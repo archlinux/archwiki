@@ -6,8 +6,8 @@
 			"Matma Rex",
 			"Midnight Gambler",
 			"Silvicola",
-			"아라",
-			"Zombie45764"
+			"Zombie45764",
+			"아라"
 		]
 	},
 	"tog-underline": "Linggs undârschdrajchn:",
@@ -97,7 +97,6 @@
 	"category-subcat-count": "Di ghadegorii umfasd {{PLURAL:$2|bloos a undâr-ghadegorii|dsam $2 undâr-ghadegoriâ, wofoo {{PLURAL:$1|nôr ôône| $1}}}} undn ôôdsajchd wärn.",
 	"category-article-count": "Di ghadegorii umfasd {{PLURAL:$2|bloos a sajdn|$2 sajdn, wofoo hiir {{PLURAL:$1|aane undn ôôdsajchd wärd|l$1 ôôdsajchd undn wärn}}}}.",
 	"category-file-count": "{{PLURAL:$2|Di Gadegorii umfasd bloos a Dadei.|Di folgende {{PLURAL:$1|Dadei is|$1 Dadein sind}} in der Gadegorii, von insgsamd $2 Dadein anzeichd.}}",
-	"listingcontinuesabbrev": "(Fôrdsedsung)",
 	"noindex-category": "Seidn, wou net indexierd sin",
 	"about": "Ieber",
 	"newwindow": "(Wärd in am najn fenschdâ daargschdeld)",
@@ -210,7 +209,7 @@
 	"nospecialpagetext": "<strong>Duu hasch â sôndâr-sajdn ôôgruufn, dii wo uugildich is.</strong>\n\nÂ lsidn mid richdichn sôndâr-sajdn findsch undâr [[Special:SpecialPages|{{int:specialpages}}]].",
 	"error": "Feelâr",
 	"databaseerror": "Feelâr fon dr Daadnbangg",
-	"laggedslavemode": "'''Achdung:''' Filajchd dsajchd dii sajdn noch ned ales, was indswischn gändârd wôrn is.",
+	"laggedreplicamode": "'''Achdung:''' Filajchd dsajchd dii sajdn noch ned ales, was indswischn gändârd wôrn is.",
 	"readonly": "Di daadnbangg is gschbärd.",
 	"enterlockreason": "Bide schrajb, wisoo dii daadnbangg gschbärd wärn sol, un wi lang des dan dauârn mechd.",
 	"readonlytext": "Di daadnbangg is grôôd gschbärd, alsâ ghamâr nids naj râjschrajwn odr ändrn. Brobiir's hald schbäädr noch âmôôl.\n\nGschbärd is se desdâweechn: $1",
@@ -515,7 +514,7 @@
 	"namespace": "Nôômâraum:",
 	"invert": "Auswaal umdreâ",
 	"blanknamespace": "(Sajdn)",
-	"contributions": "{{GENDER:$1|Beidrääch}}",
+	"tool-link-contributions": "{{GENDER:$1|Beidrääch}}",
 	"contributions-title": "Bajdrääch fo „$1“",
 	"mycontris": "Bajdreech",
 	"contribsub2": "Von {{GENDER:$3|$1}} ($2)",

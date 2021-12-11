@@ -2,16 +2,15 @@
 /**
  * @author Tim Starling
  * @author Niklas Laxström
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @file
  */
 
 namespace CLDRPluralRuleParser;
 
-use CLDRPluralRuleParser\Converter\Operator;
 use CLDRPluralRuleParser\Converter\Expression;
 use CLDRPluralRuleParser\Converter\Fragment;
-use CLDRPluralRuleParser\Error;
+use CLDRPluralRuleParser\Converter\Operator;
 
 /**
  * Helper class for converting rules to reverse polish notation (RPN).
@@ -43,21 +42,23 @@ class Converter {
 	 *
 	 * @var array
 	 */
-	public $operators = array();
+	public $operators = [];
 
 	/**
 	 * The operand stack
 	 *
 	 * @var array
 	 */
-	public $operands = array();
+	public $operands = [];
 
 	/**
 	 * Precedence levels. Note that there's no need to worry about associativity
 	 * for the level 4 operators, since they return boolean and don't accept
 	 * boolean inputs.
+	 *
+	 * @var array
 	 */
-	private static $precedence = array(
+	private static $precedence = [
 		'or' => 2,
 		'and' => 3,
 		'is' => 4,
@@ -69,28 +70,28 @@ class Converter {
 		'mod' => 5,
 		',' => 6,
 		'..' => 7,
-	);
+	];
 
 	/**
 	 * A character list defining whitespace, for use in strspn() etc.
 	 */
-	const WHITESPACE_CLASS = " \t\r\n";
+	private const WHITESPACE_CLASS = " \t\r\n";
 
 	/**
 	 * Same for digits. Note that the grammar given in UTS #35 doesn't allow
 	 * negative numbers or decimal separators.
 	 */
-	const NUMBER_CLASS = '0123456789';
+	private const NUMBER_CLASS = '0123456789';
 
 	/**
 	 * A character list of symbolic operands.
 	 */
-	const OPERAND_SYMBOLS = 'nivwft';
+	private const OPERAND_SYMBOLS = 'nivwft';
 
 	/**
 	 * An anchored regular expression which matches a word at the current offset.
 	 */
-	const WORD_REGEX = '/[a-zA-Z@]+/A';
+	private const WORD_REGEX = '/[a-zA-Z@]+/A';
 
 	/**
 	 * Convert a rule to RPN. This is the only public entry point.
@@ -125,7 +126,8 @@ class Converter {
 		// Iterate through all tokens, saving the operators and operands to a
 		// stack per Dijkstra's shunting yard algorithm.
 		/** @var Operator $token */
-		while ( false !== ( $token = $this->nextToken() ) ) {
+		$token = $this->nextToken();
+		while ( $token !== false ) {
 			// In this grammar, there are only binary operators, so every valid
 			// rule string will alternate between operator and operand tokens.
 			$expectOperator = !$expectOperator;
@@ -136,26 +138,29 @@ class Converter {
 					$token->error( 'unexpected operand' );
 				}
 				$this->operands[] = $token;
-				continue;
 			} else {
 				// Operator
 				if ( !$expectOperator ) {
 					$token->error( 'unexpected operator' );
 				}
 				// Resolve higher precedence levels
+				/** @var Operator $lastOp */
 				$lastOp = end( $this->operators );
+				// @phan-suppress-next-line PhanUndeclaredProperty
 				while ( $lastOp && self::$precedence[$token->name] <= self::$precedence[$lastOp->name] ) {
-					$this->doOperation( $lastOp, $this->operands );
+					$this->doOperation( $lastOp );
 					array_pop( $this->operators );
 					$lastOp = end( $this->operators );
 				}
 				$this->operators[] = $token;
 			}
+
+			$token = $this->nextToken();
 		}
 
 		// Finish off the stack
-		while ( $op = array_pop( $this->operators ) ) {
-			$this->doOperation( $op, $this->operands );
+		while ( $this->operators ) {
+			$this->doOperation( array_pop( $this->operators ) );
 		}
 
 		// Make sure the result is sane. The first case is possible for an empty
@@ -177,7 +182,7 @@ class Converter {
 	/**
 	 * Fetch the next token from the input string.
 	 *
-	 * @return Fragment The next token
+	 * @return Fragment|false The next token
 	 */
 	protected function nextToken() {
 		if ( $this->pos >= $this->end ) {
@@ -257,6 +262,7 @@ class Converter {
 		}
 
 		// The single-character operand symbols
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		if ( strpos( self::OPERAND_SYMBOLS, $word1 ) !== false ) {
 			$token = $this->newNumber( $word1, $this->pos );
 			$this->pos++;

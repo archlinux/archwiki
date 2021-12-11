@@ -1,7 +1,5 @@
 <?php
 /**
- * Arbitrary section name based PHP profiling.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,26 +16,31 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Profiler
  */
+
+use MediaWiki\Logger\LoggerFactory;
+use Psr\Log\LoggerInterface;
 use Wikimedia\ScopedCallback;
 
 /**
- * Custom PHP profiler for parser/DB type section names that xhprof/xdebug can't handle
+ * Arbitrary section name based PHP profiling. This custom profiler can track
+ * code execution that doesn't cleanly map to a function call and thus can't be
+ * handled by Xhprof or Excimer. For example, parser invocations or DB queries.
  *
  * @since 1.25
+ * @ingroup Profiler
  */
 class SectionProfiler {
-	/** @var array Map of (mem,real,cpu) */
+	/** @var array|null Map of (mem,real,cpu) */
 	protected $start;
-	/** @var array Map of (mem,real,cpu) */
+	/** @var array|null Map of (mem,real,cpu) */
 	protected $end;
-	/** @var array List of resolved profile calls with start/end data */
+	/** @var array[] List of resolved profile calls with start/end data */
 	protected $stack = [];
 	/** @var array Queue of open profile calls with start data */
 	protected $workStack = [];
 
-	/** @var array Map of (function name => aggregate data array) */
+	/** @var array[] Map of (function name => aggregate data array) */
 	protected $collated = [];
 	/** @var bool */
 	protected $collateDone = false;
@@ -46,6 +49,8 @@ class SectionProfiler {
 	protected $collateOnly = true;
 	/** @var array Cache of a standard broken collation entry */
 	protected $errorEntry;
+	/** @var LoggerInterface */
+	protected $logger;
 
 	/**
 	 * @param array $params
@@ -53,6 +58,7 @@ class SectionProfiler {
 	public function __construct( array $params = [] ) {
 		$this->errorEntry = $this->getErrorEntry();
 		$this->collateOnly = empty( $params['trace'] );
+		$this->logger = LoggerFactory::getInstance( 'profiler' );
 	}
 
 	/**
@@ -81,7 +87,7 @@ class SectionProfiler {
 	 * delays in usage of the profiler skewing the results. A "-total" entry
 	 * is always included in the results.
 	 *
-	 * @return array List of method entries arrays, each having:
+	 * @return array[] List of method entries arrays, each having:
 	 *   - name    : method name
 	 *   - calls   : the number of invoking calls
 	 *   - real    : real time elapsed (ms)
@@ -96,7 +102,7 @@ class SectionProfiler {
 	public function getFunctionStats() {
 		$this->collateData();
 
-		if ( is_array( $this->start ) ) {
+		if ( is_array( $this->start ) && is_array( $this->end ) ) {
 			$totalCpu = max( $this->end['cpu'] - $this->start['cpu'], 0 );
 			$totalReal = max( $this->end['real'] - $this->start['real'], 0 );
 			$totalMem = max( $this->end['memory'] - $this->start['memory'], 0 );
@@ -231,14 +237,14 @@ class SectionProfiler {
 	public function profileOutInternal( $functionname ) {
 		$item = array_pop( $this->workStack );
 		if ( $item === null ) {
-			$this->debugGroup( 'profileerror', "Profiling error: $functionname" );
+			$this->logger->error( "Profiling error: $functionname" );
 			return;
 		}
 		list( $ofname, /* $ocount */, $ortime, $octime, $omem ) = $item;
 
 		if ( $functionname === 'close' ) {
 			$message = "Profile section ended by close(): {$ofname}";
-			$this->debugGroup( 'profileerror', $message );
+			$this->logger->error( $message );
 			if ( $this->collateOnly ) {
 				$this->collated[$message] = $this->errorEntry;
 			} else {
@@ -247,7 +253,7 @@ class SectionProfiler {
 			$functionname = $ofname;
 		} elseif ( $ofname !== $functionname ) {
 			$message = "Profiling error: in({$ofname}), out($functionname)";
-			$this->debugGroup( 'profileerror', $message );
+			$this->logger->error( $message );
 			if ( $this->collateOnly ) {
 				$this->collated[$message] = $this->errorEntry;
 			} else {
@@ -463,10 +469,7 @@ class SectionProfiler {
 	 */
 	protected function getTime( $metric = 'wall' ) {
 		if ( $metric === 'cpu' || $metric === 'user' ) {
-			$ru = wfGetRusage();
-			if ( !$ru ) {
-				return 0;
-			}
+			$ru = getrusage( 0 /* RUSAGE_SELF */ );
 			$time = $ru['ru_utime.tv_sec'] + $ru['ru_utime.tv_usec'] / 1e6;
 			if ( $metric === 'cpu' ) {
 				# This is the time of system calls, added to the user time
@@ -476,29 +479,6 @@ class SectionProfiler {
 			return $time;
 		} else {
 			return microtime( true );
-		}
-	}
-
-	/**
-	 * Add an entry in the debug log file
-	 *
-	 * @param string $s String to output
-	 */
-	protected function debug( $s ) {
-		if ( function_exists( 'wfDebug' ) ) {
-			wfDebug( $s );
-		}
-	}
-
-	/**
-	 * Add an entry in the debug log group
-	 *
-	 * @param string $group Group to send the message to
-	 * @param string $s String to output
-	 */
-	protected function debugGroup( $group, $s ) {
-		if ( function_exists( 'wfDebugLog' ) ) {
-			wfDebugLog( $group, $s );
 		}
 	}
 }

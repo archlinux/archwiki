@@ -4,8 +4,8 @@
 			"Fohanno",
 			"Fulup",
 			"Gwendal",
-			"Y-M D",
-			"Huñvreüs"
+			"Huñvreüs",
+			"Y-M D"
 		]
 	},
 	"renameuser": "Adenvel an implijer",
@@ -21,7 +21,6 @@
 	"renameuserwarnings": "Diwallit :",
 	"renameuserconfirm": "Ya, adenvel an implijer",
 	"renameusersubmit": "Kas",
-	"renameuser-submit-blocklog": "Diskwel marilh stankañ an implijer",
 	"renameusererrordoesnotexist": "An implijer \"<nowiki>$1</nowiki>\" n'eus ket anezhañ",
 	"renameusererrorexists": "Krouet eo bet an anv {{GENDER:$1|implijer|implijerez|implijer}} \"<nowiki>$1</nowiki>\" dija",
 	"renameusererrorinvalid": "Faziek eo an anv implijer \"<nowiki>$1</nowiki>\"",
@@ -33,7 +32,7 @@
 	"renameuser-page-unmoved": "N'eus ket bet gallet adkas ar bajenn $1 da $2.",
 	"log-name-renameuser": "Roll an implijerien bet adanvet",
 	"log-description-renameuser": "Setu marilh kemmoù anv an implijerien.",
-	"logentry-renameuser-renameuser": "Gant $1 eo bet adanvet implijer $4 ($6 degasadenn) da $5",
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|en|he|en/he}} deus adanvet implijer{{GENDER:$7||ez}} $4 ($6 degasadenn) da $5",
 	"logentry-renameuser-renameuser-legacier": "Gant $1 eo bet adanvet implijer $4 da $5",
 	"renameuser-move-log": "Pajenn dilec'hiet ent emgefreek e-ser adenvel an {{GENDER:$2|implijer|implijerez|implijer}} \"[[User:$1|$1]]\" e \"[[User:$2|$2]]\"",
 	"action-renameuser": "Adenvel implijerien",

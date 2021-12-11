@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"StanProg",
-			"ShockD",
-			"Vlad5250",
 			"Ivml",
-			"Stoyan"
+			"ShockD",
+			"StanProg",
+			"Stoyan",
+			"Vlad5250"
 		]
 	},
 	"oathauth-desc": "Осигурява поддръжка на удостоверяването посредством HMAC на базата на еднократни пароли",
@@ -30,7 +30,7 @@
 	"right-oathauth-disable-for-user": "Деактивиране на двукомпонентно удостоверяване на потребител",
 	"oathauth-disable-intro": "С голямата сила идва голяма отговорност",
 	"oathauth-enteruser": "Потребителско име:",
-	"oathauth-enterreason": "Причина за изключване:",
+	"oathauth-enterdisablereason": "Причина за изключване:",
 	"right-oathauth-enable": "Включване на двукомпонентно удостоверяване",
 	"action-oathauth-enable": "включване на двукомпонентно удостоверяване",
 	"oathauth-auth-token-label": "Маркер",

@@ -1,7 +1,5 @@
 <?php
 /**
- * Manage storage of comments in the database
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,35 +22,41 @@ use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
- * CommentStore handles storage of comments (edit summaries, log reasons, etc)
- * in the database.
+ * @defgroup CommentStore CommentStore
+ *
+ * The Comment store in MediaWiki is responsible for storing edit summaries,
+ * log action comments and other such short strings (referred to as "comments").
+ *
+ * The CommentStore class handles the database abstraction for reading
+ * and writing comments, which are represented by CommentStoreComment objects.
+ *
+ * Data is internally stored in the `comment` table..
+ */
+
+/**
+ * Handle database storage of comments such as edit summaries and log reasons.
+ *
+ * @ingroup CommentStore
  * @since 1.30
  */
 class CommentStore {
 
 	/**
 	 * Maximum length of a comment in UTF-8 characters. Longer comments will be truncated.
-	 * @note This must be at least 255 and not greater than floor( MAX_COMMENT_LENGTH / 4 ).
+	 * @note This must be at least 255 and not greater than floor( MAX_DATA_LENGTH / 4 ).
 	 */
-	const COMMENT_CHARACTER_LIMIT = 500;
-
-	/**
-	 * Maximum length of a comment in bytes. Longer comments will be truncated.
-	 * @note This value is determined by the size of the underlying database field,
-	 *  currently BLOB in MySQL/MariaDB.
-	 */
-	const MAX_COMMENT_LENGTH = 65535;
+	public const COMMENT_CHARACTER_LIMIT = 500;
 
 	/**
 	 * Maximum length of serialized data in bytes. Longer data will result in an exception.
 	 * @note This value is determined by the size of the underlying database field,
 	 *  currently BLOB in MySQL/MariaDB.
 	 */
-	const MAX_DATA_LENGTH = 65535;
+	public const MAX_DATA_LENGTH = 65535;
 
 	/**
 	 * Define fields that use temporary tables for transitional purposes
-	 * @var array Keys are '$key', values are arrays with these possible fields:
+	 * Array keys are field names, values are arrays with these possible fields:
 	 *  - table: Temporary table name
 	 *  - pk: Temporary table column referring to the main table's primary key
 	 *  - field: Temporary table column referring comment.comment_id
@@ -60,7 +64,7 @@ class CommentStore {
 	 *  - stage: Migration stage
 	 *  - deprecatedIn: Version when using insertWithTempTable() was deprecated
 	 */
-	protected $tempTables = [
+	protected const TEMP_TABLES = [
 		'rev_comment' => [
 			'table' => 'revision_comment_temp',
 			'pk' => 'revcomment_rev',
@@ -76,25 +80,18 @@ class CommentStore {
 	];
 
 	/**
-	 * @since 1.30
-	 * @deprecated in 1.31
-	 * @var string|null
-	 */
-	protected $key = null;
-
-	/**
 	 * @var int One of the MIGRATION_* constants, or an appropriate combination
 	 *  of SCHEMA_COMPAT_* constants.
 	 * @todo Deprecate and remove once extensions seem unlikely to need to use
 	 *  it for migration anymore.
 	 */
-	protected $stage;
+	private $stage;
 
 	/** @var array[] Cache for `self::getJoin()` */
-	protected $joinCache = [];
+	private $joinCache = [];
 
 	/** @var Language Language to use for comment truncation */
-	protected $lang;
+	private $lang;
 
 	/**
 	 * @param Language $lang Language to use for comment truncation. Defaults
@@ -116,44 +113,12 @@ class CommentStore {
 	}
 
 	/**
-	 * Static constructor for easier chaining
-	 * @deprecated in 1.31 Should not be constructed with a $key, use CommentStore::getStore
-	 * @param string $key A key such as "rev_comment" identifying the comment
-	 *  field being fetched.
-	 * @return CommentStore
-	 */
-	public static function newKey( $key ) {
-		wfDeprecated( __METHOD__, '1.31' );
-		$store = new CommentStore(
-			MediaWikiServices::getInstance()->getContentLanguage(), MIGRATION_NEW
-		);
-		$store->key = $key;
-		return $store;
-	}
-
-	/**
 	 * @since 1.31
 	 * @deprecated in 1.31 Use DI to inject a CommentStore instance into your class.
 	 * @return CommentStore
 	 */
 	public static function getStore() {
 		return MediaWikiServices::getInstance()->getCommentStore();
-	}
-
-	/**
-	 * Compat method allowing use of self::newKey until removed.
-	 * @param string|null $methodKey
-	 * @throws InvalidArgumentException
-	 * @return string
-	 */
-	private function getKey( $methodKey = null ) {
-		$key = $this->key ?? $methodKey;
-		if ( $key === null ) {
-			// @codeCoverageIgnoreStart
-			throw new InvalidArgumentException( '$key should not be null' );
-			// @codeCoverageIgnoreEnd
-		}
-		return $key;
 	}
 
 	/**
@@ -166,14 +131,13 @@ class CommentStore {
 	 *  actually fetch the comment. If possible, use `self::getJoin()` instead.
 	 *
 	 * @since 1.30
-	 * @since 1.31 Method signature changed, $key parameter added (with deprecated back compat)
-	 * @param string|null $key A key such as "rev_comment" identifying the comment
+	 * @since 1.31 Method signature changed, $key parameter added (required since 1.35)
+	 * @param string $key A key such as "rev_comment" identifying the comment
 	 *  field being fetched.
 	 * @return string[] to include in the `$vars` to `IDatabase->select()`. All
 	 *  fields are aliased, so `+` is safe to use.
 	 */
-	public function getFields( $key = null ) {
-		$key = $this->getKey( $key );
+	public function getFields( $key ) {
 		$fields = [];
 		if ( ( $this->stage & SCHEMA_COMPAT_READ_BOTH ) === SCHEMA_COMPAT_READ_OLD ) {
 			$fields["{$key}_text"] = $key;
@@ -184,10 +148,9 @@ class CommentStore {
 				$fields["{$key}_old"] = $key;
 			}
 
-			$tempTableStage = isset( $this->tempTables[$key] )
-				? $this->tempTables[$key]['stage'] : MIGRATION_NEW;
+			$tempTableStage = static::TEMP_TABLES[$key]['stage'] ?? MIGRATION_NEW;
 			if ( $tempTableStage & SCHEMA_COMPAT_READ_OLD ) {
-				$fields["{$key}_pk"] = $this->tempTables[$key]['joinPK'];
+				$fields["{$key}_pk"] = static::TEMP_TABLES[$key]['joinPK'];
 			}
 			if ( $tempTableStage & SCHEMA_COMPAT_READ_NEW ) {
 				$fields["{$key}_id"] = "{$key}_id";
@@ -203,8 +166,8 @@ class CommentStore {
 	 * actual comment.
 	 *
 	 * @since 1.30
-	 * @since 1.31 Method signature changed, $key parameter added (with deprecated back compat)
-	 * @param string|null $key A key such as "rev_comment" identifying the comment
+	 * @since 1.31 Method signature changed, $key parameter added (required since 1.35)
+	 * @param string $key A key such as "rev_comment" identifying the comment
 	 *  field being fetched.
 	 * @return array[] With three keys:
 	 *   - tables: (string[]) to include in the `$table` to `IDatabase->select()`
@@ -213,8 +176,7 @@ class CommentStore {
 	 *  All tables, fields, and joins are aliased, so `+` is safe to use.
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
-	public function getJoin( $key = null ) {
-		$key = $this->getKey( $key );
+	public function getJoin( $key ) {
 		if ( !array_key_exists( $key, $this->joinCache ) ) {
 			$tables = [];
 			$fields = [];
@@ -227,10 +189,9 @@ class CommentStore {
 			} else { // READ_BOTH or READ_NEW
 				$join = ( $this->stage & SCHEMA_COMPAT_READ_OLD ) ? 'LEFT JOIN' : 'JOIN';
 
-				$tempTableStage = isset( $this->tempTables[$key] )
-					? $this->tempTables[$key]['stage'] : MIGRATION_NEW;
+				$tempTableStage = static::TEMP_TABLES[$key]['stage'] ?? MIGRATION_NEW;
 				if ( $tempTableStage & SCHEMA_COMPAT_READ_OLD ) {
-					$t = $this->tempTables[$key];
+					$t = static::TEMP_TABLES[$key];
 					$alias = "temp_$key";
 					$tables[$alias] = $t['table'];
 					$joins[$alias] = [ $join, "{$alias}.{$t['pk']} = {$t['joinPK']}" ];
@@ -238,7 +199,7 @@ class CommentStore {
 						$joinField = "{$alias}.{$t['field']}";
 					} else {
 						// Nothing hits this code path for now, but will in the future when we set
-						// $this->tempTables['rev_comment']['stage'] to MIGRATION_WRITE_NEW while
+						// static::TEMP_TABLES['rev_comment']['stage'] to MIGRATION_WRITE_NEW while
 						// merging revision_comment_temp into revision.
 						// @codeCoverageIgnoreStart
 						$joins[$alias][0] = 'LEFT JOIN';
@@ -281,11 +242,11 @@ class CommentStore {
 	 * @param IDatabase|null $db Database handle for getCommentLegacy(), or null for getComment()
 	 * @param string $key A key such as "rev_comment" identifying the comment
 	 *  field being fetched.
-	 * @param object|array $row
+	 * @param stdClass|array $row
 	 * @param bool $fallback
 	 * @return CommentStoreComment
 	 */
-	private function getCommentInternal( IDatabase $db = null, $key, $row, $fallback = false ) {
+	private function getCommentInternal( ?IDatabase $db, $key, $row, $fallback = false ) {
 		$row = (array)$row;
 		if ( array_key_exists( "{$key}_text", $row ) && array_key_exists( "{$key}_data", $row ) ) {
 			$cid = $row["{$key}_cid"] ?? null;
@@ -304,8 +265,7 @@ class CommentStore {
 			}
 			$data = null;
 		} else {
-			$tempTableStage = isset( $this->tempTables[$key] )
-				? $this->tempTables[$key]['stage'] : MIGRATION_NEW;
+			$tempTableStage = static::TEMP_TABLES[$key]['stage'] ?? MIGRATION_NEW;
 			$row2 = null;
 			if ( ( $tempTableStage & SCHEMA_COMPAT_READ_NEW ) && array_key_exists( "{$key}_id", $row ) ) {
 				if ( !$db ) {
@@ -331,7 +291,7 @@ class CommentStore {
 						. "does have fields for getCommentLegacy()"
 					);
 				}
-				$t = $this->tempTables[$key];
+				$t = static::TEMP_TABLES[$key];
 				$id = $row["{$key}_pk"];
 				$row2 = $db->selectRow(
 					[ $t['table'], 'comment' ],
@@ -407,20 +367,14 @@ class CommentStore {
 	 * `{$key}_text` (string) and `{$key}_data` (JSON string or null).
 	 *
 	 * @since 1.30
-	 * @since 1.31 Method signature changed, $key parameter added (with deprecated back compat)
+	 * @since 1.31 Method signature changed, $key parameter added (required since 1.35)
 	 * @param string $key A key such as "rev_comment" identifying the comment
 	 *  field being fetched.
-	 * @param object|array|null $row Result row.
+	 * @param stdClass|array|null $row Result row.
 	 * @param bool $fallback If true, fall back as well as possible instead of throwing an exception.
 	 * @return CommentStoreComment
 	 */
 	public function getComment( $key, $row = null, $fallback = false ) {
-		// Compat for method sig change in 1.31 (introduction of $key)
-		if ( $this->key !== null ) {
-			$fallback = $row;
-			$row = $key;
-			$key = $this->getKey();
-		}
 		if ( $row === null ) {
 			// @codeCoverageIgnoreStart
 			throw new InvalidArgumentException( '$row must not be null' );
@@ -440,21 +394,15 @@ class CommentStore {
 	 * `{$key}_text` (string) and `{$key}_data` (JSON string or null).
 	 *
 	 * @since 1.30
-	 * @since 1.31 Method signature changed, $key parameter added (with deprecated back compat)
+	 * @since 1.31 Method signature changed, $key parameter added (required since 1.35)
 	 * @param IDatabase $db Database handle to use for lookup
 	 * @param string $key A key such as "rev_comment" identifying the comment
 	 *  field being fetched.
-	 * @param object|array|null $row Result row.
+	 * @param stdClass|array|null $row Result row.
 	 * @param bool $fallback If true, fall back as well as possible instead of throwing an exception.
 	 * @return CommentStoreComment
 	 */
 	public function getCommentLegacy( IDatabase $db, $key, $row = null, $fallback = false ) {
-		// Compat for method sig change in 1.31 (introduction of $key)
-		if ( $this->key !== null ) {
-			$fallback = $row;
-			$row = $key;
-			$key = $this->getKey();
-		}
 		if ( $row === null ) {
 			// @codeCoverageIgnoreStart
 			throw new InvalidArgumentException( '$row must not be null' );
@@ -554,13 +502,12 @@ class CommentStore {
 		}
 
 		if ( $this->stage & SCHEMA_COMPAT_WRITE_NEW ) {
-			$tempTableStage = isset( $this->tempTables[$key] )
-				? $this->tempTables[$key]['stage'] : MIGRATION_NEW;
+			$tempTableStage = static::TEMP_TABLES[$key]['stage'] ?? MIGRATION_NEW;
 			if ( $tempTableStage & SCHEMA_COMPAT_WRITE_OLD ) {
-				$t = $this->tempTables[$key];
+				$t = static::TEMP_TABLES[$key];
 				$func = __METHOD__;
 				$commentId = $comment->id;
-				$callback = function ( $id ) use ( $dbw, $commentId, $t, $func ) {
+				$callback = static function ( $id ) use ( $dbw, $commentId, $t, $func ) {
 					$dbw->insert(
 						$t['table'],
 						[
@@ -586,7 +533,7 @@ class CommentStore {
 	 *  row insert in the same transaction.
 	 *
 	 * @since 1.30
-	 * @since 1.31 Method signature changed, $key parameter added (with deprecated back compat)
+	 * @since 1.31 Method signature changed, $key parameter added (required since 1.35)
 	 * @param IDatabase $dbw Database handle to insert on
 	 * @param string $key A key such as "rev_comment" identifying the comment
 	 *  field being fetched.
@@ -595,20 +542,13 @@ class CommentStore {
 	 * @return array Fields for the insert or update
 	 */
 	public function insert( IDatabase $dbw, $key, $comment = null, $data = null ) {
-		// Compat for method sig change in 1.31 (introduction of $key)
-		if ( $this->key !== null ) {
-			$data = $comment;
-			$comment = $key;
-			$key = $this->key;
-		}
 		if ( $comment === null ) {
 			// @codeCoverageIgnoreStart
 			throw new InvalidArgumentException( '$comment can not be null' );
 			// @codeCoverageIgnoreEnd
 		}
 
-		$tempTableStage = isset( $this->tempTables[$key] )
-			? $this->tempTables[$key]['stage'] : MIGRATION_NEW;
+		$tempTableStage = static::TEMP_TABLES[$key]['stage'] ?? MIGRATION_NEW;
 		if ( $tempTableStage & SCHEMA_COMPAT_WRITE_OLD ) {
 			throw new InvalidArgumentException( "Must use insertWithTempTable() for $key" );
 		}
@@ -627,7 +567,7 @@ class CommentStore {
 	 *  row insert in the same transaction.
 	 *
 	 * @since 1.30
-	 * @since 1.31 Method signature changed, $key parameter added (with deprecated back compat)
+	 * @since 1.31 Method signature changed, $key parameter added (required since 1.35)
 	 * @param IDatabase $dbw Database handle to insert on
 	 * @param string $key A key such as "rev_comment" identifying the comment
 	 *  field being fetched.
@@ -639,27 +579,21 @@ class CommentStore {
 	 *    inserted/updated is known. Pass it that primary key.
 	 */
 	public function insertWithTempTable( IDatabase $dbw, $key, $comment = null, $data = null ) {
-		// Compat for method sig change in 1.31 (introduction of $key)
-		if ( $this->key !== null ) {
-			$data = $comment;
-			$comment = $key;
-			$key = $this->getKey();
-		}
 		if ( $comment === null ) {
 			// @codeCoverageIgnoreStart
 			throw new InvalidArgumentException( '$comment can not be null' );
 			// @codeCoverageIgnoreEnd
 		}
 
-		if ( !isset( $this->tempTables[$key] ) ) {
+		if ( !isset( static::TEMP_TABLES[$key] ) ) {
 			throw new InvalidArgumentException( "Must use insert() for $key" );
-		} elseif ( isset( $this->tempTables[$key]['deprecatedIn'] ) ) {
-			wfDeprecated( __METHOD__ . " for $key", $this->tempTables[$key]['deprecatedIn'] );
+		} elseif ( isset( static::TEMP_TABLES[$key]['deprecatedIn'] ) ) {
+			wfDeprecated( __METHOD__ . " for $key", static::TEMP_TABLES[$key]['deprecatedIn'] );
 		}
 
 		list( $fields, $callback ) = $this->insertInternal( $dbw, $key, $comment, $data );
 		if ( !$callback ) {
-			$callback = function () {
+			$callback = static function () {
 				// Do nothing.
 			};
 		}
@@ -671,7 +605,7 @@ class CommentStore {
 	 * @param Message $msg
 	 * @return array
 	 */
-	protected static function encodeMessage( Message $msg ) {
+	private static function encodeMessage( Message $msg ) {
 		$key = count( $msg->getKeysToTry() ) > 1 ? $msg->getKeysToTry() : $msg->getKey();
 		$params = $msg->getParams();
 		foreach ( $params as &$param ) {
@@ -690,7 +624,7 @@ class CommentStore {
 	 * @param array $data
 	 * @return Message
 	 */
-	protected static function decodeMessage( $data ) {
+	private static function decodeMessage( $data ) {
 		$key = array_shift( $data );
 		foreach ( $data as &$param ) {
 			if ( is_object( $param ) ) {

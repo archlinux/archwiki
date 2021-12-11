@@ -6,6 +6,7 @@ namespace OOUI;
  * Checkbox input widget.
  */
 class CheckboxInputWidget extends InputWidget {
+	use RequiredElement;
 
 	/* Static Properties */
 
@@ -16,7 +17,7 @@ class CheckboxInputWidget extends InputWidget {
 	/**
 	 * Whether the checkbox is selected.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $selected;
 
@@ -26,7 +27,6 @@ class CheckboxInputWidget extends InputWidget {
 	 *          (default: false)
 	 *      - bool $config['indeterminate'] Whether the checkbox is in the indeterminate state.
 	 *          (default: false)
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -37,6 +37,11 @@ class CheckboxInputWidget extends InputWidget {
 			'icon' => 'check',
 			'classes' => [ 'oo-ui-checkboxInputWidget-checkIcon' ],
 		] );
+
+		// Traits
+		$this->initializeRequiredElement(
+			array_merge( [ 'indicatorElement' => null ], $config )
+		);
 
 		// Initialization
 		$this->addClasses( [ 'oo-ui-checkboxInputWidget' ] );

@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Warnunge:",
 	"renameuserconfirm": "Jo, dunn dä Metmaacher ömbenenne un em singe Name ändere",
 	"renameusersubmit": "Ömdäufe!",
-	"renameuser-submit-blocklog": "Logbooch met Spärre för dä Metmaacher",
 	"renameusererrordoesnotexist": "Ene Metmaacher „<nowiki>$1</nowiki>“ kenne mer nit.",
 	"renameusererrorexists": "Ene Metmaacher met däm Name „<nowiki>$1</nowiki>“ jit et ald.",
 	"renameusererrorinvalid": "Ene Metmaacher-Name eß „<nowiki>$1</nowiki>“ ävver nit, dä wöhr nit richtich.",

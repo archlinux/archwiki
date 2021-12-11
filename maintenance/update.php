@@ -25,8 +25,11 @@
  * @ingroup Maintenance
  */
 
+// NO_AUTOLOAD -- due to hashbang above
+
 require_once __DIR__ . '/Maintenance.php';
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\DatabaseSqlite;
 
 /**
@@ -35,13 +38,12 @@ use Wikimedia\Rdbms\DatabaseSqlite;
  * @ingroup Maintenance
  */
 class UpdateMediaWiki extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'MediaWiki database updater' );
 		$this->addOption( 'skip-compat-checks', 'Skips compatibility checks, mostly for developers' );
 		$this->addOption( 'quick', 'Skip 5 second countdown before starting' );
 		$this->addOption( 'doshared', 'Also update shared tables' );
-		$this->addOption( 'nopurge', 'Do not purge the objectcache table after updates' );
 		$this->addOption( 'noschema', 'Only do the updates that are not done during schema updates' );
 		$this->addOption(
 			'schema',
@@ -57,11 +59,11 @@ class UpdateMediaWiki extends Maintenance {
 		);
 	}
 
-	function getDbType() {
+	public function getDbType() {
 		return Maintenance::DB_ADMIN;
 	}
 
-	function compatChecks() {
+	private function compatChecks() {
 		$minimumPcreVersion = Installer::MINIMUM_PCRE_VERSION;
 
 		$pcreVersion = explode( ' ', PCRE_VERSION, 2 )[0];
@@ -73,19 +75,10 @@ class UpdateMediaWiki extends Maintenance {
 				"https://www.mediawiki.org/wiki/Manual:Errors_and_symptoms/PCRE\n\n" .
 				"ABORTING.\n" );
 		}
-
-		$test = new PhpXmlBugTester();
-		if ( !$test->ok ) {
-			$this->fatalError(
-				"Your system has a combination of PHP and libxml2 versions that is buggy\n" .
-				"and can cause hidden data corruption in MediaWiki and other web apps.\n" .
-				"Upgrade to libxml2 2.7.3 or later.\n" .
-				"ABORTING (see https://bugs.php.net/bug.php?id=45996).\n" );
-		}
 	}
 
-	function execute() {
-		global $wgVersion, $wgLang, $wgAllowSchemaUpdates, $wgMessagesDirs;
+	public function execute() {
+		global $wgLang, $wgAllowSchemaUpdates, $wgMessagesDirs;
 
 		if ( !$wgAllowSchemaUpdates
 			&& !( $this->hasOption( 'force' )
@@ -114,16 +107,18 @@ class UpdateMediaWiki extends Maintenance {
 		// T206765: We need to load the installer i18n files as some of errors come installer/updater code
 		$wgMessagesDirs['MediawikiInstaller'] = dirname( __DIR__ ) . '/includes/installer/i18n';
 
-		$lang = Language::factory( 'en' );
+		$lang = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
 		// Set global language to ensure localised errors are in English (T22633)
 		RequestContext::getMain()->setLanguage( $lang );
-		$wgLang = $lang; // BackCompat
+
+		// BackCompat
+		$wgLang = $lang;
 
 		define( 'MW_UPDATER', true );
 
-		$this->output( "MediaWiki {$wgVersion} Updater\n\n" );
+		$this->output( 'MediaWiki ' . MW_VERSION . " Updater\n\n" );
 
-		wfWaitForSlaves();
+		MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->waitForReplication();
 
 		if ( !$this->hasOption( 'skip-compat-checks' ) ) {
 			$this->compatChecks();
@@ -173,24 +168,6 @@ class UpdateMediaWiki extends Maintenance {
 
 		$time1 = microtime( true );
 
-		$badPhpUnit = dirname( __DIR__ ) . '/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php';
-		if ( file_exists( $badPhpUnit ) ) {
-			// Bad versions of the file are:
-			// https://raw.githubusercontent.com/sebastianbergmann/phpunit/c820f915bfae34e5a836f94967a2a5ea5ef34f21/src/Util/PHP/eval-stdin.php
-			// https://raw.githubusercontent.com/sebastianbergmann/phpunit/3aaddb1c5bd9b9b8d070b4cf120e71c36fd08412/src/Util/PHP/eval-stdin.php
-			$md5 = md5_file( $badPhpUnit );
-			if ( $md5 === '120ac49800671dc383b6f3709c25c099'
-				|| $md5 === '28af792cb38fc9a1b236b91c1aad2876'
-			) {
-				$success = unlink( $badPhpUnit );
-				if ( $success ) {
-					$this->output( "Removed PHPUnit eval-stdin.php to protect against CVE-2017-9841\n" );
-				} else {
-					$this->error( "Unable to remove $badPhpUnit, you should manually. See CVE-2017-9841" );
-				}
-			}
-		}
-
 		$shared = $this->hasOption( 'doshared' );
 
 		$updates = [ 'core', 'extensions' ];
@@ -202,6 +179,17 @@ class UpdateMediaWiki extends Maintenance {
 		}
 
 		$updater = DatabaseUpdater::newForDB( $db, $shared, $this );
+
+		// Avoid upgrading from versions older than 1.27
+		// Using an implicit marker (bot_passwords table didn't exist until 1.27)
+		// TODO: Use an explicit marker
+		// See T259771
+		if ( !$updater->tableExists( 'bot_passwords' ) ) {
+			$this->fatalError(
+				"Can not upgrade from versions older than 1.27, please upgrade to that version or later first."
+			);
+		}
+
 		$updater->doUpdates( $updates );
 
 		foreach ( $updater->getPostDatabaseUpdateMaintenance() as $maint ) {
@@ -221,9 +209,8 @@ class UpdateMediaWiki extends Maintenance {
 		}
 
 		$updater->setFileAccess();
-		if ( !$this->hasOption( 'nopurge' ) ) {
-			$updater->purgeCache();
-		}
+
+		$updater->purgeCache();
 
 		$time2 = microtime( true );
 
@@ -231,7 +218,7 @@ class UpdateMediaWiki extends Maintenance {
 		$this->output( "\nDone in $timeDiff.\n" );
 	}
 
-	function afterFinalSetup() {
+	protected function afterFinalSetup() {
 		global $wgLocalisationCacheConf;
 
 		# Don't try to access the database
@@ -253,7 +240,7 @@ class UpdateMediaWiki extends Maintenance {
 	public function validateParamsAndArgs() {
 		// Allow extensions to add additional params.
 		$params = [];
-		Hooks::run( 'MaintenanceUpdateAddParams', [ &$params ] );
+		$this->getHookRunner()->onMaintenanceUpdateAddParams( $params );
 
 		// This executes before the PHP version check, so don't use null coalesce (??).
 		// Keeping this compatible with older PHP versions lets us reach the code that

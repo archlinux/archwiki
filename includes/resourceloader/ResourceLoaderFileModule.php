@@ -20,6 +20,10 @@
  * @author Roan Kattouw
  */
 
+use MediaWiki\Languages\LanguageFallback;
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Minify\CSSMin;
+
 /**
  * Module based on local JavaScript/CSS files.
  *
@@ -30,10 +34,10 @@
  * - getStyles / ResourceLoaderModule::saveFileDependencies.
  *
  * @ingroup ResourceLoader
+ * @see $wgResourceModules
  * @since 1.17
  */
 class ResourceLoaderFileModule extends ResourceLoaderModule {
-
 	/** @var string Local base path, see __construct() */
 	protected $localBasePath = '';
 
@@ -101,7 +105,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @var array List of packaged files to make available through require()
 	 * @par Usage:
 	 * @code
-	 * [ [file-path], [file-path], ... ]
+	 * [ [file-path-or-object], [file-path-or-object], ... ]
 	 * @endcode
 	 */
 	protected $packageFiles = null;
@@ -111,6 +115,12 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *  keyed by context hash
 	 */
 	private $expandedPackageFiles = [];
+
+	/**
+	 * @var array Further expanded versions of $expandedPackageFiles, lazy-computed by
+	 *   getPackageFiles(); keyed by context hash
+	 */
+	private $fullyExpandedPackageFiles = [];
 
 	/**
 	 * @var array List of modules this module depends on
@@ -141,10 +151,14 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/** @var bool Link to raw files in debug mode */
 	protected $debugRaw = true;
 
+	/** @var string[] */
 	protected $targets = [ 'desktop' ];
 
 	/** @var bool Whether CSSJanus flipping should be skipped for this module */
 	protected $noflip = false;
+
+	/** @var bool Whether this module requires the client to support ES6 */
+	protected $es6 = false;
 
 	/**
 	 * @var bool Whether getStyleURLsForDebug should return raw file paths,
@@ -168,77 +182,23 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	protected $missingLocalFileRefs = [];
 
 	/**
+	 * @var VueComponentParser|null Lazy-created by getVueComponentParser()
+	 */
+	protected $vueComponentParser = null;
+
+	/**
 	 * Constructs a new module from an options array.
 	 *
-	 * @param array $options List of options; if not given or empty, an empty module will be
-	 *     constructed
+	 * @param array $options See $wgResourceModules for the available options.
 	 * @param string|null $localBasePath Base path to prepend to all local paths in $options.
 	 *     Defaults to $IP
 	 * @param string|null $remoteBasePath Base path to prepend to all remote paths in $options.
 	 *     Defaults to $wgResourceBasePath
-	 *
-	 * Below is a description for the $options array:
 	 * @throws InvalidArgumentException
-	 * @par Construction options:
-	 * @code
-	 *     [
-	 *         // Base path to prepend to all local paths in $options. Defaults to $IP
-	 *         'localBasePath' => [base path],
-	 *         // Base path to prepend to all remote paths in $options. Defaults to $wgResourceBasePath
-	 *         'remoteBasePath' => [base path],
-	 *         // Equivalent of remoteBasePath, but relative to $wgExtensionAssetsPath
-	 *         'remoteExtPath' => [base path],
-	 *         // Equivalent of remoteBasePath, but relative to $wgStylePath
-	 *         'remoteSkinPath' => [base path],
-	 *         // Scripts to always include (cannot be set if 'packageFiles' is also set, see below)
-	 *         'scripts' => [file path string or array of file path strings],
-	 *         // Scripts to include in specific language contexts
-	 *         'languageScripts' => [
-	 *             [language code] => [file path string or array of file path strings],
-	 *         ],
-	 *         // Scripts to include in specific skin contexts
-	 *         'skinScripts' => [
-	 *             [skin name] => [file path string or array of file path strings],
-	 *         ],
-	 *         // Scripts to include in debug contexts
-	 *         'debugScripts' => [file path string or array of file path strings],
-	 *         // For package modules: files to be made available for internal require() do not
-	 *         // need to have 'type' defined; it will be inferred from the file name extension
-	 *         // if omitted. 'config' can only be used when 'type' is 'data'; the variables are
-	 *         // resolved with Config::get(). The first entry in 'packageFiles' is always the
-	 *         // module entry point. If 'packageFiles' is set, 'scripts' cannot also be set.
-	 *         'packageFiles' => [
-	 *             [file path string], // or:
-	 *             [ 'name' => [file name], 'file' => [file path], 'type' => 'script'|'data' ], // or:
-	 *             [ 'name' => [name], 'content' => [string], 'type' => 'script'|'data' ], // or:
-	 *             [ 'name' => [name], 'callback' => [callable], 'type' => 'script'|'data' ],
-	 *             [ 'name' => [name], 'config' => [ [config var name], ... ], 'type' => 'data' ],
-	 *             [ 'name' => [name], 'config' => [ [JS name] => [PHP name] ], 'type' => 'data' ],
-	 *         ],
-	 *         // Modules which must be loaded before this module
-	 *         'dependencies' => [module name string or array of module name strings],
-	 *         'templates' => [
-	 *             [template alias with file.ext] => [file path to a template file],
-	 *         ],
-	 *         // Styles to always load
-	 *         'styles' => [file path string or array of file path strings],
-	 *         // Styles to include in specific skin contexts
-	 *         'skinStyles' => [
-	 *             [skin name] => [file path string or array of file path strings],
-	 *         ],
-	 *         // Messages to always load
-	 *         'messages' => [array of message key strings],
-	 *         // Group which this module should be loaded together with
-	 *         'group' => [group name string],
-	 *         // Function that, if it returns true, makes the loader skip this module.
-	 *         // The file must contain valid JavaScript for execution in a private function.
-	 *         // The file must not contain the "function () {" and "}" wrapper though.
-	 *         'skipFunction' => [file path]
-	 *     ]
-	 * @endcode
+	 * @see $wgResourceModules
 	 */
 	public function __construct(
-		$options = [],
+		array $options = [],
 		$localBasePath = null,
 		$remoteBasePath = null
 	) {
@@ -304,12 +264,16 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 				// Single booleans
 				case 'debugRaw':
 				case 'noflip':
+				case 'es6':
 					$this->{$member} = (bool)$option;
 					break;
 			}
 		}
 		if ( isset( $options['scripts'] ) && isset( $options['packageFiles'] ) ) {
 			throw new InvalidArgumentException( "A module may not set both 'scripts' and 'packageFiles'" );
+		}
+		if ( isset( $options['packageFiles'] ) && isset( $options['skinScripts'] ) ) {
+			throw new InvalidArgumentException( "Options 'skinScripts' and 'packageFiles' cannot be used together." );
 		}
 		if ( $hasTemplates ) {
 			$this->dependencies[] = 'mediawiki.template';
@@ -337,10 +301,10 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *     to $IP
 	 * @param string|null $remoteBasePath Path to use if not provided in module definition. Defaults
 	 *     to $wgResourceBasePath
-	 * @return array [ localBasePath, remoteBasePath ]
+	 * @return string[] [ localBasePath, remoteBasePath ]
 	 */
 	public static function extractBasePaths(
-		$options = [],
+		array $options = [],
 		$localBasePath = null,
 		$remoteBasePath = null
 	) {
@@ -374,6 +338,18 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 			$remoteBasePath = (string)$options['remoteBasePath'];
 		}
 
+		if ( $remoteBasePath === '' ) {
+			// If MediaWiki is installed at the document root (not recommended),
+			// then wgScriptPath is set to the empty string by the installer to
+			// ensure safe concatenating of file paths (avoid "/" + "/foo" being "//foo").
+			// However, this also means the path itself can be an invalid URI path,
+			// as those must start with a slash. Within ResourceLoader, we will not
+			// do such primitive/unsafe slash concatenation and use URI resolution
+			// instead, so beyond this point, to avoid fatal errors in CSSMin::resolveUrl(),
+			// do a best-effort support for docroot installs by casting this to a slash.
+			$remoteBasePath = '/';
+		}
+
 		return [ $localBasePath, $remoteBasePath ];
 	}
 
@@ -387,6 +363,12 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$deprecationScript = $this->getDeprecationInformation( $context );
 		if ( $this->packageFiles !== null ) {
 			$packageFiles = $this->getPackageFiles( $context );
+			foreach ( $packageFiles['files'] as &$file ) {
+				if ( $file['type'] === 'script+style' ) {
+					$file['content'] = $file['content']['script'];
+					$file['type'] = 'script';
+				}
+			}
 			if ( $deprecationScript ) {
 				$mainFile =& $packageFiles['files'][$packageFiles['main']];
 				$mainFile['content'] = $deprecationScript . $mainFile['content'];
@@ -400,7 +382,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 
 	/**
 	 * @param ResourceLoaderContext $context
-	 * @return array
+	 * @return string[]
 	 */
 	public function getScriptURLsForDebug( ResourceLoaderContext $context ) {
 		$urls = [];
@@ -426,15 +408,31 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * Get all styles for a given context.
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return array CSS code for $context as an associative array mapping media type to CSS text.
+	 * @return string[] CSS code for $context as an associative array mapping media type to CSS text.
 	 */
 	public function getStyles( ResourceLoaderContext $context ) {
 		$styles = $this->readStyleFiles(
 			$this->getStyleFiles( $context ),
-			$this->getFlip( $context ),
 			$context
 		);
-		// Collect referenced files
+
+		if ( $this->packageFiles !== null ) {
+			$packageFiles = $this->getPackageFiles( $context );
+			foreach ( $packageFiles['files'] as $fileName => $file ) {
+				if ( $file['type'] === 'script+style' ) {
+					$style = $this->processStyle(
+						$file['content']['style'],
+						$file['content']['styleLang'],
+						$fileName,
+						$context
+					);
+					$styles['all'] = ( $styles['all'] ?? '' ) . "\n" . $style;
+				}
+			}
+		}
+
+		// Track indirect file dependencies so that ResourceLoaderStartUpModule can check for
+		// on-disk file changes to any of this files without having to recompute the file list
 		$this->saveFileDependencies( $context, $this->localFileRefs );
 
 		return $styles;
@@ -442,7 +440,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 
 	/**
 	 * @param ResourceLoaderContext $context
-	 * @return array
+	 * @return string[][]
 	 */
 	public function getStyleURLsForDebug( ResourceLoaderContext $context ) {
 		if ( $this->hasGeneratedStyles ) {
@@ -468,7 +466,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Gets list of message keys used by this module.
 	 *
-	 * @return array List of message keys
+	 * @return string[] List of message keys
 	 */
 	public function getMessages() {
 		return $this->messages;
@@ -486,28 +484,43 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Gets list of names of modules this module depends on.
 	 * @param ResourceLoaderContext|null $context
-	 * @return array List of module names
+	 * @return string[] List of module names
 	 */
 	public function getDependencies( ResourceLoaderContext $context = null ) {
 		return $this->dependencies;
 	}
 
 	/**
-	 * Get the skip function.
+	 * Helper method for getting a file.
+	 *
+	 * @param string $localPath The path to the resource to load
+	 * @param string $type The type of resource being loaded (for error reporting only)
+	 * @throws RuntimeException If the supplied path is not found, or not a path
+	 * @return string
+	 */
+	private function getFileContents( $localPath, $type ) {
+		if ( !is_file( $localPath ) ) {
+			throw new RuntimeException(
+				__METHOD__ . ": $type file not found, or is not a file: \"$localPath\""
+			);
+		}
+		return $this->stripBom( file_get_contents( $localPath ) );
+	}
+
+	/**
 	 * @return null|string
-	 * @throws MWException
+	 * @throws RuntimeException If the file doesn't exist
 	 */
 	public function getSkipFunction() {
 		if ( !$this->skipFunction ) {
 			return null;
 		}
-
 		$localPath = $this->getLocalPath( $this->skipFunction );
-		if ( !file_exists( $localPath ) ) {
-			throw new MWException( __METHOD__ . ": skip function file not found: \"$localPath\"" );
-		}
-		$contents = $this->stripBom( file_get_contents( $localPath ) );
-		return $contents;
+		return $this->getFileContents( $localPath, 'skip function' );
+	}
+
+	public function requiresES6() {
+		return $this->es6;
 	}
 
 	/**
@@ -525,37 +538,32 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Helper method for getDefinitionSummary.
 	 *
-	 * @see ResourceLoaderModule::getFileDependencies
 	 * @param ResourceLoaderContext $context
-	 * @return array
+	 * @return string
 	 */
 	private function getFileHashes( ResourceLoaderContext $context ) {
 		$files = [];
 
-		// Flatten style files into $files
-		$styles = self::collateFilePathListByOption( $this->styles, 'media', 'all' );
-		foreach ( $styles as $styleFiles ) {
-			$files = array_merge( $files, $styleFiles );
+		$styleFiles = $this->getStyleFiles( $context );
+		foreach ( $styleFiles as $paths ) {
+			$files = array_merge( $files, $paths );
 		}
 
-		$skinFiles = self::collateFilePathListByOption(
-			self::tryForKey( $this->skinStyles, $context->getSkin(), 'default' ),
-			'media',
-			'all'
-		);
-		foreach ( $skinFiles as $styleFiles ) {
-			$files = array_merge( $files, $styleFiles );
-		}
-
-		// Extract file names for package files
+		// Extract file paths for package files
+		// Optimisation: Use foreach() and isset() instead of array_map/array_filter.
+		// This is a hot code path, called by StartupModule for thousands of modules.
 		$expandedPackageFiles = $this->expandPackageFiles( $context );
-		$packageFiles = $expandedPackageFiles ?
-			array_filter( array_map( function ( $fileInfo ) {
-				return $fileInfo['filePath'] ?? null;
-			}, $expandedPackageFiles['files'] ) ) :
-			[];
+		$packageFiles = [];
+		if ( $expandedPackageFiles ) {
+			foreach ( $expandedPackageFiles['files'] as $fileInfo ) {
+				if ( isset( $fileInfo['filePath'] ) ) {
+					$packageFiles[] = $fileInfo['filePath'];
+				}
+			}
+		}
 
-		// Final merge, this should result in a master list of dependent files
+		// Merge all the file paths we were able discover directly from the module definition.
+		// This is the master list of direct-dependent files for this module.
 		$files = array_merge(
 			$files,
 			$packageFiles,
@@ -568,18 +576,23 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		if ( $this->skipFunction ) {
 			$files[] = $this->skipFunction;
 		}
-		$files = array_map( [ $this, 'getLocalPath' ], $files );
-		// File deps need to be treated separately because they're already prefixed
-		$files = array_merge( $files, $this->getFileDependencies( $context ) );
-		// Filter out any duplicates from getFileDependencies() and others.
-		// Most commonly introduced by compileLessFile(), which always includes the
-		// entry point Less file we already know about.
-		$files = array_values( array_unique( $files ) );
 
-		// Don't include keys or file paths here, only the hashes. Including that would needlessly
-		// cause global cache invalidation when files move or if e.g. the MediaWiki path changes.
-		// Any significant ordering is already detected by the definition summary.
-		return array_map( [ __CLASS__, 'safeFileHash' ], $files );
+		// Expand these local paths into absolute file paths
+		$files = array_map( [ $this, 'getLocalPath' ], $files );
+
+		// Add any lazily discovered file dependencies from previous module builds.
+		// These are added last because they are already absolute file paths.
+		$files = array_merge( $files, $this->getFileDependencies( $context ) );
+
+		// Filter out any duplicates. Typically introduced by getFileDependencies() which
+		// may lazily re-discover a master file.
+		$files = array_unique( $files );
+
+		// Don't return array keys or any other form of file path here, only the hashes.
+		// Including file paths would needlessly cause global cache invalidation when files
+		// move on disk or if e.g. the MediaWiki directory name changes.
+		// Anything where order is significant is already detected by the definition summary.
+		return FileContentsHasher::getFileContentsHash( $files );
 	}
 
 	/**
@@ -618,13 +631,13 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		if ( $packageFiles ) {
 			// Extract the minimum needed:
 			// - The 'main' pointer (included as-is).
-			// - The 'files' array, simplied to only which files exist (the keys of
+			// - The 'files' array, simplified to only which files exist (the keys of
 			//   this array), and something that represents their non-file content.
 			//   For packaged files that reflect files directly from disk, the
-			//   'getFileHashes' method tracks this already.
-			//   It is important that the keys of the 'files' array are preserved,
-			//   as they affect the module output.
-			$packageFiles['files'] = array_map( function ( $fileInfo ) {
+			//   'getFileHashes' method tracks their content already.
+			//   It is important that the keys of the $packageFiles['files'] array
+			//   are preserved, as they do affect the module output.
+			$packageFiles['files'] = array_map( static function ( $fileInfo ) {
 				return $fileInfo['definitionSummary'] ?? ( $fileInfo['content'] ?? null );
 			}, $packageFiles['files'] );
 		}
@@ -642,6 +655,16 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		}
 
 		return $summary;
+	}
+
+	/**
+	 * @return VueComponentParser
+	 */
+	protected function getVueComponentParser() {
+		if ( $this->vueComponentParser === null ) {
+			$this->vueComponentParser = new VueComponentParser;
+		}
+		return $this->vueComponentParser;
 	}
 
 	/**
@@ -677,7 +700,11 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 			return $path->getRemotePath();
 		}
 
-		return "{$this->remoteBasePath}/$path";
+		if ( $this->remoteBasePath === '/' ) {
+			return "/$path";
+		} else {
+			return "{$this->remoteBasePath}/$path";
+		}
 	}
 
 	/**
@@ -694,11 +721,14 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Infer the file type from a package file path.
 	 * @param string $path
-	 * @return string 'script' or 'data'
+	 * @return string 'script', 'script-vue', or 'data'
 	 */
 	public static function getPackageFileType( $path ) {
 		if ( preg_match( '/\.json$/i', $path ) ) {
 			return 'data';
+		}
+		if ( preg_match( '/\.vue$/i', $path ) ) {
+			return 'script-vue';
 		}
 		return 'script';
 	}
@@ -710,11 +740,11 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *     or path/options pairs
 	 * @param string $option Option name
 	 * @param mixed $default Default value if the option isn't set
-	 * @return array List of file paths, collated by $option
+	 * @return string[][] List of file paths, collated by $option
 	 */
 	protected static function collateFilePathListByOption( array $list, $option, $default ) {
 		$collatedFiles = [];
-		foreach ( (array)$list as $key => $value ) {
+		foreach ( $list as $key => $value ) {
 			if ( is_int( $key ) ) {
 				// File name as the value
 				if ( !isset( $collatedFiles[$default] ) ) {
@@ -736,10 +766,10 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Get a list of element that match a key, optionally using a fallback key.
 	 *
-	 * @param array $list List of lists to select from
-	 * @param string $key Key to look for in $map
+	 * @param array[] $list List of lists to select from
+	 * @param string $key Key to look for in $list
 	 * @param string|null $fallback Key to look for in $list if $key doesn't exist
-	 * @return array List of elements from $map which matched $key or $fallback,
+	 * @return array List of elements from $list which matched $key or $fallback,
 	 *  or an empty list in case of no match
 	 */
 	protected static function tryForKey( array $list, $key, $fallback = null ) {
@@ -758,7 +788,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * Get a list of script file paths for this module, in order of proper execution.
 	 *
 	 * @param ResourceLoaderContext $context
-	 * @return array List of file paths
+	 * @return string[] List of file paths
 	 */
 	private function getScriptFiles( ResourceLoaderContext $context ) {
 		$files = array_merge(
@@ -778,14 +808,15 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * possibly using a fallback language.
 	 *
 	 * @param string $lang
-	 * @return array
+	 * @return string[]
 	 */
 	private function getLanguageScripts( $lang ) {
 		$scripts = self::tryForKey( $this->languageScripts, $lang );
 		if ( $scripts ) {
 			return $scripts;
 		}
-		$fallbacks = Language::getFallbacksFor( $lang );
+		$fallbacks = MediaWikiServices::getInstance()->getLanguageFallback()
+			->getAll( $lang, LanguageFallback::MESSAGES );
 		foreach ( $fallbacks as $lang ) {
 			$scripts = self::tryForKey( $this->languageScripts, $lang );
 			if ( $scripts ) {
@@ -799,9 +830,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Get a list of file paths for all styles in this module, in order of proper inclusion.
 	 *
-	 * @internal Exposed only for use by WebInstallerOutput.
+	 * @internal Exposed only for use by structure phpunit tests.
 	 * @param ResourceLoaderContext $context
-	 * @return array List of file paths
+	 * @return string[][] List of file paths
 	 */
 	public function getStyleFiles( ResourceLoaderContext $context ) {
 		return array_merge_recursive(
@@ -836,8 +867,10 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * @return array A list of file paths collated by media type
 	 */
 	protected function getAllSkinStyleFiles() {
+		$skinFactory = MediaWikiServices::getInstance()->getSkinFactory();
 		$styleFiles = [];
-		$internalSkinNames = array_keys( Skin::getSkinNames() );
+
+		$internalSkinNames = array_keys( $skinFactory->getSkinNames() );
 		$internalSkinNames[] = 'default';
 
 		foreach ( $internalSkinNames as $internalSkinName ) {
@@ -875,9 +908,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Get the contents of a list of JavaScript files. Helper for getScript().
 	 *
-	 * @param array $scripts List of file paths to scripts to read, remap and concetenate
+	 * @param string[] $scripts List of file paths to scripts to read, remap and concetenate
 	 * @return string Concatenated JavaScript data from $scripts
-	 * @throws MWException
+	 * @throws RuntimeException
 	 */
 	private function readScriptFiles( array $scripts ) {
 		if ( empty( $scripts ) ) {
@@ -886,10 +919,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$js = '';
 		foreach ( array_unique( $scripts, SORT_REGULAR ) as $fileName ) {
 			$localPath = $this->getLocalPath( $fileName );
-			if ( !file_exists( $localPath ) ) {
-				throw new MWException( __METHOD__ . ": script file not found: \"$localPath\"" );
-			}
-			$contents = $this->stripBom( file_get_contents( $localPath ) );
+			$contents = $this->getFileContents( $localPath, 'script' );
 			$js .= $contents . "\n";
 		}
 		return $js;
@@ -900,13 +930,12 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *
 	 * @internal This is considered a private method. Exposed for internal use by WebInstallerOutput.
 	 * @param array $styles Map of media type to file paths to read, remap, and concatenate
-	 * @param bool $flip
 	 * @param ResourceLoaderContext $context
-	 * @return array List of concatenated and remapped CSS data from $styles,
+	 * @return string[] List of concatenated and remapped CSS data from $styles,
 	 *     keyed by media type
-	 * @throws MWException
+	 * @throws RuntimeException
 	 */
-	public function readStyleFiles( array $styles, $flip, ResourceLoaderContext $context ) {
+	public function readStyleFiles( array $styles, ResourceLoaderContext $context ) {
 		if ( !$styles ) {
 			return [];
 		}
@@ -914,7 +943,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 			$uniqueFiles = array_unique( $files, SORT_REGULAR );
 			$styleFiles = [];
 			foreach ( $uniqueFiles as $file ) {
-				$styleFiles[] = $this->readStyleFile( $file, $flip, $context );
+				$styleFiles[] = $this->readStyleFile( $file, $context );
 			}
 			$styles[$media] = implode( "\n", $styleFiles );
 		}
@@ -922,36 +951,57 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	}
 
 	/**
-	 * Reads a style file.
+	 * Read and process a style file. Reads a file from disk and runs it through processStyle().
 	 *
 	 * This method can be used as a callback for array_map()
 	 *
+	 * @internal
 	 * @param string $path File path of style file to read
-	 * @param bool $flip
 	 * @param ResourceLoaderContext $context
-	 *
 	 * @return string CSS data in script file
-	 * @throws MWException If the file doesn't exist
+	 * @throws RuntimeException If the file doesn't exist
 	 */
-	protected function readStyleFile( $path, $flip, ResourceLoaderContext $context ) {
+	protected function readStyleFile( $path, ResourceLoaderContext $context ) {
+		$localPath = $this->getLocalPath( $path );
+		$style = $this->getFileContents( $localPath, 'style' );
+		$styleLang = $this->getStyleSheetLang( $localPath );
+
+		return $this->processStyle( $style, $styleLang, $path, $context );
+	}
+
+	/**
+	 * Process a CSS/LESS string.
+	 *
+	 * This method performs the following processing steps:
+	 * - LESS compilation (if $styleLang = 'less')
+	 * - RTL flipping with CSSJanus (if getFlip() returns true)
+	 * - Registration of references to local files in $localFileRefs and $missingLocalFileRefs
+	 * - URL remapping and data URI embedding
+	 *
+	 * @internal
+	 * @param string $style CSS/LESS string
+	 * @param string $styleLang Language of $style ('css' or 'less')
+	 * @param string $path File path where the CSS/LESS lives, used for resolving relative file paths
+	 * @param ResourceLoaderContext $context
+	 * @return string Processed CSS
+	 */
+	protected function processStyle( $style, $styleLang, $path, ResourceLoaderContext $context ) {
 		$localPath = $this->getLocalPath( $path );
 		$remotePath = $this->getRemotePath( $path );
-		if ( !file_exists( $localPath ) ) {
-			$msg = __METHOD__ . ": style file not found: \"$localPath\"";
-			wfDebugLog( 'resourceloader', $msg );
-			throw new MWException( $msg );
-		}
 
-		if ( $this->getStyleSheetLang( $localPath ) === 'less' ) {
-			$style = $this->compileLessFile( $localPath, $context );
+		if ( $styleLang === 'less' ) {
+			$style = $this->compileLessString( $style, $localPath, $context );
 			$this->hasGeneratedStyles = true;
-		} else {
-			$style = $this->stripBom( file_get_contents( $localPath ) );
 		}
 
-		if ( $flip ) {
-			$style = CSSJanus::transform( $style, true, false );
+		if ( $this->getFlip( $context ) ) {
+			$style = CSSJanus::transform(
+				$style,
+				/* $swapLtrRtlInURL = */ true,
+				/* $swapLeftRightInURL = */ false
+			);
 		}
+
 		$localDir = dirname( $localPath );
 		$remoteDir = dirname( $remotePath );
 		// Get and register local file references
@@ -980,7 +1030,7 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	/**
 	 * Get target(s) for the module, eg ['desktop'] or ['desktop', 'mobile']
 	 *
-	 * @return array Array of strings
+	 * @return string[]
 	 */
 	public function getTargets() {
 		return $this->targets;
@@ -1009,62 +1059,93 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	}
 
 	/**
-	 * Compile a LESS file into CSS.
+	 * @deprecated since 1.35 Use compileLessString() instead
+	 * @param string $fileName
+	 * @param ResourceLoaderContext $context
+	 * @return string
+	 * @codeCoverageIgnore
+	 */
+	protected function compileLessFile( $fileName, ResourceLoaderContext $context ) {
+		wfDeprecated( __METHOD__, '1.35' );
+
+		$style = $this->getFileContents( $fileName, 'LESS' );
+		return $this->compileLessString( $style, $fileName, $context );
+	}
+
+	/**
+	 * Compile a LESS string into CSS.
 	 *
 	 * Keeps track of all used files and adds them to localFileRefs.
 	 *
-	 * @since 1.22
-	 * @since 1.27 Added $context parameter.
+	 * @since 1.35
 	 * @throws Exception If less.php encounters a parse error
-	 * @param string $fileName File path of LESS source
+	 * @param string $style LESS source to compile
+	 * @param string $stylePath File path of LESS source, used for resolving relative file paths
 	 * @param ResourceLoaderContext $context Context in which to generate script
 	 * @return string CSS source
 	 */
-	protected function compileLessFile( $fileName, ResourceLoaderContext $context ) {
+	protected function compileLessString( $style, $stylePath, ResourceLoaderContext $context ) {
 		static $cache;
-
+		// @TODO: dependency injection
 		if ( !$cache ) {
 			$cache = ObjectCache::getLocalServerInstance( CACHE_ANYTHING );
 		}
 
-		$vars = $this->getLessVars( $context );
-		// Construct a cache key from the LESS file name, and a hash digest
-		// of the LESS variables used for compilation.
-		ksort( $vars );
-		$varsHash = hash( 'md4', serialize( $vars ) );
-		$cacheKey = $cache->makeGlobalKey( 'LESS', $fileName, $varsHash );
-		$cachedCompile = $cache->get( $cacheKey );
-
-		// If we got a cached value, we have to validate it by getting a
-		// checksum of all the files that were loaded by the parser and
-		// ensuring it matches the cached entry's.
-		if ( isset( $cachedCompile['hash'] ) ) {
-			$contentHash = FileContentsHasher::getFileContentsHash( $cachedCompile['files'] );
-			if ( $contentHash === $cachedCompile['hash'] ) {
-				$this->localFileRefs = array_merge( $this->localFileRefs, $cachedCompile['files'] );
-				return $cachedCompile['css'];
-			}
+		$skinName = $context->getSkin();
+		$skinImportPaths = ExtensionRegistry::getInstance()->getAttribute( 'SkinLessImportPaths' );
+		$importDirs = [];
+		if ( isset( $skinImportPaths[ $skinName ] ) ) {
+			$importDirs[] = $skinImportPaths[ $skinName ];
 		}
 
-		$compiler = $context->getResourceLoader()->getLessCompiler( $vars );
-		$css = $compiler->parseFile( $fileName )->getCss();
-		$files = $compiler->AllParsedFiles();
-		$this->localFileRefs = array_merge( $this->localFileRefs, $files );
+		$vars = $this->getLessVars( $context );
+		// Construct a cache key from a hash of the LESS source, and a hash digest
+		// of the LESS variables used for compilation.
+		ksort( $vars );
+		$compilerParams = [
+			'vars' => $vars,
+			'importDirs' => $importDirs,
+		];
+		$key = $cache->makeGlobalKey(
+			'resourceloader-less',
+			'v1',
+			hash( 'md4', $style ),
+			hash( 'md4', serialize( $compilerParams ) )
+		);
 
-		// Cache for 24 hours (86400 seconds).
-		$cache->set( $cacheKey, [
-			'css'   => $css,
-			'files' => $files,
-			'hash'  => FileContentsHasher::getFileContentsHash( $files ),
-		], 3600 * 24 );
+		// If we got a cached value, we have to validate it by getting a checksum of all the
+		// files that were loaded by the parser and ensuring it matches the cached entry's.
+		$data = $cache->get( $key );
+		if (
+			!$data ||
+			$data['hash'] !== FileContentsHasher::getFileContentsHash( $data['files'] )
+		) {
+			$compiler = $context->getResourceLoader()->getLessCompiler( $vars, $importDirs );
 
-		return $css;
+			$css = $compiler->parse( $style, $stylePath )->getCss();
+			// T253055: store the implicit dependency paths in a form relative to any install
+			// path so that multiple version of the application can share the cache for identical
+			// less stylesheets. This also avoids churn during application updates.
+			$files = $compiler->AllParsedFiles();
+			$data = [
+				'css'   => $css,
+				'files' => ResourceLoaderModule::getRelativePaths( $files ),
+				'hash'  => FileContentsHasher::getFileContentsHash( $files )
+			];
+			$cache->set( $key, $data, $cache::TTL_DAY );
+		}
+
+		foreach ( ResourceLoaderModule::expandRelativePaths( $data['files'] ) as $path ) {
+			$this->localFileRefs[] = $path;
+		}
+
+		return $data['css'];
 	}
 
 	/**
 	 * Takes named templates by the module and returns an array mapping.
 	 * @return array Templates mapping template alias to content
-	 * @throws MWException
+	 * @throws RuntimeException If a file doesn't exist
 	 */
 	public function getTemplates() {
 		$templates = [];
@@ -1075,14 +1156,9 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 				$alias = $this->getPath( $templatePath );
 			}
 			$localPath = $this->getLocalPath( $templatePath );
-			if ( file_exists( $localPath ) ) {
-				$content = file_get_contents( $localPath );
-				$templates[$alias] = $this->stripBom( $content );
-			} else {
-				$msg = __METHOD__ . ": template file not found: \"$localPath\"";
-				wfDebugLog( 'resourceloader', $msg );
-				throw new MWException( $msg );
-			}
+			$content = $this->getFileContents( $localPath, 'template' );
+
+			$templates[$alias] = $this->stripBom( $content );
 		}
 		return $templates;
 	}
@@ -1103,7 +1179,8 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 *
 	 * @param ResourceLoaderContext $context
 	 * @return array|null
-	 * @throws MWException If the 'packageFiles' definition is invalid.
+	 * @phan-return array{main:string,files:string[][]}|null
+	 * @throws LogicException If the 'packageFiles' definition is invalid.
 	 */
 	private function expandPackageFiles( ResourceLoaderContext $context ) {
 		$hash = $context->getHash();
@@ -1116,26 +1193,28 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 		$expandedFiles = [];
 		$mainFile = null;
 
-		foreach ( $this->packageFiles as $alias => $fileInfo ) {
+		foreach ( $this->packageFiles as $key => $fileInfo ) {
 			if ( is_string( $fileInfo ) ) {
 				$fileInfo = [ 'name' => $fileInfo, 'file' => $fileInfo ];
-			} elseif ( !isset( $fileInfo['name'] ) ) {
-				$msg = __METHOD__ . ": invalid package file definition for module " .
-					"\"{$this->getName()}\": 'name' key is required when value is not a string";
-				wfDebugLog( 'resourceloader', $msg );
-				throw new MWException( $msg );
 			}
+			if ( !isset( $fileInfo['name'] ) ) {
+				$msg = "Missing 'name' key in package file info for module '{$this->getName()}'," .
+					" offset '{$key}'.";
+				$this->getLogger()->error( $msg );
+				throw new LogicException( $msg );
+			}
+			$fileName = $fileInfo['name'];
 
 			// Infer type from alias if needed
-			$type = $fileInfo['type'] ?? self::getPackageFileType( $fileInfo['name'] );
+			$type = $fileInfo['type'] ?? self::getPackageFileType( $fileName );
 			$expanded = [ 'type' => $type ];
 			if ( !empty( $fileInfo['main'] ) ) {
-				$mainFile = $fileInfo['name'];
-				if ( $type !== 'script' ) {
-					$msg = __METHOD__ . ": invalid package file definition for module " .
-						"\"{$this->getName()}\": main file \"$mainFile\" must be of type \"script\", not \"$type\"";
-					wfDebugLog( 'resourceloader', $msg );
-					throw new MWException( $msg );
+				$mainFile = $fileName;
+				if ( $type !== 'script' && $type !== 'script-vue' ) {
+					$msg = "Main file in package must be of type 'script', module " .
+						"'{$this->getName()}', main file '{$mainFile}' is '{$type}'.";
+					$this->getLogger()->error( $msg );
+					throw new LogicException( $msg );
 				}
 			}
 
@@ -1148,30 +1227,54 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 			} elseif ( isset( $fileInfo['file'] ) ) {
 				$expanded['filePath'] = $fileInfo['file'];
 			} elseif ( isset( $fileInfo['callback'] ) ) {
+				// If no extra parameter for the callback is given, use null.
+				$expanded['callbackParam'] = $fileInfo['callbackParam'] ?? null;
+
 				if ( !is_callable( $fileInfo['callback'] ) ) {
-					$msg = __METHOD__ . ": invalid callback for package file \"{$fileInfo['name']}\"" .
-						" in module \"{$this->getName()}\"";
-					wfDebugLog( 'resourceloader', $msg );
-					throw new MWException( $msg );
+					$msg = "Invalid 'callback' for module '{$this->getName()}', file '{$fileName}'.";
+					$this->getLogger()->error( $msg );
+					throw new LogicException( $msg );
 				}
 				if ( isset( $fileInfo['versionCallback'] ) ) {
 					if ( !is_callable( $fileInfo['versionCallback'] ) ) {
-						throw new MWException( __METHOD__ . ": invalid versionCallback for file" .
-							" \"{$fileInfo['name']}\" in module \"{$this->getName()}\"" );
+						throw new LogicException( "Invalid 'versionCallback' for "
+							. "module '{$this->getName()}', file '{$fileName}'."
+						);
 					}
-					$expanded['definitionSummary'] =
-						( $fileInfo['versionCallback'] )( $context, $this->getConfig() );
+
+					// Execute the versionCallback with the same arguments that
+					// would be given to the callback
+					$callbackResult = ( $fileInfo['versionCallback'] )(
+						$context,
+						$this->getConfig(),
+						$expanded['callbackParam']
+					);
+					if ( $callbackResult instanceof ResourceLoaderFilePath ) {
+						$expanded['filePath'] = $callbackResult->getPath();
+					} else {
+						$expanded['definitionSummary'] = $callbackResult;
+					}
 					// Don't invoke 'callback' here as it may be expensive (T223260).
 					$expanded['callback'] = $fileInfo['callback'];
 				} else {
-					$expanded['content'] = ( $fileInfo['callback'] )( $context, $this->getConfig() );
+					// Else go ahead invoke callback with its arguments.
+					$callbackResult = ( $fileInfo['callback'] )(
+						$context,
+						$this->getConfig(),
+						$expanded['callbackParam']
+					);
+					if ( $callbackResult instanceof ResourceLoaderFilePath ) {
+						$expanded['filePath'] = $callbackResult->getPath();
+					} else {
+						$expanded['content'] = $callbackResult;
+					}
 				}
 			} elseif ( isset( $fileInfo['config'] ) ) {
 				if ( $type !== 'data' ) {
-					$msg = __METHOD__ . ": invalid use of \"config\" for package file \"{$fileInfo['name']}\" " .
-						"in module \"{$this->getName()}\": type must be \"data\" but is \"$type\"";
-					wfDebugLog( 'resourceloader', $msg );
-					throw new MWException( $msg );
+					$msg = "Key 'config' only valid for data files. "
+						. " Module '{$this->getName()}', file '{$fileName}' is '{$type}'.";
+					$this->getLogger()->error( $msg );
+					throw new LogicException( $msg );
 				}
 				$expandedConfig = [];
 				foreach ( $fileInfo['config'] as $key => $var ) {
@@ -1180,22 +1283,21 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 				$expanded['content'] = $expandedConfig;
 			} elseif ( !empty( $fileInfo['main'] ) ) {
 				// [ 'name' => 'foo.js', 'main' => true ] is shorthand
-				$expanded['filePath'] = $fileInfo['name'];
+				$expanded['filePath'] = $fileName;
 			} else {
-				$msg = __METHOD__ . ": invalid package file definition for \"{$fileInfo['name']}\" " .
-					"in module \"{$this->getName()}\": one of \"file\", \"content\", \"callback\" or \"config\" " .
-					"must be set";
-				wfDebugLog( 'resourceloader', $msg );
-				throw new MWException( $msg );
+				$msg = "Incomplete definition for module '{$this->getName()}', file '{$fileName}'. "
+					. "One of 'file', 'content', 'callback', or 'config' must be set.";
+				$this->getLogger()->error( $msg );
+				throw new LogicException( $msg );
 			}
 
-			$expandedFiles[$fileInfo['name']] = $expanded;
+			$expandedFiles[$fileName] = $expanded;
 		}
 
 		if ( $expandedFiles && $mainFile === null ) {
 			// The first package file that is a script is the main file
-			foreach ( $expandedFiles as $path => &$file ) {
-				if ( $file['type'] === 'script' ) {
+			foreach ( $expandedFiles as $path => $file ) {
+				if ( $file['type'] === 'script' || $file['type'] === 'script-vue' ) {
 					$mainFile = $path;
 					break;
 				}
@@ -1215,40 +1317,88 @@ class ResourceLoaderFileModule extends ResourceLoaderModule {
 	 * Resolves the package files defintion and generates the content of each package file.
 	 * @param ResourceLoaderContext $context
 	 * @return array Package files data structure, see ResourceLoaderModule::getScript()
+	 * @throws RuntimeException If a file doesn't exist, or parsing a .vue file fails
 	 */
 	public function getPackageFiles( ResourceLoaderContext $context ) {
 		if ( $this->packageFiles === null ) {
 			return null;
 		}
+		$hash = $context->getHash();
+		if ( isset( $this->fullyExpandedPackageFiles[ $hash ] ) ) {
+			return $this->fullyExpandedPackageFiles[ $hash ];
+		}
 		$expandedPackageFiles = $this->expandPackageFiles( $context );
 
 		// Expand file contents
-		foreach ( $expandedPackageFiles['files'] as &$fileInfo ) {
+		foreach ( $expandedPackageFiles['files'] as $fileName => &$fileInfo ) {
 			// Turn any 'filePath' or 'callback' key into actual 'content',
-			// and remove the key after that.
-			if ( isset( $fileInfo['filePath'] ) ) {
-				$localPath = $this->getLocalPath( $fileInfo['filePath'] );
-				if ( !file_exists( $localPath ) ) {
-					$msg = __METHOD__ . ": package file not found: \"$localPath\"" .
-						" in module \"{$this->getName()}\"";
-					wfDebugLog( 'resourceloader', $msg );
-					throw new MWException( $msg );
+			// and remove the key after that. The callback could return a
+			// ResourceLoaderFilePath object; if that happens, fall through
+			// to the 'filePath' handling.
+			if ( isset( $fileInfo['callback'] ) ) {
+				$callbackResult = ( $fileInfo['callback'] )(
+					$context,
+					$this->getConfig(),
+					$fileInfo['callbackParam']
+				);
+				if ( $callbackResult instanceof ResourceLoaderFilePath ) {
+					// Fall through to the filePath handling code below
+					$fileInfo['filePath'] = $callbackResult->getPath();
+				} else {
+					$fileInfo['content'] = $callbackResult;
 				}
-				$content = $this->stripBom( file_get_contents( $localPath ) );
+				unset( $fileInfo['callback'] );
+			}
+			// Only interpret 'filePath' if 'content' hasn't been set already.
+			// This can happen if 'versionCallback' provided 'filePath',
+			// while 'callback' provides 'content'. In that case both are set
+			// at this point. The 'filePath' from 'versionCallback' in that case is
+			// only to inform getDefinitionSummary().
+			if ( !isset( $fileInfo['content'] ) && isset( $fileInfo['filePath'] ) ) {
+				$localPath = $this->getLocalPath( $fileInfo['filePath'] );
+				$content = $this->getFileContents( $localPath, 'package' );
 				if ( $fileInfo['type'] === 'data' ) {
 					$content = json_decode( $content );
 				}
 				$fileInfo['content'] = $content;
 				unset( $fileInfo['filePath'] );
-			} elseif ( isset( $fileInfo['callback'] ) ) {
-				$fileInfo['content'] = ( $fileInfo['callback'] )( $context, $this->getConfig() );
-				unset( $fileInfo['callback'] );
+			}
+			if ( $fileInfo['type'] === 'script-vue' ) {
+				try {
+					$parsedComponent = $this->getVueComponentParser()->parse(
+						$fileInfo['content'],
+						[ 'minifyTemplate' => !$context->getDebug() ]
+					);
+				} catch ( Exception $e ) {
+					$msg = "Error parsing file '$fileName' in module '{$this->getName()}': " .
+						$e->getMessage();
+					$this->getLogger()->error( $msg );
+					throw new RuntimeException( $msg );
+				}
+				$encodedTemplate = json_encode( $parsedComponent['template'] );
+				if ( $context->getDebug() ) {
+					// Replace \n (backslash-n) with space + backslash-newline in debug mode
+					// We only replace \n if not preceded by a backslash, to avoid breaking '\\n'
+					$encodedTemplate = preg_replace( '/(?<!\\\\)\\\\n/', " \\\n", $encodedTemplate );
+					// Expand \t to real tabs in debug mode
+					$encodedTemplate = strtr( $encodedTemplate, [ "\\t" => "\t" ] );
+				}
+				$fileInfo['content'] = [
+					'script' => $parsedComponent['script'] .
+						";\nmodule.exports.template = $encodedTemplate;",
+					'style' => $parsedComponent['style'] ?? '',
+					'styleLang' => $parsedComponent['styleLang'] ?? 'css'
+				];
+				$fileInfo['type'] = 'script+style';
 			}
 
-			// Not needed for client response, exists for getDefinitionSummary().
+			// Not needed for client response, exists for use by getDefinitionSummary().
 			unset( $fileInfo['definitionSummary'] );
+			// Not needed for client response, used by callbacks only.
+			unset( $fileInfo['callbackParam'] );
 		}
 
+		$this->fullyExpandedPackageFiles[ $hash ] = $expandedPackageFiles;
 		return $expandedPackageFiles;
 	}
 

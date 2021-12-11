@@ -48,7 +48,7 @@ class VirtualRESTServiceClient {
 	/** @var array Map of (prefix => VirtualRESTService|array) */
 	private $instances = [];
 
-	const VALID_MOUNT_REGEX = '#^/[0-9a-z]+/([0-9a-z]+/)*$#';
+	private const VALID_MOUNT_REGEX = '#^/[0-9a-z]+/([0-9a-z]+/)*$#';
 
 	/**
 	 * @param MultiHttpClient $http
@@ -102,7 +102,7 @@ class VirtualRESTServiceClient {
 	 * @return array (prefix,VirtualRESTService) or (null,null) if none found
 	 */
 	public function getMountAndService( $path ) {
-		$cmpFunc = function ( $a, $b ) {
+		$cmpFunc = static function ( $a, $b ) {
 			$al = substr_count( $a, '/' );
 			$bl = substr_count( $b, '/' );
 			return $bl <=> $al; // largest prefix first
@@ -156,7 +156,7 @@ class VirtualRESTServiceClient {
 	 *     list( $rcode, $rdesc, $rhdrs, $rbody, $rerr ) = $responses[0];
 	 * @endcode
 	 *
-	 * @param array $reqs Map of Virtual HTTP request maps
+	 * @param array[] $reqs Map of Virtual HTTP request maps
 	 * @return array $reqs Map of corresponding response values with the same keys/order
 	 * @throws Exception
 	 */
@@ -203,7 +203,7 @@ class VirtualRESTServiceClient {
 		}
 
 		// Function to get IDs that won't collide with keys in $armoredIndexMap
-		$idFunc = function () use ( &$curUniqueId ) {
+		$idFunc = static function () use ( &$curUniqueId ) {
 			return $curUniqueId++;
 		};
 
@@ -242,6 +242,14 @@ class VirtualRESTServiceClient {
 					$checkReqIndexesByPrefix[$prefix][$index] = 1;
 				}
 			}
+
+			// Expand protocol-relative URLs
+			foreach ( $executeReqs as $index => &$req ) {
+				if ( preg_match( '#^//#', $req['url'] ) ) {
+					$req['url'] = wfExpandUrl( $req['url'], PROTO_CURRENT );
+				}
+			}
+
 			// Run the actual work HTTP requests
 			foreach ( $this->http->runMulti( $executeReqs ) as $index => $ranReq ) {
 				$doneReqs[$index] = $ranReq;

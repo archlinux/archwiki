@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Cainamarques",
+			"Eduardo Addad de Oliveira",
+			"Eduardoaddad",
+			"Felipe L. Ewald",
+			"He7d3r",
 			"Helder.wiki",
 			"Jaideraf",
 			"Jefersonmoraes",
-			"He7d3r",
-			"Luan",
-			"Felipe L. Ewald",
-			"Eduardo Addad de Oliveira"
+			"Luan"
 		]
 	},
 	"scribunto-desc": "Estrutura para incorporar linguagens de script em páginas do MediaWiki",
@@ -58,10 +59,11 @@
 	"scribunto-limitreport-timeusage": "Uso de tempo em Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 segundos",
 	"scribunto-limitreport-virtmemusage": "Tamanho virtual em Lua",
-	"scribunto-limitreport-virtmemusage-value": "$1/$2",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|byte|bytes}}",
 	"scribunto-limitreport-estmemusage": "Estimativa do uso de memória em Lua",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|byte|bytes}}",
 	"scribunto-limitreport-memusage": "Uso de memória em Lua",
-	"scribunto-limitreport-memusage-value": "$1/$2",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|byte|bytes}}",
 	"scribunto-limitreport-profile": "Perfil em Lua",
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-profile-percent": "$1%",

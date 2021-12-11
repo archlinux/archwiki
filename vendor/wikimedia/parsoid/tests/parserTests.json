@@ -1,0 +1,58 @@
+{
+	"parserTests.txt": {
+		"repo": "/wikimedia/mediawiki/",
+		"path": "tests/parser/parserTests.txt",
+		"expectedSHA1": "6b8baef116ef32e021bab3cabbf4bc0d132ca52d",
+		"latestCommit": "ed543be03bbf3dcd1da2dd882b2b327917a1aa33"
+	},
+	"legacyMediaParserTests.txt": {
+		"repo": "/wikimedia/mediawiki/",
+		"path": "tests/parser/legacyMediaParserTests.txt",
+		"expectedSHA1": "21426ab625db99fba8366c8395e0f009eb5ef660",
+		"latestCommit": "96d9eaa8c7d3ac1a433ae3e87fe8f5f009e5fe69"
+	},
+	"sectionWrappingParserTests.txt": {
+		"repo": "--UNUSED--",
+		"path": "--UNUSED--"
+	},
+	"tableFixupsParserTests.txt": {
+		"repo": "--UNUSED--",
+		"path": "--UNUSED--"
+	},
+	"separatorTests.txt": {
+		"repo": "--UNUSED--",
+		"path": "--UNUSED--"
+	},
+	"selserWrappingParserTests.txt": {
+		"repo": "--UNUSED--",
+		"path": "--UNUSED--"
+	},
+	"langParserTests.txt": {
+		"repo": "/wikimedia/mediawiki-services-parsoid/",
+		"path": "tests/langParserTests.txt"
+	},
+	"citeParserTests.txt": {
+		"repo": "/wikimedia/mediawiki-extensions-Cite/",
+		"path": "tests/parser/citeParserTests.txt",
+		"expectedSHA1": "df8ca20e112063adfbd7208f9fe5e832a2b9765c",
+		"latestCommit": "6b813c68744d7bbbd8930c7150d346d006f5e5b6"
+	},
+	"timedMediaHandlerParserTests.txt": {
+		"repo": "/wikimedia/mediawiki-extensions-TimedMediaHandler/",
+		"path": "tests/parser/parserTests.txt",
+		"expectedSHA1": "1ce0c3f3bc5df93125b0ef3f3e528363a6b5b0e7",
+		"latestCommit": "62677fcd14639a250c589036233f35158c4dfeef"
+	},
+	"poemParserTests.txt": {
+		"repo": "/wikimedia/mediawiki-extensions-Poem/",
+		"path": "tests/parser/parserTests.txt",
+		"expectedSHA1": "ffe275baf1e88b174eb90fe4a61ae7f7171821ee",
+		"latestCommit": "5337f7927ace34af6620e7d5c8f733f6cf413667"
+	},
+	"imageMapParserTests.txt": {
+		"repo": "/wikimedia/mediawiki-extensions-ImageMap/",
+		"path": "tests/parser/imageMapParserTests.txt",
+		"expectedSHA1": "df1f578a27c3e2e950c8e2d32967a153c1e3e3fd",
+		"latestCommit": "86e2a3a971b8e0fcef771e0312eafc4a40f200a5"
+	}
+}

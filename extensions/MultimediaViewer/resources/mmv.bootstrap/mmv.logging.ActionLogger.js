@@ -37,6 +37,7 @@
 	 * The map's keys are the action identifiers and the values are the sampling factor for each action type.
 	 * There is a "default" key defined providing a default sampling factor for actions that aren't explicitly
 	 * set in the map.
+	 *
 	 * @property {Object.<string, number>}
 	 * @static
 	 */
@@ -55,7 +56,8 @@
 	 * in 10 tabs, there will be 10 file-description-page events. If they view the
 	 * same image 10 times by hitting the prev/next buttons, there will be 10
 	 * image-view events, etc.
-	 * @property
+	 *
+	 * @property {Object}
 	 * @static
 	 */
 	L.logActions = {

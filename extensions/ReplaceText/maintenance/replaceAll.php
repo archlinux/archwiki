@@ -28,13 +28,11 @@
  * @link     https://www.mediawiki.org/wiki/Extension:Replace_Text
  *
  */
-// @codingStandardsIgnoreStart
 $IP = getenv( "MW_INSTALL_PATH" ) ?: __DIR__ . "/../../..";
 if ( !is_readable( "$IP/maintenance/Maintenance.php" ) ) {
 	die( "MW_INSTALL_PATH needs to be set to your MediaWiki installation.\n" );
 }
-require_once ( "$IP/maintenance/Maintenance.php" );
-// @codingStandardsIgnoreEnd
+require_once "$IP/maintenance/Maintenance.php";
 
 /**
  * Maintenance script that replaces text in pages
@@ -106,8 +104,8 @@ class ReplaceAll extends Maintenance {
 			User::newFromName( $userReplacing );
 
 		if ( get_class( $user ) !== 'User' ) {
-			$this->error(
-				"Couldn't translate '$userReplacing' to a user.", true
+			$this->fatalError(
+				"Couldn't translate '$userReplacing' to a user."
 			);
 		}
 
@@ -117,7 +115,7 @@ class ReplaceAll extends Maintenance {
 	private function getTarget() {
 		$ret = $this->getArg( 0 );
 		if ( !$ret ) {
-			$this->error( "You have to specify a target.", true );
+			$this->fatalError( "You have to specify a target." );
 		}
 		return [ $ret ];
 	}
@@ -125,7 +123,7 @@ class ReplaceAll extends Maintenance {
 	private function getReplacement() {
 		$ret = $this->getArg( 1 );
 		if ( !$ret ) {
-			$this->error( "You have to specify replacement text.", true );
+			$this->fatalError( "You have to specify replacement text." );
 		}
 		return [ $ret ];
 	}
@@ -144,13 +142,11 @@ class ReplaceAll extends Maintenance {
 		$handle = fopen( $file, "r" );
 		if ( $handle === false ) {
 			throw new MWException( "Trouble opening file: $file\n" );
-			return false;
 		}
 
 		$this->defaultContinue = true;
-		// @codingStandardsIgnoreStart
+		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
 		while ( ( $line = fgets( $handle ) ) !== false ) {
-		// @codingStandardsIgnoreEnd
 			$field = explode( "\t", substr( $line, 0, -1 ) );
 			if ( !isset( $field[1] ) ) {
 				continue;
@@ -185,19 +181,19 @@ class ReplaceAll extends Maintenance {
 	}
 
 	private function listNamespaces() {
-		echo "Index\tNamespace\n";
+		$this->output( "Index\tNamespace\n" );
 		$nsList = MWNamespace::getCanonicalNamespaces();
 		ksort( $nsList );
 		foreach ( $nsList as $int => $val ) {
 			if ( $val == "" ) {
 				$val = "(main)";
 			}
-			echo " $int\t$val\n";
+			$this->output( " $int\t$val\n" );
 		}
 	}
 
 	private function showFileFormat() {
-echo <<<EOF
+		$text = <<<EOF
 
 The format of the replacements file is tab separated with three fields.
 Any line that does not have a tab is ignored and can be considered a comment.
@@ -217,6 +213,7 @@ regex(p*)	Count the Ps; \\1	true
 
 
 EOF;
+		$this->output( $text );
 	}
 
 	private function getNamespaces() {
@@ -275,7 +272,7 @@ EOF;
 				// Implicit conversion of objects to strings
 				$this->output( "$title	->	$newTitle\n" );
 			} else {
-				echo "$title\n";
+				$this->output( "$title\n" );
 			}
 		}
 	}
@@ -297,12 +294,12 @@ EOF;
 				$params[ 'watch_page' ] = false;
 			}
 
-			echo "Replacing on $title... ";
+			$this->output( "Replacing on $title... " );
 			$job = new ReplaceTextJob( $title, $params );
 			if ( $job->run() !== true ) {
 				$this->error( "Trouble on the page '$title'." );
 			}
-			echo "done.\n";
+			$this->output( "done.\n" );
 		}
 	}
 
@@ -354,7 +351,7 @@ EOF;
 		}
 
 		if ( $this->namespaces === [] ) {
-			$this->error( "No matching namespaces.", true );
+			$this->fatalError( "No matching namespaces." );
 		}
 
 		foreach ( array_keys( $this->target ) as $index ) {
@@ -363,11 +360,11 @@ EOF;
 			$useRegex = $this->useRegex[$index];
 
 			if ( $this->getOption( "debug" ) ) {
-				echo "Replacing '$target' with '$replacement'";
+				$this->output( "Replacing '$target' with '$replacement'" );
 				if ( $useRegex ) {
-					echo " as regular expression.";
+					$this->output( " as regular expression." );
 				}
-				echo "\n";
+				$this->output( "\n" );
 			}
 
 			if ( $this->rename ) {
@@ -391,7 +388,7 @@ EOF;
 			$titles = new TitleArrayFromResult( $res );
 
 			if ( count( $titles ) === 0 ) {
-				$this->error( 'No targets found to replace.', true );
+				$this->fatalError( 'No targets found to replace.' );
 			}
 
 			if ( $this->getOption( "dry-run" ) ) {
@@ -399,10 +396,8 @@ EOF;
 				continue;
 			}
 
-			if (
-				!$this->shouldContinueByDefault() &&
-					$this->listTitles( $titles, $target, $replacement, $useRegex, $this->rename )
-			) {
+			if ( !$this->shouldContinueByDefault() ) {
+				$this->listTitles( $titles, $target, $replacement, $useRegex, $this->rename );
 				if ( !$this->getReply( 'Replace instances on these pages?' ) ) {
 					return;
 				}

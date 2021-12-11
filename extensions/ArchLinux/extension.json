@@ -11,11 +11,11 @@
     "MediaWiki\\Extensions\\ArchLinux\\Hooks": "ArchLinux.hooks.php"
   },
   "Hooks": {
-    "SkinTemplateOutputPageBeforeExec": [
-      "MediaWiki\\Extensions\\ArchLinux\\Hooks::onSkinTemplateOutputPageBeforeExec"
-    ],
     "BeforePageDisplay": [
       "MediaWiki\\Extensions\\ArchLinux\\Hooks::onBeforePageDisplay"
+    ],
+    "AfterFinalPageOutput": [
+      "MediaWiki\\Extensions\\ArchLinux\\Hooks::onAfterFinalPageOutput"
     ]
   },
   "ResourceModules": {

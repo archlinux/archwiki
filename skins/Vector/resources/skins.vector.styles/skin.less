@@ -1,0 +1,35 @@
+// Modern Vector stylesheets
+
+@import '../../variables.less';
+@import 'mediawiki.mixins.less';
+
+@media screen {
+	@import 'common/normalize.less';
+	@import 'layout.less';
+	@import 'common/typography.less';
+
+	// Components
+	@import 'Indicators.less';
+	@import 'SiteNotice.less';
+	@import 'Menu.less';
+	@import 'VueEnhancedSearchBox.less';
+	@import 'SearchBoxLoader.less';
+	@import 'MenuTabs.less';
+	@import 'TabWatchstarLink.less';
+	@import 'MenuDropdown.less';
+	@import 'MenuPortal.less';
+	@import 'LanguageButton.less';
+	@import 'Sidebar.less';
+	@import 'SidebarLogo.less';
+	@import 'Footer.less';
+}
+
+@media all {
+	// Component styles that should apply in all modes.
+	@import 'Logo.less';
+}
+
+@media print {
+	@import 'common/print.less';
+	@import 'layout-print.less';
+}

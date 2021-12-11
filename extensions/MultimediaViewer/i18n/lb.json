@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Soued031"
 		]
 	},
 	"multimediaviewer-optin-pref": "De <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span> aktivéieren",
@@ -26,7 +27,7 @@
 	"multimediaviewer-restriction-currency": "Dës Bild ass eng Duerstellung vun enger Währungseenheet an ënnerläit méiglecherweis legale Limitatiounen.",
 	"multimediaviewer-restriction-ihl": "Op dësem Bild si Symboler déi duerch dat internationaalt humanitärt Recht geschützt sinn.",
 	"multimediaviewer-restriction-insignia": "Op dësem Bild sinn offiziell Logoen déi eventuell den Objet vu rechtleche Limitatiounen si kéinten.",
-	"multimediaviewer-restriction-nazi": "Op dësem Bild si Nazi- oder aner faschistesch Symboler déi an eenzelne Länner kéinte verbuede sinn.",
+	"multimediaviewer-restriction-nazi": "Op dësem Bild si Nazi- oder aner faschistesch Symboler déi an eenzele Länner kéinte verbuede sinn.",
 	"multimediaviewer-about-mmv": "Iwwer dësen Interface",
 	"multimediaviewer-discuss-mmv": "Diskussioun",
 	"multimediaviewer-help-mmv": "Hëllef",

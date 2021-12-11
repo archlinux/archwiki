@@ -20,9 +20,10 @@
  * @file
  */
 
-use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\AuthenticationResponse;
+use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\CreateFromLoginAuthenticationRequest;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Log in to the wiki with AuthManager
@@ -43,7 +44,7 @@ class ApiClientLogin extends ApiBase {
 			$this->getModuleName(),
 			$this->getModulePath(),
 			AuthManager::ACTION_LOGIN,
-			self::needsToken(),
+			$this->needsToken(),
 		] );
 		return $msgs;
 	}
@@ -64,8 +65,8 @@ class ApiClientLogin extends ApiBase {
 			}
 		}
 
-		$helper = new ApiAuthManagerHelper( $this );
-		$manager = AuthManager::singleton();
+		$manager = MediaWikiServices::getInstance()->getAuthManager();
+		$helper = new ApiAuthManagerHelper( $this, $manager );
 
 		// Make sure it's possible to log in
 		if ( !$manager->canAuthenticateNow() ) {
@@ -105,6 +106,11 @@ class ApiClientLogin extends ApiBase {
 
 	public function isReadMode() {
 		return false;
+	}
+
+	public function isWriteMode() {
+		// (T283394) Logging in triggers some database writes, so should be marked appropriately.
+		return true;
 	}
 
 	public function needsToken() {

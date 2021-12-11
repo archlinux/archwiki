@@ -3,14 +3,17 @@
 use MediaWiki\MediaWikiServices;
 
 class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
+	/** @var Language[] */
 	public $langCache = [];
+	/** @var array */
 	public $timeCache = [];
+	/** @var int */
 	public $maxLangCacheSize;
 
 	public function register() {
 		// Pre-populate the language cache
-		global $wgContLang;
-		$this->langCache[$wgContLang->getCode()] = $wgContLang;
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$this->langCache[$contLang->getCode()] = $contLang;
 		$this->maxLangCacheSize = $this->getEngine()->getOption( 'maxLangCacheSize' );
 
 		$statics = [
@@ -59,8 +62,7 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 	 * @return string[]
 	 */
 	public function getContLangCode() {
-		global $wgContLang;
-		return [ $wgContLang->getCode() ];
+		return [ MediaWikiServices::getInstance()->getContentLanguage()->getCode() ];
 	}
 
 	/**
@@ -262,12 +264,13 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 		if ( $username === 'male' || $username === 'female' ) {
 			$gender = $username;
 		} else {
+			$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
 			// default
-			$gender = User::getDefaultOption( 'gender' );
+			$gender = $userOptionsLookup->getDefaultOption( 'gender' );
 
 			// Check for "User:" prefix
 			$title = Title::newFromText( $username );
-			if ( $title && $title->getNamespace() == NS_USER ) {
+			if ( $title && $title->getNamespace() === NS_USER ) {
 				$username = $title->getText();
 			}
 
@@ -297,6 +300,12 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 	public function formatNum( $lang, $args ) {
 		$num = $args[0];
 		$this->checkType( 'formatNum', 1, $num, 'number' );
+		if ( is_infinite( $num ) ) {
+			throw new Scribunto_LuaError( "bad argument #1 to 'formatNum' (infinite)" );
+		}
+		if ( is_nan( $num ) ) {
+			throw new Scribunto_LuaError( "bad argument #1 to 'formatNum' (NaN)" );
+		}
 
 		$noCommafy = false;
 		if ( isset( $args[1] ) ) {
@@ -304,7 +313,11 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 			$options = $args[1];
 			$noCommafy = !empty( $options['noCommafy'] );
 		}
-		return [ $lang->formatNum( $num, $noCommafy ) ];
+		if ( $noCommafy ) {
+			return [ $lang->formatNumNoSeparators( $num ) ];
+		} else {
+			return [ $lang->formatNum( $num ) ];
+		}
 	}
 
 	/**

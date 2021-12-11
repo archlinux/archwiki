@@ -1,0 +1,18 @@
+{{!
+	See @typedef MenuDefinition
+}}
+{{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
+<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="{{id}}" {{#class}}class="{{.}}"{{/class}} aria-labelledby="{{id}}-label" role="navigation" {{{html-tooltip}}}
+	 {{{html-user-language-attributes}}}>
+	{{#is-dropdown}}
+	<input type="checkbox" class="vector-menu-checkbox" aria-labelledby="{{id}}-label" />
+	{{/is-dropdown}}
+	<h3 id="{{id}}-label" {{#heading-class}}class="{{.}}"{{/heading-class}}>
+		<span>{{label}}</span>
+	</h3>
+	<div class="vector-menu-content">
+		<ul class="vector-menu-content-list">{{{html-items}}}</ul>
+		{{{html-after-portal}}}
+	</div>
+</nav>

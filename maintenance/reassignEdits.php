@@ -23,6 +23,8 @@
  * @license GPL-2.0-or-later
  */
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/Maintenance.php';
 
 /**
@@ -67,8 +69,8 @@ class ReassignEdits extends Maintenance {
 	/**
 	 * Reassign edits from one user to another
 	 *
-	 * @param User $from User to take edits from
-	 * @param User $to User to assign edits to
+	 * @param User &$from User to take edits from
+	 * @param User &$to User to assign edits to
 	 * @param bool $rc Update the recent changes table
 	 * @param bool $report Don't change things; just echo numbers
 	 * @return int Number of entries changed, or that would be changed
@@ -128,26 +130,29 @@ class ReassignEdits extends Maintenance {
 		$total = $cur + $del + $rec;
 		$this->output( "\nTotal entries to change: {$total}\n" );
 
+		$toActorId =
+			MediaWikiServices::getInstance()->getActorNormalization()->acquireActorId( $to, $dbw );
 		if ( !$report ) {
 			if ( $total ) {
 				# Reassign edits
 				$this->output( "\nReassigning current edits..." );
 				$dbw->update(
 					'revision_actor_temp',
-					[ 'revactor_actor' => $to->getActorId( $dbw ) ],
+					[ 'revactor_actor' => $toActorId ],
 					[ 'revactor_actor' => $from->getActorId() ],
 					__METHOD__
 				);
 				$this->output( "done.\nReassigning deleted edits..." );
 				$dbw->update( 'archive',
-					[ 'ar_actor' => $to->getActorId( $dbw ) ],
+					[ 'ar_actor' => $toActorId ],
 					[ $arQueryInfo['conds'] ], __METHOD__ );
 				$this->output( "done.\n" );
 				# Update recent changes if required
 				if ( $rc ) {
 					$this->output( "Updating recent changes..." );
 					$dbw->update( 'recentchanges',
-						[ 'rc_actor' => $to->getActorId( $dbw ) ],
+						[ 'rc_actor' => $toActorId ],
+						// @phan-suppress-next-line PhanTypeArraySuspiciousNullable False positive
 						[ $rcQueryInfo['conds'] ], __METHOD__ );
 					$this->output( "done.\n" );
 				}
@@ -167,9 +172,8 @@ class ReassignEdits extends Maintenance {
 	 */
 	private function initialiseUser( $username ) {
 		if ( User::isIP( $username ) ) {
-			$user = new User();
-			$user->setId( 0 );
-			$user->setName( $username );
+			$user = User::newFromName( $username, false );
+			$user->getActorId();
 		} else {
 			$user = User::newFromName( $username );
 			if ( !$user ) {

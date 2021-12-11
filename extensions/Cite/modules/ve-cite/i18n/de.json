@@ -8,12 +8,12 @@
 			"Jcornelius",
 			"Jdforrester",
 			"Kghbln",
+			"Kurt Jansson",
 			"Metalhead64",
 			"Murma174",
 			"Se4598",
 			"Tomabrafix",
-			"Umherirrender",
-			"Kurt Jansson"
+			"Umherirrender"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buch",
@@ -28,7 +28,10 @@
 	"cite-ve-changedesc-reflist-group-to": "Einzelnachweislistengruppe geändert von der allgemeinen Gruppe in „$1“",
 	"cite-ve-changedesc-reflist-responsive-set": "Die Einzelnachweisliste wird jetzt in reagierenden Spalten angezeigt",
 	"cite-ve-changedesc-reflist-responsive-unset": "Die Einzelnachweisliste wird jetzt in nur einer Spalte angezeigt",
-	"cite-ve-changedesc-reflist-item-id": "Einzelnachweisindex geändert",
+	"cite-ve-citationneeded-button": "Einen Beleg hinzufügen",
+	"cite-ve-citationneeded-description": "Ein Autor hat darauf hingewiesen, dass für diese Behauptung ein Beleg auf eine zuverlässige Quelle erforderlich ist.",
+	"cite-ve-citationneeded-reason": "Begründung:",
+	"cite-ve-citationneeded-title": "Beleg wird benötigt",
 	"cite-ve-dialog-reference-editing-reused": "Dieser Einzelnachweis wird auf dieser Seite {{PLURAL:$1|einmal|2=zwei Mal|$1 Mal}} verwendet.",
 	"cite-ve-dialog-reference-editing-reused-long": "Dieser Einzelnachweis wird {{PLURAL:$1|ein|2=zwei|$1}} Mal auf dieser Seite verwendet. Hier durchgeführte Änderungen werden auf alle Orte angewandt, an denen dieser Einzelnachweis erneut verwendet wird.",
 	"cite-ve-dialog-reference-options-group-label": "Diese Gruppe verwenden",

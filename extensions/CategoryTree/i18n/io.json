@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Malafaya",
-			"Joao Xavier"
+			"Joao Xavier",
+			"Malafaya"
 		]
 	},
 	"categorytree": "Kategorio-arboro",
@@ -10,6 +10,7 @@
 	"categorytree-legend": "Montrar kategorio-arboro",
 	"categorytree-category": "Kategorio:",
 	"categorytree-go": "Montrar Arboro",
+	"categorytree-mode-label": "Modo:",
 	"categorytree-mode-categories": "nur kategorii",
 	"categorytree-mode-pages": "pagini ecepte arkivi",
 	"categorytree-mode-all": "omna pagini",

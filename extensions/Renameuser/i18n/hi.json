@@ -3,8 +3,8 @@
 		"authors": [
 			"Ansumang",
 			"Kaustubh",
-			"Siddhartha Ghai",
-			"Sfic"
+			"Sfic",
+			"Siddhartha Ghai"
 		]
 	},
 	"renameuser": "सदस्यनाम बदलें",
@@ -20,7 +20,6 @@
 	"renameuserwarnings": "चेतावनी:",
 	"renameuserconfirm": "हाँ, सदस्य का नाम बदलें",
 	"renameusersubmit": "जमा करें",
-	"renameuser-submit-blocklog": "सदस्य का ब्लॉक लॉग दिखाएँ",
 	"renameusererrordoesnotexist": "सदस्य \"<nowiki>$1</nowiki>\" मौजूद नहीं है।",
 	"renameusererrorexists": "सदस्य \"<nowiki>$1</nowiki>\" पहले से मौजूद है।",
 	"renameusererrorinvalid": "सदस्यनाम \"<nowiki>$1</nowiki>\" अमान्य है।",

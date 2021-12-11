@@ -6,8 +6,8 @@ use MediaWiki\Logger\LegacyLogger;
  * @group Database
  * @group GlobalFunctions
  */
-class GlobalTest extends MediaWikiTestCase {
-	protected function setUp() {
+class GlobalTest extends MediaWikiIntegrationTestCase {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$readOnlyFile = $this->getNewTempFile();
@@ -263,6 +263,8 @@ class GlobalTest extends MediaWikiTestCase {
 	 * @covers ::wfNegotiateType
 	 */
 	public function testNegotiateType() {
+		$this->hideDeprecated( 'wfNegotiateType' );
+
 		$this->assertEquals(
 			'text/html',
 			wfNegotiateType(
@@ -308,12 +310,12 @@ class GlobalTest extends MediaWikiTestCase {
 	 * @covers ::wfDebugMem
 	 */
 	public function testDebugFunctionTest() {
+		$this->hideDeprecated( 'wfDebugMem' );
+
 		$debugLogFile = $this->getNewTempFile();
 
 		$this->setMwGlobals( [
 			'wgDebugLogFile' => $debugLogFile,
-			#  @todo FIXME: $wgDebugTimestamps should be tested
-			'wgDebugTimestamps' => false,
 		] );
 		$this->setLogger( 'wfDebug', new LegacyLogger( 'wfDebug' ) );
 
@@ -384,29 +386,28 @@ class GlobalTest extends MediaWikiTestCase {
 
 	/**
 	 * @covers ::wfPercent
+	 * @dataProvider provideWfPercentTest
 	 */
-	public function testWfPercentTest() {
-		$pcts = [
+	public function testWfPercentTest( float $input,
+		string $expected,
+		int $accuracy = 2,
+		bool $round = true
+	) {
+		$this->assertSame( $expected, wfPercent( $input, $accuracy, $round ) );
+	}
+
+	public function provideWfPercentTest() {
+		return [
 			[ 6 / 7, '0.86%', 2, false ],
 			[ 3 / 3, '1%' ],
 			[ 22 / 7, '3.14286%', 5 ],
 			[ 3 / 6, '0.5%' ],
 			[ 1 / 3, '0%', 0 ],
 			[ 10 / 3, '0%', -1 ],
+			[ 123.456, '120%', -1 ],
 			[ 3 / 4 / 5, '0.1%', 1 ],
 			[ 6 / 7 * 8, '6.8571428571%', 10 ],
 		];
-
-		foreach ( $pcts as $pct ) {
-			if ( !isset( $pct[2] ) ) {
-				$pct[2] = 2;
-			}
-			if ( !isset( $pct[3] ) ) {
-				$pct[3] = true;
-			}
-
-			$this->assertEquals( wfPercent( $pct[0], $pct[2], $pct[3] ), $pct[1], $pct[1] );
-		}
 	}
 
 	/**
@@ -476,8 +477,8 @@ class GlobalTest extends MediaWikiTestCase {
 		$mergedText = null;
 		$conflictingMerge = wfMerge( 'old', 'old and mine', 'old and yours', $mergedText );
 
-		$this->assertEquals( true, $successfulMerge );
-		$this->assertEquals( false, $conflictingMerge );
+		$this->assertTrue( $successfulMerge );
+		$this->assertFalse( $conflictingMerge );
 	}
 
 	/**
@@ -686,41 +687,6 @@ class GlobalTest extends MediaWikiTestCase {
 		);
 	}
 
-	/**
-	 * @covers ::wfMemcKey
-	 */
-	public function testWfMemcKey() {
-		$cache = ObjectCache::getLocalClusterInstance();
-		$this->assertEquals(
-			$cache->makeKey( 'foo', 123, 'bar' ),
-			wfMemcKey( 'foo', 123, 'bar' )
-		);
-	}
-
-	/**
-	 * @covers ::wfForeignMemcKey
-	 */
-	public function testWfForeignMemcKey() {
-		$cache = ObjectCache::getLocalClusterInstance();
-		$keyspace = $this->readAttribute( $cache, 'keyspace' );
-		$this->assertEquals(
-			wfForeignMemcKey( $keyspace, '', 'foo', 'bar' ),
-			$cache->makeKey( 'foo', 'bar' )
-		);
-	}
-
-	/**
-	 * @covers ::wfGlobalCacheKey
-	 */
-	public function testWfGlobalCacheKey() {
-		$cache = ObjectCache::getLocalClusterInstance();
-		$this->hideDeprecated( 'wfGlobalCacheKey' );
-		$this->assertEquals(
-			$cache->makeGlobalKey( 'foo', 123, 'bar' ),
-			wfGlobalCacheKey( 'foo', 123, 'bar' )
-		);
-	}
-
 	public static function provideWfShellWikiCmdList() {
 		global $wgPhpCli;
 
@@ -743,5 +709,6 @@ class GlobalTest extends MediaWikiTestCase {
 			],
 		];
 	}
+
 	/* @todo many more! */
 }

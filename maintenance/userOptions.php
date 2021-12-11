@@ -24,6 +24,8 @@
  * @author Antoine Musso <hashar at free dot fr>
  */
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/Maintenance.php';
 
 /**
@@ -31,7 +33,7 @@ require_once __DIR__ . '/Maintenance.php';
  */
 class UserOptionsMaintenance extends Maintenance {
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 
 		$this->addDescription( 'Pass through all users and change one of their options.
@@ -40,7 +42,7 @@ The new option is NOT validated.' );
 		$this->addOption( 'list', 'List available user options and their default value' );
 		$this->addOption( 'usage', 'Report all options statistics or just one if you specify it' );
 		$this->addOption( 'old', 'The value to look for', false, true );
-		$this->addOption( 'new', 'Rew value to update users with', false, true );
+		$this->addOption( 'new', 'New value to update users with', false, true );
 		$this->addOption( 'nowarn', 'Hides the 5 seconds warning' );
 		$this->addOption( 'dry', 'Do not save user settings back to database' );
 		$this->addArg( 'option name', 'Name of the option to change or provide statistics about', false );
@@ -60,7 +62,7 @@ The new option is NOT validated.' );
 		) {
 			$this->updateOptions();
 		} else {
-			$this->maybeHelp( /* force = */ true );
+			$this->maybeHelp( true );
 		}
 	}
 
@@ -68,7 +70,8 @@ The new option is NOT validated.' );
 	 * List default options and their value
 	 */
 	private function listAvailableOptions() {
-		$def = User::getDefaultOptions();
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		$def = $userOptionsLookup->getDefaultOptions();
 		ksort( $def );
 		$maxOpt = 0;
 		foreach ( $def as $opt => $value ) {
@@ -86,7 +89,8 @@ The new option is NOT validated.' );
 		$option = $this->getArg( 0 );
 
 		$ret = [];
-		$defaultOptions = User::getDefaultOptions();
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		$defaultOptions = $userOptionsLookup->getDefaultOptions();
 
 		// We list user by user_id from one of the replica DBs
 		$dbr = wfGetDB( DB_REPLICA );
@@ -197,4 +201,4 @@ WARN
 }
 
 $maintClass = UserOptionsMaintenance::class;
-require RUN_MAINTENANCE_IF_MAIN;
+require_once RUN_MAINTENANCE_IF_MAIN;

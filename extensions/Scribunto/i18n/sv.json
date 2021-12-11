@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ainali",
 			"GameOn",
 			"Hangsna",
 			"Jopparn",
 			"Lokal Profil",
-			"Skalman",
-			"WikiPhoenix",
-			"Ainali",
+			"Magol",
 			"Rotsee",
-			"Magol"
+			"Skalman",
+			"WikiPhoenix"
 		]
 	},
 	"scribunto-desc": "Ramverk för att bädda in skriptspråk på MediaWiki-sidor",

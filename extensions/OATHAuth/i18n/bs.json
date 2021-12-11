@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Srdjan m"
+			"Semina x",
+			"Srdjan m",
+			"Srđan"
 		]
 	},
 	"specialpages-group-oath": "Potvrda u 2 koraka",
@@ -14,19 +16,27 @@
 	"oathauth-validatedoath": "Podaci potvrđeni. Odsad će se provoditi potvrda u 2 koraka.",
 	"oathauth-failedtovalidateoath": "Ne mogu potvrditi dvofaktorske podatke",
 	"oathauth-disabledoath": "Potvrda u 2 koraka isključena.",
-	"oathauth-prefs-label": "Potvrda u 2 koraka:",
+	"oathauth-prefs-label": "Potvrda u dva koraka:",
 	"oathauth-step1": "1. korak: Preuzmite program za potvrdu u 2 koraka",
 	"oathauth-step1-test": "Preuzmite program za potvrdu u 2 koraka. Može biti mobilna (naprimjer, Google Authenticator) ili računarska aplikacija",
 	"oathauth-step2": "2. korak: Skenirajte QR kôd",
 	"oathauth-step2alt": "Ili ručno upišite tajnu:",
 	"oathauth-step3": "3. korak: Zapišite kodove",
 	"oathauth-step4": "4. korak: Potvrda",
-	"oathauth-entertoken": "Upišite kôd za potvrdu s Vašeg uređaja:",
+	"oathauth-entertoken": "Upišite kôd za potvrdu sa svog uređaja:",
 	"right-oathauth-enable": "Uključivanje potvrde u 2 koraka",
 	"action-oathauth-enable": "uključite potvrdu u 2 koraka",
 	"oathauth-auth-token-label": "Žeton",
 	"oathauth-auth-ui": "Upišite kôd za potvrdu s Vašeg uređaja",
 	"oathauth-throttled": "Previše pokušaja potvrde! Sačekajte $1.",
 	"oathauth-login-failed": "Potvrda nije uspjela.",
-	"oathauth-describe-provider": "Potvrda u 2 koraka (OATH)."
+	"oathauth-describe-provider": "Potvrda u 2 koraka (OATH).",
+	"oathauth-module-totp-label": "TOTP (jednokratna šifra)",
+	"oathauth-ui-manage": "Upravljaj",
+	"oathmanage": "Upravljanje potvrdom u dva koraka",
+	"oathauth-ui-not-enabled-modules": "Prebacivanje na alternativnu metodu",
+	"oathauth-ui-enabled-module": "Uključena metoda potvrde",
+	"oathauth-disable-generic": "Isključi",
+	"oathauth-totp-description": "Jednokratni algoritam zasnovan na vremenu (TOTP) proširenje je algoritma zasnovanog na HMAC-u (HOTP) i stvara jednokratnu lozinku uzimajući jedinstvenost trenutnog vremena.",
+	"oathauth-invalidrequest": "Nevažeći zahtjev"
 }

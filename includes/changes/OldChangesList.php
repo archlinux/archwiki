@@ -32,6 +32,7 @@ class OldChangesList extends ChangesList {
 	 * @param int|null $linenumber (default null)
 	 *
 	 * @return string|bool
+	 * @return-taint none
 	 */
 	public function recentChangesLine( &$rc, $watched = false, $linenumber = null ) {
 		$classes = $this->getHTMLClasses( $rc, $watched );
@@ -53,10 +54,8 @@ class OldChangesList extends ChangesList {
 
 		$attribs = $this->getDataAttributes( $rc );
 
-		// Avoid PHP 7.1 warning from passing $this by reference
-		$list = $this;
-		if ( !Hooks::run( 'OldChangesListRecentChangesLine',
-			[ &$list, &$html, $rc, &$classes, &$attribs ] )
+		if ( !$this->getHookRunner()->onOldChangesListRecentChangesLine(
+			$this, $html, $rc, $classes, $attribs )
 		) {
 			return false;
 		}
@@ -69,9 +68,9 @@ class OldChangesList extends ChangesList {
 		$this->insertDateHeader( $dateheader, $rc->mAttribs['rc_timestamp'] );
 
 		$html = $this->getHighlightsContainerDiv() . $html;
-		$attribs['class'] = implode( ' ', $classes );
+		$attribs['class'] = $classes;
 
-		return $dateheader . Html::rawElement( 'li', $attribs,  $html ) . "\n";
+		return $dateheader . Html::rawElement( 'li', $attribs, $html ) . "\n";
 	}
 
 	/**

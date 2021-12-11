@@ -5,17 +5,16 @@
 
 	colors="true"
 	backupGlobals="false"
+	convertDeprecationsToExceptions="true"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	forceCoversAnnotation="true"
+	failOnWarning="true"
 	stopOnFailure="false"
-	timeoutForSmallTests="10"
-	timeoutForMediumTests="30"
-	timeoutForLargeTests="60"
+	failOnRisky="true"
 	beStrictAboutTestsThatDoNotTestAnything="true"
 	beStrictAboutOutputDuringTests="true"
-	beStrictAboutTestSize="true"
 	verbose="false">
 	<testsuites>
 		<testsuite name="includes">
@@ -44,9 +43,6 @@
 		<testsuite name="tests">
 			<directory>tests</directory>
 		</testsuite>
-		<testsuite name="uploadfromurl">
-			<file>suites/UploadFromUrlTestSuite.php</file>
-		</testsuite>
 		<testsuite name="extensions">
 			<directory>structure</directory>
 			<file>suites/ExtensionsTestSuite.php</file>
@@ -58,6 +54,9 @@
 		</testsuite>
 		<testsuite name="unit">
 			<directory>unit</directory>
+		</testsuite>
+		<testsuite name="integration">
+			<directory>integration</directory>
 		</testsuite>
 	</testsuites>
 	<groups>
@@ -72,6 +71,7 @@
 			<directory suffix=".php">../../maintenance</directory>
 			<exclude>
 				<directory suffix=".php">../../languages/messages</directory>
+				<directory suffix=".php">../../maintenance/benchmarks</directory>
 				<file>../../languages/data/normalize-ar.php</file>
 				<file>../../languages/data/normalize-ml.php</file>
 			</exclude>
@@ -91,4 +91,8 @@
 			</arguments>
 		</listener>
 	</listeners>
+	<extensions>
+		<extension class="MediaWikiLoggerPHPUnitExtension" />
+		<extension class="MediaWikiHooksPHPUnitExtension" />
+	</extensions>
 </phpunit>

@@ -1,4 +1,8 @@
 <?php
+
+// phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintReturn
+// phpcs:disable MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
+
 /**
  * Delayed loading of global objects.
  *
@@ -41,6 +45,8 @@ use Wikimedia\ObjectFactory;
  * resort, you can use StubObject::isRealObject() to break the loop, but as a
  * general rule, the stub object mechanism should be transparent, and code
  * which refers to it should be kept to a minimum.
+ *
+ * @newable
  */
 class StubObject {
 	/** @var null|string */
@@ -56,6 +62,8 @@ class StubObject {
 	protected $params;
 
 	/**
+	 * @stable to call
+	 *
 	 * @param string|null $global Name of the global variable.
 	 * @param string|callable|null $class Name of the class of the real object
 	 *                               or a factory function to call
@@ -120,6 +128,9 @@ class StubObject {
 		$params = $this->factory
 			? [ 'factory' => $this->factory ]
 			: [ 'class' => $this->class ];
+
+		// ObjectFactory::getObjectFromSpec accepts an array, not just a callable (phan bug)
+		// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
 		return ObjectFactory::getObjectFromSpec( $params + [
 			'args' => $this->params,
 			'closure_expansion' => false,
@@ -164,7 +175,7 @@ class StubObject {
 					. "\${$this->global}->$name from $caller\n" );
 			}
 			wfDebug( "Unstubbing \${$this->global} on call of "
-				. "\${$this->global}::$name from $caller\n" );
+				. "\${$this->global}::$name from $caller" );
 			$GLOBALS[$this->global] = $this->_newObject();
 			--$recursionLevel;
 			return $GLOBALS[$this->global];

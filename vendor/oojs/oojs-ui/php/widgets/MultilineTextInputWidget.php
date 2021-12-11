@@ -10,14 +10,13 @@ class MultilineTextInputWidget extends TextInputWidget {
 	/**
 	 * Allow multiple lines of text.
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $multiline = true;
 
 	/**
 	 * @param array $config Configuration options
 	 *      - int $config['rows'] If multiline, number of visible lines in textarea
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Config initialization

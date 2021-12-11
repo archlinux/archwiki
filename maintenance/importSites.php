@@ -1,8 +1,6 @@
 <?php
 
-$basePath = getenv( 'MW_INSTALL_PATH' ) !== false ? getenv( 'MW_INSTALL_PATH' ) : __DIR__ . '/..';
-
-require_once $basePath . '/maintenance/Maintenance.php';
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script for importing site definitions from XML into the sites table.
@@ -17,7 +15,7 @@ class ImportSites extends Maintenance {
 	public function __construct() {
 		$this->addDescription( 'Imports site definitions from XML into the sites table.' );
 
-		$this->addArg( 'file', 'An XML file containing site definitions (see docs/sitelist.txt). ' .
+		$this->addArg( 'file', 'An XML file containing site definitions (see docs/sitelist.md). ' .
 			'Use "php://stdin" to read from stdin.', true
 		);
 

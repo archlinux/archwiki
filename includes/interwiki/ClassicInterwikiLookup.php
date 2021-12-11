@@ -24,19 +24,20 @@ namespace MediaWiki\Interwiki;
 
 use Cdb\Exception as CdbException;
 use Cdb\Reader as CdbReader;
-use Hooks;
 use Interwiki;
 use Language;
-use WikiMap;
 use MapCacheLRU;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
 use WANObjectCache;
+use WikiMap;
 use Wikimedia\Rdbms\Database;
 
 /**
  * InterwikiLookup implementing the "classic" interwiki storage (hardcoded up to MW 1.26).
  *
  * This implements two levels of caching (in-process array and a WANObjectCache)
- * and tree storage backends (SQL, CDB, and plain PHP arrays).
+ * and three storage backends (SQL, CDB, and plain PHP arrays).
  *
  * All information is loaded on creation when called by $this->fetch( $prefix ).
  * All work is done on replica DB, because this should *never* change (except during
@@ -91,9 +92,13 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	 */
 	private $thisSite = null;
 
+	/** @var HookRunner */
+	private $hookRunner;
+
 	/**
 	 * @param Language $contLang Language object used to convert prefixes to lower case
 	 * @param WANObjectCache $objectCache Cache for interwiki info retrieved from the database
+	 * @param HookContainer $hookContainer
 	 * @param int $objectCacheExpiry Expiry time for $objectCache, in seconds
 	 * @param bool|array|string $cdbData The path of a CDB file, or
 	 *        an array resembling the contents of a CDB file,
@@ -104,9 +109,10 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	 *    - 3: site level as well as wiki and global levels
 	 * @param string $fallbackSite The code to assume for the local site,
 	 */
-	function __construct(
+	public function __construct(
 		Language $contLang,
 		WANObjectCache $objectCache,
+		HookContainer $hookContainer,
 		$objectCacheExpiry,
 		$cdbData,
 		$interwikiScopes,
@@ -116,6 +122,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 
 		$this->contLang = $contLang;
 		$this->objectCache = $objectCache;
+		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->objectCacheExpiry = $objectCacheExpiry;
 		$this->cdbData = $cdbData;
 		$this->interwikiScopes = $interwikiScopes;
@@ -212,9 +219,9 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	 * @return bool|string The interwiki entry or false if not found
 	 */
 	private function getInterwikiCacheEntry( $prefix ) {
-		wfDebug( __METHOD__ . "( $prefix )\n" );
+		wfDebug( __METHOD__ . "( $prefix )" );
 
-		$wikiId = WikiMap::getWikiIdFromDbDomain( WikiMap::getCurrentWikiDbDomain() );
+		$wikiId = WikiMap::getCurrentWikiId();
 
 		$value = false;
 		try {
@@ -272,7 +279,7 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	 */
 	private function load( $prefix ) {
 		$iwData = [];
-		if ( !Hooks::run( 'InterwikiLoadPrefix', [ $prefix, &$iwData ] ) ) {
+		if ( !$this->hookRunner->onInterwikiLoadPrefix( $prefix, $iwData ) ) {
 			return $this->loadFromArray( $iwData );
 		}
 
@@ -337,9 +344,9 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 	 * @return array List of prefixes, where each row is an associative array
 	 */
 	private function getAllPrefixesCached( $local ) {
-		wfDebug( __METHOD__ . "()\n" );
+		wfDebug( __METHOD__ . "()" );
 
-		$wikiId = WikiMap::getWikiIdFromDbDomain( WikiMap::getCurrentWikiDbDomain() );
+		$wikiId = WikiMap::getCurrentWikiId();
 
 		$data = [];
 		try {
@@ -393,6 +400,42 @@ class ClassicInterwikiLookup implements InterwikiLookup {
 		}
 
 		return array_values( $data );
+	}
+
+	/**
+	 * Given the array returned by getAllPrefixes(), build a PHP hash which
+	 * can be given to \Cdb\Reader\Hash() as $this->cdbData, ie as the
+	 * value of $wgInterwikiCache.  This is used to construct mock
+	 * interwiki lookup services for testing (in particular, parsertests).
+	 * @param array $allPrefixes An array of interwiki information such as
+	 *   would be returned by ::getAllPrefixes()
+	 * @param int $scope The scope at which to insert interwiki prefixes.
+	 *   See the $interwikiScopes parameter to ::__construct().
+	 * @param ?string $thisSite The value of $thisSite, if $scope is 3.
+	 * @return array A PHP associative array suitable to use as
+	 *   $wgInterwikiCache
+	 */
+	public static function buildCdbHash(
+		array $allPrefixes, int $scope = 1, ?string $thisSite = null
+	): array {
+		$result = [];
+		$wikiId = WikiMap::getCurrentWikiId();
+		$keyPrefix = ( $scope >= 2 ) ? '__global' : $wikiId;
+		if ( $scope >= 3 && $thisSite ) {
+			$result[ "__sites:$wikiId" ] = $thisSite;
+			$keyPrefix = "_$thisSite";
+		}
+		$list = [];
+		foreach ( $allPrefixes as $iwInfo ) {
+			$prefix = $iwInfo['iw_prefix'];
+			$result["$keyPrefix:$prefix"] = implode( ' ', [
+				$iwInfo['iw_local'] ?? 0, $iwInfo['iw_url']
+			] );
+			$list[] = $prefix;
+		}
+		$result["__list:$keyPrefix"]  = implode( ' ', $list );
+		$result["__list:__sites"] = $wikiId;
+		return $result;
 	}
 
 	/**

@@ -24,6 +24,7 @@ namespace MediaWiki\Shell;
 
 use Hooks;
 use MediaWiki\MediaWikiServices;
+use Shellbox\Shellbox;
 
 /**
  * Executes shell commands
@@ -49,7 +50,7 @@ class Shell {
 	 *
 	 * @since 1.31
 	 */
-	const NO_ROOT = 1;
+	public const NO_ROOT = 1;
 
 	/**
 	 * Use seccomp to block dangerous syscalls
@@ -57,14 +58,14 @@ class Shell {
 	 *
 	 * @since 1.31
 	 */
-	const SECCOMP = 2;
+	public const SECCOMP = 2;
 
 	/**
 	 * Create a private /dev
 	 *
 	 * @since 1.31
 	 */
-	const PRIVATE_DEV = 4;
+	public const PRIVATE_DEV = 4;
 
 	/**
 	 * Restrict the request to have no
@@ -72,7 +73,7 @@ class Shell {
 	 *
 	 * @since 1.31
 	 */
-	const NO_NETWORK = 8;
+	public const NO_NETWORK = 8;
 
 	/**
 	 * Deny execve syscall with seccomp
@@ -80,14 +81,14 @@ class Shell {
 	 *
 	 * @since 1.31
 	 */
-	const NO_EXECVE = 16;
+	public const NO_EXECVE = 16;
 
 	/**
 	 * Deny access to LocalSettings.php (MW_CONFIG_FILE)
 	 *
 	 * @since 1.31
 	 */
-	const NO_LOCALSETTINGS = 32;
+	public const NO_LOCALSETTINGS = 32;
 
 	/**
 	 * Apply a default set of restrictions for improved
@@ -97,15 +98,15 @@ class Shell {
 	 *       by default, and is not guaranteed to be backwards-compatible.
 	 * @since 1.31
 	 */
-	const RESTRICT_DEFAULT = self::NO_ROOT | self::SECCOMP | self::PRIVATE_DEV |
-							 self::NO_LOCALSETTINGS;
+	public const RESTRICT_DEFAULT = self::NO_ROOT | self::SECCOMP | self::PRIVATE_DEV |
+									self::NO_LOCALSETTINGS;
 
 	/**
 	 * Don't apply any restrictions
 	 *
 	 * @since 1.31
 	 */
-	const RESTRICT_NONE = 0;
+	public const RESTRICT_NONE = 0;
 
 	/**
 	 * Returns a new instance of Command class
@@ -134,12 +135,12 @@ class Shell {
 	 *
 	 * @return bool
 	 */
-	public static function isDisabled() {
+	public static function isDisabled(): bool {
 		static $disabled = null;
 
-		if ( is_null( $disabled ) ) {
+		if ( $disabled === null ) {
 			if ( !function_exists( 'proc_open' ) ) {
-				wfDebug( "proc_open() is disabled\n" );
+				wfDebug( "proc_open() is disabled" );
 				$disabled = true;
 			} else {
 				$disabled = false;
@@ -160,63 +161,8 @@ class Shell {
 	 *     array of strings parameter. Null values are ignored.
 	 * @return string
 	 */
-	public static function escape( ...$args ) {
-		if ( count( $args ) === 1 && is_array( reset( $args ) ) ) {
-			// If only one argument has been passed, and that argument is an array,
-			// treat it as a list of arguments
-			$args = reset( $args );
-		}
-
-		$first = true;
-		$retVal = '';
-		foreach ( $args as $arg ) {
-			if ( $arg === null ) {
-				continue;
-			}
-			if ( !$first ) {
-				$retVal .= ' ';
-			} else {
-				$first = false;
-			}
-
-			if ( wfIsWindows() ) {
-				// Escaping for an MSVC-style command line parser and CMD.EXE
-				// Refs:
-				//  * https://web.archive.org/web/20020708081031/http://mailman.lyra.org/pipermail/scite-interest/2002-March/000436.html
-				//  * https://technet.microsoft.com/en-us/library/cc723564.aspx
-				//  * T15518
-				//  * CR r63214
-				// Double the backslashes before any double quotes. Escape the double quotes.
-				$tokens = preg_split( '/(\\\\*")/', $arg, -1, PREG_SPLIT_DELIM_CAPTURE );
-				$arg = '';
-				$iteration = 0;
-				foreach ( $tokens as $token ) {
-					if ( $iteration % 2 == 1 ) {
-						// Delimiter, a double quote preceded by zero or more slashes
-						$arg .= str_replace( '\\', '\\\\', substr( $token, 0, -1 ) ) . '\\"';
-					} elseif ( $iteration % 4 == 2 ) {
-						// ^ in $token will be outside quotes, need to be escaped
-						$arg .= str_replace( '^', '^^', $token );
-					} else { // $iteration % 4 == 0
-						// ^ in $token will appear inside double quotes, so leave as is
-						$arg .= $token;
-					}
-					$iteration++;
-				}
-				// Double the backslashes before the end of the string, because
-				// we will soon add a quote
-				$m = [];
-				if ( preg_match( '/^(.*?)(\\\\+)$/', $arg, $m ) ) {
-					$arg = $m[1] . str_replace( '\\', '\\\\', $m[2] );
-				}
-
-				// Add surrounding quotes
-				$retVal .= '"' . $arg . '"';
-			} else {
-				$retVal .= escapeshellarg( $arg );
-			}
-		}
-		return $retVal;
+	public static function escape( ...$args ): string {
+		return Shellbox::escape( ...$args );
 	}
 
 	/**
@@ -233,11 +179,13 @@ class Shell {
 	 * @phan-param array{php?:string,wrapper?:string} $options
 	 * @return Command
 	 */
-	public static function makeScriptCommand( $script, $parameters, $options = [] ): Command {
+	public static function makeScriptCommand(
+		string $script, array $parameters, $options = []
+	): Command {
 		global $wgPhpCli;
 		// Give site config file a chance to run the script in a wrapper.
 		// The caller may likely want to call wfBasename() on $script.
-		Hooks::run( 'wfShellWikiCmd', [ &$script, &$parameters, &$options ] );
+		Hooks::runner()->onWfShellWikiCmd( $script, $parameters, $options );
 		$cmd = [ $options['php'] ?? $wgPhpCli ];
 		if ( isset( $options['wrapper'] ) ) {
 			$cmd[] = $options['wrapper'];

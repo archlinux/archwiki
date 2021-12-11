@@ -21,7 +21,9 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Languages\LanguageConverterFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Implements Special:Ancientpages
@@ -30,23 +32,43 @@ use MediaWiki\MediaWikiServices;
  */
 class SpecialAncientPages extends QueryPage {
 
-	function __construct( $name = 'Ancientpages' ) {
-		parent::__construct( $name );
+	/** @var NamespaceInfo */
+	private $namespaceInfo;
+
+	/** @var ILanguageConverter */
+	private $languageConverter;
+
+	/**
+	 * @param NamespaceInfo $namespaceInfo
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param LanguageConverterFactory $languageConverterFactory
+	 */
+	public function __construct(
+		NamespaceInfo $namespaceInfo,
+		ILoadBalancer $loadBalancer,
+		LinkBatchFactory $linkBatchFactory,
+		LanguageConverterFactory $languageConverterFactory
+	) {
+		parent::__construct( 'Ancientpages' );
+		$this->namespaceInfo = $namespaceInfo;
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setLinkBatchFactory( $linkBatchFactory );
+		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() );
 	}
 
 	public function isExpensive() {
 		return true;
 	}
 
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
 	public function getQueryInfo() {
 		$tables = [ 'page', 'revision' ];
 		$conds = [
-			'page_namespace' =>
-				MediaWikiServices::getInstance()->getNamespaceInfo()->getContentNamespaces(),
+			'page_namespace' => $this->namespaceInfo->getContentNamespaces(),
 			'page_is_redirect' => 0
 		];
 		$joinConds = [
@@ -58,7 +80,7 @@ class SpecialAncientPages extends QueryPage {
 		];
 
 		// Allow extensions to modify the query
-		Hooks::run( 'AncientPagesQuery', [ &$tables, &$conds, &$joinConds ] );
+		$this->getHookRunner()->onAncientPagesQuery( $tables, $conds, $joinConds );
 
 		return [
 			'tables' => $tables,
@@ -76,7 +98,7 @@ class SpecialAncientPages extends QueryPage {
 		return true;
 	}
 
-	function sortDescending() {
+	protected function sortDescending() {
 		return false;
 	}
 
@@ -86,17 +108,17 @@ class SpecialAncientPages extends QueryPage {
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		$d = $this->getLanguage()->userTimeAndDate( $result->value, $this->getUser() );
 		$title = Title::makeTitle( $result->namespace, $result->title );
 		$linkRenderer = $this->getLinkRenderer();
+
 		$link = $linkRenderer->makeKnownLink(
 			$title,
-			new HtmlArmor( MediaWikiServices::getInstance()->getContentLanguage()->
-				convert( htmlspecialchars( $title->getPrefixedText() ) ) )
+			new HtmlArmor( $this->languageConverter->convertHtml( $title->getPrefixedText() ) )
 		);
 
 		return $this->getLanguage()->specialList( $link, htmlspecialchars( $d ) );

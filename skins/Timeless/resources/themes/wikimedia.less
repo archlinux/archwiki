@@ -29,12 +29,18 @@
 @link-red: @red;
 @link-red-visited: @red-dark;
 
+@link-ext: #37a;
+@link-ext-visited: darken( @link-ext, 10% );
+
 // Flair
 
 // Fonts are chosen for consistent metrics, not necessarily overall prettiness.
-@fonts: 'Segoe UI', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Lato', 'Liberation Sans', 'Noto Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
-@fonts-secondary: 'Linux Libertine', 'Times New Roman', 'Liberation Serif', 'Nimbus Roman', 'Noto Serif', 'Times', serif;
+@fonts-sans: 'Segoe UI', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Lato', 'Liberation Sans', 'Noto Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
+@fonts-serif: 'Linux Libertine', 'Times New Roman', 'Liberation Serif', 'Nimbus Roman', 'Noto Serif', 'Times', serif;
 @fonts-mono: 'Menlo', 'Consolas', 'Monaco', 'Noto Mono', 'Nimbus Mono L', monospace;
+
+@fonts: @fonts-sans;
+@fonts-secondary: @fonts-serif;
 
 @border: 0.2em;
 @radius: 0.2em;

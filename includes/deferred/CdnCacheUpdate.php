@@ -1,7 +1,5 @@
 <?php
 /**
- * CDN cache purging.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,22 +18,41 @@
  * @file
  */
 
-use Wikimedia\Assert\Assert;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Assert\Assert;
 
 /**
  * Handles purging the appropriate CDN objects given a list of URLs or Title instances
  * @ingroup Cache
  */
 class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
-	/** @var string[] Collection of URLs to purge */
-	private $urls = [];
+	/** @var array[] List of (URL, rebound purge delay) tuples */
+	private $urlTuples = [];
+	/** @var array[] List of (Title, rebound purge delay) tuples */
+	private $titleTuples = [];
+
+	/** @var int Maximum seconds of rebound purge delay (sanity) */
+	private const MAX_REBOUND_DELAY = 300;
 
 	/**
-	 * @param string[] $urlArr Collection of URLs to purge
+	 * @param string[]|Title[] $targets Collection of URLs/titles to be purged from CDN
+	 * @param array $options Options map. Supports:
+	 *   - reboundDelay: how many seconds after the first purge to send a rebound purge.
+	 *      No rebound purge will be sent if this is not positive. [Default: 0]
 	 */
-	public function __construct( array $urlArr ) {
-		$this->urls = $urlArr;
+	public function __construct( array $targets, array $options = [] ) {
+		$delay = min(
+			(int)max( $options['reboundDelay'] ?? 0, 0 ),
+			self::MAX_REBOUND_DELAY
+		);
+
+		foreach ( $targets as $target ) {
+			if ( $target instanceof Title ) {
+				$this->titleTuples[] = [ $target, $delay ];
+			} else {
+				$this->urlTuples[] = [ $target, $delay ];
+			}
+		}
 	}
 
 	public function merge( MergeableUpdate $update ) {
@@ -43,40 +60,46 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		Assert::parameterType( __CLASS__, $update, '$update' );
 		'@phan-var self $update';
 
-		$this->urls = array_merge( $this->urls, $update->urls );
+		$this->urlTuples = array_merge( $this->urlTuples, $update->urlTuples );
+		$this->titleTuples = array_merge( $this->titleTuples, $update->titleTuples );
 	}
 
 	/**
 	 * Create an update object from an array of Title objects, or a TitleArray object
 	 *
 	 * @param Traversable|Title[] $titles
-	 * @param string[] $urlArr
+	 * @param string[] $urls
 	 * @return CdnCacheUpdate
+	 * @deprecated Since 1.35 Use HtmlCacheUpdater instead
 	 */
-	public static function newFromTitles( $titles, $urlArr = [] ) {
-		( new LinkBatch( $titles ) )->execute();
-		/** @var Title $title */
-		foreach ( $titles as $title ) {
-			$urlArr = array_merge( $urlArr, $title->getCdnUrls() );
-		}
-
-		return new CdnCacheUpdate( $urlArr );
+	public static function newFromTitles( $titles, $urls = [] ) {
+		return new CdnCacheUpdate( array_merge( $titles, $urls ) );
 	}
 
-	/**
-	 * Purges the list of URLs passed to the constructor.
-	 */
 	public function doUpdate() {
-		global $wgCdnReboundPurgeDelay;
+		// Resolve the final list of URLs just before purging them (T240083)
+		$reboundDelayByUrl = $this->resolveReboundDelayByUrl();
 
-		self::purge( $this->urls );
+		// Send the immediate purges to CDN
+		self::purge( array_keys( $reboundDelayByUrl ) );
+		$immediatePurgeTimestamp = time();
 
-		if ( $wgCdnReboundPurgeDelay > 0 ) {
-			JobQueueGroup::singleton()->lazyPush( new CdnPurgeJob( [
-				'urls' => $this->urls,
-				'jobReleaseTimestamp' => time() + $wgCdnReboundPurgeDelay
-			] ) );
+		// Get the URLs that need rebound purges, grouped by seconds of purge delay
+		$urlsWithReboundByDelay = [];
+		foreach ( $reboundDelayByUrl as $url => $delay ) {
+			if ( $delay > 0 ) {
+				$urlsWithReboundByDelay[$delay][] = $url;
+			}
 		}
+		// Enqueue delayed purge jobs for these URLs (usually only one job)
+		$jobs = [];
+		foreach ( $urlsWithReboundByDelay as $delay => $urls ) {
+			$jobs[] = new CdnPurgeJob( [
+				'urls' => $urls,
+				'jobReleaseTimestamp' => $immediatePurgeTimestamp + $delay
+			] );
+		}
+		JobQueueGroup::singleton()->lazyPush( $jobs );
 	}
 
 	/**
@@ -84,19 +107,19 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 	 * $urlArr should contain the full URLs to purge as values
 	 * (example: $urlArr[] = 'http://my.host/something')
 	 *
-	 * @param string[] $urlArr List of full URLs to purge
+	 * @param string[] $urls List of full URLs to purge
 	 */
-	public static function purge( array $urlArr ) {
+	public static function purge( array $urls ) {
 		global $wgCdnServers, $wgHTCPRouting;
 
-		if ( !$urlArr ) {
+		if ( !$urls ) {
 			return;
 		}
 
 		// Remove duplicate URLs from list
-		$urlArr = array_unique( $urlArr );
+		$urls = array_unique( $urls );
 
-		wfDebugLog( 'squid', __METHOD__ . ': ' . implode( ' ', $urlArr ) );
+		wfDebugLog( 'squid', __METHOD__ . ': ' . implode( ' ', $urls ) );
 
 		// Reliably broadcast the purge to all edge nodes
 		$ts = microtime( true );
@@ -104,56 +127,74 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		$relayerGroup->getRelayer( 'cdn-url-purges' )->notifyMulti(
 			'cdn-url-purges',
 			array_map(
-				function ( $url ) use ( $ts ) {
+				static function ( $url ) use ( $ts ) {
 					return [
 						'url' => $url,
 						'timestamp' => $ts,
 					];
 				},
-				$urlArr
+				$urls
 			)
 		);
 
 		// Send lossy UDP broadcasting if enabled
 		if ( $wgHTCPRouting ) {
-			self::HTCPPurge( $urlArr );
+			self::HTCPPurge( $urls );
 		}
 
 		// Do direct server purges if enabled (this does not scale very well)
 		if ( $wgCdnServers ) {
-			// Maximum number of parallel connections per CDN
-			$maxSocketsPerCdn = 8;
-			// Number of requests to send per socket
-			// 400 seems to be a good tradeoff, opening a socket takes a while
-			$urlsPerSocket = 400;
-			$socketsPerCdn = ceil( count( $urlArr ) / $urlsPerSocket );
-			if ( $socketsPerCdn > $maxSocketsPerCdn ) {
-				$socketsPerCdn = $maxSocketsPerCdn;
-			}
-
-			$pool = new SquidPurgeClientPool;
-			$chunks = array_chunk( $urlArr, ceil( count( $urlArr ) / $socketsPerCdn ) );
-			foreach ( $wgCdnServers as $server ) {
-				foreach ( $chunks as $chunk ) {
-					$client = new SquidPurgeClient( $server );
-					foreach ( $chunk as $url ) {
-						$client->queuePurge( self::expand( $url ) );
-					}
-					$pool->addClient( $client );
-				}
-			}
-
-			$pool->run();
+			self::naivePurge( $urls );
 		}
 	}
 
 	/**
-	 * Send Hyper Text Caching Protocol (HTCP) CLR requests.
+	 * @return string[] List of URLs
+	 */
+	public function getUrls() {
+		return array_keys( $this->resolveReboundDelayByUrl() );
+	}
+
+	/**
+	 * @return int[] Map of (URL => rebound purge delay)
+	 */
+	private function resolveReboundDelayByUrl() {
+		$services = MediaWikiServices::getInstance();
+		/** @var Title $title */
+
+		// Avoid multiple queries for HtmlCacheUpdater::getUrls() call
+		$lb = $services->getLinkBatchFactory()->newLinkBatch();
+		foreach ( $this->titleTuples as list( $title, $delay ) ) {
+			$lb->addObj( $title );
+		}
+		$lb->execute();
+
+		$reboundDelayByUrl = [];
+
+		// Resolve the titles into CDN URLs
+		$htmlCacheUpdater = $services->getHtmlCacheUpdater();
+		foreach ( $this->titleTuples as list( $title, $delay ) ) {
+			foreach ( $htmlCacheUpdater->getUrls( $title ) as $url ) {
+				// Use the highest rebound for duplicate URLs in order to handle the most lag
+				$reboundDelayByUrl[$url] = max( $reboundDelayByUrl[$url] ?? 0, $delay );
+			}
+		}
+
+		foreach ( $this->urlTuples as list( $url, $delay ) ) {
+			// Use the highest rebound for duplicate URLs in order to handle the most lag
+			$reboundDelayByUrl[$url] = max( $reboundDelayByUrl[$url] ?? 0, $delay );
+		}
+
+		return $reboundDelayByUrl;
+	}
+
+	/**
+	 * Send Hyper Text Caching Protocol (HTCP) CLR requests
 	 *
 	 * @throws MWException
-	 * @param string[] $urlArr Collection of URLs to purge
+	 * @param string[] $urls Collection of URLs to purge
 	 */
-	private static function HTCPPurge( array $urlArr ) {
+	private static function HTCPPurge( array $urls ) {
 		global $wgHTCPRouting, $wgHTCPMulticastTTL;
 
 		// HTCP CLR operation
@@ -185,11 +226,14 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 		}
 
 		// Get sequential trx IDs for packet loss counting
-		$ids = UIDGenerator::newSequentialPerNodeIDs(
-			'squidhtcppurge', 32, count( $urlArr ), UIDGenerator::QUICK_VOLATILE
+		$idGenerator = MediaWikiServices::getInstance()->getGlobalIdGenerator();
+		$ids = $idGenerator->newSequentialPerNodeIDs(
+			'squidhtcppurge', 32,
+			count( $urls ),
+			$idGenerator::QUICK_VOLATILE
 		);
 
-		foreach ( $urlArr as $url ) {
+		foreach ( $urls as $url ) {
 			if ( !is_string( $url ) ) {
 				throw new MWException( 'Bad purge URL' );
 			}
@@ -238,6 +282,42 @@ class CdnCacheUpdate implements DeferrableUpdate, MergeableUpdate {
 					$subconf['host'], $subconf['port'] );
 			}
 		}
+	}
+
+	/**
+	 * Send HTTP PURGE requests for each of the URLs to all of the cache servers
+	 *
+	 * @param string[] $urls
+	 * @throws Exception
+	 */
+	private static function naivePurge( array $urls ) {
+		global $wgCdnServers;
+
+		$reqs = [];
+		foreach ( $urls as $url ) {
+			$url = self::expand( $url );
+			$urlInfo = wfParseUrl( $url );
+			$urlHost = strlen( $urlInfo['port'] ?? null )
+				? IP::combineHostAndPort( $urlInfo['host'], $urlInfo['port'] )
+				: $urlInfo['host'];
+			$baseReq = [
+				'method' => 'PURGE',
+				'url' => $url,
+				'headers' => [
+					'Host' => $urlHost,
+					'Connection' => 'Keep-Alive',
+					'Proxy-Connection' => 'Keep-Alive',
+					'User-Agent' => 'MediaWiki/' . MW_VERSION . ' ' . __CLASS__
+				]
+			];
+			foreach ( $wgCdnServers as $server ) {
+				$reqs[] = ( $baseReq + [ 'proxy' => $server ] );
+			}
+		}
+
+		$http = MediaWikiServices::getInstance()->getHttpRequestFactory()
+			->createMultiClient( [ 'maxConnsPerHost' => 8, 'usePipelining' => true ] );
+		$http->runMulti( $reqs );
 	}
 
 	/**

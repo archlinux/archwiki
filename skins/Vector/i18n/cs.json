@@ -1,15 +1,24 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mormegil",
 			"Dvorapa",
-			"Patriccck"
+			"Jaroslav Cerny",
+			"Matěj Suchánek",
+			"Mormegil",
+			"Patriccck",
+			"Patrik L."
 		]
 	},
 	"skinname-vector": "Vektor",
 	"vector-skin-desc": "Moderní verze vzhledu Kniha s novějším vzhledem a vylepšenou použitelností",
-	"vector.css": "/* Zde uvedené CSS bude ovlivňovat pouze vzhled „Vektor“ */",
-	"vector.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele vzhledu „Vektor“ */",
+	"prefs-vector-enable-vector-1-label": "Použít starý Vektor",
+	"prefs-vector-enable-vector-1-help": "V následujících letech budeme postupně aktualizovat vzhled Vektor. Starý Vektor vám umožní používat starou verzi Vektoru z prosince 2019. Více o aktualizacích se dozvíte na naší [[mw:Reading/Web/Desktop_Improvements|projektové stránce]].",
+	"vector-opt-out": "Přepnout na starý vzhled",
+	"vector-opt-out-tooltip": "Změnit nastavení a vrátit se zpět ke staré podobě vzhledu (starý Vektor)",
+	"vector.css": "/* Veškeré zde uvedené CSS bude načítáno uživatelům vzhledu „Vektor“ */",
+	"vector.js": "/* Veškerý zde uvedený JavaScript bude načítán uživatelům vzhledu „Vektor“ */",
+	"vector-action-toggle-sidebar": "Přepnout postranní panel",
+	"vector-language-button-label": "{{PLURAL:$1|$1 jazyk|$1 jazyky|$1 jazyků}}",
 	"vector-action-addsection": "Přidat téma",
 	"vector-action-delete": "Smazat",
 	"vector-action-move": "Přesunout",
@@ -23,5 +32,7 @@
 	"vector-view-viewsource": "Zobrazit zdrojový kód",
 	"vector-jumptonavigation": "Skočit na navigaci",
 	"vector-jumptosearch": "Skočit na vyhledávání",
-	"vector-more-actions": "Další"
+	"vector-jumptocontent": "Přeskočit na obsah",
+	"vector-more-actions": "Další",
+	"vector-search-loader": "Načítají se návrhy pro hledání"
 }

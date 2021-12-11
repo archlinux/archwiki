@@ -24,10 +24,14 @@
  * @author Luke Welling lwelling@wikimedia.org
  */
 
+use MediaWiki\Mail\UserEmailContact;
+
 /**
  * Stores a single person's name and email address.
  * These are passed in via the constructor, and will be returned in SMTP
  * header format when requested.
+ *
+ * @newable
  */
 class MailAddress {
 	/**
@@ -46,6 +50,8 @@ class MailAddress {
 	public $address;
 
 	/**
+	 * @stable to call
+	 *
 	 * @param string $address String with an email address
 	 * @param string|null $name Human-readable name if a string address is given
 	 * @param string|null $realName Human-readable real name if a string address is given
@@ -59,12 +65,12 @@ class MailAddress {
 	/**
 	 * Create a new MailAddress object for the given user
 	 *
-	 * @since 1.24
-	 * @param User $user
+	 * @param UserEmailContact $user
 	 * @return MailAddress
+	 * @since 1.24
 	 */
-	public static function newFromUser( User $user ) {
-		return new MailAddress( $user->getEmail(), $user->getName(), $user->getRealName() );
+	public static function newFromUser( UserEmailContact $user ) {
+		return new MailAddress( $user->getEmail(), $user->getUser()->getName(), $user->getRealName() );
 	}
 
 	/**

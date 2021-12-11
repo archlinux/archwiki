@@ -3,7 +3,7 @@ HtmlFormatter is a library spun off MediaWiki that allows you to load HTML into 
 Usage
 -----
 
-<pre lang="php">
+```php
 use HtmlFormatter\HtmlFormatter;
 // Load HTML that already has doctype and stuff
 $formatter = new HtmlFormatter( $html );
@@ -30,11 +30,11 @@ $formatter->getDoc()->createElement( 'p', 'Appended paragraph' );
 
 // Get resulting HTML
 $processedHtml = $formatter->getText();
-</pre>
+```
 
 License
 -------
-Copyright 2011-2016 MediaWiki contributors
+Copyright 2011-2020 MediaWiki contributors
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dr Lotus Black",
+			"Ninjastrikers",
 			"Sanlinnaing",
-			"Zawthet",
-			"Dr Lotus Black"
+			"Zawthet"
 		]
 	},
 	"visualeditor-cite-tool-name-web": "ဝဘ်ဆိုဒ်",
-	"cite-ve-dialog-reference-options-section": "ရွေးချယ်စရာများ",
+	"cite-ve-dialog-reference-options-section": "ရွေးပိုင်ခွင့်",
 	"cite-ve-dialog-reference-title": "ကိုးကား",
 	"cite-ve-dialog-reference-useexisting-tool": "ပြန်လည်သုံး",
 	"cite-ve-dialogbutton-reference-title": "ရည်ညွှန်း",

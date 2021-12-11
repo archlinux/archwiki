@@ -44,6 +44,7 @@ class TimezoneFilter implements Filter {
 				if ( count( $data ) === 3 ) {
 					// Make sure this timezone exists
 					try {
+						// @phan-suppress-next-line PhanNoopNew
 						new DateTimeZone( $data[2] );
 						// If the constructor didn't throw, we know it's valid
 						$valid = true;
@@ -66,7 +67,7 @@ class TimezoneFilter implements Filter {
 					$data[1] = intval( $data[1] );
 					$minDiff = abs( $data[0] ) * 60 + $data[1];
 					if ( $data[0] < 0 ) {
-						$minDiff = - $minDiff;
+						$minDiff = -$minDiff;
 					}
 				} else {
 					$minDiff = intval( $data[0] ) * 60;

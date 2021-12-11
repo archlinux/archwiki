@@ -2,23 +2,25 @@
 	"@metadata": {
 		"authors": [
 			"Bennylin",
+			"Diki Ananta",
 			"Meursault2004",
 			"NoiX180",
-			"Pras"
+			"Pras",
+			"Sumbukompor"
 		]
 	},
 	"gadgets-desc": "Marengaké para nganggo sakarepé milih [[Special:Gadgets|géjet CSS lan JavaScript]] ing [[Special:Preferences#mw-prefsection-gadgets|pilalan]].",
 	"prefs-gadgets": "Géjet",
 	"gadgets-prefstext": "Ing ngisor iki daftar gadget astaméwa sing bisa panjenangan aktifaké kanggo rékening panjenengan. Gadget-gadget iki sabagéyan gedhé adhedhasar JavaScript dadi panjenengan kudu ngaktifaké JavaScript ing panjlajah wèb panjenengan supaya bisa nglakokaké.\nMangga diwigatèkaké yèn gadget-gadget iki ora ndarbèni pangaruh marang kaca prèferènsi iki.\n\nUga mangga diwigatèkaké yèn gadget astaméwa iki dudu bagéyan saka piranti empuk MediaWiki lan biasané dikembangaké lan diopèni déning panganggo-panganggo ing wiki lokal panjenengan. Pangurus lokal bisa nyunting gadget sing kasedyakaké nganggo [[MediaWiki:Gadgets-definition|dhéfinisi]] lan [[Special:Gadgets|uraian]].",
 	"gadgets": "Géjet",
-	"gadgetusage": "Statistik panganggoné géjet",
+	"gadgetusage": "Setatistik panganggoné géjet",
 	"gadgetusage-gadget": "Géjet",
 	"gadgetusage-usercount": "Cacah sing nganggo",
 	"gadgetusage-noresults": "Ora ana géjeté.",
 	"gadgetusage-activeusers": "Para nganggo sing giyat",
 	"gadgetusage-default": "Baku",
 	"gadgets-title": "Géjet",
-	"gadgets-pagetext": "Ing ngisor iki kapacak pratélaning géjet mirunggan sing bisa diurubaké déning saben panganggo saka [[Special:Preferences#mw-prefsection-gadgets|kaca pilalané]], kaya sing diandharaké ing [[MediaWiki:Gadgets-definition|kaca dhéfinisiné]].\nKaterangan iki migunani murih gampangé panjenengan mangerti kaca layang sistem sing ngandharaké dhèskripsi lan kodhe géjet.",
+	"gadgets-pagetext": "Ing ngisor iki kapacak pratélaning géjet mirunggan sing bisa diurubaké déning saben naraguna saka [[Special:Preferences#mw-prefsection-gadgets|kaca pilalané]], kaya sing diandharaké ing [[MediaWiki:Gadgets-definition|kaca dhéfinisiné]].\nKaterangan iki migunani murih gampangé panjenengan mangerti kaca layang sistem sing ngandharaké dhèskripsi lan kodhe géjet.",
 	"gadgets-uses": "Guna",
 	"gadgets-required-rights": "Mbutuhaké {{PLURAL:$2|hak}} ing ngisor iki:\n\n$1",
 	"gadgets-required-skins": "Ana ing {{PLURAL:$2|ules $1|ules iki: $1}}.",

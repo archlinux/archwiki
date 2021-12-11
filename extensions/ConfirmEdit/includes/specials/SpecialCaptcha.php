@@ -5,21 +5,21 @@ class SpecialCaptcha extends UnlistedSpecialPage {
 		parent::__construct( 'Captcha' );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function execute( $par ) {
 		$this->setHeaders();
 
 		$instance = ConfirmEditHooks::getInstance();
 
-		switch ( $par ) {
-			case "image":
-				if ( method_exists( $instance, 'showImage' ) ) {
-					// @todo: Do this in a more OOP way
-					/** @phan-suppress-next-line PhanUndeclaredMethod */
-					return $instance->showImage();
-				}
-			case "help":
-			default:
-				return $instance->showHelp();
+		if ( $par === 'image' && method_exists( $instance, 'showImage' ) ) {
+			// @todo: Do this in a more OOP way
+			/** @phan-suppress-next-line PhanUndeclaredMethod */
+			$instance->showImage();
+			return;
 		}
+
+		$instance->showHelp();
 	}
 }

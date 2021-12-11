@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Frozen-mikan",
+			"Fryed-peach",
+			"Otokoume",
 			"Shirayuki",
 			"Whym",
-			"Fryed-peach",
-			"Frozen-mikan",
-			"Otokoume",
 			"Yusuke1109"
 		]
 	},
@@ -55,10 +55,8 @@
 	"scribunto-limitreport-timeusage": "Lua 実行時間",
 	"scribunto-limitreport-timeusage-value": "$1/$2 秒",
 	"scribunto-limitreport-virtmemusage": "Lua 仮想サイズ",
-	"scribunto-limitreport-virtmemusage-value": "$1/$2",
 	"scribunto-limitreport-estmemusage": "Lua 推定メモリ使用量",
 	"scribunto-limitreport-memusage": "Lua のメモリ使用量",
-	"scribunto-limitreport-memusage-value": "$1/$2",
 	"scribunto-limitreport-profile": "Lua プロファイル",
 	"scribunto-limitreport-profile-ms": "$1 ミリ秒",
 	"scribunto-limitreport-profile-percent": "$1%",

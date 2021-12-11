@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Athena in Wonderland",
 			"Giro720",
 			"Hamilton Abreu",
 			"Luckas",
 			"Malafaya",
 			"Opraco",
-			"Waldir",
-			"555",
 			"Vitorvicentevalente",
-			"Athena in Wonderland"
+			"Waldir",
+			555
 		]
 	},
 	"renameuser": "Alterar o nome do utilizador",
@@ -25,7 +25,6 @@
 	"renameuserwarnings": "Alertas:",
 	"renameuserconfirm": "Sim, alterar o nome do utilizador",
 	"renameusersubmit": "Enviar",
-	"renameuser-submit-blocklog": "Mostrar o registo de bloqueios do utilizador",
 	"renameusererrordoesnotexist": "O utilizador \"<nowiki>$1</nowiki>\" não existe.",
 	"renameusererrorexists": "{{GENDER:$1|O utilizador|A utilizadora}} \"<nowiki>$1</nowiki>\" já existe.",
 	"renameusererrorinvalid": "O nome de utilizador \"<nowiki>$1</nowiki>\" é inválido.",

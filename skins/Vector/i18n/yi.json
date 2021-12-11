@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Har-wradim",
 			"Joystick",
-			"פוילישער",
-			"Har-wradim"
+			"פוילישער"
 		]
 	},
 	"skinname-vector": "וועקטאר",
 	"vector-skin-desc": "מאדערנע ווערסיע פון מאנאבוק מיט פרישן אויסזען און א סך באניצער־פריינדלעכקייט פארבעסערונגען",
-	"vector.css": "/* CSS געשטעלט דא ווירקט נאר אויפן וועקטאר סקין */",
+	"vector.css": "/* אלע CSS דא וועל ווערן געלאדן פֿאר באניצער פונעם וועקטאר סקין */",
 	"vector-action-addsection": "צושטעלן טעמע",
 	"vector-action-delete": "אויסמעקן",
 	"vector-action-move": "באַוועגן",

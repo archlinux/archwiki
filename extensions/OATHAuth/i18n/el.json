@@ -2,9 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Geraki",
-			"Protnet",
+			"NikosLikomitros",
 			"Nikosgranturismogt",
-			"Panos78"
+			"Panos78",
+			"Protnet"
 		]
 	},
 	"disableoathforuser": "Απενεργοποίηση ελέγχου ταυτότητας δύο παραγόντων για ένα χρήστη",

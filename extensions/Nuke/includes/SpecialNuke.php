@@ -1,9 +1,31 @@
 <?php
 
+namespace MediaWiki\Extension\Nuke;
+
+use ActorMigration;
+use FileDeleteForm;
+use Html;
+use HTMLForm;
+use ListToggle;
+use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
+use MediaWiki\MediaWikiServices;
+use PermissionsError;
+use SpecialPage;
+use Title;
+use User;
+use UserBlockedError;
+use UserNamePrefixSearch;
+use WikiPage;
+use Xml;
+
 class SpecialNuke extends SpecialPage {
+
+	/** @var NukeHookRunner */
+	private $hookRunner;
 
 	public function __construct() {
 		parent::__construct( 'Nuke', 'nuke' );
+		$this->hookRunner = new NukeHookRunner( $this->getHookContainer() );
 	}
 
 	public function doesWrites() {
@@ -18,11 +40,17 @@ class SpecialNuke extends SpecialPage {
 		$this->checkPermissions();
 		$this->checkReadOnly();
 		$this->outputHeader();
-		$this->addHelpLink( 'Extension:Nuke' );
+		$this->addHelpLink( 'Help:Extension:Nuke' );
 
 		$currentUser = $this->getUser();
-		if ( $currentUser->isBlocked() ) {
-			$block = $currentUser->getBlock();
+		$block = $currentUser->getBlock();
+
+		// appliesToRight is presently a no-op, since there is no handling for `delete`,
+		// and so will return `null`. `true` will be returned if the block actively
+		// applies to `delete`, and both `null` and `true` should result in an error
+		if ( $block && ( $block->isSitewide() ||
+			( $block->appliesToRight( 'delete' ) !== false ) )
+		) {
 			throw new UserBlockedError( $block );
 		}
 
@@ -41,6 +69,7 @@ class SpecialNuke extends SpecialPage {
 			$this->msg( 'nuke-multiplepeople' )->inContentLanguage()->text() :
 			$this->msg( 'nuke-defaultreason', $target )->
 			inContentLanguage()->text();
+
 		$reason = $req->getText( 'wpReason', $msg );
 
 		$limit = $req->getInt( 'limit', 500 );
@@ -120,7 +149,6 @@ class SpecialNuke extends SpecialPage {
 			->setSubmitTextMsg( 'nuke-submit-user' )
 			->setSubmitName( 'nuke-submit-user' )
 			->setAction( $this->getPageTitle()->getLocalURL( 'action=submit' ) )
-			->setMethod( 'post' )
 			->addHiddenField( 'wpEditToken', $this->getUser()->getEditToken() )
 			->prepareForm()
 			->displayForm( false );
@@ -171,7 +199,11 @@ class SpecialNuke extends SpecialPage {
 			Xml::tags( 'p',
 				null,
 				Xml::inputLabel(
-					$this->msg( 'deletecomment' )->text(), 'wpReason', 'wpReason', 70, $reason
+					$this->msg( 'deletecomment' )->text(),
+					'wpReason',
+					'wpReason',
+					70,
+					$reason
 				)
 			)
 		);
@@ -189,13 +221,14 @@ class SpecialNuke extends SpecialPage {
 		$commaSeparator = $this->msg( 'comma-separator' )->escaped();
 
 		$linkRenderer = $this->getLinkRenderer();
+		$localRepo = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo();
 		foreach ( $pages as $info ) {
 			/**
 			 * @var $title Title
 			 */
 			list( $title, $userName ) = $info;
 
-			$image = $title->inNamespace( NS_FILE ) ? wfLocalFile( $title ) : false;
+			$image = $title->inNamespace( NS_FILE ) ? $localRepo->newFile( $title ) : false;
 			$thumb = $image && $image->exists() ?
 				$image->transform( [ 'width' => 120, 'height' => 120 ], 0 ) :
 				false;
@@ -248,22 +281,13 @@ class SpecialNuke extends SpecialPage {
 
 		$where = [ "(rc_new = 1) OR (rc_log_type = 'upload' AND rc_log_action = 'upload')" ];
 
-		if ( class_exists( ActorMigration::class ) ) {
-			if ( $username === '' ) {
-				$actorQuery = ActorMigration::newMigration()->getJoin( 'rc_user' );
-				$what['rc_user_text'] = $actorQuery['fields']['rc_user_text'];
-			} else {
-				$actorQuery = ActorMigration::newMigration()
-					->getWhere( $dbr, 'rc_user', User::newFromName( $username, false ) );
-				$where[] = $actorQuery['conds'];
-			}
+		if ( $username === '' ) {
+			$actorQuery = ActorMigration::newMigration()->getJoin( 'rc_user' );
+			$what['rc_user_text'] = $actorQuery['fields']['rc_user_text'];
 		} else {
-			$actorQuery = [ 'tables' => [], 'joins' => [] ];
-			if ( $username === '' ) {
-				$what[] = 'rc_user_text';
-			} else {
-				$where['rc_user_text'] = $username;
-			}
+			$actorQuery = ActorMigration::newMigration()
+				->getWhere( $dbr, 'rc_user', User::newFromName( $username, false ) );
+			$where[] = $actorQuery['conds'];
 		}
 
 		if ( $namespace !== null ) {
@@ -271,7 +295,7 @@ class SpecialNuke extends SpecialPage {
 		}
 
 		$pattern = $this->getRequest()->getText( 'pattern' );
-		if ( !is_null( $pattern ) && trim( $pattern ) !== '' ) {
+		if ( $pattern !== null && trim( $pattern ) !== '' ) {
 			// $pattern is a SQL pattern supporting wildcards, so buildLike
 			// will not work.
 			$where[] = 'rc_title LIKE ' . $dbr->addQuotes( $pattern );
@@ -302,7 +326,7 @@ class SpecialNuke extends SpecialPage {
 
 		// Allows other extensions to provide pages to be nuked that don't use
 		// the recentchanges table the way mediawiki-core does
-		Hooks::run( 'NukeGetNewPages', [ $username, $pattern, $namespace, $limit, &$pages ] );
+		$this->hookRunner->onNukeGetNewPages( $username, $pattern, $namespace, $limit, $pages );
 
 		// Re-enforcing the limit *after* the hook because other extensions
 		// may add and/or remove pages. We need to make sure we don't end up
@@ -324,11 +348,14 @@ class SpecialNuke extends SpecialPage {
 	protected function doDelete( array $pages, $reason ) {
 		$res = [];
 
+		$services = MediaWikiServices::getInstance();
+		$localRepo = $services->getRepoGroup()->getLocalRepo();
+		$permissionManager = $services->getPermissionManager();
 		foreach ( $pages as $page ) {
 			$title = Title::newFromText( $page );
 
 			$deletionResult = false;
-			if ( !Hooks::run( 'NukeDeletePage', [ $title, $reason, &$deletionResult ] ) ) {
+			if ( !$this->hookRunner->onNukeDeletePage( $title, $reason, $deletionResult ) ) {
 				if ( $deletionResult ) {
 					$res[] = $this->msg( 'nuke-deleted', $title->getPrefixedText() )->parse();
 				} else {
@@ -337,8 +364,9 @@ class SpecialNuke extends SpecialPage {
 				continue;
 			}
 
-			$file = $title->getNamespace() === NS_FILE ? wfLocalFile( $title ) : false;
-			$permission_errors = $title->getUserPermissionsErrors( 'delete', $this->getUser() );
+			$user = $this->getUser();
+			$file = $title->getNamespace() === NS_FILE ? $localRepo->newFile( $title ) : false;
+			$permission_errors = $permissionManager->getPermissionErrors( 'delete', $user, $title );
 
 			if ( $permission_errors !== [] ) {
 				throw new PermissionsError( 'delete', $permission_errors );
@@ -346,20 +374,28 @@ class SpecialNuke extends SpecialPage {
 
 			if ( $file ) {
 				$oldimage = null; // Must be passed by reference
-				$ok = FileDeleteForm::doDelete( $title, $file, $oldimage, $reason, false )->isOK();
+				$status = FileDeleteForm::doDelete(
+					$title,
+					$file,
+					$oldimage,
+					$reason,
+					false,
+					$user
+				);
 			} else {
-				$article = new Article( $title, 0 );
-				$ok = $article->doDeleteArticle( $reason );
+				$status = WikiPage::factory( $title )
+					->doDeleteArticleReal( $reason, $user );
 			}
 
-			if ( $ok ) {
+			if ( $status->isOK() ) {
 				$res[] = $this->msg( 'nuke-deleted', $title->getPrefixedText() )->parse();
 			} else {
 				$res[] = $this->msg( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
 			}
 		}
 
-		$this->getOutput()->addHTML( "<ul>\n<li>" . implode( "</li>\n<li>", $res ) . "</li>\n</ul>\n" );
+		$this->getOutput()->addHTML( "<ul>\n<li>" . implode( "</li>\n<li>", $res ) .
+			"</li>\n</ul>\n" );
 		$this->getOutput()->addWikiMsg( 'nuke-delete-more' );
 	}
 
@@ -377,6 +413,7 @@ class SpecialNuke extends SpecialPage {
 			// No prefix suggestion for invalid user
 			return [];
 		}
+
 		// Autocomplete subpage as user list - public to allow caching
 		return UserNamePrefixSearch::search( 'public', $search, $limit, $offset );
 	}

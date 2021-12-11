@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"DannyS712",
+			"Fitoschido",
 			"Lpachuau",
-			"RMizo",
-			"아라",
 			"Macofe",
+			"RMizo",
 			"Stephanecbisson",
-			"Fitoschido"
+			"아라"
 		]
 	},
 	"tog-underline": "Zawmna hnuairinna",
@@ -115,7 +116,6 @@
 	"category-article-count-limited": "{{PLURAL:$1 |$1He|$1 Heng}} phekte hi hë pawl, i en mékah hian a awm.",
 	"category-file-count": "{{PLURAL:$2|He pawl hian hë taksa chauh hi a kengtel.|{{PLURAL:$1|He taksa $1 |Heng taksa $1-te}} hi he pawlah hian a awm, a vaia $2 zingah}}",
 	"category-file-count-limited": "{{PLURAL:$1|He taksa|$1Heng taksate}} hi hemi pawl, i en mékah hian a awm.",
-	"listingcontinuesabbrev": "chhunz.",
 	"index-category": "Phêk tarlante",
 	"noindex-category": "Phêk tarlan lohte",
 	"broken-file-category": "Taksa kehchhe zawmna awm phêkte",
@@ -227,7 +227,6 @@
 	"thisisdeleted": "$1 hi en emaw, dah lêt leh emaw i duh em?",
 	"viewdeleted": "$1 i en duh em?",
 	"restorelink": "{{PLURAL:$1| vawi khat nuaibo|vawi $1 nuaibo tawh}} siamţhatna",
-	"feedlinks": "Chàwmna:",
 	"feed-invalid": "Chawmna dik lo.",
 	"feed-unavailable": "Syndication chawm-letna tih theih a ni lo",
 	"site-rss-feed": "RSS chawmna $1",
@@ -253,7 +252,7 @@
 	"nospecialpagetext": "<strong>Vohbik phek awm lo en i tum.</strong>\n\nVohbik phekte chu hetah hian a en theih [[Special:SpecialPages|{{int:specialpages}}]].",
 	"error": "Dik lo",
 	"databaseerror": "Database dik loh",
-	"laggedslavemode": "'''Vaukhanna:''' He phêk hian tun hnaia siam thar a pho lang lo mai thei.",
+	"laggedreplicamode": "'''Vaukhanna:''' He phêk hian tun hnaia siam thar a pho lang lo mai thei.",
 	"readonly": "Database kalh a ni",
 	"enterlockreason": "I kalhna chhan leh i hawn leh hun tura i rin sawi rawh",
 	"missing-article": "Database-in a hmuh tùr phêk \"$1\" $2 a hmu lo tlat mai. \n\nHei hi dnglm ţhing emaw phêk paih tawh zawmna hlui zui vanga awm a ni tlangpui. \n\nChumi a nih si loh chuan khawlthluakah hrik ţhalo i tawng tihna a ni ang. Khawngaihin [[Special:ListUsers/sysop|roreltu]] hnenah  a URL chiang taka sawiin hrilh rawh.",
@@ -369,7 +368,6 @@
 	"passwordreset-email": "E-chenhmun:",
 	"passwordreset-emailtitle": "{{SITENAME}}-a siangchan chanchin kim",
 	"passwordreset-emailelement": "Hmangtuhming: \n$1\n\nThurûk lailâwk: \n$2",
-	"passwordreset-emailsentemail": "Hriat nawntirna e-lehkha thawn fel a ni.",
 	"changeemail": "E-chenhmun thlâk rawh",
 	"changeemail-header": "Siangchan e-chenhmun thlâk rawh",
 	"changeemail-no-info": "He phêk lut mai tùr chuan i inziahluh a ngai.",
@@ -483,7 +481,7 @@
 	"histfirst": "Hmasa ber",
 	"histlast": "Hnuhnung ber",
 	"historysize": "({{PLURAL:$1|bait 1 |bait $1}})",
-	"historyempty": "(ruak)",
+	"historyempty": "ruak",
 	"history-feed-title": "Ennawnna chanchin",
 	"history-feed-description": "Wiki-a hemi phêk ennawnna chanchin",
 	"history-feed-item-nocomment": "$1-in $2-ah",
@@ -1121,7 +1119,7 @@
 	"invert": "Thlan lêtna",
 	"namespace_association": "Hminghmun kaihhnawih",
 	"blanknamespace": "(Phekpui)",
-	"contributions": "{{GENDER:$1|Hmangtu}} kutthawhnate",
+	"tool-link-contributions": "{{GENDER:$1|Hmangtu}} kutthawhnate",
 	"contributions-title": "$1 kutthawhnate",
 	"mycontris": "Kutthawhnate",
 	"contribsub2": "$1 tan ($2) .",

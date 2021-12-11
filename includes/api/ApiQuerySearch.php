@@ -31,6 +31,10 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 	/** @var array list of api allowed params */
 	private $allowedParams;
 
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'sr' );
 	}
@@ -44,7 +48,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -68,8 +72,9 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		$nquery = $search->replacePrefixes( $query );
 		if ( $nquery !== $query ) {
 			$query = $nquery;
-			wfDeprecated( 'SearchEngine::replacePrefixes() (overridden by ' .
-						  get_class( $search ) . ')', '1.32' );
+			wfDeprecatedMsg( 'SearchEngine::replacePrefixes() is overridden by ' .
+				get_class( $search ) . ', this was deprecated in MediaWiki 1.32',
+				'1.32' );
 		}
 		// Perform the actual search
 		if ( $what == 'text' ) {
@@ -93,7 +98,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 			// for instance the Lucene-based engine we use on Wikipedia.
 			// In this case, fall back to full-text search (which will
 			// include titles in it!)
-			if ( is_null( $matches ) ) {
+			if ( $matches === null ) {
 				$what = 'text';
 				$matches = $search->searchText( $query );
 			}
@@ -115,35 +120,34 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 			} else {
 				$this->dieStatus( $status );
 			}
-		} elseif ( is_null( $matches ) ) {
+		} elseif ( $matches === null ) {
 			$this->dieWithError( [ 'apierror-searchdisabled', $what ], "search-{$what}-disabled" );
 		}
 
-		if ( $resultPageSet === null ) {
-			$apiResult = $this->getResult();
-			// Add search meta data to result
-			if ( isset( $searchInfo['totalhits'] ) ) {
-				$totalhits = $matches->getTotalHits();
-				if ( $totalhits !== null ) {
-					$apiResult->addValue( [ 'query', 'searchinfo' ],
-						'totalhits', $totalhits );
-				}
+		$apiResult = $this->getResult();
+		// Add search meta data to result
+		if ( isset( $searchInfo['totalhits'] ) ) {
+			$totalhits = $matches->getTotalHits();
+			if ( $totalhits !== null ) {
+				$apiResult->addValue( [ 'query', 'searchinfo' ],
+					'totalhits', $totalhits );
 			}
-			if ( isset( $searchInfo['suggestion'] ) && $matches->hasSuggestion() ) {
-				$apiResult->addValue( [ 'query', 'searchinfo' ],
-					'suggestion', $matches->getSuggestionQuery() );
-				$apiResult->addValue( [ 'query', 'searchinfo' ],
-					'suggestionsnippet', $matches->getSuggestionSnippet() );
-			}
-			if ( isset( $searchInfo['rewrittenquery'] ) && $matches->hasRewrittenQuery() ) {
-				$apiResult->addValue( [ 'query', 'searchinfo' ],
-					'rewrittenquery', $matches->getQueryAfterRewrite() );
-				$apiResult->addValue( [ 'query', 'searchinfo' ],
-					'rewrittenquerysnippet', $matches->getQueryAfterRewriteSnippet() );
-			}
+		}
+		if ( isset( $searchInfo['suggestion'] ) && $matches->hasSuggestion() ) {
+			$apiResult->addValue( [ 'query', 'searchinfo' ],
+				'suggestion', $matches->getSuggestionQuery() );
+			$apiResult->addValue( [ 'query', 'searchinfo' ],
+				'suggestionsnippet', HtmlArmor::getHtml( $matches->getSuggestionSnippet() ) );
+		}
+		if ( isset( $searchInfo['rewrittenquery'] ) && $matches->hasRewrittenQuery() ) {
+			$apiResult->addValue( [ 'query', 'searchinfo' ],
+				'rewrittenquery', $matches->getQueryAfterRewrite() );
+			$apiResult->addValue( [ 'query', 'searchinfo' ],
+				'rewrittenquerysnippet', HtmlArmor::getHtml( $matches->getQueryAfterRewriteSnippet() ) );
 		}
 
 		$titles = [];
+		$data = [];
 		$count = 0;
 
 		if ( $matches->hasMoreResults() ) {
@@ -157,8 +161,9 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 				continue;
 			}
 
+			$vals = $this->getSearchResultData( $result, $prop );
+
 			if ( $resultPageSet === null ) {
-				$vals = $this->getSearchResultData( $result, $prop );
 				if ( $vals ) {
 					// Add item to results and see whether it fits
 					$fit = $apiResult->addValue( [ 'query', $this->getModuleName() ], null, $vals );
@@ -169,6 +174,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 				}
 			} else {
 				$titles[] = $result->getTitle();
+				$data[] = $vals ?: [];
 			}
 		}
 
@@ -194,7 +200,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 				'query', $this->getModuleName()
 			], 'p' );
 		} else {
-			$resultPageSet->setRedirectMergePolicy( function ( $current, $new ) {
+			$resultPageSet->setRedirectMergePolicy( static function ( $current, $new ) {
 				if ( !isset( $current['index'] ) || $new['index'] < $current['index'] ) {
 					$current['index'] = $new['index'];
 				}
@@ -203,7 +209,10 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 			$resultPageSet->populateFromTitles( $titles );
 			$offset = $params['offset'] + 1;
 			foreach ( $titles as $index => $title ) {
-				$resultPageSet->setGeneratorData( $title, [ 'index' => $index + $offset ] );
+				$resultPageSet->setGeneratorData(
+					$title,
+					$data[ $index ] + [ 'index' => $index + $offset ]
+				);
 			}
 		}
 	}
@@ -211,7 +220,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 	/**
 	 * Assemble search result data.
 	 * @param SearchResult $result Search result
-	 * @param array        $prop Props to extract (as keys)
+	 * @param array $prop Props to extract (as keys)
 	 * @return array|null Result data or null if result is broken in some way.
 	 */
 	private function getSearchResultData( SearchResult $result, $prop ) {
@@ -244,7 +253,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 		if ( isset( $prop['categorysnippet'] ) ) {
 			$vals['categorysnippet'] = $result->getCategorySnippet();
 		}
-		if ( !is_null( $result->getRedirectTitle() ) ) {
+		if ( $result->getRedirectTitle() !== null ) {
 			if ( isset( $prop['redirecttitle'] ) ) {
 				$vals['redirecttitle'] = $result->getRedirectTitle()->getPrefixedText();
 			}
@@ -252,7 +261,7 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 				$vals['redirectsnippet'] = $result->getRedirectSnippet();
 			}
 		}
-		if ( !is_null( $result->getSectionTitle() ) ) {
+		if ( $result->getSectionTitle() !== null ) {
 			if ( isset( $prop['sectiontitle'] ) ) {
 				$vals['sectiontitle'] = $result->getSectionTitle()->getFragment();
 			}
@@ -279,10 +288,10 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 	/**
 	 * Add interwiki results as a section in query results.
 	 * @param ISearchResultSet $matches
-	 * @param ApiResult       $apiResult
-	 * @param array           $prop Props to extract (as keys)
-	 * @param string          $section Section name where results would go
-	 * @param int             $type Interwiki result type
+	 * @param ApiResult $apiResult
+	 * @param array $prop Props to extract (as keys)
+	 * @param string $section Section name where results would go
+	 * @param int $type Interwiki result type
 	 * @return int|null Number of total hits in the data or null if none was produced
 	 */
 	private function addInterwikiResults(
@@ -381,6 +390,12 @@ class ApiQuerySearch extends ApiQueryGeneratorBase {
 			'interwiki' => false,
 			'enablerewrites' => false,
 		];
+
+		// Generators only add info/properties if explicitly requested. T263841
+		if ( $this->isInGeneratorMode() ) {
+			$this->allowedParams['prop'][ApiBase::PARAM_DFLT] = '';
+			$this->allowedParams['info'][ApiBase::PARAM_DFLT] = '';
+		}
 
 		// If we have more than one engine the list of available sorts is
 		// difficult to represent. For now don't expose it.

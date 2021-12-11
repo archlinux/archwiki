@@ -21,23 +21,36 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Cache\LinkBatchFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * @ingroup SpecialPage
  */
 class SpecialUnusedCategories extends QueryPage {
-	function __construct( $name = 'Unusedcategories' ) {
-		parent::__construct( $name );
+
+	/**
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LinkBatchFactory $linkBatchFactory
+	 */
+	public function __construct(
+		ILoadBalancer $loadBalancer,
+		LinkBatchFactory $linkBatchFactory
+	) {
+		parent::__construct( 'Unusedcategories' );
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setLinkBatchFactory( $linkBatchFactory );
 	}
 
 	public function isExpensive() {
 		return true;
 	}
 
-	function getPageHeader() {
+	protected function getPageHeader() {
 		return $this->msg( 'unusedcategoriestext' )->parseAsBlock();
 	}
 
-	function getOrderFields() {
+	protected function getOrderFields() {
 		return [ 'title' ];
 	}
 
@@ -68,16 +81,16 @@ class SpecialUnusedCategories extends QueryPage {
 	 * A should come before Z (T32907)
 	 * @return bool
 	 */
-	function sortDescending() {
+	protected function sortDescending() {
 		return false;
 	}
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		$title = Title::makeTitle( NS_CATEGORY, $result->title );
 
 		return $this->getLinkRenderer()->makeLink( $title, $title->getText() );

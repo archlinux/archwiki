@@ -10,7 +10,7 @@ use MediaWiki\MediaWikiServices;
 class TextContentTest extends MediaWikiLangTestCase {
 	protected $context;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		// trigger purging of all page related tables
@@ -21,28 +21,21 @@ class TextContentTest extends MediaWikiLangTestCase {
 		$user = new User();
 		$user->setName( '127.0.0.1' );
 
-		$this->context = new RequestContext( new FauxRequest() );
-		$this->context->setTitle( Title::newFromText( 'Test' ) );
+		$this->context = new RequestContext();
+		$this->context->setTitle( Title::makeTitle( NS_MAIN, 'Test' ) );
 		$this->context->setUser( $user );
 
+		RequestContext::getMain()->setTitle( $this->context->getTitle() );
+
 		$this->setMwGlobals( [
-			'wgUser' => $user,
 			'wgTextModelsToParse' => [
 				CONTENT_MODEL_WIKITEXT,
 				CONTENT_MODEL_CSS,
 				CONTENT_MODEL_JAVASCRIPT,
 			],
-			'wgTidyConfig' => [ 'driver' => 'RemexHtml' ],
 			'wgCapitalLinks' => true,
 			'wgHooks' => [], // bypass hook ContentGetParserOutput that force custom rendering
 		] );
-
-		MWTidy::destroySingleton();
-	}
-
-	protected function tearDown() {
-		MWTidy::destroySingleton();
-		parent::tearDown();
 	}
 
 	/**
@@ -86,8 +79,8 @@ class TextContentTest extends MediaWikiLangTestCase {
 
 		if ( $expectedFields ) {
 			foreach ( $expectedFields as $field => $exp ) {
-				$f = 'get' . ucfirst( $field );
-				$v = call_user_func( [ $po, $f ] );
+				$getter = 'get' . ucfirst( $field );
+				$v = $po->$getter();
 
 				if ( is_array( $exp ) ) {
 					$this->assertArrayEquals( $exp, $v );
@@ -177,7 +170,7 @@ class TextContentTest extends MediaWikiLangTestCase {
 		$content = $this->newContent( $text );
 		$t = $content->getRedirectTarget();
 
-		if ( is_null( $expected ) ) {
+		if ( $expected === null ) {
 			$this->assertNull( $t, "text should not have generated a redirect target: $text" );
 		} else {
 			$this->assertEquals( $expected, $t->getPrefixedText() );
@@ -191,7 +184,7 @@ class TextContentTest extends MediaWikiLangTestCase {
 	public function testIsRedirect( $text, $expected ) {
 		$content = $this->newContent( $text );
 
-		$this->assertEquals( !is_null( $expected ), $content->isRedirect() );
+		$this->assertEquals( $expected !== null, $content->isRedirect() );
 	}
 
 	public static function dataIsCountable() {
@@ -218,7 +211,7 @@ class TextContentTest extends MediaWikiLangTestCase {
 
 		$content = $this->newContent( $text );
 
-		$v = $content->isCountable( $hasLinks, $this->context->getTitle() );
+		$v = $content->isCountable( $hasLinks );
 
 		$this->assertEquals(
 			$expected,
@@ -386,7 +379,7 @@ class TextContentTest extends MediaWikiLangTestCase {
 	 * @covers TextContent::getDeletionUpdates
 	 */
 	public function testDeletionUpdates( $model, $text, $expectedStuff ) {
-		$page = $this->getNonexistingTestPage( get_class( $this ) . '-' . $this->getName() );
+		$page = $this->getNonexistingTestPage( get_class( $this ) . '::' . __FUNCTION__ );
 		$title = $page->getTitle();
 
 		$content = ContentHandler::makeContent( $text, $title, $model );

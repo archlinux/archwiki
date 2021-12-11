@@ -1,6 +1,7 @@
 /* eslint-disable no-jquery/no-global-selector */
 $( function () {
 	var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
+		loadOptionalDependencies = require( './optional-enhancements.js' ),
 		// Track if DOM has been set up for mobile fanciness yet
 		monobookMobileElements = false,
 		// Toggles and targets for popouts
@@ -44,17 +45,17 @@ $( function () {
 					't-contributions'
 				];
 				newTabs.forEach( function ( item ) {
-					var a = $( '#' + item + ' a' );
+					var $a = $( '#' + item + ' a' );
 					// TODO check if we're on the page and add class=selected
 
-					if ( a.length ) {
+					if ( $a.length ) {
 						mw.util.addPortletLink(
 							'p-cactions-mobile',
-							a.attr( 'href' ),
-							a.text(),
-							a.parent().attr( 'id' ) + '-mobile',
-							a.attr( 'tooltip' ),
-							a.attr( 'accesskey' ),
+							$a.attr( 'href' ),
+							$a.text(),
+							$a.parent().attr( 'id' ) + '-mobile',
+							$a.attr( 'tooltip' ),
+							$a.attr( 'accesskey' ),
 							'#ca-more'
 						);
 					}
@@ -87,4 +88,5 @@ $( function () {
 
 	$( window ).on( 'resize', setupMonoBookMobile );
 	setupMonoBookMobile();
+	loadOptionalDependencies();
 } );

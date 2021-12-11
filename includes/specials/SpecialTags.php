@@ -21,8 +21,6 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\MediaWikiServices;
-
 /**
  * A special page that lists tags for edits
  *
@@ -45,11 +43,11 @@ class SpecialTags extends SpecialPage {
 	 */
 	protected $softwareActivatedTags;
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'Tags' );
 	}
 
-	function execute( $par ) {
+	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
 		$this->addHelpLink( 'Manual:Tags' );
@@ -73,16 +71,15 @@ class SpecialTags extends SpecialPage {
 		}
 	}
 
-	function showTagList() {
+	private function showTagList() {
 		$out = $this->getOutput();
 		$out->setPageTitle( $this->msg( 'tags-title' ) );
 		$out->wrapWikiMsg( "<div class='mw-tags-intro'>\n$1\n</div>", 'tags-intro' );
 
-		$user = $this->getUser();
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
-		$userCanManage = $permissionManager->userHasRight( $user, 'managechangetags' );
-		$userCanDelete = $permissionManager->userHasRight( $user, 'deletechangetags' );
-		$userCanEditInterface = $permissionManager->userHasRight( $user, 'editinterface' );
+		$authority = $this->getAuthority();
+		$userCanManage = $authority->isAllowed( 'managechangetags' );
+		$userCanDelete = $authority->isAllowed( 'deletechangetags' );
+		$userCanEditInterface = $authority->isAllowed( 'editinterface' );
 
 		// Show form to create a tag
 		if ( $userCanManage ) {
@@ -94,6 +91,7 @@ class SpecialTags extends SpecialPage {
 				],
 				'Reason' => [
 					'type' => 'text',
+					'maxlength' => CommentStore::COMMENT_CHARACTER_LIMIT,
 					'label' => $this->msg( 'tags-create-reason' )->plain(),
 					'size' => 50,
 				],
@@ -102,13 +100,13 @@ class SpecialTags extends SpecialPage {
 				],
 			];
 
-			$form = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
-			$form->setAction( $this->getPageTitle( 'create' )->getLocalURL() );
-			$form->setWrapperLegendMsg( 'tags-create-heading' );
-			$form->setHeaderText( $this->msg( 'tags-create-explanation' )->parseAsBlock() );
-			$form->setSubmitCallback( [ $this, 'processCreateTagForm' ] );
-			$form->setSubmitTextMsg( 'tags-create-submit' );
-			$form->show();
+			HTMLForm::factory( 'ooui', $fields, $this->getContext() )
+				->setAction( $this->getPageTitle( 'create' )->getLocalURL() )
+				->setWrapperLegendMsg( 'tags-create-heading' )
+				->setHeaderText( $this->msg( 'tags-create-explanation' )->parseAsBlock() )
+				->setSubmitCallback( [ $this, 'processCreateTagForm' ] )
+				->setSubmitTextMsg( 'tags-create-submit' )
+				->show();
 
 			// If processCreateTagForm generated a redirect, there's no point
 			// continuing with this, as the user is just going to end up getting sent
@@ -169,7 +167,10 @@ class SpecialTags extends SpecialPage {
 			}
 		}
 
-		$out->addModuleStyles( 'jquery.tablesorter.styles' );
+		$out->addModuleStyles( [
+			'jquery.tablesorter.styles',
+			'mediawiki.pager.tablePager'
+		] );
 		$out->addModules( 'jquery.tablesorter' );
 		$out->addHTML( Xml::tags(
 			'table',
@@ -179,7 +180,9 @@ class SpecialTags extends SpecialPage {
 		) );
 	}
 
-	function doTagRow( $tag, $hitcount, $showManageActions, $showDeleteActions, $showEditLinks ) {
+	private function doTagRow(
+		$tag, $hitcount, $showManageActions, $showDeleteActions, $showEditLinks
+	) {
 		$newRow = '';
 		$newRow .= Xml::tags( 'td', null, Xml::element( 'code', null, $tag ) );
 
@@ -189,7 +192,9 @@ class SpecialTags extends SpecialPage {
 			$disp .= ' ';
 			$editLink = $linkRenderer->makeLink(
 				$this->msg( "tag-$tag" )->inContentLanguage()->getTitle(),
-				$this->msg( 'tags-edit' )->text()
+				$this->msg( 'tags-edit' )->text(),
+				[],
+				[ 'action' => 'edit' ]
 			);
 			$disp .= $this->msg( 'parentheses' )->rawParams( $editLink )->escaped();
 		}
@@ -201,7 +206,9 @@ class SpecialTags extends SpecialPage {
 			$desc .= ' ';
 			$editDescLink = $linkRenderer->makeLink(
 				$this->msg( "tag-$tag-description" )->inContentLanguage()->getTitle(),
-				$this->msg( 'tags-edit' )->text()
+				$this->msg( 'tags-edit' )->text(),
+				[],
+				[ 'action' => 'edit' ]
 			);
 			$desc .= $this->msg( 'parentheses' )->rawParams( $editDescLink )->escaped();
 		}
@@ -314,13 +321,13 @@ class SpecialTags extends SpecialPage {
 				$out->parseAsInterface( $status->getWikiText() ) .
 				$this->msg( 'tags-create-warnings-below' )->parseAsBlock();
 
-			$subform = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
-			$subform->setAction( $this->getPageTitle( 'create' )->getLocalURL() );
-			$subform->setWrapperLegendMsg( 'tags-create-heading' );
-			$subform->setHeaderText( $headerText );
-			$subform->setSubmitCallback( [ $this, 'processCreateTagForm' ] );
-			$subform->setSubmitTextMsg( 'htmlform-yes' );
-			$subform->show();
+			HTMLForm::factory( 'ooui', $fields, $this->getContext() )
+				->setAction( $this->getPageTitle( 'create' )->getLocalURL() )
+				->setWrapperLegendMsg( 'tags-create-heading' )
+				->setHeaderText( $headerText )
+				->setSubmitCallback( [ $this, 'processCreateTagForm' ] )
+				->setSubmitTextMsg( 'htmlform-yes' )
+				->show();
 
 			$out->addBacklinkSubtitle( $this->getPageTitle() );
 			return true;
@@ -331,10 +338,8 @@ class SpecialTags extends SpecialPage {
 	}
 
 	protected function showDeleteTagForm( $tag ) {
-		$user = $this->getUser();
-		if ( !MediaWikiServices::getInstance()
-				->getPermissionManager()
-				->userHasRight( $user, 'deletechangetags' ) ) {
+		$authority = $this->getAuthority();
+		if ( !$authority->isAllowed( 'deletechangetags' ) ) {
 			throw new PermissionsError( 'deletechangetags' );
 		}
 
@@ -343,7 +348,7 @@ class SpecialTags extends SpecialPage {
 		$out->addBacklinkSubtitle( $this->getPageTitle() );
 
 		// is the tag actually able to be deleted?
-		$canDeleteResult = ChangeTags::canDeleteTag( $tag, $user );
+		$canDeleteResult = ChangeTags::canDeleteTag( $tag, $authority );
 		if ( !$canDeleteResult->isGood() ) {
 			$out->wrapWikiTextAsInterface( 'error', $canDeleteResult->getWikiText() );
 			if ( !$canDeleteResult->isOK() ) {
@@ -379,24 +384,22 @@ class SpecialTags extends SpecialPage {
 			'required' => true,
 		];
 
-		$form = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
-		$form->setAction( $this->getPageTitle( 'delete' )->getLocalURL() );
-		// @phan-suppress-next-line PhanUndeclaredProperty
-		$form->tagAction = 'delete'; // custom property on HTMLForm object
-		$form->setSubmitCallback( [ $this, 'processTagForm' ] );
-		$form->setSubmitTextMsg( 'tags-delete-submit' );
-		$form->setSubmitDestructive(); // nasty!
-		$form->addPreText( $preText );
-		$form->show();
+		HTMLForm::factory( 'ooui', $fields, $this->getContext() )
+			->setAction( $this->getPageTitle( 'delete' )->getLocalURL() )
+			->setSubmitCallback( function ( $data, $form ) {
+				return $this->processTagForm( $data, $form, 'delete' );
+			} )
+			->setSubmitTextMsg( 'tags-delete-submit' )
+			->setSubmitDestructive()
+			->addPreText( $preText )
+			->show();
 	}
 
 	protected function showActivateDeactivateForm( $tag, $activate ) {
 		$actionStr = $activate ? 'activate' : 'deactivate';
 
-		$user = $this->getUser();
-		if ( !MediaWikiServices::getInstance()
-				->getPermissionManager()
-				->userHasRight( $user, 'managechangetags' ) ) {
+		$authority = $this->getAuthority();
+		if ( !$authority->isAllowed( 'managechangetags' ) ) {
 			throw new PermissionsError( 'managechangetags' );
 		}
 
@@ -406,8 +409,11 @@ class SpecialTags extends SpecialPage {
 		$out->addBacklinkSubtitle( $this->getPageTitle() );
 
 		// is it possible to do this?
-		$func = $activate ? 'canActivateTag' : 'canDeactivateTag';
-		$result = ChangeTags::$func( $tag, $user );
+		if ( $activate ) {
+			$result = ChangeTags::canActivateTag( $tag, $authority );
+		} else {
+			$result = ChangeTags::canDeactivateTag( $tag, $authority );
+		}
 		if ( !$result->isGood() ) {
 			$out->wrapWikiTextAsInterface( 'error', $result->getWikiText() );
 			if ( !$result->isOK() ) {
@@ -432,35 +438,36 @@ class SpecialTags extends SpecialPage {
 			'required' => true,
 		];
 
-		$form = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
-		$form->setAction( $this->getPageTitle( $actionStr )->getLocalURL() );
-		// @phan-suppress-next-line PhanUndeclaredProperty
-		$form->tagAction = $actionStr;
-		$form->setSubmitCallback( [ $this, 'processTagForm' ] );
-		// tags-activate-submit, tags-deactivate-submit
-		$form->setSubmitTextMsg( "tags-$actionStr-submit" );
-		$form->addPreText( $preText );
-		$form->show();
+		HTMLForm::factory( 'ooui', $fields, $this->getContext() )
+			->setAction( $this->getPageTitle( $actionStr )->getLocalURL() )
+			->setSubmitCallback( function ( $data, $form ) use ( $actionStr ) {
+				return $this->processTagForm( $data, $form, $actionStr );
+			} )
+			// tags-activate-submit, tags-deactivate-submit
+			->setSubmitTextMsg( "tags-$actionStr-submit" )
+			->addPreText( $preText )
+			->show();
 	}
 
 	/**
 	 * @param array $data
 	 * @param HTMLForm $form
+	 * @param string $action
 	 * @return bool
-	 * @suppress PhanUndeclaredProperty $form->tagAction
 	 */
-	public function processTagForm( array $data, HTMLForm $form ) {
+	public function processTagForm( array $data, HTMLForm $form, string $action ) {
 		$context = $form->getContext();
 		$out = $context->getOutput();
 
 		$tag = $data['HiddenTag'];
-		$status = call_user_func( [ ChangeTags::class, "{$form->tagAction}TagWithChecks" ],
+		// activateTagWithChecks, deactivateTagWithChecks, deleteTagWithChecks
+		$status = call_user_func( [ ChangeTags::class, "{$action}TagWithChecks" ],
 			$tag, $data['Reason'], $context->getUser(), true );
 
 		if ( $status->isGood() ) {
 			$out->redirect( $this->getPageTitle()->getLocalURL() );
 			return true;
-		} elseif ( $status->isOK() && $form->tagAction === 'delete' ) {
+		} elseif ( $status->isOK() && $action === 'delete' ) {
 			// deletion succeeded, but hooks raised a warning
 			$out->addWikiTextAsInterface( $this->msg( 'tags-delete-warnings-after-delete', $tag,
 				count( $status->getWarningsArray() ) )->text() . "\n" .

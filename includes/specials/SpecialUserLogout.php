@@ -27,7 +27,7 @@
  * @ingroup SpecialPage
  */
 class SpecialUserLogout extends FormSpecialPage {
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'Userlogout' );
 	}
 
@@ -104,7 +104,7 @@ class SpecialUserLogout extends FormSpecialPage {
 		$out = $this->getOutput();
 		// Hook.
 		$injected_html = '';
-		Hooks::run( 'UserLogoutComplete', [ &$user, &$injected_html, $oldName ] );
+		$this->getHookRunner()->onUserLogoutComplete( $user, $injected_html, $oldName );
 		$out->addHTML( $injected_html );
 	}
 
@@ -120,6 +120,7 @@ class SpecialUserLogout extends FormSpecialPage {
 
 	/**
 	 * Let blocked users to log out and come back with their sockpuppets
+	 * @return bool
 	 */
 	public function requiresUnblock() {
 		return false;

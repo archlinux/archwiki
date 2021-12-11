@@ -4,9 +4,13 @@
  * @since 1.20
  */
 class NullFileJournal extends FileJournal {
+	public function __construct() {
+		// No-op
+	}
+
 	/**
 	 * @see FileJournal::doLogChangeBatch()
-	 * @param array $entries
+	 * @param array[] $entries
 	 * @param string $batchId
 	 * @return StatusValue
 	 */
@@ -16,7 +20,7 @@ class NullFileJournal extends FileJournal {
 
 	/**
 	 * @see FileJournal::doGetCurrentPosition()
-	 * @return int|bool
+	 * @return int|false
 	 */
 	protected function doGetCurrentPosition() {
 		return false;
@@ -25,7 +29,7 @@ class NullFileJournal extends FileJournal {
 	/**
 	 * @see FileJournal::doGetPositionAtTime()
 	 * @param int|string $time Timestamp
-	 * @return int|bool
+	 * @return int|false
 	 */
 	protected function doGetPositionAtTime( $time ) {
 		return false;
@@ -35,7 +39,7 @@ class NullFileJournal extends FileJournal {
 	 * @see FileJournal::doGetChangeEntries()
 	 * @param int $start
 	 * @param int $limit
-	 * @return array
+	 * @return array[]
 	 */
 	protected function doGetChangeEntries( $start, $limit ) {
 		return [];

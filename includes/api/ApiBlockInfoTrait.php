@@ -29,6 +29,7 @@ trait ApiBlockInfoTrait {
 	/**
 	 * Get basic info about a given block
 	 * @param AbstractBlock $block
+	 * @param Language|null $language
 	 * @return array Array containing several keys:
 	 *  - blockid - ID of the block
 	 *  - blockedby - username of the blocker
@@ -36,21 +37,48 @@ trait ApiBlockInfoTrait {
 	 *  - blockreason - reason provided for the block
 	 *  - blockedtimestamp - timestamp for when the block was placed/modified
 	 *  - blockexpiry - expiry time of the block
+	 *  - blockpartial - block only applies to certain pages, namespaces and/or actions
 	 *  - systemblocktype - system block type, if any
 	 */
-	private function getBlockDetails( AbstractBlock $block ) {
+	private function getBlockDetails(
+		AbstractBlock $block,
+		$language = null
+	) {
+		if ( $language === null ) {
+			$language = $this->getLanguage();
+		}
+
 		$vals = [];
 		$vals['blockid'] = $block->getId();
 		$vals['blockedby'] = $block->getByName();
 		$vals['blockedbyid'] = $block->getBy();
-		$vals['blockreason'] = $block->getReason();
+		$vals['blockreason'] = $block->getReasonComment()
+			->message->inLanguage( $language )->plain();
 		$vals['blockedtimestamp'] = wfTimestamp( TS_ISO_8601, $block->getTimestamp() );
 		$vals['blockexpiry'] = ApiResult::formatExpiry( $block->getExpiry(), 'infinite' );
 		$vals['blockpartial'] = !$block->isSitewide();
+		$vals['blocknocreate'] = $block->isCreateAccountBlocked();
+		$vals['blockanononly'] = !$block->isHardblock();
+
 		if ( $block instanceof SystemBlock ) {
 			$vals['systemblocktype'] = $block->getSystemBlockType();
 		}
+
 		return $vals;
 	}
+
+	// region   Methods required from ApiBase
+	/** @name   Methods required from ApiBase
+	 * @{
+	 */
+
+	/**
+	 * @see IContextSource::getLanguage
+	 * @return Language
+	 */
+	abstract public function getLanguage();
+
+	/** @} */
+	// endregion -- end of methods required from ApiBase
 
 }

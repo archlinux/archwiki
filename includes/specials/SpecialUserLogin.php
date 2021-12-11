@@ -41,8 +41,12 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 		'authform-wrongtoken' => 'sessionfailure',
 	];
 
-	public function __construct() {
+	/**
+	 * @param AuthManager $authManager
+	 */
+	public function __construct( AuthManager $authManager ) {
 		parent::__construct( 'Userlogin' );
+		$this->setAuthManager( $authManager );
 	}
 
 	public function doesWrites() {
@@ -64,7 +68,7 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 	public function setHeaders() {
 		// override the page title if we are doing a forced reauthentication
 		parent::setHeaders();
-		if ( $this->securityLevel && $this->getUser()->isLoggedIn() ) {
+		if ( $this->securityLevel && $this->getUser()->isRegistered() ) {
 			$this->getOutput()->setPageTitle( $this->msg( 'login-security' ) );
 		}
 	}
@@ -124,7 +128,8 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 
 		# Run any hooks; display injected HTML if any, else redirect
 		$injected_html = '';
-		Hooks::run( 'UserLoginComplete', [ &$user, &$injected_html, $direct ] );
+		$this->getHookRunner()->onUserLoginComplete(
+			$user, $injected_html, $direct );
 
 		if ( $injected_html !== '' || $extraMessages ) {
 			$this->showSuccessPage( 'success', $this->msg( 'loginsuccesstitle' ),
@@ -156,7 +161,7 @@ class SpecialUserLogin extends LoginSignupSpecialPage {
 		LoggerFactory::getInstance( 'authevents' )->info( 'Login attempt', [
 			'event' => 'login',
 			'successful' => $success,
-			'status' => $status,
+			'status' => strval( $status ),
 		] );
 	}
 }

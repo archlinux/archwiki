@@ -48,13 +48,13 @@
 
 		assert.strictEqual(
 			panel.$location.text(),
-			'Location: 12° 20′ 44.44″ N, 98° 45′ 55.56″ E',
+			'(multimediaviewer-geolocation: (multimediaviewer-geoloc-coords: (multimediaviewer-geoloc-coord: 12, 20, 44.44, (multimediaviewer-geoloc-north)), (multimediaviewer-geoloc-coord: 98, 45, 55.56, (multimediaviewer-geoloc-east))))',
 			'Location text is set as expected - if this fails it may be due to i18n issues.'
 		);
 
 		assert.strictEqual(
 			panel.$location.prop( 'href' ),
-			'http://tools.wmflabs.org/geohack/geohack.php?pagename=File:' + fileName + '&params=' + latitude + '_N_' + longitude + '_E_&language=en',
+			'http://tools.wmflabs.org/geohack/geohack.php?pagename=File:' + fileName + '&params=' + latitude + '_N_' + longitude + '_E_&language=qqx',
 			'Location URL is set as expected'
 		);
 
@@ -66,13 +66,13 @@
 
 		assert.strictEqual(
 			panel.$location.text(),
-			'Location: 12° 20′ 44.44″ S, 98° 45′ 55.56″ W',
+			'(multimediaviewer-geolocation: (multimediaviewer-geoloc-coords: (multimediaviewer-geoloc-coord: 12, 20, 44.44, (multimediaviewer-geoloc-south)), (multimediaviewer-geoloc-coord: 98, 45, 55.56, (multimediaviewer-geoloc-west))))',
 			'Location text is set as expected - if this fails it may be due to i18n issues.'
 		);
 
 		assert.strictEqual(
 			panel.$location.prop( 'href' ),
-			'http://tools.wmflabs.org/geohack/geohack.php?pagename=File:' + fileName + '&params=' + ( -latitude ) + '_S_' + ( -longitude ) + '_W_&language=en',
+			'http://tools.wmflabs.org/geohack/geohack.php?pagename=File:' + fileName + '&params=' + ( -latitude ) + '_S_' + ( -longitude ) + '_W_&language=qqx',
 			'Location URL is set as expected'
 		);
 
@@ -84,13 +84,13 @@
 
 		assert.strictEqual(
 			panel.$location.text(),
-			'Location: 0° 0′ 0″ N, 0° 0′ 0″ E',
+			'(multimediaviewer-geolocation: (multimediaviewer-geoloc-coords: (multimediaviewer-geoloc-coord: 0, 0, 0, (multimediaviewer-geoloc-north)), (multimediaviewer-geoloc-coord: 0, 0, 0, (multimediaviewer-geoloc-east))))',
 			'Location text is set as expected - if this fails it may be due to i18n issues.'
 		);
 
 		assert.strictEqual(
 			panel.$location.prop( 'href' ),
-			'http://tools.wmflabs.org/geohack/geohack.php?pagename=File:' + fileName + '&params=' + latitude + '_N_' + longitude + '_E_&language=en',
+			'http://tools.wmflabs.org/geohack/geohack.php?pagename=File:' + fileName + '&params=' + latitude + '_N_' + longitude + '_E_&language=qqx',
 			'Location URL is set as expected'
 		);
 	} );
@@ -144,9 +144,9 @@
 		assert.strictEqual( panel.creditField.$element.find( '.mw-mmv-author' ).text(), imageData.author, 'Author text is correctly set' );
 		assert.strictEqual( panel.creditField.$element.find( '.mw-mmv-source' ).html(), '<b>Lost</b><a href="foo">Bar</a>', 'Source text is correctly set' );
 		// Either multimediaviewer-credit-popup-text or multimediaviewer-credit-popup-text-more.
-		assert.ok( creditPopupText === 'Author and source information' || creditPopupText === 'View full author and source', 'Source tooltip is correctly set' );
-		assert.ok( panel.$datetime.text().indexOf( '26 August 2013' ) > 0, 'Correct date is displayed' );
-		assert.strictEqual( panel.$license.text(), 'CC BY 2.0', 'License is correctly set' );
+		assert.ok( creditPopupText === '(multimediaviewer-credit-popup-text)' || creditPopupText === '(multimediaviewer-credit-popup-text-more)', 'Source tooltip is correctly set' );
+		assert.strictEqual( panel.$datetime.text(), '(multimediaviewer-datetime-created: August 26, 2013)', 'Correct date is displayed' );
+		assert.strictEqual( panel.$license.text(), '(multimediaviewer-license-cc-by-2.0)', 'License is correctly set' );
 		assert.ok( panel.$license.prop( 'target' ), 'License information opens in new window' );
 		assert.strictEqual( panel.$restrictions.children().last().children().hasClass( 'mw-mmv-restriction-default' ), true, 'Default restriction is correctly displayed last' );
 
@@ -154,7 +154,7 @@
 		panel.setImageInfo( image, imageData, repoData );
 		clock.tick( 10 );
 
-		assert.ok( panel.$datetime.text().indexOf( '25 August 2013' ) > 0, 'Correct date is displayed' );
+		assert.strictEqual( panel.$datetime.text(), '(multimediaviewer-datetime-uploaded: August 25, 2013)', 'Correct date is displayed' );
 
 		clock.restore();
 	} );

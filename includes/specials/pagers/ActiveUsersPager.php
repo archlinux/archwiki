@@ -19,7 +19,10 @@
  * @ingroup Pager
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\User\UserGroupManager;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * This class is used to get a list of active users. The ones with specials
@@ -54,9 +57,28 @@ class ActiveUsersPager extends UsersPager {
 	/**
 	 * @param IContextSource|null $context
 	 * @param FormOptions $opts
+	 * @param LinkBatchFactory|null $linkBatchFactory
+	 * @param HookContainer $hookContainer
+	 * @param ILoadBalancer $loadBalancer
+	 * @param UserGroupManager $userGroupManager
 	 */
-	public function __construct( IContextSource $context = null, FormOptions $opts ) {
-		parent::__construct( $context );
+	public function __construct(
+		?IContextSource $context,
+		FormOptions $opts,
+		LinkBatchFactory $linkBatchFactory,
+		HookContainer $hookContainer,
+		ILoadBalancer $loadBalancer,
+		UserGroupManager $userGroupManager
+	) {
+		parent::__construct(
+			$context,
+			null,
+			null,
+			$linkBatchFactory,
+			$hookContainer,
+			$loadBalancer,
+			$userGroupManager
+		);
 
 		$this->RCMaxAge = $this->getConfig()->get( 'ActiveUserDays' );
 		$this->requestedUser = '';
@@ -64,7 +86,7 @@ class ActiveUsersPager extends UsersPager {
 		$un = $opts->getValue( 'username' );
 		if ( $un != '' ) {
 			$username = Title::makeTitleSafe( NS_USER, $un );
-			if ( !is_null( $username ) ) {
+			if ( $username !== null ) {
 				$this->requestedUser = $username->getText();
 			}
 		}
@@ -80,11 +102,11 @@ class ActiveUsersPager extends UsersPager {
 		}
 	}
 
-	function getIndexField() {
+	public function getIndexField() {
 		return 'qcc_title';
 	}
 
-	function getQueryInfo( $data = null ) {
+	public function getQueryInfo( $data = null ) {
 		$dbr = $this->getDatabase();
 
 		$activeUserSeconds = $this->getConfig()->get( 'ActiveUserDays' ) * 86400;
@@ -126,12 +148,9 @@ class ActiveUsersPager extends UsersPager {
 			] ];
 			$conds['ug2.ug_user'] = null;
 		}
-		if ( !MediaWikiServices::getInstance()
-				  ->getPermissionManager()
-				  ->userHasRight( $this->getUser(), 'hideuser' )
-		) {
+		if ( !$this->canSeeHideuser() ) {
 			$conds[] = 'NOT EXISTS (' . $dbr->selectSQLText(
-					'ipblocks', '1', [ 'ipb_user=user_id', 'ipb_deleted' => 1 ]
+					'ipblocks', '1', [ 'ipb_user=user_id', 'ipb_deleted' => 1 ], __METHOD__
 				) . ')';
 		}
 		$subquery = $dbr->buildSelectSubquery( $tables, $fields, $conds, $fname, $options, $jconds );
@@ -181,7 +200,7 @@ class ActiveUsersPager extends UsersPager {
 			'limit' => intval( $limit ),
 			'order' => $dir,
 			'conds' =>
-				$offset != '' ? [ $this->mIndexField . $operator . $this->mDb->addQuotes( $offset ) ] : [],
+				$offset != '' ? [ $this->mIndexField . $operator . $this->getDatabase()->addQuotes( $offset ) ] : [],
 		] );
 
 		$tables = $info['tables'];
@@ -206,7 +225,7 @@ class ActiveUsersPager extends UsersPager {
 		// is done in two queries to avoid huge quicksorts and to make COUNT(*) correct.
 		$dbr = $this->getDatabase();
 		$res = $dbr->select( 'ipblocks',
-			[ 'ipb_user', 'MAX(ipb_deleted) AS deleted, MAX(ipb_sitewide) AS sitewide' ],
+			[ 'ipb_user', 'deleted' => 'MAX(ipb_deleted)', 'sitewide' => 'MAX(ipb_sitewide)' ],
 			[ 'ipb_user' => $uids ],
 			__METHOD__,
 			[ 'GROUP BY' => [ 'ipb_user' ] ]
@@ -221,7 +240,7 @@ class ActiveUsersPager extends UsersPager {
 		$this->mResult->seek( 0 );
 	}
 
-	function formatRow( $row ) {
+	public function formatRow( $row ) {
 		$userName = $row->user_name;
 
 		$ulinks = Linker::userLink( $row->user_id, $userName );

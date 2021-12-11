@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jsoby",
 			"Danmichaelo",
+			"Jeblad",
 			"Jon Harald Søby",
-			"Jeblad"
+			"Jsoby"
 		]
 	},
 	"pdf-desc": "Håndtering av PDF-visning i bildemodus",

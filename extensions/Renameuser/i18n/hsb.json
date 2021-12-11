@@ -18,7 +18,6 @@
 	"renameuserwarnings": "Warnowanja:",
 	"renameuserconfirm": "Haj, wužiwarja přemjenować",
 	"renameusersubmit": "Składować",
-	"renameuser-submit-blocklog": "Blokowanski protokol za wužiwarja pokazać",
 	"renameusererrordoesnotexist": "Wužiwarske mjeno „<nowiki>$1</nowiki>“ njeeksistuje.",
 	"renameusererrorexists": "Wužiwarske mjeno „<nowiki>$1</nowiki>“ hižo eksistuje.",
 	"renameusererrorinvalid": "Wužiwarske mjeno „<nowiki>$1</nowiki>“ njeje płaćiwe.",

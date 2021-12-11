@@ -31,7 +31,7 @@
 	"action-oathauth-disable-for-user": "একজন ব্যবহারকারীর দুই-ধাপের প্রমাণীকরণ নিষ্ক্রিয় করার",
 	"oathauth-disable-intro": "মহৎ শক্তির সাথে, মহৎ দায়িত্ব আসে",
 	"oathauth-enteruser": "ব্যবহারকারী নাম:",
-	"oathauth-enterreason": "নিষ্ক্রিয় করার কারণ:",
+	"oathauth-enterdisablereason": "নিষ্ক্রিয় করার কারণ:",
 	"right-oathauth-enable": "দুই-ধাপের প্রমাণীকরণ সক্রিয় করে",
 	"action-oathauth-enable": "দুই-ধাপের প্রমাণীকরণ সক্রিয় করার",
 	"oathauth-auth-token-label": "টোকেন",
@@ -53,5 +53,7 @@
 	"oathauth-disable-generic": "নিষ্ক্রিয় করুন",
 	"oathauth-disable-page-title": "$1 নিষ্ক্রিয় করুন",
 	"oathauth-enable-page-title": "$1 সক্রিয় করুন",
-	"oathauth-ui-available-modules": "উপলব্ধ পদ্ধতিসমূহ"
+	"oathauth-ui-available-modules": "উপলব্ধ পদ্ধতিসমূহ",
+	"oathauth-disable-method-warning-button-label": "নিশ্চিত করছি ও অগ্রসর হোন",
+	"oathauth-invalidrequest": "অবৈধ অনুরোধ"
 }

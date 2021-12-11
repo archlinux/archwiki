@@ -23,6 +23,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Special page to direct the user to a random page
@@ -34,10 +35,25 @@ class RandomPage extends SpecialPage {
 	protected $isRedir = false; // should the result be a redirect?
 	protected $extra = []; // Extra SQL statements
 
-	public function __construct( $name = 'Randompage' ) {
-		$this->namespaces = MediaWikiServices::getInstance()->getNamespaceInfo()->
-			getContentNamespaces();
-		parent::__construct( $name );
+	/** @var ILoadBalancer */
+	private $loadBalancer;
+
+	/**
+	 * @param ILoadBalancer|string|null $loadBalancer
+	 * @param NamespaceInfo|null $nsInfo
+	 */
+	public function __construct(
+		$loadBalancer = null,
+		NamespaceInfo $nsInfo = null
+	) {
+		parent::__construct( is_string( $loadBalancer ) ? $loadBalancer : 'Randompage' );
+		// This class is extended and therefor fallback to global state - T265308
+		$services = MediaWikiServices::getInstance();
+		$this->loadBalancer = $loadBalancer instanceof ILoadBalancer
+			? $loadBalancer
+			: $services->getDBLoadBalancer();
+		$nsInfo = $nsInfo ?? $services->getNamespaceInfo();
+		$this->namespaces = $nsInfo->getContentNamespaces();
 	}
 
 	public function getNamespaces() {
@@ -60,13 +76,12 @@ class RandomPage extends SpecialPage {
 		if ( is_string( $par ) ) {
 			// Testing for stringiness since we want to catch
 			// the empty string to mean main namespace only.
-			$this->setNamespace(
-				MediaWikiServices::getInstance()->getContentLanguage()->getNsIndex( $par ) );
+			$this->setNamespace( $this->getContentLanguage()->getNsIndex( $par ) );
 		}
 
 		$title = $this->getRandomTitle();
 
-		if ( is_null( $title ) ) {
+		if ( $title === null ) {
 			$this->setHeaders();
 			// Message: randompage-nopages, randomredirect-nopages
 			$this->getOutput()->addWikiMsg( strtolower( $this->getName() ) . '-nopages',
@@ -87,7 +102,7 @@ class RandomPage extends SpecialPage {
 	 * @return string
 	 */
 	private function getNsList() {
-		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$contLang = $this->getContentLanguage();
 		$nsNames = [];
 		foreach ( $this->namespaces as $n ) {
 			if ( $n === NS_MAIN ) {
@@ -108,14 +123,14 @@ class RandomPage extends SpecialPage {
 		$randstr = wfRandom();
 		$title = null;
 
-		if ( !Hooks::run(
-			'SpecialRandomGetRandomTitle',
-			[ &$randstr, &$this->isRedir, &$this->namespaces, &$this->extra, &$title ]
-		) ) {
+		if ( !$this->getHookRunner()->onSpecialRandomGetRandomTitle(
+			$randstr, $this->isRedir, $this->namespaces,
+			$this->extra, $title )
+		) {
 			return $title;
 		}
 
-		$row = $this->selectRandomPageFromDB( $randstr );
+		$row = $this->selectRandomPageFromDB( $randstr, __METHOD__ );
 
 		/* If we picked a value that was higher than any in
 		 * the DB, wrap around and select the page with the
@@ -125,7 +140,7 @@ class RandomPage extends SpecialPage {
 		 * causes anyway.  Trust me, I'm a mathematician. :)
 		 */
 		if ( !$row ) {
-			$row = $this->selectRandomPageFromDB( "0" );
+			$row = $this->selectRandomPageFromDB( "0", __METHOD__ );
 		}
 
 		if ( $row ) {
@@ -146,7 +161,7 @@ class RandomPage extends SpecialPage {
 		$joinConds = [];
 
 		// Allow extensions to modify the query
-		Hooks::run( 'RandomPageQuery', [ &$tables, &$conds, &$joinConds ] );
+		$this->getHookRunner()->onRandomPageQuery( $tables, $conds, $joinConds );
 
 		return [
 			'tables' => $tables,
@@ -161,7 +176,7 @@ class RandomPage extends SpecialPage {
 	}
 
 	private function selectRandomPageFromDB( $randstr, $fname = __METHOD__ ) {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 
 		$query = $this->getQueryInfo( $randstr );
 		$res = $dbr->select(

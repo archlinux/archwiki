@@ -2,22 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Alchimista",
+			"Athena in Wonderland",
 			"Cainamarques",
+			"CaiusSPQR",
+			"Fúlvio",
 			"Hamilton Abreu",
 			"Imperadeiro98",
 			"Malafaya",
-			"Waldir",
-			"555",
 			"Vitorvicentevalente",
-			"Fúlvio",
-			"Athena in Wonderland",
-			"CaiusSPQR"
+			"Waldir",
+			555
 		]
 	},
 	"interwiki": "Ver e manipular dados de interwikis",
 	"interwiki-title-norights": "Dados de prefixos interwikis",
 	"interwiki-desc": "[[Special:Interwiki|Página especial]] para ver e editar a tabela de interwikis",
-	"interwiki_intro": "Esta é uma visão geral da tabela de interwikis, que define os prefixos usados para criar rapidamente hiperligações para outras wikis e outros sítios externos. Para recomendações de uso, por favor consulte [//www.mediawiki.org/wiki/Extension:Interwiki o manual na MediaWiki.org].",
+	"interwiki_intro": "Esta é uma visão geral da tabela de interwikis, que define os prefixos usados para criar rapidamente hiperligações para outras wikis e outros sítios externos. Para recomendações de uso, por favor consulte [https//www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki o manual na wiki MediaWiki.org].",
 	"interwiki-legend-label": "Legenda",
 	"interwiki_prefix": "Prefixo",
 	"interwiki-prefix-label": "Prefixo:",
@@ -29,7 +29,7 @@
 	"interwiki_local_1_intro": "Pedidos HTTP externos, feitos à wiki local usando este prefixo interwikis, serão redirecionados para o URL de destino (ou seja, serão tratados como hiperligações para páginas locais).",
 	"interwiki_trans": "Transcluir",
 	"interwiki-trans-label": "Transcluir",
-	"interwiki_trans_1_intro": "Se for usada a notação <code>{<nowiki />{prefixo:<em>nome da página</em>}}</code>, permitir a transclusão de predefinições e páginas da wiki externa se transclusões interwikis forem permitidas de forma geral nesta wiki ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding transclusão interwikis]).",
+	"interwiki_trans_1_intro": "Se for usada a sintaxe de texto wiki <code>{<nowiki />{prefixo:<em>nome da página</em>}}</code>, permitir a transclusão de predefinições e páginas da wiki externa se as transclusões interwikis forem permitidas de forma geral nesta wiki ([https//www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgEnableScaryTranscluding transclusão interwikis]).",
 	"interwiki_trans_0_intro": "Não permitir que <code>{<nowiki />{prefixo:<em>nome da página</em>}}</code> transclua predefinições e páginas externas, mas antes procurar uma página local no espaço nominal das predefinições.",
 	"interwiki_1": "sim",
 	"interwiki_0": "não",

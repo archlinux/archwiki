@@ -2,9 +2,9 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
+use Config;
 use ExtensionRegistry;
 use Wikimedia\Rdbms\LBFactory;
-use Config;
 
 /**
  * This class serves as a utility class for this extension
@@ -12,7 +12,7 @@ use Config;
  * @package MediaWiki\Extension\OATHAuth
  */
 class OATHAuth {
-	const AUTHENTICATED_OVER_2FA = 'OATHAuthAuthenticatedOver2FA';
+	public const AUTHENTICATED_OVER_2FA = 'OATHAuthAuthenticatedOver2FA';
 
 	/**
 	 * @var Config

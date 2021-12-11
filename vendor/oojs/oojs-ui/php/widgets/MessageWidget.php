@@ -46,7 +46,6 @@ class MessageWidget extends Widget {
 
 	/**
 	 * @param array $config Configuration options
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -58,8 +57,14 @@ class MessageWidget extends Widget {
 		$this->initializeTitledElement( $config );
 		$this->initializeFlaggedElement( $config );
 
-		$this->setType( isset( $config['type'] ) ? $config['type'] : $this->defaultType );
+		$this->setType( $config['type'] ?? $this->defaultType );
 		$this->setInline( isset( $config['inline'] ) && (bool)$config['inline'] );
+
+		// If an icon is passed in, set it again as setType will
+		// have overridden the setIcon call in the IconElement constructor
+		if ( isset( $config['icon'] ) ) {
+			$this->setIcon( $config['icon'] );
+		}
 
 		$this->addClasses( [ 'oo-ui-messageWidget' ] );
 		$this->appendContent( [ $this->icon, $this->label ] );

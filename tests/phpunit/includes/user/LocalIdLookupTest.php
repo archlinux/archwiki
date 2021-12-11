@@ -7,10 +7,10 @@ use MediaWiki\MediaWikiServices;
  * @covers LocalIdLookup
  * @group Database
  */
-class LocalIdLookupTest extends MediaWikiTestCase {
+class LocalIdLookupTest extends MediaWikiIntegrationTestCase {
 	private $localUsers = [];
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->setGroupPermissions( 'local-id-lookup-test', 'hideuser', true );
@@ -22,6 +22,7 @@ class LocalIdLookupTest extends MediaWikiTestCase {
 		}
 
 		$sysop = static::getTestSysop()->getUser();
+		$blockStore = MediaWikiServices::getInstance()->getDatabaseBlockStore();
 
 		$block = new DatabaseBlock( [
 			'address' => $this->localUsers[2]->getName(),
@@ -30,7 +31,7 @@ class LocalIdLookupTest extends MediaWikiTestCase {
 			'expiry' => '1 day',
 			'hideName' => false,
 		] );
-		$block->insert();
+		$blockStore->insertBlock( $block );
 
 		$block = new DatabaseBlock( [
 			'address' => $this->localUsers[3]->getName(),
@@ -39,7 +40,7 @@ class LocalIdLookupTest extends MediaWikiTestCase {
 			'expiry' => '1 day',
 			'hideName' => true,
 		] );
-		$block->insert();
+		$blockStore->insertBlock( $block );
 	}
 
 	public function getLookupUser() {

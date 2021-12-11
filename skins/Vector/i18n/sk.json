@@ -2,15 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Helix84",
-			"Rudko",
-			"Sudo77(new)",
 			"KuboF",
+			"Luky001",
 			"Mikulas1",
-			"Robert Važan"
+			"Robert Važan",
+			"Rudko",
+			"Sudo77(new)"
 		]
 	},
 	"skinname-vector": "Vector",
 	"vector-skin-desc": "Moderná verzia MonoBooku so sviežim vzhľadom a vylepšenou použiteľnosťou",
+	"prefs-vector-enable-vector-1-label": "Použiť starý Vector",
+	"prefs-vector-enable-vector-1-help": "V nasledujúcich rokoch budeme postupne aktualizovať vzhľad Vector. Starý Vector vám umožní používať starú verziu Vectora z decembra 2019. Viac o aktualizáciách sa dozviete na našej [[mw:Reading/Web/Desktop_Improvements|projektovej stránke]].",
+	"vector-opt-out": "Prepnúť na starý vzhľad",
+	"vector-opt-out-tooltip": "Zmeniť nastavenie a vrátiť sa späť k starej podobe vzhľadu (starý Vector)",
 	"vector.css": "/* Tu umiestnené CSS bude ovplyvňovať používateľov štýlu Vector */",
 	"vector.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Vector */",
 	"vector-action-addsection": "Pridať tému",

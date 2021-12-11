@@ -23,10 +23,11 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use OOUI\IconWidget;
 use Wikimedia\Rdbms\DBQueryTimeoutError;
-use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Special page which uses a ChangesList to show query results.
@@ -39,7 +40,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * Maximum length of a tag description in UTF-8 characters.
 	 * Longer descriptions will be truncated.
 	 */
-	const TAG_DESC_CHARACTER_LIMIT = 120;
+	private const TAG_DESC_CHARACTER_LIMIT = 120;
 
 	/**
 	 * Preference name for saved queries. Subclasses that use saved queries should override this.
@@ -85,25 +86,27 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 * all of the filters in a group can be configured to only display on the
 	 * unstuctured UI, in which case you don't need a group title.
 	 *
-	 * @var array $filterGroupDefinitions
+	 * @var array
 	 */
 	private $filterGroupDefinitions;
 
-	// Same format as filterGroupDefinitions, but for a single group (reviewStatus)
-	// that is registered conditionally.
+	/**
+	 * @var array Same format as filterGroupDefinitions, but for a single group (reviewStatus)
+	 * that is registered conditionally.
+	 */
 	private $legacyReviewStatusFilterGroupDefinition;
 
-	// Single filter group registered conditionally
+	/** @var array Single filter group registered conditionally */
 	private $reviewStatusFilterGroupDefinition;
 
-	// Single filter group registered conditionally
+	/** @var array Single filter group registered conditionally */
 	private $hideCategorizationFilterDefinition;
 
 	/**
 	 * Filter groups, and their contained filters
 	 * This is an associative array (with group name as key) of ChangesListFilterGroup objects.
 	 *
-	 * @var array $filterGroups
+	 * @var ChangesListFilterGroup[]
 	 */
 	protected $filterGroups = [];
 
@@ -111,7 +114,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		parent::__construct( $name, $restriction );
 
 		$nonRevisionTypes = [ RC_LOG ];
-		Hooks::run( 'SpecialWatchlistGetNonRevisionTypes', [ &$nonRevisionTypes ] );
+		$this->getHookRunner()->onSpecialWatchlistGetNonRevisionTypes( $nonRevisionTypes );
 
 		$this->filterGroupDefinitions = [
 			[
@@ -125,7 +128,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhideliu
 						'showHideSuffix' => 'showhideliu',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$actorMigration = ActorMigration::newMigration();
@@ -143,7 +146,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhideanons
 						'showHideSuffix' => 'showhideanons',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$actorMigration = ActorMigration::newMigration();
@@ -168,7 +171,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-user-experience-level-unregistered-label',
 						'description' => 'rcfilters-filter-user-experience-level-unregistered-description',
 						'cssClassSuffix' => 'user-unregistered',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return !$rc->getAttribute( 'rc_user' );
 						}
 					],
@@ -177,7 +180,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-user-experience-level-registered-label',
 						'description' => 'rcfilters-filter-user-experience-level-registered-description',
 						'cssClassSuffix' => 'user-registered',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_user' );
 						}
 					],
@@ -186,9 +189,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-user-experience-level-newcomer-label',
 						'description' => 'rcfilters-filter-user-experience-level-newcomer-description',
 						'cssClassSuffix' => 'user-newcomer',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							$performer = $rc->getPerformer();
-							return $performer && $performer->isLoggedIn() &&
+							return $performer && $performer->isRegistered() &&
 								$performer->getExperienceLevel() === 'newcomer';
 						}
 					],
@@ -197,9 +200,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-user-experience-level-learner-label',
 						'description' => 'rcfilters-filter-user-experience-level-learner-description',
 						'cssClassSuffix' => 'user-learner',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							$performer = $rc->getPerformer();
-							return $performer && $performer->isLoggedIn() &&
+							return $performer && $performer->isRegistered() &&
 								$performer->getExperienceLevel() === 'learner';
 						},
 					],
@@ -208,9 +211,9 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-user-experience-level-experienced-label',
 						'description' => 'rcfilters-filter-user-experience-level-experienced-description',
 						'cssClassSuffix' => 'user-experienced',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							$performer = $rc->getPerformer();
-							return $performer && $performer->isLoggedIn() &&
+							return $performer && $performer->isRegistered() &&
 								$performer->getExperienceLevel() === 'experienced';
 						},
 					]
@@ -232,7 +235,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhidemine
 						'showHideSuffix' => 'showhidemine',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$actorQuery = ActorMigration::newMigration()->getWhere( $dbr, 'rc_user', $ctx->getUser() );
@@ -241,7 +244,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 							$conds[] = 'NOT(' . $actorQuery['conds'] . ')';
 						},
 						'cssClassSuffix' => 'self',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $ctx->getUser()->equals( $rc->getPerformer() );
 						},
 					],
@@ -250,7 +253,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-editsbyother-label',
 						'description' => 'rcfilters-filter-editsbyother-description',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$actorQuery = ActorMigration::newMigration()
@@ -260,7 +263,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 							$conds[] = $actorQuery['conds'];
 						},
 						'cssClassSuffix' => 'others',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return !$ctx->getUser()->equals( $rc->getPerformer() );
 						},
 					]
@@ -280,13 +283,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhidebots
 						'showHideSuffix' => 'showhidebots',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds['rc_bot'] = 0;
 						},
 						'cssClassSuffix' => 'bot',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_bot' );
 						},
 					],
@@ -295,13 +298,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-humans-label',
 						'description' => 'rcfilters-filter-humans-description',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds['rc_bot'] = 1;
 						},
 						'cssClassSuffix' => 'human',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return !$rc->getAttribute( 'rc_bot' );
 						},
 					]
@@ -324,13 +327,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhideminor
 						'showHideSuffix' => 'showhideminor',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_minor = 0';
 						},
 						'cssClassSuffix' => 'minor',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_minor' );
 						}
 					],
@@ -339,13 +342,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-major-label',
 						'description' => 'rcfilters-filter-major-description',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_minor = 1';
 						},
 						'cssClassSuffix' => 'major',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return !$rc->getAttribute( 'rc_minor' );
 						}
 					]
@@ -363,7 +366,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-lastrevision-label',
 						'description' => 'rcfilters-filter-lastrevision-description',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds ) use ( $nonRevisionTypes ) {
 							$conds[] = $dbr->makeList(
 								[
@@ -374,7 +377,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 							);
 						},
 						'cssClassSuffix' => 'last',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_this_oldid' ) === $rc->getAttribute( 'page_latest' );
 						}
 					],
@@ -383,7 +386,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-previousrevision-label',
 						'description' => 'rcfilters-filter-previousrevision-description',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds ) use ( $nonRevisionTypes ) {
 							$conds[] = $dbr->makeList(
 								[
@@ -394,7 +397,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 							);
 						},
 						'cssClassSuffix' => 'previous',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_this_oldid' ) !== $rc->getAttribute( 'page_latest' );
 						}
 					]
@@ -414,13 +417,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-pageedits-description',
 						'default' => false,
 						'priority' => -2,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_EDIT );
 						},
 						'cssClassSuffix' => 'src-mw-edit',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_EDIT;
 						},
 					],
@@ -430,13 +433,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-newpages-description',
 						'default' => false,
 						'priority' => -3,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_NEW );
 						},
 						'cssClassSuffix' => 'src-mw-new',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_NEW;
 						},
 					],
@@ -449,13 +452,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'description' => 'rcfilters-filter-logactions-description',
 						'default' => false,
 						'priority' => -5,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_LOG );
 						},
 						'cssClassSuffix' => 'src-mw-log',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_LOG;
 						}
 					],
@@ -476,7 +479,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						// wlshowhidepatr
 						'showHideSuffix' => 'showhidepatr',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds['rc_patrolled'] = RecentChange::PRC_UNPATROLLED;
@@ -486,7 +489,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 					[
 						'name' => 'hideunpatrolled',
 						'default' => false,
-						'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+						'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 							&$query_options, &$join_conds
 						) {
 							$conds[] = 'rc_patrolled != ' . RecentChange::PRC_UNPATROLLED;
@@ -510,7 +513,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-reviewstatus-unpatrolled-label',
 						'description' => 'rcfilters-filter-reviewstatus-unpatrolled-description',
 						'cssClassSuffix' => 'reviewstatus-unpatrolled',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_patrolled' ) == RecentChange::PRC_UNPATROLLED;
 						},
 					],
@@ -519,7 +522,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-reviewstatus-manual-label',
 						'description' => 'rcfilters-filter-reviewstatus-manual-description',
 						'cssClassSuffix' => 'reviewstatus-manual',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_patrolled' ) == RecentChange::PRC_PATROLLED;
 						},
 					],
@@ -528,13 +531,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'label' => 'rcfilters-filter-reviewstatus-auto-label',
 						'description' => 'rcfilters-filter-reviewstatus-auto-description',
 						'cssClassSuffix' => 'reviewstatus-auto',
-						'isRowApplicableCallable' => function ( $ctx, $rc ) {
+						'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 							return $rc->getAttribute( 'rc_patrolled' ) == RecentChange::PRC_AUTOPATROLLED;
 						},
 					],
 				],
 				'default' => ChangesListStringOptionsFilterGroup::NONE,
-				'queryCallable' => function ( $specialPageClassName, $ctx, $dbr,
+				'queryCallable' => static function ( $specialPageClassName, $ctx, $dbr,
 					&$tables, &$fields, &$conds, &$query_options, &$join_conds, $selected
 				) {
 					if ( $selected === [] ) {
@@ -546,7 +549,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 						'auto' => RecentChange::PRC_AUTOPATROLLED,
 					];
 					// e.g. rc_patrolled IN (0, 2)
-					$conds['rc_patrolled'] = array_map( function ( $s ) use ( $rcPatrolledValues ) {
+					$conds['rc_patrolled'] = array_map( static function ( $s ) use ( $rcPatrolledValues ) {
 						return $rcPatrolledValues[ $s ];
 					}, $selected );
 				}
@@ -562,13 +565,13 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			'showHideSuffix' => 'showhidecategorization',
 			'default' => false,
 			'priority' => -4,
-			'queryCallable' => function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
+			'queryCallable' => static function ( $specialClassName, $ctx, $dbr, &$tables, &$fields, &$conds,
 				&$query_options, &$join_conds
 			) {
 				$conds[] = 'rc_type != ' . $dbr->addQuotes( RC_CATEGORIZE );
 			},
 			'cssClassSuffix' => 'src-mw-categorize',
-			'isRowApplicableCallable' => function ( $ctx, $rc ) {
+			'isRowApplicableCallable' => static function ( $ctx, $rc ) {
 				return $rc->getAttribute( 'rc_source' ) === RecentChange::SRC_CATEGORIZE;
 			},
 		];
@@ -624,6 +627,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 		$this->considerActionsForDefaultSavedQuery( $subpage );
 
+		// Enable OOUI and module for the clock icon.
+		if ( $this->getConfig()->get( 'WatchlistExpiry' ) ) {
+			$this->getOutput()->enableOOUI();
+			$this->getOutput()->addModules( 'mediawiki.special.changeslist.watchlistexpiry' );
+		}
+
 		$opts = $this->getOptions();
 		try {
 			$rows = $this->getRows();
@@ -651,7 +660,8 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 				return;
 			}
 
-			$batch = new LinkBatch;
+			$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
+			$batch = $linkBatchFactory->newLinkBatch();
 			foreach ( $rows as $row ) {
 				$batch->add( NS_USER, $row->rc_user_text );
 				$batch->add( NS_USER_TALK, $row->rc_user_text );
@@ -809,7 +819,8 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			}
 
 			$out->addBodyClasses( 'mw-rcfilters-enabled' );
-			$collapsed = $this->getUser()->getBoolOption( static::$collapsedPreferenceName );
+			$collapsed = MediaWikiServices::getInstance()->getUserOptionsLookup()
+				->getBoolOption( $this->getUser(), static::$collapsedPreferenceName );
 			if ( $collapsed ) {
 				$out->addBodyClasses( 'mw-rcfilters-collapsed' );
 			}
@@ -908,7 +919,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'ChangesListSpecialPage-changeTagListSummary', $context->getLanguage() ),
 			WANObjectCache::TTL_DAY,
-			function ( $oldValue, &$ttl, array &$setOpts ) use ( $context ) {
+			static function ( $oldValue, &$ttl, array &$setOpts ) use ( $context ) {
 				$explicitlyDefinedTags = array_fill_keys( ChangeTags::listExplicitlyDefinedTags(), 0 );
 				$softwareActivatedTags = array_fill_keys( ChangeTags::listSoftwareActivatedTags(), 0 );
 
@@ -963,7 +974,8 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	 */
 	protected static function getChangeTagList( ResourceLoaderContext $context ) {
 		$tags = self::getChangeTagListSummary( $context );
-		$language = Language::factory( $context->getLanguage() );
+		$language = MediaWikiServices::getInstance()->getLanguageFactory()
+			->getLanguage( $context->getLanguage() );
 		foreach ( $tags as &$tagInfo ) {
 			$tagInfo['label'] = Sanitizer::stripAllTags( $tagInfo['labelMsg']->parse() );
 			$tagInfo['description'] = $tagInfo['descriptionMsg'] ?
@@ -977,7 +989,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		}
 
 		// Instead of sorting by hit count (disabled for now), sort by display name
-		usort( $tags, function ( $a, $b ) {
+		usort( $tags, static function ( $a, $b ) {
 			return strcasecmp( $a['label'], $b['label'] );
 		} );
 		return $tags;
@@ -1008,7 +1020,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	/**
 	 * Get the database result for this special page instance. Used by ApiFeedRecentChanges.
 	 *
-	 * @return bool|IResultWrapper Result or false
+	 * @return IResultWrapper|false
 	 */
 	public function getRows() {
 		$opts = $this->getOptions();
@@ -1070,7 +1082,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			);
 		}
 
-		Hooks::run( 'ChangesListSpecialPageStructuredFilters', [ $this ] );
+		$this->getHookRunner()->onChangesListSpecialPageStructuredFilters( $this );
 
 		$this->registerFiltersFromDefinitions( [] );
 
@@ -1164,7 +1176,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		foreach ( $this->filterGroups as $group ) {
 			if ( $group instanceof ChangesListBooleanFilterGroup ) {
 				foreach ( $group->getFilters() as $key => $filter ) {
-					if ( $filter->displaysOnUnstructuredUi( $this ) ) {
+					if ( $filter->displaysOnUnstructuredUi() ) {
 						$filters[ $key ] = $filter;
 					}
 				}
@@ -1282,12 +1294,12 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			'messageKeys' => [],
 		];
 
-		usort( $this->filterGroups, function ( $a, $b ) {
+		usort( $this->filterGroups, static function ( $a, $b ) {
 			return $b->getPriority() <=> $a->getPriority();
 		} );
 
 		foreach ( $this->filterGroups as $groupName => $group ) {
-			$groupOutput = $group->getJsData( $this );
+			$groupOutput = $group->getJsData();
 			if ( $groupOutput !== null ) {
 				$output['messageKeys'] = array_merge(
 					$output['messageKeys'],
@@ -1394,7 +1406,7 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 				$allInGroupEnabled = array_reduce(
 					$filters,
-					function ( $carry, $filter ) use ( $opts ) {
+					static function ( $carry, $filter ) use ( $opts ) {
 						return $carry && $opts[ $filter->getName() ];
 					},
 					/* initialValue */ count( $filters ) > 0
@@ -1530,31 +1542,43 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 
 			$namespaces = $this->expandSymbolicNamespaceFilters( $namespaces );
 
-			if ( $opts[ 'associated' ] ) {
-				$namespaceInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
-				$associatedNamespaces = array_map(
-					function ( $ns ) use ( $namespaceInfo ){
-						return $namespaceInfo->getAssociated( $ns );
-					},
-					array_filter(
-						$namespaces,
-						function ( $ns ) use ( $namespaceInfo ) {
-							return $namespaceInfo->hasTalkNamespace( $ns );
-						}
-					)
-				);
-				$namespaces = array_unique( array_merge( $namespaces, $associatedNamespaces ) );
-			}
+			$namespaceInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
+			$namespaces = array_filter(
+				$namespaces,
+				static function ( $ns ) use ( $namespaceInfo ) {
+					return $namespaceInfo->exists( $ns );
+				}
+			);
 
-			if ( count( $namespaces ) === 1 ) {
-				$operator = $opts[ 'invert' ] ? '!=' : '=';
-				$value = $dbr->addQuotes( reset( $namespaces ) );
-			} else {
-				$operator = $opts[ 'invert' ] ? 'NOT IN' : 'IN';
-				sort( $namespaces );
-				$value = '(' . $dbr->makeList( $namespaces ) . ')';
+			if ( $namespaces !== [] ) {
+				// Namespaces are just ints, use them as int when acting with the database
+				$namespaces = array_map( 'intval', $namespaces );
+
+				if ( $opts[ 'associated' ] ) {
+					$associatedNamespaces = array_map(
+						static function ( $ns ) use ( $namespaceInfo ){
+							return $namespaceInfo->getAssociated( $ns );
+						},
+						array_filter(
+							$namespaces,
+							static function ( $ns ) use ( $namespaceInfo ) {
+								return $namespaceInfo->hasTalkNamespace( $ns );
+							}
+						)
+					);
+					$namespaces = array_unique( array_merge( $namespaces, $associatedNamespaces ) );
+				}
+
+				if ( count( $namespaces ) === 1 ) {
+					$operator = $opts[ 'invert' ] ? '!=' : '=';
+					$value = $dbr->addQuotes( reset( $namespaces ) );
+				} else {
+					$operator = $opts[ 'invert' ] ? 'NOT IN' : 'IN';
+					sort( $namespaces );
+					$value = '(' . $dbr->makeList( $namespaces ) . ')';
+				}
+				$conds[] = "rc_namespace $operator $value";
 			}
-			$conds[] = "rc_namespace $operator $value";
 		}
 
 		// Calculate cutoff
@@ -1620,10 +1644,8 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 	protected function runMainQueryHook( &$tables, &$fields, &$conds,
 		&$query_options, &$join_conds, $opts
 	) {
-		return Hooks::run(
-			'ChangesListSpecialPageQuery',
-			[ $this->getName(), &$tables, &$fields, &$conds, &$query_options, &$join_conds, $opts ]
-		);
+		return $this->getHookRunner()->onChangesListSpecialPageQuery(
+			$this->getName(), $tables, $fields, $conds, $query_options, $join_conds, $opts );
 	}
 
 	/**
@@ -1660,9 +1682,6 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		$this->outputChangesList( $rows, $opts );
 	}
 
-	/**
-	 * Output feed links.
-	 */
 	public function outputFeedLinks() {
 		// nothing by default
 	}
@@ -1762,6 +1781,29 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 			[ 'class' => 'mw-changeslist-legend-plusminus' ],
 			$context->msg( 'recentchanges-label-plusminus' )->text()
 		) . "\n";
+		// Watchlist expiry clock icon.
+		if ( $context->getConfig()->get( 'WatchlistExpiry' ) ) {
+			$widget = new IconWidget( [
+				'icon' => 'clock',
+				'classes' => [ 'mw-changesList-watchlistExpiry' ],
+			] );
+			// Link the image to its label for assistive technologies.
+			$watchlistLabelId = 'mw-changeslist-watchlistExpiry-label';
+			$widget->getIconElement()->setAttributes( [
+				'role' => 'img',
+				'aria-labelledby' => $watchlistLabelId,
+			] );
+			$legend .= Html::rawElement(
+				'dt',
+				[ 'class' => 'mw-changeslist-legend-watchlistexpiry' ],
+				$widget
+			);
+			$legend .= Html::element(
+				'dd',
+				[ 'class' => 'mw-changeslist-legend-watchlistexpiry', 'id' => $watchlistLabelId ],
+				$context->msg( 'recentchanges-legend-watchlistexpiry' )->text()
+			);
+		}
 		$legend .= Html::closeElement( 'dl' ) . "\n";
 
 		$legendHeading = $this->isStructuredFilterUiEnabled() ?
@@ -1875,7 +1917,10 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		$aboveNewcomer = $dbr->makeList(
 			[
 				'user_editcount >= ' . intval( $wgLearnerEdits ),
-				'user_registration <= ' . $dbr->addQuotes( $dbr->timestamp( $learnerCutoff ) ),
+				$dbr->makeList( [
+					'user_registration IS NULL',
+					'user_registration <= ' . $dbr->addQuotes( $dbr->timestamp( $learnerCutoff ) ),
+				], IDatabase::LIST_OR ),
 			],
 			IDatabase::LIST_AND
 		);
@@ -1883,8 +1928,11 @@ abstract class ChangesListSpecialPage extends SpecialPage {
 		$aboveLearner = $dbr->makeList(
 			[
 				'user_editcount >= ' . intval( $wgExperiencedUserEdits ),
-				'user_registration <= ' .
-					$dbr->addQuotes( $dbr->timestamp( $experiencedUserCutoff ) ),
+				$dbr->makeList( [
+					'user_registration IS NULL',
+					'user_registration <= ' .
+						$dbr->addQuotes( $dbr->timestamp( $experiencedUserCutoff ) ),
+				], IDatabase::LIST_OR ),
 			],
 			IDatabase::LIST_AND
 		);

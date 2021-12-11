@@ -41,21 +41,16 @@ class AutoCommitUpdate implements DeferrableUpdate, DeferrableCallback {
 		$autoTrx = $this->dbw->getFlag( DBO_TRX );
 		$this->dbw->clearFlag( DBO_TRX );
 		try {
-			/** @var Exception $e */
-			$e = null;
 			( $this->callback )( $this->dbw, $this->fname );
-		} catch ( Exception $e ) {
-		}
-		if ( $autoTrx ) {
-			$this->dbw->setFlag( DBO_TRX );
-		}
-		if ( $e ) {
-			throw $e;
+		} finally {
+			if ( $autoTrx ) {
+				$this->dbw->setFlag( DBO_TRX );
+			}
 		}
 	}
 
 	/**
-	 * @private This method is public so that it works with onTransactionResolution()
+	 * @internal This method is public so that it works with onTransactionResolution()
 	 * @param int $trigger
 	 */
 	public function cancelOnRollback( $trigger ) {

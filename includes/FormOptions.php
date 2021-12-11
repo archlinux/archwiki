@@ -35,29 +35,29 @@
 class FormOptions implements ArrayAccess {
 	/** @name Type constants
 	 * Used internally to map an option value to a WebRequest accessor
+	 * @{
 	 */
-	/* @{ */
 	/** Mark value for automatic detection (for simple data types only) */
-	const AUTO = -1;
+	public const AUTO = -1;
 	/** String type, maps guessType() to WebRequest::getText() */
-	const STRING = 0;
+	public const STRING = 0;
 	/** Integer type, maps guessType() to WebRequest::getInt() */
-	const INT = 1;
+	public const INT = 1;
 	/** Float type, maps guessType() to WebRequest::getFloat()
 	 * @since 1.23
 	 */
-	const FLOAT = 4;
+	public const FLOAT = 4;
 	/** Boolean type, maps guessType() to WebRequest::getBool() */
-	const BOOL = 2;
+	public const BOOL = 2;
 	/** Integer type or null, maps to WebRequest::getIntOrNull()
 	 * This is useful for the namespace selector.
 	 */
-	const INTNULL = 3;
+	public const INTNULL = 3;
 	/** Array type, maps guessType() to WebRequest::getArray()
 	 * @since 1.29
 	 */
-	const ARR = 5;
-	/* @} */
+	public const ARR = 5;
+	/** @} */
 
 	/**
 	 * Map of known option names to information about them.
@@ -231,7 +231,7 @@ class FormOptions implements ArrayAccess {
 	 *
 	 * @see consumeValue()
 	 * @throws MWException If any option does not exist
-	 * @param array $names Array of option names as strings
+	 * @param string[] $names List of option names
 	 * @return array Array of option values, or the default values if they are null
 	 */
 	public function consumeValues( $names ) {
@@ -381,11 +381,12 @@ class FormOptions implements ArrayAccess {
 		}
 	}
 
-	/** @name ArrayAccess functions
+	/***************************************************************************/
+	// region   ArrayAccess functions
+	/** @name   ArrayAccess functions
 	 * These functions implement the ArrayAccess PHP interface.
 	 * @see https://www.php.net/manual/en/class.arrayaccess.php
 	 */
-	/* @{ */
 
 	/**
 	 * Whether the option exists.
@@ -421,5 +422,6 @@ class FormOptions implements ArrayAccess {
 	public function offsetUnset( $name ) {
 		$this->delete( $name );
 	}
-	/* @} */
+
+	// endregion -- end of ArrayAccess functions
 }

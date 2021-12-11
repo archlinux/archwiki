@@ -45,7 +45,7 @@ class ApiFormatXml extends ApiFormatBase {
 		$this->mXslt = $params['xslt'];
 
 		$this->printText( '<?xml version="1.0"?>' );
-		if ( !is_null( $this->mXslt ) ) {
+		if ( $this->mXslt !== null ) {
 			$this->addXslt();
 		}
 
@@ -58,7 +58,7 @@ class ApiFormatXml extends ApiFormatBase {
 			$result->addValue( null, 'xmlns', self::$namespace, ApiResult::NO_SIZE_CHECK );
 		}
 		$data = $result->getResultData( null, [
-			'Custom' => function ( &$data, &$metadata ) {
+			'Custom' => static function ( &$data, &$metadata ) {
 				if ( isset( $metadata[ApiResult::META_TYPE] ) ) {
 					// We want to use non-BC for BCassoc to force outputting of _idx.
 					switch ( $metadata[ApiResult::META_TYPE] ) {
@@ -247,7 +247,7 @@ class ApiFormatXml extends ApiFormatBase {
 
 		return '_' . preg_replace_callback(
 			"/[^$nc]/uS",
-			function ( $m ) {
+			static function ( $m ) {
 				return sprintf( '.%X.', UtfNormal\Utils::utf8ToCodepoint( $m[0] ) );
 			},
 			str_replace( '.', '.2E.', $name )
@@ -256,12 +256,12 @@ class ApiFormatXml extends ApiFormatBase {
 
 	protected function addXslt() {
 		$nt = Title::newFromText( $this->mXslt );
-		if ( is_null( $nt ) || !$nt->exists() ) {
+		if ( $nt === null || !$nt->exists() ) {
 			$this->addWarning( 'apiwarn-invalidxmlstylesheet' );
 
 			return;
 		}
-		if ( $nt->getNamespace() != NS_MEDIAWIKI ) {
+		if ( $nt->getNamespace() !== NS_MEDIAWIKI ) {
 			$this->addWarning( 'apiwarn-invalidxmlstylesheetns' );
 
 			return;

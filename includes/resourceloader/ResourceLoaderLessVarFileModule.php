@@ -17,6 +17,10 @@
  *
  * @file
  */
+use Wikimedia\Minify\CSSMin;
+
+// Per https://phabricator.wikimedia.org/T241091
+// phpcs:disable MediaWiki.Commenting.FunctionAnnotations.UnrecognizedAnnotation
 
 /**
  * Module augmented with context-specific LESS variables.
@@ -31,7 +35,7 @@ class ResourceLoaderLessVarFileModule extends ResourceLoaderFileModule {
 	 * @inheritDoc
 	 */
 	public function __construct(
-		$options = [],
+		array $options = [],
 		$localBasePath = null,
 		$remoteBasePath = null
 	) {
@@ -50,19 +54,17 @@ class ResourceLoaderLessVarFileModule extends ResourceLoaderFileModule {
 	}
 
 	/**
-	 * Exclude a set of messages from a JSON string representation
+	 * Return a subset of messages from a JSON string representation.
 	 *
-	 * @param string $blob
-	 * @param array $exclusions
-	 * @return object $blob
+	 * @param string|null $blob JSON, or null if module has no declared messages
+	 * @param string[] $allowed
+	 * @return array
 	 */
-	protected function excludeMessagesFromBlob( $blob, $exclusions ) {
-		$data = json_decode( $blob, true );
-		// unset the LESS variables so that they are not forwarded to JavaScript
-		foreach ( $exclusions as $key ) {
-			unset( $data[$key] );
-		}
-		return (object)$data;
+	private function pluckFromMessageBlob( $blob, array $allowed ) : array {
+		$data = $blob ? json_decode( $blob, true ) : [];
+		// Keep only the messages intended for LESS export
+		// (opposite of getMesssages essentially).
+		return array_intersect_key( $data, array_flip( $allowed ) );
 	}
 
 	/**
@@ -70,21 +72,40 @@ class ResourceLoaderLessVarFileModule extends ResourceLoaderFileModule {
 	 */
 	protected function getMessageBlob( ResourceLoaderContext $context ) {
 		$blob = parent::getMessageBlob( $context );
-		return json_encode( $this->excludeMessagesFromBlob( $blob, $this->lessVariables ) );
+		if ( !$blob ) {
+			// If module has no blob, preserve null to avoid needless WAN cache allocation
+			// client output for modules without messages.
+			return $blob;
+		}
+		return json_encode( (object)$this->pluckFromMessageBlob( $blob, $this->messages ) );
 	}
 
+	// phpcs:disable MediaWiki.Commenting.DocComment.SpacingDocTag, Squiz.WhiteSpace.FunctionSpacing.Before
 	/**
-	 * Takes a message and wraps it in quotes for compatibility with LESS parser
-	 * (ModifyVars) method so that the variable can be loaded and made available to stylesheets.
-	 * Note this does not take care of CSS escaping. That will be taken care of as part
-	 * of CSS Janus.
+	 * Escape and wrap a message value as literal string for LESS.
+	 *
+	 * This mostly lets CSSMin escape it and wrap it, but also escape single quotes
+	 * for compatibility with LESS's feature of variable interpolation into other strings.
+	 * This is relatively rare for most use of LESS, but for messages it is quite common.
+	 *
+	 * Example:
+	 *
+	 * @code
+	 *     @x: "foo's";
+	 *     .eg { content: 'Value is @{x}'; }
+	 * @endcode
+	 *
+	 * Produces output: `.eg { content: 'Value is foo's'; }`.
+	 * (Tested in less.php 1.8.1, and Less.js 2.7)
 	 *
 	 * @param string $msg
-	 * @return string wrapped LESS variable definition
+	 * @return string wrapped LESS variable value
 	 */
 	private static function wrapAndEscapeMessage( $msg ) {
 		return str_replace( "'", "\'", CSSMin::serializeStringValue( $msg ) );
 	}
+
+	// phpcs:enable MediaWiki.Commenting.DocComment.SpacingDocTag, Squiz.WhiteSpace.FunctionSpacing.Before
 
 	/**
 	 * Get language-specific LESS variables for this module.
@@ -93,13 +114,20 @@ class ResourceLoaderLessVarFileModule extends ResourceLoaderFileModule {
 	 * @return array LESS variables
 	 */
 	protected function getLessVars( ResourceLoaderContext $context ) {
-		$blob = parent::getMessageBlob( $context );
-		$lessMessages = $this->excludeMessagesFromBlob( $blob, $this->messages );
-
 		$vars = parent::getLessVars( $context );
-		foreach ( $lessMessages as $msgKey => $value ) {
-			$vars['msg-' . $msgKey] = self::wrapAndEscapeMessage( $value );
+
+		$blob = parent::getMessageBlob( $context );
+		$messages = $this->pluckFromMessageBlob( $blob, $this->lessVariables );
+
+		// It is important that we iterate the declared list from $this->lessVariables,
+		// and not $messages since in the case of undefined messages, the key is
+		// omitted entirely from the blob. This emits a log warning for developers,
+		// but we must still carry on and produce a valid LESS variable declaration,
+		// to avoid a LESS syntax error (T267785).
+		foreach ( $this->lessVariables as $msgKey ) {
+			$vars['msg-' . $msgKey] = self::wrapAndEscapeMessage( $messages[$msgKey] ?? "⧼${msgKey}⧽" );
 		}
+
 		return $vars;
 	}
 }

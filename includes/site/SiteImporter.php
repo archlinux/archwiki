@@ -2,7 +2,7 @@
 
 /**
  * Utility for importing site entries from XML.
- * For the expected format of the input, see docs/sitelist.txt and docs/sitelist-1.0.xsd.
+ * For the expected format of the input, see docs/sitelist.md and docs/sitelist-1.0.xsd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,11 +82,13 @@ class SiteImporter {
 		$document = new DOMDocument();
 
 		$oldLibXmlErrors = libxml_use_internal_errors( true );
+		$oldDisable = libxml_disable_entity_loader( true );
 		$ok = $document->loadXML( $xml, LIBXML_NONET );
 
 		if ( !$ok ) {
 			$errors = libxml_get_errors();
 			libxml_use_internal_errors( $oldLibXmlErrors );
+			libxml_disable_entity_loader( $oldDisable );
 
 			foreach ( $errors as $error ) {
 				/** @var LibXMLError $error */
@@ -99,6 +101,7 @@ class SiteImporter {
 		}
 
 		libxml_use_internal_errors( $oldLibXmlErrors );
+		libxml_disable_entity_loader( $oldDisable );
 		$this->importFromDOM( $document->documentElement );
 	}
 

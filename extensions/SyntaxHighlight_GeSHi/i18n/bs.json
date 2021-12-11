@@ -3,7 +3,8 @@
 		"authors": [
 			"CERminator",
 			"Semso98",
-			"Srdjan m"
+			"Srdjan m",
+			"Srđan"
 		]
 	},
 	"syntaxhighlight-desc": "Omogućava isticanje sintakse <code>&lt;source&gt;</code> uz pomoć [http://pygments.org/ Pygments - Python syntax highlighter]",

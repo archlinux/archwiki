@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Aftab1995",
+			"Aftabuzzaman",
 			"Bellayet",
 			"Nasir8891",
 			"Zaheen",
-			"Aftabuzzaman",
 			"আফতাবুজ্জামান"
 		]
 	},
@@ -18,8 +18,8 @@
 	"cite_error_ref_no_input": "অবৈধ <code>&lt;ref&gt;</code> ট্যাগ; নামবিহীন ref সমূহের অবশ্যই বিষয়বস্তু থাকতে হবে",
 	"cite_error_references_duplicate_key": "<code>&lt;ref&gt;</code> ট্যাগ অবৈধ; আলাদা বিষয়বস্তুর সঙ্গে \"$1\" নাম একাধিক বার সংজ্ঞায়িত করা হয়েছে",
 	"cite_error_references_invalid_parameters": "<code>&lt;references&gt;</code> ট্যাগে অবৈধ প্যারামিটার",
-	"cite_error_references_no_backlink_label": "স্বনির্ধারিত পিছনসংযোগের স্তরের সংখ্যা শেষ হয়ে গেছে।\n<nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> বার্তায় আরও সংজ্ঞায়িত করুন।",
-	"cite_error_no_link_label_group": "\"$1\" গ্রুপের জন্য স্বনির্ধারিত লিংক ব্যবহারের সীমানা পেরিয়েছে।\n<nowiki>[[MediaWiki:$2]]</nowiki> বার্তায় আরও সজ্ঞায়িত করুন।",
+	"cite_error_references_no_backlink_label": "স্বনির্ধারিত পিছনসংযোগের স্তরের সংখ্যা শেষ হয়ে গেছে।\n[[MediaWiki:Cite references link many format backlink labels]] বার্তায় আরও সংজ্ঞায়িত করুন।",
+	"cite_error_no_link_label_group": "\"$1\" গ্রুপের জন্য স্বনির্ধারিত লিংক ব্যবহারের সীমানা পেরিয়েছে।\n[[MediaWiki:$2]] বার্তায় আরও সজ্ঞায়িত করুন।",
 	"cite_error_references_no_text": "অবৈধ <code>&lt;ref&gt;</code> ট্যাগ; <code>$1</code> নামের সূত্রের জন্য কোন লেখা প্রদান করা হয়নি",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code> ট্যাগের ক্ষেত্রে <code>&lt;/ref&gt;</code> ট্যাগ যোগ করা হয়নি",
 	"cite_error_group_refs_without_references": "\"$1\" নামক গ্রুপের জন্য <code>&lt;ref&gt;</code> ট্যাগ রয়েছে, কিন্তু এর জন্য কোন সঙ্গতিপূর্ণ <code>&lt;references group=\"$1\"/&gt;</code> ট্যাগ পাওয়া যায়নি, বা বন্ধকরণ <code>&lt;/ref&gt;</code> দেয়া হয়নি",

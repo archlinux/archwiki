@@ -95,7 +95,7 @@ $specialPageAliases['eo'] = [
 
 /** Spanish (español) */
 $specialPageAliases['es'] = [
-	'Interwiki' => [ 'Enlaces_interligüísticos' ],
+	'Interwiki' => [ 'Enlaces_interlingüísticos' ],
 ];
 
 /** Estonian (eesti) */

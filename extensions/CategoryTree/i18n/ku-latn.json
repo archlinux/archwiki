@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bikarhêner",
 			"Erdal Ronahi",
 			"George Animal",
 			"Ghybu",
 			"Gomada",
-			"Welathêja",
-			"Bikarhêner"
+			"Guherto",
+			"Welathêja"
 		]
 	},
 	"categorytree": "Dara kategoriyan",
@@ -28,5 +29,5 @@
 	"categorytree-nothing-found": "ti tişt nehate dîtin",
 	"categorytree-no-subcategories": "binkategorî tune",
 	"categorytree-no-pages": "ne rûpelek an jî binkategoriyek",
-	"categorytree-not-found": "Kategorîya <i>$1</i> nehate dîtin"
+	"categorytree-not-found": "Kategoriya <i>$1</i> nehate dîtin"
 }

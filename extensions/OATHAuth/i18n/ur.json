@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"පසිඳු කාවින්ද",
-			"Muhammad Shuaib"
+			"Muhammad Shuaib",
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"oathauth-desc": "یک وقتی پاس ورڈ پر مبنی HMAC کی مدد سے توثیق سازی کی معاونت فراہم کرتا ہے",
@@ -31,7 +31,7 @@
 	"right-oathauth-view-log": "دو مرحلہ توثیق کی تبدیلیوں کے نوشتہ تک رسائی",
 	"action-oathauth-view-log": "دو مرحلہ توثیق کی تبدیلیوں کے نوشتہ تک رسائی",
 	"oathauth-enteruser": "صارف نام:",
-	"oathauth-enterreason": "غیر فعال کرنے کی وجہ:",
+	"oathauth-enterdisablereason": "غیر فعال کرنے کی وجہ:",
 	"oathauth-user-not-does-not-have-oath-enabled": "صارف نے دو مرحلہ توثیق کو فعال نہیں کیا، لہذا غیر فعال کرنے کے لیے کچھ نہیں ہے۔",
 	"right-oathauth-enable": "دو مرحلہ توثیق کی تنفیذ",
 	"action-oathauth-enable": "دو مرحلہ توثیق فعال کرنے",

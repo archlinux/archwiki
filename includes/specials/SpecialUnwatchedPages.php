@@ -24,9 +24,11 @@
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
 
-use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IResultWrapper;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Languages\LanguageConverterFactory;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * A special page that displays a list of pages that are not on anyones watchlist.
@@ -35,15 +37,33 @@ use Wikimedia\Rdbms\IDatabase;
  */
 class SpecialUnwatchedPages extends QueryPage {
 
-	function __construct( $name = 'Unwatchedpages' ) {
-		parent::__construct( $name, 'unwatchedpages' );
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
+	/** @var ILanguageConverter */
+	private $languageConverter;
+
+	/**
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LanguageConverterFactory $languageConverterFactory
+	 */
+	public function __construct(
+		LinkBatchFactory $linkBatchFactory,
+		ILoadBalancer $loadBalancer,
+		LanguageConverterFactory $languageConverterFactory
+	) {
+		parent::__construct( 'Unwatchedpages', 'unwatchedpages' );
+		$this->linkBatchFactory = $linkBatchFactory;
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() );
 	}
 
 	public function isExpensive() {
 		return true;
 	}
 
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
@@ -58,7 +78,7 @@ class SpecialUnwatchedPages extends QueryPage {
 			return;
 		}
 
-		$batch = new LinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
 		}
@@ -68,7 +88,7 @@ class SpecialUnwatchedPages extends QueryPage {
 	}
 
 	public function getQueryInfo() {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
 		return [
 			'tables' => [ 'page', 'watchlist' ],
 			'fields' => [
@@ -87,11 +107,11 @@ class SpecialUnwatchedPages extends QueryPage {
 		];
 	}
 
-	function sortDescending() {
+	protected function sortDescending() {
 		return false;
 	}
 
-	function getOrderFields() {
+	protected function getOrderFields() {
 		return [ 'page_namespace', 'page_title' ];
 	}
 
@@ -107,18 +127,17 @@ class SpecialUnwatchedPages extends QueryPage {
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		$nt = Title::makeTitleSafe( $result->namespace, $result->title );
 		if ( !$nt ) {
 			return Html::element( 'span', [ 'class' => 'mw-invalidtitle' ],
 				Linker::getInvalidTitleDescription( $this->getContext(), $result->namespace, $result->title ) );
 		}
 
-		$text = MediaWikiServices::getInstance()->getContentLanguage()->
-			convert( htmlspecialchars( $nt->getPrefixedText() ) );
+		$text = $this->languageConverter->convertHtml( $nt->getPrefixedText() );
 
 		$linkRenderer = $this->getLinkRenderer();
 

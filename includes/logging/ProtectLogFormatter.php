@@ -87,24 +87,22 @@ class ProtectLogFormatter extends LogFormatter {
 			return '';
 		}
 
-		// Show history link for all changes after the protection
+		// Show history link for pages that exist otherwise show nothing
 		$title = $this->entry->getTarget();
-		$links = [
-			$linkRenderer->makeLink( $title,
+		$links = [];
+		if ( $title->exists() ) {
+			$links[] = $linkRenderer->makeLink( $title,
 				$this->msg( 'hist' )->text(),
 				[],
 				[
 					'action' => 'history',
 					'offset' => $this->entry->getTimestamp(),
 				]
-			)
-		];
+			);
+		}
 
 		// Show change protection link
-		if ( MediaWikiServices::getInstance()
-				->getPermissionManager()
-				->userHasRight( $this->context->getUser(), 'protect' )
-		) {
+		if ( $this->context->getAuthority()->isAllowed( 'protect' ) ) {
 			$links[] = $linkRenderer->makeKnownLink(
 				$title,
 				$this->msg( 'protect_change' )->text(),
@@ -113,8 +111,13 @@ class ProtectLogFormatter extends LogFormatter {
 			);
 		}
 
-		return $this->msg( 'parentheses' )->rawParams(
-			$this->context->getLanguage()->pipeList( $links ) )->escaped();
+		if ( empty( $links ) ) {
+			return '';
+		} else {
+			return $this->msg( 'parentheses' )->rawParams(
+				$this->context->getLanguage()->pipeList( $links )
+			)->escaped();
+		}
 	}
 
 	protected function getParametersForApi() {
@@ -168,7 +171,7 @@ class ProtectLogFormatter extends LogFormatter {
 	/**
 	 * Create the protect description to show in the log formatter
 	 *
-	 * @param array $details
+	 * @param array[] $details
 	 * @return string
 	 */
 	public function createProtectDescription( array $details ) {

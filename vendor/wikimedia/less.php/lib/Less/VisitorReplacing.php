@@ -6,43 +6,41 @@
  * @package Less
  * @subpackage visitor
  */
-class Less_VisitorReplacing extends Less_Visitor{
+class Less_VisitorReplacing extends Less_Visitor {
 
-	public function visitObj( $node ){
-
+	public function visitObj( $node ) {
 		$funcName = 'visit'.$node->type;
-		if( isset($this->_visitFnCache[$funcName]) ){
+		if ( isset( $this->_visitFnCache[$funcName] ) ) {
 
 			$visitDeeper = true;
 			$node = $this->$funcName( $node, $visitDeeper );
 
-			if( $node ){
-				if( $visitDeeper && is_object($node) ){
-					$node->accept($this);
+			if ( $node ) {
+				if ( $visitDeeper && is_object( $node ) ) {
+					$node->accept( $this );
 				}
 
 				$funcName = $funcName . "Out";
-				if( isset($this->_visitFnCache[$funcName]) ){
+				if ( isset( $this->_visitFnCache[$funcName] ) ) {
 					$this->$funcName( $node );
 				}
 			}
 
-		}else{
-			$node->accept($this);
+		} else {
+			$node->accept( $this );
 		}
 
 		return $node;
 	}
 
-	public function visitArray( $nodes ){
-
+	public function visitArray( $nodes ) {
 		$newNodes = array();
-		foreach($nodes as $node){
-			$evald = $this->visitObj($node);
-			if( $evald ){
-				if( is_array($evald) ){
-					self::flatten($evald,$newNodes);
-				}else{
+		foreach ( $nodes as $node ) {
+			$evald = $this->visitObj( $node );
+			if ( $evald ) {
+				if ( is_array( $evald ) ) {
+					self::flatten( $evald, $newNodes );
+				} else {
 					$newNodes[] = $evald;
 				}
 			}
@@ -50,18 +48,17 @@ class Less_VisitorReplacing extends Less_Visitor{
 		return $newNodes;
 	}
 
-	public function flatten( $arr, &$out ){
-
-		foreach($arr as $item){
-			if( !is_array($item) ){
+	public function flatten( $arr, &$out ) {
+		foreach ( $arr as $item ) {
+			if ( !is_array( $item ) ) {
 				$out[] = $item;
 				continue;
 			}
 
-			foreach($item as $nestedItem){
-				if( is_array($nestedItem) ){
-					self::flatten( $nestedItem, $out);
-				}else{
+			foreach ( $item as $nestedItem ) {
+				if ( is_array( $nestedItem ) ) {
+					self::flatten( $nestedItem, $out );
+				} else {
 					$out[] = $nestedItem;
 				}
 			}
@@ -71,5 +68,3 @@ class Less_VisitorReplacing extends Less_Visitor{
 	}
 
 }
-
-

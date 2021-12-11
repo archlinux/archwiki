@@ -22,10 +22,12 @@
  * @ingroup Maintenance ExternalStorage
  */
 
+use MediaWiki\MediaWikiServices;
+
 if ( !defined( 'MEDIAWIKI' ) ) {
 	$optionsWithArgs = [ 'm' ];
 
-	require_once __DIR__ . '/../commandLine.inc';
+	require_once __DIR__ . '/../CommandLineInc.php';
 
 	resolveStubs();
 }
@@ -41,9 +43,10 @@ function resolveStubs() {
 	$maxID = $dbr->selectField( 'text', 'MAX(old_id)', '', $fname );
 	$blockSize = 10000;
 	$numBlocks = intval( $maxID / $blockSize ) + 1;
+	$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
 	for ( $b = 0; $b < $numBlocks; $b++ ) {
-		wfWaitForSlaves();
+		$lbFactory->waitForReplication();
 
 		printf( "%5.2f%%\n", $b / $numBlocks * 100 );
 		$start = intval( $maxID / $numBlocks ) * $b + 1;

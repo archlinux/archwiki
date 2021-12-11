@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Liuxinyu970226",
-			"LNDDYL",
+			"94rain",
 			"Cwlin0416",
-			"Wehwei",
 			"Eflyjason",
 			"Kly",
-			"Winston Sung",
-			"94rain"
+			"LNDDYL",
+			"Liuxinyu970226",
+			"Wehwei",
+			"Winston Sung"
 		]
 	},
 	"timeless-desc": "Timeless 佈景主題是 Brandon Harris 繼 Winter prototype 之後所設計的，其中的各種樣式來自維基媒體基金會",
@@ -26,8 +26,8 @@
 	"timeless-view-view": "閱讀",
 	"timeless-pagemisc": "更多",
 	"timeless-namespaces": "命名空間",
-	"timeless-pagetools": "頁面動作",
+	"timeless-pagetools": "頁面操作",
 	"timeless-languages": "語言",
 	"timeless-projects": "其它專案",
-	"timeless.js": "/* 任何在此的 JavaScript 都會在使用者使用 Timeless 佈景主題時被載入 */"
+	"timeless.js": "/* 對於採用 Timeless 佈景主題的使用者，在此所有的 JavaScript 都會載入 */"
 }

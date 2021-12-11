@@ -12,11 +12,15 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.32.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"config": {
-		"PFEnableStringFunctions": false,
-		"PFStringLengthLimit": 1000
+		"PFEnableStringFunctions": {
+			"value": false
+		},
+		"PFStringLengthLimit": {
+			"value": 1000
+		}
 	},
 	"ExtensionMessagesFiles": {
 		"ParserFunctionsMagic": "ParserFunctions.i18n.magic.php"
@@ -27,18 +31,20 @@
 		]
 	},
 	"Hooks": {
-		"ParserTestGlobals": [
-			"MediaWiki\\Extensions\\ParserFunctions\\Hooks::onParserTestGlobals"
-		],
-		"ParserFirstCallInit": [
-			"MediaWiki\\Extensions\\ParserFunctions\\Hooks::onParserFirstCallInit"
-		],
-		"ScribuntoExternalLibraries": [
-			"MediaWiki\\Extensions\\ParserFunctions\\Hooks::onScribuntoExternalLibraries"
-		]
+		"ParserTestGlobals": "ParserFunctionsHookHandler",
+		"ParserFirstCallInit": "ParserFunctionsHookHandler",
+		"ScribuntoExternalLibraries": "MediaWiki\\Extensions\\ParserFunctions\\Hooks::onScribuntoExternalLibraries"
+	},
+	"HookHandlers": {
+		"ParserFunctionsHookHandler": {
+			"class": "MediaWiki\\Extensions\\ParserFunctions\\Hooks",
+			"services": [
+				"MainConfig"
+			]
+		}
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extensions\\ParserFunctions\\": "includes/"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

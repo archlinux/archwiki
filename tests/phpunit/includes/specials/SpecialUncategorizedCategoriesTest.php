@@ -1,8 +1,11 @@
 <?php
+
+use MediaWiki\MediaWikiServices;
+
 /**
  * Tests for Special:UncategorizedCategories
  */
-class SpecialUncategorizedCategoriesTest extends MediaWikiTestCase {
+class SpecialUncategorizedCategoriesTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideTestGetQueryInfoData
 	 * @covers SpecialUncategorizedCategories::getQueryInfo
@@ -11,7 +14,13 @@ class SpecialUncategorizedCategoriesTest extends MediaWikiTestCase {
 		$msg = new RawMessage( $msgContent );
 		$mockContext = $this->getMockBuilder( RequestContext::class )->getMock();
 		$mockContext->method( 'msg' )->willReturn( $msg );
-		$special = new SpecialUncategorizedCategories();
+		$services = MediaWikiServices::getInstance();
+		$special = new SpecialUncategorizedCategories(
+			$services->getNamespaceInfo(),
+			$services->getDBLoadBalancer(),
+			$services->getLinkBatchFactory(),
+			$services->getLanguageConverterFactory()
+		);
 		$special->setContext( $mockContext );
 		$this->assertEquals( [
 			'tables' => [

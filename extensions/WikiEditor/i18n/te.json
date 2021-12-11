@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Veeven",
-			"Macofe"
+			"Arjunaraoc",
+			"Chaduvari",
+			"Macofe",
+			"Veeven"
 		]
 	},
 	"wikieditor": "ఉన్నత వికీపాఠ్య దిద్దుబాటు ముఖాంతరం",
@@ -10,6 +12,8 @@
 	"wikieditor-loading": "లోడవుతూంది",
 	"wikieditor-toolbar": "ఎడిటింగ్ టూల్‌బార్",
 	"wikieditor-toolbar-desc": "మెరుగైన ఉపయోగశీలతో దిద్దుబాటు పేజీ పనిముట్లపట్టీ",
+	"wikieditor-toolbar-preference": "సవరణ టూల్ బార్   సచేతనం",
+	"wikieditor-toolbar-preference-help": "దీనిని కొన్నిసార్లు '2010 వికీటెక్స్ట్ ఎడిటర్'  అంటారు.",
 	"wikieditor-toolbar-loading": "లోడవుతోంది...",
 	"wikieditor-toolbar-tool-bold": "బొద్దు",
 	"wikieditor-toolbar-tool-bold-example": "బొద్దు పాఠ్యం",
@@ -36,17 +40,18 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "తప్పుడు శీర్షిక",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "బయటి లింకు",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "పేజీ ఉనికిని సరిచూస్తున్నాం...",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "అయోమయ నివృత్తి పేజీ",
 	"wikieditor-toolbar-tool-link-int-invalid": "మీరు ఇచ్చిన శీర్షిక సరైనది కాదు.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "మీరు ఇచ్చిన చిరునామాని బట్టి మీరు మరో వికీ పేజీకి లంకె చేర్చాలని ఉద్దేశించినట్టుంది. దాన్ని అంతర్గత లంకెగా మార్చాలనుకుంటున్నారా?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "అంతర్గత లంకె",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "బయటి లంకె",
 	"wikieditor-toolbar-tool-link-empty": "మీరు దేనికి లంకె వెయ్యాలో పేర్కొనలేదు.",
-	"wikieditor-toolbar-tool-file": "పొదిగిన ఫైలు",
+	"wikieditor-toolbar-tool-file": "ఫైలు చొప్పించు",
 	"wikieditor-toolbar-file-target": "దస్త్రం పేరు:",
 	"wikieditor-toolbar-file-size": "పరిమాణం:",
 	"wikieditor-toolbar-file-default": "(అప్రమేయం)",
 	"wikieditor-toolbar-tool-file-cancel": "రద్దుచేయి",
-	"wikieditor-toolbar-tool-reference": "సాక్ష్యాలు",
+	"wikieditor-toolbar-tool-reference": "మూలాలు",
 	"wikieditor-toolbar-tool-reference-example": "పాదసూచిక పాఠ్యాన్ని ఇక్కడ చేర్చండి",
 	"wikieditor-toolbar-tool-reference-cancel": "రద్దుచేయి",
 	"wikieditor-toolbar-tool-signature": "టైంస్టాంపుతో సహా మీ సంతకం",

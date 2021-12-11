@@ -17,17 +17,29 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 	/** @var DatabaseSqlite */
 	protected $db;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		if ( !Sqlite::isPresent() ) {
 			$this->markTestSkipped( 'No SQLite support detected' );
 		}
-		$this->db = $this->getMockBuilder( DatabaseSqlite::class )
+		$this->db = $this->newMockDb();
+		if ( version_compare( $this->db->getServerVersion(), '3.6.0', '<' ) ) {
+			$this->markTestSkipped( "SQLite at least 3.6 required, {$this->db->getServerVersion()} found" );
+		}
+	}
+
+	/**
+	 * @param string|null $version
+	 * @param string|null &$sqlDump
+	 * @return \PHPUnit\Framework\MockObject\MockObject|DatabaseSqlite
+	 */
+	private function newMockDb( $version = null, &$sqlDump = null ) {
+		$mock = $this->getMockBuilder( DatabaseSqlite::class )
 			->setConstructorArgs( [ [
 				'dbFilePath' => ':memory:',
 				'dbname' => 'Foo',
-				'schema' => false,
+				'schema' => null,
 				'host' => false,
 				'user' => false,
 				'password' => false,
@@ -37,25 +49,42 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 				'flags' => DBO_DEFAULT,
 				'variables' => [],
 				'profiler' => null,
+				'topologyRole' => Database::ROLE_STREAMING_MASTER,
+				'topologicalMaster' => null,
 				'trxProfiler' => new TransactionProfiler(),
 				'connLogger' => new NullLogger(),
 				'queryLogger' => new NullLogger(),
+				'replLogger' => new NullLogger(),
 				'errorLogger' => null,
-				'deprecationLogger' => null,
-			] ] )->setMethods( [ 'query' ] )
-			->getMock();
-		$this->db->initConnection();
-		$this->db->method( 'query' )->willReturn( true );
-		if ( version_compare( $this->db->getServerVersion(), '3.6.0', '<' ) ) {
-			$this->markTestSkipped( "SQLite at least 3.6 required, {$this->db->getServerVersion()} found" );
+				'deprecationLogger' => new NullLogger(),
+				'srvCache' => new HashBagOStuff(),
+			] ] )->setMethods( array_merge(
+				[ 'query' ],
+				$version ? [ 'getServerVersion' ] : []
+			) )->getMock();
+
+		$mock->initConnection();
+
+		$sqlDump = '';
+		$mock->method( 'query' )->willReturnCallback( static function ( $sql ) use ( &$sqlDump ) {
+			$sqlDump .= "$sql;";
+
+			return true;
+		} );
+
+		if ( $version ) {
+			$mock->method( 'getServerVersion' )->willReturn( $version );
 		}
+
+		return $mock;
 	}
 
 	/**
-	 * @param $sql
-	 * @return string|string[]|null
+	 * @param string $sql
+	 * @return string
 	 */
 	private function replaceVars( $sql ) {
+		/** @var Database $wrapper */
 		$wrapper = TestingAccessWrapper::newFromObject( $this->db );
 		// normalize spacing to hide implementation details
 		return preg_replace( '/\s+/', ' ', $wrapper->replaceVars( $sql ) );
@@ -216,10 +245,10 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 		$indexList = $db->query( 'PRAGMA INDEX_LIST("bar")' );
 		$index = $indexList->next();
 		$this->assertEquals( 'bar_index1', $index->name );
-		$this->assertEquals( '0', $index->unique );
+		$this->assertSame( '0', $index->unique );
 		$index = $indexList->next();
 		$this->assertEquals( 'bar_index2', $index->name );
-		$this->assertEquals( '1', $index->unique );
+		$this->assertSame( '1', $index->unique );
 
 		$db->duplicateTableStructure( 'foo', 'baz', true );
 		$this->assertEquals( 'CREATE TABLE "baz"(foo, barfoo)',
@@ -229,11 +258,11 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 		$indexList = $db->query( 'PRAGMA INDEX_LIST("baz")' );
 		$index = $indexList->next();
 		$this->assertEquals( 'baz_index1', $index->name );
-		$this->assertEquals( '0', $index->unique );
+		$this->assertSame( '0', $index->unique );
 		$index = $indexList->next();
 		$this->assertEquals( 'baz_index2', $index->name );
-		$this->assertEquals( '1', $index->unique );
-		$this->assertSame( 0,
+		$this->assertSame( '1', $index->unique );
+		$this->assertSame( '0',
 			$db->selectField( 'sqlite_master', 'COUNT(*)', [ 'name' => 'baz' ] ),
 			'Create a temporary duplicate only'
 		);
@@ -307,53 +336,36 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 
 	/**
 	 * Runs upgrades of older databases and compares results with current schema
-	 * @todo Currently only checks list of tables
 	 * @coversNothing
 	 */
 	public function testUpgrades() {
-		global $IP, $wgVersion, $wgProfiler;
+		global $IP;
 
 		// Versions tested
 		$versions = [
-			// '1.13', disabled for now, was totally screwed up
-			// SQLite wasn't included in 1.14
-			'1.15',
-			'1.16',
-			'1.17',
-			'1.18',
-			'1.19',
-			'1.20',
-			'1.21',
-			'1.22',
-			'1.23',
+			'1.27',
+			'1.28',
+			'1.29',
+			'1.30',
+			'1.31',
+			'1.32',
+			'1.33',
+			'1.34',
+			'1.35',
 		];
 
 		// Mismatches for these columns we can safely ignore
-		$ignoredColumns = [
-			'user_newtalk.user_last_timestamp', // r84185
-		];
+		$ignoredColumns = [];
 
 		$currentDB = DatabaseSqlite::newStandaloneInstance( ':memory:' );
 		$currentDB->sourceFile( "$IP/maintenance/tables.sql" );
+		$currentDB->sourceFile( "$IP/maintenance/sqlite/tables-generated.sql" );
 
-		$profileToDb = false;
-		if ( isset( $wgProfiler['output'] ) ) {
-			$out = $wgProfiler['output'];
-			if ( $out === 'db' ) {
-				$profileToDb = true;
-			} elseif ( is_array( $out ) && in_array( 'db', $out ) ) {
-				$profileToDb = true;
-			}
-		}
-
-		if ( $profileToDb ) {
-			$currentDB->sourceFile( "$IP/maintenance/sqlite/archives/patch-profiling.sql" );
-		}
 		$currentTables = $this->getTables( $currentDB );
 		sort( $currentTables );
 
 		foreach ( $versions as $version ) {
-			$versions = "upgrading from $version to $wgVersion";
+			$versions = "upgrading from $version to " . MW_VERSION;
 			$db = $this->prepareTestDB( $version );
 			$tables = $this->getTables( $db );
 			$this->assertEquals( $currentTables, $tables, "Different tables $versions" );
@@ -378,6 +390,12 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 							(bool)$cols[$name]->notnull,
 							"NOT NULL status does not match for column $fullName $versions"
 						);
+						if ( $cols[$name]->dflt_value === 'NULL' ) {
+							$cols[$name]->dflt_value = null;
+						}
+						if ( $column->dflt_value === 'NULL' ) {
+							$column->dflt_value = null;
+						}
 						$this->assertEquals(
 							$column->dflt_value,
 							$cols[$name]->dflt_value,
@@ -409,7 +427,7 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 		$insertion = $db->insert( 'a', [ 'a_1' => 10 ], __METHOD__ );
 		$this->assertTrue( $insertion, "Insertion worked" );
 
-		$this->assertInternalType( 'integer', $db->insertId(), "Actual typecheck" );
+		$this->assertIsInt( $db->insertId(), "Actual typecheck" );
 		$this->assertTrue( $db->close(), "closing database" );
 	}
 
@@ -461,9 +479,6 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 			'searchindex_content',
 			'searchindex_segments',
 			'searchindex_segdir',
-			// FTS4 ready!!1
-			'searchindex_docsize',
-			'searchindex_stat',
 		];
 		foreach ( $excluded as $t ) {
 			unset( $list[$t] );
@@ -528,7 +543,7 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 		$insertion = $db->insert( 'a', [ 'a_1' => 10 ], __METHOD__ );
 		$this->assertTrue( $insertion, "Insertion failed" );
 		$res = $db->select( 'a', '*' );
-		$this->assertEquals( 1, $db->numFields( $res ), "wrong number of fields" );
+		$this->assertSame( 1, $db->numFields( $res ), "wrong number of fields" );
 
 		$this->assertTrue( $db->close(), "closing database" );
 	}
@@ -541,7 +556,7 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 
 		$toString = (string)$db;
 
-		$this->assertContains( 'sqlite object', $toString );
+		$this->assertStringContainsString( 'sqlite object', $toString );
 	}
 
 	/**
@@ -550,5 +565,84 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 	public function testsAttributes() {
 		$attributes = Database::attributesFromType( 'sqlite' );
 		$this->assertTrue( $attributes[Database::ATTR_DB_LEVEL_LOCKING] );
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\DatabaseSqlite::insert()
+	 * @param string $version
+	 * @param string $table
+	 * @param array $rows
+	 * @param string $expectedSql
+	 * @dataProvider provideNativeInserts
+	 */
+	public function testNativeInsertSupport( $version, $table, $rows, $expectedSql ) {
+		$sqlDump = '';
+		$db = $this->newMockDb( $version, $sqlDump );
+		$db->query( 'CREATE TABLE a ( a_1 )', __METHOD__ );
+
+		$sqlDump = '';
+		$db->insert( $table, $rows, __METHOD__ );
+		$this->assertEquals( $expectedSql, $sqlDump );
+	}
+
+	public function provideNativeInserts() {
+		return [
+			[
+				'3.8.0',
+				'a',
+				[ 'a_1' => 1 ],
+				'INSERT INTO a (a_1) VALUES (1);'
+			],
+			[
+				'3.8.0',
+				'a',
+				[
+					[ 'a_1' => 2 ],
+					[ 'a_1' => 3 ]
+				],
+				'INSERT INTO a (a_1) VALUES (2),(3);'
+			],
+		];
+	}
+
+	/**
+	 * @covers \Wikimedia\Rdbms\DatabaseSqlite::replace()
+	 * @param string $version
+	 * @param string $table
+	 * @param array $ukeys
+	 * @param array $rows
+	 * @param string $expectedSql
+	 * @dataProvider provideNativeReplaces
+	 */
+	public function testNativeReplaceSupport( $version, $table, $ukeys, $rows, $expectedSql ) {
+		$sqlDump = '';
+		$db = $this->newMockDb( $version, $sqlDump );
+		$db->query( 'CREATE TABLE a ( a_1 PRIMARY KEY, a_2 )', __METHOD__ );
+
+		$sqlDump = '';
+		$db->replace( $table, $ukeys, $rows, __METHOD__ );
+		$this->assertEquals( $expectedSql, $sqlDump );
+	}
+
+	public function provideNativeReplaces() {
+		return [
+			[
+				'3.8.0',
+				'a',
+				[ 'a_1' ],
+				[ 'a_1' => 1, 'a_2' => 'x' ],
+				'REPLACE INTO a (a_1,a_2) VALUES (1,\'x\');'
+			],
+			[
+				'3.8.0',
+				'a',
+				[ 'a_1' ],
+				[
+					[ 'a_1' => 2, 'a_2' => 'x' ],
+					[ 'a_1' => 3, 'a_2' => 'y' ]
+				],
+				'REPLACE INTO a (a_1,a_2) VALUES (2,\'x\'),(3,\'y\');'
+			],
+		];
 	}
 }

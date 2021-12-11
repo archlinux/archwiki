@@ -35,12 +35,14 @@
 	 * Sampling factor key-value map.
 	 *
 	 * Makes the logger sample log events instead of recording each one if > 0. Disables logging if === 0.
+	 *
 	 * @property {number}
 	 */
 	L.samplingFactor = 0;
 
 	/**
 	 * EventLogging schema
+	 *
 	 * @property {string}
 	 */
 	L.schema = '';

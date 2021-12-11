@@ -21,17 +21,25 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Deployment
+ * @ingroup Installer
  */
 
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\StaticHookRegistry;
 use MediaWiki\Interwiki\NullInterwikiLookup;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 
 /**
- * This documentation group collects source code files with deployment functionality.
+ * The Installer helps admins create or upgrade their wiki.
  *
- * @defgroup Deployment Deployment
+ * The installer classes are exposed through these human interfaces:
+ *
+ * - The `maintenance/install.php` script, backed by CliInstaller.
+ * - The `maintenance/update.php` script, backed by DatabaseUpdater.
+ * - The `mw-config/index.php` web entry point, backed by WebInstaller.
+ *
+ * @defgroup Installer Installer
  */
 
 /**
@@ -40,7 +48,7 @@ use MediaWiki\Shell\Shell;
  * This class provides the base for installation and update functionality
  * for both MediaWiki core and extensions.
  *
- * @ingroup Deployment
+ * @ingroup Installer
  * @since 1.17
  */
 abstract class Installer {
@@ -51,7 +59,13 @@ abstract class Installer {
 	 * Defining this is necessary because PHP may be linked with a system version
 	 * of PCRE, which may be older than that bundled with the minimum PHP version.
 	 */
-	const MINIMUM_PCRE_VERSION = '7.2';
+	public const MINIMUM_PCRE_VERSION = '7.2';
+
+	/**
+	 * URL to mediawiki-announce list summary page
+	 */
+	private const MEDIAWIKI_ANNOUNCE_URL =
+		'https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/';
 
 	/**
 	 * @var array
@@ -121,7 +135,6 @@ abstract class Installer {
 	 */
 	protected $envChecks = [
 		'envCheckDB',
-		'envCheckBrokenXML',
 		'envCheckPCRE',
 		'envCheckMemory',
 		'envCheckCache',
@@ -217,17 +230,17 @@ abstract class Installer {
 		'_MemCachedServers' => '',
 		'_UpgradeKeySupplied' => false,
 		'_ExistingDBSettings' => false,
+		// Single quotes are intentional, LocalSettingsGenerator must output this unescaped.
+		'_Logo' => '$wgResourceBasePath/resources/assets/wiki.png',
 
-		// $wgLogo is probably wrong (T50084); set something that will work.
-		// Single quotes work fine here, as LocalSettingsGenerator outputs this unescaped.
-		'wgLogo' => '$wgResourceBasePath/resources/assets/wiki.png',
 		'wgAuthenticationTokenVersion' => 1,
 	];
 
 	/**
 	 * The actual list of installation steps. This will be initialized by getInstallSteps()
 	 *
-	 * @var array
+	 * @var array[]
+	 * @phan-var array<int,array{name:string,callback:array{0:object,1:string}}>
 	 */
 	private $installSteps = [];
 
@@ -244,7 +257,6 @@ abstract class Installer {
 	 * @var array
 	 */
 	protected $objectCaches = [
-		'apc' => 'apc_fetch',
 		'apcu' => 'apcu_fetch',
 		'wincache' => 'wincache_ucache_get'
 	];
@@ -314,19 +326,9 @@ abstract class Installer {
 	];
 
 	/**
-	 * URL to mediawiki-announce subscription
+	 * @var HookContainer|null
 	 */
-	protected $mediaWikiAnnounceUrl =
-		'https://lists.wikimedia.org/mailman/subscribe/mediawiki-announce';
-
-	/**
-	 * Supported language codes for Mailman
-	 */
-	protected $mediaWikiAnnounceLanguages = [
-		'ca', 'cs', 'da', 'de', 'en', 'es', 'et', 'eu', 'fi', 'fr', 'hr', 'hu',
-		'it', 'ja', 'ko', 'lt', 'nl', 'no', 'pl', 'pt', 'pt-br', 'ro', 'ru',
-		'sl', 'sr', 'sv', 'tr', 'uk'
-	];
+	protected $autoExtensionHookContainer;
 
 	/**
 	 * UI interface for displaying a short message
@@ -387,7 +389,7 @@ abstract class Installer {
 
 		// make sure we use the installer config as the main config
 		$configRegistry = $baseConfig->get( 'ConfigRegistry' );
-		$configRegistry['main'] = function () use ( $installerConfig ) {
+		$configRegistry['main'] = static function () use ( $installerConfig ) {
 			return $installerConfig;
 		};
 
@@ -400,42 +402,13 @@ abstract class Installer {
 	 * Constructor, always call this from child classes.
 	 */
 	public function __construct() {
-		global $wgMemc, $wgUser, $wgObjectCaches;
-
 		$defaultConfig = new GlobalVarConfig(); // all the stuff from DefaultSettings.php
 		$installerConfig = self::getInstallerConfig( $defaultConfig );
 
-		// Reset all services and inject config overrides
-		MediaWikiServices::resetGlobalInstance( $installerConfig );
+		$this->resetMediaWikiServices( $installerConfig );
 
-		// Don't attempt to load user language options (T126177)
-		// This will be overridden in the web installer with the user-specified language
-		RequestContext::getMain()->setLanguage( 'en' );
-
-		// Disable all global services, since we don't have any configuration yet!
+		// Disable all storage services, since we don't have any configuration yet!
 		MediaWikiServices::disableStorageBackend();
-
-		$mwServices = MediaWikiServices::getInstance();
-
-		// Disable i18n cache
-		$mwServices->getLocalisationCache()->disableBackend();
-
-		// Clear language cache so the old i18n cache doesn't sneak back in
-		Language::clearCaches();
-
-		// Disable object cache (otherwise CACHE_ANYTHING will try CACHE_DB and
-		// SqlBagOStuff will then throw since we just disabled wfGetDB)
-		$wgObjectCaches = $mwServices->getMainConfig()->get( 'ObjectCaches' );
-		$wgMemc = ObjectCache::getInstance( CACHE_NONE );
-
-		// Disable interwiki lookup, to avoid database access during parses
-		$mwServices->redefineService( 'InterwikiLookup', function () {
-			return new NullInterwikiLookup();
-		} );
-
-		// Having a user with id = 0 safeguards us from DB access via User::loadOptions().
-		$wgUser = User::newFromId( 0 );
-		RequestContext::getMain()->setUser( $wgUser );
 
 		$this->settings = $this->internalDefaults;
 
@@ -456,10 +429,82 @@ abstract class Installer {
 		}
 
 		$this->parserTitle = Title::newFromText( 'Installer' );
-		$this->parserOptions = new ParserOptions( $wgUser ); // language will be wrong :(
-		$this->parserOptions->setTidy( true );
+	}
+
+	/**
+	 * Reset the global service container and associated global state
+	 * to accommodate different stages of the installation.
+	 * @since 1.35
+	 *
+	 * @param Config|null $installerConfig Config override. If null, the previous
+	 *        config will be inherited.
+	 * @param array $serviceOverrides Service definition overrides. Values can be null to
+	 *        disable specific overrides that would be applied per default, namely
+	 *        'InterwikiLookup' and 'UserOptionsLookup'.
+	 *
+	 * @return MediaWikiServices
+	 * @throws MWException
+	 */
+	public function resetMediaWikiServices( Config $installerConfig = null, $serviceOverrides = [] ) {
+		global $wgUser, $wgObjectCaches, $wgLang;
+
+		$serviceOverrides += [
+			// Disable interwiki lookup, to avoid database access during parses
+			'InterwikiLookup' => static function () {
+				return new NullInterwikiLookup();
+			},
+
+			// Disable user options database fetching, only rely on default options.
+			'UserOptionsLookup' => static function ( MediaWikiServices $services ) {
+				return $services->get( '_DefaultOptionsLookup' );
+			}
+		];
+
+		$lang = $this->getVar( '_UserLang', 'en' );
+
+		// Reset all services and inject config overrides
+		MediaWikiServices::resetGlobalInstance( $installerConfig );
+
+		$mwServices = MediaWikiServices::getInstance();
+
+		foreach ( $serviceOverrides as $name => $callback ) {
+			// Skip if the caller set $callback to null
+			// to suppress default overrides.
+			if ( $callback ) {
+				$mwServices->redefineService( $name, $callback );
+			}
+		}
+
+		// Disable i18n cache
+		$mwServices->getLocalisationCache()->disableBackend();
+
+		// Clear language cache so the old i18n cache doesn't sneak back in
+		Language::$mLangObjCache = [];
+
+		// Set a fake user.
+		// Note that this will reset the context's language,
+		// so set the user before setting the language.
+		$user = User::newFromId( 0 );
+		$wgUser = $user;
+
+		RequestContext::getMain()->setUser( $user );
+
+		// Don't attempt to load user language options (T126177)
+		// This will be overridden in the web installer with the user-specified language
+		// Ensure $wgLang does not have a reference to a stale LocalisationCache instance
+		// (T241638, T261081)
+		RequestContext::getMain()->setLanguage( $lang );
+		$wgLang = RequestContext::getMain()->getLanguage();
+
+		// Disable object cache (otherwise CACHE_ANYTHING will try CACHE_DB and
+		// SqlBagOStuff will then throw since we just disabled wfGetDB)
+		$wgObjectCaches = $mwServices->getMainConfig()->get( 'ObjectCaches' );
+
+		$this->parserOptions = new ParserOptions( $user ); // language will be wrong :(
 		// Don't try to access DB before user language is initialised
-		$this->setParserLanguage( Language::factory( 'en' ) );
+		$this->setParserLanguage( $mwServices->getLanguageFactory()->getLanguage( 'en' ) );
+
+		return $mwServices;
 	}
 
 	/**
@@ -485,13 +530,9 @@ abstract class Installer {
 	 * @return Status
 	 */
 	public function doEnvironmentChecks() {
-		// Php version has already been checked by entry scripts
+		// PHP version has already been checked by entry scripts
 		// Show message here for information purposes
-		if ( wfIsHHVM() ) {
-			$this->showMessage( 'config-env-hhvm', HHVM_VERSION );
-		} else {
-			$this->showMessage( 'config-env-php', PHP_VERSION );
-		}
+		$this->showMessage( 'config-env-php', PHP_VERSION );
 
 		$good = true;
 		// Must go here because an old version of PCRE can prevent other checks from completing
@@ -667,9 +708,7 @@ abstract class Installer {
 		# posix_getegid() *not* getmygid() because we want the group of the webserver,
 		# not whoever owns the current script.
 		$gid = posix_getegid();
-		$group = posix_getpwuid( $gid )['name'];
-
-		return $group;
+		return posix_getpwuid( $gid )['name'] ?? null;
 	}
 
 	/**
@@ -746,7 +785,8 @@ abstract class Installer {
 				'ss_active_users' => 0,
 				'ss_images' => 0
 			],
-			__METHOD__, 'IGNORE'
+			__METHOD__,
+			'IGNORE'
 		);
 
 		return Status::newGood();
@@ -792,21 +832,6 @@ abstract class Installer {
 			return false;
 		}
 		return $ok;
-	}
-
-	/**
-	 * Some versions of libxml+PHP break < and > encoding horribly
-	 * @return bool
-	 */
-	protected function envCheckBrokenXML() {
-		$test = new PhpXmlBugTester();
-		if ( !$test->ok ) {
-			$this->showError( 'config-brokenlibxml' );
-
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
@@ -929,8 +954,6 @@ abstract class Installer {
 		if ( $convert ) {
 			$this->setVar( 'wgImageMagickConvertCommand', $convert );
 			$this->showMessage( 'config-imagemagick', $convert );
-
-			return true;
 		} elseif ( function_exists( 'imagejpeg' ) ) {
 			$this->showMessage( 'config-gd' );
 		} else {
@@ -1007,8 +1030,7 @@ abstract class Installer {
 		}
 
 		# Get a list of available locales.
-		$result = Shell::command( '/usr/bin/locale', '-a' )
-			->execute();
+		$result = Shell::command( '/usr/bin/locale', '-a' )->execute();
 
 		if ( $result->getExitCode() != 0 ) {
 			return true;
@@ -1135,25 +1157,11 @@ abstract class Installer {
 		$not_normal_c = "\u{FA6C}";
 		$normal_c = "\u{242EE}";
 
-		$useNormalizer = 'php';
-		$needsUpdate = false;
+		$intl = normalizer_normalize( $not_normal_c, Normalizer::FORM_C );
 
-		if ( function_exists( 'normalizer_normalize' ) ) {
-			$useNormalizer = 'intl';
-			$intl = normalizer_normalize( $not_normal_c, Normalizer::FORM_C );
-			if ( $intl !== $normal_c ) {
-				$needsUpdate = true;
-			}
-		}
-
-		// Uses messages 'config-unicode-using-php' and 'config-unicode-using-intl'
-		if ( $useNormalizer === 'php' ) {
-			$this->showMessage( 'config-unicode-pure-php-warning' );
-		} else {
-			$this->showMessage( 'config-unicode-using-' . $useNormalizer );
-			if ( $needsUpdate ) {
-				$this->showMessage( 'config-unicode-update-warning' );
-			}
+		$this->showMessage( 'config-unicode-using-intl' );
+		if ( $intl !== $normal_c ) {
+			$this->showMessage( 'config-unicode-update-warning' );
 		}
 	}
 
@@ -1199,6 +1207,9 @@ abstract class Installer {
 		];
 
 		// it would be good to check other popular languages here, but it'll be slow.
+		// TODO no need to have a loop if there is going to only be one script type
+
+		$httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
 
 		Wikimedia\suppressWarnings();
 
@@ -1211,8 +1222,11 @@ abstract class Installer {
 				}
 
 				try {
-					$text = MediaWikiServices::getInstance()->getHttpRequestFactory()->
-						get( $url . $file, [ 'timeout' => 3 ], __METHOD__ );
+					$text = $httpRequestFactory->get(
+						$url . $file,
+						[ 'timeout' => 3 ],
+						__METHOD__
+					);
 				} catch ( Exception $e ) {
 					// HttpRequestFactory::get can throw with allow_url_fopen = false and no curl
 					// extension.
@@ -1309,6 +1323,7 @@ abstract class Installer {
 			return Status::newGood( [] );
 		}
 
+		// @phan-suppress-next-line SecurityCheck-PathTraversal False positive T268920
 		$dh = opendir( $extDir );
 		$exts = [];
 		$status = new Status;
@@ -1491,17 +1506,67 @@ abstract class Installer {
 	/**
 	 * Installs the auto-detected extensions.
 	 *
-	 * @suppress SecurityCheck-OTHER It thinks $exts/$IP is user controlled but they are not.
 	 * @return Status
 	 */
 	protected function includeExtensions() {
-		global $IP;
-		$exts = $this->getVar( '_Extensions' );
-		$IP = $this->getVar( 'IP' );
-
 		// Marker for DatabaseUpdater::loadExtensions so we don't
 		// double load extensions
 		define( 'MW_EXTENSIONS_LOADED', true );
+
+		$legacySchemaHooks = $this->getAutoExtensionLegacyHooks();
+		$data = $this->getAutoExtensionData();
+		if ( isset( $data['globals']['wgHooks']['LoadExtensionSchemaUpdates'] ) ) {
+			$legacySchemaHooks = array_merge( $legacySchemaHooks,
+				$data['globals']['wgHooks']['LoadExtensionSchemaUpdates'] );
+		}
+		$extDeprecatedHooks = $data['attributes']['DeprecatedHooks'] ?? [];
+
+		$this->autoExtensionHookContainer = new HookContainer(
+			new StaticHookRegistry(
+				[ 'LoadExtensionSchemaUpdates' => $legacySchemaHooks ],
+				$data['attributes']['Hooks'] ?? [],
+				$extDeprecatedHooks
+			),
+			MediaWikiServices::getInstance()->getObjectFactory()
+		);
+
+		return Status::newGood();
+	}
+
+	/**
+	 * Auto-detect extensions with an old style .php registration file, load
+	 * the extensions, and return the merged $wgHooks array.
+	 *
+	 * @suppress SecurityCheck-PathTraversal It thinks $exts/$IP is user controlled but they are not.
+	 * @return array
+	 */
+	protected function getAutoExtensionLegacyHooks() {
+		$exts = $this->getVar( '_Extensions' );
+		$installPath = $this->getVar( 'IP' );
+		$files = [];
+		foreach ( $exts as $e ) {
+			if ( file_exists( "$installPath/extensions/$e/$e.php" ) ) {
+				$files[] = "$installPath/extensions/$e/$e.php";
+			}
+		}
+
+		if ( $files ) {
+			return $this->includeExtensionFiles( $files );
+		} else {
+			return [];
+		}
+	}
+
+	/**
+	 * Include the specified extension PHP files. Populate $wgAutoloadClasses
+	 * and return the LoadExtensionSchemaUpdates hooks.
+	 *
+	 * @param string[] $files
+	 * @return array LoadExtensionSchemaUpdates legacy hooks
+	 */
+	protected function includeExtensionFiles( $files ) {
+		global $IP;
+		$IP = $this->getVar( 'IP' );
 
 		/**
 		 * We need to include DefaultSettings before including extensions to avoid
@@ -1511,38 +1576,60 @@ abstract class Installer {
 		 * but we're not opening that can of worms
 		 * @see https://phabricator.wikimedia.org/T28857
 		 */
-		global $wgAutoloadClasses;
-		$wgAutoloadClasses = [];
-		$queue = [];
-
 		require "$IP/includes/DefaultSettings.php";
 
+		// phpcs:ignore MediaWiki.VariableAnalysis.UnusedGlobalVariables
+		global $wgAutoloadClasses;
+		foreach ( $files as $file ) {
+			require_once $file;
+		}
+
+		// @phpcs:disable MediaWiki.VariableAnalysis.MisleadingGlobalNames.Misleading$wgHooks
+		// @phan-suppress-next-line PhanUndeclaredVariable,PhanCoalescingAlwaysNull $wgHooks is set by DefaultSettings
+		$hooksWeWant = $wgHooks['LoadExtensionSchemaUpdates'] ?? [];
+		// @phpcs:enable MediaWiki.VariableAnalysis.MisleadingGlobalNames.Misleading$wgHooks
+
+		// Ignore everyone else's hooks. Lord knows what someone might be doing
+		// in ParserFirstCallInit (see T29171)
+		return [ 'LoadExtensionSchemaUpdates' => $hooksWeWant ];
+	}
+
+	/**
+	 * Auto-detect extensions with an extension.json file. Load the extensions,
+	 * populate $wgAutoloadClasses and return the merged registry data.
+	 *
+	 * @return array
+	 */
+	protected function getAutoExtensionData() {
+		$exts = $this->getVar( '_Extensions' );
+		$installPath = $this->getVar( 'IP' );
+		$queue = [];
 		foreach ( $exts as $e ) {
-			if ( file_exists( "$IP/extensions/$e/extension.json" ) ) {
-				$queue["$IP/extensions/$e/extension.json"] = 1;
-			} else {
-				require_once "$IP/extensions/$e/$e.php";
+			if ( file_exists( "$installPath/extensions/$e/extension.json" ) ) {
+				$queue["$installPath/extensions/$e/extension.json"] = 1;
 			}
 		}
 
 		$registry = new ExtensionRegistry();
 		$data = $registry->readFromQueue( $queue );
-		$wgAutoloadClasses += $data['autoload'];
+		global $wgAutoloadClasses;
+		$wgAutoloadClasses += $data['globals']['wgAutoloadClasses'];
+		return $data;
+	}
 
-		// @phan-suppress-next-line PhanUndeclaredVariable $wgHooks is set by DefaultSettings
-		$hooksWeWant = $wgHooks['LoadExtensionSchemaUpdates'] ?? [];
-
-		if ( isset( $data['globals']['wgHooks']['LoadExtensionSchemaUpdates'] ) ) {
-			$hooksWeWant = array_merge_recursive(
-				$hooksWeWant,
-				$data['globals']['wgHooks']['LoadExtensionSchemaUpdates']
-			);
+	/**
+	 * Get the hook container previously populated by includeExtensions().
+	 *
+	 * @internal For use by DatabaseInstaller
+	 * @since 1.36
+	 * @return HookContainer
+	 */
+	public function getAutoExtensionHookContainer() {
+		if ( !$this->autoExtensionHookContainer ) {
+			throw new \Exception( __METHOD__ .
+				': includeExtensions() has not been called' );
 		}
-		// Unset everyone else's hooks. Lord knows what someone might be doing
-		// in ParserFirstCallInit (see T29171)
-		$GLOBALS['wgHooks'] = [ 'LoadExtensionSchemaUpdates' => $hooksWeWant ];
-
-		return Status::newGood();
+		return $this->autoExtensionHookContainer;
 	}
 
 	/**
@@ -1555,16 +1642,19 @@ abstract class Installer {
 	 * be shown on install.
 	 *
 	 * @param DatabaseInstaller $installer DatabaseInstaller so we can make callbacks
-	 * @return array
+	 * @return array[]
+	 * @phan-return array<int,array{name:string,callback:array{0:object,1:string}}>
 	 */
 	protected function getInstallSteps( DatabaseInstaller $installer ) {
 		$coreInstallSteps = [
 			[ 'name' => 'database', 'callback' => [ $installer, 'setupDatabase' ] ],
 			[ 'name' => 'tables', 'callback' => [ $installer, 'createTables' ] ],
+			[ 'name' => 'tables-manual', 'callback' => [ $installer, 'createManualTables' ] ],
 			[ 'name' => 'interwiki', 'callback' => [ $installer, 'populateInterwikiTable' ] ],
 			[ 'name' => 'stats', 'callback' => [ $this, 'populateSiteStats' ] ],
 			[ 'name' => 'keys', 'callback' => [ $this, 'generateKeys' ] ],
 			[ 'name' => 'updates', 'callback' => [ $installer, 'insertUpdateKeys' ] ],
+			[ 'name' => 'restore-services', 'callback' => [ $this, 'restoreServices' ] ],
 			[ 'name' => 'sysop', 'callback' => [ $this, 'createSysop' ] ],
 			[ 'name' => 'mainpage', 'callback' => [ $this, 'createMainpage' ] ],
 		];
@@ -1658,20 +1748,30 @@ abstract class Installer {
 	}
 
 	/**
+	 * Restore services that have been redefined in the early stage of installation
+	 * @return Status
+	 */
+	public function restoreServices() {
+		$this->resetMediaWikiServices( null, [
+			'UserOptionsLookup' => static function ( MediaWikiServices $services ) {
+				return $services->get( 'UserOptionsManager' );
+			}
+		] );
+		return Status::newGood();
+	}
+
+	/**
 	 * Generate a secret value for variables using a secure generator.
 	 *
 	 * @param array $keys
 	 * @return Status
 	 */
 	protected function doGenerateKeys( $keys ) {
-		$status = Status::newGood();
-
 		foreach ( $keys as $name => $length ) {
 			$secretKey = MWCryptRand::generateHex( $length );
 			$this->setVar( $name, $secretKey );
 		}
-
-		return $status;
+		return Status::newGood();
 	}
 
 	/**
@@ -1691,10 +1791,15 @@ abstract class Installer {
 		if ( $user->idForName() == 0 ) {
 			$user->addToDatabase();
 
-			try {
-				$user->setPassword( $this->getVar( '_AdminPassword' ) );
-			} catch ( PasswordError $pwe ) {
-				return Status::newFatal( 'config-admin-error-password', $name, $pwe->getMessage() );
+			$password = $this->getVar( '_AdminPassword' );
+			$status = $user->changeAuthenticationData( [
+				'username' => $user->getName(),
+				'password' => $password,
+				'retype' => $password,
+			] );
+			if ( !$status->isGood() ) {
+				return Status::newFatal( 'config-admin-error-password',
+					$name, $status->getWikiText( null, null, $this->getVar( '_UserLang' ) ) );
 			}
 
 			$user->addGroup( 'sysop' );
@@ -1709,42 +1814,66 @@ abstract class Installer {
 			$ssUpdate = SiteStatsUpdate::factory( [ 'users' => 1 ] );
 			$ssUpdate->doUpdate();
 		}
-		$status = Status::newGood();
 
 		if ( $this->getVar( '_Subscribe' ) && $this->getVar( '_AdminEmail' ) ) {
-			$this->subscribeToMediaWikiAnnounce( $status );
+			return $this->subscribeToMediaWikiAnnounce();
 		}
-
-		return $status;
+		return Status::newGood();
 	}
 
 	/**
-	 * @param Status $s
+	 * @return Status
 	 */
-	private function subscribeToMediaWikiAnnounce( Status $s ) {
-		$params = [
-			'email' => $this->getVar( '_AdminEmail' ),
-			'language' => 'en',
-			'digest' => 0
-		];
-
-		// Mailman doesn't support as many languages as we do, so check to make
-		// sure their selected language is available
-		$myLang = $this->getVar( '_UserLang' );
-		if ( in_array( $myLang, $this->mediaWikiAnnounceLanguages ) ) {
-			$myLang = $myLang == 'pt-br' ? 'pt_BR' : $myLang; // rewrite to Mailman's pt_BR
-			$params['language'] = $myLang;
+	private function subscribeToMediaWikiAnnounce() {
+		$status = Status::newGood();
+		$http = MediaWikiServices::getInstance()->getHttpRequestFactory();
+		if ( !$http->canMakeRequests() ) {
+			$status->warning( 'config-install-subscribe-fail',
+				wfMessage( 'config-install-subscribe-notpossible' ) );
+			return $status;
 		}
 
-		if ( MWHttpRequest::canMakeRequests() ) {
-			$res = MWHttpRequest::factory( $this->mediaWikiAnnounceUrl,
-				[ 'method' => 'POST', 'postData' => $params ], __METHOD__ )->execute();
-			if ( !$res->isOK() ) {
-				$s->warning( 'config-install-subscribe-fail', $res->getMessage() );
-			}
+		// Create subscription request
+		$params = [ 'email' => $this->getVar( '_AdminEmail' ) ];
+		$req = $http->create( self::MEDIAWIKI_ANNOUNCE_URL . 'anonymous_subscribe',
+			[ 'method' => 'POST', 'postData' => $params ], __METHOD__ );
+
+		// Add headers needed to pass Django's CSRF checks
+		$token = str_repeat( 'a', 64 );
+		$req->setHeader( 'Referer', self::MEDIAWIKI_ANNOUNCE_URL );
+		$req->setHeader( 'Cookie', "csrftoken=$token" );
+		$req->setHeader( 'X-CSRFToken', $token );
+
+		// Send subscription request
+		$reqStatus = $req->execute();
+		if ( !$reqStatus->isOK() ) {
+			$status->warning( 'config-install-subscribe-fail',
+				Status::wrap( $reqStatus )->getMessage() );
+			return $status;
+		}
+
+		// Was the request submitted successfully?
+		// The status message is displayed after a redirect, using Django's messages
+		// framework, so load the list summary page and look for the expected text.
+		// (Though parsing the cookie set by the framework may be possible, it isn't
+		// simple, since the format of the cookie has changed between versions.)
+		$checkReq = $http->create( self::MEDIAWIKI_ANNOUNCE_URL, [], __METHOD__ );
+		$checkReq->setCookieJar( $req->getCookieJar() );
+		if ( !$checkReq->execute()->isOK() ) {
+			$status->warning( 'config-install-subscribe-possiblefail' );
+			return $status;
+		}
+		$html = $checkReq->getContent();
+		if ( strpos( $html, 'Please check your inbox for further instructions' ) !== false ) {
+			// Success
+		} elseif ( strpos( $html, 'Member already subscribed' ) !== false ) {
+			$status->warning( 'config-install-subscribe-alreadysubscribed' );
+		} elseif ( strpos( $html, 'Subscription request already pending' ) !== false ) {
+			$status->warning( 'config-install-subscribe-alreadypending' );
 		} else {
-			$s->warning( 'config-install-subscribe-notpossible' );
+			$status->warning( 'config-install-subscribe-possiblefail' );
 		}
+		return $status;
 	}
 
 	/**
@@ -1761,13 +1890,14 @@ abstract class Installer {
 			return $status;
 		}
 		try {
-			$page = WikiPage::factory( $title );
+			$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 			$content = new WikitextContent(
 				wfMessage( 'mainpagetext' )->inContentLanguage()->text() . "\n\n" .
 				wfMessage( 'mainpagedocfooter' )->inContentLanguage()->text()
 			);
 
-			$status = $page->doEditContent( $content,
+			$status = $page->doEditContent(
+				$content,
 				'',
 				EDIT_NEW,
 				false,
@@ -1795,6 +1925,8 @@ abstract class Installer {
 		$GLOBALS['wgUseDatabaseMessages'] = false;
 		// Don't cache langconv tables
 		$GLOBALS['wgLanguageConverterCacheType'] = CACHE_NONE;
+		// Don't try to cache ResourceLoader dependencies in the database
+		$GLOBALS['wgResourceLoaderUseObjectCacheForDeps'] = true;
 		// Debug-friendly
 		$GLOBALS['wgShowExceptionDetails'] = true;
 		$GLOBALS['wgShowHostnames'] = true;
@@ -1820,6 +1952,9 @@ abstract class Installer {
 				] ]
 			]
 		];
+
+		// Don't use the DB as the main stash
+		$GLOBALS['wgMainStash'] = CACHE_NONE;
 
 		// Don't try to use any object cache for SessionManager either.
 		$GLOBALS['wgSessionCacheType'] = CACHE_NONE;

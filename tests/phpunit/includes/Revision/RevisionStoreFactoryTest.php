@@ -4,6 +4,10 @@ namespace MediaWiki\Tests\Revision;
 
 use ActorMigration;
 use CommentStore;
+use HashBagOStuff;
+use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Page\PageStore;
+use MediaWiki\Page\PageStoreFactory;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\RevisionStoreFactory;
 use MediaWiki\Revision\SlotRoleRegistry;
@@ -12,14 +16,20 @@ use MediaWiki\Storage\BlobStoreFactory;
 use MediaWiki\Storage\NameTableStore;
 use MediaWiki\Storage\NameTableStoreFactory;
 use MediaWiki\Storage\SqlBlobStore;
+use MediaWiki\User\ActorStore;
+use MediaWiki\User\ActorStoreFactory;
+use MediaWiki\User\UserIdentityLookup;
+use MediaWikiIntegrationTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use TitleFactory;
 use WANObjectCache;
 use Wikimedia\Rdbms\ILBFactory;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
 
-class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
+class RevisionStoreFactoryTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Revision\RevisionStoreFactory::__construct
@@ -33,9 +43,12 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 			$this->getHashWANObjectCache(),
 			$this->getMockCommentStore(),
 			ActorMigration::newMigration(),
-			MIGRATION_NEW,
+			$this->getMockActorStoreFactory(),
 			new NullLogger(),
-			true
+			$this->getContentHandlerFactory(),
+			$this->getPageStoreFactory(),
+			$this->getTitleFactory(),
+			$this->createHookContainer()
 		);
 		$this->assertTrue( true );
 	}
@@ -50,11 +63,7 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 	 * @dataProvider provideWikiIds
 	 * @covers \MediaWiki\Revision\RevisionStoreFactory::getRevisionStore
 	 */
-	public function testGetRevisionStore(
-		$dbDomain,
-		$mcrMigrationStage = MIGRATION_NEW,
-		$contentHandlerUseDb = true
-	) {
+	public function testGetRevisionStore( $wikiId ) {
 		$lbFactory = $this->getMockLoadBalancerFactory();
 		$blobStoreFactory = $this->getMockBlobStoreFactory();
 		$nameTableStoreFactory = $this->getNameTableStoreFactory();
@@ -62,7 +71,12 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 		$cache = $this->getHashWANObjectCache();
 		$commentStore = $this->getMockCommentStore();
 		$actorMigration = ActorMigration::newMigration();
+		$actorStoreFactory = $this->getMockActorStoreFactory();
 		$logger = new NullLogger();
+		$contentHandlerFactory = $this->getContentHandlerFactory();
+		$pageStoreFactory = $this->getPageStoreFactory();
+		$titleFactory = $this->getTitleFactory();
+		$hookContainer = $this->createHookContainer();
 
 		$factory = new RevisionStoreFactory(
 			$lbFactory,
@@ -72,36 +86,38 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 			$cache,
 			$commentStore,
 			$actorMigration,
-			$mcrMigrationStage,
+			$actorStoreFactory,
 			$logger,
-			$contentHandlerUseDb
+			$contentHandlerFactory,
+			$pageStoreFactory,
+			$titleFactory,
+			$hookContainer
 		);
 
-		$store = $factory->getRevisionStore( $dbDomain );
+		$store = $factory->getRevisionStore( $wikiId );
 		$wrapper = TestingAccessWrapper::newFromObject( $store );
 
 		// ensure the correct object type is returned
 		$this->assertInstanceOf( RevisionStore::class, $store );
 
 		// ensure the RevisionStore is for the given wikiId
-		$this->assertSame( $dbDomain, $wrapper->dbDomain );
+		$this->assertSame( $wikiId, $wrapper->wikiId );
 
 		// ensure all other required services are correctly set
 		$this->assertSame( $cache, $wrapper->cache );
 		$this->assertSame( $commentStore, $wrapper->commentStore );
-		$this->assertSame( $mcrMigrationStage, $wrapper->mcrMigrationStage );
 		$this->assertSame( $actorMigration, $wrapper->actorMigration );
-		$this->assertSame( $contentHandlerUseDb, $store->getContentHandlerUseDB() );
 
 		$this->assertInstanceOf( ILoadBalancer::class, $wrapper->loadBalancer );
 		$this->assertInstanceOf( BlobStore::class, $wrapper->blobStore );
 		$this->assertInstanceOf( NameTableStore::class, $wrapper->contentModelStore );
 		$this->assertInstanceOf( NameTableStore::class, $wrapper->slotRoleStore );
 		$this->assertInstanceOf( LoggerInterface::class, $wrapper->logger );
+		$this->assertInstanceOf( UserIdentityLookup::class, $wrapper->actorStore );
 	}
 
 	/**
-	 * @return \PHPUnit_Framework_MockObject_MockObject|ILoadBalancer
+	 * @return MockObject|ILoadBalancer
 	 */
 	private function getMockLoadBalancer() {
 		return $this->getMockBuilder( ILoadBalancer::class )
@@ -109,7 +125,7 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @return \PHPUnit_Framework_MockObject_MockObject|ILBFactory
+	 * @return MockObject|ILBFactory
 	 */
 	private function getMockLoadBalancerFactory() {
 		$mock = $this->getMockBuilder( ILBFactory::class )
@@ -124,7 +140,7 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @return \PHPUnit_Framework_MockObject_MockObject|SqlBlobStore
+	 * @return MockObject|SqlBlobStore
 	 */
 	private function getMockSqlBlobStore() {
 		return $this->getMockBuilder( SqlBlobStore::class )
@@ -132,7 +148,7 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @return \PHPUnit_Framework_MockObject_MockObject|BlobStoreFactory
+	 * @return MockObject|BlobStoreFactory
 	 */
 	private function getMockBlobStoreFactory() {
 		$mock = $this->getMockBuilder( BlobStoreFactory::class )
@@ -154,6 +170,39 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
+	 * @return IContentHandlerFactory|MockObject
+	 */
+	private function getContentHandlerFactory(): IContentHandlerFactory {
+		return $this->createMock( IContentHandlerFactory::class );
+	}
+
+	/**
+	 * @return PageStore|MockObject
+	 */
+	private function getMockPageStore(): PageStore {
+		return $this->createMock( PageStore::class );
+	}
+
+	/**
+	 * @return PageStoreFactory|MockObject
+	 */
+	private function getPageStoreFactory(): PageStoreFactory {
+		$mock = $this->createMock( PageStoreFactory::class );
+
+		$mock->method( 'getPageStore' )
+			->willReturn( $this->getMockPageStore() );
+
+		return $mock;
+	}
+
+	/**
+	 * @return TitleFactory|MockObject
+	 */
+	private function getTitleFactory(): TitleFactory {
+		return $this->createMock( TitleFactory::class );
+	}
+
+	/**
 	 * @return NameTableStoreFactory
 	 */
 	private function getNameTableStoreFactory() {
@@ -164,15 +213,40 @@ class RevisionStoreFactoryTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @return \PHPUnit_Framework_MockObject_MockObject|CommentStore
+	 * @return MockObject|CommentStore
 	 */
 	private function getMockCommentStore() {
 		return $this->getMockBuilder( CommentStore::class )
 			->disableOriginalConstructor()->getMock();
 	}
 
+	/**
+	 * @return WANObjectCache
+	 */
 	private function getHashWANObjectCache() {
-		return new WANObjectCache( [ 'cache' => new \HashBagOStuff() ] );
+		return new WANObjectCache( [ 'cache' => new HashBagOStuff() ] );
 	}
 
+	/**
+	 * @return ActorStore|MockObject
+	 */
+	private function getMockActorStore() {
+		return $this->getMockBuilder( ActorStore::class )
+			->disableOriginalConstructor()->getMock();
+	}
+
+	/**
+	 * @return ActorStoreFactory|MockObject
+	 */
+	private function getMockActorStoreFactory() {
+		$mock = $this->getMockBuilder( ActorStoreFactory::class )
+			->disableOriginalConstructor()->getMock();
+
+		$mock->method( 'getActorStore' )
+			->willReturnCallback( function () {
+				return $this->getMockActorStore();
+			} );
+
+		return $mock;
+	}
 }

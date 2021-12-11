@@ -11,9 +11,11 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group Lua
  * @group LuaStandalone
+ * @group Standalone
  * @covers Scribunto_LuaStandaloneInterpreter
  */
 class Scribunto_LuaStandaloneInterpreterTest extends Scribunto_LuaInterpreterTest {
+	/** @var array */
 	public $stdOpts = [
 		'errorFile' => null,
 		'luaPath' => null,
@@ -66,7 +68,7 @@ class Scribunto_LuaStandaloneInterpreterTest extends Scribunto_LuaInterpreterTes
 		$engine = TestingAccessWrapper::newFromObject( $interpreter->engine );
 		$status = $interpreter->getStatus();
 		$pid = $status['pid'];
-		$this->assertInternalType( 'integer', $status['pid'] );
+		$this->assertIsInt( $status['pid'] );
 		$initialVsize = $this->getVsize( $pid );
 		$this->assertGreaterThan( 0, $initialVsize, 'Initial vsize' );
 
@@ -80,7 +82,7 @@ class Scribunto_LuaStandaloneInterpreterTest extends Scribunto_LuaInterpreterTes
 		$time = $status['time'] / $engine->getClockTick();
 		$this->assertGreaterThan( 0.1, $time, 'getStatus() time usage' );
 		$this->assertLessThan( 1.5, $time, 'getStatus() time usage' );
-		$this->assertEquals( $vsize, $status['vsize'], 'vsize', $vsize * 0.1 );
+		$this->assertEqualsWithDelta( $vsize, $status['vsize'], $vsize * 0.1, 'vsize' );
 	}
 
 	/**
@@ -129,7 +131,8 @@ class Scribunto_LuaStandaloneInterpreterTest extends Scribunto_LuaInterpreterTes
 	 */
 	public function testLuaToPhpArrayKeyConversion( $lua, $expect ) {
 		if ( $expect instanceof Exception ) {
-			$this->setExpectedException( Scribunto_LuaError::class, $expect->getMessage() );
+			$this->expectException( Scribunto_LuaError::class );
+			$this->expectExceptionMessage( $expect->getMessage() );
 		}
 
 		$interpreter = $this->newInterpreter();

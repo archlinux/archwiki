@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"HanV",
-			"Siebrand",
-			"Esketti",
-			"Sjoerddebruin",
 			"Dinosaur918",
+			"Esketti",
+			"HanV",
 			"Mar(c)",
-			"Romaine"
+			"Romaine",
+			"Siebrand",
+			"Sjoerddebruin"
 		]
 	},
 	"fancycaptcha-desc": "Generator voor opgedirkte captcha's voor ConfirmEdit",

@@ -2,7 +2,6 @@
 
 namespace TextExtracts\Test;
 
-use MediaWiki\Tidy\TidyDriverBase;
 use TextExtracts\TextTruncator;
 
 /**
@@ -12,8 +11,6 @@ use TextExtracts\TextTruncator;
  * @license GPL-2.0-or-later
  */
 class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
-	use \PHPUnit4And6Compat;
-
 	/**
 	 * @dataProvider provideGetFirstSentences
 	 * @param string $text
@@ -21,7 +18,7 @@ class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
 	 * @param string $expected
 	 */
 	public function testGetFirstSentences( $text, $sentences, $expected ) {
-		$truncator = new TextTruncator();
+		$truncator = new TextTruncator( false );
 		$this->assertSame( $expected, $truncator->getFirstSentences( $text, $sentences ) );
 	}
 
@@ -138,7 +135,7 @@ class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
 	 * @param string $expected
 	 */
 	public function testGetFirstChars( $text, $chars, $expected ) {
-		$truncator = new TextTruncator();
+		$truncator = new TextTruncator( false );
 		$this->assertSame( $expected, $truncator->getFirstChars( $text, $chars ) );
 	}
 
@@ -171,16 +168,11 @@ class TextTruncatorTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	public function testTidyIntegration() {
-		$tidy = $this->createMock( TidyDriverBase::class );
-		$tidy->method( 'tidy' )
-			->willReturnCallback( function ( $text ) {
-				return "<tidy>$text</tidy>";
-			} );
-		$truncator = new TextTruncator( $tidy );
+		$truncator = new TextTruncator( true );
 
-		$text = 'Aa. Bb.';
-		$this->assertSame( '<tidy>Aa.</tidy>', $truncator->getFirstSentences( $text, 1 ) );
-		$this->assertSame( '<tidy>Aa</tidy>', $truncator->getFirstChars( $text, 1 ) );
+		$text = '<b>Aa. Bb.</b>';
+		$this->assertSame( '<p><b>Aa.</b></p>', $truncator->getFirstSentences( $text, 1 ) );
+		$this->assertSame( '<p><b>Aa</b></p>', $truncator->getFirstChars( $text, 4 ) );
 	}
 
 }

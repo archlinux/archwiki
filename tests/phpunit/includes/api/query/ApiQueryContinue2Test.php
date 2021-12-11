@@ -30,9 +30,9 @@ class ApiQueryContinue2Test extends ApiQueryContinueTestBase {
 	/**
 	 * Create a set of pages. These must not change, otherwise the tests might give wrong results.
 	 *
-	 * @see MediaWikiTestCase::addDBDataOnce()
+	 * @see MediaWikiIntegrationTestCase::addDBDataOnce()
 	 */
-	function addDBDataOnce() {
+	public function addDBDataOnce() {
 		try {
 			$this->editPage( 'AQCT73462-A', '**AQCT73462-A**  [[AQCT73462-B]] [[AQCT73462-C]]' );
 			$this->editPage( 'AQCT73462-B', '[[AQCT73462-A]]  **AQCT73462-B** [[AQCT73462-C]]' );
@@ -50,7 +50,7 @@ class ApiQueryContinue2Test extends ApiQueryContinueTestBase {
 	 */
 	public function testA() {
 		$this->mVerbose = false;
-		$mk = function ( $g, $p, $gDir ) {
+		$mk = static function ( $g, $p, $gDir ) {
 			return [
 				'generator' => 'allpages',
 				'gapprefix' => 'AQCT73462-',

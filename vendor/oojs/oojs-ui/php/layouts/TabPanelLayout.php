@@ -15,21 +15,29 @@ class TabPanelLayout extends PanelLayout {
 	/**
 	 * @var string
 	 */
-	private $name;
+	protected $name;
 	/**
 	 * @var string
 	 */
-	private $label;
+	protected $label;
+	/**
+	 * @var TabOptionWidget
+	 */
+	protected $tabItem;
 	/**
 	 * @var bool
 	 */
-	private $active;
+	protected $active;
+	/**
+	 * @var array
+	 */
+	protected $tabItemConfig;
 
 	/**
 	 * @param string $name Unique symbolic name of tab panel
 	 * @param array $config Configuration options
 	 *      - string|HtmlSnippet $config['label'] Label for tab panel's tab
-	 * @param-taint $config escapes_htmlnoent
+	 *      - array $config['tabItemConfig'] Additional tab item config
 	 */
 	public function __construct( $name, array $config = [] ) {
 		// Allow passing positional parameters inside the config array
@@ -46,6 +54,7 @@ class TabPanelLayout extends PanelLayout {
 		// Initialization
 		$this->name = $name;
 		$this->label = $config['label'] ?? null;
+		$this->tabItemConfig = $config['tabItemConfig'] ?? [];
 		$this->addClasses( [ 'oo-ui-tabPanelLayout' ] );
 		$this->setAttributes( [
 			'role' => 'tabpanel',
@@ -55,6 +64,9 @@ class TabPanelLayout extends PanelLayout {
 	public function getConfig( &$config ) {
 		$config['name'] = $this->name;
 		$config['label'] = $this->label;
+		if ( !empty( $this->tabItemConfig ) ) {
+			$config['tabItemConfig'] = $this->tabItemConfig;
+		}
 		// scrollable default has changed to true
 		if ( !$this->hasClass( 'oo-ui-panelLayout-scrollable' ) ) {
 			$config['scrollable'] = false;
@@ -66,6 +78,24 @@ class TabPanelLayout extends PanelLayout {
 
 	public function getName() {
 		return $this->name;
+	}
+
+	public function getTabItemConfig() {
+		return $this->tabItemConfig;
+	}
+
+	public function setTabItem( $tabItem ) {
+		$this->tabItem = $tabItem;
+		$this->setupTabItem();
+		return $this;
+	}
+
+	public function setupTabItem() {
+		// TODO: Set aria-labelledby/aria-controls as in .js
+		if ( $this->label ) {
+			$this->tabItem->setLabel( $this->label );
+		}
+		return $this;
 	}
 
 	public function getLabel() {

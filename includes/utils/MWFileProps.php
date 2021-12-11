@@ -55,8 +55,9 @@ class MWFileProps {
 	 *   - minor_mime
 	 *
 	 * @param string $path Filesystem path to a file
-	 * @param string|bool $ext The file extension, or true to extract it from the filename.
-	 *             Set it to false to ignore the extension.
+	 * @param string|bool|null $ext The file extension, or true to extract it from the filename.
+	 *  Set it to false to ignore the extension. Might be null in case the file is going to be
+	 *  stashed.
 	 * @return array
 	 * @since 1.28
 	 */
@@ -72,7 +73,10 @@ class MWFileProps {
 			# MIME type according to file contents
 			$info['file-mime'] = $this->magic->guessMimeType( $path, false );
 			# Logical MIME type
-			$ext = ( $ext === true ) ? FileBackend::extensionFromPath( $path ) : $ext;
+			$ext = ( $ext === true ) ? FileBackend::extensionFromPath( $path ) : (string)$ext;
+
+			# XXX: MimeAnalyzer::improveTypeFromExtension() may return null (T253483).
+			# Unclear if callers of this method expect that.
 			$info['mime'] = $this->magic->improveTypeFromExtension( $info['file-mime'], $ext );
 
 			list( $info['major_mime'], $info['minor_mime'] ) = File::splitMime( $info['mime'] );
@@ -82,7 +86,7 @@ class MWFileProps {
 			$handler = MediaHandler::getHandler( $info['mime'] );
 			if ( $handler ) {
 				$info['metadata'] = $handler->getMetadata( $fsFile, $path );
-				/** @noinspection PhpMethodParametersCountMismatchInspection */
+				// @phan-suppress-next-line PhanParamTooMany
 				$gis = $handler->getImageSize( $fsFile, $path, $info['metadata'] );
 				if ( is_array( $gis ) ) {
 					$info = $this->extractImageSizeInfo( $gis ) + $info;

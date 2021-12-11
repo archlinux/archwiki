@@ -22,7 +22,9 @@
  * @author Ævar Arnfjörð Bjarmason <avarab@gmail.com>
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Languages\LanguageConverterFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Searches the database for files of the requested MIME type, comparing this with the
@@ -32,23 +34,38 @@ use MediaWiki\MediaWikiServices;
 class SpecialMIMESearch extends QueryPage {
 	protected $major, $minor, $mime;
 
-	function __construct( $name = 'MIMEsearch' ) {
-		parent::__construct( $name );
+	/** @var ILanguageConverter */
+	private $languageConverter;
+
+	/**
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param LanguageConverterFactory $languageConverterFactory
+	 */
+	public function __construct(
+		ILoadBalancer $loadBalancer,
+		LinkBatchFactory $linkBatchFactory,
+		LanguageConverterFactory $languageConverterFactory
+	) {
+		parent::__construct( 'MIMEsearch' );
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setLinkBatchFactory( $linkBatchFactory );
+		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() );
 	}
 
 	public function isExpensive() {
 		return false;
 	}
 
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
-	function isCacheable() {
+	public function isCacheable() {
 		return false;
 	}
 
-	function linkParameters() {
+	protected function linkParameters() {
 		return [ 'mime' => "{$this->major}/{$this->minor}" ];
 	}
 
@@ -107,14 +124,15 @@ class SpecialMIMESearch extends QueryPage {
 	 * is what we ideally want, so everything works out fine anyhow.
 	 * @return array
 	 */
-	function getOrderFields() {
+	protected function getOrderFields() {
 		return [];
 	}
 
 	/**
 	 * Generate and output the form
+	 * @return string
 	 */
-	function getPageHeader() {
+	protected function getPageHeader() {
 		$formDescriptor = [
 			'mime' => [
 				'type' => 'combobox',
@@ -136,7 +154,7 @@ class SpecialMIMESearch extends QueryPage {
 	}
 
 	protected function getSuggestionsForTypes() {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
 		$lastMajor = null;
 		$suggestions = [];
 		$result = $dbr->select(
@@ -182,14 +200,14 @@ class SpecialMIMESearch extends QueryPage {
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		$linkRenderer = $this->getLinkRenderer();
 		$nt = Title::makeTitle( $result->namespace, $result->title );
-		$text = MediaWikiServices::getInstance()->getContentLanguage()
-			->convert( htmlspecialchars( $nt->getText() ) );
+
+		$text = $this->languageConverter->convertHtml( $nt->getText() );
 		$plink = $linkRenderer->makeLink(
 			Title::newFromText( $nt->getPrefixedText() ),
 			new HtmlArmor( $text )

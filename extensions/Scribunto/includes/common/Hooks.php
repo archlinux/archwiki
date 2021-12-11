@@ -52,10 +52,10 @@ class ScribuntoHooks {
 	/**
 	 * Register parser hooks.
 	 *
-	 * @param Parser &$parser
+	 * @param Parser $parser
 	 * @return bool
 	 */
-	public static function setupParserHook( Parser &$parser ) {
+	public static function setupParserHook( Parser $parser ) {
 		$parser->setFunctionHook( 'invoke', 'ScribuntoHooks::invokeHook', Parser::SFH_OBJECT_ARGS );
 		return true;
 	}
@@ -63,10 +63,10 @@ class ScribuntoHooks {
 	/**
 	 * Called when the interpreter is to be reset.
 	 *
-	 * @param Parser &$parser
+	 * @param Parser $parser
 	 * @return bool
 	 */
-	public static function clearState( Parser &$parser ) {
+	public static function clearState( Parser $parser ) {
 		Scribunto::resetParserEngine( $parser );
 		return true;
 	}
@@ -85,14 +85,14 @@ class ScribuntoHooks {
 	/**
 	 * Hook function for {{#invoke:module|func}}
 	 *
-	 * @param Parser &$parser
+	 * @param Parser $parser
 	 * @param PPFrame $frame
 	 * @param array $args
 	 * @throws MWException
 	 * @throws ScribuntoException
 	 * @return string
 	 */
-	public static function invokeHook( Parser &$parser, PPFrame $frame, array $args ) {
+	public static function invokeHook( Parser $parser, PPFrame $frame, array $args ) {
 		global $wgScribuntoGatherFunctionStats;
 
 		try {
@@ -210,7 +210,7 @@ class ScribuntoHooks {
 		}
 
 		$cacheVersion = '1';
-		$key = $cache->makeGlobalKey( __METHOD__, $cacheVersion, $threshold );
+		$key = $cache->makeGlobalKey( __METHOD__, $cacheVersion, (string)$threshold );
 
 		// This is a classic "read-update-write" critical section with no
 		// mutual exclusion, but the only consequence is that some samples
@@ -265,7 +265,7 @@ class ScribuntoHooks {
 			// Let TemplateStyles override Scribunto
 			return true;
 		}
-		if ( $title->getNamespace() == NS_MODULE && !Scribunto::isDocPage( $title ) ) {
+		if ( $title->getNamespace() === NS_MODULE && !Scribunto::isDocPage( $title ) ) {
 			$model = CONTENT_MODEL_SCRIBUNTO;
 			return true;
 		}
@@ -336,12 +336,12 @@ class ScribuntoHooks {
 	/**
 	 * EditPageBeforeEditButtons hook
 	 *
-	 * @param EditPage &$editor
+	 * @param EditPage $editor
 	 * @param array &$buttons Button array
 	 * @param int &$tabindex Current tabindex
 	 * @return bool
 	 */
-	public static function beforeEditButtons( EditPage &$editor, array &$buttons, &$tabindex ) {
+	public static function beforeEditButtons( EditPage $editor, array &$buttons, &$tabindex ) {
 		if ( $editor->getTitle()->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
 			unset( $buttons['preview'] );
 		}
@@ -383,12 +383,12 @@ class ScribuntoHooks {
 	}
 
 	/**
-	 * @param Article &$article
+	 * @param Article $article
 	 * @param bool &$outputDone
 	 * @param bool &$pcache
 	 * @return bool
 	 */
-	public static function showDocPageHeader( Article &$article, &$outputDone, &$pcache ) {
+	public static function showDocPageHeader( Article $article, &$outputDone, &$pcache ) {
 		$title = $article->getTitle();
 		if ( Scribunto::isDocPage( $title, $forModule ) ) {
 			$article->getContext()->getOutput()->addHTML(

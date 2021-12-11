@@ -31,7 +31,7 @@ class FormatJson {
 	 *
 	 * @since 1.22
 	 */
-	const UTF8_OK = 1;
+	public const UTF8_OK = 1;
 
 	/**
 	 * Skip escaping the characters '<', '>', and '&', which have special meanings in
@@ -43,7 +43,7 @@ class FormatJson {
 	 *
 	 * @since 1.22
 	 */
-	const XMLMETA_OK = 2;
+	public const XMLMETA_OK = 2;
 
 	/**
 	 * Skip escaping as many characters as reasonably possible.
@@ -52,7 +52,7 @@ class FormatJson {
 	 *
 	 * @since 1.22
 	 */
-	const ALL_OK = self::UTF8_OK | self::XMLMETA_OK;
+	public const ALL_OK = self::UTF8_OK | self::XMLMETA_OK;
 
 	/**
 	 * If set, treat JSON objects '{...}' as associative arrays. Without this option,
@@ -60,40 +60,21 @@ class FormatJson {
 	 *
 	 * @since 1.24
 	 */
-	const FORCE_ASSOC = 0x100;
+	public const FORCE_ASSOC = 0x100;
 
 	/**
 	 * If set, attempt to fix invalid JSON.
 	 *
 	 * @since 1.24
 	 */
-	const TRY_FIXING = 0x200;
+	public const TRY_FIXING = 0x200;
 
 	/**
 	 * If set, strip comments from input before parsing as JSON.
 	 *
 	 * @since 1.25
 	 */
-	const STRIP_COMMENTS = 0x400;
-
-	/**
-	 * Characters problematic in JavaScript.
-	 *
-	 * @note These are listed in ECMA-262 (5.1 Ed.), §7.3 Line Terminators along with U+000A (LF)
-	 *       and U+000D (CR). However, PHP already escapes LF and CR according to RFC 4627.
-	 */
-	private static $badChars = [
-		"\u{2028}", // U+2028 LINE SEPARATOR
-		"\u{2029}", // U+2029 PARAGRAPH SEPARATOR
-	];
-
-	/**
-	 * Escape sequences for characters listed in FormatJson::$badChars.
-	 */
-	private static $badCharsEscaped = [
-		'\u2028', // U+2028 LINE SEPARATOR
-		'\u2029', // U+2029 PARAGRAPH SEPARATOR
-	];
+	public const STRIP_COMMENTS = 0x400;
 
 	/**
 	 * Returns the JSON representation of a value.
@@ -107,42 +88,33 @@ class FormatJson {
 	 *
 	 * @param mixed $value The value to encode. Can be any type except a resource.
 	 * @param string|bool $pretty If a string, add non-significant whitespace to improve
-	 *   readability, using that string for indentation. If true, use the default indent
-	 *   string (four spaces).
+	 *   readability, using that string for indentation (must consist only of whitespace
+	 *   characters). If true, use the default indent string (four spaces).
 	 * @param int $escaping Bitfield consisting of _OK class constants
 	 * @return string|false String if successful; false upon failure
 	 */
 	public static function encode( $value, $pretty = false, $escaping = 0 ) {
-		if ( !is_string( $pretty ) ) {
-			$pretty = $pretty ? '    ' : false;
-		}
-
 		// PHP escapes '/' to prevent breaking out of inline script blocks using '</script>',
 		// which is hardly useful when '<' and '>' are escaped (and inadequate), and such
 		// escaping negatively impacts the human readability of URLs and similar strings.
 		$options = JSON_UNESCAPED_SLASHES;
-		$options |= $pretty !== false ? JSON_PRETTY_PRINT : 0;
-		$options |= ( $escaping & self::UTF8_OK ) ? JSON_UNESCAPED_UNICODE : 0;
-		$options |= ( $escaping & self::XMLMETA_OK ) ? 0 : ( JSON_HEX_TAG | JSON_HEX_AMP );
-		$json = json_encode( $value, $options );
-		if ( $json === false ) {
-			return false;
-		}
-
-		if ( $pretty !== false && $pretty !== '    ' ) {
-			// Change the four-space indent to a tab indent
-			$json = str_replace( "\n    ", "\n\t", $json );
-			while ( strpos( $json, "\t    " ) !== false ) {
-				$json = str_replace( "\t    ", "\t\t", $json );
-			}
-
-			if ( $pretty !== "\t" ) {
-				// Change the tab indent to the provided indent
-				$json = str_replace( "\t", $pretty, $json );
-			}
+		if ( $pretty || is_string( $pretty ) ) {
+			$options |= JSON_PRETTY_PRINT;
 		}
 		if ( $escaping & self::UTF8_OK ) {
-			$json = str_replace( self::$badChars, self::$badCharsEscaped, $json );
+			$options |= JSON_UNESCAPED_UNICODE;
+		}
+		if ( !( $escaping & self::XMLMETA_OK ) ) {
+			$options |= JSON_HEX_TAG | JSON_HEX_AMP;
+		}
+		$json = json_encode( $value, $options );
+
+		if ( is_string( $pretty ) && $pretty !== '    ' && $json !== false ) {
+			// Change the four-space indent to the provided indent.
+			// The regex matches four spaces either at the start of a line or immediately
+			// after the previous match. $pretty should contain only whitespace characters,
+			// so there should be no need to call StringUtils::escapeRegexReplacement().
+			$json = preg_replace( '/ {4}|.*+\n\K {4}/A', $pretty, $json );
 		}
 
 		return $json;
@@ -206,7 +178,7 @@ class FormatJson {
 					$value, -1, $count );
 			if ( $count > 0 ) {
 				$result = json_decode( $value, $assoc );
-				if ( JSON_ERROR_NONE === json_last_error() ) {
+				if ( json_last_error() === JSON_ERROR_NONE ) {
 					// Report warning
 					$st = Status::newGood( $result );
 					$st->warning( wfMessage( 'json-warn-trailing-comma' )->numParams( $count ) );
@@ -215,6 +187,9 @@ class FormatJson {
 			}
 		}
 
+		// JSON_ERROR_RECURSION, JSON_ERROR_INF_OR_NAN,
+		// JSON_ERROR_UNSUPPORTED_TYPE, JSON_ERROR_INVALID_PROPERTY_NAME,
+		// are all encode errors that we don't need to care about here.
 		switch ( $code ) {
 			case JSON_ERROR_NONE:
 				return Status::newGood( $result );
@@ -235,14 +210,8 @@ class FormatJson {
 			case JSON_ERROR_UTF8:
 				$msg = 'json-error-utf8';
 				break;
-			case JSON_ERROR_RECURSION:
-				$msg = 'json-error-recursion';
-				break;
-			case JSON_ERROR_INF_OR_NAN:
-				$msg = 'json-error-inf-or-nan';
-				break;
-			case JSON_ERROR_UNSUPPORTED_TYPE:
-				$msg = 'json-error-unsupported-type';
+			case JSON_ERROR_UTF16:
+				$msg = 'json-error-utf16';
 				break;
 		}
 		return Status::newFatal( $msg );

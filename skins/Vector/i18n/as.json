@@ -3,9 +3,20 @@
 		"authors": [
 			"Bishnu Saikia",
 			"Chaipau",
-			"Gitartha.bordoloi"
+			"Gitartha.bordoloi",
+			"Simbu123"
 		]
 	},
+	"skinname-vector": "ভেক্টৰ",
+	"vector-skin-desc": "নতুন ৰূপ আৰু বহুতো ব্যৱহাৰযোগ্যতাৰ উন্নতিৰ সৈতে ম'ন'বুকৰ আধুনিক সংস্কৰণ",
+	"prefs-vector-enable-vector-1-label": "পুৰণা ভেক্টৰ ব্যৱহাৰ কৰক",
+	"prefs-vector-enable-vector-1-help": "পৰৱৰ্তী কেইবছৰমানত, আমি ক্ৰমান্বয়ে ভেক্টৰ আৱৰণ আপডেট কৰিম। পুৰণা ভেক্টৰ আৱৰণে আপোনাক ভেক্টৰৰ পুৰণি সংস্কৰণ চাবলৈ অনুমতি দিব (ডিচেম্বৰ ২০১৯ লৈকে)। আপডেটবোৰৰ বিষয়ে অধিক জানিবলৈ, আমাৰ [[mw:Reading/Web/Desktop_Improvements|প্ৰকল্প পৃষ্ঠালৈ]] যাওক।",
+	"vector-opt-out": "পুৰণি ৰূপলৈ যাওক",
+	"vector-opt-out-tooltip": "আৱৰণৰ পুৰণি ৰূপলৈ ঘূৰি যাবলৈ আপোনাৰ ছেটিংছ সলনি কৰক (পুৰণা ভেক্টৰ)",
+	"vector.css": "/* ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো CSS লোড কৰা হ'ব */",
+	"vector.js": "/* ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো জাভাস্ক্ৰিপ্ট লোড কৰা হ'ব */",
+	"vector-action-toggle-sidebar": "পাৰ্শ্বদণ্ড টগল কৰক",
+	"vector-language-button-label": "{{PLURAL:$1|$1টা ভাষা}}",
 	"vector-action-addsection": "বিষয় যোগ",
 	"vector-action-delete": "বিলোপ কৰক",
 	"vector-action-move": "স্থানান্তৰ কৰক",
@@ -17,5 +28,9 @@
 	"vector-view-history": "ইতিহাস চাওক",
 	"vector-view-view": "পঢ়ক",
 	"vector-view-viewsource": "উৎস চাওক",
-	"vector-more-actions": "অধিক"
+	"vector-jumptonavigation": "নেভিগেশ্যনলৈ যাওক",
+	"vector-jumptosearch": "সন্ধানলৈ যাওক",
+	"vector-jumptocontent": "সমললৈ যাওক",
+	"vector-more-actions": "অধিক",
+	"vector-search-loader": "সন্ধান পৰামৰ্শ লোড কৰা হৈছে"
 }

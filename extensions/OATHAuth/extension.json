@@ -1,6 +1,6 @@
 {
 	"name": "OATHAuth",
-	"version": "0.4.4",
+	"version": "0.5.0",
 	"author": [
 		"Ryan Lane",
 		"Robert Vogel <vogel@hallowelt.com>",
@@ -10,7 +10,7 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.32.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
@@ -21,12 +21,14 @@
 		}
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\OATHAuth\\": "src/",
+		"MediaWiki\\Extension\\OATHAuth\\": "src/"
+	},
+	"TestAutoloadNamespaces": {
 		"MediaWiki\\Extension\\OATHAuth\\Tests\\": "tests/phpunit/"
 	},
 	"AuthManagerAutoConfig": {
 		"secondaryauth": {
-			"OATHSecondaryAuthenticationProvider":{
+			"OATHSecondaryAuthenticationProvider": {
 				"class": "\\MediaWiki\\Extension\\OATHAuth\\Auth\\SecondaryAuthenticationProvider",
 				"sort": 50
 			}
@@ -39,21 +41,20 @@
 		"OATHAuthAlias": "OATHAuth.alias.php"
 	},
 	"Hooks": {
-		"AuthChangeFormFields": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\AuthChangeFormFields\\TOTPExtendTokenField::callback"
-		],
-		"TwoFactorIsEnabled": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\TwoFactorIsEnabled\\SetIsEnabled::callback"
-		],
-		"LoadExtensionSchemaUpdates": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\LoadExtensionSchemaUpdates\\UpdateTables::callback"
-		],
-		"GetPreferences": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetPreferences\\AuthModule::callback"
-		],
-		"getUserPermissionsErrors": [
-			"\\MediaWiki\\Extension\\OATHAuth\\Hook\\GetUserPermissionsErrors\\CheckExclusiveRights::callback"
-		]
+		"AuthChangeFormFields": "main",
+		"LoadExtensionSchemaUpdates": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\LoadExtensionSchemaUpdates\\UpdateTables::callback",
+		"GetPreferences": "main",
+		"getUserPermissionsErrors": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\HookHandler",
+			"services": [
+				"OATHUserRepository",
+				"PermissionManager",
+				"MainConfig"
+			]
+		}
 	},
 	"MessagesDirs": {
 		"OATHAuth": [
@@ -84,11 +85,19 @@
 				"totp/jquery.qrcode.js",
 				"totp/qrcode.js",
 				"totp/ext.oath.showqrcode.js"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		},
 		"ext.oath.totp.showqrcode.styles": {
 			"styles": [
 				"totp/ext.oath.showqrcode.styles.css"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		}
 	},
@@ -97,29 +106,53 @@
 		"remoteExtPath": "OATHAuth/modules"
 	},
 	"SpecialPages": {
-		"DisableOATHForUser": "\\MediaWiki\\Extension\\OATHAuth\\Special\\DisableOATHForUser",
-		"OATHManage": "\\MediaWiki\\Extension\\OATHAuth\\Special\\OATHManage"
+		"DisableOATHForUser": {
+			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\DisableOATHForUser",
+			"services": [
+				"OATHUserRepository",
+				"UserFactory"
+			]
+		},
+		"OATHManage": {
+			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\OATHManage",
+			"services": [
+				"OATHUserRepository",
+				"OATHAuth"
+			]
+		},
+		"VerifyOATHForUser": {
+			"class": "\\MediaWiki\\Extension\\OATHAuth\\Special\\VerifyOATHForUser",
+			"services": [
+				"OATHUserRepository",
+				"UserFactory"
+			]
+		}
 	},
 	"AvailableRights": [
 		"oathauth-enable",
 		"oathauth-api-all",
 		"oathauth-disable-for-user",
+		"oathauth-verify-user",
 		"oathauth-view-log"
 	],
 	"GroupPermissions": {
 		"*": {
-			"oathauth-enable": true,
 			"oathauth-disable-for-user": false,
 			"oathauth-view-log": false
 		},
+		"user": {
+			"oathauth-enable": true
+		},
 		"sysop": {
 			"oathauth-disable-for-user": true,
+			"oathauth-verify-user": true,
 			"oathauth-view-log": true
 		}
 	},
 	"GrantPermissions": {
 		"oath": {
-			"oathauth-api-all": true
+			"oathauth-api-all": true,
+			"oathauth-verify-user": true
 		}
 	},
 	"GrantPermissionGroups": {
@@ -134,13 +167,11 @@
 	"RateLimits": {
 		"badoath": {
 			"&can-bypass": false,
-			"user": [
-				10,
-				60
-			]
+			"user": [ 10, 60 ],
+			"user-global": [ 10, 60 ]
 		}
 	},
-	"ReauthenticateTime":  {
+	"ReauthenticateTime": {
 		"oathauth-enable": 60
 	},
 	"load_composer_autoloader": true,

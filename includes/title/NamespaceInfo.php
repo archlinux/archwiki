@@ -21,6 +21,8 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 
@@ -51,15 +53,15 @@ class NamespaceInfo {
 	/** @var ServiceOptions */
 	private $options;
 
+	/** @var HookRunner */
+	private $hookRunner;
+
 	/**
 	 * Definitions of the NS_ constants are in Defines.php
 	 *
-	 * @todo Make this const when HHVM support is dropped (T192166)
-	 *
-	 * @var array
 	 * @internal
 	 */
-	public static $canonicalNames = [
+	public const CANONICAL_NAMES = [
 		NS_MEDIA            => 'Media',
 		NS_SPECIAL          => 'Special',
 		NS_MAIN             => '',
@@ -81,13 +83,9 @@ class NamespaceInfo {
 	];
 
 	/**
-	 * TODO Make this const when HHVM support is dropped (T192166)
-	 *
-	 * @since 1.34
-	 * @var array
+	 * @internal For use by ServiceWiring
 	 */
-	public static $constructorOptions = [
-		'AllowImageMoving',
+	public const CONSTRUCTOR_OPTIONS = [
 		'CanonicalNamespaceNames',
 		'CapitalLinkOverrides',
 		'CapitalLinks',
@@ -101,10 +99,12 @@ class NamespaceInfo {
 
 	/**
 	 * @param ServiceOptions $options
+	 * @param HookContainer $hookContainer
 	 */
-	public function __construct( ServiceOptions $options ) {
-		$options->assertRequiredOptions( self::$constructorOptions );
+	public function __construct( ServiceOptions $options, HookContainer $hookContainer ) {
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
+		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
 	/**
@@ -127,19 +127,46 @@ class NamespaceInfo {
 	}
 
 	/**
+	 * Throw if given index isn't an integer or integer-like string and so can't be a valid namespace.
+	 *
+	 * @param int|string $index
+	 * @param string $method
+	 *
+	 * @throws InvalidArgumentException
+	 * @return int Cleaned up namespace index
+	 */
+	private function makeValidNamespace( $index, $method ) {
+		if ( !(
+			is_int( $index )
+			// Namespace index numbers as strings
+			|| ctype_digit( $index )
+			// Negative numbers as strings
+			|| ( $index[0] === '-' && ctype_digit( substr( $index, 1 ) ) )
+		) ) {
+			throw new InvalidArgumentException(
+				"$method called with non-integer (" . gettype( $index ) . ") namespace '$index'"
+			);
+		}
+
+		return intval( $index );
+	}
+
+	/**
 	 * Can pages in the given namespace be moved?
 	 *
 	 * @param int $index Namespace index
 	 * @return bool
 	 */
 	public function isMovable( $index ) {
-		$result = $index >= NS_MAIN &&
-			( $index != NS_FILE || $this->options->get( 'AllowImageMoving' ) );
+		$extensionRegistry = ExtensionRegistry::getInstance();
+		$extNamespaces = $extensionRegistry->getAttribute( 'ImmovableNamespaces' );
+
+		$result = $index >= NS_MAIN && !in_array( $index, $extNamespaces );
 
 		/**
 		 * @since 1.20
 		 */
-		Hooks::run( 'NamespaceIsMovable', [ $index, &$result ] );
+		$this->hookRunner->onNamespaceIsMovable( $index, $result );
 
 		return $result;
 	}
@@ -161,6 +188,8 @@ class NamespaceInfo {
 	 * @return bool
 	 */
 	public function isTalk( $index ) {
+		$index = $this->makeValidNamespace( $index, __METHOD__ );
+
 		return $index > NS_MAIN
 			&& $index % 2;
 	}
@@ -174,6 +203,8 @@ class NamespaceInfo {
 	 *         (e.g. NS_SPECIAL).
 	 */
 	public function getTalk( $index ) {
+		$index = $this->makeValidNamespace( $index, __METHOD__ );
+
 		$this->isMethodValidFor( $index, __METHOD__ );
 		return $this->isTalk( $index )
 			? $index
@@ -187,7 +218,7 @@ class NamespaceInfo {
 	 * @param LinkTarget $target
 	 * @return LinkTarget Talk page for $target
 	 * @throws MWException if $target doesn't have talk pages, e.g. because it's in NS_SPECIAL,
-	 *         because it's a relative section-only link, or it's an an interwiki link.
+	 *         because it's a relative section-only link, or it's an interwiki link.
 	 */
 	public function getTalkPage( LinkTarget $target ) : LinkTarget {
 		if ( $target->getText() === '' ) {
@@ -237,6 +268,8 @@ class NamespaceInfo {
 	 * @return int
 	 */
 	public function getSubject( $index ) {
+		$index = $this->makeValidNamespace( $index, __METHOD__ );
+
 		# Handle special namespaces
 		if ( $index < NS_MAIN ) {
 			return $index;
@@ -353,7 +386,7 @@ class NamespaceInfo {
 			if ( is_array( $this->options->get( 'ExtraNamespaces' ) ) ) {
 				$this->canonicalNamespaces += $this->options->get( 'ExtraNamespaces' );
 			}
-			Hooks::run( 'CanonicalNamespaces', [ &$this->canonicalNamespaces ] );
+			$this->hookRunner->onCanonicalNamespaces( $this->canonicalNamespaces );
 		}
 		return $this->canonicalNamespaces;
 	}
@@ -396,7 +429,7 @@ class NamespaceInfo {
 	 * @return array
 	 */
 	public function getValidNamespaces() {
-		if ( is_null( $this->validNamespaces ) ) {
+		if ( $this->validNamespaces === null ) {
 			$this->validNamespaces = [];
 			foreach ( array_keys( $this->getCanonicalNamespaces() ) as $ns ) {
 				if ( $ns >= 0 ) {
@@ -409,8 +442,6 @@ class NamespaceInfo {
 
 		return $this->validNamespaces;
 	}
-
-	/*
 
 	/**
 	 * Does this namespace ever have a talk namespace?
@@ -456,7 +487,8 @@ class NamespaceInfo {
 	}
 
 	/**
-	 * Does the namespace allow subpages?
+	 * Does the namespace allow subpages? Note that this refers to structured
+	 * handling of subpages, and does not include SpecialPage subpage parameters.
 	 *
 	 * @param int $index Index to check
 	 * @return bool
@@ -467,7 +499,7 @@ class NamespaceInfo {
 
 	/**
 	 * Get a list of all namespace indices which are considered to contain content
-	 * @return array Array of namespace indices
+	 * @return int[] Array of namespace indices
 	 */
 	public function getContentNamespaces() {
 		$contentNamespaces = $this->options->get( 'ContentNamespaces' );
@@ -485,7 +517,7 @@ class NamespaceInfo {
 	 * List all namespace indices which are considered subject, aka not a talk
 	 * or special namespace. See also NamespaceInfo::isSubject
 	 *
-	 * @return array Array of namespace indices
+	 * @return int[] Array of namespace indices
 	 */
 	public function getSubjectNamespaces() {
 		return array_filter(
@@ -498,7 +530,7 @@ class NamespaceInfo {
 	 * List all namespace indices which are considered talks, aka not a subject
 	 * or special namespace. See also NamespaceInfo::isTalk
 	 *
-	 * @return array Array of namespace indices
+	 * @return int[] Array of namespace indices
 	 */
 	public function getTalkNamespaces() {
 		return array_filter(
@@ -582,6 +614,7 @@ class NamespaceInfo {
 		// PermissionManager is not injected because adding an explicit dependency
 		// breaks MW installer by adding a dependency chain on the database before
 		// it was set up. Also, the method is deprecated and will be soon removed.
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()
 			->getPermissionManager()
 			->getNamespaceRestrictionLevels( $index, $user );
@@ -616,6 +649,6 @@ class NamespaceInfo {
 	 * @return int[]
 	 */
 	public static function getCommonNamespaces() {
-		return array_keys( self::$canonicalNames );
+		return array_keys( self::CANONICAL_NAMES );
 	}
 }

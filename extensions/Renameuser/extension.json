@@ -9,7 +9,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.33.0"
+		"MediaWiki": ">= 1.36.0"
 	},
 	"ExtensionMessagesFiles": {
 		"RenameuserAliases": "Renameuser.alias.php"
@@ -23,15 +23,17 @@
 		]
 	},
 	"Hooks": {
-		"ShowMissingArticle": [
-			"RenameuserHooks::onShowMissingArticle"
-		],
-		"ContributionsToolLinks": [
-			"RenameuserHooks::onContributionsToolLinks"
-		],
-		"GetLogTypesOnUser": [
-			"RenameuserHooks::onGetLogTypesOnUser"
-		]
+		"ShowMissingArticle": "main",
+		"ContributionsToolLinks": "main",
+		"GetLogTypesOnUser": "main"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "RenameuserHooks",
+			"services": [
+				"PermissionManager"
+			]
+		}
 	},
 	"JobClasses": {
 		"renameUser": "RenameUserJob"
@@ -48,14 +50,32 @@
 		"renameuser"
 	],
 	"SpecialPages": {
-		"Renameuser": "SpecialRenameuser"
+		"Renameuser": {
+			"class": "SpecialRenameuser",
+			"services": [
+				"HookContainer",
+				"ContentLanguage",
+				"MovePageFactory",
+				"PermissionManager",
+				"TitleFactory",
+				"UserFactory",
+				"UserNamePrefixSearch",
+				"UserNameUtils"
+			]
+		}
 	},
 	"AutoloadClasses": {
+		"RenameUserAbortHook": "includes/Hook/RenameUserAbortHook.php",
+		"RenameuserHookRunner": "includes/RenameuserHookRunner.php",
 		"RenameuserHooks": "includes/RenameuserHooks.php",
 		"RenameUserJob": "includes/RenameUserJob.php",
 		"RenameuserLogFormatter": "includes/RenameuserLogFormatter.php",
+		"RenameUserPreRenameHook": "includes/Hook/RenameUserPreRenameHook.php",
+		"RenameUserCompleteHook": "includes/Hook/RenameUserCompleteHook.php",
 		"RenameuserSQL": "includes/RenameuserSQL.php",
+		"RenameUserSQLHook": "includes/Hook/RenameUserSQLHook.php",
+		"RenameUserWarningHook": "includes/Hook/RenameUserWarningHook.php",
 		"SpecialRenameuser": "includes/SpecialRenameuser.php"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

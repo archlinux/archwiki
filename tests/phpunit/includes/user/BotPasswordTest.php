@@ -9,7 +9,7 @@ use Wikimedia\TestingAccessWrapper;
  * @covers BotPassword
  * @group Database
  */
-class BotPasswordTest extends MediaWikiTestCase {
+class BotPasswordTest extends MediaWikiIntegrationTestCase {
 
 	/** @var TestUser */
 	private $testUser;
@@ -17,7 +17,7 @@ class BotPasswordTest extends MediaWikiTestCase {
 	/** @var string */
 	private $testUserName;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->setMwGlobals( [
@@ -48,10 +48,10 @@ class BotPasswordTest extends MediaWikiTestCase {
 		$mock2->expects( $this->never() )->method( 'lookupCentralIds' );
 
 		$this->mergeMwGlobalArrayValue( 'wgCentralIdLookupProviders', [
-			'BotPasswordTest OkMock' => [ 'factory' => function () use ( $mock1 ) {
+			'BotPasswordTest OkMock' => [ 'factory' => static function () use ( $mock1 ) {
 				return $mock1;
 			} ],
-			'BotPasswordTest FailMock' => [ 'factory' => function () use ( $mock2 ) {
+			'BotPasswordTest FailMock' => [ 'factory' => static function () use ( $mock2 ) {
 				return $mock2;
 			} ],
 		] );
@@ -365,8 +365,9 @@ class BotPasswordTest extends MediaWikiTestCase {
 		);
 
 		$passwordHash = $password ? $passwordFactory->newFromPlaintext( $password ) : null;
-		$this->assertFalse( $bp->save( 'update', $passwordHash ) );
-		$this->assertTrue( $bp->save( 'insert', $passwordHash ) );
+		$this->assertFalse( $bp->save( 'update', $passwordHash )->isGood() );
+		$this->assertTrue( $bp->save( 'insert', $passwordHash )->isGood() );
+
 		$bp2 = BotPassword::newFromCentralId( 42, 'TestSave', BotPassword::READ_LATEST );
 		$this->assertInstanceOf( BotPassword::class, $bp2 );
 		$this->assertEquals( $bp->getUserCentralId(), $bp2->getUserCentralId() );
@@ -374,6 +375,7 @@ class BotPasswordTest extends MediaWikiTestCase {
 		$this->assertEquals( $bp->getToken(), $bp2->getToken() );
 		$this->assertEquals( $bp->getRestrictions(), $bp2->getRestrictions() );
 		$this->assertEquals( $bp->getGrants(), $bp2->getGrants() );
+
 		/** @var Password $pw */
 		$pw = TestingAccessWrapper::newFromObject( $bp )->getPassword();
 		if ( $password === null ) {
@@ -385,9 +387,10 @@ class BotPasswordTest extends MediaWikiTestCase {
 		$token = $bp->getToken();
 		$this->assertEquals( 42, $bp->getUserCentralId() );
 		$this->assertEquals( 'TestSave', $bp->getAppId() );
-		$this->assertFalse( $bp->save( 'insert' ) );
-		$this->assertTrue( $bp->save( 'update' ) );
+		$this->assertFalse( $bp->save( 'insert' )->isGood() );
+		$this->assertTrue( $bp->save( 'update' )->isGood() );
 		$this->assertNotEquals( $token, $bp->getToken() );
+
 		$bp2 = BotPassword::newFromCentralId( 42, 'TestSave', BotPassword::READ_LATEST );
 		$this->assertInstanceOf( BotPassword::class, $bp2 );
 		$this->assertEquals( $bp->getToken(), $bp2->getToken() );
@@ -401,8 +404,9 @@ class BotPasswordTest extends MediaWikiTestCase {
 
 		$passwordHash = $passwordFactory->newFromPlaintext( 'XXX' );
 		$token = $bp->getToken();
-		$this->assertTrue( $bp->save( 'update', $passwordHash ) );
+		$this->assertTrue( $bp->save( 'update', $passwordHash )->isGood() );
 		$this->assertNotEquals( $token, $bp->getToken() );
+
 		/** @var Password $pw */
 		$pw = TestingAccessWrapper::newFromObject( $bp )->getPassword();
 		$this->assertTrue( $pw->verify( 'XXX' ) );
@@ -411,7 +415,8 @@ class BotPasswordTest extends MediaWikiTestCase {
 		$this->assertFalse( $bp->isSaved() );
 		$this->assertNull( BotPassword::newFromCentralId( 42, 'TestSave', BotPassword::READ_LATEST ) );
 
-		$this->assertFalse( $bp->save( 'foobar' ) );
+		$this->expectException( UnexpectedValueException::class );
+		$bp->save( 'foobar' )->isGood();
 	}
 
 	public static function provideSave() {
@@ -419,5 +424,48 @@ class BotPasswordTest extends MediaWikiTestCase {
 			[ null ],
 			[ 'foobar' ],
 		];
+	}
+
+	/**
+	 * Tests for error handling when bp_restrictions and bp_grants are too long
+	 */
+	public function testSaveValidation() {
+		$lotsOfIPs = [
+			'IPAddresses' => array_fill(
+				0,
+				5000,
+				"127.0.0.0/8"
+			)
+		];
+
+		$bp = BotPassword::newUnsaved( [
+			'centralId' => 42,
+			'appId' => 'TestSave',
+			// When this becomes JSON, it'll be 70,017 characters, which is
+			// greater than BotPassword::GRANTS_MAXLENGTH, so it will cause an error.
+			'restrictions' => MWRestrictions::newFromArray( $lotsOfIPs ),
+			'grants' => [
+				// Maximum length of the JSON is BotPassword::RESTRICTIONS_MAXLENGTH characters.
+				// So one long grant name should be good. Turning it into JSON will add
+				// a couple of extra characters, taking it over BotPassword::RESTRICTIONS_MAXLENGTH
+				// characters long, so it will cause an error.
+				str_repeat( '*', BotPassword::RESTRICTIONS_MAXLENGTH )
+			],
+		] );
+
+		$status = $bp->save( 'insert' );
+
+		$this->assertFalse( $status->isGood() );
+		$this->assertNotEmpty( $status->getErrors() );
+
+		$this->assertSame(
+			'botpasswords-toolong-restrictions',
+			$status->getErrors()[0]['message']
+		);
+
+		$this->assertSame(
+			'botpasswords-toolong-grants',
+			$status->getErrors()[1]['message']
+		);
 	}
 }

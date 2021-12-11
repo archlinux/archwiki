@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Rancher",
-			"Михајло Анђелковић",
-			"Milicevic01",
 			"BadDog",
-			"Zoranzoki21"
+			"Milicevic01",
+			"Rancher",
+			"Zoranzoki21",
+			"Михајло Анђелковић"
 		]
 	},
 	"pdf-desc": "Руковалац за приказ PDF датотека у режиму за слике",
@@ -15,7 +15,7 @@
 	"pdf-file-page-warning-info": "Сазнајте више о овом проблему.",
 	"pdf_no_metadata": "Не могу да преузмем метаподатке из PDF-а",
 	"pdf_page_error": "Број страница ван опсега",
-	"exif-pdf-producer": "Коришћени софтвер за конвертовање",
+	"exif-pdf-producer": "Програм за претварање",
 	"exif-pdf-version": "Верзија PDF формата",
 	"exif-pdf-encrypted": "Шифровано",
 	"exif-pdf-pagesize": "Величина странице"

@@ -11,6 +11,7 @@
 			"Shirayuki",
 			"Suisui",
 			"Whym",
+			"Yusuke1109",
 			"ネイ"
 		]
 	},
@@ -215,7 +216,6 @@
 	"exif-photometricinterpretation-4": "透明マスク",
 	"exif-photometricinterpretation-5": "分版 (おそらく CMYK)",
 	"exif-photometricinterpretation-6": "YCbCr",
-	"exif-photometricinterpretation-8": "CIE L*a*b*",
 	"exif-photometricinterpretation-9": "CIE L*a*b* (ICC エンコード)",
 	"exif-photometricinterpretation-10": "CIE L*a*b* (ITU エンコード)",
 	"exif-photometricinterpretation-32803": "カラーフィルター配列",
@@ -303,6 +303,12 @@
 	"exif-scenetype-1": "直接撮影された画像",
 	"exif-customrendered-0": "通常処理",
 	"exif-customrendered-1": "特殊処理",
+	"exif-customrendered-2": "HDR（オリジナルが保存されていない）",
+	"exif-customrendered-3": "HDR（オリジナルが保存されている）",
+	"exif-customrendered-4": "オリジナル（HDR用）",
+	"exif-customrendered-6": "パノラマ",
+	"exif-customrendered-7": "ポートレートHDR",
+	"exif-customrendered-8": "ポートレート",
 	"exif-exposuremode-0": "露出自動",
 	"exif-exposuremode-1": "露出マニュアル",
 	"exif-exposuremode-2": "オートブラケット",
@@ -389,5 +395,12 @@
 	"exif-urgency-normal": "通常 ($1)",
 	"exif-urgency-low": "低 ($1)",
 	"exif-urgency-high": "高 ($1)",
-	"exif-urgency-other": "利用者定義の優先度 ($1)"
+	"exif-urgency-other": "利用者定義の優先度 ($1)",
+	"exif-usepanoramaviewer": "パノラマビューワーを使用するか",
+	"exif-usepanoramaviewer-true": "はい",
+	"exif-usepanoramaviewer-false": "いいえ",
+	"exif-exposurelockused": "露出を固定していたか",
+	"exif-exposurelockused-true": "はい",
+	"exif-exposurelockused-false": "いいえ",
+	"exif-stitchingsoftware": "スティッチングソフトウェア"
 }

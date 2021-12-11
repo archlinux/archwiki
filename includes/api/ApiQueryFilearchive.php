@@ -57,14 +57,10 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		$fld_bitdepth = isset( $prop['bitdepth'] );
 		$fld_archivename = isset( $prop['archivename'] );
 
-		if ( $fld_description &&
-			!$this->getPermissionManager()->userHasRight( $user, 'deletedhistory' )
-		) {
+		if ( $fld_description && !$this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
 			$this->dieWithError( 'apierror-cantview-deleted-description', 'permissiondenied' );
 		}
-		if ( $fld_metadata &&
-			!$this->getPermissionManager()->userHasAnyRight( $user, 'deletedtext', 'undelete' )
-		) {
+		if ( $fld_metadata && !$this->getAuthority()->isAllowedAny( 'deletedtext', 'undelete' ) ) {
 			$this->dieWithError( 'apierror-cantview-deleted-metadata', 'permissiondenied' );
 		}
 
@@ -73,7 +69,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 		$this->addFields( $fileQuery['fields'] );
 		$this->addJoinConds( $fileQuery['joins'] );
 
-		if ( !is_null( $params['continue'] ) ) {
+		if ( $params['continue'] !== null ) {
 			$cont = explode( '|', $params['continue'] );
 			$this->dieContinueUsageIf( count( $cont ) != 3 );
 			$op = $params['dir'] == 'descending' ? '<' : '>';
@@ -119,11 +115,9 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			if ( $sha1 ) {
 				$this->addWhereFld( 'fa_sha1', $sha1 );
 				// Paranoia: avoid brute force searches (T19342)
-				if ( !$this->getPermissionManager()->userHasRight( $user, 'deletedtext' ) ) {
+				if ( !$this->getAuthority()->isAllowed( 'deletedtext' ) ) {
 					$bitmask = File::DELETED_FILE;
-				} elseif ( !$this->getPermissionManager()
-					->userHasAnyRight( $user, 'suppressrevision', 'viewsuppressed' )
-				) {
+				} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
 					$bitmask = File::DELETED_FILE | File::DELETED_RESTRICTED;
 				} else {
 					$bitmask = 0;
@@ -211,7 +205,7 @@ class ApiQueryFilearchive extends ApiQueryBase {
 			if ( $fld_mime && $canViewFile ) {
 				$file['mime'] = "$row->fa_major_mime/$row->fa_minor_mime";
 			}
-			if ( $fld_archivename && !is_null( $row->fa_archive_name ) ) {
+			if ( $fld_archivename && $row->fa_archive_name !== null ) {
 				$file['archivename'] = $row->fa_archive_name;
 			}
 

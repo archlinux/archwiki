@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Cérilew",
 			"Geoleplubo",
 			"Hercule",
-			"아라",
-			"Cérilew"
+			"아라"
 		]
 	},
 	"tog-underline": "Loïens soulinés:",
@@ -115,7 +115,6 @@
 	"category-article-count-limited": "{{PLURAL:$1|L' pache d'apré ale est|Chés $1 paches d'apré sont}} dins l'catégorie-lo.",
 	"category-file-count": "Chol catégorie al o  {{PLURAL:$2|seulemint ech fichié-lo:|$2 fichiés dont chés $1 fichiés suivants:}}",
 	"category-file-count-limited": "{{PLURAL:$1|Ech fichié d'apré est|Chés $1 fichiés d'apré sont}} dins l'catégorie-lo.",
-	"listingcontinuesabbrev": "cont.",
 	"index-category": "Paches indécsées",
 	"noindex-category": "Paches nin indécsées",
 	"broken-file-category": "Paches aveuc des loïens d'fichiés bérzillés",
@@ -232,7 +231,6 @@
 	"thisisdeleted": "Vir ou érfoaire $1?",
 	"viewdeleted": "Vir $1?",
 	"restorelink": "{{PLURAL:$1|eune édition défacée|$1 chés éditions défacées}}",
-	"feedlinks": "Pipe:",
 	"feed-unavailable": "I n'y o poin ed sindicachion ed ches pipes",
 	"site-rss-feed": "$1 RSS Fil",
 	"site-atom-feed": "$1 Atom Fil",
@@ -255,7 +253,7 @@
 	"nosuchspecialpage": "I n'y o poin chot éspéchiale pache-lo",
 	"error": "Bérlurache",
 	"databaseerror": "Bérlurache din l'database",
-	"laggedslavemode": "'''Afute:''' Pététe éq l'pache-lo n'o poin chés darins canjemints.",
+	"laggedreplicamode": "'''Afute:''' Pététe éq l'pache-lo n'o poin chés darins canjemints.",
 	"missing-article": "El base éd dounées n'o poin treuvé ech teske d'eune pache éq ale d'vroait treuver, aveuc ch'nom  \"$1\" $2. <br />  Généralemint, ch'est pasqué in o sui eune anthieusse diff o bin un histourique érlié aveuc eune pache défachée.\n\nSi s'n'est poin ch'cas-lo, pététe éq ch'est un bogue din ch'businkillache. <br /> I feut signaler ch'probléme-lo à un [[Special:ListUsers/sysop|administrateu]], aveuc l'URL.",
 	"missingarticle-rev": "(révision#: $1)",
 	"missingarticle-diff": "(Diff: $1, $2)",
@@ -686,7 +684,7 @@
 	"namespace_association": "Éspache d' noms achuchonné",
 	"tooltip-namespace_association": "Cochez chole case pour inclure égalemint chl’éspache d' noms éd discussion o du sujet, achuchonné à chl’éspache de noms sélekcionné",
 	"blanknamespace": "(Moaite)",
-	"contributions": "Contérbuchons éd l’{{GENDER:$1|utilisateu|utilisatriche}}",
+	"tool-link-contributions": "Contérbuchons éd l’{{GENDER:$1|utilisateu|utilisatriche}}",
 	"contributions-title": "Contérbuchons dechl uzeu à pérpos éd $1",
 	"mycontris": "Mes contérbuchons",
 	"anoncontribs": "Contérbuchons",

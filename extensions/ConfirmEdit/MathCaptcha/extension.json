@@ -21,7 +21,9 @@
 		"MathCaptcha": "includes/MathCaptcha.php"
 	},
 	"config": {
-		"CaptchaClass": "MathCaptcha"
+		"CaptchaClass": {
+			"value": "MathCaptcha"
+		}
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

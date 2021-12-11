@@ -23,21 +23,30 @@
 namespace MediaWiki\Revision;
 
 use Content;
-use LogicException;
 use Wikimedia\Assert\Assert;
+use Wikimedia\NonSerializable\NonSerializableTrait;
 
 /**
  * Value object representing the set of slots belonging to a revision.
+ *
+ * @note RevisionSlots provides "raw" access to the slots and does not apply audience checks.
+ * If audience checks are desired, use RevisionRecord::getSlot() or RevisionRecord::getContent()
+ * instead.
+ *
+ * @newable
  *
  * @since 1.31
  * @since 1.32 Renamed from MediaWiki\Storage\RevisionSlots
  */
 class RevisionSlots {
+	use NonSerializableTrait;
 
 	/** @var SlotRecord[]|callable */
 	protected $slots;
 
 	/**
+	 * @stable to call.
+	 *
 	 * @param SlotRecord[]|callable $slots SlotRecords,
 	 *        or a callback that returns such a structure.
 	 */
@@ -67,25 +76,18 @@ class RevisionSlots {
 	}
 
 	/**
-	 * Implemented to defy serialization.
-	 *
-	 * @throws LogicException always
-	 */
-	public function __sleep() {
-		throw new LogicException( __CLASS__ . ' is not serializable.' );
-	}
-
-	/**
 	 * Returns the Content of the given slot.
 	 * Call getSlotNames() to get a list of available slots.
 	 *
 	 * Note that for mutable Content objects, each call to this method will return a
 	 * fresh clone.
 	 *
+	 * @see SlotRecord::getContent()
+	 *
 	 * @param string $role The role name of the desired slot
 	 *
 	 * @throws RevisionAccessException if the slot does not exist or slot data
-	 *        could not be lazy-loaded.
+	 *        could not be lazy-loaded. See SlotRecord::getContent() for details.
 	 * @return Content
 	 */
 	public function getContent( $role ) {
@@ -140,13 +142,13 @@ class RevisionSlots {
 	/**
 	 * Computes the total nominal size of the revision's slots, in bogo-bytes.
 	 *
-	 * @warning This is potentially expensive! It may cause all slot's content to be loaded
+	 * @warning This is potentially expensive! It may cause some slots' content to be loaded
 	 * and deserialized.
 	 *
 	 * @return int
 	 */
 	public function computeSize() {
-		return array_reduce( $this->getSlots(), function ( $accu, SlotRecord $slot ) {
+		return array_reduce( $this->getPrimarySlots(), static function ( $accu, SlotRecord $slot ) {
 			return $accu + $slot->getSize();
 		}, 0 );
 	}
@@ -182,20 +184,20 @@ class RevisionSlots {
 	 * is that slot's hash. For consistency, the combined hash of an empty set of slots
 	 * is the hash of the empty string.
 	 *
-	 * @warning This is potentially expensive! It may cause all slot's content to be loaded
+	 * @warning This is potentially expensive! It may cause some slots' content to be loaded
 	 * and deserialized, then re-serialized and hashed.
 	 *
 	 * @return string
 	 */
 	public function computeSha1() {
-		$slots = $this->getSlots();
+		$slots = $this->getPrimarySlots();
 		ksort( $slots );
 
 		if ( empty( $slots ) ) {
 			return SlotRecord::base36Sha1( '' );
 		}
 
-		return array_reduce( $slots, function ( $accu, SlotRecord $slot ) {
+		return array_reduce( $slots, static function ( $accu, SlotRecord $slot ) {
 			return $accu === null
 				? $slot->getSha1()
 				: SlotRecord::base36Sha1( $accu . $slot->getSha1() );
@@ -213,14 +215,14 @@ class RevisionSlots {
 	public function getOriginalSlots() {
 		return array_filter(
 			$this->getSlots(),
-			function ( SlotRecord $slot ) {
+			static function ( SlotRecord $slot ) {
 				return !$slot->isInherited();
 			}
 		);
 	}
 
 	/**
-	 * Return all slots that are not not originate in the revision they belong to (that is,
+	 * Return all slots that are not originate in the revision they belong to (that is,
 	 * they are inherited from some other revision).
 	 *
 	 * @note This may cause the slot meta-data for the revision to be lazy-loaded.
@@ -230,8 +232,23 @@ class RevisionSlots {
 	public function getInheritedSlots() {
 		return array_filter(
 			$this->getSlots(),
-			function ( SlotRecord $slot ) {
+			static function ( SlotRecord $slot ) {
 				return $slot->isInherited();
+			}
+		);
+	}
+
+	/**
+	 * Return all primary slots (those that are not derived).
+	 *
+	 * @return SlotRecord[]
+	 * @since 1.36
+	 */
+	public function getPrimarySlots() : array {
+		return array_filter(
+			$this->getSlots(),
+			static function ( SlotRecord $slot ) {
+				return !$slot->isDerived();
 			}
 		);
 	}

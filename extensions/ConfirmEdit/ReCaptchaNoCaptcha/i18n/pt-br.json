@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Eduardo Addad de Oliveira"
+			"Eduardo Addad de Oliveira",
+			"Eduardoaddad"
 		]
 	},
 	"renocaptcha-desc": "Módulo reCAPTCHA NoCAPTCHA para o Confirm Edit",

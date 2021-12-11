@@ -3,15 +3,16 @@
 		"authors": [
 			"DzWiki",
 			"KWiki",
+			"Semso98",
 			"Srdjan m",
-			"Semso98"
+			"Srđan"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Knjiga",
 	"visualeditor-cite-tool-name-journal": "Časopis",
 	"visualeditor-cite-tool-name-news": "Vijesti",
 	"visualeditor-cite-tool-name-web": "Veb-sajt",
-	"cite-ve-dialog-reference-editing-reused": "Ova referenca koristi se već $1 {{PLURAL:$1|put|puta}} na ovoj stranici.",
+	"cite-ve-dialog-reference-editing-reused": "Ova referenca koristi se {{PLURAL:$1|1=jednom|2=dvaput|$1 put|$1 puta}} na stranici.",
 	"cite-ve-dialog-reference-options-group-label": "Koristi ovu grupu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Opće reference",
 	"cite-ve-dialog-reference-options-name-label": "Ponovo koristi pod ovim imenom",

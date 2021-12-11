@@ -25,12 +25,13 @@
  * @since 1.28
  */
 class DumpStringOutput extends DumpOutput {
+	/** @var string */
 	private $output = '';
 
 	/**
 	 * @param string $string
 	 */
-	function write( $string ) {
+	public function write( $string ) {
 		$this->output .= $string;
 	}
 

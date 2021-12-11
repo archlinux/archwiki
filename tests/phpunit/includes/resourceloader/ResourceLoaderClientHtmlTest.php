@@ -232,13 +232,6 @@ Deprecation message.' ]
 			],
 			[
 				'context' => [],
-				'modules' => [ 'test.scripts' ],
-				'only' => ResourceLoaderModule::TYPE_SCRIPTS,
-				'extra' => [ 'raw' => '1', 'sync' => '1' ],
-				'output' => '<script src="/w/load.php?lang=nl&amp;modules=test.scripts&amp;only=scripts&amp;raw=1&amp;sync=1"></script>',
-			],
-			[
-				'context' => [],
 				'modules' => [ 'test.scripts.user' ],
 				'only' => ResourceLoaderModule::TYPE_SCRIPTS,
 				'extra' => [],
@@ -256,8 +249,8 @@ Deprecation message.' ]
 				'modules' => [ 'test.styles.pure', 'test.styles.mixed' ],
 				'only' => ResourceLoaderModule::TYPE_STYLES,
 				'extra' => [],
-				'output' => '<link rel="stylesheet" href="/w/load.php?debug=true&amp;lang=nl&amp;modules=test.styles.mixed&amp;only=styles"/>' . "\n"
-					. '<link rel="stylesheet" href="/w/load.php?debug=true&amp;lang=nl&amp;modules=test.styles.pure&amp;only=styles"/>',
+				'output' => '<link rel="stylesheet" href="/w/load.php?debug=1&amp;lang=nl&amp;modules=test.styles.mixed&amp;only=styles"/>' . "\n"
+					. '<link rel="stylesheet" href="/w/load.php?debug=1&amp;lang=nl&amp;modules=test.styles.pure&amp;only=styles"/>',
 			],
 			[
 				'context' => [ 'debug' => 'false' ],
@@ -346,7 +339,7 @@ Deprecation message.' ]
 
 	public function testGetDocumentAttributes() {
 		$client = new ResourceLoaderClientHtml( self::makeContext() );
-		$this->assertInternalType( 'array', $client->getDocumentAttributes() );
+		$this->assertIsArray( $client->getDocumentAttributes() );
 	}
 
 	private static function expandVariables( $text ) {
@@ -358,8 +351,6 @@ Deprecation message.' ]
 
 	private static function makeContext( $extraQuery = [] ) {
 		$conf = new HashConfig( [
-			'ResourceModuleSkinStyles' => [],
-			'ResourceModules' => [],
 			'EnableJavaScriptTest' => false,
 			'LoadScript' => '/w/load.php',
 		] );
@@ -427,7 +418,7 @@ Deprecation message.' ]
 			'test.ordering.d' => [ 'shouldEmbed' => true, 'styles' => '.orderingD{}' ],
 			'test.ordering.e' => [ 'shouldEmbed' => false ],
 		];
-		return array_map( function ( $options ) {
+		return array_map( static function ( $options ) {
 			return self::makeModule( $options );
 		}, $modules );
 	}

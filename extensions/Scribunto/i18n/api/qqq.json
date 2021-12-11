@@ -3,16 +3,16 @@
 		"authors": [
 			"Amire80",
 			"Anomie",
+			"Base",
 			"Gomada",
+			"Liuxinyu970226",
 			"Mormegil",
 			"Nemo bis",
 			"Raymond",
 			"Shirayuki",
 			"Siebrand",
 			"Snævar",
-			"Liuxinyu970226",
-			"Umherirrender",
-			"Base"
+			"Umherirrender"
 		]
 	},
 	"apihelp-scribunto-console-description": "{{doc-apihelp-description|scribunto-console}}",

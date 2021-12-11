@@ -21,8 +21,6 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\MediaWikiServices;
-
 /**
  * A special page that lists special pages
  *
@@ -30,11 +28,11 @@ use MediaWiki\MediaWikiServices;
  */
 class SpecialSpecialpages extends UnlistedSpecialPage {
 
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'Specialpages' );
 	}
 
-	function execute( $par ) {
+	public function execute( $par ) {
 		$out = $this->getOutput();
 		$this->setHeaders();
 		$this->outputHeader();
@@ -52,37 +50,34 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 	}
 
 	private function getPageGroups() {
-		$pages = MediaWikiServices::getInstance()->getSpecialPageFactory()->
-			getUsablePages( $this->getUser() );
+		$pages = $this->getSpecialPageFactory()->getUsablePages( $this->getUser() );
 
 		if ( $pages === [] ) {
-			# Yeah, that was pointless. Thanks for coming.
+			// Yeah, that was pointless. Thanks for coming.
 			return false;
 		}
 
-		/** Put them into a sortable array */
+		// Put them into a sortable array
 		$groups = [];
 		/** @var SpecialPage $page */
 		foreach ( $pages as $page ) {
-			if ( $page->isListed() ) {
-				$group = $page->getFinalGroupName();
-				if ( !isset( $groups[$group] ) ) {
-					$groups[$group] = [];
-				}
-				$groups[$group][$page->getDescription()] = [
-					$page->getPageTitle(),
-					$page->isRestricted(),
-					$page->isCached()
-				];
+			$group = $page->getFinalGroupName();
+			if ( !isset( $groups[$group] ) ) {
+				$groups[$group] = [];
 			}
+			$groups[$group][$page->getDescription()] = [
+				$page->getPageTitle(),
+				$page->isRestricted(),
+				$page->isCached()
+			];
 		}
 
-		/** Sort */
+		// Sort
 		foreach ( $groups as $group => $sortedPages ) {
 			ksort( $groups[$group] );
 		}
 
-		/** Always move "other" to end */
+		// Always move "other" to end
 		if ( array_key_exists( 'other', $groups ) ) {
 			$other = $groups['other'];
 			unset( $groups['other'] );
@@ -115,9 +110,7 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 				Html::openElement( 'div', [ 'class' => 'mw-specialpages-list' ] )
 				. '<ul>'
 			);
-			foreach ( $sortedPages as $desc => $specialpage ) {
-				list( $title, $restricted, $cached ) = $specialpage;
-
+			foreach ( $sortedPages as $desc => [ $title, $restricted, $cached ] ) {
 				$pageClasses = [];
 				if ( $cached ) {
 					$includesCachedPages = true;
@@ -131,7 +124,7 @@ class SpecialSpecialpages extends UnlistedSpecialPage {
 				$link = $this->getLinkRenderer()->makeKnownLink( $title, $desc );
 				$out->addHTML( Html::rawElement(
 						'li',
-						[ 'class' => implode( ' ', $pageClasses ) ],
+						[ 'class' => $pageClasses ],
 						$link
 					) . "\n" );
 			}

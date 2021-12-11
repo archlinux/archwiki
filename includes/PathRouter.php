@@ -73,7 +73,7 @@
 class PathRouter {
 
 	/**
-	 * @var array
+	 * @var stdClass[]
 	 */
 	private $patterns = [];
 
@@ -166,6 +166,25 @@ class PathRouter {
 	}
 
 	/**
+	 * @internal For use by WebRequest::getPathInfo
+	 * @param string $path To be given to add()
+	 * @param string $varName Full name of configuration variable for use
+	 *  in error message and url to mediawiki.org Manual (e.g. "wgExample").
+	 * @throws FatalError If path is invalid
+	 */
+	public function validateRoute( $path, $varName ) {
+		if ( $path && !preg_match( '/^(https?:\/\/|\/)/', $path ) ) {
+			// T48998: Bail out early if path is non-absolute
+			throw new FatalError(
+				"If you use a relative URL for \$$varName, it must start " .
+				'with a slash (<code>/</code>).<br><br>See ' .
+				"<a href=\"https://www.mediawiki.org/wiki/Manual:\$$varName\">" .
+				"https://www.mediawiki.org/wiki/Manual:\$$varName</a>."
+			);
+		}
+	}
+
+	/**
 	 * Add a new path pattern to the path router with the strict option on
 	 * @see self::add
 	 * @param string|array $path
@@ -190,7 +209,7 @@ class PathRouter {
 	}
 
 	/**
-	 * @param object $pattern
+	 * @param stdClass $pattern
 	 * @return float|int
 	 */
 	protected static function makeWeight( $pattern ) {
@@ -239,7 +258,7 @@ class PathRouter {
 		$this->sortByWeight();
 
 		$matches = $this->internalParse( $path );
-		if ( is_null( $matches ) ) {
+		if ( $matches === null ) {
 			// Try with the normalized path (T100782)
 			$path = wfRemoveDotSegments( $path );
 			$path = preg_replace( '#/+#', '/', $path );
@@ -264,7 +283,7 @@ class PathRouter {
 
 		foreach ( $this->patterns as $pattern ) {
 			$matches = self::extractTitle( $path, $pattern );
-			if ( !is_null( $matches ) ) {
+			if ( $matches !== null ) {
 				break;
 			}
 		}
@@ -273,7 +292,7 @@ class PathRouter {
 
 	/**
 	 * @param string $path
-	 * @param object $pattern
+	 * @param stdClass $pattern
 	 * @return array|null
 	 */
 	protected static function extractTitle( $path, $pattern ) {
@@ -373,9 +392,9 @@ class PathRouter {
 	protected static function expandParamValue( $pathMatches, $key, $value ) {
 		$error = false;
 
-		$replacer = function ( $m ) use ( $pathMatches, $key, &$error ) {
+		$replacer = static function ( $m ) use ( $pathMatches, $key, &$error ) {
 			if ( $m[1] == "key" ) {
-				if ( is_null( $key ) ) {
+				if ( $key === null ) {
 					$error = true;
 
 					return '';

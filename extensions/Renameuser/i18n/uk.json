@@ -7,10 +7,10 @@
 			"Base",
 			"EugeneZelenko",
 			"Microcell",
-			"Prima klasy4na",
-			"Тест",
 			"Piramidion",
-			"Vlad5250"
+			"Prima klasy4na",
+			"Vlad5250",
+			"Тест"
 		]
 	},
 	"renameuser": "Перейменувати користувача",
@@ -26,7 +26,6 @@
 	"renameuserwarnings": "Попередження:",
 	"renameuserconfirm": "Так, перейменувати користувача",
 	"renameusersubmit": "Виконати",
-	"renameuser-submit-blocklog": "Показати журнал блокувань користувача",
 	"renameusererrordoesnotexist": "Користувач з іменем «<nowiki>$1</nowiki>» не зареєстрований.",
 	"renameusererrorexists": "{{GENDER:$1|Користувач|Користувачка}} з іменем «<nowiki>$1</nowiki>» вже існує.",
 	"renameusererrorinvalid": "Недопустиме ім'я користувача: <nowiki>$1</nowiki>.",
@@ -42,6 +41,6 @@
 	"logentry-renameuser-renameuser-legacier": "$1 {{GENDER:$2|перейменував|перейменувала}} {{GENDER:$7|користувача|користувачку}} $4 на $5",
 	"renameuser-move-log": "Автоматичне перейменування сторінки при перейменуванні {{GENDER:$2|користувача|користувачки}} «[[User:$1|$1]]» на «[[User:$2|$2]]»",
 	"action-renameuser": "перейменування користувачів",
-	"right-renameuser": "перейменування користувачів",
+	"right-renameuser": "Перейменування користувачів",
 	"renameuser-renamed-notice": "Цей користувач був перейменований.\nДля довідки нижче наведений журнал перейменувань."
 }

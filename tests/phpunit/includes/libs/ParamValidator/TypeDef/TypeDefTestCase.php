@@ -2,7 +2,8 @@
 
 namespace Wikimedia\ParamValidator\TypeDef;
 
-use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Message\DataMessageValue;
+use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\SimpleCallbacks;
 use Wikimedia\ParamValidator\TypeDef;
 use Wikimedia\ParamValidator\ValidationException;
@@ -10,13 +11,13 @@ use Wikimedia\ParamValidator\ValidationException;
 /**
  * Test case infrastructure for TypeDef subclasses
  *
- * Generally you'll only need to override static::$testClass and data providers
- * for methods the TypeDef actually implements.
+ * Generally you'll only need to implement self::getInstance() and
+ * data providers methods.
  */
 abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 
-	/** @var string|null TypeDef class name being tested */
-	protected static $testClass = null;
+	/** Standard "$ret" array for provideCheckSettings */
+	protected const STDRET = [ 'issues' => [ 'X' ], 'allowedKeys' => [ 'Y' ], 'messages' => [] ];
 
 	/**
 	 * Create a SimpleCallbacks for testing
@@ -29,7 +30,7 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 	 * @return SimpleCallbacks
 	 */
 	protected function getCallbacks( $value, array $options ) {
-		return new SimpleCallbacks( [ 'test' => $value ] );
+		return new SimpleCallbacks( $value === null ? [] : [ 'test' => $value ] );
 	}
 
 	/**
@@ -39,13 +40,7 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 	 * @param array $options Options array.
 	 * @return TypeDef
 	 */
-	protected function getInstance( SimpleCallbacks $callbacks, array $options ) {
-		if ( static::$testClass === null ) {
-			throw new \LogicException( 'Either assign static::$testClass or override ' . __METHOD__ );
-		}
-
-		return new static::$testClass( $callbacks );
-	}
+	abstract protected function getInstance( SimpleCallbacks $callbacks, array $options );
 
 	/**
 	 * @dataProvider provideValidate
@@ -55,14 +50,14 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 	 *  with matching failure code and data will be thrown. Otherwise, the return value must be equal.
 	 * @param array $settings Settings array.
 	 * @param array $options Options array
-	 * @param array[] $expectConds Expected conditions reported. Each array is
-	 *  `[ $ex->getFailureCode() ] + $ex->getFailureData()`.
+	 * @param array[] $expectConds Expected condition codes and data reported.
 	 */
 	public function testValidate(
 		$value, $expect, array $settings = [], array $options = [], array $expectConds = []
 	) {
 		$callbacks = $this->getCallbacks( $value, $options );
 		$typeDef = $this->getInstance( $callbacks, $options );
+		$settings = $typeDef->normalizeSettings( $settings );
 
 		if ( $expect instanceof ValidationException ) {
 			try {
@@ -70,8 +65,14 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 				$typeDef->validate( 'test', $v, $settings, $options );
 				$this->fail( 'Expected exception not thrown' );
 			} catch ( ValidationException $ex ) {
-				$this->assertEquals( $expect->getFailureCode(), $ex->getFailureCode() );
-				$this->assertEquals( $expect->getFailureData(), $ex->getFailureData() );
+				$this->assertSame(
+					$expect->getFailureMessage()->getCode(),
+					$ex->getFailureMessage()->getCode()
+				);
+				$this->assertSame(
+					$expect->getFailureMessage()->getData(),
+					$ex->getFailureMessage()->getData()
+				);
 			}
 		} else {
 			$v = $typeDef->getValue( 'test', $settings, $options );
@@ -79,8 +80,8 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 		}
 
 		$conditions = [];
-		foreach ( $callbacks->getRecordedConditions() as $ex ) {
-			$conditions[] = array_merge( [ $ex->getFailureCode() ], $ex->getFailureData() );
+		foreach ( $callbacks->getRecordedConditions() as $c ) {
+			$conditions[] = [ 'code' => $c['message']->getCode(), 'data' => $c['message']->getData() ];
 		}
 		$this->assertSame( $expectConds, $conditions );
 	}
@@ -92,9 +93,6 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideNormalizeSettings
-	 * @param array $settings
-	 * @param array $expect
-	 * @param array $options Options array
 	 */
 	public function testNormalizeSettings( array $settings, array $expect, array $options = [] ) {
 		$typeDef = $this->getInstance( new SimpleCallbacks( [] ), $options );
@@ -111,6 +109,32 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * @dataProvider provideCheckSettings
+	 * @param array $settings
+	 * @param array $ret Input $ret array
+	 * @param array $expect
+	 * @param array $options Options array
+	 */
+	public function testCheckSettings(
+		array $settings,
+		array $ret,
+		array $expect,
+		array $options = []
+	) : void {
+		$typeDef = $this->getInstance( new SimpleCallbacks( [] ), $options );
+		$this->assertEquals( $expect, $typeDef->checkSettings( 'test', $settings, $options, $ret ) );
+	}
+
+	/**
+	 * @return array|Iterable
+	 */
+	public function provideCheckSettings() {
+		return [
+			'Basic test' => [ [], self::STDRET, self::STDRET ],
+		];
+	}
+
+	/**
 	 * @dataProvider provideGetEnumValues
 	 * @param array $settings
 	 * @param array|null $expect
@@ -118,6 +142,8 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 	 */
 	public function testGetEnumValues( array $settings, $expect, array $options = [] ) {
 		$typeDef = $this->getInstance( new SimpleCallbacks( [] ), $options );
+		$settings = $typeDef->normalizeSettings( $settings );
+
 		$this->assertSame( $expect, $typeDef->getEnumValues( 'test', $settings, $options ) );
 	}
 
@@ -132,13 +158,11 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideStringifyValue
-	 * @param mixed $value
-	 * @param string|null $expect
-	 * @param array $settings
-	 * @param array $options Options array
 	 */
 	public function testStringifyValue( $value, $expect, array $settings = [], array $options = [] ) {
 		$typeDef = $this->getInstance( new SimpleCallbacks( [] ), $options );
+		$settings = $typeDef->normalizeSettings( $settings );
+
 		$this->assertSame( $expect, $typeDef->stringifyValue( 'test', $value, $settings, $options ) );
 	}
 
@@ -152,42 +176,53 @@ abstract class TypeDefTestCase extends \PHPUnit\Framework\TestCase {
 	}
 
 	/**
-	 * @dataProvider provideDescribeSettings
-	 * @param array $settings
-	 * @param array $expectNormal
-	 * @param array $expectCompact
-	 * @param array $options Options array
+	 * @dataProvider provideGetInfo
 	 */
-	public function testDescribeSettings(
-		array $settings, array $expectNormal, array $expectCompact, array $options = []
+	public function testGetInfo(
+		array $settings, array $expectParamInfo, array $expectHelpInfo, array $options = []
 	) {
 		$typeDef = $this->getInstance( new SimpleCallbacks( [] ), $options );
+		$settings = $typeDef->normalizeSettings( $settings );
+
 		$this->assertSame(
-			$expectNormal,
-			$typeDef->describeSettings( 'test', $settings, $options ),
-			'Normal mode'
+			$expectParamInfo,
+			$typeDef->getParamInfo( 'test', $settings, $options )
 		);
-		$this->assertSame(
-			$expectCompact,
-			$typeDef->describeSettings( 'test', $settings, [ 'compact' => true ] + $options ),
-			'Compact mode'
+
+		$actual = [];
+		$constraint = \PHPUnit\Framework\Assert::logicalOr(
+			$this->isNull(),
+			$this->isInstanceOf( MessageValue::class )
 		);
+		foreach ( $typeDef->getHelpInfo( 'test', $settings, $options ) as $k => $v ) {
+			$this->assertThat( $v, $constraint );
+			$actual[$k] = $v ? $v->dump() : null;
+		}
+		$this->assertSame( $expectHelpInfo, $actual );
 	}
 
 	/**
 	 * @return array|Iterable
 	 */
-	public function provideDescribeSettings() {
-		yield 'Basic test' => [ [], [], [] ];
+	public function provideGetInfo() {
+		return [
+			'Basic test' => [ [], [], [] ],
+		];
+	}
 
-		foreach ( $this->provideStringifyValue() as $i => $v ) {
-			yield "Default value (from provideStringifyValue data set \"$i\")" => [
-				[ ParamValidator::PARAM_DEFAULT => $v[0] ] + ( $v[2] ?? [] ),
-				[ 'default' => $v[1] ],
-				[ 'default' => [ 'value' => $v[1] ] ],
-				$v[3] ?? [],
-			];
-		}
+	/**
+	 * Create a ValidationException that's identical to what the typedef object would throw.
+	 * @param string $code Error code, same as what was passed to TypeDef::failure().
+	 * @param mixed $value Parameter value (ie. second argument to TypeDef::validate()).
+	 * @param array $settings Settings object (ie. third argument to TypeDef::validate()).
+	 * @return ValidationException
+	 */
+	protected function getValidationException(
+		string $code, $value, array $settings = []
+	): ValidationException {
+		return new ValidationException(
+			DataMessageValue::new( "paramvalidator-$code", [], $code ),
+			'test', $value, $settings );
 	}
 
 }

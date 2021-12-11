@@ -54,14 +54,14 @@ class LocalPasswordPrimaryAuthenticationProvider
 	 * @return \stdClass|null
 	 */
 	protected function getPasswordResetData( $username, $row ) {
-		$now = wfTimestamp();
+		$now = (int)wfTimestamp();
 		$expiration = wfTimestampOrNull( TS_UNIX, $row->user_password_expires );
-		if ( $expiration === null || $expiration >= $now ) {
+		if ( $expiration === null || (int)$expiration >= $now ) {
 			return null;
 		}
 
 		$grace = $this->config->get( 'PasswordExpireGrace' );
-		if ( $expiration + $grace < $now ) {
+		if ( (int)$expiration + $grace < $now ) {
 			$data = [
 				'hard' => true,
 				'msg' => \Status::newFatal( 'resetpass-expired' )->getMessage(),
@@ -140,7 +140,7 @@ class LocalPasswordPrimaryAuthenticationProvider
 		if ( $this->getPasswordFactory()->needsUpdate( $pwhash ) ) {
 			$newHash = $this->getPasswordFactory()->newFromPlaintext( $req->password );
 			$fname = __METHOD__;
-			\DeferredUpdates::addCallableUpdate( function () use ( $newHash, $oldRow, $fname ) {
+			\DeferredUpdates::addCallableUpdate( static function () use ( $newHash, $oldRow, $fname ) {
 				$dbw = wfGetDB( DB_MASTER );
 				$dbw->update(
 					'user',

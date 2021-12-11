@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Cedric31",
-			"Gloria sah"
+			"Gloria sah",
+			"Nicolas Eynaud",
+			"Quentí"
 		]
 	},
 	"ooui-outline-control-move-down": "Far davalar l’element",
@@ -17,8 +19,10 @@
 	"ooui-dialog-process-dismiss": "Regetar",
 	"ooui-dialog-process-retry": "Ensajatz tornamai",
 	"ooui-dialog-process-continue": "Contunhar",
+	"ooui-combobox-button-label": "Capvirar las opcions",
 	"ooui-selectfile-button-select": "Seleccionar un fichièr",
 	"ooui-selectfile-not-supported": "Lo tipe de fichièr es pas compatible",
 	"ooui-selectfile-placeholder": "Cap de fichièr pas seleccionat",
-	"ooui-selectfile-dragdrop-placeholder": "Depausar lo fichièr aicí"
+	"ooui-selectfile-dragdrop-placeholder": "Depausar lo fichièr aicí",
+	"ooui-field-help": "Ajuda"
 }

@@ -3,16 +3,16 @@
 namespace MediaWiki\Tests\Rest\BasicAccess;
 
 use GuzzleHttp\Psr7\Uri;
-use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Rest\BasicAccess\MWBasicAuthorizer;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Rest\Router;
 use MediaWiki\Rest\Validator\Validator;
-use MediaWikiTestCase;
+use MediaWiki\User\UserIdentityValue;
+use MediaWikiIntegrationTestCase;
 use Psr\Container\ContainerInterface;
-use User;
 use Wikimedia\ObjectFactory;
 
 /**
@@ -23,37 +23,33 @@ use Wikimedia\ObjectFactory;
  * @covers \MediaWiki\Rest\BasicAccess\BasicRequestAuthorizer
  * @covers \MediaWiki\Rest\BasicAccess\MWBasicRequestAuthorizer
  */
-class MWBasicRequestAuthorizerTest extends MediaWikiTestCase {
+class MWBasicRequestAuthorizerTest extends MediaWikiIntegrationTestCase {
 	private function createRouter( $userRights, $request ) {
-		$user = User::newFromName( 'Test user' );
 		$objectFactory = new ObjectFactory(
 			$this->getMockForAbstractClass( ContainerInterface::class )
 		);
-		$permissionManager = $this->createMock( PermissionManager::class );
-		// Don't allow the rights to everybody so that user rights kick in.
-		$permissionManager->method( 'isEveryoneAllowed' )->willReturn( false );
-		$permissionManager->method( 'userHasRight' )
-			->will( $this->returnCallback( function ( $user, $action ) use ( $userRights ) {
-				return isset( $userRights[$action] ) && $userRights[$action];
-			} ) );
+		$authority = new SimpleAuthority( new UserIdentityValue( 0, 'Test user' ), $userRights );
 
 		global $IP;
 
 		return new Router(
 			[ "$IP/tests/phpunit/unit/includes/Rest/testRoutes.json" ],
 			[],
+			'http://wiki.example.com',
 			'/rest',
 			new \EmptyBagOStuff(),
 			new ResponseFactory( [] ),
-			new MWBasicAuthorizer( $user, $permissionManager ),
+			new MWBasicAuthorizer( $authority ),
+			$authority,
 			$objectFactory,
-			new Validator( $objectFactory, $permissionManager, $request, $user )
+			new Validator( $objectFactory, $request, $authority ),
+			$this->createHookContainer()
 		);
 	}
 
 	public function testReadDenied() {
-		$request = new RequestData( [ 'uri' => new Uri( '/rest/user/joe/hello' ) ] );
-		$router = $this->createRouter( [ 'read' => false ], $request );
+		$request = new RequestData( [ 'uri' => new Uri( '/rest/mock/RouterTest/hello' ) ] );
+		$router = $this->createRouter( [], $request );
 		$response = $router->execute( $request );
 		$this->assertSame( 403, $response->getStatusCode() );
 
@@ -64,8 +60,8 @@ class MWBasicRequestAuthorizerTest extends MediaWikiTestCase {
 	}
 
 	public function testReadAllowed() {
-		$request = new RequestData( [ 'uri' => new Uri( '/rest/user/joe/hello' ) ] );
-		$router = $this->createRouter( [ 'read' => true ], $request );
+		$request = new RequestData( [ 'uri' => new Uri( '/rest/mock/RouterTest/hello' ) ] );
+		$router = $this->createRouter( [ 'read' ], $request );
 		$response = $router->execute( $request );
 		$this->assertSame( 200, $response->getStatusCode() );
 	}
@@ -86,7 +82,7 @@ class MWBasicRequestAuthorizerTest extends MediaWikiTestCase {
 		$request = new RequestData( [
 			'uri' => new Uri( '/rest/mock/MWBasicRequestAuthorizerTest/write' )
 		] );
-		$router = $this->createRouter( [ 'read' => true, 'writeapi' => false ], $request );
+		$router = $this->createRouter( [ 'read' ], $request );
 		$response = $router->execute( $request );
 		$this->assertSame( 403, $response->getStatusCode() );
 
@@ -100,7 +96,7 @@ class MWBasicRequestAuthorizerTest extends MediaWikiTestCase {
 		$request = new RequestData( [
 			'uri' => new Uri( '/rest/mock/MWBasicRequestAuthorizerTest/write' )
 		] );
-		$router = $this->createRouter( [ 'read' => true, 'writeapi' => true ], $request );
+		$router = $this->createRouter( [ 'read', 'writeapi' ], $request );
 		$response = $router->execute( $request );
 
 		$this->assertSame( 200, $response->getStatusCode() );

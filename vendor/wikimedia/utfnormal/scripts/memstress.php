@@ -52,6 +52,11 @@ foreach ( $testfiles as $file => $desc ) {
 	benchmarkTest( $normalizer, $file, $desc );
 }
 
+/**
+ * @param Validator &$u
+ * @param string $filename
+ * @param string $desc
+ */
 function benchmarkTest( &$u, $filename, $desc ) {
 	print "Testing $filename ($desc)...\n";
 	$data = file_get_contents( $filename );
@@ -78,6 +83,12 @@ function benchmarkTest( &$u, $filename, $desc ) {
 	}
 }
 
+/**
+ * @param Validator &$u
+ * @param string &$data
+ * @param string $form
+ * @return string
+ */
 function benchmarkForm( &$u, &$data, $form ) {
 	# $start = microtime( true );
 	for ( $i = 0; $i < BENCH_CYCLES; $i++ ) {

@@ -51,12 +51,12 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 	 * packet after 1 second, so 1.2 seconds allows for 1 retransmit without
 	 * permanent failure.
 	 */
-	const DEFAULT_CONN_TIMEOUT = 1.2;
+	private const DEFAULT_CONN_TIMEOUT = 1.2;
 
 	/**
 	 * Default request timeout
 	 */
-	const DEFAULT_REQ_TIMEOUT = 3.0;
+	private const DEFAULT_REQ_TIMEOUT = 3.0;
 
 	/**
 	 * @var MultiHttpClient
@@ -75,17 +75,13 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 	private $httpParams;
 
 	/**
-	 * Optional serialization type to use. Allowed values: "PHP", "JSON", or "legacy".
-	 * "legacy" is PHP serialization with no serialization type tagging or hmac protection.
+	 * Optional serialization type to use. Allowed values: "PHP", "JSON".
 	 * @var string
-	 * @deprecated since 1.34, the "legacy" value will be removed in 1.35.
-	 *   Use either "PHP" or "JSON".
 	 */
 	private $serializationType;
 
 	/**
-	 * Optional HMAC Key for protecting the serialized blob. If omitted, or if serializationType
-	 * is "legacy", then no protection is done
+	 * Optional HMAC Key for protecting the serialized blob. If omitted no protection is done
 	 * @var string
 	 */
 	private $hmacKey;
@@ -122,7 +118,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		$this->httpParams['writeHeaders'] = $params['httpParams']['writeHeaders'] ?? [];
 		$this->httpParams['deleteHeaders'] = $params['httpParams']['deleteHeaders'] ?? [];
 		$this->extendedErrorBodyFields = $params['extendedErrorBodyFields'] ?? [];
-		$this->serializationType = $params['serialization_type'] ?? 'legacy';
+		$this->serializationType = $params['serialization_type'] ?? 'PHP';
 		$this->hmacKey = $params['hmac_key'] ?? '';
 
 		// The parent constructor calls setLogger() which sets the logger in $this->client
@@ -141,6 +137,7 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 	}
 
 	protected function doGet( $key, $flags = 0, &$casToken = null ) {
+		$getToken = ( $casToken === self::PASS_BY_REF );
 		$casToken = null;
 
 		$req = [
@@ -149,21 +146,23 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 			'headers' => $this->httpParams['readHeaders'],
 		];
 
+		$value = false;
+		$valueSize = false;
 		list( $rcode, $rdesc, $rhdrs, $rbody, $rerr ) = $this->client->run( $req );
-		if ( $rcode === 200 ) {
-			if ( is_string( $rbody ) ) {
-				$value = $this->decodeBody( $rbody );
-				/// @FIXME: use some kind of hash or UUID header as CAS token
-				$casToken = ( $value !== false ) ? $rbody : null;
-
-				return $value;
+		if ( $rcode === 200 && is_string( $rbody ) ) {
+			$value = $this->decodeBody( $rbody );
+			$valueSize = strlen( $rbody );
+			// @FIXME: use some kind of hash or UUID header as CAS token
+			if ( $getToken && $value !== false ) {
+				$casToken = $rbody;
 			}
-			return false;
+		} elseif ( $rcode === 0 || ( $rcode >= 400 && $rcode != 404 ) ) {
+			$this->handleError( "Failed to fetch $key", $rcode, $rerr, $rhdrs, $rbody );
 		}
-		if ( $rcode === 0 || ( $rcode >= 400 && $rcode != 404 ) ) {
-			return $this->handleError( "Failed to fetch $key", $rcode, $rerr, $rhdrs, $rbody );
-		}
-		return false;
+
+		$this->updateOpStats( self::METRIC_OP_GET, [ $key => [ null, $valueSize ] ] );
+
+		return $value;
 	}
 
 	protected function doSet( $key, $value, $exptime = 0, $flags = 0 ) {
@@ -177,10 +176,14 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		];
 
 		list( $rcode, $rdesc, $rhdrs, $rbody, $rerr ) = $this->client->run( $req );
-		if ( $rcode === 200 || $rcode === 201 || $rcode === 204 ) {
-			return true;
+		$res = ( $rcode === 200 || $rcode === 201 || $rcode === 204 );
+		if ( !$res ) {
+			$this->handleError( "Failed to store $key", $rcode, $rerr, $rhdrs, $rbody );
 		}
-		return $this->handleError( "Failed to store $key", $rcode, $rerr, $rhdrs, $rbody );
+
+		$this->updateOpStats( self::METRIC_OP_SET, [ $key => [ strlen( $rbody ), null ] ] );
+
+		return $res;
 	}
 
 	protected function doAdd( $key, $value, $exptime = 0, $flags = 0 ) {
@@ -201,10 +204,14 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		];
 
 		list( $rcode, $rdesc, $rhdrs, $rbody, $rerr ) = $this->client->run( $req );
-		if ( in_array( $rcode, [ 200, 204, 205, 404, 410 ] ) ) {
-			return true;
+		$res = in_array( $rcode, [ 200, 204, 205, 404, 410 ] );
+		if ( !$res ) {
+			$this->handleError( "Failed to delete $key", $rcode, $rerr, $rhdrs, $rbody );
 		}
-		return $this->handleError( "Failed to delete $key", $rcode, $rerr, $rhdrs, $rbody );
+
+		$this->updateOpStats( self::METRIC_OP_DELETE, [ $key ] );
+
+		return $res;
 	}
 
 	public function incr( $key, $value = 1, $flags = 0 ) {
@@ -223,6 +230,14 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 		return $this->incr( $key, -$value, $flags );
 	}
 
+	public function makeKeyInternal( $keyspace, $components ) {
+		return $this->genericKeyFromComponents( $keyspace, ...$components );
+	}
+
+	protected function convertGenericKey( $key ) {
+		return $key; // short-circuit; already uses "generic" keys
+	}
+
 	/**
 	 * Processes the response body.
 	 *
@@ -230,19 +245,15 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 	 * @return mixed|bool the processed body, or false on error
 	 */
 	private function decodeBody( $body ) {
-		if ( $this->serializationType === 'legacy' ) {
-			$serialized = $body;
-		} else {
-			$pieces = explode( '.', $body, 3 );
-			if ( count( $pieces ) !== 3 || $pieces[0] !== $this->serializationType ) {
+		$pieces = explode( '.', $body, 3 );
+		if ( count( $pieces ) !== 3 || $pieces[0] !== $this->serializationType ) {
+			return false;
+		}
+		list( , $hmac, $serialized ) = $pieces;
+		if ( $this->hmacKey !== '' ) {
+			$checkHmac = hash_hmac( 'sha256', $serialized, $this->hmacKey, true );
+			if ( !hash_equals( $checkHmac, base64_decode( $hmac ) ) ) {
 				return false;
-			}
-			list( , $hmac, $serialized ) = $pieces;
-			if ( $this->hmacKey !== '' ) {
-				$checkHmac = hash_hmac( 'sha256', $serialized, $this->hmacKey, true );
-				if ( !hash_equals( $checkHmac, base64_decode( $hmac ) ) ) {
-					return false;
-				}
 			}
 		}
 
@@ -252,7 +263,6 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 				return ( json_last_error() === JSON_ERROR_NONE ) ? $value : false;
 
 			case 'PHP':
-			case 'legacy':
 				return unserialize( $serialized );
 
 			default:
@@ -279,7 +289,6 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 				break;
 
 			case 'PHP':
-			case "legacy":
 				$value = serialize( $body );
 				break;
 
@@ -289,18 +298,14 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 				);
 		}
 
-		if ( $this->serializationType !== 'legacy' ) {
-			if ( $this->hmacKey !== '' ) {
-				$hmac = base64_encode(
-					hash_hmac( 'sha256', $value, $this->hmacKey, true )
-				);
-			} else {
-				$hmac = '';
-			}
-			$value = $this->serializationType . '.' . $hmac . '.' . $value;
+		if ( $this->hmacKey !== '' ) {
+			$hmac = base64_encode(
+				hash_hmac( 'sha256', $value, $this->hmacKey, true )
+			);
+		} else {
+			$hmac = '';
 		}
-
-		return $value;
+		return $this->serializationType . '.' . $hmac . '.' . $value;
 	}
 
 	/**
@@ -310,7 +315,6 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 	 * @param string $rerr Error message from client
 	 * @param array $rhdrs Response headers
 	 * @param string $rbody Error body from client (if any)
-	 * @return false
 	 */
 	protected function handleError( $msg, $rcode, $rerr, $rhdrs, $rbody ) {
 		$message = "$msg : ({code}) {error}";
@@ -337,6 +341,5 @@ class RESTBagOStuff extends MediumSpecificBagOStuff {
 
 		$this->logger->error( $message, $context );
 		$this->setLastError( $rcode === 0 ? self::ERR_UNREACHABLE : self::ERR_UNEXPECTED );
-		return false;
 	}
 }

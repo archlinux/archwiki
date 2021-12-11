@@ -1,8 +1,6 @@
 <?php
 
-$basePath = getenv( 'MW_INSTALL_PATH' ) !== false ? getenv( 'MW_INSTALL_PATH' ) : __DIR__ . '/..';
-
-require_once $basePath . '/maintenance/Maintenance.php';
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script for exporting site definitions from XML into the sites table.
@@ -17,7 +15,7 @@ class ExportSites extends Maintenance {
 	public function __construct() {
 		$this->addDescription( 'Exports site definitions the sites table to XML file' );
 
-		$this->addArg( 'file', 'A file to write the XML to (see docs/sitelist.txt). ' .
+		$this->addArg( 'file', 'A file to write the XML to (see docs/sitelist.md). ' .
 			'Use "php://stdout" to write to stdout.', true
 		);
 

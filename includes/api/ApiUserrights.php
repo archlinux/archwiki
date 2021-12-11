@@ -23,6 +23,8 @@
  * @file
  */
 
+use MediaWiki\ParamValidator\TypeDef\UserDef;
+
 /**
  * @ingroup API
  */
@@ -51,7 +53,7 @@ class ApiUserrights extends ApiBase {
 
 		// Deny if the user is blocked and doesn't have the full 'userrights' permission.
 		// This matches what Special:UserRights does for the web UI.
-		if ( !$this->getPermissionManager()->userHasRight( $pUser, 'userrights' ) ) {
+		if ( !$this->getAuthority()->isAllowed( 'userrights' ) ) {
 			$block = $pUser->getBlock();
 			if ( $block && $block->isSitewide() ) {
 				$this->dieBlocked( $block );
@@ -104,7 +106,7 @@ class ApiUserrights extends ApiBase {
 
 		// Check if user can add tags
 		if ( $tags !== null ) {
-			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $tags, $pUser );
+			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $tags, $this->getAuthority() );
 			if ( !$ableToTag->isOK() ) {
 				$this->dieStatus( $ableToTag );
 			}
@@ -117,7 +119,7 @@ class ApiUserrights extends ApiBase {
 		$r['userid'] = $user->getId();
 		list( $r['added'], $r['removed'] ) = $form->doSaveUserGroups(
 			// Don't pass null to doSaveUserGroups() for array params, cast to empty array
-			$user, (array)$add, (array)$params['remove'],
+			$user, $add, (array)$params['remove'],
 			$params['reason'], (array)$tags, $groupExpiries
 		);
 
@@ -160,16 +162,25 @@ class ApiUserrights extends ApiBase {
 		return true;
 	}
 
-	public function getAllowedParams() {
+	public function getAllowedParams( $flags = 0 ) {
+		$allGroups = $this->getAllGroups();
+
+		if ( $flags & ApiBase::GET_VALUES_FOR_HELP ) {
+			sort( $allGroups );
+		}
+
 		$a = [
 			'user' => [
 				ApiBase::PARAM_TYPE => 'user',
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'id' ],
+				UserDef::PARAM_RETURN_OBJECT => true,
 			],
 			'userid' => [
 				ApiBase::PARAM_TYPE => 'integer',
+				ApiBase::PARAM_DEPRECATED => true,
 			],
 			'add' => [
-				ApiBase::PARAM_TYPE => $this->getAllGroups(),
+				ApiBase::PARAM_TYPE => $allGroups,
 				ApiBase::PARAM_ISMULTI => true
 			],
 			'expiry' => [
@@ -178,7 +189,7 @@ class ApiUserrights extends ApiBase {
 				ApiBase::PARAM_DFLT => 'infinite',
 			],
 			'remove' => [
-				ApiBase::PARAM_TYPE => $this->getAllGroups(),
+				ApiBase::PARAM_TYPE => $allGroups,
 				ApiBase::PARAM_ISMULTI => true
 			],
 			'reason' => [

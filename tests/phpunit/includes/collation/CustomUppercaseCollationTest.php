@@ -1,19 +1,20 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @covers CustomUppercaseCollation
  */
-class CustomUppercaseCollationTest extends MediaWikiTestCase {
+class CustomUppercaseCollationTest extends MediaWikiIntegrationTestCase {
 
-	public function setUp() {
+	protected function setUp() : void {
+		parent::setUp();
 		$this->collation = new CustomUppercaseCollation( [
 			'D',
 			'C',
 			'Cs',
 			'B'
-		], Language::factory( 'en' ) );
-
-		parent::setUp();
+		], MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' ) );
 	}
 
 	/**

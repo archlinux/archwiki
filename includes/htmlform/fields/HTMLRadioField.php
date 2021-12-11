@@ -2,9 +2,12 @@
 
 /**
  * Radio checkbox fields.
+ *
+ * @stable to extend
  */
 class HTMLRadioField extends HTMLFormField {
 	/**
+	 * @stable to call
 	 * @param array $params
 	 *   In adition to the usual HTMLFormField parameters, this can take the following fields:
 	 *   - flatlist: If given, the options will be displayed on a single line (wrapping to following
@@ -58,6 +61,7 @@ class HTMLRadioField extends HTMLFormField {
 		foreach ( $this->getOptions() as $label => $data ) {
 			$options[] = [
 				'data' => $data,
+				// @phan-suppress-next-line SecurityCheck-XSS Labels are raw when not from message
 				'label' => $this->mOptionsLabelsNotFromMessage ? new OOUI\HtmlSnippet( $label ) : $label,
 			];
 		}

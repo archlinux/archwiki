@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Alexmar983",
 			"Beta16",
 			"Darth Kule",
 			"Doc.mari",
@@ -8,15 +9,14 @@
 			"Elitre",
 			"F. Cosoleto",
 			"FRacco",
+			"Fringio",
 			"Gianfranco",
-			"Minerva Titani",
-			"Raoli",
-			"Una giornata uggiosa '94",
-			"Ontsed",
-			"Alexmar983",
-			"Nemo bis",
 			"Jdforrester",
-			"Fringio"
+			"Minerva Titani",
+			"Nemo bis",
+			"Ontsed",
+			"Raoli",
+			"Una giornata uggiosa '94"
 		]
 	},
 	"ooui-outline-control-move-down": "Sposta in basso",
@@ -33,8 +33,11 @@
 	"ooui-dialog-process-retry": "Riprova",
 	"ooui-dialog-process-continue": "Continua",
 	"ooui-selectfile-button-select": "Seleziona un file",
+	"ooui-selectfile-button-select-multiple": "Seleziona file",
 	"ooui-selectfile-not-supported": "La selezione del file non è supportata",
 	"ooui-selectfile-placeholder": "Nessun file è selezionato",
 	"ooui-selectfile-dragdrop-placeholder": "Posiziona i file qui",
+	"ooui-selectfile-dragdrop-placeholder-multiple": "Posiziona i file qui",
+	"ooui-popup-widget-close-button-aria-label": "Chiudi",
 	"ooui-field-help": "Aiuto"
 }

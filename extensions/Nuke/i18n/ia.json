@@ -24,5 +24,9 @@
 	"nuke-delete-more": "[[Special:Nuke|Deler plus paginas]]",
 	"nuke-pattern": "Patrono SQL LIKE (p.ex. %) pro le nomine de pagina:",
 	"nuke-nopages-global": "Il non ha titulos de pagina que corresponde a tu recerca.",
-	"nuke-viewchanges": "vider modificationes"
+	"nuke-viewchanges": "vider modificationes",
+	"nuke-namespace": "Limitar al spatio de nomines:",
+	"nuke-linkoncontribs": "deletion in massa",
+	"nuke-linkoncontribs-text": "Deler tote le paginas del quales {{GENDER:$1|iste usator}} es le unic autor",
+	"nuke-confirm": "Tu es sur le puncto de deler {{PLURAL:$1|1 pagina|$1 paginas}}. Es tu secur de voler deler {{PLURAL:$1|lo|los}}?"
 }

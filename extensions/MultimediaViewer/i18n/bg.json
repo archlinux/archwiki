@@ -1,15 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mitzev",
 			"DCLXVI",
-			"Vodnokon4e",
+			"Kareyac",
+			"Mitzev",
+			"ShockD",
 			"StanProg",
-			"ShockD"
+			"Vodnokon4e"
 		]
 	},
 	"multimediaviewer-optin-pref": "Включване на <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media Viewer]</span>",
 	"multimediaviewer-datetime-created": "Създадено: $1",
+	"multimediaviewer-multiple-authors-combine": "$1 и $2",
 	"multimediaviewer-permission-title": "Данни за разрешението",
 	"multimediaviewer-permission-link": "преглед на условията",
 	"multimediaviewer-permission-viewmore": "Вижте още",
@@ -20,12 +22,14 @@
 	"multimediaviewer-optin-pending-mmv": "Включване на Media Viewer",
 	"multimediaviewer-optin-help": "Media Viewer ще се използва за показване на изображения.",
 	"multimediaviewer-share-tab": "Споделяне",
+	"multimediaviewer-embed-wt": "Уикитекст",
 	"multimediaviewer-view-expanded": "Отваряне в Media Viewer",
 	"multimediaviewer-title-popup-text": "Описание",
 	"multimediaviewer-title-popup-text-more": "Преглед на пълното описание",
 	"multimediaviewer-credit-popup-text-more": "Показване на цялостна информация за автора и източника",
 	"multimediaviewer-options-tooltip": "Включване или изключване на Media Viewer",
 	"multimediaviewer-options-dialog-header": "Изключване на Media Viewer?",
+	"multimediaviewer-options-learn-more": "Научете повече",
 	"multimediaviewer-option-submit-button": "Изключване на Media Viewer",
 	"multimediaviewer-option-cancel-button": "Отказ",
 	"multimediaviewer-disable-confirmation-header": "Вие изключихте Media Viewer",

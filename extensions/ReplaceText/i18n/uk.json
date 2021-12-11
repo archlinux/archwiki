@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"AS",
+			"Ahonc",
 			"Andriykopanytsia",
 			"Base",
+			"Piramidion",
 			"Prima klasy4na",
-			"Ата",
-			"Ahonc",
-			"Piramidion"
+			"Ата"
 		]
 	},
 	"replacetext": "Заміна тексту",
@@ -43,7 +43,7 @@
 	"replacetext_continue": "Продовжити",
 	"replacetext_announce": "Повідомити про ці редагування через $1 та списки спостереження",
 	"replacetext_editsummary": "Заміна тексту — «$1» на «$2»",
-	"right-replacetext": "виконання заміни тексту по всій вікі",
-	"action-replacetext": "виконання замін тексту по всій вікі",
+	"right-replacetext": "Виконання заміни рядків тексту по всій вікі",
+	"action-replacetext": "виконання заміни рядків тексту по всій вікі",
 	"replacetext_reminder": "Щоб також змінити посилання на цю сторінку на інших сторінках, перейдіть до $1."
 }

@@ -4,11 +4,9 @@ use MediaWiki\MediaWikiServices;
 
 /**
  * @covers Interwiki
- *
- * @group MediaWiki
  * @group Database
  */
-class InterwikiTest extends MediaWikiTestCase {
+class InterwikiTest extends MediaWikiIntegrationTestCase {
 
 	public function testConstructor() {
 		$interwiki = new Interwiki(

@@ -1,21 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Danmichaelo",
-			"Event",
-			"Jeblad",
-			"Laaknor",
-			"Njardarlogar",
-			"Gloria sah",
 			"Apple farmer",
-			"Kingu",
-			"Nghtwlkr",
-			"Jdforrester",
-			"Emilbk",
 			"Cocu",
+			"Danmichaelo",
+			"Emilbk",
+			"Event",
+			"Gloria sah",
+			"Jdforrester",
+			"Jeblad",
+			"Jon Harald Søby",
+			"Kingu",
+			"Laaknor",
+			"Nghtwlkr",
+			"Njardarlogar",
 			"Tarjeimo",
-			"Telaneo",
-			"Jon Harald Søby"
+			"Telaneo"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bok",
@@ -30,7 +30,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Referanselistegruppe endret fra den generelle gruppa til «$1»",
 	"cite-ve-changedesc-reflist-responsive-set": "Referanseliste endret til å vise i responsive kolonner",
 	"cite-ve-changedesc-reflist-responsive-unset": "Referanseliste endret til å vise i kun én kolonne",
-	"cite-ve-changedesc-reflist-item-id": "Referanseindeks endret",
 	"cite-ve-citationneeded-button": "Legg til en referanse",
 	"cite-ve-citationneeded-description": "En bruker har meldt at denne påstanden trenger en pålitelig referanse.",
 	"cite-ve-citationneeded-title": "Trenger referanse",

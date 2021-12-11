@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Salvemm el lombard"
+		]
+	},
+	"action-tboverride": "ignora la lista negra di titoi o di nom d'utent",
+	"action-tboverride-account": "ignora la lista negra di nom d'utent",
+	"action-titleblacklistlog": "varda el register di titoi blocad",
+	"log-name-titleblacklist": "Titoi blocad",
+	"log-description-titleblacklist": "'Sti aveniment chi i lassen el segn di ativazzion de la lista bnegra di titoi.",
+	"logentry-titleblacklist-hit-username": " {{GENDER:$2|El $1|La $1|El/La $1}} l'hà caosad l'ativazzion de la lista negra di titoi tentand de creà el cunt  $3 che 'l corispond a $4.",
+	"titleblacklist-desc": "El permet ai minestrador de proibì la creazzion de pagine e cunt d'utent con i titoi indicad in su la [[MediaWiki:Titleblacklist|lista nedra]] e in su la [[MediaWiki:Titlewhitelist|lista bianca]]",
+	"titleblacklist": "# Lista di titoi minga permess. I titoi e i utent che 'l so nom el corispond a un'espression regolar indicada chichinscì i poden vesser minga cread.\n# Drovà \"#\" per i righe de coment.\n# Per impostazzion predefinida la diferenza intra majuscole e i minuscole la ghe fa nagot.",
+	"titlewhitelist": "# Questa chì l'è una lista de titoi permess (lista bianca). Comenzà la riga con \"#\" per comentà.\n# Per impostazzion predefinida al sistema ghe fà nagot la diferenza infra i majuscole e i minuscole.",
+	"titleblacklist-forbidden-edit": "La creazzion de pagine con titol \"$2\" l'è stada bandida. La vos corispondeta in la lista di titoi minga permetud l'è questa chì: <code>$1</code>",
+	"titleblacklist-forbidden-move": "Impossibil spostà la pagina \"$2\" al titol \"$3\" desgià che la creazzion de pagine con titol \"$3\" l'è stata bandida. La vos corrispondenda in l'elenco di titoli minga permetud l'è questa chì: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "La creazzion de file con titol \"$2\" l'è stada bandida. La vos corrispondenda in la lista di titoi minga permetud l'è questa chì: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "La creazzion di utenzwe con nom \"$2\" l'è stada bandida. La vos corrispondenda in la lista di nom minga permetud l'è questa chì: <code>$1</code>",
+	"titleblacklist-invalid": "{{PLURAL:$1|Questa riga chì|Queste righe chì}} in la lista negra di titoi minga permetud {{PLURAL:$1|l'è minga valida|a inn minga valide}}; per piesè corensg {{PLURAL:$1|l'eror|i eror}} inanz de salvà la pagina.",
+	"titleblacklist-override": "Ignora la lista negra di titoi se la corispond",
+	"titleblacklist-override-help": "I utent con assee de priviliensg i poden impostà questa opzion chì per ignorà i control de lista negra sora el titol.",
+	"titleblacklist-warning": "<strong>Atenzione: questa pagina chì la pò vesser modificada domà di minestrador o di utent cont el dirit <code>tboverride</code> desgià che la corispond a quella vos chì de la lista di titoi blocad:</strong><br /><code>$1</code>",
+	"right-tboverride": "Ignora la lista negra di titoi o di nom d'utent",
+	"right-tboverride-account": "Ignora la lista negra di nom d'utent",
+	"right-titleblacklistlog": "Varda el register di titoi blocad"
+}

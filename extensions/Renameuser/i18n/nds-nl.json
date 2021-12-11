@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Waorschuwingen:",
 	"renameuserconfirm": "Ja, herneum disse gebruker",
 	"renameusersubmit": "Herneumen",
-	"renameuser-submit-blocklog": "Blokkeerlogboek veur gebruker laoten zien",
 	"renameusererrordoesnotexist": "De gebruker \"<nowiki>$1</nowiki>\" besteet niet.",
 	"renameusererrorexists": "De gebrukersnaam \"<nowiki>$1</nowiki>\" is al in gebruuk.",
 	"renameusererrorinvalid": "De gebrukersnaam \"<nowiki>$1</nowiki>\" is ongeldig.",

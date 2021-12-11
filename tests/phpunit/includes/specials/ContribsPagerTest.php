@@ -6,22 +6,81 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @group Database
  */
-class ContribsPagerTest extends MediaWikiTestCase {
+class ContribsPagerTest extends MediaWikiIntegrationTestCase {
 	/** @var ContribsPager */
 	private $pager;
 
 	/** @var LinkRenderer */
 	private $linkRenderer;
 
-	function setUp() {
-		$this->linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
-		$context = new RequestContext();
-		$this->pager = new ContribsPager( $context, [
+	/** @var RevisionStore */
+	private $revisionStore;
+
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
+	/** @var HookContainer */
+	private $hookContainer;
+
+	/** @var ILoadBalancer */
+	private $loadBalancer;
+
+	/** @var ActorMigration */
+	private $actorMigration;
+
+	/** @var NamespaceInfo */
+	private $namespaceInfo;
+
+	protected function setUp() : void {
+		parent::setUp();
+
+		$services = MediaWikiServices::getInstance();
+		$this->linkRenderer = $services->getLinkRenderer();
+		$this->revisionStore = $services->getRevisionStore();
+		$this->linkBatchFactory = $services->getLinkBatchFactory();
+		$this->hookContainer = $services->getHookContainer();
+		$this->loadBalancer = $services->getDBLoadBalancer();
+		$this->actorMigration = $services->getActorMigration();
+		$this->namespaceInfo = $services->getNamespaceInfo();
+		$this->pager = $this->getContribsPager( [
 			'start' => '2017-01-01',
 			'end' => '2017-02-02',
-		], $this->linkRenderer );
+		] );
+	}
 
-		parent::setUp();
+	private function getContribsPager( array $options ) {
+		return new ContribsPager(
+			new RequestContext(),
+			$options,
+			$this->linkRenderer,
+			$this->linkBatchFactory,
+			$this->hookContainer,
+			$this->loadBalancer,
+			$this->actorMigration,
+			$this->revisionStore,
+			$this->namespaceInfo
+		);
+	}
+
+	/**
+	 * @covers ContribsPager::reallyDoQuery
+	 * Tests enabling/disabling ContribsPager::reallyDoQuery hook via the revisionsOnly option to restrict
+	 * extensions are able to insert their own revisions
+	 */
+	public function testRevisionsOnlyOption() {
+		$this->setTemporaryHook( 'ContribsPager::reallyDoQuery', static function ( &$data ) {
+			$fakeRow = (object)[ 'rev_timestamp' => '20200717192356' ];
+			$fakeRowWrapper = new FakeResultWrapper( [ $fakeRow ] );
+			$data[] = $fakeRowWrapper;
+		} );
+
+		$allContribsPager = $this->getContribsPager( [] );
+		$allContribsResults = $allContribsPager->reallyDoQuery( '', 2, IndexPager::QUERY_DESCENDING );
+		$this->assertEquals( $allContribsResults->numRows(), 1 );
+
+		$revOnlyPager = $this->getContribsPager( [ 'revisionsOnly' => true ] );
+		$revOnlyResults = $revOnlyPager->reallyDoQuery( '', 2, IndexPager::QUERY_DESCENDING );
+		$this->assertEquals( $revOnlyResults->numRows(), 0 );
 	}
 
 	/**
@@ -31,7 +90,11 @@ class ContribsPagerTest extends MediaWikiTestCase {
 	 * @param array $expectedOpts Expected options
 	 */
 	public function testDateFilterOptionProcessing( array $inputOpts, array $expectedOpts ) {
-		$this->assertArraySubset( $expectedOpts, ContribsPager::processDateFilter( $inputOpts ) );
+		$this->assertArraySubmapSame(
+			$expectedOpts,
+			ContribsPager::processDateFilter( $inputOpts ),
+			"Matching date filter options"
+		);
 	}
 
 	public static function dateFilterOptionProcessingProvider() {
@@ -129,10 +192,10 @@ class ContribsPagerTest extends MediaWikiTestCase {
 	 * @covers \ContribsPager::getQueryInfo
 	 */
 	public function testUniqueSortOrderWithoutIpChanges() {
-		$pager = new ContribsPager( new RequestContext(), [
+		$pager = $this->getContribsPager( [
 			'start' => '',
 			'end' => '',
-		], $this->linkRenderer );
+		] );
 
 		/** @var ContribsPager $pager */
 		$pager = TestingAccessWrapper::newFromObject( $pager );
@@ -151,11 +214,11 @@ class ContribsPagerTest extends MediaWikiTestCase {
 	 * @covers \ContribsPager::getQueryInfo
 	 */
 	public function testUniqueSortOrderOnIpChanges() {
-		$pager = new ContribsPager( new RequestContext(), [
+		$pager = $this->getContribsPager( [
 			'target' => '116.17.184.5/32',
 			'start' => '',
 			'end' => '',
-		], $this->linkRenderer );
+		] );
 
 		/** @var ContribsPager $pager */
 		$pager = TestingAccessWrapper::newFromObject( $pager );
@@ -166,4 +229,51 @@ class ContribsPagerTest extends MediaWikiTestCase {
 		$this->assertSame( [ 'ipc_rev_timestamp DESC', 'ipc_rev_id DESC' ], $queryInfo[4]['ORDER BY'] );
 	}
 
+	/**
+	 * @covers \ContribsPager::tryToCreateValidRevision
+	 * @covers \ContribsPager::tryCreatingRevisionRecord
+	 */
+	public function testCreateRevision() {
+		$this->hideDeprecated( 'ContribsPager::tryToCreateValidRevision' );
+		$this->hideDeprecated( 'Revision::__construct' );
+		$title = Title::makeTitle( NS_MAIN, __METHOD__ );
+
+		$pager = $this->getContribsPager( [
+			'target' => '116.17.184.5/32',
+			'start' => '',
+			'end' => '',
+		] );
+
+		$invalidRow = (object)[
+			'foo' => 'bar'
+		];
+
+		$this->assertNull( $pager->tryToCreateValidRevision( $invalidRow, $title ) );
+		$this->assertNull( $pager->tryCreatingRevisionRecord( $invalidRow, $title ) );
+
+		$validRow = (object)[
+			'rev_id' => '2',
+			'rev_page' => '2',
+			'page_namespace' => $title->getNamespace(),
+			'page_title' => $title->getDBkey(),
+			'rev_text_id' => '47',
+			'rev_timestamp' => '20180528192356',
+			'rev_minor_edit' => '0',
+			'rev_deleted' => '0',
+			'rev_len' => '700',
+			'rev_parent_id' => '0',
+			'rev_sha1' => 'deadbeef',
+			'rev_comment_text' => 'whatever',
+			'rev_comment_data' => null,
+			'rev_comment_cid' => null,
+			'rev_user' => '1',
+			'rev_user_text' => 'Editor',
+			'rev_actor' => '11',
+			'rev_content_format' => null,
+			'rev_content_model' => null,
+		];
+
+		$this->assertNotNull( $pager->tryToCreateValidRevision( $validRow, $title ) );
+		$this->assertNotNull( $pager->tryCreatingRevisionRecord( $validRow, $title ) );
+	}
 }

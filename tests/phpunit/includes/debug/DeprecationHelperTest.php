@@ -5,7 +5,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @covers DeprecationHelper
  */
-class DeprecationHelperTest extends MediaWikiTestCase {
+class DeprecationHelperTest extends MediaWikiIntegrationTestCase {
 
 	/** @var TestDeprecatedClass */
 	private $testClass;
@@ -13,7 +13,7 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 	/** @var TestDeprecatedSubclass */
 	private $testSubclass;
 
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		$this->testClass = new TestDeprecatedClass();
 		$this->testSubclass = new TestDeprecatedSubclass();
@@ -37,6 +37,10 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 
 	public function provideGet() {
 		return [
+			[ 'protectedDeprecated', 0, null ],
+			[ 'privateDeprecated', null, null ],
+			[ 'fallbackDeprecated', null, null ],
+			[ 'fallbackGetterOnly', null, null ],
 			[ 'protectedNonDeprecated', E_USER_ERROR,
 				'Cannot access non-public property TestDeprecatedClass::$protectedNonDeprecated' ],
 			[ 'privateNonDeprecated', E_USER_ERROR,
@@ -69,6 +73,11 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 
 	public function provideSet() {
 		return [
+			[ 'protectedDeprecated', null, null ],
+			[ 'privateDeprecated', null, null ],
+			[ 'fallbackDeprecated', null, null ],
+			[ 'fallbackGetterOnly', E_USER_ERROR,
+			  'Cannot access non-public property TestDeprecatedClass::$fallbackGetterOnly' ],
 			[ 'protectedNonDeprecated', E_USER_ERROR,
 			  'Cannot access non-public property TestDeprecatedClass::$protectedNonDeprecated' ],
 			[ 'privateNonDeprecated', E_USER_ERROR,
@@ -98,10 +107,10 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 	public function testSubclassGetSet() {
 		$fullName = 'TestDeprecatedClass::$privateNonDeprecated';
 		$this->assertErrorTriggered( function () {
-			$this->assertSame( null, $this->testSubclass->getNonDeprecatedPrivateParentProperty() );
+			$this->assertSame( null, $this->testSubclass->getNondeprecatedPrivateParentProperty() );
 		}, E_USER_ERROR, "Cannot access non-public property $fullName" );
 		$this->assertErrorTriggered( function () {
-			$this->testSubclass->setNonDeprecatedPrivateParentProperty( 0 );
+			$this->testSubclass->setNondeprecatedPrivateParentProperty( 0 );
 			$wrapper = TestingAccessWrapper::newFromObject( $this->testSubclass );
 			$this->assertSame( 1, $wrapper->privateNonDeprecated );
 		}, E_USER_ERROR, "Cannot access non-public property $fullName" );
@@ -119,7 +128,7 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 
 	protected function assertErrorTriggered( callable $callback, $level, $message ) {
 		$actualLevel = $actualMessage = null;
-		set_error_handler( function ( $errorCode, $errorStr ) use ( &$actualLevel, &$actualMessage ) {
+		set_error_handler( static function ( $errorCode, $errorStr ) use ( &$actualLevel, &$actualMessage ) {
 			$actualLevel = $errorCode;
 			$actualMessage = $errorStr;
 		} );
@@ -133,7 +142,7 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 		try {
 			$this->assertSame( $expected, TestingAccessWrapper::newFromObject( $object )->$propName );
 		} catch ( ReflectionException $e ) {
-			if ( !preg_match( "/Property (TestDeprecated(Class|Subclass)::)?$propName does not exist/",
+			if ( !preg_match( "/Property (TestDeprecated(Class|Subclass)::\\$?)?$propName does not exist/",
 				$e->getMessage() )
 			) {
 				throw $e;
@@ -146,10 +155,8 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 	}
 
 	protected function assertDeprecationWarningIssued( callable $callback ) {
-		MWDebug::clearLog();
+		$this->expectDeprecation();
 		$callback();
-		$wrapper = TestingAccessWrapper::newFromClass( MWDebug::class );
-		$this->assertNotEmpty( $wrapper->deprecationWarnings );
 	}
 
 	/**
@@ -158,7 +165,7 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 	 * @dataProvider provideBadMWVersion
 	 */
 	public function testBadMWVersion( $version, $expected ) {
-		$this->setExpectedException( $expected );
+		$this->expectException( $expected );
 
 		wfDeprecated( __METHOD__, $version );
 	}
@@ -167,6 +174,7 @@ class DeprecationHelperTest extends MediaWikiTestCase {
 		return [
 			[ 1, Exception::class ],
 			[ 1.33, Exception::class ],
+			[ true, Exception::class ],
 			[ null, Exception::class ]
 		];
 	}

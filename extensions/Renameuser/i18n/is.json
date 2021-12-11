@@ -5,9 +5,9 @@
 			"S.Örvarr.S",
 			"Snævar",
 			"Spacebirdy",
+			"Sveinn í Felli",
 			"Ævar Arnfjörð Bjarmason",
-			"לערי ריינהארט",
-			"Sveinn í Felli"
+			"לערי ריינהארט"
 		]
 	},
 	"renameuser": "Breyta notandanafni",
@@ -23,7 +23,6 @@
 	"renameuserwarnings": "Viðvaranir:",
 	"renameuserconfirm": "Já, breyta nafni notandans",
 	"renameusersubmit": "Senda",
-	"renameuser-submit-blocklog": "Sýna bönnunar skrá notandans",
 	"renameusererrordoesnotexist": "Notandinn „<nowiki>$1</nowiki>“ er ekki til",
 	"renameusererrorexists": "{{GENDER:$1|Notandinn}} „<nowiki>$1</nowiki>“ er nú þegar til",
 	"renameusererrorinvalid": "Notandanafnið „<nowiki>$1</nowiki>“ er ógilt",

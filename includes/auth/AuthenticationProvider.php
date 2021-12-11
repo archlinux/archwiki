@@ -24,6 +24,7 @@
 namespace MediaWiki\Auth;
 
 use Config;
+use MediaWiki\HookContainer\HookContainer;
 use Psr\Log\LoggerAwareInterface;
 
 /**
@@ -49,6 +50,11 @@ interface AuthenticationProvider extends LoggerAwareInterface {
 	 * @param Config $config
 	 */
 	public function setConfig( Config $config );
+
+	/**
+	 * @param HookContainer $hookContainer
+	 */
+	public function setHookContainer( HookContainer $hookContainer );
 
 	/**
 	 * Return a unique identifier for this instance

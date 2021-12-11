@@ -30,7 +30,6 @@ class SearchSuggestionSet {
 	private $suggestions = [];
 
 	/**
-	 *
 	 * @var array
 	 */
 	private $pageMap = [];
@@ -153,7 +152,7 @@ class SearchSuggestionSet {
 		if ( $this->getSize() > 0 && $suggestion->getScore() <= $this->getBestScore() ) {
 			$suggestion->setScore( $this->getBestScore() + 1 );
 		}
-		array_unshift( $this->suggestions,  $suggestion );
+		array_unshift( $this->suggestions, $suggestion );
 		if ( $pageID ) {
 			$this->pageMap[$pageID] = true;
 		}
@@ -209,7 +208,7 @@ class SearchSuggestionSet {
 	 */
 	public static function fromTitles( array $titles, $hasMoreResults = false ) {
 		$score = count( $titles );
-		$suggestions = array_map( function ( $title ) use ( &$score ) {
+		$suggestions = array_map( static function ( $title ) use ( &$score ) {
 			return SearchSuggestion::fromTitle( $score--, $title );
 		}, $titles );
 		return new SearchSuggestionSet( $suggestions, $hasMoreResults );
@@ -226,7 +225,7 @@ class SearchSuggestionSet {
 	 */
 	public static function fromStrings( array $titles, $hasMoreResults = false ) {
 		$score = count( $titles );
-		$suggestions = array_map( function ( $title ) use ( &$score ) {
+		$suggestions = array_map( static function ( $title ) use ( &$score ) {
 			return SearchSuggestion::fromText( $score--, $title );
 		}, $titles );
 		return new SearchSuggestionSet( $suggestions, $hasMoreResults );

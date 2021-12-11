@@ -1,15 +1,26 @@
 {
 	"@metadata": {
 		"authors": [
-			"Joseph",
-			"Ömer Berkay",
+			"BaRaN6161 TURK",
 			"Demircimehmed",
-			"Sayginer"
+			"Joseph",
+			"MuratTheTurkish",
+			"Sayginer",
+			"Ömer Berkay"
 		]
 	},
-	"codeeditor-desc": "JavaScript ve CSS sayfaları için [https://ace.c9.io/ Ace editör] kullanarak sözdizimi-vurgulu düzenleme",
+	"codeeditor-desc": "[https://ace.c9.io/ Ace düzenleyici] kullanarak JavaScript ve CSS sayfalarında sözdizimi ile vurgulanmış düzenleme",
+	"codeeditor-next-annotation": "Sonraki ek nota git",
 	"codeeditor-toolbar-toggle": "Kod editörünü değiştir",
-	"codeeditor-save-with-errors": "Belge hata içermekte. Kaydetmek istediğinizden emin misiniz?",
-	"codeeditor-lineWrapping-toggle": "Satır kaydırmasına geçiş.",
-	"codeeditor-gotoline": "... numaralı satıra git"
+	"codeeditor-save-with-errors": "Belge hata içermektedir. Yayımlamak istediğinizden emin misiniz?",
+	"codeeditor-invisibleChars-toggle": "Görünmez karakterleri değiştir",
+	"codeeditor-lineWrapping-toggle": "Satır kaydırmasını değiştir",
+	"codeeditor-searchReplace-toggle": "Ara ve iletişim kutusunu değiştir",
+	"codeeditor-gotoline": "Satır numarasına git...",
+	"codeeditor-gotoline-placeholder": "satır[:kolon]",
+	"codeeditor-gotoline-prompt": "Satır numarası girin",
+	"codeeditor-indent": "Girinti",
+	"codeeditor-outdent": "Çıkıntı",
+	"codeeditor-error-title": "Bağımlılık başarısız oldu",
+	"codeeditor-error-message": "CodeEditor'un yüklenmesi için WikiEditor'a ihtiyaç var."
 }

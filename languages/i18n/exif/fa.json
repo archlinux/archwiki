@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajam",
+			"Amire80",
 			"Ebraminio",
 			"Huji",
 			"Meisam",
-			"ZxxZxxZ",
-			"Reza1615"
+			"Reza1615",
+			"ZxxZxxZ"
 		]
 	},
 	"exif-imagewidth": "عرض",
@@ -197,7 +199,7 @@
 	"exif-photometricinterpretation-3": "پالت",
 	"exif-photometricinterpretation-4": "شفافیت پوشش",
 	"exif-photometricinterpretation-5": "جداشده (احتمالاُ CMYK)",
-	"exif-photometricinterpretation-8": "CIE L*a*b*",
+	"exif-photometricinterpretation-8": "CIE L*a*b*‎",
 	"exif-photometricinterpretation-9": "CIE L*a*b* (رمزنگاری ICC)",
 	"exif-photometricinterpretation-10": "CIE L*a*b* (رمزنگاری ITU)",
 	"exif-unknowndate": "تاریخ نامعلوم",
@@ -272,6 +274,12 @@
 	"exif-scenetype-1": "تصویر مستقیماً عکاسی شده",
 	"exif-customrendered-0": "ظهور عادی",
 	"exif-customrendered-1": "ظهور سفارشی",
+	"exif-customrendered-2": "HDR (غیراصلی ذخیره شده‌است)",
+	"exif-customrendered-3": "HDR (اصلی ذخیره شده‌است)",
+	"exif-customrendered-4": "اصلی (برای HDR)",
+	"exif-customrendered-6": "سراسرنما",
+	"exif-customrendered-7": "HDR پرتره",
+	"exif-customrendered-8": "پرتره",
 	"exif-exposuremode-0": "نوردهی خودکار",
 	"exif-exposuremode-1": "نوردهی دستی",
 	"exif-exposuremode-2": "قاب‌بندی خودکار (Auto bracket)",
@@ -357,5 +365,13 @@
 	"exif-urgency-normal": "عادی ($1)",
 	"exif-urgency-low": "کم ($1)",
 	"exif-urgency-high": "زیاد ($1)",
-	"exif-urgency-other": "اولویت تعریف شده توسط کاربر ($1)"
+	"exif-urgency-other": "اولویت تعریف شده توسط کاربر ($1)",
+	"exif-firstphotodate": "تاریخ اولین عکس",
+	"exif-lastphotodate": "تاریخ آخرین عکس",
+	"exif-projectiontype": "نوع نمایش",
+	"exif-usepanoramaviewer": "استفاده از نمایشگر پانوراما",
+	"exif-usepanoramaviewer-true": "بله",
+	"exif-usepanoramaviewer-false": "خیر",
+	"exif-exposurelockused-true": "بله",
+	"exif-exposurelockused-false": "خیر"
 }

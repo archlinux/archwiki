@@ -2,13 +2,16 @@
 
 namespace MediaWiki\Auth;
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserNameUtils;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @covers \MediaWiki\Auth\EmailNotificationSecondaryAuthenticationProvider
  */
-class EmailNotificationSecondaryAuthenticationProviderTest extends \PHPUnit\Framework\TestCase {
+class EmailNotificationSecondaryAuthenticationProviderTest extends \MediaWikiIntegrationTestCase {
 	public function testConstructor() {
 		$config = new \HashConfig( [
 			'EnableEmail' => true,
@@ -59,7 +62,21 @@ class EmailNotificationSecondaryAuthenticationProviderTest extends \PHPUnit\Fram
 	}
 
 	public function testBeginSecondaryAccountCreation() {
-		$authManager = new AuthManager( new \FauxRequest(), new \HashConfig() );
+		$mwServices = MediaWikiServices::getInstance();
+		$services = $this->createNoOpAbstractMock( ContainerInterface::class );
+		$objectFactory = new \Wikimedia\ObjectFactory( $services );
+		$hookContainer = $this->createHookContainer();
+		$userNameUtils = $this->createNoOpMock( UserNameUtils::class );
+		$authManager = new AuthManager(
+			new \FauxRequest(),
+			new \HashConfig(),
+			$objectFactory,
+			$hookContainer,
+			$mwServices->getReadOnlyMode(),
+			$userNameUtils,
+			$mwServices->getBlockManager(),
+			$mwServices->getBlockErrorFormatter()
+		);
 
 		$creator = $this->getMockBuilder( \User::class )->getMock();
 		$userWithoutEmail = $this->getMockBuilder( \User::class )->getMock();

@@ -2,16 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"DaBler",
-			"LTM3",
 			"Dvorapa",
-			"Mormegil",
+			"LTM3",
 			"Matěj Suchánek",
-			"Patriccck"
+			"Mormegil",
+			"Patriccck",
+			"Patrik L."
 		]
 	},
 	"skinname-timeless": "Nadčasový",
 	"timeless-desc": "Nadčasový vzhled navržený podle prototypu Winter, vytvořeného Brandonem Harrisem, a dalších vzhledů vytvořených nadací Wikimedia",
-	"timeless-anonymous": "Anonym",
+	"timeless-anonymous": "Neregistrovaný",
 	"timeless-loggedinas": "{{GENDER:$1|Přihlášen|Přihlášena}} jako '''$1'''",
 	"timeless-notloggedin": "Nepřihlášen(a)",
 	"timeless-userpage": "Stránka {{GENDER:$1|uživatele|uživatelky}}",

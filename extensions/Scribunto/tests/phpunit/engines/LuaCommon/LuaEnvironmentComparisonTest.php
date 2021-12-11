@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group Lua
  * @group LuaSandbox
@@ -8,13 +10,14 @@
  */
 class Scribunto_LuaEnvironmentComparisonTest extends PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
-	use PHPUnit4And6Compat;
 
+	/** @var array */
 	public $sandboxOpts = [
 		'memoryLimit' => 50000000,
 		'cpuLimit' => 30,
 		'allowEnvFuncs' => true,
 	];
+	/** @var array */
 	public $standaloneOpts = [
 		'errorFile' => null,
 		'luaPath' => null,
@@ -23,11 +26,12 @@ class Scribunto_LuaEnvironmentComparisonTest extends PHPUnit\Framework\TestCase 
 		'allowEnvFuncs' => true,
 	];
 
+	/** @var Scribunto_LuaEngine[] */
 	protected $engines = [];
 
 	private function makeEngine( $class, $opts ) {
-		$parser = new Parser;
-		$options = new ParserOptions;
+		$parser = MediaWikiServices::getInstance()->getParserFactory()->create();
+		$options = ParserOptions::newFromAnon();
 		$options->setTemplateCallback( [ $this, 'templateCallback' ] );
 		$parser->startExternalParse( Title::newMainPage(), $options, Parser::OT_HTML, true );
 		$engine = new $class ( [ 'parser' => $parser ] + $opts );
@@ -37,12 +41,12 @@ class Scribunto_LuaEnvironmentComparisonTest extends PHPUnit\Framework\TestCase 
 		return $engine;
 	}
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		try {
 			$this->engines['LuaSandbox'] = $this->makeEngine(
-				'Scribunto_LuaSandboxEngine', $this->sandboxOpts
+				Scribunto_LuaSandboxEngine::class, $this->sandboxOpts
 			);
 		} catch ( Scribunto_LuaInterpreterNotFoundError $e ) {
 			$this->markTestSkipped( "LuaSandbox interpreter not available" );
@@ -51,7 +55,7 @@ class Scribunto_LuaEnvironmentComparisonTest extends PHPUnit\Framework\TestCase 
 
 		try {
 			$this->engines['LuaStandalone'] = $this->makeEngine(
-				'Scribunto_LuaStandaloneEngine', $this->standaloneOpts
+				Scribunto_LuaStandaloneEngine::class, $this->standaloneOpts
 			);
 		} catch ( Scribunto_LuaInterpreterNotFoundError $e ) {
 			$this->markTestSkipped( "LuaStandalone interpreter not available" );
@@ -59,7 +63,7 @@ class Scribunto_LuaEnvironmentComparisonTest extends PHPUnit\Framework\TestCase 
 		}
 	}
 
-	protected function tearDown() {
+	protected function tearDown() : void {
 		foreach ( $this->engines as $engine ) {
 			$engine->destroy();
 		}

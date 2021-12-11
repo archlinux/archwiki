@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lancine.kounfantoh.fofana"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "ߞߊ߬ߝߊ",
+	"visualeditor-cite-tool-name-news": "ߝߐ߰ߓߍ",
+	"visualeditor-cite-tool-name-web": "ߓߟߐߟߐ߫ ߞߍߦߙߐ",
+	"cite-ve-citationneeded-button": "ߟߊ߬ߛߙߋ߬ߦߊ߬ߟߌ ߘߏ߫ ߝߙߊ߬",
+	"cite-ve-dialog-reference-options-group-label": "ߞߙߎ ߣߌ߲߬ ߠߊߓߊ߯ߙߊ߫",
+	"cite-ve-dialog-reference-options-group-placeholder": "ߦߟߌߡߊߛߙߋ߫ ߟߊߞߊ߬ߝߏ߬ߣߍ߲ ߠߎ߬",
+	"cite-ve-dialog-reference-options-name-label": "ߊ߬ ߟߊߓߊ߯ߙߊ߫ ߌߞߐߕߎ߲߯ ߕߐ߮ ߣߌ߲߬ ߘߌ߫",
+	"cite-ve-dialog-reference-title": "ߦߟߌߡߊߛߙߋ",
+	"cite-ve-dialog-reference-useexisting-tool": "ߊ߬ ߟߊߓߊ߯ߙߊ߫ ߕߎ߲߯ߣߌ߲߫",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "ߦߟߌߡߊߛߙߋ ߟߎ߬ ߟߊߞߊ߬ߝߏ߬ߣߍ߲ ߛߙߍߘߍ",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "ߞߙߎ \"$1\" ߦߟߌߡߊߛߙߋ ߛߙߍߘߍ",
+	"cite-ve-dialog-referenceslist-title": "ߦߟߌߡߊߛߙߋ ߟߎ߬ ߛߙߍߘߍ",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "ߌ ߟߊ߫ ߞߣߐߘߐ ߟߊߢߊ߬ ߞߎ߲߬ߠߊ߬ߝߎߟߋ߲ ߓߐߛߎ߲ ߝߙߊ߬ߟߌ ߟߊ߫. ߌ ߘߌ߫ ߛߋ߫ ߞߊ߬ߝߊ ߟߎ߬ ߞߍ߫ ߟߴߊ߬ ߛߙߋ ߘߌ߫߸ ߥߟߊ߫ ߝߐ߰ߓߍ ߣߌ߫ ߓߟߐߟߐ ߞߍߦߙߐ ߟߎ߬.",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "ߟߊ߬ߛߙߋ߬ߦߊ߬ߟߌ",
+	"cite-ve-toolbar-group-label": "ߟߊߛߙߋߦߊ߫",
+	"cite-ve-othergroup-item": "ߦߟߌߡߊߛߙߋ $1",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "ߦߟߌߡߊߛߙߋ ߟߎ߬",
+	"visualeditor-internal-list-diff-group-name-mwreference": "ߦߟߌߡߊߛߙߋ߫ ߞߙߎ ߕߐ߮: \"$1\""
+}

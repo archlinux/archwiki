@@ -18,15 +18,21 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.28.0"
+		"MediaWiki": ">= 1.36.0"
 	},
 	"ExtensionMessagesFiles": {
 		"InterwikiAlias": "Interwiki.alias.php"
 	},
 	"config": {
-		"InterwikiCentralDB": null,
-		"InterwikiCentralInterlanguageDB": null,
-		"InterwikiViewOnly": false
+		"InterwikiCentralDB": {
+			"value": null
+		},
+		"InterwikiCentralInterlanguageDB": {
+			"value": null
+		},
+		"InterwikiViewOnly": {
+			"value": false
+		}
 	},
 	"MessagesDirs": {
 		"Interwiki": [
@@ -34,31 +40,29 @@
 		]
 	},
 	"Hooks": {
-		"InterwikiLoadPrefix": "InterwikiHooks::onInterwikiLoadPrefix",
-		"UserGetAllRights": "InterwikiHooks::onUserGetAllRights"
+		"InterwikiLoadPrefix": "MediaWiki\\Extension\\Interwiki\\Hooks::onInterwikiLoadPrefix",
+		"UserGetAllRights": "MediaWiki\\Extension\\Interwiki\\Hooks::onUserGetAllRights"
 	},
 	"ResourceModules": {
 		"ext.interwiki.specialpage": {
-			"styles": "Interwiki.css"
+			"styles": "interwiki.css"
 		}
 	},
 	"ResourceFileModulePaths": {
-		"localBasePath": "",
-		"remoteExtPath": "Interwiki"
+		"localBasePath": "modules",
+		"remoteExtPath": "Interwiki/modules"
 	},
 	"SpecialPages": {
-		"Interwiki": "SpecialInterwiki"
+		"Interwiki": "MediaWiki\\Extension\\Interwiki\\SpecialInterwiki"
 	},
 	"ExtensionFunctions": [
-		"InterwikiHooks::onExtensionFunctions"
+		"MediaWiki\\Extension\\Interwiki\\Hooks::onExtensionFunctions"
 	],
-	"AutoloadClasses": {
-		"InterwikiHooks": "includes/InterwikiHooks.php",
-		"SpecialInterwiki": "includes/SpecialInterwiki.php",
-		"InterwikiLogFormatter": "includes/InterwikiLogFormatter.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Interwiki\\": "includes/"
 	},
 	"LogActionsHandlers": {
-		"interwiki/*": "InterwikiLogFormatter"
+		"interwiki/*": "MediaWiki\\Extension\\Interwiki\\InterwikiLogFormatter"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

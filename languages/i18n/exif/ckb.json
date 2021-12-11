@@ -2,13 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Arastein",
+			"Arya sarhan",
 			"Asoxor",
 			"Calak",
 			"Diyar se",
 			"Haval",
 			"Marmzok",
 			"Muhammed taha",
-			"Épine"
+			"Épine",
+			"ئارام بکر"
 		]
 	},
 	"exif-imagewidth": "پانی",
@@ -30,7 +32,7 @@
 	"exif-pixelydimension": "بەرزی وێنە",
 	"exif-usercomment": "بۆچوونەکانی بەکارھێنەر",
 	"exif-relatedsoundfile": "فایلی ده‌نگی لێکچوو",
-	"exif-datetimeoriginal": "ڕێکەوت و کاتی بەرھەمھێنانی داتا",
+	"exif-datetimeoriginal": "ڕێکەوت و کاتی بەرھەمھێنانی دراوە",
 	"exif-datetimedigitized": "ڕێکەوت و کاتی بە دیجیتاڵی کردن",
 	"exif-exposuretime-format": "$1 چرکە ($2)",
 	"exif-fnumber": "ڕێژەی ئێف",
@@ -152,7 +154,7 @@
 	"exif-scenecapturetype-1": "دیمەن",
 	"exif-scenecapturetype-2": "پۆرترە",
 	"exif-scenecapturetype-3": "وێنەی شەو",
-	"exif-gaincontrol-0": "هیچ",
+	"exif-gaincontrol-0": "ھیچیان",
 	"exif-contrast-0": "ئاسایی",
 	"exif-contrast-1": "نەرم",
 	"exif-contrast-2": "ڕەق",

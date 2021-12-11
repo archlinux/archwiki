@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
 
 /**
@@ -10,7 +11,6 @@ class RenameuserSQL {
 	 * The old username
 	 *
 	 * @var string
-	 * @access private
 	 */
 	public $old;
 
@@ -18,15 +18,13 @@ class RenameuserSQL {
 	 * The new username
 	 *
 	 * @var string
-	 * @access private
 	 */
 	public $new;
 
 	/**
 	 * The user ID
 	 *
-	 * @var integer
-	 * @access private
+	 * @var int
 	 */
 	public $uid;
 
@@ -34,14 +32,13 @@ class RenameuserSQL {
 	 * The tables => fields to be updated
 	 *
 	 * @var array
-	 * @access private
 	 */
 	public $tables;
 
 	/**
 	 * tables => fields to be updated in a deferred job
 	 *
-	 * @var array
+	 * @var array[]
 	 */
 	public $tablesJob;
 
@@ -50,7 +47,6 @@ class RenameuserSQL {
 	 * the updates and the old username may have already been renamed in the user table.
 	 *
 	 * @var bool
-	 * @access private
 	 */
 	public $checkIfUserExists;
 
@@ -79,12 +75,15 @@ class RenameuserSQL {
 	 * Users with more than this number of edits will have their rename operation
 	 * deferred via the job queue.
 	 */
-	const CONTRIB_JOB = 500;
+	private const CONTRIB_JOB = 500;
 
 	// B/C constants for tablesJob field
-	const NAME_COL = 0;
-	const UID_COL  = 1;
-	const TIME_COL = 2;
+	public const NAME_COL = 0;
+	public const UID_COL  = 1;
+	public const TIME_COL = 2;
+
+	/** @var RenameuserHookRunner */
+	private $hookRunner;
 
 	/**
 	 * Constructor
@@ -99,6 +98,8 @@ class RenameuserSQL {
 	 *    'checkIfUserExists' - bool, whether to update the user table
 	 */
 	public function __construct( $old, $new, $uid, User $renamer, $options = [] ) {
+		$this->hookRunner = new RenameuserHookRunner( MediaWikiServices::getInstance()->getHookContainer() );
+
 		$this->old = $old;
 		$this->new = $new;
 		$this->uid = $uid;
@@ -120,63 +121,7 @@ class RenameuserSQL {
 		$this->tables = []; // Immediate updates
 		$this->tablesJob = []; // Slow updates
 
-		if ( self::actorMigrationWriteOld() ) {
-			// If this user has a large number of edits, use the jobqueue
-			// T134136: if this is for user_id=0, then use the queue as the edit count is unknown.
-			if ( !$uid || User::newFromId( $uid )->getEditCount() > self::CONTRIB_JOB ) {
-				$this->tablesJob['revision'] = [
-					self::NAME_COL => 'rev_user_text',
-					self::UID_COL  => 'rev_user',
-					self::TIME_COL => 'rev_timestamp',
-					'uniqueKey'    => 'rev_id'
-				];
-				$this->tablesJob['archive'] = [
-					self::NAME_COL => 'ar_user_text',
-					self::UID_COL  => 'ar_user',
-					self::TIME_COL => 'ar_timestamp',
-					'uniqueKey'    => 'ar_id'
-				];
-				$this->tablesJob['logging'] = [
-					self::NAME_COL => 'log_user_text',
-					self::UID_COL  => 'log_user',
-					self::TIME_COL => 'log_timestamp',
-					'uniqueKey'    => 'log_id'
-				];
-				$this->tablesJob['image'] = [
-					self::NAME_COL => 'img_user_text',
-					self::UID_COL  => 'img_user',
-					self::TIME_COL => 'img_timestamp',
-					'uniqueKey'    => 'img_name'
-				];
-				$this->tablesJob['oldimage'] = [
-					self::NAME_COL => 'oi_user_text',
-					self::UID_COL  => 'oi_user',
-					self::TIME_COL => 'oi_timestamp'
-				];
-				$this->tablesJob['filearchive'] = [
-					self::NAME_COL => 'fa_user_text',
-					self::UID_COL  => 'fa_user',
-					self::TIME_COL => 'fa_timestamp',
-					'uniqueKey'    => 'fa_id'
-				];
-			} else {
-				$this->tables['revision'] = [ 'rev_user_text', 'rev_user' ];
-				$this->tables['archive'] = [ 'ar_user_text', 'ar_user' ];
-				$this->tables['logging'] = [ 'log_user_text', 'log_user' ];
-				$this->tables['image'] = [ 'img_user_text', 'img_user' ];
-				$this->tables['oldimage'] = [ 'oi_user_text', 'oi_user' ];
-				$this->tables['filearchive'] = [ 'fa_user_text', 'fa_user' ];
-			}
-
-			// Recent changes is pretty hot, deadlocks occur if done all at once
-			if ( wfQueriesMustScale() ) {
-				$this->tablesJob['recentchanges'] = [ 'rc_user_text', 'rc_user', 'rc_timestamp' ];
-			} else {
-				$this->tables['recentchanges'] = [ 'rc_user_text', 'rc_user' ];
-			}
-		}
-
-		Hooks::run( 'RenameUserSQL', [ $this ] );
+		$this->hookRunner->onRenameUserSQL( $this );
 	}
 
 	protected function debug( $msg ) {
@@ -188,7 +133,7 @@ class RenameuserSQL {
 
 	/**
 	 * Do the rename operation
-	 * @return true
+	 * @return bool
 	 */
 	public function rename() {
 		global $wgUpdateRowsPerJob;
@@ -199,7 +144,7 @@ class RenameuserSQL {
 		$dbw = wfGetDB( DB_MASTER );
 		$atomicId = $dbw->startAtomic( __METHOD__, $dbw::ATOMIC_CANCELABLE );
 
-		Hooks::run( 'RenameUserPreRename', [ $this->uid, $this->old, $this->new ] );
+		$this->hookRunner->onRenameUserPreRename( $this->uid, $this->old, $this->new );
 
 		// Make sure the user exists if needed
 		if ( $this->checkIfUserExists && !self::lockUserAndGetId( $this->old ) ) {
@@ -217,13 +162,11 @@ class RenameuserSQL {
 			[ 'user_name' => $this->old, 'user_id' => $this->uid ],
 			__METHOD__
 		);
-		if ( self::actorMigrationWriteNew() ) {
-			$dbw->update( 'actor',
-				[ 'actor_name' => $this->new ],
-				[ 'actor_name' => $this->old, 'actor_user' => $this->uid ],
-				__METHOD__
-			);
-		}
+		$dbw->update( 'actor',
+			[ 'actor_name' => $this->new ],
+			[ 'actor_name' => $this->old, 'actor_user' => $this->uid ],
+			__METHOD__
+		);
 
 		// Reset token to break login with central auth systems.
 		// Again, avoids user being logged in with old name.
@@ -253,9 +196,11 @@ class RenameuserSQL {
 
 		$dbw->update( 'logging',
 			[ 'log_title' => $newTitle->getDBkey() ],
-			[ 'log_type' => $logTypesOnUser,
+			[
+				'log_type' => $logTypesOnUser,
 				'log_namespace' => NS_USER,
-				'log_title' => $oldTitle->getDBkey() ],
+				'log_title' => $oldTitle->getDBkey()
+			],
 			__METHOD__
 		);
 
@@ -302,7 +247,7 @@ class RenameuserSQL {
 			$jobParams['minTimestamp'] = '0';
 			$jobParams['maxTimestamp'] = '0';
 			$jobParams['count'] = 0;
-			// Unique column for slave lag avoidance
+			// Unique column for replica lag avoidance
 			if ( isset( $params['uniqueKey'] ) ) {
 				$jobParams['uniqueKey'] = $params['uniqueKey'];
 			}
@@ -366,18 +311,21 @@ class RenameuserSQL {
 
 		$that = $this;
 		$fname = __METHOD__;
-		$dbw->onTransactionIdle( function () use ( $that, $dbw, $logEntry, $logid, $fname ) {
-			$dbw->startAtomic( $fname );
-			// Clear caches and inform authentication plugins
-			$user = User::newFromId( $that->uid );
-			$user->load( User::READ_LATEST );
-			// Trigger the UserSaveSettings hook
-			$user->saveSettings();
-			Hooks::run( 'RenameUserComplete', [ $that->uid, $that->old, $that->new ] );
-			// Publish to RC
-			$logEntry->publish( $logid );
-			$dbw->endAtomic( $fname );
-		} );
+		$dbw->onTransactionCommitOrIdle(
+			function () use ( $that, $dbw, $logEntry, $logid, $fname ) {
+				$dbw->startAtomic( $fname );
+				// Clear caches and inform authentication plugins
+				$user = User::newFromId( $that->uid );
+				$user->load( User::READ_LATEST );
+				// Trigger the UserSaveSettings hook
+				$user->saveSettings();
+				$this->hookRunner->onRenameUserComplete( $that->uid, $that->old, $that->new );
+				// Publish to RC
+				$logEntry->publish( $logid );
+				$dbw->endAtomic( $fname );
+			},
+			$fname
+		);
 
 		$this->debug( "Finished rename for {$this->old} to {$this->new}" );
 
@@ -386,7 +334,7 @@ class RenameuserSQL {
 
 	/**
 	 * @param string $name Current wiki local user name
-	 * @return integer Returns 0 if no row was found
+	 * @return int Returns 0 if no row was found
 	 */
 	private static function lockUserAndGetId( $name ) {
 		return (int)wfGetDB( DB_MASTER )->selectField(
@@ -396,48 +344,5 @@ class RenameuserSQL {
 			__METHOD__,
 			[ 'FOR UPDATE' ]
 		);
-	}
-
-	/**
-	 * Indicate whether we should still write old user fields
-	 * @return bool
-	 */
-	public static function actorMigrationWriteOld() {
-		global $wgActorTableSchemaMigrationStage;
-
-		if ( !is_callable( User::class, 'getActorId' ) ) {
-			return true;
-		}
-		if ( !isset( $wgActorTableSchemaMigrationStage ) ) {
-			return false;
-		}
-
-		if ( defined( 'ActorMigration::MIGRATION_STAGE_SCHEMA_COMPAT' ) ) {
-			return (bool)( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_OLD );
-		} else {
-			// Return true even for MIGRATION_WRITE_NEW because reads might still be falling back
-			return $wgActorTableSchemaMigrationStage < MIGRATION_NEW;
-		}
-	}
-
-	/**
-	 * Indicate whether we should write new actor fields
-	 * @return bool
-	 */
-	public static function actorMigrationWriteNew() {
-		global $wgActorTableSchemaMigrationStage;
-
-		if ( !is_callable( User::class, 'getActorId' ) ) {
-			return false;
-		}
-		if ( !isset( $wgActorTableSchemaMigrationStage ) ) {
-			return true;
-		}
-
-		if ( defined( 'ActorMigration::MIGRATION_STAGE_SCHEMA_COMPAT' ) ) {
-			return (bool)( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_NEW );
-		} else {
-			return $wgActorTableSchemaMigrationStage > MIGRATION_OLD;
-		}
 	}
 }

@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hwangjy9",
+			"Jango",
 			"Klutzy",
 			"Kwj2772",
 			"Priviet",
-			"아라",
 			"SeoJeongHo",
-			"Hwangjy9",
 			"Ykhwong",
-			"Jango"
+			"아라"
 		]
 	},
 	"scribunto-desc": "미디어위키 문서에 스크립트 언어를 넣기 위한 프레임워크",
@@ -20,7 +20,7 @@
 	"scribunto-doc-page-name": "Module:$1/설명문서",
 	"scribunto-doc-page-does-not-exist": "''이 모듈에 대한 설명문서는 [[$1]]에서 만들 수 있습니다''",
 	"scribunto-doc-page-header": "'''이 문서는 [[$1]]에 대한 설명문서입니다.'''",
-	"scribunto-console-intro": "* 모듈 내보내기는 저장하지 않은 수정을 포함하여 변수 \"p\"로 사용할 수 있습니다.\n* 표현으로 평가하는 \"=\"이 있는 줄을 앞에 넣거나 print()를 사용하세요.\n* 이 콘솔에 메시지를 보낼 모듈 코드에 mw.log()를 사용하세요.",
+	"scribunto-console-intro": "* 모듈 내보내기는 저장하지 않은 수정을 포함하여 변수 \"p\"로 사용할 수 있습니다.\n* 표현식으로 처리하려면 \"=\"이 있는 줄을 앞에 넣거나 print()를 사용하세요. 테이블의 경우에는 mw.logObject()를 이용하세요\n* 이 콘솔에 메시지를 보내려면 모듈 코드에 mw.log()와 mw.logObject()를 사용하세요.",
 	"scribunto-console-title": "콘솔 디버그",
 	"scribunto-console-too-large": "이 콘솔 세션이 너무 큽니다. 콘솔 역사를 삭제하거나 모듈의 크기를 줄이세요.",
 	"scribunto-console-current-src": "콘솔 입력",
@@ -57,10 +57,14 @@
 	"scribunto-limitreport-timeusage": "루아 시간 사용",
 	"scribunto-limitreport-timeusage-value": "$1/$2초",
 	"scribunto-limitreport-virtmemusage": "루아 가상 크기",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|바이트}}",
 	"scribunto-limitreport-estmemusage": "루아 추정 메모리 사용",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|바이트}}",
 	"scribunto-limitreport-memusage": "루아 메모리 사용",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|바이트}}",
 	"scribunto-limitreport-profile": "루아 프로필",
 	"scribunto-limitreport-profile-ms": "$1ms",
+	"scribunto-limitreport-logs": "Lua 기록",
 	"nstab-module": "모듈",
 	"tooltip-ca-nstab-module": "모듈 문서 보기"
 }

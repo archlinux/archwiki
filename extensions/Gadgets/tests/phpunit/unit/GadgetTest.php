@@ -60,7 +60,7 @@ class GadgetTest extends MediaWikiUnitTestCase {
 		$g = $this->create( '*foo [ResourceLoader]|foo.js|foo.css' );
 		$this->assertEquals( 'foo', $g->getName() );
 		$this->assertTrue( $g->supportsResourceLoader() );
-		$this->assertEquals( 0, count( $g->getLegacyScripts() ) );
+		$this->assertCount( 0, $g->getLegacyScripts() );
 	}
 
 	/**
@@ -99,6 +99,17 @@ class GadgetTest extends MediaWikiUnitTestCase {
 		$this->assertTrue( $gUnset->isSkinSupported( $skin ) );
 		$this->assertTrue( $gSkinSupported->isSkinSupported( $skin ) );
 		$this->assertFalse( $gSkinNotSupported->isSkinSupported( $skin ) );
+	}
+
+	/**
+	 * @covers MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers Gadget::getTargets
+	 */
+	public function testTargets() {
+		$g = $this->create( '*foo[ResourceLoader]|foo.js' );
+		$g2 = $this->create( '*bar[ResourceLoader|targets=desktop,mobile]|bar.js' );
+		$this->assertEquals( [ 'desktop' ], $g->getTargets() );
+		$this->assertEquals( [ 'desktop', 'mobile' ], $g2->getTargets() );
 	}
 
 	/**

@@ -129,11 +129,7 @@
 
 		assert.strictEqual( conf.exists( 'doesNotExist' ), false, 'Map.exists where property does not exist' );
 		assert.strictEqual( conf.exists( 'undef' ), true, 'Map.exists where value is `undefined`' );
-		assert.strictEqual( conf.exists( [ 'undef', 'example' ] ), true, 'Map.exists with multiple keys (all existing)' );
-		assert.strictEqual( conf.exists( [ 'example', 'doesNotExist' ] ), false, 'Map.exists with multiple keys (some non-existing)' );
-		assert.strictEqual( conf.exists( [] ), true, 'Map.exists with no keys' );
 		assert.strictEqual( conf.exists( nummy ), false, 'Map.exists with invalid key that looks like an existing key' );
-		assert.strictEqual( conf.exists( [ nummy ] ), false, 'Map.exists with invalid key that looks like an existing key' );
 
 		// Multiple values at once
 		conf = new mw.Map();
@@ -185,7 +181,7 @@
 		this.restoreWarnings();
 		assert.strictEqual( globalConf.get( 'anotherGlobalMapChecker' ), 'Again', 'Change in window object not reflected in global Map' );
 
-		// Whitelist this global variable for QUnit's 'noglobal' mode
+		// Allow this global variable for QUnit's 'noglobal' mode
 		if ( QUnit.config.noglobals ) {
 			QUnit.config.pollution.push( 'anotherGlobalMapChecker' );
 		}
@@ -239,11 +235,11 @@
 			' &amp; <a title="Project:Help desk" href="/wiki/Project:Help_desk">help desk</a>', 'Internal links work with parse' );
 
 		assertMultipleFormats( [ 'mediawiki-test-version-entrypoints-index-php' ], [ 'plain', 'text', 'escaped' ], mw.messages.get( 'mediawiki-test-version-entrypoints-index-php' ), 'External link markup is unprocessed' );
-		assert.htmlEqual( mw.message( 'mediawiki-test-version-entrypoints-index-php' ).parse(), '<a href="https://www.mediawiki.org/wiki/Manual:index.php">index.php</a>', 'External link works correctly in parse mode' );
+		assert.htmlEqual( mw.message( 'mediawiki-test-version-entrypoints-index-php' ).parse(), '<a href="https://www.mediawiki.org/wiki/Manual:index.php" class="external">index.php</a>', 'External link works correctly in parse mode' );
 
 		assertMultipleFormats( [ 'external-link-replace', 'http://example.org/?x=y&z' ], [ 'plain', 'text' ], 'Foo [http://example.org/?x=y&z bar]', 'Parameters are substituted but external link is not processed' );
 		assert.strictEqual( mw.message( 'external-link-replace', 'http://example.org/?x=y&z' ).escaped(), 'Foo [http://example.org/?x=y&amp;z bar]', 'In escaped mode, parameters are substituted and ampersand is escaped, but external link is not processed' );
-		assert.htmlEqual( mw.message( 'external-link-replace', 'http://example.org/?x=y&z' ).parse(), 'Foo <a href="http://example.org/?x=y&amp;z">bar</a>', 'External link with replacement works in parse mode without double-escaping' );
+		assert.htmlEqual( mw.message( 'external-link-replace', 'http://example.org/?x=y&z' ).parse(), 'Foo <a href="http://example.org/?x=y&amp;z" class="external">bar</a>', 'External link with replacement works in parse mode without double-escaping' );
 
 		hello.parse();
 		assert.strictEqual( hello.format, 'parse', 'Message.parse correctly updated the "format" property' );
@@ -338,8 +334,8 @@
 		mw.messages.set( 'qqx-message', '(qqx-message)' );
 		mw.messages.set( 'non-qqx-message', 'hello world' );
 
-		assert.strictEqual( mw.message( 'missing-message' ).plain(), '(missing-message)', 'qqx message (missing)' );
-		assert.strictEqual( mw.message( 'missing-message', 'bar', 'baz' ).plain(), '(missing-message: bar, baz)', 'qqx message (missing) with parameters' );
+		assert.strictEqual( mw.message( 'missing-message' ).plain(), '⧼missing-message⧽', 'qqx message (missing)' );
+		assert.strictEqual( mw.message( 'missing-message', 'bar', 'baz' ).plain(), '⧼missing-message⧽', 'qqx message (missing) with parameters' );
 		assert.strictEqual( mw.message( 'qqx-message' ).plain(), '(qqx-message)', 'qqx message (defined)' );
 		assert.strictEqual( mw.message( 'qqx-message', 'bar', 'baz' ).plain(), '(qqx-message: bar, baz)', 'qqx message (defined) with parameters' );
 		assert.strictEqual( mw.message( 'non-qqx-message' ).plain(), 'hello world', 'non-qqx message in qqx mode' );

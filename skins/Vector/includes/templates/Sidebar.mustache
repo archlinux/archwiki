@@ -1,0 +1,24 @@
+{{!
+	@typedef object emphasized-sidebar-action
+	@prop string href
+	@prop string text
+
+	string html-logo-attributes for site logo. Must be used inside tag e.g. `class="logo" lang="en-gb"`
+	MenuDefinition data-portlets-first
+	MenuDefinition[] array-portlets-rest
+	emphasized-sidebar-action data-emphasized-sidebar-action For displaying an emphasized action in the sidebar.
+}}
+
+<div id="mw-panel" class="mw-sidebar">
+	{{#data-portlets-first}}{{>Menu}}{{/data-portlets-first}}
+	{{#data-emphasized-sidebar-action}}
+	<div class="mw-sidebar-action">
+		<a class="mw-sidebar-action-link" title="{{msg-vector-opt-out-tooltip}}"
+			href="{{href}}">{{msg-vector-opt-out}}</a>
+	</div>
+	{{/data-emphasized-sidebar-action}}
+	{{#array-portlets-rest}}{{>Menu}}{{/array-portlets-rest}}
+	{{^is-language-in-header}}
+	{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
+	{{/is-language-in-header}}
+</div>

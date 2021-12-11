@@ -16,7 +16,7 @@ class PageDataRequestHandlerTest extends \MediaWikiLangTestCase {
 	 */
 	private $obLevel;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->interfaceTitle = Title::newFromText( __CLASS__ );
@@ -25,7 +25,7 @@ class PageDataRequestHandlerTest extends \MediaWikiLangTestCase {
 		$this->setMwGlobals( 'wgArticlePath', '/wiki/$1' );
 	}
 
-	protected function tearDown() {
+	protected function tearDown() : void {
 		$obLevel = ob_get_level();
 
 		while ( ob_get_level() > $this->obLevel ) {
@@ -200,8 +200,8 @@ class PageDataRequestHandlerTest extends \MediaWikiLangTestCase {
 	 * @dataProvider handleRequestProvider
 	 *
 	 * @param string $subpage The subpage to request (or '')
-	 * @param array  $params  Request parameters
-	 * @param array  $headers  Request headers
+	 * @param array $params Request parameters
+	 * @param array $headers Request headers
 	 * @param string $expectedOutput
 	 * @param int $expectedStatusCode Expected HTTP status code.
 	 * @param string[] $expectedHeaders Expected HTTP response headers.
@@ -217,7 +217,7 @@ class PageDataRequestHandlerTest extends \MediaWikiLangTestCase {
 		$output = $this->makeOutputPage( $params, $headers );
 		$request = $output->getRequest();
 
-		/* @var FauxResponse $response */
+		/** @var FauxResponse $response */
 		$response = $request->response();
 
 		// construct handler
@@ -240,13 +240,13 @@ class PageDataRequestHandlerTest extends \MediaWikiLangTestCase {
 			foreach ( $expectedHeaders as $name => $exp ) {
 				$value = $response->getHeader( $name );
 				$this->assertNotNull( $value, "header: $name" );
-				$this->assertInternalType( 'string', $value, "header: $name" );
+				$this->assertIsString( $value, "header: $name" );
 				$this->assertStringEndsWith( $exp, $value, "header: $name" );
 			}
 		} catch ( HttpError $e ) {
 			ob_end_clean();
 			$this->assertEquals( $expectedStatusCode, $e->getStatusCode(), 'status code' );
-			$this->assertContains( $expectedOutput, $e->getHTML(), 'error output' );
+			$this->assertStringContainsString( $expectedOutput, $e->getHTML(), 'error output' );
 		}
 
 		// We always set "Access-Control-Allow-Origin: *"
@@ -290,15 +290,13 @@ class PageDataRequestHandlerTest extends \MediaWikiLangTestCase {
 	 * @param Title $title
 	 * @param array $headers Request headers
 	 * @param string $expectedRedirectSuffix Expected suffix of the HTTP Location header.
-	 *
-	 * @throws HttpError
 	 */
 	public function testHttpContentNegotiation(
 		Title $title,
 		array $headers,
 		$expectedRedirectSuffix
 	) {
-		/* @var FauxResponse $response */
+		/** @var FauxResponse $response */
 		$output = $this->makeOutputPage( [], $headers );
 		$request = $output->getRequest();
 

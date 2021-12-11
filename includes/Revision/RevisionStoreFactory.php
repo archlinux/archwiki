@@ -27,9 +27,14 @@ namespace MediaWiki\Revision;
 
 use ActorMigration;
 use CommentStore;
-use Psr\Log\LoggerInterface;
+use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Page\PageStoreFactory;
 use MediaWiki\Storage\BlobStoreFactory;
 use MediaWiki\Storage\NameTableStoreFactory;
+use MediaWiki\User\ActorStoreFactory;
+use Psr\Log\LoggerInterface;
+use TitleFactory;
 use WANObjectCache;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Rdbms\ILBFactory;
@@ -61,19 +66,25 @@ class RevisionStoreFactory {
 	private $commentStore;
 	/** @var ActorMigration */
 	private $actorMigration;
-	/** @var int One of the MIGRATION_* constants */
-	private $mcrMigrationStage;
-	/**
-	 * @var bool
-	 * @see $wgContentHandlerUseDB
-	 */
-	private $contentHandlerUseDB;
-
+	/** @var ActorStoreFactory */
+	private $actorStoreFactory;
 	/** @var NameTableStoreFactory */
 	private $nameTables;
 
 	/** @var SlotRoleRegistry */
 	private $slotRoleRegistry;
+
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
+
+	/** @var PageStoreFactory */
+	private $pageStoreFactory;
+
+	/** @var TitleFactory */
+	private $titleFactory;
+
+	/** @var HookContainer */
+	private $hookContainer;
 
 	/**
 	 * @param ILBFactory $dbLoadBalancerFactory
@@ -83,10 +94,12 @@ class RevisionStoreFactory {
 	 * @param WANObjectCache $cache
 	 * @param CommentStore $commentStore
 	 * @param ActorMigration $actorMigration
-	 * @param int $migrationStage
+	 * @param ActorStoreFactory $actorStoreFactory
 	 * @param LoggerInterface $logger
-	 * @param bool $contentHandlerUseDB see {@link $wgContentHandlerUseDB}. Must be the same
-	 *        for all wikis in the cluster. Will go away after MCR migration.
+	 * @param IContentHandlerFactory $contentHandlerFactory
+	 * @param PageStoreFactory $pageStoreFactory
+	 * @param TitleFactory $titleFactory
+	 * @param HookContainer $hookContainer
 	 */
 	public function __construct(
 		ILBFactory $dbLoadBalancerFactory,
@@ -96,11 +109,13 @@ class RevisionStoreFactory {
 		WANObjectCache $cache,
 		CommentStore $commentStore,
 		ActorMigration $actorMigration,
-		$migrationStage,
+		ActorStoreFactory $actorStoreFactory,
 		LoggerInterface $logger,
-		$contentHandlerUseDB
+		IContentHandlerFactory $contentHandlerFactory,
+		PageStoreFactory $pageStoreFactory,
+		TitleFactory $titleFactory,
+		HookContainer $hookContainer
 	) {
-		Assert::parameterType( 'integer', $migrationStage, '$migrationStage' );
 		$this->dbLoadBalancerFactory = $dbLoadBalancerFactory;
 		$this->blobStoreFactory = $blobStoreFactory;
 		$this->slotRoleRegistry = $slotRoleRegistry;
@@ -108,9 +123,12 @@ class RevisionStoreFactory {
 		$this->cache = $cache;
 		$this->commentStore = $commentStore;
 		$this->actorMigration = $actorMigration;
-		$this->mcrMigrationStage = $migrationStage;
+		$this->actorStoreFactory = $actorStoreFactory;
 		$this->logger = $logger;
-		$this->contentHandlerUseDB = $contentHandlerUseDB;
+		$this->contentHandlerFactory = $contentHandlerFactory;
+		$this->pageStoreFactory = $pageStoreFactory;
+		$this->titleFactory = $titleFactory;
+		$this->hookContainer = $hookContainer;
 	}
 
 	/**
@@ -125,20 +143,22 @@ class RevisionStoreFactory {
 
 		$store = new RevisionStore(
 			$this->dbLoadBalancerFactory->getMainLB( $dbDomain ),
-			// @phan-suppress-next-line PhanAccessMethodInternal
 			$this->blobStoreFactory->newSqlBlobStore( $dbDomain ),
 			$this->cache, // Pass local cache instance; Leave cache sharing to RevisionStore.
 			$this->commentStore,
 			$this->nameTables->getContentModels( $dbDomain ),
 			$this->nameTables->getSlotRoles( $dbDomain ),
 			$this->slotRoleRegistry,
-			$this->mcrMigrationStage,
 			$this->actorMigration,
+			$this->actorStoreFactory->getActorStore( $dbDomain ),
+			$this->contentHandlerFactory,
+			$this->pageStoreFactory->getPageStore( $dbDomain ),
+			$this->titleFactory,
+			$this->hookContainer,
 			$dbDomain
 		);
 
 		$store->setLogger( $this->logger );
-		$store->setContentHandlerUseDB( $this->contentHandlerUseDB );
 
 		return $store;
 	}

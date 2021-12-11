@@ -23,11 +23,14 @@
  * @since 1.19
  */
 
+use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
  * A value class to process existing log entries. In other words, this class caches a log
  * entry from the database and provides an immutable object-oriented representation of it.
+ *
+ * This class should only be used in context of the LogFormatter class.
  *
  * @since 1.19
  */
@@ -188,7 +191,7 @@ class DatabaseLogEntry extends LogEntryBase {
 		return $this->revId;
 	}
 
-	public function getPerformer() {
+	protected function getPerformerUser(): User {
 		if ( !$this->performer ) {
 			$actorId = isset( $this->row->log_actor ) ? (int)$this->row->log_actor : 0;
 			$userId = (int)$this->row->log_user;
@@ -209,6 +212,15 @@ class DatabaseLogEntry extends LogEntryBase {
 		}
 
 		return $this->performer;
+	}
+
+	public function getPerformer() {
+		wfDeprecated( __METHOD__, '1.36' );
+		return $this->getPerformerUser();
+	}
+
+	public function getPerformerIdentity(): UserIdentity {
+		return $this->getPerformerUser();
 	}
 
 	public function getTarget() {

@@ -29,35 +29,38 @@ class HTMLCheckMatrixTest extends MediaWikiUnitTestCase {
 	public function testValidateCallsUserDefinedValidationCallback() {
 		$called = false;
 		$field = new HTMLCheckMatrix( self::$defaultOptions + [
-			'validation-callback' => function () use ( &$called ) {
+			'validation-callback' => static function () use ( &$called ) {
 				$called = true;
 
 				return false;
 			},
 		] );
-		$this->assertEquals( false, $this->validate( $field, [] ) );
+		$this->assertFalse( $this->validate( $field, [] ) );
 		$this->assertTrue( $called );
 	}
 
-	public function testValidateRequiresArrayInput() {
+	/**
+	 * @dataProvider provideValidate
+	 */
+	public function testValidate( $expected, $submitted ) {
 		$field = new HTMLCheckMatrix( self::$defaultOptions );
-		$this->assertEquals( false, $this->validate( $field, null ) );
-		$this->assertEquals( false, $this->validate( $field, true ) );
-		$this->assertEquals( false, $this->validate( $field, 'abc' ) );
-		$this->assertEquals( false, $this->validate( $field, new stdClass ) );
-		$this->assertEquals( true, $this->validate( $field, [] ) );
+		$this->assertSame( $expected, $this->validate( $field, $submitted ) );
+	}
+
+	public function provideValidate() {
+		// $expected, $submitted
+		yield [ false, null ];
+		yield [ false, true ];
+		yield [ false, 'abc' ];
+		yield [ false, (object)[] ];
+		yield [ true, [] ];
+		yield [ true, [ 'c1-r1' ] ];
+		yield [ true, [ 'c1-r1', 'c1-r2', 'c2-r1', 'c2-r2' ] ];
 	}
 
 	public function testValidateAllowsOnlyKnownTags() {
 		$field = new HTMLCheckMatrix( self::$defaultOptions );
 		$this->assertInstanceOf( Message::class, $this->validate( $field, [ 'foo' ] ) );
-	}
-
-	public function testValidateAcceptsPartialTagList() {
-		$field = new HTMLCheckMatrix( self::$defaultOptions );
-		$this->assertTrue( $this->validate( $field, [] ) );
-		$this->assertTrue( $this->validate( $field, [ 'c1-r1' ] ) );
-		$this->assertTrue( $this->validate( $field, [ 'c1-r1', 'c1-r2', 'c2-r1', 'c2-r2' ] ) );
 	}
 
 	/**

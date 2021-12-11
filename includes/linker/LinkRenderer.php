@@ -20,17 +20,17 @@
  */
 namespace MediaWiki\Linker;
 
-use DummyLinker;
-use Hooks;
 use Html;
 use HtmlArmor;
 use LinkCache;
-use Linker;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\SpecialPage\SpecialPageFactory;
 use NamespaceInfo;
 use Sanitizer;
 use Title;
 use TitleFormatter;
+use TitleValue;
 
 /**
  * Class that generates HTML <a> links for pages.
@@ -74,24 +74,38 @@ class LinkRenderer {
 	 */
 	private $nsInfo;
 
-	/**
-	 * Whether to run the legacy Linker hooks
-	 *
-	 * @var bool
-	 */
-	private $runLegacyBeginHook = true;
+	/** @var HookContainer */
+	private $hookContainer;
+
+	/** @var HookRunner */
+	private $hookRunner;
 
 	/**
+	 * @var SpecialPageFactory
+	 */
+	private $specialPageFactory;
+
+	/**
+	 * @internal For use by LinkRendererFactory
 	 * @param TitleFormatter $titleFormatter
 	 * @param LinkCache $linkCache
 	 * @param NamespaceInfo $nsInfo
+	 * @param SpecialPageFactory $specialPageFactory
+	 * @param HookContainer $hookContainer
 	 */
 	public function __construct(
-		TitleFormatter $titleFormatter, LinkCache $linkCache, NamespaceInfo $nsInfo
+		TitleFormatter $titleFormatter,
+		LinkCache $linkCache,
+		NamespaceInfo $nsInfo,
+		SpecialPageFactory $specialPageFactory,
+		HookContainer $hookContainer
 	) {
 		$this->titleFormatter = $titleFormatter;
 		$this->linkCache = $linkCache;
 		$this->nsInfo = $nsInfo;
+		$this->specialPageFactory = $specialPageFactory;
+		$this->hookContainer = $hookContainer;
+		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
 	/**
@@ -137,18 +151,11 @@ class LinkRenderer {
 	}
 
 	/**
-	 * @param bool $run
-	 */
-	public function setRunLegacyBeginHook( $run ) {
-		$this->runLegacyBeginHook = $run;
-	}
-
-	/**
 	 * @param LinkTarget $target
 	 * @param string|HtmlArmor|null $text
 	 * @param array $extraAttribs
 	 * @param array $query
-	 * @return string
+	 * @return string HTML
 	 */
 	public function makeLink(
 		LinkTarget $target, $text = null, array $extraAttribs = [], array $query = []
@@ -161,85 +168,13 @@ class LinkRenderer {
 		}
 	}
 
-	/**
-	 * Get the options in the legacy format
-	 *
-	 * @param bool $isKnown Whether the link is known or broken
-	 * @return array
-	 */
-	private function getLegacyOptions( $isKnown ) {
-		$options = [ 'stubThreshold' => $this->stubThreshold ];
-		if ( $this->forceArticlePath ) {
-			$options[] = 'forcearticlepath';
-		}
-		if ( $this->expandUrls === PROTO_HTTP ) {
-			$options[] = 'http';
-		} elseif ( $this->expandUrls === PROTO_HTTPS ) {
-			$options[] = 'https';
-		}
-
-		$options[] = $isKnown ? 'known' : 'broken';
-
-		return $options;
-	}
-
 	private function runBeginHook( LinkTarget $target, &$text, &$extraAttribs, &$query, $isKnown ) {
 		$ret = null;
-		if ( !Hooks::run( 'HtmlPageLinkRendererBegin',
-			[ $this, $target, &$text, &$extraAttribs, &$query, &$ret ] )
+		if ( !$this->hookRunner->onHtmlPageLinkRendererBegin(
+			$this, $target, $text, $extraAttribs, $query, $ret )
 		) {
 			return $ret;
 		}
-
-		// Now run the legacy hook
-		return $this->runLegacyBeginHook( $target, $text, $extraAttribs, $query, $isKnown );
-	}
-
-	private function runLegacyBeginHook( LinkTarget $target, &$text, &$extraAttribs, &$query,
-		$isKnown
-	) {
-		if ( !$this->runLegacyBeginHook || !Hooks::isRegistered( 'LinkBegin' ) ) {
-			// Disabled, or nothing registered
-			return null;
-		}
-
-		$realOptions = $options = $this->getLegacyOptions( $isKnown );
-		$ret = null;
-		$dummy = new DummyLinker();
-		$title = Title::newFromLinkTarget( $target );
-		if ( $text !== null ) {
-			$realHtml = $html = HtmlArmor::getHtml( $text );
-		} else {
-			$realHtml = $html = null;
-		}
-		if ( !Hooks::run( 'LinkBegin',
-			[ $dummy, $title, &$html, &$extraAttribs, &$query, &$options, &$ret ], '1.28' )
-		) {
-			return $ret;
-		}
-
-		if ( $html !== null && $html !== $realHtml ) {
-			// &$html was modified, so re-armor it as $text
-			$text = new HtmlArmor( $html );
-		}
-
-		// Check if they changed any of the options, hopefully not!
-		if ( $options !== $realOptions ) {
-			$factory = MediaWikiServices::getInstance()->getLinkRendererFactory();
-			// They did, so create a separate instance and have that take over the rest
-			$newRenderer = $factory->createFromLegacyOptions( $options );
-			// Don't recurse the hook...
-			$newRenderer->setRunLegacyBeginHook( false );
-			if ( in_array( 'known', $options, true ) ) {
-				return $newRenderer->makeKnownLink( $title, $text, $extraAttribs, $query );
-			} elseif ( in_array( 'broken', $options, true ) ) {
-				return $newRenderer->makeBrokenLink( $title, $text, $extraAttribs, $query );
-			} else {
-				return $newRenderer->makeLink( $title, $text, $extraAttribs, $query );
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -285,7 +220,7 @@ class LinkRenderer {
 	 * @param string|HtmlArmor|null $text
 	 * @param array $extraAttribs
 	 * @param array $query
-	 * @return string
+	 * @return string HTML
 	 */
 	public function makeKnownLink(
 		LinkTarget $target, $text = null, array $extraAttribs = [], array $query = []
@@ -310,6 +245,7 @@ class LinkRenderer {
 
 	/**
 	 * @param LinkTarget $target
+	 * @param-taint $target none
 	 * @param string|HtmlArmor|null $text
 	 * @param array $extraAttribs
 	 * @param array $query
@@ -368,27 +304,13 @@ class LinkRenderer {
 	 */
 	private function buildAElement( LinkTarget $target, $text, array $attribs, $isKnown ) {
 		$ret = null;
-		if ( !Hooks::run( 'HtmlPageLinkRendererEnd',
-			[ $this, $target, $isKnown, &$text, &$attribs, &$ret ] )
+		if ( !$this->hookRunner->onHtmlPageLinkRendererEnd(
+			$this, $target, $isKnown, $text, $attribs, $ret )
 		) {
 			return $ret;
 		}
 
-		$html = HtmlArmor::getHtml( $text );
-
-		// Run legacy hook
-		if ( Hooks::isRegistered( 'LinkEnd' ) ) {
-			$dummy = new DummyLinker();
-			$title = Title::newFromLinkTarget( $target );
-			$options = $this->getLegacyOptions( $isKnown );
-			if ( !Hooks::run( 'LinkEnd',
-				[ $dummy, $title, $options, &$html, &$attribs, &$ret ], '1.28' )
-			) {
-				return $ret;
-			}
-		}
-
-		return Html::rawElement( 'a', $attribs, $html );
+		return Html::rawElement( 'a', $attribs, HtmlArmor::getHtml( $text ) );
 	}
 
 	/**
@@ -427,12 +349,26 @@ class LinkRenderer {
 	/**
 	 * Normalizes the provided target
 	 *
-	 * @todo move the code from Linker actually here
+	 * @internal For use by deprecated Linker & DummyLinker
+	 *     ::normaliseSpecialPage() methods
 	 * @param LinkTarget $target
 	 * @return LinkTarget
 	 */
-	private function normalizeTarget( LinkTarget $target ) {
-		return Linker::normaliseSpecialPage( $target );
+	public function normalizeTarget( LinkTarget $target ) {
+		if ( $target->getNamespace() === NS_SPECIAL && !$target->isExternal() ) {
+			list( $name, $subpage ) = $this->specialPageFactory->resolveAlias(
+				$target->getDBkey()
+			);
+			if ( $name ) {
+				return new TitleValue(
+					NS_SPECIAL,
+					$this->specialPageFactory->getLocalNameFor( $name, $subpage ),
+					$target->getFragment()
+				);
+			}
+		}
+
+		return $target;
 	}
 
 	/**

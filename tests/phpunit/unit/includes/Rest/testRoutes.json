@@ -1,7 +1,7 @@
 [
 	{
-		"path": "/user/{name}/hello",
-		"class": "MediaWiki\\Rest\\Handler\\HelloHandler"
+		"path": "/mock/RouterTest/hello",
+		"class": "MediaWiki\\Tests\\Rest\\Handler\\HelloHandler"
 	},
 	{
 		"path": "/mock/EntryPoint/header",
@@ -14,6 +14,14 @@
 	{
 		"path": "/mock/RouterTest/throw",
 		"factory": "MediaWiki\\Tests\\Rest\\RouterTest::throwHandlerFactory"
+	},
+	{
+		"path": "/mock/RouterTest/throwRedirect",
+		"factory": "MediaWiki\\Tests\\Rest\\RouterTest::throwRedirectHandlerFactory"
+	},
+	{
+		"path": "/mock/RouterTest/throwWrapped",
+		"factory": "MediaWiki\\Tests\\Rest\\RouterTest::throwWrappedHandlerFactory"
 	},
 	{
 		"path": "/mock/MWBasicRequestAuthorizerTest/write",

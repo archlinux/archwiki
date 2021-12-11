@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Abbas dhothar",
+			"BukhariSaeed",
+			"Khalid Mahmood"
+		]
+	},
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویول ایڈیٹر]]",
+	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویژوئل ایڈیٹر: چیک]]",
+	"tag-visualeditor-wikitext": "2017 سورس ایڈیٹ",
+	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویژوئل ایڈیٹر:چالو]]",
+	"visualeditor-help-label": "یوزر گائیڈ پڑھو",
+	"visualeditor-welcomedialog-action": "اڈیٹنگ شروع کرو",
+	"visualeditor-welcomedialog-switch": "سورس ایڈیٹر وچ جاؤ",
+	"visualeditor-welcomedialog-switch-ve": "ویژوئل ایڈیٹر وچ جاؤ",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|جی آیاں نوں}} نوں $2"
+}

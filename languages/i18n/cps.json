@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Capisano",
+			"Macofe",
 			"Oxyzen",
 			"Reedy",
-			"아라",
-			"Macofe",
-			"Stephanecbisson"
+			"Stephanecbisson",
+			"아라"
 		]
 	},
 	"tog-underline": "Kuritan sa idalum ang mga link",
@@ -114,7 +114,6 @@
 	"category-article-count-limited": "Ang mga gasunod nga{{PLURAL:$1|ka pahina|$1 ka mga pahina}} ara yanda sa kategorya.",
 	"category-file-count": "{{PLURAL:$2|Mini nga kategorya naga-unod lang gid sang gasunod nga file. |Ang mga gasunod nga {{PLURAL:$1|ka pahina|$1 ka mga pahina}} sa mini nga kategroya, sa $2 nga kabilugan.}}",
 	"category-file-count-limited": "Ang gasunod nga {{PLURAL:$1|ka file|$1 ka mga file}} ara sa yanda nga kategorya.",
-	"listingcontinuesabbrev": "padayon",
 	"index-category": "Na-index nga mga pahina",
 	"noindex-category": "Wala na-index nga mga pahina",
 	"broken-file-category": "Mga pahina nga may guba nga mga file links",
@@ -220,7 +219,6 @@
 	"thisisdeleted": "Tan-awon ukon ibalik ang sang una nga $1?",
 	"viewdeleted": "Tan-awon ang $1?",
 	"restorelink": "{{PLURAL:$1|isa ka|$1}} pinanas nga ginbag-o",
-	"feedlinks": "Pa-on:",
 	"feed-invalid": "Sala nga sari sang sebisyo sang pagpaabot",
 	"feed-unavailable": "Wala sang serbisyo halin sa pa-on sang sindikasyon",
 	"site-rss-feed": "$1 pa-on nga RSS",
@@ -246,7 +244,7 @@
 	"nospecialpagetext": "<strong>Nagpangayo ikaw sang inbalido nga pinasahi nga pahina.</strong>\n\nAng listahan sang inbalido nga mga pinasahi nga pahina makit-an sa [[Special:SpecialPages|{{int:specialpages}}]].",
 	"error": "Sala",
 	"databaseerror": "Diperensya sa database",
-	"laggedslavemode": "Pahibalo: Posible nga wala unod ang pahina sang mga yanda nga bag-ong nadugang.",
+	"laggedreplicamode": "Pahibalo: Posible nga wala unod ang pahina sang mga yanda nga bag-ong nadugang.",
 	"readonly": "Nakakandado ang database",
 	"enterlockreason": "Maghatag sang kabangdanan sa pagkakandado, upod ang bana-bana kung san-o ang kandado ibuy-an",
 	"readonlytext": "Nakakandado yanda ang kalipunan sang datos para sa mga bago nga entrada kag iban pa nga mga pagbag-o, seguro para sa ulubrahon nga pangapagpasakdag sang kalipunan sang datos, magabalik ini sa normal pagkaagi sini.\n\nNaghatag sang mini nga rason ang tagadumala nga nagkandado sini: $1",
@@ -527,7 +525,7 @@
 	"namespace": "Lang-at ngalan:",
 	"invert": "Suli-on ang seleksyon",
 	"blanknamespace": "(Panguna)",
-	"contributions": "Mga nabulig sang manug-usar",
+	"tool-link-contributions": "Mga nabulig sang manug-usar",
 	"contributions-title": "Mga nabulig sang tagagamit nga si $1",
 	"mycontris": "Akon nabulig",
 	"contribsub2": "Para kay $1 ($2)",

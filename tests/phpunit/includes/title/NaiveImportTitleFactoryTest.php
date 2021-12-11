@@ -23,10 +23,12 @@
  * @covers NaiveImportTitleFactory
  *
  * @group Title
+ *
+ * TODO convert to unit tests
  */
-class NaiveImportTitleFactoryTest extends MediaWikiTestCase {
+class NaiveImportTitleFactoryTest extends MediaWikiIntegrationTestCase {
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->setContentLang( 'en' );
@@ -80,7 +82,11 @@ class NaiveImportTitleFactoryTest extends MediaWikiTestCase {
 	 * @dataProvider basicProvider
 	 */
 	public function testBasic( ForeignTitle $foreignTitle, $titleText ) {
-		$factory = new NaiveImportTitleFactory();
+		$factory = new NaiveImportTitleFactory(
+			$this->getServiceContainer()->getContentLanguage(),
+			$this->getServiceContainer()->getNamespaceInfo(),
+			$this->getServiceContainer()->getTitleFactory()
+		);
 		$testTitle = $factory->createTitleFromForeignTitle( $foreignTitle );
 		$title = Title::newFromText( $titleText );
 

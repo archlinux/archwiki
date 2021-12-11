@@ -4,20 +4,13 @@
  * @group ContentHandler
  * @group Database
  *        ^--- needed, because we do need the database to test link updates
- *
- * @FIXME this should not extend JavaScriptContentTest.
  */
-class CssContentTest extends JavaScriptContentTest {
+class CssContentTest extends TextContentTest {
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
-		// Anon user
-		$user = new User();
-		$user->setName( '127.0.0.1' );
-
 		$this->setMwGlobals( [
-			'wgUser' => $user,
 			'wgTextModelsToParse' => [
 				CONTENT_MODEL_CSS,
 			]
@@ -34,7 +27,7 @@ class CssContentTest extends JavaScriptContentTest {
 				'MediaWiki:Test.css',
 				null,
 				"hello <world>\n",
-				"<pre class=\"mw-code mw-css\" dir=\"ltr\">\nhello &lt;world&gt;\n\n</pre>"
+				"<pre class=\"mw-code mw-css\" dir=\"ltr\">\nhello &lt;world>\n\n</pre>"
 			],
 			[
 				'MediaWiki:Test.css',
@@ -49,6 +42,21 @@ class CssContentTest extends JavaScriptContentTest {
 			],
 
 			// TODO: more...?
+		];
+	}
+
+	// XXX: currently, preSaveTransform is applied to styles. this may change or become optional.
+	public static function dataPreSaveTransform() {
+		return [
+			[ 'hello this is ~~~',
+				"hello this is [[Special:Contributions/127.0.0.1|127.0.0.1]]",
+			],
+			[ 'hello \'\'this\'\' is <nowiki>~~~</nowiki>',
+				'hello \'\'this\'\' is <nowiki>~~~</nowiki>',
+			],
+			[ " Foo \n ",
+				" Foo",
+			],
 		];
 	}
 

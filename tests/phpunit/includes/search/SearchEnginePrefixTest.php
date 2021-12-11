@@ -1,15 +1,12 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
-use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Search
  * @group Database
  */
 class SearchEnginePrefixTest extends MediaWikiLangTestCase {
-	private $originalHandlers;
-
 	/**
 	 * @var SearchEngine
 	 */
@@ -50,7 +47,7 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 		$this->insertPage( 'External' );
 	}
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		if ( !$this->isWikitextNS( NS_MAIN ) ) {
@@ -65,15 +62,6 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 
 		$this->search = MediaWikiServices::getInstance()->newSearchEngine();
 		$this->search->setNamespaces( [] );
-
-		$this->originalHandlers = TestingAccessWrapper::newFromClass( Hooks::class )->handlers;
-		TestingAccessWrapper::newFromClass( Hooks::class )->handlers = [];
-	}
-
-	public function tearDown() {
-		parent::tearDown();
-
-		TestingAccessWrapper::newFromClass( Hooks::class )->handlers = $this->originalHandlers;
 	}
 
 	protected function searchProvision( array $results = null ) {
@@ -82,7 +70,7 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 		} else {
 			$this->setMwGlobals( 'wgHooks', [
 				'PrefixSearchBackend' => [
-					function ( $namespaces, $search, $limit, &$srchres ) use ( $results ) {
+					static function ( $namespaces, $search, $limit, &$srchres ) use ( $results ) {
 						$srchres = $results;
 						return false;
 					}
@@ -184,7 +172,7 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 	public function testSearch( array $case ) {
 		$this->search->setLimitOffset( 3 );
 		$results = $this->search->defaultPrefixSearch( $case['query'] );
-		$results = array_map( function ( Title $t ) {
+		$results = array_map( static function ( Title $t ) {
 			return $t->getPrefixedText();
 		}, $results );
 
@@ -202,7 +190,7 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 	public function testSearchWithOffset( array $case ) {
 		$this->search->setLimitOffset( 3, 1 );
 		$results = $this->search->defaultPrefixSearch( $case['query'] );
-		$results = array_map( function ( Title $t ) {
+		$results = array_map( static function ( Title $t ) {
 			return $t->getPrefixedText();
 		}, $results );
 
@@ -352,7 +340,7 @@ class SearchEnginePrefixTest extends MediaWikiLangTestCase {
 		$search = $this->mockSearchWithResults( $case['provision'] );
 		$results = $search->completionSearch( $case['query'] );
 
-		$results = $results->map( function ( SearchSuggestion $s ) {
+		$results = $results->map( static function ( SearchSuggestion $s ) {
 			return $s->getText();
 		} );
 

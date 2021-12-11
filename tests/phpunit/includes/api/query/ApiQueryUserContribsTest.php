@@ -43,16 +43,14 @@ class ApiQueryUserContribsTest extends ApiTestCase {
 		$this->markTestSkippedIfDbType( 'sqlite' );
 
 		if ( isset( $params['ucuserids'] ) ) {
-			$params['ucuserids'] = implode( '|', array_map( 'User::idFromName', $params['ucuserids'] ) );
+			$params['ucuserids'] = implode( '|', array_map( [ User::class, 'idFromName' ], $params['ucuserids'] ) );
 		}
 		if ( isset( $params['ucuser'] ) ) {
 			$params['ucuser'] = implode( '|', $params['ucuser'] );
 		}
 
-		$sort = 'rsort';
 		if ( $reverse ) {
 			$params['ucdir'] = 'newer';
-			$sort = 'sort';
 		}
 
 		$params += [
@@ -75,7 +73,7 @@ class ApiQueryUserContribsTest extends ApiTestCase {
 		$this->assertSame( $revs, $count, 'Expected number of revisions' );
 		foreach ( $ids as $user => $revids ) {
 			$sorted = $revids;
-			call_user_func_array( $sort, [ &$sorted ] );
+			$reverse ? sort( $sorted ) : rsort( $sorted );
 			$this->assertSame( $sorted, $revids, "IDs for $user are sorted" );
 		}
 

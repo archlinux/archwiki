@@ -1,9 +1,9 @@
 <?php
 
 use Psr\Log\NullLogger;
-use Wikimedia\Rdbms\TransactionProfiler;
-use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\DatabaseDomain;
+use Wikimedia\Rdbms\TransactionProfiler;
 
 /**
  * Helper for testing the methods from the Database class
@@ -12,13 +12,13 @@ use Wikimedia\Rdbms\Database;
 class DatabaseTestHelper extends Database {
 
 	/**
-	 * __CLASS__ of the test suite,
+	 * @var string[] __CLASS__ of the test suite,
 	 * used to determine, if the function name is passed every time to query()
 	 */
 	protected $testName = [];
 
 	/**
-	 * Array of lastSqls passed to query(),
+	 * @var string[] Array of lastSqls passed to query(),
 	 * This is an array since some methods in Database can do more than one
 	 * query. Cleared when calling getLastSqls().
 	 */
@@ -33,15 +33,18 @@ class DatabaseTestHelper extends Database {
 	protected $lastError = null;
 
 	/**
-	 * Array of tables to be considered as existing by tableExist()
+	 * @var string[] Array of tables to be considered as existing by tableExist()
 	 * Use setExistingTables() to alter.
 	 */
 	protected $tablesExists;
 
 	/**
-	 * Value to return from unionSupportsOrderAndLimit()
+	 * @var bool Value to return from unionSupportsOrderAndLimit()
 	 */
 	protected $unionSupportsOrderAndLimit = true;
+
+	/** @var int[] */
+	protected $forcedAffectedCountQueue = [];
 
 	public function __construct( $testName, array $opts = [] ) {
 		parent::__construct( $opts + [
@@ -52,17 +55,20 @@ class DatabaseTestHelper extends Database {
 			'schema' => null,
 			'tablePrefix' => '',
 			'flags' => 0,
-			'cliMode' => $opts['cliMode'] ?? true,
+			'cliMode' => true,
 			'agent' => '',
+			'topologyRole' => null,
+			'topologicalMaster' => null,
 			'srvCache' => new HashBagOStuff(),
 			'profiler' => null,
 			'trxProfiler' => new TransactionProfiler(),
 			'connLogger' => new NullLogger(),
 			'queryLogger' => new NullLogger(),
-			'errorLogger' => function ( Exception $e ) {
+			'replLogger' => new NullLogger(),
+			'errorLogger' => static function ( Exception $e ) {
 				wfWarn( get_class( $e ) . ": {$e->getMessage()}" );
 			},
-			'deprecationLogger' => function ( $msg ) {
+			'deprecationLogger' => static function ( $msg ) {
 				wfWarn( $msg );
 			}
 		] );
@@ -136,7 +142,7 @@ class DatabaseTestHelper extends Database {
 		}
 	}
 
-	function strencode( $s ) {
+	public function strencode( $s ) {
 		// Choose apos to avoid handling of escaping double quotes in quoted text
 		return str_replace( "'", "\'", $s );
 	}
@@ -163,54 +169,50 @@ class DatabaseTestHelper extends Database {
 		return in_array( $table, (array)$this->tablesExists );
 	}
 
-	// Redeclare parent method to make it public
-	public function nativeReplace( $table, $rows, $fname ) {
-		parent::nativeReplace( $table, $rows, $fname );
-	}
-
-	function getType() {
+	public function getType() {
 		return 'test';
 	}
 
-	function open( $server, $user, $password, $dbName, $schema, $tablePrefix ) {
+	public function open( $server, $user, $password, $dbName, $schema, $tablePrefix ) {
+		$this->server = 'localhost';
 		$this->conn = (object)[ 'test' ];
 
 		return true;
 	}
 
-	function fetchObject( $res ) {
+	public function fetchObject( $res ) {
 		return false;
 	}
 
-	function fetchRow( $res ) {
+	public function fetchRow( $res ) {
 		return false;
 	}
 
-	function numRows( $res ) {
+	public function numRows( $res ) {
 		return -1;
 	}
 
-	function numFields( $res ) {
+	public function numFields( $res ) {
 		return -1;
 	}
 
-	function fieldName( $res, $n ) {
+	public function fieldName( $res, $n ) {
 		return 'test';
 	}
 
-	function insertId() {
+	public function insertId() {
 		return -1;
 	}
 
-	function dataSeek( $res, $row ) {
+	public function dataSeek( $res, $row ) {
 		/* nop */
 	}
 
-	function lastErrno() {
+	public function lastErrno() {
 		return $this->lastError ? $this->lastError['errno'] : -1;
 	}
 
-	function lastError() {
+	public function lastError() {
 		return $this->lastError ? $this->lastError['error'] : 'test';
 	}
 
@@ -218,37 +220,41 @@ class DatabaseTestHelper extends Database {
 		return $this->lastError['wasKnownStatementRollbackError'] ?? false;
 	}
 
-	function fieldInfo( $table, $field ) {
+	public function fieldInfo( $table, $field ) {
 		return false;
 	}
 
-	function indexInfo( $table, $index, $fname = 'Database::indexInfo' ) {
+	public function indexInfo( $table, $index, $fname = 'Database::indexInfo' ) {
 		return false;
 	}
 
-	function fetchAffectedRowCount() {
+	public function fetchAffectedRowCount() {
 		return -1;
 	}
 
-	function getSoftwareLink() {
+	public function getSoftwareLink() {
 		return 'test';
 	}
 
-	function getServerVersion() {
+	public function getServerVersion() {
 		return 'test';
 	}
 
-	function getServerInfo() {
+	public function getServerInfo() {
 		return 'test';
 	}
 
-	function ping( &$rtt = null ) {
+	public function ping( &$rtt = null ) {
 		$rtt = 0.0;
 		return true;
 	}
 
 	protected function closeConnection() {
 		return true;
+	}
+
+	public function setNextQueryAffectedRowCounts( array $counts ) {
+		$this->forcedAffectedCountQueue = $counts;
 	}
 
 	protected function doQuery( $sql ) {
@@ -265,6 +271,10 @@ class DatabaseTestHelper extends Database {
 		$this->nextResult = [];
 		$this->lastError = null;
 
+		if ( $this->forcedAffectedCountQueue ) {
+			$this->affectedRowCount = array_shift( $this->forcedAffectedCountQueue );
+		}
+
 		return new FakeResultWrapper( $res );
 	}
 
@@ -274,5 +284,13 @@ class DatabaseTestHelper extends Database {
 
 	public function setUnionSupportsOrderAndLimit( $v ) {
 		$this->unionSupportsOrderAndLimit = (bool)$v;
+	}
+
+	public function useIndexClause( $index ) {
+		return "FORCE INDEX (" . $this->indexName( $index ) . ")";
+	}
+
+	public function ignoreIndexClause( $index ) {
+		return "IGNORE INDEX (" . $this->indexName( $index ) . ")";
 	}
 }

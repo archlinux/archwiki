@@ -20,6 +20,7 @@
 
 /**
  * Extension of Message implementing IApiMessage
+ * @newable
  * @since 1.25
  * @ingroup API
  */
@@ -32,10 +33,12 @@ class ApiMessage extends Message implements IApiMessage {
 	 * This returns $msg if it's an IApiMessage, calls 'new ApiRawMessage' if
 	 * $msg is a RawMessage, or calls 'new ApiMessage' in all other cases.
 	 *
+	 * @stable to call
 	 * @param Message|RawMessage|array|string $msg
 	 * @param string|null $code
 	 * @param array|null $data
 	 * @return IApiMessage
+	 * @param-taint $msg tainted
 	 */
 	public static function create( $msg, $code = null, array $data = null ) {
 		if ( is_array( $msg ) ) {

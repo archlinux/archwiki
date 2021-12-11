@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Iltever",
-			"Ernác"
+			"Ernác",
+			"Iltever"
 		]
 	},
 	"renameuser": "Къошулуучуну атын ауушдур",
@@ -18,7 +18,6 @@
 	"renameuserwarnings": "Эс бёлюгюз:",
 	"renameuserconfirm": "Хо, къошулуучуну атын ауушдур",
 	"renameusersubmit": "Тындыр",
-	"renameuser-submit-blocklog": "Къошулуучуну блок этилиу журналын кёргюз",
 	"renameusererrordoesnotexist": "«<nowiki>$1</nowiki>» ат бла къошулуучу регистрация этилмегенди.",
 	"renameusererrorexists": "«<nowiki>$1</nowiki>» ат бла къошулуучу алгъадан регистрация этилиб турады.",
 	"renameusererrorinvalid": "«<nowiki>$1</nowiki>» деген ат джарамагъан атды.",

@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Crt",
-			"Nike",
-			"Nedergard",
-			"Stryn",
-			"McSalama",
 			"01miki10",
 			"Alluk.",
+			"Crt",
 			"Kyykaarme",
-			"Pyscowicz"
+			"McSalama",
+			"Nedergard",
+			"Nike",
+			"Pyscowicz",
+			"Stryn"
 		]
 	},
 	"fancycaptcha-addurl": "Muokkauksesi sisältää uusia linkkejä muille sivuille. \nKirjoita kuvan sisältämät sanat alla olevaan tekstikenttään \n([[Special:Captcha/help|lisätietoja]]):",

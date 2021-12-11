@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Foxj",
 			"John Reid",
-			"Foxj"
+			"MJL"
 		]
 	},
-	"ooui-outline-control-move-down": "Muiv eetem doon",
-	"ooui-outline-control-move-up": "Muiv eetem up",
-	"ooui-outline-control-remove": "Remuiv eetem",
+	"ooui-outline-control-move-down": "Muiv item doon",
+	"ooui-outline-control-move-up": "Muiv item up",
+	"ooui-outline-control-remove": "Remuiv item",
 	"ooui-toolbar-more": "Mair",
 	"ooui-toolgroup-expand": "Mair",
 	"ooui-toolgroup-collapse": "Less",

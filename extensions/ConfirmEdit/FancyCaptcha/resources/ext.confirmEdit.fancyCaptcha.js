@@ -22,6 +22,9 @@ $( document ).on( 'click', '.fancycaptcha-reload', function () {
 			// now do the same with a selector that works for pre-1.27 login forms
 			$root.find( '[name="wpCaptchaId"]' ).val( captchaIndex );
 			$root.find( '[name="wpCaptchaWord"]' ).val( '' ).trigger( 'focus' );
+
+			// and make it accessible for other tools, e.g. VisualEditor
+			$captchaImage.data( 'captchaId', captchaIndex );
 		}
 	} )
 		.always( function () {

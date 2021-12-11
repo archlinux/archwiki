@@ -24,27 +24,49 @@
  * @author Rob Church <robchur@gmail.com>
  */
 
-use Wikimedia\Rdbms\IResultWrapper;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Page\WikiPageFactory;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Special:Listredirects - Lists all the redirects on the wiki.
  * @ingroup SpecialPage
  */
 class SpecialListRedirects extends QueryPage {
-	function __construct( $name = 'Listredirects' ) {
-		parent::__construct( $name );
+
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
+	/** @var WikiPageFactory */
+	private $wikiPageFactory;
+
+	/**
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param ILoadBalancer $loadBalancer
+	 * @param WikiPageFactory $wikiPageFactory
+	 */
+	public function __construct(
+		LinkBatchFactory $linkBatchFactory,
+		ILoadBalancer $loadBalancer,
+		WikiPageFactory $wikiPageFactory
+	) {
+		parent::__construct( 'Listredirects' );
+		$this->linkBatchFactory = $linkBatchFactory;
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->wikiPageFactory = $wikiPageFactory;
 	}
 
 	public function isExpensive() {
 		return true;
 	}
 
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
-	function sortDescending() {
+	protected function sortDescending() {
 		return false;
 	}
 
@@ -67,7 +89,7 @@ class SpecialListRedirects extends QueryPage {
 		];
 	}
 
-	function getOrderFields() {
+	protected function getOrderFields() {
 		return [ 'p1.page_namespace', 'p1.page_title' ];
 	}
 
@@ -77,12 +99,12 @@ class SpecialListRedirects extends QueryPage {
 	 * @param IDatabase $db
 	 * @param IResultWrapper $res
 	 */
-	function preprocessResults( $db, $res ) {
+	public function preprocessResults( $db, $res ) {
 		if ( !$res->numRows() ) {
 			return;
 		}
 
-		$batch = new LinkBatch;
+		$batch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
 			$redirTarget = $this->getRedirectTarget( $row );
@@ -108,18 +130,18 @@ class SpecialListRedirects extends QueryPage {
 			);
 		} else {
 			$title = Title::makeTitle( $row->namespace, $row->title );
-			$article = WikiPage::factory( $title );
+			$page = $this->wikiPageFactory->newFromTitle( $title );
 
-			return $article->getRedirectTarget();
+			return $page->getRedirectTarget();
 		}
 	}
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		$linkRenderer = $this->getLinkRenderer();
 		# Make a link to the redirect itself
 		$rd_title = Title::makeTitle( $result->namespace, $result->title );

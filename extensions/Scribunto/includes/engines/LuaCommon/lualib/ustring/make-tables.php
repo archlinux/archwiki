@@ -62,9 +62,14 @@ $pats = [
 ];
 
 $ranges = [];
-// @codingStandardsIgnoreLine MediaWiki.NamingConventions.PrefixedGlobalFunctions
-function addRange( $k, $start, $end ) {
-	// @codingStandardsIgnoreLine MediaWiki.NamingConventions.ValidGlobalName
+
+/**
+ * @param string $k
+ * @param int $start
+ * @param int $end
+ */
+function addRange( $k, $start, $end ) { // phpcs:ignore MediaWiki.NamingConventions.PrefixedGlobalFunctions
+	// phpcs:ignore MediaWiki.NamingConventions.ValidGlobalName
 	global $fh, $ranges;
 	// Speed/memory tradeoff
 	if ( !( $start >= 0x20 && $start < 0x7f ) && $end - $start >= 10 ) {
@@ -127,6 +132,7 @@ foreach ( $pats as $k => $pp ) {
 			$check[] = sprintf( "pats[0x%02x][k]", ord( $p ) );
 		}
 	}
+	// @phan-suppress-next-line PhanImpossibleConditionInGlobalScope
 	if ( $ranges[$k] ) {
 		$body = "\tlocal c = tonumber( k ) or 0/0;\n";
 		$check = array_merge( $check, $ranges[$k] );

@@ -18,7 +18,6 @@ class ButtonGroupWidget extends Widget {
 	/**
 	 * @param array $config Configuration options
 	 *      - ButtonWidget[] $config['items'] Buttons to add
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor

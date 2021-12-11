@@ -3,8 +3,8 @@
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\IDatabase;
 
-class DatabaseLogEntryTest extends MediaWikiTestCase {
-	public function setUp() {
+class DatabaseLogEntryTest extends MediaWikiIntegrationTestCase {
+	protected function setUp() : void {
 		parent::setUp();
 
 		// These services cache their joins
@@ -12,16 +12,15 @@ class DatabaseLogEntryTest extends MediaWikiTestCase {
 		MediaWikiServices::getInstance()->resetServiceForTesting( 'ActorMigration' );
 	}
 
-	public function tearDown() {
-		parent::tearDown();
-
+	protected function tearDown() : void {
 		MediaWikiServices::getInstance()->resetServiceForTesting( 'CommentStore' );
 		MediaWikiServices::getInstance()->resetServiceForTesting( 'ActorMigration' );
+		parent::tearDown();
 	}
 
 	/**
-	 * @covers       DatabaseLogEntry::newFromId
-	 * @covers       DatabaseLogEntry::getSelectQueryData
+	 * @covers DatabaseLogEntry::newFromId
+	 * @covers DatabaseLogEntry::getSelectQueryData
 	 *
 	 * @dataProvider provideNewFromId
 	 *
@@ -36,7 +35,7 @@ class DatabaseLogEntryTest extends MediaWikiTestCase {
 		array $expectedFields = null
 	) {
 		$row = $row ? (object)$row : null;
-		$db = $this->getMock( IDatabase::class );
+		$db = $this->createMock( IDatabase::class );
 		$db->expects( self::once() )
 			->method( 'selectRow' )
 			->with( $selectFields['tables'],

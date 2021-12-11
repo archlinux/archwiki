@@ -47,7 +47,7 @@ use Wikimedia\AtEase\AtEase;
  * much larger.
  *
  * For mixed-family CIDR sets, however, this code gives well over
- * 100x speedup vs iterating IP::isInRange() over an array
+ * 100x speedup vs iterating Wikimedia\IPUtils::isInRange() over an array
  * of CIDR specs.
  *
  * The basic implementation is two separate binary trees
@@ -83,10 +83,10 @@ use Wikimedia\AtEase\AtEase;
  * a net loss in my test scenarios due to additional match complexity)
  */
 class IPSet {
-	/** @var array|bool $root4 The root of the IPv4 matching tree */
+	/** @var array|bool The root of the IPv4 matching tree */
 	private $root4 = false;
 
-	/** @var array|bool $root6 The root of the IPv6 matching tree */
+	/** @var array|bool The root of the IPv6 matching tree */
 	private $root6 = false;
 
 	/**

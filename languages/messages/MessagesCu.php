@@ -8,6 +8,7 @@
  *
  */
 
+/** @phpcs-require-sorted-array */
 $specialPageAliases = [
 	'Allpages'                  => [ 'Вьсѩ_страницѧ' ],
 	'Categories'                => [ 'Катигорїѩ' ],
@@ -43,7 +44,7 @@ $namespaceAliases = [
 	'Нарочьна'                       => NS_SPECIAL,
 	'Бесѣда'                         => NS_TALK,
 	'Польѕевател҄ь'                  => NS_USER,
-	'Польѕевател_бесѣда'             => NS_USER_TALK,
+	'Польѕевател_бесѣда'             => NS_USER_TALK,
 	'{{grammar:genitive|$1}}_бесѣда' => NS_PROJECT_TALK,
 	'Ви́дъ'                          => NS_FILE,
 	'Видъ'                           => NS_FILE,
@@ -54,13 +55,14 @@ $namespaceAliases = [
 	'Образьца_бесѣда'                => NS_TEMPLATE_TALK,
 	'Помощь'                         => NS_HELP,
 	'Помощи_бесѣда'                  => NS_HELP_TALK,
-	'Катигорї'                      => NS_CATEGORY,
+	'Катигорї'                      => NS_CATEGORY,
 	'Катигорїѩ_бесѣда'               => NS_CATEGORY_TALK,
 ];
 
+/** @phpcs-require-sorted-array */
 $magicWords = [
-	'redirect'                  => [ '0', '#ПРѢНАПРАВЛЄНИѤ', '#REDIRECT' ],
 	'language'                  => [ '0', '#ѨꙀꙐКЪ:', '#LANGUAGE:' ],
+	'redirect'                  => [ '0', '#ПРѢНАПРАВЛЄНИѤ', '#REDIRECT' ],
 ];
 
 $separatorTransformTable = [

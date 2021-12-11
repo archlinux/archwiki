@@ -1,26 +1,13 @@
 <?php
 
-class MediaWikiPHPUnitCommand extends PHPUnit_TextUI_Command {
-	private $cliArgs;
+use PHPUnit\TextUI\Command;
 
-	public function __construct( $ignorableOptions, $cliArgs ) {
-		$ignore = function ( $arg ) {
-		};
-		foreach ( $ignorableOptions as $option ) {
-			$this->longOptions[$option] = $ignore;
-		}
-		$this->cliArgs = $cliArgs;
-	}
-
-	protected function handleCustomTestSuite() {
+class MediaWikiPHPUnitCommand extends Command {
+	protected function handleCustomTestSuite() : void {
 		// Use our suite.xml
 		if ( !isset( $this->arguments['configuration'] ) ) {
 			$this->arguments['configuration'] = __DIR__ . '/suite.xml';
 		}
-
-		// Add our own listeners
-		$this->arguments['listeners'][] = new MediaWikiPHPUnitTestListener;
-		$this->arguments['listeners'][] = new MediaWikiLoggerPHPUnitTestListener;
 
 		// Output only to stderr to avoid "Headers already sent" problems
 		$this->arguments['stderr'] = true;
@@ -32,9 +19,7 @@ class MediaWikiPHPUnitCommand extends PHPUnit_TextUI_Command {
 		}
 	}
 
-	protected function createRunner() {
-		$runner = new MediaWikiTestRunner;
-		$runner->setMwCliArgs( $this->cliArgs );
-		return $runner;
+	public function publicShowHelp() {
+		parent::showHelp();
 	}
 }

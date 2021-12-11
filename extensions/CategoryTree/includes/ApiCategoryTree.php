@@ -44,6 +44,7 @@ class ApiCategoryTree extends ApiBase {
 		$ct = new CategoryTree( $options );
 		$depth = CategoryTree::capDepth( $ct->getOption( 'mode' ), $depth );
 		$ctConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'categorytree' );
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 		$html = $this->getHTML( $ct, $title, $depth, $ctConfig );
 
 		$this->getMain()->setCacheMode( 'public' );
@@ -80,38 +81,31 @@ class ApiCategoryTree extends ApiBase {
 	 * @return string HTML
 	 */
 	private function getHTML( CategoryTree $ct, Title $title, $depth, Config $ctConfig ) {
-		global $wgMemc;
+		$services = MediaWikiServices::getInstance();
+		$cache = $services->getMainWANObjectCache();
+		$langConv = $services->getLanguageConverterFactory()->getLanguageConverter();
 
-		$mckey = ObjectCache::getLocalClusterInstance()->makeKey(
-			'ajax-categorytree',
-			md5( $title->getDBkey() ),
-			md5( $ct->getOptionsAsCacheKey( $depth ) ),
-			$this->getLanguage()->getCode(),
-			MediaWikiServices::getInstance()->getContentLanguage()->getExtraHashOptions(),
-			$ctConfig->get( 'RenderHashAppend' )
+		return $cache->getWithSetCallback(
+			$cache->makeKey(
+				'categorytree-html-ajax',
+				md5( $title->getDBkey() ),
+				md5( $ct->getOptionsAsCacheKey( $depth ) ),
+				$this->getLanguage()->getCode(),
+				$langConv->getExtraHashOptions(),
+				$ctConfig->get( 'RenderHashAppend' )
+			),
+			$cache::TTL_DAY,
+			function () use ( $ct, $title, $depth ) {
+				return trim( $ct->renderChildren( $title, $depth ) );
+			},
+			[
+				'touchedCallback' => function () {
+					$timestamp = $this->getConditionalRequestData( 'last-modified' );
+
+					return $timestamp ? wfTimestamp( TS_UNIX, $timestamp ) : null;
+				}
+			]
 		);
-
-		$touched = $this->getConditionalRequestData( 'last-modified' );
-		if ( $touched ) {
-			$mcvalue = $wgMemc->get( $mckey );
-			if ( $mcvalue && $touched <= $mcvalue['timestamp'] ) {
-				$html = $mcvalue['value'];
-			}
-		}
-
-		if ( !isset( $html ) ) {
-			$html = $ct->renderChildren( $title, $depth );
-
-			$wgMemc->set(
-				$mckey,
-				[
-					'timestamp' => wfTimestampNow(),
-					'value' => $html
-				],
-				86400
-			);
-		}
-		return trim( $html );
 	}
 
 	/**

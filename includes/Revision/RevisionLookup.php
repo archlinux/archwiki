@@ -24,7 +24,7 @@ namespace MediaWiki\Revision;
 
 use IDBAccessObject;
 use MediaWiki\Linker\LinkTarget;
-use Title;
+use MediaWiki\Page\PageIdentity;
 
 /**
  * Service for looking up page revisions.
@@ -47,9 +47,12 @@ interface RevisionLookup extends IDBAccessObject {
 	 *
 	 * @param int $id
 	 * @param int $flags bit field, see IDBAccessObject::READ_XXX
+	 * @param PageIdentity|null $page The page the revision belongs to.
+	 *        Providing the page may improve performance.
+	 *
 	 * @return RevisionRecord|null
 	 */
-	public function getRevisionById( $id, $flags = 0 );
+	public function getRevisionById( $id, $flags = 0, PageIdentity $page = null );
 
 	/**
 	 * Load either the current, or a specified, revision
@@ -58,12 +61,12 @@ interface RevisionLookup extends IDBAccessObject {
 	 *
 	 * MCR migration note: this replaces Revision::newFromTitle
 	 *
-	 * @param LinkTarget $linkTarget
+	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
 	 * @param int $revId (optional)
 	 * @param int $flags bit field, see IDBAccessObject::READ_XXX
 	 * @return RevisionRecord|null
 	 */
-	public function getRevisionByTitle( LinkTarget $linkTarget, $revId = 0, $flags = 0 );
+	public function getRevisionByTitle( $page, $revId = 0, $flags = 0 );
 
 	/**
 	 * Load either the current, or a specified, revision
@@ -78,6 +81,27 @@ interface RevisionLookup extends IDBAccessObject {
 	 * @return RevisionRecord|null
 	 */
 	public function getRevisionByPageId( $pageId, $revId = 0, $flags = 0 );
+
+	/**
+	 * Load the revision for the given title with the given timestamp.
+	 * WARNING: Timestamps may in some circumstances not be unique,
+	 * so this isn't the best key to use.
+	 *
+	 * MCR migration note: this replaces Revision::loadFromTimestamp
+	 *
+	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param string $timestamp
+	 * @param int $flags Bitfield (optional) include:
+	 *      RevisionLookup::READ_LATEST: Select the data from the master
+	 *      RevisionLookup::READ_LOCKING: Select & lock the data from the master
+	 *      Default: RevisionLookup::READ_NORMAL
+	 * @return RevisionRecord|null
+	 */
+	public function getRevisionByTimestamp(
+		$page,
+		string $timestamp,
+		int $flags = RevisionLookup::READ_NORMAL
+	): ?RevisionRecord;
 
 	/**
 	 * Get previous revision for this title
@@ -125,12 +149,25 @@ interface RevisionLookup extends IDBAccessObject {
 	 *
 	 * MCR migration note: this replaces Revision::newKnownCurrent
 	 *
-	 * @param Title $title the associated page title
+	 * @param PageIdentity $page the associated page
 	 * @param int $revId current revision of this page
 	 *
 	 * @return RevisionRecord|bool Returns false if missing
 	 */
-	public function getKnownCurrentRevision( Title $title, $revId );
+	public function getKnownCurrentRevision( PageIdentity $page, $revId = 0 );
+
+	/**
+	 * Get the first revision of the page.
+	 *
+	 * @since 1.35
+	 * @param LinkTarget|PageIdentity $page Calling with LinkTarget is deprecated since 1.36
+	 * @param int $flags bit field, see IDBAccessObject::READ_* constants.
+	 * @return RevisionRecord|null
+	 */
+	public function getFirstRevision(
+		$page,
+		int $flags = IDBAccessObject::READ_NORMAL
+	): ?RevisionRecord;
 
 }
 

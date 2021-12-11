@@ -40,6 +40,10 @@ $wgLocaltimezone = 'UTC';
 # Site language code, should be one of the list in ./languages/Names.php
 $wgLanguageCode = "en";
 
+# Allow to change the page language
+$wgPageLanguageUseDB = true;
+$wgGroupPermissions['sysop']['pagelang'] = true;
+
 ## The URL base path to the directory containing the wiki;
 ## defaults for all runtime URL paths are based off of this.
 ## For more information on customizing the URLs please see:
@@ -54,7 +58,7 @@ $wgStylePath        = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.
 ## Set to an empty string so no logo is loaded by default.
-$wgLogo             = "";
+$wgLogos = ["1x" => ""];
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
@@ -327,12 +331,13 @@ wfLoadExtension( 'Nuke' );
 
 # AbuseFilter extension
 wfLoadExtension( 'AbuseFilter' );
-$wgGroupPermissions['sysop']['abusefilter-modify'] = true;
-$wgGroupPermissions['*']['abusefilter-log-detail'] = true;
 $wgGroupPermissions['*']['abusefilter-view'] = true;
 $wgGroupPermissions['*']['abusefilter-log'] = true;
-$wgGroupPermissions['sysop']['abusefilter-private'] = true;
+$wgGroupPermissions['*']['abusefilter-log-detail'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify'] = true;
 $wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
+$wgGroupPermissions['sysop']['abusefilter-privatedetails'] = true;
+$wgGroupPermissions['sysop']['abusefilter-privatedetails-log'] = true;
 $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
 
 # filter groups
@@ -397,6 +402,13 @@ $wgReservedUsernames[] = 'Anonymous';
 
 # TextExtracts extension
 wfLoadExtension( 'TextExtracts' );
+
+# Improved interface for editing wikitext
+wfLoadExtension( 'WikiEditor' );
+
+# Syntax highlighting in WikiEditor
+wfLoadExtension( 'CodeMirror' );
+$wgDefaultUserOptions['usecodemirror'] = 1;
 
 ##
 ## Temporary settings for maintenance

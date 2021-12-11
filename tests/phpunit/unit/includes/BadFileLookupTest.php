@@ -1,13 +1,14 @@
 <?php
 
 use MediaWiki\BadFileLookup;
+use MediaWiki\HookContainer\HookContainer;
 
 /**
  * @coversDefaultClass MediaWiki\BadFileLookup
  */
 class BadFileLookupTest extends MediaWikiUnitTestCase {
 	/** Shared with GlobalWithDBTest */
-	const BLACKLIST = <<<WIKITEXT
+	public const BAD_FILE_LIST = <<<WIKITEXT
 Comment line, no effect [[File:Good.jpg]]
  * Indented list is also a comment [[File:Good.jpg]]
 * [[File:Bad.jpg]] except [[Nasty page]]
@@ -21,20 +22,27 @@ Comment line, no effect [[File:Good.jpg]]
 * [[File:Bad5.jpg]] before [[malformed title<>]] doesn't ignore the line
 WIKITEXT;
 
-	/** Shared with GlobalWithDBTest */
+	/** @var HookContainer */
+	private $hookContainer;
+
+	/**
+	 * Shared with GlobalWithDBTest
+	 * @param string $name
+	 * @param bool &$bad
+	 * @return bool
+	 */
 	public static function badImageHook( $name, &$bad ) {
 		switch ( $name ) {
-		case 'Hook_bad.jpg':
-		case 'Redirect_to_hook_good.jpg':
-			$bad = true;
-			return false;
+			case 'Hook_bad.jpg':
+			case 'Redirect_to_hook_good.jpg':
+				$bad = true;
+				return false;
 
-		case 'Hook_good.jpg':
-		case 'Redirect_to_hook_bad.jpg':
-			$bad = false;
-			return false;
+			case 'Hook_good.jpg':
+			case 'Redirect_to_hook_bad.jpg':
+				$bad = false;
+				return false;
 		}
-
 		return true;
 	}
 
@@ -44,18 +52,18 @@ WIKITEXT;
 			->will( $this->returnCallback( function ( $name ) {
 				$mockFile = $this->createMock( File::class );
 				$mockFile->expects( $this->once() )->method( 'getTitle' )
-					->will( $this->returnCallback( function () use ( $name ) {
+					->will( $this->returnCallback( static function () use ( $name ) {
 						switch ( $name ) {
-						case 'Redirect to bad.jpg':
-							return new TitleValue( NS_FILE, 'Bad.jpg' );
-						case 'Redirect_to_good.jpg':
-							return new TitleValue( NS_FILE, 'Good.jpg' );
-						case 'Redirect to hook bad.jpg':
-							return new TitleValue( NS_FILE, 'Hook_bad.jpg' );
-						case 'Redirect to hook good.jpg':
-							return new TitleValue( NS_FILE, 'Hook_good.jpg' );
-						default:
-							return new TitleValue( NS_FILE, $name );
+							case 'Redirect to bad.jpg':
+								return new TitleValue( NS_FILE, 'Bad.jpg' );
+							case 'Redirect_to_good.jpg':
+								return new TitleValue( NS_FILE, 'Good.jpg' );
+							case 'Redirect to hook bad.jpg':
+								return new TitleValue( NS_FILE, 'Hook_bad.jpg' );
+							case 'Redirect to hook good.jpg':
+								return new TitleValue( NS_FILE, 'Hook_good.jpg' );
+							default:
+								return new TitleValue( NS_FILE, $name );
 						}
 					} ) );
 				$mockFile->expects( $this->never() )->method( $this->anythingBut( 'getTitle' ) );
@@ -68,6 +76,7 @@ WIKITEXT;
 
 	/**
 	 * Just returns null for every findFile().
+	 * @return RepoGroup
 	 */
 	private function getMockRepoGroupNull() {
 		$mock = $this->createMock( RepoGroup::class );
@@ -88,14 +97,14 @@ WIKITEXT;
 			}
 			list( $ns, $text ) = explode( ':', $text );
 			switch ( $ns ) {
-			case 'Image':
-			case 'File':
-				$ns = NS_FILE;
-				break;
+				case 'Image':
+				case 'File':
+					$ns = NS_FILE;
+					break;
 
-			case 'User':
-				$ns = NS_USER;
-				break;
+				case 'User':
+					$ns = NS_USER;
+					break;
 			}
 			return new TitleValue( $ns, $text );
 		} ) );
@@ -104,10 +113,11 @@ WIKITEXT;
 		return $mock;
 	}
 
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
-
-		$this->setTemporaryHook( 'BadImage', __CLASS__ . '::badImageHook' );
+		$this->hookContainer = $this->createHookContainer( [
+			'BadImage' => __CLASS__ . '::badImageHook'
+		] );
 	}
 
 	/**
@@ -117,12 +127,13 @@ WIKITEXT;
 	 */
 	public function testIsBadFile( $name, $title, $expected ) {
 		$bfl = new BadFileLookup(
-			function () {
-				return self::BLACKLIST;
+			static function () {
+				return self::BAD_FILE_LIST;
 			},
 			new EmptyBagOStuff,
 			$this->getMockRepoGroup(),
-			$this->getMockTitleParser()
+			$this->getMockTitleParser(),
+			$this->hookContainer
 		);
 
 		$this->assertSame( $expected, $bfl->isBadFile( $name, $title ) );
@@ -135,12 +146,13 @@ WIKITEXT;
 	 */
 	public function testIsBadFile_nullRepoGroup( $name, $title, $expected ) {
 		$bfl = new BadFileLookup(
-			function () {
-				return self::BLACKLIST;
+			static function () {
+				return self::BAD_FILE_LIST;
 			},
 			new EmptyBagOStuff,
 			$this->getMockRepoGroupNull(),
-			$this->getMockTitleParser()
+			$this->getMockTitleParser(),
+			$this->hookContainer
 		);
 
 		// Hack -- these expectations are reversed if the repo group returns null. In that case 1)

@@ -18,7 +18,7 @@ class ConfigFactoryTest extends \MediaWikiIntegrationTestCase {
 	 */
 	public function testRegisterInvalid() {
 		$factory = new ConfigFactory();
-		$this->setExpectedException( InvalidArgumentException::class );
+		$this->expectException( InvalidArgumentException::class );
 		$factory->register( 'invalid', 'Invalid callback' );
 	}
 
@@ -27,8 +27,8 @@ class ConfigFactoryTest extends \MediaWikiIntegrationTestCase {
 	 */
 	public function testRegisterInvalidInstance() {
 		$factory = new ConfigFactory();
-		$this->setExpectedException( InvalidArgumentException::class );
-		$factory->register( 'invalidInstance', new stdClass );
+		$this->expectException( InvalidArgumentException::class );
+		$factory->register( 'invalidInstance', (object)[] );
 	}
 
 	/**
@@ -72,7 +72,7 @@ class ConfigFactoryTest extends \MediaWikiIntegrationTestCase {
 		// define new config instance
 		$newFactory = new ConfigFactory();
 		$newFactory->register( 'foo', 'GlobalVarConfig::newInstance' );
-		$newFactory->register( 'bar', function () {
+		$newFactory->register( 'bar', static function () {
 			return new HashConfig();
 		} );
 
@@ -87,7 +87,7 @@ class ConfigFactoryTest extends \MediaWikiIntegrationTestCase {
 		$this->assertNotSame( $bar, $newBar, 'don\'t salvage if callbacks differ' );
 
 		// the new factory doesn't have quux defined, so the quux instance should not be salvaged
-		$this->setExpectedException( ConfigException::class );
+		$this->expectException( ConfigException::class );
 		$newFactory->makeConfig( 'quux' );
 	}
 
@@ -139,7 +139,7 @@ class ConfigFactoryTest extends \MediaWikiIntegrationTestCase {
 	 */
 	public function testMakeConfigWithNoBuilders() {
 		$factory = new ConfigFactory();
-		$this->setExpectedException( ConfigException::class );
+		$this->expectException( ConfigException::class );
 		$factory->makeConfig( 'nobuilderregistered' );
 	}
 
@@ -148,10 +148,10 @@ class ConfigFactoryTest extends \MediaWikiIntegrationTestCase {
 	 */
 	public function testMakeConfigWithInvalidCallback() {
 		$factory = new ConfigFactory();
-		$factory->register( 'unittest', function () {
+		$factory->register( 'unittest', static function () {
 			return true; // Not a Config object
 		} );
-		$this->setExpectedException( UnexpectedValueException::class );
+		$this->expectException( UnexpectedValueException::class );
 		$factory->makeConfig( 'unittest' );
 	}
 

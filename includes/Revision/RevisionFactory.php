@@ -22,8 +22,9 @@
 
 namespace MediaWiki\Revision;
 
+use IDBAccessObject;
+use MediaWiki\Page\PageIdentity;
 use MWException;
-use Title;
 
 /**
  * Service for constructing revision objects.
@@ -34,7 +35,7 @@ use Title;
  * @note This was written to act as a drop-in replacement for the corresponding
  *       static methods in Revision.
  */
-interface RevisionFactory {
+interface RevisionFactory extends IDBAccessObject {
 
 	/**
 	 * Constructs a new RevisionRecord based on the given associative array following the MW1.29
@@ -42,16 +43,20 @@ interface RevisionFactory {
 	 *
 	 * MCR migration note: this replaces Revision::newFromRow
 	 *
-	 * @deprecated since 1.31. Use a MutableRevisionRecord instead.
+	 * @deprecated since 1.31, hard deprecated since 1.36' Use a MutableRevisionRecord instead.
 	 *
 	 * @param array $fields
 	 * @param int $queryFlags Flags for lazy loading behavior, see IDBAccessObject::READ_XXX.
-	 * @param Title|null $title
+	 * @param PageIdentity|null $page
 	 *
 	 * @return MutableRevisionRecord
 	 * @throws MWException
 	 */
-	public function newMutableRevisionFromArray( array $fields, $queryFlags = 0, Title $title = null );
+	public function newMutableRevisionFromArray(
+		array $fields,
+		$queryFlags = self::READ_NORMAL,
+		PageIdentity $page = null
+	);
 
 	/**
 	 * Constructs a RevisionRecord given a database row and content slots.
@@ -59,14 +64,18 @@ interface RevisionFactory {
 	 * MCR migration note: this replaces Revision::newFromRow for rows based on the
 	 * revision, slot, and content tables defined for MCR since MW1.31.
 	 *
-	 * @param object $row A query result row as a raw object.
+	 * @param \stdClass $row A query result row as a raw object.
 	 *        Use RevisionStore::getQueryInfo() to build a query that yields the required fields.
 	 * @param int $queryFlags Flags for lazy loading behavior, see IDBAccessObject::READ_XXX.
-	 * @param Title|null $title
+	 * @param PageIdentity|null $page A page object for the revision.
 	 *
 	 * @return RevisionRecord
 	 */
-	public function newRevisionFromRow( $row, $queryFlags = 0, Title $title = null );
+	public function newRevisionFromRow(
+		$row,
+		$queryFlags = self::READ_NORMAL,
+		PageIdentity $page = null
+	);
 
 	/**
 	 * Make a fake revision object from an archive table row. This is queried
@@ -74,11 +83,11 @@ interface RevisionFactory {
 	 *
 	 * MCR migration note: this replaces Revision::newFromArchiveRow
 	 *
-	 * @param object $row A query result row as a raw object.
+	 * @param \stdClass $row A query result row as a raw object.
 	 *        Use RevisionStore::getArchiveQueryInfo() to build a query that yields the
 	 *        required fields.
 	 * @param int $queryFlags Flags for lazy loading behavior, see IDBAccessObject::READ_XXX.
-	 * @param Title|null $title
+	 * @param PageIdentity|null $page
 	 * @param array $overrides An associative array that allows fields in $row to be overwritten.
 	 *        Keys in this array correspond to field names in $row without the "ar_" prefix, so
 	 *        $overrides['user'] will override $row->ar_user, etc.
@@ -87,8 +96,8 @@ interface RevisionFactory {
 	 */
 	public function newRevisionFromArchiveRow(
 		$row,
-		$queryFlags = 0,
-		Title $title = null,
+		$queryFlags = self::READ_NORMAL,
+		PageIdentity $page = null,
 		array $overrides = []
 	);
 

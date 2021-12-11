@@ -18,7 +18,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Deployment
+ * @ingroup Installer
  */
 
 use MediaWiki\MediaWikiServices;
@@ -31,9 +31,9 @@ use MediaWiki\MediaWikiServices;
  * quite a lot of things you could do in OutputPage that would break the installer,
  * that wouldn't be immediately obvious.
  *
- * @ingroup Deployment
+ * @ingroup Installer
  * @since 1.17
- * @private
+ * @internal
  */
 class WebInstallerOutput {
 
@@ -131,57 +131,30 @@ class WebInstallerOutput {
 	 * @return string
 	 */
 	public function getCSS() {
-		global $wgStyleDirectory;
-
-		$moduleNames = [
-			// Based on Skin::getDefaultModules
-			'mediawiki.legacy.shared',
-			// Based on Vector::setupSkinUserCss
-			'mediawiki.skinning.interface',
-		];
-
 		$resourceLoader = MediaWikiServices::getInstance()->getResourceLoader();
 
-		if ( file_exists( "$wgStyleDirectory/Vector/skin.json" ) ) {
-			// Force loading Vector skin if available as a fallback skin
-			// for whatever ResourceLoader wants to have as the default.
-			$registry = new ExtensionRegistry();
-			$data = $registry->readFromQueue( [
-				"$wgStyleDirectory/Vector/skin.json" => 1,
-			] );
-			if ( isset( $data['globals']['wgResourceModules'] ) ) {
-				$resourceLoader->register( $data['globals']['wgResourceModules'] );
-			}
-
-			$moduleNames[] = 'skins.vector.styles';
-		}
-
-		$moduleNames[] = 'mediawiki.legacy.config';
-
 		$rlContext = new ResourceLoaderContext( $resourceLoader, new FauxRequest( [
-				'debug' => 'true',
-				'lang' => $this->getLanguage()->getCode(),
-				'only' => 'styles',
+			'debug' => 'true',
+			'lang' => $this->getLanguage()->getCode(),
+			'only' => 'styles',
 		] ) );
 
-		$styles = [];
-		foreach ( $moduleNames as $moduleName ) {
-			/** @var ResourceLoaderFileModule $module */
-			$module = $resourceLoader->getModule( $moduleName );
-			'@phan-var ResourceLoaderFileModule $module';
-			if ( !$module ) {
-				// T98043: Don't fatal, but it won't look as pretty.
-				continue;
-			}
+		$module = new ResourceLoaderSkinModule( [
+			'features' => [
+				'elements',
+				'interface-message-box'
+			],
+			'styles' => [
+				'mw-config/config.css',
+			],
+		] );
 
-			// Based on: ResourceLoaderFileModule::getStyles (without the DB query)
-			$styles = array_merge( $styles, ResourceLoader::makeCombinedStyles(
-				$module->readStyleFiles(
-					$module->getStyleFiles( $rlContext ),
-					$module->getFlip( $rlContext ),
-					$rlContext
-			) ) );
-		}
+		// Based on: ResourceLoaderFileModule::getStyles (without the DB query)
+		$styles = ResourceLoader::makeCombinedStyles(
+			$module->readStyleFiles(
+				$module->getStyleFiles( $rlContext ),
+				$rlContext
+		) );
 
 		return implode( "\n", $styles );
 	}
@@ -221,7 +194,8 @@ class WebInstallerOutput {
 	private function getLanguage() {
 		global $wgLang;
 
-		return is_object( $wgLang ) ? $wgLang : Language::factory( 'en' );
+		return is_object( $wgLang ) ? $wgLang
+			: MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' );
 	}
 
 	/**
@@ -262,6 +236,7 @@ class WebInstallerOutput {
 
 			return;
 		}
+
 ?>
 <?php echo Html::htmlHeader( $this->getHeadAttribs() ); ?>
 
@@ -310,7 +285,6 @@ class WebInstallerOutput {
 	// Section 2: Installer pages
 	echo '<div class="portal"><div class="body"><ul>';
 	foreach ( [
-		'config-sidebar-readme' => 'Readme',
 		'config-sidebar-relnotes' => 'ReleaseNotes',
 		'config-sidebar-license' => 'Copying',
 		'config-sidebar-upgrade' => 'UpgradeDoc',
@@ -346,8 +320,7 @@ class WebInstallerOutput {
 	}
 
 	public function outputTitle() {
-		global $wgVersion;
-		echo wfMessage( 'config-title', $wgVersion )->escaped();
+		echo wfMessage( 'config-title', MW_VERSION )->escaped();
 	}
 
 	/**

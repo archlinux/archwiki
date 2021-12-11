@@ -20,10 +20,11 @@
  * @file
  * @ingroup SpecialPage
  */
-
-use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IResultWrapper;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Content\IContentHandlerFactory;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * A special page listing redirects to redirecting page.
@@ -32,29 +33,51 @@ use Wikimedia\Rdbms\IDatabase;
  * @ingroup SpecialPage
  */
 class SpecialDoubleRedirects extends QueryPage {
-	function __construct( $name = 'DoubleRedirects' ) {
-		parent::__construct( $name );
+
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
+
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
+	/** @var IDatabase */
+	private $dbr;
+
+	/**
+	 * @param IContentHandlerFactory $contentHandlerFactory
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param ILoadBalancer $loadBalancer
+	 */
+	public function __construct(
+		IContentHandlerFactory $contentHandlerFactory,
+		LinkBatchFactory $linkBatchFactory,
+		ILoadBalancer $loadBalancer
+	) {
+		parent::__construct( 'DoubleRedirects' );
+		$this->contentHandlerFactory = $contentHandlerFactory;
+		$this->linkBatchFactory = $linkBatchFactory;
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->dbr = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 	}
 
 	public function isExpensive() {
 		return true;
 	}
 
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
-	function sortDescending() {
+	protected function sortDescending() {
 		return false;
 	}
 
-	function getPageHeader() {
+	protected function getPageHeader() {
 		return $this->msg( 'doubleredirectstext' )->parseAsBlock();
 	}
 
-	function reallyGetQueryInfo( $namespace = null, $title = null ) {
+	private function reallyGetQueryInfo( $namespace = null, $title = null ) {
 		$limitToTitle = !( $namespace === null && $title === null );
-		$dbr = wfGetDB( DB_REPLICA );
 		$retval = [
 			'tables' => [
 				'ra' => 'redirect',
@@ -86,7 +109,7 @@ class SpecialDoubleRedirects extends QueryPage {
 
 				// Need to check both NULL and "" for some reason,
 				// apparently either can be stored for non-iw entries.
-				'ra.rd_interwiki IS NULL OR ra.rd_interwiki = ' . $dbr->addQuotes( '' ),
+				'ra.rd_interwiki IS NULL OR ra.rd_interwiki = ' . $this->dbr->addQuotes( '' ),
 
 				'pb.page_namespace = ra.rd_namespace',
 				'pb.page_title = ra.rd_title',
@@ -107,16 +130,16 @@ class SpecialDoubleRedirects extends QueryPage {
 		return $this->reallyGetQueryInfo();
 	}
 
-	function getOrderFields() {
+	protected function getOrderFields() {
 		return [ 'ra.rd_namespace', 'ra.rd_title' ];
 	}
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		// If no Title B or C is in the query, it means this came from
 		// querycache (which only saves the 3 columns for title A).
 		// That does save the bulk of the query cost, but now we need to
@@ -127,21 +150,16 @@ class SpecialDoubleRedirects extends QueryPage {
 			if ( isset( $result->b_namespace ) ) {
 				$deep = $result;
 			} else {
-				$dbr = wfGetDB( DB_REPLICA );
 				$qi = $this->reallyGetQueryInfo(
 					$result->namespace,
 					$result->title
 				);
-				$res = $dbr->select(
+				$deep = $this->dbr->selectRow(
 					$qi['tables'],
 					$qi['fields'],
 					$qi['conds'],
 					__METHOD__
 				);
-
-				if ( $res ) {
-					$deep = $dbr->fetchObject( $res ) ?: false;
-				}
 			}
 		}
 
@@ -155,11 +173,10 @@ class SpecialDoubleRedirects extends QueryPage {
 		// if the page is editable, add an edit link
 		if (
 			// check user permissions
-			MediaWikiServices::getInstance()
-				->getPermissionManager()
-				->userHasRight( $this->getUser(), 'edit' ) &&
+			$this->getAuthority()->isAllowed( 'edit' ) &&
 			// check, if the content model is editable through action=edit
-			ContentHandler::getForTitle( $titleA )->supportsDirectEditing()
+			$this->contentHandlerFactory->getContentHandler( $titleA->getContentModel() )
+				->supportsDirectEditing()
 		) {
 			$edit = $linkRenderer->makeKnownLink(
 				$titleA,
@@ -211,12 +228,12 @@ class SpecialDoubleRedirects extends QueryPage {
 	 * @param IDatabase $db
 	 * @param IResultWrapper $res
 	 */
-	function preprocessResults( $db, $res ) {
+	public function preprocessResults( $db, $res ) {
 		if ( !$res->numRows() ) {
 			return;
 		}
 
-		$batch = new LinkBatch;
+		$batch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $res as $row ) {
 			$batch->add( $row->namespace, $row->title );
 			if ( isset( $row->b_namespace ) ) {

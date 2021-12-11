@@ -14,7 +14,8 @@ trait FlaggedElement {
 	/**
 	 * Flags.
 	 *
-	 * @var string[]
+	 * @var bool[]
+	 * @phan-var array<string,bool>
 	 */
 	protected $flags = [];
 

@@ -6,6 +6,9 @@
  * @file
  */
 
+/**
+ * @group Language
+ */
 class LanguageRuTest extends LanguageClassesTestCase {
 	/**
 	 * @dataProvider providePlural
@@ -88,6 +91,71 @@ class LanguageRuTest extends LanguageClassesTestCase {
 				'Викитеки',
 				'Викитека',
 				'genitive',
+			],
+			[
+				'Википедию',
+				'Википедия',
+				'accusative',
+			],
+			[
+				'Викисловарь',
+				'Викисловарь',
+				'accusative',
+			],
+			[
+				'Викицитатник',
+				'Викицитатник',
+				'accusative',
+			],
+			[
+				'Викиучебник',
+				'Викиучебник',
+				'accusative',
+			],
+			[
+				'Викитеку',
+				'Викитека',
+				'accusative',
+			],
+			[
+				'Викиновости',
+				'Викиновости',
+				'accusative',
+			],
+			[
+				'Викиверситет',
+				'Викиверситет',
+				'accusative',
+			],
+			[
+				'Викивиды',
+				'Викивиды',
+				'accusative',
+			],
+			[
+				'Викиданные',
+				'Викиданные',
+				'accusative',
+			],
+			[
+				'Викисклад',
+				'Викисклад',
+				'accusative',
+			],
+			[
+				'Викигид',
+				'Викигид',
+				'accusative',
+			],
+			[
+				'Мету',
+				'Мета',
+				'accusative',
+			],
+			[
+				'Инкубатор',
+				'Инкубатор',
+				'accusative',
 			],
 			[
 				'Викитеке',

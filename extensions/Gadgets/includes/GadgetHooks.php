@@ -25,15 +25,39 @@ use Wikimedia\WrappedString;
 
 class GadgetHooks {
 	/**
-	 * PageContentSaveComplete hook handler.
+	 * PageSaveComplete hook handler
+	 *
+	 * Only run in versions of mediawiki begining 1.35; before 1.35, ::onPageContentSaveComplete
+	 * and ::onPageContentInsertComplete are used
+	 *
+	 * @note parameters include classes not available before 1.35, so for those typehints
+	 * are not used. The variable name reflects the class
 	 *
 	 * @param WikiPage $wikiPage
-	 * @param User $user
-	 * @param Content $content New page content
+	 * @param mixed $userIdentity unused
+	 * @param string $summary
+	 * @param int $flags
+	 * @param mixed $revisionRecord unused
+	 * @param mixed $editResult unused
 	 */
-	public static function onPageContentSaveComplete( WikiPage $wikiPage, $user, $content ) {
-		// update cache if MediaWiki:Gadgets-definition was edited
-		GadgetRepo::singleton()->handlePageUpdate( $wikiPage->getTitle() );
+	public static function onPageSaveComplete(
+		WikiPage $wikiPage,
+		$userIdentity,
+		string $summary,
+		int $flags,
+		$revisionRecord,
+		$editResult
+	) {
+		$title = $wikiPage->getTitle();
+		$repo = GadgetRepo::singleton();
+
+		if ( $flags & EDIT_NEW ) {
+			if ( $title->inNamespace( NS_GADGET_DEFINITION ) ) {
+				$repo->handlePageCreation( $title );
+			}
+		}
+
+		$repo->handlePageUpdate( $title );
 	}
 
 	/**
@@ -160,7 +184,6 @@ class GadgetHooks {
 		 * @var $gadget Gadget
 		 */
 		$user = $out->getUser();
-		$skin = $out->getSkin();
 		foreach ( $ids as $id ) {
 			try {
 				$gadget = $repo->getGadget( $id );
@@ -178,7 +201,8 @@ class GadgetHooks {
 			}
 			if ( $gadget->isEnabled( $user )
 				&& $gadget->isAllowed( $user )
-				&& $gadget->isSkinSupported( $skin )
+				&& $gadget->isSkinSupported( $out->getSkin() )
+				&& ( in_array( $out->getTarget() ?? 'desktop', $gadget->getTargets() ) )
 			) {
 				if ( $gadget->hasModule() ) {
 					if ( $gadget->getType() === 'styles' ) {
@@ -210,6 +234,10 @@ class GadgetHooks {
 		$out->addHTML( WrappedString::join( "\n", $strings ) );
 	}
 
+	/**
+	 * @param string $id
+	 * @return string|WrappedString HTML
+	 */
 	private static function makeLegacyWarning( $id ) {
 		$special = SpecialPage::getTitleFor( 'Gadgets' );
 
@@ -256,18 +284,6 @@ class GadgetHooks {
 		}
 
 		return true;
-	}
-
-	/**
-	 * After a new page is created in the Gadget definition namespace,
-	 * invalidate the list of gadget ids
-	 *
-	 * @param WikiPage $page
-	 */
-	public static function onPageContentInsertComplete( WikiPage $page ) {
-		if ( $page->getTitle()->inNamespace( NS_GADGET_DEFINITION ) ) {
-			GadgetRepo::singleton()->handlePageCreation( $page->getTitle() );
-		}
 	}
 
 	/**
@@ -323,7 +339,6 @@ class GadgetHooks {
 	/**
 	 * Prevent gadget preferences from being deleted.
 	 * @link https://www.mediawiki.org/wiki/Manual:Hooks/DeleteUnknownPreferences
-	 * @suppress PhanParamTooMany
 	 * @param string[] &$where Array of where clause conditions to add to.
 	 * @param IDatabase $db
 	 */

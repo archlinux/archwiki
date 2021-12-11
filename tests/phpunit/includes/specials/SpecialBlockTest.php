@@ -2,10 +2,11 @@
 
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\DatabaseBlock;
-use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
-use Wikimedia\TestingAccessWrapper;
+use MediaWiki\Block\Restriction\PageRestriction;
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\LoadBalancer;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Blocking
@@ -17,12 +18,19 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @inheritDoc
 	 */
 	protected function newSpecialPage() {
-		return new SpecialBlock();
+		$services = MediaWikiServices::getInstance();
+		return new SpecialBlock(
+			$services->getBlockUtils(),
+			$services->getBlockPermissionCheckerFactory(),
+			$services->getBlockUserFactory(),
+			$services->getUserNameUtils(),
+			$services->getUserNamePrefixSearch()
+		);
 	}
 
-	public function tearDown() {
-		parent::tearDown();
+	protected function tearDown() : void {
 		$this->resetTables();
+		parent::tearDown();
 	}
 
 	/**
@@ -30,13 +38,12 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 */
 	public function testGetFormFields() {
 		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => false,
 			'wgBlockAllowsUTEdit' => true,
 		] );
 		$page = $this->newSpecialPage();
 		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
 		$fields = $wrappedPage->getFormFields();
-		$this->assertInternalType( 'array', $fields );
+		$this->assertIsArray( $fields );
 		$this->assertArrayHasKey( 'Target', $fields );
 		$this->assertArrayHasKey( 'Expiry', $fields );
 		$this->assertArrayHasKey( 'Reason', $fields );
@@ -46,23 +53,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertArrayHasKey( 'HardBlock', $fields );
 		$this->assertArrayHasKey( 'PreviousTarget', $fields );
 		$this->assertArrayHasKey( 'Confirm', $fields );
-
-		$this->assertArrayNotHasKey( 'EditingRestriction', $fields );
-		$this->assertArrayNotHasKey( 'PageRestrictions', $fields );
-		$this->assertArrayNotHasKey( 'NamespaceRestrictions', $fields );
-	}
-
-	/**
-	 * @covers ::getFormFields()
-	 */
-	public function testGetFormFieldsPartialBlocks() {
-		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => true,
-		] );
-		$page = $this->newSpecialPage();
-		$wrappedPage = TestingAccessWrapper::newFromObject( $page );
-		$fields = $wrappedPage->getFormFields();
-
 		$this->assertArrayHasKey( 'EditingRestriction', $fields );
 		$this->assertArrayHasKey( 'PageRestrictions', $fields );
 		$this->assertArrayHasKey( 'NamespaceRestrictions', $fields );
@@ -73,7 +63,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 */
 	public function testMaybeAlterFormDefaults() {
 		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => false,
 			'wgBlockAllowsUTEdit' => true,
 		] );
 
@@ -93,7 +82,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertSame( $block->isCreateAccountBlocked(), $fields['CreateAccount']['default'] );
 		$this->assertSame( $block->isAutoblocking(), $fields['AutoBlock']['default'] );
 		$this->assertSame( !$block->isUsertalkEditAllowed(), $fields['DisableUTEdit']['default'] );
-		$this->assertSame( $block->getReason(), $fields['Reason']['default'] );
+		$this->assertSame( $block->getReasonComment()->text, $fields['Reason']['default'] );
 		$this->assertSame( 'infinite', $fields['Expiry']['default'] );
 	}
 
@@ -101,10 +90,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::maybeAlterFormDefaults()
 	 */
 	public function testMaybeAlterFormDefaultsPartial() {
-		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => true,
-		] );
-
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 		$pageSaturn = $this->getExistingTestPage( 'Saturn' );
@@ -127,7 +112,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			new PageRestriction( 0, 999999 ),
 		] );
 
-		$block->insert();
+		MediaWikiServices::getInstance()->getDatabaseBlockStore()->insertBlock( $block );
 
 		// Refresh the block from the database.
 		$block = DatabaseBlock::newFromTarget( $block->getTarget() );
@@ -152,11 +137,9 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm()
 	 */
 	public function testProcessForm() {
-		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => false,
-		] );
-		$badActor = $this->getTestUser()->getUser();
+		$badActor = $this->getTestUser()->getUserIdentity();
 		$context = RequestContext::getMain();
+		$context->setUser( $this->getTestSysop()->getUser() );
 
 		$page = $this->newSpecialPage();
 		$reason = 'test';
@@ -181,7 +164,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $result );
 
 		$block = DatabaseBlock::newFromTarget( $badActor );
-		$this->assertSame( $reason, $block->getReason() );
+		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 	}
 
@@ -189,12 +172,10 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm()
 	 */
 	public function testProcessFormExisting() {
-		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => false,
-		] );
 		$badActor = $this->getTestUser()->getUser();
 		$sysop = $this->getTestSysop()->getUser();
 		$context = RequestContext::getMain();
+		$context->setUser( $sysop );
 
 		// Create a block that will be updated.
 		$block = new DatabaseBlock( [
@@ -205,7 +186,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			'sitewide' => 0,
 			'enableAutoblock' => false,
 		] );
-		$block->insert();
+		MediaWikiServices::getInstance()->getDatabaseBlockStore()->insertBlock( $block );
 
 		$page = $this->newSpecialPage();
 		$reason = 'test';
@@ -230,20 +211,18 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $result );
 
 		$block = DatabaseBlock::newFromTarget( $badActor );
-		$this->assertSame( $reason, $block->getReason() );
+		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
-		$this->assertSame( '1', $block->isAutoblocking() );
+		$this->assertTrue( $block->isAutoblocking() );
 	}
 
 	/**
 	 * @covers ::processForm()
 	 */
 	public function testProcessFormRestrictions() {
-		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => true,
-		] );
 		$badActor = $this->getTestUser()->getUser();
 		$context = RequestContext::getMain();
+		$context->setUser( $this->getTestSysop()->getUser() );
 
 		$pageSaturn = $this->getExistingTestPage( 'Saturn' );
 		$pageMars = $this->getExistingTestPage( 'Mars' );
@@ -279,7 +258,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $result );
 
 		$block = DatabaseBlock::newFromTarget( $badActor );
-		$this->assertSame( $reason, $block->getReason() );
+		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertCount( 2, $block->getRestrictions() );
 		$this->assertTrue( $this->getBlockRestrictionStore()->equals( $block->getRestrictions(), [
@@ -292,11 +271,9 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	 * @covers ::processForm()
 	 */
 	public function testProcessFormRestrictionsChange() {
-		$this->setMwGlobals( [
-			'wgEnablePartialBlocks' => true,
-		] );
 		$badActor = $this->getTestUser()->getUser();
 		$context = RequestContext::getMain();
+		$context->setUser( $this->getTestSysop()->getUser() );
 
 		$pageSaturn = $this->getExistingTestPage( 'Saturn' );
 		$pageMars = $this->getExistingTestPage( 'Mars' );
@@ -317,7 +294,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 				$reason,
 			],
 			'Confirm' => '1',
-			'CreateAccount' => '0',
+			'CreateAccount' => '1',
 			'DisableUTEdit' => '0',
 			'DisableEmail' => '0',
 			'HardBlock' => '0',
@@ -333,9 +310,10 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $result );
 
 		$block = DatabaseBlock::newFromTarget( $badActor );
-		$this->assertSame( $reason, $block->getReason() );
+		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
+		$this->assertTrue( $block->isCreateAccountBlocked() );
 		$this->assertCount( 2, $block->getRestrictions() );
 		$this->assertTrue( $this->getBlockRestrictionStore()->equals( $block->getRestrictions(), [
 			new PageRestriction( $block->getId(), $pageMars->getId() ),
@@ -349,9 +327,10 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $result );
 
 		$block = DatabaseBlock::newFromTarget( $badActor );
-		$this->assertSame( $reason, $block->getReason() );
+		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
+		$this->assertTrue( $block->isCreateAccountBlocked() );
 		$this->assertCount( 1, $block->getRestrictions() );
 		$this->assertTrue( $this->getBlockRestrictionStore()->equals( $block->getRestrictions(), [
 			new PageRestriction( $block->getId(), $pageMars->getId() ),
@@ -364,10 +343,11 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $result );
 
 		$block = DatabaseBlock::newFromTarget( $badActor );
-		$this->assertSame( $reason, $block->getReason() );
+		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertFalse( $block->isSitewide() );
-		$this->assertCount( 0, $block->getRestrictions() );
+		$this->assertTrue( $block->isCreateAccountBlocked() );
+		$this->assertSame( [], $block->getRestrictions() );
 
 		// Change to sitewide.
 		$data['EditingRestriction'] = 'sitewide';
@@ -376,10 +356,10 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$this->assertTrue( $result );
 
 		$block = DatabaseBlock::newFromTarget( $badActor );
-		$this->assertSame( $reason, $block->getReason() );
+		$this->assertSame( $reason, $block->getReasonComment()->text );
 		$this->assertSame( $expiry, $block->getExpiry() );
 		$this->assertTrue( $block->isSitewide() );
-		$this->assertCount( 0, $block->getRestrictions() );
+		$this->assertSame( [], $block->getRestrictions() );
 
 		// Ensure that there are no restrictions where the blockId is 0.
 		$count = $this->db->selectRowCount(
@@ -392,31 +372,151 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	}
 
 	/**
+	 * @dataProvider provideProcessFormUserTalkEditFlag
+	 * @covers ::processForm()
+	 */
+	public function testProcessFormUserTalkEditFlag( $options, $expected ) {
+		$this->setMwGlobals( [
+			'wgBlockAllowsUTEdit' => $options['configAllowsUserTalkEdit'],
+		] );
+
+		$performer = $this->getTestSysop()->getUser();
+		$target = $this->getTestUser()->getUser();
+
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser( $performer );
+
+		$data = [
+			'Target' => $target,
+			'PreviousTarget' => $target,
+			'Expiry' => 'infinity',
+			'CreateAccount' => '1',
+			'DisableEmail' => '0',
+			'HardBlock' => '0',
+			'AutoBlock' => '0',
+			'Watch' => '0',
+			'Confirm' => '1',
+			'DisableUTEdit' => $options['optionBlocksUserTalkEdit'],
+		];
+
+		if ( !$options['userTalkNamespaceBlocked'] ) {
+			$data['EditingRestriction'] = 'partial';
+			$data['PageRestrictions'] = '';
+			$data['NamespaceRestrictions'] = '';
+		}
+
+		$result = $this->newSpecialPage()->processForm(
+			$data,
+			$context
+		);
+
+		if ( $expected === 'ipb-prevent-user-talk-edit' ) {
+			$this->assertSame( $expected, $result->getErrorsArray()[0][0] );
+		} else {
+			$block = DatabaseBlock::newFromTarget( $target );
+			$this->assertSame( $expected, $block->isUsertalkEditAllowed() );
+		}
+	}
+
+	/**
+	 * Test cases for whether own user talk edit is allowed, with different combinations of:
+	 * - whether user talk namespace blocked
+	 * - config BlockAllowsUTEdit true/false
+	 * - block option specifying whether to block own user talk edit
+	 * For more about the desired behaviour, see T252892.
+	 *
+	 * @return array
+	 */
+	public function provideProcessFormUserTalkEditFlag() {
+		return [
+			'Always allowed if user talk namespace not blocked' => [
+				[
+					'userTalkNamespaceBlocked' => false,
+					'configAllowsUserTalkEdit' => true,
+					'optionBlocksUserTalkEdit' => false,
+				],
+				true,
+			],
+			'Always allowed if user talk namespace not blocked (config is false)' => [
+				[
+					'userTalkNamespaceBlocked' => false,
+					'configAllowsUserTalkEdit' => false,
+					'optionBlocksUserTalkEdit' => false,
+				],
+				true,
+			],
+			'Error if user talk namespace not blocked, but option blocks user talk edit' => [
+				[
+					'userTalkNamespaceBlocked' => false,
+					'configAllowsUserTalkEdit' => true,
+					'optionBlocksUserTalkEdit' => true,
+				],
+				'ipb-prevent-user-talk-edit',
+			],
+			'Always blocked if user talk namespace blocked and wgBlockAllowsUTEdit is false' => [
+				[
+					'userTalkNamespaceBlocked' => true,
+					'configAllowsUserTalkEdit' => false,
+					'optionBlocksUserTalkEdit' => false,
+				],
+				false,
+			],
+			'Option used if user talk namespace blocked and config is true (blocked)' => [
+				[
+					'userTalkNamespaceBlocked' => true,
+					'configAllowsUserTalkEdit' => true,
+					'optionBlocksUserTalkEdit' => true,
+				],
+				false,
+			],
+			'Option used if user talk namespace blocked and config is true (not blocked)' => [
+				[
+					'userTalkNamespaceBlocked' => true,
+					'configAllowsUserTalkEdit' => true,
+					'optionBlocksUserTalkEdit' => false,
+				],
+				true,
+			],
+		];
+	}
+
+	/**
 	 * @dataProvider provideProcessFormErrors
 	 * @covers ::processForm()
 	 */
-	public function testProcessFormErrors( $data, $expected, $config = [] ) {
-		$defaultConfig = [
-			'wgEnablePartialBlocks' => true,
+	public function testProcessFormErrors( $data, $expected, $options = [] ) {
+		$this->setMwGlobals( [
 			'wgBlockAllowsUTEdit' => true,
-		];
+		] );
 
-		$this->setMwGlobals( array_merge( $defaultConfig, $config ) );
-
+		$performer = $this->getTestSysop()->getUser();
+		$target = !empty( $options['blockingSelf'] ) ? $performer : '1.2.3.4';
 		$defaultData = [
-			'Target' => '1.2.3.4',
+			'Target' => $target,
+			'PreviousTarget' => $target,
 			'Expiry' => 'infinity',
-			'Reason' => [ 'bad reason' ],
-			'Confirm' => false,
-			'PageRestrictions' => '',
-			'NamespaceRestrictions' => '',
+			'CreateAccount' => '0',
+			'DisableUTEdit' => '0',
+			'DisableEmail' => '0',
+			'HardBlock' => '0',
+			'AutoBlock' => '0',
+			'Confirm' => '0',
+			'Watch' => '0',
 		];
 
-		$context = RequestContext::getMain();
-		$page = $this->newSpecialPage();
-		$result = $page->processForm( array_merge( $defaultData, $data ), $context );
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser( $performer );
 
-		$this->assertEquals( $result[0], $expected );
+		$result = $this->newSpecialPage()->processForm(
+			array_merge( $defaultData, $data ),
+			$context
+		);
+
+		if ( $result instanceof Status ) {
+			$result = $result->getErrorsArray();
+		}
+		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+		$this->assertEquals( $expected, $error );
 	}
 
 	public function provideProcessFormErrors() {
@@ -433,12 +533,6 @@ class SpecialBlockTest extends SpecialPageTestBase {
 				],
 				'ipb_expiry_old',
 			],
-			'HideUser with wrong permissions' => [
-				[
-					'HideUser' => 1,
-				],
-				'badaccess-group0',
-			],
 			'Bad ip address' => [
 				[
 					'Target' => '1.2.3.4/1234',
@@ -448,22 +542,246 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			'Edit user talk page invalid with no restrictions' => [
 				[
 					'EditingRestriction' => 'partial',
-					'DisableUTEdit' => 1,
+					'DisableUTEdit' => '1',
+					'PageRestrictions' => '',
+					'NamespaceRestrictions' => '',
 				],
 				'ipb-prevent-user-talk-edit',
 			],
-			'Edit user talk page invalid with namespace restriction != NS_USER_TALK ' => [
+			'Edit user talk page invalid with namespace restriction !== NS_USER_TALK ' => [
 				[
 					'EditingRestriction' => 'partial',
-					'DisableUTEdit' => 1,
-					'NamespaceRestrictions' => NS_USER
+					'DisableUTEdit' => '1',
+					'PageRestrictions' => '',
+					'NamespaceRestrictions' => NS_USER,
 				],
 				'ipb-prevent-user-talk-edit',
+			],
+			'Blocking self and target changed' => [
+				[
+					'PreviousTarget' => 'other',
+					'Confirm' => '1',
+				],
+				'ipb-blockingself',
+				[
+					'blockingSelf' => true,
+				],
+			],
+			'Blocking self and no confirm' => [
+				[],
+				'ipb-blockingself',
+				[
+					'blockingSelf' => true,
+				],
+			],
+			'Empty expiry' => [
+				[
+					'Expiry' => '',
+				],
+				'ipb_expiry_invalid',
+			],
+			'Expiry valid but longer than 50 chars' => [
+				[
+					'Expiry' => '30th September 9999 19:19:19.532453 Europe/Amsterdam',
+				],
+				'ipb_expiry_invalid',
 			],
 		];
 	}
 
 	/**
+	 * @dataProvider provideProcessFormErrorsReblock
+	 * @covers ::processForm()
+	 */
+	public function testProcessFormErrorsReblock( $data, $permissions, $expected ) {
+		$this->setMwGlobals( [
+			'wgBlockAllowsUTEdit' => true,
+		] );
+
+		$performer = $this->getTestSysop()->getUser();
+		$this->overrideUserPermissions( $performer, $permissions );
+		$blockedUser = $this->getTestUser()->getUser();
+
+		$block = new DatabaseBlock( [
+			'address' => $blockedUser,
+			'by' => $performer->getId(),
+			'hideName' => true,
+		] );
+		MediaWikiServices::getInstance()->getDatabaseBlockStore()->insertBlock( $block );
+
+		// Matches the existing block
+		$defaultData = [
+			'Target' => $blockedUser->getName(),
+			'PreviousTarget' => $blockedUser->getName(),
+			'Expiry' => 'infinity',
+			'DisableUTEdit' => '1',
+			'CreateAccount' => '0',
+			'DisableEmail' => '0',
+			'HardBlock' => '0',
+			'AutoBlock' => '0',
+			'HideUser' => '1',
+			'Confirm' => '1',
+			'Watch' => '0',
+		];
+
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser( $performer );
+
+		$result = $this->newSpecialPage()->processForm(
+			array_merge( $defaultData, $data ),
+			$context
+		);
+
+		if ( $result instanceof Status ) {
+			$result = $result->getErrorsArray();
+		}
+		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+		$this->assertEquals( $expected, $error );
+	}
+
+	public function provideProcessFormErrorsReblock() {
+		return [
+			'Reblock user with Confirm false' => [
+				[
+					// Avoid error for hiding user with confirm false
+					'HideUser' => '0',
+					'Confirm' => '0',
+				],
+				[ 'block', 'hideuser' ],
+				'ipb_already_blocked',
+			],
+			'Reblock user with Reblock false' => [
+				[ 'Reblock' => '0' ],
+				[ 'block', 'hideuser' ],
+				'ipb_already_blocked',
+			],
+			'Reblock with confirm True but target has changed' => [
+				[ 'PreviousTarget' => '1.2.3.4' ],
+				[ 'block', 'hideuser' ],
+				'ipb_already_blocked',
+			],
+			'Reblock with same block' => [
+				[ 'HideUser' => '1' ],
+				[ 'block', 'hideuser' ],
+				'ipb_already_blocked',
+			],
+			'Reblock hidden user with wrong permissions' => [
+				[ 'HideUser' => '0' ],
+				[ 'block', 'hideuser' => false ],
+				'cant-see-hidden-user',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideProcessFormErrorsHideUser
+	 * @covers ::processForm()
+	 */
+	public function testProcessFormErrorsHideUser( $data, $permissions, $expected ) {
+		$performer = $this->getTestSysop()->getUser();
+		$this->overrideUserPermissions( $performer, array_merge( $permissions, [ 'block' ] ) );
+
+		$defaultData = [
+			'Target' => $this->getTestUser()->getUser(),
+			'HideUser' => '1',
+			'Expiry' => 'infinity',
+			'Confirm' => '1',
+			'CreateAccount' => '0',
+			'DisableUTEdit' => '0',
+			'DisableEmail' => '0',
+			'HardBlock' => '0',
+			'AutoBlock' => '0',
+			'Watch' => '0',
+		];
+
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser( $performer );
+
+		$result = $this->newSpecialPage()->processForm(
+			array_merge( $defaultData, $data ),
+			$context
+		);
+
+		if ( $result instanceof Status ) {
+			$result = $result->getErrorsArray();
+		}
+		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+		$this->assertEquals( $expected, $error );
+	}
+
+	public function provideProcessFormErrorsHideUser() {
+		return [
+			'HideUser with wrong permissions' => [
+				[],
+				[ 'hideuser' => '0' ],
+				'badaccess-group0',
+			],
+			'Hideuser with partial block' => [
+				[ 'EditingRestriction' => 'partial' ],
+				[ 'hideuser' ],
+				'ipb_hide_partial',
+			],
+			'Hideuser with finite expiry' => [
+				[ 'Expiry' => '1 hour' ],
+				[ 'hideuser' ],
+				'ipb_expiry_temp',
+			],
+			'Hideuser with no confirm' => [
+				[ 'Confirm' => '0' ],
+				[ 'hideuser' ],
+				'ipb-confirmhideuser',
+			],
+		];
+	}
+
+	/**
+	 * @covers ::processForm()
+	 */
+	public function testProcessFormErrorsHideUserProlific() {
+		$this->setMwGlobals( [ 'wgHideUserContribLimit' => 0 ] );
+
+		$performer = $this->getTestSysop()->getUser();
+		$this->overrideUserPermissions( $performer, [ 'block', 'hideuser' ] );
+
+		$userToBlock = $this->getTestUser()->getUser();
+		$pageSaturn = $this->getExistingTestPage( 'Saturn' );
+		$pageSaturn->doEditContent(
+			ContentHandler::makeContent( 'content', $pageSaturn->getTitle() ),
+			'summary',
+			0,
+			false,
+			$userToBlock
+		);
+
+		$context = new DerivativeContext( RequestContext::getMain() );
+		$context->setUser( $performer );
+
+		$result = $this->newSpecialPage()->processForm(
+			[
+				'Target' => $userToBlock,
+				'CreateAccount' => '1',
+				'HideUser' => '1',
+				'Expiry' => 'infinity',
+				'Confirm' => '1',
+				'DisableUTEdit' => '0',
+				'DisableEmail' => '0',
+				'HardBlock' => '0',
+				'AutoBlock' => '0',
+				'Watch' => '0',
+			],
+			$context
+		);
+
+		if ( $result instanceof Status ) {
+			$result = $result->getErrorsArray();
+		}
+		$error = is_array( $result[0] ) ? $result[0][0] : $result[0];
+		$this->assertEquals( 'ipb_hide_invalid', $error );
+	}
+
+	/**
+	 * TODO: Move to BlockPermissionCheckerTest
+	 *
 	 * @dataProvider provideCheckUnblockSelf
 	 * @covers ::checkUnblockSelf
 	 */
@@ -472,9 +790,12 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		$blockPerformer,
 		$adjustPerformer,
 		$adjustTarget,
+		$sitewide,
 		$expectedResult,
 		$reason
 	) {
+		$this->hideDeprecated( 'SpecialBlock::checkUnblockSelf' );
+
 		$this->setMwGlobals( [
 			'wgBlockDisablesLogin' => false,
 		] );
@@ -483,10 +804,10 @@ class SpecialBlockTest extends SpecialPageTestBase {
 		// Getting errors about creating users in db in provider.
 		// Need to use mutable to ensure different named testusers.
 		$users = [
-			'u1' => TestUserRegistry::getMutableTestUser( __CLASS__, 'sysop' )->getUser(),
-			'u2' => TestUserRegistry::getMutableTestUser( __CLASS__, 'sysop' )->getUser(),
-			'u3' => TestUserRegistry::getMutableTestUser( __CLASS__, 'sysop' )->getUser(),
-			'u4' => TestUserRegistry::getMutableTestUser( __CLASS__, 'sysop' )->getUser(),
+			'u1' => $this->getMutableTestUser( 'sysop' )->getUser(),
+			'u2' => $this->getMutableTestUser( 'sysop' )->getUser(),
+			'u3' => $this->getMutableTestUser( 'sysop' )->getUser(),
+			'u4' => $this->getMutableTestUser( 'sysop' )->getUser(),
 			'nonsysop' => $this->getTestUser()->getUser()
 		];
 		foreach ( [ 'blockedUser', 'blockPerformer', 'adjustPerformer', 'adjustTarget' ] as $var ) {
@@ -498,11 +819,11 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			'user' => $blockedUser->getId(),
 			'by' => $blockPerformer->getId(),
 			'expiry' => 'infinity',
-			'sitewide' => 1,
+			'sitewide' => $sitewide,
 			'enableAutoblock' => true,
 		] );
 
-		$block->insert();
+		MediaWikiServices::getInstance()->getDatabaseBlockStore()->insertBlock( $block );
 
 		$this->assertSame(
 			SpecialBlock::checkUnblockSelf( $adjustTarget, $adjustPerformer ),
@@ -514,12 +835,78 @@ class SpecialBlockTest extends SpecialPageTestBase {
 	public function provideCheckUnblockSelf() {
 		// 'blockedUser', 'blockPerformer', 'adjustPerformer', 'adjustTarget'
 		return [
-			[ 'u1', 'u2', 'u3', 'u4', true, 'Unrelated users' ],
-			[ 'u1', 'u2', 'u1', 'u4', 'ipbblocked', 'Block unrelated while blocked' ],
-			[ 'u1', 'u2', 'u1', 'u1', true, 'Has unblockself' ],
-			[ 'nonsysop', 'u2', 'nonsysop', 'nonsysop', 'ipbnounblockself', 'no unblockself' ],
-			[ 'nonsysop', 'nonsysop', 'nonsysop', 'nonsysop', true, 'no unblockself but can de-selfblock' ],
-			[ 'u1', 'u2', 'u1', 'u2', true, 'Can block user who blocked' ],
+			[ 'u1', 'u2', 'u3', 'u4', 1, true, 'Unrelated users' ],
+			[ 'u1', 'u2', 'u1', 'u4', 1, 'ipbblocked', 'Block unrelated while blocked' ],
+			[ 'u1', 'u2', 'u1', 'u4', 0, true, 'Block unrelated while partial blocked' ],
+			[ 'u1', 'u2', 'u1', 'u1', 1, true, 'Has unblockself' ],
+			[ 'nonsysop', 'u2', 'nonsysop', 'nonsysop', 1, 'ipbnounblockself', 'no unblockself' ],
+			[ 'nonsysop', 'nonsysop', 'nonsysop', 'nonsysop', 1, true,
+				'no unblockself but can de-selfblock'
+			],
+			[ 'u1', 'u2', 'u1', 'u2', 1, true, 'Can block user who blocked' ],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetTargetAndType
+	 * @covers ::getTargetAndType
+	 */
+	public function testGetTargetAndType( $par, $requestData, $expectedTarget ) {
+		$request = $requestData ? new FauxRequest( $requestData ) : null;
+		$page = $this->newSpecialPage();
+		list( $target, $type ) = $page->getTargetAndType( $par, $request );
+		$this->assertSame( $target, $expectedTarget );
+	}
+
+	public function provideGetTargetAndType() {
+		$invalidTarget = '';
+		return [
+			'Choose \'wpTarget\' parameter first' => [
+				'2.2.2.0/24',
+				[
+					'wpTarget' => '1.1.1.0/24',
+					'ip' => '3.3.3.0/24',
+					'wpBlockAddress' => '4.4.4.0/24',
+				],
+				'1.1.1.0/24',
+			],
+			'Choose subpage parameter second' => [
+				'2.2.2.0/24',
+				[
+					'wpTarget' => $invalidTarget,
+					'ip' => '3.3.3.0/24',
+					'wpBlockAddress' => '4.4.4.0/24',
+				],
+				'2.2.2.0/24',
+			],
+			'Choose \'ip\' parameter third' => [
+				$invalidTarget,
+				[
+					'wpTarget' => $invalidTarget,
+					'ip' => '3.3.3.0/24',
+					'wpBlockAddress' => '4.4.4.0/24',
+				],
+				'3.3.3.0/24',
+			],
+			'Choose \'wpBlockAddress\' parameter fourth' => [
+				$invalidTarget,
+				[
+					'wpTarget' => $invalidTarget,
+					'ip' => $invalidTarget,
+					'wpBlockAddress' => '4.4.4.0/24',
+				],
+				'4.4.4.0/24',
+			],
+			'No web request' => [
+				'2.2.2.0/24',
+				false,
+				'2.2.2.0/24',
+			],
+			'No valid request data or subpage parameter' => [
+				null,
+				[],
+				null,
+			],
 		];
 	}
 
@@ -536,7 +923,7 @@ class SpecialBlockTest extends SpecialPageTestBase {
 			'enableAutoblock' => true,
 		] );
 
-		$block->insert();
+		MediaWikiServices::getInstance()->getDatabaseBlockStore()->insertBlock( $block );
 
 		return $block;
 	}

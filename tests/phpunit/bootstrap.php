@@ -48,6 +48,7 @@ function wfRequireOnceInGlobalScope( $fileName ) {
 
 define( 'MEDIAWIKI', true );
 define( 'MW_PHPUNIT_TEST', true );
+define( 'MW_ENTRY_POINT', 'cli' );
 
 $IP = realpath( __DIR__ . '/../../' );
 // We don't use a settings file here but some code still assumes that one exists
@@ -70,24 +71,22 @@ wfRequireOnceInGlobalScope( "$IP/includes/Defines.php" );
 wfRequireOnceInGlobalScope( "$IP/includes/DefaultSettings.php" );
 wfRequireOnceInGlobalScope( "$IP/includes/GlobalFunctions.php" );
 
+TestSetup::applyInitialConfig();
+
 // Populate classes and namespaces from extensions and skins present in filesystem.
 $directoryToJsonMap = [
-	$GLOBALS['wgExtensionDirectory'] => [ 'extension.json', 'extension-wip.json' ],
-	$GLOBALS['wgStyleDirectory'] => [ 'skin.json', 'skin-wip.json' ]
+	$GLOBALS['wgExtensionDirectory'] => 'extension*.json',
+	$GLOBALS['wgStyleDirectory'] => 'skin*.json'
 ];
-foreach ( $directoryToJsonMap as $directory => $jsonFile ) {
-	foreach ( new DirectoryIterator( $directory ) as $iterator ) {
-		foreach ( $jsonFile as $file ) {
-
-			$jsonPath = $iterator->getPathname() . '/' . $file;
-			if ( file_exists( $jsonPath ) ) {
-				// ExtensionRegistry->readFromQueue is not used as it checks extension/skin
-				// dependencies, which we don't need or want for unit tests.
-				$json = file_get_contents( $jsonPath );
-				$info = json_decode( $json, true );
-				$dir = dirname( $jsonPath );
-				ExtensionRegistry::exportAutoloadClassesAndNamespaces( $dir, $info );
-			}
-		}
+foreach ( $directoryToJsonMap as $directory => $jsonFilePattern ) {
+	foreach ( new GlobIterator( $directory . '/*/' . $jsonFilePattern ) as $iterator ) {
+		$jsonPath = $iterator->getPathname();
+		// ExtensionRegistry->readFromQueue is not used as it checks extension/skin
+		// dependencies, which we don't need or want for unit tests.
+		$json = file_get_contents( $jsonPath );
+		$info = json_decode( $json, true );
+		$dir = dirname( $jsonPath );
+		ExtensionRegistry::exportAutoloadClassesAndNamespaces( $dir, $info );
+		ExtensionRegistry::exportTestAutoloadClassesAndNamespaces( $dir, $info );
 	}
 }

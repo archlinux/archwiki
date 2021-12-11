@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"DannyS712",
 			"Krinkle",
+			"Matěj Suchánek",
 			"Omnipaedista",
 			"Svetko",
-			"Wolliger Mensch",
-			"ОйЛ",
-			"아라",
-			"Илья Драконов",
 			"Vvs-dm",
-			"Matěj Suchánek"
+			"Wolliger Mensch",
+			"Илья Драконов",
+			"ОйЛ",
+			"아라"
 		]
 	},
 	"tog-oldsig": "твои нꙑнѣшьн҄ь аѵтографъ :",
@@ -87,7 +88,6 @@
 	"hidden-categories": "{{PLURAL:$1|съкрꙑта катигорїꙗ|съкрꙑтѣ катигорїи|съкрꙑтꙑ катигорїѩ}}",
 	"hidden-category-category": "съкрꙑтꙑ катигорїѩ",
 	"category-subcat-count": "{{PLURAL:$2|1=Сѥи катигорїи тъкъмо сꙗ подъкатигорїꙗ ѥстъ|Сѥи катигорїи {{PLURAL:$1|1=ѥдина подъкатигорїꙗ ѥстъ|2 подъкатигорїи ѥстє|$1 подъкатигорїѩ сѫтъ}} · а вьсѩ жє подъкатигорїѩ число $2 ѥстъ}}",
-	"listingcontinuesabbrev": "· вѧщє",
 	"broken-file-category": "страницѧ ѩжє блаꙁничьнꙑ свѧꙁи съ дѣла имѫтъ",
 	"about": "опьсаниѥ",
 	"article": "члѣнъ",
@@ -183,7 +183,6 @@
 	"confirmable-no": "нѣтъ",
 	"viewdeleted": "$1 видєти хощєши ;",
 	"restorelink": "{{PLURAL:$1|ѥдьна поничьжєна мѣна|$1 поничьжєноу мѣноу|$1 поничьжєнъ мѣнъ}}",
-	"feedlinks": "потокъ :",
 	"red-link-title": "$1 (сѥѩ страницѧ нѣстъ)",
 	"nstab-main": "члѣнъ",
 	"nstab-user": "польꙃєватєл҄ь",
@@ -302,7 +301,7 @@
 	"histfirst": "прьвꙑ",
 	"histlast": "послѣдьнꙗ",
 	"historysize": "{{PLURAL:$1|1 баитъ|$1 баита|$1 баитъ}}",
-	"historyempty": "(поусто)",
+	"historyempty": "поусто",
 	"history-feed-title": "мѣнъ їсторїꙗ",
 	"history-feed-item-nocomment": "$1 при $2",
 	"rev-deleted-comment": "(мѣнꙑ опьсаниѥ съкрꙑто ѥстъ)",
@@ -589,7 +588,7 @@
 	"invert": "обрати иꙁборъ",
 	"namespace_association": "съвѧꙁани имєнъ простори",
 	"blanknamespace": "(главьно)",
-	"contributions": "{{GENDER:$1|польꙃєватєлꙗ|польꙃєватєлицѧ}} добродѣꙗниꙗ",
+	"tool-link-contributions": "{{GENDER:$1|польꙃєватєлꙗ|польꙃєватєлицѧ}} добродѣꙗниꙗ",
 	"contributions-title": "польꙃєватєлꙗ ⁖ $1 ⁖ добродѣꙗниꙗ",
 	"mycontris": "добродѣꙗниꙗ",
 	"anoncontribs": "добродѣꙗниꙗ",

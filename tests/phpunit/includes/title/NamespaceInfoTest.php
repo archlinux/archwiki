@@ -6,18 +6,22 @@
  */
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\MediaWikiServices;
 
-class NamespaceInfoTest extends MediaWikiTestCase {
+class NamespaceInfoTest extends MediaWikiIntegrationTestCase {
 	use TestAllServiceOptionsUsed;
 
 	/**********************************************************************************************
 	 * Shared code
 	 * %{
 	 */
+
+	/** @var ScopedCallback */
 	private $scopedCallback;
 
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		// Boo, there's still some global state in the class :(
@@ -30,17 +34,13 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 			ExtensionRegistry::getInstance()->setAttributeForTest( 'ExtensionNamespaces', [] );
 	}
 
-	public function tearDown() {
+	protected function tearDown() : void {
 		$this->scopedCallback = null;
 
 		parent::tearDown();
 	}
 
-	/**
-	 * TODO Make this a const once HHVM support is dropped (T192166)
-	 */
-	private static $defaultOptions = [
-		'AllowImageMoving' => true,
+	private const DEFAULT_OPTIONS = [
 		'CanonicalNamespaceNames' => [
 			NS_TALK => 'Talk',
 			NS_USER => 'User',
@@ -62,12 +62,22 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 		'NonincludableNamespaces' => [],
 	];
 
+	/**
+	 * @return HookContainer
+	 */
+	private function getHookContainer() {
+		return MediaWikiServices::getInstance()->getHookContainer();
+	}
+
 	private function newObj( array $options = [] ) : NamespaceInfo {
-		return new NamespaceInfo( new LoggedServiceOptions(
-			self::$serviceOptionsAccessLog,
-			NamespaceInfo::$constructorOptions,
-			$options, self::$defaultOptions
-		) );
+		return new NamespaceInfo(
+			new LoggedServiceOptions(
+				self::$serviceOptionsAccessLog,
+				NamespaceInfo::CONSTRUCTOR_OPTIONS,
+				$options, self::DEFAULT_OPTIONS
+			),
+			$this->getHookContainer()
+		);
 	}
 
 	// %} End shared code
@@ -85,20 +95,20 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 */
 	public function testConstructor( ServiceOptions $options, $expectedExceptionText = null ) {
 		if ( $expectedExceptionText !== null ) {
-			$this->setExpectedException( \Wikimedia\Assert\PreconditionException::class,
-				$expectedExceptionText );
+			$this->expectException( \Wikimedia\Assert\PreconditionException::class );
+			$this->expectExceptionMessage( $expectedExceptionText );
 		}
-		new NamespaceInfo( $options );
+		new NamespaceInfo( $options, $this->getHookContainer() );
 		$this->assertTrue( true );
 	}
 
 	public function provideConstructor() {
 		return [
-			[ new ServiceOptions( NamespaceInfo::$constructorOptions, self::$defaultOptions ) ],
+			[ new ServiceOptions( NamespaceInfo::CONSTRUCTOR_OPTIONS, self::DEFAULT_OPTIONS ) ],
 			[ new ServiceOptions( [], [] ), 'Required options missing: ' ],
 			[ new ServiceOptions(
-				array_merge( NamespaceInfo::$constructorOptions, [ 'invalid' ] ),
-				self::$defaultOptions,
+				array_merge( NamespaceInfo::CONSTRUCTOR_OPTIONS, [ 'invalid' ] ),
+				self::DEFAULT_OPTIONS,
 				[ 'invalid' => '' ]
 			), 'Unsupported options passed: invalid' ],
 		];
@@ -110,10 +120,9 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 *
 	 * @param bool $expected
 	 * @param int $ns
-	 * @param bool $allowImageMoving
 	 */
-	public function testIsMovable( $expected, $ns, $allowImageMoving = true ) {
-		$obj = $this->newObj( [ 'AllowImageMoving' => $allowImageMoving ] );
+	public function testIsMovable( $expected, $ns ) {
+		$obj = $this->newObj();
 		$this->assertSame( $expected, $obj->isMovable( $ns ) );
 	}
 
@@ -125,10 +134,8 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 			'Nonexistent even namespace' => [ true, 1234 ],
 			'Nonexistent odd namespace' => [ true, 12345 ],
 
-			'Media with image moving' => [ false, NS_MEDIA, true ],
-			'Media with no image moving' => [ false, NS_MEDIA, false ],
-			'File with image moving' => [ true, NS_FILE, true ],
-			'File with no image moving' => [ false, NS_FILE, false ],
+			'Media' => [ false, NS_MEDIA ],
+			'File' => [ true, NS_FILE ],
 		];
 	}
 
@@ -335,11 +342,11 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 
 	public function provideWantSignatures_ExtraSignatureNamespaces() {
 		$ret = array_map(
-			function ( $arr ) {
+			static function ( $arr ) {
 				// We've added all these as extra signature namespaces, so expect true
 				return [ $arr[0], true ];
 			},
-			self::provideWantSignatures()
+			$this->provideWantSignatures()
 		);
 
 		// Add one more that's false
@@ -406,8 +413,6 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @param mixed $contentNamespaces To pass to constructor
-	 * @param array $expected
 	 * @dataProvider provideGetContentNamespaces
 	 * @covers NamespaceInfo::getContentNamespaces
 	 */
@@ -685,8 +690,10 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 * @param int $ns
 	 */
 	public function testGetTalk_special( $ns ) {
-		$this->setExpectedException( MWException::class,
-			"NamespaceInfo::getTalk does not make any sense for given namespace $ns" );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage(
+			"NamespaceInfo::getTalk does not make any sense for given namespace $ns"
+		);
 		$this->newObj()->getTalk( $ns );
 	}
 
@@ -698,8 +705,8 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 * @param int $ns
 	 */
 	public function testGetAssociated_special( $ns ) {
-		$this->setExpectedException(
-			MWException::class,
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage(
 			"NamespaceInfo::getAssociated does not make any sense for given namespace $ns"
 		);
 		$this->newObj()->getAssociated( $ns );
@@ -761,7 +768,7 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 * @covers NamespaceInfo::isMethodValidFor
 	 */
 	public function testGetTalkPage_bad( LinkTarget $t ) {
-		$this->setExpectedException( MWException::class );
+		$this->expectException( MWException::class );
 		$this->newObj()->getTalkPage( $t );
 	}
 
@@ -772,7 +779,7 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 * @covers NamespaceInfo::isMethodValidFor
 	 */
 	public function testGetAssociatedPage_bad( LinkTarget $t ) {
-		$this->setExpectedException( MWException::class );
+		$this->expectException( MWException::class );
 		$this->newObj()->getAssociatedPage( $t );
 	}
 
@@ -829,7 +836,7 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	// Default canonical namespaces
 	// %{
 	private function getDefaultNamespaces() {
-		return [ NS_MAIN => '' ] + self::$defaultOptions['CanonicalNamespaceNames'];
+		return [ NS_MAIN => '' ] + self::DEFAULT_OPTIONS['CanonicalNamespaceNames'];
 	}
 
 	/**
@@ -1009,7 +1016,7 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 */
 	private function setupHookNamespaces() {
 		$callback =
-			function ( &$canonicalNamespaces ) {
+			static function ( &$canonicalNamespaces ) {
 				$canonicalNamespaces[NS_MAIN] = 'Main';
 				unset( $canonicalNamespaces[NS_MEDIA] );
 				$canonicalNamespaces[123456] = 'Hooked';
@@ -1219,7 +1226,7 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	public function testGetValidNamespaces_misc( array $namespaces, array $expected ) {
 		// Each namespace's name is just its index
 		$this->setTemporaryHook( 'CanonicalNamespaces',
-			function ( &$canonicalNamespaces ) use ( $namespaces ) {
+			static function ( &$canonicalNamespaces ) use ( $namespaces ) {
 				$canonicalNamespaces = array_combine( $namespaces, $namespaces );
 			}
 		);
@@ -1246,14 +1253,10 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 	 * TODO: This is superceeded by PermissionManagerTest::testGetNamespaceRestrictionLevels
 	 * Remove when deprecated method is removed.
 	 * @dataProvider provideGetRestrictionLevels
-	 * @covers       NamespaceInfo::getRestrictionLevels
-	 *
-	 * @param array $expected
-	 * @param int $ns
-	 * @param array|null $groups
-	 * @throws MWException
+	 * @covers NamespaceInfo::getRestrictionLevels
 	 */
 	public function testGetRestrictionLevels( array $expected, $ns, array $groups = null ) {
+		$this->hideDeprecated( 'NamespaceInfo::getRestrictionLevels' );
 		$this->setMwGlobals( [
 			'wgGroupPermissions' => [
 				'*' => [ 'edit' => true ],
@@ -1276,7 +1279,7 @@ class NamespaceInfoTest extends MediaWikiTestCase {
 			'wgAutopromote' => []
 		] );
 		$obj = $this->newObj();
-		$user = is_null( $groups ) ? null : $this->getTestUser( $groups )->getUser();
+		$user = $groups === null ? null : $this->getTestUser( $groups )->getUser();
 		$this->assertSame( $expected, $obj->getRestrictionLevels( $ns, $user ) );
 	}
 

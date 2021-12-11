@@ -18,7 +18,9 @@
  * @file
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\PageEditStash;
 
 /**
@@ -35,11 +37,42 @@ use MediaWiki\Storage\PageEditStash;
  * @since 1.25
  */
 class ApiStashEdit extends ApiBase {
-	const ERROR_NONE = PageEditStash::ERROR_NONE; // b/c
-	const ERROR_PARSE = PageEditStash::ERROR_PARSE; // b/c
-	const ERROR_CACHE = PageEditStash::ERROR_CACHE; // b/c
-	const ERROR_UNCACHEABLE = PageEditStash::ERROR_UNCACHEABLE; // b/c
-	const ERROR_BUSY = PageEditStash::ERROR_BUSY; // b/c
+
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
+
+	/** @var PageEditStash */
+	private $pageEditStash;
+
+	/** @var RevisionLookup */
+	private $revisionLookup;
+
+	/** @var IBufferingStatsdDataFactory */
+	private $statsdDataFactory;
+
+	/**
+	 * @param ApiMain $main
+	 * @param string $action
+	 * @param IContentHandlerFactory $contentHandlerFactory
+	 * @param PageEditStash $pageEditStash
+	 * @param RevisionLookup $revisionLookup
+	 * @param IBufferingStatsdDataFactory $statsdDataFactory
+	 */
+	public function __construct(
+		ApiMain $main,
+		$action,
+		IContentHandlerFactory $contentHandlerFactory,
+		PageEditStash $pageEditStash,
+		RevisionLookup $revisionLookup,
+		IBufferingStatsdDataFactory $statsdDataFactory
+	) {
+		parent::__construct( $main, $action );
+
+		$this->contentHandlerFactory = $contentHandlerFactory;
+		$this->pageEditStash = $pageEditStash;
+		$this->revisionLookup = $revisionLookup;
+		$this->statsdDataFactory = $statsdDataFactory;
+	}
 
 	public function execute() {
 		$user = $this->getUser();
@@ -49,11 +82,11 @@ class ApiStashEdit extends ApiBase {
 			$this->dieWithError( 'apierror-botsnotsupported' );
 		}
 
-		$editStash = MediaWikiServices::getInstance()->getPageEditStash();
 		$page = $this->getTitleOrPageId( $params );
 		$title = $page->getTitle();
 
-		if ( !ContentHandler::getForModelID( $params['contentmodel'] )
+		if ( !$this->contentHandlerFactory
+			->getContentHandler( $params['contentmodel'] )
 			->isSupportedFormat( $params['contentformat'] )
 		) {
 			$this->dieWithError(
@@ -72,7 +105,7 @@ class ApiStashEdit extends ApiBase {
 			if ( !preg_match( '/^[0-9a-f]{40}$/', $textHash ) ) {
 				$this->dieWithError( 'apierror-stashedit-missingtext', 'missingtext' );
 			}
-			$text = $editStash->fetchInputText( $textHash );
+			$text = $this->pageEditStash->fetchInputText( $textHash );
 			if ( !is_string( $text ) ) {
 				$this->dieWithError( 'apierror-stashedit-missingtext', 'missingtext' );
 			}
@@ -89,11 +122,14 @@ class ApiStashEdit extends ApiBase {
 		$page = WikiPage::factory( $title );
 		if ( $page->exists() ) {
 			// Page exists: get the merged content with the proposed change
-			$baseRev = Revision::newFromPageId( $page->getId(), $params['baserevid'] );
+			$baseRev = $this->revisionLookup->getRevisionByPageId(
+				$page->getId(),
+				$params['baserevid']
+			);
 			if ( !$baseRev ) {
 				$this->dieWithError( [ 'apierror-nosuchrevid', $params['baserevid'] ] );
 			}
-			$currentRev = $page->getRevision();
+			$currentRev = $page->getRevisionRecord();
 			if ( !$currentRev ) {
 				$this->dieWithError( [ 'apierror-missingrev-pageid', $page->getId() ], 'missingrev' );
 			}
@@ -112,13 +148,29 @@ class ApiStashEdit extends ApiBase {
 				$content = $editContent;
 			} else {
 				// Merge the edit into the current version
-				$baseContent = $baseRev->getContent();
-				$currentContent = $currentRev->getContent();
+				$baseContent = $baseRev->getContent( SlotRecord::MAIN );
+				$currentContent = $currentRev->getContent( SlotRecord::MAIN );
 				if ( !$baseContent || !$currentContent ) {
 					$this->dieWithError( [ 'apierror-missingcontent-pageid', $page->getId() ], 'missingrev' );
 				}
-				$handler = ContentHandler::getForModelID( $baseContent->getModel() );
-				$content = $handler->merge3( $baseContent, $editContent, $currentContent );
+
+				$baseModel = $baseContent->getModel();
+				$currentModel = $currentContent->getModel();
+
+				// T255700: Put this in try-block because if the models of these three Contents
+				// happen to not be identical, the ContentHandler may throw exception here.
+				try {
+					$content = $this->contentHandlerFactory
+						->getContentHandler( $baseModel )
+						->merge3( $baseContent, $editContent, $currentContent );
+				} catch ( Exception $e ) {
+					$this->dieWithException( $e, [
+						'wrap' => ApiMessage::create(
+							[ 'apierror-contentmodel-mismatch', $currentModel, $baseModel ]
+						)
+					] );
+				}
+
 			}
 		} else {
 			// New pages: use the user-provided content model
@@ -134,12 +186,11 @@ class ApiStashEdit extends ApiBase {
 		if ( $user->pingLimiter( 'stashedit' ) ) {
 			$status = 'ratelimited';
 		} else {
-			$status = $editStash->parseAndCache( $page, $content, $user, $params['summary'] );
-			$editStash->stashInputText( $text, $textHash );
+			$status = $this->pageEditStash->parseAndCache( $page, $content, $user, $params['summary'] );
+			$this->pageEditStash->stashInputText( $text, $textHash );
 		}
 
-		$stats = MediaWikiServices::getInstance()->getStatsdDataFactory();
-		$stats->increment( "editstash.cache_stores.$status" );
+		$this->statsdDataFactory->increment( "editstash.cache_stores.$status" );
 
 		$ret = [ 'status' => $status ];
 		// If we were rate-limited, we still return the pre-existing valid hash if one was passed
@@ -160,9 +211,7 @@ class ApiStashEdit extends ApiBase {
 	 * @deprecated Since 1.34
 	 */
 	public function parseAndStash( WikiPage $page, Content $content, User $user, $summary ) {
-		$editStash = MediaWikiServices::getInstance()->getPageEditStash();
-
-		return $editStash->parseAndCache( $page, $content, $user, $summary );
+		return $this->pageEditStash->parseAndCache( $page, $content, $user, $summary ?? '' );
 	}
 
 	public function getAllowedParams() {
@@ -187,13 +236,14 @@ class ApiStashEdit extends ApiBase {
 			],
 			'summary' => [
 				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_DFLT => ''
 			],
 			'contentmodel' => [
-				ApiBase::PARAM_TYPE => ContentHandler::getContentModels(),
+				ApiBase::PARAM_TYPE => $this->contentHandlerFactory->getContentModels(),
 				ApiBase::PARAM_REQUIRED => true
 			],
 			'contentformat' => [
-				ApiBase::PARAM_TYPE => ContentHandler::getAllContentFormats(),
+				ApiBase::PARAM_TYPE => $this->contentHandlerFactory->getAllContentFormats(),
 				ApiBase::PARAM_REQUIRED => true
 			],
 			'baserevid' => [

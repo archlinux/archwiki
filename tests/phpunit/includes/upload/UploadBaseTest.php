@@ -1,24 +1,24 @@
 <?php
 
+use MediaWiki\Interwiki\ClassicInterwikiLookup;
+
 /**
  * @group Upload
  */
-class UploadBaseTest extends MediaWikiTestCase {
+class UploadBaseTest extends MediaWikiIntegrationTestCase {
 
 	/** @var UploadTestHandler */
 	protected $upload;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->upload = new UploadTestHandler;
 
-		$this->setMwGlobals( 'wgHooks', [
-			'InterwikiLoadPrefix' => [
-				function ( $prefix, &$data ) {
-					return false;
-				}
-			],
+		$this->setMwGlobals( [
+			'wgInterwikiCache' => ClassicInterwikiLookup::buildCdbHash( [
+				// no entries, no interwiki prefixes
+			] ),
 		] );
 	}
 
@@ -640,6 +640,8 @@ class UploadTestHandler extends UploadBase {
 	 * Almost the same as UploadBase::detectScriptInSvg, except it's
 	 * public, works on an xml string instead of filename, and returns
 	 * the result instead of interpreting them.
+	 * @param string $svg
+	 * @return array
 	 */
 	public function checkSvgString( $svg ) {
 		$check = new XmlTypeCheck(
@@ -647,8 +649,8 @@ class UploadTestHandler extends UploadBase {
 			[ $this, 'checkSvgScriptCallback' ],
 			false,
 			[
-				'processing_instruction_handler' => 'UploadBase::checkSvgPICallback',
-				'external_dtd_handler' => 'UploadBase::checkSvgExternalDTD'
+				'processing_instruction_handler' => [ UploadBase::class, 'checkSvgPICallback' ],
+				'external_dtd_handler' => [ UploadBase::class, 'checkSvgExternalDTD' ],
 			]
 		);
 		return [ $check->wellFormed, $check->filterMatch ];
@@ -656,6 +658,7 @@ class UploadTestHandler extends UploadBase {
 
 	/**
 	 * Same as parent function, but override visibility to 'public'.
+	 * @inheritDoc
 	 */
 	public function detectScriptInSvg( $filename, $partial ) {
 		return parent::detectScriptInSvg( $filename, $partial );

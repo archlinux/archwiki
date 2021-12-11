@@ -2,12 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Dbc334",
+			"Eleassar",
+			"Janezdrilc",
 			"Smihael",
-			"Yerpo",
-			"Janezdrilc"
+			"Yerpo"
 		]
 	},
 	"vector-skin-desc": "Sodobna različica MonoBook s svežim videzom in mnogimi izboljšavami uporabnosti",
+	"prefs-vector-enable-vector-1-label": "Uporabljaj stari Vector",
+	"prefs-vector-enable-vector-1-help": "V naslednjih nekaj letih bomo postopoma posodabljali preobleko Vector. Stari Vector vam omogoča prikaz stare različice preobleke Vector (iz decembra 2019). Več o posodobitvah lahko izveste na naši [[mw:Reading/Web/Desktop_Improvements|projektni strani]].",
 	"vector-action-addsection": "Dodaj temo",
 	"vector-action-delete": "Izbriši",
 	"vector-action-move": "Preimenuj",

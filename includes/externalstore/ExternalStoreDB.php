@@ -20,13 +20,13 @@
  * @file
  */
 
-use Wikimedia\Rdbms\LBFactory;
-use Wikimedia\Rdbms\ILoadBalancer;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\DBConnRef;
-use Wikimedia\Rdbms\MaintainableDBConnRef;
 use Wikimedia\Rdbms\DatabaseDomain;
+use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\DBUnexpectedError;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\LBFactory;
+use Wikimedia\Rdbms\MaintainableDBConnRef;
 
 /**
  * DB accessible external objects.
@@ -177,6 +177,7 @@ class ExternalStoreDB extends ExternalStoreMedium {
 	 * @deprecated since 1.34
 	 */
 	public function getSlave( $cluster ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return $this->getReplica( $cluster );
 	}
 

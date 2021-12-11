@@ -153,7 +153,7 @@ class WANObjectCacheReaper implements LoggerAwareInterface {
 		if ( $lastOkEvent ) {
 			$ok = $this->store->merge(
 				$posKey,
-				function ( $bag, $key, $curValue ) use ( $lastOkEvent ) {
+				static function ( $bag, $key, $curValue ) use ( $lastOkEvent ) {
 					if ( !$curValue ) {
 						// Use new position
 					} else {
@@ -171,7 +171,7 @@ class WANObjectCacheReaper implements LoggerAwareInterface {
 						'ctime' => $curValue ? $curValue['ctime'] : date( 'c' )
 					];
 				},
-				IExpiringStore::TTL_INDEFINITE
+				BagOStuff::TTL_INDEFINITE
 			);
 
 			$pos = $lastOkEvent['pos'];

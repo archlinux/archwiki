@@ -6,6 +6,7 @@ namespace OOUI;
  * Radio input widget.
  */
 class RadioInputWidget extends InputWidget {
+	use RequiredElement;
 
 	/* Static Properties */
 
@@ -15,11 +16,15 @@ class RadioInputWidget extends InputWidget {
 	 * @param array $config Configuration options
 	 *      - bool $config['selected'] Whether the radio button is initially selected
 	 *          (default: false)
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
 		parent::__construct( $config );
+
+		// Traits
+		$this->initializeRequiredElement(
+			array_merge( [ 'indicatorElement' => null ], $config )
+		);
 
 		// Initialization
 		$this->addClasses( [ 'oo-ui-radioInputWidget' ] );

@@ -19,10 +19,14 @@ Adding or updating libraries
 ----------------------------
 
 0. Read the [documentation] on the process for adding new libraries.
-1. Ensure you're using version 1.8.5 (or later) of composer via
-   `composer --version`. This keeps installed.json alphasorted, making patches
-   less likely to conflict, and diffs easier to read.
+1. Ensure you're using the latest version of 1.10.x of composer via
+   `composer --version`. This keeps installed.json alpha-sorted, making patches
+   less likely to conflict, and diffs easier to read. Composer 2.x is being
+   evaluated and should not be used.
 2. Edit the composer.json file to add/update the libraries you want to change.
+   It is recommended that you use `composer require <package> <version>
+   --no-update` to do so as composer will then automatically sort the
+   composer.json file.
 3. Run `composer update --no-dev --ignore-platform-reqs` to download files and
    update the autoloader.
 4. Add all the new dependencies that got installed to composer.json as well,
@@ -36,11 +40,15 @@ Adding or updating libraries
 7. Review and merge changes.
 
 Note that you MUST pair patches changing versions of libraries used by MediaWiki
-itself with ones for the "core" repo. This repo has special configuration, which
-skips the integrity checks and so allowing a circular dependency Gordian knot to
-be fixed. However, this means that, if merged alone without a pair, you'll cause
-ALL patches in MediaWiki and ALL extensions to fail their continuous integration
-tests. If in doubt, seek advice from regular commiters to this repository.
+itself with ones for the "core" repo. Specifically, the patch in mediawiki/core
+must have a `Depends-On` footer to the patch in mediawiki/vendor.
+
+The vendor repo has special configuration, which skips the integrity checks and
+so allowing a circular dependency Gordian knot to be fixed. However, this means
+that, if merged alone without a pair, you'll cause ALL patches in MediaWiki and
+ALL extensions to fail their continuous integration tests.
+
+If in doubt, seek advice from regular commiters to this repository.
 
 
 [Composer]: https://getcomposer.org/

@@ -11,7 +11,7 @@ class CaptchaTest extends MediaWikiTestCase {
 	/** @var ScopedCallback[] */
 	private $hold = [];
 
-	public function tearDown() {
+	public function tearDown() : void {
 		// Destroy any ScopedCallbacks being held
 		$this->hold = [];
 		parent::tearDown();
@@ -139,7 +139,7 @@ class CaptchaTest extends MediaWikiTestCase {
 	 */
 	public function testCanSkipCaptchaUserright( $userIsAllowed, $expected ) {
 		$testObject = new SimpleCaptcha();
-		$user = $this->getMock( User::class );
+		$user = $this->createMock( User::class );
 		$user->method( 'isAllowed' )->willReturn( $userIsAllowed );
 
 		$actual = $testObject->canSkipCaptcha( $user, RequestContext::getMain()->getConfig() );
@@ -155,18 +155,14 @@ class CaptchaTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @param $allowUserConfirmEmail
-	 * @param $userIsMailConfirmed
-	 * @param $expected
-	 * @throws ConfigException
 	 * @dataProvider provideCanSkipCaptchaMailconfirmed
 	 */
 	public function testCanSkipCaptchaMailconfirmed( $allowUserConfirmEmail,
 		$userIsMailConfirmed, $expected ) {
 		$testObject = new SimpleCaptcha();
-		$user = $this->getMock( User::class );
+		$user = $this->createMock( User::class );
 		$user->method( 'isEmailConfirmed' )->willReturn( $userIsMailConfirmed );
-		$config = $this->getMock( Config::class );
+		$config = $this->createMock( Config::class );
 		$config->method( 'get' )->willReturn( $allowUserConfirmEmail );
 
 		$actual = $testObject->canSkipCaptcha( $user, $config );
@@ -184,16 +180,12 @@ class CaptchaTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @param $requestIP
-	 * @param $IPWhitelist
-	 * @param $expected
-	 * @throws ConfigException
 	 * @dataProvider provideCanSkipCaptchaIPWhitelisted
 	 */
 	public function testCanSkipCaptchaIPWhitelisted( $requestIP, $IPWhitelist, $expected ) {
 		$testObject = new SimpleCaptcha();
-		$config = $this->getMock( Config::class );
-		$request = $this->getMock( WebRequest::class );
+		$config = $this->createMock( Config::class );
+		$request = $this->createMock( WebRequest::class );
 		$request->method( 'getIP' )->willReturn( $requestIP );
 
 		$this->setMwGlobals( [

@@ -19,7 +19,6 @@
 	"renameuserwarnings": "Atension:",
 	"renameuserconfirm": "É!, arnòmina l'utent",
 	"renameusersubmit": "Falo",
-	"renameuser-submit-blocklog": "Smon-e ël registr dij blocage për l'utent",
 	"renameusererrordoesnotexist": "A-i é pa gnun utent ch'as ës-ciama \"<nowiki>$1</nowiki>\"",
 	"renameusererrorexists": "N'utent ch'as ës-ciama \"<nowiki>$1</nowiki>\" a-i é già",
 	"renameusererrorinvalid": "Lë stranòm \"<nowiki>$1</nowiki>\" a l'é nen bon",

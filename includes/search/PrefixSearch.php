@@ -27,6 +27,7 @@ use MediaWiki\MediaWikiServices;
  * names that match. Used largely by the OpenSearch implementation.
  * @deprecated Since 1.27, Use SearchEngine::defaultPrefixSearch or SearchEngine::completionSearch
  *
+ * @stable to extend
  * @ingroup Search
  */
 abstract class PrefixSearch {
@@ -37,7 +38,7 @@ abstract class PrefixSearch {
 	 * @param int $limit
 	 * @param array $namespaces Used if query is not explicitly prefixed
 	 * @param int $offset How many results to offset from the beginning
-	 * @return array Array of strings or Title objects
+	 * @return (Title|string)[]
 	 */
 	public function search( $search, $limit, $namespaces = [], $offset = 0 ) {
 		$search = trim( $search );
@@ -60,7 +61,7 @@ abstract class PrefixSearch {
 	 * @param array $namespaces
 	 * @param int $offset How many results to offset from the beginning
 	 *
-	 * @return array
+	 * @return (Title|string)[]
 	 */
 	public function searchWithVariants( $search, $limit, array $namespaces, $offset = 0 ) {
 		$searches = $this->search( $search, $limit, $namespaces, $offset );
@@ -89,8 +90,8 @@ abstract class PrefixSearch {
 	 * When implemented in a descendant class, receives an array of Title objects and returns
 	 * either an unmodified array or an array of strings corresponding to titles passed to it.
 	 *
-	 * @param array $titles
-	 * @return array
+	 * @param Title[] $titles
+	 * @return (Title|string)[]
 	 */
 	abstract protected function titles( array $titles );
 
@@ -98,19 +99,18 @@ abstract class PrefixSearch {
 	 * When implemented in a descendant class, receives an array of titles as strings and returns
 	 * either an unmodified array or an array of Title objects corresponding to strings received.
 	 *
-	 * @param array $strings
-	 *
-	 * @return array
+	 * @param string[] $strings
+	 * @return (Title|string)[]
 	 */
 	abstract protected function strings( array $strings );
 
 	/**
 	 * Do a prefix search of titles and return a list of matching page names.
-	 * @param array $namespaces
+	 * @param int[] $namespaces
 	 * @param string $search
 	 * @param int $limit
 	 * @param int $offset How many results to offset from the beginning
-	 * @return array Array of strings
+	 * @return (Title|string)[]
 	 */
 	protected function searchBackend( $namespaces, $search, $limit, $offset ) {
 		if ( count( $namespaces ) == 1 ) {
@@ -122,10 +122,9 @@ abstract class PrefixSearch {
 			}
 		}
 		$srchres = [];
-		if ( Hooks::run(
-			'PrefixSearchBackend',
-			[ $namespaces, $search, $limit, &$srchres, $offset ]
-		) ) {
+		if ( Hooks::runner()->onPrefixSearchBackend(
+			$namespaces, $search, $limit, $srchres, $offset )
+		) {
 			return $this->titles( $this->defaultSearchBackend( $namespaces, $search, $limit, $offset ) );
 		}
 		return $this->strings(
@@ -168,7 +167,7 @@ abstract class PrefixSearch {
 			$special = $spFactory->getPage( $specialTitle->getText() );
 			if ( $special ) {
 				$subpages = $special->prefixSearchSubpages( $subpageSearch, $limit, $offset );
-				return array_map( function ( $sub ) use ( $specialTitle ) {
+				return array_map( static function ( $sub ) use ( $specialTitle ) {
 					return $specialTitle->getSubpage( $sub );
 				}, $subpages );
 			} else {
@@ -255,7 +254,13 @@ abstract class PrefixSearch {
 			}
 
 			$title = Title::makeTitleSafe( $namespace, $search );
-			// Why does the prefix default to empty?
+			if ( !$title ) {
+				$title = Title::makeTitleSafe(
+					$namespace,
+					// Don't just ignore input like "[[Foo]]", but try to search for "Foo"
+					preg_replace( MediaWikiTitleCodec::getTitleInvalidRegex(), '', $search )
+				);
+			}
 			$prefix = $title ? $title->getDBkey() : '';
 			$prefixes[$prefix][] = $namespace;
 		}

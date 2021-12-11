@@ -20,6 +20,9 @@
  * @file
  */
 
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
+
 /**
  * This is a three-in-one module to query:
  *   * backlinks  - links pointing to the given page,
@@ -55,7 +58,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	private $redirTitles = [];
 	private $continueStr = null;
 
-	// output element name, database column field prefix, database table
+	/** @var string[][] output element name, database column field prefix, database table */
 	private $backlinksSettings = [
 		'backlinks' => [
 			'code' => 'bl',
@@ -77,6 +80,10 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		]
 	];
 
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( ApiQuery $query, $moduleName ) {
 		$settings = $this->backlinksSettings[$moduleName];
 		$prefix = $settings['prefix'];
@@ -119,13 +126,13 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
 	private function runFirstQuery( $resultPageSet = null ) {
 		$this->addTables( [ $this->bl_table, 'page' ] );
 		$this->addWhere( "{$this->bl_from}=page_id" );
-		if ( is_null( $resultPageSet ) ) {
+		if ( $resultPageSet === null ) {
 			$this->addFields( [ 'page_id', 'page_title', 'page_namespace' ] );
 		} else {
 			$this->addFields( $resultPageSet->getPageTableFields() );
@@ -170,6 +177,11 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		$this->addOption( 'STRAIGHT_JOIN' );
 
 		$res = $this->select( __METHOD__ );
+
+		if ( $resultPageSet === null ) {
+			$this->executeGenderCacheFromResultWrapper( $res, __METHOD__ );
+		}
+
 		$count = 0;
 		foreach ( $res as $row ) {
 			if ( ++$count > $this->params['limit'] ) {
@@ -192,7 +204,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 				$this->redirTitles[] = $t;
 			}
 
-			if ( is_null( $resultPageSet ) ) {
+			if ( $resultPageSet === null ) {
 				$a = [ 'pageid' => (int)$row->page_id ];
 				ApiQueryBase::addTitleInfo( $a, $t );
 				if ( $row->page_is_redirect ) {
@@ -207,15 +219,15 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
 	private function runSecondQuery( $resultPageSet = null ) {
 		$db = $this->getDB();
-		$this->addTables( [ 'page', $this->bl_table ] );
+		$this->addTables( [ $this->bl_table, 'page' ] );
 		$this->addWhere( "{$this->bl_from}=page_id" );
 
-		if ( is_null( $resultPageSet ) ) {
+		if ( $resultPageSet === null ) {
 			$this->addFields( [ 'page_id', 'page_title', 'page_namespace', 'page_is_redirect' ] );
 		} else {
 			$this->addFields( $resultPageSet->getPageTableFields() );
@@ -286,8 +298,15 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		$orderBy[] = $this->bl_from . $sort;
 		$this->addOption( 'ORDER BY', $orderBy );
 		$this->addOption( 'USE INDEX', [ 'page' => 'PRIMARY' ] );
+		// T290379: Avoid MariaDB deciding to scan all of `page`.
+		$this->addOption( 'STRAIGHT_JOIN' );
 
 		$res = $this->select( __METHOD__ );
+
+		if ( $resultPageSet === null ) {
+			$this->executeGenderCacheFromResultWrapper( $res, __METHOD__ );
+		}
+
 		$count = 0;
 		foreach ( $res as $row ) {
 			$ns = $this->hasNS ? $row->{$this->bl_ns} : NS_FILE;
@@ -311,7 +330,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 				$this->cont[] = $row->page_id;
 			}
 
-			if ( is_null( $resultPageSet ) ) {
+			if ( $resultPageSet === null ) {
 				$a = [ 'pageid' => (int)$row->page_id ];
 				ApiQueryBase::addTitleInfo( $a, Title::makeTitle( $row->page_namespace, $row->page_title ) );
 				if ( $row->page_is_redirect ) {
@@ -327,7 +346,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -342,8 +361,15 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 			$this->params['limit'] = $this->getMain()->canApiHighLimits() ? $botMax : $userMax;
 			$result->addParsedLimit( $this->getModuleName(), $this->params['limit'] );
 		} else {
-			$this->params['limit'] = (int)$this->params['limit'];
-			$this->validateLimit( 'limit', $this->params['limit'], 1, $userMax, $botMax );
+			$this->params['limit'] = $this->getMain()->getParamValidator()->validateValue(
+				$this, 'limit', (int)$this->params['limit'], [
+					ParamValidator::PARAM_TYPE => 'limit',
+					IntegerDef::PARAM_MIN => 1,
+					IntegerDef::PARAM_MAX => $userMax,
+					IntegerDef::PARAM_MAX2 => $botMax,
+					IntegerDef::PARAM_IGNORE_RANGE => true,
+				]
+			);
 		}
 
 		$this->rootTitle = $this->getTitleFromTitleOrPageId( $this->params );
@@ -406,6 +432,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 					break;
 
 				default:
+					// @phan-suppress-next-line PhanImpossibleCondition
 					$this->dieContinueUsageIf( true );
 			}
 
@@ -421,10 +448,10 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		// Fill in any missing fields in case it's needed below
 		$this->cont += [ 0, 0, 0, '', 0, 0, 0 ];
 
-		if ( is_null( $resultPageSet ) ) {
+		if ( $resultPageSet === null ) {
 			// Try to add the result data in one go and pray that it fits
 			$code = $this->bl_code;
-			$data = array_map( function ( $arr ) use ( $code ) {
+			$data = array_map( static function ( $arr ) use ( $code ) {
 				if ( isset( $arr['redirlinks'] ) ) {
 					$arr['redirlinks'] = array_values( $arr['redirlinks'] );
 					ApiResult::setIndexedTagName( $arr['redirlinks'], $code );
@@ -436,6 +463,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 				// It didn't fit. Add elements one by one until the
 				// result is full.
 				ksort( $this->resultArr );
+				// @phan-suppress-next-line PhanSuspiciousValueComparison
 				if ( count( $this->cont ) >= 7 ) {
 					$startAt = $this->cont[6];
 				} else {
@@ -461,6 +489,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 					$hasRedirs = false;
 					$redirLinks = isset( $arr['redirlinks'] ) ? (array)$arr['redirlinks'] : [];
 					ksort( $redirLinks );
+					// @phan-suppress-next-line PhanSuspiciousValueComparisonInLoop
 					if ( count( $this->cont ) >= 8 && $pageID == $startAt ) {
 						$redirStartAt = $this->cont[7];
 					} else {
@@ -500,7 +529,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 				$this->bl_code
 			);
 		}
-		if ( !is_null( $this->continueStr ) ) {
+		if ( $this->continueStr !== null ) {
 			$this->setContinueEnumParameter( 'continue', $this->continueStr );
 		}
 	}

@@ -2,9 +2,25 @@
 
 namespace MediaWiki\Extensions\ParserFunctions;
 
+use Config;
 use Parser;
 
-class Hooks {
+class Hooks implements
+	\MediaWiki\Hook\ParserFirstCallInitHook,
+	\MediaWiki\Hook\ParserTestGlobalsHook
+{
+
+	/** @var Config */
+	private $config;
+
+	/**
+	 * @param Config $config
+	 */
+	public function __construct(
+		Config $config
+	) {
+		$this->config = $config;
+	}
 
 	/**
 	 * Enables string functions during parser tests.
@@ -13,7 +29,7 @@ class Hooks {
 	 *
 	 * @param array &$globals
 	 */
-	public static function onParserTestGlobals( array &$globals ) {
+	public function onParserTestGlobals( &$globals ) {
 		$globals['wgPFEnableStringFunctions'] = true;
 	}
 
@@ -24,9 +40,7 @@ class Hooks {
 	 *
 	 * @param Parser $parser
 	 */
-	public static function onParserFirstCallInit( Parser $parser ) {
-		global $wgPFEnableStringFunctions;
-
+	public function onParserFirstCallInit( $parser ) {
 		// These functions accept DOM-style arguments
 		$class = ParserFunctions::class;
 		$parser->setFunctionHook( 'if', "$class::if", Parser::SFH_OBJECT_ARGS );
@@ -43,7 +57,7 @@ class Hooks {
 		$parser->setFunctionHook( 'titleparts', "$class::titleparts" );
 
 		// String Functions: enable if configured
-		if ( $wgPFEnableStringFunctions ) {
+		if ( $this->config->get( 'PFEnableStringFunctions' ) ) {
 			$parser->setFunctionHook( 'len',       "$class::runLen" );
 			$parser->setFunctionHook( 'pos',       "$class::runPos" );
 			$parser->setFunctionHook( 'rpos',      "$class::runRPos" );

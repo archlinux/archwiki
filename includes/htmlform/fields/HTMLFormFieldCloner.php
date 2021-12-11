@@ -34,6 +34,7 @@
  * additional (string) keys present with other types of values.
  *
  * @since 1.23
+ * @stable to extend
  */
 class HTMLFormFieldCloner extends HTMLFormField {
 	private static $counter = 0;
@@ -45,8 +46,12 @@ class HTMLFormFieldCloner extends HTMLFormField {
 	 */
 	protected $uniqueId;
 
+	/**
+	 * @stable to call
+	 * @inheritDoc
+	 */
 	public function __construct( $params ) {
-		$this->uniqueId = static::class . ++self::$counter . 'x';
+		$this->uniqueId = $this->getClassName() . ++self::$counter . 'x';
 		parent::__construct( $params );
 
 		if ( empty( $this->mParams['fields'] ) || !is_array( $this->mParams['fields'] ) ) {
@@ -54,6 +59,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		}
 
 		// Make sure the delete button, if explicitly specified, is sane
+		// @phan-suppress-next-line PhanTypeMismatchDimFetch Phan is very confused
 		if ( isset( $this->mParams['fields']['delete'] ) ) {
 			$class = 'mw-htmlform-cloner-delete-button';
 			$info = $this->mParams['fields']['delete'] + [
@@ -193,8 +199,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 	public function getDefault() {
 		$ret = parent::getDefault();
 
-		// The default default is one entry with all subfields at their
-		// defaults.
+		// The default is one entry with all subfields at their defaults.
 		if ( $ret === null ) {
 			$fields = $this->createFieldsForKey( $this->uniqueId );
 			$row = [];
@@ -211,6 +216,10 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		return $ret;
 	}
 
+	/**
+	 * @inheritDoc
+	 * @phan-param array[] $values
+	 */
 	public function cancelSubmit( $values, $alldata ) {
 		if ( isset( $values['nonjs'] ) ) {
 			return true;
@@ -231,6 +240,10 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		return parent::cancelSubmit( $values, $alldata );
 	}
 
+	/**
+	 * @inheritDoc
+	 * @phan-param array[] $values
+	 */
 	public function validate( $values, $alldata ) {
 		if ( isset( $this->mParams['required'] )
 			&& $this->mParams['required'] !== false
@@ -313,17 +326,13 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		}
 
 		if ( $displayFormat !== 'raw' ) {
-			$classes = [
-				'mw-htmlform-cloner-row',
-			];
+			$classes = [ 'mw-htmlform-cloner-row' ];
 
 			if ( !$hasLabel ) { // Avoid strange spacing when no labels exist
 				$classes[] = 'mw-htmlform-nolabel';
 			}
 
-			$attribs = [
-				'class' => implode( ' ', $classes ),
-			];
+			$attribs = [ 'class' => $classes ];
 
 			if ( $displayFormat === 'table' ) {
 				$html = Html::rawElement( 'table',
@@ -358,6 +367,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			'id' => Sanitizer::escapeIdForAttribute( "{$this->mID}--$key--delete" ),
 			'cssclass' => 'mw-htmlform-cloner-delete-button',
 			'default' => $this->getMessage( $label )->text(),
+			'disabled' => $this->mParams['disabled'] ?? false,
 		], $this->mParent );
 		return $field;
 	}
@@ -372,6 +382,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			'id' => Sanitizer::escapeIdForAttribute( "{$this->mID}--create" ),
 			'cssclass' => 'mw-htmlform-cloner-create-button',
 			'default' => $this->getMessage( $label )->text(),
+			'disabled' => $this->mParams['disabled'] ?? false,
 		], $this->mParent );
 	}
 
@@ -388,6 +399,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		}
 
 		$template = $this->getInputHTMLForKey( $this->uniqueId, [] );
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped data-template contains html, but that is okay here
 		$html = Html::rawElement( 'ul', [
 			'id' => "mw-htmlform-cloner-list-{$this->mID}",
 			'class' => 'mw-htmlform-cloner-ul',
@@ -435,15 +447,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 			$html .= $fieldHtml;
 		}
 
-		$classes = [
-			'mw-htmlform-cloner-row',
-		];
-
-		$attribs = [
-			'class' => implode( ' ', $classes ),
-		];
-
-		$html = Html::rawElement( 'div', $attribs, "\n$html\n" );
+		$html = Html::rawElement( 'div', [ 'class' => 'mw-htmlform-cloner-row' ], "\n$html\n" );
 
 		$html .= $hidden;
 
@@ -468,6 +472,7 @@ class HTMLFormFieldCloner extends HTMLFormField {
 		}
 
 		$template = $this->getInputOOUIForKey( $this->uniqueId, [] );
+		// @phan-suppress-next-line SecurityCheck-DoubleEscaped data-template contains html, but that is okay here
 		$html = Html::rawElement( 'ul', [
 			'id' => "mw-htmlform-cloner-list-{$this->mID}",
 			'class' => 'mw-htmlform-cloner-ul',

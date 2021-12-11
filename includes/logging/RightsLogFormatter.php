@@ -97,16 +97,16 @@ class RightsLogFormatter extends LogFormatter {
 		$allParams = $this->entry->getParameters();
 
 		if ( count( $oldGroups ) ) {
-			$params[3] = [ 'raw' => $this->formatRightsList( $oldGroups,
-				$allParams['oldmetadata'] ?? [] ) ];
+			$params[3] = Message::rawParam( $this->formatRightsList( $oldGroups,
+				$allParams['oldmetadata'] ?? [] ) );
 		} else {
 			$params[3] = $this->msg( 'rightsnone' )->text();
 		}
 		if ( count( $newGroups ) ) {
 			// Array_values is used here because of T44211
 			// see use of array_unique in UserrightsPage::doSaveUserGroups on $newGroups.
-			$params[4] = [ 'raw' => $this->formatRightsList( array_values( $newGroups ),
-				$allParams['newmetadata'] ?? [] ) ];
+			$params[4] = Message::rawParam( $this->formatRightsList( array_values( $newGroups ),
+				$allParams['newmetadata'] ?? [] ) );
 		} else {
 			$params[4] = $this->msg( 'rightsnone' )->text();
 		}
@@ -179,7 +179,7 @@ class RightsLogFormatter extends LogFormatter {
 			$oldmetadata =& $params['oldmetadata'];
 			// unset old metadata entry to ensure metadata goes at the end of the params array
 			unset( $params['oldmetadata'] );
-			$params['oldmetadata'] = array_map( function ( $index ) use ( $params, $oldmetadata ) {
+			$params['oldmetadata'] = array_map( static function ( $index ) use ( $params, $oldmetadata ) {
 				$result = [ 'group' => $params['4:array:oldgroups'][$index] ];
 				if ( isset( $oldmetadata[$index] ) ) {
 					$result += $oldmetadata[$index];
@@ -196,7 +196,7 @@ class RightsLogFormatter extends LogFormatter {
 			$newmetadata =& $params['newmetadata'];
 			// unset old metadata entry to ensure metadata goes at the end of the params array
 			unset( $params['newmetadata'] );
-			$params['newmetadata'] = array_map( function ( $index ) use ( $params, $newmetadata ) {
+			$params['newmetadata'] = array_map( static function ( $index ) use ( $params, $newmetadata ) {
 				$result = [ 'group' => $params['5:array:newgroups'][$index] ];
 				if ( isset( $newmetadata[$index] ) ) {
 					$result += $newmetadata[$index];

@@ -71,6 +71,7 @@
 
 	/**
 	 * Creates the DOM element that setWarning()/clearWarning() will operate on.
+	 *
 	 * @private
 	 */
 	DP.initWarning = function () {
@@ -195,6 +196,7 @@
 
 	/**
 	 * Displays a warning ribbon.
+	 *
 	 * @param {string} content Content of the warning (can be HTML,
 	 *   setWarning does no escaping).
 	 */

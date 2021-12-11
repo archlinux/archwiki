@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"OC Ripper",
 			"Msannakoval",
+			"OC Ripper",
 			"Vlad5250"
 		]
 	},
@@ -18,7 +18,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Grupa spisaka s referencijama je smijenjena iz opšte grupe u „$1”",
 	"cite-ve-changedesc-reflist-responsive-set": "Spisak referenci je izmijenjen za prikaz u odzivnim kolonama",
 	"cite-ve-changedesc-reflist-responsive-unset": "Spisak referenci je izmijenjen za prikaz u samo jednoj koloni",
-	"cite-ve-changedesc-reflist-item-id": "Indeks reference je izmijenjen",
 	"cite-ve-dialog-reference-editing-reused": "Ova referenca koristi se {{PLURAL:$1|jednom|2=dvaput|$1 puta}} u ovoj stranici.",
 	"cite-ve-dialog-reference-editing-reused-long": "Ova referenca koristi se {{PLURAL:$1|jednom|2=dvaput|$1 puta}} na ovoj stranici. Ovdje napravljene promjene utjecati će na sva područja njegove upotrebe.",
 	"cite-ve-dialog-reference-options-group-label": "Koristi ovu grupu",

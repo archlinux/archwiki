@@ -4,7 +4,7 @@
  * @group ResourceLoader
  * @covers DerivativeResourceLoaderContext
  */
-class DerivativeResourceLoaderContextTest extends PHPUnit\Framework\TestCase {
+class DerivativeResourceLoaderContextTest extends MediaWikiIntegrationTestCase {
 
 	use MediaWikiCoversValidator;
 
@@ -66,12 +66,27 @@ class DerivativeResourceLoaderContextTest extends PHPUnit\Framework\TestCase {
 		$this->assertSame( $derived->getUser(), 'MyUser' );
 	}
 
+	public function testChangeUserObj() {
+		$user = $this->createMock( User::class );
+		$parent = $this->createMock( ResourceLoaderContext::class );
+		$parent
+			->expects( $this->once() )
+			->method( 'getUserObj' )
+			->willReturn( $user );
+
+		$derived = new DerivativeResourceLoaderContext( $parent );
+		$this->assertSame( $derived->getUserObj(), $user, 'inherit from parent' );
+
+		$derived->setUser( null );
+		$this->assertNotSame( $derived->getUserObj(), $user, 'different' );
+	}
+
 	public function testChangeDebug() {
 		$derived = new DerivativeResourceLoaderContext( self::makeContext() );
-		$this->assertSame( $derived->getDebug(), false, 'inherit from parent' );
+		$this->assertSame( $derived->getDebug(), 0, 'inherit from parent' );
 
-		$derived->setDebug( true );
-		$this->assertSame( $derived->getDebug(), true );
+		$derived->setDebug( 1 );
+		$this->assertSame( $derived->getDebug(), 1 );
 	}
 
 	public function testChangeOnly() {
@@ -103,19 +118,19 @@ class DerivativeResourceLoaderContextTest extends PHPUnit\Framework\TestCase {
 
 	public function testChangeHash() {
 		$derived = new DerivativeResourceLoaderContext( self::makeContext() );
-		$this->assertSame( $derived->getHash(), 'qqx|fallback|||scripts|||||', 'inherit' );
+		$this->assertSame( $derived->getHash(), 'qqx|fallback|0||scripts|||||', 'inherit' );
 
 		$derived->setLanguage( 'nl' );
 		$derived->setUser( 'Example' );
 		// Assert that subclass is able to clear parent class "hash" member
-		$this->assertSame( $derived->getHash(), 'nl|fallback||Example|scripts|||||' );
+		$this->assertSame( $derived->getHash(), 'nl|fallback|0|Example|scripts|||||' );
 	}
 
 	public function testChangeContentOverrides() {
 		$derived = new DerivativeResourceLoaderContext( self::makeContext() );
 		$this->assertNull( $derived->getContentOverrideCallback(), 'default' );
 
-		$override = function ( Title $t ) {
+		$override = static function ( Title $t ) {
 			return null;
 		};
 		$derived->setContentOverrideCallback( $override );

@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Cache\LinkBatchFactory;
+
 /**
  * A special page that displays list of tracking categories
  * Tracking categories allow pages with certain characteristics to be tracked.
@@ -32,16 +34,27 @@
  */
 
 class SpecialTrackingCategories extends SpecialPage {
-	function __construct() {
+
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
+	/**
+	 * @param LinkBatchFactory $linkBatchFactory
+	 */
+	public function __construct( LinkBatchFactory $linkBatchFactory ) {
 		parent::__construct( 'TrackingCategories' );
+		$this->linkBatchFactory = $linkBatchFactory;
 	}
 
-	function execute( $par ) {
+	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
 		$this->addHelpLink( 'Help:Categories' );
 		$this->getOutput()->allowClickjacking();
-		$this->getOutput()->addModuleStyles( 'jquery.tablesorter.styles' );
+		$this->getOutput()->addModuleStyles( [
+			'jquery.tablesorter.styles',
+			'mediawiki.pager.tablePager'
+		] );
 		$this->getOutput()->addModules( 'jquery.tablesorter' );
 		$this->getOutput()->addHTML(
 			Html::openElement( 'table', [ 'class' => 'mw-datatable sortable',
@@ -62,7 +75,7 @@ class SpecialTrackingCategories extends SpecialPage {
 		$trackingCategories = new TrackingCategories( $this->getConfig() );
 		$categoryList = $trackingCategories->getTrackingCategories();
 
-		$batch = new LinkBatch();
+		$batch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $categoryList as $catMsg => $data ) {
 			$batch->addObj( $data['msg'] );
 			foreach ( $data['cats'] as $catTitle ) {
@@ -71,7 +84,7 @@ class SpecialTrackingCategories extends SpecialPage {
 		}
 		$batch->execute();
 
-		Hooks::run( 'SpecialTrackingCategories::preprocess', [ $this, $categoryList ] );
+		$this->getHookRunner()->onSpecialTrackingCategories__preprocess( $this, $categoryList );
 
 		$linkRenderer = $this->getLinkRenderer();
 
@@ -90,8 +103,8 @@ class SpecialTrackingCategories extends SpecialPage {
 					$catTitle->getText()
 				);
 
-				Hooks::run( 'SpecialTrackingCategories::generateCatLink',
-					[ $this, $catTitle, &$html ] );
+				$this->getHookRunner()->onSpecialTrackingCategories__generateCatLink(
+					$this, $catTitle, $html );
 
 				$allMsgs[] = $html;
 			}

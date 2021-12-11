@@ -3,7 +3,7 @@
 namespace MediaWiki\Extensions\ArchLinux;
 
 /**
- * @var \SkinTemplate $skinTemplate
+ * @var string $title
  * @var array $archNavBar
  * @var string $archHome
  * @var array $archNavBarSelected
@@ -18,8 +18,8 @@ namespace MediaWiki\Extensions\ArchLinux;
         <ul id="archnavbarlist">
             <?php
             foreach ($archNavBar as $name => $url) {
-                if (($skinTemplate->getTitle() == $name && in_array($name, $archNavBarSelected))
-                    || (!(in_array($skinTemplate->getTitle(), $archNavBarSelected)) && $name == $archNavBarSelectedDefault)) {
+                if (($title == $name && in_array($name, $archNavBarSelected))
+                    || (!(in_array($title, $archNavBarSelected)) && $name == $archNavBarSelectedDefault)) {
                     $anbClass = ' class="anb-selected"';
                 } else {
                     $anbClass = '';

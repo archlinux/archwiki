@@ -18,11 +18,13 @@
 
 namespace MediaWiki\Extension\OATHAuth\Api\Module;
 
-use MediaWiki\MediaWikiServices;
+use ApiQuery;
 use ApiQueryBase;
-use ApiBase;
 use ApiResult;
+use ManualLogEntry;
+use MediaWiki\MediaWikiServices;
 use User;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * Query module to check if a user has OATH authentication enabled.
@@ -35,6 +37,10 @@ use User;
  * @ingroup Extensions
  */
 class ApiQueryOATH extends ApiQueryBase {
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'oath' );
 	}
@@ -45,7 +51,18 @@ class ApiQueryOATH extends ApiQueryBase {
 			$params['user'] = $this->getUser()->getName();
 		}
 
-		$this->checkUserRightsAny( 'oathauth-api-all' );
+		$this->checkUserRightsAny( [ 'oathauth-api-all', 'oathauth-verify-user' ] );
+
+		$hasOAthauthApiAll = $this->getPermissionManager()
+			->userHasRight(
+				$this->getUser(),
+				'oathauth-api-all'
+			);
+
+		$reasonProvided = $params['reason'] !== null && $params['reason'] !== '';
+		if ( !$hasOAthauthApiAll && !$reasonProvided ) {
+			$this->dieWithError( [ 'apierror-missingparam', 'reason' ] );
+		}
 
 		$user = User::newFromName( $params['user'] );
 		if ( $user === false ) {
@@ -64,6 +81,15 @@ class ApiQueryOATH extends ApiQueryBase {
 			$data['enabled'] = $authUser &&
 				$authUser->getModule() !== null &&
 				$authUser->getModule()->isEnabled( $authUser );
+
+			// Log if the user doesn't have oathauth-api-all or if a reason is provided
+			if ( !$hasOAthauthApiAll || $reasonProvided ) {
+				$logEntry = new ManualLogEntry( 'oath', 'verify' );
+				$logEntry->setPerformer( $this->getUser() );
+				$logEntry->setTarget( $user->getUserPage() );
+				$logEntry->setComment( $params['reason'] );
+				$logEntry->insert();
+			}
 		}
 		$result->addValue( 'query', $this->getModuleName(), $data );
 	}
@@ -81,14 +107,23 @@ class ApiQueryOATH extends ApiQueryBase {
 		return true;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getAllowedParams() {
 		return [
 			'user' => [
-				ApiBase::PARAM_TYPE => 'user',
+				ParamValidator::PARAM_TYPE => 'user',
+			],
+			'reason' => [
+				ParamValidator::PARAM_TYPE => 'string',
 			],
 		];
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function getExamplesMessages() {
 		return [
 			'action=query&meta=oath'

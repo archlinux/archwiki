@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Kaffi",
+			"Les Meloures",
 			"Robby",
-			"Soued031",
-			"Les Meloures"
+			"Soued031"
 		]
 	},
 	"categorytree": "Struktur vun de Kategorien",
@@ -33,6 +33,6 @@
 	"categorytree-no-parent-categories": "Keng Iwwerkategorien",
 	"categorytree-no-pages": "Keng Säiten oder Ënnerkategorien",
 	"categorytree-not-found": "Kategorie ''$1'' net fonnt",
-	"categorytree-error": "Problem beim luede vun den Donneeën.",
-	"categorytree-retry": "Waart w.e.g. een Ament a probéiert dann nach eng Kéier."
+	"categorytree-error": "Problem beim Luede vun den Donnéeën.",
+	"categorytree-retry": "Waart wgl. een Ament a probéiert dann nach eng Kéier."
 }

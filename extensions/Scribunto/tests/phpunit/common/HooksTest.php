@@ -2,7 +2,6 @@
 
 class ScribuntoHooksTest extends PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
-	use PHPUnit4And6Compat;
 
 	public function provideContentHandlerDefaultModelFor() {
 		return [

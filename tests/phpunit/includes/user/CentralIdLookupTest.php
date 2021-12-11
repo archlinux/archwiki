@@ -6,7 +6,7 @@ use Wikimedia\TestingAccessWrapper;
  * @covers CentralIdLookup
  * @group Database
  */
-class CentralIdLookupTest extends MediaWikiTestCase {
+class CentralIdLookupTest extends MediaWikiIntegrationTestCase {
 
 	public function testFactory() {
 		$mock = $this->getMockForAbstractClass( CentralIdLookup::class );
@@ -15,7 +15,7 @@ class CentralIdLookupTest extends MediaWikiTestCase {
 			'wgCentralIdLookupProviders' => [
 				'local' => [ 'class' => LocalIdLookup::class ],
 				'local2' => [ 'class' => LocalIdLookup::class ],
-				'mock' => [ 'factory' => function () use ( $mock ) {
+				'mock' => [ 'factory' => static function () use ( $mock ) {
 					return $mock;
 				} ],
 				'bad' => [ 'class' => stdClass::class ],

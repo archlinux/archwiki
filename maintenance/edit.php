@@ -21,6 +21,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -60,16 +61,17 @@ class EditCLI extends Maintenance {
 		$slot = $this->getOption( 'slot', SlotRecord::MAIN );
 
 		if ( $userName === false ) {
-			$wgUser = User::newSystemUser( 'Maintenance script', [ 'steal' => true ] );
+			$user = User::newSystemUser( 'Maintenance script', [ 'steal' => true ] );
 		} else {
-			$wgUser = User::newFromName( $userName );
+			$user = User::newFromName( $userName );
 		}
-		if ( !$wgUser ) {
+		if ( !$user ) {
 			$this->fatalError( "Invalid username" );
 		}
-		if ( $wgUser->isAnon() ) {
-			$wgUser->addToDatabase();
+		if ( $user->isAnon() ) {
+			$user->addToDatabase();
 		}
+		$wgUser = $user;
 
 		$title = Title::newFromText( $this->getArg( 0 ) );
 		if ( !$title ) {
@@ -82,7 +84,7 @@ class EditCLI extends Maintenance {
 			$this->fatalError( "Page already exists" );
 		}
 
-		$page = WikiPage::factory( $title );
+		$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 
 		if ( $remove ) {
 			if ( $slot === SlotRecord::MAIN ) {
@@ -98,7 +100,7 @@ class EditCLI extends Maintenance {
 
 		# Do the edit
 		$this->output( "Saving... " );
-		$updater = $page->newPageUpdater( $wgUser );
+		$updater = $page->newPageUpdater( $user );
 
 		$flags = ( $minor ? EDIT_MINOR : 0 ) |
 			( $bot ? EDIT_FORCE_BOT : 0 ) |

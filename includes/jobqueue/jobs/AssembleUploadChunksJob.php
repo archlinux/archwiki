@@ -35,14 +35,14 @@ class AssembleUploadChunksJob extends Job {
 
 	public function run() {
 		$scope = RequestContext::importScopedSession( $this->params['session'] );
-		$this->addTeardownCallback( function () use ( &$scope ) {
+		$this->addTeardownCallback( static function () use ( &$scope ) {
 			ScopedCallback::consume( $scope ); // T126450
 		} );
 
 		$context = RequestContext::getMain();
 		$user = $context->getUser();
 		try {
-			if ( !$user->isLoggedIn() ) {
+			if ( !$user->isRegistered() ) {
 				$this->setLastError( "Could not load the author user from session." );
 
 				return false;
@@ -69,15 +69,19 @@ class AssembleUploadChunksJob extends Job {
 					$this->params['filekey'],
 					[ 'result' => 'Failure', 'stage' => 'assembling', 'status' => $status ]
 				);
-				$this->setLastError( $status->getWikiText( false, false, 'en' ) );
 
-				return false;
+				// the chunks did not get assembled, but this should not be considered a job
+				// failure - they simply didn't pass verification for some reason, and that
+				// reason is stored in above session to inform the clients
+				return true;
 			}
 
 			// We can only get warnings like 'duplicate' after concatenating the chunks
 			$status = Status::newGood();
 			$status->value = [
-				'warnings' => UploadBase::makeWarningsSerializable( $upload->checkWarnings() )
+				'warnings' => UploadBase::makeWarningsSerializable(
+					$upload->checkWarnings( $user )
+				)
 			];
 
 			// We have a new filekey for the fully concatenated file

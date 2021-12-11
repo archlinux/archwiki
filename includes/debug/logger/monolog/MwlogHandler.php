@@ -37,12 +37,12 @@ use Monolog\Logger;
 class MwlogHandler extends SyslogUdpHandler {
 
 	/**
-	 * @var string $appprefix
+	 * @var string
 	 */
 	private $appprefix;
 
 	/**
-	 * @var string $hostname
+	 * @var string
 	 */
 	private $hostname;
 
@@ -89,7 +89,7 @@ class MwlogHandler extends SyslogUdpHandler {
 		return preg_split( '/$\R?^/m', (string)$message, -1, PREG_SPLIT_NO_EMPTY );
 	}
 
-	protected function write( array $record ) {
+	protected function write( array $record ): void {
 		$lines = $this->splitMessageIntoLines( $record['formatted'] );
 		$header = $this->syslogHeader(
 			$this->logLevels[$record['level']],

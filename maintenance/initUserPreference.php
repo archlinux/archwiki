@@ -54,20 +54,22 @@ class InitUserPreference extends Maintenance {
 			'up_value IS NOT NULL',
 			'up_value != 0',
 		] );
+		$iterator->setCaller( __METHOD__ );
 
 		$processed = 0;
 		foreach ( $iterator as $batch ) {
 			foreach ( $batch as $row ) {
-				$values = [
-					'up_user' => $row->up_user,
-					'up_property' => $target,
-					'up_value' => $row->up_value,
-				];
 				$dbw->upsert(
 					'user_properties',
-					$values,
-					[ 'up_user', 'up_property' ],
-					$values,
+					[
+						'up_user' => $row->up_user,
+						'up_property' => $target,
+						'up_value' => $row->up_value,
+					],
+					[ [ 'up_user', 'up_property' ] ],
+					[
+						'up_value' => $row->up_value,
+					],
 					__METHOD__
 				);
 
@@ -80,5 +82,5 @@ class InitUserPreference extends Maintenance {
 	}
 }
 
-$maintClass = InitUserPreference::class; // Tells it to run the class
+$maintClass = InitUserPreference::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

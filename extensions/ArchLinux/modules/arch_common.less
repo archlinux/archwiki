@@ -38,14 +38,14 @@ body {
         padding: 2px;
     }
 
-    pre {
+    pre:not([class*="CodeMirror"]) {
         border: @code-border-style;
         overflow: auto;
         word-break: break-all;
         white-space: pre-wrap !important;
     }
 
-    pre,
+    pre:not([class*="CodeMirror"]),
     code,
     tt {
         background-color: @code-background-color;
@@ -100,8 +100,9 @@ body {
 
 /* Colors of links in the content, MediaWiki navigation and the footer */
 #content,
-#mw-navigation li:not(.new),  // Vector
-#mw-panel li:not(.new),       // Vector
+header.mw-header li:not(.new), // Vector
+#mw-navigation li:not(.new),  // Legacy Vector
+#mw-panel li:not(.new),       // Legacy Vector
 #column-one li:not(.new),     // MonoBook
 #footer {
   a:not(.new) {
@@ -125,7 +126,7 @@ body {
 /* Color of visited links for content and left column
  * (not for MediaWiki navigation elements above the page) */
 #content,
-#mw-panel li:not(.new),       // Vector
+#mw-panel li:not(.new),       // Legacy Vector
 #p-navigation li:not(.new),   // MonoBook
 #p-tb li:not(.new)            // MonoBook
 {
@@ -150,6 +151,6 @@ a.new:visited,
  */
 .mw-body-content a.external,
 .mw-body-content a.extiw {
-    background: url(/resources/src/mediawiki.skinning/images/external-ltr.png) center right no-repeat;
+    background: url(../../../resources/src/mediawiki.skinning/images/external-ltr.svg) center right no-repeat;
     padding-right: 13px;
 }

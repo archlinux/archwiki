@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Albertas",
 			"Eitvys200",
 			"Garas",
 			"Homo",
 			"Matasg",
-			"Albertas",
+			"Tomasdd",
 			"Zygimantus"
 		]
 	},
-	"captcha-edit": "Kad redaguotumėte šį straipsnį, apskaičiuokite šią paprastą sumą ir įveskite atsakymą į laukelį ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-edit": "Kad redaguotumėte šį straipsnį, išspręskite pateiktą užduotį ir įveskite atsakymą į laukelį ([[Special:Captcha/help|daugiau informacijos]]):",
 	"captcha-edit-fail": "Neteisingas arba nenurodytas patvirtinimo kodas.",
 	"captcha-desc": "Pateikia CAPTCHA metodikas, kaip apsisaugoti nuo brukalo ir slaptažodžių spėliojimo",
 	"captcha-label": "CAPTCHA",
@@ -17,12 +18,12 @@
 	"captcha-info-help": "CAPTCHA aprašymas.",
 	"captcha-id-label": "CAPTCHA ID",
 	"captcha-id-help": "Ši reikšmė turėtų būti siunčiama atgal nepakeista.",
-	"captcha-addurl": "Jūsų pakeitimuose yra nauja išorinė nuoroda.\nKad apsaugotume viki nuo automatinio brukalo, mes maloniai prašome jūsų suskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį, kad Jūsų pakeitimai būtų išsaugoti, ([[Special:Captcha/help|daugiau informacijos]]):",
-	"captcha-badlogin": "Kad apsaugotume viki nuo automatinio slaptažodžių nulaužinėjimo, mes maloniai prašome jūsų apskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
-	"captcha-createaccount": "Kad apsaugotume viki nuo automatinio paskyrų kūrimo, mes maloniai prašome apskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-addurl": "Jūsų pakeitimuose yra nauja išorinė nuoroda.\nKad apsaugotume viki nuo automatinio brukalo, mes maloniai prašome Jūsų išspręsti šią žemiau pateiktą užduotį ir įrašyti atsakymą į langelį, kad Jūsų pakeitimai būtų išsaugoti ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-badlogin": "Kad apsaugotume viki nuo automatinio slaptažodžių spėliojimo, mes maloniai prašome Jūsų išspręsti šią žemiau pateiktą užduotį ir įrašyti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-createaccount": "Kad apsaugotume viki nuo automatinio paskyrų kūrimo, mes maloniai prašome Jūsų išspręsti šią žemiau pateiktą užduotį ir įrašyti atsakymą į langelį\n([[Special:Captcha/help|daugiau informacijos]]):",
 	"captcha-createaccount-fail": "Neteisingas arba nenurodytas patvirtinimo kodas.",
-	"captcha-create": "Kad sukurtumėte puslapį, prašome apskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
-	"captcha-sendemail": "Kad apsaugotume viki nuo automatinio brukalo, maloniai prašome apskaičiuoti paprastą sumą, pateiktą žemiau, ir įvesti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-create": "Kad sukurtumėte puslapį, prašome išspręsti šią žemiau pateiktą užduotį ir įrašyti atsakymą į langelį ([[Special:Captcha/help|daugiau informacijos]]):",
+	"captcha-sendemail": "Kad apsaugotume viki nuo automatinio brukalo, maloniai prašome išspręsti šią žemiau pateiktą užduotį ir įrašyti atsakymą į langelį\n([[Special:Captcha/help|daugiau informacijos]]):",
 	"captcha-sendemail-fail": "Neteisingas arba nenurodytas CAPTCHA.",
 	"captcha-disabledinapi": "Šis veiksmas reikalauja nurodyti patvirtinimo kodą, todėl jis negali būti atliktas per API.",
 	"captcha-error": "CAPTCHA patvirtinimas nepavyko dėl vidinės klaidos: $1",

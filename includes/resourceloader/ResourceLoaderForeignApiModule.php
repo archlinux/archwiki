@@ -19,7 +19,7 @@
  */
 
 /**
- * Module for mediawiki.ForeignApi that has dynamically
+ * Module for mediawiki.ForeignApi and mediawiki.ForeignRest that has dynamically
  * generated dependencies, via a hook usable by extensions.
  *
  * @ingroup ResourceLoader
@@ -28,7 +28,7 @@
 class ResourceLoaderForeignApiModule extends ResourceLoaderFileModule {
 	public function getDependencies( ResourceLoaderContext $context = null ) {
 		$dependencies = $this->dependencies;
-		Hooks::run( 'ResourceLoaderForeignApiModules', [ &$dependencies, $context ] );
+		$this->getHookRunner()->onResourceLoaderForeignApiModules( $dependencies, $context );
 		return $dependencies;
 	}
 }

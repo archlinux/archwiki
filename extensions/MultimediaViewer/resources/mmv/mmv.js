@@ -74,6 +74,7 @@
 
 		/**
 		 * Image index on page.
+		 *
 		 * @property {number}
 		 */
 		this.currentIndex = 0;
@@ -87,6 +88,7 @@
 
 		/**
 		 * UI object used to display the pictures in the page.
+		 *
 		 * @property {mw.mmv.LightboxInterface}
 		 * @private
 		 */
@@ -94,12 +96,14 @@
 
 		/**
 		 * How many sharp images have been displayed in Media Viewer since the pageload
+		 *
 		 * @property {number}
 		 */
 		this.imageDisplayedCount = 0;
 
 		/**
 		 * How many data-filled metadata panels have been displayed in Media Viewer since the pageload
+		 *
 		 * @property {number}
 		 */
 		this.metadataDisplayedCount = 0;
@@ -115,6 +119,7 @@
 		/**
 		 * Stores whether the real image was loaded and displayed already.
 		 * This is reset when paging, so it is not necessarily accurate.
+		 *
 		 * @property {boolean}
 		 */
 		this.realThumbnailShown = false;
@@ -123,6 +128,7 @@
 		 * Stores whether the a blurred placeholder is being displayed in place of the real image.
 		 * When a placeholder is displayed, but it is not blurred, this is false.
 		 * This is reset when paging, so it is not necessarily accurate.
+		 *
 		 * @property {boolean}
 		 */
 		this.blurredThumbnailShown = false;
@@ -207,9 +213,10 @@
 
 			this.fetchThumbnailForLightboxImage(
 				image, imageWidths.real
-			).then( function ( thumbnail, image ) {
-				image.className = ext;
-				viewer.setImage( ui, thumbnail, image, imageWidths );
+			).then( function ( thumbnail, image2 ) {
+				// eslint-disable-next-line mediawiki/class-doc
+				image2.className = ext;
+				viewer.setImage( ui, thumbnail, image2, imageWidths );
 			}, function ( error ) {
 				viewer.ui.canvas.showError( error );
 			} );
@@ -280,6 +287,7 @@
 		// know what size it should be. We still assign it to allow for
 		// size calculations in getCurrentImageWidths, which needs to know
 		// the aspect ratio
+		// eslint-disable-next-line mediawiki/class-doc
 		$initialImage.hide()
 			.removeAttr( 'style' )
 			.removeClass()
@@ -330,6 +338,7 @@
 					} );
 				}
 
+				// eslint-disable-next-line mediawiki/class-doc
 				imageElement.className = 'mw-mmv-final-image ' + image.filePageTitle.getExtension().toLowerCase();
 				imageElement.alt = image.alt;
 
@@ -449,8 +458,9 @@
 		this.setImage( this.ui, thumbnail, imageElement, imageWidths );
 
 		// We only animate unblurWithAnimation if the image wasn't loaded from the cache
-		// A load in < 10ms is considered to be a browser cache hit
-		if ( this.blurredThumbnailShown && loadTime > 10 ) {
+		// A load in < 100ms is fast enough (maybe even browser cache hit) that
+		// using a 300ms animation would needlessly deter from a fast experience.
+		if ( this.blurredThumbnailShown && loadTime > 100 ) {
 			this.ui.canvas.unblurWithAnimation();
 		} else {
 			this.ui.canvas.unblur();
@@ -587,18 +597,21 @@
 	 * Preload this many prev/next images to speed up navigation.
 	 * (E.g. preloadDistance = 3 means that the previous 3 and the next 3 images will be loaded.)
 	 * Preloading only happens when the viewer is open.
+	 *
 	 * @property {number}
 	 */
 	MMVP.preloadDistance = 1;
 
 	/**
 	 * Stores image metadata preloads, so they can be cancelled.
+	 *
 	 * @property {mw.mmv.model.TaskQueue}
 	 */
 	MMVP.metadataPreloadQueue = null;
 
 	/**
 	 * Stores image thumbnail preloads, so they can be cancelled.
+	 *
 	 * @property {mw.mmv.model.TaskQueue}
 	 */
 	MMVP.thumbnailPreloadQueue = null;
@@ -903,8 +916,8 @@
 		function route( fileName ) {
 			var fileTitle;
 			comingFromHashChange = true;
-			fileName = decodeURIComponent( fileName );
 			try {
+				fileName = decodeURIComponent( fileName );
 				fileTitle = new mw.Title( fileName );
 				this.loadImageByTitle( fileTitle );
 			} catch ( err ) {
@@ -932,6 +945,7 @@
 
 	/**
 	 * Updates the hash to reflect an open image file
+	 *
 	 * @param {boolean} useReplaceState Whether to update history entry to avoid long history queues
 	 */
 	MMVP.setMediaHash = function ( useReplaceState ) {
@@ -1015,8 +1029,8 @@
 	};
 
 	/**
-	* Unregisters all event handlers. Currently only used in tests.
-	*/
+	 * Unregisters all event handlers. Currently only used in tests.
+	 */
 	MMVP.cleanupEventHandlers = function () {
 		$( document ).off( 'mmv-close.mmvp mmv-resize-end.mmvp' );
 

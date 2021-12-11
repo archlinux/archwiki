@@ -40,11 +40,11 @@ class SearchSuggestionSetTest extends \MediaWikiUnitTestCase {
 
 		$suggestion = new SearchSuggestion( 2 );
 		$set->append( $suggestion );
-		$this->assertEquals( 1, $set->getWorstScore() );
+		$this->assertSame( 1, $set->getWorstScore() );
 		$this->assertEquals( 3, $set->getBestScore() );
-		$this->assertEquals( 1, $suggestion->getScore() );
+		$this->assertSame( 1, $suggestion->getScore() );
 
-		$scores = $set->map( function ( $s ) {
+		$scores = $set->map( static function ( $s ) {
 			return $s->getScore();
 		} );
 		$sorted = $scores;
@@ -84,7 +84,7 @@ class SearchSuggestionSetTest extends \MediaWikiUnitTestCase {
 		$this->assertEquals( 6, $set->getBestScore() );
 		$this->assertEquals( 6, $suggestion->getScore() );
 
-		$scores = $set->map( function ( $s ) {
+		$scores = $set->map( static function ( $s ) {
 			return $s->getScore();
 		} );
 		$sorted = $scores;

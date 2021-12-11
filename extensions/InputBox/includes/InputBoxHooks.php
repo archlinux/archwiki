@@ -13,10 +13,10 @@ class InputBoxHooks {
 
 	/**
 	 * Initialization
-	 * @param Parser &$parser
+	 * @param Parser $parser
 	 * @return true
 	 */
-	public static function register( Parser &$parser ) {
+	public static function register( Parser $parser ) {
 		// Register the hook with the parser
 		$parser->setHook( 'inputbox', [ 'InputBoxHooks', 'render' ] );
 
@@ -93,11 +93,8 @@ class InputBoxHooks {
 			return true;
 		}
 
+		$title = $request->getText( 'prefix', '' ) . $request->getText( 'title', '' );
 		$params = $request->getValues();
-		$title = $params['prefix'];
-		if ( isset( $params['title'] ) ) {
-			$title .= $params['title'];
-		}
 		unset( $params['prefix'] );
 		$params['title'] = $title;
 

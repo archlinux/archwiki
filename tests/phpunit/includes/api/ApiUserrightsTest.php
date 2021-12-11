@@ -12,12 +12,16 @@ use MediaWiki\MediaWikiServices;
  */
 class ApiUserrightsTest extends ApiTestCase {
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		$this->tablesUsed = array_merge(
 			$this->tablesUsed,
 			[ 'change_tag', 'change_tag_def', 'logging' ]
 		);
+		$this->setMwGlobals( [
+			'wgAddGroups' => [],
+			'wgRemoveGroups' => [],
+		] );
 	}
 
 	/**
@@ -96,7 +100,8 @@ class ApiUserrightsTest extends ApiTestCase {
 	) {
 		$params['action'] = 'userrights';
 
-		$this->setExpectedException( ApiUsageException::class, $expectedException );
+		$this->expectException( ApiUsageException::class );
+		$this->expectExceptionMessage( $expectedException );
 
 		if ( !$user ) {
 			// If 'user' or 'userid' is specified and $user was not specified,
@@ -130,16 +135,17 @@ class ApiUserrightsTest extends ApiTestCase {
 	}
 
 	public function testBlockedWithUserrights() {
-		global $wgUser;
+		$user = $this->getTestSysop()->getUser();
 
-		$block = new DatabaseBlock( [ 'address' => $wgUser, 'by' => $wgUser->getId(), ] );
-		$block->insert();
+		$block = new DatabaseBlock( [ 'address' => $user, 'by' => $user->getId(), ] );
+		$blockStore = MediaWikiServices::getInstance()->getDatabaseBlockStore();
+		$blockStore->insertBlock( $block );
 
 		try {
 			$this->doSuccessfulRightsChange();
 		} finally {
-			$block->delete();
-			$wgUser->clearInstanceCache();
+			$blockStore->deleteBlock( $block );
+			$user->clearInstanceCache();
 		}
 	}
 
@@ -149,12 +155,13 @@ class ApiUserrightsTest extends ApiTestCase {
 		$this->setPermissions( true, true );
 
 		$block = new DatabaseBlock( [ 'address' => $user, 'by' => $user->getId() ] );
-		$block->insert();
+		$blockStore = MediaWikiServices::getInstance()->getDatabaseBlockStore();
+		$blockStore->insertBlock( $block );
 
 		try {
 			$this->doFailedRightsChange( 'You have been blocked from editing.' );
 		} finally {
-			$block->delete();
+			$blockStore->deleteBlock( $block );
 			$user->clearInstanceCache();
 		}
 	}
@@ -259,6 +266,7 @@ class ApiUserrightsTest extends ApiTestCase {
 	 * error in the way we construct the mock.
 	 *
 	 * @param bool $canProcessExpiries
+	 * @return ApiUserrights
 	 */
 	private function getMockForProcessingExpiries( $canProcessExpiries ) {
 		$sysop = $this->getTestSysop()->getUser();
@@ -305,7 +313,7 @@ class ApiUserrightsTest extends ApiTestCase {
 	 * @param array $expectedGroups Array of expected groups
 	 */
 	public function testAddAndRemoveGroups(
-		array $permissions = null, array $groupsToChange, array $expectedGroups
+		?array $permissions, array $groupsToChange, array $expectedGroups
 	) {
 		if ( $permissions !== null ) {
 			$this->setPermissions( $permissions[0], $permissions[1] );

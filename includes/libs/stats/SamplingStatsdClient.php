@@ -20,9 +20,9 @@
  * @file
  */
 
-use Liuggio\StatsdClient\StatsdClient;
 use Liuggio\StatsdClient\Entity\StatsdData;
 use Liuggio\StatsdClient\Entity\StatsdDataInterface;
+use Liuggio\StatsdClient\StatsdClient;
 
 /**
  * A statsd client that applies the sampling rate to the data items before sending them.
@@ -55,7 +55,7 @@ class SamplingStatsdClient extends StatsdClient {
 			$samplingRates = [ '*' => $sampleRate ];
 		}
 		if ( $samplingRates ) {
-			array_walk( $data, function ( $item ) use ( $samplingRates ) {
+			array_walk( $data, static function ( $item ) use ( $samplingRates ) {
 				/** @var StatsdData $item */
 				foreach ( $samplingRates as $pattern => $rate ) {
 					if ( fnmatch( $pattern, $item->getKey(), FNM_NOESCAPE ) ) {

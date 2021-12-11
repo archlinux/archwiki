@@ -20,10 +20,10 @@
 
 namespace MediaWiki\Storage;
 
+use ExternalStoreAccess;
 use MediaWiki\Config\ServiceOptions;
 use WANObjectCache;
 use Wikimedia\Rdbms\ILBFactory;
-use ExternalStoreAccess;
 
 /**
  * Service for instantiating BlobStores
@@ -55,8 +55,7 @@ class BlobStoreFactory {
 	private $options;
 
 	/**
-	 * @var array
-	 * @since 1.34
+	 * @internal For use by ServiceWiring
 	 */
 	public const CONSTRUCTOR_OPTIONS = [
 		'CompressRevisions',

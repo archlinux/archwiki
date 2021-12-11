@@ -27,7 +27,7 @@
  * @since 1.27
  */
 class ReverseArrayIterator implements Iterator, Countable {
-	/** @var array $array */
+	/** @var array */
 	protected $array;
 
 	/**
@@ -36,6 +36,7 @@ class ReverseArrayIterator implements Iterator, Countable {
 	 * of the object in reverse order.  (Note that the default order
 	 * for PHP arrays and objects is declaration/assignment order.)
 	 *
+	 * @phpcs:ignore MediaWiki.Commenting.FunctionComment.ObjectTypeHintParam
 	 * @param array|object $array
 	 */
 	public function __construct( $array = [] ) {

@@ -60,8 +60,13 @@
 		this.cache = config.cache;
 		this.api = config.api || new mw.Api();
 		// Supports: IE10, FF28, Chrome23
+		// eslint-disable-next-line compat/compat
 		this.compare = window.Intl && Intl.Collator ?
-			new Intl.Collator( mw.config.get( 'wgContentLanguage' ), { sensitivity: 'base' } ).compare :
+			// eslint-disable-next-line compat/compat
+			new Intl.Collator(
+				mw.language.bcp47( mw.config.get( 'wgContentLanguage' ) ),
+				{ sensitivity: 'base' }
+			).compare :
 			null;
 
 		// Initialization

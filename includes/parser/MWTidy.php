@@ -21,14 +21,14 @@
  * @ingroup Parser
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Class to interact with and configure Remex tidy
  *
  * @ingroup Parser
  */
 class MWTidy {
-	private static $instance;
-
 	/**
 	 * Interface with Remex tidy.
 	 * If tidy isn't able to correct the markup, the original will be
@@ -38,59 +38,9 @@ class MWTidy {
 	 *                     <body> or <html> tag.
 	 * @return string Corrected HTML output
 	 * @throws MWException
+	 * @deprecated since 1.36; use MediaWikiServices::getTidy()->tidy() instead
 	 */
 	public static function tidy( $text ) {
-		$driver = self::singleton();
-		if ( !$driver ) {
-			throw new MWException( __METHOD__ .
-				': tidy is disabled, caller should have checked MWTidy::isEnabled()' );
-		}
-		return $driver->tidy( $text );
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function isEnabled() {
-		return self::singleton() !== false;
-	}
-
-	/**
-	 * @return bool|\MediaWiki\Tidy\TidyDriverBase
-	 */
-	public static function singleton() {
-		global $wgTidyConfig;
-		if ( self::$instance === null ) {
-			self::$instance = self::factory( $wgTidyConfig );
-		}
-		return self::$instance;
-	}
-
-	/**
-	 * Create a new Tidy driver object from configuration.
-	 * @see $wgTidyConfig
-	 * @param array|null $config Optional since 1.33
-	 * @return bool|\MediaWiki\Tidy\TidyDriverBase
-	 * @throws MWException
-	 */
-	public static function factory( array $config = null ) {
-		return new MediaWiki\Tidy\RemexDriver( $config ?? [] );
-	}
-
-	/**
-	 * Set the driver to be used. This is for testing.
-	 * @param MediaWiki\Tidy\TidyDriverBase|false|null $instance
-	 * @deprecated Since 1.33
-	 */
-	public static function setInstance( $instance ) {
-		wfDeprecated( __METHOD__, '1.33' );
-		self::$instance = $instance;
-	}
-
-	/**
-	 * Destroy the current singleton instance
-	 */
-	public static function destroySingleton() {
-		self::$instance = null;
+		return MediaWikiServices::getInstance()->getTidy()->tidy( $text );
 	}
 }

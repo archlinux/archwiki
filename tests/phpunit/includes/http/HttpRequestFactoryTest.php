@@ -1,20 +1,38 @@
 <?php
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Http\HttpRequestFactory;
+use Psr\Log\NullLogger;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @covers MediaWiki\Http\HttpRequestFactory
  */
-class HttpRequestFactoryTest extends MediaWikiTestCase {
+class HttpRequestFactoryTest extends MediaWikiIntegrationTestCase {
 
 	/**
+	 * @param array|null $options
 	 * @return HttpRequestFactory
 	 */
-	private function newFactory() {
-		return new HttpRequestFactory();
+	private function newFactory( $options = null ) {
+		if ( !$options ) {
+			$options = [
+				'HTTPTimeout' => 1,
+				'HTTPConnectTimeout' => 1,
+				'HTTPMaxTimeout' => INF,
+				'HTTPMaxConnectTimeout' => INF
+			];
+		}
+		return new HttpRequestFactory(
+			new ServiceOptions( HttpRequestFactory::CONSTRUCTOR_OPTIONS, $options ),
+			new NullLogger
+		);
 	}
 
 	/**
+	 * @param MWHttpRequest $req
+	 * @param string $expectedUrl
+	 * @param array $expectedOptions
 	 * @return HttpRequestFactory
 	 */
 	private function newFactoryWithFakeRequest(
@@ -24,6 +42,7 @@ class HttpRequestFactoryTest extends MediaWikiTestCase {
 	) {
 		$factory = $this->getMockBuilder( HttpRequestFactory::class )
 			->setMethods( [ 'create' ] )
+			->disableOriginalConstructor()
 			->getMock();
 
 		$factory->method( 'create' )
@@ -46,6 +65,7 @@ class HttpRequestFactoryTest extends MediaWikiTestCase {
 	}
 
 	/**
+	 * @param Status|string $result
 	 * @return MWHttpRequest
 	 */
 	private function newFakeRequest( $result ) {
@@ -116,4 +136,124 @@ class HttpRequestFactoryTest extends MediaWikiTestCase {
 		$this->assertNull( $factory->request( 'POST', 'https://example.test' ) );
 	}
 
+	public static function provideCreateTimeouts() {
+		return [
+			'normal config defaults' => [
+				[
+					'HTTPTimeout' => 10,
+					'HTTPConnectTimeout' => 20,
+					'HTTPMaxTimeout' => INF,
+					'HTTPMaxConnectTimeout' => INF
+				],
+				[],
+				[
+					'timeout' => 10,
+					'connectTimeout' => 20
+				]
+			],
+			'config defaults overridden by max' => [
+				[
+					'HTTPTimeout' => 10,
+					'HTTPConnectTimeout' => 20,
+					'HTTPMaxTimeout' => 9,
+					'HTTPMaxConnectTimeout' => 11
+				],
+				[],
+				[
+					'timeout' => 9,
+					'connectTimeout' => 11
+				]
+			],
+			'create option overridden by max config' => [
+				[
+					'HTTPTimeout' => 1,
+					'HTTPConnectTimeout' => 2,
+					'HTTPMaxTimeout' => 9,
+					'HTTPMaxConnectTimeout' => 11
+				],
+				[
+					'timeout' => 100,
+					'connectTimeout' => 200
+				],
+				[
+					'timeout' => 9,
+					'connectTimeout' => 11
+				]
+			],
+			'create option below max config' => [
+				[
+					'HTTPTimeout' => 1,
+					'HTTPConnectTimeout' => 2,
+					'HTTPMaxTimeout' => 9,
+					'HTTPMaxConnectTimeout' => 11
+				],
+				[
+					'timeout' => 7,
+					'connectTimeout' => 8
+				],
+				[
+					'timeout' => 7,
+					'connectTimeout' => 8
+				]
+			],
+			'max config overridden by max create option ' => [
+				[
+					'HTTPTimeout' => 1,
+					'HTTPConnectTimeout' => 2,
+					'HTTPMaxTimeout' => 9,
+					'HTTPMaxConnectTimeout' => 11
+				],
+				[
+					'timeout' => 100,
+					'connectTimeout' => 200,
+					'maxTimeout' => 100,
+					'maxConnectTimeout' => 200
+				],
+				[
+					'timeout' => 100,
+					'connectTimeout' => 200
+				]
+			],
+		];
+	}
+
+	/** @dataProvider provideCreateTimeouts */
+	public function testCreateTimeouts( $config, $createOptions, $expected ) {
+		$factory = $this->newFactory( $config );
+		$request = $factory->create( 'https://example.test', $createOptions );
+		$request = TestingAccessWrapper::newFromObject( $request );
+		foreach ( $expected as $key => $expectedValue ) {
+			$this->assertEquals( $expectedValue, $request->$key, "key $key" );
+		}
+	}
+
+	/** @dataProvider provideCreateTimeouts */
+	public function testCreateMultiTimeouts( $config, $createOptions, $expected ) {
+		$factory = $this->newFactory( $config );
+		$multi = $factory->createMultiClient( $createOptions );
+		$multi = TestingAccessWrapper::newFromObject( $multi );
+		$this->assertEquals( $expected['connectTimeout'], $multi->connTimeout );
+		$this->assertEquals( $expected['timeout'], $multi->reqTimeout );
+	}
+
+	/** @dataProvider provideCreateTimeouts */
+	public function testCreateGuzzleClient( $config, $createOptions, $expected ) {
+		$factory = $this->newFactory( $config );
+		$client = $factory->createGuzzleClient(
+			[
+				'timeout' => $createOptions['timeout'] ?? null,
+				'connect_timeout' => $createOptions['connectTimeout'] ?? null,
+				'maxTimeout' => $createOptions['maxTimeout'] ?? null,
+				'maxConnectTimeout' => $createOptions['maxConnectTimeout'] ?? null
+			]
+		);
+		$this->assertEquals(
+			$expected['connectTimeout'],
+			$client->getConfig( 'connect_timeout' )
+		);
+		$this->assertEquals(
+			$expected['timeout'],
+			$client->getConfig( 'timeout' )
+		);
+	}
 }

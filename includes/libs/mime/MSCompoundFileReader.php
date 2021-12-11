@@ -41,19 +41,18 @@ class MSCompoundFileReader {
 	private $sectorLength;
 	private $difat;
 	private $fat = [];
-	private $fileLength;
 
-	const TYPE_UNALLOCATED = 0;
-	const TYPE_STORAGE = 1;
-	const TYPE_STREAM = 2;
-	const TYPE_ROOT = 5;
+	private const TYPE_UNALLOCATED = 0;
+	private const TYPE_STORAGE = 1;
+	private const TYPE_STREAM = 2;
+	private const TYPE_ROOT = 5;
 
-	const ERROR_FILE_OPEN = 1;
-	const ERROR_SEEK = 2;
-	const ERROR_READ = 3;
-	const ERROR_INVALID_SIGNATURE = 4;
-	const ERROR_READ_PAST_END = 5;
-	const ERROR_INVALID_FORMAT = 6;
+	public const ERROR_FILE_OPEN = 1;
+	public const ERROR_SEEK = 2;
+	public const ERROR_READ = 3;
+	public const ERROR_INVALID_SIGNATURE = 4;
+	public const ERROR_READ_PAST_END = 5;
+	public const ERROR_INVALID_FORMAT = 6;
 
 	private static $mimesByClsid = [
 		// From http://justsolve.archiveteam.org/wiki/Microsoft_Compound_File
@@ -149,7 +148,6 @@ class MSCompoundFileReader {
 			$this->error( 'invalid signature: ' . bin2hex( $this->header['header_signature'] ),
 				self::ERROR_INVALID_SIGNATURE );
 		}
-		// @phan-suppress-next-line PhanTypeInvalidRightOperandOfIntegerOp
 		$this->sectorLength = 1 << $this->header['sector_shift'];
 		$this->readDifat();
 		$this->readDirectory();
@@ -232,7 +230,6 @@ class MSCompoundFileReader {
 	}
 
 	private function readSector( $sectorId ) {
-		// @phan-suppress-next-line PhanTypeInvalidRightOperandOfIntegerOp
 		return $this->readOffset( $this->sectorOffset( $sectorId ), 1 << $this->header['sector_shift'] );
 	}
 

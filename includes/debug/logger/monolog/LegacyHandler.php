@@ -50,39 +50,39 @@ class LegacyHandler extends AbstractProcessingHandler {
 
 	/**
 	 * Log sink descriptor
-	 * @var string $uri
+	 * @var string
 	 */
 	protected $uri;
 
 	/**
 	 * Filter log events using legacy rules
-	 * @var bool $useLegacyFilter
+	 * @var bool
 	 */
 	protected $useLegacyFilter;
 
 	/**
 	 * Log sink
-	 * @var resource $sink
+	 * @var resource
 	 */
 	protected $sink;
 
 	/**
-	 * @var string $error
+	 * @var string
 	 */
 	protected $error;
 
 	/**
-	 * @var string $host
+	 * @var string
 	 */
 	protected $host;
 
 	/**
-	 * @var int $port
+	 * @var int
 	 */
 	protected $port;
 
 	/**
-	 * @var string $prefix
+	 * @var string
 	 */
 	protected $prefix;
 
@@ -175,7 +175,7 @@ class LegacyHandler extends AbstractProcessingHandler {
 		return $this->host !== null;
 	}
 
-	protected function write( array $record ) {
+	protected function write( array $record ): void {
 		if ( $this->useLegacyFilter &&
 			!LegacyLogger::shouldEmit(
 				$record['channel'], $record['message'],
@@ -222,7 +222,7 @@ class LegacyHandler extends AbstractProcessingHandler {
 		}
 	}
 
-	public function close() {
+	public function close(): void {
 		if ( is_resource( $this->sink ) ) {
 			if ( $this->useUdp() ) {
 				socket_close( $this->sink );

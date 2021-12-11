@@ -1,7 +1,5 @@
 <?php
 /**
- * Profiler showing output in page source.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,11 +16,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Profiler
  */
 
 /**
- * The least sophisticated profiler output class possible, view your source! :)
+ * Adds profiler output to the HTTP response.
+ *
+ * The least sophisticated profiler output class possible, view source! :)
  *
  * @ingroup Profiler
  * @since 1.25
@@ -34,7 +33,7 @@ class ProfilerOutputText extends ProfilerOutput {
 	/** @var bool Whether to use visible text or a comment (for HTML responses) */
 	private $visible;
 
-	function __construct( Profiler $collector, array $params ) {
+	public function __construct( Profiler $collector, array $params ) {
 		parent::__construct( $collector, $params );
 		$this->thresholdMs = $params['thresholdMs'] ?? 1.0;
 		$this->visible = $params['visible'] ?? false;
@@ -49,16 +48,16 @@ class ProfilerOutputText extends ProfilerOutput {
 
 		// Filter out really tiny entries
 		$min = $this->thresholdMs;
-		$stats = array_filter( $stats, function ( $a ) use ( $min ) {
+		$stats = array_filter( $stats, static function ( $a ) use ( $min ) {
 			return $a['real'] > $min;
 		} );
 		// Sort descending by time elapsed
-		usort( $stats, function ( $a, $b ) {
+		usort( $stats, static function ( $a, $b ) {
 			return $b['real'] <=> $a['real'];
 		} );
 
 		array_walk( $stats,
-			function ( $item ) use ( &$out ) {
+			static function ( $item ) use ( &$out ) {
 				$out .= sprintf( "%6.2f%% %3.3f %6d - %s\n",
 					$item['%real'], $item['real'], $item['calls'], $item['name'] );
 			}

@@ -21,11 +21,14 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\ActorStoreFactory;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
- * This class handles the logic for the actor table migration.
+ * This class handles the logic for the actor table migration and should
+ * always be used in lieu of directly accessing database tables.
  *
  * This is not intended to be a long-term part of MediaWiki; it will be
  * deprecated and removed once actor migration is complete.
@@ -41,17 +44,17 @@ class ActorMigration {
 	 * Constant for extensions to feature-test whether $wgActorTableSchemaMigrationStage
 	 * (in MW <1.34) expects MIGRATION_* or SCHEMA_COMPAT_*
 	 */
-	const MIGRATION_STAGE_SCHEMA_COMPAT = 1;
+	public const MIGRATION_STAGE_SCHEMA_COMPAT = 1;
 
 	/**
 	 * Define fields that use temporary tables for transitional purposes
-	 * @var array Keys are '$key', values are arrays with four fields:
+	 * Array keys are field names, values are arrays with these possible fields:
 	 *  - table: Temporary table name
 	 *  - pk: Temporary table column referring to the main table's primary key
 	 *  - field: Temporary table column referring actor.actor_id
 	 *  - joinPK: Main table's primary key
 	 */
-	private static $tempTables = [
+	protected const TEMP_TABLES = [
 		'rev_user' => [
 			'table' => 'revision_actor_temp',
 			'pk' => 'revactor_rev',
@@ -65,18 +68,17 @@ class ActorMigration {
 	];
 
 	/**
-	 * Fields that formerly used $tempTables
-	 * @var array Key is '$key', value is the MediaWiki version in which it was
-	 *  removed from $tempTables.
+	 * Fields that formerly used TEMP_TABLES
+	 * Array keys are field names, values are the MediaWiki version when it was removed.
 	 */
-	private static $formerTempTables = [];
+	protected const FORMER_TEMP_TABLES = [];
 
 	/**
 	 * Define fields that are deprecated for use with this class.
-	 * @var (string|null)[] Keys are '$key', value is null for soft deprecation
+	 * Array keys are field names, values are null for soft deprecation
 	 *  or a string naming the deprecated version for hard deprecation.
 	 */
-	private static $deprecated = [
+	protected const DEPRECATED = [
 		'ar_user' => null, // 1.34
 		'img_user' => null, // 1.34
 		'oi_user' => null, // 1.34
@@ -88,28 +90,37 @@ class ActorMigration {
 
 	/**
 	 * Define fields that are removed for use with this class.
-	 * @var string[] Keys are '$key', value is the MediaWiki version in which
-	 *  use was removed.
+	 * Array keys are field names, values are the MediaWiki version in which use was removed.
 	 */
-	private static $removed = [];
+	protected const REMOVED = [];
 
 	/**
 	 * Define fields that use non-standard mapping
-	 * @var array Keys are the user id column name, values are arrays with two
+	 * Array keys are the user id column name, values are arrays with two
 	 *  elements (the user text column name and the actor id column name)
 	 */
-	private static $specialFields = [
+	protected const SPECIAL_FIELDS = [
 		'ipb_by' => [ 'ipb_by_text', 'ipb_by_actor' ],
 	];
 
-	/** @var array|null Cache for `self::getJoin()` */
-	private $joinCache = null;
+	/** @var array[] Cache for `self::getJoin()` */
+	private $joinCache = [];
 
 	/** @var int Combination of SCHEMA_COMPAT_* constants */
 	private $stage;
 
-	/** @private */
-	public function __construct( $stage ) {
+	/** @var ActorStoreFactory */
+	private $actorStoreFactory;
+
+	/**
+	 * @param int $stage
+	 * @param ActorStoreFactory $actorStoreFactory
+	 * @internal
+	 */
+	public function __construct(
+		$stage,
+		ActorStoreFactory $actorStoreFactory
+	) {
 		if ( ( $stage & SCHEMA_COMPAT_WRITE_BOTH ) === 0 ) {
 			throw new InvalidArgumentException( '$stage must include a write mode' );
 		}
@@ -127,11 +138,12 @@ class ActorMigration {
 		}
 
 		$this->stage = $stage;
+		$this->actorStoreFactory = $actorStoreFactory;
 	}
 
 	/**
 	 * Static constructor
-	 * @return ActorMigration
+	 * @return self
 	 */
 	public static function newMigration() {
 		return MediaWikiServices::getInstance()->getActorMigration();
@@ -142,13 +154,13 @@ class ActorMigration {
 	 * @param string $key
 	 */
 	private static function checkDeprecation( $key ) {
-		if ( isset( self::$removed[$key] ) ) {
+		if ( isset( static::REMOVED[$key] ) ) {
 			throw new InvalidArgumentException(
-				"Use of " . static::class . " for '$key' was removed in MediaWiki " . self::$removed[$key]
+				"Use of ActorMigration for '$key' was removed in MediaWiki " . static::REMOVED[$key]
 			);
 		}
-		if ( !empty( self::$deprecated[$key] ) ) {
-			wfDeprecated( static::class . " for '$key'", self::$deprecated[$key], false, 3 );
+		if ( !empty( static::DEPRECATED[$key] ) ) {
+			wfDeprecated( "ActorMigration for '$key'", static::DEPRECATED[$key], false, 3 );
 		}
 	}
 
@@ -176,7 +188,7 @@ class ActorMigration {
 	 * @return string[] [ $text, $actor ]
 	 */
 	private static function getFieldNames( $key ) {
-		return self::$specialFields[$key] ?? [ $key . '_text', substr( $key, 0, -5 ) . '_actor' ];
+		return static::SPECIAL_FIELDS[$key] ?? [ $key . '_text', substr( $key, 0, -5 ) . '_actor' ];
 	}
 
 	/**
@@ -206,8 +218,8 @@ class ActorMigration {
 				$fields[$text] = $text;
 				$fields[$actor] = 'NULL';
 			} else {
-				if ( isset( self::$tempTables[$key] ) ) {
-					$t = self::$tempTables[$key];
+				if ( isset( static::TEMP_TABLES[$key] ) ) {
+					$t = static::TEMP_TABLES[$key];
 					$alias = "temp_$key";
 					$tables[$alias] = $t['table'];
 					$joins[$alias] = [ 'JOIN', "{$alias}.{$t['pk']} = {$t['joinPK']}" ];
@@ -236,6 +248,50 @@ class ActorMigration {
 	}
 
 	/**
+	 * Get actor ID from UserIdentity, if it exists
+	 *
+	 * @since 1.35.0
+	 * @deprecated since 1.36. Use ActorStore::findActorId instead.
+	 *
+	 * @param IDatabase $db
+	 * @param UserIdentity $user
+	 * @return int|false
+	 */
+	public function getExistingActorId( IDatabase $db, UserIdentity $user ) {
+		wfDeprecated( __METHOD__, '1.36' );
+		// Get the correct ActorStore based on the DB passed,
+		// and not on the passed $user wiki ID, since before all
+		// User object are LOCAL, but the databased passed here can be
+		// foreign.
+		return $this->actorStoreFactory
+			->getActorNormalization( $db->getDomainID() )
+			->findActorId( $user, $db );
+	}
+
+	/**
+	 * Attempt to assign an actor ID to the given user.
+	 * If it is already assigned, return the existing ID.
+	 *
+	 * @since 1.35.0
+	 * @deprecated since 1.36. Use ActorStore::acquireActorId instead.
+	 *
+	 * @param IDatabase $dbw
+	 * @param UserIdentity $user
+	 *
+	 * @return int The new actor ID
+	 */
+	public function getNewActorId( IDatabase $dbw, UserIdentity $user ) {
+		wfDeprecated( __METHOD__, '1.36' );
+		// Get the correct ActorStore based on the DB passed,
+		// and not on the passed $user wiki ID, since before all
+		// User object are LOCAL, but the databased passed here can be
+		// foreign.
+		return $this->actorStoreFactory
+			->getActorNormalization( $dbw->getDomainID() )
+			->acquireActorId( $user, $dbw );
+	}
+
+	/**
 	 * Get UPDATE fields for the actor
 	 *
 	 * @param IDatabase $dbw Database to use for creating an actor ID, if necessary
@@ -247,7 +303,7 @@ class ActorMigration {
 	public function getInsertValues( IDatabase $dbw, $key, UserIdentity $user ) {
 		self::checkDeprecation( $key );
 
-		if ( isset( self::$tempTables[$key] ) ) {
+		if ( isset( static::TEMP_TABLES[$key] ) ) {
 			throw new InvalidArgumentException( "Must use getInsertValuesWithTempTable() for $key" );
 		}
 
@@ -258,11 +314,9 @@ class ActorMigration {
 			$ret[$text] = $user->getName();
 		}
 		if ( $this->stage & SCHEMA_COMPAT_WRITE_NEW ) {
-			// We need to be able to assign an actor ID if none exists
-			if ( !$user instanceof User && !$user->getActorId() ) {
-				$user = User::newFromAnyId( $user->getId(), $user->getName(), null );
-			}
-			$ret[$actor] = $user->getActorId( $dbw );
+			$ret[$actor] = $this->actorStoreFactory
+				->getActorNormalization( $dbw->getDomainID() )
+				->acquireActorId( $user, $dbw );
 		}
 		return $ret;
 	}
@@ -282,9 +336,9 @@ class ActorMigration {
 	public function getInsertValuesWithTempTable( IDatabase $dbw, $key, UserIdentity $user ) {
 		self::checkDeprecation( $key );
 
-		if ( isset( self::$formerTempTables[$key] ) ) {
-			wfDeprecated( __METHOD__ . " for $key", self::$formerTempTables[$key] );
-		} elseif ( !isset( self::$tempTables[$key] ) ) {
+		if ( isset( static::FORMER_TEMP_TABLES[$key] ) ) {
+			wfDeprecated( __METHOD__ . " for $key", static::FORMER_TEMP_TABLES[$key] );
+		} elseif ( !isset( static::TEMP_TABLES[$key] ) ) {
 			throw new InvalidArgumentException( "Must use getInsertValues() for $key" );
 		}
 
@@ -296,16 +350,14 @@ class ActorMigration {
 			$ret[$text] = $user->getName();
 		}
 		if ( $this->stage & SCHEMA_COMPAT_WRITE_NEW ) {
-			// We need to be able to assign an actor ID if none exists
-			if ( !$user instanceof User && !$user->getActorId() ) {
-				$user = User::newFromAnyId( $user->getId(), $user->getName(), null );
-			}
-			$id = $user->getActorId( $dbw );
+			$id = $this->actorStoreFactory
+				->getActorNormalization( $dbw->getDomainID() )
+				->acquireActorId( $user, $dbw );
 
-			if ( isset( self::$tempTables[$key] ) ) {
+			if ( isset( static::TEMP_TABLES[$key] ) ) {
 				$func = __METHOD__;
-				$callback = function ( $pk, array $extra ) use ( $dbw, $key, $id, $func ) {
-					$t = self::$tempTables[$key];
+				$callback = static function ( $pk, array $extra ) use ( $dbw, $key, $id, $func ) {
+					$t = static::TEMP_TABLES[$key];
 					$set = [ $t['field'] => $id ];
 					foreach ( $t['extra'] as $to => $from ) {
 						if ( !array_key_exists( $from, $extra ) ) {
@@ -316,20 +368,20 @@ class ActorMigration {
 					$dbw->upsert(
 						$t['table'],
 						[ $t['pk'] => $pk ] + $set,
-						[ $t['pk'] ],
+						[ [ $t['pk'] ] ],
 						$set,
 						$func
 					);
 				};
 			} else {
 				$ret[$actor] = $id;
-				$callback = function ( $pk, array $extra ) {
+				$callback = static function ( $pk, array $extra ) {
 				};
 			}
-		} elseif ( isset( self::$tempTables[$key] ) ) {
+		} elseif ( isset( static::TEMP_TABLES[$key] ) ) {
 			$func = __METHOD__;
-			$callback = function ( $pk, array $extra ) use ( $key, $func ) {
-				$t = self::$tempTables[$key];
+			$callback = static function ( $pk, array $extra ) use ( $key, $func ) {
+				$t = static::TEMP_TABLES[$key];
 				foreach ( $t['extra'] as $to => $from ) {
 					if ( !array_key_exists( $from, $extra ) ) {
 						throw new InvalidArgumentException( "$func callback: \$extra[$from] is not provided" );
@@ -337,7 +389,7 @@ class ActorMigration {
 				}
 			};
 		} else {
-			$callback = function ( $pk, array $extra ) {
+			$callback = static function ( $pk, array $extra ) {
 			};
 		}
 		return [ $ret, $callback ];
@@ -349,7 +401,9 @@ class ActorMigration {
 	 * @param IDatabase $db Database to use for quoting and list-making
 	 * @param string $key A key such as "rev_user" identifying the actor
 	 *  field being fetched.
-	 * @param UserIdentity|UserIdentity[] $users Users to test for
+	 * @param UserIdentity|UserIdentity[]|null|false $users Users to test for.
+	 *  Passing null, false, or the empty array will return 'conds' that never match,
+	 *  and an empty array for 'orconds'.
 	 * @param bool $useId If false, don't try to query by the user ID.
 	 *  Intended for use with rc_user since it has an index on
 	 *  (rc_user_text,rc_timestamp) but not (rc_user,rc_timestamp).
@@ -373,6 +427,14 @@ class ActorMigration {
 
 		if ( $users instanceof UserIdentity ) {
 			$users = [ $users ];
+		} elseif ( $users === null || $users === false ) {
+			// DWIM
+			$users = [];
+		} elseif ( !is_array( $users ) ) {
+			$what = is_object( $users ) ? get_class( $users ) : gettype( $users );
+			throw new InvalidArgumentException(
+				__METHOD__ . ": Value for \$users must be a UserIdentity or array, got $what"
+			);
 		}
 
 		// Get information about all the passed users
@@ -383,9 +445,13 @@ class ActorMigration {
 			if ( $useId && $user->getId() ) {
 				$ids[] = $user->getId();
 			} else {
-				$names[] = $user->getName();
+				// make sure to use normalized form of IP for anonymous users
+				$names[] = IPUtils::sanitizeIP( $user->getName() );
 			}
-			$actorId = $user->getActorId();
+			$actorId = $this->actorStoreFactory
+				->getActorNormalization( $db->getDomainID() )
+				->findActorId( $user, $db );
+
 			if ( $actorId ) {
 				$actors[] = $actorId;
 			}
@@ -396,8 +462,8 @@ class ActorMigration {
 		// Combine data into conditions to be ORed together
 		if ( $this->stage & SCHEMA_COMPAT_READ_NEW ) {
 			if ( $actors ) {
-				if ( isset( self::$tempTables[$key] ) ) {
-					$t = self::$tempTables[$key];
+				if ( isset( static::TEMP_TABLES[$key] ) ) {
+					$t = static::TEMP_TABLES[$key];
 					$alias = "temp_$key";
 					$tables[$alias] = $t['table'];
 					$joins[$alias] = [ 'JOIN', "{$alias}.{$t['pk']} = {$t['joinPK']}" ];
@@ -423,5 +489,4 @@ class ActorMigration {
 			'joins' => $joins,
 		];
 	}
-
 }

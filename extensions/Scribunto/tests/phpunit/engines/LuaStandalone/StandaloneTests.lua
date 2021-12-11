@@ -20,53 +20,53 @@ end
 
 return testframework.getTestProvider( {
 	{ name = 'setfenv on a C function', func = setfenv1,
-	  expect = "'setfenv' cannot set the requested environment, it is protected",
+		expect = "'setfenv' cannot set the requested environment, it is protected",
 	},
 	{ name = 'getfenv on a C function', func = getfenv1,
-	  expect = { nil },
+		expect = { nil },
 	},
 	{ name = 'Invalid array key (table)', func = mw.var_export,
-	  args = { { [{}] = 1 } },
-	  expect = 'Cannot use table as an array key when passing data from Lua to PHP',
+		args = { { [{}] = 1 } },
+		expect = 'Cannot use table as an array key when passing data from Lua to PHP',
 	},
 	{ name = 'Invalid array key (boolean)', func = mw.var_export,
-	  args = { { [true] = 1 } },
-	  expect = 'Cannot use boolean as an array key when passing data from Lua to PHP',
+		args = { { [true] = 1 } },
+		expect = 'Cannot use boolean as an array key when passing data from Lua to PHP',
 	},
 	{ name = 'Invalid array key (function)', func = mw.var_export,
-	  args = { { [tostring] = 1 } },
-	  expect = 'Cannot use function as an array key when passing data from Lua to PHP',
+		args = { { [tostring] = 1 } },
+		expect = 'Cannot use function as an array key when passing data from Lua to PHP',
 	},
 	{ name = 'Unusual array key (float)', func = mw.var_export,
-	  args = { { [1.5] = 1 } },
-	  expect = { "array ( '1.5' => 1, )" }
+		args = { { [1.5] = 1 } },
+		expect = { "array ( '1.5' => 1, )" }
 	},
 	{ name = 'Unusual array key (inf)', func = mw.var_export,
-	  args = { { [math.huge] = 1 } },
-	  expect = { "array ( 'inf' => 1, )" }
+		args = { { [math.huge] = 1 } },
+		expect = { "array ( 'inf' => 1, )" }
 	},
 	{ name = 'Unusual array key ("00")', func = mw.var_export,
-	  args = { { ["00"] = "zero zero" } },
-	  expect = { "array ( '00' => 'zero zero', )" }
+		args = { { ["00"] = "zero zero" } },
+		expect = { "array ( '00' => 'zero zero', )" }
 	},
 	{ name = 'Unusual array key ("0.0")', func = mw.var_export,
-	  args = { { ["0.0"] = "zero . zero" } },
-	  expect = { "array ( '0.0' => 'zero . zero', )" }
+		args = { { ["0.0"] = "zero . zero" } },
+		expect = { "array ( '0.0' => 'zero . zero', )" }
 	},
 	{ name = 'Unusual array key ("01")', func = mw.var_export,
-	  args = { { ["01"] = "zero one" } },
-	  expect = { "array ( '01' => 'zero one', )" }
+		args = { { ["01"] = "zero one" } },
+		expect = { "array ( '01' => 'zero one', )" }
 	},
 	{ name = 'Unusual array key ("-9223372036854775808")', func = mw.var_export,
-	  args = { { ["-9223372036854775808"] = "min" } },
-	  expect = { "array ( -9223372036854775808 => 'min', )" }
+		args = { { ["-9223372036854775808"] = "min" } },
+		expect = { "array ( -9223372036854775808 => 'min', )" }
 	},
 	{ name = 'Unusual array key (-9223372036854775808)', func = mw.var_export,
-	  args = { { [-9223372036854775808] = "min" } },
-	  expect = { "array ( -9223372036854775808 => 'min', )" }
+		args = { { [-9223372036854775808] = "min" } },
+		expect = { "array ( -9223372036854775808 => 'min', )" }
 	},
 	{ name = 'Unusual array key ("-9223372036854775809")', func = mw.var_export,
-	  args = { { ["-9223372036854775809"] = "min - 1" } },
-	  expect = { "array ( '-9223372036854775809' => 'min - 1', )" }
+		args = { { ["-9223372036854775809"] = "min - 1" } },
+		expect = { "array ( '-9223372036854775809' => 'min - 1', )" }
 	},
 } )

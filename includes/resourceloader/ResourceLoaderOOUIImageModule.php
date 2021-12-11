@@ -53,14 +53,14 @@ class ResourceLoaderOOUIImageModule extends ResourceLoaderImageModule {
 					// Images and color variants are defined per-theme, here converted to per-skin
 					case 'images':
 					case 'variants':
-						$definition[$key][$skin] = $data[$key];
+						$definition[$key][$skin] = $value;
 						break;
 
 					// Other options must be identical for each theme (or only defined in the default one)
 					default:
 						if ( !isset( $definition[$key] ) ) {
-							$definition[$key] = $data[$key];
-						} elseif ( $definition[$key] !== $data[$key] ) {
+							$definition[$key] = $value;
+						} elseif ( $definition[$key] !== $value ) {
 							throw new Exception(
 								"Mismatched OOUI theme images definition: " .
 									"key '$key' of theme '$theme' for module '$module' " .
@@ -91,7 +91,8 @@ class ResourceLoaderOOUIImageModule extends ResourceLoaderImageModule {
 	 * @since 1.34
 	 * @param string $theme
 	 * @param string $module
-	 * @return array
+	 * @return array|false
+	 * @suppress PhanTypeArraySuspiciousNullable
 	 */
 	protected function loadOOUIDefinition( $theme, $module ) {
 		// Find the path to the JSON file which contains the actual image definitions for this theme
@@ -129,7 +130,7 @@ class ResourceLoaderOOUIImageModule extends ResourceLoaderImageModule {
 
 		// Expand the paths to images (since they are relative to the JSON file that defines them, not
 		// our base directory)
-		$fixPath = function ( &$path ) use ( $dataPath ) {
+		$fixPath = static function ( &$path ) use ( $dataPath ) {
 			if ( $dataPath instanceof ResourceLoaderFilePath ) {
 				$path = new ResourceLoaderFilePath(
 					dirname( $dataPath->getPath() ) . '/' . $path,
@@ -140,7 +141,8 @@ class ResourceLoaderOOUIImageModule extends ResourceLoaderImageModule {
 				$path = dirname( $dataPath ) . '/' . $path;
 			}
 		};
-		array_walk( $data['images'], function ( &$value ) use ( $fixPath ) {
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		array_walk( $data['images'], static function ( &$value ) use ( $fixPath ) {
 			if ( is_string( $value['file'] ) ) {
 				$fixPath( $value['file'] );
 			} elseif ( is_array( $value['file'] ) ) {

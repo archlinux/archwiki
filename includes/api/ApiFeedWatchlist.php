@@ -51,6 +51,7 @@ class ApiFeedWatchlist extends ApiBase {
 		$config = $this->getConfig();
 		$feedClasses = $config->get( 'FeedClasses' );
 		$params = [];
+		$feedItems = [];
 		try {
 			$params = $this->extractRequestParams();
 
@@ -110,7 +111,6 @@ class ApiFeedWatchlist extends ApiBase {
 			$module->execute();
 
 			$data = $module->getResult()->getResultData( [ 'query', 'watchlist' ] );
-			$feedItems = [];
 			foreach ( (array)$data as $key => $info ) {
 				if ( ApiResult::isMetadataKey( $key ) ) {
 					continue;
@@ -263,6 +263,7 @@ class ApiFeedWatchlist extends ApiBase {
 			'excludeuser' => 'wlexcludeuser',
 		];
 		if ( $flags ) {
+			// @phan-suppress-next-line PhanParamTooMany
 			$wlparams = $this->getWatchlistModule()->getAllowedParams( $flags );
 			foreach ( $copyParams as $from => $to ) {
 				$p = $wlparams[$from];

@@ -1,3 +1,9 @@
+!! Version 2
+# Force the test runner to ensure the extension is loaded
+!! functionhooks
+invoke
+!! endfunctionhooks
+
 !! article
 Module:Test
 !! text
@@ -225,64 +231,64 @@ Template:Scribunto_frame_caching
 
 !! test
 Scribunto: no such module
-!! input
+!! wikitext
 {{#invoke:foo|bar}}
-!! result
+!! html
 <p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-0">Script error: No such module &quot;foo&quot;.</span></strong>
 </p>
 !! end
 
 !! test
 Scribunto: no such function
-!! input
+!! wikitext
 {{#invoke:test|blah}}
-!! result
+!! html
 <p><strong class="error"><span class="scribunto-error" id="mw-scribunto-error-0">Script error: The function &quot;blah&quot; does not exist.</span></strong>
 </p>
 !! end
 
 !! test
 Scribunto: hello world
-!! input
+!! wikitext
 {{#invoke:test|hello}}
-!! result
+!! html
 <p>hello
 </p>
 !! end
 
 !! test
 Scribunto: getAllArgs
-!! input
+!! wikitext
 {{#invoke:test|getAllArgs|x|y|z|a=1|b=2|c=3|7=?}}
-!! result
+!! html
 <p>1=x, 2=y, 3=z, 7=?, a=1, b=2, c=3
 </p>
 !! end
 
 !! test
 Scribunto: getAllArgs, deprecated style
-!! input
+!! wikitext
 {{#invoke:test|getAllArgs2|x|y|z|a=1|b=2|c=3|7=?}}
-!! result
+!! html
 <p>1=x, 2=y, 3=z, 7=?, a=1, b=2, c=3
 </p>
 !! end
 
 !! test
 Scribunto: getNumericArgs
-!! input
+!! wikitext
 {{#invoke:test|getNumericArgs|x|y|z|a=1|b=2|c=3|7=?}}
-!! result
+!! html
 <p>1=x, 2=y, 3=z
 </p>
 !! end
 
 !! test
 Scribunto: named numeric parameters
-!! input
+!! wikitext
 {{#invoke:test|getArg|2|a|2=b}}
 {{#invoke:test|getArg|2|2=a|b}}
-!! result
+!! html
 <p>b
 b
 </p>
@@ -290,10 +296,10 @@ b
 
 !! test
 Scribunto: template-style argument trimming
-!! input
+!! wikitext
 {{#invoke:test|getArgLength|2| x }}
 {{#invoke:test|getArgLength|2|2= x }}
-!! result
+!! html
 <p>3
 1
 </p>
@@ -301,10 +307,10 @@ Scribunto: template-style argument trimming
 
 !! test
 Scribunto: missing argument
-!! input
+!! wikitext
 {{#invoke:test|getArgType|2}}
 {{#invoke:test|getArgType|blah}}
-!! result
+!! html
 <p>nil
 nil
 </p>
@@ -312,93 +318,93 @@ nil
 
 !! test
 Scribunto: parent frame access
-!! input
+!! wikitext
 {{Scribunto_all_args|x|y|z|a = 1|b = 2|c = 3}}
-!! result
+!! html
 <p>1=x, 2=y, 3=z, a=1, b=2, c=3
 </p>
 !! end
 
 !! test
 Scribunto: expandTemplate
-!! input
+!! wikitext
 {{#invoke:test|testExpandTemplate}}
-!! result
+!! html
 <p>x=1, y=2, z=|||
 </p>
 !! end
 
 !! test
 Scribunto: expandTemplate with headers
-!! input
+!! wikitext
 ==foo==
 {{#invoke:test|testExpandTemplateWithHeaders}}
-!! result
+!! html
 <h2><span class="mw-headline" id="foo">foo</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: foo">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
-<h2><span class="mw-headline" id="bar">bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Template:Scribunto_template_with_headers&amp;action=edit&amp;section=T-1" title="Template:Scribunto template with headers">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<h2><span class="mw-headline" id="bar">bar</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Template:Scribunto_template_with_headers&amp;action=edit&amp;section=T-1" title="Edit section: ">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
 !! end
 
 !! test
 Scribunto: newTemplateParserValue
-!! input
+!! wikitext
 {{#invoke:test|testNewTemplateParserValue}}
-!! result
+!! html
 <p>x=1, y=2, z=blah
 </p>
 !! end
 
 !! test
 Scribunto: preprocess
-!! input
+!! wikitext
 {{#invoke:test|testPreprocess|foo}}
-!! result
+!! html
 <p>1=foo|x=y
 </p>
 !! end
 
 !! test
 Scribunto: newParserValue
-!! input
+!! wikitext
 {{#invoke:test|testNewParserValue|foo}}
-!! result
+!! html
 <p>1=foo|x=y
 </p>
 !! end
 
 !! test
 Scribunto: table return
-!! input
+!! wikitext
 {{#invoke:test|emptyTable}}
-!! result
+!! html
 <p>table
 </p>
 !! end
 
 !! test
 Scribunto: require
-!! input
+!! wikitext
 {{#invoke:test|import}}
-!! result
+!! html
 <p>3
 </p>
 !! end
 
 !! test
 Scribunto: access to a module imported at the chunk level
-!! input
+!! wikitext
 {{#invoke:test|bitop}}
-!! result
+!! html
 <p>15
 </p>
 !! end
 
 !! test
 Scribunto: invoke instance upvalue isolation
-!! input
+!! wikitext
 {{#invoke:test|isolationTestUpvalue|1}}
 {{#invoke:test|isolationTestUpvalue|2}}
 {{#invoke:test|isolationTestUpvalue|3}}
-!! result
+!! html
 <p>1
 2
 3
@@ -407,11 +413,11 @@ Scribunto: invoke instance upvalue isolation
 
 !! test
 Scribunto: invoke instance global isolation
-!! input
+!! wikitext
 {{#invoke:test|isolationTestGlobal|1}}
 {{#invoke:test|isolationTestGlobal|2}}
 {{#invoke:test|isolationTestGlobal|3}}
-!! result
+!! html
 <p>1
 2
 3
@@ -420,9 +426,9 @@ Scribunto: invoke instance global isolation
 
 !! test
 Scribunto: ASCII null
-!! input
+!! wikitext
 {{#invoke:test|null}}
-!! result
+!! html
 <p>�
 </p>
 !! end
@@ -431,37 +437,37 @@ Scribunto: ASCII null
 Scribunto: isSubsting during PST
 !! options
 pst
-!! input
+!! wikitext
 {{safesubst:#invoke:test|isSubsting}}
-!! result
+!! html
 true
 !! end
 
 !! test
 Scribunto: isSubsting during normal parse
-!! input
+!! wikitext
 {{safesubst:#invoke:test|isSubsting}}
-!! result
+!! html
 <p>false
 </p>
 !! end
 
 !! test
 Scribunto: frame:getTitle
-!! input
+!! wikitext
 {{#invoke:test|getFrameTitle}}
-!! result
+!! html
 <p>Module:Test
 </p>
 !! end
 
 !! test
 Scribunto: Metatable on export table
-!! input
+!! wikitext
 {{#invoke:Metatables|zero}}
 {{#invoke:Metatables|one}}
 {{#invoke:Metatables|two}}
-!! result
+!! html
 <p>You called the zero method from p
 You called the one method from mt1
 You called the two method from mt2
@@ -470,26 +476,26 @@ You called the two method from mt2
 
 !! test
 Scribunto: Correct argument numbering with equals sign in function name
-!! input
+!! wikitext
 {{#invoke:test|test=InFunctionName|good|bad}}
-!! result
+!! html
 <p>good
 </p>
 !! end
 
 !! test
 Scribunto: Strip markers in CSS
-!! input
+!! wikitext
 {{#invoke:test|testStrippedCss|<nowiki>#ff0000</nowiki>}}
-!! result
+!! html
 <div style="color:#ff0000"></div>
 !! end
 
 !! test
 Scribunto: Parser output isn't incorrectly cached across frames
-!! input
+!! wikitext
 Root: {{#invoke:test|testFrameCaching}} Template: {{Scribunto frame caching}}
-!! result
+!! html
 <p>Root: Parent frame is the root: yes. Child frame is the root: no. Template: Parent frame is the root: no. Child frame is the root: no.
 </p>
 !! end

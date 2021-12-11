@@ -18,7 +18,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Deployment
+ * @ingroup Installer
  */
 
 use MediaWiki\Installer\InstallException;
@@ -27,7 +27,7 @@ use MediaWiki\MediaWikiServices;
 /**
  * Class for the core installer command line interface.
  *
- * @ingroup Deployment
+ * @ingroup Installer
  * @since 1.17
  */
 class CliInstaller extends Installer {
@@ -54,8 +54,8 @@ class CliInstaller extends Installer {
 	 * @param array $options
 	 * @throws InstallException
 	 */
-	function __construct( $siteName, $admin = null, array $options = [] ) {
-		global $wgContLang;
+	public function __construct( $siteName, $admin = null, array $options = [] ) {
+		global $wgPasswordPolicy;
 
 		parent::__construct();
 
@@ -75,22 +75,19 @@ class CliInstaller extends Installer {
 			$this->setVar( '_UserLang', $options['lang'] );
 			$wgLanguageCode = $options['lang'];
 			$this->setVar( 'wgLanguageCode', $wgLanguageCode );
-			$wgContLang = MediaWikiServices::getInstance()->getContentLanguage();
-			$wgLang = Language::factory( $options['lang'] );
+			$wgLang = MediaWikiServices::getInstance()->getLanguageFactory()
+				->getLanguage( $options['lang'] );
 			RequestContext::getMain()->setLanguage( $wgLang );
 		}
 
 		$this->setVar( 'wgSitename', $siteName );
 
-		$metaNS = $wgContLang->ucfirst( str_replace( ' ', '_', $siteName ) );
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$metaNS = $contLang->ucfirst( str_replace( ' ', '_', $siteName ) );
 		if ( $metaNS == 'MediaWiki' ) {
 			$metaNS = 'Project';
 		}
 		$this->setVar( 'wgMetaNamespace', $metaNS );
-
-		if ( $admin ) {
-			$this->setVar( '_AdminName', $admin );
-		}
 
 		if ( !isset( $options['installdbuser'] ) ) {
 			$this->setVar( '_InstallUser',
@@ -107,8 +104,25 @@ class CliInstaller extends Installer {
 			$this->setVar( '_CreateDBAccount', true );
 		}
 
-		if ( isset( $options['pass'] ) ) {
-			$this->setVar( '_AdminPassword', $options['pass'] );
+		if ( $admin ) {
+			$this->setVar( '_AdminName', $admin );
+			if ( isset( $options['pass'] ) ) {
+				$adminUser = User::newFromName( $admin );
+				if ( !$adminUser ) {
+					throw new InstallException( Status::newFatal( 'config-admin-name-invalid' ) );
+				}
+				$upp = new UserPasswordPolicy(
+					$wgPasswordPolicy['policies'],
+					$wgPasswordPolicy['checks']
+				);
+				$status = $upp->checkUserPasswordForGroups( $adminUser, $options['pass'],
+					[ 'bureaucrat', 'sysop', 'interface-admin' ] ); // per Installer::createSysop()
+				if ( !$status->isGood() ) {
+					throw new InstallException( Status::newFatal(
+						$status->getMessage( 'config-admin-error-password-invalid' ) ) );
+				}
+				$this->setVar( '_AdminPassword', $options['pass'] );
+			}
 		}
 
 		// Detect and inject any extension found
@@ -173,11 +187,12 @@ class CliInstaller extends Installer {
 
 	/**
 	 * Main entry point.
+	 * @return Status
 	 */
 	public function execute() {
 		// If APC is available, use that as the MainCacheType, instead of nothing.
 		// This is hacky and should be consolidated with WebInstallerOptions.
-		// This is here instead of in __construct(), because it should run run after
+		// This is here instead of in __construct(), because it should run after
 		// doEnvironmentChecks(), which populates '_Caches'.
 		if ( count( $this->getVar( '_Caches' ) ) ) {
 			// We detected a CACHE_ACCEL implementation, use it.
@@ -228,11 +243,13 @@ class CliInstaller extends Installer {
 	}
 
 	public function showMessage( $msg, ...$params ) {
+		// @phan-suppress-next-line SecurityCheck-XSS
 		echo $this->getMessageText( $msg, $params ) . "\n";
 		flush();
 	}
 
 	public function showError( $msg, ...$params ) {
+		// @phan-suppress-next-line SecurityCheck-XSS
 		echo "***{$this->getMessageText( $msg, $params )}***\n";
 		flush();
 	}
@@ -253,8 +270,10 @@ class CliInstaller extends Installer {
 
 	/**
 	 * Dummy
+	 * @param string $msg Key for wfMessage()
+	 * @param mixed ...$params
 	 */
-	public function showHelpBox( $msg /*, ... */ ) {
+	public function showHelpBox( $msg, ...$params ) {
 	}
 
 	public function showStatusMessage( Status $status ) {

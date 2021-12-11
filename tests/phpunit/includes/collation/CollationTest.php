@@ -8,10 +8,6 @@
  * @covers UppercaseCollation
  */
 class CollationTest extends MediaWikiLangTestCase {
-	protected function setUp() {
-		parent::setUp();
-		$this->checkPHPExtension( 'intl' );
-	}
 
 	/**
 	 * Test to make sure, that if you
@@ -92,7 +88,7 @@ class CollationTest extends MediaWikiLangTestCase {
 		$this->assertEquals( $firstLetter, $col->getFirstLetter( $string ) );
 	}
 
-	function firstLetterProvider() {
+	public function firstLetterProvider() {
 		return [
 			[ 'uppercase', 'Abc', 'A' ],
 			[ 'uppercase', 'abc', 'A' ],

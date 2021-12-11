@@ -7,7 +7,7 @@
  */
 class GadgetDefinitionValidator {
 	/**
-	 * Validation metadata.
+	 * @var array Validation metadata.
 	 * 'foo.bar.baz' => [ 'type check callback',
 	 *   'type name' [, 'member type check callback', 'member type name'] ]
 	 */
@@ -70,7 +70,7 @@ class GadgetDefinitionValidator {
 				);
 			}
 
-			if ( isset( $validation[2] ) && is_array( $val ) ) {
+			if ( isset( $validation[2] ) && isset( $validation[3] ) && is_array( $val ) ) {
 				// Descend into the array and check the type of each element
 				$func = $validation[2];
 				foreach ( $val as $i => $v ) {

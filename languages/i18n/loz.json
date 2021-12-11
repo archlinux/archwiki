@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"DannyS712",
 			"Kaganer",
 			"Litingatinga Silozi",
 			"Ooswesthoesbes",
@@ -86,7 +87,6 @@
 	"subcategories": "Subkattegori",
 	"category-media-header": "Kattegori media di \"$1\"",
 	"category-empty": "''Wo kattegori cwale fumile ishi petulo nji media.''",
-	"listingcontinuesabbrev": "kepoli",
 	"about": "Ngesi ye ng'i atulile",
 	"article": "Petulo",
 	"newwindow": "(apuzi kwa nca windo)",
@@ -174,7 +174,6 @@
 	"thisisdeleted": "Kamukile/afi kulobala tamuhile $1?",
 	"viewdeleted": "Kamukile $1?",
 	"restorelink": "{{PLURAL:$1|1 afi bye sa afi kulobala|$1 afina bye sa afi kulobala}}",
-	"feedlinks": "Feed (sa sadumi kabili padi):",
 	"feed-invalid": "Subskripsyon feed tapi bufosi.",
 	"site-rss-feed": "$1 RSS Feed (sa sadumi kabili padi)",
 	"site-atom-feed": "$1 Atom Feed (sa sadumi kabili padi)",
@@ -295,7 +294,7 @@
 	"histlegend": "Petuho seleksi: nyansulize selt sisebelisoni di radio e dusize enter.<br />\nInformasi: (bye) = petuho a nca selt,\n(pu-lila) = petuho a pre selt, p = pili kenki.",
 	"histfirst": "Pu-kona",
 	"histlast": "Pu-lila",
-	"historyempty": "(necafeti)",
+	"historyempty": "necafeti",
 	"history-feed-title": "Bundau di selt",
 	"history-feed-description": "Bundau di selt di petulo di wiki.",
 	"history-feed-item-nocomment": "$1 di $2",
@@ -553,7 +552,7 @@
 	"namespace": "Fatukile efro:",
 	"invert": "Fatukile efro ye ng'i",
 	"blanknamespace": "(Yem efro)",
-	"contributions": "Afina di sebelu",
+	"tool-link-contributions": "Afina di sebelu",
 	"mycontris": "Zwa afina",
 	"contribsub2": "Di $1 ($2)",
 	"uctop": "nca ng'i",

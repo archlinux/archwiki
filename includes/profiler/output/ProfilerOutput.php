@@ -16,19 +16,24 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Profiler
  */
 
+use MediaWiki\Logger\LoggerFactory;
+use Psr\Log\LoggerInterface;
+
 /**
- * Base class for profiling output
+ * Base class for profiling output.
  *
- * Since 1.25
+ * @ingroup Profiler
+ * @since 1.25
  */
 abstract class ProfilerOutput {
 	/** @var Profiler */
 	protected $collector;
+	/** @var LoggerInterface */
+	protected $logger;
 	/** @var array Configuration of $wgProfiler */
-	protected $params = [];
+	protected $params;
 
 	/**
 	 * @param Profiler $collector The actual profiler
@@ -37,6 +42,7 @@ abstract class ProfilerOutput {
 	public function __construct( Profiler $collector, array $params ) {
 		$this->collector = $collector;
 		$this->params = $params;
+		$this->logger = LoggerFactory::getInstance( 'profiler' );
 	}
 
 	/**

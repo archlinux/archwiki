@@ -28,16 +28,22 @@ namespace MediaWiki\Diff;
 /**
  * Stores, escapes and formats the results of word-level diff
  *
- * @private
+ * @internal
  * @ingroup DifferenceEngine
  */
 class WordAccumulator {
+	/** @var string */
 	public $insClass = ' class="diffchange diffchange-inline"';
+	/** @var string */
 	public $delClass = ' class="diffchange diffchange-inline"';
 
+	/** @var array */
 	private $lines = [];
+	/** @var string */
 	private $line = '';
+	/** @var string */
 	private $group = '';
+	/** @var string */
 	private $tag = '';
 
 	/**

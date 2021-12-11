@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Patriot Kur",
+			"Гусейн"
+		]
+	},
+	"pfunc_time_error": "Error: Yanliş vaxt",
+	"pfunc_expr_unrecognised_word": "İfodə xəto: Zınə nıbə sıxan \"$1\".",
+	"pfunc_expr_unexpected_operator": "İfodə xəto: Çaş kardənıbə operator $1",
+	"pfunc_expr_missing_operand": "İfodə xəto: $1 operand vəs kardəni",
+	"pfunc_expr_unrecognised_punctuation": "İfodə xəto: Punktuasiyə zınə nıbə rəmz \"$1\".",
+	"pfunc_expr_division_by_zero": "Bə sıfıri jəy"
+}

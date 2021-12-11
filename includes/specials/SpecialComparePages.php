@@ -23,6 +23,11 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\SlotRecord;
+
 /**
  * Implements Special:ComparePages
  *
@@ -30,14 +35,23 @@
  */
 class SpecialComparePages extends SpecialPage {
 
-	// Stored objects
-	protected $opts, $skin;
+	/** @var RevisionLookup */
+	private $revisionLookup;
 
-	// Some internal settings
-	protected $showNavigation = false;
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
 
-	public function __construct() {
+	/**
+	 * @param RevisionLookup $revisionLookup
+	 * @param IContentHandlerFactory $contentHandlerFactory
+	 */
+	public function __construct(
+		RevisionLookup $revisionLookup,
+		IContentHandlerFactory $contentHandlerFactory
+	) {
 		parent::__construct( 'ComparePages' );
+		$this->revisionLookup = $revisionLookup;
+		$this->contentHandlerFactory = $contentHandlerFactory;
 	}
 
 	/**
@@ -54,11 +68,11 @@ class SpecialComparePages extends SpecialPage {
 		$form = HTMLForm::factory( 'ooui', [
 			'Page1' => [
 				'type' => 'title',
+				'exists' => true,
 				'name' => 'page1',
 				'label-message' => 'compare-page1',
 				'size' => '40',
 				'section' => 'page1',
-				'validation-callback' => [ $this, 'checkExistingTitle' ],
 				'required' => false,
 			],
 			'Revision1' => [
@@ -72,10 +86,10 @@ class SpecialComparePages extends SpecialPage {
 			'Page2' => [
 				'type' => 'title',
 				'name' => 'page2',
+				'exists' => true,
 				'label-message' => 'compare-page2',
 				'size' => '40',
 				'section' => 'page2',
-				'validation-callback' => [ $this, 'checkExistingTitle' ],
 				'required' => false,
 			],
 			'Revision2' => [
@@ -102,22 +116,31 @@ class SpecialComparePages extends SpecialPage {
 		$form->setSubmitTextMsg( 'compare-submit' );
 		$form->suppressReset();
 		$form->setMethod( 'get' );
-		$form->setSubmitCallback( [ __CLASS__, 'showDiff' ] );
+		$form->setSubmitCallback( [ $this, 'showDiff' ] );
 
 		$form->loadData();
 		$form->displayForm( '' );
 		$form->trySubmit();
 	}
 
-	public static function showDiff( $data, HTMLForm $form ) {
-		$rev1 = self::revOrTitle( $data['Revision1'], $data['Page1'] );
-		$rev2 = self::revOrTitle( $data['Revision2'], $data['Page2'] );
+	/**
+	 * @internal Callback for HTMLForm
+	 * @param array $data
+	 * @param HTMLForm $form
+	 */
+	public function showDiff( $data, HTMLForm $form ) {
+		$rev1 = $this->revOrTitle( $data['Revision1'], $data['Page1'] );
+		$rev2 = $this->revOrTitle( $data['Revision2'], $data['Page2'] );
 
 		if ( $rev1 && $rev2 ) {
-			$revision = Revision::newFromId( $rev1 );
+			$revisionRecord = $this->revisionLookup->getRevisionById( $rev1 );
 
-			if ( $revision ) { // NOTE: $rev1 was already checked, should exist.
-				$contentHandler = $revision->getContentHandler();
+			if ( $revisionRecord ) { // NOTE: $rev1 was already checked, should exist.
+				$contentModel = $revisionRecord->getSlot(
+					SlotRecord::MAIN,
+					RevisionRecord::RAW
+				)->getModel();
+				$contentHandler = $this->contentHandlerFactory->getContentHandler( $contentModel );
 				$de = $contentHandler->createDifferenceEngine( $form->getContext(),
 					$rev1,
 					$rev2,
@@ -130,7 +153,7 @@ class SpecialComparePages extends SpecialPage {
 		}
 	}
 
-	public static function revOrTitle( $revision, $title ) {
+	private function revOrTitle( $revision, $title ) {
 		if ( $revision ) {
 			return $revision;
 		} elseif ( $title ) {
@@ -143,27 +166,18 @@ class SpecialComparePages extends SpecialPage {
 		return null;
 	}
 
-	public function checkExistingTitle( $value, $alldata ) {
-		if ( $value === '' || $value === null ) {
-			return true;
-		}
-		$title = Title::newFromText( $value );
-		if ( !$title instanceof Title ) {
-			return $this->msg( 'compare-invalid-title' )->parseAsBlock();
-		}
-		if ( !$title->exists() ) {
-			return $this->msg( 'compare-title-not-exists' )->parseAsBlock();
-		}
-
-		return true;
-	}
-
+	/**
+	 * @internal Callback for HTMLForm
+	 * @param string|null $value
+	 * @param array $alldata
+	 * @return string|bool
+	 */
 	public function checkExistingRevision( $value, $alldata ) {
 		if ( $value === '' || $value === null ) {
 			return true;
 		}
-		$revision = Revision::newFromId( $value );
-		if ( $revision === null ) {
+		$revisionRecord = $this->revisionLookup->getRevisionById( $value );
+		if ( $revisionRecord === null ) {
 			return $this->msg( 'compare-revision-not-exists' )->parseAsBlock();
 		}
 

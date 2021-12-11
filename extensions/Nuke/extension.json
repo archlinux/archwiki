@@ -1,6 +1,5 @@
 {
 	"name": "Nuke",
-	"version": "1.3.0",
 	"author": [
 		"Brion Vibber",
 		"Jeroen De Dauw"
@@ -9,7 +8,7 @@
 	"descriptionmsg": "nuke-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.28.1"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {
@@ -21,9 +20,7 @@
 		]
 	},
 	"Hooks": {
-		"ContributionsToolLinks": [
-			"NukeHooks::nukeContributionsLinks"
-		]
+		"ContributionsToolLinks": "MediaWiki\\Extension\\Nuke\\Hooks::nukeContributionsLinks"
 	},
 	"ResourceModules": {
 		"ext.nuke.confirm": {
@@ -39,8 +36,8 @@
 		}
 	},
 	"ResourceFileModulePaths": {
-		"localBasePath": "",
-		"remoteExtPath": "Nuke"
+		"localBasePath": "modules",
+		"remoteExtPath": "Nuke/modules"
 	},
 	"GroupPermissions": {
 		"sysop": {
@@ -50,12 +47,16 @@
 	"AvailableRights": [
 		"nuke"
 	],
+	"GrantPermissions": {
+		"delete": {
+			"nuke": true
+		}
+	},
 	"SpecialPages": {
-		"Nuke": "SpecialNuke"
+		"Nuke": "MediaWiki\\Extension\\Nuke\\SpecialNuke"
 	},
-	"AutoloadClasses": {
-		"SpecialNuke": "includes/SpecialNuke.php",
-		"NukeHooks": "includes/NukeHooks.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Nuke\\": "includes/"
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }

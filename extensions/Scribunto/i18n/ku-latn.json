@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"George Animal",
 			"Ghybu",
 			"Gomada",
-			"George Animal",
+			"Guherto",
 			"McDutchie"
 		]
 	},
@@ -17,8 +18,8 @@
 	"scribunto-console-clear": "Jê bibe",
 	"scribunto-common-error-category": "Rûpelên bi çewtiyên kodê",
 	"scribunto-common-nosuchmodule": "Çewtiya nivîsê: Moduleke bi vî rengî \"$2\" tune ye.",
-	"scribunto-lua-error-location": "Çewtiya Lua'yê $1: $2.",
-	"scribunto-lua-error": "Çewtiya Lua'yê: $2.",
+	"scribunto-lua-error-location": "Xeletiya Luayê $1: $2.",
+	"scribunto-lua-error": "Xeletiya Luayê: $2.",
 	"nstab-module": "Modul",
 	"tooltip-ca-nstab-module": "Rûpela modulê bibîne"
 }

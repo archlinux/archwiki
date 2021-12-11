@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Neukoln",
-			"בנימין",
-			"Yona b",
 			"Eladk",
-			"ערן",
-			"Guycn2"
+			"Guycn2",
+			"Neukoln",
+			"Yona b",
+			"בנימין",
+			"ערן"
 		]
 	},
 	"multimediaviewer-desc": "הגדלת תמונות ממוזערות במידות גדולות יותר למסך מלא",
@@ -33,7 +33,7 @@
 	"multimediaviewer-permission-viewmore": "להראות עוד",
 	"multimediaviewer-restriction-2257": "התמונה הזאת מכילה תוכן מיני שעשוי להיות מושא לחוק להגנת הילד ואכיפת המוסר של ארצות הברית.",
 	"multimediaviewer-restriction-aus-reserve": "התמונה הזאת צולמה בשמורה של חבר העמים האוסטרלי ואינה יכולה לשמש לרווח מסחרי ללא רשות.",
-	"multimediaviewer-restriction-communist": "התמונה הזאת מכילה סמלים קומוניסטיים שעשויים להיות אסורים במספר מדינות.",
+	"multimediaviewer-restriction-communist": "התמונה הזאת מכילה סמלים קומוניסטיים שעשויים להיות אסורים בכמה מדינות.",
 	"multimediaviewer-restriction-costume": "התמונה הזאת מציגה תחפושות ועשויה להיות מושא למגבלות משפטיות.",
 	"multimediaviewer-restriction-currency": "התמונה הזאת מציגה יחידת מטבע ועשויה להיות מושא למגבלות משפטיות.",
 	"multimediaviewer-restriction-design": "העיצוב של נושא התמונה הזאת יכול להיות מוגבל בזכויות יוצרים ולהיות מושא למגבלות משפטיות.",
@@ -93,7 +93,7 @@
 	"multimediaviewer-large-embed-dimensions": "גדול $1",
 	"multimediaviewer-medium-embed-dimensions": "בינוני $1",
 	"multimediaviewer-small-embed-dimensions": "קטן $1",
-	"multimediaviewer-embed-dimensions": "$1 × $2 פיקסלים",
+	"multimediaviewer-embed-dimensions": "<span dir=\"ltr\">$1 × $2</span> פיקסלים",
 	"multimediaviewer-description-page-button-text": "פרטים נוספים על הקובץ הזה",
 	"multimediaviewer-description-page-popup-text": "פרטים נוספים על הקובץ הזה ב{{GRAMMAR:תחילית|$1}}",
 	"multimediaviewer-commons-subtitle": "מאגר המדיה החופשי",

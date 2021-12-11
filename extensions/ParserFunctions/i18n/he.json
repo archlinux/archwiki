@@ -7,7 +7,7 @@
 	"pfunc_desc": "הוספת פונקציות לוגיות למפענח",
 	"pfunc_time_error": "שגיאה: זמן שגוי",
 	"pfunc_time_too_long": "שגיאה: יותר מדי קריאות ל#זמן.",
-	"pfunc_time_too_big": "שגיאה: #זמן תומכת רק בשנים עד 9999",
+	"pfunc_time_too_big": "שגיאה: #זמן תומכת רק בשנים עד 9999.",
 	"pfunc_time_too_small": "שגיאה: הפונקציה #time תומכת רק בשנים מ־0.",
 	"pfunc_rel2abs_invalid_depth": "שגיאה: עומק שגוי בנתיב: \"$1\" (ניסיון כניסה לצומת מעל צומת השורש)",
 	"pfunc_expr_stack_exhausted": "שגיאה בביטוי: המחסנית מלאה",
@@ -22,7 +22,7 @@
 	"pfunc_expr_division_by_zero": "חלוקה באפס",
 	"pfunc_expr_invalid_argument": "ארגומנט בלתי תקין לפונקציה $1: < -1 או > 1",
 	"pfunc_expr_invalid_argument_ln": "ארגומנט בלתי תקין לפונקציה ln: <= 0",
-	"pfunc_expr_unknown_error": "שגיאה בביטוי: שגיאה בלתי ידועה ($1)",
+	"pfunc_expr_unknown_error": "שגיאה בביטוי: שגיאה בלתי־ידועה ($1)",
 	"pfunc_expr_not_a_number": "התוצאה של $1 אינה מספר",
 	"pfunc_string_too_long": "שגיאה: המחרוזת עוברת את גבול התווים המותר, $1"
 }

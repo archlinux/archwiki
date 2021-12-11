@@ -5,7 +5,7 @@
  * @singleton
  */
 ( function () {
-	var nonce = 0,
+	var
 		fieldsAllowed = {
 			stash: true,
 			filekey: true,
@@ -21,16 +21,6 @@
 		};
 
 	/**
-	 * Get nonce for iframe IDs on the page.
-	 *
-	 * @private
-	 * @return {number}
-	 */
-	function getNonce() {
-		return nonce++;
-	}
-
-	/**
 	 * Given a non-empty object, return one of its keys.
 	 *
 	 * @private
@@ -38,89 +28,14 @@
 	 * @return {string}
 	 */
 	function getFirstKey( obj ) {
-		var key;
-		for ( key in obj ) {
-			return key;
-		}
-	}
-
-	/**
-	 * Get new iframe object for an upload.
-	 *
-	 * @private
-	 * @param {string} id
-	 * @return {HTMLIframeElement}
-	 */
-	function getNewIframe( id ) {
-		var frame = document.createElement( 'iframe' );
-		frame.id = id;
-		frame.name = id;
-		return frame;
-	}
-
-	/**
-	 * Shortcut for getting hidden inputs
-	 *
-	 * @private
-	 * @param {string} name
-	 * @param {string} val
-	 * @return {jQuery}
-	 */
-	function getHiddenInput( name, val ) {
-		return $( '<input>' ).attr( 'type', 'hidden' )
-			.attr( 'name', name )
-			.val( val );
-	}
-
-	/**
-	 * Process the result of the form submission, returned to an iframe.
-	 * This is the iframe's onload event.
-	 *
-	 * @param {HTMLIframeElement} iframe Iframe to extract result from
-	 * @return {Object} Response from the server. The return value may or may
-	 *   not be an XMLDocument, this code was copied from elsewhere, so if you
-	 *   see an unexpected return type, please file a bug.
-	 */
-	function processIframeResult( iframe ) {
-		var json,
-			doc = iframe.contentDocument || frames[ iframe.id ].document;
-
-		if ( doc.XMLDocument ) {
-			// The response is a document property in IE
-			return doc.XMLDocument;
-		}
-
-		if ( doc.body ) {
-			// Get the json string
-			// We're actually searching through an HTML doc here --
-			// according to mdale we need to do this
-			// because IE does not load JSON properly in an iframe
-			json = $( doc.body ).find( 'pre' ).text();
-
-			return JSON.parse( json );
-		}
-
-		// Response is a xml document
-		return doc;
-	}
-
-	function formDataAvailable() {
-		return window.FormData !== undefined &&
-			window.File !== undefined &&
-			window.File.prototype.slice !== undefined;
+		return obj[ Object.keys( obj )[ 0 ] ];
 	}
 
 	$.extend( mw.Api.prototype, {
 		/**
 		 * Upload a file to MediaWiki.
 		 *
-		 * The file will be uploaded using AJAX and FormData, if the browser supports it, or via an
-		 * iframe if it doesn't.
-		 *
-		 * Caveats of iframe upload:
-		 * - The returned jQuery.Promise will not receive `progress` notifications during the upload
-		 * - It is incompatible with uploads to a foreign wiki using mw.ForeignApi
-		 * - You must pass a HTMLInputElement and not a File for it to be possible
+		 * The file will be uploaded using AJAX and FormData.
 		 *
 		 * @param {HTMLInputElement|File|Blob} file HTML input type=file element with a file already inside
 		 *  of it, or a File object.
@@ -128,11 +43,7 @@
 		 * @return {jQuery.Promise}
 		 */
 		upload: function ( file, data ) {
-			var isFileInput, canUseFormData;
-
-			isFileInput = file && file.nodeType === Node.ELEMENT_NODE;
-
-			if ( formDataAvailable() && isFileInput && file.files ) {
+			if ( file && file.nodeType === Node.ELEMENT_NODE && file.files ) {
 				file = file.files[ 0 ];
 			}
 
@@ -141,124 +52,11 @@
 			}
 
 			// Blobs are allowed in formdata uploads, it turns out
-			canUseFormData = formDataAvailable() && ( file instanceof window.File || file instanceof window.Blob );
-
-			if ( !isFileInput && !canUseFormData ) {
+			if ( !( file instanceof window.File || file instanceof window.Blob ) ) {
 				throw new Error( 'Unsupported argument type passed to mw.Api.upload' );
 			}
 
-			if ( canUseFormData ) {
-				return this.uploadWithFormData( file, data );
-			}
-
-			return this.uploadWithIframe( file, data );
-		},
-
-		/**
-		 * Upload a file to MediaWiki with an iframe and a form.
-		 *
-		 * This method is necessary for browsers without the File/FormData
-		 * APIs, and continues to work in browsers with those APIs.
-		 *
-		 * The rough sketch of how this method works is as follows:
-		 * 1. An iframe is loaded with no content.
-		 * 2. A form is submitted with the passed-in file input and some extras.
-		 * 3. The MediaWiki API receives that form data, and sends back a response.
-		 * 4. The response is sent to the iframe, because we set target=(iframe id)
-		 * 5. The response is parsed out of the iframe's document, and passed back
-		 *    through the promise.
-		 *
-		 * @private
-		 * @param {HTMLInputElement} file The file input with a file in it.
-		 * @param {Object} data Other upload options, see action=upload API docs for more
-		 * @return {jQuery.Promise}
-		 */
-		uploadWithIframe: function ( file, data ) {
-			var key,
-				tokenPromise = $.Deferred(),
-				api = this,
-				deferred = $.Deferred(),
-				nonce = getNonce(),
-				id = 'uploadframe-' + nonce,
-				$form = $( '<form>' ),
-				iframe = getNewIframe( id ),
-				$iframe = $( iframe );
-
-			for ( key in data ) {
-				if ( !fieldsAllowed[ key ] ) {
-					delete data[ key ];
-				}
-			}
-
-			data = $.extend( {}, this.defaults.parameters, { action: 'upload' }, data );
-			$form.addClass( 'mw-api-upload-form' );
-
-			$form.css( 'display', 'none' )
-				.attr( {
-					action: this.defaults.ajax.url,
-					method: 'POST',
-					target: id,
-					enctype: 'multipart/form-data'
-				} );
-
-			$iframe.one( 'load', function () {
-				$iframe.one( 'load', function () {
-					var result = processIframeResult( iframe );
-					deferred.notify( 1 );
-
-					if ( !result ) {
-						deferred.reject( 'ok-but-empty', 'No response from API on upload attempt.' );
-					} else if ( result.error ) {
-						if ( result.error.code === 'badtoken' ) {
-							api.badToken( 'csrf' );
-						}
-
-						deferred.reject( result.error.code, result );
-					} else if ( result.upload && result.upload.warnings ) {
-						deferred.reject( getFirstKey( result.upload.warnings ), result );
-					} else {
-						deferred.resolve( result );
-					}
-				} );
-				tokenPromise.done( function () {
-					$form.trigger( 'submit' );
-				} );
-			} );
-
-			$iframe.on( 'error', function ( error ) {
-				deferred.reject( 'http', error );
-			} );
-
-			$iframe.prop( 'src', 'about:blank' ).hide();
-
-			file.name = 'file';
-
-			// eslint-disable-next-line no-jquery/no-each-util
-			$.each( data, function ( key, val ) {
-				$form.append( getHiddenInput( key, val ) );
-			} );
-
-			if ( !data.filename && !data.stash ) {
-				throw new Error( 'Filename not included in file data.' );
-			}
-
-			if ( this.needToken() ) {
-				this.getEditToken().then( function ( token ) {
-					$form.append( getHiddenInput( 'token', token ) );
-					tokenPromise.resolve();
-				}, tokenPromise.reject );
-			} else {
-				tokenPromise.resolve();
-			}
-
-			$( 'body' ).append( $form, $iframe );
-
-			deferred.always( function () {
-				$form.remove();
-				$iframe.remove();
-			} );
-
-			return deferred.promise();
+			return this.uploadWithFormData( file, data );
 		},
 
 		/**
@@ -362,10 +160,10 @@
 				// 47. This'll work around it, but comes with the drawback of
 				// having to properly relay the results to the returned promise.
 				// eslint-disable-next-line no-loop-func
-				promise.done( function ( start, end, next, result ) {
+				promise.done( function ( s, e, n, result ) {
 					var filekey = result.upload.filekey;
-					active = this.uploadChunk( file, data, start, end, filekey, chunkRetries )
-						.done( end === file.size ? deferred.resolve : next.resolve )
+					active = this.uploadChunk( file, data, s, e, filekey, chunkRetries )
+						.done( e === file.size ? deferred.resolve : n.resolve )
 						.fail( deferred.reject )
 						.progress( deferred.notify );
 				// start, end & next must be bound to closure, or they'd have
@@ -426,10 +224,10 @@
 					// failure handlers have a complete result object (including
 					// possibly more warnings, e.g. duplicate)
 					// This matches .upload, which also completes the upload.
-					if ( result.upload && result.upload.warnings && code in result.upload.warnings ) {
+					if ( result.upload && result.upload.warnings ) {
 						if ( end === file.size ) {
 							// uploaded last chunk = reject with result data
-							return $.Deferred().reject( code, result );
+							return $.Deferred().reject( result.upload.warnings.code || 'unknown', result );
 						} else {
 							// still uploading chunks = resolve to keep going
 							return $.Deferred().resolve( result );
@@ -552,8 +350,11 @@
 				},
 				function ( errorCode, result ) {
 					if ( result && result.upload && result.upload.result === 'Success' && result.upload.filekey ) {
-						// Catch handler is also called in case of warnings (e.g. 'duplicate')
+						// When a file is uploaded with `ignorewarnings` and there are warnings,
+						// the promise will be rejected (because of those warnings, e.g. 'duplicate')
+						// but the result is actually a success
 						// We don't really care about those warnings, as long as the upload got stashed...
+						// Turn this back into a successful promise and allow the upload to complete
 						filekey = result.upload.filekey;
 						return $.Deferred().resolve( finishUpload );
 					}
@@ -593,7 +394,7 @@
 				throw new Error( 'Filename not included in file data.' );
 			}
 
-			promise = this.upload( file, { stash: true, filename: data.filename } );
+			promise = this.upload( file, { stash: true, filename: data.filename, ignorewarnings: data.ignorewarnings } );
 
 			return this.finishUploadToStash( promise, data );
 		},
@@ -624,7 +425,7 @@
 
 			promise = this.chunkedUpload(
 				file,
-				{ stash: true, filename: data.filename },
+				{ stash: true, filename: data.filename, ignorewarnings: data.ignorewarnings },
 				chunkSize,
 				chunkRetries
 			);

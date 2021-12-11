@@ -3,9 +3,10 @@
 		"authors": [
 			"Anakmalaysia",
 			"Aurora",
-			"Pizza1016",
 			"Karmadunya9-",
-			"Macofe"
+			"Macofe",
+			"Pizza1016",
+			"Tofeiku"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buku",
@@ -18,8 +19,9 @@
 	"cite-ve-changedesc-reflist-group-both": "Kumpulan senarai rujukan ditukar dari \"$1\" ke \"$2\"",
 	"cite-ve-changedesc-reflist-group-from": "Kumpulan senarai rujukan ditukar dari \"$1\" ke kumpulan am",
 	"cite-ve-changedesc-reflist-group-to": "Kumpulan senarai rujukan ditukar dari kumpulan am ke \"$1\"",
-	"cite-ve-changedesc-reflist-item-id": "Indeks rujukan diubah",
-	"cite-ve-dialog-reference-editing-reused": "Rujukan ini digunakan $1 kali di laman ini.",
+	"cite-ve-citationneeded-reason": "Sebab diberi:",
+	"cite-ve-citationneeded-title": "Petikan diperlukan",
+	"cite-ve-dialog-reference-editing-reused": "Rujukan ini digunakan {{PLURAL:$1|sekali|2=dua kali|$1 kali}} di laman ini.",
 	"cite-ve-dialog-reference-options-group-label": "Gunakan kumpulan ini",
 	"cite-ve-dialog-reference-options-group-placeholder": "Rujukan umum",
 	"cite-ve-dialog-reference-options-name-label": "Gunakan semula dengan nama ini",

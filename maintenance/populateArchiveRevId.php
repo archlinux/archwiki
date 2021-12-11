@@ -21,6 +21,7 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\DBQueryError;
 use Wikimedia\Rdbms\IDatabase;
 
@@ -48,8 +49,8 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 	 * @return bool
 	 */
 	public static function isNewInstall( IDatabase $dbw ) {
-		return $dbw->selectRowCount( 'archive' ) === 0 &&
-			$dbw->selectRowCount( 'revision' ) === 1;
+		return $dbw->selectRowCount( 'archive', '*', [], __METHOD__ ) === 0 &&
+			$dbw->selectRowCount( 'revision', '*', [], __METHOD__ ) === 1;
 	}
 
 	protected function getUpdateKey() {
@@ -73,9 +74,10 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 			return true;
 		}
 
+		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		$count = 0;
 		while ( true ) {
-			wfWaitForSlaves();
+			$lbFactory->waitForReplication();
 
 			$arIds = $dbw->selectFieldValues(
 				'archive',
@@ -119,7 +121,7 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 		$ok = false;
 		while ( !$ok ) {
 			try {
-				$dbw->doAtomicSection( __METHOD__, function ( IDatabase $dbw, $fname ) {
+				$dbw->doAtomicSection( __METHOD__, static function ( IDatabase $dbw, $fname ) {
 					$dbw->insert( 'revision', self::$dummyRev, $fname );
 					$id = $dbw->insertId();
 					$toDelete = [ $id ];
@@ -137,7 +139,8 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 				} );
 				$ok = true;
 			} catch ( DBQueryError $e ) {
-				if ( $e->errno != 1062 ) { // 1062 is "duplicate entry", ignore it and retry
+				if ( $e->errno != 1062 ) {
+					// 1062 is "duplicate entry", ignore it and retry
 					throw $e;
 				}
 			}
@@ -156,12 +159,13 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 			self::$dummyRev = self::makeDummyRevisionRow( $dbw );
 		}
 
-		$updates = $dbw->doAtomicSection( __METHOD__, function ( IDatabase $dbw, $fname ) use ( $arIds ) {
+		$updates = $dbw->doAtomicSection( __METHOD__, static function ( IDatabase $dbw, $fname ) use ( $arIds ) {
 			// Create new rev_ids by inserting dummy rows into revision and then deleting them.
 			$dbw->insert( 'revision', array_fill( 0, count( $arIds ), self::$dummyRev ), $fname );
 			$revIds = $dbw->selectFieldValues(
 				'revision',
 				'rev_id',
+				// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 				[ 'rev_timestamp' => self::$dummyRev['rev_timestamp'] ],
 				$fname
 			);
@@ -231,13 +235,13 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 		if ( !$rev ) {
 			// Since no revisions are available to copy, generate a dummy
 			// revision to a dummy page, then rollback the commit
-			wfDebug( __METHOD__ . ": No revisions are available to copy\n" );
+			wfDebug( __METHOD__ . ": No revisions are available to copy" );
 
-			$dbw->begin();
+			$dbw->begin( __METHOD__ );
 
 			// Make a title and revision and insert them
 			$title = Title::newFromText( "PopulateArchiveRevId_4b05b46a81e29" );
-			$page = WikiPage::factory( $title );
+			$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 			$updater = $page->newPageUpdater(
 				User::newSystemUser( 'Maintenance script', [ 'steal' => true ] )
 			);
@@ -259,7 +263,7 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 				[ 'ORDER BY' => 'rev_timestamp ASC' ]
 			);
 
-			$dbw->rollback();
+			$dbw->rollback( __METHOD__ );
 		}
 		if ( !$rev ) {
 			// This should never happen.
@@ -293,5 +297,5 @@ class PopulateArchiveRevId extends LoggedUpdateMaintenance {
 	}
 }
 
-$maintClass = "PopulateArchiveRevId";
+$maintClass = PopulateArchiveRevId::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

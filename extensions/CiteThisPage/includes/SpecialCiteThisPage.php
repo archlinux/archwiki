@@ -1,6 +1,15 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
+namespace MediaWiki\Extension\CiteThisPage;
+
+use FormSpecialPage;
+use HTMLForm;
+use MediaWiki\Revision\RevisionLookup;
+use Parser;
+use ParserFactory;
+use ParserOptions;
+use SearchEngineFactory;
+use Title;
 
 class SpecialCiteThisPage extends FormSpecialPage {
 
@@ -14,8 +23,29 @@ class SpecialCiteThisPage extends FormSpecialPage {
 	 */
 	protected $title = false;
 
-	public function __construct() {
+	/** @var SearchEngineFactory */
+	private $searchEngineFactory;
+
+	/** @var RevisionLookup */
+	private $revisionLookup;
+
+	/** @var ParserFactory */
+	private $parserFactory;
+
+	/**
+	 * @param SearchEngineFactory $searchEngineFactory
+	 * @param RevisionLookup $revisionLookup
+	 * @param ParserFactory $parserFactory
+	 */
+	public function __construct(
+		SearchEngineFactory $searchEngineFactory,
+		RevisionLookup $revisionLookup,
+		ParserFactory $parserFactory
+	) {
 		parent::__construct( 'CiteThisPage' );
+		$this->searchEngineFactory = $searchEngineFactory;
+		$this->revisionLookup = $revisionLookup;
+		$this->parserFactory = $parserFactory;
 	}
 
 	/**
@@ -31,30 +61,36 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		}
 	}
 
+	/**
+	 * @param HTMLForm $form
+	 */
 	protected function alterForm( HTMLForm $form ) {
 		$form->setMethod( 'get' );
+		$form->setFormIdentifier( 'titleform' );
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function getFormFields() {
-		if ( isset( $this->par ) ) {
-			$default = $this->par;
-		} else {
-			$default = '';
-		}
 		return [
 			'page' => [
 				'name' => 'page',
 				'type' => 'title',
-				'default' => $default,
+				'exists' => true,
+				'default' => $this->par ?? '',
 				'label-message' => 'citethispage-change-target'
 			]
 		];
 	}
 
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
 	public function onSubmit( array $data ) {
 		// GET forms are "submitted" on every view, so check
-		// that some data was put in for page, as empty string
-		// will pass validation
+		// that some data was put in for page
 		if ( strlen( $data['page'] ) ) {
 			$this->title = Title::newFromText( $data['page'] );
 		}
@@ -70,22 +106,18 @@ class SpecialCiteThisPage extends FormSpecialPage {
 	 * @return string[] Matching subpages
 	 */
 	public function prefixSearchSubpages( $search, $limit, $offset ) {
-		$title = Title::newFromText( $search );
-		if ( !$title || !$title->canExist() ) {
-			// No prefix suggestion in special and media namespace
-			return [];
-		}
-		// Autocomplete subpage the same as a normal search
-		$result = SearchEngine::completionSearch( $search );
-		return array_map( function ( $sub ) {
-			return $sub->getSuggestedTitle();
-		}, $result->getSuggestions() );
+		return $this->prefixSearchString( $search, $limit, $offset, $this->searchEngineFactory );
 	}
 
+	/** @inheritDoc */
 	protected function getGroupName() {
 		return 'pagetools';
 	}
 
+	/**
+	 * @param Title $title
+	 * @param int $revId
+	 */
 	private function showCitations( Title $title, $revId ) {
 		if ( !$revId ) {
 			$revId = $title->getLatestRevID();
@@ -93,8 +125,9 @@ class SpecialCiteThisPage extends FormSpecialPage {
 
 		$out = $this->getOutput();
 
-		$revision = Revision::newFromTitle( $title, $revId );
-		if ( !$revision ) {
+		$revTimestamp = $this->revisionLookup->getTimestampFromId( $revId );
+
+		if ( !$revTimestamp ) {
 			$out->wrapWikiMsg( '<div class="errorbox">$1</div>',
 				[ 'citethispage-badrevision', $title->getPrefixedText(), $revId ] );
 			return;
@@ -102,15 +135,16 @@ class SpecialCiteThisPage extends FormSpecialPage {
 
 		$parserOptions = $this->getParserOptions();
 		// Set the overall timestamp to the revision's timestamp
-		$parserOptions->setTimestamp( $revision->getTimestamp() );
+		$parserOptions->setTimestamp( $revTimestamp );
 
-		$parser = $this->getParser();
+		$parser = $this->parserFactory->create();
 		// Register our <citation> tag which just parses using a different
 		// context
 		$parser->setHook( 'citation', [ $this, 'citationTag' ] );
+
 		// Also hold on to a separate Parser instance for <citation> tag parsing
 		// since we can't parse in a parse using the same Parser
-		$this->citationParser = $this->getParser();
+		$this->citationParser = $this->parserFactory->create();
 
 		$ret = $parser->parse(
 			$this->getContentText(),
@@ -128,14 +162,6 @@ class SpecialCiteThisPage extends FormSpecialPage {
 	}
 
 	/**
-	 * @return Parser
-	 */
-	private function getParser() {
-		$parserConf = $this->getConfig()->get( 'ParserConf' );
-		return new $parserConf['class']( $parserConf );
-	}
-
-	/**
 	 * Get the content to parse
 	 *
 	 * @return string
@@ -147,10 +173,9 @@ class SpecialCiteThisPage extends FormSpecialPage {
 			# and the text moved into SpecialCite.i18n.php
 			# This code is kept for b/c in case an installation has its own file "citethispage-content-xx"
 			# for a previously not supported language.
-			global $wgContLanguageCode;
 			$dir = __DIR__ . '/../';
-			$code = MediaWikiServices::getInstance()->getContentLanguage()
-				->lc( $wgContLanguageCode );
+			$contentLang = $this->getContentLanguage();
+			$code = $contentLang->lc( $contentLang->getCode() );
 			if ( file_exists( "${dir}citethispage-content-$code" ) ) {
 				$msg = file_get_contents( "${dir}citethispage-content-$code" );
 			} elseif ( file_exists( "${dir}citethispage-content" ) ) {
@@ -170,12 +195,6 @@ class SpecialCiteThisPage extends FormSpecialPage {
 		$parserOptions = ParserOptions::newFromUser( $this->getUser() );
 		$parserOptions->setDateFormat( 'default' );
 		$parserOptions->setInterfaceMessage( true );
-
-		// Having tidy on causes whitespace and <pre> tags to
-		// be generated around the output of the CiteThisPageOutput
-		// class TODO FIXME.
-		$parserOptions->setTidy( false );
-
 		return $parserOptions;
 	}
 
@@ -201,21 +220,25 @@ class SpecialCiteThisPage extends FormSpecialPage {
 			/* $linestart = */ false
 		);
 
-		return $ret->getText( [
+		return Parser::stripOuterParagraph( $ret->getText( [
 			'enableSectionEditLinks' => false,
 			// This will be inserted into the output of another parser, so there will actually be a wrapper
 			'unwrap' => true,
-		] );
+			'wrapperDivClass' => '',
+		] ) );
 	}
 
+	/** @inheritDoc */
 	protected function getDisplayFormat() {
 		return 'ooui';
 	}
 
+	/** @inheritDoc */
 	public function requiresUnblock() {
 		return false;
 	}
 
+	/** @inheritDoc */
 	public function requiresWrite() {
 		return false;
 	}

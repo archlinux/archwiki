@@ -31,11 +31,22 @@ use MediaWiki\MediaWikiServices;
  * @ingroup Maintenance
  */
 class ForkController {
-	protected $children = [], $childNumber = 0;
-	protected $termReceived = false;
-	protected $flags = 0, $procsToStart = 0;
+	/** @var array|null */
+	protected $children = [];
 
-	protected static $restartableSignals = [
+	/** @var int */
+	protected $childNumber = 0;
+
+	/** @var bool */
+	protected $termReceived = false;
+
+	/** @var int */
+	protected $flags = 0;
+
+	/** @var int */
+	protected $procsToStart = 0;
+
+	protected const RESTARTABLE_SIGNALS = [
 		SIGFPE,
 		SIGILL,
 		SIGSEGV,
@@ -51,8 +62,12 @@ class ForkController {
 	 * Pass this flag to __construct() to cause the class to automatically restart
 	 * workers that exit with non-zero exit status or a signal such as SIGSEGV.
 	 */
-	const RESTART_ON_ERROR = 1;
+	private const RESTART_ON_ERROR = 1;
 
+	/**
+	 * @param int $numProcs The number of worker processes to fork
+	 * @param int $flags
+	 */
 	public function __construct( $numProcs, $flags = 0 ) {
 		if ( !wfIsCLI() ) {
 			throw new MWException( "ForkController cannot be used from the web." );
@@ -97,7 +112,7 @@ class ForkController {
 						// Restart if the signal was abnormal termination
 						// Don't restart if it was deliberately killed
 						$signal = pcntl_wtermsig( $status );
-						if ( in_array( $signal, self::$restartableSignals ) ) {
+						if ( in_array( $signal, self::RESTARTABLE_SIGNALS ) ) {
 							echo "Worker exited with signal $signal, restarting\n";
 							$this->procsToStart++;
 						}
@@ -150,14 +165,11 @@ class ForkController {
 	}
 
 	protected function prepareEnvironment() {
-		global $wgMemc;
 		// Don't share DB, storage, or memcached connections
 		MediaWikiServices::resetChildProcessServices();
-		FileBackendGroup::destroySingleton();
 		JobQueueGroup::destroySingletons();
 		ObjectCache::clear();
 		RedisConnectionPool::destroySingletons();
-		$wgMemc = null;
 	}
 
 	/**
@@ -192,8 +204,6 @@ class ForkController {
 	}
 
 	protected function initChild() {
-		global $wgMemc, $wgMainCacheType;
-		$wgMemc = wfGetCache( $wgMainCacheType );
 		$this->children = null;
 		pcntl_signal( SIGTERM, SIG_DFL );
 	}

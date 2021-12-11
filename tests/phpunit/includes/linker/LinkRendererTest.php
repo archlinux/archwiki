@@ -14,7 +14,7 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 	 */
 	private $factory;
 
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		$this->setMwGlobals( [
 			'wgArticlePath' => '/wiki/$1',
@@ -142,7 +142,10 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 		$wanCache = $services->getMainWANObjectCache();
 		$titleFormatter = $services->getTitleFormatter();
 		$nsInfo = $services->getNamespaceInfo();
-		$linkCache = new LinkCache( $titleFormatter, $wanCache, $nsInfo );
+		$specialPageFactory = $services->getSpecialPageFactory();
+		$hookContainer = $services->getHookContainer();
+		$loadBalancer = $services->getDBLoadBalancer();
+		$linkCache = new LinkCache( $titleFormatter, $wanCache, $nsInfo, $loadBalancer );
 		$foobarTitle = new TitleValue( NS_MAIN, 'FooBar' );
 		$redirectTitle = new TitleValue( NS_MAIN, 'Redirect' );
 		$userTitle = new TitleValue( NS_USER, 'Someuser' );
@@ -166,7 +169,8 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 			0 // redir
 		);
 
-		$linkRenderer = new LinkRenderer( $titleFormatter, $linkCache, $nsInfo );
+		$linkRenderer = new LinkRenderer( $titleFormatter, $linkCache,
+			$nsInfo, $specialPageFactory, $hookContainer );
 		$linkRenderer->setStubThreshold( 0 );
 		$this->assertSame(
 			'',
@@ -192,7 +196,7 @@ class LinkRendererTest extends MediaWikiLangTestCase {
 		);
 	}
 
-	function tearDown() {
+	protected function tearDown() : void {
 		Title::clearCaches();
 		parent::tearDown();
 	}

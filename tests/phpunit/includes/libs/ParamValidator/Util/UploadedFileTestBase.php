@@ -6,12 +6,12 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Wikimedia\AtEase\AtEase;
 
-class UploadedFileTestBase extends \PHPUnit\Framework\TestCase {
+abstract class UploadedFileTestBase extends \PHPUnit\Framework\TestCase {
 
 	/** @var string|null */
 	protected static $tmpdir;
 
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass() : void {
 		parent::setUpBeforeClass();
 
 		// Create a temporary directory for this test's files.
@@ -30,9 +30,7 @@ class UploadedFileTestBase extends \PHPUnit\Framework\TestCase {
 		}
 	}
 
-	public static function tearDownAfterClass() {
-		parent::tearDownAfterClass();
-
+	public static function tearDownAfterClass() : void {
 		// Clean up temporary directory.
 		if ( self::$tmpdir !== null ) {
 			$iter = new RecursiveIteratorIterator(
@@ -49,6 +47,7 @@ class UploadedFileTestBase extends \PHPUnit\Framework\TestCase {
 			rmdir( self::$tmpdir );
 			self::$tmpdir = null;
 		}
+		parent::tearDownAfterClass();
 	}
 
 	protected static function assertTmpdir() {

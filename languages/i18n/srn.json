@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Adfokati",
+			"DannyS712",
 			"Jordi",
 			"Kaganer",
+			"Macofe",
 			"Ooswesthoesbes",
 			"Stretsh",
 			"Urhixidur",
-			"아라",
-			"Macofe"
+			"아라"
 		]
 	},
 	"tog-underline": "Poti strepi ondro den miti:",
@@ -104,7 +105,6 @@
 	"category-article-count-limited": "Den {{PLURAL:$1|papira|$1 papira}} disi de ini a grupu disi.",
 	"category-file-count": "{{PLURAL:$2|A grupu disi abi soso a file disi.|A grupu disi abi {{PLURAL:$1|a file disi|de $1 file disi}}, fu $2, teri na makandra.}}",
 	"category-file-count-limited": "{{PLURAL:$1|A file disi|Den $1 file disi}} de ini a grupu disi.",
-	"listingcontinuesabbrev": "moro",
 	"about": "Abra",
 	"article": "Papira",
 	"newwindow": "(o opo ini wan nyun fensre)",
@@ -194,7 +194,6 @@
 	"thisisdeleted": "Luku noso poti baka $1?",
 	"viewdeleted": "Luku $1?",
 	"restorelink": "$1 taki de ben puru",
-	"feedlinks": "Feed:",
 	"feed-invalid": "A sortu feed disi no bun dyaso",
 	"feed-unavailable": "Den Syndication feed no de na tapu {{SITENAME}}",
 	"site-rss-feed": "$1 RSS-feed",
@@ -334,7 +333,7 @@
 	"histfirst": "A moro owru wan",
 	"histlast": "A moro nyun wan",
 	"historysize": "({{PLURAL:$1|wan byte|$1 byte}})",
-	"historyempty": "(leygi)",
+	"historyempty": "leygi",
 	"history-feed-title": "Kenkistori",
 	"history-feed-description": "Kenkistori du disi papira opo {{SITENAME}}",
 	"history-feed-item-nocomment": "$1 tapu $2",
@@ -622,7 +621,7 @@
 	"namespace": "Nen-presi",
 	"invert": "Drai a teki",
 	"blanknamespace": "(Fesi nen-presi)",
-	"contributions": "Sani di a kebroikiman du",
+	"tool-link-contributions": "Sani di a kebroikiman du",
 	"mycontris": "Sani di mi du",
 	"contribsub2": "Fu $1 ($2)",
 	"uctop": "a moro nyun kenki",

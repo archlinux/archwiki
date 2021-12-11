@@ -3,14 +3,14 @@
 		"authors": [
 			"Kaajawa",
 			"Mahitgar",
+			"NehalDaveND",
 			"Praju23",
+			"Sureshkhole",
+			"Susheelkasab",
 			"V.narsikar",
 			"Ydyashad",
-			"संतोष दहिवळ",
 			"अभय नातू",
-			"NehalDaveND",
-			"Sureshkhole",
-			"Susheelkasab"
+			"संतोष दहिवळ"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "पुस्तक",
@@ -25,7 +25,6 @@
 	"cite-ve-changedesc-reflist-group-to": "संदर्भयादी सामान्य गटाकडून \"$1\" कडे नेलेली आहे",
 	"cite-ve-changedesc-reflist-responsive-set": "संदर्भ यादी प्रतीसादिक स्तंभात दाखवता यावी अशा पद्धतीने बदलण्यात आली आहे.",
 	"cite-ve-changedesc-reflist-responsive-unset": "संदर्भ यादी फक्त एकच स्तंभात दाखवता यावी अशा पद्धतीने बदलण्यात आली आहे.",
-	"cite-ve-changedesc-reflist-item-id": "संदर्भयादी बदलली गेली आहे",
 	"cite-ve-dialog-reference-editing-reused": "हा संदर्भ या पानावर $1 {{PLURAL:$1|वेळा}} वापरल्या गेला.",
 	"cite-ve-dialog-reference-options-group-label": "हा संदर्भगट वापरा",
 	"cite-ve-dialog-reference-options-group-placeholder": "सामान्य संदर्भ",

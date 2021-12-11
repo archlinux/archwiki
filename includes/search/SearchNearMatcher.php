@@ -1,6 +1,9 @@
 <?php
 
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\WikiPageFactory;
 
 /**
  * Implementation of near match title search.
@@ -18,9 +21,36 @@ class SearchNearMatcher {
 	 */
 	private $language;
 
-	public function __construct( Config $config, Language $lang ) {
+	/**
+	 * Current language converter
+	 * @var ILanguageConverter
+	 */
+	private $languageConverter;
+
+	/**
+	 * @var HookRunner
+	 */
+	private $hookRunner;
+
+	/**
+	 * @var WikiPageFactory
+	 */
+	private $wikiPageFactory;
+
+	/**
+	 * SearchNearMatcher constructor.
+	 * @param Config $config
+	 * @param Language $lang
+	 * @param HookContainer $hookContainer
+	 */
+	public function __construct( Config $config, Language $lang, HookContainer $hookContainer ) {
 		$this->config = $config;
 		$this->language = $lang;
+		$services = MediaWikiServices::getInstance();
+		$this->languageConverter = $services->getLanguageConverterFactory()
+			->getLanguageConverter( $lang );
+		$this->wikiPageFactory = $services->getWikiPageFactory();
+		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
 	/**
@@ -33,7 +63,7 @@ class SearchNearMatcher {
 	public function getNearMatch( $searchterm ) {
 		$title = $this->getNearMatchInternal( $searchterm );
 
-		Hooks::run( 'SearchGetNearMatchComplete', [ $searchterm, &$title ] );
+		$this->hookRunner->onSearchGetNearMatchComplete( $searchterm, $title );
 		return $title;
 	}
 
@@ -54,18 +84,17 @@ class SearchNearMatcher {
 	 * @return null|Title
 	 */
 	protected function getNearMatchInternal( $searchterm ) {
-		$lang = $this->language;
 		$allSearchTerms = [ $searchterm ];
 
-		if ( $lang->hasVariants() ) {
+		if ( $this->languageConverter->hasVariants() ) {
 			$allSearchTerms = array_unique( array_merge(
 				$allSearchTerms,
-				$lang->autoConvertToAllVariants( $searchterm )
+				$this->languageConverter->autoConvertToAllVariants( $searchterm )
 			) );
 		}
 
 		$titleResult = null;
-		if ( !Hooks::run( 'SearchGetNearMatchBefore', [ $allSearchTerms, &$titleResult ] ) ) {
+		if ( !$this->hookRunner->onSearchGetNearMatchBefore( $allSearchTerms, $titleResult ) ) {
 			return $titleResult;
 		}
 
@@ -79,12 +108,12 @@ class SearchNearMatcher {
 		foreach ( $allSearchTerms as $term ) {
 			# Exact match? No need to look further.
 			$title = Title::newFromText( $term );
-			if ( is_null( $title ) ) {
+			if ( $title === null ) {
 				return null;
 			}
 
 			# Try files if searching in the Media: namespace
-			if ( $title->getNamespace() == NS_MEDIA ) {
+			if ( $title->getNamespace() === NS_MEDIA ) {
 				$title = Title::makeTitle( NS_FILE, $title->getText() );
 			}
 
@@ -93,42 +122,44 @@ class SearchNearMatcher {
 			}
 
 			# See if it still otherwise has content is some sane sense
-			$page = WikiPage::factory( $title );
-			if ( $page->hasViewableContent() ) {
-				return $title;
+			if ( $title->canExist() ) {
+				$page = $this->wikiPageFactory->newFromTitle( $title );
+				if ( $page->hasViewableContent() ) {
+					return $title;
+				}
 			}
 
-			if ( !Hooks::run( 'SearchAfterNoDirectMatch', [ $term, &$title ] ) ) {
+			if ( !$this->hookRunner->onSearchAfterNoDirectMatch( $term, $title ) ) {
 				return $title;
 			}
 
 			# Now try all lower case (i.e. first letter capitalized)
-			$title = Title::newFromText( $lang->lc( $term ) );
+			$title = Title::newFromText( $this->language->lc( $term ) );
 			if ( $title && $title->exists() ) {
 				return $title;
 			}
 
 			# Now try capitalized string
-			$title = Title::newFromText( $lang->ucwords( $term ) );
+			$title = Title::newFromText( $this->language->ucwords( $term ) );
 			if ( $title && $title->exists() ) {
 				return $title;
 			}
 
 			# Now try all upper case
-			$title = Title::newFromText( $lang->uc( $term ) );
+			$title = Title::newFromText( $this->language->uc( $term ) );
 			if ( $title && $title->exists() ) {
 				return $title;
 			}
 
 			# Now try Word-Caps-Breaking-At-Word-Breaks, for hyphenated names etc
-			$title = Title::newFromText( $lang->ucwordbreaks( $term ) );
+			$title = Title::newFromText( $this->language->ucwordbreaks( $term ) );
 			if ( $title && $title->exists() ) {
 				return $title;
 			}
 
 			// Give hooks a chance at better match variants
 			$title = null;
-			if ( !Hooks::run( 'SearchGetNearMatch', [ $term, &$title ] ) ) {
+			if ( !$this->hookRunner->onSearchGetNearMatch( $term, $title ) ) {
 				return $title;
 			}
 		}
@@ -137,21 +168,21 @@ class SearchNearMatcher {
 
 		# Entering an IP address goes to the contributions page
 		if ( $this->config->get( 'EnableSearchContributorsByIP' ) ) {
-			if ( ( $title->getNamespace() == NS_USER && User::isIP( $title->getText() ) )
+			if ( ( $title->getNamespace() === NS_USER && User::isIP( $title->getText() ) )
 				|| User::isIP( trim( $searchterm ) ) ) {
 				return SpecialPage::getTitleFor( 'Contributions', $title->getDBkey() );
 			}
 		}
 
 		# Entering a user goes to the user page whether it's there or not
-		if ( $title->getNamespace() == NS_USER ) {
+		if ( $title->getNamespace() === NS_USER ) {
 			return $title;
 		}
 
 		# Go to images that exist even if there's no local page.
 		# There may have been a funny upload, or it may be on a shared
 		# file repository such as Wikimedia Commons.
-		if ( $title->getNamespace() == NS_FILE ) {
+		if ( $title->getNamespace() === NS_FILE ) {
 			$image = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
 			if ( $image ) {
 				return $title;
@@ -160,8 +191,8 @@ class SearchNearMatcher {
 
 		# MediaWiki namespace? Page may be "implied" if not customized.
 		# Just return it, with caps forced as the message system likes it.
-		if ( $title->getNamespace() == NS_MEDIAWIKI ) {
-			return Title::makeTitle( NS_MEDIAWIKI, $lang->ucfirst( $title->getText() ) );
+		if ( $title->getNamespace() === NS_MEDIAWIKI ) {
+			return Title::makeTitle( NS_MEDIAWIKI, $this->language->ucfirst( $title->getText() ) );
 		}
 
 		# Quoted term? Try without the quotes...

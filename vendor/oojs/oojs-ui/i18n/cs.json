@@ -6,14 +6,16 @@
 			"Juandev",
 			"Koo6",
 			"Littledogboy",
+			"Martin Urbanec",
+			"Matěj Suchánek",
 			"Michaelbrabec",
 			"Mormegil",
+			"Patriccck",
+			"Patrik L.",
 			"Polda18",
 			"Tchoř",
-			"ශ්වෙත",
 			"Vojtěch Dostál",
-			"Matěj Suchánek",
-			"Martin Urbanec"
+			"ශ්වෙත"
 		]
 	},
 	"ooui-outline-control-move-down": "Přesunout položku dolů",
@@ -31,8 +33,11 @@
 	"ooui-dialog-process-continue": "Pokračovat",
 	"ooui-combobox-button-label": "Rozbalení výběru",
 	"ooui-selectfile-button-select": "Vybrat soubor",
+	"ooui-selectfile-button-select-multiple": "Vybrat soubory",
 	"ooui-selectfile-not-supported": "Výběr souboru není podporován",
 	"ooui-selectfile-placeholder": "Nebyl vybrán žádný soubor",
 	"ooui-selectfile-dragdrop-placeholder": "Umístěte soubor sem",
+	"ooui-selectfile-dragdrop-placeholder-multiple": "Přetáhněte soubory zde",
+	"ooui-popup-widget-close-button-aria-label": "Zavřít",
 	"ooui-field-help": "Pomoc"
 }

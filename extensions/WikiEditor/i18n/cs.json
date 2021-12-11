@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Dvorapa",
 			"Jkjk",
 			"Kuvaly",
 			"Littledogboy",
-			"Mormegil",
 			"Macofe",
-			"Dvorapa",
 			"Matěj Suchánek",
-			"Patriccck"
+			"Mormegil",
+			"Patriccck",
+			"Patrik L."
 		]
 	},
 	"wikieditor": "Vylepšené rozhraní pro editaci wikitextu",
@@ -51,7 +52,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Vnitřní odkaz",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Externí odkaz",
 	"wikieditor-toolbar-tool-link-empty": "Musíte uvést cíl odkazu.",
-	"wikieditor-toolbar-tool-file": "Média",
+	"wikieditor-toolbar-tool-file": "Obrázky a média",
 	"wikieditor-toolbar-tool-file-example": "Příklad.jpg",
 	"wikieditor-toolbar-tool-file-title": "Vložit soubor",
 	"wikieditor-toolbar-file-target": "Název souboru:",
@@ -131,6 +132,7 @@
 	"wikieditor-toolbar-tool-replace-success": "{{PLURAL:$1|Provedeno|Provedena|Provedeno}} $1 nahrazení.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Musíte uvést, co se má hledat.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Zadaný regulární výraz je neplatný: $1",
+	"wikieditor-toolbar-tool-replace-word": "Hledat pouze celá slova",
 	"wikieditor-toolbar-section-characters": "Zvláštní znaky",
 	"wikieditor-toolbar-section-help": "Nápověda",
 	"wikieditor-toolbar-help-heading-description": "Popis",

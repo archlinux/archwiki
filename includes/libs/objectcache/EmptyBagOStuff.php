@@ -27,6 +27,12 @@
  * @ingroup Cache
  */
 class EmptyBagOStuff extends MediumSpecificBagOStuff {
+	public function __construct( array $params = [] ) {
+		parent::__construct( $params );
+
+		$this->attrMap[self::ATTR_DURABILITY] = self::QOS_DURABILITY_NONE;
+	}
+
 	protected function doGet( $key, $flags = 0, &$casToken = null ) {
 		$casToken = null;
 
@@ -59,5 +65,13 @@ class EmptyBagOStuff extends MediumSpecificBagOStuff {
 
 	public function merge( $key, callable $callback, $exptime = 0, $attempts = 10, $flags = 0 ) {
 		return true; // faster
+	}
+
+	public function makeKeyInternal( $keyspace, $components ) {
+		return $this->genericKeyFromComponents( $keyspace, ...$components );
+	}
+
+	protected function convertGenericKey( $key ) {
+		return $key; // short-circuit; already uses "generic" keys
 	}
 }

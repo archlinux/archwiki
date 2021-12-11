@@ -3,16 +3,16 @@
 /**
  * @covers WebPHandler
  */
-class WebPHandlerTest extends MediaWikiTestCase {
-	public function setUp() {
+class WebPHandlerTest extends MediaWikiIntegrationTestCase {
+	protected function setUp() : void {
 		parent::setUp();
 		// Allocated file for testing
 		$this->tempFileName = tempnam( wfTempDir(), 'WEBP' );
 	}
 
-	public function tearDown() {
-		parent::tearDown();
+	protected function tearDown() : void {
 		unlink( $this->tempFileName );
+		parent::tearDown();
 	}
 
 	/**

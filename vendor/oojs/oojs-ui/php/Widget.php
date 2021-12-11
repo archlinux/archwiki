@@ -14,7 +14,7 @@ class Widget extends Element {
 	/**
 	 * Disabled.
 	 *
-	 * @var boolean Widget is disabled
+	 * @var bool Widget is disabled
 	 */
 	protected $disabled = false;
 
@@ -23,7 +23,6 @@ class Widget extends Element {
 	/**
 	 * @param array $config Configuration options
 	 *      - bool $config['disabled'] Disable (default: false)
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Initialize config
@@ -71,6 +70,19 @@ class Widget extends Element {
 	 */
 	public function getInputId() {
 		return null;
+	}
+
+	/**
+	 * Set the element with the given ID as a label for this widget.
+	 *
+	 * @param string|null $id
+	 */
+	public function setLabelledBy( $id ) {
+		if ( $id ) {
+			$this->setAttributes( [ 'aria-labelledby' => $id ] );
+		} else {
+			$this->removeAttributes( [ 'aria-labelledby' ] );
+		}
 	}
 
 	public function getConfig( &$config ) {

@@ -20,7 +20,9 @@
  */
 
 use MediaWiki\Interwiki\InterwikiLookup;
-use Wikimedia\TestingAccessWrapper;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageIdentityValue;
 
 /**
  * @covers MediaWikiTitleCodec
@@ -29,9 +31,9 @@ use Wikimedia\TestingAccessWrapper;
  * @group Database
  *        ^--- needed because of global state in
  */
-class MediaWikiTitleCodecTest extends MediaWikiTestCase {
+class MediaWikiTitleCodecTest extends MediaWikiIntegrationTestCase {
 
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->setMwGlobals( [
@@ -58,7 +60,7 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 
 		$genderCache->expects( $this->any() )
 			->method( 'getGenderOf' )
-			->will( $this->returnCallback( function ( $userName ) {
+			->will( $this->returnCallback( static function ( $userName ) {
 				return preg_match( '/^[^- _]+a( |_|$)/u', $userName ) ? 'female' : 'male';
 			} ) );
 
@@ -76,12 +78,12 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 
 		$iwLookup->expects( $this->any() )
 			->method( 'isValidInterwiki' )
-			->will( $this->returnCallback( function ( $prefix ) {
+			->will( $this->returnCallback( static function ( $prefix ) {
 				return $prefix === 'localtestiw' || $prefix === 'remotetestiw';
 			} ) );
 
 		$iwLookup->expects( $this->never() )
-			->method( $this->callback( function ( $name ) {
+			->method( $this->callback( static function ( $name ) {
 				return $name !== 'isValidInterwiki';
 			} ) );
 
@@ -114,17 +116,17 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 		$nsInfo = $this->createMock( NamespaceInfo::class );
 
 		$nsInfo->method( 'exists' )
-			->will( $this->returnCallback( function ( $ns ) use ( $canonicalNamespaces ) {
+			->will( $this->returnCallback( static function ( $ns ) use ( $canonicalNamespaces ) {
 				return isset( $canonicalNamespaces[$ns] );
 			} ) );
 
 		$nsInfo->method( 'getCanonicalName' )
-			->will( $this->returnCallback( function ( $ns ) use ( $canonicalNamespaces ) {
+			->will( $this->returnCallback( static function ( $ns ) use ( $canonicalNamespaces ) {
 				return $canonicalNamespaces[$ns] ?? false;
 			} ) );
 
 		$nsInfo->method( 'hasGenderDistinction' )
-			->will( $this->returnCallback( function ( $ns ) {
+			->will( $this->returnCallback( static function ( $ns ) {
 				return $ns === NS_USER || $ns === NS_USER_TALK;
 			} ) );
 
@@ -139,7 +141,7 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 
 	protected function makeCodec( $lang ) {
 		return new MediaWikiTitleCodec(
-			Language::factory( $lang ),
+			MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( $lang ),
 			$this->getGenderCache(),
 			[ 'localtestiw' ],
 			$this->getInterwikiLookup(),
@@ -197,19 +199,20 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 	}
 
 	public static function provideGetText() {
+		// $title = new TitleValue( $namespace, $dbkey, $fragment );
 		return [
-			[ NS_MAIN, 'Foo_Bar', '', 'en', 'Foo Bar' ],
-			[ NS_USER, 'Hansi_Maier', 'stuff_and_so_on', 'en', 'Hansi Maier' ],
+			[ new TitleValue( NS_MAIN, 'Foo_Bar', '' ), 'en', 'Foo Bar' ],
+			[ new TitleValue( NS_USER, 'Hansi_Maier', 'stuff_and_so_on' ), 'en', 'Hansi Maier' ],
+			[ new PageIdentityValue( 37, NS_MAIN, 'Foo_Bar', PageIdentity::LOCAL ), 'en', 'Foo Bar' ],
+			[ new PageIdentityValue( 37, NS_USER, 'Hansi_Maier', PageIdentity::LOCAL ), 'en', 'Hansi Maier' ],
 		];
 	}
 
 	/**
 	 * @dataProvider provideGetText
 	 */
-	public function testGetText( $namespace, $dbkey, $fragment, $lang, $expected ) {
+	public function testGetText( $title, $lang, $expected ) {
 		$codec = $this->makeCodec( $lang );
-		$title = new TitleValue( $namespace, $dbkey, $fragment );
-
 		$actual = $codec->getText( $title );
 
 		$this->assertEquals( $expected, $actual );
@@ -217,26 +220,56 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 
 	public static function provideGetPrefixedText() {
 		return [
-			[ NS_MAIN, 'Foo_Bar', '', 'en', 'Foo Bar' ],
-			[ NS_USER, 'Hansi_Maier', 'stuff_and_so_on', 'en', 'User:Hansi Maier' ],
+			[ new TitleValue( NS_MAIN, 'Foo_Bar', '' ), 'en', 'Foo Bar' ],
+			[ new TitleValue( NS_USER, 'Hansi_Maier', 'stuff_and_so_on' ), 'en', 'User:Hansi Maier' ],
 
 			// No capitalization or normalization is applied while formatting!
-			[ NS_USER_TALK, 'hansi__maier', '', 'en', 'User talk:hansi  maier' ],
+			[ new TitleValue( NS_USER_TALK, 'hansi__maier', '' ), 'en', 'User talk:hansi  maier' ],
 
 			// getGenderCache() provides a mock that considers first
 			// names ending in "a" to be female.
-			[ NS_USER, 'Lisa_Müller', '', 'de', 'Benutzerin:Lisa Müller' ],
-			[ 1000000, 'Invalid_namespace', '', 'en', 'Special:Badtitle/NS1000000:Invalid namespace' ],
+			[
+				new TitleValue( NS_USER, 'Lisa_Müller', '' ),
+				'de', 'Benutzerin:Lisa Müller'
+			],
+			[
+				new TitleValue( 1000000, 'Invalid_namespace', '' ),
+				'en',
+				'Special:Badtitle/NS1000000:Invalid namespace'
+			],
+			[
+				new PageIdentityValue( 37, NS_MAIN, 'Foo_Bar', PageIdentity::LOCAL ),
+				'en',
+				'Foo Bar'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER, 'Hansi_Maier', PageIdentity::LOCAL ),
+				'en',
+				'User:Hansi Maier'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER_TALK, 'hansi__maier', PageIdentity::LOCAL ),
+				'en',
+				'User talk:hansi  maier'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER, 'Lisa_Müller', PageIdentity::LOCAL ),
+				'de',
+				'Benutzerin:Lisa Müller'
+			],
+			[
+				new PageIdentityValue( 37, 1000000, 'Invalid_namespace', PageIdentity::LOCAL ),
+				'en',
+				'Special:Badtitle/NS1000000:Invalid namespace'
+			],
 		];
 	}
 
 	/**
 	 * @dataProvider provideGetPrefixedText
 	 */
-	public function testGetPrefixedText( $namespace, $dbkey, $fragment, $lang, $expected ) {
+	public function testGetPrefixedText( $title, $lang, $expected ) {
 		$codec = $this->makeCodec( $lang );
-		$title = new TitleValue( $namespace, $dbkey, $fragment );
-
 		$actual = $codec->getPrefixedText( $title );
 
 		$this->assertEquals( $expected, $actual );
@@ -244,32 +277,60 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 
 	public static function provideGetPrefixedDBkey() {
 		return [
-			[ NS_MAIN, 'Foo_Bar', '', '', 'en', 'Foo_Bar' ],
-			[ NS_USER, 'Hansi_Maier', 'stuff_and_so_on', '', 'en', 'User:Hansi_Maier' ],
+			[ new TitleValue( NS_MAIN, 'Foo_Bar', '', '' ), 'en', 'Foo_Bar' ],
+			[ new TitleValue( NS_USER, 'Hansi_Maier', 'stuff_and_so_on', '' ), 'en', 'User:Hansi_Maier' ],
 
 			// No capitalization or normalization is applied while formatting!
-			[ NS_USER_TALK, 'hansi__maier', '', '', 'en', 'User_talk:hansi__maier' ],
+			[ new TitleValue( NS_USER_TALK, 'hansi__maier', '', '' ), 'en', 'User_talk:hansi__maier' ],
 
 			// getGenderCache() provides a mock that considers first
 			// names ending in "a" to be female.
-			[ NS_USER, 'Lisa_Müller', '', '', 'de', 'Benutzerin:Lisa_Müller' ],
+			[ new TitleValue( NS_USER, 'Lisa_Müller', '', '' ), 'de', 'Benutzerin:Lisa_Müller' ],
 
-			[ NS_MAIN, 'Remote_page', '', 'remotetestiw', 'en', 'remotetestiw:Remote_page' ],
+			[ new TitleValue( NS_MAIN, 'Remote_page', '', 'remotetestiw' ), 'en', 'remotetestiw:Remote_page' ],
 
 			// non-existent namespace
-			[ 10000000, 'Foobar', '', '', 'en', 'Special:Badtitle/NS10000000:Foobar' ],
+			[ new TitleValue( 10000000, 'Foobar', '', '' ), 'en', 'Special:Badtitle/NS10000000:Foobar' ],
+
+			[
+				new PageIdentityValue( 37, NS_MAIN, 'Foo_Bar', PageIdentity::LOCAL ),
+				'en' ,
+				'Foo_Bar'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER, 'Hansi_Maier', PageIdentity::LOCAL ),
+				'en',
+				'User:Hansi_Maier'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER_TALK, 'hansi__maier', PageIdentity::LOCAL ),
+				'en',
+				'User_talk:hansi__maier'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER, 'Lisa_Müller', PageIdentity::LOCAL ),
+				'de',
+				'Benutzerin:Lisa_Müller'
+			],
+			[
+				new PageIdentityValue( 37, NS_MAIN, 'Remote_page', PageIdentity::LOCAL ),
+				'en' ,
+				'Remote_page'
+			],
+			[
+				new PageIdentityValue( 37, 10000000, 'Foobar', PageIdentity::LOCAL ),
+				'en' ,
+				'Special:Badtitle/NS10000000:Foobar'
+			],
 		];
 	}
 
 	/**
 	 * @dataProvider provideGetPrefixedDBkey
 	 */
-	public function testGetPrefixedDBkey( $namespace, $dbkey, $fragment,
-		$interwiki, $lang, $expected
+	public function testGetPrefixedDBkey( $title, $lang, $expected
 	) {
 		$codec = $this->makeCodec( $lang );
-		$title = new TitleValue( $namespace, $dbkey, $fragment, $interwiki );
-
 		$actual = $codec->getPrefixedDBkey( $title );
 
 		$this->assertEquals( $expected, $actual );
@@ -277,21 +338,38 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 
 	public static function provideGetFullText() {
 		return [
-			[ NS_MAIN, 'Foo_Bar', '', 'en', 'Foo Bar' ],
-			[ NS_USER, 'Hansi_Maier', 'stuff_and_so_on', 'en', 'User:Hansi Maier#stuff and so on' ],
+			[ new TitleValue( NS_MAIN, 'Foo_Bar', '' ), 'en', 'Foo Bar' ],
+			[ new TitleValue( NS_USER, 'Hansi_Maier', 'stuff_and_so_on' ), 'en', 'User:Hansi Maier#stuff and so on' ],
 
 			// No capitalization or normalization is applied while formatting!
-			[ NS_USER_TALK, 'hansi__maier', '', 'en', 'User talk:hansi  maier' ],
+			[ new TitleValue( NS_USER_TALK, 'hansi__maier', '' ), 'en', 'User talk:hansi  maier' ],
+
+			[ new TitleValue( NS_MAIN, 'Foo_Bar' ), 'en', 'Foo Bar' ],
+			[ new TitleValue( NS_USER, 'Hansi_Maier' ), 'en', 'User:Hansi Maier' ],
+
+			[
+				new PageIdentityValue( 37, NS_MAIN, 'Foo_Bar', PageIdentity::LOCAL ),
+				'en',
+				'Foo Bar'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER, 'Hansi_Maier', PageIdentity::LOCAL ),
+				'en',
+				'User:Hansi Maier'
+			],
+			[
+				new PageIdentityValue( 37, NS_USER_TALK, 'hansi__maier', PageIdentity::LOCAL ),
+				'en',
+				'User talk:hansi  maier'
+			],
 		];
 	}
 
 	/**
 	 * @dataProvider provideGetFullText
 	 */
-	public function testGetFullText( $namespace, $dbkey, $fragment, $lang, $expected ) {
+	public function testGetFullText( $title, $lang, $expected ) {
 		$codec = $this->makeCodec( $lang );
-		$title = new TitleValue( $namespace, $dbkey, $fragment );
-
 		$actual = $codec->getFullText( $title );
 
 		$this->assertEquals( $expected, $actual );
@@ -366,6 +444,7 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 			[ 'X#n&#x303;', NS_MAIN, 'en', new TitleValue( NS_MAIN, 'X', 'ñ' ) ],
 			// target section parsing
 			'empty fragment' => [ 'X#', NS_MAIN, 'en', new TitleValue( NS_MAIN, 'X' ) ],
+			'only fragment' => [ '#', NS_MAIN, 'en', new TitleValue( NS_MAIN, '' ) ],
 			'double hash' => [ 'X##', NS_MAIN, 'en', new TitleValue( NS_MAIN, 'X', '#' ) ],
 			'fragment with hash' => [ 'X#z#z', NS_MAIN, 'en', new TitleValue( NS_MAIN, 'X', 'z#z' ) ],
 			'fragment with space' => [ 'X#z z', NS_MAIN, 'en', new TitleValue( NS_MAIN, 'X', 'z z' ) ],
@@ -396,7 +475,7 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 		// TODO: test unicode errors
 
 		return [
-			[ '#' ],
+			[ 'User:#' ],
 			[ '::' ],
 			[ '::xx' ],
 			[ '::##' ],
@@ -457,7 +536,7 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 	 * @dataProvider provideParseTitle_invalid
 	 */
 	public function testParseTitle_invalid( $text ) {
-		$this->setExpectedException( MalformedTitleException::class );
+		$this->expectException( MalformedTitleException::class );
 
 		$codec = $this->makeCodec( 'en' );
 		$codec->parseTitle( $text, NS_MAIN );
@@ -490,19 +569,20 @@ class MediaWikiTitleCodecTest extends MediaWikiTestCase {
 		$this->setService( 'TitleFormatter', $codec );
 
 		$actual = Title::makeTitleSafe( $ns, $text, $fragment, $interwiki );
-		// We need to reset some members so equality testing works
-		if ( $actual ) {
-			$wrapper = TestingAccessWrapper::newFromObject( $actual );
-			$wrapper->mArticleID = $actual->getNamespace() === NS_SPECIAL ? 0 : -1;
-			$wrapper->mLocalInterwiki = false;
-			$wrapper->mUserCaseDBKey = null;
+
+		if ( $expected ) {
+			$this->assertNotNull( $actual );
+			$this->assertTrue( Title::castFromLinkTarget( $expected )->equals( $actual ) );
+		} else {
+			$this->assertNull( $actual );
 		}
-		$this->assertEquals( Title::castFromLinkTarget( $expected ), $actual );
 	}
 
 	public static function provideMakeTitleValueSafe() {
 		$ret = [
 			'Nonexistent NS' => [ null, 942929, 'Test' ],
+			'Linebreak in title' => [ null, NS_MAIN, "Test\nthis" ],
+			'Pipe in title' => [ null, NS_MAIN, "Test|this" ],
 			'Simple page' => [ new TitleValue( NS_MAIN, 'Test' ), NS_MAIN, 'Test' ],
 
 			// Fragments

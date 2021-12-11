@@ -17,16 +17,17 @@
 	"nuke-submit-user": "Кхочушде",
 	"nuke-submit-delete": "ДӀаяха хаьржнарш",
 	"right-nuke": "дуккха агӀонаш дӀаяхар",
-	"nuke-userorip": "Декъашхочун цӀе, IP-адрес (еса йита мега):",
+	"nuke-userorip": "Декъашхочун цӀе, IP-адрес (яьсса йита мега):",
 	"nuke-maxpages": "АгӀонийн максимум дукхалла:",
 	"nuke-editby": "Кхолийна {{GENDER:$1|декъашхочо}} [[Special:Contributions/$1|$1]]",
 	"nuke-deleted": "'''$1''' агӀо дӀаяьккхина.",
 	"nuke-not-deleted": "[[:$1]] агӀо дӀайоккхила '''дац'''.",
 	"nuke-delete-more": "[[Special:Nuke|Дуккха агӀонаш дӀаяхар]]",
-	"nuke-pattern": "Кеп агӀона цӀеран:",
+	"nuke-pattern": "SQL LIKE кеп (масал., %) агӀонан цӀеран:",
 	"nuke-nopages-global": "[[Special:RecentChanges|Кеста бинчу хийцамашкахь]] керла агӀонаш яц.",
 	"nuke-viewchanges": "ХӀоттина болу хийцам",
-	"nuke-namespace": "Къастае меттиг цӀерш:",
+	"nuke-namespace": "Къастае меттиган цӀе:",
 	"nuke-linkoncontribs": "Дуккха дӀаяхар",
-	"nuke-linkoncontribs-text": "ХӀокху декъашхочо кхоьллина агӀонаш массо дӀаяха"
+	"nuke-linkoncontribs-text": "ХӀокху декъашхочо кхоьллина агӀонаш массо дӀаяха",
+	"nuke-confirm": "Ахьа {{PLURAL:$1|дӀайохкуш ю цхьа агӀо|$1 дӀайохкуш ю агӀо}}. Лаьий хьуна, иза кхочушдан?"
 }

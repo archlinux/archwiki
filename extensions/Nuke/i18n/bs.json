@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"CERminator",
-			"Srdjan m"
+			"Obsuser",
+			"Srdjan m",
+			"Srđan"
 		]
 	},
 	"nuke": "Masovno brisanje",
@@ -10,7 +12,7 @@
 	"nuke-desc": "Daje administratorima mogućnost [[Special:Nuke|masovnog brisanja]] stranica",
 	"nuke-nopages": "[[Special:Contributions/$1|$1]] nedavno nije {{GENDER:$1|napravio|napravila}} nijednu novu stranicu.",
 	"nuke-list": "Sljedeće stranice nedavno je {{GENDER:$1|napravio|napravila}} [[Special:Contributions/$1|$1]];\nupišite komentar i pritisnite dugme da biste ih obrisali.",
-	"nuke-list-multiple": "Slijedeće stranice su nedavno napravljene;\nstavite ih u komentar i pritisnite dugme za njihovo brisanje.",
+	"nuke-list-multiple": "Sljedeće stranice su nedavno napravljene;\nstavite ih u komentar i pritisnite dugme za njihovo brisanje.",
 	"nuke-defaultreason": "Masovno brisanje stranica koje je {{GENDER:$1|dodao|dodala}} [[Special:Contributions/$1|$1]]",
 	"nuke-multiplepeople": "Masovno brisanje nedavno dodanih stranica",
 	"nuke-tools": "Ovaj alat omogućuje masovno brisanje stranica koje je nedavno dodao određeni korisnik ili IP adresa.\nUnesite korisničko ime ili IP adresu za izlistavanje stranica koje se brišu ili ostavite prazno za prikaz svih korisnika.",

@@ -34,6 +34,10 @@ class IndexLayout extends MenuLayout {
 	 * @var bool
 	 */
 	protected $continuous;
+	/**
+	 * @var string
+	 */
+	protected $currentTabPanelName;
 
 	/**
 	 * @param array $config Configuration options
@@ -41,7 +45,6 @@ class IndexLayout extends MenuLayout {
 	 *        displayed. Disabled on mobile. (default: false)
 	 *      - bool $config['autoFocus'] (default: true)
 	 *      - bool $config['framed'] (default: true)
-	 * @param-taint $config escapes_htmlnoent
 	 */
 	public function __construct( array $config = [] ) {
 		$config = array_merge(
@@ -99,6 +102,34 @@ class IndexLayout extends MenuLayout {
 	}
 
 	/**
+	 * Get the tabs widget.
+	 *
+	 * @return TabSelectWidget Tabs widget
+	 */
+	public function getTabs() {
+		return $this->tabSelectWidget;
+	}
+
+	/**
+	 * Get a tab panel by its symbolic name.
+	 *
+	 * @param string $name Symbolic name of table panel
+	 * @return TabPanelLayout Tab panel, if found
+	 */
+	public function getTabPanel( $name ) {
+		return $this->tabPanels[$name];
+	}
+
+	public function getCurrentTabPanel() {
+		$name = $this->getCurrentTabPanelName();
+		return $name ? $this->getTabPanel( $name ) : null;
+	}
+
+	public function getCurrentTabPanelName() {
+		return $this->currentTabPanelName;
+	}
+
+	/**
 	 * Add tab panels to the index layout
 	 *
 	 * When tab panels are added with the same names as existing tab panels, the existing tab panels
@@ -108,20 +139,42 @@ class IndexLayout extends MenuLayout {
 	 */
 	public function addTabPanels( array $tabPanels ) {
 		$tabItems = [];
-		foreach ( $tabPanels as $i => $tabPanel ) {
+		foreach ( $tabPanels as $tabPanel ) {
 			$this->tabPanels[ $tabPanel->getName() ] = $tabPanel;
-			$labelElement = new Tag( 'span' );
-			$tabItem = new TabOptionWidget( [
-				'labelElement' => $labelElement,
-				'label' => $tabPanel->getLabel(),
+			$tabItem = new TabOptionWidget( array_merge( [
 				'data' => $tabPanel->getName(),
-				// Select the first item
-				// TODO: Support selecting an arbitrary item
-				'selected' => $this->tabSelectWidget->isEmpty() && $i === 0
-			] );
+			], $tabPanel->getTabItemConfig() ) );
+			$tabPanel->setTabItem( $tabItem );
 			$tabItems[] = $tabItem;
 		}
 		$this->tabSelectWidget->addItems( $tabItems );
 		$this->stackLayout->addItems( $tabPanels );
+
+		// Select the first item
+		$this->getTabs()->selectItem( $tabItems[ 0 ] );
+	}
+
+	/**
+	 * Set the current tab panel by symbolic name.
+	 *
+	 * @param string $name Symbolic name of tab panel
+	 */
+	public function setTabPanel( $name ) {
+		if ( $name !== $this->currentTabPanelName ) {
+			$tabPanel = $this->getTabPanel( $name );
+			$previousTabPanel = $this->getCurrentTabPanel();
+			$selectedItem = $this->getTabs()->findSelectedItem();
+			if ( !$selectedItem || $selectedItem->getData() !== $name ) {
+				$this->getTabs()->selectItemByData( $name );
+			}
+			if ( $tabPanel ) {
+				if ( $previousTabPanel ) {
+					$previousTabPanel->setActive( false );
+				}
+				$this->currentTabPanelName = $name;
+				$tabPanel->setActive( true );
+				$this->stackLayout->setItem( $tabPanel );
+			}
+		}
 	}
 }

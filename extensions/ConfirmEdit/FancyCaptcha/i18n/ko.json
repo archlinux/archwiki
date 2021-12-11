@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"IRTC1015",
 			"Kwj2772",
-			"ToePeu",
-			"아라",
 			"Revi",
+			"ToePeu",
 			"Ykhwong",
-			"IRTC1015"
+			"아라"
 		]
 	},
 	"fancycaptcha-desc": "편집 확인에 대한 공상 CAPTCHA(캡차) 생성기",

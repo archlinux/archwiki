@@ -6,6 +6,10 @@
  * @license GPL-2.0-or-later
  */
 
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Storage\EditResult;
+use MediaWiki\User\UserIdentity;
+
 /**
  * Hooks for the TitleBlacklist class
  *
@@ -207,18 +211,22 @@ class TitleBlacklistHooks {
 	}
 
 	/**
-	 * PageContentSaveComplete hook
+	 * PageSaveComplete hook
 	 *
 	 * @param WikiPage $wikiPage
-	 * @param User &$user
-	 * @param Content $content
+	 * @param UserIdentity $userIdentity
 	 * @param string $summary
-	 * @param bool $isminor
-	 * @param bool $iswatch
-	 * @param string $section
+	 * @param int $flags
+	 * @param RevisionRecord $revisionRecord
+	 * @param EditResult $editResult
 	 */
 	public static function onClearBlacklist(
-		WikiPage $wikiPage, &$user, $content, $summary, $isminor, $iswatch, $section
+		WikiPage $wikiPage,
+		UserIdentity $userIdentity,
+		string $summary,
+		int $flags,
+		RevisionRecord $revisionRecord,
+		EditResult $editResult
 	) {
 		$title = $wikiPage->getTitle();
 		if ( $title->getNamespace() === NS_MEDIAWIKI && $title->getDBkey() == 'Titleblacklist' ) {

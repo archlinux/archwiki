@@ -4,8 +4,8 @@
 			"Dani",
 			"Glanthor Reviol",
 			"KossuthRad",
-			"Tacsipacsi",
-			"Nyuszika7H"
+			"Nyuszika7H",
+			"Tacsipacsi"
 		]
 	},
 	"cite-desc": "Lehetővé teszi idézések létrehozását <code>&lt;ref[ name=id]&gt;</code> és <code>&lt;references/&gt;</code> tagek segítségével",
@@ -17,8 +17,8 @@
 	"cite_error_ref_no_input": "Érvénytelen <code>&lt;ref&gt;</code> címke; a név (name) nélküli lábjegyzeteknek adni kell valamilyen tartalmat",
 	"cite_error_references_duplicate_key": "Érvénytelen <code>&lt;ref&gt;</code> címke, „$1” nevű forráshivatkozás többször van definiálva eltérő tartalommal",
 	"cite_error_references_invalid_parameters": "Érvénytelen paraméter a <code>&lt;references&gt;</code> címkében",
-	"cite_error_references_no_backlink_label": "Elfogytak a visszahivatkozásra használt címkék, adj meg többet a <nowiki>[[MediaWiki:Cite references link many format backlink labels]]</nowiki> üzenetben",
-	"cite_error_no_link_label_group": "Nincs több egyedi címke a következő csoport számára: „$1”.\nAdj meg többet a <nowiki>[[MediaWiki:$2]]</nowiki> lapon.",
+	"cite_error_references_no_backlink_label": "Elfogytak a visszahivatkozásra használt címkék, adj meg többet a [[MediaWiki:Cite references link many format backlink labels]] üzenetben",
+	"cite_error_no_link_label_group": "Nincs több egyedi címke a következő csoport számára: „$1”. Adj meg többet a [[MediaWiki:$2]] lapon.",
 	"cite_error_references_no_text": "Érvénytelen <code>&lt;ref&gt;</code> címke; nincs megadva szöveg a(z) <code>$1</code> nevű ref-eknek",
 	"cite_error_included_ref": "Egy <code>&lt;ref&gt;</code> címke lezáró <code>&lt;/ref&gt;</code> része hiányzik",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> címkék léteznek a(z) „$1” csoporthoz, de nincs hozzá <code>&lt;references group=\"$1\"/&gt;</code>, vagy egy lezáró <code>&lt;/ref&gt;</code> hiányzik.",

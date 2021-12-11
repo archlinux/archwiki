@@ -4,7 +4,7 @@
 
 @import 'variables.less';
 
-div#column-content {
+#column-content {
 	padding-top: 6em;
 }
 
@@ -21,21 +21,21 @@ div#column-content {
 }
 
 #sidebar-toggle {
-	.background-image-svg( 'images/icon-triangle-down.svg', 'images/icon-triangle-down.gif' );
+	background-image: url( images/icon-triangle-down.svg );
 	position: absolute;
 	top: @top-position;
 	left: 1em;
 }
 
 #p-personal-toggle {
-	.background-image-svg( 'images/icon-user.svg', 'images/icon-user.gif' );
+	background-image: url( images/icon-user.svg );
 	position: absolute;
 	top: @top-position;
 	right: 1em;
 }
 
 #globalWrapper-toggle {
-	.background-image-svg( 'images/icon-triangle-up.svg', 'images/icon-triangle-up.gif' );
+	background-image: url( images/icon-triangle-up.svg );
 	margin: 1em auto;
 }
 
@@ -78,7 +78,7 @@ div#column-content {
 	box-sizing: border-box;
 }
 
-#searchGoButton {
+#searchButton {
 	position: absolute;
 	box-sizing: border-box;
 	top: 1px;
@@ -88,7 +88,7 @@ div#column-content {
 	text-indent: -99999px;
 	border: 0;
 	background: none;
-	.background-image-svg( 'images/icon-search.svg', 'images/icon-search.gif' );
+	background-image: url( images/icon-search.svg );
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	cursor: pointer;
@@ -185,14 +185,14 @@ div#column-content {
 			position: relative;
 			padding: 0.5em 1em 0.75em;
 			background-color: #fbfbfb;
-			.background-image-svg( 'images/icon-page.svg', 'images/icon-page.gif' );
+			background-image: url( images/icon-page.svg );
 			background-position: 50% 50%;
 			background-repeat: no-repeat;
 			text-transform: lowercase;
 		}
 
 		&#ca-talk-mobile a {
-			.background-image-svg( 'images/icon-chat.svg', 'images/icon-chat.gif' );
+			background-image: url( images/icon-chat.svg );
 		}
 
 		&#ca-more {
@@ -200,7 +200,7 @@ div#column-content {
 
 			a {
 				background-color: transparent;
-				.background-image-svg( 'images/icon-triangle-ltr.svg', 'images/icon-triangle-ltr.gif' );
+				background-image: url( images/icon-triangle-ltr.svg );
 				background-position: 100% 40%;
 				text-indent: 0;
 				padding-left: 0.5em;
@@ -210,11 +210,11 @@ div#column-content {
 		}
 
 		&#ca-languages a {
-			.background-image-svg( 'images/icon-globe.svg', 'images/icon-globe.gif' );
+			background-image: url( images/icon-globe.svg );
 		}
 
 		&#ca-tools a {
-			.background-image-svg( 'images/icon-tools.svg', 'images/icon-tools.gif' );
+			background-image: url( images/icon-tools.svg );
 		}
 
 		&.selected {
@@ -241,7 +241,7 @@ div#column-content {
 /*
 ** footer
 */
-#footer li {
+.mw-footer li {
 	margin-left: 0;
 }
 

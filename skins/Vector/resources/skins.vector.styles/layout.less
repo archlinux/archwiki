@@ -1,0 +1,124 @@
+/**
+ * Layout
+ *
+ * Layout rules divide the page into sections and how VectorComponents should be arranged in the skin.
+ * The rules here should only define the layout, not color or typography.
+ */
+
+@import '../../variables.less';
+@import 'mediawiki.mixins.less';
+
+// Header
+
+// Header sizes defined in the description of T246170 and comment T246170#5957100
+@width-grid-column-one: 11em;
+@padding-vertical-header: 0.125em;
+@margin-top-header: 0.625em;
+@margin-bottom-header: 0.3125em;
+@height-header:
+	@height-logo-icon +
+	@margin-top-header +
+	@margin-bottom-header +
+	2 * @padding-vertical-header;
+// 3.125em + 0.625em + 0.3125em + 0.25em = 4.3125em
+
+// Menu button
+@margin-horizontal-sidebar-button-icon: unit( 12px / @font-size-browser, em); // 0.75em @ 16
+
+// Logo
+
+// Logo sizes per specification in T245190.
+@height-logo-icon: 3.125em;
+
+// The logo is variable width but typically consists of:
+// - a icon (50x50)
+// - a wordmark (approx 120px)
+@min-width-logo: unit( 180px / @font-size-browser, em ); // 11.25em @ 16
+
+// Search
+
+// Canonical version of spec: T270202
+// This assumes the presence of variables inside layout.less. DO NOT import it separately.
+// Assumes various variables defined there.
+@min-width-search: unit( 150px / @font-size-browser / @font-size-base, em ); // 10.71428571em @ 16 & 0.875em
+@min-width-search-tablet: unit( 350px / @font-size-browser / @font-size-base, em ); // 25em @ 16 & 0.875em
+@max-width-search: unit( 500px / @font-size-browser / @font-size-base, em ); // 35.71428571em @ 16 & 0.875em
+@margin-horizontal-search: unit( 40px / @font-size-browser / @font-size-base, em ); // 2.85714286em @ 16 & 0.875em
+
+// Personal menu
+
+@min-width-personal-tools: unit( 300px / @font-size-browser, em ); // 18.75 @ 16
+
+// Sidebar
+
+@margin-top-sidebar: 0.5em;
+
+// Adjust the left position of the sidebar to align it with the sidebar menu button,
+// in the header, while ensuring the background gradient still extends to the edge of the screen.
+// note: the 1px comes from the transparent border of the sidebar button.
+@padding-left-sidebar:
+	@margin-horizontal-sidebar-button-icon +
+	unit( @border-width-base / @font-size-browser, em );
+
+// Layout containers
+
+// Page container
+
+@max-width-page-container: unit( 1650px / @font-size-browser, em ); // 103.125em @ 16
+@min-width-page-container--padded: @max-width-page-container + ( 2 * @padding-horizontal-page-container ); // 106.875em
+@padding-horizontal-page-container: unit( 30px / @font-size-browser, em ); // 1.875em @ 16
+
+// Content containers
+
+@max-width-workspace-container: unit( 1440px / @font-size-browser, em ); // 90em @ 16
+@max-width-content-container: unit( 960px / @font-size-browser, em ); // 60em @ 16
+
+// Note this uses variables defined in mediawiki.skin.variables so that VisualEditor can read them
+// see T259331.
+@padding-content: @padding-top-content @padding-horizontal-content 1.5em;
+// We want ~60px of space between the end of the sidebar and the start of the
+// content container for aesthetic reasons. The sidebar is already displaced
+// -30px so we simply add 30px of space to the width of the sidebar.
+@margin-start-content: @width-grid-column-one + unit( 8px / @font-size-browser, em ); // 11.5em @ 16
+
+// Tabs
+
+@height-tabs: 2.5em; // Keep in sync with .vector-menu-tabs height.
+
+// Breakpoints
+
+// This determines the maximum width breakpoint at which
+// the content will have a fixed start margin applied to it when the sidebar
+// is open. The content can shift its position when the sidebar is open/closed
+// at or below this breakpoint and will maintain its position above this breakpoint.
+@max-width-margin-start-content:
+	(2 * @margin-start-content ) +
+	( 2 * @padding-horizontal-page-container ) +
+	@max-width-content-container;
+// 23em + 3.75em + 60em = 86.75em @ 16
+
+// Defines the minimum viewport width, at which point the layout will not get any
+// smaller and will start horizontal scrolling instead.
+@min-width-supported:
+	unit( 500px / @font-size-browser, em ) -
+	( 2 * @padding-horizontal-page-container );
+// 31.25em - 3.75em = 27.5em @ 16
+
+// Width used to determine when to break the personal tools onto a separate line
+// below the search box.
+@width-comfortable:
+	( 2 * @padding-horizontal-page-container ) +
+	@size-sidebar-button +
+	@margin-horizontal-sidebar-button-icon +
+	@min-width-logo +
+	( 2 * @margin-horizontal-search ) +
+	@max-width-search +
+	@min-width-personal-tools;
+// 3.75em + 2.75em + 0.75em + 11.25em + 5.71428571em + 35.71428571em + 18.75em = 78.67857142em @ 16
+
+@border-color-sidebar: @background-color-secondary--modern;
+@background-color-secondary--modern: #f8f9fa;
+@background-color-page-container: @background-color-base;
+
+// Default layout.
+@import 'layout-default.less';

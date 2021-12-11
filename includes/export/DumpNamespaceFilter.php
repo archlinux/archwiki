@@ -38,7 +38,7 @@ class DumpNamespaceFilter extends DumpFilter {
 	 * @param string $param
 	 * @throws MWException
 	 */
-	function __construct( &$sink, $param ) {
+	public function __construct( &$sink, $param ) {
 		parent::__construct( $sink );
 
 		$constants = [
@@ -81,7 +81,7 @@ class DumpNamespaceFilter extends DumpFilter {
 	}
 
 	/**
-	 * @param object $page
+	 * @param stdClass $page
 	 * @return bool
 	 */
 	protected function pass( $page ) {

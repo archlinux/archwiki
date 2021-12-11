@@ -6,6 +6,7 @@ namespace OOUI;
  * Generic widget for buttons.
  */
 class SelectFileInputWidget extends InputWidget {
+	use RequiredElement;
 
 	/* Static Properties */
 
@@ -41,9 +42,13 @@ class SelectFileInputWidget extends InputWidget {
 		$this->button = $config['button'];
 		$this->icon = $config['icon'];
 
-		$this->addClasses( [ 'oo-ui-selectFileWidget' ] );
+		// Traits
+		$this->initializeRequiredElement(
+			array_merge( [ 'indicatorElement' => null ], $config )
+		);
 
 		// Initialization
+		$this->addClasses( [ 'oo-ui-selectFileInputWidget' ] );
 		$this->input->setAttributes( [
 			'type' => 'file'
 		] );

@@ -29,6 +29,10 @@
  */
 class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'lbl' );
 	}
@@ -59,7 +63,7 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 			);
 		}
 
-		if ( !is_null( $params['continue'] ) ) {
+		if ( $params['continue'] !== null ) {
 			$cont = explode( '|', $params['continue'] );
 			$this->dieContinueUsageIf( count( $cont ) != 3 );
 
@@ -115,6 +119,11 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 
 		$count = 0;
 		$result = $this->getResult();
+
+		if ( $resultPageSet === null ) {
+			$this->executeGenderCacheFromResultWrapper( $res, __METHOD__ );
+		}
+
 		foreach ( $res as $row ) {
 			if ( ++$count > $params['limit'] ) {
 				// We've reached the one extra which shows that there are
@@ -127,7 +136,7 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 				break;
 			}
 
-			if ( !is_null( $resultPageSet ) ) {
+			if ( $resultPageSet !== null ) {
 				$pages[] = Title::newFromRow( $row );
 			} else {
 				$entry = [ 'pageid' => (int)$row->page_id ];
@@ -158,7 +167,7 @@ class ApiQueryLangBacklinks extends ApiQueryGeneratorBase {
 			}
 		}
 
-		if ( is_null( $resultPageSet ) ) {
+		if ( $resultPageSet === null ) {
 			$result->addIndexedTagName( [ 'query', $this->getModuleName() ], 'll' );
 		} else {
 			$resultPageSet->populateFromTitles( $pages );

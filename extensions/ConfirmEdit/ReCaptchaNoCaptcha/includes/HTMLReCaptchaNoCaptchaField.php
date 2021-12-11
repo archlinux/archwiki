@@ -27,6 +27,9 @@ class HTMLReCaptchaNoCaptchaField extends HTMLFormField {
 		$this->mName = 'g-recaptcha-response';
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getInputHTML( $value ) {
 		$out = $this->mParent->getOutput();
 		$lang = htmlspecialchars( urlencode( $this->mParent->getLanguage()->getCode() ) );
@@ -36,8 +39,10 @@ class HTMLReCaptchaNoCaptchaField extends HTMLFormField {
 		// See https://developers.google.com/recaptcha/docs/faq
 		$out->addHeadItem(
 			'g-recaptchascript',
-			"<script src=\"https://www.google.com/recaptcha/api.js?hl={$lang}\" async defer></script>"
+			"<script src=\"https://www.recaptcha.net/recaptcha/api.js?hl={$lang}\" async defer></script>"
 		);
+		ReCaptchaNoCaptcha::addCSPSources( $out->getCSP() );
+
 		$output = Html::element( 'div', [
 			'class' => [
 				'g-recaptcha',
@@ -51,9 +56,10 @@ class HTMLReCaptchaNoCaptchaField extends HTMLFormField {
   <div>
     <div style="width: 302px; height: 422px; position: relative;">
       <div style="width: 302px; height: 422px; position: absolute;">
-        <iframe src="https://www.google.com/recaptcha/api/fallback?k={$htmlUrlencoded}&hl={$lang}"
-                frameborder="0" scrolling="no"
-                style="width: 302px; height:422px; border-style: none;">
+        <iframe
+        	src="https://www.recaptcha.net/recaptcha/api/fallback?k={$htmlUrlencoded}&hl={$lang}"
+            frameborder="0" scrolling="no"
+            style="width: 302px; height:422px; border-style: none;">
         </iframe>
       </div>
     </div>

@@ -7,8 +7,6 @@ use Wikimedia\Rdbms\DBError;
  * All locks are non-blocking, which avoids deadlocks.
  *
  * @ingroup LockManager
- * @phan-file-suppress PhanUndeclaredConstant Phan doesn't read constants in LockManager
- *   when accessed via self::
  */
 class PostgreSqlLockManager extends DBLockManager {
 	/** @var array Mapping of lock types to the type actually used */
@@ -26,7 +24,7 @@ class PostgreSqlLockManager extends DBLockManager {
 
 		$db = $this->getConnection( $lockSrv ); // checked in isServerUp()
 		$bigints = array_unique( array_map(
-			function ( $key ) {
+			static function ( $key ) {
 				return Wikimedia\base_convert( substr( $key, 0, 15 ), 16, 10 );
 			},
 			array_map( [ $this, 'sha1Base16Absolute' ], $paths )

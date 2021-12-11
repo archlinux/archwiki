@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 
 /**
@@ -35,28 +36,32 @@ class TraditionalImageGallery extends ImageGalleryBase {
 	 *
 	 * @return string
 	 */
-	function toHTML() {
+	public function toHTML() {
+		$resolveFilesViaParser = $this->mParser instanceof Parser;
+		if ( $resolveFilesViaParser ) {
+			$out = $this->mParser->getOutput();
+			$repoGroup = null;
+			$linkRenderer = $this->mParser->getLinkRenderer();
+			$badFileLookup = $this->mParser->getBadFileLookup();
+		} else {
+			$out = $this->getOutput();
+			$services = MediaWikiServices::getInstance();
+			$repoGroup = $services->getRepoGroup();
+			$linkRenderer = $services->getLinkRenderer();
+			$badFileLookup = $services->getBadFileLookup();
+		}
+
 		if ( $this->mPerRow > 0 ) {
 			$maxwidth = $this->mPerRow * ( $this->mWidths + $this->getAllPadding() );
 			$oldStyle = $this->mAttribs['style'] ?? '';
-			# _width is ignored by any sane browser. IE6 doesn't know max-width
-			# so it uses _width instead
-			$this->mAttribs['style'] = "max-width: {$maxwidth}px;_width: {$maxwidth}px;" .
-				$oldStyle;
+			$this->mAttribs['style'] = "max-width: {$maxwidth}px;" . $oldStyle;
 		}
 
 		$attribs = Sanitizer::mergeAttributes(
 			[ 'class' => 'gallery mw-gallery-' . $this->mMode ], $this->mAttribs );
 
-		$modules = $this->getModules();
-
-		if ( $this->mParser ) {
-			$this->mParser->getOutput()->addModules( $modules );
-			$this->mParser->getOutput()->addModuleStyles( 'mediawiki.page.gallery.styles' );
-		} else {
-			$this->getOutput()->addModules( $modules );
-			$this->getOutput()->addModuleStyles( 'mediawiki.page.gallery.styles' );
-		}
+		$out->addModules( $this->getModules() );
+		$out->addModuleStyles( 'mediawiki.page.gallery.styles' );
 		$output = Xml::openElement( 'ul', $attribs );
 		if ( $this->mCaption ) {
 			$output .= "\n\t<li class='gallerycaption'>{$this->mCaption}</li>";
@@ -65,40 +70,39 @@ class TraditionalImageGallery extends ImageGalleryBase {
 		if ( $this->mShowFilename ) {
 			// Preload LinkCache info for when generating links
 			// of the filename below
-			$lb = new LinkBatch();
-			foreach ( $this->mImages as $img ) {
-				$lb->addObj( $img[0] );
+			$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
+			$lb = $linkBatchFactory->newLinkBatch();
+			foreach ( $this->mImages as [ $title, /* see below */ ] ) {
+				$lb->addObj( $title );
 			}
 			$lb->execute();
 		}
 
 		$lang = $this->getRenderLang();
 		# Output each image...
-		foreach ( $this->mImages as $pair ) {
+		foreach ( $this->mImages as [ $nt, $text, $alt, $link, $handlerOpts, $loading ] ) {
 			// "text" means "caption" here
 			/** @var Title $nt */
-			list( $nt, $text, $alt, $link ) = $pair;
 
 			$descQuery = false;
 			if ( $nt->getNamespace() === NS_FILE ) {
 				# Get the file...
-				if ( $this->mParser instanceof Parser ) {
+				if ( $resolveFilesViaParser ) {
 					# Give extensions a chance to select the file revision for us
 					$options = [];
-					Hooks::run( 'BeforeParserFetchFileAndTitle',
-						[ $this->mParser, $nt, &$options, &$descQuery ] );
+					Hooks::runner()->onBeforeParserFetchFileAndTitle(
+						$this->mParser, $nt, $options, $descQuery );
 					# Fetch and register the file (file title may be different via hooks)
 					list( $img, $nt ) = $this->mParser->fetchFileAndTitle( $nt, $options );
 				} else {
-					$img = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $nt );
+					$img = $repoGroup->findFile( $nt );
 				}
 			} else {
 				$img = false;
 			}
 
 			$params = $this->getThumbParams( $img );
-			// $pair[4] is per image handler options
-			$transformOptions = $params + $pair[4];
+			$transformOptions = $params + $handlerOpts;
 
 			$thumb = false;
 
@@ -108,19 +112,16 @@ class TraditionalImageGallery extends ImageGalleryBase {
 					. ( $this->getThumbPadding() + $this->mHeights ) . 'px;">'
 					. htmlspecialchars( $nt->getText() ) . '</div>';
 
-				if ( $this->mParser instanceof Parser ) {
+				if ( $resolveFilesViaParser ) {
 					$this->mParser->addTrackingCategory( 'broken-file-category' );
 				}
-			} elseif ( $this->mHideBadImages && MediaWikiServices::getInstance()->getBadFileLookup()
-				->isBadFile( $nt->getDBkey(), $this->getContextTitle() )
+			} elseif ( $this->mHideBadImages &&
+				$badFileLookup->isBadFile( $nt->getDBkey(), $this->getContextTitle() )
 			) {
 				# The image is blacklisted, just show it as a text link.
 				$thumbhtml = "\n\t\t\t" . '<div class="thumb" style="height: ' .
 					( $this->getThumbPadding() + $this->mHeights ) . 'px;">' .
-					Linker::linkKnown(
-						$nt,
-						htmlspecialchars( $nt->getText() )
-					) .
+					$linkRenderer->makeKnownLink( $nt, $nt->getText() ) .
 					'</div>';
 			} else {
 				$thumb = $img->transform( $transformOptions );
@@ -146,6 +147,10 @@ class TraditionalImageGallery extends ImageGalleryBase {
 						$imageParameters['alt'] = $nt->getText();
 					}
 
+					if ( $loading === ImageGalleryBase::LOADING_LAZY ) {
+						$imageParameters['loading'] = 'lazy';
+					}
+
 					$this->adjustImageParameters( $thumb, $imageParameters );
 
 					Linker::processResponsiveImages( $img, $thumb, $transformOptions );
@@ -164,17 +169,11 @@ class TraditionalImageGallery extends ImageGalleryBase {
 					// Call parser transform hook
 					/** @var MediaHandler $handler */
 					$handler = $img->getHandler();
-					if ( $this->mParser && $handler ) {
+					if ( $resolveFilesViaParser && $handler ) {
 						$handler->parserTransformHook( $this->mParser, $img );
 					}
 				}
 			}
-
-			// @todo Code is incomplete.
-			// $linkTarget = Title::newFromText( MediaWikiServices::getInstance()->
-			// getContentLanguage()->getNsText( MediaWikiServices::getInstance()->
-			// getNamespaceInfo()->getUser() ) . ":{$ut}" );
-			// $ul = Linker::link( $linkTarget, $ut );
 
 			$meta = [];
 			if ( $img ) {
@@ -193,7 +192,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 			}
 
 			$textlink = $this->mShowFilename ?
-				$this->getCaptionHtml( $nt, $lang ) :
+				$this->getCaptionHtml( $nt, $lang, $linkRenderer ) :
 				'';
 
 			$galleryText = $textlink . $text . $meta;
@@ -220,17 +219,16 @@ class TraditionalImageGallery extends ImageGalleryBase {
 	/**
 	 * @param Title $nt
 	 * @param Language $lang
+	 * @param LinkRenderer $linkRenderer
 	 * @return string HTML
 	 */
-	protected function getCaptionHtml( Title $nt, Language $lang ) {
+	protected function getCaptionHtml( Title $nt, Language $lang, LinkRenderer $linkRenderer ) {
 		// Preloaded into LinkCache in toHTML
-		return Linker::linkKnown(
+		return $linkRenderer->makeKnownLink(
 			$nt,
-			htmlspecialchars(
-				is_int( $this->getCaptionLength() ) ?
-					$lang->truncateForVisual( $nt->getText(), $this->getCaptionLength() ) :
-					$nt->getText()
-			),
+			is_int( $this->getCaptionLength() ) ?
+				$lang->truncateForVisual( $nt->getText(), $this->getCaptionLength() ) :
+				$nt->getText(),
 			[
 				'class' => 'galleryfilename' .
 					( $this->getCaptionLength() === true ? ' galleryfilename-truncate' : '' )

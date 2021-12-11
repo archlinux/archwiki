@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Bulaisen",
+			"DannyS712",
 			"Kalani",
 			"Kolonahe",
+			"Macofe",
 			"Node ue",
 			"Singularity",
-			"Xqt",
-			"Macofe"
+			"Xqt"
 		]
 	},
 	"tog-underline": "Kahalalo i nā loulou:",
@@ -129,7 +130,6 @@
 	"category-article-count-limited": "Aia {{PLURAL:$1|kēia ʻaoʻao|$1 mau ʻaoʻao}} ma ka mahele okamanawa.",
 	"category-file-count": "{{PLURAL:$2|Hoʻokahi waihona wale nō o kēia mahele.|Aia {{PLURAL:$1|i kēia waihona|$1 mau waihona}} i loko o kēia mahele, $2 ka huina.}}",
 	"category-file-count-limited": "Aia {{PLURAL:$1|kēia waihona|$1 mau waihona}} ma ka mahele okamanawa.",
-	"listingcontinuesabbrev": "(homaʻia)",
 	"index-category": "ʻAoʻao i hoʻopapakuhikuhi kikoʻī ʻia",
 	"noindex-category": "Nā ʻAoʻao i hoʻopapakuhikuhi kikoʻī ʻia",
 	"broken-file-category": "ʻAoʻao me nā loulou waihona haki",
@@ -246,7 +246,6 @@
 	"thisisdeleted": "Nānā ai‘ole hō‘āla iā $1?",
 	"viewdeleted": "Nānā iā $1?",
 	"restorelink": "{{PLURAL:$1|kekahi loli holoi|$1 mau loli holoi}}",
-	"feedlinks": "Hānaīke:",
 	"feed-invalid": "Hewa ka hulu hānaīke kiaʻi.",
 	"feed-unavailable": "Loaʻa ʻole i nā hānaīke sinidiketiona",
 	"site-rss-feed": "Hānaīke RSS o $1",
@@ -277,7 +276,7 @@
 	"databaseerror-query": "Nīnau: $1",
 	"databaseerror-function": "Hana: $1",
 	"databaseerror-error": "Hewa: $1",
-	"laggedslavemode": "<strong>E akahele:</strong> ʻAʻole loaʻa paha i ka ʻaoʻao na hoʻouka hou hou.",
+	"laggedreplicamode": "<strong>E akahele:</strong> ʻAʻole loaʻa paha i ka ʻaoʻao na hoʻouka hou hou.",
 	"readonly": "Laka ‘ia ka hōkeo ‘ikepili",
 	"enterlockreason": "E kikokiko i kekahi kumu no ka laka, a hoʻokomo pū i ka pau ana o kēlā laka",
 	"readonlytext": "Ke laka nei ka hōkeo ʻikepili i kēia manawa no nā hana hou a me nā kāloli ʻē aʻe no kekahi mālama hōkeo ʻikepili hōʻoia hou a hou paha a e hele a maʻamau i ka pau ana.\n\nUa hāʻawi ke kahu i laka i kēia kumu: $1",
@@ -494,7 +493,7 @@
 	"histfirst": "kahiko loa",
 	"histlast": "hou loa",
 	"historysize": "({{PLURAL:$1|1 ‘ai|$1 mau ‘ai}})",
-	"historyempty": "(ʻaʻohe)",
+	"historyempty": "ʻaʻohe",
 	"history-feed-title": "Mōʻaukala kāmua",
 	"history-feed-description": "Mōʻaukala kāmua no kēia ʻaoʻao ma ka wiki",
 	"history-feed-item-nocomment": "$1 ma $3 ma ka hola $4",
@@ -900,7 +899,7 @@
 	"namespace": "Lewainoa:",
 	"invert": "Kuapo i ke koho",
 	"blanknamespace": "(‘ano nui)",
-	"contributions": "Nā haʻawina o ka {{GENDER:$1|mea hoʻohana}}",
+	"tool-link-contributions": "Nā haʻawina o ka {{GENDER:$1|mea hoʻohana}}",
 	"contributions-title": "Nā Hāʻawina mea hoʻohana no $1",
 	"mycontris": "Kaʻu mau haʻawina",
 	"contribsub2": "No {{GENDER:$3|$1}} ($2)",

@@ -1,10 +1,10 @@
-@import 'mediawiki.ui/variables';
-@import 'mw.rcfilters.mixins';
-@import 'mw.rcfilters.variables';
+@import 'mediawiki.ui/variables.less';
+@import 'mw.rcfilters.mixins.less';
+@import 'mw.rcfilters.variables.less';
 
 @keyframes fadeBlue {
 	60% {
-		border-top-color: @colorProgressive;
+		border-top-color: @color-primary;
 	}
 
 	100% {
@@ -14,6 +14,8 @@
 
 .mw-rcfilters-ui-changesListWrapperWidget {
 	position: relative;
+	// `.mw-changeslist-legend` child element is floated and must be cleared (T279008#6967026).
+	.mixin-clearfix();
 
 	&-newChanges {
 		min-height: 34px;

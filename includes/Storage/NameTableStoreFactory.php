@@ -19,9 +19,9 @@
 
 namespace MediaWiki\Storage;
 
-use Wikimedia\Rdbms\ILBFactory;
-use WANObjectCache;
 use Psr\Log\LoggerInterface;
+use WANObjectCache;
+use Wikimedia\Rdbms\ILBFactory;
 
 class NameTableStoreFactory {
 	private static $info;
@@ -45,7 +45,7 @@ class NameTableStoreFactory {
 				'idField' => 'ctd_id',
 				'nameField' => 'ctd_name',
 				'normalizationCallback' => null,
-				'insertCallback' => function ( $insertFields ) {
+				'insertCallback' => static function ( $insertFields ) {
 					$insertFields['ctd_user_defined'] = 0;
 					$insertFields['ctd_count'] = 0;
 					return $insertFields;

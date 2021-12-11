@@ -3,19 +3,20 @@
 		"authors": [
 			"Aleator",
 			"Arnaugir",
+			"Fitoschido",
+			"Mguix",
 			"Paucabot",
+			"Qllach",
 			"SMP",
 			"Toniher",
-			"Vriullop",
-			"Qllach",
-			"Fitoschido"
+			"Vriullop"
 		]
 	},
 	"categorytree": "Categories en arbre",
 	"categorytree-portlet": "Categories",
 	"categorytree-legend": "Mostra l'arbre de categories",
 	"categorytree-desc": "Navegació dinàmica per l'[[Special:CategoryTree|estructura de categories]]",
-	"categorytree-header": "Entreu el nom d'una categoria per a veure l'arbre del seu contingut. Aquesta pàgina utilitza una funcionalitat avançada del JavaScript coneguda com a AJAX, i no funciona en navegadors antics o que tinguin el JavaScript desactivat.",
+	"categorytree-header": "Introduïu un nom de la categoria per veure el seu contingut com una estructura d'arbre. (Requereix JavaScript.)",
 	"categorytree-category": "Categoria:",
 	"categorytree-go": "Mostra l'arbre",
 	"categorytree-parents": "Categories superiors",

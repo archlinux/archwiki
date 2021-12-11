@@ -1,9 +1,9 @@
 <?php
 
-class MediaWikiTest extends MediaWikiTestCase {
+class MediaWikiTest extends MediaWikiIntegrationTestCase {
 	private $oldServer, $oldGet, $oldPost;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->setMwGlobals( [
@@ -20,11 +20,11 @@ class MediaWikiTest extends MediaWikiTestCase {
 		$this->oldPost = $_POST;
 	}
 
-	protected function tearDown() {
-		parent::tearDown();
+	protected function tearDown() : void {
 		$_SERVER = $this->oldServer;
 		$_GET = $this->oldGet;
 		$_POST = $this->oldPost;
+		parent::tearDown();
 	}
 
 	public static function provideTryNormaliseRedirect() {
@@ -197,14 +197,14 @@ class MediaWikiTest extends MediaWikiTestCase {
 
 		// A job that attempts to set a cookie
 		$jobHasRun = false;
-		DeferredUpdates::addCallableUpdate( function () use ( $response, &$jobHasRun ) {
+		DeferredUpdates::addCallableUpdate( static function () use ( $response, &$jobHasRun ) {
 			$jobHasRun = true;
 			$response->setCookie( 'JobCookie', 'yes' );
 			$response->header( 'Foo: baz' );
 		} );
 
 		$hookWasRun = false;
-		$this->setTemporaryHook( 'WebResponseSetCookie', function () use ( &$hookWasRun ) {
+		$this->setTemporaryHook( 'WebResponseSetCookie', static function () use ( &$hookWasRun ) {
 			$hookWasRun = true;
 			return true;
 		} );

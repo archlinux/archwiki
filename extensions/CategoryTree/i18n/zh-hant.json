@@ -1,25 +1,26 @@
 {
 	"@metadata": {
 		"authors": [
+			"A2093064",
 			"Alexsh",
+			"Cwlin0416",
+			"Duolaimi",
+			"Kly",
 			"Liangent",
+			"Liuxinyu970226",
 			"Mark85296341",
 			"Oapbtommy",
 			"Shinjiman",
 			"Simon Shek",
-			"Liuxinyu970226",
-			"Cwlin0416",
-			"Duolaimi",
 			"Wehwei",
-			"Kly",
-			"A2093064"
+			"Xiplus"
 		]
 	},
 	"categorytree": "分類樹",
 	"categorytree-portlet": "分類",
 	"categorytree-legend": "顯示分類樹",
 	"categorytree-desc": "可用動態更新的方式導覽 [[Special:CategoryTree|分類結構]]",
-	"categorytree-header": "請輸入分類名稱以使用樹狀結構檢視分類內容。\n(需要使用 JavaScript。)",
+	"categorytree-header": "請輸入分類名稱以使用樹狀結構檢視分類內容。（需要使用 JavaScript。）",
 	"categorytree-category": "分類：",
 	"categorytree-go": "顯示樹狀結構",
 	"categorytree-parents": "上層分類",
@@ -40,7 +41,7 @@
 	"categorytree-no-subcategories": "無子分類",
 	"categorytree-no-parent-categories": "無上層分類",
 	"categorytree-no-pages": "沒有頁面或子分類",
-	"categorytree-not-found": "查無分類 <i>$1</i>",
+	"categorytree-not-found": "找不到分類<b>$1</b>",
 	"categorytree-error": "讀取資料時發生錯誤。",
 	"categorytree-retry": "請稍候再試一次。"
 }

@@ -20,9 +20,24 @@
  *
  * @file
  */
+
+use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\EditPage\SpamChecker;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Timestamp\TimestampException;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\Revision\MutableRevisionRecord;
+use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Revision\SlotRecord;
+use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserIdentity;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Timestamp\TimestampException;
 
 /**
  * Handles the backend logic of merging the histories of two
@@ -33,7 +48,7 @@ use Wikimedia\Rdbms\IDatabase;
 class MergeHistory {
 
 	/** Maximum number of revisions that can be merged at once */
-	const REVISION_LIMIT = 5000;
+	public const REVISION_LIMIT = 5000;
 
 	/** @var Title Page from which history will be merged */
 	protected $source;
@@ -56,18 +71,85 @@ class MergeHistory {
 	/** @var int Number of revisions merged (for Special:MergeHistory success message) */
 	protected $revisionsMerged;
 
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
+
+	/** @var RevisionStore */
+	private $revisionStore;
+
+	/** @var WatchedItemStoreInterface */
+	private $watchedItemStore;
+
+	/** @var SpamChecker */
+	private $spamChecker;
+
+	/** @var HookRunner */
+	private $hookRunner;
+
+	/** @var WikiPageFactory */
+	private $wikiPageFactory;
+
+	/** @var UserFactory */
+	private $userFactory;
+
 	/**
+	 * Since 1.35 dependencies are injected and not providing them is hard deprecated; use the
+	 * MergeHistoryFactory service
+	 *
 	 * @param Title $source Page from which history will be merged
 	 * @param Title $dest Page to which history will be merged
 	 * @param string|bool $timestamp Timestamp up to which history from the source will be merged
+	 * @param ILoadBalancer|null $loadBalancer
+	 * @param IContentHandlerFactory|null $contentHandlerFactory
+	 * @param RevisionStore|null $revisionStore
+	 * @param WatchedItemStoreInterface|null $watchedItemStore
+	 * @param SpamChecker|null $spamChecker
+	 * @param HookContainer|null $hookContainer
+	 * @param WikiPageFactory|null $wikiPageFactory
+	 * @param UserFactory|null $userFactory
 	 */
-	public function __construct( Title $source, Title $dest, $timestamp = false ) {
+	public function __construct(
+		Title $source,
+		Title $dest,
+		$timestamp = false,
+		ILoadBalancer $loadBalancer = null,
+		IContentHandlerFactory $contentHandlerFactory = null,
+		RevisionStore $revisionStore = null,
+		WatchedItemStoreInterface $watchedItemStore = null,
+		SpamChecker $spamChecker = null,
+		HookContainer $hookContainer = null,
+		WikiPageFactory $wikiPageFactory = null,
+		UserFactory $userFactory = null
+	) {
+		if ( $loadBalancer === null ) {
+			wfDeprecatedMsg( 'Direct construction of ' . __CLASS__ .
+				' was deprecated in MediaWiki 1.35', '1.35' );
+			$services = MediaWikiServices::getInstance();
+
+			$loadBalancer = $services->getDBLoadBalancer();
+			$contentHandlerFactory = $services->getContentHandlerFactory();
+			$revisionStore = $services->getRevisionStore();
+			$watchedItemStore = $services->getWatchedItemStore();
+			$spamChecker = $services->getSpamChecker();
+			$hookContainer = $services->getHookContainer();
+			$wikiPageFactory = $services->getWikiPageFactory();
+			$userFactory = $services->getUserFactory();
+		}
+
 		// Save the parameters
 		$this->source = $source;
 		$this->dest = $dest;
 
 		// Get the database
-		$this->dbw = wfGetDB( DB_MASTER );
+		$this->dbw = $loadBalancer->getConnection( DB_MASTER );
+
+		$this->contentHandlerFactory = $contentHandlerFactory;
+		$this->revisionStore = $revisionStore;
+		$this->watchedItemStore = $watchedItemStore;
+		$this->spamChecker = $spamChecker;
+		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->wikiPageFactory = $wikiPageFactory;
+		$this->userFactory = $userFactory;
 
 		// Max timestamp should be min of destination page
 		$firstDestTimestamp = $this->dbw->selectField(
@@ -150,41 +232,94 @@ class MergeHistory {
 	}
 
 	/**
-	 * Check if the merge is possible
-	 * @param User $user
+	 * @param callable $authorizer ( string $action, PageIdentity $target, PermissionStatus $status )
+	 * @param Authority $performer
 	 * @param string $reason
-	 * @return Status
+	 * @return PermissionStatus
 	 */
-	public function checkPermissions( User $user, $reason ) {
-		$status = new Status();
+	private function authorizeInternal(
+		callable $authorizer,
+		Authority $performer,
+		string $reason
+	) {
+		$status = PermissionStatus::newEmpty();
 
-		// Check if user can edit both pages
-		$errors = wfMergeErrorArrays(
-			$this->source->getUserPermissionsErrors( 'edit', $user ),
-			$this->dest->getUserPermissionsErrors( 'edit', $user )
-		);
-
-		// Convert into a Status object
-		if ( $errors ) {
-			foreach ( $errors as $error ) {
-				$status->fatal( ...$error );
-			}
-		}
+		$authorizer( 'edit', $this->source, $status );
+		$authorizer( 'edit', $this->dest, $status );
 
 		// Anti-spam
-		if ( EditPage::matchSummarySpamRegex( $reason ) !== false ) {
+		if ( $this->spamChecker->checkSummary( $reason ) !== false ) {
 			// This is kind of lame, won't display nice
 			$status->fatal( 'spamprotectiontext' );
 		}
 
 		// Check mergehistory permission
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
-		if ( !$permissionManager->userHasRight( $user, 'mergehistory' ) ) {
+		if ( !$performer->isAllowed( 'mergehistory' ) ) {
 			// User doesn't have the right to merge histories
 			$status->fatal( 'mergehistory-fail-permission' );
 		}
-
 		return $status;
+	}
+
+	/**
+	 * Check whether $performer can execute the merge.
+	 *
+	 * @note this method does not guarantee full permissions check, so it should
+	 * only be used to to decide whether to show a merge form. To authorize the merge
+	 * action use {@link self::authorizeMerge} instead.
+	 *
+	 * @param Authority $performer
+	 * @param string|null $reason
+	 * @return PermissionStatus
+	 */
+	public function probablyCanMerge( Authority $performer, string $reason = null ): PermissionStatus {
+		return $this->authorizeInternal(
+			function ( string $action, PageIdentity $target, PermissionStatus $status ) use ( $performer ) {
+				return $performer->probablyCan( $action, $target, $status );
+			},
+			$performer,
+			$reason
+		);
+	}
+
+	/**
+	 * Authorize the merge by $performer.
+	 *
+	 * @note this method should be used right before the actual merge is performed.
+	 * To check whether a current performer has the potential to merge the history,
+	 * use {@link self::probablyCanMerge} instead.
+	 *
+	 * @param Authority $performer
+	 * @param string|null $reason
+	 * @return PermissionStatus
+	 */
+	public function authorizeMerge( Authority $performer, string $reason = null ): PermissionStatus {
+		return $this->authorizeInternal(
+			function ( string $action, PageIdentity $target, PermissionStatus $status ) use ( $performer ) {
+				return $performer->authorizeWrite( $action, $target, $status );
+			},
+			$performer,
+			$reason
+		);
+	}
+
+	/**
+	 * Check if the merge is possible
+	 * @deprecated since 1.36. Use ::authorizeMerge or ::probablyCanMerge instead.
+	 * @param Authority $performer
+	 * @param string $reason
+	 * @return Status
+	 */
+	public function checkPermissions( Authority $performer, $reason ) {
+		wfDeprecated( __METHOD__, '1.36' );
+		$permissionStatus = $this->authorizeInternal(
+			function ( string $action, PageIdentity $target, PermissionStatus $status ) use ( $performer ) {
+				return $performer->definitelyCan( $action, $target, $status );
+			},
+			$performer,
+			$reason
+		);
+		return Status::wrap( $permissionStatus );
 	}
 
 	/**
@@ -238,11 +373,11 @@ class MergeHistory {
 	 * The user may have to "undo" the redirect manually to finish the "unmerge".
 	 * Maybe this should delete redirects at the source page of merges?
 	 *
-	 * @param User $user
+	 * @param Authority $performer
 	 * @param string $reason
 	 * @return Status status of the history merge
 	 */
-	public function merge( User $user, $reason = '' ) {
+	public function merge( Authority $performer, $reason = '' ) {
 		$status = new Status();
 
 		// Check validity and permissions required for merge
@@ -250,9 +385,9 @@ class MergeHistory {
 		if ( !$validCheck->isOK() ) {
 			return $validCheck;
 		}
-		$permCheck = $this->checkPermissions( $user, $reason );
+		$permCheck = $this->authorizeMerge( $performer, $reason );
 		if ( !$permCheck->isOK() ) {
-			return $permCheck;
+			return Status::wrap( $permCheck );
 		}
 
 		$this->dbw->startAtomic( __METHOD__ );
@@ -285,12 +420,13 @@ class MergeHistory {
 			__METHOD__
 		);
 
-		// Make the source page a redirect if no revisions are left
 		$haveRevisions = $this->dbw->lockForUpdate(
 			'revision',
 			[ 'rev_page' => $this->source->getArticleID() ],
 			__METHOD__
 		);
+
+		// Update source page, histories and invalidate caches
 		if ( !$haveRevisions ) {
 			if ( $reason ) {
 				$reason = wfMessage(
@@ -307,53 +443,19 @@ class MergeHistory {
 				)->inContentLanguage()->text();
 			}
 
-			$contentHandler = ContentHandler::getForTitle( $this->source );
-			$redirectContent = $contentHandler->makeRedirectContent(
-				$this->dest,
-				wfMessage( 'mergehistory-redirect-text' )->inContentLanguage()->plain()
-			);
+			$this->updateSourcePage( $status, $performer->getUser(), $reason );
 
-			if ( $redirectContent ) {
-				$redirectPage = WikiPage::factory( $this->source );
-				$redirectRevision = new Revision( [
-					'title' => $this->source,
-					'page' => $this->source->getArticleID(),
-					'comment' => $reason,
-					'content' => $redirectContent ] );
-				$redirectRevision->insertOn( $this->dbw );
-				$redirectPage->updateRevisionOn( $this->dbw, $redirectRevision );
-
-				// Now, we record the link from the redirect to the new title.
-				// It should have no other outgoing links...
-				$this->dbw->delete(
-					'pagelinks',
-					[ 'pl_from' => $this->dest->getArticleID() ],
-					__METHOD__
-				);
-				$this->dbw->insert( 'pagelinks',
-					[
-						'pl_from' => $this->dest->getArticleID(),
-						'pl_from_namespace' => $this->dest->getNamespace(),
-						'pl_namespace' => $this->dest->getNamespace(),
-						'pl_title' => $this->dest->getDBkey() ],
-					__METHOD__
-				);
-			} else {
-				// Warning if we couldn't create the redirect
-				$status->warning( 'mergehistory-warning-redirect-not-created' );
-			}
 		} else {
-			$this->source->invalidateCache(); // update histories
+			$this->source->invalidateCache();
 		}
-		$this->dest->invalidateCache(); // update histories
+		$this->dest->invalidateCache();
 
-		// Duplicate watchers of the old article to the new article on history merge
-		$store = MediaWikiServices::getInstance()->getWatchedItemStore();
-		$store->duplicateAllAssociatedEntries( $this->source, $this->dest );
+		// Duplicate watchers of the old article to the new article
+		$this->watchedItemStore->duplicateAllAssociatedEntries( $this->source, $this->dest );
 
 		// Update our logs
 		$logEntry = new ManualLogEntry( 'merge', 'merge' );
-		$logEntry->setPerformer( $user );
+		$logEntry->setPerformer( $performer->getUser() );
 		$logEntry->setComment( $reason );
 		$logEntry->setTarget( $this->source );
 		$logEntry->setParameters( [
@@ -363,9 +465,112 @@ class MergeHistory {
 		$logId = $logEntry->insert();
 		$logEntry->publish( $logId );
 
-		Hooks::run( 'ArticleMergeComplete', [ $this->source, $this->dest ] );
+		$this->hookRunner->onArticleMergeComplete( $this->source, $this->dest );
 
 		$this->dbw->endAtomic( __METHOD__ );
+
+		return $status;
+	}
+
+	/**
+	 * Do various cleanup work and updates to the source page. This method
+	 * will only be called if no revision is remaining on the page.
+	 *
+	 * At the end, there would be either a redirect page or a deleted page,
+	 * depending on whether the content model of the page supports redirects or not.
+	 *
+	 * @param Status $status
+	 * @param UserIdentity $user
+	 * @param string $reason
+	 *
+	 * @return Status
+	 */
+	private function updateSourcePage( $status, $user, $reason ) {
+		$deleteSource = false;
+		$sourceModel = $this->source->getContentModel();
+		$contentHandler = $this->contentHandlerFactory->getContentHandler( $sourceModel );
+
+		if ( !$contentHandler->supportsRedirects() ) {
+			$deleteSource = true;
+			$newContent = $contentHandler->makeEmptyContent();
+		} else {
+			$msg = wfMessage( 'mergehistory-redirect-text' )->inContentLanguage()->plain();
+			$newContent = $contentHandler->makeRedirectContent( $this->dest, $msg );
+		}
+
+		if ( !$newContent instanceof Content ) {
+			// Handler supports redirect but cannot create new redirect content?
+			// Not possible to proceed without Content.
+
+			// @todo. Remove this once there's no evidence it's happening or if it's
+			// determined all violating handlers have been fixed.
+			// This is mostly kept because previous code was also blindly checking
+			// existing of the Content for both content models that supports redirects
+			// and those that that don't, so it's hard to know what it was masking.
+			$logger = MediaWiki\Logger\LoggerFactory::getInstance( 'ContentHandler' );
+			$logger->warning(
+				'ContentHandler for {model} says it supports redirects but failed '
+				. 'to return Content object from ContentHandler::makeRedirectContent().'
+				. ' {value} returned instead.',
+				[
+					'value' => gettype( $newContent ),
+					'model' => $sourceModel
+				]
+			);
+
+			throw new InvalidArgumentException(
+				"ContentHandler for '$sourceModel' supports redirects" .
+				' but cannot create redirect content during History merge.'
+			);
+		}
+
+		// T263340/T93469: Create revision record to also serve as the page revision.
+		// This revision will be used to create page content. If the source page's
+		// content model supports redirects, then it will be the redirect content.
+		// If the content model does not supports redirect, this content will aid
+		// proper deletion of the page below.
+		$comment = CommentStoreComment::newUnsavedComment( $reason );
+		$revRecord = new MutableRevisionRecord( $this->source );
+		$revRecord->setContent( SlotRecord::MAIN, $newContent )
+			->setPageId( $this->source->getArticleID() )
+			->setComment( $comment )
+			->setUser( $user )
+			->setTimestamp( wfTimestampNow() );
+
+		$insertedRevRecord = $this->revisionStore->insertRevisionOn( $revRecord, $this->dbw );
+
+		$newPage = $this->wikiPageFactory->newFromTitle( $this->source );
+		$newPage->updateRevisionOn( $this->dbw, $insertedRevRecord );
+
+		if ( !$deleteSource ) {
+			// We have created a redirect page so let's
+			// record the link from the page to the new title.
+			// It should have no other outgoing links...
+			$this->dbw->delete(
+				'pagelinks',
+				[ 'pl_from' => $this->dest->getArticleID() ],
+				__METHOD__
+			);
+			$this->dbw->insert( 'pagelinks',
+				[
+					'pl_from' => $this->dest->getArticleID(),
+					'pl_from_namespace' => $this->dest->getNamespace(),
+					'pl_namespace' => $this->dest->getNamespace(),
+					'pl_title' => $this->dest->getDBkey() ],
+				__METHOD__
+			);
+
+		} else {
+			// T263340/T93469: Delete the source page to prevent errors because its
+			// revisions are now tied to a different title and its content model
+			// does not support redirects, so we cannot leave a new revision on it.
+			// This deletion does not depend on userright but may still fails. If it
+			// fails, it will be communicated in the status reponse.
+			$reason = wfMessage( 'mergehistory-source-deleted-reason' )->inContentLanguage()->plain();
+			$userObj = $this->userFactory->newFromUserIdentity( $user );
+			$deletionStatus = $newPage->doDeleteArticleReal( $reason, $userObj );
+			$status->merge( $deletionStatus );
+		}
 
 		return $status;
 	}

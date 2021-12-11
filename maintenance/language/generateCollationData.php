@@ -49,8 +49,8 @@ class GenerateCollationData extends Maintenance {
 	/**
 	 * Important tertiary weights from UTS #10 section 7.2
 	 */
-	const NORMAL_UPPERCASE = 0x08;
-	const NORMAL_HIRAGANA = 0x0E;
+	private const NORMAL_UPPERCASE = 0x08;
+	private const NORMAL_HIRAGANA = 0x0E;
 
 	public function __construct() {
 		parent::__construct();
@@ -94,7 +94,7 @@ class GenerateCollationData extends Maintenance {
 				// Extra old version
 				$error .= "You are using outdated version of ICU ($icuVersion), intended for "
 					. ( $unicodeVersion ? "Unicode $unicodeVersion" : "an unknown version of Unicode" )
-					. "; this file might not be avalaible for it, and it's not supported by MediaWiki. "
+					. "; this file might not be available for it, and it's not supported by MediaWiki. "
 					. " You are on your own; consider upgrading PHP's intl extension or try "
 					. "one of the files available at:";
 			} elseif ( version_compare( $icuVersion, "51.0", ">=" ) ) {
@@ -138,12 +138,12 @@ class GenerateCollationData extends Maintenance {
 		$this->generateFirstChars();
 	}
 
-	function loadUcd() {
+	private function loadUcd() {
 		$uxr = new UcdXmlReader( "{$this->dataDir}/ucd.all.grouped.xml" );
 		$uxr->readChars( [ $this, 'charCallback' ] );
 	}
 
-	function charCallback( $data ) {
+	private function charCallback( $data ) {
 		// Skip non-printable characters,
 		// but do not skip a normal space (U+0020) since
 		// people like to use that as a fake no header symbol.
@@ -193,7 +193,7 @@ class GenerateCollationData extends Maintenance {
 		}
 	}
 
-	function generateFirstChars() {
+	private function generateFirstChars() {
 		$file = fopen( "{$this->dataDir}/allkeys.txt", 'r' );
 		if ( !$file ) {
 			$this->fatalError( "Unable to open allkeys.txt" );
@@ -221,8 +221,7 @@ class GenerateCollationData extends Maintenance {
 				continue;
 			}
 			foreach ( StringUtils::explode( '[', $allWeights ) as $weightStr ) {
-				preg_match_all( '/[*.]([0-9A-F]+)/', $weightStr, $m );
-				if ( !empty( $m[1] ) ) {
+				if ( preg_match_all( '/[*.]([0-9A-F]+)/', $weightStr, $m ) ) {
 					if ( $m[1][0] !== '0000' ) {
 						$primary .= '.' . $m[1][0];
 					}
@@ -312,7 +311,7 @@ class GenerateCollationData extends Maintenance {
 
 			if ( $this->debugOutFile ) {
 				fwrite( $this->debugOutFile, sprintf( "%05X %s %s (%s)\n", $cp, $weight, $char,
-					implode( ' ', array_map( 'UtfNormal\Utils::codepointToUtf8', $group ) ) ) );
+					implode( ' ', array_map( [ UtfNormal\Utils::class, 'codepointToUtf8' ], $group ) ) ) );
 			}
 		}
 
@@ -336,7 +335,7 @@ class UcdXmlReader {
 	public $blocks = [];
 	public $currentBlock;
 
-	function __construct( $fileName ) {
+	public function __construct( $fileName ) {
 		$this->fileName = $fileName;
 	}
 

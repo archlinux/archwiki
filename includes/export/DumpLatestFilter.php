@@ -27,19 +27,23 @@
  * @ingroup Dump
  */
 class DumpLatestFilter extends DumpFilter {
+	/** @var stdClass|null */
 	public $page;
 
+	/** @var string|null */
 	public $pageString;
 
+	/** @var stdClass|null */
 	public $rev;
 
+	/** @var string|null */
 	public $revString;
 
 	/**
-	 * @param object $page
+	 * @param stdClass $page
 	 * @param string $string
 	 */
-	function writeOpenPage( $page, $string ) {
+	public function writeOpenPage( $page, $string ) {
 		$this->page = $page;
 		$this->pageString = $string;
 	}
@@ -47,7 +51,7 @@ class DumpLatestFilter extends DumpFilter {
 	/**
 	 * @param string $string
 	 */
-	function writeClosePage( $string ) {
+	public function writeClosePage( $string ) {
 		if ( $this->rev ) {
 			$this->sink->writeOpenPage( $this->page, $this->pageString );
 			$this->sink->writeRevision( $this->rev, $this->revString );
@@ -60,10 +64,10 @@ class DumpLatestFilter extends DumpFilter {
 	}
 
 	/**
-	 * @param object $rev
+	 * @param stdClass $rev
 	 * @param string $string
 	 */
-	function writeRevision( $rev, $string ) {
+	public function writeRevision( $rev, $string ) {
 		if ( $rev->rev_id == $this->page->page_latest ) {
 			$this->rev = $rev;
 			$this->revString = $string;

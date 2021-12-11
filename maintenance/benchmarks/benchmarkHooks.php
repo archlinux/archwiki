@@ -21,7 +21,7 @@
  * @ingroup Benchmark
  */
 
-require_once __DIR__ . '/Benchmarker.php';
+require_once __DIR__ . '/../includes/Benchmarker.php';
 
 /**
  * Maintenance script that benchmarks %MediaWiki hooks.
@@ -53,7 +53,7 @@ class BenchmarkHooks extends Benchmarker {
 						$wgHooks['Test'][] = [ $this, 'test' ];
 					}
 				},
-				'function' => function () {
+				'function' => static function () {
 					Hooks::run( 'Test' );
 				}
 			];

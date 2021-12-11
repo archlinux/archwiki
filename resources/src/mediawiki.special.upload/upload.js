@@ -48,7 +48,7 @@
 				iiprop: 'uploadwarning',
 				errorformat: 'html',
 				errorlang: mw.config.get( 'wgUserLanguage' )
-			} ).done( function ( result ) {
+			} ).then( function ( result ) {
 				var
 					resultOut = '',
 					page = result.query.pages[ 0 ];
@@ -58,7 +58,8 @@
 					resultOut = page.invalidreason.html;
 				}
 				uploadWarning.processResult( resultOut, uploadWarning.nameToCheck );
-			} ).always( function () {
+				$spinnerDestCheck.remove();
+			} ).catch( function () {
 				$spinnerDestCheck.remove();
 			} );
 		},
@@ -164,16 +165,17 @@
 			);
 		}
 
-		// fillDestFile setup
-		mw.config.get( 'wgUploadSourceIds' ).forEach( function ( sourceId ) {
+		// fillDestFile setup. Note if the upload wiki does not allow uploads,
+		// e.g. Polish Wikipedia -  this code still runs amnd this will be undefined,
+		// so fallback to empty array.
+		mw.config.get( 'wgUploadSourceIds', [] ).forEach( function ( sourceId ) {
 			$( '#' + sourceId ).on( 'change', function () {
 				var path, slash, backslash, fname;
 				if ( !mw.config.get( 'wgUploadAutoFill' ) ) {
 					return;
 				}
 				// Remove any previously flagged errors
-				$( '#mw-upload-permitted' ).attr( 'class', '' );
-				$( '#mw-upload-prohibited' ).attr( 'class', '' );
+				$( '#mw-upload-permitted, #mw-upload-prohibited' ).removeClass();
 
 				path = $( this ).val();
 				// Find trailing part
@@ -216,8 +218,8 @@
 
 				// Replace spaces by underscores
 				fname = fname.replace( / /g, '_' );
-				// Capitalise first letter if needed
-				if ( mw.config.get( 'wgCapitalizeUploads' ) ) {
+				// Capitalise first letter if needed. Note fname may be empty string.
+				if ( fname && mw.config.get( 'wgCapitalizeUploads' ) ) {
 					fname = fname[ 0 ].toUpperCase() + fname.slice( 1 );
 				}
 
@@ -245,6 +247,7 @@
 		 * @return {boolean}
 		 */
 		function hasFileAPI() {
+			// eslint-disable-next-line compat/compat
 			return window.FileReader !== undefined;
 		}
 
@@ -279,6 +282,11 @@
 				s /= 1024;
 				sizeMsgs = sizeMsgs.slice( 1 );
 			}
+			// The following messages are used here:
+			// * size-bytes
+			// * size-kilobytes
+			// * size-megabytes
+			// * size-gigabytes
 			return mw.msg( sizeMsgs[ 0 ], Math.round( s ) );
 		}
 
@@ -293,6 +301,7 @@
 		 * @param {Function} callbackBinary
 		 */
 		function fetchPreview( file, callback, callbackBinary ) {
+			// eslint-disable-next-line compat/compat
 			var reader = new FileReader();
 			if ( callbackBinary && 'readAsBinaryString' in reader ) {
 				// To fetch JPEG metadata we need a binary string; start there.
@@ -573,8 +582,11 @@
 
 		allowCloseWindow = mw.confirmCloseWindow( {
 			test: function () {
-				return $( '#wpUploadFile' ).get( 0 ).files.length !== 0 ||
-					$uploadForm.data( 'origtext' ) !== $uploadForm.serialize();
+				var $wpUploadFile = $( '#wpUploadFile' );
+				// check for existence of #wpUploadFile in case a gadget removed it (T262844)
+				return (
+					$wpUploadFile.length && $wpUploadFile.get( 0 ).files.length !== 0
+				) || $uploadForm.data( 'origtext' ) !== $uploadForm.serialize();
 			},
 
 			message: mw.msg( 'editwarning-warning' ),

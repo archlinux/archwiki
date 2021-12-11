@@ -5,7 +5,7 @@
  *
  * @group API
  */
-class ApiPrefixUniquenessTest extends MediaWikiTestCase {
+class ApiPrefixUniquenessTest extends MediaWikiIntegrationTestCase {
 
 	public function testPrefixes() {
 		$main = new ApiMain( new FauxRequest() );
@@ -20,7 +20,8 @@ class ApiPrefixUniquenessTest extends MediaWikiTestCase {
 			$class = get_class( $module );
 
 			$prefix = $module->getModulePrefix();
-			if ( $prefix === '' /* HACK: T196962 */ || $prefix === 'wbeu' ) {
+			if ( $prefix === '' /* HACK: T196962 */ || $prefix === 'wbeu'
+				/* HACK: T290585 */ || $prefix === 'pi' ) {
 				continue;
 			}
 

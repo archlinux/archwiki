@@ -49,7 +49,13 @@ class RangeDifference {
 	/** @var int */
 	public $rightlength;
 
-	function __construct( $leftstart, $leftend, $rightstart, $rightend ) {
+	/**
+	 * @param int $leftstart
+	 * @param int $leftend
+	 * @param int $rightstart
+	 * @param int $rightend
+	 */
+	public function __construct( $leftstart, $leftend, $rightstart, $rightend ) {
 		$this->leftstart = $leftstart;
 		$this->leftend = $leftend;
 		$this->leftlength = $leftend - $leftstart;

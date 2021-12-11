@@ -24,22 +24,32 @@ use Wikimedia\Rdbms\IResultWrapper;
 
 abstract class UserArray implements Iterator {
 	/**
+	 * @note Try to avoid in new code, in case getting UserIdentity batch is enough,
+	 * use {@link \MediaWiki\User\UserIdentityLookup::newSelectQueryBuilder()}.
+	 * In case you need full User objects, you can keep using this method, but it's
+	 * moving towards deprecation.
+	 *
 	 * @param IResultWrapper $res
 	 * @return UserArrayFromResult
 	 */
-	static function newFromResult( $res ) {
+	public static function newFromResult( $res ) {
 		$userArray = null;
-		if ( !Hooks::run( 'UserArrayFromResult', [ &$userArray, $res ] ) ) {
+		if ( !Hooks::runner()->onUserArrayFromResult( $userArray, $res ) ) {
 			return null;
 		}
 		return $userArray ?? new UserArrayFromResult( $res );
 	}
 
 	/**
+	 * @note Try to avoid in new code, in case getting UserIdentity batch is enough,
+	 * use {@link \MediaWiki\User\UserIdentityLookup::newSelectQueryBuilder()}.
+	 * In case you need full User objects, you can keep using this method, but it's
+	 * moving towards deprecation.
+	 *
 	 * @param array $ids
 	 * @return UserArrayFromResult|ArrayIterator
 	 */
-	static function newFromIDs( $ids ) {
+	public static function newFromIDs( $ids ) {
 		$ids = array_map( 'intval', (array)$ids ); // paranoia
 		if ( !$ids ) {
 			// Database::select() doesn't like empty arrays
@@ -59,11 +69,16 @@ abstract class UserArray implements Iterator {
 	}
 
 	/**
+	 * @note Try to avoid in new code, in case getting UserIdentity batch is enough,
+	 * use {@link \MediaWiki\User\UserIdentityLookup::newSelectQueryBuilder()}.
+	 * In case you need full User objects, you can keep using this method, but it's
+	 * moving towards deprecation.
+	 *
 	 * @since 1.25
 	 * @param array $names
 	 * @return UserArrayFromResult|ArrayIterator
 	 */
-	static function newFromNames( $names ) {
+	public static function newFromNames( $names ) {
 		$names = array_map( 'strval', (array)$names ); // paranoia
 		if ( !$names ) {
 			// Database::select() doesn't like empty arrays

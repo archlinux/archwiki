@@ -26,17 +26,30 @@
  * @author Danny B.
  */
 
+use MediaWiki\Cache\LinkBatchFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * A querypage to list the most wanted templates
  *
  * @ingroup SpecialPage
  */
 class SpecialWantedTemplates extends WantedQueryPage {
-	function __construct( $name = 'Wantedtemplates' ) {
-		parent::__construct( $name );
+
+	/**
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LinkBatchFactory $linkBatchFactory
+	 */
+	public function __construct(
+		ILoadBalancer $loadBalancer,
+		LinkBatchFactory $linkBatchFactory
+	) {
+		parent::__construct( 'Wantedtemplates' );
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setLinkBatchFactory( $linkBatchFactory );
 	}
 
-	function getQueryInfo() {
+	public function getQueryInfo() {
 		return [
 			'tables' => [ 'templatelinks', 'page' ],
 			'fields' => [

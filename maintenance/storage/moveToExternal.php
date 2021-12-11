@@ -21,13 +21,15 @@
  * @ingroup Maintenance ExternalStorage
  */
 
+// NO_AUTOLOAD -- file scope code
+
 use MediaWiki\MediaWikiServices;
 
 define( 'REPORTING_INTERVAL', 1 );
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	$optionsWithArgs = [ 'e', 's' ];
-	require_once __DIR__ . '/../commandLine.inc';
+	require_once __DIR__ . '/../CommandLineInc.php';
 	require_once 'resolveStubs.php';
 
 	$fname = 'moveToExternal';
@@ -41,8 +43,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	$location = $args[1]; // e.g. "cluster12" or "global-swift"
 	$dbw = wfGetDB( DB_MASTER );
 
-	$maxID = $options['e'] ?? $dbw->selectField( 'text', 'MAX(old_id)', '', $fname );
-	$minID = $options['s'] ?? 1;
+	$maxID = (int)( $options['e'] ?? $dbw->selectField( 'text', 'MAX(old_id)', '', $fname ) );
+	$minID = (int)( $options['s'] ?? 1 );
 
 	moveToExternal( $type, $location, $maxID, $minID );
 }
@@ -58,6 +60,7 @@ function moveToExternal( $type, $location, $maxID, $minID = 1 ) {
 	print "Moving text rows from $minID to $maxID to external storage\n";
 
 	$esFactory = MediaWikiServices::getInstance()->getExternalStoreFactory();
+	$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 	$extStore = $esFactory->getStore( $type );
 	$numMoved = 0;
 
@@ -67,14 +70,15 @@ function moveToExternal( $type, $location, $maxID, $minID = 1 ) {
 
 		if ( !( $block % REPORTING_INTERVAL ) ) {
 			print "oldid=$blockStart, moved=$numMoved\n";
-			wfWaitForSlaves();
+			$lbFactory->waitForReplication();
 		}
 
 		$res = $dbr->select( 'text', [ 'old_id', 'old_flags', 'old_text' ],
 			[
 				"old_id BETWEEN $blockStart AND $blockEnd",
 				'old_flags NOT ' . $dbr->buildLike( $dbr->anyString(), 'external', $dbr->anyString() ),
-			], $fname );
+			], $fname
+		);
 		foreach ( $res as $row ) {
 			# Resolve stubs
 			$text = $row->old_text;

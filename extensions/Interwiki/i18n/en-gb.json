@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mdann52",
+			"Andibing",
+			"Bjh21",
 			"Chase me ladies, I'm the Cavalry",
-			"Andibing"
+			"Mdann52"
 		]
 	},
 	"interwiki": "View and edit interwiki data",
 	"interwiki-title-norights": "View interwiki data",
 	"interwiki-desc": "Adds a [[Special:Interwiki|special page]] to view and edit the interwiki table",
-	"interwiki_intro": "This is an overview of the interwiki table, which defines the prefix shortcuts used to quickly link to different wikis and other external sites. For recommended use, please see [//www.mediawiki.org/wiki/Extension:Interwiki the manual on MediaWiki.org].",
+	"interwiki_intro": "This is an overview of the interwiki table, which defines the prefix shortcuts used to quickly link to different wikis and other external sites. For recommended use, please see [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki the manual on MediaWiki.org].",
 	"interwiki-legend-label": "Legend",
 	"interwiki_prefix": "Prefix",
 	"interwiki-prefix-label": "Prefix:",
@@ -21,7 +22,7 @@
 	"interwiki_local_1_intro": "External HTTP requests to the local wiki using this interwiki prefix will be redirected to the target URL of the interwiki (i.e. treated like links to local pages).",
 	"interwiki_trans": "Transclude",
 	"interwiki-trans-label": "Transclude:",
-	"interwiki_trans_1_intro": "If wikitext syntax <code>{<nowiki />{prefix:<em>pagename</em>}}</code> is used, allow template/page transclusion from the foreign wiki if interwiki transclusions are enabled in general ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding scary transclusion]).",
+	"interwiki_trans_1_intro": "If wikitext syntax <code>{<nowiki />{prefix:<em>pagename</em>}}</code> is used, allow template/page transclusion from the foreign wiki if interwiki transclusions are enabled in general ([https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgEnableScaryTranscluding scary transclusion]).",
 	"interwiki_trans_0_intro": "Do not allow <code>{<nowiki />{prefix:<em>pagename</em>}}</code> to transclude foreign templates/pages, rather look for a local page in the template namespace.",
 	"interwiki_1": "yes",
 	"interwiki_0": "no",

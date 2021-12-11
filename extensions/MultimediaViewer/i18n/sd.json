@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mehtab ahmed",
 			"Aursani",
-			"Tweety",
-			"Indus Asia"
+			"Indus Asia",
+			"Mehtab ahmed",
+			"Tweety"
 		]
 	},
 	"multimediaviewer-desc": "سڄي اسڪرين واري انٽرفيس ۾ ننڍي فائل کي وڏو ڪري ڏيکاريو",
@@ -93,7 +93,7 @@
 	"multimediaviewer-option-submit-button": "ميڊيا ڏسڻي بند ڪيو",
 	"multimediaviewer-option-cancel-button": "رد",
 	"multimediaviewer-disable-confirmation-header": "اوهان ميڊيا ڏسڻي بند ڪري چڪا آهيو",
-	"multimediaviewer-disable-confirmation-text": "ٻيهر اوهان $1 تي ڪنهن به تصوير تي ڪلڪ ڪندو ته، اوهان کي سڌو فائل جا تفصيل ڏيکاريا ويندا.",
+	"multimediaviewer-disable-confirmation-text": "ٻيھر اوهان $1 تي ڪنھن تصوير تي ڪلڪ ڪندا، تہ اوهان سڌو فائل جا سڀ تفصيل ڏسندا.",
 	"multimediaviewer-enable-dialog-header": "ميڊيا ڏسڻي کوليو؟",
 	"multimediaviewer-enable-submit-button": "ميڊيا ڏسڻي کوليو",
 	"multimediaviewer-enable-confirmation-header": "اوهان سمورن فائلن لاءِ ميڊيا ڏسڻي کولي چڪا آهيو",

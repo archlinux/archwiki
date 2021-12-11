@@ -22,18 +22,20 @@ namespace MediaWiki\Block;
 
 use DateTime;
 use DateTimeZone;
-use DeferredUpdates;
-use Hooks;
-use IP;
+use LogicException;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\User\UserIdentity;
+use Message;
 use MWCryptHash;
 use Psr\Log\LoggerInterface;
 use User;
 use WebRequest;
 use WebResponse;
 use Wikimedia\IPSet;
+use Wikimedia\IPUtils;
 
 /**
  * A service class for checking blocks.
@@ -49,8 +51,7 @@ class BlockManager {
 	private $options;
 
 	/**
-	 * @var array
-	 * @since 1.34
+	 * @internal For use by ServiceWiring
 	 */
 	public const CONSTRUCTOR_OPTIONS = [
 		'ApplyIpBlocksToXff',
@@ -67,20 +68,26 @@ class BlockManager {
 	/** @var LoggerInterface */
 	private $logger;
 
+	/** @var HookRunner */
+	private $hookRunner;
+
 	/**
 	 * @param ServiceOptions $options
 	 * @param PermissionManager $permissionManager
 	 * @param LoggerInterface $logger
+	 * @param HookContainer $hookContainer
 	 */
 	public function __construct(
 		ServiceOptions $options,
 		PermissionManager $permissionManager,
-		LoggerInterface $logger
+		LoggerInterface $logger,
+		HookContainer $hookContainer
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
 		$this->permissionManager = $permissionManager;
 		$this->logger = $logger;
+		$this->hookRunner = new HookRunner( $hookContainer );
 	}
 
 	/**
@@ -93,7 +100,7 @@ class BlockManager {
 	 * (1) The global user (and can be affected by IP blocks). The global request object
 	 * is needed for checking the IP address, the XFF header and the cookies.
 	 * (2) The global user (and exempt from IP blocks). The global request object is
-	 * needed for checking the cookies.
+	 * available.
 	 * (3) Another user (not the global user). No request object is available or needed;
 	 * just look for a block against the user account.
 	 *
@@ -111,16 +118,23 @@ class BlockManager {
 	 * @param bool $fromReplica Whether to check the replica DB first.
 	 *  To improve performance, non-critical checks are done against replica DBs.
 	 *  Check when actually saving should be done against master.
+	 * @param bool $disableIpBlockExemptChecking This is used internally to prevent
+	 *   a infinite recursion with autopromote. See T270145.
 	 * @return AbstractBlock|null The most relevant block, or null if there is no block.
 	 */
-	public function getUserBlock( User $user, $request, $fromReplica ) {
+	public function getUserBlock( User $user, $request, $fromReplica, $disableIpBlockExemptChecking = false ) {
 		$fromMaster = !$fromReplica;
 		$ip = null;
 
 		// If this is the global user, they may be affected by IP blocks (case #1),
 		// or they may be exempt (case #2). If affected, look for additional blocks
-		// against the IP address.
+		// against the IP address and referenced in a cookie.
 		$checkIpBlocks = $request &&
+			// Because calling getBlock within Autopromote leads back to here,
+			// thus causing a infinite recursion. We fix this by not checking for
+			// ipblock-exempt when calling getBlock within Autopromote.
+			// See T270145.
+			!$disableIpBlockExemptChecking &&
 			!$this->permissionManager->userHasRight( $user, 'ipblock-exempt' );
 
 		if ( $request && $checkIpBlocks ) {
@@ -132,16 +146,11 @@ class BlockManager {
 			$this->getAdditionalIpBlocks( $blocks, $request, !$user->isRegistered(), $fromMaster );
 			$this->getCookieBlock( $blocks, $user, $request );
 
-		} elseif ( $request ) {
-
-			// Case #2: checking the global user, but they are exempt from IP blocks
-			// TODO: remove dependency on DatabaseBlock (T221075)
-			$blocks = DatabaseBlock::newListFromTarget( $user, null, $fromMaster );
-			$this->getCookieBlock( $blocks, $user, $request );
-
 		} else {
 
-			// Case #3: checking whether a user's account is blocked
+			// Case #2: checking the global user, but they are exempt from IP blocks
+			// and cookie blocks, so we only check for a user account block.
+			// Case #3: checking whether another user's account is blocked.
 			// TODO: remove dependency on DatabaseBlock (T221075)
 			$blocks = DatabaseBlock::newListFromTarget( $user, null, $fromMaster );
 
@@ -157,14 +166,13 @@ class BlockManager {
 			} else {
 				$block = new CompositeBlock( [
 					'address' => $ip,
-					'byText' => 'MediaWiki default',
-					'reason' => wfMessage( 'blockedtext-composite-reason' )->plain(),
+					'reason' => new Message( 'blockedtext-composite-reason' ),
 					'originalBlocks' => $blocks,
 				] );
 			}
 		}
 
-		Hooks::run( 'GetUserBlock', [ clone $user, $ip, &$block ] );
+		$this->hookRunner->onGetUserBlock( clone $user, $ip, $block );
 
 		return $block;
 	}
@@ -201,27 +209,25 @@ class BlockManager {
 			// Local list
 			if ( $this->isLocallyBlockedProxy( $ip ) ) {
 				$blocks[] = new SystemBlock( [
-					'byText' => wfMessage( 'proxyblocker' )->text(),
-					'reason' => wfMessage( 'proxyblockreason' )->plain(),
+					'reason' => new Message( 'proxyblockreason' ),
 					'address' => $ip,
 					'systemBlock' => 'proxy',
 				] );
 			} elseif ( $isAnon && $this->isDnsBlacklisted( $ip ) ) {
 				$blocks[] = new SystemBlock( [
-					'byText' => wfMessage( 'sorbs' )->text(),
-					'reason' => wfMessage( 'sorbsreason' )->plain(),
+					'reason' => new Message( 'sorbsreason' ),
 					'address' => $ip,
+					'anonOnly' => true,
 					'systemBlock' => 'dnsbl',
 				] );
 			}
 		}
 
 		// Soft blocking
-		if ( $isAnon && IP::isInRanges( $ip, $this->options->get( 'SoftBlockRanges' ) ) ) {
+		if ( $isAnon && IPUtils::isInRanges( $ip, $this->options->get( 'SoftBlockRanges' ) ) ) {
 			$blocks[] = new SystemBlock( [
 				'address' => $ip,
-				'byText' => 'MediaWiki default',
-				'reason' => wfMessage( 'softblockrangesreason', $ip )->plain(),
+				'reason' => new Message( 'softblockrangesreason', [ $ip ] ),
 				'anonOnly' => true,
 				'systemBlock' => 'wgSoftBlockRanges',
 			] );
@@ -272,8 +278,11 @@ class BlockManager {
 	}
 
 	/**
-	 * Try to load a block from an ID given in a cookie value. If the block is invalid
-	 * doesn't exist, or the cookie value is malformed, remove the cookie.
+	 * Try to load a block from an ID given in a cookie value.
+	 *
+	 * If the block is invalid, doesn't exist, or the cookie value is malformed, no
+	 * block will be loaded. In these cases the cookie will either (1) be replaced
+	 * with a valid cookie or (2) removed, next time trackBlockWithCookie is called.
 	 *
 	 * @param UserIdentity $user
 	 * @param WebRequest $request
@@ -284,12 +293,12 @@ class BlockManager {
 		WebRequest $request
 	) {
 		$cookieValue = $request->getCookie( 'BlockID' );
-		if ( is_null( $cookieValue ) ) {
+		if ( $cookieValue === null ) {
 			return false;
 		}
 
 		$blockCookieId = $this->getIdFromCookieValue( $cookieValue );
-		if ( !is_null( $blockCookieId ) ) {
+		if ( $blockCookieId !== null ) {
 			// TODO: remove dependency on DatabaseBlock (T221075)
 			$block = DatabaseBlock::newFromID( $blockCookieId );
 			if (
@@ -299,8 +308,6 @@ class BlockManager {
 				return $block;
 			}
 		}
-
-		$this->clearBlockCookie( $request->response() );
 
 		return false;
 	}
@@ -356,12 +363,12 @@ class BlockManager {
 	 * Whether the given IP is in a DNS blacklist.
 	 *
 	 * @param string $ip IP to check
-	 * @param bool $checkWhitelist Whether to check the whitelist first
+	 * @param bool $checkAllowed Whether to check $wgProxyWhitelist first
 	 * @return bool True if blacklisted.
 	 */
-	public function isDnsBlacklisted( $ip, $checkWhitelist = false ) {
+	public function isDnsBlacklisted( $ip, $checkAllowed = false ) {
 		if ( !$this->options->get( 'EnableDnsBlacklist' ) ||
-			( $checkWhitelist && in_array( $ip, $this->options->get( 'ProxyWhitelist' ) ) )
+			( $checkAllowed && in_array( $ip, $this->options->get( 'ProxyWhitelist' ) ) )
 		) {
 			return false;
 		}
@@ -373,13 +380,13 @@ class BlockManager {
 	 * Whether the given IP is in a given DNS blacklist.
 	 *
 	 * @param string $ip IP to check
-	 * @param array $bases Array of Strings: URL of the DNS blacklist
+	 * @param string[] $bases URL of the DNS blacklist
 	 * @return bool True if blacklisted.
 	 */
 	private function inDnsBlacklist( $ip, array $bases ) {
 		$found = false;
 		// @todo FIXME: IPv6 ???  (https://bugs.php.net/bug.php?id=33170)
-		if ( IP::isIPv4( $ip ) ) {
+		if ( IPUtils::isIPv4( $ip ) ) {
 			// Reverse IP, T23255
 			$ipReversed = implode( '.', array_reverse( explode( '.', $ip ) ) );
 
@@ -404,7 +411,12 @@ class BlockManager {
 
 				if ( $ipList ) {
 					$this->logger->info(
-						"Hostname $hostname is {$ipList[0]}, it's a proxy says $basename!"
+						'Hostname {hostname} is {ipList}, it\'s a proxy says {basename}!',
+						[
+							'hostname' => $hostname,
+							'ipList' => $ipList[0],
+							'basename' => $basename,
+						]
 					);
 					$found = true;
 					break;
@@ -430,44 +442,65 @@ class BlockManager {
 	/**
 	 * Set the 'BlockID' cookie depending on block type and user authentication status.
 	 *
+	 * If a block cookie is already set, this will check the block that the cookie references
+	 * and do the following:
+	 *  - If the block is a valid block that should be applied, do nothing and return early.
+	 *    This ensures that the cookie's expiry time is based on the time of the first page
+	 *    load or attempt. (See discussion on T233595.)
+	 *  - If the block is invalid (e.g. has expired), clear the cookie and continue to check
+	 *    whether there is another block that should be tracked.
+	 *  - If the block is a valid block, but should not be tracked by a cookie, clear the
+	 *    cookie and continue to check whether there is another block that should be tracked.
+	 *
 	 * @since 1.34
 	 * @param User $user
+	 * @param WebResponse $response The response on which to set the cookie.
+	 * @throws LogicException If called before the User object was loaded.
+	 * @throws LogicException If not called pre-send.
 	 */
-	public function trackBlockWithCookie( User $user ) {
+	public function trackBlockWithCookie( User $user, WebResponse $response ) {
 		$request = $user->getRequest();
+
 		if ( $request->getCookie( 'BlockID' ) !== null ) {
-			// User already has a block cookie
-			return;
+			$cookieBlock = $this->getBlockFromCookieValue( $user, $request );
+			if ( $cookieBlock && $this->shouldApplyCookieBlock( $cookieBlock, $user->isAnon() ) ) {
+				return;
+			}
+			// The block pointed to by the cookie is invalid or should not be tracked.
+			$this->clearBlockCookie( $response );
 		}
 
-		// Defer checks until the user has been fully loaded to avoid circular dependency
-		// of User on itself (T180050 and T226777)
-		DeferredUpdates::addCallableUpdate(
-			function () use ( $user, $request ) {
-				$block = $user->getBlock();
-				$response = $request->response();
-				$isAnon = $user->isAnon();
+		if ( !$user->isSafeToLoad() ) {
+			// Prevent a circular dependency by not allowing this method to be called
+			// before or while the user is being loaded.
+			// E.g. User > BlockManager > Block > Message > getLanguage > User.
+			// See also T180050 and T226777.
+			throw new LogicException( __METHOD__ . ' requires a loaded User object' );
+		}
+		if ( $response->headersSent() ) {
+			throw new LogicException( __METHOD__ . ' must be called pre-send' );
+		}
 
-				if ( $block ) {
-					if ( $block instanceof CompositeBlock ) {
-						// TODO: Improve on simply tracking the first trackable block (T225654)
-						foreach ( $block->getOriginalBlocks() as $originalBlock ) {
-							if ( $this->shouldTrackBlockWithCookie( $originalBlock, $isAnon ) ) {
-								'@phan-var DatabaseBlock $originalBlock';
-								$this->setBlockCookie( $originalBlock, $response );
-								return;
-							}
-						}
-					} else {
-						if ( $this->shouldTrackBlockWithCookie( $block, $isAnon ) ) {
-							'@phan-var DatabaseBlock $block';
-							$this->setBlockCookie( $block, $response );
-						}
+		$block = $user->getBlock();
+		$isAnon = $user->isAnon();
+
+		if ( $block ) {
+			if ( $block instanceof CompositeBlock ) {
+				// TODO: Improve on simply tracking the first trackable block (T225654)
+				foreach ( $block->getOriginalBlocks() as $originalBlock ) {
+					if ( $this->shouldTrackBlockWithCookie( $originalBlock, $isAnon ) ) {
+						'@phan-var DatabaseBlock $originalBlock';
+						$this->setBlockCookie( $originalBlock, $response );
+						return;
 					}
 				}
-			},
-			DeferredUpdates::PRESEND
-		);
+			} else {
+				if ( $this->shouldTrackBlockWithCookie( $block, $isAnon ) ) {
+					'@phan-var DatabaseBlock $block';
+					$this->setBlockCookie( $block, $response );
+				}
+			}
+		}
 	}
 
 	/**
@@ -482,7 +515,7 @@ class BlockManager {
 	 */
 	public function setBlockCookie( DatabaseBlock $block, WebResponse $response ) {
 		// Calculate the default expiry time.
-		$maxExpiryTime = wfTimestamp( TS_MW, wfTimestamp() + ( 24 * 60 * 60 ) );
+		$maxExpiryTime = wfTimestamp( TS_MW, (int)wfTimestamp() + ( 24 * 60 * 60 ) );
 
 		// Use the block's expiry time only if it's less than the default.
 		$expiryTime = $block->getExpiry();
@@ -556,12 +589,12 @@ class BlockManager {
 		$id = ( $bangPos === false ) ? $cookieValue : substr( $cookieValue, 0, $bangPos );
 		if ( !$this->options->get( 'SecretKey' ) ) {
 			// If there's no secret key, just use the ID as given.
-			return $id;
+			return (int)$id;
 		}
 		$storedHmac = substr( $cookieValue, $bangPos + 1 );
 		$calculatedHmac = MWCryptHash::hmac( $id, $this->options->get( 'SecretKey' ), false );
 		if ( $calculatedHmac === $storedHmac ) {
-			return $id;
+			return (int)$id;
 		} else {
 			return null;
 		}

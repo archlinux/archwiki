@@ -2,18 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Devunt",
+			"Garam",
+			"Hwangjy9",
 			"IRTC1015",
 			"Klutzy",
 			"Kwj2772",
 			"LFM",
+			"Macofe",
 			"Mintz0223",
 			"Priviet",
-			"관인생략",
-			"아라",
-			"Macofe",
-			"Hwangjy9",
 			"Ykhwong",
-			"Garam"
+			"관인생략",
+			"아라"
 		]
 	},
 	"wikieditor": "확장된 위키텍스트 편집 인터페이스",
@@ -56,11 +56,13 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "내부 링크",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "외부 링크",
 	"wikieditor-toolbar-tool-link-empty": "링크할 대상을 입력하지 않았습니다.",
-	"wikieditor-toolbar-tool-file": "파일 넣기",
+	"wikieditor-toolbar-tool-file": "이미지 및 미디어",
 	"wikieditor-toolbar-tool-file-example": "Example.jpg",
 	"wikieditor-toolbar-tool-file-title": "파일 넣기",
 	"wikieditor-toolbar-file-target": "파일 이름:",
 	"wikieditor-toolbar-file-caption": "설명:",
+	"wikieditor-toolbar-file-alt": "대체 텍스트:",
+	"wikieditor-toolbar-file-alt-help-label": "(도움말 보기)",
 	"wikieditor-toolbar-file-size": "크기:",
 	"wikieditor-toolbar-file-float": "정렬:",
 	"wikieditor-toolbar-file-default": "(기본값)",

@@ -8,13 +8,13 @@ class FileTest extends MediaWikiMediaTestCase {
 	 * @dataProvider providerCanAnimate
 	 * @covers File::canAnimateThumbIfAppropriate
 	 */
-	function testCanAnimateThumbIfAppropriate( $filename, $expected ) {
+	public function testCanAnimateThumbIfAppropriate( $filename, $expected ) {
 		$this->setMwGlobals( 'wgMaxAnimatedGifArea', 9000 );
 		$file = $this->dataFile( $filename );
 		$this->assertEquals( $file->canAnimateThumbIfAppropriate(), $expected );
 	}
 
-	function providerCanAnimate() {
+	public function providerCanAnimate() {
 		return [
 			[ 'nonanimated.gif', true ],
 			[ 'jpeg-comment-utf.jpg', true ],
@@ -146,6 +146,7 @@ class FileTest extends MediaWikiMediaTestCase {
 			->setMethods( [ 'fileExists', 'getLocalReference' ] )
 			->getMock();
 
+		$tempDir = wfTempDir();
 		$fsFile = new FSFile( 'fsFilePath' );
 
 		$repoMock->expects( $this->any() )
@@ -184,7 +185,10 @@ class FileTest extends MediaWikiMediaTestCase {
 		$reflection_property->setAccessible( true );
 		$reflection_property->setValue( $fileMock, $handlerMock );
 
-		if ( !is_null( $data['tmpBucketedThumbCache'] ) ) {
+		if ( $data['tmpBucketedThumbCache'] !== null ) {
+			foreach ( $data['tmpBucketedThumbCache'] as $bucket => &$tmpBucketed ) {
+				$tmpBucketed = str_replace( '/tmp', $tempDir, $tmpBucketed );
+			}
 			$reflection_property = $reflection->getProperty( 'tmpBucketedThumbCache' );
 			$reflection_property->setAccessible( true );
 			$reflection_property->setValue( $fileMock, $data['tmpBucketedThumbCache'] );
@@ -193,7 +197,11 @@ class FileTest extends MediaWikiMediaTestCase {
 		$result = $fileMock->getThumbnailSource(
 			[ 'physicalWidth' => $data['physicalWidth'] ] );
 
-		$this->assertEquals( $data['expectedPath'], $result['path'], $data['message'] );
+		$this->assertEquals(
+			str_replace( '/tmp', $tempDir, $data['expectedPath'] ),
+			$result['path'],
+			$data['message']
+		);
 	}
 
 	public function getThumbnailSourceProvider() {
@@ -384,6 +392,54 @@ class FileTest extends MediaWikiMediaTestCase {
 				'expectedResult' => true,
 				'message' => 'Bucket image could not be generated'
 			] ],
+		];
+	}
+
+	/**
+	 * @covers File::getDisplayWidthHeight
+	 * @dataProvider providerGetDisplayWidthHeight
+	 * @param array $dim Array [maxWidth, maxHeight, width, height]
+	 * @param array $expected Array [width, height] The width and height we expect to display at
+	 */
+	public function testGetDisplayWidthHeight( $dim, $expected ) {
+		$fileMock = $this->getMockBuilder( File::class )
+			->setConstructorArgs( [ 'fileMock', false ] )
+			->setMethods( [ 'getWidth', 'getHeight' ] )
+			->getMockForAbstractClass();
+
+		$fileMock->method( 'getWidth' )->willReturn( $dim[2] );
+		$fileMock->method( 'getHeight' )->willReturn( $dim[3] );
+
+		$actual = $fileMock->getDisplayWidthHeight( $dim[0], $dim[1] );
+		$this->assertEquals( $actual, $expected );
+	}
+
+	public function providerGetDisplayWidthHeight() {
+		return [
+			[
+				[ 1024.0, 768.0, 600.0, 600.0 ],
+				[ 600.0, 600.0 ]
+			],
+			[
+				[ 1024.0, 768.0, 1600.0, 600.0 ],
+				[ 1024.0, 384.0 ]
+			],
+			[
+				[ 1024.0, 768.0, 1024.0, 768.0 ],
+				[ 1024.0, 768.0 ]
+			],
+			[
+				[ 1024.0, 768.0, 800.0, 1000.0 ],
+				[ 614.0, 768.0 ]
+			],
+			[
+				[ 1024.0, 768.0, 0, 1000 ],
+				[ 0, 0 ]
+			],
+			[
+				[ 1024.0, 768.0, 2000, 0 ],
+				[ 0, 0 ]
+			],
 		];
 	}
 }

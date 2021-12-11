@@ -21,7 +21,8 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Tidy\TidyDriverBase;
+use MediaWiki\User\UserOptionsLookup;
 
 /**
  * A special page that expands submitted templates, parser functions,
@@ -44,17 +45,38 @@ class SpecialExpandTemplates extends SpecialPage {
 	protected $removeNowiki;
 
 	/** @var int Maximum size in bytes to include. 50MB allows fixing those huge pages */
-	const MAX_INCLUDE_SIZE = 50000000;
+	private const MAX_INCLUDE_SIZE = 50000000;
 
-	function __construct() {
+	/** @var Parser */
+	private $parser;
+
+	/** @var UserOptionsLookup */
+	private $userOptionsLookup;
+
+	/** @var TidyDriverBase */
+	private $tidy;
+
+	/**
+	 * @param Parser $parser
+	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param TidyDriverBase $tidy
+	 */
+	public function __construct(
+		Parser $parser,
+		UserOptionsLookup $userOptionsLookup,
+		TidyDriverBase $tidy
+	) {
 		parent::__construct( 'ExpandTemplates' );
+		$this->parser = $parser;
+		$this->userOptionsLookup = $userOptionsLookup;
+		$this->tidy = $tidy;
 	}
 
 	/**
 	 * Show the special page
 	 * @param string|null $subpage
 	 */
-	function execute( $subpage ) {
+	public function execute( $subpage ) {
 		$this->setHeaders();
 		$this->addHelpLink( 'Help:ExpandTemplates' );
 
@@ -74,13 +96,11 @@ class SpecialExpandTemplates extends SpecialPage {
 			$this->removeNowiki = $request->getBool( 'wpRemoveNowiki', false );
 			$options = ParserOptions::newFromContext( $this->getContext() );
 			$options->setRemoveComments( $this->removeComments );
-			$options->setTidy( true );
 			$options->setMaxIncludeSize( self::MAX_INCLUDE_SIZE );
 
-			$parser = MediaWikiServices::getInstance()->getParser();
 			if ( $this->generateXML ) {
-				$parser->startExternalParse( $title, $options, Parser::OT_PREPROCESS );
-				$dom = $parser->preprocessToDom( $input );
+				$this->parser->startExternalParse( $title, $options, Parser::OT_PREPROCESS );
+				$dom = $this->parser->preprocessToDom( $input );
 
 				if ( method_exists( $dom, 'saveXML' ) ) {
 					// @phan-suppress-next-line PhanUndeclaredMethod
@@ -91,7 +111,7 @@ class SpecialExpandTemplates extends SpecialPage {
 				}
 			}
 
-			$output = $parser->preprocess( $input, $title, $options );
+			$output = $this->parser->preprocess( $input, $title, $options );
 		} else {
 			$this->removeComments = $request->getBool( 'wpRemoveComments', true );
 			$this->removeNowiki = $request->getBool( 'wpRemoveNowiki', false );
@@ -118,17 +138,15 @@ class SpecialExpandTemplates extends SpecialPage {
 			}
 
 			$config = $this->getConfig();
-			if ( MWTidy::isEnabled() && $options->getTidy() ) {
-				$tmp = MWTidy::tidy( $tmp );
-			} else {
-				wfDeprecated( 'disabling tidy', '1.33' );
-			}
+
+			$tmp = $this->tidy->tidy( $tmp );
 
 			$out->addHTML( $tmp );
 
 			$pout = $this->generateHtml( $title, $output );
 			$rawhtml = $pout->getText();
 			if ( $this->generateRawHtml && strlen( $rawhtml ) > 0 ) {
+				// @phan-suppress-next-line SecurityCheck-DoubleEscaped Wanted here to display the html
 				$out->addHTML( $this->makeOutput( $rawhtml, 'expand_templates_html_output' ) );
 			}
 
@@ -234,7 +252,7 @@ class SpecialExpandTemplates extends SpecialPage {
 			[
 				'id' => 'output',
 				'readonly' => 'readonly',
-				'class' => 'mw-editfont-' . $this->getUser()->getOption( 'editfont' )
+				'class' => 'mw-editfont-' . $this->userOptionsLookup->getOption( $this->getUser(), 'editfont' )
 			]
 		);
 
@@ -251,7 +269,7 @@ class SpecialExpandTemplates extends SpecialPage {
 	private function generateHtml( Title $title, $text ) {
 		$popts = ParserOptions::newFromContext( $this->getContext() );
 		$popts->setTargetLanguage( $title->getPageLanguage() );
-		return MediaWikiServices::getInstance()->getParser()->parse( $text, $title, $popts );
+		return $this->parser->parse( $text, $title, $popts );
 	}
 
 	/**
@@ -273,10 +291,7 @@ class SpecialExpandTemplates extends SpecialPage {
 			// allowed and a valid edit token is not provided (T73111). However, MediaWiki
 			// does not currently provide logged-out users with CSRF protection; in that case,
 			// do not show the preview unless anonymous editing is allowed.
-			if ( $user->isAnon() && !MediaWikiServices::getInstance()
-					->getPermissionManager()
-					->userHasRight( $user, 'edit' )
-			) {
+			if ( $user->isAnon() && !$this->getAuthority()->isAllowed( 'edit' ) ) {
 				$error = [ 'expand_templates_preview_fail_html_anon' ];
 			} elseif ( !$user->matchEditToken( $request->getVal( 'wpEditToken' ), '', $request ) ) {
 				$error = [ 'expand_templates_preview_fail_html' ];

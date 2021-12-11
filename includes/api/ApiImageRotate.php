@@ -44,7 +44,7 @@ class ApiImageRotate extends ApiBase {
 
 		// Check if user can add tags
 		if ( $params['tags'] ) {
-			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $this->getUser() );
+			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $this->getAuthority() );
 			if ( !$ableToTag->isOK() ) {
 				$this->dieStatus( $ableToTag );
 			}
@@ -83,15 +83,7 @@ class ApiImageRotate extends ApiBase {
 			}
 
 			// Check whether we're allowed to rotate this file
-			$permError = $this->checkTitleUserPermissions( $file->getTitle(), [ 'edit', 'upload' ] );
-			if ( $permError ) {
-				$r['result'] = 'Failure';
-				$r['errors'] = $this->getErrorFormatter()->arrayFromStatus(
-					$this->errorArrayToStatus( $permError )
-				);
-				$result[] = $r;
-				continue;
-			}
+			$this->checkTitleUserPermissions( $file->getTitle(), [ 'edit', 'upload' ] );
 
 			$srcPath = $file->getLocalRefPath();
 			if ( $srcPath === false ) {

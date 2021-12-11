@@ -1,7 +1,9 @@
+[![Continuous Integration](https://github.com/wikimedia/less.php/workflows/PHP%20Test/badge.svg)](https://github.com/wikimedia/less.php/actions)
+
 [Less.php](http://lessphp.typesettercms.com)
 ========
 
-This is the Wikimedia fork of a PHP port of the official LESS processor <http://lesscss.org>. [![Build Status](https://travis-ci.org/wikimedia/less.php.png?branch=master)](https://travis-ci.org/wikimedia/less.php)
+This is the Wikimedia fork of a PHP port of the official LESS processor <http://lesscss.org>.
 
 * [About](#about)
 * [Installation](#installation)
@@ -32,41 +34,17 @@ You can install the library with Composer or manually.
 
 #### Composer
 
-Step 1. Edit your `composer.json`:
-
-```json
-{
-    "require": {
-        "wikimedia/less.php": "~1.7.0.9"
-    }
-}
-```
-
-Step 2. Install it:
-
-```bash
-$ curl -sS https://getcomposer.org/installer | php
-$ php composer.phar install
-```
+1. [Install Composer](https://getcomposer.org/download/)
+2. Run `composer require wikimedia/less.php`
 
 #### Manually From Release
 
-Step 1. [Download the latest release](https://github.com/wikimedia/less.php/releases) and upload the PHP files to your server.
+Step 1. [Download a release](https://github.com/wikimedia/less.php/releases) and upload the PHP files to your server.
 
 Step 2. Include the library:
 
 ```php
-require_once '[path to less.php]/Less.php';
-```
-
-#### Manually From Source
-
-Step 1. [Download the source](https://github.com/wikimedia/less.php/archive/master.zip) and upload the files in /lib/Less to a folder on your server.
-
-Step 2. Include the library and register the autoloader
-
-```php
-require_once '[path to less.php]/Autoloader.php';
+require_once '[path to less.php]/lib/Less/Autoloader.php';
 Less_Autoloader::register();
 ```
 

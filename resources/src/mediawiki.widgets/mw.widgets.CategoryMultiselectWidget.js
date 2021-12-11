@@ -20,7 +20,7 @@
 	 *         ]
 	 *       } );
 	 *
-	 *       $( 'body' ).append( selector.$element );
+	 *       $( document.body ).append( selector.$element );
 	 *
 	 *       selector.setSearchTypes( [ mw.widgets.CategoryMultiselectWidget.SearchType.SubCategories ] );
 	 *     } );
@@ -183,6 +183,17 @@
 		} ).always( this.popPending.bind( this ) );
 
 		return deferred.promise();
+	};
+
+	/**
+	 * @inheritdoc
+	 */
+	mw.widgets.CategoryMultiselectWidget.prototype.isAllowedData = function ( data ) {
+		var title = mw.Title.makeTitle( NS_CATEGORY, data );
+		if ( !title ) {
+			return false;
+		}
+		return mw.widgets.CategoryMultiselectWidget.parent.prototype.isAllowedData.call( this, data );
 	};
 
 	/**

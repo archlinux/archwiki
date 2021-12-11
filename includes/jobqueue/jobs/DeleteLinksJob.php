@@ -32,13 +32,13 @@ use MediaWiki\MediaWikiServices;
  * @since 1.27
  */
 class DeleteLinksJob extends Job {
-	function __construct( Title $title, array $params ) {
+	public function __construct( Title $title, array $params ) {
 		parent::__construct( 'deleteLinks', $title, $params );
 		$this->removeDuplicates = true;
 	}
 
-	function run() {
-		if ( is_null( $this->title ) ) {
+	public function run() {
+		if ( $this->title === null ) {
 			$this->setLastError( "deleteLinks: Invalid title" );
 			return false;
 		}
@@ -52,15 +52,17 @@ class DeleteLinksJob extends Job {
 			return false;
 		}
 
-		if ( WikiPage::newFromID( $pageId, WikiPage::READ_LATEST ) ) {
+		$services = MediaWikiServices::getInstance();
+		$wikiPageFactory = $services->getWikiPageFactory();
+		if ( $wikiPageFactory->newFromID( $pageId, WikiPage::READ_LATEST ) ) {
 			// The page was restored somehow or something went wrong
 			$this->setLastError( "deleteLinks: Page #$pageId exists" );
 			return false;
 		}
 
-		$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$factory = $services->getDBLoadBalancerFactory();
 		$timestamp = $this->params['timestamp'] ?? null;
-		$page = WikiPage::factory( $this->title ); // title when deleted
+		$page = $wikiPageFactory->newFromTitle( $this->title ); // title when deleted
 
 		$update = new LinksDeletionUpdate( $page, $pageId, $timestamp );
 		$update->setTransactionTicket( $factory->getEmptyTransactionTicket( __METHOD__ ) );

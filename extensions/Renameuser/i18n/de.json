@@ -1,20 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
+			"J. 'mach' wust",
 			"Kghbln",
 			"Metalhead64",
 			"Purodha",
 			"Raimond Spekking",
 			"Spacebirdy",
 			"The Evil IP address",
-			"Umherirrender",
-			"J. 'mach' wust"
+			"Umherirrender"
 		]
 	},
 	"renameuser": "Benutzer umbenennen",
 	"renameuser-linkoncontribs": "{{GENDER:$1|Benutzer|Benutzerin}} umbenennen",
 	"renameuser-linkoncontribs-text": "{{GENDER:$1|Diesen Benutzer|Diese Benutzerin}} umbenennen",
-	"renameuser-desc": "Eine [[Special:RenameUser|Spezialseite]] zum Ändern eines Benutzernamens",
+	"renameuser-desc": "Erweitert das Wiki um eine [[Special:RenameUser|Spezialseite]] zum Ändern eines Benutzernamens",
 	"renameuserold": "Bisheriger Benutzername:",
 	"renameusernew": "Neuer Benutzername:",
 	"renameuserreason": "Grund:",
@@ -24,7 +24,6 @@
 	"renameuserwarnings": "Warnungen:",
 	"renameuserconfirm": "Ja, Benutzer umbenennen",
 	"renameusersubmit": "Umbenennen",
-	"renameuser-submit-blocklog": "Benutzersperr-Logbuch zum Benutzer anzeigen",
 	"renameusererrordoesnotexist": "Der Benutzername „<nowiki>$1</nowiki>“ ist nicht vorhanden.",
 	"renameusererrorexists": "Der {{GENDER:$1|Benutzername}} „<nowiki>$1</nowiki>“ ist bereits vorhanden.",
 	"renameusererrorinvalid": "Der Benutzername „<nowiki>$1</nowiki>“ ist ungültig.",
@@ -34,6 +33,7 @@
 	"renameuser-page-exists": "Die Seite „$1“ ist bereits vorhanden und kann nicht automatisch überschrieben werden.",
 	"renameuser-page-moved": "Die Seite „$1“ wurde nach „$2“ verschoben.",
 	"renameuser-page-unmoved": "Die Seite „$1“ konnte nicht nach „$2“ verschoben werden.",
+	"renameuser-warning-currentblock": "Dieser Benutzer ist [$1 derzeit gesperrt].",
 	"log-name-renameuser": "Benutzernamenänderungs-Logbuch",
 	"log-description-renameuser": "In diesem Logbuch werden die Änderungen von Benutzernamen protokolliert.",
 	"logentry-renameuser-renameuser": "$1 hat {{GENDER:$2|den Benutzer|die Benutzerin}} „$4“ (mit {{PLURAL:$6|einer Bearbeitung|$6 Bearbeitungen}}) in „{{GENDER:$7|$5}}“ umbenannt",

@@ -13,7 +13,7 @@
  * @author Numulunj pilgae
  */
 
-$fallback = 'ru';
+$fallback = 'myv, ru';
 
 $namespaceNames = [
 	NS_MEDIA            => 'Медиа',
@@ -52,12 +52,14 @@ $namespaceAliases = [
 	'Обсуждение_категории' => NS_CATEGORY_TALK,
 ];
 
+/** @phpcs-require-sorted-array */
 $specialPageAliases = [
 	'Allmessages'               => [ 'СембеПачфтематне' ],
 	'Allpages'                  => [ 'СембеЛопат' ],
 	'Ancientpages'              => [ 'КунардоньЛопат' ],
 	'Blankpage'                 => [ 'ШаваЛопа' ],
 	'Block'                     => [ 'СёлгомаIP' ],
+	'BlockList'                 => [ 'IPСёлгоматЛувома' ],
 	'Booksources'               => [ 'КинигаЛисьмот' ],
 	'BrokenRedirects'           => [ 'СиньтьфШашфтфксне' ],
 	'Categories'                => [ 'Категориет' ],
@@ -75,7 +77,6 @@ $specialPageAliases = [
 	'Filepath'                  => [ 'ФайлКиц' ],
 	'Import'                    => [ 'Сувафтомс' ],
 	'Invalidateemail'           => [ 'Аф кемокстамс адресть' ],
-	'BlockList'                 => [ 'IPСёлгоматЛувома' ],
 	'LinkSearch'                => [ 'СюлмафксВешендема' ],
 	'Listadmins'                => [ 'ЛувомаСистемонь вятиксне' ],
 	'Listbots'                  => [ 'ЛувомаРоботт програпне' ],

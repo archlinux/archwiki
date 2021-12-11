@@ -61,10 +61,10 @@ class ExternalUserNames {
 	 */
 	public static function getUserLinkTitle( $userName ) {
 		$pos = strpos( $userName, '>' );
+		$services = MediaWikiServices::getInstance();
 		if ( $pos !== false ) {
 			$iw = explode( ':', substr( $userName, 0, $pos ) );
 			$firstIw = array_shift( $iw );
-			$services = MediaWikiServices::getInstance();
 			$interwikiLookup = $services->getInterwikiLookup();
 			if ( $interwikiLookup->isValidInterwiki( $firstIw ) ) {
 				$title = $services->getNamespaceInfo()->getCanonicalName( NS_USER ) .
@@ -76,7 +76,17 @@ class ExternalUserNames {
 			}
 			return null;
 		} else {
-			return SpecialPage::getTitleFor( 'Contributions', $userName );
+			// Protect against invalid user names from old corrupt database rows, T232451
+			if (
+				$services->getUserNameUtils()->isIP( $userName )
+				|| $services->getUserNameUtils()->isValidIPRange( $userName )
+				|| $services->getUserNameUtils()->isValid( $userName )
+			) {
+				return SpecialPage::getTitleFor( 'Contributions', $userName );
+			} else {
+				// Bad user name, no link
+				return null;
+			}
 		}
 	}
 
@@ -95,7 +105,7 @@ class ExternalUserNames {
 	 *  username), otherwise the name with the prefix prepended.
 	 */
 	public function applyPrefix( $name ) {
-		if ( !User::isUsableName( $name ) ) {
+		if ( User::getCanonicalName( $name, 'usable' ) === false ) {
 			return $name;
 		}
 
@@ -107,7 +117,7 @@ class ExternalUserNames {
 			// See if any extension wants to create it.
 			if ( !isset( $this->triedCreations[$name] ) ) {
 				$this->triedCreations[$name] = true;
-				if ( !Hooks::run( 'ImportHandleUnknownUser', [ $name ] ) &&
+				if ( !Hooks::runner()->onImportHandleUnknownUser( $name ) &&
 					User::idFromName( $name, User::READ_LATEST )
 				) {
 					return $name;

@@ -28,6 +28,8 @@
  */
 class CategoryTreeHooks {
 
+	private const EXTENSION_DATA_FLAG = 'CategoryTree';
+
 	/**
 	 * @internal For use by CategoryTreeCategoryViewer and CategoryTreePage only!
 	 * @return bool
@@ -48,19 +50,19 @@ class CategoryTreeHooks {
 		global $wgCategoryTreeOmitNamespace;
 
 		if ( !isset( $wgCategoryTreeDefaultOptions['mode'] )
-			|| is_null( $wgCategoryTreeDefaultOptions['mode'] )
+			|| $wgCategoryTreeDefaultOptions['mode'] === null
 		) {
 			$wgCategoryTreeDefaultOptions['mode'] = $wgCategoryTreeDefaultMode;
 		}
 
 		if ( !isset( $wgCategoryTreeDefaultOptions['hideprefix'] )
-			|| is_null( $wgCategoryTreeDefaultOptions['hideprefix'] )
+			|| $wgCategoryTreeDefaultOptions['hideprefix'] === null
 		) {
 			$wgCategoryTreeDefaultOptions['hideprefix'] = $wgCategoryTreeOmitNamespace;
 		}
 
 		if ( !isset( $wgCategoryTreeCategoryPageOptions['mode'] )
-			|| is_null( $wgCategoryTreeCategoryPageOptions['mode'] )
+			|| $wgCategoryTreeCategoryPageOptions['mode'] === null
 		) {
 			$mode = $wgRequest->getVal( 'mode' );
 			$wgCategoryTreeCategoryPageOptions['mode'] = ( $mode )
@@ -110,9 +112,14 @@ class CategoryTreeHooks {
 			$argv[$k] = $v;
 		}
 
-		// now handle just like a <categorytree> tag
-		$html = self::parserHook( $cat, $argv, $parser );
-		return [ $html, 'noparse' => true, 'isHTML' => true ];
+		if ( $parser->getOutputType() === Parser::OT_PREPROCESS ) {
+			return Html::openElement( 'categorytree', $argv ) .
+				$cat . Html::closeElement( 'categorytree' );
+		} else {
+			// now handle just like a <categorytree> tag
+			$html = self::parserHook( $cat, $argv, $parser );
+			return [ $html, 'noparse' => true, 'isHTML' => true ];
+		}
 	}
 
 	/**
@@ -138,10 +145,10 @@ class CategoryTreeHooks {
 	/**
 	 * Entry point for the <categorytree> tag parser hook.
 	 * This loads CategoryTreeFunctions.php and calls CategoryTree::getTag()
-	 * @suppress PhanUndeclaredProperty ParserOutput->mCategoryTreeTag
 	 * @param string $cat
 	 * @param array $argv
 	 * @param Parser|null $parser
+	 * @param PPFrame|null $frame
 	 * @param bool $allowMissing
 	 * @return bool|string
 	 */
@@ -149,11 +156,12 @@ class CategoryTreeHooks {
 		$cat,
 		array $argv,
 		Parser $parser = null,
+		PPFrame $frame = null,
 		$allowMissing = false
 	) {
 		if ( $parser ) {
 			# flag for use by CategoryTreeHooks::parserOutput
-			$parser->mOutput->mCategoryTreeTag = true;
+			$parser->getOutput()->setExtensionData( self::EXTENSION_DATA_FLAG, true );
 		}
 
 		$ct = new CategoryTree( $argv );
@@ -177,8 +185,7 @@ class CategoryTreeHooks {
 	/**
 	 * Hook callback that injects messages and things into the <head> tag,
 	 * if needed in the current page.
-	 * Does nothing if $parserOutput->mCategoryTreeTag is not set
-	 * @suppress PhanUndeclaredProperty ParserOutput->mCategoryTreeTag
+	 * Does nothing if self::EXTENSION_DATA_FLAG is not set on $parserOutput extension data.
 	 * @param OutputPage $outputPage
 	 * @param ParserOutput $parserOutput
 	 */
@@ -187,7 +194,7 @@ class CategoryTreeHooks {
 			// Skip, we've already set the headers unconditionally
 			return;
 		}
-		if ( !empty( $parserOutput->mCategoryTreeTag ) ) {
+		if ( $parserOutput->getExtensionData( self::EXTENSION_DATA_FLAG ) ) {
 			CategoryTree::setHeaders( $outputPage );
 		}
 	}
@@ -237,9 +244,9 @@ class CategoryTreeHooks {
 		}
 
 		foreach ( $categories as $category => $type ) {
-			$links[$type][] = self::parserHook( $category, $wgCategoryTreePageCategoryOptions, null, true );
-			CategoryTree::setHeaders( $out );
+			$links[$type][] = self::parserHook( $category, $wgCategoryTreePageCategoryOptions, null, null, true );
 		}
+		CategoryTree::setHeaders( $out );
 
 		return false;
 	}
@@ -266,6 +273,7 @@ class CategoryTreeHooks {
 	 * @suppress PhanUndeclaredProperty SpecialPage->categoryTreeCategories
 	 * @param SpecialPage $specialPage SpecialTrackingCategories object
 	 * @param array $trackingCategories [ 'msg' => Title, 'cats' => Title[] ]
+	 * @phan-param array<string,array{msg:Title,cats:Title[]}> $trackingCategories
 	 */
 	public static function onSpecialTrackingCategoriesPreprocess(
 		SpecialPage $specialPage, array $trackingCategories

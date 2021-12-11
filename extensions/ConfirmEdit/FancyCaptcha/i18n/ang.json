@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gott wisst"
+			"Gott wisst",
+			"Heahwrita"
 		]
 	},
-	"fancycaptcha-imgcaptcha-ph": "Besettan þone traht þe þū sīhst būfan",
-	"fancycaptcha-reload-text": "Ednīwian"
+	"fancycaptcha-imgcaptcha-ph": "Writ þone traht þe þu sihst on þære metunge",
+	"fancycaptcha-reload-text": "Idniwa"
 }

@@ -1,19 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ashok modhvadia",
-			"KartikMistry",
-			"The Discoverer",
 			"Arbhatt",
+			"Ashok modhvadia",
+			"CptViraj",
 			"Dsvyas",
+			"KartikMistry",
 			"NehalDaveND",
-			"Nisargjhaveri"
+			"Nisargjhaveri",
+			"The Discoverer"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "પુસ્તક",
 	"visualeditor-cite-tool-name-journal": "પત્રિકા",
 	"visualeditor-cite-tool-name-news": "સમાચાર",
 	"visualeditor-cite-tool-name-web": "વેબસાઇટ",
+	"cite-ve-citationneeded-reason": "આપેલ કારણ:",
 	"cite-ve-dialog-reference-options-group-label": "આ સમૂહ વાપરો",
 	"cite-ve-dialog-reference-options-group-placeholder": "સામાન્ય સંદર્ભો",
 	"cite-ve-dialog-reference-options-name-label": "આ નામ વડે ફરી વાપરો",

@@ -3,6 +3,8 @@
  */
 ( function () {
 
+	var parsedMessages = require( './mediawiki.action.edit.preview.parsedMessages.json' );
+
 	/**
 	 * @ignore
 	 * @param {jQuery.Event} e
@@ -119,7 +121,7 @@
 			$wikiDiff.hide();
 
 			$.extend( postData, {
-				prop: 'text|indicators|displaytitle|modules|jsconfigvars|categorieshtml|templates|langlinks|limitreporthtml',
+				prop: 'text|indicators|displaytitle|modules|jsconfigvars|categorieshtml|templates|langlinks|limitreporthtml|parsewarningshtml',
 				text: $textbox.textSelection( 'getContents' ),
 				pst: true,
 				preview: true,
@@ -135,7 +137,7 @@
 
 			parseRequest = api.post( postData );
 			parseRequest.done( function ( response ) {
-				var newList, $displaytitle, $content, $parent, $list;
+				var newList, $displaytitle, $content, $parent, $list, arrow, $previewHeader;
 				if ( response.parse.jsconfigvars ) {
 					mw.config.set( response.parse.jsconfigvars );
 				}
@@ -163,12 +165,24 @@
 
 				if ( response.parse.displaytitle ) {
 					$displaytitle = $( $.parseHTML( response.parse.displaytitle ) );
+					// The following messages can be used here:
+					// * editconflict
+					// * editingcomment
+					// * editingsection
+					// * editing
+					// * creating
 					$( '#firstHeading' ).msg(
 						mw.config.get( 'wgEditMessage', 'editing' ),
 						$displaytitle
 					);
 					document.title = mw.msg(
 						'pagetitle',
+						// The following messages can be used here:
+						// * editconflict
+						// * editingcomment
+						// * editingsection
+						// * editing
+						// * creating
 						mw.msg(
 							mw.config.get( 'wgEditMessage', 'editing' ),
 							$displaytitle.text()
@@ -182,24 +196,45 @@
 				}
 				if ( response.parse.templates ) {
 					newList = response.parse.templates.map( function ( template ) {
-						return $( '<li>' )
-							.append( $( '<a>' )
-								.attr( {
-									href: mw.util.getUrl( template.title ),
-									class: ( template.exists ? '' : 'new' )
-								} )
+						return $( '<li>' ).append(
+							$( '<a>' )
+								.addClass( template.exists ? '' : 'new' )
+								.attr( 'href', mw.util.getUrl( template.title ) )
 								.text( template.title )
-							);
+						);
 					} );
 
-					$editform.find( '.templatesUsed .mw-editfooter-list' ).detach().empty().append( newList ).appendTo( '.templatesUsed' );
+					$parent = $( '.templatesUsed' );
+					if ( newList.length ) {
+						$list = $parent.find( 'ul' );
+						if ( $list.length ) {
+							$list.detach().empty();
+						} else {
+							$( '<div>' )
+								.addClass( 'mw-templatesUsedExplanation' )
+								.append( '<p>' )
+								.appendTo( $parent );
+							$list = $( '<ul>' );
+						}
+
+						// Add "Templates used in this preview" or replace
+						// "Templates used on this page" with it
+						$( '.mw-templatesUsedExplanation > p' )
+							.msg( 'templatesusedpreview', newList.length );
+
+						$list.append( newList ).appendTo( $parent );
+					} else {
+						$parent.empty();
+					}
 				}
 				if ( response.parse.limitreporthtml ) {
-					$( '.limitreport' ).html( response.parse.limitreporthtml );
+					$( '.limitreport' ).html( response.parse.limitreporthtml )
+						.find( '.mw-collapsible' ).makeCollapsible();
 				}
 				if ( response.parse.langlinks && mw.config.get( 'skin' ) === 'vector' ) {
 					newList = response.parse.langlinks.map( function ( langlink ) {
 						var bcp47 = mw.language.bcp47( langlink.lang );
+						// eslint-disable-next-line mediawiki/class-doc
 						return $( '<li>' )
 							.addClass( 'interlanguage-link interwiki-' + langlink.lang )
 							.append( $( '<a>' )
@@ -216,8 +251,31 @@
 					$parent = $list.parent();
 					$list.detach().empty().append( newList ).prependTo( $parent );
 				}
+				arrow = $( document.body ).css( 'direction' ) === 'rtl' ? '←' : '→';
+				$previewHeader = $( '<div>' )
+					.addClass( 'previewnote' )
+					.append( $( '<h2>' )
+						.attr( 'id', 'mw-previewheader' )
+						.text( mw.message( 'preview' ).escaped() )
+					)
+					.append( $( '<div>' )
+						.addClass( 'warningbox' )
+						.html( parsedMessages.previewnote )
+						.append( ' ' )
+						.append( $( '<span>' )
+							.addClass( 'mw-continue-editing' )
+							.append( $( '<a>' )
+								.attr( 'href', '#' + $editform.attr( 'id' ) )
+								.text( arrow + ' ' + mw.msg( 'continue-editing' ) )
+							)
+						)
+					);
+				response.parse.parsewarningshtml.forEach( function ( warning ) {
+					$previewHeader.find( '.warningbox' ).append( $( '<p>' ).append( warning ) );
+				} );
 
 				if ( response.parse.text ) {
+					$wikiPreview.find( '.previewnote' ).remove();
 					$content = $wikiPreview.children( '.mw-content-ltr,.mw-content-rtl' );
 					$content
 						.detach()
@@ -226,7 +284,7 @@
 					mw.hook( 'wikipage.content' ).fire( $content );
 
 					// Reattach
-					$wikiPreview.append( $content );
+					$wikiPreview.append( $previewHeader ).append( $content );
 
 					$wikiPreview.show();
 				}
@@ -235,11 +293,10 @@
 		$.when( parseRequest, diffRequest ).done( function ( parseResp ) {
 			var parse = parseResp && parseResp[ 0 ].parse,
 				isSubject = ( section === 'new' ),
-				summaryMsg = isSubject ? 'subject-preview' : 'summary-preview',
 				$summaryPreview = $editform.find( '.mw-summary-preview' ).empty();
 			if ( parse && parse.parsedsummary ) {
 				$summaryPreview.append(
-					mw.message( summaryMsg ).parse(),
+					mw.message( isSubject ? 'subject-preview' : 'summary-preview' ).parse(),
 					' ',
 					$( '<span>' ).addClass( 'comment' ).html(
 						// There is no equivalent to rawParams
@@ -258,29 +315,25 @@
 			$copyElements.removeClass( 'mw-preview-copyelements-loading' );
 		} ).fail( function ( code, result ) {
 			// This just shows the error for whatever request failed first
-			var errorMsg = 'API error: ' + code;
-			if ( code === 'http' ) {
-				errorMsg = 'HTTP error: ';
-				if ( result.exception ) {
-					errorMsg += result.exception;
-				} else {
-					errorMsg += result.textStatus;
-				}
-			}
+			var $errorMsg = api.getErrorMessage( result );
 			$errorBox = $( '<div>' )
 				.addClass( 'errorbox' )
-				.html( '<strong>' + mw.message( 'previewerrortext' ).escaped() + '</strong><br>' )
-				.append( document.createTextNode( errorMsg ) );
+				.append( $( '<strong>' ).text( mw.message( 'previewerrortext' ).text() ) )
+				.append( $errorMsg );
 			$wikiDiff.hide();
 			$wikiPreview.hide().before( $errorBox );
 		} );
 	}
 
 	$( function () {
-		// Do not enable on user .js/.css pages, as there's no sane way of "previewing"
-		// the scripts or styles without reloading the page.
-		if ( $( '#mw-userjsyoucanpreview' ).length || $( '#mw-usercssyoucanpreview' ).length ) {
-			return;
+		var selector;
+
+		// Enable only live diff on user .js/.css pages, as there's no sane way of
+		// "previewing" the scripts or styles without reloading the page.
+		if ( $( '#mw-userjsyoucanpreview, #mw-usercssyoucanpreview, #mw-userjspreview, #mw-usercsspreview' ).length ) {
+			selector = '#wpDiff';
+		} else {
+			selector = '#wpPreview, #wpDiff';
 		}
 
 		// The following elements can change in a preview but are not output
@@ -288,17 +341,19 @@
 		// TODO: Make the server output these always (in a hidden state), so we don't
 		// have to fish and (hopefully) put them in the right place (since skins
 		// can change where they are output).
+		// FIXME: This is prone to breaking any time Vector's HTML for portals change.
 
 		if ( !document.getElementById( 'p-lang' ) && document.getElementById( 'p-tb' ) && mw.config.get( 'skin' ) === 'vector' ) {
 			$( '.portal' ).last().after(
 				$( '<div>' ).attr( {
-					class: 'portal',
+					class: 'vector-menu vector-menu-portal portal',
 					id: 'p-lang',
 					role: 'navigation',
 					'aria-labelledby': 'p-lang-label'
 				} )
 					.append( $( '<h3>' ).attr( 'id', 'p-lang-label' ).text( mw.msg( 'otherlanguages' ) ) )
-					.append( $( '<div>' ).addClass( 'body' ).append( '<ul>' ) )
+					.append( $( '<div>' ).addClass( 'body vector-menu-content' ) )
+					.append( $( '<ul>' ).addClass( 'vector-menu-content-list' ) )
 			);
 		}
 
@@ -313,15 +368,28 @@
 				$( '<div>' )
 					.hide()
 					.attr( 'id', 'wikiDiff' )
-					.html( '<table class="diff"><col class="diff-marker"/><col class="diff-content"/>' +
-						'<col class="diff-marker"/><col class="diff-content"/><tbody/></table>' )
+					// The following classes are used here:
+					// * diff-editfont-monospace
+					// * diff-editfont-sans-serif
+					// * diff-editfont-serif
+					.addClass( 'diff-editfont-' + mw.user.options.get( 'editfont' ) )
+					// TODO: Set diff-contentalign-* classes
+					.append(
+						$( '<table>' ).addClass( 'diff' ).append(
+							$( '<col>' ).addClass( 'diff-marker' ),
+							$( '<col>' ).addClass( 'diff-content' ),
+							$( '<col>' ).addClass( 'diff-marker' ),
+							$( '<col>' ).addClass( 'diff-content' ),
+							$( '<tbody>' )
+						)
+					)
 			);
 		}
 
 		// This should be moved down to '#editform', but is kept on the body for now
 		// because the LiquidThreads extension is re-using this module with only half
 		// the EditPage (doesn't include #editform presumably, T57463).
-		$( document.body ).on( 'click', '#wpPreview, #wpDiff', doLivePreview );
+		$( document.body ).on( 'click', selector, doLivePreview );
 	} );
 
 }() );

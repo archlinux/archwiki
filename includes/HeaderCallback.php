@@ -17,6 +17,13 @@ class HeaderCallback {
 	 * @since 1.29
 	 */
 	public static function register() {
+		// T261260 load the WebRequest class, which will be needed in callback().
+		// Autoloading seems unreliable in header callbacks, and in the case of a web
+		// request (ie. in all cases where the request might be performance-sensitive)
+		// it will have to be loaded at some point anyway.
+		// This can be removed once we require PHP 8.0+.
+		class_exists( \WebRequest::class );
+
 		header_register_callback( [ __CLASS__, 'callback' ] );
 	}
 
@@ -50,11 +57,17 @@ class HeaderCallback {
 				\MediaWiki\Logger\LoggerFactory::getInstance( 'cache-cookies' )->warning(
 					'Cookies set on {url} with Cache-Control "{cache-control}"', [
 						'url' => \WebRequest::getGlobalRequestURL(),
-						'cookies' => $headers['set-cookie'],
+						'set-cookie' => self::sanitizeSetCookie( $headers['set-cookie'] ),
 						'cache-control' => $cacheControl ?: '<not set>',
 					]
 				);
 			}
+		}
+
+		// Set the request ID on the response, so edge infrastructure can log it.
+		// FIXME this is not an ideal place to do it, but the most reliable for now.
+		if ( !isset( $headers['x-request-id'] ) ) {
+			header( 'X-Request-Id: ' . \WebRequest::getRequestId() );
 		}
 
 		// Save a backtrace for logging in case it turns out that headers were sent prematurely
@@ -78,5 +91,25 @@ class HeaderCallback {
 				'detection-trace' => new \Exception( 'Detected here' ),
 			] );
 		}
+	}
+
+	/**
+	 * Sanitize Set-Cookie headers for logging.
+	 * @param array $values List of header values.
+	 * @return string
+	 */
+	public static function sanitizeSetCookie( array $values ) {
+		$sanitizedValues = [];
+		foreach ( $values as $value ) {
+			// Set-Cookie header format: <cookie-name>=<cookie-value>; <non-sensitive attributes>
+			$parts = explode( ';', $value );
+			list( $name, $value ) = explode( '=', $parts[0], 2 );
+			if ( strlen( $value ) > 8 ) {
+				$value = substr( $value, 0, 8 ) . '...';
+				$parts[0] = "$name=$value";
+			}
+			$sanitizedValues[] = implode( ';', $parts );
+		}
+		return implode( "\n", $sanitizedValues );
 	}
 }

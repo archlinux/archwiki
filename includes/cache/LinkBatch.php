@@ -22,8 +22,9 @@
  */
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Class representing a list of titles
@@ -33,19 +34,68 @@ use Wikimedia\Rdbms\IDatabase;
  */
 class LinkBatch {
 	/**
-	 * 2-d array, first index namespace, second index dbkey, value arbitrary
+	 * @var array[] 2-d array, first index namespace, second index dbkey, value arbitrary
 	 */
 	public $data = [];
 
 	/**
-	 * For debugging which method is using this class.
+	 * @var string|null For debugging which method is using this class.
 	 */
 	protected $caller;
 
 	/**
-	 * @param Traversable|LinkTarget[] $arr Initial items to be added to the batch
+	 * @var LinkCache
 	 */
-	public function __construct( $arr = [] ) {
+	private $linkCache;
+
+	/**
+	 * @var TitleFormatter
+	 */
+	private $titleFormatter;
+
+	/**
+	 * @var Language
+	 */
+	private $contentLanguage;
+
+	/**
+	 * @var GenderCache
+	 */
+	private $genderCache;
+
+	/**
+	 * @var ILoadBalancer
+	 */
+	private $loadBalancer;
+
+	/**
+	 * @param Traversable|LinkTarget[] $arr Initial items to be added to the batch
+	 * @param LinkCache|null $linkCache
+	 * @param TitleFormatter|null $titleFormatter
+	 * @param Language|null $contentLanguage
+	 * @param GenderCache|null $genderCache
+	 * @param ILoadBalancer|null $loadBalancer
+	 * @deprecated 1.35 Use makeLinkBatch of the LinkBatchFactory service instead
+	 */
+	public function __construct(
+		iterable $arr = [],
+		?LinkCache $linkCache = null,
+		?TitleFormatter $titleFormatter = null,
+		?Language $contentLanguage = null,
+		?GenderCache $genderCache = null,
+		?ILoadBalancer $loadBalancer = null
+	) {
+		$getServices = static function () {
+			// BC hack. Use a closure so this can be unit-tested.
+			return MediaWikiServices::getInstance();
+		};
+
+		$this->linkCache = $linkCache ?? $getServices()->getLinkCache();
+		$this->titleFormatter = $titleFormatter ?? $getServices()->getTitleFormatter();
+		$this->contentLanguage = $contentLanguage ?? $getServices()->getContentLanguage();
+		$this->genderCache = $genderCache ?? $getServices()->getGenderCache();
+		$this->loadBalancer = $loadBalancer ?? $getServices()->getDBLoadBalancer();
+
 		foreach ( $arr as $item ) {
 			$this->addObj( $item );
 		}
@@ -72,7 +122,7 @@ class LinkBatch {
 		if ( is_object( $linkTarget ) ) {
 			$this->add( $linkTarget->getNamespace(), $linkTarget->getDBkey() );
 		} else {
-			wfDebug( "Warning: LinkBatch::addObj got invalid LinkTarget object\n" );
+			wfDebug( "Warning: LinkBatch::addObj got invalid LinkTarget object" );
 		}
 	}
 
@@ -122,22 +172,20 @@ class LinkBatch {
 	/**
 	 * Do the query and add the results to the LinkCache object
 	 *
-	 * @return array Mapping PDBK to ID
+	 * @return int[] Mapping PDBK to ID
 	 */
 	public function execute() {
-		$linkCache = MediaWikiServices::getInstance()->getLinkCache();
-
-		return $this->executeInto( $linkCache );
+		return $this->executeInto( $this->linkCache );
 	}
 
 	/**
 	 * Do the query and add the results to a given LinkCache object
 	 * Return an array mapping PDBK to ID
 	 *
-	 * @param LinkCache &$cache
-	 * @return array Remaining IDs
+	 * @param LinkCache $cache
+	 * @return int[] Remaining IDs
 	 */
-	protected function executeInto( &$cache ) {
+	protected function executeInto( $cache ) {
 		$res = $this->doQuery();
 		$this->doGenderQuery();
 		$ids = $this->addResultToCache( $cache, $res );
@@ -153,33 +201,42 @@ class LinkBatch {
 	 *
 	 * @param LinkCache $cache
 	 * @param IResultWrapper $res
-	 * @return array Array of remaining titles
+	 * @return int[] Array of remaining titles
 	 */
 	public function addResultToCache( $cache, $res ) {
 		if ( !$res ) {
 			return [];
 		}
 
-		$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
 		// For each returned entry, add it to the list of good links, and remove it from $remaining
 
 		$ids = [];
 		$remaining = $this->data;
 		foreach ( $res as $row ) {
-			$title = new TitleValue( (int)$row->page_namespace, $row->page_title );
-			$cache->addGoodLinkObjFromRow( $title, $row );
-			$pdbk = $titleFormatter->getPrefixedDBkey( $title );
-			$ids[$pdbk] = $row->page_id;
+			$title = TitleValue::tryNew( (int)$row->page_namespace, $row->page_title );
+			if ( $title ) {
+				$cache->addGoodLinkObjFromRow( $title, $row );
+				$pdbk = $this->titleFormatter->getPrefixedDBkey( $title );
+				$ids[$pdbk] = $row->page_id;
+			} else {
+				wfLogWarning( __METHOD__ . ': encountered invalid title: ' .
+					$row->page_namespace . '-' . $row->page_title );
+			}
+
 			unset( $remaining[$row->page_namespace][$row->page_title] );
 		}
 
 		// The remaining links in $data are bad links, register them as such
 		foreach ( $remaining as $ns => $dbkeys ) {
 			foreach ( $dbkeys as $dbkey => $unused ) {
-				$title = new TitleValue( (int)$ns, (string)$dbkey );
-				$cache->addBadLinkObj( $title );
-				$pdbk = $titleFormatter->getPrefixedDBkey( $title );
-				$ids[$pdbk] = 0;
+				$title = TitleValue::tryNew( (int)$ns, (string)$dbkey );
+				if ( $title ) {
+					$cache->addBadLinkObj( $title );
+					$pdbk = $this->titleFormatter->getPrefixedDBkey( $title );
+					$ids[$pdbk] = 0;
+				} else {
+					wfLogWarning( __METHOD__ . ': encountered invalid title: ' . $ns . '-' . $dbkey );
+				}
 			}
 		}
 
@@ -196,7 +253,7 @@ class LinkBatch {
 		}
 
 		// This is similar to LinkHolderArray::replaceInternal
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
 		$table = 'page';
 		$fields = array_merge(
 			LinkCache::getSelectFields(),
@@ -224,14 +281,12 @@ class LinkBatch {
 		if ( $this->isEmpty() ) {
 			return false;
 		}
-		$services = MediaWikiServices::getInstance();
 
-		if ( !$services->getContentLanguage()->needsGenderDistinction() ) {
+		if ( !$this->contentLanguage->needsGenderDistinction() ) {
 			return false;
 		}
 
-		$genderCache = $services->getGenderCache();
-		$genderCache->doLinkBatch( $this->data, $this->caller );
+		$this->genderCache->doLinkBatch( $this->data, $this->caller );
 
 		return true;
 	}

@@ -10,9 +10,9 @@
 			"Innv",
 			"KPu3uC B Poccuu",
 			"Kaganer",
-			"Александр Сигачёв",
 			"Okras",
-			"Vlad5250"
+			"Vlad5250",
+			"Александр Сигачёв"
 		]
 	},
 	"renameuser": "Переименовать участника",
@@ -28,7 +28,6 @@
 	"renameuserwarnings": "Предупреждения:",
 	"renameuserconfirm": "Да, переименовать участника",
 	"renameusersubmit": "Выполнить",
-	"renameuser-submit-blocklog": "Показать журнал блокировок участника",
 	"renameusererrordoesnotexist": "Участник с именем «<nowiki>$1</nowiki>» не зарегистрирован.",
 	"renameusererrorexists": "{{GENDER:$1|Участник|Участница}} с именем «<nowiki>$1</nowiki>» уже зарегистрирован.",
 	"renameusererrorinvalid": "Недопустимое имя участника «<nowiki>$1</nowiki>»",

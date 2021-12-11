@@ -23,9 +23,9 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * A repository that stores files in the local filesystem and registers them
@@ -48,11 +48,18 @@ class LocalRepo extends FileRepo {
 	/** @var callable */
 	protected $oldFileFactoryKey = [ OldLocalFile::class, 'newFromKey' ];
 
-	function __construct( array $info = null ) {
+	/** @var string DB domain of the repo wiki */
+	protected $dbDomain;
+	/** @var bool Whether shared cache keys are exposed/accessible */
+	protected $hasAccessibleSharedCache;
+
+	public function __construct( array $info = null ) {
 		parent::__construct( $info );
 
-		$this->hasSha1Storage = isset( $info['storageLayout'] )
-			&& $info['storageLayout'] === 'sha1';
+		$this->dbDomain = WikiMap::getCurrentWikiDbDomain();
+		$this->hasAccessibleSharedCache = true;
+
+		$this->hasSha1Storage = ( $info['storageLayout'] ?? null ) === 'sha1';
 
 		if ( $this->hasSha1Storage() ) {
 			$this->backend = new FileBackendDBRepoWrapper( [
@@ -68,7 +75,7 @@ class LocalRepo extends FileRepo {
 	 * @param stdClass $row
 	 * @return LocalFile
 	 */
-	function newFileFromRow( $row ) {
+	public function newFileFromRow( $row ) {
 		if ( isset( $row->img_name ) ) {
 			return call_user_func( $this->fileFromRowFactory, $row, $this );
 		} elseif ( isset( $row->oi_name ) ) {
@@ -83,7 +90,7 @@ class LocalRepo extends FileRepo {
 	 * @param string $archiveName
 	 * @return OldLocalFile
 	 */
-	function newFromArchiveName( $title, $archiveName ) {
+	public function newFromArchiveName( $title, $archiveName ) {
 		return OldLocalFile::newFromArchiveName( $title, $this, $archiveName );
 	}
 
@@ -97,9 +104,9 @@ class LocalRepo extends FileRepo {
 	 *
 	 * @return Status
 	 */
-	function cleanupDeletedBatch( array $storageKeys ) {
+	public function cleanupDeletedBatch( array $storageKeys ) {
 		if ( $this->hasSha1Storage() ) {
-			wfDebug( __METHOD__ . ": skipped because storage uses sha1 paths\n" );
+			wfDebug( __METHOD__ . ": skipped because storage uses sha1 paths" );
 			return Status::newGood();
 		}
 
@@ -117,14 +124,14 @@ class LocalRepo extends FileRepo {
 			$deleted = $this->deletedFileHasKey( $key, 'lock' );
 			$hidden = $this->hiddenFileHasKey( $key, 'lock' );
 			if ( !$deleted && !$hidden ) { // not in use now
-				wfDebug( __METHOD__ . ": deleting $key\n" );
+				wfDebug( __METHOD__ . ": deleting $key" );
 				$op = [ 'op' => 'delete', 'src' => $path ];
 				if ( !$backend->doOperation( $op )->isOK() ) {
 					$status->error( 'undelete-cleanup-error', $path );
 					$status->failCount++;
 				}
 			} else {
-				wfDebug( __METHOD__ . ": $key still in use\n" );
+				wfDebug( __METHOD__ . ": $key still in use" );
 				$status->successCount++;
 			}
 			$dbw->endAtomic( __METHOD__ );
@@ -194,12 +201,12 @@ class LocalRepo extends FileRepo {
 	 * @param Title $title Title of file
 	 * @return bool|Title
 	 */
-	function checkRedirect( Title $title ) {
+	public function checkRedirect( Title $title ) {
 		$title = File::normalizeTitle( $title, 'exception' );
 
-		$memcKey = $this->getSharedCacheKey( 'image_redirect', md5( $title->getDBkey() ) );
+		$memcKey = $this->getSharedCacheKey( 'file-redirect', md5( $title->getDBkey() ) );
 		if ( $memcKey === false ) {
-			$memcKey = $this->getLocalCacheKey( 'image_redirect', md5( $title->getDBkey() ) );
+			$memcKey = $this->getLocalCacheKey( 'file-redirect', md5( $title->getDBkey() ) );
 			$expiry = 300; // no invalidation, 5 minutes
 		} else {
 			$expiry = 86400; // has invalidation, 1 day
@@ -259,11 +266,16 @@ class LocalRepo extends FileRepo {
 			}
 		}
 
-		$fileMatchesSearch = function ( File $file, array $search ) {
+		$fileMatchesSearch = static function ( File $file, array $search ) {
 			// Note: file name comparison done elsewhere (to handle redirects)
+
+			// Fallback to RequestContext::getMain should be replaced with a better
+			// way of setting the user that should be used; currently it needs to be
+			// set for each file individually. See T263033#6477586
+			$contextUser = RequestContext::getMain()->getUser();
 			$user = ( !empty( $search['private'] ) && $search['private'] instanceof User )
 				? $search['private']
-				: null;
+				: $contextUser;
 
 			return (
 				$file->exists() &&
@@ -349,7 +361,7 @@ class LocalRepo extends FileRepo {
 			$title = File::normalizeTitle( $dbKey );
 			$redir = $this->checkRedirect( $title ); // hopefully hits memcached
 
-			if ( $redir && $redir->getNamespace() == NS_FILE ) {
+			if ( $redir && $redir->getNamespace() === NS_FILE ) {
 				$file = $this->newFile( $redir );
 				if ( $file && $fileMatchesSearch( $file, $search ) ) {
 					$file->redirectedFrom( $title->getDBkey() );
@@ -375,7 +387,7 @@ class LocalRepo extends FileRepo {
 	 * @param string $hash A sha1 hash to look for
 	 * @return LocalFile[]
 	 */
-	function findBySha1( $hash ) {
+	public function findBySha1( $hash ) {
 		$dbr = $this->getReplicaDB();
 		$fileQuery = LocalFile::getQueryInfo();
 		$res = $dbr->select(
@@ -403,9 +415,9 @@ class LocalRepo extends FileRepo {
 	 * Overrides generic implementation in FileRepo for performance reason
 	 *
 	 * @param string[] $hashes An array of hashes
-	 * @return array[] An Array of arrays or iterators of file objects and the hash as key
+	 * @return File[][] An Array of arrays or iterators of file objects and the hash as key
 	 */
-	function findBySha1s( array $hashes ) {
+	public function findBySha1s( array $hashes ) {
 		if ( $hashes === [] ) {
 			return []; // empty parameter
 		}
@@ -466,25 +478,15 @@ class LocalRepo extends FileRepo {
 	 * Get a connection to the replica DB
 	 * @return IDatabase
 	 */
-	function getReplicaDB() {
+	public function getReplicaDB() {
 		return wfGetDB( DB_REPLICA );
-	}
-
-	/**
-	 * Alias for getReplicaDB()
-	 *
-	 * @return IDatabase
-	 * @deprecated Since 1.29
-	 */
-	function getSlaveDB() {
-		return $this->getReplicaDB();
 	}
 
 	/**
 	 * Get a connection to the master DB
 	 * @return IDatabase
 	 */
-	function getMasterDB() {
+	public function getMasterDB() {
 		return wfGetDB( DB_MASTER );
 	}
 
@@ -493,22 +495,30 @@ class LocalRepo extends FileRepo {
 	 * @return Closure
 	 */
 	protected function getDBFactory() {
-		return function ( $index ) {
+		return static function ( $index ) {
 			return wfGetDB( $index );
 		};
 	}
 
 	/**
-	 * Get a key on the primary cache for this repository.
-	 * Returns false if the repository's cache is not accessible at this site.
-	 * The parameters are the parts of the key.
+	 * Check whether the repo has a shared cache, accessible from the current site context
 	 *
-	 * @return string
+	 * @return bool
+	 * @since 1.35
 	 */
-	function getSharedCacheKey( /*...*/ ) {
-		$args = func_get_args();
+	protected function hasAcessibleSharedCache() {
+		return $this->hasAccessibleSharedCache;
+	}
 
-		return $this->wanCache->makeKey( ...$args );
+	public function getSharedCacheKey( $kClassSuffix, ...$components ) {
+		// T267668: do not include the repo name in the key
+		return $this->hasAcessibleSharedCache()
+			? $this->wanCache->makeGlobalKey(
+				'filerepo-' . $kClassSuffix,
+				$this->dbDomain,
+				...$components
+			)
+			: false;
 	}
 
 	/**
@@ -517,8 +527,8 @@ class LocalRepo extends FileRepo {
 	 * @param Title $title Title of page
 	 * @return void
 	 */
-	function invalidateImageRedirect( Title $title ) {
-		$key = $this->getSharedCacheKey( 'image_redirect', md5( $title->getDBkey() ) );
+	public function invalidateImageRedirect( Title $title ) {
+		$key = $this->getSharedCacheKey( 'file-redirect', md5( $title->getDBkey() ) );
 		if ( $key ) {
 			$this->getMasterDB()->onTransactionPreCommitOrIdle(
 				function () use ( $key ) {
@@ -535,7 +545,7 @@ class LocalRepo extends FileRepo {
 	 * @return array
 	 * @since 1.22
 	 */
-	function getInfo() {
+	public function getInfo() {
 		global $wgFavicon;
 
 		return array_merge( parent::getInfo(), [
@@ -588,7 +598,7 @@ class LocalRepo extends FileRepo {
 		$this->assertWritableRepo(); // fail out if read-only
 
 		if ( $this->hasSha1Storage() ) {
-			wfDebug( __METHOD__ . ": skipped because storage uses sha1 paths\n" );
+			wfDebug( __METHOD__ . ": skipped because storage uses sha1 paths" );
 			return Status::newGood();
 		} else {
 			return parent::$function( ...$args );

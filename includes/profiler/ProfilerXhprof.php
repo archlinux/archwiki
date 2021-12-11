@@ -34,29 +34,27 @@
  * $wgProfiler['output'] = 'udp';
  * @endcode
  *
- * ProfilerXhprof profiles all functions using the XHProf PHP extenstion.
- * For PHP5 users, this extension can be installed via PECL or your operating
- * system's package manager. XHProf support is built into HHVM.
+ * ProfilerXhprof profiles all functions using the XHProf PHP extenstion. This
+ * extension can be installed via PECL or your operating system's package manager.
  *
  * To restrict the functions for which profiling data is collected, you can
- * use either a whitelist ($wgProfiler['include']) or a blacklist
+ * use either a allow list ($wgProfiler['include']) or a deny list
  * ($wgProfiler['exclude']) containing an array of function names.
  * Shell-style patterns are also accepted.
  *
  * This also supports Tideways-XHProf PHP extension, which is mostly a drop-in
- * replacement for Xhprof (replace XHPROF_FLAGS_* with XHPROF_TIDEWAYS_FLAGS_*),
+ * replacement for Xhprof (replace XHPROF_FLAGS_* with TIDEWAYS_XHPROF_FLAGS_*),
  * as well as the older (discontinued) Tideways extension (TIDEWAYS_FLAGS_*).
  *
  * @copyright © 2014 Wikimedia Foundation and contributors
  * @ingroup Profiler
  * @see Xhprof
  * @see https://php.net/xhprof
- * @see https://github.com/facebook/hhvm/blob/master/hphp/doc/profiling.md
  * @see https://github.com/tideways/php-xhprof-extension
  */
 class ProfilerXhprof extends Profiler {
 	/**
-	 * @var XhprofData|null $xhprofData
+	 * @var XhprofData|null
 	 */
 	protected $xhprofData;
 
@@ -144,10 +142,10 @@ class ProfilerXhprof extends Profiler {
 				'calls' => $stats['ct'],
 				'real' => $stats['wt']['total'] / 1000,
 				'%real' => $stats['wt']['percent'],
-				'cpu' => isset( $stats['cpu'] ) ? $stats['cpu']['total'] / 1000 : 0,
-				'%cpu' => isset( $stats['cpu'] ) ? $stats['cpu']['percent'] : 0,
-				'memory' => isset( $stats['mu'] ) ? $stats['mu']['total'] : 0,
-				'%memory' => isset( $stats['mu'] ) ? $stats['mu']['percent'] : 0,
+				'cpu' => ( $stats['cpu']['total'] ?? 0 ) / 1000,
+				'%cpu' => $stats['cpu']['percent'] ?? 0,
+				'memory' => $stats['mu']['total'] ?? 0,
+				'%memory' => $stats['mu']['percent'] ?? 0,
 				'min_real' => $stats['wt']['min'] / 1000,
 				'max_real' => $stats['wt']['max'] / 1000
 			];
@@ -200,7 +198,7 @@ class ProfilerXhprof extends Profiler {
 	 */
 	protected function getFunctionReport() {
 		$data = $this->getFunctionStats();
-		usort( $data, function ( $a, $b ) {
+		usort( $data, static function ( $a, $b ) {
 			return $b['real'] <=> $a['real']; // descending
 		} );
 

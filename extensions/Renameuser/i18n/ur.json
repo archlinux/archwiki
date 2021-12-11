@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"පසිඳු කාවින්ද",
 			"BukhariSaeed",
-			"Muhammad Shuaib"
+			"Muhammad Shuaib",
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"renameuser": "صارف کا نام تبدیل کریں",
@@ -18,7 +18,6 @@
 	"renameuserwarnings": "انتباہ:",
 	"renameuserconfirm": "ہاں، صارف کا نام بدلیں",
 	"renameusersubmit": "جمع کرائیں",
-	"renameuser-submit-blocklog": "صارف کا نوشتہ پابندی دکھائیں",
 	"renameusererrordoesnotexist": "صارف «<nowiki>$1</nowiki>» موجود نہیں ہے۔",
 	"renameusererrorexists": "{{GENDER:$1|صارف}} «<nowiki>$1</nowiki>» پہلے سے موجود ہے۔",
 	"renameusererrorinvalid": "«<nowiki>$1</nowiki>» نام درست نہیں ہے۔",

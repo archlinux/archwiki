@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ammartivari",
+			"Bjakupi",
 			"Dori",
 			"FatosMorina",
 			"Mikullovci11",
-			"Olsi",
-			"Ammartivari",
-			"Bjakupi"
+			"Olsi"
 		]
 	},
 	"renameuser": "Riemëroje përdoruesin",
@@ -22,7 +22,6 @@
 	"renameuserwarnings": "Paralajmërimet:",
 	"renameuserconfirm": "Po, ndërrojë emrin e përdoruesit",
 	"renameusersubmit": "Ndryshoje",
-	"renameuser-submit-blocklog": "Shfaq shënimet e bllokimit për përdoruesin",
 	"renameusererrordoesnotexist": "Përdoruesi me emër \"<nowiki>$1</nowiki>\" nuk ekziston",
 	"renameusererrorexists": "Përdoruesi me emër \"<nowiki>$1</nowiki>\" ekziston",
 	"renameusererrorinvalid": "Emri \"<nowiki>$1</nowiki>\" nuk është i lejuar",

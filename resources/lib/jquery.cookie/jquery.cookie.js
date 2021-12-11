@@ -4,6 +4,8 @@
  *
  * Copyright 2013 Klaus Hartl
  * Released under the MIT license
+ *
+ * Patched for MediaWiki to handle SameSite flag.
  */
 (function ($, document, undefined) {
 
@@ -14,7 +16,13 @@
 	}
 
 	function decoded(s) {
-		return unRfc2068(decodeURIComponent(s.replace(pluses, ' ')));
+		try {
+			return unRfc2068(decodeURIComponent(s.replace(pluses, ' ')));
+		} catch(e) {
+			// If the cookie cannot be decoded this should not throw an error.
+			// See T271838.
+			return '';
+		}
 	}
 
 	function unRfc2068(value) {
@@ -51,7 +59,9 @@
 				options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
 				options.path    ? '; path=' + options.path : '',
 				options.domain  ? '; domain=' + options.domain : '',
-				options.secure  ? '; secure' : ''
+				options.secure  ? '; secure' : '',
+				// PATCH: handle SameSite flag --tgr
+				options.sameSite ? '; samesite=' + options.sameSite : ''
 			].join(''));
 		}
 

@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Alma",
+			"ArenaL5",
+			"Elisardojm",
 			"Prevert",
-			"Toliño",
-			"Elisardojm"
+			"Toliño"
 		]
 	},
 	"renameuser": "Mudar o nome do usuario",
-	"renameuser-linkoncontribs": "cambiar o nome do usuario",
-	"renameuser-linkoncontribs-text": "Cambiar o nome deste usuario",
+	"renameuser-linkoncontribs": "cambiar o nome d{{GENDER:$1|o usuario|a usuaria|a conta}}",
+	"renameuser-linkoncontribs-text": "Cambiar o nome dest{{GENDER:$1|e usuario|a usuaria|a conta}}",
 	"renameuser-desc": "Engade unha [[Special:RenameUser|páxina especial]] para renomear un usuario (precisa dereitos de ''renomear usuarios'')",
 	"renameuserold": "Nome de usuario actual:",
 	"renameusernew": "Novo nome de usuario:",
@@ -20,7 +21,6 @@
 	"renameuserwarnings": "Avisos:",
 	"renameuserconfirm": "Si, renomear este usuario",
 	"renameusersubmit": "Enviar",
-	"renameuser-submit-blocklog": "Amosar o rexistro de bloqueos do usuario",
 	"renameusererrordoesnotexist": "O usuario \"<nowiki>$1</nowiki>\" non existe.",
 	"renameusererrorexists": "{{GENDER:$1|O usuario|A usuaria}} \"<nowiki>$1</nowiki>\" xa existe.",
 	"renameusererrorinvalid": "O nome de usuario \"<nowiki>$1</nowiki>\" non é válido.",

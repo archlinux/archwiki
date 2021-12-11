@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cainamarques",
-			"Eduardo.mps",
-			"Giro720",
-			"Dianakc",
-			"HenriqueCrang",
 			"!Silent",
-			"Felipe L. Ewald"
+			"Cainamarques",
+			"Dianakc",
+			"Eduardo.mps",
+			"Felipe L. Ewald",
+			"Giro720",
+			"HenriqueCrang"
 		]
 	},
 	"fancycaptcha-desc": "Gerador CAPTCHA extravagante para Confirm Edit",

@@ -68,7 +68,7 @@ class WrappedString {
 	 *
 	 * NOTE: This is an internal method. Use join() or WrappedStringList instead.
 	 *
-	 * @param array $wraps
+	 * @param (string|WrappedString|WrappedStringList)[] $wraps
 	 * @return string[] Compacted list to be treated as strings
 	 * (may contain WrappedString and WrappedStringList objects)
 	 */
@@ -115,7 +115,7 @@ class WrappedString {
 	 * callers to collect multiple lists and compact them together.
 	 *
 	 * @param string $sep
-	 * @param WrappedString[] $wraps
+	 * @param (string|WrappedString|WrappedStringList)[] $wraps
 	 * @return WrappedStringList
 	 */
 	public static function join( $sep, array $wraps ) {

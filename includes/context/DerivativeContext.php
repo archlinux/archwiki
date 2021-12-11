@@ -19,12 +19,14 @@
  * @file
  */
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\Authority;
 
 /**
  * An IContextSource implementation which will inherit context from another source
  * but allow individual pieces of context to be changed locally
  * eg: A ContextSource that can inherit from the main RequestContext but have
  *     a different Title instance set on it.
+ * @newable
  * @since 1.19
  */
 class DerivativeContext extends ContextSource implements MutableContext {
@@ -54,6 +56,11 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	private $user;
 
 	/**
+	 * @var Authority
+	 */
+	private $authority;
+
+	/**
 	 * @var Language
 	 */
 	private $lang;
@@ -74,6 +81,7 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	private $timing;
 
 	/**
+	 * @stable to call
 	 * @param IContextSource $context Context to inherit from
 	 */
 	public function __construct( IContextSource $context ) {
@@ -197,6 +205,7 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	 * @param User $user
 	 */
 	public function setUser( User $user ) {
+		$this->authority = $user;
 		$this->user = $user;
 	}
 
@@ -205,6 +214,21 @@ class DerivativeContext extends ContextSource implements MutableContext {
 	 */
 	public function getUser() {
 		return $this->user ?: $this->getContext()->getUser();
+	}
+
+	public function setAuthority( Authority $authority ) {
+		$this->authority = $authority;
+		$this->user = MediaWikiServices::getInstance()
+			->getUserFactory()
+			->newFromAuthority( $authority );
+	}
+
+	/**
+	 * @since 1.36
+	 * @return Authority
+	 */
+	public function getAuthority(): Authority {
+		return $this->authority ?: $this->getContext()->getAuthority();
 	}
 
 	/**
@@ -217,7 +241,7 @@ class DerivativeContext extends ContextSource implements MutableContext {
 			$this->lang = $language;
 		} elseif ( is_string( $language ) ) {
 			$language = RequestContext::sanitizeLangCode( $language );
-			$obj = Language::factory( $language );
+			$obj = MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( $language );
 			$this->lang = $obj;
 		} else {
 			throw new MWException( __METHOD__ . " was passed an invalid type of data." );

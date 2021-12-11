@@ -76,6 +76,11 @@
 		this.renderInsertForm();
 
 		this.addPages( [
+			new OO.ui.PageLayout( 'initializing', {
+				scrollable: true,
+				padded: true,
+				content: [ new OO.ui.ProgressBarWidget( { indeterminate: true } ) ]
+			} ),
 			new OO.ui.PageLayout( 'upload', {
 				scrollable: true,
 				padded: true,
@@ -168,7 +173,7 @@
 		this.clear();
 		this.upload = this.createUpload();
 
-		this.setPage( 'upload' );
+		this.setPage( 'initializing' );
 
 		if ( this.filekey ) {
 			this.setFilekey( this.filekey );
@@ -179,6 +184,7 @@
 				// If the user can't upload anything, don't give them the option to.
 				return api.getUserInfo().then(
 					function ( userInfo ) {
+						booklet.setPage( 'upload' );
 						if ( userInfo.rights.indexOf( 'upload' ) === -1 ) {
 							if ( mw.user.isAnon() ) {
 								booklet.getPage( 'upload' ).$element.msg( 'apierror-mustbeloggedin', mw.msg( 'action-upload' ) );
@@ -189,10 +195,15 @@
 						return $.Deferred().resolve();
 					},
 					// Always resolve, never reject
-					function () { return $.Deferred().resolve(); }
+					function () {
+						booklet.setPage( 'upload' );
+						return $.Deferred().resolve();
+					}
 				);
 			},
 			function ( errorMsg ) {
+				booklet.setPage( 'upload' );
+				// eslint-disable-next-line mediawiki/msg-doc
 				booklet.getPage( 'upload' ).$element.msg( errorMsg );
 				return $.Deferred().resolve();
 			}
@@ -328,34 +339,15 @@
 	mw.Upload.BookletLayout.prototype.getErrorMessageForStateDetails = function () {
 		var state = this.upload.getState(),
 			stateDetails = this.upload.getStateDetails(),
-			error = stateDetails.errors ? stateDetails.errors[ 0 ] : false,
 			warnings = stateDetails.upload && stateDetails.upload.warnings,
 			$ul = $( '<ul>' ),
-			errorText;
+			$error;
 
 		if ( state === mw.Upload.State.ERROR ) {
-			if ( !error ) {
-				if ( stateDetails.textStatus === 'timeout' ) {
-					// in case of $.ajax.fail(), there is no response json
-					errorText = mw.message( 'apierror-timeout' ).parse();
-				} else if ( stateDetails.xhr && stateDetails.xhr.status === 0 ) {
-					// failed to even connect to server
-					errorText = mw.message( 'apierror-offline' ).parse();
-				} else if ( stateDetails.textStatus ) {
-					errorText = stateDetails.textStatus;
-				} else {
-					errorText = mw.message( 'apierror-unknownerror', JSON.stringify( stateDetails ) ).parse();
-				}
-
-				// If there's an 'exception' key, this might be a timeout, or other connection problem
-				return $.Deferred().resolve( new OO.ui.Error(
-					$( '<p>' ).html( errorText ),
-					{ recoverable: false }
-				) );
-			}
+			$error = ( new mw.Api() ).getErrorMessage( stateDetails );
 
 			return $.Deferred().resolve( new OO.ui.Error(
-				$( '<p>' ).html( error.html ),
+				$error,
 				{ recoverable: false }
 			) );
 		}
@@ -678,7 +670,7 @@
 	 * @param {File|null} file File to select
 	 */
 	mw.Upload.BookletLayout.prototype.setFile = function ( file ) {
-		this.selectFileWidget.setValue( file );
+		this.selectFileWidget.setValue( [ file ] );
 	};
 
 	/**

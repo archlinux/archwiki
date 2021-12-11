@@ -18,14 +18,25 @@
 		}
 	],
 	"require": {
-		"PHP" : ">=5.3"
+		"php": ">=7.2.9"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "~4.8.24"
+		"mediawiki/mediawiki-codesniffer": "34.0.0",
+		"mediawiki/minus-x": "1.0.0",
+		"php-parallel-lint/php-console-highlighter": "0.5.0",
+		"php-parallel-lint/php-parallel-lint": "1.2.0",
+		"phpunit/phpunit": "^8.5"
 	},
 	"scripts": {
 		"test": [
-			"phpunit"
+			"parallel-lint . --exclude vendor",
+			"phpcs -sp",
+			"phpunit",
+			"minus-x check ."
+		],
+		"fix": [
+			"minus-x fix .",
+			"phpcbf"
 		]
 	},
 	"autoload": {

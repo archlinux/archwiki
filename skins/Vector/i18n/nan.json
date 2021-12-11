@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"A-lú-mih",
 			"Ianbu",
-			"唐吉訶德的侍從",
-			"Luuva"
+			"Luuva",
+			"唐吉訶德的侍從"
 		]
 	},
 	"vector-action-addsection": "Ke chi̍t-ê toān-lo̍h",
@@ -16,6 +17,6 @@
 	"vector-view-edit": "Siu-kái",
 	"vector-view-history": "khoàⁿ le̍k-sú",
 	"vector-view-view": "Tha̍k",
-	"vector-view-viewsource": "Khoàⁿ goân-sú lōe-iông",
+	"vector-view-viewsource": "Khoàⁿ goân-sí lōe-iông",
 	"vector-more-actions": "Koh khoàⁿ"
 }

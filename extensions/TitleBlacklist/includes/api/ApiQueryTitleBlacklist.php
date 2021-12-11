@@ -51,6 +51,7 @@ class ApiQueryTitleBlacklist extends ApiBase {
 		}
 
 		$blacklisted = TitleBlacklist::singleton()->userCannot(
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable T240141
 			$title, $this->getUser(), $action, $override
 		);
 		if ( $blacklisted instanceof TitleBlacklistEntry ) {
@@ -64,7 +65,7 @@ class ApiQueryTitleBlacklist extends ApiBase {
 			$res->addValue( 'titleblacklist', 'result', 'blacklisted' );
 			// there aren't any messages for create(talk|page), using edit for those instead
 			$message = $blacklisted->getErrorMessage( $action !== 'create' ? $action : 'edit' );
-			$res->addValue( 'titleblacklist', 'reason', wfMessage( $message, $result )->text() );
+			$res->addValue( 'titleblacklist', 'reason', $this->msg( $message, $result )->text() );
 			$res->addValue( 'titleblacklist', 'message', $message );
 			$res->addValue( 'titleblacklist', 'line', htmlspecialchars( $blacklisted->getRaw() ) );
 		} else {

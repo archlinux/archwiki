@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kolega2357",
 			"Conquistador",
+			"Kolega2357",
 			"Vlad5250"
 		]
 	},
@@ -21,7 +21,7 @@
 	"gadgets-required-rights": "Zahtijeva {{PLURAL:$2|sljedeće pravo|sljedeća prava}}:\n\n$1",
 	"gadgets-required-skins": "Dostupno u {{PLURAL:$2|temi $1|sljedećim temama: $1}}.",
 	"gadgets-default": "Dostupno za svakog po postavkama",
-	"gadgets-legacy": "Spravica nije učitana. Molimo vas prebacite na „Вчитувач на ресурси“ (ResourceLoader). ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) Saznajte više])",
+	"gadgets-legacy": "Spravica nije učitana. Molimo vas prebacite na „Вчитувач на ресурси“ (ResourceLoader). ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Saznajte više])",
 	"gadgets-export": "Izvezi / Извези",
 	"gadgets-export-title": "Izvoz spravice",
 	"gadgets-not-found": "Spravica \"$1\" nije pronađena.",

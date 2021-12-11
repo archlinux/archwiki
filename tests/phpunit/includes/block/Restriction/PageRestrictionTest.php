@@ -42,7 +42,7 @@ class PageRestrictionTest extends RestrictionTestCase {
 		$this->assertSame( $title, $restriction->getTitle() );
 
 		$restriction = new $class( 1, 1 );
-		$title = \Title::newFromId( 1 );
+		$title = \Title::newFromID( 1 );
 		$this->assertEquals( $title->getArticleID(), $restriction->getTitle()->getArticleID() );
 	}
 
@@ -58,6 +58,17 @@ class PageRestrictionTest extends RestrictionTestCase {
 		$this->assertSame( 1, $restriction->getBlockId() );
 		$this->assertSame( 2, $restriction->getValue() );
 		$this->assertSame( 'Saturn', $restriction->getTitle()->getText() );
+	}
+
+	public function testNewFromTitle() {
+		$class = $this->getClass();
+		$title = \Title::newFromText( 'Pluto' );
+		$restriction = $class::newFromTitle( 'Mars' );
+		$restriction2 = $class::newFromTitle( $title );
+
+		$this->assertSame( 0, $restriction->getBlockId() );
+		$this->assertSame( 'Mars', $restriction->getTitle()->getText() );
+		$this->assertSame( $title->getArticleID(), $restriction2->getValue() );
 	}
 
 	/**

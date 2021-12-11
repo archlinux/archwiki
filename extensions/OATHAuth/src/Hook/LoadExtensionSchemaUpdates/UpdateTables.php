@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\OATHAuth\Hook\LoadExtensionSchemaUpdates;
 
-use DatabaseUpdater;
-use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia;
-use FormatJson;
 use ConfigException;
+use DatabaseUpdater;
+use FormatJson;
+use MediaWiki\MediaWikiServices;
+use Wikimedia;
+use Wikimedia\Rdbms\IDatabase;
 
 class UpdateTables {
 	/**
@@ -25,7 +25,7 @@ class UpdateTables {
 	 * @return bool
 	 */
 	public static function callback( $updater ) {
-		$dir = dirname( dirname( dirname( __DIR__ ) ) );
+		$dir = dirname( __DIR__, 3 );
 		$handler = new static( $updater, $dir );
 		return $handler->execute();
 	}
@@ -40,7 +40,8 @@ class UpdateTables {
 	}
 
 	protected function execute() {
-		switch ( $this->updater->getDB()->getType() ) {
+		$type = $this->updater->getDB()->getType();
+		switch ( $type ) {
 			case 'mysql':
 			case 'sqlite':
 				$this->updater->addExtensionTable( 'oathauth_users', "{$this->base}/sql/mysql/tables.sql" );
@@ -50,10 +51,11 @@ class UpdateTables {
 					'secret_reset',
 					"{$this->base}/sql/mysql/patch-remove_reset.sql"
 				);
+
 				$this->updater->addExtensionField(
 					'oathauth_users',
 					'module',
-					"{$this->base}/sql/mysql/patch-add_generic_fields.sql"
+					"{$this->base}/sql/{$type}/patch-add_generic_fields.sql"
 				);
 
 				$this->updater->addExtensionUpdate(
@@ -62,17 +64,17 @@ class UpdateTables {
 				$this->updater->dropExtensionField(
 					'oathauth_users',
 					'secret',
-					"{$this->base}/sql/mysql/patch-remove_module_specific_fields.sql"
+					"{$this->base}/sql/{$type}/patch-remove_module_specific_fields.sql"
 				);
 
 				$this->updater->addExtensionUpdate(
 					[ [ __CLASS__, 'schemaUpdateTOTPToMultipleKeys' ] ]
 				);
 
-				break;
+				$this->updater->addExtensionUpdate(
+					[ [ __CLASS__, 'schemaUpdateTOTPScratchTokensToArray' ] ]
+				);
 
-			case 'oracle':
-				$this->updater->addExtensionTable( 'oathauth_users', "{$this->base}/sql/oracle/tables.sql" );
 				break;
 
 			case 'postgres':
@@ -84,6 +86,18 @@ class UpdateTables {
 	}
 
 	/**
+	 * @return Wikimedia\Rdbms\DBConnRef
+	 */
+	private static function getDatabase() {
+		global $wgOATHAuthDatabase;
+		// Global can be `null` during installation, ensure we pass `false` instead (T270147)
+		$database = $wgOATHAuthDatabase ?? false;
+		$lb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
+			->getMainLB( $database );
+		return $lb->getConnectionRef( DB_MASTER, [], $database );
+	}
+
+	/**
 	 * Helper function for converting old users to the new schema
 	 *
 	 * @param DatabaseUpdater $updater
@@ -91,11 +105,7 @@ class UpdateTables {
 	 * @return bool
 	 */
 	public function schemaUpdateOldUsersFromInstaller( DatabaseUpdater $updater ) {
-		global $wgOATHAuthDatabase;
-		$lb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
-			->getMainLB( $wgOATHAuthDatabase );
-		$dbw = $lb->getConnectionRef( DB_MASTER, [], $wgOATHAuthDatabase );
-		return self::schemaUpdateOldUsers( $dbw );
+		return self::schemaUpdateOldUsers( self::getDatabase() );
 	}
 
 	/**
@@ -105,11 +115,7 @@ class UpdateTables {
 	 * @throws ConfigException
 	 */
 	public static function schemaUpdateSubstituteForGenericFields( DatabaseUpdater $updater ) {
-		global $wgOATHAuthDatabase;
-		$lb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
-			->getMainLB( $wgOATHAuthDatabase );
-		$dbw = $lb->getConnectionRef( DB_MASTER, [], $wgOATHAuthDatabase );
-		return self::convertToGenericFields( $dbw );
+		return self::convertToGenericFields( self::getDatabase() );
 	}
 
 	/**
@@ -119,11 +125,17 @@ class UpdateTables {
 	 * @throws ConfigException
 	 */
 	public static function schemaUpdateTOTPToMultipleKeys( DatabaseUpdater $updater ) {
-		global $wgOATHAuthDatabase;
-		$lb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
-			->getMainLB( $wgOATHAuthDatabase );
-		$dbw = $lb->getConnectionRef( DB_MASTER, [], $wgOATHAuthDatabase );
-		return self::switchTOTPToMultipleKeys( $dbw );
+		return self::switchTOTPToMultipleKeys( self::getDatabase() );
+	}
+
+	/**
+	 * Helper function for converting single TOTP keys to multi-key system
+	 * @param DatabaseUpdater $updater
+	 * @return bool
+	 * @throws ConfigException
+	 */
+	public static function schemaUpdateTOTPScratchTokensToArray( DatabaseUpdater $updater ) {
+		return self::switchTOTPScratchTokensToArray( self::getDatabase() );
 	}
 
 	/**
@@ -133,7 +145,7 @@ class UpdateTables {
 	 * @throws ConfigException
 	 */
 	public static function convertToGenericFields( IDatabase $db ) {
-		if ( !$db->fieldExists( 'oathauth_users', 'secret' ) ) {
+		if ( !$db->fieldExists( 'oathauth_users', 'secret', __METHOD__ ) ) {
 			return true;
 		}
 
@@ -176,8 +188,6 @@ class UpdateTables {
 				);
 			}
 		}
-
-		return true;
 	}
 
 	/**
@@ -188,7 +198,7 @@ class UpdateTables {
 	 * @throws ConfigException
 	 */
 	public static function switchTOTPToMultipleKeys( IDatabase $db ) {
-		if ( !$db->fieldExists( 'oathauth_users', 'data' ) ) {
+		if ( !$db->fieldExists( 'oathauth_users', 'data', __METHOD__ ) ) {
 			return true;
 		}
 
@@ -222,13 +232,62 @@ class UpdateTables {
 	}
 
 	/**
+	 * Switch scratch tokens from string to an array
+	 *
+	 * @param IDatabase $db
+	 * @return bool
+	 * @throws ConfigException
+	 */
+	public static function switchTOTPScratchTokensToArray( IDatabase $db ) {
+		if ( !$db->fieldExists( 'oathauth_users', 'data' ) ) {
+			return true;
+		}
+
+		$res = $db->select(
+			'oathauth_users',
+			[ 'id', 'data' ],
+			[
+				'module' => 'totp'
+			],
+			__METHOD__
+		);
+
+		foreach ( $res as $row ) {
+			$data = FormatJson::decode( $row->data, true );
+
+			$updated = false;
+			foreach ( $data['keys'] as &$k ) {
+				if ( is_string( $k['scratch_tokens'] ) ) {
+					$k['scratch_tokens'] = explode( ',', $k['scratch_tokens'] );
+					$updated = true;
+				}
+			}
+
+			if ( !$updated ) {
+				continue;
+			}
+
+			$db->update(
+				'oathauth_users',
+				[
+					'data' => FormatJson::encode( $data )
+				],
+				[ 'id' => $row->id ],
+				__METHOD__
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Helper function for converting old users to the new schema
 	 *
 	 * @param IDatabase $db
 	 * @return bool
 	 */
 	public static function schemaUpdateOldUsers( IDatabase $db ) {
-		if ( !$db->fieldExists( 'oathauth_users', 'secret_reset' ) ) {
+		if ( !$db->fieldExists( 'oathauth_users', 'secret_reset', __METHOD__ ) ) {
 			return true;
 		}
 

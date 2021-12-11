@@ -104,6 +104,7 @@
 				// foo = { mw.msg( 'bar' ): baz }
 				configuration.newButtons = {};
 				for ( msg in configuration.buttons ) {
+					// eslint-disable-next-line mediawiki/msg-doc
 					configuration.newButtons[ mw.msg( msg ) ] = configuration.buttons[ msg ];
 				}
 				configuration.buttons = configuration.newButtons;
@@ -119,12 +120,9 @@
 					.attr( 'id', module.id )
 					.append( $content )
 					.data( 'context', context )
-					.appendTo( $( 'body' ) )
+					.appendTo( document.body )
 					.each( module.init )
 					.dialog( configuration );
-				// Set tabindexes on buttons added by .dialog()
-				dialogsModule.fn.setTabindexes( $dialogDiv.closest( '.ui-dialog' )
-					.find( 'button' ).not( '[tabindex]' ) );
 				if ( !( 'resizeme' in module ) || module.resizeme ) {
 					$dialogDiv
 						.on( 'dialogopen', dialogsModule.fn.resize )
@@ -154,6 +152,7 @@
 					// Make sure elements don't wrapped so we get an accurate idea of whether they really fit. Also temporarily show
 					// hidden elements. Work around jQuery bug where <div style="display: inline;"/> inside a dialog is both
 					// :visible and :hidden
+					// eslint-disable-next-line no-jquery/no-sizzle
 					$oldHidden = $( this ).find( '*' ).not( ':visible' );
 
 				// Save the style attributes of the hidden elements to restore them later. Calling hide() after show() messes up
@@ -180,19 +179,6 @@
 				$oldHidden.each( function () {
 					$( this ).attr( 'style', $( this ).data( 'oldstyle' ) );
 				} );
-			},
-
-			/**
-			 * Set the right tabindexes on elements in a dialog
-			 *
-			 * @param {Object} $elements Elements to set tabindexes on. If they already have tabindexes, this function can behave a bit weird
-			 */
-			setTabindexes: function ( $elements ) {
-				// Get the highest tab index
-				var tabIndex = $( document ).lastTabIndex() + 1;
-				$elements.each( function () {
-					$( this ).attr( 'tabindex', tabIndex++ );
-				} );
 			}
 		},
 
@@ -202,7 +188,7 @@
 		quickDialog: function ( body, settings ) {
 			$( '<div>' )
 				.text( body )
-				.appendTo( $( 'body' ) )
+				.appendTo( document.body )
 				.dialog( $.extend( {
 					bgiframe: true,
 					modal: true

@@ -85,7 +85,7 @@
 	 */
 	function attachHandler( $content ) {
 		$content.find( '.CategoryTreeToggle' )
-			.click( handleNode )
+			.on( 'click', handleNode )
 			.attr( 'title', function () {
 				return mw.msg(
 					$( this ).data( 'ct-state' ) === 'collapsed' ?
@@ -134,7 +134,8 @@
 		$link.data( 'ct-loaded', true );
 
 		$children.empty().append(
-			$( '<i class="CategoryTreeNotice"></i>' )
+			$( '<i>' )
+				.addClass( 'CategoryTreeNotice' )
 				.text( mw.msg( 'categorytree-loading' ) )
 		);
 
@@ -184,7 +185,7 @@
 						data = mw.msg( 'categorytree-nothing-found' );
 				}
 
-				$data = $( '<i class="CategoryTreeNotice"></i>' ).text( data );
+				$data = $( '<i>' ).addClass( 'CategoryTreeNotice' ).text( data );
 			} else {
 				$data = $( $.parseHTML( data ) );
 				attachHandler( $data );
@@ -204,6 +205,7 @@
 
 	$( function () {
 		// Attach click handler for sidebar
+		// eslint-disable-next-line no-jquery/no-global-selector
 		attachHandler( $( '#p-categorytree-portlet' ) );
 	} );
 

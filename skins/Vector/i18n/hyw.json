@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Azniv Stepanian",
 			"ArmenBakkalian",
+			"Azniv Stepanian",
 			"Rajemian",
 			"Դավիթ Սարոյան"
 		]
@@ -15,5 +15,5 @@
 	"vector-view-edit": "Խմբագրել",
 	"vector-view-history": "Տեսնել պատմութիւնը",
 	"vector-view-view": "Կարդալ",
-	"vector-more-actions": "Աւելին"
+	"vector-more-actions": "Աւելի"
 }

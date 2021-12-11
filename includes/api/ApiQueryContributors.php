@@ -37,7 +37,7 @@ class ApiQueryContributors extends ApiQueryBase {
 	 * database pages too heavily), so only do the first MAX_PAGES input pages
 	 * in each API call (leaving the rest for continuation).
 	 */
-	const MAX_PAGES = 100;
+	private const MAX_PAGES = 100;
 
 	public function __construct( ApiQuery $query, $moduleName ) {
 		// "pc" is short for "page contributors", "co" was already taken by the
@@ -58,7 +58,7 @@ class ApiQueryContributors extends ApiQueryBase {
 			$cont = explode( '|', $params['continue'] );
 			$this->dieContinueUsageIf( count( $cont ) != 2 );
 			$cont_page = (int)$cont[0];
-			$pages = array_filter( $pages, function ( $v ) use ( $cont_page ) {
+			$pages = array_filter( $pages, static function ( $v ) use ( $cont_page ) {
 				return $v >= $cont_page;
 			} );
 		}
@@ -146,7 +146,7 @@ class ApiQueryContributors extends ApiQueryBase {
 		} elseif ( $params['rights'] ) {
 			$excludeGroups = false;
 			foreach ( $params['rights'] as $r ) {
-				$limitGroups = array_merge( $limitGroups, $this->getPermissionManager()
+				$limitGroups = array_merge( $limitGroups, $this->getGroupPermissionsLookup()
 					->getGroupsWithPermission( $r ) );
 			}
 
@@ -163,7 +163,7 @@ class ApiQueryContributors extends ApiQueryBase {
 		} elseif ( $params['excluderights'] ) {
 			$excludeGroups = true;
 			foreach ( $params['excluderights'] as $r ) {
-				$limitGroups = array_merge( $limitGroups, $this->getPermissionManager()
+				$limitGroups = array_merge( $limitGroups, $this->getGroupPermissionsLookup()
 					->getGroupsWithPermission( $r ) );
 			}
 		}
@@ -223,9 +223,13 @@ class ApiQueryContributors extends ApiQueryBase {
 		return 'public';
 	}
 
-	public function getAllowedParams() {
+	public function getAllowedParams( $flags = 0 ) {
 		$userGroups = User::getAllGroups();
 		$userRights = $this->getPermissionManager()->getAllPermissions();
+
+		if ( $flags & ApiBase::GET_VALUES_FOR_HELP ) {
+			sort( $userGroups );
+		}
 
 		return [
 			'group' => [

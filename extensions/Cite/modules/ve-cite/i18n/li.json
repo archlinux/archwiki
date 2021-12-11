@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robin0van0der0vliet",
+			"Ooswesthoesbes",
 			"Robin van der Vliet",
-			"Ooswesthoesbes"
+			"Robin0van0der0vliet"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Book",
@@ -18,7 +18,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Rifferensieliesgebroek verangerd van de algemein groep nao \"$1\"",
 	"cite-ve-changedesc-reflist-responsive-set": "Rifferensielies verangerd veur in antjwäördende kolomme waer te gaeve",
 	"cite-ve-changedesc-reflist-responsive-unset": "Rifferensielies verangerd veur in slechs ein kolom waer te gaeve",
-	"cite-ve-changedesc-reflist-item-id": "Rifferensie-index verangerd",
 	"cite-ve-dialog-reference-editing-reused": "Dees rifferensie weurt $1 {{PLURAL:$1|kieër}} gebroek op dees pagina.",
 	"cite-ve-dialog-reference-options-group-label": "Gebroek dees groep",
 	"cite-ve-dialog-reference-options-group-placeholder": "Algemein rifferensies",

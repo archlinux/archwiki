@@ -14,8 +14,12 @@ class SpecialLinkAccounts extends AuthManagerSpecialPage {
 		AuthManager::ACTION_LINK, AuthManager::ACTION_LINK_CONTINUE,
 	];
 
-	public function __construct() {
+	/**
+	 * @param AuthManager $authManager
+	 */
+	public function __construct( AuthManager $authManager ) {
 		parent::__construct( 'LinkAccounts' );
+		$this->setAuthManager( $authManager );
 	}
 
 	protected function getGroupName() {
@@ -23,7 +27,7 @@ class SpecialLinkAccounts extends AuthManagerSpecialPage {
 	}
 
 	public function isListed() {
-		return AuthManager::singleton()->canLinkAccounts();
+		return $this->getAuthManager()->canLinkAccounts();
 	}
 
 	protected function getRequestBlacklist() {

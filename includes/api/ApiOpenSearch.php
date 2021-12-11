@@ -71,7 +71,8 @@ class ApiOpenSearch extends ApiBase {
 
 			case 'xml':
 				$printer = $this->getMain()->createPrinterByName( 'xml' . $this->fm );
-				'@phan-var ApiFormatXML $printer';
+				'@phan-var ApiFormatXml $printer';
+				/** @var ApiFormatXml $printer */
 				$printer->setRootElement( 'SearchSuggestion' );
 				return $printer;
 
@@ -83,24 +84,20 @@ class ApiOpenSearch extends ApiBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 		$search = $params['search'];
-		$suggest = $params['suggest'];
-		$results = [];
-		if ( !$suggest || $this->getConfig()->get( 'EnableOpenSearchSuggest' ) ) {
-			// Open search results may be stored for a very long time
-			$this->getMain()->setCacheMaxAge( $this->getConfig()->get( 'SearchSuggestCacheExpiry' ) );
-			$this->getMain()->setCacheMode( 'public' );
-			$results = $this->search( $search, $params );
 
-			// Allow hooks to populate extracts and images
-			Hooks::run( 'ApiOpenSearchSuggest', [ &$results ] );
+		// Open search results may be stored for a very long time
+		$this->getMain()->setCacheMaxAge( $this->getConfig()->get( 'SearchSuggestCacheExpiry' ) );
+		$this->getMain()->setCacheMode( 'public' );
+		$results = $this->search( $search, $params );
 
-			// Trim extracts, if necessary
-			$length = $this->getConfig()->get( 'OpenSearchDescriptionLength' );
-			foreach ( $results as &$r ) {
-				// @phan-suppress-next-line PhanTypeInvalidDimOffset
-				if ( is_string( $r['extract'] ) && !$r['extract trimmed'] ) {
-					$r['extract'] = self::trimExtract( $r['extract'], $length );
-				}
+		// Allow hooks to populate extracts and images
+		$this->getHookRunner()->onApiOpenSearchSuggest( $results );
+
+		// Trim extracts, if necessary
+		$length = $this->getConfig()->get( 'OpenSearchDescriptionLength' );
+		foreach ( $results as &$r ) {
+			if ( is_string( $r['extract'] ) && !$r['extract trimmed'] ) {
+				$r['extract'] = self::trimExtract( $r['extract'], $length );
 			}
 		}
 
@@ -140,7 +137,8 @@ class ApiOpenSearch extends ApiBase {
 		if ( $resolveRedir ) {
 			// Query for redirects
 			$redirects = [];
-			$lb = new LinkBatch( $titles );
+			$linkBatchFactory = MediaWikiServices::getInstance()->getLinkBatchFactory();
+			$lb = $linkBatchFactory->newLinkBatch( $titles );
 			if ( !$lb->isEmpty() ) {
 				$db = $this->getDB();
 				$res = $db->select(
@@ -210,7 +208,7 @@ class ApiOpenSearch extends ApiBase {
 
 	/**
 	 * @param string $search
-	 * @param array &$results
+	 * @param array[] &$results
 	 */
 	protected function populateResult( $search, &$results ) {
 		$result = $this->getResult();
@@ -251,7 +249,6 @@ class ApiOpenSearch extends ApiBase {
 					if ( is_string( $r['extract'] ) && $r['extract'] !== '' ) {
 						$item['Description'] = $r['extract'];
 					}
-					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 					if ( is_array( $r['image'] ) && isset( $r['image']['source'] ) ) {
 						$item['Image'] = array_intersect_key( $r['image'], $imageKeys );
 					}
@@ -276,7 +273,11 @@ class ApiOpenSearch extends ApiBase {
 			return $this->allowedParams;
 		}
 		$this->allowedParams = $this->buildCommonApiParams( false ) + [
-			'suggest' => false,
+			'suggest' => [
+				ApiBase::PARAM_DFLT => false,
+				// Deprecated since 1.35
+				ApiBase::PARAM_DEPRECATED => true,
+			],
 			'redirects' => [
 				ApiBase::PARAM_TYPE => [ 'return', 'resolve' ],
 			],

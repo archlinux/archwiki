@@ -4,6 +4,9 @@ namespace OOUI;
 
 /**
  * Multiple checkbox input widget. Intended to be used within a OO.ui.FormLayout.
+ *
+ * @phan-suppress-next-line PhanParamSignatureMismatch Parent returns a string
+ * @method string[] getValue()
  */
 class CheckboxMultiselectInputWidget extends InputWidget {
 
@@ -32,7 +35,6 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 	 * @param array $config Configuration options
 	 *      - array[] $config['options'] Array of menu options in the format
 	 *          `[ 'data' => …, 'label' => …, 'disabled' => … ]`
-	 * @param-taint $config escapes_html
 	 */
 	public function __construct( array $config = [] ) {
 		// Parent constructor
@@ -59,6 +61,7 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 	 *
 	 * @param string[] $value New value
 	 * @return $this
+	 * @suppress PhanParamSignatureMismatch Parent has string $value
 	 */
 	public function setValue( $value ) {
 		$this->value = $this->cleanUpValue( $value );
@@ -78,6 +81,7 @@ class CheckboxMultiselectInputWidget extends InputWidget {
 	 *
 	 * @param string[] $value Original value
 	 * @return string[] Cleaned up value
+	 * @suppress PhanParamSignatureMismatch Parent has 'string' instead of 'string[]'
 	 */
 	protected function cleanUpValue( $value ) {
 		$cleanValue = [];

@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chelin",
 			"C.R.",
+			"Chelin",
+			"Cryptex nap",
 			"Ruthven"
 		]
 	},
@@ -19,7 +20,7 @@
 	"categorytree-mode-pages": "tutte 'e paggene accettuanno l'immaggene",
 	"categorytree-mode-all": "Tutte 'e ppaggene",
 	"categorytree-collapse": "annascunne",
-	"categorytree-expand": "fa vede",
+	"categorytree-expand": "spanne",
 	"categorytree-member-counts": "Cuntene {{PLURAL:$1|1 sottocategurìa|$1 sottocategurìe}}, {{PLURAL:$2|1 paggena|$2 paggene}} e {{PLURAL:$3|1 file|$3 file}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",

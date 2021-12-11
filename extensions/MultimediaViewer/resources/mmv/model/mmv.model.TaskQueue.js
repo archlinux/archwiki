@@ -28,6 +28,7 @@
 	function TaskQueue() {
 		/**
 		 * The list of functions to execute.
+		 *
 		 * @protected
 		 * @property {Array.<function()>}
 		 */
@@ -35,6 +36,7 @@
 
 		/**
 		 * State of the task queue (running, finished etc)
+		 *
 		 * @protected
 		 * @property {mw.mmv.model.TaskQueue.State}
 		 */
@@ -42,6 +44,7 @@
 
 		/**
 		 * A deferred which shows the state of the queue.
+		 *
 		 * @protected
 		 * @property {jQuery.Deferred}
 		 */

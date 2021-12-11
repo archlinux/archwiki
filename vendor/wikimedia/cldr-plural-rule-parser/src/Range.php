@@ -2,7 +2,7 @@
 /**
  * @author Tim Starling
  * @author Niklas Laxström
- * @license GPL-2.0+
+ * @license GPL-2.0-or-later
  * @file
  */
 
@@ -17,7 +17,7 @@ class Range {
 	 *
 	 * @var array
 	 */
-	public $parts = array();
+	public $parts = [];
 
 	/**
 	 * Initialize a new instance of Range
@@ -25,11 +25,11 @@ class Range {
 	 * @param int $start The start of the range
 	 * @param int|bool $end The end of the range, or false if the range is not bounded.
 	 */
-	function __construct( $start, $end = false ) {
+	public function __construct( $start, $end = false ) {
 		if ( $end === false ) {
 			$this->parts[] = $start;
 		} else {
-			$this->parts[] = array( $start, $end );
+			$this->parts[] = [ $start, $end ];
 		}
 	}
 
@@ -41,7 +41,7 @@ class Range {
 	 *   otherwise, number simply has to be inside the range.
 	 * @return bool True if the number is inside the range; otherwise, false.
 	 */
-	function isNumberIn( $number, $integerConstraint = true ) {
+	public function isNumberIn( $number, $integerConstraint = true ) {
 		foreach ( $this->parts as $part ) {
 			if ( is_array( $part ) ) {
 				if ( ( !$integerConstraint || floor( $number ) === (float)$number )
@@ -66,7 +66,7 @@ class Range {
 	 * @param int $number The number to check
 	 * @return bool True if the number is inside the range; otherwise, false.
 	 */
-	function isNumberWithin( $number ) {
+	public function isNumberWithin( $number ) {
 		return $this->isNumberIn( $number, false );
 	}
 
@@ -76,7 +76,7 @@ class Range {
 	 * @param Range|int $other The part to add, either
 	 *   a range object itself or a single number.
 	 */
-	function add( $other ) {
+	public function add( $other ) {
 		if ( $other instanceof self ) {
 			$this->parts = array_merge( $this->parts, $other->parts );
 		} else {
@@ -90,7 +90,7 @@ class Range {
 	 *
 	 * @return string The string representation of the rule evaluator range
 	 */
-	function __toString() {
+	public function __toString() {
 		$s = 'Range(';
 		foreach ( $this->parts as $i => $part ) {
 			if ( $i ) {

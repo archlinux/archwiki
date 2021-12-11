@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Permissions\Authority;
+
 /**
  * Base class for testing special pages.
  *
@@ -11,17 +13,17 @@
  * @author Addshore
  * @author Thiemo Kreuz
  */
-abstract class SpecialPageTestBase extends MediaWikiTestCase {
+abstract class SpecialPageTestBase extends MediaWikiIntegrationTestCase {
 
 	private $obLevel;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->obLevel = ob_get_level();
 	}
 
-	protected function tearDown() {
+	protected function tearDown() : void {
 		$obLevel = ob_get_level();
 
 		while ( ob_get_level() > $this->obLevel ) {
@@ -50,7 +52,11 @@ abstract class SpecialPageTestBase extends MediaWikiTestCase {
 	 * @param string $subPage The subpage parameter to call the page with
 	 * @param WebRequest|null $request Web request that may contain URL parameters, etc
 	 * @param Language|string|null $language The language which should be used in the context
-	 * @param User|null $user The user which should be used in the context of this special page
+	 * @param Authority|null $performer The user which should be used in the context of this special page
+	 * @param bool $fullHtml if true, the entirety of the generated HTML will be returned, this
+	 * includes the opening <!DOCTYPE> declaration and closing </html> tag. If false, only value
+	 * of OutputPage::getHTML() will be returned except if the page is redirect or where OutputPage
+	 * is completely disabled.
 	 *
 	 * @throws Exception
 	 * @return array [ string, WebResponse ] A two-elements array containing the HTML output
@@ -60,14 +66,16 @@ abstract class SpecialPageTestBase extends MediaWikiTestCase {
 		$subPage = '',
 		WebRequest $request = null,
 		$language = null,
-		User $user = null
+		Authority $performer = null,
+		$fullHtml = false
 	) {
 		return ( new SpecialPageExecutor() )->executeSpecialPage(
 			$this->newSpecialPage(),
 			$subPage,
 			$request,
 			$language,
-			$user
+			$performer,
+			$fullHtml
 		);
 	}
 

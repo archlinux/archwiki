@@ -22,7 +22,7 @@ class DOMBuilder implements TreeHandler {
 	public $system;
 
 	/**
-	 * @var int $quirks The quirks mode. May be either TreeBuilder::NO_QUIRKS,
+	 * @var int The quirks mode. May be either TreeBuilder::NO_QUIRKS,
 	 *   TreeBuilder::LIMITED_QUIRKS or TreeBuilder::QUIRKS to indicate
 	 *   no-quirks mode, limited-quirks mode or quirks mode respectively.
 	 */
@@ -59,7 +59,7 @@ class DOMBuilder implements TreeHandler {
 	 *     nonstandard calls.
 	 */
 	public function __construct( $options = [] ) {
-		$options = $options + [
+		$options += [
 			'suppressHtmlNamespace' => false,
 			'suppressIdAttribute' => false,
 			'errorCallback' => null,
@@ -103,7 +103,19 @@ class DOMBuilder implements TreeHandler {
 		$this->doc = $this->createDocument();
 	}
 
-	protected function createDocument( $doctypeName = null, $public = null, $system = null ) {
+	/**
+	 * @param string|null $doctypeName
+	 * @param string|null $public
+	 * @param string|null $system
+	 * @return \DOMDocument
+	 * @suppress PhanTypeMismatchArgumentInternalReal
+	 *   Null args to DOMImplementation::createDocument
+	 */
+	protected function createDocument(
+		string $doctypeName = null,
+		string $public = null,
+		string $system = null
+	) {
 		$impl = new \DOMImplementation;
 		if ( $doctypeName === '' ) {
 			$this->coerced = true;
@@ -132,6 +144,7 @@ class DOMBuilder implements TreeHandler {
 			$parent = $refElement->userData;
 			$refNode = null;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		$parent->insertBefore( $node, $refNode );
 	}
 
@@ -244,10 +257,11 @@ class DOMBuilder implements TreeHandler {
 			$prev = $refNode->previousSibling;
 		}
 		if ( $prev !== null && $prev->nodeType === XML_TEXT_NODE ) {
-			/** @var \DOMCharacterData $prev */
+			'@phan-var \DOMCharacterData $prev'; /** @var \DOMCharacterData $prev */
 			$prev->appendData( $data );
 		} else {
 			$node = $this->doc->createTextNode( $data );
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
 			$parent->insertBefore( $node, $refNode );
 		}
 	}
@@ -288,8 +302,8 @@ class DOMBuilder implements TreeHandler {
 	}
 
 	public function mergeAttributes( Element $element, Attributes $attrs, $sourceStart ) {
-		/** @var \DOMElement $node */
 		$node = $element->userData;
+		'@phan-var \DOMElement $node'; /** @var \DOMElement $node */
 		foreach ( $attrs->getObjects() as $name => $attr ) {
 			if ( $attr->namespaceURI === null
 				&& strpos( $attr->localName, ':' ) !== false

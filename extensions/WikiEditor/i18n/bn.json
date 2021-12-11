@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Aftab1995",
+			"Aftabuzzaman",
 			"Bellayet",
 			"Leemon2010",
+			"Macofe",
 			"Nasir8891",
 			"Wikitanvir",
-			"Aftabuzzaman",
-			"Macofe",
 			"আফতাবুজ্জামান"
 		]
 	},
@@ -51,7 +51,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "আন্তঃসংযোগ",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "বহিঃসংযোগ",
 	"wikieditor-toolbar-tool-link-empty": "লিঙ্ক করা জন্য আপনি কোনো কিছু টাইপ করেননি।",
-	"wikieditor-toolbar-tool-file": "এম্বেডকৃত ফাইল",
+	"wikieditor-toolbar-tool-file": "চিত্র ও মিডিয়া",
 	"wikieditor-toolbar-tool-file-example": "উদাহরণ.jpg",
 	"wikieditor-toolbar-tool-file-title": "ফাইল সংযোজন",
 	"wikieditor-toolbar-file-target": "ফাইলের নাম:",
@@ -150,9 +150,9 @@
 	"wikieditor-toolbar-help-content-bold-description": "গাঢ়",
 	"wikieditor-toolbar-help-content-bold-syntax": "'''গাঢ় লেখা'''",
 	"wikieditor-toolbar-help-content-bold-result": "<strong>গাঢ় লেখা</strong>",
-	"wikieditor-toolbar-help-content-bolditalic-description": "গাঢ় &amp; বাঁকা",
-	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''গাঢ় &amp; বাঁকা লেখা'''''",
-	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>গাঢ় &amp; বাঁকা লেখা</em></strong>",
+	"wikieditor-toolbar-help-content-bolditalic-description": "গাঢ় ও বাঁকা",
+	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''গাঢ় ও বাঁকা লেখা'''''",
+	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>গাঢ় ও বাঁকা লেখা</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "আভ্যন্তরীণ সংযোগ",
 	"wikieditor-toolbar-help-content-ilink-syntax": "[[পাতার শিরোনাম]]<br />[[পাতার শিরোনাম|সংযোগ লেবেল]]",
 	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>পাতার শিরোনাম</a><br /><a href='#'>সংযোগের লেবেল</a>",

@@ -4,10 +4,12 @@ namespace MediaWiki\Rest;
 
 use AppendIterator;
 use BagOStuff;
-use Wikimedia\Message\MessageValue;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Permissions\Authority;
 use MediaWiki\Rest\BasicAccess\BasicAuthorizerInterface;
 use MediaWiki\Rest\PathTemplateMatcher\PathMatcher;
 use MediaWiki\Rest\Validator\Validator;
+use Wikimedia\Message\MessageValue;
 use Wikimedia\ObjectFactory;
 
 /**
@@ -29,6 +31,9 @@ class Router {
 	private $routeFileTimestamps;
 
 	/** @var string */
+	private $baseUrl;
+
+	/** @var string */
 	private $rootPath;
 
 	/** @var \BagOStuff */
@@ -46,35 +51,51 @@ class Router {
 	/** @var BasicAuthorizerInterface */
 	private $basicAuth;
 
+	/** @var Authority */
+	private $authority;
+
 	/** @var ObjectFactory */
 	private $objectFactory;
 
 	/** @var Validator */
 	private $restValidator;
 
+	/** @var CorsUtils|null */
+	private $cors;
+
+	/** @var HookContainer */
+	private $hookContainer;
+
 	/**
 	 * @param string[] $routeFiles List of names of JSON files containing routes
 	 * @param array $extraRoutes Extension route array
-	 * @param string $rootPath The base URL path
+	 * @param string $baseUrl The base URL
+	 * @param string $rootPath The base path for routes, relative to the base URL
 	 * @param BagOStuff $cacheBag A cache in which to store the matcher trees
 	 * @param ResponseFactory $responseFactory
 	 * @param BasicAuthorizerInterface $basicAuth
+	 * @param Authority $authority
 	 * @param ObjectFactory $objectFactory
 	 * @param Validator $restValidator
+	 * @param HookContainer $hookContainer
+	 * @internal
 	 */
-	public function __construct( $routeFiles, $extraRoutes, $rootPath,
+	public function __construct( $routeFiles, $extraRoutes, $baseUrl, $rootPath,
 		BagOStuff $cacheBag, ResponseFactory $responseFactory,
-		BasicAuthorizerInterface $basicAuth, ObjectFactory $objectFactory,
-		Validator $restValidator
+		BasicAuthorizerInterface $basicAuth, Authority $authority,
+		ObjectFactory $objectFactory, Validator $restValidator, HookContainer $hookContainer
 	) {
 		$this->routeFiles = $routeFiles;
 		$this->extraRoutes = $extraRoutes;
+		$this->baseUrl = $baseUrl;
 		$this->rootPath = $rootPath;
 		$this->cacheBag = $cacheBag;
 		$this->responseFactory = $responseFactory;
 		$this->basicAuth = $basicAuth;
+		$this->authority = $authority;
 		$this->objectFactory = $objectFactory;
 		$this->restValidator = $restValidator;
+		$this->hookContainer = $hookContainer;
 	}
 
 	/**
@@ -218,6 +239,27 @@ class Router {
 	}
 
 	/**
+	 * Returns a full URL for the given route.
+	 * Intended for use in redirects.
+	 *
+	 * @param string $route
+	 * @param array $pathParams
+	 * @param array $queryParams
+	 *
+	 * @return false|string
+	 */
+	public function getRouteUrl( $route, $pathParams = [], $queryParams = [] ) {
+		foreach ( $pathParams as $param => $value ) {
+			// NOTE: we use rawurlencode here, since execute() uses rawurldecode().
+			// Spaces in path params must be encoded to %20 (not +).
+			$route = str_replace( '{' . $param . '}', rawurlencode( $value ), $route );
+		}
+
+		$url = $this->baseUrl . $this->rootPath . $route;
+		return wfAppendQuery( $url, $queryParams );
+	}
+
+	/**
 	 * Find the handler for a request and execute it
 	 *
 	 * @param RequestInterface $request
@@ -246,15 +288,14 @@ class Router {
 
 		if ( !$match ) {
 			// Check for 405 wrong method
-			$allowed = [];
-			foreach ( $matchers as $allowedMethod => $allowedMatcher ) {
-				if ( $allowedMethod === $requestMethod ) {
-					continue;
-				}
-				if ( $allowedMatcher->match( $relPath ) ) {
-					$allowed[] = $allowedMethod;
-				}
+			$allowed = $this->getAllowedMethods( $relPath );
+
+			// Check for CORS Preflight. This response will *not* allow the request unless
+			// an Access-Control-Allow-Origin header is added to this response.
+			if ( $this->cors && $requestMethod === 'OPTIONS' ) {
+				return $this->cors->createPreflightResponse( $allowed );
 			}
+
 			if ( $allowed ) {
 				$response = $this->responseFactory->createLocalizedHttpError( 405,
 					( new MessageValue( 'rest-wrong-method' ) )
@@ -273,13 +314,9 @@ class Router {
 			}
 		}
 
+		// Use rawurldecode so a "+" in path params is not interpreted as a space character.
 		$request->setPathParams( array_map( 'rawurldecode', $match['params'] ) );
-		$spec = $match['userData'];
-		$objectFactorySpec = array_intersect_key( $spec,
-			[ 'factory' => true, 'class' => true, 'args' => true, 'services' => true ] );
-		/** @var $handler Handler (annotation for PHPStorm) */
-		$handler = $this->objectFactory->createObject( $objectFactorySpec );
-		$handler->init( $this, $request, $spec, $this->responseFactory );
+		$handler = $this->createHandler( $request, $match['userData'] );
 
 		try {
 			return $this->executeHandler( $handler );
@@ -289,24 +326,90 @@ class Router {
 	}
 
 	/**
+	 * Get the allow methods for a path.
+	 *
+	 * @param string $relPath
+	 * @return array
+	 */
+	private function getAllowedMethods( string $relPath ) : array {
+		// Check for 405 wrong method
+		$allowed = [];
+		foreach ( $this->getMatchers() as $allowedMethod => $allowedMatcher ) {
+			if ( $allowedMatcher->match( $relPath ) ) {
+				$allowed[] = $allowedMethod;
+			}
+		}
+
+		return array_unique(
+			in_array( 'GET', $allowed ) ? array_merge( [ 'HEAD' ], $allowed ) : $allowed
+		);
+	}
+
+	/**
+	 * Create a handler from its spec
+	 * @param RequestInterface $request
+	 * @param array $spec
+	 * @return Handler
+	 */
+	private function createHandler( RequestInterface $request, array $spec ): Handler {
+		$objectFactorySpec = array_intersect_key(
+			$spec,
+			[
+				'factory' => true,
+				'class' => true,
+				'args' => true,
+				'services' => true,
+				'optional_services' => true
+			]
+		);
+		/** @var $handler Handler (annotation for PHPStorm) */
+		$handler = $this->objectFactory->createObject( $objectFactorySpec );
+		$handler->init( $this, $request, $spec, $this->authority, $this->responseFactory, $this->hookContainer );
+
+		return $handler;
+	}
+
+	/**
 	 * Execute a fully-constructed handler
 	 *
 	 * @param Handler $handler
 	 * @return ResponseInterface
 	 */
 	private function executeHandler( $handler ): ResponseInterface {
-		// @phan-suppress-next-line PhanAccessMethodInternal
+		// Check for basic authorization, to avoid leaking data from private wikis
 		$authResult = $this->basicAuth->authorize( $handler->getRequest(), $handler );
 		if ( $authResult ) {
 			return $this->responseFactory->createHttpError( 403, [ 'error' => $authResult ] );
 		}
 
+		// Validate the parameters
 		$handler->validate( $this->restValidator );
 
+		// Check conditional request headers
+		$earlyResponse = $handler->checkPreconditions();
+		if ( $earlyResponse ) {
+			return $earlyResponse;
+		}
+
+		// Run the main part of the handler
 		$response = $handler->execute();
 		if ( !( $response instanceof ResponseInterface ) ) {
 			$response = $this->responseFactory->createFromReturnValue( $response );
 		}
+
+		// Set Last-Modified and ETag headers in the response if available
+		$handler->applyConditionalResponseHeaders( $response );
+
 		return $response;
+	}
+
+	/**
+	 * @param CorsUtils $cors
+	 * @return self
+	 */
+	public function setCors( CorsUtils $cors ) : self {
+		$this->cors = $cors;
+
+		return $this;
 	}
 }

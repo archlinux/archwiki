@@ -22,8 +22,8 @@ use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
+use MediaWiki\MediaWikiServices;
 use Message;
 use User;
 

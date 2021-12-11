@@ -23,6 +23,7 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\User\UserIdentity;
 
 /**
  * Helper class for file deletion
@@ -41,7 +42,7 @@ class LocalFileDeleteBatch {
 	/** @var array */
 	private $archiveUrls = [];
 
-	/** @var array Items to be processed in the deletion batch */
+	/** @var array[] Items to be processed in the deletion batch */
 	private $deletionBatch;
 
 	/** @var bool Whether to suppress all suppressable fields when deleting */
@@ -50,21 +51,25 @@ class LocalFileDeleteBatch {
 	/** @var Status */
 	private $status;
 
-	/** @var User */
+	/** @var UserIdentity */
 	private $user;
 
 	/**
 	 * @param File $file
+	 * @param UserIdentity $user
 	 * @param string $reason
 	 * @param bool $suppress
-	 * @param User|null $user
 	 */
-	function __construct( File $file, $reason = '', $suppress = false, $user = null ) {
+	public function __construct(
+		File $file,
+		UserIdentity $user,
+		$reason = '',
+		$suppress = false
+	) {
 		$this->file = $file;
+		$this->user = $user;
 		$this->reason = $reason;
 		$this->suppress = $suppress;
-		global $wgUser;
-		$this->user = $user ?: $wgUser;
 		$this->status = $file->repo->newGood();
 	}
 
@@ -134,7 +139,7 @@ class LocalFileDeleteBatch {
 			$res = $dbw->select(
 				'oldimage',
 				[ 'oi_archive_name', 'oi_sha1' ],
-				[ 'oi_archive_name' => array_keys( $oldRels ),
+				[ 'oi_archive_name' => array_map( 'strval', array_keys( $oldRels ) ),
 					'oi_name' => $this->file->getName() ], // performance
 				__METHOD__
 			);
@@ -244,7 +249,7 @@ class LocalFileDeleteBatch {
 				$fileQuery['fields'],
 				[
 					'oi_name' => $this->file->getName(),
-					'oi_archive_name' => array_keys( $oldRels )
+					'oi_archive_name' => array_map( 'strval', array_keys( $oldRels ) )
 				],
 				__METHOD__,
 				[ 'FOR UPDATE' ],
@@ -288,7 +293,7 @@ class LocalFileDeleteBatch {
 		}
 	}
 
-	function doDBDeletes() {
+	private function doDBDeletes() {
 		$dbw = $this->file->repo->getMasterDB();
 		list( $oldRels, $deleteCurrent ) = $this->getOldRels();
 
@@ -296,7 +301,7 @@ class LocalFileDeleteBatch {
 			$dbw->delete( 'oldimage',
 				[
 					'oi_name' => $this->file->getName(),
-					'oi_archive_name' => array_keys( $oldRels )
+					'oi_archive_name' => array_map( 'strval', array_keys( $oldRels ) )
 				], __METHOD__ );
 		}
 
@@ -366,14 +371,13 @@ class LocalFileDeleteBatch {
 
 	/**
 	 * Removes non-existent files from a deletion batch.
-	 * @param array $batch
+	 * @param array[] $batch
 	 * @return Status
 	 */
 	protected function removeNonexistentFiles( $batch ) {
 		$files = $newBatch = [];
 
-		foreach ( $batch as $batchItem ) {
-			list( $src, ) = $batchItem;
+		foreach ( $batch as [ $src, /* dest */ ] ) {
 			$files[$src] = $this->file->repo->getVirtualUrl( 'public' ) . '/' . rawurlencode( $src );
 		}
 

@@ -27,6 +27,8 @@ use Status;
 
 /**
  * Basic framework for a primary authentication provider that uses passwords
+ *
+ * @stable to extend
  * @ingroup Auth
  * @since 1.27
  */
@@ -39,6 +41,7 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 	private $passwordFactory = null;
 
 	/**
+	 * @stable to call
 	 * @param array $params Settings
 	 *  - authoritative: Whether this provider should ABSTAIN (false) or FAIL
 	 *    (true) on password failure
@@ -48,7 +51,6 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 	}
 
 	/**
-	 * Get the PasswordFactory
 	 * @return PasswordFactory
 	 */
 	protected function getPasswordFactory() {
@@ -115,7 +117,7 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 	 *
 	 * @param string $username
 	 * @param Status $status From $this->checkPasswordValidity()
-	 * @param mixed|null $data Passed through to $this->getPasswordResetData()
+	 * @param \stdClass|null $data Passed through to $this->getPasswordResetData()
 	 */
 	protected function setPasswordResetFlag( $username, Status $status, $data = null ) {
 		$reset = $this->getPasswordResetData( $username, $data );
@@ -139,9 +141,10 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 	/**
 	 * Get password reset data, if any
 	 *
+	 * @stable to override
 	 * @param string $username
-	 * @param mixed $data
-	 * @return object|null { 'hard' => bool, 'msg' => Message }
+	 * @param \stdClass|null $data
+	 * @return \stdClass|null { 'hard' => bool, 'msg' => Message }
 	 */
 	protected function getPasswordResetData( $username, $data ) {
 		return null;
@@ -150,6 +153,7 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 	/**
 	 * Get expiration date for a new password, if any
 	 *
+	 * @stable to override
 	 * @param string $username
 	 * @return string|null
 	 */
@@ -158,11 +162,19 @@ abstract class AbstractPasswordPrimaryAuthenticationProvider
 		$expires = $days ? wfTimestamp( TS_MW, time() + $days * 86400 ) : null;
 
 		// Give extensions a chance to force an expiration
-		\Hooks::run( 'ResetPasswordExpiration', [ \User::newFromName( $username ), &$expires ] );
+		$this->getHookRunner()->onResetPasswordExpiration(
+			\User::newFromName( $username ), $expires );
 
 		return $expires;
 	}
 
+	/**
+	 * @stable to override
+	 * @param string $action
+	 * @param array $options
+	 *
+	 * @return AuthenticationRequest[]
+	 */
 	public function getAuthenticationRequests( $action, array $options ) {
 		switch ( $action ) {
 			case AuthManager::ACTION_LOGIN:

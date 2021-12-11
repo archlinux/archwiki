@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"L2212",
-			"Via maxima",
-			"Taxandru",
 			"Purodha",
-			"Uharteko"
+			"Taxandru",
+			"Uharteko",
+			"Via maxima"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libru",
@@ -20,7 +20,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Su grupu de lista de riferimentos est cambiadu dae su grupu generale a \"$1\"",
 	"cite-ve-changedesc-reflist-responsive-set": "Sa lista de riferimentos est istada cambiada pro l'ammustrare in colunnas adativas",
 	"cite-ve-changedesc-reflist-responsive-unset": "Sa lista de riferimentos est istada cambiada pro l'ammustrare in una colunna ebbia",
-	"cite-ve-changedesc-reflist-item-id": "S'ìnditze de su riferimentu est cambiadu",
 	"cite-ve-dialog-reference-editing-reused": "Custu riferimentu est impreadu {{PLURAL:$1|una bia|2=duas bias|$1 bias}} in custa pàgina.",
 	"cite-ve-dialog-reference-editing-reused-long": "Custu riferimentu benit impreadu {{PLURAL:$1|una bia|2=duas bias|$1 bias}} in custa pàgina. Sas modìficas fatas inoghe ant a èssere aplicadas in totu sos logos in ue custu riferimentu benit torradu a impreare.",
 	"cite-ve-dialog-reference-options-group-label": "Imprea custu grupu",

@@ -19,7 +19,7 @@
 	 *       upload.upload();
 	 *     } );
 	 *
-	 *     $( 'body' ).append( file.$element, button.$element );
+	 *     $( document.body ).append( file.$element, button.$element );
 	 *
 	 * You can also choose to {@link #uploadToStash stash the upload} and
 	 * {@link #finishStashUpload finalize} it later:
@@ -314,6 +314,7 @@
 		this.setState( Upload.State.UPLOADING );
 
 		this.stashPromise = this.api.chunkedUploadToStash( this.getFile(), {
+			ignorewarnings: true,
 			filename: this.getFilename()
 		} ).then( function ( finishStash ) {
 			upload.setState( Upload.State.STASHED );
@@ -346,6 +347,7 @@
 			upload.setState( Upload.State.UPLOADING );
 
 			return finishStash( {
+				ignorewarnings: false,
 				watchlist: ( upload.getWatchlist() ) ? 1 : undefined,
 				comment: upload.getComment(),
 				filename: upload.getFilename(),

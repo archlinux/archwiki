@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Les Meloures",
 			"Robby",
-			"Soued031",
-			"Les Meloures"
+			"Soued031"
 		]
 	},
 	"pfunc_desc": "Erweidert Parser mat logesche Funktiounen",
@@ -13,7 +13,7 @@
 	"pfunc_time_too_small": "Feeler: #time ënnerstëtzt nëmme Jore vun 0 un.",
 	"pfunc_expr_stack_exhausted": "Expressiouns-Feeler: Stack iwwergelaf",
 	"pfunc_expr_unexpected_number": "Expressiouns-Feeler: Onerwarten Zuel",
-	"pfunc_expr_unrecognised_word": "Expressiouns-Feeler: Onerkantent Wuert \"$1\"",
+	"pfunc_expr_unrecognised_word": "Expressiouns-Feeler: Onerkannt Wuert \"$1\"",
 	"pfunc_expr_unexpected_operator": "Expressiounsfeeler: Onerwarten Operateur: $1",
 	"pfunc_expr_missing_operand": "Expressiounsfeeler: Et feelt en Operand fir $1",
 	"pfunc_expr_unexpected_closing_bracket": "Expressiouns-Feeler: Onerwarte Klammer déi zougemaach gëtt",

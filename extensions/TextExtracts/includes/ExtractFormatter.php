@@ -11,8 +11,8 @@ use HtmlFormatter\HtmlFormatter;
  * @license GPL-2.0-or-later
  */
 class ExtractFormatter extends HtmlFormatter {
-	const SECTION_MARKER_START = "\1\2";
-	const SECTION_MARKER_END = "\2\1";
+	public const SECTION_MARKER_START = "\1\2";
+	public const SECTION_MARKER_END = "\2\1";
 
 	/**
 	 * @var bool

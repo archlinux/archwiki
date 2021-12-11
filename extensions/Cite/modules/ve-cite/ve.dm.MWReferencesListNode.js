@@ -48,6 +48,9 @@ ve.dm.MWReferencesListNode.static.matchTagNames = null;
 
 ve.dm.MWReferencesListNode.static.matchRdfaTypes = [ 'mw:Extension/references', 'mw:Transclusion' ];
 
+// This node has the same specificity as ve.dm.MWTranslcusionNode and only matches
+// ahead of it because it is registered later (via a dependency in ResourceLoader)
+// TODO: Make this less fragile.
 ve.dm.MWReferencesListNode.static.matchFunction = function ( domElement ) {
 	function isRefList( el ) {
 		return el && el.nodeType === Node.ELEMENT_NODE && ( el.getAttribute( 'typeof' ) || '' ).indexOf( 'mw:Extension/references' ) !== -1;
@@ -91,8 +94,9 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 			templateGenerated: templateGenerated
 		}
 	};
-	if ( mwData.body && mwData.body.html ) {
+	if ( mwData.body && mwData.body.html && !templateGenerated ) {
 		// Process the nodes in .body.html as if they were this node's children
+		// Don't process template-generated reflists, that mangles the content (T209493)
 		contentsDiv = domElements[ 0 ].ownerDocument.createElement( 'div' );
 		contentsDiv.innerHTML = mwData.body.html;
 		contentsData = converter.getDataFromDomClean( contentsDiv );

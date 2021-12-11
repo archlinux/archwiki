@@ -21,15 +21,6 @@
  * @ingroup Maintenance
  * @author Tim Starling
  *
- * USAGE: php moveBatch.php [-u <user>] [-r <reason>] [-i <interval>] [-noredirects] [listfile]
- *
- * [listfile] - file with two titles per line, separated with pipe characters;
- * the first title is the source, the second is the destination.
- * Standard input is used if listfile is not given.
- * <user> - username to perform moves as
- * <reason> - reason to be given for moves
- * <interval> - number of seconds to sleep after each move
- * <noredirects> - suppress creation of redirects
  *
  * This will print out error codes from Title::moveTo() if something goes wrong,
  * e.g. immobile_namespace for namespaces which can't be moved
@@ -63,7 +54,7 @@ class MoveBatch extends Maintenance {
 		chdir( $oldCwd );
 
 		# Options processing
-		$user = $this->getOption( 'u', false );
+		$username = $this->getOption( 'u', false );
 		$reason = $this->getOption( 'r', '' );
 		$interval = $this->getOption( 'i', 0 );
 		$noredirects = $this->hasOption( 'noredirects' );
@@ -77,14 +68,15 @@ class MoveBatch extends Maintenance {
 		if ( !$file ) {
 			$this->fatalError( "Unable to read file, exiting" );
 		}
-		if ( $user === false ) {
-			$wgUser = User::newSystemUser( 'Move page script', [ 'steal' => true ] );
+		if ( $username === false ) {
+			$user = User::newSystemUser( 'Move page script', [ 'steal' => true ] );
 		} else {
-			$wgUser = User::newFromName( $user );
+			$user = User::newFromName( $username );
 		}
-		if ( !$wgUser ) {
+		if ( !$user ) {
 			$this->fatalError( "Invalid username" );
 		}
+		$wgUser = $user;
 
 		# Setup complete, now start
 		$dbw = $this->getDB( DB_MASTER );
@@ -100,7 +92,7 @@ class MoveBatch extends Maintenance {
 			}
 			$source = Title::newFromText( $parts[0] );
 			$dest = Title::newFromText( $parts[1] );
-			if ( is_null( $source ) || is_null( $dest ) ) {
+			if ( $source === null || $dest === null ) {
 				$this->error( "Invalid title on line $linenum" );
 				continue;
 			}
@@ -109,7 +101,7 @@ class MoveBatch extends Maintenance {
 			$this->beginTransaction( $dbw, __METHOD__ );
 			$mp = MediaWikiServices::getInstance()->getMovePageFactory()
 				->newMovePage( $source, $dest );
-			$status = $mp->move( $wgUser, $reason, !$noredirects );
+			$status = $mp->move( $user, $reason, !$noredirects );
 			if ( !$status->isOK() ) {
 				$this->output( "\nFAILED: " . $status->getMessage( false, false, 'en' )->text() );
 			}

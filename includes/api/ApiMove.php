@@ -21,12 +21,31 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\MovePageFactory;
 
 /**
  * API Module to move pages
  * @ingroup API
  */
 class ApiMove extends ApiBase {
+
+	use ApiWatchlistTrait;
+
+	/** @var MovePageFactory */
+	private $movePageFactory;
+
+	public function __construct(
+		ApiMain $mainModule,
+		$moduleName,
+		MovePageFactory $movePageFactory
+	) {
+		parent::__construct( $mainModule, $moduleName );
+
+		$this->movePageFactory = $movePageFactory;
+
+		$this->watchlistExpiryEnabled = $this->getConfig()->get( 'WatchlistExpiry' );
+		$this->watchlistMaxDuration = $this->getConfig()->get( 'WatchlistExpiryMaxDuration' );
+	}
 
 	public function execute() {
 		$this->useTransactionalTimeLimit();
@@ -60,14 +79,14 @@ class ApiMove extends ApiBase {
 		$toTalk = $toTitle->getTalkPageIfDefined();
 
 		$repoGroup = MediaWikiServices::getInstance()->getRepoGroup();
-		if ( $toTitle->getNamespace() == NS_FILE
+		if ( $toTitle->getNamespace() === NS_FILE
 			&& !$repoGroup->getLocalRepo()->findFile( $toTitle )
 			&& $repoGroup->findFile( $toTitle )
 		) {
 			if ( !$params['ignorewarnings'] &&
-				 $this->getPermissionManager()->userHasRight( $user, 'reupload-shared' ) ) {
+				$this->getAuthority()->isAllowed( 'reupload-shared' ) ) {
 				$this->dieWithError( 'apierror-fileexists-sharedrepo-perm' );
-			} elseif ( !$this->getPermissionManager()->userHasRight( $user, 'reupload-shared' ) ) {
+			} elseif ( !$this->getAuthority()->isAllowed( 'reupload-shared' ) ) {
 				$this->dieWithError( 'apierror-cantoverwrite-sharedfile' );
 			}
 		}
@@ -79,7 +98,7 @@ class ApiMove extends ApiBase {
 
 		// Check if the user is allowed to add the specified changetags
 		if ( $params['tags'] ) {
-			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $user );
+			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $this->getAuthority() );
 			if ( !$ableToTag->isOK() ) {
 				$this->dieStatus( $ableToTag );
 			}
@@ -157,10 +176,11 @@ class ApiMove extends ApiBase {
 		if ( isset( $params['watchlist'] ) ) {
 			$watch = $params['watchlist'];
 		}
+		$watchlistExpiry = $this->getExpiryFromParams( $params );
 
 		// Watch pages
-		$this->setWatch( $watch, $fromTitle, 'watchmoves' );
-		$this->setWatch( $watch, $toTitle, 'watchmoves' );
+		$this->setWatch( $watch, $fromTitle, $user, 'watchmoves', $watchlistExpiry );
+		$this->setWatch( $watch, $toTitle, $user, 'watchmoves', $watchlistExpiry );
 
 		$result->addValue( null, $this->getModuleName(), $r );
 	}
@@ -170,28 +190,27 @@ class ApiMove extends ApiBase {
 	 * @param Title $to
 	 * @param string $reason
 	 * @param bool $createRedirect
-	 * @param array $changeTags Applied to the entry in the move log and redirect page revision
+	 * @param string[] $changeTags Applied to the entry in the move log and redirect page revision
 	 * @return Status
 	 */
 	protected function movePage( Title $from, Title $to, $reason, $createRedirect, $changeTags ) {
-		$mp = MediaWikiServices::getInstance()->getMovePageFactory()->newMovePage( $from, $to );
+		$mp = $this->movePageFactory->newMovePage( $from, $to );
 		$valid = $mp->isValidMove();
 		if ( !$valid->isOK() ) {
 			return $valid;
 		}
 
-		$user = $this->getUser();
-		$permStatus = $mp->checkPermissions( $user, $reason );
+		$permStatus = $mp->authorizeMove( $this->getAuthority(), $reason );
 		if ( !$permStatus->isOK() ) {
-			return $permStatus;
+			return Status::wrap( $permStatus );
 		}
 
 		// Check suppressredirect permission
-		if ( !$this->getPermissionManager()->userHasRight( $user, 'suppressredirect' ) ) {
+		if ( !$this->getAuthority()->isAllowed( 'suppressredirect' ) ) {
 			$createRedirect = true;
 		}
 
-		return $mp->move( $user, $reason, $createRedirect, $changeTags );
+		return $mp->move( $this->getUser(), $reason, $createRedirect, $changeTags );
 	}
 
 	/**
@@ -199,15 +218,15 @@ class ApiMove extends ApiBase {
 	 * @param Title $toTitle
 	 * @param string $reason
 	 * @param bool $noredirect
-	 * @param array $changeTags Applied to the entry in the move log and redirect page revisions
+	 * @param string[] $changeTags Applied to the entry in the move log and redirect page revisions
 	 * @return array
 	 */
 	public function moveSubpages( $fromTitle, $toTitle, $reason, $noredirect, $changeTags = [] ) {
 		$retval = [];
 
-		$mp = new MovePage( $fromTitle, $toTitle );
+		$mp = $this->movePageFactory->newMovePage( $fromTitle, $toTitle );
 		$result =
-			$mp->moveSubpagesIfAllowed( $this->getUser(), $reason, !$noredirect, $changeTags );
+			$mp->moveSubpagesIfAllowed( $this->getAuthority(), $reason, !$noredirect, $changeTags );
 		if ( !$result->isOK() ) {
 			// This means the whole thing failed
 			return [ 'errors' => $this->getErrorFormatter()->arrayFromStatus( $result ) ];
@@ -216,6 +235,7 @@ class ApiMove extends ApiBase {
 		// At least some pages could be moved
 		// Report each of them separately
 		foreach ( $result->getValue() as $oldTitle => $status ) {
+			/** @var Status $status */
 			$r = [ 'from' => $oldTitle ];
 			if ( $status->isOK() ) {
 				$r['to'] = $status->getValue();
@@ -237,7 +257,7 @@ class ApiMove extends ApiBase {
 	}
 
 	public function getAllowedParams() {
-		return [
+		$params = [
 			'from' => null,
 			'fromid' => [
 				ApiBase::PARAM_TYPE => 'integer'
@@ -250,15 +270,13 @@ class ApiMove extends ApiBase {
 			'movetalk' => false,
 			'movesubpages' => false,
 			'noredirect' => false,
-			'watchlist' => [
-				ApiBase::PARAM_DFLT => 'preferences',
-				ApiBase::PARAM_TYPE => [
-					'watch',
-					'unwatch',
-					'preferences',
-					'nochange'
-				],
-			],
+		];
+
+		// Params appear in the docs in the order they are defined,
+		// which is why this is here and not at the bottom.
+		$params += $this->getWatchlistParams();
+
+		return $params + [
 			'ignorewarnings' => false,
 			'tags' => [
 				ApiBase::PARAM_TYPE => 'tags',

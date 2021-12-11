@@ -29,12 +29,17 @@
  * Extends DiffOp. Used to mark strings that have been
  * changed from the first string array (both added and subtracted).
  *
- * @private
+ * @internal
  * @ingroup DifferenceEngine
  */
 class DiffOpChange extends DiffOp {
+	/** @inheritDoc */
 	public $type = 'change';
 
+	/**
+	 * @param string[]|false $orig
+	 * @param string[]|false $closing
+	 */
 	public function __construct( $orig, $closing ) {
 		$this->orig = $orig;
 		$this->closing = $closing;

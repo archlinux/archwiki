@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>temporarily watched</title>
+    <g stroke="none" stroke-width="1" fill="#AAA" fill-rule="evenodd">
+        <g transform="translate(1, 1)">
+            <path d="M9,0.205 L9,13.439 L3.932,15.998 L4.778,10.295 L0.753,6.193 L6.407,5.243 L9,0.205 Z" />
+        </g>
+        <g transform="translate(1, 1)">
+            <path d="M9.041,0.125 L6.407,5.243 L0.753,6.193 L4.778,10.295 L3.932,15.998 L9.055,13.411 L14.185,15.978 L13.323,10.289 L17.337,6.176 L11.685,5.24 L9.041,0.125 Z M9.044,4.48 L10.376,7.058 L13.223,7.528 L11.201,9.599 L11.636,12.462 L9.049,11.168 L6.471,12.47 L6.897,9.599 L4.874,7.535 L7.718,7.058 L9.044,4.48 Z" />
+        </g>
+    </g>
+</svg>

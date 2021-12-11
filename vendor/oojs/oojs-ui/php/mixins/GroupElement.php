@@ -50,6 +50,17 @@ trait GroupElement {
 		return $this->items;
 	}
 
+	public function findItemFromData( $data ) {
+		$items = $this->getItems();
+		// TODO: Support non-string $data using a hash (e.g. json_encode)
+		foreach ( $items as $item ) {
+			if ( $item->getData() === $data ) {
+				return $item;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Add items.
 	 *

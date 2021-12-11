@@ -46,7 +46,8 @@ class DeleteEqualMessages extends Maintenance {
 	 * @param array &$messageInfo
 	 */
 	protected function fetchMessageInfo( $langCode, array &$messageInfo ) {
-		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$services = MediaWikiServices::getInstance();
+		$contLang = $services->getContentLanguage();
 		if ( $langCode ) {
 			$this->output( "\n... fetching message info for language: $langCode" );
 			$nonContentLanguage = true;
@@ -58,13 +59,17 @@ class DeleteEqualMessages extends Maintenance {
 
 		/* Based on SpecialAllmessages::reallyDoQuery #filter=modified */
 
-		$l10nCache = Language::getLocalisationCache();
+		$l10nCache = $services->getLocalisationCache();
 		$messageNames = $l10nCache->getSubitemList( 'en', 'messages' );
 		// Normalise message names for NS_MEDIAWIKI page_title
 		$messageNames = array_map( [ $contLang, 'ucfirst' ], $messageNames );
 
 		$statuses = AllMessagesTablePager::getCustomisedStatuses(
-			$messageNames, $langCode, $nonContentLanguage );
+			$messageNames,
+			$langCode,
+			$nonContentLanguage,
+			$this->getDB( DB_REPLICA )
+		);
 		// getCustomisedStatuses is stripping the sub page from the page titles, add it back
 		$titleSuffix = $nonContentLanguage ? "/$langCode" : '';
 
@@ -110,9 +115,11 @@ class DeleteEqualMessages extends Maintenance {
 
 		$this->output( 'Checking for pages with default message...' );
 
+		$services = MediaWikiServices::getInstance();
 		// Load message information
 		if ( $langCode ) {
-			$langCodes = Language::fetchLanguageNames( null, 'mwfile' );
+			$langCodes = $services->getLanguageNameUtils()
+				->getLanguageNames( null, 'mwfile' );
 			if ( $langCode === '*' ) {
 				// All valid lang-code subpages in NS_MEDIAWIKI that
 				// override the messsages in that language
@@ -176,25 +183,27 @@ class DeleteEqualMessages extends Maintenance {
 		// Handle deletion
 		$this->output( "\n...deleting equal messages (this may take a long time!)..." );
 		$dbw = $this->getDB( DB_MASTER );
+		$lbFactory = $services->getDBLoadBalancerFactory();
+		$wikiPageFactory = $services->getWikiPageFactory();
 		foreach ( $messageInfo['results'] as $result ) {
-			wfWaitForSlaves();
+			$lbFactory->waitForReplication();
 			$dbw->ping();
 			$title = Title::makeTitle( NS_MEDIAWIKI, $result['title'] );
 			$this->output( "\n* [[$title]]" );
-			$page = WikiPage::factory( $title );
-			$error = ''; // Passed by ref
-			$success = $page->doDeleteArticle( 'No longer required', false, 0, true, $error, $user );
-			if ( !$success ) {
+			$page = $wikiPageFactory->newFromTitle( $title );
+			$status = $page->doDeleteArticleReal( 'No longer required', $user );
+			if ( !$status->isOK() ) {
 				$this->output( " (Failed!)" );
 			}
 			if ( $result['hasTalk'] && $doDeleteTalk ) {
 				$title = Title::makeTitle( NS_MEDIAWIKI_TALK, $result['title'] );
 				$this->output( "\n* [[$title]]" );
-				$page = WikiPage::factory( $title );
-				$error = ''; // Passed by ref
-				$success = $page->doDeleteArticle( 'Orphaned talk page of no longer required message',
-					false, 0, true, $error, $user );
-				if ( !$success ) {
+				$page = $wikiPageFactory->newFromTitle( $title );
+				$status = $page->doDeleteArticleReal(
+					'Orphaned talk page of no longer required message',
+					$user
+				);
+				if ( !$status->isOK() ) {
 					$this->output( " (Failed!)" );
 				}
 			}

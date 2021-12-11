@@ -19,11 +19,16 @@
  * @ingroup Pager
  */
 
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\User\UserFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * @ingroup Pager
  */
-use MediaWiki\MediaWikiServices;
-
 class NewPagesPager extends ReverseChronologicalPager {
 
 	/**
@@ -36,17 +41,60 @@ class NewPagesPager extends ReverseChronologicalPager {
 	 */
 	protected $mForm;
 
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
+	/** @var HookRunner */
+	private $hookRunner;
+
+	/** @var PermissionManager */
+	private $permissionManager;
+
+	/** @var NamespaceInfo */
+	private $namespaceInfo;
+
+	/** @var ActorMigration */
+	private $actorMigration;
+
+	/** @var UserFactory */
+	private $userFactory;
+
 	/**
 	 * @param SpecialNewpages $form
 	 * @param FormOptions $opts
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param HookContainer $hookContainer
+	 * @param PermissionManager $permissionManager
+	 * @param ILoadBalancer $loadBalancer
+	 * @param NamespaceInfo $namespaceInfo
+	 * @param ActorMigration $actorMigration
+	 * @param UserFactory $userFactory
 	 */
-	public function __construct( $form, FormOptions $opts ) {
+	public function __construct(
+		$form,
+		FormOptions $opts,
+		LinkBatchFactory $linkBatchFactory,
+		HookContainer $hookContainer,
+		PermissionManager $permissionManager,
+		ILoadBalancer $loadBalancer,
+		NamespaceInfo $namespaceInfo,
+		ActorMigration $actorMigration,
+		UserFactory $userFactory
+	) {
+		// Set database before parent constructor to avoid setting it there with wfGetDB
+		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 		parent::__construct( $form->getContext() );
 		$this->mForm = $form;
 		$this->opts = $opts;
+		$this->linkBatchFactory = $linkBatchFactory;
+		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->permissionManager = $permissionManager;
+		$this->namespaceInfo = $namespaceInfo;
+		$this->actorMigration = $actorMigration;
+		$this->userFactory = $userFactory;
 	}
 
-	function getQueryInfo() {
+	public function getQueryInfo() {
 		$rcQuery = RecentChange::getQueryInfo();
 
 		$conds = [];
@@ -65,12 +113,13 @@ class NewPagesPager extends ReverseChronologicalPager {
 		}
 
 		if ( $user ) {
-			$conds[] = ActorMigration::newMigration()->getWhere(
-				$this->mDb, 'rc_user', User::newFromName( $user->getText(), false ), false
+			$userObj = $this->userFactory->newFromName( $user->getText(), UserFactory::RIGOR_NONE );
+			$conds[] = $this->actorMigration->getWhere(
+				$this->getDatabase(), 'rc_user', $userObj, false
 			)['conds'];
 		} elseif ( $this->canAnonymousUsersCreatePages() && $this->opts->getValue( 'hideliu' ) ) {
 			# If anons cannot make new pages, don't "exclude logged in users"!
-			$conds[] = ActorMigration::newMigration()->isAnon( $rcQuery['fields']['rc_user'] );
+			$conds[] = $this->actorMigration->isAnon( $rcQuery['fields']['rc_user'] );
 		}
 
 		$conds = array_merge( $conds, $this->getNamespaceCond() );
@@ -91,14 +140,13 @@ class NewPagesPager extends ReverseChronologicalPager {
 		// Allow changes to the New Pages query
 		$tables = array_merge( $rcQuery['tables'], [ 'page' ] );
 		$fields = array_merge( $rcQuery['fields'], [
-			'length' => 'page_len', 'rev_id' => 'page_latest', 'page_namespace', 'page_title'
+			'length' => 'page_len', 'rev_id' => 'page_latest', 'page_namespace', 'page_title',
+			'page_content_model',
 		] );
 		$join_conds = [ 'page' => [ 'JOIN', 'page_id=rc_cur_id' ] ] + $rcQuery['joins'];
 
-		// Avoid PHP 7.1 warning from passing $this by reference
-		$pager = $this;
-		Hooks::run( 'SpecialNewpagesConditions',
-			[ &$pager, $this->opts, &$conds, &$tables, &$fields, &$join_conds ] );
+		$this->hookRunner->onSpecialNewpagesConditions(
+			$this, $this->opts, $conds, $tables, $fields, $join_conds );
 
 		$info = [
 			'tables' => $tables,
@@ -122,33 +170,37 @@ class NewPagesPager extends ReverseChronologicalPager {
 	}
 
 	private function canAnonymousUsersCreatePages() {
-		$pm = MediaWikiServices::getInstance()->getPermissionManager();
-		return ( $pm->groupHasPermission( '*', 'createpage' ) ||
-			$pm->groupHasPermission( '*', 'createtalk' )
-		);
+		return $this->permissionManager->groupHasPermission( '*', 'createpage' ) ||
+			$this->permissionManager->groupHasPermission( '*', 'createtalk' );
 	}
 
 	// Based on ContribsPager.php
-	function getNamespaceCond() {
+	private function getNamespaceCond() {
 		$namespace = $this->opts->getValue( 'namespace' );
 		if ( $namespace === 'all' || $namespace === '' ) {
 			return [];
 		}
 
 		$namespace = intval( $namespace );
+		if ( $namespace < NS_MAIN ) {
+			// Negative namespaces are invalid
+			return [];
+		}
+
 		$invert = $this->opts->getValue( 'invert' );
 		$associated = $this->opts->getValue( 'associated' );
 
 		$eq_op = $invert ? '!=' : '=';
 		$bool_op = $invert ? 'AND' : 'OR';
 
-		$selectedNS = $this->mDb->addQuotes( $namespace );
+		$dbr = $this->getDatabase();
+		$selectedNS = $dbr->addQuotes( $namespace );
 		if ( !$associated ) {
 			return [ "rc_namespace $eq_op $selectedNS" ];
 		}
 
-		$associatedNS = $this->mDb->addQuotes(
-			MediaWikiServices::getInstance()->getNamespaceInfo()->getAssociated( $namespace )
+		$associatedNS = $dbr->addQuotes(
+			$this->namespaceInfo->getAssociated( $namespace )
 		);
 		return [
 			"rc_namespace $eq_op $selectedNS " .
@@ -157,17 +209,17 @@ class NewPagesPager extends ReverseChronologicalPager {
 		];
 	}
 
-	function getIndexField() {
+	public function getIndexField() {
 		return 'rc_timestamp';
 	}
 
-	function formatRow( $row ) {
+	public function formatRow( $row ) {
 		return $this->mForm->formatRow( $row );
 	}
 
 	protected function getStartBody() {
 		# Do a batch existence check on pages
-		$linkBatch = new LinkBatch();
+		$linkBatch = $this->linkBatchFactory->newLinkBatch();
 		foreach ( $this->mResult as $row ) {
 			$linkBatch->add( NS_USER, $row->rc_user_text );
 			$linkBatch->add( NS_USER_TALK, $row->rc_user_text );

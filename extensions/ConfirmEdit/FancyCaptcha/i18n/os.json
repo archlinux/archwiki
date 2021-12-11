@@ -1,5 +1,9 @@
 {
-	"@metadata": [],
+	"@metadata": {
+		"authors": [
+			"Amikeco"
+		]
+	},
 	"fancycaptcha-captcha": "Æдасдзинад бæлвырдгæнæн",
-	"fancycaptcha-imgcaptcha-ph": "Уæлдæр цы текст уыныс, уый бафысс"
+	"fancycaptcha-imgcaptcha-ph": "Нывыл цы текст уыныс, уый бафысс"
 }

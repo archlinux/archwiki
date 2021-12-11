@@ -26,7 +26,7 @@
 
 /**
  * Class representing a 'diff' between two sequences of strings.
- * @private
+ * @newable
  * @ingroup DifferenceEngine
  */
 class Diff {
@@ -44,6 +44,9 @@ class Diff {
 
 	/**
 	 * Computes diff between sequences of strings.
+	 *
+	 * @stable to call
+	 * @todo Don't do work in the constructor, use a service to create diffs instead (T257472).
 	 *
 	 * @param string[] $from_lines An array of strings.
 	 *   Typically these are lines from a file.
@@ -71,7 +74,7 @@ class Diff {
 	 *    $diff = new Diff($lines1, $lines2);
 	 *    $rev = $diff->reverse();
 	 *
-	 * @return Object A Diff object representing the inverse of the
+	 * @return self A Diff object representing the inverse of the
 	 *   original diff.
 	 */
 	public function reverse() {

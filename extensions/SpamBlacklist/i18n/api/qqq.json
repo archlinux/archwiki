@@ -1,5 +1,7 @@
 {
-	"@metadata": [],
+	"@metadata": {
+		"authors": []
+	},
 	"apihelp-spamblacklist-description": "{{doc-apihelp-description|spamblacklist}}",
 	"apihelp-spamblacklist-example-1": "{{doc-apihelp-example|spamblacklist}}",
 	"apihelp-spamblacklist-param-url": "{{doc-apihelp-param|spamblacklist|url}}",

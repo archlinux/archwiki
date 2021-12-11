@@ -4,13 +4,10 @@
  * @covers ChangesListFilterGroup
  */
 class ChangesListFilterGroupTest extends \MediaWikiUnitTestCase {
-	/**
-	 * phpcs:disable Generic.Files.LineLength
-	 * @expectedException MWException
-	 * @expectedExceptionMessage Group names may not contain '_'.  Use the naming convention: 'camelCase'
-	 * phpcs:enable
-	 */
 	public function testReservedCharacter() {
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage(
+			"Group names may not contain '_'.  Use the naming convention: 'camelCase'" );
 		new MockChangesListFilterGroup(
 			[
 				'type' => 'some_type',
@@ -44,7 +41,7 @@ class ChangesListFilterGroupTest extends \MediaWikiUnitTestCase {
 				-4,
 			],
 			array_map(
-				function ( $f ) {
+				static function ( $f ) {
 					return $f->getPriority();
 				},
 				array_values( $filters )

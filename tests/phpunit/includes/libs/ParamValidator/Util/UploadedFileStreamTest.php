@@ -5,6 +5,7 @@ namespace Wikimedia\ParamValidator\Util;
 require_once __DIR__ . '/UploadedFileTestBase.php';
 
 use RuntimeException;
+use TypeError;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\TestingAccessWrapper;
 
@@ -13,26 +14,26 @@ use Wikimedia\TestingAccessWrapper;
  */
 class UploadedFileStreamTest extends UploadedFileTestBase {
 
-	/**
-	 * @expectedException RuntimeException
-	 * @expectedExceptionMessage Failed to open file:
-	 */
 	public function testConstruct_doesNotExist() {
 		$filename = $this->makeTemp( __FUNCTION__ );
 		unlink( $filename );
 
 		$this->assertFileNotExists( $filename, 'sanity check' );
+		$this->expectException( RuntimeException::class );
+		$this->expectExceptionMessage( "Failed to open file:" );
 		$stream = new UploadedFileStream( $filename );
 	}
 
-	/**
-	 * @expectedException RuntimeException
-	 * @expectedExceptionMessage Failed to open file:
-	 */
 	public function testConstruct_notReadable() {
+		if ( wfIsWindows() ) {
+			$this->markTestSkipped( "Skip test, since chmod does not work on windows" );
+		}
+
 		$filename = $this->makeTemp( __FUNCTION__ );
 
 		chmod( $filename, 0000 );
+		$this->expectException( RuntimeException::class );
+		$this->expectExceptionMessage( "Failed to open file:" );
 		$stream = new UploadedFileStream( $filename );
 	}
 
@@ -42,7 +43,12 @@ class UploadedFileStreamTest extends UploadedFileTestBase {
 		$fp = TestingAccessWrapper::newFromObject( $stream )->fp;
 		$this->assertSame( 'f', fread( $fp, 1 ), 'sanity check' );
 		unset( $stream );
-		$this->assertFalse( AtEase::quietCall( 'fread', $fp, 1 ) );
+		try {
+			// PHP 7 raises warnings
+			$this->assertFalse( AtEase::quietCall( 'fread', $fp, 1 ) );
+		} catch ( TypeError $ex ) {
+			// PHP 8 throws
+		}
 	}
 
 	public function testToString() {
@@ -69,7 +75,7 @@ class UploadedFileStreamTest extends UploadedFileTestBase {
 			->setConstructorArgs( [ $filename ] )
 			->setMethods( [ 'getContents' ] )
 			->getMock();
-		$stream->method( 'getContents' )->willReturnCallback( function () {
+		$stream->method( 'getContents' )->willReturnCallback( static function () {
 			throw new \Error( 'Bogus' );
 		} );
 		$this->assertSame( '', (string)$stream );
@@ -185,7 +191,7 @@ class UploadedFileStreamTest extends UploadedFileTestBase {
 		// No error even if the fd goes bad
 		$stream = new UploadedFileStream( $filename );
 		fclose( TestingAccessWrapper::newFromObject( $stream )->fp );
-		$this->assertInternalType( 'boolean', $stream->eof() );
+		$this->assertIsBool( $stream->eof() );
 	}
 
 	public function testIsFuncs() {

@@ -7,21 +7,21 @@ namespace jakobo\HOTP;
  * Supported formats include hex, decimal, string, and HOTP
 
  * @author Jakob Heuser (firstname)@felocity.com
- * @copyright 2011
+ * @copyright 2011-2020
  * @license BSD-3-Clause
  * @version 1.0
  */
 class HOTPResult {
     protected $hash;
-    protected $binary;
     protected $decimal;
     protected $hex;
 
     /**
      * Build an HOTP Result
      * @param string $value the value to construct with
+     * @codeCoverageIgnore
      */
-    public function __construct( $value ) {
+    public function __construct( string $value ) {
         // store raw
         $this->hash = $value;
     }
@@ -30,7 +30,7 @@ class HOTPResult {
      * Returns the string version of the HOTP
      * @return string
      */
-    public function toString() {
+    public function toString(): string {
         return $this->hash;
     }
 
@@ -38,9 +38,8 @@ class HOTPResult {
      * Returns the hex version of the HOTP
      * @return string
      */
-    public function toHex() {
-        if( !$this->hex )
-        {
+    public function toHex(): string {
+        if( !$this->hex ) {
             $this->hex = dechex( $this->toDec() );
         }
         return $this->hex;
@@ -50,15 +49,13 @@ class HOTPResult {
      * Returns the decimal version of the HOTP
      * @return int
      */
-    public function toDec() {
-        if( !$this->decimal )
-        {
+    public function toDec(): int {
+        if( !$this->decimal ) {
             // store calculate decimal
-            $hmac_result = array();
+            $hmac_result = [];
 
             // Convert to decimal
-            foreach ( str_split( $this->hash,2 ) as $hex )
-            {
+            foreach ( str_split( $this->hash,2 ) as $hex ) {
                $hmac_result[] = hexdec($hex);
             }
 
@@ -79,7 +76,7 @@ class HOTPResult {
      * @param int $length the length of the HOTP to return
      * @return string
      */
-    public function toHOTP( $length ) {
+    public function toHOTP( int $length ): string {
         $str = str_pad( $this->toDec(), $length, "0", STR_PAD_LEFT );
         return substr( $str, ( -1 * $length ) );
     }

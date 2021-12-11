@@ -21,6 +21,9 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * Implements Special:Allpages
  *
@@ -32,30 +35,44 @@ class SpecialAllPages extends IncludableSpecialPage {
 	/**
 	 * Maximum number of pages to show on single subpage.
 	 *
-	 * @var int $maxPerPage
+	 * @var int
 	 */
 	protected $maxPerPage = 345;
 
 	/**
 	 * Determines, which message describes the input field 'nsfrom'.
 	 *
-	 * @var string $nsfromMsg
+	 * @var string
 	 */
 	protected $nsfromMsg = 'allpagesfrom';
 
+	/** @var ILoadBalancer */
+	private $loadBalancer;
+
+	/** @var SearchEngineFactory */
+	private $searchEngineFactory;
+
 	/**
-	 * @param string $name Name of the special page, as seen in links and URLs (default: 'Allpages')
+	 * @param ILoadBalancer|null $loadBalancer
+	 * @param SearchEngineFactory|null $searchEngineFactory
 	 */
-	function __construct( $name = 'Allpages' ) {
-		parent::__construct( $name );
+	public function __construct(
+		ILoadBalancer $loadBalancer = null,
+		SearchEngineFactory $searchEngineFactory = null
+	) {
+		parent::__construct( 'Allpages' );
+		// This class is extended and therefore falls back to global state - T265309
+		$services = MediaWikiServices::getInstance();
+		$this->loadBalancer = $loadBalancer ?? $services->getDBLoadBalancer();
+		$this->searchEngineFactory = $searchEngineFactory ?? $services->getSearchEngineFactory();
 	}
 
 	/**
 	 * Entry point : initialise variables and call subfunctions.
 	 *
-	 * @param string $par Becomes "FOO" when called like Special:Allpages/FOO (default null)
+	 * @param string|null $par Becomes "FOO" when called like Special:Allpages/FOO
 	 */
-	function execute( $par ) {
+	public function execute( $par ) {
 		$request = $this->getRequest();
 		$out = $this->getOutput();
 
@@ -158,7 +175,9 @@ class SpecialAllPages extends IncludableSpecialPage {
 	 * @param string $to List all pages to this name
 	 * @param bool $hideredirects Don't show redirects (default false)
 	 */
-	function showToplevel( $namespace = NS_MAIN, $from = '', $to = '', $hideredirects = false ) {
+	private function showToplevel(
+		$namespace = NS_MAIN, $from = '', $to = '', $hideredirects = false
+	) {
 		$from = Title::makeTitleSafe( $namespace, $from );
 		$to = Title::makeTitleSafe( $namespace, $to );
 		$from = ( $from && $from->isLocal() ) ? $from->getDBkey() : null;
@@ -173,7 +192,9 @@ class SpecialAllPages extends IncludableSpecialPage {
 	 * @param string|false $to List all pages to this name (default false)
 	 * @param bool $hideredirects Don't show redirects (default false)
 	 */
-	function showChunk( $namespace = NS_MAIN, $from = false, $to = false, $hideredirects = false ) {
+	private function showChunk(
+		$namespace = NS_MAIN, $from = false, $to = false, $hideredirects = false
+	) {
 		$output = $this->getOutput();
 
 		$fromList = $this->getNamespaceKeyAndText( $namespace, $from );
@@ -192,7 +213,7 @@ class SpecialAllPages extends IncludableSpecialPage {
 			list( $namespace, $fromKey, $from ) = $fromList;
 			list( , $toKey, $to ) = $toList;
 
-			$dbr = wfGetDB( DB_REPLICA );
+			$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 			$filterConds = [ 'page_namespace' => $namespace ];
 			if ( $hideredirects ) {
 				$filterConds['page_is_redirect'] = 0;
@@ -378,7 +399,7 @@ class SpecialAllPages extends IncludableSpecialPage {
 	 * @return string[] Matching subpages
 	 */
 	public function prefixSearchSubpages( $search, $limit, $offset ) {
-		return $this->prefixSearchString( $search, $limit, $offset );
+		return $this->prefixSearchString( $search, $limit, $offset, $this->searchEngineFactory );
 	}
 
 	protected function getGroupName() {

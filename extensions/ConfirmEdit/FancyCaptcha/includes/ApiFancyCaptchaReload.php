@@ -17,6 +17,9 @@ class ApiFancyCaptchaReload extends ApiBase {
 		return true;
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getAllowedParams() {
 		return [];
 	}

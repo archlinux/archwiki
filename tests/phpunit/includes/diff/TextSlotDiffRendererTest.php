@@ -1,21 +1,30 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Assert\ParameterTypeException;
 
 /**
  * @covers TextSlotDiffRenderer
  */
-class TextSlotDiffRendererTest extends MediaWikiTestCase {
+class TextSlotDiffRendererTest extends MediaWikiIntegrationTestCase {
+
+	public function testGetExtraCacheKeys() {
+		$slotDiffRenderer = $this->getTextSlotDiffRenderer();
+		$key = $slotDiffRenderer->getExtraCacheKeys();
+		$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_WIKIDIFF2_INLINE );
+		$inlineKey = $slotDiffRenderer->getExtraCacheKeys();
+		$this->assertSame( $key, [] );
+		$this->assertSame( $inlineKey, [ phpversion( 'wikidiff2' ), 'inline' ] );
+	}
 
 	/**
 	 * @dataProvider provideGetDiff
 	 * @param array|null $oldContentArgs To pass to makeContent() (if not null)
 	 * @param array|null $newContentArgs
 	 * @param string|Exception $expectedResult
-	 * @throws Exception
 	 */
 	public function testGetDiff(
-		array $oldContentArgs = null, array $newContentArgs = null, $expectedResult
+		?array $oldContentArgs, ?array $newContentArgs, $expectedResult
 	) {
 		$this->mergeMwGlobalArrayValue( 'wgContentHandlers', [
 			'testing' => DummyContentHandlerForTesting::class,
@@ -26,7 +35,8 @@ class TextSlotDiffRendererTest extends MediaWikiTestCase {
 		$newContent = $newContentArgs ? self::makeContent( ...$newContentArgs ) : null;
 
 		if ( $expectedResult instanceof Exception ) {
-			$this->setExpectedException( get_class( $expectedResult ), $expectedResult->getMessage() );
+			$this->expectException( get_class( $expectedResult ) );
+			$this->expectExceptionMessage( $expectedResult->getMessage() );
 		}
 
 		$slotDiffRenderer = $this->getTextSlotDiffRenderer();
@@ -86,14 +96,15 @@ class TextSlotDiffRendererTest extends MediaWikiTestCase {
 	private function getTextSlotDiffRenderer() {
 		$slotDiffRenderer = new TextSlotDiffRenderer();
 		$slotDiffRenderer->setStatsdDataFactory( new NullStatsdDataFactory() );
-		$slotDiffRenderer->setLanguage( Language::factory( 'en' ) );
+		$slotDiffRenderer->setLanguage(
+			MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( 'en' ) );
 		$slotDiffRenderer->setEngine( TextSlotDiffRenderer::ENGINE_PHP );
 		return $slotDiffRenderer;
 	}
 
 	/**
 	 * Convert a HTML diff to a human-readable format and hopefully make the test less fragile.
-	 * @param string diff
+	 * @param string $diff
 	 * @return string
 	 */
 	private function getPlainDiff( $diff ) {
@@ -101,6 +112,10 @@ class TextSlotDiffRendererTest extends MediaWikiTestCase {
 			html_entity_decode( '&nbsp;' ) => ' ',
 			html_entity_decode( '&minus;' ) => '-',
 		];
+		// Preserve markers when stripping tags
+		$diff = str_replace( '<td class="diff-marker"></td>', ' ', $diff );
+		$diff = str_replace( '<td colspan="2"></td>', ' ', $diff );
+		$diff = preg_replace( '/data-marker="([^"]*)">/', '>$1', $diff );
 		return str_replace( array_keys( $replacements ), array_values( $replacements ),
 			trim( strip_tags( $diff ), "\n" ) );
 	}

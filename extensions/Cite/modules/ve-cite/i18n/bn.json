@@ -2,16 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Aftab1995",
+			"Aftabuzzaman",
 			"Bellayet",
 			"Jayantanth",
+			"NahidSultan",
 			"Nasir8891",
+			"RYasmeen (WMF)",
 			"Runab",
 			"Sayak Sarkar",
-			"Tauhid16",
-			"Aftabuzzaman",
-			"RYasmeen (WMF)",
 			"Sayma Jahan",
-			"NahidSultan",
+			"Tauhid16",
 			"আফতাবুজ্জামান"
 		]
 	},
@@ -27,10 +27,11 @@
 	"cite-ve-changedesc-reflist-group-to": "তথ্যসূত্রের তালিকার দল সাধারণ দলে থেকে \"$1\"-এ পরিবর্তিত হয়েছে",
 	"cite-ve-changedesc-reflist-responsive-set": "প্রতিক্রিয়াশীল কলামে প্রদর্শিত হতে তথ্যসূত্রের তালিকাটি পরিবর্তিত করে",
 	"cite-ve-changedesc-reflist-responsive-unset": "কেবলমাত্র একটি কলামে প্রদর্শিত হতে তথ্যসূত্রের তালিকাটি পরিবর্তিত করে",
-	"cite-ve-changedesc-reflist-item-id": "তথ্যসূত্রের সূচক পরিবর্তিত হয়েছে",
 	"cite-ve-citationneeded-button": "উদ্ধৃতি যোগ করুন",
+	"cite-ve-citationneeded-description": "একজন সম্পাদক ইঙ্গিত করেছেন যে এই দাবিটির জন্য একটি নির্ভরযোগ্য উৎসের উদ্ধৃতি প্রয়োজন।",
 	"cite-ve-citationneeded-title": "উদ্ধৃতি প্রয়োজন",
 	"cite-ve-dialog-reference-editing-reused": "এই তথ্যসূত্রটি এই পাতায় {{PLURAL:$1|একবার|2=দুইবার|$1 বার}} ব্যবহৃত হয়েছে।",
+	"cite-ve-dialog-reference-editing-reused-long": "এই তথ্যসূত্রটি এই পাতায় {{PLURAL:$1|একবার|2=দুইবার|$1 বার}} ব্যবহৃত হয়েছে। এখানে করা পরিবর্তনগুলি যেখানে এই তথ্যসূত্রটি পুনরায় ব্যবহৃত হয়েছে সেখানেও প্রয়োগ করা হবে।",
 	"cite-ve-dialog-reference-options-group-label": "এই দল ব্যবহার করুন",
 	"cite-ve-dialog-reference-options-group-placeholder": "সাধারণ তথ্যসূত্র",
 	"cite-ve-dialog-reference-options-name-label": "এই নামে পুনঃব্যবহার করুন",

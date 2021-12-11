@@ -1,20 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abanima",
 			"Aiman titi",
 			"DRIHEM",
-			"Meno25",
-			"OsamaK",
-			"روخو",
-			"Abanima",
 			"Maroen1990",
+			"Meno25",
 			"Mr. Ibrahem",
-			"ديفيد"
+			"OsamaK",
+			"ديفيد",
+			"روخو"
 		]
 	},
 	"gadgets-desc": "يسمح للمستخدمين باختيار [[Special:Gadgets|إضافات سي إس إس وجافاسكريبت]] معدلة في [[Special:Preferences#mw-prefsection-gadgets|تفضيلاتهم]]",
 	"prefs-gadgets": "الإضافات",
-	"gadgets-prefstext": "بالأسفل قائمة بالإضافات الخاصة التي يمكن تفعيلها لحسابك.\nهذه الإضافات مبنية على الأغلب على جافا سكريبت، لكي تعمل الإضافات يجب أن يكون جافا سكريبت مفعل في متصفحك.\nلاحظ أن هذه الإضافات لن يكون لها أي تأثير على صفحة التفضيلات هذه.\n\nأيضا لاحظ أن هذه الإضافات الخاصة ليست جزءا من برنامج ميدياويكي، ويتم تطويرها وصيانتها عادة بواسطة مستخدمين في الويكي المحلي الخاص بك.\nالإداريون المحليون يمكنهم تعديل [[MediaWiki:Gadgets-definition|التعريفات]]\nو [[Special:Gadgets|الوصوفات]] للإضافات المتوفرة. عدد المستخدمين لكل إضافة في هذه الويكي معروضة في  [[Special:GadgetUsage|إحصاءات استخدام الإضافات]].",
+	"gadgets-prefstext": "فيما يلي قائمة بالأدوات الخاصة التي يمكنك تمكينها لحسابك.\nتعتمد هذه الأدوات في الغالب على جافا سكريبت؛ لذلك يجب تمكين جافا سكريبت في متصفحك حتى تعمل.\nلاحظ أن هذه الأدوات لن يكون لها أي تأثير على صفحة التفضيلات هذه.\n\nلاحظ أيضا أن هذه الأدوات الخاصة ليست جزءا من برنامج ميدياويكي، وعادةً ما يتم تطويرها وصيانتها من قبل المستخدمين على الويكي المحلي الخاص بك.\nيمكن لإداريي الواجهة المحليين تحرير [[MediaWiki:Gadgets-definition|تعريفات]]  الأدوات المتاحة، ويمكن للإداريين المحليين تحرير [[Special:Gadgets|أوصافها]]، حيث يمكنك رؤية النص المصدري لكل إضافة. يتم سرد أرقام المستخدمين لكل أداة على هذا الويكي في[[Special:GadgetUsage|إحصائيات استخدام الأدوات]].",
 	"gadgets": "إضافات",
 	"gadgetusage": "إحصاءات استخدام الإضافات",
 	"gadgetusage-gadget": "الإضافة",
@@ -30,7 +30,7 @@
 	"gadgets-required-rights": "يتطلب {{PLURAL:$2|الحق|الحقوق}} التالية:\n\n$1",
 	"gadgets-required-skins": "متاحة على {{PLURAL:$2|$1 skin|following skins: $1}}.",
 	"gadgets-default": "تمكين الجميع بشكل افتراضي.",
-	"gadgets-legacy": "الإضافة لم يتم تحميلها. من فضلك تحول إلى ResourceLoader. ([https://www.mediawiki.org/wiki/ResourceLoader/Migration_guide_(users) اعرف المزيد])",
+	"gadgets-legacy": "الإضافة لم يتم تحميلها. من فضلك تحول إلى ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) اعرف المزيد])",
 	"gadgets-export": "صدّر",
 	"gadgets-export-title": "أداة تصدير",
 	"gadgets-not-found": "الأداة \"$1\" لم يتم العثور عليها.",

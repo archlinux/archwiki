@@ -1,11 +1,15 @@
 <?php
 
+use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+
 /**
  * Helper functions for the login form that need to be shared with other special pages
  * (such as CentralAuth's SpecialCentralLogin).
  * @since 1.27
  */
 class LoginHelper extends ContextSource {
+	use ProtectedHookAccessorTrait;
+
 	/**
 	 * Valid error and warning messages
 	 *
@@ -38,7 +42,7 @@ class LoginHelper extends ContextSource {
 		static $messages = null;
 		if ( !$messages ) {
 			$messages = self::$validErrorMessages;
-			Hooks::run( 'LoginFormValidErrorMessages', [ &$messages ] );
+			Hooks::runner()->onLoginFormValidErrorMessages( $messages );
 		}
 
 		return $messages;
@@ -59,7 +63,8 @@ class LoginHelper extends ContextSource {
 	 *    - successredirect: send an HTTP redirect using $wgRedirectOnLogin if needed
 	 * @param string $returnTo
 	 * @param array|string $returnToQuery
-	 * @param bool $stickHTTPS Keep redirect link on HTTPS
+	 * @param bool $stickHTTPS Keep redirect link on HTTPS. Ignored (treated as
+	 *   true) if $wgForceHTTPS is true.
 	 */
 	public function showReturnToPage(
 		$type, $returnTo = '', $returnToQuery = '', $stickHTTPS = false
@@ -73,16 +78,18 @@ class LoginHelper extends ContextSource {
 		}
 
 		// Allow modification of redirect behavior
-		Hooks::run( 'PostLoginRedirect', [ &$returnTo, &$returnToQuery, &$type ] );
+		$this->getHookRunner()->onPostLoginRedirect( $returnTo, $returnToQuery, $type );
 
 		$returnToTitle = Title::newFromText( $returnTo ) ?: Title::newMainPage();
 
-		if ( $config->get( 'SecureLogin' ) && !$stickHTTPS ) {
-			$options = [ 'http' ];
-			$proto = PROTO_HTTP;
-		} elseif ( $config->get( 'SecureLogin' ) ) {
+		if ( $config->get( 'ForceHTTPS' )
+			|| ( $config->get( 'SecureLogin' ) && $stickHTTPS )
+		) {
 			$options = [ 'https' ];
 			$proto = PROTO_HTTPS;
+		} elseif ( $config->get( 'SecureLogin' ) && !$stickHTTPS ) {
+			$options = [ 'http' ];
+			$proto = PROTO_HTTP;
 		} else {
 			$options = [];
 			$proto = PROTO_RELATIVE;

@@ -24,7 +24,9 @@
  * @author Soxred93 <soxred93@gmail.com>
  */
 
+use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Querypage that lists the most wanted files
@@ -33,11 +35,30 @@ use MediaWiki\MediaWikiServices;
  */
 class WantedFilesPage extends WantedQueryPage {
 
-	function __construct( $name = 'Wantedfiles' ) {
-		parent::__construct( $name );
+	/** @var RepoGroup */
+	private $repoGroup;
+
+	/**
+	 * @param RepoGroup|string $repoGroup
+	 * @param ILoadBalancer|null $loadBalancer
+	 * @param LinkBatchFactory|null $linkBatchFactory
+	 */
+	public function __construct(
+		$repoGroup,
+		ILoadBalancer $loadBalancer = null,
+		LinkBatchFactory $linkBatchFactory = null
+	) {
+		parent::__construct( is_string( $repoGroup ) ? $repoGroup : 'Wantedfiles' );
+		// This class is extended and therefor fallback to global state - T265301
+		$services = MediaWikiServices::getInstance();
+		$this->repoGroup = $repoGroup instanceof RepoGroup
+			? $repoGroup
+			: $services->getRepoGroup();
+		$this->setDBLoadBalancer( $loadBalancer ?? $services->getDBLoadBalancer() );
+		$this->setLinkBatchFactory( $linkBatchFactory ?? $services->getLinkBatchFactory() );
 	}
 
-	function getPageHeader() {
+	protected function getPageHeader() {
 		# Specifically setting to use "Wanted Files" (NS_MAIN) as title, so as to get what
 		# category would be used on main namespace pages, for those tricky wikipedia
 		# admins who like to do {{#ifeq:{{NAMESPACE}}|foo|bar|....}}.
@@ -79,7 +100,7 @@ class WantedFilesPage extends WantedQueryPage {
 	 * @return bool
 	 */
 	protected function likelyToHaveFalsePositives() {
-		return RepoGroup::singleton()->hasForeignRepos();
+		return $this->repoGroup->hasForeignRepos();
 	}
 
 	/**
@@ -92,7 +113,7 @@ class WantedFilesPage extends WantedQueryPage {
 	 * redirects.
 	 * @return bool
 	 */
-	function forceExistenceCheck() {
+	protected function forceExistenceCheck() {
 		return true;
 	}
 
@@ -106,10 +127,10 @@ class WantedFilesPage extends WantedQueryPage {
 	 * @return bool
 	 */
 	protected function existenceCheck( Title $title ) {
-		return (bool)MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
+		return (bool)$this->repoGroup->findFile( $title );
 	}
 
-	function getQueryInfo() {
+	public function getQueryInfo() {
 		return [
 			'tables' => [
 				'imagelinks',

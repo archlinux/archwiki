@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Avjoska",
-			"Pikne",
-			"Boxmein",
 			"Amire80",
+			"Avjoska",
+			"Boxmein",
+			"Pikne",
 			"Roland",
 			"Suwa"
 		]
@@ -21,7 +21,6 @@
 	"cite-ve-changedesc-reflist-group-to": "Vahetatud viiteloendi üldviidete rühm rühma \"$1\" vastu",
 	"cite-ve-changedesc-reflist-responsive-set": "Vahetatud viiteloendi kuva isereguleeruvate veergude vastu",
 	"cite-ve-changedesc-reflist-responsive-unset": "Vahetatud viiteloendi kuva ainult ühe veeru vastu",
-	"cite-ve-changedesc-reflist-item-id": "Vahetatud viite indeks",
 	"cite-ve-dialog-reference-editing-reused": "Seda viidet on sellel leheküljel kasutatud {{PLURAL:$1|ühel korral|$1 korda}}.",
 	"cite-ve-dialog-reference-editing-reused-long": "Seda viidet on sellel leheküljel kasutatud {{PLURAL:$1|ühel korral|2=kaks korda|$1 korda}}. Siin tehtud muudatused rakenduvad igas kohas, kus seda viidet kasutatakse.",
 	"cite-ve-dialog-reference-options-group-label": "Viiterühm",

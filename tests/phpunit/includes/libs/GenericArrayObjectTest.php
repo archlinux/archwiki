@@ -164,7 +164,7 @@ abstract class GenericArrayObjectTest extends PHPUnit\Framework\TestCase {
 
 		$this->assertEquals( $listSize, $list->count() );
 
-		$this->checkTypeChecks( function ( GenericArrayObject $list, $element ) {
+		$this->checkTypeChecks( static function ( GenericArrayObject $list, $element ) {
 			$list->append( $element );
 		} );
 	}
@@ -180,11 +180,11 @@ abstract class GenericArrayObjectTest extends PHPUnit\Framework\TestCase {
 
 		$elementClass = $list->getObjectType();
 
-		foreach ( [ 42, 'foo', [], new stdClass(), 4.2 ] as $element ) {
+		foreach ( [ 42, 'foo', [], (object)[], 4.2 ] as $element ) {
 			$validValid = $element instanceof $elementClass;
 
 			try {
-				call_user_func( $function, $list, $element );
+				$function( $list, $element );
 				$valid = true;
 			} catch ( InvalidArgumentException $exception ) {
 				$valid = false;
@@ -248,7 +248,7 @@ abstract class GenericArrayObjectTest extends PHPUnit\Framework\TestCase {
 
 		$this->assertEquals( count( $elements ), $list->count() );
 
-		$this->checkTypeChecks( function ( GenericArrayObject $list, $element ) {
+		$this->checkTypeChecks( static function ( GenericArrayObject $list, $element ) {
 			$list->offsetSet( mt_rand(), $element );
 		} );
 	}
@@ -269,7 +269,7 @@ abstract class GenericArrayObjectTest extends PHPUnit\Framework\TestCase {
 		$copy = unserialize( $serialization );
 
 		$this->assertEquals( $serialization, serialize( $copy ) );
-		$this->assertEquals( count( $list ), count( $copy ) );
+		$this->assertSame( count( $list ), count( $copy ) );
 
 		$list = $list->getArrayCopy();
 		$copy = $copy->getArrayCopy();

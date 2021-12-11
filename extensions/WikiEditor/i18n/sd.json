@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mehtab ahmed",
-			"Indus Asia"
+			"Indus Asia",
+			"Mehtab ahmed"
 		]
 	},
 	"wikieditor": "متقدم وڪي‌ٽيڪسٽ سنوار انٽرفيس",
@@ -10,6 +10,7 @@
 	"wikieditor-wikitext-tab": "وڪي‌ٽيڪسٽ",
 	"wikieditor-loading": "لاهيندي…",
 	"wikieditor-toolbar": "سنوار اوزار-پٽي",
+	"wikieditor-toolbar-desc": "متقدم استعمال-ڪاري سان صفحي جي اوزار-پٽي سنواريو",
 	"wikieditor-toolbar-preference": "سنوار اوزار-پٽي کي قابلِڪار بڻايو",
 	"wikieditor-toolbar-preference-help": "ھن کي ڪڏھن ڪڏھن '2010 وڪي‌ٽيڪسٽ سنوارگاھ' پڻ چيو ويندو آھي.",
 	"wikieditor-toolbar-loading": "لاهيندي…",
@@ -44,7 +45,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "اندروني ڳنڍڻو",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "خارجي ڳنڍڻو",
 	"wikieditor-toolbar-tool-link-empty": "توھان ڳنڍڻ لاءِ ڪجھ بہ داخل نہ ڪيو.",
-	"wikieditor-toolbar-tool-file": "جَڙيل فائيل",
+	"wikieditor-toolbar-tool-file": "عڪس ۽ ميڊيا",
 	"wikieditor-toolbar-tool-file-example": "مثال.jpg",
 	"wikieditor-toolbar-tool-file-title": "فائل وجھو",
 	"wikieditor-toolbar-file-target": "فائيل نانءُ:",
@@ -107,6 +108,7 @@
 	"wikieditor-toolbar-tool-table-preview": "پيش-نگاھ",
 	"wikieditor-toolbar-tool-table-insert": "درج ڪريو",
 	"wikieditor-toolbar-tool-table-cancel": "رد",
+	"wikieditor-toolbar-tool-table-toomany": "ھن ڊايلاگ سان $1 کان وڌيڪ {{PLURAL:$1|خانن}} واري جدول وجھڻ ممڪن نہ آھي.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "توھان قطارن ۽ ڪالمن لاءِ قابلِڪار نگ داخل ناھي ڪيو.",
 	"wikieditor-toolbar-tool-table-zero": "توھان ٻڙي ڪالمن يا قطارن سان جدول نٿا وجھي سگھو.",
 	"wikieditor-toolbar-tool-replace": "ڳوليو ۽ مٽايو",

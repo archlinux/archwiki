@@ -13,7 +13,7 @@
 	"captcha-info-help": "Descriziona d' 'o CAPTCHA",
 	"captcha-id-label": "ID d' 'o CAPTCHA",
 	"captcha-id-help": "Stu valore s'adda mannà arreto senza cagnà.",
-	"captcha-addurl": "'O cagnamiento tuojo azzecca cullegamiente 'e fore.\nPe' putè aiutà a pruteggere annanz' 'o spam automateco, pe' piacere rispunnette 'e dumanne ca cumpareno abbascio 'a casciulella ([[Special:Captcha/help|cchiù nfurmaziune]]):",
+	"captcha-addurl": "'O cagnamiento tujo azzecca cullegamiente 'a fore.\nPe putè aiutà a pruteggere annanz' 'o spam automateco, pe piacere rispunnitte 'e dumanne ca cumpareno abbascio 'a casciulella ([[Special:Captcha/help|cchiù nfurmaziune]]):",
 	"captcha-badlogin": "Pe' pruteggere sta wiki 'a coccheruno ca se futtesse 'e password automaticamente, ve cercammo gentilmente 'e ve ffà sta somma facile facile ccà abbascio e nce miettere 'a risposta int' 'a casciulella ([[Special:Captcha/help|cchiù nfurmaziune]]):",
 	"captcha-createaccount": "Pe' pruteggere sta wiki 'a coccheruno ca se criase nu melione 'e cunte, ve cercammo gentilmente 'e ve ffà sta somma facile facile ccà abbascio e nce miettere 'a risposta int' 'a casciulella ([[Special:Captcha/help|cchiù nfurmaziune]]):",
 	"captcha-createaccount-fail": "Codece 'e cunferma CAPTCHA errato o mancante.",

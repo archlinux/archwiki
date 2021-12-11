@@ -44,7 +44,11 @@ class CreditsAction extends FormlessAction {
 	 * @return string HTML
 	 */
 	public function onView() {
-		if ( $this->page->getID() == 0 ) {
+		$this->getOutput()->addModuleStyles( [
+			'mediawiki.action.styles',
+		] );
+
+		if ( $this->getWikiPage()->getId() == 0 ) {
 			$s = $this->msg( 'nocredits' )->parse();
 		} else {
 			$s = $this->getCredits( -1 );
@@ -64,7 +68,7 @@ class CreditsAction extends FormlessAction {
 		$s = '';
 
 		if ( $cnt != 0 ) {
-			$s = $this->getAuthor( $this->page );
+			$s = $this->getAuthor();
 			if ( $cnt > 1 || $cnt < 0 ) {
 				$s .= ' ' . $this->getContributors( $cnt - 1, $showIfMax );
 			}
@@ -75,10 +79,11 @@ class CreditsAction extends FormlessAction {
 
 	/**
 	 * Get the last author with the last modification time
-	 * @param Page $page
+	 *
 	 * @return string HTML
 	 */
-	protected function getAuthor( Page $page ) {
+	private function getAuthor() {
+		$page = $this->getWikiPage();
 		$user = User::newFromName( $page->getUserText(), false );
 
 		$timestamp = $page->getTimestamp();
@@ -113,7 +118,7 @@ class CreditsAction extends FormlessAction {
 	 * @return string Html
 	 */
 	protected function getContributors( $cnt, $showIfMax ) {
-		$contributors = $this->page->getContributors();
+		$contributors = $this->getWikiPage()->getContributors();
 
 		$others_link = false;
 
@@ -134,7 +139,7 @@ class CreditsAction extends FormlessAction {
 		/** @var User $user */
 		foreach ( $contributors as $user ) {
 			$cnt--;
-			if ( $user->isLoggedIn() ) {
+			if ( $user->isRegistered() ) {
 				$link = $this->link( $user );
 				if ( $this->canShowRealUserName() && $user->getRealName() ) {
 					$real_names[] = $link;

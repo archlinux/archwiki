@@ -29,12 +29,16 @@
  * Extends DiffOp. Used to mark strings that have been
  * added from the first string array.
  *
- * @private
+ * @internal
  * @ingroup DifferenceEngine
  */
 class DiffOpAdd extends DiffOp {
+	/** @inheritDoc */
 	public $type = 'add';
 
+	/**
+	 * @param string[]|false $lines
+	 */
 	public function __construct( $lines ) {
 		$this->closing = $lines;
 		$this->orig = false;

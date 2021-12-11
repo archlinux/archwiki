@@ -62,6 +62,14 @@ abstract class CachedAction extends FormlessAction implements ICacheHelper {
 	 */
 	protected $cacheEnabled = true;
 
+	public function __construct(
+		Page $page,
+		IContextSource $context = null
+	) {
+		parent::__construct( $page, $context );
+		wfDeprecated( __CLASS__, '1.36' );
+	}
+
 	/**
 	 * Sets if the cache should be enabled or not.
 	 *
@@ -168,7 +176,7 @@ abstract class CachedAction extends FormlessAction implements ICacheHelper {
 	 */
 	protected function getCacheKey() {
 		return [
-			get_class( $this->page ),
+			get_class( $this->getArticle() ),
 			$this->getName(),
 			$this->getLanguage()->getCode()
 		];

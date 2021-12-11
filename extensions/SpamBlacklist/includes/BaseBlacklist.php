@@ -68,11 +68,17 @@ abstract class BaseBlacklist {
 
 	/**
 	 * @param array $links
-	 * @param Title $title
+	 * @param ?Title $title
+	 * @param User $user
 	 * @param bool $preventLog
 	 * @return mixed
 	 */
-	abstract public function filter( array $links, Title $title, $preventLog = false );
+	abstract public function filter(
+		array $links,
+		?Title $title,
+		User $user,
+		$preventLog = false
+	);
 
 	/**
 	 * Adds a blacklist class to the registry
@@ -136,6 +142,13 @@ abstract class BaseBlacklist {
 	}
 
 	/**
+	 * Clear instance cache. For use during testing.
+	 */
+	public static function clearInstanceCache() {
+		self::$instances = [];
+	}
+
+	/**
 	 * Returns the code for the blacklist implementation
 	 *
 	 * @return string
@@ -154,11 +167,12 @@ abstract class BaseBlacklist {
 		if ( $title->inNamespace( NS_MEDIAWIKI ) ) {
 			$sources = [];
 			foreach ( self::$blacklistTypes as $type => $class ) {
+				// For the built in types, this results in the use of:
+				// spam-blacklist, spam-whitelist
+				// email-blacklist, email-whitelist
 				$type = ucfirst( $type );
-				$sources += [
-					"$type-blacklist",
-					"$type-whitelist"
-				];
+				$sources[] = "$type-blacklist";
+				$sources[] = "$type-whitelist";
 			}
 
 			if ( in_array( $title->getDBkey(), $sources ) ) {
@@ -176,15 +190,12 @@ abstract class BaseBlacklist {
 			}
 		}
 
-		// @phan-suppress-next-line PhanTypeMismatchForeach += makes Phan think $files is a number
 		foreach ( $files as $fileName ) {
 			$matches = [];
 			if ( preg_match( '/^DB: (\w*) (.*)$/', $fileName, $matches ) ) {
-				if ( $wgDBname === $matches[1] ) {
-					if ( $matches[2] === $title->getPrefixedDbKey() ) {
-						// Local DB fetch of this page...
-						return true;
-					}
+				if ( $wgDBname === $matches[1] && $matches[2] === $title->getPrefixedDbKey() ) {
+					// Local DB fetch of this page...
+					return true;
 				}
 			} elseif ( preg_match( $thisHttpRegex, $fileName ) ) {
 				// Raw view of this page
@@ -236,15 +247,14 @@ abstract class BaseBlacklist {
 	 * @return array Regular expressions
 	 */
 	public function getLocalBlacklists() {
-		$that = $this;
 		$type = $this->getBlacklistType();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'spamblacklist', $type, 'blacklist-regex' ),
 			$this->expiryTime,
-			function () use ( $that, $type ) {
-				return SpamRegexBatch::regexesFromMessage( "{$type}-blacklist", $that );
+			function () use ( $type ) {
+				return SpamRegexBatch::regexesFromMessage( "{$type}-blacklist", $this );
 			}
 		);
 	}
@@ -255,15 +265,14 @@ abstract class BaseBlacklist {
 	 * @return array Regular expressions
 	 */
 	public function getWhitelists() {
-		$that = $this;
 		$type = $this->getBlacklistType();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'spamblacklist', $type, 'whitelist-regex' ),
 			$this->expiryTime,
-			function () use ( $that, $type ) {
-				return SpamRegexBatch::regexesFromMessage( "{$type}-whitelist", $that );
+			function () use ( $type ) {
+				return SpamRegexBatch::regexesFromMessage( "{$type}-whitelist", $this );
 			}
 		);
 	}
@@ -284,17 +293,15 @@ abstract class BaseBlacklist {
 		}
 
 		$miss = false;
-
-		$that = $this;
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$regexes = $cache->getWithSetCallback(
 			// This used to be cached per-site, but that could be bad on a shared
 			// server where not all wikis have the same configuration.
 			$cache->makeKey( 'spamblacklist', $listType, 'shared-blacklist-regex' ),
 			$this->expiryTime,
-			function () use ( $that, &$miss ) {
+			function () use ( &$miss ) {
 				$miss = true;
-				return $that->buildSharedBlacklists();
+				return $this->buildSharedBlacklists();
 			}
 		);
 
@@ -335,44 +342,47 @@ abstract class BaseBlacklist {
 				wfDebugLog( 'SpamBlacklist', "got from file $fileName\n" );
 			}
 
-			// Build a separate batch of regexes from each source.
-			// While in theory we could squeeze a little efficiency
-			// out of combining multiple sources in one regex, if
-			// there's a bad line in one of them we'll gain more
-			// from only having to break that set into smaller pieces.
-			$regexes = array_merge(
-				$regexes,
-				SpamRegexBatch::regexesFromText( $text, $this, $fileName )
-			);
+			if ( $text ) {
+				// Build a separate batch of regexes from each source.
+				// While in theory we could squeeze a little efficiency
+				// out of combining multiple sources in one regex, if
+				// there's a bad line in one of them we'll gain more
+				// from only having to break that set into smaller pieces.
+				$regexes = array_merge(
+					$regexes,
+					SpamRegexBatch::regexesFromText( $text, $this, $fileName )
+				);
+			}
 		}
 
 		return $regexes;
 	}
 
 	private function getHttpText( $fileName ) {
-		global $wgDBname, $messageMemc;
-		$listType = $this->getBlacklistType();
+		global $wgMessageCacheType;
+		// FIXME: This is a hack to use Memcached where possible (incl. WMF),
+		// but have CACHE_DB as fallback (instead of no cache).
+		// This might be a good candidate for T248005.
+		$cache = ObjectCache::getInstance( $wgMessageCacheType );
 
-		# HTTP request
-		# To keep requests to a minimum, we save results into $messageMemc, which is
-		# similar to $wgMemc except almost certain to exist. By default, it is stored
-		# in the database
-		# There are two keys, when the warning key expires, a random thread will refresh
-		# the real key. This reduces the chance of multiple requests under high traffic
-		# conditions.
-		$key = "{$listType}_blacklist_file:$fileName";
-		$warningKey = "$wgDBname:{$listType}filewarning:$fileName";
-		$httpText = $messageMemc->get( $key );
-		$warning = $messageMemc->get( $warningKey );
+		$listType = $this->getBlacklistType();
+		// There are two keys, when the warning key expires, a random thread will refresh
+		// the real key. This reduces the chance of multiple requests under high traffic
+		// conditions.
+		$key = $cache->makeGlobalKey( "blacklist_file_{$listType}", $fileName );
+		$warningKey = $cache->makeKey( "filewarning_{$listType}", $fileName );
+		$httpText = $cache->get( $key );
+		$warning = $cache->get( $warningKey );
 
 		if ( !is_string( $httpText ) || ( !$warning && !mt_rand( 0, $this->warningChance ) ) ) {
 			wfDebugLog( 'SpamBlacklist', "Loading $listType blacklist from $fileName\n" );
-			$httpText = Http::get( $fileName );
+			$httpText = MediaWikiServices::getInstance()->getHttpRequestFactory()
+				->get( $fileName, [], __METHOD__ );
 			if ( $httpText === false ) {
 				wfDebugLog( 'SpamBlacklist', "Error loading $listType blacklist from $fileName\n" );
 			}
-			$messageMemc->set( $warningKey, 1, $this->warningTime );
-			$messageMemc->set( $key, $httpText, $this->expiryTime );
+			$cache->set( $warningKey, 1, $this->warningTime );
+			$cache->set( $key, $httpText, $this->expiryTime );
 		} else {
 			wfDebugLog( 'SpamBlacklist', "Got $listType blacklist from HTTP cache for $fileName\n" );
 		}
@@ -428,8 +438,9 @@ abstract class BaseBlacklist {
 	/**
 	 * @param Title $title
 	 * @param string[] $entries
+	 * @param User $user
 	 */
-	public function warmCachesForFilter( Title $title, array $entries ) {
+	public function warmCachesForFilter( Title $title, array $entries, User $user ) {
 		// subclass this
 	}
 }

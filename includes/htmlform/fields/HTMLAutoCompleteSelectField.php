@@ -29,10 +29,16 @@
  * The old name of autocomplete-data[-messages] was autocomplete[-messages] which is still
  * recognized but deprecated since MediaWiki 1.29 since it conflicts with how autocomplete is
  * used in HTMLTextField.
+ *
+ * @stable to extend
  */
 class HTMLAutoCompleteSelectField extends HTMLTextField {
 	protected $autocompleteData = [];
 
+	/**
+	 * @stable to call
+	 * @inheritDoc
+	 */
 	public function __construct( $params ) {
 		$params += [
 			'require-match' => false,

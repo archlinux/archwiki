@@ -21,6 +21,9 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Cache\LinkBatchFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * A special page that lists most linked pages that does not exist
  *
@@ -28,15 +31,24 @@
  */
 class WantedPagesPage extends WantedQueryPage {
 
-	function __construct( $name = 'Wantedpages' ) {
-		parent::__construct( $name );
+	/**
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LinkBatchFactory $linkBatchFactory
+	 */
+	public function __construct(
+		ILoadBalancer $loadBalancer,
+		LinkBatchFactory $linkBatchFactory
+	) {
+		parent::__construct( 'Wantedpages' );
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setLinkBatchFactory( $linkBatchFactory );
 	}
 
-	function isIncludable() {
+	public function isIncludable() {
 		return true;
 	}
 
-	function execute( $par ) {
+	public function execute( $par ) {
 		$inc = $this->including();
 
 		if ( $inc ) {
@@ -48,8 +60,8 @@ class WantedPagesPage extends WantedQueryPage {
 		parent::execute( $par );
 	}
 
-	function getQueryInfo() {
-		$dbr = wfGetDB( DB_REPLICA );
+	public function getQueryInfo() {
+		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
 		$count = $this->getConfig()->get( 'WantedPagesThreshold' ) - 1;
 		$query = [
 			'tables' => [
@@ -85,9 +97,7 @@ class WantedPagesPage extends WantedQueryPage {
 			]
 		];
 		// Replacement for the WantedPages::getSQL hook
-		// Avoid PHP 7.1 warning from passing $this by reference
-		$wantedPages = $this;
-		Hooks::run( 'WantedPages::getQueryInfo', [ &$wantedPages, &$query ] );
+		$this->getHookRunner()->onWantedPages__getQueryInfo( $this, $query );
 
 		return $query;
 	}

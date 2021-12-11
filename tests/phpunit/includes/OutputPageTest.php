@@ -1,6 +1,12 @@
 <?php
 
+use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use Wikimedia\DependencyStore\KeyValueDependencyStore;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -9,27 +15,29 @@ use Wikimedia\TestingAccessWrapper;
  * @group Database
  * @group Output
  */
-class OutputPageTest extends MediaWikiTestCase {
-	const SCREEN_MEDIA_QUERY = 'screen and (min-width: 982px)';
-	const SCREEN_ONLY_MEDIA_QUERY = 'only screen and (min-width: 982px)';
+class OutputPageTest extends MediaWikiIntegrationTestCase {
+	use MockAuthorityTrait;
 
-	// @codingStandardsIgnoreStart Generic.Files.LineLength
-	const RSS_RC_LINK = '<link rel="alternate" type="application/rss+xml" title=" RSS feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=rss"/>';
-	const ATOM_RC_LINK = '<link rel="alternate" type="application/atom+xml" title=" Atom feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=atom"/>';
+	private const SCREEN_MEDIA_QUERY = 'screen and (min-width: 982px)';
+	private const SCREEN_ONLY_MEDIA_QUERY = 'only screen and (min-width: 982px)';
 
-	const RSS_TEST_LINK = '<link rel="alternate" type="application/rss+xml" title="&quot;Test&quot; RSS feed" href="fake-link"/>';
-	const ATOM_TEST_LINK = '<link rel="alternate" type="application/atom+xml" title="&quot;Test&quot; Atom feed" href="fake-link"/>';
-	// @codingStandardsIgnoreEnd
+	// phpcs:disable Generic.Files.LineLength
+	private const RSS_RC_LINK = '<link rel="alternate" type="application/rss+xml" title=" RSS feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=rss"/>';
+	private const ATOM_RC_LINK = '<link rel="alternate" type="application/atom+xml" title=" Atom feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=atom"/>';
+
+	private const RSS_TEST_LINK = '<link rel="alternate" type="application/rss+xml" title="&quot;Test&quot; RSS feed" href="fake-link"/>';
+	private const ATOM_TEST_LINK = '<link rel="alternate" type="application/atom+xml" title="&quot;Test&quot; Atom feed" href="fake-link"/>';
+	// phpcs:enable
 
 	// Ensure that we don't affect the global ResourceLoader state.
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		ResourceLoader::clearCache();
 	}
 
-	protected function tearDown() {
-		parent::tearDown();
+	protected function tearDown() : void {
 		ResourceLoader::clearCache();
+		parent::tearDown();
 	}
 
 	/**
@@ -61,7 +69,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		];
 	}
 
-	private function setupFeedLinks( $feed, $types ) {
+	private function setupFeedLinks( $feed, $types ) : OutputPage {
 		$outputPage = $this->newInstance( [
 			'AdvertisedFeedTypes' => $types,
 			'Feed' => $feed,
@@ -76,7 +84,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		return $outputPage;
 	}
 
-	private function assertFeedLinks( $outputPage, $message, $present, $non_present ) {
+	private function assertFeedLinks( OutputPage $outputPage, $message, $present, $non_present ) {
 		$links = $outputPage->getHeadLinksArray();
 		foreach ( $present as $link ) {
 			$this->assertContains( $link, $links, $message );
@@ -86,14 +94,14 @@ class OutputPageTest extends MediaWikiTestCase {
 		}
 	}
 
-	private function assertFeedUILinks( $outputPage, $ui_links ) {
+	private function assertFeedUILinks( OutputPage $outputPage, $ui_links ) {
 		if ( $ui_links ) {
 			$this->assertTrue( $outputPage->isSyndicated(), 'Syndication should be offered' );
 			$this->assertGreaterThan( 0, count( $outputPage->getSyndicationLinks() ),
 				'Some syndication links should be there' );
 		} else {
 			$this->assertFalse( $outputPage->isSyndicated(), 'No syndication should be offered' );
-			$this->assertSame( 0, count( $outputPage->getSyndicationLinks() ),
+			$this->assertSame( [], $outputPage->getSyndicationLinks(),
 				'No syndication links should be there' );
 		}
 	}
@@ -280,7 +288,10 @@ class OutputPageTest extends MediaWikiTestCase {
 		$op = $this->newInstance();
 		$op->addScript( 'some random string' );
 
-		$this->assertContains( "\nsome random string\n", "\n" . $op->getBottomScripts() . "\n" );
+		$this->assertStringContainsString(
+			"\nsome random string\n",
+			"\n" . $op->getBottomScripts() . "\n"
+		);
 	}
 
 	/**
@@ -291,9 +302,9 @@ class OutputPageTest extends MediaWikiTestCase {
 		$op->addScriptFile( '/somescript.js' );
 		$op->addScriptFile( '//example.com/somescript.js' );
 
-		$this->assertContains(
-			"\n" . Html::linkedScript( '/somescript.js', $op->getCSPNonce() ) .
-				Html::linkedScript( '//example.com/somescript.js', $op->getCSPNonce() ) . "\n",
+		$this->assertStringContainsString(
+			"\n" . Html::linkedScript( '/somescript.js', $op->getCSP()->getNonce() ) .
+				Html::linkedScript( '//example.com/somescript.js', $op->getCSP()->getNonce() ) . "\n",
 			"\n" . $op->getBottomScripts() . "\n"
 		);
 	}
@@ -306,9 +317,9 @@ class OutputPageTest extends MediaWikiTestCase {
 		$op->addInlineScript( 'let foo = "bar";' );
 		$op->addInlineScript( 'alert( foo );' );
 
-		$this->assertContains(
-			"\n" . Html::inlineScript( "\nlet foo = \"bar\";\n", $op->getCSPNonce() ) . "\n" .
-				Html::inlineScript( "\nalert( foo );\n", $op->getCSPNonce() ) . "\n",
+		$this->assertStringContainsString(
+			"\n" . Html::inlineScript( "\nlet foo = \"bar\";\n", $op->getCSP()->getNonce() ) . "\n" .
+				Html::inlineScript( "\nalert( foo );\n", $op->getCSP()->getNonce() ) . "\n",
 			"\n" . $op->getBottomScripts() . "\n"
 		);
 	}
@@ -350,7 +361,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		$this->assertTrue( $op->hasHeadItem( 'e' ) );
 		$this->assertTrue( $op->hasHeadItem( '0' ) );
 
-		$this->assertContains( "\nq\n<d>&amp;\ng\nx\n",
+		$this->assertStringContainsString( "\nq\n<d>&amp;\ng\nx\n",
 			'' . $op->headElement( $op->getContext()->getSkin() ) );
 	}
 
@@ -380,8 +391,26 @@ class OutputPageTest extends MediaWikiTestCase {
 		$this->assertTrue( $op->hasHeadItem( '0' ) );
 		$this->assertFalse( $op->hasHeadItem( 'b' ) );
 
-		$this->assertContains( "\nq\n<d>&amp;\ng\nx\n",
+		$this->assertStringContainsString( "\nq\n<d>&amp;\ng\nx\n",
 			'' . $op->headElement( $op->getContext()->getSkin() ) );
+	}
+
+	/**
+	 * @covers OutputPage::addParserOutputMetadata
+	 * @covers OutputPage::addParserOutput
+	 */
+	public function testCSPParserOutput() {
+		$this->setMwGlobals( [ 'wgCSPHeader' => [] ] );
+		foreach ( [ 'Default', 'Script', 'Style' ] as $type ) {
+			$op = $this->newInstance();
+			$ltype = strtolower( $type );
+			$stubPO1 = $this->createParserOutputStub( "getExtraCSP{$type}Srcs", [ "{$ltype}src.com" ] );
+			$op->addParserOutputMetadata( $stubPO1 );
+			$csp = TestingAccessWrapper::newFromObject( $op->getCSP() );
+			$actual = $csp->makeCSPDirectives( [ 'default-src' => [] ], false );
+			$regex = '/(^|;)\s*' . $ltype . '-src\s[^;]*' . $ltype . 'src\.com[\s;]/';
+			$this->assertRegExp( $regex, $actual, $type );
+		}
 	}
 
 	/**
@@ -395,7 +424,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		$op->addBodyClasses( [ 'd', 'e' ] );
 		$op->addBodyClasses( 'a' );
 
-		$this->assertContains( '"a mediawiki b c d e ltr',
+		$this->assertStringContainsString( '"a mediawiki b c d e ltr',
 			'' . $op->headElement( $op->getContext()->getSkin() ) );
 	}
 
@@ -497,7 +526,7 @@ class OutputPageTest extends MediaWikiTestCase {
 					[ 'CacheEpoch' => wfTimestamp( TS_MW, $lastModified + 1 ) ] ],
 			'Recently-touched user' =>
 				[ $lastModified, $lastModified, false, [],
-				function ( $op ) {
+				function ( OutputPage $op ) {
 					$op->getContext()->setUser( $this->getTestUser()->getUser() );
 				} ],
 			'After CDN expiry' =>
@@ -505,18 +534,18 @@ class OutputPageTest extends MediaWikiTestCase {
 					[ 'UseCdn' => true, 'CdnMaxAge' => 3599 ] ],
 			'Hook allows cache use' =>
 				[ $lastModified + 1, $lastModified, true, [],
-				function ( $op, $that ) {
+				static function ( $op, $that ) {
 					$that->setTemporaryHook( 'OutputPageCheckLastModified',
-						function ( &$modifiedTimes ) {
+						static function ( &$modifiedTimes ) {
 							$modifiedTimes = [ 1 ];
 						}
 					);
 				} ],
 			'Hooks prohibits cache use' =>
 				[ $lastModified, $lastModified, false, [],
-				function ( $op, $that ) {
+				static function ( $op, $that ) {
 					$that->setTemporaryHook( 'OutputPageCheckLastModified',
-						function ( &$modifiedTimes ) {
+						static function ( &$modifiedTimes ) {
 							$modifiedTimes = [ max( $modifiedTimes ) + 1 ];
 						}
 					);
@@ -582,6 +611,18 @@ class OutputPageTest extends MediaWikiTestCase {
 	}
 
 	/**
+	 * @covers OutputPage::setRobotPolicy
+	 * @covers OutputPage::getRobotPolicy
+	 */
+	public function testGetRobotPolicy() {
+		$op = $this->newInstance();
+		$op->setRobotPolicy( 'noindex, follow' );
+
+		$policy = $op->getRobotPolicy();
+		$this->assertSame( 'noindex,follow', $policy );
+	}
+
+	/**
 	 * @covers OutputPage::setIndexPolicy
 	 * @covers OutputPage::setFollowPolicy
 	 * @covers OutputPage::getHeadLinksArray
@@ -613,8 +654,11 @@ class OutputPageTest extends MediaWikiTestCase {
 
 	/**
 	 * Shorthand for getting the text of a message, in content language.
+	 * @param MessageLocalizer $op
+	 * @param mixed ...$msgParams
+	 * @return string
 	 */
-	private static function getMsgText( $op, ...$msgParams ) {
+	private static function getMsgText( MessageLocalizer $op, ...$msgParams ) {
 		return $op->msg( ...$msgParams )->inContentLanguage()->text();
 	}
 
@@ -762,11 +806,11 @@ class OutputPageTest extends MediaWikiTestCase {
 		$str = OutputPage::buildBacklinkSubtitle( $title, $query )->text();
 
 		foreach ( $contains as $substr ) {
-			$this->assertContains( $substr, $str );
+			$this->assertStringContainsString( $substr, $str );
 		}
 
 		foreach ( $notContains as $substr ) {
-			$this->assertNotContains( $substr, $str );
+			$this->assertStringNotContainsString( $substr, $str );
 		}
 	}
 
@@ -788,11 +832,11 @@ class OutputPageTest extends MediaWikiTestCase {
 		$str = $op->getSubtitle();
 
 		foreach ( $contains as $substr ) {
-			$this->assertContains( $substr, $str );
+			$this->assertStringContainsString( $substr, $str );
 		}
 
 		foreach ( $notContains as $substr ) {
-			$this->assertNotContains( $substr, $str );
+			$this->assertStringNotContainsString( $substr, $str );
 		}
 	}
 
@@ -962,7 +1006,7 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::setArticleRelated
 	 * @covers OutputPage::isArticleRelated
 	 */
-	function testArticleFlags() {
+	public function testArticleFlags() {
 		$op = $this->newInstance();
 		$this->assertFalse( $op->isArticle() );
 		$this->assertTrue( $op->isArticleRelated() );
@@ -992,7 +1036,7 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::addParserOutputMetadata
 	 * @covers OutputPage::addParserOutput
 	 */
-	function testLanguageLinks() {
+	public function testLanguageLinks() {
 		$op = $this->newInstance();
 		$this->assertSame( [], $op->getLanguageLinks() );
 
@@ -1027,12 +1071,12 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @param array $args Array of form [ category name => sort key ]
 	 * @param array $fakeResults Array of form [ category name => value to return from mocked
 	 *   LinkBatch ]
-	 * @param callable $variantLinkCallback Callback to replace findVariantLink() call
+	 * @param callable|null $variantLinkCallback Callback to replace findVariantLink() call
 	 * @param array $expectedNormal Expected return value of getCategoryLinks['normal']
 	 * @param array $expectedHidden Expected return value of getCategoryLinks['hidden']
 	 */
 	public function testAddCategoryLinks(
-		array $args, array $fakeResults, callable $variantLinkCallback = null,
+		array $args, array $fakeResults, ?callable $variantLinkCallback,
 		array $expectedNormal, array $expectedHidden
 	) {
 		$expectedNormal = $this->extractExpectedCategories( $expectedNormal, 'add' );
@@ -1054,7 +1098,7 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::getCategoryLinks
 	 */
 	public function testAddCategoryLinksOneByOne(
-		array $args, array $fakeResults, callable $variantLinkCallback = null,
+		array $args, array $fakeResults, ?callable $variantLinkCallback,
 		array $expectedNormal, array $expectedHidden
 	) {
 		if ( count( $args ) <= 1 ) {
@@ -1084,7 +1128,7 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::getCategoryLinks
 	 */
 	public function testSetCategoryLinks(
-		array $args, array $fakeResults, callable $variantLinkCallback = null,
+		array $args, array $fakeResults, ?callable $variantLinkCallback,
 		array $expectedNormal, array $expectedHidden
 	) {
 		$expectedNormal = $this->extractExpectedCategories( $expectedNormal, 'set' );
@@ -1112,7 +1156,7 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::getCategoryLinks
 	 */
 	public function testParserOutputCategoryLinks(
-		array $args, array $fakeResults, callable $variantLinkCallback = null,
+		array $args, array $fakeResults, ?callable $variantLinkCallback,
 		array $expectedNormal, array $expectedHidden
 	) {
 		$expectedNormal = $this->extractExpectedCategories( $expectedNormal, 'pout' );
@@ -1137,6 +1181,9 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * We allow different expectations for different tests as an associative array, like
 	 * [ 'set' => [ ... ], 'default' => [ ... ] ] if setCategoryLinks() will give a different
 	 * result.
+	 * @param array $expected
+	 * @param string $key
+	 * @return array
 	 */
 	private function extractExpectedCategories( array $expected, $key ) {
 		if ( !$expected || isset( $expected[0] ) ) {
@@ -1150,9 +1197,37 @@ class OutputPageTest extends MediaWikiTestCase {
 	) : OutputPage {
 		$this->setMwGlobals( 'wgUsePigLatinVariant', true );
 
+		if ( $variantLinkCallback ) {
+			$mockContLang = $this->createMock( Language::class );
+			$mockContLang
+				->expects( $this->any() )
+				->method( 'convertHtml' )
+				->will( $this->returnCallback( static function ( $arg ) {
+					return $arg;
+				} ) );
+
+			$mockLanguageConverter = $this
+				->createMock( ILanguageConverter::class );
+			$mockLanguageConverter
+				->expects( $this->any() )
+				->method( 'findVariantLink' )
+				->will( $this->returnCallback( $variantLinkCallback ) );
+
+			$languageConverterFactory = $this
+				->createMock( LanguageConverterFactory::class );
+			$languageConverterFactory
+				->expects( $this->any() )
+				->method( 'getLanguageConverter' )
+				->willReturn( $mockLanguageConverter );
+			$this->setService(
+				'LanguageConverterFactory',
+				$languageConverterFactory
+			);
+		}
+
 		$op = $this->getMockBuilder( OutputPage::class )
 			->setConstructorArgs( [ new RequestContext() ] )
-				   ->setMethods( [ 'addCategoryLinksToLBAndGetResult', 'getTitle' ] )
+			->setMethods( [ 'addCategoryLinksToLBAndGetResult', 'getTitle' ] )
 			->getMock();
 
 		$title = Title::newFromText( 'My test page' );
@@ -1162,7 +1237,7 @@ class OutputPageTest extends MediaWikiTestCase {
 
 		$op->expects( $this->any() )
 			->method( 'addCategoryLinksToLBAndGetResult' )
-			->will( $this->returnCallback( function ( array $categories ) use ( $fakeResults ) {
+			->will( $this->returnCallback( static function ( array $categories ) use ( $fakeResults ) {
 				$return = [];
 				foreach ( $categories as $category => $unused ) {
 					if ( isset( $fakeResults[$category] ) ) {
@@ -1172,31 +1247,20 @@ class OutputPageTest extends MediaWikiTestCase {
 				return new FakeResultWrapper( $return );
 			} ) );
 
-		if ( $variantLinkCallback ) {
-			$mockContLang = $this->getMockBuilder( Language::class )
-				->setConstructorArgs( [ 'en' ] )
-				->setMethods( [ 'findVariantLink' ] )
-				->getMock();
-			$mockContLang->expects( $this->any() )
-				->method( 'findVariantLink' )
-				->will( $this->returnCallback( $variantLinkCallback ) );
-			$this->setContentLang( $mockContLang );
-		}
-
 		$this->assertSame( [], $op->getCategories() );
 
 		return $op;
 	}
 
-	private function doCategoryAsserts( $op, $expectedNormal, $expectedHidden ) {
+	private function doCategoryAsserts( OutputPage $op, $expectedNormal, $expectedHidden ) {
 		$this->assertSame( array_merge( $expectedHidden, $expectedNormal ), $op->getCategories() );
 		$this->assertSame( $expectedNormal, $op->getCategories( 'normal' ) );
 		$this->assertSame( $expectedHidden, $op->getCategories( 'hidden' ) );
 	}
 
-	private function doCategoryLinkAsserts( $op, $expectedNormal, $expectedHidden ) {
+	private function doCategoryLinkAsserts( OutputPage $op, $expectedNormal, $expectedHidden ) {
 		$catLinks = $op->getCategoryLinks();
-		$this->assertSame( (bool)$expectedNormal + (bool)$expectedHidden, count( $catLinks ) );
+		$this->assertCount( (bool)$expectedNormal + (bool)$expectedHidden, $catLinks );
 		if ( $expectedNormal ) {
 			$this->assertSame( count( $expectedNormal ), count( $catLinks['normal'] ) );
 		}
@@ -1205,10 +1269,10 @@ class OutputPageTest extends MediaWikiTestCase {
 		}
 
 		foreach ( $expectedNormal as $i => $name ) {
-			$this->assertContains( $name, $catLinks['normal'][$i] );
+			$this->assertStringContainsString( $name, $catLinks['normal'][$i] );
 		}
 		foreach ( $expectedHidden as $i => $name ) {
-			$this->assertContains( $name, $catLinks['hidden'][$i] );
+			$this->assertStringContainsString( $name, $catLinks['hidden'][$i] );
 		}
 	}
 
@@ -1233,7 +1297,7 @@ class OutputPageTest extends MediaWikiTestCase {
 			'Variant link' => [
 				[ 'Test' => 'Test', 'Estay' => 'Estay' ],
 				[ 'Test' => (object)[ 'page_title' => 'Test' ] ],
-				function ( &$link, &$title ) {
+				static function ( &$link, &$title ) {
 					if ( $link === 'Estay' ) {
 						$link = 'Test';
 						$title = Title::makeTitleSafe( NS_CATEGORY, $link );
@@ -1251,8 +1315,8 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::getCategories
 	 */
 	public function testGetCategoriesInvalid() {
-		$this->setExpectedException( InvalidArgumentException::class,
-			'Invalid category type given: hiddne' );
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Invalid category type given: hiddne' );
 
 		$op = $this->newInstance();
 		$op->getCategories( 'hiddne' );
@@ -1305,14 +1369,14 @@ class OutputPageTest extends MediaWikiTestCase {
 		$op->addHelpLink( 'Manual:PHP unit testing' );
 		$indicators = $op->getIndicators();
 		$this->assertSame( [ 'mw-helplink' ], array_keys( $indicators ) );
-		$this->assertContains( 'Manual:PHP_unit_testing', $indicators['mw-helplink'] );
+		$this->assertStringContainsString( 'Manual:PHP_unit_testing', $indicators['mw-helplink'] );
 
 		$op->addHelpLink( 'https://phpunit.de', true );
 		$indicators = $op->getIndicators();
 		$this->assertSame( [ 'mw-helplink' ], array_keys( $indicators ) );
-		$this->assertContains( 'https://phpunit.de', $indicators['mw-helplink'] );
-		$this->assertNotContains( 'mediawiki', $indicators['mw-helplink'] );
-		$this->assertNotContains( 'Manual:PHP', $indicators['mw-helplink'] );
+		$this->assertStringContainsString( 'https://phpunit.de', $indicators['mw-helplink'] );
+		$this->assertStringNotContainsString( 'mediawiki', $indicators['mw-helplink'] );
+		$this->assertStringNotContainsString( 'Manual:PHP', $indicators['mw-helplink'] );
 	}
 
 	/**
@@ -1395,6 +1459,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		$stubFile->method( 'getTimestamp' )->willReturn( '12211221123321' );
 		$stubFile->method( 'getSha1' )->willReturn( 'bf3ffa7047dc080f5855377a4f83cd18887e3b05' );
 
+		/** @var File $stubFile */
 		$op->setFileVersion( $stubFile );
 
 		$this->assertEquals(
@@ -1405,6 +1470,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		$stubMissingFile = $this->createMock( File::class );
 		$stubMissingFile->method( 'exists' )->willReturn( false );
 
+		/** @var File $stubMissingFile */
 		$op->setFileVersion( $stubMissingFile );
 		$this->assertNull( $op->getFileVersion() );
 
@@ -1418,8 +1484,10 @@ class OutputPageTest extends MediaWikiTestCase {
 	/**
 	 * Call either with arguments $methodName, $returnValue; or an array
 	 * [ $methodName => $returnValue, $methodName => $returnValue, ... ]
+	 * @param mixed ...$args
+	 * @return ParserOutput
 	 */
-	private function createParserOutputStub( ...$args ) {
+	private function createParserOutputStub( ...$args ) : ParserOutput {
 		if ( count( $args ) === 0 ) {
 			$retVals = [];
 		} elseif ( count( $args ) === 1 ) {
@@ -1427,7 +1495,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		} elseif ( count( $args ) === 2 ) {
 			$retVals = [ $args[0] => $args[1] ];
 		}
-		$pOut = $this->getMock( ParserOutput::class );
+		$pOut = $this->createMock( ParserOutput::class );
 		foreach ( $retVals as $method => $retVal ) {
 			$pOut->method( $method )->willReturn( $retVal );
 		}
@@ -1436,10 +1504,14 @@ class OutputPageTest extends MediaWikiTestCase {
 			'getCategories',
 			'getFileSearchOptions',
 			'getHeadItems',
+			'getImages',
 			'getIndicators',
 			'getLanguageLinks',
 			'getOutputHooks',
 			'getTemplateIds',
+			'getExtraCSPDefaultSrcs',
+			'getExtraCSPStyleSrcs',
+			'getExtraCSPScriptSrcs',
 		];
 
 		foreach ( $arrayReturningMethods as $method ) {
@@ -1647,7 +1719,8 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::addWikiTextAsInterface
 	 */
 	public function testAddWikiTextAsInterfaceNoTitle() {
-		$this->setExpectedException( MWException::class, 'Title is null' );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage( 'Title is null' );
 
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->addWikiTextAsInterface( 'a' );
@@ -1657,7 +1730,8 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::addWikiTextAsContent
 	 */
 	public function testAddWikiTextAsContentNoTitle() {
-		$this->setExpectedException( MWException::class, 'Title is null' );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage( 'Title is null' );
 
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->addWikiTextAsContent( 'a' );
@@ -1807,7 +1881,7 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::addTemplate
 	 */
 	public function testAddTemplate() {
-		$template = $this->getMock( QuickTemplate::class );
+		$template = $this->createMock( QuickTemplate::class );
 		$template->method( 'getHTML' )->willReturn( '<abc>&def;' );
 
 		$op = $this->newInstance();
@@ -1817,92 +1891,8 @@ class OutputPageTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider provideParse
-	 * @covers OutputPage::parse
-	 * @param array $args To pass to parse()
-	 * @param string $expectedHTML Expected return value for parse()
-	 * @param string $expectedHTML Expected return value for parseInline(), if different
-	 */
-	public function testParse( array $args, $expectedHTML ) {
-		$this->hideDeprecated( 'OutputPage::parse' );
-		$op = $this->newInstance();
-		$this->assertSame( $expectedHTML, $op->parse( ...$args ) );
-	}
-
-	/**
-	 * @dataProvider provideParse
-	 * @covers OutputPage::parseInline
-	 */
-	public function testParseInline( array $args, $expectedHTML, $expectedHTMLInline = null ) {
-		if ( count( $args ) > 3 ) {
-			// $language param not supported
-			$this->assertTrue( true );
-			return;
-		}
-		$this->hideDeprecated( 'OutputPage::parseInline' );
-		$op = $this->newInstance();
-		$this->assertSame( $expectedHTMLInline ?? $expectedHTML, $op->parseInline( ...$args ) );
-	}
-
-	public function provideParse() {
-		return [
-			'List at start of line (content)' => [
-				[ '* List', true, false ],
-				"<div class=\"mw-parser-output\"><ul><li>List</li></ul></div>",
-				"<ul><li>List</li></ul>",
-			],
-			'List at start of line (interface)' => [
-				[ '* List', true, true ],
-				"<ul><li>List</li></ul>",
-			],
-			'List not at start (content)' => [
-				[ "* ''Not'' list", false, false ],
-				'<div class="mw-parser-output">* <i>Not</i> list</div>',
-				'* <i>Not</i> list',
-			],
-			'List not at start (interface)' => [
-				[ "* ''Not'' list", false, true ],
-				'* <i>Not</i> list',
-			],
-			'Interface message' => [
-				[ "''Italic''", true, true ],
-				"<p><i>Italic</i>\n</p>",
-				'<i>Italic</i>',
-			],
-			'formatnum (content)' => [
-				[ '{{formatnum:123456.789}}', true, false ],
-				"<div class=\"mw-parser-output\"><p>123,456.789\n</p></div>",
-				"123,456.789",
-			],
-			'formatnum (interface)' => [
-				[ '{{formatnum:123456.789}}', true, true ],
-				"<p>123,456.789\n</p>",
-				"123,456.789",
-			],
-			'Language (content)' => [
-				[ '{{formatnum:123456.789}}', true, false, Language::factory( 'is' ) ],
-				"<div class=\"mw-parser-output\"><p>123.456,789\n</p></div>",
-			],
-			'Language (interface)' => [
-				[ '{{formatnum:123456.789}}', true, true, Language::factory( 'is' ) ],
-				"<p>123.456,789\n</p>",
-				'123.456,789',
-			],
-			'No section edit links' => [
-				[ '== Header ==' ],
-				'<div class="mw-parser-output"><h2><span class="mw-headline" id="Header">' .
-					"Header</span></h2></div>",
-				'<h2><span class="mw-headline" id="Header">Header</span></h2>',
-			]
-		];
-	}
-
-	/**
 	 * @dataProvider provideParseAs
 	 * @covers OutputPage::parseAsContent
-	 * @param array $args To pass to parse()
-	 * @param string $expectedHTML Expected return value for parseAsContent()
-	 * @param string $expectedHTML Expected return value for parseInlineAsInterface(), if different
 	 */
 	public function testParseAsContent(
 		array $args, $expectedHTML, $expectedHTMLInline = null
@@ -1914,9 +1904,6 @@ class OutputPageTest extends MediaWikiTestCase {
 	/**
 	 * @dataProvider provideParseAs
 	 * @covers OutputPage::parseAsInterface
-	 * @param array $args To pass to parse()
-	 * @param string $expectedHTML Expected return value for parseAsInterface()
-	 * @param string $expectedHTML Expected return value for parseInlineAsInterface(), if different
 	 */
 	public function testParseAsInterface(
 		array $args, $expectedHTML, $expectedHTMLInline = null
@@ -1968,30 +1955,11 @@ class OutputPageTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @covers OutputPage::parse
-	 */
-	public function testParseNullTitle() {
-		$this->hideDeprecated( 'OutputPage::parse' );
-		$this->setExpectedException( MWException::class, 'Empty $mTitle in OutputPage::parseInternal' );
-		$op = $this->newInstance( [], null, 'notitle' );
-		$op->parse( '' );
-	}
-
-	/**
-	 * @covers OutputPage::parseInline
-	 */
-	public function testParseInlineNullTitle() {
-		$this->hideDeprecated( 'OutputPage::parseInline' );
-		$this->setExpectedException( MWException::class, 'Empty $mTitle in OutputPage::parseInternal' );
-		$op = $this->newInstance( [], null, 'notitle' );
-		$op->parseInline( '' );
-	}
-
-	/**
 	 * @covers OutputPage::parseAsContent
 	 */
 	public function testParseAsContentNullTitle() {
-		$this->setExpectedException( MWException::class, 'Empty $mTitle in OutputPage::parseInternal' );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage( 'Empty $mTitle in OutputPage::parseInternal' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseAsContent( '' );
 	}
@@ -2000,7 +1968,8 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::parseAsInterface
 	 */
 	public function testParseAsInterfaceNullTitle() {
-		$this->setExpectedException( MWException::class, 'Empty $mTitle in OutputPage::parseInternal' );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage( 'Empty $mTitle in OutputPage::parseInternal' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseAsInterface( '' );
 	}
@@ -2009,7 +1978,8 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @covers OutputPage::parseInlineAsInterface
 	 */
 	public function testParseInlineAsInterfaceNullTitle() {
-		$this->setExpectedException( MWException::class, 'Empty $mTitle in OutputPage::parseInternal' );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage( 'Empty $mTitle in OutputPage::parseInternal' );
 		$op = $this->newInstance( [], null, 'notitle' );
 		$op->parseInlineAsInterface( '' );
 	}
@@ -2235,7 +2205,7 @@ class OutputPageTest extends MediaWikiTestCase {
 			->will( $this->returnValue( $cookies ) );
 		TestingAccessWrapper::newFromObject( $op )->mVaryHeader = [];
 
-		$this->hideDeprecated( 'addVaryHeader $option is ignored' );
+		$this->filterDeprecated( '/The \$option parameter to addVaryHeader is ignored/' );
 		foreach ( $calls as $call ) {
 			$op->addVaryHeader( ...$call );
 		}
@@ -2389,17 +2359,30 @@ class OutputPageTest extends MediaWikiTestCase {
 		$op = $this->newInstance( [], $req, in_array( 'notitle', $options ) ? 'notitle' : null );
 
 		if ( !in_array( 'notitle', $options ) ) {
-			$mockLang = $this->getMock( Language::class );
+			$mockLang = $this->createMock( Language::class );
+			$mockLang->method( 'getCode' )->willReturn( $code );
 
+			$mockLanguageConverter = $this
+				->createMock( ILanguageConverter::class );
 			if ( in_array( 'varianturl', $options ) ) {
-				$mockLang->expects( $this->never() )->method( $this->anything() );
+				$mockLanguageConverter->expects( $this->never() )->method( $this->anything() );
 			} else {
-				$mockLang->method( 'hasVariants' )->willReturn( count( $variants ) > 1 );
-				$mockLang->method( 'getVariants' )->willReturn( $variants );
-				$mockLang->method( 'getCode' )->willReturn( $code );
+				$mockLanguageConverter->method( 'hasVariants' )->willReturn( count( $variants ) > 1 );
+				$mockLanguageConverter->method( 'getVariants' )->willReturn( $variants );
 			}
 
-			$mockTitle = $this->getMock( Title::class );
+			$languageConverterFactory = $this
+				->createMock( LanguageConverterFactory::class );
+			$languageConverterFactory
+				->expects( $this->any() )
+				->method( 'getLanguageConverter' )
+				->willReturn( $mockLanguageConverter );
+			$this->setService(
+				'LanguageConverterFactory',
+				$languageConverterFactory
+			);
+
+			$mockTitle = $this->createMock( Title::class );
 			$mockTitle->method( 'getPageLanguage' )->willReturn( $mockLang );
 
 			$op->setTitle( $mockTitle );
@@ -2531,11 +2514,13 @@ class OutputPageTest extends MediaWikiTestCase {
 		$ctx->setSkin( $skinFactory->makeSkin( 'fallback' ) );
 		$ctx->setLanguage( 'en' );
 		$out = new OutputPage( $ctx );
-		$nonce = $class->getProperty( 'CSPNonce' );
+		$reflectCSP = new ReflectionClass( ContentSecurityPolicy::class );
+		$nonce = $reflectCSP->getProperty( 'nonce' );
 		$nonce->setAccessible( true );
-		$nonce->setValue( $out, 'secret' );
+		$nonce->setValue( $out->getCSP(), 'secret' );
 		$rl = $out->getResourceLoader();
 		$rl->setMessageBlobStore( $this->createMock( MessageBlobStore::class ) );
+		$rl->setDependencyStore( $this->createMock( KeyValueDependencyStore::class ) );
 		$rl->register( [
 			'test.foo' => [
 				'class' => ResourceLoaderTestModule::class,
@@ -2657,6 +2642,7 @@ class OutputPageTest extends MediaWikiTestCase {
 			->getMock();
 		$op->method( 'buildCssLinksArray' )
 			->willReturn( [] );
+		/** @var OutputPage $op */
 		$rl = $op->getResourceLoader();
 		$rl->setMessageBlobStore( $this->createMock( MessageBlobStore::class ) );
 
@@ -2834,9 +2820,7 @@ class OutputPageTest extends MediaWikiTestCase {
 		}
 
 		$fauxRequest = new FauxRequest( $queryData, false );
-		$this->setMwGlobals( [
-			'wgRequest' => $fauxRequest,
-		] );
+		$this->setRequest( $fauxRequest );
 
 		$actualReturn = OutputPage::transformCssMedia( $args['media'] );
 		$this->assertSame( $args['expectedReturn'], $actualReturn, $args['message'] );
@@ -2977,7 +2961,7 @@ class OutputPageTest extends MediaWikiTestCase {
 				[
 					'wgResourceBasePath' => '/w',
 					'wgLogo' => '/img/default.png',
-					'wgLogoHD' => [
+					'wgLogos' => [
 						'1.5x' => '/img/one-point-five.png',
 						'2x' => '/img/two-x.png',
 					],
@@ -2991,16 +2975,17 @@ class OutputPageTest extends MediaWikiTestCase {
 			[
 				[
 					'wgResourceBasePath' => '/w',
-					'wgLogo' => '/img/default.png',
-					'wgLogoHD' => false,
+					'wgLogos' => [
+						'1x' => '/img/default.png',
+					],
 				],
 				'Link: </img/default.png>;rel=preload;as=image'
 			],
 			[
 				[
 					'wgResourceBasePath' => '/w',
-					'wgLogo' => '/img/default.png',
-					'wgLogoHD' => [
+					'wgLogos' => [
+						'1x' => '/img/default.png',
 						'2x' => '/img/two-x.png',
 					],
 				],
@@ -3011,8 +2996,8 @@ class OutputPageTest extends MediaWikiTestCase {
 			[
 				[
 					'wgResourceBasePath' => '/w',
-					'wgLogo' => '/img/default.png',
-					'wgLogoHD' => [
+					'wgLogos' => [
+						'1x' => '/img/default.png',
 						'svg' => '/img/vector.svg',
 					],
 				],
@@ -3022,8 +3007,9 @@ class OutputPageTest extends MediaWikiTestCase {
 			[
 				[
 					'wgResourceBasePath' => '/w',
-					'wgLogo' => '/w/test.jpg',
-					'wgLogoHD' => false,
+					'wgLogos' => [
+						'1x' => '/w/test.jpg',
+					],
 					'wgUploadPath' => '/w/images',
 					'IP' => dirname( __DIR__ ) . '/data/media',
 				],
@@ -3040,12 +3026,12 @@ class OutputPageTest extends MediaWikiTestCase {
 	 * @dataProvider provideIsRevisionCurrent
 	 */
 	public function testIsRevisionCurrent( $titleLastRevision, $outputRevision, $expectedResult ) {
-		$titleMock = $this->getMock( Title::class, [], [], '', false );
+		$titleMock = $this->createMock( Title::class );
 		$titleMock->expects( $this->any() )
 			->method( 'getLatestRevID' )
 			->willReturn( $titleLastRevision );
 
-		$output = $this->newInstance( [], null, [ 'notitle' => true ] );
+		$output = $this->newInstance( [], null );
 		$output->setTitle( $titleMock );
 		$output->setRevisionId( $outputRevision );
 		$this->assertEquals( $expectedResult, $output->isRevisionCurrent() );
@@ -3062,15 +3048,230 @@ class OutputPageTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @return OutputPage
+	 * @covers OutputPage::sendCacheControl
+	 * @dataProvider provideSendCacheControl
 	 */
-	private function newInstance( $config = [], WebRequest $request = null, $options = [] ) {
+	public function testSendCacheControl( array $options = [], array $expectations = [] ) {
+		$output = $this->newInstance( [
+			'LoggedOutMaxAge' => $options['loggedOutMaxAge'] ?? 0,
+			'UseCdn' => $options['useCdn'] ?? false,
+		] );
+
+		$output->enableClientCache( $options['enableClientCache'] ?? true );
+		$output->setCdnMaxage( $options['cdnMaxAge'] ?? 0 );
+
+		if ( isset( $options['lastModified'] ) ) {
+			$output->setLastModified( $options['lastModified'] );
+		}
+
+		$response = $output->getRequest()->response();
+		if ( isset( $options['cookie'] ) ) {
+			$response->setCookie( 'test', 1234 );
+		}
+
+		$output->sendCacheControl();
+
+		$headers = [
+			'Vary' => 'Accept-Encoding, Cookie',
+			'Cache-Control' => 'private, must-revalidate, max-age=0',
+			'Pragma' => false,
+			'Expires' => true,
+			'Last-Modified' => false,
+		];
+
+		foreach ( $headers as $header => $default ) {
+			$value = $expectations[$header] ?? $default;
+			if ( $value === true ) {
+				$this->assertNotEmpty( $response->getHeader( $header ) );
+			} elseif ( $value === false ) {
+				$this->assertNull( $response->getHeader( $header ) );
+			} else {
+				$this->assertEquals( $value, $response->getHeader( $header ) );
+			}
+		}
+	}
+
+	public function provideSendCacheControl() {
+		return [
+			'Default' => [],
+			'Logged out max-age' => [
+				[
+					'loggedOutMaxAge' => 300,
+				],
+				[
+					'Cache-Control' => 'private, must-revalidate, max-age=300',
+				],
+			],
+			'Cookies' => [
+				[
+					'cookie' => true,
+				],
+			],
+			'Cookies with logged out max-age' => [
+				[
+					'loggedOutMaxAge' => 300,
+					'cookie' => true,
+				],
+			],
+			'Disable client cache' => [
+				[
+					'enableClientCache' => false,
+				],
+				[
+					'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
+					'Pragma' => 'no-cache'
+				],
+			],
+			'Set last modified' => [
+				[
+					// 0 is the current time, so we'll use 1 instead.
+					'lastModified' => 1,
+				],
+				[
+					'Last-Modified' => 'Thu, 01 Jan 1970 00:00:01 GMT',
+				]
+			],
+			'Public' => [
+				[
+					'useCdn' => true,
+					'cdnMaxAge' => 300,
+				],
+				[
+					'Cache-Control' => 's-maxage=300, must-revalidate, max-age=0',
+					'Expires' => false,
+				],
+			],
+		];
+	}
+
+	public function provideGetJsVarsEditable() {
+		yield 'can edit and create' => [
+			'performer' => $this->mockAnonAuthorityWithPermissions( [ 'edit', 'create' ] ),
+			'expectedEditableConfig' => [
+				'wgIsProbablyEditable' => true,
+				'wgRelevantPageIsProbablyEditable' => true,
+			]
+		];
+		yield 'cannot edit or create' => [
+			'performer' => $this->mockAnonAuthorityWithoutPermissions( [ 'edit', 'create' ] ),
+			'expectedEditableConfig' => [
+				'wgIsProbablyEditable' => false,
+				'wgRelevantPageIsProbablyEditable' => false,
+			]
+		];
+		yield 'only can edit relevant title' => [
+			'performer' => $this->mockAnonAuthority( function (
+				string $permission,
+				PageIdentity $page
+			) {
+				if ( $permission === 'edit' | $permission === 'create' ) {
+					if ( $page->getDBkey() === 'RelevantTitle' ) {
+						return true;
+					}
+					return false;
+				}
+				return false;
+			} ),
+			'expectedEditableConfig' => [
+				'wgIsProbablyEditable' => false,
+				'wgRelevantPageIsProbablyEditable' => true,
+			]
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetJsVarsEditable
+	 * @covers OutputPage::performerCanEditOrCreate
+	 */
+	public function testGetJsVarsEditable( Authority $performer, array $expectedEditableConfig ) {
+		$op = $this->newInstance( [], null, null, $performer );
+		$op->getContext()->getSkin()->setRelevantTitle( Title::newFromText( 'RelevantTitle' ) );
+		$this->assertArraySubmapSame( $expectedEditableConfig, $op->getJSVars() );
+	}
+
+	/**
+	 * @param bool $registered
+	 * @param bool $matchToken
+	 * @return MockObject|User
+	 */
+	private function mockUser( bool $registered, bool $matchToken ) {
+		$user = $this->createNoOpMock( User::class, [ 'isRegistered', 'matchEditToken' ] );
+		$user->method( 'isRegistered' )->willReturn( $registered );
+		$user->method( 'matchEditToken' )->willReturn( $matchToken );
+		return $user;
+	}
+
+	public function provideUserCanPreview() {
+		yield 'all good' => [
+			'performer' => $this->mockUserAuthorityWithPermissions(
+				$this->mockUser( true, true ),
+				[ 'edit' ]
+			),
+			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
+			true
+		];
+		yield 'get request' => [
+			'performer' => $this->mockUserAuthorityWithPermissions(
+				$this->mockUser( true, true ),
+				[ 'edit' ]
+			),
+			'request' => new FauxRequest( [ 'action' => 'submit' ], false ),
+			false
+		];
+		yield 'not a submit action' => [
+			'performer' => $this->mockUserAuthorityWithPermissions(
+				$this->mockUser( true, true ),
+				[ 'edit' ]
+			),
+			'request' => new FauxRequest( [ 'action' => 'something' ], true ),
+			false
+		];
+		yield 'anon can not' => [
+			'performer' => $this->mockUserAuthorityWithPermissions(
+				$this->mockUser( false, true ),
+				[ 'edit' ]
+			),
+			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
+			false
+		];
+		yield 'token not match' => [
+			'performer' => $this->mockUserAuthorityWithPermissions(
+				$this->mockUser( true, false ),
+				[ 'edit' ]
+			),
+			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
+			false
+		];
+		yield 'no permission' => [
+			'performer' => $this->mockUserAuthorityWithoutPermissions(
+				$this->mockUser( true, true ),
+				[ 'edit' ]
+			),
+			'request' => new FauxRequest( [ 'action' => 'submit' ], true ),
+			false
+		];
+	}
+
+	/**
+	 * @dataProvider provideUserCanPreview
+	 * @covers OutputPage::userCanPreview
+	 */
+	public function testUserCanPreview( Authority $performer, WebRequest $request, bool $expected ) {
+		$op = $this->newInstance( [], $request, null, $performer );
+		$this->assertSame( $expected, $op->userCanPreview() );
+	}
+
+	private function newInstance(
+		array $config = [],
+		WebRequest $request = null,
+		$option = null,
+		Authority $performer = null
+	) : OutputPage {
 		$context = new RequestContext();
 
 		$context->setConfig( new MultiConfig( [
 			new HashConfig( $config + [
 				'AppleTouchIcon' => false,
-				'DisableLangConversion' => true,
 				'EnableCanonicalServerLink' => false,
 				'Favicon' => false,
 				'Feed' => false,
@@ -3083,12 +3284,16 @@ class OutputPageTest extends MediaWikiTestCase {
 			$context->getConfig()
 		] ) );
 
-		if ( !in_array( 'notitle', (array)$options ) ) {
+		if ( $option !== 'notitle' ) {
 			$context->setTitle( Title::newFromText( 'My test page' ) );
 		}
 
 		if ( $request ) {
 			$context->setRequest( $request );
+		}
+
+		if ( $performer ) {
+			$context->setAuthority( $performer );
 		}
 
 		return new OutputPage( $context );

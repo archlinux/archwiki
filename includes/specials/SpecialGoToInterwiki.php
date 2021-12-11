@@ -34,8 +34,8 @@
  * @ingroup SpecialPage
  */
 class SpecialGoToInterwiki extends UnlistedSpecialPage {
-	public function __construct( $name = 'GoToInterwiki' ) {
-		parent::__construct( $name );
+	public function __construct() {
+		parent::__construct( 'GoToInterwiki' );
 	}
 
 	public function execute( $par ) {
@@ -45,9 +45,7 @@ class SpecialGoToInterwiki extends UnlistedSpecialPage {
 		// RedirectSpecialPage::personallyIdentifiableTarget). See the hack
 		// for avoiding T109724 in MediaWiki::performRequest (which also
 		// explains why we can't use a query parameter instead).
-		//
-		// HHVM dies when substr_compare is used on an empty string so ensure it's not.
-		$force = ( substr_compare( $par ?: 'x', 'force/', 0, 6 ) === 0 );
+		$force = ( strpos( $par, 'force/' ) === 0 );
 		if ( $force ) {
 			$par = substr( $par, 6 );
 		}

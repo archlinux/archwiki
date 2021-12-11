@@ -26,7 +26,7 @@ $optionsWithArgs = [ 'cache' ];
 $optionsWithoutArgs = [
 	'debug', 'help'
 ];
-require_once __DIR__ . '/commandLine.inc';
+require_once __DIR__ . '/CommandLineInc.php';
 
 $debug = isset( $options['debug'] );
 $help = isset( $options['help'] );
@@ -165,6 +165,7 @@ do {
 			$res = $mcc->get( $args[0] );
 			$hv = $mcc->_hashfunc( $args[0] );
 			for ( $i = 0; $i < 3; $i++ ) {
+				// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 				print $mcc->_buckets[$hv % $mcc->_bucketcount] . "\n";
 				$hv += $mcc->_hashfunc( $i . $args[0] );
 			}
@@ -212,7 +213,7 @@ do {
 
 		default:
 			$bad = true;
-	} // switch() end
+	}
 
 	if ( $bad ) {
 		if ( $command ) {

@@ -6,6 +6,7 @@
  */
 
 /**
+ * @group Language
  * @covers LanguageMl
  */
 class LanguageMlTest extends LanguageClassesTestCase {
@@ -14,27 +15,27 @@ class LanguageMlTest extends LanguageClassesTestCase {
 	 * @dataProvider provideFormatNum
 	 * @covers Language::formatNum
 	 */
-	public function testFormatNum( $result, $value ) {
+	public function testFormatNum( $value, $result ) {
 		// For T31495
 		$this->assertEquals( $result, $this->getLang()->formatNum( $value ) );
 	}
 
 	public static function provideFormatNum() {
 		return [
-			[ '12,34,567', '1234567' ],
-			[ '12,345', '12345' ],
+			[ '1234567', '12,34,567' ],
+			[ '12345', '12,345' ],
 			[ '1', '1' ],
 			[ '123', '123' ],
-			[ '1,234', '1234' ],
-			[ '12,345.56', '12345.56' ],
-			[ '12,34,56,79,81,23,45,678', '12345679812345678' ],
+			[ '1234', '1,234' ],
+			[ '12345.56', '12,345.56' ],
+			[ '12345679812345678', '12,34,56,79,81,23,45,678' ],
 			[ '.12345', '.12345' ],
-			[ '-12,00,000', '-1200000' ],
-			[ '-98', '-98' ],
-			[ '-98', -98 ],
-			[ '-1,23,45,678', -12345678 ],
+			[ '-1200000', '−12,00,000' ],
+			[ '-98', '−98' ],
+			[ -98, '−98' ],
+			[ -12345678, '−1,23,45,678' ],
 			[ '', '' ],
-			[ '', null ],
+			[ null, '' ],
 		];
 	}
 
@@ -48,12 +49,11 @@ class LanguageMlTest extends LanguageClassesTestCase {
 			throw new Exception( 'Expected output must differ.' );
 		}
 
-		$this->setMwGlobals( 'wgFixMalayalamUnicode', true );
-		$this->assertSame( $expected, $this->getLang()->normalize( $input ), 'ml-normalised form' );
-
-		$this->setMwGlobals( 'wgFixMalayalamUnicode', false );
-		$this->hideDeprecated( '$wgFixMalayalamUnicode = false' );
-		$this->assertSame( $input, $this->getLang()->normalize( $input ), 'regular normalised form' );
+		$this->assertSame(
+			$expected,
+			$this->getLang()->normalize( $input ),
+			'ml-normalised form'
+		);
 	}
 
 	public static function provideNormalize() {
@@ -61,6 +61,14 @@ class LanguageMlTest extends LanguageClassesTestCase {
 			[
 				'ല്‍',
 				'ൽ',
+			],
+			[
+				'ര്‍',
+				'ർ',
+			],
+			[
+				'ള്‍',
+				'ൾ',
 			],
 		];
 	}

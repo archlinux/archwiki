@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Bencoke",
+			"Hanna Tardos",
 			"Tacsipacsi"
 		]
 	},
@@ -31,5 +32,6 @@
 	"oathauth-describe-provider": "Kétlépcsős azonosítás (OATH).",
 	"grant-group-authentication": "hitelesítési műveletek végrehajtása magadnak és másoknak",
 	"grant-oath": "kétlépcsős hitelesítés (OATH) információinak elérése magadról és másokról",
-	"right-oathauth-api-all": "OATH-információk lekérdezése és érvényesítése magadról és másokról"
+	"right-oathauth-api-all": "OATH-információk lekérdezése és érvényesítése magadról és másokról",
+	"oathauth-disable-method-warning": "Amennyiben kikapcsolja a $1 többlépcsős hitelesítést, többé nem használhatja ezt a módszert belépéskor, és minden hitelesítéssel kapcsolatos adat törlődik."
 }

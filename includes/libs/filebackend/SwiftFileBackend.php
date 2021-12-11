@@ -22,6 +22,7 @@
  * @author Russ Nelson
  */
 
+use Psr\Log\LoggerInterface;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -110,6 +111,10 @@ class SwiftFileBackend extends FileBackendStore {
 	 *   - writeUsers          : Swift users with write access to public containers (account:username)
 	 *   - secureReadUsers     : Swift users with read access to private containers (account:username)
 	 *   - secureWriteUsers    : Swift users with write access to private containers (account:username)
+	 *   - connTimeout         : The HTTP connect timeout to use when connecting to Swift, in
+	 *                           seconds.
+	 *   - reqTimeout          : The HTTP request timeout to use when communicating with Swift, in
+	 *                           seconds.
 	 */
 	public function __construct( array $config ) {
 		parent::__construct( $config );
@@ -124,8 +129,17 @@ class SwiftFileBackend extends FileBackendStore {
 		$this->shardViaHashLevels = $config['shardViaHashLevels'] ?? '';
 		$this->rgwS3AccessKey = $config['rgwS3AccessKey'] ?? '';
 		$this->rgwS3SecretKey = $config['rgwS3SecretKey'] ?? '';
+
 		// HTTP helper client
-		$this->http = new MultiHttpClient( [] );
+		$httpOptions = [];
+		foreach ( [ 'connTimeout', 'reqTimeout' ] as $optionName ) {
+			if ( isset( $config[$optionName] ) ) {
+				$httpOptions[$optionName] = $config[$optionName];
+			}
+		}
+		$this->http = new MultiHttpClient( $httpOptions );
+		$this->http->setLogger( $this->logger );
+
 		// Cache container information to mask latency
 		if ( isset( $config['wanCache'] ) && $config['wanCache'] instanceof WANObjectCache ) {
 			$this->memCache = $config['wanCache'];
@@ -142,6 +156,11 @@ class SwiftFileBackend extends FileBackendStore {
 		$this->writeUsers = $config['writeUsers'] ?? [];
 		$this->secureReadUsers = $config['secureReadUsers'] ?? [];
 		$this->secureWriteUsers = $config['secureWriteUsers'] ?? [];
+	}
+
+	public function setLogger( LoggerInterface $logger ) {
+		parent::setLogger( $logger );
+		$this->http->setLogger( $logger );
 	}
 
 	public function getFeatures() {
@@ -196,18 +215,15 @@ class SwiftFileBackend extends FileBackendStore {
 		}
 		// By default, Swift has annoyingly low maximum header value limits
 		if ( isset( $contentHeaders['content-disposition'] ) ) {
-			$disposition = '';
+			$maxLength = 255;
 			// @note: assume FileBackend::makeContentDisposition() already used
-			foreach ( explode( ';', $contentHeaders['content-disposition'] ) as $part ) {
-				$part = trim( $part );
-				$new = ( $disposition === '' ) ? $part : "{$disposition};{$part}";
-				if ( strlen( $new ) <= 255 ) {
-					$disposition = $new;
-				} else {
-					break; // too long; sigh
-				}
+			$offset = $maxLength - strlen( $contentHeaders['content-disposition'] );
+			if ( $offset < 0 ) {
+				$pos = strrpos( $contentHeaders['content-disposition'], ';', $offset );
+				$contentHeaders['content-disposition'] = $pos === false
+					? ''
+					: trim( substr( $contentHeaders['content-disposition'], 0, $pos ) );
 			}
-			$contentHeaders['content-disposition'] = $disposition;
 		}
 
 		return $contentHeaders;
@@ -929,7 +945,7 @@ class SwiftFileBackend extends FileBackendStore {
 			}
 		} else {
 			// Recursive: list all dirs under $dir and its subdirs
-			$getParentDir = function ( $path ) {
+			$getParentDir = static function ( $path ) {
 				return ( strpos( $path, '/' ) !== false ) ? dirname( $path ) : false;
 			};
 
@@ -1556,6 +1572,7 @@ class SwiftFileBackend extends FileBackendStore {
 		} elseif ( $rcode === 409 ) { // not empty
 			$this->onError( $status, __METHOD__, $params, $rerr, $rcode, $rdesc ); // race?
 		} else {
+			// @phan-suppress-previous-line PhanPluginDuplicateIfStatements
 			$this->onError( $status, __METHOD__, $params, $rerr, $rcode, $rdesc );
 		}
 

@@ -120,13 +120,13 @@
 				assert.ok( true, 'Image was pretend-loaded' );
 				done2();
 			} )
-			.progress( function ( response, percent ) {
+			.progress( function ( response2, percent ) {
 				if ( i === 0 ) {
 					assert.strictEqual( percent, 50, 'Correctly propagated a 50% progress event' );
-					assert.strictEqual( response, response, 'Partial response propagated' );
+					assert.strictEqual( response2, response2, 'Partial response propagated' );
 				} else if ( i === 1 ) {
 					assert.strictEqual( percent, 100, 'Correctly propagated a 100% progress event' );
-					assert.strictEqual( response, response, 'Partial response propagated' );
+					assert.strictEqual( response2, response2, 'Partial response propagated' );
 				} else {
 					assert.ok( false, 'Only 2 progress events should propagate' );
 				}

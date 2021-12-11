@@ -1,61 +1,82 @@
 /**
- * Try to catch errors in modules which don't do their own error handling.
- *
  * @class mw.errorLogger
  * @singleton
  */
+'use strict';
+
+/**
+ * Fired via mw.track when an error is not handled by local code and is caught by the
+ * window.onerror handler.
+ *
+ * @event global_error
+ * @param {string} errorMessage Error message.
+ * @param {string} url URL where error was raised.
+ * @param {number} line Line number where error was raised.
+ * @param {number} [column] Line number where error was raised. Not all browsers
+ *   support this.
+ * @param {Error|Mixed} [errorObject] The error object. Typically an instance of Error, but
+ *   anything (even a primitive value) passed to a throw clause will end up here.
+ */
+
+/**
+ * Fired via mw.track when an error is logged with mw.errorLogger#logError.
+ *
+ * @event error_caught
+ * @param {Error} errorObject The error object
+ */
+
+/**
+ * Install a `window.onerror` handler that logs errors by notifying both `global.error` and
+ * `error.uncaught` topic subscribers that an event has occurred. Note well that the former is
+ * done for backwards compatibilty.
+ *
+ * @private
+ * @param {Object} window
+ * @fires global_error
+ * @fires error_caught
+ */
+function installGlobalHandler( window ) {
+	// We will preserve the return value of the previous handler. window.onerror works the
+	// opposite way than normal event handlers (returning true will prevent the default
+	// action, returning false will let the browser handle the error normally, by e.g.
+	// logging to the console), so our fallback old handler needs to return false.
+	var oldHandler = window.onerror || function () {
+		return false;
+	};
+
+	window.onerror = function ( errorMessage, url, line, column, errorObject ) {
+		mw.track( 'global.error', {
+			errorMessage: errorMessage,
+			url: url,
+			lineNumber: line,
+			columnNumber: column,
+			stackTrace: errorObject ? errorObject.stack : '',
+			errorObject: errorObject
+		} );
+
+		if ( errorObject ) {
+			mw.track( 'error.uncaught', errorObject );
+		}
+
+		return oldHandler.apply( this, arguments );
+	};
+}
+
 mw.errorLogger = {
 	/**
-	 * Fired via mw.track when an error is not handled by local code and is caught by the
-	 * window.onerror handler.
+	 * Logs an error by notifying `error.caught` topic subscribers that an event has occurred.
 	 *
-	 * @event global_error
-	 * @param {string} errorMessage Error errorMessage.
-	 * @param {string} url URL where error was raised.
-	 * @param {number} lineNumber Line number where error was raised.
-	 * @param {number} [columnNumber] Line number where error was raised. Not all browsers
-	 *   support this.
-	 * @param {Error|Mixed} [errorObject] The error object. Typically an instance of Error, but anything
-	 *   (even a primitive value) passed to a throw clause will end up here.
+	 * @param {Error} error
+	 * @param {string} [topic='error.caught']
+	 * @fires error_caught
 	 */
-
-	/**
-	 * Install a window.onerror handler that will report via mw.track, while preserving
-	 * any previous handler.
-	 *
-	 * @param {Object} window
-	 */
-	installGlobalHandler: function ( window ) {
-		// We will preserve the return value of the previous handler. window.onerror works the
-		// opposite way than normal event handlers (returning true will prevent the default
-		// action, returning false will let the browser handle the error normally, by e.g.
-		// logging to the console), so our fallback old handler needs to return false.
-		var oldHandler = window.onerror || function () {
-			return false;
-		};
-
-		/**
-		 * Dumb window.onerror handler which forwards the errors via mw.track.
-		 *
-		 * @param {string} errorMessage
-		 * @param {string} url
-		 * @param {number} lineNumber
-		 * @param {number} [columnNumber]
-		 * @param {Error|Mixed} [errorObject]
-		 * @return {boolean} True to prevent the default action
-		 * @fires global_error
-		 */
-		window.onerror = function ( errorMessage, url, lineNumber, columnNumber, errorObject ) {
-			mw.track( 'global.error', {
-				errorMessage: errorMessage,
-				url: url,
-				lineNumber: lineNumber,
-				columnNumber: columnNumber,
-				errorObject: errorObject
-			} );
-			return oldHandler.apply( this, arguments );
-		};
+	logError: function ( error, topic ) {
+		mw.track( topic || 'error.caught', error );
 	}
 };
 
-mw.errorLogger.installGlobalHandler( window );
+if ( window.QUnit ) {
+	mw.errorLogger.installGlobalHandler = installGlobalHandler;
+} else {
+	installGlobalHandler( window );
+}

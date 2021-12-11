@@ -1,6 +1,6 @@
 {
 	"name": "Replace Text",
-	"version": "1.4.1",
+	"version": "1.4.2",
 	"author": [
 		"Yaron Koren",
 		"Niklas Laxström",
@@ -63,8 +63,7 @@
 		"ReplaceTextHooks": "src/ReplaceTextHooks.php",
 		"SpecialReplaceText": "src/SpecialReplaceText.php",
 		"ReplaceTextJob": "src/ReplaceTextJob.php",
-		"ReplaceTextSearch": "src/ReplaceTextSearch.php",
-		"ReplaceTextUtils": "src/ReplaceTextUtils.php"
+		"ReplaceTextSearch": "src/ReplaceTextSearch.php"
 	},
 	"Hooks": {
 		"AdminLinks": [
@@ -78,6 +77,7 @@
 		]
 	},
 	"config": {
+		"ReplaceTextResultsLimit": 250,
 		"ReplaceTextUser": null
 	},
 	"manifest_version": 1

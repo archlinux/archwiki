@@ -46,6 +46,7 @@
 
 		/**
 		 * This flag is set to true when we were unable to load the viewer.
+		 *
 		 * @property {boolean}
 		 */
 		this.viewerIsBroken = false;
@@ -106,22 +107,22 @@
 
 		return deferred.promise()
 			.then(
-				function ( viewer ) {
+				function ( viewer2 ) {
 					if ( !bs.viewerInitialized ) {
 						if ( bs.thumbs.length ) {
-							viewer.initWithThumbs( bs.thumbs );
+							viewer2.initWithThumbs( bs.thumbs );
 						}
 
 						bs.viewerInitialized = true;
 					}
-					return viewer;
+					return viewer2;
 				},
-				function ( message ) {
-					mw.log.warn( message );
+				function ( message2 ) {
+					mw.log.warn( message2 );
 					bs.cleanupOverlay();
 					bs.viewerIsBroken = true;
-					mw.notify( 'Error loading MediaViewer: ' + message );
-					return $.Deferred().reject( message );
+					mw.notify( 'Error loading MediaViewer: ' + message2 );
+					return $.Deferred().reject( message2 );
 				}
 			);
 	};
@@ -460,7 +461,7 @@
 	 * @private
 	 */
 	MMVB.isViewerHash = function () {
-		var path = OO.Router.prototype.getPath();
+		var path = location.hash.slice( 1 );
 		return path.match( mw.mmv.ROUTE_REGEXP ) || path.match( mw.mmv.LEGACY_ROUTE_REGEXP );
 	};
 

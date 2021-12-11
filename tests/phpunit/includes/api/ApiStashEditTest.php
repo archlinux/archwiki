@@ -2,8 +2,8 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Storage\PageEditStash;
-use Wikimedia\TestingAccessWrapper;
 use Psr\Log\NullLogger;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @covers ApiStashEdit
@@ -13,21 +13,18 @@ use Psr\Log\NullLogger;
  * @group Database
  */
 class ApiStashEditTest extends ApiTestCase {
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		$this->setService( 'PageEditStash', new PageEditStash(
 			new HashBagOStuff( [] ),
 			MediaWikiServices::getInstance()->getDBLoadBalancer(),
 			new NullLogger(),
 			new NullStatsdDataFactory(),
+			MediaWikiServices::getInstance()->getHookContainer(),
 			PageEditStash::INITIATOR_USER
 		) );
 		// Clear rate-limiting cache between tests
 		$this->setMwGlobals( 'wgMainCacheType', 'hash' );
-	}
-
-	public function tearDown() {
-		parent::tearDown();
 	}
 
 	/**
@@ -35,7 +32,7 @@ class ApiStashEditTest extends ApiTestCase {
 	 *
 	 * @param array $params Query parameters for API request.  All are optional and will have
 	 *   sensible defaults filled in.  To make a parameter actually not passed, set to null.
-	 * @param User $user User to do the request
+	 * @param User|null $user User to do the request
 	 * @param string $expectedResult 'stashed', 'editconflict'
 	 * @return array
 	 */
@@ -110,7 +107,7 @@ class ApiStashEditTest extends ApiTestCase {
 	 *
 	 * @param string $title Title of page
 	 * @param string Content $text Content of edit
-	 * @param User $user User who made edit
+	 * @param User|null $user User who made edit
 	 * @return string
 	 */
 	protected function getStashKey( $title = __CLASS__, $text = 'Content', User $user = null ) {
@@ -187,81 +184,99 @@ class ApiStashEditTest extends ApiTestCase {
 
 	public function testPageWithNoRevisions() {
 		$name = ucfirst( __FUNCTION__ );
-		$rev = $this->editPage( $name, '' )->value['revision'];
+		$revRecord = $this->editPage( $name, '' )->value['revision-record'];
 
-		$this->setExpectedApiException( [ 'apierror-missingrev-pageid', $rev->getPage() ] );
+		$this->setExpectedApiException( [ 'apierror-missingrev-pageid', $revRecord->getPageId() ] );
 
 		// Corrupt the database.  @todo Does the API really need to fail gracefully for this case?
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->update(
 			'page',
 			[ 'page_latest' => 0 ],
-			[ 'page_id' => $rev->getPage() ],
+			[ 'page_id' => $revRecord->getPageId() ],
 			__METHOD__
 		);
 
-		$this->doStash( [ 'title' => $name, 'baserevid' => $rev->getId() ] );
+		$this->doStash( [ 'title' => $name, 'baserevid' => $revRecord->getId() ] );
 	}
 
 	public function testExistingPage() {
 		$name = ucfirst( __FUNCTION__ );
-		$rev = $this->editPage( $name, '' )->value['revision'];
+		$revRecord = $this->editPage( $name, '' )->value['revision-record'];
 
-		$this->doStash( [ 'title' => $name, 'baserevid' => $rev->getId() ] );
+		$this->doStash( [ 'title' => $name, 'baserevid' => $revRecord->getId() ] );
 	}
 
 	public function testInterveningEdit() {
+		$this->markTestSkippedIfNoDiff3();
+
 		$name = ucfirst( __FUNCTION__ );
-		$oldRev = $this->editPage( $name, "A\n\nB" )->value['revision'];
+		$oldRevRecord = $this->editPage( $name, "A\n\nB" )->value['revision-record'];
 		$this->editPage( $name, "A\n\nC" );
 
 		$this->doStash( [
 			'title' => $name,
-			'baserevid' => $oldRev->getId(),
+			'baserevid' => $oldRevRecord->getId(),
 			'text' => "D\n\nB",
 		] );
 	}
 
 	public function testEditConflict() {
 		$name = ucfirst( __FUNCTION__ );
-		$oldRev = $this->editPage( $name, 'A' )->value['revision'];
+		$oldRevRecord = $this->editPage( $name, 'A' )->value['revision-record'];
 		$this->editPage( $name, 'B' );
 
 		$this->doStash( [
 			'title' => $name,
-			'baserevid' => $oldRev->getId(),
+			'baserevid' => $oldRevRecord->getId(),
 			'text' => 'C',
 		], null, 'editconflict' );
 	}
 
+	public function testMidEditContentModelMismatch() {
+		$name = ucfirst( __FUNCTION__ );
+		$page = WikiPage::factory( Title::makeTitle( NS_MAIN, $name ) );
+
+		$content = new CssContent( 'Css' );
+		$revRecord = $page->doEditContent( $content, '' )->value['revision-record'];
+		$page->doEditContent( new WikitextContent( 'Text' ), '' );
+
+		$this->setExpectedApiException(
+			[ 'apierror-contentmodel-mismatch', 'wikitext', 'css' ]
+		);
+		$this->doStash( [ 'title' => $name, 'baserevid' => $revRecord->getId() ] );
+	}
+
 	public function testDeletedRevision() {
 		$name = ucfirst( __FUNCTION__ );
-		$oldRev = $this->editPage( $name, 'A' )->value['revision'];
+		$oldRevRecord = $this->editPage( $name, 'A' )->value['revision-record'];
 		$this->editPage( $name, 'B' );
 
-		$this->setExpectedApiException( [ 'apierror-missingcontent-pageid', $oldRev->getPage() ] );
+		$this->setExpectedApiException(
+			[ 'apierror-missingcontent-pageid', $oldRevRecord->getPageId() ]
+		);
 
-		$this->revisionDelete( $oldRev );
+		$this->revisionDelete( $oldRevRecord );
 
 		$this->doStash( [
 			'title' => $name,
-			'baserevid' => $oldRev->getId(),
+			'baserevid' => $oldRevRecord->getId(),
 			'text' => 'C',
 		] );
 	}
 
 	public function testDeletedRevisionSection() {
 		$name = ucfirst( __FUNCTION__ );
-		$oldRev = $this->editPage( $name, 'A' )->value['revision'];
+		$oldRevRecord = $this->editPage( $name, 'A' )->value['revision-record'];
 		$this->editPage( $name, 'B' );
 
 		$this->setExpectedApiException( 'apierror-sectionreplacefailed' );
 
-		$this->revisionDelete( $oldRev );
+		$this->revisionDelete( $oldRevRecord );
 
 		$this->doStash( [
 			'title' => $name,
-			'baserevid' => $oldRev->getId(),
+			'baserevid' => $oldRevRecord->getId(),
 			'text' => 'C',
 			'section' => '1',
 		] );
@@ -380,7 +395,7 @@ class ApiStashEditTest extends ApiTestCase {
 		$this->doStashOld( $user );
 
 		// Now let's also increment our editcount
-		$this->editPage( ucfirst( __FUNCTION__ ), '' );
+		$this->editPage( ucfirst( __FUNCTION__ ), '', '', NS_MAIN, $user );
 
 		$user->clearInstanceCache();
 		$this->assertFalse( $this->doCheckCache( $user ),
@@ -402,7 +417,7 @@ class ApiStashEditTest extends ApiTestCase {
 
 		$wrapper = TestingAccessWrapper::newFromObject( $cache );
 
-		$this->assertEquals( $ttl, $wrapper->bag[$key][HashBagOStuff::KEY_EXP] - time(), '', 1 );
+		$this->assertEqualsWithDelta( $ttl, $wrapper->bag[$key][HashBagOStuff::KEY_EXP] - time(), 1 );
 	}
 
 	public function signatureProvider() {

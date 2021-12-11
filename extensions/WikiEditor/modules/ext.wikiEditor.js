@@ -69,12 +69,12 @@
 			page_token: mw.user.getPageviewToken(),
 			session_token: mw.user.sessionId(),
 			editor_interface: 'wikitext',
-			platform: 'desktop', // FIXME
+			platform: 'desktop', // FIXME T249944
 			integration: 'page',
 			page_id: mw.config.get( 'wgArticleId' ),
 			page_title: mw.config.get( 'wgPageName' ),
 			page_ns: mw.config.get( 'wgNamespaceNumber' ),
-			revision_id: mw.config.get( 'wgRevisionId' ),
+			revision_id: mw.config.get( 'wgRevisionId' ) || +$( 'input[name=parentRevId]' ).val() || 0,
 			user_id: mw.user.getId(),
 			user_editcount: mw.config.get( 'wgUserEditCount', 0 ),
 			mw_version: mw.config.get( 'wgVersion' )
@@ -82,6 +82,10 @@
 
 		if ( mw.user.isAnon() ) {
 			data.user_class = 'IP';
+		}
+
+		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
+			data.bucket = mw.user.options.get( 'discussiontools-abtest' );
 		}
 
 		// Schema's kind of a mess of special properties
@@ -105,11 +109,22 @@
 	} );
 
 	logEditFeature = sampledLogger( 'VisualEditorFeatureUse', function ( inSample, feature, action ) {
-		return {
+		/* eslint-disable camelcase */
+		var data = {
 			feature: feature,
 			action: action,
-			editingSessionId: editingSessionId
+			editingSessionId: editingSessionId,
+			user_id: mw.user.getId(),
+			user_editcount: mw.config.get( 'wgUserEditCount', 0 ),
+			platform: 'desktop', // FIXME T249944
+			integration: 'page',
+			editor_interface: 'wikitext'
 		};
+		/* eslint-enable camelcase */
+		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
+			data.bucket = mw.user.options.get( 'discussiontools-abtest' );
+		}
+		return data;
 	} );
 
 	function logAbort( switchingToVE, unmodified ) {
@@ -138,7 +153,7 @@
 		var $textarea = $( '#wpTextbox1' ),
 			$editingSessionIdInput = $( '#editingStatsId' ),
 			origText = $textarea.val(),
-			submitting, onUnloadFallback, dialogsConfig, readyTime;
+			submitting, onUnloadFallback, readyTime;
 
 		if ( $editingSessionIdInput.length ) {
 			editingSessionId = $editingSessionIdInput.val();
@@ -210,6 +225,12 @@
 		$( '#toolbar' ).remove();
 		// Add toolbar module
 		// TODO: Implement .wikiEditor( 'remove' )
+		mw.addWikiEditor( $textarea );
+	} );
+
+	mw.addWikiEditor = function ( $textarea ) {
+		var dialogsConfig;
+
 		$textarea.wikiEditor(
 			'addModule', require( './jquery.wikiEditor.toolbar.config.js' )
 		);
@@ -219,5 +240,6 @@
 		dialogsConfig.replaceIcons( $textarea );
 		// Add dialogs module
 		$textarea.wikiEditor( 'addModule', dialogsConfig.getDefaultConfig() );
-	} );
+
+	};
 }() );

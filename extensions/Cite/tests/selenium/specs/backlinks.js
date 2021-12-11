@@ -1,16 +1,19 @@
-var assert = require( 'assert' ),
+'use strict';
+
+const assert = require( 'assert' ),
 	Api = require( 'wdio-mediawiki/Api' ),
 	CitePage = require( '../pageobjects/cite.page' ),
 	Util = require( 'wdio-mediawiki/Util' );
 
 describe( 'Cite backlinks', function () {
-	var title;
+	let title;
 
 	before( function () {
 		title = Util.getTestString( 'CiteTest-title-' );
 
-		browser.call( function () {
-			return Api.edit(
+		browser.call( async () => {
+			const bot = await Api.bot();
+			await bot.edit(
 				title,
 				'This is reference #1: <ref name="a">This is citation #1 for reference #1 and #2</ref>\n\n' +
 				'This is reference #2: <ref name="a" />\n\n' +
@@ -36,7 +39,7 @@ describe( 'Cite backlinks', function () {
 
 	it( 'clickable up arrow is hidden by default when there are multiple backlinks', function () {
 		assert(
-			!CitePage.getCiteMultiBacklink( 1 ).isVisible(),
+			!CitePage.getCiteMultiBacklink( 1 ).isDisplayed(),
 			'the up-pointing arrow in the reference line is not linked'
 		);
 	} );
@@ -44,7 +47,7 @@ describe( 'Cite backlinks', function () {
 	it( 'clickable up arrow shows when jumping to multiple used references', function () {
 		CitePage.getReference( 2 ).click();
 		assert(
-			CitePage.getCiteMultiBacklink( 1 ).isVisible(),
+			CitePage.getCiteMultiBacklink( 1 ).isDisplayed(),
 			'the up-pointing arrow in the reference line is linked'
 		);
 
@@ -71,20 +74,20 @@ describe( 'Cite backlinks', function () {
 		CitePage.getCiteMultiBacklink( 1 ).click();
 
 		assert(
-			!CitePage.getCiteMultiBacklink( 1 ).isVisible(),
+			!CitePage.getCiteMultiBacklink( 1 ).isDisplayed(),
 			'the up-pointing arrow in the reference line is not linked'
 		);
 	} );
 
 	it( 'are not accidentally removed from unnamed references', function () {
 		CitePage.getReference( 3 ).click();
-		CitePage.getCiteSingleBacklink( 2 ).waitForVisible();
+		CitePage.getCiteSingleBacklink( 2 ).waitForDisplayed();
 		CitePage.getCiteSingleBacklink( 2 ).click();
 		// It doesn't matter what is focussed next, just needs to be something else
 		CitePage.getReference( 1 ).click();
 
 		assert(
-			CitePage.getCiteSingleBacklink( 2 ).isVisible(),
+			CitePage.getCiteSingleBacklink( 2 ).isDisplayed(),
 			'the backlink on the unnamed reference is still visible'
 		);
 	} );

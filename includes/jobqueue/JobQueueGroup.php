@@ -44,14 +44,14 @@ class JobQueueGroup {
 	/** @var array Map of (bucket => (queue => JobQueue, types => list of types) */
 	protected $coalescedQueues;
 
-	const TYPE_DEFAULT = 1; // integer; jobs popped by default
-	const TYPE_ANY = 2; // integer; any job
+	public const TYPE_DEFAULT = 1; // integer; jobs popped by default
+	private const TYPE_ANY = 2; // integer; any job
 
-	const USE_CACHE = 1; // integer; use process or persistent cache
+	public const USE_CACHE = 1; // integer; use process or persistent cache
 
-	const PROC_CACHE_TTL = 15; // integer; seconds
+	private const PROC_CACHE_TTL = 15; // integer; seconds
 
-	const CACHE_VERSION = 1; // integer; cache version
+	private const CACHE_VERSION = 1; // integer; cache version
 
 	/**
 	 * @param string $domain Wiki domain ID
@@ -75,7 +75,10 @@ class JobQueueGroup {
 		}
 
 		if ( !isset( self::$instances[$domain] ) ) {
-			self::$instances[$domain] = new self( $domain, wfConfiguredReadOnlyReason() );
+			$reason = MediaWikiServices::getInstance()
+				->getConfiguredReadOnlyMode()
+				->getReason();
+			self::$instances[$domain] = new self( $domain, $reason );
 			// Make sure jobs are not getting pushed to bogus wikis. This can confuse
 			// the job runner system into spawning endless RPC requests that fail (T171371).
 			$wikiId = WikiMap::getWikiIdFromDbDomain( $domain );
@@ -110,17 +113,27 @@ class JobQueueGroup {
 
 		$conf = [ 'domain' => $this->domain, 'type' => $type ];
 		if ( isset( $wgJobTypeConf[$type] ) ) {
-			$conf = $conf + $wgJobTypeConf[$type];
+			$conf += $wgJobTypeConf[$type];
 		} else {
-			$conf = $conf + $wgJobTypeConf['default'];
+			$conf += $wgJobTypeConf['default'];
 		}
 		if ( !isset( $conf['readOnlyReason'] ) ) {
 			$conf['readOnlyReason'] = $this->readOnlyReason;
 		}
 
+		return $this->factoryJobQueue( $conf );
+	}
+
+	/**
+	 * @param array $conf
+	 * @return JobQueue
+	 * @throws JobQueueError
+	 */
+	private function factoryJobQueue( array $conf ) {
 		$services = MediaWikiServices::getInstance();
 		$conf['stats'] = $services->getStatsdDataFactory();
 		$conf['wanCache'] = $services->getMainWANObjectCache();
+		$conf['idGenerator'] = $services->getGlobalIdGenerator();
 
 		return JobQueue::factory( $conf );
 	}
@@ -217,10 +230,10 @@ class JobQueueGroup {
 	 *
 	 * @param int|string $qtype JobQueueGroup::TYPE_* constant or job type string
 	 * @param int $flags Bitfield of JobQueueGroup::USE_* constants
-	 * @param array $blacklist List of job types to ignore
+	 * @param array $ignored List of job types to ignore
 	 * @return RunnableJob|bool Returns false on failure
 	 */
-	public function pop( $qtype = self::TYPE_DEFAULT, $flags = 0, array $blacklist = [] ) {
+	public function pop( $qtype = self::TYPE_DEFAULT, $flags = 0, array $ignored = [] ) {
 		global $wgJobClasses;
 
 		$job = false;
@@ -234,7 +247,7 @@ class JobQueueGroup {
 		}
 
 		if ( is_string( $qtype ) ) { // specific job type
-			if ( !in_array( $qtype, $blacklist ) ) {
+			if ( !in_array( $qtype, $ignored ) ) {
 				$job = $this->get( $qtype )->pop();
 			}
 		} else { // any job in the "default" jobs types
@@ -251,7 +264,7 @@ class JobQueueGroup {
 				$types = array_intersect( $types, $this->getDefaultQueueTypes() );
 			}
 
-			$types = array_diff( $types, $blacklist ); // avoid selected types
+			$types = array_diff( $types, $ignored ); // avoid selected types
 			shuffle( $types ); // avoid starvation
 
 			foreach ( $types as $type ) { // for each queue...
@@ -307,7 +320,7 @@ class JobQueueGroup {
 	/**
 	 * Get the list of queue types
 	 *
-	 * @return array List of strings
+	 * @return string[]
 	 */
 	public function getQueueTypes() {
 		return array_keys( $this->getCachedConfigVar( 'wgJobClasses' ) );
@@ -316,7 +329,7 @@ class JobQueueGroup {
 	/**
 	 * Get the list of default queue types
 	 *
-	 * @return array List of strings
+	 * @return string[]
 	 */
 	public function getDefaultQueueTypes() {
 		global $wgJobTypesExcludedFromDefaultQueue;
@@ -374,7 +387,7 @@ class JobQueueGroup {
 	}
 
 	/**
-	 * Get the size of the queus for a list of job types
+	 * Get the size of the queues for a list of job types
 	 *
 	 * @return int[] Map of (job type => size)
 	 */
@@ -385,7 +398,7 @@ class JobQueueGroup {
 			$queue = $info['queue'];
 			$sizes = $queue->getSiblingQueueSizes( $this->getQueueTypes() );
 			if ( is_array( $sizes ) ) { // batching features supported
-				$sizeMap = $sizeMap + $sizes;
+				$sizeMap += $sizes;
 			} else { // we have to go through the queues in the bucket one-by-one
 				foreach ( $info['types'] as $type ) {
 					$sizeMap[$type] = $this->get( $type )->getSize();
@@ -406,7 +419,7 @@ class JobQueueGroup {
 		if ( $this->coalescedQueues === null ) {
 			$this->coalescedQueues = [];
 			foreach ( $wgJobTypeConf as $type => $conf ) {
-				$queue = JobQueue::factory(
+				$queue = $this->factoryJobQueue(
 					[ 'domain' => $this->domain, 'type' => 'null' ] + $conf );
 				$loc = $queue->getCoalesceLocationInternal();
 				if ( !isset( $this->coalescedQueues[$loc] ) ) {
@@ -441,7 +454,7 @@ class JobQueueGroup {
 			$value = $cache->getWithSetCallback(
 				$cache->makeGlobalKey( 'jobqueue', 'configvalue', $this->domain, $name ),
 				$cache::TTL_DAY + mt_rand( 0, $cache::TTL_DAY ),
-				function () use ( $wiki, $name ) {
+				static function () use ( $wiki, $name ) {
 					global $wgConf;
 					// @TODO: use the full domain ID here
 					return [ 'v' => $wgConf->getConfig( $wiki, $name ) ];

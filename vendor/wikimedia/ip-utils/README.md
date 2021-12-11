@@ -12,12 +12,12 @@ Additional documentation about the library can be found on
 Usage
 -----
 
-<pre lang="php">
+```php
 use Wikimedia\IPUtils;
 
 IPUtils::isIPAddress( '::1' );
 IPUtils::isIPv4( '124.24.52.13' );
-</pre>
+```
 
 
 Running tests

@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\MediaWikiServices;
+
 class SpecialBooksourcesTest extends SpecialPageTestBase {
 	public static function provideISBNs() {
 		return [
@@ -35,7 +38,11 @@ class SpecialBooksourcesTest extends SpecialPageTestBase {
 	}
 
 	protected function newSpecialPage() {
-		return new SpecialBookSources();
+		$services = MediaWikiServices::getInstance();
+		return new SpecialBookSources(
+			$services->getRevisionLookup(),
+			$services->getContentLanguage()
+		);
 	}
 
 	/**
@@ -43,9 +50,9 @@ class SpecialBooksourcesTest extends SpecialPageTestBase {
 	 */
 	public function testExecute() {
 		list( $html, ) = $this->executeSpecialPage( 'Invalid', null, 'qqx' );
-		$this->assertContains( '(booksources-invalid-isbn)', $html );
+		$this->assertStringContainsString( '(booksources-invalid-isbn)', $html );
 		list( $html, ) = $this->executeSpecialPage( '0-7475-3269-9', null, 'qqx' );
-		$this->assertNotContains( '(booksources-invalid-isbn)', $html );
-		$this->assertContains( '(booksources-text)', $html );
+		$this->assertStringNotContainsString( '(booksources-invalid-isbn)', $html );
+		$this->assertStringContainsString( '(booksources-text)', $html );
 	}
 }

@@ -20,7 +20,6 @@
 	"renameuserwarnings": "எச்சரிக்கை:",
 	"renameuserconfirm": "சரி, பயனருக்கு மாற்றுப்பெயர் கொடுக்கவும்",
 	"renameusersubmit": "சமர்ப்பி",
-	"renameuser-submit-blocklog": "பயனாளரின் தடை உள்ளீட்டை காட்டு",
 	"renameusererrordoesnotexist": "\"<nowiki>$1</nowiki>\" என்ற பெயரிலான பயனர் இல்லை.",
 	"renameusererrorexists": "\"<nowiki>$1</nowiki>\" என்ற பெயரில் ஏற்கனவே பயனர் ஒருவர் உள்ளார்.",
 	"renameusererrorinvalid": "\"<nowiki>$1</nowiki>\" என்ற பயனர் பெயர் செல்லாது.",

@@ -3,6 +3,7 @@
 use MediaWiki\FileBackend\FSFile\TempFSFileFactory;
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\Logger\LoggerFactory;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * Code shared by the FileBackendGroup integration and unit tests. They need merely provide a
@@ -16,12 +17,14 @@ trait FileBackendGroupTestTrait {
 	 *     * 'lmgFactory'
 	 *     * 'mimeAnalyzer'
 	 *     * 'tmpFileFactory'
+	 * @return FileBackendGroup
 	 */
 	abstract protected function newObj( array $options = [] ) : FileBackendGroup;
 
 	/**
 	 * @param string $domain Expected argument that LockManagerGroupFactory::getLockManagerGroup
 	 *   will receive
+	 * @return LockManagerGroupFactory
 	 */
 	abstract protected function getLockManagerGroupFactory( $domain )
 		: LockManagerGroupFactory;
@@ -31,7 +34,12 @@ trait FileBackendGroupTestTrait {
 	 */
 	abstract protected static function getWikiID();
 
-	/** @var BagOStuff */
+	/**
+	 * null indicates that we don't have the actual object reference, but it should be an empty
+	 * HashBagOStuff.
+	 *
+	 * @var BagOStuff|null
+	 */
 	private $srvCache;
 
 	/** @var WANObjectCache */
@@ -68,7 +76,7 @@ trait FileBackendGroupTestTrait {
 			'FileBackends' => [],
 			'ForeignFileRepos' => [],
 			'LocalFileRepo' => self::getDefaultLocalFileRepo(),
-			'wikiId' => self::getWikiID(),
+			'fallbackWikiId' => self::getWikiID(),
 		];
 	}
 
@@ -88,7 +96,7 @@ trait FileBackendGroupTestTrait {
 	public function testConstructor_backendObject() {
 		// 'backend' being an object makes that repo from configuration ignored
 		// XXX This is not documented in DefaultSettings.php, does it do anything useful?
-		$obj = $this->newObj( [ 'ForeignFileRepos' => [ [ 'backend' => new stdclass ] ] ] );
+		$obj = $this->newObj( [ 'ForeignFileRepos' => [ [ 'backend' => (object)[] ] ] ] );
 		$this->assertSame( FSFileBackend::class, $obj->config( 'local-backend' )['class'] );
 	}
 
@@ -160,7 +168,8 @@ trait FileBackendGroupTestTrait {
 	 * @covers ::register
 	 */
 	public function testRegister_exception( $fileBackends, $class, $msg ) {
-		$this->setExpectedException( $class, $msg );
+		$this->expectException( $class );
+		$this->expectExceptionMessage( $msg );
 		$this->newObj( [ 'FileBackends' => $fileBackends ] );
 	}
 
@@ -196,8 +205,8 @@ trait FileBackendGroupTestTrait {
 	 * @covers ::get
 	 */
 	public function testGetUnrecognized() {
-		$this->setExpectedException( InvalidArgumentException::class,
-			"No backend defined with the name 'unrecognized'." );
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( "No backend defined with the name 'unrecognized'." );
 		$this->newObj()->get( 'unrecognized' );
 	}
 
@@ -221,7 +230,9 @@ trait FileBackendGroupTestTrait {
 			'tmpFileFactory' => $this->tmpFileFactory,
 			'statusWrapper' => [ Status::class, 'wrap' ],
 			'wanCache' => $this->wanCache,
-			'srvCache' => $this->srvCache,
+			// If $this->srvCache is null, we don't know what it should be, so just fill in the
+			// actual value. Equality to a new HashBagOStuff doesn't work because of the token.
+			'srvCache' => $this->srvCache ?? $config['srvCache'],
 			'logger' => LoggerFactory::getInstance( 'FileOperation' ),
 			// This was set to null above in $config, it's not really null
 			'profiler' => null,
@@ -240,15 +251,20 @@ trait FileBackendGroupTestTrait {
 			'class' => FSFileBackend::class,
 			'lockManager' =>
 				$this->lmgFactory->getLockManagerGroup( self::getWikiID() )->get( 'fsLockManager' ),
-			'fileJournal' =>
-				FileJournal::factory( [ 'class' => NullFileJournal::class ], 'local-backend' ),
+			'fileJournal' => new NullFileJournal,
 		], $config );
 
 		// For config values that are objects, check object identity.
 		$this->assertSame( [ $obj, 'guessMimeInternal' ], $config['mimeCallback'] );
 		$this->assertSame( $this->tmpFileFactory, $config['tmpFileFactory'] );
 		$this->assertSame( $this->wanCache, $config['wanCache'] );
-		$this->assertSame( $this->srvCache, $config['srvCache'] );
+		if ( $this->srvCache === null ) {
+			$this->assertInstanceOf( HashBagOStuff::class, $config['srvCache'] );
+			$this->assertSame(
+				[], TestingAccessWrapper::newFromObject( $config['srvCache'] )->bag );
+		} else {
+			$this->assertSame( $this->srvCache, $config['srvCache'] );
+		}
 	}
 
 	/**
@@ -314,7 +330,7 @@ trait FileBackendGroupTestTrait {
 			'class' => '',
 			'lockManager' => 'fsLockManager',
 			'fileJournal' => [ 'factory' =>
-				function () use ( $mockJournal ) {
+				static function () use ( $mockJournal ) {
 					return $mockJournal;
 				}
 			],
@@ -327,8 +343,8 @@ trait FileBackendGroupTestTrait {
 	 * @covers ::config
 	 */
 	public function testConfigUnrecognized() {
-		$this->setExpectedException( InvalidArgumentException::class,
-			"No backend defined with the name 'unrecognized'." );
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( "No backend defined with the name 'unrecognized'." );
 		$this->newObj()->config( 'unrecognized' );
 	}
 
@@ -338,11 +354,11 @@ trait FileBackendGroupTestTrait {
 	 * @param string|null $expected Name of backend that will be returned from 'get', or null
 	 * @param string $storagePath
 	 */
-	public function testBackendFromPath( $expected = null, $storagePath ) {
+	public function testBackendFromPath( $expected, $storagePath ) {
 		$obj = $this->newObj( [ 'FileBackends' => [
-			[ 'name' => '', 'class' => stdclass::class, 'lockManager' => 'fsLockManager' ],
-			[ 'name' => 'a', 'class' => stdclass::class, 'lockManager' => 'fsLockManager' ],
-			[ 'name' => 'b', 'class' => stdclass::class, 'lockManager' => 'fsLockManager' ],
+			[ 'name' => '', 'class' => stdClass::class, 'lockManager' => 'fsLockManager' ],
+			[ 'name' => 'a', 'class' => stdClass::class, 'lockManager' => 'fsLockManager' ],
+			[ 'name' => 'b', 'class' => stdClass::class, 'lockManager' => 'fsLockManager' ],
 		] ] );
 		$this->assertSame(
 			$expected === null ? null : $obj->get( $expected ),
@@ -375,7 +391,7 @@ trait FileBackendGroupTestTrait {
 	 * @param string|null $content
 	 * @param string|null $fsPath
 	 * @param string|null $expectedExtensionType Expected return of
-	 *   MimeAnalyzer::guessTypesForExtension
+	 *   MimeAnalyzer::getMimeTypeFromExtensionOrNull
 	 * @param string|null $expectedGuessedMimeType Expected return value of
 	 *   MimeAnalyzer::guessMimeType (null if expected not to be called)
 	 */
@@ -387,7 +403,7 @@ trait FileBackendGroupTestTrait {
 		$expectedGuessedMimeType
 	) {
 		$mimeAnalyzer = $this->createMock( MimeAnalyzer::class );
-		$mimeAnalyzer->expects( $this->once() )->method( 'guessTypesForExtension' )
+		$mimeAnalyzer->expects( $this->once() )->method( 'getMimeTypeFromExtensionOrNull' )
 			->willReturn( $expectedExtensionType );
 		$tmpFileFactory = $this->createMock( TempFSFileFactory::class );
 
@@ -411,7 +427,7 @@ trait FileBackendGroupTestTrait {
 		}
 
 		$mimeAnalyzer->expects( $this->never() )
-			->method( $this->anythingBut( 'guessTypesForExtension', 'guessMimeType' ) );
+			->method( $this->anythingBut( 'getMimeTypeFromExtensionOrNull', 'guessMimeType' ) );
 		$tmpFileFactory->expects( $this->never() )
 			->method( $this->anythingBut( 'newTempFSFile' ) );
 

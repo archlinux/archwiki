@@ -21,6 +21,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * An utility class to rescore search results by looking for an exact match
  * in the db and add the page found to the first position.
@@ -120,6 +122,7 @@ class SearchExactMatchRescorer {
 	 * Returns an array where the element of $array at index $key becomes
 	 * the first element.
 	 * @param int $key key to pull to the front
+	 * @param array $array
 	 * @return array $array with the item at $key pulled to the front
 	 */
 	private function pullFront( $key, array $array ) {
@@ -134,7 +137,7 @@ class SearchExactMatchRescorer {
 	 * @return null|string If title exists and redirects, get the destination's prefixed name
 	 */
 	private function getRedirectTarget( $title ) {
-		$page = WikiPage::factory( $title );
+		$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 		if ( !$page->exists() ) {
 			return null;
 		}

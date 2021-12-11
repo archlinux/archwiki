@@ -4,14 +4,14 @@
 			"Aleator",
 			"Arnaugir",
 			"El libre",
+			"Fitoschido",
 			"Juanpabl",
 			"Paucabot",
 			"Qllach",
 			"SMP",
-			"Toniher",
-			"Vriullop",
 			"Ssola",
-			"Fitoschido"
+			"Toniher",
+			"Vriullop"
 		]
 	},
 	"renameuser": "Reanomena l'usuari",
@@ -27,7 +27,6 @@
 	"renameuserwarnings": "Advertències:",
 	"renameuserconfirm": "Sí, reanomena l'usuari",
 	"renameusersubmit": "Tramet",
-	"renameuser-submit-blocklog": "Mostra el registre de blocatges per l'usuari",
 	"renameusererrordoesnotexist": "L'usuari «<nowiki>$1</nowiki>» no existeix",
 	"renameusererrorexists": "L'usuari «<nowiki>$1</nowiki>» ja existeix",
 	"renameusererrorinvalid": "El nom d'usuari «<nowiki>$1</nowiki>» no és vàlid",

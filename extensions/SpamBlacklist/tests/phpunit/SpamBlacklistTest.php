@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @group SpamBlacklist
  * @group Database
@@ -61,21 +63,27 @@ class SpamBlacklistTest extends MediaWikiTestCase {
 	 * @dataProvider spamProvider
 	 */
 	public function testSpam( $links, $expected ) {
-		$returnValue = $this->spamFilter->filter( $links, Title::newMainPage() );
+		$returnValue = $this->spamFilter->filter(
+			$links,
+			Title::newMainPage(),
+			$this->createMock( User::class )
+		);
 		$this->assertEquals( $expected, $returnValue );
 	}
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
-
-		// create spam filter
-		$this->spamFilter = new SpamBlacklist;
 
 		$this->setMwGlobals( 'wgBlacklistSettings', [
 			'files' => [],
 		] );
 
-		\MessageCache::singleton()->enable();
+		BaseBlacklist::clearInstanceCache();
+
+		// create spam filter
+		$this->spamFilter = new SpamBlacklist;
+
+		MediaWikiServices::getInstance()->getMessageCache()->enable();
 		$this->insertPage( 'MediaWiki:Spam-blacklist', implode( "\n", $this->blacklist ) );
 		$this->insertPage( 'MediaWiki:Spam-whitelist', implode( "\n", $this->whitelist ) );
 
@@ -86,8 +94,8 @@ class SpamBlacklistTest extends MediaWikiTestCase {
 		$reflProp->setValue( $instance, false );
 	}
 
-	protected function tearDown() {
-		\MessageCache::singleton()->disable();
+	protected function tearDown() : void {
+		MediaWikiServices::getInstance()->getMessageCache()->disable();
 		parent::tearDown();
 	}
 }

@@ -13,9 +13,9 @@ use CrhConverter as Crh;
 
 class CrhExceptions {
 
-	const WB = '\b'; # default word boundary; may be updated in the future
+	private const WB = '\b'; # default word boundary; may be updated in the future
 
-	function __construct() {
+	public function __construct() {
 		$this->loadRegs();
 	}
 
@@ -89,7 +89,7 @@ class CrhExceptions {
 		}
 	}
 
-	function loadExceptions( $lcChars, $ucChars ) {
+	public function loadExceptions( $lcChars, $ucChars ) {
 		# init lc and uc, as needed
 		$this->initLcUc( $lcChars, $ucChars );
 
@@ -116,8 +116,10 @@ class CrhExceptions {
 			$this->Latn2CyrlPatterns, $this->CyrlCleanUpRegexes ];
 	}
 
-	# map Latin to Cyrillic and back, simple string match only (no regex)
-	# variants: all lowercase, all uppercase, first letter capitalized
+	/**
+	 * @var string[] map Latin to Cyrillic and back, simple string match only (no regex)
+	 * variants: all lowercase, all uppercase, first letter capitalized
+	 */
 	private $ManyToOneC2LMappings = [
 		# Carefully ordered many-to-one mappings
 		# these are ordered so C2L is correct (the later Latin one)
@@ -128,8 +130,10 @@ class CrhExceptions {
 		'mesul' => 'месуль', 'mesül' => 'месуль',
 	];
 
-	# map Cyrillic to Latin and back, simple string match only (no regex)
-	# variants: all lowercase, all uppercase, first letter capitalized
+	/**
+	 * @var string[] map Cyrillic to Latin and back, simple string match only (no regex)
+	 * variants: all lowercase, all uppercase, first letter capitalized
+	 */
 	private $multiCaseMappings = [
 
 		#### Cyrillic to Latin
@@ -344,8 +348,10 @@ class CrhExceptions {
 
 	];
 
-	# map Cyrillic to Latin and back, simple string match only (no regex)
-	# no variants: map exactly as is
+	/**
+	 * @var string[] map Cyrillic to Latin and back, simple string match only (no regex)
+	 * no variants: map exactly as is
+	 */
 	private $exactCaseMappings = [
 		# аббревиатуры
 		# abbreviations
@@ -354,11 +360,13 @@ class CrhExceptions {
 		'КъМПУ' => 'QMPU',
 	];
 
-	# map Cyrillic to Latin and back, match end of word
-	# variants: all lowercase, all uppercase, first letter capitalized
-	# "first letter capitalized" variant was in the source
-	# items with capture group refs (e.g., $1) are only mapped from the
-	# regex to the reference
+	/**
+	 * @var string[] map Cyrillic to Latin and back, match end of word
+	 * variants: all lowercase, all uppercase, first letter capitalized
+	 * "first letter capitalized" variant was in the source
+	 * items with capture group refs (e.g., $1) are only mapped from the
+	 * regex to the reference
+	 */
 	private $suffixMapping = [
 		# originally C2L
 		'иаль' => 'ial', 'нуль' => 'nul', 'кой' => 'köy', 'койнинъ' => 'köyniñ', 'койни' => 'köyni',
@@ -372,10 +380,12 @@ class CrhExceptions {
 
 	];
 
-	# map Cyrillic to Latin and back, match beginning of word
-	# variants: all lowercase, all uppercase, first letter capitalized
-	# items with capture group refs (e.g., $1) are only mapped from the
-	# regex to the reference
+	/**
+	 * @var string[] map Cyrillic to Latin and back, match beginning of word
+	 * variants: all lowercase, all uppercase, first letter capitalized
+	 * items with capture group refs (e.g., $1) are only mapped from the
+	 * regex to the reference
+	 */
 	private $prefixMapping = [
 		# originally C2L
 		'буюк([^ъ])' => 'büyük$1', 'бую([гдйлмнпрстчшc])(и)' => 'büyü$1$2',
@@ -399,13 +409,11 @@ class CrhExceptions {
 	private $Cyrl2LatnRegexes = [];
 	private $Latn2CyrlRegexes = [];
 
-	function loadRegs() {
+	private function loadRegs() {
 		// Regexes as keys need to be declared in a function.
 		$this->Cyrl2LatnRegexes = [
-			############################
-			# относятся ко всему слову #
-			# whole words              #
-			############################
+			# относятся ко всему слову
+			# whole words
 
 			// TODO: refactor upper/lower/first capital whole words without
 			// regexes into simpler list
@@ -478,10 +486,8 @@ class CrhExceptions {
 			'/' . self::WB . 'Я' . self::WB . '/u' => 'Ya',
 			'/' . self::WB . 'Ё' . self::WB . '/u' => 'Yo',
 
-			############################
-			# относятся к началу слова #
-			# word prefixes            #
-			############################
+			# относятся к началу слова
+			# word prefixes
 			'/' . self::WB . 'КъЮШн/u' => 'QYŞn',
 			'/' . self::WB . 'ЮШн/u' => 'YŞn',
 
@@ -564,10 +570,8 @@ class CrhExceptions {
 			'/([аеёиоуыэюяйьъaeöüğqАЕЁИОУЫЭЮЯЙЬЪAEÖÜĞQ])Я([' . Crh::C_LC . 'cğñqöü])/u' => '$1Ya$2',
 			'/([аеёиоуыэюяйьъaeöüğqАЕЁИОУЫЭЮЯЙЬЪAEÖÜĞQ])Я([' . Crh::C_UC . 'CĞÑQÖÜ])/u' => '$1YA$2',
 
-			###############################
-			# не зависят от места в слове #
-			# position independent        #
-			###############################
+			# не зависят от места в слове
+			# position independent
 
 			# слова на -льон
 			# words with -льон

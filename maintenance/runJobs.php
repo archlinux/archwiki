@@ -21,15 +21,9 @@
  * @ingroup Maintenance
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	// So extensions (and other code) can check whether they're running in job mode.
-	// This is not defined if this script is included from installer/updater or phpunit.
-	define( 'MEDIAWIKI_JOB_RUNNER', true );
-}
-
 require_once __DIR__ . '/Maintenance.php';
 
-use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 
 /**
  * Maintenance script that runs pending jobs.
@@ -47,6 +41,13 @@ class RunJobs extends Maintenance {
 		$this->addOption( 'nothrottle', 'Ignore job throttling configuration', false, false );
 		$this->addOption( 'result', 'Set to "json" to print only a JSON response', false, true );
 		$this->addOption( 'wait', 'Wait for new jobs instead of exiting', false, false );
+	}
+
+	public function finalSetup() {
+		// So extensions (and other code) can check whether they're running in job mode.
+		// This is not defined if this script is included from installer/updater or phpunit.
+		define( 'MEDIAWIKI_JOB_RUNNER', true );
+		parent::finalSetup();
 	}
 
 	public function memoryLimit() {
@@ -74,7 +75,7 @@ class RunJobs extends Maintenance {
 		$outputJSON = ( $this->getOption( 'result' ) === 'json' );
 		$wait = $this->hasOption( 'wait' );
 
-		$runner = new JobRunner( LoggerFactory::getInstance( 'runJobs' ) );
+		$runner = MediaWikiServices::getInstance()->getJobRunner();
 		if ( !$outputJSON ) {
 			$runner->setDebugHandler( [ $this, 'debugInternal' ] );
 		}

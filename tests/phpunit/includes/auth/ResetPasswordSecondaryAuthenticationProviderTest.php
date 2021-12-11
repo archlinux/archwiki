@@ -2,13 +2,17 @@
 
 namespace MediaWiki\Auth;
 
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\User\UserNameUtils;
+use Psr\Container\ContainerInterface;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group AuthManager
  * @covers \MediaWiki\Auth\ResetPasswordSecondaryAuthenticationProvider
  */
-class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiTestCase {
+class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideGetAuthenticationRequests
 	 * @param string $action
@@ -50,7 +54,7 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiTestCas
 			$mock->expects( $this->once() )->method( 'tryReset' )
 				->with( $this->identicalTo( $user ), $this->identicalTo( $reqs ) )
 				->will( $this->returnValue( $obj ) );
-			$this->assertSame( $obj, call_user_func_array( [ $mock, $method ], $args ) );
+			$this->assertSame( $obj, $mock->$method( ...$args ) );
 		}
 	}
 
@@ -79,13 +83,28 @@ class ResetPasswordSecondaryAuthenticationProviderTest extends \MediaWikiTestCas
 				'preauth' => [],
 				'primaryauth' => [],
 				'secondaryauth' => [
-					[ 'factory' => function () use ( $provider ) {
+					[ 'factory' => static function () use ( $provider ) {
 						return $provider;
 					} ],
 				],
 			],
 		] );
-		$manager = new AuthManager( new \FauxRequest, $config );
+		$mwServices = MediaWikiServices::getInstance();
+		$services = $this->createNoOpAbstractMock( ContainerInterface::class );
+		$objectFactory = new \Wikimedia\ObjectFactory( $services );
+		$permManager = $this->createNoOpMock( PermissionManager::class );
+		$hookContainer = $this->createHookContainer();
+		$userNameUtils = $this->createNoOpMock( UserNameUtils::class );
+		$manager = new AuthManager(
+			new \FauxRequest,
+			$config,
+			$objectFactory,
+			$hookContainer,
+			$mwServices->getReadOnlyMode(),
+			$userNameUtils,
+			$mwServices->getBlockManager(),
+			$mwServices->getBlockErrorFormatter()
+		);
 		$provider->setManager( $manager );
 		$provider = TestingAccessWrapper::newFromObject( $provider );
 

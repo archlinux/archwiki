@@ -67,7 +67,7 @@ class Less_SourceMap_Base64VLQ {
 	/**
 	 * Constructor
 	 */
-	public function __construct(){
+	public function __construct() {
 		// I leave it here for future reference
 		// foreach(str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/') as $i => $char)
 		// {
@@ -85,8 +85,8 @@ class Less_SourceMap_Base64VLQ {
 	 * even on a 64 bit machine.
 	 * @param string $aValue
 	 */
-	public function toVLQSigned($aValue){
-		return 0xffffffff & ($aValue < 0 ? ((-$aValue) << 1) + 1 : ($aValue << 1) + 0);
+	public function toVLQSigned( $aValue ) {
+		return 0xffffffff & ( $aValue < 0 ? ( ( -$aValue ) << 1 ) + 1 : ( $aValue << 1 ) + 0 );
 	}
 
 	/**
@@ -100,8 +100,8 @@ class Less_SourceMap_Base64VLQ {
 	 * even on a 64 bit machine.
 	 * @param integer $aValue
 	 */
-	public function fromVLQSigned($aValue){
-		return $aValue & 1 ? $this->zeroFill(~$aValue + 2, 1) | (-1 - 0x7fffffff) : $this->zeroFill($aValue, 1);
+	public function fromVLQSigned( $aValue ) {
+		return $aValue & 1 ? $this->zeroFill( ~$aValue + 2, 1 ) | ( -1 - 0x7fffffff ) : $this->zeroFill( $aValue, 1 );
 	}
 
 	/**
@@ -110,18 +110,18 @@ class Less_SourceMap_Base64VLQ {
 	 * @param string $aValue The value to encode
 	 * @return string The encoded value
 	 */
-	public function encode($aValue){
+	public function encode( $aValue ) {
 		$encoded = '';
-		$vlq = $this->toVLQSigned($aValue);
+		$vlq = $this->toVLQSigned( $aValue );
 		do
 		{
 			$digit = $vlq & $this->mask;
-			$vlq = $this->zeroFill($vlq, $this->shift);
-			if($vlq > 0){
+			$vlq = $this->zeroFill( $vlq, $this->shift );
+			if ( $vlq > 0 ) {
 				$digit |= $this->continuationBit;
 			}
-			$encoded .= $this->base64Encode($digit);
-		} while($vlq > 0);
+			$encoded .= $this->base64Encode( $digit );
+		} while ( $vlq > 0 );
 
 		return $encoded;
 	}
@@ -132,17 +132,17 @@ class Less_SourceMap_Base64VLQ {
 	 * @param string $encoded The encoded value to decode
 	 * @return integer The decoded value
 	 */
-	public function decode($encoded){
+	public function decode( $encoded ) {
 		$vlq = 0;
 		$i = 0;
 		do
 		{
-			$digit = $this->base64Decode($encoded[$i]);
-			$vlq |= ($digit & $this->mask) << ($i * $this->shift);
+			$digit = $this->base64Decode( $encoded[$i] );
+			$vlq |= ( $digit & $this->mask ) << ( $i * $this->shift );
 			$i++;
-		} while($digit & $this->continuationBit);
+		} while ( $digit & $this->continuationBit );
 
-		return $this->fromVLQSigned($vlq);
+		return $this->fromVLQSigned( $vlq );
 	}
 
 	/**
@@ -152,8 +152,8 @@ class Less_SourceMap_Base64VLQ {
 	 * @param integer $b number of bits to shift
 	 * @return integer
 	 */
-	public function zeroFill($a, $b){
-		return ($a >= 0) ? ($a >> $b) : ($a >> $b) & (PHP_INT_MAX >> ($b - 1));
+	public function zeroFill( $a, $b ) {
+		return ( $a >= 0 ) ? ( $a >> $b ) : ( $a >> $b ) & ( PHP_INT_MAX >> ( $b - 1 ) );
 	}
 
 	/**
@@ -163,9 +163,9 @@ class Less_SourceMap_Base64VLQ {
 	 * @return string
 	 * @throws Exception If the number is invalid
 	 */
-	public function base64Encode($number){
-		if($number < 0 || $number > 63){
-			throw new Exception(sprintf('Invalid number "%s" given. Must be between 0 and 63.', $number));
+	public function base64Encode( $number ) {
+		if ( $number < 0 || $number > 63 ) {
+			throw new Exception( sprintf( 'Invalid number "%s" given. Must be between 0 and 63.', $number ) );
 		}
 		return $this->intToCharMap[$number];
 	}
@@ -177,9 +177,9 @@ class Less_SourceMap_Base64VLQ {
 	 * @return number
 	 * @throws Exception If the number is invalid
 	 */
-	public function base64Decode($char){
-		if(!array_key_exists($char, $this->charToIntMap)){
-			throw new Exception(sprintf('Invalid base 64 digit "%s" given.', $char));
+	public function base64Decode( $char ) {
+		if ( !array_key_exists( $char, $this->charToIntMap ) ) {
+			throw new Exception( sprintf( 'Invalid base 64 digit "%s" given.', $char ) );
 		}
 		return $this->charToIntMap[$char];
 	}

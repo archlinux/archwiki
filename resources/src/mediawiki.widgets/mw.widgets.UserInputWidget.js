@@ -16,6 +16,7 @@
 	 * @constructor
 	 * @param {Object} [config] Configuration options
 	 * @cfg {number} [limit=10] Number of results to show
+	 * @cfg {mw.Api} [api] API object to use, creates a default mw.Api instance if not specified
 	 */
 	mw.widgets.UserInputWidget = function MwWidgetsUserInputWidget( config ) {
 		// Config initialization
@@ -29,6 +30,7 @@
 
 		// Properties
 		this.limit = config.limit || 10;
+		this.api = config.api || new mw.Api();
 
 		// Initialization
 		this.$element.addClass( 'mw-widget-userInputWidget' );
@@ -43,9 +45,11 @@
 	/* Methods */
 
 	/**
-	 * @inheritdoc
+	 * Handle menu item 'choose' event, updating the text input value to the value of the clicked item.
+	 *
+	 * @param {OO.ui.MenuOptionWidget} item Selected item
 	 */
-	mw.widgets.UserInputWidget.prototype.onLookupMenuItemChoose = function ( item ) {
+	mw.widgets.UserInputWidget.prototype.onLookupMenuChoose = function ( item ) {
 		this.closeLookupMenu();
 		this.setLookupsDisabled( true );
 		this.setValue( item.getData() );
@@ -75,7 +79,7 @@
 	mw.widgets.UserInputWidget.prototype.getLookupRequest = function () {
 		var inputValue = this.value;
 
-		return new mw.Api().get( {
+		return this.api.get( {
 			action: 'query',
 			list: 'allusers',
 			// Prefix of list=allusers is case sensitive. Normalise first

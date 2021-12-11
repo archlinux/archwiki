@@ -28,7 +28,7 @@
  * @ingroup SpecialPage
  */
 class SpecialListGrants extends SpecialPage {
-	function __construct() {
+	public function __construct() {
 		parent::__construct( 'Listgrants' );
 	}
 
@@ -74,7 +74,7 @@ class SpecialListGrants extends SpecialPage {
 				"<td>" .
 				$this->msg(
 					"listgrants-grant-display",
-					\User::getGrantName( $grant ),
+					MWGrants::grantName( $grant ),
 					"<span class='mw-listgrants-grant-name'>" . $id . "</span>"
 				)->parse() .
 				"</td>" .

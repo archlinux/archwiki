@@ -25,14 +25,14 @@ abstract class Scribunto_LuaInterpreter {
 	 * Lua. If an error occurs, a Scribunto_LuaError will be thrown.
 	 *
 	 * @param callable $callable The PHP callable
-	 * @return object a Lua function
+	 * @return LuaSandboxFunction a Lua function
 	 */
 	abstract public function wrapPhpFunction( $callable );
 
 	/**
 	 * Test whether an object is a Lua function.
 	 *
-	 * @param object $object
+	 * @param mixed|LuaSandboxFunction $object
 	 * @return bool
 	 */
 	abstract public function isLuaFunction( $object );
@@ -59,10 +59,4 @@ abstract class Scribunto_LuaInterpreter {
 	 * @return void
 	 */
 	abstract public function unpauseUsageTimer();
-}
-
-class Scribunto_LuaInterpreterNotFoundError extends MWException {
-}
-
-class Scribunto_LuaInterpreterBadVersionError extends MWException {
 }

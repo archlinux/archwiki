@@ -5,12 +5,12 @@ namespace PageImages\Tests;
 use IContextSource;
 use MediaWikiTestCase;
 use OutputPage;
-use PageImages;
+use PageImages\PageImages;
 use SkinTemplate;
 use Title;
 
 /**
- * @covers PageImages
+ * @covers \PageImages\PageImages
  *
  * @group PageImages
  * @group Database
@@ -27,7 +27,7 @@ class PageImagesTest extends MediaWikiTestCase {
 
 	public function testConstructor() {
 		$pageImages = new PageImages();
-		$this->assertInstanceOf( 'PageImages', $pageImages );
+		$this->assertInstanceOf( PageImages::class, $pageImages );
 	}
 
 	public function testGivenNonExistingPageGetPageImageReturnsFalse() {
@@ -40,13 +40,32 @@ class PageImagesTest extends MediaWikiTestCase {
 		$this->assertSame( 'page_image_free', PageImages::getPropName( true ) );
 	}
 
-	public function testGivenNonExistingPageOnBeforePageDisplayDoesNotAddMeta() {
-		$context = $this->getMock( IContextSource::class );
-		$context->method( 'getTitle' )
-			->will( $this->returnValue( $this->newTitle() ) );
+	public function testGetPropNames() {
+		$this->assertSame(
+			[ PageImages::PROP_NAME_FREE, PageImages::PROP_NAME ],
+			PageImages::getPropNames( PageImages::LICENSE_ANY )
+		);
+		$this->assertSame(
+			PageImages::PROP_NAME_FREE,
+			PageImages::getPropNames( PageImages::LICENSE_FREE )
+		);
+	}
 
-		$outputPage = $this->getMock(
-			OutputPage::class, [ 'addMeta' ], [ $context ] );
+	public function testGivenNonExistingPageOnBeforePageDisplayDoesNotAddMeta() {
+		$context = $this->createMock( IContextSource::class );
+		$context->method( 'getTitle' )
+			->willReturn( $this->newTitle() );
+		$fauxRequest = new \FauxRequest();
+		$config = new \HashConfig();
+		$context->method( 'getRequest' )
+			->willReturn( $fauxRequest );
+		$context->method( 'getConfig' )
+			->willReturn( $config );
+
+		$outputPage = $this->getMockBuilder( OutputPage::class )
+			->setMethods( [ 'addMeta' ] )
+			->setConstructorArgs( [ $context ] )
+			->getMock();
 		$outputPage->expects( $this->never() )
 			->method( 'addMeta' );
 

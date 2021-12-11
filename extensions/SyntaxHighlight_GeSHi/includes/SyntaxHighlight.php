@@ -21,19 +21,19 @@ use MediaWiki\Shell\Shell;
 
 class SyntaxHighlight {
 
-	/** @var int The maximum number of lines that may be selected for highlighting. **/
-	const HIGHLIGHT_MAX_LINES = 1000;
+	/** @var int The maximum number of lines that may be selected for highlighting. */
+	private const HIGHLIGHT_MAX_LINES = 1000;
 
-	/** @var int Maximum input size for the highlighter (100 kB). **/
-	const HIGHLIGHT_MAX_BYTES = 102400;
+	/** @var int Maximum input size for the highlighter (100 kB). */
+	private const HIGHLIGHT_MAX_BYTES = 102400;
 
-	/** @var string CSS class for syntax-highlighted code. **/
-	const HIGHLIGHT_CSS_CLASS = 'mw-highlight';
+	/** @var string CSS class for syntax-highlighted code. Public as used by the updateCSS maintenance script. */
+	public const HIGHLIGHT_CSS_CLASS = 'mw-highlight';
 
 	/** @var int Cache version. Increment whenever the HTML changes. */
-	const CACHE_VERSION = 2;
+	private const CACHE_VERSION = 2;
 
-	/** @var array Mapping of MIME-types to lexer names. **/
+	/** @var array Mapping of MIME-types to lexer names. */
 	private static $mimeLexers = [
 		'text/javascript'  => 'javascript',
 		'application/json' => 'javascript',
@@ -80,16 +80,29 @@ class SyntaxHighlight {
 	/**
 	 * Register parser hook
 	 *
-	 * @param Parser &$parser
+	 * @param Parser $parser
 	 */
-	public static function onParserFirstCallInit( Parser &$parser ) {
-		foreach ( [ 'source', 'syntaxhighlight' ] as $tag ) {
-			$parser->setHook( $tag, [ 'SyntaxHighlight', 'parserHook' ] );
-		}
+	public static function onParserFirstCallInit( Parser $parser ) {
+		$parser->setHook( 'source', [ 'SyntaxHighlight', 'parserHookSource' ] );
+		$parser->setHook( 'syntaxhighlight', [ 'SyntaxHighlight', 'parserHook' ] );
 	}
 
 	/**
-	 * Parser hook
+	 * Parser hook for <source> to add deprecated tracking category
+	 *
+	 * @param string $text
+	 * @param array $args
+	 * @param Parser $parser
+	 * @return string
+	 * @throws MWException
+	 */
+	public static function parserHookSource( $text, $args, $parser ) {
+		$parser->addTrackingCategory( 'syntaxhighlight-source-category' );
+		return self::parserHook( $text, $args, $parser );
+	}
+
+	/**
+	 * Parser hook for both <source> and <syntaxhighlight> logic
 	 *
 	 * @param string $text
 	 * @param array $args
@@ -99,7 +112,7 @@ class SyntaxHighlight {
 	 */
 	public static function parserHook( $text, $args, $parser ) {
 		// Replace strip markers (For e.g. {{#tag:syntaxhighlight|<nowiki>...}})
-		$out = $parser->mStripState->unstripNoWiki( $text );
+		$out = $parser->getStripState()->unstripNoWiki( $text );
 
 		// Don't trim leading spaces away, just the linefeeds
 		$out = preg_replace( '/^\n+/', '', rtrim( $out ) );
@@ -110,65 +123,40 @@ class SyntaxHighlight {
 				$args['inline'] = true;
 			}
 			unset( $args['enclose'] );
+			$parser->addTrackingCategory( 'syntaxhighlight-enclose-category' );
 		}
 
 		$lexer = $args['lang'] ?? '';
 
-		$result = self::highlight( $out, $lexer, $args );
+		$result = self::highlight( $out, $lexer, $args, $parser );
 		if ( !$result->isGood() ) {
 			$parser->addTrackingCategory( 'syntaxhighlight-error-category' );
 		}
 		$out = $result->getValue();
-
-		// Allow certain HTML attributes
-		$htmlAttribs = Sanitizer::validateAttributes( $args, [ 'style', 'class', 'id', 'dir' ] );
-		if ( !isset( $htmlAttribs['class'] ) ) {
-			$htmlAttribs['class'] = self::HIGHLIGHT_CSS_CLASS;
-		} else {
-			$htmlAttribs['class'] .= ' ' . self::HIGHLIGHT_CSS_CLASS;
-		}
-		if ( !( isset( $htmlAttribs['dir'] ) && $htmlAttribs['dir'] === 'rtl' ) ) {
-			$htmlAttribs['dir'] = 'ltr';
-		}
-
-		if ( isset( $args['inline'] ) ) {
-			// Enforce inlineness. Stray newlines may result in unexpected list and paragraph processing
-			// (also known as doBlockLevels()).
-			$out = str_replace( "\n", ' ', $out );
-			$out = Html::rawElement( 'code', $htmlAttribs, $out );
-
-		} else {
-			// Not entirely sure what benefit this provides, but it was here already
-			$htmlAttribs['class'] .= ' ' . 'mw-content-' . $htmlAttribs['dir'];
-
-			// Unwrap Pygments output to provide our own wrapper. We can't just always use the 'nowrap'
-			// option (pass 'inline'), since it disables other useful things like line highlighting.
-			// Tolerate absence of quotes for Html::element() and wgWellFormedXml=false.
-			if ( $out !== '' ) {
-				$m = [];
-				if ( preg_match( '/^<div class="?mw-highlight"?>(.*)<\/div>$/s', trim( $out ), $m ) ) {
-					$out = trim( $m[1] );
-				} else {
-					throw new MWException( 'Unexpected output from Pygments encountered' );
-				}
-			}
-
-			// Use 'nowiki' strip marker to prevent list processing (also known as doBlockLevels()).
-			// However, leave the wrapping <div/> outside to prevent <p/>-wrapping.
-			$marker = $parser::MARKER_PREFIX . '-syntaxhighlightinner-' .
-				sprintf( '%08X', $parser->mMarkerIndex++ ) . $parser::MARKER_SUFFIX;
-			$parser->mStripState->addNoWiki( $marker, $out );
-
-			$out = Html::openElement( 'div', $htmlAttribs ) .
-				$marker .
-				Html::closeElement( 'div' );
-		}
 
 		// Register CSS
 		// TODO: Consider moving to a separate method so that public method
 		// highlight() can be used without needing to know the module name.
 		$parser->getOutput()->addModuleStyles( 'ext.pygments' );
 
+		return $out;
+	}
+
+	/**
+	 * Unwrap the <div> wrapper of the Pygments output
+	 *
+	 * @param string $out Output
+	 * @return string Unwrapped output
+	 */
+	private static function unwrap( string $out ) : string {
+		if ( $out !== '' ) {
+			$m = [];
+			if ( preg_match( '/^<div class="?mw-highlight"?>(.*)<\/div>$/s', trim( $out ), $m ) ) {
+				$out = trim( $m[1] );
+			} else {
+				throw new MWException( 'Unexpected output from Pygments encountered' );
+			}
+		}
 		return $out;
 	}
 
@@ -188,10 +176,11 @@ class SyntaxHighlight {
 
 	/**
 	 * @param string $code
-	 * @param bool $inline
+	 * @param bool $isInline
+	 * @return string HTML
 	 */
-	private static function plainCodeWrap( $code, $inline ) {
-		if ( $inline ) {
+	private static function plainCodeWrap( $code, $isInline ) {
+		if ( $isInline ) {
 			return htmlspecialchars( $code, ENT_NOQUOTES );
 		}
 
@@ -203,24 +192,12 @@ class SyntaxHighlight {
 	}
 
 	/**
-	 * Highlight a code-block using a particular lexer.
-	 *
-	 * This produces raw HTML (wrapped by Status), the caller is responsible
-	 * for making sure the "ext.pygments" module is loaded in the output.
-	 *
-	 * @param string $code Code to highlight.
-	 * @param string|null $lang Language name, or null to use plain markup.
-	 * @param array $args Associative array of additional arguments.
-	 *  If it contains a 'line' key, the output will include line numbers.
-	 *  If it includes a 'highlight' key, the value will be parsed as a
-	 *  comma-separated list of lines and line-ranges to highlight.
-	 *  If it contains a 'start' key, the value will be used as the line at which to
-	 *  start highlighting.
-	 *  If it contains a 'inline' key, the output will not be wrapped in `<div><pre/></div>`.
-	 * @return Status Status object, with HTML representing the highlighted
-	 *  code as its value.
+	 * @param string $code
+	 * @param string|null $lang
+	 * @param array $args
+	 * @return Status
 	 */
-	public static function highlight( $code, $lang = null, $args = [] ) {
+	private static function highlightInner( $code, $lang = null, $args = [] ) {
 		$status = new Status;
 
 		$lexer = self::getLexer( $lang );
@@ -255,15 +232,16 @@ class SyntaxHighlight {
 			);
 		}
 
-		$inline = isset( $args['inline'] );
+		$isInline = isset( $args['inline'] );
+		$showLines = isset( $args['line'] );
 
-		if ( $inline ) {
+		if ( $isInline ) {
 			$code = trim( $code );
 		}
 
 		if ( $lexer === null ) {
 			// When syntax highlighting is disabled..
-			$status->value = self::plainCodeWrap( $code, $inline );
+			$status->value = self::plainCodeWrap( $code, $isInline );
 			return $status;
 		}
 
@@ -273,7 +251,7 @@ class SyntaxHighlight {
 		];
 
 		// Line numbers
-		if ( isset( $args['line'] ) ) {
+		if ( $showLines ) {
 			$options['linenos'] = 'inline';
 		}
 
@@ -294,7 +272,11 @@ class SyntaxHighlight {
 			$options['linenostart'] = (int)$args['start'];
 		}
 
-		if ( $inline ) {
+		if ( !empty( $args['linelinks'] ) && ctype_alpha( $args['linelinks'] ) ) {
+			$options['linespans'] = $args['linelinks'];
+		}
+
+		if ( $isInline ) {
 			$options['nowrap'] = 1;
 		}
 
@@ -330,17 +312,121 @@ class SyntaxHighlight {
 
 		if ( $error !== null || $output === null ) {
 			$status->warning( 'syntaxhighlight-error-pygments-invocation-failure' );
-			wfWarn( 'Failed to invoke Pygments: ' . $error );
+			if ( $error !== null ) {
+				wfWarn( 'Failed to invoke Pygments: ' . $error );
+			} else {
+				wfWarn( 'Invoking Pygments returned blank output with no error response' );
+			}
+
 			// Fall back to preformatted code without syntax highlighting
-			$output = self::plainCodeWrap( $code, $inline );
+			$output = self::plainCodeWrap( $code, $isInline );
 		}
 
-		if ( $inline ) {
+		$status->value = $output;
+
+		return $status;
+	}
+
+	/**
+	 * Highlight a code-block using a particular lexer.
+	 *
+	 * This produces raw HTML (wrapped by Status), the caller is responsible
+	 * for making sure the "ext.pygments" module is loaded in the output.
+	 *
+	 * @param string $code Code to highlight.
+	 * @param string|null $lang Language name, or null to use plain markup.
+	 * @param array $args Associative array of additional arguments.
+	 *  If it contains a 'line' key, the output will include line numbers.
+	 *  If it includes a 'highlight' key, the value will be parsed as a
+	 *   comma-separated list of lines and line-ranges to highlight.
+	 *  If it contains a 'start' key, the value will be used as the line at which to
+	 *   start highlighting.
+	 *  If it contains a 'inline' key, the output will not be wrapped in `<div><pre/></div>`.
+	 *  If it contains a 'linelinks' key, lines will have links and anchors with a prefix
+	 *   of the value. Similar to the lineanchors+linespans features in Pygments.
+	 * @param Parser|null $parser Parser, if generating content to be parsed.
+	 * @return Status Status object, with HTML representing the highlighted
+	 *  code as its value.
+	 */
+	public static function highlight( $code, $lang = null, $args = [], ?Parser $parser = null ) {
+		$status = self::highlightInner( $code, $lang, $args );
+		$output = $status->getValue();
+
+		$isInline = isset( $args['inline'] );
+		$showLines = isset( $args['line'] );
+		$lexer = self::getLexer( $lang );
+
+		// Post-Pygment HTML transformations.
+
+		if ( $showLines ) {
+			$lineReplace = Html::element( 'span', [ 'class' => 'linenos', 'data-line' => '$1' ] );
+			if ( !empty( $args['linelinks'] ) ) {
+				$lineReplace = Html::rawElement(
+					'a',
+					[ 'href' => '#' . $args['linelinks'] . '-$1' ],
+					$lineReplace
+				);
+			}
+			// Convert line numbers to data attributes so they
+			// can be displayed as CSS generated content and be
+			// unselectable in all browsers.
+			$output = preg_replace(
+				'`<span class="linenos">\s*([^<]*)\s*</span>`',
+				$lineReplace,
+				$output
+			);
+		}
+
+		// Allow certain HTML attributes
+		$htmlAttribs = Sanitizer::validateAttributes(
+			$args, array_flip( [ 'style', 'class', 'id' ] )
+		);
+
+		$dir = ( isset( $args['dir'] ) && $args['dir'] === 'rtl' ) ? 'rtl' : 'ltr';
+
+		// Build class list
+		$classList = [];
+		if ( isset( $htmlAttribs['class'] ) ) {
+			$classList[] = $htmlAttribs['class'];
+		}
+		$classList[] = self::HIGHLIGHT_CSS_CLASS;
+		if ( $lexer !== null ) {
+			$classList[] = self::HIGHLIGHT_CSS_CLASS . '-lang-' . $lexer;
+		}
+		$classList[] = 'mw-content-' . $dir;
+		if ( $showLines ) {
+			$classList[] = self::HIGHLIGHT_CSS_CLASS . '-lines';
+		}
+		$htmlAttribs['class'] = implode( ' ', $classList );
+		$htmlAttribs['dir'] = $dir;
+		'@phan-var array{class:string,dir:string} $htmlAttribs';
+
+		if ( $isInline ) {
 			// We've already trimmed the input $code before highlighting,
 			// but pygment's standard out adds a line break afterwards,
 			// which would then be preserved in the paragraph that wraps this,
 			// and become visible as a space. Avoid that.
 			$output = trim( $output );
+
+			// Enforce inlineness. Stray newlines may result in unexpected list and paragraph processing
+			// (also known as doBlockLevels()).
+			$output = str_replace( "\n", ' ', $output );
+			$output = Html::rawElement( 'code', $htmlAttribs, $output );
+		} else {
+			$output = self::unwrap( $output );
+
+			if ( $parser ) {
+				// Use 'nowiki' strip marker to prevent list processing (also known as doBlockLevels()).
+				// However, leave the wrapping <div/> outside to prevent <p/>-wrapping.
+				$marker = $parser::MARKER_PREFIX . '-syntaxhighlightinner-' .
+					sprintf( '%08X', $parser->mMarkerIndex++ ) . $parser::MARKER_SUFFIX;
+				$parser->getStripState()->addNoWiki( $marker, $output );
+				$output = $marker;
+			}
+
+			$output = Html::openElement( 'div', $htmlAttribs ) .
+				$output .
+				Html::closeElement( 'div' );
 		}
 
 		$status->value = $output;
@@ -376,9 +462,9 @@ class SyntaxHighlight {
 			if ( ctype_digit( $value ) ) {
 				$lines[] = (int)$value;
 			} elseif ( strpos( $value, '-' ) !== false ) {
-				list( $start, $end ) = array_map( 'trim', explode( '-', $value ) );
+				list( $start, $end ) = array_map( 'intval', explode( '-', $value ) );
 				if ( self::validHighlightRange( $start, $end ) ) {
-					for ( $i = intval( $start ); $i <= $end; $i++ ) {
+					for ( $i = $start; $i <= $end; $i++ ) {
 						$lines[] = $i;
 					}
 				}
@@ -403,9 +489,7 @@ class SyntaxHighlight {
 		// to DoS the system by asking for a huge range.
 		// Impose an arbitrary limit on the number of lines in a
 		// given range to reduce the impact.
-		return ctype_digit( $start ) &&
-			ctype_digit( $end ) &&
-			$start > 0 &&
+		return $start > 0 &&
 			$start < $end &&
 			$end - $start < self::HIGHLIGHT_MAX_LINES;
 	}
@@ -426,16 +510,21 @@ class SyntaxHighlight {
 	public static function onContentGetParserOutput( Content $content, Title $title,
 		$revId, ParserOptions $options, $generateHtml, ParserOutput &$output
 	) {
-		global $wgParser, $wgTextModelsToParse;
+		global $wgTextModelsToParse;
 
 		if ( !$generateHtml ) {
 			// Nothing special for us to do, let MediaWiki handle this.
 			return true;
 		}
 
-		// Determine the language
+		// Determine the SyntaxHighlight language from the page's
+		// content model. Extensions can extend the default CSS/JS
+		// mapping by setting the SyntaxHighlightModels attribute.
 		$extension = ExtensionRegistry::getInstance();
-		$models = $extension->getAttribute( 'SyntaxHighlightModels' );
+		$models = $extension->getAttribute( 'SyntaxHighlightModels' ) + [
+			CONTENT_MODEL_CSS => 'css',
+			CONTENT_MODEL_JAVASCRIPT => 'javascript',
+		];
 		$model = $content->getModel();
 		if ( !isset( $models[$model] ) ) {
 			// We don't care about this model, carry on.
@@ -443,7 +532,7 @@ class SyntaxHighlight {
 		}
 		$lexer = $models[$model];
 
-		// Hope that $wgSyntaxHighlightModels does not contain silly types.
+		// Hope that the "SyntaxHighlightModels" attribute does not contain silly types.
 		$text = ContentHandler::getContentText( $content );
 		if ( !$text ) {
 			// Oops! Non-text content? Let MediaWiki handle this.
@@ -453,17 +542,19 @@ class SyntaxHighlight {
 		// Parse using the standard parser to get links etc. into the database, HTML is replaced below.
 		// We could do this using $content->fillParserOutput(), but alas it is 'protected'.
 		if ( $content instanceof TextContent && in_array( $model, $wgTextModelsToParse ) ) {
-			$output = $wgParser->parse( $text, $title, $options, true, true, $revId );
+			$output = MediaWikiServices::getInstance()->getParser()
+				->parse( $text, $title, $options, true, true, $revId );
 		}
 
-		$status = self::highlight( $text, $lexer );
+		$status = self::highlight( $text, $lexer, [ 'line' => true, 'linelinks' => 'L' ] );
 		if ( !$status->isOK() ) {
 			return true;
 		}
 		$out = $status->getValue();
 
 		$output->addModuleStyles( 'ext.pygments' );
-		$output->setText( '<div dir="ltr">' . $out . '</div>' );
+		$output->addModules( 'ext.pygments.linenumbers' );
+		$output->setText( $out );
 
 		// Inform MediaWiki that we have parsed this page and it shouldn't mess with it.
 		return false;
@@ -504,75 +595,4 @@ class SyntaxHighlight {
 		// Inform MediaWiki that we have parsed this page and it shouldn't mess with it.
 		return false;
 	}
-
-	/**
-	 * Conditionally register resource loader modules that depends on the
-	 * VisualEditor MediaWiki extension.
-	 *
-	 * @param ResourceLoader &$resourceLoader
-	 */
-	public static function onResourceLoaderRegisterModules( &$resourceLoader ) {
-		if ( !ExtensionRegistry::getInstance()->isLoaded( 'VisualEditor' ) ) {
-			return;
-		}
-
-		$resourceLoader->register( 'ext.geshi.visualEditor', [
-			'class' => ResourceLoaderSyntaxHighlightVisualEditorModule::class,
-			'localBasePath' => __DIR__ . '/../modules',
-			'remoteExtPath' => 'SyntaxHighlight_GeSHi/modules',
-			'scripts' => [
-				've-syntaxhighlight/ve.dm.MWSyntaxHighlightNode.js',
-				've-syntaxhighlight/ve.dm.MWBlockSyntaxHighlightNode.js',
-				've-syntaxhighlight/ve.dm.MWInlineSyntaxHighlightNode.js',
-				've-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.js',
-				've-syntaxhighlight/ve.ce.MWBlockSyntaxHighlightNode.js',
-				've-syntaxhighlight/ve.ce.MWInlineSyntaxHighlightNode.js',
-				've-syntaxhighlight/ve.ui.MWSyntaxHighlightWindow.js',
-				've-syntaxhighlight/ve.ui.MWSyntaxHighlightDialog.js',
-				've-syntaxhighlight/ve.ui.MWSyntaxHighlightDialogTool.js',
-				've-syntaxhighlight/ve.ui.MWSyntaxHighlightInspector.js',
-				've-syntaxhighlight/ve.ui.MWSyntaxHighlightInspectorTool.js',
-			],
-			'styles' => [
-				've-syntaxhighlight/ve.ce.MWSyntaxHighlightNode.css',
-				've-syntaxhighlight/ve.ui.MWSyntaxHighlightDialog.css',
-				've-syntaxhighlight/ve.ui.MWSyntaxHighlightInspector.css',
-			],
-			'dependencies' => [
-				'ext.visualEditor.mwcore',
-				'oojs-ui.styles.icons-editing-advanced'
-			],
-			'messages' => [
-				'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code',
-				'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language',
-				'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none',
-				'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines',
-				'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline',
-				'syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title',
-			],
-			'targets' => [ 'desktop', 'mobile' ],
-		] );
-	}
-
-	/**
-	 * Backward-compatibility shim for extensions.
-	 * @deprecated since MW 1.25
-	 */
-	public static function prepare( $text, $lang ) {
-		wfDeprecated( __METHOD__ );
-		return new GeSHi( self::highlight( $text, $lang )->getValue() );
-	}
-
-	/**
-	 * Backward-compatibility shim for extensions.
-	 * @deprecated since MW 1.25
-	 * @param GeSHi $geshi
-	 * @return string
-	 */
-	public static function buildHeadItem( $geshi ) {
-		wfDeprecated( __METHOD__ );
-		$geshi->parse_code();
-		return '';
-	}
 }
-class_alias( SyntaxHighlight::class, 'SyntaxHighlight_GeSHi' );

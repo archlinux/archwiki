@@ -1,6 +1,6 @@
 <?php
 
-class SearchResultTraitTest extends MediawikiTestCase {
+class SearchResultTraitTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers SearchResultTrait::getExtensionData
 	 * @covers SearchResultTrait::setExtensionData
@@ -12,7 +12,7 @@ class SearchResultTraitTest extends MediawikiTestCase {
 		$this->assertEquals( [], $result->getExtensionData(), 'starts empty' );
 
 		$data = [ 'hello' => 'world' ];
-		$result->setExtensionData( function () use ( &$data ) {
+		$result->setExtensionData( static function () use ( &$data ) {
 			return $data;
 		} );
 		$this->assertEquals( $data, $result->getExtensionData(), 'can set extension data' );

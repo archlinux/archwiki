@@ -17,16 +17,17 @@ use MediaWiki\MediaWikiServices;
  * Implements a title blacklist for MediaWiki
  */
 class TitleBlacklist {
-	/** @var TitleBlacklistEntry[] */
+	/** @var TitleBlacklistEntry[]|null */
 	private $mBlacklist = null;
 
-	/** @var TitleBlacklistEntry[] */
+	/** @var TitleBlacklistEntry[]|null */
 	private $mWhitelist = null;
 
-	/** @var TitleBlacklist */
+	/** @var TitleBlacklist|null */
 	protected static $instance = null;
 
-	const VERSION = 3;	// Blacklist format
+	/** Blacklist format */
+	public const VERSION = 3;
 
 	/**
 	 * Get an instance of this class
@@ -123,7 +124,7 @@ class TitleBlacklist {
 			return wfMessage( 'titleblacklist' )->inContentLanguage()->text();
 		} elseif ( $source['type'] == 'localpage' && count( $source ) >= 2 ) {
 			$title = Title::newFromText( $source['src'] );
-			if ( is_null( $title ) ) {
+			if ( $title === null ) {
 				return '';
 			}
 			if ( $title->getNamespace() == NS_MEDIAWIKI ) {
@@ -262,7 +263,7 @@ class TitleBlacklist {
 	 * @return TitleBlacklistEntry[]
 	 */
 	public function getBlacklist() {
-		if ( is_null( $this->mBlacklist ) ) {
+		if ( $this->mBlacklist === null ) {
 			$this->load();
 		}
 		return $this->mBlacklist;
@@ -274,7 +275,7 @@ class TitleBlacklist {
 	 * @return TitleBlacklistEntry[]
 	 */
 	public function getWhitelist() {
-		if ( is_null( $this->mWhitelist ) ) {
+		if ( $this->mWhitelist === null ) {
 			$this->loadWhitelist();
 		}
 		return $this->mWhitelist;
@@ -287,19 +288,31 @@ class TitleBlacklist {
 	 * @return string The content of the blacklist source as a string
 	 */
 	private static function getHttp( $url ) {
-		global $messageMemc, $wgTitleBlacklistCaching;
+		global $wgTitleBlacklistCaching, $wgMessageCacheType;
+		// FIXME: This is a hack to use Memcached where possible (incl. WMF),
+		// but have CACHE_DB as fallback (instead of no cache).
+		// This might be a good candidate for T248005.
+		$cache = ObjectCache::getInstance( $wgMessageCacheType );
 
-		$key = 'title_blacklist_source:' . md5( $url ); // Global shared
-		$warnkey = $messageMemc->makeKey( 'titleblacklistwarning', md5( $url ) );
-		$result = $messageMemc->get( $key );
-		$warn = $messageMemc->get( $warnkey );
+		// Globally shared
+		$key = $cache->makeGlobalKey( 'title_blacklist_source', md5( $url ) );
+		// Per-wiki
+		$warnkey = $cache->makeKey( 'titleblacklistwarning', md5( $url ) );
+
+		$result = $cache->get( $key );
+		$warn = $cache->get( $warnkey );
 
 		if ( !is_string( $result )
 			|| ( !$warn && !mt_rand( 0, $wgTitleBlacklistCaching['warningchance'] ) )
 		) {
-			$result = Http::get( $url );
-			$messageMemc->set( $warnkey, 1, $wgTitleBlacklistCaching['warningexpiry'] );
-			$messageMemc->set( $key, $result, $wgTitleBlacklistCaching['expiry'] );
+			$result = MediaWikiServices::getInstance()->getHttpRequestFactory()
+				->get( $url, [], __METHOD__ );
+			$cache->set( $warnkey, 1, $wgTitleBlacklistCaching['warningexpiry'] );
+			$cache->set( $key, $result, $wgTitleBlacklistCaching['expiry'] );
+			if ( !$result ) {
+				wfDebugLog( 'TitleBlacklist-cache', "Error loading title blacklist from $url\n" );
+				$result = '';
+			}
 		}
 
 		return $result;
@@ -325,6 +338,7 @@ class TitleBlacklist {
 		foreach ( $blacklist as $e ) {
 			Wikimedia\suppressWarnings();
 			$regex = $e->getRegex();
+			// @phan-suppress-next-line SecurityCheck-ReDoS
 			if ( preg_match( "/{$regex}/u", '' ) === false ) {
 				$badEntries[] = $e->getRaw();
 			}

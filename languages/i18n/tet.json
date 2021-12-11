@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"DannyS712",
 			"MF-Warburg",
-			"Nemo bis",
-			"Reedy",
-			"아라",
 			"Matma Rex",
-			"Raphael Merx"
+			"Nemo bis",
+			"Raphael Merx",
+			"Reedy",
+			"아라"
 		]
 	},
 	"tog-underline": "Subliña ligasaun sira:",
@@ -96,7 +97,6 @@
 	"category_header": "Artigu iha kategoría \"$1\"",
 	"subcategories": "Sub-kategoria sira",
 	"category-empty": "''Kategoria ne'e agora la iha pájina sira.''",
-	"listingcontinuesabbrev": "kont.",
 	"about": "Kona-ba",
 	"article": "Pájina",
 	"cancel": "Para",
@@ -259,7 +259,7 @@
 	"page_last": "ikus",
 	"histfirst": "sedu liu hotu",
 	"histlast": "foun liu hotu",
-	"historyempty": "(mamuk)",
+	"historyempty": "mamuk",
 	"history-feed-item-nocomment": "$1 iha $2",
 	"rev-delundel": "hatudu/subar",
 	"rev-showdeleted": "hatudu",
@@ -514,7 +514,7 @@
 	"undelete-show-file-submit": "Sin",
 	"namespace": "Espasu pájina nian:",
 	"blanknamespace": "(Prinsipál)",
-	"contributions": "{{GENDER:$1|Kontribuisaun uza-na'in}}",
+	"tool-link-contributions": "{{GENDER:$1|Kontribuisaun uza-na'in}}",
 	"contributions-title": "Kontribuisaun \"$1\" nian",
 	"mycontris": "Kontribuisaun",
 	"contribsub2": "Ba $1 ($2)",

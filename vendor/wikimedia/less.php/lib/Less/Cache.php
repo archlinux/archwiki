@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname(__FILE__).'/Version.php');
+require_once dirname( __FILE__ ).'/Version.php';
 
 /**
  * Utility for handling the generation and caching of css files
@@ -9,7 +9,7 @@ require_once( dirname(__FILE__).'/Version.php');
  * @subpackage cache
  *
  */
-class Less_Cache{
+class Less_Cache {
 
 	// directory less.php can use for storing data
 	public static $cache_dir	= false;
@@ -23,7 +23,6 @@ class Less_Cache{
 	// specifies the number of seconds after which data created by less.php will be seen as 'garbage' and potentially cleaned up
 	public static $gc_lifetime	= 604800;
 
-
 	/**
 	 * Save and reuse the results of compiled less files.
 	 * The first call to Get() will generate css and save it.
@@ -34,99 +33,92 @@ class Less_Cache{
 	 * @param array $modify_vars Array of variables
 	 * @return string Name of the css file
 	 */
-	public static function Get( $less_files, $parser_options = array(), $modify_vars = array() ){
-
-
-		//check $cache_dir
-		if( isset($parser_options['cache_dir']) ){
+	public static function Get( $less_files, $parser_options = array(), $modify_vars = array() ) {
+		// check $cache_dir
+		if ( isset( $parser_options['cache_dir'] ) ) {
 			Less_Cache::$cache_dir = $parser_options['cache_dir'];
 		}
 
-		if( empty(Less_Cache::$cache_dir) ){
-			throw new Exception('cache_dir not set');
+		if ( empty( Less_Cache::$cache_dir ) ) {
+			throw new Exception( 'cache_dir not set' );
 		}
 
-		if( isset($parser_options['prefix']) ){
+		if ( isset( $parser_options['prefix'] ) ) {
 			Less_Cache::$prefix = $parser_options['prefix'];
 		}
 
-		if( empty(Less_Cache::$prefix) ){
-			throw new Exception('prefix not set');
+		if ( empty( Less_Cache::$prefix ) ) {
+			throw new Exception( 'prefix not set' );
 		}
 
-		if( isset($parser_options['prefix_vars']) ){
+		if ( isset( $parser_options['prefix_vars'] ) ) {
 			Less_Cache::$prefix_vars = $parser_options['prefix_vars'];
 		}
 
-		if( empty(Less_Cache::$prefix_vars) ){
-			throw new Exception('prefix_vars not set');
+		if ( empty( Less_Cache::$prefix_vars ) ) {
+			throw new Exception( 'prefix_vars not set' );
 		}
 
 		self::CheckCacheDir();
 		$less_files = (array)$less_files;
 
+		// create a file for variables
+		if ( !empty( $modify_vars ) ) {
+			$lessvars = Less_Parser::serializeVars( $modify_vars );
+			$vars_file = Less_Cache::$cache_dir . Less_Cache::$prefix_vars . sha1( $lessvars ) . '.less';
 
-		//create a file for variables
-		if( !empty($modify_vars) ){
-			$lessvars = Less_Parser::serializeVars($modify_vars);
-			$vars_file = Less_Cache::$cache_dir . Less_Cache::$prefix_vars . sha1($lessvars) . '.less';
-
-			if( !file_exists($vars_file) ){
-				file_put_contents($vars_file, $lessvars);
+			if ( !file_exists( $vars_file ) ) {
+				file_put_contents( $vars_file, $lessvars );
 			}
 
-			$less_files += array($vars_file => '/');
+			$less_files += array( $vars_file => '/' );
 		}
 
-
 		// generate name for compiled css file
-		$hash = md5(json_encode($less_files));
- 		$list_file = Less_Cache::$cache_dir . Less_Cache::$prefix . $hash . '.list';
+		$hash = md5( json_encode( $less_files ) );
+		$list_file = Less_Cache::$cache_dir . Less_Cache::$prefix . $hash . '.list';
 
- 		// check cached content
- 		if( !isset($parser_options['use_cache']) || $parser_options['use_cache'] === true ){
-			if( file_exists($list_file) ){
+		// check cached content
+		if ( !isset( $parser_options['use_cache'] ) || $parser_options['use_cache'] === true ) {
+			if ( file_exists( $list_file ) ) {
 
-				self::ListFiles($list_file, $list, $cached_name);
-				$compiled_name = self::CompiledName($list, $hash);
+				self::ListFiles( $list_file, $list, $cached_name );
+				$compiled_name = self::CompiledName( $list, $hash );
 
 				// if $cached_name is the same as the $compiled name, don't regenerate
-				if( !$cached_name || $cached_name === $compiled_name ){
+				if ( !$cached_name || $cached_name === $compiled_name ) {
 
-					$output_file = self::OutputFile($compiled_name, $parser_options );
+					$output_file = self::OutputFile( $compiled_name, $parser_options );
 
-					if( $output_file && file_exists($output_file) ){
-						@touch($list_file);
-						return basename($output_file); // for backwards compatibility, we just return the name of the file
+					if ( $output_file && file_exists( $output_file ) ) {
+						@touch( $list_file );
+						return basename( $output_file ); // for backwards compatibility, we just return the name of the file
 					}
 				}
 			}
 		}
 
 		$compiled = self::Cache( $less_files, $parser_options );
-		if( !$compiled ){
+		if ( !$compiled ) {
 			return false;
 		}
 
 		$compiled_name = self::CompiledName( $less_files, $hash );
-		$output_file = self::OutputFile($compiled_name, $parser_options );
+		$output_file = self::OutputFile( $compiled_name, $parser_options );
 
-
-		//save the file list
+		// save the file list
 		$list = $less_files;
 		$list[] = $compiled_name;
-		$cache = implode("\n",$list);
+		$cache = implode( "\n", $list );
 		file_put_contents( $list_file, $cache );
 
-
-		//save the css
+		// save the css
 		file_put_contents( $output_file, $compiled );
 
-
-		//clean up
+		// clean up
 		self::CleanCache();
 
-		return basename($output_file);
+		return basename( $output_file );
 	}
 
 	/**
@@ -137,29 +129,26 @@ class Less_Cache{
 	 * @param array $modify_vars Array of variables
 	 * @return string Name of the css file
 	 */
-	public static function Regen( $less_files, $parser_options = array(), $modify_vars = array() ){
+	public static function Regen( $less_files, $parser_options = array(), $modify_vars = array() ) {
 		$parser_options['use_cache'] = false;
 		return self::Get( $less_files, $parser_options, $modify_vars );
 	}
 
-	public static function Cache( &$less_files, $parser_options = array() ){
-
-
+	public static function Cache( &$less_files, $parser_options = array() ) {
 		// get less.php if it exists
-		$file = dirname(__FILE__) . '/Less.php';
-		if( file_exists($file) && !class_exists('Less_Parser') ){
-			require_once($file);
+		$file = dirname( __FILE__ ) . '/Less.php';
+		if ( file_exists( $file ) && !class_exists( 'Less_Parser' ) ) {
+			require_once $file;
 		}
 
 		$parser_options['cache_dir'] = Less_Cache::$cache_dir;
-		$parser = new Less_Parser($parser_options);
-
+		$parser = new Less_Parser( $parser_options );
 
 		// combine files
-		foreach($less_files as $file_path => $uri_or_less ){
+		foreach ( $less_files as $file_path => $uri_or_less ) {
 
-			//treat as less markup if there are newline characters
-			if( strpos($uri_or_less,"\n") !== false ){
+			// treat as less markup if there are newline characters
+			if ( strpos( $uri_or_less, "\n" ) !== false ) {
 				$parser->Parse( $uri_or_less );
 				continue;
 			}
@@ -169,20 +158,17 @@ class Less_Cache{
 
 		$compiled = $parser->getCss();
 
-
 		$less_files = $parser->allParsedFiles();
 
 		return $compiled;
 	}
 
+	private static function OutputFile( $compiled_name, $parser_options ) {
+		// custom output file
+		if ( !empty( $parser_options['output'] ) ) {
 
-	private static function OutputFile( $compiled_name, $parser_options ){
-
-		//custom output file
-		if( !empty($parser_options['output']) ){
-
-			//relative to cache directory?
-			if( preg_match('#[\\\\/]#',$parser_options['output']) ){
+			// relative to cache directory?
+			if ( preg_match( '#[\\\\/]#', $parser_options['output'] ) ) {
 				return $parser_options['output'];
 			}
 
@@ -192,54 +178,48 @@ class Less_Cache{
 		return Less_Cache::$cache_dir.$compiled_name;
 	}
 
-
-	private static function CompiledName( $files, $extrahash ){
-
-		//save the file list
-		$temp = array(Less_Version::cache_version);
-		foreach($files as $file){
-			$temp[] = filemtime($file)."\t".filesize($file)."\t".$file;
+	private static function CompiledName( $files, $extrahash ) {
+		// save the file list
+		$temp = array( Less_Version::cache_version );
+		foreach ( $files as $file ) {
+			$temp[] = filemtime( $file )."\t".filesize( $file )."\t".$file;
 		}
 
-		return Less_Cache::$prefix.sha1(json_encode($temp).$extrahash).'.css';
+		return Less_Cache::$prefix.sha1( json_encode( $temp ).$extrahash ).'.css';
 	}
 
-
-	public static function SetCacheDir( $dir ){
+	public static function SetCacheDir( $dir ) {
 		Less_Cache::$cache_dir = $dir;
 		self::CheckCacheDir();
 	}
 
-	public static function CheckCacheDir(){
+	public static function CheckCacheDir() {
+		Less_Cache::$cache_dir = str_replace( '\\', '/', Less_Cache::$cache_dir );
+		Less_Cache::$cache_dir = rtrim( Less_Cache::$cache_dir, '/' ).'/';
 
-		Less_Cache::$cache_dir = str_replace('\\','/',Less_Cache::$cache_dir);
-		Less_Cache::$cache_dir = rtrim(Less_Cache::$cache_dir,'/').'/';
-
-		if( !file_exists(Less_Cache::$cache_dir) ){
-			if( !mkdir(Less_Cache::$cache_dir) ){
-				throw new Less_Exception_Parser('Less.php cache directory couldn\'t be created: '.Less_Cache::$cache_dir);
+		if ( !file_exists( Less_Cache::$cache_dir ) ) {
+			if ( !mkdir( Less_Cache::$cache_dir ) ) {
+				throw new Less_Exception_Parser( 'Less.php cache directory couldn\'t be created: '.Less_Cache::$cache_dir );
 			}
 
-		}elseif( !is_dir(Less_Cache::$cache_dir) ){
-			throw new Less_Exception_Parser('Less.php cache directory doesn\'t exist: '.Less_Cache::$cache_dir);
+		} elseif ( !is_dir( Less_Cache::$cache_dir ) ) {
+			throw new Less_Exception_Parser( 'Less.php cache directory doesn\'t exist: '.Less_Cache::$cache_dir );
 
-		}elseif( !is_writable(Less_Cache::$cache_dir) ){
-			throw new Less_Exception_Parser('Less.php cache directory isn\'t writable: '.Less_Cache::$cache_dir);
+		} elseif ( !is_writable( Less_Cache::$cache_dir ) ) {
+			throw new Less_Exception_Parser( 'Less.php cache directory isn\'t writable: '.Less_Cache::$cache_dir );
 
 		}
 
 	}
-
 
 	/**
 	 * Delete unused less.php files
 	 *
 	 */
-	public static function CleanCache(){
+	public static function CleanCache() {
 		static $clean = false;
 
-
-		if( $clean || empty(Less_Cache::$cache_dir) ){
+		if ( $clean || empty( Less_Cache::$cache_dir ) ) {
 			return;
 		}
 
@@ -247,69 +227,63 @@ class Less_Cache{
 
 		// only remove files with extensions created by less.php
 		// css files removed based on the list files
-		$remove_types = array('lesscache'=>1,'list'=>1,'less'=>1,'map'=>1);
+		$remove_types = array( 'lesscache' => 1,'list' => 1,'less' => 1,'map' => 1 );
 
-		$files = scandir(Less_Cache::$cache_dir);
-		if( !$files ){
+		$files = scandir( Less_Cache::$cache_dir );
+		if ( !$files ) {
 			return;
 		}
 
 		$check_time = time() - self::$gc_lifetime;
-		foreach($files as $file){
-
+		foreach ( $files as $file ) {
 
 			// don't delete if the file wasn't created with less.php
-			if( strpos($file,Less_Cache::$prefix) !== 0 ){
+			if ( strpos( $file, Less_Cache::$prefix ) !== 0 ) {
 				continue;
 			}
 
-			$parts = explode('.',$file);
-			$type = array_pop($parts);
+			$parts = explode( '.', $file );
+			$type = array_pop( $parts );
 
-
-			if( !isset($remove_types[$type]) ){
+			if ( !isset( $remove_types[$type] ) ) {
 				continue;
 			}
 
 			$full_path = Less_Cache::$cache_dir . $file;
-			$mtime = filemtime($full_path);
+			$mtime = filemtime( $full_path );
 
 			// don't delete if it's a relatively new file
-			if( $mtime > $check_time ){
+			if ( $mtime > $check_time ) {
 				continue;
 			}
 
-
 			// delete the list file and associated css file
-			if( $type === 'list' ){
-				self::ListFiles($full_path, $list, $css_file_name);
-				if( $css_file_name ){
+			if ( $type === 'list' ) {
+				self::ListFiles( $full_path, $list, $css_file_name );
+				if ( $css_file_name ) {
 					$css_file = Less_Cache::$cache_dir . $css_file_name;
-					if( file_exists($css_file) ){
-						unlink($css_file);
+					if ( file_exists( $css_file ) ) {
+						unlink( $css_file );
 					}
 				}
 			}
 
-			unlink($full_path);
+			unlink( $full_path );
 		}
 
-
 	}
-
 
 	/**
 	 * Get the list of less files and generated css file from a list file
 	 *
 	 */
-	static function ListFiles($list_file, &$list, &$css_file_name ){
+	static function ListFiles( $list_file, &$list, &$css_file_name ) {
+		$list = explode( "\n", file_get_contents( $list_file ) );
 
-		$list = explode("\n",file_get_contents($list_file));
+		// pop the cached name that should match $compiled_name
+		$css_file_name = array_pop( $list );
 
-		//pop the cached name that should match $compiled_name
-		$css_file_name = array_pop($list);
-
-		if( !preg_match('/^' . Less_Cache::$prefix . '[a-f0-9]+\.css$/',$css_file_name) ){
+		if ( !preg_match( '/^' . Less_Cache::$prefix . '[a-f0-9]+\.css$/', $css_file_name ) ) {
 			$list[] = $css_file_name;
 			$css_file_name = false;
 		}

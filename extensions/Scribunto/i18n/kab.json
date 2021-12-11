@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Belkacem77"
+			"Belkacem77",
+			"YouvaDjouadi"
 		]
 	},
-	"scribunto-lua-error": "Tuccḍa Lua: $2."
+	"scribunto-lua-error": "Tuccḍa n Lua: $2."
 }

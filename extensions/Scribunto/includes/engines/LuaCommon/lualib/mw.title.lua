@@ -56,6 +56,9 @@ local function makeTitleObject( data )
 	local checkSelf = util.makeCheckSelfFunction( 'mw.title', 'title', obj, 'title object' );
 	local ns = mw.site.namespaces[data.namespace]
 
+	local isCurrentTitle = data.isCurrentTitle
+	data.isCurrentTitle = nil
+
 	data.isContentPage = ns.isContent
 	data.isExternal = data.interwiki ~= ''
 	data.isSpecialPage = data.namespace == mw.site.namespaces.Special.id
@@ -206,6 +209,10 @@ local function makeTitleObject( data )
 				for k,v in pairs( php.getExpensiveData( t.fullText ) ) do
 					data[k] = v
 				end
+			end
+
+			if k == 'id' and isCurrentTitle then
+				php.recordVaryFlag( t.fullText, 'vary-page-id' )
 			end
 
 			if k == 'fullText' then

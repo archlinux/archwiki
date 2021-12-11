@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 
 /**
@@ -31,6 +32,10 @@ use MediaWiki\Revision\RevisionRecord;
  */
 class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'arv' );
 	}
@@ -140,20 +145,19 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 
 		if ( $params['user'] !== null ) {
 			$actorQuery = ActorMigration::newMigration()
-				->getWhere( $db, 'rev_user', User::newFromName( $params['user'], false ) );
+				->getWhere( $db, 'rev_user', $params['user'] );
 			$this->addWhere( $actorQuery['conds'] );
 		} elseif ( $params['excludeuser'] !== null ) {
 			$actorQuery = ActorMigration::newMigration()
-				->getWhere( $db, 'rev_user', User::newFromName( $params['excludeuser'], false ) );
+				->getWhere( $db, 'rev_user', $params['excludeuser'] );
 			$this->addWhere( 'NOT(' . $actorQuery['conds'] . ')' );
 		}
 
 		if ( $params['user'] !== null || $params['excludeuser'] !== null ) {
 			// Paranoia: avoid brute force searches (T19342)
-			if ( !$this->getPermissionManager()->userHasRight( $this->getUser(), 'deletedhistory' ) ) {
+			if ( !$this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
 				$bitmask = RevisionRecord::DELETED_USER;
-			} elseif ( !$this->getPermissionManager()
-				->userHasAnyRight( $this->getUser(), 'suppressrevision', 'viewsuppressed' )
+			} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' )
 			) {
 				$bitmask = RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED;
 			} else {
@@ -188,6 +192,11 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 
 		$hookData = [];
 		$res = $this->select( __METHOD__, [], $hookData );
+
+		if ( $resultPageSet === null ) {
+			$this->executeGenderCacheFromResultWrapper( $res, __METHOD__ );
+		}
+
 		$pageMap = []; // Maps rev_page to array index
 		$count = 0;
 		$nextIndex = 0;
@@ -218,7 +227,7 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 					$generated[] = $row->rev_id;
 				}
 			} else {
-				$revision = $revisionStore->newRevisionFromRow( $row );
+				$revision = $revisionStore->newRevisionFromRow( $row, 0, Title::newFromRow( $row ) );
 				$rev = $this->extractRevisionInfo( $revision, $row );
 
 				if ( !isset( $pageMap[$row->rev_page] ) ) {
@@ -260,6 +269,8 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 		$ret = parent::getAllowedParams() + [
 			'user' => [
 				ApiBase::PARAM_TYPE => 'user',
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_RETURN_OBJECT => true,
 			],
 			'namespace' => [
 				ApiBase::PARAM_ISMULTI => true,
@@ -282,6 +293,8 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 			],
 			'excludeuser' => [
 				ApiBase::PARAM_TYPE => 'user',
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_RETURN_OBJECT => true,
 			],
 			'continue' => [
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
@@ -305,7 +318,7 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 			'action=query&list=allrevisions&arvuser=Example&arvlimit=50'
 				=> 'apihelp-query+allrevisions-example-user',
 			'action=query&list=allrevisions&arvdir=newer&arvlimit=50'
-				=> 'apihelp-query+allrevisions-example-ns-main',
+				=> 'apihelp-query+allrevisions-example-ns-any',
 		];
 	}
 

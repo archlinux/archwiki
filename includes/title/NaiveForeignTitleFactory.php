@@ -18,13 +18,22 @@
  * @file
  */
 
-use MediaWiki\MediaWikiServices;
-
 /**
  * A parser that translates page titles on a foreign wiki into ForeignTitle
  * objects, with no knowledge of the namespace setup on the foreign site.
  */
 class NaiveForeignTitleFactory implements ForeignTitleFactory {
+
+	/** @var Language */
+	private $contentLanguage;
+
+	/**
+	 * @param Language $contentLanguage
+	 */
+	public function __construct( Language $contentLanguage ) {
+		$this->contentLanguage = $contentLanguage;
+	}
+
 	/**
 	 * Creates a ForeignTitle object based on the page title, and optionally the
 	 * namespace ID, of a page on a foreign wiki. These values could be, for
@@ -56,9 +65,8 @@ class NaiveForeignTitleFactory implements ForeignTitleFactory {
 		 * ID, we fall back to using the local wiki's namespace names to resolve
 		 * this -- better than nothing, and mimics the old crappy behavior
 		 */
-		$isNamespacePartValid = is_null( $ns )
-			? MediaWikiServices::getInstance()->getContentLanguage()->getNsIndex( $pieces[0] ) !==
-				false
+		$isNamespacePartValid = $ns === null
+			? $this->contentLanguage->getNsIndex( $pieces[0] ) !== false
 			: $ns != 0;
 
 		if ( count( $pieces ) === 2 && $isNamespacePartValid ) {

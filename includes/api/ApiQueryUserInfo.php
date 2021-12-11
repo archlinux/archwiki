@@ -20,8 +20,8 @@
  * @file
  */
 
-use MediaWiki\Block\AbstractBlock;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\TalkPageNotificationManager;
+use MediaWiki\User\UserEditTracker;
 
 /**
  * Query module to get information about the currently logged-in user
@@ -32,47 +32,52 @@ class ApiQueryUserInfo extends ApiQueryBase {
 
 	use ApiBlockInfoTrait;
 
-	const WL_UNREAD_LIMIT = 1000;
+	private const WL_UNREAD_LIMIT = 1000;
 
 	/** @var array */
 	private $params = [];
+
 	/** @var array */
 	private $prop = [];
 
-	public function __construct( ApiQuery $query, $moduleName ) {
+	/**
+	 * @var TalkPageNotificationManager
+	 */
+	private $talkPageNotificationManager;
+
+	/**
+	 * @var WatchedItemStore
+	 */
+	private $watchedItemStore;
+
+	/**
+	 * @var UserEditTracker
+	 */
+	private $userEditTracker;
+
+	public function __construct(
+		ApiQuery $query,
+		$moduleName,
+		TalkPageNotificationManager $talkPageNotificationManager,
+		WatchedItemStore $watchedItemStore,
+		UserEditTracker $userEditTracker
+	) {
 		parent::__construct( $query, $moduleName, 'ui' );
+		$this->talkPageNotificationManager = $talkPageNotificationManager;
+		$this->watchedItemStore = $watchedItemStore;
+		$this->userEditTracker = $userEditTracker;
 	}
 
 	public function execute() {
 		$this->params = $this->extractRequestParams();
 		$result = $this->getResult();
 
-		if ( !is_null( $this->params['prop'] ) ) {
+		if ( $this->params['prop'] !== null ) {
 			$this->prop = array_flip( $this->params['prop'] );
 		}
 
 		$r = $this->getCurrentUserInfo();
 		$result->addValue( 'query', $this->getModuleName(), $r );
-	}
-
-	/**
-	 * Get basic info about a given block
-	 *
-	 * @deprecated since 1.34 Use ApiBlockInfoTrait::getBlockDetails() instead.
-	 * @param AbstractBlock $block
-	 * @return array See ApiBlockInfoTrait::getBlockDetails
-	 */
-	public static function getBlockInfo( AbstractBlock $block ) {
-		wfDeprecated( __METHOD__, '1.34' );
-
-		// Hack to access a private method from a trait:
-		$dummy = new class {
-			use ApiBlockInfoTrait {
-				getBlockDetails as public;
-			}
-		};
-
-		return $dummy->getBlockDetails( $block );
 	}
 
 	/**
@@ -117,7 +122,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 	protected function getCurrentUserInfo() {
 		$user = $this->getUser();
 		$vals = [];
-		$vals['id'] = (int)$user->getId();
+		$vals['id'] = $user->getId();
 		$vals['name'] = $user->getName();
 
 		if ( $user->isAnon() ) {
@@ -132,7 +137,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		}
 
 		if ( isset( $this->prop['hasmsg'] ) ) {
-			$vals['messages'] = $user->getNewtalk();
+			$vals['messages'] = $this->talkPageNotificationManager->userHasNewMessages( $user );
 		}
 
 		if ( isset( $this->prop['groups'] ) ) {
@@ -181,7 +186,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 
 		if ( isset( $this->prop['preferencestoken'] ) &&
 			!$this->lacksSameOriginSecurity() &&
-			$this->getPermissionManager()->userHasRight( $user, 'editmyoptions' )
+			$this->getAuthority()->isAllowed( 'editmyoptions' )
 		) {
 			$vals['preferencestoken'] = $user->getEditToken( '', $this->getMain()->getRequest() );
 		}
@@ -193,7 +198,12 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		}
 
 		if ( isset( $this->prop['ratelimits'] ) ) {
-			$vals['ratelimits'] = $this->getRateLimits();
+			// true = real rate limits, taking User::isPingLimitable into account
+			$vals['ratelimits'] = $this->getRateLimits( true );
+		}
+		if ( isset( $this->prop['theoreticalratelimits'] ) ) {
+			// false = ignore User::isPingLimitable
+			$vals['theoreticalratelimits'] = $this->getRateLimits( false );
 		}
 
 		if ( isset( $this->prop['realname'] ) &&
@@ -202,8 +212,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 			$vals['realname'] = $user->getRealName();
 		}
 
-		if ( $this->getPermissionManager()->userHasRight( $user, 'viewmyprivateinfo' ) &&
-				isset( $this->prop['email'] ) ) {
+		if ( $this->getAuthority()->isAllowed( 'viewmyprivateinfo' ) && isset( $this->prop['email'] ) ) {
 			$vals['email'] = $user->getEmail();
 			$auth = $user->getEmailAuthenticationTimestamp();
 			if ( $auth !== null ) {
@@ -231,8 +240,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		}
 
 		if ( isset( $this->prop['unreadcount'] ) ) {
-			$store = MediaWikiServices::getInstance()->getWatchedItemStore();
-			$unreadNotifications = $store->countUnreadNotifications(
+			$unreadNotifications = $this->watchedItemStore->countUnreadNotifications(
 				$user,
 				self::WL_UNREAD_LIMIT
 			);
@@ -260,13 +268,20 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		return $vals;
 	}
 
-	protected function getRateLimits() {
+	/**
+	 * Get the rate limits that apply to the user, or the rate limits
+	 * that would apply if the user didn't have `noratelimit`
+	 *
+	 * @param bool $applyNoRateLimit
+	 * @return array
+	 */
+	protected function getRateLimits( bool $applyNoRateLimit ) {
 		$retval = [
 			ApiResult::META_TYPE => 'assoc',
 		];
 
 		$user = $this->getUser();
-		if ( !$user->isPingLimitable() ) {
+		if ( $applyNoRateLimit && !$user->isPingLimitable() ) {
 			return $retval; // No limits
 		}
 
@@ -289,7 +304,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 		// Now get the actual limits
 		foreach ( $this->getConfig()->get( 'RateLimits' ) as $action => $limits ) {
 			foreach ( $categories as $cat ) {
-				if ( isset( $limits[$cat] ) && !is_null( $limits[$cat] ) ) {
+				if ( isset( $limits[$cat] ) ) {
 					$retval[$action][$cat]['hits'] = (int)$limits[$cat][0];
 					$retval[$action][$cat]['seconds'] = (int)$limits[$cat][1];
 				}
@@ -303,25 +318,18 @@ class ApiQueryUserInfo extends ApiQueryBase {
 	 * @return string|null ISO 8601 timestamp of current user's last contribution or null if none
 	 */
 	protected function getLatestContributionTime() {
-		$user = $this->getUser();
-		$dbr = $this->getDB();
-
-		if ( $user->getActorId() === null ) {
+		$timestamp = $this->userEditTracker->getLatestEditTimestamp( $this->getUser() );
+		if ( $timestamp === false ) {
 			return null;
 		}
-		$res = $dbr->selectField( 'revision_actor_temp',
-			'MAX(revactor_timestamp)',
-			[ 'revactor_actor' => $user->getActorId() ],
-			__METHOD__
-		);
-
-		return $res ? wfTimestamp( TS_ISO_8601, $res ) : null;
+		return MWTimestamp::convert( TS_ISO_8601, $timestamp );
 	}
 
 	public function getAllowedParams() {
 		return [
 			'prop' => [
 				ApiBase::PARAM_ISMULTI => true,
+				ApiBase::PARAM_ALL => true,
 				ApiBase::PARAM_TYPE => [
 					'blockinfo',
 					'hasmsg',
@@ -333,6 +341,7 @@ class ApiQueryUserInfo extends ApiQueryBase {
 					'options',
 					'editcount',
 					'ratelimits',
+					'theoreticalratelimits',
 					'email',
 					'realname',
 					'acceptlang',

@@ -78,7 +78,7 @@ abstract class GenericArrayObject extends ArrayObject {
 	public function __construct( $input = null, $flags = 0, $iterator_class = 'ArrayIterator' ) {
 		parent::__construct( [], $flags, $iterator_class );
 
-		if ( !is_null( $input ) ) {
+		if ( $input !== null ) {
 			foreach ( $input as $offset => $value ) {
 				$this->offsetSet( $offset, $value );
 			}
@@ -142,12 +142,12 @@ abstract class GenericArrayObject extends ArrayObject {
 	protected function setElement( $index, $value ) {
 		if ( !$this->hasValidType( $value ) ) {
 			throw new InvalidArgumentException(
-				'Can only add '	. $this->getObjectType() . ' implementing objects to '
+				'Can only add ' . $this->getObjectType() . ' implementing objects to '
 				. static::class . '.'
 			);
 		}
 
-		if ( is_null( $index ) ) {
+		if ( $index === null ) {
 			$index = $this->getNewOffset();
 		}
 

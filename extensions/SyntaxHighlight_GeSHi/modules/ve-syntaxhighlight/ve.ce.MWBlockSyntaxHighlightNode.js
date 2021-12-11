@@ -34,4 +34,10 @@ ve.ce.MWBlockSyntaxHighlightNode.static.getDescription = function ( model ) {
 
 /* Registration */
 
+ve.ce.MWBlockSyntaxHighlightNode.prototype.getFocusableElement = function () {
+	// Container div is 100% width, so overlaps floatables. Just highlight
+	// the inner <pre> (T272864).
+	return this.$element.find( 'pre' ).first();
+};
+
 ve.ce.nodeFactory.register( ve.ce.MWBlockSyntaxHighlightNode );

@@ -1,10 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Akamycoco",
 			"Vickylin77s"
 		]
 	},
+	"vector-action-addsection": "micomod hasasowalen",
+	"vector-action-delete": "masopitay to",
 	"vector-action-move": "malinah",
+	"vector-action-protect": "midipot",
 	"vector-view-create": " misanga’",
 	"vector-view-edit": "misinanot",
 	"vector-view-history": " misongila’ a minengneng to likisi",

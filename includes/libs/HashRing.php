@@ -34,6 +34,11 @@
  * A location that is temporarily "ejected" is said to be absent from the "live" ring.
  * If no location ejections are active, then the base ring and live ring are identical.
  *
+ * This class is designed in a way that using the "md5" algorithm will make it compatible
+ * with libketama, e.g. OPT_LIBKETAMA_COMPATIBLE from the PECL memcached extension or "ketama"
+ * from twemproxy. This can simplify the process of switching client libraries. However, note
+ * that different clients might use incompatible 32-bit memcached value flag conventions.
+ *
  * @since 1.22
  */
 class HashRing implements Serializable {
@@ -49,20 +54,18 @@ class HashRing implements Serializable {
 	/** @var array[] Non-empty position-ordered list of (position, location name) */
 	protected $liveRing;
 
-	/** @var float Number of positions on the ring */
-	const RING_SIZE = 4294967296.0; // 2^32
 	/** @var integer Overall number of node groups per server */
-	const HASHES_PER_LOCATION = 40;
+	private const HASHES_PER_LOCATION = 40;
 	/** @var integer Number of nodes in a node group */
-	const SECTORS_PER_HASH = 4;
+	private const SECTORS_PER_HASH = 4;
 
-	const KEY_POS = 0;
-	const KEY_LOCATION = 1;
+	public const KEY_POS = 0;
+	public const KEY_LOCATION = 1;
 
 	/** @var int Consider all locations */
-	const RING_ALL = 0;
+	public const RING_ALL = 0;
 	/** @var int Only consider "live" locations */
-	const RING_LIVE = 1;
+	public const RING_LIVE = 1;
 
 	/**
 	 * Make a consistent hash ring given a set of locations and their weight values
@@ -268,7 +271,7 @@ class HashRing implements Serializable {
 			$this->weightByLocation,
 			array_filter(
 				$this->ejectExpiryByLocation,
-				function ( $expiry ) use ( $now ) {
+				static function ( $expiry ) use ( $now ) {
 					return ( $expiry > $now );
 				}
 			)
@@ -316,7 +319,7 @@ class HashRing implements Serializable {
 			}
 		}
 		// Sort the locations into clockwise order based on the hash ring position
-		usort( $ring, function ( $a, $b ) {
+		usort( $ring, static function ( $a, $b ) {
 			if ( $a[self::KEY_POS] === $b[self::KEY_POS] ) {
 				throw new UnexpectedValueException( 'Duplicate node positions.' );
 			}
@@ -329,7 +332,7 @@ class HashRing implements Serializable {
 
 	/**
 	 * @param string $item Key
-	 * @return float Ring position; integral number in [0, self::RING_SIZE - 1]
+	 * @return float Ring position; integral number in [0, 4294967296] (2^32)
 	 */
 	private function getItemPosition( $item ) {
 		// If $algo is MD5, then this matches that of with libketama.
@@ -351,7 +354,7 @@ class HashRing implements Serializable {
 
 	/**
 	 * @param string $nodeGroupName
-	 * @return float[] Four ring positions on [0, self::RING_SIZE - 1]
+	 * @return float[] Four ring positions on [0, 4294967296] (2^32)
 	 */
 	private function getNodePositionQuartet( $nodeGroupName ) {
 		$octets = substr( hash( $this->algo, (string)$nodeGroupName, true ), 0, 16 );
@@ -399,7 +402,7 @@ class HashRing implements Serializable {
 			// Live ring needs to be regerenated...
 			$this->ejectExpiryByLocation = array_filter(
 				$this->ejectExpiryByLocation,
-				function ( $expiry ) use ( $now ) {
+				static function ( $expiry ) use ( $now ) {
 					return ( $expiry > $now );
 				}
 			);

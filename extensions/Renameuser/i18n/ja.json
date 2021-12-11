@@ -1,18 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
+			"Afaz",
 			"Aotake",
 			"Broad-Sky",
 			"Fryed-peach",
 			"Hosiryuhosi",
 			"Marine-Blue",
 			"Ohgi",
+			"Otokoume",
 			"Penn Station",
 			"Shirayuki",
 			"Suisui",
-			"青子守歌",
-			"Otokoume",
-			"Afaz"
+			"青子守歌"
 		]
 	},
 	"renameuser": "利用者名の変更",
@@ -28,7 +28,6 @@
 	"renameuserwarnings": "警告:",
 	"renameuserconfirm": "はい、利用者名を変更します",
 	"renameusersubmit": "変更",
-	"renameuser-submit-blocklog": "利用者のブロック記録を表示",
 	"renameusererrordoesnotexist": "利用者「<nowiki>$1</nowiki>」は存在しません。",
 	"renameusererrorexists": "{{GENDER:$1|利用者}}「<nowiki>$1</nowiki>」は既に存在しています。",
 	"renameusererrorinvalid": "利用者名「<nowiki>$1</nowiki>」は無効な値です。",

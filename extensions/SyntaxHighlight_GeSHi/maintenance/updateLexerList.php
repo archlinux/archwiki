@@ -50,14 +50,18 @@ class UpdateLexerList extends Maintenance {
 			->execute();
 
 		if ( $result->getExitCode() != 0 ) {
-			throw new \RuntimeException( $result->getStderr() );
+			$this->fatalError( 'Non-zero exit code: ' . $result->getStderr() );
 		}
 
 		$output = $result->getStdout();
 		foreach ( explode( "\n", $output ) as $line ) {
 			if ( substr( $line, 0, 1 ) === '*' ) {
 				$newLexers = explode( ', ', trim( $line, "* :\n" ) );
-				$lexers = array_merge( $lexers, $newLexers );
+
+				// Skip internal, unnamed lexers
+				if ( $newLexers[0] !== '' ) {
+					$lexers = array_merge( $lexers, $newLexers );
+				}
 			}
 		}
 		$lexers = array_unique( $lexers );

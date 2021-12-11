@@ -127,7 +127,8 @@ class ImportImages extends Maintenance {
 	public function execute() {
 		global $wgFileExtensions, $wgUser, $wgRestrictionLevels;
 
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
+		$services = MediaWikiServices::getInstance();
+		$permissionManager = $services->getPermissionManager();
 
 		$processed = $added = $ignored = $skipped = $overwritten = $failed = 0;
 
@@ -189,6 +190,7 @@ class ImportImages extends Maintenance {
 		# Batch "upload" operation
 		$count = count( $files );
 		if ( $count > 0 ) {
+			$lbFactory = $services->getDBLoadBalancerFactory();
 			foreach ( $files as $file ) {
 				if ( $sleep && ( $processed > 0 ) ) {
 					sleep( $sleep );
@@ -226,7 +228,7 @@ class ImportImages extends Maintenance {
 				}
 
 				# Check existence
-				$image = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo()
+				$image = $services->getRepoGroup()->getLocalRepo()
 					->newFile( $title );
 				if ( $image->exists() ) {
 					if ( $this->hasOption( 'overwrite' ) ) {
@@ -270,16 +272,18 @@ class ImportImages extends Maintenance {
 					/* find user directly from source wiki, through MW's API */
 					$real_user = $this->getFileUserFromSourceWiki( $sourceWikiUrl, $base );
 					if ( $real_user === false ) {
-						$wgUser = $user;
+						// don't change $wgUser
 					} else {
-						$wgUser = User::newFromName( $real_user );
-						if ( $wgUser === false ) {
+						$realUser = User::newFromName( $real_user );
+						if ( $realUser === false ) {
 							# user does not exist in target wiki
 							$this->output(
 								"failed: user '$real_user' does not exist in target wiki."
 							);
 							continue;
 						}
+						$wgUser = $realUser;
+						$user = $realUser;
 					}
 				} else {
 					# Find comment text
@@ -308,10 +312,10 @@ class ImportImages extends Maintenance {
 				# Import the file
 				if ( $this->hasOption( 'dry' ) ) {
 					$this->output(
-						" publishing {$file} by '{$wgUser->getName()}', comment '$commentText'... "
+						" publishing {$file} by '{$user->getName()}', comment '$commentText'... "
 					);
 				} else {
-					$mwProps = new MWFileProps( MediaWiki\MediaWikiServices::getInstance()->getMimeAnalyzer() );
+					$mwProps = new MWFileProps( $services->getMimeAnalyzer() );
 					$props = $mwProps->getPropsFromPath( $file, true );
 					$flags = 0;
 					$publishOptions = [];
@@ -340,10 +344,11 @@ class ImportImages extends Maintenance {
 
 				if ( $this->hasOption( 'dry' ) ) {
 					$this->output( "done.\n" );
-				} elseif ( $image->recordUpload2(
+				} elseif ( $image->recordUpload3(
 					$archive->value,
 					$summary,
 					$commentText,
+					$user,
 					$props,
 					$timestamp
 				)->isOK() ) {
@@ -366,7 +371,7 @@ class ImportImages extends Maintenance {
 						$this->output( "\nWaiting for replica DBs...\n" );
 						// Wait for replica DBs.
 						sleep( 2 ); # Why this sleep?
-						wfWaitForSlaves();
+						$lbFactory->waitForReplication();
 
 						$this->output( "\nSetting image restrictions ... " );
 
@@ -376,7 +381,7 @@ class ImportImages extends Maintenance {
 							$restrictions[$type] = $protectLevel;
 						}
 
-						$page = WikiPage::factory( $title );
+						$page = $services->getWikiPageFactory()->newFromTitle( $title );
 						$status = $page->doUpdateRestrictions( $restrictions, [], $cascade, '', $user );
 						$this->output( ( $status->isOK() ? 'done' : 'failed' ) . "\n" );
 					}
@@ -489,8 +494,15 @@ class ImportImages extends Maintenance {
 		return false;
 	}
 
-	# @todo FIXME: Access the api in a saner way and performing just one query
-	# (preferably batching files too).
+	/**
+	 * @todo FIXME: Access the api in a saner way and performing just one query
+	 * (preferably batching files too).
+	 *
+	 * @param string $wiki_host
+	 * @param string $file
+	 *
+	 * @return string|bool
+	 */
 	private function getFileCommentFromSourceWiki( $wiki_host, $file ) {
 		$url = $wiki_host . '/api.php?action=query&format=xml&titles=File:'
 			. rawurlencode( $file ) . '&prop=imageinfo&&iiprop=comment';

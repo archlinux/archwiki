@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
+			"Kizule",
 			"Milicevic01",
 			"Nikola Smolenski",
-			"Милан Јелисавчић",
-			"Zoranzoki21",
 			"Obsuser",
 			"Prevodim",
-			"BadDog"
+			"Zoranzoki21",
+			"Милан Јелисавчић"
 		]
 	},
 	"ooui-outline-control-move-down": "Премести ставку надоле",
@@ -27,6 +28,8 @@
 	"ooui-selectfile-button-select": "Изаберите датотеку",
 	"ooui-selectfile-not-supported": "Избор датотеке није подржан",
 	"ooui-selectfile-placeholder": "Датотека није изабрана",
-	"ooui-selectfile-dragdrop-placeholder": "Овде отпустите датотеку",
+	"ooui-selectfile-dragdrop-placeholder": "Отпустите датотеку овде",
+	"ooui-selectfile-dragdrop-placeholder-multiple": "Отпустите датотеке овде",
+	"ooui-popup-widget-close-button-aria-label": "Затвори",
 	"ooui-field-help": "Помоћ"
 }

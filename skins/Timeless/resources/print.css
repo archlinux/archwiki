@@ -1,13 +1,11 @@
 /* Styles for print view and printing */
 
 /* Hide some extra stuff from print view */
-.mw-indicators,
 #mw-header,
 #mw-site-navigation,
 #mw-related-navigation,
 #mw-page-header-links,
-#mw-footer,
-#catlinks {
+#mw-footer {
 	display: none;
 }
 

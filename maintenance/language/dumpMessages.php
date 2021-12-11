@@ -23,6 +23,8 @@
  * @todo Make this more useful, right now just dumps content language
  */
 
+use MediaWiki\MediaWikiServices;
+
 require_once __DIR__ . '/../Maintenance.php';
 
 /**
@@ -31,19 +33,20 @@ require_once __DIR__ . '/../Maintenance.php';
  * @ingroup MaintenanceLanguage
  */
 class DumpMessages extends Maintenance {
+
 	public function __construct() {
 		parent::__construct();
 		$this->addDescription( 'Dump an entire language, using the keys from English' );
 	}
 
 	public function execute() {
-		global $wgVersion;
-
 		$messages = [];
-		foreach ( array_keys( Language::getMessagesFor( 'en' ) ) as $key ) {
+		$localisationCache = MediaWikiServices::getInstance()->getLocalisationCache();
+		$localisationMessagesEn = $localisationCache->getItem( 'en', 'messages' );
+		foreach ( array_keys( $localisationMessagesEn ) as $key ) {
 			$messages[$key] = wfMessage( $key )->text();
 		}
-		$this->output( "MediaWiki $wgVersion language file\n" );
+		$this->output( "MediaWiki " . MW_VERSION . " language file\n" );
 		$this->output( serialize( $messages ) );
 	}
 }

@@ -44,7 +44,7 @@ class ApiRevisionDelete extends ApiBase {
 
 		// Check if user can add tags
 		if ( $params['tags'] ) {
-			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $user );
+			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $params['tags'], $this->getAuthority() );
 			if ( !$ableToTag->isOK() ) {
 				$this->dieStatus( $ableToTag );
 			}
@@ -91,6 +91,7 @@ class ApiRevisionDelete extends ApiBase {
 			$this->dieWithError( [ 'apierror-revdel-needtarget' ], 'needtarget' );
 		}
 
+		// TODO: replace use of PermissionManager
 		if ( $this->getPermissionManager()->isBlockedFrom( $user, $targetObj ) ) {
 			$this->dieBlocked( $user->getBlock() );
 		}
@@ -125,7 +126,7 @@ class ApiRevisionDelete extends ApiBase {
 		$result->addValue( null, $this->getModuleName(), $data );
 	}
 
-	private function extractStatusInfo( $status ) {
+	private function extractStatusInfo( Status $status ) {
 		$ret = [
 			'status' => $status->isOK() ? 'Success' : 'Fail',
 		];

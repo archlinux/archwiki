@@ -1,5 +1,13 @@
 <?php
 
+namespace PageImages;
+
+use ApiBase;
+use ApiQuery;
+use ApiQueryBase;
+use MediaWiki\MediaWikiServices;
+use Title;
+
 /**
  * Expose image information for a page via a new prop=pageimages API.
  *
@@ -12,17 +20,6 @@
  * @author Sam Smith
  */
 class ApiQueryPageImages extends ApiQueryBase {
-
-	/**
-	 * @const API parameter value for free images
-	 */
-	const PARAM_LICENSE_FREE = 'free';
-
-	/**
-	 * @const API parameter value for images with any type of license
-	 */
-	const PARAM_LICENSE_ANY = 'any';
-
 	/**
 	 * @param ApiQuery $query API query module
 	 * @param string $moduleName Name of this query module
@@ -55,14 +52,9 @@ class ApiQueryPageImages extends ApiQueryBase {
 
 		// $titles is a map of ID to title object, which is ideal,
 		// whereas $missingFileTitles is a map of title text to ID.
-		$missingFileTitles = array_map( function ( $text ) {
-			return Title::newFromText( $text, NS_FILE );
-		}, array_flip( $missingFileTitles ) );
-
-		// N.B. We can't use array_merge here as it doesn't preserve
-		// keys.
-		foreach ( $missingFileTitles as $id => $title ) {
-			$titles[$id] = $title;
+		// Do not use array_merge here as it doesn't preserve keys.
+		foreach ( $missingFileTitles as $dbkey => $id ) {
+			$titles[$id] = Title::makeTitle( NS_FILE, $dbkey );
 		}
 
 		return $titles;
@@ -71,7 +63,6 @@ class ApiQueryPageImages extends ApiQueryBase {
 	/**
 	 * Evaluates the parameters, performs the requested retrieval of page images,
 	 * and sets up the result
-	 * @return null
 	 */
 	public function execute() {
 		$params = $this->extractRequestParams();
@@ -119,12 +110,13 @@ class ApiQueryPageImages extends ApiQueryBase {
 		}
 
 		$size = $params['thumbsize'];
+		$lang = $params['langcode'];
 		// Extract page images from the page_props table
 		if ( count( $titles ) > 0 ) {
 			$this->addTables( 'page_props' );
 			$this->addFields( [ 'pp_page', 'pp_propname', 'pp_value' ] );
 			$this->addWhere( [ 'pp_page' => array_keys( $titles ),
-				'pp_propname' => self::getPropNames( $params['license'] ) ] );
+				'pp_propname' => PageImages::getPropNames( $params['license'] ) ] );
 
 			$res = $this->select( __METHOD__ );
 
@@ -139,7 +131,7 @@ class ApiQueryPageImages extends ApiQueryBase {
 
 			foreach ( $buffer as $pageId => $row ) {
 				$fileName = $row->pp_value;
-				$this->setResultValues( $prop, $pageId, $fileName, $size );
+				$this->setResultValues( $prop, $pageId, $fileName, $size, $lang );
 			}
 		// End page props image extraction
 		}
@@ -148,26 +140,8 @@ class ApiQueryPageImages extends ApiQueryBase {
 		// the file itself rather than searching for a page_image. (Bug 50252)
 		foreach ( $filePageTitles as $pageId => $title ) {
 			$fileName = $title->getDBkey();
-			$this->setResultValues( $prop, $pageId, $fileName, $size );
+			$this->setResultValues( $prop, $pageId, $fileName, $size, $lang );
 		}
-	}
-
-	/**
-	 * Get property names used in page_props table
-	 *
-	 * If the license is free, then only the free property name will be returned,
-	 * otherwise both free and non-free property names will be returned. That's
-	 * because we save the image name only once if it's free and the best image.
-	 *
-	 * @param string $license either PARAM_LICENSE_FREE or PARAM_LICENSE_ANY,
-	 * specifying whether to return the non-free property name or not
-	 * @return string|array
-	 */
-	protected static function getPropNames( $license ) {
-		if ( $license === self::PARAM_LICENSE_FREE ) {
-			return PageImages::getPropName( true );
-		}
-		return [ PageImages::getPropName( true ), PageImages::getPropName( false ) ];
 	}
 
 	/**
@@ -187,14 +161,19 @@ class ApiQueryPageImages extends ApiQueryBase {
 	 * @param int $pageId The ID of the page
 	 * @param string $fileName The name of the file to transform
 	 * @param int $size The thumbsize value from the API request
+	 * @param string $lang The language code from the API request
 	 */
-	protected function setResultValues( array $prop, $pageId, $fileName, $size ) {
+	protected function setResultValues( array $prop, $pageId, $fileName, $size, $lang ) {
 		$vals = [];
 		if ( isset( $prop['thumbnail'] ) || isset( $prop['original'] ) ) {
-			$file = wfFindFile( $fileName );
+			$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $fileName );
 			if ( $file ) {
 				if ( isset( $prop['thumbnail'] ) ) {
-					$thumb = $file->transform( [ 'width' => $size, 'height' => $size ] );
+					$thumb = $file->transform( [
+						'width' => $size,
+						'height' => $size,
+						'lang' => $lang
+					] );
 					if ( $thumb && $thumb->getUrl() ) {
 						// You can request a thumb 1000x larger than the original
 						// which (in case of bitmap original) will return a Thumb object
@@ -209,12 +188,23 @@ class ApiQueryPageImages extends ApiQueryBase {
 				}
 
 				if ( isset( $prop['original'] ) ) {
+					$originalSize = [
+						'width' => $file->getWidth(),
+						'height' => $file->getHeight()
+					];
+					if ( $lang ) {
+						$file = $file->transform( [
+							'lang' => $lang,
+							'width' => $originalSize['width'],
+							'height' => $originalSize['height']
+						] );
+					}
 					$original_url = wfExpandUrl( $file->getUrl(), PROTO_CURRENT );
 
 					$vals['original'] = [
 						'source' => $original_url,
-						'width' => $file->getWidth(),
-						'height' => $file->getHeight()
+						'width' => $originalSize['width'],
+						'height' => $originalSize['height']
 					];
 				}
 			}
@@ -250,7 +240,7 @@ class ApiQueryPageImages extends ApiQueryBase {
 				ApiBase::PARAM_MAX2 => 100,
 			],
 			'license' => [
-				ApiBase::PARAM_TYPE => [ self::PARAM_LICENSE_FREE, self::PARAM_LICENSE_ANY ],
+				ApiBase::PARAM_TYPE => [ PageImages::LICENSE_FREE, PageImages::LICENSE_ANY ],
 				ApiBase::PARAM_ISMULTI => false,
 				ApiBase::PARAM_DFLT => $this->getConfig()->get( 'PageImagesAPIDefaultLicense' ),
 			],
@@ -258,6 +248,10 @@ class ApiQueryPageImages extends ApiQueryBase {
 				ApiBase::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
 			],
+			'langcode' => [
+				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_DFLT => null
+			]
 		];
 	}
 

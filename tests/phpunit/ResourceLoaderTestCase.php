@@ -3,14 +3,14 @@
 use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
 
-abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
+abstract class ResourceLoaderTestCase extends MediaWikiIntegrationTestCase {
 	// Version hash for a blank file module.
 	// Result of ResourceLoader::makeHash(), ResourceLoaderTestModule
 	// and ResourceLoaderFileModule::getDefinitionSummary().
-	const BLANK_VERSION = '9p30q';
+	public const BLANK_VERSION = '9p30q';
 	// Result of ResoureLoader::makeVersionQuery() for a blank file module.
 	// In other words, result of ResourceLoader::makeHash( BLANK_VERSION );
-	const BLANK_COMBI = 'rbml8';
+	public const BLANK_COMBI = 'rbml8';
 
 	/**
 	 * @param array|string $options Language code or options array
@@ -38,13 +38,13 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 		];
 		$resourceLoader = $rl ?: new ResourceLoader( MediaWikiServices::getInstance()->getMainConfig() );
 		$request = new FauxRequest( [
-				'debug' => $options['debug'],
-				'lang' => $options['lang'],
-				'modules' => $options['modules'],
-				'only' => $options['only'],
-				'safemode' => $options['safemode'],
-				'skin' => $options['skin'],
-				'target' => 'phpunit',
+			'debug' => $options['debug'],
+			'lang' => $options['lang'],
+			'modules' => $options['modules'],
+			'only' => $options['only'],
+			'safemode' => $options['safemode'],
+			'skin' => $options['skin'],
+			'target' => 'phpunit',
 		] );
 		$ctx = $this->getMockBuilder( ResourceLoaderContext::class )
 			->setConstructorArgs( [ $resourceLoader, $request ] )
@@ -64,9 +64,6 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 			'Script' => '/w/index.php',
 			'LoadScript' => '/w/load.php',
 
-			// For ResourceLoader::register() - TODO: Inject somehow T32956
-			'ResourceModuleSkinStyles' => [],
-
 			// For ResourceLoader::respond() - TODO: Inject somehow T32956
 			'UseFileCache' => false,
 		];
@@ -76,7 +73,7 @@ abstract class ResourceLoaderTestCase extends MediaWikiTestCase {
 		return new HashConfig( self::getSettings() );
 	}
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		ResourceLoader::clearCache();
@@ -99,6 +96,7 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 	protected $script = '';
 	protected $styles = '';
 	protected $skipFunction = null;
+	protected $es6 = false;
 	protected $isRaw = false;
 	protected $isKnownEmpty = false;
 	protected $type = ResourceLoaderModule::LOAD_GENERAL;
@@ -151,6 +149,10 @@ class ResourceLoaderTestModule extends ResourceLoaderModule {
 		return $this->skipFunction;
 	}
 
+	public function requiresES6() {
+		return $this->es6;
+	}
+
 	public function isRaw() {
 		return $this->isRaw;
 	}
@@ -190,7 +192,10 @@ class ResourceLoaderFileTestModule extends ResourceLoaderFileModule {
 		return $this->lessVars;
 	}
 
-	/** @return array */
+	/**
+	 * @param ResourceLoaderContext $context
+	 * @return array
+	 */
 	protected function getFileDependencies( ResourceLoaderContext $context ) {
 		// No-op
 		return [];

@@ -1,4 +1,10 @@
 {
-	"@metadata": [],
-	"skinname-monobook": "مۆنۆ"
+	"@metadata": {
+		"authors": [
+			"ئارام بکر"
+		]
+	},
+	"skinname-monobook": "مۆنۆ",
+	"monobook-jumptopersonal": "ئامرازەکانی بەکارھێنەر",
+	"monobook-more-actions": "زیاتر"
 }

@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\NameTableAccessException;
 
@@ -36,6 +37,10 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 
 	private $token = null;
 
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'rv' );
 	}
@@ -45,10 +50,9 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 	/** @deprecated since 1.24 */
 	protected function getTokenFunctions() {
 		// tokenname => function
-		// function prototype is func($pageid, $title, $rev)
+		// function prototype is func( User $user )
 		// should return token or false
 
-		// Don't call the hooks twice
 		if ( isset( $this->tokenFunctions ) ) {
 			return $this->tokenFunctions;
 		}
@@ -62,26 +66,22 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		$this->tokenFunctions = [
 			'rollback' => [ self::class, 'getRollbackToken' ]
 		];
-		Hooks::run( 'APIQueryRevisionsTokens', [ &$this->tokenFunctions ] );
 
 		return $this->tokenFunctions;
 	}
 
 	/**
 	 * @deprecated since 1.24
-	 * @param int $pageid
-	 * @param Title $title
-	 * @param Revision $rev
-	 * @return bool|string
+	 * @internal
+	 * @param User $user
+	 * @return string|false
 	 */
-	public static function getRollbackToken( $pageid, $title, $rev ) {
-		global $wgUser;
-		if ( !MediaWikiServices::getInstance()->getPermissionManager()
-				->userHasRight( $wgUser, 'rollback' ) ) {
+	public static function getRollbackToken( User $user ) {
+		if ( !$user->isAllowed( 'rollback' ) ) {
 			return false;
 		}
 
-		return $wgUser->getEditToken( 'rollback' );
+		return $user->getEditToken( 'rollback' );
 	}
 
 	protected function run( ApiPageSet $resultPageSet = null ) {
@@ -135,6 +135,15 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		$idField = 'rev_id';
 		$tsField = 'rev_timestamp';
 		$pageField = 'rev_page';
+
+		$ignoreIndex = [
+			// T224017: `rev_timestamp` is never the correct index to use for this module, but
+			// MariaDB sometimes insists on trying to use it anyway. Tell it not to.
+			// Last checked with MariaDB 10.4.13
+			'revision' => 'rev_timestamp',
+		];
+		$useIndex = [];
+
 		if ( $params['user'] !== null ) {
 			// We're going to want to use the page_actor_timestamp index (on revision_actor_temp)
 			// so use that table's denormalized fields.
@@ -146,10 +155,7 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		if ( $resultPageSet === null ) {
 			$this->parseParameters( $params );
 			$this->token = $params['token'];
-			$opts = [];
-			if ( $this->token !== null || $pageCount > 0 ) {
-				$opts[] = 'page';
-			}
+			$opts = [ 'page' ];
 			if ( $this->fld_user ) {
 				$opts[] = 'user';
 			}
@@ -199,11 +205,10 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 		if ( $resultPageSet === null && $this->fetchContent ) {
 			// For each page we will request, the user must have read rights for that page
 			$status = Status::newGood();
-			$user = $this->getUser();
 
 			/** @var Title $title */
 			foreach ( $pageSet->getGoodTitles() as $title ) {
-				if ( !$this->getPermissionManager()->userCan( 'read', $user, $title ) ) {
+				if ( !$this->getAuthority()->authorizeRead( 'read', $title ) ) {
 					$status->fatal( ApiMessage::create(
 						[ 'apierror-cannotviewtitle', wfEscapeWikiText( $title->getPrefixedText() ) ],
 						'accessdenied'
@@ -316,23 +321,29 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 
 			if ( $params['user'] !== null ) {
 				$actorQuery = ActorMigration::newMigration()
-					->getWhere( $db, 'rev_user', User::newFromName( $params['user'], false ) );
+					->getWhere( $db, 'rev_user', $params['user'] );
 				$this->addTables( $actorQuery['tables'] );
 				$this->addJoinConds( $actorQuery['joins'] );
 				$this->addWhere( $actorQuery['conds'] );
 			} elseif ( $params['excludeuser'] !== null ) {
 				$actorQuery = ActorMigration::newMigration()
-					->getWhere( $db, 'rev_user', User::newFromName( $params['excludeuser'], false ) );
+					->getWhere( $db, 'rev_user', $params['excludeuser'] );
 				$this->addTables( $actorQuery['tables'] );
 				$this->addJoinConds( $actorQuery['joins'] );
 				$this->addWhere( 'NOT(' . $actorQuery['conds'] . ')' );
+			} else {
+				// T258480: MariaDB ends up using rev_page_actor_timestamp in some cases here.
+				// Last checked with MariaDB 10.4.13
+				// Unless we are filtering by user (see above), we always want to use the
+				// "history" index on the revision table, namely page_timestamp.
+				$useIndex['revision'] = 'page_timestamp';
 			}
+
 			if ( $params['user'] !== null || $params['excludeuser'] !== null ) {
 				// Paranoia: avoid brute force searches (T19342)
-				if ( !$this->getPermissionManager()->userHasRight( $this->getUser(), 'deletedhistory' ) ) {
+				if ( !$this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
 					$bitmask = RevisionRecord::DELETED_USER;
-				} elseif ( !$this->getPermissionManager()
-					->userHasAnyRight( $this->getUser(), 'suppressrevision', 'viewsuppressed' )
+				} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' )
 				) {
 					$bitmask = RevisionRecord::DELETED_USER | RevisionRecord::DELETED_RESTRICTED;
 				} else {
@@ -389,9 +400,11 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 
 		$this->addOption( 'LIMIT', $this->limit + 1 );
 
-		// T224017: `rev_timestamp` is never the correct index to use for this module, but
-		// MariaDB (10.1.37-39) sometimes insists on trying to use it anyway. Tell it not to.
-		$this->addOption( 'IGNORE INDEX', [ 'revision' => 'rev_timestamp' ] );
+		$this->addOption( 'IGNORE INDEX', $ignoreIndex );
+
+		if ( $useIndex ) {
+			$this->addOption( 'USE INDEX', $useIndex );
+		}
 
 		$count = 0;
 		$generated = [];
@@ -417,15 +430,16 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 			if ( $resultPageSet !== null ) {
 				$generated[] = $row->rev_id;
 			} else {
-				$revision = $revisionStore->newRevisionFromRow( $row );
+				$revision = $revisionStore->newRevisionFromRow( $row, 0, Title::newFromRow( $row ) );
 				$rev = $this->extractRevisionInfo( $revision, $row );
 
 				if ( $this->token !== null ) {
-					$title = Title::newFromLinkTarget( $revision->getPageAsLinkTarget() );
-					$revisionCompat = new Revision( $revision );
 					$tokenFunctions = $this->getTokenFunctions();
 					foreach ( $this->token as $t ) {
-						$val = call_user_func( $tokenFunctions[$t], $title->getArticleID(), $title, $revisionCompat );
+						$val = call_user_func(
+							$tokenFunctions[$t],
+							$this->getUser()
+						);
 						if ( $val === false ) {
 							$this->addWarning( [ 'apiwarn-tokennotallowed', $t ] );
 						} else {
@@ -492,10 +506,14 @@ class ApiQueryRevisions extends ApiQueryRevisionsBase {
 			],
 			'user' => [
 				ApiBase::PARAM_TYPE => 'user',
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_RETURN_OBJECT => true,
 				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'singlepageonly' ] ],
 			],
 			'excludeuser' => [
 				ApiBase::PARAM_TYPE => 'user',
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name', 'ip', 'id', 'interwiki' ],
+				UserDef::PARAM_RETURN_OBJECT => true,
 				ApiBase::PARAM_HELP_MSG_INFO => [ [ 'singlepageonly' ] ],
 			],
 			'tag' => null,

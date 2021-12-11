@@ -60,11 +60,11 @@ class FileBackendMultiWrite extends FileBackend {
 	protected $asyncWrites = false;
 
 	/** @var int Compare file sizes among backends */
-	const CHECK_SIZE = 1;
+	private const CHECK_SIZE = 1;
 	/** @var int Compare file mtimes among backends */
-	const CHECK_TIME = 2;
+	private const CHECK_TIME = 2;
 	/** @var int Compare file hashes among backends */
-	const CHECK_SHA1 = 4;
+	private const CHECK_SHA1 = 4;
 
 	/**
 	 * Construct a proxy backend that consists of several internal backends.
@@ -102,33 +102,34 @@ class FileBackendMultiWrite extends FileBackend {
 		// Construct backends here rather than via registration
 		// to keep these backends hidden from outside the proxy.
 		$namesUsed = [];
-		foreach ( $config['backends'] as $index => $config ) {
-			$name = $config['name'];
+		foreach ( $config['backends'] as $index => $beConfig ) {
+			$name = $beConfig['name'];
 			if ( isset( $namesUsed[$name] ) ) { // don't break FileOp predicates
 				throw new LogicException( "Two or more backends defined with the name $name." );
 			}
 			$namesUsed[$name] = 1;
 			// Alter certain sub-backend settings for sanity
-			unset( $config['readOnly'] ); // use proxy backend setting
-			unset( $config['fileJournal'] ); // use proxy backend journal
-			unset( $config['lockManager'] ); // lock under proxy backend
-			$config['domainId'] = $this->domainId; // use the proxy backend wiki ID
-			if ( !empty( $config['isMultiMaster'] ) ) {
+			unset( $beConfig['readOnly'] ); // use proxy backend setting
+			unset( $beConfig['fileJournal'] ); // use proxy backend journal
+			unset( $beConfig['lockManager'] ); // lock under proxy backend
+			$beConfig['domainId'] = $this->domainId; // use the proxy backend wiki ID
+			$beConfig['logger'] = $this->logger; // use the proxy backend logger
+			if ( !empty( $beConfig['isMultiMaster'] ) ) {
 				if ( $this->masterIndex >= 0 ) {
 					throw new LogicException( 'More than one master backend defined.' );
 				}
 				$this->masterIndex = $index; // this is the "master"
-				$config['fileJournal'] = $this->fileJournal; // log under proxy backend
+				$beConfig['fileJournal'] = $this->fileJournal; // log under proxy backend
 			}
-			if ( !empty( $config['readAffinity'] ) ) {
+			if ( !empty( $beConfig['readAffinity'] ) ) {
 				$this->readIndex = $index; // prefer this for reads
 			}
 			// Create sub-backend object
-			if ( !isset( $config['class'] ) ) {
+			if ( !isset( $beConfig['class'] ) ) {
 				throw new InvalidArgumentException( 'No class given for a backend config.' );
 			}
-			$class = $config['class'];
-			$this->backends[$index] = new $class( $config );
+			$class = $beConfig['class'];
+			$this->backends[$index] = new $class( $beConfig );
 		}
 		if ( $this->masterIndex < 0 ) { // need backends and must have a master
 			throw new LogicException( 'No master backend defined.' );
@@ -141,21 +142,22 @@ class FileBackendMultiWrite extends FileBackend {
 	final protected function doOperationsInternal( array $ops, array $opts ) {
 		$status = $this->newStatus();
 
+		$fname = __METHOD__;
 		$mbe = $this->backends[$this->masterIndex]; // convenience
 
 		// Acquire any locks as needed
+		$scopeLock = null;
 		if ( empty( $opts['nonLocking'] ) ) {
-			/** @noinspection PhpUnusedLocalVariableInspection */
 			$scopeLock = $this->getScopedLocksForOps( $ops, $status );
 			if ( !$status->isOK() ) {
 				return $status; // abort
 			}
 		}
-		// Clear any cache entries (after locks acquired)
-		$this->clearCache();
-		$opts['preserveCache'] = true; // only locked files are cached
 		// Get the list of paths to read/write
 		$relevantPaths = $this->fileStoragePathsForOps( $ops );
+		// Clear any cache entries (after locks acquired)
+		$this->clearCache( $relevantPaths );
+		$opts['preserveCache'] = true; // only locked files are cached
 		// Check if the paths are valid and accessible on all backends
 		$status->merge( $this->accessibilityCheck( $relevantPaths ) );
 		if ( !$status->isOK() ) {
@@ -165,7 +167,7 @@ class FileBackendMultiWrite extends FileBackend {
 		$syncStatus = $this->consistencyCheck( $relevantPaths );
 		if ( !$syncStatus->isOK() ) {
 			$this->logger->error(
-				__METHOD__ . ": failed sync check: " . FormatJson::encode( $relevantPaths )
+				"$fname: failed sync check: " . FormatJson::encode( $relevantPaths )
 			);
 			// Try to resync the clone backends to the master on the spot
 			if (
@@ -194,17 +196,19 @@ class FileBackendMultiWrite extends FileBackend {
 				if ( $this->asyncWrites && !$this->hasVolatileSources( $ops ) ) {
 					// Bind $scopeLock to the callback to preserve locks
 					DeferredUpdates::addCallableUpdate(
-						function () use ( $backend, $realOps, $opts, $scopeLock, $relevantPaths ) {
-							$this->logger->error(
-								"'{$backend->getName()}' async replication; paths: " .
+						function () use (
+							$backend, $realOps, $opts, $scopeLock, $relevantPaths, $fname
+						) {
+							$this->logger->debug(
+								"$fname: '{$backend->getName()}' async replication; paths: " .
 								FormatJson::encode( $relevantPaths )
 							);
 							$backend->doOperations( $realOps, $opts );
 						}
 					);
 				} else {
-					$this->logger->error(
-						"'{$backend->getName()}' sync replication; paths: " .
+					$this->logger->debug(
+						"$fname: '{$backend->getName()}' sync replication; paths: " .
 						FormatJson::encode( $relevantPaths )
 					);
 					$status->merge( $backend->doOperations( $realOps, $opts ) );
@@ -399,6 +403,7 @@ class FileBackendMultiWrite extends FileBackend {
 					if (
 						$resyncMode === 'conservative' &&
 						$cloneStat &&
+						// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 						$cloneStat['mtime'] > $masterStat['mtime']
 					) {
 						// Do not replace files with older ones; reduces the risk of data loss
@@ -416,6 +421,7 @@ class FileBackendMultiWrite extends FileBackend {
 					if ( $resyncMode === 'conservative' ) {
 						// Do not delete stray files; reduces the risk of data loss
 						$status->fatal( 'backend-fail-synced', $path );
+						$this->logger->error( "$fname: not allowed to delete file '$clonePath'" );
 					} else {
 						// Delete the stay file from the clone backend
 						$status->merge( $cloneBackend->quickDelete( [ 'src' => $clonePath ] ) );
@@ -457,7 +463,7 @@ class FileBackendMultiWrite extends FileBackend {
 			}
 		}
 
-		return array_values( array_unique( array_filter( $paths, 'FileBackend::isStoragePath' ) ) );
+		return array_values( array_unique( array_filter( $paths, [ FileBackend::class, 'isStoragePath' ] ) ) );
 	}
 
 	/**
@@ -527,7 +533,7 @@ class FileBackendMultiWrite extends FileBackend {
 	}
 
 	/**
-	 * @param array $ops File operations for FileBackend::doOperations()
+	 * @param array[] $ops File operations for FileBackend::doOperations()
 	 * @return bool Whether there are file path sources with outside lifetime/ownership
 	 */
 	protected function hasVolatileSources( array $ops ) {
@@ -540,7 +546,7 @@ class FileBackendMultiWrite extends FileBackend {
 		return false;
 	}
 
-	protected function doQuickOperationsInternal( array $ops ) {
+	protected function doQuickOperationsInternal( array $ops, array $opts ) {
 		$status = $this->newStatus();
 		// Do the operations on the master backend; setting StatusValue fields
 		$realOps = $this->substOpBatchPaths( $ops, $this->backends[$this->masterIndex] );
@@ -555,7 +561,7 @@ class FileBackendMultiWrite extends FileBackend {
 			$realOps = $this->substOpBatchPaths( $ops, $backend );
 			if ( $this->asyncWrites && !$this->hasVolatileSources( $ops ) ) {
 				DeferredUpdates::addCallableUpdate(
-					function () use ( $backend, $realOps ) {
+					static function () use ( $backend, $realOps ) {
 						$backend->doQuickOperations( $realOps );
 					}
 				);
@@ -609,7 +615,7 @@ class FileBackendMultiWrite extends FileBackend {
 			$realParams = $this->substOpPaths( $params, $backend );
 			if ( $this->asyncWrites ) {
 				DeferredUpdates::addCallableUpdate(
-					function () use ( $backend, $method, $realParams ) {
+					static function () use ( $backend, $method, $realParams ) {
 						$backend->$method( $realParams );
 					}
 				);

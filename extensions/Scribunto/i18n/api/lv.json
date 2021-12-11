@@ -4,5 +4,7 @@
 			"Papuass"
 		]
 	},
-	"apihelp-scribunto-console-param-content": "Jaunais moduļa saturs"
+	"apihelp-scribunto-console-param-title": "Testējamā moduļa nosaukums.",
+	"apihelp-scribunto-console-param-content": "Jaunais moduļa saturs",
+	"apihelp-scribunto-console-param-session": "Sesijas marķieris."
 }

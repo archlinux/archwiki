@@ -29,9 +29,9 @@ namespace MediaWiki\Interwiki;
  */
 
 use Interwiki;
+use MediaWikiSite;
 use Site;
 use SiteLookup;
-use MediaWikiSite;
 
 class InterwikiLookupAdapter implements InterwikiLookup {
 
@@ -45,7 +45,7 @@ class InterwikiLookupAdapter implements InterwikiLookup {
 	 */
 	private $interwikiMap;
 
-	function __construct(
+	public function __construct(
 		SiteLookup $siteLookup,
 		array $interwikiMap = null
 	) {
@@ -80,6 +80,7 @@ class InterwikiLookupAdapter implements InterwikiLookup {
 			return false;
 		}
 
+		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		return $this->interwikiMap[$prefix];
 	}
 
@@ -156,15 +157,16 @@ class InterwikiLookupAdapter implements InterwikiLookup {
 	 * @return Interwiki[]
 	 */
 	private function getSiteInterwikis( Site $site ) {
+		$url = $site->getPageUrl();
+		if ( $site instanceof MediaWikiSite ) {
+			$path = $site->getFileUrl( 'api.php' );
+		} else {
+			$path = '';
+		}
+		$local = $site->getSource() === 'local';
+
 		$interwikis = [];
 		foreach ( $site->getInterwikiIds() as $interwiki ) {
-			$url = $site->getPageUrl();
-			if ( $site instanceof MediaWikiSite ) {
-				$path = $site->getFileUrl( 'api.php' );
-			} else {
-				$path = '';
-			}
-			$local = $site->getSource() === 'local';
 			// TODO: How to adapt trans?
 			$interwikis[$interwiki] = new Interwiki(
 				$interwiki,

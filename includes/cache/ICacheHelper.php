@@ -25,6 +25,7 @@
 /**
  * Interface for all classes implementing CacheHelper functionality.
  *
+ * @deprecated since 1.36
  * @since 1.20
  */
 interface ICacheHelper {
@@ -34,7 +35,7 @@ interface ICacheHelper {
 	 * @since 1.20
 	 * @param bool $cacheEnabled
 	 */
-	function setCacheEnabled( $cacheEnabled );
+	public function setCacheEnabled( $cacheEnabled );
 
 	/**
 	 * Initializes the caching.
@@ -45,7 +46,7 @@ interface ICacheHelper {
 	 * @param int|null $cacheExpiry Sets the cache expiry, either ttl in seconds or unix timestamp.
 	 * @param bool|null $cacheEnabled Sets if the cache should be enabled or not.
 	 */
-	function startCache( $cacheExpiry = null, $cacheEnabled = null );
+	public function startCache( $cacheExpiry = null, $cacheEnabled = null );
 
 	/**
 	 * Get a cached value if available or compute it if not and then cache it if possible.
@@ -61,7 +62,7 @@ interface ICacheHelper {
 	 *
 	 * @return mixed
 	 */
-	function getCachedValue( $computeFunction, $args = [], $key = null );
+	public function getCachedValue( $computeFunction, $args = [], $key = null );
 
 	/**
 	 * Saves the HTML to the cache in case it got recomputed.
@@ -69,7 +70,7 @@ interface ICacheHelper {
 	 *
 	 * @since 1.20
 	 */
-	function saveCache();
+	public function saveCache();
 
 	/**
 	 * Sets the time to live for the cache, in seconds or a unix timestamp
@@ -79,5 +80,5 @@ interface ICacheHelper {
 	 *
 	 * @param int $cacheExpiry
 	 */
-	function setExpiry( $cacheExpiry );
+	public function setExpiry( $cacheExpiry );
 }

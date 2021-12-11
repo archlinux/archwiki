@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Adam78",
+			"Bencemac",
 			"Dani",
 			"Dj",
+			"Hanna Tardos",
 			"Hunyadym",
-			"Tgr",
-			"Bencemac"
+			"Tgr"
 		]
 	},
 	"renameuser": "Szerkesztő átnevezése",
@@ -22,7 +23,6 @@
 	"renameuserwarnings": "Figyelmeztetések:",
 	"renameuserconfirm": "Igen, nevezd át a szerkesztőt",
 	"renameusersubmit": "Elküld",
-	"renameuser-submit-blocklog": "Felhasználóhoz kapcsolódó naplóbejegyzések megjelenítése",
 	"renameusererrordoesnotexist": "Nem létezik „<nowiki>$1</nowiki>” nevű felhasználó",
 	"renameusererrorexists": "Már létezik „<nowiki>$1</nowiki>” nevű felhasználó",
 	"renameusererrorinvalid": "A felhasználónév („<nowiki>$1</nowiki>”) érvénytelen",
@@ -32,6 +32,7 @@
 	"renameuser-page-exists": "$1 már létezik, és nem lehet automatikusan felülírni.",
 	"renameuser-page-moved": "$1 át lett nevezve $2 névre",
 	"renameuser-page-unmoved": "$1-t nem sikerült $2 névre nevezi",
+	"renameuser-warning-currentblock": "A felhasználó [$1 jelenleg blokkolva van].",
 	"log-name-renameuser": "Felhasználóátnevezési napló",
 	"log-description-renameuser": "Ez a rendszernapló a szerkesztői nevek változásait mutatja.",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|átnevezte}} $4 szerkesztőt ({{PLURAL:$6|egy|$6}} szerkesztés) erre: {{GENDER:$7|$5}}",

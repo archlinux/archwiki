@@ -1,13 +1,14 @@
 <?php
 
 class Scribunto_LuaStandaloneTest extends Scribunto_LuaEngineUnitTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'StandaloneTests';
 
 	public static function suite( $className ) {
 		return self::makeSuite( $className, 'LuaStandalone' );
 	}
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$interpreter = $this->getEngine()->getInterpreter();

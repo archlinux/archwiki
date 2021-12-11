@@ -1,6 +1,13 @@
 <?php
 
+/*
+ * @stable to extend
+ */
 class CollapsibleFieldsetLayout extends OOUI\FieldsetLayout {
+	/**
+	 * @stable to call
+	 * @inheritDoc
+	 */
 	public function __construct( array $config = [] ) {
 		parent::__construct( $config );
 

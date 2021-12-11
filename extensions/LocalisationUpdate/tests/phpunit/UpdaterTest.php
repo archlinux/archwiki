@@ -7,13 +7,10 @@
 
 namespace LocalisationUpdate;
 
-use PHPUnit4And6Compat;
-
 /**
  * @covers \LocalisationUpdate\Updater
  */
 class UpdaterTest extends \PHPUnit\Framework\TestCase {
-	use PHPUnit4And6Compat;
 
 	public function testIsDirectory() {
 		$updater = new Updater();
@@ -51,24 +48,24 @@ class UpdaterTest extends \PHPUnit\Framework\TestCase {
 		$input = [ 'file' => 'Hello World!' ];
 		$output = [ 'en' => [ 'key' => $input['file'] ] ];
 
-		$reader = $this->getMock( 'LocalisationUpdate\Reader' );
+		$reader = $this->createMock( 'LocalisationUpdate\Reader\Reader' );
 		$reader
 			->expects( $this->once() )
 			->method( 'parse' )
-			->will( $this->returnValue( $output ) );
+			->willReturn( $output );
 
-		$factory = $this->getMock( 'LocalisationUpdate\ReaderFactory' );
+		$factory = $this->createMock( 'LocalisationUpdate\Reader\ReaderFactory' );
 		$factory
 			->expects( $this->once() )
 			->method( 'getReader' )
-			->will( $this->returnValue( $reader ) );
+			->willReturn( $reader );
 
 		$observed = $updater->readMessages( $factory, $input );
 		$this->assertEquals( $output, $observed, 'Tries to parse given file' );
 	}
 
 	public function testFindChangedTranslations() {
-		$updater = $updater = new Updater();
+		$updater = new Updater();
 
 		$origin = [
 			'A' => '1',
@@ -76,14 +73,18 @@ class UpdaterTest extends \PHPUnit\Framework\TestCase {
 			'D' => '4',
 		];
 		$remote = [
-			'A' => '1', // No change key
-			'B' => '2', // New key
-			'C' => '33', // Changed key
-			'D' => '44', // Blacklisted key
+			// No change key
+			'A' => '1',
+			// New key
+			'B' => '2',
+			// Changed key
+			'C' => '33',
+			// Ignored key
+			'D' => '44',
 		];
-		$blacklist = [ 'D' => 0 ];
+		$ignore = [ 'D' => 0 ];
 		$expected = [ 'B' => '2', 'C' => '33' ];
-		$observed = $updater->findChangedTranslations( $origin, $remote, $blacklist );
+		$observed = $updater->findChangedTranslations( $origin, $remote, $ignore );
 		$this->assertEquals( $expected, $observed, 'Changed and new keys returned' );
 	}
 }

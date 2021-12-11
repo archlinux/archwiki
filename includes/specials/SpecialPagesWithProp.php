@@ -22,6 +22,8 @@
  * @ingroup SpecialPage
  */
 
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * Special:PagesWithProp to search the page_props table
  * @ingroup SpecialPage
@@ -54,11 +56,15 @@ class SpecialPagesWithProp extends QueryPage {
 	 */
 	private $sortByValue = false;
 
-	function __construct( $name = 'PagesWithProp' ) {
-		parent::__construct( $name );
+	/**
+	 * @param ILoadBalancer $loadBalancer
+	 */
+	public function __construct( ILoadBalancer $loadBalancer ) {
+		parent::__construct( 'PagesWithProp' );
+		$this->setDBLoadBalancer( $loadBalancer );
 	}
 
-	function isCacheable() {
+	public function isCacheable() {
 		return false;
 	}
 
@@ -75,7 +81,7 @@ class SpecialPagesWithProp extends QueryPage {
 
 		$propnames = $this->getExistingPropNames();
 
-		$form = HTMLForm::factory( 'ooui', [
+		$fields = [
 			'propname' => [
 				'type' => 'combobox',
 				'name' => 'propname',
@@ -105,14 +111,17 @@ class SpecialPagesWithProp extends QueryPage {
 				'label-message' => 'pageswithprop-sortbyvalue',
 				'required' => false,
 			]
-		], $this->getContext() );
-		$form->setMethod( 'get' );
-		$form->setSubmitCallback( [ $this, 'onSubmit' ] );
-		$form->setWrapperLegendMsg( 'pageswithprop-legend' );
-		$form->addHeaderText( $this->msg( 'pageswithprop-text' )->parseAsBlock() );
-		$form->setSubmitTextMsg( 'pageswithprop-submit' );
+		];
 
-		$form->prepareForm();
+		$context = new DerivativeContext( $this->getContext() );
+		$context->setTitle( $this->getPageTitle() ); // Remove subpage
+		$form = HTMLForm::factory( 'ooui', $fields, $context )
+			->setMethod( 'get' )
+			->setSubmitCallback( [ $this, 'onSubmit' ] )
+			->setWrapperLegendMsg( 'pageswithprop-legend' )
+			->addHeaderText( $this->msg( 'pageswithprop-text' )->parseAsBlock() )
+			->setSubmitTextMsg( 'pageswithprop-submit' )
+			->prepareForm();
 		$form->displayForm( false );
 		if ( $propname !== '' && $propname !== null ) {
 			$form->trySubmit();
@@ -142,7 +151,7 @@ class SpecialPagesWithProp extends QueryPage {
 	 * Disable RSS/Atom feeds
 	 * @return bool
 	 */
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
@@ -174,7 +183,7 @@ class SpecialPagesWithProp extends QueryPage {
 		return $query;
 	}
 
-	function getOrderFields() {
+	protected function getOrderFields() {
 		$sort = [ 'page_id' ];
 		if ( $this->sortByValue ) {
 			array_unshift( $sort, 'pp_sortkey' );
@@ -191,10 +200,10 @@ class SpecialPagesWithProp extends QueryPage {
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Result row
+	 * @param stdClass $result Result row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		$title = Title::newFromRow( $result );
 		$ret = $this->getLinkRenderer()->makeKnownLink( $title );
 		if ( $result->pp_value !== '' ) {
@@ -237,7 +246,8 @@ class SpecialPagesWithProp extends QueryPage {
 			$opts['OFFSET'] = $offset;
 		}
 
-		$res = wfGetDB( DB_REPLICA )->select(
+		$dbr = $this->getDBLoadBalancer()->getConnectionRef( ILoadBalancer::DB_REPLICA );
+		$res = $dbr->select(
 			'page_props',
 			'pp_propname',
 			'',

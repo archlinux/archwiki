@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Xuacu",
-			"McDutchie"
+			"McDutchie",
+			"Xuacu"
 		]
 	},
 	"scribunto-desc": "Infraestructura pa incrustar llinguaxes de script nes páxines de MediaWiki",

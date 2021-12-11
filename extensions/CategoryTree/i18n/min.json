@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"David Wadie Fisher-Freberg",
 			"Iwan Novirion"
 		]
 	},
@@ -16,10 +17,10 @@
 	"categorytree-mode-pages": "laman salain berkas",
 	"categorytree-mode-all": "kasado laman",
 	"categorytree-collapse": "tutuik",
-	"categorytree-expand": "bukak",
-	"categorytree-member-counts": "Barisi {{PLURAL:$1|$1 subkategori}}, {{PLURAL:$2|$2 laman}}, jo {{PLURAL:$3|$3 berkas}}",
-	"categorytree-num-categories": "$1 K",
-	"categorytree-num-pages": "$1 L",
+	"categorytree-expand": "kambangkan",
+	"categorytree-member-counts": "Baisi {{PLURAL:$1|$1 subkategori}}, {{PLURAL:$2|$2 laman}}, jo {{PLURAL:$3|$3 berkas}}",
+	"categorytree-num-categories": "$1 C",
+	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 B",
 	"categorytree-num-empty": "kosong",
 	"categorytree-load": "muek",

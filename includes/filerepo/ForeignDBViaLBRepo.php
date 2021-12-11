@@ -22,7 +22,6 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -31,39 +30,28 @@ use Wikimedia\Rdbms\ILoadBalancer;
  * @ingroup FileRepo
  */
 class ForeignDBViaLBRepo extends LocalRepo {
-	/** @var string */
-	protected $wiki;
-
 	/** @var array */
 	protected $fileFactory = [ ForeignDBFile::class, 'newFromTitle' ];
 
 	/** @var array */
 	protected $fileFromRowFactory = [ ForeignDBFile::class, 'newFromRow' ];
 
-	/** @var bool */
-	protected $hasSharedCache;
-
 	/**
 	 * @param array|null $info
 	 */
-	function __construct( $info ) {
+	public function __construct( $info ) {
 		parent::__construct( $info );
-		$this->wiki = $info['wiki'];
-		$this->hasSharedCache = $info['hasSharedCache'];
+		'@phan-var array $info';
+		$this->dbDomain = $info['wiki'];
+		$this->hasAccessibleSharedCache = $info['hasSharedCache'];
 	}
 
-	/**
-	 * @return IDatabase
-	 */
-	function getMasterDB() {
-		return $this->getDBLoadBalancer()->getConnectionRef( DB_MASTER, [], $this->wiki );
+	public function getMasterDB() {
+		return $this->getDBLoadBalancer()->getConnectionRef( DB_MASTER, [], $this->dbDomain );
 	}
 
-	/**
-	 * @return IDatabase
-	 */
-	function getReplicaDB() {
-		return $this->getDBLoadBalancer()->getConnectionRef( DB_REPLICA, [], $this->wiki );
+	public function getReplicaDB() {
+		return $this->getDBLoadBalancer()->getConnectionRef( DB_REPLICA, [], $this->dbDomain );
 	}
 
 	/**
@@ -71,7 +59,7 @@ class ForeignDBViaLBRepo extends LocalRepo {
 	 */
 	protected function getDBFactory() {
 		return function ( $index ) {
-			return $this->getDBLoadBalancer()->getConnectionRef( $index, [], $this->wiki );
+			return $this->getDBLoadBalancer()->getConnectionRef( $index, [], $this->dbDomain );
 		};
 	}
 
@@ -81,28 +69,7 @@ class ForeignDBViaLBRepo extends LocalRepo {
 	protected function getDBLoadBalancer() {
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
-		return $lbFactory->getMainLB( $this->wiki );
-	}
-
-	function hasSharedCache() {
-		return $this->hasSharedCache;
-	}
-
-	/**
-	 * Get a key on the primary cache for this repository.
-	 * Returns false if the repository's cache is not accessible at this site.
-	 * The parameters are the parts of the key, as for wfMemcKey().
-	 * @return bool|string
-	 */
-	function getSharedCacheKey( /*...*/ ) {
-		if ( $this->hasSharedCache() ) {
-			$args = func_get_args();
-			array_unshift( $args, $this->wiki );
-
-			return implode( ':', $args );
-		} else {
-			return false;
-		}
+		return $lbFactory->getMainLB( $this->dbDomain );
 	}
 
 	protected function assertWritableRepo() {

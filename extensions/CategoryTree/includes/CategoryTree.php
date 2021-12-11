@@ -37,7 +37,6 @@ class CategoryTree {
 	private $linkRenderer;
 
 	/**
-	 * @suppress PhanTypeInvalidDimOffset
 	 * @param array $options
 	 */
 	public function __construct( array $options ) {
@@ -98,7 +97,7 @@ class CategoryTree {
 	 * @return array|bool
 	 */
 	private static function decodeNamespaces( $nn ) {
-		if ( $nn === false || is_null( $nn ) ) {
+		if ( $nn === false || $nn === null ) {
 			return false;
 		}
 
@@ -145,7 +144,7 @@ class CategoryTree {
 	public static function decodeMode( $mode ) {
 		global $wgCategoryTreeDefaultOptions;
 
-		if ( is_null( $mode ) ) {
+		if ( $mode === null ) {
 			return $wgCategoryTreeDefaultOptions['mode'];
 		}
 		if ( is_int( $mode ) ) {
@@ -180,7 +179,7 @@ class CategoryTree {
 	 * @return bool|null|string
 	 */
 	public static function decodeBoolean( $value ) {
-		if ( is_null( $value ) ) {
+		if ( $value === null ) {
 			return null;
 		}
 		if ( is_bool( $value ) ) {
@@ -217,7 +216,7 @@ class CategoryTree {
 	public static function decodeHidePrefix( $value ) {
 		global $wgCategoryTreeDefaultOptions;
 
-		if ( is_null( $value ) ) {
+		if ( $value === null ) {
 			return $wgCategoryTreeDefaultOptions['hideprefix'];
 		}
 		if ( is_int( $value ) ) {
@@ -282,7 +281,7 @@ class CategoryTree {
 	}
 
 	/**
-	 * @param string|null $depth
+	 * @param int|null $depth
 	 * @return string
 	 */
 	public function getOptionsAsCacheKey( $depth = null ) {
@@ -295,7 +294,7 @@ class CategoryTree {
 			$key .= $k . ':' . $v . ';';
 		}
 
-		if ( !is_null( $depth ) ) {
+		if ( $depth !== null ) {
 			$key .= ";depth=" . $depth;
 		}
 		return $key;
@@ -320,8 +319,7 @@ class CategoryTree {
 	/**
 	 * Custom tag implementation. This is called by CategoryTreeHooks::parserHook, which is used to
 	 * load CategoryTreeFunctions.php on demand.
-	 * @suppress PhanParamReqAfterOpt $parser is not optional but nullable
-	 * @param Parser|null $parser
+	 * @param ?Parser $parser
 	 * @param string $category
 	 * @param bool $hideroot
 	 * @param array $attr
@@ -329,7 +327,7 @@ class CategoryTree {
 	 * @param bool $allowMissing
 	 * @return bool|string
 	 */
-	public function getTag( Parser $parser = null, $category, $hideroot = false, array $attr = [],
+	public function getTag( ?Parser $parser, $category, $hideroot = false, array $attr = [],
 		$depth = 1, $allowMissing = false
 	) {
 		global $wgCategoryTreeDisableCache;
@@ -391,6 +389,7 @@ class CategoryTree {
 	 * Returns a string with an HTML representation of the children of the given category.
 	 * @param Title $title
 	 * @param int $depth
+	 * @suppress PhanUndeclaredClassMethod,PhanUndeclaredClassInstanceof
 	 * @return string
 	 */
 	public function renderChildren( Title $title, $depth = 1 ) {
@@ -457,8 +456,38 @@ class CategoryTree {
 		# collect categories separately from other pages
 		$categories = '';
 		$other = '';
+		$suppressTranslations = self::decodeBoolean(
+			$this->getOption( 'notranslations' )
+		) && ExtensionRegistry::getInstance()->isLoaded( 'Translate' );
+
+		if ( $suppressTranslations ) {
+			$lb = new LinkBatch();
+			foreach ( $res as $row ) {
+				$title = Title::newFromText( $row->page_title, $row->page_namespace );
+				// Page name could have slashes, check the subpage for valid language built-in codes
+				$isValidLangCode = $title->getSubpageText();
+
+				if ( $title !== null && $isValidLangCode ) {
+					$lb->addObj( $title->getBaseTitle() );
+				}
+			}
+
+			$lb->execute();
+		}
 
 		foreach ( $res as $row ) {
+			if ( $suppressTranslations ) {
+				$title = Title::newFromRow( $row );
+				$baseTitle = $title->getBaseTitle();
+				$page = \TranslatablePage::isTranslationPage( $title );
+
+				if ( ( $page instanceof \TranslatablePage ) && $baseTitle->exists() ) {
+					// T229265: Render only the default pages created and ignore their
+					// translations.
+					continue;
+				}
+			}
+
 			# NOTE: in inverse mode, the page record may be null, because we use a right join.
 			#      happens for categories with no category page (red cat links)
 			if ( $inverse && $row->page_title === null ) {
@@ -523,7 +552,7 @@ class CategoryTree {
 				$special,
 				$t->getText(),
 				[ 'class' => 'CategoryTreeLabel' ],
-				[ 'target' => $t->getPartialURL() ] + $this->mOptions
+				[ 'target' => $t->getDBkey() ] + $this->mOptions
 			);
 			$s .= Xml::closeElement( 'span' );
 		}
@@ -672,21 +701,19 @@ class CategoryTree {
 			}
 		}
 
-		$s .= Xml::closeElement( 'div' );
-		$s .= Xml::closeElement( 'div' );
+		$s .= Xml::closeElement( 'div' ) . Xml::closeElement( 'div' );
 
 		return $s;
 	}
 
 	/**
 	 * Create a string which format the page, subcat and file counts of a category
-	 * @suppress PhanParamReqAfterOpt $cat is not optional but nullable
 	 * @param IContextSource $context
-	 * @param Category|null $cat
+	 * @param ?Category $cat
 	 * @param int $countMode
 	 * @return string
 	 */
-	public static function createCountString( IContextSource $context, Category $cat = null,
+	public static function createCountString( IContextSource $context, ?Category $cat,
 		$countMode
 	) {
 		# Get counts, with conversion to integer so === works

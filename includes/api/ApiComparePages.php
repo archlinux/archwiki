@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,10 +18,11 @@
  * @file
  */
 
+use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionRecord;
-use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionArchiveRecord;
+use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 
@@ -37,12 +37,18 @@ class ApiComparePages extends ApiBase {
 	/** @var \MediaWiki\Revision\SlotRoleRegistry */
 	private $slotRoleRegistry;
 
-	private $guessedTitle = false, $props;
+	/** @var Title|false */
+	private $guessedTitle = false;
+	private $props;
+
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
 
 	public function __construct( ApiMain $mainModule, $moduleName, $modulePrefix = '' ) {
 		parent::__construct( $mainModule, $moduleName, $modulePrefix );
 		$this->revisionStore = MediaWikiServices::getInstance()->getRevisionStore();
 		$this->slotRoleRegistry = MediaWikiServices::getInstance()->getSlotRoleRegistry();
+		$this->contentHandlerFactory = MediaWikiServices::getInstance()->getContentHandlerFactory();
 	}
 
 	public function execute() {
@@ -91,9 +97,9 @@ class ApiComparePages extends ApiBase {
 
 						// (T203433) Create an empty dummy revision as the "previous".
 						// The main slot has to exist, the rest will be handled by DifferenceEngine.
-						$fromRev = $this->revisionStore->newMutableRevisionFromArray( [
-							'title' => $title ?: Title::makeTitle( NS_SPECIAL, 'Badtitle/' . __METHOD__ )
-						] );
+						$fromRev = new MutableRevisionRecord(
+							$title ?: $toRev->getPage()
+						);
 						$fromRev->setContent(
 							SlotRecord::MAIN,
 							$toRelRev->getContent( SlotRecord::MAIN, RevisionRecord::RAW )
@@ -127,7 +133,8 @@ class ApiComparePages extends ApiBase {
 					if ( !$toRev ) {
 						$title = Title::newFromLinkTarget( $title );
 						$this->dieWithError(
-							[ 'apierror-missingrev-title', wfEscapeWikiText( $title->getPrefixedText() ) ], 'nosuchrevid'
+							[ 'apierror-missingrev-title', wfEscapeWikiText( $title->getPrefixedText() ) ],
+							'nosuchrevid'
 						);
 					}
 					$toRelRev = $toRev;
@@ -146,14 +153,10 @@ class ApiComparePages extends ApiBase {
 		// @codeCoverageIgnoreEnd
 
 		// Handle revdel
-		if ( !$fromRev->audienceCan(
-			RevisionRecord::DELETED_TEXT, RevisionRecord::FOR_THIS_USER, $this->getUser()
-		) ) {
+		if ( !$fromRev->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
 			$this->dieWithError( [ 'apierror-missingcontent-revid', $fromRev->getId() ], 'missingcontent' );
 		}
-		if ( !$toRev->audienceCan(
-			RevisionRecord::DELETED_TEXT, RevisionRecord::FOR_THIS_USER, $this->getUser()
-		) ) {
+		if ( !$toRev->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
 			$this->dieWithError( [ 'apierror-missingcontent-revid', $toRev->getId() ], 'missingcontent' );
 		}
 
@@ -234,9 +237,7 @@ class ApiComparePages extends ApiBase {
 	 */
 	private function getRevisionById( $id ) {
 		$rev = $this->revisionStore->getRevisionById( $id );
-		if ( !$rev && $this->getPermissionManager()
-				->userHasAnyRight( $this->getUser(), 'deletedtext', 'undelete' )
-		) {
+		if ( !$rev && $this->getAuthority()->isAllowedAny( 'deletedtext', 'undelete' ) ) {
 			// Try the 'archive' table
 			$arQuery = $this->revisionStore->getArchiveQueryInfo();
 			$row = $this->getDB()->selectRow(
@@ -399,7 +400,8 @@ class ApiComparePages extends ApiBase {
 				if ( !$suppliedContent ) {
 					if ( $title->exists() ) {
 						$this->dieWithError(
-							[ 'apierror-missingrev-title', wfEscapeWikiText( $title->getPrefixedText() ) ], 'nosuchrevid'
+							[ 'apierror-missingrev-title', wfEscapeWikiText( $title->getPrefixedText() ) ],
+							'nosuchrevid'
 						);
 					} else {
 						$this->dieWithError(
@@ -454,9 +456,7 @@ class ApiComparePages extends ApiBase {
 		if ( $rev ) {
 			$newRev = MutableRevisionRecord::newFromParentRevision( $rev );
 		} else {
-			$newRev = $this->revisionStore->newMutableRevisionFromArray( [
-				'title' => $title ?: Title::makeTitle( NS_SPECIAL, 'Badtitle/' . __METHOD__ )
-			] );
+			$newRev = new MutableRevisionRecord( $title ?: Title::newMainPage() );
 		}
 		foreach ( $params["{$prefix}slots"] as $role ) {
 			$text = $params["{$prefix}text-{$role}"];
@@ -579,6 +579,12 @@ class ApiComparePages extends ApiBase {
 			if ( isset( $this->props['size'] ) ) {
 				$vals["{$prefix}size"] = $rev->getSize();
 			}
+			if ( isset( $this->props['timestamp'] ) ) {
+				$revTimestamp = $rev->getTimestamp();
+				if ( $revTimestamp ) {
+					$vals["{$prefix}timestamp"] = wfTimestamp( TS_ISO_8601, $revTimestamp );
+				}
+			}
 
 			$anyHidden = false;
 			if ( $rev->isDeleted( RevisionRecord::DELETED_TEXT ) ) {
@@ -608,6 +614,7 @@ class ApiComparePages extends ApiBase {
 					if ( isset( $this->props['comment'] ) ) {
 						$vals["{$prefix}comment"] = $comment->text;
 					}
+					// @phan-suppress-next-line SecurityCheck-DoubleEscaped false positive
 					$vals["{$prefix}parsedcomment"] = Linker::formatComment(
 						$comment->text, $title
 					);
@@ -657,11 +664,11 @@ class ApiComparePages extends ApiBase {
 			],
 			'contentformat-{slot}' => [
 				ApiBase::PARAM_TEMPLATE_VARS => [ 'slot' => 'slots' ], // fixed below
-				ApiBase::PARAM_TYPE => ContentHandler::getAllContentFormats(),
+				ApiBase::PARAM_TYPE => $this->contentHandlerFactory->getAllContentFormats(),
 			],
 			'contentmodel-{slot}' => [
 				ApiBase::PARAM_TEMPLATE_VARS => [ 'slot' => 'slots' ], // fixed below
-				ApiBase::PARAM_TYPE => ContentHandler::getContentModels(),
+				ApiBase::PARAM_TYPE => $this->contentHandlerFactory->getContentModels(),
 			],
 			'pst' => false,
 
@@ -670,11 +677,11 @@ class ApiComparePages extends ApiBase {
 				ApiBase::PARAM_DEPRECATED => true,
 			],
 			'contentformat' => [
-				ApiBase::PARAM_TYPE => ContentHandler::getAllContentFormats(),
+				ApiBase::PARAM_TYPE => $this->contentHandlerFactory->getAllContentFormats(),
 				ApiBase::PARAM_DEPRECATED => true,
 			],
 			'contentmodel' => [
-				ApiBase::PARAM_TYPE => ContentHandler::getContentModels(),
+				ApiBase::PARAM_TYPE => $this->contentHandlerFactory->getContentModels(),
 				ApiBase::PARAM_DEPRECATED => true,
 			],
 			'section' => [
@@ -715,6 +722,7 @@ class ApiComparePages extends ApiBase {
 				'comment',
 				'parsedcomment',
 				'size',
+				'timestamp',
 			],
 			ApiBase::PARAM_ISMULTI => true,
 			ApiBase::PARAM_HELP_MSG_PER_VALUE => [],

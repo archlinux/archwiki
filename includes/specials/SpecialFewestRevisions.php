@@ -21,7 +21,11 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Languages\LanguageConverterFactory;
+use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Special page for listing the articles with the fewest revisions.
@@ -30,15 +34,37 @@ use MediaWiki\MediaWikiServices;
  * @author Martin Drashkov
  */
 class SpecialFewestRevisions extends QueryPage {
-	function __construct( $name = 'Fewestrevisions' ) {
-		parent::__construct( $name );
+
+	/** @var NamespaceInfo */
+	private $namespaceInfo;
+
+	/** @var ILanguageConverter */
+	private $languageConverter;
+
+	/**
+	 * @param NamespaceInfo $namespaceInfo
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param LanguageConverterFactory $languageConverterFactory
+	 */
+	public function __construct(
+		NamespaceInfo $namespaceInfo,
+		ILoadBalancer $loadBalancer,
+		LinkBatchFactory $linkBatchFactory,
+		LanguageConverterFactory $languageConverterFactory
+	) {
+		parent::__construct( 'Fewestrevisions' );
+		$this->namespaceInfo = $namespaceInfo;
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setLinkBatchFactory( $linkBatchFactory );
+		$this->languageConverter = $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() );
 	}
 
 	public function isExpensive() {
 		return true;
 	}
 
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
@@ -51,8 +77,7 @@ class SpecialFewestRevisions extends QueryPage {
 				'value' => 'COUNT(*)',
 			],
 			'conds' => [
-				'page_namespace' => MediaWikiServices::getInstance()->getNamespaceInfo()->
-					getContentNamespaces(),
+				'page_namespace' => $this->namespaceInfo->getContentNamespaces(),
 				'page_id = rev_page',
 				'page_is_redirect = 0',
 			],
@@ -62,16 +87,16 @@ class SpecialFewestRevisions extends QueryPage {
 		];
 	}
 
-	function sortDescending() {
+	protected function sortDescending() {
 		return false;
 	}
 
 	/**
 	 * @param Skin $skin
-	 * @param object $result Database row
+	 * @param stdClass $result Database row
 	 * @return string
 	 */
-	function formatResult( $skin, $result ) {
+	public function formatResult( $skin, $result ) {
 		$nt = Title::makeTitleSafe( $result->namespace, $result->title );
 		if ( !$nt ) {
 			return Html::element(
@@ -85,8 +110,8 @@ class SpecialFewestRevisions extends QueryPage {
 			);
 		}
 		$linkRenderer = $this->getLinkRenderer();
-		$text = MediaWikiServices::getInstance()->getContentLanguage()->
-			convert( htmlspecialchars( $nt->getPrefixedText() ) );
+
+		$text = $this->languageConverter->convertHtml( $nt->getPrefixedText() );
 		$plink = $linkRenderer->makeLink( $nt, new HtmlArmor( $text ) );
 
 		$nl = $this->msg( 'nrevisions' )->numParams( $result->value )->text();
@@ -100,6 +125,16 @@ class SpecialFewestRevisions extends QueryPage {
 		) . $redirect;
 
 		return $this->getLanguage()->specialList( $plink, $nlink );
+	}
+
+	/**
+	 * Cache page existence for performance
+	 *
+	 * @param IDatabase $db
+	 * @param IResultWrapper $res
+	 */
+	protected function preprocessResults( $db, $res ) {
+		$this->executeLBFromResultWrapper( $res );
 	}
 
 	protected function getGroupName() {

@@ -28,6 +28,10 @@ use MediaWiki\MediaWikiServices;
  */
 class ApiQueryAllPages extends ApiQueryGeneratorBase {
 
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( ApiQuery $query, $moduleName ) {
 		parent::__construct( $query, $moduleName, 'ap' );
 	}
@@ -53,7 +57,7 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -64,7 +68,7 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 		// Page filters
 		$this->addTables( 'page' );
 
-		if ( !is_null( $params['continue'] ) ) {
+		if ( $params['continue'] !== null ) {
 			$cont = explode( '|', $params['continue'] );
 			$this->dieContinueUsageIf( count( $cont ) != 1 );
 			$op = $params['dir'] == 'descending' ? '<' : '>';
@@ -97,7 +101,7 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 				$db->anyString() ) );
 		}
 
-		if ( is_null( $resultPageSet ) ) {
+		if ( $resultPageSet === null ) {
 			$selectFields = [
 				'page_namespace',
 				'page_title',
@@ -183,7 +187,7 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 			// in the 1992 SQL standard (it doesn't like having the
 			// constant-in-WHERE page_namespace column in there). Using the
 			// 1999 rules works fine, but that breaks other DBs. Sigh.
-			/// @todo Once we drop support for 1992-rule DBs, we can simplify this.
+			// @todo Once we drop support for 1992-rule DBs, we can simplify this.
 			$dbType = $db->getType();
 			if ( $dbType === 'mysql' || $dbType === 'sqlite' ) {
 				// Ignore the rules, or 1999 rules if you count unique keys
@@ -236,11 +240,11 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 				continue;
 			}
 
-			if ( is_null( $resultPageSet ) ) {
+			if ( $resultPageSet === null ) {
 				$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 				$vals = [
 					'pageid' => (int)$row->page_id,
-					'ns' => (int)$title->getNamespace(),
+					'ns' => $title->getNamespace(),
 					'title' => $title->getPrefixedText()
 				];
 				$fit = $result->addValue( [ 'query', $this->getModuleName() ], null, $vals );
@@ -253,7 +257,7 @@ class ApiQueryAllPages extends ApiQueryGeneratorBase {
 			}
 		}
 
-		if ( is_null( $resultPageSet ) ) {
+		if ( $resultPageSet === null ) {
 			$result->addIndexedTagName( [ 'query', $this->getModuleName() ], 'p' );
 		}
 	}

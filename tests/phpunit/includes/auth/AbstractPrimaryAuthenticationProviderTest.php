@@ -2,11 +2,13 @@
 
 namespace MediaWiki\Auth;
 
+use MediaWiki\Interwiki\ClassicInterwikiLookup;
+
 /**
  * @group AuthManager
  * @covers \MediaWiki\Auth\AbstractPrimaryAuthenticationProvider
  */
-class AbstractPrimaryAuthenticationProviderTest extends \MediaWikiTestCase {
+class AbstractPrimaryAuthenticationProviderTest extends \MediaWikiIntegrationTestCase {
 	public function testAbstractPrimaryAuthenticationProvider() {
 		$user = \User::newFromName( 'UTSysop' );
 
@@ -137,19 +139,15 @@ class AbstractPrimaryAuthenticationProviderTest extends \MediaWikiTestCase {
 	 */
 	public function testProviderNormalizeUsername( $name, $expect ) {
 		// fake interwiki map for the 'Interwiki prefix' testcase
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [
-			'InterwikiLoadPrefix' => [
-				function ( $prefix, &$iwdata ) {
-					if ( $prefix === 'interwiki' ) {
-						$iwdata = [
-							'iw_url' => 'http://example.com/',
-							'iw_local' => 0,
-							'iw_trans' => 0,
-						];
-						return false;
-					}
-				},
-			],
+		$this->setMwGlobals( [
+			'wgInterwikiCache' => ClassicInterwikiLookup::buildCdbHash( [
+				[
+					'iw_prefix' => 'interwiki',
+					'iw_url' => 'http://example.com/',
+					'iw_local' => 0,
+					'iw_trans' => 0,
+				],
+			] ),
 		] );
 
 		$provider = $this->getMockForAbstractClass( AbstractPrimaryAuthenticationProvider::class );

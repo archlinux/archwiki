@@ -1,11 +1,11 @@
 <?php
 /**
- * This does the initial set up for a web request.
+ * The set up for all MediaWiki web requests.
  *
- * It does some security checks, loads autoloaders, constants, and
- * global functions, starts the profiler, loads the configuration,
- * and loads Setup.php, which loads extensions using the extension
- * registration system and initializes the application's global state.
+ * It does:
+ * - web-related security checks,
+ * - decide how and from where to load site configuration (LocalSettings.php),
+ * - load Setup.php.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
+ */
+
+/**
+ * @defgroup entrypoint Entry points
+ *
+ * These primary scripts live in the root directory. They are the ones used by
+ * web requests to interact with the wiki. Other PHP files in the repository
+ * do not need to be accessed directly by the web.
  */
 
 # T17461: Make IE8 turn off content sniffing. Everybody else should ignore this
@@ -43,6 +51,15 @@ if ( $IP === false ) {
 	$IP = dirname( __DIR__ );
 }
 
+function wfWebStartNoLocalSettings() {
+	# LocalSettings.php is the per-site customization file. If it does not exist
+	# the wiki installer needs to be launched or the generated file uploaded to
+	# the root wiki directory. Give a hint, if it is not readable by the server.
+	global $IP;
+	require_once "$IP/includes/NoLocalSettings.php";
+	die();
+}
+
 // If no LocalSettings file exists, try to display an error page
 // (use a callback because it depends on TemplateParser)
 if ( !defined( 'MW_CONFIG_CALLBACK' ) ) {
@@ -50,31 +67,20 @@ if ( !defined( 'MW_CONFIG_CALLBACK' ) ) {
 		define( 'MW_CONFIG_FILE', "$IP/LocalSettings.php" );
 	}
 	if ( !is_readable( MW_CONFIG_FILE ) ) {
-
-		function wfWebStartNoLocalSettings() {
-			# LocalSettings.php is the per-site customization file. If it does not exist
-			# the wiki installer needs to be launched or the generated file uploaded to
-			# the root wiki directory. Give a hint, if it is not readable by the server.
-			global $IP;
-			require_once "$IP/includes/NoLocalSettings.php";
-			die();
-		}
-
 		define( 'MW_CONFIG_CALLBACK', 'wfWebStartNoLocalSettings' );
+	}
+}
+
+function wfWebStartSetup() {
+	// Initialise output buffering
+	// Check for previously set up buffers, to avoid a mix of gzip and non-gzip output.
+	if ( ob_get_level() == 0 ) {
+		ob_start( 'MediaWiki\\OutputHandler::handle' );
 	}
 }
 
 // Custom setup for WebStart entry point
 if ( !defined( 'MW_SETUP_CALLBACK' ) ) {
-
-	function wfWebStartSetup() {
-		// Initialise output buffering
-		// Check for previously set up buffers, to avoid a mix of gzip and non-gzip output.
-		if ( ob_get_level() == 0 ) {
-			ob_start( 'MediaWiki\\OutputHandler::handle' );
-		}
-	}
-
 	define( 'MW_SETUP_CALLBACK', 'wfWebStartSetup' );
 }
 
@@ -85,7 +91,7 @@ if ( isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST
 	ignore_user_abort( true );
 }
 
-if ( !defined( 'MW_API' ) &&
+if ( !defined( 'MW_API' ) && !defined( 'MW_REST_API' ) &&
 	RequestContext::getMain()->getRequest()->getHeader( 'Promise-Non-Write-API-Action' )
 ) {
 	header( 'Cache-Control: no-cache' );

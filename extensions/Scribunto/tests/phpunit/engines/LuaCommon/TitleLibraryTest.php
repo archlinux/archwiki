@@ -1,50 +1,42 @@
 <?php
 
+use MediaWiki\Interwiki\ClassicInterwikiLookup;
+
 /**
  * @covers Scribunto_LuaTitleLibrary
  * @group Database
  */
 class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'TitleLibraryTests';
 
-	public static function suite( $className ) {
-		global $wgInterwikiCache;
-		if ( $wgInterwikiCache ) {
-			$suite = new PHPUnit_Framework_TestSuite;
-			$suite->setName( $className );
-			$suite->addTest(
-				new Scribunto_LuaEngineTestSkip(
-					$className, 'Cannot run TitleLibrary tests when $wgInterwikiCache is set'
-				), [ 'Lua' ]
-			);
-			return $suite;
-		}
+	/** @var Title|null */
+	private $testTitle = null;
 
-		return parent::suite( $className );
-	}
+	/** @var int */
+	private $testPageId = null;
 
-	protected function setUp() {
-		global $wgHooks;
-
+	protected function setUp() : void {
+		$this->setTestTitle( null );
 		parent::setUp();
 
-		// Hook to inject our interwiki prefix
-		$this->hooks = $wgHooks;
-		$wgHooks['InterwikiLoadPrefix'][] = function ( $prefix, &$data ) {
-			if ( $prefix !== 'interwikiprefix' ) {
-				return true;
-			}
-
-			$data = [
-				'iw_prefix' => 'interwikiprefix',
-				'iw_url'    => '//test.wikipedia.org/wiki/$1',
-				'iw_api'    => 1,
-				'iw_wikiid' => 0,
-				'iw_local'  => 0,
-				'iw_trans'  => 0,
-			];
-			return false;
-		};
+		// Set up interwikis (via wgInterwikiCache) before creating any Titles
+		$this->setMwGlobals( [
+			'wgServer' => '//wiki.local',
+			'wgCanonicalServer' => 'http://wiki.local',
+			'wgUsePathInfo' => true,
+			'wgActionPaths' => [],
+			'wgScript' => '/w/index.php',
+			'wgScriptPath' => '/w',
+			'wgArticlePath' => '/wiki/$1',
+			'wgInterwikiCache' => ClassicInterwikiLookup::buildCdbHash( [
+				[
+					'iw_prefix' => 'interwikiprefix',
+					'iw_url'    => '//test.wikipedia.org/wiki/$1',
+					'iw_local'  => 0,
+				],
+			] ),
+		] );
 
 		// Page for getContent test
 		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestPage' ) );
@@ -54,7 +46,7 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 			),
 			'Summary'
 		);
-		$testPageId = $page->getId();
+		$this->testPageId = $page->getId();
 
 		// Pages for redirectTarget tests
 		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestRedirect' ) );
@@ -113,24 +105,17 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 		// Indicate to the tests that it's safe to create the title objects
 		$interpreter = $this->getEngine()->getInterpreter();
 		$interpreter->callFunction(
-			$interpreter->loadString( "mw.title.testPageId = $testPageId", 'fortest' )
+			$interpreter->loadString( "mw.title.testPageId = $this->testPageId", 'fortest' )
 		);
-
-		$this->setMwGlobals( [
-			'wgServer' => '//wiki.local',
-			'wgCanonicalServer' => 'http://wiki.local',
-			'wgUsePathInfo' => true,
-			'wgActionPaths' => [],
-			'wgScript' => '/w/index.php',
-			'wgScriptPath' => '/w',
-			'wgArticlePath' => '/wiki/$1',
-		] );
 	}
 
-	protected function tearDown() {
-		global $wgHooks;
-		$wgHooks = $this->hooks;
-		parent::tearDown();
+	protected function getTestTitle() {
+		return $this->testTitle ?? parent::getTestTitle();
+	}
+
+	protected function setTestTitle( $title ) {
+		$this->testTitle = $title !== null ? Title::newFromText( $title ) : null;
+		$this->resetEngine();
 	}
 
 	protected function getTestModules() {
@@ -166,5 +151,72 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 		$templates = $engine->getParser()->getOutput()->getTemplates();
 		$this->assertArrayHasKey( NS_PROJECT, $templates );
 		$this->assertArrayHasKey( 'Loaded_from_Lua', $templates[NS_PROJECT] );
+	}
+
+	/**
+	 * @dataProvider provideVaryPageId
+	 */
+	public function testVaryPageId( $testTitle, $code, $flag ) {
+		$this->setTestTitle( $testTitle );
+
+		$code = strtr( $code, [ '$$ID$$' => $this->testPageId ] );
+
+		$engine = $this->getEngine();
+		$interpreter = $engine->getInterpreter();
+		$this->assertFalse(
+			$engine->getParser()->getOutput()->getFlag( 'vary-page-id' ), 'sanity check'
+		);
+
+		$interpreter->callFunction( $interpreter->loadString(
+			"local _ = $code", 'reference title but not id'
+		) );
+		$this->assertFalse( $engine->getParser()->getOutput()->getFlag( 'vary-page-id' ) );
+
+		$interpreter->callFunction( $interpreter->loadString(
+			"local _ = $code.id", 'reference id'
+		) );
+		$this->assertSame( $flag, $engine->getParser()->getOutput()->getFlag( 'vary-page-id' ) );
+	}
+
+	public function provideVaryPageId() {
+		return [
+			'by getCurrentTitle()' => [
+				'ScribuntoTestPage',
+				'mw.title.getCurrentTitle()',
+				true
+			],
+			'by name' => [
+				'ScribuntoTestPage',
+				'mw.title.new("ScribuntoTestPage")',
+				true
+			],
+			'by id' => [
+				'ScribuntoTestPage',
+				'mw.title.new( $$ID$$ )',
+				true
+			],
+
+			'other page by name' => [
+				'ScribuntoTestRedirect',
+				'mw.title.new("ScribuntoTestPage")',
+				false
+			],
+			'other page by id' => [
+				'ScribuntoTestRedirect',
+				'mw.title.new( $$ID$$ )',
+				false
+			],
+
+			'new page by getCurrentTitle()' => [
+				'ScribuntoTestPage/DoesNotExist',
+				'mw.title.getCurrentTitle()',
+				true
+			],
+			'new page by name' => [
+				'ScribuntoTestPage/DoesNotExist',
+				'mw.title.new("ScribuntoTestPage/DoesNotExist")',
+				true
+			],
+		];
 	}
 }

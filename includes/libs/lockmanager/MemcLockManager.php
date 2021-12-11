@@ -148,7 +148,7 @@ class MemcLockManager extends QuorumLockManager {
 				if ( !$ok ) {
 					$status->fatal( 'lockmanager-fail-acquirelock', $path );
 				} else {
-					$this->logger->debug( __METHOD__ . ": acquired lock on key $locksKey.\n" );
+					$this->logger->debug( __METHOD__ . ": acquired lock on key $locksKey." );
 				}
 			}
 		}
@@ -212,7 +212,7 @@ class MemcLockManager extends QuorumLockManager {
 				$ok = $memc->set( $locksKey, $locksHeld, self::MAX_LOCK_TTL );
 			}
 			if ( $ok ) {
-				$this->logger->debug( __METHOD__ . ": released lock on key $locksKey.\n" );
+				$this->logger->debug( __METHOD__ . ": released lock on key $locksKey." );
 			} else {
 				$status->fatal( 'lockmanager-fail-releaselock', $path );
 			}
@@ -309,7 +309,7 @@ class MemcLockManager extends QuorumLockManager {
 		// This reduces memcached spam, especially in the rare case where a server acquires
 		// some lock keys and dies without releasing them. Lock keys expire after a few minutes.
 		$loop = new WaitConditionLoop(
-			function () use ( $memc, $keys, &$lockedKeys ) {
+			static function () use ( $memc, $keys, &$lockedKeys ) {
 				foreach ( array_diff( $keys, $lockedKeys ) as $key ) {
 					if ( $memc->add( "$key:mutex", 1, 180 ) ) { // lock record
 						$lockedKeys[] = $key;
@@ -345,7 +345,7 @@ class MemcLockManager extends QuorumLockManager {
 	/**
 	 * Make sure remaining locks get cleared for sanity
 	 */
-	function __destruct() {
+	public function __destruct() {
 		while ( count( $this->locksHeld ) ) {
 			foreach ( $this->locksHeld as $path => $locks ) {
 				$this->doUnlock( [ $path ], self::LOCK_EX );

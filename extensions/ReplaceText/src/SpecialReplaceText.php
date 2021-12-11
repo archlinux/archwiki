@@ -67,7 +67,7 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		$this->setHeaders();
-		if ( !is_null( $out->getResourceLoader()->getModule( 'mediawiki.special' ) ) ) {
+		if ( $out->getResourceLoader()->getModule( 'mediawiki.special' ) !== null ) {
 			$out->addModuleStyles( 'mediawiki.special' );
 		}
 		$this->doSpecialReplaceText();
@@ -77,14 +77,8 @@ class SpecialReplaceText extends SpecialPage {
 	 * @return array namespaces selected for search
 	 */
 	function getSelectedNamespaces() {
-		if ( class_exists( MediaWikiServices::class ) ) {
-			// MW 1.27+
-			$all_namespaces = MediaWikiServices::getInstance()->getSearchEngineConfig()
-				->searchableNamespaces();
-		} else {
-			/** @phan-suppress-next-line PhanUndeclaredStaticMethod */
-			$all_namespaces = SearchEngine::searchableNamespaces();
-		}
+		$all_namespaces = MediaWikiServices::getInstance()->getSearchEngineConfig()
+			->searchableNamespaces();
 		$selected_namespaces = [];
 		foreach ( $all_namespaces as $ns => $name ) {
 			if ( $this->getRequest()->getCheck( 'ns' . $ns ) ) {
@@ -111,6 +105,8 @@ class SpecialReplaceText extends SpecialPage {
 		$this->doAnnounce = $request->getBool( 'doAnnounce' );
 		$this->selected_namespaces = $this->getSelectedNamespaces();
 
+		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+
 		if ( $request->getCheck( 'continue' ) && $this->target === '' ) {
 			$this->showForm( 'replacetext_givetarget' );
 			return;
@@ -135,10 +131,9 @@ class SpecialReplaceText extends SpecialPage {
 				"<code><nowiki>{$this->replacement}</nowiki></code>",
 				$count
 			);
-
 			// Link back
 			$out->addHTML(
-				ReplaceTextUtils::link(
+				$linkRenderer->makeLink(
 					$this->getPageTitle(),
 					$this->msg( 'replacetext_return' )->text()
 				)
@@ -178,17 +173,17 @@ class SpecialReplaceText extends SpecialPage {
 			// If no results were found, check to see if a bad
 			// category name was entered.
 			if ( count( $titles_for_edit ) == 0 && count( $titles_for_move ) == 0 ) {
-				$bad_cat_name = false;
+				$category_title = null;
 
 				if ( !empty( $this->category ) ) {
 					$category_title = Title::makeTitleSafe( NS_CATEGORY, $this->category );
 					if ( !$category_title->exists() ) {
-						$bad_cat_name = true;
+						$category_title = null;
 					}
 				}
 
-				if ( $bad_cat_name ) {
-					$link = ReplaceTextUtils::link(
+				if ( $category_title !== null ) {
+					$link = $linkRenderer->makeLink(
 						$category_title,
 						ucfirst( $this->category )
 					);
@@ -209,7 +204,7 @@ class SpecialReplaceText extends SpecialPage {
 				// link back to starting form
 				$out->addHTML(
 					'<p>' .
-					ReplaceTextUtils::link(
+					$linkRenderer->makeLink(
 						$this->getPageTitle(),
 						$this->msg( 'replacetext_return' )->text()
 					)
@@ -217,7 +212,7 @@ class SpecialReplaceText extends SpecialPage {
 				);
 			} else {
 				$warning_msg = $this->getAnyWarningMessageBeforeReplace( $titles_for_edit, $titles_for_move );
-				if ( !is_null( $warning_msg ) ) {
+				if ( $warning_msg !== null ) {
 					$out->addWikiTextAsContent(
 						"<div class=\"errorbox\">$warning_msg</div><br clear=\"both\" />"
 					);
@@ -272,10 +267,10 @@ class SpecialReplaceText extends SpecialPage {
 		foreach ( $request->getValues() as $key => $value ) {
 			if ( $value == '1' && $key !== 'replace' && $key !== 'use_regex' ) {
 				if ( strpos( $key, 'move-' ) !== false ) {
-					$title = Title::newFromID( substr( $key, 5 ) );
+					$title = Title::newFromID( (int)substr( $key, 5 ) );
 					$replacement_params['move_page'] = true;
 				} else {
-					$title = Title::newFromID( $key );
+					$title = Title::newFromID( (int)$key );
 				}
 				if ( $title !== null ) {
 					$jobs[] = new ReplaceTextJob( $title, $replacement_params );
@@ -308,6 +303,7 @@ class SpecialReplaceText extends SpecialPage {
 			if ( $title == null ) {
 				continue;
 			}
+			// @phan-suppress-next-line SecurityCheck-ReDoS target could be a regex from user
 			$context = $this->extractContext( $row->old_text, $this->target, $this->use_regex );
 			$titles_for_edit[] = [ $title, $context ];
 		}
@@ -429,7 +425,7 @@ class SpecialReplaceText extends SpecialPage {
 			Html::hidden( 'continue', 1 ) .
 			Html::hidden( 'token', $out->getUser()->getEditToken() )
 		);
-		if ( is_null( $warning_msg ) ) {
+		if ( $warning_msg === null ) {
 			$out->addWikiMsg( 'replacetext_docu' );
 		} else {
 			$out->wrapWikiMsg(
@@ -474,14 +470,8 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		// The interface is heavily based on the one in Special:Search.
-		if ( class_exists( MediaWikiServices::class ) ) {
-			// MW 1.27+
-			$namespaces = MediaWikiServices::getInstance()->getSearchEngineConfig()
-				->searchableNamespaces();
-		} else {
-			/** @phan-suppress-next-line PhanUndeclaredStaticMethod */
-			$namespaces = SearchEngine::searchableNamespaces();
-		}
+		$namespaces = MediaWikiServices::getInstance()->getSearchEngineConfig()
+			->searchableNamespaces();
 		$tables = $this->namespaceTables( $namespaces );
 		$out->addHTML(
 			"<div class=\"mw-search-formheader\"></div>\n" .
@@ -545,7 +535,6 @@ class SpecialReplaceText extends SpecialPage {
 	 * @return string HTML
 	 */
 	function namespaceTables( $namespaces, $rowsPerTable = 3 ) {
-		global $wgContLang;
 		// Group namespaces into rows according to subject.
 		// Try not to make too many assumptions about namespace numbering.
 		$rows = [];
@@ -556,7 +545,7 @@ class SpecialReplaceText extends SpecialPage {
 				$rows[$subj] = "";
 			}
 			$name = str_replace( '_', ' ', $name );
-			if ( '' == $name ) {
+			if ( $name == '' ) {
 				$name = $this->msg( 'blanknamespace' )->text();
 			}
 			$rows[$subj] .= Xml::openElement( 'td', [ 'style' => 'white-space: nowrap' ] ) .
@@ -568,7 +557,7 @@ class SpecialReplaceText extends SpecialPage {
 		// Lay out namespaces in multiple floating two-column tables so they'll
 		// be arranged nicely while still accommodating different screen widths
 		// Float to the right on RTL wikis
-		$tableStyle = $wgContLang->isRTL() ?
+		$tableStyle = MediaWikiServices::getInstance()->getContentLanguage()->isRTL() ?
 			'float: right; margin: 0 0 0em 1em' : 'float: left; margin: 0 1em 0em 0';
 		// Build the final HTML table...
 		for ( $i = 0; $i < $numRows; $i += $rowsPerTable ) {
@@ -618,6 +607,8 @@ class SpecialReplaceText extends SpecialPage {
 		// Needed for bolding of search term.
 		$out->addModuleStyles( "mediawiki.special.search.styles" );
 
+		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+
 		if ( count( $titles_for_edit ) > 0 ) {
 			$out->addWikiMsg(
 				'replacetext_choosepagesforedit',
@@ -633,7 +624,7 @@ class SpecialReplaceText extends SpecialPage {
 				list( $title, $context ) = $title_and_context;
 				$out->addHTML(
 					Xml::check( $title->getArticleID(), true ) .
-					ReplaceTextUtils::link( $title ) .
+					$linkRenderer->makeLink( $title, null ) .
 					" - <small>$context</small><br />\n"
 				);
 			}
@@ -648,7 +639,7 @@ class SpecialReplaceText extends SpecialPage {
 			foreach ( $titles_for_move as $title ) {
 				$out->addHTML(
 					Xml::check( 'move-' . $title->getArticleID(), true ) .
-					ReplaceTextUtils::link( $title ) . "<br />\n"
+					$linkRenderer->makeLink( $title, null ) . "<br />\n"
 				);
 			}
 			$out->addHTML( '<br />' );
@@ -693,7 +684,7 @@ class SpecialReplaceText extends SpecialPage {
 			$out->addWikiMsg( 'replacetext_cannotmove', $wgLang->formatNum( count( $unmoveable_titles ) ) );
 			$text = "<ul>\n";
 			foreach ( $unmoveable_titles as $title ) {
-				$text .= "<li>" . ReplaceTextUtils::link( $title ) . "<br />\n";
+				$text .= "<li>" . $linkRenderer->makeLink( $title, null ) . "<br />\n";
 			}
 			$text .= "</ul>\n";
 			$out->addHTML( $text );
@@ -723,14 +714,13 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		$poss = [];
-		foreach ( $matches[0] as $_ ) {
+		$match = $matches[0] ?? [];
+		foreach ( $match as $_ ) {
 			$poss[] = $_[1];
 		}
 
 		$cuts = [];
-		// @codingStandardsIgnoreStart
 		for ( $i = 0; $i < count( $poss ); $i++ ) {
-		// @codingStandardsIgnoreEnd
 			$index = $poss[$i];
 			$len = strlen( $target );
 
@@ -756,15 +746,18 @@ class SpecialReplaceText extends SpecialPage {
 				// Backwards compatibility code; remove once MW 1.30 is
 				// no longer supported.
 				$contextBefore =
-					$wgLang->truncate( $contextBefore, - $cw, '...', false );
+					// @phan-suppress-next-line PhanUndeclaredMethod
+					$wgLang->truncate( $contextBefore, -$cw, '...', false );
 				$contextAfter =
+					// @phan-suppress-next-line PhanUndeclaredMethod
 					$wgLang->truncate( $contextAfter, $cw, '...', false );
 			} else {
 				$contextBefore =
-					$wgLang->truncateForDatabase( $contextBefore, - $cw, '...', false );
+					$wgLang->truncateForDatabase( $contextBefore, -$cw, '...', false );
 				$contextAfter =
 					$wgLang->truncateForDatabase( $contextAfter, $cw, '...', false );
 			}
+
 			$context .= $this->convertWhiteSpaceToHTML( $contextBefore );
 			$snippet = $this->convertWhiteSpaceToHTML( substr( $text, $index, $len ) );
 			if ( $use_regex ) {

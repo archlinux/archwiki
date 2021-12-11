@@ -1,9 +1,10 @@
 <?php
 
 class Scribunto_LuaUriLibraryTest extends Scribunto_LuaEngineTestBase {
+	/** @inheritDoc */
 	protected static $moduleName = 'UriLibraryTests';
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->setMwGlobals( [
@@ -14,6 +15,7 @@ class Scribunto_LuaUriLibraryTest extends Scribunto_LuaEngineTestBase {
 			'wgScript' => '/w/index.php',
 			'wgScriptPath' => '/w',
 			'wgArticlePath' => '/wiki/$1',
+			'wgFragmentMode' => [ 'legacy', 'html5' ],
 		] );
 	}
 

@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Candalua",
+			"Fierodelveneto",
 			"GatoSelvadego"
 		]
 	},
@@ -17,8 +18,8 @@
 	"categorytree-mode-categories": "mostra solo le categorie",
 	"categorytree-mode-pages": "tute le pagine, via de i file",
 	"categorytree-mode-all": "tute le pagine",
-	"categorytree-collapse": "conprimi",
-	"categorytree-expand": "espandi",
+	"categorytree-collapse": "strenxi",
+	"categorytree-expand": "slarga",
 	"categorytree-member-counts": "la contien {{PLURAL:$1|1 sotocategoria|$1 sotocategorie}}, {{PLURAL:$2|1 pagina|$2 pagine}} e {{PLURAL:$3|1 file|$3 file}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
@@ -30,7 +31,7 @@
 	"categorytree-no-subcategories": "nissuna sotocategoria",
 	"categorytree-no-parent-categories": "nissuna categoria superior",
 	"categorytree-no-pages": "nissuna voçe né sotocategoria",
-	"categorytree-not-found": "Categoria <i>$1</i> mìa catà",
+	"categorytree-not-found": "Categoria <i>$1</i> mìa catada",
 	"categorytree-error": "Ghe xe un problema nel caricamento dei dati.",
 	"categorytree-retry": "Speta n'atimo e dopo próa de novo."
 }

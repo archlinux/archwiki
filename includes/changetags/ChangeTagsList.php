@@ -19,6 +19,8 @@
  * @ingroup Change tagging
  */
 
+use MediaWiki\Permissions\Authority;
+
 /**
  * Generic list for change tagging.
  *
@@ -26,10 +28,9 @@
  * @method ChangeTagsLogItem next()
  * @method ChangeTagsLogItem reset()
  * @method ChangeTagsLogItem current()
- * @phan-file-suppress PhanParamSignatureMismatch
  */
 abstract class ChangeTagsList extends RevisionListBase {
-	function __construct( IContextSource $context, Title $title, array $ids ) {
+	public function __construct( IContextSource $context, Title $title, array $ids ) {
 		parent::__construct( $context, $title );
 		$this->ids = $ids;
 	}
@@ -64,7 +65,7 @@ abstract class ChangeTagsList extends RevisionListBase {
 	/**
 	 * Reload the list data from the master DB.
 	 */
-	function reloadFromMaster() {
+	public function reloadFromMaster() {
 		$dbw = wfGetDB( DB_MASTER );
 		$this->res = $this->doQuery( $dbw );
 	}
@@ -72,13 +73,13 @@ abstract class ChangeTagsList extends RevisionListBase {
 	/**
 	 * Add/remove change tags from all the items in the list.
 	 *
-	 * @param array $tagsToAdd
-	 * @param array $tagsToRemove
+	 * @param string[] $tagsToAdd
+	 * @param string[] $tagsToRemove
 	 * @param string|null $params
 	 * @param string $reason
-	 * @param User $user
+	 * @param Authority $performer
 	 * @return Status
 	 */
-	abstract function updateChangeTagsOnAll( $tagsToAdd, $tagsToRemove, $params,
-		$reason, $user );
+	abstract public function updateChangeTagsOnAll( $tagsToAdd, $tagsToRemove, $params,
+													$reason, Authority $performer );
 }

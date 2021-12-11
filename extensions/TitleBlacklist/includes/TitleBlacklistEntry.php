@@ -37,7 +37,7 @@ class TitleBlacklistEntry {
 
 	/**
 	 * Entry format version
-	 * @var string
+	 * @var int
 	 */
 	private $mFormatVersion;
 
@@ -63,6 +63,7 @@ class TitleBlacklistEntry {
 
 	/**
 	 * Returns whether this entry is capable of filtering new accounts.
+	 * @return bool
 	 */
 	private function filtersNewAccounts() {
 		global $wgTitleBlacklistUsernameSources;
@@ -101,31 +102,35 @@ class TitleBlacklistEntry {
 		}
 
 		if ( isset( $this->mParams['antispoof'] )
-			&& is_callable( 'AntiSpoof::checkUnicodeString' )
+			&& ExtensionRegistry::getInstance()->isLoaded( 'AntiSpoof' )
 		) {
 			if ( $action === 'edit' ) {
 				// Use process cache for frequently edited pages
 				$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-				list( $ok, $norm ) = $cache->getWithSetCallback(
-					$cache->makeKey( 'titleblacklist', 'normalized-unicode', md5( $title ) ),
+				$status = $cache->getWithSetCallback(
+					$cache->makeKey( 'titleblacklist', 'normalized-unicode-status', md5( $title ) ),
 					$cache::TTL_MONTH,
 					function () use ( $title ) {
-						return AntiSpoof::checkUnicodeString( $title );
+						return AntiSpoof::checkUnicodeStringStatus( $title );
 					},
 					[ 'pcTTL' => $cache::TTL_PROC_LONG ]
 				);
 			} else {
-				list( $ok, $norm ) = AntiSpoof::checkUnicodeString( $title );
+				$status = AntiSpoof::checkUnicodeStringStatus( $title );
 			}
 
-			if ( $ok === "OK" ) {
-				list( , $title ) = explode( ':', $norm, 2 );
+			if ( $status->isOK() ) {
+				// Remove version from return value
+				list( , $title ) = explode( ':', $status->getValue(), 2 );
 			} else {
-				wfDebugLog( 'TitleBlacklist', 'AntiSpoof could not normalize "' . $title . '".' );
+				wfDebugLog( 'TitleBlacklist', 'AntiSpoof could not normalize "' . $title . '" ' .
+					$status->getMessage( false, false, 'en' )->text() . '.'
+				);
 			}
 		}
 
 		Wikimedia\suppressWarnings();
+		// @phan-suppress-next-line SecurityCheck-ReDoS
 		$match = preg_match(
 			"/^(?:{$this->mRegex})$/us" . ( isset( $this->mParams['casesensitive'] ) ? '' : 'i' ),
 			$title
@@ -209,10 +214,12 @@ class TitleBlacklistEntry {
 		// Process magic words
 		preg_match_all( '/{{\s*([a-z]+)\s*:\s*(.+?)\s*}}/', $regex, $magicwords, PREG_SET_ORDER );
 		foreach ( $magicwords as $mword ) {
-			global $wgParser;	// Functions we're calling don't need, nevertheless let's use it
 			switch ( strtolower( $mword[1] ) ) {
 				case 'ns':
-					$cpf_result = CoreParserFunctions::ns( $wgParser, $mword[2] );
+					$cpf_result = CoreParserFunctions::ns(
+						MediaWikiServices::getInstance()->getParser(),
+						$mword[2]
+					);
 					if ( is_string( $cpf_result ) ) {
 						// All result will have the same value, so we can just use str_seplace()
 						$regex = str_replace( $mword[0], $cpf_result, $regex );
@@ -227,6 +234,7 @@ class TitleBlacklistEntry {
 		}
 		// Return result
 		if ( $regex ) {
+			// @phan-suppress-next-line SecurityCheck-ReDoS
 			return new TitleBlacklistEntry( $regex, $options, $raw, $source );
 		} else {
 			return null;
@@ -262,7 +270,7 @@ class TitleBlacklistEntry {
 	}
 
 	/**
-	 * @return string The format version
+	 * @return int The format version
 	 */
 	public function getFormatVersion() {
 		return $this->mFormatVersion;
@@ -271,7 +279,7 @@ class TitleBlacklistEntry {
 	/**
 	 * Set the format version
 	 *
-	 * @param string $v New version to set
+	 * @param int $v New version to set
 	 */
 	public function setFormatVersion( $v ) {
 		$this->mFormatVersion = $v;

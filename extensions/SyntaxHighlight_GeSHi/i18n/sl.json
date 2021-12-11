@@ -2,10 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Dbc334",
-			"Yerpo",
-			"Eleassar"
+			"Eleassar",
+			"Yerpo"
 		]
 	},
 	"syntaxhighlight-desc": "Nudi označevanje skladnje <code>&lt;syntaxhighlight&gt;</code> z uporabo [http://pygments.org/ Pygments – označevalnika skladnje Python]",
+	"syntaxhighlight-error-category": "Strani z napakami pri označevanju skladnje",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Koda",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jezik",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Prikaži številke vrstic",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Številka začetne vrstice",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kode"
 }

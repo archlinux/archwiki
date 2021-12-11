@@ -2,14 +2,14 @@
 
 abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
-	use PHPUnit4And6Compat;
 
 	/**
+	 * @param array $opts
 	 * @return Scribunto_LuaInterpreter
 	 */
 	abstract protected function newInterpreter( $opts = [] );
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		try {
 			$this->newInterpreter();
@@ -34,8 +34,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 	}
 
 	/** @dataProvider provideRoundtrip */
-	public function testRoundtrip( /*...*/ ) {
-		$args = func_get_args();
+	public function testRoundtrip( ...$args ) {
 		$args = $this->normalizeOrder( $args );
 		$interpreter = $this->newInterpreter();
 		$passthru = $interpreter->loadString( 'return ...', 'passthru' );
@@ -45,8 +44,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 	}
 
 	/** @dataProvider provideRoundtrip */
-	public function testDoubleRoundtrip( /* ... */ ) {
-		$args = func_get_args();
+	public function testDoubleRoundtrip( ...$args ) {
 		$args = $this->normalizeOrder( $args );
 
 		$interpreter = $this->newInterpreter();
@@ -91,8 +89,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 		return $a;
 	}
 
-	public function passthru( /* ... */ ) {
-		$args = func_get_args();
+	public function passthru( ...$args ) {
 		return $args;
 	}
 

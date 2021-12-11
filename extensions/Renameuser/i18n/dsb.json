@@ -17,7 +17,6 @@
 	"renameuserwarnings": "Warnowanja:",
 	"renameuserconfirm": "Jo, wužywarja pśemjeniś",
 	"renameusersubmit": "Pśemjeniś",
-	"renameuser-submit-blocklog": "Blokěrowański protokol za wužywarja pokazaś",
 	"renameusererrordoesnotexist": "Wužywaŕ \"<nowiki>$1</nowiki>\" njeeksistěrujo.",
 	"renameusererrorexists": "Wužywaŕ \"<nowiki>$1</nowiki>\" južo eksistěrujo.",
 	"renameusererrorinvalid": "Wužywarske mě \"<nowiki>$1</nowiki>\" jo njepłaśiwe.",

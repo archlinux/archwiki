@@ -28,6 +28,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\ScopedCallback;
 use XMLReader;
 
@@ -91,10 +92,10 @@ class Reader implements LoggerAwareInterface {
 	/** @var int */
 	private $extendedXMPOffset = 0;
 
-	/** @var int Flag determining if the XMP is safe to parse **/
+	/** @var int Flag determining if the XMP is safe to parse */
 	private $parsable = 0;
 
-	/** @var string Buffer of XML to parse **/
+	/** @var string Buffer of XML to parse */
 	private $xmlParsableBuffer = '';
 
 	/**
@@ -111,30 +112,35 @@ class Reader implements LoggerAwareInterface {
 	 * a property we're not interested in. So if a new
 	 * element pops up when we're in that mode, we ignore it.
 	 */
-	const MODE_INITIAL = 0;
-	const MODE_IGNORE = 1;
-	const MODE_LI = 2;
-	const MODE_LI_LANG = 3;
-	const MODE_QDESC = 4;
+	private const MODE_INITIAL = 0;
+	private const MODE_IGNORE = 1;
+	private const MODE_LI = 2;
+	private const MODE_LI_LANG = 3;
+	private const MODE_QDESC = 4;
 
 	// The following MODE constants are also used in the
 	// $items array to denote what type of property the item is.
-	const MODE_SIMPLE = 10;
-	const MODE_STRUCT = 11; // structure (associative array)
-	const MODE_SEQ = 12; // ordered list
-	const MODE_BAG = 13; // unordered list
-	const MODE_LANG = 14;
-	const MODE_ALT = 15; // non-language alt. Currently not implemented, and not needed atm.
-	const MODE_BAGSTRUCT = 16; // A BAG of Structs.
+	public const MODE_SIMPLE = 10;
+	// structure (associative array)
+	public const MODE_STRUCT = 11;
+	// ordered list
+	public const MODE_SEQ = 12;
+	// unordered list
+	public const MODE_BAG = 13;
+	public const MODE_LANG = 14;
+	// non-language alt. Currently not implemented, and not needed atm.
+	public const MODE_ALT = 15;
+	// A BAG of Structs.
+	public const MODE_BAGSTRUCT = 16;
 
-	const NS_RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
-	const NS_XML = 'http://www.w3.org/XML/1998/namespace';
+	private const NS_RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+	private const NS_XML = 'http://www.w3.org/XML/1998/namespace';
 
 	// States used while determining if XML is safe to parse
-	const PARSABLE_UNKNOWN = 0;
-	const PARSABLE_OK = 1;
-	const PARSABLE_BUFFERING = 2;
-	const PARSABLE_NO = 3;
+	private const PARSABLE_UNKNOWN = 0;
+	private const PARSABLE_OK = 1;
+	private const PARSABLE_BUFFERING = 2;
+	private const PARSABLE_NO = 3;
 
 	/**
 	 * Primary job is to initialize the XMLParser
@@ -142,11 +148,7 @@ class Reader implements LoggerAwareInterface {
 	 * @param LoggerInterface|null $logger Logger instance if available
 	 * @param string $filename
 	 */
-	function __construct( LoggerInterface $logger = null, $filename = 'unknown' ) {
-		if ( !function_exists( 'xml_parser_create_ns' ) ) {
-			// this should already be checked by this point
-			throw new RuntimeException( 'XMP support requires XML Parser' );
-		}
+	public function __construct( LoggerInterface $logger = null, $filename = 'unknown' ) {
 		if ( $logger ) {
 			$this->setLogger( $logger );
 		} else {
@@ -200,7 +202,7 @@ class Reader implements LoggerAwareInterface {
 	 * @return bool
 	 */
 	public static function isSupported() {
-		return function_exists( 'xml_parser_create_ns' ) && class_exists( 'XMLReader' );
+		return function_exists( 'xml_parser_create_ns' ) && class_exists( XMLReader::class );
 	}
 
 	/** Get the result array. Do some post-processing before returning
@@ -343,9 +345,9 @@ class Reader implements LoggerAwareInterface {
 			}
 			if ( $this->charset !== 'UTF-8' ) {
 				// don't convert if already utf-8
-				\Wikimedia\suppressWarnings();
+				AtEase::suppressWarnings();
 				$content = iconv( $this->charset, 'UTF-8//IGNORE', $content );
-				\Wikimedia\restoreWarnings();
+				AtEase::restoreWarnings();
 			}
 
 			// Ensure the XMP block does not have an xml doctype declaration, which
@@ -391,15 +393,17 @@ class Reader implements LoggerAwareInterface {
 						'offset' => $offset,
 						'content' => $content,
 				] );
-				$this->results = []; // blank if error.
+				// blank if error.
+				$this->results = [];
 				$this->destroyXMLParser();
 				return false;
 			}
 		} catch ( \Exception $e ) {
 			$this->logger->warning(
-				'{method} {exception}',
+				'{method} {message}',
 				[
 					'method' => __METHOD__,
+					'message' => $e->getMessage(),
 					'exception' => $e,
 					'file' => $this->filename,
 					'content' => $content,
@@ -508,7 +512,7 @@ class Reader implements LoggerAwareInterface {
 	 * @param string $data Character data
 	 * @throws RuntimeException On invalid data
 	 */
-	function char( $parser, $data ) {
+	public function char( $parser, $data ) {
 		$data = trim( $data );
 		if ( trim( $data ) === "" ) {
 			return;
@@ -548,25 +552,36 @@ class Reader implements LoggerAwareInterface {
 		$reader = new XMLReader();
 		$result = null;
 
+		// Pull in the arbitrary MAX_URI_LENGTH from libxml2...
+		$maxUriLength = 1024 * 1024;
+		$dataUri = 'data://text/plain,' . urlencode( $content );
+		if ( strlen( $dataUri ) > $maxUriLength ) {
+			// libxml2 won't parse this file as a data URI due to the length.
+			return false;
+		}
+
 		// For XMLReader to parse incomplete/invalid XML, it has to be open()'ed
 		// instead of using XML().
 		$reader->open(
-			'data://text/plain,' . urlencode( $content ),
+			$dataUri,
 			null,
 			LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET
 		);
 
-		$oldDisable = libxml_disable_entity_loader( true );
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		$reset = new ScopedCallback(
-			'libxml_disable_entity_loader',
-			[ $oldDisable ]
-		);
+		if ( LIBXML_VERSION < 20900 ) {
+			$oldDisable = libxml_disable_entity_loader( true );
+			/** @noinspection PhpUnusedLocalVariableInspection */
+			$reset = new ScopedCallback(
+				'libxml_disable_entity_loader',
+				[ $oldDisable ]
+			);
+		}
+
 		$reader->setParserProperty( XMLReader::SUBST_ENTITIES, false );
 
 		// Even with LIBXML_NOWARNING set, XMLReader::read gives a warning
 		// when parsing truncated XML, which causes unit tests to fail.
-		\Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		while ( $reader->read() ) {
 			if ( $reader->nodeType === XMLReader::ELEMENT ) {
 				// Reached the first element without hitting a doctype declaration
@@ -580,9 +595,9 @@ class Reader implements LoggerAwareInterface {
 				break;
 			}
 		}
-		\Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 
-		if ( !is_null( $result ) ) {
+		if ( $result !== null ) {
 			return $result;
 		}
 
@@ -632,7 +647,8 @@ class Reader implements LoggerAwareInterface {
 			}
 			$this->saveValue( $ns, $tag, $this->charContent );
 
-			$this->charContent = false; // reset
+			// reset
+			$this->charContent = false;
 		}
 		array_shift( $this->curItem );
 		array_shift( $this->mode );
@@ -690,7 +706,7 @@ class Reader implements LoggerAwareInterface {
 			} elseif ( is_callable( $validate ) ) {
 				$val =& $this->results['xmp-' . $info['map_group']][$finalName];
 				call_user_func_array( $validate, [ $info, &$val, false ] );
-				if ( is_null( $val ) ) {
+				if ( $val === null ) {
 					// the idea being the validation function will unset the variable if
 					// its invalid.
 					$this->logger->info(
@@ -802,7 +818,7 @@ class Reader implements LoggerAwareInterface {
 	 * @param string $elm Namespace . ' ' . element name
 	 * @throws RuntimeException
 	 */
-	function endElement( $parser, $elm ) {
+	public function endElement( $parser, $elm ) {
 		if ( $elm === ( self::NS_RDF . ' RDF' )
 			|| $elm === 'adobe:ns:meta/ xmpmeta'
 			|| $elm === 'adobe:ns:meta/ xapmeta'
@@ -1021,7 +1037,8 @@ class Reader implements LoggerAwareInterface {
 	 */
 	private function startElementModeQDesc( $elm ) {
 		if ( $elm === self::NS_RDF . ' value' ) {
-			return; // do nothing
+			// do nothing
+			return;
 		}
 
 		// otherwise its a qualifier, which we ignore
@@ -1233,7 +1250,7 @@ class Reader implements LoggerAwareInterface {
 	 * @param array $attribs Attribute name => value
 	 * @throws RuntimeException
 	 */
-	function startElement( $parser, $elm, $attribs ) {
+	public function startElement( $parser, $elm, $attribs ) {
 		if ( $elm === self::NS_RDF . ' RDF'
 			|| $elm === 'adobe:ns:meta/ xmpmeta'
 			|| $elm === 'adobe:ns:meta/ xapmeta'
@@ -1315,7 +1332,6 @@ class Reader implements LoggerAwareInterface {
 		}
 	}
 
-	// @codingStandardsIgnoreStart Generic.Files.LineLength
 	/**
 	 * Process attributes.
 	 * Simple values can be stored as either a tag or attribute
@@ -1325,13 +1341,13 @@ class Reader implements LoggerAwareInterface {
 	 *
 	 * @par Example:
 	 * @code
-	 * <rdf:Description rdf:about="" xmlns:exif="http://ns.adobe.com/exif/1.0/" exif:DigitalZoomRatio="0/10">
+	 * <rdf:Description rdf:about=""
+	 * 	xmlns:exif="http://ns.adobe.com/exif/1.0/" exif:DigitalZoomRatio="0/10">
 	 * @endcode
 	 *
 	 * @param array $attribs Array attribute=>value
 	 * @throws RuntimeException
 	 */
-	// @codingStandardsIgnoreEnd
 	private function doAttribs( $attribs ) {
 		// first check for rdf:parseType attribute, as that can change
 		// how the attributes are interperted.
@@ -1403,7 +1419,7 @@ class Reader implements LoggerAwareInterface {
 				call_user_func_array( $validate, [ $info, &$val, true ] );
 				// the reasoning behind using &$val instead of using the return value
 				// is to be consistent between here and validating structures.
-				if ( is_null( $val ) ) {
+				if ( $val === null ) {
 					$this->logger->info(
 						__METHOD__ . " <$ns:$tag> failed validation.",
 						[ 'file' => $this->filename ]

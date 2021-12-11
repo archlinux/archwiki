@@ -36,7 +36,7 @@ $specialPageAliases['as'] = [
 
 /** Avaric (авар) */
 $specialPageAliases['av'] = [
-	'Gadgets' => [ 'Гаджеты' ],
+	'Gadgets' => [ 'Гаджетал', 'Гаджеты' ],
 ];
 
 /** Bulgarian (български) */
@@ -297,6 +297,7 @@ $specialPageAliases['pa'] = [
 /** Polish (polski) */
 $specialPageAliases['pl'] = [
 	'Gadgets' => [ 'Gadżety' ],
+	'GadgetUsage' => [ 'Użycie_gadżetów', 'Statystyki_gadżetów' ],
 ];
 
 /** Romanian (română) */

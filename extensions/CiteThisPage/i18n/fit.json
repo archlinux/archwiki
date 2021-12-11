@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Palmtree222",
+			"Pyscowicz"
+		]
+	},
+	"citethispage": "Viitetieot",
+	"citethispage-desc": "Lissää spesiaalisivun [[Special:CiteThisPage|viittauksille]] ja länkin työneuvoihin.",
+	"citethispage-link": "Viitetieot",
+	"tooltip-citethispage": "Tietoa tämän sivun refereenaamisesta",
+	"citethispage-change-target": "Sivu:"
+}

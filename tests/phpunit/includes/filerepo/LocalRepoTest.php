@@ -9,6 +9,7 @@ use MediaWiki\MediaWikiServices;
 class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @param array $extraInfo To pass to LocalRepo constructor
+	 * @return LocalRepo
 	 */
 	private function newRepo( array $extraInfo = [] ) {
 		return new LocalRepo( $extraInfo + [
@@ -77,7 +78,8 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::newFileFromRow
 	 */
 	public function testNewFileFromRow_invalid() {
-		$this->setExpectedException( 'MWException', 'LocalRepo::newFileFromRow: invalid row' );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage( 'LocalRepo::newFileFromRow: invalid row' );
 
 		$row = (object)[
 			"img_user" => '1',
@@ -166,21 +168,27 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::__construct
 	 * @covers ::checkRedirect
 	 * @covers ::getSharedCacheKey
-	 * @covers ::getLocalCacheKey
 	 */
-	public function testCheckRedirect_redirect_noWANCache() {
-		$this->markTestIncomplete( 'WANObjectCache::makeKey is final' );
-
-		$mockWan = $this->getMockBuilder( WANObjectCache::class )
-			->setConstructorArgs( [ [ 'cache' => new EmptyBagOStuff ] ] )
-			->setMethods( [ 'makeKey' ] )
+	public function testCheckRedirectSharedEmptyCache() {
+		$dbDomain = WikiMap::getCurrentWikiDbDomain()->getId();
+		$mockBag = $this->getMockBuilder( EmptyBagOStuff::class )
+			->onlyMethods( [ 'makeKey', 'makeGlobalKey' ] )
 			->getMock();
-		$mockWan->expects( $this->exactly( 2 ) )->method( 'makeKey' )->withConsecutive(
-			[ 'image_redirect', md5( 'Redirect' ) ],
-			[ 'filerepo', 'local', 'image_redirect', md5( 'Redirect' ) ]
-		)->will( $this->onConsecutiveCalls( false, 'somekey' ) );
+		$mockBag->expects( $this->exactly( 0 ) )
+			->method( 'makeKey' )
+			->withConsecutive(
+				[ 'filerepo-file-redirect', 'local', md5( 'Redirect' ) ]
+			);
+		$mockBag->expects( $this->exactly( 1 ) )
+			->method( 'makeGlobalKey' )
+			->withConsecutive(
+				[ 'filerepo-file-redirect', $dbDomain, md5( 'Redirect' ) ]
+			)->willReturnOnConsecutiveCalls(
+				implode( ':', [ 'filerepo-file-redirect', $dbDomain, md5( 'Redirect' ) ] )
+			);
 
-		$repo = $this->newRepo( [ 'wanCache' => $mockWan ] );
+		$wanCache = new WANObjectCache( [ 'cache' => $mockBag ] );
+		$repo = $this->newRepo( [ 'wanCache' => $wanCache ] );
 
 		$this->editPage( 'File:Redirect', '#REDIRECT [[File:Target]]' );
 		$this->assertEquals( 'File:Target',
@@ -192,7 +200,8 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	 * @covers ::checkRedirect
 	 */
 	public function testCheckRedirect_invalidFile() {
-		$this->setExpectedException( MWException::class, '`Notafile` is not a valid file title.' );
+		$this->expectException( MWException::class );
+		$this->expectExceptionMessage( '`Notafile` is not a valid file title.' );
 		$this->newRepo()->checkRedirect( Title::makeTitle( NS_MAIN, 'Notafile' ) );
 	}
 
@@ -239,7 +248,6 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 			$repo->checkRedirect( $title )->getPrefixedText() );
 
 		$repo->invalidateImageRedirect( $title );
-		$repo->getMasterDB()->commit();
 
 		$this->markTestIncomplete(
 			"Can't figure out how to get image redirect validation to take effect" );
@@ -354,8 +362,6 @@ class LocalRepoTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @param string $method
-	 * @param mixed ...$args
 	 * @dataProvider provideSkipWriteOperationIfSha1
 	 * @covers ::store
 	 * @covers ::storeBatch

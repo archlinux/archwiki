@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80",
-			"Sapral Mikail",
 			"Adam-Yourist",
-			"Умар",
-			"ElizaMag"
+			"Amire80",
+			"ElizaMag",
+			"Sapral Mikail",
+			"Умар"
 		]
 	},
 	"wikieditor": "Викитекст хувцара шера интерфейс",
@@ -53,7 +53,9 @@
 	"wikieditor-toolbar-file-caption": "Кулг яздар:",
 	"wikieditor-toolbar-file-size": "Боарам:",
 	"wikieditor-toolbar-file-float": "Нийсдар:",
+	"wikieditor-toolbar-file-default": "(юххьанцара мо)",
 	"wikieditor-toolbar-file-format": "Формат:",
+	"wikieditor-toolbar-file-format-none": "цхьаккха",
 	"wikieditor-toolbar-tool-file-cancel": "Эшац",
 	"wikieditor-toolbar-tool-reference": "Белгалдоахар",
 	"wikieditor-toolbar-tool-reference-cancel": "Эшац",
@@ -67,12 +69,20 @@
 	"wikieditor-toolbar-group-format": "Формат",
 	"wikieditor-toolbar-tool-nowiki": "Теркал ма е вики-форматировани",
 	"wikieditor-toolbar-tool-nowiki-example": "Укхаза хувца езаш йоаца текст хьачуоттае",
-	"wikieditor-toolbar-tool-redirect": "ДIа-хьа хьожавар",
+	"wikieditor-toolbar-tool-redirect": "Ластар",
 	"wikieditor-toolbar-tool-big": "Йоккха",
 	"wikieditor-toolbar-tool-big-example": "Йоккха текст",
 	"wikieditor-toolbar-tool-small": "ЗIамига",
 	"wikieditor-toolbar-tool-small-example": "ЗIамига текст",
-	"wikieditor-toolbar-tool-replace-search": "Хьалáха:",
+	"wikieditor-toolbar-tool-replace-search": "Лаха:",
+	"wikieditor-toolbar-tool-replace-replace": "ДӀахувца укхох:",
+	"wikieditor-toolbar-tool-replace-case": "Регистр теркалъе",
+	"wikieditor-toolbar-tool-replace-regex": "Лахара мугӀ регулярни выражени йолаш санна лархӀа",
+	"wikieditor-toolbar-tool-replace-button-findnext": "Лаха дӀáходар",
+	"wikieditor-toolbar-tool-replace-button-replace": "ДӀахувца",
+	"wikieditor-toolbar-tool-replace-button-replaceall": "ДӀахувца дерригаш",
+	"wikieditor-toolbar-tool-replace-close": "ДӀакъовла",
+	"wikieditor-toolbar-tool-replace-word": "Алхха бӀарчча дешаш",
 	"wikieditor-toolbar-section-characters": "ЛаьрххIа дола хьаракаш",
 	"wikieditor-toolbar-section-help": "Новкъoстал",
 	"wikieditor-toolbar-help-page-link": "Тӏатовжамаш"

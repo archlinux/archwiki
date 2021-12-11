@@ -1,19 +1,26 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ahmad252",
+			"Alireza Ivaz",
 			"Calak",
+			"DEXi",
 			"Ebraminio",
 			"Huji",
+			"Ladsgroup",
 			"Reza1615",
-			"Zack90",
-			"DEXi",
-			"Alireza Ivaz"
+			"Zack90"
 		]
 	},
 	"skinname-vector": "وکتور",
 	"vector-skin-desc": "نگارش مدرن مونوبوک با نمای تازه و بهینه‌سازی‌های کاربردی",
-	"vector.css": "/* دستورات این بخش کاربرانی را که از پوستهٔ وکتور استفاده کنند تحت تاثیر قرار می‌دهند. */",
-	"vector.js": "/ * کدهای جاوااسکریپتی که در اینجا قرار می‌گیرند برای کاربران پوستهٔ وکتور  بارگیری می‌شود * /",
+	"prefs-vector-enable-vector-1-label": "استفاده از وکتور قدیمی",
+	"prefs-vector-enable-vector-1-help": "در چند سال آینده، ما کم‌کم پوستهٔ وکتور را به‌روزرسانی خواهیم کرد. وکتور قدیمی به شما اجازه می‌دهد تا از نسخهٔ قدیمی وکتور (نسخهٔ دسامبر ۲۰۱۹) استفاده کنید. برای کسب اطلاعات بیشتر در خصوص به‌روزرسانی‌ها، به [[mw:Reading/Web/Desktop_Improvements|صفحهٔ پروژه]] مراجعه کنید.",
+	"vector-opt-out": "بازگشت به ظاهر قدیمی",
+	"vector-opt-out-tooltip": "تنظیمات‌تان را تغییر دهید تا به نمای قبلی پوسته (وکتور قدیمی) برگردید",
+	"vector.css": "/* دستورات سی‌اس‌اس که در این بخش قرار بگیرد برای کاربرانی که از پوستهٔ وکتور استفاده کنند بارگیری می‌شود */",
+	"vector.js": "/* دستورات جاوااسکریپت که در این بخش قرار بگیرد برای کاربرانی که از پوستهٔ وکتور استفاده کنند بارگیری می‌شود */",
+	"vector-action-toggle-sidebar": "جمع و باز کردن نوار کناری",
 	"vector-action-addsection": "افزودن بخش",
 	"vector-action-delete": "حذف",
 	"vector-action-move": "انتقال",
@@ -27,5 +34,7 @@
 	"vector-view-viewsource": "نمایش مبدأ",
 	"vector-jumptonavigation": "پرش به ناوبری",
 	"vector-jumptosearch": "پرش به جستجو",
-	"vector-more-actions": "بیشتر"
+	"vector-jumptocontent": "پرش به محتوا",
+	"vector-more-actions": "بیشتر",
+	"vector-search-loader": "بارگیری پیشنهادهای جستجو"
 }

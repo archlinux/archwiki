@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ajdar",
-			"Ильнар",
-			"Ерней"
+			"Ерней",
+			"Ильнар"
 		]
 	},
 	"interwiki": "Интервики көйләнмәләрен карау һәм үзгәртү",
@@ -13,7 +13,7 @@
 	"interwiki-legend-label": "Аңлатма",
 	"interwiki_prefix": "Өстәлмә",
 	"interwiki-prefix-label": "Өстәлмә",
-	"interwiki-local-label": "Алга",
+	"interwiki-local-label": "Юнәлдерү",
 	"interwiki_trans": "Ачу",
 	"interwiki-trans-label": "Тоташтыру",
 	"interwiki_1": "әйе",

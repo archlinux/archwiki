@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\FakeResultWrapper;
 
 /**
  * @covers PageProps
@@ -14,21 +15,21 @@ use MediaWiki\MediaWikiServices;
 class PagePropsTest extends MediaWikiLangTestCase {
 
 	/**
-	 * @var Title $title1
+	 * @var Title
 	 */
 	private $title1;
 
 	/**
-	 * @var Title $title2
+	 * @var Title
 	 */
 	private $title2;
 
 	/**
-	 * @var array $the_properties
+	 * @var array
 	 */
-	private $the_properties;
+	private $expectedProperties;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->setMwGlobals( [
@@ -44,16 +45,14 @@ class PagePropsTest extends MediaWikiLangTestCase {
 			[ 'DUMMY' => 'DummyContentHandlerForTesting' ]
 		);
 
-		if ( !$this->the_properties ) {
-			$this->the_properties = [
+		if ( !$this->expectedProperties ) {
+			$this->expectedProperties = [
 				"property1" => "value1",
 				"property2" => "value2",
 				"property3" => "value3",
 				"property4" => "value4"
 			];
-		}
 
-		if ( !$this->title1 ) {
 			$page = $this->createPage(
 				'PagePropsTest_page_1',
 				"just a dummy page",
@@ -61,10 +60,8 @@ class PagePropsTest extends MediaWikiLangTestCase {
 			);
 			$this->title1 = $page->getTitle();
 			$page1ID = $this->title1->getArticleID();
-			$this->setProperties( $page1ID, $this->the_properties );
-		}
+			$this->setProperties( $page1ID, $this->expectedProperties );
 
-		if ( !$this->title2 ) {
 			$page = $this->createPage(
 				'PagePropsTest_page_2',
 				"just a dummy page",
@@ -72,7 +69,7 @@ class PagePropsTest extends MediaWikiLangTestCase {
 			);
 			$this->title2 = $page->getTitle();
 			$page2ID = $this->title2->getArticleID();
-			$this->setProperties( $page2ID, $this->the_properties );
+			$this->setProperties( $page2ID, $this->expectedProperties );
 		}
 	}
 
@@ -90,7 +87,7 @@ class PagePropsTest extends MediaWikiLangTestCase {
 
 	/**
 	 * Test getting a single property from multiple pages. The property was
-	 * set in setUp().
+	 * set in setUp(). Using Title[].
 	 */
 	public function testGetSinglePropertyMultiplePages() {
 		$pageProps = PageProps::getInstance();
@@ -100,6 +97,27 @@ class PagePropsTest extends MediaWikiLangTestCase {
 			$this->title1,
 			$this->title2
 		];
+		$result = $pageProps->getProperties( $titles, "property1" );
+		$this->assertArrayHasKey( $page1ID, $result, "Found page 1 property" );
+		$this->assertArrayHasKey( $page2ID, $result, "Found page 2 property" );
+		$this->assertEquals( $result[$page1ID], "value1", "Get property page 1" );
+		$this->assertEquals( $result[$page2ID], "value1", "Get property page 2" );
+	}
+
+	/**
+	 * Test getting a single property from multiple pages. The property was
+	 * set in setUp(). Using TitleArray.
+	 */
+	public function testGetSinglePropertyMultiplePagesTitleArray() {
+		$pageProps = PageProps::getInstance();
+		$page1ID = $this->title1->getArticleID();
+		$page2ID = $this->title2->getArticleID();
+		$rows = [
+			$this->createRowFromTitle( $this->title1 ),
+			$this->createRowFromTitle( $this->title2 )
+		];
+		$resultWrapper = new FakeResultWrapper( $rows );
+		$titles = TitleArray::newFromResult( $resultWrapper );
 		$result = $pageProps->getProperties( $titles, "property1" );
 		$this->assertArrayHasKey( $page1ID, $result, "Found page 1 property" );
 		$this->assertArrayHasKey( $page2ID, $result, "Found page 2 property" );
@@ -143,18 +161,17 @@ class PagePropsTest extends MediaWikiLangTestCase {
 	 * other extensions. Therefore, rather than checking to see if the
 	 * properties that were set in the test case exactly match the
 	 * retrieved properties, we need to check to see if they are a
-	 * subset of the retrieved properties. Since this version of PHPUnit
-	 * does not yet include assertArraySubset(), we needed to code the
-	 * equivalent functionality.
+	 * subset of the retrieved properties.
 	 */
 	public function testGetAllProperties() {
 		$pageProps = PageProps::getInstance();
 		$page1ID = $this->title1->getArticleID();
 		$result = $pageProps->getAllProperties( $this->title1 );
 		$this->assertArrayHasKey( $page1ID, $result, "Found properties" );
+
 		$properties = $result[$page1ID];
-		$patched = array_replace_recursive( $properties, $this->the_properties );
-		$this->assertEquals( $patched, $properties, "Get all properties" );
+		$subset = array_intersect_key( $properties, $this->expectedProperties );
+		$this->assertEquals( $this->expectedProperties, $subset, "Get all properties" );
 	}
 
 	/**
@@ -172,12 +189,14 @@ class PagePropsTest extends MediaWikiLangTestCase {
 		$result = $pageProps->getAllProperties( $titles );
 		$this->assertArrayHasKey( $page1ID, $result, "Found page 1 properties" );
 		$this->assertArrayHasKey( $page2ID, $result, "Found page 2 properties" );
-		$properties1 = $result[$page1ID];
-		$patched = array_replace_recursive( $properties1, $this->the_properties );
-		$this->assertEquals( $patched, $properties1, "Get all properties page 1" );
-		$properties2 = $result[$page2ID];
-		$patched = array_replace_recursive( $properties2, $this->the_properties );
-		$this->assertEquals( $patched, $properties2, "Get all properties page 2" );
+
+		$properties = $result[$page1ID];
+		$subset = array_intersect_key( $properties, $this->expectedProperties );
+		$this->assertEquals( $this->expectedProperties, $subset, "Properties of page 1" );
+
+		$properties = $result[$page2ID];
+		$subset = array_intersect_key( $properties, $this->expectedProperties );
+		$this->assertEquals( $this->expectedProperties, $subset, "Properties of page 2" );
 	}
 
 	/**
@@ -192,6 +211,7 @@ class PagePropsTest extends MediaWikiLangTestCase {
 		$value1 = $pageProps->getProperties( $this->title1, "property1" );
 		$this->setProperty( $page1ID, "property1", "another value" );
 		$value2 = $pageProps->getProperties( $this->title1, "property1" );
+
 		$this->assertEquals( $value1, $value2, "Single cache" );
 	}
 
@@ -207,6 +227,7 @@ class PagePropsTest extends MediaWikiLangTestCase {
 		$properties1 = $pageProps->getAllProperties( $this->title1 );
 		$this->setProperty( $page1ID, "property1", "another value" );
 		$properties2 = $pageProps->getAllProperties( $this->title1 );
+
 		$this->assertEquals( $properties1, $properties2, "Multi Cache" );
 	}
 
@@ -248,7 +269,7 @@ class PagePropsTest extends MediaWikiLangTestCase {
 		}
 
 		if ( $page->exists() ) {
-			$page->doDeleteArticle( "done" );
+			$page->doDeleteArticleReal( "done", $this->getTestSysop()->getUser() );
 		}
 
 		$content = ContentHandler::makeContent( $text, $page->getTitle(), $model );
@@ -259,15 +280,12 @@ class PagePropsTest extends MediaWikiLangTestCase {
 
 	protected function setProperties( $pageID, $properties ) {
 		$rows = [];
-
 		foreach ( $properties as $propertyName => $propertyValue ) {
-			$row = [
+			$rows[] = [
 				'pp_page' => $pageID,
 				'pp_propname' => $propertyName,
 				'pp_value' => $propertyValue
 			];
-
-			$rows[] = $row;
 		}
 
 		$dbw = wfGetDB( DB_MASTER );
@@ -285,9 +303,16 @@ class PagePropsTest extends MediaWikiLangTestCase {
 	}
 
 	protected function setProperty( $pageID, $propertyName, $propertyValue ) {
-		$properties = [];
-		$properties[$propertyName] = $propertyValue;
-
+		$properties = [
+			$propertyName => $propertyValue
+		];
 		$this->setProperties( $pageID, $properties );
+	}
+
+	protected function createRowFromTitle( $title ) {
+		return (object)[
+			'page_namespace' => $title->getNamespace(),
+			'page_title' => $title->getText()
+		];
 	}
 }

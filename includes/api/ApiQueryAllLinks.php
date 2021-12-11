@@ -20,6 +20,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Query module to enumerate links from all pages together.
  *
@@ -34,6 +36,10 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 	private $useIndex = null;
 	private $props = [];
 
+	/**
+	 * @param ApiQuery $query
+	 * @param string $moduleName
+	 */
 	public function __construct( ApiQuery $query, $moduleName ) {
 		switch ( $moduleName ) {
 			case 'alllinks':
@@ -90,7 +96,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet
 	 * @return void
 	 */
 	private function run( $resultPageSet = null ) {
@@ -129,7 +135,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 			$this->addWhereFld( $pfx . 'namespace', $namespace );
 		}
 
-		$continue = !is_null( $params['continue'] );
+		$continue = $params['continue'] !== null;
 		if ( $continue ) {
 			$continueArr = explode( '|', $params['continue'] );
 			$op = $params['dir'] == 'descending' ? '<' : '>';
@@ -183,6 +189,20 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 
 		$res = $this->select( __METHOD__ );
 
+		// Get gender information
+		if ( $res->numRows() && $resultPageSet === null ) {
+			$services = MediaWikiServices::getInstance();
+			if ( $services->getNamespaceInfo()->hasGenderDistinction( $namespace ) ) {
+				$users = [];
+				foreach ( $res as $row ) {
+					$users[] = $row->pl_title;
+				}
+				if ( $users !== [] ) {
+					$services->getGenderCache()->doQuery( $users, __METHOD__ );
+				}
+			}
+		}
+
 		$pageids = [];
 		$titles = [];
 		$count = 0;
@@ -199,7 +219,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 				break;
 			}
 
-			if ( is_null( $resultPageSet ) ) {
+			if ( $resultPageSet === null ) {
 				$vals = [
 					ApiResult::META_TYPE => 'assoc',
 				];
@@ -231,7 +251,7 @@ class ApiQueryAllLinks extends ApiQueryGeneratorBase {
 			}
 		}
 
-		if ( is_null( $resultPageSet ) ) {
+		if ( $resultPageSet === null ) {
 			$result->addIndexedTagName( [ 'query', $this->getModuleName() ], $this->indexTag );
 		} elseif ( $params['unique'] ) {
 			$resultPageSet->populateFromTitles( $titles );

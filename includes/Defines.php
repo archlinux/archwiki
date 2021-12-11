@@ -26,19 +26,14 @@ require_once __DIR__ . '/libs/rdbms/defines.php';
 use Wikimedia\Rdbms\IDatabase;
 
 /**
- * @defgroup Constants MediaWiki constants
- */
-
-/**
  * The running version of MediaWiki.
  *
- * This replaces the the $wgVersion global found in earlier versions.
+ * This replaces the $wgVersion global found in earlier versions. When updating,
+ * remember to also bump the stand-alone duplicate of this in PHPVersionCheck.
  *
- * @since 1.34.1
+ * @since 1.35
  */
-define( 'MW_VERSION', '1.34.1' );
-
-# Obsolete aliases
+define( 'MW_VERSION', '1.36.2' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants
@@ -188,8 +183,8 @@ define( 'SFH_OBJECT_ARGS', 2 );
 /** @} */
 
 /** @{
- * Autopromote conditions (must be here and not in Autopromote.php, so that
- * they're loaded for DefaultSettings.php before AutoLoader.php)
+ * Autopromote conditions (must be here, so that they're loaded for
+ * DefaultSettings.php before AutoLoader.php)
  */
 define( 'APCOND_EDITCOUNT', 1 );
 define( 'APCOND_AGE', 2 );
@@ -226,6 +221,7 @@ define( 'CONTENT_MODEL_JAVASCRIPT', 'javascript' );
 define( 'CONTENT_MODEL_CSS', 'css' );
 define( 'CONTENT_MODEL_TEXT', 'text' );
 define( 'CONTENT_MODEL_JSON', 'json' );
+define( 'CONTENT_MODEL_UNKNOWN', 'unknown' );
 /** @} */
 
 /** @{
@@ -235,21 +231,21 @@ define( 'CONTENT_MODEL_JSON', 'json' );
  * Extensions are free to use the below formats, or define their own.
  * It is recommended to stick with the conventions for MIME types.
  */
-// wikitext
+/** Wikitext */
 define( 'CONTENT_FORMAT_WIKITEXT', 'text/x-wiki' );
-// for js pages
+/** For JS pages */
 define( 'CONTENT_FORMAT_JAVASCRIPT', 'text/javascript' );
-// for css pages
+/** For CSS pages */
 define( 'CONTENT_FORMAT_CSS', 'text/css' );
-// for future use, e.g. with some plain-html messages.
+/** For future use, e.g. with some plain HTML messages. */
 define( 'CONTENT_FORMAT_TEXT', 'text/plain' );
-// for future use, e.g. with some plain-html messages.
+/** For future use, e.g. with some plain HTML messages. */
 define( 'CONTENT_FORMAT_HTML', 'text/html' );
-// for future use with the api and for extensions
+/** For future use with the API and for extensions */
 define( 'CONTENT_FORMAT_SERIALIZED', 'application/vnd.php.serialized' );
-// for future use with the api, and for use by extensions
+/** For future use with the API, and for use by extensions */
 define( 'CONTENT_FORMAT_JSON', 'application/json' );
-// for future use with the api, and for use by extensions
+/** For future use with the API, and for use by extensions */
 define( 'CONTENT_FORMAT_XML', 'application/xml' );
 /** @} */
 

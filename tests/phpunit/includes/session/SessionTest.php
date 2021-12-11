@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Session;
 
+use MediaWikiIntegrationTestCase;
 use Psr\Log\LogLevel;
-use MediaWikiTestCase;
 use User;
 use Wikimedia\TestingAccessWrapper;
 
@@ -11,7 +11,7 @@ use Wikimedia\TestingAccessWrapper;
  * @group Session
  * @covers MediaWiki\Session\Session
  */
-class SessionTest extends MediaWikiTestCase {
+class SessionTest extends MediaWikiIntegrationTestCase {
 
 	public function testClear() {
 		$session = TestUtils::getDummySession();
@@ -23,7 +23,7 @@ class SessionTest extends MediaWikiTestCase {
 		$backend->expects( $this->once() )->method( 'canSetUser' )
 			->will( $this->returnValue( true ) );
 		$backend->expects( $this->once() )->method( 'setUser' )
-			->with( $this->callback( function ( $user ) {
+			->with( $this->callback( static function ( $user ) {
 				return $user instanceof User && $user->isAnon();
 			} ) );
 		$backend->expects( $this->once() )->method( 'save' );
@@ -39,7 +39,7 @@ class SessionTest extends MediaWikiTestCase {
 		$backend->expects( $this->once() )->method( 'canSetUser' )
 			->will( $this->returnValue( true ) );
 		$backend->expects( $this->once() )->method( 'setUser' )
-			->with( $this->callback( function ( $user ) {
+			->with( $this->callback( static function ( $user ) {
 				return $user instanceof User && $user->isAnon();
 			} ) );
 		$backend->expects( $this->once() )->method( 'save' );
@@ -104,7 +104,6 @@ class SessionTest extends MediaWikiTestCase {
 
 	/**
 	 * @dataProvider provideSecretsRoundTripping
-	 * @param mixed $data
 	 */
 	public function testSecretsRoundTripping( $data ) {
 		$session = TestUtils::getDummySession();

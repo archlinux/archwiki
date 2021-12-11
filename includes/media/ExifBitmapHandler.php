@@ -25,20 +25,22 @@
  * Stuff specific to JPEG and (built-in) TIFF handler.
  * All metadata related, since both JPEG and TIFF support Exif.
  *
+ * @stable to extend
  * @ingroup Media
  */
 class ExifBitmapHandler extends BitmapHandler {
-	const BROKEN_FILE = '-1'; // error extracting metadata
-	const OLD_BROKEN_FILE = '0'; // outdated error extracting metadata.
+	/** Error extracting metadata */
+	public const BROKEN_FILE = '-1';
 
-	function convertMetadataVersion( $metadata, $version = 1 ) {
+	/** Outdated error extracting metadata */
+	public const OLD_BROKEN_FILE = '0';
+
+	public function convertMetadataVersion( $metadata, $version = 1 ) {
 		// basically flattens arrays.
 		$version = intval( explode( ';', $version, 2 )[0] );
 		if ( $version < 1 || $version >= 2 ) {
 			return $metadata;
 		}
-
-		$avoidHtml = true;
 
 		if ( !is_array( $metadata ) ) {
 			$metadata = unserialize( $metadata );
@@ -63,14 +65,15 @@ class ExifBitmapHandler extends BitmapHandler {
 
 		// ContactInfo also has to be dealt with specially
 		if ( isset( $metadata['Contact'] ) ) {
-			$metadata['Contact'] =
-				$formatter->collapseContactInfo(
-					$metadata['Contact'] );
+			$metadata['Contact'] = $formatter->collapseContactInfo(
+				is_array( $metadata['Contact'] ) ? $metadata['Contact'] : [ $metadata['Contact'] ]
+			);
 		}
 
 		foreach ( $metadata as &$val ) {
 			if ( is_array( $val ) ) {
-				$val = $formatter->flattenArrayReal( $val, 'ul', $avoidHtml );
+				// @phan-suppress-next-line SecurityCheck-DoubleEscaped Ambiguous with the true for nohtml
+				$val = $formatter->flattenArrayReal( $val, 'ul', true );
 			}
 		}
 		$metadata['MEDIAWIKI_EXIF_VERSION'] = 1;
@@ -92,7 +95,7 @@ class ExifBitmapHandler extends BitmapHandler {
 		if ( $metadata === self::OLD_BROKEN_FILE ) {
 			# Old special value indicating that there is no Exif data in the file.
 			# or that there was an error well extracting the metadata.
-			wfDebug( __METHOD__ . ": back-compat version\n" );
+			wfDebug( __METHOD__ . ": back-compat version" );
 
 			return self::METADATA_COMPATIBLE;
 		}
@@ -109,12 +112,12 @@ class ExifBitmapHandler extends BitmapHandler {
 				&& $exif['MEDIAWIKI_EXIF_VERSION'] == 1
 			) {
 				// back-compatible but old
-				wfDebug( __METHOD__ . ": back-compat version\n" );
+				wfDebug( __METHOD__ . ": back-compat version" );
 
 				return self::METADATA_COMPATIBLE;
 			}
 			# Wrong (non-compatible) version
-			wfDebug( __METHOD__ . ": wrong version\n" );
+			wfDebug( __METHOD__ . ": wrong version" );
 
 			return self::METADATA_BAD;
 		}
@@ -124,12 +127,12 @@ class ExifBitmapHandler extends BitmapHandler {
 
 	/**
 	 * @param File $image
-	 * @param bool|IContextSource $context Context to use (optional)
-	 * @return array|bool
+	 * @param IContextSource|false $context
+	 * @return array[]|false
 	 */
 	public function formatMetadata( $image, $context = false ) {
 		$meta = $this->getCommonMetaArray( $image );
-		if ( count( $meta ) === 0 ) {
+		if ( !$meta ) {
 			return false;
 		}
 
@@ -156,7 +159,7 @@ class ExifBitmapHandler extends BitmapHandler {
 		return $exif;
 	}
 
-	function getMetadataType( $image ) {
+	public function getMetadataType( $image ) {
 		return 'exif';
 	}
 
@@ -168,7 +171,7 @@ class ExifBitmapHandler extends BitmapHandler {
 	 * @param string $path
 	 * @return array|false
 	 */
-	function getImageSize( $image, $path ) {
+	public function getImageSize( $image, $path ) {
 		$gis = parent::getImageSize( $image, $path );
 
 		// Don't just call $image->getMetadata(); FSFile::getPropsFromPath() calls us with a bogus object.
@@ -215,7 +218,7 @@ class ExifBitmapHandler extends BitmapHandler {
 	 * Given a chunk of serialized Exif metadata, return the orientation as
 	 * degrees of rotation.
 	 *
-	 * @param string $data
+	 * @param string|false $data
 	 * @return int 0, 90, 180 or 270
 	 * @todo FIXME: Orientation can include flipping as well; see if this is an issue!
 	 */

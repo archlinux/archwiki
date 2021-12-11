@@ -277,7 +277,7 @@
 								action: {
 									type: 'encapsulate',
 									options: {
-										pre: configData.magicWords.redirect + ' [[',
+										pre: configData.magicWords.redirect[ 0 ] + ' [[',
 										periMsg: 'wikieditor-toolbar-tool-redirect-example',
 										post: ']]',
 										ownline: true
@@ -532,15 +532,15 @@
 								syntax: { htmlMsg: [
 									'wikieditor-toolbar-help-content-file-syntax',
 									fileNamespace,
-									configData.magicWords.img_thumbnail,
+									configData.magicWords.img_thumbnail[ 0 ],
 									mw.message( 'wikieditor-toolbar-help-content-file-caption' ).text()
 								] },
 								result: { html: '<div class="thumbinner" style="width: 102px;">' +
-									'<a href="#" class="image">' +
+									'<a class="image">' +
 									'<img alt="" src="' + $.wikiEditor.imgPath + 'toolbar/example-image.png" width="100" height="50" class="thumbimage"/>' +
 									'</a>' +
 									'<div class="thumbcaption"><div class="magnify">' +
-									'<a title="' + mw.message( 'thumbnail-more' ).escaped() + '" class="internal" href="#"></a>' +
+									'<a title="' + mw.message( 'thumbnail-more' ).escaped() + '" class="internal"></a>' +
 									'</div>' + mw.message( 'wikieditor-toolbar-help-content-file-caption' ).escaped() + '</div>' +
 									'</div>'
 								}

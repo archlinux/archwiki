@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Janezdrilc",
-			"Dbc334"
+			"Dbc334",
+			"Eleassar",
+			"Janezdrilc"
 		]
 	},
 	"oathauth-desc": "Zagotavlja podporo za preverjanje pristnosti s pomočjo gesel za enkratno uporabo, ki temeljijo na HMAC-u",
@@ -33,13 +34,13 @@
 	"action-oathauth-view-log": "dostop do dnevnika sprememb dvostopenjskega preverjanja pristnosti",
 	"oathauth-disable-intro": "Z veliko močjo pride velika odgovornost",
 	"oathauth-enteruser": "Uporabniško ime:",
-	"oathauth-enterreason": "Razlog za izključitev:",
+	"oathauth-enterdisablereason": "Razlog za izključitev:",
 	"oathauth-user-not-does-not-have-oath-enabled": "Uporabnik nima vključenega dvostopenjskega preverjanja pristnosti, zato ni ničesar za izključiti",
 	"right-oathauth-enable": "Dvostopenjsko preverjanje pristnosti",
 	"action-oathauth-enable": "vključi dvostopenjsko preverjanje pristnosti",
 	"oathauth-auth-token-label": "Žeton",
 	"oathauth-auth-token-help": "Geslo za enkratno uporabo, ki služi kot druga stopnja dvostopenjskega preverjanja pristnosti.",
-	"oathauth-auth-ui": "Vnesi kodo za potrditev iz svoje naprave za preverjanje pristnosti.",
+	"oathauth-auth-ui": "Iz svoje naprave prepišite kodo za potrditev identitete.",
 	"oathauth-throttled": "Preveč poskusov potrditve! Počakaj $1.",
 	"oathauth-login-failed": "Potrditev je spodletela.",
 	"oathauth-describe-provider": "Dvostopenjsko preverjanje pristnosti (OATH).",

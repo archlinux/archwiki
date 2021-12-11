@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
+			"Milicevic01",
 			"Millosh",
 			"Rancher",
 			"Verlor",
-			"Milicevic01",
-			"Сербијана",
-			"BadDog"
+			"Сербијана"
 		]
 	},
 	"pfunc_desc": "Проширује рашчлањивач са логичким функцијама",

@@ -9,7 +9,7 @@ CREATE TABLE /*_*/site_stats_tmp (
   -- * in namespace 0
   -- * not a redirect
   -- * contains the text '[['
-  -- See Article::isCountable() in includes/Article.php
+  -- See WikiPage::isCountable() in includes/Article.php
   ss_good_articles bigint unsigned default 0,
 
   -- Total pages, theoretically equal to SELECT COUNT(*) FROM page; except faster
@@ -25,8 +25,8 @@ CREATE TABLE /*_*/site_stats_tmp (
   ss_images int default 0
 ) /*$wgDBTableOptions*/;
 
-INSERT INTO /*_*/site_stats_tmp
-	SELECT * FROM /*_*/site_stats;
+INSERT INTO /*_*/site_stats_tmp(ss_row_id, ss_total_edits, ss_good_articles, ss_total_pages, ss_users, ss_active_users, ss_images)
+	SELECT ss_row_id, ss_total_edits, ss_good_articles, ss_total_pages, ss_users, ss_active_users, ss_images FROM /*_*/site_stats;
 
 DROP TABLE /*_*/site_stats;
 

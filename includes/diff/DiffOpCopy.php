@@ -29,12 +29,17 @@
  * Extends DiffOp. Used to mark strings that have been
  * copied from one string array to the other.
  *
- * @private
+ * @internal
  * @ingroup DifferenceEngine
  */
 class DiffOpCopy extends DiffOp {
+	/** @inheritDoc */
 	public $type = 'copy';
 
+	/**
+	 * @param string[]|false $orig
+	 * @param string[]|false $closing
+	 */
 	public function __construct( $orig, $closing = false ) {
 		if ( !is_array( $closing ) ) {
 			$closing = $orig;

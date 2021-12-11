@@ -29,6 +29,7 @@ class ApiContinuationManager {
 	private $allModules = [];
 	private $generatedModules = [];
 
+	/** @var array[] */
 	private $continuationData = [];
 	private $generatorContinuationData = [];
 	private $generatorNonContinuationData = [];
@@ -97,7 +98,6 @@ class ApiContinuationManager {
 	}
 
 	/**
-	 * Is the generator done?
 	 * @return bool
 	 */
 	public function isGeneratorDone() {
@@ -217,8 +217,6 @@ class ApiContinuationManager {
 			// Some modules are unfinished: include those params, and copy
 			// the generator params.
 			foreach ( $continuationData as $module => $kvp ) {
-				// XXX: Not sure why phan is complaining here...
-				// @phan-suppress-next-line PhanTypeInvalidLeftOperand
 				$data += $kvp;
 			}
 			$generatorParams = [];

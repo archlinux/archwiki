@@ -20,8 +20,8 @@
  * @file
  */
 
-use Wikimedia\Rdbms\ResultWrapper;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * List for revision table items for a single page
@@ -30,13 +30,13 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 	/** @var Title */
 	public $title;
 
-	/** @var array */
+	/** @var int[]|null */
 	protected $ids;
 
-	/** @var ResultWrapper|bool */
+	/** @var IResultWrapper|false */
 	protected $res;
 
-	/** @var bool|Revision */
+	/** @var RevisionItemBase|false */
 	protected $current;
 
 	/**
@@ -44,23 +44,23 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 	 * @param IContextSource $context
 	 * @param Title $title
 	 */
-	function __construct( IContextSource $context, Title $title ) {
+	public function __construct( IContextSource $context, Title $title ) {
 		$this->setContext( $context );
 		$this->title = $title;
 	}
 
 	/**
 	 * Select items only where the ID is any of the specified values
-	 * @param array $ids
+	 * @param int[] $ids
 	 */
-	function filterByIds( array $ids ) {
+	public function filterByIds( array $ids ) {
 		$this->ids = $ids;
 	}
 
 	/**
 	 * Get the internal type name of this list. Equal to the table name.
 	 * Override this function.
-	 * @return null
+	 * @return string|null
 	 */
 	public function getType() {
 		return null;
@@ -80,7 +80,7 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 
 	/**
 	 * Start iteration. This must be called before current() or next().
-	 * @return Revision First list item
+	 * @return RevisionItemBase First list item
 	 */
 	public function reset() {
 		if ( !$this->res ) {
@@ -98,7 +98,7 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 
 	/**
 	 * Get the current list item, or false if we are at the end
-	 * @return Revision
+	 * @return RevisionItemBase
 	 */
 	public function current() {
 		return $this->current;
@@ -106,7 +106,7 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 
 	/**
 	 * Move the iteration pointer to the next list item, and return it.
-	 * @return Revision
+	 * @return RevisionItemBase
 	 * @suppress PhanParamSignatureMismatchInternal
 	 */
 	public function next() {
@@ -138,12 +138,14 @@ abstract class RevisionListBase extends ContextSource implements Iterator {
 	/**
 	 * Do the DB query to iterate through the objects.
 	 * @param IDatabase $db DB object to use for the query
+	 * @return IResultWrapper
 	 */
 	abstract public function doQuery( $db );
 
 	/**
 	 * Create an item object from a DB result row
-	 * @param object $row
+	 * @param stdClass $row
+	 * @return RevisionItemBase
 	 */
 	abstract public function newItem( $row );
 }

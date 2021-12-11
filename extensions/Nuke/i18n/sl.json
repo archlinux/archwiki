@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dbc334"
+			"Dbc334",
+			"Eleassar"
 		]
 	},
 	"nuke": "Množični izbris",
@@ -19,7 +20,7 @@
 	"nuke-userorip": "Uporabniško ime, IP-naslov ali prazno:",
 	"nuke-maxpages": "Največje število strani:",
 	"nuke-editby": "{{GENDER:$1|Ustvaril|Ustvarila|Ustvaril(-a)}} [[Special:Contributions/$1|$1]]",
-	"nuke-deleted": "Stran '''$1''' je bila izbrisana.",
+	"nuke-deleted": "Stran '''$1''' je izbrisana.",
 	"nuke-not-deleted": "Strani [[:$1]] '''ni bilo mogoče''' izbrisati.",
 	"nuke-delete-more": "[[Special:Nuke|Izbriši več strani]]",
 	"nuke-pattern": "Vzorec SQL LIKE (npr. %) za ime strani:",

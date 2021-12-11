@@ -1,14 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Angel sm",
 			"Clerc",
+			"DannyS712",
 			"Fiestoforo",
 			"Kaniw",
 			"Lin linao",
+			"Ndołkah",
 			"Poquil",
 			"Remember the dot",
-			"아라",
-			"Angel sm"
+			"아라"
 		]
 	},
 	"tog-underline": "Miñcewirilpe lasun",
@@ -74,7 +76,6 @@
 	"category-subcat-count": "{{PLURAL:$2|Tüfachi trokiñ niey kiñe minchetrokiñ müten.|Tüfachi trokiñ niey {{PLURAL:$1 minchetrokiñ}}, $2 mew.}}",
 	"category-article-count": "{{PLURAL:$2|Tüfachi trokiñ niey tüfachi wülngiñ.|Tüfachi {{PLURAL:$1wülngiñ}} tüfachi trokiñ mew, kom $2 mew.}}",
 	"category-file-count": "{{PLURAL:$2|Tüfachi trokiñ niey tüfachi wülngiñ müten.|Tüfachi {{PLURAL:$1 eltukawün}} müley tüfachi trokiñ mew, kom $2 mew.}}",
-	"listingcontinuesabbrev": "ramt.",
 	"index-category": "Wülngiñ mülelu wif mew",
 	"noindex-category": "Wülngiñ mülenolu wif mew",
 	"about": "Ñi dungu",
@@ -166,7 +167,6 @@
 	"thisisdeleted": "Pen kam kümeeltun $1?",
 	"viewdeleted": "Küpaadkintuymi $1 am?",
 	"restorelink": "{{PLURAL:$1|kiñe wirin ñamümgün|$1 wirin ñamümün}}",
-	"feedlinks": "Amuldungu:",
 	"site-rss-feed": "$1 RSS ñi amuldungu",
 	"site-atom-feed": "$1 ñi Atom ñi amuldungu",
 	"page-rss-feed": "«$1» RSS ñi amuldungu",
@@ -184,6 +184,7 @@
 	"nstab-template": "Adtükupeyüm",
 	"nstab-help": "Kelluwe",
 	"nstab-category": "Trokiñ",
+	"mainpage-nstab": "Ñizol Wvbgiñ",
 	"nosuchaction": "Mülelay feychi femün",
 	"error": "Welulkan",
 	"missing-article": "Feychi ngülümdunguwe kintulay feychi wülngiñ ñi wirin, welu nienuafulu. Ñi üy ta \"$1\" $2.\n\nChi kiñe rakizuamün ta pünefalkülenuchi kalelu kam nülkükawlelu liftungepelu wülngiñ ñi rupañmael.\n\nFemnuale, welulkafuy feychi küzauwe. Feypimi tüfachi dungu kiñe [[Special:ListUsers/sysop|ngünefe]]. Wirituymi feychi URL.",
@@ -206,6 +207,7 @@
 	"mailmypassword": "Amulün we nülawe werküwe mew",
 	"loginlanguagelabel": "Cezugun: $1",
 	"pt-login": "Konkülen",
+	"pt-createaccount": "Zewman rakim",
 	"resetpass-submit-cancel": "Katrüntukun",
 	"summary": "Pichi trokiñündungu:",
 	"subject": "Dungu/üy:",
@@ -252,7 +254,7 @@
 	"history-show-deleted": "Liftungepelu malün müten",
 	"histfirst": "Wüne",
 	"histlast": "Doy we",
-	"historyempty": "(welli)",
+	"historyempty": "welli",
 	"history-feed-item-nocomment": "$1 $2 mew",
 	"rev-delundel": "pengelün/ellkan",
 	"rev-showdeleted": "pegelpe",
@@ -481,7 +483,7 @@
 	"namespace": "Üytun ñi wellin:",
 	"invert": "Welulün dullin",
 	"blanknamespace": "(Ñidol)",
-	"contributions": "Kellufe ñi wirin",
+	"tool-link-contributions": "Kellufe ñi wirin",
 	"contributions-title": "kellufe $1 ñi wirin",
 	"mycontris": "Tañi kellukontun",
 	"contribsub2": "$1 ($2)",

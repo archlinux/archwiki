@@ -1,18 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
+			"Garam",
+			"Hwangjy9",
 			"Klutzy",
 			"Kwj2772",
+			"Ykhwong",
 			"Yknok29",
-			"아라",
-			"Hwangjy9",
-			"Garam"
+			"아라"
 		]
 	},
 	"imagemap_desc": "<code>&lt;imagemap&gt;</code> 태그로 클라이언트 측에서 클릭할 수 있는 영상 지도를 사용할 수 있습니다",
 	"imagemap_no_image": "오류: 첫 줄에 그림이 제시되어야 합니다.",
 	"imagemap_invalid_image": "오류: 그림이 잘못되었거나 존재하지 않습니다.",
-	"imagemap_bad_image": "오류: 그림은 이 문서에서 사용이 금지되어 있습니다.",
+	"imagemap_bad_image": "오류: 이미지는 이 문서에서 허용되지 않습니다.",
 	"imagemap_no_link": "오류: $1번째 줄에서 올바른 링크를 찾을 수 없습니다",
 	"imagemap_invalid_title": "오류: $1번째 줄의 링크 제목이 잘못되었습니다",
 	"imagemap_missing_coord": "오류: $1줄에 정의된 도형의 좌표 값이 충분하지 않습니다.",

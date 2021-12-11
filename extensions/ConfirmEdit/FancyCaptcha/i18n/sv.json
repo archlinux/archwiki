@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Ainali",
-			"Thurs",
-			"WikiPhoenix",
+			"Jopparn",
 			"Lokal Profil",
-			"Jopparn"
+			"Sabelöga",
+			"Thurs",
+			"WikiPhoenix"
 		]
 	},
+	"fancycaptcha-desc": "Fancy CAPTCHA-generator för Confirm Edit",
 	"fancycaptcha-addurl": "Din ändring innehåller nya externa länkar.\nFör att skydda wikin mot automatisk spam ber vi dig att skriva orden som visas nedan i rutan ([[Special:Captcha/help|mer information]]):",
 	"fancycaptcha-badlogin": "För att skydda wikin mot automatiserad lösenordsknäckning ber vi dig att skriva\norden som visas nedan i rutan ([[Special:Captcha/help|mer information]]):",
 	"fancycaptcha-captcha": "Säkerhetskontroll",

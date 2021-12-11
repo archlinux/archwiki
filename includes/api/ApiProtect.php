@@ -24,6 +24,16 @@
  * @ingroup API
  */
 class ApiProtect extends ApiBase {
+
+	use ApiWatchlistTrait;
+
+	public function __construct( ApiMain $mainModule, $moduleName, $modulePrefix = '' ) {
+		parent::__construct( $mainModule, $moduleName, $modulePrefix );
+
+		$this->watchlistExpiryEnabled = $this->getConfig()->get( 'WatchlistExpiry' );
+		$this->watchlistMaxDuration = $this->getConfig()->get( 'WatchlistExpiryMaxDuration' );
+	}
+
 	public function execute() {
 		$params = $this->extractRequestParams();
 
@@ -36,8 +46,8 @@ class ApiProtect extends ApiBase {
 		$tags = $params['tags'];
 
 		// Check if user can add tags
-		if ( !is_null( $tags ) ) {
-			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $tags, $user );
+		if ( $tags !== null ) {
+			$ableToTag = ChangeTags::canAddTagsAccompanyingChange( $tags, $this->getAuthority() );
 			if ( !$ableToTag->isOK() ) {
 				$this->dieStatus( $ableToTag );
 			}
@@ -57,6 +67,10 @@ class ApiProtect extends ApiBase {
 		}
 
 		$restrictionTypes = $titleObj->getRestrictionTypes();
+		$levels = $this->getPermissionManager()->getNamespaceRestrictionLevels(
+			$titleObj->getNamespace(),
+			$user
+		);
 
 		$protections = [];
 		$expiryarray = [];
@@ -75,7 +89,7 @@ class ApiProtect extends ApiBase {
 			if ( !in_array( $p[0], $restrictionTypes ) && $p[0] != 'create' ) {
 				$this->dieWithError( [ 'apierror-protect-invalidaction', wfEscapeWikiText( $p[0] ) ] );
 			}
-			if ( !in_array( $p[1], $this->getConfig()->get( 'RestrictionLevels' ) ) && $p[1] != 'all' ) {
+			if ( !in_array( $p[1], $levels ) && $p[1] != 'all' ) {
 				$this->dieWithError( [ 'apierror-protect-invalidlevel', wfEscapeWikiText( $p[1] ) ] );
 			}
 
@@ -102,7 +116,8 @@ class ApiProtect extends ApiBase {
 		$cascade = $params['cascade'];
 
 		$watch = $params['watch'] ? 'watch' : $params['watchlist'];
-		$this->setWatch( $watch, $titleObj, 'watchdefault' );
+		$watchlistExpiry = $this->getExpiryFromParams( $params );
+		$this->setWatch( $watch, $titleObj, $user, 'watchdefault', $watchlistExpiry );
 
 		$status = $pageObj->doUpdateRestrictions(
 			$protections,
@@ -164,16 +179,7 @@ class ApiProtect extends ApiBase {
 				ApiBase::PARAM_DFLT => false,
 				ApiBase::PARAM_DEPRECATED => true,
 			],
-			'watchlist' => [
-				ApiBase::PARAM_DFLT => 'preferences',
-				ApiBase::PARAM_TYPE => [
-					'watch',
-					'unwatch',
-					'preferences',
-					'nochange'
-				],
-			],
-		];
+		] + $this->getWatchlistParams();
 	}
 
 	public function needsToken() {

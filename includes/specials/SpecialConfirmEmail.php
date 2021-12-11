@@ -21,7 +21,7 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserFactory;
 
 /**
  * Special page allows users to request email confirmation message, and handles
@@ -32,8 +32,17 @@ use MediaWiki\MediaWikiServices;
  * @author Rob Church <robchur@gmail.com>
  */
 class SpecialConfirmEmail extends UnlistedSpecialPage {
-	public function __construct() {
+
+	/** @var UserFactory */
+	private $userFactory;
+
+	/**
+	 * @param UserFactory $userFactory
+	 */
+	public function __construct( UserFactory $userFactory ) {
 		parent::__construct( 'Confirmemail', 'editmyprivateinfo' );
+
+		$this->userFactory = $userFactory;
 	}
 
 	public function doesWrites() {
@@ -48,7 +57,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 	 * @throws ReadOnlyError
 	 * @throws UserNotLoggedIn
 	 */
-	function execute( $code ) {
+	public function execute( $code ) {
 		// Ignore things like master queries/connections on GET requests.
 		// It's very convenient to just allow formless link usage.
 		$trxProfiler = Profiler::instance()->getTransactionProfiler();
@@ -59,10 +68,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 
 		// This could also let someone check the current email address, so
 		// require both permissions.
-		if ( !MediaWikiServices::getInstance()
-				->getPermissionManager()
-				->userHasRight( $this->getUser(), 'viewmyprivateinfo' )
-		) {
+		if ( !$this->getAuthority()->isAllowed( 'viewmyprivateinfo' ) ) {
 			throw new PermissionsError( 'viewmyprivateinfo' );
 		}
 
@@ -83,7 +89,7 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 	/**
 	 * Show a nice form for the user to request a confirmation mail
 	 */
-	function showRequestForm() {
+	private function showRequestForm() {
 		$user = $this->getUser();
 		$out = $this->getOutput();
 
@@ -104,7 +110,6 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 			$out->addWikiMsg( 'confirmemail_text' );
 			$form = HTMLForm::factory( 'ooui', $descriptor, $this->getContext() );
 			$form
-				->setMethod( 'post' )
 				->setAction( $this->getPageTitle()->getLocalURL() )
 				->setSubmitTextMsg( 'confirmemail_send' )
 				->setSubmitCallback( [ $this, 'submitSend' ] );
@@ -153,7 +158,11 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 	 * @param string $code Confirmation code
 	 */
 	private function attemptConfirm( $code ) {
-		$user = User::newFromConfirmationCode( $code, User::READ_EXCLUSIVE );
+		$user = $this->userFactory->newFromConfirmationCode(
+			$code,
+			UserFactory::READ_LATEST
+		);
+
 		if ( !is_object( $user ) ) {
 			$this->getOutput()->addWikiMsg( 'confirmemail_invalid' );
 
@@ -167,12 +176,13 @@ class SpecialConfirmEmail extends UnlistedSpecialPage {
 			return;
 		}
 
-		$user->confirmEmail();
-		$user->saveSettings();
-		$message = $this->getUser()->isLoggedIn() ? 'confirmemail_loggedin' : 'confirmemail_success';
+		$userLatest = $user->getInstanceForUpdate();
+		$userLatest->confirmEmail();
+		$userLatest->saveSettings();
+		$message = $this->getUser()->isRegistered() ? 'confirmemail_loggedin' : 'confirmemail_success';
 		$this->getOutput()->addWikiMsg( $message );
 
-		if ( !$this->getUser()->isLoggedIn() ) {
+		if ( !$this->getUser()->isRegistered() ) {
 			$title = SpecialPage::getTitleFor( 'Userlogin' );
 			$this->getOutput()->returnToMain( true, $title );
 		}

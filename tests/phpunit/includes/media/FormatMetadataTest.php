@@ -1,11 +1,13 @@
 <?php
 
+use Wikimedia\TestingAccessWrapper;
+
 /**
  * @group Media
  */
 class FormatMetadataTest extends MediaWikiMediaTestCase {
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->checkPHPExtension( 'exif' );
@@ -20,7 +22,7 @@ class FormatMetadataTest extends MediaWikiMediaTestCase {
 
 		// Throws an error if bug hit
 		$meta = $file->formatMetadata();
-		$this->assertNotEquals( false, $meta, 'Valid metadata extracted' );
+		$this->assertIsArray( $meta, 'Valid metadata extracted' );
 
 		// Find date exif entry
 		$this->assertArrayHasKey( 'visible', $meta );
@@ -31,14 +33,12 @@ class FormatMetadataTest extends MediaWikiMediaTestCase {
 			}
 		}
 		$this->assertNotNull( $dateIndex, 'Date entry exists in metadata' );
-		$this->assertEquals( '0000:01:00 00:02:27',
+		$this->assertSame( '0000:01:00 00:02:27',
 			$meta['visible'][$dateIndex]['value'],
 			'File with invalid date metadata (T31471)' );
 	}
 
 	/**
-	 * @param mixed $input
-	 * @param mixed $output
 	 * @dataProvider provideResolveMultivalueValue
 	 * @covers FormatMetadata::resolveMultivalueValue
 	 */
@@ -97,8 +97,6 @@ class FormatMetadataTest extends MediaWikiMediaTestCase {
 	}
 
 	/**
-	 * @param mixed $input
-	 * @param mixed $output
 	 * @dataProvider provideGetFormattedData
 	 * @covers FormatMetadata::getFormattedData
 	 */
@@ -138,6 +136,41 @@ class FormatMetadataTest extends MediaWikiMediaTestCase {
 				// WebMHandler.php turns both 'muxingapp' & 'writingapp' to 'Software'
 				[ 'Software' => [ [ 'Lavf57.25.100' ], [ 'Lavf57.25.100' ] ] ],
 				[ 'Software' => "<ul><li>Lavf57.25.100</li>\n<li>Lavf57.25.100</li></ul>" ],
+			],
+		];
+	}
+
+	/**
+	 * @covers FormatMetadata::getPriorityLanguages
+	 * @dataProvider provideGetPriorityLanguagesData
+	 * @param string $languageClass
+	 * @param string[] $expected
+	 */
+	public function testGetPriorityLanguagesInternal_language_expect(
+		string $languageClass,
+		array $expected
+	): void {
+		$formatMetadata = TestingAccessWrapper::newFromObject( new FormatMetadata() );
+		$context = $formatMetadata->getContext();
+		$context->setLanguage( new $languageClass() );
+
+		$x = $formatMetadata->getPriorityLanguages();
+		$this->assertSame( $expected, $x );
+	}
+
+	public function provideGetPriorityLanguagesData() {
+		return [
+			'LanguageMl' => [
+				LanguageMl::class,
+				[ 'ml', 'en' ],
+			],
+			'LanguageEn' => [
+				LanguageEn::class,
+				[ 'en', 'en' ],
+			],
+			'LanguageQqx' => [
+				LanguageQqx::class,
+				[ 'qqx', 'en' ],
 			],
 		];
 	}

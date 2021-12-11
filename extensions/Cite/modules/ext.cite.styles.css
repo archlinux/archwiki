@@ -10,6 +10,12 @@
 	-webkit-column-width: 30em;
 	-moz-column-width: 30em;
 	column-width: 30em;
+	margin-top: 0.3em;
+}
+
+/* Lines first column up nicely. */
+.mw-parser-output .mw-references-columns .references {
+	margin-top: 0;
 }
 
 /* Avoid elements from breaking between columns */
@@ -17,6 +23,27 @@
 	-webkit-column-break-inside: avoid;
 	page-break-inside: avoid;
 	break-inside: avoid-column;
+}
+
+ol.references {
+	/* Resetting *any* counter on an <ol> element messes the build-in numbering in Firefox up.
+	   Explicitely resetting the build-in "list-item" counter fixes this. */
+	counter-reset: mw-ref-extends-parent list-item;
+}
+
+ol.references > li {
+	counter-increment: mw-ref-extends-parent;
+	counter-reset: mw-ref-extends-child;
+}
+
+ol.references .mw-extended-references {
+	list-style: none;
+	margin-left: 2em;
+}
+
+.mw-extended-references > li:before {
+	counter-increment: mw-ref-extends-child;
+	content: counter( mw-ref-extends-parent, decimal ) '.' counter( mw-ref-extends-child, decimal ) '. ';
 }
 
 sup.reference {
@@ -45,6 +72,15 @@ sup.reference:target {
 	font-weight: bold;
 	/* For the case that the error is embedded in an element with a different direction */
 	unicode-bidi: embed;
+}
+
+.mw-ext-cite-error code {
+	/* As code is inheriting `#f8f9fa` as background color from `code`,
+	   we need to increase contrast, by setting it to `transparent`. See T247903. */
+	background-color: transparent;
+	color: inherit;
+	/* Reduce inherited `padding` to make code fit in better in Resources list. */
+	padding: 1px 2px;
 }
 
 /* @noflip */

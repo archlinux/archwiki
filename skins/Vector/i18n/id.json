@@ -5,14 +5,21 @@
 			"Bennylin",
 			"Farras",
 			"Iwan Novirion",
+			"Naufal06",
 			"Rex",
 			"William Surya Permana"
 		]
 	},
 	"skinname-vector": "Vektor",
 	"vector-skin-desc": "Versi modern dari MonoBook dengan tampilan segar dan banyak perbaikan kegunaan",
+	"prefs-vector-enable-vector-1-label": "Gunakan Vektor Warisan",
+	"prefs-vector-enable-vector-1-help": "Dalam beberapa tahun ke depan, kami akan memperbarui kulit Vektor secara bertahap. Vektor Warisan memungkinkan Anda untuk melihat-lihat dengan Vektor versi lama (per Desember 2019). Untuk mempelajari lebih lanjut tentang pembaruan ini, bukalah [[mw:Reading/Web/Desktop_Improvements|halaman proyek]] kami.",
+	"vector-opt-out": "Beralih ke tampilan lama",
+	"vector-opt-out-tooltip": "Ubah pengaturan Anda untuk kembali ke tampilan lama dari kulit ini (Vektor Warisan)",
 	"vector.css": "/* CSS yang ada di sini akan diterapkan pada kulit Vektor. */",
 	"vector.js": "/* Semua JavaScript di sini akan dimuatkan untuk para pengguna yang menggunakan kulit Vector */",
+	"vector-action-toggle-sidebar": "Buka/tutup bilah samping",
+	"vector-language-button-label": "$1 bahasa",
 	"vector-action-addsection": "Bagian baru",
 	"vector-action-delete": "Hapus",
 	"vector-action-move": "Pindahkan",
@@ -26,5 +33,7 @@
 	"vector-view-viewsource": "Lihat sumber",
 	"vector-jumptonavigation": "Loncat ke navigasi",
 	"vector-jumptosearch": "Loncat ke pencarian",
-	"vector-more-actions": "Lainnya"
+	"vector-jumptocontent": "Lompat ke isi",
+	"vector-more-actions": "Lainnya",
+	"vector-search-loader": "Memuat saran pencarian"
 }

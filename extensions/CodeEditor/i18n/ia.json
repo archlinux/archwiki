@@ -7,7 +7,7 @@
 	"codeeditor-desc": "Modification con coloration syntactic pro paginas con JavaScript e CSS usante le [https://ace.c9.io/ editor Ace]",
 	"codeeditor-next-annotation": "Annotation sequente",
 	"codeeditor-toolbar-toggle": "Activar o disactivar le editor de codice",
-	"codeeditor-save-with-errors": "Le documento contine errores. Es tu secur de voler salveguardar lo?",
+	"codeeditor-save-with-errors": "Le documento contine errores. Es tu secur de voler publicar lo?",
 	"codeeditor-invisibleChars-toggle": "Alternar characteres invisibile",
 	"codeeditor-lineWrapping-toggle": "Alternar ruptura de lineas",
 	"codeeditor-searchReplace-toggle": "Alternar dialogo cercar e reimplaciar",

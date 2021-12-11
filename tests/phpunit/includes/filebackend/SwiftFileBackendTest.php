@@ -12,11 +12,11 @@ use Wikimedia\TestingAccessWrapper;
  * @covers SwiftFileBackendFileList
  * @covers SwiftFileBackendList
  */
-class SwiftFileBackendTest extends MediaWikiTestCase {
+class SwiftFileBackendTest extends MediaWikiIntegrationTestCase {
 	/** @var TestingAccessWrapper|SwiftFileBackend */
 	private $backend;
 
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->backend = TestingAccessWrapper::newFromObject(
@@ -45,6 +45,10 @@ class SwiftFileBackendTest extends MediaWikiTestCase {
 
 	public static function provider_testExtractPostableContentHeaders() {
 		return [
+			'empty' => [
+				[],
+				[]
+			],
 			[
 				[
 					'content-length' => 345,
@@ -73,7 +77,7 @@ class SwiftFileBackendTest extends MediaWikiTestCase {
 				],
 				[
 					'content-type' => 'image+bitmap/jpeg',
-					'content-disposition' => 'inline;filename=xxx',
+					'content-disposition' => 'inline; filename=xxx',
 					'content-duration' => 35.6363,
 					'content-custom' => 'hello',
 					'x-content-custom' => 'hello'

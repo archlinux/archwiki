@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hoo",
 			"Kghbln",
 			"Metalhead64",
-			"Hoo",
 			"PerfektesChaos",
 			"Umherirrender"
 		]
@@ -54,10 +54,14 @@
 	"scribunto-limitreport-timeusage": "Lua – Zeitnutzung",
 	"scribunto-limitreport-timeusage-value": "$1/$2 Sekunden",
 	"scribunto-limitreport-virtmemusage": "Lua – virtuelle Größe",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|Byte|Bytes}}",
 	"scribunto-limitreport-estmemusage": "Lua – geschätzte Speichernutzung",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|Byte|Bytes}}",
 	"scribunto-limitreport-memusage": "Lua – Speichernutzung",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|Byte|Bytes}}",
 	"scribunto-limitreport-profile": "Lua – Profil",
 	"scribunto-limitreport-profile-ms": "$1 ms",
+	"scribunto-limitreport-profile-percent": "$1 %",
 	"scribunto-limitreport-logs": "Lua-Logbücher",
 	"nstab-module": "Modul",
 	"tooltip-ca-nstab-module": "Die Modulseite ansehen"

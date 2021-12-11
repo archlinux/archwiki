@@ -25,22 +25,26 @@
 // phpcs:ignore Squiz.Classes.ValidClassName.NotCamelCaps
 class PPNode_Hash_Tree implements PPNode {
 
+	/** @var string */
 	public $name;
 
 	/**
 	 * The store array for children of this node. It is "raw" in the sense that
 	 * nodes are two-element arrays ("descriptors") rather than PPNode_Hash_*
 	 * objects.
+	 * @var array
 	 */
 	private $rawChildren;
 
 	/**
 	 * The store array for the siblings of this node, including this node itself.
+	 * @var array
 	 */
 	private $store;
 
 	/**
 	 * The index into $this->store which contains the descriptor of this node.
+	 * @var int
 	 */
 	private $index;
 
@@ -48,13 +52,13 @@ class PPNode_Hash_Tree implements PPNode {
 	 * The offset of the name within descriptors, used in some places for
 	 * readability.
 	 */
-	const NAME = 0;
+	public const NAME = 0;
 
 	/**
 	 * The offset of the child list within descriptors, used in some places for
 	 * readability.
 	 */
-	const CHILDREN = 1;
+	public const CHILDREN = 1;
 
 	/**
 	 * Construct an object using the data from $store[$index]. The rest of the
@@ -340,6 +344,7 @@ class PPNode_Hash_Tree implements PPNode {
 	 * Like splitTemplate() but for a raw child array. For internal use only.
 	 * @param array $children
 	 * @return array
+	 * @suppress SecurityCheck-XSS
 	 */
 	public static function splitRawTemplate( array $children ) {
 		$parts = [];

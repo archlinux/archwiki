@@ -29,7 +29,7 @@ abstract class CaptchaStore {
 
 	/**
 	 * The singleton instance
-	 * @var CaptchaStore
+	 * @var CaptchaStore|null
 	 */
 	private static $instance;
 

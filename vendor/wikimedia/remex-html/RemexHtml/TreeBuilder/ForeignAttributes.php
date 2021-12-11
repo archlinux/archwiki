@@ -117,13 +117,14 @@ class ForeignAttributes implements Attributes {
 	}
 
 	public function offsetExists( $offset ) {
-		$offset = isset( $this->table[$offset] ) ? $this->table[$offset] : $offset;
+		$offset = $this->table[$offset] ?? $offset;
 		return $this->unadjusted->offsetExists( $offset );
 	}
 
 	public function &offsetGet( $offset ) {
-		$offset = isset( $this->table[$offset] ) ? $this->table[$offset] : $offset;
-		return $this->unadjusted->offsetGet( $offset );
+		$offset = $this->table[$offset] ?? $offset;
+		$value = &$this->unadjusted->offsetGet( $offset );
+		return $value;
 	}
 
 	public function offsetSet( $offset, $value ) {
@@ -137,7 +138,7 @@ class ForeignAttributes implements Attributes {
 	public function getValues() {
 		$result = [];
 		foreach ( $this->unadjusted->getValues() as $name => $value ) {
-			$name = isset( $this->table[$name] ) ? $this->table[$name] : $name;
+			$name = $this->table[$name] ?? $name;
 			$result[$name] = $value;
 		}
 		return $result;

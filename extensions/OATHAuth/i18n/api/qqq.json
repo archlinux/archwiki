@@ -1,21 +1,22 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
+			"Liuxinyu970226",
+			"Purodha",
 			"Raymond",
+			"Robby",
 			"Ryan Lane <rlane@wikimedia.org>",
 			"Shirayuki",
-			"Purodha",
-			"Umherirrender",
-			"Tyler Romeo <tylerromeo@gmail.com>",
-			"Liuxinyu970226",
-			"Amire80",
 			"Siebrand",
-			"Robby"
+			"Tyler Romeo <tylerromeo@gmail.com>",
+			"Umherirrender"
 		]
 	},
 	"apihelp-query+oath-description": "{{doc-apihelp-description|query+oath}}",
 	"apihelp-query+oath-summary": "{{doc-apihelp-summary|query+oath}}",
 	"apihelp-query+oath-param-user": "{{doc-apihelp-param|query+oath|user}}",
+	"apihelp-query+oath-param-reason": "{{doc-apihelp-param|query+oath|reason}}",
 	"apihelp-query+oath-example-1": "{{doc-apihelp-example|query+oath}}",
 	"apihelp-query+oath-example-2": "{{doc-apihelp-example|query+oath}}",
 	"apihelp-oathvalidate-description": "{{doc-apihelp-description|oathvalidate}}",

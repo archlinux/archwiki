@@ -19,7 +19,8 @@
  */
 
 use MediaWiki\Block\DatabaseBlock;
-use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\Authority;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * @ingroup API
@@ -58,37 +59,52 @@ trait ApiQueryBlockInfoTrait {
 		] );
 
 		// Don't show hidden names
-		if ( !$this->getPermissionManager()->userHasRight( $this->getUser(), 'hideuser' ) ) {
+		if ( !$this->getAuthority()->isAllowed( 'hideuser' ) ) {
 			$this->addWhere( 'ipb_deleted = 0 OR ipb_deleted IS NULL' );
 		}
 	}
 
-	/**
-	 * @name Methods required from ApiQueryBase
-	 * @{
-	 */
+	/***************************************************************************/
+	// region   Methods required from ApiQueryBase
+	/** @name   Methods required from ApiQueryBase */
 
-	/** @see ApiBase::getDB */
+	/**
+	 * @see ApiBase::getDB
+	 * @return IDatabase
+	 */
 	abstract protected function getDB();
 
-	/** @see ApiBase::getPermissionManager */
-	abstract protected function getPermissionManager(): PermissionManager;
+	/**
+	 * @see IContextSource::getAuthority
+	 * @return Authority
+	 */
+	abstract public function getAuthority();
 
-	/** @see IContextSource::getUser */
-	abstract public function getUser();
-
-	/** @see ApiQueryBase::addTables */
+	/**
+	 * @see ApiQueryBase::addTables
+	 * @param string|array $tables
+	 * @param string|null $alias
+	 */
 	abstract protected function addTables( $tables, $alias = null );
 
-	/** @see ApiQueryBase::addFields */
+	/**
+	 * @see ApiQueryBase::addFields
+	 * @param array|string $fields
+	 */
 	abstract protected function addFields( $fields );
 
-	/** @see ApiQueryBase::addWhere */
+	/**
+	 * @see ApiQueryBase::addWhere
+	 * @param string|array $conds
+	 */
 	abstract protected function addWhere( $conds );
 
-	/** @see ApiQueryBase::addJoinConds */
+	/**
+	 * @see ApiQueryBase::addJoinConds
+	 * @param array $conds
+	 */
 	abstract protected function addJoinConds( $conds );
 
-	/**@}*/
+	// endregion -- end of methods required from ApiQueryBase
 
 }

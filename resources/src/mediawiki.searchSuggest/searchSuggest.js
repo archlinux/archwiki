@@ -4,11 +4,29 @@
 ( function () {
 	// eslint-disable-next-line no-jquery/no-map-util
 	var searchNS = $.map( mw.config.get( 'wgFormattedNamespaces' ), function ( nsName, nsID ) {
-		if ( nsID >= 0 && mw.user.options.get( 'searchNs' + nsID ) ) {
+			if ( nsID >= 0 && mw.user.options.get( 'searchNs' + nsID ) ) {
 			// Cast string key to number
-			return Number( nsID );
-		}
-	} );
+				return Number( nsID );
+			}
+		} ),
+		// T251544: Collect search performance metrics to compare Vue search with
+		// mediawiki.searchSuggest performance. Marks and Measures will only be
+		// recorded on the Vector skin.
+		/* eslint-disable compat/compat */
+		shouldTestSearch = !!( mw.config.get( 'skin' ) === 'vector' &&
+			window.performance &&
+			window.requestAnimationFrame &&
+			performance.mark &&
+			performance.measure &&
+			performance.getEntriesByName &&
+			performance.clearMarks ),
+		/* eslint-enable compat/compat */
+		loadStartMark = 'mwVectorLegacySearchLoadStart',
+		queryMark = 'mwVectorLegacySearchQuery',
+		renderMark = 'mwVectorLegacySearchRender',
+		queryToRenderMeasure = 'mwVectorLegacySearchQueryToRender',
+		loadStartToFirstRenderMeasure = 'mwVectorLegacySearchLoadStartToFirstRender';
+
 	mw.searchSuggest = {
 		// queries the wiki and calls response with the result
 		request: function ( api, query, response, maxRows, namespace ) {
@@ -17,8 +35,7 @@
 				action: 'opensearch',
 				search: query,
 				namespace: namespace || searchNS,
-				limit: maxRows,
-				suggest: true
+				limit: maxRows
 			} ).done( function ( data, jqXHR ) {
 				response( data[ 1 ], {
 					type: jqXHR.getResponseHeader( 'X-OpenSearch-Type' ),
@@ -42,6 +59,17 @@
 			$searchInput = $( '#searchInput' ),
 			previousSearchText = $searchInput.val();
 
+		function serializeObject( fields ) {
+			var i,
+				obj = {};
+
+			for ( i = 0; i < fields.length; i++ ) {
+				obj[ fields[ i ].name ] = fields[ i ].value;
+			}
+
+			return obj;
+		}
+
 		// Compute form data for search suggestions functionality.
 		function getFormData( context ) {
 			var $form, baseHref, linkParams;
@@ -50,10 +78,10 @@
 				// Compute common parameters for links' hrefs
 				$form = context.config.$region.closest( 'form' );
 
-				baseHref = $form.attr( 'action' );
+				baseHref = $form.attr( 'action' ) || '';
 				baseHref += baseHref.indexOf( '?' ) > -1 ? '&' : '?';
 
-				linkParams = $form.serializeObject();
+				linkParams = serializeObject( $form.serializeArray() );
 
 				context.formData = {
 					textParam: context.data.$textbox.attr( 'name' ),
@@ -80,6 +108,21 @@
 				} );
 			}
 			previousSearchText = searchText;
+
+			if ( !shouldTestSearch ) {
+				return;
+			}
+
+			// Clear past marks that are no longer relevant. This likely means that the
+			// search request failed or was cancelled. Whatever the reason, the mark
+			// is no longer needed since we are only interested in collecting the time
+			// from query to render.
+			if ( performance.getEntriesByName( queryMark ).length ) {
+				performance.clearMarks( queryMark );
+			}
+
+			// eslint-disable-next-line compat/compat
+			performance.mark( queryMark );
 		}
 
 		/**
@@ -118,6 +161,36 @@
 				query: metadata.query,
 				inputLocation: getInputLocation( context )
 			} );
+
+			if ( shouldTestSearch ) {
+				// Schedule the mark after the search results have rendered and are
+				// visible to the user. Two rAF's are needed for this since rAF will
+				// execute before the rendering steps happen (e.g. layout and paint). A
+				// nested rAF will execute after these rendering steps have completed
+				// and ensure the search results are visible to the user.
+				requestAnimationFrame( function () {
+					requestAnimationFrame( function () {
+						if ( !performance.getEntriesByName( queryMark ).length ) {
+							return;
+						}
+
+						performance.mark( renderMark );
+						performance.measure( queryToRenderMeasure, queryMark, renderMark );
+
+						// Measure from the start of the lazy load to the first render if we
+						// haven't already captured that info.
+						if ( performance.getEntriesByName( loadStartMark ).length &&
+							!performance.getEntriesByName( loadStartToFirstRenderMeasure ).length ) {
+							performance.measure( loadStartToFirstRenderMeasure, loadStartMark, renderMark );
+						}
+
+						// The measures are the most meaningful info so we remove the marks
+						// after we have the measure.
+						performance.clearMarks( queryMark );
+						performance.clearMarks( renderMark );
+					} );
+				} );
+			}
 		}
 
 		// The function used to render the suggestions.
@@ -182,7 +255,7 @@
 				index: context.config.suggestions.indexOf( query )
 			} );
 
-			if ( $el.children().length === 0 ) {
+			if ( mw.user.options.get( 'search-match-redirect' ) && $el.children().length === 0 ) {
 				$el
 					.append(
 						$( '<div>' )

@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Albertas",
+			"Eitvys200",
 			"Garas",
 			"Homo",
+			"Hugo.arg",
 			"Matasg",
 			"Perkunas",
-			"Hugo.arg",
-			"Tomasdd",
-			"Albertas"
+			"Tomasdd"
 		]
 	},
 	"skinname-vector": "Vektorinė",
@@ -23,5 +24,7 @@
 	"vector-view-history": "Istorija",
 	"vector-view-view": "Skaityti",
 	"vector-view-viewsource": "Žiūrėti kodą",
-	"vector-more-actions": "Daugiau"
+	"vector-jumptocontent": "Pereiti prie turinio",
+	"vector-more-actions": "Daugiau",
+	"vector-search-loader": "Įkeliami paieškos pasiūlymai"
 }

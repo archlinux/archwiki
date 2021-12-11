@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Marat-avgust",
 			"Timming",
-			"Ильнар",
-			"Marat-avgust"
+			"Ерней",
+			"Ильнар"
 		]
 	},
-	"cite_error": "Өземтә китерү хатасы: $1",
-	"cite_error_references_duplicate_key": "<code>&lt;ref&gt;</code> исемле тәг дөрес түгел: «$1» исеме берничә тапкыр төрле эчтәлек өчен билгеләнгән",
+	"cite_error": "Чыганакка җибәрү хатасы: $1",
+	"cite_error_references_duplicate_key": "Ярамаган <code>&lt;ref&gt;</code> исемле тамга: «$1» исеме берничә тапкыр төрле эчтәлек өчен билгеләнгән",
 	"cite_references_link_accessibility_label": "Күчү",
 	"cite_references_link_many_accessibility_label": "Күчү өчен:"
 }

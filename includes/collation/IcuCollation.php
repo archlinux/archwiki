@@ -18,11 +18,13 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * @since 1.16.3
  */
 class IcuCollation extends Collation {
-	const FIRST_LETTER_VERSION = 4;
+	private const FIRST_LETTER_VERSION = 4;
 
 	/** @var Collator */
 	private $primaryCollator;
@@ -51,7 +53,7 @@ class IcuCollation extends Collation {
 	 * is pretty useless for sorting Chinese text anyway. Japanese and Korean
 	 * blocks are not included here, because they are smaller and more useful.
 	 */
-	private static $cjkBlocks = [
+	private const CJK_BLOCKS = [
 		[ 0x2E80, 0x2EFF ], // CJK Radicals Supplement
 		[ 0x2F00, 0x2FDF ], // Kangxi Radicals
 		[ 0x2FF0, 0x2FFF ], // Ideographic Description Characters
@@ -90,7 +92,7 @@ class IcuCollation extends Collation {
 	 * Empty arrays are intended; this signifies that the data for the language is
 	 * available and that there are, in fact, no additional letters to consider.
 	 */
-	private static $tailoringFirstLetters = [
+	private const TAILORING_FIRST_LETTERS = [
 		'af' => [],
 		'am' => [],
 		'ar' => [],
@@ -239,21 +241,12 @@ class IcuCollation extends Collation {
 		'zu' => [],
 	];
 
-	/**
-	 * @since 1.16.3
-	 */
-	const RECORD_LENGTH = 14;
-
 	public function __construct( $locale ) {
-		if ( !extension_loaded( 'intl' ) ) {
-			throw new MWException( 'An ICU collation was requested, ' .
-				'but the intl extension is not available.' );
-		}
-
 		$this->locale = $locale;
 		// Drop everything after the '@' in locale's name
 		$localeParts = explode( '@', $locale );
-		$this->digitTransformLanguage = Language::factory( $locale === 'root' ? 'en' : $localeParts[0] );
+		$this->digitTransformLanguage = MediaWikiServices::getInstance()->getLanguageFactory()
+			->getLanguage( $locale === 'root' ? 'en' : $localeParts[0] );
 
 		$this->mainCollator = Collator::create( $locale );
 		if ( !$this->mainCollator ) {
@@ -351,25 +344,25 @@ class IcuCollation extends Collation {
 	private function fetchFirstLetterData() {
 		global $IP;
 		// Generate data from serialized data file
-		if ( isset( self::$tailoringFirstLetters[$this->locale] ) ) {
+		if ( isset( self::TAILORING_FIRST_LETTERS[$this->locale] ) ) {
 			$letters = require "$IP/includes/collation/data/first-letters-root.php";
 			// Append additional characters
-			$letters = array_merge( $letters, self::$tailoringFirstLetters[$this->locale] );
+			$letters = array_merge( $letters, self::TAILORING_FIRST_LETTERS[$this->locale] );
 			// Remove unnecessary ones, if any
-			if ( isset( self::$tailoringFirstLetters['-' . $this->locale] ) ) {
-				$letters = array_diff( $letters, self::$tailoringFirstLetters['-' . $this->locale] );
+			if ( isset( self::TAILORING_FIRST_LETTERS['-' . $this->locale] ) ) {
+				$letters = array_diff( $letters, self::TAILORING_FIRST_LETTERS['-' . $this->locale] );
 			}
 			// Apply digit transforms
 			$digits = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ];
 			$letters = array_diff( $letters, $digits );
 			foreach ( $digits as $digit ) {
-				$letters[] = $this->digitTransformLanguage->formatNum( $digit, true );
+				$letters[] = $this->digitTransformLanguage->formatNumNoSeparators( $digit );
 			}
 		} elseif ( $this->locale === 'root' ) {
 			$letters = require "$IP/includes/collation/data/first-letters-root.php";
 		} else {
 			// FIXME: Is this still used?
-			$letters = wfGetPrecompiledData( "first-letters-{$this->locale}.ser" );
+			$letters = $this->getPrecompiledData( "first-letters-{$this->locale}.ser" );
 			if ( $letters === false ) {
 				throw new MWException( "MediaWiki does not support ICU locale " .
 					"\"{$this->locale}\"" );
@@ -392,7 +385,7 @@ class IcuCollation extends Collation {
 				// Primary collision (two characters with the same sort position).
 				// Keep whichever one sorts first in the main collator.
 				$comp = $this->mainCollator->compare( $letter, $letterMap[$key] );
-				wfDebug( "Primary collision '$letter' '{$letterMap[$key]}' (comparison: $comp)\n" );
+				wfDebug( "Primary collision '$letter' '{$letterMap[$key]}' (comparison: $comp)" );
 				// If that also has a collision, use codepoint as a tiebreaker.
 				if ( $comp === 0 ) {
 					$comp = UtfNormal\Utils::utf8ToCodepoint( $letter ) <=>
@@ -470,7 +463,7 @@ class IcuCollation extends Collation {
 			$prev = $trimmedKey;
 		}
 		foreach ( $duplicatePrefixes as $badKey ) {
-			wfDebug( "Removing '{$letterMap[$badKey]}' from first letters.\n" );
+			wfDebug( "Removing '{$letterMap[$badKey]}' from first letters." );
 			unset( $letterMap[$badKey] );
 			// This code assumes that unsetting does not change sort order.
 		}
@@ -483,6 +476,26 @@ class IcuCollation extends Collation {
 		unset( $letterMap );
 
 		return $data;
+	}
+
+	/**
+	 * Get an object from the precompiled serialized directory
+	 *
+	 * Replaced use of wfGetPrecompiledData
+	 *
+	 * @param string $name
+	 * @return mixed The variable on success, false on failure
+	 */
+	private function getPrecompiledData( $name ) {
+		global $IP;
+		$file = "$IP/serialized/$name";
+		if ( file_exists( $file ) ) {
+			$blob = file_get_contents( $file );
+			if ( $blob ) {
+				return unserialize( $blob );
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -504,7 +517,7 @@ class IcuCollation extends Collation {
 	}
 
 	/**
-	 * @return string
+	 * @return int
 	 * @since 1.16.3
 	 */
 	public function getFirstLetterCount() {
@@ -518,7 +531,7 @@ class IcuCollation extends Collation {
 	 * @since 1.16.3
 	 */
 	public static function isCjk( $codepoint ) {
-		foreach ( self::$cjkBlocks as $block ) {
+		foreach ( self::CJK_BLOCKS as $block ) {
 			if ( $codepoint >= $block[0] && $codepoint <= $block[1] ) {
 				return true;
 			}
@@ -533,7 +546,7 @@ class IcuCollation extends Collation {
 	 * @since 1.21
 	 * @return string|bool
 	 */
-	static function getUnicodeVersionForICU() {
+	public static function getUnicodeVersionForICU() {
 		$icuVersion = INTL_ICU_VERSION;
 		if ( !$icuVersion ) {
 			return false;
@@ -542,6 +555,10 @@ class IcuCollation extends Collation {
 		$versionPrefix = substr( $icuVersion, 0, 3 );
 		// Source: http://site.icu-project.org/download
 		$map = [
+			'67.' => '13.0',
+			'66.' => '13.0',
+			'65.' => '12.0',
+			'64.' => '12.0',
 			'63.' => '11.0',
 			'62.' => '11.0',
 			'61.' => '10.0',

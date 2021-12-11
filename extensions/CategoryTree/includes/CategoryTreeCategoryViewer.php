@@ -30,14 +30,12 @@ class CategoryTreeCategoryViewer extends CategoryViewer {
 	 * @return CategoryTree
 	 */
 	private function getCategoryTree() {
-		global $wgCategoryTreeCategoryPageOptions;
-
 		if ( !isset( $this->categorytree ) ) {
 			if ( !CategoryTreeHooks::shouldForceHeaders() ) {
 				CategoryTree::setHeaders( $this->getOutput() );
 			}
 
-			$this->categorytree = new CategoryTree( $wgCategoryTreeCategoryPageOptions );
+			$this->categorytree = new CategoryTree( $this->getConfig()->get( 'CategoryTreeCategoryPageOptions' ) );
 		}
 
 		return $this->categorytree;

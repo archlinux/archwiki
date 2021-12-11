@@ -278,7 +278,7 @@
 			},
 			buildTool: function ( context, id, tool ) {
 				var i, label, $button, config, icon, $select, $options, oouiButton,
-					option, optionLabel;
+					option, optionLabel, menuId;
 				if ( 'filters' in tool ) {
 					for ( i = 0; i < tool.filters.length; i++ ) {
 						if ( $( tool.filters[ i ] ).length === 0 ) {
@@ -286,7 +286,7 @@
 						}
 					}
 				}
-				label = $.wikiEditor.autoSafeMsg( tool, 'label' );
+				label = $.wikiEditor.autoMsg( tool, 'label' );
 				switch ( tool.type ) {
 					case 'button':
 					case 'toggle':
@@ -308,7 +308,7 @@
 						} else {
 							$button = $( '<a>' )
 								.attr( {
-									href: '#',
+									tabindex: 0,
 									title: label,
 									rel: id,
 									role: 'button',
@@ -329,6 +329,13 @@
 							// OOUI button
 							if ( $button.data( 'ooui' ) && tool.type === 'toggle' ) {
 								$button.data( 'ooui' ).setValue( active );
+								// Use progressive icon in WMUI theme
+								if ( OO.ui.WikimediaUITheme && OO.ui.theme instanceof OO.ui.WikimediaUITheme ) {
+									// Wait for updateElementClasses to run
+									setTimeout( function () {
+										$button.data( 'ooui' ).$icon.toggleClass( 'oo-ui-image-progressive', active );
+									} );
+								}
 							}
 						} );
 						if ( 'action' in tool ) {
@@ -347,17 +354,23 @@
 									);
 								} );
 							} else {
-								$button.on( 'click', function ( e ) {
-									toolbarModule.fn.doAction(
-										context, tool.action
-									);
-									e.preventDefault();
-									return false;
+								$button.on( 'click keydown', function ( e ) {
+									if (
+										e.type === 'click' ||
+										e.type === 'keydown' && e.key === 'Enter'
+									) {
+										toolbarModule.fn.doAction(
+											context, tool.action
+										);
+										e.preventDefault();
+										return false;
+									}
 								} );
 							}
 						}
 						return $button;
 					case 'select':
+						menuId = 'menu-' + ( new Date() ).getTime();
 						$select = $( '<div>' )
 							.attr( { rel: id, class: 'tool tool-select' } );
 						$options = $( '<div>' ).addClass( 'options' );
@@ -373,18 +386,23 @@
 											e.preventDefault();
 											return false;
 										} )
-										.on( 'click', function ( e ) {
-											toolbarModule.fn.doAction(
-												$( this ).data( 'context' ), $( this ).data( 'action' ), $( this )
-											);
-											// Hide the dropdown
-											$( this ).closest( '.tool-select' ).removeClass( 'options-shown' );
-											e.preventDefault();
-											return false;
+										.on( 'click keydown', function ( e ) {
+											if (
+												e.type === 'click' ||
+												e.type === 'keydown' && e.key === 'Enter'
+											) {
+												toolbarModule.fn.doAction(
+													$( this ).data( 'context' ), $( this ).data( 'action' ), $( this )
+												);
+												// Hide the dropdown
+												$( this ).closest( '.tool-select' ).removeClass( 'options-shown' );
+												e.preventDefault();
+												return false;
+											}
 										} )
 										.text( optionLabel )
 										.addClass( 'option' )
-										.attr( { rel: option, href: '#' } )
+										.attr( { rel: option, tabindex: 0, role: 'menuitem' } )
 								);
 							}
 						}
@@ -392,16 +410,26 @@
 							.addClass( 'label' )
 							.text( label )
 							.data( 'options', $options )
-							.attr( 'href', '#' )
+							.attr( { role: 'button', tabindex: 0, 'aria-expanded': false, 'aria-controls': menuId, 'aria-haspopup': 'menu' } )
 							.on( 'mousedown', function ( e ) {
 								// No dragging!
 								e.preventDefault();
 								return false;
 							} )
-							.on( 'click', function ( e ) {
-								$( this ).data( 'options' ).closest( '.tool-select' ).toggleClass( 'options-shown' );
-								e.preventDefault();
-								return false;
+							.on( 'click keydown', function ( e ) {
+								var $options, canShowOptions;
+								if (
+									e.type === 'click' ||
+									e.type === 'keydown' && e.key === 'Enter'
+								) {
+									$options = $( this ).data( 'options' );
+									// eslint-disable-next-line no-jquery/no-class-state
+									canShowOptions = !$options.closest( '.tool-select' ).hasClass( 'options-shown' );
+									$options.closest( '.tool-select' ).toggleClass( 'options-shown', canShowOptions );
+									$( this ).attr( 'aria-expanded', canShowOptions.toString() );
+									e.preventDefault();
+									return false;
+								}
 							} )
 						);
 						$select.append( $( '<div>' ).addClass( 'menu' ).append( $options ) );
@@ -414,7 +442,10 @@
 				var label = $.wikiEditor.autoMsg( page, 'label' );
 				return $( '<div>' )
 					.text( label )
-					.attr( 'rel', id )
+					.attr( {
+						rel: id,
+						role: 'option'
+					} )
 					.data( 'context', context )
 					.on( 'mousedown', function ( e ) {
 						// No dragging!
@@ -492,6 +523,7 @@
 							$characters
 								.html( html )
 								.children()
+								.attr( 'role', 'option' )
 								.on( 'mousedown', function ( e ) {
 									// No dragging!
 									e.preventDefault();
@@ -560,6 +592,7 @@
 					if ( character.titleMsg !== undefined ) {
 						return mw.html.element(
 							'span',
+							// eslint-disable-next-line mediawiki/msg-doc
 							{ rel: character.label, title: mw.msg( character.titleMsg ) },
 							character.label
 						);
@@ -582,9 +615,9 @@
 					$( '<a>' )
 						.addClass( selected === id ? 'current' : null )
 						.attr( {
-							href: '#',
+							tabindex: 0,
 							role: 'button',
-							'aria-pressed': 'false',
+							'aria-expanded': ( selected === id ).toString(),
 							'aria-controls': 'wikiEditor-section-' + id
 						} )
 						.text( $.wikiEditor.autoMsg( section, 'label' ) )
@@ -597,7 +630,13 @@
 							e.preventDefault();
 							return false;
 						} )
-						.on( 'click', function ( e ) {
+						.on( 'click keydown', function ( e ) {
+							if (
+								e.type !== 'click' &&
+								( e.type !== 'keydown' || e.key !== 'Enter' )
+							) {
+								return;
+							}
 							// We have to set aria-pressed over here, as NVDA wont recognize it
 							// if we do it in the below .each as it seems
 							$( this ).attr( 'aria-pressed', 'true' );
@@ -608,19 +647,22 @@
 							} );
 							$sections = $( this ).data( 'context' ).$ui.find( '.sections' );
 							$section = $sections.find( '.section-' + $( this ).parent().attr( 'rel' ) );
+							// eslint-disable-next-line no-jquery/no-class-state
 							show = !$section.hasClass( 'section-visible' );
 							$sections.find( '.section-visible' )
-								.attr( 'aria-expanded', 'false' )
 								.removeClass( 'section-visible' )
 								.addClass( 'section-hidden' );
 
+							$( this ).attr( 'aria-expanded', 'false' );
 							$( this ).parent().parent().find( 'a' ).removeClass( 'current' );
 							if ( show ) {
 								$section
 									.removeClass( 'section-hidden' )
 									.attr( 'aria-expanded', 'true' )
 									.addClass( 'section-visible' );
-								$( this ).addClass( 'current' );
+
+								$( this ).attr( 'aria-expanded', 'true' )
+									.addClass( 'current' );
 							}
 
 							// Save the currently visible section
@@ -678,8 +720,27 @@
 						}
 						break;
 					case 'booklet':
-						$pages = $( '<div>' ).addClass( 'pages' );
-						$index = $( '<div>' ).addClass( 'index' );
+						$pages = $( '<div>' )
+							.addClass( 'pages' )
+							.attr( {
+								tabindex: '0',
+								role: 'listbox'
+							} )
+							.on( 'keydown', function ( event ) {
+								var $selected = $pages.children().filter( function () {
+									return $( this ).css( 'display' ) !== 'none';
+								} );
+								$.wikiEditor.modules.toolbar.fn.handleKeyDown( $selected.children().first(), event, $pages );
+							} );
+						$index = $( '<div>' )
+							.addClass( 'index' )
+							.attr( {
+								tabindex: '0',
+								role: 'listbox'
+							} )
+							.on( 'keydown', function ( event ) {
+								$.wikiEditor.modules.toolbar.fn.handleKeyDown( $index, event, $index );
+							} );
 						if ( 'pages' in section ) {
 							for ( page in section.pages ) {
 								$pages.append(
@@ -730,10 +791,50 @@
 				}
 				setTimeout( function () {
 					context.$textarea.trigger( 'wikiEditor-toolbar-doneInitialSections' );
+					// Use hook for attaching new toolbar tools to avoid race conditions
+					mw.hook( 'wikiEditor.toolbarReady' ).fire( context.$textarea );
 				} );
+			},
+			handleKeyDown: function ( $element, event, $parent ) {
+				var $nextItem,
+					$currentItem = $element.find( '.wikiEditor-character-highlighted' ),
+					optionTop = $parent.find( '.wikiEditor-character-highlighted' ).offset().top,
+					selectTop = $parent.offset().top;
+				switch ( event.keyCode ) {
+					// Up arrow
+					case 38:
+						if ( $currentItem.length ) {
+							$currentItem.removeClass( 'wikiEditor-character-highlighted' );
+							$nextItem = $currentItem.prev();
+							$nextItem = $nextItem.length ? $nextItem : $currentItem;
+							$nextItem.addClass( 'wikiEditor-character-highlighted' );
+						} else {
+							$element.children().first().addClass( 'wikiEditor-character-highlighted' );
+						}
+						event.preventDefault();
+						event.stopPropagation();
+						break;
+					// Down arrow
+					case 40:
+						if ( $currentItem.length ) {
+							$currentItem.removeClass( 'wikiEditor-character-highlighted' );
+							$nextItem = $currentItem.next();
+							$nextItem = $nextItem.length ? $nextItem : $currentItem;
+							$nextItem.addClass( 'wikiEditor-character-highlighted' );
+						} else {
+							$element.children().first().addClass( 'wikiEditor-character-highlighted' );
+						}
+						event.preventDefault();
+						event.stopPropagation();
+						break;
+					// Enter
+					case 13:
+						$currentItem.trigger( 'click' );
+						break;
+				}
+				$parent.scrollTop( $parent.scrollTop() + ( optionTop - selectTop ) );
 			}
 		}
-
 	};
 
 	module.exports = toolbarModule;

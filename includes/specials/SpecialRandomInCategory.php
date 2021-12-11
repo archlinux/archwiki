@@ -22,6 +22,8 @@
  * @author Brian Wolff
  */
 
+use Wikimedia\Rdbms\ILoadBalancer;
+
 /**
  * Special page to direct the user to a random page
  *
@@ -58,8 +60,15 @@ class SpecialRandomInCategory extends FormSpecialPage {
 	/** @var int|null */
 	private $minTimestamp = null;
 
-	public function __construct( $name = 'RandomInCategory' ) {
-		parent::__construct( $name );
+	/** @var ILoadBalancer */
+	private $loadBalancer;
+
+	/**
+	 * @param ILoadBalancer $loadBalancer
+	 */
+	public function __construct( ILoadBalancer $loadBalancer ) {
+		parent::__construct( 'RandomInCategory' );
+		$this->loadBalancer = $loadBalancer;
 	}
 
 	/**
@@ -137,14 +146,16 @@ class SpecialRandomInCategory extends FormSpecialPage {
 
 		$title = $this->getRandomTitle();
 
-		if ( is_null( $title ) ) {
+		if ( $title === null ) {
 			$msg = $this->msg( 'randomincategory-nopages',
 				$this->category->getText() );
 
 			return Status::newFatal( $msg );
 		}
 
-		$this->getOutput()->redirect( $title->getFullURL() );
+		$query = $this->getRequest()->getValues();
+		unset( $query['title'] );
+		$this->getOutput()->redirect( $title->getFullURL( $query ) );
 	}
 
 	/**
@@ -166,21 +177,21 @@ class SpecialRandomInCategory extends FormSpecialPage {
 			$up = false;
 		}
 
-		$row = $this->selectRandomPageFromDB( $rand, $offset, $up );
+		$row = $this->selectRandomPageFromDB( $rand, $offset, $up, __METHOD__ );
 
 		// Try again without the timestamp offset (wrap around the end)
 		if ( !$row ) {
-			$row = $this->selectRandomPageFromDB( false, $offset, $up );
+			$row = $this->selectRandomPageFromDB( false, $offset, $up, __METHOD__ );
 		}
 
 		// Maybe the category is really small and offset too high
 		if ( !$row ) {
-			$row = $this->selectRandomPageFromDB( $rand, 0, $up );
+			$row = $this->selectRandomPageFromDB( $rand, 0, $up, __METHOD__ );
 		}
 
 		// Just get the first entry.
 		if ( !$row ) {
-			$row = $this->selectRandomPageFromDB( false, 0, true );
+			$row = $this->selectRandomPageFromDB( false, 0, true, __METHOD__ );
 		}
 
 		if ( $row ) {
@@ -223,7 +234,7 @@ class SpecialRandomInCategory extends FormSpecialPage {
 			]
 		];
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 		$minClTime = $this->getTimestampOffset( $rand );
 		if ( $minClTime ) {
 			$qi['conds'][] = 'cl_timestamp ' . $op . ' ' .
@@ -264,7 +275,7 @@ class SpecialRandomInCategory extends FormSpecialPage {
 	 * @throws MWException If category has no entries.
 	 */
 	protected function getMinAndMaxForCat( Title $category ) {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 		$res = $dbr->selectRow(
 			'categorylinks',
 			[
@@ -294,7 +305,7 @@ class SpecialRandomInCategory extends FormSpecialPage {
 	 * @return stdClass|false Info for the title selected.
 	 */
 	private function selectRandomPageFromDB( $rand, $offset, $up, $fname = __METHOD__ ) {
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 
 		$query = $this->getQueryInfo( $rand, $offset, $up );
 		$res = $dbr->select(

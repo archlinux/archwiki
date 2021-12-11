@@ -18,6 +18,7 @@
  * @file
  */
 
+use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\MediaWikiServices;
 
 /**
@@ -25,6 +26,8 @@ use MediaWiki\MediaWikiServices;
  * @ingroup SpecialPage
  */
 class ImportReporter extends ContextSource {
+	use ProtectedHookAccessorTrait;
+
 	private $reason = false;
 	private $logTags = [];
 	private $mOriginalLogCallback = null;
@@ -40,7 +43,7 @@ class ImportReporter extends ContextSource {
 	 * @param string $interwiki
 	 * @param string|bool $reason
 	 */
-	function __construct( $importer, $upload, $interwiki, $reason = false ) {
+	public function __construct( $importer, $upload, $interwiki, $reason = false ) {
 		$this->mOriginalPageOutCallback =
 			$importer->setPageOutCallback( [ $this, 'reportPage' ] );
 		$this->mOriginalLogCallback =
@@ -55,24 +58,24 @@ class ImportReporter extends ContextSource {
 	/**
 	 * Sets change tags to apply to the import log entry and null revision.
 	 *
-	 * @param array $tags
+	 * @param string[] $tags
 	 * @since 1.29
 	 */
 	public function setChangeTags( array $tags ) {
 		$this->logTags = $tags;
 	}
 
-	function open() {
+	public function open() {
 		$this->getOutput()->addHTML( "<ul>\n" );
 	}
 
-	function reportNotice( $msg, array $params ) {
+	private function reportNotice( $msg, array $params ) {
 		$this->getOutput()->addHTML(
 			Html::element( 'li', [], $this->msg( $msg, $params )->text() )
 		);
 	}
 
-	function reportLogItem( ...$args ) {
+	private function reportLogItem( ...$args ) {
 		$this->mLogItemCount++;
 		if ( is_callable( $this->mOriginalLogCallback ) ) {
 			call_user_func_array( $this->mOriginalLogCallback, $args );
@@ -97,7 +100,8 @@ class ImportReporter extends ContextSource {
 		}
 
 		$this->mPageCount++;
-		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		$services = MediaWikiServices::getInstance();
+		$linkRenderer = $services->getLinkRenderer();
 		if ( $successCount > 0 ) {
 			// <bdi> prevents jumbling of the versions count
 			// in RTL wikis in case the page title is LTR
@@ -117,7 +121,8 @@ class ImportReporter extends ContextSource {
 			} else {
 				$pageTitle = $foreignTitle->getFullText();
 				$fullInterwikiPrefix = $this->mInterwiki;
-				Hooks::run( 'ImportLogInterwikiLink', [ &$fullInterwikiPrefix, &$pageTitle ] );
+				$this->getHookRunner()->onImportLogInterwikiLink(
+					$fullInterwikiPrefix, $pageTitle );
 
 				$interwikiTitleStr = $fullInterwikiPrefix . ':' . $pageTitle;
 				$interwiki = '[[:' . $interwikiTitleStr . ']]';
@@ -131,27 +136,44 @@ class ImportReporter extends ContextSource {
 					. $this->reason;
 			}
 
-			$comment = $detail; // quick
+			$comment = CommentStoreComment::newUnsavedComment( $detail );
 			$dbw = wfGetDB( DB_MASTER );
+			$revStore = $services->getRevisionStore();
 			$latest = $title->getLatestRevID();
-			$nullRevision = Revision::newNullRevision(
+			$nullRevRecord = $revStore->newNullRevision(
 				$dbw,
-				$title->getArticleID(),
+				$title,
 				$comment,
 				true,
 				$this->getUser()
 			);
 
 			$nullRevId = null;
-			if ( !is_null( $nullRevision ) ) {
-				$nullRevId = $nullRevision->insertOn( $dbw );
-				$page = WikiPage::factory( $title );
-				# Update page record
-				$page->updateRevisionOn( $dbw, $nullRevision );
-				Hooks::run(
-					'NewRevisionFromEditComplete',
-					[ $page, $nullRevision, $latest, $this->getUser() ]
+			if ( $nullRevRecord !== null ) {
+				$inserted = $revStore->insertRevisionOn( $nullRevRecord, $dbw );
+				$nullRevId = $inserted->getId();
+				$page = $services->getWikiPageFactory()->newFromTitle( $title );
+
+				// Update page record
+				$page->updateRevisionOn( $dbw, $inserted );
+
+				$fakeTags = [];
+				$this->getHookRunner()->onRevisionFromEditComplete(
+					$page, $inserted, $latest, $this->getUser(), $fakeTags
 				);
+
+				// Hook is hard deprecated since 1.35
+				if ( $this->getHookContainer()->isRegistered( 'NewRevisionFromEditComplete' ) ) {
+					// Only create Revision object if needed
+					$nullRevision = new Revision( $inserted );
+					$this->getHookRunner()->onNewRevisionFromEditComplete(
+						$page,
+						$nullRevision,
+						$latest,
+						$this->getUser(),
+						$fakeTags
+					);
+				}
 			}
 
 			// Create the import log entry
@@ -173,7 +195,7 @@ class ImportReporter extends ContextSource {
 		}
 	}
 
-	function close() {
+	public function close() {
 		$out = $this->getOutput();
 		if ( $this->mLogItemCount > 0 ) {
 			$msg = $this->msg( 'imported-log-entries' )->numParams( $this->mLogItemCount )->parse();

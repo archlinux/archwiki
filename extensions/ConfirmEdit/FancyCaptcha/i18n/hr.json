@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"SpeedyGonsales",
 			"MaGa",
-			"Roberta F."
+			"Roberta F.",
+			"SpeedyGonsales"
 		]
 	},
 	"fancycaptcha-addurl": "Vaše uređivanje sadrži nove vanjske poveznice. Kao zaštitu od automatskog spama,\nmolimo unesite slova koja vidite na slici dolje: ([[Special:Captcha/help|Pomoć]])",

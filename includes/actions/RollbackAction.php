@@ -20,7 +20,9 @@
  * @ingroup Actions
  */
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\SlotRecord;
 
 /**
  * User interface for the rollback action
@@ -90,33 +92,37 @@ class RollbackAction extends FormAction {
 
 	public function handleRollbackRequest() {
 		$this->enableTransactionalTimelimit();
+		$this->getOutput()->addModuleStyles( 'mediawiki.interface.helpers.styles' );
 
 		$request = $this->getRequest();
 		$user = $this->getUser();
 		$from = $request->getVal( 'from' );
-		$rev = $this->page->getRevision();
+		$rev = $this->getWikiPage()->getRevisionRecord();
 		if ( $from === null ) {
 			throw new ErrorPageError( 'rollbackfailed', 'rollback-missingparam' );
 		}
 		if ( !$rev ) {
 			throw new ErrorPageError( 'rollbackfailed', 'rollback-missingrevision' );
 		}
-		if ( $from !== $rev->getUserText() ) {
+
+		$revUser = $rev->getUser();
+		$userText = $revUser ? $revUser->getName() : '';
+		if ( $from !== $userText ) {
 			throw new ErrorPageError( 'rollbackfailed', 'alreadyrolled', [
 				$this->getTitle()->getPrefixedText(),
 				$from,
-				$rev->getUserText()
+				$userText
 			] );
 		}
 
 		$data = null;
-		$errors = $this->page->doRollback(
+		$errors = $this->getWikiPage()->doRollback(
 			$from,
 			$request->getText( 'summary' ),
 			$request->getVal( 'token' ),
 			$request->getBool( 'bot' ),
 			$data,
-			$this->getUser()
+			$this->getContext()->getAuthority()
 		);
 
 		if ( in_array( [ 'actionthrottledtext' ], $errors ) ) {
@@ -129,15 +135,17 @@ class RollbackAction extends FormAction {
 			$errMsg = array_shift( $errArray );
 			$this->getOutput()->addWikiMsgArray( $errMsg, $errArray );
 
-			if ( isset( $data['current'] ) ) {
-				/** @var Revision $current */
-				$current = $data['current'];
+			if ( isset( $data['current-revision-record'] ) ) {
+				/** @var RevisionRecord $current */
+				$current = $data['current-revision-record'];
 
-				if ( $current->getComment() != '' ) {
+				if ( $current->getComment() != null ) {
 					$this->getOutput()->addWikiMsg(
 						'editcomment',
 						Message::rawParam(
-							Linker::formatComment( $current->getComment() )
+							Linker::formatComment(
+								$current->getComment()->text
+							)
 						)
 					);
 				}
@@ -157,33 +165,42 @@ class RollbackAction extends FormAction {
 			throw new ErrorPageError( 'rollbackfailed', $error[0], array_slice( $error, 1 ) );
 		}
 
-		/** @var Revision $current */
-		$current = $data['current'];
-		$target = $data['target'];
+		/** @var RevisionRecord $current */
+		$current = $data['current-revision-record'];
+		$target = $data['target-revision-record'];
 		$newId = $data['newid'];
 		$this->getOutput()->setPageTitle( $this->msg( 'actioncomplete' ) );
 		$this->getOutput()->setRobotPolicy( 'noindex,nofollow' );
 
 		$old = Linker::revUserTools( $current );
 		$new = Linker::revUserTools( $target );
+
+		$currentUser = $current->getUser( RevisionRecord::FOR_THIS_USER, $user );
+		$targetUser = $target->getUser( RevisionRecord::FOR_THIS_USER, $user );
 		$this->getOutput()->addHTML(
 			$this->msg( 'rollback-success' )
 				->rawParams( $old, $new )
-				->params( $current->getUserText( RevisionRecord::FOR_THIS_USER, $user ) )
-				->params( $target->getUserText( RevisionRecord::FOR_THIS_USER, $user ) )
+				->params( $currentUser ? $currentUser->getName() : '' )
+				->params( $targetUser ? $targetUser->getName() : '' )
 				->parseAsBlock()
 		);
 
-		if ( $user->getBoolOption( 'watchrollback' ) ) {
-			$user->addWatch( $this->page->getTitle(), User::IGNORE_USER_RIGHTS );
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+
+		if ( $userOptionsLookup->getBoolOption( $user, 'watchrollback' ) ) {
+			$user->addWatch( $this->getTitle(), User::IGNORE_USER_RIGHTS );
 		}
 
 		$this->getOutput()->returnToMain( false, $this->getTitle() );
 
 		if ( !$request->getBool( 'hidediff', false ) &&
-			!$this->getUser()->getBoolOption( 'norollbackdiff' )
+			!$userOptionsLookup->getBoolOption( $this->getUser(), 'norollbackdiff' )
 		) {
-			$contentHandler = $current->getContentHandler();
+			$contentModel = $current->getSlot( SlotRecord::MAIN, RevisionRecord::RAW )
+				->getModel();
+			$contentHandler = MediaWikiServices::getInstance()
+				->getContentHandlerFactory()
+				->getContentHandler( $contentModel );
 			$de = $contentHandler->createDifferenceEngine(
 				$this->getContext(),
 				$current->getId(),
@@ -211,7 +228,7 @@ class RollbackAction extends FormAction {
 			$trxLimits = $this->context->getConfig()->get( 'TrxProfilerLimits' );
 			$trxProfiler = Profiler::instance()->getTransactionProfiler();
 			$trxProfiler->redefineExpectations( $trxLimits['POST'], $fname );
-			DeferredUpdates::addCallableUpdate( function () use ( $trxProfiler, $trxLimits, $fname
+			DeferredUpdates::addCallableUpdate( static function () use ( $trxProfiler, $trxLimits, $fname
 			) {
 				$trxProfiler->redefineExpectations( $trxLimits['PostSend-POST'], $fname );
 			} );

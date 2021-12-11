@@ -20,9 +20,9 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
-use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\LoadBalancer;
 
 /**
@@ -53,12 +53,12 @@ class SiteStats {
 
 		$lb = self::getLB();
 		$dbr = $lb->getConnectionRef( DB_REPLICA );
-		wfDebug( __METHOD__ . ": reading site_stats from replica DB\n" );
+		wfDebug( __METHOD__ . ": reading site_stats from replica DB" );
 		$row = self::doLoadFromDB( $dbr );
 
 		if ( !self::isRowSane( $row ) && $lb->hasOrMadeRecentMasterChanges() ) {
 			// Might have just been initialized during this request? Underflow?
-			wfDebug( __METHOD__ . ": site_stats damaged or missing on replica DB\n" );
+			wfDebug( __METHOD__ . ": site_stats damaged or missing on replica DB" );
 			$row = self::doLoadFromDB( $lb->getConnectionRef( DB_MASTER ) );
 		}
 
@@ -72,7 +72,7 @@ class SiteStats {
 				// Some manual construction scenarios may leave the table empty or
 				// broken, however, for instance when importing from a dump into a
 				// clean schema with mwdumper.
-				wfDebug( __METHOD__ . ": initializing damaged or missing site_stats\n" );
+				wfDebug( __METHOD__ . ": initializing damaged or missing site_stats" );
 				SiteStatsInit::doAllAndCommit( $dbr );
 			}
 
@@ -80,7 +80,7 @@ class SiteStats {
 		}
 
 		if ( !self::isRowSane( $row ) ) {
-			wfDebug( __METHOD__ . ": site_stats persistently nonsensical o_O\n" );
+			wfDebug( __METHOD__ . ": site_stats persistently nonsensical o_O" );
 			// Always return a row-like object
 			$row = self::salvageInsaneRow( $row );
 		}
@@ -182,7 +182,7 @@ class SiteStats {
 		return $cache->getWithSetCallback(
 			$cache->makeKey( 'SiteStats', 'jobscount' ),
 			$cache::TTL_MINUTE,
-			function ( $oldValue, &$ttl, array &$setOpts ) {
+			static function ( $oldValue, &$ttl, array &$setOpts ) {
 				try{
 					$jobs = array_sum( JobQueueGroup::singleton()->getQueueSizes() );
 				} catch ( JobQueueError $e ) {
@@ -252,7 +252,7 @@ class SiteStats {
 	 *
 	 * Checks only fields which are filled by SiteStatsInit::refresh.
 	 *
-	 * @param bool|object $row
+	 * @param bool|stdClass $row
 	 * @return bool
 	 */
 	private static function isRowSane( $row ) {

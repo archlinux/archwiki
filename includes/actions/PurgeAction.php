@@ -33,16 +33,12 @@ class PurgeAction extends FormAction {
 		return 'purge';
 	}
 
-	public function requiresUnblock() {
-		return false;
-	}
-
 	public function getDescription() {
 		return '';
 	}
 
 	public function onSubmit( $data ) {
-		return $this->page->doPurge();
+		return $this->getWikiPage()->doPurge();
 	}
 
 	public function show() {

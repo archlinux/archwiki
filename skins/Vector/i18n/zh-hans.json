@@ -1,17 +1,29 @@
 {
 	"@metadata": {
 		"authors": [
+			"500000000006城",
+			"AYZ04",
+			"Cwek",
+			"Func",
 			"Hydra",
+			"Irati",
 			"Liangent",
 			"Liuxinyu970226",
+			"Sunny00217",
 			"Xiaomingyan",
-			"Cwek"
+			"Xiplus",
+			"Yfdyh000"
 		]
 	},
 	"skinname-vector": "Vector",
-	"vector-skin-desc": "提供清新的外观和许多可用性改进的现代版MonoBook",
+	"vector-skin-desc": "有着清新外观和许多可用性改进的现代版MonoBook皮肤",
+	"prefs-vector-enable-vector-1-label": "使用经典Vector",
+	"prefs-vector-enable-vector-1-help": "接下来的几年中，我们将逐步更新Vector皮肤。经典Vector允许您查看Vector的旧版本（截至2019年12月）。有关更新的更多信息，请查看我们的[[mw:Reading/Web/Desktop_Improvements|项目页面]]",
+	"vector-opt-out": "切换回旧风格",
+	"vector-opt-out-tooltip": "更改您的设置来使用经典Vector皮肤。",
 	"vector.css": "/* 这里放置的CSS将影响使用Vector皮肤的用户 */",
 	"vector.js": "/* 这里的任何JavaScript将为使用Vector皮肤的用户加载 */",
+	"vector-action-toggle-sidebar": "折叠侧栏",
 	"vector-action-addsection": "添加话题",
 	"vector-action-delete": "删除",
 	"vector-action-move": "移动",
@@ -25,5 +37,7 @@
 	"vector-view-viewsource": "查看源代码",
 	"vector-jumptonavigation": "跳到导航",
 	"vector-jumptosearch": "跳到搜索",
-	"vector-more-actions": "更多"
+	"vector-jumptocontent": "跳转到内容",
+	"vector-more-actions": "更多",
+	"vector-search-loader": "正在加载搜索建议"
 }

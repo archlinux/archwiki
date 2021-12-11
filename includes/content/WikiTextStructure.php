@@ -147,7 +147,7 @@ class WikiTextStructure {
 	 * Extract parts of the text - opening, main and auxiliary.
 	 */
 	private function extractWikitextParts() {
-		if ( !is_null( $this->allText ) ) {
+		if ( $this->allText !== null ) {
 			return;
 		}
 		$text = $this->parserOutput->getText( [
@@ -216,7 +216,6 @@ class WikiTextStructure {
 	}
 
 	/**
-	 * Get opening text
 	 * @return string
 	 */
 	public function getOpeningText() {
@@ -225,7 +224,6 @@ class WikiTextStructure {
 	}
 
 	/**
-	 * Get main text
 	 * @return string
 	 */
 	public function getMainText() {
@@ -234,7 +232,6 @@ class WikiTextStructure {
 	}
 
 	/**
-	 * Get auxiliary text
 	 * @return string[]
 	 */
 	public function getAuxiliaryText() {

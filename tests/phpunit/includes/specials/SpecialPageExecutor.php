@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Permissions\Authority;
+
 /**
  * @author Addshore
  *
@@ -11,8 +13,13 @@ class SpecialPageExecutor {
 	 * @param SpecialPage $page The special page to execute
 	 * @param string $subPage The subpage parameter to call the page with
 	 * @param WebRequest|null $request Web request that may contain URL parameters, etc
-	 * @param Language|string|null $language The language which should be used in the context
-	 * @param User|null $user The user which should be used in the context of this special page
+	 * @param Language|string|null $language The language which should be used in the context;
+	 * if not specified, the pseudo-code 'qqx' is used
+	 * @param Authority|null $performer The user which should be used in the context of this special page
+	 * @param bool $fullHtml if true, the entirety of the generated HTML will be returned, this
+	 * includes the opening <!DOCTYPE> declaration and closing </html> tag. If false, only value
+	 * of OutputPage::getHTML() will be returned except if the page is redirect or where OutputPage
+	 * is completely disabled.
 	 *
 	 * @throws Exception
 	 * @return array [ string, WebResponse ] A two-elements array containing the HTML output
@@ -23,9 +30,10 @@ class SpecialPageExecutor {
 		$subPage = '',
 		WebRequest $request = null,
 		$language = null,
-		User $user = null
+		Authority $performer = null,
+		$fullHtml = false
 	) {
-		$context = $this->newContext( $request, $language, $user );
+		$context = $this->newContext( $request, $language, $performer );
 
 		$output = new OutputPage( $context );
 		$context->setOutput( $output );
@@ -33,7 +41,7 @@ class SpecialPageExecutor {
 		$page->setContext( $context );
 		$output->setTitle( $page->getPageTitle() );
 
-		$html = $this->getHTMLFromSpecialPage( $page, $subPage );
+		$html = $this->getHTMLFromSpecialPage( $page, $subPage, $fullHtml );
 		$response = $context->getRequest()->response();
 
 		if ( $response instanceof FauxResponse ) {
@@ -49,26 +57,24 @@ class SpecialPageExecutor {
 
 	/**
 	 * @param WebRequest|null $request
-	 * @param Language|string|null $language
-	 * @param User|null $user
+	 * @param Language|string|null $language Defaults to 'qqx'
+	 * @param Authority|null $performer
 	 *
 	 * @return DerivativeContext
 	 */
 	private function newContext(
 		WebRequest $request = null,
 		$language = null,
-		User $user = null
+		Authority $performer = null
 	) {
 		$context = new DerivativeContext( RequestContext::getMain() );
 
 		$context->setRequest( $request ?: new FauxRequest() );
 
-		if ( $language !== null ) {
-			$context->setLanguage( $language );
-		}
+		$context->setLanguage( $language ?: 'qqx' );
 
-		if ( $user !== null ) {
-			$context->setUser( $user );
+		if ( $performer !== null ) {
+			$context->setAuthority( $performer );
 		}
 
 		$this->setEditTokenFromUser( $context );
@@ -97,11 +103,12 @@ class SpecialPageExecutor {
 	/**
 	 * @param SpecialPage $page
 	 * @param string $subPage
+	 * @param bool $fullHtml
 	 *
 	 * @throws Exception
 	 * @return string HTML
 	 */
-	private function getHTMLFromSpecialPage( SpecialPage $page, $subPage ) {
+	private function getHTMLFromSpecialPage( SpecialPage $page, $subPage, $fullHtml ) {
 		ob_start();
 
 		try {
@@ -114,6 +121,8 @@ class SpecialPageExecutor {
 				$html = ob_get_contents();
 			} elseif ( $output->isDisabled() ) {
 				$html = ob_get_contents();
+			} elseif ( $fullHtml ) {
+				$html = $output->output( true );
 			} else {
 				$html = $output->getHTML();
 			}

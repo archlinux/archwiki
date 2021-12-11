@@ -7,9 +7,9 @@
 			"Klutzy",
 			"Kwj2772",
 			"Mooozi",
-			"아라",
 			"Revi",
-			"Ykhwong"
+			"Ykhwong",
+			"아라"
 		]
 	},
 	"exif-imagewidth": "너비",
@@ -203,7 +203,6 @@
 	"exif-photometricinterpretation-3": "팔레트",
 	"exif-photometricinterpretation-4": "투명 마스크",
 	"exif-photometricinterpretation-5": "분리 (아마도 CMYK)",
-	"exif-photometricinterpretation-8": "CIE L*a*b*",
 	"exif-photometricinterpretation-9": "CIE L*a*b* (ICC 인코딩)",
 	"exif-photometricinterpretation-10": "CIE L*a*b* (ITU 인코딩)",
 	"exif-photometricinterpretation-32803": "컬러 필터 어레이",
@@ -281,6 +280,8 @@
 	"exif-customrendered-3": "HDR (원본 저장)",
 	"exif-customrendered-4": "원본 (HDR용)",
 	"exif-customrendered-6": "파노라마",
+	"exif-customrendered-7": "HDR 인물 사진",
+	"exif-customrendered-8": "인물 사진",
 	"exif-exposuremode-0": "자동 노출",
 	"exif-exposuremode-1": "수동 노출",
 	"exif-exposuremode-2": "자동 노출 브래킷",

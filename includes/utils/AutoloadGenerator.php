@@ -32,8 +32,8 @@
  *     $gen->getAutoload();
  */
 class AutoloadGenerator {
-	const FILETYPE_JSON = 'json';
-	const FILETYPE_PHP = 'php';
+	private const FILETYPE_JSON = 'json';
+	private const FILETYPE_PHP = 'php';
 
 	/**
 	 * @var string Root path of the project being scanned for classes
@@ -105,8 +105,6 @@ class AutoloadGenerator {
 	}
 
 	/**
-	 * Set PSR4 namespaces
-	 *
 	 * Unlike self::setExcludePaths(), this will only skip outputting the
 	 * autoloader entry when the namespace matches the path.
 	 *
@@ -173,9 +171,22 @@ class AutoloadGenerator {
 		if ( $this->shouldExclude( $inputPath ) ) {
 			return;
 		}
-		$result = $this->collector->getClasses(
-			file_get_contents( $inputPath )
-		);
+		$fileContents = file_get_contents( $inputPath );
+
+		// Skip files that declare themselves excluded
+		if ( preg_match( '!^// *NO_AUTOLOAD!m', $fileContents ) ) {
+			return;
+		}
+		// Skip files that use CommandLineInc since these execute file-scope
+		// code when included
+		if ( preg_match(
+			'/(require|require_once)[ (].*(CommandLineInc.php|commandLine.inc)/',
+			$fileContents )
+		) {
+			return;
+		}
+
+		$result = $this->collector->getClasses( $fileContents );
 
 		// Filter out classes that will be found by PSR4
 		$result = array_filter( $result, function ( $class ) use ( $inputPath ) {
@@ -202,8 +213,7 @@ class AutoloadGenerator {
 	}
 
 	/**
-	 * @param string $dir Path to a directory to recursively search
-	 *  for php files with either .php or .inc extensions
+	 * @param string $dir Path to a directory to recursively search for php files
 	 */
 	public function readDir( $dir ) {
 		$it = new RecursiveDirectoryIterator(
@@ -211,9 +221,7 @@ class AutoloadGenerator {
 		$it = new RecursiveIteratorIterator( $it );
 
 		foreach ( $it as $path => $file ) {
-			$ext = pathinfo( $path, PATHINFO_EXTENSION );
-			// some older files in mw use .inc
-			if ( $ext === 'php' || $ext === 'inc' ) {
+			if ( pathinfo( $path, PATHINFO_EXTENSION ) === 'php' ) {
 				$this->readFile( $path );
 			}
 		}
@@ -325,9 +333,9 @@ EOD;
 
 		if ( $fileinfo['type'] === self::FILETYPE_JSON ) {
 			return $this->generateJsonAutoload( $fileinfo['filename'] );
-		} else {
-			return $this->generatePHPAutoload( $commandName, $fileinfo['filename'] );
 		}
+
+		return $this->generatePHPAutoload( $commandName, $fileinfo['filename'] );
 	}
 
 	/**
@@ -339,23 +347,23 @@ EOD;
 	 * @return array
 	 */
 	public function getTargetFileinfo() {
-		$fileinfo = [
-			'filename' => $this->basepath . '/autoload.php',
-			'type' => self::FILETYPE_PHP
-		];
 		if ( file_exists( $this->basepath . '/extension.json' ) ) {
-			$fileinfo = [
+			return [
 				'filename' => $this->basepath . '/extension.json',
 				'type' => self::FILETYPE_JSON
 			];
-		} elseif ( file_exists( $this->basepath . '/skin.json' ) ) {
-			$fileinfo = [
+		}
+		if ( file_exists( $this->basepath . '/skin.json' ) ) {
+			return [
 				'filename' => $this->basepath . '/skin.json',
 				'type' => self::FILETYPE_JSON
 			];
 		}
 
-		return $fileinfo;
+		return [
+			'filename' => $this->basepath . '/autoload.php',
+			'type' => self::FILETYPE_PHP
+		];
 	}
 
 	/**
@@ -375,7 +383,7 @@ EOD;
 	 *  * languages/
 	 *  * maintenance/
 	 *  * mw-config/
-	 *  * /*.php
+	 *  * any `*.php` file in the base directory
 	 */
 	public function initMediaWikiDefault() {
 		foreach ( [ 'includes', 'languages', 'maintenance', 'mw-config' ] as $dir ) {

@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"01miki10",
 			"Agony",
 			"Cimon Avaro",
 			"Crt",
 			"Nike",
+			"Pxos",
 			"Str4nd",
-			"Stryn",
-			"Pxos"
+			"Stryn"
 		]
 	},
 	"action-titleblacklistlog": "tarkastella nimien mustan listan lokia",
@@ -20,7 +21,7 @@
 	"titleblacklist-forbidden-edit": "Sivun ”$2” luonti on estetty, koska se täsmää seuraavaan merkintään mustassa listassa: <code>$1</code>",
 	"titleblacklist-forbidden-move": "Sivua ”$2” ei voi siirtää nimelle ”$3”, koska sivun ”$3” luonti on estetty. Se täsmää seuraavaan merkintään mustassa listassa: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "Tiedoston ”$2” luonti on estetty, koska se täsmää seuraavaan merkintään mustassa listassa: <code>$1</code>",
-	"titleblacklist-forbidden-new-account": "Käyttäjätunnuksen ”$2” luonti on estetty.\nSe täsmää seuraavaan mustan listan merkintään: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "Käyttäjänimen ”$2” luonti on estetty.\nSe täsmää seuraavaan mustan listan merkintään: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|Seuraava rivi mustalla listalla ei ole kelvollinen|Seuraavat rivit mustalla listalla eivät ole kelvollisia}}. Korjaa {{PLURAL:$1|se|ne}} ennen tallentamista:",
 	"titleblacklist-override": "Ohita mustan listan merkinnät",
 	"right-tboverride": "Ohittaa sivunimien tai käyttäjänimien musta lista",

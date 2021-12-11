@@ -8,11 +8,7 @@
  * license. See the LICENSE file for details.
  */
 
-namespace Wikimedia\Composer;
-
-use Wikimedia\Composer\Merge\ExtraPackage;
-use Wikimedia\Composer\Merge\MissingFileException;
-use Wikimedia\Composer\Merge\PluginState;
+namespace Wikimedia\Composer\Merge\V2;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
@@ -20,12 +16,11 @@ use Composer\EventDispatcher\Event as BaseEvent;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Factory;
 use Composer\Installer;
-use Composer\Installer\InstallerEvent;
-use Composer\Installer\InstallerEvents;
 use Composer\Installer\PackageEvent;
 use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Package\RootPackageInterface;
+use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event as ScriptEvent;
 use Composer\Script\ScriptEvents;
@@ -85,17 +80,12 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Offical package name
      */
-    const PACKAGE_NAME = 'wikimedia/composer-merge-plugin';
-
-    /**
-     * Name of the composer 1.1 init event.
-     */
-    const COMPAT_PLUGINEVENTS_INIT = 'init';
+    public const PACKAGE_NAME = 'wikimedia/composer-merge-plugin';
 
     /**
      * Priority that plugin uses to register callbacks.
      */
-    const CALLBACK_PRIORITY = 50000;
+    private const CALLBACK_PRIORITY = 50000;
 
     /**
      * @var Composer $composer
@@ -115,16 +105,23 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Files that have already been fully processed
      *
-     * @var string[] $loaded
+     * @var array<string, bool> $loaded
      */
     protected $loaded = array();
 
     /**
      * Files that have already been partially processed
      *
-     * @var string[] $loadedNoDev
+     * @var array<string, bool> $loadedNoDev
      */
     protected $loadedNoDev = array();
+
+    /**
+     * Nested packages to restrict update operations.
+     *
+     * @var array<string, bool> $updateAllowList
+     */
+    protected $updateAllowList = array();
 
     /**
      * {@inheritdoc}
@@ -139,16 +136,25 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
+    public function deactivate(Composer $composer, IOInterface $io)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function uninstall(Composer $composer, IOInterface $io)
+    {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
         return array(
-            // Use our own constant to make this event optional. Once
-            // composer-1.1 is required, this can use PluginEvents::INIT
-            // instead.
-            self::COMPAT_PLUGINEVENTS_INIT =>
+            PluginEvents::INIT =>
                 array('onInit', self::CALLBACK_PRIORITY),
-            InstallerEvents::PRE_DEPENDENCIES_SOLVING =>
-                array('onDependencySolve', self::CALLBACK_PRIORITY),
             PackageEvents::POST_PACKAGE_INSTALL =>
                 array('onPostPackageInstall', self::CALLBACK_PRIORITY),
             ScriptEvents::POST_INSTALL_CMD =>
@@ -162,6 +168,17 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
             ScriptEvents::PRE_UPDATE_CMD =>
                 array('onInstallUpdateOrDump', self::CALLBACK_PRIORITY),
         );
+    }
+
+    /**
+     * Get list of packages to restrict update operations.
+     *
+     * @return string[]
+     * @see \Composer\Installer::setUpdateAllowList()
+     */
+    public function getUpdateAllowList()
+    {
+        return array_keys($this->updateAllowList);
     }
 
     /**
@@ -263,6 +280,14 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
             $package->mergeInto($root, $this->state);
         }
 
+        $requirements = $package->getMergedRequirements();
+        if (!empty($requirements)) {
+            $this->updateAllowList = array_replace(
+                $this->updateAllowList,
+                array_fill_keys($requirements, true)
+            );
+        }
+
         if ($this->state->isDevMode()) {
             $this->loaded[$path] = true;
         } else {
@@ -272,38 +297,6 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
         if ($this->state->recurseIncludes()) {
             $this->mergeFiles($package->getIncludes(), false);
             $this->mergeFiles($package->getRequires(), true);
-        }
-    }
-
-    /**
-     * Handle an event callback for pre-dependency solving phase of an install
-     * or update by adding any duplicate package dependencies found during
-     * initial merge processing to the request that will be processed by the
-     * dependency solver.
-     *
-     * @param InstallerEvent $event
-     */
-    public function onDependencySolve(InstallerEvent $event)
-    {
-        $request = $event->getRequest();
-        foreach ($this->state->getDuplicateLinks('require') as $link) {
-            $this->logger->info(
-                "Adding dependency <comment>{$link}</comment>"
-            );
-            $request->install($link->getTarget(), $link->getConstraint());
-        }
-
-        // Issue #113: Check devMode of event rather than our global state.
-        // Composer fires the PRE_DEPENDENCIES_SOLVING event twice for
-        // `--no-dev` operations to decide which packages are dev only
-        // requirements.
-        if ($this->state->shouldMergeDev() && $event->isDevMode()) {
-            foreach ($this->state->getDuplicateLinks('require-dev') as $link) {
-                $this->logger->info(
-                    "Adding dev dependency <comment>{$link}</comment>"
-                );
-                $request->install($link->getTarget(), $link->getConstraint());
-            }
         }
     }
 
@@ -340,14 +333,21 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
         // @codeCoverageIgnoreStart
         if ($this->state->isFirstInstall()) {
             $this->state->setFirstInstall(false);
-            $this->logger->info(
-                '<comment>' .
-                'Running additional update to apply merge settings' .
-                '</comment>'
-            );
+
+            $requirements = $this->getUpdateAllowList();
+            if (empty($requirements)) {
+                return;
+            }
+
+            $this->logger->log("\n".'<info>Running composer update to apply merge settings</info>');
+
+            if (!$this->state->isComposer1()) {
+                $file = Factory::getComposerFile();
+                $lock = Factory::getLockFile($file);
+                $lockBackup = file_exists($lock) ? file_get_contents($lock) : null;
+            }
 
             $config = $this->composer->getConfig();
-
             $preferSource = $config->get('preferred-install') == 'source';
             $preferDist = $config->get('preferred-install') == 'dist';
 
@@ -366,14 +366,25 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
                 $this->state->shouldOptimizeAutoloader()
             );
 
-            if ($this->state->forceUpdate()) {
-                // Force update mode so that new packages are processed rather
-                // than just telling the user that composer.json and
-                // composer.lock don't match.
-                $installer->setUpdate(true);
+            $installer->setUpdate(true);
+
+            if ($this->state->isComposer1()) {
+                $installer->setUpdateWhitelist($requirements);
+            } else {
+                $installer->setUpdateAllowList($requirements);
             }
 
-            $installer->run();
+            $status = $installer->run();
+            if ($status !== 0) {
+                if (!$this->state->isComposer1() && $lockBackup) {
+                    $this->logger->log(
+                        "\n".'<error>'.
+                        'Update to apply merge settings failed, reverting '.$lock.' to its original content.'.
+                        '</error>'
+                    );
+                    file_put_contents($lock, $lockBackup);
+                }
+            }
         }
         // @codeCoverageIgnoreEnd
     }

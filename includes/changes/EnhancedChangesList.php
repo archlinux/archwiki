@@ -31,7 +31,7 @@ class EnhancedChangesList extends ChangesList {
 	protected $cacheEntryFactory;
 
 	/**
-	 * @var array Array of array of RCCacheEntry
+	 * @var RCCacheEntry[][]
 	 */
 	protected $rc_cache;
 
@@ -89,7 +89,7 @@ class EnhancedChangesList extends ChangesList {
 			'jquery.makeCollapsible',
 		] );
 
-		return '<div class="mw-changeslist">';
+		return '<div class="mw-changeslist" aria-live="polite">';
 	}
 
 	/**
@@ -205,7 +205,7 @@ class EnhancedChangesList extends ChangesList {
 		# Default values for RC flags
 		$collectedRcFlags = [];
 		foreach ( $recentChangesFlags as $key => $value ) {
-			$flagGrouping = ( $recentChangesFlags[$key]['grouping'] ?? 'any' );
+			$flagGrouping = $value['grouping'] ?? 'any';
 			switch ( $flagGrouping ) {
 				case 'all':
 					$collectedRcFlags[$key] = true;
@@ -412,7 +412,7 @@ class EnhancedChangesList extends ChangesList {
 		if ( $type == RC_LOG ) {
 			$link = htmlspecialchars( $rcObj->timestamp );
 			# Revision link
-		} elseif ( !ChangesList::userCan( $rcObj, RevisionRecord::DELETED_TEXT, $this->getUser() ) ) {
+		} elseif ( !ChangesList::userCan( $rcObj, RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
 			$link = Html::element( 'span', [ 'class' => 'history-deleted' ], $rcObj->timestamp );
 		} else {
 			$link = $this->linkRenderer->makeKnownLink(
@@ -467,8 +467,8 @@ class EnhancedChangesList extends ChangesList {
 		$attribs = $this->getDataAttributes( $rcObj );
 
 		// give the hook a chance to modify the data
-		$success = Hooks::run( 'EnhancedChangesListModifyLineData',
-			[ $this, &$data, $block, $rcObj, &$classes, &$attribs ] );
+		$success = $this->getHookRunner()->onEnhancedChangesListModifyLineData(
+			$this, $data, $block, $rcObj, $classes, $attribs );
 		if ( !$success ) {
 			// skip entry if hook aborted it
 			return [];
@@ -555,7 +555,7 @@ class EnhancedChangesList extends ChangesList {
 			if (
 				$isnew ||
 				$rcObj->mAttribs['rc_type'] == RC_CATEGORIZE ||
-				!ChangesList::userCan( $rcObj, RevisionRecord::DELETED_TEXT, $this->getUser() )
+				!ChangesList::userCan( $rcObj, RevisionRecord::DELETED_TEXT, $this->getAuthority() )
 			) {
 				$links['total-changes'] = Html::rawElement( 'span', [], $nchanges[$n] );
 			} else {
@@ -611,8 +611,7 @@ class EnhancedChangesList extends ChangesList {
 		}
 
 		# Allow others to alter, remove or add to these links
-		Hooks::run( 'EnhancedChangesList::getLogText',
-			[ $this, &$links, $block ] );
+		$this->getHookRunner()->onEnhancedChangesList__getLogText( $this, $links, $block );
 
 		if ( !$links ) {
 			return '';
@@ -631,8 +630,6 @@ class EnhancedChangesList extends ChangesList {
 	 */
 	protected function recentChangesBlockLine( $rcObj ) {
 		$data = [];
-
-		$query = [ 'curid' => $rcObj->mAttribs['rc_cur_id'] ];
 
 		$type = $rcObj->mAttribs['rc_type'];
 		$logType = $rcObj->mAttribs['rc_log_type'];
@@ -674,8 +671,7 @@ class EnhancedChangesList extends ChangesList {
 
 		# Diff and hist links
 		if ( $type != RC_LOG && $type != RC_CATEGORIZE ) {
-			$query['action'] = 'history';
-			$data['historyLink'] = $this->getDiffHistLinks( $rcObj, $query, false );
+			$data['historyLink'] = $this->getDiffHistLinks( $rcObj, false );
 		}
 		$data['separatorAfterLinks'] = ' <span class="mw-changeslist-separator"></span> ';
 
@@ -697,7 +693,7 @@ class EnhancedChangesList extends ChangesList {
 			$data['userTalkLink'] = $rcObj->usertalklink;
 			$data['comment'] = $this->insertComment( $rcObj );
 			if ( $type == RC_CATEGORIZE ) {
-				$data['historyLink'] = $this->getDiffHistLinks( $rcObj, $query, false );
+				$data['historyLink'] = $this->getDiffHistLinks( $rcObj, false );
 			}
 			$data['rollback'] = $this->getRollback( $rcObj );
 		}
@@ -711,15 +707,15 @@ class EnhancedChangesList extends ChangesList {
 		$data['attribs'] = array_merge( $this->getDataAttributes( $rcObj ), [ 'class' => $classes ] );
 
 		// give the hook a chance to modify the data
-		$success = Hooks::run( 'EnhancedChangesListModifyBlockLineData',
-			[ $this, &$data, $rcObj ] );
+		$success = $this->getHookRunner()->onEnhancedChangesListModifyBlockLineData(
+			$this, $data, $rcObj );
 		if ( !$success ) {
 			// skip entry if hook aborted it
 			return '';
 		}
 		$attribs = $data['attribs'];
 		unset( $data['attribs'] );
-		$attribs = array_filter( $attribs, function ( $key ) {
+		$attribs = array_filter( $attribs, static function ( $key ) {
 			return $key === 'class' || Sanitizer::isReservedDataAttribute( $key );
 		}, ARRAY_FILTER_USE_KEY );
 
@@ -773,11 +769,19 @@ class EnhancedChangesList extends ChangesList {
 	 * @since 1.27
 	 *
 	 * @param RCCacheEntry $rc
-	 * @param array $query array of key/value pairs to append as a query string
-	 * @param bool $useParentheses (optional) Wrap comments in parentheses where needed
+	 * @param bool|array|null $query deprecated
+	 * @param bool|null $useParentheses (optional) Wrap comments in parentheses where needed
 	 * @return string HTML
 	 */
-	public function getDiffHistLinks( RCCacheEntry $rc, array $query, $useParentheses = true ) {
+	public function getDiffHistLinks( RCCacheEntry $rc, $query = null, $useParentheses = null ) {
+		if ( is_bool( $query ) ) {
+			$useParentheses = $query;
+		} elseif ( $query !== null ) {
+			wfDeprecated( __METHOD__ . ' with $query parameter', '1.36' );
+		}
+		if ( $useParentheses === null ) {
+			$useParentheses = true;
+		}
 		$pageTitle = $rc->getTitle();
 		if ( $rc->getAttribute( 'rc_type' ) == RC_CATEGORIZE ) {
 			// For categorizations we must swap the category title with the page title!
@@ -793,7 +797,10 @@ class EnhancedChangesList extends ChangesList {
 			$pageTitle,
 			new HtmlArmor( $this->message['hist'] ),
 			[ 'class' => 'mw-changeslist-history' ],
-			$query
+			[
+				'action' => 'history',
+				'curid' => $rc->getAttribute( 'rc_cur_id' )
+			]
 		);
 		if ( $useParentheses ) {
 			$retVal = $this->msg( 'parentheses' )

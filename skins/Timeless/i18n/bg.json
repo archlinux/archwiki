@@ -2,8 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"DCLXVI",
-			"StanProg",
 			"ShockD",
+			"StanProg",
+			"Ted Masters",
 			"Vlad5250"
 		]
 	},
@@ -25,5 +26,5 @@
 	"timeless-pagetools": "Действия на страницата",
 	"timeless-languages": "Езици",
 	"timeless-projects": "Други проекти",
-	"timeless.js": "/* Поставеният тук JavaScript ще бъде зареден за потребители, използващи облика Timeless */"
+	"timeless.js": "/* Всичкият JavaScript тук ще бъде зареден за потребители, използващи облика Timeless */"
 }

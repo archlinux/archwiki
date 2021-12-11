@@ -144,7 +144,7 @@ ve.ui.MWReferenceDialog.static.getImportRules = function () {
  */
 ve.ui.MWReferenceDialog.prototype.documentHasContent = function () {
 	// TODO: Check for other types of empty, e.g. only whitespace?
-	return this.referenceModel.getDocument().data.hasContent();
+	return this.referenceModel && this.referenceModel.getDocument().data.hasContent();
 };
 
 /*
@@ -235,7 +235,6 @@ ve.ui.MWReferenceDialog.prototype.getBodyHeight = function () {
 	);
 };
 
-// eslint-disable-next-line valid-jsdoc
 /**
  * Work on a specific reference.
  *
@@ -262,7 +261,6 @@ ve.ui.MWReferenceDialog.prototype.useReference = function ( ref ) {
 	this.referenceGroupInput.setDisabled( true );
 	this.referenceGroupInput.setValue( this.originalGroup );
 	this.referenceGroupInput.setDisabled( false );
-	this.referenceTarget.initialize();
 
 	group = this.getFragment().getDocument().getInternalList()
 		.getNodeGroup( this.referenceModel.getListGroup() );
@@ -305,7 +303,6 @@ ve.ui.MWReferenceDialog.prototype.initialize = function () {
 
 	this.referenceTarget = ve.init.target.createTargetWidget(
 		{
-			tools: ve.copy( ve.init.target.constructor.static.toolbarGroups ),
 			includeCommands: this.constructor.static.includeCommands,
 			excludeCommands: this.constructor.static.excludeCommands.concat( citeCommands ),
 			importRules: this.constructor.static.getImportRules(),

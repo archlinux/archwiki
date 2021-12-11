@@ -3,6 +3,8 @@
 namespace MediaWiki\Auth;
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserNameUtils;
+use Psr\Container\ContainerInterface;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -10,7 +12,7 @@ use Wikimedia\TestingAccessWrapper;
  * @group Database
  * @covers \MediaWiki\Auth\LocalPasswordPrimaryAuthenticationProvider
  */
-class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase {
+class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiIntegrationTestCase {
 
 	private $manager = null;
 	private $config = null;
@@ -26,6 +28,7 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 	 * @return LocalPasswordPrimaryAuthenticationProvider
 	 */
 	protected function getProvider( $loginOnly = false ) {
+		$mwServices = MediaWikiServices::getInstance();
 		if ( !$this->config ) {
 			$this->config = new \HashConfig();
 		}
@@ -34,8 +37,25 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 			MediaWikiServices::getInstance()->getMainConfig()
 		] );
 
+		// We need a real HookContainer since testProviderChangeAuthenticationData()
+		// modifies $wgHooks
+		$hookContainer = $mwServices->getHookContainer();
+
 		if ( !$this->manager ) {
-			$this->manager = new AuthManager( new \FauxRequest(), $config );
+			$services = $this->createNoOpAbstractMock( ContainerInterface::class );
+			$objectFactory = new \Wikimedia\ObjectFactory( $services );
+			$userNameUtils = $this->createNoOpMock( UserNameUtils::class );
+
+			$this->manager = new AuthManager(
+				new \FauxRequest(),
+				$config,
+				$objectFactory,
+				$hookContainer,
+				$mwServices->getReadOnlyMode(),
+				$userNameUtils,
+				$mwServices->getBlockManager(),
+				$mwServices->getBlockErrorFormatter()
+			);
 		}
 		$this->validity = \Status::newGood();
 		$provider = $this->getMockBuilder( LocalPasswordPrimaryAuthenticationProvider::class )
@@ -50,6 +70,7 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$provider->setConfig( $config );
 		$provider->setLogger( new \Psr\Log\NullLogger() );
 		$provider->setManager( $this->manager );
+		$provider->setHookContainer( $hookContainer );
 
 		return $provider;
 	}
@@ -122,7 +143,7 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		// Set instance vars
 		$this->getProvider();
 
-		/// @todo: Because we're currently using User, which uses the global config...
+		// @todo: Because we're currently using User, which uses the global config...
 		$this->setMwGlobals( [ 'wgPasswordExpireGrace' => 100 ] );
 
 		$this->config->set( 'PasswordExpireGrace', 100 );
@@ -426,7 +447,7 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$testUser = $this->getMutableTestUser();
 		$user = $testUser->getUser()->getName();
 		if ( is_callable( $usernameTransform ) ) {
-			$user = call_user_func( $usernameTransform, $user );
+			$user = $usernameTransform( $user );
 		}
 		$cuser = ucfirst( $user );
 		$oldpass = $testUser->getPassword();
@@ -436,7 +457,7 @@ class LocalPasswordPrimaryAuthenticationProviderTest extends \MediaWikiTestCase 
 		$oldExpiry = $dbw->selectField( 'user', 'user_password_expires', [ 'user_name' => $cuser ] );
 
 		$this->mergeMwGlobalArrayValue( 'wgHooks', [
-			'ResetPasswordExpiration' => [ function ( $user, &$expires ) {
+			'ResetPasswordExpiration' => [ static function ( $user, &$expires ) {
 				$expires = '30001231235959';
 			} ]
 		] );

@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Cbrown1023",
+			"Fanjiayi",
+			"Macofe",
 			"Tauʻolunga",
 			"לערי ריינהארט",
-			"아라",
-			"Macofe",
-			"Fanjiayi"
+			"아라"
 		]
 	},
 	"tog-underline": "Ngaahi fehokotaki ʻoku laineʻi ʻi lalo:",
@@ -85,7 +85,6 @@
 	"category-empty": "''Ko e faʻahinga ʻeni ʻoku ʻikai ʻi ai haʻane kupu pe ʻata.''",
 	"hidden-categories": "Faʻahinga toi",
 	"hidden-category-category": "Ngaahi faʻahinga toi",
-	"listingcontinuesabbrev": " hoko",
 	"about": "Kau ki",
 	"article": "Peesi kakano",
 	"newwindow": "(fakaava ʻi he matapā foʻou)",
@@ -168,7 +167,6 @@
 	"thisisdeleted": "Vakai pe fakafoki: $1?",
 	"viewdeleted": "Vakai ke he $1?",
 	"restorelink": "ko e fatu ʻosi tāmateʻi ʻe $1",
-	"feedlinks": "Fafanga:",
 	"feed-invalid": "Ko e falenga fafanga ʻoku taʻeʻaonga.",
 	"site-atom-feed": "$1 Lave ''Atom''",
 	"page-rss-feed": "\"$1\" lave ''RSS''",
@@ -187,7 +185,7 @@
 	"nosuchspecialpage": "Hala ha peesi makehe pehē",
 	"error": "Halaʻi",
 	"databaseerror": "Halaʻi tānekingaʻilo",
-	"laggedslavemode": "Tokanga: Mahalo pē ʻoku ʻikai ha toki fakafoʻou ʻi loto peesi.",
+	"laggedreplicamode": "Tokanga: Mahalo pē ʻoku ʻikai ha toki fakafoʻou ʻi loto peesi.",
 	"readonly": "ʻOku lokaʻi ʻa e tānekingaʻilo",
 	"readonlytext": "ʻOku lokaʻi ʻa e tānekingaʻilo he taimí ni (ʻoku ikai te ke lava fatu) maʻa e monomono fakatānekingaʻilo tuʻumaʻu. ʻOsi ia ʻe foki ia ki hono faʻafai.\n\nKo e pule, naʻe lokaʻi ia, ʻoku pehē: $1",
 	"readonly_lag": "Naʻe lokaʻi fakamīsini ʻa e tānekingaʻiló ni lolotonga he fetulitlui hake ʻo e tauhia pōpula mo e tauhia pule",
@@ -616,7 +614,7 @@
 	"namespace": "Vā hingoa:",
 	"invert": "Fulihi hoʻo fili",
 	"blanknamespace": "(Kupu)",
-	"contributions": "Ngaahi foaki ʻo e ʻetitá",
+	"tool-link-contributions": "Ngaahi foaki ʻo e ʻetitá",
 	"mycontris": "Foaki ʻaʻaku",
 	"uctop": " ʻi ʻolunga",
 	"sp-contributions-deleted": "Ngaahi foaki ʻo ha ʻetita kuo tāmateʻi",
@@ -699,7 +697,7 @@
 	"allmessagesdefault": "Tohi tuʻunga",
 	"allmessagescurrent": "Tohi lolotonga",
 	"allmessagestext": "Ko e hokohoko ʻeni ʻo e ngaahi tala fakafounga kātoa ʻi he vā hingoa ''MediaWiki''.",
-	"allmessages-not-supported-database": "!!FUZZY!!ʻOku ʻikai ngāueʻaki mo e '''{{ns:special}}:Allmessages''' koeʻuhi ʻoku kamosiʻi mate ʻa e '''$wgUseDatabaseMessages'''.",
+	"allmessages-not-supported-database": "ʻOku ʻikai ngāueʻaki mo e '''{{ns:special}}:Allmessages''' koeʻuhi ʻoku kamosiʻi mate ʻa e '''$wgUseDatabaseMessages'''.",
 	"filemissing": "ʻOku pulia ʻa e faile",
 	"import": "Hū mai ngaahi peesi",
 	"importinterwiki": "Hū mai ʻo e fakalava ''wiki''",
@@ -787,6 +785,7 @@
 	"version": "Paaki",
 	"redirect-page": "Peesi ID",
 	"specialpages": "Ngaahi peesi makehe",
+	"purge": "fakamaʻa",
 	"rightsnone": "(hala)",
 	"expandtemplates": "Fakalahiange ʻa e ngaahi sīpinga"
 }

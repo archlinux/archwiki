@@ -39,7 +39,7 @@ class ParserTestPrinter extends TestRecorder {
 	private $markWhitespace;
 	private $xmlError;
 
-	function __construct( $term, $options ) {
+	public function __construct( $term, $options ) {
 		$this->term = $term;
 		$options += [
 			'showDiffs' => true,
@@ -104,7 +104,6 @@ class ParserTestPrinter extends TestRecorder {
 	 * Print a happy success message.
 	 *
 	 * @param ParserTestResult $testResult
-	 * @return bool
 	 */
 	private function showSuccess( ParserTestResult $testResult ) {
 		if ( $this->showProgress ) {
@@ -128,6 +127,8 @@ class ParserTestPrinter extends TestRecorder {
 			}
 
 			print $this->term->color( '31' ) . 'FAILED!' . $this->term->reset() . "\n";
+
+			print "{$testResult->test['file']}:{$testResult->test['line']}\n";
 
 			if ( $this->showOutput ) {
 				print "--- Expected ---\n{$testResult->expected}\n";

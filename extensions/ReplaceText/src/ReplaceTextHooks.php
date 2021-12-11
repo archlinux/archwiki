@@ -20,6 +20,8 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 class ReplaceTextHooks {
 
 	/**
@@ -36,7 +38,7 @@ class ReplaceTextHooks {
 		}
 		$extensionsRow = $generalSection->getRow( 'extensions' );
 
-		if ( is_null( $extensionsRow ) ) {
+		if ( $extensionsRow === null ) {
 			$extensionsRow = new ALRow( 'extensions' );
 			$generalSection->addRow( $extensionsRow );
 		}
@@ -58,8 +60,9 @@ class ReplaceTextHooks {
 	 */
 	public static function replaceTextReminder( &$form, &$ot, &$nt ) {
 		$out = $form->getOutput();
-		$page = SpecialPageFactory::getPage( 'ReplaceText' );
-		$pageLink = ReplaceTextUtils::link( $page->getPageTitle() );
+		$services = MediaWikiServices::getInstance();
+		$page = $services->getSpecialPageFactory()->getPage( 'ReplaceText' );
+		$pageLink = $services->getLinkRenderer()->makeLink( $page->getPageTitle(), null );
 		$out->addHTML( $form->msg( 'replacetext_reminder' )
 			->rawParams( $pageLink )->inContentLanguage()->parseAsBlock() );
 	}
@@ -70,7 +73,7 @@ class ReplaceTextHooks {
 	 */
 	public static function getReservedNames( &$names ) {
 		global $wgReplaceTextUser;
-		if ( !is_null( $wgReplaceTextUser ) ) {
+		if ( $wgReplaceTextUser !== null ) {
 			$names[] = $wgReplaceTextUser;
 		}
 	}

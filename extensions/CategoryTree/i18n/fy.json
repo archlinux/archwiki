@@ -1,22 +1,25 @@
 {
 	"@metadata": {
 		"authors": [
-			"SK-luuut",
-			"Snakesteuben",
-			"Robin0van0der0vliet",
 			"Ieneach fan 'e Esk",
+			"PiefPafPier",
 			"Robin van der Vliet",
-			"PiefPafPier"
+			"Robin0van0der0vliet",
+			"SK-luuut",
+			"Snakesteuben"
 		]
 	},
 	"categorytree": "Kategorybeam",
 	"categorytree-portlet": "Kategoryen",
-	"categorytree-legend": "Lit kategorystambeam sjen",
-	"categorytree-header": "Folje in kategorynamme yn om de ynhâld yn in beamstruktuer te sjen. Tink dêrom dat dit spesjale JavaScript funksjes brûkt bekend as AJAX. At jo in tige âlde blêdzjer hawwe of jo hawwe JavaScript net oan stean, dan wurket dit net.",
+	"categorytree-legend": "Kategorybeam werjaan",
+	"categorytree-desc": "Dynamysk troch de [[Special:CategoryTree|kategorystruktuer]] navigearje",
+	"categorytree-header": "Folje in kategorynamme yn om 'e ynhâld yn in beamstruktuer te sjen. (JavaScript fereaske.)",
 	"categorytree-category": "Kategory:",
-	"categorytree-go": "Los",
+	"categorytree-go": "Beam werjaan",
+	"categorytree-parents": "Boppelizzend",
+	"categorytree-mode-label": "Modus:",
 	"categorytree-mode-categories": "allinne kategoryen",
-	"categorytree-mode-pages": "alle siden útsein ôfbylden",
+	"categorytree-mode-pages": "siden útsein bestannen",
 	"categorytree-mode-all": "alle siden",
 	"categorytree-collapse": "ynklappe",
 	"categorytree-expand": "útklappe",
@@ -25,10 +28,13 @@
 	"categorytree-num-pages": "$1 S",
 	"categorytree-num-files": "$1 B",
 	"categorytree-num-empty": "leech",
-	"categorytree-load": "ynlade",
-	"categorytree-loading": "ynlade...",
+	"categorytree-load": "lade",
+	"categorytree-loading": "laden ...",
 	"categorytree-nothing-found": "neat fûn",
-	"categorytree-no-subcategories": "gjin ûnderlizzende kategoryen",
-	"categorytree-no-pages": "gjin siden of ûnderlizzende siden",
-	"categorytree-not-found": "Kategory <i>$1</i> net fûn"
+	"categorytree-no-subcategories": "gjin ûnderkategoryen",
+	"categorytree-no-parent-categories": "gjin boppekategoryen",
+	"categorytree-no-pages": "gjin siden of ûnderkategoryen",
+	"categorytree-not-found": "Kategory <i>$1</i> net fûn",
+	"categorytree-error": "Probleem mei data laden.",
+	"categorytree-retry": "Efkes wachtsje en besykje it dan nochris."
 }

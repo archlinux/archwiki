@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"BadDog"
+		]
+	},
+	"apihelp-templatedata-description": "Прибавља податке које је ускладиштило проширење TemplateData.",
+	"apihelp-templatedata-summary": "Прибавља податке које је ускладиштило проширење „Подаци о шаблону”.",
+	"apihelp-templatedata-example-1": "Приказује TemplateData за шаблоне [[Template:Stub]] и [[Template:Example]], са резултатима ако шаблони не постоје или постоје, али немају TemplateData",
+	"apihelp-templatedata-example-2": "Приказује TemplateData за шаблоне [[Template:Stub]] и [[Template:Example]], без резултата ако шаблони не постоје или постоје, али немају TemplateData",
+	"apihelp-templatedata-param-includeMissingTitles": "Приказује податке о насловима чак и ако недостају или немају TemplateData. Подразумевано, наслови се само враћају ако постоје и имају TemplateData.",
+	"apihelp-templatedata-param-doNotIgnoreMissingTitles": "Приказује податке о насловима чак и ако недостају или немају TemplateData. Подразумевано, ради компатибилности, наслови су се само враћају ако постоје и имају TemplateData.",
+	"apihelp-templatedata-param-lang": "Приказује локализоване вредности за наведени језик. Подразумевано се приказују сви доступни преводи.",
+	"apierror-templatedata-corrupt": "TemplateData на страници #$1 садржи неважеће податке: $2",
+	"apiwarn-templatedata-deprecation-format": "У будућности, подразумевани излазни формат промениће се у <kbd>jsonfm</kbd>. Изричито наведите <kbd>format=json</kbd>."
+}

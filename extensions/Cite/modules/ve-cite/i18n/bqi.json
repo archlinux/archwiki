@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mogoeilor",
-			"Kikumoron"
+			"Kikumoron",
+			"Mogoeilor"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "کتاو",
@@ -15,7 +15,6 @@
 	"cite-ve-changedesc-reflist-group-both": "نومگٱ سرچشماْیٱل ز «$1» سی «$2» آلشد ڤابی",
 	"cite-ve-changedesc-reflist-group-from": "نومگٱ جرغاْ سرچشماْ ز «$1» ب جٱرغاْ کولی آلشد ڤابی.",
 	"cite-ve-changedesc-reflist-group-to": "نومگٱ جٱرغاْ سرچشماْ ز جٱرغاْ کولی آلشد ڤابی ب «$1»",
-	"cite-ve-changedesc-reflist-item-id": "سیائاْ سرچشماْ آلشد ڤابی",
 	"cite-ve-dialog-reference-options-group-label": "ای جٱرغاْ ناْ ڤٱنین ڤا کار",
 	"cite-ve-dialog-reference-options-group-placeholder": "سرچشماْیٱل کولی",
 	"cite-ve-dialog-reference-options-name-label": "چونو اْسمی ناْ ز نۉ ڤٱن ڤا کار",

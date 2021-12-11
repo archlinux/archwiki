@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Balyozxane",
+			"Bikarhêner",
+			"George Animal",
+			"Guherto"
+		]
+	},
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Guhartina dîtbarî]]",
+	"tag-visualeditor-description": "Bi bikaranîna [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]] hate guhartin",
+	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Guhartina dîtbarî: Kontrol bike]]",
+	"tag-visualeditor-wikitext": "2017 amûra guhartina çavkaniyê",
+	"tag-visualeditor-wikitext-description": "Guhartinên bi rêya 2017 amûra guhartina çavkaniyê hatine pêkanîn",
+	"visualeditor-feedback-link": "Project:VisualEditor/Paşragihandin",
+	"visualeditor-help-label": "Rêberê bikarhêneran bixwîne",
+	"visualeditor-help-title": "Rêberek ji bo hînbûna bikaranîna edîtorê",
+	"visualeditor-welcomedialog-action": "Dest bi guhartinê bike",
+	"visualeditor-welcomedialog-content": "Her kes dikare biguherîne, û her başkirin alîkariyê dike.",
+	"visualeditor-welcomedialog-content-thanks": "Spas ji bo ku te ji dinyayê re bona zêdetir keşfan bû alîkar!",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Bi xêr hatî}} $2ê"
+}

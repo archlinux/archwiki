@@ -19,16 +19,18 @@
  * @ingroup Pager
  */
 
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Revision\RevisionFactory;
+use MediaWiki\Revision\RevisionRecord;
+use Wikimedia\Rdbms\FakeResultWrapper;
+use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IResultWrapper;
+
 /**
  * @ingroup Pager
  */
-use MediaWiki\Linker\LinkRenderer;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\Revision\RevisionRecord;
-use Wikimedia\Rdbms\IDatabase;
-use Wikimedia\Rdbms\IResultWrapper;
-use Wikimedia\Rdbms\FakeResultWrapper;
-
 class DeletedContribsPager extends IndexPager {
 
 	/**
@@ -52,18 +54,46 @@ class DeletedContribsPager extends IndexPager {
 	public $namespace = '';
 
 	/**
-	 * @var IDatabase
-	 */
-	public $mDb;
-
-	/**
 	 * @var string Navigation bar with paging links.
 	 */
 	protected $mNavigationBar;
 
-	public function __construct( IContextSource $context, $target, $namespace = false,
-		LinkRenderer $linkRenderer
+	/** @var HookRunner */
+	private $hookRunner;
+
+	/** @var CommentStore */
+	private $commentStore;
+
+	/** @var ActorMigration */
+	private $actorMigration;
+
+	/** @var RevisionFactory */
+	private $revisionFactory;
+
+	/**
+	 * @param IContextSource $context
+	 * @param string $target
+	 * @param string|int $namespace
+	 * @param LinkRenderer $linkRenderer
+	 * @param HookContainer $hookContainer
+	 * @param ILoadBalancer $loadBalancer
+	 * @param CommentStore $commentStore
+	 * @param ActorMigration $actorMigration
+	 * @param RevisionFactory $revisionFactory
+	 */
+	public function __construct(
+		IContextSource $context,
+		$target,
+		$namespace,
+		LinkRenderer $linkRenderer,
+		HookContainer $hookContainer,
+		ILoadBalancer $loadBalancer,
+		CommentStore $commentStore,
+		ActorMigration $actorMigration,
+		RevisionFactory $revisionFactory
 	) {
+		// Set database before parent constructor to avoid setting it there with wfGetDB
+		$this->mDb = $loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA, 'contributions' );
 		parent::__construct( $context, $linkRenderer );
 		$msgs = [ 'deletionlog', 'undeleteviewlink', 'diff' ];
 		foreach ( $msgs as $msg ) {
@@ -71,41 +101,44 @@ class DeletedContribsPager extends IndexPager {
 		}
 		$this->target = $target;
 		$this->namespace = $namespace;
-		$this->mDb = wfGetDB( DB_REPLICA, 'contributions' );
+		$this->hookRunner = new HookRunner( $hookContainer );
+		$this->commentStore = $commentStore;
+		$this->actorMigration = $actorMigration;
+		$this->revisionFactory = $revisionFactory;
 	}
 
-	function getDefaultQuery() {
+	public function getDefaultQuery() {
 		$query = parent::getDefaultQuery();
 		$query['target'] = $this->target;
 
 		return $query;
 	}
 
-	function getQueryInfo() {
+	public function getQueryInfo() {
+		$dbr = $this->getDatabase();
 		$userCond = [
 			// ->getJoin() below takes care of any joins needed
-			ActorMigration::newMigration()->getWhere(
-				wfGetDB( DB_REPLICA ), 'ar_user', User::newFromName( $this->target, false ), false
+			$this->actorMigration->getWhere(
+				$dbr, 'ar_user', User::newFromName( $this->target, false ), false
 			)['conds']
 		];
 		$conds = array_merge( $userCond, $this->getNamespaceCond() );
 		$user = $this->getUser();
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
 		// Paranoia: avoid brute force searches (T19792)
-		if ( !$permissionManager->userHasRight( $user, 'deletedhistory' ) ) {
-			$conds[] = $this->mDb->bitAnd( 'ar_deleted', RevisionRecord::DELETED_USER ) . ' = 0';
-		} elseif ( !$permissionManager->userHasAnyRight( $user, 'suppressrevision', 'viewsuppressed' ) ) {
-			$conds[] = $this->mDb->bitAnd( 'ar_deleted', RevisionRecord::SUPPRESSED_USER ) .
+		if ( !$this->getAuthority()->isAllowed( 'deletedhistory' ) ) {
+			$conds[] = $dbr->bitAnd( 'ar_deleted', RevisionRecord::DELETED_USER ) . ' = 0';
+		} elseif ( !$this->getAuthority()->isAllowedAny( 'suppressrevision', 'viewsuppressed' ) ) {
+			$conds[] = $dbr->bitAnd( 'ar_deleted', RevisionRecord::SUPPRESSED_USER ) .
 				' != ' . RevisionRecord::SUPPRESSED_USER;
 		}
 
-		$commentQuery = CommentStore::getStore()->getJoin( 'ar_comment' );
-		$actorQuery = ActorMigration::newMigration()->getJoin( 'ar_user' );
+		$commentQuery = $this->commentStore->getJoin( 'ar_comment' );
+		$actorQuery = $this->actorMigration->getJoin( 'ar_user' );
 
 		return [
 			'tables' => [ 'archive' ] + $commentQuery['tables'] + $actorQuery['tables'],
 			'fields' => [
-				'ar_rev_id', 'ar_namespace', 'ar_title', 'ar_timestamp',
+				'ar_rev_id', 'ar_id', 'ar_namespace', 'ar_title', 'ar_timestamp',
 				'ar_minor_edit', 'ar_deleted'
 			] + $commentQuery['fields'] + $actorQuery['fields'],
 			'conds' => $conds,
@@ -123,15 +156,13 @@ class DeletedContribsPager extends IndexPager {
 	 * @param bool $order IndexPager::QUERY_ASCENDING or IndexPager::QUERY_DESCENDING
 	 * @return IResultWrapper
 	 */
-	function reallyDoQuery( $offset, $limit, $order ) {
+	public function reallyDoQuery( $offset, $limit, $order ) {
 		$data = [ parent::reallyDoQuery( $offset, $limit, $order ) ];
 
 		// This hook will allow extensions to add in additional queries, nearly
 		// identical to ContribsPager::reallyDoQuery.
-		Hooks::run(
-			'DeletedContribsPager::reallyDoQuery',
-			[ &$data, $this, $offset, $limit, $order ]
-		);
+		$this->hookRunner->onDeletedContribsPager__reallyDoQuery(
+			$data, $this, $offset, $limit, $order );
 
 		$result = [];
 
@@ -159,7 +190,7 @@ class DeletedContribsPager extends IndexPager {
 		return new FakeResultWrapper( $result );
 	}
 
-	function getIndexField() {
+	public function getIndexField() {
 		return 'ar_timestamp';
 	}
 
@@ -185,7 +216,7 @@ class DeletedContribsPager extends IndexPager {
 		return "</ul>\n";
 	}
 
-	function getNavigationBar() {
+	public function getNavigationBar() {
 		if ( isset( $this->mNavigationBar ) ) {
 			return $this->mNavigationBar;
 		}
@@ -216,7 +247,7 @@ class DeletedContribsPager extends IndexPager {
 		return $this->mNavigationBar;
 	}
 
-	function getNamespaceCond() {
+	private function getNamespaceCond() {
 		if ( $this->namespace !== '' ) {
 			return [ 'ar_namespace' => (int)$this->namespace ];
 		} else {
@@ -231,7 +262,7 @@ class DeletedContribsPager extends IndexPager {
 	 * @param stdClass $row
 	 * @return string
 	 */
-	function formatRow( $row ) {
+	public function formatRow( $row ) {
 		$ret = '';
 		$classes = [];
 		$attribs = [];
@@ -245,27 +276,28 @@ class DeletedContribsPager extends IndexPager {
 		 */
 		Wikimedia\suppressWarnings();
 		try {
-			$rev = Revision::newFromArchiveRow( $row );
-			$validRevision = (bool)$rev->getId();
+			$revRecord = $this->revisionFactory->newRevisionFromArchiveRow( $row );
+			$validRevision = (bool)$revRecord->getId();
 		} catch ( Exception $e ) {
 			$validRevision = false;
 		}
 		Wikimedia\restoreWarnings();
 
 		if ( $validRevision ) {
-			$attribs['data-mw-revid'] = $rev->getId();
+			$attribs['data-mw-revid'] = $revRecord->getId();
 			$ret = $this->formatRevisionRow( $row );
 		}
 
 		// Let extensions add data
-		Hooks::run( 'DeletedContributionsLineEnding', [ $this, &$ret, $row, &$classes, &$attribs ] );
+		$this->hookRunner->onDeletedContributionsLineEnding(
+			$this, $ret, $row, $classes, $attribs );
 		$attribs = array_filter( $attribs,
 			[ Sanitizer::class, 'isReservedDataAttribute' ],
 			ARRAY_FILTER_USE_KEY
 		);
 
 		if ( $classes === [] && $attribs === [] && $ret === '' ) {
-			wfDebug( "Dropping Special:DeletedContribution row that could not be formatted\n" );
+			wfDebug( "Dropping Special:DeletedContribution row that could not be formatted" );
 			$ret = "<!-- Could not format Special:DeletedContribution row. -->\n";
 		} else {
 			$attribs['class'] = $classes;
@@ -287,22 +319,16 @@ class DeletedContribsPager extends IndexPager {
 	 * @param stdClass $row
 	 * @return string
 	 */
-	function formatRevisionRow( $row ) {
+	private function formatRevisionRow( $row ) {
 		$page = Title::makeTitle( $row->ar_namespace, $row->ar_title );
 
 		$linkRenderer = $this->getLinkRenderer();
 
-		$rev = new Revision( [
-			'title' => $page,
-			'id' => $row->ar_rev_id,
-			'comment' => CommentStore::getStore()->getComment( 'ar_comment', $row )->text,
-			'user' => $row->ar_user,
-			'user_text' => $row->ar_user_text,
-			'actor' => $row->ar_actor ?? null,
-			'timestamp' => $row->ar_timestamp,
-			'minor_edit' => $row->ar_minor_edit,
-			'deleted' => $row->ar_deleted,
-		] );
+		$revRecord = $this->revisionFactory->newRevisionFromArchiveRow(
+				$row,
+				RevisionFactory::READ_NORMAL,
+				$page
+			);
 
 		$undelete = SpecialPage::getTitleFor( 'Undelete' );
 
@@ -323,16 +349,15 @@ class DeletedContribsPager extends IndexPager {
 		);
 
 		$user = $this->getUser();
-		$permissionManager = MediaWikiServices::getInstance()->getPermissionManager();
 
-		if ( $permissionManager->userHasRight( $user, 'deletedtext' ) ) {
+		if ( $this->getAuthority()->isAllowed( 'deletedtext' ) ) {
 			$last = $linkRenderer->makeKnownLink(
 				$undelete,
 				$this->messages['diff'],
 				[],
 				[
 					'target' => $page->getPrefixedText(),
-					'timestamp' => $rev->getTimestamp(),
+					'timestamp' => $revRecord->getTimestamp(),
 					'diff' => 'prev'
 				]
 			);
@@ -340,11 +365,11 @@ class DeletedContribsPager extends IndexPager {
 			$last = htmlspecialchars( $this->messages['diff'] );
 		}
 
-		$comment = Linker::revComment( $rev );
-		$date = $this->getLanguage()->userTimeAndDate( $rev->getTimestamp(), $user );
+		$comment = Linker::revComment( $revRecord );
+		$date = $this->getLanguage()->userTimeAndDate( $revRecord->getTimestamp(), $user );
 
-		if ( !$permissionManager->userHasRight( $user, 'undelete' ) ||
-			 !$rev->userCan( RevisionRecord::DELETED_TEXT, $user )
+		if ( !$this->getAuthority()->isAllowed( 'undelete' ) ||
+			!$revRecord->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() )
 		) {
 			$link = htmlspecialchars( $date ); // unusable link
 		} else {
@@ -354,12 +379,12 @@ class DeletedContribsPager extends IndexPager {
 				[ 'class' => 'mw-changeslist-date' ],
 				[
 					'target' => $page->getPrefixedText(),
-					'timestamp' => $rev->getTimestamp()
+					'timestamp' => $revRecord->getTimestamp()
 				]
 			);
 		}
 		// Style deleted items
-		if ( $rev->isDeleted( RevisionRecord::DELETED_TEXT ) ) {
+		if ( $revRecord->isDeleted( RevisionRecord::DELETED_TEXT ) ) {
 			$link = '<span class="history-deleted">' . $link . '</span>';
 		}
 
@@ -369,14 +394,14 @@ class DeletedContribsPager extends IndexPager {
 			[ 'class' => 'mw-changeslist-title' ]
 		);
 
-		if ( $rev->isMinor() ) {
+		if ( $revRecord->isMinor() ) {
 			$mflag = ChangesList::flag( 'minor' );
 		} else {
 			$mflag = '';
 		}
 
 		// Revision delete link
-		$del = Linker::getRevDeleteLink( $user, $rev, $page );
+		$del = Linker::getRevDeleteLink( $user, $revRecord, $page );
 		if ( $del ) {
 			$del .= ' ';
 		}
@@ -392,19 +417,10 @@ class DeletedContribsPager extends IndexPager {
 		$ret = "{$del}{$link} {$tools} {$separator} {$mflag} {$pagelink} {$comment}";
 
 		# Denote if username is redacted for this edit
-		if ( $rev->isDeleted( RevisionRecord::DELETED_USER ) ) {
+		if ( $revRecord->isDeleted( RevisionRecord::DELETED_USER ) ) {
 			$ret .= " <strong>" . $this->msg( 'rev-deleted-user-contribs' )->escaped() . "</strong>";
 		}
 
 		return $ret;
-	}
-
-	/**
-	 * Get the Database object in use
-	 *
-	 * @return IDatabase
-	 */
-	public function getDatabase() {
-		return $this->mDb;
 	}
 }

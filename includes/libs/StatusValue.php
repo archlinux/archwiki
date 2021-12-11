@@ -37,6 +37,7 @@
  *
  * The use of Message objects should be avoided when serializability is needed.
  *
+ * @newable
  * @since 1.25
  */
 class StatusValue {
@@ -96,11 +97,11 @@ class StatusValue {
 	 * @return static[]
 	 */
 	public function splitByErrorType() {
-		$errorsOnlyStatusValue = clone $this;
-		$warningsOnlyStatusValue = clone $this;
-		$warningsOnlyStatusValue->ok = true;
+		$errorsOnlyStatusValue = static::newGood();
+		$warningsOnlyStatusValue = static::newGood();
+		$warningsOnlyStatusValue->setResult( true, $this->getValue() );
+		$errorsOnlyStatusValue->setResult( $this->isOK(), $this->getValue() );
 
-		$errorsOnlyStatusValue->errors = $warningsOnlyStatusValue->errors = [];
 		foreach ( $this->errors as $item ) {
 			if ( $item['type'] === 'warning' ) {
 				$warningsOnlyStatusValue->errors[] = $item;
@@ -170,17 +171,65 @@ class StatusValue {
 	}
 
 	/**
+	 * Add a new error to the error array ($this->errors) if that error is not already in the
+	 * error array. Each error is passed as an array with the following fields:
+	 *
+	 * - type: 'error' or 'warning'
+	 * - message: a string (message key) or MessageSpecifier
+	 * - params: an array of string parameters
+	 *
+	 * If the new error is of type 'error' and it matches an existing error of type 'warning',
+	 * the existing error is upgraded to type 'error'. An error provided as a MessageSpecifier
+	 * will successfully match an error provided as the same string message key and array of
+	 * parameters as separate array elements.
+	 *
+	 * @param array $newError
+	 */
+	private function addError( array $newError ) {
+		if ( $newError[ 'message' ] instanceof MessageSpecifier ) {
+			$isEqual = static function ( $existingError ) use ( $newError ) {
+				if ( $existingError['message'] instanceof MessageSpecifier ) {
+					// compare attributes of both MessageSpecifiers
+					return $newError['message'] == $existingError['message'];
+				} else {
+					return $newError['message']->getKey() === $existingError['message'] &&
+						$newError['message']->getParams() === $existingError['params'];
+				}
+			};
+		} else {
+			$isEqual = static function ( $existingError ) use ( $newError ) {
+				if ( $existingError['message'] instanceof MessageSpecifier ) {
+					return $newError['message'] === $existingError['message']->getKey() &&
+						$newError['params'] === $existingError['message']->getParams();
+				} else {
+					return $newError['message'] === $existingError['message'] &&
+						$newError['params'] === $existingError['params'];
+				}
+			};
+		}
+		foreach ( $this->errors as $index => $existingError ) {
+			if ( $isEqual( $existingError ) ) {
+				if ( $newError[ 'type' ] === 'error' && $existingError[ 'type' ] === 'warning' ) {
+					$this->errors[ $index ][ 'type' ] = 'error';
+				}
+				return;
+			}
+		}
+		$this->errors[] = $newError;
+	}
+
+	/**
 	 * Add a new warning
 	 *
 	 * @param string|MessageSpecifier $message Message key or object
 	 * @param mixed ...$parameters
 	 */
 	public function warning( $message, ...$parameters ) {
-		$this->errors[] = [
+		$this->addError( [
 			'type' => 'warning',
 			'message' => $message,
 			'params' => $parameters
-		];
+		] );
 	}
 
 	/**
@@ -191,11 +240,11 @@ class StatusValue {
 	 * @param mixed ...$parameters
 	 */
 	public function error( $message, ...$parameters ) {
-		$this->errors[] = [
+		$this->addError( [
 			'type' => 'error',
 			'message' => $message,
 			'params' => $parameters
-		];
+		] );
 	}
 
 	/**
@@ -206,11 +255,7 @@ class StatusValue {
 	 * @param mixed ...$parameters
 	 */
 	public function fatal( $message, ...$parameters ) {
-		$this->errors[] = [
-			'type' => 'error',
-			'message' => $message,
-			'params' => $parameters
-		];
+		$this->error( $message, ...$parameters );
 		$this->ok = false;
 	}
 
@@ -221,7 +266,9 @@ class StatusValue {
 	 * @param bool $overwriteValue Whether to override the "value" member
 	 */
 	public function merge( $other, $overwriteValue = false ) {
-		$this->errors = array_merge( $this->errors, $other->errors );
+		foreach ( $other->errors as $error ) {
+			$this->addError( $error );
+		}
 		$this->ok = $this->ok && $other->ok;
 		if ( $overwriteValue ) {
 			$this->value = $other->value;
@@ -342,13 +389,60 @@ class StatusValue {
 				$out .= sprintf( "| %4d | %-25.25s | %-40.40s |\n",
 					$i,
 					$key,
-					implode( " ", $params )
+					$this->flattenParams( $params )
 				);
-				$i += 1;
+				$i++;
 			}
 			$out .= $hdr;
 		}
 
 		return $out;
+	}
+
+	/**
+	 * @param array $params Message parameters
+	 * @return string String representation
+	 */
+	private function flattenParams( array $params ) : string {
+		$ret = [];
+		foreach ( $params as $p ) {
+			if ( is_array( $p ) ) {
+				$ret[] = '[ ' . self::flattenParams( $p ) . ' ]';
+			} elseif ( $p instanceof MessageSpecifier ) {
+				$ret[] = '{ ' . $p->getKey() . ': ' . self::flattenParams( $p->getParams() ) . ' }';
+			} else {
+				$ret[] = (string)$p;
+			}
+		}
+		return implode( ' ', $ret );
+	}
+
+	/**
+	 * Returns a list of status messages of the given type (or all if false)
+	 *
+	 * @note this handles RawMessage poorly
+	 *
+	 * @param string|bool $type
+	 * @return array[]
+	 */
+	protected function getStatusArray( $type = false ) {
+		$result = [];
+
+		foreach ( $this->getErrors() as $error ) {
+			if ( $type === false || $error['type'] === $type ) {
+				if ( $error['message'] instanceof MessageSpecifier ) {
+					$result[] = array_merge(
+						[ $error['message']->getKey() ],
+						$error['message']->getParams()
+					);
+				} elseif ( $error['params'] ) {
+					$result[] = array_merge( [ $error['message'] ], $error['params'] );
+				} else {
+					$result[] = [ $error['message'] ];
+				}
+			}
+		}
+
+		return $result;
 	}
 }

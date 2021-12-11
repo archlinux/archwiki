@@ -21,7 +21,11 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Page\MergeHistoryFactory;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\RevisionStore;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Special page allowing users with the appropriate permissions to
@@ -66,8 +70,35 @@ class SpecialMergeHistory extends SpecialPage {
 	/** @var int[] */
 	public $prevId;
 
-	public function __construct() {
+	/** @var MergeHistoryFactory */
+	private $mergeHistoryFactory;
+
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
+	/** @var ILoadBalancer */
+	private $loadBalancer;
+
+	/** @var RevisionStore */
+	private $revisionStore;
+
+	/**
+	 * @param MergeHistoryFactory $mergeHistoryFactory
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param ILoadBalancer $loadBalancer
+	 * @param RevisionStore $revisionStore
+	 */
+	public function __construct(
+		MergeHistoryFactory $mergeHistoryFactory,
+		LinkBatchFactory $linkBatchFactory,
+		ILoadBalancer $loadBalancer,
+		RevisionStore $revisionStore
+	) {
 		parent::__construct( 'MergeHistory', 'mergehistory' );
+		$this->mergeHistoryFactory = $mergeHistoryFactory;
+		$this->linkBatchFactory = $linkBatchFactory;
+		$this->loadBalancer = $loadBalancer;
+		$this->revisionStore = $revisionStore;
 	}
 
 	public function doesWrites() {
@@ -157,7 +188,7 @@ class SpecialMergeHistory extends SpecialPage {
 		}
 	}
 
-	function showMergeForm() {
+	private function showMergeForm() {
 		$out = $this->getOutput();
 		$out->addWikiMsg( 'mergehistory-header' );
 
@@ -194,9 +225,15 @@ class SpecialMergeHistory extends SpecialPage {
 
 		# List all stored revisions
 		$revisions = new MergeHistoryPager(
-			$this, [], $this->mTargetObj, $this->mDestObj
+			$this,
+			[],
+			$this->mTargetObj,
+			$this->mDestObj,
+			$this->linkBatchFactory,
+			$this->loadBalancer,
+			$this->revisionStore
 		);
-		$haveRevisions = $revisions && $revisions->getNumRows() > 0;
+		$haveRevisions = $revisions->getNumRows() > 0;
 
 		$out = $this->getOutput();
 		$titleObj = $this->getPageTitle();
@@ -276,8 +313,8 @@ class SpecialMergeHistory extends SpecialPage {
 		return true;
 	}
 
-	function formatRevisionRow( $row ) {
-		$rev = new Revision( $row );
+	public function formatRevisionRow( $row ) {
+		$revRecord = $this->revisionStore->newRevisionFromRow( $row );
 
 		$linkRenderer = $this->getLinkRenderer();
 
@@ -290,21 +327,21 @@ class SpecialMergeHistory extends SpecialPage {
 		$user = $this->getUser();
 
 		$pageLink = $linkRenderer->makeKnownLink(
-			$rev->getTitle(),
+			$revRecord->getPageAsLinkTarget(),
 			$this->getLanguage()->userTimeAndDate( $ts, $user ),
 			[],
-			[ 'oldid' => $rev->getId() ]
+			[ 'oldid' => $revRecord->getId() ]
 		);
-		if ( $rev->isDeleted( RevisionRecord::DELETED_TEXT ) ) {
+		if ( $revRecord->isDeleted( RevisionRecord::DELETED_TEXT ) ) {
 			$pageLink = '<span class="history-deleted">' . $pageLink . '</span>';
 		}
 
 		# Last link
-		if ( !$rev->userCan( RevisionRecord::DELETED_TEXT, $user ) ) {
+		if ( !$revRecord->userCan( RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
 			$last = $this->msg( 'last' )->escaped();
 		} elseif ( isset( $this->prevId[$row->rev_id] ) ) {
 			$last = $linkRenderer->makeKnownLink(
-				$rev->getTitle(),
+				$revRecord->getPageAsLinkTarget(),
 				$this->msg( 'last' )->text(),
 				[],
 				[
@@ -314,13 +351,13 @@ class SpecialMergeHistory extends SpecialPage {
 			);
 		}
 
-		$userLink = Linker::revUserTools( $rev );
+		$userLink = Linker::revUserTools( $revRecord );
 
 		$size = $row->rev_len;
-		if ( !is_null( $size ) ) {
+		if ( $size !== null ) {
 			$stxt = Linker::formatRevisionSize( $size );
 		}
-		$comment = Linker::revComment( $rev );
+		$comment = Linker::revComment( $revRecord );
 
 		return Html::rawElement( 'li', [],
 			$this->msg( 'mergehistory-revisionrow' )
@@ -339,13 +376,13 @@ class SpecialMergeHistory extends SpecialPage {
 	 *
 	 * @return bool Success
 	 */
-	function merge() {
+	private function merge() {
 		# Get the titles directly from the IDs, in case the target page params
 		# were spoofed. The queries are done based on the IDs, so it's best to
 		# keep it consistent...
 		$targetTitle = Title::newFromID( $this->mTargetID );
 		$destTitle = Title::newFromID( $this->mDestID );
-		if ( is_null( $targetTitle ) || is_null( $destTitle ) ) {
+		if ( $targetTitle === null || $destTitle === null ) {
 			return false; // validate these
 		}
 		if ( $targetTitle->getArticleID() == $destTitle->getArticleID() ) {
@@ -353,7 +390,7 @@ class SpecialMergeHistory extends SpecialPage {
 		}
 
 		// MergeHistory object
-		$mh = new MergeHistory( $targetTitle, $destTitle, $this->mTimestamp );
+		$mh = $this->mergeHistoryFactory->newMergeHistory( $targetTitle, $destTitle, $this->mTimestamp );
 
 		// Merge!
 		$mergeStatus = $mh->merge( $this->getUser(), $this->mComment );
@@ -372,9 +409,14 @@ class SpecialMergeHistory extends SpecialPage {
 			[ 'redirect' => 'no' ]
 		);
 
+		// In some cases the target page will be deleted
+		$append = $targetTitle->exists( Title::READ_LATEST )
+			? ''
+			: $this->msg( 'mergehistory-source-deleted', $targetLink );
+
 		$this->getOutput()->addWikiMsg( $this->msg( 'mergehistory-done' )
 			->rawParams( $targetLink )
-			->params( $destTitle->getPrefixedText() )
+			->params( $destTitle->getPrefixedText(), $append )
 			->numParams( $mh->getMergedRevisionCount() )
 		);
 

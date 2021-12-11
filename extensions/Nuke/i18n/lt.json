@@ -3,16 +3,17 @@
 		"authors": [
 			"Eitvys200",
 			"Homo",
+			"Manvydasz",
 			"Matasg",
 			"Pofka",
-			"Manvydasz"
+			"Tomasdd"
 		]
 	},
 	"nuke": "Masinis trynimas",
 	"nuke-desc": "Suteikia administratoriams galimybę [[Special:Nuke|masiškai trinti]] puslapius",
 	"nuke-nopages": "Nėra naujų puslapių, sukurtų [[Special:Contributions/$1|$1]] naujausiuose keitimuose.",
 	"nuke-list": "Šiuos puslapius neseniai sukūrė [[Special:Contributions/$1|{{GENDER:$1|$1}}]];\nįrašykite komentarą ir paspauskite mygtuką, kad jie būtų ištrinti.",
-	"nuke-defaultreason": "Masinis pašalinimas puslapių, kuriuos sukūrė $1",
+	"nuke-defaultreason": "Masinis pašalinimas puslapių, kuriuos sukūrė [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Masinis neseniai sukurtų puslapių trynimas",
 	"nuke-tools": "Šis įrankis leidžia masiškai ištrinti puslapius, neseniai sukurtus nurodyto naudotojo ar IP.\nĮrašykite naudotojo vardą ar IP adresą, kad gautumėte trintinų puslapių sąrašą.",
 	"nuke-submit-user": "Puslapių sąrašas",

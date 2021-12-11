@@ -34,17 +34,19 @@ class ExportProgressFilter extends DumpFilter {
 	 * @param DumpOutput &$sink
 	 * @param BackupDumper &$progress
 	 */
-	function __construct( &$sink, &$progress ) {
+	public function __construct( &$sink, &$progress ) {
 		parent::__construct( $sink );
 		$this->progress = $progress;
 	}
 
-	function writeClosePage( $string ) {
+	/** @inheritDoc */
+	public function writeClosePage( $string ) {
 		parent::writeClosePage( $string );
 		$this->progress->reportPage();
 	}
 
-	function writeRevision( $rev, $string ) {
+	/** @inheritDoc */
+	public function writeRevision( $rev, $string ) {
 		parent::writeRevision( $rev, $string );
 		$this->progress->revCount();
 	}

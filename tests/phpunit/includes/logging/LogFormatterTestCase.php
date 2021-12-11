@@ -1,4 +1,5 @@
 <?php
+
 use MediaWiki\Linker\LinkTarget;
 
 /**
@@ -39,7 +40,7 @@ abstract class LogFormatterTestCase extends MediaWikiLangTestCase {
 	}
 
 	private function getLinkTargetsAsStrings( array $linkTargets ) {
-		return array_map( function ( LinkTarget $t ) {
+		return array_map( static function ( LinkTarget $t ) {
 			return $t->getInterwiki() . ':' . $t->getNamespace() . ':'
 				. $t->getDBkey() . '#' . $t->getFragment();
 		}, $linkTargets );

@@ -5,7 +5,7 @@ use Wikimedia\TestingAccessWrapper;
 /**
  * @covers ChangesListBooleanFilterGroup
  */
-class ChangesListBooleanFilterGroupTest extends MediaWikiTestCase {
+class ChangesListBooleanFilterGroupTest extends MediaWikiIntegrationTestCase {
 	public function testIsFullCoverage() {
 		$hideGroupDefault = TestingAccessWrapper::newFromObject(
 			new ChangesListBooleanFilterGroup( [
@@ -15,10 +15,7 @@ class ChangesListBooleanFilterGroupTest extends MediaWikiTestCase {
 			] )
 		);
 
-		$this->assertSame(
-			true,
-			$hideGroupDefault->isFullCoverage
-		);
+		$this->assertTrue( $hideGroupDefault->isFullCoverage );
 	}
 
 	public function testGetJsData() {

@@ -1,5 +1,13 @@
 <?php
 
+namespace LocalisationUpdate;
+
+use FormatJson;
+use Language;
+use LocalisationUpdate\Fetcher\FetcherFactory;
+use LocalisationUpdate\Reader\ReaderFactory;
+use Maintenance;
+
 $IP = strval( getenv( 'MW_INSTALL_PATH' ) ) !== ''
 	? getenv( 'MW_INSTALL_PATH' )
 	: realpath( __DIR__ . '/../../' );
@@ -23,8 +31,8 @@ class Update extends Maintenance {
 	public function execute() {
 		// Prevent the script from timing out
 		set_time_limit( 0 );
-		ini_set( "max_execution_time", 0 );
-		ini_set( 'memory_limit', -1 );
+		ini_set( 'max_execution_time', '0' );
+		ini_set( 'memory_limit', '-1' );
 
 		global $IP;
 		global $wgLocalisationUpdateRepositories;
@@ -32,21 +40,21 @@ class Update extends Maintenance {
 
 		$dir = LocalisationUpdate::getDirectory();
 		if ( !$dir ) {
-			$this->error( "No cache directory configured", true );
+			$this->fatalError( 'No cache directory configured' );
 			return;
 		}
 
 		$lc = Language::getLocalisationCache();
 		$messagesDirs = $lc->getMessagesDirs();
 
-		$finder = new LocalisationUpdate\Finder( $messagesDirs, $IP );
-		$readerFactory = new LocalisationUpdate\ReaderFactory();
-		$fetcherFactory = new LocalisationUpdate\FetcherFactory();
+		$finder = new Finder( $messagesDirs, $IP );
+		$readerFactory = new ReaderFactory();
+		$fetcherFactory = new FetcherFactory();
 
 		$repoid = $this->getOption( 'repoid', $wgLocalisationUpdateRepository );
 		if ( !isset( $wgLocalisationUpdateRepositories[$repoid] ) ) {
 			$known = implode( ', ', array_keys( $wgLocalisationUpdateRepositories ) );
-			$this->error( "Unknown repoid $repoid; known: $known", true );
+			$this->fatalError( "Unknown repoid $repoid; known: $known" );
 			return;
 		}
 		$repos = $wgLocalisationUpdateRepositories[$repoid];
@@ -56,7 +64,7 @@ class Update extends Maintenance {
 		$logger = $this;
 
 		// Do it ;)
-		$updater = new LocalisationUpdate\Updater();
+		$updater = new Updater();
 		$updatedMessages = $updater->execute(
 			$finder,
 			$readerFactory,
@@ -79,10 +87,16 @@ class Update extends Maintenance {
 		$this->output( "Saved $count new translations\n" );
 	}
 
+	/**
+	 * @param string $msg
+	 */
 	public function logInfo( $msg ) {
 		$this->output( $msg . "\n" );
 	}
 
+	/**
+	 * @param string $msg
+	 */
 	public function logError( $msg ) {
 		$this->error( $msg );
 	}

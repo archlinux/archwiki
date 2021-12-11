@@ -150,7 +150,7 @@
 	 * were created in functions upon which `asyncMethod` was called have
 	 * resolved.
 	 *
-	 * @return {$.Promise}
+	 * @return {jQuery.Promise}
 	 */
 	MTH.waitForAsync = function () {
 		var deferred = $.Deferred();

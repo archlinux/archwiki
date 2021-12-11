@@ -18,43 +18,59 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+use Wikimedia\AtEase;
 use Wikimedia\Rdbms\DBConnectionError;
-use Wikimedia\Rdbms\DBReadOnlyError;
 use Wikimedia\Rdbms\DBExpectedError;
+use Wikimedia\Rdbms\DBReadOnlyError;
+use Wikimedia\RequestTimeout\RequestTimeoutException;
 
 /**
  * Class to expose exceptions to the client (API bots, users, admins using CLI scripts)
  * @since 1.28
  */
 class MWExceptionRenderer {
-	const AS_RAW = 1; // show as text
-	const AS_PRETTY = 2; // show as HTML
+	public const AS_RAW = 1; // show as text
+	public const AS_PRETTY = 2; // show as HTML
 
 	/**
-	 * @param Exception|Throwable $e Original exception
+	 * @param Throwable $e Original exception
 	 * @param int $mode MWExceptionExposer::AS_* constant
-	 * @param Exception|Throwable|null $eNew New exception from attempting to show the first
+	 * @param Throwable|null $eNew New throwable from attempting to show the first
 	 */
-	public static function output( $e, $mode, $eNew = null ) {
+	public static function output( Throwable $e, $mode, Throwable $eNew = null ) {
 		global $wgMimeType, $wgShowExceptionDetails;
 
+		if ( function_exists( 'apache_setenv' ) ) {
+			// The client should not be blocked on "post-send" updates. If apache decides that
+			// a response should be gzipped, it will wait for PHP to finish since it cannot gzip
+			// anything until it has the full response (even with "Transfer-Encoding: chunked").
+			AtEase\AtEase::suppressWarnings();
+			apache_setenv( 'no-gzip', '1' );
+			AtEase\AtEase::restoreWarnings();
+		}
+
 		if ( defined( 'MW_API' ) ) {
-			// Unhandled API exception, we can't be sure that format printer is alive
 			self::header( 'MediaWiki-API-Error: internal_api_error_' . get_class( $e ) );
-			wfHttpError( 500, 'Internal Server Error', self::getText( $e ) );
-		} elseif ( self::isCommandLine() ) {
+		}
+
+		if ( self::isCommandLine() ) {
 			self::printError( self::getText( $e ) );
 		} elseif ( $mode === self::AS_PRETTY ) {
 			self::statusHeader( 500 );
-			self::header( "Content-Type: $wgMimeType; charset=utf-8" );
+			self::header( "Content-Type: $wgMimeType; charset=UTF-8" );
+			ob_start();
 			if ( $e instanceof DBConnectionError ) {
 				self::reportOutageHTML( $e );
 			} else {
 				self::reportHTML( $e );
 			}
+			self::header( "Content-Length: " . ob_get_length() );
+			ob_end_flush();
 		} else {
+			ob_start();
 			self::statusHeader( 500 );
-			self::header( "Content-Type: $wgMimeType; charset=utf-8" );
+			self::header( "Content-Type: $wgMimeType; charset=UTF-8" );
 			if ( $eNew ) {
 				$message = "MediaWiki internal error.\n\n";
 				if ( $wgShowExceptionDetails ) {
@@ -78,15 +94,17 @@ class MWExceptionRenderer {
 			} else {
 				$message = MWExceptionHandler::getPublicLogMessage( $e );
 			}
-			echo nl2br( htmlspecialchars( $message ) ) . "\n";
+			print nl2br( htmlspecialchars( $message ) ) . "\n";
+			self::header( "Content-Length: " . ob_get_length() );
+			ob_end_flush();
 		}
 	}
 
 	/**
-	 * @param Exception|Throwable $e
-	 * @return bool Should the exception use $wgOut to output the error?
+	 * @param Throwable $e
+	 * @return bool Should the throwable use $wgOut to output the error?
 	 */
-	private static function useOutputPage( $e ) {
+	private static function useOutputPage( Throwable $e ) {
 		// Can the extension use the Message class/wfMessage to get i18n-ed messages?
 		foreach ( $e->getTrace() as $frame ) {
 			if ( isset( $frame['class'] ) && $frame['class'] === LocalisationCache::class ) {
@@ -102,32 +120,27 @@ class MWExceptionRenderer {
 			!empty( $GLOBALS['wgFullyInitialised'] ) &&
 			!empty( $GLOBALS['wgOut'] ) &&
 			RequestContext::getMain()->getTitle() &&
-			!defined( 'MEDIAWIKI_INSTALL' )
+			!defined( 'MEDIAWIKI_INSTALL' ) &&
+			// Don't send a skinned HTTP 500 page to API clients.
+			!defined( 'MW_API' )
 		);
 	}
 
 	/**
-	 * Output the exception report using HTML
+	 * Output the throwable report using HTML
 	 *
-	 * @param Exception|Throwable $e
+	 * @param Throwable $e
 	 */
-	private static function reportHTML( $e ) {
+	private static function reportHTML( Throwable $e ) {
 		global $wgOut, $wgSitename;
 
 		if ( self::useOutputPage( $e ) ) {
-			if ( $e instanceof MWException ) {
-				$wgOut->prepareErrorPage( $e->getPageTitle() );
-			} elseif ( $e instanceof DBReadOnlyError ) {
-				$wgOut->prepareErrorPage( self::msg( 'readonly', 'Database is locked' ) );
-			} elseif ( $e instanceof DBExpectedError ) {
-				$wgOut->prepareErrorPage( self::msg( 'databaseerror', 'Database error' ) );
-			} else {
-				$wgOut->prepareErrorPage( self::msg( 'internalerror', 'Internal error' ) );
-			}
+			$wgOut->prepareErrorPage( self::getExceptionTitle( $e ) );
 
 			// Show any custom GUI message before the details
-			if ( $e instanceof MessageSpecifier ) {
-				$wgOut->addHTML( Html::element( 'p', [], Message::newFromSpecifier( $e )->text() ) );
+			$customMessage = self::getCustomMessage( $e );
+			if ( $customMessage !== null ) {
+				$wgOut->addHTML( Html::element( 'p', [], $customMessage ) );
 			}
 			$wgOut->addHTML( self::getHTML( $e ) );
 
@@ -155,10 +168,10 @@ class MWExceptionRenderer {
 	 * backtrace to the error, otherwise show a message to ask to set it to true
 	 * to show that information.
 	 *
-	 * @param Exception|Throwable $e
+	 * @param Throwable $e
 	 * @return string Html to output
 	 */
-	public static function getHTML( $e ) {
+	public static function getHTML( Throwable $e ) {
 		global $wgShowExceptionDetails;
 
 		if ( $wgShowExceptionDetails ) {
@@ -212,10 +225,10 @@ class MWExceptionRenderer {
 	}
 
 	/**
-	 * @param Exception|Throwable $e
+	 * @param Throwable $e
 	 * @return string
 	 */
-	private static function getText( $e ) {
+	private static function getText( Throwable $e ) {
 		global $wgShowExceptionDetails;
 
 		if ( $wgShowExceptionDetails ) {
@@ -228,12 +241,55 @@ class MWExceptionRenderer {
 	}
 
 	/**
-	 * @param Exception|Throwable $e
+	 * @param Throwable $e
 	 * @return string
 	 */
-	private static function getShowBacktraceError( $e ) {
+	private static function getShowBacktraceError( Throwable $e ) {
 		$var = '$wgShowExceptionDetails = true;';
 		return "Set $var at the bottom of LocalSettings.php to show detailed debugging information.";
+	}
+
+	/**
+	 * Get the page title to be used for a given exception.
+	 *
+	 * @param Throwable $e
+	 * @return string
+	 */
+	private static function getExceptionTitle( Throwable $e ) {
+		if ( $e instanceof MWException ) {
+			return $e->getPageTitle();
+		} elseif ( $e instanceof DBReadOnlyError ) {
+			return self::msg( 'readonly', 'Database is locked' );
+		} elseif ( $e instanceof DBExpectedError ) {
+			return self::msg( 'databaseerror', 'Database error' );
+		} elseif ( $e instanceof RequestTimeoutException ) {
+			return self::msg( 'timeouterror', 'Request timeout' );
+		} else {
+			return self::msg( 'internalerror', 'Internal error' );
+		}
+	}
+
+	/**
+	 * Extract an additional user-visible message from an exception, or null if
+	 * it has none.
+	 *
+	 * @param Throwable $e
+	 * @return string|null
+	 */
+	private static function getCustomMessage( Throwable $e ) {
+		try {
+			if ( $e instanceof MessageSpecifier ) {
+				$msg = Message::newFromSpecifier( $e );
+			} elseif ( $e instanceof RequestTimeoutException ) {
+				$msg = wfMessage( 'timeouterror-text', $e->getLimit() );
+			} else {
+				return null;
+			}
+			$text = $msg->text();
+		} catch ( Exception $e2 ) {
+			return null;
+		}
+		return $text;
 	}
 
 	/**
@@ -280,9 +336,9 @@ class MWExceptionRenderer {
 	}
 
 	/**
-	 * @param Exception|Throwable $e
+	 * @param Throwable $e
 	 */
-	private static function reportOutageHTML( $e ) {
+	private static function reportOutageHTML( Throwable $e ) {
 		global $wgShowExceptionDetails, $wgShowHostnames, $wgSitename;
 
 		$sorry = htmlspecialchars( self::msg(
@@ -307,7 +363,7 @@ class MWExceptionRenderer {
 			) );
 		}
 
-		MessageCache::singleton()->disable(); // no DB access
+		MediaWikiServices::getInstance()->getMessageCache()->disable(); // no DB access
 		$html = "<!DOCTYPE html>\n" .
 				'<html><head>' .
 				'<title>' .

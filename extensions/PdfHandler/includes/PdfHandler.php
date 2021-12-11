@@ -1,6 +1,18 @@
 <?php
 
+namespace MediaWiki\Extension\PdfHandler;
+
+use File;
+use IContextSource;
+use ImageHandler;
+use MediaTransformError;
+use MediaTransformOutput;
 use MediaWiki\MediaWikiServices;
+use PoolCounterWorkViaCallback;
+use ResourceLoader;
+use ThumbnailImage;
+use TransformParameterError;
+use Wikimedia\AtEase\AtEase;
 
 /**
  * Copyright © 2007 Martin Seidel (Xarax) <jodeldi@gmx.de>
@@ -25,12 +37,17 @@ use MediaWiki\MediaWikiServices;
  */
 
 class PdfHandler extends ImageHandler {
-	public static $messages = [
+	private const MESSAGES = [
 		'main' => 'pdf-file-page-warning',
 		'header' => 'pdf-file-page-warning-header',
 		'info' => 'pdf-file-page-warning-info',
 		'footer' => 'pdf-file-page-warning-footer',
 	];
+
+	/**
+	 * 10MB is considered a large file
+	 */
+	private const LARGE_FILE = 1e7;
 
 	/**
 	 * @return bool
@@ -153,6 +170,7 @@ class PdfHandler extends ImageHandler {
 			return new TransformParameterError( $params );
 		}
 
+		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 		$width = (int)$params['width'];
 		$height = (int)$params['height'];
 		$page = (int)$params['page'];
@@ -175,7 +193,7 @@ class PdfHandler extends ImageHandler {
 
 		// Thumbnail extraction is very inefficient for large files.
 		// Provide a way to pool count limit the number of downloaders.
-		if ( $image->getSize() >= 1e7 ) { // 10MB
+		if ( $image->getSize() >= self::LARGE_FILE ) {
 			$work = new PoolCounterWorkViaCallback( 'GetLocalFileCopy', sha1( $image->getName() ),
 				[
 					'doWork' => function () use ( $image ) {
@@ -188,7 +206,8 @@ class PdfHandler extends ImageHandler {
 			$srcPath = $image->getLocalRefPath();
 		}
 
-		if ( $srcPath === false ) { // could not download original
+		if ( $srcPath === false ) {
+			// could not download original
 			return $this->doThumbError( $width, $height, 'filemissing' );
 		}
 
@@ -196,6 +215,7 @@ class PdfHandler extends ImageHandler {
 			$wgPdfProcessor,
 			"-sDEVICE=jpeg",
 			"-sOutputFile=-",
+			"-sstdout=%stderr",
 			"-dFirstPage={$page}",
 			"-dLastPage={$page}",
 			"-dSAFER",
@@ -280,9 +300,9 @@ class PdfHandler extends ImageHandler {
 				 * @suppress PhanUndeclaredProperty
 				 */
 				'doWork' => function () use ( $image, $metadata ) {
-					Wikimedia\suppressWarnings();
+					AtEase::suppressWarnings();
 					$image->pdfMetaArray = unserialize( $metadata );
-					Wikimedia\restoreWarnings();
+					AtEase::restoreWarnings();
 				},
 			]
 		);
@@ -311,7 +331,7 @@ class PdfHandler extends ImageHandler {
 		static $mime;
 
 		if ( !isset( $mime ) ) {
-			$magic = MediaWiki\MediaWikiServices::getInstance()->getMimeAnalyzer();
+			$magic = MediaWikiServices::getInstance()->getMimeAnalyzer();
 			$mime = $magic->guessTypesForExtension( $wgPdfOutputExtension );
 		}
 		return [ $wgPdfOutputExtension, $mime ];
@@ -351,9 +371,9 @@ class PdfHandler extends ImageHandler {
 		if ( !$meta ) {
 			return false;
 		}
-		Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		$meta = unserialize( $meta );
-		Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 
 		if ( !isset( $meta['mergedMetadata'] )
 			|| !is_array( $meta['mergedMetadata'] )
@@ -364,6 +384,29 @@ class PdfHandler extends ImageHandler {
 
 		// Inherited from MediaHandler.
 		return $this->formatMetadataHelper( $meta['mergedMetadata'], $context );
+	}
+
+	/** @inheritDoc */
+	protected function formatTag( string $key, $vals, $context = false ) {
+		switch ( $key ) {
+			case 'pdf-Producer':
+			case 'pdf-Version':
+				return htmlspecialchars( $vals );
+			case 'pdf-PageSize':
+				foreach ( $vals as &$val ) {
+					$val = htmlspecialchars( $val );
+				}
+				return $vals;
+			case 'pdf-Encrypted':
+				// @todo: The value isn't i18n-ised; should be done here.
+				// For reference, if encrypted this field's value looks like:
+				// "yes (print:yes copy:no change:no addNotes:no)"
+				return htmlspecialchars( $vals );
+			default:
+				break;
+		}
+		// Use default formatting
+		return false;
 	}
 
 	/**
@@ -382,7 +425,8 @@ class PdfHandler extends ImageHandler {
 	 * @return array|bool
 	 */
 	public function getPageDimensions( File $image, $page ) {
-		$index = $page; // MW starts pages at 1, as they are stored here
+		// MW starts pages at 1, as they are stored here
+		$index = $page;
 
 		$info = $this->getDimensionInfo( $image );
 		if ( $info && isset( $info['dimensionsByPage'][$index] ) ) {
@@ -402,7 +446,9 @@ class PdfHandler extends ImageHandler {
 				if ( !$data || !isset( $data['Pages'] ) ) {
 					return false;
 				}
-				unset( $data['text'] ); // lower peak RAM
+
+				// lower peak RAM
+				unset( $data['text'] );
 
 				$dimsByPage = [];
 				$count = intval( $data['Pages'] );
@@ -437,7 +483,7 @@ class PdfHandler extends ImageHandler {
 	 */
 	public function getWarningConfig( $file ) {
 		return [
-			'messages' => self::$messages,
+			'messages' => self::MESSAGES,
 			'link' => '//www.mediawiki.org/wiki/Special:MyLanguage/Help:Security/PDF_files',
 			'module' => 'pdfhandler.messages',
 		];
@@ -449,7 +495,7 @@ class PdfHandler extends ImageHandler {
 	 */
 	public static function registerWarningModule( &$resourceLoader ) {
 		$resourceLoader->register( 'pdfhandler.messages', [
-			'messages' => array_values( self::$messages ),
+			'messages' => array_values( self::MESSAGES ),
 		] );
 	}
 }

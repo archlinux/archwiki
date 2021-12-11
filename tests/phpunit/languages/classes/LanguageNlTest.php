@@ -5,20 +5,36 @@
  * @file
  */
 
-/** Tests for MediaWiki languages/LanguageNl.php */
+/** Tests for MediaWiki languages/LanguageNl.php
+ * @group Language
+ */
 class LanguageNlTest extends LanguageClassesTestCase {
 
 	/**
 	 * @covers Language::formatNum
-	 * @todo split into a test and a dataprovider
+	 * @dataProvider provideFormatNum
 	 */
-	public function testFormatNum() {
-		$this->assertEquals( '1.234.567', $this->getLang()->formatNum( '1234567' ) );
-		$this->assertEquals( '12.345', $this->getLang()->formatNum( '12345' ) );
-		$this->assertEquals( '1', $this->getLang()->formatNum( '1' ) );
-		$this->assertEquals( '123', $this->getLang()->formatNum( '123' ) );
-		$this->assertEquals( '1.234', $this->getLang()->formatNum( '1234' ) );
-		$this->assertEquals( '12.345,56', $this->getLang()->formatNum( '12345.56' ) );
-		$this->assertEquals( ',1234556', $this->getLang()->formatNum( '.1234556' ) );
+	public function testFormatNum( $unformatted, $formatted ) {
+		$this->assertEquals( $formatted, $this->getLang()->formatNum( $unformatted ) );
+	}
+
+	public function provideFormatNum() {
+		return [
+			[ '1234567', '1.234.567' ],
+			[ '12345', '12.345' ],
+			[ '1', '1' ],
+			[ '123', '123' ],
+			[ '1234', '1.234' ],
+			[ '12345.56', '12.345,56' ],
+			[ '.1234556', ',1234556' ],
+			[ '12345679812345678', '12.345.679.812.345.678' ],
+			[ '.12345', ',12345' ],
+			[ '-1200000', '−1.200.000' ],
+			[ '-98', '−98' ],
+			[ -98, '−98' ],
+			[ -12345678, '−12.345.678' ],
+			[ '', '' ],
+			[ null, '' ]
+		];
 	}
 }

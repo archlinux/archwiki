@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Herryz",
+			"NoiX180",
+			"Salomo Christian Hutajulu"
+		]
+	},
+	"tooltip-ca-ve-edit": "Padimpos alaman on",
+	"visualeditor-ca-createlocaldescriptionsource": "Tambahon asal ni deskripsi lokal",
+	"visualeditor-ca-createsource": "Bahen sumber",
+	"visualeditor-ca-editsource": "Patota asal",
+	"visualeditor-ca-editsource-section": "patota asal",
+	"visualeditor-descriptionpagelink": "Project:VisualEditor"
+}

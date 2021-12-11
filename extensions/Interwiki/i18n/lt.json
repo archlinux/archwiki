@@ -3,14 +3,15 @@
 		"authors": [
 			"Eitvys200",
 			"Homo",
-			"Hugo.arg"
+			"Hugo.arg",
+			"Tomasdd"
 		]
 	},
 	"interwiki": "Žiūrėti ir redaguoti interwiki duomenis",
 	"interwiki-title-norights": "Žiūrėti tarpkalbinių nuorodų duomenis",
 	"interwiki-desc": "Prideda [[Special:Interwiki|specialųjį puslapį]] interwiki lentelei peržiūrėti ir redaguoti",
 	"interwiki_local": "Persiųsti",
-	"interwiki-local-label": "Persiųsti:",
+	"interwiki-local-label": "Persiųsti",
 	"interwiki_1": "taip",
 	"interwiki_0": "ne",
 	"interwiki_edit": "Redaguoti",

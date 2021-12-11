@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Умар",
-			"Исмаил Садуев"
+			"Исмаил Садуев",
+			"Умар"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Жайна",
@@ -19,6 +19,7 @@
 	"cite-ve-dialog-referenceslist-title": "Билгалдаккхаршан могӀам",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Дика йе хьайн контент хаамийн хьосташ тӀетоьхна. Хайн йиш ю цитаташ дало жайнаш тӀера, газеташ тӀера я веб-сайташ тӀера.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Цитаташ",
+	"cite-ve-dialogbutton-reference-title": "Хьост",
 	"cite-ve-dialogbutton-reference-tooltip": "Коьрта",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Билгалдаккхаршан могӀам",
 	"cite-ve-reference-input-placeholder": "Муьлхачунна тӀетовжа лаьа хьуна?",

@@ -21,13 +21,21 @@
  *
  * @file
  */
+
+use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\User\UserIdentityValue;
+use OOUI\IconWidget;
 use Wikimedia\Rdbms\IResultWrapper;
 
 class ChangesList extends ContextSource {
-	const CSS_CLASS_PREFIX = 'mw-changeslist-';
+	use ProtectedHookAccessorTrait;
+
+	public const CSS_CLASS_PREFIX = 'mw-changeslist-';
 
 	/**
 	 * @var Skin
@@ -88,7 +96,7 @@ class ChangesList extends ContextSource {
 		$user = $context->getUser();
 		$sk = $context->getSkin();
 		$list = null;
-		if ( Hooks::run( 'FetchChangesList', [ $user, &$sk, &$list, $groups ] ) ) {
+		if ( Hooks::runner()->onFetchChangesList( $user, $sk, $list, $groups ) ) {
 			$new = $context->getRequest()->getBool( 'enhanced', $user->getOption( 'usenewrc' ) );
 
 			return $new ?
@@ -225,7 +233,7 @@ class ChangesList extends ContextSource {
 	 * in the front-end.
 	 *
 	 * @param RecentChange $rc
-	 * @return array Array of CSS classes
+	 * @return string[] Array of CSS classes
 	 */
 	protected function getHTMLClassesForFilters( $rc ) {
 		$classes = [];
@@ -255,6 +263,8 @@ class ChangesList extends ContextSource {
 	 * Make an "<abbr>" element for a given change flag. The flag indicating a new page, minor edit,
 	 * bot edit, or unpatrolled edit. In English it typically contains "N", "m", "b", or "!".
 	 *
+	 * Styling for these flags is provided through mediawiki.interface.helpers.styles.
+	 *
 	 * @param string $flag One key of $wgRecentChangesFlags
 	 * @param IContextSource|null $context
 	 * @return string HTML
@@ -263,7 +273,7 @@ class ChangesList extends ContextSource {
 		static $map = [ 'minoredit' => 'minor', 'botedit' => 'bot' ];
 		static $flagInfos = null;
 
-		if ( is_null( $flagInfos ) ) {
+		if ( $flagInfos === null ) {
 			global $wgRecentChangesFlags;
 			$flagInfos = [];
 			foreach ( $wgRecentChangesFlags as $key => $value ) {
@@ -307,10 +317,10 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param IResultWrapper|array $rows
+	 * @param IResultWrapper|stdClass[] $rows
 	 */
 	public function initChangesListRows( $rows ) {
-		Hooks::run( 'ChangesListInitRows', [ $this, $rows ] );
+		$this->getHookRunner()->onChangesListInitRows( $this, $rows );
 	}
 
 	/**
@@ -407,20 +417,25 @@ class ChangesList extends ContextSource {
 	/**
 	 * Render the date and time of a revision in the current user language
 	 * based on whether the user is able to view this information or not.
-	 * @param Revision $rev
-	 * @param User $user
+	 * @param RevisionRecord $rev
+	 * @param Authority $performer
 	 * @param Language $lang
 	 * @param Title|null $title (optional) where Title does not match
 	 *   the Title associated with the Revision
 	 * @internal For usage by Pager classes only (e.g. HistoryPager and ContribsPager).
 	 * @return string HTML
 	 */
-	public static function revDateLink( Revision $rev, User $user, Language $lang, $title = null ) {
+	public static function revDateLink(
+		RevisionRecord $rev,
+		Authority $performer,
+		Language $lang,
+		$title = null
+	) {
 		$ts = $rev->getTimestamp();
-		$date = $lang->userTimeAndDate( $ts, $user );
-		if ( $rev->userCan( RevisionRecord::DELETED_TEXT, $user ) ) {
+		$date = $lang->userTimeAndDate( $ts, $performer->getUser() );
+		if ( $rev->userCan( RevisionRecord::DELETED_TEXT, $performer ) ) {
 			$link = MediaWikiServices::getInstance()->getLinkRenderer()->makeKnownLink(
-				$title ?? $rev->getTitle(),
+				$title ?? $rev->getPageAsLinkTarget(),
 				$date,
 				[ 'class' => 'mw-changeslist-date' ],
 				[ 'oldid' => $rev->getId() ]
@@ -485,7 +500,7 @@ class ChangesList extends ContextSource {
 			$rc->mAttribs['rc_type'] == RC_CATEGORIZE
 		) {
 			$diffLink = $this->message['diff'];
-		} elseif ( !self::userCan( $rc, RevisionRecord::DELETED_TEXT, $this->getUser() ) ) {
+		} elseif ( !self::userCan( $rc, RevisionRecord::DELETED_TEXT, $this->getAuthority() ) ) {
 			$diffLink = $this->message['diff'];
 		} else {
 			$query = [
@@ -523,6 +538,9 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
+	 * Get the HTML link to the changed page, possibly with a prefix from hook handlers, and a
+	 * suffix for temporarily watched items.
+	 *
 	 * @param RecentChange &$rc
 	 * @param bool $unpatrolled
 	 * @param bool $watched
@@ -551,12 +569,47 @@ class ChangesList extends ContextSource {
 
 		# TODO: Deprecate the $s argument, it seems happily unused.
 		$s = '';
-		# Avoid PHP 7.1 warning from passing $this by reference
-		$changesList = $this;
-		Hooks::run( 'ChangesListInsertArticleLink',
-			[ &$changesList, &$articlelink, &$s, &$rc, $unpatrolled, $watched ] );
+		$this->getHookRunner()->onChangesListInsertArticleLink( $this, $articlelink,
+			$s, $rc, $unpatrolled, $watched );
 
-		return "{$s} {$articlelink}";
+		// Watchlist expiry icon.
+		$watchlistExpiry = '';
+		if ( isset( $rc->watchlistExpiry ) && $rc->watchlistExpiry ) {
+			$watchlistExpiry = $this->getWatchlistExpiry( $rc );
+		}
+
+		return "{$s} {$articlelink}{$watchlistExpiry}";
+	}
+
+	/**
+	 * Get HTML to display the clock icon for watched items that have a watchlist expiry time.
+	 * @since 1.35
+	 * @param RecentChange $recentChange
+	 * @return string The HTML to display an indication of the expiry time.
+	 */
+	public function getWatchlistExpiry( RecentChange $recentChange ): string {
+		$item = WatchedItem::newFromRecentChange( $recentChange, $this->getUser() );
+		// Guard against expired items, even though they shouldn't come here.
+		if ( $item->isExpired() ) {
+			return '';
+		}
+		$daysLeftText = $item->getExpiryInDaysText( $this->getContext() );
+		// Matching widget is also created in ChangesListSpecialPage, for the legend.
+		$widget = new IconWidget( [
+			'icon' => 'clock',
+			'title' => $daysLeftText,
+			'classes' => [ 'mw-changesList-watchlistExpiry' ],
+		] );
+		$widget->setAttributes( [
+			// Add labels for assistive technologies.
+			'role' => 'img',
+			'aria-label' => $this->msg( 'watchlist-expires-in-aria-label' )->text(),
+			// Days-left is used in resources/src/mediawiki.special.changeslist.watchlistexpiry/watchlistexpiry.js
+			'data-days-left' => $item->getExpiryInDays(),
+		] );
+		// Add spaces around the widget (the page title is to one side,
+		// and a semicolon or opening-parenthesis to the other).
+		return " $widget ";
 	}
 
 	/**
@@ -568,8 +621,16 @@ class ChangesList extends ContextSource {
 	 * @return string HTML fragment
 	 */
 	public function getTimestamp( $rc ) {
-		// @todo FIXME: Hard coded ". .". Is there a message for this? Should there be?
-		return $this->message['semicolon-separator'] . '<span class="mw-changeslist-date">' .
+		// This uses the semi-colon separator unless there's a watchlist expiry date for the entry,
+		// because in that case the timestamp is preceeded by a clock icon.
+		// A space is important after mw-changeslist-separator--semicolon to make sure
+		// that whatever comes before it is distinguishable.
+		// (Otherwise your have the text of titles pushing up against the timestamp)
+		// A specific element is used for this purpose as `mw-changeslist-date` is used in a variety
+		// of other places with a different position and the information proceeding getTimestamp can vary.
+		$separatorClass = $rc->watchlistExpiry ? 'mw-changeslist-separator' : 'mw-changeslist-separator--semicolon';
+		return Html::element( 'span', [ 'class' => $separatorClass ] ) . ' ' .
+			'<span class="mw-changeslist-date">' .
 			htmlspecialchars( $this->getLanguage()->userTime(
 				$rc->mAttribs['rc_timestamp'],
 				$this->getUser()
@@ -672,6 +733,7 @@ class ChangesList extends ContextSource {
 	 * @return bool
 	 */
 	public static function isDeleted( $rc, $field ) {
+		// @phan-suppress-next-line PhanTypeInvalidLeftOperandOfBitwiseOp false positive
 		return ( $rc->mAttribs['rc_deleted'] & $field ) == $field;
 	}
 
@@ -680,20 +742,20 @@ class ChangesList extends ContextSource {
 	 * field of this revision, if it's marked as deleted.
 	 * @param RCCacheEntry|RecentChange $rc
 	 * @param int $field
-	 * @param User|null $user User object to check against. If null, the global RequestContext's
+	 * @param Authority|null $performer to check permissions against. If null, the global RequestContext's
 	 * User is assumed instead.
 	 * @return bool
 	 */
-	public static function userCan( $rc, $field, User $user = null ) {
-		if ( $user === null ) {
-			$user = RequestContext::getMain()->getUser();
+	public static function userCan( $rc, $field, Authority $performer = null ) {
+		if ( $performer === null ) {
+			$performer = RequestContext::getMain()->getAuthority();
 		}
 
 		if ( $rc->mAttribs['rc_type'] == RC_LOG ) {
-			return LogEventsList::userCanBitfield( $rc->mAttribs['rc_deleted'], $field, $user );
+			return LogEventsList::userCanBitfield( $rc->mAttribs['rc_deleted'], $field, $performer );
 		}
 
-		return RevisionRecord::userCanBitfield( $rc->mAttribs['rc_deleted'], $field, $user );
+		return RevisionRecord::userCanBitfield( $rc->mAttribs['rc_deleted'], $field, $performer );
 	}
 
 	/**
@@ -725,19 +787,22 @@ class ChangesList extends ContextSource {
 			/** Check for rollback permissions, disallow special pages, and only
 			 * show a link on the top-most revision
 			 */
-			if ( MediaWikiServices::getInstance()->getPermissionManager()
-				->quickUserCan( 'rollback', $this->getUser(), $title )
-			) {
-				$rev = new Revision( [
-					'title' => $title,
-					'id' => $rc->mAttribs['rc_this_oldid'],
-					'user' => $rc->mAttribs['rc_user'],
-					'user_text' => $rc->mAttribs['rc_user_text'],
-					'actor' => $rc->mAttribs['rc_actor'] ?? null,
-					'deleted' => $rc->mAttribs['rc_deleted']
-				] );
-				$s .= ' ' . Linker::generateRollback( $rev, $this->getContext(),
-					[ 'noBrackets' ] );
+			if ( $this->getAuthority()->probablyCan( 'rollback', $title ) ) {
+				$revRecord = new MutableRevisionRecord( $title );
+				$revRecord->setId( (int)$rc->mAttribs['rc_this_oldid'] );
+				$revRecord->setVisibility( (int)$rc->mAttribs['rc_deleted'] );
+				$user = new UserIdentityValue(
+					(int)$rc->mAttribs['rc_user'],
+					$rc->mAttribs['rc_user_text']
+				);
+				$revRecord->setUser( $user );
+
+				$s .= ' ';
+				$s .= Linker::generateRollback(
+					$revRecord,
+					$this->getContext(),
+					[ 'noBrackets' ]
+				);
 			}
 		}
 	}
@@ -756,7 +821,7 @@ class ChangesList extends ContextSource {
 	/**
 	 * @param string &$s
 	 * @param RecentChange &$rc
-	 * @param array &$classes
+	 * @param string[] &$classes
 	 */
 	public function insertTags( &$s, &$rc, &$classes ) {
 		if ( empty( $rc->mAttribs['ts_tags'] ) ) {
@@ -774,7 +839,7 @@ class ChangesList extends ContextSource {
 
 	/**
 	 * @param RecentChange $rc
-	 * @param array &$classes
+	 * @param string[] &$classes
 	 * @return string
 	 * @since 1.26
 	 */
@@ -793,7 +858,7 @@ class ChangesList extends ContextSource {
 	}
 
 	/**
-	 * @param object|RecentChange $rc Database row from recentchanges or a RecentChange object
+	 * @param stdClass|RecentChange $rc Database row from recentchanges or a RecentChange object
 	 * @param User $user
 	 * @return bool
 	 */

@@ -22,7 +22,7 @@ class BenchmarkerTest extends \PHPUnit\Framework\TestCase {
 
 		$count = 0;
 		$bench->bench( [
-			'test' => function () use ( &$count ) {
+			'test' => static function () use ( &$count ) {
 					$count++;
 			}
 		] );
@@ -40,10 +40,10 @@ class BenchmarkerTest extends \PHPUnit\Framework\TestCase {
 		$buffer = [];
 		$bench->bench( [
 			'test' => [
-				'setup' => function () use ( &$buffer ) {
+				'setup' => static function () use ( &$buffer ) {
 						$buffer[] = 'setup';
 				},
-				'function' => function () use ( &$buffer ) {
+				'function' => static function () use ( &$buffer ) {
 						$buffer[] = 'run';
 				}
 			]
@@ -70,7 +70,7 @@ class BenchmarkerTest extends \PHPUnit\Framework\TestCase {
 			->willReturn( null );
 
 		$bench->bench( [
-			'test' => function () {
+			'test' => static function () {
 			}
 		] );
 	}
@@ -86,8 +86,8 @@ class BenchmarkerTest extends \PHPUnit\Framework\TestCase {
 		$benchProxy->defaultCount = 1;
 
 		$bench->expects( $this->once() )->method( 'addResult' )
-			->with( $this->callback( function ( $res ) {
-				return isset( $res['name'] ) && $res['name'] === __CLASS__ . '::noop()';
+			->with( $this->callback( static function ( $res ) {
+				return isset( $res['name'] ) && $res['name'] === ( __CLASS__ . '::noop()' );
 			} ) );
 
 		$bench->bench( [
@@ -103,8 +103,8 @@ class BenchmarkerTest extends \PHPUnit\Framework\TestCase {
 		$benchProxy->defaultCount = 1;
 
 		$bench->expects( $this->once() )->method( 'addResult' )
-			->with( $this->callback( function ( $res ) {
-				return 'strtolower(A)';
+			->with( $this->callback( static function ( $res ) {
+				return $res['name'] === 'strtolower(A)';
 			} ) );
 
 		$bench->bench( [ [
@@ -130,12 +130,12 @@ class BenchmarkerTest extends \PHPUnit\Framework\TestCase {
 				] ) );
 
 		$bench->expects( $this->once() )->method( 'output' )
-			->with( $this->callback( function ( $out ) {
+			->with( $this->callback( static function ( $out ) {
 				return preg_match( '/memory.+ peak/', $out ) === 1;
 			} ) );
 
 		$bench->bench( [
-			'test' => function () {
+			'test' => static function () {
 			}
 		] );
 	}

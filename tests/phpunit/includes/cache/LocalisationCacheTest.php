@@ -10,30 +10,24 @@ use Psr\Log\NullLogger;
  * @covers LocalisationCache
  * @author Niklas Laxström
  */
-class LocalisationCacheTest extends MediaWikiTestCase {
-	protected function setUp() {
-		parent::setUp();
-		$this->setMwGlobals( [
-			'wgExtensionMessagesFiles' => [],
-			'wgHooks' => [],
-		] );
-	}
+class LocalisationCacheTest extends MediaWikiIntegrationTestCase {
 
 	/**
+	 * @param array $hooks Hook overrides
 	 * @return LocalisationCache
 	 */
-	protected function getMockLocalisationCache() {
+	protected function getMockLocalisationCache( $hooks = [] ) {
 		global $IP;
 
 		$mockLangNameUtils = $this->createMock( LanguageNameUtils::class );
 		$mockLangNameUtils->method( 'isValidBuiltInCode' )->will( $this->returnCallback(
-			function ( $code ) {
+			static function ( $code ) {
 				// Copy-paste, but it's only one line
 				return (bool)preg_match( '/^[a-z0-9-]{2,}$/', $code );
 			}
 		) );
 		$mockLangNameUtils->method( 'isSupportedLanguage' )->will( $this->returnCallback(
-			function ( $code ) {
+			static function ( $code ) {
 				return in_array( $code, [
 					'ar',
 					'arz',
@@ -46,7 +40,7 @@ class LocalisationCacheTest extends MediaWikiTestCase {
 			}
 		) );
 		$mockLangNameUtils->method( 'getMessagesFileName' )->will( $this->returnCallback(
-			function ( $code ) {
+			static function ( $code ) {
 				global $IP;
 				$code = str_replace( '-', '_', ucfirst( $code ) );
 				return "$IP/languages/messages/Messages$code.php";
@@ -55,6 +49,8 @@ class LocalisationCacheTest extends MediaWikiTestCase {
 		$mockLangNameUtils->expects( $this->never() )->method( $this->anythingBut(
 			'isValidBuiltInCode', 'isSupportedLanguage', 'getMessagesFileName'
 		) );
+
+		$hookContainer = $this->createHookContainer( $hooks );
 
 		$lc = $this->getMockBuilder( LocalisationCache::class )
 			->setConstructorArgs( [
@@ -67,7 +63,8 @@ class LocalisationCacheTest extends MediaWikiTestCase {
 				new LCStoreDB( [] ),
 				new NullLogger,
 				[],
-				$mockLangNameUtils
+				$mockLangNameUtils,
+				$hookContainer
 			] )
 			->setMethods( [ 'getMessagesDirs' ] )
 			->getMock();
@@ -124,9 +121,10 @@ class LocalisationCacheTest extends MediaWikiTestCase {
 	public function testRecacheFallbacksWithHooks() {
 		// Use hook to provide updates for messages. This is what the
 		// LocalisationUpdate extension does. See T70781.
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [
+
+		$lc = $this->getMockLocalisationCache( [
 			'LocalisationCacheRecacheFallback' => [
-				function (
+				static function (
 					LocalisationCache $lc,
 					$code,
 					array &$cache
@@ -139,8 +137,6 @@ class LocalisationCacheTest extends MediaWikiTestCase {
 				}
 			]
 		] );
-
-		$lc = $this->getMockLocalisationCache();
 		$lc->recache( 'ba' );
 		$this->assertEquals(
 			[

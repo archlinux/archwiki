@@ -6,9 +6,9 @@ use MediaWiki\MediaWikiServices;
  * @covers ChangeTags
  * @group Database
  */
-class ChangeTagsTest extends MediaWikiTestCase {
+class ChangeTagsTest extends MediaWikiIntegrationTestCase {
 
-	public function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 
 		$this->tablesUsed[] = 'change_tag';
@@ -23,22 +23,44 @@ class ChangeTagsTest extends MediaWikiTestCase {
 		$this->tablesUsed[] = 'archive';
 	}
 
+	public function tearDown() : void {
+		ChangeTags::$avoidReopeningTablesForTesting = false;
+		parent::tearDown();
+	}
+
+	private function emptyChangeTagsTables() {
+		$dbw = wfGetDB( DB_MASTER );
+		$dbw->delete( 'change_tag', '*' );
+		$dbw->delete( 'change_tag_def', '*' );
+	}
+
 	// TODO most methods are not tested
 
 	/** @dataProvider provideModifyDisplayQuery */
-	public function testModifyDisplayQuery( $origQuery, $filter_tag, $useTags, $modifiedQuery ) {
+	public function testModifyDisplayQuery(
+		$origQuery,
+		$filter_tag,
+		$useTags,
+		$avoidReopeningTables,
+		$modifiedQuery
+	) {
 		$this->setMwGlobals( 'wgUseTagFilter', $useTags );
+
+		if ( $avoidReopeningTables && $this->db->getType() !== 'mysql' ) {
+			$this->markTestSkipped( 'MySQL only' );
+		}
+
+		ChangeTags::$avoidReopeningTablesForTesting = $avoidReopeningTables;
+
 		$rcId = 123;
 		ChangeTags::updateTags( [ 'foo', 'bar' ], [], $rcId );
 		// HACK resolve deferred group concats (see comment in provideModifyDisplayQuery)
 		if ( isset( $modifiedQuery['fields']['ts_tags'] ) ) {
-			$modifiedQuery['fields']['ts_tags'] = call_user_func_array(
-				[ wfGetDB( DB_REPLICA ), 'buildGroupConcatField' ],
-				$modifiedQuery['fields']['ts_tags']
-			);
+			$modifiedQuery['fields']['ts_tags'] = wfGetDB( DB_REPLICA )
+				->buildGroupConcatField( ...$modifiedQuery['fields']['ts_tags'] );
 		}
 		if ( isset( $modifiedQuery['exception'] ) ) {
-			$this->setExpectedException( $modifiedQuery['exception'] );
+			$this->expectException( $modifiedQuery['exception'] );
 		}
 		ChangeTags::modifyDisplayQuery(
 			$origQuery['tables'],
@@ -81,6 +103,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'', // no tag filter
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'recentchanges' ],
 					'fields' => [ 'rc_id', 'rc_timestamp', 'ts_tags' => $groupConcats['recentchanges'] ],
@@ -99,6 +122,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'', // no tag filter
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'recentchanges' ],
 					'fields' => [ 'rc_id', 'ts_tags' => $groupConcats['recentchanges'] ],
@@ -117,6 +141,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'foo',
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'recentchanges', 'change_tag' ],
 					'fields' => [ 'rc_id', 'rc_timestamp', 'ts_tags' => $groupConcats['recentchanges'] ],
@@ -135,6 +160,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'foo',
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'logging', 'change_tag' ],
 					'fields' => [ 'log_id', 'ts_tags' => $groupConcats['logging'] ],
@@ -153,6 +179,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'foo',
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'revision', 'change_tag' ],
 					'fields' => [ 'rev_id', 'rev_timestamp', 'ts_tags' => $groupConcats['revision'] ],
@@ -171,11 +198,31 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'foo',
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'archive', 'change_tag' ],
 					'fields' => [ 'ar_id', 'ar_timestamp', 'ts_tags' => $groupConcats['archive'] ],
 					'conds' => [ "ar_timestamp > '20170714183203'", 'ct_tag_id' => [ 1 ] ],
 					'join_conds' => [ 'change_tag' => [ 'JOIN', 'ct_rev_id=ar_rev_id' ] ],
+					'options' => [ 'ORDER BY' => 'ar_timestamp DESC' ],
+				]
+			],
+			'archive query with single tag filter, avoiding reopening tables' => [
+				[
+					'tables' => [ 'archive' ],
+					'fields' => [ 'ar_id', 'ar_timestamp' ],
+					'conds' => [ "ar_timestamp > '20170714183203'" ],
+					'join_conds' => [],
+					'options' => [ 'ORDER BY' => 'ar_timestamp DESC' ],
+				],
+				'foo',
+				true, // tag filtering enabled
+				true, // avoid reopening tables
+				[
+					'tables' => [ 'archive', 'change_tag_for_display_query' ],
+					'fields' => [ 'ar_id', 'ar_timestamp', 'ts_tags' => $groupConcats['archive'] ],
+					'conds' => [ "ar_timestamp > '20170714183203'", 'ct_tag_id' => [ 1 ] ],
+					'join_conds' => [ 'change_tag_for_display_query' => [ 'JOIN', 'ct_rev_id=ar_rev_id' ] ],
 					'options' => [ 'ORDER BY' => 'ar_timestamp DESC' ],
 				]
 			],
@@ -189,6 +236,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'',
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[ 'exception' => MWException::class ]
 			],
 			'tag filter ignored when tag filtering is disabled' => [
@@ -201,6 +249,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				'foo',
 				false, // tag filtering disabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'archive' ],
 					'fields' => [ 'ar_id', 'ar_timestamp', 'ts_tags' => $groupConcats['archive'] ],
@@ -219,6 +268,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				[ 'foo', 'bar' ],
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'recentchanges', 'change_tag' ],
 					'fields' => [ 'rc_id', 'rc_timestamp', 'ts_tags' => $groupConcats['recentchanges'] ],
@@ -237,6 +287,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				[ 'foo', 'bar' ],
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'recentchanges', 'change_tag' ],
 					'fields' => [ 'rc_id', 'rc_timestamp', 'ts_tags' => $groupConcats['recentchanges'] ],
@@ -255,11 +306,31 @@ class ChangeTagsTest extends MediaWikiTestCase {
 				],
 				[ 'foo', 'bar' ],
 				true, // tag filtering enabled
+				false, // not avoiding reopening tables
 				[
 					'tables' => [ 'recentchanges', 'change_tag' ],
 					'fields' => [ 'rc_id', 'ts_tags' => $groupConcats['recentchanges'] ],
 					'conds' => [ "rc_timestamp > '20170714183203'", 'ct_tag_id' => [ 1, 2 ] ],
 					'join_conds' => [ 'change_tag' => [ 'JOIN', 'ct_rc_id=rc_id' ] ],
+					'options' => [ 'ORDER BY rc_timestamp DESC', 'DISTINCT' ],
+				]
+			],
+			'recentchanges query with multiple tag filter with strings, avoiding reopening tables' => [
+				[
+					'tables' => 'recentchanges',
+					'fields' => 'rc_id',
+					'conds' => "rc_timestamp > '20170714183203'",
+					'join_conds' => [],
+					'options' => 'ORDER BY rc_timestamp DESC',
+				],
+				[ 'foo', 'bar' ],
+				true, // tag filtering enabled
+				true, // avoid reopening tables
+				[
+					'tables' => [ 'recentchanges', 'change_tag_for_display_query' ],
+					'fields' => [ 'rc_id', 'ts_tags' => $groupConcats['recentchanges'] ],
+					'conds' => [ "rc_timestamp > '20170714183203'", 'ct_tag_id' => [ 1, 2 ] ],
+					'join_conds' => [ 'change_tag_for_display_query' => [ 'JOIN', 'ct_rc_id=rc_id' ] ],
 					'options' => [ 'ORDER BY rc_timestamp DESC', 'DISTINCT' ],
 				]
 			],
@@ -333,9 +404,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 		// FIXME: fails under postgres
 		$this->markTestSkippedIfDbType( 'postgres' );
 
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->delete( 'change_tag', '*' );
-		$dbw->delete( 'change_tag_def', '*' );
+		$this->emptyChangeTagsTables();
 
 		$rcId = 123;
 		$revId = 341;
@@ -377,8 +446,6 @@ class ChangeTagsTest extends MediaWikiTestCase {
 		$revId = 342;
 		ChangeTags::updateTags( [ 'tag1' ], [], $rcId, $revId );
 		ChangeTags::updateTags( [ 'tag3' ], [], $rcId, $revId );
-
-		$dbr = wfGetDB( DB_REPLICA );
 
 		$expected = [
 			(object)[
@@ -430,9 +497,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 		// FIXME: fails under postgres
 		$this->markTestSkippedIfDbType( 'postgres' );
 
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->delete( 'change_tag', '*' );
-		$dbw->delete( 'change_tag_def', '*' );
+		$this->emptyChangeTagsTables();
 
 		$rcId = 123;
 		ChangeTags::updateTags( [ 'tag1', 'tag2' ], [], $rcId );
@@ -482,9 +547,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 		// FIXME: fails under postgres
 		$this->markTestSkippedIfDbType( 'postgres' );
 
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->delete( 'change_tag', '*' );
-		$dbw->delete( 'change_tag_def', '*' );
+		$this->emptyChangeTagsTables();
 
 		$rcId = 123;
 		ChangeTags::updateTags( [ 'tag1', 'tag2' ], [], $rcId );
@@ -523,9 +586,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 	}
 
 	public function testDeleteTags() {
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->delete( 'change_tag', '*' );
-		$dbw->delete( 'change_tag_def', '*' );
+		$this->emptyChangeTagsTables();
 		MediaWikiServices::getInstance()->resetServiceForTesting( 'NameTableStoreFactory' );
 
 		$rcId = 123;
@@ -597,10 +658,26 @@ class ChangeTagsTest extends MediaWikiTestCase {
 		$this->assertArrayEquals( $tags1, ChangeTags::getTags( $this->db, $rcId ) );
 	}
 
+	public function testGetTagsWithData() {
+		$rcId1 = 123;
+		$rcId2 = 456;
+		$rcId3 = 789;
+		ChangeTags::addTags( [ 'tag 1' ], $rcId1, null, null, 'data1' );
+		ChangeTags::addTags( [ 'tag 3_1' ], $rcId3, null, null );
+		ChangeTags::addTags( [ 'tag 3_2' ], $rcId3, null, null, 'data3_2' );
+
+		$data = ChangeTags::getTagsWithData( $this->db, $rcId1 );
+		$this->assertSame( [ 'tag 1' => 'data1' ], $data );
+
+		$data = ChangeTags::getTagsWithData( $this->db, $rcId2 );
+		$this->assertSame( [], $data );
+
+		$data = ChangeTags::getTagsWithData( $this->db, $rcId3 );
+		$this->assertArrayEquals( [ 'tag 3_1' => null, 'tag 3_2' => 'data3_2' ], $data, false, true );
+	}
+
 	public function testTagUsageStatistics() {
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->delete( 'change_tag', '*' );
-		$dbw->delete( 'change_tag_def', '*' );
+		$this->emptyChangeTagsTables();
 		MediaWikiServices::getInstance()->resetServiceForTesting( 'NameTableStoreFactory' );
 
 		$rcId = 123;
@@ -613,9 +690,7 @@ class ChangeTagsTest extends MediaWikiTestCase {
 	}
 
 	public function testListExplicitlyDefinedTags() {
-		$dbw = wfGetDB( DB_MASTER );
-		$dbw->delete( 'change_tag', '*' );
-		$dbw->delete( 'change_tag_def', '*' );
+		$this->emptyChangeTagsTables();
 
 		$rcId = 123;
 		ChangeTags::updateTags( [ 'tag1', 'tag2' ], [], $rcId );

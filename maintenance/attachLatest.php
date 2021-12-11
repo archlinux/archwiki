@@ -25,6 +25,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionLookup;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -55,8 +56,11 @@ class AttachLatest extends Maintenance {
 			$conds,
 			__METHOD__ );
 
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$services = MediaWikiServices::getInstance();
+		$lbFactory = $services->getDBLoadBalancerFactory();
 		$dbDomain = $lbFactory->getLocalDomainID();
+		$wikiPageFactory = $services->getWikiPageFactory();
+		$revisionLookup = $services->getRevisionLookup();
 
 		$n = 0;
 		foreach ( $result as $row ) {
@@ -72,18 +76,19 @@ class AttachLatest extends Maintenance {
 				continue;
 			}
 
-			$revision = Revision::loadFromTimestamp( $dbw, $title, $latestTime );
-			if ( is_null( $revision ) ) {
+			$revRecord = $revisionLookup->getRevisionByTimestamp( $title, $latestTime, RevisionLookup::READ_LATEST );
+			if ( $revRecord === null ) {
 				$this->output(
 					"$dbDomain $pageId [[$name]] latest time $latestTime, can't find revision id\n"
 				);
 				continue;
 			}
-			$id = $revision->getId();
+
+			$id = $revRecord->getId();
 			$this->output( "$dbDomain $pageId [[$name]] latest time $latestTime, rev id $id\n" );
 			if ( $this->hasOption( 'fix' ) ) {
-				$page = WikiPage::factory( $title );
-				$page->updateRevisionOn( $dbw, $revision );
+				$page = $wikiPageFactory->newFromTitle( $title );
+				$page->updateRevisionOn( $dbw, $revRecord );
 				$lbFactory->waitForReplication();
 			}
 			$n++;

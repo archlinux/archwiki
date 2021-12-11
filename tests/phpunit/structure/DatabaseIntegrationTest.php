@@ -1,56 +1,102 @@
 <?php
 
-use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\Database;
 
 /**
  * @group Database
  */
-class DatabaseIntegrationTest extends MediaWikiTestCase {
+class DatabaseIntegrationTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @var Database
 	 */
 	protected $db;
 
-	private $functionTest = false;
-
-	protected function setUp() {
+	protected function setUp() : void {
 		parent::setUp();
 		$this->db = wfGetDB( DB_MASTER );
-	}
-
-	protected function tearDown() {
-		parent::tearDown();
-		if ( $this->functionTest ) {
-			$this->dropFunctions();
-			$this->functionTest = false;
-		}
-		$this->db->restoreFlags( IDatabase::RESTORE_INITIAL );
-	}
-
-	public function testStoredFunctions() {
-		if ( !in_array( wfGetDB( DB_MASTER )->getType(), [ 'mysql', 'postgres' ] ) ) {
-			$this->markTestSkipped( 'MySQL or Postgres required' );
-		}
-		global $IP;
-		$this->dropFunctions();
-		$this->functionTest = true;
-		$this->assertTrue(
-			$this->db->sourceFile( "$IP/tests/phpunit/data/db/{$this->db->getType()}/functions.sql" )
-		);
-		$res = $this->db->query( 'SELECT mw_test_function() AS test', __METHOD__ );
-		$this->assertEquals( 42, $res->fetchObject()->test );
-	}
-
-	private function dropFunctions() {
-		$this->db->query( 'DROP FUNCTION IF EXISTS mw_test_function'
-			. ( $this->db->getType() == 'postgres' ? '()' : '' )
-		);
 	}
 
 	public function testUnknownTableCorruptsResults() {
 		$res = $this->db->select( 'page', '*', [ 'page_id' => 1 ] );
 		$this->assertFalse( $this->db->tableExists( 'foobarbaz' ) );
-		$this->assertInternalType( 'int', $res->numRows() );
+		$this->assertIsInt( $res->numRows() );
+	}
+
+	public function testUniformTablePrefix() {
+		global $IP;
+		$path = "$IP/maintenance/tables.json";
+		$tables = json_decode( file_get_contents( $path ), true );
+
+		// @todo Remove exception once these tables are fixed
+		$excludeList = [
+			'user_newtalk',
+			'revision_actor_temp',
+			'change_tag',
+			'objectcache',
+			'page'
+		];
+
+		$prefixes = [];
+		foreach ( $tables as $table ) {
+			$tableName = $table['name'];
+
+			if ( in_array( $tableName, $excludeList ) ) {
+				continue;
+			}
+
+			foreach ( $table['columns'] as $column ) {
+				$prefixes[] = strtok( $column['name'], '_' );
+			}
+			foreach ( $table['indexes'] ?? [] as $index ) {
+				$prefixes[] = strtok( $index['name'], '_' );
+			}
+
+			if ( count( array_unique( $prefixes ) ) === 1 ) {
+				$prefixes = []; // reset
+				continue;
+			}
+
+			$list = implode( '_, ', $prefixes ) . '_';
+
+			$this->fail(
+				"Columns and indexes of '$tableName' table should"
+				. " have uniform prefix. Non-uniform found: [ $list ]"
+			);
+		}
+
+		$this->assertSame( [], $prefixes );
+	}
+
+	public function automaticSqlGenerationParams() {
+		return [
+			[ 'mysql' ],
+			[ 'sqlite' ],
+			[ 'postgres' ],
+		];
+	}
+
+	/**
+	 * @dataProvider automaticSqlGenerationParams
+	 */
+	public function testAutomaticSqlGeneration( $type ) {
+		global $IP;
+		$abstractSchemaPath = "$IP/maintenance/tables.json";
+		if ( $type === 'mysql' ) {
+			$oldPath = "$IP/maintenance/tables-generated.sql";
+		} else {
+			$oldPath = "$IP/maintenance/$type/tables-generated.sql";
+		}
+		$oldContent = file_get_contents( $oldPath );
+		$newPath = $this->getNewTempFile();
+		$maintenanceScript = new GenerateSchemaSql();
+		$maintenanceScript->loadWithArgv(
+			[ '--json=' . $abstractSchemaPath, '--sql=' . $newPath, '--type=' . $type ]
+		);
+		$maintenanceScript->execute();
+		$this->assertEquals(
+			$oldContent,
+			file_get_contents( $newPath ),
+			"The generated schema in '$type' type has to be the same"
+		);
 	}
 }

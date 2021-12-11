@@ -20,23 +20,23 @@
  * @file
  */
 
-use Wikimedia\Rdbms\IDatabase;
+use MediaWiki\MediaWikiServices;
 
 class RevisionList extends RevisionListBase {
+	/** @inheritDoc */
 	public function getType() {
 		return 'revision';
 	}
 
-	/**
-	 * @param IDatabase $db
-	 * @return mixed
-	 */
+	/** @inheritDoc */
 	public function doQuery( $db ) {
 		$conds = [ 'rev_page' => $this->title->getArticleID() ];
 		if ( $this->ids !== null ) {
 			$conds['rev_id'] = array_map( 'intval', $this->ids );
 		}
-		$revQuery = Revision::getQueryInfo( [ 'page', 'user' ] );
+		$revQuery = MediaWikiServices::getInstance()
+			->getRevisionStore()
+			->getQueryInfo( [ 'page', 'user' ] );
 		return $db->select(
 			$revQuery['tables'],
 			$revQuery['fields'],
@@ -47,6 +47,7 @@ class RevisionList extends RevisionListBase {
 		);
 	}
 
+	/** @inheritDoc */
 	public function newItem( $row ) {
 		return new RevisionItem( $this, $row );
 	}

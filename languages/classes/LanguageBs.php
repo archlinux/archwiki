@@ -38,7 +38,7 @@ class LanguageBs extends Language {
 	 *
 	 * @return string
 	 */
-	function convertGrammar( $word, $case ) {
+	public function convertGrammar( $word, $case ) {
 		global $wgGrammarForms;
 		if ( isset( $wgGrammarForms['bs'][$case][$word] ) ) {
 			return $wgGrammarForms['bs'][$case][$word];
@@ -46,10 +46,10 @@ class LanguageBs extends Language {
 		switch ( $case ) {
 			case 'instrumental': # instrumental
 				$word = 's ' . $word;
-			break;
+				break;
 			case 'lokativ': # locative
 				$word = 'o ' . $word;
-			break;
+				break;
 		}
 
 		# this will return the original value for 'nominativ' (nominative)

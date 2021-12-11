@@ -1,10 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
+			"Naufal06",
+			"NoiX180",
 			"Pras",
-			"NoiX180"
+			"Sumbukompor"
 		]
 	},
+	"skinname-vector": "Vèktor",
+	"vector-skin-desc": "Vèrsi modhèren Vèktor kanthi praupan seger lan manéka owahan anyar sing migunani",
+	"prefs-vector-enable-vector-1-label": "Anggo Vector Baku",
+	"vector-opt-out": "Bali menyang pakulitan lawas",
+	"vector-opt-out-tooltip": "Owahi setèlanmu saperlu bali menyang pakulitan lawas (Vector Baku)",
+	"vector.css": "/* Kabèh CSS ing kéné bakal dimot kanggo naraguna ules Vèktor */",
+	"vector.js": "/* Kabèh JavaScript ing kéné bakal dimot kanggo naraguna ules Vèktor */",
+	"vector-language-button-label": "$1 basa",
 	"vector-action-addsection": "Tambah rembug",
 	"vector-action-delete": "Busak",
 	"vector-action-move": "Lih",
@@ -16,5 +26,9 @@
 	"vector-view-history": "Deleng sajarah",
 	"vector-view-view": "Waca",
 	"vector-view-viewsource": "Pirsani sumber",
-	"vector-more-actions": "Liyané"
+	"vector-jumptonavigation": "Menyang navigasi",
+	"vector-jumptosearch": "Menyang panggolèkan",
+	"vector-jumptocontent": "Menyang kontèn",
+	"vector-more-actions": "Liyané",
+	"vector-search-loader": "Ngemot pamrayoganing panggolèk"
 }

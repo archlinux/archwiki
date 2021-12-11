@@ -21,7 +21,9 @@
  * @ingroup SpecialPage
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Languages\LanguageConverterFactory;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * A special page looking for page without any category.
@@ -33,24 +35,42 @@ class SpecialUncategorizedPages extends PageQueryPage {
 	/** @var int|false */
 	protected $requestedNamespace = false;
 
-	function __construct( $name = 'Uncategorizedpages' ) {
-		parent::__construct( $name );
+	/** @var NamespaceInfo */
+	private $namespaceInfo;
+
+	/**
+	 * @param NamespaceInfo $namespaceInfo
+	 * @param ILoadBalancer $loadBalancer
+	 * @param LinkBatchFactory $linkBatchFactory
+	 * @param LanguageConverterFactory $languageConverterFactory
+	 */
+	public function __construct(
+		NamespaceInfo $namespaceInfo,
+		ILoadBalancer $loadBalancer,
+		LinkBatchFactory $linkBatchFactory,
+		LanguageConverterFactory $languageConverterFactory
+	) {
+		parent::__construct( 'Uncategorizedpages' );
 		$this->addHelpLink( 'Help:Categories' );
+		$this->namespaceInfo = $namespaceInfo;
+		$this->setDBLoadBalancer( $loadBalancer );
+		$this->setLinkBatchFactory( $linkBatchFactory );
+		$this->setLanguageConverter( $languageConverterFactory->getLanguageConverter( $this->getContentLanguage() ) );
 	}
 
-	function sortDescending() {
+	protected function sortDescending() {
 		return false;
 	}
 
-	function isExpensive() {
+	public function isExpensive() {
 		return true;
 	}
 
-	function isSyndicated() {
+	public function isSyndicated() {
 		return false;
 	}
 
-	function getQueryInfo() {
+	public function getQueryInfo() {
 		return [
 			'tables' => [ 'page', 'categorylinks' ],
 			'fields' => [
@@ -63,8 +83,7 @@ class SpecialUncategorizedPages extends PageQueryPage {
 				'cl_from IS NULL',
 				'page_namespace' => $this->requestedNamespace !== false
 						? $this->requestedNamespace
-						: MediaWikiServices::getInstance()->getNamespaceInfo()->
-							getContentNamespaces(),
+						: $this->namespaceInfo->getContentNamespaces(),
 				'page_is_redirect' => 0
 			],
 			'join_conds' => [
@@ -73,12 +92,11 @@ class SpecialUncategorizedPages extends PageQueryPage {
 		];
 	}
 
-	function getOrderFields() {
+	protected function getOrderFields() {
 		// For some crazy reason ordering by a constant
 		// causes a filesort
 		if ( $this->requestedNamespace === false &&
-			count( MediaWikiServices::getInstance()->getNamespaceInfo()->
-				getContentNamespaces() ) > 1
+			count( $this->namespaceInfo->getContentNamespaces() ) > 1
 		) {
 			return [ 'page_namespace', 'page_title' ];
 		}

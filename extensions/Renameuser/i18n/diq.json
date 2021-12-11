@@ -4,12 +4,12 @@
 			"Aspar",
 			"Erdemaslancan",
 			"Gorizon",
-			"Mirzali",
-			"Xoser",
-			"Marmase",
-			"Kumkumuk",
 			"Gırd",
-			"Orbot707"
+			"Kumkumuk",
+			"Marmase",
+			"Mirzali",
+			"Orbot707",
+			"Xoser"
 		]
 	},
 	"renameuser": "Karberi newe ra name ke",
@@ -25,7 +25,6 @@
 	"renameuserwarnings": "Tembey:",
 	"renameuserconfirm": "bele karberi newe ra name bıker",
 	"renameusersubmit": "Bırışe",
-	"renameuser-submit-blocklog": "Rocekanê bloqandê karbari bıvin",
 	"renameusererrordoesnotexist": "\"<nowiki>$1</nowiki>\" no name de yew karber çino.",
 	"renameusererrorexists": "\"<nowiki>$1</nowiki>\" {{GENDER:$1|karber}} ca ra esto",
 	"renameusererrorinvalid": "\"<nowiki>$1</nowiki>\" nameyê karberi nemeqbulo",

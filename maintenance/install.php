@@ -21,6 +21,8 @@
  * @ingroup Maintenance
  */
 
+// NO_AUTOLOAD -- file-scope define() used to modify behaviour
+
 require_once __DIR__ . '/Maintenance.php';
 
 define( 'MW_CONFIG_CALLBACK', 'Installer::overrideConfig' );
@@ -36,7 +38,7 @@ define( 'MEDIAWIKI_INSTALL', true );
  * @ingroup Maintenance
  */
 class CommandLineInstaller extends Maintenance {
-	function __construct() {
+	public function __construct() {
 		parent::__construct();
 		global $IP;
 
@@ -109,7 +111,7 @@ class CommandLineInstaller extends Maintenance {
 		return parent::getDbType();
 	}
 
-	function execute() {
+	public function execute() {
 		global $IP;
 
 		$siteName = $this->getArg( 0, 'MediaWiki' ); // Will not be set if used with --env-checks
@@ -189,7 +191,7 @@ class CommandLineInstaller extends Maintenance {
 		}
 	}
 
-	function validateParamsAndArgs() {
+	public function validateParamsAndArgs() {
 		if ( !$this->hasOption( 'env-checks' ) ) {
 			parent::validateParamsAndArgs();
 		}
