@@ -3,10 +3,13 @@
 		"authors": [
 			"George Animal",
 			"Ghybu",
-			"Gomada"
+			"Gomada",
+			"Balyozxane",
+			"Bikarhêner"
 		]
 	},
 	"prefs-gadgets": "Amûr",
+	"gadgets-prefstext": "Li jêr çend amûrên taybet hatine lîstekirin ku tu dikarî ji bo hesabê xwe bi kar bînî.\nPiraniya van amûran JavaScriptê dixebitînin, lewma divê JavaScript di geroka te de were çalakkirin.\nTi tesîra van amûran li ser vê rûpela tercîhan tune ye.\n\nHerwiha hay jê hebe ku ev amûrên taybet parçeyeke nivîsbariya MediaWikiyê nînin û bi gelemperî ji aliyê bikarhênerên xwemalî yên vê wîkiyê ve tên çêkirin û birêvebirin.\nRêveberên navrûyê dikarin [[MediaWiki:Gadgets-definition|taybetmendiyên]] amûrên heyî biguherînin û rêveberên xwemalî jî dikarin [[Special:Gadgets|danasîna]] wan (kodên wan yên çavkaniyê li wir tên nîşandan) biguherînin. Hejmara bikarhênerên ku van amûran li ser vê wîkiyê bi kar tînin li [[Special:GadgetUsage|Statîstîkên bikaranîna amûran]] tên lîstekirin.",
 	"gadgets": "Amûr",
 	"gadgets-title": "Amûr",
 	"gadgets-uses": "Bikaranîn",

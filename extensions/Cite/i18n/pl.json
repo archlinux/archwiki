@@ -9,7 +9,8 @@
 			"Rail",
 			"Railfail536",
 			"Sp5uhe",
-			"Woytecr"
+			"Woytecr",
+			"Nux"
 		]
 	},
 	"cite-desc": "Dodaje znaczniki <code>&lt;ref&gt;</code> oraz <code>&lt;references&gt;</code> ułatwiające podawanie źródeł cytatów",
@@ -23,7 +24,7 @@
 	"cite_error_references_duplicate_key": "Nieprawidłowy znacznik <code>&lt;ref&gt;</code>; nazwę „$1” zdefiniowano więcej niż raz z różną zawartością",
 	"cite_error_references_invalid_parameters": "Nieprawidłowy parametr w znaczniku <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "Zabrakło etykiet do przypisów. Zadeklaruj więcej w komunikacie [[MediaWiki:Cite references link many format backlink labels]]",
-	"cite_error_no_link_label_group": "Zabrakło niestandardowych etykiet linków dla grupy „$1“. Zdefiniuj ich większą liczbę w komunikacie [[MediaWiki:$2]].",
+	"cite_error_no_link_label_group": "Zabrakło niestandardowych etykiet linków dla grupy „$1”. Zdefiniuj ich większą liczbę w komunikacie [[MediaWiki:$2]].",
 	"cite_error_references_no_text": "Błąd w składni znacznika <code>&lt;ref&gt;</code>; brak tekstu w przypisie o nazwie <code>$1</code>",
 	"cite_error_included_ref": "Brak znacznika zamykającego <code>&lt;/ref&gt;</code> po otwartym znaczniku <code>&lt;ref&gt;</code>",
 	"cite_error_included_references": "Brakujący tag zamykający dla <code>&lt;references&gt;</code>",

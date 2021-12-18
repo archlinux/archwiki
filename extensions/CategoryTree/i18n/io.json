@@ -21,6 +21,7 @@
 	"categorytree-num-files": "$1 P",
 	"categorytree-num-empty": "vakua",
 	"categorytree-load": "kargar",
+	"categorytree-loading": "karganta...",
 	"categorytree-nothing-found": "nulo trovita",
 	"categorytree-no-subcategories": "nula subkategorii",
 	"categorytree-no-pages": "nula pagini o subkategorii",

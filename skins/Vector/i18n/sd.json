@@ -7,7 +7,8 @@
 			"Tweety"
 		]
 	},
-	"vector-action-addsection": "عنوان ڏيو",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ٻولي|$1 ٻوليون}}",
+	"vector-action-addsection": "موضوع شامل ڪريو",
 	"vector-action-delete": "ڊاھيو",
 	"vector-action-move": "چوريو",
 	"vector-action-protect": "تحفظيو",
@@ -17,7 +18,7 @@
 	"vector-view-edit": "سنواريو",
 	"vector-view-history": "سوانح ڏسو",
 	"vector-view-view": "پڙھو",
-	"vector-view-viewsource": "ڪوڊ ڏسو",
-	"vector-jumptosearch": "ڳولا ڏانهن هلو",
+	"vector-view-viewsource": "ذريعو ڏسو",
+	"vector-jumptosearch": "ڳولا ڏانھن هلو",
 	"vector-more-actions": "وڌيڪ"
 }

@@ -7,7 +7,8 @@
 			"Máté",
 			"Tacsipacsi",
 			"Tgr",
-			"Urbalazs"
+			"Urbalazs",
+			"Balint36"
 		]
 	},
 	"templatedata-desc": "A sablonok paraméterezését leíró adatokat tárol (JSON formátumban)",
@@ -38,7 +39,7 @@
 	"templatedata-doc-param-type-unknown": "Ismeretlen",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "Fájl",
-	"templatedata-doc-param-type-wiki-page-name": "Lap",
+	"templatedata-doc-param-type-wiki-page-name": "Lapcím",
 	"templatedata-doc-param-type-wiki-template-name": "Sablon",
 	"templatedata-doc-param-type-wiki-user-name": "Felhasználó",
 	"templatedata-doc-params": "Sablonparaméterek",
@@ -55,7 +56,7 @@
 	"templatedata-invalid-param": "Érvénytelen „$1” paraméter a(z) „$2” tulajdonsághoz.",
 	"templatedata-invalid-parse": "Szintaktikai hiba a JSON-ban.",
 	"templatedata-invalid-type": "A(z) „$1” tulajdonság „$2” típusú kellene, hogy legyen.",
-	"templatedata-invalid-unknown": "Ismeretlen tulajonság: „$1”",
+	"templatedata-invalid-unknown": "Ismeretlen tulajdonság: „$1”.",
 	"templatedata-invalid-value": "A(z) „$1” tulajdonság értéke érvénytelen",
 	"templatedata-modal-button-add-language": "Nyelv hozzáadása",
 	"templatedata-modal-button-addparam": "Paraméter hozzáadása",

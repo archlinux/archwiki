@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Fulup",
-			"Y-M D"
+			"Y-M D",
+			"Adriendelucca"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -11,6 +12,7 @@
 	"vector-opt-out-tooltip": "Kemmañ hoc'h arventennoù evit distreiñ da dres kozh ar gwiskadur (Vector istorel)",
 	"vector.css": "/* Talvezout a raio ar CSS lakaet amañ evit implijerien ar gwiskadur Vektor */",
 	"vector.js": "/* Kement JavaScript amañ a vo karget evit an implijerien a ra gant ar gwiskadur Vektor */",
+	"vector-language-button-label": "{{PLURAL:$1|$1 yezh|$1 yezhoù}}",
 	"vector-action-addsection": "Rannbennad nevez",
 	"vector-action-delete": "Diverkañ",
 	"vector-action-move": "Adenvel",

@@ -4,10 +4,12 @@
 			"Ainali",
 			"Lejonel",
 			"Lokal Profil",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Nirmos (Wikimedia)"
 		]
 	},
 	"syntaxhighlight-desc": "Ger syntaxmarkering med [http://pygments.org/ Pygments] inuti <code>&lt;syntaxhighlight&gt;</code>-taggar",
+	"syntaxhighlight-enclose-category": "Sidor som använder föråldrade enclose-attribut",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Kod",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Språk",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Ingen)",

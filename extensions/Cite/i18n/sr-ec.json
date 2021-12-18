@@ -20,7 +20,7 @@
 	"cite_error_ref_no_key": "Почетка ознака <code>&lt;ref&gt;</code> није исправно обликована или садржи неисправан назив",
 	"cite_error_ref_too_many_keys": "Неважећа ознака <code>&lt;ref&gt;</code>; неваљана имена, нпр. има их превише.",
 	"cite_error_ref_no_input": "Неважећа ознака <code>&lt;ref&gt;</code>; референце без имена морају имати садржај.",
-	"cite_error_references_duplicate_key": "Неисправна <code>&lt;ref&gt;</code> ознака; име „$1“ је дефинисано више пута с различитим садржајем",
+	"cite_error_references_duplicate_key": "Неисправна ознака <code>&lt;ref&gt;</code>; назив „$1” је дефинисано више пута с различитим садржајем",
 	"cite_error_references_invalid_parameters": "Невалидан параметар у тагу <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "Понестало је прилагођених наслова повратних линкова. Дефинишите их још у поруци [[MediaWiki:Cite references link many format backlink labels]].",
 	"cite_error_no_link_label_group": "Понестало је прилагођених наслова веза за групу „$1”. Дефинишите их још у поруци [[MediaWiki:$2]].",

@@ -6,7 +6,8 @@
 			"Pxos",
 			"Pyscowicz",
 			"Silvonen",
-			"Stryn"
+			"Stryn",
+			"MITO"
 		]
 	},
 	"disableoathforuser": "Poista käytöstä käyttäjän kaksivaiheinen tunnistautuminen",
@@ -21,6 +22,7 @@
 	"oathauth-step2": "Vaihe 2: Skannaa QR-koodi",
 	"oathauth-step2alt": "Tai syötä salainen tunnus käsin:",
 	"oathauth-step4": "Vaihe 4: Vahvistus",
+	"right-oathauth-disable-for-user": "Poistaa käyttäjältä kaksivaiheinen tunnistautuminen",
 	"oathauth-enteruser": "Käyttäjänimi:",
 	"right-oathauth-enable": "Ottaa käyttöön kahden tekijän avulla suoritettu (''two-factor'') tunnistautuminen",
 	"action-oathauth-enable": "ottaa käyttöön kahden tekijän avulla suoritettua (''two-factor'') tunnistautumista",

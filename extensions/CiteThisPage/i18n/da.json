@@ -6,12 +6,13 @@
 			"Jhertel",
 			"Morten LJ",
 			"Peter Alberti",
-			"Weblars"
+			"Weblars",
+			"Antonla"
 		]
 	},
 	"citethispage": "Referér",
 	"citethispage-desc": "Tilføjer en [[Special:Cite|specialside til reference]] og en henvisning i værktøjsmenuen",
-	"citethispage-link": "Referér til denne side",
+	"citethispage-link": "Referer til denne side",
 	"tooltip-citethispage": "Information om, hvordan man kan citere denne side",
 	"citethispage-change-submit": "Anvend som reference",
 	"citethispage-change-target": "Side:",

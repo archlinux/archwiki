@@ -8,13 +8,15 @@
 			"Roberta F.",
 			"SpeedyGonsales",
 			"Teoo3",
-			"Zeljko.filipin"
+			"Zeljko.filipin",
+			"Ponor"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Knjiga",
 	"visualeditor-cite-tool-name-journal": "Časopis",
-	"visualeditor-cite-tool-name-news": "Vijesti",
-	"visualeditor-cite-tool-name-web": "Web stranice",
+	"visualeditor-cite-tool-name-news": "Novine",
+	"visualeditor-cite-tool-name-web": "Mrežne stranice",
+	"cite-ve-citationneeded-button": "Dodaj izvor",
 	"cite-ve-dialog-reference-editing-reused": "Ova je referencija rabljena {{PLURAL:$1|jednom|2=dvaput|$1 puta}} na ovoj stranici.",
 	"cite-ve-dialog-reference-options-group-label": "Koristi ovu grupu",
 	"cite-ve-dialog-reference-options-group-placeholder": "Opće referencije",
@@ -39,5 +41,7 @@
 	"cite-ve-referenceslist-missingref": "Ova reference je definirana u predlošku ili drugom generiranom dijelu, i za sad može biti uređivana samo u prikazu za uređivanje izvornog koda.",
 	"cite-ve-referenceslist-missingreflist": "Ovaj je popis izvora generirao predložak i za sada ga je moguće uređivati jedino uređivanjem kôda.",
 	"cite-ve-toolbar-group-label": "Citiraj",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencije"
+	"cite-ve-othergroup-item": "$1 referenca",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Referencije",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Naziv grupe referenci: $1"
 }

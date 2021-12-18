@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"AC Krah",
+			"Robertjamal12",
+			"Amire80"
+		]
+	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 kasa|$1 kasa ahorow}}",
+	"vector-action-addsection": "Fa atifi asɛm ka ho",
+	"vector-action-delete": "Pepa",
+	"vector-action-move": "Yi kɔ bɛbi foforo",
+	"vector-action-protect": "Bammɔ",
+	"vector-view-create": "Create",
+	"vector-view-edit": "Sesa",
+	"vector-view-history": "Hwɛ abakwasɛm",
+	"vector-view-view": "Kenkan",
+	"vector-more-actions": "Pii"
+}

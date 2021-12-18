@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"SPQRobin",
-			"Siebrand"
+			"Siebrand",
+			"Nickthijssen1994"
 		]
 	},
 	"pfunc_desc": "Verrijkt de parser met logische functies",
@@ -14,11 +15,11 @@
 	"pfunc_expr_stack_exhausted": "Fout in uitdrukking: stack uitgeput.",
 	"pfunc_expr_unexpected_number": "Fout in uitdrukking: onverwacht getal.",
 	"pfunc_expr_preg_match_failure": "Fout in uitdrukking: onverwacht falen van preg_match.",
-	"pfunc_expr_unrecognised_word": "Fout in uitdrukking: woord \"$1\" niet herkend.",
+	"pfunc_expr_unrecognised_word": "Fout in uitdrukking: Onbekend woord \"$1\".",
 	"pfunc_expr_unexpected_operator": "Fout in uitdrukking: niet verwachte operator $1.",
 	"pfunc_expr_missing_operand": "Fout in uitdrukking: operand voor $1 ontbreekt.",
 	"pfunc_expr_unexpected_closing_bracket": "Fout in uitdrukking: haakje sluiten op onverwachte plaats.",
-	"pfunc_expr_unrecognised_punctuation": "Fout in uitdrukking: niet herkend leesteken \"$1\".",
+	"pfunc_expr_unrecognised_punctuation": "Fout in uitdrukking: Onbekend leesteken \"$1\".",
 	"pfunc_expr_unclosed_bracket": "Fout in uitdrukking: niet gesloten haakje openen.",
 	"pfunc_expr_division_by_zero": "Deling door nul",
 	"pfunc_expr_invalid_argument": "Ongeldige parameter voor $1: < -1 of > 1",

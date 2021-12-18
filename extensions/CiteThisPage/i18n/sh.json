@@ -3,12 +3,13 @@
 		"authors": [
 			"Kolega2357",
 			"OC Ripper",
-			"Vlad5250"
+			"Vlad5250",
+			"BadDog"
 		]
 	},
 	"citethispage": "Citiraj",
 	"citethispage-desc": "Dodaje posebnu stranicu za [[Special:CiteThisPage|citiranje]] i link do alatnika",
-	"citethispage-link": "Citiraj ovaj članak",
+	"citethispage-link": "Citiraj ovu stranicu",
 	"tooltip-citethispage": "Informacije kako citirati ovu stranicu",
 	"citethispage-change-submit": "Citiraj - Цитирај",
 	"citethispage-change-target": "Stranica:",

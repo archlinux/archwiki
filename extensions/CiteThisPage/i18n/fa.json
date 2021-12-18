@@ -4,12 +4,13 @@
 			"Huji",
 			"Reza1615",
 			"Wayiran",
-			"ZxxZxxZ"
+			"ZxxZxxZ",
+			"Jeeputer"
 		]
 	},
 	"citethispage": "یادکرد این مقاله",
 	"citethispage-desc": "صفحهٔ ویژه‌ای برای [[Special:CiteThisPage|یادکرد]] اضافه می‌کند و پیوندی به جعبه ابزار می‌افزاید",
-	"citethispage-link": "یادکرد پیوند این مقاله",
+	"citethispage-link": "ارجاع به این صفحه",
 	"tooltip-citethispage": "اطلاعات در خصوص چگونگی یادکرد این صفحه",
 	"citethispage-change-submit": "یادکرد",
 	"citethispage-change-target": "صفحه:",

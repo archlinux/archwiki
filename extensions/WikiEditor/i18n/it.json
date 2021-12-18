@@ -65,6 +65,7 @@
 	"wikieditor-toolbar-file-target": "Nome file:",
 	"wikieditor-toolbar-file-caption": "Didascalia:",
 	"wikieditor-toolbar-file-alt": "Testo alternativo:",
+	"wikieditor-toolbar-file-alt-help-label": "(Mostra aiuto)",
 	"wikieditor-toolbar-file-size": "Dimensione:",
 	"wikieditor-toolbar-file-float": "Allineamento:",
 	"wikieditor-toolbar-file-default": "(predefinito)",

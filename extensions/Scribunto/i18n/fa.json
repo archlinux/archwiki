@@ -11,7 +11,8 @@
 			"Mjbmr",
 			"Reza1615",
 			"ZxxZxxZ",
-			"جواد"
+			"جواد",
+			"Jeeputer"
 		]
 	},
 	"scribunto-desc": "چارچوبی برای تعبیه‌کردن زبان‌های اسکریپتی در صفحه‌های مدیاویکی",
@@ -31,6 +32,7 @@
 	"scribunto-console-cleared": "وضعیت میز فرمان پاک‌سازی شد، چون پودمان تغییر کرد.",
 	"scribunto-console-cleared-session-lost": "وضعیت میزفرمان پاک‌سازی شد، چون اطلاعات نشست از دست رفت.",
 	"scribunto-common-error-category": "صفحه‌های دارای خطاهای اسکریپتی",
+	"scribunto-common-error-category-desc": "در زمان پردازش پودمان‌های گنجانده شده در صفحه خطایی رخ داده است.",
 	"scribunto-common-nosuchmodule": "خطای اسکریپتی: پودمان «$2» وجود ندارد.",
 	"scribunto-common-nofunction": "خطای اسکریپتی: باید تابعی را برای فراخوانی مشخص کنید.",
 	"scribunto-common-nosuchfunction": "خطای اسکریپتی: تابع «$2» وجود ندارد.",
@@ -44,7 +46,7 @@
 	"scribunto-lua-in-function-at": "در تابع در $1:$2",
 	"scribunto-lua-error-location": "خطای لوآ $1: $2.",
 	"scribunto-lua-error": "خطای لوآ: $2.",
-	"scribunto-lua-notarrayreturn": "خطای اسکریپتی: پودمان چیزی غیر از یک جدول برگرداند. (باید یک جدول برون‌ریزی برگرداند)",
+	"scribunto-lua-notarrayreturn": "خطای اسکریپتی: پودمان مقدار $2 را برگرداند. باید یک جدول برون‌ریزی را برگرداند.",
 	"scribunto-luastandalone-proc-error": "خطای لوآ: نمی‌تواند فرایند را ایجاد کند.",
 	"scribunto-luastandalone-proc-error-msg": "خطای لوا: روند نتوانست ایجاد شود: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "خطای لوآ: نتوانست روند را ایجاد کند: proc_open در دسترس نیست. دستور پیکربندی \"disable_functions\"پی‌اچ‌پی‌ را بررسی کنید.",
@@ -59,8 +61,11 @@
 	"scribunto-limitreport-timeusage": "مصرف زمان لوآ",
 	"scribunto-limitreport-timeusage-value": "$1/ $2  ثانیه",
 	"scribunto-limitreport-virtmemusage": "اندازهٔ مجازی لوآ",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|بایت}}",
 	"scribunto-limitreport-estmemusage": "حافظهٔ مصرفی لوآ تخمین‌زده‌شده",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|بایت}}",
 	"scribunto-limitreport-memusage": "مصرف حافظهٔ‌ لوآ",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|بایت}}",
 	"scribunto-limitreport-profile": "مشخصات لوآ",
 	"scribunto-limitreport-profile-ms": "$1 میلی‌ثانیه",
 	"scribunto-limitreport-profile-percent": "$1٪",

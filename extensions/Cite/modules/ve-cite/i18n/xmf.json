@@ -2,20 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"David1010",
-			"Silovan"
+			"Silovan",
+			"Narazeni"
 		]
 	},
-	"visualeditor-cite-tool-name-book": "წიგნი",
+	"visualeditor-cite-tool-name-book": "წინგი",
 	"visualeditor-cite-tool-name-journal": "ჟურნალი",
-	"visualeditor-cite-tool-name-news": "სიახლეები",
-	"visualeditor-cite-tool-name-web": "ვებ-გვერდი",
+	"visualeditor-cite-tool-name-news": "ახალი ამბეეფი",
+	"visualeditor-cite-tool-name-web": "ვებ-ხასჷლა",
 	"cite-ve-dialog-reference-editing-reused": "თე რსხილი ხასჷლას {{PLURAL:$1|-შა}} გიმირინუაფუ.",
-	"cite-ve-dialog-reference-options-group-label": "თე ბუნა გიმორინაფა",
+	"cite-ve-dialog-reference-options-group-label": "ათე ბუნაშ გჷმორინაფა",
 	"cite-ve-dialog-reference-options-group-placeholder": "ზოგადი წყუეფი",
-	"cite-ve-dialog-reference-options-name-label": "კინე მაჟირაშა გიმორინაფა თე ჯოხოთ",
+	"cite-ve-dialog-reference-options-name-label": "კჷნ მაჟირაშა გჷმორინაფა თე ჯოხოთ",
 	"cite-ve-dialog-reference-options-section": "პარამეტრეფი",
 	"cite-ve-dialog-reference-title": "სქოლიო",
-	"cite-ve-dialog-reference-useexisting-tool": "კინ გიმორინაფა",
+	"cite-ve-dialog-reference-useexisting-tool": "კჷნ გჷმორინაფა",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "თარი სქოლიოშ ერკებული",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "ბუნა „$1“-იშ სქოლიოშ ერკებული",
 	"cite-ve-dialog-referenceslist-title": "სქოლიოშ ერკებული",

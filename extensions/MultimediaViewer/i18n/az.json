@@ -6,6 +6,7 @@
 			"Wertuose"
 		]
 	},
+	"multimediaviewer-optin-pref": "\"Media nümayişetdiricisi\"ni aktivləşdir",
 	"multimediaviewer-file-page": "Müvafiq faylın səhifəsinə get",
 	"multimediaviewer-repository-local": "Ətraflı",
 	"multimediaviewer-datetime-created": "Tarix: $1",

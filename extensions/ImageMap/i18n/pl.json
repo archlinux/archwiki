@@ -3,13 +3,14 @@
 		"authors": [
 			"Derbeth",
 			"Leinad",
-			"Sp5uhe"
+			"Sp5uhe",
+			"Matma Rex"
 		]
 	},
 	"imagemap_desc": "Umożliwia utworzenie obrazka zawierającego klikalną mapę, z użyciem znacznika <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Błąd – należy wpisać grafikę w pierwszej linii",
 	"imagemap_invalid_image": "Błąd – grafika jest niepoprawna lub nie istnieje",
-	"imagemap_bad_image": "Błąd – ta grafika jest zakazana w tym serwisie",
+	"imagemap_bad_image": "Błąd: Ta grafika nie może być użyta na tej stronie.",
 	"imagemap_no_link": "Błąd – nie znaleziono poprawnego linku na końcu linii $1",
 	"imagemap_invalid_title": "Błąd – niepoprawny tytuł linku w linii $1",
 	"imagemap_missing_coord": "Błąd – niewystarczająca liczba współrzędnych dla kształtu zdefiniowanego w linii $1",

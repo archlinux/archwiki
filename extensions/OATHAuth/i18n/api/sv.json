@@ -1,12 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Felba"
 		]
 	},
 	"apihelp-query+oath-description": "Kolla för att se om tvåfaktorsautentisering (OATH) är aktiverat för en användare.",
 	"apihelp-query+oath-summary": "Kolla för att se om tvåfaktorsautentisering (OATH) är aktiverat för en användare.",
 	"apihelp-query+oath-param-user": "Användare att hämta information om. Standard är den nuvarande användaren.",
+	"apihelp-query+oath-param-reason": "Orsak för att fråga om OATH-status.",
 	"apihelp-query+oath-example-1": "Skaffa information om den aktuella användaren.",
 	"apihelp-query+oath-example-2": "Hämta information om användaren <kbd>Example</kbd>",
 	"apihelp-oathvalidate-description": "Bekräfta en nyckel för tvåfaktorsautentisering (OATH).",
@@ -14,5 +16,7 @@
 	"apihelp-oathvalidate-param-user": "Användare att bekräfta nyckel för. Standard är den nuvarande användaren.",
 	"apihelp-oathvalidate-param-totp": "Nyckel för tvåfaktorsautentisering (OATH). Föråldrat, använd parametern \"data\" istället.",
 	"apihelp-oathvalidate-example-1": "Bekräfta en nyckel för nuvarande användare",
-	"apihelp-oathvalidate-example-2": "Bekräfta en nyckel för användaren <kbd>Example</kbd>"
+	"apihelp-oathvalidate-example-2": "Bekräfta en nyckel för användaren <kbd>Example</kbd>",
+	"apihelp-oathvalidate-example-3": "Validera JSON-data för användare <kbd>Example</kbd>",
+	"apihelp-oathvalidate-param-data": "JSON-kodad data som förväntas av modulen är för närvarande aktiverad för användaren som autentiseras"
 }

@@ -33,5 +33,6 @@
 	"apihelp-visualeditoredit-param-page": "Pagina asupra căreia să se efectueze acțiunile.",
 	"apihelp-visualeditoredit-param-sectiontitle": "Titlul pentru secțiunea nouă.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Cand salvați, setați timestampul pentru revisia care a fost editată. Folosit ca să detecteze conflicturi de editare.",
-	"apihelp-visualeditoredit-param-summary": "Descrierea modificării."
+	"apihelp-visualeditoredit-param-summary": "Descrierea modificării.",
+	"apihelp-visualeditoredit-param-wikitext": "Wikitextul cu care să se acționeze."
 }

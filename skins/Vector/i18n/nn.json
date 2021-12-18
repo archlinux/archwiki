@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Gunnernett",
-			"Njardarlogar"
+			"Njardarlogar",
+			"Ranveig"
 		]
 	},
+	"skinname-vector": "Vector",
+	"vector-opt-out": "Bytt til den gamle utsjånaden",
+	"vector-language-button-label": "{{PLURAL:$1|$1 språk}}",
 	"vector-action-addsection": "Nytt emne",
 	"vector-action-delete": "Slett",
 	"vector-action-move": "Flytt",

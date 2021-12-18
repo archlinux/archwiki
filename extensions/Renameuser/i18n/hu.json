@@ -7,7 +7,8 @@
 			"Dj",
 			"Hanna Tardos",
 			"Hunyadym",
-			"Tgr"
+			"Tgr",
+			"Tacsipacsi"
 		]
 	},
 	"renameuser": "Szerkesztő átnevezése",
@@ -24,11 +25,11 @@
 	"renameuserconfirm": "Igen, nevezd át a szerkesztőt",
 	"renameusersubmit": "Elküld",
 	"renameusererrordoesnotexist": "Nem létezik „<nowiki>$1</nowiki>” nevű felhasználó",
-	"renameusererrorexists": "Már létezik „<nowiki>$1</nowiki>” nevű felhasználó",
+	"renameusererrorexists": "Már létezik „<nowiki>$1</nowiki>” nevű felhasználó.",
 	"renameusererrorinvalid": "A felhasználónév („<nowiki>$1</nowiki>”) érvénytelen",
 	"renameuser-error-request": "Hiba történt a lekérdezés küldése közben.  Menj vissza az előző oldalra és próbáld újra.",
 	"renameuser-error-same-user": "Nem nevezhetsz át egy felhasználót a meglévő nevére.",
-	"renameusersuccess": "„<nowiki>$1</nowiki>” sikeresen át lett nevezve „<nowiki>$2</nowiki>” névre.",
+	"renameusersuccess": "„<nowiki>$1</nowiki>” átnevezve „<nowiki>$2</nowiki>” névre.",
 	"renameuser-page-exists": "$1 már létezik, és nem lehet automatikusan felülírni.",
 	"renameuser-page-moved": "$1 át lett nevezve $2 névre",
 	"renameuser-page-unmoved": "$1-t nem sikerült $2 névre nevezi",

@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Temuri rajavi"
+			"Temuri rajavi",
+			"Amire80"
 		]
 	},
 	"wikieditor-toolbar-section-help": "Ацхыраара",
 	"wikieditor-toolbar-help-page-file": "Афаилқәа",
 	"wikieditor-toolbar-help-page-discussion": "Ахцәажәара",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='Special:MyPage'> Алахәыла ахьʒ</a> (<a href='#' title='Special:MyTalk'> ахцәажәара </a>)"
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Алахәыла ахьʒ</a> (<a href='#' title='$2:Username'>ахцәажәара</a>)"
 }

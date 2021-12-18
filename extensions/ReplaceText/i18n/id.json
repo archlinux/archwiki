@@ -4,16 +4,17 @@
 			"Bennylin",
 			"Farras",
 			"IvanLanin",
-			"Rex"
+			"Rex",
+			"Rachmat04"
 		]
 	},
 	"replacetext": "Mengganti teks",
 	"replacetext-desc": "Menyediakan [[Special:ReplaceText|halaman istimewa]] untuk memungkinkan pengurus untuk melakukan pencarian-dan-penggantian untaian secara global pada semua halaman isi dari suatu wiki",
-	"replacetext_docu": "Untuk mengganti suatu teks kalimat dengan kalimat lain di antara semua halaman-halaman regular wiki ini, masukkan kedua teks di sini dan klik 'Lanjutkan'. Anda akan mendapatkan tampilan daftar halaman yang berisikan teks yang dicari, dan Anda dapat memilih yang mana saja yang ingin digantikan. Nama Anda akan tampil di versi terdahulu halaman sebagai pengguna yang melakukan perubahan.",
+	"replacetext_docu": "Untuk mengganti satu string teks dengan string yang lain di semua halaman reguler di wiki ini, masukkan dua bagian teks di sini lalu tekan \"{{int:replacetext_continue}}\".\nAnda kemudian akan diperlihatkan daftar halaman yang berisi teks pencarian, dan Anda dapat memilih halaman yang ingin Anda ganti.\nNama Anda akan muncul pada riwayat halaman sebagai pengguna yang bertanggung jawab atas setiap perubahan.",
 	"replacetext_originaltext": "Teks asli:",
 	"replacetext_replacementtext": "Teks pengganti:",
 	"replacetext_useregex": "Gunakan persamaan reguler",
-	"replacetext_regexdocu": "(Congoh: nilai dari \"a(.*)c\" untuk \"Teks asal\" dan \"ac$1\" untuk \"Teks pengganti\" akan mengganti \"abc\" dengan \"acb\".)",
+	"replacetext_regexdocu": "(Contoh: nilai \"a(.*)c\" bagi \"{{int:replacetext_originaltext}}\" dan \"ac$1\" bagi \"{{int:replacetext_replacementtext}}\" akan mengganti \"abc\" dengan \"acb\".)",
 	"replacetext_optionalfilters": "Filter opsional:",
 	"replacetext_categorysearch": "Hanya ganti pada kategori:",
 	"replacetext_prefixsearch": "Hanya ganti pada halaman dengan awalan:",
@@ -38,6 +39,9 @@
 	"replacetext_warning": "Ada {{PLURAL:$1|$1 halaman|$1 halaman}} yang telah berisi untaian pengganti, \"$2\". Jika Anda melakukan penggantian ini Anda tidak akan dapat memisahkan pengganti Anda dari untaian ini.",
 	"replacetext_blankwarning": "Karena untaian pengganti kosong, operasi ini tidak dapat dikembalikan.\nApakah ingin dilanjutkan?",
 	"replacetext_continue": "Lanjutkan",
+	"replacetext_announce": "Beritahukan suntingan ini melalui $1 dan daftar pantauan",
 	"replacetext_editsummary": "Penggantian teks - \"$1\" menjadi \"$2\"",
-	"right-replacetext": "Melakukan penggantian seluruh teks kalimat di wiki ini"
+	"right-replacetext": "Melakukan penggantian seluruh teks kalimat di wiki ini",
+	"action-replacetext": "lakukan penggantian rentetan di seluruh wiki",
+	"replacetext_reminder": "Untuk memodifikasi pranala ke halaman ini dalam halaman yang lain, tuju ke $1."
 }

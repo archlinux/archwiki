@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Dağlı95",
-			"Toghrul Rahimli"
+			"Toghrul Rahimli",
+			"NMW03"
 		]
 	},
-	"fancycaptcha-badlogin": "Vikini avtomatlaşdırılmış parol sındırılmasından qorumaq üçün, aşağıdakı qutuda göstərilən sözləri daxil etməyinizi xahiş edirik ([[Xüsusi:Captcha/help|daha çox məlumat]]):",
-	"fancycaptcha-captcha": "Təhlükəsizlik nəzarəti",
+	"fancycaptcha-badlogin": "Vikini avtomatlaşdırılmış parol sındırılmasından qorumaq üçün, aşağıdakı qutuda göstərilən sözləri daxil etməyinizi xahiş edirik ([[Special:Captcha/help|daha çox məlumat]]):",
+	"fancycaptcha-captcha": "Təhlükəsizlik yoxlanışı",
 	"fancycaptcha-accountcreate": "Vikidə avtomatik hesab yaradılmasının qarşısını almaq üçün xahiş edirik tələb olunan sözləri daxil edin ([[Special:Captcha/help|ətraflı məlumat]]):",
 	"fancycaptcha-imgcaptcha-ph": "Yuxarıda gördüyünüz mətni daxil edin",
 	"fancycaptcha-reload-text": "Yenilə"

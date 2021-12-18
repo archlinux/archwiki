@@ -20,7 +20,8 @@
 			"Simeondahl",
 			"SimmeD",
 			"Tehnix",
-			"Weblars"
+			"Weblars",
+			"Antonla"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -45,8 +46,8 @@
 	"visualeditor-ca-createlocaldescriptionsource": "Tilføj lokal beskrivelse med wikitekst",
 	"visualeditor-ca-createsource": "Opret kilde",
 	"visualeditor-ca-editlocaldescriptionsource": "Rediger kilde for lokal beskrivelse",
-	"visualeditor-ca-editsource": "Redigér wikikode",
-	"visualeditor-ca-editsource-section": "redigér wikikode",
+	"visualeditor-ca-editsource": "Rediger kildekode",
+	"visualeditor-ca-editsource-section": "rediger kildetekst",
 	"visualeditor-ca-ve-create": "VisualEditor",
 	"visualeditor-ca-ve-edit": "VisualEditor",
 	"visualeditor-ca-ve-edit-section": "VisualEditor",

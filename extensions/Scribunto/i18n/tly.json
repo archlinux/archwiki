@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ganbarzada"
+			"Ganbarzada",
+			"Гусейн"
 		]
 	},
-	"scribunto-lua-error": "Çı Lua səhv: $2"
+	"scribunto-lua-error": "Lua хәто: $2"
 }

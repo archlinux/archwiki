@@ -4,12 +4,13 @@
 			"Kernoweger",
 			"Kw-Moon",
 			"Macofe",
-			"Nrowe"
+			"Nrowe",
+			"GwikorFrank"
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikitekst",
 	"wikieditor-loading": "Ow karga...",
-	"wikieditor-toolbar": "Toulvar chanjya",
+	"wikieditor-toolbar": "Toulvar golegi",
 	"wikieditor-toolbar-desc": "Toulvar folen janjya gans devnydh gwellhes",
 	"wikieditor-toolbar-preference": "Galosegi an toulvar chanjya gwellhes",
 	"wikieditor-toolbar-loading": "Ow karga...",
@@ -72,8 +73,8 @@
 	"wikieditor-toolbar-tool-redirect-example": "Hanow an folen gosten",
 	"wikieditor-toolbar-tool-big": "Bras",
 	"wikieditor-toolbar-tool-big-example": "Tekst bras",
-	"wikieditor-toolbar-tool-small": "Byhan",
-	"wikieditor-toolbar-tool-small-example": "Tekst byhan",
+	"wikieditor-toolbar-tool-small": "Byghan",
+	"wikieditor-toolbar-tool-small-example": "Tekst byghan",
 	"wikieditor-toolbar-tool-superscript": "Gorskrif",
 	"wikieditor-toolbar-tool-superscript-example": "Tekst gorskrif",
 	"wikieditor-toolbar-tool-subscript": "Isskrif",

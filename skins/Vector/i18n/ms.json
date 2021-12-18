@@ -3,15 +3,19 @@
 		"authors": [
 			"Anakmalaysia",
 			"Aurora",
-			"Pizza1016"
+			"Pizza1016",
+			"Izington"
 		]
 	},
 	"skinname-vector": "Vector",
 	"vector-skin-desc": "Versi MonoBook yang moden dengan rupa yang segar dan banyak pembaikan kepada kegunaan.",
+	"prefs-vector-enable-vector-1-label": "Gunakan Vector Lama",
 	"vector-opt-out": "Kembali ke wajah lama",
+	"vector-opt-out-tooltip": "Ubahkan tetapan anda untuk menukar balik rupa lama kulit (legacy Vector)",
 	"vector.css": "/* CSS yang terletak di sini akan mempengaruhi pengguna kulit Vector */",
 	"vector.js": "/ * Sebarang JavaScript di sini akan dimuatkan untuk pengguna-pengguna yang menggunakan kulit Vector * /",
-	"vector-action-addsection": "Buka topik",
+	"vector-language-button-label": "{{PLURAL:$1|satu bahasa|$1 bahasa}}",
+	"vector-action-addsection": "Tambah topik",
 	"vector-action-delete": "Hapus",
 	"vector-action-move": "Pindah",
 	"vector-action-protect": "Lindung",
@@ -22,5 +26,9 @@
 	"vector-view-history": "Lihat sejarah",
 	"vector-view-view": "Baca",
 	"vector-view-viewsource": "Lihat sumber",
-	"vector-more-actions": "Lain"
+	"vector-jumptonavigation": "Pergi ke navigasi",
+	"vector-jumptosearch": "Pergi ke carian",
+	"vector-jumptocontent": "Pergi ke kandungan",
+	"vector-more-actions": "Lain",
+	"vector-search-loader": "Memuat cadangan carian"
 }

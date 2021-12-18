@@ -8,7 +8,8 @@
 			"MuratTheTurkish",
 			"Suelnur",
 			"Violetanka",
-			"Vito Genovese"
+			"Vito Genovese",
+			"SaldırganSincap"
 		]
 	},
 	"interwiki": "Vikilerarası veriyi görüntüle ve düzenle",
@@ -24,10 +25,10 @@
 	"interwiki-local-label": "Yönlendir",
 	"interwiki_local_0_intro": "URL'de bu vikiarası önekini kullanarak yerel vikiye yapılan harici HTTP istekleri, \"{{int:badtitle}}\" hata sayfasıyla sonuçlanır.",
 	"interwiki_local_1_intro": "Bu vikiarası önekini kullanarak yerel vikiye harici HTTP istekleri, vikiarasının hedef URL'sine yönlendirilir (yani, yerel sayfalara bağlantılar gibi davranılır).",
-	"interwiki_trans": "Görüntüle",
-	"interwiki-trans-label": "Görüntüle",
+	"interwiki_trans": "Yansıtma",
+	"interwiki-trans-label": "Yansıtma",
 	"interwiki_trans_1_intro": "Vikimetin sözdizimi <code>{<nowiki />{önek:<em>sayfa adı</em>}}</code> kullanılıyorsa, genel olarak vikiarası eklemeleri etkinse yabancı vikiden şablon/sayfa eklemesine izin verin ([https://www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding/tr aşma dahil olmak üzere]).",
-	"interwiki_trans_0_intro": "<code>{<nowiki />{önek:<em>sayfa adı</em>}}</code>'nın yabancı şablonları/sayfaları dönüştürmesine izin vermeyin, bunun yerine şablon ad alanında yerel bir sayfa arayın.",
+	"interwiki_trans_0_intro": "<code>{<nowiki />{prefix:<em>pagename</em>}}</code> ögesinin yabancı şablonları/sayfaları yansıtmasına izin vermeyin, bunun yerine şablon ad alanında yerel bir sayfa arayın.",
 	"interwiki_1": "evet",
 	"interwiki_0": "hayır",
 	"interwiki_error": "Hata: Vikiarası tablosu boş ya da başka bir şeyde sorun çıktı.",

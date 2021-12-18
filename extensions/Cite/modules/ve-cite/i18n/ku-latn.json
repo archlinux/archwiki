@@ -4,12 +4,15 @@
 			"Bikarhêner",
 			"George Animal",
 			"Ghybu",
-			"Purodha"
+			"Purodha",
+			"Balyozxane"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Pirtûk",
+	"visualeditor-cite-tool-name-journal": "Kovar",
 	"visualeditor-cite-tool-name-news": "Nûçe",
 	"visualeditor-cite-tool-name-web": "Malper",
+	"cite-ve-citationneeded-button": "Çavkaniyekê lê zêde bike",
 	"cite-ve-dialog-reference-editing-reused": "Ev çavkanî di vê rûpelê de {{PLURAL:$1|carekî|2=car|$1 caran}} tê bikaranîn.",
 	"cite-ve-dialog-reference-options-group-label": "Vê komê bi kar bîne",
 	"cite-ve-dialog-reference-options-group-placeholder": "Çavkaniyên giştî",

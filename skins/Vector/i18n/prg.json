@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Nertiks",
-			"Peteris"
+			"Peteris",
+			"Nērtiks Jōrgesuns"
 		]
 	},
+	"vector-action-addsection": "Preidāis tēman",
 	"vector-action-delete": "Āupausinais",
 	"vector-action-move": "Prapīdais",
 	"vector-action-protect": "Kūnsteis",
@@ -13,5 +15,6 @@
 	"vector-view-edit": "Redigīs",
 	"vector-view-history": "Enwaidinnais istōrijan",
 	"vector-view-view": "Skaitāis",
-	"vector-view-viewsource": "Enwaidinnais appun"
+	"vector-view-viewsource": "Enwaidinnais appun",
+	"vector-more-actions": "Tūls"
 }

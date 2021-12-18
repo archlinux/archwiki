@@ -788,9 +788,9 @@ ve.ui.MWMediaDialog.prototype.cleanAPIresponse = function ( rawResponse, config 
 	}
 
 	// Check if the string should be truncated
-	return isTruncated && !config.ignoreCharLimit ?
-		originalText.substring( 0, charLimit ) + ellipsis :
-		originalText;
+	return mw.html.escape( isTruncated && !config.ignoreCharLimit ?
+		originalText.slice( 0, charLimit ) + ellipsis :
+		originalText );
 };
 
 /**

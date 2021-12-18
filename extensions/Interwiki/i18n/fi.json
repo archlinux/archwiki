@@ -11,13 +11,14 @@
 			"Pyscowicz",
 			"Stryn",
 			"Valtlait",
-			"VezonThunder"
+			"VezonThunder",
+			"Veikk0.ma"
 		]
 	},
 	"interwiki": "Wikienväliset linkit",
 	"interwiki-title-norights": "Katso interwiki-tietoja",
 	"interwiki-desc": "Lisää [[Special:Interwiki|toimintosivun]], jonka avulla voi katsoa ja muokata interwiki-taulua.",
-	"interwiki_intro": "Tämä on yleiskatsaus interwiki-taulusta, joka määrittää etuliitteet, joiden avulla voi nopeasti linkittää muihin wikeihin ja ulkoisiin sivustoihin. [//www.mediawiki.org/wiki/Extension:Interwiki MediaWiki.org:issa sijaitsevassa oppaassa] on lisätietoa suositellusta käytöstä.",
+	"interwiki_intro": "Tämä on yleiskatsaus interwiki-taulukosta, jossa määriteltyjen etuliitteiden avulla voi nopeasti linkittää muihin wikeihin ja ulkoisiin sivustoihin. [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki MediaWiki.org:issa sijaitsevassa oppaassa] on lisätietoa suositelluista käyttötavoista.",
 	"interwiki-legend-label": "Selite",
 	"interwiki_prefix": "Etuliite",
 	"interwiki-prefix-label": "Etuliite:",

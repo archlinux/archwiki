@@ -5,9 +5,11 @@
 			"Base",
 			"Movses",
 			"Piramidion",
-			"Ата"
+			"Ата",
+			"DDPAT"
 		]
 	},
+	"skinname-timeless": "Поза часом",
 	"timeless-desc": "Оформлення «Вічне», створене за прототипом «Зима» Брендона Гарріса та різноманітними стилями Фонду Вікімедіа",
 	"timeless-anonymous": "Анонім",
 	"timeless-loggedinas": "Увійшли як '''$1'''",
@@ -25,6 +27,7 @@
 	"timeless-namespaces": "Простори назв",
 	"timeless-pagetools": "Дії над сторінкою",
 	"timeless-languages": "Мови",
-	"timeless-projects": "Інші проекти",
+	"timeless-projects": "Інші проєкти",
+	"timeless.css": "/* Весь CSS тут буде завантажений для користувачів скіна Timeless */",
 	"timeless.js": "/* Увесь розміщений тут код JavaScript буде завантажений для всіх користувачів теми оформлення «Вічне» */"
 }

@@ -7,7 +7,9 @@
 			"Mywood",
 			"Onecountry",
 			"PhiLiP",
-			"Yfdyh000"
+			"Yfdyh000",
+			"Xiplus",
+			"Xzonn"
 		]
 	},
 	"replacetext": "替换文字",
@@ -23,7 +25,7 @@
 	"replacetext_editpages": "仅在页面内容中替换",
 	"replacetext_movepages": "可能的话，在页面名称中替换",
 	"replacetext_givetarget": "必须指定查找的字符串。",
-	"replacetext_nonamespace": "您必须选择至少一个名字空间。",
+	"replacetext_nonamespace": "您必须选择至少一个命名空间。",
 	"replacetext_editormove": "必须选择至少一个替换选项。",
 	"replacetext_choosepagesforedit": "在以下{{PLURAL:$3|页面}}的文本中，将“$1”替换成“$2”。",
 	"replacetext_choosepagesformove": "将{{PLURAL:$3|以下页面中标题|以下$3个页面中标题}}的“$1”替换为“$2”：",

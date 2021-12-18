@@ -6,8 +6,8 @@
 		]
 	},
 	"monobook-desc": "Giao diện MediaWiki cổ điển năm 2004, được đặt tên theo bức hình nền cuốn sách đen trắng",
-	"monobook.css": "/* Mã CSS đặt ở đây sẽ ảnh hưởng đến thành viên sử dụng giao diện MonoBook */",
-	"monobook.js": "/* Mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện MonoBook */",
+	"monobook.css": "/* Tất cả mã CSS tại đây sẽ được tải khi người dùng sử dụng giao diện MonoBook */",
+	"monobook.js": "/* Tất cả mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện MonoBook */",
 	"monobook-jumptotop": "quay lại đầu trang",
 	"monobook-jumptopersonal": "công cụ cá nhân",
 	"monobook-jumptonavigation": "Bước tới điều hướng",

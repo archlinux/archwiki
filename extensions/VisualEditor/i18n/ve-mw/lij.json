@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Giromin Cangiaxo",
-			"S4b1nuz E.656"
+			"S4b1nuz E.656",
+			"N. Longo",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -24,8 +26,8 @@
 	"visualeditor-backbutton-tooltip": "Torna inderê",
 	"visualeditor-beta-warning": "Se ti t'incontri di problemi tecnichi dementre che ti fæ de modiffiche, dinnelo.",
 	"visualeditor-browserwarning": "Ti t'ê aprœuvo a dœuviâ 'n navegatô ch'o no l'è ofiçialmente suportou da questo editor.",
-	"visualeditor-ca-createlocaldescriptionsource": "Azonzi descrission locale con sorgente",
-	"visualeditor-ca-createsource": "Crea sorgente",
+	"visualeditor-ca-createlocaldescriptionsource": "Azónzi descriçión locâle con wikitèsto",
+	"visualeditor-ca-createsource": "Crêa wikitèsto",
 	"visualeditor-ca-editlocaldescriptionsource": "Modiffica o wikitesto da descrission locale",
 	"visualeditor-ca-editsource": "Modìfica wikitèsto",
 	"visualeditor-ca-editsource-section": "modìfica wikitèsto",

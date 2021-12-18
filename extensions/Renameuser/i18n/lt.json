@@ -10,8 +10,8 @@
 		]
 	},
 	"renameuser": "Pervadinti naudotoją",
-	"renameuser-linkoncontribs": "pervadinti naudotoją",
-	"renameuser-linkoncontribs-text": "Pervardinti šį {{{{GENDER:$1|naudotoją}}",
+	"renameuser-linkoncontribs": "pervadinti {{GENDER:$1|naudotoją}}",
+	"renameuser-linkoncontribs-text": "Pervadinti šį {{GENDER:$1|naudotoją}}",
 	"renameuser-desc": "Prideda [[Special:RenameUser|specialų puslapį]] naudotojo pervadinimui (reikia ''pervadintojo'' teisių)",
 	"renameuserold": "Esamas naudotojo vardas:",
 	"renameusernew": "Naujas naudotojo vardas:",

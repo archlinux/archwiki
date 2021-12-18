@@ -52,7 +52,9 @@
 			"Синкретик",
 			"Туллук",
 			"Умар",
-			"Ядерный Трамвай"
+			"Ядерный Трамвай",
+			"Pacha Tchernof",
+			"Rivka Silinsky"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -315,9 +317,9 @@
 	"visualeditor-mwgallerydialog-heights-input-placeholder": "Высота по умолчанию: $1 px",
 	"visualeditor-mwgallerydialog-image-caption-placeholder": "Заголовок изображения",
 	"visualeditor-mwgallerydialog-mode-dropdown-label-nolines": "Традиционная без границ",
-	"visualeditor-mwgallerydialog-mode-dropdown-label-packed": "Упакованная",
-	"visualeditor-mwgallerydialog-mode-dropdown-label-packed-hover": "Упакованная с подписями по наведению",
-	"visualeditor-mwgallerydialog-mode-dropdown-label-packed-overlay": "Упакованная с подписями поверх",
+	"visualeditor-mwgallerydialog-mode-dropdown-label-packed": "Упакованный",
+	"visualeditor-mwgallerydialog-mode-dropdown-label-packed-hover": "Упакованный с подписями по наведению",
+	"visualeditor-mwgallerydialog-mode-dropdown-label-packed-overlay": "Упакованный с подписями поверх",
 	"visualeditor-mwgallerydialog-mode-dropdown-label-slideshow": "Слайд-шоу",
 	"visualeditor-mwgallerydialog-mode-dropdown-label-traditional": "Традиционный",
 	"visualeditor-mwgallerydialog-mode-field-label": "Режим отображения",
@@ -434,6 +436,7 @@
 	"visualeditor-templatesused-tool": "Использованные шаблоны",
 	"visualeditor-title-error": "Ошибочное название.",
 	"visualeditor-toload": "Редактор сейчас загрузится. Если через несколько секунд вы будете по-прежнему видеть это сообщение, пожалуйста, [$1 перезагрузите страницу].",
+	"visualeditor-tooltip-non-breaking-space": "Неразрывный пробел",
 	"visualeditor-usernamespacepagelink": "Project:Личное пространство",
 	"visualeditor-version-label": "Версия",
 	"visualeditor-wikitext-progress": "Преобразование вики-текста",

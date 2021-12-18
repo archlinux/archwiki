@@ -7,7 +7,8 @@
 			"Dim Grits",
 			"Piramidion",
 			"Ytsukeng Fyvaprol",
-			"Ата"
+			"Ата",
+			"DDPAT"
 		]
 	},
 	"fancycaptcha-desc": "Чудернацький CAPTCHA-генератор для підтвердження редагування",
@@ -18,6 +19,6 @@
 	"fancycaptcha-create": "Щоб створити сторінку, будь ласка, введіть у текстове поле слова, зображені на картинці: ([[Special:Captcha/help|докладніше]]):",
 	"fancycaptcha-edit": "Щоб редагувати цю сторінку, будь ласка, введіть у текстове поле слова, зображені на картинці: ([[Special:Captcha/help|докладніше]]):",
 	"fancycaptcha-imgcaptcha-ph": "Введіть текст, який Ви бачите на зображенні",
-	"fancycaptcha-sendemail": "Для захисту вікі від автоматичного спаму просимо вас ввести слова, які показані нижче в полі ([[Special:Captcha/help|more info]]):",
+	"fancycaptcha-sendemail": "Для захисту вікі від автоматичного спаму просимо вас ввести слова, які показані нижче в полі ([[Special:Captcha/help|докладніше]]):",
 	"fancycaptcha-reload-text": "Оновити"
 }

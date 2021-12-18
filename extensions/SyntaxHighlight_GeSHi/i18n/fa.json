@@ -4,11 +4,13 @@
 			"Ebraminio",
 			"Huji",
 			"Ladsgroup",
-			"Reza1615"
+			"Reza1615",
+			"Jeeputer"
 		]
 	},
 	"syntaxhighlight-desc": "امکان رنگین کردن دستورات <code>&lt;syntaxhighlight&gt;</code> با استفاده از [http://pygments.org/ Pygments] را فراهم می‌آورد",
 	"syntaxhighlight-error-category": "صفحه‌های دارای خطای سینتکس‌های‌لایت",
+	"syntaxhighlight-enclose-category": "صفحه‌هایی که از ویژگی ضمیمه منسوخ‌شده استفاده می‌کنند",
 	"syntaxhighlight-source-category": "صفحه‌هایی که از برچسب‌های منسوخ منبع استفاده می‌کنند",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "کد",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "زبان",

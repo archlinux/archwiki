@@ -9,10 +9,13 @@
 			"Papuass",
 			"PeterisP",
 			"Silraks",
-			"Zuiks"
+			"Zuiks",
+			"TMg"
 		]
 	},
+	"collabpad-doctitle": "CollabPad: $1",
 	"collabpad-import-subtitle": "Importēts no $1",
+	"collabpad": "CollabPad",
 	"tooltip-ca-createsource": "Izveidot šīs lapas pirmkodu",
 	"tooltip-ca-edit": "Labot šo lapu, izmantojot vikitekstu",
 	"tooltip-ca-editsource": "Labot šīs lapas pirmkodu",
@@ -168,6 +171,7 @@
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Vai tiešām vēlies turpināt, neaizpildot {{PLURAL:$2|laukus|lauku|laukus}} $1?",
 	"visualeditor-dialog-transclusion-single-mode": "Paslēpt iespējas",
 	"visualeditor-dialog-transclusion-title": "Iekļāvums",
+	"visualeditor-dialog-transclusion-templates-menu-aria-label": "Veidnes lauku iestatīšanas izvēlne",
 	"visualeditor-dialogbutton-media-tooltip": "Attēli un mediji",
 	"visualeditor-dialogbutton-meta-tooltip": "Lapas iestatījumi",
 	"visualeditor-dialogbutton-template-tooltip": "Veidne",
@@ -356,7 +360,7 @@
 	"visualeditor-version-label": "Versija",
 	"visualeditor-wikitext-progress": "Pārveido vikitekstu",
 	"visualeditor-wikitext-warning": "Tu lieto vizuālo redaktoru - [[{{MediaWiki:visualeditor-wikitext-warning-link}}|vikiteksts]] šeit nedarbosies. Lai pārslēgtos uz koda labošanu nezaudējot izmaiņas, jebkurā brīdī spied uz pārslēgšanās pogas.",
-	"visualeditor-wikitext-warning-title": "Atklātas wikitext iezīmes",
+	"visualeditor-wikitext-warning-title": "Pamanītas vikiteksta iezīmes",
 	"visualeditor-wikitextconvert-title": "Pārveidot formatējumu uz vikitekstu?",
 	"visualeditor-wikitextconvert-message": "Tavs ievietotais saturs ir formatēts. Vai to vajadzētu pārveidot par vikitekstu vai ievietot kā vienkāršu tekstu?",
 	"visualeditor-wikitextconvert-plain": "Izmantot vienkāršu tekstu",

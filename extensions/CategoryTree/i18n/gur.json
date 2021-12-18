@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Ayire Adongo",
+			"Dnshitobu"
+		]
+	},
+	"categorytree-expand": "yalegɛ",
+	"categorytree-member-counts": "Tari la {{PLURAL:$1|1 bɔgesegɔ boyi|$1 bɔgesi}}, {{PLURAL:$2|1 pɛgerɛ|$2 pɛgesi}}, la {{PLURAL:$3|1 pɔkɔ|$3 pɔkerɔ}}",
+	"categorytree-num-categories": "$1 C",
+	"categorytree-num-pages": "$1 P",
+	"categorytree-num-files": "$1 F"
+}

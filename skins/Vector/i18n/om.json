@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Maammee",
-			"Oromoo"
+			"Oromoo",
+			"Ahrada2016"
 		]
 	},
 	"vector-action-addsection": "Mata duree ida'i",
 	"vector-action-delete": "Balleessi",
 	"vector-action-move": "Oofi",
+	"vector-action-protect": "Eegumsa",
 	"vector-action-undelete": "Hin balleessin",
 	"vector-view-create": "Uumi",
 	"vector-view-edit": "Gulaali",

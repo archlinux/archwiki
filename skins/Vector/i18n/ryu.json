@@ -1,9 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kyoww"
+			"Kyoww",
+			"ChoiChong"
 		]
 	},
+	"vector-action-addsection": "話題追加",
+	"vector-action-delete": "削除",
+	"vector-action-move": "移動",
+	"vector-action-protect": "保護",
+	"vector-view-create": "ちゅくゆん",
 	"vector-view-edit": "直すん",
-	"vector-view-view": "読むん"
+	"vector-view-history": "履歴んーじゅん",
+	"vector-view-view": "読むん",
+	"vector-more-actions": "うぬ他"
 }

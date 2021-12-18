@@ -17,8 +17,11 @@
 	"prefs-vector-enable-vector-1-label": "Χρήση του Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "Κατά τα επόμενα χρόνια, θα αναβαθμίζουμε σταδιακά το περιβάλλον Vector. Το Legacy Vector θα σας επιτρέψει να δείτε την παλιά έκδοση του Vector (ως τον Δεκέμβριο του 2019). Για να μάθετε περισσότερα σχετικά με τις αναβαθμίσεις, μεταβείτε στη [[mw:Reading/Web/Desktop_Improvements|σελίδα του έργου]] μας.",
 	"vector-opt-out": "Εναλλαγή στην παλιά εμφάνιση",
-	"vector.css": "/* Το τοποθετημένο εδώ CSS θα επηρεάσει χρήστες του Vector skin */",
-	"vector.js": "/* Οποιοσδήποτε κώδικας JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Vector skin */",
+	"vector-opt-out-tooltip": "Αλλάξτε τις ρυθμίσεις για να πάτε πίσω στην παλιά εμφάνιση του θέματος (παλιό Vector)",
+	"vector.css": "/* Όλα τα CSS εδώ θα φορτώσουν για χρήστες του Vector skin */",
+	"vector.js": "/* Όλη η JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Vector skin */",
+	"vector-action-toggle-sidebar": "Εναλλαγή πλευρικής στήλης",
+	"vector-language-button-label": "{{PLURAL:$1|$1 γλώσσα|$1 γλώσσες}}",
 	"vector-action-addsection": "Προσθήκη θέματος",
 	"vector-action-delete": "Διαγραφή",
 	"vector-action-move": "Μετακίνηση",
@@ -32,5 +35,7 @@
 	"vector-view-viewsource": "Προβολή κώδικα",
 	"vector-jumptonavigation": "Μετάβαση στην πλοήγηση",
 	"vector-jumptosearch": "Πήδηση στην αναζήτηση",
-	"vector-more-actions": "Περισσότερα"
+	"vector-jumptocontent": "Μετάβαση στο περιεχόμενο",
+	"vector-more-actions": "Περισσότερα",
+	"vector-search-loader": "Φόρτωση προτάσεων αναζήτησης"
 }

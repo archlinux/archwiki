@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Siebrand"
+			"Siebrand",
+			"McDutchie"
 		]
 	},
-	"spam-blacklisted-email-text": "Je e-mailadres staat momenteel op de zwarte lijst waardoor je geen e-mails naar andere gebruikers kunt verzenden."
+	"spam-blacklisted-email-text": "Jouw e-mailadres is momenteel geblokkeerd voor het sturen van e-mails naar andere gebruikers."
 }

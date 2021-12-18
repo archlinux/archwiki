@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Weather Top Wizard"
+		]
+	},
+	"categorytree-collapse": "kasura",
+	"categorytree-expand": "rabailevu",
+	"categorytree-num-categories": "$1 I",
+	"categorytree-num-pages": "$1 T",
+	"categorytree-num-files": "$1 F"
+}

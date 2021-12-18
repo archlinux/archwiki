@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Weather Top Wizard"
+		]
+	},
+	"pfunc_expr_missing_operand": "Cala ni ivakamacala: Yali na operand ni $1.",
+	"pfunc_expr_division_by_zero": "Saiva na tabana."
+}

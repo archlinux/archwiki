@@ -11,7 +11,8 @@
 			"Tarikozket",
 			"TmY e12",
 			"ToprakM",
-			"Vito Genovese"
+			"Vito Genovese",
+			"SaldırganSincap"
 		]
 	},
 	"nuke": "Toplu sil",
@@ -30,6 +31,7 @@
 	"nuke-maxpages": "Maksimum sayfa sayısı:",
 	"nuke-editby": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] tarafından oluşturuldu",
 	"nuke-deleted": "'''$1''' sayfası silindi.",
+	"nuke-deletion-queued": "'''$1''' sayfası silinmek üzere sıraya alındı.",
 	"nuke-not-deleted": "[[:$1]] sayfası '''silinemedi'''.",
 	"nuke-delete-more": "[[Special:Nuke|Daha fazla sayfa sil]]",
 	"nuke-pattern": "Sayfa adı için SQL LIKE modeli (ör. %):",

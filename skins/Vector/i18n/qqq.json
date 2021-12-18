@@ -26,7 +26,7 @@
 	"vector-language-button-label": "Label for language button in modern Vector.\n\nArguments:\n* $1 number of languages, supports plural",
 	"vector-action-addsection": "Used in the Vector skin. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}\n{{Identical|Add topic}}",
 	"vector-action-delete": "Used in the Vector skin, as the name of a tab at the top of the page. See for example {{canonicalurl:Translating:MediaWiki|useskin=vector}}\n\n{{Identical|Delete}}",
-	"vector-action-move": "Used in the Vector skin, on the tabs at the top of the page. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}\n\n{{Identical|Move}}",
+	"vector-action-move": "The \"Move\" action renames pages.\n\nUsed in the Vector skin, on the tabs at the top of the page. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}\n\n{{Identical|Move}}",
 	"vector-action-protect": "Tab at top of page, in vector skin\n\n{{Identical|Protect}}",
 	"vector-action-undelete": "Tab at top of page, in vector skin.\n{{Identical|Undelete}}",
 	"vector-action-unprotect": "Tab at top of page, in vector skin.\n{{Identical|Change protection}}",

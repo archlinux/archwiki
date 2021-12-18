@@ -5,7 +5,8 @@
 			"Alex Khimich",
 			"Movses",
 			"Piramidion",
-			"Ата"
+			"Ата",
+			"DDPAT"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Не знайдено кешованої серіалізованої інформації з таким ключем",
@@ -32,15 +33,15 @@
 	"apihelp-visualeditor-param-section": "Розділ, над яким вчинити дію.",
 	"apihelp-visualeditor-param-starttimestamp": "При збереженні, встановіть мітку часу, коли сторінка була завантажена. Використовується для виявлення конфліктів редагування.",
 	"apihelp-visualeditor-param-stash": "При збереженні встановіть у \"true\", якщо бажаєте використовувати API «схованки» (stashing).",
-	"apihelp-visualeditor-param-wikitext": "Вікітекст для відправки у Parsoid і конвертування у HTML-код (paction=parsefragment).",
+	"apihelp-visualeditor-param-wikitext": "Вікі-текст для відправки у Parsoid і конвертування у HTML-код (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "Повертає HTML5 для сторінки від сервісу Parsoid.",
-	"apihelp-visualeditoredit-description": "Зберегти HTML5-сторінку у MediaWiki (конвертовану у вікітекст сервісом Parsoid).",
+	"apihelp-visualeditoredit-description": "Зберегти HTML5-сторінку у MediaWiki (конвертовану у вікі-текст сервісом Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "При збереженні, ставить тут мітку часу, коли сторінка була редагована. Використовується для виявлення конфліктів редагування.",
 	"apihelp-visualeditoredit-param-cachekey": "Використати результат попереднього запиту serializeforcache із цим ключем. Нехтує $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID капчі (при збереженні з показуванням капчі).",
 	"apihelp-visualeditoredit-param-captchaword": "Відповідь на капчу (при збереженні з показуванням капчі).",
 	"apihelp-visualeditoredit-param-etag": "ETag для надсилання.",
-	"apihelp-visualeditoredit-param-html": "HTML-код для відправки у Parsoid в обмін на вікітекст.",
+	"apihelp-visualeditoredit-param-html": "HTML-код для відправки у Parsoid в обмін на вікі-текст.",
 	"apihelp-visualeditoredit-param-minor": "Галочка незначного редагування.",
 	"apihelp-visualeditoredit-param-needcheck": "При збереженні встановіть цей параметр, якщо версія може мати додаткові проблеми. В результаті відредагована версія буде позначена тегом.",
 	"apihelp-visualeditoredit-param-oldid": "Номер версії для використання. За замовчуванням — остання версія. 0 для нової сторінки.",
@@ -51,6 +52,6 @@
 	"apihelp-visualeditoredit-param-starttimestamp": "При збереженні, встановіть мітку часу, коли сторінка була завантажена. Використовується для виявлення конфліктів редагування.",
 	"apihelp-visualeditoredit-param-summary": "Опис редагування.",
 	"apihelp-visualeditoredit-param-tags": "Мітки змін, які слід застосувати до цього редагування.",
-	"apihelp-visualeditoredit-param-wikitext": "Вікірозмітка, якою слід здійснити дію.",
+	"apihelp-visualeditoredit-param-wikitext": "Вікі-розмітка, якою слід здійснити дію.",
 	"apihelp-visualeditoredit-summary": "Зберегти HTML5-сторінку у MediaWiki (конвертовану у вікітекст сервісом Parsoid)."
 }

@@ -23,7 +23,9 @@
 			"Taha",
 			"الناز",
 			"درفش کاویانی",
-			"فلورانس"
+			"فلورانس",
+			"Darafsh",
+			"Jeeputer"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "کتاب",
@@ -33,13 +35,14 @@
 	"cite-ve-changedesc-ref-group-both": "گروه منبع از «$1» به «$2» تغییر یافت",
 	"cite-ve-changedesc-ref-group-from": "گروه منبع از «$1» به گروه عمومی تغییر یافت",
 	"cite-ve-changedesc-ref-group-to": "گروه منبع از گروه عمومی به «$1» تغییر یافت",
-	"cite-ve-changedesc-reflist-group-both": "فهرست منبع یادکرد از «$1» به «$2» تغییر یافت",
-	"cite-ve-changedesc-reflist-group-from": "فهرست گروه منبع از «$1» به گروه عمومی تغییر یافت",
-	"cite-ve-changedesc-reflist-group-to": "فهرست گروه منبع از گروه عمومی به «$1» تغییر یافت",
+	"cite-ve-changedesc-reflist-group-both": "گروه فهرست منابع از «$1» به «$2» تغییر یافت",
+	"cite-ve-changedesc-reflist-group-from": "گروه فهرست منابع از «$1» به گروه عمومی تغییر یافت",
+	"cite-ve-changedesc-reflist-group-to": "گروه فهرست منابع از گروه عمومی به «$1» تغییر یافت",
 	"cite-ve-changedesc-reflist-responsive-set": "فهرست منابع به حالت ستون‌های تعاملی تغییر یافت",
 	"cite-ve-changedesc-reflist-responsive-unset": "فهرست منابع به یک ستون تغییر یافت",
 	"cite-ve-citationneeded-button": "افزودن یک یادکرد",
 	"cite-ve-citationneeded-description": "یکی از ویرایشگران اشاره کرده است که این ادعا نیاز به یک یادکرد از منبعی قابل اعتماد دارد.",
+	"cite-ve-citationneeded-reason": "دلیل ارائه شده:",
 	"cite-ve-citationneeded-title": "نیازمند یادکرد است",
 	"cite-ve-dialog-reference-editing-reused": "این منبع {{PLURAL:$1|یک|2=دو|$1}} بار در این صفحه استفاده شده‌است.",
 	"cite-ve-dialog-reference-editing-reused-long": "این ارجاع {{PLURAL:$1|یک|2=دو|$1 بار}} در این صفحه استفاده شده‌است. تغییرات اینجا بر همهٔ جاهایی که این ارجاع استفاده شده‌است اعمال می‌شود.",

@@ -4,10 +4,11 @@
 			"Cekli829",
 			"Toghrul Rahimli",
 			"Vugar 1981",
-			"Wertuose"
+			"Wertuose",
+			"NMW03"
 		]
 	},
-	"inputbox-tryexact": "Dəqiq uyğunluq",
+	"inputbox-tryexact": "Tam uyğunluğu sınayın",
 	"inputbox-searchfulltext": "Yaxşı mətni axtar",
 	"inputbox-createarticle": "Məqalə yarat",
 	"inputbox-postcomment": "Yeni bölmə",

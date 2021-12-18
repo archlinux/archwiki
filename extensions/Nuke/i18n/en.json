@@ -21,6 +21,7 @@
 	"nuke-maxpages": "Maximum number of pages:",
 	"nuke-editby": "Created by [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Page '''$1''' has been deleted.",
+	"nuke-deletion-queued": "Page '''$1''' has been queued for deletion.",
 	"nuke-not-deleted": "Page [[:$1]] '''could not''' be deleted.",
 	"nuke-delete-more": "[[Special:Nuke|Delete more pages]]",
 	"nuke-pattern": "SQL LIKE pattern (e.g. %) for the page name:",

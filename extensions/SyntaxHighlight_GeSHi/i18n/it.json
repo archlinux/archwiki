@@ -12,6 +12,7 @@
 	"syntaxhighlight-error-category-desc": "Si è verificato un errore durante il tentativo di evidenziare il codice incluso nella pagina.",
 	"syntaxhighlight-enclose-category": "Pagine che utilizzano tag enclose deprecati",
 	"syntaxhighlight-source-category": "Pagine che utilizzano tag source deprecati",
+	"syntaxhighlight-source-category-desc": "L'evidenziazione della sintassi in queste pagine utilizza tag <code><nowiki><source></nowiki></code> deprecati",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Codice",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Linguaggio",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(nessuno)",

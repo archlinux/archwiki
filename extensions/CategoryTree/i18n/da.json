@@ -6,7 +6,8 @@
 			"Christian List",
 			"Fredelige",
 			"Jon Harald Søby",
-			"Peter Alberti"
+			"Peter Alberti",
+			"Antonla"
 		]
 	},
 	"categorytree": "Kategoritræ",
@@ -22,7 +23,7 @@
 	"categorytree-mode-pages": "sider med undtagelse af filer",
 	"categorytree-mode-all": "alle sider",
 	"categorytree-collapse": "fold sammen",
-	"categorytree-expand": "fold ud",
+	"categorytree-expand": "udvid",
 	"categorytree-member-counts": "indeholder {{PLURAL:$1|én underkategori|$1 underkategorier}}, {{PLURAL:$2|én side|$2 sider}} og {{PLURAL:$3|én fil|$3 filer}}",
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 S",

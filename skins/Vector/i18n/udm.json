@@ -7,7 +7,10 @@
 			"Wadorgurt"
 		]
 	},
-	"vector-action-addsection": "Выль темаез ватсано",
+	"skinname-vector": "Вектор",
+	"vector-opt-out": "Вуж тусэ берытсконо",
+	"vector-language-button-label": "{{PLURAL:$1|$1 кыл}}",
+	"vector-action-addsection": "Выль тема ватсано",
 	"vector-action-delete": "Быдтоно",
 	"vector-action-move": "Нимзэ воштыны",
 	"vector-action-protect": "Утьыны",
@@ -16,5 +19,8 @@
 	"vector-view-history": "Историзэ учконо",
 	"vector-view-view": "Лыдӟоно",
 	"vector-view-viewsource": "Кодзэ учкыны",
+	"vector-jumptonavigation": "Навигация доры потоно",
+	"vector-jumptosearch": "Утчан доры потоно",
+	"vector-jumptocontent": "Пуштрос доры потоно",
 	"vector-more-actions": "Эшшо"
 }

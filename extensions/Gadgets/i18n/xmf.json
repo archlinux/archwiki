@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Silovan"
+			"Silovan",
+			"Narazeni"
 		]
 	},
 	"right-gadgets-edit": "გაჯეტიშ JavaScript დო CSS ხასჷლეფიშ რედაქტირაფა",
-	"action-gadgets-edit": "თე გაჯეტიშ JavaScript ვარდა CSS ხასჷლაშ რედაქტირაფა",
+	"action-gadgets-edit": "თე გაჯეტიშ JavaScript ვარ-და CSS ხასჷლაშ რედაქტირაფა",
 	"right-gadgets-definition-edit": "გაჯეტიშ გოთანჯუაშ რედაქტირაფა",
 	"action-gadgets-definition-edit": "თე გაჯეტიშ გოთანჯუაშ რედაქტირაფა"
 }

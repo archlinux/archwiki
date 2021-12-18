@@ -14,7 +14,9 @@
 			"Solde",
 			"Ssola",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Jmarchn",
+			"Mguix"
 		]
 	},
 	"wikieditor": "Interfície avançada de modificació de wikitext",
@@ -120,7 +122,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Previsualització",
 	"wikieditor-toolbar-tool-table-insert": "Insereix",
 	"wikieditor-toolbar-tool-table-cancel": "Anuŀla",
-	"wikieditor-toolbar-tool-table-toomany": "Inserció d'una taula amb més de $1 {{PLURAL:$1|les cèl·lules}} no és possible amb aquest diàleg.",
+	"wikieditor-toolbar-tool-table-toomany": "Inserir una taula amb més de $1 {{PLURAL:$1|cel·la|cel·les}} no és possible amb aquest diàleg.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "No heu introduït un nombre vàlid de files o columnes.",
 	"wikieditor-toolbar-tool-table-zero": "No podeu inserir una taula amb zero files o columnes.",
 	"wikieditor-toolbar-tool-replace": "Cerca i reemplaça",

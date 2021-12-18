@@ -9,7 +9,8 @@
 			"Sf",
 			"Srdjan m",
 			"Srđan",
-			"Zoranzoki21"
+			"Zoranzoki21",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Stvorite izvorni kod ove stranice",
@@ -23,8 +24,8 @@
 	"visualeditor-ca-createlocaldescriptionsource": "Dodaj lokalni opis (izvorno)",
 	"visualeditor-ca-createsource": "Stvorite izvor",
 	"visualeditor-ca-editlocaldescriptionsource": "Uredi lokalni opis (izvorno)",
-	"visualeditor-ca-editsource": "Uredi izvor",
-	"visualeditor-ca-editsource-section": "uredi izvor",
+	"visualeditor-ca-editsource": "Uredi kôd",
+	"visualeditor-ca-editsource-section": "uredi kôd",
 	"visualeditor-ca-ve-create": "VisualEditor",
 	"visualeditor-ca-ve-edit": "VisualEditor",
 	"visualeditor-ca-ve-edit-section": "VisualEditor",

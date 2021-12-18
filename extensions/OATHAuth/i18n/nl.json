@@ -10,7 +10,10 @@
 			"Servien",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan"
+			"Southparkfan",
+			"Danieldegroot2",
+			"McDutchie",
+			"Nieuwsgierige Gebruiker"
 		]
 	},
 	"oathauth-desc": "Biedt ondersteuning voor authenticatie via op HMAC-gebaseerde eenmalige wachtwoorden",
@@ -36,6 +39,7 @@
 	"oathauth-disable-for-user": "Tweetrapsauthenticatie voor een gebruiker uitschakelen",
 	"right-oathauth-disable-for-user": "Tweetrapsauthenticatie voor gebruikers uitschakelen",
 	"action-oathauth-disable-for-user": "tweetrapsauthenticatie voor gebruikers uit te schakelen",
+	"right-oathauth-verify-user": "Controleer of een gebruiker tweetrapsauthenticatie heeft ingeschakeld",
 	"right-oathauth-view-log": "Toegang hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"action-oathauth-view-log": "toegang te hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"oathauth-enteruser": "Gebruikersnaam:",
@@ -45,8 +49,8 @@
 	"action-oathauth-enable": "tweetrapsauthenticatie in te schakelen",
 	"oathauth-auth-token-label": "Verificatiecode",
 	"oathauth-auth-token-help": "Het eenmalige wachtwoord gebruikt als tweede trap van de tweetrapsauthenticatie",
-	"oathauth-auth-ui": "Gelieve een verificatiecode van uw authenticatie-apparaat invullen",
-	"oathauth-throttled": "Teveel verificatiepogingen! Wacht $1.",
+	"oathauth-auth-ui": "Voer een verificatiecode in vanaf uw authenticatieapparaat.",
+	"oathauth-throttled": "Te veel verificatiepogingen! Wacht $1.",
 	"oathauth-login-failed": "Verificatie mislukt",
 	"oathauth-describe-provider": "Tweetrapsauthenticatie (OATH).",
 	"grant-group-authentication": "Authenticatie handelingen voor zichzelf en anderen kunnen uitvoeren",

@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"MaGa"
+			"MaGa",
+			"Ponor"
 		]
 	},
 	"codeeditor-next-annotation": "Idi na sljedeću bilješku",
 	"codeeditor-toolbar-toggle": "Uključi/isključi uređivač kôda",
-	"codeeditor-save-with-errors": "Postoje pogrješke u dokumentu. Jeste li sigurni da ga želite spremiti?",
+	"codeeditor-save-with-errors": "U dokumentu ima pogrešaka. Jeste li sigurni da ga želite spremiti?",
 	"codeeditor-invisibleChars-toggle": "Prikaži/sakrij nevidljive znakove",
 	"codeeditor-lineWrapping-toggle": "Uključi/isključi prijelom redova",
 	"codeeditor-searchReplace-toggle": "Uključi/isključi dijalog za pretragu i zamjenu",

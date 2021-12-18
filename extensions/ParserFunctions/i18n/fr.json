@@ -11,7 +11,8 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"Ajeje Brazorf"
 		]
 	},
 	"pfunc_desc": "Etend l’analyseur syntaxique avec des fonctions logiques",
@@ -19,7 +20,7 @@
 	"pfunc_time_too_long": "Erreur : appels trop nombreux à #time.",
 	"pfunc_time_too_big": "Erreur : #time prend uniquement en charge des années jusqu’à 9999.",
 	"pfunc_time_too_small": "Erreur : #time prend uniquement en charge les années à partir de 0.",
-	"pfunc_rel2abs_invalid_depth": "Erreur : profondeur invalide dans le chemin « $1 » (tentative d’accès à un noeud au-dessus du nœud racine).",
+	"pfunc_rel2abs_invalid_depth": "Erreur : profondeur invalide dans le chemin « $1 » (tentative d’accès à un nœud au-dessus du nœud racine).",
 	"pfunc_expr_stack_exhausted": "Erreur d’expression : dépassement de pile.",
 	"pfunc_expr_unexpected_number": "Erreur d’expression : nombre inattendu.",
 	"pfunc_expr_preg_match_failure": "Erreur d’expression : échec inattendu de preg_match.",

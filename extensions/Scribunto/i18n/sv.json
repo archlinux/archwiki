@@ -9,7 +9,8 @@
 			"Magol",
 			"Rotsee",
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Hannarosendeloitte"
 		]
 	},
 	"scribunto-desc": "Ramverk för att bädda in skriptspråk på MediaWiki-sidor",
@@ -58,8 +59,11 @@
 	"scribunto-limitreport-timeusage": "Lua - tidsanvändning",
 	"scribunto-limitreport-timeusage-value": "$1/$2 sekunder",
 	"scribunto-limitreport-virtmemusage": "Lua - virtuell storlek",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|byte}}",
 	"scribunto-limitreport-estmemusage": "Lua - uppskattad minnesanvändning",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|byte}}",
 	"scribunto-limitreport-memusage": "Lua - minnesanvändning",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|byte}}",
 	"scribunto-limitreport-profile": "Lua-profil",
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Lua-loggar",

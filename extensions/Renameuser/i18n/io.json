@@ -14,6 +14,7 @@
 	"renameuserreason": "Motivo:",
 	"renameuserwarnings": "Averti:",
 	"renameuserconfirm": "Yes, rinomez l'uzanto",
+	"renameusersubmit": "Sendez",
 	"renameusererrordoesnotexist": "L'uzanto \"<nowiki>$1</nowiki>\" ne existas.",
 	"renameusererrorexists": "La {{GENDER:$1|uzero}} \"<nowiki>$1</nowiki>\" ja existas.",
 	"renameusererrorinvalid": "L'uzantonomo \"<nowiki>$1</nowiki>\" esas ne-valida.",

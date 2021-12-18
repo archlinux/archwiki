@@ -4,7 +4,25 @@
 			"McDutchie"
 		]
 	},
+	"multimediaviewer-desc": "Aggrandir miniaturas in un interfacie a plen schermo",
 	"multimediaviewer-optin-pref": "Activar <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About visualisator multimedial]</span>",
+	"multimediaviewer-file-page": "Visitar le pagina del file correspondente",
+	"multimediaviewer-repository-local": "Plus detalios",
+	"multimediaviewer-datetime-created": "Create: $1",
+	"multimediaviewer-datetime-uploaded": "Incargate: $1",
+	"multimediaviewer-credit-fallback": "Vider information sur le autor",
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|un altere autor|$1 altere autores}}",
-	"multimediaviewer-multiple-authors-combine": "$1 e $2"
+	"multimediaviewer-multiple-authors-combine": "$1 e $2",
+	"multimediaviewer-metadata-error": "Non poteva cargar detalios del imagine (error: $1)",
+	"multimediaviewer-thumbnail-error": "Non es possibile monstrar le file",
+	"multimediaviewer-thumbnail-error-description": "Il sembla haber un problema technic. Tu pote $1 si illo persiste. Error: $2",
+	"multimediaviewer-thumbnail-error-retry": "reprobar",
+	"multimediaviewer-thumbnail-error-report": "reportar le problema",
+	"multimediaviewer-license-cc-pd": "Dominio public",
+	"multimediaviewer-license-pd": "Dominio public",
+	"multimediaviewer-license-default": "Vider licentia",
+	"multimediaviewer-permission-title": "Detalios del permission",
+	"multimediaviewer-permission-link": "vider terminos",
+	"multimediaviewer-permission-link-hide": "celar terminos",
+	"multimediaviewer-permission-viewmore": "Vider plus"
 }

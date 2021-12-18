@@ -79,15 +79,22 @@ class DeleteOldFancyCaptchas extends Maintenance {
 
 		$this->output( "$count old fancy captchas to be deleted.\n" );
 
-		$ret = $backend->doQuickOperations( $filesToDelete );
+		$deletedCount = 0;
+		foreach ( array_chunk( $filesToDelete, 1000 ) as $chunk ) {
+			$ret = $backend->doQuickOperations( $chunk );
 
-		if ( $ret->isOK() ) {
-			$this->output( "$count old fancy captchas deleted.\n" );
-		} else {
-			$status = Status::wrap( $ret );
-			$this->output( "Deleting old captchas errored.\n" );
-			$this->output( $status->getWikiText( false, false, 'en' ) );
+			if ( $ret->isOK() ) {
+				$chunkCount = count( $chunk );
+				$this->output( "$chunkCount...\n" );
+				$deletedCount += $chunkCount;
+			} else {
+				$status = Status::wrap( $ret );
+				$this->output( "Deleting old captchas errored.\n" );
+				$this->output( $status->getWikiText( false, false, 'en' ) );
+			}
 		}
+
+		$this->output( "$deletedCount old fancy captchas deleted.\n" );
 	}
 }
 

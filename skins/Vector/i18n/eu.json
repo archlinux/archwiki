@@ -8,8 +8,16 @@
 			"Xabier Armendaritz"
 		]
 	},
+	"skinname-vector": "Vector",
 	"vector-skin-desc": "MonoBook-en bertsio modernoa, itxura berriarekin eta erabilgarritasun hobekuntza askorekin",
+	"prefs-vector-enable-vector-1-label": "Aurreko Vector itxura erabili",
+	"prefs-vector-enable-vector-1-help": "Hurrengo urteetan zehar, pixkanaka joango gara Vector itxura aldatzen. Vector itxura zaharrak oraindik aukera emango dizu 2019ko Abenduan Vectorrek zuen itxura erabiltzeko. Aldaketen inguruan gehiago jakiteko, joan zaitez [[mw:Reading/Web/Desktop_Improvements|proiektuaren orrialdera]].",
 	"vector-opt-out": "Itxura zaharrera aldatu",
+	"vector-opt-out-tooltip": "Aldatu zure hobespenak aurreko itxurara joateko (Vector zaharra)",
+	"vector.css": "/* Hemen idatzitako CSS guztia Vector itxura duten erabiltzaile guztiei agertuko zaie */",
+	"vector.js": "/* Hemen idatzitako JavaScript guztia Vector itxura duten erabiltzaile guztiei agertuko zaie */",
+	"vector-action-toggle-sidebar": "Alboko barra ezkutatu edo erakutsi",
+	"vector-language-button-label": "{{PLURAL:$1|Hizkuntza bat|$1 hizkuntza}}",
 	"vector-action-addsection": "Gehitu atala",
 	"vector-action-delete": "Ezabatu",
 	"vector-action-move": "Mugitu",
@@ -21,5 +29,9 @@
 	"vector-view-history": "Ikusi historia",
 	"vector-view-view": "Irakurri",
 	"vector-view-viewsource": "Kodea ikusia",
-	"vector-more-actions": "Gehiago"
+	"vector-jumptonavigation": "Nabigaziora joan",
+	"vector-jumptosearch": "Bilaketara joan",
+	"vector-jumptocontent": "Edukira joan",
+	"vector-more-actions": "Gehiago",
+	"vector-search-loader": "Bilaketa gomendioak kargatzen"
 }

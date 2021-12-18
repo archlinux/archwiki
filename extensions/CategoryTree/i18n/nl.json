@@ -5,7 +5,8 @@
 			"Kippenvlees1",
 			"Mainframe98",
 			"SPQRobin",
-			"Siebrand"
+			"Siebrand",
+			"Nickthijssen1994"
 		]
 	},
 	"categorytree": "Categorieboom",
@@ -22,7 +23,7 @@
 	"categorytree-mode-all": "alle pagina's",
 	"categorytree-collapse": "samenvouwen",
 	"categorytree-expand": "uitvouwen",
-	"categorytree-member-counts": "bevat {{PLURAL:$1|één ondercategorie|$1 ondercategorieën}}, {{PLURAL:$2|één pagina|$2 pagina's}} en {{PLURAL:$3|één bestand|$3 bestanden}}",
+	"categorytree-member-counts": "Bevat {{PLURAL:$1|één subcategorie|$1 subcategorieën}}, {{PLURAL:$2|één pagina|$2 pagina's}} en {{PLURAL:$3|één bestand|$3 bestanden}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 B",

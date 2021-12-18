@@ -9,6 +9,7 @@
 	"apihelp-query+oath-description": "Sprawdź czy weryfikacja dwuetapowa (OATH) jest włączona u użytkownika.",
 	"apihelp-query+oath-summary": "Sprawdź czy weryfikacja dwuetapowa (OATH) jest włączona u użytkownika.",
 	"apihelp-query+oath-param-user": "Użytkownik o którym pobierane będą informacje. Domyślnie obecny użytkownik.",
+	"apihelp-query+oath-param-reason": "Powód pozyskiwania informacji o statusie OATH.",
 	"apihelp-query+oath-example-1": "Pobierz informacje o aktualnym użytkowniku",
 	"apihelp-query+oath-example-2": "Pobierz informacje na temat użytkownika <kbd>Example</kbd>",
 	"apihelp-oathvalidate-description": "Waliduj token weryfikacji dwuetapowej (OATH).",

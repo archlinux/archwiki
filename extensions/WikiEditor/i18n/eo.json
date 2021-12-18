@@ -16,7 +16,7 @@
 		]
 	},
 	"wikieditor": "Progresa redaktilo por vikiteksto",
-	"wikieditor-desc": "Ebligas redaktan interfacon por etendebla vikiteksto kaj multaj utilaj moduloj",
+	"wikieditor-desc": "Provizas progresan, etendeblan vikitekstan redaktan interfacon",
 	"wikieditor-wikitext-tab": "Vikiteksto",
 	"wikieditor-loading": "Ŝargante",
 	"wikieditor-toolbar": "Ilobreto por redaktoj",
@@ -118,7 +118,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Antaŭvido",
 	"wikieditor-toolbar-tool-table-insert": "Enmeti",
 	"wikieditor-toolbar-tool-table-cancel": "Nuligi",
-	"wikieditor-toolbar-tool-table-toomany": "Enmeti tabelon kun pli ol 1000 ĉeloj ne eblas per ĉi tiu dialogujo.",
+	"wikieditor-toolbar-tool-table-toomany": "Enmeti tabelon kun pli ol $1 {{PLURAL:$1|ĉelo|ĉeloj}} ne eblas per ĉi tiu dialogujo.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Vi ne enigis permesitan nombron de linioj aŭ kolumnoj.",
 	"wikieditor-toolbar-tool-table-zero": "Vi ne povas enigi tabelon kun nul linioj aŭ kolumnoj.",
 	"wikieditor-toolbar-tool-replace": "Serĉi kaj anstataŭigi",

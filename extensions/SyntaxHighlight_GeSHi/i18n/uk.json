@@ -5,11 +5,12 @@
 			"Ahonc",
 			"Dars",
 			"Piramidion",
-			"Ата"
+			"Ата",
+			"DDPAT"
 		]
 	},
 	"syntaxhighlight-desc": "Забезпечує підсвічування синтаксису <code>&lt;syntaxhighlight&gt;</code> за допомогою [http://pygments.org/ Pygments] для синтаксису Python",
-	"syntaxhighlight-error-category": "Сторінки, які містять помилки підсвітки синтаксису",
+	"syntaxhighlight-error-category": "Сторінки, які містять помилки підсвічення синтаксису",
 	"syntaxhighlight-error-category-desc": "Сталася помилка при спробі підсвічення коду на сторінці.",
 	"syntaxhighlight-enclose-category": "Сторінки, які використовують застарілі атрибути «enclose»",
 	"syntaxhighlight-enclose-category-desc": "Підсвічування синтаксису на сторінці використовує застарілий синтаксис «enclose».",

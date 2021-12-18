@@ -15,6 +15,7 @@
 	"cite_error_ref_no_key": "Početna oznaka <code>&lt;ref&gt;</code> nije ispravno oblikovana ili sadrži neispravan naziv",
 	"cite_error_ref_too_many_keys": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nnevaljani nazivi, npr. možda ih je previše",
 	"cite_error_ref_no_input": "Nevaljana oznaka <code>&lt;ref&gt;</code>;\nreference bez naziva moraju imati sadržaj",
+	"cite_error_references_duplicate_key": "Neispravna oznaka <code>&lt;ref&gt;</code>; naziv \"$1\" definiran je nekoliko puta s različitim sadržajem",
 	"cite_error_references_invalid_parameters": "Neispravan parametar u oznaci <code>&lt;references&gt;</code>",
 	"cite_error_references_no_backlink_label": "Ponestalo je prilagođenih naslova backlinkova. Definirajte ih još u [[MediaWiki:Cite references link many format backlink labels]] poruci",
 	"cite_error_no_link_label_group": "Nedovoljan broj proizvoljnih naslova linkova za grupu \"$1\". Definišite više putem poruke [[MediaWiki:$2]].",

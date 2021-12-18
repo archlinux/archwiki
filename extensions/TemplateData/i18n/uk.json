@@ -8,7 +8,8 @@
 			"Piramidion",
 			"VolodymyrF",
 			"Ата",
-			"Капитан Джон Шепард"
+			"Капитан Джон Шепард",
+			"DDPAT"
 		]
 	},
 	"templatedata-desc": "Реалізація сховища даних для параметрів шаблону (JSON)",
@@ -18,7 +19,7 @@
 	"templatedata-doc-format-inline": "Для цього шаблону краще внутрішнє форматування параметрів.",
 	"templatedata-doc-no-params-set": "Не вказано жодного параметра",
 	"templatedata-doc-param-autovalue": "Автоматичне значення",
-	"templatedata-doc-param-default": "Стандартно",
+	"templatedata-doc-param-default": "За замовчуванням",
 	"templatedata-doc-param-example": "Приклад",
 	"templatedata-doc-param-desc": "Опис",
 	"templatedata-doc-param-desc-empty": "немає опису",
@@ -32,7 +33,7 @@
 	"templatedata-doc-param-type-boolean": "Логічне значення",
 	"templatedata-doc-param-type-content": "Вміст",
 	"templatedata-doc-param-type-date": "Дата",
-	"templatedata-doc-param-type-line": "Лінія",
+	"templatedata-doc-param-type-line": "Короткий текст",
 	"templatedata-doc-param-type-number": "Число",
 	"templatedata-doc-param-type-string": "Рядок",
 	"templatedata-doc-param-type-unbalanced-wikitext": "Незбалансований вікі-текст",
@@ -92,7 +93,7 @@
 	"templatedata-modal-table-param-actions": "Дії",
 	"templatedata-modal-table-param-aliases": "Псевдоніми (через кому)",
 	"templatedata-modal-table-param-autovalue": "Автозначення",
-	"templatedata-modal-table-param-default": "Стандартно ($1)",
+	"templatedata-modal-table-param-default": "За замовчуванням ($1)",
 	"templatedata-modal-table-param-deprecated": "Застарілий",
 	"templatedata-modal-table-param-deprecatedValue": "Застарілі інструкції",
 	"templatedata-modal-table-param-description": "Опис ($1)",

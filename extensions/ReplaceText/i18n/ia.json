@@ -6,7 +6,7 @@
 	},
 	"replacetext": "Reimplaciar texto",
 	"replacetext-desc": "Forni un [[Special:ReplaceText|pagina special]] que permitte al administratores cercar e reimplaciar globalmente un catena de characteres in tote le paginas de contento de un wiki",
-	"replacetext_docu": "Pro reimplaciar un catena de characteres per un altere in tote le paginas regular in iste wiki, entra le duo pecias de texto hic e clicca super \"{{int:replacetext_continue}}\".\nPostea apparera un lista de paginas que contine le texto cercate, e tu potera seliger le paginas in le quales tu vole reimplaciar lo.\nTu nomine figurara in le historias del paginas como le usator responsabile de eventual modificationes.",
+	"replacetext_docu": "Pro reimplaciar un catena de characteres per un altere in tote le paginas normal sur iste wiki, entra le duo pecias de texto hic e clicca sur \"{{int:replacetext_continue}}\".\nPostea apparera un lista de paginas que contine le texto cercate, e tu potera seliger le paginas in le quales tu vole reimplaciar lo.\nSi isto face modificationes, tu nomine figurara in le historias del paginas como le usator responsabile.",
 	"replacetext_originaltext": "Texto original:",
 	"replacetext_replacementtext": "Texto de substitution:",
 	"replacetext_useregex": "Usar expressiones regular",

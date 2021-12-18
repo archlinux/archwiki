@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Max20091",
-			"Minh Nguyen"
+			"Minh Nguyen",
+			"Vinhtantran"
 		]
 	},
-	"scribunto-desc": "Khuôn khổ đế nhúng ngôn ngữ kịch bản vào các trang MediaWiki",
+	"scribunto-desc": "Nền tảng đế nhúng ngôn ngữ kịch bản vào các trang MediaWiki",
 	"scribunto-line": "tại dòng $1",
 	"scribunto-module-line": "trong $1 tại dòng $2",
 	"scribunto-parser-dialog-title": "Lỗi kịch bản",
@@ -52,11 +53,14 @@
 	"scribunto-limitreport-timeusage": "Thời gian sử dụng Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 giây",
 	"scribunto-limitreport-virtmemusage": "Kích thước ảo Lua",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|byte}}",
 	"scribunto-limitreport-estmemusage": "Ước lượng sử dụng bộ nhớ Lua",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|byte}}",
 	"scribunto-limitreport-memusage": "Sử dụng bộ nhớ Lua",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|byte}}",
 	"scribunto-limitreport-profile": "Hồ sơ Lua",
 	"scribunto-limitreport-profile-ms": "$1 ms",
-	"scribunto-limitreport-logs": "Lời ghi Lua",
+	"scribunto-limitreport-logs": "Nhật trình Lua",
 	"nstab-module": "Mô đun",
 	"tooltip-ca-nstab-module": "Xem trang mô đun"
 }

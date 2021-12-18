@@ -8,7 +8,8 @@
 			"PhiLiP",
 			"Philip",
 			"Shinjiman",
-			"阿pp"
+			"阿pp",
+			"FakeGreenHand"
 		]
 	},
 	"pfunc_desc": "用逻辑函数加强解析器",
@@ -24,7 +25,7 @@
 	"pfunc_expr_unexpected_operator": "表达式错误：未预料的$1操作符。",
 	"pfunc_expr_missing_operand": "表达式错误：缺少$1的操作数。",
 	"pfunc_expr_unexpected_closing_bracket": "表达式错误：未预料的反括号。",
-	"pfunc_expr_unrecognised_punctuation": "表达式错误：无法识别的标点“$1”。",
+	"pfunc_expr_unrecognised_punctuation": "表达式错误：无法识别的符号“$1”。",
 	"pfunc_expr_unclosed_bracket": "表达式错误：未封闭的括号。",
 	"pfunc_expr_division_by_zero": "零除。",
 	"pfunc_expr_invalid_argument": "$1的无效参数：< -1 或 > 1。",

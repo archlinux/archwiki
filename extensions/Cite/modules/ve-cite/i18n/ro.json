@@ -32,7 +32,7 @@
 	"cite-ve-citationneeded-reason": "Motivul oferit:",
 	"cite-ve-citationneeded-title": "Citare necesară",
 	"cite-ve-dialog-reference-editing-reused": "Această referință este utilizată {{PLURAL:$1|o singură dată|de $1 ori|de $1 de ori}} în această pagină.",
-	"cite-ve-dialog-reference-editing-reused-long": "This referință este folosită {{PLURAL:$1|o dată|de $1 times|de $1 de ori}} în această pagină. Schimbările făcute aici vor fi aplicate în toate locurile unde este folosită această referință..",
+	"cite-ve-dialog-reference-editing-reused-long": "Această referință este folosită {{PLURAL:$1|o dată|de $1 ori|de $1 de ori}} în această pagină. Schimbările făcute aici vor fi aplicate în toate locurile unde este refolosită această referință.",
 	"cite-ve-dialog-reference-options-group-label": "Folosește acest grup",
 	"cite-ve-dialog-reference-options-group-placeholder": "Referințe generale",
 	"cite-ve-dialog-reference-options-name-label": "Reutilizează cu acest nume",

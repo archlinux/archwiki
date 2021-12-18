@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ninjastrikers",
+			"咽頭べさ"
+		]
+	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 ဘာႏသာႏငဝ်းငွါ|$1 ဘာႏသာႏငဝ်းငွါဖိုင်ႏ}}",
+	"vector-action-addsection": "ထဲမ်သော့ꩻထဲင်း အကျောင်ꩻခရာႏတသာ",
+	"vector-action-delete": "ယားကုဲင်",
+	"vector-action-move": "ခြုဲင်း",
+	"vector-action-protect": "ရဲးကမ်းသွော့",
+	"vector-view-create": "တဲမ်းစတာႏ",
+	"vector-view-edit": "ဖျင်ဆင်တာႏ",
+	"vector-view-history": "ထွားရာႏဇာႏဝင်ႏ",
+	"vector-view-view": "ဟော်ꩻတာႏ",
+	"vector-more-actions": "ထဲင်းယင်း"
+}

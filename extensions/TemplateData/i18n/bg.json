@@ -33,7 +33,7 @@
 	"templatedata-doc-param-type-unknown": "Неизвестен",
 	"templatedata-doc-param-type-url": "URL адрес",
 	"templatedata-doc-param-type-wiki-file-name": "Файл",
-	"templatedata-doc-param-type-wiki-page-name": "Страница",
+	"templatedata-doc-param-type-wiki-page-name": "Име на страница",
 	"templatedata-doc-param-type-wiki-template-name": "Шаблон",
 	"templatedata-doc-param-type-wiki-user-name": "Потребител",
 	"templatedata-doc-params": "Параметри на шаблона",
@@ -81,6 +81,6 @@
 	"templatedata-modal-title-paramorder": "Ред на параметрите",
 	"templatedata-modal-title-templatedesc": "Описание на шаблона ($1)",
 	"templatedata-modal-title-templateformat": "Предложено уикитекстово форматиране",
-	"templatedata-modal-title-templateparam-details": "Описание на параметра: $1",
+	"templatedata-modal-title-templateparam-details": "Описание на параметъра: $1",
 	"templatedata-modal-title-templateparams": "Параметри на шаблона"
 }

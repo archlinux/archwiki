@@ -6,9 +6,11 @@
 			"Otokoume",
 			"Sujiniku",
 			"Whym",
-			"Yusuke1109"
+			"Yusuke1109",
+			"しぃ"
 		]
 	},
+	"skinname-timeless": "Timeless",
 	"timeless-desc": "Brandon Harris による Winter というプロトタイプやウィキメディア財団によるさまざまなスタイルを基にしてデザインされた不朽 (timeless) の外装。",
 	"timeless-anonymous": "匿名",
 	"timeless-loggedinas": "'''$1''' としてログインしています",
@@ -17,7 +19,7 @@
 	"timeless-talkpage": "{{GENDER:$1|利用者}}トーク",
 	"timeless-pagelog": "ページの記録",
 	"timeless-more": "その他",
-	"timeless-sitetools": "ウィキツール",
+	"timeless-sitetools": "Wikiツール",
 	"timeless-pageactions": "ページツール",
 	"timeless-userpagetools": "利用者ページツール",
 	"timeless-action-addsection": "新しい話題",
@@ -27,5 +29,6 @@
 	"timeless-pagetools": "ページアクション",
 	"timeless-languages": "言語",
 	"timeless-projects": "他プロジェクト",
+	"timeless.css": "/* ここにあるすべてのCSSは、Timeless外装を使用している利用者に対して読み込まれます */",
 	"timeless.js": "/* ここにあるすべてのJavaScriptは、Timeless外装を使用している利用者に対して読み込まれます */"
 }

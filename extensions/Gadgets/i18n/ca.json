@@ -9,18 +9,19 @@
 			"Paucabot",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Jmarchn"
 		]
 	},
 	"gadgets-desc": "Permet als usuaris personalitzar [[Special:Gadgets|ginys CSS i JavaScript]] a les seves [[Special:Preferences#mw-prefsection-gadgets|preferències]]",
 	"prefs-gadgets": "Ginys",
-	"gadgets-prefstext": "A continuació teniu una llista de ginys especials que podeu activar al vostre compte.<br />\nLa majoria d'aquests ginys fan servir JavaScript, per tant l'haureu de tenir activat al vostre navegador per a que funcionin.\nTingueu en compte que aquests ginys no tenen cap efecte sobre aquesta pàgina de preferències.\n\nTingueu també present que aquests ginys especials no formen part del programari MediaWiki i que acostumen a estar fets i mantinguts per usuaris del vostre wiki local.<br />\nEls administradors locals poden editar els ginys disponibles fent servir [[MediaWiki:Gadgets-definition|definicions]] i [[Special:Gadgets|descripcions]]. El nombre d'usuaris de cada giny al wiki es llista a les [[Special:GadgetUsage|estadístiques d'ús dels ginys]].",
+	"gadgets-prefstext": "A continuació teniu una llista de ginys especials que podeu activar al vostre compte.\nLa majoria d'aquests ginys fan servir JavaScript, per tant l'haureu de tenir activat al vostre navegador per a que funcionin.\nTingueu en compte que aquests ginys no tenen cap efecte sobre aquesta pàgina de preferències.\n\nTingueu també present que aquests ginys especials no formen part del programari MediaWiki i que acostumen a estar fets i mantinguts per usuaris del vostre wiki local.\nEls administradors d'interfície local poden editar els ginys disponibles fent servir [[MediaWiki:Gadgets-definition|definicions]], i els administradors locals poden editar les seves [[Special:Gadgets|descripcions]]. El nombre d'usuaris de cada giny al wiki es llista a les [[Special:GadgetUsage|estadístiques d'ús dels ginys]].",
 	"gadgets": "Ginys",
 	"gadgetusage": "Estadístiques d'ús de ginys",
 	"gadgetusage-gadget": "Giny",
 	"gadgetusage-usercount": "Nombre d'usuaris",
 	"gadgetusage-noresults": "No s'ha trobat cap giny.",
-	"gadgetusage-intro": "Aquesta taula indica el nombre d'usuaris que tenen activat cada giny en aquest wiki. Pot incloure ginys que ja no estan disponibles.",
+	"gadgetusage-intro": "Aquesta taula indica el nombre d'usuaris que tenen activat cada giny en aquest wiki. Pot incloure ginys que ja no estan disponibles. Un usuari actiu es compta com algú que ha fet una modificació en  {{PLURAL:$1|el darrer dia|els darrers $1 dies}}. Aquesta llista exclou les estadístiques dels ginys habilitats per a tothom de manera predeterminada i pot incloure ginys que ja no estan disponibles.",
 	"gadgetusage-activeusers": "Usuaris actius",
 	"gadgetusage-default": "Per defecte",
 	"gadgets-title": "Ginys",

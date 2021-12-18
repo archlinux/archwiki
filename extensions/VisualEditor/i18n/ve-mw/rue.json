@@ -3,12 +3,15 @@
 		"authors": [
 			"Dicto23456",
 			"KHMELNYTSKYIA",
-			"Tkalyn"
+			"Tkalyn",
+			"Gramo Džukić",
+			"Gramo6"
 		]
 	},
 	"tooltip-ca-ve-edit": "Редагувати цю сторінку",
 	"visualeditor-ca-editsource": "Едітовати жрідло",
 	"visualeditor-ca-editsource-section": "едітовати жрідло",
+	"visualeditor-descriptionpagelink": "Project:Візуалный едітор",
 	"visualeditor-dialog-meta-languages-link-label": "Звязана сторінка",
 	"visualeditor-dialog-meta-languages-section": "Языкы",
 	"visualeditor-languages-tool": "Языкы"

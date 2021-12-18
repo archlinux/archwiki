@@ -5,6 +5,7 @@
 			"Papuass"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 valodas|$1 valoda|$1 valodas}}",
 	"vector-action-addsection": "Jauna sadaļa",
 	"vector-action-delete": "Dzēst",
 	"vector-action-move": "Pārvietot",

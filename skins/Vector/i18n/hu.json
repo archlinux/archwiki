@@ -32,5 +32,7 @@
 	"vector-view-viewsource": "A lap forrása",
 	"vector-jumptonavigation": "Ugrás a navigációhoz",
 	"vector-jumptosearch": "Ugrás a kereséshez",
-	"vector-more-actions": "Több"
+	"vector-jumptocontent": "Ugrás a tartalomhoz",
+	"vector-more-actions": "Több",
+	"vector-search-loader": "Keresési javaslatok betöltése…"
 }

@@ -22,7 +22,10 @@
 			"Opraco",
 			"SandroHc",
 			"Toliño",
-			"Vitorvicentevalente"
+			"Vitorvicentevalente",
+			"Emma Franzen",
+			"McDutchie",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -201,7 +204,7 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Voltar",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Continuar mesmo assim",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Falta um campo obrigatório|Faltam campos obrigatórios}}",
-	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Tem certeza de que deseja continuar sem preencher {{PLURAL:$2|o campo|os $1 campos}}?",
+	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Tem certeza de que deseja continuar sem preencher {{PLURAL:$2|o campo|os campos}} $1?",
 	"visualeditor-dialog-transclusion-single-mode": "Ocultar opções",
 	"visualeditor-dialog-transclusion-title": "Transclusão",
 	"visualeditor-dialog-transclusion-templates-menu-aria-label": "Menu de configuração dos campos da predefinição",

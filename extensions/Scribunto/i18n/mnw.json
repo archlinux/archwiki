@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Htawmonzel"
+			"Htawmonzel",
+			"咽頭べさ"
 		]
 	},
+	"scribunto-common-error-category": "မုလိက် နွံဗၠေတ်မံင်မွဲမွဲသိုက်",
 	"scribunto-lua-error": "Lua ဗၠေတ်: $2."
 }

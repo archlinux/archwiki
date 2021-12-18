@@ -1,8 +1,14 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Iflaq"
+		]
 	},
 	"categorytree-category": "زٲژ:",
+	"categorytree-expand": "پُھہلاوُن",
 	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄"
+	"categorytree-empty-bullet": "◄",
+	"categorytree-num-categories": "$1 ز",
+	"categorytree-num-pages": "$1 ص",
+	"categorytree-num-files": "$1 ف"
 }

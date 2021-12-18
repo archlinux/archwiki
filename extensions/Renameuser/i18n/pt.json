@@ -34,6 +34,7 @@
 	"renameuser-page-exists": "Já existe a página $1. Não é possível sobrescrever automaticamente.",
 	"renameuser-page-moved": "A página $1 foi movida para $2.",
 	"renameuser-page-unmoved": "Não foi possível mover a página $1 para $2.",
+	"renameuser-warning-currentblock": "Este utilizador está [$1 atualmente bloqueado].",
 	"log-name-renameuser": "Registo de alteração do nome de utilizadores",
 	"log-description-renameuser": "Este é um registo de alterações efetuadas a nomes de utilizadores.",
 	"logentry-renameuser-renameuser": "$1 alterou o nome {{GENDER:$2|do utilizador|da utilizadora}} $4 (com {{PLURAL:$6|$6 edição|$6 edições}}) para {{GENDER:$7|$5}}",

@@ -3,11 +3,12 @@
 		"authors": [
 			"Artsiom91",
 			"Vlad5250",
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"ZlyiLev"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Візуальны рэдактар]]",
-	"tag-visualeditor-description": "Праўка зроблена з выкарыстаннем [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуальнага рэдактара]]",
+	"tag-visualeditor-description": "Праўка зроблена з дапамогай [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуальнага рэдактара]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Візуальная праўка: Праверыць]]",
 	"tag-visualeditor-needcheck-description": "Праўка была зроблена з дапамогай [[{{MediaWiki:visualeditor-descriptionpagelink}}|візуальнага рэдактара]], і сістэма заўважыла патэнцыйна непажаданыя змены ў вікітэксце.",
 	"tag-visualeditor-wikitext": "рэдактар вікітэксту 2017",

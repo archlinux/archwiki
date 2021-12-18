@@ -32,6 +32,7 @@
 	"nuke-maxpages": "Used as label for \"nuke limit\" input box.",
 	"nuke-editby": "This message is followed by {{msg-mw|Comma-separator}} and {{msg-mw|Nuke-viewchanges}}.\n\nParameters:\n* $1 - a username",
 	"nuke-deleted": "Used as success result of deletion. Parameters:\n* $1 - page title\nSee also:\n* {{msg-mw|Nuke-not-deleted}}",
+	"nuke-deletion-queued": "Used when the page is queued for deletion. Parameters:\n* $1 - page title\nSee also:\n* {{msg-mw|Nuke-deleted}}",
 	"nuke-not-deleted": "Used as failure result of deletion. Parameters:\n* $1 - page title\nSee also:\n* {{msg-mw|Nuke-deleted}}",
 	"nuke-delete-more": "Used at the bottom of the Nuke (mass deletion) result page.",
 	"nuke-pattern": "Used as label for \"nuke pattern\" input box.",

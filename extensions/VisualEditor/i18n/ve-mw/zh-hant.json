@@ -33,7 +33,8 @@
 			"Xiplus",
 			"Zhxy 519",
 			"和平奮鬥救地球",
-			"烈羽"
+			"烈羽",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad：$1",
@@ -357,9 +358,9 @@
 	"visualeditor-preference-core-description": "開啟視覺化編輯器，目前尚未支援對話頁面及其他命名空間。",
 	"visualeditor-preference-core-label": "視覺化編輯",
 	"visualeditor-preference-enable": "開啟視覺化編輯器，將可於以下{{PLURAL:$2|命名空間}}使用：$1",
-	"visualeditor-preference-newwikitexteditor-description": "在可視化編輯器中開啟新版維基文本模式。它擁有可視化編輯器中提供的很多工具，使用了類似的設計，並允許更好地在兩個編輯器之間切換。",
+	"visualeditor-preference-newwikitexteditor-description": "在視覺化編輯器中開啟新版維基文字模式。它擁有視覺化編輯器中提供的很多工具，使用了類似的設計，並允許更好地在兩個編輯器之間切換。",
 	"visualeditor-preference-newwikitexteditor-enable": "在視覺化編輯器裡使用 wiki 文字模式，以取代其它不同的 wiki 文字編輯器。",
-	"visualeditor-preference-newwikitexteditor-label": "新維基文本模式",
+	"visualeditor-preference-newwikitexteditor-label": "新版wikitext模式",
 	"visualeditor-preference-tabs": "編輯模式：",
 	"visualeditor-preference-tabs-multi-tab": "同時顯示兩種編輯器頁籤",
 	"visualeditor-preference-tabs-prefer-ve": "如果可以，讓我使用視覺化編輯器",

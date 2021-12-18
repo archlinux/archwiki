@@ -20,6 +20,7 @@
 	"nuke-maxpages": "Numero maxime de paginas:",
 	"nuke-editby": "Create per [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Le pagina '''$1''' ha essite delite.",
+	"nuke-deletion-queued": "Le pagina '''$1''' ha essite adjungite al cauda de deletiones.",
 	"nuke-not-deleted": "Le pagina [[:$1]] '''non poteva''' esser delite.",
 	"nuke-delete-more": "[[Special:Nuke|Deler plus paginas]]",
 	"nuke-pattern": "Patrono SQL LIKE (p.ex. %) pro le nomine de pagina:",

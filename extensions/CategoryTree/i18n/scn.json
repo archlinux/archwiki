@@ -4,12 +4,14 @@
 			"Aushulz",
 			"C.R.",
 			"Pippinu",
-			"Santu"
+			"Santu",
+			"1233qwer1234qwer4",
+			"Ajeje Brazorf"
 		]
 	},
-	"categorytree": "Àrvulu  di li catigurìi",
+	"categorytree": "Àrvulu dî catigurìi",
 	"categorytree-portlet": "Catigurìi",
-	"categorytree-legend": "Ammustra l'àrvulu di li catigurìi",
+	"categorytree-legend": "Ammustra l'àrvulu dî catigurìi",
 	"categorytree-desc": "Accissòriu AJAX pi taliari la [[Special:CategoryTree|struttura di li catigurìi]] dû situ",
 	"categorytree-header": "Nziriri lu nomu dâ catigirìa di unni si disìa taliari lu cuntinutu sutta furma di struttura a àrvulu. La pàggina addumanna li funziunalitati avanzati di JavaScript saputi sèntiri AJAX; si veni usatu nu browser  vecchiu assai o li funzioni JavaScript sunnu disabbilitati, sta pàggina non funziona.",
 	"categorytree-category": "Catigurìa:",
@@ -28,7 +30,7 @@
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F",
 	"categorytree-num-empty": "vacanti",
-	"categorytree-load": "càrica",
+	"categorytree-load": "càrrica",
 	"categorytree-loading": "sta caricannu...",
 	"categorytree-nothing-found": "nuddu risurtatu",
 	"categorytree-no-subcategories": "nudda suttacatigurìa.",

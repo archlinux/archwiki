@@ -20,7 +20,8 @@
 			"予弦",
 			"沈澄心",
 			"神樂坂秀吉",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"Tranve"
 		]
 	},
 	"multimediaviewer-desc": "在全屏界面中以较大尺寸显示缩略图。",
@@ -97,10 +98,11 @@
 	"multimediaviewer-download-small-button-name": "下载小尺寸",
 	"multimediaviewer-download-medium-button-name": "下载中等尺寸",
 	"multimediaviewer-download-large-button-name": "下载大尺寸",
+	"multimediaviewer-download-xl-button-name": "下载超大尺寸",
 	"multimediaviewer-link-to-page": "文件说明页面的链接",
 	"multimediaviewer-link-to-file": "原始文件的链接",
 	"multimediaviewer-share-explanation": "复制并自由分享本链接",
-	"multimediaviewer-embed-wt": "Wiki文本",
+	"multimediaviewer-embed-wt": "Wikitext",
 	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-embed-explanation": "使用这些代码嵌入该文件",
 	"multimediaviewer-text-embed-credit-text-bl": "由$1，$2，$3",

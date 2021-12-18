@@ -45,6 +45,7 @@
 	"interwiki_edited": "Awalan \"$1\" telah diubah dalam jadual interwiki.",
 	"interwiki_editerror": "Awalan \"$1\" tidak boleh diubah dalam jadual interwiki. Barangkali awalan ini tidak wujud.",
 	"interwiki-badprefix": "Awalan interwiki yang dinyatakan, \"$1\" mengandungi aksara yang tidak sah",
+	"interwiki-cannotaddlocallanguage": "Awalan \"$1\" padan dengan kod bahasa yang diketahui. Menambah awalan antara bahasa lokal dinyahdayakan apabila menggunakan pangkalan data antara bahasa global.",
 	"interwiki-submit-empty": "Awalan dan URL tidak boleh dibiarkan kosong.",
 	"interwiki-submit-invalidurl": "Protokol URL itu tidak sah.",
 	"log-name-interwiki": "Log maklumat Interwiki",

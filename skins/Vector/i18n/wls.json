@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lea.Fakauvea"
+		]
+	},
+	"vector-action-addsection": "Tohi he kupu",
+	"vector-action-delete": "Molehi",
+	"vector-action-move": "Fetogi higoa",
+	"vector-action-protect": "Puipui",
+	"vector-view-create": "Fa'u",
+	"vector-view-edit": "Fetogi",
+	"vector-view-history": "Kamata'aga",
+	"vector-view-view": "Lau",
+	"vector-more-actions": "Mo 'ihi atu"
+}

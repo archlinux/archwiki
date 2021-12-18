@@ -4,7 +4,8 @@
 			"Acamicamacaraca",
 			"Kolega2357",
 			"OC Ripper",
-			"Vlad5250"
+			"Vlad5250",
+			"BadDog"
 		]
 	},
 	"categorytree": "Stablasti prikaz hijerarhije kategorija",
@@ -20,11 +21,11 @@
 	"categorytree-mode-pages": "stranice bez slika - странице без слика",
 	"categorytree-mode-all": "sve stranice - све странице",
 	"categorytree-collapse": "sakrij - сакриј",
-	"categorytree-expand": "proširi - прошири",
-	"categorytree-member-counts": "sadrži {{PLURAL:$1|jednu podkategoriju|$1 podkategorije|$1 podkategorija}}, {{PLURAL:$2|jednu stranicu|$2 stranice|$2 stranica}} i {{PLURAL:$3|jednu datoteku|$3 datoteke|$3 datoteka}}",
+	"categorytree-expand": "proširi",
+	"categorytree-member-counts": "sadrži {{PLURAL:$1|jednu potkategoriju|$1 potkategorije|$1 potkategorija}}, {{PLURAL:$2|jednu stranicu|$2 stranice|$2 stranica}} i {{PLURAL:$3|jednu datoteku|$3 datoteke|$3 datoteka}}",
 	"categorytree-num-categories": "$1 K",
-	"categorytree-num-pages": "$1 P",
-	"categorytree-num-files": "$1 F",
+	"categorytree-num-pages": "$1 S",
+	"categorytree-num-files": "$1 D",
 	"categorytree-num-empty": "prazna",
 	"categorytree-load": "učitaj - учитај",
 	"categorytree-loading": "učitavam - учитавам",

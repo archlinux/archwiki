@@ -14,7 +14,7 @@
 	"categorytree-legend": "শ্ৰেণীবৃক্ষ দেখুৱাওক",
 	"categorytree-desc": "[[Special:CategoryTree|শ্ৰেণীবৃক্ষ গঠন]] পৰিদৰ্শন কৰক",
 	"categorytree-header": "সমলসমূহ বৃক্ষৰূপত চাবলৈ এটা শ্ৰেণীৰ নাম লিখক।\nমন কৰক যে এনে কৰিবলৈ AJAX নামৰ এটা উচ্চস্তৰৰ জাভা কৌশলৰ আৱশ্যক।\nআপোনাৰ ব্ৰাওজাৰ অতি পুৰণি হ'লে বা জাভাস্ক্ৰিপ্ট নিষ্ক্ৰিয় হৈ থাকিলে ই কাম নকৰিব।",
-	"categorytree-category": "শ্ৰেণীবৄক্ষ:",
+	"categorytree-category": "শ্ৰেণী:",
 	"categorytree-go": "বৃক্ষ দেখুৱাওক",
 	"categorytree-parents": "পালক",
 	"categorytree-mode-label": "প্ৰণালী:",

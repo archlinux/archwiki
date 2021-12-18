@@ -9,7 +9,8 @@
 			"Geraki",
 			"Omnipaedista",
 			"Protnet",
-			"ZaDiak"
+			"ZaDiak",
+			"Giannaras99"
 		]
 	},
 	"interwiki": "Εμφάνιση και επεξεργασία δεδομένων interwiki",
@@ -39,7 +40,7 @@
 	"interwiki_deleted": "Το πρόθεμα «$1» αφαιρέθηκε με επιτυχία από τον πίνακα interwiki.",
 	"interwiki_delfailed": "Το πρόθεμα «$1» δεν μπορεί να καταργηθεί από τον πίνακα interwiki.",
 	"interwiki-logtext": "Προβολή αρχείου καταγραφής",
-	"interwiki_addtext": "Προσθήκη ενός προθέματος interwiki",
+	"interwiki_addtext": "Προσθήκη ενός interwiki ή γλώσσας προθέματος",
 	"interwiki_addintro": "Πρόκειται να προσθέσετε ένα νέο πρόθεμα interwiki.\nΝα θυμάστε ότι δεν μπορεί να περιέχει κενό διάστημα ( ), άνω και κάτω τελεία (:), συμπλεκτικό σύμβολο (&) ή «ίσον» (=).",
 	"interwiki_addbutton": "Προσθήκη",
 	"interwiki_added": "Το πρόθεμα «$1» προστέθηκε με επιτυχία στον πίνακα interwiki.",

@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Melos",
-			"Santu"
+			"Santu",
+			"Ajeje Brazorf"
 		]
 	},
-	"pfunc_desc": "Ci junci ô parser na sèrii di funzioni lòggichi",
+	"pfunc_desc": "C'agghiunci ô parser na sèrii di funzioni lòggichi",
 	"pfunc_time_error": "Sbàgghiu: uràriu nun vàlidu",
 	"pfunc_time_too_long": "Sbàgghiu: troppi chiamati a #time",
-	"pfunc_rel2abs_invalid_depth": "Sbàgghiu: prufunnità non vàlida ntô pircorsu \"$1\" (si tintau di tràsiri a nu nodu cchiù supra di la ràdica)",
+	"pfunc_rel2abs_invalid_depth": "Sbàgghiu: prufunnità non vàlida ntô pircorsu \"$1\" (si tintau di tràsiri ôn nodu cchiù supra di la ràdica)",
 	"pfunc_expr_stack_exhausted": "Sbàgghiu nti la sprissioni: lu stack finìu",
 	"pfunc_expr_unexpected_number": "Sbàgghiu nti la sprissioni: nùmmiru non privistu",
 	"pfunc_expr_preg_match_failure": "Sbàgghiu nti la sprissioni: sbàgghiu non privistu 'n preg_match",

@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Stavanger7"
+			"Stavanger7",
+			"Renan"
 		]
 	},
-	"scribunto-lua-error": "Errore de Lua: $2"
+	"scribunto-lua-error": "Errore de Lua: $2",
+	"nstab-module": "Module",
+	"tooltip-ca-nstab-module": "Vider li págine de module"
 }

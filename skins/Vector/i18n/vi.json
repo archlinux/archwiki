@@ -5,7 +5,11 @@
 			"Prenn",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
-			"Withoutaname"
+			"Withoutaname",
+			"Nguyễn Mạnh An",
+			"Keo010122",
+			"Nghiemtrongdai VN",
+			"Thienhau2003"
 		]
 	},
 	"skinname-vector": "Vectơ",
@@ -17,6 +21,7 @@
 	"vector.css": "/* Tất cả mã CSS tại đây sẽ được tải khi người dùng sử dụng giao diện Vectơ */",
 	"vector.js": "/* Tất cả mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện Vectơ */",
 	"vector-action-toggle-sidebar": "Bật/tắt thanh bên",
+	"vector-language-button-label": "$1 ngôn ngữ",
 	"vector-action-addsection": "Thêm đề tài",
 	"vector-action-delete": "Xóa",
 	"vector-action-move": "Di chuyển",
@@ -30,5 +35,7 @@
 	"vector-view-viewsource": "Xem mã nguồn",
 	"vector-jumptonavigation": "Bước tới điều hướng",
 	"vector-jumptosearch": "Bước tới tìm kiếm",
-	"vector-more-actions": "Khác"
+	"vector-jumptocontent": "Bước tới nội dung",
+	"vector-more-actions": "Thêm",
+	"vector-search-loader": "Đang tải gợi ý tìm kiếm"
 }

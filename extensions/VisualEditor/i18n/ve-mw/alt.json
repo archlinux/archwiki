@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Батыр Комдошев"
+			"Батыр Комдошев",
+			"Kareyac"
 		]
 	},
 	"tooltip-ca-ve-edit": "Бу бӱкти тӱзедер",
@@ -9,5 +10,7 @@
 	"visualeditor-ca-createsource": "Кодты јайаар",
 	"visualeditor-ca-editsource": "Кодты тӱзедер",
 	"visualeditor-ca-editsource-section": "кодты тӱзедер",
-	"visualeditor-descriptionpagelink": "Project:Визуал редакторы"
+	"visualeditor-descriptionpagelink": "Project:Визуал редакторы",
+	"visualeditor-dialog-meta-settings-index-disable": "Јок",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-disable": "Јок"
 }

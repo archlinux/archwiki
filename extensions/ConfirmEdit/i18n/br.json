@@ -5,12 +5,14 @@
 			"Fohanno",
 			"Fulup",
 			"VIGNERON",
-			"Y-M D"
+			"Y-M D",
+			"Adriendelucca"
 		]
 	},
 	"captcha-edit": "A-raok gellout kemmañ ar bajenn-mañ e c'houlenner ouzhoc'h respont d'ar jedadenn eeun a-is ha lakaat an disoc'h er vaezienn ([[Special:Captcha/help|Petra eo se?]])",
 	"captcha-desc": "Pourchas a ra teknikoù CAPTCHA evit en em wareziñ diouzh ar strob hag an diskuliañ gerioù-tremen",
 	"captcha-label": "CAPTCHA",
+	"captcha-info-help": "Deskrivadur ar c'hCAPTCHA.",
 	"captcha-addurl": "Liammoù diavaez nevez zo bet ouzhpennet ganeoc'h. A-benn talañ ouzh ar strob emgefre skrivit disoc'h ar jedadennig eeun-mañ er stern : <br />([[Special:Captcha/help|Petra eo se?]])",
 	"captcha-badlogin": "A-benn talañ ouzh preizhadur emgefre ar gerioù-tremen e c'houlenner ouzhoc'h jediñ an tamm oberiadenn ha skrivañ an disoc'h anezhi er vaezienn a-is ([[Special:Captcha/help|Petra eo se ?]]):",
 	"captcha-createaccount": "A-benn hor sikour da dalañ ouzh ar c'hrouiñ kontoù emgefre, jedit an tamm oberiadenn ha skrivañ an disoc'h anezhi er vaezienn a-is ([[Special:Captcha/help|gouzout hiroc'h]]) :",

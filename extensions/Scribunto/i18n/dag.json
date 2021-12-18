@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dnshitobu"
+			"Dnshitobu",
+			"Achiri Bitamsimli"
 		]
 	},
-	"scribunto-lua-error": "Lua error: $2."
+	"scribunto-lua-error": "Lua bi niŋ dede:$2"
 }

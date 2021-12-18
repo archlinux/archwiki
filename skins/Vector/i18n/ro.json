@@ -7,17 +7,19 @@
 			"ImGelu",
 			"Minisarm",
 			"NGC 54",
-			"Strainu"
+			"Strainu",
+			"Tanea.d"
 		]
 	},
 	"skinname-vector": "Vector",
 	"vector-skin-desc": "Versiunea modernă pentru MonoBook cu o înfățișare reîmprospătată și multe îmbunătățiri de uzabilitate",
 	"prefs-vector-enable-vector-1-label": "Folosiți versiunea veche de Vector",
-	"prefs-vector-enable-vector-1-help": "De-a lungul următorilor ani vom actualiza gradual skinul Vector. Versiunea veche de Vector vă va permite să folosiți varianta din decembrie 2019. Pentru a afla mai multe despre aceste actualizări, vizitați [[mw:Reading/Web/Desktop_Improvements|pagina proiectului]].",
+	"prefs-vector-enable-vector-1-help": "De-a lungul următorilor ani vom actualiza gradual skin-ul Vector. Versiunea veche de Vector vă va permite să folosiți varianta din decembrie 2019. Pentru a afla mai multe despre aceste actualizări, vizitați [[mw:Reading/Web/Desktop_Improvements|pagina proiectului]].",
 	"vector-opt-out": "Treci la aspectul vechi",
 	"vector-opt-out-tooltip": "Schimbați-vă preferințele pentru a trece la aspectul vechi al skinului Vector",
 	"vector.css": "/* CSS plasate aici vor afecta utilizatorii stilului Vector */",
 	"vector-action-toggle-sidebar": "Arată/ascunde bara laterală",
+	"vector-language-button-label": "{{PLURAL:$1|$1 limbă|$1 limbi}}",
 	"vector-action-addsection": "Adăugare subiect",
 	"vector-action-delete": "Ștergere",
 	"vector-action-move": "Redenumire",

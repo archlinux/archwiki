@@ -17,9 +17,10 @@
 	"vector-action-unprotect": "Chanjar protektado",
 	"vector-view-create": "Krear",
 	"vector-view-edit": "Redaktar",
-	"vector-view-history": "Vidar versionaro",
+	"vector-view-history": "Kronologio",
 	"vector-view-view": "Lektar",
 	"vector-view-viewsource": "Vidar fonto",
+	"vector-jumptonavigation": "Irez a navigado",
 	"vector-jumptosearch": "Irez a serchilo",
 	"vector-more-actions": "Pluse"
 }

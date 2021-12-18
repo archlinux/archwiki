@@ -7,7 +7,8 @@
 			"Mikulas1",
 			"Robert Važan",
 			"Rudko",
-			"Sudo77(new)"
+			"Sudo77(new)",
+			"Yardom78"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -18,6 +19,7 @@
 	"vector-opt-out-tooltip": "Zmeniť nastavenie a vrátiť sa späť k starej podobe vzhľadu (starý Vector)",
 	"vector.css": "/* Tu umiestnené CSS bude ovplyvňovať používateľov štýlu Vector */",
 	"vector.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Vector */",
+	"vector-language-button-label": "{{PLURAL:$1|$1 jazyk|$1 jazyky|$1 jazykov}}",
 	"vector-action-addsection": "Pridať tému",
 	"vector-action-delete": "Zmazať",
 	"vector-action-move": "Presunúť",

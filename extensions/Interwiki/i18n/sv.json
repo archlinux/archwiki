@@ -14,7 +14,8 @@
 			"Sabelöga",
 			"Sertion",
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Anhn"
 		]
 	},
 	"interwiki": "Visa och redigera interwikidata",
@@ -37,7 +38,7 @@
 	"interwiki_1": "ja",
 	"interwiki_0": "nej",
 	"interwiki_error": "FEL: Interwikitabellen är tom, eller så gick något fel.",
-	"interwiki-cached": "Interwikidata mellanlagras. Att ändra mellanlagret är inte möjligt.",
+	"interwiki-cached": "Interwikidata har sparats i cache och kan ej ändras.",
 	"interwiki_edit": "Redigera",
 	"interwiki_reasonfield": "Anledning:",
 	"interwiki_deleting": "Du håller på att ta bort prefixet \"$1\".",

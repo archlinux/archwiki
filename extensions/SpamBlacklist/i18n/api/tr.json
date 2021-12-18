@@ -3,11 +3,12 @@
 		"authors": [
 			"Arystanbek",
 			"BaRaN6161 TURK",
-			"Incelemeelemani"
+			"Incelemeelemani",
+			"SaldırganSincap"
 		]
 	},
-	"apihelp-spamblacklist-description": "Bu SpamBlacklist karşı bir veya daha fazla URL doğrula.",
-	"apihelp-spamblacklist-example-1": "Kara liste URL'lerini iki defa kontrol ediniz",
-	"apihelp-spamblacklist-param-url": "Kara liste URL'lerine yönelik doğrula.",
-	"apihelp-spamblacklist-summary": "SpamBlacklist'e karşı bir veya daha fazla URL'yi doğrulayın."
+	"apihelp-spamblacklist-description": "SpamBlacklist'e karşı bir veya daha fazla URL doğrulayın.",
+	"apihelp-spamblacklist-example-1": "Kara listeye göre iki URL'yi kontrol edin",
+	"apihelp-spamblacklist-param-url": "Kara listeye göre doğrulanacak URL'ler.",
+	"apihelp-spamblacklist-summary": "SpamBlacklist'e karşı bir veya daha fazla URL doğrulayın."
 }

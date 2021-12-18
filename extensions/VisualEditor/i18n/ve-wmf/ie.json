@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Makuba",
-			"Stavanger7"
+			"Stavanger7",
+			"Renan"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|visual modification]]",
@@ -10,7 +11,7 @@
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor: Examination]]",
 	"tag-visualeditor-needcheck-description": "Edite per li [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]], durant quel li systema ha forsan descovrit ínintentionat modificationes in li wikitextu.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Remarcas",
-	"visualeditor-feedback-tool": "Intrar un remarca",
+	"visualeditor-feedback-tool": "Dar feedback pri ti software",
 	"visualeditor-help-label": "Leer li manuale",
-	"visualeditor-help-title": "Manuale por li usation del editor"
+	"visualeditor-help-title": "Manuale pri li usada del redactor"
 }

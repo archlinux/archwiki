@@ -14,6 +14,7 @@
 	"prefs-vector-enable-vector-1-help": "Kroz narednih nekoliko godina postepeno ćemo ažurirati temu Vector. Stari Vector pružit će Vam mogućnost da koristite raniju verziju Vectora (zamrznutu u decembru 2019). Za detalje o ažuriranjima, posjetite našu [[mw:Reading/Web/Desktop_Improvements|projektnu stranicu]].",
 	"vector-opt-out": "Prebaci na stari izgled",
 	"vector-opt-out-tooltip": "Promijenite postavke da biste vratili stari izgled teme (stari Vector)",
+	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Izbriši",
 	"vector-action-move": "Premjesti",
@@ -27,5 +28,6 @@
 	"vector-view-viewsource": "Pogledaj izvor",
 	"vector-jumptonavigation": "Idi na navigaciju",
 	"vector-jumptosearch": "Idi na pretragu",
-	"vector-more-actions": "Više"
+	"vector-more-actions": "Više",
+	"vector-search-loader": "Učitavam prijedloge pretrage"
 }

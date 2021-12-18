@@ -9,7 +9,7 @@
 	"categorytree-portlet": "Kategorije",
 	"categorytree-legend": "Kategorijowy štom pokazać",
 	"categorytree-desc": "Přisłušk (gadget) na zakładźe AJAX za [[Special:CategoryTree|zwobraznjenje struktury]] wikija",
-	"categorytree-header": "Zapisaj mjeno kategorije, zo by jeje wobsah jako štomowu strukturu widźał. Wobkedźbuj, zo su za to wěste JavaScriptowe funkcije (AJAX) trjeba. Jeli maš jara stary wobhladowak abo jeli JavaScript je wupinjeny, to snano njebudźe fungować.",
+	"categorytree-header": "Zapodaj mjeno kategorije, zo by jeje wobsah jako štomowu strukturu pokazał. (Wužaduje sej JavaScript.)",
 	"categorytree-category": "Kategorija",
 	"categorytree-go": "Štom pokazać",
 	"categorytree-parents": "Nadkategorije",

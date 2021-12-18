@@ -9,7 +9,8 @@
 			"Huji",
 			"Ladsgroup",
 			"Reza1615",
-			"Zack90"
+			"Zack90",
+			"Jeeputer"
 		]
 	},
 	"skinname-vector": "وکتور",
@@ -21,6 +22,7 @@
 	"vector.css": "/* دستورات سی‌اس‌اس که در این بخش قرار بگیرد برای کاربرانی که از پوستهٔ وکتور استفاده کنند بارگیری می‌شود */",
 	"vector.js": "/* دستورات جاوااسکریپت که در این بخش قرار بگیرد برای کاربرانی که از پوستهٔ وکتور استفاده کنند بارگیری می‌شود */",
 	"vector-action-toggle-sidebar": "جمع و باز کردن نوار کناری",
+	"vector-language-button-label": "{{PLURAL:$1|$1 زبان}}",
 	"vector-action-addsection": "افزودن بخش",
 	"vector-action-delete": "حذف",
 	"vector-action-move": "انتقال",

@@ -18,7 +18,8 @@
 			"Sertion",
 			"Technic2",
 			"Warrakkk",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Hannarosendeloitte"
 		]
 	},
 	"wikieditor": "Avancerat gränssnitt för redigering av wikitext",
@@ -66,6 +67,9 @@
 	"wikieditor-toolbar-tool-file-title": "Infoga fil",
 	"wikieditor-toolbar-file-target": "Filnamn:",
 	"wikieditor-toolbar-file-caption": "Bildtext:",
+	"wikieditor-toolbar-file-alt": "Alternativ text:",
+	"wikieditor-toolbar-file-alt-help": "Du kan använda detta valfria fält för att skriva en textbeskrivning för personer som inte kan se filen. \nBeskrivningen bör vara tillräcklig för att de ska förstå syftet och informationen från medieobjektet. Detta är avgörande för blinda användare och andra personer som använder skärmläsarprogramvara eller textläsare.",
+	"wikieditor-toolbar-file-alt-help-label": "(Visa hjälp)",
 	"wikieditor-toolbar-file-size": "Storlek:",
 	"wikieditor-toolbar-file-float": "Justering:",
 	"wikieditor-toolbar-file-default": "(standard)",

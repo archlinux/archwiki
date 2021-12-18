@@ -9,6 +9,7 @@
 			"Vajotwo"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 łéngua|$1 łéngue}}",
 	"vector-action-addsection": "Xonta discusion",
 	"vector-action-delete": "Descançeła",
 	"vector-action-move": "Sposta",

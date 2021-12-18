@@ -12,6 +12,8 @@
 	"interwiki_prefix": "Prefisse",
 	"interwiki-prefix-label": "Prefisse:",
 	"interwiki_prefix_intro": "'U prefisse inderuicchi avène ausate jndr'à <code>[<nowiki />[prefix:<em>pagename</em>]]</code> sindasse uicchiteste.",
+	"interwiki_url": "URL",
+	"interwiki-url-label": "URL:",
 	"interwiki_url_intro": "Modelle pe le URL. 'U segnaposte $1 avène sostituite da <em>nomepàgene</em> jndr'à <code>[<nowiki />[prefix:<em>nomepàgene</em>]]</code>.",
 	"interwiki_local": "Inoltre",
 	"interwiki-local-label": "Inoltre",

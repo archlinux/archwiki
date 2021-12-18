@@ -48,7 +48,7 @@
 	"visualeditor-dialog-media-choose-image": "ใช้ภาพนี้",
 	"visualeditor-dialog-media-content-description-link": "(หน้าคำอธิบาย)",
 	"visualeditor-dialog-media-content-filename": "ชื่อไฟล์",
-	"visualeditor-dialog-media-content-section": "คำอธิบาย",
+	"visualeditor-dialog-media-content-section": "คำบรรยายโดยย่อ",
 	"visualeditor-dialog-media-content-section-help": "คุณสามารถใช้สิ่งนี้แสดงป้ายระบุที่แสดงถัดจากรายการสำหรับผู้อ่านทั้งหมดได้ โดยมักจะใช้อธิบายเหตุผลที่รายการสัมพันธ์กับบริบทซึ่งแสดงอยู่ โดยควรจะเป็นข้อมูลที่กระชับ",
 	"visualeditor-dialog-media-goback": "ย้อนกลับ",
 	"visualeditor-dialog-media-info-artist": "อัปโหลดโดย $1",

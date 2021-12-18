@@ -14,7 +14,7 @@
 	"interwiki_edit": "Mudifiggà",
 	"interwiki_reasonfield": "Rasgioni",
 	"interwiki_deleting": "Sei canzillendhi lu prefissu \"$1\".",
-	"interwiki_addtext": "Aggiungi un prefissu interwiki",
+	"interwiki_addtext": "Aggiungi un prefissu interwiki (prefissu di linga)",
 	"interwiki_addbutton": "Aggiungì",
 	"log-name-interwiki": "Rigisthru di la table interwiki"
 }

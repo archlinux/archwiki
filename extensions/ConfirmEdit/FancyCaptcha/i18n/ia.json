@@ -4,6 +4,7 @@
 			"McDutchie"
 		]
 	},
+	"fancycaptcha-desc": "Generator sophisticate de CAPTCHAs pro Confirm Edit",
 	"fancycaptcha-addurl": "Tu modification include nove ligamines externe.\nPro adjutar a proteger le wiki contra le spam automatisate, per favor entra le parolas que appare infra in le quadro ([[Special:Captcha/help|plus info]]):",
 	"fancycaptcha-badlogin": "Pro adjutar a proteger le wiki contra le furto automatisate de contrasignos, per favor entra le parolas que appare infra in le quadro ([[Special:Captcha/help|plus info]]):",
 	"fancycaptcha-captcha": "Controlo de securitate",

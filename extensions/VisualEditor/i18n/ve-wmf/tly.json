@@ -4,5 +4,22 @@
 			"Гусейн"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|vində redaktor]]"
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|виндә редактор]]",
+	"tag-visualeditor-description": "Овахтә быә де [[{{MediaWiki:visualeditor-descriptionpagelink}}|виндә редактори]]",
+	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|виндә редактор]]: осә карде",
+	"tag-visualeditor-needcheck-description": "Овахте де [[{{MediaWiki:visualeditor-descriptionpagelink}}|виндә редактори]] дастәки, комонәдә системә пәјдо кардыше овахтә быә вики-хәтти, бәзне бе  ғәсто не.",
+	"tag-visualeditor-wikitext": "2017 вики-мәтни редактор",
+	"tag-visualeditor-wikitext-description": "Сәрост кардә быә де вики-мәтни 2017 редактори дастәки",
+	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|виндә редактор]] окыштә быә",
+	"tag-visualeditor-switched-description": "Окоәдә бино кардыше сәрост карде де виндә редактори, ијән пешо оваште бә вики-мәтни редактор.",
+	"visualeditor-feedback-link": "Project:Виндә редактор/Рајон",
+	"visualeditor-feedback-tool": "Рај огәте",
+	"visualeditor-help-label": "Окоәдә дәрсәвони баһандән",
+	"visualeditor-help-title": "Редактори око дој дәрсәвон",
+	"visualeditor-welcomedialog-action": "Бино карде овахте",
+	"visualeditor-welcomedialog-content": "Сәрост карде бәзне һарки ијән һар гылә чок кардеј бә дастәки.",
+	"visualeditor-welcomedialog-content-thanks": "Сәгбән ки дастәк кардәјон бә дынјо һәнијән ве зыне!",
+	"visualeditor-welcomedialog-switch": "Бә редактори бешемонә коди дәвардән",
+	"visualeditor-welcomedialog-switch-ve": "Бә виндә редактори дәварде",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Хош омәјш}} бә сајт $2"
 }

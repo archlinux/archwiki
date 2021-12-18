@@ -8,7 +8,7 @@
 			"Tgr"
 		]
 	},
-	"apierror-visualeditor-docserver": "Hiba a Parsoid/RESTbase-szerverhez csatlakozáskor",
+	"apierror-visualeditor-docserver": "Hiba a Parsoid/RESTBase-szerverhez csatlakozáskor (nincs válasz)",
 	"apierror-visualeditor-latestnotfound": "Nem található a legfrissebb verzió az adott címhez",
 	"apihelp-visualeditor-description": "A Parsoid szolgáltatástól kapott oldalból HTML5 oldalt készít.",
 	"apihelp-visualeditor-param-basetimestamp": "Mentésnél állítsd a szerkesztett lapváltozat időbélyegére. Szerkesztési ütközések felismerésére szolgál.",

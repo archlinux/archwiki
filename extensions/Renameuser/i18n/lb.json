@@ -22,7 +22,7 @@
 	"renameusererrordoesnotexist": "De Benotzer \"<nowiki>$1</nowiki>\" gëtt et net.",
 	"renameusererrorexists": "De {{GENDER:$1|Benotzernumm}} \"<nowiki>$1</nowiki>\" gëtt et schonn.",
 	"renameusererrorinvalid": "De Benotzernumm \"<nowiki>$1</nowiki>\" kann net benotzt ginn.",
-	"renameuser-error-request": "Et gouf e Problem mat ärer Ufro.\nGitt wgl. zréck a versicht et nach eng Kéier.",
+	"renameuser-error-request": "Et gouf e Probleem mat Ärer Ufro.\nGitt wgl. zréck a versicht et nach eng Kéier.",
 	"renameuser-error-same-user": "Dir kënnt kee Benotzernumm änneren, an him deselwechten Numm erëmginn.",
 	"renameusersuccess": "De {{GENDER:$2|Benotzer}} \"<nowiki>$1</nowiki>\" gouf \"<nowiki>$2</nowiki>\" ëmbenannt.",
 	"renameuser-page-exists": "D'Säit $1 gëtt et schonn a kann net automatesch iwwerschriwwe ginn.",

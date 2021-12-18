@@ -4,7 +4,8 @@
 			"Matthias",
 			"Ooswesthoesbes",
 			"Pahles",
-			"Tibor"
+			"Tibor",
+			"Servien"
 		]
 	},
 	"renameuser": "Herneum gebroeker",
@@ -19,7 +20,7 @@
 	"renameuserreserve": "Veurkómme det de aaje gebroeker opnuuj wörd geregistreerd",
 	"renameuserwarnings": "Waarschuwinge:",
 	"renameuserconfirm": "Jao, hernaam gebroeker",
-	"renameusersubmit": "Herneum",
+	"renameusersubmit": "Hernööm",
 	"renameusererrordoesnotexist": "De gebroeker \"<nowiki>$1</nowiki>\" besteit neet.",
 	"renameusererrorexists": "De gebroeker \"<nowiki>$1</nowiki>\" besteit al.",
 	"renameusererrorinvalid": "De gebroekersnaam \"<nowiki>$1</nowiki>\" is óngeljig.",

@@ -5,7 +5,8 @@
 			"Fulup",
 			"Gwendal",
 			"Macofe",
-			"Y-M D"
+			"Y-M D",
+			"Adriendelucca"
 		]
 	},
 	"wikieditor": "Etrefas kemmañ wikitestenn klokaet",
@@ -47,7 +48,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Liamm diabarzh",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Liamm diavaez",
 	"wikieditor-toolbar-tool-link-empty": "N'hoc'h eus merket netra a c'haller sevel liammoù outañ.",
-	"wikieditor-toolbar-tool-file": "Restr enframmet",
+	"wikieditor-toolbar-tool-file": "Skeudennoù ha mediaoù",
 	"wikieditor-toolbar-tool-file-example": "Skouer.jpg",
 	"wikieditor-toolbar-tool-file-title": "Ensoc'hañ ur restr",
 	"wikieditor-toolbar-file-target": "Anv ar restr :",
@@ -123,7 +124,7 @@
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Erlec'hiañ pep tra",
 	"wikieditor-toolbar-tool-replace-close": "Serriñ",
 	"wikieditor-toolbar-tool-replace-nomatch": "N'eus bet kavet netra o klotañ gant ar pezh a glaskit.",
-	"wikieditor-toolbar-tool-replace-success": "$1 erlec'hiadenn graet",
+	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|erlec'hiadenn|erlec'hiadennoù}} graet",
 	"wikieditor-toolbar-tool-replace-emptysearch": "N'hoc'h eus ebarzhet netra da glask.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Direizh eo ar jedad reoliek hoc'h eus lakaet : $1",
 	"wikieditor-toolbar-section-characters": "Arouezennoù dibar",

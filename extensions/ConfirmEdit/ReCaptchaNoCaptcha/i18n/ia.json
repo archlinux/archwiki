@@ -4,6 +4,7 @@
 			"McDutchie"
 		]
 	},
+	"renocaptcha-desc": "Modulo reCAPTCHA NoCAPTCHA pro le Confirmation de modification",
 	"renocaptcha-edit": "Pro proteger le wiki contra le spam automatisate, per favor, resolve le CAPTCHA sequente:",
 	"renocaptcha-addurl": "Iste modification include nove ligamines externe. Pro proteger le wiki contra le spam automatisate, per favor, resolve le CAPTCHA sequente:",
 	"renocaptcha-badlogin": "Pro proteger le wiki contra le furto automatisate de contrasignos, per favor, resolve le CAPTCHA sequente:",

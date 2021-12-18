@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"ಶಿವಕುಮಾರ್ ನಾಯಕ್"
+			"ಶಿವಕುಮಾರ್ ನಾಯಕ್",
+			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
 		]
 	},
+	"pfunc_time_error": "ದೋಷ: ಅಮಾನ್ಯ ಸಮಯ.",
 	"pfunc_expr_unrecognised_word": "ಪದವಿನ್ಯಾಸ ದೋಷ: ಗುರುತಿಸಲಾಗದ ಪದ\"$1\".",
 	"pfunc_expr_unrecognised_punctuation": "ಪದವಿನ್ಯಾಸ ದೋಷ: ಗುರುತಿಸಲಾಗದ ವಿರಾಮ ಚಿಹ್ನೆ\"$1\"."
 }

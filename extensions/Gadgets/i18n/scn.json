@@ -1,11 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sarvaturi"
+			"Sarvaturi",
+			"Ajeje Brazorf"
 		]
 	},
 	"prefs-gadgets": "Accissori",
 	"gadgets": "Accissori",
 	"gadgetusage": "Statìstichi supra l'usu di l'accissori",
-	"gadgets-title": "Accissori"
+	"gadgetusage-usercount": "Nùmmiru di utenti",
+	"gadgets-title": "Accissori",
+	"gadgets-uses": "Usa",
+	"gadgets-export-download": "Scàrrica"
 }

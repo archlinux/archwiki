@@ -13,7 +13,7 @@
 		]
 	},
 	"cite-desc": "Seba gıoteka, etiketê <code>&lt;ref&gt;</code> u <code>&lt;references&gt;</code> keno cı",
-	"cite_error": "Çımeyo ğelet: $1",
+	"cite_error": "Xetaya gırewtışi: $1",
 	"cite_error_ref_invalid_dir": "Etiketo <code>&lt;ref&gt;</code> nêravêrde; xısusiyetê diri \"$1\" nêzaniyeno. Gani \"ltr\" ya zi \"rtl\" bo",
 	"cite_error_ref_numeric_key": "Etiket <code>&lt;ref&gt;</code> ke raşt niyo;\nName nieşkeno tamamar bo. Şınasiyaye yew serekê bıkarnê",
 	"cite_error_ref_no_key": "Etiket <code>&lt;ref&gt;</code> ke raşt niyo;\nEka kontent çini yo, gani yew name biyo",
@@ -24,7 +24,7 @@
 	"cite_error_references_invalid_parameters": "Etiketê <code>&lt;çımeyan&gt;</code> de parametreyo nêvêrde",
 	"cite_error_references_no_backlink_label": "Linkanê Custom backlinkî hin çini yo. Zerreyê mesajê [[MediaWiki:Cite references link many format backlink labels]]î de hewna tasvir bike",
 	"cite_error_no_link_label_group": "Eka etiketinê linkê şexsi ser ena grubi \"$1\" ciniyo. Zerre mesajê [[MediaWiki:$2]] de zafyer qise bike.",
-	"cite_error_references_no_text": "Nêvêreno<code>&lt;ref&gt;</code> etiket;\nno nuşte çıme be namey <code>$1</code> rê vıraziyao.",
+	"cite_error_references_no_text": "Etiketê <code>&lt;ref&gt;</code> nêvêreno; seba referansan be nameyê <code>$1</code> ra nuşte nêame dayene",
 	"cite_error_included_ref": "<code>&lt;ref&gt;</code>Qandê etiketi <code>&lt;/ref&gt;</code> racnayış kemiyo",
 	"cite_error_included_references": "Seba çıniyayışê <code>&lt;references&gt;</code> ra etiketo racıneyêno",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> Pê namey \"$1\" ya yew etiketê grube esto, lakin dustê cı de etiketê <code>&lt;references group=\"$1\"/&gt;</code> nêvineya",

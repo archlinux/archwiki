@@ -32,6 +32,7 @@
 	"nuke-maxpages": "最大ページ数:",
 	"nuke-editby": "[[Special:Contributions/$1|$1]] が作成",
 	"nuke-deleted": "ページ  '''$1''' を削除しました。",
+	"nuke-deletion-queued": "ページ '''$1''' が削除キューに追加されました。",
 	"nuke-not-deleted": "ページ [[:$1]] を削除'''できませんでした'''。",
 	"nuke-delete-more": "[[Special:Nuke|他のページも削除]]",
 	"nuke-pattern": "ページ名のSQL LIKE パターン (例: %)：",

@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Samatics"
+		]
+	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 languej|$1 languej-dem}}",
+	"vector-view-edit": "Chenj-am",
+	"vector-view-history": "Si di tins we don hapun hia",
+	"vector-view-view": "Rid-am",
+	"vector-more-actions": "Si oda tins:"
+}

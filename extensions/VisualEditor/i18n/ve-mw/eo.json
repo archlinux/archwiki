@@ -12,7 +12,8 @@
 			"Robin van der Vliet",
 			"Shirayuki",
 			"Yekrats",
-			"YvesNevelsteen"
+			"YvesNevelsteen",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -215,7 +216,7 @@
 	"visualeditor-generating-wikitext-progress": "Produktante vikitekston",
 	"visualeditor-languages-tool": "Lingvoj",
 	"visualeditor-linkinspector-button-link-external": "Ekstera retejo",
-	"visualeditor-linkinspector-button-link-internal": "Traserĉi paĝojn",
+	"visualeditor-linkinspector-button-link-internal": "Traserĉi internajn paĝojn",
 	"visualeditor-linkinspector-convert-link-isbn": "Igi al ligo de ISBN",
 	"visualeditor-linkinspector-convert-link-pmid": "Igi al ligo de PMID",
 	"visualeditor-linkinspector-convert-link-rfc": "Igi al ligo de RFC",

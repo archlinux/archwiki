@@ -1,8 +1,35 @@
 {
 	"@metadata": {
 		"authors": [
-			"Shahwaqar"
+			"Shahwaqar",
+			"Iflaq",
+			"Rishabhbhat"
 		]
 	},
-	"visualeditor-preference-tabs": "اٮ۪ڑِٹَیغ طٔریٖقہٕ:"
+	"visualeditor-ca-editsource": "کوڈ اؠڈِٹ کٔرِو",
+	"visualeditor-ca-editsource-section": "کوڈ اؠڈِٹ کٔرِو",
+	"visualeditor-dialog-media-change-image": "شَکل بَدلٲئو",
+	"visualeditor-dialog-media-content-filename": "فَیِل ناو",
+	"visualeditor-dialog-media-position-left": "کھووُر",
+	"visualeditor-dialog-meta-categories-category": "زٲژ",
+	"visualeditor-dialog-meta-categories-data-label": "زٲژ",
+	"visualeditor-dialog-meta-categories-input-newcategorylabel": "نٔو زٲژ",
+	"visualeditor-dialog-meta-categories-section": "زٲژ",
+	"visualeditor-dialog-meta-languages-code-label": "زَبان کوڑ",
+	"visualeditor-dialog-meta-languages-label": "زَبانٕ",
+	"visualeditor-dialog-meta-languages-name-label": "زَبان",
+	"visualeditor-dialog-meta-languages-section": "زَبانٕ",
+	"visualeditor-dialog-template-title": "فرما",
+	"visualeditor-dialogbutton-template-tooltip": "فرما",
+	"visualeditor-media-title-image": "شکل",
+	"visualeditor-mwgallerydialog-classes-field-label": "سی ایس ایس کلاسیں",
+	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "آگُر",
+	"visualeditor-mwsignature-tool": "تُہند دَستخَط",
+	"visualeditor-preference-tabs": "اٮ۪ڑِٹَیغ طٔریٖقہٕ:",
+	"visualeditor-rebase-client-export": "بَرآمَد",
+	"visualeditor-rebase-client-export-start": "بَرآمَد...",
+	"visualeditor-rebase-client-import": "دَرآمَد",
+	"visualeditor-savedialog-label-publish-short": "شایع کٔرِو",
+	"visualeditor-savedialog-label-publish-short-start": "شایع کٔرِو...",
+	"visualeditor-usernamespacepagelink": "Project: رُکُن ناو جائے"
 }

@@ -10,7 +10,8 @@
 			"Subi",
 			"Theklan",
 			"Unai Fdz. de Betoño",
-			"Xabier Armendaritz"
+			"Xabier Armendaritz",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -258,7 +259,7 @@
 	"visualeditor-mwgallerydialog-widths-field-label": "Irudiaren zabalera",
 	"visualeditor-mwgallerydialog-widths-input-placeholder": "Zabalara lehenetsia:$1 px",
 	"visualeditor-mwlanguagevariant-disabled": "Aldaketa aldaerak desaktibatuta",
-	"visualeditor-mwlanguagevariant-filter": "Aldaerak $1ra hautatu dira",
+	"visualeditor-mwlanguagevariant-filter": "Aldaerak $1 hizkuntzarako iragazi dira",
 	"visualeditor-mwlanguagevariant-name": "Hizkuntzaren izena: $1",
 	"visualeditor-mwlanguagevariant-unknown": "Hizkuntza aldaera",
 	"visualeditor-mwlanguagevariantcontextitem-flag-describe": "Hau deskribatutako araua da.",
@@ -307,7 +308,7 @@
 	"visualeditor-rebase-client-import": "Inportatu",
 	"visualeditor-rebase-client-import-name": "Orriaren izenburua",
 	"visualeditor-recreate": "Orria ezabatu da, zu aldaketak egiten hasi ondoren. Berriro sortzeko, sakatu «$1».",
-	"visualeditor-redirect-description": "$1ra birzuzendu",
+	"visualeditor-redirect-description": "«$1» orrira birzuzenduta",
 	"visualeditor-savedialog-error-badtoken": "Ezin izan dugu zure edizioa gorde, saioa dagoeneko ez zelako baliozkoa.",
 	"visualeditor-savedialog-identify-anon": "Orria lankide anonimotzat gorde nahi duzu? Zure IP helbidea orriaren aldaketa historian gordeko da.",
 	"visualeditor-savedialog-identify-trylogin": "Dagoeneko zure saioa bukatu da. Mesedez hasi berriz saioa beste fitxa batean eta saiatu berriz.",

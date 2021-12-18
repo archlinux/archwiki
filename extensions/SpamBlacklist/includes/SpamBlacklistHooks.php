@@ -53,9 +53,10 @@ class SpamBlacklistHooks {
 				]
 			);
 			$status->fatal( $error );
+			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
+			return false;
 		}
 
-		// Always return true, EditPage will look at $status->isOk().
 		return true;
 	}
 

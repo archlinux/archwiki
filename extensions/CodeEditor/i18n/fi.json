@@ -6,6 +6,7 @@
 		]
 	},
 	"codeeditor-desc": "Lisää syntaksinkorostuksen JavaScript ja CSS-sivuille käyttäen [https://ace.c9.io/ Ace-muokkainta]",
+	"codeeditor-next-annotation": "Siirry seuraavaan huomautukseen",
 	"codeeditor-toolbar-toggle": "Koodimuokkain",
 	"codeeditor-save-with-errors": "Dokumentti sisältää virheitä. Haluatko varmasti tallentaa?",
 	"codeeditor-invisibleChars-toggle": "Näytä/piilota näkymättömät merkit",

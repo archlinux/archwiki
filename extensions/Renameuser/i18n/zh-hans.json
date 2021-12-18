@@ -37,6 +37,7 @@
 	"renameuser-page-exists": "页面$1已经存在，不能被自动覆盖。",
 	"renameuser-page-moved": "页面$1已移动至$2。",
 	"renameuser-page-unmoved": "页面$1不能移动至$2。",
+	"renameuser-warning-currentblock": "此用户[$1 当前被封禁]。",
 	"log-name-renameuser": "用户更名日志",
 	"log-description-renameuser": "这是对用户名改动的日志。",
 	"logentry-renameuser-renameuser": "$1{{GENDER:$2|重命名}}用户$4（{{PLURAL:$6|$6个编辑}}）为{{GENDER:$7|$5}}",

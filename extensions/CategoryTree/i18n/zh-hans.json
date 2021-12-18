@@ -27,9 +27,9 @@
 	"categorytree-collapse": "折叠",
 	"categorytree-expand": "展开",
 	"categorytree-member-counts": "含有$1个子分类，$2个页面和$3个文件",
-	"categorytree-num-categories": "$1分类",
-	"categorytree-num-pages": "$1页面",
-	"categorytree-num-files": "$1文件",
+	"categorytree-num-categories": "$1个分类",
+	"categorytree-num-pages": "$1个页面",
+	"categorytree-num-files": "$1个文件",
 	"categorytree-num-empty": "空",
 	"categorytree-load": "载入",
 	"categorytree-loading": "正在载入...",
@@ -37,7 +37,7 @@
 	"categorytree-no-subcategories": "无子分类",
 	"categorytree-no-parent-categories": "无父分类",
 	"categorytree-no-pages": "没有页面或子分类",
-	"categorytree-not-found": "找不到分类<i>$1</i>",
+	"categorytree-not-found": "找不到分类“$1”",
 	"categorytree-error": "载入数据出错。",
 	"categorytree-retry": "请稍后重试。"
 }

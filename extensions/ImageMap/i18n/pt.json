@@ -5,10 +5,10 @@
 			"Malafaya"
 		]
 	},
-	"imagemap_desc": "Permite mapas de imagem clicáveis no lado do cliente usando a \"tag\" <code>&lt;imagemap&gt;</code>",
+	"imagemap_desc": "Permite mapas de imagem clicáveis no lado do cliente usando a etiqueta <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Erro: é necessário especificar uma imagem na primeira linha",
 	"imagemap_invalid_image": "Erro: imagem inválida ou inexistente",
-	"imagemap_bad_image": "Erro: a imagem está na lista negra para esta página",
+	"imagemap_bad_image": "Erro: a imagem não é permitida nesta página",
 	"imagemap_no_link": "Erro: não foi encontrada nenhuma hiperligação válida ao final da linha $1.",
 	"imagemap_invalid_title": "Erro: título inválido numa hiperligação, na linha $1.",
 	"imagemap_missing_coord": "Erro: coordenadas insuficientes para formar uma figura, na linha $1",

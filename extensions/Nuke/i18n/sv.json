@@ -7,7 +7,8 @@
 			"Lejonel",
 			"Martinwiss",
 			"Tobulos1",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Ayaibrahim"
 		]
 	},
 	"nuke": "Massradering",
@@ -33,5 +34,6 @@
 	"nuke-viewchanges": "visa ändringar",
 	"nuke-namespace": "Begränsa till namnrymd:",
 	"nuke-linkoncontribs": "massradering",
-	"nuke-linkoncontribs-text": "Radera alla sidor där användaren är ensam bidragsgivare"
+	"nuke-linkoncontribs-text": "Radera alla sidor där {{GENDER:$1|användaren}} är den enda bidragsgivaren",
+	"nuke-confirm": "Du är påväg att radera {{PLURAL:$1|en sida|$1 sidor}}. Är du säker på att du vill radera detta?"
 }

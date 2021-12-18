@@ -26,6 +26,7 @@
 	"renameuser-page-exists": "Le pagina $1 existe ja e non pote esser automaticamente superscribite.",
 	"renameuser-page-moved": "Le pagina $1 ha essite renominate a $2.",
 	"renameuser-page-unmoved": "Le pagina $1 non poteva esser renominate a $2.",
+	"renameuser-warning-currentblock": "Iste usator es [$1 actualmente blocate].",
 	"log-name-renameuser": "Registro de renominationes de usatores",
 	"log-description-renameuser": "Isto es un registro de cambiamentos de nomines de usator.",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|renominava}} le usator $4 ({{PLURAL:$6|$6 modification|$6 modificationes}}) a {{GENDER:$7|$5}}",

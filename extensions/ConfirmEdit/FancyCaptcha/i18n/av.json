@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gazimagomedov"
+			"Gazimagomedov",
+			"Omarov M."
 		]
 	},
 	"fancycaptcha-captcha": "ХIинкъибукIунгутIиялъул хал гьаби",
-	"fancycaptcha-imgcaptcha-ph": "Дуда тIадехун бихьулеб бугеб текст, хъвай",
+	"fancycaptcha-imgcaptcha-ph": "Сураталда бихьулеб бугеб текст хъвай",
 	"fancycaptcha-reload-text": "ЦӀигьабизе"
 }

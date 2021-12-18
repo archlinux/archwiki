@@ -1,8 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"NoiX180"
+			"NoiX180",
+			"Chinamoonroll"
 		]
 	},
-	"cite_error": "Pikobet nganggit: $1"
+	"cite_error": "Pikobet nganggit: $1",
+	"cite-tracking-category-cite-error": "Kaca antuk galat pustaka",
+	"cite_references_link_many_and": "&#32;",
+	"cite_references_link_accessibility_label": "Makecos",
+	"cite_references_link_many_accessibility_label": "Makecos nuju:",
+	"cite_references_link_accessibility_back_label": "Makecos walik",
+	"cite_section_preview_references": "Pracingak pustaka",
+	"cite_warning": "Paingetan anggit: $1"
 }

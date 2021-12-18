@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lloffiwr"
+			"Lloffiwr",
+			"JonesT143"
 		]
 	},
+	"vector-language-button-label": "$1 iaith",
 	"vector-action-addsection": "Ychwanegu adran",
 	"vector-action-delete": "Dileu",
 	"vector-action-move": "Symud",

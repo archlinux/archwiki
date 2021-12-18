@@ -21,7 +21,7 @@
 	"templatedata-doc-desc-empty": "Brak opisu.",
 	"templatedata-doc-format-block": "Dla tego szablonu preferowane jest formatowanie parametrów w bloku.",
 	"templatedata-doc-format-custom": "Ten szablon ma niestandardowe formatowanie.",
-	"templatedata-doc-format-inline": "Dla tego szablonu preferowanie jest formatowanie parametrów w linii.",
+	"templatedata-doc-format-inline": "Dla tego szablonu preferowane jest formatowanie parametrów w linii.",
 	"templatedata-doc-no-params-set": "Nie podano parametrów",
 	"templatedata-doc-param-autovalue": "Wartość automatyczna",
 	"templatedata-doc-param-default": "Domyślne",

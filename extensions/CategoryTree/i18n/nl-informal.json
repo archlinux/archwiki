@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Siebrand"
+			"Siebrand",
+			"McDutchie"
 		]
 	},
-	"categorytree-header": "Geef een categorienaam in om de inhoud als een boomstructuur te bekijken.\nLet op: deze functie gebruikt JavaScript-functionaliteit die bekend staat als AJAX.\nAls je een verouderde browser hebt of JavaScript uitgeschakeld is, dan werkt deze functie niet."
+	"categorytree-header": "Typ een categorienaam om de inhoud in een boomstructuur te bekijken. (Vereist JavaScript.)"
 }

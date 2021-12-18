@@ -15,7 +15,9 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92"
+			"Wladek92",
+			"DreZhsh",
+			"Orlodrim"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -32,7 +34,7 @@
 	"vector-action-delete": "Supprimer",
 	"vector-action-move": "Renommer",
 	"vector-action-protect": "Protéger",
-	"vector-action-undelete": "Rétablir",
+	"vector-action-undelete": "Restaurer",
 	"vector-action-unprotect": "Changer la protection",
 	"vector-view-create": "Créer",
 	"vector-view-edit": "Modifier",

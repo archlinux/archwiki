@@ -9,13 +9,14 @@
 	"scripts": {
 		"test": [
 			"parallel-lint . --exclude node_modules --exclude vendor",
-			"phpcs -p -s",
+			"@phpcs",
 			"minus-x check ."
 		],
 		"fix": [
 			"minus-x fix .",
 			"phpcbf"
 		],
-		"phan": "phan -d . --long-progress-bar"
+		"phan": "phan -d . --long-progress-bar",
+		"phpcs": "phpcs -sp --cache"
 	}
 }

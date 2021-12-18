@@ -4,7 +4,8 @@
 			"BRUTE",
 			"David1010",
 			"MIKHEIL",
-			"Otogi"
+			"Otogi",
+			"Გიო ოქრო"
 		]
 	},
 	"templatedata-doc-desc-empty": "არ არის აღწერა.",
@@ -27,6 +28,7 @@
 	"templatedata-doc-param-type-number": "ნომერი",
 	"templatedata-doc-param-type-string": "ველი",
 	"templatedata-doc-param-type-unbalanced-wikitext": "დაუბალანსებელი ვიკიტექსტი",
+	"templatedata-doc-param-type-unknown": "უცნობია",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "ფაილი",
 	"templatedata-doc-param-type-wiki-page-name": "გვერდის სახელი",

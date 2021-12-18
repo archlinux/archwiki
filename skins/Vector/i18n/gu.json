@@ -12,6 +12,7 @@
 	"vector-opt-out": "જૂના દેખાવ પર જાઓ",
 	"vector-opt-out-tooltip": "તમારી ગોઠવણીને જૂના દેખાવ પર લઇ જાઓ (જૂનું વેક્ટર)",
 	"vector-action-toggle-sidebar": "સાઇડબાર છુપાવો-બતાવો",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ભાષા|$1 ભાષાઓ}}",
 	"vector-action-addsection": "નવો વિષય",
 	"vector-action-delete": "રદ કરો",
 	"vector-action-move": "ખસેડો",

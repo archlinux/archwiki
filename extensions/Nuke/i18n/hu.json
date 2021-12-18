@@ -28,7 +28,7 @@
 	"nuke-deleted": "A(z) '''$1''' oldal törölve.",
 	"nuke-not-deleted": "A(z) [[:$1]] oldalt '''nem sikerült''' törölni.",
 	"nuke-delete-more": "[[Special:Nuke|További oldalak törlése]]",
-	"nuke-pattern": "Lapnév minta:",
+	"nuke-pattern": "SQL LIKE-minta (pl. %) a lapnévhez:",
 	"nuke-nopages-global": "Nincsenek a keresésre illeszkedő oldalcímek.",
 	"nuke-viewchanges": "változtatások megtekintése",
 	"nuke-namespace": "Csak az alábbi névtérben:",

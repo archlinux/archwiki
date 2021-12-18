@@ -14,7 +14,7 @@
 	"interwiki": "Wikiközi hivatkozások adatainak megtekintése és szerkesztése",
 	"interwiki-title-norights": "Wikiközi hivatkozások adatainak megtekintése",
 	"interwiki-desc": "[[Special:Interwiki|Speciális lap]], ahol megtekinthető és szerkeszthető a wikiközi hivatkozások táblája",
-	"interwiki_intro": "Ez egy áttekintés a wikiközi hivatkozások táblájáról, ami meghatározza a más wikikre vagy egyéb külső oldalakra való gyors hivatkozáshoz használt előtagokat. A javasolt használathoz lásd az [//www.mediawiki.org/wiki/Extension:Interwiki útmutatót a MediaWiki.org-on] (angolul).",
+	"interwiki_intro": "Ez egy áttekintés a wikiközi hivatkozások táblájáról, ami meghatározza a más wikikre vagy egyéb külső oldalakra való gyors hivatkozáshoz használt előtagokat. A javasolt használathoz lásd az [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki útmutatót a MediaWiki.org-on] (angolul).",
 	"interwiki-legend-label": "Jelmagyarázat",
 	"interwiki_prefix": "Előtag",
 	"interwiki-prefix-label": "Előtag:",

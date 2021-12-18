@@ -22,7 +22,8 @@
 			"고기랑",
 			"렌즈",
 			"아라",
-			"콩가루"
+			"콩가루",
+			"Apzp79"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "책",
@@ -38,9 +39,11 @@
 	"cite-ve-changedesc-reflist-responsive-set": "각주 목록은 여러 반응형 열로 표시되도록 변경되었습니다",
 	"cite-ve-changedesc-reflist-responsive-unset": "각주 목록은 하나의 열로만 표시되도록 변경되었습니다",
 	"cite-ve-citationneeded-button": "인용 추가",
+	"cite-ve-citationneeded-description": "어떤 편집자가 이 주장에 신뢰할 수 있는 출처 인용이 필요하다고 지적했습니다.",
 	"cite-ve-citationneeded-reason": "이유:",
 	"cite-ve-citationneeded-title": "출처 필요",
-	"cite-ve-dialog-reference-editing-reused": "이 각주는 이 문서에서 {{PLURAL:$1|한 번|2=두 번|$1번}} 사용되었습니다.",
+	"cite-ve-dialog-reference-editing-reused": "이 인용은 이 문서에서 {{PLURAL:$1|한 번|2=두 번|$1번}} 사용되었습니다.",
+	"cite-ve-dialog-reference-editing-reused-long": "이 인용은 이 문서에서 {{PLURAL:$1|한 번|2=두 번|$1회}} 사용됐습니다. 여기서 변경한 내용은 이 인용이 재사용된 모든 곳에 반영됩니다.",
 	"cite-ve-dialog-reference-options-group-label": "이 그룹 사용",
 	"cite-ve-dialog-reference-options-group-placeholder": "일반 각주",
 	"cite-ve-dialog-reference-options-name-label": "이 이름으로 다시 사용",

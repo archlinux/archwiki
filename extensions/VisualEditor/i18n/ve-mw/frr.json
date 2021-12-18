@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"ChrisPtDe",
-			"Murma174"
+			"Murma174",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Di kweltekst faan detdiar sidj skriiw",
@@ -139,7 +140,7 @@
 	"visualeditor-serializeerror": "Bi't loosin faan dooten faan di server: $1 as wat skiaf gingen.",
 	"visualeditor-settings-tool": "Iinstelangen för det sidj",
 	"visualeditor-usernamespacepagelink": "Project:Brükernöömrüm",
-	"visualeditor-version-label": "Werjuun",
+	"visualeditor-version-label": "Wersion",
 	"visualeditor-wikitext-warning": "Dü brükst VisualEditor. [[{{MediaWiki:visualeditor-wikitext-warning-link}}|Wikitext]] werket heer ei. Trak üüb „{{int:visualeditor-ca-editsource}}“, am det sidj uun Wikitext-muude tu bewerkin. Wat noch ei seekert wurden as, gongt ferleesen.",
 	"visualeditor-wikitext-warning-title": "Wikitext as fünjen wurden"
 }

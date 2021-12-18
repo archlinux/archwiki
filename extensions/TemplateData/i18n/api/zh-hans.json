@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Shizhao"
 		]
 	},
-	"apihelp-templatedata-description": "获取由TemplateData扩展存储的数据。",
-	"apihelp-templatedata-summary": "获取由TemplateData扩展存储的数据。",
+	"apihelp-templatedata-description": "获取由模板数据扩展存储的数据。",
+	"apihelp-templatedata-summary": "获取由模板数据扩展存储的数据。",
 	"apihelp-templatedata-example-1": "返回[[Template:Stub]]和[[Template:Example]]的模板数据，如果模板不存在，或虽然存在但没有模板数据的话就返回结果",
 	"apihelp-templatedata-example-2": "返回[[Template:Stub]]和[[Template:Example]]的模板数据，如果模板不存在，或虽然存在但没有模板数据的话就不返回结果",
 	"apihelp-templatedata-param-includeMissingTitles": "返回有关标题的数据，即便其丢失或缺少模板数据。默认情况下只在标题存在且有模板数据时返回标题。",

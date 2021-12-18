@@ -8,7 +8,8 @@
 			"Leyth",
 			"Mjbmr",
 			"Rtemis",
-			"ZxxZxxZ"
+			"ZxxZxxZ",
+			"Jeeputer"
 		]
 	},
 	"categorytree": "درخت رده",
@@ -27,7 +28,7 @@
 	"categorytree-expand": "گسترش",
 	"categorytree-expand-bullet": "◄",
 	"categorytree-empty-bullet": "◄",
-	"categorytree-member-counts": "شامل {{PLURAL:$1|یک زیررده|$1 زیررده}}، {{PLURAL:$2|یک صفحه|$2 صفحه}} و {{PLURAL:$3|یک پرونده|$3 پرونده است}}",
+	"categorytree-member-counts": "شامل {{PLURAL:$1|یک زیررده|$1 زیررده}}، {{PLURAL:$2|یک صفحه|$2 صفحه}} و {{PLURAL:$3|یک پرونده|$3 پرونده}} است",
 	"categorytree-num-categories": "$1 ر",
 	"categorytree-num-pages": "$1 ص",
 	"categorytree-num-files": "$1 پ",

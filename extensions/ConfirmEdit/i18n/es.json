@@ -19,7 +19,8 @@
 			"Muro de Aguas",
 			"Pertile",
 			"Sanbec",
-			"Sophivorus"
+			"Sophivorus",
+			"Jakeukalane"
 		]
 	},
 	"captcha-edit": "Para editar esta página, realiza la siguiente tarea y escribe el resultado en la casilla ([[Special:Captcha/help|más información]]):",
@@ -30,12 +31,12 @@
 	"captcha-info-help": "Descripción del CAPTCHA.",
 	"captcha-id-label": "Identificador del CAPTCHA",
 	"captcha-id-help": "Este valor debería devolverse sin cambios.",
-	"captcha-addurl": "Tu edición incluye nuevos enlaces externos.\nPara proteger el wiki contra el spam automatizado, realiza la siguiente tarea y escribe el resultado en la casilla para poder guardar tu edición ([[Special:Captcha/help|más información]]):",
-	"captcha-badlogin": "Para proteger el wiki del descifrado de contraseñas automatizado, por favor realiza la siguiente tarea e ingresa la respuesta en la casilla ([[Special:Captcha/help|más información]]):",
-	"captcha-createaccount": "Para proteger el wiki de la creación automática de cuentas, realiza la siguiente tarea y escribe el resultado en la casilla ([[Special:Captcha/help|más información]]):",
+	"captcha-addurl": "Tu edición incluye nuevos enlaces externos.\nPara proteger la wiki contra el spam automatizado, realiza la siguiente tarea y escribe el resultado en la casilla para poder guardar tu edición ([[Special:Captcha/help|más información]]):",
+	"captcha-badlogin": "Para proteger la wiki contra el descifrado automatizado de contraseñas, por favor realiza la siguiente tarea e ingresa la respuesta en la casilla ([[Special:Captcha/help|más información]]):",
+	"captcha-createaccount": "Para proteger la wiki de la creación automática de cuentas, realiza la siguiente tarea y escribe el resultado en la casilla ([[Special:Captcha/help|más información]]):",
 	"captcha-createaccount-fail": "Falta el código CAPTCHA, o éste es incorrecto.",
 	"captcha-create": "Para crear la página, realiza la siguiente tarea y escribe el resultado en la casilla ([[Special:Captcha/help|más información]]):",
-	"captcha-sendemail": "Para proteger el wiki contra el spam automatizado, realiza la siguiente tarea y escribe el resultado en la casilla ([[Special:Captcha/help|más información]]):",
+	"captcha-sendemail": "Para proteger la wiki contra el spam automatizado, realiza la siguiente tarea y escribe el resultado en la casilla ([[Special:Captcha/help|más información]]):",
 	"captcha-sendemail-fail": "Falta el código CAPTCHA, o éste es incorrecto.",
 	"captcha-disabledinapi": "Esta acción requiere un captcha, así que no puede ser ejecutada a través de un API.",
 	"captcha-error": "La comprobación del CAPTCHA falló debido a un error interno: $1",

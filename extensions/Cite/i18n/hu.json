@@ -8,9 +8,9 @@
 			"Tacsipacsi"
 		]
 	},
-	"cite-desc": "Lehetővé teszi idézések létrehozását <code>&lt;ref[ name=id]&gt;</code> és <code>&lt;references/&gt;</code> tagek segítségével",
+	"cite-desc": "Lehetővé teszi idézések létrehozását <code>&lt;ref&gt;</code> és <code>&lt;references/&gt;</code> XML-elemek segítségével",
 	"cite_error": "Forráshivatkozás-hiba: $1",
-	"cite_error_ref_invalid_dir": "Érvénytelen <code>&lt;ref&gt;</code> címke; a(z) „$1” <var>dir</var> attribútum ismeretlen, értéke csak <samp>ltr</samp> vagy <samp>rtl</samp> lehet",
+	"cite_error_ref_invalid_dir": "Érvénytelen <code>dir=\"$1\"</code> attribútum, az attribútum értéke csak <code>ltr</code> vagy <code>rtl</code> lehet",
 	"cite_error_ref_numeric_key": "Érvénytelen <code>&lt;ref&gt;</code> címke; a <var>name</var> értéke nem lehet csupán egy szám, használj leíró címeket",
 	"cite_error_ref_no_key": "A nyitó <code>&lt;ref&gt;</code> címke formai hibás vagy rossz névvel rendelkezik",
 	"cite_error_ref_too_many_keys": "Érvénytelen <code>&lt;ref&gt;</code> címke; hibás nevek, pl. túl sok",
@@ -19,9 +19,9 @@
 	"cite_error_references_invalid_parameters": "Érvénytelen paraméter a <code>&lt;references&gt;</code> címkében",
 	"cite_error_references_no_backlink_label": "Elfogytak a visszahivatkozásra használt címkék, adj meg többet a [[MediaWiki:Cite references link many format backlink labels]] üzenetben",
 	"cite_error_no_link_label_group": "Nincs több egyedi címke a következő csoport számára: „$1”. Adj meg többet a [[MediaWiki:$2]] lapon.",
-	"cite_error_references_no_text": "Érvénytelen <code>&lt;ref&gt;</code> címke; nincs megadva szöveg a(z) <code>$1</code> nevű ref-eknek",
+	"cite_error_references_no_text": "Érvénytelen <code>&lt;ref&gt;</code> címke; nincs megadva szöveg a(z) <code>$1</code> nevű lábjegyzeteknek",
 	"cite_error_included_ref": "Egy <code>&lt;ref&gt;</code> címke lezáró <code>&lt;/ref&gt;</code> része hiányzik",
-	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> címkék léteznek a(z) „$1” csoporthoz, de nincs hozzá <code>&lt;references group=\"$1\"/&gt;</code>, vagy egy lezáró <code>&lt;/ref&gt;</code> hiányzik.",
+	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> címkék léteznek a(z) „$1” csoporthoz, de nincs hozzá <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "A <code>&lt;references&gt;</code> és a benne található <code>&lt;ref&gt;</code> címke csoportattribútuma („$1”) nem egyezik meg.",
 	"cite_error_references_missing_group": "Olyan <code>&lt;ref&gt;</code> címke lett lett definiálva egy <code>&lt;references&gt;</code> címkében, amely csoportattribútuma („$1”) nem szerepel a szöveg korábbi részében.",
 	"cite_error_references_missing_key": "a <code>&lt;references&gt;</code> címkében definiált „$1” nevű <code>&lt;ref&gt;</code> címke nem szerepel a szöveg korábbi részében.",

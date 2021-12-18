@@ -7,7 +7,7 @@
 			"Yerpo"
 		]
 	},
-	"wikieditor": "Napredni vmesnik za urejanje wikibesedila",
+	"wikieditor": "Napredni vmesnik za urejanje vikibesedila",
 	"wikieditor-desc": "Omogoča napreden, razširljiv vmesnik za urejanje wikibesedila",
 	"wikieditor-wikitext-tab": "Vikibesedilo",
 	"wikieditor-loading": "Nalaganje ...",
@@ -43,7 +43,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Preverjanje obstoja strani ...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Razločitvena stran",
 	"wikieditor-toolbar-tool-link-int-invalid": "Navedeni naslov ni veljaven.",
-	"wikieditor-toolbar-tool-link-lookslikeinternal": "Navedeni URL izgleda kot povezava na drugo wikistran. Ali jo želite narediti notranjo povezavo?",
+	"wikieditor-toolbar-tool-link-lookslikeinternal": "Navedeni URL izgleda kot povezava na drugo vikistran. Ali jo želite narediti notranjo povezavo?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Notranja povezava",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Zunanja povezava",
 	"wikieditor-toolbar-tool-link-empty": "Niste vnesli ničesar, na kar bi se lahko povezovalo.",

@@ -13,7 +13,8 @@
 			"Macofe",
 			"PoLuX124",
 			"Themasterriot",
-			"Tiberius1701"
+			"Tiberius1701",
+			"Rodney Araujo"
 		]
 	},
 	"multimediaviewer-desc": "Expande las miniaturas a un tamaño mayor en una vista de pantalla completa",
@@ -77,7 +78,7 @@
 	"multimediaviewer-download-xl-button-name": "Descargar tamaño extragrande",
 	"multimediaviewer-link-to-page": "Enlace a la página de descripción del archivo",
 	"multimediaviewer-link-to-file": "Enlace al archivo original",
-	"multimediaviewer-share-explanation": "Copiar y compartir el enlace",
+	"multimediaviewer-share-explanation": "Copiar y compartir libremente el enlace",
 	"multimediaviewer-embed-wt": "Wikitexto",
 	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-embed-explanation": "Utiliza este código para incrustar el archivo",
@@ -91,6 +92,7 @@
 	"multimediaviewer-embed-via": "Vía $1.",
 	"multimediaviewer-default-embed-dimensions": "Tamaño de miniaturas predeterminado",
 	"multimediaviewer-original-embed-dimensions": "Archivo original, $1",
+	"multimediaviewer-xl-embed-dimensions": "Extragrande $1",
 	"multimediaviewer-large-embed-dimensions": "Grande, $1",
 	"multimediaviewer-medium-embed-dimensions": "Mediano, $1",
 	"multimediaviewer-small-embed-dimensions": "Pequeño, $1",

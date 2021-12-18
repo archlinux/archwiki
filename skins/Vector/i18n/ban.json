@@ -9,14 +9,24 @@
 			"NoiX180"
 		]
 	},
-	"vector-action-addsection": "Tambahin topik",
+	"vector-opt-out": "Alih nuju cingakan sadurungné",
+	"vector-opt-out-tooltip": "Uahin setélan Ida antuk mawali nuju cingakan sadurungné saking kules puniki (Vektor warisan)",
+	"vector-action-toggle-sidebar": "Tugel wilah sisi",
+	"vector-language-button-label": "{{PLURAL:$1|$1 basa}}",
+	"vector-action-addsection": "Weweh topik",
 	"vector-action-delete": "Usap",
 	"vector-action-move": "Gingsirang",
 	"vector-action-protect": "Saib",
+	"vector-action-undelete": "Tan kausap",
+	"vector-action-unprotect": "Uah saiban",
 	"vector-view-create": "Kardi",
 	"vector-view-edit": "Uah",
 	"vector-view-history": "Cingak babad",
 	"vector-view-view": "Wacén",
 	"vector-view-viewsource": "Cingak wit",
-	"vector-more-actions": "Lianan"
+	"vector-jumptonavigation": "Cebur nuju navigasi",
+	"vector-jumptosearch": "Cebur nuju parerehan",
+	"vector-jumptocontent": "Cebur nuju daging",
+	"vector-more-actions": "Lianan",
+	"vector-search-loader": "Ngamuat saran parerehan"
 }

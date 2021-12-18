@@ -29,6 +29,7 @@
 	"nuke-maxpages": "Número máximo de páginas:",
 	"nuke-editby": "Criada [[Special:Contributions/$1|{{GENDER:$1|pelo usuário $1|pela usuária $1|por $1}}]]",
 	"nuke-deleted": "A página \"\"$1\"\" foi excluída.",
+	"nuke-deletion-queued": "A página '''$1''' foi colocada na fila para exclusão.",
 	"nuke-not-deleted": "A página [[:$1]] '''não pôde''' ser excluída.",
 	"nuke-delete-more": "[[Special:Nuke|Eliminar mais páginas]]",
 	"nuke-pattern": "Padrão (por exemplo %) para o nome da página:",

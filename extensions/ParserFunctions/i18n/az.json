@@ -2,15 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Cekli829",
-			"Dağlı95"
+			"Dağlı95",
+			"NMW03"
 		]
 	},
-	"pfunc_time_error": "Xəta: yanlış zaman",
+	"pfunc_time_error": "Xəta: Yanlış zaman.",
 	"pfunc_expr_stack_exhausted": "İfadə xətası: Stek doludur.",
 	"pfunc_expr_unexpected_number": "İfadə xətası: gözlənilməz ədəd",
 	"pfunc_expr_preg_match_failure": "İfadə xətası: Gözlənilməz preg_match nasazlığı",
-	"pfunc_expr_unrecognised_word": "İfadə xətası: tanınmayan ifadə söz \"$1\".",
-	"pfunc_expr_unexpected_operator": "İfadə xətası: gözlənilməz \"$1\" operatoru.",
+	"pfunc_expr_unrecognised_word": "İfadə xətası: tanınmayan ifadə \"$1\".",
+	"pfunc_expr_unexpected_operator": "İfadə xətası: Gözlənilməz \"$1\" operatoru.",
 	"pfunc_expr_missing_operand": "İfadə xətası: $1 operantı çatışmır.",
 	"pfunc_expr_unexpected_closing_bracket": "İfadə xətası: Gözlənilməz bağlanmış mötərizə",
 	"pfunc_expr_unrecognised_punctuation": "İfadə xətası: \"$1\" punktuasiyasının tanınmayan simvolu.",

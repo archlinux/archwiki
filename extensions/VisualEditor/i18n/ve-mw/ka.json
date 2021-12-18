@@ -14,7 +14,8 @@
 			"Silovan",
 			"Tokoko",
 			"Გიო ოქრო",
-			"Იო ოქრო"
+			"Იო ოქრო",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "ამ გვერდის წყაროს კოდის შექმნა",
@@ -35,6 +36,7 @@
 	"visualeditor-ca-ve-edit-section": "ვიზუალური რედაქტორი",
 	"visualeditor-categories-tool": "კატეგორიები",
 	"visualeditor-changedesc-mwredirect": "გადამისამართების სამიზნე შეცვალა $1-დან $2-ზე",
+	"visualeditor-changedesc-mwtransclusion": "შეიცვალა თარგის პარამეტრი",
 	"visualeditor-desc": "მედიავიკის ვიზუალური რედაქტორი",
 	"visualeditor-descriptionpagelink": "Project:ვიზუალური რედაქტორი",
 	"visualeditor-dialog-media-alttext-section": "ალტერნატიული ტექსტი",
@@ -256,7 +258,13 @@
 	"visualeditor-mwgallerydialog-title": "გალერეა",
 	"visualeditor-mwgallerydialog-widths-field-label": "სურათის სიგანე",
 	"visualeditor-mwgallerydialog-widths-input-placeholder": "საწყისი სიგანე: $1 პქ",
+	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "ენა",
+	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "წყარო",
+	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "დანიშნულება",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-twoway-label": "ტექსტი",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "ენები",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "ენის კოდი",
+	"visualeditor-mwlanguagevariantinspector-filter-text-label": "შინაარსი",
 	"visualeditor-mwsignature-tool": "თქვენი ხელმოწერა",
 	"visualeditor-parameter-input-placeholder": "ველის სახელი",
 	"visualeditor-parameter-search-more": "კიდევ {{PLURAL:$1|ერთი ველის|$1 ველის}} ჩვენება",
@@ -290,6 +298,8 @@
 	"visualeditor-savedialog-label-review": "თქვენი ცვლილებების გადახედვა",
 	"visualeditor-savedialog-label-review-good": "შენახვის ფორმაზე დაბრუნება",
 	"visualeditor-savedialog-label-save-short": "შენახვა",
+	"visualeditor-savedialog-review-visual": "ვიზუალური",
+	"visualeditor-savedialog-review-wikitext": "ვიკიტექსტი",
 	"visualeditor-savedialog-title-conflict": "კონფლიქტი",
 	"visualeditor-savedialog-title-preview": "თქვენი ცვლილებების წინასწარ გადახედვა",
 	"visualeditor-savedialog-title-review": "თქვენი ცვლილებების გადახედვა",
@@ -307,5 +317,6 @@
 	"visualeditor-version-label": "ვერსია",
 	"visualeditor-wikitext-progress": "ვიკიტექსტის კონვერტაცია",
 	"visualeditor-wikitext-warning": "თქვენ იყენებთ ვიზუალურ რედაქტორს - [[{{MediaWiki:visualeditor-wikitext-warning-link}}|ვიკიტექსტი]] აქ არ მუშაობს. დააწკაპუნეთგადართვის ღილაკს, რათა ცვლილებები არ დაიკარგოს.",
-	"visualeditor-wikitext-warning-title": "აღმოჩენილია ვიკი-ტექსტი"
+	"visualeditor-wikitext-warning-title": "აღმოჩენილია ვიკი-ტექსტი",
+	"visualeditor-wikitextconvert-convert": "ვიკიტექსტში გადაყვანა"
 }

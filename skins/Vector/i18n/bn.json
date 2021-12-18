@@ -18,7 +18,7 @@
 	"prefs-vector-enable-vector-1-help": "আগামী কয়েক বছর ধরে, আমরা ধীরে ধীরে ভেক্টর আবরণ হালনাগাদ করব। উত্তরাধিকার ভেক্টর আপনাকে ভেক্টরের পুরনো সংস্করণ দেখার অনুমতি দেবে (ডিসেম্বর ২০১৯ অনুযায়ী)। এই হালনাগাদ সম্পর্কে আরও জানতে, আমাদের [[mw:Reading/Web/Desktop_Improvements|প্রকল্প পাতায়]] যান।",
 	"vector-opt-out": "পুরনো চেহারাতে যান",
 	"vector-opt-out-tooltip": "আবরণটির পুরনো চেহারাতে ফিরে যেতে আপনার সেটিংস পরিবর্তন করুন (উত্তরাধিকার ভেক্টর)",
-	"vector.css": "/* এখানের সকল CSS ভেক্টর আবরণ ব্যবহারকারীদের জন্য লোড হবে */",
+	"vector.css": "/* এখানের সকল সিএসএস ভেক্টর আবরণ ব্যবহারকারীদের জন্য লোড হবে */",
 	"vector.js": "/* এখানের সকল জাভাস্ক্রিপ্ট ভেক্টর আবরণ ব্যবহারকারীদের জন্য লোড হবে */",
 	"vector-action-toggle-sidebar": "পার্শ্বদণ্ড দেখান",
 	"vector-language-button-label": "{{PLURAL:$1|$1টি ভাষা}}",
@@ -33,9 +33,9 @@
 	"vector-view-history": "ইতিহাস দেখুন",
 	"vector-view-view": "পড়ুন",
 	"vector-view-viewsource": "উৎস দেখুন",
-	"vector-jumptonavigation": "পরিভ্রমণে ঝাঁপ দিন",
-	"vector-jumptosearch": "অনুসন্ধানে ঝাঁপ দিন",
-	"vector-jumptocontent": "বিষয়বস্তুতে ঝাঁপ দিন",
+	"vector-jumptonavigation": "পরিভ্রমণে চলুন",
+	"vector-jumptosearch": "অনুসন্ধানে চলুন",
+	"vector-jumptocontent": "বিষয়বস্তুতে চলুন",
 	"vector-more-actions": "আরও",
 	"vector-search-loader": "অনুসন্ধানের পরামর্শ লোড করা হচ্ছে"
 }

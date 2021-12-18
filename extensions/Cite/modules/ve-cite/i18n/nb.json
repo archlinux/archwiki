@@ -15,7 +15,8 @@
 			"Nghtwlkr",
 			"Njardarlogar",
 			"Tarjeimo",
-			"Telaneo"
+			"Telaneo",
+			"Abuluntu"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Bok",
@@ -32,6 +33,7 @@
 	"cite-ve-changedesc-reflist-responsive-unset": "Referanseliste endret til å vise i kun én kolonne",
 	"cite-ve-citationneeded-button": "Legg til en referanse",
 	"cite-ve-citationneeded-description": "En bruker har meldt at denne påstanden trenger en pålitelig referanse.",
+	"cite-ve-citationneeded-reason": "Angitt årsak:",
 	"cite-ve-citationneeded-title": "Trenger referanse",
 	"cite-ve-dialog-reference-editing-reused": "Denne referansen er brukt {{PLURAL:$1|én gang|$1  ganger}} på denne siden.",
 	"cite-ve-dialog-reference-editing-reused-long": "Denne referansen er brukt {{PLURAL:$1|én gang|2=to ganger|$1 ganger}} på denne siden. Endringer gjort her vil brukes alle steder hvor referansen er gjenbrukt.",

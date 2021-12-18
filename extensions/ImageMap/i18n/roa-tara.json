@@ -7,7 +7,7 @@
 	"imagemap_desc": "Permette le mappe de immaggine cazzabbele late cliende ausanne 'u tag <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Errore: a specifià 'n'immaggine jndr'à prima righe",
 	"imagemap_invalid_image": "Errore: l'immaggine jè invalide o non g'esiste",
-	"imagemap_bad_image": "Errore: l'immaggine sus a sta pàgene jè jndr'à lista gnore",
+	"imagemap_bad_image": "Errore: l'immaggine sus a sta pàgene non g'è permesse.",
 	"imagemap_no_link": "Errore: nisciune collegamende valide ha state acchiate a fine d'a linèe $1",
 	"imagemap_invalid_title": "Errore: titele invalide jndr'à 'u collegamende a 'a linèe $1",
 	"imagemap_missing_coord": "Errore: non ge stonne abbastanze coordinate pa figure a 'a linèe $1",

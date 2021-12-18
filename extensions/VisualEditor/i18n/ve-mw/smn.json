@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Trondtr",
-			"Yupik"
+			"Yupik",
+			"Seipinne"
 		]
 	},
 	"tooltip-ca-ve-edit": "Mute taam siijđo",
@@ -10,10 +11,33 @@
 	"visualeditor-ca-createsource": "Räähti wikiteevstâ",
 	"visualeditor-ca-editsource": "Mute käldee",
 	"visualeditor-ca-editsource-section": "Mute käldee",
+	"visualeditor-categories-tool": "Luokah",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
 	"visualeditor-dialog-media-content-filename": "Tiätuvuárkkánommâ",
+	"visualeditor-dialog-media-info-licenseshortname": "Liiseens",
+	"visualeditor-dialog-media-save": "Vuorkkii",
+	"visualeditor-dialog-media-search-tab-search": "Uusâ",
 	"visualeditor-dialog-meta-categories-category": "Luokka",
 	"visualeditor-dialog-meta-categories-data-label": "Luokah",
+	"visualeditor-dialog-meta-categories-input-hiddencategorieslabel": "Čiehhum luokah",
 	"visualeditor-dialog-meta-categories-section": "Luokah",
-	"visualeditor-linkinspector-educationpopup-title": "Liiŋkah"
+	"visualeditor-dialog-meta-languages-label": "Kielah",
+	"visualeditor-dialog-meta-languages-name-label": "Kielâ",
+	"visualeditor-dialog-meta-languages-section": "Kielah",
+	"visualeditor-dialog-meta-settings-hiddencat-label": "Čiehhum luokka",
+	"visualeditor-dialog-template-title": "Myenster",
+	"visualeditor-dialog-transclusion-add-param": "Lasseet lasetiäđuid",
+	"visualeditor-dialogbutton-template-tooltip": "Myenster",
+	"visualeditor-languages-tool": "Kielah",
+	"visualeditor-linkinspector-convert-link-isbn": "Mute ISBN-liŋkkân",
+	"visualeditor-linkinspector-educationpopup-title": "Liiŋkah",
+	"visualeditor-magiclinknodeinspector-title-isbn": "ISBN-liŋkkâ",
+	"visualeditor-mwgallerydialog-classes-field-label": "CSS-luokah",
+	"visualeditor-mwgallerydialog-styles-field-label": "CSS-stiijlah",
+	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Kielâ",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Kielah",
+	"visualeditor-savedialog-label-create": "Räähti siijđo",
+	"visualeditor-savedialog-label-save-short": "Vuorkkii",
+	"visualeditor-savedialog-label-save-short-start": "Vuorkkii...",
+	"visualeditor-savedialog-review-wikitext": "Wikitekstâ"
 }

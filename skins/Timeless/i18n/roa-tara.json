@@ -4,6 +4,7 @@
 			"Joetaras"
 		]
 	},
+	"skinname-timeless": "Timeless",
 	"timeless-desc": "'Nu skin senze tiembe proggettate apprisse 'u prototipe Winter da Brandon Harris e diverse stile d'a Wikimedia Foundation",
 	"timeless-anonymous": "Anonime",
 	"timeless-loggedinas": "Trasute cumme \"$1\"",
@@ -22,5 +23,6 @@
 	"timeless-pagetools": "Aziune sus 'a pàgene",
 	"timeless-languages": "Lènghe",
 	"timeless-projects": "Otre pruggette",
+	"timeless.css": "/* Tutte le CSS aqquà avène carecate pe le utinde ca ausane 'a masckere Timeless */",
 	"timeless.js": "/* Tutte le JavaScript aqquà avène carecate pe le utinde ca ausane 'a masckere Timeless */"
 }

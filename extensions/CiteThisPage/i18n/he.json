@@ -7,10 +7,10 @@
 			"שמזן"
 		]
 	},
-	"citethispage": "ציטוט דף זה",
+	"citethispage": "ציטוט הדף הזה",
 	"citethispage-desc": "הוספת דף מיוחד וקישור בתיבת הכלים ל[[Special:CiteThisPage|ציטוט]]",
-	"citethispage-link": "ציטוט דף זה",
-	"tooltip-citethispage": "מידע כיצד לצטט דף זה",
+	"citethispage-link": "ציטוט הדף הזה",
+	"tooltip-citethispage": "מידע איך לצטט את הדף הזה",
 	"citethispage-change-submit": "ציטוט",
 	"citethispage-change-target": "דף:",
 	"citethispage-badrevision": "שגיאה: לא נמצאה גרסה של הדף \"$1\" עם מזהה הגרסה $2.",

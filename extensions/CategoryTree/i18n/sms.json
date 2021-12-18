@@ -4,9 +4,21 @@
 			"Yupik"
 		]
 	},
+	"categorytree": "Kategoriamuõrr",
 	"categorytree-portlet": "Kategoria",
+	"categorytree-legend": "Čuäʹjet kategoriamuõr",
 	"categorytree-category": "Kategoria:",
+	"categorytree-go": "Čuäʹjet muõr",
+	"categorytree-parents": "Pâʹjjkategoria",
+	"categorytree-mode-categories": "pâi kategoria",
+	"categorytree-mode-all": "puk seeid",
+	"categorytree-expand": "čuäʹjet",
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 S",
-	"categorytree-num-files": "$1 T"
+	"categorytree-num-files": "$1 T",
+	"categorytree-load": "čuäʹjet",
+	"categorytree-no-subcategories": "ij vueʹllkategoria",
+	"categorytree-no-parent-categories": "ij pâʹjjkategoria",
+	"categorytree-no-pages": "ij ni seeid leʹbe vueʹllkategoria",
+	"categorytree-not-found": "Kategoria <i>$1</i> ij käunnʼjam"
 }

@@ -20,6 +20,7 @@
  * @author Ankit Garg
  */
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\ScopedCallback;
 
 /**

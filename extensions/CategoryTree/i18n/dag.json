@@ -3,11 +3,14 @@
 		"authors": [
 			"Amire80",
 			"Dnshitobu",
-			"Shahadusadik"
+			"Shahadusadik",
+			"Alhassan Mohammed Awal",
+			"Chirifo",
+			"Sir Amugi"
 		]
 	},
 	"categorytree-expand": "yelgima",
-	"categorytree-member-counts": "Di malila {{PLURAL:$1|1 subcategory|$1 subcategories}}, {{PLURAL:$2|1 page|$2 pages}}, ni {{PLURAL:$3|1 file|$3 files}}",
+	"categorytree-member-counts": "Di mal la {{PLURAL:$1|1 subcategory|$1 subcategories}}, {{PLURAL:$2|1 page|$2 pages}}, ni",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 F"

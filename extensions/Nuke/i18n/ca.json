@@ -7,7 +7,8 @@
 			"Paucabot",
 			"SMP",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Jmarchn"
 		]
 	},
 	"nuke": "Eliminació massiva",
@@ -19,7 +20,7 @@
 	"nuke-defaultreason": "Esborrat massiu de pàgines creades per [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-multiplepeople": "Esborrat massiu de pàgines creades recentment",
 	"nuke-tools": "Aquesta eina permet l'eliminació massiva de pàgines creades recentment per un usuari o IP.\nIndiqueu el nom d'usuari o adreça IP per obtenir la llista de pàgines a esborrar, o deixeu-ho en blanc per tots els usuaris.",
-	"nuke-submit-user": "Vés-hi",
+	"nuke-submit-user": "Llista de pàgines",
 	"nuke-submit-delete": "Esborra els seleccionats",
 	"right-nuke": "Esborrar pàgines de forma massiva",
 	"nuke-userorip": "Nom d'usuari, adreça IP o en blanc:",
@@ -28,10 +29,10 @@
 	"nuke-deleted": "La pàgina '''$1''' ha estat esborrada.",
 	"nuke-not-deleted": "La pàgina [[:$1]] '''no s'ha pogut''' esborrar.",
 	"nuke-delete-more": "[[Special:Nuke|Esborra més pàgines]]",
-	"nuke-pattern": "Patró pel nom de pàgina:",
-	"nuke-nopages-global": "No hi ha cap pàgina nova als [[Special:RecentChanges|canvis recents]].",
+	"nuke-pattern": "Patró SQL LIKE (per exemple,%) per al nom de la pàgina:",
+	"nuke-nopages-global": "No hi ha cap títol de pàgina que coincideixi amb la vostra cerca.",
 	"nuke-viewchanges": "mostra els canvis",
 	"nuke-namespace": "Limitat a l’espai de noms:",
 	"nuke-linkoncontribs": "eliminació massiva",
-	"nuke-linkoncontribs-text": "Eliminació massiva de pàgines on aquest usuari és l'únic autor"
+	"nuke-linkoncontribs-text": "Eliminació massiva de pàgines on {{GENDER:$1|aquest usuari|aquesta usuària}} és l'únic autor"
 }

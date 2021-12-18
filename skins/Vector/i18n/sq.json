@@ -5,19 +5,21 @@
 			"GretaDoci",
 			"MicroBoy",
 			"Mikullovci11",
-			"Olsi"
+			"Olsi",
+			"Besnik b",
+			"Ftillimi"
 		]
 	},
 	"vector-action-addsection": "Shto një temë",
-	"vector-action-delete": "Grise",
+	"vector-action-delete": "Fshije",
 	"vector-action-move": "Zhvendose",
 	"vector-action-protect": "Mbroje",
-	"vector-action-undelete": "Anullo fshirjen",
+	"vector-action-undelete": "Anulo fshirjen",
 	"vector-action-unprotect": "Ndrysho mbrojtjen",
 	"vector-view-create": "Krijo",
 	"vector-view-edit": "Redakto",
-	"vector-view-history": "Shiko historikun",
+	"vector-view-history": "Shihni historikun",
 	"vector-view-view": "Lexo",
-	"vector-view-viewsource": "Shiko tekstin",
-	"vector-more-actions": "Më tepër..."
+	"vector-view-viewsource": "Shihni burimin",
+	"vector-more-actions": "Më tepër"
 }

@@ -1,9 +1,11 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Weather Top Wizard"
+		]
 	},
 	"renameuser": "Liliu hingoa ʻo e ʻetita",
-	"renameuserold": "Hingoa motuʻa ʻo e ʻetita:",
+	"renameuserold": "Lolotonga hingoa ʻetita:",
 	"renameusernew": "Hingoa foʻou ʻo e ʻetita:",
 	"renameusersubmit": "Fai ā liliuhingoa",
 	"renameusererrordoesnotexist": "Ko e ʻetita \"<nowiki>$1</nowiki>\" ʻoku ʻikai toka tuʻu ia",

@@ -3,12 +3,14 @@
 		"authors": [
 			"Cwek",
 			"Liuxinyu970226",
-			"Xiaomingyan"
+			"Xiaomingyan",
+			"FakeGreenHand",
+			"TsuyaMarisa"
 		]
 	},
 	"skinname-monobook": "MonoBook",
-	"monobook-desc": "自2004年就出现的经典MediaWiki皮肤，命名依据一本书中某页面的黑白照片背景",
-	"monobook.css": "/* 这里放置的CSS将影响使用MonoBook皮肤的用户 */",
+	"monobook-desc": "始于2004年的经典MediaWiki皮肤，名字源于作为某本书页面背景的一张黑白照片",
+	"monobook.css": "/* 这里的任何CSS将为使用MonoBook皮肤的用户加载 */",
 	"monobook.js": "/* 这里的任何JavaScript将为使用MonoBook皮肤的用户加载 */",
 	"monobook-jumptotop": "返回顶部",
 	"monobook-jumptopersonal": "用户工具",

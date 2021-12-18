@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"nuke": "Xóa hàng loạt",
@@ -21,6 +22,7 @@
 	"nuke-maxpages": "Số trang tối đa:",
 	"nuke-editby": "{{GENDER:$1}}Được tạo bởi [[Special:Contributions/$1|$1]]",
 	"nuke-deleted": "Đã xóa trang '''$1'''.",
+	"nuke-deletion-queued": "Đã đặt trang '''$1''' vào hàng đợi xóa.",
 	"nuke-not-deleted": "'''Không thể''' xóa trang [[:$1]].",
 	"nuke-delete-more": "[[Special:Nuke|Xóa thêm trang]]",
 	"nuke-pattern": "Mẫu tên trang:",

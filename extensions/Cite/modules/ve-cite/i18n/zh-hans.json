@@ -25,7 +25,8 @@
 			"Zhangjintao",
 			"乌拉跨氪",
 			"佛壁灯",
-			"夢蝶葬花"
+			"夢蝶葬花",
+			"FakeGreenHand"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "图书",
@@ -41,6 +42,8 @@
 	"cite-ve-changedesc-reflist-responsive-set": "参考列表已更改为在响应栏中显示",
 	"cite-ve-changedesc-reflist-responsive-unset": "参考列表已更改为只在一栏中显示",
 	"cite-ve-citationneeded-button": "添加引用",
+	"cite-ve-citationneeded-description": "有编者指出，此声明需要引用可靠来源。",
+	"cite-ve-citationneeded-reason": "给出的原因：",
 	"cite-ve-citationneeded-title": "需要引用",
 	"cite-ve-dialog-reference-editing-reused": "此引用在本页使用了$1{{PLURAL:$1|次}}。",
 	"cite-ve-dialog-reference-editing-reused-long": "此引用在本页使用了$1{{PLURAL:$1|次}}。在此做出的更改将在复用此引用的所有页面生效。",

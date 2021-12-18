@@ -4,7 +4,8 @@
 			"Bishnu Saikia",
 			"Chaipau",
 			"Gitartha.bordoloi",
-			"Rajuonline"
+			"Rajuonline",
+			"Simbu123"
 		]
 	},
 	"inputbox-desc": "পূৰ্বসংজ্ঞায়িত HTML ফৰ্মৰ অন্তৰ্ভুক্তি অনুমোদন কৰক",
@@ -13,5 +14,5 @@
 	"inputbox-tryexact": "কেবল দিয়া শব্দহে বিচাৰিব",
 	"inputbox-searchfulltext": "সম্পূৰ্ণ পাঠ্য বিচাৰিব",
 	"inputbox-createarticle": "পৃষ্ঠা সৃষ্টি কৰক",
-	"inputbox-ns-main": "মূখ্য"
+	"inputbox-ns-main": "মুখ্য"
 }

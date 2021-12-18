@@ -7,7 +7,8 @@
 			"Base",
 			"Piramidion",
 			"Prima klasy4na",
-			"Ата"
+			"Ата",
+			"DDPAT"
 		]
 	},
 	"replacetext": "Заміна тексту",
@@ -26,8 +27,8 @@
 	"replacetext_nonamespace": "Ви повинні вибрати принаймні один простір назв.",
 	"replacetext_editormove": "Ви повинні вибрати принаймні один варіант заміни.",
 	"replacetext_choosepagesforedit": "Будь ласка, виберіть {{PLURAL:$3|1=сторінку, в якій|сторінки, в яких}} ви хочете здійснити заміну «$1» на «$2»:",
-	"replacetext_choosepagesformove": "Замінити «$1» на «$2» в {{PLURAL:$3|1=назві наступної сторінки|назвах наступних сторінок}}:",
-	"replacetext_cannotmove": "{{PLURAL:$1|1=Наступна сторінка не може бути перейменована|Наступні сторінки не можуть бути перейменовані}}:",
+	"replacetext_choosepagesformove": "Замінити «$1» на «$2» в {{PLURAL:$3|1=назві такої сторінки|назвах таких сторінок}}:",
+	"replacetext_cannotmove": "{{PLURAL:$1|1=Така сторінка не може бути перейменована|Такі сторінки не можуть бути перейменовані}}:",
 	"replacetext_formovedpages": "Для перейменованих сторінок:",
 	"replacetext_savemovedpages": "Зберегти старі назви як перенаправлення на нові",
 	"replacetext_watchmovedpages": "Спостерігати за цими сторінками",

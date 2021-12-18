@@ -21,7 +21,10 @@
 			"Rachmat04",
 			"Raynasution",
 			"Rv77ax",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Chinamoonroll",
+			"TMg",
+			"WillsonEP09"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -70,11 +73,14 @@
 	"visualeditor-dialog-media-info-audiofile": "Berkas audio",
 	"visualeditor-dialog-media-info-created": "Dibuat: $1",
 	"visualeditor-dialog-media-info-credit": "Kredit",
+	"visualeditor-dialog-media-info-dateformat": "$2 $1 $3",
+	"visualeditor-dialog-media-info-ellipsis": "…",
 	"visualeditor-dialog-media-info-imagedescription": "Keterangan lengkap",
 	"visualeditor-dialog-media-info-licenseshortname": "Lisensi",
 	"visualeditor-dialog-media-info-meta-artist": "Seniman: $1",
 	"visualeditor-dialog-media-info-moreinfo": "Informasi selengkapnya",
 	"visualeditor-dialog-media-info-readmore": "Pelajari selengkapnya",
+	"visualeditor-dialog-media-info-separator": "·",
 	"visualeditor-dialog-media-info-uploaded": "Diunggah: $1",
 	"visualeditor-dialog-media-page-advanced": "Lanjutan",
 	"visualeditor-dialog-media-page-general": "Umum",

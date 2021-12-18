@@ -13,7 +13,9 @@
 			"Saederup92",
 			"Sarrus",
 			"Sir48",
-			"Weblars"
+			"Weblars",
+			"Antonla",
+			"Jhertel"
 		]
 	},
 	"wikieditor": "Avanceret interface til redigering af wikitekst",
@@ -56,7 +58,7 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Intern henvisning",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Ekstern henvisning",
 	"wikieditor-toolbar-tool-link-empty": "Du har ikke angivet noget at henvise til.",
-	"wikieditor-toolbar-tool-file": "Billedere og medier",
+	"wikieditor-toolbar-tool-file": "Billeder og medier",
 	"wikieditor-toolbar-tool-file-example": "Eksempel.jpg",
 	"wikieditor-toolbar-tool-file-title": "Indsæt fil",
 	"wikieditor-toolbar-file-target": "Filnavn:",

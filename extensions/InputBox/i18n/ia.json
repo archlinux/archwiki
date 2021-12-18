@@ -10,5 +10,8 @@
 	"inputbox-tryexact": "Cercar le titulo exacte",
 	"inputbox-searchfulltext": "Cercar in texto integre",
 	"inputbox-createarticle": "Crear pagina",
+	"inputbox-movearticle": "Renominar pagina",
+	"inputbox-postcomment": "Nove section",
+	"inputbox-postcommenttitle": "Nove section",
 	"inputbox-ns-main": "Principal"
 }

@@ -13,7 +13,8 @@
 			"Liuxinyu970226",
 			"Mark85296341",
 			"Shinjiman",
-			"Xiplus"
+			"Xiplus",
+			"Weather Top Wizard"
 		]
 	},
 	"nuke": "大量刪除",
@@ -32,6 +33,7 @@
 	"nuke-maxpages": "頁面數量上限：",
 	"nuke-editby": "由 [[Special:Contributions/$1|$1]] 建立",
 	"nuke-deleted": "已刪除頁面 '''$1'''。",
+	"nuke-deletion-queued": "頁面'''$1'''已佇列刪除。",
 	"nuke-not-deleted": "'''無法'''刪除頁面 [[:$1]]。",
 	"nuke-delete-more": "[[Special:Nuke|刪除更多頁面]]",
 	"nuke-pattern": "用於頁面名稱的 SQL LIKE 模式（例如 %）：",

@@ -16,9 +16,10 @@
 	"prefs-vector-enable-vector-1-help": "У наредном периоду постепено ћемо ажурирати векторску тему. Изаберите опцију изнад како бисте се вратили на старији изглед теме (децембар 2019). [[mw:Reading/Web/Desktop_Improvements|Детаљније о ажурирањима]]",
 	"vector-opt-out": "Старији изглед",
 	"vector-opt-out-tooltip": "Промените подешавања да бисте се вратили старом изгледу теме (старија векторска)",
-	"vector.css": "/* CSS постављен овде ће утицати на све кориснике векторске теме */",
-	"vector.js": "/* JavaScript постављен овде ће се учитати за све оне који користе векторску тему */",
-	"vector-action-toggle-sidebar": "Укључи/искључи бочну траку",
+	"vector.css": "/* CSS постављен овде учитаће се свим корисницима векторске теме */",
+	"vector.js": "/* JavaScript постављен овде учитаће се свим корисницима векторске теме */",
+	"vector-action-toggle-sidebar": "Прикажи/сакриј бочну траку",
+	"vector-language-button-label": "{{PLURAL:$1|$1 језик|$1 језика}}",
 	"vector-action-addsection": "Додај тему",
 	"vector-action-delete": "Избриши",
 	"vector-action-move": "Премести",
@@ -32,5 +33,7 @@
 	"vector-view-viewsource": "Извор",
 	"vector-jumptonavigation": "Пређи на навигацију",
 	"vector-jumptosearch": "Пређи на претрагу",
-	"vector-more-actions": "Више"
+	"vector-jumptocontent": "Пређи на садржај",
+	"vector-more-actions": "Више",
+	"vector-search-loader": "Учитавам предлоге претраге"
 }

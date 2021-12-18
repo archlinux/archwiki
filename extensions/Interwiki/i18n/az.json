@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Wertuose"
+			"Wertuose",
+			"NMW03"
 		]
 	},
 	"interwiki": "İnterviki məlumatlarına bax və redaktə et",
@@ -10,7 +11,7 @@
 	"interwiki_prefix": "Prefiks",
 	"interwiki-prefix-label": "Prefiks:",
 	"interwiki_local": "Yönləndir",
-	"interwiki-local-label": "Yönləndir:",
+	"interwiki-local-label": "Yönləndir",
 	"interwiki_trans": "Göstər",
 	"interwiki-trans-label": "Göstər:",
 	"interwiki_1": "bəli",

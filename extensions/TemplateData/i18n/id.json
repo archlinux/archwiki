@@ -8,7 +8,9 @@
 			"Kenrick95",
 			"NoiX180",
 			"Rizkiahmadz",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Chinamoonroll",
+			"Rachmat04"
 		]
 	},
 	"templatedata-desc": "Pengimplementasian penyimpanan data untuk parameter templat (dengan menggunakan JSON)",
@@ -76,7 +78,7 @@
 	"templatedata-modal-errormsg": "Ditemukan galat. Pastikan tidak terdapat nama parameter yang kosong atau duplikat, dan pastikan juga nama parameter tidak memuat \"$1\", \"$2\" atau \"$3\".",
 	"templatedata-modal-errormsg-duplicate-name": "Ditemukan galat. Nama yang dipilih sudah digunakan oleh parameter lain.",
 	"templatedata-modal-errormsg-import-noparams": "Tidak ada parameter baru yang ditemukan saat mengimpor.",
-	"templatedata-modal-format-block": "Blok",
+	"templatedata-modal-format-block": "Blokir",
 	"templatedata-modal-format-custom": "Ubahsuai",
 	"templatedata-modal-format-inline": "Satu baris",
 	"templatedata-modal-format-null": "Tak ditentukan",

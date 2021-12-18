@@ -8,7 +8,7 @@
 	"prefs-gadgets": "Acessori",
 	"gadgets-prefstext": "Chi de sota a gh'è una lista di acessori speciai che te podet ativà per la toa utenza. \nLa pupart de sti acessori chì l'è fondada sora 'l JavaScript, donca gh'è besogn de ativà el JavaScript in del to programa de navigazzion de fai fonzionà a la sgiusta manera. Notà che i acessori i avarann nissun efet in quella pagina de preferenze chì.\n\nDessorapù, notà che 'sti accessori speciai i fann minga part del programa MediaWiki e de solit a inn realizzad e sgestid di utent de ciaschedun sit wiki. I minestrador de l'interfacia del sit i poden modifegà la lista di acessori disponibil per mezz di pagine di [[MediaWiki:Gadgets-definition|definizzion]], inveci i minestrador del sit i poden modifegà i so [[Special:Gadgets|descrizzion]], 'doe te podet vedè el codes sorgent de ciaschedun di acessori. El numer de utent per ciaschedun di acessori in su 'sto wiki chì l'è in la lista in di [[Special:GadgetUsage|statisteghe de utilizazzion di acessori]].",
 	"gadgets": "Acessori",
-	"gadgetusage": "Statistiche sora l'utilizazion di acessori",
+	"gadgetusage": "Statisteghe de l'uso di acessori",
 	"gadgetusage-gadget": "Acessori",
 	"gadgetusage-usercount": "Numer de utent",
 	"gadgetusage-noresults": "Nissun acessori trovad",

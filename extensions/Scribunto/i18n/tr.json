@@ -8,7 +8,8 @@
 			"Sadrettin",
 			"Sezgin İbiş",
 			"Violetanka",
-			"Vito Genovese"
+			"Vito Genovese",
+			"SaldırganSincap"
 		]
 	},
 	"scribunto-desc": "Betik dillerini MediaWiki sayfalarına gömmek için çerçeve",
@@ -45,11 +46,11 @@
 	"scribunto-lua-notarrayreturn": "Betik hatası: Modül $2 değerini döndürdü. Bir aktarım tablosu döndürmesi gerekiyor.",
 	"scribunto-luastandalone-proc-error": "Lua hatası: İşlem oluşturulamıyor.",
 	"scribunto-luastandalone-proc-error-msg": "Lua hatası: İşlem oluşturulamıyor: $2",
-	"scribunto-luastandalone-proc-error-proc-open": "Lua hatası: İşlem oluşturulamıyor: proc_open mevcut değil. PHP'nin \"enable_functions\" yapılandırma yönergesini kontrol edin.",
+	"scribunto-luastandalone-proc-error-proc-open": "Lua hatası: İşlem oluşturulamıyor: proc_open mevcut değil. PHP'nin \"disable_functions\" yapılandırma yönergesini kontrol edin.",
 	"scribunto-luastandalone-decode-error": "Lua hatası: Dahili hata: Mesajın kodu çözülemedi.",
 	"scribunto-luastandalone-write-error": "Lua hatası: Dahili hata: Boruya yazma hatası.",
 	"scribunto-luastandalone-read-error": "Lua hatası: Dahili hata: Borudan okuma hatası.",
-	"scribunto-luastandalone-gone": "Lua hatası: Dahili hata: Yorumlayıcı zaten çıkmış.",
+	"scribunto-luastandalone-gone": "Lua hatası: Dahili hata: Yorumlayıcı zaten var.",
 	"scribunto-luastandalone-signal": "Lua hatası: Dahili hata: Yorumlayıcı \"$2\" sinyaliyle sonlandırıldı.",
 	"scribunto-luastandalone-exited": "Lua hatası: Dahili hata: Yorumlayıcı durum $2 ile çıkıldı.",
 	"scribunto-module-with-errors-category": "Hatalı Scribunto modülleri",

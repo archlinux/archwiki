@@ -6,7 +6,9 @@
 			"Korrawit",
 			"Macofe",
 			"Octahedron80",
-			"Woraponboonkerd"
+			"Woraponboonkerd",
+			"Ans",
+			"Thas Tayapongsak"
 		]
 	},
 	"wikieditor": "อินเทอร์เฟซการแก้ไขข้อความวิกิขั้นสูง",
@@ -53,7 +55,7 @@
 	"wikieditor-toolbar-tool-file-example": "ตัวอย่าง.jpg",
 	"wikieditor-toolbar-tool-file-title": "แทรกไฟล์",
 	"wikieditor-toolbar-file-target": "ชื่อไฟล์:",
-	"wikieditor-toolbar-file-caption": "คำบรรยาย:",
+	"wikieditor-toolbar-file-caption": "คำบรรยายโดยย่อ",
 	"wikieditor-toolbar-file-size": "ขนาด:",
 	"wikieditor-toolbar-file-float": "จัดชิดแนว:",
 	"wikieditor-toolbar-file-default": "(ค่าเริ่มต้น)",

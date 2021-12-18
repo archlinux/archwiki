@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Giromin Cangiaxo"
+			"Giromin Cangiaxo",
+			"N. Longo"
 		]
 	},
 	"cite-desc": "O l'azonze i tag <code>&lt;ref&gt;</code> e <code>&lt;references/&gt;</code> pe gestî e çitaçioin",
-	"cite_error": "Errô inte notte: $1",
+	"cite_error": "Erô inte nòtte: $1",
 	"cite_error_ref_invalid_dir": "<code>dir=\"$1\"</code> non vallido, o deve eser <code>ltr</code> ò <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Errô inte l'uso do marcatô <code>&lt;ref&gt;</code>; o nomme o no poeu ese un nummero intrego. Adoeuvia un tittolo esteizo",
 	"cite_error_ref_no_key": "L'avertua de l'etichetta <code>&lt;ref&gt;</code> a no l'è corretta ò a g'ha un nomme errou.",

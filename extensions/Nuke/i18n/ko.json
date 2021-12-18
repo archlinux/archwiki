@@ -29,6 +29,7 @@
 	"nuke-maxpages": "문서의 최대 크기:",
 	"nuke-editby": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]]님이 만듦",
 	"nuke-deleted": "'''$1''' 문서를 삭제했습니다.",
+	"nuke-deletion-queued": "'''$1''' 문서는 삭제를 위해 대기열에 추가되었습니다.",
 	"nuke-not-deleted": "[[:$1]] 문서를 삭제하지 '''못했습니다'''.",
 	"nuke-delete-more": "[[Special:Nuke|더 많은 문서를 삭제하기]]",
 	"nuke-pattern": "문서 이름의 SQL LIKE 패턴(예: %):",

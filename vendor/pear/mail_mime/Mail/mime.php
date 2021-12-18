@@ -8,7 +8,7 @@
  * contain plain-text bodies, HTML bodies, attachments, inline
  * images and specific headers.
  *
- * Compatible with PHP version 5 and 7
+ * Compatible with PHP version 5, 7 and 8
  *
  * LICENSE: This LICENSE is in the BSD license style.
  * Copyright (c) 2002-2003, Richard Heyes <richard@phpguru.org>
@@ -87,21 +87,21 @@ class Mail_mime
      *
      * @var string
      */
-    protected $txtbody;
+    protected $txtbody = '';
 
     /**
      * Contains the html part of the email
      *
      * @var string
      */
-    protected $htmlbody;
+    protected $htmlbody = '';
 
     /**
      * Contains the text/calendar part of the email
      *
      * @var string
      */
-    protected $calbody;
+    protected $calbody = '';
 
     /**
      * List of the attached images
@@ -792,7 +792,7 @@ class Mail_mime
         // Write the rest of the message into file
         $res = $this->get($params, $filename);
 
-        return $res ?: true;
+        return $res ? $res : true;
     }
 
     /**
@@ -837,7 +837,7 @@ class Mail_mime
             @ini_set('magic_quotes_runtime', $magic_quotes);
         }
 
-        return $res ?: true;
+        return $res ? $res : true;
     }
 
     /**
@@ -875,7 +875,7 @@ class Mail_mime
             }
         }
 
-        if (count($this->html_images) && isset($this->htmlbody)) {
+        if (count($this->html_images) && strlen($this->htmlbody) > 0) {
             foreach ($this->html_images as $key => $value) {
                 $rval  = preg_quote($value['name'], '#');
                 $regex = array(
@@ -987,12 +987,12 @@ class Mail_mime
         $alternatives_count = $html + $calendar + $has_text;
 
         if ($alternatives_count > 1) {
-            $alt_part = $this->addAlternativePart($parent_part ?: $mixed_params);
+            $alt_part = $this->addAlternativePart($parent_part ? $parent_part : $mixed_params);
         } else {
             $alt_part = null;
         }
 
-        $dest_part = $alt_part ?: $parent_part;
+        $dest_part = $alt_part ? $alt_part : $parent_part;
         $part = null;
 
         if ($has_text) {
@@ -1007,7 +1007,7 @@ class Mail_mime
             $part = $this->addCalendarPart($dest_part);
         }
 
-        return $dest_part ?: $part;
+        return $dest_part ? $dest_part : $part;
     }
 
     /**

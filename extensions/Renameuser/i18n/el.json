@@ -12,11 +12,12 @@
 			"NikosLikomitros",
 			"Nikosgranturismogt",
 			"Omnipaedista",
-			"ZaDiak"
+			"ZaDiak",
+			"Giannaras99"
 		]
 	},
 	"renameuser": "Μετονομασία χρήστη",
-	"renameuser-linkoncontribs": "Μετονομασία χρήστη",
+	"renameuser-linkoncontribs": "Μετονομασία {{GENDER:$1|χρήστη|χρήστριας}}",
 	"renameuser-linkoncontribs-text": "Μετονομασία αυτού του {{GENDER:$1|χρήστη}}",
 	"renameuser-desc": "Προσθέτει μια [[Special:RenameUser|ειδική σελίδα]] για την μετονομασία ενός χρήστη (είναι απαραίτητο το δικαίωμα ''renameuser'')",
 	"renameuserold": "Τρέχον όνομα χρήστη:",

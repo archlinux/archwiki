@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Lokal Profil",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Hannarosendeloitte"
 		]
 	},
 	"apihelp-titleblacklist-description": "Validera en sidtitel, filnamn eller användarnamn mot TitleBlacklist.",
@@ -11,5 +12,6 @@
 	"apihelp-titleblacklist-param-action": "Åtgärden som ska kontrolleras.",
 	"apihelp-titleblacklist-param-nooverride": "Försök inte att åsidosätta svartlistan för titlar.",
 	"apihelp-titleblacklist-example-1": "Kontrollera om [[Foo]] är svartlistad",
-	"apihelp-titleblacklist-example-2": "Kontrollera om [[Bar]] är svartlistad för redigering"
+	"apihelp-titleblacklist-example-2": "Kontrollera om [[Bar]] är svartlistad för redigering",
+	"apihelp-createaccount-param-ignoretitleblacklist": "Ignorera förfalskningskontroller (kräver en av följande rättigheter: <code>tboverride</code>, <code>tboverride-account</code>)."
 }

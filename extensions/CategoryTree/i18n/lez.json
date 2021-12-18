@@ -17,6 +17,7 @@
 	"categorytree-mode-all": "Вири ччинар",
 	"categorytree-collapse": "Алчудрун",
 	"categorytree-expand": "Гегьеншрун",
+	"categorytree-member-counts": "$1 {{PLURAL:$1|агъакатегория}}, $2 {{PLURAL:$2|чин}} ва $3 {{PLURAL:$3|файл}} ква",
 	"categorytree-num-categories": "$1 К",
 	"categorytree-num-pages": "$1 Ч",
 	"categorytree-num-files": "$1 Ф",

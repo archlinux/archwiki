@@ -28,7 +28,7 @@
 	"apihelp-visualeditor-param-preload": "הדף שממנו יילקח התוכן אם בדף המאוחזר עדיין אין תוכן.",
 	"apihelp-visualeditor-param-preloadparams": "הפרמטרים שיוכללו בדף שייטען מראש, אם ישנו.",
 	"apihelp-visualeditor-param-pst": "ביצוע התמרה לפני שמירה (pre-save transform) על קוד ויקי לפני שליחתו לפרסואיד (paction=parsefragment).",
-	"apihelp-visualeditor-param-section": "על איזו פסקה לפעול.",
+	"apihelp-visualeditor-param-section": "על איזה פרק לפעול.",
 	"apihelp-visualeditor-param-starttimestamp": "בעת שמירה, להגדיר את זה בתור חותם־הזמן של הגרסה שנטענת. זה משמש לזיהוי התנגשויות.",
 	"apihelp-visualeditor-param-stash": "בעת השמירה נא להגדיר שזה true כדי להשתמש ב־API המאגר",
 	"apihelp-visualeditor-param-wikitext": "קוד ויקי שיישלח לפרסואיד כדי להמיר ל־HTML‏ (paction=parsefragment).",
@@ -45,11 +45,11 @@
 	"apihelp-visualeditoredit-param-oldid": "באיזה מספר גרסה להשתמש. ברירת המחדל היא הגרסה האחרונה. יש להשתמש ב־0 לדף חדש.",
 	"apihelp-visualeditoredit-param-paction": "איזו פעולה לבצע.",
 	"apihelp-visualeditoredit-param-page": "על איזה דף לבצע את הפעולה.",
-	"apihelp-visualeditoredit-param-section": "על איזו פסקה לפעול.",
-	"apihelp-visualeditoredit-param-sectiontitle": "הכותרת של הפסקה החדשה.",
+	"apihelp-visualeditoredit-param-section": "על איזה פרק לפעול.",
+	"apihelp-visualeditoredit-param-sectiontitle": "הכותרת של הפרק החדש.",
 	"apihelp-visualeditoredit-param-starttimestamp": "בעת השמירה, להגדיר את זה לחותם־זמן כאשר הדף לא נטען. משמש לזיהוי התנגשויות עריכה.",
 	"apihelp-visualeditoredit-param-summary": "תקציר עריכה.",
-	"apihelp-visualeditoredit-param-tags": "אילו תגי שינוי להחיל על העריכה.",
+	"apihelp-visualeditoredit-param-tags": "אילו תגי שינוי להחיל על הגרסה.",
 	"apihelp-visualeditoredit-param-wikitext": "עם איזה קוד ויקי לפעול.",
 	"apihelp-visualeditoredit-summary": "שמירת דף HTML5 למדיה־ויקי (מומר לקוד ויקי דרך שירות פרסואיד)."
 }

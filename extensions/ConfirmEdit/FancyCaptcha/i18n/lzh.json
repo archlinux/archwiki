@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"LaMagiaaa",
-			"Suchichi02"
+			"Suchichi02",
+			"Crowley666"
 		]
 	},
 	"fancycaptcha-captcha": "安檢",
+	"fancycaptcha-edit": "欲纂此頁，鍵入圖示之碼　([[Special:Captcha/help|幫助]])：",
 	"fancycaptcha-imgcaptcha-ph": "輸圖中文字"
 }

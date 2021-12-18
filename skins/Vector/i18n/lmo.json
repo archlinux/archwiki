@@ -12,7 +12,7 @@
 	"vector-opt-out": "Torna a l'aspet vegg",
 	"vector-opt-out-tooltip": "Cambia i to impostazzion per tornà a la visualizzazion de la pell che la gh'era prima (legacy Vector)",
 	"vector-action-toggle-sidebar": "Ativa/desativa la sbarra de fianch",
-	"vector-language-button-label": "{{PLURAL:$1|$1 lengoa|$1 lengove}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lengua|$1 lengov}}",
 	"vector-action-addsection": "Sgionta un argoment",
 	"vector-action-delete": "Scancela",
 	"vector-action-move": "Sposta",

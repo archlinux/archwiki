@@ -1,11 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"DonCamillo"
+			"DonCamillo",
+			"Em-em"
 		]
 	},
 	"categorytree-category": "Rukuni:",
 	"categorytree-expand": "Fadada",
+	"categorytree-member-counts": "Ɗauke {{PLURAL:$1|1 subcategory|$1 subcategories}}, {{PLURAL:$2|1 page|$2 pages}}, and {{PLURAL:$3|1 file|$3 files}}",
 	"categorytree-num-categories": "$1 C",
-	"categorytree-num-pages": "$1 P"
+	"categorytree-num-pages": "$1 P",
+	"categorytree-num-files": "$1 F"
 }

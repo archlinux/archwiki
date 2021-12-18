@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Oby Ezeilo"
+			"Oby Ezeilo",
+			"Tochiprecious"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}/Visual edit]]"
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ndezi nke anya na-ele]]"
 }

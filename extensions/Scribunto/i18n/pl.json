@@ -10,7 +10,8 @@
 			"Rail",
 			"Railfail536",
 			"WTM",
-			"Woytecr"
+			"Woytecr",
+			"The Polish"
 		]
 	},
 	"scribunto-desc": "Framework pozwalający na osadzanie języków skryptowych na stronach MediaWiki",
@@ -56,7 +57,7 @@
 	"scribunto-luastandalone-exited": "Błąd Lua: Błąd wewnętrzny: Interpreter zakończył pracę ze statusem $2",
 	"scribunto-module-with-errors-category": "Moduły Scribunto zawierające błędy",
 	"scribunto-module-with-errors-category-desc": "Moduł zawiera błąd.",
-	"scribunto-limitreport-timeusage": "Czas użytkowania Lua",
+	"scribunto-limitreport-timeusage": "Czas pracy (Lua)",
 	"scribunto-limitreport-timeusage-value": "$1/$2 sekund",
 	"scribunto-limitreport-virtmemusage": "Wirtualny rozmiar Lua",
 	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|bajt|bajty|bajtów}}",

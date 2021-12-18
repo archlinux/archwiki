@@ -5,8 +5,11 @@
 		]
 	},
 	"cite_error": "ߝߎ߬ߕߎ߲߬ߕߌ ߞߏߝߐ߫: $1",
+	"cite-tracking-category-cite-error": "ߝߎ߬ߕߎ߲߬ߕߌ߫ ߦߟߌߡߊߛߙߋ ߦߋ߫ ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߟߊ߫",
+	"cite-tracking-category-cite-error-desc": "ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߦߋ߫ ߦߌߟߡߊ ߣߌ߲߬ ߘߐ߫߸ ߝߎ߬ߕߎ߲߬ߕߌ ߦߴߏ߬ ߟߎ߫ ߟߊ߫ ߞߊ߬ ߓߐ߫ ߦߟߌߡߊߛߙߋ ߞߊ߲ߠߊߛߓߍ ߟߎ߬ ߟߊߓߊ߯ߙߊ ߡߊ߬.",
 	"cite_references_link_accessibility_label": "ߌ ߕߐ߬ߡߐ߲߬ ߛߊ߲ߝߍ߬",
 	"cite_references_link_many_accessibility_label": "ߌ ߔߊ߲߫ ߛߊ߲ߝߍ߬ ߞߊ߬ ߛߋ߫:",
 	"cite_references_link_accessibility_back_label": "ߌ ߜߊ߲߫ ߞߵߌ ߞߐߛߊ߬ߦߌ߫ ߘߎ߰ߟߊ߫",
+	"cite_section_preview_references": "ߦߟߌߡߊߛߙߋ ߟߎ߬ ߢߍߦߋߟߌ",
 	"cite_warning": "ߟߊߞߏߝߐߟߌ ߝߎ߬ߕߎ߲߬ߕߌ: $1"
 }

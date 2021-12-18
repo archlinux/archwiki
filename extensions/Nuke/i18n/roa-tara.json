@@ -20,6 +20,7 @@
 	"nuke-maxpages": "Numere massime de pàggene:",
 	"nuke-editby": "Ccrejate da [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Pàgene '''$1''' ha state scangellate.",
+	"nuke-deletion-queued": "'A pàgene '''$1''' ha state accodate pa scangellazzione.",
 	"nuke-not-deleted": "Pàgene [[:$1]] '''non ge pò''' essere scangellate.",
 	"nuke-delete-more": "[[Special:Nuke|Scangille cchiù pàggene]]",
 	"nuke-pattern": "Segnaposte SQL LIKE (e.g. %) pu nome d'a pàgene:",

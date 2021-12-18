@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robby"
+			"Robby",
+			"Les Meloures"
 		]
 	},
 	"templatedata-doc-desc-empty": "Keng Beschreiwung.",
@@ -41,8 +42,8 @@
 	"templatedata-invalid-missing": "Obligatoresch Eegenschaft \"$1\" net fonnt.",
 	"templatedata-invalid-param": "Net valabele Parameter \"$1\" fir d'Eegenschaft \"$2\".",
 	"templatedata-invalid-parse": "Syntaxfeeler am JSON.",
-	"templatedata-modal-button-add-language": "Sprooch dobäisetzen",
-	"templatedata-modal-button-addparam": "Parameter dobäisetzen",
+	"templatedata-modal-button-add-language": "Sprooch derbäisetzen",
+	"templatedata-modal-button-addparam": "Parameter derbäisetzen",
 	"templatedata-modal-button-apply": "Uwenden",
 	"templatedata-modal-button-back": "Zréck",
 	"templatedata-modal-button-cancel": "Ofbriechen",
@@ -76,7 +77,7 @@
 	"templatedata-modal-table-param-deprecatedValue": "Vereelzt Uleedung",
 	"templatedata-modal-table-param-description": "Beschreiwung ($1)",
 	"templatedata-modal-table-param-example": "Beispill ($1)",
-	"templatedata-modal-table-param-importoption": "{{PLURAL:$1|E virgeschloene|$1 virgeschloe}} Parameter dobäisetzen",
+	"templatedata-modal-table-param-importoption": "{{PLURAL:$1|E virgeschloene|$1 virgeschloe}} Parameter derbäisetzen",
 	"templatedata-modal-table-param-importoption-subtitle": "Inklusiv: $1",
 	"templatedata-modal-table-param-label": "Etikett ($1)",
 	"templatedata-modal-table-param-name": "Numm",
@@ -84,7 +85,7 @@
 	"templatedata-modal-table-param-suggested": "Virgeschlo",
 	"templatedata-modal-table-param-type": "Typ",
 	"templatedata-modal-table-param-uneditablefield": "Net ännerbar",
-	"templatedata-modal-title-addparam": "Neie Parameter dobäisetzen",
+	"templatedata-modal-title-addparam": "Neie Parameter derbäisetzen",
 	"templatedata-modal-title-choose-language": "Sprooch eraussichen",
 	"templatedata-modal-title-language": "Sprooch",
 	"templatedata-modal-title-paramorder": "Reiefolleg vun de Parameteren",

@@ -3,10 +3,11 @@
 		"authors": [
 			"Gomoko",
 			"Thibaut120094",
-			"Wladek92"
+			"Wladek92",
+			"McDutchie"
 		]
 	},
-	"hcaptcha-desc": "Module [https://www.hcaptcha.com/ hCaptcha]pour Confirm Edit",
+	"hcaptcha-desc": "Module [https://www.hcaptcha.com/ hCaptcha] pour Confirm Edit",
 	"hcaptcha-edit": "Pour protéger le wiki contre les attaques de modifications automatisées, nous vous prions de bien vouloir résoudre le hCaptcha suivant :",
 	"hcaptcha-addurl": "Votre modification inclut de nouveaux liens externes. Pour protéger le wiki contre le pourriel automatisé, nous vous prions de bien vouloir résoudre le CAPTCHA suivant :",
 	"hcaptcha-badlogin": "Pour protéger le wiki contre les tentatives automatisées de cassage du mot de passe, nous vous prions de bien vouloir résoudre le hCaptcha suivant :",

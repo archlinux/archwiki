@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Iriman"
+			"Iriman",
+			"Jeeputer"
 		]
 	},
-	"renocaptcha-createaccount": "برای جلوگیری از ایجاد خودکار حساب کاربری، خواهشمندیم مسئلهٔ زیر را حل نمایید ([[Special:Captcha/help|اطلاعات بیشتر]]):"
+	"renocaptcha-createaccount": "برای حفاظت از ویکی در برابر ایجاد خودکار حساب کاربری، احتراماً از شما خواهشمندیم کپچای زیر را حل نمایید:"
 }

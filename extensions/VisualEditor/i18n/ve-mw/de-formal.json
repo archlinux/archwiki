@@ -3,7 +3,8 @@
 		"authors": [
 			"Hwboehm",
 			"Kghbln",
-			"Se4598"
+			"Se4598",
+			"Zabe"
 		]
 	},
 	"visualeditor-autosave-modified-prompt-message": "Diese Seite wurde bearbeitet, seit Sie sie das letzte mal geladen haben. Möchten {{GENDER:|Sie}} die Bearbeitung der alten Version fortsetzen oder die aktuelle Version bearbeiten?",
@@ -13,6 +14,7 @@
 	"visualeditor-autosave-recovered-text": "Ihre ungespeicherten Änderungen wurden automatisch wiederhergestellt.",
 	"visualeditor-beta-warning": "Falls Sie irgendwelche technischen Fehler entdecken, melden Sie diese bitte.",
 	"visualeditor-browserwarning": "Sie verwenden einen Browser, der vom VisualEditor nicht offiziell unterstützt wird.",
+	"visualeditor-ca-editsource-section": "Quelltext bearbeiten",
 	"visualeditor-dialog-media-alttext-section-help": "Sie können dies verwenden, um eine Textbeschreibung für Menschen zu schreiben, die das Element nicht sehen können. Die Beschreibung sollte genug für sie zum Verstehen des Zwecks und der Information sein, die vom Medienelement gegeben wird. Dies ist wichtig für blinde Benutzer und andere Menschen, die Screenreader-Software oder Nur-Text-Browser verwenden.",
 	"visualeditor-dialog-media-content-section-help": "Sie können dies verwenden, um eine Bezeichnung anzuzeigen, die neben dem Element für alle Leser angezeigt wird. Dies wird oft verwendet, um zu erklären, warum das Element für den Kontext relevant ist, in dem es angezeigt wird. Sie sollte knapp und informativ sein.",
 	"visualeditor-dialog-media-position-checkbox-help": "Sie können dieses Medienelement in der Zeile mit dem Seitentext anstatt umgebend erscheinen lassen. Sie sollten dies nur selten tun, da es den Textfluss aufbricht, wenn Sie die Markierung dieses Kästchens aufheben.",

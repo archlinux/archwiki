@@ -5,9 +5,15 @@
 			"Yupik"
 		]
 	},
+	"visualeditor-categories-tool": "Kategoriijat",
 	"visualeditor-dialog-media-choose-image": "Geavat dán gova",
+	"visualeditor-dialog-media-content-filename": "Fiilanamma",
+	"visualeditor-dialog-media-info-licenseshortname": "Liseansa",
+	"visualeditor-dialog-media-info-moreinfo": "Lassedieđut",
 	"visualeditor-dialog-media-info-readmore": "Loga lasi",
+	"visualeditor-dialog-media-page-advanced": "Lasseásahusat",
 	"visualeditor-dialog-media-search-tab-search": "Oza",
+	"visualeditor-dialog-media-searchselect": "Vállje",
 	"visualeditor-dialog-media-title": "Mediaválljemat",
 	"visualeditor-dialog-meta-categories-category": "Kategoriija",
 	"visualeditor-dialog-meta-categories-data-label": "Kategoriijat",
@@ -18,6 +24,8 @@
 	"visualeditor-dialog-meta-languages-name-label": "Giella",
 	"visualeditor-dialog-meta-languages-section": "Gielat",
 	"visualeditor-dialog-meta-settings-redirect-label": "Sirdde dán siiddu siidui",
+	"visualeditor-dialog-template-title": "Málle",
+	"visualeditor-dialog-transclusion-add-param": "Lasit lassedieđuid",
 	"visualeditor-dialogbutton-media-tooltip": "Govat ja media",
 	"visualeditor-dialogbutton-template-tooltip": "Málle",
 	"visualeditor-editnotices-tooltip": "Divodandieđáhusat",
@@ -28,6 +36,7 @@
 	"visualeditor-formatdropdown-format-mw-heading4": "Nuppáldas bajilčála 2",
 	"visualeditor-formatdropdown-format-mw-heading5": "Nuppáldas bajilčála 3",
 	"visualeditor-formatdropdown-format-mw-heading6": "Nuppáldas bajilčála 4",
+	"visualeditor-languages-tool": "Gielat",
 	"visualeditor-linkinspector-button-link-external": "Olggobeale siidu",
 	"visualeditor-linkinspector-button-link-internal": "Oza siiddu",
 	"visualeditor-linkinspector-educationpopup-title": "Liŋkkat",
@@ -36,7 +45,10 @@
 	"visualeditor-mweditmodesource-tool-current": "Gáldodivodeapmi",
 	"visualeditor-mweditmodeve-tool-current": "Visuála divvun",
 	"visualeditor-mwgallerydialog-title": "Galleriija",
+	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Giella",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Gielat",
 	"visualeditor-mwsignature-tool": "Du vuolláičála",
 	"visualeditor-savedialog-label-review": "Dárkkis iežat rievdademiid",
+	"visualeditor-savedialog-review-wikitext": "Wikiteaksta",
 	"visualeditor-savedialog-title-save": "Vurke iežat rievdadusaid"
 }

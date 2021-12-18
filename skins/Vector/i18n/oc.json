@@ -2,11 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Boulaur",
-			"Cedric31"
+			"Cedric31",
+			"Quentí"
 		]
 	},
 	"vector.css": "/* Lo CSS plaçat aicí afectarà los utilizaires de l’abilhatge Vector */",
 	"vector.js": "/* Tot JavaScript aicí serà cargat amb las paginas accedidas pels utilizaires de l’abilhatge Vector unicament. */",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lenga|$1 lengas}}",
 	"vector-action-addsection": "Apondre un subjècte",
 	"vector-action-delete": "Suprimir",
 	"vector-action-move": "Renomenar",

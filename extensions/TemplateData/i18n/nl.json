@@ -16,7 +16,8 @@
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan"
+			"Southparkfan",
+			"McDutchie"
 		]
 	},
 	"templatedata-desc": "Implementeert gegevensopslag voor sjabloonparameters (met behulp van JSON)",
@@ -47,7 +48,7 @@
 	"templatedata-doc-param-type-unknown": "Onbekend",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "Bestand",
-	"templatedata-doc-param-type-wiki-page-name": "Pagina",
+	"templatedata-doc-param-type-wiki-page-name": "Paginanaam",
 	"templatedata-doc-param-type-wiki-template-name": "Sjabloon",
 	"templatedata-doc-param-type-wiki-user-name": "Gebruiker",
 	"templatedata-doc-params": "Sjabloonparameters",
@@ -72,7 +73,7 @@
 	"templatedata-modal-button-changelang": "Taal wijzigen",
 	"templatedata-modal-button-delparam": "Parameterinformatie verwijderen",
 	"templatedata-modal-button-done": "Afgerond",
-	"templatedata-modal-button-map": "Kaart bekijken",
+	"templatedata-modal-button-map": "Mapping bewerking",
 	"templatedata-modal-button-importParams": "Parameters importeren",
 	"templatedata-modal-button-restoreparam": "Parameter herstellen",
 	"templatedata-modal-button-saveparam": "Opslaan",

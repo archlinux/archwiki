@@ -5,7 +5,8 @@
 			"Christian List",
 			"Peter Alberti",
 			"Saederup92",
-			"Weblars"
+			"Weblars",
+			"Antonla"
 		]
 	},
 	"vector-skin-desc": "Moderne version af MonoBook med frisk udseende og mange forbedringer af brugervenligheden",
@@ -14,7 +15,7 @@
 	"vector-opt-out": "Skift til det gamle udseende",
 	"vector-opt-out-tooltip": "Ændr indstillingerne for at gå tilbage til det gamle udseende (klassisk Vector)",
 	"vector-action-toggle-sidebar": "Vis/skjul venstremenuen",
-	"vector-action-addsection": "Nyt emne",
+	"vector-action-addsection": "Tilføj emne",
 	"vector-action-delete": "Slet",
 	"vector-action-move": "Flyt",
 	"vector-action-protect": "Beskyt",

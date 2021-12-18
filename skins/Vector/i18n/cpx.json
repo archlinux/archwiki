@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"ChoiChong"
+		]
+	},
+	"vector-action-delete": "刪",
+	"vector-action-move": "移动",
+	"vector-view-edit": "修改"
+}

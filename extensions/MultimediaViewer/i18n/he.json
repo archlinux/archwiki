@@ -20,7 +20,7 @@
 	"multimediaviewer-multiple-authors": "{{PLURAL:$1|ועוד יוצר אחד|ועוד $1 יוצרים}}",
 	"multimediaviewer-multiple-authors-combine": "$1 $2",
 	"multimediaviewer-metadata-error": "לא היה ניתן לטעון את פרטי התמונה. (שגיאה: $1)",
-	"multimediaviewer-thumbnail-error": "סליחה, לא ניתן להציג את הקובץ",
+	"multimediaviewer-thumbnail-error": "מצטערים, לא ניתן להציג את הקובץ",
 	"multimediaviewer-thumbnail-error-description": "נראה שיש בעיה טכנית. באפשרותך $1 אם היא ממשיכה. שגיאה: $2",
 	"multimediaviewer-thumbnail-error-retry": "לנסות שוב",
 	"multimediaviewer-thumbnail-error-report": "לדווח את הבעיה",

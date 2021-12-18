@@ -1,5 +1,47 @@
 = MediaWiki 1.36 =
 
+== MediaWiki 1.36.3 ==
+
+This is a security and maintenance release of the MediaWiki 1.36 branch.
+
+=== Changes since MediaWiki 1.36.2 ===
+* (T280363) mediawiki.page.ready: Introduce wikipage.indicators hook.
+* (T290697) Add symfony/polyfill-php80.
+* IcuCollation: Add some more icu to unicode version mappings.
+* ApiBase: Annotate deprecated constants individually.
+* PHPVersionCheck: Mark PHP 7.4.0 - 7.4.2 as buggy.
+* (T293044) installer: Fix 5th param to sourceFile() in DatabaseUpdater.
+* (T291127) Always encode spaces in cookie values as "%20".
+* Use LocalFile::getHookRunner instead of LocalFile::hookRunner.
+* (T293564) mediawiki.page.ready: Fire hook 'wikipage.indicators' with
+  children.
+* HistoryBlobStub: add getLocation() to get $mOldId.
+* Fix checkStorage.php.
+* checkStorage: pass no parameters to WikiRevision::getContent().
+* (T292763, CVE-2021-44854) SECURITY: Do not cache private wiki completion results.
+* (T294316) Revert "Mark ApiClientLogin/ApiLogin as requiring write mode".
+* (T294796) JobQueueRedis: Replace deprecated zSize with zCard.
+* (T278037) NoLocalSettings: Pass an EmptyBagOStuff to TemplateParser.
+* (T212428, T267468) Allow populateContentTables to continue when there are
+  bad blobs.
+* (T295191) ApiQuerySiteinfo: Fix "rightsinfo"/"url" when $wgRightsPage is
+  set.
+* Update pear/mail_mime to 1.10.11.
+* Update deprecated Guzzle Psr7 function calls.
+* (T281972) Follow-Up: I10fbd4b6a: Update @since tags as those were backported.
+* Tweak error message for missing composer dependencies.
+* (T296112) Allow inserting new sections named '0'.
+* nukeNS: don't run purgeRedundantText() after every change.
+* (T286779, T297031) installer: Fix Postgres mistakes in using changeField
+  method.
+* (T225888) RollbackAction: fix missing pagetitle.
+* (T297322, CVE-2021-44858, CVE-2021-44857) SECURITY: Fix permissions checks in
+  undo actions.
+* (T297574, CVE-2021-45038) SECURITY: Fix permissions check in action=rollback.
+* (T34716, T297416) SECURITY: Require 'read' right for most actions.
+* (T271037, CVE-2021-44856) SECURITY: Fix use of EditFilterMergedContent hook when
+  changing content model.
+
 == MediaWiki 1.36.2 ==
 
 This is a security and maintenance release of the MediaWiki 1.36 branch.
@@ -204,6 +246,7 @@ This is no longer encouraged, and the option has been removed.
 * Added wikimedia/request-timeout 1.1.0.
 * Added wikimedia/shellbox 1.0.4.
 * Added WVUI 0.1.0.
+* Added symfony/symfony/polyfill-php80 1.23.1.
 
 ==== Changed external libraries ====
 * Updated composer/semver from 1.5.1 to 3.2.4.
@@ -212,7 +255,7 @@ This is no longer encouraged, and the option has been removed.
 * Updated jQuery Migrate from v3.1.0 to v3.3.2.
 * Updated jquery.client from 2.0.2 to 3.0.0.
 * Updated OOUI from 0.39.3 to 0.41.3.
-* Updated pear/mail_mime from 1.10.8 to 1.10.9.
+* Updated pear/mail_mime from 1.10.8 to 1.10.11.
 * Updated pear/net_smtp from 1.9.1 to 1.9.2.
 * Updated pimple/pimple from 3.3.0 to 3.3.1.
 * Updated wikimedia/at-ease from 2.0.0 to 2.1.0.

@@ -68,7 +68,7 @@
 	"templatedata-modal-button-removemap": "הסרת מפה",
 	"templatedata-modal-button-restoreparam": "שחזור פרמטר",
 	"templatedata-modal-button-saveparam": "שמירה",
-	"templatedata-modal-confirmcancel": "האם ברצונך לבטל את השינויים שביצעת?",
+	"templatedata-modal-confirmcancel": "האם {{GENDER:|אתה בטוח שאתה רוצה|את בטוחה שאת רוצה|ברצונך באמת}} לזרוק את השינויים שלך?",
 	"templatedata-modal-current-language": "שפה נוכחית: $1",
 	"templatedata-modal-errormsg": "נמצאו שגיאות. נא לוודא ששמות הפרמטרים אינם ריקים ואינם חוזרים על עצמם, ושבשמות הפרמטרים לא מופיעים התווים \"$1\", \"$2\" או \"$3\".",
 	"templatedata-modal-errormsg-duplicate-name": "נמצאה שגיאה. השם שנבחר כבר משמש פרמטר אחר.",

@@ -19,7 +19,8 @@
 			"SaldırganSincap",
 			"Srhat",
 			"Sucsuzz",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Cobija"
 		]
 	},
 	"wikieditor": "Gelişmiş vikimetin düzenleme arayüzü",
@@ -68,7 +69,7 @@
 	"wikieditor-toolbar-file-target": "Dosya adı:",
 	"wikieditor-toolbar-file-caption": "Altyazı:",
 	"wikieditor-toolbar-file-alt": "Alternatif metin:",
-	"wikieditor-toolbar-file-alt-help": "Dosyayı göremeyen insanlar için bu isteğe bağlı alana açıklama metni yazabilirsiniz. \nAçıklama, medya öğesinin verdiği amacı ve bilgiyi anlamaları için yeterli olmalıdır. \nBu, görme engelli kullanıcılar ve ekran okuyucu yazılımı veya salt metin tarayıcı kullanan diğer kişiler için çok önemlidir.",
+	"wikieditor-toolbar-file-alt-help": "Dosyayı göremeyen insanlar için bu isteğe bağlı alana açıklama metni yazabilirsiniz. \nAçıklama, medya ögesinin amacını ve verdiği bilgiyi anlamak için yeterli olmalıdır. Bu, ekran okuma yazılımı ya da metin tarayıcı kullanan görme engelli kullanıcılar veya diğer kişiler için çok önemlidir.",
 	"wikieditor-toolbar-file-alt-help-label": "(Yardımı gör)",
 	"wikieditor-toolbar-file-size": "Boyut:",
 	"wikieditor-toolbar-file-float": "Hizalama:",

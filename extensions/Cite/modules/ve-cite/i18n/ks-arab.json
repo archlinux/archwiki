@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Iflaq"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "کِتاب",
+	"visualeditor-cite-tool-name-news": "خَبَر",
+	"visualeditor-cite-tool-name-web": "ویب سایٹ",
+	"cite-ve-othergroup-item": "$1 حَوالہٕ",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "حَوالہٕ"
+}

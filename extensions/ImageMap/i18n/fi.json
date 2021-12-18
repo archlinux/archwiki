@@ -4,13 +4,14 @@
 			"Agony",
 			"Nike",
 			"Str4nd",
-			"Tarmo"
+			"Tarmo",
+			"MITO"
 		]
 	},
 	"imagemap_desc": "Mahdollistaa napsautettavien kuvakarttojen tekemisen <code>&lt;imagemap&gt;</code>-elementillä.",
 	"imagemap_no_image": "Error: kuva pitää määritellä ensimmäisellä rivillä.",
 	"imagemap_invalid_image": "Error: kuva ei kelpaa tai sitä ei ole olemassa",
-	"imagemap_bad_image": "Virhe: Kuva kuuluu sivuston estolistalle",
+	"imagemap_bad_image": "Virhe: Kuvaa ei sallita tällä sivulla.",
 	"imagemap_no_link": "Virhe: rivin $1 lopusta ei löytynyt kelvollista linkkiä",
 	"imagemap_invalid_title": "Virhe: kelvoton otsikko linkissä rivillä $1",
 	"imagemap_missing_coord": "Virhe: rivin $1 muodolle ei ole määritelty riittävästi koordinaatteja",

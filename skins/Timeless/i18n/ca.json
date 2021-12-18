@@ -4,7 +4,8 @@
 			"Fitoschido",
 			"Macofe",
 			"Toniher",
-			"Vriullop"
+			"Vriullop",
+			"Jmarchn"
 		]
 	},
 	"timeless-desc": "Una aparença atemporal dissenyada a partir del prototip Winter de Brandon Harris i diversos estils de la Fundació Wikimedia",
@@ -24,5 +25,5 @@
 	"timeless-pagetools": "Accions de pàgina",
 	"timeless-languages": "Llengües",
 	"timeless-projects": "Altres projectes",
-	"timeless.js": "/* Qualsevol codi JavaScript afegit aquí es carregarà per als usuaris que utilitzin l'aprença Timeless */"
+	"timeless.js": "/* Qualsevol codi JavaScript afegit aquí es carregarà per als usuaris que utilitzin l'aparença Timeless */"
 }

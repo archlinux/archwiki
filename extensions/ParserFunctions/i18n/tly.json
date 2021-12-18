@@ -5,10 +5,10 @@
 			"Гусейн"
 		]
 	},
-	"pfunc_time_error": "Error: Yanliş vaxt",
-	"pfunc_expr_unrecognised_word": "İfodə xəto: Zınə nıbə sıxan \"$1\".",
-	"pfunc_expr_unexpected_operator": "İfodə xəto: Çaş kardənıbə operator $1",
-	"pfunc_expr_missing_operand": "İfodə xəto: $1 operand vəs kardəni",
-	"pfunc_expr_unrecognised_punctuation": "İfodə xəto: Punktuasiyə zınə nıbə rəmz \"$1\".",
-	"pfunc_expr_division_by_zero": "Bə sıfıri jəy"
+	"pfunc_time_error": "Error: рост ныбә вахт",
+	"pfunc_expr_unrecognised_word": "Ифодә хәто: Нызынә сыхан \"$1\".",
+	"pfunc_expr_unexpected_operator": "Ифодә хәто: Чаш кардәныбә оператор $1",
+	"pfunc_expr_missing_operand": "Ифодә хәто: $1 operand вәс кардәни",
+	"pfunc_expr_unrecognised_punctuation": "Ифодә хәто: Пунктуасијә жыго рәмзи \"$1\" зындәни.",
+	"pfunc_expr_division_by_zero": "Бә сыфыри жәј"
 }

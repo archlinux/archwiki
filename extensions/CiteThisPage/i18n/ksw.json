@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Khing"
+			"Khing",
+			"Jaeminlovetaejoon",
+			"SawJaemin"
 		]
 	},
-	"citethispage-link": "Cite this page",
+	"citethispage": "ၡၣ်ကဘျံးပၤတခါအံၤ",
+	"citethispage-link": "ၡၣ်ကဘျံးပၤတခါအံၤ",
 	"tooltip-citethispage": "Information on how to cite this page"
 }

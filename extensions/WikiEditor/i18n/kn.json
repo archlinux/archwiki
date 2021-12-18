@@ -3,7 +3,8 @@
 		"authors": [
 			"Nayvik",
 			"VASANTH S.N.",
-			"Yogesh"
+			"Yogesh",
+			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
 		]
 	},
 	"wikieditor": "ಮುಂದುವರಿದ ವಿಕಿಪಠ್ಯ ಸಂಪಾದನೆಯ ಅಂತರ್‍ಸಂಪರ್ಕ",
@@ -39,9 +40,9 @@
 	"wikieditor-toolbar-file-size": "ಗಾತ್ರ:",
 	"wikieditor-toolbar-file-default": "(ಮೂಲಸ್ಥಿತಿ)",
 	"wikieditor-toolbar-tool-file-insert": "ಸೇರ್ಪಡಿಸು",
-	"wikieditor-toolbar-tool-file-cancel": "ರದ್ದುಮಾಡು",
+	"wikieditor-toolbar-tool-file-cancel": "ರದ್ದುಮಾಡಿ",
 	"wikieditor-toolbar-tool-reference": "ಉಲ್ಲೇಖಗಳು",
-	"wikieditor-toolbar-tool-reference-cancel": "ರದ್ದು ಮಾಡು",
+	"wikieditor-toolbar-tool-reference-cancel": "ರದ್ದುಮಾಡಿ",
 	"wikieditor-toolbar-tool-reference-insert": "ಸೇರ್ಪಡಿಸು",
 	"wikieditor-toolbar-section-advanced": "ಮುಂದುವರೆದ",
 	"wikieditor-toolbar-tool-heading": "ತಲೆಬರಹ",
@@ -67,7 +68,7 @@
 	"wikieditor-toolbar-tool-table-example": "ಉದಾಹರಣೆ",
 	"wikieditor-toolbar-tool-table-preview": "ಮುನ್ನೋಟ",
 	"wikieditor-toolbar-tool-table-insert": "ಸೇರ್ಪಡಿಸು",
-	"wikieditor-toolbar-tool-table-cancel": "ರದ್ದುಮಾಡು",
+	"wikieditor-toolbar-tool-table-cancel": "ರದ್ದುಮಾಡಿ",
 	"wikieditor-toolbar-tool-replace-search": "ಇದನ್ನು ಹುಡುಕು",
 	"wikieditor-toolbar-tool-replace-close": "ಮುಚ್ಚಿ",
 	"wikieditor-toolbar-section-characters": "ವಿಶೇಷ ಅಕ್ಷರಗಳು",

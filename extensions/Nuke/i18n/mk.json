@@ -20,6 +20,7 @@
 	"nuke-maxpages": "Најг. број на страници:",
 	"nuke-editby": "Создавач: [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Страницата '''$1''' е избришана.",
+	"nuke-deletion-queued": "Страницата '''$1''' е ставена во редица за бришење.",
 	"nuke-not-deleted": "Страницата [[:$1]] '''не можеше''' да се избрише.",
 	"nuke-delete-more": "[[Special:Nuke|Избриши уште страници]]",
 	"nuke-pattern": "Мостра на SQL LIKE (на пр. %) за име на страница:",

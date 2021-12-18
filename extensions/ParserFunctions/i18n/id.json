@@ -6,11 +6,12 @@
 			"Iwan Novirion",
 			"Meursault2004",
 			"RXerself",
-			"Rex"
+			"Rex",
+			"Rachmat04"
 		]
 	},
 	"pfunc_desc": "Mengembangkan parser dengan fungsi logis",
-	"pfunc_time_error": "Kesalahan: waktu tidak valid",
+	"pfunc_time_error": "Kesalahan: waktu tidak sah.",
 	"pfunc_time_too_long": "Kesalahan: Pemanggilan #time terlalu banyak",
 	"pfunc_time_too_big": "Galat: #time hanya mendukung tahun hingga 9999",
 	"pfunc_time_too_small": "Galat: #time hanya mendukung tahun dari 0",
@@ -24,7 +25,7 @@
 	"pfunc_expr_unexpected_closing_bracket": "Kesalahan ekspresi: Kurung tutup tak terduga",
 	"pfunc_expr_unrecognised_punctuation": "Kesalahan ekspresi: Karakter tanda baca \"$1\" tidak dikenal.",
 	"pfunc_expr_unclosed_bracket": "Kesalahan ekspresi: Kurung tanpa tutup",
-	"pfunc_expr_division_by_zero": "Pembagian oleh nol",
+	"pfunc_expr_division_by_zero": "Pembagian oleh nol.",
 	"pfunc_expr_invalid_argument": "Argumen tidak berlaku untuk $1: < -1 or > 1",
 	"pfunc_expr_invalid_argument_ln": "Argumen tidak berlaku untuk ln: <= 0",
 	"pfunc_expr_unknown_error": "Kesalahan ekspresi: Kesalahan tak dikenal ($1)",

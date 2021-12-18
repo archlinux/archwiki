@@ -42,7 +42,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Проверувам дали постои страницата...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Појаснителна страница",
 	"wikieditor-toolbar-tool-link-int-invalid": "Наведениот наслов е неважечки.",
-	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL адресата која ја назначивте изгледа како врска до друга вики-страница. Сакате ова да биде внатрешна врска?",
+	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL адресата која ја назначивте изгледа како врска до друга викистраница. Сакате ова да биде внатрешна врска?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Внатрешна врска",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Надворешна врска",
 	"wikieditor-toolbar-tool-link-empty": "Не внесовте одредница за врската.",

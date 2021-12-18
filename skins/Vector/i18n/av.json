@@ -2,20 +2,21 @@
 	"@metadata": {
 		"authors": [
 			"Gazimagomedov",
-			"Умар"
+			"Умар",
+			"Omarov M."
 		]
 	},
-	"vector-skin-desc": "MonoBook'алъул цӀияб версия цияб куцгун ва цӀиял юзабилитиялгун",
-	"vector-action-addsection": "Тема жубазе",
-	"vector-action-delete": "БацIцIине",
+	"vector-skin-desc": "MonoBook'алъул гьанжесеб версия цӀияб куцгун ва гӀемерал хӀалтӀизабунлъиялъе квегӀенлъиялгун",
+	"vector-action-addsection": "ТӀадежубазе тема",
+	"vector-action-delete": "Гилдизабизе",
 	"vector-action-move": "ЦӀар хисизе",
-	"vector-action-protect": "Хиса-басияздасан цIунизе",
-	"vector-action-undelete": "БукӀараб гӀадин гьабизе",
+	"vector-action-protect": "ЦӀунизе",
+	"vector-action-undelete": "БукӀахъинабизе",
 	"vector-action-unprotect": "ЦӀуни хисизе",
 	"vector-view-create": "Гьабизе",
 	"vector-view-edit": "Хисизабизе",
-	"vector-view-history": "Тарих балагьизе",
+	"vector-view-history": "Тарихалъухъ ралагьизе",
 	"vector-view-view": "ЦӀализе",
-	"vector-view-viewsource": "Вики-текст балагьизе",
+	"vector-view-viewsource": "Кодалъухъ ралагьизе",
 	"vector-more-actions": "Жеги"
 }

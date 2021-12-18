@@ -8,7 +8,8 @@
 			"Piramidion",
 			"Steve.rusyn",
 			"SteveR",
-			"Ата"
+			"Ата",
+			"DDPAT"
 		]
 	},
 	"scribunto-desc": "Фреймворк для включення скриптових мов на сторінки MediaWiki",
@@ -40,6 +41,7 @@
 	"scribunto-lua-in-function": "у функції «$1»",
 	"scribunto-lua-in-main": "в головній частині коду",
 	"scribunto-lua-in-function-at": "у функції в $1:$2",
+	"scribunto-lua-backtrace-line": "$1: $2",
 	"scribunto-lua-error-location": "Помилка Lua $1: $2.",
 	"scribunto-lua-error": "Помилка Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Помилка скрипту: Модуль повернув значення $2. Він повинен повертати таблицю експорту.",
@@ -64,6 +66,7 @@
 	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|байт}}",
 	"scribunto-limitreport-profile": "Профіль Lua",
 	"scribunto-limitreport-profile-ms": "$1 мс",
+	"scribunto-limitreport-profile-percent": "$1%",
 	"scribunto-limitreport-logs": "Журнали Lua",
 	"nstab-module": "Модуль",
 	"tooltip-ca-nstab-module": "Переглянути сторінку модуля"

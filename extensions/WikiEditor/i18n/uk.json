@@ -16,7 +16,8 @@
 			"Prima klasy4na",
 			"Vlad5250",
 			"Ата",
-			"Тест"
+			"Тест",
+			"DDPAT"
 		]
 	},
 	"wikieditor": "Розширений інтерфейс редагування вікітексту",
@@ -64,6 +65,9 @@
 	"wikieditor-toolbar-tool-file-title": "Вставити файл",
 	"wikieditor-toolbar-file-target": "Назва файлу:",
 	"wikieditor-toolbar-file-caption": "Підпис:",
+	"wikieditor-toolbar-file-alt": "Альтернативний текст:",
+	"wikieditor-toolbar-file-alt-help": "Ви можете використовувати це необов’язкове поле для написання текстового опису для людей, які не бачать файл.\nОпис має бути достатнім для того, щоб вони зрозуміли мету та інформацію, надану засобом масової інформації. Це важливо для незрячих користувачів та інших людей, які використовують програмне забезпечення для зчитування з екрана або текстові браузери.",
+	"wikieditor-toolbar-file-alt-help-label": "(Показати допомогу)",
 	"wikieditor-toolbar-file-size": "Розмір:",
 	"wikieditor-toolbar-file-float": "Вирівнювання:",
 	"wikieditor-toolbar-file-default": "(стандартно)",

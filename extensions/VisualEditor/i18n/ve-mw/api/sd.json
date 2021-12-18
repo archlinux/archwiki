@@ -4,7 +4,8 @@
 			"Mehtab ahmed"
 		]
 	},
-	"apierror-visualeditor-latestnotfound": "عنوان لاءِ تازو-ترين ورجاءُ نہ لھي سگھيو",
+	"apierror-visualeditor-latestnotfound": "عنوان لاءِ تازو-ترين ورجاءُ نہ لھي سگهيو",
+	"apihelp-visualeditor-param-format": "آئوٽ پٽ جو فارميٽ.",
 	"apihelp-visualeditor-param-paction": "پيش ڪرڻ لاءِ عمل.",
 	"apihelp-visualeditor-param-page": "جنھن صفحي  تي عملن جو مظاھرو ڪيو وڃي.",
 	"apihelp-visualeditor-param-section": "سيڪشن جنھن تي ڪم ڪجي.",
@@ -12,5 +13,6 @@
 	"apihelp-visualeditoredit-param-page": "صفحو جنھن تي عمل پيش ڪجن.",
 	"apihelp-visualeditoredit-param-section": "سيڪشن جنھن تي ڪم ڪجي.",
 	"apihelp-visualeditoredit-param-sectiontitle": "نئين سيڪشن لاءِ عنوان.",
-	"apihelp-visualeditoredit-param-summary": "سنوار جو تَتُ."
+	"apihelp-visualeditoredit-param-summary": "سنوار جو تَتُ.",
+	"apihelp-visualeditoredit-param-wikitext": "عمل ڪرڻ لاءِ وڪي‌متن."
 }

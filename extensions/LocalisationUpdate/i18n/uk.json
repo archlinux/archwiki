@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Prima klasy4na"
+			"Prima klasy4na",
+			"DDPAT"
 		]
 	},
+	"localisationupdate-extensionname": "LocalisationUpdate",
 	"localisationupdate-desc": "Забезпечує оновлення локалізованих повідомлень у міру можливості"
 }

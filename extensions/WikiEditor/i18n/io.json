@@ -3,10 +3,16 @@
 		"authors": [
 			"Joao Xavier",
 			"Lakaoso",
-			"Malafaya"
+			"Malafaya",
+			"Amire80",
+			"JSantos"
 		]
 	},
+	"wikieditor-wikitext-tab": "Wikitexto",
+	"wikieditor-loading": "Karganta...",
 	"wikieditor-toolbar-preference": "Habilitar utensilo-stango (editing toolbar)",
+	"wikieditor-toolbar-loading": "Karganta...",
+	"wikieditor-toolbar-tool-bold-example": "Dika literi",
 	"wikieditor-toolbar-tool-italic": "Kursiva",
 	"wikieditor-toolbar-tool-italic-example": "Kursiva texto",
 	"wikieditor-toolbar-tool-ilink": "Interna ligilo",
@@ -28,6 +34,7 @@
 	"wikieditor-toolbar-tool-file": "Imaji e 'media'",
 	"wikieditor-toolbar-tool-file-example": "Exemplo.jpg",
 	"wikieditor-toolbar-tool-file-title": "Inkluzar arkivo",
+	"wikieditor-toolbar-file-caption": "Deskripto-texto:",
 	"wikieditor-toolbar-file-size": "Grandeso:",
 	"wikieditor-toolbar-file-float": "Aliniar:",
 	"wikieditor-toolbar-file-default": "(ordinara)",
@@ -48,6 +55,7 @@
 	"wikieditor-toolbar-tool-heading-5": "Nivelo 5",
 	"wikieditor-toolbar-group-format": "Formato",
 	"wikieditor-toolbar-tool-nowiki-example": "Skribez texto sen formato hike",
+	"wikieditor-toolbar-tool-redirect": "Ridirektilo",
 	"wikieditor-toolbar-tool-big": "Granda",
 	"wikieditor-toolbar-tool-big-example": "Granda texto",
 	"wikieditor-toolbar-tool-small": "Mikra",
@@ -67,6 +75,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|remplasigo|remplasigi}} facita.",
 	"wikieditor-toolbar-section-characters": "Specala literi",
 	"wikieditor-toolbar-section-help": "Helpo",
+	"wikieditor-toolbar-help-heading-description": "Deskriptado",
 	"wikieditor-toolbar-help-heading-syntax": "Quon vu skribis",
 	"wikieditor-toolbar-help-page-link": "Ligili",
 	"wikieditor-toolbar-help-page-list": "Listi",

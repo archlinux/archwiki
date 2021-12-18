@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gildo Máquina",
+			"Jacinto Jeque"
+		]
+	},
+	"vector-action-addsection": "Ophitaanya yoolempwa",
+	"vector-action-delete": "Ocipiha",
+	"vector-action-move": "Okumiha",
+	"vector-action-protect": "Okhapelela",
+	"vector-view-create": "Opaka",
+	"vector-view-edit": "Owehiha",
+	"vector-view-history": "Moonelo wa ethale",
+	"vector-view-view": "Osoma",
+	"vector-more-actions": "Vanceene"
+}

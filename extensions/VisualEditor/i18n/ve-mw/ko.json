@@ -28,7 +28,9 @@
 			"고솜",
 			"렌즈",
 			"아라",
-			"콩가루"
+			"콩가루",
+			"Apzp79",
+			"Codenstory"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -199,7 +201,7 @@
 	"visualeditor-dialog-transclusion-remove-param": "필드 제거",
 	"visualeditor-dialog-transclusion-remove-template": "틀 제거",
 	"visualeditor-dialog-transclusion-required-parameter": "필수 필드",
-	"visualeditor-dialog-transclusion-required-parameter-description": "필드는 필수입니다.",
+	"visualeditor-dialog-transclusion-required-parameter-description": "이 필드는 필수입니다.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "돌아가기",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "어쨌든 계속하기",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "필요한 {{PLURAL:$1|필드}} 없음",
@@ -316,7 +318,7 @@
 	"visualeditor-parameter-search-more": "{{PLURAL:$1|필드 하나 더|필드 $1개 더}} 보기",
 	"visualeditor-parameter-search-no-unused": "사용하지 않은 필드가 없습니다",
 	"visualeditor-parameter-search-unknown": "알 수 없는 변수",
-	"visualeditor-preference-betatempdisable": "베타 동안 시각편집기를 일시적으로 비활성화",
+	"visualeditor-preference-betatempdisable": "베타 기간 동안 시각편집기를 일시적으로 비활성화",
 	"visualeditor-preference-core-description": "시각편집기를 활성화합니다. 토론 문서와 몇몇 다른 이름공간에서는 사용할 수 없습니다.",
 	"visualeditor-preference-core-label": "시각편집기",
 	"visualeditor-preference-enable": "시각편집기를 활성화합니다. 다음 {{PLURAL:$2|이름공간}}에서 사용할 수 있습니다: $1",

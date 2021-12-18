@@ -1,16 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Santu"
+			"Santu",
+			"Ajeje Brazorf"
 		]
 	},
 	"imagemap_desc": "Pirmetti di rializzari ''image map'' cliccàbbili latu client cô tag <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Sbàgghiu: s'hà spicificari na mmàggini ntâ prima riga",
 	"imagemap_invalid_image": "Sbàgghiu: la mmàggini nun è vàlida o non c'è",
 	"imagemap_bad_image": "Sbàgghiu: la mmàggini s'attrova ntâ blacklist pi sta pàggina",
-	"imagemap_no_link": "\nSbàgghiu: non vinni attruvatu nuddu lijami vàlidu a la fini dâ riga $1",
+	"imagemap_no_link": "Sbàgghiu: non vinni attruvatu nuddu lijami vàlidu â fini dâ riga $1.",
 	"imagemap_invalid_title": "Sbàgghiu: tìtulu dû lijami non vàlidu ntâ riga $1",
-	"imagemap_missing_coord": "Sbàgghiu: non ci sunnu abbastanza cuurdinati pi la furma spicificata nti la tiga $1",
+	"imagemap_missing_coord": "Sbàgghiu: nun ci sunnu abbastanza cuurdinati pâ furma spicificata ntâ riga $1",
 	"imagemap_unrecognised_shape": "Sbàgghiu: Furma (shape) non canusciuta nti la riga $1, ogniduna di li righi hà accuminciari cu unu di li furmi ccà di sècutu:  <code>default</code>, <code>rect</code>, <code>circle</code> o <code>poly</code>",
 	"imagemap_invalid_coord": "Sbàgghiu: cuurdinata non vàlida ntâ riga $1, idda hà èssiri nu nùmmiru",
 	"imagemap_invalid_desc": "Sbàgghiu: valuri non vàlidu pô paràmitru desc, hà èssiri unu di chisti: <code>$1</code>",
