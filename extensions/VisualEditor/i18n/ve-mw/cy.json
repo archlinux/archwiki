@@ -8,7 +8,8 @@
 			"Jdforrester",
 			"Lloffiwr",
 			"Robin Owain",
-			"ОйЛ"
+			"ОйЛ",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -116,10 +117,11 @@
 	"visualeditor-dialog-transclusion-add-content": "Ychwanegu cynnwys",
 	"visualeditor-dialog-transclusion-add-param": "Ychwanegu gwybodaeth ychwanegol",
 	"visualeditor-dialog-transclusion-add-template": "Ychwanegu templed",
+	"visualeditor-dialog-transclusion-collapse-options": "Cuddio'r dewisiadau",
 	"visualeditor-dialog-transclusion-content": "Cynnwys",
+	"visualeditor-dialog-transclusion-expand-options": "Dewisiadau...",
 	"visualeditor-dialog-transclusion-loading": "Llwytho...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Dewisiadau...",
-	"visualeditor-dialog-transclusion-no-template-description": "Nid oes gan y \"$1\" templed disgrifiad, ond gallai fod rhywfaint o wybodaeth a roddir ar y dudalen y templed.",
+	"visualeditor-dialog-transclusion-no-template-description": "Nid oes gan y \"$1\" templed disgrifiad, ond gallai fod rhywfaint o wybodaeth a roddir ar y [[$2|dudalen y templed]].",
 	"visualeditor-dialog-transclusion-options": "Dewisiadau",
 	"visualeditor-dialog-transclusion-param-info": "Disgrifiad y maes",
 	"visualeditor-dialog-transclusion-param-info-missing": "Dim disgrifiad maes ar gael",
@@ -129,8 +131,6 @@
 	"visualeditor-dialog-transclusion-remove-template": "Cael gwared ar y nodyn",
 	"visualeditor-dialog-transclusion-required-parameter": "Maes gofynnol",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Ydych chi wir eisiau parhau heb lenwi'r {{PLURAL:$2|maes|$1 o feysydd}}?",
-	"visualeditor-dialog-transclusion-single-mode": "Cuddio'r dewisiadau",
-	"visualeditor-dialog-transclusion-title": "Cynhwysiad",
 	"visualeditor-dialogbutton-media-tooltip": "Ffeil gyfrwng",
 	"visualeditor-dialogbutton-meta-tooltip": "Gosodiadau'r dudalen",
 	"visualeditor-dialogbutton-template-tooltip": "Templed",

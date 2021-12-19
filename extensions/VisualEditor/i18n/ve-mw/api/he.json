@@ -38,6 +38,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "להשתמש בתוצאה של בקשת ה־serializeforcache הקודמת עם המפתח הזה. עוקף את $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "מזהה Captcha (בעת שמירה עם תשובת captcha).",
 	"apihelp-visualeditoredit-param-captchaword": "תשובה ל־captcha (בעת שמירה עם תשובת captcha).",
+	"apihelp-visualeditoredit-param-plugins": "תוספים מזוהים עם בקשת ה־API.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "נתונים שרירותיים שנשלחים באמצעות תוסף עם בקשת ה־API.",
 	"apihelp-visualeditoredit-param-etag": "איזה ETag לשלוח.",
 	"apihelp-visualeditoredit-param-html": "איזה HTML לשלוח לפרסואיד כדי לקבל חזרה קוד ויקי.",
 	"apihelp-visualeditoredit-param-minor": "דגל עריכה משנית.",

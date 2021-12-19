@@ -1,35 +1,29 @@
-// Modern Vector stylesheets
+/**
+ * Vector modern stylesheets
+ * See '../common/common.less' for common screen and print Vector stylesheets.
+ */
 
-@import '../../variables.less';
+@import '../common/variables.less';
 @import 'mediawiki.mixins.less';
 
 @media screen {
-	@import 'common/normalize.less';
-	@import 'layout.less';
-	@import 'common/typography.less';
+	// Layouts
+	@import './layouts/screen.less';
 
 	// Components
-	@import 'Indicators.less';
-	@import 'SiteNotice.less';
-	@import 'Menu.less';
-	@import 'VueEnhancedSearchBox.less';
-	@import 'SearchBoxLoader.less';
-	@import 'MenuTabs.less';
-	@import 'TabWatchstarLink.less';
-	@import 'MenuDropdown.less';
-	@import 'MenuPortal.less';
-	@import 'LanguageButton.less';
-	@import 'Sidebar.less';
-	@import 'SidebarLogo.less';
-	@import 'Footer.less';
+	@import './components/SearchBoxLoader.less';
+	@import './components/VueEnhancedSearchBox.less';
+	@import './components/Sidebar.less';
+	@import './components/LanguageButton.less';
+	@import './components/UserLinks.less';
+	@import './components/StickyHeader.less';
 }
 
 @media all {
-	// Component styles that should apply in all modes.
-	@import 'Logo.less';
+	// Component styles that should apply in all media.
+	@import './components/Logo.less';
 }
 
 @media print {
-	@import 'common/print.less';
-	@import 'layout-print.less';
+	@import './layouts/print.less';
 }

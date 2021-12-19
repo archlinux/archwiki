@@ -5,7 +5,7 @@
  * @extends OO.ui.SelectWidget
  * @mixes OO.ui.mixin.DraggableGroupElement
  *
- * @param {Object} config Dialog configuration object
+ * @param {Object} [config] Dialog configuration object
  */
 function ParamSelectWidget( config ) {
 	// Parent constructor

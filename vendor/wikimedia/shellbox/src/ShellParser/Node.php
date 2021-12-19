@@ -2,7 +2,7 @@
 
 namespace Shellbox\ShellParser;
 
-use WikiPEG\InternalError;
+use Wikimedia\WikiPEG\InternalError;
 
 class Node {
 	/** @var string The node type */

@@ -72,7 +72,7 @@ final class LatestSkinVersionRequirement implements Requirement {
 	/**
 	 * @inheritDoc
 	 */
-	public function getName() : string {
+	public function getName(): string {
 		return Constants::REQUIREMENT_LATEST_SKIN_VERSION;
 	}
 
@@ -80,7 +80,7 @@ final class LatestSkinVersionRequirement implements Requirement {
 	 * @inheritDoc
 	 * @throws \ConfigException
 	 */
-	public function isMet() : bool {
+	public function isMet(): bool {
 		return $this->skinVersionLookup->getVersion() === Constants::SKIN_VERSION_LATEST;
 	}
 }

@@ -265,11 +265,11 @@ class MockSiteConfig extends SiteConfig {
 
 	/** @inheritDoc */
 	protected function getMagicWords(): array {
-		// make all magic words case-sensitive
-		return [ 'toc'           => [ 1, 'toc' ],
+		return [
+			'toc'           => [ 0, '__TOC__' ],
 			'img_thumbnail' => [ 1, 'thumb' ],
 			'img_none'      => [ 1, 'none' ],
-			'__notoc__'     => [ 1, '__notoc__' ]
+			'notoc'         => [ 0, '__NOTOC__' ]
 		];
 	}
 
@@ -300,7 +300,7 @@ class MockSiteConfig extends SiteConfig {
 			'img_class' => "/^(?:(?:class\=(.*?)))$/uS"
 		];
 		$regexes = array_intersect_key( $paramMWs, array_flip( $words ) );
-		return function ( $text ) use ( $regexes ) {
+		return static function ( $text ) use ( $regexes ) {
 			/**
 			 * $name is the canonical magic word name
 			 * $re has patterns for matching aliases

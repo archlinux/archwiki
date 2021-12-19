@@ -46,6 +46,31 @@ class PHPUtils {
 	}
 
 	/**
+	 * FIXME: Copied from FormatJson.php in core
+	 *
+	 * Characters problematic in JavaScript.
+	 *
+	 * @note These are listed in ECMA-262 (5.1 Ed.), §7.3 Line Terminators along with U+000A (LF)
+	 *       and U+000D (CR). However, PHP already escapes LF and CR according to RFC 4627.
+	 */
+	private const BAD_CHARS = [
+		"\u{2028}", // U+2028 LINE SEPARATOR
+		"\u{2029}", // U+2029 PARAGRAPH SEPARATOR
+	];
+
+	/**
+	 * FIXME: Copied from FormatJson.php in core
+	 *
+	 * Escape sequences for characters listed in FormatJson::BAD_CHARS.
+	 */
+	private const BAD_CHARS_ESCAPED = [
+		'\u2028', // U+2028 LINE SEPARATOR
+		'\u2029', // U+2029 PARAGRAPH SEPARATOR
+	];
+
+	/**
+	 * FIXME: Core has FormatJson::encode that does a more comprehensive job
+	 *
 	 * json_encode wrapper function
 	 * - unscapes slashes and unicode
 	 *
@@ -58,10 +83,12 @@ class PHPUtils {
 			// Do this manually until JSON_THROW_ON_ERROR is available
 			throw new Exception( 'JSON encoding failed.' );
 		}
+		$str = str_replace( self::BAD_CHARS, self::BAD_CHARS_ESCAPED, $str );
 		return $str;
 	}
 
 	/**
+	 * FIXME: Core has FormatJson::parse that does a more comprehensive job
 	 * json_decode wrapper function
 	 * @param string $str String to decode into the json object
 	 * @param bool $assoc Controls whether to parse as an an associative array - defaults to true
@@ -129,6 +156,8 @@ class PHPUtils {
 	/**
 	 * Append an array to an accumulator using the most efficient method
 	 * available. Makes sure that accumulation is O(n).
+	 *
+	 * See https://w.wiki/3zvE
 	 *
 	 * @param array &$dest Destination array
 	 * @param array $source Array to merge
@@ -307,7 +336,7 @@ class PHPUtils {
 		$newCloseDelimiter = $delimiterPairs[$startDelimiter] ?? $startDelimiter;
 		// escape the new delimiter
 		preg_match_all( '/[^\\\\]|\\\\./s', $stripped, $matches );
-		return implode( '', array_map( function ( $c ) use ( $newDelimiter, $newCloseDelimiter ) {
+		return implode( '', array_map( static function ( $c ) use ( $newDelimiter, $newCloseDelimiter ) {
 			return ( $c === $newDelimiter || $c === $newCloseDelimiter )
 				? ( '\\' . $c ) : $c;
 		}, $matches[0] ) );
@@ -368,6 +397,31 @@ class PHPUtils {
 	}
 
 	/**
+	 * Convert an iterable to an array.
+	 *
+	 * This function is similar to *but not the same as* the built-in
+	 * iterator_to_array, because arrays are iterable but not Traversable!
+	 *
+	 * This function is also present in the wmde/iterable-functions library,
+	 * but it's short enough that we don't need to pull in an entire new
+	 * dependency here.
+	 *
+	 * @see https://stackoverflow.com/questions/44587973/php-iterable-to-array-or-traversable
+	 * @see https://github.com/wmde/iterable-functions/blob/master/src/functions.php
+	 *
+	 * @phan-template T
+	 * @param iterable<T> $iterable
+	 * @return array<T>
+	 */
+	public static function iterable_to_array( iterable $iterable ): array { // phpcs:ignore MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName,Generic.Files.LineLength.TooLong
+		if ( is_array( $iterable ) ) {
+			return $iterable;
+		}
+		'@phan-var \Traversable $iterable'; // @var \Traversable $iterable
+		return iterator_to_array( $iterable );
+	}
+
+	/**
 	 * Indicate that the code which calls this function is intended to be
 	 * unreachable.
 	 *
@@ -379,6 +433,44 @@ class PHPUtils {
 	public static function unreachable( string $reason = "should never happen" ) {
 		// @phan-suppress-next-line PhanImpossibleCondition
 		Assert::invariant( false, $reason );
+	}
+
+	/**
+	 * If a string starts with a given prefix, remove the prefix. Otherwise,
+	 * return the original string. Like preg_replace( "/^$prefix/", '', $subject )
+	 * except about 1.14x faster in the replacement case and 2x faster in
+	 * the no-op case.
+	 *
+	 * Note: adding type declarations to the parameters adds an overhead of 3%.
+	 * The benchmark above was without type declarations.
+	 *
+	 * @param string $subject
+	 * @param string $prefix
+	 * @return string
+	 */
+	public static function stripPrefix( $subject, $prefix ) {
+		if ( str_starts_with( $subject, $prefix ) ) {
+			return substr( $subject, strlen( $prefix ) );
+		} else {
+			return $subject;
+		}
+	}
+
+	/**
+	 * If a string ends with a given suffix, remove the suffix. Otherwise,
+	 * return the original string. Like preg_replace( "/$suffix$/", '', $subject )
+	 * except faster.
+	 *
+	 * @param string $subject
+	 * @param string $suffix
+	 * @return string
+	 */
+	public static function stripSuffix( $subject, $suffix ) {
+		if ( str_ends_with( $subject, $suffix ) ) {
+			return substr( $subject, 0, -strlen( $suffix ) );
+		} else {
+			return $subject;
+		}
 	}
 
 }

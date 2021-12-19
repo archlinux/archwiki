@@ -3,8 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
-use DOMElement;
-use DOMNode;
+use Wikimedia\Parsoid\Core\MediaStructure;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Html2Wt\LinkHandlerUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Html2Wt\WTSUtils;
 use Wikimedia\Parsoid\Tokens\KV;
@@ -22,12 +24,10 @@ class SpanHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function handle(
-		DOMElement $node, SerializerState $state, bool $wrapperUnmodified = false
-	): ?DOMNode {
+		Element $node, SerializerState $state, bool $wrapperUnmodified = false
+	): ?Node {
 		$env = $state->getEnv();
 		$dp = DOMDataUtils::getDataParsoid( $node );
-		$contentSrc = ( $node->textContent != '' ) ? $node->textContent
-			: DOMCompat::getInnerHTML( $node );
 		if ( self::isRecognizedSpanWrapper( $node ) ) {
 			if ( DOMUtils::hasTypeOf( $node, 'mw:Nowiki' ) ) {
 				$ext = $env->getSiteConfig()->getExtTagImpl( 'nowiki' );
@@ -36,11 +36,15 @@ class SpanHandler extends DOMHandler {
 				$state->serializer->emitWikitext( $src, $node );
 				$state->singleLineContext->pop();
 			} elseif ( WTUtils::isInlineMedia( $node ) ) {
-				$state->serializer->figureHandler( $node );
+				LinkHandlerUtils::figureHandler(
+					$state, $node, MediaStructure::parse( $node )
+				);
 			} elseif (
 				DOMUtils::hasTypeOf( $node, 'mw:Entity' ) &&
 				DOMUtils::hasNChildren( $node, 1 )
 			) {
+				$contentSrc = ( $node->textContent != '' ) ? $node->textContent
+					: DOMCompat::getInnerHTML( $node );
 				// handle a new mw:Entity (not handled by selser) by
 				// serializing its children
 				if ( isset( $dp->src ) && $contentSrc === ( $dp->srcContent ?? null ) ) {
@@ -66,7 +70,7 @@ class SpanHandler extends DOMHandler {
 		} elseif ( $node->hasAttribute( 'data-mw-selser-wrapper' ) ) {
 			$state->serializeChildren( $node );
 		} else {
-			$kvs = array_filter( WTSUtils::getAttributeKVArray( $node ), function ( KV $kv ) {
+			$kvs = array_filter( WTSUtils::getAttributeKVArray( $node ), static function ( KV $kv ) {
 				return !preg_match( '/^data-parsoid/', $kv->k )
 					&& ( $kv->k !== DOMDataUtils::DATA_OBJECT_ATTR_NAME )
 					&& !( $kv->k === 'id' && preg_match( '/^mw[\w-]{2,}$/D', $kv->v ) );
@@ -88,10 +92,10 @@ class SpanHandler extends DOMHandler {
 	}
 
 	/**
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @return string|null
 	 */
-	private static function isRecognizedSpanWrapper( DOMElement $node ): ?string {
+	private static function isRecognizedSpanWrapper( Element $node ): ?string {
 		return DOMUtils::matchTypeOf(
 			$node,
 			// FIXME(T254501): Remove mw:DisplaySpace

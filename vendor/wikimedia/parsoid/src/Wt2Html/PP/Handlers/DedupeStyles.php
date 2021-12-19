@@ -3,8 +3,8 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\PP\Handlers;
 
-use DOMElement;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -12,11 +12,11 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 class DedupeStyles {
 
 	/**
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @param Env $env
-	 * @return bool|DOMElement
+	 * @return bool|Element
 	 */
-	public static function dedupe( DOMElement $node, Env $env ) {
+	public static function dedupe( Element $node, Env $env ) {
 		if ( !$node->hasAttribute( 'data-mw-deduplicate' ) ) {
 			// Not a templatestyles <style> tag
 			return true;
@@ -34,8 +34,8 @@ class DedupeStyles {
 			$link = $node->ownerDocument->createElement( 'link' );
 			$link->setAttribute( 'rel', 'mw-deduplicated-inline-style' );
 			$link->setAttribute( 'href', 'mw-data:' . $key );
-			$link->setAttribute( 'about', $node->getAttribute( 'about' ) );
-			$link->setAttribute( 'typeof', $node->getAttribute( 'typeof' ) );
+			$link->setAttribute( 'about', $node->getAttribute( 'about' ) ?? '' );
+			$link->setAttribute( 'typeof', $node->getAttribute( 'typeof' ) ?? '' );
 			DOMDataUtils::setDataParsoid( $link, DOMDataUtils::getDataParsoid( $node ) );
 			DOMDataUtils::setDataMw( $link, DOMDataUtils::getDataMw( $node ) );
 			$node->parentNode->replaceChild( $link, $node );

@@ -17,8 +17,8 @@
 	"monobook-jumptonavigation": "Ir para navegação",
 	"monobook-jumptosearch": "Ir para pesquisar",
 	"monobook-more-actions": "Mais",
+	"cactions-mobile": "Ações da página",
 	"monobook-cactions-label": "Ações da página",
 	"monobook-notifications-link": "Notificações ($1)",
-	"monobook-notifications-link-none": "Notificações",
-	"monobook-responsive-label": "Ativar o MonoBook de resposta rápida"
+	"monobook-notifications-link-none": "Notificações"
 }

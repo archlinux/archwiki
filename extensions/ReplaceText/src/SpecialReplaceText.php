@@ -17,8 +17,20 @@
  *
  * @file
  */
+namespace MediaWiki\Extension\ReplaceText;
 
+use ErrorPageError;
+use Html;
+use JobQueueGroup;
 use MediaWiki\MediaWikiServices;
+use MovePage;
+use MWNamespace;
+use OOUI;
+use PermissionsError;
+use SpecialPage;
+use Title;
+use User;
+use Xml;
 
 class SpecialReplaceText extends SpecialPage {
 	private $target;
@@ -52,20 +64,17 @@ class SpecialReplaceText extends SpecialPage {
 			throw new PermissionsError( 'replacetext' );
 		}
 
-		$out = $this->getOutput();
 		// Replace Text can't be run with certain settings, due to the
 		// changes they make to the DB storage setup.
 		if ( $wgCompressRevisions ) {
-			$errorMsg = "Error: text replacements cannot be run if \$wgCompressRevisions is set to true.";
-			$out->addWikiTextAsContent( "<div class=\"errorbox\">$errorMsg</div>" );
-			return;
+			throw new ErrorPageError( "replacetext_cfg_error", "replacetext_no_compress" );
 		}
 		if ( !empty( $wgExternalStores ) ) {
-			$errorMsg = "Error: text replacements cannot be run if \$wgExternalStores is non-empty.";
-			$out->addWikiTextAsContent( "<div class=\"errorbox\">$errorMsg</div>" );
-			return;
+			throw new ErrorPageError( "replacetext_cfg_error", "replacetext_no_external_stores" );
 		}
 
+		$out = $this->getOutput();
+		$out->enableOOUI();
 		$this->setHeaders();
 		if ( $out->getResourceLoader()->getModule( 'mediawiki.special' ) !== null ) {
 			$out->addModuleStyles( 'mediawiki.special' );
@@ -213,9 +222,14 @@ class SpecialReplaceText extends SpecialPage {
 			} else {
 				$warning_msg = $this->getAnyWarningMessageBeforeReplace( $titles_for_edit, $titles_for_move );
 				if ( $warning_msg !== null ) {
-					$out->addWikiTextAsContent(
-						"<div class=\"errorbox\">$warning_msg</div><br clear=\"both\" />"
-					);
+					$warningLabel = new OOUI\LabelWidget( [
+						'label' => new OOUI\HtmlSnippet( $warning_msg )
+					] );
+					$warning = new OOUI\MessageWidget( [
+						'type' => 'warning',
+						'label' => $warningLabel
+					] );
+					$out->addHTML( $warning );
 				}
 
 				$this->pageListForm( $titles_for_edit, $titles_for_move, $unmoveable_titles );
@@ -264,8 +278,11 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		$jobs = [];
+		// These are OOUI checkboxes - we don't determine whether they
+		// were checked by their value (which will be null), but rather
+		// by whether they were submitted at all.
 		foreach ( $request->getValues() as $key => $value ) {
-			if ( $value == '1' && $key !== 'replace' && $key !== 'use_regex' ) {
+			if ( $key !== 'replace' && $key !== 'use_regex' ) {
 				if ( strpos( $key, 'move-' ) !== false ) {
 					$title = Title::newFromID( (int)substr( $key, 5 ) );
 					$replacement_params['move_page'] = true;
@@ -273,7 +290,7 @@ class SpecialReplaceText extends SpecialPage {
 					$title = Title::newFromID( (int)$key );
 				}
 				if ( $title !== null ) {
-					$jobs[] = new ReplaceTextJob( $title, $replacement_params );
+					$jobs[] = new Job( $title, $replacement_params );
 				}
 			}
 		}
@@ -290,7 +307,7 @@ class SpecialReplaceText extends SpecialPage {
 	function getTitlesForEditingWithContext() {
 		$titles_for_edit = [];
 
-		$res = ReplaceTextSearch::doSearchQuery(
+		$res = Search::doSearchQuery(
 			$this->target,
 			$this->selected_namespaces,
 			$this->category,
@@ -323,7 +340,7 @@ class SpecialReplaceText extends SpecialPage {
 		$titles_for_move = [];
 		$unmoveable_titles = [];
 
-		$res = ReplaceTextSearch::getMatchingTitles(
+		$res = Search::getMatchingTitles(
 			$this->target,
 			$this->selected_namespaces,
 			$this->category,
@@ -337,7 +354,7 @@ class SpecialReplaceText extends SpecialPage {
 				continue;
 			}
 
-			$new_title = ReplaceTextSearch::getReplacedTitle(
+			$new_title = Search::getReplacedTitle(
 				$title,
 				$this->target,
 				$this->replacement,
@@ -369,14 +386,14 @@ class SpecialReplaceText extends SpecialPage {
 	 */
 	function getAnyWarningMessageBeforeReplace( $titles_for_edit, $titles_for_move ) {
 		if ( $this->replacement === '' ) {
-			return $this->msg( 'replacetext_blankwarning' )->text();
+			return $this->msg( 'replacetext_blankwarning' )->parse();
 		} elseif ( $this->use_regex ) {
 			// If it's a regex, don't bother checking for existing
 			// pages - if the replacement string includes wildcards,
 			// it's a meaningless check.
 			return null;
 		} elseif ( count( $titles_for_edit ) > 0 ) {
-			$res = ReplaceTextSearch::doSearchQuery(
+			$res = Search::doSearchQuery(
 				$this->replacement,
 				$this->selected_namespaces,
 				$this->category,
@@ -386,10 +403,10 @@ class SpecialReplaceText extends SpecialPage {
 			$count = $res->numRows();
 			if ( $count > 0 ) {
 				return $this->msg( 'replacetext_warning' )->numParams( $count )
-					->params( "<code><nowiki>{$this->replacement}</nowiki></code>" )->text();
+					->params( "<code><nowiki>{$this->replacement}</nowiki></code>" )->parse();
 			}
 		} elseif ( count( $titles_for_move ) > 0 ) {
-			$res = ReplaceTextSearch::getMatchingTitles(
+			$res = Search::getMatchingTitles(
 				$this->replacement,
 				$this->selected_namespaces,
 				$this->category,
@@ -399,7 +416,7 @@ class SpecialReplaceText extends SpecialPage {
 			$count = $res->numRows();
 			if ( $count > 0 ) {
 				return $this->msg( 'replacetext_warning' )->numParams( $count )
-					->params( $this->replacement )->text();
+					->params( $this->replacement )->parse();
 			}
 		}
 
@@ -451,11 +468,11 @@ class SpecialReplaceText extends SpecialPage {
 		);
 		$out->addHTML( '</td></tr></table>' );
 
-		// MSSQL/SQLServer and SQLite unfortunately lack a REGEXP
+		// SQLite unfortunately lack a REGEXP
 		// function or operator by default, so disable regex(p)
-		// searches for both these DB types.
+		// searches that DB type.
 		$dbr = wfGetDB( DB_REPLICA );
-		if ( $dbr->getType() != 'sqlite' && $dbr->getType() != 'mssql' ) {
+		if ( $dbr->getType() != 'sqlite' ) {
 			$out->addHTML( Xml::tags( 'p', null,
 					Xml::checkLabel(
 						$this->msg( 'replacetext_useregex' )->text(),
@@ -475,7 +492,7 @@ class SpecialReplaceText extends SpecialPage {
 		$tables = $this->namespaceTables( $namespaces );
 		$out->addHTML(
 			"<div class=\"mw-search-formheader\"></div>\n" .
-			"<fieldset id=\"mw-searchoptions\">\n" .
+			"<fieldset class=\"ext-replacetext-searchoptions\">\n" .
 			Xml::tags( 'h4', null, $this->msg( 'powersearch-ns' )->parse() )
 		);
 		// The ability to select/unselect groups of namespaces in the
@@ -486,14 +503,27 @@ class SpecialReplaceText extends SpecialPage {
 			// do nothing
 		} else {
 			$out->addHTML(
-				Html::element(
+				Html::rawElement(
 					'div',
-					[ 'id' => 'mw-search-togglebox' ]
+					[ 'class' => 'ext-replacetext-search-togglebox' ],
+					Html::element( 'label', [],
+						$this->msg( 'powersearch-togglelabel' )->text()
+					) .
+					Html::element( 'input', [
+						'id' => 'mw-search-toggleall',
+						'type' => 'button',
+						'value' => $this->msg( 'powersearch-toggleall' )->text(),
+					] ) .
+					Html::element( 'input', [
+						'id' => 'mw-search-togglenone',
+						'type' => 'button',
+						'value' => $this->msg( 'powersearch-togglenone' )->text()
+					] )
 				)
 			);
 		}
 		$out->addHTML(
-			Xml::element( 'div', [ 'class' => 'divider' ], '', false ) .
+			Xml::element( 'div', [ 'class' => 'ext-replacetext-divider' ], '', false ) .
 			"$tables\n</fieldset>"
 		);
 		// @todo FIXME: raw html messages
@@ -501,10 +531,15 @@ class SpecialReplaceText extends SpecialPage {
 		$prefix_search_label = $this->msg( 'replacetext_prefixsearch' )->escaped();
 		$rcPage = SpecialPage::getTitleFor( 'Recentchanges' );
 		$rcPageName = $rcPage->getPrefixedText();
+		$continueButton = new OOUI\ButtonInputWidget( [
+			'type' => 'submit',
+			'label' => $this->msg( 'replacetext_continue' )->text(),
+			'flags' => [ 'primary', 'progressive' ]
+		] );
 		$out->addHTML(
-			"<fieldset id=\"mw-searchoptions\">\n" .
+			"<fieldset class=\"ext-replacetext-searchoptions\">\n" .
 			Xml::tags( 'h4', null, $this->msg( 'replacetext_optionalfilters' )->parse() ) .
-			Xml::element( 'div', [ 'class' => 'divider' ], '', false ) .
+			Xml::element( 'div', [ 'class' => 'ext-replacetext-divider' ], '', false ) .
 			"<p>$category_search_label\n" .
 			Xml::input( 'category', 20, $this->category, [ 'type' => 'text' ] ) . '</p>' .
 			"<p>$prefix_search_label\n" .
@@ -521,10 +556,33 @@ class SpecialReplaceText extends SpecialPage {
 				$this->msg( 'replacetext_announce', $rcPageName )->text(), 'doAnnounce', 'doAnnounce', true
 			) .
 			"</p>\n" .
-			Xml::submitButton( $this->msg( 'replacetext_continue' )->text() ) .
+			$continueButton .
 			Xml::closeElement( 'form' )
 		);
+		$out->addModuleStyles( 'ext.ReplaceTextStyles' );
 		$out->addModules( 'ext.ReplaceText' );
+	}
+
+	/**
+	 * This function is not currently used, but it may get used in the
+	 * future if the "1st screen" interface changes to use OOUI.
+	 *
+	 * @param string $label
+	 * @param string $name
+	 * @param bool $selected
+	 * @return string HTML
+	 */
+	function checkLabel( $label, $name, $selected = false ) {
+		$checkbox = new OOUI\CheckboxInputWidget( [
+			'name' => $name,
+			'value' => 1,
+			'selected' => $selected
+		] );
+		$layout = new OOUI\FieldLayout( $checkbox, [
+			'align' => 'inline',
+			'label' => $label
+		] );
+		return $layout;
 	}
 
 	/**
@@ -604,10 +662,18 @@ class SpecialReplaceText extends SpecialPage {
 
 		$out->addModules( "ext.ReplaceText" );
 		$out->addModuleStyles( "ext.ReplaceTextStyles" );
-		// Needed for bolding of search term.
-		$out->addModuleStyles( "mediawiki.special.search.styles" );
 
 		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+
+		// Only show "invert selections" link if there are more than
+		// five pages.
+		if ( count( $titles_for_edit ) + count( $titles_for_move ) > 5 ) {
+			$invertButton = new OOUI\ButtonWidget( [
+				'label' => $this->msg( 'replacetext_invertselections' )->text(),
+				'classes' => [ 'ext-replacetext-invert' ]
+			] );
+			$out->addHTML( $invertButton );
+		}
 
 		if ( count( $titles_for_edit ) > 0 ) {
 			$out->addWikiMsg(
@@ -622,11 +688,19 @@ class SpecialReplaceText extends SpecialPage {
 				 * @var $title Title
 				 */
 				list( $title, $context ) = $title_and_context;
-				$out->addHTML(
-					Xml::check( $title->getArticleID(), true ) .
-					$linkRenderer->makeLink( $title, null ) .
-					" - <small>$context</small><br />\n"
-				);
+				$checkbox = new OOUI\CheckboxInputWidget( [
+					'name' => $title->getArticleID(),
+					'selected' => true
+				] );
+				$labelText = $linkRenderer->makeLink( $title, null ) . "<br /><small>$context</small>";
+				$checkboxLabel = new OOUI\LabelWidget( [
+					'label' => new OOUI\HtmlSnippet( $labelText )
+				] );
+				$layout = new OOUI\FieldLayout( $checkbox, [
+					'align' => 'inline',
+					'label' => $checkboxLabel
+				] );
+				$out->addHTML( $layout );
 			}
 			$out->addHTML( '<br />' );
 		}
@@ -657,26 +731,12 @@ class SpecialReplaceText extends SpecialPage {
 			$out->addHTML( '<br />' );
 		}
 
-		$out->addHTML(
-			"<br />\n" .
-			Xml::submitButton( $this->msg( 'replacetext_replace' )->text() ) . "\n"
-		);
-
-		// Only show "invert selections" link if there are more than
-		// five pages.
-		if ( count( $titles_for_edit ) + count( $titles_for_move ) > 5 ) {
-			$buttonOpts = [
-				'type' => 'button',
-				'value' => $this->msg( 'replacetext_invertselections' )->text(),
-				'disabled' => true,
-				'id' => 'replacetext-invert',
-				'class' => 'mw-replacetext-invert'
-			];
-
-			$out->addHTML(
-				Xml::element( 'input', $buttonOpts )
-			);
-		}
+		$submitButton = new OOUI\ButtonInputWidget( [
+			'type' => 'submit',
+			'flags' => [ 'primary', 'progressive' ],
+			'label' => $this->msg( 'replacetext_replace' )->text()
+		] );
+		$out->addHTML( $submitButton );
 
 		$out->addHTML( '</form>' );
 
@@ -742,22 +802,11 @@ class SpecialReplaceText extends SpecialPage {
 			list( $index, $len, ) = $_;
 			$contextBefore = substr( $text, 0, $index );
 			$contextAfter = substr( $text, $index + $len );
-			if ( !is_callable( [ $wgLang, 'truncateForDatabase' ] ) ) {
-				// Backwards compatibility code; remove once MW 1.30 is
-				// no longer supported.
-				$contextBefore =
-					// @phan-suppress-next-line PhanUndeclaredMethod
-					$wgLang->truncate( $contextBefore, -$cw, '...', false );
-				$contextAfter =
-					// @phan-suppress-next-line PhanUndeclaredMethod
-					$wgLang->truncate( $contextAfter, $cw, '...', false );
-			} else {
-				$contextBefore =
-					$wgLang->truncateForDatabase( $contextBefore, -$cw, '...', false );
-				$contextAfter =
-					$wgLang->truncateForDatabase( $contextAfter, $cw, '...', false );
-			}
 
+			$contextBefore = $wgLang->truncateForDatabase( $contextBefore, -$cw, '...', false );
+			$contextAfter = $wgLang->truncateForDatabase( $contextAfter, $cw, '...', false );
+
+			// @phan-suppress-next-line SecurityCheck-DoubleEscaped T290624
 			$context .= $this->convertWhiteSpaceToHTML( $contextBefore );
 			$snippet = $this->convertWhiteSpaceToHTML( substr( $text, $index, $len ) );
 			if ( $use_regex ) {
@@ -766,8 +815,9 @@ class SpecialReplaceText extends SpecialPage {
 				$targetq = preg_quote( $this->convertWhiteSpaceToHTML( $target ), '/' );
 				$targetStr = "/$targetq/i";
 			}
-			$context .= preg_replace( $targetStr, '<span class="searchmatch">\0</span>', $snippet );
+			$context .= preg_replace( $targetStr, '<span class="ext-replacetext-searchmatch">\0</span>', $snippet );
 
+			// @phan-suppress-next-line SecurityCheck-DoubleEscaped T290624
 			$context .= $this->convertWhiteSpaceToHTML( $contextAfter );
 		}
 		return $context;

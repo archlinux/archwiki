@@ -2,29 +2,28 @@
 
 namespace MediaWiki\Extension\Nuke;
 
+use MediaWiki\Hook\ContributionsToolLinksHook;
 use SpecialPage;
 use Title;
 use Wikimedia\IPUtils;
 
-class Hooks {
+class Hooks implements ContributionsToolLinksHook {
 
 	/**
 	 * Shows link to Special:Nuke on Special:Contributions/username if applicable
 	 *
-	 * @param int $userId
-	 * @param Title $userPageTitle
-	 * @param string[] &$toolLinks
-	 * @param SpecialPage $sp
+	 * @param int $id
+	 * @param Title $title
+	 * @param string[] &$tools
+	 * @param SpecialPage $specialPage
 	 */
-	public static function nukeContributionsLinks( $userId, $userPageTitle, &$toolLinks,
-		SpecialPage $sp
-	) {
-		$username = $userPageTitle->getText();
-		if ( $sp->getUser()->isAllowed( 'nuke' ) && !IPUtils::isValidRange( $username ) ) {
-			$toolLinks['nuke'] = $sp->getLinkRenderer()->makeKnownLink(
+	public function onContributionsToolLinks( $id, Title $title, array &$tools, SpecialPage $specialPage ) {
+		$username = $title->getText();
+		if ( $specialPage->getUser()->isAllowed( 'nuke' ) && !IPUtils::isValidRange( $username ) ) {
+			$tools['nuke'] = $specialPage->getLinkRenderer()->makeKnownLink(
 				SpecialPage::getTitleFor( 'Nuke' ),
-				$sp->msg( 'nuke-linkoncontribs' )->text(),
-				[ 'title' => $sp->msg( 'nuke-linkoncontribs-text', $username )->text() ],
+				$specialPage->msg( 'nuke-linkoncontribs' )->text(),
+				[ 'title' => $specialPage->msg( 'nuke-linkoncontribs-text', $username )->text() ],
 				[ 'target' => $username ]
 			);
 		}

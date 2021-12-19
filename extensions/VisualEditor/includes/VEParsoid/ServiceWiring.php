@@ -39,7 +39,7 @@ if (
 
 return [
 
-	'ParsoidSettings' => function ( MediaWikiServices $services ): array {
+	'ParsoidSettings' => static function ( MediaWikiServices $services ): array {
 		# Unified location for default parsoid settings.
 
 		$veConfig = $services->getConfigFactory()
@@ -58,7 +58,7 @@ return [
 		return $parsoidSettings;
 	},
 
-	'ParsoidSiteConfig' => function ( MediaWikiServices $services ): SiteConfig {
+	'ParsoidSiteConfig' => static function ( MediaWikiServices $services ): SiteConfig {
 		$mainConfig = $services->getMainConfig();
 		$parsoidSettings = $services->get( 'ParsoidSettings' );
 		if ( !empty( $parsoidSettings['debugApi'] ) ) {
@@ -84,12 +84,12 @@ return [
 		);
 	},
 
-	'ParsoidPageConfigFactory' => function ( MediaWikiServices $services ): MWPageConfigFactory {
+	'ParsoidPageConfigFactory' => static function ( MediaWikiServices $services ): MWPageConfigFactory {
 		return new MWPageConfigFactory( $services->getRevisionStore(),
 			$services->getSlotRoleRegistry() );
 	},
 
-	'ParsoidDataAccess' => function ( MediaWikiServices $services ): DataAccess {
+	'ParsoidDataAccess' => static function ( MediaWikiServices $services ): DataAccess {
 		$parsoidSettings = $services->get( 'ParsoidSettings' );
 		if ( !empty( $parsoidSettings['debugApi'] ) ) {
 			return ApiDataAccess::fromSettings( $parsoidSettings );
@@ -98,6 +98,7 @@ return [
 			$services->getRepoGroup(),
 			$services->getBadFileLookup(),
 			$services->getHookContainer(),
+			$services->getContentTransformer(),
 			$services->getParserFactory() // *legacy* parser factory
 		);
 	},

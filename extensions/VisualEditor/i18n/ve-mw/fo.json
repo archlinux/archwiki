@@ -83,7 +83,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Far aftur",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Halt fram álíkavæl",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Kravd {{PLURAL:$1|parametur|parametrar}} mangla",
-	"visualeditor-dialog-transclusion-title": "Leggjast inn í",
 	"visualeditor-dialogbutton-media-tooltip": "Miðil",
 	"visualeditor-dialogbutton-meta-tooltip": "Síðu innstillingar",
 	"visualeditor-dialogbutton-template-tooltip": "Fyrimynd",

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ibrahima"
+			"Ibrahima",
+			"Ibrahima Malal Sarr"
 		]
 	},
 	"scribunto-lua-error": "Lua error: $2."

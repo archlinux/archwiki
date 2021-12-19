@@ -857,6 +857,19 @@ ve.ui.MWSaveDialog.prototype.getSetupProcess = function ( data ) {
 			this.canPreview = !!data.canPreview;
 			this.setupCheckboxes( data.checkboxFields || [] );
 			this.checkboxesByName = data.checkboxesByName || {};
+			// HACK: Change layout when wpWatchlistExpiry is present to force wpWatchthis
+			// onto a new line, hopefully with the expiry dropdown
+			this.$saveCheckboxes.toggleClass( 've-ui-mwSaveDialog-checkboxes-withExpiry', !!this.checkboxesByName.wpWatchlistExpiry );
+			// Toggle the watchlist-expiry dropdown's disabled state according to the
+			// selected state of the watchthis checkbox.
+			if ( this.checkboxesByName.wpWatchthis && this.checkboxesByName.wpWatchlistExpiry ) {
+				// Set initial state to match the watchthis checkbox.
+				this.checkboxesByName.wpWatchlistExpiry.setDisabled( !this.checkboxesByName.wpWatchthis.isSelected() );
+				// Change state on every change of the watchthis checkbox.
+				this.checkboxesByName.wpWatchthis.on( 'change', function ( enabled ) {
+					this.checkboxesByName.wpWatchlistExpiry.setDisabled( !enabled );
+				}.bind( this ) );
+			}
 
 			function trackCheckbox( n ) {
 				ve.track( 'activity.mwSave', { action: 'checkbox-' + n } );

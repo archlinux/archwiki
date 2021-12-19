@@ -19,13 +19,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Extensions
  * @author Daniel Kinzler, brightbyte.de
  */
 
 ( function () {
 	var loadChildren,
-		data = require( './data.json' );
+		config = require( './data.json' );
 
 	/**
 	 * Expands a given node (loading it's children if not loaded)
@@ -39,9 +38,8 @@
 		$children.show();
 
 		$link
-			.text( mw.msg( 'categorytree-collapse-bullet' ) )
 			.attr( 'title', mw.msg( 'categorytree-collapse' ) )
-			.data( 'ct-state', 'expanded' );
+			.attr( 'data-ct-state', 'expanded' );
 
 		if ( !$link.data( 'ct-loaded' ) ) {
 			loadChildren( $link, $children );
@@ -59,19 +57,18 @@
 			.siblings( '.CategoryTreeChildren' ).hide();
 
 		$link
-			.text( mw.msg( 'categorytree-expand-bullet' ) )
 			.attr( 'title', mw.msg( 'categorytree-expand' ) )
-			.data( 'ct-state', 'collapsed' );
+			.attr( 'data-ct-state', 'collapsed' );
 	}
 
 	/**
 	 * Handles clicks on the expand buttons, and calls the appropriate function
 	 *
-	 * @context {Element} CategoryTreeToggle
+	 * @this {Element} CategoryTreeToggle
 	 */
 	function handleNode() {
 		var $link = $( this );
-		if ( $link.data( 'ct-state' ) === 'collapsed' ) {
+		if ( $link.attr( 'data-ct-state' ) === 'collapsed' ) {
 			expandNode( $link );
 		} else {
 			collapseNode( $link );
@@ -88,7 +85,7 @@
 			.on( 'click', handleNode )
 			.attr( 'title', function () {
 				return mw.msg(
-					$( this ).data( 'ct-state' ) === 'collapsed' ?
+					$( this ).attr( 'data-ct-state' ) === 'collapsed' ?
 						'categorytree-expand' :
 						'categorytree-collapse'
 				);
@@ -146,7 +143,7 @@
 		ctTitle = $link.attr( 'data-ct-title' );
 		ctMode = $linkParentCTTag.data( 'ct-mode' );
 		ctMode = typeof ctMode === 'number' ? ctMode : undefined;
-		ctOptions = $linkParentCTTag.attr( 'data-ct-options' ) || data.defaultCtOptions;
+		ctOptions = $linkParentCTTag.attr( 'data-ct-options' ) || config.defaultCtOptions;
 
 		// Mode and options have defaults or fallbacks, title does not.
 		// Don't make a request if there is no title.

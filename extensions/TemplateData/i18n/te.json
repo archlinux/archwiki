@@ -10,7 +10,9 @@
 	"templatedata-doc-param-desc": "వివరణ",
 	"templatedata-doc-param-name": "పరామితి",
 	"templatedata-doc-param-status": "స్థితి",
+	"templatedata-doc-param-suggestedvalues": "సూచిత విలువలు",
 	"templatedata-doc-param-type-date": "తేదీ",
 	"templatedata-doc-params": "మూస పరామితులు",
-	"templatedata-modal-confirmcancel": "మీ మార్పులను తోసిపుచ్చాలనే మీరు నిశ్చయించుకున్నారా?"
+	"templatedata-modal-confirmcancel": "మీ మార్పులను తోసిపుచ్చాలనే మీరు నిశ్చయించుకున్నారా?",
+	"templatedata-modal-table-param-suggestedvalues": "సూచిత విలువలు"
 }

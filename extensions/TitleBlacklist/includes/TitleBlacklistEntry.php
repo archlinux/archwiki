@@ -110,7 +110,7 @@ class TitleBlacklistEntry {
 				$status = $cache->getWithSetCallback(
 					$cache->makeKey( 'titleblacklist', 'normalized-unicode-status', md5( $title ) ),
 					$cache::TTL_MONTH,
-					function () use ( $title ) {
+					static function () use ( $title ) {
 						return AntiSpoof::checkUnicodeStringStatus( $title );
 					},
 					[ 'pcTTL' => $cache::TTL_PROC_LONG ]

@@ -91,14 +91,18 @@ ve.ce.MWReferencesListNode.prototype.onSetup = function () {
  * @method
  */
 ve.ce.MWReferencesListNode.prototype.onTeardown = function () {
+	// Parent method
+	ve.ce.MWReferencesListNode.super.prototype.onTeardown.call( this );
+
+	if ( !this.listNode ) {
+		return;
+	}
+
 	this.internalList.disconnect( this, { update: 'onInternalListUpdate' } );
 	this.listNode.disconnect( this, { update: 'onListNodeUpdate' } );
 
 	this.internalList = null;
 	this.listNode = null;
-
-	// Parent method
-	ve.ce.MWReferencesListNode.super.prototype.onTeardown.call( this );
 };
 
 /**
@@ -155,7 +159,7 @@ ve.ce.MWReferencesListNode.prototype.onListNodeUpdate = function () {
  */
 ve.ce.MWReferencesListNode.prototype.update = function () {
 	var i, iLen, index, firstNode, key, keyedNodes, modelNode, refPreview,
-		$li, internalList, refGroup, listGroup, nodes,
+		$li, internalList, refGroup, listGroup, nodes, emptyText,
 		model = this.getModel();
 
 	// Check the node hasn't been destroyed, as this method is debounced.
@@ -168,6 +172,12 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 	listGroup = model.getAttribute( 'listGroup' );
 	nodes = internalList.getNodeGroup( listGroup );
 
+	if ( refGroup !== '' ) {
+		emptyText = ve.msg( 'cite-ve-referenceslist-isempty', refGroup );
+	} else {
+		emptyText = ve.msg( 'cite-ve-referenceslist-isempty-default' );
+	}
+
 	// Just use Parsoid-provided DOM for first rendering
 	// NB: Technically this.modified could be reset to false if this
 	// node is re-attached, but that is an unlikely edge case.
@@ -175,7 +185,12 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 		this.$originalRefList = $( model.getStore().value(
 			model.getElement().originalDomElementsHash
 		) );
-		this.$element.append( this.$originalRefList );
+		if ( !nodes || !nodes.indexOrder.length ) {
+			this.$refmsg.text( emptyText );
+			this.$element.append( this.$refmsg );
+		} else {
+			this.$element.append( this.$originalRefList );
+		}
 		return;
 	}
 
@@ -193,11 +208,7 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 	}
 
 	if ( !nodes || !nodes.indexOrder.length ) {
-		if ( refGroup !== '' ) {
-			this.$refmsg.text( ve.msg( 'cite-ve-referenceslist-isempty', refGroup ) );
-		} else {
-			this.$refmsg.text( ve.msg( 'cite-ve-referenceslist-isempty-default' ) );
-		}
+		this.$refmsg.text( emptyText );
 		this.$element.append( this.$refmsg );
 	} else {
 		for ( i = 0, iLen = nodes.indexOrder.length; i < iLen; i++ ) {

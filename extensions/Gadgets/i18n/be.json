@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Artsiom91",
-			"Mikalai Udodau"
+			"Mikalai Udodau",
+			"ZlyiLev"
 		]
 	},
 	"prefs-gadgets": "Гаджэты",
@@ -10,5 +11,6 @@
 	"gadgets": "Гаджэты",
 	"gadgetusage": "Статыстыка карыстання гаджэтамі",
 	"gadgetusage-gadget": "Гаджэт",
-	"gadgets-title": "Гаджэты"
+	"gadgets-title": "Гаджэты",
+	"gadgets-not-found": "Гаджэт «$1» не знойдзены."
 }

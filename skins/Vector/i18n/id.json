@@ -6,9 +6,9 @@
 			"Farras",
 			"Iwan Novirion",
 			"Naufal06",
+			"Rachmat04",
 			"Rex",
-			"William Surya Permana",
-			"Rachmat04"
+			"William Surya Permana"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -36,5 +36,7 @@
 	"vector-jumptosearch": "Loncat ke pencarian",
 	"vector-jumptocontent": "Lompat ke isi",
 	"vector-more-actions": "Lainnya",
-	"vector-search-loader": "Memuat saran pencarian"
+	"vector-search-loader": "Memuat saran pencarian",
+	"vector-anon-user-menu-pages": "Halaman penyunting yang telah keluar log",
+	"vector-anon-user-menu-pages-learn": "pelajari lebih lanjut"
 }

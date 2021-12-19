@@ -4,10 +4,9 @@ namespace Wikimedia\Parsoid\Wt2Html;
 
 use Generator;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Tokens\SourceRange;
-use Wikimedia\Parsoid\Utils\PHPUtils;
-use Wikimedia\Parsoid\Utils\Utils;
+use Wikimedia\Parsoid\Config\Profile;
 use Wikimedia\Parsoid\Wt2Html\TT\TokenHandler;
+use Wikimedia\Parsoid\Wt2Html\TT\TraceProxy;
 
 /**
  * Token transformation manager. Individual transformations
@@ -26,11 +25,17 @@ class TokenTransformManager extends PipelineStage {
 	/** @var string */
 	private $traceType = "";
 
-	/** @var array */
-	private $traceState;
+	/** @var bool */
+	private $traceEnabled;
 
 	/** @var TokenHandler[] */
 	private $transformers = [];
+
+	/** @var int For TraceProxy */
+	public $tokenTimes = 0;
+
+	/** @var Profile|null For TraceProxy */
+	public $profile;
 
 	/**
 	 * @param Env $env
@@ -44,23 +49,18 @@ class TokenTransformManager extends PipelineStage {
 	) {
 		parent::__construct( $env, $prevStage );
 		$this->options = $options;
-		$this->traceType = 'trace/ttm:' . preg_replace( '/TokenTransform/', '', $stageId );
 		$this->pipelineId = null;
+		$this->traceType = 'trace/ttm:' . str_replace( 'TokenTransform', '', $stageId );
+		$this->traceEnabled = $env->hasTraceFlags();
+	}
 
-		// Compute tracing state
-		$this->traceState = null;
-		if ( $env->hasTraceFlags() ) {
-			$this->traceState = [
-				'tokenTimes' => 0,
-				'tracer' => function ( $token, $transformer ) use ( $env ) {
-					$cname = Utils::stripNamespace( get_class( $transformer ) );
-					$cnameStr = $cname . str_repeat( ' ', 23 - strlen( $cname ) ) . "|";
-					$env->log(
-						$this->traceType, $this->pipelineId, $cnameStr,
-						PHPUtils::jsonEncode( $token )
-					);
-				}
-			];
+	/**
+	 * @param int $id
+	 */
+	public function setPipelineId( int $id ): void {
+		parent::setPipelineId( $id );
+		foreach ( $this->transformers as $transformer ) {
+			$transformer->setPipelineId( $id );
 		}
 	}
 
@@ -75,15 +75,11 @@ class TokenTransformManager extends PipelineStage {
 	 * @inheritDoc
 	 */
 	public function addTransformer( TokenHandler $t ): void {
-		$this->transformers[] = $t;
-	}
-
-	/**
-	 * Get this manager's tracing state object
-	 * @return array|null
-	 */
-	public function getTraceState(): ?array {
-		return $this->traceState;
+		if ( $this->traceEnabled ) {
+			$this->transformers[] = new TraceProxy( $this, $this->options, $this->traceType, $t );
+		} else {
+			$this->transformers[] = $t;
+		}
 	}
 
 	/**
@@ -97,13 +93,11 @@ class TokenTransformManager extends PipelineStage {
 		}
 
 		$startTime = null;
-		$profile = null;
-		if ( $this->traceState ) {
-			$profile = $this->traceState['profile'] =
-				$this->env->profiling() ? $this->env->getCurrentProfile() : null;
-		}
+		$profile = $this->profile = $this->env->profiling() ? $this->env->getCurrentProfile() : null;
+
 		if ( $profile ) {
-			$startTime = PHPUtils::getStartHRTime();
+			$startTime = microtime( true );
+			$this->tokenTimes = 0;
 		}
 
 		foreach ( $this->transformers as $transformer ) {
@@ -111,17 +105,13 @@ class TokenTransformManager extends PipelineStage {
 				if ( count( $tokens ) === 0 ) {
 					break;
 				}
-				if ( $this->traceState ) {
-					$this->traceState['transformer'] = get_class( $transformer );
-				}
-
 				$tokens = $transformer->process( $tokens );
 			}
 		}
 
 		if ( $profile ) {
 			$profile->bumpTimeUse( 'TTM',
-				( PHPUtils::getStartHRTime() - $startTime - $this->traceState['tokenTimes'] ),
+				( microtime( true ) - $startTime ) * 1000 - $this->tokenTimes,
 				'TTM' );
 		}
 
@@ -132,17 +122,9 @@ class TokenTransformManager extends PipelineStage {
 	 * @inheritDoc
 	 */
 	public function resetState( array $opts ): void {
+		parent::resetState( $opts );
 		foreach ( $this->transformers as $transformer ) {
 			$transformer->resetState( $opts );
-		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setSourceOffsets( SourceRange $so ): void {
-		foreach ( $this->transformers as $transformer ) {
-			$transformer->setSourceOffsets( $so );
 		}
 	}
 
@@ -154,7 +136,6 @@ class TokenTransformManager extends PipelineStage {
 	 * @return array Returns the array of processed tokens
 	 */
 	public function process( $tokens, ?array $opts = null ): array {
-		'@phan-var array $tokens'; // @var array $tokens
 		return $this->processChunk( $tokens );
 	}
 

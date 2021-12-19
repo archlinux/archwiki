@@ -818,11 +818,11 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 		switch ( $this->getLuaType( $repl ) ) {
 		case 'string':
 		case 'number':
-			$cb = function ( $m ) use ( $repl, $anypos, &$captures ) {
+			$cb = static function ( $m ) use ( $repl, $anypos, &$captures ) {
 				if ( $anypos ) {
 					$m = array_shift( $captures );
 				}
-				return preg_replace_callback( '/%([%0-9])/', function ( $m2 ) use ( $m ) {
+				return preg_replace_callback( '/%([%0-9])/', static function ( $m2 ) use ( $m ) {
 					$x = $m2[1];
 					if ( $x === '%' ) {
 						return '%';
@@ -896,7 +896,7 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 			$maxMatches = $n < 0 ? INF : $n;
 			$n = -1;
 			$realCallback = $cb;
-			$cb = function ( $m ) use ( $realCallback, &$skippedMatches, &$maxMatches ) {
+			$cb = static function ( $m ) use ( $realCallback, &$skippedMatches, &$maxMatches ) {
 				$c = ord( $m['phpBug53823'] );
 				if ( $c >= 0x80 && $c <= 0xbf || $maxMatches <= 0 ) {
 					$skippedMatches++;

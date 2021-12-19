@@ -68,7 +68,6 @@ class InputBox {
 		switch ( $this->mType ) {
 			case 'create':
 			case 'comment':
-				$this->mParser->getOutput()->addModules( 'ext.inputBox' );
 				return $this->getCreateForm();
 			case 'move':
 				return $this->getMoveForm();
@@ -441,9 +440,12 @@ class InputBox {
 			'type' => $this->mHidden ? 'hidden' : 'text',
 			'name' => 'title',
 			'class' => $this->getLinebreakClasses() .
-				'mw-ui-input mw-ui-input-inline createboxInput',
+				'mw-ui-input mw-ui-input-inline mw-inputbox-createbox',
 			'value' => $this->mDefaultText,
 			'placeholder' => $this->mPlaceholderText,
+			// For visible input fields, use required so that the form will not
+			// submit without a value
+			'required' => !$this->mHidden,
 			'size' => $this->mWidth,
 			'dir' => $this->mDir
 		] );
@@ -453,7 +455,7 @@ class InputBox {
 			[
 				'type' => 'submit',
 				'name' => 'create',
-				'class' => 'mw-ui-button mw-ui-progressive createboxButton',
+				'class' => 'mw-ui-button mw-ui-progressive',
 				'value' => $this->mButtonLabel
 			]
 		);
@@ -706,7 +708,7 @@ REGEX;
 			$defaultAttr[ 'aria-label' ] = $this->mTextBoxAriaLabel;
 		}
 
-		return Xml::openElement( 'input', $defaultAttr );
+		return Html::openElement( 'input', $defaultAttr );
 	}
 
 	private function bgColorStyle() {

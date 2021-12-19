@@ -508,7 +508,7 @@ class MockDataAccess implements DataAccess {
 				}
 			}
 
-			$ret = array_merge( $ret, [ $normFileName => $info ] );
+			$ret[$normFileName] = $info;
 		}
 
 		return $ret;
@@ -548,6 +548,7 @@ class MockDataAccess implements DataAccess {
 			'html' => $html,
 			'modules' => [],
 			'modulestyles' => [],
+			'jsconfigvars' => [],
 			'categories' => [],
 		];
 	}
@@ -558,6 +559,7 @@ class MockDataAccess implements DataAccess {
 		$ret = [
 			'modules' => [],
 			'modulestyles' => [],
+			'jsconfigvars' => [],
 			'categories' => [],
 			'properties' => [],
 		];
@@ -571,6 +573,9 @@ class MockDataAccess implements DataAccess {
 			$ret['wikitext'] = 'purple';
 		} elseif ( $wikitext === '{{REVISIONID}}' ) {
 			$ret['wikitext'] = (string)$revid;
+		} elseif ( $wikitext === '{{mangle}}' ) {
+			$ret['wikitext'] = 'hi';
+			$ret['categories']['Mangle'] = 'ho';
 		} else {
 			$ret['wikitext'] = '';
 		}

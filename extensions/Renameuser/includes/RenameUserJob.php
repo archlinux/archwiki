@@ -47,7 +47,7 @@ class RenameUserJob extends Job {
 	public function run() {
 		global $wgUpdateRowsPerQuery;
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 		$table = $this->params['table'];
 		$column = $this->params['column'];
 

@@ -2,9 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"AmaryllisGardener",
-			"Fanjiayi"
+			"Fanjiayi",
+			"MinecraftAustralia"
 		]
 	},
+	"vector-action-addsection": "Ed topik",
+	"vector-action-delete": "Deliit",
+	"vector-action-move": "Moew",
+	"vector-action-protect": "Protekt",
+	"vector-view-create": "Meik",
 	"vector-view-edit": "Edet",
-	"vector-view-history": "View histrei"
+	"vector-view-history": "View histrei",
+	"vector-view-view": "Riid",
+	"vector-more-actions": "Mor"
 }

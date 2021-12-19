@@ -110,12 +110,11 @@ mw.libs.ve.fixFragmentLinks = function ( container, docTitle, prefix ) {
 	var docTitleText = docTitle.getPrefixedText();
 	prefix = prefix || '';
 	Array.prototype.forEach.call( container.querySelectorAll( 'a[href*="#"]' ), function ( el ) {
-		var target, title,
-			fragment = new mw.Uri( el.href ).fragment,
+		var fragment = new mw.Uri( el.href ).fragment,
 			targetData = mw.libs.ve.getTargetDataFromHref( el.href, el.ownerDocument );
 
 		if ( targetData.isInternal ) {
-			title = mw.Title.newFromText( targetData.title );
+			var title = mw.Title.newFromText( targetData.title );
 			if ( title && title.getPrefixedText() === docTitleText ) {
 
 				if ( !fragment ) {
@@ -123,7 +122,7 @@ mw.libs.ve.fixFragmentLinks = function ( container, docTitle, prefix ) {
 					el.setAttribute( 'href', '#' );
 				} else {
 					if ( prefix ) {
-						target = container.querySelector( '#' + $.escapeSelector( fragment ) );
+						var target = container.querySelector( '#' + $.escapeSelector( fragment ) );
 						// There may be multiple links to a specific target, so check the target
 						// hasn't already been fixed (in which case it would be null)
 						if ( target ) {
@@ -153,22 +152,20 @@ mw.libs.ve.fixFragmentLinks = function ( container, docTitle, prefix ) {
  *    True if the href pointed to the local wiki, false if href is external
  */
 mw.libs.ve.getTargetDataFromHref = function ( href, doc ) {
-	var relativeBase, relativeBaseRegex, relativeHref, isInternal, matches, data, uri;
-
 	function regexEscape( str ) {
 		return str.replace( /([.?*+^$[\]\\(){}|-])/g, '\\$1' );
 	}
 
 	// Protocol relative href
-	relativeHref = href.replace( /^https?:/i, '' );
+	var relativeHref = href.replace( /^https?:/i, '' );
 	// Paths without a host portion are assumed to be internal
-	isInternal = !/^\/\//.test( relativeHref );
+	var isInternal = !/^\/\//.test( relativeHref );
 
 	// Check if this matches the server's article path
 	// Protocol relative base
-	relativeBase = mw.libs.ve.resolveUrl( mw.config.get( 'wgArticlePath' ), doc ).replace( /^https?:/i, '' );
-	relativeBaseRegex = new RegExp( regexEscape( relativeBase ).replace( regexEscape( '$1' ), '(.*)' ) );
-	matches = relativeHref.match( relativeBaseRegex );
+	var relativeBase = mw.libs.ve.resolveUrl( mw.config.get( 'wgArticlePath' ), doc ).replace( /^https?:/i, '' );
+	var relativeBaseRegex = new RegExp( regexEscape( relativeBase ).replace( regexEscape( '$1' ), '(.*)' ) );
+	var matches = relativeHref.match( relativeBaseRegex );
 	if ( matches && matches[ 1 ].split( '#' )[ 0 ].indexOf( '?' ) === -1 ) {
 		// Take the relative path
 		href = matches[ 1 ];
@@ -178,7 +175,7 @@ mw.libs.ve.getTargetDataFromHref = function ( href, doc ) {
 	// Check if this matches the server's script path (as used by red links)
 	relativeBase = mw.libs.ve.resolveUrl( mw.config.get( 'wgScript' ), doc ).replace( /^https?:/i, '' );
 	if ( relativeHref.indexOf( relativeBase ) === 0 ) {
-		uri = new mw.Uri( relativeHref );
+		var uri = new mw.Uri( relativeHref );
 		if ( Object.keys( uri.query ).length === 1 && uri.query.title ) {
 			href = uri.query.title;
 			isInternal = true;
@@ -193,7 +190,7 @@ mw.libs.ve.getTargetDataFromHref = function ( href, doc ) {
 
 	// This href doesn't necessarily come from Parsoid (and it might not have the "./" prefix), but
 	// this method will work fine.
-	data = mw.libs.ve.parseParsoidResourceName( href );
+	var data = mw.libs.ve.parseParsoidResourceName( href );
 	data.isInternal = isInternal;
 	return data;
 };
@@ -213,21 +210,20 @@ mw.libs.ve.expandModuleNames = function ( moduleNames ) {
 	var modules = [];
 
 	moduleNames.split( '|' ).forEach( function ( group ) {
-		var matches, prefix, suffixes;
 		if ( group.indexOf( ',' ) === -1 ) {
 			// This is not a set of modules in foo.bar,baz notation
 			// but a single module
 			modules.push( group );
 		} else {
 			// This is a set of modules in foo.bar,baz notation
-			matches = group.match( /(.*)\.([^.]*)/ );
+			var matches = group.match( /(.*)\.([^.]*)/ );
 			if ( !matches ) {
 				// Prefixless modules, i.e. without dots
 				modules = modules.concat( group.split( ',' ) );
 			} else {
 				// We have a prefix and a bunch of suffixes
-				prefix = matches[ 1 ];
-				suffixes = matches[ 2 ].split( ',' ); // [ 'bar', 'baz' ]
+				var prefix = matches[ 1 ];
+				var suffixes = matches[ 2 ].split( ',' ); // [ 'bar', 'baz' ]
 				suffixes.forEach( function ( suffix ) {
 					modules.push( prefix + '.' + suffix );
 				} );

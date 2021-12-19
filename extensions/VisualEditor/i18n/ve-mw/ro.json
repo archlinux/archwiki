@@ -14,7 +14,8 @@
 			"Reception123",
 			"Stelistcristi",
 			"Strainu",
-			"Wintereu"
+			"Wintereu",
+			"TMg"
 		]
 	},
 	"collabpad-import-subtitle": "Importat de pe $1",
@@ -155,14 +156,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Adăugare conținut",
 	"visualeditor-dialog-transclusion-add-param": "Adăugare mai multe informații",
 	"visualeditor-dialog-transclusion-add-template": "Adăugare format",
+	"visualeditor-dialog-transclusion-collapse-options": "Ascunde opțiunile",
 	"visualeditor-dialog-transclusion-content": "Conținut",
 	"visualeditor-dialog-transclusion-contextitem-description": "Generat din: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Arată opțiunile",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Câmp învechit",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Câmpul este învechit. $1",
 	"visualeditor-dialog-transclusion-loading": "Se încarcă...",
-	"visualeditor-dialog-transclusion-more-template-description": "S-ar putea să mai fie și alte informații despre formatul \"$1\" în [[{{ns:template}}:$1|pagina lui]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Arată opțiunile",
-	"visualeditor-dialog-transclusion-no-template-description": "Formatul „$1” nu are încă o descriere, dar ar putea exista câteva informații pe [[$1|pagina formatului]].",
+	"visualeditor-dialog-transclusion-more-template-description": "S-ar putea să fie niște informații adiționale despre formatul „$1” pe [[{{ns:template}}:$1|pagina sa]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Formatul „$1” nu are încă o descriere, dar ar putea exista câteva informații pe [[$2|pagina formatului]].",
 	"visualeditor-dialog-transclusion-options": "Opțiuni",
 	"visualeditor-dialog-transclusion-param-default": "Valoare implicită: $1",
 	"visualeditor-dialog-transclusion-param-example": "de exemplu $1",
@@ -179,8 +181,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Continuă oricum",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Parametru|Parametri}} necesar{{PLURAL:$1||i}} lipsă",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Sigur doriți să continuați fără a completa {{PLURAL:$2|parametrul|parametrii}} $1?",
-	"visualeditor-dialog-transclusion-single-mode": "Ascunde opțiunile",
-	"visualeditor-dialog-transclusion-title": "Transcludere",
 	"visualeditor-dialogbutton-media-tooltip": "Imagini și media",
 	"visualeditor-dialogbutton-meta-tooltip": "Setări pagină",
 	"visualeditor-dialogbutton-template-tooltip": "Format",
@@ -343,6 +343,5 @@
 	"visualeditor-wikitext-warning-title": "Limbaj de text wiki detectat",
 	"visualeditor-wikitextconvert-title": "Convertiți formatarea în wikitext?",
 	"visualeditor-wikitextconvert-message": "Conținutul lipit de dvs. conține formatare. Ar trebui convertit în wikitext sau inserat ca text simplu?",
-	"visualeditor-wikitextconvert-plain": "Utilizează text simplu",
 	"visualeditor-wikitextconvert-convert": "Convertește în wikitext"
 }

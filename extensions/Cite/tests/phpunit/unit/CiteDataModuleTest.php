@@ -14,7 +14,7 @@ use WebRequest;
  */
 class CiteDataModuleTest extends \MediaWikiUnitTestCase {
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		global $wgRequest;
 
 		parent::setUp();
@@ -48,7 +48,7 @@ class CiteDataModuleTest extends \MediaWikiUnitTestCase {
 		);
 	}
 
-	private function createResourceLoaderContext() : ResourceLoaderContext {
+	private function createResourceLoaderContext(): ResourceLoaderContext {
 		$msg = $this->createMock( Message::class );
 		$msg->method( 'inContentLanguage' )
 			->willReturnSelf();

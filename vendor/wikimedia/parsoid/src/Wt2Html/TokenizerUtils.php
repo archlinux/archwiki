@@ -221,8 +221,7 @@ class TokenizerUtils {
 				// {{!}} pipe templates..
 				// FIXME: Presumably these should mix with and match | above.
 				// phpcs:ignore Squiz.WhiteSpace.LanguageConstructSpacing.IncorrectSingle
-				return
-					( $stops['tableCellArg']
+				return ( $stops['tableCellArg']
 						&& substr( $input, $pos, 5 ) === '{{!}}' )
 					|| ( $stops['table']
 						&& substr( $input, $pos, 10 ) === '{{!}}{{!}}' );
@@ -332,19 +331,26 @@ class TokenizerUtils {
 
 	public static function enforceParserResourceLimits( Env $env, $token ) {
 		if ( $token && ( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) ) {
+			$resource = null;
 			switch ( $token->getName() ) {
 				case 'listItem':
-					$env->bumpWt2HtmlResourceUse( 'listItem' );
+					$resource = 'listItem';
 					break;
-
 				case 'template':
-					$env->bumpWt2HtmlResourceUse( 'transclusion' );
+					$resource = 'transclusion';
 					break;
-
 				case 'td':
 				case 'th':
-					$env->bumpWt2HtmlResourceUse( 'tableCell' );
+					$resource = 'tableCell';
 					break;
+			}
+			if (
+				$resource !== null &&
+				$env->bumpWt2HtmlResourceUse( $resource ) === false
+			) {
+				// `false` indicates that this bump pushed us over the threshold
+				// We don't want to log every token above that, which would be `null`
+				$env->log( 'warn', "wt2html: $resource limit exceeded" );
 			}
 		}
 	}

@@ -2,7 +2,7 @@
 
 namespace Wikimedia\Parsoid\Language;
 
-use DOMElement;
+use Wikimedia\Parsoid\DOM\Element;
 
 /**
  * A simple {@link LanguageGuesser} that returns the same "source language" for every node.
@@ -14,7 +14,6 @@ class ConstantLanguageGuesser extends LanguageGuesser {
 	private $langCode;
 
 	/**
-	 * ConstantLanguageGuesser constructor.
 	 * @param string $langCode
 	 */
 	public function __construct( string $langCode ) {
@@ -22,7 +21,7 @@ class ConstantLanguageGuesser extends LanguageGuesser {
 	}
 
 	/** @inheritDoc */
-	public function guessLang( DOMElement $node ): string {
+	public function guessLang( Element $node ): string {
 		return $this->langCode;
 	}
 

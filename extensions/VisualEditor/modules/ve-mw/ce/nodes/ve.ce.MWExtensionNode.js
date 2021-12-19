@@ -115,7 +115,6 @@ ve.ce.MWExtensionNode.prototype.onParseSuccess = function ( deferred, response )
 	deferred.resolve( contentNodes );
 };
 
-/** */
 ve.ce.MWExtensionNode.prototype.afterRender = function () {
 	var node = this,
 		$images = this.$element

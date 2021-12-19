@@ -3,6 +3,7 @@
 		"authors": [
 			"Aleator",
 			"El libre",
+			"Jmarchn",
 			"Jordi Roqué",
 			"Kippelboy",
 			"Papapep",
@@ -19,7 +20,7 @@
 	"titleblacklist-forbidden-upload": "S'ha prohibit el nom de fitxer «$2» i se n'impedeix la creació. Concorda amb la següent línia de la llista negra: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "No es pot crear el nom d'usuari «$2». Coincideix amb la següent entrada de la llista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|La línia següent|Les línies següents}} de la llista negra no {{PLURAL:$1|és vàlida|són vàlides}}; heu de corregir-{{PLURAL:$1|la|les}} abans de guardar:",
-	"titleblacklist-override": "Ignora la llista negra",
+	"titleblacklist-override": "Substitueix la llista negra del títol si coincideix",
 	"right-tboverride": "Sobreescriu el títol o el nom d'usuari de la llista negra",
 	"right-tboverride-account": "Ignorar la llista negra de noms d'usuari"
 }

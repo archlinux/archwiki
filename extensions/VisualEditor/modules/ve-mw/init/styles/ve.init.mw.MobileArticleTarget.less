@@ -10,8 +10,8 @@
 	// (see .content styles in Minerva)
 	margin-bottom: 1em;
 
-	.ve-ce-attachedRootNode,
-	.ve-ui-surface-placeholder {
+	> .ve-ce-surface .ve-ce-attachedRootNode,
+	> .ve-ui-surface-placeholder {
 		padding: 0;
 
 		&:before {
@@ -23,7 +23,7 @@
 		}
 	}
 
-	.ve-ce-attachedRootNode {
+	> .ve-ce-surface .ve-ce-attachedRootNode {
 		// Ensure whole page is focusable (T109508)
 		// Subtract toolbar height, margin-bottom and a little more
 		// to prevent scrolling.
@@ -35,6 +35,18 @@
 			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 			min-height: ~'calc( 100vh - 10em )';
 		}
+
+		.ve-ui-targetWidget & {
+			min-height: 0;
+		}
+	}
+}
+
+.ve-ui-mwTargetWidget {
+	/* stylelint-disable-next-line selector-class-pattern */
+	.ve-ui-mwSurface.content {
+		// When content is applied to surface in a TargetWidget, don't add margins
+		margin: 0;
 	}
 }
 
@@ -56,7 +68,7 @@
 }
 
 @media screen and ( max-width: 767px ) {
-	.ve-init-mw-target-surface .ve-ui-surface-placeholder > * {
+	.ve-init-mw-target-surface > .ve-ui-surface-placeholder > * {
 		/* Fix margin overlap */
 		margin-top: 0;
 		/* Placeholder doesn't need a border as well */

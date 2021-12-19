@@ -1,0 +1,87 @@
+@import '../../common/variables.less';
+@import 'mediawiki.mixins.less';
+
+.vector-sticky-header {
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: @z-index-header;
+	transform: translateY( -100% );
+	transition: transform 250ms linear;
+	display: flex;
+	align-items: center;
+	max-width: @max-width-page-container + @padding-horizontal-page-container + @padding-horizontal-page-container;
+	margin: 0 auto;
+	background: @background-color-base;
+	background-color: #fffffff7;
+	border-bottom: 1px solid @colorGray14;
+	// FIXME: Should this adapt to different thresholds? Ask Alex!
+	padding: 6px 8px 6px 10px;
+	justify-content: space-between;
+	box-sizing: border-box;
+
+	// If the user has expressed their preference for reduced motion, then disable animation for the sticky header.
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+
+	@media ( min-width: @width-breakpoint-desktop ) {
+		padding: 6px 25px;
+	}
+
+	// T289714 Hide the sticky header at lower resolutions.
+	@media ( max-width: @width-breakpoint-tablet ) {
+		display: none;
+	}
+
+	&-visible {
+		transform: translateY( 0% );
+	}
+
+	//
+	// Layout
+	//
+	&-start {
+		display: flex;
+		align-items: center;
+	}
+
+	&-end {
+		display: flex;
+		align-items: center;
+	}
+
+	//
+	// Components
+	//
+	&-icons,
+	&-context-bar {
+		display: flex;
+		align-items: center;
+		white-space: nowrap;
+		margin: 0 15px;
+		padding-left: 30px;
+	}
+
+	&-context-bar {
+		border-left: 1px solid #c8c8c8;
+	}
+
+	&-context-bar-primary {
+		padding-right: 15px;
+		font-size: unit( 22 / @font-size-browser, em );
+	}
+
+	&-context-bar-secondary {
+		&:before {
+			padding-right: 15px;
+			content: '|';
+		}
+	}
+}
+
+.client-nojs .vector-sticky-header {
+	display: none;
+}

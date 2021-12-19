@@ -1,0 +1,10 @@
+{{#data-user-interface-preferences}}{{{html-items}}}{{/data-user-interface-preferences}}
+{{#is-create-account-allowed}}
+	<li id="p-createaccount" class="user-links-collapsible-item">
+		{{{html-create-account}}}
+	</li>
+{{/is-create-account-allowed}}
+{{^is-anon}}
+	{{#data-user-page}}{{{html-items}}}{{/data-user-page}}
+	{{#data-notifications}}{{{html-items}}}{{/data-notifications}}
+{{/is-anon}}

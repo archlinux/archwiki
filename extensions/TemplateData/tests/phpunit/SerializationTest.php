@@ -20,7 +20,7 @@ class SerializationTest extends MediaWikiTestCase {
 
 		$result = TemplateDataHooks::getStatusFromParserOutput( $output );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
-		$this->assertEquals( $status->__toString(), $result->__toString() );
+		$this->assertSame( (string)$status, (string)$result );
 	}
 
 	public function testParserOutputPersistenceBackwardCompatibility() {
@@ -35,7 +35,7 @@ class SerializationTest extends MediaWikiTestCase {
 
 		$result = TemplateDataHooks::getStatusFromParserOutput( $output );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
-		$this->assertEquals( $status->__toString(), $result->__toString() );
+		$this->assertSame( (string)$status, (string)$result );
 	}
 
 	public function provideStatus() {
@@ -56,7 +56,7 @@ class SerializationTest extends MediaWikiTestCase {
 		TemplateDataHooks::setStatusToParserOutput( $parserOutput, $status );
 		$result = TemplateDataHooks::getStatusFromParserOutput( $parserOutput );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
-		$this->assertEquals( $status->__toString(), $result->__toString() );
+		$this->assertSame( (string)$status, (string)$result );
 	}
 
 	/**
@@ -68,6 +68,6 @@ class SerializationTest extends MediaWikiTestCase {
 		$json = TemplateDataHooks::jsonSerializeStatus( $status );
 		$result = TemplateDataHooks::newStatusFromJson( $json );
 		$this->assertEquals( $status->getStatusValue(), $result->getStatusValue() );
-		$this->assertEquals( $status->__toString(), $result->__toString() );
+		$this->assertSame( (string)$status, (string)$result );
 	}
 }

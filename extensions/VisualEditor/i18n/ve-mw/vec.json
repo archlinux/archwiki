@@ -4,7 +4,8 @@
 			"Candalua",
 			"Fierodelveneto",
 			"GatoSelvadego",
-			"Gloria sah"
+			"Gloria sah",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -160,14 +161,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Xónta contegnuo",
 	"visualeditor-dialog-transclusion-add-param": "Xónta pì informasion",
 	"visualeditor-dialog-transclusion-add-template": "Xónta modeło",
+	"visualeditor-dialog-transclusion-collapse-options": "Scondi opsion",
 	"visualeditor-dialog-transclusion-content": "Contegnuo",
 	"visualeditor-dialog-transclusion-contextitem-description": "Xenerà da: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Mostra opsion",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Canpo obsołeto",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "El canpo el xé obsołeto. $1",
 	"visualeditor-dialog-transclusion-loading": "So' drio cargar...",
 	"visualeditor-dialog-transclusion-more-template-description": "Ghe podaria esare major informasion sol modèło \"$1\" in te ła [[{{ns:template}}:$1|so pàjina]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Mostra opsion",
-	"visualeditor-dialog-transclusion-no-template-description": "El modeło \"$1\" no el ga njoncora na descrision, ma podaria esarghe algune informasion in te ła [[$1|pàjina del modeło]].",
+	"visualeditor-dialog-transclusion-no-template-description": "El modeło \"$1\" no el ga njoncora na descrision, ma podaria esarghe algune informasion in te ła [[$2|pàjina del modeło]].",
 	"visualeditor-dialog-transclusion-options": "Opsion",
 	"visualeditor-dialog-transclusion-param-default": "Predefinio: $1",
 	"visualeditor-dialog-transclusion-param-example": "Exenpio: $1",
@@ -184,8 +186,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Sèvita isteso",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Canpo de òblego che manca|Canpi de òblego che manca}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Sito seguro de vołer ndar vanti sensa vałorixare {{PLURAL:$2|el canpo|i canpi}} $1?",
-	"visualeditor-dialog-transclusion-single-mode": "Scondi opsion",
-	"visualeditor-dialog-transclusion-title": "Incluxion",
 	"visualeditor-dialogbutton-media-tooltip": "Imàjini e file de multimèdia",
 	"visualeditor-dialogbutton-meta-tooltip": "Inpostasion pàjina",
 	"visualeditor-dialogbutton-template-tooltip": "Modeło",
@@ -354,6 +354,5 @@
 	"visualeditor-wikitext-warning": "Te si drio doparar modifegadore vixuałe - el [[{{MediaWiki:visualeditor-wikitext-warning-link}}|wikitesto]] no el funsiona cuà. Par pasare a ła modifega sorxente in calsiasi momento sensa perdare nisun canbiamento, schicia sora el boton de canbio.",
 	"visualeditor-wikitext-warning-title": "Riłevà wikitesto",
 	"visualeditor-wikitextconvert-message": "El contegnuo incołà el detiende ła formatasion. Vuto convertirlo in wikitesto o inserirlo cofà tenpo sénplego?",
-	"visualeditor-wikitextconvert-plain": "Dopara testo sénplego",
 	"visualeditor-wikitextconvert-convert": "Converti in wikitesto"
 }

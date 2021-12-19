@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"FakeGreenHand",
 			"Hydra",
 			"Hzy980512",
 			"Liangent",
@@ -8,8 +9,7 @@
 			"PhiLiP",
 			"Philip",
 			"Shinjiman",
-			"阿pp",
-			"FakeGreenHand"
+			"阿pp"
 		]
 	},
 	"pfunc_desc": "用逻辑函数加强解析器",

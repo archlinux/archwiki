@@ -1,7 +1,8 @@
 /**
  * @external MenuDefinition
  */
-import { placeholder, htmlUserLanguageAttributes, portletAfter } from './utils';
+import { placeholder, htmlUserLanguageAttributes,
+	makeIcon, portletAfter } from './utils';
 
 /**
  * @type {MenuDefinition}
@@ -12,8 +13,9 @@ export const languageData = {
 	class: 'mw-portlet-lang vector-menu-dropdown',
 	// mw-interlanguage-selector must be present to operate in ULS mode.
 	// icon classes and button classes
-	'heading-class': 'vector-menu-heading mw-interlanguage-selector ' +
-		'mw-ui-icon mw-ui-icon-before mw-ui-icon-wikimedia-language ' +
+	'checkbox-class': 'mw-interlanguage-selector',
+	'html-vector-heading-icon': makeIcon( 'wikimedia-language' ),
+	'heading-class': 'vector-menu-heading ' +
 		'mw-ui-button mw-ui-quiet',
 	'html-tooltip': 'A message tooltip-p-lang must exist for this to appear',
 	label: '10 languages',

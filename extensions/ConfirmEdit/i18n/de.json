@@ -38,5 +38,5 @@
 	"confirmedit-preview-validity": "Gültigkeit",
 	"confirmedit-preview-valid": "gültig",
 	"confirmedit-preview-invalid": "ungültig",
-	"confirmedit-preview-description": "Die folgende Tabelle zeigt die Liste der Zeilen auf dieser Seite an und ob es eine gültige IP-Adresse oder ein gültiger IP-Adressbereich ist. Falls die Zeile eine gültige IP-Adresse oder ein gültiger IP-Adressbereich ist, wird sie/er für das CAPTCHA weißgelistet, aber ungültige Zeilen werden ignoriert. Ein Beispiel für einen gültigen IP-Adressbereich wäre 69.208.0.0/16, der von 69.208.0.0 bis 69.208.255.255 geht. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Weitere Informationen] zur Berechnung eines IP-Adressbereichs."
+	"confirmedit-preview-description": "Die folgende Tabelle zeigt die Liste der Zeilen auf dieser Seite an und ob es eine gültige IP-Adresse oder ein gültiger IP-Adressbereich ist. Falls die Zeile eine gültige IP-Adresse oder ein gültiger IP-Adressbereich ist, wird sie/er vom CAPTCHA ausgenommen; ungültige Zeilen werden ignoriert. Ein Beispiel für einen gültigen IP-Adressbereich wäre 69.208.0.0/16, der von 69.208.0.0 bis 69.208.255.255 geht. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Weitere Informationen] zur Berechnung eines IP-Adressbereichs."
 }

@@ -48,13 +48,13 @@ class UpdaterTest extends \PHPUnit\Framework\TestCase {
 		$input = [ 'file' => 'Hello World!' ];
 		$output = [ 'en' => [ 'key' => $input['file'] ] ];
 
-		$reader = $this->createMock( 'LocalisationUpdate\Reader\Reader' );
+		$reader = $this->createMock( \LocalisationUpdate\Reader\Reader::class );
 		$reader
 			->expects( $this->once() )
 			->method( 'parse' )
 			->willReturn( $output );
 
-		$factory = $this->createMock( 'LocalisationUpdate\Reader\ReaderFactory' );
+		$factory = $this->createMock( \LocalisationUpdate\Reader\ReaderFactory::class );
 		$factory
 			->expects( $this->once() )
 			->method( 'getReader' )

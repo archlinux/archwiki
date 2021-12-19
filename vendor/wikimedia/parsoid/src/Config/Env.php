@@ -3,20 +3,16 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Config;
 
-use DOMDocument;
-use DOMDocumentFragment;
-use RemexHtml\DOM\DOMBuilder;
-use RemexHtml\Tokenizer\PlainAttributes;
-use RemexHtml\Tokenizer\Tokenizer;
-use RemexHtml\TreeBuilder\Dispatcher;
-use RemexHtml\TreeBuilder\TreeBuilder;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Logger\ParsoidLogger;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Title;
@@ -27,6 +23,11 @@ use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 use Wikimedia\Parsoid\Wt2Html\PageConfigFrame;
 use Wikimedia\Parsoid\Wt2Html\ParserPipelineFactory;
+use Wikimedia\RemexHtml\DOM\DOMBuilder;
+use Wikimedia\RemexHtml\Tokenizer\PlainAttributes;
+use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
+use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
+use Wikimedia\RemexHtml\TreeBuilder\TreeBuilder;
 
 // phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
 
@@ -105,8 +106,8 @@ class Env {
 	private $behaviorSwitches = [];
 
 	/**
-	 * Maps fragment id to the fragment forest (array of DOMNodes).
-	 * @var array<string,DOMDocumentFragment>
+	 * Maps fragment id to the fragment forest (array of Nodes).
+	 * @var array<string,DocumentFragment>
 	 */
 	private $fragmentMap = [];
 
@@ -184,7 +185,7 @@ class Env {
 	/** @var bool */
 	public $discardDataParsoid = false;
 
-	/** @var DOMDocument */
+	/** @var Document */
 	private $domDiff;
 
 	/**
@@ -226,7 +227,7 @@ class Env {
 
 	/**
 	 * Prevent GC from collecting the PHP wrapper around the libxml doc
-	 * @var DOMDocument
+	 * @var Document
 	 */
 	public $topLevelDoc;
 
@@ -259,13 +260,14 @@ class Env {
 	 *      wikitext variant in wt2html mode, and in html2wt mode new
 	 *      or edited HTML will be left unconverted.
 	 *  - logLevels: (string[]) Levels to log
-	 *  - topLevelDoc: (DOMDocument) Set explicitly when serializing otherwise
+	 *  - topLevelDoc: (Document) Set explicitly when serializing otherwise
 	 *      it gets initialized for parsing.
 	 */
 	public function __construct(
 		SiteConfig $siteConfig, PageConfig $pageConfig, DataAccess $dataAccess,
 		?array $options = null
 	) {
+		self::checkPlatform();
 		$options = $options ?? [];
 		$this->siteConfig = $siteConfig;
 		$this->pageConfig = $pageConfig;
@@ -310,6 +312,31 @@ class Env {
 			$this->profiling = true;
 		}
 		$this->setupTopLevelDoc( $options['topLevelDoc'] ?? null );
+	}
+
+	/**
+	 * Check to see if the PHP platform is sane
+	 */
+	private static function checkPlatform() {
+		static $checked;
+		if ( !$checked ) {
+			$highBytes =
+				"\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f" .
+				"\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f" .
+				"\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf" .
+				"\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf" .
+				"\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf" .
+				"\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf" .
+				"\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef" .
+				"\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff";
+			if ( strtolower( 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' . $highBytes )
+				!== 'abcdefghijklmnopqrstuvwxyz' . $highBytes
+			) {
+				throw new \RuntimeException( 'strtolower() doesn\'t work -- ' .
+					'please set the locale to C or a UTF-8 variant such as C.UTF-8' );
+			}
+			$checked = true;
+		}
 	}
 
 	/**
@@ -497,7 +524,7 @@ class Env {
 	 */
 	public function resolveTitle( string $str, bool $resolveOnly = false ): string {
 		$origName = $str;
-		$str = trim( $str ); // PORT-FIXME: Care about non-ASCII whitespace?
+		$str = trim( $str );
 
 		$pageConfig = $this->getPageConfig();
 
@@ -683,7 +710,7 @@ class Env {
 
 	/**
 	 * Store reference to DOM diff document
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 */
 	public function setDOMDiff( $doc ): void {
 		$this->domDiff = $doc;
@@ -691,9 +718,9 @@ class Env {
 
 	/**
 	 * Return reference to DOM diff document
-	 * @return DOMDocument|null
+	 * @return Document|null
 	 */
-	public function getDOMDiff(): ?DOMDocument {
+	public function getDOMDiff(): ?Document {
 		return $this->domDiff;
 	}
 
@@ -709,9 +736,9 @@ class Env {
 	 * When an environment is constructed, we initialize a document (and
 	 * dispatcher to it) to be used throughout the parse.
 	 *
-	 * @param ?DOMDocument $topLevelDoc
+	 * @param ?Document $topLevelDoc
 	 */
-	public function setupTopLevelDoc( ?DOMDocument $topLevelDoc = null ) {
+	public function setupTopLevelDoc( ?Document $topLevelDoc = null ) {
 		if ( $topLevelDoc ) {
 			$this->topLevelDoc = $topLevelDoc;
 		} else {
@@ -752,7 +779,21 @@ class Env {
 	private function createDocumentDispatcher(): array {
 		// The options to DOMBuilder should be kept in sync with its other
 		// uses, so grep for it before changing
-		$domBuilder = new DOMBuilder( [ 'suppressHtmlNamespace' => true ] );
+		$domBuilder = new class( [
+			'suppressHtmlNamespace' => true,
+			# 'suppressIdAttribute' => true,
+			#'domExceptionClass' => \Wikimdedia\Dodo\DOMException::class,
+		] ) extends DOMBuilder {
+				/** @inheritDoc */
+				protected function createDocument(
+					string $doctypeName = null,
+					string $public = null,
+					string $system = null
+				) {
+					// @phan-suppress-next-line PhanTypeMismatchReturn
+					return DOMCompat::newDocument( $doctypeName === 'html' );
+				}
+		};
 		$dispatcher = new Dispatcher( new TreeBuilder( $domBuilder ) );
 
 		// PORT-FIXME: Necessary to setEnableCdataCallback
@@ -763,7 +804,7 @@ class Env {
 		$dispatcher->startTag( 'body', new PlainAttributes(), false, 0, 0 );
 
 		$doc = $domBuilder->getFragment();
-		'@phan-var DOMDocument $doc'; // @var DOMDocument $doc
+		'@phan-var Document $doc'; // @var Document $doc
 
 		return [ $doc, $dispatcher ];
 	}
@@ -804,7 +845,7 @@ class Env {
 	}
 
 	/**
-	 * @return array<string,DOMDocumentFragment>
+	 * @return array<string,DocumentFragment>
 	 */
 	public function getDOMFragmentMap(): array {
 		return $this->fragmentMap;
@@ -812,19 +853,19 @@ class Env {
 
 	/**
 	 * @param string $id Fragment id
-	 * @return DOMDocumentFragment
+	 * @return DocumentFragment
 	 */
-	public function getDOMFragment( string $id ): DOMDocumentFragment {
+	public function getDOMFragment( string $id ): DocumentFragment {
 		return $this->fragmentMap[$id];
 	}
 
 	/**
 	 * @param string $id Fragment id
-	 * @param DOMDocumentFragment $forest DOM forest
+	 * @param DocumentFragment $forest DOM forest
 	 *   to store against the fragment id
 	 */
 	public function setDOMFragment(
-		string $id, DOMDocumentFragment $forest
+		string $id, DocumentFragment $forest
 	): void {
 		$this->fragmentMap[$id] = $forest;
 	}
@@ -850,7 +891,7 @@ class Env {
 	 */
 	public function recordLint( string $type, array $lintData ): void {
 		// Parsoid-JS tests don't like getting null properties where JS had undefined.
-		$lintData = array_filter( $lintData, function ( $v ) {
+		$lintData = array_filter( $lintData, static function ( $v ) {
 			return $v !== null;
 		} );
 
@@ -905,22 +946,26 @@ class Env {
 	 *
 	 * @param string $resource
 	 * @param int $count How much of the resource is used?
-	 * @throws ResourceLimitExceededException
+	 * @return ?bool Returns `null` if the limit was already reached, `false` when exceeded
 	 */
-	public function bumpWt2HtmlResourceUse( string $resource, int $count = 1 ): void {
+	public function bumpWt2HtmlResourceUse( string $resource, int $count = 1 ): ?bool {
 		$n = $this->wt2htmlUsage[$resource] ?? 0;
+		if ( !$this->compareWt2HtmlLimit( $resource, $n ) ) {
+			return null;
+		}
 		$n += $count;
 		$this->wt2htmlUsage[$resource] = $n;
+		return $this->compareWt2HtmlLimit( $resource, $n );
+	}
+
+	/**
+	 * @param string $resource
+	 * @param int $n
+	 * @return bool Return `false` when exceeded
+	 */
+	public function compareWt2HtmlLimit( string $resource, int $n ): bool {
 		$wt2htmlLimits = $this->siteConfig->getWt2HtmlLimits();
-		if (
-			isset( $wt2htmlLimits[$resource] ) &&
-			$n > $wt2htmlLimits[$resource]
-		) {
-			// TODO: re-evaluate whether throwing an exception is really
-			// the right failure strategy when Parsoid is integrated into MW
-			// (T221238)
-			throw new ResourceLimitExceededException( "wt2html: $resource limit exceeded: $n" );
-		}
+		return !( isset( $wt2htmlLimits[$resource] ) && $n > $wt2htmlLimits[$resource] );
 	}
 
 	/**

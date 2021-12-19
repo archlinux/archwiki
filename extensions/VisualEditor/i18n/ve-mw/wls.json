@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lea.Fakauvea"
+			"Lea.Fakauvea",
+			"Amire80"
 		]
 	},
 	"visualeditor-ca-createlocaldescriptionsource": "Tohi te matapuna o te kupu fakahino",
 	"visualeditor-ca-createsource": "Fa'u tupunua",
-	"visualeditor-ca-editsource": "fetogi te matapuna",
-	"visualeditor-ca-editsource-section": "Fetogi matapuna",
+	"visualeditor-ca-editsource": "Fetogi te matapuna",
+	"visualeditor-ca-editsource-section": "fetogi matapuna",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

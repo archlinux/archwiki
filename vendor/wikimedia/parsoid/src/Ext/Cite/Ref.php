@@ -3,10 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Cite;
 
-use DOMDocumentFragment;
-use DOMElement;
-use DOMNode;
 use Exception;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
@@ -22,7 +22,7 @@ class Ref extends ExtensionTagHandler {
 	/** @inheritDoc */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $txt, array $extArgs
-	): ?DOMDocumentFragment {
+	): ?DocumentFragment {
 		// Drop nested refs entirely, unless we've explicitly allowed them
 		$parentExtTag = $extApi->parentExtTag();
 		if ( $parentExtTag === 'ref' && empty( $extApi->parentExtTagOpts()['allowNestedRef'] ) ) {
@@ -58,8 +58,8 @@ class Ref extends ExtensionTagHandler {
 
 	/** @inheritDoc */
 	public function lintHandler(
-		ParsoidExtensionAPI $extApi, DOMElement $ref, callable $defaultHandler
-	): ?DOMNode {
+		ParsoidExtensionAPI $extApi, Element $ref, callable $defaultHandler
+	): ?Node {
 		// Don't lint the content of ref in ref, since it can lead to cycles
 		// using named refs
 		if ( WTUtils::fromExtensionContent( $ref, 'references' ) ) {
@@ -71,7 +71,7 @@ class Ref extends ExtensionTagHandler {
 		}
 		$refFirstChild = $ref->firstChild;
 		DOMUtils::assertElt( $refFirstChild );
-		$linkBackId = preg_replace( '/[^#]*#/', '', $refFirstChild->getAttribute( 'href' ), 1 );
+		$linkBackId = preg_replace( '/[^#]*#/', '', $refFirstChild->getAttribute( 'href' ) ?? '', 1 );
 		$refNode = $ref->ownerDocument->getElementById( $linkBackId );
 		if ( $refNode ) {
 			// Ex: Buggy input wikitext without ref content
@@ -82,7 +82,7 @@ class Ref extends ExtensionTagHandler {
 
 	/** @inheritDoc */
 	public function domToWikitext(
-		ParsoidExtensionAPI $extApi, DOMElement $node, bool $wrapperUnmodified
+		ParsoidExtensionAPI $extApi, Element $node, bool $wrapperUnmodified
 	) {
 		$startTagSrc = $extApi->extStartTagToWikitext( $node );
 		$dataMw = DOMDataUtils::getDataMw( $node );
@@ -118,19 +118,21 @@ class Ref extends ExtensionTagHandler {
 			if ( !$bodyElt ) {
 				$extraDebug = '';
 				$firstA = DOMCompat::querySelector( $node, 'a[href]' );
-				if ( $firstA && preg_match( '/^#/', $firstA->getAttribute( 'href' ) ) ) {
-					$href = $firstA->getAttribute( 'href' );
-					try {
-						$ref = DOMCompat::querySelector( $extApi->getTopLevelDoc(), $href );
-						if ( $ref ) {
-							$extraDebug .= ' [doc: ' . DOMCompat::getOuterHTML( $ref ) . ']';
+				if ( $firstA ) {
+					$href = $firstA->getAttribute( 'href' ) ?? '';
+					if ( str_starts_with( $href, '#' ) ) {
+						try {
+							$ref = DOMCompat::querySelector( $extApi->getTopLevelDoc(), $href );
+							if ( $ref ) {
+								$extraDebug .= ' [doc: ' . DOMCompat::getOuterHTML( $ref ) . ']';
+							}
+						} catch ( Exception $e ) {
+							// We are just providing VE with debugging info.
+							// So, ignore all exceptions / errors in this code.
 						}
-					} catch ( Exception $e ) {
-						// We are just providing VE with debugging info.
-						// So, ignore all exceptions / errors in this code.
-					}
-					if ( !$extraDebug ) {
-						$extraDebug = ' [reference ' . $href . ' not found]';
+						if ( !$extraDebug ) {
+							$extraDebug = ' [reference ' . $href . ' not found]';
+						}
 					}
 				}
 				$extApi->log(
@@ -147,7 +149,7 @@ class Ref extends ExtensionTagHandler {
 			$hasFollow = strlen( $dataMw->attrs->follow ?? '' ) > 0;
 
 			if ( $hasFollow ) {
-				$about = $node->getAttribute( 'about' );
+				$about = $node->getAttribute( 'about' ) ?? '';
 				$followNode = DOMCompat::querySelector(
 					$bodyElt, "span[typeof~='mw:Cite/Follow'][about='{$about}']"
 				);

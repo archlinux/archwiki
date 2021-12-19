@@ -80,6 +80,10 @@
 			return deferred.reject();
 		}
 
+		if ( history.scrollRestoration ) {
+			history.scrollRestoration = 'manual';
+		}
+
 		// FIXME setupOverlay is a quick hack to avoid setting up and immediately
 		// removing the overlay on a not-MMV -> not-MMV hash change.
 		// loadViewer is called on every click and hash change and setting up
@@ -134,6 +138,15 @@
 	 */
 	MMVB.processThumbs = function ( $content ) {
 		var bs = this;
+
+		// MMVB.processThumbs() is a callback for `wikipage.content` hook (see constructor)
+		// which as state in the documentation can be fired when content is added to the DOM
+		// https://doc.wikimedia.org/mediawiki-core/master/js/#!/api/mw.hook
+		// The content being added can contain thumbnails that the MultimediaViewer may need to
+		// process correctly and add the thumbs array, so it's necessary to invalidate the
+		// viewer initialization state if this happens to let the MMVB.loadViewer() to process
+		// new images correctly
+		bs.viewerInitialized = false;
 
 		this.$thumbs = $content.find(
 			'.gallery .image img, ' +
@@ -257,7 +270,11 @@
 	 */
 	MMVB.processFilePageThumb = function ( $thumb, title ) {
 		var $link,
+			$icon,
+			$label,
 			$configLink,
+			$configIcon,
+			$configLabel,
 			$filepageButtons,
 			bs = this,
 			link = $thumb.closest( 'a' ).prop( 'href' );
@@ -267,17 +284,32 @@
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '.mw-mmv-filepage-buttons' ).next().addBack().remove();
 
+		$icon = $( '<span>' ).addClass( 'mw-ui-icon mw-ui-icon-before' );
+
 		$link = $( '<a>' )
 			// It won't matter because we catch the click event anyway, but
 			// give the user some URL to see.
 			.prop( 'href', link )
-			.addClass( 'mw-mmv-view-expanded mw-ui-button mw-ui-icon mw-ui-icon-before' )
+			.addClass( 'mw-mmv-view-expanded mw-ui-button' );
+
+		$label = $( '<span>' )
 			.text( mw.message( 'multimediaviewer-view-expanded' ).text() );
+
+		$icon.append( $label ).appendTo( $link );
 
 		$configLink = $( '<a>' )
 			.prop( 'href', $thumb.closest( 'a' ).prop( 'href' ) )
-			.addClass( 'mw-mmv-view-config mw-ui-button mw-ui-icon mw-ui-icon-element' )
+			.addClass( 'mw-mmv-view-config mw-ui-button' );
+
+		$configLabel = $( '<span>' )
 			.text( mw.message( 'multimediaviewer-view-config' ).text() );
+
+		$configIcon = $( '<span>' )
+			.addClass( 'mw-ui-icon mw-ui-icon-before' )
+			.append( $configLabel )
+			.appendTo( $configLink );
+
+		$configIcon.append( $configLabel ).appendTo( $configLink );
 
 		$filepageButtons = $( '<div>' )
 			.addClass( 'mw-ui-button-group mw-mmv-filepage-buttons' )

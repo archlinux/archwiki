@@ -25,14 +25,14 @@ class FootnoteMarkFormatterTest extends \MediaWikiUnitTestCase {
 
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'plain' )->willReturnCallback(
-			function ( $parser, ...$args ) {
+			static function ( $parser, ...$args ) {
 				return implode( '|', $args );
 			}
 		);
 		$anchorFormatter = $this->createMock( AnchorFormatter::class );
 		$anchorFormatter->method( 'getReferencesKey' )->willReturnArgument( 0 );
 		$anchorFormatter->method( 'refKey' )->willReturnCallback(
-			function ( ...$args ) {
+			static function ( ...$args ) {
 				return implode( '+', $args );
 			}
 		);
@@ -156,7 +156,7 @@ class FootnoteMarkFormatterTest extends \MediaWikiUnitTestCase {
 		);
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'plain' )->willReturnCallback(
-			function ( $parser, ...$args ) {
+			static function ( $parser, ...$args ) {
 				return implode( '|', $args );
 			}
 		);

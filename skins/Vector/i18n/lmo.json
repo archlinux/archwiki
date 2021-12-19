@@ -28,5 +28,13 @@
 	"vector-jumptosearch": "Và a cercà",
 	"vector-jumptocontent": "Và al contegnud",
 	"vector-more-actions": "Anmò",
-	"vector-search-loader": "Caregament di sugeriment de ricerca"
+	"vector-search-loader": "Caregament di sugeriment de ricerca",
+	"vector-anon-user-menu-pages": "Pagine per i editor minga coness",
+	"vector-anon-user-menu-pages-learn": "per savénn pussee",
+	"vector-anon-user-menu-pages-label": "Imprend pussee sora i modifeghe",
+	"vector-personal-more-label": "Conligament de l'utent",
+	"vector-main-menu-tooltip": "Menù principal",
+	"tooltip-vector-anon-user-menu-title": "Pussee de opzion",
+	"vector-menu-checkbox-expanded": "slargad",
+	"vector-menu-checkbox-collapsed": "compress"
 }

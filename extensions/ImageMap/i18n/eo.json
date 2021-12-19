@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"KuboF",
 			"Michawiki",
 			"Robin van der Vliet",
-			"Yekrats",
-			"KuboF"
+			"Yekrats"
 		]
 	},
 	"imagemap_desc": "Permesas klientflankajn klakeblajn bildmapojn uzante etikedon <code>&lt;imagemap&gt;</code>",

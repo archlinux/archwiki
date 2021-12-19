@@ -175,6 +175,7 @@ abstract class ScribuntoEngineBase {
 				$this->modules[$finalKey] = $this->newModule( $text, $finalKey );
 			}
 			// Almost certainly $key === $finalKey, but just in case...
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			$this->modules[$key] = $this->modules[$finalKey];
 		}
 		return $this->modules[$key];

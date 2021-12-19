@@ -16,13 +16,14 @@
 			"Ryo567",
 			"Sanbec",
 			"Translationista",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"DDPAT"
 		]
 	},
 	"interwiki": "Ver y editar la tabla de interwikis",
 	"interwiki-title-norights": "Ver datos de interwikis",
 	"interwiki-desc": "Añade una [[Special:Interwiki|página especial]] para ver y editar la tabla de interwikis",
-	"interwiki_intro": "Este es un resumen de la tabla de interwikis, que define los atajos mediante prefijos usados para enlazar rápidamente diferentes wikis y otros sitios externos. Para recomendaciones de uso véase [//www.mediawiki.org/wiki/Extension:Interwiki el manual en MediaWiki.org].",
+	"interwiki_intro": "Este es un resumen de la tabla de interwikis, que define los atajos mediante prefijos usados para enlazar rápidamente diferentes wikis y otros sitios externos. Para recomendaciones de uso véase [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki el manual en MediaWiki.org].",
 	"interwiki-legend-label": "Leyenda",
 	"interwiki_prefix": "Prefijo",
 	"interwiki-prefix-label": "Prefijo:",
@@ -34,7 +35,7 @@
 	"interwiki_local_1_intro": "Las solicitudes HTTP externas al wiki local usando este prefijo interwiki serán redirigidas a la URL destino del interwiki (es decir, se tratarán como enlaces a páginas locales).",
 	"interwiki_trans": "Transcluir",
 	"interwiki-trans-label": "Transcluir",
-	"interwiki_trans_1_intro": "Si se usa la sintaxis wikitexto <code>{<nowiki />{prefijo:<em>nombre de página</em>}}</code>, permitir la transclusión de la plantilla/página desde la wiki foránea, si las transclusiones interwikis están activadas en la ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding transclusión escalofriante]) general.",
+	"interwiki_trans_1_intro": "Si se usa la sintaxis wikitexto <code>{<nowiki />{prefijo:<em>nombre de página</em>}}</code>, permitir la transclusión de la plantilla/página desde la wiki foránea, si las transclusiones interwikis están activadas en la ([https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgEnableScaryTranscluding transclusión escalofriante]) general.",
 	"interwiki_trans_0_intro": "No permitir <code>{<nowiki />{prefijo:<em>nombredepágina</em>}}</code> transcluir plantillas/páginas foráneas. En su lugar, buscar una página local en el espacio de nombres de la plantilla.",
 	"interwiki_1": "sí",
 	"interwiki_0": "no",

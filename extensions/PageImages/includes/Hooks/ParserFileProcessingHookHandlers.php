@@ -72,8 +72,8 @@ class ParserFileProcessingHookHandlers {
 	 * @param ImageGalleryBase $gallery Object representing the gallery being created
 	 */
 	public function doAfterParserFetchFileAndTitle( Parser $parser, ImageGalleryBase $gallery ) {
-		foreach ( $gallery->getImages() as $image ) {
-			$this->processFile( $parser, $image[0], null );
+		foreach ( $gallery->getImages() as [ $title ] ) {
+			$this->processFile( $parser, $title, null );
 		}
 	}
 

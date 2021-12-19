@@ -91,13 +91,12 @@ OO.mixinClass( ve.ui.TargetWidget, OO.ui.mixin.PendingElement );
 /**
  * Create the target for this widget to use
  *
- * @return {ve.init.Target} Target
+ * @return {ve.init.Target}
  */
 ve.ui.TargetWidget.prototype.createTarget = function () {
 	return new ve.init.Target( {
 		register: false,
 		toolbarGroups: this.toolbarGroups,
-		inTargetWidget: true,
 		modes: this.modes,
 		defaultMode: this.defaultMode
 	} );
@@ -108,13 +107,12 @@ ve.ui.TargetWidget.prototype.createTarget = function () {
  *
  * This replaces the entire surface in the target.
  *
- * @param {ve.dm.Document} doc Document
+ * @param {ve.dm.Document} doc
  */
 ve.ui.TargetWidget.prototype.setDocument = function ( doc ) {
-	var surface;
 	// Destroy the previous surface
 	this.clear();
-	surface = this.target.addSurface( doc, {
+	var surface = this.target.addSurface( doc, {
 		inTargetWidget: true,
 		includeCommands: this.includeCommands,
 		excludeCommands: this.excludeCommands,
@@ -173,7 +171,7 @@ ve.ui.TargetWidget.prototype.isReadOnly = function () {
 /**
  * Get surface.
  *
- * @return {ve.ui.Surface|null} Surface
+ * @return {ve.ui.Surface|null}
  */
 ve.ui.TargetWidget.prototype.getSurface = function () {
 	return this.target.getSurface();
@@ -182,7 +180,7 @@ ve.ui.TargetWidget.prototype.getSurface = function () {
 /**
  * Get toolbar.
  *
- * @return {OO.ui.Toolbar} Toolbar
+ * @return {OO.ui.Toolbar}
  */
 ve.ui.TargetWidget.prototype.getToolbar = function () {
 	return this.target.getToolbar();

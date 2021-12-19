@@ -12,17 +12,17 @@
 
 namespace Wikimedia\Parsoid\Core;
 
-use DOMElement;
 use InvalidArgumentException;
-use RemexHtml\HTMLData;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\SiteConfig;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
+use Wikimedia\RemexHtml\HTMLData;
 
 class Sanitizer {
 	/**
@@ -68,11 +68,12 @@ class Sanitizer {
 	!ix';
 
 	/**
-	 * Blacklist for evil uris like javascript:
-	 * WARNING: DO NOT use this in any place that actually requires blacklisting
-	 * for security reasons. There are NUMEROUS[1] ways to bypass blacklisting, the
-	 * only way to be secure from javascript: uri based xss vectors is to whitelist
-	 * things that you know are safe and deny everything else.
+	 * Pattern matching evil uris like javascript:
+	 * WARNING: DO NOT use this in any place that actually requires denying
+	 * certain URIs for security reasons. There are NUMEROUS[1] ways to bypass
+	 * pattern-based deny lists; the only way to be secure from javascript:
+	 * uri based xss vectors is to allow only things that you know are safe
+	 * and deny everything else.
 	 * [1]: http://ha.ckers.org/xss.html
 	 */
 	private const EVIL_URI_PATTERN = '!(^|\s|\*/\s*)(javascript|vbscript)([^\w]|$)!iD';
@@ -95,7 +96,7 @@ class Sanitizer {
 
 	/** Characters that will be ignored in IDNs.
 	 * https://tools.ietf.org/html/rfc3454#section-3.1
-	 * Strip them before further processing so blacklists and such work.
+	 * Strip them before further processing so deny lists and such work.
 	 * Part of Sanitizer::cleanUrl in core.
 	 */
 	private const IDN_RE_G = "/
@@ -126,14 +127,14 @@ class Sanitizer {
 	];
 
 	/**
-	 * Fetch the whitelist of acceptable attributes for a given element name.
+	 * Fetch the list of acceptable attributes for a given element name.
 	 *
 	 * @param string $element
 	 * @return array
 	 */
-	public static function attributeWhitelist( string $element ): array {
+	public static function attributesAllowedInternal( string $element ): array {
 		// PORT-FIXME: this method is private in core, but used by Gallery
-		$lists = self::setupAttributeWhitelist();
+		$lists = self::setupAttributesAllowedInternal();
 		$list = $lists[$element] ?? [];
 		return array_flip( $list );
 	}
@@ -143,11 +144,11 @@ class Sanitizer {
 	 * of allowed attributes
 	 * @return array
 	 */
-	private static function setupAttributeWhitelist(): array {
-		static $whitelist;
+	private static function setupAttributesAllowedInternal(): array {
+		static $allowed;
 
-		if ( $whitelist !== null ) {
-			return $whitelist;
+		if ( $allowed !== null ) {
+			return $allowed;
 		}
 
 		$common = [
@@ -204,7 +205,7 @@ class Sanitizer {
 
 		# Numbers refer to sections in HTML 4.01 standard describing the element.
 		# See: https://www.w3.org/TR/html4/
-		$whitelist = [
+		$allowed = [
 			# 7.5.4
 			'div'        => $block,
 			'center'     => $common, # deprecated
@@ -297,8 +298,8 @@ class Sanitizer {
 			'th'         => array_merge( $common, $tablecell, $tablealign ),
 
 			# 12.2
-			# NOTE: <a> is not allowed directly, but the attrib
-			# whitelist is used from the Parser object
+			# NOTE: <a> is not allowed directly, but this list of allowed
+			# attributes is used from the Parser object
 			'a'          => array_merge( $common, [ 'href', 'rel', 'rev' ] ), # rel/rev esp. for RDFa
 
 			# 13.2
@@ -363,9 +364,12 @@ class Sanitizer {
 			// So we don't bother including $common attributes that have no purpose.
 			'meta' => [ 'itemprop', 'content' ],
 			'link' => [ 'itemprop', 'href', 'title' ],
+
+			// HTML 5 section 4.3.5
+			'aside' => $common,
 		];
 
-		return $whitelist;
+		return $allowed;
 	}
 
 	/**
@@ -523,7 +527,7 @@ class Sanitizer {
 	public static function cleanUrl( SiteConfig $siteConfig, string $href, string $mode ): ?string {
 		if ( $mode !== 'wikilink' ) {
 			$href = preg_replace_callback(
-				'/([\][<>"\x00-\x20\x7F\|])/', function ( $matches ) {
+				'/([\][<>"\x00-\x20\x7F\|])/', static function ( $matches ) {
 					return urlencode( $matches[0] );
 				}, $href
 			);
@@ -786,7 +790,7 @@ class Sanitizer {
 	): string {
 		return self::delimiterReplaceCallback(
 			$startDelim, $endDelim,
-			function ( array $matches ) use ( $replace ) {
+			static function ( array $matches ) use ( $replace ) {
 				return strtr( $replace, [ '$0' => $matches[0], '$1' => $matches[1] ] );
 			},
 			$subject, $flags
@@ -814,7 +818,7 @@ class Sanitizer {
 		// unconditionally discard the entire attribute or process it further.
 		// That further processing will catch and discard any dangerous
 		// strings in the rest of the attribute
-		return preg_match( ( '/^(?:typeof|property|rel)$/D' ), $k )
+		return in_array( $k, [ 'typeof', 'property', 'rel' ], true )
 			&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', $v )
 			|| $k === 'about' && preg_match( '/^#mwt\d+$/D', $v )
 			|| $k === 'content'
@@ -854,7 +858,7 @@ class Sanitizer {
 	): array {
 		$tag = $tagName ?: $token->getName();
 
-		$wlist = self::attributeWhitelist( $tag );
+		$list = self::attributesAllowedInternal( $tag );
 		$newAttrs = [];
 		$n = count( $attrs );
 		for ( $i = 0;  $i < $n;  $i++ ) {
@@ -887,7 +891,7 @@ class Sanitizer {
 			$origV = $a->vsrc ?? $v;
 			$psdAttr = self::isParsoidAttr( $k, $v, $attrs );
 
-			// Bypass RDFa/whitelisting checks for Parsoid-inserted attrs
+			// Bypass RDFa/allowed attribute checks for Parsoid-inserted attrs
 			// Safe to do since the tokenizer renames about/typeof attrs.
 			// unconditionally. FIXME: The escaping solution in the tokenizer
 			// may be aggressive. There is no need to escape typeof strings
@@ -914,7 +918,7 @@ class Sanitizer {
 				# * Ensure that the attribute is not namespaced by banning
 				#   colons.
 				if ( ( !preg_match( '/^data-[^:]*$/iD', $k )
-					 && !isset( $wlist[$k] ) )
+					 && !isset( $list[$k] ) )
 					 || self::isReservedDataAttribute( $k )
 				) {
 					$newAttrs[$k] = [ null, $origV, $origK ];
@@ -972,7 +976,7 @@ class Sanitizer {
 				// that instead.
 				$rel = $token->getAttributeShadowInfo( 'rel' );
 				$mode = ( $k === 'href' &&
-					$rel &&
+					isset( $rel['value'] ) &&
 					preg_match( '#^mw:WikiLink(/Interwiki)?$#', $rel['value'] )
 				) ? 'wikilink' : 'external';
 				$origHref = $token->getAttributeShadowInfo( $k )['value'];
@@ -1013,14 +1017,13 @@ class Sanitizer {
 	 * dom elements, which wouldn't have had a chance to be sanitized before
 	 * tree building.
 	 * @param SiteConfig $siteConfig
-	 * @param DOMElement $wrapper wrapper
+	 * @param Element $wrapper wrapper
 	 * @param array $attrs attributes
 	 */
 	public static function applySanitizedArgs(
-		SiteConfig $siteConfig, DOMElement $wrapper, array $attrs
+		SiteConfig $siteConfig, Element $wrapper, array $attrs
 	): void {
-		// We can switch to a different DOM library that can return uppercase node name
-		$nodeName = strtolower( $wrapper->nodeName );
+		$nodeName = DOMCompat::nodeName( $wrapper );
 		$sanitizedAttrs = self::sanitizeTagAttrs( $siteConfig, $nodeName, null, $attrs );
 		foreach ( $sanitizedAttrs as $k => $v ) {
 			if ( isset( $v[0] ) ) {
@@ -1086,7 +1089,7 @@ class Sanitizer {
 			$title = $bits[0];
 		}
 		$title = preg_replace_callback(
-			'/[%? \[\]#|<>]/', function ( $matches ) {
+			'/[%? \[\]#|<>]/', static function ( $matches ) {
 				return PHPUtils::encodeURIComponent( $matches[0] );
 			}, $title );
 		if ( $anchor !== null ) {
@@ -1118,7 +1121,7 @@ class Sanitizer {
 		$space = preg_replace( '#(?<!\\\\)(\\$|\\\\)#', '\\\\$1', $space );
 		return preg_replace(
 			array_keys( self::FIXTAGS ),
-			array_map( function ( string $replacement ) use ( $space ) {
+			array_map( static function ( string $replacement ) use ( $space ) {
 				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				return sprintf( $replacement, $space );
 			}, array_values( self::FIXTAGS ) ),

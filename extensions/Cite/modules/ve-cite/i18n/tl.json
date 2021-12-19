@@ -3,10 +3,10 @@
 		"authors": [
 			"Amire80",
 			"AnakngAraw",
+			"GinawaSaHapon",
 			"Jewel457",
 			"Jojit fb",
-			"Sky Harbor",
-			"GinawaSaHapon"
+			"Sky Harbor"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Aklat",
@@ -40,6 +40,7 @@
 	"cite-ve-dialog-referenceslist-title": "Talasanggunian",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Pinapahusay ang nilalaman mo sa pamamagitan ng pagdagdag ng mga pinagkuhanan ng impormasyon. Pwede mong sipiin ang mga aklat, diyaryo, at website.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Mga Sinipi",
+	"cite-ve-dialogbutton-reference-full-label": "Payak na anyo",
 	"cite-ve-dialogbutton-reference-title": "Sanggunian",
 	"cite-ve-dialogbutton-reference-tooltip": "Payak",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Talasanggunian",

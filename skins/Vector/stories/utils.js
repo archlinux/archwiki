@@ -1,4 +1,16 @@
 /**
+ * @external MenuDefinition
+ */
+
+/**
+ * @param {string} name
+ * @return {string}
+ */
+function makeIcon( name ) {
+	return `<span class="mw-ui-icon mw-ui-icon-${name}"></span>`;
+}
+
+/**
  * @param {string} msg
  * @param {number} [height=200]
  * @return {string}
@@ -19,4 +31,51 @@ const portletAfter = ( html ) => {
 
 const htmlUserLanguageAttributes = `dir="ltr" lang="en-GB"`;
 
-export { placeholder, htmlUserLanguageAttributes, portletAfter };
+/**
+ * @param {string} [additionalClassString] to add to the menu class
+ * @return {Object}
+ */
+function helperClassName( additionalClassString = '' ) {
+	return { class: additionalClassString };
+}
+
+/**
+ * @param {string} name of the menu
+ * @param {string} htmlItems
+ * @param {Object} [additionalData] to add to the menu template data
+ * @param {string} [additionalData.class]
+ * @return {MenuDefinition}
+ */
+function helperMakeMenuData( name, htmlItems, additionalData = {} ) {
+	let label;
+	switch ( name ) {
+		case 'personal':
+			label = 'Personal tools';
+			break;
+		default:
+			label = 'Menu label';
+			break;
+	}
+
+	// Handle "class" property separately to ensure it is appended to existing classes
+	const additionalClassString = additionalData.class;
+	const additionalDataWithoutClass = Object.assign( {}, additionalData );
+	delete additionalDataWithoutClass.class;
+
+	return Object.assign( {
+		id: `p-${name}`,
+		class: `mw-portlet mw-portlet-${name} vector-menu ${additionalClassString}`,
+		label,
+		'html-user-language-attributes': htmlUserLanguageAttributes,
+		'html-items': htmlItems
+	}, additionalDataWithoutClass );
+}
+
+export {
+	makeIcon,
+	placeholder,
+	htmlUserLanguageAttributes,
+	portletAfter,
+	helperClassName,
+	helperMakeMenuData
+};

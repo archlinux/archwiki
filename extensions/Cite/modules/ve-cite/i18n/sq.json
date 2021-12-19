@@ -10,12 +10,12 @@
 			"Euriditi",
 			"G1m",
 			"GretaDoci",
+			"Klein Muçi",
 			"Kosovastar",
 			"Kushtrim",
 			"Liridon",
-			"Techlik",
-			"Klein Muçi",
 			"Ritam",
+			"Techlik",
 			"Vyolla"
 		]
 	},
@@ -50,7 +50,7 @@
 	"cite-ve-dialog-referenceslist-title": "Listë referencash",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Përmirëson lëndën tuaj duke shtuar burime informacioni. Mund të citoni prej librash, gazetash dhe sajtesh.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Citime",
-	"cite-ve-dialogbutton-reference-full-label": "Formë bazë",
+	"cite-ve-dialogbutton-reference-full-label": "Bazë",
 	"cite-ve-dialogbutton-reference-title": "Referencë",
 	"cite-ve-dialogbutton-reference-tooltip": "Bazik",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Listë referencash",

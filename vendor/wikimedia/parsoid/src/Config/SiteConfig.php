@@ -43,7 +43,16 @@ abstract class SiteConfig {
 	protected $magicWordMap;
 
 	/** @var array|null */
-	private $mwAliases, $variables, $functionHooks;
+	private $mwAliases;
+
+	/** @var array|null */
+	private $variables;
+
+	/** @var array|null */
+	private $functionHooks;
+
+	/** @var string[] */
+	private $protocolsRegexes = [];
 
 	/**
 	 * FIXME: not private so that ParserTests can reset these variables
@@ -717,9 +726,13 @@ abstract class SiteConfig {
 	/**
 	 * A regex matching a line containing just comments and
 	 * sol transparent links and behavior switches.
+	 *
+	 * @param bool $addIncludes
 	 * @return string
 	 */
-	public function solTransparentWikitextNoWsRegexp(): string {
+	public function solTransparentWikitextNoWsRegexp(
+		bool $addIncludes = false
+	): string {
 		// cscott sadly says: Note that this depends on the precise
 		// localization of the magic words of this particular wiki.
 		static $solTransparentWikitextNoWsRegexp = null;
@@ -737,6 +750,8 @@ abstract class SiteConfig {
 				'\[\[' . $category . '\:[^\]]*?\]\]|' .
 				'__(?:' . $bswRegexp . ')__|' .
 				$comment .
+				// FIXME(SSS): What about onlyinclude and noinclude?
+				( $addIncludes ? '|<includeonly>[\S\s]*?</includeonly>' : '' ) .
 				')*)@';
 		}
 		return $solTransparentWikitextNoWsRegexp;
@@ -815,7 +830,7 @@ abstract class SiteConfig {
 					$alias = mb_strtolower( $alias );
 					$this->mwAliases[$magicword][] = $alias;
 				}
-				$this->magicWordMap[$alias] = $magicword;
+				$this->magicWordMap[$alias] = [ $caseSensitive, $magicword ];
 				if ( isset( $variablesMap[$magicword] ) ) {
 					$this->variables[$alias] = $magicword;
 				}
@@ -835,7 +850,7 @@ abstract class SiteConfig {
 
 	/**
 	 * List all magic words by alias
-	 * @return string[] Keys are aliases, values are canonical names.
+	 * @return string[] Keys are aliases, values are arrays of case-sensitive, canonical names.
 	 */
 	public function magicWords(): array {
 		$this->populateMagicWords();
@@ -879,7 +894,11 @@ abstract class SiteConfig {
 	 */
 	public function magicWordCanonicalName( string $word ): ?string {
 		$mws = $this->magicWords();
-		return $mws[$word] ?? $mws[mb_strtolower( $word )] ?? null;
+		if ( isset( $mws[$word] ) ) {
+			return $mws[$word][1];
+		}
+		$mw = $mws[mb_strtolower( $word )] ?? null;
+		return ( $mw && !$mw[0] ) ? $mw[1] : null;
 	}
 
 	/**
@@ -1020,7 +1039,7 @@ abstract class SiteConfig {
 			'PMID' => '[^/]*//www\.ncbi\.nlm\.nih\.gov/pubmed/(?P<PMID>\w+)\?dopt=Abstract',
 		];
 		$regex = '!^(?:' . implode( '|', $pats ) . ')$!';
-		return function ( $text ) use ( $pats, $regex ) {
+		return static function ( $text ) use ( $pats, $regex ) {
 			if ( preg_match( $regex, $text, $m ) ) {
 				foreach ( $pats as $k => $re ) {
 					if ( isset( $m[$k] ) && $m[$k] !== '' ) {
@@ -1057,7 +1076,7 @@ abstract class SiteConfig {
 					return $content;
 				}
 				// strip "./" prefix. TODO: Use relativeLinkPrefix() instead?
-				$href = preg_replace( '!^\./!', '', $href );
+				$href = PHPUtils::stripPrefix( $href, './' );
 				return "[[$href|$content]]";
 
 			case 'RFC':
@@ -1077,12 +1096,32 @@ abstract class SiteConfig {
 	abstract protected function getProtocols(): array;
 
 	/**
+	 * Get a regex fragment matching URL protocols, quoted for an exclamation
+	 * mark delimiter. The case-insensitive option should be used.
+	 *
+	 * @param bool $excludeProtRel Whether to exclude protocol-relative URLs
+	 * @return string
+	 */
+	public function getProtocolsRegex( $excludeProtRel = false ) {
+		if ( !isset( $this->protocolsRegexes[$excludeProtRel] ) ) {
+			$parts = [];
+			foreach ( $this->getProtocols() as $protocol ) {
+				if ( !$excludeProtRel || $protocol !== '//' ) {
+					$parts[] = preg_quote( $protocol, '!' );
+				}
+			}
+			$this->protocolsRegexes[$excludeProtRel] = implode( '|', $parts );
+		}
+		return $this->protocolsRegexes[$excludeProtRel];
+	}
+
+	/**
 	 * Matcher for valid protocols, must be anchored at start of string.
 	 * @param string $potentialLink
 	 * @return bool Whether $potentialLink begins with a valid protocol
 	 */
 	public function hasValidProtocol( string $potentialLink ): bool {
-		$re = '!^(?:' . implode( '|', array_map( 'preg_quote', $this->getProtocols() ) ) . ')!i';
+		$re = '!^(?:' . $this->getProtocolsRegex() . ')!i';
 		return (bool)preg_match( $re, $potentialLink );
 	}
 
@@ -1092,7 +1131,7 @@ abstract class SiteConfig {
 	 * @return bool Whether $potentialLink contains a valid protocol
 	 */
 	public function findValidProtocol( string $potentialLink ): bool {
-		$re = '!(?:\W|^)(?:' . implode( '|', array_map( 'preg_quote', $this->getProtocols() ) ) . ')!i';
+		$re = '!(?:\W|^)(?:' . $this->getProtocolsRegex() . ')!i';
 		return (bool)preg_match( $re, $potentialLink );
 	}
 
@@ -1279,7 +1318,7 @@ abstract class SiteConfig {
 	/** @phan-var array<string,int> */
 	protected $wt2htmlLimits = [
 		// We won't handle pages beyond this size
-		'wikitextSize' => 1000000, // 1M
+		'wikitextSize' => 2048 * 1024,  // ParserOptions::maxIncludeSize
 
 		// Max list items per page
 		'listItem' => 30000,

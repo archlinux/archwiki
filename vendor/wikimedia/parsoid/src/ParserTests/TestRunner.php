@@ -3,9 +3,6 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\ParserTests;
 
-use DOMDocument;
-use DOMElement;
-use DOMNode;
 use Error;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Alea\Alea;
@@ -14,12 +11,16 @@ use Wikimedia\Parsoid\Config\Api\DataAccess;
 use Wikimedia\Parsoid\Config\Api\PageConfig;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Tools\ScriptUtils;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
+use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\PageConfigFrame;
@@ -258,7 +259,7 @@ class TestRunner {
 	 */
 	private function buildTests(): void {
 		// Startup by loading .txt test file
-		$warnFunc = function ( string $warnMsg ):void {
+		$warnFunc = static function ( string $warnMsg ):void {
 			error_log( $warnMsg );
 		};
 		$normFunc = function ( string $title ):string {
@@ -308,11 +309,11 @@ class TestRunner {
 	 *
 	 * @param Env $env
 	 * @param Test $test
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @param array $changelist
 	 */
 	private function applyChanges(
-		Env $env, Test $test, DOMDocument $doc, array $changelist
+		Env $env, Test $test, Document $doc, array $changelist
 	) {
 		// Seed the random-number generator based on the item title and changelist
 		$alea = new Alea( ( json_encode( $changelist ) ) . ( $test->testName ?? '' ) );
@@ -322,11 +323,11 @@ class TestRunner {
 		$test->changes = $changelist;
 
 		// Helper function for getting a random string
-		$randomString = function () use ( &$alea ): string {
+		$randomString = static function () use ( &$alea ): string {
 			return base_convert( (string)$alea->uint32(), 10, 36 );
 		};
 
-		$insertNewNode = function ( DOMNode $n ) use ( $randomString ): void {
+		$insertNewNode = static function ( Node $n ) use ( $randomString ): void {
 			// Insert a text node, if not in a fosterable position.
 			// If in foster position, enter a comment.
 			// In either case, dom-diff should register a new node
@@ -342,7 +343,7 @@ class TestRunner {
 
 			// For these container nodes, it would be buggy
 			// to insert text nodes as children
-			switch ( $n->parentNode->nodeName ) {
+			switch ( DOMCompat::nodeName( $n->parentNode ) ) {
 				case 'ol':
 				case 'ul':
 					$wrapperName = 'li';
@@ -354,12 +355,12 @@ class TestRunner {
 					$prev = DOMCompat::getPreviousElementSibling( $n );
 					if ( $prev ) {
 						// TH or TD
-						$wrapperName = $prev->nodeName;
+						$wrapperName = DOMCompat::nodeName( $prev );
 					} else {
 						$next = DOMCompat::getNextElementSibling( $n );
 						if ( $next ) {
 							// TH or TD
-							$wrapperName = $next->nodeName;
+							$wrapperName = DOMCompat::nodeName( $next );
 						} else {
 							$wrapperName = 'td';
 						}
@@ -375,7 +376,7 @@ class TestRunner {
 					break;
 			}
 
-			if ( DOMUtils::isFosterablePosition( $n ) && $n->parentNode->nodeName !== 'tr' ) {
+			if ( DOMUtils::isFosterablePosition( $n ) && DOMCompat::nodeName( $n->parentNode ) !== 'tr' ) {
 				$newNode = $ownerDoc->createComment( $str );
 			} elseif ( $wrapperName ) {
 				$newNode = $ownerDoc->createElement( $wrapperName );
@@ -387,11 +388,11 @@ class TestRunner {
 			$n->parentNode->insertBefore( $newNode, $n );
 		};
 
-		$removeNode = function ( DOMNode $n ): void {
+		$removeNode = static function ( Node $n ): void {
 			$n->parentNode->removeChild( $n );
 		};
 
-		$applyChangesInternal = function ( DOMNode $node, array $changes ) use (
+		$applyChangesInternal = static function ( Node $node, array $changes ) use (
 			&$env, &$applyChangesInternal, $removeNode, $insertNewNode,
 			$randomString
 		): void {
@@ -476,11 +477,11 @@ class TestRunner {
 	 *
 	 * @param array $options
 	 * @param Test $test
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @return array The list of changes.
 	 */
 	private function generateChanges(
-		array $options, Test $test, DOMDocument $doc
+		array $options, Test $test, Document $doc
 	): array {
 		$alea = new Alea( ( $test->seed ?? '' ) . ( $test->testName ?? '' ) );
 
@@ -490,8 +491,8 @@ class TestRunner {
 		 *
 		 * Currently true for template and extension content, and for entities.
 		 */
-		$domSubtreeIsEditable = function ( DOMNode $node ): bool {
-			return !( $node instanceof DOMElement ) ||
+		$domSubtreeIsEditable = static function ( Node $node ): bool {
+			return !( $node instanceof Element ) ||
 				( !WTUtils::isEncapsulationWrapper( $node ) &&
 					// These wrappers can only be edited in restricted ways.
 					// Simpler to just block all editing on them.
@@ -509,9 +510,9 @@ class TestRunner {
 		 * Currently, this restriction is only applied to DOMs generated for images.
 		 * Possibly, there are other candidates.
 		 */
-		$nodeIsUneditable = function ( DOMNode $node ) use ( &$nodeIsUneditable ): bool {
+		$nodeIsUneditable = static function ( Node $node ) use ( &$nodeIsUneditable ): bool {
 			// Text and comment nodes are always editable
-			if ( !( $node instanceof DOMElement ) ) {
+			if ( !( $node instanceof Element ) ) {
 				return false;
 			}
 
@@ -521,16 +522,16 @@ class TestRunner {
 			// - Entity spans are uneditable as well
 			// - Placeholder is defined to be uneditable in the spec
 			return DOMUtils::matchTypeOf( $node, '#^mw:(Image|Video|Audio|Entity|Placeholder|DisplaySpace)(/|$)#' ) || (
-				$node->nodeName !== 'figcaption' &&
+				DOMCompat::nodeName( $node ) !== 'figcaption' &&
 				$node->parentNode &&
-				$node->parentNode->nodeName !== 'body' &&
+				DOMCompat::nodeName( $node->parentNode ) !== 'body' &&
 				$nodeIsUneditable( $node->parentNode )
 			);
 		};
 
 		$defaultChangeType = 0;
 
-		$hasChangeMarkers = function ( array $list ) use (
+		$hasChangeMarkers = static function ( array $list ) use (
 			&$hasChangeMarkers, $defaultChangeType
 		): bool {
 			// If all recorded changes are 0, then nothing has been modified
@@ -544,7 +545,7 @@ class TestRunner {
 			return false;
 		};
 
-		$genChangesInternal = function ( DOMNode $node ) use (
+		$genChangesInternal = static function ( Node $node ) use (
 			&$genChangesInternal, &$hasChangeMarkers,
 			$domSubtreeIsEditable, $nodeIsUneditable, $alea,
 			$defaultChangeType
@@ -610,10 +611,10 @@ class TestRunner {
 	 * Apply manually-specified changes, which are provided in a pseudo-jQuery
 	 * format.
 	 *
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @param array $changes
 	 */
-	private function applyManualChanges( DOMDocument $doc, array $changes ) {
+	private function applyManualChanges( Document $doc, array $changes ) {
 		$err = null;
 		// changes are specified using jquery methods.
 		//  [x,y,z...] becomes $(x)[y](z....)
@@ -624,19 +625,19 @@ class TestRunner {
 		// on the results of the selector in the first argument, which is
 		// a good way to get at the text and comment nodes
 		$jquery = [
-			'after' => function ( DOMNode $node, string $html ) {
+			'after' => static function ( Node $node, string $html ) {
 				$div = null;
 				$tbl = null;
-				if ( $node->parentNode->nodeName === 'tbody' ) {
+				if ( DOMCompat::nodeName( $node->parentNode ) === 'tbody' ) {
 					$tbl = $node->ownerDocument->createElement( 'table' );
 					DOMCompat::setInnerHTML( $tbl, $html );
 					// <tbody> is implicitly added when inner html is set to <tr>..</tr>
 					DOMUtils::migrateChildren( $tbl->firstChild, $node->parentNode, $node->nextSibling );
-				} elseif ( $node->parentNode->nodeName === 'tr' ) {
+				} elseif ( DOMCompat::nodeName( $node->parentNode ) === 'tr' ) {
 					$tbl = $node->ownerDocument->createElement( 'table' );
 					DOMCompat::setInnerHTML( $tbl, '<tbody><tr></tr></tbody>' );
 					$tr = $tbl->firstChild->firstChild;
-					'@phan-var \DOMElement $tr'; // @var \DOMElement $tr
+					'@phan-var Element $tr'; // @var Element $tr
 					DOMCompat::setInnerHTML( $tr, $html );
 					DOMUtils::migrateChildren( $tbl->firstChild->firstChild,
 						$node->parentNode, $node->nextSibling );
@@ -646,8 +647,8 @@ class TestRunner {
 					DOMUtils::migrateChildren( $div, $node->parentNode, $node->nextSibling );
 				}
 			},
-			'append' => function ( DOMNode $node, string $html ) {
-				if ( $node->nodeName === 'tr' ) {
+			'append' => static function ( Node $node, string $html ) {
+				if ( DOMCompat::nodeName( $node ) === 'tr' ) {
 					$tbl = $node->ownerDocument->createElement( 'table' );
 					DOMCompat::setInnerHTML( $tbl, $html );
 					// <tbody> is implicitly added when inner html is set to <tr>..</tr>
@@ -658,23 +659,23 @@ class TestRunner {
 					DOMUtils::migrateChildren( $div, $node );
 				}
 			},
-			'attr' => function ( DOMNode $node, string $name, string $val ) {
-				'@phan-var \DOMElement $node'; // @var \DOMElement $node
+			'attr' => static function ( Node $node, string $name, string $val ) {
+				'@phan-var Element $node'; // @var Element $node
 				$node->setAttribute( $name, $val );
 			},
-			'before' => function ( DOMNode $node, string $html ) {
+			'before' => static function ( Node $node, string $html ) {
 				$div = null;
 				$tbl = null;
-				if ( $node->parentNode->nodeName === 'tbody' ) {
+				if ( DOMCompat::nodeName( $node->parentNode ) === 'tbody' ) {
 					$tbl = $node->ownerDocument->createElement( 'table' );
 					DOMCompat::setInnerHTML( $tbl, $html );
 					// <tbody> is implicitly added when inner html is set to <tr>..</tr>
 					DOMUtils::migrateChildren( $tbl->firstChild, $node->parentNode, $node );
-				} elseif ( $node->parentNode->nodeName === 'tr' ) {
+				} elseif ( DOMCompat::nodeName( $node->parentNode ) === 'tr' ) {
 					$tbl = $node->ownerDocument->createElement( 'table' );
 					DOMCompat::setInnerHTML( $tbl, '<tbody><tr></tr></tbody>' );
 					$tr = $tbl->firstChild->firstChild;
-					'@phan-var \DOMElement $tr'; // @var \DOMElement $tr
+					'@phan-var Element $tr'; // @var Element $tr
 					DOMCompat::setInnerHTML( $tr, $html );
 					DOMUtils::migrateChildren( $tbl->firstChild->firstChild, $node->parentNode, $node );
 				} else {
@@ -683,26 +684,26 @@ class TestRunner {
 					DOMUtils::migrateChildren( $div, $node->parentNode, $node );
 				}
 			},
-			'removeAttr' => function ( DOMNode $node, string $name ) {
-				'@phan-var \DOMElement $node'; // @var \DOMElement $node
+			'removeAttr' => static function ( Node $node, string $name ) {
+				'@phan-var Element $node'; // @var Element $node
 				$node->removeAttribute( $name );
 			},
-			'removeClass' => function ( DOMNode $node, string $c ) {
-				'@phan-var \DOMElement $node'; // @var \DOMElement $node
+			'removeClass' => static function ( Node $node, string $c ) {
+				'@phan-var Element $node'; // @var Element $node
 				DOMCompat::getClassList( $node )->remove( $c );
 			},
-			'addClass' => function ( DOMNode $node, string $c ) {
-				'@phan-var \DOMElement $node'; // @var \DOMElement $node
+			'addClass' => static function ( Node $node, string $c ) {
+				'@phan-var Element $node'; // @var Element $node
 				DOMCompat::getClassList( $node )->add( $c );
 			},
-			'text' => function ( DOMNode $node, string $t ) {
+			'text' => static function ( Node $node, string $t ) {
 				$node->textContent = $t;
 			},
-			'html' => function ( DOMNode $node, string $h ) {
-				'@phan-var \DOMElement $node'; // @var \DOMElement $node
+			'html' => static function ( Node $node, string $h ) {
+				'@phan-var Element $node'; // @var Element $node
 				DOMCompat::setInnerHTML( $node, $h );
 			},
-			'remove' => function ( DOMNode $node, string $optSelector = null ) {
+			'remove' => static function ( Node $node, string $optSelector = null ) {
 				// jquery lets us specify an optional selector to further
 				// restrict the removed elements.
 				// text nodes don't have the "querySelectorAll" method, so
@@ -710,10 +711,10 @@ class TestRunner {
 				// is less useful)
 				if ( !$optSelector ) {
 					$what = [ $node ];
-				} elseif ( !( $node instanceof DOMElement ) ) {
+				} elseif ( !( $node instanceof Element ) ) {
 					$what = [ $node ];/* text node hack! */
 				} else {
-					'@phan-var \DOMElement $node'; // @var \DOMElement $node
+					'@phan-var Element $node'; // @var Element $node
 					$what = DOMCompat::querySelectorAll( $node, $optSelector );
 				}
 				foreach ( $what as $node ) {
@@ -722,11 +723,11 @@ class TestRunner {
 					}
 				}
 			},
-			'empty' => function ( DOMNode $node ) {
-				'@phan-var \DOMElement $node'; // @var \DOMElement $node
+			'empty' => static function ( Node $node ) {
+				'@phan-var Element $node'; // @var Element $node
 				DOMCompat::replaceChildren( $node );
 			},
-			'wrap' => function ( DOMNode $node, string $w ) {
+			'wrap' => static function ( Node $node, string $w ) {
 				$frag = $node->ownerDocument->createElement( 'div' );
 				DOMCompat::setInnerHTML( $frag, $w );
 				$first = $frag->firstChild;
@@ -749,7 +750,9 @@ class TestRunner {
 				continue;
 			}
 			// use document.querySelectorAll as a poor man's $(...)
-			$els = DOMCompat::querySelectorAll( $body, $change[0] );
+			$els = PHPUtils::iterable_to_array(
+				DOMCompat::querySelectorAll( $body, $change[0] )
+			);
 			if ( !count( $els ) ) {
 				$err = new Error( $change[0] .
 					' did not match any elements: ' . DOMCompat::getOuterHTML( $body ) );
@@ -759,7 +762,7 @@ class TestRunner {
 				$change = array_slice( $change, 1 );
 				$acc = [];
 				foreach ( $els as $el ) {
-					$acc = array_merge( $acc, iterator_to_array( $el->childNodes ) );
+					PHPUtils::pushArray( $acc, iterator_to_array( $el->childNodes ) );
 				}
 				$els = $acc;
 			}
@@ -786,11 +789,11 @@ class TestRunner {
 	 * @param Test $test
 	 * @param string $mode
 	 * @param string $wikitext
-	 * @return DOMDocument
+	 * @return Document
 	 */
 	private function convertWt2Html(
 		Env $env, Test $test, string $mode, string $wikitext
-	): DOMDocument {
+	): Document {
 		// FIXME: Ugly!  Maybe we should switch to using the entrypoint to
 		// the library for parserTests instead of reusing the environment
 		// and touching these internals.
@@ -816,11 +819,11 @@ class TestRunner {
 	 * @param Test $test
 	 * @param array $options
 	 * @param string $mode
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @return string
 	 */
 	private function convertHtml2Wt(
-		Env $env, Test $test, array $options, string $mode, DOMDocument $doc
+		Env $env, Test $test, array $options, string $mode, Document $doc
 	): string {
 		$selserData = null;
 		$startsAtWikitext = $mode === 'wt2wt' || $mode === 'wt2html' || $mode === 'selser';
@@ -958,10 +961,10 @@ class TestRunner {
 	 * @param Test $test
 	 * @param array $options
 	 * @param string $mode
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 */
 	private function processParsedHTML(
-		Test $test, array $options, string $mode, DOMDocument $doc
+		Test $test, array $options, string $mode, Document $doc
 	): void {
 		$test->time['end'] = microtime( true );
 		// Check the result vs. the expected result.
@@ -1012,13 +1015,13 @@ class TestRunner {
 
 	/**
 	 * @param Test $test
-	 * @param DOMElement $out
+	 * @param Element $out
 	 * @param array $options
 	 * @param string $mode
 	 * @return bool
 	 */
 	private function checkHTML(
-		Test $test, DOMElement $out, array $options, string $mode
+		Test $test, Element $out, array $options, string $mode
 	): bool {
 		$normalizedOut = null;
 		$normalizedExpected = null;
@@ -1081,10 +1084,10 @@ class TestRunner {
 		$toWikiText = $mode === 'html2wt' || $mode === 'wt2wt' || $mode === 'selser';
 		// FIXME: normalization not in place yet
 		$normalizedExpected = $toWikiText ?
-			preg_replace( '/\n+$/D', '', $testWikitext, 1 ) : $testWikitext;
+			rtrim( $testWikitext, "\n" ) : $testWikitext;
 
 		// FIXME: normalization not in place yet
-		$normalizedOut = ( $toWikiText ) ? preg_replace( '/\n+$/D', '', $out, 1 ) : $out;
+		$normalizedOut = ( $toWikiText ) ? rtrim( $out, "\n" ) : $out;
 
 		$input = $mode === 'selser' ? $test->changedHTMLStr :
 			( $mode === 'html2wt' ? $test->parsoidHtml : $testWikitext );
@@ -1250,7 +1253,7 @@ class TestRunner {
 				$testKnownFailures,
 				JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES |
 				JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
-			);
+			) . "\n";
 			if ( ScriptUtils::booleanOption( $options['updateKnownFailures'] ?? null ) ) {
 				file_put_contents( $this->knownFailuresPath, $contents );
 			} elseif ( $allModes && $offsetType === 'byte' ) {
@@ -1273,7 +1276,7 @@ class TestRunner {
 						 ')/m';
 					$fileContent = preg_replace_callback(
 						$exp,
-						function ( array $matches ) use ( $fail, $updateFormat ) {
+						static function ( array $matches ) use ( $fail, $updateFormat ) {
 							return $matches[1] . $fail[$updateFormat];
 						},
 						$fileContent
@@ -1354,7 +1357,7 @@ class TestRunner {
 				$testModes[] = 'selser';
 			}
 
-			$targetModes = array_filter( $targetModes, function ( string $mode ) use ( $testModes ): bool {
+			$targetModes = array_filter( $targetModes, static function ( string $mode ) use ( $testModes ): bool {
 				return array_search( $mode, $testModes, true ) !== false;
 			} );
 		}
@@ -1366,7 +1369,7 @@ class TestRunner {
 
 		// Honor language option in parserTests.txt
 		$prefix = $test->options['language'] ?? 'enwiki';
-		if ( !preg_match( '/wiki/', $prefix ) ) {
+		if ( !str_contains( $prefix, 'wiki' ) ) {
 			// Convert to our enwiki.. format
 			$prefix .= 'wiki';
 		}

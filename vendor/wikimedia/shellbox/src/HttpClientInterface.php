@@ -21,5 +21,5 @@ interface HttpClientInterface {
 	 * @param RequestInterface $request
 	 * @return ResponseInterface
 	 */
-	public function send( RequestInterface $request ) : ResponseInterface;
+	public function send( RequestInterface $request ): ResponseInterface;
 }

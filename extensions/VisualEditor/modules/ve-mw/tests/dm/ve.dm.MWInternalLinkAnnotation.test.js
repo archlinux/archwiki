@@ -6,16 +6,15 @@
 
 QUnit.module( 've.dm.MWInternalLinkAnnotation' );
 
-QUnit.test( 'toDataElement', function ( assert ) {
-	var i, l,
-		doc = ve.dm.example.createExampleDocument(),
-		externalLink = function ( href ) {
-			var link = document.createElement( 'a' );
+QUnit.test( 'toDataElement', ( assert ) => {
+	const doc = ve.dm.example.createExampleDocument(),
+		externalLink = ( href ) => {
+			const link = document.createElement( 'a' );
 			link.setAttribute( 'href', href );
 			return link;
 		},
-		internalLink = function ( pageTitle, params ) {
-			var link = document.createElement( 'a' );
+		internalLink = ( pageTitle, params ) => {
+			const link = document.createElement( 'a' );
 			link.setAttribute( 'href', location.origin + mw.Title.newFromText( pageTitle ).getUrl( params ) );
 			return link;
 		},
@@ -112,9 +111,9 @@ QUnit.test( 'toDataElement', function ( assert ) {
 					type: 'link/mwInternal',
 					attributes: {
 						lookupTitle: 'Foo',
-						normalizedTitle: 'Foo#bar.3F',
-						origTitle: 'Foo#bar.3F',
-						title: 'Foo#bar.3F'
+						normalizedTitle: 'Foo#' + mw.util.escapeIdForLink( 'bar?' ),
+						origTitle: 'Foo#' + mw.util.escapeIdForLink( 'bar?' ),
+						title: 'Foo#' + mw.util.escapeIdForLink( 'bar?' )
 					}
 				}
 			}
@@ -130,14 +129,13 @@ QUnit.test( 'toDataElement', function ( assert ) {
 	converter.contextStack = [];
 	converter.fromClipboard = true;
 
-	for ( i = 0, l = cases.length; i < l; i++ ) {
+	for ( let i = 0; i < cases.length; i++ ) {
 		assert.deepEqual( ve.dm.MWInternalLinkAnnotation.static.toDataElement( [ cases[ i ].element ], converter ), cases[ i ].expected, cases[ i ].msg );
 	}
 } );
 
-QUnit.test( 'getFragment', function ( assert ) {
-	var i, l,
-		cases = [
+QUnit.test( 'getFragment', ( assert ) => {
+	const cases = [
 			{
 				msg: 'No fragment returns null',
 				original: 'Foo',
@@ -175,7 +173,7 @@ QUnit.test( 'getFragment', function ( assert ) {
 			}
 		];
 
-	for ( i = 0, l = cases.length; i < l; i++ ) {
+	for ( let i = 0; i < cases.length; i++ ) {
 		assert.strictEqual( ve.dm.MWInternalLinkAnnotation.static.getFragment( cases[ i ].original ), cases[ i ].expected, cases[ i ].msg );
 	}
 } );

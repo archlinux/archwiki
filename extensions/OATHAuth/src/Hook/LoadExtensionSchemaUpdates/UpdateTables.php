@@ -94,7 +94,7 @@ class UpdateTables {
 		$database = $wgOATHAuthDatabase ?? false;
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
 			->getMainLB( $database );
-		return $lb->getConnectionRef( DB_MASTER, [], $database );
+		return $lb->getConnectionRef( DB_PRIMARY, [], $database );
 	}
 
 	/**

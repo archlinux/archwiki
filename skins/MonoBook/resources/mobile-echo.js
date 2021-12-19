@@ -1,5 +1,5 @@
 /* eslint-disable no-jquery/no-global-selector */
-$( function () {
+module.exports = function () {
 	var mobileMediaQuery = window.matchMedia( 'screen and (max-width: 550px)' ),
 		echoHacked = false,
 		echoHackActive = false,
@@ -60,4 +60,4 @@ $( function () {
 
 	$( window ).on( 'resize', monoBookMobileEchoHack );
 	monoBookMobileEchoHack();
-} );
+};

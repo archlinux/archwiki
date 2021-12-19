@@ -46,6 +46,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Utilise le résultat d’une précédente requête <tt>serializeforcache</tt> avec cette clé. Ceci remplace $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Identifiant CAPTCHA (lors d’un enregistrement avec une réponse CAPTCHA).",
 	"apihelp-visualeditoredit-param-captchaword": "Réponse au CAPTCHA (lors d’un enregistrement avec une réponse CAPTCHA).",
+	"apihelp-visualeditoredit-param-plugins": "Modules associés avec la requête de l’API.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Données arbitraires envoyées par un module avec la requête de l’API.",
 	"apihelp-visualeditoredit-param-etag": "ETag à envoyer.",
 	"apihelp-visualeditoredit-param-html": "HTML à envoyer à Parsoid en échange de wikicode.",
 	"apihelp-visualeditoredit-param-minor": "Marquage d’édition mineure.",

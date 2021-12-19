@@ -1,8 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Wertuose"
+			"NMW03"
 		]
 	},
-	"titleblacklist-override": "Qara siyahını nəzərə alma"
+	"action-tboverride": "başlıq və ya istifadəçi adı qara siyahısını atla",
+	"action-tboverride-account": "istifadəçi adı qara siyahısını atla",
+	"action-titleblacklistlog": "qara siyahı jurnalına bax",
+	"log-name-titleblacklist": "Qara siyahı qeydləri",
+	"log-description-titleblacklist": "Bunlar qara siyahıya düşən cəhdləri göstərir",
+	"titleblacklist-forbidden-edit": "\"$2\" adlı səhifə yaratmaq qadağan edilib.\nO, bu qara siyahı elementinin şərtini ödəyir: <code>$1</code>",
+	"titleblacklist-forbidden-upload": "\"$2\" adlı fayl yaratmaq qadağan edilib.\nO, bu qara siyahı elementinin şərtini ödəyir: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "\"$2\" adlı istifadəçi yaratmaq qadağan edilib.\nO, bu qara siyahı elementinin şərtini ödəyir: <code>$1</code>",
+	"titleblacklist-override": "Başlıq qara siyahısına uyğun gəlirsə, onu ləğv et"
 }

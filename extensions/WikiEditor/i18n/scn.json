@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Aushulz",
 			"Gmelfi",
 			"Macofe",
 			"Pippinu",
-			"Sarvaturi",
-			"Ajeje Brazorf"
+			"Sarvaturi"
 		]
 	},
 	"wikieditor": "Ntirfazza avanzata di canci di testu wiki",
@@ -49,6 +49,7 @@
 	"wikieditor-toolbar-tool-link-empty": "Nun annicasti nenti versu cui mettiri lu liami",
 	"wikieditor-toolbar-tool-file": "File ncurpuratu",
 	"wikieditor-toolbar-tool-file-example": "Asempiu.jpg",
+	"wikieditor-toolbar-file-default": "(pridifinutu)",
 	"wikieditor-toolbar-file-format-none": "nuddu",
 	"wikieditor-toolbar-tool-file-insert": "Nzirisci",
 	"wikieditor-toolbar-tool-reference": "Rifirenza",

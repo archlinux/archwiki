@@ -14,7 +14,8 @@
 			"Teslaton",
 			"TomášPolonec",
 			"Vegetator",
-			"Yardom78"
+			"Yardom78",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Vytvoriť zdrojový kód tejto stránky",
@@ -152,14 +153,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Pridať obsah",
 	"visualeditor-dialog-transclusion-add-param": "Pridať viac informácií",
 	"visualeditor-dialog-transclusion-add-template": "Pridať šablónu",
+	"visualeditor-dialog-transclusion-collapse-options": "Skryť možnosti",
 	"visualeditor-dialog-transclusion-content": "Obsah",
 	"visualeditor-dialog-transclusion-contextitem-description": "Vytvorené z: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Zobraziť možnosti",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Zastaraný parameter",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Parameter je zastaraný. $1",
 	"visualeditor-dialog-transclusion-loading": "Načítava sa...",
 	"visualeditor-dialog-transclusion-more-template-description": "Ďalšie informácie o šablóne „$1“ môžu byť uvedené na [[{{ns:template}}:$1|jej stránke]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Zobraziť možnosti",
-	"visualeditor-dialog-transclusion-no-template-description": "Šablóna „$1“ zatiaľ nemá popis, nejaké informácie sa ale môžu nachádzať na [[$1|jej stránke]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Šablóna „$1“ zatiaľ nemá popis, nejaké informácie sa ale môžu nachádzať na [[$2|jej stránke]].",
 	"visualeditor-dialog-transclusion-options": "Možnosti",
 	"visualeditor-dialog-transclusion-param-default": "Predvolená hodnota: $1",
 	"visualeditor-dialog-transclusion-param-example": "napr. $1",
@@ -176,8 +178,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Pokračovať napriek tomu",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Chýba povinný parameter|Chýbajú povinné parametre}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Skutočne chcete pokračovať bez vyplnenia {{PLURAL:$2|parametra|parametrov}} $1?",
-	"visualeditor-dialog-transclusion-single-mode": "Skryť možnosti",
-	"visualeditor-dialog-transclusion-title": "Šablóna",
 	"visualeditor-dialogbutton-media-tooltip": "Obrázky a multimédiá",
 	"visualeditor-dialogbutton-meta-tooltip": "Nastavenia stránky",
 	"visualeditor-dialogbutton-template-tooltip": "Šablóna",
@@ -340,6 +340,5 @@
 	"visualeditor-wikitext-warning-title": "Zistená syntax wikitextu",
 	"visualeditor-wikitextconvert-title": "Previesť formátovanie na wikitext?",
 	"visualeditor-wikitextconvert-message": "Vložili ste obsah obsahujúci formátovanie. Mal by byť prevedený na wikitext alebo vložený ako obyčajný text?",
-	"visualeditor-wikitextconvert-plain": "Použiť obyčajný text",
 	"visualeditor-wikitextconvert-convert": "Previesť na wikitext"
 }

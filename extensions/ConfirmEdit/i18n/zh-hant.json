@@ -45,5 +45,5 @@
 	"confirmedit-preview-validity": "有效性",
 	"confirmedit-preview-valid": "有效",
 	"confirmedit-preview-invalid": "無效",
-	"confirmedit-preview-description": "以下表格顯示出有關此頁面行數的清單，以及是否為有效的 IP 位址或 IP 位址範圍。如果某行是有效的 IP 位址或 IP 位址範圍，這會從驗證碼流程來被列入在白名單裡，若如果是無效的行則會被忽略。例如：來自於 69.208.0.0 至 69.208.255.255 網段的有效 IP 位址範圍會是 69.208.0.0/16。有關計算 IP 位址範圍更多方面訊息[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 可查看此]。"
+	"confirmedit-preview-description": "以下表格顯示出有關此頁面行數的清單，以及是否為有效的 IP 位址或 IP 位址範圍。如果某行是有效的 IP 位址或 IP 位址範圍，這會從驗證碼檢查流程排除掉；若如果是無效的行，則會被忽略。例如：來自於 69.208.0.0 至 69.208.255.255 網段的有效 IP 位址範圍會是 69.208.0.0/16。有關計算 IP 位址範圍更多方面訊息[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix 可查看此]。"
 }

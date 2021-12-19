@@ -36,6 +36,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Verwende das Ergebnis einer früheren serializeforcache-Anfrage mit diesem Schlüssel. Überschreibt $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Kennung des Captchas (beim Speichern mit einer Captcha-Antwort).",
 	"apihelp-visualeditoredit-param-captchaword": "Antwort an das Captcha (beim Speichern mit einer Captcha-Antwort).",
+	"apihelp-visualeditoredit-param-plugins": "Plugins, die mit der API-Anfrage verknüpft sind.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Beliebige Daten, die von einem Plugin mit der API-Anfrage gesendet werden.",
 	"apihelp-visualeditoredit-param-etag": "Zu sendendes ETag.",
 	"apihelp-visualeditoredit-param-html": "HTML, das an Parsoid in Austausch für Wikitext gesendet werden soll.",
 	"apihelp-visualeditoredit-param-minor": "Markierung für kleine Bearbeitung.",

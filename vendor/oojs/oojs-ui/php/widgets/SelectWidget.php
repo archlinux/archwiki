@@ -44,7 +44,7 @@ class SelectWidget extends Widget {
 	}
 
 	public function findSelectedItems() {
-		$selected = array_filter( $this->getItems(), function ( $item ) {
+		$selected = array_filter( $this->getItems(), static function ( $item ) {
 			return $item->isSelected();
 		} );
 
@@ -81,12 +81,10 @@ class SelectWidget extends Widget {
 	 * @return $this
 	 */
 	public function unselectItem( $item ) {
-		$items = $this->getItems();
-
 		if ( $item ) {
 			$item->setSelected( false );
 		} else {
-			foreach ( $items as $i ) {
+			foreach ( $this->getItems() as $i ) {
 				if ( $i->isSelected() ) {
 					$i->setSelected( false );
 				}
@@ -103,12 +101,10 @@ class SelectWidget extends Widget {
 	 * @return $this
 	 */
 	public function selectItem( $item = null ) {
-		$items = $this->getItems();
-
 		if ( $this->multiselect && $item ) {
 			$item->setSelected( true );
 		} else {
-			foreach ( $items as $i ) {
+			foreach ( $this->getItems() as $i ) {
 				$selected = $item === $i;
 				if ( $i->isSelected() !== $selected ) {
 					$i->setSelected( $selected );

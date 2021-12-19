@@ -7,6 +7,7 @@
 			"Eduardoaddad",
 			"Felipe L. Ewald",
 			"Giro720",
+			"Jaideraf",
 			"Luckas",
 			"TheGabrielZaum",
 			555
@@ -26,7 +27,7 @@
 	"titleblacklist-forbidden-upload": "O arquivo nomeado como \"$2\" foi impedido de ser criado.\nEle se encaixa na seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-forbidden-new-account": "O nome de usuário \"$2\" foi banido de ser registrado.\nO nome corresponde na seguinte entrada da lista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|A seguinte linha|As seguintes linhas}} da lista negra {{PLURAL:$1|é inválida|são inválidas}}. \n{{PLURAL:$1|Corrija-a|Corrija-as}} antes de salvar:",
-	"titleblacklist-override": "Over-ride a lista negra do título, se corresponde",
+	"titleblacklist-override": "Ignorar a lista de bloqueio de título, se corresponder",
 	"titleblacklist-override-help": "Usuários com privilégios suficientes podem configurar isso para ignorar as verificações da lista negra do título.",
 	"titleblacklist-warning": "<strong>Aviso: Esta página só pode ser editada por administradores e outros usuários com o direito <code>tboverride</code> porque corresponde ao seguinte título na lista negra:</strong><br /><code>$1</code>",
 	"right-tboverride": "Contornar a lista negra de títulos e nomes de usuário",

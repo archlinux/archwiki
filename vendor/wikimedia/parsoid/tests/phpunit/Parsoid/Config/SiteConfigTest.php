@@ -11,10 +11,14 @@ use Wikimedia\TestingAccessWrapper;
  */
 class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 
-	/** @return MockObject|SiteConfig */
+	/**
+	 * @param array $methods Subset of methods to mock.
+	 *
+	 * @return MockObject|SiteConfig
+	 */
 	private function getSiteConfig( array $methods = [] ) {
 		return $this->getMockBuilder( SiteConfig::class )
-			->setMethods( $methods )
+			->onlyMethods( $methods )
 			->getMockForAbstractClass();
 	}
 
@@ -47,12 +51,12 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 	/**
 	 * @dataProvider provideMakeExtResourceURL
 	 */
-	public function testMakeExtResourceURL( $match, $href, $content, $expect ) {
+	public function testMakeExtResourceURL( array $match, string $href, string $content, string $expect ) {
 		$siteConfig = $this->getSiteConfig();
 		$this->assertSame( $expect, $siteConfig->makeExtResourceURL( $match, $href, $content ) );
 	}
 
-	public function provideMakeExtResourceURL() {
+	public function provideMakeExtResourceURL(): array {
 		return [
 			[
 				[ 'ISBN', '9780615720302' ], './Special:Booksources/9780615720302', 'ISBN 978-0615720302',
@@ -278,10 +282,10 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 
 	private function setupMagicWordTestConfig(): SiteConfig {
 		$mws = [
-			"img_lossy"     => [ false, "lossy=$1" ],
-			"numberofwikis" => [ false, "NUMBEROFWIKIS" ], // variable
+			"img_lossy"     => [ true, "lossy=$1" ],
+			"numberofwikis" => [ false, "numberofwikis" ], // variable
 			"lcfirst"       => [ false, "LCFIRST:" ], // is a no-hash function hook
-			"expr"          => [ false, "EXPR" ], // function hook with valid hashed version
+			"expr"          => [ false, "expr" ], // function hook with valid hashed version
 			"noglobal"      => [ true, "__NOGLOBAL__" ],
 			"defaultsort"   => [ true, "DEFAULTSORT:", "DEFAULTSORTKEY:", "DEFAULTCATEGORYSORT:" ],
 		];
@@ -304,14 +308,14 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		$siteConfig = $this->setupMagicWordTestConfig();
 		// Expected results
 		$mwMap = [
-			'lossy=$1'             => 'img_lossy',
-			'numberofwikis'        => 'numberofwikis',
-			"lcfirst:"             => "lcfirst",
-			'expr'                 => 'expr',
-			'__NOGLOBAL__'         => 'noglobal',
-			'DEFAULTSORT:'         => 'defaultsort',
-			'DEFAULTSORTKEY:'      => 'defaultsort',
-			'DEFAULTCATEGORYSORT:' => 'defaultsort'
+			'lossy=$1'             => [ true, 'img_lossy' ],
+			'numberofwikis'        => [ false, 'numberofwikis' ],
+			'lcfirst:'             => [ false, 'lcfirst' ],
+			'expr'                 => [ false, 'expr' ],
+			'__NOGLOBAL__'         => [ true, 'noglobal' ],
+			'DEFAULTSORT:'         => [ true, 'defaultsort' ],
+			'DEFAULTSORTKEY:'      => [ true, 'defaultsort' ],
+			'DEFAULTCATEGORYSORT:' => [ true, 'defaultsort' ]
 		];
 		$this->assertSame( $mwMap, $siteConfig->magicWords() );
 	}
@@ -320,17 +324,13 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		// FIXME: Given that Parsoid proxies {{..}} wikitext to core for expansion,
 		// some of these tests don't mean a while lot right now. There are known
 		// bugs in SiteConfig right now. (T257629)
-		// T257629: for example, Parsoid accepts '[[File:Foo.jpg|RIGHT]]'
-		// where the core parser doesn't; img_right should be case-sensitive.
-		// In fact, img_lossy is the only attribute in mediawiki which is *not*
-		// case-sensitive. (T259165 says these should all be made consistent.)
 		$siteConfig = $this->setupMagicWordTestConfig();
 		$aliases = [
 			// FIXME: Should the magic word code be de-duping the aliases array?
-			"img_lossy"     => [ "lossy=$1", "lossy=$1" ],
-			"numberofwikis" => [ "NUMBEROFWIKIS", "numberofwikis" ],
+			"img_lossy"     => [ "lossy=$1" ],
+			"numberofwikis" => [ "numberofwikis", "numberofwikis" ],
 			"lcfirst"       => [ "LCFIRST:", "lcfirst:" ],
-			"expr"          => [ "EXPR", "expr" ],
+			"expr"          => [ "expr", "expr" ],
 			"noglobal"      => [ "__NOGLOBAL__" ],
 			"defaultsort"   => [ "DEFAULTSORT:", "DEFAULTSORTKEY:", "DEFAULTCATEGORYSORT:" ],
 		];

@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Fitoschido",
+			"Jmarchn",
 			"Toniher",
-			"Vriullop",
-			"Jmarchn"
+			"Vriullop"
 		]
 	},
 	"scribunto-desc": "Un entorn de treball per a incrustar llenguatges d'script a les pàgines de MediaWiki",

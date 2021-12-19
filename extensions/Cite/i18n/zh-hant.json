@@ -10,10 +10,11 @@
 			"Philip",
 			"Waihorace",
 			"Wbxshiori",
-			"乌拉跨氪"
+			"乌拉跨氪",
+			"Winston Sung"
 		]
 	},
-	"cite-desc": "添加用於引用的 <code>&lt;ref&gt;</code> 與 <code>&lt;references/&gt;</code> 標籤",
+	"cite-desc": "加入用於參考資料的 <code>&lt;ref&gt;</code> 與 <code>&lt;references/&gt;</code> 標籤",
 	"cite_error": "引用錯誤：$1",
 	"cite_error_ref_invalid_dir": "無效的 <code>dir=\"$1\"</code>，必須是 <code>ltr</code> 或 <code>rtl</code>",
 	"cite_error_ref_numeric_key": "無效的 <code>&lt;ref&gt;</code> 標籤，name 屬性不能使用數字，請使用可描述內容的標題",

@@ -41,7 +41,6 @@ class Update extends Maintenance {
 		$dir = LocalisationUpdate::getDirectory();
 		if ( !$dir ) {
 			$this->fatalError( 'No cache directory configured' );
-			return;
 		}
 
 		$lc = Language::getLocalisationCache();
@@ -55,7 +54,6 @@ class Update extends Maintenance {
 		if ( !isset( $wgLocalisationUpdateRepositories[$repoid] ) ) {
 			$known = implode( ', ', array_keys( $wgLocalisationUpdateRepositories ) );
 			$this->fatalError( "Unknown repoid $repoid; known: $known" );
-			return;
 		}
 		$repos = $wgLocalisationUpdateRepositories[$repoid];
 

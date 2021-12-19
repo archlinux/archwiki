@@ -3,7 +3,7 @@
 namespace Shellbox\ShellParser;
 
 use Shellbox\ShellboxError;
-use WikiPEG\Location;
+use Wikimedia\WikiPEG\Location;
 
 /**
  * Exception class for shell command syntax errors. By default the message uses

@@ -28,8 +28,6 @@
 	"categorytree-mode-all": "todas las páginas",
 	"categorytree-collapse": "contraer",
 	"categorytree-expand": "expandir",
-	"categorytree-expand-bullet": "►",
-	"categorytree-empty-bullet": "►",
 	"categorytree-member-counts": "Contiene {{PLURAL:$1|una subcategoría|$1 subcategorías}}, {{PLURAL:$2|una página|$2 páginas}} y {{PLURAL:$3|un archivo|$3 archivos}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",

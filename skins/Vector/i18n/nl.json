@@ -3,13 +3,13 @@
 		"authors": [
 			"Calak",
 			"Mainframe98",
+			"McDutchie",
+			"Nickthijssen1994",
 			"Romaine",
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Troefkaart",
-			"McDutchie",
-			"Nickthijssen1994"
+			"Troefkaart"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -32,5 +32,12 @@
 	"vector-jumptonavigation": "Naar navigatie springen",
 	"vector-jumptosearch": "Naar zoeken springen",
 	"vector-jumptocontent": "Naar inhoud springen",
-	"vector-more-actions": "Meer"
+	"vector-more-actions": "Meer",
+	"vector-anon-user-menu-pages-learn": "meer lezen",
+	"vector-anon-user-menu-pages-label": "Meer leren over bewerken",
+	"vector-personal-more-label": "Gebruikerskoppelingen",
+	"vector-main-menu-tooltip": "Hoofdmenu",
+	"tooltip-vector-anon-user-menu-title": "Meer opties",
+	"vector-menu-checkbox-expanded": "uitgevouwen",
+	"vector-menu-checkbox-collapsed": "samenvouwen"
 }

@@ -540,13 +540,13 @@ abstract class ParsoidHandler extends Handler {
 			}
 		}
 
-		$reqOpts = array_merge( [
+		$reqOpts = $attribs['envOptions'] + [
 			'pageBundle' => $needsPageBundle,
 			// When substing, set data-parsoid to be discarded, so that the subst'ed
 			// content is considered new when it comes back.
 			'discardDataParsoid' => $doSubst,
 			'contentmodel' => $opts['contentmodel'] ?? null,
-		], $attribs['envOptions'] );
+		];
 
 		// VE, the only client using body_only property,
 		// doesn't want section tags when this flag is set.
@@ -571,8 +571,7 @@ abstract class ParsoidHandler extends Handler {
 		$timing->end( "wt2html.$mstr.init" );
 		$metrics->timing(
 			"wt2html.$mstr.size.input",
-			# Should perhaps be strlen instead (or cached!): T239841
-			mb_strlen( $pageConfig->getPageMainContent() )
+			strlen( $pageConfig->getPageMainContent() )
 		);
 		$parseTiming = Timing::start( $metrics );
 
@@ -662,7 +661,7 @@ abstract class ParsoidHandler extends Handler {
 			throw new HttpException( $e->getMessage(), 400 );
 		}
 
-		// Should perhaps be strlen instead (or cached!): T239841
+		// FIXME: Should perhaps be strlen instead
 		$htmlSize = mb_strlen( $html );
 
 		// Send input size to statsd/Graphite
@@ -696,7 +695,7 @@ abstract class ParsoidHandler extends Handler {
 				$envOptions['inputContentVersion'] = $vOriginal;
 			} else {
 				$envOptions['inputContentVersion'] = $vEdited;
-				// We need to downgrade the original to match the the edited doc's version.
+				// We need to downgrade the original to match the edited doc's version.
 				$downgrade = Parsoid::findDowngrade( $vOriginal, $vEdited );
 				// Downgrades are only for pagebundle
 				if ( $downgrade && $opts['from'] === FormatHelper::FORMAT_PAGEBUNDLE ) {
@@ -835,8 +834,7 @@ abstract class ParsoidHandler extends Handler {
 		}
 
 		$timing->end( 'html2wt.total' );
-		# Should perhaps be strlen instead (or cached!): T239841
-		$metrics->timing( 'html2wt.size.output', mb_strlen( $wikitext ) );
+		$metrics->timing( 'html2wt.size.output', strlen( $wikitext ) );
 
 		$response = $this->getResponseFactory()->create();
 		FormatHelper::setContentType( $response, FormatHelper::FORMAT_WIKITEXT );

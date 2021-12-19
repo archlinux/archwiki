@@ -271,7 +271,7 @@ class ConfirmEditHooks implements
 	 * @param ResourceLoader $resourceLoader
 	 * @return void
 	 */
-	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ) : void {
+	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
 		$extensionRegistry = ExtensionRegistry::getInstance();
 		$messages = [];
 

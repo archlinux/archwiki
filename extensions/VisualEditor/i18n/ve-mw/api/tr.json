@@ -6,8 +6,8 @@
 			"HakanIST",
 			"Hedda",
 			"McAang",
-			"MuratTheTurkish",
 			"Mim.saitkilic",
+			"MuratTheTurkish",
 			"SaldırganSincap"
 		]
 	},
@@ -42,6 +42,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Bu tuş ile bir önceki serializeforcache bir isteğin sonucu kullanın. $1html geçersiz kılar.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha kimliği (captcha cevabı ile kaydederken).",
 	"apihelp-visualeditoredit-param-captchaword": "Captcha'ya cevap (captcha cevabı ile kaydederken).",
+	"apihelp-visualeditoredit-param-plugins": "API isteğiyle ilişkili eklentiler.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "API isteği ile bir eklenti tarafından gönderilen keyfi veriler.",
 	"apihelp-visualeditoredit-param-etag": "Gönderilecek ETag.",
 	"apihelp-visualeditoredit-param-html": "Parsoid göndermek için viki karşılığında HTML.",
 	"apihelp-visualeditoredit-param-minor": "Küçük için işaret düzenleyin.",

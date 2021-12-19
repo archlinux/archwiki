@@ -13,7 +13,7 @@ ve.scrollIntoView = OO.ui.Element.static.scrollIntoView.bind( OO.ui.Element.stat
 /**
  * Select the contents of an element
  *
- * @param {HTMLElement} element Element
+ * @param {HTMLElement} element
  */
 ve.selectElement = function ( element ) {
 	var win = OO.ui.Element.static.getWindow( element ),
@@ -75,11 +75,11 @@ ve.translateRect = function ( rect, x, y ) {
  * @return {Object|null} Object containing two rectangles: start and end, or null if there are no rectangles
  */
 ve.getStartAndEndRects = function ( rects ) {
-	var i, l, startRect, endRect;
 	if ( !rects || !rects.length ) {
 		return null;
 	}
-	for ( i = 0, l = rects.length; i < l; i++ ) {
+	var startRect, endRect;
+	for ( var i = 0, l = rects.length; i < l; i++ ) {
 		if ( !startRect || rects[ i ].top < startRect.top ) {
 			// Use ve.extendObject as ve.copy copies non-plain objects by reference
 			startRect = ve.extendObject( {}, rects[ i ] );
@@ -123,7 +123,7 @@ ve.getSystemPlatform = function () {
 /**
  * Check whether a jQuery event represents a plain left click, without any modifiers
  *
- * @param {jQuery.Event} e The jQuery event object
+ * @param {jQuery.Event} e
  * @return {boolean} Whether it was an unmodified left click
  */
 ve.isUnmodifiedLeftClick = function ( e ) {
@@ -141,12 +141,11 @@ ve.isUnmodifiedLeftClick = function ( e ) {
  * @return {boolean} Whether multiple clipboardData item formats are supported
  */
 ve.isClipboardDataFormatsSupported = function ( e, customTypes ) {
-	var profile, clipboardData,
-		cacheKey = customTypes ? 'cachedCustom' : 'cached';
+	var cacheKey = customTypes ? 'cachedCustom' : 'cached';
 
 	if ( ve.isClipboardDataFormatsSupported[ cacheKey ] === undefined ) {
-		profile = $.client.profile();
-		clipboardData = e.originalEvent.clipboardData || e.originalEvent.dataTransfer;
+		var profile = $.client.profile();
+		var clipboardData = e.originalEvent.clipboardData || e.originalEvent.dataTransfer;
 		ve.isClipboardDataFormatsSupported[ cacheKey ] = !!(
 			clipboardData &&
 			( !customTypes || profile.name !== 'edge' ) && (
@@ -233,10 +232,9 @@ ve.removePassiveEventListener = function ( elem, event, handler ) {
  * @return {boolean} Whether passive event listeners are supported
  */
 ve.isPassiveEventsSupported = function () {
-	var opts;
 	if ( ve.isPassiveEventsSupported.supported === undefined ) {
 		try {
-			opts = Object.defineProperty( {}, 'passive', {
+			var opts = Object.defineProperty( {}, 'passive', {
 				// eslint-disable-next-line getter-return
 				get: function () {
 					ve.isPassiveEventsSupported.supported = true;

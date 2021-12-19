@@ -17,7 +17,8 @@
 			"Vlad5250",
 			"Zylbath",
 			"לערי ריינהארט",
-			"아라"
+			"아라",
+			"McDutchie"
 		]
 	},
 	"tog-underline": "Verwies ünnerstrieken",
@@ -456,7 +457,6 @@
 	"previewconflict": "Disse Vörschau wiest den Inholt vun dat Textfeld baven; so warrt de Siet utseihn, wenn du nu spiekerst.",
 	"session_fail_preview": "'''Deit uns leed! Wi kunnen dien Ännern nich spiekern. Diene Sitzungsdaten weren weg.\nVersöök dat noch wedder. Wenn dat noch jümmer nich geiht, denn versöök di [[Special:UserLogout|aftomellen]] un denn wedder antomellen.'''",
 	"session_fail_preview_html": "'''Deit uns leed! Wi kunnen dien Ännern nich spiekern, de Sitzungsdaten sünd verloren gahn.'''\n\n''In {{SITENAME}} is dat Spiekern vun rein HTML verlöövt, dorvun is de Vörschau utblennt, dat JavaScript-Angrepen nich mööglich sünd.''\n\n'''Versöök dat noch wedder un klick noch wedder op „Siet spiekern“. Wenn dat Problem noch jümmer dor is, [[Special:UserLogout|mell di af]] un denn wedder an.'''",
-	"token_suffix_mismatch": "'''Dien Ännern sünd afwiest worrn. Dien Browser hett welk Teken in de Kuntrull-Tekenreeg kaputt maakt.\nWenn dat so spiekert warrt, kann dat angahn, dat noch mehr Teken in de Siet kaputt gaht.\nDat kann to’n Bispeel dor vun kamen, dat du en anonymen Proxy-Deenst bruukst, de wat verkehrt maakt.'''",
 	"editing": "Ännern vun $1",
 	"creating": "Opstellen vun $1",
 	"editingsection": "Ännern vun $1 (Afsatz)",
@@ -669,8 +669,6 @@
 	"restoreprefs": "All Standardinstellungen wedderhalen",
 	"prefs-editing": "Grött vun’t Textfeld",
 	"searchresultshead": "Söökresultaten",
-	"stub-threshold": "Grött ünner de Lenken op <a href=\"#\" class=\"stub\">Stubbens un lütte Sieden</a> farvlich kenntekent warrn schöölt (in Bytes):",
-	"stub-threshold-disabled": "Utstellt",
 	"recentchangesdays": "Daag, de de List vun de „Ne’esten Ännern“ wiesen schall:",
 	"recentchangesdays-max": "(Maximal $1 {{PLURAL:$1|Dag|Daag}})",
 	"recentchangescount": "Antall Ännern, de wiest warrt:",
@@ -698,7 +696,7 @@
 	"default": "Standard",
 	"prefs-files": "Datein",
 	"prefs-custom-css": "Anpasst CSS",
-	"prefs-custom-js": "Anpasst JS",
+	"prefs-custom-js": "Anpasst JavaScript",
 	"prefs-common-config": "Deelt CSS/JavaScript för all Skins:",
 	"prefs-reset-intro": "Du kannst disse Siet bruken, dien Instellungen all op de Standardinstellung trüchtosetten.\nDat kann nich wedder ungeschehn maakt warrn.",
 	"prefs-emailconfirm-label": "E-Mail-Bestätigung:",
@@ -1455,7 +1453,6 @@
 	"ipblocklist-legend": "Blockten Bruker finnen",
 	"ipblocklist-submit": "Söken",
 	"infiniteblock": "unbegrenzt",
-	"expiringblock": "löppt $1 $2 af",
 	"anononlyblock": "blot Anonyme",
 	"noautoblockblock": "Autoblock afstellt",
 	"createaccountblock": "Brukerkonten opstellen sperrt",

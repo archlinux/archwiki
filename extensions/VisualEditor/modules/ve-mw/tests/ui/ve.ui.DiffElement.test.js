@@ -6,11 +6,9 @@
 
 QUnit.module( 've.ui.DiffElement (MW)', ve.test.utils.mwEnvironment );
 
-QUnit.test( 'Diffing', function ( assert ) {
-	var i, len,
-		fixBase = function ( body ) {
-			return '<html><head><base href="' + ve.dm.example.baseUri + '"></head><body>' + body + '</body>';
-		},
+QUnit.test( 'Diffing', ( assert ) => {
+	const fixBase = ( body ) =>
+			'<html><head><base href="' + ve.dm.example.baseUri + '"></head><body>' + body + '</body>',
 		cases = [
 			{
 				msg: 'Change template param',
@@ -47,7 +45,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 			}
 		];
 
-	for ( i = 0, len = cases.length; i < len; i++ ) {
+	for ( let i = 0; i < cases.length; i++ ) {
 		ve.test.utils.runDiffElementTest( assert, cases[ i ] );
 	}
 

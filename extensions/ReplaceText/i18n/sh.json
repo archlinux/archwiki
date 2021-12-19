@@ -36,7 +36,7 @@
 	"replacetext_continue": "Nastavi",
 	"replacetext_announce": "Najavljaj ove izmjene preko $1 i praćene",
 	"replacetext_editsummary": "Zamjena teksta — \"$1\" sa \"$2\"",
+	"replacetext_reminder": "Da ujedno biste promijenili ka ovoj stranici na drugim stranicama, idite na $1.",
 	"right-replacetext": "Zamjenjivanje teksta u cijelom wikiju",
-	"action-replacetext": "zamjenjivanje teksta u cijelom wikiju",
-	"replacetext_reminder": "Da ujedno biste promijenili ka ovoj stranici na drugim stranicama, idite na $1."
+	"action-replacetext": "zamjenjivanje teksta u cijelom wikiju"
 }

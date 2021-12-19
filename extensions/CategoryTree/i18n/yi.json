@@ -18,8 +18,6 @@
 	"categorytree-mode-all": "אַלע בלעטער",
 	"categorytree-collapse": "אײַנציען",
 	"categorytree-expand": "פֿאַרברייטערן",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "אנטהאלט {{PLURAL:$1|1 אונטערקאטעגאריע|$1 אונטערקאטעגאריעס}}, {{PLURAL:$2|1 בלאט|$2 בלעטער}}, און {{PLURAL:$3|1 טעקע|$3 טעקעס}}",
 	"categorytree-num-categories": "$1 קאַט",
 	"categorytree-num-pages": "$1 ב",

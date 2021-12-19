@@ -45,7 +45,7 @@ class UpdateScratchTokenFormat extends Maintenance {
 		global $wgOATHAuthDatabase;
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
 			->getMainLB( $wgOATHAuthDatabase );
-		$dbw = $lb->getConnectionRef( DB_MASTER, [], $wgOATHAuthDatabase );
+		$dbw = $lb->getConnectionRef( DB_PRIMARY, [], $wgOATHAuthDatabase );
 
 		if ( !UpdateTables::schemaUpdateOldUsers( $dbw ) ) {
 			$this->error( "Failed to update scratch_token rows.\n", 1 );

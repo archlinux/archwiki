@@ -3,7 +3,8 @@
 		"authors": [
 			"Beta16",
 			"Darth Kule",
-			"Sannita"
+			"Sannita",
+			"Ajeje Brazorf"
 		]
 	},
 	"monobook-desc": "Il tema classico di MediaWiki dal 2004, prende il nome dall'immagine in bianco e nero del libro usata come sfondo della pagina",
@@ -14,8 +15,8 @@
 	"monobook-jumptonavigation": "Vai alla navigazione",
 	"monobook-jumptosearch": "Vai alla ricerca",
 	"monobook-more-actions": "Altro",
+	"cactions-mobile": "Azioni sulla pagina",
 	"monobook-cactions-label": "Azioni sulla pagina",
 	"monobook-notifications-link": "Notifiche ($1)",
-	"monobook-notifications-link-none": "Notifiche",
-	"monobook-responsive-label": "Attiva il design adattabile di MonoBook"
+	"monobook-notifications-link-none": "Notifiche"
 }

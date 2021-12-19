@@ -4,11 +4,11 @@
 			"AS",
 			"Andriykopanytsia",
 			"Base",
+			"DDPAT",
 			"Movses",
 			"Piramidion",
 			"Vlad5250",
-			"Ата",
-			"DDPAT"
+			"Ата"
 		]
 	},
 	"oathauth-desc": "Забезпечує підтримку автентифікації за допомогою HMAC на основі одноразових паролів",

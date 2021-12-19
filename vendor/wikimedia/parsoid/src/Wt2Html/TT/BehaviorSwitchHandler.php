@@ -26,10 +26,10 @@ class BehaviorSwitchHandler extends TokenHandler {
 	 * See {@link TokenTransformManager#addTransform}'s transformation parameter.
 	 *
 	 * @param Token $token
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	public function onBehaviorSwitch( Token $token ): array {
-		$env = $this->manager->env;
+	public function onBehaviorSwitch( Token $token ): TokenHandlerResult {
+		$env = $this->env;
 		$magicWord = $env->getSiteConfig()->magicWordCanonicalName( $token->attribs[0]->v );
 		$env->setVariable( $magicWord, true );
 		$metaToken = new SelfclosingTagTk(
@@ -38,13 +38,13 @@ class BehaviorSwitchHandler extends TokenHandler {
 			Utils::clone( $token->dataAttribs )
 		);
 
-		return [ 'tokens' => [ $metaToken ] ];
+		return new TokenHandlerResult( [ $metaToken ] );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ) {
-		return $token->getName() === 'behavior-switch' ? $this->onBehaviorSwitch( $token ) : $token;
+	public function onTag( Token $token ): ?TokenHandlerResult {
+		return $token->getName() === 'behavior-switch' ? $this->onBehaviorSwitch( $token ) : null;
 	}
 }

@@ -8,6 +8,7 @@
 		]
 	},
 	"vector-skin-desc": "Verziona muderna 'e MonoBook cu n'aspetto nuovo nuovo e tante migliuramente d'uso",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lengua|$1 lengue}}",
 	"vector-action-addsection": "Aggiunge chiacchierata",
 	"vector-action-delete": "Scancèlla",
 	"vector-action-move": "Mòve",

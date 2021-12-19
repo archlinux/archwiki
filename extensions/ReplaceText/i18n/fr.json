@@ -50,7 +50,10 @@
 	"replacetext_continue": "Continuer",
 	"replacetext_announce": "Annoncer ces modifications via $1 et les listes de suivi",
 	"replacetext_editsummary": "Remplacement de texte — « $1 » par « $2 »",
+	"replacetext_reminder": "Pour modifier aussi les liens vers cette page dans d’autres pages, allez en $1.",
+	"replacetext_cfg_error": "Erreur de configuration de ReplaceText",
+	"replacetext_no_compress": "Votre wiki ne fonctionnera pas avec ReplaceText: les remplacements de text ne peuvent s’exécuter si $wgCompressRevisions est positionné à vrai.",
+	"replacetext_no_external_stores": "Votre wiki ne fonctionnera pas avec ReplaceText: les remplacements de text ne peuvent s’exécuter si $wgCompressRevisions est non vide.",
 	"right-replacetext": "Faire des remplacements de texte dans tout le wiki",
-	"action-replacetext": "faire les remplacements de la chaîne dans tout le wiki",
-	"replacetext_reminder": "Pour modifier aussi les liens vers cette page dans d’autres pages, allez en $1."
+	"action-replacetext": "faire les remplacements de la chaîne dans tout le wiki"
 }

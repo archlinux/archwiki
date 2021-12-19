@@ -17,7 +17,8 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Shell\Shell;
+use MediaWiki\SyntaxHighlight\Pygmentize;
+use MediaWiki\SyntaxHighlight\PygmentsException;
 
 class SyntaxHighlight {
 
@@ -54,7 +55,7 @@ class SyntaxHighlight {
 		}
 
 		if ( !$lexers ) {
-			$lexers = require __DIR__ . '/../SyntaxHighlight.lexers.php';
+			$lexers = Pygmentize::getLexers();
 		}
 
 		$lexer = strtolower( $lang );
@@ -148,7 +149,7 @@ class SyntaxHighlight {
 	 * @param string $out Output
 	 * @return string Unwrapped output
 	 */
-	private static function unwrap( string $out ) : string {
+	private static function unwrap( string $out ): string {
 		if ( $out !== '' ) {
 			$m = [];
 			if ( preg_match( '/^<div class="?mw-highlight"?>(.*)<\/div>$/s', trim( $out ), $m ) ) {
@@ -158,20 +159,6 @@ class SyntaxHighlight {
 			}
 		}
 		return $out;
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function getPygmentizePath() {
-		global $wgPygmentizePath;
-
-		// If $wgPygmentizePath is unset, use the bundled copy.
-		if ( $wgPygmentizePath === false ) {
-			$wgPygmentizePath = __DIR__ . '/../pygments/pygmentize';
-		}
-
-		return $wgPygmentizePath;
 	}
 
 	/**
@@ -219,16 +206,6 @@ class SyntaxHighlight {
 				'syntaxhighlight-error-exceeds-size-limit',
 				$length,
 				self::HIGHLIGHT_MAX_BYTES
-			);
-		} elseif ( Shell::isDisabled() ) {
-			// Disable syntax highlighting
-			$lexer = null;
-			$status->warning( 'syntaxhighlight-error-pygments-invocation-failure' );
-			wfWarn(
-				'MediaWiki determined that it cannot invoke Pygments. ' .
-				'As a result, SyntaxHighlight_GeSHi will not perform any syntax highlighting. ' .
-				'See the debug log for details: ' .
-				'https://www.mediawiki.org/wiki/Manual:$wgDebugLogFile'
 			);
 		}
 
@@ -285,28 +262,14 @@ class SyntaxHighlight {
 		$output = $cache->getWithSetCallback(
 			$cache->makeGlobalKey( 'highlight', self::makeCacheKeyHash( $code, $lexer, $options ) ),
 			$cache::TTL_MONTH,
-			function ( $oldValue, &$ttl ) use ( $code, $lexer, $options, &$error ) {
-				$optionPairs = [];
-				foreach ( $options as $k => $v ) {
-					$optionPairs[] = "{$k}={$v}";
-				}
-				$result = Shell::command(
-					self::getPygmentizePath(),
-					'-l', $lexer,
-					'-f', 'html',
-					'-O', implode( ',', $optionPairs )
-				)
-					->input( $code )
-					->restrict( Shell::RESTRICT_DEFAULT | Shell::NO_NETWORK )
-					->execute();
-
-				if ( $result->getExitCode() != 0 ) {
+			static function ( $oldValue, &$ttl ) use ( $code, $lexer, $options, &$error ) {
+				try {
+					return Pygmentize::highlight( $lexer, $code, $options );
+				} catch ( PygmentsException $e ) {
 					$ttl = WANObjectCache::TTL_UNCACHEABLE;
-					$error = $result->getStderr();
+					$error = $e->getMessage();
 					return null;
 				}
-
-				return $result->getStdout();
 			}
 		);
 
@@ -512,6 +475,12 @@ class SyntaxHighlight {
 	) {
 		global $wgTextModelsToParse;
 
+		// Hope that the "SyntaxHighlightModels" attribute does not contain silly types.
+		if ( !( $content instanceof TextContent ) ) {
+			// Oops! Non-text content? Let MediaWiki handle this.
+			return true;
+		}
+
 		if ( !$generateHtml ) {
 			// Nothing special for us to do, let MediaWiki handle this.
 			return true;
@@ -531,17 +500,11 @@ class SyntaxHighlight {
 			return true;
 		}
 		$lexer = $models[$model];
-
-		// Hope that the "SyntaxHighlightModels" attribute does not contain silly types.
-		$text = ContentHandler::getContentText( $content );
-		if ( !$text ) {
-			// Oops! Non-text content? Let MediaWiki handle this.
-			return true;
-		}
+		$text = $content->getText();
 
 		// Parse using the standard parser to get links etc. into the database, HTML is replaced below.
 		// We could do this using $content->fillParserOutput(), but alas it is 'protected'.
-		if ( $content instanceof TextContent && in_array( $model, $wgTextModelsToParse ) ) {
+		if ( in_array( $model, $wgTextModelsToParse ) ) {
 			$output = MediaWikiServices::getInstance()->getParser()
 				->parse( $text, $title, $options, true, true, $revId );
 		}
@@ -594,5 +557,19 @@ class SyntaxHighlight {
 
 		// Inform MediaWiki that we have parsed this page and it shouldn't mess with it.
 		return false;
+	}
+
+	/**
+	 * Hook to add Pygments version to Special:Version
+	 *
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SoftwareInfo
+	 * @param array &$software
+	 */
+	public static function onSoftwareInfo( array &$software ) {
+		try {
+			$software['[https://pygments.org/ Pygments]'] = Pygmentize::getVersion();
+		} catch ( PygmentsException $e ) {
+			// pass
+		}
 	}
 }

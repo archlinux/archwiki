@@ -139,28 +139,29 @@
         },
         {
             "name": "cssjanus/cssjanus",
-            "version": "v1.3.0",
-            "version_normalized": "1.3.0.0",
+            "version": "v2.1.0",
+            "version_normalized": "2.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cssjanus/php-cssjanus.git",
-                "reference": "93db9fb39c2f9bcf287715ae254c088b14a77799"
+                "reference": "de7483c0805750a6462b372eab55d022d555df02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cssjanus/php-cssjanus/zipball/93db9fb39c2f9bcf287715ae254c088b14a77799",
-                "reference": "93db9fb39c2f9bcf287715ae254c088b14a77799",
+                "url": "https://api.github.com/repos/cssjanus/php-cssjanus/zipball/de7483c0805750a6462b372eab55d022d555df02",
+                "reference": "de7483c0805750a6462b372eab55d022d555df02",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.6.0"
+                "php": ">=7.2.0"
             },
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "^0.9.2",
-                "phpunit/phpunit": "^4.8.36",
-                "squizlabs/php_codesniffer": "^3.1.1"
+                "mediawiki/mediawiki-phan-config": "0.10.6",
+                "php-parallel-lint/php-parallel-lint": "^1.3.0",
+                "phpunit/phpunit": "^8.5.15",
+                "squizlabs/php_codesniffer": "^3.6.0"
             },
-            "time": "2019-05-10T23:50:10+00:00",
+            "time": "2021-09-09T17:58:26+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -174,10 +175,10 @@
             ],
             "authors": [
                 {
-                    "name": "Trevor Parscal"
+                    "name": "Roan Kattouw"
                 },
                 {
-                    "name": "Roan Kattouw"
+                    "name": "Trevor Parscal"
                 },
                 {
                     "name": "Timo Tijhof"
@@ -610,31 +611,31 @@
         },
         {
             "name": "oojs/oojs-ui",
-            "version": "v0.41.3",
-            "version_normalized": "0.41.3.0",
+            "version": "v0.42.0",
+            "version_normalized": "0.42.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/oojs-ui.git",
-                "reference": "0034158b0a4ed728908a6e564a7589c602e4174e"
+                "reference": "cf3761126c1da853bc7fd127e8471e5bfdde911e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/0034158b0a4ed728908a6e564a7589c602e4174e",
-                "reference": "0034158b0a4ed728908a6e564a7589c602e4174e",
+                "url": "https://api.github.com/repos/wikimedia/oojs-ui/zipball/cf3761126c1da853bc7fd127e8471e5bfdde911e",
+                "reference": "cf3761126c1da853bc7fd127e8471e5bfdde911e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.9"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
                 "mediawiki/mediawiki-phan-config": "0.10.6",
                 "mediawiki/minus-x": "1.1.1",
                 "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
                 "phpunit/phpunit": "^8.5"
             },
-            "time": "2021-03-12T19:07:25+00:00",
+            "time": "2021-08-19T03:28:25+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1207,29 +1208,24 @@
         },
         {
             "name": "psr/container",
-            "version": "1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "1.1.1",
+            "version_normalized": "1.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/container.git",
-                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f"
+                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
-                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/8622567409010282b7aeebe4bb841fe98b58dcaf",
+                "reference": "8622567409010282b7aeebe4bb841fe98b58dcaf",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=7.2.0"
             },
-            "time": "2017-02-14T16:28:37+00:00",
+            "time": "2021-03-05T17:36:06+00:00",
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
@@ -1243,7 +1239,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common Container Interface (PHP FIG PSR-11)",
@@ -1914,57 +1910,78 @@
             "install-path": "../wikimedia/composer-merge-plugin"
         },
         {
-            "name": "wikimedia/css-sanitizer",
-            "version": "v3.0.2",
-            "version_normalized": "3.0.2.0",
+            "name": "wikimedia/dodo",
+            "version": "v0.3.0",
+            "version_normalized": "0.3.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/wikimedia/css-sanitizer.git",
-                "reference": "718e2a79fc3fec4c7a43193b5e2ac3bae6756ee4"
+                "url": "https://github.com/wikimedia/mediawiki-libs-Dodo.git",
+                "reference": "e46b9c8a1e5804509d39d03d612f02c15fed0759"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/css-sanitizer/zipball/718e2a79fc3fec4c7a43193b5e2ac3bae6756ee4",
-                "reference": "718e2a79fc3fec4c7a43193b5e2ac3bae6756ee4",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-Dodo/zipball/e46b9c8a1e5804509d39d03d612f02c15fed0759",
+                "reference": "e46b9c8a1e5804509d39d03d612f02c15fed0759",
                 "shasum": ""
             },
             "require": {
-                "ext-iconv": "*",
-                "ext-mbstring": "*",
-                "php": ">=7.2.0",
-                "wikimedia/at-ease": "^2.0.0",
-                "wikimedia/utfnormal": "2.0.0 || ^3.0.1"
+                "php": ">=7.2.9|^8.0",
+                "wikimedia/idle-dom": "0.10.0",
+                "wikimedia/remex-html": "2.3.2",
+                "wikimedia/zest-css": "^2.0.1"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "consolidation/robo": "^3@alpha",
+                "fgnass/domino": "^2.1",
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
                 "mediawiki/mediawiki-phan-config": "0.10.6",
                 "mediawiki/minus-x": "1.1.1",
-                "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
-                "phpunit/phpunit": "^8.5",
-                "wikimedia/testing-access-wrapper": "1.0.0"
+                "nikic/php-parser": "^4.10",
+                "ockcyp/covers-validator": "1.3.3",
+                "php-parallel-lint/php-console-highlighter": "^0.5",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
+                "phpunit/phpunit": "^8.5|^9.5",
+                "web-platform-tests/wpt": "^2.7",
+                "wikimedia/update-history": "1.0.1"
             },
-            "time": "2021-03-21T17:30:58+00:00",
+            "time": "2021-08-08T17:04:35+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "Wikimedia\\CSS\\": "src/"
+                    "Wikimedia\\Dodo\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "Apache-2.0"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "Brad Jorsch",
-                    "email": "bjorsch@wikimedia.org"
+                    "name": "Jason Linehan",
+                    "email": "jlinehan@wikimedia.org"
+                },
+                {
+                    "name": "C. Scott Ananian",
+                    "email": "cananian@wikimedia.org"
+                },
+                {
+                    "name": "Tim Abdullin",
+                    "email": "tim.abdullin@speedandfunction.com"
+                },
+                {
+                    "name": "Wikimedia Parsing Team and the broader MediaWiki community",
+                    "homepage": "https://www.mediawiki.org/wiki/Parsoid"
                 }
             ],
-            "description": "Classes to parse and sanitize CSS",
-            "homepage": "https://www.mediawiki.org/wiki/Css-sanitizer",
-            "install-path": "../wikimedia/css-sanitizer"
+            "description": "DOm DOcument implementation",
+            "homepage": "https://www.mediawiki.org/wiki/Dodo",
+            "keywords": [
+                "dom",
+                "domino",
+                "webidl"
+            ],
+            "install-path": "../wikimedia/dodo"
         },
         {
             "name": "wikimedia/html-formatter",
@@ -2015,6 +2032,58 @@
             "description": "Performs transformations of HTML by wrapping around libxml2 and working around its countless bugs.",
             "homepage": "https://www.mediawiki.org/wiki/HtmlFormatter",
             "install-path": "../wikimedia/html-formatter"
+        },
+        {
+            "name": "wikimedia/idle-dom",
+            "version": "v0.10.0",
+            "version_normalized": "0.10.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wikimedia/mediawiki-libs-IDLeDOM.git",
+                "reference": "1d34b55cfe259fd26c541811581c2e1578b46727"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-IDLeDOM/zipball/1d34b55cfe259fd26c541811581c2e1578b46727",
+                "reference": "1d34b55cfe259fd26c541811581c2e1578b46727",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.9"
+            },
+            "require-dev": {
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
+                "mediawiki/mediawiki-phan-config": "0.10.6",
+                "mediawiki/minus-x": "1.1.1",
+                "ockcyp/covers-validator": "1.3.3",
+                "php-parallel-lint/php-console-highlighter": "^0.5",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
+                "phpunit/phpunit": "^8.5|^9.5",
+                "wikimedia/assert": "0.4.0|^0.5.0",
+                "wikimedia/update-history": "^1.0.1",
+                "wikimedia/webidl": "1.0.3"
+            },
+            "time": "2021-08-07T06:22:22+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Wikimedia\\IDLeDOM\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "C. Scott Ananian",
+                    "email": "cananian@wikimedia.org"
+                }
+            ],
+            "description": "DOM interfaces automatically generated from WebIDL",
+            "homepage": "https://www.mediawiki.org/wiki/IDLeDOM",
+            "install-path": "../wikimedia/idle-dom"
         },
         {
             "name": "wikimedia/ip-set",
@@ -2252,33 +2321,85 @@
             "install-path": "../wikimedia/minify"
         },
         {
-            "name": "wikimedia/object-factory",
-            "version": "v3.0.0",
-            "version_normalized": "3.0.0.0",
+            "name": "wikimedia/normalized-exception",
+            "version": "v1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/wikimedia/object-factory.git",
-                "reference": "0d2c4efc08e80485e5f7b1665fe473375e242017"
+                "url": "https://github.com/wikimedia/mediawiki-libs-NormalizedException.git",
+                "reference": "ed9fc13d75f65c80dc1a95d4792658c97fd782e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/object-factory/zipball/0d2c4efc08e80485e5f7b1665fe473375e242017",
-                "reference": "0d2c4efc08e80485e5f7b1665fe473375e242017",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-NormalizedException/zipball/ed9fc13d75f65c80dc1a95d4792658c97fd782e6",
+                "reference": "ed9fc13d75f65c80dc1a95d4792658c97fd782e6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.9"
+            },
+            "require-dev": {
+                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "mediawiki/mediawiki-phan-config": "0.10.6",
+                "mediawiki/minus-x": "1.1.1",
+                "ockcyp/covers-validator": "1.3.3",
+                "php-parallel-lint/php-console-highlighter": "^0.5",
+                "php-parallel-lint/php-parallel-lint": "1.2.0",
+                "phpunit/phpunit": "^8.5|^9.5"
+            },
+            "time": "2021-07-01T07:36:43+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Wikimedia\\NormalizedException\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gergő Tisza",
+                    "email": "gtisza@wikimedia.org"
+                }
+            ],
+            "description": "A helper for making exceptions play nice with PSR-3 logging",
+            "homepage": "https://www.mediawiki.org/wiki/NormalizedException",
+            "support": {
+                "source": "https://github.com/wikimedia/mediawiki-libs-NormalizedException/tree/v1.0.1"
+            },
+            "install-path": "../wikimedia/normalized-exception"
+        },
+        {
+            "name": "wikimedia/object-factory",
+            "version": "v3.0.2",
+            "version_normalized": "3.0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wikimedia/object-factory.git",
+                "reference": "fcfc7a0dafe9608231816d6bf74919826d9bc885"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wikimedia/object-factory/zipball/fcfc7a0dafe9608231816d6bf74919826d9bc885",
+                "reference": "fcfc7a0dafe9608231816d6bf74919826d9bc885",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.9",
-                "psr/container": "1.0.0"
+                "psr/container": "1.1.1"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "31.0.0",
-                "mediawiki/minus-x": "1.1.0",
-                "ockcyp/covers-validator": "1.2.0",
+                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "mediawiki/minus-x": "1.1.1",
+                "ockcyp/covers-validator": "1.3.3",
                 "php-parallel-lint/php-console-highlighter": "0.5.0",
                 "php-parallel-lint/php-parallel-lint": "1.2.0",
                 "phpunit/phpunit": "^8.5"
             },
-            "time": "2020-11-02T21:36:00+00:00",
+            "time": "2021-04-25T19:27:15+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2302,17 +2423,17 @@
         },
         {
             "name": "wikimedia/parsoid",
-            "version": "v0.13.1",
-            "version_normalized": "0.13.1.0",
+            "version": "v0.14.0",
+            "version_normalized": "0.14.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/parsoid.git",
-                "reference": "abbea0680ebd5faa0867494710952358a5671447"
+                "reference": "aa88828c6619595e145469f63320d065e796d77a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/parsoid/zipball/abbea0680ebd5faa0867494710952358a5671447",
-                "reference": "abbea0680ebd5faa0867494710952358a5671447",
+                "url": "https://api.github.com/repos/wikimedia/parsoid/zipball/aa88828c6619595e145469f63320d065e796d77a",
+                "reference": "aa88828c6619595e145469f63320d065e796d77a",
                 "shasum": ""
             },
             "require": {
@@ -2322,40 +2443,45 @@
                 "liuggio/statsd-php-client": "^1.0.18",
                 "php": ">=7.2.0",
                 "psr/log": "^1.1.2",
+                "symfony/polyfill-php80": "^1.23.1",
                 "wikimedia/assert": "0.4.0|^0.5.0",
+                "wikimedia/dodo": "0.3.0",
                 "wikimedia/ip-utils": "^1.0.0|^3.0.0",
                 "wikimedia/object-factory": "^3.0.0",
-                "wikimedia/remex-html": "^2.2.0|^2.3.0",
+                "wikimedia/remex-html": "^2.3.2",
                 "wikimedia/scoped-callback": "^3.0.0",
-                "wikimedia/wikipeg": "2.0.5",
-                "wikimedia/zest-css": "^1.1.5"
+                "wikimedia/wikipeg": "^2.0.6",
+                "wikimedia/zest-css": "^2.0.1"
             },
             "conflict": {
-                "wikimedia/langconv": "<0.3.5 || >=0.4"
+                "wikimedia/langconv": "<0.4.2"
             },
             "require-dev": {
-                "composer/composer": "^1.10@RC",
+                "composer/composer": "^1.10.22||^2.1.8",
                 "ext-curl": "*",
-                "mediawiki/mediawiki-codesniffer": "34.0.0",
+                "mediawiki/mediawiki-codesniffer": "36.0.0",
                 "mediawiki/mediawiki-phan-config": "0.10.6",
-                "mediawiki/minus-x": "1.1.0",
+                "mediawiki/minus-x": "1.1.1",
                 "monolog/monolog": "~1.25.2||^2.0.0",
-                "ockcyp/covers-validator": "1.3.1",
-                "php-parallel-lint/php-console-color": "^0.3.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
+                "ockcyp/covers-validator": "1.3.3",
+                "php-parallel-lint/php-console-highlighter": "0.5.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
                 "phpunit/phpunit": "^8.5",
                 "sebastian/diff": "^3.0.2",
-                "wikimedia/alea": "^0.9.2",
-                "wikimedia/langconv": "^0.3.5",
+                "wikimedia/alea": "^0.9.3",
+                "wikimedia/langconv": "^0.4.2",
                 "wikimedia/testing-access-wrapper": "~1.0"
             },
             "suggest": {
                 "wikimedia/langconv": "Provides script conversion support"
             },
-            "time": "2021-09-23T07:17:20+00:00",
+            "time": "2021-11-16T22:07:53+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
+                "files": [
+                    "DomImpl.php"
+                ],
                 "psr-4": {
                     "Wikimedia\\Parsoid\\": "src"
                 }
@@ -2377,8 +2503,8 @@
                 "parsoid"
             ],
             "support": {
-                "irc": "irc://irc.freenode.net/mediawiki-parsoid",
-                "source": "https://github.com/wikimedia/parsoid/tree/v0.13.1",
+                "irc": "irc://irc.libera.chat/mediawiki-parsoid",
+                "source": "https://github.com/wikimedia/parsoid/tree/v0.14.0",
                 "wiki": "https://www.mediawiki.org/wiki/Parsoid"
             },
             "install-path": "../wikimedia/parsoid"
@@ -2503,33 +2629,35 @@
         },
         {
             "name": "wikimedia/relpath",
-            "version": "2.1.1",
-            "version_normalized": "2.1.1.0",
+            "version": "3.0.0",
+            "version_normalized": "3.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/RelPath.git",
-                "reference": "35e701ff16abf461bb8676a9d9177f86fa0b2c94"
+                "reference": "b237d203c820cd1000f2c5ecad25de9fa7165612"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/RelPath/zipball/35e701ff16abf461bb8676a9d9177f86fa0b2c94",
-                "reference": "35e701ff16abf461bb8676a9d9177f86fa0b2c94",
+                "url": "https://api.github.com/repos/wikimedia/RelPath/zipball/b237d203c820cd1000f2c5ecad25de9fa7165612",
+                "reference": "b237d203c820cd1000f2c5ecad25de9fa7165612",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9"
+                "php": ">=7.2.9"
             },
             "require-dev": {
-                "jakub-onderka/php-parallel-lint": "^0.9.0.0",
-                "mediawiki/mediawiki-codesniffer": "15.0.0",
-                "phpunit/phpunit": "^4.8.9.0"
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
+                "mediawiki/minus-x": "1.1.1",
+                "ockcyp/covers-validator": "1.3.3",
+                "php-parallel-lint/php-console-highlighter": "0.5.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
+                "phpunit/phpunit": "^8.5"
             },
-            "time": "2018-01-18T21:23:40+00:00",
+            "time": "2021-08-03T16:57:39+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "files": [
-                    "src/RelPath/RelPath.php",
                     "src/Wikimedia/RelPath.php"
                 ]
             },
@@ -2549,17 +2677,17 @@
         },
         {
             "name": "wikimedia/remex-html",
-            "version": "2.2.2",
-            "version_normalized": "2.2.2.0",
+            "version": "2.3.2",
+            "version_normalized": "2.3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/remex-html.git",
-                "reference": "3f55e728403fe52445c3aaab20f5e4be8e2b282b"
+                "reference": "d46adaad8c6640eb6ba834b6268188ff0426c449"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/remex-html/zipball/3f55e728403fe52445c3aaab20f5e4be8e2b282b",
-                "reference": "3f55e728403fe52445c3aaab20f5e4be8e2b282b",
+                "url": "https://api.github.com/repos/wikimedia/remex-html/zipball/d46adaad8c6640eb6ba834b6268188ff0426c449",
+                "reference": "d46adaad8c6640eb6ba834b6268188ff0426c449",
                 "shasum": ""
             },
             "require": {
@@ -2570,20 +2698,22 @@
             },
             "require-dev": {
                 "ext-json": "*",
-                "mediawiki/mediawiki-codesniffer": "34.0.0",
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
                 "mediawiki/mediawiki-phan-config": "0.10.6",
-                "mediawiki/minus-x": "1.1.0",
+                "mediawiki/minus-x": "1.1.1",
                 "ockcyp/covers-validator": "1.3.3",
                 "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
-                "phpunit/phpunit": "^8.5 || ^9.5"
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
+                "phpunit/phpunit": "^8.5 || ^9.5",
+                "wikimedia/update-history": "1.0.1"
             },
-            "time": "2021-01-30T16:11:18+00:00",
+            "time": "2021-08-07T07:07:23+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "RemexHtml\\": "RemexHtml/"
+                    "RemexHtml\\": "src/",
+                    "Wikimedia\\RemexHtml\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2797,17 +2927,17 @@
         },
         {
             "name": "wikimedia/shellbox",
-            "version": "1.0.4",
-            "version_normalized": "1.0.4.0",
+            "version": "2.0.0",
+            "version_normalized": "2.0.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/shellbox.git",
-                "reference": "d7ad649b7443d86235d7f179d205f9b9476c9c63"
+                "reference": "1e92deeb37de7df1b59c3c8c923d92bf2f22fa9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/shellbox/zipball/d7ad649b7443d86235d7f179d205f9b9476c9c63",
-                "reference": "d7ad649b7443d86235d7f179d205f9b9476c9c63",
+                "url": "https://api.github.com/repos/wikimedia/shellbox/zipball/1e92deeb37de7df1b59c3c8c923d92bf2f22fa9d",
+                "reference": "1e92deeb37de7df1b59c3c8c923d92bf2f22fa9d",
                 "shasum": ""
             },
             "require": {
@@ -2815,19 +2945,21 @@
                 "ext-json": "*",
                 "guzzlehttp/guzzle": "~7.2.0",
                 "monolog/monolog": "^2.0.0",
-                "php": ">=7.2",
+                "php": ">=7.2.9",
                 "psr/log": "~1.1.3",
-                "wikimedia/wikipeg": "~2.0.4"
+                "wikimedia/wikipeg": "~2.0.6"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
                 "mediawiki/mediawiki-phan-config": "0.10.6",
+                "mediawiki/minus-x": "1.1.1",
+                "ockcyp/covers-validator": "1.3.3",
                 "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
-                "phpunit/phpunit": "^8.5",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
+                "phpunit/phpunit": "^8.5|^9.5",
                 "psy/psysh": "~0.10.4"
             },
-            "time": "2021-02-26T19:40:11+00:00",
+            "time": "2021-08-20T21:02:01+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2851,6 +2983,7 @@
                 }
             ],
             "description": "Library and server for containerized shell execution",
+            "homepage": "https://www.mediawiki.org/wiki/Shellbox",
             "install-path": "../wikimedia/shellbox"
         },
         {
@@ -2955,31 +3088,32 @@
         },
         {
             "name": "wikimedia/wait-condition-loop",
-            "version": "v2.0.1",
-            "version_normalized": "2.0.1.0",
+            "version": "v2.0.2",
+            "version_normalized": "2.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/wait-condition-loop.git",
-                "reference": "44637dcee19765c4887cd3cc0fd97db0eabd7688"
+                "reference": "9bb0894e8c5195d43b2f2babbe4cc8f36bd5be0e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/wait-condition-loop/zipball/44637dcee19765c4887cd3cc0fd97db0eabd7688",
-                "reference": "44637dcee19765c4887cd3cc0fd97db0eabd7688",
+                "url": "https://api.github.com/repos/wikimedia/wait-condition-loop/zipball/9bb0894e8c5195d43b2f2babbe4cc8f36bd5be0e",
+                "reference": "9bb0894e8c5195d43b2f2babbe4cc8f36bd5be0e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.9"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
+                "mediawiki/mediawiki-phan-config": "0.10.6",
                 "mediawiki/minus-x": "1.1.1",
                 "ockcyp/covers-validator": "1.3.3",
                 "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
                 "phpunit/phpunit": "^8.5"
             },
-            "time": "2021-02-11T18:40:34+00:00",
+            "time": "2021-08-23T19:25:32+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3003,36 +3137,41 @@
         },
         {
             "name": "wikimedia/wikipeg",
-            "version": "2.0.5",
-            "version_normalized": "2.0.5.0",
+            "version": "2.0.6",
+            "version_normalized": "2.0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/wikipeg.git",
-                "reference": "df47c20859c80923d08ce906c5c7412161ef052f"
+                "reference": "9a92384ae11e1a3b7ecfe0feef1809b1af73889b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/wikipeg/zipball/df47c20859c80923d08ce906c5c7412161ef052f",
-                "reference": "df47c20859c80923d08ce906c5c7412161ef052f",
+                "url": "https://api.github.com/repos/wikimedia/wikipeg/zipball/9a92384ae11e1a3b7ecfe0feef1809b1af73889b",
+                "reference": "9a92384ae11e1a3b7ecfe0feef1809b1af73889b",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": ">=7.2"
+                "php": ">=7.2.9"
             },
             "require-dev": {
-                "mediawiki/minus-x": "1.1.0",
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
+                "mediawiki/mediawiki-phan-config": "0.10.6",
+                "mediawiki/minus-x": "1.1.1",
+                "ockcyp/covers-validator": "1.3.3",
                 "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0"
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
+                "phpunit/phpunit": "^8.5|^9.5",
+                "wikimedia/update-history": "^1.0"
             },
-            "time": "2020-12-17T21:12:05+00:00",
+            "time": "2021-08-07T06:12:21+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "WikiPEG\\": "src",
-                    "WikiPEG\\Tests\\": "tests/php"
+                    "WikiPEG\\": "src/",
+                    "Wikimedia\\WikiPEG\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3040,9 +3179,6 @@
                 "MIT"
             ],
             "description": "Parser generator for JavaScript and PHP",
-            "support": {
-                "source": "https://github.com/wikimedia/wikipeg/tree/2.0.5"
-            },
             "install-path": "../wikimedia/wikipeg"
         },
         {
@@ -3159,17 +3295,17 @@
         },
         {
             "name": "wikimedia/zest-css",
-            "version": "1.1.5",
-            "version_normalized": "1.1.5.0",
+            "version": "2.0.1",
+            "version_normalized": "2.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/mediawiki-libs-Zest.git",
-                "reference": "bc3346fcf2a93f02a8a6697d98c305c14ef1869f"
+                "reference": "ab537a887f393ca8e759638aadc675f01f8859a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-Zest/zipball/bc3346fcf2a93f02a8a6697d98c305c14ef1869f",
-                "reference": "bc3346fcf2a93f02a8a6697d98c305c14ef1869f",
+                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-Zest/zipball/ab537a887f393ca8e759638aadc675f01f8859a1",
+                "reference": "ab537a887f393ca8e759638aadc675f01f8859a1",
                 "shasum": ""
             },
             "require": {
@@ -3178,20 +3314,21 @@
                 "php": ">=7.2.0"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "mediawiki/mediawiki-codesniffer": "37.0.0",
                 "mediawiki/mediawiki-phan-config": "0.10.6",
                 "mediawiki/minus-x": "1.1.1",
                 "ockcyp/covers-validator": "1.3.3",
                 "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.0",
                 "phpunit/phpunit": "^8.5 || ^9.5",
                 "wikimedia/remex-html": "^2.2.2 || ^2.3",
-                "wikimedia/testing-access-wrapper": "~1.0"
+                "wikimedia/testing-access-wrapper": "~1.0",
+                "wikimedia/update-history": "^1.0.1"
             },
             "suggest": {
                 "ext-intl": "*"
             },
-            "time": "2021-03-23T15:15:09+00:00",
+            "time": "2021-08-07T06:32:11+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3223,26 +3360,26 @@
         },
         {
             "name": "zordius/lightncandy",
-            "version": "v1.2.5",
-            "version_normalized": "1.2.5.0",
+            "version": "v1.2.6",
+            "version_normalized": "1.2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zordius/lightncandy.git",
-                "reference": "37aa381e0f27d411a630062070c7a5a2174c62e7"
+                "reference": "b451f73e8b5c73e62e365997ba3c993a0376b72a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zordius/lightncandy/zipball/37aa381e0f27d411a630062070c7a5a2174c62e7",
-                "reference": "37aa381e0f27d411a630062070c7a5a2174c62e7",
+                "url": "https://api.github.com/repos/zordius/lightncandy/zipball/b451f73e8b5c73e62e365997ba3c993a0376b72a",
+                "reference": "b451f73e8b5c73e62e365997ba3c993a0376b72a",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7"
+                "phpunit/phpunit": ">=7"
             },
-            "time": "2020-03-08T06:00:24+00:00",
+            "time": "2021-07-11T04:52:41+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -3274,6 +3411,10 @@
                 "php",
                 "template"
             ],
+            "support": {
+                "issues": "https://github.com/zordius/lightncandy/issues",
+                "source": "https://github.com/zordius/lightncandy/tree/v1.2.6"
+            },
             "install-path": "../zordius/lightncandy"
         }
     ],

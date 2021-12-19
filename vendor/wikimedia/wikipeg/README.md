@@ -67,6 +67,8 @@ You can tweak the generated parser with several options:
   * `--extra-options-file` — file with additional options (in JSON format) to
     pass to `PEG.buildParser`
   * `--trace` — makes the parser trace its progress
+  * `--header-comment-file` — file containing a well-formatted comment, used
+    to customize the comment at the top of the generated file
 
 ### JavaScript API
 

@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
+use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Permissions\RestrictionStore;
 
 /**
  * @covers Scribunto_LuaTitleLibrary
@@ -16,7 +18,7 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 	/** @var int */
 	private $testPageId = null;
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		$this->setTestTitle( null );
 		parent::setUp();
 
@@ -38,66 +40,91 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 			] ),
 		] );
 
+		$editor = $this->getTestSysop()->getUser();
+
 		// Page for getContent test
 		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestPage' ) );
-		$page->doEditContent(
+		$page->doUserEditContent(
 			new WikitextContent(
 				'{{int:mainpage}}<includeonly>...</includeonly><noinclude>...</noinclude>'
 			),
+			$editor,
 			'Summary'
 		);
 		$this->testPageId = $page->getId();
 
 		// Pages for redirectTarget tests
 		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestRedirect' ) );
-		$page->doEditContent(
+		$page->doUserEditContent(
 			new WikitextContent( '#REDIRECT [[ScribuntoTestTarget]]' ),
+			$editor,
 			'Summary'
 		);
 		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestNonRedirect' ) );
-		$page->doEditContent(
+		$page->doUserEditContent(
 			new WikitextContent( 'Not a redirect.' ),
+			$editor,
 			'Summary'
 		);
 
 		// Set restrictions for protectionLevels and cascadingProtection tests
-		// Since mRestrictionsLoaded is true, they don't count as expensive
-		$title = Title::newFromText( 'Main Page' );
-		$title->mRestrictionsLoaded = true;
-		$title->mRestrictions = [ 'edit' => [], 'move' => [] ];
-		$title->mCascadeSources = [
-			Title::makeTitle( NS_MAIN, "Lockbox" ),
-			Title::makeTitle( NS_MAIN, "Lockbox2" ),
+
+		$restrictionStore = $this->createNoOpMock(
+			RestrictionStore::class,
+			[
+				'getCascadeProtectionSources',
+				'getRestrictions',
+				'areRestrictionsLoaded',
+				'areCascadeProtectionSourcesLoaded',
+				'getAllRestrictions',
+				'registerOldRestrictions' // just do nothing
+			]
+		);
+
+		$this->setService( 'RestrictionStore', $restrictionStore );
+
+		$restrictionStore->method( 'areRestrictionsLoaded' )->willReturn( true );
+		$restrictionStore->method( 'areCascadeProtectionSourcesLoaded' )->willReturn( true );
+
+		$restrictions = [
+			'Main_Page' => [ 'edit' => [], 'move' => [] ],
+			'Module:TestFramework' => [
+				'edit' => [ 'sysop', 'bogus' ],
+				'move' => [ 'sysop', 'bogus' ],
+			],
+			'interwikiprefix:Module:TestFramework' => [],
+			'Talk:Has/A/Subpage' => [ 'create' => [ 'sysop' ] ],
+			'Not/A/Subpage' => [ 'edit' => [ 'autoconfirmed' ], 'move' => [ 'sysop' ] ],
+			'Module_talk:Test_Framework' => [ 'edit' => [], 'move' => [ 'sysop' ] ],
 		];
-		$title->mCascadingRestrictions = [ 'edit' => [ 'sysop' ] ];
-		$title = Title::newFromText( 'Module:TestFramework' );
-		$title->mRestrictionsLoaded = true;
-		$title->mRestrictions = [
-			'edit' => [ 'sysop', 'bogus' ],
-			'move' => [ 'sysop', 'bogus' ],
-		];
-		$title->mCascadeSources = [];
-		$title->mCascadingRestrictions = [];
-		$title = Title::newFromText( 'interwikiprefix:Module:TestFramework' );
-		$title->mRestrictionsLoaded = true;
-		$title->mRestrictions = [];
-		$title->mCascadeSources = [];
-		$title->mCascadingRestrictions = [];
-		$title = Title::newFromText( 'Talk:Has/A/Subpage' );
-		$title->mRestrictionsLoaded = true;
-		$title->mRestrictions = [ 'create' => [ 'sysop' ] ];
-		$title->mCascadeSources = [];
-		$title->mCascadingRestrictions = [];
-		$title = Title::newFromText( 'Not/A/Subpage' );
-		$title->mRestrictionsLoaded = true;
-		$title->mRestrictions = [ 'edit' => [ 'autoconfirmed' ], 'move' => [ 'sysop' ] ];
-		$title->mCascadeSources = [];
-		$title->mCascadingRestrictions = [];
-		$title = Title::newFromText( 'Module talk:Test Framework' );
-		$title->mRestrictionsLoaded = true;
-		$title->mRestrictions = [ 'edit' => [], 'move' => [ 'sysop' ] ];
-		$title->mCascadeSources = [];
-		$title->mCascadingRestrictions = [];
+
+		$restrictionStore->method( 'getAllRestrictions' )
+			->willReturnCallback( static function ( $title ) use ( $restrictions ) {
+				$key = $title->getPrefixedDBkey();
+				return $restrictions[$key] ?? [];
+			} );
+
+		$restrictionStore->method( 'getRestrictions' )
+			->willReturnCallback( static function ( $title, $action ) {
+				$key = $title->getPrefixedDBkey();
+				$pageRestrictions = $restrictions[$key] ?? [];
+				return $pageRestrictions[$action] ?? [];
+			} );
+
+		$restrictionStore->method( 'getCascadeProtectionSources' )
+			->willReturnCallback( static function ( $title ) {
+				if ( $title->getPrefixedDBkey() === 'Main_Page' ) {
+					return [
+						[
+							PageIdentityValue::localIdentity( 5678, NS_MAIN, "Lockbox" ),
+							PageIdentityValue::localIdentity( 8765, NS_MAIN, "Lockbox2" ),
+						],
+						[ 'edit' => [ 'sysop' ] ]
+					];
+				} else {
+					return [ [], [] ];
+				}
+			} );
 
 		// Note this depends on every iteration of the data provider running with a clean parser
 		$this->getEngine()->getParser()->getOptions()->setExpensiveParserFunctionLimit( 10 );

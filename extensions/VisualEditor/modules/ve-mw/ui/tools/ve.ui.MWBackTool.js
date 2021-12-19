@@ -18,9 +18,7 @@ ve.ui.MWBackTool.static.group = 'navigation';
 ve.ui.MWBackTool.static.icon = 'close';
 ve.ui.MWBackTool.static.title =
 	OO.ui.deferMsg( 'visualeditor-backbutton-tooltip' );
-ve.ui.MWBackTool.static.commandName = 'back';
 
-/** */
 ve.ui.MWBackTool.prototype.onUpdateState = function () {
 	// Parent method
 	ve.ui.MWBackTool.super.prototype.onUpdateState.apply( this, arguments );
@@ -29,17 +27,13 @@ ve.ui.MWBackTool.prototype.onUpdateState = function () {
 	this.setDisabled( false );
 };
 
-ve.ui.toolFactory.register( ve.ui.MWBackTool );
+ve.ui.MWBackTool.prototype.onSelect = function () {
+	// Parent method
+	ve.ui.MWBackTool.super.prototype.onSelect.apply( this, arguments );
 
-/**
- * Back command
- */
-ve.ui.MWBackCommand = function VeUiMWBackCommand() {
-	// Parent constructor
-	ve.ui.MWBackCommand.super.call( this, 'back' );
+	if ( this.toolbar instanceof ve.ui.TargetToolbar ) {
+		this.toolbar.target.tryTeardown();
+	}
 };
-OO.inheritClass( ve.ui.MWBackCommand, ve.ui.Command );
-ve.ui.MWBackCommand.prototype.execute = function () {
-	ve.init.target.tryTeardown();
-};
-ve.ui.commandRegistry.register( new ve.ui.MWBackCommand() );
+
+ve.ui.toolFactory.register( ve.ui.MWBackTool );

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"DDPAT",
 			"Piramidion",
-			"Ата",
-			"DDPAT"
+			"Ата"
 		]
 	},
 	"apihelp-query+pageimages-description": "Видає інформацію про зображення на сторінці, таку як мініатюри і наявність фото.",

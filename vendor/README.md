@@ -30,12 +30,16 @@ Adding or updating libraries
 4. Add all the new dependencies that got installed to composer.json as well,
    so that everything has their version pinned. (You can look at the changes
    in composer.lock or composer/installed.json to see what they are.)
-5. Rarely, lint checks fail because test files in some library were written
+5. In some cases, the libraries might include not needed files (e.g. test files,
+   project files, etc). If you cannot exclude them from library's archive
+   (e.g. by `export-ignore`ing unwanted files in library's `.gitattributes`
+   file), you can skip checking them in by listing them in `.gitignore` file.
+6. Rarely, lint checks fail because test files in some library were written
    for an unsupported PHP version. In that case add the test directories to
    the --exclude parameter in the script > test field in composer.json, and
    to .gitignore.
-6. Add and commit changes as a gerrit patch.
-7. Review and merge changes.
+7. Add and commit changes as a gerrit patch.
+8. Review and merge changes.
 
 Note that you MUST pair patches changing versions of libraries used by MediaWiki
 itself with ones for the "core" repo. Specifically, the patch in mediawiki/core

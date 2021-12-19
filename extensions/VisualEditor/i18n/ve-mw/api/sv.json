@@ -6,7 +6,8 @@
 			"Lokal Profil",
 			"Technic2",
 			"Warrakkk",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Dhallin"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Ingen cachelagrad serialisering hittades med nyckeln",
@@ -40,6 +41,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Använd resultatet från en tidigare serializeforcache-begäran med denna nyckel. Åsidosätter $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha-ID (vid sparning med ett captcha-svar).",
 	"apihelp-visualeditoredit-param-captchaword": "Svar till captcha (vid sparning med ett captcha-svar).",
+	"apihelp-visualeditoredit-param-plugins": "Insticksprogram som är kopplade till API-begäran.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Godtyckliga data som skickas av ett plugin med API-begäran.",
 	"apihelp-visualeditoredit-param-etag": "ETag att skicka.",
 	"apihelp-visualeditoredit-param-html": "HTML att skicka till Parsoid i utbyte mot wikitext.",
 	"apihelp-visualeditoredit-param-minor": "Flagga för mindre redigering.",

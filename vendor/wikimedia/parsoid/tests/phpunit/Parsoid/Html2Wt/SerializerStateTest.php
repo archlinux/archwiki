@@ -2,14 +2,14 @@
 
 namespace Test\Parsoid\Html2Wt;
 
-use DOMDocument;
-use DOMElement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 use Wikimedia\Parsoid\Html2Wt\WikitextSerializer;
 use Wikimedia\Parsoid\Mocks\MockEnv;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Zest\Zest;
 
 class SerializerStateTest extends TestCase {
@@ -19,14 +19,11 @@ class SerializerStateTest extends TestCase {
 	 * @param array $extraMethodsToMock
 	 * @return WikitextSerializer|MockObject
 	 */
-	private function getBaseSerializerMock( $extraMethodsToMock = [] ) {
+	private function getBaseSerializerMock( array $extraMethodsToMock = [] ): WikitextSerializer {
 		$serializer = $this->getMockBuilder( WikitextSerializer::class )
 			->disableOriginalConstructor()
-			->setMethods( array_merge( [ 'buildSep', 'trace' ], $extraMethodsToMock ) )
+			->onlyMethods( array_merge( [ 'trace' ], $extraMethodsToMock ) )
 			->getMock();
-		$serializer->expects( $this->any() )
-			->method( 'buildSep' )
-			->willReturn( '' );
 		$serializer->expects( $this->any() )
 			->method( 'trace' )
 			->willReturn( null );
@@ -37,7 +34,7 @@ class SerializerStateTest extends TestCase {
 
 	private function getState(
 		array $options = [], MockEnv $env = null, WikitextSerializer $serializer = null
-	) {
+	): SerializerState {
 		if ( !$env ) {
 			$env = new MockEnv( [] );
 		}
@@ -51,10 +48,10 @@ class SerializerStateTest extends TestCase {
 	 * Create a DOM document with the given HTML body and return the given node within it.
 	 * @param string $html
 	 * @param string $selector
-	 * @return DOMElement
+	 * @return Element
 	 */
-	private function getNode( $html = '<div id="main"></div>', $selector = '#main' ) {
-		$document = new DOMDocument();
+	private function getNode( $html = '<div id="main"></div>', $selector = '#main' ): Element {
+		$document = DOMCompat::newDocument( true );
 		$document->loadHTML( "<html><body>$html</body></html>" );
 		return Zest::find( $selector, $document )[0];
 	}
@@ -160,20 +157,20 @@ class SerializerStateTest extends TestCase {
 				[ $node->firstChild ],
 				[ $node->firstChild->nextSibling ]
 			)
-			->willReturnCallback( function ( DOMElement $node ) {
+			->willReturnCallback( static function ( Element $node ) {
 				return $node->nextSibling;
 			} );
 		$state = $this->getState( [], null, $serializer );
 		$state->serializeChildren( $node );
 
-		$callback = function () {
+		$callback = static function () {
 		};
 		$node = $this->getNode( '<div id="main"><span></span></div>' );
 		$serializer = $this->getBaseSerializerMock( [ 'serializeNode' ] );
 		$serializer->expects( $this->once() )
 			->method( 'serializeNode' )
 			->with( $node->firstChild )
-			->willReturnCallback( function ( DOMElement $node ) use ( &$state, $callback ) {
+			->willReturnCallback( function ( Element $node ) use ( &$state, $callback ) {
 				$this->assertSame( $callback, end( $state->wteHandlerStack ) );
 				return $node->nextSibling;
 			} );
@@ -196,7 +193,7 @@ class SerializerStateTest extends TestCase {
 			->method( 'serializeNode' );
 		$state = $this->getState( [], null, $serializer );
 		$node = $this->getNode();
-		$callback = function () {
+		$callback = static function () {
 		};
 		$state->$method( $node, $callback );
 	}

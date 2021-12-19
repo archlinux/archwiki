@@ -1,0 +1,203 @@
+@import '../../common/variables.less';
+@import 'mediawiki.mixins.less';
+
+@font-size-user-links: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
+@padding-horizontal-user-links: 12px;
+
+.vector-user-links {
+	display: flex;
+	align-items: center;
+	position: relative;
+	justify-content: flex-end;
+	flex-shrink: 1;
+
+	.vector-user-menu-more {
+		font-size: @font-size-user-links;
+
+		.vector-menu-content-list {
+			display: flex;
+			align-items: center;
+
+			li {
+				margin: 0;
+				white-space: nowrap;
+
+				a {
+					color: @color-base;
+					text-decoration: none;
+
+					.mw-ui-icon {
+						margin-right: 4px;
+					}
+				}
+
+				// Below tablet threshold, all menu items except the notification icons will collapse into the user menu
+				// This ensures a max of 4 icons on small screen sizes (i.e. search, 2 notification icons and the user avatar)
+				&.user-links-collapsible-item {
+					display: none;
+
+					@media ( min-width: @width-breakpoint-tablet ) {
+						display: block;
+					}
+				}
+			}
+		}
+
+		.mw-ui-button {
+			// FIXME: Overrides mw-ui-button's `display: inline-block` property so that
+			// the text in the button is vertically centered. `.mw-ui-button` sets a
+			// min-height to the button, but should also vertically center the
+			// button's children.
+			display: flex;
+			align-items: center;
+		}
+
+		#pt-userpage-2 {
+			max-width: unit( 155 / @font-size-browser / @font-size-base, em );
+
+			span {
+				.text-overflow( @visible: false );
+			}
+
+			// T287522#7295558: Increase the max-width of the username when viewport
+			// allows for it.
+			@media ( min-width: @width-breakpoint-desktop-wide ) {
+				max-width: unit( 200 / @font-size-browser / @font-size-base, em );
+			}
+		}
+	}
+
+	.vector-user-menu {
+
+		// Override ".emptyPortlet" class to ensure user menu isn't hidden
+		&.emptyPortlet {
+			display: block;
+		}
+
+		.vector-menu-heading {
+			.mw-ui-icon ~ span {
+				.mixin-screen-reader-text();
+			}
+
+			// FIXME: For cached HTML only.
+			&.mw-ui-icon > span {
+				color: transparent;
+			}
+		}
+
+		.vector-menu-content {
+			min-width: 200px;
+			max-width: unit( 350px / @font-size-browser, em );
+			top: 100%;
+			left: unset;
+			right: 0;
+			border-top-width: 1px;
+			border-radius: 2px;
+			// T285786: Box shadow per design spec
+			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.25 );
+
+			.user-links-collapsible-item {
+				@media ( min-width: @width-breakpoint-tablet ) {
+					display: none;
+				}
+			}
+		}
+
+		// FIXME: Remove `li` selector when T289163 is addressed.
+		li,
+		.mw-list-item {
+			width: 100%;
+		}
+
+		// FIXME: Remove `li > a` selector when T289163 is addressed.
+		li > a,
+		.vector-menu-content-item,
+		.mw-list-item > a {
+			// Overrides .mw-ui-icon's `min-height` property to have a computed
+			// min-height of 32px. This matches the design spec of having an icon that
+			// is 20px in height + 6px of top padding + 6px of bottom padding. Using
+			// min-height instead of vertical padding allows menu items without an
+			// icon to still be 32px in height.
+			min-height: unit( 32px / @font-size-browser, em );
+			// Overrides .mw-ui-icon's `display: inline-block` property so that
+			// the text can be vertically centered.
+			display: flex;
+			align-items: center;
+			// Overrides .mw-ui-icon's `padding: 0` property so that the text is not
+			// at the edge of the menu. Apply the padding on the link element instead
+			// of the li element to maximize the click target.
+			padding: 0 @padding-horizontal-user-links;
+			color: @color-base;
+			text-decoration: none;
+
+			span {
+				font-size: @font-size-user-links;
+				.text-overflow( @visible: false );
+				// Overrides .mw-ui-icon's `line-height: 0` property so that the text is
+				// visible when not overflowing.
+				line-height: initial;
+			}
+
+			// Set hover color for "Create account" and "Login" menu items.
+			&:hover {
+				background-color: @background-color-secondary;
+			}
+		}
+
+		.vector-menu-content-item-login {
+			border-bottom: 1px solid @border-color-base;
+		}
+
+		.vector-user-menu-anon-editor {
+			padding: 4px @padding-horizontal-user-links;
+			color: @colorGray5;
+			font-size: @font-size-user-links;
+
+			p {
+				margin: 0;
+			}
+
+			a:before {
+				content: '@{msg-parentheses-start}';
+				color: @colorGray5;
+			}
+
+			a:after {
+				content: '@{msg-parentheses-end}';
+				color: @colorGray5;
+			}
+		}
+
+		.vector-menu-content-item-logout {
+			border-top: 1px solid @border-color-base;
+		}
+	}
+
+	.vector-user-menu-logged-out h3 {
+		&:before {
+			height: 100%;
+		}
+
+		&:after {
+			content: none;
+		}
+	}
+
+	.vector-user-menu-logged-in h3 {
+		// FIXME: Ideally this variable should be accessible from mediawiki.skin.variables
+		// Remove it when we can.
+		@icon-padding-md: unit( 12 / @font-size-browser, em );
+		@icon-arrow-size: unit( 12px / @font-size-browser, em );
+		padding-right: @icon-padding-md + @icon-arrow-size;
+
+		&:before {
+			color: #54595d;
+		}
+
+		&:after {
+			background-position: 100% 0%;
+			top: @icon-padding-md + ( @icon-arrow-size / 2 );
+			right: @icon-arrow-size;
+		}
+	}
+}

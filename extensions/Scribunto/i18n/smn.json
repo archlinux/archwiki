@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Trondtr",
 			"Muotâ",
-			"Seipinne"
+			"Seipinne",
+			"Trondtr"
 		]
 	},
 	"scribunto-line": "raddalâsâst $1",

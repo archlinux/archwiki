@@ -13,21 +13,19 @@ mw.libs.ve = mw.libs.ve || {};
  * This widget can be used to show the user a basic editing interface
  * while VE libraries are still loading.
  *
- * It has a similar API to OO.ui.TextInputWidget, but is designed to
+ * It has a similar API to OO.ui.InputWidget, but is designed to
  * be loaded before any core VE code or dependencies, e.g. OOUI.
  *
  * @class
  *
  * @constructor
- * @param {Object} [config] Configuration options
- * @cfg {string} [value] Initial value
+ * @param {Object} config Configuration options
+ * @cfg {string} value Raw wikitext to edit
  */
 mw.libs.ve.MWTempWikitextEditorWidget = function VeUiMwTempWikitextEditorWidget( config ) {
 	var conf = mw.config.get( 'wgVisualEditor' ),
 		dir = conf.pageLanguageDir,
 		lang = conf.pageLanguageCode;
-
-	config = config || {};
 
 	this.$element = $( '<textarea>' )
 		.addClass( 've-init-mw-tempWikitextEditorWidget ' )
@@ -84,9 +82,7 @@ mw.libs.ve.MWTempWikitextEditorWidget.prototype.focus = function () {
 };
 
 /**
- * Get the input value
- *
- * @return {string} Value
+ * @return {string} Raw, possibly edited wikitext
  */
 mw.libs.ve.MWTempWikitextEditorWidget.prototype.getValue = function () {
 	return this.$element.val();

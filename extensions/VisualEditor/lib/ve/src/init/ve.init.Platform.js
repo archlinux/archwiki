@@ -139,8 +139,8 @@ ve.init.Platform.prototype.getMetadataIdRegExp = function () {
  * Show a read-only notification to the user.
  *
  * @abstract
- * @param {jQuery|string} message Message
- * @param {jQuery|string} [title] Title
+ * @param {jQuery|string} message
+ * @param {jQuery|string} [title]
  */
 ve.init.Platform.prototype.notify = null;
 
@@ -368,9 +368,6 @@ ve.init.Platform.prototype.getInitializedPromise = function () {
  * @return {jQuery.Promise}
  */
 ve.init.Platform.prototype.fetchSpecialCharList = function () {
-	var charsObj = {},
-		groups = [ 'accents', 'mathematical', 'symbols' ];
-
 	function tryParseJSON( json ) {
 		try {
 			return JSON.parse( json );
@@ -382,6 +379,9 @@ ve.init.Platform.prototype.fetchSpecialCharList = function () {
 		}
 		return {};
 	}
+
+	var charsObj = {},
+		groups = [ 'accents', 'mathematical', 'symbols' ];
 
 	groups.forEach( function ( group ) {
 		charsObj[ group ] = {

@@ -1,0 +1,70 @@
+// The use of mixins.buttons requires @font-size-base to be defined for this to work in Storybook
+@import '../../common/variables.less';
+@import 'mediawiki.mixins.less';
+
+// TODO: `#p-lang-btn` Can be changed to `.mw-portlet-lang` when languages-in-header is the default.
+#p-lang-btn {
+	// FIXME [review whether margin-top is needed] center vertically in heading.
+	margin-top: 2px;
+	.box-sizing( border-box );
+	height: @height-lang-button;
+
+	.mw-ui-icon:before {
+		// Put icon on correct standard normal state color.
+		opacity: 0.87;
+	}
+
+	.vector-menu-heading {
+		font-size: initial;
+		// reset padding styles in MenuDropdown.less with right padding for arrow.
+		padding-right: 30px;
+		padding-left: 8px;
+		// Prevent select of span text "X languages"
+		user-select: none;
+		// Remove opacity on language button (it applies to more menu because of label color).
+		opacity: 1;
+
+		span {
+			// Special treatment for language button, based on Vector font-size
+			font-size: @font-size-base;
+		}
+
+		&:after {
+			top: 0;
+		}
+	}
+
+	.vector-menu-content {
+		top: auto;
+		left: -@border-width-base;
+		right: -@border-width-base;
+		// align borders of open menu align with button
+		.box-sizing( border-box );
+		max-height: 65vh;
+		overflow: scroll;
+		border-top-width: 1px;
+
+		// Adds to the show/hide technique in MenuDropdown.less with
+		// display to prevent rendering and long scrolling on Main page
+		display: none;
+
+		li a {
+			font-size: inherit;
+		}
+	}
+
+	.vector-menu-checkbox:checked ~ .vector-menu-content {
+		display: block;
+	}
+
+	.after-portlet {
+		// ensure there is a visual separation between the language links and additional links.
+		margin-top: 10px;
+	}
+}
+
+// Hides language button with CSS, ensures language button is in DOM for temporary JS hack for interwiki links
+// Temporary solution to T287206, can be removed when ULS dialog includes interwiki links
+#p-lang-btn.mw-portlet-empty {
+	display: none;
+}

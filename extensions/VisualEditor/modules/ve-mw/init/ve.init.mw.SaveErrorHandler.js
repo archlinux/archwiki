@@ -36,7 +36,7 @@ ve.init.mw.SaveErrorHandler.static.matchFunction = null;
  * @static
  * @inheritable
  * @param {Object} data API response from action=visualeditoredit
- * @param {ve.init.mw.ArticleTarget} target Target
+ * @param {ve.init.mw.ArticleTarget} target
  */
 ve.init.mw.SaveErrorHandler.static.process = null;
 

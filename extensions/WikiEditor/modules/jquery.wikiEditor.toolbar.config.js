@@ -411,6 +411,11 @@
 						language: 'cr',
 						layout: 'characters',
 						characters: specialCharacterGroups.canadianaboriginal
+					},
+					runes: {
+						labelMsg: 'special-characters-group-runes',
+						layout: 'characters',
+						characters: specialCharacterGroups.runes
 					}
 				}
 			},

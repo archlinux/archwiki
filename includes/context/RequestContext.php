@@ -25,6 +25,7 @@
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Session\CsrfTokenSet;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\IPUtils;
 use Wikimedia\NonSerializable\NonSerializableTrait;
@@ -296,6 +297,9 @@ class RequestContext implements IContextSource, MutableContext {
 		return $this->user;
 	}
 
+	/**
+	 * @param Authority $authority
+	 */
 	public function setAuthority( Authority $authority ) {
 		$this->authority = $authority;
 		// Keep user consistent
@@ -477,7 +481,7 @@ class RequestContext implements IContextSource, MutableContext {
 	 *
 	 * @return RequestContext
 	 */
-	public static function getMain() : RequestContext {
+	public static function getMain(): RequestContext {
 		if ( self::$instance === null ) {
 			self::$instance = new self;
 		}
@@ -527,6 +531,10 @@ class RequestContext implements IContextSource, MutableContext {
 		];
 	}
 
+	public function getCsrfTokenSet(): CsrfTokenSet {
+		return new CsrfTokenSet( $this->getRequest() );
+	}
+
 	/**
 	 * Import an client IP address, HTTP headers, user ID, and session ID
 	 *
@@ -571,7 +579,7 @@ class RequestContext implements IContextSource, MutableContext {
 		}
 
 		$importSessionFunc = static function ( User $user, array $params ) {
-			global $wgRequest, $wgUser;
+			global $wgRequest;
 
 			$context = RequestContext::getMain();
 
@@ -600,7 +608,7 @@ class RequestContext implements IContextSource, MutableContext {
 			// and caught (leaving the main context in a mixed state), there is no risk
 			// of the User object being attached to the wrong IP, headers, or session.
 			$context->setUser( $user );
-			$wgUser = $context->getUser(); // b/c
+			StubGlobalUser::setUser( $context->getUser() ); // b/c
 			if ( $session && MediaWiki\Session\PHPSessionHandler::isEnabled() ) {
 				session_id( $session->getId() );
 				AtEase::quietCall( 'session_start' );

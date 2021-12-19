@@ -34,5 +34,9 @@
 	"vector-jumptosearch": "Ugrás a kereséshez",
 	"vector-jumptocontent": "Ugrás a tartalomhoz",
 	"vector-more-actions": "Több",
-	"vector-search-loader": "Keresési javaslatok betöltése…"
+	"vector-search-loader": "Keresési javaslatok betöltése…",
+	"vector-anon-user-menu-pages": "Lapok kijelentkezett szerkesztőknek",
+	"vector-anon-user-menu-pages-learn": "további információk",
+	"vector-anon-user-menu-pages-label": "Tudj meg többet a szerkesztésről",
+	"vector-personal-more-label": "Felhasználói hivatkozások"
 }

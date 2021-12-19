@@ -22,9 +22,9 @@
  * @singleton
  */
 ( function () {
-	var conf, tabMessages, uri, pageExists, viewUri, veEditUri, veEditSourceUri, isViewPage, isEditPage,
-		pageCanLoadEditor, veEditBaseUri, init, targetPromise, enable, tempdisable, autodisable,
-		tabPreference, enabledForUser, initialWikitext, oldId,
+	var conf, tabMessages, uri, pageExists, viewUri, veEditUri, veEditSourceUri,
+		init, targetPromise,
+		tabPreference, initialWikitext, oldId,
 		isLoading, tempWikitextEditor, tempWikitextEditorData, $toolbarPlaceholder,
 		configData = require( './data.json' ),
 		veactionToMode = {
@@ -39,8 +39,6 @@
 		educationPopupsDisabled = false;
 
 	function showLoading( mode ) {
-		var $content, windowHeight, clientTop, top, bottom, middle;
-
 		if ( isLoading ) {
 			return;
 		}
@@ -57,14 +55,14 @@
 		// eslint-disable-next-line no-use-before-define
 		$( document ).on( 'keydown', onDocumentKeyDown );
 
-		$content = $( '#content' );
+		var $content = $( '#content' );
 		if ( mode !== 'source' ) {
 			// Center within visible part of the target
-			windowHeight = window.innerHeight;
-			clientTop = $content[ 0 ].offsetTop - window.pageYOffset;
-			top = Math.max( clientTop, 0 );
-			bottom = Math.min( clientTop + $content[ 0 ].offsetHeight, windowHeight );
-			middle = ( bottom - top ) / 2;
+			var windowHeight = window.innerHeight;
+			var clientTop = $content[ 0 ].offsetTop - window.pageYOffset;
+			var top = Math.max( clientTop, 0 );
+			var bottom = Math.min( clientTop + $content[ 0 ].offsetHeight, windowHeight );
+			var middle = ( bottom - top ) / 2;
 			init.$loading.css( 'top', middle + Math.max( -clientTop, 0 ) );
 		} else {
 			init.$loading.css( 'top', '' );
@@ -99,13 +97,13 @@
 	}
 
 	function setupTempWikitextEditor( data ) {
-		var content = data.content;
+		var wikitext = data.content;
 		// Add trailing linebreak to non-empty wikitext documents for consistency
 		// with old editor and usability. Will be stripped on save. T156609
-		if ( content ) {
-			content += '\n';
+		if ( wikitext ) {
+			wikitext += '\n';
 		}
-		tempWikitextEditor = new mw.libs.ve.MWTempWikitextEditorWidget( { value: content } );
+		tempWikitextEditor = new mw.libs.ve.MWTempWikitextEditorWidget( { value: wikitext } );
 		tempWikitextEditorData = data;
 
 		// Create an equal-height placeholder for the toolbar to avoid vertical jump
@@ -134,17 +132,17 @@
 	}
 
 	function syncTempWikitextEditor() {
-		var newContent = tempWikitextEditor.getValue();
+		var wikitext = tempWikitextEditor.getValue();
 
 		// Strip trailing linebreak. Will get re-added in ArticleTarget#parseDocument.
-		if ( newContent.slice( -1 ) === '\n' ) {
-			newContent = newContent.slice( 0, -1 );
+		if ( wikitext.slice( -1 ) === '\n' ) {
+			wikitext = wikitext.slice( 0, -1 );
 		}
 
-		if ( newContent !== tempWikitextEditorData.content ) {
+		if ( wikitext !== tempWikitextEditorData.content ) {
 			// Write changes back to response data object,
 			// which will be used to construct the surface.
-			tempWikitextEditorData.content = newContent;
+			tempWikitextEditorData.content = wikitext;
 			// TODO: Consider writing changes using a
 			// transaction so they can be undone.
 			// For now, just mark surface as pre-modified
@@ -227,8 +225,6 @@
 					return mw.libs.ve.targetLoader.loadModules( mode );
 				} )
 				.then( function () {
-					var target;
-
 					if ( !active ) {
 						// Loading was aborted
 						// TODO: Make loaders abortable instead of waiting
@@ -236,7 +232,7 @@
 						return $.Deferred().reject().promise();
 					}
 
-					target = ve.init.mw.targetFactory.create(
+					var target = ve.init.mw.targetFactory.create(
 						conf.contentModels[ mw.config.get( 'wgPageContentModel' ) ], {
 							modes: availableModes,
 							defaultMode: mode
@@ -291,9 +287,6 @@
 	 * @return {jQuery.Promise} Promise which resolves when the preference has been set
 	 */
 	function setEditorPreference( editor ) {
-		var key = pageExists ? 'edit' : 'create',
-			sectionKey = 'editsection';
-
 		// If visual mode isn't available, don't set the editor preference as the
 		// user has expressed no choice by opening this editor. (T246259)
 		// Strictly speaking the same thing should happen if visual mode is
@@ -309,6 +302,9 @@
 		if ( editor !== 'visualeditor' && editor !== 'wikitext' ) {
 			throw new Error( 'setEditorPreference called with invalid option: ', editor );
 		}
+
+		var key = pageExists ? 'edit' : 'create',
+			sectionKey = 'editsection';
 
 		if (
 			mw.config.get( 'wgVisualEditorConfig' ).singleEditTab &&
@@ -404,7 +400,6 @@
 		tPromise = tPromise || getTarget( mode, section );
 		tPromise
 			.then( function ( target ) {
-				var activatePromise;
 				incrementLoadingProgress();
 				target.on( 'deactivate', function () {
 					active = false;
@@ -417,7 +412,7 @@
 				if ( tempWikitextEditor ) {
 					syncTempWikitextEditor();
 				}
-				activatePromise = target.activate( dataPromise );
+				var activatePromise = target.activate( dataPromise );
 				$( '#content' ).prepend( init.$loading );
 				return activatePromise;
 			} )
@@ -550,14 +545,14 @@
 		oldId = undefined;
 	}
 	pageExists = !!mw.config.get( 'wgRelevantArticleId' );
-	isViewPage = mw.config.get( 'wgIsArticle' ) && !( 'diff' in uri.query );
-	isEditPage = mw.config.get( 'wgAction' ) === 'edit' || mw.config.get( 'wgAction' ) === 'submit';
-	pageCanLoadEditor = isViewPage || isEditPage;
+	var isViewPage = mw.config.get( 'wgIsArticle' ) && !( 'diff' in uri.query );
+	var isEditPage = mw.config.get( 'wgAction' ) === 'edit' || mw.config.get( 'wgAction' ) === 'submit';
+	var pageCanLoadEditor = isViewPage || isEditPage;
 
 	// Cast "0" (T89513)
-	enable = !!+mw.user.options.get( 'visualeditor-enable' );
-	tempdisable = !!+mw.user.options.get( 'visualeditor-betatempdisable' );
-	autodisable = !!+mw.user.options.get( 'visualeditor-autodisable' );
+	var enable = !!+mw.user.options.get( 'visualeditor-enable' );
+	var tempdisable = !!+mw.user.options.get( 'visualeditor-betatempdisable' );
+	var autodisable = !!+mw.user.options.get( 'visualeditor-autodisable' );
 	tabPreference = mw.user.options.get( 'visualeditor-tabs' );
 
 	function isOnlyTabVE() {
@@ -678,8 +673,7 @@
 		},
 
 		setupMultiTabs: function () {
-			var caVeEdit,
-				action = pageExists ? 'edit' : 'create',
+			var action = pageExists ? 'edit' : 'create',
 				isMinerva = mw.config.get( 'skin' ) === 'minerva',
 				pTabsId = isMinerva ? 'page-actions' :
 					$( '#p-views' ).length ? 'p-views' : 'p-cactions',
@@ -719,7 +713,7 @@
 				// the user doesn't have permission to edit.
 				if ( $caEdit.length && !$caSource.length ) {
 					// Add the VisualEditor tab (#ca-ve-edit)
-					caVeEdit = mw.util.addPortletLink(
+					var caVeEdit = mw.util.addPortletLink(
 						pTabsId,
 						// Use url instead of '#'.
 						// So that 1) one can always open it in a new tab, even when
@@ -797,7 +791,6 @@
 
 		setupMultiSectionLinks: function () {
 			var $editsections = $( '#mw-content-text .mw-editsection' ),
-				isMinerva = mw.config.get( 'skin' ) === 'minerva',
 				bodyDir = $( document.body ).css( 'direction' );
 
 			// Match direction of the user interface
@@ -849,6 +842,7 @@
 				} );
 			}
 
+			var isMinerva = mw.config.get( 'skin' ) === 'minerva';
 			if ( isMinerva ) {
 				// Minerva hides the link text - display tiny icons instead
 				mw.loader.load( [ 'oojs-ui.styles.icons-editing-advanced', 'oojs-ui.styles.icons-accessibility' ] );
@@ -885,7 +879,7 @@
 		 * This is a duplicate of a function in ve.utils, because this file runs
 		 * before any of VE core or OOui has been loaded.
 		 *
-		 * @param {jQuery.Event} e The jQuery event object
+		 * @param {jQuery.Event} e
 		 * @return {boolean} Whether it was an unmodified left click
 		 */
 		isUnmodifiedLeftClick: function ( e ) {
@@ -893,7 +887,6 @@
 		},
 
 		onEditTabClick: function ( mode, e ) {
-			var section;
 			if ( !init.isUnmodifiedLeftClick( e ) ) {
 				return;
 			}
@@ -908,7 +901,7 @@
 				return;
 			}
 
-			section = $( e.target ).closest( '#ca-addsection' ).length ? 'new' : null;
+			var section = $( e.target ).closest( '#ca-addsection' ).length ? 'new' : null;
 
 			if ( active ) {
 				targetPromise.done( function ( target ) {
@@ -1000,8 +993,7 @@
 		 * @param {string} [section] Override edit section, taken from link URL if not specified
 		 */
 		onEditSectionLinkClick: function ( mode, e, section ) {
-			var tPromise,
-				linkUri = new mw.Uri( e.target.href ),
+			var linkUri = new mw.Uri( e.target.href ),
 				title = mw.Title.newFromText( linkUri.query.title || '' );
 
 			if (
@@ -1037,7 +1029,7 @@
 			if ( section === undefined ) {
 				section = parseSection( linkUri.query.section );
 			}
-			tPromise = getTarget( mode, section );
+			var tPromise = getTarget( mode, section );
 			activateTarget( mode, section, tPromise );
 		},
 
@@ -1139,7 +1131,7 @@
 
 	// On a view page, extend the current URI so parameters like oldid are carried over
 	// On a non-view page, use viewUri
-	veEditBaseUri = pageCanLoadEditor ? uri : viewUri;
+	var veEditBaseUri = pageCanLoadEditor ? uri : viewUri;
 	if ( init.isSingleEditTab ) {
 		veEditSourceUri = veEditUri = veEditBaseUri.clone().extend( { action: 'edit' } );
 		delete veEditUri.query.veaction;
@@ -1170,7 +1162,7 @@
 		mw.config.get( 'wgTwoColConflict' ) !== 'true'
 	);
 
-	enabledForUser = (
+	var enabledForUser = (
 		// User has 'visualeditor-enable' preference enabled (for alpha opt-in)
 		// User has 'visualeditor-betatempdisable' preference disabled
 		// User has 'visualeditor-autodisable' preference disabled
@@ -1240,11 +1232,10 @@
 	}
 
 	$( function () {
-		var mode, requiredSkinElements, notify,
-			showWikitextWelcome = true,
+		var showWikitextWelcome = true,
 			section = uri.query.section !== undefined ? parseSection( uri.query.section ) : null;
 
-		requiredSkinElements =
+		var requiredSkinElements =
 			$( '#content' ).length &&
 			$( '#mw-content-text' ).length &&
 			// A link to open the editor is technically not necessary if it's going to open itself
@@ -1261,6 +1252,10 @@
 		}
 
 		function getInitialEditMode() {
+			if ( mw.config.get( 'wgDiscussionToolsStartNewTopicTool' ) ) {
+				// Avoid conflicts with DiscussionTools
+				return false;
+			}
 			// On view pages if veaction is correctly set
 			var m = veactionToMode[ uri.query.veaction ];
 			if ( isViewPage && init.isAvailable && availableModes.indexOf( m ) !== -1 ) {
@@ -1299,7 +1294,7 @@
 				'See https://www.mediawiki.org/wiki/Extension:VisualEditor/Skin_requirements for the requirements.'
 			);
 		} else if ( init.isAvailable ) {
-			mode = getInitialEditMode();
+			var mode = getInitialEditMode();
 			if ( mode ) {
 				showWikitextWelcome = false;
 				trackActivateStart( {
@@ -1453,7 +1448,7 @@
 			// Load postEdit code to execute the queued event below, which will handle it once it arrives
 			mw.loader.load( 'mediawiki.action.view.postEdit' );
 
-			notify = uri.query.venotify;
+			var notify = uri.query.venotify;
 			if ( notify === 'saved' ) {
 				notify = mw.config.get( 'wgEditSubmitButtonLabelPublish' ) ? 'published' : 'saved';
 			}

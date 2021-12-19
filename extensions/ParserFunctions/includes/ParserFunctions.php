@@ -39,7 +39,7 @@ class ParserFunctions {
 		static $done = false;
 		if ( !$done ) {
 			global $wgHooks;
-			$wgHooks['ParserClearState'][] = function () {
+			$wgHooks['ParserClearState'][] = static function () {
 				self::$mTimeChars = 0;
 			};
 			$done = true;
@@ -352,6 +352,8 @@ class ParserFunctions {
 				}
 				$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
 				if ( !$file ) {
+					$parser->getOutput()->addImage(
+						$title->getDBKey(), false, false );
 					return $else;
 				}
 				$parser->getOutput()->addImage(
@@ -926,7 +928,7 @@ class ParserFunctions {
 	 * @param Language $language
 	 * @return ILanguageConverter
 	 */
-	private static function getLanguageConverter( Language $language ) : ILanguageConverter {
+	private static function getLanguageConverter( Language $language ): ILanguageConverter {
 		return MediaWikiServices::getInstance()
 			->getLanguageConverterFactory()
 			->getLanguageConverter( $language );

@@ -97,9 +97,10 @@
 	"visualeditor-dialog-transclusion-add-content": "सम्पर्क विवरण थप्ने",
 	"visualeditor-dialog-transclusion-add-param": "थप जानकारी",
 	"visualeditor-dialog-transclusion-add-template": "ढाँचा जोड्ने",
+	"visualeditor-dialog-transclusion-collapse-options": "छुपो विकल्पहरू",
 	"visualeditor-dialog-transclusion-content": "सामग्री",
+	"visualeditor-dialog-transclusion-expand-options": "विकल्पहरू देखाउनुहाेस्",
 	"visualeditor-dialog-transclusion-loading": "खुल्दै छ…",
-	"visualeditor-dialog-transclusion-multiple-mode": "विकल्पहरू देखाउनुहाेस्",
 	"visualeditor-dialog-transclusion-options": "विकल्पहरू",
 	"visualeditor-dialog-transclusion-param-default": "पुनर्निधारित: $1",
 	"visualeditor-dialog-transclusion-param-example": "उदाहरण $1",
@@ -108,8 +109,6 @@
 	"visualeditor-dialog-transclusion-remove-template": "ढाँचा हटाउनुहाेस्",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "पछाडि पर्कने",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "र पनि जारी राख्ने",
-	"visualeditor-dialog-transclusion-single-mode": "छुपो विकल्पहरू",
-	"visualeditor-dialog-transclusion-title": "पारदर्शिता",
 	"visualeditor-dialogbutton-media-tooltip": "तस्वीर र मिडियाहरू",
 	"visualeditor-dialogbutton-meta-tooltip": "प्याड सेटिङ्गहरू",
 	"visualeditor-dialogbutton-template-tooltip": "टेम्प्लेट",
@@ -188,6 +187,5 @@
 	"visualeditor-title-error": "अमान्य शीर्षक।",
 	"visualeditor-version-label": "संस्करण",
 	"visualeditor-wikitext-progress": "विकिपाठलाई रूपान्तरण गर्नुहोस्",
-	"visualeditor-wikitextconvert-plain": "सादा पाठ प्रयोग गर्नुहोस्",
 	"visualeditor-wikitextconvert-convert": "wikitext मा रूपान्तरण गर्नुहोस्"
 }

@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Apzp79",
 			"Jay94ks",
 			"Ykhwong",
-			"아라",
-			"Apzp79"
+			"아라"
 		]
 	},
 	"skinname-monobook": "모노북",
@@ -16,8 +16,8 @@
 	"monobook-jumptonavigation": "둘러보기로 이동",
 	"monobook-jumptosearch": "검색으로 이동",
 	"monobook-more-actions": "더 보기",
+	"cactions-mobile": "문서 행위",
 	"monobook-cactions-label": "문서 행위",
 	"monobook-notifications-link": "알림 ($1)",
-	"monobook-notifications-link-none": "알림",
-	"monobook-responsive-label": "반응적인 모노북 디자인 사용"
+	"monobook-notifications-link-none": "알림"
 }

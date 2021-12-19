@@ -35,6 +35,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Usar le resultato de un previe requesta \"serializeforcache\" con iste clave. Supplanta $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID de captcha (quando salveguardar con un responsa captcha).",
 	"apihelp-visualeditoredit-param-captchaword": "Responsa al captcha (quando salveguardar con un responsa captcha).",
+	"apihelp-visualeditoredit-param-plugins": "Plug-ins associate al requesta API.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Datos arbitrari inviate per un plug-in con le requesta API.",
 	"apihelp-visualeditoredit-param-etag": "ETag a inviar.",
 	"apihelp-visualeditoredit-param-html": "HTML a inviar a Parsoid in excambio de wikitexto.",
 	"apihelp-visualeditoredit-param-minor": "Marca de modification minor.",

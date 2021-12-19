@@ -13,7 +13,7 @@
 	"visualeditor-dialog-media-size-choosefull": "Бүтэн хэмжээнд нь аваачих",
 	"visualeditor-dialog-media-type-none": "Үндсэн",
 	"visualeditor-dialog-meta-categories-input-hiddencategorieslabel": "Нуугдсан категориуд",
-	"visualeditor-dialog-transclusion-multiple-mode": "Сонголтуудыг харуулах",
-	"visualeditor-dialog-transclusion-placeholder": "Загвар нэмэх",
-	"visualeditor-dialog-transclusion-single-mode": "Сонголтуудыг нуух"
+	"visualeditor-dialog-transclusion-collapse-options": "Сонголтуудыг нуух",
+	"visualeditor-dialog-transclusion-expand-options": "Сонголтуудыг харуулах",
+	"visualeditor-dialog-transclusion-placeholder": "Загвар нэмэх"
 }

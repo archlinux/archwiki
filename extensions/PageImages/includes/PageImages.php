@@ -251,6 +251,10 @@ class PageImages {
 	public static function onBeforePageDisplay( OutputPage &$out, Skin &$skin ) {
 		$imageFile = self::getPageImage( $out->getContext()->getTitle() );
 		if ( !$imageFile ) {
+			$fallback = $out->getConfig()->get( 'PageImagesOpenGraphFallbackImage' );
+			if ( $fallback ) {
+				$out->addMeta( 'og:image', wfExpandUrl( $fallback, PROTO_CANONICAL ) );
+			}
 			return;
 		}
 

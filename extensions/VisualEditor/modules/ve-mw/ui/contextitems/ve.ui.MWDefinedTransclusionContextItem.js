@@ -111,7 +111,7 @@ ve.ui.MWDefinedTransclusionContextItem.static.getToolsByTitle = function () {
 /**
  * Get the tool definition that matches a specific model, if any
  *
- * @param {ve.dm.Model} model Model
+ * @param {ve.dm.Model} model
  * @return {Object|null} Tool definition, or null if no match
  */
 ve.ui.MWDefinedTransclusionContextItem.static.getMatchedTool = function ( model ) {

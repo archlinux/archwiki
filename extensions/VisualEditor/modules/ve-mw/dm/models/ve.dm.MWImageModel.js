@@ -226,7 +226,7 @@ ve.dm.MWImageModel.static.newFromImageNode = function ( node ) {
 /**
  * Get the hash object of the current image model state.
  *
- * @return {Object} Hash object
+ * @return {Object}
  */
 ve.dm.MWImageModel.prototype.getHashObject = function () {
 	var hash = {
@@ -819,7 +819,7 @@ ve.dm.MWImageModel.prototype.getVerticalAlignment = function () {
  * Get the scalable object responsible for size manipulations
  * for the given image
  *
- * @return {ve.dm.Scalable} Scalable object
+ * @return {ve.dm.Scalable}
  */
 ve.dm.MWImageModel.prototype.getScalable = function () {
 	return this.scalable;
@@ -1126,7 +1126,7 @@ ve.dm.MWImageModel.prototype.getImageHref = function () {
  * Attach a new scalable object to the model and request the
  * information from the API.
  *
- * @param {ve.dm.Scalable} scalable Scalable object
+ * @param {ve.dm.Scalable} scalable
  */
 ve.dm.MWImageModel.prototype.attachScalable = function ( scalable ) {
 	var imageName = mw.libs.ve.normalizeParsoidResourceName( this.getResourceName() ),

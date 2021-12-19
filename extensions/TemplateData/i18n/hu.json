@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Balint36",
 			"Bencemac",
 			"Bináris",
 			"Csega",
 			"Máté",
 			"Tacsipacsi",
 			"Tgr",
-			"Urbalazs",
-			"Balint36"
+			"Urbalazs"
 		]
 	},
 	"templatedata-desc": "A sablonok paraméterezését leíró adatokat tárol (JSON formátumban)",
@@ -28,6 +28,7 @@
 	"templatedata-doc-param-status-optional": "opcionális",
 	"templatedata-doc-param-status-required": "kötelező",
 	"templatedata-doc-param-status-suggested": "ajánlott",
+	"templatedata-doc-param-suggestedvalues": "Javasolt értékek",
 	"templatedata-doc-param-type": "Típus",
 	"templatedata-doc-param-type-boolean": "Logikai",
 	"templatedata-doc-param-type-content": "Tartalom",
@@ -97,6 +98,8 @@
 	"templatedata-modal-table-param-name": "Név",
 	"templatedata-modal-table-param-required": "Kötelező",
 	"templatedata-modal-table-param-suggested": "Ajánlott",
+	"templatedata-modal-table-param-suggestedvalues": "Javasolt értékek",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "Érték hozzáadása…",
 	"templatedata-modal-table-param-type": "Típus",
 	"templatedata-modal-table-param-uneditablefield": "Nem szerkeszthető",
 	"templatedata-modal-title": "Sablondokumentáció-szerkesztő",

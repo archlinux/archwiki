@@ -143,7 +143,7 @@ class SyntaxInfo {
 		if ( $this->featureList === null ) {
 			$features = [];
 			$this->root->traverse(
-				function ( $node ) use ( &$features ) {
+				static function ( $node ) use ( &$features ) {
 					if ( $node instanceof Node ) {
 						$newFeatures = self::$featuresByNodeType[$node->type] ?? [];
 						foreach ( $newFeatures as $feature ) {

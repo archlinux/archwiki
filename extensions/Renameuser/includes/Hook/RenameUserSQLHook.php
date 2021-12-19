@@ -15,6 +15,6 @@ interface RenameUserSQLHook {
 	 *
 	 * @param RenameuserSQL $renameUserSql
 	 */
-	public function onRenameUserSQL( RenameuserSQL $renameUserSql ) : void;
+	public function onRenameUserSQL( RenameuserSQL $renameUserSql ): void;
 
 }

@@ -20,14 +20,11 @@ class MetaHandlerTest extends TestCase {
 	 * @param array $extraMethodsToMock
 	 * @return WikitextSerializer|MockObject
 	 */
-	private function getBaseSerializerMock( $extraMethodsToMock = [] ) {
+	private function getBaseSerializerMock( array $extraMethodsToMock = [] ): WikitextSerializer {
 		$serializer = $this->getMockBuilder( WikitextSerializer::class )
 			->disableOriginalConstructor()
-			->setMethods( array_merge( [ 'buildSep', 'trace' ], $extraMethodsToMock ) )
+			->onlyMethods( array_merge( [ 'trace' ], $extraMethodsToMock ) )
 			->getMock();
-		$serializer->expects( $this->any() )
-			->method( 'buildSep' )
-			->willReturn( '' );
 		$serializer->expects( $this->any() )
 			->method( 'trace' )
 			->willReturn( null );
@@ -35,7 +32,7 @@ class MetaHandlerTest extends TestCase {
 		return $serializer;
 	}
 
-	protected function processMeta( $env, $state, $html, $res ) {
+	protected function processMeta( MockEnv $env, SerializerState $state, string $html, string $res ): void {
 		$doc = ContentUtils::createAndLoadDocument( $html );
 		$metaNode = DOMCompat::getBody( $doc )->firstChild;
 

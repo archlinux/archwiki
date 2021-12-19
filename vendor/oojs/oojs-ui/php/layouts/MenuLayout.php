@@ -41,9 +41,8 @@ class MenuLayout extends Layout {
 	 *      - bool $config['expanded'] Expand content to fill the parent element (default: true)
 	 *      - bool $config['showMenu'] Show menu (default: true)
 	 *      - string $config['menuPosition'] top, after, bottom, before (default: before)
-	 * @codingStandardsIgnoreStart
+	 * @phpcs:ignore Generic.Files.LineLength
 	 * @phan-param array{menuPanel:PanelLayout,contentPanel:PanelLayout,expanded?:bool,showMenu?:bool,menuPosition?:string} $config
-	 * @codingStandardsIgnoreEnd
 	 */
 	public function __construct( array $config = [] ) {
 		$config = array_merge( [

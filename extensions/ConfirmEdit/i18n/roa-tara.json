@@ -33,5 +33,5 @@
 	"confirmedit-preview-validity": "Validità",
 	"confirmedit-preview-valid": "valide",
 	"confirmedit-preview-invalid": "invalide",
-	"confirmedit-preview-description": "'A tabbelle ca avéne face 'ndrucà l'elenghe de le linée sus a sta pàgene e ce jè 'n'indirizze IP o 'n'indervalle de indirizze IP. Ce 'a linée jè 'n'indirizze IP valide o 'n'indervalle de indirizze IP, avène sckaffate jndr'à ''whitelist'' da 'u CAPTCHA, ma le linée ca no sò valide avènene cacate. 'N'esembie de indervalle de indirizze IP valide pò essere: 69.208.0.0/16 ca vèje da 69.208.0.0 'nzigne a  69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Cchiù 'mbormaziune] sus a 'u calcole de 'n'indervalle de indirizze IP."
+	"confirmedit-preview-description": "'A tabbelle ca avéne face 'ndrucà l'elenghe de le linée sus a sta pàgene e ce jè 'n'indirizze IP o 'n'indervalle de indirizze IP. Ce 'a linée jè 'n'indirizze IP valide o 'n'indervalle de indirizze IP, avène escluse da 'u condrolle d'u CAPTCHA, ma le linée ca no sò valide avènene cacate. 'N'esembie de indervalle de indirizze IP valide pò essere: 69.208.0.0/16 ca vèje da 69.208.0.0 'nzigne a  69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Cchiù 'mbormaziune] sus a 'u calcole de 'n'indervalle de indirizze IP."
 }

@@ -360,12 +360,12 @@ class Tag {
 	 * vulnerability. (Note that URLs must be HTML-escaped regardless of this check.)
 	 *
 	 * The point is to disallow 'javascript:' URLs (there are no good reasons to ever use them
-	 * anyway), but there's no good way to blacklist them because of very lax parsing in browsers.
+	 * anyway), but there's no good way to prohibit them because of very lax parsing in browsers.
 	 *
 	 * An URL is safe if:
 	 *
 	 *  - it is empty, or
-	 *  - it starts with a whitelisted protocol, followed by a colon (absolute URL), or
+	 *  - it starts with an allowed protocol, followed by a colon (absolute URL), or
 	 *  - it starts with two slashes `//` (protocol-relative URL), or
 	 *  - it starts with a single slash `/`, or dot and slash `./` (relative URL), or
 	 *  - it starts with a question mark `?` (replace query part in current URL), or
@@ -379,7 +379,7 @@ class Tag {
 	 */
 	public static function isSafeUrl( $url ) {
 		// Keep this function in sync with OO.ui.isSafeUrl
-		$protocolWhitelist = [
+		$protocolAllowList = [
 			// Sourced from MediaWiki's $wgUrlProtocols
 			'bitcoin', 'ftp', 'ftps', 'geo', 'git', 'gopher', 'http', 'https', 'irc', 'ircs',
 			'magnet', 'mailto', 'mms', 'news', 'nntp', 'redis', 'sftp', 'sip', 'sips', 'sms', 'ssh',
@@ -390,7 +390,7 @@ class Tag {
 			return true;
 		}
 
-		foreach ( $protocolWhitelist as $protocol ) {
+		foreach ( $protocolAllowList as $protocol ) {
 			if ( self::stringStartsWith( $url, $protocol . ':' ) ) {
 				return true;
 			}

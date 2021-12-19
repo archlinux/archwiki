@@ -22,8 +22,6 @@
 	"categorytree-mode-all": "تمام صفحات",
 	"categorytree-collapse": "چھپائیں",
 	"categorytree-expand": "وسیع کریں",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "اس میں {{PLURAL:$1|1 ذیلی زمرہ|$1 ذیلی زمرہ جات}}، {{PLURAL:$2|1 صفحہ|$2 صفحات}} اور {{PLURAL:$3|1 فائل|$3 فائلیں}} موجود ہیں/ہے۔",
 	"categorytree-num-categories": "$1 ز",
 	"categorytree-num-pages": "$1 ص",

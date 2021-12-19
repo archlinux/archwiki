@@ -74,19 +74,6 @@ body {
 }
 
 /* general styles */
-a {
-	color: @link;
-}
-
-a:visited {
-	color: @link-visited;
-}
-
-a.new,
-#p-personal a.new {
-	color: @link-new;
-}
-
 ul {
 	list-style-type: square;
 	.list-style-image( 'images/bullet.svg' );
@@ -105,7 +92,6 @@ pre,
 }
 
 .mw-indicators {
-	float: right;
 	line-height: 1.5em;
 	font-size: 95%;
 }
@@ -188,12 +174,30 @@ table.rimage {
 	color: @text-color;
 	border-collapse: collapse;
 
-	/* allows .pBody styles to wrap around content added via BaseTemplateAfterPortlet hook */
+	/* allows .pBody styles to wrap around content added via SkinAfterPortlet hook */
 	&:after {
 		content: '';
 		clear: both;
 		display: block;
 	}
+}
+
+/* Set `text-transform` only on languages where capitalization is not significant.
+** Translates to all, which don't carry `.monobook-capitalize-all-nouns` at `body`.
+*/
+body:not( .monobook-capitalize-all-nouns ) {
+	.portlet h3,
+	#p-personal ul,
+	#p-cactions ul li a {
+		text-transform: lowercase;
+	}
+}
+
+/* Don't lowercase username */
+li#pt-userpage,
+/* Sometimes people don't want personal tools to be lowercase! */
+.no-text-transform {
+	text-transform: none;
 }
 
 /*
@@ -358,4 +362,24 @@ div.mw-lag-warn-high {
 /* Tooltips are outside of the normal body code, so this helps make the size of the text sensible */
 .tipsy {
 	font-size: 127%;
+}
+
+// Directionality styles previously provided by the deprecated`legacy` feature (T287410)
+// for HTML elements which do not carry dir HTML attributes.
+// These have been copied across to MonoBook to minimize disruption caused by T287701.
+// If you are reading this comment in 2022, please consider checking usage in wikitext and
+// removing them both.
+.mw-content-ltr {
+	/* @noflip */
+	direction: ltr;
+}
+
+.mw-content-rtl {
+	/* @noflip */
+	direction: rtl;
+}
+
+// MonoBook makes use of Skin::getClear, must provide its own style following T287410.
+.visualClear {
+	clear: both;
 }

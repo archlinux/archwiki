@@ -20,9 +20,12 @@
 		]
 	},
 	"Hooks": {
-		"SidebarBeforeOutput": [
-			"MediaWiki\\Extension\\CiteThisPage\\Hooks::onSidebarBeforeOutput"
-		]
+		"SidebarBeforeOutput": "CiteThisPageHookHandler"
+	},
+	"HookHandlers": {
+		"CiteThisPageHookHandler": {
+			"class": "MediaWiki\\Extension\\CiteThisPage\\Hooks"
+		}
 	},
 	"ResourceModules": {
 		"ext.citeThisPage": {

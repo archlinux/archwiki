@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Muskwatch"
+			"Muskwatch",
+			"Amire80"
 		]
 	},
-	"tooltip-ca-ve-edit": "ka qw'lasiitucw ti umat t'ayc",
-	"visualeditor-ca-editsource": "qw'lasiitucw tc cats",
+	"tooltip-ca-ve-edit": "Ka qw'lasiitucw ti umat t'ayc",
+	"visualeditor-ca-editsource": "Qw'lasiitucw tc cats",
 	"visualeditor-ca-editsource-section": "qw'lasiitucw tc cats"
 }

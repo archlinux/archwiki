@@ -112,13 +112,12 @@ ve.dm.MWTransclusionNode.static.blockType = 'mwTransclusionBlock';
 ve.dm.MWTransclusionNode.static.cellType = 'mwTransclusionTableCell';
 
 ve.dm.MWTransclusionNode.static.toDataElement = function ( domElements, converter ) {
-	var dataElement,
-		mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+	var mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {},
 		isInline = this.isHybridInline( domElements, converter ),
 		type = isInline ? this.inlineType : this.blockType;
 
-	dataElement = {
+	var dataElement = {
 		type: type,
 		attributes: {
 			mw: mwData,
@@ -139,16 +138,14 @@ ve.dm.MWTransclusionNode.static.toDataElement = function ( domElements, converte
 };
 
 ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var els, i, len, span, value,
-		modelNode, viewNode,
+	var els, value,
 		store = converter.getStore(),
 		originalMw = dataElement.attributes.originalMw,
 		originalDomElements = store.value( dataElement.originalDomElementsHash );
 
 	function wrapTextNode( node ) {
-		var wrapper;
 		if ( node.nodeType === Node.TEXT_NODE ) {
-			wrapper = doc.createElement( 'span' );
+			var wrapper = doc.createElement( 'span' );
 			wrapper.appendChild( node );
 			return wrapper;
 		}
@@ -189,7 +186,7 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		// If the first element is a <link>, <meta> or <style> tag, e.g. a category or TemplateStyles,
 		// ensure it is not destroyed by copy-paste by replacing it with a span
 		if ( els[ 0 ].tagName === 'LINK' || els[ 0 ].tagName === 'META' || els[ 0 ].tagName === 'STYLE' ) {
-			span = doc.createElement( 'span' );
+			var span = doc.createElement( 'span' );
 			span.setAttribute( 'typeof', 'mw:Transclusion' );
 			span.setAttribute( 'data-mw', els[ 0 ].getAttribute( 'data-mw' ) );
 			els[ 0 ] = span;
@@ -205,15 +202,15 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		els[ 0 ].setAttribute( 'data-ve-no-generated-contents', true );
 
 		// ... and mark all but the first child as ignorable
-		for ( i = 1, len = els.length; i < len; i++ ) {
+		for ( var i = 1; i < els.length; i++ ) {
 			// Wrap plain text nodes so we can give them an attribute
 			els[ i ] = wrapTextNode( els[ i ] );
 			els[ i ].setAttribute( 'data-ve-ignore', 'true' );
 		}
 	} else if ( converter.isForPreview() ) {
-		modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
+		var modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
 		modelNode.setDocument( converter.internalList.getDocument() );
-		viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
+		var viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
 		if ( !viewNode.hasRendering() ) {
 			viewNode.onSetup();
 			viewNode.$element
@@ -228,7 +225,7 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 };
 
 ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) {
-	var change, params, param, paramChanges, listItem, from, to,
+	var param, paramChanges,
 		descriptions = [ ve.msg( 'visualeditor-changedesc-mwtransclusion' ) ];
 
 	// This method assumes that the behavior of isDiffComparable above remains
@@ -251,7 +248,7 @@ ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) 
 		// The bits of a template we care about are deeply-nested inside an
 		// attribute. We'll restructure this so that we can pretend template
 		// params are the direct attributes of the template.
-		params = {};
+		var params = {};
 		for ( param in attributeChanges.mw.from.parts[ 0 ].template.params ) {
 			params[ param ] = { from: getLabel( attributeChanges.mw.from.parts[ 0 ].template.params[ param ] ) };
 		}
@@ -266,16 +263,16 @@ ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) 
 			// helpful just-being-given-the-changed-bits, so we have to filter
 			// this ourselves.
 			// Trim string values, and convert empty strings to undefined
-			from = ( params[ param ].from || '' ).trim() || undefined;
-			to = ( params[ param ].to || '' ).trim() || undefined;
+			var from = ( params[ param ].from || '' ).trim() || undefined,
+				to = ( params[ param ].to || '' ).trim() || undefined;
 			if ( from !== to ) {
-				change = this.describeChange( param, { from: from, to: to } );
+				var change = this.describeChange( param, { from: from, to: to } );
 				if ( change ) {
 					if ( !paramChanges ) {
 						paramChanges = document.createElement( 'ul' );
 						descriptions.push( paramChanges );
 					}
-					listItem = document.createElement( 'li' );
+					var listItem = document.createElement( 'li' );
 					if ( typeof change === 'string' ) {
 						listItem.appendChild( document.createTextNode( change ) );
 					} else {
@@ -310,15 +307,14 @@ ve.dm.MWTransclusionNode.static.cloneElement = function () {
  * @return {string} Escaped parameter value
  */
 ve.dm.MWTransclusionNode.static.escapeParameter = function ( param ) {
-	var match, needsNowiki,
-		input = param,
+	var input = param,
 		output = '',
 		inNowiki = false,
 		bracketStack = 0,
 		linkStack = 0;
 
 	while ( input.length > 0 ) {
-		match = input.match( /(?:\[\[)|(?:\]\])|(?:\{\{)|(?:\}\})|\|+|<\/?nowiki>|<nowiki\s*\/>/ );
+		var match = input.match( /(?:\[\[)|(?:\]\])|(?:\{\{)|(?:\}\})|\|+|<\/?nowiki>|<nowiki\s*\/>/ );
 		if ( !match ) {
 			output += input;
 			break;
@@ -333,7 +329,7 @@ ve.dm.MWTransclusionNode.static.escapeParameter = function ( param ) {
 				output += match[ 0 ];
 			}
 		} else {
-			needsNowiki = true;
+			var needsNowiki = true;
 			if ( match[ 0 ] === '<nowiki>' ) {
 				inNowiki = true;
 				needsNowiki = false;
@@ -372,11 +368,12 @@ ve.dm.MWTransclusionNode.static.escapeParameter = function ( param ) {
 };
 
 /**
- * Get the wikitext for this transclusion.
+ * Recreate the wikitext for this transclusion, possibly containing multiple template invocations,
+ * mixed with raw wikitext snippets.
  *
  * @static
  * @param {Object} content MW data content
- * @return {string} Wikitext like `{{foo|1=bar|baz=quux}}`
+ * @return {string} Wikitext
  */
 ve.dm.MWTransclusionNode.static.getWikitext = function ( content ) {
 	var i, len, part, template, param,
@@ -424,37 +421,36 @@ ve.dm.MWTransclusionNode.prototype.onAttributeChange = function ( key ) {
 /**
  * Check if transclusion contains only a single template.
  *
- * @param {string|string[]} [templates] Names of templates to allow, omit to allow any template name
+ * @param {string|string[]} [allowedTemplates] Names of templates to allow, omit to allow any template name
  * @return {boolean} Transclusion only contains a single template, which is one of the ones in templates
  */
-ve.dm.MWTransclusionNode.prototype.isSingleTemplate = function ( templates ) {
-	var i, len,
-		templateNS = mw.config.get( 'wgNamespaceIds' ).template,
-		partsList = this.getPartsList();
+ve.dm.MWTransclusionNode.prototype.isSingleTemplate = function ( allowedTemplates ) {
+	var templateNS = mw.config.get( 'wgNamespaceIds' ).template,
+		parts = this.getPartsList();
 
 	function normalizeTemplateTitle( name ) {
 		var title = mw.Title.newFromText( name, templateNS );
 		return title ? title.getPrefixedText() : name;
 	}
 
-	if ( partsList.length !== 1 ) {
+	// Bail out as early as possible when no filter is given, or it's not a single part anyway
+	var isSingle = parts.length === 1;
+	if ( !isSingle || !allowedTemplates ) {
+		return isSingle;
+	}
+
+	var singlePart = parts[ 0 ];
+	// It's not a template but e.g. a parser function or raw wikitext content
+	if ( !singlePart.templatePage ) {
 		return false;
 	}
-	if ( templates === undefined ) {
-		return true;
+
+	if ( typeof allowedTemplates === 'string' ) {
+		allowedTemplates = [ allowedTemplates ];
 	}
-	if ( typeof templates === 'string' ) {
-		templates = [ templates ];
-	}
-	for ( i = 0, len = templates.length; i < len; i++ ) {
-		if (
-			partsList[ 0 ].templatePage &&
-			partsList[ 0 ].templatePage === normalizeTemplateTitle( templates[ i ] )
-		) {
-			return true;
-		}
-	}
-	return false;
+	return allowedTemplates.some( function ( template ) {
+		return singlePart.templatePage === normalizeTemplateTitle( template );
+	} );
 };
 
 /**
@@ -463,21 +459,21 @@ ve.dm.MWTransclusionNode.prototype.isSingleTemplate = function ( templates ) {
  * @return {Object[]} List of objects with either template or content properties
  */
 ve.dm.MWTransclusionNode.prototype.getPartsList = function () {
-	var i, len, href, page, part, content;
-
 	if ( !this.partsList ) {
 		this.partsList = [];
-		content = this.getAttribute( 'mw' );
-		for ( i = 0, len = content.parts.length; i < len; i++ ) {
-			part = content.parts[ i ];
+		var content = this.getAttribute( 'mw' );
+		for ( var i = 0; i < content.parts.length; i++ ) {
+			var part = content.parts[ i ];
+			// A template as serialized by {@see ve.dm.MWTemplateModel.serialize}
 			if ( part.template ) {
-				href = part.template.target.href;
-				page = href ? mw.libs.ve.normalizeParsoidResourceName( href ) : null;
+				var href = part.template.target.href,
+					page = href ? mw.libs.ve.normalizeParsoidResourceName( href ) : null;
 				this.partsList.push( {
 					template: part.template.target.wt,
 					templatePage: page
 				} );
 			} else {
+				// Raw wikitext as serialized by {@see ve.dm.MWTransclusionContentModel.serialize}
 				this.partsList.push( { content: part } );
 			}
 		}
@@ -487,9 +483,9 @@ ve.dm.MWTransclusionNode.prototype.getPartsList = function () {
 };
 
 /**
- * Wrapper for static method
+ * Wrapper for static method, {@see ve.dm.MWTransclusionNode.static.getWikitext} above.
  *
- * @return {string} Wikitext like `{{foo|1=bar|baz=quux}}`
+ * @return {string} Wikitext
  */
 ve.dm.MWTransclusionNode.prototype.getWikitext = function () {
 	return this.constructor.static.getWikitext( this.getAttribute( 'mw' ) );

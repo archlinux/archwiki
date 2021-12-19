@@ -4,6 +4,7 @@ namespace Vector;
 
 use MediaWiki\MediaWikiServices;
 use Vector\FeatureManagement\FeatureManager;
+use Vector\Services\LanguageService;
 
 /**
  * A service locator for services specific to Vector.
@@ -23,5 +24,14 @@ final class VectorServices {
 	 */
 	public static function getFeatureManager(): FeatureManager {
 		return MediaWikiServices::getInstance()->getService( Constants::SERVICE_FEATURE_MANAGER );
+	}
+
+	/**
+	 * Gets the language service.
+	 *
+	 * @return LanguageService
+	 */
+	public static function getLanguageService(): LanguageService {
+		return new LanguageService();
 	}
 }

@@ -44,5 +44,7 @@
 	"visualeditor-dialog-meta-settings-newsectioneditlink-disable": "A'a",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "Eh",
 	"visualeditor-dialog-meta-settings-toc-force": "Koda yaushe",
-	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Koma baya"
+	"visualeditor-dialog-transclusion-action-save": "Ajiye",
+	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Koma baya",
+	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "Cigaba da gyarawa"
 }

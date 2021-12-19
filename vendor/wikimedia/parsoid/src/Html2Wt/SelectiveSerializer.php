@@ -4,14 +4,14 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Html2Wt;
 
 use Composer\Semver\Semver;
-use DOMComment;
-use DOMDocument;
-use DOMElement;
-use DOMText;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\DOM\Comment;
+use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -39,7 +39,6 @@ class SelectiveSerializer {
 	private $selserData;
 
 	/**
-	 * SelectiveSerializer constructor.
 	 * @param array $options
 	 */
 	public function __construct( $options ) {
@@ -72,10 +71,10 @@ class SelectiveSerializer {
 	 * have selser reuse apply to them and the speculatively computed DSR values will
 	 * be discarded.
 	 *
-	 * @param DOMElement $body
+	 * @param Element $body
 	 * @param string $nodeName
 	 */
-	private function wrapTextChildrenOfNode( DOMElement $body, string $nodeName ): void {
+	private function wrapTextChildrenOfNode( Element $body, string $nodeName ): void {
 		// Note that while it might seem that only the first and last child need to be
 		// wrapped, when nested list items are added, the previously last child of
 		// a list item become an intermediate child in the new DOM. Without the span
@@ -117,26 +116,35 @@ class SelectiveSerializer {
 					}
 				}
 				$next = $c->nextSibling;
-				if ( $c instanceof DOMText ) {
+				if ( $c instanceof Text ) {
 					$text = $c->nodeValue;
 					$len = strlen( $text );
+
+					// Don't wrap newlines since single-line-context handling will convert these
+					// newlines into spaces and introduce dirty-diffs. Leaving nls outside the
+					// wrapped text lets it be handled as separator text and emitted appropriately.
 					if ( $len > 0 && $text[$len - 1] === "\n" ) {
-						$nl = "\n";
 						$text = rtrim( $text, "\n" );
-						$len--;
+						$numOfNls = $len - strlen( $text );
+						$nl = str_repeat( "\n", $numOfNls );
+						$len -= $numOfNls;
 					} else {
 						$nl = null;
-					}
 
-					// Detect last child of "original" item and tack on trailingWS width
-					// to the contents of this text node. If this is a list item and
-					// we added a nested list, that nested list will be the last item.
-					if ( $eltDSR && (
-						!$next || (
-							$inListItem && DOMUtils::isList( $next ) && WTUtils::isNewElt( $next )
-						)
-					) ) {
-						$len += $eltDSR->trailingWS;
+						// Detect last child of "original" item and tack on trailingWS width
+						// to the contents of this text node. If this is a list item and
+						// we added a nested list, that nested list will be the last item.
+						//
+						// Note that trailingWS is only captured for the last line, so if
+						// the text ends in a newline (the "if" condition), we shouldn't need
+						// to do this.
+						if ( $eltDSR && (
+							!$next || (
+								$inListItem && DOMUtils::isList( $next ) && WTUtils::isNewElt( $next )
+							)
+						) ) {
+							$len += $eltDSR->trailingWS;
+						}
 					}
 
 					$span = $doc->createElement( 'span' );
@@ -149,13 +157,14 @@ class SelectiveSerializer {
 						$elt->insertBefore( $span, $c );
 						$span->appendChild( $doc->createTextNode( $text ) );
 						$c->nodeValue = $nl;
+						$start += $numOfNls;
 					} else {
 						$elt->replaceChild( $span, $c );
 						$span->appendChild( $c );
 					}
-				} elseif ( $c instanceof DOMComment ) {
+				} elseif ( $c instanceof Comment ) {
 					$start += WTUtils::decodedCommentLength( $c );
-				} elseif ( $c instanceof DOMElement ) {
+				} elseif ( $c instanceof Element ) {
 					// No point wrapping following text nodes if there won't be any usable DSR
 					$cDSR = DOMDataUtils::getDataParsoid( $c )->dsr ?? null;
 					if ( !Utils::isValidDSR( $cDSR ) ) {
@@ -170,9 +179,9 @@ class SelectiveSerializer {
 	}
 
 	/**
-	 * @param DOMElement $body
+	 * @param Element $body
 	 */
-	private function preprocessDOM( DOMElement $body ): void {
+	private function preprocessDOM( Element $body ): void {
 		if ( Semver::satisfies( $this->env->getInputContentVersion(), '>=2.1.2' ) ) {
 			// Wrap text node children of <li> elements in dummy spans
 			$this->wrapTextChildrenOfNode( $body, 'li' );
@@ -185,10 +194,10 @@ class SelectiveSerializer {
 	 *
 	 * WARNING: You probably want to use WikitextContentModelHandler::fromDOM instead.
 	 *
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @return string
 	 */
-	public function serializeDOM( DOMDocument $doc ): string {
+	public function serializeDOM( Document $doc ): string {
 		$serializeStart = null;
 		$domDiffStart = null;
 		$r = null;

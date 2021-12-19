@@ -105,8 +105,8 @@ class RadioSelectInputWidget extends InputWidget {
 		return $this;
 	}
 
-	public function setDisabled( $state ) {
-		parent::setDisabled( $state );
+	public function setDisabled( $disabled ) {
+		parent::setDisabled( $disabled );
 		foreach ( $this->fields as $field ) {
 			$field->getField()->setDisabled( $this->isDisabled() );
 		}
@@ -114,13 +114,14 @@ class RadioSelectInputWidget extends InputWidget {
 	}
 
 	public function getConfig( &$config ) {
-		$o = [];
+		$options = [];
 		foreach ( $this->fields as $field ) {
-			$label = $field->getLabel();
-			$data = $field->getField()->getValue();
-			$o[] = [ 'data' => $data, 'label' => $label ];
+			$options[] = [
+				'data' => $field->getField()->getValue(),
+				'label' => $field->getLabel(),
+			];
 		}
-		$config['options'] = $o;
+		$config['options'] = $options;
 		return parent::getConfig( $config );
 	}
 }

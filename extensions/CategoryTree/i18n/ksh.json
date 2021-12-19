@@ -19,7 +19,6 @@
 	"categorytree-mode-all": "alles: nomahl Sigge, Saachjroppe, un Mehdije",
 	"categorytree-collapse": "zosammefallde",
 	"categorytree-expand": "opfallde",
-	"categorytree-empty-bullet": "►",
 	"categorytree-member-counts": "do dren {{PLURAL:$1|{{PLURAL:$4|sin|es|es}} ein Ungerjrupp|sin $1 Ungerjruppe|es kein Ungerjrupp}}, {{PLURAL:$2|ein Sigg|$2 Sigge|kein Sigg}}, un {{PLURAL:$3|ein Datei|$3 Dateie|kein Dateie}}, zosamme {{PLURAL:$4|ein Saach|$4 Saache|och nix}}",
 	"categorytree-num-categories": "$1&nbsp;J",
 	"categorytree-num-pages": "$1&nbsp;S",

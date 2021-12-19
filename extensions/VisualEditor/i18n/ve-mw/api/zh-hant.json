@@ -38,6 +38,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "使用上次 serializeforcache 請求的結果以及此金鑰。覆蓋 $1html。",
 	"apihelp-visualeditoredit-param-captchaid": "驗證碼 ID (當使用驗證碼儲存時)。",
 	"apihelp-visualeditoredit-param-captchaword": "回答驗證碼 (當使用驗證碼儲存時)。",
+	"apihelp-visualeditoredit-param-plugins": "與 API 請求關聯的套件。",
+	"apihelp-visualeditoredit-param-data-{plugin}": "由帶有 API 請求的套件發送的隨意資料。",
 	"apihelp-visualeditoredit-param-etag": "要傳送的 ETag。",
 	"apihelp-visualeditoredit-param-html": "要傳送至 Parsoid 轉換為 WikiText 的 HTML。",
 	"apihelp-visualeditoredit-param-minor": "標記為小編輯。",

@@ -29,5 +29,7 @@
 	"vector-jumptonavigation": "Spring til navigation",
 	"vector-jumptosearch": "Spring til søgning",
 	"vector-jumptocontent": "Spring til indhold",
-	"vector-more-actions": "Mere"
+	"vector-more-actions": "Mere",
+	"vector-anon-user-menu-pages-learn": "lær mere",
+	"vector-main-menu-tooltip": "Hovedmenu"
 }

@@ -6,7 +6,7 @@
 	"license-name": "WTFPL",
 	"type": "api",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.37.0"
 	},
 	"APIPropModules": {
 		"pageimages": "PageImages\\ApiQueryPageImages"
@@ -65,16 +65,16 @@
 				}
 			}
 		},
-		"PageImagesBlacklist": {
+		"PageImagesDenylist": {
 			"value": [
 				{
 					"type": "db",
-					"page": "MediaWiki:Pageimages-blacklist",
+					"page": "MediaWiki:Pageimages-denylist",
 					"db": false
 				}
 			]
 		},
-		"PageImagesBlacklistExpiry": {
+		"PageImagesDenylistExpiry": {
 			"value": 900
 		},
 		"PageImagesExpandOpenSearchXml": {
@@ -95,6 +95,10 @@
 		"PageImagesAPIDefaultLicense": {
 			"description": "Get images with either a 'free' license or 'any' (including free and non-free) license by default, via 'pilicense' option, in pageprops query api. The value of this setting should be either 'free' or 'any'.",
 			"value": "free"
+		},
+		"PageImagesOpenGraphFallbackImage": {
+			"description": "A url to fallback image that will be shown when there is no image on a page.",
+			"value": false
 		}
 	},
 	"manifest_version": 2

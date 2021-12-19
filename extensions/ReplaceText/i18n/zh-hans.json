@@ -45,7 +45,8 @@
 	"replacetext_continue": "继续",
 	"replacetext_announce": "通过$1和监视列表通知这些编辑",
 	"replacetext_editsummary": "文本替换 - 替换“$1”为“$2”",
+	"replacetext_reminder": "要同时修改其他页面中链入此页面的链接，请前往$1。",
+	"replacetext_cfg_error": "ReplaceText配置错误",
 	"right-replacetext": "在整个wiki进行字符串替换",
-	"action-replacetext": "在整个wiki进行字符串替换",
-	"replacetext_reminder": "要同时修改其他页面中链入此页面的链接，请前往$1。"
+	"action-replacetext": "在整个wiki进行字符串替换"
 }

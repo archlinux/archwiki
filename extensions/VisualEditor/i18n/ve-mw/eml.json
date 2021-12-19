@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Gloria sah",
-			"Lévi"
+			"Lévi",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Fà al côdis surzèia ed cla pàgina ché",
@@ -87,12 +88,13 @@
 	"visualeditor-dialog-transclusion-add-content": "Zûnta j argumèint",
 	"visualeditor-dialog-transclusion-add-param": "Śuntèr piò infurmasiòun",
 	"visualeditor-dialog-transclusion-add-template": "Śuntèr di modē",
+	"visualeditor-dialog-transclusion-collapse-options": "Nascònd'r el siélti",
 	"visualeditor-dialog-transclusion-content": "Cuntgnû",
+	"visualeditor-dialog-transclusion-expand-options": "Fer vèder dal siélti",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Càmp vèć",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Al càmp 'l è vèć. $1",
 	"visualeditor-dialog-transclusion-loading": "Drē a carghèr...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Fer vèder dal siélti",
-	"visualeditor-dialog-transclusion-no-template-description": "Al mudèl \"$1\" al gà mia incòra 'na spiegasiòun, mó prén èsregh soquânti infurmasiòun int la [[$1|pàgina dal mudèl]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Al mudèl \"$1\" al gà mia incòra 'na spiegasiòun, mó prén èsregh soquânti infurmasiòun int la [[$2|pàgina dal mudèl]].",
 	"visualeditor-dialog-transclusion-options": "Al sernidûri",
 	"visualeditor-dialog-transclusion-param-info": "Descrisiòun dal càmp",
 	"visualeditor-dialog-transclusion-param-info-missing": "A n'gh'è dispunìbil nisùna descrisiòun dal càmp",
@@ -103,8 +105,6 @@
 	"visualeditor-dialog-transclusion-required-parameter": "A gh'vōl al càmp",
 	"visualeditor-dialog-transclusion-required-parameter-description": "A bśògna mèt'r-egh al càmp.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Torna indrē",
-	"visualeditor-dialog-transclusion-single-mode": "Nascònd'r el siélti",
-	"visualeditor-dialog-transclusion-title": "Mèt dèinter un mudèl",
 	"visualeditor-dialogbutton-media-tooltip": "Média",
 	"visualeditor-dialogbutton-meta-tooltip": "I paràmeter 'dla pàgina",
 	"visualeditor-dialogbutton-template-tooltip": "Mudèl",

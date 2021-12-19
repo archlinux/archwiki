@@ -37,5 +37,5 @@
 	"confirmedit-preview-validity": "Validità",
 	"confirmedit-preview-valid": "valido",
 	"confirmedit-preview-invalid": "non valido",
-	"confirmedit-preview-description": "La seguente tabella mostra la lista delle linee su questa pagina e se è un indirizzo IP o un intervallo di indirizzi IP. Se la linea è un indirizzo IP valido o un intervallo di indirizzi IP, sarà inserito nella whitelist dal CAPTCHA, ma le linee non valide saranno ignorate. Un esempio di intervallo di indirizzi IP valido potrebbe essere: 69.208.0.0/16 che va da 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Ulteriori informazioni]  sul calcolo di un intervallo di indirizzi IP."
+	"confirmedit-preview-description": "La seguente tabella mostra la lista delle linee su questa pagina e se è un indirizzo IP o un intervallo di indirizzi IP. Se la linea è un indirizzo IP valido o un intervallo di indirizzi IP, sarà escluso dal controllo del CAPTCHA, ma le linee non valide saranno ignorate. Un esempio di intervallo di indirizzi IP valido potrebbe essere: 69.208.0.0/16 che va da 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Ulteriori informazioni]  sul calcolo di un intervallo di indirizzi IP."
 }

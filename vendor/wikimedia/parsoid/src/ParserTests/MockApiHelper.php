@@ -620,7 +620,7 @@ class MockApiHelper extends ApiHelper {
 				$turl .= '-';
 				if ( $mediatype === 'VIDEO' ) {
 					// Hack in a 'seek' option, if provided (T258767)
-					if ( preg_match( '/^seek/', $extraParam ?? '' ) ) {
+					if ( str_starts_with( $extraParam ?? '', 'seek' ) ) {
 						$turl .= $props['extraParams'][$extraParam] ?? '';
 					}
 					$turl .= '-';
@@ -776,7 +776,7 @@ class MockApiHelper extends ApiHelper {
 		if ( ( $params['prop'] ?? null ) === 'imageinfo' ) {
 			$response = [ 'query' => [] ];
 			$filename = $params['titles']; // assumes this is a single file
-			$tonum = function ( $x ) {
+			$tonum = static function ( $x ) {
 				return $x ? (int)$x : null;
 			};
 			$ii = self::imageInfo(

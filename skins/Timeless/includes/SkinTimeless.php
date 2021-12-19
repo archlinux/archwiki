@@ -12,11 +12,10 @@ class SkinTimeless extends SkinTemplate {
 	public function __construct(
 		array $options = []
 	) {
-		global $wgVersion;
 		$out = $this->getOutput();
 
 		// This code block can be removed when 1.35 is no longer supported.
-		if ( version_compare( $wgVersion, '1.36', '<' ) ) {
+		if ( version_compare( MW_VERSION, '1.36', '<' ) ) {
 			// Add external links - this is replaced by `content-links` feature in 1.36
 			$out->addModuleStyles( [
 				'mediawiki.skinning.content.externallinks'

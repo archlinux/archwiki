@@ -19,8 +19,8 @@
  * @cfg {boolean} [isReadOnly] Page is read-only
  */
 ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
-	var linkData, messageKey,
-		title = template.getTitle() ? mw.Title.newFromText( template.getTitle() ) : null;
+	var link = template.getTitle(),
+		veConfig = mw.config.get( 'wgVisualEditorConfig' );
 
 	// Configuration initialization
 	config = ve.extendObject( {
@@ -33,78 +33,121 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	// Properties
 	this.template = template;
 	this.spec = template.getSpec();
-	this.$more = $( '<div>' );
-	this.$description = $( '<div>' );
-	this.removeButton = new OO.ui.ButtonWidget( {
-		framed: false,
-		icon: 'trash',
-		title: ve.msg( 'visualeditor-dialog-transclusion-remove-template' ),
-		flags: [ 'destructive' ],
-		classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
-	} )
-		.connect( this, { click: 'onRemoveButtonClick' } );
+	this.$description = $( '<div>' )
+		.addClass( 've-ui-mwTemplatePage-description' );
 	this.infoFieldset = new OO.ui.FieldsetLayout( {
 		label: this.spec.getLabel(),
 		icon: 'puzzle'
 	} );
-	this.addButton = new OO.ui.ButtonWidget( {
-		framed: false,
-		icon: 'parameter',
-		label: ve.msg( 'visualeditor-dialog-transclusion-add-param' )
-	} )
-		.connect( this, { click: 'onAddButtonFocus' } );
 
 	// Initialization
-	this.$description.addClass( 've-ui-mwTemplatePage-description' );
-	if ( this.spec.getDescription() ) {
-		this.$description.text( this.spec.getDescription() );
-		if ( title ) {
+	this.$description
+		.text( this.spec.getDescription() );
+
+	// The transcluded page may be dynamically generated or unspecified in the DOM
+	// for other reasons (T68724). In that case we can't tell the user what the
+	// template is called, nor link to the template page. However, if we know for
+	// certain that the template doesn't exist, be explicit about it (T162694).
+	var linkData = ve.init.platform.linkCache.getCached( '_missing/' + link ),
+		pageMissing = link && linkData && linkData.missing;
+
+	if ( link ) {
+		if ( this.spec.getDescription() ) {
 			this.$description
 				.append(
 					$( '<hr>' ),
 					$( '<span>' )
 						.addClass( 've-ui-mwTemplatePage-description-extra' )
-						.append( mw.message(
-							'visualeditor-dialog-transclusion-more-template-description',
-							title.getRelativeText( mw.config.get( 'wgNamespaceIds' ).template )
-						).parseDom() )
+						.append(
+							!veConfig.transclusionDialogNewSidebar ?
+								mw.message( 'visualeditor-dialog-transclusion-more-template-description',
+									this.spec.getLabel(), link ).parseDom() :
+								mw.message( 'visualeditor-dialog-transclusion-see-template',
+									link ).parseDom()
+						)
 				);
-			ve.targetLinksToNewWindow( this.$description[ 0 ] );
-		}
-	} else {
-		// The transcluded page may be dynamically generated or unspecified in the DOM
-		// for other reasons (T68724). In that case we can't tell the user what the
-		// template is called, nor link to the template page. However, if we know for
-		// certain that the template doesn't exist, be explicit about it (T162694).
-		if ( title ) {
-			linkData = ve.init.platform.linkCache.getCached( '_missing/' + title );
-			messageKey = linkData && linkData.missing ?
-				'visualeditor-dialog-transclusion-absent-template' :
-				'visualeditor-dialog-transclusion-no-template-description';
-
+		} else if ( pageMissing ) {
 			this.$description
 				.addClass( 've-ui-mwTemplatePage-description-missing' )
-				// The following messages are used here:
-				// * visualeditor-dialog-transclusion-absent-template
-				// * visualeditor-dialog-transclusion-no-template-description
-				.append( mw.message( messageKey, title.getPrefixedText() ).parseDom() );
-			ve.targetLinksToNewWindow( this.$description[ 0 ] );
+				.append( mw.message(
+					'visualeditor-dialog-transclusion-absent-template',
+					this.spec.getLabel()
+				).parseDom() );
+		} else if ( !veConfig.transclusionDialogNewSidebar || this.spec.isDocumented() ) {
+			this.$description
+				.addClass( 've-ui-mwTemplatePage-description-missing' )
+				.append( mw.message(
+					'visualeditor-dialog-transclusion-no-template-description',
+					this.spec.getLabel(), link
+				).parseDom() );
 		}
+		ve.targetLinksToNewWindow( this.$description[ 0 ] );
 	}
 	this.$description.find( 'a[href]' )
 		.on( 'click', function () {
 			ve.track( 'activity.transclusion', { action: 'template-doc-link-click' } );
 		} );
 
-	this.infoFieldset.$element.append( this.$description );
-	this.$more
-		.addClass( 've-ui-mwTemplatePage-more' )
-		.append( this.addButton.$element );
+	this.infoFieldset.$element
+		.append( this.$description );
+
+	if ( veConfig.transclusionDialogNewSidebar && !pageMissing ) {
+		var noticeWidget;
+
+		if ( !this.template.getSpec().getDocumentedParameterOrder().length ) {
+			noticeWidget = new OO.ui.MessageWidget( {
+				label: mw.message( 'visualeditor-dialog-transclusion-no-parameters-description' ).parseDom(),
+				classes: [ 've-ui-mwTransclusionDialog-template-note' ]
+			} );
+		} else if ( !this.template.getSpec().isDocumented() ) {
+			noticeWidget = new OO.ui.MessageWidget( {
+				label: mw.message( 'visualeditor-dialog-transclusion-no-template-data-description', link ).parseDom(),
+				classes: [ 've-ui-mwTransclusionDialog-template-note' ],
+				type: 'warning'
+			} );
+		}
+
+		if ( noticeWidget && noticeWidget.$element ) {
+			ve.targetLinksToNewWindow( noticeWidget.$element[ 0 ] );
+			this.infoFieldset.$element.append( noticeWidget.$element );
+		}
+	}
+
 	this.$element
 		.addClass( 've-ui-mwTemplatePage' )
 		.append( this.infoFieldset.$element );
+
 	if ( !config.isReadOnly ) {
-		this.$element.append( this.removeButton.$element, this.$more );
+		if ( !veConfig.transclusionDialogBackButton &&
+			!veConfig.transclusionDialogNewSidebar
+		) {
+			var removeButton = new OO.ui.ButtonWidget( {
+				framed: false,
+				icon: 'trash',
+				title: ve.msg( 'visualeditor-dialog-transclusion-remove-template' ),
+				flags: [ 'destructive' ],
+				classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
+			} )
+				.connect( this, { click: 'onRemoveButtonClick' } );
+			removeButton.$element.appendTo( this.$element );
+		}
+
+		if ( !veConfig.transclusionDialogNewSidebar ) {
+			// This button is only shown as a last resort when this …TemplatePage is neither followed by
+			// a …ParameterPage (i.e. the template doesn't have parameters) nor a
+			// …ParameterPlaceholderPage (i.e. the parameter search widget isn't shown). This state
+			// should be unreachable, but isn't. Hiding this is done via CSS.
+			var addButton = new OO.ui.ButtonWidget( {
+				framed: false,
+				icon: 'parameter',
+				label: ve.msg( 'visualeditor-dialog-transclusion-add-param' )
+			} )
+				.connect( this, { click: 'addPlaceholderParameter' } );
+			$( '<div>' )
+				.addClass( 've-ui-mwTemplatePage-more' )
+				.append( addButton.$element )
+				.appendTo( this.$element );
+		}
 	}
 };
 
@@ -134,6 +177,6 @@ ve.ui.MWTemplatePage.prototype.onRemoveButtonClick = function () {
 	this.template.remove();
 };
 
-ve.ui.MWTemplatePage.prototype.onAddButtonFocus = function () {
+ve.ui.MWTemplatePage.prototype.addPlaceholderParameter = function () {
 	this.template.addParameter( new ve.dm.MWParameterModel( this.template ) );
 };

@@ -27,10 +27,10 @@ class FormLayout extends Layout {
 		$this->initializeGroupElement( array_merge( [ 'group' => $this ], $config ) );
 
 		// Initialization
-		$attributeWhitelist = [ 'method', 'action', 'enctype' ];
+		$attributeAllowList = [ 'method', 'action', 'enctype' ];
 		$this
 			->addClasses( [ 'oo-ui-formLayout' ] )
-			->setAttributes( array_intersect_key( $config, array_flip( $attributeWhitelist ) ) );
+			->setAttributes( array_intersect_key( $config, array_flip( $attributeAllowList ) ) );
 		if ( isset( $config['items'] ) ) {
 			$this->addItems( $config['items'] );
 		}

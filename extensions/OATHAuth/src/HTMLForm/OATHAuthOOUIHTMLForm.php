@@ -79,7 +79,8 @@ abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm 
 	 */
 	public function displayForm( $submitResult ) {
 		if ( !$this->layoutContainer instanceof Layout ) {
-			return parent::displayForm( $submitResult );
+			parent::displayForm( $submitResult );
+			return;
 		}
 
 		$this->layoutContainer->appendContent( new HtmlSnippet(

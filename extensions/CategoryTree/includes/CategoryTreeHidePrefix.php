@@ -22,6 +22,8 @@
  * @author Daniel Kinzler, brightbyte.de
  */
 
+namespace MediaWiki\Extension\CategoryTree;
+
 /**
  * Constants for use with the hideprefix option,
  * defining when the namespace prefix should be hidden.

@@ -6,15 +6,20 @@
  */
 
 /**
- * MediaWiki template parameter.
+ * Represents a parameter that's part of a template invocation, centered around the parameter's
+ * value. Holds a reference to the specification of the template and the parameter as it is
+ * documented via TemplateData. Meant to be a sub-element of a {@see ve.dm.MWTemplateModel}, which
+ * is a sub-element of a {@see ve.dm.MWTransclusionModel}.
  *
  * @class
  * @mixins OO.EventEmitter
  *
  * @constructor
- * @param {ve.dm.MWTemplateModel} template Template
- * @param {string} [name=''] Parameter name
- * @param {string} [value=''] Parameter value
+ * @param {ve.dm.MWTemplateModel} template Reference back to the template that contains the
+ *  parameter, as well as to the specification
+ * @param {string} [name] Can be missing or empty when meant to be used as a placeholder. Parameters
+ *  without a name won't be serialized to wikitext, {@see ve.dm.MWTemplateModel.serialize}.
+ * @param {string} [value='']
  */
 ve.dm.MWParameterModel = function VeDmMWParameterModel( template, name, value ) {
 	// Mixin constructors
@@ -25,7 +30,7 @@ ve.dm.MWParameterModel = function VeDmMWParameterModel( template, name, value ) 
 	this.originalName = name;
 	this.name = typeof name === 'string' ? name.trim() : '';
 	this.value = value || '';
-	this.id = this.template.getId() + '/' + name;
+	this.id = this.template.getId() + '/' + this.name;
 };
 
 /* Inheritance */
@@ -35,43 +40,45 @@ OO.mixinClass( ve.dm.MWParameterModel, OO.EventEmitter );
 /* Events */
 
 /**
+ * Emitted when the parameter's value changed.
+ *
  * @event change
  */
 
 /* Methods */
 
 /**
- * Check if parameter is required.
- *
- * @return {boolean} Parameter is required
+ * @return {boolean}
  */
 ve.dm.MWParameterModel.prototype.isRequired = function () {
 	return this.template.getSpec().isParameterRequired( this.name );
 };
 
 /**
- * Check if parameter is suggested.
- *
- * @param {string} name Parameter name
- * @return {boolean} Parameter is suggested
+ * @return {boolean}
  */
 ve.dm.MWParameterModel.prototype.isSuggested = function () {
 	return this.template.getSpec().isParameterSuggested( this.name );
 };
 
 /**
- * Check if parameter is deprecated.
- *
- * @return {boolean} Parameter is deprecated
+ * @return {boolean}
  */
 ve.dm.MWParameterModel.prototype.isDeprecated = function () {
 	return this.template.getSpec().isParameterDeprecated( this.name );
 };
 
 /**
+ * @return {boolean}
+ */
+ve.dm.MWParameterModel.prototype.isDocumented = function () {
+	return this.template.getSpec().isParameterDocumented( this.name );
+};
+
+/**
  * Get template of which this parameter is part.
  *
- * @return {ve.dm.MWTemplateModel} Template
+ * @return {ve.dm.MWTemplateModel}
  */
 ve.dm.MWParameterModel.prototype.getTemplate = function () {
 	return this.template;
@@ -87,26 +94,22 @@ ve.dm.MWParameterModel.prototype.getId = function () {
 };
 
 /**
- * Get parameter name.
- *
- * @return {string} Parameter name
+ * @return {string} Trimmed parameter name, or an empty string if no name was provided
  */
 ve.dm.MWParameterModel.prototype.getName = function () {
 	return this.name;
 };
 
 /**
- * Get parameter name.
+ * Original parameter name. Will be used in {@see ve.dm.MWTransclusionPartModel.serialize}.
  *
- * @return {string} Parameter name
+ * @return {string|undefined} Untrimmed parameter name as provided on construction time
  */
 ve.dm.MWParameterModel.prototype.getOriginalName = function () {
 	return this.originalName;
 };
 
 /**
- * Get parameter value.
- *
  * @return {string} Parameter value, or automatic value if there is none stored.
  *  Otherwise an empty string.
  */
@@ -115,49 +118,48 @@ ve.dm.MWParameterModel.prototype.getValue = function () {
 };
 
 /**
- * Get default parameter value.
- *
- * @return {string} Default parameter value
+ * @return {string[]}
+ */
+ve.dm.MWParameterModel.prototype.getSuggestedValues = function () {
+	return this.template.getSpec().getParameterSuggestedValues( this.name );
+};
+
+/**
+ * @return {string}
  */
 ve.dm.MWParameterModel.prototype.getDefaultValue = function () {
 	return this.template.getSpec().getParameterDefaultValue( this.name );
 };
 
 /**
- * Get default parameter value.
- *
- * @return {string} Default parameter value
+ * @return {string|null}
  */
 ve.dm.MWParameterModel.prototype.getExampleValue = function () {
 	return this.template.getSpec().getParameterExampleValue( this.name );
 };
 
 /**
- * Get automatic parameter value.
- *
- * @return {string} Automatic parameter name.
+ * @return {string}
  */
 ve.dm.MWParameterModel.prototype.getAutoValue = function () {
 	return this.template.getSpec().getParameterAutoValue( this.name );
 };
 
 /**
- * Get parameter type.
- *
- * @return {string} Parameter type
+ * @return {string} Parameter type, e.g. "string"
  */
 ve.dm.MWParameterModel.prototype.getType = function () {
 	return this.template.getSpec().getParameterType( this.name );
 };
 
 /**
- * Set parameter value.
- *
- * @param {string} value Parameter value
+ * @param {string} value
  */
 ve.dm.MWParameterModel.prototype.setValue = function ( value ) {
-	this.value = value;
-	this.emit( 'change' );
+	if ( this.value !== value ) {
+		this.value = value;
+		this.emit( 'change' );
+	}
 };
 
 /**

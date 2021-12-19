@@ -31,5 +31,13 @@
 	"vector-jumptosearch": "Mine otsikasti",
 	"vector-jumptocontent": "Mine sisu juurde",
 	"vector-more-actions": "Veel",
-	"vector-search-loader": "Otsisoovituste laadimine"
+	"vector-search-loader": "Otsisoovituste laadimine",
+	"vector-anon-user-menu-pages": "Leheküljed sisse logimata kasutajatele",
+	"vector-anon-user-menu-pages-learn": "lisateave",
+	"vector-anon-user-menu-pages-label": "Loe veel muutmise kohta",
+	"vector-personal-more-label": "Kasutajalingid",
+	"vector-main-menu-tooltip": "Peamenüü",
+	"tooltip-vector-anon-user-menu-title": "Veel valikuid",
+	"vector-menu-checkbox-expanded": "avatud",
+	"vector-menu-checkbox-collapsed": "suletud"
 }

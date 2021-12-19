@@ -37,5 +37,13 @@
 	"vector-jumptosearch": "অনুসন্ধানে চলুন",
 	"vector-jumptocontent": "বিষয়বস্তুতে চলুন",
 	"vector-more-actions": "আরও",
-	"vector-search-loader": "অনুসন্ধানের পরামর্শ লোড করা হচ্ছে"
+	"vector-search-loader": "অনুসন্ধানের পরামর্শ লোড করা হচ্ছে",
+	"vector-anon-user-menu-pages": "অনিবন্ধিত সম্পাদকের জন্য পাতা",
+	"vector-anon-user-menu-pages-learn": "আরও জানুন",
+	"vector-anon-user-menu-pages-label": "সম্পাদনা করা সম্পর্কে আরও জানুন",
+	"vector-personal-more-label": "ব্যবহারকারী সংযোগ",
+	"vector-main-menu-tooltip": "প্রধান মেনু",
+	"tooltip-vector-anon-user-menu-title": "আরও বিকল্প",
+	"vector-menu-checkbox-expanded": "প্রসারিত",
+	"vector-menu-checkbox-collapsed": "সংকোচিত"
 }

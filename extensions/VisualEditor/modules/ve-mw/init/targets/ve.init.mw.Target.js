@@ -13,8 +13,11 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
+ * @cfg {string[]} [surfaceClasses] Surface classes to apply
  */
 ve.init.mw.Target = function VeInitMwTarget( config ) {
+	this.surfaceClasses = config.surfaceClasses || [];
+
 	// Parent constructor
 	ve.init.mw.Target.super.call( this, config );
 
@@ -145,6 +148,17 @@ ve.init.mw.Target.static.integrationType = null;
  */
 ve.init.mw.Target.static.platformType = null;
 
+/**
+ * Enable conversion of formatted text to wikitext in source mode
+ *
+ * Unstable, temporary flag.
+ *
+ * @static
+ * @property {boolean}
+ * @inheritable
+ */
+ve.init.mw.Target.static.convertToWikitextOnPaste = true;
+
 /* Static Methods */
 
 /**
@@ -261,6 +275,15 @@ ve.init.mw.Target.prototype.getHtml = function ( newDoc, oldDoc ) {
 ve.init.mw.Target.prototype.track = function () {};
 
 /**
+ * Get a list of CSS classes to be added to surfaces, and target widget surfaces
+ *
+ * @return {string[]} CSS classes
+ */
+ve.init.mw.Target.prototype.getSurfaceClasses = function () {
+	return this.surfaceClasses;
+};
+
+/**
  * @inheritdoc
  */
 ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
@@ -268,7 +291,8 @@ ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
 		// Reset to visual mode for target widgets
 		modes: [ 'visual' ],
 		defaultMode: 'visual',
-		toolbarGroups: this.toolbarGroups
+		toolbarGroups: this.toolbarGroups,
+		surfaceClasses: this.getSurfaceClasses()
 	}, config ) );
 };
 
@@ -298,11 +322,13 @@ ve.init.mw.Target.prototype.createSurface = function ( dmDoc, config ) {
 ve.init.mw.Target.prototype.getSurfaceConfig = function ( config ) {
 	// If we're not asking for a specific mode's config, use the default mode.
 	config = ve.extendObject( { mode: this.defaultMode }, config );
+	// eslint-disable-next-line mediawiki/class-doc
 	return ve.init.mw.Target.super.prototype.getSurfaceConfig.call( this, ve.extendObject( {
 		// Provide the wikitext versions of the registries, if we're using source mode
 		commandRegistry: config.mode === 'source' ? ve.ui.wikitextCommandRegistry : ve.ui.commandRegistry,
 		sequenceRegistry: config.mode === 'source' ? ve.ui.wikitextSequenceRegistry : ve.ui.sequenceRegistry,
-		dataTransferHandlerFactory: config.mode === 'source' ? ve.ui.wikitextDataTransferHandlerFactory : ve.ui.dataTransferHandlerFactory
+		dataTransferHandlerFactory: config.mode === 'source' ? ve.ui.wikitextDataTransferHandlerFactory : ve.ui.dataTransferHandlerFactory,
+		classes: this.getSurfaceClasses()
 	}, config ) );
 };
 
@@ -349,7 +375,9 @@ ve.init.mw.Target.prototype.addSurface = function () {
 	surface = ve.init.mw.Target.super.prototype.addSurface.apply( this, arguments );
 	// Add classes specific to surfaces attached directly to the target,
 	// as opposed to TargetWidget surfaces
-	surface.$element.addClass( 've-init-mw-target-surface' );
+	if ( !surface.inTargetWidget ) {
+		surface.$element.addClass( 've-init-mw-target-surface' );
+	}
 	this.track( 'trace.createSurface.exit' );
 
 	this.setSurface( surface );
@@ -500,7 +528,7 @@ ve.init.mw.Target.prototype.refreshUser = function ( doc ) {
 /**
  * Get a wikitext fragment from a document
  *
- * @param {ve.dm.Document} doc Document
+ * @param {ve.dm.Document} doc
  * @param {boolean} [useRevision=true] Whether to use the revision ID + ETag
  * @return {jQuery.Promise} Abortable promise which resolves with a wikitext string
  */
@@ -540,7 +568,7 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
 /**
  * Parse a fragment of wikitext into HTML
  *
- * @param {string} wikitext Wikitext
+ * @param {string} wikitext
  * @param {boolean} pst Perform pre-save transform
  * @param {ve.dm.Document} [doc] Parse for a specific document, defaults to current surface's
  * @return {jQuery.Promise} Abortable promise
@@ -573,7 +601,9 @@ ve.init.mw.Target.prototype.getPageName = function () {
  *
  * @param {ve.dm.Document} [doc] API for a specific document, should default to document of current surface.
  * @param {Object} [options] API options
- * @return {mw.Api} API object
+ * @param {Object} [options.parameters] Default query parameters for all API requests. Defaults
+ *  include action=query, format=json, and formatversion=2 if not specified otherwise.
+ * @return {mw.Api}
  */
 ve.init.mw.Target.prototype.getContentApi = function ( doc, options ) {
 	options = options || {};
@@ -588,7 +618,7 @@ ve.init.mw.Target.prototype.getContentApi = function ( doc, options ) {
  * associated with the current user.
  *
  * @param {Object} [options] API options
- * @return {mw.Api} API object
+ * @return {mw.Api}
  */
 ve.init.mw.Target.prototype.getLocalApi = function ( options ) {
 	options = options || {};

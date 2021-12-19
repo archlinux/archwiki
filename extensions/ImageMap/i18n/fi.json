@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Agony",
+			"MITO",
 			"Nike",
 			"Str4nd",
-			"Tarmo",
-			"MITO"
+			"Tarmo"
 		]
 	},
 	"imagemap_desc": "Mahdollistaa napsautettavien kuvakarttojen tekemisen <code>&lt;imagemap&gt;</code>-elementillä.",

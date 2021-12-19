@@ -30,12 +30,11 @@ ve.dm.Selection.static.type = null;
  * @throws {Error} Unknown selection type
  */
 ve.dm.Selection.static.newFromJSON = function ( json ) {
-	var hash, constructor;
 	if ( ve.dm.Document && arguments[ 0 ] instanceof ve.dm.Document ) {
 		throw new Error( 'Got obsolete ve.dm.Document argument' );
 	}
-	hash = typeof json === 'string' ? JSON.parse( json ) : json;
-	constructor = ve.dm.selectionFactory.lookup( hash.type );
+	var hash = typeof json === 'string' ? JSON.parse( json ) : json;
+	var constructor = ve.dm.selectionFactory.lookup( hash.type );
 
 	if ( !constructor ) {
 		throw new Error( 'Unknown selection type ' + hash.name );
@@ -48,7 +47,7 @@ ve.dm.Selection.static.newFromJSON = function ( json ) {
  * Create a new selection from a hash object
  *
  * @abstract
- * @param {Object} hash Hash object
+ * @param {Object} hash
  * @return {ve.dm.Selection} New selection
  */
 ve.dm.Selection.static.newFromHash = null;
@@ -116,7 +115,7 @@ ve.dm.Selection.prototype.isCollapsed = null;
  * Apply translations from a transaction
  *
  * @abstract
- * @param {ve.dm.Transaction} tx Transaction
+ * @param {ve.dm.Transaction} tx
  * @param {boolean} [excludeInsertion] Do not grow to cover insertions at boundaries
  * @return {ve.dm.Selection} A new translated selection
  */
@@ -126,7 +125,7 @@ ve.dm.Selection.prototype.translateByTransaction = null;
  * Apply translations from a transaction, with bias depending on author ID comparison
  *
  * @abstract
- * @param {ve.dm.Transaction} tx Transaction
+ * @param {ve.dm.Transaction} tx
  * @param {number} authorId The selection's author ID
  * @return {ve.dm.Selection} A new translated selection
  */
@@ -140,8 +139,8 @@ ve.dm.Selection.prototype.translateByTransactionWithAuthor = null;
  * @return {ve.dm.Selection} A new translated selection
  */
 ve.dm.Selection.prototype.translateByTransactions = function ( txs, excludeInsertion ) {
-	var i, l, selection = this;
-	for ( i = 0, l = txs.length; i < l; i++ ) {
+	var selection = this;
+	for ( var i = 0, l = txs.length; i < l; i++ ) {
 		selection = selection.translateByTransaction( txs[ i ], excludeInsertion );
 	}
 	return selection;
@@ -150,14 +149,13 @@ ve.dm.Selection.prototype.translateByTransactions = function ( txs, excludeInser
 /**
  * Apply translations from a change
  *
- * @param {ve.dm.Change} change The change
+ * @param {ve.dm.Change} change
  * @param {number} authorId The author ID of this selection
  * @return {ve.dm.Selection} A new translated selection
  */
 ve.dm.Selection.prototype.translateByChange = function ( change, authorId ) {
-	var i, len,
-		selection = this;
-	for ( i = 0, len = change.transactions.length; i < len; i++ ) {
+	var selection = this;
+	for ( var i = 0, len = change.transactions.length; i < len; i++ ) {
 		selection = selection.translateByTransactionWithAuthor(
 			change.transactions[ i ],
 			authorId
@@ -205,7 +203,7 @@ ve.dm.Selection.prototype.getName = function () {
  * Check if two selections are equal
  *
  * @abstract
- * @param {ve.dm.Selection} other Other selection
+ * @param {ve.dm.Selection} other
  * @return {boolean} Selections are equal
  */
 ve.dm.Selection.prototype.equals = null;

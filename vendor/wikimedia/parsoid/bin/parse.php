@@ -10,11 +10,22 @@ require_once __DIR__ . '/../tools/Maintenance.php';
 use Composer\Factory;
 use Composer\IO\NullIO;
 
+use MediaWiki\MediaWikiServices;
+use MWParsoid\ParsoidServices;
+use Wikimedia\Parsoid\Config\Api\ApiHelper;
+use Wikimedia\Parsoid\Config\Api\DataAccess;
+use Wikimedia\Parsoid\Config\Api\PageConfig;
+use Wikimedia\Parsoid\Config\Api\SiteConfig;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\Mocks\MockDataAccess;
+use Wikimedia\Parsoid\Mocks\MockPageConfig;
+use Wikimedia\Parsoid\Mocks\MockPageContent;
+use Wikimedia\Parsoid\Mocks\MockSiteConfig;
 use Wikimedia\Parsoid\ParserTests\TestUtils;
 use Wikimedia\Parsoid\Parsoid;
+use Wikimedia\Parsoid\Tools\ExtendedOptsProcessor;
 use Wikimedia\Parsoid\Tools\ScriptUtils;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -23,7 +34,13 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
 
 // phpcs:ignore MediaWiki.Files.ClassMatchesFilename.WrongCase
 class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
-	use \Wikimedia\Parsoid\Tools\ExtendedOptsProcessor;
+	use ExtendedOptsProcessor;
+
+	/** @var PageConfig */
+	private $pageConfig;
+
+	/** @var Parsoid */
+	private $parsoid;
 
 	public function __construct() {
 		parent::__construct();
@@ -45,7 +62,17 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			true
 		);
 		$this->setOptionDefault( 'body_only', true );
+
 		$this->addOption( 'profile', 'Proxy for --trace time' );
+		$this->addOption( 'benchmark', 'Suppress output and show timing summary' );
+		$this->addOption( 'count',
+			'Repeat the operation this many times',
+			false, true );
+		$this->addOption( 'warmup', 'Run the operation once before benchmarking' );
+		$this->addOption( 'delay',
+			'Wait for the specified number of milliseconds after warmup. For use with perf -D.',
+			false, true );
+
 		$this->addOption( 'selser',
 						 'Use the selective serializer to go from HTML to Wikitext.' );
 		$this->addOption(
@@ -224,11 +251,10 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 
 	/**
 	 * @param array $configOpts
-	 * @return array
 	 */
-	private function makeMwConfig( array $configOpts ): array {
-		$services = \MediaWiki\MediaWikiServices::getInstance();
-		$parsoidServices = new \MWParsoid\ParsoidServices( $services );
+	private function setupMwConfig( array $configOpts ) {
+		$services = MediaWikiServices::getInstance();
+		$parsoidServices = new ParsoidServices( $services );
 		$siteConfig = $parsoidServices->getParsoidSiteConfig();
 		if ( isset( $configOpts['maxDepth'] ) ) {
 			$siteConfig->setMaxTemplateDepth( $configOpts['maxDepth'] );
@@ -239,72 +265,56 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$title = \Title::newFromText(
 			$configOpts['title'] ?? $siteConfig->mainpage()
 		);
-		$pageConfig = $pcFactory->create(
+		$this->pageConfig = $pcFactory->create(
 			$title,
 			null, // UserIdentity
 			$configOpts['revid'] ?? null,
 			$configOpts['pageContent'] ?? null
 		);
-		$parsoid = new Parsoid( $siteConfig, $dataAccess );
-
-		return [
-			'parsoid' => $parsoid,
-			'pageConfig' => $pageConfig,
-		];
+		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
 	/**
 	 * @param array $configOpts
-	 * @return array
 	 */
-	private function makeApiConfig( array $configOpts ): array {
-		$api = new \Wikimedia\Parsoid\Config\Api\ApiHelper( $configOpts );
+	private function setupApiConfig( array $configOpts ) {
+		$api = new ApiHelper( $configOpts );
 
-		$siteConfig = new \Wikimedia\Parsoid\Config\Api\SiteConfig( $api, $configOpts );
-		$dataAccess = new \Wikimedia\Parsoid\Config\Api\DataAccess( $api, $siteConfig, $configOpts );
-		$pageConfig = new \Wikimedia\Parsoid\Config\Api\PageConfig( $api, $configOpts + [
+		$siteConfig = new SiteConfig( $api, $configOpts );
+		$dataAccess = new DataAccess( $api, $siteConfig, $configOpts );
+		$this->pageConfig = new PageConfig( $api, $configOpts + [
 			'title' => $siteConfig->mainpage(),
 			'loadData' => true,
 		] );
 
-		$parsoid = new Parsoid( $siteConfig, $dataAccess );
-
-		return [
-			'parsoid' => $parsoid,
-			'pageConfig' => $pageConfig,
-		];
+		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
 	/**
 	 * @param array $configOpts
-	 * @return array
 	 */
-	private function makeMockConfig( array $configOpts ): array {
-		$siteConfig = new \Wikimedia\Parsoid\Mocks\MockSiteConfig( $configOpts );
-		$dataAccess = new \Wikimedia\Parsoid\Mocks\MockDataAccess( $configOpts );
-		$parsoid = new Parsoid( $siteConfig, $dataAccess );
+	private function setupMockConfig( array $configOpts ) {
+		$siteConfig = new MockSiteConfig( $configOpts );
+		$dataAccess = new MockDataAccess( $configOpts );
+		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 
-		$pageContent = new \Wikimedia\Parsoid\Mocks\MockPageContent( [ 'main' =>
+		$pageContent = new MockPageContent( [ 'main' =>
 			$configOpts['pageContent'] ?? '' ] );
-		$pageConfig = new \Wikimedia\Parsoid\Mocks\MockPageConfig( $configOpts, $pageContent );
-
-		return [
-			'parsoid' => $parsoid,
-			'pageConfig' => $pageConfig,
-		];
+		$this->pageConfig = new MockPageConfig( $configOpts, $pageContent );
 	}
 
 	/**
+	 * Initialize $this->parsoid and $this->pageConfig
+	 *
 	 * @param array $configOpts
-	 * @return array
 	 */
-	private function makeConfig( array $configOpts ): array {
+	private function setupConfig( array $configOpts ) {
 		if ( $configOpts['mock'] ) {
-			return $this->makeMockConfig( $configOpts );
+			$this->setupMockConfig( $configOpts );
 		} elseif ( $configOpts['standalone'] ?? true ) {
-			return $this->makeApiConfig( $configOpts );
+			$this->setupApiConfig( $configOpts );
 		} else {
-			return $this->makeMwConfig( $configOpts );
+			$this->setupMwConfig( $configOpts );
 		}
 	}
 
@@ -321,11 +331,11 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$configOpts["pageContent"] = $wt;
 		}
 
-		$res = $this->makeConfig( $configOpts );
+		$this->setupConfig( $configOpts );
 
 		try {
-			return $res['parsoid']->wikitext2html(
-				$res['pageConfig'], $parsoidOpts
+			return $this->parsoid->wikitext2html(
+				$this->pageConfig, $parsoidOpts
 			);
 		} catch ( ClientError $e ) {
 			$this->error( $e->getMessage() );
@@ -345,11 +355,11 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		?SelserData $selserData = null
 	): string {
 		$configOpts["pageContent"] = ''; // FIXME: T234549
-		$res = $this->makeConfig( $configOpts );
+		$this->setupConfig( $configOpts );
 
 		try {
-			return $res['parsoid']->html2wikitext(
-				$res['pageConfig'], $html, $parsoidOpts, $selserData
+			return $this->parsoid->html2wikitext(
+				$this->pageConfig, $html, $parsoidOpts, $selserData
 			);
 		} catch ( ClientError $e ) {
 			$this->error( $e->getMessage() );
@@ -378,7 +388,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			# XXX: This doesn't work on production machines or in integrated
 			# mode, since Composer\Factory isn't in the production `vendor`
 			# deploy.
-			$composer = Factory::create( new NullIo(), './composer.json', false );
+			$composer = Factory::create( new NullIO(), './composer.json', false );
 			$root = $composer->getPackage();
 			$this->output( $root->getFullPrettyVersion() . "\n" );
 			die( 0 );
@@ -389,31 +399,11 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$this->maybeHelp();
 		$this->maybeVersion();
 
-		// Produce a CPU flamegraph via excimer's profiling
+		$parsoidOpts = [];
+		ScriptUtils::setDebuggingFlags( $parsoidOpts, $this->getOptions() );
+
 		if ( $this->hasOption( 'flamegraph' ) ) {
-			$profiler = new ExcimerProfiler;
-			$profiler->setPeriod( 0.01 );
-			$profiler->setEventType( EXCIMER_CPU );
-			$profiler->start();
-			register_shutdown_function( function () use ( $profiler ) {
-				$profiler->stop();
-				$fgPath = getenv( 'FLAMEGRAPH_PATH' );
-				if ( empty( $fgPath ) ) {
-					$fgPath = "/usr/local/bin/flamegraph.pl";
-				}
-				$fgOutDir = getenv( 'FLAMEGRAPH_OUTDIR' );
-				if ( empty( $fgOutDir ) ) {
-					$fgOutDir = "/tmp";
-				}
-				// phpcs:disable MediaWiki.Usage.ForbiddenFunctions.popen
-				$pipe = popen( "$fgPath > $fgOutDir/profile.svg", "w" );
-				fwrite( $pipe, $profiler->getLog()->formatCollapsed() );
-				$report = sprintf( "%-79s %14s %14s\n", 'Function', 'Self', 'Inclusive' );
-				foreach ( $profiler->getLog()->aggregateByFunction() as $id => $info ) {
-					$report .= sprintf( "%-79s %14d %14d\n", $id, $info['self'], $info['inclusive'] );
-				}
-				file_put_contents( "$fgOutDir/aggregated.txt", $report );
-			} );
+			$this->startFlameGraphProfiler();
 		}
 
 		if ( $this->hasOption( 'inputfile' ) ) {
@@ -489,7 +479,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$configOpts['maxDepth'] = (int)$this->getOption( 'maxdepth' );
 		}
 
-		$parsoidOpts = [
+		$parsoidOpts += [
 			"scrubWikitext" => $this->hasOption( 'scrubWikitext' ),
 			"body_only" => ScriptUtils::booleanOption( $this->getOption( 'body_only' ) ),
 			"wrapSections" => $this->hasOption( 'wrapSections' ),
@@ -511,7 +501,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$parsoidOpts['logLevels'] = [ 'fatal', 'error', 'warn' ];
 		}
 
-		ScriptUtils::setDebuggingFlags( $parsoidOpts, $this->getOptions() );
 		if ( $this->hasOption( 'profile' ) ) {
 			if ( !isset( $parsoidOpts['traceFlags'] ) ) {
 				$parsoidOpts['traceFlags'] = [];
@@ -524,95 +513,202 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$this->hasOption( 'selser' );
 
 		if ( $startsAtHtml ) {
-			if ( $this->hasOption( 'pbin' ) || $this->hasOption( 'pbinfile' ) ) {
-				$doc = DOMUtils::parseHTML( $input );
-				if ( $this->hasOption( 'pbinfile' ) ) {
-					$json = file_get_contents( $this->getOption( 'pbinfile' ) );
-				} else {
-					$json = $this->getOption( 'pbin' );
-				}
-				$pb = PHPUtils::jsonDecode( $json );
-				$pb = new PageBundle(
-					'',
-					$pb['parsoid'] ?? null,
-					[ 'ids' => [] ]  // FIXME: ^999.0.0
-				);
-				PageBundle::apply( $doc, $pb );
-				$input = ContentUtils::toXML( $doc );
-			}
+			$this->transformFromHtml( $configOpts, $parsoidOpts, $input );
+		} else {
+			$this->transformFromWt( $configOpts, $parsoidOpts, $input );
+		}
+	}
 
-			if ( $this->hasOption( 'selser' ) ) {
-				if ( $this->hasOption( 'oldtext' ) ) {
-					$oldText = $this->getOption( 'oldtext' );
-				} elseif ( $this->hasOption( 'oldtextfile' ) ) {
-					$oldText = file_get_contents( $this->getOption( 'oldtextfile' ) );
-					if ( $oldText === false ) {
-						return;
-					}
-				} else {
-					$this->error(
-						'Please provide original wikitext ' .
-						'(--oldtext or --oldtextfile). Selser requires that.'
-					);
-					$this->maybeHelp();
-					return;
-				}
-				$oldHTML = null;
-				if ( $this->hasOption( 'oldhtmlfile' ) ) {
-					$oldHTML = file_get_contents( $this->getOption( 'oldhtmlfile' ) );
-					if ( $oldHTML === false ) {
-						return;
-					}
-					if ( isset( $pb ) ) {
-						$oldDoc = DOMUtils::parseHTML( $oldHTML );
-						PageBundle::apply( $oldDoc, $pb );
-						$oldHTML = ContentUtils::toXML( $oldDoc );
-					}
-				}
-				$selserData = new SelserData( $oldText, $oldHTML );
-			} else {
-				$selserData = null;
+	/**
+	 * Produce a CPU flamegraph via excimer's profiling
+	 */
+	private function startFlameGraphProfiler() {
+		$profiler = new ExcimerProfiler;
+		$profiler->setPeriod( 0.01 );
+		$profiler->setEventType( EXCIMER_CPU );
+		$profiler->start();
+		register_shutdown_function( static function () use ( $profiler ) {
+			$profiler->stop();
+			$fgPath = getenv( 'FLAMEGRAPH_PATH' );
+			if ( empty( $fgPath ) ) {
+				$fgPath = "/usr/local/bin/flamegraph.pl";
 			}
+			$fgOutDir = getenv( 'FLAMEGRAPH_OUTDIR' );
+			if ( empty( $fgOutDir ) ) {
+				$fgOutDir = "/tmp";
+			}
+			// phpcs:disable MediaWiki.Usage.ForbiddenFunctions.popen
+			$pipe = popen( "$fgPath > $fgOutDir/profile.svg", "w" );
+			fwrite( $pipe, $profiler->getLog()->formatCollapsed() );
+			$report = sprintf( "%-79s %14s %14s\n", 'Function', 'Self', 'Inclusive' );
+			foreach ( $profiler->getLog()->aggregateByFunction() as $id => $info ) {
+				$report .= sprintf( "%-79s %14d %14d\n", $id, $info['self'], $info['inclusive'] );
+			}
+			file_put_contents( "$fgOutDir/aggregated.txt", $report );
+		} );
+	}
 
-			$wt = $this->html2Wt( $configOpts, $parsoidOpts, $input, $selserData );
-			if ( $this->hasOption( 'html2html' ) ) {
-				$html = $this->wt2Html( $configOpts, $parsoidOpts, $wt );
-				$this->output( $this->maybeNormalize( $html ) );
-			} else {
-				$this->output( $wt );
+	/**
+	 * Optionally benchmark a callback. If benchmarking is disabled, just call
+	 * it and output the return value.
+	 *
+	 * @param callable $callback
+	 */
+	private function benchmark( $callback ) {
+		if ( $this->hasOption( 'warmup' ) ) {
+			$callback();
+		}
+		if ( $this->hasOption( 'benchmark' ) ) {
+			$count = $this->getOption( 'count', 1 );
+			if ( $this->hasOption( 'delay' ) ) {
+				usleep( $this->getOption( 'delay' ) * 1000 );
+			}
+			$startTime = microtime( true );
+			for ( $i = 0; $i < $count; $i++ ) {
+				$callback();
+			}
+			$total = ( microtime( true ) - $startTime ) * 1000;
+			$this->output( "Total time: $total ms\n" );
+			if ( $count > 1 ) {
+				$mean = $total / $count;
+				$this->output( "Mean: $mean ms\n" );
 			}
 		} else {
-			$html = $this->wt2Html( $configOpts, $parsoidOpts, $input );
-			if ( $this->hasOption( 'wt2wt' ) ) {
-				$wt = $this->html2Wt( $configOpts, $parsoidOpts, $html );
-				$this->output( $wt );
-			} else {
-				if ( $this->hasOption( 'pboutfile' ) ) {
-					file_put_contents(
-						$this->getOption( 'pboutfile' ),
-						PHPUtils::jsonEncode( [
-							'parsoid' => $html->parsoid,
-							'mw' => $html->mw,
-						] )
-					);
-					$html = $html->html;
-				} elseif ( $this->hasOption( 'pageBundle' ) ) {
-					// Stitch this back in, even though it was just extracted
-					$doc = DOMUtils::parseHTML( $html->html );
-					DOMDataUtils::injectPageBundle(
-						$doc,
-						PHPUtils::arrayToObject( [
-							'parsoid' => $html->parsoid,
-							'mw' => $html->mw,
-						] ) );
-					$html = ContentUtils::toXML( $doc );
-				}
-				$this->output( $this->maybeNormalize( $html ) );
+			$this->output( $callback() );
+			if ( self::posix_isatty( STDOUT ) ) {
+				$this->output( "\n" );
 			}
 		}
+	}
 
-		if ( self::posix_isatty( STDOUT ) ) {
-			$this->output( "\n" );
+	/**
+	 * Do html2wt or html2html and output the result
+	 *
+	 * @param array $configOpts
+	 * @param array $parsoidOpts
+	 * @param string $input
+	 */
+	private function transformFromHtml( $configOpts, $parsoidOpts, $input ) {
+		$input = $this->getPageBundleXML( $input ) ?? $input;
+
+		if ( $this->hasOption( 'selser' ) ) {
+			if ( $this->hasOption( 'oldtext' ) ) {
+				$oldText = $this->getOption( 'oldtext' );
+			} elseif ( $this->hasOption( 'oldtextfile' ) ) {
+				$oldText = file_get_contents( $this->getOption( 'oldtextfile' ) );
+				if ( $oldText === false ) {
+					return;
+				}
+			} else {
+				$this->error(
+					'Please provide original wikitext ' .
+					'(--oldtext or --oldtextfile). Selser requires that.'
+				);
+				$this->maybeHelp();
+				return;
+			}
+			$oldHTML = null;
+			if ( $this->hasOption( 'oldhtmlfile' ) ) {
+				$oldHTML = file_get_contents( $this->getOption( 'oldhtmlfile' ) );
+				if ( $oldHTML === false ) {
+					return;
+				}
+				if ( isset( $pb ) ) {
+					$oldDoc = DOMUtils::parseHTML( $oldHTML );
+					PageBundle::apply( $oldDoc, $pb );
+					$oldHTML = ContentUtils::toXML( $oldDoc );
+				}
+			}
+			$selserData = new SelserData( $oldText, $oldHTML );
+		} else {
+			$selserData = null;
+		}
+
+		if ( $this->hasOption( 'html2html' ) ) {
+			$this->benchmark(
+				function () use ( $configOpts, $parsoidOpts, $input, $selserData ) {
+					$wt = $this->html2Wt( $configOpts, $parsoidOpts, $input, $selserData );
+					$html = $this->wt2Html( $configOpts, $parsoidOpts, $wt );
+					return $this->maybeNormalize( $html );
+				}
+			);
+		} else {
+			$this->benchmark(
+				function () use ( $configOpts, $parsoidOpts, $input, $selserData ) {
+					return $this->html2Wt( $configOpts, $parsoidOpts, $input, $selserData );
+				}
+			);
+		}
+	}
+
+	/**
+	 * Get the page bundle XML, or null if pbin/pbinfile was not specified
+	 *
+	 * @param string $input
+	 * @return string|null
+	 * @throws ClientError
+	 */
+	private function getPageBundleXML( $input ) {
+		if ( !$this->hasOption( 'pbin' ) && !$this->hasOption( 'pbinfile' ) ) {
+			return null;
+		}
+		$doc = DOMUtils::parseHTML( $input );
+		if ( $this->hasOption( 'pbinfile' ) ) {
+			$json = file_get_contents( $this->getOption( 'pbinfile' ) );
+		} else {
+			$json = $this->getOption( 'pbin' );
+		}
+		$pb = PHPUtils::jsonDecode( $json );
+		$pb = new PageBundle(
+			'',
+			$pb['parsoid'] ?? null,
+			[ 'ids' => [] ]  // FIXME: ^999.0.0
+		);
+		PageBundle::apply( $doc, $pb );
+		return ContentUtils::toXML( $doc );
+	}
+
+	/**
+	 * Do a wt2html or wt2wt operation and output the result
+	 *
+	 * @param array $configOpts
+	 * @param array $parsoidOpts
+	 * @param string $input
+	 */
+	private function transformFromWt( $configOpts, $parsoidOpts, $input ) {
+		if ( $this->hasOption( 'wt2wt' ) ) {
+			$this->benchmark( function () use ( $configOpts, $parsoidOpts, $input ) {
+				$html = $this->wt2Html( $configOpts, $parsoidOpts, $input );
+				return $this->html2Wt( $configOpts, $parsoidOpts, $html );
+			} );
+		} elseif ( $parsoidOpts['pageBundle'] ?? false ) {
+			if ( $this->hasOption( 'pboutfile' ) ) {
+				$html = $this->wt2Html( $configOpts, $parsoidOpts, $input );
+				file_put_contents(
+					$this->getOption( 'pboutfile' ),
+					PHPUtils::jsonEncode( [
+						'parsoid' => $html->parsoid,
+						'mw' => $html->mw,
+					] )
+				);
+				$html = $html->html;
+			} elseif ( $this->hasOption( 'pageBundle' ) ) {
+				$html = $this->wt2Html( $configOpts, $parsoidOpts, $input );
+				// Stitch this back in, even though it was just extracted
+				$doc = DOMUtils::parseHTML( $html->html );
+				DOMDataUtils::injectPageBundle(
+					$doc,
+					PHPUtils::arrayToObject( [
+						'parsoid' => $html->parsoid,
+						'mw' => $html->mw,
+					] ) );
+				$html = ContentUtils::toXML( $doc );
+			}
+			$this->output( $this->maybeNormalize( $html ) );
+		} else {
+			$this->benchmark( function () use ( $configOpts, $parsoidOpts, $input ) {
+				return $this->wt2Html( $configOpts, $parsoidOpts, $input );
+			} );
 		}
 	}
 }

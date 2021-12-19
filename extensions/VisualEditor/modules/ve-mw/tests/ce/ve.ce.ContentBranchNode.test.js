@@ -5,14 +5,13 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.ce.ContentBranchNode (MW)', ve.test.utils.mwEnvironment );
+QUnit.module( 've.ce.ContentBranchNode (MW)' );
 
 /* Tests */
 
 // FIXME runner copypasted from core, use data provider
-QUnit.test( 'getRenderedContents', function ( assert ) {
-	var i, len, doc, $wrapper,
-		cases = [ {
+QUnit.test( 'getRenderedContents', ( assert ) => {
+	const cases = [ {
 			msg: 'Annotation spanning text and inline nodes',
 			data: [
 				{ type: 'paragraph' },
@@ -40,9 +39,9 @@ QUnit.test( 'getRenderedContents', function ( assert ) {
 				'</b>'
 		} ];
 
-	for ( i = 0, len = cases.length; i < len; i++ ) {
-		doc = new ve.dm.Document( ve.dm.example.preprocessAnnotations( cases[ i ].data ) );
-		$wrapper = $( new ve.ce.ParagraphNode( doc.getDocumentNode().getChildren()[ 0 ] ).getRenderedContents() );
+	for ( let i = 0; i < cases.length; i++ ) {
+		const doc = new ve.dm.Document( ve.dm.example.preprocessAnnotations( cases[ i ].data ) ),
+			$wrapper = $( new ve.ce.ParagraphNode( doc.getDocumentNode().getChildren()[ 0 ] ).getRenderedContents() );
 		// HACK strip out all the class="ve-ce-textStyleAnnotation ve-ce-textStyleBoldAnnotation" crap
 		$wrapper.find( '.ve-ce-textStyleAnnotation' ).removeAttr( 'class' );
 		assert.equalDomElement( $wrapper[ 0 ], $( '<div>' ).html( cases[ i ].html )[ 0 ], cases[ i ].msg );

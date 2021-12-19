@@ -5,12 +5,12 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.dm.MWTransclusionNode', ve.test.utils.mwEnvironment );
+QUnit.module( 've.dm.MWTransclusionNode' );
 
 /* Tests */
 
-QUnit.test( 'getWikitext', function ( assert ) {
-	var i, node, cases = [
+QUnit.test( 'getWikitext', ( assert ) => {
+	const cases = [
 		{
 			msg: 'mix of numbered and named parameters',
 			mw: {
@@ -103,8 +103,8 @@ QUnit.test( 'getWikitext', function ( assert ) {
 			wikitext: '{{foo|bar=[[baz|quux]]}}'
 		} ];
 
-	for ( i = 0; i < cases.length; i++ ) {
-		node = new ve.dm.MWTransclusionNode(
+	for ( let i = 0; i < cases.length; i++ ) {
+		const node = new ve.dm.MWTransclusionNode(
 			{ type: 'mwTransclusion', attributes: { mw: cases[ i ].mw } }
 		);
 		assert.strictEqual( node.getWikitext(), cases[ i ].wikitext, cases[ i ].msg );

@@ -45,7 +45,7 @@ class OATHAuth {
 		$this->collectModules();
 		if ( isset( $this->modules[$key] ) ) {
 			$module = call_user_func_array( $this->modules[$key], [] );
-			if ( $module instanceof IModule === false ) {
+			if ( !$module instanceof IModule ) {
 				return null;
 			}
 			return $module;

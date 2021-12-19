@@ -18,7 +18,7 @@ class PageImageCandidateTest extends MediaWikiUnitTestCase {
 	 * @param int|bool $height
 	 * @return File
 	 */
-	private function fileMock( $width, $height ) : File {
+	private function fileMock( $width, $height ): File {
 		$title = $this->createMock( Title::class );
 		$title->method( 'getDBKey' )->willReturn( 'Testing' );
 		$file = $this->createMock( File::class );

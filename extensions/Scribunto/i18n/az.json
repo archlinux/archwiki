@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"NMW03",
 			"Serkanland",
 			"Toghrul Rahimli",
-			"Wertuose",
-			"NMW03"
+			"Wertuose"
 		]
 	},
 	"scribunto-desc": "Skriptləşdirmə dillərini MediaWiki səhifələrində istifadə etmək üçün framework",

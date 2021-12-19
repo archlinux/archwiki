@@ -18,9 +18,6 @@
 		"PdfHandlerDpi": {
 			"value": 150
 		},
-		"PdfCreateThumbnailsInJobQueue": {
-			"value": false
-		},
 		"PdfPostProcessor": {
 			"value": "/usr/bin/convert"
 		},
@@ -42,16 +39,15 @@
 			"i18n"
 		]
 	},
-	"Hooks": {
-		"UploadVerifyFile": [
-			"MediaWiki\\Extension\\PdfHandler\\CreatePdfThumbnailsJob::insertJobs"
-		],
-		"ResourceLoaderRegisterModules": [
-			"MediaWiki\\Extension\\PdfHandler\\PdfHandler::registerWarningModule"
-		]
-	},
-	"JobClasses": {
-		"createPdfThumbnailsJob": "MediaWiki\\Extension\\PdfHandler\\CreatePdfThumbnailsJob"
+	"ResourceModules": {
+		"pdfhandler.messages": {
+			"messages": [
+				"pdf-file-page-warning",
+				"pdf-file-page-warning-header",
+				"pdf-file-page-warning-info",
+				"pdf-file-page-warning-footer"
+			]
+		}
 	},
 	"MediaHandlers": {
 		"application/pdf": "MediaWiki\\Extension\\PdfHandler\\PdfHandler"

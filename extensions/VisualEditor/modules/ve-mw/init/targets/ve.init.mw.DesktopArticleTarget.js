@@ -206,7 +206,7 @@ ve.init.mw.DesktopArticleTarget.prototype.getEditableContent = function () {
 /**
  * Set the container for the target, appending the target to it
  *
- * @param {jQuery} $container Container
+ * @param {jQuery} $container
  */
 ve.init.mw.DesktopArticleTarget.prototype.setContainer = function ( $container ) {
 	$container.append( this.$element );
@@ -499,7 +499,7 @@ ve.init.mw.DesktopArticleTarget.prototype.setSurface = function ( surface ) {
 /**
  * Setup new section input for a surface, if required
  *
- * @param {ve.ui.Surface} surface Surface
+ * @param {ve.ui.Surface} surface
  */
 ve.init.mw.DesktopArticleTarget.prototype.setupNewSection = function ( surface ) {
 	if ( surface.getMode() === 'source' && this.section === 'new' ) {
@@ -540,7 +540,7 @@ ve.init.mw.DesktopArticleTarget.prototype.onSectionTitleChange = function () {
 /**
  * Teardown new section inputs
  *
- * @param {ve.ui.Surface} surface Surface
+ * @param {ve.ui.Surface} surface
  */
 ve.init.mw.DesktopArticleTarget.prototype.teardownNewSection = function ( surface ) {
 	surface.setPlaceholder( '' );
@@ -582,13 +582,14 @@ ve.init.mw.DesktopArticleTarget.prototype.tryTeardown = function ( noPrompt, tra
  * @fires deactivate
  */
 ve.init.mw.DesktopArticleTarget.prototype.teardown = function ( trackMechanism ) {
-	var abortType,
+	var
 		saveDialogPromise = ve.createDeferred().resolve().promise(),
 		target = this;
 
 	this.emit( 'deactivate' );
 
 	// Event tracking
+	var abortType, abortedMode;
 	if ( trackMechanism ) {
 		if ( this.activating ) {
 			abortType = 'preinit';
@@ -601,11 +602,7 @@ ve.init.mw.DesktopArticleTarget.prototype.teardown = function ( trackMechanism )
 			// they go through switchToWikitextEditor() instead
 			abortType = 'abandon';
 		}
-		ve.track( 'mwedit.abort', {
-			type: abortType,
-			mechanism: trackMechanism,
-			mode: this.surface ? this.surface.getMode() : this.getDefaultMode()
-		} );
+		abortedMode = this.surface ? this.surface.getMode() : this.getDefaultMode();
 	}
 
 	// Cancel activating, start deactivating
@@ -665,6 +662,15 @@ ve.init.mw.DesktopArticleTarget.prototype.teardown = function ( trackMechanism )
 			$( '.ve-init-mw-desktopArticleTarget-uneditableContent' )
 				.removeClass( 've-init-mw-desktopArticleTarget-uneditableContent' );
 
+			// Event tracking
+			if ( trackMechanism ) {
+				ve.track( 'mwedit.abort', {
+					type: abortType,
+					mechanism: trackMechanism,
+					mode: abortedMode
+				} );
+			}
+
 			if ( !target.isViewPage ) {
 				location.href = target.viewUri.clone().extend( {
 					redirect: mw.config.get( 'wgIsRedirect' ) ? 'no' : undefined
@@ -718,17 +724,17 @@ ve.init.mw.DesktopArticleTarget.prototype.loadFail = function ( code, errorDetai
  * @inheritdoc
  */
 ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
-	var redirectMetaItems, metaList,
-		editNotices = this.getEditNotices(),
-		actionTools = this.actionsToolbar.tools,
-		surface = this.getSurface(),
-		target = this;
-
 	if ( !this.activating ) {
 		// Activation was aborted before we got here. Do nothing
 		// TODO are there things we need to clean up?
 		return;
 	}
+
+	var redirectMetaItems, metaList,
+		editNotices = this.getEditNotices(),
+		actionTools = this.actionsToolbar.tools,
+		surface = this.getSurface(),
+		target = this;
 
 	this.activating = false;
 
@@ -770,7 +776,7 @@ ve.init.mw.DesktopArticleTarget.prototype.surfaceReady = function () {
 	// Set edit notices, will be shown after meta dialog.
 	// Make sure notices actually exists, because this might be a mode-switch and
 	// we've already removed it.
-	if ( editNotices.length ) {
+	if ( editNotices.length && actionTools.notices ) {
 		actionTools.notices.setNotices( editNotices );
 	} else if ( actionTools.notices ) {
 		actionTools.notices.destroy();
@@ -1157,7 +1163,11 @@ ve.init.mw.DesktopArticleTarget.prototype.transformPage = function () {
 	// Exclude notification area to work around T143837
 	this.$originalContent.append( this.$element.siblings().not( '.mw-notification-area' ) );
 
-	this.$originalCategories = $( '#catlinks' ).clone( true );
+	// To preserve event handlers (e.g. HotCat) if editing is cancelled, detach the original container
+	// and replace it with a clone during editing
+	this.$originalCategories = $( '#catlinks' );
+	this.$originalCategories.after( this.$originalCategories.clone() );
+	this.$originalCategories.detach();
 
 	// Mark every non-direct ancestor between editableContent and the container as uneditable
 	$content = this.$editableContent;

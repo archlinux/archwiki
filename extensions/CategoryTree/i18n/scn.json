@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"1233qwer1234qwer4",
 			"Aushulz",
 			"C.R.",
 			"Pippinu",
 			"Santu",
-			"1233qwer1234qwer4",
 			"Ajeje Brazorf"
 		]
 	},
@@ -23,8 +23,6 @@
 	"categorytree-mode-all": "tutti li pàggini",
 	"categorytree-collapse": "cumprimi",
 	"categorytree-expand": "spanni",
-	"categorytree-expand-bullet": "[<b>+</b>]",
-	"categorytree-empty-bullet": "[<b>×</b>]",
 	"categorytree-member-counts": "cunteni {{PLURAL:$1|1 suttacatigurìa|$1 suttacatigurìi}}, {{PLURAL:$2|1 pàggina|$2 pàggini}} e {{PLURAL:$3|1 file|$3 file}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",

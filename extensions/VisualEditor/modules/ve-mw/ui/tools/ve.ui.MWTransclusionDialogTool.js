@@ -52,10 +52,8 @@ ve.ui.MWTransclusionDialogTool.static.template = null;
  * @inheritdoc
  */
 ve.ui.MWTransclusionDialogTool.static.isCompatibleWith = function ( model ) {
-	var compatible;
-
 	// Parent method
-	compatible = ve.ui.MWTransclusionDialogTool.super.static.isCompatibleWith.call( this, model );
+	var compatible = ve.ui.MWTransclusionDialogTool.super.static.isCompatibleWith.call( this, model );
 
 	if ( compatible && this.template ) {
 		return model.isSingleTemplate( this.template );

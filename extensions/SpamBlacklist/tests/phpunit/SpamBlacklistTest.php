@@ -71,7 +71,60 @@ class SpamBlacklistTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected, $returnValue );
 	}
 
-	protected function setUp() : void {
+	public function spamEditProvider() {
+		return [
+			'no spam' => [
+				'https://example.com',
+				true,
+			],
+			'revision with spam, with additional non-spam' => [
+				"https://foo.com\nhttp://01bags.com\nhttp://bar.com'",
+				false,
+			],
+
+			'revision with domain blacklisted as spam, but subdomain whitelisted' => [
+				'http://a5b.sytes.net',
+				true,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider spamEditProvider
+	 */
+	public function testSpamEdit( $text, $ok ) {
+		$fields = [
+			'wpTextbox1' => $text,
+			'wpUnicodeCheck' => EditPage::UNICODE_CHECK,
+			'wpRecreate' => true,
+		];
+
+		$req = new FauxRequest( $fields, true );
+
+		$page = $this->getNonexistingTestPage( __METHOD__ );
+		$title = $page->getTitle();
+
+		$articleContext = new RequestContext;
+		$articleContext->setRequest( $req );
+		$articleContext->setWikiPage( $page );
+		$articleContext->setUser( $this->getTestUser()->getUser() );
+
+		$article = new Article( $title );
+		$ep = new EditPage( $article );
+		$ep->setContextTitle( $title );
+
+		$ep->importFormData( $req );
+
+		$status = $ep->attemptSave( $result );
+
+		$this->assertSame( $ok, $status->isOK() );
+
+		if ( !$ok ) {
+			$this->assertTrue( $status->hasMessage( 'spam-blacklisted-link' ) );
+		}
+	}
+
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->setMwGlobals( 'wgBlacklistSettings', [
@@ -94,7 +147,7 @@ class SpamBlacklistTest extends MediaWikiTestCase {
 		$reflProp->setValue( $instance, false );
 	}
 
-	protected function tearDown() : void {
+	protected function tearDown(): void {
 		MediaWikiServices::getInstance()->getMessageCache()->disable();
 		parent::tearDown();
 	}

@@ -5,14 +5,14 @@
 			"Ahonc",
 			"Base",
 			"Calak",
+			"DDPAT",
 			"Dim Grits",
 			"Movses",
 			"NickK",
 			"Piramidion",
 			"Prima klasy4na",
 			"Ата",
-			"Тест",
-			"DDPAT"
+			"Тест"
 		]
 	},
 	"skinname-vector": "Векторне",
@@ -40,5 +40,13 @@
 	"vector-jumptosearch": "Перейти до пошуку",
 	"vector-jumptocontent": "Перейти до вмісту",
 	"vector-more-actions": "Ще",
-	"vector-search-loader": "Завантажуються підказки пошуку"
+	"vector-search-loader": "Завантажуються підказки пошуку",
+	"vector-anon-user-menu-pages": "Сторінка для редакторів, які вийшли з системи",
+	"vector-anon-user-menu-pages-learn": "дізнатися більше",
+	"vector-anon-user-menu-pages-label": "Дізнатися більше про редагування",
+	"vector-personal-more-label": "Посилання користувачів",
+	"vector-main-menu-tooltip": "Головне меню",
+	"tooltip-vector-anon-user-menu-title": "Більше опцій",
+	"vector-menu-checkbox-expanded": "розширений",
+	"vector-menu-checkbox-collapsed": "згорнутий"
 }

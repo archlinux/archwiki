@@ -17,8 +17,7 @@ mw.libs.ve = mw.libs.ve || {};
  * @param {Object} [config] Configuration options
  */
 mw.libs.ve.SwitchPopupWidget = function MWLibsVESwitchPopupWidget( mode, config ) {
-	var $content, showAgainLayout, showAgainCheckbox,
-		prefix = mode === 'visual' ? 'visualeditor-mweditmodewt' : 'visualeditor-mweditmodeve',
+	var prefix = mode === 'visual' ? 'visualeditor-mweditmodewt' : 'visualeditor-mweditmodeve',
 		option = mode === 'visual' ? 'visualeditor-hidevisualswitchpopup' : 'visualeditor-hidesourceswitchpopup';
 
 	// Parent constructor
@@ -35,17 +34,17 @@ mw.libs.ve.SwitchPopupWidget = function MWLibsVESwitchPopupWidget( mode, config 
 	// The following messages are used here:
 	// * visualeditor-mweditmodewt-popup-body
 	// * visualeditor-mweditmodeve-popup-body
-	$content = $( '<p>' ).text( mw.msg( prefix + '-popup-body' ) );
+	var $content = $( '<p>' ).text( mw.msg( prefix + '-popup-body' ) );
 
 	if ( !mw.user.isAnon() ) {
-		showAgainCheckbox = new OO.ui.CheckboxInputWidget()
+		var showAgainCheckbox = new OO.ui.CheckboxInputWidget()
 			.on( 'change', function ( value ) {
 				var configValue = value ? '1' : '';
 				new mw.Api().saveOption( option, configValue );
 				mw.user.options.set( option, configValue );
 			} );
 
-		showAgainLayout = new OO.ui.FieldLayout( showAgainCheckbox, {
+		var showAgainLayout = new OO.ui.FieldLayout( showAgainCheckbox, {
 			align: 'inline',
 			label: mw.msg( 'visualeditor-mweditmodeve-showagain' )
 		} );

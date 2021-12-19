@@ -10,7 +10,7 @@ var Model = require( './Model.js' );
  * @extends OO.EventEmitter
  *
  * @constructor
- * @param {Object} config Configuration object
+ * @param {Object} [config]
  * @cfg {string} [fullPageName] The full name of the current page
  * @cfg {string} [parentPage] The name of the parent page
  * @cfg {string} [isPageSubLevel] The page is sub-level of another template

@@ -46,7 +46,7 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 		return $this->wanCache->getWithSetCallback(
 			$key,
 			self::CACHE_TTL,
-			function ( $oldValue, &$ttl, array &$setOpts ) use ( $fname ) {
+			static function ( $oldValue, &$ttl, array &$setOpts ) use ( $fname ) {
 				$dbr = wfGetDB( DB_REPLICA );
 				$setOpts += Database::getCacheSetOptions( $dbr );
 

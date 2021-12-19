@@ -42,6 +42,6 @@
 	"replacetext_blankwarning": "'''Varoitus:''' Koska korvaava teksti on tyhjä, operaatiota ei voi palauttaa käänteisellä korvauksella.",
 	"replacetext_continue": "Jatka",
 	"replacetext_editsummary": "Tekstin korvaus – ”$1” muotoon ”$2”",
-	"right-replacetext": "Tehdä merkkijonojen korvauksia koko wikin laajuudella",
-	"replacetext_reminder": "Muuttaaksesi linkkejä tähän sivuun muilla sivuilla, mene sivulle $1."
+	"replacetext_reminder": "Muuttaaksesi linkkejä tähän sivuun muilla sivuilla, mene sivulle $1.",
+	"right-replacetext": "Tehdä merkkijonojen korvauksia koko wikin laajuudella"
 }

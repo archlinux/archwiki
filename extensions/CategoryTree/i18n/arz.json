@@ -19,8 +19,6 @@
 	"categorytree-mode-all": "كل الصفحات",
 	"categorytree-collapse": "اضغط",
 	"categorytree-expand": "اتوسع",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "فيه {{PLURAL:$1|1 تصنيف فرعي|$1 تصنيف فرعي}}، {{PLURAL:$2|1 صفحة|$2 صفحة}}، و {{PLURAL:$3|1 ملف|$3 ملف}}",
 	"categorytree-num-categories": "$1 ت",
 	"categorytree-num-pages": " $1 ص",

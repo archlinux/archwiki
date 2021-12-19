@@ -14,8 +14,8 @@
 	"monobook-jumptonavigation": "Gezinti kısmına atla",
 	"monobook-jumptosearch": "Arama kısmına atla",
 	"monobook-more-actions": "Daha fazla",
+	"cactions-mobile": "Sayfa eylemleri",
 	"monobook-cactions-label": "Sayfa eylemleri",
 	"monobook-notifications-link": "Bildirimler ($1)",
-	"monobook-notifications-link-none": "Bildirimler",
-	"monobook-responsive-label": "Duyarlı MonoBook tasarımını etkinleştir"
+	"monobook-notifications-link-none": "Bildirimler"
 }

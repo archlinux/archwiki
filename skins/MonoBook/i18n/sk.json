@@ -13,6 +13,5 @@
 	"monobook.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Monobook */",
 	"monobook-more-actions": "Viac",
 	"monobook-notifications-link": "Upozornenia ($1)",
-	"monobook-notifications-link-none": "Upozornenia",
-	"monobook-responsive-label": "Zapnúť responzívny dizajn MonoBooku"
+	"monobook-notifications-link-none": "Upozornenia"
 }

@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gnangarra"
+			"Gnangarra",
+			"Amire80"
 		]
 	},
-	"tooltip-ca-ve-edit": "wallak nidja bibol",
-	"visualeditor-ca-createlocaldescriptionsource": "ngatti nidja waagnkin birnup",
-	"visualeditor-ca-createsource": "wallakiny birnup",
-	"visualeditor-ca-editsource": "wallak birnup",
+	"tooltip-ca-ve-edit": "Wallak nidja bibol",
+	"visualeditor-ca-createlocaldescriptionsource": "Ngatti nidja waagnkin birnup",
+	"visualeditor-ca-createsource": "Wallakiny birnup",
+	"visualeditor-ca-editsource": "Wallak birnup",
 	"visualeditor-ca-editsource-section": "wallak birnup",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

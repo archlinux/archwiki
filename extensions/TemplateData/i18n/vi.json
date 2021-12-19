@@ -4,8 +4,8 @@
 			"Max20091",
 			"Minh Nguyen",
 			"Nguyên Lê",
-			"NguoiDungKhongDinhDanh",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"templatedata-desc": "Lưu trữ dữ liệu cho tham số bản mẫu (qua JSON)",
@@ -25,6 +25,7 @@
 	"templatedata-doc-param-status-optional": "tùy chọn",
 	"templatedata-doc-param-status-required": "bắt buộc",
 	"templatedata-doc-param-status-suggested": "khuyên dùng",
+	"templatedata-doc-param-suggestedvalues": "Giá trị đề nghị",
 	"templatedata-doc-param-type": "Kiểu",
 	"templatedata-doc-param-type-boolean": "Luận lý",
 	"templatedata-doc-param-type-content": "Nội dung",
@@ -100,6 +101,8 @@
 	"templatedata-modal-table-param-name": "Tên",
 	"templatedata-modal-table-param-required": "Bắt buộc",
 	"templatedata-modal-table-param-suggested": "Khuyến khích",
+	"templatedata-modal-table-param-suggestedvalues": "Giá trị đề nghị",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "Thêm giá trị...",
 	"templatedata-modal-table-param-type": "Kiểu",
 	"templatedata-modal-table-param-uneditablefield": "Không sửa được",
 	"templatedata-modal-title": "Trình soạn thảo tài liệu bản mẫu",

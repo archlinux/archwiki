@@ -5,7 +5,8 @@
 			"PiefPafPier",
 			"Robin van der Vliet",
 			"Robin0van0der0vliet",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -158,14 +159,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Ynhâld tafoegje",
 	"visualeditor-dialog-transclusion-add-param": "Mear ynformaasje tafoegje",
 	"visualeditor-dialog-transclusion-add-template": "Berjocht tafoegje",
+	"visualeditor-dialog-transclusion-collapse-options": "Opsjes ferbergje",
 	"visualeditor-dialog-transclusion-content": "Ynhâld",
 	"visualeditor-dialog-transclusion-contextitem-description": "Generearre troch: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Opsjes werjaan",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Utfazearre fjild",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "It fjild wurdt útfazearre. $1",
 	"visualeditor-dialog-transclusion-loading": "Laden ...",
 	"visualeditor-dialog-transclusion-more-template-description": "Der soe oanfoljende ynformaasje oer it berjocht \"$1\" stean kinne op 'e [[{{ns:template}}:$1|berjochtside]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Opsjes werjaan",
-	"visualeditor-dialog-transclusion-no-template-description": "It berjocht \"$1\" hat noch gjin beskriuwing, mar der soe ynformaasje stean kinne op 'e [[$1|berjochtside]].",
+	"visualeditor-dialog-transclusion-no-template-description": "It berjocht \"$1\" hat noch gjin beskriuwing, mar der soe ynformaasje stean kinne op 'e [[$2|berjochtside]].",
 	"visualeditor-dialog-transclusion-options": "Opsjes",
 	"visualeditor-dialog-transclusion-param-default": "Standert: $1",
 	"visualeditor-dialog-transclusion-param-example": "bgl. $1",
@@ -182,8 +184,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Dochs trochgean",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Ferplicht fjild mist|Ferplichte fjilden misse}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Wolle jo wier trochgean sûnder {{PLURAL:$2|it fjild|de fjilden}} $1 yn te foljen?",
-	"visualeditor-dialog-transclusion-single-mode": "Opsjes ferbergje",
-	"visualeditor-dialog-transclusion-title": "Transklúzje",
 	"visualeditor-dialog-transclusion-templates-menu-aria-label": "Ynstelmenu berjochtfjilden",
 	"visualeditor-dialogbutton-media-tooltip": "Ofbylden en media",
 	"visualeditor-dialogbutton-meta-tooltip": "Sideynstellings",
@@ -388,6 +388,5 @@
 	"visualeditor-wikitext-warning-title": "Wikitekst-opmaak ûntdutsen",
 	"visualeditor-wikitextconvert-title": "Opmaak nei wikitekst omsette?",
 	"visualeditor-wikitextconvert-message": "De ynhâld dy't jo plakt hawwe, befettet opmaak. Moat it omset wurde nei wikitekst, of ynfoege as platte tekst?",
-	"visualeditor-wikitextconvert-plain": "Platte tekst brûke",
 	"visualeditor-wikitextconvert-convert": "Omsette nei wikitekst"
 }

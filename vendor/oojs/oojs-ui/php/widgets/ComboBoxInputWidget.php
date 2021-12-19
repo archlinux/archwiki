@@ -61,13 +61,14 @@ class ComboBoxInputWidget extends TextInputWidget {
 	}
 
 	public function getConfig( &$config ) {
-		$o = [];
+		$options = [];
 		foreach ( $this->options as $option ) {
-			$label = $option->content[0];
-			$data = $option->getAttribute( 'value' );
-			$o[] = [ 'data' => $data, 'label' => $label ];
+			$options[] = [
+				'data' => $option->getAttribute( 'value' ),
+				'label' => $option->content[0],
+			];
 		}
-		$config['options'] = $o;
+		$config['options'] = $options;
 		// JS ComboBoxInputWidget has `autocomplete: false` in the defaults. Make sure
 		// explicitly passing `autocomplete: true` overrides that. Doing so doesn't make
 		// much sense, this is just to make the tests happy.

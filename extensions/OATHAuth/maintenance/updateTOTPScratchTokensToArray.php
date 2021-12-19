@@ -44,7 +44,7 @@ class UpdateTOTPScratchTokensToArray extends Maintenance {
 		global $wgOATHAuthDatabase;
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancerFactory()
 			->getMainLB( $wgOATHAuthDatabase );
-		$dbw = $lb->getConnectionRef( DB_MASTER, [], $wgOATHAuthDatabase );
+		$dbw = $lb->getConnectionRef( DB_PRIMARY, [], $wgOATHAuthDatabase );
 
 		if ( !UpdateTables::switchTOTPScratchTokensToArray( $dbw ) ) {
 			$this->error( "Failed to update TOTP Scratch Tokens.\n", 1 );

@@ -52,6 +52,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Use the result of a previous serializeforcache request with this key. Overrides $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (when saving with a captcha response).",
 	"apihelp-visualeditoredit-param-captchaword": "Answer to the captcha (when saving with a captcha response).",
+	"apihelp-visualeditoredit-param-plugins": "Plugins associated with the API request.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Arbitrary data sent by a plugin with the API request.",
 	"apihelp-visualeditoredit-param-etag": "ETag to send.",
 	"apihelp-visualeditoredit-param-html": "HTML to send to Parsoid in exchange for wikitext.",
 	"apihelp-visualeditoredit-param-minor": "Flag for minor edit.",

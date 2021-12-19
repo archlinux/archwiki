@@ -9,7 +9,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 	 */
 	abstract protected function newInterpreter( $opts = [] );
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 		try {
 			$this->newInterpreter();
@@ -153,7 +153,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 
 	public function testWrapPHPFunction() {
 		$interpreter = $this->newInterpreter();
-		$func = $interpreter->wrapPhpFunction( function ( $n ) {
+		$func = $interpreter->wrapPhpFunction( static function ( $n ) {
 			return [ 42, $n ];
 		} );
 		$res = $interpreter->callFunction( $func, 'From PHP' );
@@ -175,7 +175,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 
 		// Like a first call to Scribunto_LuaEngine::registerInterface()
 		$interpreter->registerLibrary( 'mw_interface', [
-			'foo' => function ( $v ) use ( &$test1Called ) {
+			'foo' => static function ( $v ) use ( &$test1Called ) {
 				$test1Called = $v;
 			},
 		] );
@@ -184,7 +184,7 @@ abstract class Scribunto_LuaInterpreterTest extends PHPUnit\Framework\TestCase {
 		);
 		// Like a second call to Scribunto_LuaEngine::registerInterface()
 		$interpreter->registerLibrary( 'mw_interface', [
-			'foo' => function ( $v ) use ( &$test2Called ) {
+			'foo' => static function ( $v ) use ( &$test2Called ) {
 				$test2Called = $v;
 			},
 		] );

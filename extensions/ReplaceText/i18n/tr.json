@@ -39,7 +39,10 @@
 	"replacetext_continue": "Devam et",
 	"replacetext_announce": "Bu düzenlemeleri $1 ve izleme listeleriyle duyurun",
 	"replacetext_editsummary": "Metin değiştirme - \"$1\" yerine \"$2\"",
+	"replacetext_reminder": "Bu sayfadaki bağlantıları diğer sayfalarda da değiştirmek için $1 gidin.",
+	"replacetext_cfg_error": "MetinDeğiştir yapılandırma hatası",
+	"replacetext_no_compress": "Vikiniz TestDeğiştir ile çalışmayacak: $wgCompressRevisions doğru olarak ayarlanırsa metin değiştirmeleri çalışmaz.",
+	"replacetext_no_external_stores": "Vikiniz TestDeğiştir ile çalışmayacak: $wgExternalStores boş değilse metin değiştirmeleri çalışmaz.",
 	"right-replacetext": "Tüm vikide dize değiştirme işlemleri yap",
-	"action-replacetext": "tüm vikide dize değiştirme işlemleri yap",
-	"replacetext_reminder": "Bu sayfadaki bağlantıları diğer sayfalarda da değiştirmek için $1 gidin."
+	"action-replacetext": "tüm vikide dize değiştirme işlemleri yap"
 }

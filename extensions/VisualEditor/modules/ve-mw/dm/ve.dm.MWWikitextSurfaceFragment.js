@@ -32,8 +32,6 @@ ve.dm.MWWikitextSurfaceFragment.prototype.hasMatchingAncestor = function ( type,
 		nodes = this.getSelectedLeafNodes(),
 		all = !!nodes.length;
 
-	nodes = this.getSelectedLeafNodes();
-	all = !!nodes.length;
 	for ( i = 0, len = nodes.length; i < len; i++ ) {
 		text = this.document.data.getText( false, nodes[ i ].getRange() );
 		// TODO: Use a registry to do this matching

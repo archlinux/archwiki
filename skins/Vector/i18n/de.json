@@ -33,5 +33,13 @@
 	"vector-jumptosearch": "Zur Suche springen",
 	"vector-jumptocontent": "Zum Inhalt springen",
 	"vector-more-actions": "Mehr",
-	"vector-search-loader": "Laden von Suchvorschlägen"
+	"vector-search-loader": "Laden von Suchvorschlägen",
+	"vector-anon-user-menu-pages": "Seiten für abgemeldete Benutzer",
+	"vector-anon-user-menu-pages-learn": "Weitere Informationen",
+	"vector-anon-user-menu-pages-label": "Erfahre mehr über das Bearbeiten",
+	"vector-personal-more-label": "Benutzerlinks",
+	"vector-main-menu-tooltip": "Hauptmenü",
+	"tooltip-vector-anon-user-menu-title": "Weitere Optionen",
+	"vector-menu-checkbox-expanded": "ausgeklappt",
+	"vector-menu-checkbox-collapsed": "eingeklappt"
 }

@@ -27,5 +27,13 @@
 	"vector-jumptosearch": "Jump to search",
 	"vector-jumptocontent": "Jump to content",
 	"vector-more-actions": "More",
-	"vector-search-loader": "Loading search suggestions"
+	"vector-search-loader": "Loading search suggestions",
+	"vector-anon-user-menu-pages": "Pages for logged out editors",
+	"vector-anon-user-menu-pages-learn": "learn more",
+	"vector-anon-user-menu-pages-label": "Learn more about editing",
+	"vector-personal-more-label": "User links",
+	"vector-main-menu-tooltip": "Main menu",
+	"tooltip-vector-anon-user-menu-title": "More options",
+	"vector-menu-checkbox-expanded": "expanded",
+	"vector-menu-checkbox-collapsed": "collapsed"
 }

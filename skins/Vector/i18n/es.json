@@ -2,20 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Armando-Martin",
+			"Avengium",
 			"Crazymadlover",
 			"Dalton2",
 			"Fitoschido",
 			"Geryescalier",
 			"Ihojose",
+			"Johny Weissmuller Jr",
 			"Locos epraix",
 			"Manuelt15",
 			"MarcoAurelio",
 			"Miguel2706",
 			"Platonides",
 			"Rodney Araujo",
-			"Vivaelcelta",
-			"Avengium",
-			"Johny Weissmuller Jr"
+			"Vivaelcelta"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -43,5 +43,13 @@
 	"vector-jumptosearch": "Ir a la búsqueda",
 	"vector-jumptocontent": "Ir al contenido",
 	"vector-more-actions": "Más",
-	"vector-search-loader": "Cargando sugerencias de búsqueda"
+	"vector-search-loader": "Cargando sugerencias de búsqueda",
+	"vector-anon-user-menu-pages": "Páginas para editores desconectados",
+	"vector-anon-user-menu-pages-learn": "más información",
+	"vector-anon-user-menu-pages-label": "Obtenga más información sobre editar",
+	"vector-personal-more-label": "Enlaces de usuario",
+	"vector-main-menu-tooltip": "Menú principal",
+	"tooltip-vector-anon-user-menu-title": "Más opciones",
+	"vector-menu-checkbox-expanded": "expandido",
+	"vector-menu-checkbox-collapsed": "contraído"
 }

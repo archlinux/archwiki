@@ -10,7 +10,8 @@
 	"--external": "HTMLDocument,HTMLBodyElement,HTMLHtmlElement,Window,Node,Text,Set,Range,Selection,ClientRect,File,FileList,Blob,DataTransfer,DataTransferItem,KeyboardEvent,MouseEvent,Promise,Storage",
 	"--warnings": [ "-nodoc(class,public)", "-global" ],
 	"--exclude": [
-		"lib/ve/rebaser/src/dm/"
+		"lib/ve/rebaser/src/dm/",
+		"modules/ve-mw/tests/"
 	],
 	"--": [
 		".jsduck/external.js",

@@ -10,7 +10,7 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.37.0"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
@@ -67,9 +67,6 @@
 			"value": 4
 		},
 		"OATHAuthDatabase": {
-			"value": false
-		},
-		"OATHAuthSecret": {
 			"value": false
 		},
 		"OATHAuthAccountPrefix": {

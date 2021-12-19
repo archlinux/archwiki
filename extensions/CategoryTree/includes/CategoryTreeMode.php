@@ -22,6 +22,8 @@
  * @author Daniel Kinzler, brightbyte.de
  */
 
+namespace MediaWiki\Extension\CategoryTree;
+
 /**
  * Constants for use with the mode, defining what should be shown in the tree.
  */

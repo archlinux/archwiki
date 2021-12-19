@@ -87,7 +87,7 @@ abstract class Installer {
 	protected $dbInstallers = [];
 
 	/**
-	 * Minimum memory size in MB.
+	 * Minimum memory size in MiB.
 	 *
 	 * @var int
 	 */
@@ -172,6 +172,7 @@ abstract class Installer {
 		'wgSitename',
 		'wgPasswordSender',
 		'wgLanguageCode',
+		'wgLocaltimezone',
 		'wgRightsIcon',
 		'wgRightsText',
 		'wgRightsUrl',
@@ -446,7 +447,7 @@ abstract class Installer {
 	 * @throws MWException
 	 */
 	public function resetMediaWikiServices( Config $installerConfig = null, $serviceOverrides = [] ) {
-		global $wgUser, $wgObjectCaches, $wgLang;
+		global $wgObjectCaches, $wgLang;
 
 		$serviceOverrides += [
 			// Disable interwiki lookup, to avoid database access during parses
@@ -478,14 +479,11 @@ abstract class Installer {
 		// Disable i18n cache
 		$mwServices->getLocalisationCache()->disableBackend();
 
-		// Clear language cache so the old i18n cache doesn't sneak back in
-		Language::$mLangObjCache = [];
-
 		// Set a fake user.
 		// Note that this will reset the context's language,
 		// so set the user before setting the language.
 		$user = User::newFromId( 0 );
-		$wgUser = $user;
+		StubGlobalUser::setUser( $user );
 
 		RequestContext::getMain()->setUser( $user );
 
@@ -1323,7 +1321,7 @@ abstract class Installer {
 			return Status::newGood( [] );
 		}
 
-		// @phan-suppress-next-line SecurityCheck-PathTraversal False positive T268920
+		// @phan-suppress-next-line SecurityCheck-PathTraversal False positive
 		$dh = opendir( $extDir );
 		$exts = [];
 		$status = new Status;
@@ -1399,6 +1397,7 @@ abstract class Installer {
 			$info += $jsonStatus->value;
 		}
 
+		// @phan-suppress-next-line SecurityCheckMulti
 		return Status::newGood( $info );
 	}
 
@@ -1576,6 +1575,7 @@ abstract class Installer {
 		 * but we're not opening that can of worms
 		 * @see https://phabricator.wikimedia.org/T28857
 		 */
+		// @phan-suppress-next-line SecurityCheck-PathTraversal
 		require "$IP/includes/DefaultSettings.php";
 
 		// phpcs:ignore MediaWiki.VariableAnalysis.UnusedGlobalVariables
@@ -1699,7 +1699,7 @@ abstract class Installer {
 	 * @param callable $startCB A callback array for the beginning of each step
 	 * @param callable $endCB A callback array for the end of each step
 	 *
-	 * @return Status[] Array of Status objects
+	 * @return Status[]
 	 */
 	public function performInstallation( $startCB, $endCB ) {
 		$installResults = [];
@@ -1802,9 +1802,10 @@ abstract class Installer {
 					$name, $status->getWikiText( null, null, $this->getVar( '_UserLang' ) ) );
 			}
 
-			$user->addGroup( 'sysop' );
-			$user->addGroup( 'bureaucrat' );
-			$user->addGroup( 'interface-admin' );
+			$userGroupManager = MediaWikiServices::getInstance()->getUserGroupManager();
+			$userGroupManager->addUserToGroup( $user, 'sysop' );
+			$userGroupManager->addUserToGroup( $user, 'bureaucrat' );
+			$userGroupManager->addUserToGroup( $user, 'interface-admin' );
 			if ( $this->getVar( '_AdminEmail' ) ) {
 				$user->setEmail( $this->getVar( '_AdminEmail' ) );
 			}
@@ -1896,12 +1897,11 @@ abstract class Installer {
 				wfMessage( 'mainpagedocfooter' )->inContentLanguage()->text()
 			);
 
-			$status = $page->doEditContent(
+			$status = $page->doUserEditContent(
 				$content,
+				User::newSystemUser( 'MediaWiki default' ),
 				'',
-				EDIT_NEW,
-				false,
-				User::newSystemUser( 'MediaWiki default' )
+				EDIT_NEW
 			);
 		} catch ( Exception $e ) {
 			// using raw, because $wgShowExceptionDetails can not be set yet

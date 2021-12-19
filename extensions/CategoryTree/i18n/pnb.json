@@ -18,8 +18,6 @@
 	"categorytree-mode-all": "سارے صفحے",
 	"categorytree-collapse": "مک گیا",
 	"categorytree-expand": "ودھاؤ",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "ایہدے وچ  {{PLURAL:$1|1 نکی گٹھ|$1 گٹھاں}}, {{PLURAL:$2|1 صفحہ|$2 صفحے}}, تے {{PLURAL:$3|1 فائل|$3 فائلاں}} ہیگیاں نیں۔",
 	"categorytree-num-categories": "$1 سی",
 	"categorytree-num-pages": "$1 پی",

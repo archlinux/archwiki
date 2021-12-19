@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"SPQRobin",
-			"Siebrand",
 			"Bas dehaan",
 			"Daniuu",
 			"Mainframe98",
-			"McDutchie"
+			"McDutchie",
+			"SPQRobin",
+			"Siebrand"
 		]
 	},
 	"spam-blacklist": " # Externe URL's die voldoen aan deze lijst worden geweigerd bij het\n # toevoegen aan een pagina. Deze lijst heeft alleen invloed op deze wiki.\n # Er bestaat ook een globale zwarte lijst.\n # Documentatie: https://www.mediawiki.org/wiki//Special:MyLanguage/Extension:SpamBlacklist\n #<!-- laat deze regel zoals hij is --> <pre>\n#\n# De syntaxis is als volgt:\n#   * Alles vanaf het teken \"#\" tot het einde van de regel is opmerking\n#   * Iedere niet-lege regel is een fragment van een reguliere uitdrukking die\n#     alleen van toepassing is op hosts binnen URL's.\n\n #</pre> <!-- laat deze regel zoals hij is -->",

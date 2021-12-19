@@ -14,7 +14,7 @@ use Wikimedia\TestingAccessWrapper;
  */
 class AnchorFormatterTest extends \MediaWikiUnitTestCase {
 
-	public function setUp() : void {
+	public function setUp(): void {
 		parent::setUp();
 
 		global $wgFragmentMode;

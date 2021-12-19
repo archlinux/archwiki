@@ -3,8 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
-use DOMElement;
-use DOMNode;
+use Wikimedia\Parsoid\Core\MediaStructure;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Html2Wt\LinkHandlerUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
 
 class ImgHandler extends DOMHandler {
@@ -15,12 +17,12 @@ class ImgHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function handle(
-		DOMElement $node, SerializerState $state, bool $wrapperUnmodified = false
-	): ?DOMNode {
+		Element $node, SerializerState $state, bool $wrapperUnmodified = false
+	): ?Node {
 		if ( $node->getAttribute( 'rel' ) === 'mw:externalImage' ) {
-			$state->serializer->emitWikitext( $node->getAttribute( 'src' ) ?: '', $node );
+			$state->serializer->emitWikitext( $node->getAttribute( 'src' ) ?? '', $node );
 		} else {
-			$state->serializer->figureHandler( $node );
+			LinkHandlerUtils::figureHandler( $state, $node, new MediaStructure( $node ) );
 		}
 		return $node->nextSibling;
 	}

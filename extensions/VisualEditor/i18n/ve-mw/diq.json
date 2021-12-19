@@ -13,7 +13,8 @@
 			"Marmase",
 			"Mirzali",
 			"Orbot707",
-			"Se4598"
+			"Se4598",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -166,14 +167,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Zerrek cı kerê",
 	"visualeditor-dialog-transclusion-add-param": "Dehana vêşi melumat cı kerê",
 	"visualeditor-dialog-transclusion-add-template": "Şablon cı kerê",
+	"visualeditor-dialog-transclusion-collapse-options": "Opsiyonan bınımne",
 	"visualeditor-dialog-transclusion-content": "Zerrek",
 	"visualeditor-dialog-transclusion-contextitem-description": "Vıraziyaye:$1",
+	"visualeditor-dialog-transclusion-expand-options": "Meçenega bımotné",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Nêwesıbyaye ca",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Ca karnayış Nêwesıbêno:$1",
 	"visualeditor-dialog-transclusion-loading": "Bar beno...",
 	"visualeditor-dialog-transclusion-more-template-description": "Heqa tay malumata çiy belki debya yo  \"$1\" pera [[{{ns:template}}:$1|tiya de]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Meçenega bımotné",
-	"visualeditor-dialog-transclusion-no-template-description": "Şınasiya şablona $1 çıni ya. Belki hebekê şınasnayış [[$1|pera şabloni]] dı esta.",
+	"visualeditor-dialog-transclusion-no-template-description": "Şınasiya şablona $1 çıni ya. Belki hebekê şınasnayış [[$2|pera şabloni]] dı esta.",
 	"visualeditor-dialog-transclusion-options": "Weçinegi",
 	"visualeditor-dialog-transclusion-param-default": "Hesıbyaye :$1",
 	"visualeditor-dialog-transclusion-param-example": "Mesela $1",
@@ -190,8 +192,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Fına zi dewam ke",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Lazım bıyaye  {{PLURAL:$1|parametre kemiyo|parametrey kemiyê}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Bê {{PLURAL:$2|patametreyê|parametreyanê}} $1 şıma qayıli dewam bıkerê?",
-	"visualeditor-dialog-transclusion-single-mode": "Opsiyonan bınımne",
-	"visualeditor-dialog-transclusion-title": "Şablon tam kerden",
 	"visualeditor-dialog-transclusion-templates-menu-aria-label": "Menuay saz kerdışê cayanê şabloni",
 	"visualeditor-dialogbutton-media-tooltip": "Resımi û medya",
 	"visualeditor-dialogbutton-meta-tooltip": "Eyarê pele",
@@ -396,6 +396,5 @@
 	"visualeditor-wikitext-warning-title": "Timaryayışa wiki metini vineyé",
 	"visualeditor-wikitextconvert-title": "Biçımkerdış wa tadiyo era wikimetın?",
 	"visualeditor-wikitextconvert-message": "Pronaye zerrekê şıma format ihtiwa keno. Gnai tadeyo zey wikimetini ya zi wa zey duz metini bo?",
-	"visualeditor-wikitextconvert-plain": "Metınê dûzi bıgurenê",
 	"visualeditor-wikitextconvert-convert": "raçarne be wikimetın"
 }

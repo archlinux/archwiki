@@ -55,6 +55,7 @@ class ImageMap {
 	public static function render( $input, $params, Parser $parser ) {
 		global $wgUrlProtocols, $wgNoFollowLinks;
 		$config = ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
+		$enableLegacyMediaDOM = $config->get( 'ParserEnableLegacyMediaDOM' );
 
 		$lines = explode( "\n", $input );
 
@@ -67,6 +68,7 @@ class ImageMap {
 		$imageTitle = null;
 		$mapHTML = '';
 		$links = [];
+		$explicitNone = false;
 
 		// Define canonical desc types to allow i18n of 'imagemap_desc_types'
 		$descTypesCanonical = 'top-right, bottom-right, bottom-left, top-left, none';
@@ -103,6 +105,14 @@ class ImageMap {
 				}
 				// Parse the options so we can use links and the like in the caption
 				$parsedOptions = $options === '' ? '' : $parser->recursiveTagParse( $options );
+
+				if ( !$enableLegacyMediaDOM ) {
+					$explicitNone = preg_match( '/(^|\|)none(\||$)/D', $parsedOptions );
+					if ( !$explicitNone ) {
+						$parsedOptions .= '|none';
+					}
+				}
+
 				$imageHTML = $parser->makeImage( $imageTitle, $parsedOptions );
 				$parser->replaceLinkHolders( $imageHTML );
 				$imageHTML = $parser->getStripState()->unstripBoth( $imageHTML );
@@ -294,37 +304,76 @@ class ImageMap {
 			$imageNode->setAttribute( 'usemap', "#$mapName" );
 		}
 
-		// Add a surrounding div, remove the default link to the description page
-		$anchor = $imageNode->parentNode;
-		$parent = $anchor->parentNode;
-		$div = $parent->insertBefore( new DOMElement( 'div' ), $anchor );
-		$div->setAttribute( 'class', 'noresize' );
-		if ( $defaultLinkAttribs ) {
-			$defaultAnchor = $div->appendChild( new DOMElement( 'a' ) );
-			foreach ( $defaultLinkAttribs as $name => $value ) {
-				$defaultAnchor->setAttribute( $name, $value );
-			}
-			$imageParent = $defaultAnchor;
-		} else {
-			$imageParent = $div;
-		}
-
-		// Add the map HTML to the div
-		// We used to add it before the div, but that made tidy unhappy
 		if ( $mapHTML !== '' ) {
 			$mapDoc = new DOMDocument();
 			$mapDoc->loadXML( $mapHTML );
 			$mapNode = $domDoc->importNode( $mapDoc->documentElement, true );
-			$div->appendChild( $mapNode );
 		}
 
-		$imageParent->appendChild( $imageNode->cloneNode( true ) );
-		$parent->removeChild( $anchor );
+		$div = null;
+
+		if ( $enableLegacyMediaDOM ) {
+			// Add a surrounding div, remove the default link to the description page
+			$anchor = $imageNode->parentNode;
+			$parent = $anchor->parentNode;
+			$div = $parent->insertBefore( new DOMElement( 'div' ), $anchor );
+			$div->setAttribute( 'class', 'noresize' );
+			if ( $defaultLinkAttribs ) {
+				$defaultAnchor = $div->appendChild( new DOMElement( 'a' ) );
+				foreach ( $defaultLinkAttribs as $name => $value ) {
+					$defaultAnchor->setAttribute( $name, $value );
+				}
+				$imageParent = $defaultAnchor;
+			} else {
+				$imageParent = $div;
+			}
+
+			// Add the map HTML to the div
+			// We used to add it before the div, but that made tidy unhappy
+			if ( isset( $mapNode ) ) {
+				$div->appendChild( $mapNode );
+			}
+
+			$imageParent->appendChild( $imageNode->cloneNode( true ) );
+			$parent->removeChild( $anchor );
+		} else {
+			$anchor = $imageNode->parentNode;
+			$wrapper = $anchor->parentNode;
+
+			$classes = $wrapper->getAttribute( 'class' );
+
+			// For T22030
+			$classes .= ( $classes ? ' ' : '' ) . 'noresize';
+
+			// Remove that class if it was only added while forcing a block
+			if ( !$explicitNone ) {
+				$classes = trim( preg_replace( '/ ?mw-halign-none/', '', $classes ) );
+			}
+
+			$wrapper->setAttribute( 'class', $classes );
+
+			if ( $defaultLinkAttribs ) {
+				$imageParent = $wrapper->ownerDocument->createElement( 'a' );
+				foreach ( $defaultLinkAttribs as $name => $value ) {
+					$imageParent->setAttribute( $name, $value );
+				}
+			} else {
+				$imageParent = new DOMElement( 'span' );
+			}
+			$wrapper->insertBefore( $imageParent, $anchor );
+
+			if ( isset( $mapNode ) ) {
+				$wrapper->insertBefore( $mapNode, $anchor );
+			}
+
+			$imageParent->appendChild( $imageNode->cloneNode( true ) );
+			$wrapper->removeChild( $anchor );
+		}
 
 		// Determine whether a "magnify" link is present
 		$xpath = new DOMXPath( $domDoc );
 		$magnify = $xpath->query( '//div[@class="magnify"]' );
-		if ( !$magnify->length && $descType !== self::NONE ) {
+		if ( $enableLegacyMediaDOM && !$magnify->length && $descType !== self::NONE ) {
 			// Add image description link
 			if ( $descType === self::TOP_LEFT || $descType === self::BOTTOM_LEFT ) {
 				$marginLeft = 0;

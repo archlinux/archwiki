@@ -8,7 +8,8 @@
 			"Prevodim",
 			"Srdjan m",
 			"Zoranzoki21",
-			"Сербијана"
+			"Сербијана",
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -162,14 +163,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Dodaj sadržaj",
 	"visualeditor-dialog-transclusion-add-param": "Dodaj više informacija",
 	"visualeditor-dialog-transclusion-add-template": "Dodaj šablon",
+	"visualeditor-dialog-transclusion-collapse-options": "Sakrij opcije",
 	"visualeditor-dialog-transclusion-content": "Sadržaj",
 	"visualeditor-dialog-transclusion-contextitem-description": "Generisano iz: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Prikaži opcije",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Zastarelo polje",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Polje je zastarelo. $1",
 	"visualeditor-dialog-transclusion-loading": "Učitavanje…",
 	"visualeditor-dialog-transclusion-more-template-description": "Možda ima dodatnih informacija o šablonu „$1” na [[{{ns:template}}:$1|njegovoj stranici]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Prikaži opcije",
-	"visualeditor-dialog-transclusion-no-template-description": "Šablon „$1“ još uvek nema opis, ali je moguće da postoje neke informacije na [[$1|stranici šablona]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Šablon „$1“ još uvek nema opis, ali je moguće da postoje neke informacije na [[$2|stranici šablona]].",
 	"visualeditor-dialog-transclusion-options": "Opcije",
 	"visualeditor-dialog-transclusion-param-default": "Podrazumevano: $1",
 	"visualeditor-dialog-transclusion-param-example": "npr. $1",
@@ -186,8 +188,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Ipak nastavi",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Obavezno polje nedostaje|Obavezna polja nedostaju}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Želite li zaista da nastavite bez {{PLURAL:$2|popune|popunjavanja}} polja $1?",
-	"visualeditor-dialog-transclusion-single-mode": "Sakrij opcije",
-	"visualeditor-dialog-transclusion-title": "Uključivanje",
 	"visualeditor-dialogbutton-media-tooltip": "Datoteka",
 	"visualeditor-dialogbutton-meta-tooltip": "Podešavanja stranice",
 	"visualeditor-dialogbutton-template-tooltip": "Šablon",
@@ -379,6 +379,5 @@
 	"visualeditor-wikitext-warning-title": "Otkriveno je označavanje vikiteksta",
 	"visualeditor-wikitextconvert-title": "Konvertovati formatiranje u vikitekst?",
 	"visualeditor-wikitextconvert-message": "Vaš nalepljen sadržaj sadrži formatiranje. Treba li da se konvertuje u vikitekst ili umetne kao običan tekst?",
-	"visualeditor-wikitextconvert-plain": "Koristi običan tekst",
 	"visualeditor-wikitextconvert-convert": "Konvertuj u vikitekst"
 }

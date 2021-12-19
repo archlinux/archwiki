@@ -5,13 +5,13 @@ namespace Wikimedia\Zest;
 use DOMNode;
 
 class ZestFunc {
-	/** @var callable(DOMNode):bool */
+	/** @var callable(DOMNode,array):bool */
 	public $func;
 	/** @var ?string */
 	public $sel = null;
-	/** @var ?callable(DOMNode):bool */
+	/** @var ?callable(DOMNode,array):bool */
 	public $simple = null;
-	/** @var ?callable(DOMNode):(?DOMNode) */
+	/** @var ?callable(DOMNode,array):(?DOMNode) */
 	public $combinator = null;
 	/** @var ?ZestFunc */
 	public $test = null;
@@ -20,7 +20,7 @@ class ZestFunc {
 	/** @var ?string */
 	public $qname = null;
 
-	/** @param callable(DOMNode):bool $func */
+	/** @param callable(DOMNode,array):bool $func */
 	function __construct( callable $func ) {
 		$this->func = $func;
 	}

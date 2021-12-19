@@ -109,21 +109,19 @@ class GadgetHooks {
 					&& $gadget->isSkinSupported( $skin )
 				) {
 					$gname = $gadget->getName();
-					# bug 30182: dir="auto" because it's often not translated
-					$desc = '<span dir="auto">' . $gadget->getDescription() . '</span>';
-					$available[$desc] = $gname;
+					$available[$gadget->getDescriptionMessageKey()] = $gname;
 					if ( $gadget->isEnabled( $user ) ) {
 						$default[] = $gname;
 					}
 				}
 			}
 
-			if ( $section !== '' ) {
-				$section = wfMessage( "gadget-section-$section" )->parse();
+			if ( $available === [] ) {
+				continue;
+			}
 
-				if ( count( $available ) ) {
-					$options[$section] = $available;
-				}
+			if ( $section !== '' ) {
+				$options["gadget-section-$section"] = $available;
 			} else {
 				$options = array_merge( $options, $available );
 			}
@@ -140,7 +138,8 @@ class GadgetHooks {
 		$preferences['gadgets'] =
 			[
 				'type' => 'multiselect',
-				'options' => $options,
+				'options-messages' => $options,
+				'options-messages-parse' => true,
 				'section' => 'gadgets',
 				'label' => '&#160;',
 				'prefix' => 'gadget-',
@@ -159,7 +158,7 @@ class GadgetHooks {
 
 		foreach ( $ids as $id ) {
 			$resourceLoader->register( Gadget::getModuleName( $id ), [
-				'class' => 'GadgetResourceLoaderModule',
+				'class' => GadgetResourceLoaderModule::class,
 				'id' => $id,
 			] );
 		}
@@ -280,6 +279,8 @@ class GadgetHooks {
 		$validateStatus = $content->validate();
 		if ( !$validateStatus->isGood() ) {
 			$status->merge( $validateStatus );
+			// @todo Remove this line after this extension do not support mediawiki version 1.36 and before
+			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
 			return false;
 		}
 

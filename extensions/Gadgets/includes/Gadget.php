@@ -88,7 +88,7 @@ class Gadget {
 	 */
 	public static function newFromDefinitionContent( $id, GadgetDefinitionContent $content ) {
 		$data = $content->getAssocArray();
-		$prefixGadgetNs = function ( $page ) {
+		$prefixGadgetNs = static function ( $page ) {
 			return 'Gadget:' . $page;
 		};
 		$info = [
@@ -138,17 +138,24 @@ class Gadget {
 	}
 
 	/**
+	 * @return string Message key
+	 */
+	public function getDescriptionMessageKey() {
+		return "gadget-{$this->getName()}";
+	}
+
+	/**
 	 * @return string Gadget description parsed into HTML
 	 */
 	public function getDescription() {
-		return wfMessage( "gadget-{$this->getName()}" )->parse();
+		return wfMessage( $this->getDescriptionMessageKey() )->parse();
 	}
 
 	/**
 	 * @return string Wikitext of gadget description
 	 */
 	public function getRawDescription() {
-		return wfMessage( "gadget-{$this->getName()}" )->plain();
+		return wfMessage( $this->getDescriptionMessageKey() )->plain();
 	}
 
 	/**

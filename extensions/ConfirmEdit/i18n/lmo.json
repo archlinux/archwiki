@@ -32,5 +32,5 @@
 	"confirmedit-preview-validity": "Validità",
 	"confirmedit-preview-valid": "valid",
 	"confirmedit-preview-invalid": "minga valid",
-	"confirmedit-preview-description": "Quella tabella chì la fà vedè la lista di linei in su quella pagina chì e, se l'è un adress IP o un grup de adress IP valid. Se la linea l'è un adress IP valid o un interval de adress IP valid, el vegnarà miss  in la lista bianca del CAPTCHA, ma i linei minga valid i vegnarann ignorade. Un esempi de interval de adress IP valid el podaria vesser: 69.208.0.0/16 che 'l va de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Per savenn pussee]  sora 'l calcol d'un interval de adress IP."
+	"confirmedit-preview-description": "Quella tabella chì la fà vedè la lista di linei in su quella pagina chì e, se l'è un adress IP o un grup de adress IP valid. Se la linea l'è un adress IP valid o un interval de adress IP valid, el vegnarà tegnud foeura del controll CAPTCHA, ma i linei minga valid i vegnarann ignorade. Un esempi de interval de adress IP valid el podaria vesser: 69.208.0.0/16 che 'l va de 69.208.0.0 a 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Per savenn pussee]  sora 'l calcol d'un interval de adress IP."
 }

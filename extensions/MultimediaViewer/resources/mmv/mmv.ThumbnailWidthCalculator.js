@@ -162,9 +162,9 @@
 			ratio = sampleHeight / sampleWidth;
 
 		cssWidth = this.calculateFittingWidth( boundingWidth, boundingHeight, sampleWidth, sampleHeight );
-		cssHeight = Math.round( cssWidth * ratio );
+		cssHeight = Math.max( 1, Math.round( cssWidth * ratio ) );
 
-		screenPixelWidth = cssWidth * this.devicePixelRatio;
+		screenPixelWidth = Math.max( 1, cssWidth * this.devicePixelRatio );
 
 		bucketedWidth = this.findNextBucket( screenPixelWidth );
 

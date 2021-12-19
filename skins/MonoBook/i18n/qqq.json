@@ -21,8 +21,8 @@
 	"monobook-jumptonavigation": "Accessibility link for jumping to the navigation links. Visually hidden by default.\n\nSee also\n* {{msg-mw|Navigation}}\n\n{{Identical|jumptonavigation}}\n\njay94ks:\nMaybe this translation context is duplicated. :)\nI've found the perfectly same thing even description also same.\n* MediaWiki:Vector-jumptonavigation/ko - This context must be filled out with same content.",
 	"monobook-jumptosearch": "Accessibility link for jumping to the site search. Visually hidden by default.\n\nSee also\n* {{msg-mw|Search}}\n\n{{Identical|jumptosearch}}",
 	"monobook-more-actions": "Label for the less-important or rarer actions that are hidden from the usual tabs on mobile interfaces (like moving the page, or for sysops deleting or protecting the page). {{Identical|More}}",
+	"cactions-mobile": "Header for the content actions menu (tabs on the top of the page)",
 	"monobook-cactions-label": "Header for the content actions menu (tabs on the top of the page)",
 	"monobook-notifications-link": "Label for Extension:Notifications link in mobile personal toolbar\n\nParameters:\n* $1 - number of current alerts/notifications",
-	"monobook-notifications-link-none": "Label for Extension:Notifications link in mobile personal toolbar when no notifications present\n{{Identical|Notification}}",
-	"monobook-responsive-label": "Label for preference checkbox"
+	"monobook-notifications-link-none": "Label for Extension:Notifications link in mobile personal toolbar when no notifications present\n{{Identical|Notification}}"
 }

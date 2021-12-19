@@ -27,14 +27,15 @@ use Vector\Constants;
 use Vector\FeatureManagement\FeatureManager;
 use Vector\FeatureManagement\Requirements\DynamicConfigRequirement;
 use Vector\FeatureManagement\Requirements\LatestSkinVersionRequirement;
+use Vector\FeatureManagement\Requirements\OverridableConfigRequirement;
 use Vector\FeatureManagement\Requirements\WvuiSearchTreatmentRequirement;
 use Vector\SkinVersionLookup;
 
 return [
-	Constants::SERVICE_CONFIG => function ( MediaWikiServices $services ) {
+	Constants::SERVICE_CONFIG => static function ( MediaWikiServices $services ) {
 		return $services->getService( 'ConfigFactory' )->makeConfig( Constants::SKIN_NAME );
 	},
-	Constants::SERVICE_FEATURE_MANAGER => function ( MediaWikiServices $services ) {
+	Constants::SERVICE_FEATURE_MANAGER => static function ( MediaWikiServices $services ) {
 		$featureManager = new FeatureManager();
 
 		$featureManager->registerRequirement(
@@ -70,12 +71,59 @@ return [
 		// Feature: Languages in sidebar
 		// ================================
 		$featureManager->registerRequirement(
-			new DynamicConfigRequirement(
+			new OverridableConfigRequirement(
 				$services->getMainConfig(),
+				$context->getUser(),
+				$context->getRequest(),
+				$services->getCentralIdLookupFactory()->getNonLocalLookup(),
 				Constants::CONFIG_KEY_LANGUAGE_IN_HEADER,
-				Constants::REQUIREMENT_LANGUAGE_IN_HEADER
+				Constants::REQUIREMENT_LANGUAGE_IN_HEADER,
+				Constants::QUERY_PARAM_LANGUAGE_IN_HEADER,
+				Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST
 			)
 		);
+
+		// ---
+
+		// Temporary T286932 - remove after languages A/B test is finished.
+		$requirementName = 'T286932';
+
+		// MultiConfig checks each config in turn, allowing us to override the main config for specific keys. In this
+		// case, override the "VectorLanguageInHeaderABTest" configuration value so that the following requirement
+		// always buckets the user as if the language treatment A/B test were running.
+		$config = new MultiConfig( [
+			new HashConfig( [
+				Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST => true,
+			] ),
+			$services->getMainConfig(),
+		] );
+
+		$featureManager->registerRequirement(
+			new OverridableConfigRequirement(
+				$config,
+				$context->getUser(),
+				$context->getRequest(),
+				$services->getCentralIdLookupFactory()->getNonLocalLookup(),
+				Constants::CONFIG_KEY_LANGUAGE_IN_HEADER,
+				$requirementName,
+				/* $overrideName = */ '',
+				Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST
+			)
+		);
+
+		if (
+			$context->getUser()->isRegistered() &&
+			$featureManager->isRequirementMet( Constants::REQUIREMENT_LATEST_SKIN_VERSION )
+		) {
+			$bucket = 'vector.language_test_2_' . (
+				$featureManager->isRequirementMet( $requirementName )
+					? 'a'
+					: 'b'
+				);
+			$services->getStatsdDataFactory()->increment( $bucket );
+		}
+
+		// ---
 
 		$featureManager->registerFeature(
 			Constants::FEATURE_LANGUAGE_IN_HEADER,
@@ -101,6 +149,30 @@ return [
 				Constants::REQUIREMENT_FULLY_INITIALISED,
 				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
 				Constants::REQUIREMENT_USE_WVUI_SEARCH
+			]
+		);
+
+		// Feature: Sticky header
+		// ================================
+		$featureManager->registerRequirement(
+			new OverridableConfigRequirement(
+				$services->getMainConfig(),
+				$context->getUser(),
+				$context->getRequest(),
+				null,
+				Constants::CONFIG_STICKY_HEADER,
+				Constants::REQUIREMENT_STICKY_HEADER,
+				Constants::QUERY_PARAM_STICKY_HEADER,
+				null
+			)
+		);
+
+		$featureManager->registerFeature(
+			Constants::FEATURE_STICKY_HEADER,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
+				Constants::REQUIREMENT_STICKY_HEADER
 			]
 		);
 

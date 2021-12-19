@@ -103,6 +103,7 @@ abstract class BaseBlacklist {
 	 * @return SpamBlacklist
 	 */
 	public static function getSpamBlacklist() {
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return self::getInstance( 'spam' );
 	}
 
@@ -110,6 +111,7 @@ abstract class BaseBlacklist {
 	 * @return EmailBlacklist
 	 */
 	public static function getEmailBlacklist() {
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return self::getInstance( 'email' );
 	}
 

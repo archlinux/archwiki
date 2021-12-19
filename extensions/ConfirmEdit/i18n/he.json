@@ -36,5 +36,5 @@
 	"confirmedit-preview-validity": "תוקף",
 	"confirmedit-preview-valid": "תקף",
 	"confirmedit-preview-invalid": "לא תקף",
-	"confirmedit-preview-description": "הטבלה הבאה מציגה רשימה של שורות בדף הזה והאם זוהי כתובת IP תקינה או טווח IP תקין. אם השורה היא כתובת IP תקינה או טווח IP תקין, היא תהיה ברשימה לבנה של CAPTCHA, אבל לשורות בלתי־תקינות לא תהיה השפעה. דוגמה לטווח כתובות IP תקין היא 69.208.0.0/16, שהולך מ־69.208.0.0 עד 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix מידע נוסף] על חישוב טווח כתובות IP."
+	"confirmedit-preview-description": "הטבלה הבאה מציגה רשימה של שורות בדף הזה והאם זוהי כתובת IP תקינה או טווח IP תקין. אם השורה היא כתובת IP תקינה או טווח IP תקין, היא לא תיכלל בבדיקות CAPTCHA, אבל לשורות בלתי־תקינות לא תהיה השפעה. דוגמה לטווח כתובות IP תקין היא 69.208.0.0/16, שהולך מ־69.208.0.0 עד 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix מידע נוסף] על חישוב טווח כתובות IP."
 }

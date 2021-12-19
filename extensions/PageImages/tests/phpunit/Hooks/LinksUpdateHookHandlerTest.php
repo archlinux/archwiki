@@ -25,7 +25,7 @@ use Wikimedia\TestingAccessWrapper;
  */
 class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 
-	public function setUp() : void {
+	public function setUp(): void {
 		parent::setUp();
 
 		// Force LinksUpdateHookHandler::getPageImageCanditates to look at all
@@ -49,40 +49,34 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 			->disableOriginalConstructor()
 			->getMock();
 
-		$sectionContent->expects( $this->any() )
-			->method( 'getParserOutput' )
+		$sectionContent->method( 'getParserOutput' )
 			->willReturn( $parserOutputLead );
 
 		$content = $this->getMockBuilder( AbstractContent::class )
 			->disableOriginalConstructor()
 			->getMock();
 
-		$content->expects( $this->any() )
-			->method( 'getSection' )
+		$content->method( 'getSection' )
 			->willReturn( $sectionContent );
 
 		$revRecord = $this->getMockBuilder( RevisionRecord::class )
 			->disableOriginalConstructor()
 			->getMock();
 
-		$revRecord->expects( $this->any() )
-			->method( 'getContent' )
+		$revRecord->method( 'getContent' )
 			->willReturn( $content );
 
 		$linksUpdate = $this->getMockBuilder( LinksUpdate::class )
 			->disableOriginalConstructor()
 			->getMock();
 
-		$linksUpdate->expects( $this->any() )
-			->method( 'getTitle' )
+		$linksUpdate->method( 'getTitle' )
 			->willReturn( $this->createMock( Title::class ) );
 
-		$linksUpdate->expects( $this->any() )
-			->method( 'getParserOutput' )
+		$linksUpdate->method( 'getParserOutput' )
 			->willReturn( $parserOutput );
 
-		$linksUpdate->expects( $this->any() )
-			->method( 'getRevisionRecord' )
+		$linksUpdate->method( 'getRevisionRecord' )
 			->willReturn( $revRecord );
 
 		return $linksUpdate;
@@ -97,15 +91,13 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 			->disableOriginalConstructor()
 			->getMock();
 		// ugly hack to avoid all the unmockable crap in FormatMetadata
-		$file->expects( $this->any() )
-			->method( 'isDeleted' )
+		$file->method( 'isDeleted' )
 			->willReturn( true );
 
 		$repoGroup = $this->getMockBuilder( RepoGroup::class )
 			->disableOriginalConstructor()
 			->getMock();
-		$repoGroup->expects( $this->any() )
-			->method( 'findFile' )
+		$repoGroup->method( 'findFile' )
 			->willReturn( $file );
 
 		return $repoGroup;
@@ -123,7 +115,7 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 		$linksUpdate = $this->getLinksUpdate( $images );
 		$mock = TestingAccessWrapper::newFromObject(
 				$this->getMockBuilder( LinksUpdateHookHandler::class )
-				->setMethods( [ 'getScore', 'isImageFree' ] )
+				->onlyMethods( [ 'getScore', 'isImageFree' ] )
 				->getMock()
 		);
 
@@ -132,16 +124,14 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 			array_push( $isFreeMap, [ $image['filename'], $image['isFree'] ] );
 		}
 
-		$mock->expects( $this->any() )
-			->method( 'getScore' )
+		$mock->method( 'getScore' )
 			->willReturnCallback(
-				function ( PageImageCandidate $_, $position ) use ( $images ) {
+				static function ( PageImageCandidate $_, $position ) use ( $images ) {
 					return $images[$position]['score'];
 				}
 			);
 
-		$mock->expects( $this->any() )
-			->method( 'isImageFree' )
+		$mock->method( 'isImageFree' )
 			->willReturnMap( $isFreeMap );
 
 		$mock->doLinksUpdate( $linksUpdate );
@@ -228,21 +218,18 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 	public function testGetScore( $image, $scoreFromTable, $position, $expected ) {
 		$mock = TestingAccessWrapper::newFromObject(
 			$this->getMockBuilder( LinksUpdateHookHandler::class )
-				->setMethods( [ 'scoreFromTable', 'getMetadata', 'getRatio', 'getBlacklist' ] )
+				->onlyMethods( [ 'scoreFromTable', 'fetchFileMetadata', 'getRatio', 'getDenylist' ] )
 				->getMock()
 		);
-		$mock->expects( $this->any() )
-			->method( 'scoreFromTable' )
+		$mock->method( 'scoreFromTable' )
 			->willReturn( $scoreFromTable );
-		$mock->expects( $this->any() )
-			->method( 'getRatio' )
+		$mock->method( 'getRatio' )
 			->willReturn( 0 );
-		$mock->expects( $this->any() )
-			->method( 'getBlacklist' )
-			->willReturn( [ 'blacklisted.jpg' => 1 ] );
+		$mock->method( 'getDenylist' )
+			->willReturn( [ 'denylisted.jpg' => 1 ] );
 
 		$score = $mock->getScore( PageImageCandidate::newFromArray( $image ), $position );
-		$this->assertEquals( $expected, $score );
+		$this->assertSame( $expected, $score );
 	}
 
 	public function provideGetScore() {
@@ -276,10 +263,10 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 				103
 			],
 			[
-				[ 'filename' => 'blacklisted.jpg', 'fullwidth' => 100 ],
+				[ 'filename' => 'denylisted.jpg', 'fullwidth' => 100 ],
 				50,
 				3,
-				// blacklist score
+				// denylist score
 				- 1000
 			],
 		];
@@ -290,6 +277,7 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 	 * @covers \PageImages\Hooks\LinksUpdateHookHandler::scoreFromTable
 	 */
 	public function testScoreFromTable( array $scores, $value, $expected ) {
+		/** @var LinksUpdateHookHandler $handlerWrapper */
 		$handlerWrapper = TestingAccessWrapper::newFromObject( new LinksUpdateHookHandler );
 
 		$score = $handlerWrapper->scoreFromTable( $value, $scores );
@@ -354,13 +342,13 @@ class LinksUpdateHookHandlerTest extends MediaWikiTestCase {
 
 		$mock = TestingAccessWrapper::newFromObject(
 			$this->getMockBuilder( LinksUpdateHookHandler::class )
-				->setMethods( [ 'fetchFileMetadata' ] )
+				->onlyMethods( [ 'fetchFileMetadata' ] )
 				->getMock()
 		);
-		$mock->expects( $this->any() )
-			->method( 'fetchFileMetadata' )
+		$mock->method( 'fetchFileMetadata' )
 			->willReturn( $metadata );
-		$this->assertEquals( $expected, $mock->isImageFree( $fileName ) );
+		/** @var LinksUpdateHookHandler $mock */
+		$this->assertSame( $expected, $mock->isImageFree( $fileName ) );
 	}
 
 	public function provideIsFreeImage() {

@@ -18,6 +18,7 @@
 			"MuratTheTurkish",
 			"Rapsar",
 			"Sadrettin",
+			"SaldırganSincap",
 			"Sayginer",
 			"Sezgin İbiş",
 			"Stultiwikia",
@@ -25,8 +26,7 @@
 			"ToprakM",
 			"TurkishStyles",
 			"Uğurkent",
-			"Violetanka",
-			"SaldırganSincap"
+			"Violetanka"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Kitap",
@@ -60,7 +60,7 @@
 	"cite-ve-dialog-referenceslist-title": "Kaynakça listesi",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Bilgi kaynakları eklemek içeriğinizi geliştirir. Kitaplardan, gazetelerden ve web sitelerinden kaynak olarak faydalanabilirsiniz.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Kaynaklar",
-	"cite-ve-dialogbutton-reference-full-label": "Temel form",
+	"cite-ve-dialogbutton-reference-full-label": "Temel",
 	"cite-ve-dialogbutton-reference-title": "Kaynakça",
 	"cite-ve-dialogbutton-reference-tooltip": "Temel",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Kaynakça listesi",

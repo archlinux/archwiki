@@ -16,7 +16,7 @@ class HTMLReCaptchaNoCaptchaFieldTest extends PHPUnit\Framework\TestCase {
 			'g-recaptcha-response' => 'def',
 		], true );
 		$mockClosure = $this->getMockBuilder( stdClass::class )
-			->setMethods( [ '__invoke' ] )->getMock();
+			->addMethods( [ '__invoke' ] )->getMock();
 		$mockClosure->expects( $this->once() )->method( '__invoke' )
 			->with( [ 'foo' => 'def' ] )->willReturn( true );
 

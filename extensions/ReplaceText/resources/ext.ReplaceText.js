@@ -12,7 +12,7 @@
 
 			if ( curElement.type === 'checkbox' && curElement.id !== 'create-redirect' &&
 				curElement.id !== 'watch-pages' && curElement.id !== 'doAnnounce' ) {
-				form.elements[ i ].checked = form.elements[ i ].checked !== true;
+				curElement.checked = !curElement.checked;
 			}
 		}
 	}
@@ -20,28 +20,14 @@
 	$( function () {
 		var $checkboxes = $( '#powersearch input[id^=mw-search-ns]' );
 
-		$( '#replacetext-invert' )
-			.on( 'click', invertSelections )
-			.prop( 'disabled', false );
+		$( '.ext-replacetext-invert' ).on( 'click', invertSelections );
 
-		// Create check all/none button
-		$( '#mw-search-togglebox' ).append(
-			$( '<label>' )
-				.text( mw.msg( 'powersearch-togglelabel' ) )
-		).append(
-			$( '<input>' ).attr( 'type', 'button' )
-				.attr( 'id', 'mw-search-toggleall' )
-				.prop( 'value', mw.msg( 'powersearch-toggleall' ) )
-				.on( 'click', function () {
-					$checkboxes.prop( 'checked', true );
-				} )
-		).append(
-			$( '<input>' ).attr( 'type', 'button' )
-				.attr( 'id', 'mw-search-togglenone' )
-				.prop( 'value', mw.msg( 'powersearch-togglenone' ) )
-				.on( 'click', function () {
-					$checkboxes.prop( 'checked', false );
-				} )
-		);
+		// Attach handler for check all/none buttons
+		$( '#mw-search-toggleall' ).on( 'click', function () {
+			$checkboxes.prop( 'checked', true );
+		} );
+		$( '#mw-search-togglenone' ).on( 'click', function () {
+			$checkboxes.prop( 'checked', false );
+		} );
 	} );
 }() );

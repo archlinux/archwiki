@@ -34,7 +34,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 		$request = $this->getMockBuilder( \WebRequest::class )->getMock();
 		$request
 			->method( 'getVal' )
-			->with( $this->anything(), $this->equalTo( 'beta' ) )
+			->with( $this->anything(), 'beta' )
 			->willReturn( 'alpha' );
 
 		$user = $this->createMock( \User::class );
@@ -43,7 +43,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 			->willReturn( false );
 		$user
 			->method( 'getOption' )
-			->with( $this->anything(), $this->equalTo( '2' ) )
+			->with( $this->anything(), '2' )
 			->willReturn( 'beta' );
 
 		$config = new HashConfig( [
@@ -73,7 +73,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 		$request = $this->getMockBuilder( \WebRequest::class )->getMock();
 		$request
 			->method( 'getVal' )
-			->with( $this->anything(), $this->equalTo( 'beta' ) )
+			->with( $this->anything(), 'beta' )
 			->willReturn( 'beta' );
 
 		$user = $this->createMock( \User::class );
@@ -82,7 +82,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 			->willReturn( false );
 		$user
 			->method( 'getOption' )
-			->with( $this->anything(), $this->equalTo( '2' ) )
+			->with( $this->anything(), '2' )
 			->willReturn( 'beta' );
 
 		$config = new HashConfig( [
@@ -112,7 +112,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 		$request = $this->getMockBuilder( \WebRequest::class )->getMock();
 		$request
 			->method( 'getVal' )
-			->with( $this->anything(), $this->equalTo( '1' ) )
+			->with( $this->anything(), '1' )
 			->willReturn( '1' );
 
 		$user = $this->createMock( \User::class );
@@ -121,7 +121,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 			->willReturn( true );
 		$user
 			->method( 'getOption' )
-			->with( $this->anything(), $this->equalTo( '1' ) )
+			->with( $this->anything(), '1' )
 			->willReturn( '1' );
 
 		$config = new HashConfig( [
@@ -151,7 +151,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 		$request = $this->getMockBuilder( \WebRequest::class )->getMock();
 		$request
 			->method( 'getVal' )
-			->with( $this->anything(), $this->equalTo( '2' ) )
+			->with( $this->anything(), '2' )
 			->willReturn( '2' );
 
 		$user = $this->createMock( \User::class );
@@ -160,7 +160,7 @@ class SkinVersionLookupTest extends \MediaWikiTestCase {
 			->willReturn( false );
 		$user
 			->method( 'getOption' )
-			->with( $this->anything(), $this->equalTo( '2' ) )
+			->with( $this->anything(), '2' )
 			->willReturn( '2' );
 
 		$config = new HashConfig( [

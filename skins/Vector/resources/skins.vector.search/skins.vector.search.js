@@ -7,12 +7,14 @@ var
 /**
  * @param {HTMLElement} searchForm
  * @param {HTMLInputElement} search
+ * @param {string|null} searchPageTitle title of page used for searching e.g. Special:Search
+ *  If null then this will default to Special:Search.
  * @return {void}
  */
-function initApp( searchForm, search ) {
+function initApp( searchForm, search, searchPageTitle ) {
 	// eslint-disable-next-line no-new
 	new Vue( {
-		el: '#p-search',
+		el: searchForm,
 		/**
 		 *
 		 * @param {Function} createElement
@@ -24,6 +26,7 @@ function initApp( searchForm, search ) {
 					autofocusInput: search === document.activeElement,
 					action: searchForm.getAttribute( 'action' ),
 					searchAccessKey: search.getAttribute( 'accessKey' ),
+					searchPageTitle: searchPageTitle,
 					searchTitle: search.getAttribute( 'title' ),
 					searchPlaceholder: search.getAttribute( 'placeholder' ),
 					searchQuery: search.value
@@ -42,9 +45,12 @@ function initApp( searchForm, search ) {
 function main( document ) {
 	var
 		searchForm = /** @type {HTMLElement} */ ( document.querySelector( '#searchform' ) ),
+		titleInput = /** @type {HTMLInputElement|null} */ (
+			searchForm.querySelector( 'input[name=title]' )
+		),
 		search = /** @type {HTMLInputElement|null} */ ( document.getElementById( 'searchInput' ) );
 	if ( search && searchForm ) {
-		initApp( searchForm, search );
+		initApp( searchForm, search, titleInput && titleInput.value );
 	}
 }
 main( document );

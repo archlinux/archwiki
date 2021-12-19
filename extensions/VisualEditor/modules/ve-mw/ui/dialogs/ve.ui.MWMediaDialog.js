@@ -1189,7 +1189,7 @@ ve.ui.MWMediaDialog.prototype.getSetupProcess = function ( data ) {
 			this.actions.setAbilities( { upload: false, save: false, insert: false, done: false } );
 
 			this.mediaUploadBookletInit = false;
-			if ( data.file ) {
+			if ( data.file && this.mediaUploadBooklet ) {
 				this.searchTabs.setTabPanel( 'upload' );
 				this.mediaUploadBooklet.setFile( data.file );
 			}

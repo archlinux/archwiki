@@ -18,8 +18,8 @@
 	"monobook-jumptonavigation": "Hoppa till navigering",
 	"monobook-jumptosearch": "Hoppa till sök",
 	"monobook-more-actions": "Fler",
+	"cactions-mobile": "Sidåtgärder",
 	"monobook-cactions-label": "Sidåtgärder",
 	"monobook-notifications-link": "Aviseringar ($1)",
-	"monobook-notifications-link-none": "Aviseringar",
-	"monobook-responsive-label": "Aktivera responsivt MonoBook-utseende"
+	"monobook-notifications-link-none": "Aviseringar"
 }

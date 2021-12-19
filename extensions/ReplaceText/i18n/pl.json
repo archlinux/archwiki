@@ -49,7 +49,8 @@
 	"replacetext_continue": "Kontynuuj",
 	"replacetext_announce": "Wyświetl te zmiany na $1 oraz w liście obserwowanych",
 	"replacetext_editsummary": "Zastępowanie tekstu – „$1” na „$2”",
+	"replacetext_reminder": "Aby zaktualizować również linki do tej strony w innych miejscach, przejdź do $1.",
+	"replacetext_cfg_error": "Błąd konfiguracji ReplaceText",
 	"right-replacetext": "Wykonywanie zastępowania tekstu w całej wiki",
-	"action-replacetext": "wykonywania zastępowania tekstu w całej wiki",
-	"replacetext_reminder": "Aby zaktualizować również linki do tej strony w innych miejscach, przejdź do $1."
+	"action-replacetext": "wykonywania zastępowania tekstu w całej wiki"
 }

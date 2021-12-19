@@ -20,7 +20,6 @@ namespace MediaWiki\Extension\OATHAuth\Key;
  */
 
 use Base32\Base32;
-use CentralIdLookup;
 use DomainException;
 use Exception;
 use jakobo\HOTP\HOTP;
@@ -144,7 +143,10 @@ class TOTPKey implements IAuthKey {
 
 		// Prevent replay attacks
 		$store = MediaWikiServices::getInstance()->getMainObjectStash();
-		$uid = CentralIdLookup::factory()->centralIdFromLocalUser( $user->getUser() );
+		$uid = MediaWikiServices::getInstance()
+			->getCentralIdLookupFactory()
+			->getLookup()
+			->centralIdFromLocalUser( $user->getUser() );
 		$key = $store->makeKey( 'oathauth-totp', 'usedtokens', $uid );
 		$lastWindow = (int)$store->get( $key );
 

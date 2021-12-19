@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2018-2019 Kunal Mehta <legoktm@member.fsf.org>
+ * Copyright (C) 2018-2019 Kunal Mehta <legoktm@debian.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ require_once __DIR__ . '/../includes/ListFetcher.php';
  * can be run without needing all of MediaWiki to be installed.
  */
 function main() {
-	$lf = new ListFetcher( function ( $text ) {
+	$lf = new ListFetcher( static function ( $text ) {
 		echo $text;
 	} );
 	[ $rev, $date ] = $lf->getLatestInfo();

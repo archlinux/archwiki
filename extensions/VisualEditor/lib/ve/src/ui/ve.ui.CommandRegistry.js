@@ -25,7 +25,7 @@ OO.inheritClass( ve.ui.CommandRegistry, OO.Registry );
 /**
  * Register a command with the factory.
  *
- * @param {ve.ui.Command} command Command object
+ * @param {ve.ui.Command} command
  * @throws {Error} If command is not an instance of ve.ui.Command
  */
 ve.ui.CommandRegistry.prototype.register = function ( command ) {
@@ -215,8 +215,7 @@ ve.ui.commandRegistry.register(
 	)
 );
 ( function () {
-	var level;
-	for ( level = 1; level <= 6; level++ ) {
+	for ( var level = 1; level <= 6; level++ ) {
 		ve.ui.commandRegistry.register(
 			new ve.ui.Command(
 				'heading' + level, 'format', 'convert',

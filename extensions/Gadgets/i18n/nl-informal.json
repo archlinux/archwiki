@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Siebrand",
-			"McDutchie"
+			"McDutchie",
+			"Siebrand"
 		]
 	},
 	"gadgets-prefstext": "Hieronder staan de speciale uitbreidingen die je kunt inschakelen.\nDe uitbreidingen zijn voornamelijk gebaseerd op JavaScript, dus JavaScript moet voor jouw browser ingeschakeld zijn om ze te laten werken.\nDe uitbreidingen hebben geen invloed op deze pagina met voorkeuren.\n\nDeze speciale uitbreidingen zijn geen onderdeel van de MediaWiki-software en worden meestal ontwikkeld en onderhouden door gebruikers van jouw wiki.\nDe beheerders van de lokale interface kunnen de [[MediaWiki:Gadgets-definition|definities]] van de beschikbare uitbreidingen wijzigen, en de beheerders van deze site kunnen de [[Special:Gadgets|beschrijvingen]] bewerken waar de broncode van iedere uitbreiding te zien is. De [[Special:GadgetUsage|aantallen gebruikers van iedere uitbreiding op deze wiki]] zijn beschikbaar.",

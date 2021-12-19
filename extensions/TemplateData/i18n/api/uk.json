@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Piramidion",
-			"DDPAT"
+			"DDPAT",
+			"Piramidion"
 		]
 	},
 	"apihelp-templatedata-description": "Отримати дані, що зберігаються розширенням TemplateData.",

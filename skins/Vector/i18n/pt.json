@@ -9,7 +9,8 @@
 			"MokaAkashiyaPT",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious"
+			"Waldyrious",
+			"Luan"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -36,5 +37,6 @@
 	"vector-jumptosearch": "Saltar para a pesquisa",
 	"vector-jumptocontent": "Saltar para o conteúdo",
 	"vector-more-actions": "Mais",
-	"vector-search-loader": "A carregar sugestões de pesquisa"
+	"vector-search-loader": "A carregar sugestões de pesquisa",
+	"vector-anon-user-menu-pages-label": "Saiba mais sobre edição"
 }

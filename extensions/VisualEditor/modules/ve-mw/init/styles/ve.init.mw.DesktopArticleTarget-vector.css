@@ -30,12 +30,12 @@
 	margin: 0 -1rem;
 }
 
-.ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ce-attachedRootNode,
-.ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ui-surface-placeholder {
+.ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ce-surface .ve-ce-attachedRootNode,
+.ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ui-surface-placeholder {
 	padding: 0 1rem;
 }
 
-.mw-body .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ui-surface-placeholder > * {
+.mw-body .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ui-surface-placeholder > * {
 	/* Fix margin overlap */
 	margin-top: 0;
 	/* Placeholder doesn't need a border as well */
@@ -55,8 +55,8 @@
 		margin: 0 -1.5rem;
 	}
 
-	.skin-vector-legacy .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ce-attachedRootNode,
-	.skin-vector-legacy .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ui-surface-placeholder {
+	.skin-vector-legacy .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ce-surface .ve-ce-attachedRootNode,
+	.skin-vector-legacy .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ui-surface-placeholder {
 		padding: 0 1.5rem;
 	}
 

@@ -5,6 +5,7 @@
 		]
 	},
 	"templatedata-doc-desc-empty": "Nudda discrizzioni.",
+	"templatedata-doc-param-default": "Pridifinutu",
 	"templatedata-doc-param-desc": "Discrizzioni",
 	"templatedata-doc-param-status": "Statu",
 	"templatedata-doc-param-type": "Tipu",
@@ -25,6 +26,7 @@
 	"templatedata-modal-current-language": "Lingua attuali: $1",
 	"templatedata-modal-format-custom": "Pirsunalizzatu",
 	"templatedata-modal-table-param-actions": "Azzioni",
+	"templatedata-modal-table-param-default": "Pridifinutu ($1)",
 	"templatedata-modal-table-param-description": "Discrizzioni ($1)",
 	"templatedata-modal-table-param-example": "Asempiu ($1)",
 	"templatedata-modal-table-param-label": "Etichetta ($1)",

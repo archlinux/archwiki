@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Jmarchn",
 			"SMP",
-			"Toniher",
-			"Jmarchn"
+			"Toniher"
 		]
 	},
 	"imagemap_desc": "Permet mapes d'imatges clicables des del costat del client fent servir l'etiqueta <code>&lt;imagemap&gt;</code>",

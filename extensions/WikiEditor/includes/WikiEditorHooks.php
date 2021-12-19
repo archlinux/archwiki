@@ -17,6 +17,22 @@ class WikiEditorHooks {
 	/* Static Methods */
 
 	/**
+	 * Should the current session be sampled for EventLogging?
+	 *
+	 * @param string $sessionId
+	 * @return bool Whether to sample the session
+	 */
+	protected static function inEventSample( $sessionId ) {
+		global $wgWMESchemaEditAttemptStepSamplingRate;
+		// Sample 6.25%
+		$samplingRate = $wgWMESchemaEditAttemptStepSamplingRate ?? 0.0625;
+		$inSample = EventLogging::sessionInSample(
+			(int)( 1 / $samplingRate ), $sessionId
+		);
+		return $inSample;
+	}
+
+	/**
 	 * Log stuff to EventLogging's Schema:EditAttemptStep -
 	 * see https://meta.wikimedia.org/wiki/Schema:EditAttemptStep
 	 * If you don't have EventLogging installed, does nothing.
@@ -27,16 +43,11 @@ class WikiEditorHooks {
 	 * @return bool Whether the event was logged or not.
 	 */
 	public static function doEventLogging( $action, $article, $data = [] ) {
-		global $wgWMESchemaEditAttemptStepSamplingRate;
 		$extensionRegistry = ExtensionRegistry::getInstance();
 		if ( !$extensionRegistry->isLoaded( 'EventLogging' ) ) {
 			return false;
 		}
-		// Sample 6.25%
-		$samplingRate = $wgWMESchemaEditAttemptStepSamplingRate ?? 0.0625;
-		$inSample = EventLogging::sessionInSample(
-			(int)( 1 / $samplingRate ), $data['editing_session_id']
-		);
+		$inSample = self::inEventSample( $data['editing_session_id'] );
 		$shouldOversample = $extensionRegistry->isLoaded( 'WikimediaEvents' ) &&
 			WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $article->getContext() );
 		if ( !$inSample && !$shouldOversample ) {
@@ -73,6 +84,49 @@ class WikiEditorHooks {
 		}
 
 		return EventLogging::logEvent( 'EditAttemptStep', 18530416, $data );
+	}
+
+	/**
+	 * Log stuff to EventLogging's Schema:VisualEditorFeatureUse -
+	 * see https://meta.wikimedia.org/wiki/Schema:VisualEditorFeatureUse
+	 * If you don't have EventLogging installed, does nothing.
+	 *
+	 * @param string $feature
+	 * @param string $action
+	 * @param Article $article Which article (with full context, page, title, etc.)
+	 * @param string $sessionId Session identifier
+	 * @return bool Whether the event was logged or not.
+	 */
+	public static function doVisualEditorFeatureUseLogging( $feature, $action, $article, $sessionId ) {
+		$extensionRegistry = ExtensionRegistry::getInstance();
+		if ( !$extensionRegistry->isLoaded( 'EventLogging' ) ) {
+			return false;
+		}
+		$inSample = self::inEventSample( $sessionId );
+		$shouldOversample = $extensionRegistry->isLoaded( 'WikimediaEvents' ) &&
+			WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $article->getContext() );
+		if ( !$inSample && !$shouldOversample ) {
+			return false;
+		}
+
+		$user = $article->getContext()->getUser();
+
+		$data = [
+			'feature' => $feature,
+			'action' => $action,
+			'editingSessionId' => $sessionId,
+			'platform' => 'desktop', // FIXME T249944
+			'integration' => 'page',
+			'editor_interface' => 'wikitext',
+			'user_id' => $user->getId(),
+			'user_editcount' => $user->getEditCount() ?: 0,
+		];
+
+		if ( $user->getOption( 'discussiontools-abtest' ) ) {
+			$data['bucket'] = $user->getOption( 'discussiontools-abtest' );
+		}
+
+		return EventLogging::logEvent( 'VisualEditorFeatureUse', 21199762, $data );
 	}
 
 	/**
@@ -177,6 +231,18 @@ class WikiEditorHooks {
 				)
 			);
 		}
+
+		$outputPage->addHTML(
+			Xml::element(
+				'input',
+				[
+					'type' => 'hidden',
+					'name' => 'wikieditorJavascriptSupport',
+					'id' => 'wikieditorJavascriptSupport',
+					'value' => ''
+				]
+			)
+		);
 	}
 
 	/**
@@ -299,6 +365,12 @@ class WikiEditorHooks {
 
 			if ( $status->isOK() ) {
 				$action = 'saveSuccess';
+
+				if ( $request->getVal( 'wikieditorJavascriptSupport' ) === 'yes' ) {
+					self::doVisualEditorFeatureUseLogging(
+						'mwSave', 'source-has-js', $article, $request->getVal( 'editingStatsId' )
+					);
+				}
 			} else {
 				$action = 'saveFailure';
 

@@ -17,7 +17,7 @@
 			"神樂坂秀吉"
 		]
 	},
-	"oathauth-desc": "提供基於HMAC的一次性密碼驗證支援",
+	"oathauth-desc": "提供基於 HMAC 的一次性密碼驗證支援",
 	"disableoathforuser": "停用使用者的雙重認證",
 	"verifyoathforuser": "驗證雙重認證狀態",
 	"specialpages-group-oath": "雙因素驗證",

@@ -2,12 +2,10 @@
 
 namespace MediaWiki\Extension\Nuke;
 
-use ActorMigration;
 use DeletePageJob;
 use FileDeleteForm;
 use Html;
 use HTMLForm;
-use JobQueueGroup;
 use ListToggle;
 use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
 use MediaWiki\MediaWikiServices;
@@ -283,12 +281,9 @@ class SpecialNuke extends SpecialPage {
 		$where = [ "(rc_new = 1) OR (rc_log_type = 'upload' AND rc_log_action = 'upload')" ];
 
 		if ( $username === '' ) {
-			$actorQuery = ActorMigration::newMigration()->getJoin( 'rc_user' );
-			$what['rc_user_text'] = $actorQuery['fields']['rc_user_text'];
+			$what['rc_user_text'] = 'actor_name';
 		} else {
-			$actorQuery = ActorMigration::newMigration()
-				->getWhere( $dbr, 'rc_user', User::newFromName( $username, false ) );
-			$where[] = $actorQuery['conds'];
+			$where['actor_name'] = $username;
 		}
 
 		if ( $namespace !== null ) {
@@ -304,7 +299,7 @@ class SpecialNuke extends SpecialPage {
 		$group = implode( ', ', $what );
 
 		$result = $dbr->select(
-			[ 'recentchanges' ] + $actorQuery['tables'],
+			[ 'recentchanges', 'actor' ],
 			$what,
 			$where,
 			__METHOD__,
@@ -313,7 +308,7 @@ class SpecialNuke extends SpecialPage {
 				'GROUP BY' => $group,
 				'LIMIT' => $limit
 			],
-			$actorQuery['joins']
+			[ 'actor' => [ 'JOIN', 'actor_id=rc_actor' ] ]
 		);
 
 		$pages = [];
@@ -373,7 +368,7 @@ class SpecialNuke extends SpecialPage {
 				throw new PermissionsError( 'delete', $permission_errors );
 			}
 
-			$file = $title->getNamespace() === NS_FILE ? wfLocalFile( $title ) : false;
+			$file = $title->getNamespace() === NS_FILE ? $localRepo->newFile( $title ) : false;
 			if ( $file ) {
 				$oldimage = null; // Must be passed by reference
 				$status = FileDeleteForm::doDelete(
@@ -409,7 +404,7 @@ class SpecialNuke extends SpecialPage {
 		}
 
 		if ( $jobs ) {
-			JobQueueGroup::singleton()->push( $jobs );
+			MediaWikiServices::getInstance()->getJobQueueGroup()->push( $jobs );
 		}
 
 		$this->getOutput()->addHTML(

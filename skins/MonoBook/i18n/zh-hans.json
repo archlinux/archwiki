@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Cwek",
+			"FakeGreenHand",
 			"Liuxinyu970226",
 			"Xiaomingyan",
-			"FakeGreenHand",
 			"TsuyaMarisa"
 		]
 	},
@@ -17,8 +17,8 @@
 	"monobook-jumptonavigation": "跳到导航",
 	"monobook-jumptosearch": "跳到搜索",
 	"monobook-more-actions": "更多",
+	"cactions-mobile": "页面操作",
 	"monobook-cactions-label": "页面操作",
 	"monobook-notifications-link": "通知（$1）",
-	"monobook-notifications-link-none": "通知",
-	"monobook-responsive-label": "启用响应式MonoBook设计"
+	"monobook-notifications-link-none": "通知"
 }

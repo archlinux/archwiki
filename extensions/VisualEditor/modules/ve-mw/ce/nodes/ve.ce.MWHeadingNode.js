@@ -37,7 +37,7 @@ ve.ce.MWHeadingNode.prototype.onSetup = function () {
 	ve.ce.MWHeadingNode.super.prototype.onSetup.call( this );
 
 	// Make reference to the surface
-	this.surface = this.root.getSurface().getSurface();
+	this.surface = this.root && this.root.getSurface().getSurface();
 	this.rebuildToc();
 };
 

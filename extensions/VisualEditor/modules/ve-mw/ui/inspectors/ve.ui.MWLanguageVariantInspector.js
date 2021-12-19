@@ -127,6 +127,7 @@ ve.ui.MWLanguageVariantInspector.prototype.getContentFromInspector = null;
  */
 ve.ui.MWLanguageVariantInspector.prototype.createTextTarget = function ( placeholder ) {
 	return ve.init.target.createTargetWidget( {
+		toolbarGroups: [],
 		includeCommands: this.constructor.static.includeCommands,
 		excludeCommands: this.constructor.static.excludeCommands,
 		importRules: this.constructor.static.getImportRules(),
@@ -671,7 +672,7 @@ ve.ui.MWLanguageVariantTwoWayInspector.prototype.onAddButtonClick = function () 
 /**
  * Remove a mapping item from the inspector.
  *
- * @param {Object} item Item
+ * @param {Object} item
  */
 ve.ui.MWLanguageVariantTwoWayInspector.prototype.onClearButtonClick = function ( item ) {
 	var idx = this.items.indexOf( item );
@@ -830,7 +831,7 @@ ve.ui.MWLanguageVariantOneWayInspector.prototype.onAddButtonClick = function () 
 /**
  * Remove a mapping item from the inspector.
  *
- * @param {Object} item Item
+ * @param {Object} item
  */
 ve.ui.MWLanguageVariantOneWayInspector.prototype.onClearButtonClick = function ( item ) {
 	var idx = this.items.indexOf( item );

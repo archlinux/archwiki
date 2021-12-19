@@ -17,7 +17,7 @@ class ResourceLoaderHooks implements ResourceLoaderGetConfigVarsHook {
 	 * @param Config $config
 	 * @return void
 	 */
-	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ) : void {
+	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
 		$hCaptchaConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'hcaptcha' );
 		if ( $hCaptchaConfig->get( 'CaptchaClass' ) === 'MediaWiki\\Extensions\\ConfirmEdit\\hCaptcha\\HCaptcha' ) {
 			$vars['wgConfirmEditConfig'] = [

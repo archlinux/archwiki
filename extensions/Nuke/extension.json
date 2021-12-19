@@ -19,8 +19,13 @@
 			"i18n"
 		]
 	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\Nuke\\Hooks"
+		}
+	},
 	"Hooks": {
-		"ContributionsToolLinks": "MediaWiki\\Extension\\Nuke\\Hooks::nukeContributionsLinks"
+		"ContributionsToolLinks": "main"
 	},
 	"ResourceModules": {
 		"ext.nuke.confirm": {

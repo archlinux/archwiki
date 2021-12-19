@@ -12,7 +12,7 @@ var Dialog = require( './Dialog.js' ),
  *
  * @constructor
  * @param {jQuery} $textarea Editor textarea
- * @param {Object} config Configuration options
+ * @param {Object} config
  */
 function Target( $textarea, config ) {
 	var $helpLink, relatedPage,

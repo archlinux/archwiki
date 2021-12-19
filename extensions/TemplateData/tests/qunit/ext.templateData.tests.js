@@ -325,6 +325,7 @@ QUnit.test( 'Validation tools', function ( assert ) {
 					'description',
 					'example',
 					'type',
+					'suggestedvalues',
 					'default',
 					'autovalue',
 					'deprecated',
@@ -492,7 +493,6 @@ QUnit.test( 'TemplateData model', function ( assert ) {
 
 	return sourceHandler.buildModel( originalWikitext )
 		.done( function ( model ) {
-
 			// Check description
 			assert.strictEqual(
 				model.getTemplateDescription(),
@@ -590,7 +590,6 @@ QUnit.test( 'TemplateData model', function ( assert ) {
 				[ 'date', 'year', 'month', 'user', 'comment', 'newParam1', 'newParam2', 'newParam3', 'newParam4', 'newParam5' ],
 				'Final templatedata output with paramOrder'
 			);
-
 		} );
 } );
 
@@ -770,6 +769,37 @@ QUnit.test( 'TemplateData sourceHandler adding default format', function ( asser
 				'Final templatedata output'
 			);
 		} );
+} );
+
+QUnit.test( 'Duplicate parameter names', function ( assert ) {
+	var model = new Model();
+	model.addParam( 'color' );
+	assert.deepEqual( model.getParams(), {
+		color: { name: 'color' }
+	} );
+	assert.deepEqual( model.getTemplateParamOrder(), [ 'color' ] );
+	model.addParam( 'color' );
+	assert.deepEqual( model.getParams(), {
+		color: { name: 'color' },
+		color2: { name: 'color' }
+	} );
+	assert.deepEqual( model.getTemplateParamOrder(), [ 'color', 'color2' ] );
+
+	model.setParamProperty( 'color2', 'name', '1' );
+	assert.deepEqual( model.getParams(), {
+		color: { name: 'color' },
+		color2: { deleted: true },
+		1: { name: '1' }
+	} );
+	assert.deepEqual( model.getTemplateParamOrder(), [ 'color', '1' ] );
+	model.setParamProperty( 'color', 'name', '1' );
+	assert.deepEqual( model.getParams(), {
+		color: { deleted: true },
+		color2: { deleted: true },
+		1: { name: '1' },
+		'1-3': { name: '1' }
+	} );
+	assert.deepEqual( model.getTemplateParamOrder(), [ '1-3', '1' ] );
 } );
 
 QUnit.test( 'safesubst: hack with an unnamed parameter', function ( assert ) {

@@ -98,7 +98,8 @@ class WaitConditionLoop {
 			$real = $this->getWallTime() - $realStart;
 			// Exit if the condition is reached, an error occurs, or this is non-blocking
 			if ( $this->timeout <= 0 ) {
-				$finalResult = $checkResult ? self::CONDITION_REACHED : self::CONDITION_FAILED;
+				// Accepts boolean true or self::CONDITION_REACHED
+				$finalResult = $checkResult > 0 ? self::CONDITION_REACHED : self::CONDITION_FAILED;
 				break;
 			} elseif ( (int)$checkResult !== self::CONDITION_CONTINUE ) {
 				if ( is_int( $checkResult ) ) {
@@ -185,7 +186,7 @@ class WaitConditionLoop {
 			try {
 				$workCallback();
 			} catch ( \Exception $e ) {
-				$workCallback = function () use ( $e ) {
+				$workCallback = static function () use ( $e ) {
 					throw $e;
 				};
 			}

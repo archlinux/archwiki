@@ -20,8 +20,6 @@
 	"categorytree-mode-all": "ھەموو پەڕەکان",
 	"categorytree-collapse": "کۆیبکەوە",
 	"categorytree-expand": "بڵاویبکەوە",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "{{PLURAL:$1|یەک ژێرپۆل|$1 ژێرپۆل}}، {{PLURAL:$2|یەک پەڕە|$2 پەڕە}}، and {{PLURAL:$3|یەک پەڕگە|$3 پەڕگە}} لەبەردەگرێتەوە",
 	"categorytree-num-categories": "$1 پۆل",
 	"categorytree-num-pages": "$1 پەڕە",

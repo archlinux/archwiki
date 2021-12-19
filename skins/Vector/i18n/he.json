@@ -29,5 +29,13 @@
 	"vector-jumptosearch": "קפיצה לחיפוש",
 	"vector-jumptocontent": "לדלג לתוכן",
 	"vector-more-actions": "עוד",
-	"vector-search-loader": "טעינת הצעות חיפוש"
+	"vector-search-loader": "טעינת הצעות חיפוש",
+	"vector-anon-user-menu-pages": "דפים לעורכים שלא נכנסו לחשבון",
+	"vector-anon-user-menu-pages-learn": "מידע נוסף",
+	"vector-anon-user-menu-pages-label": "מידע נוסף על עריכה",
+	"vector-personal-more-label": "קישורי משתמש",
+	"vector-main-menu-tooltip": "תפריט ראשי",
+	"tooltip-vector-anon-user-menu-title": "אפשרויות נוספות",
+	"vector-menu-checkbox-expanded": "מורחב",
+	"vector-menu-checkbox-collapsed": "מוסתר"
 }

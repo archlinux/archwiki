@@ -126,7 +126,7 @@ $magicWords['ko'] = [
 	'categorytree' => [ 0, '분류트리' ],
 ];
 
-/** Kurdish (Latin script) (Kurdî (latînî)‎) */
+/** Kurdish (Latin script) (Kurdî (latînî)) */
 $magicWords['ku-latn'] = [
 	'categorytree' => [ 0, 'dara_kategoriyan' ],
 ];
@@ -197,12 +197,12 @@ $magicWords['ru'] = [
 	'categorytree' => [ 0, 'деревокатегорий' ],
 ];
 
-/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+/** Serbian (Cyrillic script) (српски (ћирилица)) */
 $magicWords['sr-ec'] = [
 	'categorytree' => [ 0, 'стаблокатегорије', 'стабло_категорије' ],
 ];
 
-/** Serbian (Latin script) (srpski (latinica)‎) */
+/** Serbian (Latin script) (srpski (latinica)) */
 $magicWords['sr-el'] = [
 	'categorytree' => [ 0, 'stablokategorije', 'stablo_kategorije' ],
 ];
@@ -252,12 +252,12 @@ $magicWords['yi'] = [
 	'categorytree' => [ 0, 'קאטעגאריע_בוים' ],
 ];
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Simplified Chinese (中文（简体）) */
 $magicWords['zh-hans'] = [
 	'categorytree' => [ 0, '分类树' ],
 ];
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）) */
 $magicWords['zh-hant'] = [
 	'categorytree' => [ 0, '分類樹' ],
 ];

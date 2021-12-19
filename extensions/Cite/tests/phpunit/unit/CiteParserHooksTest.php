@@ -36,7 +36,7 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 	 * @covers ::onParserClearState
 	 */
 	public function testOnParserClearState() {
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createParser();
 		$parser->extCite = $this->createMock( Cite::class );
 
 		$citeParserHooks = new CiteParserHooks();
@@ -50,7 +50,7 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 	 * @covers ::onParserCloned
 	 */
 	public function testOnParserCloned() {
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createParser();
 		$parser->extCite = $this->createMock( Cite::class );
 
 		$citeParserHooks = new CiteParserHooks();
@@ -72,7 +72,7 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 		$parserOptions->method( 'getIsSectionPreview' )
 			->willReturn( false );
 
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createParser( [ 'getOptions', 'getOutput' ] );
 		$parser->method( 'getOptions' )
 			->willReturn( $parserOptions );
 		$parser->method( 'getOutput' )
@@ -82,6 +82,17 @@ class CiteParserHooksTest extends \MediaWikiUnitTestCase {
 		$text = '';
 		$citeParserHooks = new CiteParserHooks();
 		$citeParserHooks->onParserAfterParse( $parser, $text, $this->createMock( StripState::class ) );
+	}
+
+	/**
+	 * @param array $configurableMethods
+	 * @return Parser
+	 */
+	private function createParser( $configurableMethods = [] ) {
+		return $this->getMockBuilder( Parser::class )
+			->disableOriginalConstructor()
+			->onlyMethods( $configurableMethods )
+			->getMock();
 	}
 
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Makuba"
+			"Makuba",
+			"Renan"
 		]
 	},
 	"visualeditor": "VisualEditor",
@@ -15,7 +16,7 @@
 	"visualeditor-annotationbutton-subscript-tooltip": "Subscrit",
 	"visualeditor-annotationbutton-superscript-tooltip": "Superscrit",
 	"visualeditor-annotationbutton-underline-tooltip": "Substrecar",
-	"visualeditor-clearbutton-tooltip": "Anullar formationes",
+	"visualeditor-clearbutton-tooltip": "Remover",
 	"visualeditor-dialog-action-apply": "Applicar changes",
 	"visualeditor-dialog-action-cancel": "Anullar",
 	"visualeditor-dialog-action-goback": "Retro",
@@ -30,7 +31,7 @@
 	"visualeditor-formatdropdown-title": "Changear formation",
 	"visualeditor-help-tool": "Auxilie",
 	"visualeditor-historybutton-redo-tooltip": "Repetir",
-	"visualeditor-historybutton-undo-tooltip": "Desfar",
+	"visualeditor-historybutton-undo-tooltip": "Anullar",
 	"visualeditor-indentationbutton-indent-tooltip": "Plu larg indentation",
 	"visualeditor-indentationbutton-outdent-tooltip": "Minu larg indentation",
 	"visualeditor-inspector-close-tooltip": "Terminar",
@@ -40,7 +41,7 @@
 	"visualeditor-languageinspector-widget-label-direction": "Direction",
 	"visualeditor-languageinspector-widget-label-langcode": "Lingual code",
 	"visualeditor-languageinspector-widget-label-language": "Lingue",
-	"visualeditor-linkinspector-title": "Hyperlink",
+	"visualeditor-linkinspector-title": "Ligament",
 	"visualeditor-listbutton-bullet-tooltip": "Simplic liste",
 	"visualeditor-listbutton-number-tooltip": "Nummerat liste"
 }

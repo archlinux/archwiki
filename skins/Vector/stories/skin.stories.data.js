@@ -5,10 +5,12 @@
 import { htmlUserLanguageAttributes } from './utils';
 import { placeholder } from './utils';
 
-import { PERSONAL_MENU_TEMPLATE_DATA, menuTemplate } from './Menu.stories.data';
+import { userLinksTemplateLegacy } from './UserLinks.stories.data';
+import { menuTemplate } from './Menu.stories.data';
+import { PERSONAL_MENU_TEMPLATE_DATA } from './UserLinks.stories.data';
 import { pageActionsData, namespaceTabsData } from './MenuTabs.stories.data';
 import { vectorMenuTemplate, moreData, variantsData } from './MenuDropdown.stories.data';
-import { searchBoxData, searchBoxTemplate } from './SearchBox.stories.data';
+import { searchBoxData, searchBoxTemplate, SEARCH_TEMPLATE_PARTIALS } from './SearchBox.stories.data';
 import { SIDEBAR_DATA, SIDEBAR_TEMPLATE_PARTIALS, OPT_OUT_DATA,
 	sidebarLegacyTemplate, sidebarTemplate } from './Sidebar.stories.data';
 import { FOOTER_TEMPLATE_DATA, FOOTER_TEMPLATE_PARTIALS,
@@ -61,8 +63,9 @@ export const TEMPLATE_PARTIALS = Object.assign( {}, SIDEBAR_TEMPLATE_PARTIALS, {
 	Sidebar: sidebarTemplate,
 	VectorMenu: vectorMenuTemplate,
 	Menu: menuTemplate,
+	'legacy/UserLinks': userLinksTemplateLegacy,
 	Footer: footerTemplate
-}, FOOTER_TEMPLATE_PARTIALS );
+}, FOOTER_TEMPLATE_PARTIALS, SEARCH_TEMPLATE_PARTIALS );
 
 /**
  * @type {Indicator[]}
@@ -89,7 +92,7 @@ const DATA_INDICATORS = [ {
 
 export const LEGACY_TEMPLATE_DATA = {
 	'html-title': 'Vector 2019',
-	'page-isarticle': true,
+	'is-article': true,
 	'msg-tagline': 'From Wikipedia, the free encyclopedia',
 	'html-user-language-attributes': htmlUserLanguageAttributes,
 	'msg-vector-jumptonavigation': 'Jump to navigation',

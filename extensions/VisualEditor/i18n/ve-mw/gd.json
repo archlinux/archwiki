@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Akerbeltz",
-			"GunChleoc"
+			"GunChleoc",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Cruthaich bun-tùs na duilleige seo",
@@ -93,12 +94,13 @@
 	"visualeditor-dialog-transclusion-add-content": "Cuir ris susbaint",
 	"visualeditor-dialog-transclusion-add-param": "Cuir barrachd fiosrachaidh ris",
 	"visualeditor-dialog-transclusion-add-template": "Cuir teamplaid ris",
+	"visualeditor-dialog-transclusion-collapse-options": "Falaich na roghainnean",
 	"visualeditor-dialog-transclusion-content": "Susbaint",
+	"visualeditor-dialog-transclusion-expand-options": "Seall na roghainnean",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Raon nach molar tuilleah",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Cha mholar an raon seo tuilleadh. $1",
 	"visualeditor-dialog-transclusion-loading": "'Ga luchdadh...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Seall na roghainnean",
-	"visualeditor-dialog-transclusion-no-template-description": "Chan eil tuairisgeul aig an teamplaid \"$1\" fhathast ach dh'fhaoidte gu bheil fiosrachadh air [[$1|duilleag na teamplaid]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Chan eil tuairisgeul aig an teamplaid \"$1\" fhathast ach dh'fhaoidte gu bheil fiosrachadh air [[$2|duilleag na teamplaid]].",
 	"visualeditor-dialog-transclusion-options": "Roghainnean",
 	"visualeditor-dialog-transclusion-param-info": "Tuairisgeul an raoin",
 	"visualeditor-dialog-transclusion-param-info-missing": "Chan eil tuairisgeul an raoin ri fhaighinn",
@@ -108,8 +110,6 @@
 	"visualeditor-dialog-transclusion-remove-template": "Thoir an teamplaid air falbh",
 	"visualeditor-dialog-transclusion-required-parameter": "Raon riatanach",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Tha an raon seo riatanach.",
-	"visualeditor-dialog-transclusion-single-mode": "Falaich na roghainnean",
-	"visualeditor-dialog-transclusion-title": "Gabhail a-steach 'na iomradh",
 	"visualeditor-dialogbutton-media-tooltip": "Meadhanan",
 	"visualeditor-dialogbutton-meta-tooltip": "Roghainnean na duilleige",
 	"visualeditor-dialogbutton-template-tooltip": "Teamplaid",

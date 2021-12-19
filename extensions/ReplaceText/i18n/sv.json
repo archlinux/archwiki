@@ -44,7 +44,7 @@
 	"replacetext_continue": "Fortsätt",
 	"replacetext_announce": "Meddela dessa redigeringar via $1 och bevakningslistor",
 	"replacetext_editsummary": "Textersättning - \"$1\" till \"$2\"",
+	"replacetext_reminder": "För att även ändra länkar till denna sida på andra sidor, gå till $1.",
 	"right-replacetext": "Genomför textersättningar på hela wikin",
-	"action-replacetext": "genomför textersättningar på hela wikin",
-	"replacetext_reminder": "För att även ändra länkar till denna sida på andra sidor, gå till $1."
+	"action-replacetext": "genomför textersättningar på hela wikin"
 }

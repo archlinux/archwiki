@@ -22,8 +22,7 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	/* HACK: Based on the expected width of this widget, using % produces unreliable results */
-	max-width: 33em;
+	max-width: 100%;
 	font-weight: bold;
 	float: left;
 }

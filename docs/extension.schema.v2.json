@@ -5,7 +5,10 @@
 	"additionalProperties": false,
 	"patternProperties": {
 		"^@": {
-			"type": "string",
+			"type": [
+				"string",
+				"array"
+			],
 			"description": "Arbitrary notes, ignored by the parser."
 		}
 	},
@@ -987,6 +990,18 @@
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
+						"localBasePath": {
+							"type": "string",
+							"description": "Base path to prepend to all local paths, relative to current directory"
+						},
+						"remoteExtPath": {
+							"type": "string",
+							"description": "Base path to prepend to all remote paths, relative to $wgExtensionAssetsPath"
+						},
+						"remoteSkinPath": {
+							"type": "string",
+							"description": "Base path to prepend to all remote paths, relative to $wgStylePath"
+						},
 						"scripts": {
 							"type": "string",
 							"description": "Path to script file."

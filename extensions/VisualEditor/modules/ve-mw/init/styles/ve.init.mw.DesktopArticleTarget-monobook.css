@@ -19,7 +19,7 @@
 	padding-bottom: 0.9921875em;
 }
 
-.mw-body .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface .ve-ui-surface-placeholder > * {
+.mw-body .ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ui-surface-placeholder > * {
 	/* Fix margin overlap */
 	margin-top: 0;
 	/* Placeholder doesn't need a border as well */

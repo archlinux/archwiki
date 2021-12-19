@@ -69,11 +69,11 @@ class GadgetTest extends MediaWikiUnitTestCase {
 	 */
 	public function testIsAllowed() {
 		$user = $this->getMockBuilder( User::class )
-			->setMethods( [ 'isAllowedAll' ] )
+			->onlyMethods( [ 'isAllowedAll' ] )
 			->getMock();
 		$user->method( 'isAllowedAll' )
 			->willReturnCallback(
-				function ( ...$rights ) {
+				static function ( ...$rights ) {
 					return array_diff( $rights, [ 'test' ] ) === [];
 				}
 			);

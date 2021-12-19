@@ -3,9 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
-use DOMElement;
-use DOMNode;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
@@ -18,15 +19,17 @@ class PreHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function handle(
-		DOMElement $node, SerializerState $state, bool $wrapperUnmodified = false
-	): ?DOMNode {
+		Element $node, SerializerState $state, bool $wrapperUnmodified = false
+	): ?Node {
 		// Handle indent pre
 
 		// XXX: Use a pre escaper?
 		$content = $state->serializeIndentPreChildrenToString( $node );
 		// Strip (only the) trailing newline
-		preg_match( '/\n$/D', $content, $trailingNL );
-		$content = preg_replace( '/\n$/D', '', $content, 1 );
+		$trailingNL = str_ends_with( $content, "\n" ) ? "\n" : '';
+		if ( $trailingNL !== '' ) {
+			$content = substr( $content, 0, -1 );
+		}
 
 		// Insert indentation
 		$solRE = '/'
@@ -63,14 +66,14 @@ class PreHandler extends DOMHandler {
 		$state->emitChunk( $content, $node );
 
 		// Preserve separator source
-		$state->appendSep( $trailingNL[0] ?? '', $node );
+		$state->appendSep( $trailingNL, $node );
 		return $node->nextSibling;
 	}
 
 	/** @inheritDoc */
-	public function before( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
-		if ( $otherNode->nodeName === 'pre'
-			&& $otherNode instanceof DOMElement // for static analyzers
+	public function before( Element $node, Node $otherNode, SerializerState $state ): array {
+		if ( DOMCompat::nodeName( $otherNode ) === 'pre'
+			&& $otherNode instanceof Element // for static analyzers
 			&& ( DOMDataUtils::getDataParsoid( $otherNode )->stx ?? null ) !== 'html'
 		) {
 			return [ 'min' => 2 ];
@@ -80,9 +83,9 @@ class PreHandler extends DOMHandler {
 	}
 
 	/** @inheritDoc */
-	public function after( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
-		if ( $otherNode->nodeName === 'pre'
-			&& $otherNode instanceof DOMElement // for static analyzers
+	public function after( Element $node, Node $otherNode, SerializerState $state ): array {
+		if ( DOMCompat::nodeName( $otherNode ) === 'pre'
+			&& $otherNode instanceof Element // for static analyzers
 			&& ( DOMDataUtils::getDataParsoid( $otherNode )->stx ?? null ) !== 'html'
 		) {
 			return [ 'min' => 2 ];
@@ -92,12 +95,12 @@ class PreHandler extends DOMHandler {
 	}
 
 	/** @inheritDoc */
-	public function firstChild( DOMNode $node, DOMNode $otherNode, SerializerState $state ): array {
+	public function firstChild( Node $node, Node $otherNode, SerializerState $state ): array {
 		return [];
 	}
 
 	/** @inheritDoc */
-	public function lastChild( DOMNode $node, DOMNode $otherNode, SerializerState $state ): array {
+	public function lastChild( Node $node, Node $otherNode, SerializerState $state ): array {
 		return [];
 	}
 

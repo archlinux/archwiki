@@ -360,13 +360,13 @@ class ApiQueryExtracts extends ApiQueryBase {
 				return $text;
 
 			case 'wiki':
-				return preg_replace_callback( $pattern, function ( $matches ) {
+				return preg_replace_callback( $pattern, static function ( $matches ) {
 					$bars = str_repeat( '=', $matches[1] );
 					return "\n$bars " . trim( $matches[2] ) . " $bars";
 				}, $text );
 
 			case 'plain':
-				return preg_replace_callback( $pattern, function ( $matches ) {
+				return preg_replace_callback( $pattern, static function ( $matches ) {
 					return "\n" . trim( $matches[2] );
 				}, $text );
 
