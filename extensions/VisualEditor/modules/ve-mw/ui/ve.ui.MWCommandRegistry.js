@@ -22,3 +22,25 @@ ve.ui.commandRegistry.register(
 		}
 	)
 );
+
+ve.ui.commandRegistry.register(
+	new ve.ui.Command( 'mwNonBreakingSpace', 'content', 'insert', {
+		args: [
+			[
+				{ type: 'mwEntity', attributes: { character: '\u00a0' } },
+				{ type: '/mwEntity' }
+			],
+			// annotate
+			true,
+			// collapseToEnd
+			true
+		],
+		supportedSelections: [ 'linear' ]
+	} )
+);
+ve.ui.triggerRegistry.register(
+	'mwNonBreakingSpace', {
+		mac: [],
+		pc: new ve.ui.Trigger( 'ctrl+shift+space' )
+	}
+);

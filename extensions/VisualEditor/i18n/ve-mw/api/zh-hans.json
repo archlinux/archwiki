@@ -4,9 +4,9 @@
 			"Byfserag",
 			"Func",
 			"Liuxinyu970226",
+			"Tranve",
 			"Yejianfei",
 			"科劳",
-			"Tranve",
 			"Xzonn"
 		]
 	},
@@ -41,6 +41,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "使用之前的serializeforcache请求的结果带此密钥。覆盖$1html。",
 	"apihelp-visualeditoredit-param-captchaid": "验证码ID（当带验证码保存时）。",
 	"apihelp-visualeditoredit-param-captchaword": "回答验证码（当带验证码保存时）。",
+	"apihelp-visualeditoredit-param-plugins": "与API请求关联的插件。",
+	"apihelp-visualeditoredit-param-data-{plugin}": "插件随API请求发送的任意数据。",
 	"apihelp-visualeditoredit-param-etag": "要发送的ETag。",
 	"apihelp-visualeditoredit-param-html": "要发送至Parsoid与wikitext交换的HTML。",
 	"apihelp-visualeditoredit-param-minor": "标记小编辑。",

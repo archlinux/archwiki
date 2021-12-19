@@ -1,5 +1,7 @@
 <?php
 
+use UtfNormal\Validator;
+
 class Scribunto_LuaSandboxInterpreter extends Scribunto_LuaInterpreter {
 	/**
 	 * @var Scribunto_LuaEngine
@@ -69,7 +71,7 @@ class Scribunto_LuaSandboxInterpreter extends Scribunto_LuaInterpreter {
 		if ( isset( $e->luaTrace ) ) {
 			$opts['trace'] = $e->luaTrace;
 		}
-		$message = $e->getMessage();
+		$message = Validator::cleanUp( $e->getMessage() );
 		if ( preg_match( '/^(.*?):(\d+): (.*)$/', $message, $m ) ) {
 			$opts['module'] = $m[1];
 			$opts['line'] = $m[2];

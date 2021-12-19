@@ -1,16 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Din-nani1",
-			"Dnshitobu",
-			"Masssly",
-			"Yakubu Fadilatu",
 			"Adam Tuferu",
 			"Alhaj Darajaati",
 			"Amire80",
 			"Chirifo",
-			"Jahinfo",
-			"Munkaila Sulemana"
+			"Din-nani1",
+			"Dnshitobu",
+			"Masssly",
+			"Munkaila Sulemana",
+			"Yakubu Fadilatu",
+			"Jahinfo"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -35,5 +35,8 @@
 	"visualeditor-dialog-meta-languages-label": "Bala",
 	"visualeditor-dialog-meta-settings-index-disable": "Aayi",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "Eii",
-	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Labi mi nyaaŋa"
+	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Labi mi nyaaŋa",
+	"visualeditor-dialog-transclusion-suggestedvalues-warning": "Ŋɔ pala zaɣyin shali dinwuhiri ni di kutum ni template.",
+	"visualeditor-dialog-transclusion-title-edit-known-template": "Mali mi $1 n niŋ",
+	"visualeditor-dialog-transclusion-reset-confirmation-title": "Labimi nyaaŋa nti bɔ?"
 }

@@ -98,14 +98,14 @@ final class DynamicConfigRequirement implements Requirement {
 	/**
 	 * @inheritDoc
 	 */
-	public function getName() : string {
+	public function getName(): string {
 		return $this->requirementName;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function isMet() : bool {
+	public function isMet(): bool {
 		return (bool)$this->config->get( $this->configName );
 	}
 }

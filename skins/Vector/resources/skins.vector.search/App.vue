@@ -1,41 +1,42 @@
 <template>
-	<div id="p-search">
-		<wvui-typeahead-search
-			id="searchform"
-			ref="searchForm"
-			:client="getClient"
-			:domain="domain"
-			:footer-search-text="$i18n('searchsuggest-containing').escaped()"
-			:suggestions-label="$i18n('searchresults').escaped()"
-			:accesskey="searchAccessKey"
-			:title="searchTitle"
-			:placeholder="searchPlaceholder"
-			:aria-label="searchPlaceholder"
-			:initial-input-value="searchQuery"
-			:button-label="$i18n( 'search' ).escaped()"
-			:form-action="action"
-			:search-language="language"
-			:show-thumbnail="showThumbnail"
-			:show-description="showDescription"
-			@fetch-start="instrumentation.onFetchStart"
-			@fetch-end="instrumentation.onFetchEnd"
-			@suggestion-click="instrumentation.onSuggestionClick"
+	<wvui-typeahead-search
+		id="searchform"
+		ref="searchForm"
+		:client="getClient"
+		:domain="domain"
+		:footer-search-text="$i18n( 'searchsuggest-containing' ).text()"
+		:suggestions-label="$i18n( 'searchresults' ).text()"
+		:accesskey="searchAccessKey"
+		:title="searchTitle"
+		:placeholder="searchPlaceholder"
+		:aria-label="searchPlaceholder"
+		:search-page-title="searchPageTitle"
+		:initial-input-value="searchQuery"
+		:button-label="$i18n( 'searchbutton' ).text()"
+		:form-action="action"
+		:search-language="language"
+		:show-thumbnail="showThumbnail"
+		:show-description="showDescription"
+		:highlight-query="highlightQuery"
+		@fetch-start="instrumentation.onFetchStart"
+		@fetch-end="instrumentation.onFetchEnd"
+		@suggestion-click="instrumentation.onSuggestionClick"
+		@submit="onSubmit"
+	>
+		<input type="hidden"
+			name="title"
+			:value="searchPageTitle"
 		>
-			<input type="hidden"
-				name="title"
-				value="Special:Search"
-			>
-			<input type="hidden"
-				name="wprov"
-				:value="wprov"
-			>
-		</wvui-typeahead-search>
-	</div>
+		<input type="hidden"
+			name="wprov"
+			:value="wprov"
+		>
+	</wvui-typeahead-search>
 </template>
 
 <script>
 /* global SubmitEvent */
-var wvui = require( 'wvui' ),
+var wvui = require( 'wvui-search' ),
 	instrumentation = require( './instrumentation.js' );
 
 module.exports = {
@@ -74,6 +75,10 @@ module.exports = {
 		}
 	},
 	props: {
+		searchPageTitle: {
+			type: String,
+			default: 'Special:Search'
+		},
 		autofocusInput: {
 			type: Boolean,
 			default: false
@@ -106,6 +111,10 @@ module.exports = {
 			default: true
 		},
 		showDescription: {
+			type: Boolean,
+			default: true
+		},
+		highlightQuery: {
 			type: Boolean,
 			default: true
 		}

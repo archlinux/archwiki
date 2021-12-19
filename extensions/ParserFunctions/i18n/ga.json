@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"MinecraftAustralia"
+		]
+	},
+	"pfunc_time_error": "Earráid: Am neamhbhailí.",
+	"pfunc_expr_unrecognised_word": "Earráid léirithe: Focal neamhaitheanta \"$1\".",
+	"pfunc_expr_unexpected_operator": "Earráid léirithe: Gan choinne $1 oibreoir.",
+	"pfunc_expr_missing_operand": "Earráid léirithe: Oibrí ar iarraidh le haghaidh $1.",
+	"pfunc_expr_unrecognised_punctuation": "Earráid léirithe: Carachtar poncaíochta neamhaitheanta \"$1\".",
+	"pfunc_expr_division_by_zero": "Roinn faoi nialas."
+}

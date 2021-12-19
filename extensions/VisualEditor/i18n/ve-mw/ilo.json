@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lam-ang"
+			"Lam-ang",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Partuaten ti taudan a kodigo iti daytoy a panid",
@@ -135,13 +136,14 @@
 	"visualeditor-dialog-transclusion-add-content": "Agnayon iti linaon",
 	"visualeditor-dialog-transclusion-add-param": "Agnayon pay ti adu a pakaammo",
 	"visualeditor-dialog-transclusion-add-template": "Agnayon iti plantilia",
+	"visualeditor-dialog-transclusion-collapse-options": "Ilemmeng dagiti pagpilian",
 	"visualeditor-dialog-transclusion-content": "Linaon",
 	"visualeditor-dialog-transclusion-contextitem-description": "Pinataud manipud iti: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Ipakita dagiti pagpilian",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Saanen a maus-usar a pagikabilan",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Nasukatanen ti pagikabilan. $1",
 	"visualeditor-dialog-transclusion-loading": "Agkarkarga...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Ipakita dagiti pagpilian",
-	"visualeditor-dialog-transclusion-no-template-description": "Awan pay ti deskripsion ti plantilia ti \"$1\", ngem mabalin nga adda sangkabassit a pakaammo iti [[$1|panid ti plantilia]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Awan pay ti deskripsion ti plantilia ti \"$1\", ngem mabalin nga adda sangkabassit a pakaammo iti [[$2|panid ti plantilia]].",
 	"visualeditor-dialog-transclusion-options": "Dagiti pagpilian",
 	"visualeditor-dialog-transclusion-param-default": "Kasisigud: $1",
 	"visualeditor-dialog-transclusion-param-example": "kas ti $1",
@@ -158,8 +160,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Agtuloy latta",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Awan ti nasken a {{PLURAL:$1|parametro|parparametro}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Siguradoka kadi a kayatmo ti agtuloy a saan a mangpunno ti $1 a {{PLURAL:$2|parametro|parparametro}}?",
-	"visualeditor-dialog-transclusion-single-mode": "Ilemmeng dagiti pagpilian",
-	"visualeditor-dialog-transclusion-title": "Mailak-am",
 	"visualeditor-dialogbutton-media-tooltip": "Midia",
 	"visualeditor-dialogbutton-meta-tooltip": "Dagiti pannakaisaad ti panid",
 	"visualeditor-dialogbutton-template-tooltip": "Plantilia",

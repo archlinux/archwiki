@@ -70,7 +70,8 @@ setInterval( function () {
 			// Do nothing
 		}
 	}
-	liveSignatures = updatedSignatures;
+	// Stop updating signatures that failed once
+	ve.ce.MWSignatureNode.static.liveSignatures = updatedSignatures;
 }, 60 * 1000 );
 
 /* Methods */

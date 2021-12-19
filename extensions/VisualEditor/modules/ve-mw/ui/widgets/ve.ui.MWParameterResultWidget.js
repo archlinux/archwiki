@@ -38,8 +38,7 @@ OO.inheritClass( ve.ui.MWParameterResultWidget, OO.ui.DecoratedOptionWidget );
  * @return {jQuery}
  */
 ve.ui.MWParameterResultWidget.prototype.buildLabel = function () {
-	var i, len,
-		$label = $( '<div>' )
+	var $label = $( '<div>' )
 			.addClass( 've-ui-mwParameterResultWidget-label' )
 			.text( this.data.label ),
 		$names = $( '<div>' )
@@ -48,6 +47,11 @@ ve.ui.MWParameterResultWidget.prototype.buildLabel = function () {
 			.addClass( 've-ui-mwParameterResultWidget-description' )
 			.text( this.data.description || '' );
 
+	if ( this.data.isUnknown ) {
+		$description.addClass( 've-ui-mwParameterResultWidget-unknown' )
+			.text( ve.msg( 'visualeditor-parameter-search-unknown' ) );
+	}
+
 	if ( this.data.name && this.data.name !== this.data.label ) {
 		$names.append(
 			$( '<span>' )
@@ -55,7 +59,7 @@ ve.ui.MWParameterResultWidget.prototype.buildLabel = function () {
 				.text( this.data.name )
 		);
 	}
-	for ( i = 0, len = this.data.aliases.length; i < len; i++ ) {
+	for ( var i = 0; i < this.data.aliases.length; i++ ) {
 		if ( this.data.aliases[ i ] === this.data.label ) {
 			continue;
 		}

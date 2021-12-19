@@ -7,8 +7,8 @@
 			"Ivi104",
 			"MaGa",
 			"Neptune, the Mystic",
-			"Tivek",
-			"Ponor"
+			"Ponor",
+			"Tivek"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -36,5 +36,13 @@
 	"vector-jumptosearch": "Prijeđi na pretraživanje",
 	"vector-jumptocontent": "Prijeđi na sadržaj",
 	"vector-more-actions": "Više",
-	"vector-search-loader": "Učitavanje prijedloga pretrage"
+	"vector-search-loader": "Učitavanje prijedloga pretrage",
+	"vector-anon-user-menu-pages": "Stranice za odjavljene uređivače",
+	"vector-anon-user-menu-pages-learn": "saznajte više",
+	"vector-anon-user-menu-pages-label": "Vidi više o uređivanju",
+	"vector-personal-more-label": "Suradničke poveznice",
+	"vector-main-menu-tooltip": "Glavni izbornik",
+	"tooltip-vector-anon-user-menu-title": "Više mogućnosti",
+	"vector-menu-checkbox-expanded": "prošireno",
+	"vector-menu-checkbox-collapsed": "sažeto"
 }

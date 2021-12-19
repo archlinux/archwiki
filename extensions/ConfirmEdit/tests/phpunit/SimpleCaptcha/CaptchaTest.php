@@ -11,7 +11,7 @@ class CaptchaTest extends MediaWikiTestCase {
 	/** @var ScopedCallback[] */
 	private $hold = [];
 
-	public function tearDown() : void {
+	public function tearDown(): void {
 		// Destroy any ScopedCallbacks being held
 		$this->hold = [];
 		parent::tearDown();

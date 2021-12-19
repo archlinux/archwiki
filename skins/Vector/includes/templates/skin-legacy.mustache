@@ -4,7 +4,7 @@
 	Indicator[] array-indicators wiki-defined badges such as "good article",
 		"featured article". An empty array if none are defined.
 	string html-title
-	bool page-isarticle
+	bool is-article
 	string msg-tagline
 	string html-subtitle
 	string html-undelete-link
@@ -29,11 +29,11 @@
 <div id="mw-head-base" class="noprint"></div>
 <div id="content" class="mw-body" role="main">
 	<a id="top"></a>
-	<div id="siteNotice" class="mw-body-content">{{{html-site-notice}}}</div>
+	<div id="siteNotice">{{{html-site-notice}}}</div>
 	{{>Indicators}}
 	<h1 id="firstHeading" class="firstHeading" {{{html-user-language-attributes}}}>{{{html-title}}}</h1>
-	<div id="bodyContent" class="mw-body-content">
-		{{#page-isarticle}}<div id="siteSub" class="noprint">{{msg-tagline}}</div>{{/page-isarticle}}
+	<div id="bodyContent" class="vector-body">
+		{{#is-article}}<div id="siteSub" class="noprint">{{msg-tagline}}</div>{{/is-article}}
 		<div id="contentSub"{{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
 		<div id="contentSub2">{{{html-undelete-link}}}</div>
 		{{{html-user-message}}}
@@ -53,7 +53,7 @@
 	<h2>{{msg-navigation-heading}}</h2>
 	<div id="mw-head">
 		{{#data-portlets}}
-		{{#data-personal}}{{>Menu}}{{/data-personal}}
+		{{>legacy/UserLinks}}
 		<div id="left-navigation">
 			{{#data-namespaces}}{{>Menu}}{{/data-namespaces}}
 			{{#data-variants}}{{>Menu}}{{/data-variants}}

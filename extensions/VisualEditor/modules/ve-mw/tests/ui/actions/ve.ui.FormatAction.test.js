@@ -9,15 +9,14 @@ QUnit.module( 've.ui.FormatAction (MW)', ve.test.utils.mwEnvironment );
 
 /* Tests */
 
-QUnit.test( 'convert (MW-specific types)', function ( assert ) {
-	var i,
-		cases = [
+QUnit.test( 'convert (MW-specific types)', ( assert ) => {
+	const cases = [
 			{
 				rangeOrSelection: new ve.Range( 14, 16 ),
 				type: 'mwHeading',
 				attributes: { level: 2 },
 				expectedRangeOrSelection: new ve.Range( 14, 16 ),
-				expectedData: function ( data ) {
+				expectedData: ( data ) => {
 					data.splice( 11, 2, { type: '/list' }, { type: 'mwHeading', attributes: { level: 2 } } );
 					data.splice( 19, 2, { type: '/mwHeading' }, { type: 'list', attributes: { style: 'bullet' } } );
 				},
@@ -29,7 +28,7 @@ QUnit.test( 'convert (MW-specific types)', function ( assert ) {
 				type: 'mwHeading',
 				attributes: { level: 3 },
 				expectedRangeOrSelection: new ve.Range( 15, 44 ),
-				expectedData: function ( data ) {
+				expectedData: ( data ) => {
 					data.splice( 11, 2, { type: '/list' }, { type: 'mwHeading', attributes: { level: 3 } } );
 					data.splice( 19, 4, { type: '/mwHeading' }, { type: 'mwHeading', attributes: { level: 3 } } );
 					data.splice( 27, 4, { type: '/mwHeading' }, { type: 'mwHeading', attributes: { level: 3 } } );
@@ -44,7 +43,7 @@ QUnit.test( 'convert (MW-specific types)', function ( assert ) {
 				type: 'mwHeading',
 				attributes: { level: 1 },
 				expectedRangeOrSelection: new ve.Range( 2, 22 ),
-				expectedData: function ( data ) {
+				expectedData: ( data ) => {
 					data.splice( 0, 3, { type: 'mwHeading', attributes: { level: 1 } } );
 					data.splice( 7, 4, { type: '/mwHeading' }, { type: 'mwHeading', attributes: { level: 1 } } );
 					data.splice( 15, 4, { type: '/mwHeading' }, { type: 'mwHeading', attributes: { level: 1 } } );
@@ -58,7 +57,7 @@ QUnit.test( 'convert (MW-specific types)', function ( assert ) {
 				type: 'mwPreformatted',
 				attributes: undefined,
 				expectedRangeOrSelection: new ve.Range( 3, 20 ),
-				expectedData: function ( data ) {
+				expectedData: ( data ) => {
 					data.splice( 0, 3, { type: 'mwPreformatted' } );
 					data.splice( 7, 4, { type: '/mwPreformatted' }, { type: 'mwPreformatted' } );
 					data.splice( 15, 4, { type: '/mwPreformatted' }, { type: 'mwPreformatted' } );
@@ -69,7 +68,7 @@ QUnit.test( 'convert (MW-specific types)', function ( assert ) {
 			}
 		];
 
-	for ( i = 0; i < cases.length; i++ ) {
+	for ( let i = 0; i < cases.length; i++ ) {
 		ve.test.utils.runActionTest(
 			'format', assert, cases[ i ].html || ve.dm.example.isolationHtml, false, 'convert',
 			[ cases[ i ].type, cases[ i ].attributes ], cases[ i ].rangeOrSelection, cases[ i ].msg,

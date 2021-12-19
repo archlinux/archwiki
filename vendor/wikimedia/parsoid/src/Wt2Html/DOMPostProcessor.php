@@ -5,12 +5,13 @@ namespace Wikimedia\Parsoid\Wt2Html;
 
 use Closure;
 use DateTime;
-use DOMDocument;
-use DOMElement;
-use DOMNode;
+use Exception;
 use Generator;
 use Wikimedia\ObjectFactory;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Ext\DOMProcessor as ExtDOMProcessor;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Tokens\SourceRange;
@@ -29,7 +30,7 @@ use Wikimedia\Parsoid\Wt2Html\PP\Handlers\Headings;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\LiFixups;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\TableFixups;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\UnpackDOMFragments;
-use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddExtLinkClasses;
+use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddLinkClasses;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddMediaInfo;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\AddRedLinks;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\ComputeDSR;
@@ -107,7 +108,7 @@ class DOMPostProcessor extends PipelineStage {
 			],
 			'rev_timestamp' => [
 				'property' => 'dc:modified',
-				'content' => function ( $m ) {
+				'content' => static function ( $m ) {
 					# Convert from TS_MW ("mediawiki timestamp") format
 					$dt = DateTime::createFromFormat( 'YmdHis', $m['rev_timestamp'] );
 					# Note that DateTime::ISO8601 is not actually ISO8601, alas.
@@ -346,16 +347,12 @@ class DOMPostProcessor extends PipelineStage {
 
 		$processors = array_merge( $processors, [
 			[
-				'name' => 'LiFixups,TableFixups,DedupeStyles',
+				'name' => 'MigrateTrailingCategories,TableFixups,DedupeStyles',
 				'shortcut' => 'fixups',
 				'isTraverser' => true,
 				'skipNested' => true,
 				'handlers' => [
-					// 1. Deal with <li>-hack and move trailing categories in <li>s out of the list
-					[
-						'nodeName' => 'li',
-						'action' => [ LiFixups::class, 'handleLIHack' ],
-					],
+					// Move trailing categories in <li>s out of the list
 					[
 						'nodeName' => 'li',
 						'action' => [ LiFixups::class, 'migrateTrailingCategories' ]
@@ -408,7 +405,7 @@ class DOMPostProcessor extends PipelineStage {
 					],
 					[
 						'nodeName' => null,
-						'action' => function ( $node, $env ) use ( &$seenIds ) {
+						'action' => static function ( $node, $env ) use ( &$seenIds ) {
 							return Headings::dedupeHeadingIds( $seenIds, $node );
 						}
 					]
@@ -464,8 +461,9 @@ class DOMPostProcessor extends PipelineStage {
 				]
 			],
 			[
-				'Processor' => AddExtLinkClasses::class,
+				'Processor' => AddLinkClasses::class,
 				'shortcut' => 'linkclasses',
+				// Note that embedded content doesn't get these classes
 				'skipNested' => true
 			],
 			// Add <section> wrappers around sections
@@ -504,7 +502,7 @@ class DOMPostProcessor extends PipelineStage {
 					// don't affect other handlers that run alongside it.
 					[
 						'nodeName' => null,
-						'action' => function (
+						'action' => static function (
 							$node, $env, $options, $atTopLevel, $tplInfo
 						) use ( &$usedIdIndex ) {
 							if ( $atTopLevel && DOMUtils::isBody( $node ) ) {
@@ -543,58 +541,129 @@ class DOMPostProcessor extends PipelineStage {
 	/**
 	 * Create an element in the document.head with the given attrs.
 	 *
-	 * @param DOMDocument $document
+	 * @param Document $document
 	 * @param string $tagName
 	 * @param array $attrs
 	 */
-	private function appendToHead( DOMDocument $document, string $tagName, array $attrs = [] ): void {
+	private function appendToHead( Document $document, string $tagName, array $attrs = [] ): void {
 		$elt = $document->createElement( $tagName );
 		DOMUtils::addAttributes( $elt, $attrs );
 		( DOMCompat::getHead( $document ) )->appendChild( $elt );
 	}
 
 	/**
-	 * Get the array of style modules to add to <head>
-	 * @param DOMDocument $document
+	 * While unnecessary for Wikimedia clients, a stylesheet url in the <head>
+	 * is useful for clients like Kiwix and others who might not want to process
+	 * the meta tags to construct the resourceloader url.
+	 *
+	 * Given that these clients will be consuming Parsoid HTML outside a MediaWiki skin,
+	 * the clients are effectively responsible for their own "skin". But, once again,
+	 * as a courtesy, we are hardcoding the vector skin modules for them. But, note
+	 * that this may cause page elements to render differently than how they render
+	 * on Wikimedia sites with the vector skin since this is probably missing a number
+	 * of other modules.
+	 *
+	 * All that said, note that JS-generated parts of the page will still require them
+	 * to have more intimate knowledge of how  to process the JS modules. Except for
+	 * <graph>s, page content doesn't require JS modules at this point. So, where these
+	 * clients want to invest in the necessary logic to construct a better resourceloader
+	 * url, they could simply delete / ignore this stylesheet.
+	 *
+	 * @param Document $document
 	 * @param Env $env
 	 * @param string $lang
+	 * @param array $styleModules
 	 */
-	private function exportStyleModules( DOMDocument $document, Env $env, string $lang ): void {
-		// Hack: link styles
-		$styleModules = [
+	private function addCourtesyBasicStyleSheet(
+		Document $document, Env $env, string $lang, array $styleModules
+	): void {
+		$styleModules = array_unique( array_merge( $styleModules, [
 			'mediawiki.skinning.content.parsoid',
-			// Use the base styles that apioutput and fallback skin use.
+			// Use the base styles that API output and fallback skin use.
 			'mediawiki.skinning.interface',
 			// Make sure to include contents of user generated styles
 			// e.g. MediaWiki:Common.css / MediaWiki:Mobile.css
 			'site.styles'
-		];
+		] ) );
 
-		// Styles from modules returned from preprocessor / parse requests
-		$outputProps = $env->getOutputProperties();
-		if ( isset( $outputProps['modulestyles'] ) ) {
-			$styleModules = array_merge( $styleModules, $outputProps['modulestyles'] );
-		}
-
-		// FIXME: Maybe think about using an associative array or DS\Set
-		$styleModules = array_unique( $styleModules );
 		$styleURI = $env->getSiteConfig()->getModulesLoadURI() .
 			'?lang=' . $lang . '&modules=' .
 			PHPUtils::encodeURIComponent( implode( '|', $styleModules ) ) .
-			// FIXME: Hardcodes vector skin
 			'&only=styles&skin=vector';
-
-		// FIXME: We should add the list of style modules in a meta tag and
-		// have clients massage that into a a style URI based on skin and
-		// other baseline style modules they need for rendering.
 		$this->appendToHead( $document, 'link', [ 'rel' => 'stylesheet', 'href' => $styleURI ] );
 	}
 
 	/**
-	 * @param DOMElement $body
+	 * Export used style modules via a meta tag (and via a stylesheet for now to aid some clients)
+	 * @param Document $document
+	 * @param Env $env
+	 * @param string $lang
+	 */
+	private function exportStyleModules( Document $document, Env $env, string $lang ): void {
+		// Styles from modules returned from preprocessor / parse requests
+		$styleModules = $env->getOutputProperties()['modulestyles'] ?? [];
+		if ( $styleModules ) {
+			// FIXME: Maybe think about using an associative array or DS\Set
+			$styleModules = array_unique( $styleModules );
+
+			// mw:styleModules are CSS modules that are render-blocking.
+			$this->appendToHead( $document, 'meta', [
+				'property' => 'mw:styleModules',
+				'content' => implode( '|', $styleModules )
+			] );
+		}
+
+		$this->addCourtesyBasicStyleSheet( $document, $env, $lang, $styleModules );
+	}
+
+	/**
+	 * Export general modules (usually JS scripts) via a meta tag
+	 * @param Document $document
 	 * @param Env $env
 	 */
-	private function updateBodyClasslist( DOMElement $body, Env $env ): void {
+	private function exportGeneralModules( Document $document, Env $env ): void {
+		// Styles from modules returned from preprocessor / parse requests
+		$generalModules = $env->getOutputProperties()['modules'] ?? [];
+		if ( $generalModules ) {
+			// mw:generalModules can be processed via JS (and async) and are usually (but
+			// not always) JS scripts.
+			$this->appendToHead( $document, 'meta', [
+				'property' => 'mw:generalModules',
+				'content' => implode( '|', array_unique( $generalModules ) )
+			] );
+		}
+	}
+
+	/**
+	 * Export used JS config vars via a meta tag
+	 * @param Document $document
+	 * @param Env $env
+	 */
+	private function exportJSConfigVars( Document $document, Env $env ): void {
+		$vars = $env->getOutputProperties()['jsconfigvars'] ?? [];
+		if ( $vars ) {
+			try {
+				$content = PHPUtils::jsonEncode( $vars );
+			} catch ( Exception $e ) {
+				// Similar to ResourceLoader::makeConfigSetScript.  See T289358
+				$env->log(
+					'warn', 'JSON serialization of config data failed. ' .
+						'This usually means the config data is not valid UTF-8.'
+				);
+				return;
+			}
+			$this->appendToHead( $document, 'meta', [
+				'property' => 'mw:jsConfigVars',
+				'content' => $content,
+			] );
+		}
+	}
+
+	/**
+	 * @param Element $body
+	 * @param Env $env
+	 */
+	private function updateBodyClasslist( Element $body, Env $env ): void {
 		$dir = $env->getPageConfig()->getPageLanguageDir();
 		$bodyCL = DOMCompat::getClassList( $body );
 		$bodyCL->add( 'mw-content-' . $dir );
@@ -612,6 +681,11 @@ class DOMPostProcessor extends PipelineStage {
 		$bodyCL->add( 'mediawiki' );
 		// Set 'mw-parser-output' directly on the body.
 		// Templates target this class as part of the TemplateStyles RFC
+		// FIXME: This isn't expected to be found on the same element as the
+		// body class above, since some css targets it as a descendant.
+		// In visual diff'ing, we migrate the body contents to a wrapper div
+		// with this class to reduce visual differences.  Consider getting
+		// rid of it.
 		$bodyCL->add( 'mw-parser-output' );
 	}
 
@@ -619,11 +693,11 @@ class DOMPostProcessor extends PipelineStage {
 	 * FIXME: consider moving to DOMUtils or Env.
 	 *
 	 * @param Env $env
-	 * @param DOMDocument $document
+	 * @param Document $document
 	 */
-	public function addMetaData( Env $env, DOMDocument $document ): void {
+	public function addMetaData( Env $env, Document $document ): void {
 		// add <head> element if it was missing
-		if ( !( DOMCompat::getHead( $document ) instanceof DOMElement ) ) {
+		if ( !( DOMCompat::getHead( $document ) instanceof Element ) ) {
 			$document->documentElement->insertBefore(
 				$document->createElement( 'head' ),
 				DOMCompat::getBody( $document )
@@ -708,8 +782,8 @@ class DOMPostProcessor extends PipelineStage {
 
 		// Normalize before comparison
 		if (
-			preg_replace( '/_/', ' ', $env->getSiteConfig()->mainpage() ) ===
-			preg_replace( '/_/', ' ', $env->getPageConfig()->getTitle() )
+			str_replace( '_', ' ', $env->getSiteConfig()->mainpage() ) ===
+			str_replace( '_', ' ', $env->getPageConfig()->getTitle() )
 		) {
 			$this->appendToHead( $document, 'meta', [
 				'property' => 'isMainPage',
@@ -720,6 +794,14 @@ class DOMPostProcessor extends PipelineStage {
 		// Set the parsoid content-type strings
 		// FIXME: Should we be using http-equiv for this?
 		$this->appendToHead( $document, 'meta', [
+				'property' => 'mw:htmlVersion',
+				'content' => $env->getOutputContentVersion()
+			]
+		);
+		// Temporary backward compatibility for clients
+		// This could be skipped if we support a version downgrade path
+		// with a major version bump.
+		$this->appendToHead( $document, 'meta', [
 				'property' => 'mw:html:version',
 				'content' => $env->getOutputContentVersion()
 			]
@@ -727,7 +809,7 @@ class DOMPostProcessor extends PipelineStage {
 
 		$expTitle = strtr( $env->getPageConfig()->getTitle(), ' ', '_' );
 		$expTitle = explode( '/', $expTitle );
-		$expTitle = array_map( function ( $comp ) {
+		$expTitle = array_map( static function ( $comp ) {
 			return PHPUtils::encodeURIComponent( $comp );
 		}, $expTitle );
 
@@ -758,6 +840,8 @@ class DOMPostProcessor extends PipelineStage {
 		$body = DOMCompat::getBody( $document );
 		$body->setAttribute( 'lang', Utils::bcp47n( $lang ) );
 		$this->updateBodyClasslist( $body, $env );
+		$this->exportJSConfigVars( $document, $env );
+		$this->exportGeneralModules( $document, $env );
 		$this->exportStyleModules( $document, $env, $lang );
 
 		// Indicate whether LanguageConverter is enabled, so that downstream
@@ -782,9 +866,9 @@ class DOMPostProcessor extends PipelineStage {
 	}
 
 	/**
-	 * @param DOMNode $node
+	 * @param Node $node
 	 */
-	public function doPostProcess( DOMNode $node ): void {
+	public function doPostProcess( Node $node ): void {
 		$env = $this->env;
 
 		$hasDumpFlags = $env->hasDumpFlags();
@@ -899,7 +983,7 @@ class DOMPostProcessor extends PipelineStage {
 	 * @inheritDoc
 	 */
 	public function process( $node, array $opts = null ) {
-		'@phan-var DOMNode $node'; // @var DOMNode $node
+		'@phan-var Node $node'; // @var Node $node
 		$this->doPostProcess( $node );
 		return $node;
 	}

@@ -3,9 +3,9 @@ module.exports = function () {
 
 	window.seleniumUtils = {
 		getBoundingRect: function ( elements ) {
-			var i, l, rect, boundingRect;
-			for ( i = 0, l = elements.length; i < l; i++ ) {
-				rect = elements[ i ].getBoundingClientRect();
+			var boundingRect;
+			for ( var i = 0, l = elements.length; i < l; i++ ) {
+				var rect = elements[ i ].getBoundingClientRect();
 				if ( !boundingRect ) {
 					boundingRect = {
 						left: rect.left,

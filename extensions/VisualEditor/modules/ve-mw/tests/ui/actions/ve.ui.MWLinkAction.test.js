@@ -9,18 +9,17 @@ QUnit.module( 've.ui.MWLinkAction' );
 
 /* Tests */
 
-QUnit.test( 'MW autolink', function ( assert ) {
-	var cases = [
+QUnit.test( 'MW autolink', ( assert ) => {
+	const cases = [
 		{
 			msg: 'Strip trailing punctuation (but not matched parens)',
 			html: '<p><b>https://en.wikipedia.org/wiki/Red_(disambiguation) xyz</b></p>',
 			rangeOrSelection: new ve.Range( 1, 51 ),
 			method: 'autolinkUrl',
 			expectedRangeOrSelection: new ve.Range( 51 ),
-			expectedData: function ( data, action ) {
-				var i,
-					a = action.getLinkAnnotation( 'https://en.wikipedia.org/wiki/Red_(disambiguation)' );
-				for ( i = 1; i < 51; i++ ) {
+			expectedData: ( data, action ) => {
+				const a = action.getLinkAnnotation( 'https://en.wikipedia.org/wiki/Red_(disambiguation)' );
+				for ( let i = 1; i < 51; i++ ) {
 					data[ i ][ 1 ].push( a.element );
 				}
 			}
@@ -32,7 +31,7 @@ QUnit.test( 'MW autolink', function ( assert ) {
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 3 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 9 ),
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice( 1, 8, {
 					type: 'link/mwMagic',
 					attributes: {
@@ -51,7 +50,7 @@ QUnit.test( 'MW autolink', function ( assert ) {
 			rangeOrSelection: new ve.Range( 1, 9 ),
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 1, 9 ),
-			expectedData: function () {
+			expectedData: () => {
 				/* no change, no link */
 			}
 		},
@@ -62,7 +61,7 @@ QUnit.test( 'MW autolink', function ( assert ) {
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 3 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 10 ),
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice( 1, 9, {
 					type: 'link/mwMagic',
 					attributes: {
@@ -81,7 +80,7 @@ QUnit.test( 'MW autolink', function ( assert ) {
 			rangeOrSelection: new ve.Range( 1, 10 ),
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 1, 10 ),
-			expectedData: function () {
+			expectedData: () => {
 				/* no change, no link */
 			}
 		},
@@ -92,7 +91,7 @@ QUnit.test( 'MW autolink', function ( assert ) {
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 3 ),
 			expectedOriginalRangeOrSelection: new ve.Range( 20 ),
-			expectedData: function ( data ) {
+			expectedData: ( data ) => {
 				data.splice( 1, 19, {
 					type: 'link/mwMagic',
 					attributes: {
@@ -111,13 +110,13 @@ QUnit.test( 'MW autolink', function ( assert ) {
 			rangeOrSelection: new ve.Range( 1, 19 ),
 			method: 'autolinkMagicLink',
 			expectedRangeOrSelection: new ve.Range( 1, 19 ),
-			expectedData: function () {
+			expectedData: () => {
 				/* no change, no link */
 			}
 		}
 	];
 
-	cases.forEach( function ( caseItem ) {
+	cases.forEach( ( caseItem ) => {
 		ve.test.utils.runActionTest(
 			'link', assert, caseItem.html, false, caseItem.method, [], caseItem.rangeOrSelection, caseItem.msg,
 			{

@@ -613,7 +613,7 @@ class SimpleCaptcha {
 				// Get links from the database
 				$oldLinks = $this->getLinksFromTracker( $title );
 				// Share a parse operation with Article::doEdit()
-				$editInfo = $page->prepareContentForEdit( $content );
+				$editInfo = $page->prepareContentForEdit( $content, null, $user );
 				if ( $editInfo->output ) {
 					$newLinks = array_keys( $editInfo->output->getExternalLinks() );
 				} else {
@@ -876,7 +876,6 @@ class SimpleCaptcha {
 			// for the user, which we don't know, when he did it.
 			if ( $this->action === 'edit' ) {
 				$status->fatal(
-					// @phan-suppress-next-line SecurityCheck-DoubleEscaped False positive
 					new RawMessage(
 						Html::element(
 							'div',
@@ -1136,7 +1135,7 @@ class SimpleCaptcha {
 			return '';
 		}
 
-		$text = ContentHandler::getContentText( $content );
+		$text = ( $content instanceof TextContent ) ? $content->getText() : null;
 		if ( $section !== '' ) {
 			return MediaWikiServices::getInstance()->getParser()
 				->getSection( $text, $section );
@@ -1153,7 +1152,7 @@ class SimpleCaptcha {
 	 */
 	private function findLinks( $title, $text ) {
 		$parser = MediaWikiServices::getInstance()->getParser();
-		$user = $parser->getUser();
+		$user = $parser->getUserIdentity();
 		$options = new ParserOptions( $user );
 		$text = $parser->preSaveTransform( $text, $title, $user, $options );
 		$out = $parser->parse( $text, $title, $options );

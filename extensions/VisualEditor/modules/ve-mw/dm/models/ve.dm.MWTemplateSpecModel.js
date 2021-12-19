@@ -6,7 +6,18 @@
  */
 
 /**
- * MediaWiki template specification.
+ * Holds a mixture of:
+ * - A copy of a template's specification as it is documented via TemplateData.
+ * - Undocumented parameters that appear in a template invocation, {@see fillFromTemplate}.
+ * - Documented aliases are also considered valid, known parameter names. Use
+ *   {@see isParameterAlias} to differentiate between the two.
+ * Therefore this is not the original specification but an accessor to the documentation for an
+ * individual template invocation. It's possible different for every invocation.
+ *
+ * Meant to be in a 1:1 relationship to {@see ve.dm.MWTemplateModel}.
+ *
+ * The actual, unmodified specification can be found in {@see specCache} in
+ * {@see ve.dm.MWTransclusionModel}.
  *
  * See https://github.com/wikimedia/mediawiki-extensions-TemplateData/blob/master/Specification.md
  * for the latest version of the TemplateData specification.
@@ -14,16 +25,22 @@
  * @class
  *
  * @constructor
- * @param {ve.dm.MWTemplateModel} template Template
+ * @param {ve.dm.MWTemplateModel} template
+ * @property {Object.<string,boolean>} seenParameterNames Keeps track of any parameter from any
+ *  source and in which order they have been seen first. Includes parameters that have been removed
+ *  during the lifetime of this object, i.e. {@see fillFromTemplate} doesn't remove parameters that
+ *  have been seen before. The order is typically but not necessarily the original order in which
+ *  the parameters appear in the template. Aliases are resolved and don't appear on their original
+ *  position any more.
+ * @property {Object} templateData Documentation as provided by the TemplateData API
+ * @property {Object.<string,string>} aliases Maps aliases to primary parameter names
  */
 ve.dm.MWTemplateSpecModel = function VeDmMWTemplateSpecModel( template ) {
 	// Properties
 	this.template = template;
-	this.description = null;
-	this.params = {};
-	this.paramOrder = [];
-	this.sets = [];
-	this.maps = {};
+	this.seenParameterNames = {};
+	this.templateData = { notemplatedata: true, params: {} };
+	this.aliases = {};
 
 	// Initialization
 	this.fillFromTemplate();
@@ -33,229 +50,297 @@ OO.initClass( ve.dm.MWTemplateSpecModel );
 
 /* Static methods */
 
-ve.dm.MWTemplateSpecModel.static.getLocalValue = function ( stringOrObject, lang ) {
+/**
+ * @private
+ * @param {string|Object.<string,string>|null} stringOrObject
+ * @param {string} [languageCode]
+ * @return {string|null|undefined}
+ */
+ve.dm.MWTemplateSpecModel.static.getLocalValue = function ( stringOrObject, languageCode ) {
 	return stringOrObject && typeof stringOrObject === 'object' ?
-		OO.ui.getLocalValue( stringOrObject, lang ) :
+		OO.ui.getLocalValue( stringOrObject, languageCode ) :
 		stringOrObject;
 };
 
 /* Methods */
 
 /**
- * Extend with template spec data.
+ * Template spec data is available from the TemplateData extension's API.
  *
- * Template spec data is available from the TemplateData extension's API. Extension is passive so
- * any filled in values are not overwritten unless new values are available. This prevents changes
- * in the API or fill methods from causing issues.
- *
- * @param {Object} data Template spec data
- * @param {string} [data.description] Template description
- * @param {string[]} [data.paramOrder] Canonically ordered parameter names
- * @param {Object} [data.params] Template param specs keyed by param name
- * @param {Array} [data.sets] Lists of param sets
+ * @param {Object} data As returned by the TemplataData API. Expected to be in formatversion=2,
+ *  guaranteed via {@see ve.init.mw.Target.prototype.getContentApi}.
+ * @param {boolean} [data.notemplatedata] True when there is no user-provided documentation.
+ *  `params` are auto-detected in this case.
+ * @param {string|Object.<string,string>} [data.description] Template description
+ * @param {string[]} [data.paramOrder] Preferred parameter order as documented via TemplateData. If
+ *  given, the TemplateData API makes sure this contains the same parameters as `params`.
+ * @param {Object.<string,Object>} [data.params] Template param specs keyed by param name
+ * @param {{label:(string|Object.<string,string>),params:string[]}[]} [data.sets] List of parameter
+ *  sets, i.e. parameters that belong together (whatever that means, this feature is underspecified
+ *  and unused)
+ * @param {Object.<string,Object.<string,string|string[]|string[][]>>} [data.maps] Source to target
+ *  parameter mappings for consumers like Citoid or gadgets
  */
-ve.dm.MWTemplateSpecModel.prototype.extend = function ( data ) {
-	var key, param, i, len;
+ve.dm.MWTemplateSpecModel.prototype.setTemplateData = function ( data ) {
+	if ( !data || !ve.isPlainObject( data ) ) {
+		return;
+	}
 
-	if ( data.description !== null ) {
-		this.description = data.description;
+	this.templateData = data;
+	// Better be safe even if the `params` element isn't optional in the TemplateData API
+	if ( !this.templateData.params ) {
+		this.templateData.params = {};
 	}
-	if ( Array.isArray( data.paramOrder ) ) {
-		this.paramOrder = data.paramOrder.slice();
-	}
-	if ( data.params ) {
-		for ( key in data.params ) {
-			// Pre-fill spec
-			if ( !this.params[ key ] ) {
-				this.params[ key ] = this.getDefaultParameterSpec( key );
-			}
-			param = this.params[ key ];
-			// Extend existing spec
-			ve.extendObject( true, this.params[ key ], data.params[ key ] );
-			// Add aliased references
-			if ( param.aliases.length ) {
-				for ( i = 0, len = param.aliases.length; i < len; i++ ) {
-					this.params[ param.aliases[ i ] ] = param;
-				}
+
+	var resolveAliases = false;
+
+	for ( var primaryName in this.templateData.params ) {
+		this.seenParameterNames[ primaryName ] = true;
+
+		var aliases = this.getParameterAliases( primaryName );
+		for ( var i = 0; i < aliases.length; i++ ) {
+			var alias = aliases[ i ];
+			this.aliases[ alias ] = primaryName;
+			if ( alias in this.seenParameterNames ) {
+				resolveAliases = true;
 			}
 		}
 	}
-	this.sets = data.sets;
-	if ( data.maps ) {
-		this.maps = data.maps;
+
+	if ( resolveAliases ) {
+		var primaryNames = {};
+		for ( var name in this.seenParameterNames ) {
+			primaryNames[ this.getPrimaryParameterName( name ) ] = true;
+		}
+		this.seenParameterNames = primaryNames;
 	}
 };
 
 /**
- * Fill from template.
- *
- * Filling is passive, so existing information is never overwritten. The spec should be re-filled
- * after a parameter is added to ensure it's still complete, and this is safe because existing data
- * is never overwritten.
+ * Adds all (possibly undocumented) parameters from the linked template to the list of known
+ * parameters, {@see getKnownParameterNames}. This should be called every time a parameter is added
+ * to the template.
  */
 ve.dm.MWTemplateSpecModel.prototype.fillFromTemplate = function () {
-	var key;
-
-	for ( key in this.template.getParameters() ) {
-		if ( key && !this.params[ key ] ) {
-			this.params[ key ] = this.getDefaultParameterSpec( key );
+	for ( var name in this.template.getParameters() ) {
+		// Ignore placeholder parameters with no name
+		if ( name && !this.isKnownParameterOrAlias( name ) ) {
+			// There is no information other than the names of the parameters, that they exist, and
+			// in which order
+			this.seenParameterNames[ name ] = true;
 		}
 	}
 };
 
 /**
- * Get the default spec for a parameter.
- *
- * @param {string} name Parameter name
- * @return {Object} Parameter spec
- */
-ve.dm.MWTemplateSpecModel.prototype.getDefaultParameterSpec = function ( name ) {
-	return {
-		label: name,
-		description: null,
-		default: '',
-		type: 'string',
-		aliases: [],
-		name: name,
-		required: false,
-		suggested: false,
-		deprecated: false
-	};
-};
-
-/**
- * Get template label.
- *
- * @return {string} Template label
+ * @return {string} Normalized template name without the "Template:" namespace prefix, if possible.
+ *  Otherwise the unnormalized template name as used in the wikitext. Might even be a string like
+ *  `{{example}}` when a template name is dynamically generated.
  */
 ve.dm.MWTemplateSpecModel.prototype.getLabel = function () {
-	var titleObj,
-		title = this.template.getTitle(),
-		target = this.template.getTarget();
-
+	var title = this.template.getTitle();
 	if ( title ) {
 		try {
 			// Normalize and remove namespace prefix if in the Template: namespace
-			titleObj = new mw.Title( title );
-			title = titleObj.getRelativeText( mw.config.get( 'wgNamespaceIds' ).template );
+			title = new mw.Title( title )
+				.getRelativeText( mw.config.get( 'wgNamespaceIds' ).template );
 		} catch ( e ) { }
 	}
-
-	return title || target.wt;
+	return title || this.template.getTarget().wt;
 };
 
 /**
- * Get template description.
- *
- * @param {string} [lang] Language to get description in
+ * @param {string} [languageCode]
  * @return {string|null} Template description or null if not available
  */
-ve.dm.MWTemplateSpecModel.prototype.getDescription = function ( lang ) {
-	return this.constructor.static.getLocalValue( this.description, lang );
+ve.dm.MWTemplateSpecModel.prototype.getDescription = function ( languageCode ) {
+	return this.constructor.static.getLocalValue( this.templateData.description || null, languageCode );
 };
 
 /**
- * Get parameter order.
+ * True it the template does have any user-provided documentation. Note that undocumented templates
+ * can still have auto-detected `params` and a `paramOrder`, while documented templates might not
+ * have `params`. Use `{@see getDocumentedParameterOrder()}.length` to differentiate.
  *
- * @return {string[]} Canonically ordered parameter names
+ * @return {boolean}
  */
-ve.dm.MWTemplateSpecModel.prototype.getParameterOrder = function () {
-	return this.paramOrder.slice();
+ve.dm.MWTemplateSpecModel.prototype.isDocumented = function () {
+	return !this.templateData.notemplatedata;
 };
 
 /**
- * Check if a parameter name is known.
+ * Preferred order of parameters via TemplateData, without aliases or undocumented parameters. Empty
+ * if the template is not documented. Otherwise the explicit `paramOrder` if given, or the order of
+ * parameters as they appear in TemplateData. Returns a copy, i.e. it's safe to manipulate the
+ * array.
  *
- * Could be a primary name or alias.
- *
- * @param {string} name Parameter name
- * @return {boolean} Parameter name is known
+ * @return {string[]} Preferred order of parameters via TemplateData, if given
  */
-ve.dm.MWTemplateSpecModel.prototype.isParameterKnown = function ( name ) {
-	return this.params[ name ] !== undefined;
+ve.dm.MWTemplateSpecModel.prototype.getDocumentedParameterOrder = function () {
+	return Array.isArray( this.templateData.paramOrder ) ?
+		this.templateData.paramOrder.slice() :
+		Object.keys( this.templateData.params );
+};
+
+/**
+ * @return {string[]}
+ */
+ve.dm.MWTemplateSpecModel.prototype.getUndocumentedParameterNames = function () {
+	var documentedParameters = this.templateData.params;
+
+	return this.getKnownParameterNames().filter( function ( name ) {
+		return !( name in documentedParameters );
+	} );
+};
+
+/**
+ * Same as {@see getKnownParameterNames}, but in a canonical order that's always the same, unrelated
+ * to how the parameters appear in the wikitext. Primary parameter names documented via TemplateData
+ * are first, in their documented order. Undocumented parameters are sorted with numeric names
+ * first, followed by alphabetically sorted names.
+ *
+ * @return {string[]}
+ */
+ve.dm.MWTemplateSpecModel.prototype.getCanonicalParameterOrder = function () {
+	var undocumentedParameters = this.getUndocumentedParameterNames();
+
+	undocumentedParameters.sort( function ( a, b ) {
+		var aIsNaN = isNaN( a ),
+			bIsNaN = isNaN( b );
+
+		if ( aIsNaN && bIsNaN ) {
+			// Two strings
+			return a < b ? -1 : a === b ? 0 : 1;
+		}
+		if ( aIsNaN ) {
+			// A is a string
+			return 1;
+		}
+		if ( bIsNaN ) {
+			// B is a string
+			return -1;
+		}
+		// Two numbers
+		return a - b;
+	} );
+
+	return this.getDocumentedParameterOrder().concat( undocumentedParameters );
+};
+
+/**
+ * Check if a parameter name or alias was seen before. This includes parameters and aliases
+ * documented via TemplateData as well as undocumented parameters, e.g. from the original template
+ * invocation. When undocumented parameters are removed from the linked {@see ve.dm.MWTemplateModel}
+ * they are still known and will still be offered via {@see getKnownParameterNames} for the lifetime
+ * of this object.
+ *
+ * @param {string} name Parameter name or alias
+ * @return {boolean}
+ */
+ve.dm.MWTemplateSpecModel.prototype.isKnownParameterOrAlias = function ( name ) {
+	return name in this.seenParameterNames || name in this.aliases;
 };
 
 /**
  * Check if a parameter name is an alias.
  *
- * @param {string} name Parameter name
- * @return {boolean} Parameter name is an alias
+ * @param {string} name Parameter name or alias
+ * @return {boolean}
  */
 ve.dm.MWTemplateSpecModel.prototype.isParameterAlias = function ( name ) {
-	return this.params[ name ] !== undefined && this.params[ name ].name !== name;
+	return name in this.aliases;
 };
 
 /**
- * Get a parameter label.
- *
- * @param {string} name Parameter name
- * @param {string} [lang] Language to get label in
- * @return {string} Parameter label
+ * @param name Parameter name or alias
+ * @return {boolean}
  */
-ve.dm.MWTemplateSpecModel.prototype.getParameterLabel = function ( name, lang ) {
-	return this.constructor.static.getLocalValue( this.params[ name ].label || name, lang );
+ve.dm.MWTemplateSpecModel.prototype.isParameterDocumented = function ( name ) {
+	return name in this.templateData.params || name in this.aliases;
 };
 
 /**
- * Get a parameter description.
- *
- * @param {string} name Parameter name
- * @param {string} [lang] Language to get description
- * @return {string|null} Parameter description
+ * @param {string} name Parameter name or alias
+ * @param {string} [languageCode]
+ * @return {string} Descriptive label of the parameter, if given. Otherwise the alias or parameter
+ *  name as is.
  */
-ve.dm.MWTemplateSpecModel.prototype.getParameterDescription = function ( name, lang ) {
-	return this.constructor.static.getLocalValue( this.params[ name ].description, lang );
+ve.dm.MWTemplateSpecModel.prototype.getParameterLabel = function ( name, languageCode ) {
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return this.constructor.static.getLocalValue( param && param.label || name, languageCode );
 };
 
 /**
- * Get a parameter value.
+ * @param {string} name Parameter name or alias
+ * @param {string} [languageCode]
+ * @return {string|null}
+ */
+ve.dm.MWTemplateSpecModel.prototype.getParameterDescription = function ( name, languageCode ) {
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return this.constructor.static.getLocalValue( param && param.description || null, languageCode );
+};
+
+/**
+ * @param {string} name Parameter name or alias
+ * @return {string[]}
+ */
+ve.dm.MWTemplateSpecModel.prototype.getParameterSuggestedValues = function ( name ) {
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return param && param.suggestedvalues || [];
+};
+
+/**
+ * The default value will be placed in the input field when the parameter is added. The user can
+ * edit or even remove it.
  *
- * @param {string} name Parameter name
- * @return {string} Default parameter value
+ * @param {string} name Parameter name or alias
+ * @return {string} e.g. "{{PAGENAME}}"
  */
 ve.dm.MWTemplateSpecModel.prototype.getParameterDefaultValue = function ( name ) {
-	return this.params[ name ].default;
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return param && param.default || '';
 };
 
 /**
- * Get a parameter example value.
- *
- * @param {string} name Parameter name
- * @param {string} [lang] Language to get description
- * @return {string} Example parameter value
+ * @param {string} name Parameter name or alias
+ * @param {string} [languageCode]
+ * @return {string|null}
  */
-ve.dm.MWTemplateSpecModel.prototype.getParameterExampleValue = function ( name, lang ) {
-	return this.constructor.static.getLocalValue( this.params[ name ].example, lang );
+ve.dm.MWTemplateSpecModel.prototype.getParameterExampleValue = function ( name, languageCode ) {
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return this.constructor.static.getLocalValue( param && param.example || null, languageCode );
 };
 
 /**
- * Get a parameter auto value.
+ * The auto-value will be used by the template in case the user doesn't provide a value. In
+ * VisualEditor this is only for documentation and should not appear in a serialization.
  *
- * @param {string} name Parameter name
- * @return {string} Auto-value for the parameter
+ * @param {string} name Parameter name or alias
+ * @return {string}
  */
 ve.dm.MWTemplateSpecModel.prototype.getParameterAutoValue = function ( name ) {
-	return this.params[ name ].autovalue;
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return param && param.autovalue || '';
 };
 
 /**
- * Get a parameter type.
- *
- * @param {string} name Parameter name
- * @return {string} Parameter type
+ * @param {string} name Parameter name or alias
+ * @return {string} e.g. "string"
  */
 ve.dm.MWTemplateSpecModel.prototype.getParameterType = function ( name ) {
-	return this.params[ name ].type;
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return param && param.type || 'string';
 };
 
 /**
- * Get parameter aliases.
+ * Warning, this does not return a copy. Don't manipulate the returned array.
  *
- * @param {string} name Parameter name
+ * @param {string} name Parameter name or alias
  * @return {string[]} Alternate parameter names
  */
 ve.dm.MWTemplateSpecModel.prototype.getParameterAliases = function ( name ) {
-	return this.params[ name ].aliases;
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return param && param.aliases || [];
 };
 
 /**
@@ -263,87 +348,79 @@ ve.dm.MWTemplateSpecModel.prototype.getParameterAliases = function ( name ) {
  *
  * If a parameter is not an alias of another, the output will be the same as the input.
  *
- * @param {string} name Parameter alias
- * @return {string} Parameter name
+ * @param {string} name Parameter name or alias
+ * @return {string}
  */
-ve.dm.MWTemplateSpecModel.prototype.getParameterName = function ( name ) {
-	return this.params[ name ].name;
+ve.dm.MWTemplateSpecModel.prototype.getPrimaryParameterName = function ( name ) {
+	return this.aliases[ name ] || name;
 };
 
 /**
- * Check if parameter is required.
- *
- * @param {string} name Parameter name
- * @return {boolean} Parameter is required
+ * @param {string} name Parameter name or alias
+ * @return {boolean}
  */
 ve.dm.MWTemplateSpecModel.prototype.isParameterRequired = function ( name ) {
-	return !!this.params[ name ].required;
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return !!( param && param.required );
 };
 
 /**
- * Check if parameter is suggested.
- *
- * @param {string} name Parameter name
- * @return {boolean} Parameter is suggested
+ * @param {string} name Parameter name or alias
+ * @return {boolean}
  */
 ve.dm.MWTemplateSpecModel.prototype.isParameterSuggested = function ( name ) {
-	return !!this.params[ name ].suggested;
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return !!( param && param.suggested );
 };
 
 /**
- * Check if parameter is deprecated.
- *
- * @param {string} name Parameter name
- * @return {boolean} Parameter is deprecated
+ * @param {string} name Parameter name or alias
+ * @return {boolean}
  */
 ve.dm.MWTemplateSpecModel.prototype.isParameterDeprecated = function ( name ) {
-	return this.params[ name ].deprecated !== false;
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return !!( param && ( param.deprecated || typeof param.deprecated === 'string' ) );
 };
 
 /**
- * Get parameter deprecation description.
- *
- * @param {string} name Parameter name
+ * @param {string} name Parameter name or alias
  * @return {string} Explaining of why parameter is deprecated, empty if parameter is either not
  *   deprecated or no description has been specified
  */
 ve.dm.MWTemplateSpecModel.prototype.getParameterDeprecationDescription = function ( name ) {
-	return typeof this.params[ name ].deprecated === 'string' ?
-		this.params[ name ].deprecated : '';
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return param && typeof param.deprecated === 'string' ? param.deprecated : '';
 };
 
 /**
- * Get all primary parameter names.
+ * Get all known primary parameter names, without aliases, in their original order as they became
+ * known (usually but not necessarily the order in which they appear in the template). This still
+ * includes undocumented parameters that have been part of the template at some point during the
+ * lifetime of this object, but have been removed from the linked {@see ve.dm.MWTemplateModel} in
+ * the meantime.
  *
- * @return {string[]} Parameter names
+ * The returned array is a copy, i.e. it's safe to manipulate.
+ *
+ * @return {string[]} Primary parameter names
  */
-ve.dm.MWTemplateSpecModel.prototype.getParameterNames = function () {
-	var name,
-		names = [];
-
-	for ( name in this.params ) {
-		if ( this.params[ name ].name === name ) {
-			names.push( name );
-		}
-	}
-
-	return names;
+ve.dm.MWTemplateSpecModel.prototype.getKnownParameterNames = function () {
+	return Object.keys( this.seenParameterNames );
 };
 
 /**
- * Get parameter sets.
+ * See https://www.mediawiki.org/wiki/Extension:TemplateData#Set_object
  *
- * @return {Object[]} Lists of parameter set descriptors
+ * @return {{label:(string|Object.<string,string>),params:string[]}[]}
  */
 ve.dm.MWTemplateSpecModel.prototype.getParameterSets = function () {
-	return this.sets;
+	return this.templateData.sets || [];
 };
 
 /**
- * Get map describing relationship between another content type and the parameters.
+ * See https://www.mediawiki.org/wiki/Extension:TemplateData#Maps_object
  *
- * @return {Object} Object with application property maps to parameters keyed to application name.
+ * @return {Object.<string,Object.<string,string|string[]|string[][]>>}
  */
 ve.dm.MWTemplateSpecModel.prototype.getMaps = function () {
-	return this.maps;
+	return this.templateData.maps || {};
 };

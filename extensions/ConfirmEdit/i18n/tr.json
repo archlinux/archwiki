@@ -9,6 +9,7 @@
 			"MuratTheTurkish",
 			"Runningfridgesrule",
 			"Sadrettin",
+			"SaldırganSincap",
 			"Sayginer",
 			"Stultiwikia"
 		]
@@ -41,5 +42,5 @@
 	"confirmedit-preview-validity": "Geçerlilik",
 	"confirmedit-preview-valid": "geçerli",
 	"confirmedit-preview-invalid": "geçersiz",
-	"confirmedit-preview-description": "Aşağıdaki tabloda, bu sayfadaki satırların listesi ve bunun geçerli bir IP adresi veya IP adresi aralığı olup olmadığı gösterilmektedir. Satır geçerli bir IP adresi veya IP adres aralığıysa, CAPTCHA'dan beyaz listeye alınacak ancak geçersiz satırlar yoksayılacak. Geçerli bir IP adresi aralığına örnek: 69.208.0.0 ile 69.208.255.255 69.208.0.0/16. Bir IP adres aralığı hesaplaması hakkında [https://www.mediawiki.org/wiki/Help:Range_blocks/tr#Calculating_the_CIDR_suffix daha fazla bilgi] edinin."
+	"confirmedit-preview-description": "Aşağıdaki tabloda, bu sayfadaki satırların listesi ve bunun geçerli bir IP adresi veya IP adresi aralığı olup olmadığı gösterilmektedir. Hat geçerli bir IP adresi veya IP adresi aralığı ise, CAPTCHA kontrollerinin dışında bırakılacak, ancak geçersiz satırlar göz ardı edilecektir. Geçerli bir IP adresi aralığına bir örnek şöyle olabilir: 69.208.0.0 ile 69.208.255.255 69.208.0.0/16. Bir IP adres aralığı hesaplaması hakkında [https://www.mediawiki.org/wiki/Help:Range_blocks/tr#Calculating_the_CIDR_suffix daha fazla bilgi] edinin."
 }

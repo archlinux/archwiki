@@ -4,7 +4,6 @@
 import mustache from 'mustache';
 import { vectorMenuTemplate as portalTemplate } from './MenuDropdown.stories.data';
 import '../resources/skins.vector.styles/MenuPortal.less';
-import '../.storybook/common.less';
 import { placeholder, htmlUserLanguageAttributes, portletAfter } from './utils';
 
 /**
@@ -34,7 +33,8 @@ export const PORTALS = {
 <li><a href='#'>on each list item</a></li>
 `,
 		'html-after-portal': portletAfter(
-			placeholder( `<p>Beware: The <a href="https://codesearch.wmcloud.org/search/?q=BaseTemplateAfterPortlet&i=nope&files=&repos=">BaseTemplateAfterPortlet hook</a> can be used to inject arbitary HTML here for any portlet.</p>`, 60 )
+			placeholder( `<p>Beware: The <a href="https://codesearch.wmcloud.org/search/?q=SkinAfterPortlet&i=nope&files=&repos=">SkinAfterPortlet hook</a>
+			 can be used to inject arbitary HTML here for any portlet.</p>`, 60 )
 		)
 	},
 	navigation: {

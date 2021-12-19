@@ -37,7 +37,7 @@
 	"replacetext_continue": "Siguir",
 	"replacetext_announce": "Anunciar eses ediciones per $1 y llistes de siguimientu",
 	"replacetext_editsummary": "Sustitución de testu - de «$1» a «$2»",
+	"replacetext_reminder": "Pa cambiar tamién los enllaces a esta páxina n'otres páxines, por favor, visita $1.",
 	"right-replacetext": "Facer les sustituciones de la cadena na wiki ensembre",
-	"action-replacetext": "facer sustituciones de cadena na wiki ensembre",
-	"replacetext_reminder": "Pa cambiar tamién los enllaces a esta páxina n'otres páxines, por favor, visita $1."
+	"action-replacetext": "facer sustituciones de cadena na wiki ensembre"
 }

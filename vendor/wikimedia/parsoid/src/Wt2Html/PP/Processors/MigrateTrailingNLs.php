@@ -3,12 +3,13 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\PP\Processors;
 
-use DOMComment;
-use DOMDocumentFragment;
-use DOMElement;
-use DOMNode;
 use stdClass;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\Comment;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
@@ -19,11 +20,11 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 	private static $nodesToMigrateFrom;
 
 	/**
-	 * @param DOMNode $node
+	 * @param Node $node
 	 * @param stdClass $dp
 	 * @return bool
 	 */
-	private function nodeEndsLineInWT( DOMNode $node, stdClass $dp ): bool {
+	private function nodeEndsLineInWT( Node $node, stdClass $dp ): bool {
 		// These nodes either end a line in wikitext (tr, li, dd, ol, ul, dl, caption,
 		// p) or have implicit closing tags that can leak newlines to those that end a
 		// line (th, td)
@@ -36,25 +37,29 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 				]
 			);
 		}
-		return isset( self::$nodesToMigrateFrom[$node->nodeName] ) &&
+		return isset( self::$nodesToMigrateFrom[DOMCompat::nodeName( $node )] ) &&
 			!WTUtils::hasLiteralHTMLMarker( $dp );
 	}
 
 	/**
-	 * @param DOMNode $node
-	 * @return DOMNode|null
+	 * @param Node $node
+	 * @return Node|null
 	 */
-	private function getTableParent( DOMNode $node ): ?DOMNode {
-		if ( preg_match( '/^(td|th)$/D', $node->nodeName ) ) {
+	private function getTableParent( Node $node ): ?Node {
+		$nodeName = DOMCompat::nodeName( $node );
+		if ( in_array( $nodeName, [ 'td', 'th' ], true ) ) {
 			$node = $node->parentNode;
+			$nodeName = DOMCompat::nodeName( $node );
 		}
-		if ( $node->nodeName === 'tr' ) {
+		if ( $nodeName === 'tr' ) {
 			$node = $node->parentNode;
+			$nodeName = DOMCompat::nodeName( $node );
 		}
-		if ( preg_match( '/^(tbody|thead|tfoot|caption)$/D', $node->nodeName ) ) {
+		if ( in_array( $nodeName, [ 'tbody', 'thead', 'tfoot', 'caption' ], true ) ) {
 			$node = $node->parentNode;
+			$nodeName = DOMCompat::nodeName( $node );
 		}
-		return ( $node->nodeName === 'table' ) ? $node : null;
+		return ( $nodeName === 'table' ) ? $node : null;
 	}
 
 	/**
@@ -64,11 +69,11 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 	 * and hasn't been fostered out of a table.
 	 * (3) It is the rightmost node in the DOM subtree rooted at a node
 	 * that ends a line in wikitext
-	 * @param DOMNode $node
+	 * @param Node $node
 	 * @return bool
 	 */
-	private function canMigrateNLOutOfNode( DOMNode $node ): bool {
-		if ( $node->nodeName === 'table' || DOMUtils::atTheTop( $node ) ) {
+	private function canMigrateNLOutOfNode( Node $node ): bool {
+		if ( DOMCompat::nodeName( $node ) === 'table' || DOMUtils::atTheTop( $node ) ) {
 			return false;
 		}
 
@@ -77,7 +82,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 		$tableParent = $this->getTableParent( $node );
 		if ( $tableParent && DOMUtils::isElt( $tableParent->previousSibling ) ) {
 			$previousSibling = $tableParent->previousSibling;
-			'@phan-var \DOMElement $previousSibling'; // @var \DOMElement $previousSibling
+			'@phan-var Element $previousSibling'; // @var Element $previousSibling
 			if ( !empty( DOMDataUtils::getDataParsoid( $previousSibling )->fostered ) ) {
 				return false;
 			}
@@ -96,17 +101,17 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 	 * A node has zero wt width if:
 	 * - tsr->start == tsr->end
 	 * - only has children with zero wt width
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @return bool
 	 */
-	private function hasZeroWidthWT( DOMElement $node ): bool {
+	private function hasZeroWidthWT( Element $node ): bool {
 		$tsr = DOMDataUtils::getDataParsoid( $node )->tsr ?? null;
 		if ( !$tsr || $tsr->start === null || $tsr->start !== $tsr->end ) {
 			return false;
 		}
 
 		$c = $node->firstChild;
-		while ( $c instanceof DOMElement && $this->hasZeroWidthWT( $c ) ) {
+		while ( $c instanceof Element && $this->hasZeroWidthWT( $c ) ) {
 			$c = $c->nextSibling;
 		}
 
@@ -114,14 +119,14 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * @param DOMNode $elt
+	 * @param Node $elt
 	 * @param Env $env
 	 */
-	private function doMigrateTrailingNLs( DOMNode $elt, Env $env ) {
+	private function doMigrateTrailingNLs( Node $elt, Env $env ) {
 		// Nothing to do for text and comment nodes
 		if (
-			!( $elt instanceof DOMElement ) &&
-			!( $elt instanceof DOMDocumentFragment )
+			!( $elt instanceof Element ) &&
+			!( $elt instanceof DocumentFragment )
 		) {
 			return;
 		}
@@ -151,7 +156,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 			$n = $elt->lastChild;
 
 			// We can migrate trailing newlines across nodes that have zero-wikitext-width.
-			while ( $n instanceof DOMElement && $this->hasZeroWidthWT( $n ) ) {
+			while ( $n instanceof Element && $this->hasZeroWidthWT( $n ) ) {
 				$migrationBarrier = $n;
 				$n = $n->previousSibling;
 			}
@@ -163,7 +168,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 			$foundNL = false;
 			$tsrCorrection = 0;
 			while ( $n && ( DOMUtils::isText( $n ) || DOMUtils::isComment( $n ) ) ) {
-				if ( $n instanceof DOMComment ) {
+				if ( $n instanceof Comment ) {
 					$firstEltToMigrate = $n;
 					// <!--comment-->
 					$tsrCorrection += WTUtils::decodedCommentLength( $n );
@@ -174,7 +179,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 						$partialContent = false;
 						// all whitespace is moved
 						$tsrCorrection += strlen( $n->nodeValue );
-					} elseif ( preg_match( '/\n$/D', $n->nodeValue ) ) {
+					} elseif ( str_ends_with( $n->nodeValue, "\n" ) ) {
 						$foundNL = true;
 						$firstEltToMigrate = $n;
 						$partialContent = true;
@@ -205,8 +210,8 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 				if ( $insertPosition &&
 					DOMUtils::isMarkerMeta( $insertPosition, 'mw:EndTag' )
 				) {
-					'@phan-var \DOMElement $insertPosition'; // @var \DOMElement $insertPosition
-					if ( $insertPosition->getAttribute( 'data-etag' ) === strtolower( $elt->nodeName )
+					'@phan-var Element $insertPosition'; // @var Element $insertPosition
+					if ( $insertPosition->getAttribute( 'data-etag' ) === DOMCompat::nodeName( $elt )
 					) {
 						$insertPosition = $insertPosition->nextSibling;
 					}
@@ -247,7 +252,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 	 * @inheritDoc
 	 */
 	public function run(
-		Env $env, DOMNode $root, array $options = [], bool $atTopLevel = false
+		Env $env, Node $root, array $options = [], bool $atTopLevel = false
 	): void {
 		$this->doMigrateTrailingNLs( $root, $env );
 	}

@@ -32,7 +32,8 @@
 		"PageContentSave": "TemplateDataHooks::onPageContentSave",
 		"ResourceLoaderRegisterModules": "TemplateDataHooks::onResourceLoaderRegisterModules",
 		"EditPage::showEditForm:initial": "TemplateDataHooks::onEditPage",
-		"ParserFetchTemplateData": "TemplateDataHooks::onParserFetchTemplateData"
+		"ParserFetchTemplateData": "TemplateDataHooks::onParserFetchTemplateData",
+		"MakeGlobalVariablesScript": "TemplateDataHooks::onMakeGlobalVariablesScript"
 	},
 	"MessagesDirs": {
 		"TemplateData": [
@@ -149,6 +150,8 @@
 				"templatedata-modal-table-param-actions",
 				"templatedata-modal-table-param-aliases",
 				"templatedata-modal-table-param-autovalue",
+				"templatedata-modal-table-param-suggestedvalues",
+				"templatedata-modal-table-param-suggestedvalues-placeholder",
 				"templatedata-modal-table-param-default",
 				"templatedata-modal-table-param-deprecated",
 				"templatedata-modal-table-param-deprecatedValue",
@@ -232,6 +235,11 @@
 	"config": {
 		"TemplateDataUseGUI": {
 			"value": true
+		},
+		"TemplateDataSuggestedValuesEditor": {
+			"description": "Temporary feature flag to enable the \"suggested values\" UI",
+			"value": false,
+			"public": true
 		}
 	},
 	"manifest_version": 2

@@ -5,13 +5,13 @@ use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\MediaWikiServices;
 
 return [
-	'OATHAuth' => function ( MediaWikiServices $services ) {
+	'OATHAuth' => static function ( MediaWikiServices $services ) {
 		return new OATHAuth(
 			$services->getMainConfig(),
 			$services->getDBLoadBalancerFactory()
 		);
 	},
-	'OATHUserRepository' => function ( MediaWikiServices $services ) {
+	'OATHUserRepository' => static function ( MediaWikiServices $services ) {
 		global $wgOATHAuthDatabase;
 		$auth = $services->getService( 'OATHAuth' );
 		return new OATHUserRepository(

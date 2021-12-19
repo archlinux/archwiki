@@ -3,7 +3,7 @@
 namespace PageImages\Hooks;
 
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Rest\Entity\SearchResultPageIdentity;
+use MediaWiki\Page\PageIdentity;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
 use PageImages\PageImages;
 use PageProps;
@@ -40,13 +40,13 @@ class SearchResultProvideThumbnailHookHandler {
 			$pagesByPageId,
 			PageImages::getPropNames( PageImages::LICENSE_ANY )
 		);
-		$fileNames = array_map( function ( $prop ) {
+		$fileNames = array_map( static function ( $prop ) {
 			return $prop[ PageImages::getPropName( false ) ]
 				?? $prop[ PageImages::getPropName( true ) ]
 				?? null;
 		}, $propValues );
 
-		return array_filter( $fileNames, function ( $fileName ) {
+		return array_filter( $fileNames, static function ( $fileName ) {
 			return $fileName != null;
 		} );
 	}
@@ -59,7 +59,7 @@ class SearchResultProvideThumbnailHookHandler {
 	 * @return array
 	 */
 	private function getFileNamesForFileTitles( $linkFileTargetsByPageId ): array {
-		return array_map( function ( $linkFileTarget ) {
+		return array_map( static function ( $linkFileTarget ) {
 			return $linkFileTarget->getDBkey();
 		}, $linkFileTargetsByPageId );
 	}
@@ -69,13 +69,13 @@ class SearchResultProvideThumbnailHookHandler {
 	 *
 	 * @param array $titlesByPageId a key value array where key is pageId and value is Title
 	 * @param int $size size of thumbnail height and width in points
-	 * @return array of SearchResultThumbnail
+	 * @return SearchResultThumbnail[]
 	 */
 	private function getThumbnails( array $titlesByPageId, int $size ): array {
-		$pagesByPageId = array_filter( $titlesByPageId, function ( $title ) {
+		$pagesByPageId = array_filter( $titlesByPageId, static function ( $title ) {
 			return !$title->inNamespace( NS_FILE );
 		} );
-		$titleFilesByPageId = array_filter( $titlesByPageId, function ( $title ) {
+		$titleFilesByPageId = array_filter( $titlesByPageId, static function ( $title ) {
 			return $title->inNamespace( NS_FILE );
 		} );
 
@@ -89,7 +89,7 @@ class SearchResultProvideThumbnailHookHandler {
 				continue;
 			}
 			$thumb = $file->transform( [ 'width' => $size , 'height' => $size ] );
-			if ( !$thumb ) {
+			if ( !$thumb || $thumb->isError() ) {
 				continue;
 			}
 
@@ -115,7 +115,7 @@ class SearchResultProvideThumbnailHookHandler {
 	 * @param array &$results Placeholder for result. $pageId => SearchResultThumbnail
 	 */
 	public function doSearchResultProvideThumbnail( array $pageIdentities, &$results ): void {
-		$pageIdTitles = array_map( function ( SearchResultPageIdentity $identity ) {
+		$pageIdTitles = array_map( static function ( PageIdentity $identity ) {
 			return Title::makeTitle( $identity->getNamespace(), $identity->getDBkey() );
 		}, $pageIdentities );
 
@@ -133,7 +133,7 @@ class SearchResultProvideThumbnailHookHandler {
 	}
 
 	/**
-	 * @param array[] $pageIdentities array that contain $pageId => SearchResultPageIdentity.
+	 * @param array[] $pageIdentities array that contain $pageId => PageIdentity.
 	 * @param array[] &$results Placeholder for result. $pageId => SearchResultThumbnail
 	 */
 	public static function onSearchResultProvideThumbnail( $pageIdentities, &$results ): void {

@@ -58,7 +58,8 @@ class Cleanup extends Maintenance {
 			}
 			$revision = $this->revisionLookup->getRevisionByPageId( $id );
 			if ( $revision ) {
-				$text = ContentHandler::getContentText( $revision->getContent( SlotRecord::MAIN ) );
+				$content = $revision->getContent( SlotRecord::MAIN );
+				$text = ( $content instanceof TextContent ) ? $content->getText() : null;
 				if ( $text ) {
 					foreach ( $regexes as $regex ) {
 						if ( preg_match( $regex, $text, $matches ) ) {
@@ -90,11 +91,12 @@ class Cleanup extends Maintenance {
 		$title = Title::newFromLinkTarget( $rev->getPageAsLinkTarget() );
 		while ( $rev ) {
 			$matches = false;
+			$content = $rev->getContent( SlotRecord::MAIN );
 			foreach ( $regexes as $regex ) {
 				$matches = $matches
 					|| preg_match(
 						$regex,
-						ContentHandler::getContentText( $rev->getContent( SlotRecord::MAIN ) )
+						( $content instanceof TextContent ) ? $content->getText() : null
 					);
 			}
 			if ( !$matches ) {
@@ -116,10 +118,7 @@ class Cleanup extends Maintenance {
 			$comment = "Cleaning up links to $match";
 		}
 		$wikiPage = new WikiPage( $title );
-		$wikiPage->doEditContent(
-			$content, $comment,
-			0, false, $user
-		);
+		$wikiPage->doUserEditContent( $content, $user, $comment );
 	}
 }
 

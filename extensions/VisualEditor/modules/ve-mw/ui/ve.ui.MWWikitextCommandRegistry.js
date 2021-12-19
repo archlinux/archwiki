@@ -246,3 +246,16 @@ ve.ui.wikitextCommandRegistry.register(
 		}
 	)
 );
+
+ve.ui.wikitextCommandRegistry.register(
+	new ve.ui.Command( 'mwNonBreakingSpace', 'content', 'insert', {
+		args: [
+			'&nbsp;',
+			// annotate
+			true,
+			// collapseToEnd
+			true
+		],
+		supportedSelections: [ 'linear' ]
+	} )
+);

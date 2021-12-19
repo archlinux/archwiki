@@ -1,19 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
+			"Danieldegroot2",
 			"Kippenvlees1",
 			"LongJohn nl",
 			"Mainframe98",
+			"McDutchie",
 			"MuratTheTurkish",
+			"Nieuwsgierige Gebruiker",
 			"Romaine",
 			"SPQRobin",
 			"Servien",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan",
-			"Danieldegroot2",
-			"McDutchie",
-			"Nieuwsgierige Gebruiker"
+			"Southparkfan"
 		]
 	},
 	"oathauth-desc": "Biedt ondersteuning voor authenticatie via op HMAC-gebaseerde eenmalige wachtwoorden",

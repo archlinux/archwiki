@@ -26,7 +26,7 @@ class ConstrainedTextTest extends \PHPUnit\Framework\TestCase {
 	 * @covers ::escapeLine
 	 * @dataProvider provideConstrainedText
 	 */
-	public function testConstrainedText( $t ) {
+	public function testConstrainedText( array $t ) {
 		$t = PHPUtils::arrayToObject( $t );
 		// Set up environment and test data
 		$env = new MockEnv( [
@@ -42,7 +42,7 @@ class ConstrainedTextTest extends \PHPUnit\Framework\TestCase {
 		$ct = ConstrainedText::fromSelSer( $t->text, $node, $dataParsoid, $env );
 		$this->assertTrue( is_array( $ct ) );
 		$this->assertSameSize( $t->types, $ct );
-		$actualNames = array_map( function ( $x ) {
+		$actualNames = array_map( static function ( $x ) {
 			return get_class( $x );
 		}, $ct );
 		foreach ( $t->types as $i => $name ) {
@@ -67,7 +67,7 @@ class ConstrainedTextTest extends \PHPUnit\Framework\TestCase {
 	}
 
 	// phpcs:disable Generic.Files.LineLength.TooLong
-	public function provideConstrainedText() {
+	public function provideConstrainedText(): array {
 		return [
 			[ [
 				'name' => 'WikiLinkText: Simple',

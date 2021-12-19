@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Crochet.david",
 			"Gomoko",
 			"Grondin",
@@ -11,8 +12,7 @@
 			"Thibaut120094",
 			"Urhixidur",
 			"Verdy p",
-			"Wladek92",
-			"Ajeje Brazorf"
+			"Wladek92"
 		]
 	},
 	"pfunc_desc": "Etend l’analyseur syntaxique avec des fonctions logiques",

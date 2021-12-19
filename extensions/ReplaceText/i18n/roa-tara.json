@@ -37,7 +37,10 @@
 	"replacetext_continue": "Condinue",
 	"replacetext_announce": "Annunge ste cangiaminde ausanne $1 e l'elenghe de le pàggene condrollate",
 	"replacetext_editsummary": "Sostituzione d'u teste - \"$1\" cu \"$2\"",
+	"replacetext_reminder": "Pe cangià pure le collegaminde a sta pàgene jndr'à l'otre pàggene, vèje sus a $1.",
+	"replacetext_cfg_error": "Errore de configurazione de ReplaceText",
+	"replacetext_no_compress": "'A uicchi toje non ge funzione cu ReplaceText: le cangiaminde d'u teste non ge ponne essere fatte ce $wgCompressRevisions ste a true.",
+	"replacetext_no_external_stores": "'A uicchi toje non ge funzione cu ReplaceText: le cangiaminde d'u teste non ge ponne essere fatte ce $wgExternalStores non g'è vacande.",
 	"right-replacetext": "Fà 'a sostituzione de le stringhe sus a totte a uicchi",
-	"action-replacetext": "fà 'a sostituzione de le stringhe sus a totte a uicchi",
-	"replacetext_reminder": "Pe cangià pure le collegaminde a sta pàgene jndr'à l'otre pàggene, vèje sus a $1."
+	"action-replacetext": "fà 'a sostituzione de le stringhe sus a totte a uicchi"
 }

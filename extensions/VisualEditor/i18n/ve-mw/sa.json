@@ -80,16 +80,15 @@
 	"visualeditor-dialog-transclusion-add-content": "सामग्री योज्यताम्",
 	"visualeditor-dialog-transclusion-add-param": "अधिकसूचना",
 	"visualeditor-dialog-transclusion-add-template": "फलकं योज्यताम्",
+	"visualeditor-dialog-transclusion-collapse-options": "विकल्पाः गोप्यन्ताम्",
 	"visualeditor-dialog-transclusion-content": "अन्तर्विषयाः",
 	"visualeditor-dialog-transclusion-contextitem-description": "$1 तः सृष्टम्",
+	"visualeditor-dialog-transclusion-expand-options": "वकल्पाः दर्श्यन्ताम्",
 	"visualeditor-dialog-transclusion-loading": "आरोपयति...",
-	"visualeditor-dialog-transclusion-multiple-mode": "वकल्पाः दर्श्यन्ताम्",
 	"visualeditor-dialog-transclusion-options": "विकल्पाः",
 	"visualeditor-dialog-transclusion-remove-param": "स्थानम् निष्कास्यताम्",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "प्रतिगम्यताम्",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "कथमपि अनुवर्त्यताम्",
-	"visualeditor-dialog-transclusion-single-mode": "विकल्पाः गोप्यन्ताम्",
-	"visualeditor-dialog-transclusion-title": "अन्यलेखभागः (transclusion)",
 	"visualeditor-dialogbutton-media-tooltip": "माध्यमानि",
 	"visualeditor-dialogbutton-meta-tooltip": "पृष्ठविन्यासाः",
 	"visualeditor-dialogbutton-template-tooltip": "फलकम्",
@@ -112,6 +111,5 @@
 	"visualeditor-preference-betatempdisable": "यावता यथादृश्यसम्पादिका उपान्त्ये अस्ति, तावता यथादृश्यसम्पादिका निष्क्रियताम् ।",
 	"visualeditor-preference-core-label": "यथादृश्यसम्पादिका",
 	"visualeditor-savedialog-label-create": "पृष्ठं सृज्यताम्",
-	"visualeditor-version-label": "संस्करणम्",
-	"visualeditor-wikitextconvert-plain": "साधारणपाठः प्रयुज्यताम्"
+	"visualeditor-version-label": "संस्करणम्"
 }

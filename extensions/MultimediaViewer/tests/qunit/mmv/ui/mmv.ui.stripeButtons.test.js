@@ -59,6 +59,7 @@
 			buttons = new mw.mmv.ui.StripeButtons( $qf ),
 			$button = buttons.buttons.$descriptionPage,
 			descriptionUrl = 'http://example.com/desc',
+			descriptionUrl2 = 'http://example.com/different-desc',
 			imageInfo = { descriptionUrl: descriptionUrl },
 			repoInfo = { isCommons: function () { return false; } };
 
@@ -71,6 +72,20 @@
 		buttons.setDescriptionPageButton( imageInfo, repoInfo );
 
 		assert.strictEqual( $button.hasClass( 'mw-mmv-repo-button-commons' ), true, 'Button commons class for Commons files' );
+
+		imageInfo.pageID = 1;
+		imageInfo.title = { getUrl: function () { return descriptionUrl2; } };
+		repoInfo.isLocal = false;
+		buttons.setDescriptionPageButton( imageInfo, repoInfo );
+
+		assert.strictEqual(
+			$button.hasClass( 'mw-mmv-repo-button-commons' ), false,
+			'Button does not have commons class for Commons files with local description page'
+		);
+		assert.strictEqual(
+			$button.find( 'a' ).addBack().filter( 'a' ).attr( 'href' ), descriptionUrl2,
+			'Description page link for Commons files with local description page is correct'
+		);
 	} );
 
 }() );

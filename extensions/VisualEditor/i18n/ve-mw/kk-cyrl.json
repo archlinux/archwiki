@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Arystanbek",
-			"Нұрлан Рахымжанов"
+			"Нұрлан Рахымжанов",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Бұл беттің қайнар мәтінін бастау",
@@ -119,13 +120,14 @@
 	"visualeditor-dialog-transclusion-add-content": "Контент қосу",
 	"visualeditor-dialog-transclusion-add-param": "Көбірек мәлімет қосу",
 	"visualeditor-dialog-transclusion-add-template": "Үлгі қосу",
+	"visualeditor-dialog-transclusion-collapse-options": "Параметрлерді жасыру",
 	"visualeditor-dialog-transclusion-content": "Контент",
 	"visualeditor-dialog-transclusion-contextitem-description": "Мынадан жасалған: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Параметрлерді көрсету",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Тыйым салынған жолақ",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Жолаққа тыйым салынған. $1",
 	"visualeditor-dialog-transclusion-loading": "Жүктеуде…",
-	"visualeditor-dialog-transclusion-multiple-mode": "Параметрлерді көрсету",
-	"visualeditor-dialog-transclusion-no-template-description": "Бұл бетке \"$1\" үлгісін {{GENDER:$2|қоспақшысыз}}. Онда сипаттамасы жоқ, бірақ [[$1|үлгі бетінде]] кейбір ақпараттар бар болу мүмкін.",
+	"visualeditor-dialog-transclusion-no-template-description": "Бұл бетке \"$1\" үлгісін {{GENDER:$2|қоспақшысыз}}. Онда сипаттамасы жоқ, бірақ [[$2|үлгі бетінде]] кейбір ақпараттар бар болу мүмкін.",
 	"visualeditor-dialog-transclusion-options": "Параметрлер",
 	"visualeditor-dialog-transclusion-param-default": "Әдепкі: $1",
 	"visualeditor-dialog-transclusion-param-example": "Мысал: $1",
@@ -141,8 +143,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Қалайда жалғастыру",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Міндетті {{PLURAL:$1|параметрді|параметрді}} қажет етеді",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "$1 {{PLURAL:$2|параметрді|параметрді}} толтырмай жалғасырғыңыз келе ме?",
-	"visualeditor-dialog-transclusion-single-mode": "Параметрлерді жасыру",
-	"visualeditor-dialog-transclusion-title": "Кірістірілген бет",
 	"visualeditor-dialogbutton-media-tooltip": "Медиа",
 	"visualeditor-dialogbutton-meta-tooltip": "Бет баптаулары",
 	"visualeditor-dialogbutton-template-tooltip": "Үлгі",

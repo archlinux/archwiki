@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bennylin",
 			"Diki Ananta",
 			"Gleki",
 			"Jadinegara",
@@ -9,7 +10,6 @@
 			"NoiX180",
 			"Pras",
 			"Sumbukompor",
-			"Bennylin",
 			"TMg"
 		]
 	},
@@ -148,14 +148,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Tambah isi",
 	"visualeditor-dialog-transclusion-add-param": "Tambah katerangan liya",
 	"visualeditor-dialog-transclusion-add-template": "Tambah cithakan",
+	"visualeditor-dialog-transclusion-collapse-options": "Dhelikaké pilihan",
 	"visualeditor-dialog-transclusion-content": "Isi",
 	"visualeditor-dialog-transclusion-contextitem-description": "Kawetu saka: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Tuduhaké pilihan",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Babagan kadaluwarsa",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Babagan wis kadaluwarsa. $1",
 	"visualeditor-dialog-transclusion-loading": "Ngamot...",
 	"visualeditor-dialog-transclusion-more-template-description": "Bokmanawa ana katerangan tambahan ngenani cithakan \"$1\" ing [[{{ns:template}}:$1|kacané]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Tuduhaké pilihan",
-	"visualeditor-dialog-transclusion-no-template-description": "Cithakan \"$1\" durung ana wedharané, nanging mungkin ana sawenèh katerangan ing [[$1|kaca cithakané]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Cithakan \"$1\" durung ana wedharané, nanging mungkin ana sawenèh katerangan ing [[$2|kaca cithakané]].",
 	"visualeditor-dialog-transclusion-options": "Pilihan",
 	"visualeditor-dialog-transclusion-param-default": "Gawan: $1",
 	"visualeditor-dialog-transclusion-param-example": "conto $1",
@@ -172,8 +173,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Banjuraké waé",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Babagan}} kang kabutuhaké ilang",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Kowé yakin arep mbacutaké tanpa ngisi {{PLURAL:$2|babagan}} $1?",
-	"visualeditor-dialog-transclusion-single-mode": "Dhelikaké pilihan",
-	"visualeditor-dialog-transclusion-title": "Transklusi",
 	"visualeditor-dialogbutton-media-tooltip": "Médhia",
 	"visualeditor-dialogbutton-meta-tooltip": "Setèlan kaca",
 	"visualeditor-dialogbutton-template-tooltip": "Cithakan",

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"NR Deblocked",
 			"ОйЛ"
 		]
 	},
@@ -14,5 +15,7 @@
 	"vector-view-history": "їсторїꙗ",
 	"vector-view-view": "чьтѥниѥ",
 	"vector-view-viewsource": "страницѧ источьнъ обраꙁъ",
-	"vector-more-actions": "вѧщє"
+	"vector-more-actions": "вѧщє",
+	"vector-main-menu-tooltip": "​Главное​ ​меню​",
+	"tooltip-vector-anon-user-menu-title": "Бо́льше ѻпцїй"
 }

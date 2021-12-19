@@ -19,7 +19,8 @@
  * @cfg {boolean} [readOnly] Parameter is read-only
  */
 ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) {
-	var paramName = parameter.getName();
+	var paramName = parameter.getName(),
+		veConfig = mw.config.get( 'wgVisualEditorConfig' );
 
 	// Configuration initialization
 	config = ve.extendObject( {
@@ -41,8 +42,11 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 	this.$actions = $( '<div>' );
 	this.$labelElement = $( '<div>' );
 	this.$field = $( '<div>' );
-	this.$more = $( '<div>' );
-	this.$description = $( '<div>' );
+
+	// Temporary feature flags
+	this.useInlineDescriptions = veConfig.transclusionDialogInlineDescriptions;
+	this.useSuggestedValues = veConfig.transclusionDialogSuggestedValues;
+	this.useNewSidebar = veConfig.transclusionDialogNewSidebar;
 
 	// Note: Calling createValueInput() sets some properties we rely on later in this function
 	this.valueInput = this.createValueInput()
@@ -57,11 +61,12 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 		classes: [ 've-ui-mwParameterPage-statusIndicator' ]
 	} );
 
-	// Construct the description popup
+	// Construct the field docs
 
-	this.$description
-		.addClass( 've-ui-mwParameterPage-description' )
-		.append( $( '<p>' ).text( this.spec.getParameterDescription( paramName ) || '' ) );
+	var $doc = $( '<div>' )
+		.addClass( 've-ui-mwParameterPage-doc' )
+		.append( $( '<p>' )
+			.text( this.spec.getParameterDescription( paramName ) || '' ) );
 
 	if ( this.parameter.isRequired() ) {
 		this.statusIndicator
@@ -69,9 +74,9 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 			.setTitle(
 				ve.msg( 'visualeditor-dialog-transclusion-required-parameter' )
 			);
-		this.$description.append(
+		$doc.append(
 			$( '<p>' )
-				.addClass( 've-ui-mwParameterPage-description-required' )
+				.addClass( 've-ui-mwParameterPage-doc-required' )
 				.text(
 					ve.msg( 'visualeditor-dialog-transclusion-required-parameter-description' )
 				)
@@ -82,9 +87,9 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 			.setTitle(
 				ve.msg( 'visualeditor-dialog-transclusion-deprecated-parameter' )
 			);
-		this.$description.append(
+		$doc.append(
 			$( '<p>' )
-				.addClass( 've-ui-mwParameterPage-description-deprecated' )
+				.addClass( 've-ui-mwParameterPage-doc-deprecated' )
 				.text(
 					ve.msg(
 						'visualeditor-dialog-transclusion-deprecated-parameter-description',
@@ -95,9 +100,9 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 	}
 
 	if ( this.defaultValue ) {
-		this.$description.append(
+		$doc.append(
 			$( '<p>' )
-				.addClass( 've-ui-mwParameterPage-description-default' )
+				.addClass( 've-ui-mwParameterPage-doc-default' )
 				.text(
 					ve.msg( 'visualeditor-dialog-transclusion-param-default', this.defaultValue )
 				)
@@ -105,18 +110,23 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 	}
 
 	if ( this.exampleValue ) {
-		this.$description.append(
+		$doc.append(
 			$( '<p>' )
-				.addClass( 've-ui-mwParameterPage-description-example' )
+				.addClass( 've-ui-mwParameterPage-doc-example' )
 				.text(
-					ve.msg( 'visualeditor-dialog-transclusion-param-example', this.exampleValue )
+					ve.msg(
+						this.useInlineDescriptions ?
+							'visualeditor-dialog-transclusion-param-example-long' :
+							'visualeditor-dialog-transclusion-param-example',
+						this.exampleValue
+					)
 				)
 		);
 	}
 
 	// Construct the action buttons
 
-	if ( !this.rawValueInput ) {
+	if ( !this.rawValueInput && !this.useNewSidebar ) {
 		this.rawFallbackButton = new OO.ui.ButtonWidget( {
 			framed: false,
 			icon: 'wikiText',
@@ -127,31 +137,33 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 		this.$actions.append( this.rawFallbackButton.$element );
 	}
 
-	if ( this.$description.text().trim() === '' ) {
-		this.infoButton = new OO.ui.ButtonWidget( {
-			disabled: true,
-			title: ve.msg( 'visualeditor-dialog-transclusion-param-info-missing' ),
-			framed: false,
-			icon: 'info',
-			classes: [ 've-ui-mwParameterPage-infoButton' ]
-		} );
-	} else {
-		this.infoButton = new OO.ui.PopupButtonWidget( {
-			$overlay: config.$overlay,
-			popup: {
-				$content: this.$description
-			},
-			title: ve.msg( 'visualeditor-dialog-transclusion-param-info' ),
-			framed: false,
-			icon: 'info',
-			classes: [ 've-ui-mwParameterPage-infoButton' ]
-		} );
+	if ( !this.useInlineDescriptions ) {
+		if ( $doc.text().trim() === '' ) {
+			this.infoButton = new OO.ui.ButtonWidget( {
+				disabled: true,
+				title: ve.msg( 'visualeditor-dialog-transclusion-param-info-missing' ),
+				framed: false,
+				icon: 'info',
+				classes: [ 've-ui-mwParameterPage-infoButton' ]
+			} );
+		} else {
+			this.infoButton = new OO.ui.PopupButtonWidget( {
+				$overlay: config.$overlay,
+				popup: {
+					$content: $doc
+				},
+				title: ve.msg( 'visualeditor-dialog-transclusion-param-info' ),
+				framed: false,
+				icon: 'info',
+				classes: [ 've-ui-mwParameterPage-infoButton' ]
+			} );
+		}
+
+		this.$actions.append( this.infoButton.$element );
 	}
 
-	this.$actions.append( this.infoButton.$element );
-
-	if ( !this.parameter.isRequired() && !config.readOnly ) {
-		this.removeButton = new OO.ui.ButtonWidget( {
+	if ( !this.parameter.isRequired() && !config.readOnly && !this.useNewSidebar ) {
+		var removeButton = new OO.ui.ButtonWidget( {
 			framed: false,
 			icon: 'trash',
 			title: ve.msg( 'visualeditor-dialog-transclusion-remove-param' ),
@@ -160,15 +172,8 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 		} )
 			.connect( this, { click: 'onRemoveButtonClick' } );
 
-		this.$actions.append( this.removeButton.$element );
+		this.$actions.append( removeButton.$element );
 	}
-
-	this.addButton = new OO.ui.ButtonWidget( {
-		framed: false,
-		icon: 'parameter',
-		label: ve.msg( 'visualeditor-dialog-transclusion-add-param' )
-	} )
-		.connect( this, { click: 'onAddButtonFocus' } );
 
 	// Events
 	this.$labelElement.on( 'click', this.onLabelClick.bind( this ) );
@@ -187,14 +192,53 @@ ve.ui.MWParameterPage = function VeUiMWParameterPage( parameter, name, config ) 
 		.append(
 			this.valueInput.$element
 		);
-	this.$more
-		.addClass( 've-ui-mwParameterPage-more' )
-		.append( this.addButton.$element );
+
+	if ( this.useNewSidebar && !this.parameter.isDocumented() ) {
+		var undocumentedLabel = new OO.ui.LabelWidget( {
+			label: ve.msg( 'visualeditor-dialog-transclusion-param-undocumented' ),
+			classes: [ 've-ui-mwParameterPage-undocumentedLabel' ]
+		} );
+		this.$labelElement.after( undocumentedLabel.$element );
+	}
+
+	if ( this.useSuggestedValues && this.parameter.getSuggestedValues().length ) {
+		this.warningMessage = new OO.ui.MessageWidget( {
+			inline: true,
+			classes: [ 've-ui-mwParameterPage-warning' ]
+		} ).toggle( false );
+		this.$field.append( this.warningMessage.$element );
+	}
 	this.$element
 		.addClass( 've-ui-mwParameterPage' )
 		.append( this.$info, this.$field, this.$actions );
-	if ( !config.readOnly ) {
-		this.$element.append( this.$more );
+
+	if ( this.useInlineDescriptions ) {
+		this.$field.addClass( 've-ui-mwParameterPage-inlineDescription' );
+		this.collapsibleDoc = new ve.ui.MWExpandableContentElement( {
+			classes: [ 've-ui-mwParameterPage-inlineDescription' ],
+			$content: $doc
+		} );
+		this.$info.after( this.collapsibleDoc.$element );
+	}
+
+	// FIXME this and the addPlaceholderParameter can be remove when the feature flag is gone
+	if ( !config.readOnly && !this.useNewSidebar ) {
+		// This button is only shown when this …ParameterPage is neither followed by another
+		// …TemplatePage (i.e. it's the last template in the transclusion) nor a
+		// …ParameterPlaceholderPage (i.e. the parameter search widget isn't shown). This state
+		// should be unreachable, but isn't. Hiding this is done via CSS.
+		var addButton = new OO.ui.ButtonWidget( {
+			framed: false,
+			icon: 'parameter',
+			label: this.useNewSidebar ?
+				ve.msg( 'visualeditor-dialog-transclusion-add-undocumented-param' ) :
+				ve.msg( 'visualeditor-dialog-transclusion-add-param' )
+		} )
+			.connect( this, { click: 'addPlaceholderParameter' } );
+		$( '<div>' )
+			.addClass( 've-ui-mwParameterPage-addUndocumented' )
+			.append( addButton.$element )
+			.appendTo( this.$element );
 	}
 };
 
@@ -223,9 +267,11 @@ ve.ui.MWParameterPage.prototype.getDefaultInputConfig = function () {
 			'visualeditor-dialog-transclusion-param-default',
 			this.defaultValue
 		);
-	} else if ( this.exampleValue ) {
+	} else if ( this.exampleValue && !this.useInlineDescriptions ) {
 		valueInputConfig.placeholder = ve.msg(
-			'visualeditor-dialog-transclusion-param-example',
+			this.useInlineDescriptions ?
+				'visualeditor-dialog-transclusion-param-example-long' :
+				'visualeditor-dialog-transclusion-param-example',
 			this.exampleValue
 		);
 	}
@@ -299,6 +345,18 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 		)
 	) {
 		return ve.ui.MWExternalLinkAnnotationWidget.static.createExternalLinkInputWidget( valueInputConfig );
+	} else if (
+		this.useSuggestedValues &&
+		this.parameter.getSuggestedValues().length &&
+		this.isSuggestedValueType( type )
+	) {
+		valueInputConfig.menu = { filterFromInput: true, highlightOnFilter: true };
+		valueInputConfig.options =
+			this.parameter.getSuggestedValues().map( function ( suggestedValue ) {
+				return { data: suggestedValue };
+			} );
+		this.rawValueInput = true;
+		return new OO.ui.ComboBoxInputWidget( valueInputConfig );
 	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
 		// If the type is line, but there are already newlines in the provided
 		// value, don't break the existing content by only providing a single-
@@ -312,18 +370,29 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 };
 
 /**
- * Check if the parameter is empty
+ * Whether or not to show suggested values for a given parameter type
  *
- * @return {boolean} The parameter is empty
+ * @param {string} type Parameter type
+ * @return {boolean} True if suggested values should be shown
  */
-ve.ui.MWParameterPage.prototype.isEmpty = function () {
-	return this.valueInput.getValue() === '' && this.defaultValue === '';
+ve.ui.MWParameterPage.prototype.isSuggestedValueType = function ( type ) {
+	return [ 'unknown', 'content', 'line', 'string', 'number', 'unbalanced-wikitext' ].indexOf( type ) > -1;
+};
+
+/**
+ * @private
+ * @return {boolean} True if there is either user-provided input or a default value
+ */
+ve.ui.MWParameterPage.prototype.containsSomeValue = function () {
+	// Note: For templates that allow overriding a default value with nothing, the empty string is
+	// meaningful user input. For templates that don't, the parameter can never be truly empty.
+	return !!( this.valueInput.getValue() || this.defaultValue );
 };
 
 /**
  * Handle change events from the value input
  *
- * @param {string} value Value
+ * @param {string} value
  */
 ve.ui.MWParameterPage.prototype.onValueInputChange = function () {
 	var value = this.valueInput.getValue();
@@ -335,7 +404,17 @@ ve.ui.MWParameterPage.prototype.onValueInputChange = function () {
 	this.parameter.setValue( value );
 
 	if ( this.outlineItem ) {
-		this.outlineItem.setFlags( { empty: this.isEmpty() } );
+		this.outlineItem.setFlags( { empty: !this.containsSomeValue() } );
+	}
+
+	if ( this.warningMessage ) {
+		var isNotSuggestedValue = value &&
+			this.parameter.getSuggestedValues().length > 0 &&
+			this.parameter.getSuggestedValues().indexOf( value ) === -1;
+		if ( isNotSuggestedValue ) {
+			this.warningMessage.setLabel( ve.msg( 'visualeditor-dialog-transclusion-suggestedvalues-warning' ) );
+		}
+		this.warningMessage.toggle( isNotSuggestedValue );
 	}
 };
 
@@ -367,7 +446,7 @@ ve.ui.MWParameterPage.prototype.onRawFallbackButtonClick = function () {
 /**
  * Handle click events from the add button
  */
-ve.ui.MWParameterPage.prototype.onAddButtonFocus = function () {
+ve.ui.MWParameterPage.prototype.addPlaceholderParameter = function () {
 	var template = this.parameter.getTemplate();
 	template.addParameter( new ve.dm.MWParameterModel( template ) );
 };
@@ -394,7 +473,7 @@ ve.ui.MWParameterPage.prototype.setOutlineItem = function () {
 			.setMovable( false )
 			.setRemovable( true )
 			.setLevel( 1 )
-			.setFlags( { empty: this.isEmpty() } )
+			.setFlags( { empty: !this.containsSomeValue() } )
 			.setLabel( this.spec.getParameterLabel( this.parameter.getName() ) );
 
 		if ( this.parameter.isRequired() ) {
@@ -419,4 +498,13 @@ ve.ui.MWParameterPage.prototype.setOutlineItem = function () {
  */
 ve.ui.MWParameterPage.prototype.focus = function () {
 	this.valueInput.focus();
+};
+
+/**
+ * Refresh collapsible children.
+ */
+ve.ui.MWParameterPage.prototype.updateSize = function () {
+	if ( this.collapsibleDoc ) {
+		this.collapsibleDoc.updateSize();
+	}
 };

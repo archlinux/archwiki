@@ -6,12 +6,14 @@
 			"Iniquity",
 			"JenVan",
 			"Kaganer",
+			"Kareyac",
 			"Megakott",
 			"Nemo bis",
 			"Okras",
 			"Ole Yves",
 			"Stjn",
 			"Sunpriat",
+			"Thothsum",
 			"Александр Сигачёв"
 		]
 	},
@@ -40,5 +42,9 @@
 	"vector-jumptosearch": "Перейти к поиску",
 	"vector-jumptocontent": "Перейти к содержанию",
 	"vector-more-actions": "Ещё",
-	"vector-search-loader": "Загружаются поисковые предложения"
+	"vector-search-loader": "Загружаются поисковые предложения",
+	"vector-anon-user-menu-pages-learn": "узнать больше",
+	"vector-anon-user-menu-pages-label": "Подробнее о редактировании",
+	"vector-personal-more-label": "Пользовательские ссылки",
+	"vector-main-menu-tooltip": "Главное меню"
 }

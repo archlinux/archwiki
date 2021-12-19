@@ -59,6 +59,10 @@ ve.ce.ActiveNode.prototype.onActiveNodeSetup = function () {
  * Handle node teardown
  */
 ve.ce.ActiveNode.prototype.onActiveNodeTeardown = function () {
+	if ( !this.isActiveNodeSetup ) {
+		return;
+	}
+
 	var surface = this.activeNodeSurface;
 
 	// Events
@@ -74,7 +78,7 @@ ve.ce.ActiveNode.prototype.onActiveNodeTeardown = function () {
 /**
  * Handle select events from the surface model.
  *
- * @param {ve.dm.Selection} selection Selection
+ * @param {ve.dm.Selection} selection
  */
 ve.ce.ActiveNode.prototype.onActiveNodeSurfaceModelSelect = function ( selection ) {
 	var coveringRange = selection.getCoveringRange(),

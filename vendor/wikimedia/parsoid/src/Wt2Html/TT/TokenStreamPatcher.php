@@ -51,12 +51,11 @@ class TokenStreamPatcher extends TokenHandler {
 	private $templateHandler;
 
 	/**
-	 * TokenStreamPatcher constructor.
 	 * @param TokenTransformManager $manager
 	 * @param array $options
 	 */
 	public function __construct( TokenTransformManager $manager, array $options ) {
-		$newOptions = array_merge( $options, [ 'tsp' => true ] );
+		$newOptions = [ 'tsp' => true ] + $options;
 		parent::__construct( $manager, $newOptions );
 		$this->tokenizer = new PegTokenizer( $this->env );
 		$this->templateHandler = new TemplateHandler( $manager, $options );
@@ -84,22 +83,22 @@ class TokenStreamPatcher extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onNewline( NlTk $token ) {
-		$this->manager->env->log( 'trace/tsp', $this->manager->pipelineId,
-			function () use ( $token ) {
+	public function onNewline( NlTk $token ): ?TokenHandlerResult {
+		$this->env->log( 'trace/tsp', $this->pipelineId,
+			static function () use ( $token ) {
 				return PHPUtils::jsonEncode( $token );
 			}
 		);
 		$this->srcOffset = $token->dataAttribs->tsr->end ?? null;
 		$this->sol = true;
 		$this->tokenBuf[] = $token;
-		return [ 'tokens' => [] ];
+		return new TokenHandlerResult( [] );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onEnd( EOFTk $token ) {
+	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
 		$res = $this->onAny( $token );
 		$this->reset();
 		return $res;
@@ -148,11 +147,12 @@ class TokenStreamPatcher extends TokenHandler {
 				// All of these need uniform handling. To be addressed separately
 				// if this proves to be a real problem on production pages.
 				if ( $t instanceof SelfclosingTagTk && $t->getName() === 'template' ) {
-					$t = $this->templateHandler->processSpecialMagicWord( $this->atTopLevel, $t ) ?? [ $t ];
+					$t = $this->templateHandler->processSpecialMagicWord(
+						$this->atTopLevel, $t ) ?? [ $t ];
 				} else {
 					$t = [ $t ];
 				}
-				$ret = array_merge( $ret, $t );
+				PHPUtils::pushArray( $ret, $t );
 			}
 			return $ret;
 		} elseif ( !empty( $da->autoInsertedStart ) && !empty( $da->autoInsertedEnd ) ) {
@@ -182,9 +182,9 @@ class TokenStreamPatcher extends TokenHandler {
 	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ) {
-		$this->manager->env->log( 'trace/tsp', $this->manager->pipelineId,
-			function () use ( $token ) {
+	public function onAny( $token ): ?TokenHandlerResult {
+		$this->env->log( 'trace/tsp', $this->pipelineId,
+			static function () use ( $token ) {
 				return PHPUtils::jsonEncode( $token );
 			} );
 
@@ -197,14 +197,14 @@ class TokenStreamPatcher extends TokenHandler {
 				// white-space as well.
 				if ( count( $this->tokenBuf ) > 0 && preg_match( '/^\s*$/D', $token ) ) {
 					$this->tokenBuf[] = $token;
-					return [ 'tokens' => [] ];
+					return new TokenHandlerResult( [] );
 				}
 
 				// TRICK #1:
 				// Attempt to match "{|" after a newline and convert
 				// it to a table token.
 				if ( $this->sol ) {
-					if ( $this->atTopLevel && preg_match( '/^\{\|/', $token ) ) {
+					if ( $this->atTopLevel && str_starts_with( $token, '{|' ) ) {
 						// Reparse string with the 'table_start_tag' rule
 						// and shift tsr of result tokens by source offset
 						$retoks = $this->tokenizer->tokenizeAs( $token, 'table_start_tag', /* sol */true );
@@ -212,7 +212,7 @@ class TokenStreamPatcher extends TokenHandler {
 							// XXX: The string begins with table start syntax,
 							// we really shouldn't be here.  Anything else on the
 							// line would get swallowed up as attributes.
-							$this->manager->env->log( 'error', 'Failed to tokenize table start tag.' );
+							$this->env->log( 'error', 'Failed to tokenize table start tag.' );
 							$this->clearSOL();
 						} else {
 							TokenUtils::shiftTokenTSR( $retoks, $this->srcOffset );
@@ -247,7 +247,7 @@ class TokenStreamPatcher extends TokenHandler {
 					) {
 						// Swallow the token and clear the marker
 						$this->lastConvertedTableCellToken = null;
-						return [ 'tokens' => [] ];
+						return new TokenHandlerResult( [] );
 					} elseif (
 						count( $this->tokenBuf ) > 0 &&
 						TokenUtils::hasTypeOf( $token, 'mw:Transclusion' )
@@ -255,7 +255,7 @@ class TokenStreamPatcher extends TokenHandler {
 						// If we have buffered newlines, we might very well encounter
 						// a category link, so continue buffering.
 						$this->tokenBuf[] = $token;
-						return [ 'tokens' => [] ];
+						return new TokenHandlerResult( [] );
 					}
 				} elseif ( $token->getName() === 'link' &&
 					$token->getAttribute( 'rel' ) === 'mw:PageProp/Category'
@@ -346,6 +346,6 @@ class TokenStreamPatcher extends TokenHandler {
 			$tokens = array_merge( $this->tokenBuf, $tokens );
 			$this->tokenBuf = [];
 		}
-		return [ 'tokens' => $tokens ];
+		return new TokenHandlerResult( $tokens );
 	}
 }

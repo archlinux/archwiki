@@ -3,12 +3,13 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\PP\Handlers;
 
-use DOMElement;
-use DOMNode;
-use DOMText;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\TitleException;
@@ -20,15 +21,15 @@ class Headings {
 	 * Generate anchor ids that the PHP parser assigns to headings.
 	 * This is to ensure that links that are out there in the wild
 	 * continue to be valid links into Parsoid HTML.
-	 * @param DOMNode $node
+	 * @param Node $node
 	 * @param Env $env
 	 * @return bool
 	 */
-	public static function genAnchors( DOMNode $node, Env $env ): bool {
-		if ( !preg_match( '/^h[1-6]$/D', $node->nodeName ) ) {
+	public static function genAnchors( Node $node, Env $env ): bool {
+		if ( !preg_match( '/^h[1-6]$/D', DOMCompat::nodeName( $node ) ) ) {
 			return true;
 		}
-		'@phan-var DOMElement $node';  /** @var DOMElement $node */
+		'@phan-var Element $node';  /** @var Element $node */
 
 		// Cannot generate an anchor id if the heading already has an id!
 		//
@@ -78,20 +79,20 @@ class Headings {
 	 * markup the same way PHP does (ie, uses the source wikitext), and
 	 * handles <style>/<script> tags the same way PHP does (ie, ignores
 	 * the contents)
-	 * @param DOMNode $node
+	 * @param Node $node
 	 * @return string
 	 */
-	private static function textContentOf( DOMNode $node ): string {
+	private static function textContentOf( Node $node ): string {
 		$str = '';
 		if ( $node->hasChildNodes() ) {
 			foreach ( $node->childNodes as $n ) {
-				if ( $n instanceof DOMText ) {
+				if ( $n instanceof Text ) {
 					$str .= $n->nodeValue;
 				} elseif ( DOMUtils::hasTypeOf( $n, 'mw:LanguageVariant' ) ) {
 					// Special case for -{...}-
 					$dp = DOMDataUtils::getDataParsoid( $n );
 					$str .= $dp->src ?? '';
-				} elseif ( $n->nodeName === 'style' || $n->nodeName === 'script' ) {
+				} elseif ( DOMCompat::nodeName( $n ) === 'style' || DOMCompat::nodeName( $n ) === 'script' ) {
 					/* ignore children */
 				} else {
 					$str .= self::textContentOf( $n );
@@ -118,21 +119,21 @@ class Headings {
 
 	/**
 	 * @param array &$seenIds
-	 * @param DOMNode $node
+	 * @param Node $node
 	 * @return bool
 	 */
-	public static function dedupeHeadingIds( array &$seenIds, DOMNode $node ): bool {
+	public static function dedupeHeadingIds( array &$seenIds, Node $node ): bool {
 		// NOTE: This is not completely compliant with how PHP parser does it.
 		// If there is an id in the doc elsewhere, this will assign
 		// the heading a suffixed id, whereas the PHP parser processes
 		// headings in textual order and can introduce duplicate ids
 		// in a document in the process.
 		//
-		// However, we believe this implemention behavior is more
+		// However, we believe this implementation behavior is more
 		// consistent when handling this edge case, and in the common
 		// case (where heading ids won't conflict with ids elsewhere),
 		// matches PHP parser behavior.
-		if ( !$node instanceof DOMElement ) {
+		if ( !$node instanceof Element ) {
 			// Not an Element
 			return true;
 		}
@@ -140,30 +141,28 @@ class Headings {
 		if ( !$node->hasAttribute( 'id' ) ) {
 			return true;
 		}
-		// FIXME: Must be case-insensitively unique (T12721)
-		// ...but note that core parser uses strtolower, which only does A-Z :(
 		$key = $node->getAttribute( 'id' );
-		$key = preg_replace_callback(
-			'/[A-Z]+/',
-			function ( $matches ) {
-				return strtolower( $matches[0] );
-			},
-			$key
-		);
-		if ( empty( $seenIds[$key] ) ) {
-			$seenIds[$key] = true;
+		// IE 7 required attributes to be case-insensitively unique (T12721)
+		// but it did not support non-ASCII IDs. We don't support IE 7 anymore,
+		// but changing the algorithm would change the relevant fragment URLs.
+		// This case folding and matching algorithm has to stay exactly the
+		// same to preserve external links to the page.
+		$key = strtolower( $key );
+		if ( !isset( $seenIds[$key] ) ) {
+			$seenIds[$key] = 1;
 			return true;
 		}
 		// Only update headings and legacy links (first children of heading)
-		if ( preg_match( '/^h\d$/D', $node->nodeName ) ||
+		if ( preg_match( '/^h\d$/D', DOMCompat::nodeName( $node ) ) ||
 			WTUtils::isFallbackIdSpan( $node )
 		) {
-			$suffix = 2;
+			$suffix = ++$seenIds[$key];
 			while ( !empty( $seenIds[$key . '_' . $suffix] ) ) {
 				$suffix++;
+				$seenIds[$key]++;
 			}
 			$node->setAttribute( 'id', $node->getAttribute( 'id' ) . '_' . $suffix );
-			$seenIds[$key . '_' . $suffix] = true;
+			$seenIds[$key . '_' . $suffix] = 1;
 		}
 		return true;
 	}

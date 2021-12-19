@@ -11,9 +11,9 @@
 			"Shizhao",
 			"Shuiwater",
 			"Xiaomingyan",
+			"Xiplus",
 			"Yfdyh000",
-			"沈澄心",
-			"Xiplus"
+			"沈澄心"
 		]
 	},
 	"templatedata-desc": "实现模板参数的数据存储（使用JSON）",
@@ -33,6 +33,7 @@
 	"templatedata-doc-param-status-optional": "可选",
 	"templatedata-doc-param-status-required": "必填",
 	"templatedata-doc-param-status-suggested": "推荐",
+	"templatedata-doc-param-suggestedvalues": "建议值",
 	"templatedata-doc-param-type": "类型",
 	"templatedata-doc-param-type-boolean": "布尔值",
 	"templatedata-doc-param-type-content": "内容",
@@ -108,6 +109,8 @@
 	"templatedata-modal-table-param-name": "名称",
 	"templatedata-modal-table-param-required": "必填",
 	"templatedata-modal-table-param-suggested": "推荐",
+	"templatedata-modal-table-param-suggestedvalues": "建议值",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "添加值...",
 	"templatedata-modal-table-param-type": "类型",
 	"templatedata-modal-table-param-uneditablefield": "不可编辑",
 	"templatedata-modal-title": "模板文档编辑器",

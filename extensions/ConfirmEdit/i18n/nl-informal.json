@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Siebrand",
-			"McDutchie"
+			"McDutchie",
+			"Siebrand"
 		]
 	},
 	"captcha-addurl": "Je bewerking bevat nieuwe externe koppelingen (URL's).\nVoer ter bescherming tegen geautomatiseerde spam het antwoord op de onderstaande opdracht in in het invoerveld om je bewerking op te slaan ([[Special:Captcha/help|meer informatie]]):",

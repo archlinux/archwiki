@@ -103,7 +103,7 @@ ve.ui.ContextItem.prototype.isNode = function () {
 /**
  * Get the command for this item.
  *
- * @return {ve.ui.Command} Command
+ * @return {ve.ui.Command}
  */
 ve.ui.ContextItem.prototype.getCommand = function () {
 	return this.context.getSurface().commandRegistry.lookup( this.constructor.static.commandName );
@@ -115,9 +115,8 @@ ve.ui.ContextItem.prototype.getCommand = function () {
  * @return {ve.dm.SurfaceFragment} Surface fragment
  */
 ve.ui.ContextItem.prototype.getFragment = function () {
-	var surfaceModel;
 	if ( !this.fragment ) {
-		surfaceModel = this.context.getSurface().getModel();
+		var surfaceModel = this.context.getSurface().getModel();
 		this.fragment = this.isNode() ?
 			surfaceModel.getLinearFragment( this.model.getOuterRange() ) :
 			surfaceModel.getFragment();

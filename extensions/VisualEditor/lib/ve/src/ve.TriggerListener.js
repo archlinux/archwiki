@@ -14,18 +14,17 @@
  * @param {ve.ui.CommandRegistry} commandRegistry Command registry to get commands from
  */
 ve.TriggerListener = function VeTriggerListener( commands, commandRegistry ) {
-	var i, j, command, triggers;
 
 	// Properties
 	this.commands = commands;
 	this.commandsByTrigger = {};
 	this.triggers = {};
 
-	for ( i = this.commands.length - 1; i >= 0; i-- ) {
-		command = this.commands[ i ];
-		triggers = ve.ui.triggerRegistry.lookup( command );
+	for ( var i = this.commands.length - 1; i >= 0; i-- ) {
+		var command = this.commands[ i ];
+		var triggers = ve.ui.triggerRegistry.lookup( command );
 		if ( triggers ) {
-			for ( j = triggers.length - 1; j >= 0; j-- ) {
+			for ( var j = triggers.length - 1; j >= 0; j-- ) {
 				this.commandsByTrigger[ triggers[ j ].toString() ] = commandRegistry.lookup( command );
 			}
 			this.triggers[ command ] = triggers;
@@ -51,8 +50,8 @@ ve.TriggerListener.prototype.getCommands = function () {
 /**
  * Get command associated with trigger string.
  *
- * @param {string} trigger Trigger string
- * @return {ve.ui.Command|undefined} Command
+ * @param {string} trigger
+ * @return {ve.ui.Command|undefined}
  */
 ve.TriggerListener.prototype.getCommandByTrigger = function ( trigger ) {
 	return this.commandsByTrigger[ trigger ];
@@ -62,7 +61,7 @@ ve.TriggerListener.prototype.getCommandByTrigger = function ( trigger ) {
  * Get triggers for a specified name.
  *
  * @param {string} name Trigger name
- * @return {ve.ui.Trigger[]|undefined} Triggers
+ * @return {ve.ui.Trigger[]|undefined}
  */
 ve.TriggerListener.prototype.getTriggers = function ( name ) {
 	return this.triggers[ name ];

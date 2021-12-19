@@ -294,7 +294,7 @@ ve.ui.MWCategoryWidget.prototype.getCategories = function () {
 ve.ui.MWCategoryWidget.prototype.queryCategoryStatus = function ( categoryNames ) {
 	var widget = this,
 		promises = [], index = 0, batchSize = 50,
-		categoryNamesToQuery = [];
+		categoryNamesToQuery;
 
 	// Get rid of any we already know the hidden status of, or have an entry
 	// if normalizedTitles (i.e. have been fetched before)

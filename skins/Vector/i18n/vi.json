@@ -2,14 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
+			"Nguyễn Mạnh An",
 			"Prenn",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
 			"Withoutaname",
-			"Nguyễn Mạnh An",
+			"Thienhau2003",
 			"Keo010122",
-			"Nghiemtrongdai VN",
-			"Thienhau2003"
+			"Nghiemtrongdai VN"
 		]
 	},
 	"skinname-vector": "Vectơ",
@@ -37,5 +37,13 @@
 	"vector-jumptosearch": "Bước tới tìm kiếm",
 	"vector-jumptocontent": "Bước tới nội dung",
 	"vector-more-actions": "Thêm",
-	"vector-search-loader": "Đang tải gợi ý tìm kiếm"
+	"vector-search-loader": "Đang tải gợi ý tìm kiếm",
+	"vector-anon-user-menu-pages": "Trang dành cho người dùng chưa đăng nhập",
+	"vector-anon-user-menu-pages-learn": "tìm hiểu thêm",
+	"vector-anon-user-menu-pages-label": "Tìm hiểu thêm về sửa đổi",
+	"vector-personal-more-label": "Liên kết người dùng",
+	"vector-main-menu-tooltip": "Trình đơn chính",
+	"tooltip-vector-anon-user-menu-title": "Thêm tùy chọn",
+	"vector-menu-checkbox-expanded": "mở rộng",
+	"vector-menu-checkbox-collapsed": "thu gọn"
 }

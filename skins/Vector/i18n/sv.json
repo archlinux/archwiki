@@ -35,5 +35,13 @@
 	"vector-jumptosearch": "Hoppa till sök",
 	"vector-jumptocontent": "Hoppa till innehållet",
 	"vector-more-actions": "Mer",
-	"vector-search-loader": "Laddar in sökförslag"
+	"vector-search-loader": "Laddar in sökförslag",
+	"vector-anon-user-menu-pages": "Sidor för utloggade redigerade",
+	"vector-anon-user-menu-pages-learn": "läs mer",
+	"vector-anon-user-menu-pages-label": "Läs mer om redigering",
+	"vector-personal-more-label": "Användarlänkar",
+	"vector-main-menu-tooltip": "Huvudmeny",
+	"tooltip-vector-anon-user-menu-title": "Fler alternativ",
+	"vector-menu-checkbox-expanded": "utvidgad",
+	"vector-menu-checkbox-collapsed": "ihopfälld"
 }

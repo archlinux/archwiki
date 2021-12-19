@@ -1,8 +1,8 @@
 import mustache from 'mustache';
-import '../.storybook/common.less';
 import '../resources/skins.vector.styles/Sidebar.less';
 import '../resources/skins.vector.styles/SidebarLogo.less';
 import '../resources/skins.vector.styles/MenuPortal.less';
+
 import { sidebarTemplate,
 	sidebarLegacyTemplate, SIDEBAR_DATA, SIDEBAR_TEMPLATE_PARTIALS } from './Sidebar.stories.data';
 

@@ -3,7 +3,8 @@
 		"authors": [
 			"Benel",
 			"Bunukwiki",
-			"Tokoabibi"
+			"Tokoabibi",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "patizeng tina kasabelih a yuensma-kodo",
@@ -134,14 +135,15 @@
 	"visualeditor-dialog-transclusion-add-content": "micunus tu lacul",
 	"visualeditor-dialog-transclusion-add-param": "micunus sayadah a cesyun",
 	"visualeditor-dialog-transclusion-add-template": "micunus taazihan mitudung",
+	"visualeditor-dialog-transclusion-collapse-options": "midimut mapiliay",
 	"visualeditor-dialog-transclusion-content": "lacul",
 	"visualeditor-dialog-transclusion-contextitem-description": "masanga’ nay：$1",
+	"visualeditor-dialog-transclusion-expand-options": "paazih tu mapiliay",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "mapasatezeptu tu aazihen a sulyang",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "aazihen a sulyang mapasatezep tuway. $1",
 	"visualeditor-dialog-transclusion-loading": "miasip henay ayza…",
 	"visualeditor-dialog-transclusion-more-template-description": "i [[{{ns:template}}:$1|u kasabelih]] hakay yamalyilu hatizaay mahizaay \"$1\" taazihan mitudungay tu calabas a palatuh.",
-	"visualeditor-dialog-transclusion-multiple-mode": "paazih tu mapiliay",
-	"visualeditor-dialog-transclusion-no-template-description": "tina taazihan mitudung \"$1\" ayza nayi’ henay ucanacanan tu lacul sapuelac, nika kapah kisu i[[$1|taazihan mitudung kasabelih]] miala hatizaay si’pucay a cesyun.",
+	"visualeditor-dialog-transclusion-no-template-description": "tina taazihan mitudung \"$1\" ayza nayi’ henay ucanacanan tu lacul sapuelac, nika kapah kisu i[[$2|taazihan mitudung kasabelih]] miala hatizaay si’pucay a cesyun.",
 	"visualeditor-dialog-transclusion-param-default": "pataayaw tu kawaw: $1",
 	"visualeditor-dialog-transclusion-param-example": "tinaku $",
 	"visualeditor-dialog-transclusion-param-info": "aazihen a sulyang sapuelac",
@@ -157,8 +159,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "uyzatu palalid",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "caay kataneng suliten naca a{{PLURAL:$1|pisinga’an}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "piluceki kisu caay henay ku nisulitan $1\n{{PLURAL:$2|langat-pisinga’an}} a zasatu palalidtu haw?",
-	"visualeditor-dialog-transclusion-single-mode": "midimut mapiliay",
-	"visualeditor-dialog-transclusion-title": "nicaliwan",
 	"visualeditor-dialogbutton-media-tooltip": "myiti",
 	"visualeditor-dialogbutton-meta-tooltip": "kasabelih setin",
 	"visualeditor-dialogbutton-transclusion-tooltip": "nicaliwan",

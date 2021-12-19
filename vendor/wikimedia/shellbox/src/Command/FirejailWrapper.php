@@ -55,15 +55,11 @@ class FirejailWrapper extends Wrapper {
 		// FIXME: Doesn't actually override command-line switches?
 		$cmd[] = '--profile=' . $this->profilePath;
 
-		$whitelistedPaths = $command->getAllowedPaths();
-		// Whitelist our own sources
-		$whitelistedPaths[] = dirname( __DIR__ );
-
-		foreach ( $command->getAllowedPaths() as $whitelistedPath ) {
-			if ( $whitelistedPath === '/home' ) {
+		foreach ( $command->getAllowedPaths() as $path ) {
+			if ( $path === '/home' ) {
 				$cmd[] = '--allusers';
 			} else {
-				$cmd[] = "--whitelist={$whitelistedPath}";
+				$cmd[] = "--whitelist={$path}";
 			}
 		}
 

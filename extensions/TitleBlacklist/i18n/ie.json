@@ -4,6 +4,7 @@
 			"Renan"
 		]
 	},
+	"log-name-titleblacklist": "Diarium del liste nigri de titules",
 	"titleblacklist-desc": "Permisse administratores prohibir creation de págines e contos de usatores por un [[MediaWiki:Titleblacklist|liste nigri]] e [[MediaWiki:Titlewhitelist|liste blanc]]",
 	"titleblacklist": "#Ti es un titul de liste nigri. Titules e usatores que harmonisa un expression regulari ci ne posse es creat. \n#Usa \"#\" por comentaries. \n#Ti liste usa majuscules e minuscules per contumacie",
 	"titlewhitelist": "#Ti es un titul de liste blanc. Usa ''#'' por comentaries. \n#Ti liste usa majuscules e minuscules per contumacie",

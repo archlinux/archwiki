@@ -126,10 +126,16 @@ class SiteConfig extends ISiteConfig {
 	private $languageNameUtils;
 
 	/** @var string|null */
-	private $baseUri, $relativeLinkPrefix;
+	private $baseUri;
+
+	/** @var string|null */
+	private $relativeLinkPrefix;
 
 	/** @var array|null */
-	private $interwikiMap, $variants;
+	private $interwikiMap;
+
+	/** @var array|null */
+	private $variants;
 
 	/** @var array */
 	private $extensionTags;
@@ -195,14 +201,10 @@ class SiteConfig extends ISiteConfig {
 		}
 
 		if ( isset( $this->parsoidSettings['wt2htmlLimits'] ) ) {
-			$this->wt2htmlLimits = array_merge(
-				$this->wt2htmlLimits, $this->parsoidSettings['wt2htmlLimits']
-			);
+			$this->wt2htmlLimits = $this->parsoidSettings['wt2htmlLimits'] + $this->wt2htmlLimits;
 		}
 		if ( isset( $this->parsoidSettings['html2wtLimits'] ) ) {
-			$this->html2wtLimits = array_merge(
-				$this->html2wtLimits, $this->parsoidSettings['html2wtLimits']
-			);
+			$this->html2wtLimits = $this->parsoidSettings['html2wtLimits'] + $this->html2wtLimits;
 		}
 
 		// Register extension modules
@@ -341,6 +343,10 @@ class SiteConfig extends ISiteConfig {
 
 	public function bswRegexp(): string {
 		$bsw = self::mwaToRegex( $this->magicWordFactory->getDoubleUnderscoreArray(), '@' );
+		// Aliases for double underscore mws include the underscores
+		// So, strip them since the base regexp will have included them
+		// and they aren't expected at the use sites of bswRegexp
+		$bsw = str_replace( '__', '', $bsw );
 		return "@$bsw@Su";
 	}
 
@@ -607,7 +613,7 @@ class SiteConfig extends ISiteConfig {
 			$words = preg_grep( '/^timedmedia_/', $words, PREG_GREP_INVERT );
 		}
 		$words = $this->magicWordFactory->newArray( $words );
-		return function ( $text ) use ( $words ) {
+		return static function ( $text ) use ( $words ) {
 			$ret = $words->matchVariableStartToEnd( $text );
 			if ( $ret[0] === false || $ret[1] === false ) {
 				return null;
@@ -659,7 +665,7 @@ class SiteConfig extends ISiteConfig {
 			$this->quoteTitleRe( $this->contLang->getNsText( NS_SPECIAL ) )
 		];
 		foreach (
-			array_merge( $this->config->get( 'NamespaceAliases' ), $this->contLang->getNamespaceAliases() )
+			$this->contLang->getNamespaceAliases() + $this->config->get( 'NamespaceAliases' )
 			as $name => $ns
 		) {
 			if ( $ns === NS_SPECIAL ) {

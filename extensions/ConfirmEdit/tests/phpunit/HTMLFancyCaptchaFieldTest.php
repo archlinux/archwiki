@@ -19,7 +19,7 @@ class HTMLFancyCaptchaFieldTest extends PHPUnit\Framework\TestCase {
 
 	public function testValue() {
 		$mockClosure = $this->getMockBuilder( stdClass::class )
-			->setMethods( [ '__invoke' ] )->getMock();
+			->addMethods( [ '__invoke' ] )->getMock();
 		$request = new FauxRequest( [ 'wpcaptchaWord' => 'abc' ], true );
 		$form = $this->getForm( [ 'imageUrl' => 'https://example.com/' ], $request );
 		$form->setSubmitCallback( $mockClosure );

@@ -5,6 +5,7 @@
 			"Ahonc",
 			"Andriykopanytsia",
 			"Base",
+			"DDPAT",
 			"Dim Grits",
 			"Lxlalexlxl",
 			"Olvin",
@@ -14,8 +15,7 @@
 			"Riwnodennyk",
 			"Sodmy",
 			"Ата",
-			"Тест",
-			"DDPAT"
+			"Тест"
 		]
 	},
 	"gadgets-desc": "Дозволяє користувачам обирати [[Special:Gadgets|CSS- та JavaScript-додатки]] у своїх [[Special:Preferences#mw-prefsection-gadgets|налаштуваннях]]",

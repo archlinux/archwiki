@@ -159,6 +159,20 @@ class TemplateDataHooks {
 	}
 
 	/**
+	 * Include config when appropriate.
+	 *
+	 * @param array &$vars
+	 * @param OutputPage $output
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/MakeGlobalVariablesScript
+	 */
+	public static function onMakeGlobalVariablesScript( array &$vars, OutputPage $output ) {
+		if ( $output->getTitle()->inNamespace( NS_TEMPLATE ) ) {
+			$vars['wgTemplateDataSuggestedValuesEditor'] =
+				$output->getConfig()->get( 'TemplateDataSuggestedValuesEditor' );
+		}
+	}
+
+	/**
 	 * Parser hook for <templatedata>.
 	 * If there is any JSON provided, render the template documentation on the page.
 	 *
@@ -305,7 +319,7 @@ class TemplateDataHooks {
 	 * @param array $status contains StatusValue ok and errors fields (does not serialize value)
 	 * @return Status
 	 */
-	public static function newStatusFromJson( array $status ) : Status {
+	public static function newStatusFromJson( array $status ): Status {
 		if ( $status['ok'] ) {
 			return Status::newGood();
 		} else {
@@ -326,7 +340,7 @@ class TemplateDataHooks {
 	 * @param Status $status
 	 * @return array contains StatusValue ok and errors fields (does not serialize value)
 	 */
-	public static function jsonSerializeStatus( Status $status ) : array {
+	public static function jsonSerializeStatus( Status $status ): array {
 		if ( $status->isOK() ) {
 			return [
 				'ok' => true

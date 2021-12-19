@@ -5,8 +5,8 @@ namespace MediaWiki\Rest\Handler;
 use Config;
 use InvalidArgumentException;
 use ISearchResultSet;
+use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\PermissionManager;
-use MediaWiki\Rest\Entity\SearchResultPageIdentityValue;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
@@ -17,6 +17,7 @@ use SearchEngineFactory;
 use SearchResult;
 use SearchSuggestion;
 use Status;
+use Title;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -253,7 +254,7 @@ class SearchHandler extends Handler {
 	 *
 	 * @return array|null
 	 */
-	private function serializeThumbnail( ?SearchResultThumbnail $thumbnail ) : ?array {
+	private function serializeThumbnail( ?SearchResultThumbnail $thumbnail ): ?array {
 		if ( $thumbnail == null ) {
 			return null;
 		}
@@ -274,7 +275,7 @@ class SearchHandler extends Handler {
 	 * The information about description should be provided by extension by implementing
 	 * 'SearchResultProvideDescription' hook. Description is set to null if no extensions
 	 * implement the hook.
-	 * @param array $pageIdentities
+	 * @param ProperPageIdentity[] $pageIdentities
 	 *
 	 * @return array
 	 */
@@ -295,7 +296,7 @@ class SearchHandler extends Handler {
 	 * 'SearchResultProvideThumbnail' hook. Thumbnail is set to null if no extensions implement
 	 * the hook.
 	 *
-	 * @param array $pageIdentities
+	 * @param ProperPageIdentity[] $pageIdentities
 	 *
 	 * @return array
 	 */
@@ -316,14 +317,17 @@ class SearchHandler extends Handler {
 	public function execute() {
 		$searchEngine = $this->createSearchEngine();
 		$pageInfos = $this->doSearch( $searchEngine );
+
+		/** @var ProperPageIdentity[] $pageIdentities */
 		$pageIdentities = array_map( static function ( $pageInfo ) {
+			/** @var Title $title */
 			list( $title ) = $pageInfo;
-			return new SearchResultPageIdentityValue(
-				$title->getArticleID(),
-				$title->getNamespace(),
-				$title->getDBkey()
-			);
+			return $title->exists() ? $title->toPageIdentity() : null;
 		}, $pageInfos );
+
+		// Remove empty entries resulting from non-proper pages like e.g. special pages
+		// in the search result.
+		$pageIdentities = array_filter( $pageIdentities );
 
 		$result = array_map( "array_merge",
 			$this->buildResultFromPageInfos( $pageInfos ),

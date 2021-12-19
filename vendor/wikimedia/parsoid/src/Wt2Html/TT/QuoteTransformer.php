@@ -27,7 +27,7 @@ function array_flatten( array $array ): array {
 	$ret = [];
 	foreach ( $array as $key => $value ) {
 		if ( is_array( $value ) ) {
-			$ret = array_merge( $ret, array_flatten( $value ) );
+			PHPUtils::pushArray( $ret, array_flatten( $value ) );
 		} else {
 			$ret[$key] = $value;
 		}
@@ -99,14 +99,14 @@ class QuoteTransformer extends TokenHandler {
 	 * Handles mw-quote tokens and td/th tokens
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ) {
+	public function onTag( Token $token ): ?TokenHandlerResult {
 		$tkName = is_string( $token ) ? '' : $token->getName();
 		if ( $tkName === 'mw-quote' ) {
 			return $this->onQuote( $token );
 		} elseif ( $tkName === 'td' || $tkName === 'th' ) {
 			return $this->processQuotes( $token );
 		} else {
-			return $token;
+			return null;
 		}
 	}
 
@@ -114,7 +114,7 @@ class QuoteTransformer extends TokenHandler {
 	 * On encountering a NlTk, processes quotes on the current line
 	 * @inheritDoc
 	 */
-	public function onNewline( NlTk $token ) {
+	public function onNewline( NlTk $token ): ?TokenHandlerResult {
 		return $this->processQuotes( $token );
 	}
 
@@ -122,28 +122,28 @@ class QuoteTransformer extends TokenHandler {
 	 * On encountering an EOFTk, processes quotes on the current line
 	 * @inheritDoc
 	 */
-	public function onEnd( EOFTk $token ) {
+	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
 		return $this->processQuotes( $token );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onAny( $token ) {
-		$this->manager->env->log(
+	public function onAny( $token ): ?TokenHandlerResult {
+		$this->env->log(
 			"trace/quote",
-			$this->manager->pipelineId,
+			$this->pipelineId,
 			"ANY |",
-			function () use ( $token ) {
+			static function () use ( $token ) {
 				return PHPUtils::jsonEncode( $token );
 			}
 		);
 
 		if ( $this->onAnyEnabled ) {
 			$this->currentChunk[] = $token;
-			return [];
+			return new TokenHandlerResult( [] );
 		} else {
-			return $token;
+			return null;
 		}
 	}
 
@@ -154,16 +154,16 @@ class QuoteTransformer extends TokenHandler {
 	 * processQuotes.
 	 *
 	 * @param Token $token token
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function onQuote( Token $token ): array {
+	private function onQuote( Token $token ): TokenHandlerResult {
 		$v = $token->getAttribute( 'value' );
 		$qlen = strlen( $v );
-		$this->manager->env->log(
+		$this->env->log(
 			"trace/quote",
-			$this->manager->pipelineId,
+			$this->pipelineId,
 			"QUOTE |",
-			function () use ( $token ) {
+			static function () use ( $token ) {
 				return PHPUtils::jsonEncode( $token );
 			}
 		);
@@ -176,7 +176,7 @@ class QuoteTransformer extends TokenHandler {
 			$this->startNewChunk();
 		}
 
-		return [];
+		return new TokenHandlerResult( [] );
 	}
 
 	/**
@@ -184,19 +184,19 @@ class QuoteTransformer extends TokenHandler {
 	 * collected quote tokens so far.
 	 *
 	 * @param Token $token token
-	 * @return Token|array
+	 * @return TokenHandlerResult|null
 	 */
-	private function processQuotes( Token $token ) {
+	private function processQuotes( Token $token ): ?TokenHandlerResult {
 		if ( !$this->onAnyEnabled ) {
 			// Nothing to do, quick abort.
-			return $token;
+			return null;
 		}
 
-		$this->manager->env->log(
+		$this->env->log(
 			"trace/quote",
-			$this->manager->pipelineId,
+			$this->pipelineId,
 			"NL    |",
-			function () use( $token ) {
+			static function () use( $token ) {
 				return PHPUtils::jsonEncode( $token );
 			}
 		);
@@ -205,7 +205,7 @@ class QuoteTransformer extends TokenHandler {
 			( $token->getName() === 'td' || $token->getName() === 'th' ) &&
 			( $token->dataAttribs->stx ?? '' ) === 'html'
 		) {
-			return $token;
+			return null;
 		}
 
 		// count number of bold and italics
@@ -274,14 +274,14 @@ class QuoteTransformer extends TokenHandler {
 		$this->currentChunk[] = $token;
 		$this->startNewChunk();
 		// PORT-FIXME: Is there a more efficient way of doing this?
-		$res = [ "tokens" => array_flatten( array_merge( [], $this->chunks ) ) ];
+		$res = new TokenHandlerResult( array_flatten( $this->chunks ) );
 
-		$this->manager->env->log(
+		$this->env->log(
 			"trace/quote",
-			$this->manager->pipelineId,
+			$this->pipelineId,
 			"----->",
-			function () use ( $res ) {
-				return PHPUtils::jsonEncode( $res["tokens"] );
+			static function () use ( $res ) {
+				return PHPUtils::jsonEncode( $res->tokens );
 			}
 		);
 

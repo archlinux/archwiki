@@ -14,10 +14,12 @@ var INPUT_LOCATION_MOVED = 'header-moved',
 	// recorded on the Vector skin and only if browser supported.
 	shouldTestSearchPerformance = !!( window.performance &&
 		window.requestAnimationFrame &&
+		/* eslint-disable compat/compat */
 		performance.mark &&
 		performance.measure &&
 		performance.getEntriesByName &&
 		performance.clearMarks ),
+	/* eslint-enable compat/compat */
 	loadStartMark = 'mwVectorVueSearchLoadStart',
 	queryMark = 'mwVectorVueSearchQuery',
 	renderMark = 'mwVectorVueSearchRender',
@@ -37,6 +39,7 @@ function onFetchStart() {
 		performance.clearMarks( queryMark );
 	}
 
+	/* eslint-disable-next-line compat/compat */
 	performance.mark( queryMark );
 }
 

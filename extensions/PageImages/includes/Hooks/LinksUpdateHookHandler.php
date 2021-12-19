@@ -44,7 +44,7 @@ class LinksUpdateHookHandler {
 	 * to get page images for
 	 * @return PageImageCandidate[] $image Associative array describing an image
 	 */
-	public function getPageImageCandidates( LinksUpdate $linksUpdate ) : array {
+	public function getPageImageCandidates( LinksUpdate $linksUpdate ): array {
 		global $wgPageImagesLeadSectionOnly;
 		$po = false;
 
@@ -75,7 +75,7 @@ class LinksUpdateHookHandler {
 		}
 
 		if ( $po && $po->getExtensionData( 'pageImages' ) ) {
-			return array_map( function ( $candidateData ) {
+			return array_map( static function ( $candidateData ) {
 				return PageImageCandidate::newFromArray( $candidateData );
 			}, $po->getExtensionData( 'pageImages' ) );
 		}
@@ -156,8 +156,8 @@ class LinksUpdateHookHandler {
 		$ratio = intval( $this->getRatio( $image ) * 10 );
 		$score += $this->scoreFromTable( $ratio, $wgPageImagesScores['ratio'] );
 
-		$blacklist = $this->getBlacklist();
-		if ( isset( $blacklist[$image->getFileName()] ) ) {
+		$denylist = $this->getDenylist();
+		if ( isset( $denylist[$image->getFileName()] ) ) {
 			$score = -1000;
 		}
 
@@ -246,40 +246,40 @@ class LinksUpdateHookHandler {
 	}
 
 	/**
-	 * Returns a list of images blacklisted from influencing this extension's output
+	 * Returns a list of images denylisted from influencing this extension's output
 	 *
 	 * @return int[] Flipped associative array in format "image BDB key" => int
 	 * @throws Exception
 	 */
-	protected function getBlacklist() {
-		global $wgPageImagesBlacklistExpiry;
+	protected function getDenylist() {
+		global $wgPageImagesDenylistExpiry;
 
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 
 		return $cache->getWithSetCallback(
-			$cache->makeKey( 'pageimages-blacklist' ),
-			$wgPageImagesBlacklistExpiry,
+			$cache->makeKey( 'pageimages-denylist' ),
+			$wgPageImagesDenylistExpiry,
 			function () {
-				global $wgPageImagesBlacklist;
+				global $wgPageImagesDenylist;
 
 				$list = [];
-				foreach ( $wgPageImagesBlacklist as $source ) {
+				foreach ( $wgPageImagesDenylist as $source ) {
 					switch ( $source['type'] ) {
 						case 'db':
 							$list = array_merge(
 								$list,
-								$this->getDbBlacklist( $source['db'], $source['page'] )
+								$this->getDbDenylist( $source['db'], $source['page'] )
 							);
 							break;
 						case 'url':
 							$list = array_merge(
 								$list,
-								$this->getUrlBlacklist( $source['url'] )
+								$this->getUrlDenylist( $source['url'] )
 							);
 							break;
 						default:
 							throw new RuntimeException(
-								"unrecognized image blacklist type '{$source['type']}'"
+								"unrecognized image denylist type '{$source['type']}'"
 							);
 					}
 				}
@@ -290,14 +290,14 @@ class LinksUpdateHookHandler {
 	}
 
 	/**
-	 * Returns list of images linked by the given blacklist page
+	 * Returns list of images linked by the given denylist page
 	 *
 	 * @param string|bool $dbName Database name or false for current database
 	 * @param string $page
 	 *
 	 * @return string[]
 	 */
-	private function getDbBlacklist( $dbName, $page ) {
+	private function getDbDenylist( $dbName, $page ) {
 		$dbr = wfGetDB( DB_REPLICA, [], $dbName );
 		$title = Title::newFromText( $page );
 		$list = [];
@@ -324,7 +324,7 @@ class LinksUpdateHookHandler {
 	}
 
 	/**
-	 * Returns list of images on given remote blacklist page.
+	 * Returns list of images on given remote denylist page.
 	 * Not quite 100% bulletproof due to localised namespaces and so on.
 	 * Though if you beat people if they add bad entries to the list... :)
 	 *
@@ -332,7 +332,7 @@ class LinksUpdateHookHandler {
 	 *
 	 * @return string[]
 	 */
-	private function getUrlBlacklist( $url ) {
+	private function getUrlDenylist( $url ) {
 		global $wgFileExtensions;
 
 		$list = [];

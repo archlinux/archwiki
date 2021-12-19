@@ -18,6 +18,10 @@
  * @file
  */
 
+namespace MediaWiki\Extension\CategoryTree;
+
+use CategoryPage;
+
 class CategoryTreeCategoryPage extends CategoryPage {
 	public $mCategoryViewerClass = CategoryTreeCategoryViewer::class;
 }

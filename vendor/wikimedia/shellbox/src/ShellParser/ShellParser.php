@@ -2,7 +2,7 @@
 
 namespace Shellbox\ShellParser;
 
-use WikiPEG\SyntaxError;
+use Wikimedia\WikiPEG\SyntaxError;
 
 /**
  * Top-level entry for shell command parsing

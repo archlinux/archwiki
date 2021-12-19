@@ -10,8 +10,6 @@
  * on wiki pages.
  * This implementation stores the information as a compressed gzip blob
  * in the database.
- *
- * @class
  */
 class TemplateDataCompressedBlob extends TemplateDataBlob {
 	// Size of MySQL 'blob' field; page_props table where the data is stored uses one.
@@ -25,7 +23,7 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 	/**
 	 * @inheritDoc
 	 */
-	protected function parse() : Status {
+	protected function parse(): Status {
 		$status = parent::parse();
 		if ( $status->isOK() ) {
 			$length = strlen( $this->getJSONForDatabase() );
@@ -39,7 +37,7 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 	/**
 	 * @return string JSON (gzip compressed)
 	 */
-	public function getJSONForDatabase() : string {
+	public function getJSONForDatabase(): string {
 		if ( $this->jsonDB === null ) {
 			// Cache for repeat calls
 			$this->jsonDB = gzencode( $this->getJSON() );

@@ -5,13 +5,12 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.dm.MWImageModel', ve.test.utils.mwEnvironment );
+QUnit.module( 've.dm.MWImageModel' );
 
 /* Tests */
 
-QUnit.test( 'Create and manipulate image nodes', function ( assert ) {
-	var i, imageType, imageModel, value, result, expected, expectedAlignment, method, dir, dummyDoc,
-		imageNode = {},
+QUnit.test( 'Create and manipulate image nodes', ( assert ) => {
+	const imageNode = {},
 		images = {
 			mwInlineImage: {
 				dir: 'ltr',
@@ -115,7 +114,7 @@ QUnit.test( 'Create and manipulate image nodes', function ( assert ) {
 			}
 		};
 
-	for ( imageType in images ) {
+	for ( const imageType in images ) {
 		// Create the node
 		imageNode[ imageType ] = ve.dm.MWImageModel.static.createImageNode(
 			images[ imageType ].attrs,
@@ -130,23 +129,23 @@ QUnit.test( 'Create and manipulate image nodes', function ( assert ) {
 		);
 
 		// Run tests
-		for ( i = 0; i < images[ imageType ].tests.length; i++ ) {
-			dir = images[ imageType ].dir;
-			dummyDoc = new ve.dm.Document( [], null, null, null, null, 'en', images[ imageType ].dir );
+		for ( let i = 0; i < images[ imageType ].tests.length; i++ ) {
+			const dir = images[ imageType ].dir,
+				dummyDoc = new ve.dm.Document( [], null, null, null, null, 'en', images[ imageType ].dir );
 
 			// Start from original details
-			imageModel = ve.dm.MWImageModel.static.newFromImageAttributes( images[ imageType ].attrs, dummyDoc );
+			const imageModel = ve.dm.MWImageModel.static.newFromImageAttributes( images[ imageType ].attrs, dummyDoc );
 
 			// Run attributes
-			for ( method in images[ imageType ].tests[ i ].methods ) {
-				value = images[ imageType ].tests[ i ].methods[ method ];
+			for ( const method in images[ imageType ].tests[ i ].methods ) {
+				const value = images[ imageType ].tests[ i ].methods[ method ];
 				imageModel[ method ]( value );
 			}
 
 			// Check result
-			for ( method in images[ imageType ].tests[ i ].results.expect ) {
-				result = imageModel[ method ]();
-				expected = images[ imageType ].tests[ i ].results.expect[ method ];
+			for ( const method in images[ imageType ].tests[ i ].results.expect ) {
+				const result = imageModel[ method ](),
+					expected = images[ imageType ].tests[ i ].results.expect[ method ];
 				assert.deepEqual(
 					result,
 					expected,
@@ -156,6 +155,7 @@ QUnit.test( 'Create and manipulate image nodes', function ( assert ) {
 
 			// Run language-specific tests
 			if ( images[ imageType ].tests[ i ].results.position ) {
+				let expectedAlignment;
 				// Definition:
 				// * withText (document direction; 'left' for ltr, 'right' for rtl)
 				// * oppositeToText (opposite the document direction; 'right' for ltr, 'left' for rtl)

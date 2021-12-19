@@ -7,6 +7,7 @@
 			"Cwek",
 			"Demmy",
 			"Duolaimi",
+			"FakeGreenHand",
 			"Hudafu",
 			"Hydra",
 			"Hzy980512",
@@ -25,8 +26,7 @@
 			"Zhangjintao",
 			"乌拉跨氪",
 			"佛壁灯",
-			"夢蝶葬花",
-			"FakeGreenHand"
+			"夢蝶葬花"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "图书",
@@ -60,7 +60,7 @@
 	"cite-ve-dialog-referenceslist-title": "参考文献列表",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "通过添加信息来源以改进您的内容。您可以引用自图书、报纸和网站。",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "引用",
-	"cite-ve-dialogbutton-reference-full-label": "基本表格",
+	"cite-ve-dialogbutton-reference-full-label": "基本",
 	"cite-ve-dialogbutton-reference-title": "参考文献",
 	"cite-ve-dialogbutton-reference-tooltip": "基本",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "参考文献列表",

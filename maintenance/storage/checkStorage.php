@@ -153,7 +153,7 @@ class CheckStorage {
 					// It's safe to just erase the old_flags field
 					if ( $fix ) {
 						$this->addError( 'fixed', "Warning: old_flags set to 0", $id );
-						$dbw = wfGetDB( DB_MASTER );
+						$dbw = wfGetDB( DB_PRIMARY );
 						$dbw->ping();
 						$dbw->update( 'text', [ 'old_flags' => '' ],
 							[ 'old_id' => $id ], __METHOD__ );
@@ -357,14 +357,12 @@ class CheckStorage {
 
 		print "\n\nErrors:\n";
 		foreach ( $this->errors as $name => $errors ) {
-			// @phan-suppress-next-line PhanImpossibleConditionInLoop
 			if ( count( $errors ) ) {
 				$description = $this->errorDescriptions[$name];
 				echo "$description: " . implode( ',', array_keys( $errors ) ) . "\n";
 			}
 		}
 
-		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( count( $this->errors['restore text'] ) && $fix ) {
 			if ( (string)$xml !== '' ) {
 				$this->restoreText( array_keys( $this->errors['restore text'] ), $xml );
@@ -405,7 +403,7 @@ class CheckStorage {
 				print "$msg in old_id $id, revisions " . implode( ', ', $revIds ) . "\n";
 			}
 		}
-		$this->errors[$type] += array_flip( $revIds );
+		$this->errors[$type] += array_fill_keys( $revIds, true );
 	}
 
 	private function checkExternalConcatBlobs( $externalConcatBlobs ) {
@@ -495,15 +493,14 @@ class CheckStorage {
 		}
 
 		$dbr = wfGetDB( DB_REPLICA );
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 		$dbr->ping();
 		$dbw->ping();
 
 		$source = new ImportStreamSource( $file );
-		$importer = new WikiImporter(
-			$source,
-			MediaWikiServices::getInstance()->getMainConfig()
-		);
+		$importer = MediaWikiServices::getInstance()
+			->getWikiImporterFactory()
+			->getWikiImporter( $source );
 		$importer->setRevisionCallback( [ $this, 'importRevision' ] );
 		$importer->setNoticeCallback( static function ( $msg, $params ) {
 			echo wfMessage( $msg, $params )->text() . "\n";
@@ -566,7 +563,7 @@ class CheckStorage {
 		$flags = $blobStore->compressData( $text );
 
 		// Update the text row
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 		$dbw->update( 'text',
 			[ 'old_flags' => $flags, 'old_text' => $text ],
 			[ 'old_id' => $oldId ],

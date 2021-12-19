@@ -12,7 +12,7 @@
  * @abstract
  * @extends OO.ui.PopupTool
  * @constructor
- * @param {string} title Title
+ * @param {string} title
  * @param {OO.ui.ToolGroup} toolGroup
  * @param {Object} [config]
  * @cfg {number} [width] Popup width. Upstream default is 320.
@@ -297,7 +297,6 @@ ve.ui.MWHelpPopupTool.prototype.onSelect = function () {
 		this.versionPromise = ve.init.target.getLocalApi().get( {
 			action: 'query',
 			meta: 'siteinfo',
-			format: 'json',
 			siprop: 'extensions'
 		} ).then( function ( response ) {
 			var extension = response.query.extensions.filter( function ( ext ) {

@@ -6,7 +6,7 @@ require_once __DIR__ . '/LuaUstringLibraryTest.php';
  * @coversNothing -- Covers Lua code
  */
 class Scribunto_LuaUstringLibraryPureLuaTest extends Scribunto_LuaUstringLibraryTest {
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		// Override mw.ustring with the pure-Lua version

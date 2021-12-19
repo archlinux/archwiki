@@ -19,8 +19,6 @@
 	"categorytree-mode-all": "a h-uile duilleag",
 	"categorytree-collapse": "co-theannaich",
 	"categorytree-expand": "leudaich",
-	"categorytree-expand-bullet": "►",
-	"categorytree-empty-bullet": "►",
 	"categorytree-member-counts": "Tha $1 {{PLURAL:$1|fho-roinn-seòrsa|fho-roinn-seòrsa|fo-roinnean-seòrsa|fo-roinn-seòrsa}}, $2 {{PLURAL:$2|duilleag|dhuilleag|duilleagan|duilleag}} 's $3 {{PLURAL:$3|fhaidhle|fhaidhle|faidhlichean|faidhle}} 'na broinn",
 	"categorytree-num-categories": "$1 R-S",
 	"categorytree-num-pages": "$1 D",

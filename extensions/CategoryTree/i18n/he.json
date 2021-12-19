@@ -20,8 +20,6 @@
 	"categorytree-mode-all": "כל הדפים",
 	"categorytree-collapse": "כיווץ",
 	"categorytree-expand": "הרחבה",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "מכילה {{PLURAL:$1|קטגוריית־משנה אחת|$1 קטגוריות־משנה}}, {{PLURAL:$2|דף אחד|$2 דפים}}, ו{{PLURAL:$3|קובץ אחד|־$3 קבצים}}",
 	"categorytree-num-categories": "{{PLURAL:$1|קט' אחת|$1 קט'}}",
 	"categorytree-num-pages": "{{PLURAL:$1|דף אחד|$1 דפים}}",

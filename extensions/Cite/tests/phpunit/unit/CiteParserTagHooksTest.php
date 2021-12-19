@@ -38,7 +38,7 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 		$cite->method( 'ref' )
 			->willReturn( false );
 
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createParser();
 		$parser->extCite = $cite;
 
 		$frame = $this->createMock( PPFrame::class );
@@ -63,7 +63,7 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 		$parserOutput->expects( $this->once() )
 			->method( 'addModuleStyles' );
 
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createParser( [ 'getOutput' ] );
 		$parser->method( 'getOutput' )
 			->willReturn( $parserOutput );
 		$parser->extCite = $cite;
@@ -82,7 +82,7 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 		$cite->method( 'references' )
 			->willReturn( false );
 
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createParser();
 		$parser->extCite = $cite;
 
 		$frame = $this->createMock( PPFrame::class );
@@ -101,13 +101,24 @@ class CiteParserTagHooksTest extends \MediaWikiUnitTestCase {
 			->method( 'references' )
 			->willReturn( '<HTML>' );
 
-		$parser = $this->createMock( Parser::class );
+		$parser = $this->createParser();
 		$parser->extCite = $cite;
 
 		$frame = $this->createMock( PPFrame::class );
 
 		$html = CiteParserTagHooks::references( null, [], $parser, $frame );
 		$this->assertSame( '<HTML>', $html );
+	}
+
+	/**
+	 * @param array $configurableMethods
+	 * @return Parser
+	 */
+	private function createParser( $configurableMethods = [] ) {
+		return $this->getMockBuilder( Parser::class )
+			->disableOriginalConstructor()
+			->onlyMethods( $configurableMethods )
+			->getMock();
 	}
 
 }

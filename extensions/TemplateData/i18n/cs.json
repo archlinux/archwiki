@@ -10,7 +10,8 @@
 			"Matěj Suchánek",
 			"Mormegil",
 			"Patriccck",
-			"Patrik L."
+			"Patrik L.",
+			"Want"
 		]
 	},
 	"templatedata-desc": "Implementuje datové úložiště pro parametry šablon (pomocí JSON)",
@@ -30,6 +31,7 @@
 	"templatedata-doc-param-status-optional": "nepovinný",
 	"templatedata-doc-param-status-required": "povinný",
 	"templatedata-doc-param-status-suggested": "doporučený",
+	"templatedata-doc-param-suggestedvalues": "Doporučené hodnoty",
 	"templatedata-doc-param-type": "Typ",
 	"templatedata-doc-param-type-boolean": "Logická hodnota",
 	"templatedata-doc-param-type-content": "Obsah",
@@ -105,6 +107,8 @@
 	"templatedata-modal-table-param-name": "Název",
 	"templatedata-modal-table-param-required": "Vyžadováno",
 	"templatedata-modal-table-param-suggested": "Doporučeno",
+	"templatedata-modal-table-param-suggestedvalues": "Doporučené hodnoty",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "Přidat hodnotu...",
 	"templatedata-modal-table-param-type": "Typ",
 	"templatedata-modal-table-param-uneditablefield": "Needitovatelné",
 	"templatedata-modal-title": "Editor dokumentace šablony",

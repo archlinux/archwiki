@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use MediaWiki\Auth\SecondaryAuthenticationProvider;
+use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use Message;
 
@@ -32,7 +32,7 @@ interface IModule {
 	public function getDataFromUser( OATHUser $user );
 
 	/**
-	 * @return SecondaryAuthenticationProvider
+	 * @return AbstractSecondaryAuthenticationProvider
 	 */
 	public function getSecondaryAuthProvider();
 

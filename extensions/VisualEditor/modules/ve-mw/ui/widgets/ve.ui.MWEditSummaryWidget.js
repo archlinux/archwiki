@@ -53,7 +53,7 @@ ve.ui.MWEditSummaryWidget.static.summarySplitter = /^(\/\*.*?\*\/\s*)?(.*)$/;
 /**
  * Split a summary into the section and the actual summary
  *
- * @param {string} summary Summary
+ * @param {string} summary
  * @return {Object} Object with section and comment string properties
  */
 ve.ui.MWEditSummaryWidget.static.splitSummary = function ( summary ) {
@@ -131,8 +131,7 @@ ve.ui.MWEditSummaryWidget.prototype.getSummaries = function () {
 				list: 'usercontribs',
 				ucuser: mw.user.getName(),
 				ucprop: 'comment',
-				uclimit: 500,
-				format: 'json'
+				uclimit: 500
 			} ).then( function ( response ) {
 				var usedComments = {},
 					changes = ve.getProp( response, 'query', 'usercontribs' ) || [];

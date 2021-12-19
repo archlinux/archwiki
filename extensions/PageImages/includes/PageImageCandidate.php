@@ -35,7 +35,7 @@ class PageImageCandidate implements JsonSerializable {
 	 * @param array $fileParams from ParserMakeImageParams hook.
 	 * @return PageImageCandidate
 	 */
-	public static function newFromFileAndParams( File $file, array $fileParams ) : self {
+	public static function newFromFileAndParams( File $file, array $fileParams ): self {
 		$instance = new self();
 		$instance->fileName = $file->getTitle()->getDBkey();
 		$instance->fullWidth = $file->getWidth() ?? 0;
@@ -53,7 +53,7 @@ class PageImageCandidate implements JsonSerializable {
 	 * @return PageImageCandidate
 	 * @internal
 	 */
-	public static function newFromArray( array $array ) : self {
+	public static function newFromArray( array $array ): self {
 		$instance = new self();
 		$instance->fileName = $array['filename'];
 		$instance->fullWidth = $array['fullwidth'] ?? 0;
@@ -67,7 +67,7 @@ class PageImageCandidate implements JsonSerializable {
 	/**
 	 * @return string
 	 */
-	public function getFileName() : string {
+	public function getFileName(): string {
 		return $this->fileName;
 	}
 

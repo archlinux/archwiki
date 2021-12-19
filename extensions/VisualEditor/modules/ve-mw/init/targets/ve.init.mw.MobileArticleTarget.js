@@ -263,6 +263,14 @@ ve.init.mw.MobileArticleTarget.prototype.createSurface = function ( dmDoc, confi
 /**
  * @inheritdoc
  */
+ve.init.mw.MobileArticleTarget.prototype.getSurfaceClasses = function () {
+	var classes = ve.init.mw.MobileArticleTarget.super.prototype.getSurfaceClasses.call( this );
+	return classes.concat( [ 'content' ] );
+};
+
+/**
+ * @inheritdoc
+ */
 ve.init.mw.MobileArticleTarget.prototype.setSurface = function ( surface ) {
 	var changed = surface !== this.surface;
 
@@ -271,7 +279,6 @@ ve.init.mw.MobileArticleTarget.prototype.setSurface = function ( surface ) {
 	ve.init.mw.Target.super.prototype.setSurface.apply( this, arguments );
 
 	if ( changed ) {
-		surface.$element.addClass( 'content' );
 		this.$overlaySurface.append( surface.$element );
 	}
 };
@@ -380,11 +387,13 @@ ve.init.mw.MobileArticleTarget.prototype.switchToFallbackWikitextEditor = functi
  */
 ve.init.mw.MobileArticleTarget.prototype.save = function () {
 	// Parent method
-	ve.init.mw.MobileArticleTarget.super.prototype.save.apply( this, arguments );
+	var promise = ve.init.mw.MobileArticleTarget.super.prototype.save.apply( this, arguments );
 
 	this.overlay.log( {
 		action: 'saveAttempt'
 	} );
+
+	return promise;
 };
 
 /**

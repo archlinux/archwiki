@@ -18,6 +18,11 @@
  * @file
  */
 
+namespace MediaWiki\Extension\CategoryTree;
+
+use Category;
+use CategoryViewer;
+
 class CategoryTreeCategoryViewer extends CategoryViewer {
 	public $child_cats;
 
@@ -31,11 +36,16 @@ class CategoryTreeCategoryViewer extends CategoryViewer {
 	 */
 	private function getCategoryTree() {
 		if ( !isset( $this->categorytree ) ) {
-			if ( !CategoryTreeHooks::shouldForceHeaders() ) {
-				CategoryTree::setHeaders( $this->getOutput() );
+			CategoryTree::setHeaders( $this->getOutput() );
+
+			$options = $this->getConfig()->get( 'CategoryTreeCategoryPageOptions' );
+
+			$mode = $this->getRequest()->getVal( 'mode' );
+			if ( $mode !== null ) {
+				$options['mode'] = CategoryTree::decodeMode( $mode );
 			}
 
-			$this->categorytree = new CategoryTree( $this->getConfig()->get( 'CategoryTreeCategoryPageOptions' ) );
+			$this->categorytree = new CategoryTree( $options );
 		}
 
 		return $this->categorytree;

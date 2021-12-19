@@ -1,0 +1,28 @@
+@import 'mediawiki.ui/variables.less';
+@import 'mediawiki.skin.variables.less';
+
+.vector-user-links {
+	.vector-menu-content-list {
+		.mw-echo-alert {
+			padding: 0.2em 0.5em;
+			white-space: nowrap;
+			// Prevent alert message from pushing user links off screen
+			max-width: 270px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			.mw-ui-icon.mw-ui-icon-before:before {
+				display: none;
+			}
+		}
+
+		@media ( max-width: @width-breakpoint-desktop-wide ) {
+			.mw-echo-alert {
+				font-size: 12px;
+				position: absolute;
+				top: 100%;
+				right: 0;
+			}
+		}
+	}
+}

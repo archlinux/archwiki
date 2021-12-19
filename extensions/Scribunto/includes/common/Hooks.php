@@ -378,6 +378,11 @@ class ScribuntoHooks {
 				$out->addInlineScript( 'window.location.hash = ' . Xml::encodeJsVar( "#mw-ce-l$line" ) );
 			}
 		}
+		if ( !$status->isOK() ) {
+			// @todo Remove this line after this extension do not support mediawiki version 1.36 and before
+			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
+			return false;
+		}
 
 		return true;
 	}

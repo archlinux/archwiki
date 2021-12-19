@@ -46,7 +46,7 @@ class CiteDbTest extends \MediaWikiIntegrationTestCase {
 		);
 	}
 
-	private function newCite() : Cite {
+	private function newCite(): Cite {
 		$mockOptions = $this->createMock( ParserOptions::class );
 		$mockOptions->method( 'getIsPreview' )->willReturn( false );
 		$mockOptions->method( 'getIsSectionPreview' )->willReturn( false );

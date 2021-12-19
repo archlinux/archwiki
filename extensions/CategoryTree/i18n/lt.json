@@ -23,8 +23,6 @@
 	"categorytree-mode-all": "visi puslapiai",
 	"categorytree-collapse": "suskleisti",
 	"categorytree-expand": "išskleisti",
-	"categorytree-expand-bullet": "►",
-	"categorytree-empty-bullet": "►",
 	"categorytree-member-counts": "turi $1 {{PLURAL:$1|subkategoriją|subkategorijas|subkategorijų}}, $2 {{PLURAL:$2|puslapį|puslapius|puslapių}}, ir $3 {{PLURAL:$3|rinkmeną|rinkmenas|rinkmenų}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",

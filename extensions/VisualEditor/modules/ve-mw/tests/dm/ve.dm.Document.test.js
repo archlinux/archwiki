@@ -5,14 +5,13 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.dm.Document (MW)', ve.test.utils.mwEnvironment );
+QUnit.module( 've.dm.Document (MW)' );
 
 /* Tests */
 
 // FIXME runner copypasted from core, use data provider
-QUnit.test( 'getRelativeRange (mwBlockImage / mwInlineImage)', function ( assert ) {
-	var documentModel, i, j,
-		store = new ve.dm.HashValueStore(),
+QUnit.test( 'getRelativeRange (mwBlockImage / mwInlineImage)', ( assert ) => {
+	const store = new ve.dm.HashValueStore(),
 		storeItems = [
 			ve.dm.mwExample.MWBlockImage.storeItems,
 			ve.dm.mwExample.MWInlineImage.storeItems
@@ -228,14 +227,14 @@ QUnit.test( 'getRelativeRange (mwBlockImage / mwInlineImage)', function ( assert
 			}
 		];
 
-	for ( i = 0; i < storeItems.length; i++ ) {
-		for ( j = 0; j < storeItems[ i ].length; j++ ) {
+	for ( let i = 0; i < storeItems.length; i++ ) {
+		for ( let j = 0; j < storeItems[ i ].length; j++ ) {
 			store.hash( storeItems[ i ][ j ].value, storeItems[ i ][ j ].hash );
 		}
 	}
-	for ( i = 0; i < tests.length; i++ ) {
-		documentModel = new ve.dm.Document( new ve.dm.ElementLinearData( store, tests[ i ].data ) );
-		for ( j = 0; j < tests[ i ].cases.length; j++ ) {
+	for ( let i = 0; i < tests.length; i++ ) {
+		const documentModel = new ve.dm.Document( new ve.dm.ElementLinearData( store, tests[ i ].data ) );
+		for ( let j = 0; j < tests[ i ].cases.length; j++ ) {
 			assert.equalRange(
 				documentModel.getRelativeRange(
 					tests[ i ].cases[ j ].given,

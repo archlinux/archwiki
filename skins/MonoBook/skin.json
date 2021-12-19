@@ -14,19 +14,42 @@
 		"MediaWiki": ">= 1.36.0"
 	},
 	"ValidSkinNames": {
-		"monobook": "MonoBook"
+		"monobook": {
+			"class": "SkinMustache",
+			"args": [
+				{
+					"name": "monobook",
+					"responsive": true,
+					"templateDirectory": "templates/",
+					"scripts": [ "skins.monobook.scripts" ],
+					"styles": [ "skins.monobook.styles" ],
+					"messages": [
+						"tagline",
+						"nstab-main",
+						"nstab-talk",
+						"monobook-more-actions",
+						"otherlanguages",
+						"toolbox",
+						"navigation-heading",
+						"monobook-jumptotop",
+						"monobook-jumptopersonal",
+						"monobook-jumptosearch",
+						"monobook-cactions-label",
+						"monobook-jumptonavigation"
+					]
+				}
+			]
+		}
 	},
 	"SkinOOUIThemes": {
 		"monobook": "Apex"
-	},
-	"DefaultUserOptions": {
-		"monobook-responsive": true
 	},
 	"SkinLessImportPaths": {
 		"monobook": "resources/mediawiki.less"
 	},
 	"Hooks": {
-		"GetPreferences": "SkinMonoBook::onGetPreferences"
+		"OutputPageBodyAttributes": "MonoBook\\Hooks::onOutputPageBodyAttributes",
+		"SkinTemplateNavigation::Universal": "MonoBook\\Hooks::onSkinTemplateNavigationUniversal"
 	},
 	"MessagesDirs": {
 		"MonoBook": [
@@ -39,66 +62,30 @@
 			"features": {
 				"normalize": true,
 				"elements": true,
-				"content": true,
-				"content-links": true,
-				"interface": true,
 				"logo": true,
-				"legacy": true
-			},
-			"styles": {
-				"resources/screen-common.less": {
-					"media": "screen"
-				},
-				"resources/screen-desktop.less": {
-					"media": "screen"
-				},
-				"resources/print-common.less": {
-					"media": "print"
-				}
-			}
-		},
-		"skins.monobook.responsive": {
-			"class": "ResourceLoaderSkinModule",
-			"features": {
-				"normalize": true,
-				"elements": true,
-				"content": true,
+				"content-media": true,
 				"content-links": true,
+				"content-tables": true,
 				"interface": true,
-				"legacy": true,
-				"logo": true
+				"interface-message-box": true,
+				"interface-category": true,
+				"i18n-ordered-lists": true,
+				"i18n-all-lists-margins": true,
+				"i18n-headings": true
 			},
-			"targets": [
-				"desktop",
-				"mobile"
+			"styles": [
+				"resources/skin.less",
+				"resources/skin-responsive.less"
+			]
+		},
+		"skins.monobook.scripts": {
+			"targets": [ "desktop", "mobile" ],
+			"packageFiles": [
+				"resources/skin.js",
+				"resources/mobile-uls.js",
+				"resources/mobile-echo.js"
 			],
-			"styles": {
-				"resources/screen-common.less": {
-					"media": "screen"
-				},
-				"resources/screen-desktop.less": {
-					"media": "screen and (min-width: 551px)"
-				},
-				"resources/screen-mobile.less": {
-					"media": "screen and (max-width: 550px)"
-				},
-				"resources/print-common.less": {
-					"media": "print"
-				}
-			}
-		},
-		"skins.monobook.mobile.uls": {
-			"targets": [ "desktop", "mobile" ],
-			"scripts": [ "resources/mobile-uls.js" ]
-		},
-		"skins.monobook.mobile.echohack": {
-			"targets": [ "desktop", "mobile" ],
-			"scripts": [ "resources/mobile-echo.js" ],
-			"styles": {
-				"resources/mobile-echo.less": {
-					"media": "screen and (max-width: 550px)"
-				}
-			},
+			"styles": "resources/skin.js.less",
 			"dependencies": [
 				"oojs-ui.styles.icons-alerts",
 				"mediawiki.util"
@@ -106,30 +93,6 @@
 			"messages": [
 				"monobook-notifications-link",
 				"monobook-notifications-link-none"
-			]
-		},
-		"skins.monobook.mobile": {
-			"class": "ResourceLoaderSkinModule",
-			"features": {
-				"normalize": true,
-				"elements": true,
-				"content": true,
-				"interface": true,
-				"logo": true,
-				"legacy": true
-			},
-			"targets": [ "desktop", "mobile" ],
-			"packageFiles": [
-				"resources/mobile.js",
-				"resources/optional-enhancements.js"
-			],
-			"styles": {
-				"resources/mobile.js.less": {
-					"media": "screen and (max-width: 550px)"
-				}
-			},
-			"dependencies": [
-				"mediawiki.util"
 			]
 		}
 	},
@@ -146,9 +109,8 @@
 			"+ext.relatedArticles.readMore": "resources/skinStyles/ext.relatedArticles.readMore.less"
 		}
 	},
-	"AutoloadClasses": {
-		"SkinMonoBook": "includes/SkinMonoBook.php",
-		"MonoBookTemplate": "includes/MonoBookTemplate.php"
+	"AutoloadNamespaces": {
+		"MonoBook\\": "includes/"
 	},
 	"manifest_version": 2
 }

@@ -101,7 +101,7 @@ class DropdownInputWidget extends InputWidget {
 			}
 			// Add disabled attribute if required (both the <option> and
 			// <optgroup> elements can be disabled).
-			if ( isset( $opt[ 'disabled' ] ) && $opt[ 'disabled' ] ) {
+			if ( $opt['disabled'] ?? false ) {
 				$option->setAttributes( [ 'disabled' => 'disabled' ] );
 			}
 

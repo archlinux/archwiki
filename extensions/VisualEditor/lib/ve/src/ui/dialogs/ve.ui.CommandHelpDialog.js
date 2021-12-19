@@ -87,17 +87,19 @@ ve.ui.CommandHelpDialog.prototype.getBodyHeight = function () {
  * @inheritdoc
  */
 ve.ui.CommandHelpDialog.prototype.initialize = function () {
-	var i, iLen, j, jLen, k, kLen, triggerList, commands, shortcut,
-		$list, $shortcut, groupName, commandGroup, commandGroups, commandGroupsOrder, sequence, hasCommand, hasShortcut,
+	var dialog = this,
 		surface = ve.init.target.getSurface(),
 		sequenceRegistry = surface.sequenceRegistry,
-		commandRegistry = surface.commandRegistry;
+		commandRegistry = surface.commandRegistry,
+		availableCommands = surface.getCommands()
+			.concat( ve.init.target.constructor.static.documentCommands )
+			.concat( ve.init.target.constructor.static.targetCommands );
 
 	// Parent method
 	ve.ui.CommandHelpDialog.super.prototype.initialize.call( this );
 
-	commandGroups = this.constructor.static.commandGroups;
-	commandGroupsOrder = this.constructor.static.commandGroupsOrder;
+	var commandGroups = this.constructor.static.commandGroups;
+	var commandGroupsOrder = this.constructor.static.commandGroupsOrder;
 
 	this.contentLayout = new OO.ui.PanelLayout( {
 		scrollable: true,
@@ -106,64 +108,75 @@ ve.ui.CommandHelpDialog.prototype.initialize = function () {
 	} );
 	this.$container = $( '<div>' ).addClass( 've-ui-commandHelpDialog-container' );
 
-	for ( i = 0, iLen = commandGroupsOrder.length; i < iLen; i++ ) {
-		hasCommand = false;
-		groupName = commandGroupsOrder[ i ];
-		commandGroup = commandGroups[ groupName ];
-		commands = this.constructor.static.sortedCommandsFromGroup( groupName, commandGroup.promote, commandGroup.demote );
-		$list = $( '<dl>' ).addClass( 've-ui-commandHelpDialog-list' );
-		for ( j = 0, jLen = commands.length; j < jLen; j++ ) {
-			if ( commands[ j ].trigger ) {
-				if ( !commands[ j ].ignoreCommand && !commandRegistry.lookup( commands[ j ].trigger ) ) {
+	commandGroupsOrder.forEach( function ( groupName ) {
+		var hasCommand = false;
+		var commandGroup = commandGroups[ groupName ];
+		var commands = dialog.constructor.static.sortedCommandsFromGroup( groupName, commandGroup.promote, commandGroup.demote );
+		var $list = $( '<dl>' ).addClass( 've-ui-commandHelpDialog-list' );
+		commands.forEach( function ( command ) {
+			var triggerList;
+			if ( command.trigger ) {
+				if (
+					!command.ignoreCommand && (
+						availableCommands.indexOf( command.trigger ) === -1 ||
+						!commandRegistry.lookup( command.trigger )
+					)
+				) {
 					// Trigger is specified by unavailable command
-					continue;
+					return;
 				}
-				triggerList = ve.ui.triggerRegistry.lookup( commands[ j ].trigger );
+				triggerList = ve.ui.triggerRegistry.lookup( command.trigger );
 			} else {
 				triggerList = [];
-				if ( commands[ j ].shortcuts ) {
-					for ( k = 0, kLen = commands[ j ].shortcuts.length; k < kLen; k++ ) {
-						shortcut = commands[ j ].shortcuts[ k ];
-						triggerList.push(
-							new ve.ui.Trigger( shortcut, true )
-						);
+				if ( command.shortcuts ) {
+					if (
+						command.checkCommand && (
+							availableCommands.indexOf( command.checkCommand ) === -1 ||
+							!commandRegistry.lookup( command.checkCommand )
+						)
+					) {
+						// 'checkCommand' is not available
+						return;
 					}
+					triggerList = command.shortcuts.map( function ( shortcut ) {
+						return new ve.ui.Trigger( shortcut, true );
+					} );
 				}
 			}
 
-			hasShortcut = false;
+			var hasShortcut = false;
 
-			$shortcut = $( '<dt>' );
-			for ( k = 0, kLen = triggerList.length; k < kLen; k++ ) {
+			var $shortcut = $( '<dt>' );
+			triggerList.forEach( function ( trigger ) {
 				$shortcut.append( $( '<kbd>' ).addClass( 've-ui-commandHelpDialog-shortcut' ).append(
-					triggerList[ k ].getMessage( true ).map( this.constructor.static.buildKeyNode )
+					trigger.getMessage( true ).map( dialog.constructor.static.buildKeyNode )
 				).find( 'kbd + kbd' ).before( '+' ).end() );
 				hasShortcut = true;
-			}
-			if ( commands[ j ].sequences ) {
-				for ( k = 0, kLen = commands[ j ].sequences.length; k < kLen; k++ ) {
-					sequence = sequenceRegistry.lookup( commands[ j ].sequences[ k ] );
+			} );
+			if ( command.sequences ) {
+				command.sequences.forEach( function ( sequenceName ) {
+					var sequence = sequenceRegistry.lookup( sequenceName );
 					if ( sequence ) {
 						$shortcut.append( $( '<kbd>' ).addClass( 've-ui-commandHelpDialog-sequence' )
 							.attr( 'data-label', ve.msg( 'visualeditor-shortcuts-sequence-notice' ) )
 							.append(
-								sequence.getMessage( true ).map( this.constructor.static.buildKeyNode )
+								sequence.getMessage( true ).map( dialog.constructor.static.buildKeyNode )
 							)
 						);
 						hasShortcut = true;
 					}
-				}
+				} );
 			}
 			if ( hasShortcut ) {
 				$list.append(
 					$shortcut,
-					$( '<dd>' ).text( OO.ui.resolveMsg( commands[ j ].label ) )
+					$( '<dd>' ).text( OO.ui.resolveMsg( command.label ) )
 				);
 				hasCommand = true;
 			}
-		}
+		} );
 		if ( hasCommand ) {
-			this.$container.append(
+			dialog.$container.append(
 				$( '<div>' )
 					.addClass( 've-ui-commandHelpDialog-section' )
 					.append(
@@ -172,7 +185,7 @@ ve.ui.CommandHelpDialog.prototype.initialize = function () {
 					)
 			);
 		}
-	}
+	} );
 
 	this.contentLayout.$element.append( this.$container );
 	this.$body.append( this.contentLayout.$element );
@@ -209,38 +222,38 @@ ve.ui.CommandHelpDialog.static.buildKeyNode = function ( key ) {
  * @return {Object[]} List of commands in order
  */
 ve.ui.CommandHelpDialog.static.sortedCommandsFromGroup = function ( groupName, promote, demote ) {
-	var i,
-		commands = ve.ui.commandHelpRegistry.lookupByGroup( groupName ),
+	var commands = ve.ui.commandHelpRegistry.lookupByGroup( groupName ),
 		keys = Object.keys( commands ),
 		used = {},
 		auto = [],
 		promoted = [],
 		demoted = [];
 	keys.sort();
+
 	if ( promote ) {
-		for ( i = 0; i < promote.length; i++ ) {
-			if ( !commands[ promote[ i ] ] ) {
-				continue;
+		promote.forEach( function ( name ) {
+			if ( !commands[ name ] ) {
+				return;
 			}
-			promoted.push( commands[ promote[ i ] ] );
-			used[ promote[ i ] ] = true;
-		}
+			promoted.push( commands[ name ] );
+			used[ name ] = true;
+		} );
 	}
 	if ( demote ) {
-		for ( i = 0; i < demote.length; i++ ) {
-			if ( used[ demote[ i ] ] || !commands[ demote[ i ] ] ) {
-				continue;
+		demote.forEach( function ( name ) {
+			if ( used[ name ] || !commands[ name ] ) {
+				return;
 			}
-			demoted.push( commands[ demote[ i ] ] );
-			used[ demote[ i ] ] = true;
-		}
+			demoted.push( commands[ name ] );
+			used[ name ] = true;
+		} );
 	}
-	for ( i = 0; i < keys.length; i++ ) {
-		if ( used[ keys[ i ] ] ) {
-			continue;
+	keys.forEach( function ( name ) {
+		if ( used[ name ] ) {
+			return;
 		}
-		auto.push( commands[ keys[ i ] ] );
-	}
+		auto.push( commands[ name ] );
+	} );
 	return promoted.concat( auto, demoted );
 };
 

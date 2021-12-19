@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Shahwaqar",
 			"Iflaq",
-			"Rishabhbhat"
+			"Rishabhbhat",
+			"Shahwaqar"
 		]
 	},
 	"visualeditor-ca-editsource": "کوڈ اؠڈِٹ کٔرِو",
@@ -20,6 +20,7 @@
 	"visualeditor-dialog-meta-languages-name-label": "زَبان",
 	"visualeditor-dialog-meta-languages-section": "زَبانٕ",
 	"visualeditor-dialog-template-title": "فرما",
+	"visualeditor-dialog-transclusion-param-example-long": "مثال: $1",
 	"visualeditor-dialogbutton-template-tooltip": "فرما",
 	"visualeditor-media-title-image": "شکل",
 	"visualeditor-mwgallerydialog-classes-field-label": "سی ایس ایس کلاسیں",

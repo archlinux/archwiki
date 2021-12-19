@@ -45,7 +45,8 @@
 	"replacetext_continue": "繼續",
 	"replacetext_announce": "透過 $1 與監視清單來通知這些編輯。",
 	"replacetext_editsummary": "文字取代 - \"$1\" 取代為 \"$2\"",
+	"replacetext_reminder": "要同時變動在其它頁面上連至此頁面的連結，請前往 $1。",
+	"replacetext_cfg_error": "ReplaceText 設置錯誤",
 	"right-replacetext": "對整個 Wiki 進行字串取代。",
-	"action-replacetext": "對整個 Wiki 進行字串取代。",
-	"replacetext_reminder": "要同時變動在其它頁面上連至此頁面的連結，請前往 $1。"
+	"action-replacetext": "對整個 Wiki 進行字串取代。"
 }

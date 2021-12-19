@@ -9,9 +9,8 @@ QUnit.module( 've.ce.Surface (MW)', ve.test.utils.mwEnvironment );
 
 /* Tests */
 
-QUnit.test( 'handleLinearDelete', function ( assert ) {
-	var done = assert.async(),
-		promise = Promise.resolve(),
+QUnit.test( 'handleLinearDelete', ( assert ) => {
+	const done = assert.async(),
 		blocklength = ve.dm.mwExample.MWBlockImage.data.length,
 		cases = [
 			// This asserts that getRelativeRange (via getRelativeOffset) doesn't try to
@@ -22,7 +21,7 @@ QUnit.test( 'handleLinearDelete', function ( assert ) {
 					'<ul><li><p>Foo</p></li><li><p>Bar</p></li></ul>',
 				rangeOrSelection: new ve.Range( blocklength + 3 ),
 				keys: [ 'BACKSPACE' ],
-				expectedData: function ( data ) {
+				expectedData: ( data ) => {
 					// remove the first list item, and replace its wrapped paragraph outside
 					// the start of the list
 					data.splice(
@@ -42,7 +41,7 @@ QUnit.test( 'handleLinearDelete', function ( assert ) {
 					'<ul><li><p></p></li></ul>',
 				rangeOrSelection: new ve.Range( blocklength + 3 ),
 				keys: [ 'BACKSPACE' ],
-				expectedData: function ( data ) {
+				expectedData: ( data ) => {
 					data.splice(
 						blocklength, 6,
 						{ type: 'paragraph' },
@@ -54,19 +53,20 @@ QUnit.test( 'handleLinearDelete', function ( assert ) {
 			}
 		];
 
-	cases.forEach( function ( caseItem ) {
-		promise = promise.then( function () {
-			return ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem );
-		} );
+	let promise = Promise.resolve();
+	cases.forEach( ( caseItem ) => {
+		promise = promise.then( () =>
+			ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem )
+		);
 	} );
 
-	promise.finally( function () {
+	promise.finally( () => {
 		done();
 	} );
 } );
 
-QUnit.test( 'beforePaste/afterPaste', function ( assert ) {
-	var cases = [
+QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
+	const cases = [
 		{
 			documentHtml: '<p></p>',
 			rangeOrSelection: new ve.Range( 1 ),

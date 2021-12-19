@@ -104,7 +104,6 @@
 
 /* Section edit links */
 
-/* stylelint-disable no-descending-specificity */
 .mw-editsection {
 	/* bidi isolation: */
 	unicode-bidi: -moz-isolate;
@@ -123,4 +122,3 @@
 .mw-editsection-divider {
 	color: #54595d;
 }
-/* stylelint-enable no-descending-specificity */

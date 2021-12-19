@@ -132,14 +132,12 @@ ve.ce.SurfaceObserver.prototype.pollOnceSelection = function () {
  * @param {boolean} selectionOnly Check for selection changes only
  */
 ve.ce.SurfaceObserver.prototype.pollOnceInternal = function ( signalChanges, selectionOnly ) {
-	var oldState, newState;
-
 	if ( !this.domDocument || this.disabled ) {
 		return;
 	}
 
-	oldState = this.rangeState;
-	newState = new ve.ce.RangeState(
+	var oldState = this.rangeState;
+	var newState = new ve.ce.RangeState(
 		oldState,
 		this.surface.attachedRoot,
 		selectionOnly
@@ -158,7 +156,7 @@ ve.ce.SurfaceObserver.prototype.pollOnceInternal = function ( signalChanges, sel
 /**
  * Wrapper for setTimeout, for ease of debugging
  *
- * @param {Function} callback Callback
+ * @param {Function} callback
  * @param {number} timeout Timeout ms
  * @return {number} Timeout ID
  */
@@ -171,7 +169,7 @@ ve.ce.SurfaceObserver.prototype.setTimeout = function ( callback, timeout ) {
  *
  * Used when you have just polled, but don't want to wait for a 'rangeChange' event.
  *
- * @return {ve.Range|null} Range
+ * @return {ve.Range|null}
  */
 ve.ce.SurfaceObserver.prototype.getRange = function () {
 	if ( !this.rangeState ) {

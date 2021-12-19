@@ -3,14 +3,14 @@
 namespace Shellbox\ShellParser;
 
 
-	use WikiPEG\InternalError;
+	use Wikimedia\WikiPEG\InternalError;
 	// @phan-file-suppress PhanUnusedGotoLabel
 	// @phan-file-suppress PhanNoopSwitchCases
 	// @phan-file-suppress PhanTypeMismatchArgument
 	// @phan-file-suppress PhanTypeComparisonFromArray
 
 
-class PEGParser extends \WikiPEG\PEGParserBase {
+class PEGParser extends \Wikimedia\WikiPEG\PEGParserBase {
   // initializer
   
   	/**
@@ -6015,7 +6015,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
       switch ($startRule) {
         
         default:
-          throw new \WikiPEG\InternalError("Can't stream rule $startRule.");
+          throw new \Wikimedia\WikiPEG\InternalError("Can't stream rule $startRule.");
       }
     } else {
       switch ($startRule) {
@@ -6024,7 +6024,7 @@ class PEGParser extends \WikiPEG\PEGParserBase {
           $result = $this->parseprogram(false);
           break;
         default:
-          throw new \WikiPEG\InternalError("Can't start parsing from rule $startRule.");
+          throw new \Wikimedia\WikiPEG\InternalError("Can't start parsing from rule $startRule.");
       }
     }
 

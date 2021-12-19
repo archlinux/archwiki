@@ -3,6 +3,6 @@
 		"authors": []
 	},
 	"pageimages-desc": "Collects information about images used on page",
-	"pageimages-blacklist": "",
+	"pageimages-denylist": "",
 	"pageimages-info-label": "Page image"
 }

@@ -3,13 +3,13 @@
 		"authors": [
 			"Andriykopanytsia",
 			"Base",
+			"DDPAT",
 			"DixonD",
 			"Gzhegozh",
 			"Piramidion",
 			"Steve.rusyn",
 			"SteveR",
-			"Ата",
-			"DDPAT"
+			"Ата"
 		]
 	},
 	"scribunto-desc": "Фреймворк для включення скриптових мов на сторінки MediaWiki",

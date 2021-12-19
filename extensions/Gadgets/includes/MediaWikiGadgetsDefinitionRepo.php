@@ -102,15 +102,14 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 
 		// (b) Fetch value from WAN cache or regenerate if needed.
 		// This is hit occasionally and more so when the list changes.
-		$us = $this;
 		$value = $wanCache->getWithSetCallback(
 			$key,
 			Gadget::CACHE_TTL,
-			function ( $old, &$ttl, &$setOpts ) use ( $us ) {
+			function ( $old, &$ttl, &$setOpts ) {
 				$setOpts += Database::getCacheSetOptions( wfGetDB( DB_REPLICA ) );
 
 				$now = microtime( true );
-				$gadgets = $us->fetchStructuredList();
+				$gadgets = $this->fetchStructuredList();
 				if ( $gadgets === false ) {
 					$ttl = WANObjectCache::TTL_UNCACHEABLE;
 				}
@@ -151,7 +150,8 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 				return false; // don't cache
 			}
 
-			$g = $revRecord->getContent( SlotRecord::MAIN )->getNativeData();
+			$content = $revRecord->getContent( SlotRecord::MAIN );
+			$g = ( $content instanceof TextContent ) ? $content->getText() : '';
 		} else {
 			$g = $forceNewText;
 		}

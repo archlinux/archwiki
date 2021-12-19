@@ -252,7 +252,7 @@ class SpecialInterwiki extends SpecialPage {
 		$reason = $data['reason'];
 		$selfTitle = $this->getPageTitle();
 		$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 		switch ( $do ) {
 		case 'delete':
 			$dbw->delete( 'interwiki', [ 'iw_prefix' => $prefix ], __METHOD__ );
@@ -359,6 +359,7 @@ class SpecialInterwiki extends SpecialPage {
 		$usingGlobalLanguages = $usingGlobalInterlangLinks && !$isGlobalInterlanguageDB;
 		if ( $usingGlobalLanguages ) {
 			// Fetch list from global table
+			// @phan-suppress-next-line PhanTypeMismatchArgument
 			$dbrCentralLangDB = wfGetDB( DB_REPLICA, [], $wgInterwikiCentralInterlanguageDB );
 			$res = $dbrCentralLangDB->select( 'interwiki', '*', [], __METHOD__ );
 			$retval2 = [];

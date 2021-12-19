@@ -19,7 +19,7 @@ either be an "instant" CPU-bound check or a blocking I/O call with a small timeo
 cases should automatically work without CPU intensive spin loops.
 
 Additional documentation about the library can be found on
-[MediaWiki.org](https://www.mediawiki.org/wiki/WaitConditionLoop).
+[mediawiki.org](https://www.mediawiki.org/wiki/WaitConditionLoop).
 
 
 Usage
@@ -54,7 +54,7 @@ $status = $loop->invoke(); // CONDITION_* constant
 Running tests
 -------------
 
-    composer install --prefer-dist
+    composer install
     composer test
 
 

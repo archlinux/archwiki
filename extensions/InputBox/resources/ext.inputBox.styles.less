@@ -1,0 +1,31 @@
+@import 'mediawiki.ui/variables.less';
+
+.mw-inputbox-centered {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.mw-inputbox-inline {
+	display: inline;
+}
+
+.mw-inputbox-element {
+	/* important is needed to overwrite display:table from mw-ui checkbox */
+	display: inline-table !important;
+	white-space: nowrap;
+}
+
+.mw-inputbox-input {
+	margin-bottom: 0.5em;
+}
+
+/* TODO: Remove first selector 30 days after May 2021 parsercache expires */
+.createboxInput[type="text"]:placeholder-shown ~ .createboxButton,
+.mw-inputbox-createbox:required:invalid ~ .mw-ui-button {
+	/* appear like .mw-ui-input:disabled */
+	background-color: @colorGray12;
+	color: @color-base--inverted;
+	border-color: @colorGray12;
+	cursor: default;
+}

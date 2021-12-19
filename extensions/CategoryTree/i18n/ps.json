@@ -15,8 +15,6 @@
 	"categorytree-mode-all": "ټول مخونه",
 	"categorytree-collapse": "پرځول",
 	"categorytree-expand": "غځول",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "{{PLURAL:$1|1 څېرمه وېشنيزه|$1 څېرمه وېشنيزې}}، {{PLURAL:$2|1 مخ|$2 مخونه}} او {{PLURAL:$3|1 دوتنه|$3 دوتنې}} لري",
 	"categorytree-num-categories": "$1 و",
 	"categorytree-num-pages": "$1 م",

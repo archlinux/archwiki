@@ -63,11 +63,10 @@ ve.ce.MWTransclusionNode.static.getTemplatePartDescriptions = function ( model )
  * @return {string} Template part description
  */
 ve.ce.MWTransclusionNode.static.getTemplatePartDescription = function ( part ) {
-	var title;
 	// Ignore parts that are just content
 	if ( part.templatePage ) {
-		title = mw.Title.newFromText( part.templatePage );
-		return title.getRelativeText( mw.config.get( 'wgNamespaceIds' ).template );
+		return mw.Title.newFromText( part.templatePage )
+			.getRelativeText( mw.config.get( 'wgNamespaceIds' ).template );
 	} else if ( part.template ) {
 		// Not actually a template, but e.g. a parser function
 		return part.template;
@@ -93,13 +92,11 @@ ve.ce.MWTransclusionNode.static.getDescription = function ( model ) {
  * @return {Node[]} Filtered rendered nodes
  */
 ve.ce.MWTransclusionNode.static.filterRendering = function ( contentNodes ) {
-	var whitespaceRegex;
-
 	if ( !contentNodes.length ) {
 		return;
 	}
 
-	whitespaceRegex = new RegExp( '^[' + ve.dm.Converter.static.whitespaceList + ']+$' );
+	var whitespaceRegex = new RegExp( '^[' + ve.dm.Converter.static.whitespaceList + ']+$' );
 
 	// Filter out auto-generated items, e.g. reference lists
 	contentNodes = contentNodes.filter( function ( node ) {
@@ -161,15 +158,13 @@ ve.ce.MWTransclusionNode.prototype.generateContents = function ( config ) {
  * @param {Object} response Response data
  */
 ve.ce.MWTransclusionNode.prototype.onParseSuccess = function ( deferred, response ) {
-	var contentNodes;
-
 	if ( ve.getProp( response, 'visualeditor', 'result' ) !== 'success' ) {
 		this.onParseError( deferred );
 		return;
 	}
 
 	// Work around https://github.com/jquery/jquery/issues/1997
-	contentNodes = $.parseHTML( response.visualeditor.content, this.model && this.getModelHtmlDocument() ) || [];
+	var contentNodes = $.parseHTML( response.visualeditor.content, this.model && this.getModelHtmlDocument() ) || [];
 	deferred.resolve( this.constructor.static.filterRendering( contentNodes ) );
 };
 

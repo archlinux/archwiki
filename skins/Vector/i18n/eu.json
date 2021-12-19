@@ -33,5 +33,13 @@
 	"vector-jumptosearch": "Bilaketara joan",
 	"vector-jumptocontent": "Edukira joan",
 	"vector-more-actions": "Gehiago",
-	"vector-search-loader": "Bilaketa gomendioak kargatzen"
+	"vector-search-loader": "Bilaketa gomendioak kargatzen",
+	"vector-anon-user-menu-pages": "Izena eman gabeko erabiltzaileentzako orrialdeak",
+	"vector-anon-user-menu-pages-learn": "gehiago ikasi",
+	"vector-anon-user-menu-pages-label": "Artikuluak aldatzeari buruz gehiago ikasi",
+	"vector-personal-more-label": "Lankide loturak",
+	"vector-main-menu-tooltip": "Menu nagusia",
+	"tooltip-vector-anon-user-menu-title": "Aukera gehiago",
+	"vector-menu-checkbox-expanded": "hedatua",
+	"vector-menu-checkbox-collapsed": "bildua"
 }

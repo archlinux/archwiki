@@ -25,6 +25,7 @@
 	"apihelp-visualeditoredit-description": "Saglabā HTML5 lapu MediaWiki (pārveidotu vikitekstā ar Parsoid servisu).",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (saglabājot ar captcha atbildi).",
 	"apihelp-visualeditoredit-param-captchaword": "Atbilde uz captcha (saglabājot ar captcha atbildi).",
+	"apihelp-visualeditoredit-param-plugins": "Ar šo API pieprasījumu saistītie spraudņi",
 	"apihelp-visualeditoredit-param-etag": "Nosūtāmais ETag.",
 	"apihelp-visualeditoredit-param-minor": "Atzīmēt kā maznozīmīgu labojumu.",
 	"apihelp-visualeditoredit-param-oldid": "Izmantojamais versijas numurs. Pēc noklusējuma tik izmantota jaunākā versija. Jaunām lapām jāizmanto 0.",

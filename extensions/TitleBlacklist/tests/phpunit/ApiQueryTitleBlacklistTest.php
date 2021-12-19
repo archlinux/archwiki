@@ -17,7 +17,7 @@
  */
 class ApiQueryTitleBlacklistTest extends ApiTestCase {
 
-	public function setUp() : void {
+	public function setUp(): void {
 		parent::setUp();
 
 		TitleBlacklist::destroySingleton();
@@ -29,7 +29,7 @@ class ApiQueryTitleBlacklistTest extends ApiTestCase {
 		] );
 	}
 
-	public function tearDown() : void {
+	public function tearDown(): void {
 		TitleBlacklist::destroySingleton();
 		parent::tearDown();
 	}

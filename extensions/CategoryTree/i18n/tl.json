@@ -21,8 +21,6 @@
 	"categorytree-mode-all": "lahat ng mga pahina",
 	"categorytree-collapse": "tiklupin",
 	"categorytree-expand": "palawakin",
-	"categorytree-expand-bullet": "►",
-	"categorytree-empty-bullet": "►",
 	"categorytree-member-counts": "Naglalaman ng {{PLURAL:$1|1 subkategorya|$1 (na) subkategorya}}, {{PLURAL:$2|1 pahina|$2 (na) pahina}}, at {{PLURAL:$3|1 file|$3 (na) file}}",
 	"categorytree-num-categories": "$1 ka.",
 	"categorytree-num-pages": "$1 pa.",

@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jumpy01"
+		]
+	},
+	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|renamed}} user $4 ({{PLURAL:$6|$6 edit|$6 edits}}) to {{GENDER:$7|$5}}"
+}

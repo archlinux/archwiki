@@ -394,7 +394,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 		$spy = TestingAccessWrapper::newFromObject( $cite );
 		$spy->errorReporter = $this->createMock( ErrorReporter::class );
 		$spy->errorReporter->method( 'halfParsed' )->willReturnCallback(
-			function ( Parser $parser, ...$args ) {
+			static function ( Parser $parser, ...$args ) {
 				return '(' . implode( '|', $args ) . ')';
 			}
 		);
@@ -488,12 +488,12 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'halfParsed' )->willReturnCallback(
-			function ( $parser, ...$args ) {
+			static function ( $parser, ...$args ) {
 				return '(' . implode( '|', $args ) . ')';
 			}
 		);
 		$mockErrorReporter->method( 'plain' )->willReturnCallback(
-			function ( $parser, ...$args ) {
+			static function ( $parser, ...$args ) {
 				return '(' . implode( '|', $args ) . ')';
 			}
 		);
@@ -705,7 +705,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 		clone $cite;
 	}
 
-	private function newCite( bool $isSectionPreview = false ) : Cite {
+	private function newCite( bool $isSectionPreview = false ): Cite {
 		$mockOptions = $this->createMock( ParserOptions::class );
 		$mockOptions->method( 'getIsPreview' )->willReturn( false );
 		$mockOptions->method( 'getIsSectionPreview' )->willReturn( $isSectionPreview );

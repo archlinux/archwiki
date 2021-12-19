@@ -4,13 +4,12 @@
  * @ingroup Extensions
  */
 use MediaWiki\MediaWikiServices;
+use Wikimedia\Rdbms\IDatabase;
 
 /**
  * Represents the information about a template,
  * coming from the JSON blob in the <templatedata> tags
  * on wiki pages.
- *
- * @class
  */
 class TemplateDataBlob {
 	/**
@@ -42,6 +41,7 @@ class TemplateDataBlob {
 		'default',
 		'inherits',
 		'type',
+		'suggestedvalues',
 	];
 
 	private const VALID_TYPES = [
@@ -91,7 +91,7 @@ class TemplateDataBlob {
 	 * @param string $json
 	 * @return TemplateDataBlob
 	 */
-	public static function newFromJSON( IDatabase $db, string $json ) : TemplateDataBlob {
+	public static function newFromJSON( IDatabase $db, string $json ): TemplateDataBlob {
 		if ( $db->getType() === 'mysql' ) {
 			$tdb = new TemplateDataCompressedBlob( json_decode( $json ) );
 		} else {
@@ -128,7 +128,7 @@ class TemplateDataBlob {
 	 * @param string $json
 	 * @return TemplateDataBlob
 	 */
-	public static function newFromDatabase( IDatabase $db, string $json ) : TemplateDataBlob {
+	public static function newFromDatabase( IDatabase $db, string $json ): TemplateDataBlob {
 		// Handle GZIP compression. \037\213 is the header for GZIP files.
 		if ( substr( $json, 0, 2 ) === "\037\213" ) {
 			$json = gzdecode( $json );
@@ -142,7 +142,7 @@ class TemplateDataBlob {
 	 * See Specification.md for the expected format of the JSON object.
 	 * @return Status
 	 */
-	protected function parse() : Status {
+	protected function parse(): Status {
 		$data = $this->data;
 
 		if ( $data === null ) {
@@ -367,6 +367,19 @@ class TemplateDataBlob {
 				$paramObj->type = 'unknown';
 			}
 
+			// Param.suggestedvalues
+			if ( isset( $paramObj->suggestedvalues ) ) {
+				if ( !is_array( $paramObj->suggestedvalues ) ) {
+					return Status::newFatal(
+						'templatedata-invalid-type',
+						"params.{$paramName}.suggestedvalues",
+						'array'
+					);
+				}
+			} else {
+				$paramObj->suggestedvalues = [];
+			}
+
 			$paramNames[] = $paramName;
 		}
 
@@ -553,7 +566,7 @@ class TemplateDataBlob {
 	 * @param mixed $text
 	 * @return bool
 	 */
-	private function isValidInterfaceText( $text ) : bool {
+	private function isValidInterfaceText( $text ): bool {
 		if ( $text instanceof stdClass ) {
 			$isEmpty = true;
 			// An (array) cast would return private/protected properties as well
@@ -597,7 +610,7 @@ class TemplateDataBlob {
 	 * @return null|string Text value from the InterfaceText object or null if no suitable
 	 *  match was found
 	 */
-	protected static function getInterfaceTextInLanguage( stdClass $text, string $langCode ) : ?string {
+	protected static function getInterfaceTextInLanguage( stdClass $text, string $langCode ): ?string {
 		if ( isset( $text->$langCode ) ) {
 			return $text->$langCode;
 		}
@@ -626,7 +639,7 @@ class TemplateDataBlob {
 	/**
 	 * @return Status
 	 */
-	public function getStatus() : Status {
+	public function getStatus(): Status {
 		return $this->status;
 	}
 
@@ -697,7 +710,7 @@ class TemplateDataBlob {
 	/**
 	 * @return string JSON
 	 */
-	public function getJSON() : string {
+	public function getJSON(): string {
 		if ( $this->json === null ) {
 			// Cache for repeat calls
 			$this->json = json_encode( $this->data );
@@ -708,7 +721,7 @@ class TemplateDataBlob {
 	/**
 	 * @return string JSON
 	 */
-	public function getJSONForDatabase() : string {
+	public function getJSONForDatabase(): string {
 		return $this->getJSON();
 	}
 
@@ -717,7 +730,7 @@ class TemplateDataBlob {
 	 *
 	 * @return string
 	 */
-	public function getHtml( Language $lang ) : string {
+	public function getHtml( Language $lang ): string {
 		$data = $this->getDataInLanguage( $lang->getCode() );
 		$icon = 'settings';
 		if ( $data->format === null ) {
@@ -730,7 +743,8 @@ class TemplateDataBlob {
 			$formatMsg = 'custom';
 		}
 		$sorting = count( (array)$data->params ) > 1 ? " sortable" : "";
-		$html = Html::element(
+		$html = '<header>'
+			. Html::element(
 				'p',
 				[
 					'class' => [
@@ -741,6 +755,7 @@ class TemplateDataBlob {
 				$data->description ??
 					wfMessage( 'templatedata-doc-desc-empty' )->inLanguage( $lang )->text()
 			)
+			. '</header>'
 			. '<table class="wikitable mw-templatedata-doc-params' . $sorting . '">'
 			. Html::rawElement(
 				'caption',
@@ -818,16 +833,28 @@ class TemplateDataBlob {
 				}
 			}
 
-			$statusClass = '';
+			$suggestedValuesLine = '';
+			if ( count( $paramObj->suggestedvalues ) ) {
+				$suggestedValues = '';
+				foreach ( $paramObj->suggestedvalues as $suggestedValue ) {
+					$suggestedValues .= wfMessage( 'word-separator' )->inLanguage( $lang )->escaped()
+						. Html::element( 'code', [
+							'class' => 'mw-templatedata-doc-param-alias'
+						], $suggestedValue );
+				}
+				$suggestedValuesLine .= Html::element( 'dt', [],
+						wfMessage( 'templatedata-doc-param-suggestedvalues' )->inLanguage( $lang )->text()
+					) . Html::rawElement( 'dd', [], $suggestedValues );
+			}
+
 			if ( $paramObj->deprecated ) {
-				$status = 'templatedata-doc-param-status-deprecated';
+				$status = 'deprecated';
 			} elseif ( $paramObj->required ) {
-				$status = 'templatedata-doc-param-status-required';
-				$statusClass = 'mw-templatedata-doc-param-status-required';
+				$status = 'required';
 			} elseif ( $paramObj->suggested ) {
-				$status = 'templatedata-doc-param-status-suggested';
+				$status = 'suggested';
 			} else {
-				$status = 'templatedata-doc-param-status-optional';
+				$status = 'optional';
 			}
 
 			$html .= '<tr>'
@@ -848,6 +875,8 @@ class TemplateDataBlob {
 						wfMessage( 'templatedata-doc-param-desc-empty' )->inLanguage( $lang )->text()
 				)
 				. Html::rawElement( 'dl', [],
+					// Suggested Values
+					$suggestedValuesLine .
 					// Default
 					( $paramObj->default !== null ? ( Html::element( 'dt', [],
 						wfMessage( 'templatedata-doc-param-default' )->inLanguage( $lang )->text()
@@ -892,14 +921,31 @@ class TemplateDataBlob {
 			// Status
 			. Html::element(
 				'td',
-				[ 'class' => $statusClass ],
-				wfMessage( $status )->inLanguage( $lang )->text()
+				[
+					// CSS class names that can be used here:
+					// mw-templatedata-doc-param-status-deprecated
+					// mw-templatedata-doc-param-status-optional
+					// mw-templatedata-doc-param-status-required
+					// mw-templatedata-doc-param-status-suggested
+					'class' => "mw-templatedata-doc-param-status-$status",
+					'data-sort-value' => [
+						'deprecated' => -1,
+						'suggested' => 1,
+						'required' => 2,
+					][$status] ?? 0,
+				],
+				// Messages that can be used here:
+				// templatedata-doc-param-status-deprecated
+				// templatedata-doc-param-status-optional
+				// templatedata-doc-param-status-required
+				// templatedata-doc-param-status-suggested
+				wfMessage( "templatedata-doc-param-status-$status" )->inLanguage( $lang )->text()
 			)
 			. '</tr>';
 		}
 		$html .= '</tbody></table>';
 
-		return Html::rawElement( 'div', [ 'class' => 'mw-templatedata-doc-wrap' ], $html );
+		return Html::rawElement( 'section', [ 'class' => 'mw-templatedata-doc-wrap' ], $html );
 	}
 
 	/**
@@ -907,7 +953,7 @@ class TemplateDataBlob {
 	 * @param string $wikitext The text to extract parameters from.
 	 * @return string[] Parameter info in the same format as the templatedata 'params' key.
 	 */
-	public static function getRawParams( string $wikitext ) : array {
+	public static function getRawParams( string $wikitext ): array {
 		// Ignore wikitext within nowiki tags and comments
 		$wikitext = preg_replace( '/<!--.*?-->/s', '', $wikitext );
 		$wikitext = preg_replace( '/<nowiki\s*>.*?<\/nowiki\s*>/s', '', $wikitext );

@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"BaRaN6161 TURK"
+			"BaRaN6161 TURK",
+			"SaldırganSincap"
 		]
 	},
-	"pageimages-desc": "Sayfada kullanılan görseller hakkında bilgi toplar",
+	"pageimages-desc": "Sayfada kullanılan resimler hakkında bilgi toplar",
 	"pageimages-info-label": "Sayfa resmi"
 }

@@ -202,7 +202,7 @@ class BoxedCommand extends Command {
 		foreach ( $this->outputGlobs as $name => $glob ) {
 			$outputGlobs[$name] = $glob->getClientData();
 		}
-		// phpcs:ignore Squiz.WhiteSpace.LanguageConstructSpacing.IncorrectSingle
+		// phpcs:ignore Generic.WhiteSpace.LanguageConstructSpacing.IncorrectSingle
 		return
 			[
 				'routeName' => $this->routeName,

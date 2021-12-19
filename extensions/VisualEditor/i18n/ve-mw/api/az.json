@@ -35,6 +35,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Bu açarla əvvəlki serializeforcache sorğusunun nəticəsini istifadə edin. $1html yenidən yazır.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha nömrəsi (captcha cavabı ilə yadda saxlayarkən).",
 	"apihelp-visualeditoredit-param-captchaword": "Captcha-ya cavab (captcha cavabı ilə yadda saxlayarkən).",
+	"apihelp-visualeditoredit-param-plugins": "API sorğusu ilə əlaqəli plaginlər.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "API sorğusu ilə bir plugin tərəfindən göndərilən ixtiyari məlumatlar.",
 	"apihelp-visualeditoredit-param-etag": "Göndərmək üçün ETag.",
 	"apihelp-visualeditoredit-param-html": "Vikimətnə çevirmək üçün Parsoidə göndəriləcək HTML",
 	"apihelp-visualeditoredit-param-minor": "Kiçik redaktə olaraq işarələ",

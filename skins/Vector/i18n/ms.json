@@ -3,8 +3,8 @@
 		"authors": [
 			"Anakmalaysia",
 			"Aurora",
-			"Pizza1016",
-			"Izington"
+			"Izington",
+			"Pizza1016"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -30,5 +30,8 @@
 	"vector-jumptosearch": "Pergi ke carian",
 	"vector-jumptocontent": "Pergi ke kandungan",
 	"vector-more-actions": "Lain",
-	"vector-search-loader": "Memuat cadangan carian"
+	"vector-search-loader": "Memuat cadangan carian",
+	"vector-anon-user-menu-pages": "Halaman untuk penyunting log keluar",
+	"vector-anon-user-menu-pages-learn": "Ketahui lebih lanjut",
+	"vector-personal-more-label": "Pautan pengguna"
 }

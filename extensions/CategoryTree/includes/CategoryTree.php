@@ -21,8 +21,23 @@
  * @ingroup Extensions
  * @author Daniel Kinzler, brightbyte.de
  */
+
+namespace MediaWiki\Extension\CategoryTree;
+
+use Category;
+use Exception;
+use ExtensionRegistry;
+use FormatJson;
+use Html;
+use IContextSource;
+use LinkBatch;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use OutputPage;
+use Parser;
+use RequestContext;
+use SpecialPage;
+use Title;
 
 /**
  * Core functions for the CategoryTree extension, an AJAX based gadget
@@ -317,7 +332,7 @@ class CategoryTree {
 	}
 
 	/**
-	 * Custom tag implementation. This is called by CategoryTreeHooks::parserHook, which is used to
+	 * Custom tag implementation. This is called by Hooks::parserHook, which is used to
 	 * load CategoryTreeFunctions.php on demand.
 	 * @param ?Parser $parser
 	 * @param string $category
@@ -360,29 +375,21 @@ class CategoryTree {
 		$attr['data-ct-mode'] = $this->mOptions['mode'];
 		$attr['data-ct-options'] = $this->getOptionsAsJsStructure();
 
-		$html = '';
-		$html .= Html::openElement( 'div', $attr );
-
 		if ( !$allowMissing && !$title->getArticleID() ) {
-			$html .= Html::openElement( 'span', [ 'class' => 'CategoryTreeNotice' ] );
-			if ( $parser ) {
-				$html .= $parser->recursiveTagParse(
-					wfMessage( 'categorytree-not-found', $category )->plain() );
-			} else {
-				$html .= wfMessage( 'categorytree-not-found', $category )->parse();
-			}
-			$html .= Html::closeElement( 'span' );
+			$html = Html::rawElement( 'span', [ 'class' => 'CategoryTreeNotice' ],
+				wfMessage( 'categorytree-not-found' )
+					->plaintextParams( $category )
+					->parse()
+			);
 		} else {
 			if ( !$hideroot ) {
-				$html .= $this->renderNode( $title, $depth );
+				$html = $this->renderNode( $title, $depth );
 			} else {
-				$html .= $this->renderChildren( $title, $depth );
+				$html = $this->renderChildren( $title, $depth );
 			}
 		}
 
-		$html .= Xml::closeElement( 'div' );
-
-		return $html;
+		return Html::rawElement( 'div', $attr, $html );
 	}
 
 	/**
@@ -538,26 +545,22 @@ class CategoryTree {
 
 		$special = SpecialPage::getTitleFor( 'CategoryTree' );
 
-		$s = '';
+		$s = [];
 
 		foreach ( $res as $row ) {
 			$t = Title::makeTitle( NS_CATEGORY, $row->cl_to );
 
-			if ( $s !== '' ) {
-				$s .= wfMessage( 'pipe-separator' )->escaped();
-			}
-
-			$s .= Xml::openElement( 'span', [ 'class' => 'CategoryTreeItem' ] );
-			$s .= $this->linkRenderer->makeLink(
-				$special,
-				$t->getText(),
-				[ 'class' => 'CategoryTreeLabel' ],
-				[ 'target' => $t->getDBkey() ] + $this->mOptions
+			$s[] = Html::rawElement( 'span', [ 'class' => 'CategoryTreeItem' ],
+				$this->linkRenderer->makeLink(
+					$special,
+					$t->getText(),
+					[ 'class' => 'CategoryTreeLabel' ],
+					[ 'target' => $t->getDBkey() ] + $this->mOptions
+				)
 			);
-			$s .= Xml::closeElement( 'span' );
 		}
 
-		return $s;
+		return implode( wfMessage( 'pipe-separator' )->escaped(), $s );
 	}
 
 	/**
@@ -624,8 +627,8 @@ class CategoryTree {
 		#      Specifically, the CategoryTreeChildren div must be the first
 		#      sibling with nodeName = DIV of the grandparent of the expland link.
 
-		$s .= Xml::openElement( 'div', [ 'class' => 'CategoryTreeSection' ] );
-		$s .= Xml::openElement( 'div', [ 'class' => 'CategoryTreeItem' ] );
+		$s .= Html::openElement( 'div', [ 'class' => 'CategoryTreeSection' ] );
+		$s .= Html::openElement( 'div', [ 'class' => 'CategoryTreeItem' ] );
 
 		$attr = [ 'class' => 'CategoryTreeBullet' ];
 
@@ -640,7 +643,7 @@ class CategoryTree {
 				}
 			}
 			if ( $count === 0 ) {
-				$bullet = wfMessage( 'categorytree-empty-bullet' )->escaped() . ' ';
+				$bullet = '';
 				$attr['class'] = 'CategoryTreeEmptyBullet';
 			} else {
 				$linkattr = [];
@@ -649,23 +652,19 @@ class CategoryTree {
 				$linkattr['data-ct-title'] = $key;
 
 				if ( $children == 0 ) {
-					// Use ->plain() to ensure identical result as JS,
-					// which does:
-					// $link.text( mw.msg( 'categorytree-expand-bullet' ) );
-					$txt = wfMessage( 'categorytree-expand-bullet' )->plain();
 					$linkattr[ 'data-ct-state' ] = 'collapsed';
 				} else {
-					$txt = wfMessage( 'categorytree-collapse-bullet' )->plain();
 					$linkattr[ 'data-ct-loaded' ] = true;
 					$linkattr[ 'data-ct-state' ] = 'expanded';
 				}
 
-				$bullet = Html::element( 'span', $linkattr, $txt ) . ' ';
+				$bullet = Html::element( 'span', $linkattr ) . ' ';
 			}
 		} else {
-			$bullet = wfMessage( 'categorytree-page-bullet' )->escaped();
+			$bullet = '';
+			$attr['class'] = 'CategoryTreePageBullet';
 		}
-		$s .= Xml::tags( 'span', $attr, $bullet ) . ' ';
+		$s .= Html::rawElement( 'span', $attr, $bullet ) . ' ';
 
 		$s .= $link;
 
@@ -673,8 +672,8 @@ class CategoryTree {
 			$s .= self::createCountString( RequestContext::getMain(), $cat, $count );
 		}
 
-		$s .= Xml::closeElement( 'div' );
-		$s .= Xml::openElement(
+		$s .= Html::closeElement( 'div' );
+		$s .= Html::openElement(
 			'div',
 			[
 				'class' => 'CategoryTreeChildren',
@@ -685,23 +684,28 @@ class CategoryTree {
 		if ( $ns == NS_CATEGORY && $children > 0 ) {
 			$children = $this->renderChildren( $title, $children );
 			if ( $children == '' ) {
-				$s .= Xml::openElement( 'i', [ 'class' => 'CategoryTreeNotice' ] );
-				if ( $mode == CategoryTreeMode::CATEGORIES ) {
-					$s .= wfMessage( 'categorytree-no-subcategories' )->escaped();
-				} elseif ( $mode == CategoryTreeMode::PAGES ) {
-					$s .= wfMessage( 'categorytree-no-pages' )->escaped();
-				} elseif ( $mode == CategoryTreeMode::PARENTS ) {
-					$s .= wfMessage( 'categorytree-no-parent-categories' )->escaped();
-				} else {
-					$s .= wfMessage( 'categorytree-nothing-found' )->escaped();
+				switch ( $mode ) {
+					case CategoryTreeMode::CATEGORIES:
+						$msg = 'categorytree-no-subcategories';
+						break;
+					case CategoryTreeMode::PAGES:
+						$msg = 'categorytree-no-pages';
+						break;
+					case CategoryTreeMode::PARENTS:
+						$msg = 'categorytree-no-parent-categories';
+						break;
+					default:
+						$msg = 'categorytree-nothing-found';
+						break;
 				}
-				$s .= Xml::closeElement( 'i' );
-			} else {
-				$s .= $children;
+				$children = Html::element( 'i', [ 'class' => 'CategoryTreeNotice' ],
+					wfMessage( $msg )->text()
+				);
 			}
+			$s .= $children;
 		}
 
-		$s .= Xml::closeElement( 'div' ) . Xml::closeElement( 'div' );
+		$s .= Html::closeElement( 'div' ) . Html::closeElement( 'div' );
 
 		return $s;
 	}
@@ -752,7 +756,7 @@ class CategoryTree {
 
 		# Only $5 is actually used in the default message.
 		# Other arguments can be used in a customized message.
-		$s .= Xml::tags(
+		$s .= Html::rawElement(
 			'span',
 			$attr,
 			$context->msg( 'categorytree-member-num' )
@@ -770,9 +774,9 @@ class CategoryTree {
 	 * @return null|Title
 	 */
 	public static function makeTitle( $title ) {
-		$title = trim( $title );
+		$title = trim( strval( $title ) );
 
-		if ( strval( $title ) === '' ) {
+		if ( $title === '' ) {
 			return null;
 		}
 
@@ -790,7 +794,6 @@ class CategoryTree {
 
 	/**
 	 * Internal function to cap depth
-	 * @suppress PhanPluginDuplicateConditionalNullCoalescing until PHP7 is required
 	 * @param string $mode
 	 * @param int $depth
 	 * @return int|mixed
@@ -798,14 +801,14 @@ class CategoryTree {
 	public static function capDepth( $mode, $depth ) {
 		global $wgCategoryTreeMaxDepth;
 
-		if ( is_numeric( $depth ) ) {
-			$depth = intval( $depth );
-		} else {
+		if ( !is_numeric( $depth ) ) {
 			return 1;
 		}
 
+		$depth = intval( $depth );
+
 		if ( is_array( $wgCategoryTreeMaxDepth ) ) {
-			$max = isset( $wgCategoryTreeMaxDepth[$mode] ) ? $wgCategoryTreeMaxDepth[$mode] : 1;
+			$max = $wgCategoryTreeMaxDepth[$mode] ?? 1;
 		} elseif ( is_numeric( $wgCategoryTreeMaxDepth ) ) {
 			$max = $wgCategoryTreeMaxDepth;
 		} else {

@@ -40,7 +40,7 @@
 	"replacetext_continue": "Continuar",
 	"replacetext_announce": "Anunciar estas edicións por medio de $1 e listas de vixiancia",
 	"replacetext_editsummary": "Substitución de texto: \"$1\" por \"$2\"",
+	"replacetext_reminder": "Para modificar tamén as ligazóns a esta páxina noutras páxinas, vaia a $1.",
 	"right-replacetext": "Facer substitucións de texto en todo o wiki",
-	"action-replacetext": "facer substitucións de texto en todo o wiki",
-	"replacetext_reminder": "Para modificar tamén as ligazóns a esta páxina noutras páxinas, vaia a $1."
+	"action-replacetext": "facer substitucións de texto en todo o wiki"
 }

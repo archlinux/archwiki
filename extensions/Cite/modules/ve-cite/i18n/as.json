@@ -3,7 +3,8 @@
 		"authors": [
 			"Dibya Dutta",
 			"Gitartha.bordoloi",
-			"IKHazarika"
+			"IKHazarika",
+			"Simbu123"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "কিতাপ",
@@ -26,7 +27,7 @@
 	"cite-ve-dialog-referenceslist-title": "তথ্যসূত্ৰৰ তালিকা",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "তথ্যৰ উৎস যোগ দি আপোনাৰ সমল উন্নত কৰে। আপুনি কিতাপ, বাতৰি কাকত আৰু ৱেবছাইটৰ উদ্ধৃতি দিব পাৰে।",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "উদ্ধৃতিসমূহ",
-	"cite-ve-dialogbutton-reference-full-label": "প্ৰাথমিক ৰূপ",
+	"cite-ve-dialogbutton-reference-full-label": "সাধাৰণ",
 	"cite-ve-dialogbutton-reference-title": "তথ্যসংগ্ৰহ",
 	"cite-ve-dialogbutton-reference-tooltip": "সাধাৰণ",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "তথ্যসূত্ৰৰ তালিকা",

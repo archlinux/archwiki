@@ -6,7 +6,8 @@
 			"Casual",
 			"CoderSI",
 			"Nataev",
-			"Sociologist"
+			"Sociologist",
+			"Malikxan"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -21,5 +22,6 @@
 	"vector-view-history": "Tarix",
 	"vector-view-view": "Mutolaa",
 	"vector-view-viewsource": "Manbasini koʻrish",
-	"vector-more-actions": "Yana"
+	"vector-more-actions": "Yana",
+	"tooltip-vector-anon-user-menu-title": "Koʻproq opsiyalar"
 }

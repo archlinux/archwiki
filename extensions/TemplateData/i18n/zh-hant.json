@@ -10,10 +10,11 @@
 			"Simon Shek",
 			"Wehwei",
 			"Xiplus",
-			"Zhxy 519"
+			"Zhxy 519",
+			"Winston Sung"
 		]
 	},
-	"templatedata-desc": "實現模板參數的資料儲存 (使用 JSON)",
+	"templatedata-desc": "實現模板參數的資料儲存（使用 JSON）",
 	"templatedata-doc-desc-empty": "沒有描述。",
 	"templatedata-doc-format-block": "此模板以參數區塊格式為優先。",
 	"templatedata-doc-format-custom": "此模板有自訂格式。",
@@ -30,6 +31,7 @@
 	"templatedata-doc-param-status-optional": "選填",
 	"templatedata-doc-param-status-required": "必填",
 	"templatedata-doc-param-status-suggested": "建議",
+	"templatedata-doc-param-suggestedvalues": "建議值",
 	"templatedata-doc-param-type": "類型",
 	"templatedata-doc-param-type-boolean": "布林值",
 	"templatedata-doc-param-type-content": "內容",
@@ -105,6 +107,8 @@
 	"templatedata-modal-table-param-name": "名稱",
 	"templatedata-modal-table-param-required": "必填",
 	"templatedata-modal-table-param-suggested": "建議",
+	"templatedata-modal-table-param-suggestedvalues": "建議值",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "添加值…",
 	"templatedata-modal-table-param-type": "類型",
 	"templatedata-modal-table-param-uneditablefield": "不可編輯",
 	"templatedata-modal-title": "模板文件編輯器",

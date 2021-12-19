@@ -1,8 +1,10 @@
 var collapsibleTabs = require( '../skins.vector.legacy.js/collapsibleTabs.js' ),
 	vector = require( '../skins.vector.legacy.js/vector.js' ),
+	stickyHeader = require( './stickyHeader.js' ),
 	languageButton = require( './languageButton.js' ),
 	initSearchLoader = require( './searchLoader.js' ).initSearchLoader,
 	dropdownMenus = require( './dropdownMenus.js' ),
+	searchToggle = require( './searchToggle.js' ),
 	sidebar = require( './sidebar.js' );
 
 /**
@@ -42,6 +44,22 @@ function enableCssAnimations( document ) {
  * @return {void}
  */
 function main( window ) {
+	enableCssAnimations( window.document );
+	collapsibleTabs.init();
+	sidebar.init( window );
+	dropdownMenus();
+	vector.init();
+	initSearchLoader( document );
+	searchToggle();
+	languageButton();
+	stickyHeader();
+}
+
+/**
+ * @param {Window} window
+ * @return {void}
+ */
+function init( window ) {
 	var now = mw.now();
 	// This is the earliest time we can run JS for users (and bucket anonymous
 	// users for A/B tests).
@@ -63,13 +81,15 @@ function main( window ) {
 			mw.track( 'timing.Vector.ready', now - window.performance.timing.navigationStart ); // milliseconds
 		}
 	} );
-	enableCssAnimations( window.document );
-	collapsibleTabs.init();
-	sidebar.init( window );
-	dropdownMenus();
-	$( vector.init );
-	initSearchLoader( document );
-	languageButton();
 }
 
-main( window );
+init( window );
+
+if ( document.readyState === 'interactive' || document.readyState === 'complete' ) {
+	main( window );
+} else {
+	// This is needed when document.readyState === 'loading'.
+	document.addEventListener( 'DOMContentLoaded', function () {
+		main( window );
+	} );
+}

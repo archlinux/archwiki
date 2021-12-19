@@ -3,7 +3,8 @@
 namespace PageImages\Tests\Hooks;
 
 use LocalFile;
-use MediaWiki\Rest\Entity\SearchResultPageIdentityValue;
+use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageIdentityValue;
 use MediaWikiTestCase;
 use PageImages\Hooks\SearchResultProvideThumbnailHookHandler;
 use PageImages\PageImages;
@@ -31,7 +32,7 @@ class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiTestCase {
 	): ThumbnailImage {
 		$thumbnail = $this->getMockBuilder( ThumbnailImage::class )
 			->disableOriginalConstructor()
-			->setMethods( [
+			->onlyMethods( [
 				'getLocalCopyPath',
 				'getWidth',
 				'getHeight',
@@ -72,7 +73,7 @@ class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiTestCase {
 	private function getMockLocalFile( int $size, $thumbFilePath ): LocalFile {
 		$file = $this->getMockBuilder( LocalFile::class )
 			->disableOriginalConstructor()
-			->setMethods( [
+			->onlyMethods( [
 				'transform',
 				'getMimeType'
 			] )
@@ -93,14 +94,14 @@ class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiTestCase {
 	public function testProvideThumbnail() {
 		$pageProps = $this->getMockBuilder( PageProps::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'getProperties' ] )
+			->onlyMethods( [ 'getProperties' ] )
 			->getMock();
 
 		$pageIdentities = [
-			1 => new SearchResultPageIdentityValue( 1, NS_MAIN, 'dbKey1' ),
-			2 => new SearchResultPageIdentityValue( 2, NS_MAIN, 'dbKey2' ),
-			3 => new SearchResultPageIdentityValue( 3, NS_FILE, 'dbKey3' ),
-			4 => new SearchResultPageIdentityValue( 4, NS_FILE, 'dbKey4' )
+			1 => new PageIdentityValue( 1, NS_MAIN, 'dbKey1', PageIdentity::LOCAL ),
+			2 => new PageIdentityValue( 2, NS_MAIN, 'dbKey2', PageIdentity::LOCAL ),
+			3 => new PageIdentityValue( 3, NS_FILE, 'dbKey3', PageIdentity::LOCAL ),
+			4 => new PageIdentityValue( 4, NS_FILE, 'dbKey4', PageIdentity::LOCAL )
 		];
 
 		$pageProps->expects( $this->once() )
@@ -119,7 +120,7 @@ class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiTestCase {
 
 		$repoGroup = $this->getMockBuilder( RepoGroup::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'findFile' ] )
+			->onlyMethods( [ 'findFile' ] )
 			->getMock();
 
 		$repoGroup->expects( $this->exactly( 4 ) )

@@ -3,13 +3,14 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Pre;
 
-use DOMDocumentFragment;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Ext\Utils;
+use Wikimedia\Parsoid\Utils\PHPUtils;
 
 /**
  * The `<pre>` extension tag shadows the html pre tag, but has different
@@ -33,7 +34,7 @@ class Pre extends ExtensionTagHandler implements ExtensionModule {
 	/** @inheritDoc */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $txt, array $extArgs
-	): DOMDocumentFragment {
+	): DocumentFragment {
 		$domFragment = $extApi->htmlToDom( '' );
 		$doc = $domFragment->ownerDocument;
 		$pre = $doc->createElement( 'pre' );
@@ -50,7 +51,7 @@ class Pre extends ExtensionTagHandler implements ExtensionModule {
 		// Of course, this leads to indistinguishability between n=0 and n=1
 		// newlines, but that only seems to affect parserTests output.  Rendering
 		// is the same, and the newline is preserved for rt in the `extSrc`.
-		$txt = preg_replace( '/^\n/', '', $txt, 1 );
+		$txt = PHPUtils::stripPrefix( $txt, "\n" );
 
 		// `extSrc` will take care of rt'ing these
 		$txt = Utils::decodeWtEntities( $txt );

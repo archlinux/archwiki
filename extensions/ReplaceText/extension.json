@@ -22,10 +22,10 @@
 		"replacetext"
 	],
 	"SpecialPages": {
-		"ReplaceText": "SpecialReplaceText"
+		"ReplaceText": "MediaWiki\\Extension\\ReplaceText\\SpecialReplaceText"
 	},
 	"JobClasses": {
-		"replaceText": "ReplaceTextJob"
+		"replaceText": "MediaWiki\\Extension\\ReplaceText\\Job"
 	},
 	"MessagesDirs": {
 		"ReplaceText": [
@@ -36,19 +36,11 @@
 		"ext.ReplaceText": {
 			"scripts": [
 				"ext.ReplaceText.js"
-			],
-			"styles": [
-				"ext.ReplaceText.css"
-			],
-			"messages": [
-				"powersearch-togglelabel",
-				"powersearch-toggleall",
-				"powersearch-togglenone"
 			]
 		},
 		"ext.ReplaceTextStyles": {
 			"styles": [
-				"ext.ReplaceTextStyles.css"
+				"ext.ReplaceTextStyles.less"
 			]
 		}
 	},
@@ -59,21 +51,18 @@
 	"ExtensionMessagesFiles": {
 		"ReplaceTextAlias": "ReplaceText.i18n.alias.php"
 	},
-	"AutoloadClasses": {
-		"ReplaceTextHooks": "src/ReplaceTextHooks.php",
-		"SpecialReplaceText": "src/SpecialReplaceText.php",
-		"ReplaceTextJob": "src/ReplaceTextJob.php",
-		"ReplaceTextSearch": "src/ReplaceTextSearch.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\ReplaceText\\": "src/"
 	},
 	"Hooks": {
 		"AdminLinks": [
-			"ReplaceTextHooks::addToAdminLinks"
+			"MediaWiki\\Extension\\ReplaceText\\Hooks::addToAdminLinks"
 		],
 		"SpecialMovepageAfterMove": [
-			"ReplaceTextHooks::replaceTextReminder"
+			"MediaWiki\\Extension\\ReplaceText\\Hooks::replaceTextReminder"
 		],
 		"UserGetReservedNames": [
-			"ReplaceTextHooks::getReservedNames"
+			"MediaWiki\\Extension\\ReplaceText\\Hooks::getReservedNames"
 		]
 	},
 	"config": {

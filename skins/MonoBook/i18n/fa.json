@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Alireza Ivaz",
+			"Jeeputer",
 			"Ladsgroup",
-			"Reza1615",
-			"Jeeputer"
+			"Reza1615"
 		]
 	},
 	"skinname-monobook": "مونوبوک",
@@ -18,6 +18,5 @@
 	"monobook-more-actions": "بیشتر",
 	"monobook-cactions-label": "کنش‌های صفحه",
 	"monobook-notifications-link": "آگاه‌سازی‌ها ($1)",
-	"monobook-notifications-link-none": "آگاه‌سازی‌ها",
-	"monobook-responsive-label": "فعال‌سازی طرح واکنش‌گرای مونوبوک"
+	"monobook-notifications-link-none": "آگاه‌سازی‌ها"
 }

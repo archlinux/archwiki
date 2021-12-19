@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Quintino Lopes Castro Tavares"
+			"Quintino Lopes Castro Tavares",
+			"Waldyrious"
 		]
 	},
-	"scribunto-lua-error": "Eru na Lua: $2."
+	"scribunto-lua-error": "Eru na Lua: $2.",
+	"nstab-module": "Módulu"
 }

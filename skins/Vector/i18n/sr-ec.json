@@ -35,5 +35,12 @@
 	"vector-jumptosearch": "Пређи на претрагу",
 	"vector-jumptocontent": "Пређи на садржај",
 	"vector-more-actions": "Више",
-	"vector-search-loader": "Учитавам предлоге претраге"
+	"vector-search-loader": "Учитавам предлоге претраге",
+	"vector-anon-user-menu-pages": "Странице за одјављене уреднике",
+	"vector-anon-user-menu-pages-learn": "детаљније",
+	"vector-personal-more-label": "Кориснички линкови",
+	"vector-main-menu-tooltip": "Главни мени",
+	"tooltip-vector-anon-user-menu-title": "Више опција",
+	"vector-menu-checkbox-expanded": "проширено",
+	"vector-menu-checkbox-collapsed": "скупљено"
 }

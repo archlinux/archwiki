@@ -94,32 +94,4 @@ class GadgetDefinitionContent extends JsonContent {
 
 		return $info;
 	}
-
-	/**
-	 * @param WikiPage $page
-	 * @param ParserOutput|null $parserOutput
-	 * @return DeferrableUpdate[]
-	 */
-	public function getDeletionUpdates( WikiPage $page, ParserOutput $parserOutput = null ) {
-		return array_merge(
-			parent::getDeletionUpdates( $page, $parserOutput ),
-			[ new GadgetDefinitionDeletionUpdate( $page->getTitle() ) ]
-		);
-	}
-
-	/**
-	 * @param Title $title
-	 * @param Content|null $old
-	 * @param bool $recursive
-	 * @param ParserOutput|null $parserOutput
-	 * @return DataUpdate[]
-	 */
-	public function getSecondaryDataUpdates( Title $title, Content $old = null,
-		$recursive = true, ParserOutput $parserOutput = null
-	) {
-		return array_merge(
-			parent::getSecondaryDataUpdates( $title, $old, $recursive, $parserOutput ),
-			[ new GadgetDefinitionSecondaryDataUpdate( $title ) ]
-		);
-	}
 }

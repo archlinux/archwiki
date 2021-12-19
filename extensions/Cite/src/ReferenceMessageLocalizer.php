@@ -29,7 +29,7 @@ class ReferenceMessageLocalizer implements MessageLocalizer {
 	 *
 	 * @return string
 	 */
-	public function localizeSeparators( string $number ) : string {
+	public function localizeSeparators( string $number ): string {
 		// Filter to make sure characters are never removed
 		return strtr( $number, array_filter( $this->language->separatorTransformTable() ?: [] ) );
 	}
@@ -41,7 +41,7 @@ class ReferenceMessageLocalizer implements MessageLocalizer {
 	 *
 	 * @return string
 	 */
-	public function localizeDigits( string $number ) : string {
+	public function localizeDigits( string $number ): string {
 		return $this->language->formatNumNoSeparators( $number );
 	}
 
@@ -60,7 +60,7 @@ class ReferenceMessageLocalizer implements MessageLocalizer {
 	 *
 	 * @return Message
 	 */
-	public function msg( $key, ...$params ) : Message {
+	public function msg( $key, ...$params ): Message {
 		return wfMessage( $key, ...$params )->inLanguage( $this->language );
 	}
 

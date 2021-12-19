@@ -61,6 +61,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "{{doc-apihelp-param|visualeditoredit|cachekey}}",
 	"apihelp-visualeditoredit-param-captchaid": "{{doc-apihelp-param|visualeditoredit|captchaid}}",
 	"apihelp-visualeditoredit-param-captchaword": "{{doc-apihelp-param|visualeditoredit|captchaword}}",
+	"apihelp-visualeditoredit-param-plugins": "{{doc-apihelp-param|visualeditoredit|plugins}}",
+	"apihelp-visualeditoredit-param-data-{plugin}": "{{doc-apihelp-param|visualeditoredit|data-&#x7B;plugin} }}",
 	"apihelp-visualeditoredit-param-etag": "{{doc-apihelp-param|visualeditoredit|etag}}",
 	"apihelp-visualeditoredit-param-html": "{{doc-apihelp-param|visualeditoredit|html}}",
 	"apihelp-visualeditoredit-param-minor": "{{doc-apihelp-param|visualeditoredit|minor}}",

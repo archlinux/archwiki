@@ -45,7 +45,7 @@
 	"replacetext_continue": "Pokračovat",
 	"replacetext_announce": "Zobrazit tyto editace na $1 a v seznamech sledovaných stránek",
 	"replacetext_editsummary": "Nahrazení textu „$1“ textem „$2“",
+	"replacetext_reminder": "Pokud také chcete na jiných stránkách upravit odkazy na tuto stránku, jděte na $1.",
 	"right-replacetext": "Hledání a nahrazování textu na celé wiki",
-	"action-replacetext": "nahrazovat text na celé wiki",
-	"replacetext_reminder": "Pokud také chcete na jiných stránkách upravit odkazy na tuto stránku, jděte na $1."
+	"action-replacetext": "nahrazovat text na celé wiki"
 }

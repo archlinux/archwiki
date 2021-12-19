@@ -12,13 +12,15 @@
  * @extends OO.ui.PageLayout
  *
  * @constructor
- * @param {ve.dm.MWTransclusionContentModel} content Transclusion content
+ * @param {ve.dm.MWTransclusionContentModel} content
  * @param {string} name Unique symbolic name of page
  * @param {Object} [config] Configuration options
  * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
  * @cfg {boolean} [isReadOnly] Page is read-only
  */
 ve.ui.MWTransclusionContentPage = function VeUiMWTransclusionContentPage( content, name, config ) {
+	var veConfig = mw.config.get( 'wgVisualEditorConfig' );
+
 	// Configuration initialization
 	config = ve.extendObject( {
 		scrollable: false
@@ -33,19 +35,14 @@ ve.ui.MWTransclusionContentPage = function VeUiMWTransclusionContentPage( conten
 		autosize: true,
 		classes: [ 've-ui-mwTransclusionDialog-input' ]
 	} )
-		.setValue( this.content.getValue() )
+		.setValue( this.content.serialize() )
 		.setReadOnly( config.isReadOnly )
 		.connect( this, { change: 'onTextInputChange' } );
-	this.removeButton = new OO.ui.ButtonWidget( {
-		framed: false,
-		icon: 'trash',
-		title: ve.msg( 'visualeditor-dialog-transclusion-remove-content' ),
-		flags: [ 'destructive' ],
-		classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
-	} )
-		.connect( this, { click: 'onRemoveButtonClick' } );
 	this.valueFieldset = new OO.ui.FieldsetLayout( {
-		label: ve.msg( 'visualeditor-dialog-transclusion-content' ),
+		label: ve.msg( veConfig.transclusionDialogNewSidebar ?
+			'visualeditor-dialog-transclusion-wikitext' :
+			'visualeditor-dialog-transclusion-content'
+		),
 		icon: 'wikiText',
 		$content: this.textInput.$element
 	} );
@@ -55,8 +52,17 @@ ve.ui.MWTransclusionContentPage = function VeUiMWTransclusionContentPage( conten
 		.addClass( 've-ui-mwTransclusionContentPage' )
 		.append( this.valueFieldset.$element );
 
-	if ( !config.isReadOnly ) {
-		this.$element.append( this.removeButton.$element );
+	if ( !config.isReadOnly && !veConfig.transclusionDialogNewSidebar ) {
+		var removeButton = new OO.ui.ButtonWidget( {
+			framed: false,
+			icon: 'trash',
+			title: ve.msg( 'visualeditor-dialog-transclusion-remove-content' ),
+			flags: [ 'destructive' ],
+			classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
+		} )
+			.connect( this, { click: 'onRemoveButtonClick' } );
+
+		removeButton.$element.appendTo( this.$element );
 	}
 };
 
@@ -83,7 +89,7 @@ ve.ui.MWTransclusionContentPage.prototype.setOutlineItem = function () {
 };
 
 ve.ui.MWTransclusionContentPage.prototype.onTextInputChange = function () {
-	this.content.setValue( this.textInput.getValue() );
+	this.content.setWikitext( this.textInput.getValue() );
 };
 
 ve.ui.MWTransclusionContentPage.prototype.onRemoveButtonClick = function () {

@@ -38,6 +38,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Përdorni përfundimin e një kërkese serializeforcache të mëparshme me këtë kyç. Anashkalon $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (kur ruajtja bëhet përmes një përgjigjeje për captcha-n)",
 	"apihelp-visualeditoredit-param-captchaword": "Përgjigjuni captcha-s (kur ruajtja bëhet përmes një përgjigjeje për captcha-n)",
+	"apihelp-visualeditoredit-param-plugins": "Shtojca të përshoqëruara me kërkesën ndaj API-t",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Të dhëna arbitrare të dërguara nga një shtojcë me kërkesën ndaj API-t.",
 	"apihelp-visualeditoredit-param-etag": "ETag për t’u dërguar.",
 	"apihelp-visualeditoredit-param-html": "HTML që duhet dërguar te Parsoid-i për të marrë tekst wiki.",
 	"apihelp-visualeditoredit-param-minor": "I vini shenjë për përpunim të vockël.",

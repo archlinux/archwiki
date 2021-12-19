@@ -136,20 +136,12 @@ ve.ce.MWBlockImageNode.prototype.updateClasses = function ( oldAlign ) {
 	// Border
 	this.$element.toggleClass( 'mw-image-border', !!this.model.getAttribute( 'borderImage' ) );
 
-	switch ( alignClass ) {
-		case 'mw-halign-right':
-			this.showHandles( [ 'sw' ] );
-			break;
-		case 'mw-halign-left':
-			this.showHandles( [ 'se' ] );
-			break;
-		case 'mw-halign-center':
-			this.showHandles( [ 'sw', 'se' ] );
-			break;
-		default:
-			this.showHandles();
-			break;
-	}
+	this.showHandles( {
+		'mw-halign-right': [ 'sw' ],
+		'mw-halign-left': [ 'se' ],
+		'mw-halign-center': [ 'sw', 'se' ]
+		// Defaults to undefined
+	}[ alignClass ] );
 };
 
 /**

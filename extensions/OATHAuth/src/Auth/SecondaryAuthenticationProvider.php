@@ -71,13 +71,18 @@ class SecondaryAuthenticationProvider extends AbstractSecondaryAuthenticationPro
 
 	/**
 	 * @param IModule $module
-	 * @return SecondaryAuthenticationProvider
+	 * @return AbstractSecondaryAuthenticationProvider
 	 */
 	private function getProviderForModule( IModule $module ) {
 		$provider = $module->getSecondaryAuthProvider();
-		$provider->setLogger( $this->logger );
-		$provider->setManager( $this->manager );
-		$provider->setConfig( $this->config );
+		$services = MediaWikiServices::getInstance();
+		$provider->init(
+			$this->logger,
+			$this->manager,
+			$services->getHookContainer(),
+			$this->config,
+			$services->getUserNameUtils()
+		);
 		return $provider;
 	}
 }

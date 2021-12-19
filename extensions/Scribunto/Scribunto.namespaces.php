@@ -48,6 +48,11 @@ $namespaceNames['avk'] = [
 	829 => 'Sibaprilara',
 ];
 
+$namespaceNames['az'] = [
+	828 => 'Modul',
+	829 => 'Modul_müzakirəsi',
+];
+
 $namespaceNames['azb'] = [
 	828 => 'ماژول',
 	829 => 'ماژول_دانیشیغی',
@@ -360,6 +365,12 @@ $namespaceNames['mr'] = [
 
 $namespaceNames['ms'] = [
 	828 => 'Modul',
+	829 => 'Perbincangan_modul',
+];
+
+$namespaceNames['ms-arab'] = [
+	828 => 'مودول',
+	829 => 'ڤربينچڠن_مودول',
 ];
 
 $namespaceNames['mwl'] = [
@@ -544,7 +555,7 @@ $namespaceNames['te'] = [
 
 $namespaceNames['ti'] = [
 	828 => 'ሞድዩል',
-	829 => 'ሞድዩል_ምይይጥ',
+	829 => 'ምይይጥ_ሞድዩል',
 ];
 
 $namespaceNames['tg'] = [

@@ -39,16 +39,22 @@ class Hooks {
 	}
 
 	/**
-	 * Passes config variables to skins.vector.search ResourceLoader module.
+	 * Generates config variables for skins.vector.search Resource Loader module (defined in
+	 * skin.json).
+	 *
 	 * @param ResourceLoaderContext $context
 	 * @param Config $config
-	 * @return array
+	 * @return array<string,mixed>
 	 */
 	public static function getVectorWvuiSearchResourceLoaderConfig(
 		ResourceLoaderContext $context,
 		Config $config
-	) {
-		return $config->get( 'VectorWvuiSearchOptions' );
+	): array {
+		$result = $config->get( 'VectorWvuiSearchOptions' );
+		$result['highlightQuery'] =
+			VectorServices::getLanguageService()->canWordsBeSplitSafely( $context->getLanguage() );
+
+		return $result;
 	}
 
 	/**
@@ -83,21 +89,185 @@ class Hooks {
 	}
 
 	/**
-	 * Add icon class to an existing navigation item inside a menu hook.
-	 * See self::onSkinTemplateNavigation.
-	 * @param array $item
-	 * @return array
+	 * Transforms watch item inside the action navigation menu
+	 *
+	 * @param array &$content_navigation
 	 */
-	private static function navigationLinkToIcon( array $item ) {
-		if ( !isset( $item['class'] ) ) {
-			$item['class'] = '';
+	private static function updateActionsMenu( &$content_navigation ) {
+		$key = null;
+		if ( isset( $content_navigation['actions']['watch'] ) ) {
+			$key = 'watch';
 		}
-		$item['class'] = rtrim( 'icon ' . $item['class'], ' ' );
-		return $item;
+		if ( isset( $content_navigation['actions']['unwatch'] ) ) {
+			$key = 'unwatch';
+		}
+
+		// Promote watch link from actions to views and add an icon
+		if ( $key !== null ) {
+			self::appendClassToListItem(
+				$content_navigation['actions'][$key],
+				'icon'
+			);
+			$content_navigation['views'][$key] = $content_navigation['actions'][$key];
+			unset( $content_navigation['actions'][$key] );
+		}
+	}
+
+	/**
+	 * Updates class list on list item
+	 *
+	 * @param array &$item to update for use in makeListItem
+	 * @param array $classes to add to the item
+	 * @param bool $applyToLink (optional) and defaults to false.
+	 *   If set will modify `link-class` instead of `class`
+	 */
+	private static function addListItemClass( &$item, $classes, $applyToLink = false ) {
+		$property = $applyToLink ? 'link-class' : 'class';
+		$existingClass = $item[$property] ?? [];
+
+		if ( is_array( $existingClass ) ) {
+			$item[$property] = array_merge( $existingClass, $classes );
+		} elseif ( is_string( $existingClass ) ) {
+			// treat as string
+			$item[$property] = array_merge( [ $existingClass ], $classes );
+		} else {
+			$item[$property] = $classes;
+		}
+	}
+
+	/**
+	 * Updates the class on an existing item taking into account whether
+	 * a class exists there already.
+	 *
+	 * @param array &$item
+	 * @param string $newClass
+	 */
+	private static function appendClassToListItem( &$item, $newClass ) {
+		self::addListItemClass( $item, [ $newClass ] );
+	}
+
+	/**
+	 * Adds an icon to the list item of a menu.
+	 *
+	 * @param array &$item
+	 * @param string $icon_name
+	 */
+	private static function addIconToListItem( &$item, $icon_name ) {
+		// Set the default menu icon classes.
+		$menu_icon_classes = [ 'mw-ui-icon', 'mw-ui-icon-before', 'mw-ui-icon-wikimedia-' . $icon_name ];
+		self::addListItemClass( $item, $menu_icon_classes, true );
+	}
+
+	/**
+	 * Updates personal navigation menu (user links) for modern Vector wherein user page, create account and login links
+	 * are removed from the dropdown to be handled separately. In legacy Vector, the custom "user-page" bucket is
+	 * removed to preserve existing behavior.
+	 *
+	 * @param SkinTemplate $sk
+	 * @param array &$content_navigation
+	 */
+	private static function updateUserLinksItems( $sk, &$content_navigation ) {
+		$COLLAPSE_MENU_ITEM_CLASS = 'user-links-collapsible-item';
+
+		// For logged-in users in modern Vector, rearrange some links in the personal toolbar.
+		if ( $sk->loggedin ) {
+			// Remove user page from personal menu dropdown for logged in users at higher resolutions.
+			self::appendClassToListItem(
+				$content_navigation['user-menu']['userpage'],
+				$COLLAPSE_MENU_ITEM_CLASS
+			);
+			// Remove logout link from user-menu and recreate it in SkinVector,
+			unset( $content_navigation['user-menu']['logout'] );
+			// Don't show icons for anon menu items (besides login and create account).
+			// Prefix user link items with associated icon.
+			$user_menu = $content_navigation['user-menu'];
+			// Loop through each menu to check/append its link classes.
+			foreach ( $user_menu as $menu_key => $menu_value ) {
+				$icon_name = $menu_value['icon'] ?? '';
+				self::addIconToListItem( $content_navigation['user-menu'][$menu_key], $icon_name );
+			}
+		} else {
+			// Remove "Not logged in" from personal menu dropdown for anon users.
+			unset( $content_navigation['user-menu']['anonuserpage'] );
+			// "Create account" link is handled manually by Vector
+			unset( $content_navigation['user-menu']['createaccount'] );
+			// "Login" link is handled manually by Vector
+			unset( $content_navigation['user-menu']['login'] );
+			// Remove duplicate "Login" link added by SkinTemplate::buildPersonalUrls if group read permissions
+			// are set to false.
+			unset( $content_navigation['user-menu']['login-private'] );
+		}
+
+		// ULS and user page links are hidden at lower resolutions.
+		if ( $content_navigation['user-interface-preferences'] ) {
+			self::appendClassToListItem(
+				$content_navigation['user-interface-preferences']['uls'],
+				$COLLAPSE_MENU_ITEM_CLASS
+			);
+		}
+		if ( $content_navigation['user-page'] ) {
+			self::appendClassToListItem(
+				$content_navigation['user-page']['userpage'],
+				$COLLAPSE_MENU_ITEM_CLASS
+			);
+
+			// Style the user page link as mw-ui-button.
+			self::addListItemClass(
+				$content_navigation['user-page']['userpage'],
+				[ 'mw-ui-button',  'mw-ui-quiet' ],
+				true
+			);
+		}
+	}
+
+	/**
+	 * Make an icon
+	 *
+	 * @internal for use inside Vector skin.
+	 * @param string $name
+	 * @return string of HTML
+	 */
+	public static function makeIcon( $name ) {
+		// Html::makeLink will pass this through rawElement
+		return '<span class="mw-ui-icon mw-ui-icon-' . $name . '"></span>';
+	}
+
+	/**
+	 * Updates user interface preferences for modern Vector to upgrade icon/button menu items.
+	 *
+	 * @param SkinTemplate $sk
+	 * @param array &$content_navigation
+	 * @param string $menu identifier
+	 */
+	private static function updateMenuItems( $sk, &$content_navigation, $menu ) {
+		foreach ( $content_navigation[$menu] as $key => $item ) {
+			$hasButton = $item['button'] ?? false;
+			$hideText = $item['text-hidden'] ?? false;
+			$icon = $item['icon'] ?? '';
+			unset( $item['button'] );
+			unset( $item['icon'] );
+			unset( $item['text-hidden'] );
+
+			if ( $hasButton ) {
+				$item['link-class'][] = 'mw-ui-button mw-ui-quiet';
+			}
+
+			if ( $icon ) {
+				if ( $hideText ) {
+					$item['link-class'][] = 'mw-ui-icon mw-ui-icon-element mw-ui-icon-' . $icon;
+				} else {
+					$item['link-html'] = self::makeIcon( $icon );
+				}
+			}
+			$content_navigation[$menu][$key] = $item;
+		}
 	}
 
 	/**
 	 * Upgrades Vector's watch action to a watchstar.
+	 * This is invoked inside SkinVector, not via skin registration, as skin hooks
+	 * are not guaranteed to run last.
+	 * This can possibly be revised based on the outcome of T287622.
 	 *
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/SkinTemplateNavigation
 	 * @param SkinTemplate $sk
@@ -105,25 +275,39 @@ class Hooks {
 	 */
 	public static function onSkinTemplateNavigation( $sk, &$content_navigation ) {
 		$title = $sk->getRelevantTitle();
-		if (
-			$sk->getConfig()->get( 'VectorUseIconWatch' ) &&
-			$sk->getSkinName() === 'vector' &&
-			$title && $title->canExist()
-		) {
-			$key = null;
-			if ( isset( $content_navigation['actions']['watch'] ) ) {
-				$key = 'watch';
-			}
-			if ( isset( $content_navigation['actions']['unwatch'] ) ) {
-				$key = 'unwatch';
+
+		if ( $sk->getSkinName() === 'vector' ) {
+			if (
+				$sk->getConfig()->get( 'VectorUseIconWatch' ) &&
+				$title && $title->canExist()
+			) {
+				self::updateActionsMenu( $content_navigation );
 			}
 
-			// Promote watch link from actions to views and add an icon
-			if ( $key !== null ) {
-				$content_navigation['views'][$key] = self::navigationLinkToIcon(
-					$content_navigation['actions'][$key]
-				);
-				unset( $content_navigation['actions'][$key] );
+			if ( isset( $content_navigation['user-menu'] ) ) {
+				if ( self::isSkinVersionLegacy() ) {
+					// Remove user page from personal toolbar since it will be inside the personal menu for logged-in
+					// users in legacy Vector.
+					unset( $content_navigation['user-page'] );
+				} else {
+					// For modern Vector, rearrange some links in the personal toolbar.
+					self::updateUserLinksItems( $sk, $content_navigation );
+				}
+			}
+
+			if ( !self::isSkinVersionLegacy() ) {
+				// Upgrade preferences and notifications to icon buttons
+				// for extensions that have opted in.
+				if ( isset( $content_navigation['user-interface-preferences'] ) ) {
+					self::updateMenuItems(
+						$sk, $content_navigation, 'user-interface-preferences'
+					);
+				}
+				if ( isset( $content_navigation['notifications'] ) ) {
+					self::updateMenuItems(
+						$sk, $content_navigation, 'notifications'
+					);
+				}
 			}
 		}
 	}
@@ -200,7 +384,8 @@ class Hooks {
 		if ( !$isVectorEnabled && array_key_exists( Constants::PREF_KEY_SKIN_VERSION, $oldPreferences ) ) {
 			// The setting was cleared. However, this is likely because a different skin was chosen and
 			// the skin version preference was hidden.
-			$user->setOption(
+			MediaWikiServices::getInstance()->getUserOptionsManager()->setOption(
+				$user,
 				Constants::PREF_KEY_SKIN_VERSION,
 				$oldPreferences[ Constants::PREF_KEY_SKIN_VERSION ]
 			);
@@ -217,7 +402,11 @@ class Hooks {
 		$default = self::getConfig( Constants::CONFIG_KEY_DEFAULT_SKIN_VERSION_FOR_NEW_ACCOUNTS );
 		// Permanently set the default preference. The user can later change this preference, however,
 		// self::onLocalUserCreated() will not be executed for that account again.
-		$user->setOption( Constants::PREF_KEY_SKIN_VERSION, $default );
+		MediaWikiServices::getInstance()->getUserOptionsManager()->setOption(
+			$user,
+			Constants::PREF_KEY_SKIN_VERSION,
+			$default
+		);
 	}
 
 	/**

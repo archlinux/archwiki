@@ -22,7 +22,7 @@ class StackLayout extends PanelLayout {
 			'preserveContent' => false,
 			'continuous' => false,
 			'items' => [],
-			'scrollable' => !empty( $config['continuous'] ) && $config['continuous']
+			'scrollable' => $config['continuous'] ?? false
 		], $config );
 
 		// Parent constructor

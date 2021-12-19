@@ -54,14 +54,14 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 		$context->setLanguage( 'fr' );
 		$vectorTemplate = $this->provideVectorTemplateObject();
 		$this->setTemporaryHook( 'PersonalUrls', [
-			function ( &$personal_urls, &$title, $skin ) {
+			static function ( &$personal_urls, &$title, $skin ) {
 				$personal_urls = [
 					'pt-1' => [ 'text' => 'pt1' ],
 				];
 			}
 		] );
-		$this->setTemporaryHook( 'SkinTemplateNavigation', [
-			function ( &$skinTemplate, &$content_navigation ) {
+		$this->setTemporaryHook( 'SkinTemplateNavigation::Universal', [
+			static function ( &$skinTemplate, &$content_navigation ) {
 				$content_navigation['actions'] = [
 					'action-1' => []
 				];
@@ -69,7 +69,13 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 					'ns-1' => []
 				];
 				$content_navigation['variants'] = [
-					'variant-1' => []
+					[
+						'class' => 'selected',
+						'text' => 'Language variant',
+						'href' => '/url/to/variant',
+						'lang' => 'zh-hant',
+						'hreflang' => 'zh-hant',
+					]
 				];
 				$content_navigation['views'] = [];
 			}
@@ -88,6 +94,7 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 				'html-tooltip' => '',
 				'html-items' => '',
 				'html-after-portal' => '',
+				'html-before-portal' => '',
 				'label' => $context->msg( 'views' )->text(),
 				'heading-class' => 'vector-menu-heading',
 				'is-dropdown' => false,
@@ -102,15 +109,15 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 			$namespaces['class']
 		);
 		$this->assertSame(
-			'mw-portlet mw-portlet-variants vector-menu vector-menu-dropdown',
+			'mw-portlet mw-portlet-variants vector-menu-dropdown-noicon vector-menu vector-menu-dropdown',
 			$variants['class']
 		);
 		$this->assertSame(
-			'mw-portlet mw-portlet-cactions vector-menu vector-menu-dropdown',
+			'mw-portlet mw-portlet-cactions vector-menu-dropdown-noicon vector-menu vector-menu-dropdown',
 			$actions['class']
 		);
 		$this->assertSame(
-			'mw-portlet mw-portlet-personal vector-menu',
+			'mw-portlet mw-portlet-personal vector-user-menu-legacy vector-menu',
 			$props['data-personal']['class']
 		);
 	}

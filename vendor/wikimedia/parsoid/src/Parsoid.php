@@ -5,7 +5,6 @@ namespace Wikimedia\Parsoid;
 
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
-use DOMDocument;
 use InvalidArgumentException;
 use LogicException;
 use Wikimedia\Parsoid\Config\DataAccess;
@@ -13,7 +12,9 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\PageBundle;
+use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\SelserData;
+use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Language\LanguageConverter;
 use Wikimedia\Parsoid\Logger\LintLogger;
 use Wikimedia\Parsoid\Tokens\Token;
@@ -32,7 +33,7 @@ class Parsoid {
 	 * @see https://www.mediawiki.org/wiki/Parsoid/API#Content_Negotiation
 	 * @see https://www.mediawiki.org/wiki/Specs/HTML#Versioning
 	 */
-	public const AVAILABLE_VERSIONS = [ '2.2.0', '999.0.0' ];
+	public const AVAILABLE_VERSIONS = [ '2.3.0', '999.0.0' ];
 
 	private const DOWNGRADES = [
 		[ 'from' => '999.0.0', 'to' => '2.0.0', 'func' => 'downgrade999to2' ],
@@ -153,10 +154,13 @@ class Parsoid {
 		$env = new Env(
 			$this->siteConfig, $pageConfig, $this->dataAccess, $envOptions
 		);
-		$env->bumpWt2HtmlResourceUse(
-			# Should perhaps be strlen instead (or cached!): T239841
-			'wikitextSize', mb_strlen( $pageConfig->getPageMainContent() )
-		);
+		if ( !$env->compareWt2HtmlLimit(
+			'wikitextSize', strlen( $pageConfig->getPageMainContent() )
+		) ) {
+			throw new ResourceLimitExceededException(
+				"wt2html: wikitextSize limit exceeded"
+			);
+		}
 		$contentmodel = $options['contentmodel'] ?? null;
 		$handler = $env->getContentHandler( $contentmodel );
 		return [ $env, $handler->toDOM( $env ), $contentmodel ];
@@ -239,7 +243,7 @@ class Parsoid {
 	 * Serialize DOM to wikitext.
 	 *
 	 * @param PageConfig $pageConfig
-	 * @param DOMDocument $doc Data attributes are expected to have been applied
+	 * @param Document $doc Data attributes are expected to have been applied
 	 *   already.  Loading them will happen once the environment is created.
 	 * @param array $options [
 	 *   'scrubWikitext'       => (bool) Indicates emit "clean" wikitext.
@@ -261,7 +265,7 @@ class Parsoid {
 	 * @return string
 	 */
 	public function dom2wikitext(
-		PageConfig $pageConfig, DOMDocument $doc, array $options = [],
+		PageConfig $pageConfig, Document $doc, array $options = [],
 		?SelserData $selserData = null
 	): string {
 		$envOptions = $this->setupCommonOptions( $options );
@@ -347,7 +351,7 @@ class Parsoid {
 				);
 			}
 			// Update content-language and vary headers.
-			$ensureHeader = function ( string $h ) use ( $doc ) {
+			$ensureHeader = static function ( string $h ) use ( $doc ) {
 				$el = DOMCompat::querySelector( $doc, "meta[http-equiv=\"{$h}\"i]" );
 				if ( !$el ) {
 					$el = $doc->createElement( 'meta' );
@@ -465,7 +469,8 @@ class Parsoid {
 				// FIXME: Maybe this should be a helper to avoid the rt
 				$doc = DOMUtils::parseHTML( $pageBundle->html );
 				// Match the http-equiv meta to the content-type header
-				$meta = DOMCompat::querySelector( $doc, 'meta[property="mw:html:version"]' );
+				$meta = DOMCompat::querySelector( $doc,
+					'meta[property="mw:htmlVersion"], meta[property="mw:html:version"]' );
 				if ( $meta ) {
 					$meta->setAttribute( 'content', $pageBundle->version );
 					$pageBundle->html = ContentUtils::toXML( $doc );

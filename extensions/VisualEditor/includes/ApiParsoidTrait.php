@@ -28,7 +28,7 @@ trait ApiParsoidTrait {
 	/**
 	 * @return LoggerInterface
 	 */
-	protected function getLogger() : LoggerInterface {
+	protected function getLogger(): LoggerInterface {
 		return $this->logger ?: new NullLogger();
 	}
 
@@ -49,7 +49,7 @@ trait ApiParsoidTrait {
 	 *
 	 * @return VirtualRESTService the VirtualRESTService object to use
 	 */
-	protected function getVRSObject() : VirtualRESTService {
+	protected function getVRSObject(): VirtualRESTService {
 		global $wgVisualEditorParsoidAutoConfig;
 		// the params array to create the service object with
 		$params = [];
@@ -96,7 +96,7 @@ trait ApiParsoidTrait {
 	 *
 	 * @return VirtualRESTServiceClient
 	 */
-	protected function getVRSClient() : VirtualRESTServiceClient {
+	protected function getVRSClient(): VirtualRESTServiceClient {
 		if ( !$this->serviceClient ) {
 			$this->serviceClient = new VirtualRESTServiceClient(
 				MediaWikiServices::getInstance()->getHttpRequestFactory()->createMultiClient() );
@@ -117,18 +117,9 @@ trait ApiParsoidTrait {
 	 */
 	protected function requestRestbase(
 		Title $title, string $method, string $path, array $params, array $reqheaders = []
-	) : array {
-		$request = [
-			'method' => $method,
-			'url' => '/restbase/local/v1/' . $path
-		];
-		if ( $method === 'GET' ) {
-			$request['query'] = $params;
-		} else {
-			$request['body'] = $params;
-		}
+	): array {
 		// Should be synchronised with modules/ve-mw/init/ve.init.mw.ArticleTargetLoader.js
-		$defaultReqHeaders = [
+		$reqheaders += [
 			'Accept' =>
 				'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.0.0"',
 			'Accept-Language' => self::getPageLanguage( $title )->getCode(),
@@ -136,20 +127,19 @@ trait ApiParsoidTrait {
 			'Api-User-Agent' => 'VisualEditor-MediaWiki/' . MW_VERSION,
 			'Promise-Non-Write-API-Action' => 'true',
 		];
-		// $reqheaders take precedence over $defaultReqHeaders
-		$request['headers'] = $reqheaders + $defaultReqHeaders;
+		$request = [
+			'method' => $method,
+			'url' => '/restbase/local/v1/' . $path,
+			( $method === 'GET' ? 'query' : 'body' ) => $params,
+			'headers' => $reqheaders,
+		];
 		$response = $this->getVRSClient()->run( $request );
 		if ( $response['code'] === 200 && $response['error'] === "" ) {
 			// If response was served directly from Varnish, use the response
 			// (RP) header to declare the cache hit and pass the data to the client.
 			$headers = $response['headers'];
-			$rp = null;
 			if ( isset( $headers['x-cache'] ) && strpos( $headers['x-cache'], 'hit' ) !== false ) {
-				$rp = 'cached-response=true';
-			}
-			if ( $rp !== null ) {
-				$resp = $this->getRequest()->response();
-				$resp->header( 'X-Cache: ' . $rp );
+				$this->getRequest()->response()->header( 'X-Cache: cached-response=true' );
 			}
 		} elseif ( $response['error'] !== '' ) {
 			$this->dieWithError(
@@ -182,7 +172,7 @@ trait ApiParsoidTrait {
 	 * @param Title $title Page title
 	 * @return RevisionRecord A revision record
 	 */
-	protected function getLatestRevision( Title $title ) : RevisionRecord {
+	protected function getLatestRevision( Title $title ): RevisionRecord {
 		$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
 		$latestRevision = $revisionLookup->getRevisionByTitle( $title );
 		if ( $latestRevision !== null ) {
@@ -203,9 +193,8 @@ trait ApiParsoidTrait {
 	 *  Should be an integer but will validate and convert user input strings.
 	 * @return RevisionRecord A revision record
 	 */
-	protected function getValidRevision( Title $title, $oldid = null ) : RevisionRecord {
+	protected function getValidRevision( Title $title, $oldid = null ): RevisionRecord {
 		$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
-		$revision = null;
 		if ( $oldid === null || $oldid === 0 ) {
 			return $this->getLatestRevision( $title );
 		} else {
@@ -223,7 +212,7 @@ trait ApiParsoidTrait {
 	 * @param RevisionRecord $revision Page revision
 	 * @return array The RESTBase server's response
 	 */
-	protected function requestRestbasePageHtml( RevisionRecord $revision ) : array {
+	protected function requestRestbasePageHtml( RevisionRecord $revision ): array {
 		$title = Title::newFromLinkTarget( $revision->getPageAsLinkTarget() );
 		return $this->requestRestbase(
 			$title,
@@ -246,7 +235,7 @@ trait ApiParsoidTrait {
 	 */
 	protected function transformHTML(
 		Title $title, string $html, int $oldid = null, string $etag = null
-	) : array {
+	): array {
 		$data = [ 'html' => $html, 'scrub_wikitext' => 1 ];
 		$path = 'transform/html/to/wikitext/' . urlencode( $title->getPrefixedDBkey() ) .
 			( $oldid === null ? '' : '/' . $oldid );
@@ -288,7 +277,7 @@ trait ApiParsoidTrait {
 	 */
 	protected function transformWikitext(
 		Title $title, string $wikitext, bool $bodyOnly, int $oldid = null, bool $stash = false
-	) : array {
+	): array {
 		return $this->requestRestbase(
 			$title,
 			'POST',
@@ -308,7 +297,7 @@ trait ApiParsoidTrait {
 	 * @param Title $title
 	 * @return Language Content language
 	 */
-	public static function getPageLanguage( Title $title ) : Language {
+	public static function getPageLanguage( Title $title ): Language {
 		if ( $title->isSpecial( 'CollabPad' ) ) {
 			// Use the site language for CollabPad, as getPageLanguage just
 			// returns the interface language for special pages.

@@ -3,6 +3,7 @@
 		"authors": [
 			"01miki10",
 			"Crt",
+			"MITO",
 			"Nedergard",
 			"Nike",
 			"Pxos",
@@ -35,5 +36,11 @@
 	"vector-jumptosearch": "Siirry hakuun",
 	"vector-jumptocontent": "Siirry sisältöön",
 	"vector-more-actions": "Muut",
-	"vector-search-loader": "Ladataan hakuehdotuksia"
+	"vector-search-loader": "Ladataan hakuehdotuksia",
+	"vector-anon-user-menu-pages": "Sivut kirjautumattomille muokkaajille",
+	"vector-anon-user-menu-pages-learn": "lue lisää",
+	"vector-anon-user-menu-pages-label": "Lue lisää muokkaamisesta",
+	"vector-personal-more-label": "Käyttäjän linkit",
+	"vector-main-menu-tooltip": "Päävalikko",
+	"tooltip-vector-anon-user-menu-title": "Lisää valintoja"
 }

@@ -3,10 +3,11 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt;
 
-use DOMElement;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\WikitextConstants;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\LanguageVariantText;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 
@@ -40,11 +41,11 @@ class LanguageVariantHandler {
 	 * @return string
 	 */
 	private static function ser( SerializerState $state, string $t, ?array $opts ) {
-		$options = array_merge( [
+		$options =
+			( $opts ?? [] ) + [
 				'env' => $state->getEnv(),
 				'onSOL' => false
-			], $opts ?? []
-		);
+			];
 		return $state->serializer->htmlToWikitext( $options, $t );
 	}
 
@@ -68,7 +69,7 @@ class LanguageVariantHandler {
 	 * @return string
 	 */
 	private static function combine( string $flagStr, string $bodyStr, $useTrailingSemi ): string {
-		if ( !empty( $flagStr ) || preg_match( '/\|/', $bodyStr ) ) {
+		if ( !empty( $flagStr ) || str_contains( $bodyStr, '|' ) ) {
 			$flagStr .= '|';
 		}
 		if ( $useTrailingSemi !== false ) {
@@ -92,7 +93,7 @@ class LanguageVariantHandler {
 		array $originalFlags, array $flSp, array $flags, bool $noFilter,
 		?string $protectFunc
 	): string {
-		$filterInternal = function ( $f ) use ( $noFilter ) {
+		$filterInternal = static function ( $f ) use ( $noFilter ) {
 			// Filter out internal-use-only flags
 			if ( $noFilter ) {
 				return true;
@@ -101,14 +102,14 @@ class LanguageVariantHandler {
 		};
 		$flags = array_filter( $flags, $filterInternal );
 
-		$sortByOriginalPosition = function ( $a, $b ) use ( $originalFlags ) {
+		$sortByOriginalPosition = static function ( $a, $b ) use ( $originalFlags ) {
 			$ai = $originalFlags[$a] ?? -1;
 			$bi = $originalFlags[$b] ?? -1;
 			return $ai - $bi;
 		};
 		usort( $flags, $sortByOriginalPosition );
 
-		$insertOriginalWhitespace = function ( $f ) use ( $originalFlags, $protectFunc, $flSp ) {
+		$insertOriginalWhitespace = static function ( $f ) use ( $originalFlags, $protectFunc, $flSp ) {
 			// Reinsert the original whitespace around the flag (if any)
 			$i = $originalFlags[$f] ?? null;
 			if ( !empty( $protectFunc ) ) {
@@ -149,10 +150,10 @@ class LanguageVariantHandler {
 	/**
 	 * LanguageVariantHandler
 	 * @param SerializerState $state
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @return void
 	 */
-	public static function handleLanguageVariant( SerializerState $state, DOMElement $node ): void {
+	public static function handleLanguageVariant( SerializerState $state, Element $node ): void {
 		$dataMWV = DOMDataUtils::getJSONAttribute( $node, 'data-mw-variant', [] );
 		$dp = DOMDataUtils::getDataParsoid( $node );
 		$flSp = self::expandSpArray( $dp->flSp ?? [] );
@@ -188,7 +189,7 @@ class LanguageVariantHandler {
 		}
 
 		// Tweak flag set to account for implicitly-enabled flags.
-		if ( $node->tagName !== 'meta' ) {
+		if ( DOMCompat::nodeName( $node ) !== 'meta' ) {
 			$flags['$S'] = true;
 		}
 		if ( !isset( $flags['$S'] ) && !isset( $flags['T'] ) && !isset( $dataMWV->filter ) ) {

@@ -74,24 +74,17 @@
 		"remoteExtPath": "SpamBlacklist/modules"
 	},
 	"Hooks": {
-		"EditFilterMergedContent": [
-			"SpamBlacklistHooks::filterMergedContent"
-		],
-		"EditFilter": [
-			"SpamBlacklistHooks::validate"
-		],
-		"PageSaveComplete": [
-			"SpamBlacklistHooks::pageSaveContent"
-		],
-		"UserCanSendEmail": [
-			"SpamBlacklistHooks::userCanSendEmail"
-		],
-		"ParserOutputStashForEdit": [
-			"SpamBlacklistHooks::onParserOutputStashForEdit"
-		],
-		"UploadVerifyUpload": [
-			"SpamBlacklistHooks::onUploadVerifyUpload"
-		]
+		"EditFilterMergedContent": "SpamBlacklistHookHandler",
+		"EditFilter": "SpamBlacklistHookHandler",
+		"PageSaveComplete": "SpamBlacklistHookHandler",
+		"UserCanSendEmail": "SpamBlacklistHookHandler",
+		"ParserOutputStashForEdit": "SpamBlacklistHookHandler",
+		"UploadVerifyUpload": "SpamBlacklistHookHandler"
+	},
+	"HookHandlers": {
+		"SpamBlacklistHookHandler": {
+			"class": "SpamBlacklistHooks"
+		}
 	},
 	"config": {
 		"BlacklistSettings": {

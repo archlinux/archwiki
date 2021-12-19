@@ -8,8 +8,8 @@
 			"Liuxinyu970226",
 			"Mark85296341",
 			"Sunny00217",
-			"Xiplus",
-			"Winston Sung"
+			"Winston Sung",
+			"Xiplus"
 		]
 	},
 	"skinname-vector": "向量（Vector）",
@@ -37,5 +37,13 @@
 	"vector-jumptosearch": "跳至搜尋",
 	"vector-jumptocontent": "跳至內容",
 	"vector-more-actions": "更多",
-	"vector-search-loader": "正在載入搜尋建議"
+	"vector-search-loader": "正在載入搜尋建議",
+	"vector-anon-user-menu-pages": "用於已登出編輯者的頁面",
+	"vector-anon-user-menu-pages-learn": "了解更多",
+	"vector-anon-user-menu-pages-label": "了解更多有關編輯",
+	"vector-personal-more-label": "使用者連結",
+	"vector-main-menu-tooltip": "主選單",
+	"tooltip-vector-anon-user-menu-title": "更多選項",
+	"vector-menu-checkbox-expanded": "已展開",
+	"vector-menu-checkbox-collapsed": "已摺疊"
 }

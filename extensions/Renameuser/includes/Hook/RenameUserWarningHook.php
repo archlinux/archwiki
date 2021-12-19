@@ -19,6 +19,6 @@ interface RenameUserWarningHook {
 	 * @param array &$warnings An array with 1 or more message keys, and 1 or more parameters
 	 * for the warnings to be shown
 	 */
-	public function onRenameUserWarning( string $oldUsername, string $newUsername, array &$warnings ) : void;
+	public function onRenameUserWarning( string $oldUsername, string $newUsername, array &$warnings ): void;
 
 }

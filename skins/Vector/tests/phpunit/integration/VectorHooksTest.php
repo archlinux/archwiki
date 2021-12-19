@@ -4,6 +4,7 @@
  * @ingroup skins
  */
 
+use MediaWiki\User\UserOptionsManager;
 use Vector\Constants;
 use Vector\FeatureManagement\FeatureManager;
 use Vector\Hooks;
@@ -263,8 +264,10 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		];
 		$form = $this->createMock( HTMLForm::class );
 		$user = $this->createMock( User::class );
-		$user->expects( $this->never() )
+		$userOptionsManager = $this->createMock( UserOptionsManager::class );
+		$userOptionsManager->expects( $this->never() )
 			->method( 'setOption' );
+		$this->setService( 'UserOptionsManager', $userOptionsManager );
 		$result = true;
 		$oldPreferences = [];
 
@@ -280,8 +283,10 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		];
 		$form = $this->createMock( HTMLForm::class );
 		$user = $this->createMock( User::class );
-		$user->expects( $this->never() )
+		$userOptionsManager = $this->createMock( UserOptionsManager::class );
+		$userOptionsManager->expects( $this->never() )
 			->method( 'setOption' );
+		$this->setService( 'UserOptionsManager', $userOptionsManager );
 		$result = true;
 		$oldPreferences = [];
 
@@ -297,9 +302,11 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		];
 		$form = $this->createMock( HTMLForm::class );
 		$user = $this->createMock( User::class );
-		$user->expects( $this->once() )
+		$userOptionsManager = $this->createMock( UserOptionsManager::class );
+		$userOptionsManager->expects( $this->once() )
 			->method( 'setOption' )
-			->with( 'VectorSkinVersion', 'old' );
+			->with( $user, 'VectorSkinVersion', 'old' );
+		$this->setService( 'UserOptionsManager', $userOptionsManager );
 		$result = true;
 		$oldPreferences = [
 			'VectorSkinVersion' => 'old',
@@ -318,9 +325,11 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		$this->setService( 'Vector.Config', $config );
 
 		$user = $this->createMock( User::class );
-		$user->expects( $this->once() )
+		$userOptionsManager = $this->createMock( UserOptionsManager::class );
+		$userOptionsManager->expects( $this->once() )
 			->method( 'setOption' )
-			->with( 'VectorSkinVersion', Constants::SKIN_VERSION_LEGACY );
+			->with( $user, 'VectorSkinVersion', Constants::SKIN_VERSION_LEGACY );
+		$this->setService( 'UserOptionsManager', $userOptionsManager );
 		$isAutoCreated = false;
 		Hooks::onLocalUserCreated( $user, $isAutoCreated );
 	}
@@ -335,9 +344,11 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		$this->setService( 'Vector.Config', $config );
 
 		$user = $this->createMock( User::class );
-		$user->expects( $this->once() )
+		$userOptionsManager = $this->createMock( UserOptionsManager::class );
+		$userOptionsManager->expects( $this->once() )
 			->method( 'setOption' )
-			->with( 'VectorSkinVersion', Constants::SKIN_VERSION_LATEST );
+			->with( $user, 'VectorSkinVersion', Constants::SKIN_VERSION_LATEST );
+		$this->setService( 'UserOptionsManager', $userOptionsManager );
 		$isAutoCreated = false;
 		Hooks::onLocalUserCreated( $user, $isAutoCreated );
 	}
@@ -367,11 +378,11 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		Hooks::onSkinTemplateNavigation( $skin, $contentNavWatch );
 
 		$this->assertTrue(
-			strpos( $contentNavWatch['views']['watch']['class'], 'icon' ) !== false,
+			in_array( 'icon', $contentNavWatch['views']['watch']['class'] ) !== false,
 			'Watch list items require an "icon" class'
 		);
 		$this->assertTrue(
-			strpos( $contentNavUnWatch['views']['unwatch']['class'], 'icon' ) !== false,
+			in_array( 'icon', $contentNavUnWatch['views']['unwatch']['class'] ) !== false,
 			'Unwatch list items require an "icon" class'
 		);
 		$this->assertFalse(

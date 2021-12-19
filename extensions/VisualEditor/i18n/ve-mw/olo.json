@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ilja.mos",
-			"Mashoi7"
+			"Mashoi7",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Luaji tämän sivun lähtehkoudu",
@@ -104,13 +105,14 @@
 	"visualeditor-dialog-transclusion-add-content": "Ližiä syväindö",
 	"visualeditor-dialog-transclusion-add-param": "Ližiä enämbi tieduo",
 	"visualeditor-dialog-transclusion-add-template": "Ližiä šablon",
+	"visualeditor-dialog-transclusion-collapse-options": "Peitä azetukset",
 	"visualeditor-dialog-transclusion-content": "Syväindö",
 	"visualeditor-dialog-transclusion-contextitem-description": "Käytetty šablonoi: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Ozuta azetukset",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Vahnennuh kenty",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Kenty on vahnennuh. $1",
 	"visualeditor-dialog-transclusion-loading": "Ladavuu...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Ozuta azetukset",
-	"visualeditor-dialog-transclusion-no-template-description": "\"$1\" šablonal ei ole vie kuvavustu, no midätah tieduo voibi olla [[$1|šablonan sivul]].",
+	"visualeditor-dialog-transclusion-no-template-description": "\"$1\" šablonal ei ole vie kuvavustu, no midätah tieduo voibi olla [[$2|šablonan sivul]].",
 	"visualeditor-dialog-transclusion-options": "Azetukset",
 	"visualeditor-dialog-transclusion-param-info": "Kentän kuvavus",
 	"visualeditor-dialog-transclusion-placeholder": "Ližiä šablon",
@@ -122,8 +124,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Jatka yksikai",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Parametrua, kudai pidäy, ei ole|Parametroi, kudamat pidäy, ei ole}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Tahtotgo jatkua, hos et ole täyttänyh $1 {{PLURAL:$2|parametrua}}?",
-	"visualeditor-dialog-transclusion-single-mode": "Peitä azetukset",
-	"visualeditor-dialog-transclusion-title": "Sizällyttämine",
 	"visualeditor-dialogbutton-media-tooltip": "Medii",
 	"visualeditor-dialogbutton-meta-tooltip": "Sivun azetukset",
 	"visualeditor-dialogbutton-template-tooltip": "Šablon",

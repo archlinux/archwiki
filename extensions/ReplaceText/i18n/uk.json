@@ -5,10 +5,10 @@
 			"Ahonc",
 			"Andriykopanytsia",
 			"Base",
+			"DDPAT",
 			"Piramidion",
 			"Prima klasy4na",
-			"Ата",
-			"DDPAT"
+			"Ата"
 		]
 	},
 	"replacetext": "Заміна тексту",
@@ -44,7 +44,10 @@
 	"replacetext_continue": "Продовжити",
 	"replacetext_announce": "Повідомити про ці редагування через $1 та списки спостереження",
 	"replacetext_editsummary": "Заміна тексту — «$1» на «$2»",
+	"replacetext_reminder": "Щоб також змінити посилання на цю сторінку на інших сторінках, перейдіть до $1.",
+	"replacetext_cfg_error": "Помилка налаштування ReplaceText",
+	"replacetext_no_compress": "Ваша вікі не працюватиме з ReplaceTest: заміну тексту неможливо запустити, якщо для $wgCompressRevisions встановлено значення true.",
+	"replacetext_no_external_stores": "Ваша вікі не працюватиме з ReplaceTest: Заміну тексту неможливо запустити, якщо $wgExternalStores не є порожнім.",
 	"right-replacetext": "Виконання заміни рядків тексту по всій вікі",
-	"action-replacetext": "виконання заміни рядків тексту по всій вікі",
-	"replacetext_reminder": "Щоб також змінити посилання на цю сторінку на інших сторінках, перейдіть до $1."
+	"action-replacetext": "виконання заміни рядків тексту по всій вікі"
 }

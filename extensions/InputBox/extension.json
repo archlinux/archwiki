@@ -26,17 +26,7 @@
 	},
 	"ResourceModules": {
 		"ext.inputBox.styles": {
-			"styles": "ext.inputBox.styles.css",
-			"targets": [
-				"mobile",
-				"desktop"
-			]
-		},
-		"ext.inputBox": {
-			"scripts": "ext.inputBox.js",
-			"dependencies": [
-				"jquery.throttle-debounce"
-			],
+			"styles": "ext.inputBox.styles.less",
 			"targets": [
 				"mobile",
 				"desktop"

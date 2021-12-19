@@ -44,18 +44,26 @@ body.mw-mmv-lightbox-open {
 		line-height: inherit;
 	}
 
-	.mw-mmv-view-expanded.mw-ui-icon:before {
+	.mw-mmv-view-expanded .mw-ui-icon:before {
 		/* @embed */
 		background-image: url( img/expand.svg );
 	}
 
-	.mw-mmv-view-config.mw-ui-icon:before {
+	.mw-mmv-view-config .mw-ui-icon:before {
 		/* @embed */
 		background-image: url( img/gear.svg );
+		margin-right: 0;
 		opacity: 0.75;
 
 		&:hover {
 			opacity: 1;
+		}
+	}
+
+	.mw-mmv-view-config {
+
+		.mw-ui-icon span {
+			display: none;
 		}
 	}
 }

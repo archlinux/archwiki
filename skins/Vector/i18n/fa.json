@@ -7,10 +7,10 @@
 			"DEXi",
 			"Ebraminio",
 			"Huji",
+			"Jeeputer",
 			"Ladsgroup",
 			"Reza1615",
-			"Zack90",
-			"Jeeputer"
+			"Zack90"
 		]
 	},
 	"skinname-vector": "وکتور",
@@ -38,5 +38,8 @@
 	"vector-jumptosearch": "پرش به جستجو",
 	"vector-jumptocontent": "پرش به محتوا",
 	"vector-more-actions": "بیشتر",
-	"vector-search-loader": "بارگیری پیشنهادهای جستجو"
+	"vector-search-loader": "بارگیری پیشنهادهای جستجو",
+	"vector-anon-user-menu-pages": "صفحه‌ها برای ویرایشگران خارج‌شده از سامانه",
+	"vector-anon-user-menu-pages-learn": "بیشتر بدانید",
+	"vector-personal-more-label": "پیوندهای کاربر"
 }

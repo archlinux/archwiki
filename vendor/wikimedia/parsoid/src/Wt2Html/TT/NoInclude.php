@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Parsoid\Tokens\EOFTk;
+use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
 
@@ -13,7 +14,6 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
  */
 class NoInclude extends TokenCollector {
 	/**
-	 * NoInclude constructor.
 	 * @param TokenTransformManager $manager manager environment
 	 * @param array $options options
 	 */
@@ -51,9 +51,9 @@ class NoInclude extends TokenCollector {
 
 	/**
 	 * @param array $collection
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	protected function transformation( array $collection ): array {
+	protected function transformation( array $collection ): TokenHandlerResult {
 		$start = array_shift( $collection );
 		$sc = TokenUtils::getTokenType( $start );
 
@@ -61,15 +61,21 @@ class NoInclude extends TokenCollector {
 		if ( $sc === 'EndTagTk' ) {
 			$meta = TokenCollector::buildMetaToken( $this->manager, 'mw:Includes/NoInclude',
 				true, ( $start->dataAttribs->tsr ?? null ), null );
-			return [ 'tokens' => [ $meta ] ];
+			return new TokenHandlerResult( [ $meta ] );
 		}
 
 		// Handle self-closing tag case specially!
 		if ( $sc === 'SelfclosingTagTk' ) {
 			return ( $this->options['isInclude'] ) ?
-			[ 'tokens' => [] ] :
-			[ 'tokens' => [ TokenCollector::buildMetaToken( $this->manager, 'mw:Includes/NoInclude',
-				false, ( $start->dataAttribs->tsr ?? null ), null ) ] ];
+				new TokenHandlerResult( [] ) :
+				new TokenHandlerResult( [
+					TokenCollector::buildMetaToken(
+						$this->manager,
+						'mw:Includes/NoInclude',
+						false,
+						( $start->dataAttribs->tsr ?? null ),
+						null )
+				] );
 		}
 
 		$tokens = [];
@@ -84,7 +90,7 @@ class NoInclude extends TokenCollector {
 			$tokens[] = TokenCollector::buildMetaToken( $this->manager, 'mw:Includes/NoInclude',
 				false, $startTSR, null );
 
-			$tokens = array_merge( $tokens, $collection );
+			PHPUtils::pushArray( $tokens, $collection );
 			if ( $end && !$eof ) {
 				$tokens[] = TokenCollector::buildMetaToken( $this->manager, 'mw:Includes/NoInclude',
 					true, $endTSR, null );
@@ -92,7 +98,7 @@ class NoInclude extends TokenCollector {
 		} elseif ( empty( $this->options['inTemplate'] ) ) {
 			// Content is stripped
 			$tokens[] = TokenCollector::buildStrippedMetaToken( $this->manager,
-				'mw:Includes/NoInclude', $start, ( $eof ) ? null : $end );
+				'mw:Includes/NoInclude', $start, $eof ? null : $end );
 		}
 
 		// Preserve EOF
@@ -100,6 +106,6 @@ class NoInclude extends TokenCollector {
 			$tokens[] = $end;
 		}
 
-		return [ 'tokens' => $tokens ];
+		return new TokenHandlerResult( $tokens );
 	}
 }

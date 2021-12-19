@@ -46,11 +46,10 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 		foreach ( $statics as $name ) {
 			$lib[$name] = [ $this, $name ];
 		}
-		$ths = $this;
 		foreach ( $methods as $name ) {
-			$lib[$name] = function () use ( $ths, $name ) {
+			$lib[$name] = function () use ( $name ) {
 				$args = func_get_args();
-				return $ths->languageMethod( $name, $args );
+				return $this->languageMethod( $name, $args );
 			};
 		}
 		return $this->getEngine()->registerInterface( 'mw.language.lua', $lib );

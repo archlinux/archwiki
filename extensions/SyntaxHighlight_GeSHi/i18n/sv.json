@@ -4,8 +4,8 @@
 			"Ainali",
 			"Lejonel",
 			"Lokal Profil",
-			"WikiPhoenix",
-			"Nirmos (Wikimedia)"
+			"Nirmos (Wikimedia)",
+			"WikiPhoenix"
 		]
 	},
 	"syntaxhighlight-desc": "Ger syntaxmarkering med [http://pygments.org/ Pygments] inuti <code>&lt;syntaxhighlight&gt;</code>-taggar",

@@ -3,9 +3,9 @@
 namespace Wikimedia\Zest;
 
 use DOMDocument;
+use DOMDocumentFragment;
 use DOMElement;
 use DOMNode;
-use DOMNodeList;
 
 /**
  * Zest.php (https://github.com/wikimedia/zest.php)
@@ -33,21 +33,24 @@ class Zest {
 	/**
 	 * Find elements matching a CSS selector underneath $context.
 	 * @param string $sel The CSS selector string
-	 * @param DOMDocument|DOMElement $context The scope for the search
+	 * @param DOMDocument|DOMDocumentFragment|DOMElement $context
+	 *   The scoping root for the search
+	 * @param array $opts Additional match-context options (optional)
 	 * @return array Elements matching the CSS selector
 	 */
-	public static function find( string $sel, $context ): array {
-		return self::singleton()->find( $sel, $context );
+	public static function find( string $sel, $context, array $opts = [] ): array {
+		return self::singleton()->find( $sel, $context, $opts );
 	}
 
 	/**
 	 * Determine whether an element matches the given selector.
 	 * @param DOMNode $el The element to be tested
 	 * @param string $sel The CSS selector string
+	 * @param array $opts Additional match-context options (optional)
 	 * @return bool True iff the element matches the selector
 	 */
-	public static function matches( $el, string $sel ): bool {
-		return self::singleton()->matches( $el, $sel );
+	public static function matches( $el, string $sel, array $opts = [] ): bool {
+		return self::singleton()->matches( $el, $sel, $opts );
 	}
 
 	/**
@@ -55,13 +58,15 @@ class Zest {
 	 * The PHP DOM doesn't provide this method for DOMElement, and the
 	 * implementation in DOMDocument is broken.
 	 *
-	 * @param DOMDocument|DOMElement $context
+	 * @param DOMDocument|DOMDocumentFragment|DOMElement $context
+	 *   The scoping root for the search
 	 * @param string $id
-	 * @return array A list of the elements with the given ID. When there are more
+	 * @param array $opts Additional match-context options (optional)
+	 * @return array<DOMElement> A list of the elements with the given ID. When there are more
 	 *   than one, this method might return all of them or only the first one.
 	 */
-	public static function getElementsById( $context, string $id ): array {
-		return ZestInst::getElementsById( $context, $id );
+	public static function getElementsById( $context, string $id, array $opts = [] ): array {
+		return self::singleton()->getElementsById( $context, $id, $opts );
 	}
 
 	/**
@@ -69,12 +74,13 @@ class Zest {
 	 * The PHP DOM doesn't provide this method for DOMElement, and the
 	 * implementation in DOMDocument has performance issues.
 	 *
-	 * @param DOMDocument|DOMElement $context
+	 * @param DOMDocument|DOMDocumentFragment|DOMElement $context
 	 * @param string $tagName
-	 * @return DOMNodeList
+	 * @param array $opts Additional match-context options (optional)
+	 * @return array<DOMElement>
 	 */
-	public static function getElementsByTagName( $context, string $tagName ) {
-		return ZestInst::getElementsByTagName( $context, $tagName );
+	public static function getElementsByTagName( $context, string $tagName, array $opts = [] ) {
+		return self::singleton()->getElementsByTagName( $context, $tagName, $opts );
 	}
 
 }

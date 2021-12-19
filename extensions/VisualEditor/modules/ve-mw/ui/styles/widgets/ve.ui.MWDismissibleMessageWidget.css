@@ -1,0 +1,11 @@
+.ve-ui-dismissibleMessageWidget.oo-ui-messageWidget-block {
+	padding-right: 48px;
+}
+
+.ve-ui-dismissibleMessageWidget .oo-ui-buttonElement {
+	margin-right: 0;
+	/* Position relative to the surrounding .oo-ui-messageWidget */
+	position: absolute;
+	right: 2px;
+	top: 2px;
+}

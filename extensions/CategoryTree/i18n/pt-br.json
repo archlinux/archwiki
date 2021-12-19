@@ -25,8 +25,6 @@
 	"categorytree-mode-all": "todas as páginas",
 	"categorytree-collapse": "recolher",
 	"categorytree-expand": "expandir",
-	"categorytree-expand-bullet": "►",
-	"categorytree-empty-bullet": "►",
 	"categorytree-member-counts": "Possui {{PLURAL:$1|1 subcategoria|$1 subcategorias}}, {{PLURAL:$2|1 página|$2 páginas}} e {{PLURAL:$3|1 arquivo|$3 arquivos}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",

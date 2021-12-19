@@ -6,24 +6,21 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.37.0"
 	},
 	"ConfigRegistry": {
 		"categorytree": "GlobalVarConfig::newInstance"
 	},
-	"ExtensionFunctions": [
-		"CategoryTreeHooks::initialize"
-	],
 	"SpecialPages": {
 		"CategoryTree": {
-			"class": "CategoryTreePage",
+			"class": "MediaWiki\\Extension\\CategoryTree\\CategoryTreePage",
 			"services": [
 				"SearchEngineFactory"
 			]
 		}
 	},
 	"APIModules": {
-		"categorytree": "ApiCategoryTree"
+		"categorytree": "MediaWiki\\Extension\\CategoryTree\\ApiCategoryTree"
 	},
 	"MessagesDirs": {
 		"CategoryTree": [
@@ -35,15 +32,8 @@
 		"CategoryTreeAlias": "CategoryTree.alias.php",
 		"CategoryTreeMagic": "CategoryTree.i18n.magic.php"
 	},
-	"AutoloadClasses": {
-		"CategoryTreePage": "includes/CategoryTreePage.php",
-		"CategoryTree": "includes/CategoryTree.php",
-		"CategoryTreeCategoryPage": "includes/CategoryTreeCategoryPage.php",
-		"CategoryTreeCategoryViewer": "includes/CategoryTreeCategoryViewer.php",
-		"CategoryTreeHooks": "includes/CategoryTreeHooks.php",
-		"CategoryTreeMode": "includes/CategoryTreeMode.php",
-		"CategoryTreeHidePrefix": "includes/CategoryTreeHidePrefix.php",
-		"ApiCategoryTree": "includes/ApiCategoryTree.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\CategoryTree\\": "includes/"
 	},
 	"ResourceModules": {
 		"ext.categoryTree": {
@@ -54,7 +44,7 @@
 				"ext.categoryTree.js",
 				{
 					"name": "data.json",
-					"callback": "CategoryTreeHooks::getDataForJs"
+					"callback": "MediaWiki\\Extension\\CategoryTree\\Hooks::getDataForJs"
 				}
 			],
 			"targets": [
@@ -64,8 +54,6 @@
 			"messages": [
 				"categorytree-collapse",
 				"categorytree-expand",
-				"categorytree-collapse-bullet",
-				"categorytree-expand-bullet",
 				"categorytree-load",
 				"categorytree-loading",
 				"categorytree-nothing-found",
@@ -91,16 +79,25 @@
 		"localBasePath": "modules",
 		"remoteExtPath": "CategoryTree/modules"
 	},
+	"HookHandlers": {
+		"default": {
+			"class": "MediaWiki\\Extension\\CategoryTree\\Hooks",
+			"services": [ "DBLoadBalancer", "MainConfig" ]
+		},
+		"config": {
+			"class": "MediaWiki\\Extension\\CategoryTree\\ConfigHookHandler"
+		}
+	},
 	"Hooks": {
-		"ArticleFromTitle": "CategoryTreeHooks::articleFromTitle",
-		"SpecialTrackingCategories::preprocess": "CategoryTreeHooks::onSpecialTrackingCategoriesPreprocess",
-		"SpecialTrackingCategories::generateCatLink": "CategoryTreeHooks::onSpecialTrackingCategoriesGenerateCatLink",
-		"SkinBuildSidebar": "CategoryTreeHooks::onSkinBuildSidebar",
-		"ParserFirstCallInit": "CategoryTreeHooks::setHooks",
-		"OutputPageMakeCategoryLinks": "CategoryTreeHooks::outputPageMakeCategoryLinks",
-		"BeforePageDisplay": "CategoryTreeHooks::addHeaders",
-		"BeforePageDisplayMobile": "CategoryTreeHooks::addHeaders",
-		"OutputPageParserOutput": "CategoryTreeHooks::parserOutput"
+		"MediaWikiServices": "config",
+		"ArticleFromTitle": "default",
+		"SpecialTrackingCategories::preprocess": "default",
+		"SpecialTrackingCategories::generateCatLink": "default",
+		"SkinAfterPortlet": "default",
+		"SkinBuildSidebar": "default",
+		"ParserFirstCallInit": "default",
+		"OutputPageMakeCategoryLinks": "default",
+		"OutputPageParserOutput": "default"
 	},
 	"config": {
 		"CategoryTreeMaxChildren": {
@@ -119,9 +116,6 @@
 				"0": 2
 			},
 			"merge_strategy": "array_plus"
-		},
-		"CategoryTreeForceHeaders": {
-			"value": false
 		},
 		"CategoryTreeSidebarRoot": {
 			"value": null

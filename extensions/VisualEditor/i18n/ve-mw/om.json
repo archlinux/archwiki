@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Abbaabiyyummaa",
+			"Ahrada2016",
 			"Cedric31",
 			"Maammee",
 			"Oromoo",
-			"Tumsaa",
-			"Ahrada2016"
+			"Tumsaa"
 		]
 	},
 	"tooltip-ca-createsource": "Fuula kanaaf lakkadda maddaa uumi",
@@ -115,12 +115,13 @@
 	"visualeditor-dialog-transclusion-add-content": "Qabiyyee galchi",
 	"visualeditor-dialog-transclusion-add-param": "Odeeffannoo dabalataa galchi",
 	"visualeditor-dialog-transclusion-add-template": "Qajojii galchi",
+	"visualeditor-dialog-transclusion-collapse-options": "Filannoo dhoksi",
 	"visualeditor-dialog-transclusion-content": "Qabiyyee",
 	"visualeditor-dialog-transclusion-contextitem-description": "Kan irraa uummame: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Filannoo agarsiisi",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Ulaagaa gatame",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Ulaagan kun gatameera. $1",
 	"visualeditor-dialog-transclusion-loading": "Dhufaa jira...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Filannoo agarsiisi",
 	"visualeditor-dialog-transclusion-options": "Filannoowwan",
 	"visualeditor-dialog-transclusion-param-default": "Fafmalee:$1",
 	"visualeditor-dialog-transclusion-param-example": "fak. $1",
@@ -136,7 +137,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Ta'us itti fufi",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Barbaachisaa {{PLURAL:$1|dirree|dirreewwan}} dagataman",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Dhuguma odoo ulaagaa $1 {{PLURAL:$2}} hin guutin itti fufuu barbaaddaa?",
-	"visualeditor-dialog-transclusion-single-mode": "Filannoo dhoksi",
 	"visualeditor-dialogbutton-media-tooltip": "Miidiyaa",
 	"visualeditor-dialogbutton-meta-tooltip": "Qindaa'ina fuulaa",
 	"visualeditor-dialogbutton-template-tooltip": "Qajojii",

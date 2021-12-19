@@ -18,7 +18,7 @@ use Wikimedia\TestingAccessWrapper;
  */
 class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->setMwGlobals( [
@@ -38,7 +38,7 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 
 		$mockErrorReporter = $this->createMock( ErrorReporter::class );
 		$mockErrorReporter->method( 'halfParsed' )->willReturnCallback(
-			function ( $parser, ...$args ) {
+			static function ( $parser, ...$args ) {
 				return '(' . implode( '|', $args ) . ')';
 			}
 		);
@@ -68,14 +68,14 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 			'Default group' => [
 				[ '' => [ [ 'name' => 'a' ] ] ],
 				false,
-				"\n" . '<references />'
+				"\n<references />"
 			],
 			'Default group in preview' => [
 				[ '' => [ [ 'name' => 'a' ] ] ],
 				true,
 				"\n" . '<div class="mw-ext-cite-cite_section_preview_references">' .
 				'<h2 id="mw-ext-cite-cite_section_preview_references_header">' .
-				'(cite_section_preview_references)</h2>' . "\n" . '<references /></div>'
+				'(cite_section_preview_references)</h2><references /></div>'
 			],
 			'Named group' => [
 				[ 'foo' => [ [ 'name' => 'a' ] ] ],
@@ -87,12 +87,12 @@ class CiteIntegrationTest extends \MediaWikiIntegrationTestCase {
 				true,
 				"\n" . '<div class="mw-ext-cite-cite_section_preview_references">' .
 				'<h2 id="mw-ext-cite-cite_section_preview_references_header">' .
-				'(cite_section_preview_references)</h2>' . "\n" . '<references /></div>'
+				'(cite_section_preview_references)</h2><references /></div>'
 			]
 		];
 	}
 
-	private function newCite() : Cite {
+	private function newCite(): Cite {
 		$mockOptions = $this->createMock( ParserOptions::class );
 		$mockOptions->method( 'getIsPreview' )->willReturn( false );
 		$mockOptions->method( 'getIsSectionPreview' )->willReturn( false );

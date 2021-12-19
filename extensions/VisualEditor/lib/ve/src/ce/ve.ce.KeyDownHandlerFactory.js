@@ -43,16 +43,14 @@ OO.inheritClass( ve.ce.KeyDownHandlerFactory, OO.Factory );
  * @throws {Error} If a parameter is invalid
  */
 ve.ce.KeyDownHandlerFactory.prototype.register = function ( constructor ) {
-	var i, ilen, keys, name;
-
 	// Parent method
 	ve.ce.KeyDownHandlerFactory.super.prototype.register.call( this, constructor );
 
-	keys = constructor.static.keys;
-	name = constructor.static.name;
+	var keys = constructor.static.keys;
+	var name = constructor.static.name;
 
 	// TODO: Clean up handlerNamesByKeys in unregister
-	for ( i = 0, ilen = keys.length; i < ilen; i++ ) {
+	for ( var i = 0, ilen = keys.length; i < ilen; i++ ) {
 		this.handlerNamesByKeys[ keys[ i ] ] = this.handlerNamesByKeys[ keys[ i ] ] || [];
 		if ( this.handlerNamesByKeys[ keys[ i ] ].indexOf( name ) === -1 ) {
 			this.handlerNamesByKeys[ keys[ i ] ].push( name );
@@ -68,14 +66,13 @@ ve.ce.KeyDownHandlerFactory.prototype.register = function ( constructor ) {
  * @return {Function[]} Matched handlers
  */
 ve.ce.KeyDownHandlerFactory.prototype.lookupHandlersForKey = function ( key, selectionName ) {
-	var i, constructor, supportedSelections,
-		constructors = [],
+	var constructors = [],
 		names = this.handlerNamesByKeys[ key ] || [];
 
 	// Length is likely to be 1 or 0 so don't cache
-	for ( i = 0; i < names.length; i++ ) {
-		constructor = this.registry[ names[ i ] ];
-		supportedSelections = constructor.static.supportedSelections;
+	for ( var i = 0; i < names.length; i++ ) {
+		var constructor = this.registry[ names[ i ] ];
+		var supportedSelections = constructor.static.supportedSelections;
 		if ( !supportedSelections || supportedSelections.indexOf( selectionName ) !== -1 ) {
 			constructors.push( constructor );
 		}
@@ -89,17 +86,16 @@ ve.ce.KeyDownHandlerFactory.prototype.lookupHandlersForKey = function ( key, sel
  *
  * @param {number} key Key code
  * @param {string} selectionName Selection type name
- * @param {ve.ce.Surface} surface Surface
+ * @param {ve.ce.Surface} surface
  * @param {jQuery.Event} e Key down event
  * @return {boolean} Some handlers acted
  */
 ve.ce.KeyDownHandlerFactory.prototype.executeHandlersForKey = function ( key, selectionName, surface, e ) {
-	var i,
-		acted = false,
+	var acted = false,
 		handlers = this.lookupHandlersForKey( key, selectionName );
 
 	// Length is likely to be 1 or 0 so don't cache
-	for ( i = 0; i < handlers.length; i++ ) {
+	for ( var i = 0; i < handlers.length; i++ ) {
 		if ( handlers[ i ].static.execute( surface, e ) ) {
 			acted = true;
 		}

@@ -4,6 +4,7 @@
 			"Arystanbek",
 			"BaRaN6161 TURK",
 			"Emperyan",
+			"Hedda",
 			"Joseph",
 			"Kumkumuk",
 			"MuratTheTurkish",
@@ -35,5 +36,13 @@
 	"vector-jumptosearch": "Arama kısmına atla",
 	"vector-jumptocontent": "İçeriğe atla",
 	"vector-more-actions": "Daha fazla",
-	"vector-search-loader": "Arama önerileri yükleniyor"
+	"vector-search-loader": "Arama önerileri yükleniyor",
+	"vector-anon-user-menu-pages": "Çıkış yapmış editörler için sayfalar",
+	"vector-anon-user-menu-pages-learn": "daha fazla bilgi",
+	"vector-anon-user-menu-pages-label": "Düzenleme hakkında daha fazla bilgi edinin",
+	"vector-personal-more-label": "Kullanıcı bağlantıları",
+	"vector-main-menu-tooltip": "Ana menü",
+	"tooltip-vector-anon-user-menu-title": "Daha fazla seçenek",
+	"vector-menu-checkbox-expanded": "genişletilmiş",
+	"vector-menu-checkbox-collapsed": "daraltılmış"
 }

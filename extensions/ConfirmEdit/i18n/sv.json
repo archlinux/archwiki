@@ -13,7 +13,8 @@
 			"Per",
 			"Rotsee",
 			"Skalman",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Sabelöga"
 		]
 	},
 	"captcha-edit": "För att redigera den här sidan måste du först lösa följande uppgift och skriva svaret i rutan ([[Special:Captcha/help|mer information]]):",
@@ -44,5 +45,5 @@
 	"confirmedit-preview-validity": "Giltighet",
 	"confirmedit-preview-valid": "giltig",
 	"confirmedit-preview-invalid": "ogiltig",
-	"confirmedit-preview-description": "Följande tabell visar listan över rader på denna sida och om det finns en giltig IP-adress eller IP-adressintervall. Om raden är en giltig IP-adress eller IP-adressintervall, kommer den att vitlistas från CAPTCHA men ogiltiga rader kommer att ignoreras. Ett exempel på ett ogiltigt IP-adressintervall är: 69.208.0.0/16 vilket går från 69.208.0.0 till 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mer information] om hur ett IP-adressintervall beräknas."
+	"confirmedit-preview-description": "Följande tabell visar listan över rader på denna sida och om det finns en giltig IP-adress eller IP-adressintervall. Om raden är en giltig IP-adress eller IP-adressintervall, kommer den att utelämnas från CAPTCHA-kontroller men ogiltiga rader kommer att ignoreras. Ett exempel på ett ogiltigt IP-adressintervall är: 69.208.0.0/16 vilket går från 69.208.0.0 till 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix Mer information] om hur ett IP-adressintervall beräknas."
 }

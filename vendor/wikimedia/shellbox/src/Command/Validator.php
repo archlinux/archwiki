@@ -60,7 +60,7 @@ class Validator {
 	private function validateWithSpec( BoxedCommand $command, $spec ) {
 		// Locally cached SyntaxInfo for argv and shellFeatures
 		// The static cache will be destroyed when the closure goes out of scope.
-		$info = function () use ( $command ) : SyntaxInfo {
+		$info = function () use ( $command ): SyntaxInfo {
 			static $info;
 			if ( !$info ) {
 				$parser = new ShellParser;

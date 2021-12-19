@@ -1,7 +1,5 @@
 <?php
 
-use UtfNormal\Validator;
-
 class Scribunto_LuaError extends ScribuntoException {
 	/** @var string */
 	public $luaMessage;
@@ -12,7 +10,7 @@ class Scribunto_LuaError extends ScribuntoException {
 	 */
 	public function __construct( $message, array $options = [] ) {
 		$this->luaMessage = $message;
-		$options += [ 'args' => [ Validator::cleanUp( $message ) ] ];
+		$options += [ 'args' => [ $message ] ];
 		if ( isset( $options['module'] ) && isset( $options['line'] ) ) {
 			$msg = 'scribunto-lua-error-location';
 		} else {

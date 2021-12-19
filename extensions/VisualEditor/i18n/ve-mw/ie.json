@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Makuba",
-			"Stavanger7",
-			"Renan"
+			"Renan",
+			"Stavanger7"
 		]
 	},
 	"tooltip-ca-createsource": "Crear li fonte-code de ti págine",
@@ -60,7 +60,6 @@
 	"visualeditor-dialog-transclusion-remove-content": "Remover contenete",
 	"visualeditor-dialog-transclusion-remove-param": "Remover camp",
 	"visualeditor-dialog-transclusion-remove-template": "Remover un shablone",
-	"visualeditor-dialog-transclusion-title": "Includer un shablone",
 	"visualeditor-dialogbutton-media-tooltip": "Figuras e media",
 	"visualeditor-dialogbutton-meta-tooltip": "Paginal preferenties",
 	"visualeditor-dialogbutton-transclusion-tooltip": "Transclusion",
@@ -79,7 +78,7 @@
 	"visualeditor-meta-tool": "Optiones",
 	"visualeditor-parameter-input-placeholder": "Nómine del camp",
 	"visualeditor-parameter-search-no-unused": "Null campes sin usu",
-	"visualeditor-parameter-search-unknown": "Ínconosset parametre",
+	"visualeditor-parameter-search-unknown": "Ínconosset camp",
 	"visualeditor-preference-betatempdisable": "Temporalmen desactivar VisualEditor durant li beta-fase",
 	"visualeditor-preference-core-description": "Activar VisualEditor. It ne es attiņibil sur págines de conversation e in alquel altri nominal spacies.",
 	"visualeditor-preference-core-label": "Visual redaction",

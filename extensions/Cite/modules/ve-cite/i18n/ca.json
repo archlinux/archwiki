@@ -19,8 +19,8 @@
 			"SenyorFontal",
 			"Toniher",
 			"Unapersona",
-			"Vriullop",
-			"Vfc"
+			"Vfc",
+			"Vriullop"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Llibre",
@@ -54,7 +54,7 @@
 	"cite-ve-dialog-referenceslist-title": "Llista de referències",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Milloreu el contingut afegint fonts d'informació. Podeu citar llibres, diaris i pàgines web.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Referències",
-	"cite-ve-dialogbutton-reference-full-label": "Forma bàsica",
+	"cite-ve-dialogbutton-reference-full-label": "Bàsic",
 	"cite-ve-dialogbutton-reference-title": "Referència",
 	"cite-ve-dialogbutton-reference-tooltip": "Bàsic",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Llista de referències",

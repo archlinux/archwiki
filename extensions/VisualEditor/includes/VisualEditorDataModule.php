@@ -10,11 +10,8 @@
 
 class VisualEditorDataModule extends ResourceLoaderModule {
 
-	/* Protected Members */
-
+	/** @inheritDoc */
 	protected $targets = [ 'desktop', 'mobile' ];
-
-	/* Methods */
 
 	/**
 	 * @param ResourceLoaderContext $context Object containing information about the state of this

@@ -6,9 +6,9 @@
 			"Eminn",
 			"Interfase",
 			"Jduranboger",
+			"NMW03",
 			"Toghrul Rahimli",
-			"Wertuose",
-			"NMW03"
+			"Wertuose"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Kitab",
@@ -42,6 +42,7 @@
 	"cite-ve-dialog-referenceslist-title": "İstinadlar siyahısı",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Mənbələr əlavə edərək məzmununuzu təkmilləşdirir. Kitablardan, qəzetlərdən və saytlardan istinad edə bilərsiniz.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "İstinadlar",
+	"cite-ve-dialogbutton-reference-full-label": "Əsas",
 	"cite-ve-dialogbutton-reference-title": "İstinad",
 	"cite-ve-dialogbutton-reference-tooltip": "Əsas",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "İstinad siyahısı",

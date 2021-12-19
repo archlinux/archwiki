@@ -8,10 +8,9 @@
 		configData = require( './data.json' );
 
 	function triggerButtonClick( element ) {
-		var $button,
-			// The dialog action should always be a DOMElement.
-			dialogAction = $( element ).data( 'dialogaction' );
-		$button = dialogAction ? $( dialogAction ) : $( element ).find( 'button' ).first();
+		// The dialog action should always be a DOMElement.
+		var dialogAction = $( element ).data( 'dialogaction' );
+		var $button = dialogAction ? $( dialogAction ) : $( element ).find( 'button' ).first();
 		// Since we're reading from data attribute, make sure we got an element before clicking.
 		// Note when closing a dialog this can be false leading to TypeError: $button.trigger is not a function
 		// (T261529)
@@ -131,6 +130,8 @@
 								);
 							if ( status ) {
 								$( '#wikieditor-toolbar-link-int-target-status-' + status ).show();
+								// Status classes listed above
+								// eslint-disable-next-line mediawiki/class-doc
 								$( '#wikieditor-toolbar-link-int-target' ).parent().addClass( 'status-' + status );
 							}
 							if ( status === 'invalid' ) {
@@ -200,12 +201,13 @@
 									errorformat: 'html',
 									errorlang: mw.config.get( 'wgUserLanguage' )
 								} ).done( function ( data ) {
-									var status, page, reason = null;
+									var reason = null;
+									var status;
 									if ( !data.query || !data.query.pages ) {
 										// This happens in some weird cases like interwiki links
 										status = false;
 									} else {
-										page = data.query.pages[ 0 ];
+										var page = data.query.pages[ 0 ];
 										status = 'exists';
 										if ( page.missing ) {
 											status = 'notexists';
@@ -227,10 +229,9 @@
 							);
 						}
 						$( '#wikieditor-toolbar-link-type-int, #wikieditor-toolbar-link-type-ext' ).on( 'click', function () {
-							var request;
 							if ( $( '#wikieditor-toolbar-link-type-ext' ).prop( 'checked' ) ) {
 								// Abort previous request
-								request = $( '#wikieditor-toolbar-link-int-target-status' ).data( 'request' );
+								var request = $( '#wikieditor-toolbar-link-int-target-status' ).data( 'request' );
 								if ( request ) {
 									request.abort();
 								}
@@ -316,8 +317,7 @@
 						// Title suggestions
 						$( '#wikieditor-toolbar-link-int-target' ).data( 'suggcache', {} ).suggestions( {
 							fetch: function () {
-								var cache, request,
-									that = this,
+								var that = this,
 									title = $( this ).val();
 
 								if ( isExternalLink( title ) || title.indexOf( '|' ) !== -1 || title === '' ) {
@@ -325,18 +325,17 @@
 									return;
 								}
 
-								cache = $( this ).data( 'suggcache' );
+								var cache = $( this ).data( 'suggcache' );
 								if ( hasOwn.call( cache, title ) ) {
 									$( this ).suggestions( 'suggestions', cache[ title ] );
 									return;
 								}
 
-								request = api.get( {
+								var request = api.get( {
 									formatversion: 2,
 									action: 'opensearch',
 									search: title,
-									namespace: 0,
-									suggest: ''
+									namespace: 0
 								} ).done( function ( data ) {
 									cache[ title ] = data[ 1 ];
 									$( that ).suggestions( 'suggestions', data[ 1 ] );
@@ -356,12 +355,7 @@
 						dialogClass: 'wikiEditor-toolbar-dialog',
 						buttons: {
 							'wikieditor-toolbar-tool-link-insert': function () {
-								var match, buttons, escTarget, escText,
-									that = this,
-									insertText = '',
-									whitespace = $( '#wikieditor-toolbar-link-dialog' ).data( 'whitespace' ),
-									target = $( '#wikieditor-toolbar-link-int-target' ).val(),
-									text = $( '#wikieditor-toolbar-link-int-text' ).val();
+								var that = this;
 
 								function escapeInternalText( s ) {
 									return s.replace( /(\]{2,})/g, '<nowiki>$1</nowiki>' );
@@ -374,16 +368,21 @@
 								function escapeExternalText( s ) {
 									return s.replace( /(\]+)/g, '<nowiki>$1</nowiki>' );
 								}
+
+								var target = $( '#wikieditor-toolbar-link-int-target' ).val();
 								if ( target === '' ) {
 									// eslint-disable-next-line no-alert
 									alert( mw.msg( 'wikieditor-toolbar-tool-link-empty' ) );
 									return;
 								}
+
+								var text = $( '#wikieditor-toolbar-link-int-text' ).val();
 								if ( text.trim() === '' ) {
 									// [[Foo| ]] creates an invisible link
 									// Instead, generate [[Foo|]]
 									text = '';
 								}
+								var insertText = '';
 								if ( $( '#wikieditor-toolbar-link-type-int' ).is( ':checked' ) ) {
 									// FIXME: Exactly how fragile is this?
 									// eslint-disable-next-line no-jquery/no-sizzle
@@ -407,9 +406,9 @@
 									}
 
 									// Detect if this is really an internal link in disguise
-									match = target.match( $( this ).data( 'articlePathRegex' ) );
+									var match = target.match( $( this ).data( 'articlePathRegex' ) );
 									if ( match && !$( this ).data( 'ignoreLooksInternal' ) ) {
-										buttons = {};
+										var buttons = {};
 										buttons[ mw.msg( 'wikieditor-toolbar-tool-link-lookslikeinternal-int' ) ] =
 											function () {
 												$( '#wikieditor-toolbar-link-int-target' ).val( match[ 1 ] ).trigger( 'change' );
@@ -429,8 +428,8 @@
 										return;
 									}
 
-									escTarget = escapeExternalTarget( target );
-									escText = escapeExternalText( text );
+									var escTarget = escapeExternalTarget( target );
+									var escText = escapeExternalText( text );
 
 									if ( escTarget === escText ) {
 										insertText = escTarget;
@@ -440,6 +439,8 @@
 										insertText = '[' + escTarget + ' ' + escText + ']';
 									}
 								}
+
+								var whitespace = $( '#wikieditor-toolbar-link-dialog' ).data( 'whitespace' );
 								// Preserve whitespace in selection when replacing
 								if ( whitespace ) {
 									insertText = whitespace[ 0 ] + insertText + whitespace[ 1 ];
@@ -462,22 +463,22 @@
 							}
 						},
 						open: function () {
-							var target, text, type, matches, context, selection,
-								// Obtain the server name without the protocol. wgServer may be protocol-relative
-								serverName = mw.config.get( 'wgServer' ).replace( /^(https?:)?\/\//, '' );
+							// Obtain the server name without the protocol. wgServer may be protocol-relative
+							var serverName = mw.config.get( 'wgServer' ).replace( /^(https?:)?\/\//, '' );
 							// Cache the articlepath regex
 							$( this ).data( 'articlePathRegex', new RegExp(
 								'^https?://' + mw.util.escapeRegExp( serverName + mw.config.get( 'wgArticlePath' ) )
 									.replace( /\\\$1/g, '(.*)' ) + '$'
 							) );
 							// Pre-fill the text fields based on the current selection
-							context = $( this ).data( 'context' );
-							selection = context.$textarea.textSelection( 'getSelection' );
+							var context = $( this ).data( 'context' );
+							var selection = context.$textarea.textSelection( 'getSelection' );
 							$( '#wikieditor-toolbar-link-int-target' ).trigger( 'focus' );
 							// Trigger the change event, so the link status indicator is up to date
 							$( '#wikieditor-toolbar-link-int-target' ).trigger( 'change' );
 							$( '#wikieditor-toolbar-link-dialog' ).data( 'whitespace', [ '', '' ] );
 							if ( selection !== '' ) {
+								var matches, target, text, type;
 								if ( ( matches = selection.match( /^(\s*)\[\[([^\]|]+)(\|([^\]|]*))?\]\](\s*)$/ ) ) ) {
 									// [[foo|bar]] or [[foo]]
 									target = matches[ 2 ];
@@ -554,16 +555,15 @@
 					id: 'wikieditor-toolbar-file-dialog',
 					htmlTemplate: 'dialogInsertFile.html',
 					init: function () {
-						var magicWordsI18N = configData.magicWords,
-							defaultMsg = mw.msg( 'wikieditor-toolbar-file-default' ),
-							altHelpText = mw.msg( 'wikieditor-toolbar-file-alt-help' ),
-							altHelpLabel = mw.msg( 'wikieditor-toolbar-file-alt-help-label' );
+						var magicWordsI18N = configData.magicWords;
 
 						$( this ).find( '[data-i18n-magic]' )
 							.text( function () {
 								return magicWordsI18N[ $( this ).attr( 'data-i18n-magic' ) ][ 0 ];
 							} )
 							.removeAttr( 'data-i18n-magic' );
+
+						var defaultMsg = mw.msg( 'wikieditor-toolbar-file-default' );
 						$( this ).find( '#wikieditor-toolbar-file-size' )
 							.attr( 'placeholder', defaultMsg )
 							// The message may be long in some languages
@@ -575,6 +575,8 @@
 							} )
 							.removeAttr( 'rel' );
 
+						var altHelpText = mw.msg( 'wikieditor-toolbar-file-alt-help' );
+						var altHelpLabel = mw.msg( 'wikieditor-toolbar-file-alt-help-label' );
 						// Expandable help message for 'alt text' field
 						$( this ).find( '.wikieditor-toolbar-file-alt-help' ).text( altHelpLabel );
 						$( '.wikieditor-toolbar-file-alt-help' ).on( 'click', function () {
@@ -596,30 +598,30 @@
 						width: 590,
 						buttons: {
 							'wikieditor-toolbar-tool-file-insert': function () {
-								var fileName, caption, fileAlt, fileFloat, fileFormat,
-									fileSize, whitespace, fileTitle, options, fileUse,
-									hasPxRgx = /.+px$/,
+								var hasPxRgx = /.+px$/,
 									magicWordsI18N = configData.magicWords;
-								fileName = $( '#wikieditor-toolbar-file-target' ).val();
-								caption = $( '#wikieditor-toolbar-file-caption' ).val();
-								fileAlt = $( '#wikieditor-toolbar-file-alt' ).val();
-								fileFloat = $( '#wikieditor-toolbar-file-float' ).val();
-								fileFormat = $( '#wikieditor-toolbar-file-format' ).val();
-								fileSize = $( '#wikieditor-toolbar-file-size' ).val();
-								whitespace = $( '#wikieditor-toolbar-file-dialog' ).data( 'whitespace' );
+								var fileName = $( '#wikieditor-toolbar-file-target' ).val();
+								var caption = $( '#wikieditor-toolbar-file-caption' ).val();
+								var fileAlt = $( '#wikieditor-toolbar-file-alt' ).val();
+								var fileFloat = $( '#wikieditor-toolbar-file-float' ).val();
+								var fileFormat = $( '#wikieditor-toolbar-file-format' ).val();
+								var fileSize = $( '#wikieditor-toolbar-file-size' ).val();
+								var whitespace = $( '#wikieditor-toolbar-file-dialog' ).data( 'whitespace' );
 								// Append px to end to size if not already contains it
 								if ( fileSize !== '' && !hasPxRgx.test( fileSize ) ) {
 									fileSize += 'px';
 								}
 								if ( fileName !== '' ) {
-									fileTitle = new mw.Title( fileName );
+									var fileTitle = mw.Title.newFromText( fileName );
 									// Append file namespace prefix to filename if not already contains it
-									if ( fileTitle.getNamespaceId() !== 6 ) {
-										fileTitle = new mw.Title( fileName, 6 );
+									if ( fileTitle && fileTitle.getNamespaceId() !== 6 ) {
+										fileTitle = mw.Title.makeTitle( 6, fileName );
 									}
-									fileName = fileTitle.toText();
+									if ( fileTitle ) {
+										fileName = fileTitle.toText();
+									}
 								}
-								options = [ fileSize, fileFormat, fileFloat ];
+								var options = [ fileSize, fileFormat, fileFloat ];
 								// Filter empty values
 								options = options.filter( function ( val ) {
 									return val.length && val !== 'default';
@@ -631,7 +633,7 @@
 									options.push( caption );
 								}
 
-								fileUse = options.length === 0 ? fileName : ( fileName + '|' + options.join( '|' ) );
+								var fileUse = options.length === 0 ? fileName : ( fileName + '|' + options.join( '|' ) );
 								$( this ).dialog( 'close' );
 								toolbarModule.fn.doAction(
 									$( this ).data( 'context' ),
@@ -686,8 +688,7 @@
 							}
 						},
 						open: function () {
-							var context, selection, parseFileSyntax,
-								magicWordsI18N = configData.magicWords,
+							var magicWordsI18N = configData.magicWords,
 								fileData = {
 									pre: '',
 									post: '',
@@ -699,32 +700,31 @@
 									fileFormat: magicWordsI18N.img_thumbnail[ 0 ]
 								};
 
-							parseFileSyntax = function ( wikitext ) {
-								var escapedPipe = '\u0001',
-									result = {},
-									match, params, file, i, param, paramOrig;
+							var parseFileSyntax = function ( wikitext ) {
+								var escapedPipe = '\u0001';
 								if ( wikitext.indexOf( escapedPipe ) !== -1 ) {
 									return false;
 								}
-								match = /^(\s*)\[\[(.*)\]\](\s*)$/.exec( wikitext );
+								var match = /^(\s*)\[\[(.*)\]\](\s*)$/.exec( wikitext );
 								if ( !match ) {
 									return false;
 								}
+								var result = {};
 								result.pre = match[ 1 ];
 								result.post = match[ 3 ];
 								// Escape pipes inside links and templates,
 								// then split the parameters at the remaining pipes
-								params = match[ 2 ].replace( /\[\[[^[\]]*\]\]|\{\{[^{}]\}\}/g, function ( link ) {
+								var params = match[ 2 ].replace( /\[\[[^[\]]*\]\]|\{\{[^{}]\}\}/g, function ( link ) {
 									return link.replace( /\|/g, escapedPipe );
 								} ).split( '|' );
-								file = new mw.Title( params[ 0 ] );
-								if ( file.getNamespaceId() !== 6 ) {
+								var file = mw.Title.newFromText( params[ 0 ] );
+								if ( !file || file.getNamespaceId() !== 6 ) {
 									return false;
 								}
 								result.fileName = file.getMainText();
-								for ( i = 1; i < params.length; i++ ) {
-									paramOrig = params[ i ];
-									param = paramOrig.toLowerCase();
+								for ( var i = 1; i < params.length; i++ ) {
+									var paramOrig = params[ i ];
+									var param = paramOrig.toLowerCase();
 									if ( magicWordsI18N.img_right.indexOf( param ) !== -1 ) {
 										result.fileFloat = magicWordsI18N.img_right[ 0 ];
 									} else if ( magicWordsI18N.img_left.indexOf( param ) !== -1 ) {
@@ -758,8 +758,8 @@
 							};
 
 							// Retrieve the current selection
-							context = $( this ).data( 'context' );
-							selection = context.$textarea.textSelection( 'getSelection' );
+							var context = $( this ).data( 'context' );
+							var selection = context.$textarea.textSelection( 'getSelection' );
 
 							// Pre-fill the text fields based on the current selection
 							if ( selection !== '' ) {
@@ -844,12 +844,11 @@
 							// Instead of show/hiding, switch the HTML around
 							// We do this because the sortable tables script styles the first row,
 							// visible or not
-							var $sortable,
-								headerHTML = $( '.wikieditor-toolbar-table-preview-header' ).html(),
+							var headerHTML = $( '.wikieditor-toolbar-table-preview-header' ).html(),
 								hiddenHTML = $( '.wikieditor-toolbar-table-preview-hidden' ).html();
 							$( '.wikieditor-toolbar-table-preview-header' ).html( hiddenHTML );
 							$( '.wikieditor-toolbar-table-preview-hidden' ).html( headerHTML );
-							$sortable = $( '#wikieditor-toolbar-table-preview, #wikieditor-toolbar-table-preview2' )
+							var $sortable = $( '#wikieditor-toolbar-table-preview, #wikieditor-toolbar-table-preview2' )
 								.filter( '.sortable' );
 							mw.loader.using( 'jquery.tablesorter', function () {
 								$sortable.tablesorter();
@@ -862,9 +861,7 @@
 						width: 590,
 						buttons: {
 							'wikieditor-toolbar-tool-table-insert': function () {
-								var captionText, headerText, normalText, table, r, c,
-									isHeader, delim, classes, classStr,
-									rowsVal = $( '#wikieditor-toolbar-table-dimensions-rows' ).val(),
+								var rowsVal = $( '#wikieditor-toolbar-table-dimensions-rows' ).val(),
 									colsVal = $( '#wikieditor-toolbar-table-dimensions-columns' ).val(),
 									rows = parseInt( rowsVal, 10 ),
 									cols = parseInt( colsVal, 10 ),
@@ -884,16 +881,16 @@
 									alert( mw.msg( 'wikieditor-toolbar-tool-table-toomany', mw.language.convertNumber( 1000 ) ) );
 									return;
 								}
-								captionText = mw.msg( 'wikieditor-toolbar-tool-table-example-caption' );
-								headerText = mw.msg( 'wikieditor-toolbar-tool-table-example-header' );
-								normalText = mw.msg( 'wikieditor-toolbar-tool-table-example' );
-								table = '';
+								var captionText = mw.msg( 'wikieditor-toolbar-tool-table-example-caption' );
+								var headerText = mw.msg( 'wikieditor-toolbar-tool-table-example-header' );
+								var normalText = mw.msg( 'wikieditor-toolbar-tool-table-example' );
+								var table = '';
 								table += '|+ ' + captionText + '\n';
-								for ( r = 0; r < rows + header; r++ ) {
+								for ( var r = 0; r < rows + header; r++ ) {
 									table += '|-\n';
-									for ( c = 0; c < cols; c++ ) {
-										isHeader = ( header && r === 0 );
-										delim = isHeader ? '!' : '|';
+									for ( var c = 0; c < cols; c++ ) {
+										var isHeader = ( header && r === 0 );
+										var delim = isHeader ? '!' : '|';
 										if ( c > 0 ) {
 											delim += delim;
 										}
@@ -903,14 +900,14 @@
 									// table[table.length - 1] is read-only
 									table = table.substr( 0, table.length - 1 ) + '\n';
 								}
-								classes = [];
+								var classes = [];
 								if ( $( '#wikieditor-toolbar-table-wikitable' ).is( ':checked' ) ) {
 									classes.push( 'wikitable' );
 								}
 								if ( $( '#wikieditor-toolbar-table-sortable' ).is( ':checked' ) ) {
 									classes.push( 'sortable' );
 								}
-								classStr = classes.length > 0 ? ' class="' + classes.join( ' ' ) + '"' : '';
+								var classStr = classes.length > 0 ? ' class="' + classes.join( ' ' ) + '"' : '';
 								$( this ).dialog( 'close' );
 								toolbarModule.fn.doAction(
 									$( this ).data( 'context' ),
@@ -979,35 +976,29 @@
 
 						// TODO: Find a cleaner way to share this function
 						$( this ).data( 'replaceCallback', function ( mode ) {
-							var offset, textRemainder, regex,
-								searchStr, replaceStr, flags, matchCase, matchWord, isRegex,
-								$textarea, text, match,
-								actualReplacement,
-								start, end;
-
 							$( '#wikieditor-toolbar-replace-nomatch, #wikieditor-toolbar-replace-success, #wikieditor-toolbar-replace-emptysearch, #wikieditor-toolbar-replace-invalidregex' ).hide();
 
 							// Search string cannot be empty
-							searchStr = $( '#wikieditor-toolbar-replace-search' ).val();
+							var searchStr = $( '#wikieditor-toolbar-replace-search' ).val();
 							if ( searchStr === '' ) {
 								$( '#wikieditor-toolbar-replace-emptysearch' ).show();
 								return;
 							}
 
 							// Replace string can be empty
-							replaceStr = $( '#wikieditor-toolbar-replace-replace' ).val();
+							var replaceStr = $( '#wikieditor-toolbar-replace-replace' ).val();
 
 							// Prepare the regular expression flags
-							flags = 'm';
-							matchCase = $( '#wikieditor-toolbar-replace-case' ).is( ':checked' );
+							var flags = 'm';
+							var matchCase = $( '#wikieditor-toolbar-replace-case' ).is( ':checked' );
 							if ( !matchCase ) {
 								flags += 'i';
 							}
-							isRegex = $( '#wikieditor-toolbar-replace-regex' ).is( ':checked' );
+							var isRegex = $( '#wikieditor-toolbar-replace-regex' ).is( ':checked' );
 							if ( !isRegex ) {
 								searchStr = mw.util.escapeRegExp( searchStr );
 							}
-							matchWord = $( '#wikieditor-toolbar-replace-word' ).is( ':checked' );
+							var matchWord = $( '#wikieditor-toolbar-replace-word' ).is( ':checked' );
 							if ( matchWord ) {
 								searchStr = '\\b(?:' + searchStr + ')\\b';
 							}
@@ -1015,6 +1006,7 @@
 								flags += 'g';
 							}
 
+							var regex;
 							try {
 								regex = new RegExp( searchStr, flags );
 							} catch ( e ) {
@@ -1025,9 +1017,10 @@
 								return;
 							}
 
-							$textarea = $( this ).data( 'context' ).$textarea;
-							text = $textarea.textSelection( 'getContents' );
-							match = false;
+							var $textarea = $( this ).data( 'context' ).$textarea;
+							var text = $textarea.textSelection( 'getContents' );
+							var match = false;
+							var offset, textRemainder;
 							if ( mode !== 'replaceAll' ) {
 								if ( mode === 'replace' ) {
 									offset = $( this ).data( 'matchIndex' );
@@ -1055,8 +1048,10 @@
 								$( this ).data( 'offset', 0 );
 							} else {
 
+								var start, end;
 								if ( mode === 'replace' ) {
 
+									var actualReplacement;
 									if ( isRegex ) {
 										// If backreferences (like $1) are used, the actual actual replacement string will be different
 										actualReplacement = match[ 0 ].replace( regex, replaceStr );
@@ -1137,8 +1132,7 @@
 							}
 						},
 						open: function () {
-							var $dialog, context, $textbox,
-								that = this;
+							var that = this;
 							$( this ).data( 'offset', 0 );
 							$( this ).data( 'matchIndex', 0 );
 
@@ -1160,10 +1154,10 @@
 									$( this ).closest( '.ui-dialog' ).data( 'dialogaction', this );
 								} );
 							}
-							$dialog = $( this ).closest( '.ui-dialog' );
+							var $dialog = $( this ).closest( '.ui-dialog' );
 							that = this;
-							context = $( this ).data( 'context' );
-							$textbox = context.$textarea;
+							var context = $( this ).data( 'context' );
+							var $textbox = context.$textarea;
 
 							$textbox
 								.on( 'keypress.srdialog', function ( e ) {

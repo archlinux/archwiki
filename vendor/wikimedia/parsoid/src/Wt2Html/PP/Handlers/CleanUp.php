@@ -3,13 +3,14 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\PP\Handlers;
 
-use DOMElement;
-use DOMNode;
-use DOMText;
 use stdClass;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\DOM\Comment;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -18,11 +19,11 @@ use Wikimedia\Parsoid\Utils\WTUtils;
 
 class CleanUp {
 	/**
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @param Env $env
-	 * @return bool|DOMElement
+	 * @return bool|Element
 	 */
-	public static function stripMarkerMetas( DOMElement $node, Env $env ) {
+	public static function stripMarkerMetas( Element $node, Env $env ) {
 		if (
 			// Sometimes a non-tpl meta node might get the mw:Transclusion typeof
 			// element attached to it. So, check if the node has data-mw,
@@ -30,6 +31,9 @@ class CleanUp {
 			!DOMDataUtils::validDataMw( $node ) && (
 				(
 					DOMUtils::hasTypeOf( $node, 'mw:Placeholder/StrippedTag' ) &&
+					// NOTE: In ComputeDSR, we don't zero out the width of these
+					// markers because they're staying in the DOM and serializeDOMNode
+					// only handles a few cases of zero width nodes.
 					!DOMUtils::isNestedInListItem( $node )
 				) ||
 				DOMUtils::matchTypeOf( $node, '#^mw:(StartTag|EndTag|TSRMarker|Transclusion)(/|$)#' )
@@ -45,20 +49,45 @@ class CleanUp {
 	}
 
 	/**
-	 * @param DOMNode $node
+	 * @param Node $node
+	 * @return bool
+	 */
+	private static function isEmptyNode( Node $node ): bool {
+		$n = $node->firstChild;
+		while ( $n ) {
+			// Comments, sol-transparent links, nowiki spans without content
+			// are all stripped  by the core parser.
+			// Text nodes with whitespace don't count either.
+			if ( $n instanceof Comment ||
+				WTUtils::isSolTransparentLink( $n ) ||
+				( $n instanceof Text && preg_match( '/^[ \t]*$/D',  $n->nodeValue ) ) ||
+				( DOMUtils::hasTypeOf( $n, 'mw:Nowiki' ) && self::isEmptyNode( $n ) )
+			) {
+				$n = $n->nextSibling;
+				continue;
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param Node $node
 	 * @param Env $env
 	 * @param array $options
 	 * @param bool $atTopLevel
 	 * @param ?stdClass $tplInfo
-	 * @return bool|DOMNode
+	 * @return bool|Node
 	 */
 	public static function handleEmptyElements(
-		DOMNode $node, Env $env, array $options, bool $atTopLevel = false,
+		Node $node, Env $env, array $options, bool $atTopLevel = false,
 		?stdClass $tplInfo = null
 	) {
-		if ( !( $node instanceof DOMElement ) ||
-			!isset( WikitextConstants::$Output['FlaggedEmptyElts'][$node->nodeName] ) ||
-			!DOMUtils::nodeEssentiallyEmpty( $node )
+		if ( !( $node instanceof Element ) ||
+			!isset( WikitextConstants::$Output['FlaggedEmptyElts'][DOMCompat::nodeName( $node )] ) ||
+			!self::isEmptyNode( $node )
 		) {
 			return true;
 		}
@@ -95,10 +124,10 @@ class CleanUp {
 	 * FIXME: Worry about "about" siblings
 	 *
 	 * @param Env $env
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @return bool
 	 */
-	private static function inNativeContent( Env $env, DOMElement $node ): bool {
+	private static function inNativeContent( Env $env, Element $node ): bool {
 		while ( !DOMUtils::atTheTop( $node ) ) {
 			if ( WTUtils::getNativeExt( $env, $node ) !== null ) {
 				return true;
@@ -110,10 +139,10 @@ class CleanUp {
 
 	/**
 	 * Whitespace in this function refers to [ \t] only
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @param ?DomSourceRange $dsr
 	 */
-	private static function trimWhiteSpace( DOMElement $node, ?DomSourceRange $dsr ): void {
+	private static function trimWhiteSpace( Element $node, ?DomSourceRange $dsr ): void {
 		// Trim leading ws (on the first line)
 		$trimmedLen = 0;
 		$updateDSR = true;
@@ -183,17 +212,17 @@ class CleanUp {
 	 * Perform some final cleanup and save data-parsoid attributes on each node.
 	 *
 	 * @param array $usedIdIndex
-	 * @param DOMNode $node
+	 * @param Node $node
 	 * @param Env $env
 	 * @param bool $atTopLevel
 	 * @param ?stdClass $tplInfo
-	 * @return bool|DOMText
+	 * @return bool|Node The next node or true to continue with $node->nextSibling
 	 */
 	public static function cleanupAndSaveDataParsoid(
-		array $usedIdIndex, DOMNode $node, Env $env,
+		array $usedIdIndex, Node $node, Env $env,
 		bool $atTopLevel = false, ?stdClass $tplInfo = null
 	) {
-		if ( !( $node instanceof DOMElement ) ) {
+		if ( !( $node instanceof Element ) ) {
 			return true;
 		}
 
@@ -204,7 +233,7 @@ class CleanUp {
 
 		// Delete from data parsoid, wikitext originating autoInsertedEnd info
 		if ( !empty( $dp->autoInsertedEnd ) && !WTUtils::hasLiteralHTMLMarker( $dp ) &&
-			isset( WikitextConstants::$WTTagsWithNoClosingTags[$node->nodeName] )
+			isset( WikitextConstants::$WTTagsWithNoClosingTags[DOMCompat::nodeName( $node )] )
 		) {
 			unset( $dp->autoInsertedEnd );
 		}
@@ -222,8 +251,8 @@ class CleanUp {
 		// content where data-mw isn't necessary and html2wt knows how to
 		// handle the HTML markup.
 		$validDSR = DOMDataUtils::validDataMw( $node ) && Utils::isValidDSR( $dp->dsr ?? null );
-		$isPageProp = $node->nodeName === 'meta' &&
-			preg_match( '#^mw:PageProp/(.*)$#D', $node->getAttribute( 'property' ) );
+		$isPageProp = DOMCompat::nodeName( $node ) === 'meta' &&
+			str_starts_with( $node->getAttribute( 'property' ) ?? '', 'mw:PageProp/' );
 		if ( $validDSR && !$isPageProp ) {
 			unset( $dp->src );
 		} elseif ( $isFirstEncapsulationWrapperNode && ( !$atTopLevel || empty( $dp->tsr ) ) ) {
@@ -266,17 +295,15 @@ class CleanUp {
 				 DOMUtils::hasTypeOf( $node, 'mw:Nowiki' )
 			) {
 				DOMUtils::migrateChildren( $node, $node->parentNode, $node->nextSibling );
-				// Replace the span with an empty text node.
-				// (better for perf instead of deleting the node)
-				$next = $node->ownerDocument->createTextNode( '' );
-				$node->parentNode->replaceChild( $next, $node );
+				$next = $node->nextSibling;
+				$node->parentNode->removeChild( $node );
 				return $next;
 			}
 
 			// Trim whitespace from some wikitext markup
 			// not involving explicit HTML tags (T157481)
 			if ( !WTUtils::hasLiteralHTMLMarker( $dp ) &&
-				isset( WikitextConstants::$WikitextTagsWithTrimmableWS[$node->nodeName] )
+				isset( WikitextConstants::$WikitextTagsWithTrimmableWS[DOMCompat::nodeName( $node )] )
 			) {
 				self::trimWhiteSpace( $node, $dp->dsr ?? null );
 			}

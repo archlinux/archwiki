@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Adriendelucca",
 			"Fohanno",
 			"Fulup",
 			"Maoris",
-			"Y-M D",
-			"Adriendelucca"
+			"Y-M D"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Levr",
@@ -19,7 +19,7 @@
 	"cite-ve-dialog-reference-useexisting-tool": "Adimplijout",
 	"cite-ve-dialog-referenceslist-title": "Roll an daveennoù",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Menegoù",
-	"cite-ve-dialogbutton-reference-full-label": "Stumm diazez",
+	"cite-ve-dialogbutton-reference-full-label": "Diazez",
 	"cite-ve-dialogbutton-reference-title": "Daveenn",
 	"cite-ve-dialogbutton-reference-tooltip": "Diazez",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Roll an daveennoù",

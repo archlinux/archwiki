@@ -8,16 +8,15 @@ QUnit.module( 've.ui.UrlStringTransferHandler (MW)' );
 
 /* Tests */
 
-QUnit.test( 'paste', function ( assert ) {
-	var i,
-		cases = [
+QUnit.test( 'paste', ( assert ) => {
+	const cases = [
 			{
 				msg: 'External link converts to internal link',
 				pasteString: location.origin + mw.Title.newFromText( 'Main Page' ).getUrl(),
 				pasteType: 'text/plain',
-				expectedData: function () {
+				expectedData: () => {
 					// Explicitly create an internal link so we can assert this behaviour is working
-					var a = ve.dm.MWInternalLinkAnnotation.static.newFromTitle( mw.Title.newFromText( 'Main Page' ) ).element;
+					const a = ve.dm.MWInternalLinkAnnotation.static.newFromTitle( mw.Title.newFromText( 'Main Page' ) ).element;
 					return [
 						[ 'M', [ a ] ],
 						[ 'a', [ a ] ],
@@ -33,7 +32,7 @@ QUnit.test( 'paste', function ( assert ) {
 			}
 		];
 
-	for ( i = 0; i < cases.length; i++ ) {
+	for ( let i = 0; i < cases.length; i++ ) {
 		ve.test.utils.runUrlStringHandlerTest( assert, cases[ i ].pasteString, cases[ i ].pasteHtml, cases[ i ].pasteType, cases[ i ].expectedData, cases[ i ].msg );
 	}
 } );

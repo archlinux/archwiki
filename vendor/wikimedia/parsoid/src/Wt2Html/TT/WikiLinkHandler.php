@@ -84,7 +84,7 @@ class WikiLinkHandler extends TokenHandler {
 	 * @throws InternalException
 	 */
 	private function getWikiLinkTargetInfo( Token $token, string $href, string $hrefSrc ): stdClass {
-		$env = $this->manager->env;
+		$env = $this->env;
 		$siteConfig = $env->getSiteConfig();
 		$info = (object)[
 			'href' => $href,
@@ -96,12 +96,12 @@ class WikiLinkHandler extends TokenHandler {
 			'fromColonEscapedText' => null
 		];
 
-		if ( preg_match( '/^:/', $info->href ) ) {
+		if ( ( $info->href[0] ?? '' ) === ':' ) {
 			$info->fromColonEscapedText = true;
 			// remove the colon escape
 			$info->href = substr( $info->href, 1 );
 		}
-		if ( preg_match( '/^:/', $info->href ) ) {
+		if ( ( $info->href[0] ?? '' ) === ':' ) {
 			if ( $siteConfig->linting() ) {
 				$lint = [
 					'dsr' => DomSourceRange::fromTsr( $token->dataAttribs->tsr ),
@@ -111,10 +111,9 @@ class WikiLinkHandler extends TokenHandler {
 				if ( $this->options['inTemplate'] ) {
 					// Match Linter.findEnclosingTemplateName(), by first
 					// converting the title to an href using env.makeLink
-					$name = preg_replace(
-						'#^\./#', '',
+					$name = PHPUtils::stripPrefix(
 						$env->makeLink( $this->manager->getFrame()->getTitle() ),
-						1
+						'./'
 					);
 					$lint['templateInfo'] = [ 'name' => $name ];
 					// TODO(arlolra): Pass tsr info to the frame
@@ -143,7 +142,8 @@ class WikiLinkHandler extends TokenHandler {
 					// Empty title => main page (T66167)
 					$info->title = $env->makeTitleFromURLDecodedStr( $siteConfig->mainpage() );
 				} else {
-					$info->href = ( preg_match( '/:/', $hrefBits['title'] ) ? ':' : '' ) . $hrefBits['title'];
+					$info->href = str_contains( $hrefBits['title'], ':' )
+						? ':' . $hrefBits['title'] : $hrefBits['title'];
 					// Recurse!
 					$info = $this->getWikiLinkTargetInfo( $token, $info->href, $info->hrefSrc );
 					$info->localprefix = $nsPrefix .
@@ -178,10 +178,10 @@ class WikiLinkHandler extends TokenHandler {
 	 * Handle mw:redirect tokens
 	 *
 	 * @param Token $token
-	 * @return array
+	 * @return TokenHandlerResult
 	 * @throws InternalException
 	 */
-	private function onRedirect( Token $token ): array {
+	private function onRedirect( Token $token ): TokenHandlerResult {
 		// Avoid duplicating the link-processing code by invoking the
 		// standard onWikiLink handler on the embedded link, intercepting
 		// the generated tokens using the callback mechanism, reading
@@ -208,13 +208,13 @@ class WikiLinkHandler extends TokenHandler {
 		// Render the wikilink (including interwiki links, etc) then collect
 		// the resulting href and transfer it to rlink.
 		$r = $this->onWikiLink( $wikiLinkTk );
-		$firstToken = ( $r['tokens'][0] ?? null );
+		$firstToken = ( $r->tokens[0] ?? null );
 		$isValid = $firstToken instanceof Token &&
-			preg_match( '/^(a|link)$/D', $firstToken->getName() );
+			in_array( $firstToken->getName(), [ 'a', 'link' ], true );
 		if ( $isValid ) {
-			$da = $r['tokens'][0]->dataAttribs;
+			$da = $r->tokens[0]->dataAttribs;
 			$rlink->addNormalizedAttribute( 'href', $da->a['href'], $da->sa['href'] );
-			return [ 'tokens' => [ $rlink ] ];
+			return new TokenHandlerResult( [ $rlink ] );
 		} else {
 			// Bail!  Emit tokens as if they were parsed as a list item:
 			// #REDIRECT....
@@ -229,7 +229,8 @@ class WikiLinkHandler extends TokenHandler {
 			], (object)[ 'tsr' => $tsr0 ] );
 			$ntokens[] = $li;
 			$ntokens[] = substr( $src, strlen( $srcMatch[0] ) );
-			return [ 'tokens' => array_merge( $ntokens, $r['tokens'] ) ];
+			PHPUtils::pushArray( $ntokens, $r->tokens );
+			return new TokenHandlerResult( $ntokens );
 		}
 	}
 
@@ -257,13 +258,13 @@ class WikiLinkHandler extends TokenHandler {
 			if ( is_string( $mwc ) ) {
 				$content[] = $mwc;
 			} elseif ( count( $mwc ) ) {
-				$content = array_merge( $content, $mwc );
+				PHPUtils::pushArray( $content, $mwc );
 			}
 		} else {
 			foreach ( $token->attribs as $kv ) {
 				if ( $kv->k === 'mw:maybeContent' ) {
 					$content[] = '|';
-					$content = array_merge( $content, $kv->v );
+					PHPUtils::pushArray( $content, $kv->v );
 				}
 			}
 		}
@@ -318,11 +319,11 @@ class WikiLinkHandler extends TokenHandler {
 	 * Handle a mw:WikiLink token.
 	 *
 	 * @param Token $token
-	 * @return array|bool|string
+	 * @return TokenHandlerResult
 	 * @throws InternalException
 	 */
-	private function onWikiLink( Token $token ) {
-		$env = $this->manager->env;
+	private function onWikiLink( Token $token ): TokenHandlerResult {
+		$env = $this->env;
 		$hrefKV = $token->getAttributeKV( 'href' );
 		$hrefTokenStr = TokenUtils::tokensToString( $hrefKV->v );
 
@@ -340,7 +341,7 @@ class WikiLinkHandler extends TokenHandler {
 			}
 
 			$tokens = array_merge( [ '[' ], $extToks, [ ']' ] );
-			return [ 'tokens' => $tokens ];
+			return new TokenHandlerResult( $tokens );
 		}
 
 		// Xmlish tags in title position are invalid.  Not according to the
@@ -351,12 +352,12 @@ class WikiLinkHandler extends TokenHandler {
 			// since the fragment will have been released when expanding to DOM
 			$expandedVal = $token->fetchExpandedAttrValue( 'href' );
 			if ( preg_match( '#mw:(Nowiki|Extension|DOMFragment/sealed)#', $expandedVal ?? '' ) ) {
-				return [ 'tokens' => self::bailTokens( $env, $token, false ) ];
+				return new TokenHandlerResult( self::bailTokens( $env, $token, false ) );
 			}
 		}
 
 		// First check if the expanded href contains a pipe.
-		if ( preg_match( '/[|]/', $hrefTokenStr ) ) {
+		if ( str_contains( $hrefTokenStr, '|' ) ) {
 			// It does. This 'href' was templated and also returned other
 			// parameters separated by a pipe. We don't have any sane way to
 			// handle such a construct currently, so prevent people from editing
@@ -364,7 +365,7 @@ class WikiLinkHandler extends TokenHandler {
 			// TODO: add useful debugging info for editors ('if you would like to
 			// make this content editable, then fix template X..')
 			// TODO: also check other parameters for pipes!
-			return [ 'tokens' => self::bailTokens( $env, $token, false ) ];
+			return new TokenHandlerResult( self::bailTokens( $env, $token, false ) );
 		}
 
 		$target = null;
@@ -372,7 +373,7 @@ class WikiLinkHandler extends TokenHandler {
 			$target = $this->getWikiLinkTargetInfo( $token, $hrefTokenStr, $hrefKV->vsrc );
 		} catch ( TitleException | InternalException $e ) {
 			// Invalid title
-			return [ 'tokens' => self::bailTokens( $env, $token, false ) ];
+			return new TokenHandlerResult( self::bailTokens( $env, $token, false ) );
 		}
 
 		// Ok, it looks like we have a sane href. Figure out which handler to use.
@@ -388,10 +389,12 @@ class WikiLinkHandler extends TokenHandler {
 	 * @param Token $token
 	 * @param stdClass $target
 	 * @param bool $isRedirect
-	 * @return array
+	 * @return TokenHandlerResult
 	 * @throws InternalException
 	 */
-	private function wikiLinkHandler( Token $token, stdClass $target, bool $isRedirect ) {
+	private function wikiLinkHandler(
+		Token $token, stdClass $target, bool $isRedirect
+	): TokenHandlerResult {
 		$title = $target->title ?? null;
 		if ( $title ) {
 			if ( $isRedirect ) {
@@ -489,7 +492,7 @@ class WikiLinkHandler extends TokenHandler {
 		}
 
 		if ( $linkAttrs ) {
-			$newAttrs = array_merge( $newAttrs, $linkAttrs );
+			PHPUtils::pushArray( $newAttrs, $linkAttrs );
 		}
 
 		return [
@@ -518,7 +521,7 @@ class WikiLinkHandler extends TokenHandler {
 		$dataAttribs = $token->dataAttribs;
 		$newAttrData = self::buildLinkAttrs( $attribs, true, null, [ new KV( 'rel', 'mw:WikiLink' ) ] );
 		$content = $newAttrData['contentKVs'];
-		$env = $this->manager->env;
+		$env = $this->env;
 
 		// Set attribs and dataAttribs
 		$newTk->attribs = $newAttrData['attribs'];
@@ -541,11 +544,10 @@ class WikiLinkHandler extends TokenHandler {
 					$toks = [ $toks ];
 				}
 
-				$toks = array_values( array_filter( $toks, function ( $t ) {
+				$toks = array_values( array_filter( $toks, static function ( $t ) {
 					return $t !== '';
 				} ) );
 				$n = count( $toks );
-				$newToks = [];
 				foreach ( $toks as $j => $t ) {
 					// Bail on media-syntax in wikilink-syntax scenarios,
 					// since the legacy parser explodes on [[, last one wins.
@@ -583,7 +585,7 @@ class WikiLinkHandler extends TokenHandler {
 							// as an <a> tag with no content -- but these ought
 							// to be treated as plaintext since we don't allow
 							// nested links.
-							$newToks[] = '[' . $t->getAttribute( 'href' ) . ']';
+							$out[] = '[' . $t->getAttribute( 'href' ) . ']';
 						}
 						// suppress <a>
 						continue;
@@ -593,9 +595,8 @@ class WikiLinkHandler extends TokenHandler {
 						continue; // suppress </a>
 					}
 
-					$newToks[] = $t;
+					$out[] = $t;
 				}
-				$out = array_merge( $out, $newToks );
 				if ( $i < $l - 1 ) {
 					$out[] = '|';
 				}
@@ -617,7 +618,7 @@ class WikiLinkHandler extends TokenHandler {
 			$morecontent = Utils::decodeURIComponent( $target->href );
 
 			// Strip leading colon
-			$morecontent = preg_replace( '/^:/', '', $morecontent, 1 );
+			$morecontent = PHPUtils::stripPrefix( $morecontent, ':' );
 
 			// Try to match labeling in core
 			if ( $env->getSiteConfig()->namespaceHasSubpages( $env->getPageConfig()->getNs() ) ) {
@@ -625,7 +626,7 @@ class WikiLinkHandler extends TokenHandler {
 				// See https://gerrit.wikimedia.org/r/173431
 				if ( preg_match( '#^((\.\./)+|/)(?!\.\./)(.*?[^/])/+$#D', $morecontent, $match ) ) {
 					$morecontent = $match[3];
-				} elseif ( preg_match( '#^\.\./#', $morecontent ) ) {
+				} elseif ( str_starts_with( $morecontent, '../' ) ) {
 					// Subpages on interwiki / language links aren't valid,
 					// so $target->title should always be present here
 					$morecontent = $target->title->getPrefixedText();
@@ -652,14 +653,14 @@ class WikiLinkHandler extends TokenHandler {
 	 *
 	 * @param Token $token
 	 * @param stdClass $target
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function renderWikiLink( Token $token, stdClass $target ): array {
+	private function renderWikiLink( Token $token, stdClass $target ): TokenHandlerResult {
 		$newTk = new TagTk( 'a' );
 		try {
 			$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target, true );
 		} catch ( InternalException $e ) {
-			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+			return new TokenHandlerResult( self::bailTokens( $this->env, $token, false ) );
 		}
 
 		$newTk->addNormalizedAttribute( 'href', $this->env->makeLink( $target->title ),
@@ -670,7 +671,7 @@ class WikiLinkHandler extends TokenHandler {
 			$newTk->setAttribute( 'title', $target->title->getPrefixedText() );
 		}
 
-		return [ 'tokens' => array_merge( [ $newTk ], $content, [ new EndTagTk( 'a' ) ] ) ];
+		return new TokenHandlerResult( array_merge( [ $newTk ], $content, [ new EndTagTk( 'a' ) ] ) );
 	}
 
 	/**
@@ -679,16 +680,16 @@ class WikiLinkHandler extends TokenHandler {
 	 *
 	 * @param Token $token
 	 * @param stdClass $target
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function renderCategory( Token $token, stdClass $target ): array {
+	private function renderCategory( Token $token, stdClass $target ): TokenHandlerResult {
 		$newTk = new SelfclosingTagTk( 'link' );
 		try {
 			$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target );
 		} catch ( InternalException $e ) {
-			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+			return new TokenHandlerResult( self::bailTokens( $this->env, $token, false ) );
 		}
-		$env = $this->manager->env;
+		$env = $this->env;
 
 		// Change the rel to be mw:PageProp/Category
 		$newTk->getAttributeKV( 'rel' )->v = 'mw:PageProp/Category';
@@ -700,7 +701,7 @@ class WikiLinkHandler extends TokenHandler {
 		if ( $strContent !== '' && $strContent !== $target->href ) {
 			$hrefkv = $newTk->getAttributeKV( 'href' );
 			$hrefkv->v .= '#';
-			$hrefkv->v .= preg_replace( '/#/', '%23', Sanitizer::sanitizeTitleURI( $strContent, false ) );
+			$hrefkv->v .= str_replace( '#', '%23', Sanitizer::sanitizeTitleURI( $strContent, false ) );
 		}
 
 		if ( count( $content ) !== 1 ) {
@@ -709,7 +710,7 @@ class WikiLinkHandler extends TokenHandler {
 			$contentKV = $token->getAttributeKV( 'mw:maybeContent' );
 			$so = $contentKV->valueOffset();
 			$val = PipelineUtils::expandValueToDOM(
-				$this->manager->env,
+				$this->env,
 				$this->manager->getFrame(),
 				[ 'html' => $content, 'srcOffsets' => $so ],
 				$this->options['expandTemplates'],
@@ -729,7 +730,7 @@ class WikiLinkHandler extends TokenHandler {
 			$newTk->addSpaceSeparatedAttribute( 'typeof', 'mw:ExpandedAttrs' );
 			$newTk->addAttribute( 'data-mw', PHPUtils::jsonEncode( $dataMW ) );
 		}
-		return [ 'tokens' => [ $newTk ] ];
+		return new TokenHandlerResult( [ $newTk ] );
 	}
 
 	/**
@@ -738,16 +739,16 @@ class WikiLinkHandler extends TokenHandler {
 	 *
 	 * @param Token $token
 	 * @param stdClass $target
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function renderLanguageLink( Token $token, stdClass $target ): array {
+	private function renderLanguageLink( Token $token, stdClass $target ): TokenHandlerResult {
 		// The prefix is listed in the interwiki map
 
 		$newTk = new SelfclosingTagTk( 'link', [], $token->dataAttribs );
 		try {
 			$this->addLinkAttributesAndGetContent( $newTk, $token, $target );
 		} catch ( InternalException $e ) {
-			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+			return new TokenHandlerResult( self::bailTokens( $this->env, $token, false ) );
 		}
 
 		// add title attribute giving the presentation name of the
@@ -769,7 +770,7 @@ class WikiLinkHandler extends TokenHandler {
 		// Change the rel to be mw:PageProp/Language
 		$newTk->getAttributeKV( 'rel' )->v = 'mw:PageProp/Language';
 
-		return [ 'tokens' => [ $newTk ] ];
+		return new TokenHandlerResult( [ $newTk ] );
 	}
 
 	/**
@@ -777,9 +778,9 @@ class WikiLinkHandler extends TokenHandler {
 	 *
 	 * @param Token $token
 	 * @param stdClass $target
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function renderInterwikiLink( Token $token, stdClass $target ): array {
+	private function renderInterwikiLink( Token $token, stdClass $target ): TokenHandlerResult {
 		// The prefix is listed in the interwiki map
 
 		$tokens = [];
@@ -787,7 +788,7 @@ class WikiLinkHandler extends TokenHandler {
 		try {
 			$content = $this->addLinkAttributesAndGetContent( $newTk, $token, $target, true );
 		} catch ( InternalException $e ) {
-			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+			return new TokenHandlerResult( self::bailTokens( $this->env, $token, false ) );
 		}
 
 		// We set an absolute link to the article in the other wiki/language
@@ -807,14 +808,15 @@ class WikiLinkHandler extends TokenHandler {
 		// (The normalization here is similar to what Title#getPrefixedDBKey() does.)
 		if ( $target->href === '' || $target->href[0] !== '#' ) {
 			$titleAttr = $target->interwiki['prefix'] . ':' .
-				Utils::decodeURIComponent( preg_replace( '/_/', ' ',
-					preg_replace( '/#[\s\S]*/', '', $target->href, 1 ) ) );
+				Utils::decodeURIComponent( str_replace( '_', ' ',
+					preg_replace( '/#.*/s', '', $target->href, 1 ) ) );
 			$newTk->setAttribute( 'title', $titleAttr );
 		}
 		$tokens[] = $newTk;
 
-		$tokens = array_merge( $tokens, $content, [ new EndTagTk( 'a' ) ] );
-		return [ 'tokens' => $tokens ];
+		PHPUtils::pushArray( $tokens, $content );
+		$tokens[] = new EndTagTk( 'a' );
+		return new TokenHandlerResult( $tokens );
 	}
 
 	/**
@@ -993,8 +995,9 @@ class WikiLinkHandler extends TokenHandler {
 	 * @param string $resultStr
 	 * @return bool
 	 */
-	private static function isWikitextOpt( Env $env, ?array &$optInfo, string $prefix,
-											  string $resultStr ): bool {
+	private static function isWikitextOpt(
+		Env $env, ?array &$optInfo, string $prefix, string $resultStr
+	): bool {
 		// link and alt options are allowed to contain arbitrary
 		// wikitext (even though only strings are supported in reality)
 		// SSS FIXME: Is this actually true of all options rather than
@@ -1002,7 +1005,7 @@ class WikiLinkHandler extends TokenHandler {
 		if ( $optInfo === null ) {
 			$optInfo = self::getOptionInfo( $prefix . $resultStr, $env );
 		}
-		return $optInfo !== null && preg_match( '/^(link|alt)$/D', $optInfo['ck'] );
+		return $optInfo !== null && in_array( $optInfo['ck'], [ 'link', 'alt' ], true );
 	}
 
 	/**
@@ -1057,6 +1060,7 @@ class WikiLinkHandler extends TokenHandler {
 								// become mw:maybeContent that gets expanded
 								// below where $hasExpandableOpt is set.
 								'unpackDOMFragments' => true,
+								// FIXME: Sneaking in `env` to avoid changing the signature
 								'env' => $env
 							]
 						);
@@ -1064,8 +1068,6 @@ class WikiLinkHandler extends TokenHandler {
 						// them from fragments and we're about to attempt to
 						// when this function returns.
 						// This is similar to getting the shadow "href" below.
-						// FIXME: Sneaking in `env` to avoid changing the signature
-
 						$resultStr .= preg_replace( '/\|/', '&vert;', $str, 1 );
 						$optInfo = null; // might change the nature of opt
 						continue;
@@ -1149,7 +1151,7 @@ class WikiLinkHandler extends TokenHandler {
 	 * @param array $opts
 	 * @return string|null
 	 */
-	private static function getFormat( array $opts ) {
+	private static function getFormat( array $opts ): ?string {
 		if ( $opts['manualthumb'] ) {
 			return 'thumbnail';
 		}
@@ -1202,11 +1204,11 @@ class WikiLinkHandler extends TokenHandler {
 	 *
 	 * @param Token $token
 	 * @param stdClass $target
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function renderFile( Token $token, stdClass $target ) {
+	private function renderFile( Token $token, stdClass $target ): TokenHandlerResult {
 		$manager = $this->manager;
-		$env = $manager->env;
+		$env = $this->env;
 
 		// FIXME: Re-enable use of media cache and figure out how that fits
 		// into this new processing model. See T98995
@@ -1262,7 +1264,7 @@ class WikiLinkHandler extends TokenHandler {
 
 			$optInfo = null;
 			if ( is_string( $oText ) ) {
-				if ( preg_match( '/\|/', $oText ) ) {
+				if ( str_contains( $oText, '|' ) ) {
 					// Split the pipe-separated string into pieces
 					// and convert each one into a KV obj and add them
 					// to the beginning of the array. Note that this is
@@ -1276,7 +1278,7 @@ class WikiLinkHandler extends TokenHandler {
 					// for pipes in table cell content.  For the moment, breaking
 					// here is acceptable since it matches the php implementation
 					// bug for bug.
-					$pieces = array_map( function ( $s ) {
+					$pieces = array_map( static function ( $s ) {
 						return new KV( 'mw:maybeContent', $s );
 					}, explode( '|', $oText ) );
 					$optKVs = array_merge( $pieces, $optKVs );
@@ -1505,7 +1507,7 @@ class WikiLinkHandler extends TokenHandler {
 
 		$classes = $wrapperInfo['classes'];
 		if ( !empty( $opts['class'] ) ) {
-			$classes = array_merge( $classes, explode( ' ', $opts['class']['v'] ) );
+			PHPUtils::pushArray( $classes, explode( ' ', $opts['class']['v'] ) );
 		}
 
 		$attribs = [ new KV( 'typeof', $rdfaType ) ];
@@ -1563,7 +1565,7 @@ class WikiLinkHandler extends TokenHandler {
 				}
 				// Parse the caption
 				$captionDOM = PipelineUtils::processContentInPipeline(
-					$this->manager->env,
+					$this->env,
 					$this->manager->getFrame(),
 					array_merge( $optsCaption['v'], [ new EOFTk() ] ),
 					[
@@ -1605,7 +1607,8 @@ class WikiLinkHandler extends TokenHandler {
 			$container->addAttribute( 'data-mw', PHPUtils::jsonEncode( $dataMw ) );
 		}
 
-		return [ 'tokens' => array_merge( $tokens, [ $containerClose ] ) ];
+		$tokens[] = $containerClose;
+		return new TokenHandlerResult( $tokens );
 	}
 
 	/**
@@ -1613,9 +1616,9 @@ class WikiLinkHandler extends TokenHandler {
 	 * @param stdClass $target
 	 * @param array $errs
 	 * @param array $info
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function linkToMedia( Token $token, stdClass $target, array $errs, array $info ): array {
+	private function linkToMedia( Token $token, stdClass $target, array $errs, array $info ): TokenHandlerResult {
 		// Only pass in the url, since media links should not link to the thumburl
 		$imgHref = $info['url']; // Copied from getPath
 		$imgHrefFileName = preg_replace( '#.*/#', '', $imgHref, 1 );
@@ -1625,7 +1628,7 @@ class WikiLinkHandler extends TokenHandler {
 		try {
 			$content = $this->addLinkAttributesAndGetContent( $link, $token, $target );
 		} catch ( InternalException $e ) {
-			return [ 'tokens' => self::bailTokens( $this->env, $token, false ) ];
+			return new TokenHandlerResult( self::bailTokens( $this->env, $token, false ) );
 		}
 
 		// Change the rel to be mw:MediaLink
@@ -1641,7 +1644,7 @@ class WikiLinkHandler extends TokenHandler {
 		);
 
 		// Normalize title according to how PHP parser does it currently
-		$link->setAttribute( 'title', preg_replace( '/_/', ' ', $imgHrefFileName ) );
+		$link->setAttribute( 'title', str_replace( '_', ' ', $imgHrefFileName ) );
 
 		if ( count( $errs ) > 0 ) {
 			// Set RDFa type to mw:Error so VE and other clients
@@ -1654,15 +1657,16 @@ class WikiLinkHandler extends TokenHandler {
 			$dataMwAttr = $token->getAttribute( 'data-mw' );
 			$dataMw = $dataMwAttr ? PHPUtils::jsonDecode( $dataMwAttr, false ) : new stdClass;
 			if ( is_array( $dataMw->errors ?? null ) ) {
-				$errs = array_merge( $dataMw->errors, $errs );
+				PHPUtils::pushArray( $dataMw->errors, $errs );
+			} else {
+				$dataMw->errors = $errs;
 			}
-			$dataMw->errors = $errs;
 			$link->setAttribute( 'data-mw', PHPUtils::jsonEncode( $dataMw ) );
 		}
 
 		$tokens = array_merge( [ $link ], $content, [ new EndTagTk( 'a' ) ] );
 
-		return [ 'tokens' => $tokens ];
+		return new TokenHandlerResult( $tokens );
 	}
 
 	// FIXME: The media request here is only used to determine if this is a
@@ -1671,10 +1675,10 @@ class WikiLinkHandler extends TokenHandler {
 	/**
 	 * @param Token $token
 	 * @param stdClass $target
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	private function renderMedia( Token $token, stdClass $target ) {
-		$env = $this->manager->env;
+	private function renderMedia( Token $token, stdClass $target ): TokenHandlerResult {
+		$env = $this->env;
 		$title = $target->title;
 		$errs = [];
 		$temp2 = AddMediaInfo::requestInfo( $env, $title->getKey(), [
@@ -1691,14 +1695,14 @@ class WikiLinkHandler extends TokenHandler {
 	}
 
 	/** @inheritDoc */
-	public function onTag( Token $token ) {
+	public function onTag( Token $token ): ?TokenHandlerResult {
 		switch ( $token->getName() ) {
 			case 'wikilink':
 				return $this->onWikiLink( $token );
 			case 'mw:redirect':
 				return $this->onRedirect( $token );
 			default:
-				return $token;
+				return null;
 		}
 	}
 }

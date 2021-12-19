@@ -45,8 +45,6 @@
 
 .ve-ui-mwMediaDialog-panel-imageinfo-portrait .ve-ui-mwMediaDialog-panel-imageinfo-info {
 	padding-left: 2em;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 

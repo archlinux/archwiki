@@ -50,8 +50,6 @@
 		 * @return {string} Full HTML document
 		 */
 		getHtml: function ( newDoc, oldDoc ) {
-			var i, len;
-
 			function copyAttributes( from, to ) {
 				Array.prototype.forEach.call( from.attributes, function ( attr ) {
 					to.setAttribute( attr.name, attr.value );
@@ -60,7 +58,7 @@
 
 			if ( oldDoc ) {
 				// Copy the head from the old document
-				for ( i = 0, len = oldDoc.head.childNodes.length; i < len; i++ ) {
+				for ( var i = 0, len = oldDoc.head.childNodes.length; i < len; i++ ) {
 					newDoc.head.appendChild( oldDoc.head.childNodes[ i ].cloneNode( true ) );
 				}
 				// Copy attributes from the old document for the html, head and body
@@ -116,7 +114,7 @@
 		 *
 		 * @param {HTMLDocument} doc Document to save
 		 * @param {Object} [extraData] Extra data to send to the API
-		 * @param {Object} [options] Options
+		 * @param {Object} [options]
 		 * @return {jQuery.Promise} Promise which resolves if the post was successful
 		 */
 		saveDoc: function ( doc, extraData, options ) {
@@ -138,7 +136,7 @@
 		 *
 		 * @param {string} wikitext Wikitext to post. Deflating is optional but recommended.
 		 * @param {Object} [extraData] Extra data to send to the API
-		 * @param {Object} [options] Options
+		 * @param {Object} [options]
 		 * @param {mw.Api} [options.api] Api to use
 		 * @param {Function} [options.now] Function returning current time in milliseconds for tracking, e.g. ve.now
 		 * @param {Function} [options.track] Tracking function
@@ -158,14 +156,14 @@
 		 *  Should be included for retries even if a cache key is provided.
 		 * @param {string} [cacheKey] Optional cache key of HTML stashed on server.
 		 * @param {Object} [extraData] Extra data to send to the API
-		 * @param {Object} [options] Options
+		 * @param {Object} [options]
 		 * @return {jQuery.Promise} Promise which resolves with API save data, or rejects with error details
 		 */
 		postHtml: function ( html, cacheKey, extraData, options ) {
-			var data,
-				saver = this;
+			var saver = this;
 
 			options = options || {};
+			var data;
 			if ( cacheKey ) {
 				data = $.extend( { cachekey: cacheKey }, extraData );
 			} else {
@@ -200,7 +198,7 @@
 		 * By default uses action=visualeditoredit, paction=save.
 		 *
 		 * @param {string} data Content data
-		 * @param {Object} [options] Options
+		 * @param {Object} [options]
 		 * @param {mw.Api} [options.api] Api to use
 		 * @param {Function} [options.now] Function returning current time in milliseconds for tracking, e.g. ve.now
 		 * @param {Function} [options.track] Tracking function
@@ -208,11 +206,10 @@
 		 * @return {jQuery.Promise} Promise which resolves with API save data, or rejects with error details
 		 */
 		postContent: function ( data, options ) {
-			var request, api, start, action;
-
 			options = options || {};
-			api = options.api || new mw.Api();
+			var api = options.api || new mw.Api();
 
+			var start;
 			if ( options.now ) {
 				start = options.now();
 			}
@@ -221,7 +218,6 @@
 				{
 					action: 'visualeditoredit',
 					paction: 'save',
-					format: 'json',
 					formatversion: 2,
 					errorformat: 'html',
 					errorlang: mw.config.get( 'wgUserLanguage' ),
@@ -230,26 +226,26 @@
 				data
 			);
 
-			action = data.action;
+			var action = data.action;
 
-			request = api.postWithToken( 'csrf', data, { contentType: 'multipart/form-data' } );
+			var request = api.postWithToken( 'csrf', data, { contentType: 'multipart/form-data' } );
 
 			return request.then(
 				function ( response, jqxhr ) {
-					var eventData, fullEventName, error,
-						responseData = response[ action ];
+					var responseData = response[ action ];
 
 					// Log data about the request if eventName was set
 					if ( options.track && options.eventName ) {
-						eventData = {
+						var eventData = {
 							bytes: require( 'mediawiki.String' ).byteLength( jqxhr.responseText ),
 							duration: options.now() - start
 						};
-						fullEventName = 'performance.system.' + options.eventName +
+						var fullEventName = 'performance.system.' + options.eventName +
 							( responseData.cachekey ? '.withCacheKey' : '.withoutCacheKey' );
 						options.track( fullEventName, eventData );
 					}
 
+					var error;
 					if ( !responseData ) {
 						error = {
 							code: 'invalidresponse',
@@ -289,14 +285,14 @@
 					return responseData;
 				},
 				function ( code, response ) {
-					var eventData, fullEventName,
-						responseText = OO.getProp( response, 'xhr', 'responseText' );
+					var responseText = OO.getProp( response, 'xhr', 'responseText' );
 
 					if ( responseText && options.track && options.eventName ) {
-						eventData = {
+						var eventData = {
 							bytes: require( 'mediawiki.String' ).byteLength( responseText ),
 							duration: options.now() - start
 						};
+						var fullEventName;
 						if ( code === 'badcachekey' ) {
 							fullEventName = 'performance.system.' + options.eventName + '.badCacheKey';
 						} else {

@@ -16,7 +16,7 @@ class VisualEditorHooks {
 	// TODO: Other params too?
 	// Known-good parameters: edit, veaction, section, oldid, lintid, preload, preloadparams, editintro
 	// Partially-good: preloadtitle (source-mode only)
-	private static $unsupportedEditParams = [
+	private const UNSUPPORTED_EDIT_PARAMS = [
 		'undo',
 		'undoafter',
 		// Only for WTE. This parameter is not supported right now, and NWE has a very different design
@@ -25,7 +25,7 @@ class VisualEditorHooks {
 		'veswitched'
 	];
 
-	private static $tags = [
+	private const TAGS = [
 		'visualeditor',
 		'visualeditor-wikitext',
 		// No longer in active use:
@@ -119,7 +119,7 @@ class VisualEditorHooks {
 	 */
 	public static function getDataForDesktopArticleTargetInitModule() {
 		return [
-			'unsupportedEditParams' => self::$unsupportedEditParams,
+			'unsupportedEditParams' => self::UNSUPPORTED_EDIT_PARAMS,
 		];
 	}
 
@@ -157,7 +157,7 @@ class VisualEditorHooks {
 		] );
 		$output->addModules( 'ext.visualEditor.diffPage.init' );
 		$output->enableOOUI();
-		$output->addHtml(
+		$output->addHTML(
 			'<div class="ve-init-mw-diffPage-diffMode">' .
 			// Will be replaced by a ButtonSelectWidget in JS
 			new OOUI\ButtonGroupWidget( [
@@ -237,7 +237,7 @@ class VisualEditorHooks {
 			return false;
 		}
 
-		foreach ( self::$unsupportedEditParams as $param ) {
+		foreach ( self::UNSUPPORTED_EDIT_PARAMS as $param ) {
 			if ( $req->getVal( $param ) !== null ) {
 				return false;
 			}
@@ -332,7 +332,7 @@ class VisualEditorHooks {
 			$req->response()->setCookie( 'VEE', 'wikitext', 0, [ 'prefix' => '' ] );
 			$services->getUserOptionsManager()->setOption( $user, 'visualeditor-editor', 'wikitext' );
 			if ( !wfReadOnly() && $user->isRegistered() ) {
-				DeferredUpdates::addCallableUpdate( function () use ( $user ) {
+				DeferredUpdates::addCallableUpdate( static function () use ( $user ) {
 					$user->saveSettings();
 				} );
 			}
@@ -630,7 +630,7 @@ class VisualEditorHooks {
 	/**
 	 * Called when an edit is saved
 	 * Adds 'visualeditor-switched' tag to the edit if requested
-	 * Adds whatever tags from static::$tags are present in the vetags parameter
+	 * Adds whatever tags from static::TAGS are present in the vetags parameter
 	 *
 	 * @param RecentChange $rc The new RC entry.
 	 */
@@ -641,7 +641,7 @@ class VisualEditorHooks {
 		}
 
 		$tags = explode( ',', $request->getVal( 'vetags' ) );
-		$tags = array_values( array_intersect( $tags, static::$tags ) );
+		$tags = array_values( array_intersect( $tags, static::TAGS ) );
 		if ( $tags ) {
 			$rc->addTags( $tags );
 		}
@@ -715,7 +715,6 @@ class VisualEditorHooks {
 
 		// add VE edit section in VE available namespaces
 		if ( self::isVisualAvailable( $title, $skin->getRequest(), $user ) ) {
-			// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 			$veEditSection = $tabMessages['editsection'];
 
 			$attribs = $result['editsection']['attribs'];
@@ -991,7 +990,7 @@ class VisualEditorHooks {
 	 * @param array &$tags Available change tags.
 	 */
 	public static function onListDefinedTags( &$tags ) {
-		$tags = array_merge( $tags, static::$tags );
+		$tags = array_merge( $tags, static::TAGS );
 	}
 
 	/**
@@ -1001,7 +1000,7 @@ class VisualEditorHooks {
 	 * @param OutputPage $out The page view.
 	 */
 	public static function onMakeGlobalVariablesScript( array &$vars, OutputPage $out ) {
-		$pageLanguage = ApiParsoidTrait::getPageLanguage( $out->getTitle() );
+		$pageLanguage = ApiVisualEditor::getPageLanguage( $out->getTitle() );
 		$converter = MediaWikiServices::getInstance()->getLanguageConverterFactory()
 			->getLanguageConverter( $pageLanguage );
 
@@ -1071,6 +1070,14 @@ class VisualEditorHooks {
 			'feedbackApiUrl' => $veConfig->get( 'VisualEditorFeedbackAPIURL' ),
 			'feedbackTitle' => $veConfig->get( 'VisualEditorFeedbackTitle' ),
 			'sourceFeedbackTitle' => $veConfig->get( 'VisualEditorSourceFeedbackTitle' ),
+			'transclusionDialogSuggestedValues' => $veConfig->get( 'VisualEditorTransclusionDialogSuggestedValues' ),
+			'transclusionDialogInlineDescriptions' =>
+				$veConfig->get( 'VisualEditorTransclusionDialogInlineDescriptions' ),
+			'transclusionDialogBackButton' => $veConfig->get( 'VisualEditorTransclusionDialogBackButton' ),
+			'transclusionDialogNewSidebar' => $veConfig->get( 'VisualEditorTransclusionDialogNewSidebar' ),
+			'cirrusSearchLookup' => $extensionRegistry->isLoaded( 'CirrusSearch' )
+				&& $veConfig->get( 'VisualEditorTemplateSearchImprovements' ),
+			'templateSearchImprovements' => $veConfig->get( 'VisualEditorTemplateSearchImprovements' ),
 		];
 	}
 
@@ -1146,9 +1153,9 @@ class VisualEditorHooks {
 		if ( $cookie === 'visualeditor' || $cookie === 'wikitext' ) {
 			$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 			DeferredUpdates::addUpdate( new AtomicSectionUpdate(
-				$lb->getLazyConnectionRef( DB_MASTER ),
+				$lb->getLazyConnectionRef( DB_PRIMARY ),
 				__METHOD__,
-				function () use ( $user, $cookie ) {
+				static function () use ( $user, $cookie ) {
 					if ( wfReadOnly() ) {
 						return;
 					}

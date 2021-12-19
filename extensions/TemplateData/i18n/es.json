@@ -14,9 +14,9 @@
 			"Matiia",
 			"Mcervera",
 			"Ovruni",
+			"Rodney Araujo",
 			"Sethladan",
-			"Vfrico",
-			"Rodney Araujo"
+			"Vfrico"
 		]
 	},
 	"templatedata-desc": "Implementa almacenamiento de datos para parámetros de plantillas (mediante JSON).",
@@ -36,6 +36,7 @@
 	"templatedata-doc-param-status-optional": "opcional",
 	"templatedata-doc-param-status-required": "obligatorio",
 	"templatedata-doc-param-status-suggested": "sugerido",
+	"templatedata-doc-param-suggestedvalues": "Valores sugeridos",
 	"templatedata-doc-param-type": "Tipo",
 	"templatedata-doc-param-type-boolean": "Lógico",
 	"templatedata-doc-param-type-content": "Contenido",
@@ -111,6 +112,8 @@
 	"templatedata-modal-table-param-name": "Nombre",
 	"templatedata-modal-table-param-required": "Obligatorio",
 	"templatedata-modal-table-param-suggested": "Sugerido",
+	"templatedata-modal-table-param-suggestedvalues": "Valores sugeridos",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "Añadir valor...",
 	"templatedata-modal-table-param-type": "Tipo",
 	"templatedata-modal-table-param-uneditablefield": "No editable",
 	"templatedata-modal-title": "Editor de documentación de plantilla",

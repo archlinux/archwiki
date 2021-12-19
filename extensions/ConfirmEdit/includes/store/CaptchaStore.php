@@ -40,8 +40,8 @@ abstract class CaptchaStore {
 	 * @return CaptchaStore
 	 */
 	final public static function get() {
+		global $wgCaptchaStorageClass;
 		if ( !self::$instance instanceof self ) {
-			global $wgCaptchaStorageClass;
 			if ( in_array( 'CaptchaStore', class_parents( $wgCaptchaStorageClass ) ) ) {
 				self::$instance = new $wgCaptchaStorageClass;
 			} else {

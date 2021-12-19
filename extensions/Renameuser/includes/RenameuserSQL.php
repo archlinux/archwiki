@@ -141,7 +141,7 @@ class RenameuserSQL {
 		// Grab the user's edit count first, used in log entry
 		$contribs = User::newFromId( $this->uid )->getEditCount();
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( DB_PRIMARY );
 		$atomicId = $dbw->startAtomic( __METHOD__, $dbw::ATOMIC_CANCELABLE );
 
 		$this->hookRunner->onRenameUserPreRename( $this->uid, $this->old, $this->new );
@@ -200,6 +200,18 @@ class RenameuserSQL {
 				'log_type' => $logTypesOnUser,
 				'log_namespace' => NS_USER,
 				'log_title' => $oldTitle->getDBkey()
+			],
+			__METHOD__
+		);
+
+		$this->debug( "Updating recentchanges table for {$this->old} to {$this->new}" );
+		$dbw->update( 'recentchanges',
+			[ 'rc_title' => $newTitle->getDBkey() ],
+			[
+				'rc_type' => RC_LOG,
+				'rc_log_type' => $logTypesOnUser,
+				'rc_namespace' => NS_USER,
+				'rc_title' => $oldTitle->getDBkey()
 			],
 			__METHOD__
 		);
@@ -309,17 +321,16 @@ class RenameuserSQL {
 		// Commit the transaction
 		$dbw->endAtomic( __METHOD__ );
 
-		$that = $this;
 		$fname = __METHOD__;
 		$dbw->onTransactionCommitOrIdle(
-			function () use ( $that, $dbw, $logEntry, $logid, $fname ) {
+			function () use ( $dbw, $logEntry, $logid, $fname ) {
 				$dbw->startAtomic( $fname );
 				// Clear caches and inform authentication plugins
-				$user = User::newFromId( $that->uid );
+				$user = User::newFromId( $this->uid );
 				$user->load( User::READ_LATEST );
 				// Trigger the UserSaveSettings hook
 				$user->saveSettings();
-				$this->hookRunner->onRenameUserComplete( $that->uid, $that->old, $that->new );
+				$this->hookRunner->onRenameUserComplete( $this->uid, $this->old, $this->new );
 				// Publish to RC
 				$logEntry->publish( $logid );
 				$dbw->endAtomic( $fname );
@@ -337,7 +348,7 @@ class RenameuserSQL {
 	 * @return int Returns 0 if no row was found
 	 */
 	private static function lockUserAndGetId( $name ) {
-		return (int)wfGetDB( DB_MASTER )->selectField(
+		return (int)wfGetDB( DB_PRIMARY )->selectField(
 			'user',
 			'user_id',
 			[ 'user_name' => $name ],

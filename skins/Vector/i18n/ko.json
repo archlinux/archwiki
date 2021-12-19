@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Apzp79",
 			"ITurtle",
 			"Jay94ks",
 			"Jerrykim306",
@@ -8,8 +9,7 @@
 			"MemphisA5",
 			"Revi",
 			"Ykhwong",
-			"아라",
-			"Apzp79"
+			"아라"
 		]
 	},
 	"skinname-vector": "벡터",
@@ -37,5 +37,13 @@
 	"vector-jumptosearch": "검색으로 이동",
 	"vector-jumptocontent": "본문으로 이동",
 	"vector-more-actions": "더 보기",
-	"vector-search-loader": "검색 제안을 불러오는 중"
+	"vector-search-loader": "검색 제안을 불러오는 중",
+	"vector-anon-user-menu-pages": "로그아웃한 편집자를 위한 문서",
+	"vector-anon-user-menu-pages-learn": "더 알아보기",
+	"vector-anon-user-menu-pages-label": "편집에 관해 더 알아보기",
+	"vector-personal-more-label": "사용자 링크",
+	"vector-main-menu-tooltip": "주 메뉴",
+	"tooltip-vector-anon-user-menu-title": "더 많은 옵션",
+	"vector-menu-checkbox-expanded": "펼쳐짐",
+	"vector-menu-checkbox-collapsed": "접힘"
 }

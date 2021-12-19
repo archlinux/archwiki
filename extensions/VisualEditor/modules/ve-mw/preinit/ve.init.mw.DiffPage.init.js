@@ -8,13 +8,13 @@
 /* eslint-disable no-jquery/no-global-selector */
 
 ( function () {
-	var reviewModeButtonSelect, diffElement, lastDiff,
+	var reviewModeButtonSelect, lastDiff,
 		$wikitextDiffContainer, $wikitextDiffHeader, $wikitextDiffBody,
 		$visualDiffContainer = $( '<div>' ),
 		$visualDiff = $( '<div>' ),
 		progress = new OO.ui.ProgressBarWidget( { classes: [ 've-init-mw-diffPage-loading' ] } ),
-		uri = new mw.Uri(),
-		mode = uri.query.diffmode || mw.user.options.get( 'visualeditor-diffmode-historical' ) || 'source',
+		originalUri = new mw.Uri(),
+		mode = originalUri.query.diffmode || mw.user.options.get( 'visualeditor-diffmode-historical' ) || 'source',
 		conf = mw.config.get( 'wgVisualEditorConfig' ),
 		pluginModules = conf.pluginModules.filter( mw.loader.getState );
 
@@ -29,11 +29,12 @@
 	);
 
 	function onReviewModeButtonSelectSelect( item ) {
-		var modulePromise, oldPageName, newPageName, isVisual,
-			$revSlider = $( '.mw-revslider-container' ),
+		var $revSlider = $( '.mw-revslider-container' ),
 			oldId = mw.config.get( 'wgDiffOldId' ),
-			newId = mw.config.get( 'wgDiffNewId' );
+			newId = mw.config.get( 'wgDiffNewId' ),
+			uri = new mw.Uri();
 
+		var oldPageName, newPageName;
 		if ( mw.config.get( 'wgCanonicalSpecialPageName' ) !== 'ComparePages' ) {
 			oldPageName = newPageName = mw.config.get( 'wgRelevantPageName' );
 		} else {
@@ -42,7 +43,7 @@
 		}
 
 		mode = item.getData();
-		isVisual = mode === 'visual';
+		var isVisual = mode === 'visual';
 
 		mw.user.options.set( 'visualeditor-diffmode-historical', mode );
 		// Same as ve.init.target.getLocalApi()
@@ -67,11 +68,11 @@
 			$visualDiff.empty();
 			progress.$element.removeClass( 'oo-ui-element-hidden' );
 			// TODO: Load a smaller subset of VE for computing the visual diff
-			modulePromise = mw.loader.using( [ 'ext.visualEditor.articleTarget' ].concat( pluginModules ) );
+			var modulePromise = mw.loader.using( [ 'ext.visualEditor.articleTarget' ].concat( pluginModules ) );
 			mw.libs.ve.diffLoader.getVisualDiffGeneratorPromise( oldId, newId, modulePromise, oldPageName, newPageName ).then( function ( visualDiffGenerator ) {
 				// This class is loaded via modulePromise above
 				// eslint-disable-next-line no-undef
-				diffElement = new ve.ui.DiffElement( visualDiffGenerator(), { classes: [ 've-init-mw-diffPage-diff' ] } );
+				var diffElement = new ve.ui.DiffElement( visualDiffGenerator(), { classes: [ 've-init-mw-diffPage-diff' ] } );
 				diffElement.$document.addClass( 'mw-parser-output' );
 
 				progress.$element.addClass( 'oo-ui-element-hidden' );
@@ -92,7 +93,7 @@
 
 		if ( history.replaceState ) {
 			uri.query.diffmode = mode;
-			history.replaceState( '', document.title, uri );
+			history.replaceState( history.state, document.title, uri );
 		}
 
 	}

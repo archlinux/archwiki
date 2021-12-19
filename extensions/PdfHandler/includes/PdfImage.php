@@ -39,6 +39,8 @@ class PdfImage {
 	 */
 	private $mFilename;
 
+	public const ITEMS_FOR_PAGE_SIZE = [ 'Pages', 'pages', 'Page size', 'Page rot' ];
+
 	/**
 	 * @param string $filename
 	 */
@@ -51,22 +53,6 @@ class PdfImage {
 	 */
 	public function isValid() {
 		return true;
-	}
-
-	/**
-	 * @return array|bool
-	 */
-	public function getImageSize() {
-		$data = $this->retrieveMetadata();
-		$size = self::getPageSize( $data, 1 );
-
-		if ( $size ) {
-			$width = $size['width'];
-			$height = $size['height'];
-			return [ $width, $height, 'Pdf',
-				"width=\"$width\" height=\"$height\"" ];
-		}
-		return false;
 	}
 
 	/**
@@ -117,9 +103,9 @@ class PdfImage {
 	}
 
 	/**
-	 * @return array|bool|null
+	 * @return array
 	 */
-	public function retrieveMetaData() {
+	public function retrieveMetaData(): array {
 		global $wgPdfInfo, $wgPdftoText;
 
 		if ( $wgPdfInfo ) {
@@ -148,10 +134,12 @@ class PdfImage {
 			$resultPages = Shell::command( $cmdPages )
 				->execute();
 
-			$dump = $resultMeta->getStdout() . $resultPages->getStdout();
-			$data = $this->convertDumpToArray( $dump );
+			$data = $this->convertDumpToArray(
+				$resultMeta->getStdout(),
+				$resultPages->getStdout()
+			);
 		} else {
-			$data = null;
+			$data = [];
 		}
 
 		// Read text layer
@@ -176,15 +164,16 @@ class PdfImage {
 	}
 
 	/**
-	 * @param string $dump
-	 * @return array|bool
+	 * @param string $metaDump
+	 * @param string $infoDump
+	 * @return array
 	 */
-	protected function convertDumpToArray( $dump ) {
-		if ( strval( $dump ) == '' ) {
-			return false;
+	protected function convertDumpToArray( $metaDump, $infoDump ): array {
+		if ( strval( $infoDump ) == '' ) {
+			return [];
 		}
 
-		$lines = explode( "\n", $dump );
+		$lines = explode( "\n", $infoDump );
 		$data = [];
 
 		// Metadata is always the last item, and spans multiple lines.
@@ -217,6 +206,10 @@ class PdfImage {
 					$data[$key] = $value;
 				}
 			}
+		}
+		$metaDump = trim( $metaDump );
+		if ( $metaDump !== '' ) {
+			$data['xmp'] = $metaDump;
 		}
 		$data = $this->postProcessDump( $data );
 		return $data;

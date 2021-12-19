@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Arman musikyan",
+			"Kareyac",
 			"Teak",
 			"Vadgt",
 			"Xelgen"
@@ -19,5 +20,6 @@
 	"vector-view-history": "Դիտել պատմությունը",
 	"vector-view-view": "Կարդալ",
 	"vector-view-viewsource": "Դիտել ելատեքստը",
-	"vector-more-actions": "Ավելին"
+	"vector-more-actions": "Ավելին",
+	"vector-anon-user-menu-pages-learn": "իմանալ ավելին"
 }

@@ -28,6 +28,28 @@
 	padding-bottom: 5em;
 }
 
+.ve-ui-mwTransclusionDialog-addParameterFieldset-collapsed .oo-ui-inline-help,
+.ve-ui-mwTransclusionDialog-addParameterFieldset-collapsed .ve-ui-mwTransclusionDialog-addParameterFieldset-input {
+	display: none;
+}
+
+.ve-ui-mwTransclusionDialog-addParameterFieldset-input {
+	margin-top: 8px;
+}
+
+.ve-ui-mwTransclusionDialog-addParameterFieldset-input .oo-ui-fieldLayout-field {
+	width: 100%;
+}
+
+.ve-ui-mwTransclusionDialog-addParameterFieldset .oo-ui-fieldLayout-messages .oo-ui-messageWidget {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.ve-ui-mwTransclusionDialog-addParameterFieldset-header.oo-ui-iconElement .oo-ui-iconElement-icon {
+	height: 100%;
+}
+
 .ve-ui-mwTransclusionDialog-removeButton {
 	position: absolute;
 	top: 0.85714286em; /* Equals ≈`12px` */
@@ -36,6 +58,37 @@
 
 .ve-ui-mwTransclusionDialog-addButton {
 	white-space: nowrap;
+}
+
+.ve-ui-mwTransclusionDialog-enhancedSearch .mw-widget-titleWidget-menu-withDescriptions .mw-widget-titleOptionWidget .oo-ui-labelElement-label {
+	font-weight: bold;
+}
+
+.ve-ui-mwTransclusionDialog-enhancedSearch .mw-widget-titleWidget-menu-withDescriptions .mw-widget-titleOptionWidget .oo-ui-labelElement-label .oo-ui-labelElement-label-highlight {
+	font-weight: normal;
+}
+
+.ve-ui-mwTemplateTitleInputWidget-redirectedfrom {
+	font-style: italic;
+}
+
+.ve-ui-mwTemplateDialog-pocSidebar-debug-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 2.5em;
+	overflow: auto;
+}
+
+.ve-ui-mwTransclusionDialog-single-transclusion .ve-ui-mwTemplateDialog-pocSidebar-debug-container {
+	bottom: 0;
+}
+
+.ve-ui-mwTemplateDialog-pocSidebar-debug-container > .oo-ui-outlineSelectWidget {
+	background-color: rgba( 100%, 0%, 100%, 0.1 );
+	height: auto;
+	outline: 1px solid #f0f;
 }
 
 .ve-ui-mwTemplateDialog .oo-ui-outlineOptionWidget.oo-ui-flaggedElement-empty .oo-ui-iconElement-icon {
@@ -51,11 +104,11 @@
 	overflow: hidden;
 }
 
-.ve-ui-mwTransclusionDialog-single .oo-ui-bookletLayout .oo-ui-fieldsetLayout > .oo-ui-iconElement-icon,
-.ve-ui-mwTransclusionDialog-single .oo-ui-bookletLayout .oo-ui-fieldsetLayout > .oo-ui-labelElement-label,
-.ve-ui-mwTransclusionDialog-single .oo-ui-bookletLayout .ve-ui-mwTransclusionDialog-removeButton,
-.ve-ui-mwTransclusionDialog-multiple .oo-ui-bookletLayout .ve-ui-mwTemplatePage-more,
-.ve-ui-mwTransclusionDialog-multiple .oo-ui-bookletLayout .ve-ui-mwParameterPage-more {
+.ve-ui-mwTransclusionDialog-collapsed .oo-ui-bookletLayout .oo-ui-fieldsetLayout > .oo-ui-iconElement-icon,
+.ve-ui-mwTransclusionDialog-collapsed .oo-ui-bookletLayout .oo-ui-fieldsetLayout > .oo-ui-labelElement-label,
+.ve-ui-mwTransclusionDialog-collapsed .oo-ui-bookletLayout .ve-ui-mwTransclusionDialog-removeButton,
+.ve-ui-mwTransclusionDialog-expanded .oo-ui-bookletLayout .ve-ui-mwTemplatePage-more,
+.ve-ui-mwTransclusionDialog-expanded .oo-ui-bookletLayout .ve-ui-mwParameterPage-addUndocumented {
 	display: none;
 }
 
@@ -63,9 +116,145 @@
 .ve-ui-mwTransclusionDialog.ve-ui-mwTemplateDialog-ready .oo-ui-bookletLayout .oo-ui-fieldsetLayout > .oo-ui-iconElement-icon,
 .ve-ui-mwTransclusionDialog.ve-ui-mwTemplateDialog-ready .oo-ui-bookletLayout .ve-ui-mwTransclusionDialog-removeButton,
 .ve-ui-mwTransclusionDialog.ve-ui-mwTemplateDialog-ready .oo-ui-bookletLayout .ve-ui-mwTemplatePage-more,
-.ve-ui-mwTransclusionDialog.ve-ui-mwTemplateDialog-ready .oo-ui-bookletLayout .ve-ui-mwParameterPage-more,
+.ve-ui-mwTransclusionDialog.ve-ui-mwTemplateDialog-ready .oo-ui-bookletLayout .ve-ui-mwParameterPage-addUndocumented,
 .ve-ui-mwTransclusionDialog.ve-ui-mwTemplateDialog-ready .oo-ui-bookletLayout > .oo-ui-gridLayout > .oo-ui-panelLayout {
 	-webkit-transition: all 250ms ease-in-out;
 	-moz-transition: all 250ms ease-in-out;
 	transition: all 250ms ease-in-out;
+}
+
+.ve-ui-mwTransclusionDialog-bigger .oo-ui-menuLayout > .oo-ui-menuLayout-menu {
+	width: 240px;
+}
+
+.ve-ui-mwTransclusionDialog-bigger .oo-ui-menuLayout > .oo-ui-menuLayout-content {
+	left: 240px;
+}
+
+.ve-ui-mwTransclusionDialog-bigger .ve-ui-mwTransclusionDialog-small-screen.ve-ui-mwTransclusionDialog-expanded .oo-ui-menuLayout > .oo-ui-menuLayout-menu {
+	border-right: 0;
+	width: 100%;
+}
+
+.ve-ui-mwTransclusionDialog-bigger .ve-ui-mwTransclusionDialog-small-screen.ve-ui-mwTransclusionDialog-expanded .oo-ui-menuLayout > .oo-ui-menuLayout-content {
+	display: none;
+}
+
+.ve-ui-mwTransclusionDialog-addTemplateFieldset .oo-ui-inline-help {
+	color: inherit;
+}
+
+.ve-ui-mwTransclusionDialog-collapsed .oo-ui-bookletLayout .ve-ui-mwTransclusionDialog-addTemplateFieldset.oo-ui-fieldsetLayout > .oo-ui-labelElement-label {
+	display: inline-block;
+}
+
+.ve-ui-mwTransclusionOutlineContainerWidget {
+	/* .oo-ui-window-head uses a 1px outline which overlaps the top pixel of the sidebar */
+	padding-top: 1px;
+}
+
+.ve-ui-mwTransclusionOutlineParameterSelectWidget:focus {
+	border-radius: 2px;
+	box-shadow: inset 0 0 0 1px #36c;
+	outline: 0;
+}
+
+.ve-ui-mwTransclusionOutlineParameterWidget {
+	overflow: hidden;
+	padding-bottom: 8px;
+	padding-left: 24px;
+	padding-top: 8px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ve-ui-mwTransclusionOutlineParameterWidget.oo-ui-labelElement > .oo-ui-labelElement-label {
+	cursor: pointer;
+	display: inline;
+}
+
+/* TODO: Remove debug color */
+.ve-ui-mwTransclusionOutlineParameterWidget.oo-ui-optionWidget-selected {
+	/* background-color: rgba( 0%, 100%, 0%, 0.2 ); */
+}
+
+.ve-ui-mwTransclusionOutlineParameterWidget.oo-ui-optionWidget-highlighted,
+.ve-ui-mwTransclusionOutlineParameterWidget:hover {
+	/* This shade on a white background results in #eaecf0 a.k.a. @background-color-base--hover
+	   a.k.a. @wmui-color-base80 */
+	background-color: rgba( 0, 24, 73, 0.082 );
+}
+
+.ve-ui-mwTransclusionOutlineParameterWidget .oo-ui-checkboxInputWidget.oo-ui-widget-enabled [ type='checkbox' ]:hover + span {
+	/* Stronger :hover effect to make the different checkbox/label click regions more obvious */
+	border-width: 2px;
+}
+
+.ve-ui-mwTransclusionOutlineButtonWidget,
+.ve-ui-mwTransclusionOutlineButtonWidget > .oo-ui-buttonElement-button {
+	display: block;
+}
+
+.ve-ui-mwTransclusionOutlineButtonWidget.oo-ui-buttonElement-frameless.oo-ui-labelElement.oo-ui-iconElement > .oo-ui-buttonElement-button {
+	overflow: hidden;
+	padding: 8px 0 8px 36px;
+	text-overflow: ellipsis;
+}
+
+.ve-ui-mwTransclusionOutlineButtonWidget.oo-ui-optionWidget-selected .oo-ui-buttonElement-button {
+	background-color: #eaf3ff;
+}
+
+.ve-ui-mwTransclusionOutlineButtonWidget.oo-ui-buttonElement-frameless.oo-ui-widget-enabled > .oo-ui-buttonElement-button:hover {
+	background-color: #eaecf0;
+	color: #000;
+}
+
+.ve-ui-mwTransclusionOutlineButtonWidget.oo-ui-buttonElement-frameless.oo-ui-widget-enabled > .oo-ui-buttonElement-button:active,
+.ve-ui-mwTransclusionOutlineParameterWidget:active {
+	/* Same as .oo-ui-optionWidget-pressed, a.k.a. @background-color-primary--hover */
+	background-color: rgba( 41, 98, 204, 0.1 );
+	color: #36c;
+}
+
+.ve-ui-mwTransclusionOutlineButtonWidget.oo-ui-buttonElement-frameless.oo-ui-iconElement:first-child {
+	margin-left: 0;
+}
+
+.ve-ui-mwTransclusionOutlineButtonWidget.oo-ui-buttonElement-frameless.oo-ui-iconElement > .oo-ui-buttonElement-button > .oo-ui-iconElement-icon {
+	left: 10px;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-outlineControlsWidget {
+	padding: 2px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: left;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-outlineControlsWidget > .oo-ui-outlineControlsWidget-movers {
+	float: left;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-outlineControlsWidget .oo-ui-buttonWidget {
+	margin-left: 4px !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-outlineControlsWidget > .oo-ui-outlineControlsWidget-items > .oo-ui-buttonWidget:first-child {
+	margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-outlineControlsWidget > .oo-ui-outlineControlsWidget-movers > .oo-ui-buttonWidget:nth-child( 2 ) {
+	margin-left: -4px !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.ve-ui-mwTransclusionOutlineTemplateWidget-searchWidget {
+	margin: 8px 24px;
+	width: auto;
+}
+
+.ve-ui-mwTransclusionOutlineTemplateWidget-no-match {
+	font-style: italic;
+	color: #72777d;
+	margin: 8px 24px;
 }

@@ -40,15 +40,18 @@
 	margin-bottom: 0.8em;
 }
 
-.mw-templateData-template-add-map-button-panel,
 .oo-ui-menuLayout.oo-ui-menuLayout-showMenu.oo-ui-menuLayout-top > .oo-ui-menuLayout-menu {
-	height: fit-content;
+	height: 4em;
 	text-align: center;
 	box-shadow: 0 5px 16px -8px #0000001f;
 }
 
+.tdg-templateDataDialog-addingNewMap .oo-ui-menuLayout.oo-ui-menuLayout-showMenu.oo-ui-menuLayout-top > .oo-ui-menuLayout-menu {
+	height: 6.6em;
+}
+
 .tdg-templateDataDialog-editMapsPanel .oo-ui-menuLayout > .oo-ui-menuLayout-content {
-	top: 4.3em;
+	top: 4em;
 }
 
 .tdg-templateDataDialog-addingNewMap .oo-ui-menuLayout > .oo-ui-menuLayout-content {

@@ -16,10 +16,6 @@
 ve.init.mw.LinkCache = function VeInitMwLinkCache() {
 	// Parent constructor
 	ve.init.mw.LinkCache.super.apply( this, arguments );
-
-	// Keys are page names, values are link data objects
-	// This is kept for synchronous retrieval of cached values via #getCached
-	this.cacheValues = {};
 };
 
 /* Inheritance */

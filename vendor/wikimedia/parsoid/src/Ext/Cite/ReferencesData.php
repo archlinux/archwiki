@@ -3,7 +3,6 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Cite;
 
-use DOMElement;
 use stdClass;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
@@ -51,11 +50,11 @@ class ReferencesData {
 	/**
 	 * @param string $needle
 	 */
-	public function pushInEmbeddedContent( string $needle = 'embed' ) {
+	public function pushEmbeddedContentFlag( string $needle = 'embed' ) {
 		array_unshift( $this->inEmbeddedContent, $needle );
 	}
 
-	public function popInEmbeddedContent() {
+	public function popEmbeddedContentFlag() {
 		array_shift( $this->inEmbeddedContent );
 	}
 
@@ -101,69 +100,57 @@ class ReferencesData {
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param string $groupName
 	 * @param string $refName
-	 * @param string $about
-	 * @param DOMElement $linkBack
 	 * @return stdClass
 	 */
 	public function add(
-		ParsoidExtensionAPI $extApi, string $groupName, string $refName,
-		string $about, DOMElement $linkBack
+		ParsoidExtensionAPI $extApi, string $groupName, string $refName
 	): stdClass {
 		$group = $this->getRefGroup( $groupName, true );
 		$hasRefName = strlen( $refName ) > 0;
 
-		if ( $hasRefName && isset( $group->indexByName[$refName] ) ) {
-			$ref = $group->indexByName[$refName];
-			if ( $ref->contentId && !$ref->hasMultiples ) {
-				$ref->hasMultiples = true;
-				$c = $extApi->getContentDOM( $ref->contentId )->firstChild;
-				$ref->cachedHtml = $extApi->domToHtml( $c, true, false );
-			}
-		} else {
-			// The ids produced Cite.php have some particulars:
-			// Simple refs get 'cite_ref-' + index
-			// Refs with names get 'cite_ref-' + name + '_' + index + (backlink num || 0)
-			// Notes (references) whose ref doesn't have a name are 'cite_note-' + index
-			// Notes whose ref has a name are 'cite_note-' + name + '-' + index
-			$n = $this->index;
-			$refKey = strval( 1 + $n );
+		// The ids produced Cite.php have some particulars:
+		// Simple refs get 'cite_ref-' + index
+		// Refs with names get 'cite_ref-' + name + '_' + index + (backlink num || 0)
+		// Notes (references) whose ref doesn't have a name are 'cite_note-' + index
+		// Notes whose ref has a name are 'cite_note-' + name + '-' + index
+		$n = $this->index;
+		$refKey = strval( 1 + $n );
 
-			$refNameSanitized = $this->normalizeKey( $refName );
+		$refNameSanitized = $this->normalizeKey( $refName );
 
-			$refIdBase = 'cite_ref-' . ( $hasRefName ? $refNameSanitized . '_' . $refKey : $refKey );
-			$noteId = 'cite_note-' . ( $hasRefName ? $refNameSanitized . '-' . $refKey : $refKey );
+		$refIdBase = 'cite_ref-' . ( $hasRefName ? $refNameSanitized . '_' . $refKey : $refKey );
+		$noteId = 'cite_note-' . ( $hasRefName ? $refNameSanitized . '-' . $refKey : $refKey );
 
-			// bump index
-			$this->index += 1;
+		// bump index
+		$this->index += 1;
 
-			$ref = (object)[
-				'contentId' => null,
-				'dir' => '',
-				'group' => $group->name,
-				'groupIndex' => count( $group->refs ) + 1,
-				'index' => $n,
-				'key' => $refIdBase,
-				'id' => $hasRefName ? $refIdBase . '-0' : $refIdBase,
-				'linkbacks' => [],
-				'name' => $refName,
-				'target' => $noteId,
-				'hasMultiples' => false,
-				// Just used for comparison when we have multiples
-				'cachedHtml' => '',
-				'nodes' => [],
-				'embeddedNodes' => [],
-			];
-			$group->refs[] = $ref;
-			if ( $hasRefName ) {
-				$group->indexByName[$refName] = $ref;
-			}
-		}
+		$ref = (object)[
+			// Pointer to the contents of the ref, accessible with the
+			// $extApi->getContentDOM(), to be used when serializing the
+			// references group.  It gets set when extracting the ref from a
+			// node and not $missingContent.  Note that that might not
+			// be the first one for named refs.  Also, for named refs, it's
+			// used to detect multiple conflicting definitions.
+			'contentId' => null,
+			// Just used for comparison when we have multiples
+			'cachedHtml' => null,
+			'dir' => '',
+			'group' => $group->name,
+			'groupIndex' => count( $group->refs ) + 1,
+			'index' => $n,
+			'key' => $refIdBase,
+			'id' => $hasRefName ? $refIdBase . '-0' : $refIdBase,
+			'linkbacks' => [],
+			'name' => $refName,
+			'target' => $noteId,
+			'nodes' => [],
+			'embeddedNodes' => [],
+		];
 
-		if ( $this->inEmbeddedContent() ) {
-			$ref->embeddedNodes[] = $about;
-		} else {
-			$ref->nodes[] = $linkBack;
-			$ref->linkbacks[] = $ref->key . '-' . count( $ref->linkbacks );
+		$group->refs[] = $ref;
+
+		if ( $hasRefName ) {
+			$group->indexByName[$refName] = $ref;
 		}
 
 		return $ref;

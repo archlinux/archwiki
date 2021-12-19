@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"MinecraftAustralia"
+		]
+	},
+	"pfunc_time_error": "Probl'm: Inwal'd taim.",
+	"pfunc_expr_unrecognised_word": "Ekspresh'n probl'm: Unrekignais'd werd \"$1\"",
+	"pfunc_expr_unexpected_operator": "Ekspresh'n problem: Unekspekt'd $1 opereitaa.",
+	"pfunc_expr_missing_operand": "Ekspresh'n probl'm: Missen operend f' $1.",
+	"pfunc_expr_unrecognised_punctuation": "Ekspresh'n probl'm: Unrekignais'd punkshuash'n karekta \"$1\".",
+	"pfunc_expr_division_by_zero": "Diwis'n bai ziiro."
+}

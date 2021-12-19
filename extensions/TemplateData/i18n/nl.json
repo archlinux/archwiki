@@ -9,6 +9,7 @@
 			"Mainframe98",
 			"Mar(c)",
 			"Mbch331",
+			"McDutchie",
 			"MedShot",
 			"Robin van der Vliet",
 			"Robin0van0der0vliet",
@@ -16,8 +17,7 @@
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan",
-			"McDutchie"
+			"Southparkfan"
 		]
 	},
 	"templatedata-desc": "Implementeert gegevensopslag voor sjabloonparameters (met behulp van JSON)",

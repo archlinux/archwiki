@@ -20,8 +20,6 @@
 	"categorytree-mode-all": "موچین دیمان",
 	"categorytree-collapse": "سقوط",
 	"categorytree-expand": "پچ",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "شامل چه {{PLURAL:$1|یک چیررده|$1 چیررده}}، {{PLURAL:$2|یک تاک|$2 تاک}} ءُ {{PLURAL:$3|یک فایل|$3 فایل انت}}",
 	"categorytree-num-categories": "$1 س",
 	"categorytree-num-pages": "$1 پ",

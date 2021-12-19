@@ -12,8 +12,7 @@ class TimelessVariablesModule extends ResourceLoaderSkinModule {
 			$localBasePath = null,
 			$remoteBasePath = null
 	) {
-			global $wgVersion;
-			if ( version_compare( $wgVersion, '1.36', '<' ) ) {
+			if ( version_compare( MW_VERSION, '1.36', '<' ) ) {
 				$options['features'] = [ "logo", "legacy" ];
 			}
 

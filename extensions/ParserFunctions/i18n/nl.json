@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Nickthijssen1994",
 			"SPQRobin",
-			"Siebrand",
-			"Nickthijssen1994"
+			"Siebrand"
 		]
 	},
 	"pfunc_desc": "Verrijkt de parser met logische functies",

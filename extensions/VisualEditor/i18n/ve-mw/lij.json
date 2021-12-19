@@ -3,8 +3,8 @@
 		"authors": [
 			"Giromin Cangiaxo",
 			"S4b1nuz E.656",
-			"N. Longo",
-			"TMg"
+			"TMg",
+			"N. Longo"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -157,14 +157,15 @@
 	"visualeditor-dialog-transclusion-add-content": "Azonzi do contegnuo",
 	"visualeditor-dialog-transclusion-add-param": "Azonzi ciu informaçioin",
 	"visualeditor-dialog-transclusion-add-template": "Azonzi modello",
+	"visualeditor-dialog-transclusion-collapse-options": "Ascondi opsioin",
 	"visualeditor-dialog-transclusion-content": "Contegnuo",
 	"visualeditor-dialog-transclusion-contextitem-description": "Generou da: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Mostra i opsioin",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Campo obsoleto",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "O campo o l'è obsoleto. $1",
 	"visualeditor-dialog-transclusion-loading": "Camallando…",
 	"visualeditor-dialog-transclusion-more-template-description": "Ghe poriæ vese di atre informassioin in sciô modello \"$1\" inta [[{{ns:template}}:$1|so paggina]].",
-	"visualeditor-dialog-transclusion-multiple-mode": "Mostra i opsioin",
-	"visualeditor-dialog-transclusion-no-template-description": "O modello \"$1\" 'na descrission o no ghe l'ha ancon, ma poriæ vesighe de informassioin inta [[$1|paggina do modello]].",
+	"visualeditor-dialog-transclusion-no-template-description": "O modello \"$1\" 'na descrission o no ghe l'ha ancon, ma poriæ vesighe de informassioin inta [[$2|paggina do modello]].",
 	"visualeditor-dialog-transclusion-options": "Opçioin",
 	"visualeditor-dialog-transclusion-param-default": "Predefinio: $1",
 	"visualeditor-dialog-transclusion-param-example": "ezempio: $1",
@@ -181,8 +182,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Continnoa pægio",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Campo obrigatoio mancante|Campi obrigatori mancanti}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "T'ê seguo de voei continoâ sensa impî {{PLURAL:$2|o campo|i campi}} $1?",
-	"visualeditor-dialog-transclusion-single-mode": "Ascondi opsioin",
-	"visualeditor-dialog-transclusion-title": "Transcruxon",
 	"visualeditor-dialogbutton-media-tooltip": "Inmaggine e file murtimediæ",
 	"visualeditor-dialogbutton-meta-tooltip": "Impostassioin paggina",
 	"visualeditor-dialogbutton-template-tooltip": "Modello",
@@ -375,6 +374,5 @@
 	"visualeditor-wikitext-warning-title": "Rilevou wikitesto",
 	"visualeditor-wikitextconvert-title": "Convertî a formatassion in wikitesto?",
 	"visualeditor-wikitextconvert-message": "O cotegnuo che t'hæ incolou o conten da formatassion. T'œu convertîlo in wikitesto ò inseilo comme scrito normale?",
-	"visualeditor-wikitextconvert-plain": "Dœuvia o scrito normale",
 	"visualeditor-wikitextconvert-convert": "Converti in wikitesto"
 }

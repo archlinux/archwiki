@@ -114,12 +114,20 @@
 	 * @param {mw.mmv.model.Repo} repoInfo
 	 */
 	SBP.setDescriptionPageButton = function ( imageInfo, repoInfo ) {
-		var $button = this.buttons.$descriptionPage;
+		var $button = this.buttons.$descriptionPage,
+			isCommons = repoInfo.isCommons(),
+			descriptionUrl = imageInfo.descriptionUrl;
+
+		if ( repoInfo.isLocal === false && imageInfo.pageID ) {
+			// The file has a local description page, override the description URL
+			descriptionUrl = imageInfo.title.getUrl();
+			isCommons = false;
+		}
 
 		$button.text( mw.message( 'multimediaviewer-repository-local' ).text() )
-			.attr( 'href', imageInfo.descriptionUrl );
+			.attr( 'href', descriptionUrl );
 
-		$button.toggleClass( 'mw-mmv-repo-button-commons', repoInfo.isCommons() );
+		$button.toggleClass( 'mw-mmv-repo-button-commons', isCommons );
 	};
 
 	/**

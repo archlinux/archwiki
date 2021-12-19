@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Athena in Wonderland",
+			"Emma Franzen",
 			"Fúlvio",
 			"Hamilton Abreu",
 			"Vitorvicentevalente"
@@ -38,6 +39,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Use o resultado de um pedido \"serializeforcache\" prévio com esta chave. Substitui $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Identificador do captcha (ao gravar a resposta a um captcha).",
 	"apihelp-visualeditoredit-param-captchaword": "Resposta ao captcha (ao gravar a resposta a um captcha).",
+	"apihelp-visualeditoredit-param-plugins": "''Plug-ins'' associados ao pedido da API.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Dados arbitrários enviados por um ''plug-in'' com o pedido da API.",
 	"apihelp-visualeditoredit-param-etag": "ETag para enviar.",
 	"apihelp-visualeditoredit-param-html": "HTML a enviar ao Parsoid, para obter o texto wiki equivalente.",
 	"apihelp-visualeditoredit-param-minor": "Sinalização para edição menor.",

@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gazimagomedov"
+			"Gazimagomedov",
+			"Omarov M."
 		]
 	},
-	"cite_error": "Цитированиялъул гъалатӀ: $1"
+	"cite_error": "Цитатинабиялъул гъалатӀ: $1"
 }

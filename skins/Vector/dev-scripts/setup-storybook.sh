@@ -18,3 +18,7 @@ curl -sSL "https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/core/+/maste
 curl -sS "https://en.m.wikipedia.org/static/images/mobile/copyright/wikipedia-wordmark-en.svg" -o ".storybook/resolve-imports/assets/wordmark.svg"
 curl -sS "https://en.m.wikipedia.org/static/images/mobile/copyright/wikipedia.png" -o ".storybook/resolve-imports/assets/icon.png"
 curl -sS "https://en.wikipedia.org/static/images/mobile/copyright/wikipedia-tagline-en.svg" -o ".storybook/resolve-imports/assets/tagline.svg"
+
+# Add less variable support
+echo "@msg-parentheses-start: '(';"  >> .storybook/resolve-imports/mediawiki.skin.defaults.less
+echo "@msg-parentheses-end: ')';"  >> .storybook/resolve-imports/mediawiki.skin.defaults.less

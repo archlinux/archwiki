@@ -7,8 +7,8 @@
 			"Otokoume",
 			"Takot",
 			"Yusuke1109",
-			"青子守歌",
-			"しぃ"
+			"しぃ",
+			"青子守歌"
 		]
 	},
 	"skinname-monobook": "モノブック",
@@ -22,6 +22,5 @@
 	"monobook-more-actions": "その他",
 	"monobook-cactions-label": "ページアクション",
 	"monobook-notifications-link": "通知 ($1件)",
-	"monobook-notifications-link-none": "通知",
-	"monobook-responsive-label": "レスポンシブデザインのモノブックを有効にする"
+	"monobook-notifications-link-none": "通知"
 }

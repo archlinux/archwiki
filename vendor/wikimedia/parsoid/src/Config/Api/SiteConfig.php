@@ -26,19 +26,37 @@ class SiteConfig extends ISiteConfig {
 	private $api;
 
 	/** @var array|null */
-	private $siteData, $protocols;
+	private $siteData;
+
+	/** @var array|null */
+	private $protocols;
 
 	/** @var string|null */
-	private $baseUri, $relativeLinkPrefix;
+	private $baseUri;
+
+	/** @var string|null */
+	private $relativeLinkPrefix;
 
 	/** @var string */
-	private $savedCategoryRegexp, $savedRedirectRegexp, $savedBswRegexp;
+	private $savedCategoryRegexp;
+
+	/** @var string */
+	private $savedRedirectRegexp;
+
+	/** @var string */
+	private $savedBswRegexp;
 
 	/** @phan-var array<int,string> */
-	protected $nsNames = [], $nsCase = [];
+	protected $nsNames = [];
+
+	/** @phan-var array<int,string> */
+	protected $nsCase = [];
 
 	/** @phan-var array<string,int> */
-	protected $nsIds = [], $nsCanon = [];
+	protected $nsIds = [];
+
+	/** @phan-var array<string,int> */
+	protected $nsCanon = [];
 
 	/** @phan-var array<int,bool> */
 	protected $nsWithSubpages = [];
@@ -50,10 +68,31 @@ class SiteConfig extends ISiteConfig {
 	private $specialPageAliases = [];
 
 	/** @var array|null */
-	private $interwikiMap, $variants,
-		$langConverterEnabled, $apiMagicWords, $paramMWs,
-		$apiVariables, $apiFunctionHooks,
-		$allMWs, $extensionTags;
+	private $interwikiMap;
+
+	/** @var array|null */
+	private $variants;
+
+	/** @var array|null */
+	private $langConverterEnabled;
+
+	/** @var array|null */
+	private $apiMagicWords;
+
+	/** @var array|null */
+	private $paramMWs;
+
+	/** @var array|null */
+	private $apiVariables;
+
+	/** @var array|null */
+	private $apiFunctionHooks;
+
+	/** @var array|null */
+	private $allMWs;
+
+	/** @var array|null */
+	private $extensionTags;
 
 	/** @var int|null */
 	private $widthOption;
@@ -63,6 +102,15 @@ class SiteConfig extends ISiteConfig {
 
 	private $featureDetectionDone = false;
 	private $hasVideoInfo = false;
+
+	/** @var string[] Base parameters for a siteinfo query */
+	public const SITE_CONFIG_QUERY_PARAMS = [
+		'action' => 'query',
+		'meta' => 'siteinfo',
+		'siprop' => 'general|protocols|namespaces|namespacealiases|magicwords|interwikimap|'
+			. 'languagevariants|defaultoptions|specialpagealiases|extensiontags|'
+			. 'functionhooks|variables',
+	];
 
 	/**
 	 * @param ApiHelper $api
@@ -181,13 +229,7 @@ class SiteConfig extends ISiteConfig {
 			return;
 		}
 
-		$data = $this->api->makeRequest( [
-			'action' => 'query',
-			'meta' => 'siteinfo',
-			'siprop' => 'general|protocols|namespaces|namespacealiases|magicwords|interwikimap|'
-				. 'languagevariants|defaultoptions|specialpagealiases|extensiontags|'
-				. 'functionhooks|variables',
-		] )['query'];
+		$data = $this->api->makeRequest( self::SITE_CONFIG_QUERY_PARAMS )['query'];
 
 		$this->siteData = $data['general'];
 		$this->widthOption = $data['general']['thumblimits'][$data['defaultoptions']['thumbsize']];
@@ -220,6 +262,7 @@ class SiteConfig extends ISiteConfig {
 			$allMWs = [];
 			foreach ( $mw['aliases'] as $alias ) {
 				$this->apiMagicWords[$mwName][] = $alias;
+				// Aliases for double underscore mws include the underscores
 				if ( substr( $alias, 0, 2 ) === '__' && substr( $alias, -2 ) === '__' ) {
 					$bsws[$cs][] = preg_quote( substr( $alias, 2, -2 ), '@' );
 				}
@@ -274,7 +317,7 @@ class SiteConfig extends ISiteConfig {
 		}
 
 		$redirect = '(?i:\#REDIRECT)';
-		$quote = function ( $s ) {
+		$quote = static function ( $s ) {
 			$q = preg_quote( $s, '@' );
 			# Note that PHP < 7.3 doesn't escape # in preg_quote.  That means
 			# that the $redirect regexp will fail if used with the `x` flag.
@@ -559,7 +602,7 @@ class SiteConfig extends ISiteConfig {
 	public function getParameterizedAliasMatcher( array $words ): callable {
 		$this->loadSiteData();
 		$regexes = array_intersect_key( $this->paramMWs, array_flip( $words ) );
-		return function ( $text ) use ( $regexes ) {
+		return static function ( $text ) use ( $regexes ) {
 			/**
 			 * $name is the canonical magic word name
 			 * $re has patterns for matching aliases

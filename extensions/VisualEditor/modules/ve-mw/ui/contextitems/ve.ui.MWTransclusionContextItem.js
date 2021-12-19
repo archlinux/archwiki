@@ -66,6 +66,14 @@ ve.ui.MWTransclusionContextItem.static.isCompatibleWith =
 /**
  * @inheritdoc
  */
+ve.ui.MWTransclusionContextItem.prototype.isDeletable = function () {
+	var veConfig = mw.config.get( 'wgVisualEditorConfig' );
+	return veConfig.transclusionDialogBackButton;
+};
+
+/**
+ * @inheritdoc
+ */
 ve.ui.MWTransclusionContextItem.prototype.getDescription = function () {
 	var nodeClass = ve.ce.nodeFactory.lookup( this.model.constructor.static.name );
 	return ve.msg(

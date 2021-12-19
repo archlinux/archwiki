@@ -313,7 +313,10 @@ ve.init.mw.ArticleTarget.prototype.loadSuccess = function ( response ) {
 		this.track( 'trace.parseResponse.enter' );
 		this.originalHtml = data.content;
 		this.etag = data.etag;
-		this.fromEditedState = !!data.fromEditedState;
+		// We are reading from `preloaded` which comes from the VE API. If we want
+		// to make the VE API non-blocking in the future we will need to handle
+		// special-cases like this where the content doesn't come from RESTBase.
+		this.fromEditedState = !!data.fromEditedState || !!data.preloaded;
 		this.switched = data.switched || 'wteswitched' in new mw.Uri( location.href ).query;
 		mode = this.getDefaultMode();
 		section = ( mode === 'source' || this.enableVisualSectionEditing ) ? this.section : null;
@@ -411,7 +414,10 @@ ve.init.mw.ArticleTarget.prototype.parseMetadata = function ( response ) {
 		this.retriedRevIdConflict = false;
 	}
 
-	checkboxes = mw.libs.ve.targetLoader.createCheckboxFields( this.checkboxesDef );
+	// Save dialog doesn't exist yet, so create an overlay for the widgets, and
+	// append it to the save dialog later.
+	this.$saveDialogOverlay = $( '<div>' ).addClass( 'oo-ui-window-overlay' );
+	checkboxes = mw.libs.ve.targetLoader.createCheckboxFields( this.checkboxesDef, { $overlay: this.$saveDialogOverlay } );
 	this.checkboxFields = checkboxes.checkboxFields;
 	this.checkboxesByName = checkboxes.checkboxesByName;
 
@@ -689,9 +695,8 @@ ve.init.mw.ArticleTarget.prototype.showSaveError = function ( msg, allowReapply,
  */
 ve.init.mw.ArticleTarget.prototype.extractErrorMessages = function ( data ) {
 	var $errorMsgs = ( new mw.Api() ).getErrorMessage( data );
-	$errorMsgs.each( function () {
-		ve.targetLinksToNewWindow( this );
-	} );
+	// Warning, this assumes there are only Element nodes in the jQuery set
+	$errorMsgs.toArray().forEach( ve.targetLinksToNewWindow );
 	return $errorMsgs;
 };
 
@@ -864,7 +869,7 @@ ve.init.mw.ArticleTarget.prototype.bindSaveDialogClearDiff = function () {
 /**
  * Handle completed serialize request for diff views for new page creations.
  *
- * @param {string} wikitext Wikitext
+ * @param {string} wikitext
  */
 ve.init.mw.ArticleTarget.prototype.onSaveDialogReviewComplete = function ( wikitext ) {
 	this.bindSaveDialogClearDiff();
@@ -1317,7 +1322,8 @@ ve.init.mw.ArticleTarget.prototype.getSaveFields = function () {
 	}
 
 	for ( name in this.checkboxesByName ) {
-		if ( this.checkboxesByName[ name ].isSelected() ) {
+		// DropdownInputWidget or CheckboxInputWidget
+		if ( !this.checkboxesByName[ name ].isSelected || this.checkboxesByName[ name ].isSelected() ) {
 			fields[ name ] = this.checkboxesByName[ name ].getValue();
 		}
 	}
@@ -1604,13 +1610,15 @@ ve.init.mw.ArticleTarget.prototype.createSurface = function ( dmDoc, config ) {
 		ve.extendObject( { attachedRoot: attachedRoot }, config )
 	);
 
-	// The following classes are used here:
-	// * mw-textarea-proteced
-	// * mw-textarea-cproteced
-	// * mw-textarea-sproteced
-	surface.$element.addClass( this.protectedClasses );
-
 	return surface;
+};
+
+/**
+ * @inheritdoc
+ */
+ve.init.mw.ArticleTarget.prototype.getSurfaceClasses = function () {
+	var classes = ve.init.mw.ArticleTarget.super.prototype.getSurfaceClasses.call( this );
+	return classes.concat( [ 'mw-body-content' ] );
 };
 
 /**
@@ -1621,7 +1629,15 @@ ve.init.mw.ArticleTarget.prototype.getSurfaceConfig = function ( config ) {
 		// Don't null selection on blur when editing a document.
 		// Do use it in new section mode as there are multiple inputs
 		// on the surface (header+content).
-		nullSelectionOnBlur: this.section === 'new'
+		nullSelectionOnBlur: this.section === 'new',
+		classes: this.getSurfaceClasses()
+			// The following classes are used here:
+			// * mw-textarea-proteced
+			// * mw-textarea-cproteced
+			// * mw-textarea-sproteced
+			.concat( this.protectedClasses )
+			// addClass doesn't like empty strings
+			.filter( function ( c ) { return c; } )
 	}, config ) );
 };
 
@@ -1739,7 +1755,7 @@ ve.init.mw.ArticleTarget.prototype.isSaveable = function () {
 
 	this.edited =
 		// Document was edited before loading
-		this.fromEditedState || this.preloaded ||
+		this.fromEditedState ||
 		// Document was edited
 		surface.getModel().hasBeenModified() ||
 		// Section title (if it exists) was edited
@@ -1809,6 +1825,9 @@ ve.init.mw.ArticleTarget.prototype.showSaveDialog = function ( action, checkboxN
 				retry: 'onSaveDialogRetry',
 				close: 'onSaveDialogClose'
 			} );
+
+			// Attach custom overlay
+			target.saveDialog.$element.append( target.$saveDialogOverlay );
 		}
 
 		data = target.getSaveDialogOpeningData();

@@ -3,6 +3,7 @@
 		"authors": [
 			"BaRaN6161 TURK",
 			"Bulgu",
+			"Joseph",
 			"Mavrikant",
 			"MuratTheTurkish",
 			"Rapsar",
@@ -12,7 +13,6 @@
 			"Trncmvsr",
 			"Violetanka",
 			"Vito Genovese",
-			"Joseph",
 			"SaldırganSincap"
 		]
 	},
@@ -33,6 +33,7 @@
 	"templatedata-doc-param-status-optional": "isteğe bağlı",
 	"templatedata-doc-param-status-required": "gerekli",
 	"templatedata-doc-param-status-suggested": "önerilen",
+	"templatedata-doc-param-suggestedvalues": "Önerilen değerler",
 	"templatedata-doc-param-type": "Tür",
 	"templatedata-doc-param-type-boolean": "Boole",
 	"templatedata-doc-param-type-content": "İçerik",
@@ -108,6 +109,8 @@
 	"templatedata-modal-table-param-name": "Ad",
 	"templatedata-modal-table-param-required": "Gerekli",
 	"templatedata-modal-table-param-suggested": "Önerilen",
+	"templatedata-modal-table-param-suggestedvalues": "Önerilen değerler",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "Değer ekle...",
 	"templatedata-modal-table-param-type": "Tür",
 	"templatedata-modal-table-param-uneditablefield": "Düzenlenemez",
 	"templatedata-modal-title": "Şablon belgeleme düzenleyicisi",

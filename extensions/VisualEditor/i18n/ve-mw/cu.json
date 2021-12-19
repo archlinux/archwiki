@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"NR Deblocked",
 			"Илья Драконов",
 			"ОйЛ"
 		]
@@ -43,8 +44,10 @@
 	"visualeditor-dialog-meta-settings-toc-force": "вьсѥгда",
 	"visualeditor-dialog-meta-title": "строи",
 	"visualeditor-dialog-template-title": "обраꙁьць",
+	"visualeditor-dialog-transclusion-add-wikitext": "Добавить ​вики​-​текстъ​/Ⰴⱁⰱⰰⰲⰹⱅⱐ ​ⰲⰹⰽⱏⰻ​-​ⱅⰵⰽⱄⱅ​",
 	"visualeditor-dialog-transclusion-options": "строи",
 	"visualeditor-dialog-transclusion-placeholder": "обраꙁьца доложєниѥ",
+	"visualeditor-dialog-transclusion-wikitext": "Викитекстъ",
 	"visualeditor-dialogbutton-media-tooltip": "срѣдьства",
 	"visualeditor-dialogbutton-meta-tooltip": "страницѧ строи",
 	"visualeditor-dialogbutton-template-tooltip": "обраꙁьць",

@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"GastonJeremiah"
+			"GastonJeremiah",
+			"Amire80"
 		]
 	},
 	"visualeditor-ca-createlocaldescriptionsource": "Hewl r'man reet",
 	"visualeditor-ca-createsource": "Ree wikicode",
-	"visualeditor-ca-editsource": "manyii wikicode",
+	"visualeditor-ca-editsource": "Manyii wikicode",
 	"visualeditor-ca-editsource-section": "manyii wikicode",
 	"visualeditor-descriptionpagelink": "Project:Nɔŋgan manyiib"
 }

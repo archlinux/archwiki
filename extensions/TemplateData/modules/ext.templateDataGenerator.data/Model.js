@@ -20,7 +20,7 @@ function Model() {
 	this.format = null;
 
 	this.params = {};
-	this.paramIdentifierCounter = 0;
+	this.paramIdentifierCounter = 2;
 	this.sourceCodeParameters = [];
 	this.paramOrder = [];
 	this.paramOrderChanged = false;
@@ -55,7 +55,8 @@ OO.mixinClass( Model, OO.EventEmitter );
  * @event change-property
  * @param {string} paramKey Parameter key
  * @param {string} prop Property name
- * @param {...Mixed} value Property value
+ * @param {Mixed} value
+ * @param {string} language
  */
 
 /**
@@ -161,6 +162,9 @@ Model.static.getAllProperties = function ( getFullData ) {
 				'wiki-user-name'
 			],
 			default: 'unknown'
+		},
+		suggestedvalues: {
+			type: 'array'
 		},
 		default: {
 			type: 'string',
@@ -708,7 +712,7 @@ Model.prototype.getTemplateFormat = function () {
  *
  * @param {string} paramKey Parameter key
  * @param {string} prop Property name
- * @param {...Mixed} value Property value
+ * @param {Mixed} value
  * @param {string} [language] Value language
  * @return {boolean} Operation was successful
  * @fires change-property
@@ -718,7 +722,7 @@ Model.prototype.setParamProperty = function ( paramKey, prop, value, language ) 
 	var propertiesWithLanguage = this.constructor.static.getPropertiesWithLanguage(),
 		allProps = this.constructor.static.getAllProperties( true ),
 		status = false,
-		oldValue;
+		oldValue, newKey;
 
 	language = language || this.getDefaultLanguage();
 	if ( !allProps[ prop ] ) {
@@ -749,28 +753,26 @@ Model.prototype.setParamProperty = function ( paramKey, prop, value, language ) 
 		// Compare without language
 		if ( !this.constructor.static.compare( this.params[ paramKey ][ prop ], value ) ) {
 			oldValue = this.params[ paramKey ][ prop ];
+			this.params[ paramKey ][ prop ] = value;
 
 			if ( prop === 'name' && oldValue !== value ) {
+				newKey = value;
 				// See if the parameters already has something with this new key
-				if ( this.params[ value ] && !this.params[ value ].deleted ) {
+				if ( this.params[ newKey ] && !this.params[ newKey ].deleted ) {
 					// Change the key to be something else
-					value = this.getNewValidParameterKey( value );
+					newKey = this.getNewValidParameterKey( newKey );
 				}
 				// Copy param details to new name
-				this.params[ value ] = this.params[ oldValue ];
+				this.params[ newKey ] = this.params[ paramKey ];
 				// Delete the old param
-				this.params[ oldValue ] = { deleted: true };
-
-				this.params[ value ][ prop ] = value;
-			} else {
-				this.params[ paramKey ][ prop ] = value;
+				this.params[ paramKey ] = { deleted: true };
 			}
 
 			this.emit( 'change-property', paramKey, prop, value, language );
 			this.emit( 'change' );
 
 			if ( prop === 'name' ) {
-				this.paramOrder[ this.paramOrder.indexOf( oldValue ) ] = value;
+				this.paramOrder[ this.paramOrder.indexOf( paramKey ) ] = newKey || value;
 				this.paramOrderChanged = true;
 				this.emit( 'change-paramOrder', this.paramOrder );
 				this.emit( 'change' );
@@ -842,7 +844,7 @@ Model.prototype.emptyParamData = function ( paramKey ) {
  *
  * @param {string} paramKey Parameter key
  * @param {string} prop Parameter property
- * @return {...Mixed|null} Property value if it exists. Returns null if the
+ * @return {Mixed|null} Property value if it exists. Returns null if the
  * parameter key itself doesn't exist.
  */
 Model.prototype.getParamProperty = function ( paramKey, prop ) {
@@ -1066,16 +1068,17 @@ Model.prototype.outputTemplateData = function () {
 						}
 					}
 					break;
+				case 'suggestedvalues':
 				case 'aliases':
-					// Only update the aliases in if the new templatedata has an
-					// aliases array that isn't empty
+					// Only update these if the new templatedata has an
+					// array that isn't empty
 					if (
 						Array.isArray( this.params[ key ][ prop ] ) &&
 						this.params[ key ][ prop ].length > 0
 					) {
 						result.params[ name ][ prop ] = this.params[ key ][ prop ];
 					} else {
-						// If the new aliases array is empty, delete it from the original
+						// If the new array is empty, delete it from the original
 						delete result.params[ name ][ prop ];
 					}
 					break;
@@ -1115,6 +1118,9 @@ Model.prototype.getNewValidParameterKey = function ( key ) {
 	var allParamNames = this.getAllParamNames();
 	if ( this.params[ key ] || allParamNames.indexOf( key ) !== -1 ) {
 		// Change the key to be something else
+		if ( /\d$/.test( key ) ) {
+			key += '-';
+		}
 		key += this.paramIdentifierCounter;
 		this.paramIdentifierCounter++;
 		return this.getNewValidParameterKey( key );

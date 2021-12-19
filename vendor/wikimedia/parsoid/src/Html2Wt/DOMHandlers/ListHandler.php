@@ -3,9 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
-use DOMElement;
-use DOMNode;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 
@@ -24,8 +25,8 @@ class ListHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function handle(
-		DOMElement $node, SerializerState $state, bool $wrapperUnmodified = false
-	): ?DOMNode {
+		Element $node, SerializerState $state, bool $wrapperUnmodified = false
+	): ?Node {
 		// Disable single-line context here so that separators aren't
 		// suppressed between nested list elements.
 		$state->singleLineContext->disable();
@@ -39,13 +40,13 @@ class ListHandler extends DOMHandler {
 			$firstChildElt = DOMUtils::firstNonSepChild( $firstChildElt );
 		}
 
-		if ( !$firstChildElt || !in_array( $firstChildElt->nodeName, $this->firstChildNames, true )
+		if ( !$firstChildElt || !in_array( DOMCompat::nodeName( $firstChildElt ), $this->firstChildNames, true )
 			|| WTUtils::isLiteralHTMLNode( $firstChildElt )
 		) {
 			$state->emitChunk( $this->getListBullets( $state, $node ), $node );
 		}
 
-		$liHandler = function ( $state, $text, $opts ) use ( $node ) {
+		$liHandler = static function ( $state, $text, $opts ) use ( $node ) {
 			return $state->serializer->wteHandlers->liHandler( $node, $state, $text, $opts );
 		};
 		$state->serializeChildren( $node, $liHandler );
@@ -54,7 +55,7 @@ class ListHandler extends DOMHandler {
 	}
 
 	/** @inheritDoc */
-	public function before( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
+	public function before( Element $node, Node $otherNode, SerializerState $state ): array {
 		if ( DOMUtils::atTheTop( $otherNode ) ) {
 			return [ 'min' => 0, 'max' => 0 ];
 		}
@@ -80,7 +81,7 @@ class ListHandler extends DOMHandler {
 	}
 
 	/** @inheritDoc */
-	public function after( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
+	public function after( Element $node, Node $otherNode, SerializerState $state ): array {
 		return $this->wtListEOL( $node, $otherNode );
 	}
 

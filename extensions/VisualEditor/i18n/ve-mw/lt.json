@@ -13,7 +13,8 @@
 			"Robotukas11",
 			"Shirayuki",
 			"Tomasdd",
-			"Zygimantus"
+			"Zygimantus",
+			"TMg"
 		]
 	},
 	"tooltip-ca-createsource": "Sukurti šio puslapio išeities kodą",
@@ -160,13 +161,14 @@
 	"visualeditor-dialog-transclusion-add-content": "Pridėti turinį",
 	"visualeditor-dialog-transclusion-add-param": "Pridėti daugiau informacijos",
 	"visualeditor-dialog-transclusion-add-template": "Pridėti šabloną",
+	"visualeditor-dialog-transclusion-collapse-options": "Paslėpti parinktis",
 	"visualeditor-dialog-transclusion-content": "Turinys",
 	"visualeditor-dialog-transclusion-contextitem-description": "Gauta iš: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Rodyti parinktis",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Nebenaudotinas laukas",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Laukas yra nebenaudotinas. $1",
 	"visualeditor-dialog-transclusion-loading": "Įkeliama...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Rodyti parinktis",
-	"visualeditor-dialog-transclusion-no-template-description": "Šablonas \"$1\" kol kas neturi aprašymo, bet galite rasti informacijos [[$1|šablono puslapyje]].",
+	"visualeditor-dialog-transclusion-no-template-description": "Šablonas \"$1\" kol kas neturi aprašymo, bet galite rasti informacijos [[$2|šablono puslapyje]].",
 	"visualeditor-dialog-transclusion-options": "Parinktys",
 	"visualeditor-dialog-transclusion-param-default": "Numatytoji: $1",
 	"visualeditor-dialog-transclusion-param-example": "pvz., $1",
@@ -182,8 +184,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Vis tiek tęsti",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Trūksta {{PLURAL:$1|būtino lauko|būtinų laukų}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Ar tikrai norite tęsti neužpildę $1 {{PLURAL:$2|lauko|laukų}}?",
-	"visualeditor-dialog-transclusion-single-mode": "Paslėpti parinktis",
-	"visualeditor-dialog-transclusion-title": "Intarpas",
 	"visualeditor-dialogbutton-media-tooltip": "Paveikslėliai ir medija",
 	"visualeditor-dialogbutton-meta-tooltip": "Puslapio nustatymai",
 	"visualeditor-dialogbutton-template-tooltip": "Šablonas",
@@ -266,7 +266,7 @@
 	"visualeditor-parameter-input-placeholder": "Lauko pavadinimas",
 	"visualeditor-parameter-search-more": "Rodyti {{PLURAL:$1|vienu lauku daugiau|$1 laukais daugiau}}",
 	"visualeditor-parameter-search-no-unused": "Jokių nepanaudotų laukų",
-	"visualeditor-parameter-search-unknown": "Nežinomas laukas",
+	"visualeditor-parameter-search-unknown": "(Nežinomas laukas)",
 	"visualeditor-preference-betatempdisable": "Laikinai išjungti vizualų redaktorių, kol jis bandomosios versijos",
 	"visualeditor-preference-core-description": "Įjungti vizualų redaktorių. Jis neveiks aptarimų puslapiuose ir kai kuriose kitose vardų srityse.",
 	"visualeditor-preference-core-label": "Vizualus redagavimas",
@@ -316,6 +316,5 @@
 	"visualeditor-wikitext-warning-title": "Aptikta vikisintaksė",
 	"visualeditor-wikitextconvert-title": "Pakeisti formatavimą į vikitekstą?",
 	"visualeditor-wikitextconvert-message": "Jūsų įklijuotas turinys yra suformatuotas. Ar jis turėtų būti pakeistas į vikitekstą, ar įklijuoti kaip paprastą tekstą?",
-	"visualeditor-wikitextconvert-plain": "Naudoti paprastą tekstą",
 	"visualeditor-wikitextconvert-convert": "Perdaryti į vikitekstą"
 }

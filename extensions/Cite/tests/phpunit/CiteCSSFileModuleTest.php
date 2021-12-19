@@ -13,7 +13,7 @@ use ResourceLoaderContext;
  */
 class CiteCSSFileModuleTest extends \MediaWikiIntegrationTestCase {
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->setService(

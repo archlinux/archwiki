@@ -3,10 +3,10 @@
 		"authors": [
 			"AS",
 			"Ahonc",
+			"DDPAT",
 			"Dars",
 			"Piramidion",
-			"Ата",
-			"DDPAT"
+			"Ата"
 		]
 	},
 	"syntaxhighlight-desc": "Забезпечує підсвічування синтаксису <code>&lt;syntaxhighlight&gt;</code> за допомогою [http://pygments.org/ Pygments] для синтаксису Python",

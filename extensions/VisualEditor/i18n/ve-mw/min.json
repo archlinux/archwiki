@@ -121,12 +121,13 @@
 	"visualeditor-dialog-transclusion-add-content": "Tambah isi",
 	"visualeditor-dialog-transclusion-add-param": "Tambah informasi lainnyo",
 	"visualeditor-dialog-transclusion-add-template": "Tambah templat",
+	"visualeditor-dialog-transclusion-collapse-options": "Suruakan piliahan",
 	"visualeditor-dialog-transclusion-content": "Isi",
 	"visualeditor-dialog-transclusion-contextitem-description": "Dihasilkan dari: $1",
+	"visualeditor-dialog-transclusion-expand-options": "Caliak piliahan",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Bidang usang",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Bidang alah usang. $1",
 	"visualeditor-dialog-transclusion-loading": "Mamuek...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Caliak piliahan",
 	"visualeditor-dialog-transclusion-options": "Piliahan",
 	"visualeditor-dialog-transclusion-param-default": "Baku: $1",
 	"visualeditor-dialog-transclusion-param-example": "mis. $1",
@@ -141,8 +142,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Baliak",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Lanjuik taruih",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Bidang}} nan wajib diisi kosong",
-	"visualeditor-dialog-transclusion-single-mode": "Suruakan piliahan",
-	"visualeditor-dialog-transclusion-title": "Transklusi",
 	"visualeditor-dialogbutton-media-tooltip": "Media",
 	"visualeditor-dialogbutton-meta-tooltip": "Pangaturan laman",
 	"visualeditor-dialogbutton-template-tooltip": "Templat",
@@ -297,6 +296,5 @@
 	"visualeditor-title-error": "Judul indak sah.",
 	"visualeditor-usernamespacepagelink": "Project:Ruangnamo pangguno",
 	"visualeditor-version-label": "Versi",
-	"visualeditor-wikitext-progress": "Konversi teks wiki",
-	"visualeditor-wikitextconvert-plain": "Gunokan teks polos"
+	"visualeditor-wikitext-progress": "Konversi teks wiki"
 }

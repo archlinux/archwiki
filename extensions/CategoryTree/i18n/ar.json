@@ -25,8 +25,6 @@
 	"categorytree-mode-all": "كل الصفحات",
 	"categorytree-collapse": "اطو",
 	"categorytree-expand": "فرد",
-	"categorytree-expand-bullet": "◄",
-	"categorytree-empty-bullet": "◄",
 	"categorytree-member-counts": "يحتوي على {{PLURAL:$1|1 تصنيف فرعي واحد|تصنيفين فرعيين|$1 تصنيفات فرعية|$1 تصنيف فرعي}} و{{PLURAL:$2| صفحة واحدة|صفحتين|$2 صفحات|$2 صفحة}}، و {{PLURAL:$3| ملف واحد|ملفين|$3 ملفات|$3 ملفاً|$3 ملف}}",
 	"categorytree-num-categories": "$1 ت",
 	"categorytree-num-pages": " $1 ص",

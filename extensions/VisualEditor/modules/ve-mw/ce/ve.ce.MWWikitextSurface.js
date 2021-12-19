@@ -91,49 +91,61 @@ ve.ce.MWWikitextSurface.prototype.onCopy = function ( e ) {
  * @inheritdoc
  */
 ve.ce.MWWikitextSurface.prototype.afterPasteInsertExternalData = function ( targetFragment, pastedDocumentModel, contextRange ) {
-	var windowAction, deferred,
+	var promise, plainPastedDocumentModel, plainContextRange,
+		wasSpecial = this.pasteSpecial,
+		// TODO: This check returns true if the paste contains meaningful structure (tables, lists etc.)
+		// but no annotations (bold, links etc.).
+		wasPlain = wasSpecial || pastedDocumentModel.data.isPlainText( contextRange, true, undefined, true ),
 		view = this;
 
-	function makePlain() {
-		pastedDocumentModel = pastedDocumentModel.shallowCloneFromRange( contextRange );
-		pastedDocumentModel.data.sanitize( { plainText: true, keepEmptyContentBranches: true } );
-		// We just turned this into plaintext, which probably
-		// affected the content-length. Luckily, because of
-		// the earlier clone, we know we just want the whole
-		// document, and because of the major change to
-		// plaintext, the difference between originalRange and
-		// balancedRange don't really apply. As such, clear
-		// out newDocRange. (Can't just make it undefined;
-		// need to exclude the internal list, and since we're
-		// from a paste we also have to exclude the
-		// opening/closing paragraph.)
-		contextRange = new ve.Range( pastedDocumentModel.getDocumentRange().from + 1, pastedDocumentModel.getDocumentRange().to - 1 );
-		view.pasteSpecial = true;
-	}
+	plainPastedDocumentModel = pastedDocumentModel.shallowCloneFromRange( contextRange );
+	plainPastedDocumentModel.data.sanitize( { plainText: true, keepEmptyContentBranches: true } );
+	// We just turned this into plaintext, which probably
+	// affected the content-length. Luckily, because of
+	// the earlier clone, we know we just want the whole
+	// document, and because of the major change to
+	// plaintext, the difference between originalRange and
+	// balancedRange don't really apply. As such, clear
+	// out newDocRange. (Can't just make it undefined;
+	// need to exclude the internal list, and since we're
+	// from a paste we also have to exclude the
+	// opening/closing paragraph.)
+	plainContextRange = new ve.Range( plainPastedDocumentModel.getDocumentRange().from + 1, plainPastedDocumentModel.getDocumentRange().to - 1 );
+	view.pasteSpecial = true;
 
-	if ( !pastedDocumentModel.data.isPlainText( contextRange, true, undefined, true ) ) {
-		// Not plaintext. We need to ask whether we should convert it to
-		// wikitext, or just strip the formatting out.
-		deferred = ve.createDeferred();
-		windowAction = ve.ui.actionFactory.create( 'window', this.getSurface() );
-		windowAction.open( 'wikitextconvertconfirm', { deferred: deferred } );
-		return deferred.promise().then( function ( usePlain ) {
-			var insertPromise;
-			if ( usePlain ) {
-				makePlain();
-			}
-			insertPromise = ve.ce.MWWikitextSurface.super.prototype.afterPasteInsertExternalData.call( view, targetFragment, pastedDocumentModel, contextRange );
-			if ( !usePlain ) {
-				insertPromise = insertPromise.then( null, function () {
-					// Rich text conversion failed, insert plain text
-					makePlain();
-					return ve.ce.MWWikitextSurface.super.prototype.afterPasteInsertExternalData.call( view, targetFragment, pastedDocumentModel, contextRange );
+	// isPlainText is true but we still need sanitize (e.g. remove lists)
+	promise = ve.ce.MWWikitextSurface.super.prototype.afterPasteInsertExternalData.call( this, targetFragment, plainPastedDocumentModel, plainContextRange );
+	if ( ve.init.target.constructor.static.convertToWikitextOnPaste && !wasPlain ) {
+		promise.then( function () {
+			// We need to wait for the selection change after paste as that triggers
+			// a contextChange event. Really we should wait for the afterPaste promise to resolve.
+			setTimeout( function () {
+				var surface = view.getSurface(),
+					context = surface.getContext();
+				// HACK: Directly set the 'relatedSources' result in the context to trick it
+				// into showing a context at the end of the paste. This context will disappear
+				// as soon as the selection change as a contextChange will fire.
+				// TODO: Come up witha method to store this context on the surface model then
+				// have the LinearContext read it from there.
+				context.relatedSources = [ {
+					embeddable: false,
+					// HACK²: Pass the rich text document and original fragment (which should now cover
+					// the pasted text) to the context via the otherwise-unused 'model' property.
+					model: {
+						doc: pastedDocumentModel,
+						contextRange: contextRange,
+						fragment: targetFragment
+					},
+					name: 'wikitextPaste',
+					type: 'item'
+				} ];
+				context.afterContextChange();
+				surface.getModel().once( 'select', function () {
+					context.relatedSources = [];
+					context.afterContextChange();
 				} );
-			}
-			return insertPromise;
+			} );
 		} );
 	}
-	// isPlainText is true but we still need sanitize (e.g. remove lists)
-	makePlain();
-	return ve.ce.MWWikitextSurface.super.prototype.afterPasteInsertExternalData.call( this, targetFragment, pastedDocumentModel, contextRange );
+	return promise;
 };

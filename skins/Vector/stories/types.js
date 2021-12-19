@@ -42,11 +42,14 @@
  * @property {string} [html-user-language-attributes]
  * @property {string} form-action URL
  * @property {string|null} html-input
+ * @property {string|null} [class] of the menu
  * @property {string|null} page-title the title of the search page
  * @property {string|null} html-button-search-fallback
  * @property {string|null} html-button-search
  * @property {string} [input-location] An identifier corresponding the position of the search
  *  widget on the page, e.g. "header-navigation"
+ * @property {boolean} [is-collapsible]
+ * @property {string} [href-search]
  */
 
 /**
@@ -54,10 +57,23 @@
  * @property {string} id
  * @property {string} label
  * @property {string} html-items
+ * @property {string} [checkbox-class]
+ * @property {string} [html-vector-heading-icon]
  * @property {string} [heading-class]
  * @property {string} [html-tooltip]
  * @property {string} [class] of menu
  * @property {string} [html-user-language-attributes]
  * @property {boolean} [is-dropdown]
+ * @property {string} [html-before-portal] Additional HTML specific to portal menus.
  * @property {string} [html-after-portal] Additional HTML specific to portal menus.
+ */
+
+/**
+ * @typedef {Object.<string, MenuDefinition>} MenuDefinitions
+ */
+
+/**
+ * @typedef {Object} UserLinksDefinition
+ * @property {MenuDefinition} data-user-more
+ * @property {MenuDefinition} data-user-menu
  */

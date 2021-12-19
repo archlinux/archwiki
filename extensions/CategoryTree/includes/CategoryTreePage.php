@@ -22,6 +22,14 @@
  * @author Daniel Kinzler, brightbyte.de
  */
 
+namespace MediaWiki\Extension\CategoryTree;
+
+use Html;
+use HTMLForm;
+use SearchEngineFactory;
+use SpecialPage;
+use Title;
+
 /**
  * Special page for the CategoryTree extension, an AJAX based gadget
  * to display the category structure of a wiki
@@ -68,18 +76,16 @@ class CategoryTreePage extends SpecialPage {
 		$this->addHelpLink( 'Extension:CategoryTree' );
 		$request = $this->getRequest();
 		if ( $par ) {
-			$this->target = $par;
+			$this->target = trim( $par );
 		} else {
-			$this->target = $request->getVal( 'target' );
-			if ( $this->target === null ) {
+			$this->target = trim( $request->getVal( 'target', '' ) );
+			if ( $this->target === '' ) {
 				$rootcategory = $this->msg( 'rootcategory' );
 				if ( $rootcategory->exists() ) {
 					$this->target = $rootcategory->text();
 				}
 			}
 		}
-
-		$this->target = trim( $this->target );
 
 		$options = [];
 		$config = $this->getConfig();
@@ -97,45 +103,12 @@ class CategoryTreePage extends SpecialPage {
 
 		$this->tree = new CategoryTree( $options );
 
-		$output = $this->getOutput();
-		$output->addWikiMsg( 'categorytree-header' );
+		$this->getOutput()->addWikiMsg( 'categorytree-header' );
 
 		$this->executeInputForm();
 
-		if ( $this->target !== '' && $this->target !== null ) {
-			if ( !CategoryTreeHooks::shouldForceHeaders() ) {
-				CategoryTree::setHeaders( $output );
-			}
-
-			$title = CategoryTree::makeTitle( $this->target );
-
-			if ( $title && $title->getArticleID() ) {
-				$output->addHTML( Xml::openElement( 'div', [ 'class' => 'CategoryTreeParents' ] ) );
-				$output->addHTML( $this->msg( 'categorytree-parents' )->parse() );
-				$output->addHTML( $this->msg( 'colon-separator' )->escaped() );
-
-				$parents = $this->tree->renderParents( $title );
-
-				if ( $parents == '' ) {
-					$output->addHTML( $this->msg( 'categorytree-no-parent-categories' )->parse() );
-				} else {
-					$output->addHTML( $parents );
-				}
-
-				$output->addHTML( Xml::closeElement( 'div' ) );
-
-				$output->addHTML( Xml::openElement( 'div', [
-					'class' => 'CategoryTreeResult CategoryTreeTag',
-					'data-ct-mode' => $this->tree->getOption( 'mode' ),
-					'data-ct-options' => $this->tree->getOptionsAsJsStructure(),
-				] ) );
-				$output->addHTML( $this->tree->renderNode( $title, 1 ) );
-				$output->addHTML( Xml::closeElement( 'div' ) );
-			} else {
-				$output->addHTML( Xml::openElement( 'div', [ 'class' => 'CategoryTreeNotice' ] ) );
-				$output->addHTML( $this->msg( 'categorytree-not-found', $this->target )->parse() );
-				$output->addHTML( Xml::closeElement( 'div' ) );
-			}
+		if ( $this->target !== '' ) {
+			$this->executeCategoryTree();
 		}
 	}
 
@@ -193,6 +166,44 @@ class CategoryTreePage extends SpecialPage {
 	}
 
 	/**
+	 * Show the category tree
+	 */
+	private function executeCategoryTree() {
+		$output = $this->getOutput();
+		CategoryTree::setHeaders( $output );
+
+		$title = CategoryTree::makeTitle( $this->target );
+		if ( !$title || !$title->getArticleID() ) {
+			$output->addHTML( Html::rawElement( 'div', [ 'class' => 'CategoryTreeNotice' ],
+				$this->msg( 'categorytree-not-found' )
+					->plaintextParams( $this->target )
+					->parse()
+			) );
+			return;
+		}
+
+		$parents = $this->tree->renderParents( $title );
+		if ( $parents == '' ) {
+			$parents = $this->msg( 'categorytree-no-parent-categories' )->parse();
+		}
+
+		$output->addHTML( Html::rawElement( 'div', [ 'class' => 'CategoryTreeParents' ],
+			$this->msg( 'categorytree-parents' )->parse() .
+			$this->msg( 'colon-separator' )->escaped() .
+			$parents
+		) );
+
+		$output->addHTML( Html::rawElement( 'div',
+			[
+				'class' => 'CategoryTreeResult CategoryTreeTag',
+				'data-ct-mode' => $this->tree->getOption( 'mode' ),
+				'data-ct-options' => $this->tree->getOptionsAsJsStructure(),
+			],
+			$this->tree->renderNode( $title, 1 )
+		) );
+	}
+
+	/**
 	 * Return an array of subpages beginning with $search that this special page will accept.
 	 *
 	 * @param string $search Prefix to search for
@@ -216,7 +227,7 @@ class CategoryTreePage extends SpecialPage {
 		$searchEngine->setNamespaces( [ NS_CATEGORY ] );
 		$result = $searchEngine->defaultPrefixSearch( $search );
 
-		return array_map( function ( Title $t ) {
+		return array_map( static function ( Title $t ) {
 			// Remove namespace in search suggestion
 			return $t->getText();
 		}, $result );

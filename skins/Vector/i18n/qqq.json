@@ -39,5 +39,13 @@
 	"vector-jumptosearch": "Accessibility link for jumping to the site search. Visually hidden by default.\n\nSee also\n* {{msg-mw|Search}}",
 	"vector-jumptocontent": "Accessibility link for jumping to the content and skipping the navigation. Visually hidden by default.",
 	"vector-more-actions": "Label in the Vector skin's menu for the less-important or rarer actions which are not shown as tabs (like moving the page, or for sysops deleting or protecting the page), as well as (for users with a narrow viewing window in their browser) the less-important tab actions which the user's browser is unable to fit in. {{Identical|More}}",
-	"vector-search-loader": "Text to display below search input while the search suggestion module is loading"
+	"vector-search-loader": "Text to display below search input while the search suggestion module is loading",
+	"vector-anon-user-menu-pages": "Label describing the anon editor links in the anon user menu",
+	"vector-anon-user-menu-pages-learn": "Lowercase text of link that goes to Help:Introduction and helps the user learn more about editing",
+	"vector-anon-user-menu-pages-label": "Accessible version of 'vector-anon-user-menu-pages' link text, prompts user to learn more about editing",
+	"vector-personal-more-label": "Label describing the user links next to the user links dropdown menu.",
+	"vector-main-menu-tooltip": "Used as title attribute for main menu icon on hover.",
+	"tooltip-vector-anon-user-menu-title": "Used as title attribute for user menu icon on hover for anonymous users.",
+	"vector-menu-checkbox-expanded": "Label for expanded state of dropdown menus for screen reader or assistive technology users.",
+	"vector-menu-checkbox-collapsed": "Label for collapsed state of dropdown menus for screen reader or assistive technology users."
 }

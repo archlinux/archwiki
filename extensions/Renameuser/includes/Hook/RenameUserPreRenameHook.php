@@ -17,6 +17,6 @@ interface RenameUserPreRenameHook {
 	 * @param string $old The old username
 	 * @param string $new The new username
 	 */
-	public function onRenameUserPreRename( int $uid, string $old, string $new ) : void;
+	public function onRenameUserPreRename( int $uid, string $old, string $new ): void;
 
 }

@@ -18,7 +18,8 @@
  * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
  */
 ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeholder, name, config ) {
-	var addTemplateActionFieldLayout;
+	var veConfig = mw.config.get( 'wgVisualEditorConfig' );
+
 	// Configuration initialization
 	config = ve.extendObject( {
 		scrollable: false
@@ -54,36 +55,65 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 	} )
 		.connect( this, { click: 'onAddTemplate' } );
 
-	this.removeButton = new OO.ui.ButtonWidget( {
-		framed: false,
-		icon: 'trash',
-		title: ve.msg( 'visualeditor-dialog-transclusion-remove-template' ),
-		flags: [ 'destructive' ],
-		classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
-	} )
-		.connect( this, { click: 'onRemoveButtonClick' } );
-
-	if ( this.placeholder.getTransclusion().parts.length === 1 ) {
-		this.removeButton.toggle( false );
-	}
-
-	addTemplateActionFieldLayout = new OO.ui.ActionFieldLayout(
+	var addTemplateActionFieldLayout = new OO.ui.ActionFieldLayout(
 		this.addTemplateInput,
 		this.addTemplateButton,
 		{ align: 'top' }
 	);
 
-	this.addTemplateFieldset = new OO.ui.FieldsetLayout( {
+	var addTemplateFieldsetConfig = {
 		label: ve.msg( 'visualeditor-dialog-transclusion-placeholder' ),
 		icon: 'puzzle',
 		classes: [ 've-ui-mwTransclusionDialog-addTemplateFieldset' ],
 		items: [ addTemplateActionFieldLayout ]
-	} );
+	};
+
+	// Temporary switch for verbose template search.
+	if ( mw.config.get( 'wgVisualEditorConfig' ).templateSearchImprovements ) {
+		var dialogTitle = this.placeholder.getTransclusion().parts.length === 1 ?
+			'visualeditor-dialog-transclusion-template-search' :
+			'visualeditor-dialog-transclusion-add-template';
+
+		// Temporary feedback message when templateSearchImprovements is true T284560
+		// TODO: remove when templateSearchImprovements are out of beta
+		var feedbackMessage = new ve.ui.MWDismissibleMessageWidget( {
+			messageKey: 'visualeditor-dialog-transclusion-feedback-message'
+		} )
+			.connect( this, { close: 'focus' } );
+
+		addTemplateFieldsetConfig = ve.extendObject( addTemplateFieldsetConfig, {
+			// The following messages are used here:
+			// * visualeditor-dialog-transclusion-template-search
+			// * visualeditor-dialog-transclusion-add-template
+			label: ve.msg( dialogTitle ),
+			help: ve.msg( 'visualeditor-dialog-transclusion-template-search-help' ),
+			helpInline: true,
+			// TODO: remove this line when templateSearchImprovements are out of beta
+			items: [].concat( [ feedbackMessage ], addTemplateFieldsetConfig.items )
+		} );
+	}
+	this.addTemplateFieldset = new OO.ui.FieldsetLayout( addTemplateFieldsetConfig );
 
 	// Initialization
 	this.$element
 		.addClass( 've-ui-mwTemplatePlaceholderPage' )
-		.append( this.addTemplateFieldset.$element, this.removeButton.$element );
+		.append( this.addTemplateFieldset.$element );
+
+	if ( !veConfig.transclusionDialogNewSidebar ) {
+		this.removeButton = new OO.ui.ButtonWidget( {
+			framed: false,
+			icon: 'trash',
+			title: ve.msg( 'visualeditor-dialog-transclusion-remove-template' ),
+			flags: [ 'destructive' ],
+			classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
+		} )
+			.connect( this, { click: 'onRemoveButtonClick' } );
+
+		if ( this.placeholder.getTransclusion().parts.length === 1 ) {
+			this.removeButton.toggle( false );
+		}
+		this.$element.append( this.removeButton.$element );
+	}
 };
 
 /* Inheritance */
@@ -99,19 +129,27 @@ ve.ui.MWTemplatePlaceholderPage.prototype.setOutlineItem = function () {
 	// Parent method
 	ve.ui.MWTemplatePlaceholderPage.super.prototype.setOutlineItem.apply( this, arguments );
 
+	var dialogTitle = ( this.placeholder.getTransclusion().parts.length === 1 &&
+		mw.config.get( 'wgVisualEditorConfig' ).templateSearchImprovements ) ?
+		'visualeditor-dialog-transclusion-template-search' :
+		'visualeditor-dialog-transclusion-add-template';
+
 	if ( this.outlineItem ) {
 		this.outlineItem
 			.setIcon( 'puzzle' )
 			.setMovable( true )
 			.setRemovable( true )
 			.setFlags( [ 'placeholder' ] )
-			.setLabel( ve.msg( 'visualeditor-dialog-transclusion-placeholder' ) );
+			// The following messages are used here:
+			// * visualeditor-dialog-transclusion-template-search
+			// * visualeditor-dialog-transclusion-add-template
+			.setLabel( ve.msg( dialogTitle ) );
 	}
 };
 
 ve.ui.MWTemplatePlaceholderPage.prototype.focus = function () {
-	// Parent method
-	ve.ui.MWTemplatePlaceholderPage.super.prototype.focus.apply( this, arguments );
+	// The parent method would focus the first element, which might be the message widget
+	this.addTemplateInput.focus();
 
 	// HACK: Set the width of the lookupMenu to the width of the input
 	// TODO: This should be handled upstream in OOUI
@@ -119,14 +157,13 @@ ve.ui.MWTemplatePlaceholderPage.prototype.focus = function () {
 };
 
 ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
-	var part, name, event, editCountBucket,
-		transclusion = this.placeholder.getTransclusion(),
+	var transclusion = this.placeholder.getTransclusion(),
 		menu = this.addTemplateInput.getLookupMenu();
 
 	if ( menu.isVisible() ) {
 		menu.chooseItem( menu.findSelectedItem() );
 	}
-	name = this.addTemplateInput.getMWTitle();
+	var name = this.addTemplateInput.getMWTitle();
 	if ( !name ) {
 		// Invalid titles return null, so abort here.
 		return;
@@ -134,25 +171,27 @@ ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
 
 	// TODO tracking will only be implemented temporarily to answer questions on
 	// template usage for the Technical Wishes topic area see T258917
-	event = {
+	var event = {
 		action: 'add-template',
 		// eslint-disable-next-line camelcase
 		template_names: [ name.getPrefixedText() ]
 	};
-	editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
+	var editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
 	if ( editCountBucket !== null ) {
 		// eslint-disable-next-line camelcase
 		event.user_edit_count_bucket = editCountBucket;
 	}
 	mw.track( 'event.VisualEditorTemplateDialogUse', event );
 
-	part = ve.dm.MWTemplateModel.newFromName( transclusion, name );
+	var part = ve.dm.MWTemplateModel.newFromName( transclusion, name );
 	transclusion.replacePart( this.placeholder, part );
 	this.addTemplateInput.pushPending();
 	// abort pending lookups, also, so the menu can't appear after we've left the page
 	this.addTemplateInput.closeLookupMenu();
 	this.addTemplateButton.setDisabled( true );
-	this.removeButton.setDisabled( true );
+	if ( this.removeButton ) {
+		this.removeButton.setDisabled( true );
+	}
 };
 
 ve.ui.MWTemplatePlaceholderPage.prototype.onTemplateInputChange = function () {

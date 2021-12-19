@@ -1,10 +1,11 @@
 <?php
 /**
- * PHP port of CSSJanus.
- * https://github.com/cssjanus/php-cssjanus
+ * PHP port of CSSJanus. https://github.com/cssjanus/php-cssjanus
  *
- * Copyright 2008 Google Inc.
+ * Copyright 2020 Timo Tijhof
+ * Copyright 2014 Trevor Parscal
  * Copyright 2010 Roan Kattouw
+ * Copyright 2008 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,76 +23,70 @@
  */
 
 /**
- * This is a PHP port of CSSJanus, a utility that transforms CSS style sheets
- * written for LTR to RTL.
- *
- * Original code: http://code.google.com/p/cssjanus/source/browse/trunk/cssjanus.py
- *
- * @author Lindsey Simon <elsigh@google.com>
- * @author Roan Kattouw
+ * CSSJanus is a a utility that converts CSS stylesheets
+ * from left-to-right (LTR) to right-to-left (RTL).
  */
 class CSSJanus {
-	// Patterns defined as null are built dynamically by buildPatterns()
-	private static $patterns = array(
-		'tmpToken' => '`TMP`',
-		'nonAscii' => '[\200-\377]',
-		'unicode' => '(?:(?:\\\\[0-9a-f]{1,6})(?:\r\n|\s)?)',
-		'num' => '(?:[0-9]*\.[0-9]+|[0-9]+)',
-		'unit' => '(?:em|ex|px|cm|mm|in|pt|pc|deg|rad|grad|ms|s|hz|khz|%)',
-		'body_selector' => 'body\s*{\s*',
-		'direction' => 'direction\s*:\s*',
-		'escape' => null,
-		'nmstart' => null,
-		'nmchar' => null,
-		'ident' => null,
-		'quantity' => null,
-		'possibly_negative_quantity' => null,
-		'color' => null,
-		'url_special_chars' => '[!#$%&*-~]',
-		'valid_after_uri_chars' => '[\'\"]?\s*',
-		'url_chars' => null,
-		'lookahead_not_open_brace' => null,
-		'lookahead_not_closing_paren' => null,
-		'lookahead_for_closing_paren' => null,
-		'lookahead_not_letter' => '(?![a-zA-Z])',
-		'lookbehind_not_letter' => '(?<![a-zA-Z])',
-		'chars_within_selector' => '[^\}]*?',
-		'noflip_annotation' => '\/\*\!?\s*@noflip\s*\*\/',
-		'noflip_single' => null,
-		'noflip_class' => null,
-		'comment' => '/\/\*[^*]*\*+([^\/*][^*]*\*+)*\//',
-		'direction_ltr' => null,
-		'direction_rtl' => null,
-		'left' => null,
-		'right' => null,
-		'left_in_url' => null,
-		'right_in_url' => null,
-		'ltr_in_url' => null,
-		'rtl_in_url' => null,
-		'cursor_east' => null,
-		'cursor_west' => null,
-		'four_notation_quantity' => null,
-		'four_notation_color' => null,
-		'border_radius' => null,
-		'box_shadow' => null,
-		'text_shadow1' => null,
-		'text_shadow2' => null,
-		'bg_horizontal_percentage' => null,
-		'bg_horizontal_percentage_x' => null,
-		'suffix' => '(\s*(?:!important\s*)?[;}])'
-	);
+	private const TOKEN_TMP = '`TMP`';
+	private const TOKEN_COMMENT = '`COMMENT`';
 
-	/**
-	 * Build patterns we can't define above because they depend on other patterns.
-	 */
+	private static $patterns = null;
+
 	private static function buildPatterns() {
-		if (!is_null(self::$patterns['escape'])) {
-			// Patterns have already been built
+		if (self::$patterns !== null) {
 			return;
 		}
+		// Patterns defined as null are built dynamically
+		$patterns = array(
+			'tmpToken' => '`TMP`',
+			'nonAscii' => '[\200-\377]',
+			'unicode' => '(?:(?:\\\\[0-9a-f]{1,6})(?:\r\n|\s)?)',
+			'num' => '(?:[0-9]*\.[0-9]+|[0-9]+)',
+			'unit' => '(?:em|ex|px|cm|mm|in|pt|pc|deg|rad|grad|ms|s|hz|khz|%)',
+			'body_selector' => 'body\s*{\s*',
+			'direction' => 'direction\s*:\s*',
+			'escape' => null,
+			'nmstart' => null,
+			'nmchar' => null,
+			'ident' => null,
+			'quantity' => null,
+			'possibly_negative_quantity' => null,
+			'color' => null,
+			'url_special_chars' => '[!#$%&*-~]',
+			'valid_after_uri_chars' => '[\'\"]?\s*',
+			'url_chars' => null,
+			'lookahead_not_open_brace' => null,
+			'lookahead_not_closing_paren' => null,
+			'lookahead_for_closing_paren' => null,
+			'lookahead_not_letter' => '(?![a-zA-Z])',
+			'lookbehind_not_letter' => '(?<![a-zA-Z])',
+			'chars_within_selector' => '[^\}]*?',
+			'noflip_annotation' => '\/\*\!?\s*@noflip\s*\*\/',
+			'noflip_single' => null,
+			'noflip_class' => null,
+			'comment' => '/\/\*[^*]*\*+([^\/*][^*]*\*+)*\//',
+			'direction_ltr' => null,
+			'direction_rtl' => null,
+			'left' => null,
+			'right' => null,
+			'left_in_url' => null,
+			'right_in_url' => null,
+			'ltr_in_url' => null,
+			'rtl_in_url' => null,
+			'cursor_east' => null,
+			'cursor_west' => null,
+			'four_notation_quantity' => null,
+			'four_notation_color' => null,
+			'border_radius' => null,
+			'box_shadow' => null,
+			'text_shadow1' => null,
+			'text_shadow2' => null,
+			'bg_horizontal_percentage' => null,
+			'bg_horizontal_percentage_x' => null,
+			'suffix' => '(\s*(?:!important\s*)?[;}])'
+		);
 
 		// @codingStandardsIgnoreStart Generic.Files.LineLength.TooLong
-		$patterns =& self::$patterns;
 		$patterns['escape'] = "(?:{$patterns['unicode']}|\\\\[^\\r\\n\\f0-9a-f])";
 		$patterns['nmstart'] = "(?:[_a-z]|{$patterns['nonAscii']}|{$patterns['escape']})";
 		$patterns['nmchar'] = "(?:[_a-z0-9-]|{$patterns['nonAscii']}|{$patterns['escape']})";
@@ -102,7 +97,7 @@ class CSSJanus {
 		// Use "*+" instead of "*?" to avoid reaching the backtracking limit.
 		// <https://github.com/cssjanus/php-cssjanus/issues/14>, <https://phabricator.wikimedia.org/T215746#4944830>.
 		$patterns['url_chars'] = "(?:{$patterns['url_special_chars']}|{$patterns['nonAscii']}|{$patterns['escape']})*+";
-		$patterns['lookahead_not_open_brace'] = "(?!({$patterns['nmchar']}|\\r?\\n|\s|#|\:|\.|\,|\+|>|\(|\)|\[|\]|=|\*=|~=|\^=|'[^']*'])*+{)";
+		$patterns['lookahead_not_open_brace'] = "(?!({$patterns['nmchar']}|\\r?\\n|\s|#|\:|\.|\,|\+|>|~|\(|\)|\[|\]|=|\*=|~=|\^=|'[^']*'|\"[^\"]*\"|" . self::TOKEN_COMMENT . ")*+{)";
 		$patterns['lookahead_not_closing_paren'] = "(?!{$patterns['url_chars']}{$patterns['valid_after_uri_chars']}\))";
 		$patterns['lookahead_for_closing_paren'] = "(?={$patterns['url_chars']}{$patterns['valid_after_uri_chars']}\))";
 		$patterns['noflip_single'] = "/({$patterns['noflip_annotation']}{$patterns['lookahead_not_open_brace']}[^;}]+;?)/i";
@@ -134,14 +129,19 @@ class CSSJanus {
 		$patterns['translate_x'] = "/(transform\s*:[^;}]*)(translateX\s*\(\s*){$patterns['possibly_negative_quantity']}(\s*\))/i";
 		$patterns['translate'] = "/(transform\s*:[^;}]*)(translate\s*\(\s*){$patterns['possibly_negative_quantity']}((?:\s*,\s*{$patterns['possibly_negative_quantity']}){0,2}\s*\))/i";
 		// @codingStandardsIgnoreEnd
+
+		self::$patterns = $patterns;
 	}
+
 
 	/**
 	 * Transform an LTR stylesheet to RTL
+	 *
 	 * @param string $css Stylesheet to transform
-	 * @param array|bool $options Options array or value of transformDirInUrl option (back-compat)
-	 * @param bool $options['transformDirInUrl'] Transform directions in URLs (ltr/rtl). Default: false.
-	 * @param bool $options['transformEdgeInUrl'] Transform edges in URLs (left/right). Default: false.
+	 * @param bool|array{transformDirInUrl?:bool,transformEdgeInUrl?:bool} $options Options array,
+	 * or value of transformDirInUrl option (back-compat)
+	 *  - transformDirInUrl: Transform directions in URLs (ltr/rtl). Default: false.
+	 *  - transformEdgeInUrl: Transform edges in URLs (left/right). Default: false.
 	 * @param bool $transformEdgeInUrl [optional] For back-compat
 	 * @return string Transformed stylesheet
 	 */
@@ -159,12 +159,12 @@ class CSSJanus {
 			'transformEdgeInUrl' => false,
 		);
 
+		self::buildPatterns();
+
 		// We wrap tokens in ` , not ~ like the original implementation does.
 		// This was done because ` is not a legal character in CSS and can only
 		// occur in URLs, where we escape it to %60 before inserting our tokens.
 		$css = str_replace('`', '%60', $css);
-
-		self::buildPatterns();
 
 		// Tokenize single line rules with /* @noflip */
 		$noFlipSingle = new CSSJanusTokenizer(self::$patterns['noflip_single'], '`NOFLIP_SINGLE`');
@@ -175,7 +175,7 @@ class CSSJanus {
 		$css = $noFlipClass->tokenize($css);
 
 		// Tokenize comments
-		$comments = new CSSJanusTokenizer(self::$patterns['comment'], '`C`');
+		$comments = new CSSJanusTokenizer(self::$patterns['comment'], self::TOKEN_COMMENT);
 		$css = $comments->tokenize($css);
 
 		// LTR->RTL fixes start here
@@ -218,11 +218,11 @@ class CSSJanus {
 	private static function fixDirection($css) {
 		$css = preg_replace(
 			self::$patterns['direction_ltr'],
-			'$1' . self::$patterns['tmpToken'],
+			'$1' . self::TOKEN_TMP,
 			$css
 		);
 		$css = preg_replace(self::$patterns['direction_rtl'], '$1ltr', $css);
-		$css = str_replace(self::$patterns['tmpToken'], 'rtl', $css);
+		$css = str_replace(self::TOKEN_TMP, 'rtl', $css);
 
 		return $css;
 	}
@@ -233,9 +233,9 @@ class CSSJanus {
 	 * @return string
 	 */
 	private static function fixLtrRtlInURL($css) {
-		$css = preg_replace(self::$patterns['ltr_in_url'], self::$patterns['tmpToken'], $css);
+		$css = preg_replace(self::$patterns['ltr_in_url'], self::TOKEN_TMP, $css);
 		$css = preg_replace(self::$patterns['rtl_in_url'], 'ltr', $css);
-		$css = str_replace(self::$patterns['tmpToken'], 'rtl', $css);
+		$css = str_replace(self::TOKEN_TMP, 'rtl', $css);
 
 		return $css;
 	}
@@ -246,9 +246,9 @@ class CSSJanus {
 	 * @return string
 	 */
 	private static function fixLeftRightInURL($css) {
-		$css = preg_replace(self::$patterns['left_in_url'], self::$patterns['tmpToken'], $css);
+		$css = preg_replace(self::$patterns['left_in_url'], self::TOKEN_TMP, $css);
 		$css = preg_replace(self::$patterns['right_in_url'], 'left', $css);
-		$css = str_replace(self::$patterns['tmpToken'], 'right', $css);
+		$css = str_replace(self::TOKEN_TMP, 'right', $css);
 
 		return $css;
 	}
@@ -259,9 +259,9 @@ class CSSJanus {
 	 * @return string
 	 */
 	private static function fixLeftAndRight($css) {
-		$css = preg_replace(self::$patterns['left'], self::$patterns['tmpToken'], $css);
+		$css = preg_replace(self::$patterns['left'], self::TOKEN_TMP, $css);
 		$css = preg_replace(self::$patterns['right'], 'left', $css);
-		$css = str_replace(self::$patterns['tmpToken'], 'right', $css);
+		$css = str_replace(self::TOKEN_TMP, 'right', $css);
 
 		return $css;
 	}
@@ -274,11 +274,11 @@ class CSSJanus {
 	private static function fixCursorProperties($css) {
 		$css = preg_replace(
 			self::$patterns['cursor_east'],
-			'$1' . self::$patterns['tmpToken'],
+			'$1' . self::TOKEN_TMP,
 			$css
 		);
 		$css = preg_replace(self::$patterns['cursor_west'], '$1e-resize', $css);
-		$css = str_replace(self::$patterns['tmpToken'], 'w-resize', $css);
+		$css = str_replace(self::TOKEN_TMP, 'w-resize', $css);
 
 		return $css;
 	}
@@ -476,7 +476,6 @@ class CSSJanus {
 /**
  * Utility class used by CSSJanus that tokenizes and untokenizes things we want
  * to protect from being janused.
- * @author Roan Kattouw
  */
 class CSSJanusTokenizer {
 	private $regex;

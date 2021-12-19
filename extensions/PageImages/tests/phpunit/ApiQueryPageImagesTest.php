@@ -26,22 +26,19 @@ class ApiQueryPageImagesTest extends TestCase {
 			'PageImagesAPIDefaultLicense' => 'free'
 		] );
 
-		$context = $this->getMockBuilder( 'IContextSource' )
-			->disableOriginalConstructor()
-			->getMock();
+		$context = $this->createMock( \IContextSource::class );
 
-		$context->expects( $this->any() )
-			->method( 'getConfig' )
+		$context->method( 'getConfig' )
 			->willReturn( $config );
 
-		$main = $this->getMockBuilder( 'ApiMain' )
+		$main = $this->getMockBuilder( \ApiMain::class )
 			->disableOriginalConstructor()
 			->getMock();
 		$main->expects( $this->once() )
 			->method( 'getContext' )
 			->willReturn( $context );
 
-		$query = $this->getMockBuilder( 'ApiQuery' )
+		$query = $this->getMockBuilder( \ApiQuery::class )
 			->disableOriginalConstructor()
 			->getMock();
 		$query->expects( $this->once() )
@@ -69,29 +66,27 @@ class ApiQueryPageImagesTest extends TestCase {
 		$this->assertNotEmpty( $params );
 		$this->assertContainsOnly( 'array', $params );
 		$this->assertArrayHasKey( 'limit', $params );
-		$this->assertEquals( $params['limit'][ApiBase::PARAM_DFLT], 50 );
-		$this->assertEquals( $params['limit'][ApiBase::PARAM_TYPE], 'limit' );
-		$this->assertEquals( $params['limit'][ApiBase::PARAM_MIN], 1 );
-		$this->assertEquals( $params['limit'][ApiBase::PARAM_MAX], 50 );
-		$this->assertEquals( $params['limit'][ApiBase::PARAM_MAX2], 100 );
+		$this->assertSame( 50, $params['limit'][ApiBase::PARAM_DFLT] );
+		$this->assertSame( 'limit', $params['limit'][ApiBase::PARAM_TYPE] );
+		$this->assertSame( 1, $params['limit'][ApiBase::PARAM_MIN] );
+		$this->assertSame( 50, $params['limit'][ApiBase::PARAM_MAX] );
+		$this->assertSame( 100, $params['limit'][ApiBase::PARAM_MAX2] );
 		$this->assertArrayHasKey( 'license', $params );
-		$this->assertEquals( $params['license'][ApiBase::PARAM_TYPE], [ 'free', 'any' ] );
-		$this->assertEquals( $params['license'][ApiBase::PARAM_DFLT], 'free' );
-		$this->assertEquals( $params['license'][ApiBase::PARAM_ISMULTI], false );
+		$this->assertSame( [ 'free', 'any' ], $params['license'][ApiBase::PARAM_TYPE] );
+		$this->assertSame( 'free', $params['license'][ApiBase::PARAM_DFLT] );
+		$this->assertFalse( $params['license'][ApiBase::PARAM_ISMULTI] );
 	}
 
 	/**
 	 * @dataProvider provideGetTitles
 	 */
 	public function testGetTitles( $titles, $missingTitlesByNamespace, $expected ) {
-		$pageSet = $this->getMockBuilder( 'ApiPageSet' )
+		$pageSet = $this->getMockBuilder( \ApiPageSet::class )
 			->disableOriginalConstructor()
 			->getMock();
-		$pageSet->expects( $this->any() )
-			->method( 'getGoodTitles' )
+		$pageSet->method( 'getGoodTitles' )
 			->willReturn( $titles );
-		$pageSet->expects( $this->any() )
-			->method( 'getMissingTitlesByNamespace' )
+		$pageSet->method( 'getMissingTitlesByNamespace' )
 			->willReturn( $missingTitlesByNamespace );
 		$queryPageImages = new ApiQueryPageImagesProxyMock( $pageSet );
 
@@ -143,32 +138,29 @@ class ApiQueryPageImagesTest extends TestCase {
 		$mock = TestingAccessWrapper::newFromObject(
 			$this->getMockBuilder( ApiQueryPageImages::class )
 				->disableOriginalConstructor()
-				->setMethods( [ 'extractRequestParams', 'getTitles', 'setContinueParameter', 'dieUsage',
+				->onlyMethods( [ 'extractRequestParams', 'getTitles', 'dieWithError',
 					'addTables', 'addFields', 'addWhere', 'select', 'setResultValues' ] )
 				->getMock()
 		);
-		$mock->expects( $this->any() )
-			->method( 'extractRequestParams' )
+		$mock->method( 'extractRequestParams' )
 			->willReturn( $requestParams );
-		$mock->expects( $this->any() )
-			->method( 'getTitles' )
+		$mock->method( 'getTitles' )
 			->willReturn( $titles );
-		$mock->expects( $this->any() )
-			->method( 'select' )
+		$mock->method( 'select' )
 			->willReturn( new FakeResultWrapper( $queryResults ) );
 
 		// continue page ID is not found
 		if ( isset( $requestParams['continue'] )
 			&& $requestParams['continue'] > count( $titles )
 		) {
-			$mock->expects( $this->exactly( 1 ) )
-				->method( 'dieUsage' );
+			$mock->expects( $this->once() )
+				->method( 'dieWithError' );
 		}
 
 		$originalRequested = in_array( 'original', $requestParams['prop'] );
 		$this->assertTrue( $this->hasExpectedProperties( $queryResults, $originalRequested ) );
 
-		$license = isset( $requestParams['license'] ) ? $requestParams['license'] : 'free';
+		$license = $requestParams['license'] ?? 'free';
 		if ( $license == PageImages::LICENSE_ANY ) {
 			$propName = [ PageImages::getPropName( true ), PageImages::getPropName( false ) ];
 		} else {

@@ -3,11 +3,11 @@
 		"authors": [
 			"Aleator",
 			"Arnaugir",
+			"Jmarchn",
 			"Jordi Roqué",
 			"SMP",
 			"Ssola",
-			"Vriullop",
-			"Jmarchn"
+			"Vriullop"
 		]
 	},
 	"spam-blacklist": " #<!-- deixeu aquesta línia exactament com està --> <pre>\n# Les URL externes coincidents amb aquesta llista seran blocades en ser afegides a una pàgina.\n# Aquesta llista afecta només aquest wiki; vegeu també la llista negra global.\n# Per a més informació vegeu https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n#\n# La sintaxi és com segueix:\n#  * Tot el que aparegui des d'un caràcter \"#\" fins al final de la línia és un comentari\n#  * Qualsevol línia que no estigui en blanc és un fragment d'expressió regular que només coincidirà amb amfitrions dintre d'URL\n\n #</pre> <!-- deixeu aquesta línia exactament com està -->",

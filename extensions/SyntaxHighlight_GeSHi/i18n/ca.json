@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Annamerida",
+			"Jmarchn",
 			"Macofe",
 			"SMP",
 			"Solde",
-			"Vriullop",
-			"Jmarchn"
+			"Vriullop"
 		]
 	},
 	"syntaxhighlight-desc": "Proveeix de ressaltat sintàctic amb l'etiqueta <code>&lt;syntaxhighlight&gt;</code> usant [http://pygments.org/ Pygments - Ressaltador de sintaxi Python]",

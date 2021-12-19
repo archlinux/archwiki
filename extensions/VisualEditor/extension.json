@@ -24,9 +24,13 @@
 	"license-name": "MIT",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.36.0"
+		"MediaWiki": ">= 1.37.0"
 	},
 	"callback": "VisualEditorHooks::onRegistration",
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php",
+		"includes/VEParsoid/ServiceWiring.php"
+	],
 	"config": {
 		"VisualEditorAllowExternalLinkPaste": {
 			"value": false
@@ -170,16 +174,49 @@
 		},
 		"VisualEditorUseSingleEditTab": {
 			"value": false
+		},
+		"VisualEditorTransclusionDialogSuggestedValues": {
+			"description": "Temporary flag to enable suggested values in the transclusion dialog.",
+			"value": false
+		},
+		"VisualEditorTransclusionDialogInlineDescriptions": {
+			"description": "Temporary flag to enable inline parameter descriptions in the transclusion dialog.",
+			"value": false
+		},
+		"VisualEditorTransclusionDialogBackButton": {
+			"description": "Temporary flag to enable the back button in the transclusion dialog when inserting a new template. (T272354)",
+			"value": false
+		},
+		"VisualEditorTransclusionDialogNewSidebar": {
+			"description": "Temporary flag to enable the new sidebar in the transclusion dialog.",
+			"value": false
+		},
+		"VisualEditorTemplateSearchImprovements": {
+			"description": "Temporary feature flag to enable various changes around searching for template names. (T271802)",
+			"value": false
 		}
 	},
 	"APIModules": {
 		"visualeditor": {
 			"class": "ApiVisualEditor",
 			"services": [
-				"UserNameUtils"
+				"UserNameUtils",
+				"Parser",
+				"LinkRenderer",
+				"UserOptionsLookup",
+				"WatchlistManager",
+				"ContentTransformer"
 			]
 		},
-		"visualeditoredit": "ApiVisualEditorEdit"
+		"visualeditoredit": {
+			"class": "ApiVisualEditorEdit",
+			"services": [
+				"VisualEditorHookRunner",
+				"RevisionLookup",
+				"StatsdDataFactory",
+				"PageEditStash"
+			]
+		}
 	},
 	"MessagesDirs": {
 		"VisualEditor": [
@@ -1482,12 +1519,12 @@
 				"ext.visualEditor.checkList"
 			],
 			"messages": [
-				"visualeditor-corrupted-document-error",
-				"visualeditor-corrupted-document-title",
-				"visualeditor-missing-document-error",
-				"visualeditor-missing-document-title",
 				"visualeditor-rebase-client-author-name",
-				"visualeditor-rebase-client-connecting"
+				"visualeditor-rebase-client-connecting",
+				"visualeditor-rebase-corrupted-document-error",
+				"visualeditor-rebase-corrupted-document-title",
+				"visualeditor-rebase-missing-document-error",
+				"visualeditor-rebase-missing-document-title"
 			],
 			"targets": [
 				"desktop",
@@ -1650,6 +1687,7 @@
 				"modules/ve-mw/ui/widgets/ve.ui.MWPreTextInputWidget.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWPreDialog.js",
 				"modules/ve-mw/ui/dialogs/ve.ui.MWTableDialog.js",
+				"modules/ve-mw/ui/elements/ve.ui.MWExpandableContentElement.js",
 				"modules/ve-mw/ui/elements/ve.ui.MWExpandableErrorElement.js",
 				"modules/ve-mw/ui/elements/ve.ui.MWPreviewElement.js",
 				"modules/ve-mw/ui/tools/ve.ui.MWPopupTool.js",
@@ -1668,6 +1706,7 @@
 				"modules/ve-mw/ui/styles/dialogs/ve.ui.MWPreDialog.css",
 				"modules/ve-mw/ui/styles/inspectors/ve.ui.MWExtensionInspector.css",
 				"modules/ve-mw/ui/styles/inspectors/ve.ui.MWLiveExtensionInspector.css",
+				"modules/ve-mw/ui/styles/elements/ve.ui.MWExpandableContentElement.css",
 				"modules/ve-mw/ui/styles/elements/ve.ui.MWExpandableErrorElement.css",
 				"modules/ve-mw/ui/styles/elements/ve.ui.MWPreviewElement.css",
 				"modules/ve-mw/ui/styles/tools/ve.ui.MWPopupTool.css",
@@ -2099,12 +2138,14 @@
 				"modules/ve-mw/dm/models/ve.dm.MWTemplateModel.js",
 				"modules/ve-mw/dm/models/ve.dm.MWTemplatePlaceholderModel.js",
 				"modules/ve-mw/dm/models/ve.dm.MWParameterModel.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWDismissibleMessageWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWParameterCheckboxInputWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWParameterSearchWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWParameterResultWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWMoreParametersResultWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWNoParametersResultWidget.js",
 				"modules/ve-mw/ui/widgets/ve.ui.MWTemplateTitleInputWidget.js",
+				"modules/ve-mw/ui/pages/ve.ui.MWAddParameterPage.js",
 				"modules/ve-mw/ui/pages/ve.ui.MWTemplatePage.js",
 				"modules/ve-mw/ui/pages/ve.ui.MWParameterPage.js",
 				"modules/ve-mw/ui/pages/ve.ui.MWParameterPlaceholderPage.js",
@@ -2115,10 +2156,19 @@
 				"modules/ve-mw/ui/dialogs/ve.ui.MWTransclusionDialog.js",
 				"modules/ve-mw/ui/tools/ve.ui.MWTransclusionDialogTool.js",
 				"modules/ve-mw/ui/contextitems/ve.ui.MWTransclusionContextItem.js",
-				"modules/ve-mw/ui/contextitems/ve.ui.MWDefinedTransclusionContextItem.js"
+				"modules/ve-mw/ui/contextitems/ve.ui.MWDefinedTransclusionContextItem.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlineParameterWidget.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlineButtonWidget.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlinePartWidget.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlineTemplateWidget.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlineContainerWidget.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlineParameterSelectWidget.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlinePlaceholderWidget.js",
+				"modules/ve-mw/ui/widgets/ve.ui.MWTransclusionOutlineWikitextWidget.js"
 			],
 			"styles": [
 				"modules/ve-mw/ce/styles/nodes/ve.ce.MWTransclusionNode.css",
+				"modules/ve-mw/ui/styles/widgets/ve.ui.MWDismissibleMessageWidget.css",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWParameterResultWidget.css",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWMoreParametersResultWidget.css",
 				"modules/ve-mw/ui/styles/widgets/ve.ui.MWNoParametersResultWidget.css",
@@ -2144,26 +2194,47 @@
 			],
 			"messages": [
 				"quotation-marks",
+				"redirectedfrom",
 				"templatedata-doc-subpage",
 				"visualeditor-changedesc-mwtransclusion",
+				"visualeditor-dialog-template-insert",
 				"visualeditor-dialog-template-title",
+				"visualeditor-dialog-transclusion-action-save",
 				"visualeditor-dialog-transclusion-add-content",
+				"visualeditor-dialog-transclusion-add-wikitext",
 				"visualeditor-dialog-transclusion-add-param",
+				"visualeditor-dialog-transclusion-add-param-error-alias",
+				"visualeditor-dialog-transclusion-add-param-error-deprecated",
+				"visualeditor-dialog-transclusion-add-param-error-exists-selected",
+				"visualeditor-dialog-transclusion-add-param-error-exists-unselected",
+				"visualeditor-dialog-transclusion-add-param-error-forbidden-char",
+				"visualeditor-dialog-transclusion-add-param-help",
+				"visualeditor-dialog-transclusion-add-param-placeholder",
+				"visualeditor-dialog-transclusion-add-param-save",
 				"visualeditor-dialog-transclusion-add-template",
+				"visualeditor-dialog-transclusion-add-undocumented-param",
+				"visualeditor-dialog-transclusion-collapse-options",
 				"visualeditor-dialog-transclusion-content",
 				"visualeditor-dialog-transclusion-contextitem-description",
+				"visualeditor-dialog-transclusion-expand-options",
+				"visualeditor-dialog-transclusion-filter-placeholder",
+				"visualeditor-dialog-transclusion-filter-no-match",
 				"visualeditor-dialog-transclusion-deprecated-parameter",
 				"visualeditor-dialog-transclusion-deprecated-parameter-description",
 				"visualeditor-dialog-transclusion-loading",
 				"visualeditor-dialog-transclusion-more-template-description",
-				"visualeditor-dialog-transclusion-multiple-mode",
+				"visualeditor-dialog-transclusion-multipart-message",
+				"visualeditor-dialog-transclusion-no-parameters-description",
+				"visualeditor-dialog-transclusion-no-template-data-description",
 				"visualeditor-dialog-transclusion-no-template-description",
 				"visualeditor-dialog-transclusion-absent-template",
 				"visualeditor-dialog-transclusion-options",
 				"visualeditor-dialog-transclusion-param-default",
 				"visualeditor-dialog-transclusion-param-example",
+				"visualeditor-dialog-transclusion-param-example-long",
 				"visualeditor-dialog-transclusion-param-info",
 				"visualeditor-dialog-transclusion-param-info-missing",
+				"visualeditor-dialog-transclusion-param-undocumented",
 				"visualeditor-dialog-transclusion-placeholder",
 				"visualeditor-dialog-transclusion-raw-fallback",
 				"visualeditor-dialog-transclusion-remove-content",
@@ -2175,11 +2246,26 @@
 				"visualeditor-dialog-transclusion-required-parameter-dialog-ok",
 				"visualeditor-dialog-transclusion-required-parameter-dialog-title",
 				"visualeditor-dialog-transclusion-required-parameter-is-blank",
-				"visualeditor-dialog-transclusion-single-mode",
-				"visualeditor-dialog-transclusion-title",
+				"visualeditor-dialog-transclusion-see-template",
+				"visualeditor-dialog-transclusion-suggestedvalues-warning",
+				"visualeditor-dialog-transclusion-title-insert-template",
+				"visualeditor-dialog-transclusion-title-insert-known-template",
+				"visualeditor-dialog-transclusion-title-edit-known-template",
+				"visualeditor-dialog-transclusion-title-edit-transclusion",
+				"visualeditor-dialog-transclusion-template-search",
+				"visualeditor-dialog-transclusion-template-search-help",
 				"visualeditor-dialog-transclusion-templates-menu-aria-label",
+				"visualeditor-dialog-transclusion-reset-confirmation-title",
+				"visualeditor-dialog-transclusion-reset-confirmation-message",
+				"visualeditor-dialog-transclusion-reset-confirmation-cancel",
+				"visualeditor-dialog-transclusion-reset-confirmation-reset",
+				"visualeditor-dialog-transclusion-feedback-message",
+				"visualeditor-dialog-transclusion-wikitext",
 				"visualeditor-dialogbutton-template-tooltip",
 				"visualeditor-dialogbutton-transclusion-tooltip",
+				"visualeditor-dismissible-message-close",
+				"visualeditor-expandable-less",
+				"visualeditor-expandable-more",
 				"visualeditor-parameter-input-placeholder",
 				"visualeditor-parameter-search-more",
 				"visualeditor-parameter-search-no-unused",
@@ -2461,7 +2547,7 @@
 				"modules/ve-mw/ui/ve.ui.MWWikitextDataTransferHandlerFactory.js",
 				"modules/ve-mw/ui/ve.ui.MWWikitextSurface.js",
 				"modules/ve-mw/ui/actions/ve.ui.MWWikitextAction.js",
-				"modules/ve-mw/ui/dialogs/ve.ui.MWWikitextConvertConfirmDialog.js",
+				"modules/ve-mw/ui/contextitems/ve.ui.MWWikitextPasteContextItem.js",
 				"modules/ve-mw/ui/inspectors/ve.ui.MWWikitextLinkAnnotationInspector.js",
 				"modules/ve-mw/ui/datatransferhandlers/ve.ui.MWWikitextPlainTextStringTransferHandler.js"
 			],
@@ -2478,7 +2564,6 @@
 				"visualeditor-generating-wikitext-progress",
 				"visualeditor-wikitextconvert-title",
 				"visualeditor-wikitextconvert-message",
-				"visualeditor-wikitextconvert-plain",
 				"visualeditor-wikitextconvert-convert"
 			],
 			"targets": [
@@ -2686,6 +2771,9 @@
 			"modules/ve-mw/tests/dm/ve.dm.MWTemplateModel.test.js",
 			"modules/ve-mw/tests/dm/ve.dm.MWTransclusionModel.test.js",
 			"modules/ve-mw/tests/dm/ve.dm.MWInternalLinkAnnotation.test.js",
+			"modules/ve-mw/tests/dm/models/ve.dm.MWTemplateModel.test.js",
+			"modules/ve-mw/tests/dm/models/ve.dm.MWTemplateSpecModel.test.js",
+			"modules/ve-mw/tests/dm/models/ve.dm.MWTransclusionContentModel.test.js",
 			"lib/ve/tests/ce/ve.ce.test.js",
 			"lib/ve/tests/ce/ve.ce.Document.test.js",
 			"modules/ve-mw/tests/ce/ve.ce.Document.test.js",
@@ -2736,6 +2824,19 @@
 			"modules/ve-mw/tests/init/targets/ve.init.mw.DesktopArticleTarget.test.js",
 			"lib/ve/tests/ui/inspectors/ve.ui.FragmentInspector.test.js",
 			"modules/ve-mw/tests/ui/inspectors/ve.ui.FragmentInspector.test.js",
+			"modules/ve-mw/tests/ui/pages/ve.ui.MWAddParameterPage.test.js",
+			"modules/ve-mw/tests/ui/pages/ve.ui.MWParameterPage.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWParameterCheckboxInputWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWParameterSearchWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTemplateTitleInputWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlineButtonWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlineContainerWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlineParameterSelectWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlineParameterWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlinePartWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlinePlaceholderWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlineTemplateWidget.test.js",
+			"modules/ve-mw/tests/ui/widgets/ve.ui.MWTransclusionOutlineWikitextWidget.test.js",
 			"lib/ve/tests/ce/ve.ce.TestRunner.js",
 			"lib/ve/tests/ce/ve.ce.imetests.test.js",
 			"lib/ve/tests/ce/imetests/backspace-chromium-ubuntu-none.js",
@@ -2818,6 +2919,7 @@
 		"CollabPad": "SpecialCollabPad"
 	},
 	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\VisualEditor\\": "includes/",
 		"VEParsoid\\": "includes/VEParsoid/src"
 	},
 	"AutoloadClasses": {
@@ -2829,9 +2931,6 @@
 		"VisualEditorDesktopArticleTargetInitModule": "includes/VisualEditorDesktopArticleTargetInitModule.php",
 		"VisualEditorHooks": "includes/VisualEditorHooks.php"
 	},
-	"ServiceWiringFiles": [
-		"includes/VEParsoid/ServiceWiring.php"
-	],
 	"ConfigRegistry": {
 		"visualeditor": "GlobalVarConfig::newInstance"
 	},

@@ -134,7 +134,7 @@ final class FeatureManager {
 	 *
 	 * @throws \InvalidArgumentException If the feature isn't registered
 	 */
-	public function isFeatureEnabled( string $feature ) : bool {
+	public function isFeatureEnabled( string $feature ): bool {
 		if ( !array_key_exists( $feature, $this->features ) ) {
 			throw new \InvalidArgumentException( "The feature \"{$feature}\" isn't registered." );
 		}
@@ -200,7 +200,7 @@ final class FeatureManager {
 	 *
 	 * @throws \InvalidArgumentException If the requirement isn't registered
 	 */
-	public function isRequirementMet( string $name ) : bool {
+	public function isRequirementMet( string $name ): bool {
 		if ( !array_key_exists( $name, $this->requirements ) ) {
 			throw new \InvalidArgumentException( "Requirement \"{$name}\" isn't registered." );
 		}

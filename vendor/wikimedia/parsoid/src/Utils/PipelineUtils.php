@@ -3,17 +3,17 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
-use DOMAttr;
-use DOMComment;
-use DOMDocument;
-use DOMDocumentFragment;
-use DOMElement;
-use DOMNode;
-use DOMNodeList;
-use DOMText;
 use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\Attr;
+use Wikimedia\Parsoid\DOM\Comment;
+use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\NodeList;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
@@ -82,7 +82,7 @@ class PipelineUtils {
 	 *    - SourceRange  srcOffsets - if set, defines the range within the
 	 *          source text that $content corresponds to
 	 *    - bool   sol
-	 * @return Token[]|DOMDocumentFragment (depending on pipeline type)
+	 * @return Token[]|DocumentFragment (depending on pipeline type)
 	 */
 	public static function processContentInPipeline(
 		Env $env, Frame $frame, $content, array $opts
@@ -190,11 +190,11 @@ class PipelineUtils {
 	 * Convert a DOM node to a token. The node comes from a DOM whose data attributes
 	 * are stored outside the DOM.
 	 *
-	 * @param DOMElement $node
-	 * @param DOMAttr[] $attrs
+	 * @param Element $node
+	 * @param Attr[] $attrs
 	 * @return array
 	 */
-	private static function domAttrsToTagAttrs( DOMElement $node, array $attrs ): array {
+	private static function domAttrsToTagAttrs( Element $node, array $attrs ): array {
 		$out = [];
 		foreach ( $attrs as $a ) {
 			if ( $a->name !== DOMDataUtils::DATA_OBJECT_ATTR_NAME ) {
@@ -210,13 +210,13 @@ class PipelineUtils {
 	/**
 	 * Convert a DOM to tokens. Data attributes for nodes are stored outside the DOM.
 	 *
-	 * @param DOMNode $node The root of the DOM tree to convert to tokens
+	 * @param Node $node The root of the DOM tree to convert to tokens
 	 * @param Token[] $tokBuf This is where the tokens get stored
 	 * @return array
 	 */
-	private static function convertDOMtoTokens( DOMNode $node, array $tokBuf ): array {
-		if ( $node instanceof DOMElement ) {
-			$nodeName = strtolower( $node->nodeName );
+	private static function convertDOMtoTokens( Node $node, array $tokBuf ): array {
+		if ( $node instanceof Element ) {
+			$nodeName = DOMCompat::nodeName( $node );
 			$attrInfo = self::domAttrsToTagAttrs( $node, DOMCompat::attributes( $node ) );
 
 			if ( Utils::isVoidElement( $nodeName ) ) {
@@ -233,12 +233,12 @@ class PipelineUtils {
 				}
 				$tokBuf[] = $endTag;
 			}
-		} elseif ( $node instanceof DOMText ) {
-			$tokBuf = array_merge( $tokBuf, TokenUtils::newlinesToNlTks( $node->nodeValue ) );
-		} elseif ( $node instanceof DOMComment ) {
+		} elseif ( $node instanceof Text ) {
+			PHPUtils::pushArray( $tokBuf, TokenUtils::newlinesToNlTks( $node->nodeValue ) );
+		} elseif ( $node instanceof Comment ) {
 			$tokBuf[] = new CommentTk( $node->nodeValue );
 		} else {
-			// getWrapperTokens calls convertDOMToTokens with a DOMElement
+			// getWrapperTokens calls convertDOMToTokens with a Element
 			// and children of dom elements are always text/comment/elements
 			// which are all covered above.
 			PHPUtils::unreachable( "Should never get here!" );
@@ -254,13 +254,13 @@ class PipelineUtils {
 	 * token processing while preserving token stream semantics as if
 	 * the DOM had been converted to tokens.
 	 *
-	 * @param DOMDocumentFragment $domFragment List of DOM nodes that need to be tunneled through.
+	 * @param DocumentFragment $domFragment List of DOM nodes that need to be tunneled through.
 	 * @param array $opts
 	 * @see encapsulateExpansionHTML's doc. for more info about these options.
 	 * @return Token[] List of token representatives.
 	 */
 	private static function getWrapperTokens(
-		DOMDocumentFragment $domFragment, array $opts
+		DocumentFragment $domFragment, array $opts
 	): array {
 		if ( !$domFragment->hasChildNodes() ) {
 			return [ new TagTk( 'span' ), new EndTagTk( 'span' ) ];
@@ -316,7 +316,7 @@ class PipelineUtils {
 		$wrapperName = null;
 		if ( $wrapperType === 'BLOCK' && !DOMUtils::isWikitextBlockNode( $node ) ) {
 			$wrapperName = 'div';
-		} elseif ( $node->nodeName === 'a' ) {
+		} elseif ( DOMCompat::nodeName( $node ) === 'a' ) {
 			// Do not use 'A' as a wrapper node because it could
 			// end up getting nested inside another 'A' and the DOM
 			// structure can change where the wrapper tokens are no
@@ -324,7 +324,7 @@ class PipelineUtils {
 			// Ex: "[http://foo.com Bad nesting [[Here]]].
 			$wrapperName = 'span';
 		} elseif (
-			in_array( $node->nodeName, [ 'style', 'script' ], true ) &&
+			in_array( DOMCompat::nodeName( $node ), [ 'style', 'script' ], true ) &&
 			count( $domFragment->childNodes ) > 1
 		) {
 			// <style>/<script> tags are not fostered, so if we're wrapping
@@ -336,10 +336,10 @@ class PipelineUtils {
 		} elseif ( !DOMUtils::isElt( $node ) ) {
 			$wrapperName = 'span';
 		} else {
-			$wrapperName = $node->nodeName;
+			$wrapperName = DOMCompat::nodeName( $node );
 		}
 
-		if ( $node instanceof DOMElement ) {
+		if ( $node instanceof Element ) {
 			Assert::invariant(
 				// No need to look for data-mw as well.
 				// Nodes that have data-mw also have data-parsoid.
@@ -348,13 +348,13 @@ class PipelineUtils {
 
 			$nodeData = Utils::clone( DOMDataUtils::getNodeData( $node ) );
 
-			if ( $wrapperName !== $node->nodeName ) {
+			if ( $wrapperName !== DOMCompat::nodeName( $node ) ) {
 				// Create a copy of the node without children
 				$workNode = $node->ownerDocument->createElement( $wrapperName );
 
 				// Copy over attributes
 				foreach ( DOMCompat::attributes( $node ) as $attribute ) {
-					'@phan-var \DOMAttr $attribute'; // @var \DOMAttr $attribute
+					'@phan-var Attr $attribute'; // @var Attr $attribute
 					// "typeof" is ignored since it'll be removed below.
 					if ( $attribute->name !== 'typeof' ) {
 						$workNode->setAttribute( $attribute->name, $attribute->value );
@@ -408,7 +408,7 @@ class PipelineUtils {
 	 *    The token that generated the DOM.
 	 * @param array $expansion
 	 *    - string html HTML of the expansion.
-	 *    - DOMDocumentFragment domFragment Outermost nodes of the HTML.
+	 *    - DocumentFragment domFragment Outermost nodes of the HTML.
 	 * @param array $opts
 	 *    - SourceRange tsr
 	 *            The TSR to set on the generated tokens. This TSR is
@@ -480,11 +480,11 @@ class PipelineUtils {
 	}
 
 	/**
-	 * @param DOMDocument $doc
+	 * @param Document $doc
 	 * @param array &$textCommentAccum
 	 */
 	private static function wrapAccum(
-		DOMDocument $doc, array &$textCommentAccum
+		Document $doc, array &$textCommentAccum
 	): void {
 		// Wrap accumulated nodes in a span
 		$span = $doc->createElement( 'span' );
@@ -502,9 +502,10 @@ class PipelineUtils {
 	 * Wrap text and comment nodes in a node list into spans, so that all
 	 * top-level nodes are elements.
 	 *
-	 * @param DOMNodeList $nodes List of DOM nodes to wrap, mix of node types.
+	 * @param NodeList $nodes List of DOM nodes to wrap, mix of node types.
+	 * @param ?Node $startAfter
 	 */
-	public static function addSpanWrappers( DOMNodeList $nodes ): void {
+	public static function addSpanWrappers( $nodes, ?Node $startAfter = null ): void {
 		$textCommentAccum = [];
 		$doc = $nodes->item( 0 )->ownerDocument;
 
@@ -518,7 +519,14 @@ class PipelineUtils {
 			$nodeBuf[] = $node;
 		}
 
+		$start = ( $startAfter === null );
 		foreach ( $nodeBuf as $node ) {
+			if ( !$start ) {
+				if ( $startAfter === $node ) {
+					$start = true;
+				}
+				continue;
+			}
 			if ( DOMUtils::isText( $node ) || DOMUtils::isComment( $node ) ) {
 				$textCommentAccum[] = $node;
 			} elseif ( count( $textCommentAccum ) ) {
@@ -542,7 +550,7 @@ class PipelineUtils {
 	 *    The active environment/context.
 	 * @param Token $token
 	 *    The token that generated the DOM.
-	 * @param DOMDocumentFragment $domFragment
+	 * @param DocumentFragment $domFragment
 	 *    The DOM that the token expanded to.
 	 * @param array $opts
 	 *    Options to be passed onto the encapsulation code
@@ -550,7 +558,7 @@ class PipelineUtils {
 	 * @return Token[]
 	 */
 	public static function tunnelDOMThroughTokens(
-		Env $env, Token $token, DOMDocumentFragment $domFragment, array $opts
+		Env $env, Token $token, DocumentFragment $domFragment, array $opts
 	): array {
 		// Get placeholder tokens to get our subdom through the token processing
 		// stages. These will be finally unwrapped on the DOM.
@@ -560,11 +568,11 @@ class PipelineUtils {
 
 	/**
 	 * @param Env $env
-	 * @param DOMDocumentFragment $domFragment
+	 * @param DocumentFragment $domFragment
 	 * @return array
 	 */
 	public static function makeExpansion(
-		Env $env, DOMDocumentFragment $domFragment
+		Env $env, DocumentFragment $domFragment
 	): array {
 		$fragmentId = $env->newFragmentId();
 		$env->setDOMFragment( $fragmentId, $domFragment );
@@ -574,13 +582,13 @@ class PipelineUtils {
 	/**
 	 * @param Env $env
 	 * @param array &$expansions
-	 * @param DOMNode $node
+	 * @param Node $node
 	 */
-	private static function doExtractExpansions( Env $env, array &$expansions, DOMNode $node ): void {
+	private static function doExtractExpansions( Env $env, array &$expansions, Node $node ): void {
 		$nodes = null;
 		$expAccum = null;
 		while ( $node ) {
-			if ( $node instanceof DOMElement ) {
+			if ( $node instanceof Element ) {
 				if ( DOMUtils::matchTypeOf( $node, '#^mw:(Transclusion$|Extension/)#' ) &&
 						$node->hasAttribute( 'about' )
 					) {
@@ -642,10 +650,10 @@ class PipelineUtils {
 	 *     }
 	 *
 	 * @param Env $env
-	 * @param DOMElement $body
+	 * @param Element $body
 	 * @return array
 	 */
-	public static function extractExpansions( Env $env, DOMElement $body ): array {
+	public static function extractExpansions( Env $env, Element $body ): array {
 		$expansions = [
 			'transclusions' => [],
 			'extensions' => [],

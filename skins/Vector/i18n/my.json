@@ -21,5 +21,9 @@
 	"vector-view-viewsource": "ရင်းမြစ်ကို ကြည့်ရန်",
 	"vector-jumptonavigation": "အ​ညွှန်း​သို့ ခုန်ကူးရန်",
 	"vector-jumptosearch": "ရှာဖွေရန် ခုန်ကူးမည်",
-	"vector-more-actions": "ပို၍"
+	"vector-more-actions": "ပို၍",
+	"vector-anon-user-menu-pages-label": "တည်းဖြတ်ခြင်းအကြောင်း ပိုမိုလေ့လာရန်",
+	"vector-personal-more-label": "အသုံးပြုသူ လင့်ခ်များ",
+	"vector-main-menu-tooltip": "ပင်မ မီနူး",
+	"tooltip-vector-anon-user-menu-title": "နောက်ထပ် ရွေးချယ်စရာများ"
 }

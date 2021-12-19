@@ -38,10 +38,10 @@ class LanguageVariantHandler extends TokenHandler {
 		// we're going to fetch the actual token list from attribs
 		// (this ensures that it has gone through the earlier stages
 		// of the pipeline already to be expanded)
-		$t = preg_replace( '/^mw:lv/', '', $t, 1 );
+		$t = PHPUtils::stripPrefix( $t, 'mw:lv' );
 		$srcOffsets = $attribs[$t]->srcOffsets;
 		$domFragment = PipelineUtils::processContentInPipeline(
-			$manager->env, $manager->getFrame(), array_merge( $attribs[$t]->v, [ new EOFTk() ] ),
+			$this->env, $manager->getFrame(), array_merge( $attribs[$t]->v, [ new EOFTk() ] ),
 			[
 				'pipelineType' => 'tokens/x-mediawiki/expanded',
 				'pipelineOpts' => [
@@ -93,9 +93,9 @@ class LanguageVariantHandler extends TokenHandler {
 	 * Main handler.
 	 * See {@link TokenTransformManager#addTransform}'s transformation parameter
 	 * @param Token $token
-	 * @return array
+	 * @return TokenHandlerResult|null
 	 */
-	private function onLanguageVariant( Token $token ): array {
+	private function onLanguageVariant( Token $token ): ?TokenHandlerResult {
 		$manager = $this->manager;
 		$options = $this->options;
 		$attribs = $token->attribs;
@@ -166,19 +166,19 @@ class LanguageVariantHandler extends TokenHandler {
 				'show' => true
 			];
 		} else {
-			$dataMWV = array_reduce( $flags, function ( array $dmwv, string $f ) use ( &$sawFlagA ) {
+			$dataMWV = [];
+			foreach ( $flags as $f ) {
 				if ( array_key_exists( $f, WikitextConstants::$LCFlagMap ) ) {
 					if ( WikitextConstants::$LCFlagMap[$f] ) {
-						$dmwv[WikitextConstants::$LCFlagMap[$f]] = true;
+						$dataMWV[WikitextConstants::$LCFlagMap[$f]] = true;
 						if ( $f === 'A' ) {
 							$sawFlagA = true;
 						}
 					}
 				} else {
-					$dmwv['error'] = true;
+					$dataMWV['error'] = true;
 				}
-				return $dmwv;
-			}, [] );
+			}
 			// (this test is done at the top of ConverterRule::getRuleConvertedStr)
 			// (also partially in ConverterRule::parse)
 			if ( count( $texts ) === 1 &&
@@ -186,7 +186,7 @@ class LanguageVariantHandler extends TokenHandler {
 			) {
 				if ( isset( $dataMWV['add'] ) || isset( $dataMWV['remove'] ) ) {
 					$variants = [ '*' ];
-					$twoway = array_map( function ( string $code ) use ( $texts, &$sawTwoway ) {
+					$twoway = array_map( static function ( string $code ) use ( $texts, &$sawTwoway ) {
 						return [ 'l' => $code, 't' => $texts[0]['text'] ];
 					}, $variants );
 					$sawTwoway = true;
@@ -283,13 +283,13 @@ class LanguageVariantHandler extends TokenHandler {
 			);
 		}
 
-		return [ 'tokens' => $tokens ];
+		return new TokenHandlerResult( $tokens );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onTag( Token $token ) {
-		return $token->getName() === 'language-variant' ? $this->onLanguageVariant( $token ) : $token;
+	public function onTag( Token $token ): ?TokenHandlerResult {
+		return $token->getName() === 'language-variant' ? $this->onLanguageVariant( $token ) : null;
 	}
 }

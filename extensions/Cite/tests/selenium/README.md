@@ -1,38 +1,21 @@
 # Selenium tests
 
-Please see tests/selenium/README.md file in mediawiki/core repository, usually at mediawiki/vagrant/mediawiki folder.
+For more information see https://www.mediawiki.org/wiki/Selenium
 
 ## Setup
 
-Set up MediaWiki-Vagrant:
-
-    cd mediawiki/vagrant
-    vagrant up
-    vagrant roles enable cite
-    vagrant provision
-    cd mediawiki
-    npm install
+See https://www.mediawiki.org/wiki/MediaWiki-Docker/Extension/Cite
 
 ## Run all specs
 
-Run test specs from both mediawiki/core and installed extensions:
-
-    cd mediawiki
-    npm run selenium
+    npm run selenium-test
 
 ## Run specific tests
 
-To run only some tests, you first have to start Chromedriver in one terminal window:
+Filter by file name:
 
-    chromedriver --url-base=wd/hub --port=4444
+    npm run selenium-test -- --spec tests/selenium/specs/[FILE-NAME]
 
-Then, in another terminal window run this the current extension directory:
+Filter by file name and test name:
 
-    npm install
-    npm run selenium-test -- --spec tests/selenium/specs/FILE-NAME.js
-
-You can also filter specific test(s) by name:
-
-    npm run selenium-test -- --spec tests/selenium/specs/FILE-NAME.js --mochaOpts.grep TEST-NAME
-
-Make sure Chromedriver is running when executing the above command.
+    npm run selenium-test -- --spec tests/selenium/specs/[FILE-NAME] --mochaOpts.grep [TEST-NAME]

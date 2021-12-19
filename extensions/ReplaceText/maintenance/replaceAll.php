@@ -28,6 +28,14 @@
  * @link     https://www.mediawiki.org/wiki/Extension:Replace_Text
  *
  */
+namespace MediaWiki\Extension\ReplaceText;
+
+use Maintenance;
+use MWException;
+use MWNamespace;
+use TitleArrayFromResult;
+use User;
+
 $IP = getenv( "MW_INSTALL_PATH" ) ?: __DIR__ . "/../../..";
 if ( !is_readable( "$IP/maintenance/Maintenance.php" ) ) {
 	die( "MW_INSTALL_PATH needs to be set to your MediaWiki installation.\n" );
@@ -90,10 +98,7 @@ class ReplaceAll extends Maintenance {
 		$this->addOption( 'rename', "Rename page titles instead of replacing contents.",
 			false, false );
 
-		// MW 1.28
-		if ( method_exists( $this, 'requireExtension' ) ) {
-			$this->requireExtension( 'Replace Text' );
-		}
+		$this->requireExtension( 'Replace Text' );
 	}
 
 	private function getUser() {
@@ -154,7 +159,7 @@ class ReplaceAll extends Maintenance {
 
 			$this->target[] = $field[0];
 			$this->replacement[] = $field[1];
-			$this->useRegex[] = isset( $field[2] ) ? true : false;
+			$this->useRegex[] = isset( $field[2] );
 		}
 		return true;
 	}
@@ -227,7 +232,7 @@ EOF;
 			$namespaces = array_flip( $canonical );
 			if ( !$nsall ) {
 				$namespaces = array_map(
-					function ( $n ) use ( $canonical, $namespaces ) {
+					static function ( $n ) use ( $canonical, $namespaces ) {
 						if ( is_numeric( $n ) ) {
 							if ( isset( $canonical[ $n ] ) ) {
 								return intval( $n );
@@ -241,7 +246,7 @@ EOF;
 					}, explode( ",", $ns ) );
 				$namespaces = array_filter(
 					$namespaces,
-					function ( $val ) {
+					static function ( $val ) {
 						return $val !== null;
 					} );
 			}
@@ -268,7 +273,7 @@ EOF;
 	private function listTitles( $titles, $target, $replacement, $regex, $rename ) {
 		foreach ( $titles as $title ) {
 			if ( $rename ) {
-				$newTitle = ReplaceTextSearch::getReplacedTitle( $title, $target, $replacement, $regex );
+				$newTitle = Search::getReplacedTitle( $title, $target, $replacement, $regex );
 				// Implicit conversion of objects to strings
 				$this->output( "$title	->	$newTitle\n" );
 			} else {
@@ -295,7 +300,7 @@ EOF;
 			}
 
 			$this->output( "Replacing on $title... " );
-			$job = new ReplaceTextJob( $title, $params );
+			$job = new Job( $title, $params );
 			if ( $job->run() !== true ) {
 				$this->error( "Trouble on the page '$title'." );
 			}
@@ -368,7 +373,7 @@ EOF;
 			}
 
 			if ( $this->rename ) {
-				$res = ReplaceTextSearch::getMatchingTitles(
+				$res = Search::getMatchingTitles(
 					$target,
 					$this->namespaces,
 					$this->category,
@@ -376,7 +381,7 @@ EOF;
 					$useRegex
 				);
 			} else {
-				$res = ReplaceTextSearch::doSearchQuery(
+				$res = Search::doSearchQuery(
 					$target,
 					$this->namespaces,
 					$this->category,
@@ -423,5 +428,5 @@ EOF;
 	}
 }
 
-$maintClass = "ReplaceAll";
+$maintClass = ReplaceAll::class;
 require_once RUN_MAINTENANCE_IF_MAIN;

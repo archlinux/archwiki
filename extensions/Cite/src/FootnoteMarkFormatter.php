@@ -56,7 +56,7 @@ class FootnoteMarkFormatter {
 	 *
 	 * @return string
 	 */
-	public function linkRef( Parser $parser, string $group, array $ref ) : string {
+	public function linkRef( Parser $parser, string $group, array $ref ): string {
 		$label = $this->getLinkLabel( $parser, $group, $ref['number'] );
 		if ( $label === null ) {
 			$label = $this->messageLocalizer->localizeDigits( $ref['number'] );
@@ -94,7 +94,7 @@ class FootnoteMarkFormatter {
 	 *
 	 * @return string|null Returns null if no custom labels for this group exist
 	 */
-	private function getLinkLabel( Parser $parser, string $group, int $number ) : ?string {
+	private function getLinkLabel( Parser $parser, string $group, int $number ): ?string {
 		$message = "cite_link_label_group-$group";
 		if ( !isset( $this->linkLabels[$group] ) ) {
 			$msg = $this->messageLocalizer->msg( $message );

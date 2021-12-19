@@ -60,7 +60,7 @@ final class WvuiSearchTreatmentRequirement implements Requirement {
 	/**
 	 * @inheritDoc
 	 */
-	public function getName() : string {
+	public function getName(): string {
 		return Constants::REQUIREMENT_USE_WVUI_SEARCH;
 	}
 
@@ -71,7 +71,7 @@ final class WvuiSearchTreatmentRequirement implements Requirement {
 	 * @inheritDoc
 	 * @throws \ConfigException
 	 */
-	public function isMet() : bool {
+	public function isMet(): bool {
 		// Determine the search widget treatment to send to the user
 		$shouldUseWvuiSearch = (bool)$this->config->get( Constants::CONFIG_KEY_USE_WVUI_SEARCH );
 

@@ -49,7 +49,7 @@
 	"replacetext_continue": "Continuar",
 	"replacetext_announce": "Anunciar estas edições através da página $1 e das páginas vigiadas.",
 	"replacetext_editsummary": "Substituição de texto - \"$1\" por \"$2\"",
+	"replacetext_reminder": "Para alterar também as páginas afluentes a esta, vá para $1.",
 	"right-replacetext": "Fazer substituições de texto em toda a wiki",
-	"action-replacetext": "executar substituições de cadeias de caracteres em toda a wiki",
-	"replacetext_reminder": "Para alterar também as páginas afluentes a esta, vá para $1."
+	"action-replacetext": "executar substituições de cadeias de caracteres em toda a wiki"
 }

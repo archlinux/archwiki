@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Alex00728",
+			"Apzp79",
 			"Bluemersen",
 			"Freebiekr",
 			"Hwangjy9",
@@ -22,8 +23,7 @@
 			"고기랑",
 			"렌즈",
 			"아라",
-			"콩가루",
-			"Apzp79"
+			"콩가루"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "책",
@@ -57,7 +57,7 @@
 	"cite-ve-dialog-referenceslist-title": "각주 목록",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "정보의 출처를 추가하여 당신의 콘텐츠를 보강합니다. 서적이나 신문, 웹사이트를 인용할 수 있습니다.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "인용",
-	"cite-ve-dialogbutton-reference-full-label": "기본 양식",
+	"cite-ve-dialogbutton-reference-full-label": "기본",
 	"cite-ve-dialogbutton-reference-title": "각주",
 	"cite-ve-dialogbutton-reference-tooltip": "기본",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "각주 목록",

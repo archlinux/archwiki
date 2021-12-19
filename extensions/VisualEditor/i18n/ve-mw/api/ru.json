@@ -47,6 +47,7 @@
 	"apihelp-visualeditoredit-param-cachekey": "Используйте результат предыдущего запроса serializeforcache с этим ключом. Переопределяет $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID капчи (при сохранении с показом капчи).",
 	"apihelp-visualeditoredit-param-captchaword": "Ответ на капчу (при сохранении с показом капчи).",
+	"apihelp-visualeditoredit-param-plugins": "Плагины, связанные с API-запросом.",
 	"apihelp-visualeditoredit-param-etag": "ETag для отправки.",
 	"apihelp-visualeditoredit-param-html": "HTML для отправки в Parsoid, чтобы конвертировать в вики-текст.",
 	"apihelp-visualeditoredit-param-minor": "Флаг для малой правки.",

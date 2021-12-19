@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"DDPAT",
 			"Dim Grits",
 			"Matma Rex",
 			"Piramidion",
-			"Ата",
-			"DDPAT"
+			"Ата"
 		]
 	},
 	"skinname-monobook": "Моно-книга",
@@ -17,8 +17,8 @@
 	"monobook-jumptonavigation": "Перейти до навігації",
 	"monobook-jumptosearch": "Перейти до пошуку",
 	"monobook-more-actions": "Більше",
+	"cactions-mobile": "Дії на сторінці",
 	"monobook-cactions-label": "Дії над сторінкою",
 	"monobook-notifications-link": "Сповіщення ($1)",
-	"monobook-notifications-link-none": "Сповіщення",
-	"monobook-responsive-label": "Увімкнути адаптивне оформлення MonoBook"
+	"monobook-notifications-link-none": "Сповіщення"
 }

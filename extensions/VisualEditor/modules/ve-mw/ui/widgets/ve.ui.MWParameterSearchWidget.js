@@ -36,7 +36,6 @@ ve.ui.MWParameterSearchWidget = function VeUiMWParameterSearchWidget( template, 
 	this.template.connect( this, { add: 'buildIndex', remove: 'buildIndex' } );
 	this.getResults().connect( this, { choose: 'onSearchResultsChoose' } );
 
-	this.query.$input.attr( 'aria-label', ve.msg( 'visualeditor-parameter-input-placeholder' ) );
 	// Initialization
 	this.$element.addClass( 've-ui-mwParameterSearchWidget' );
 	this.query.$input.attr( 'aria-label', ve.msg( 'visualeditor-parameter-input-placeholder' ) );
@@ -88,24 +87,21 @@ ve.ui.MWParameterSearchWidget.prototype.onSearchResultsChoose = function ( item 
 
 /**
  * Build a searchable index of parameters.
- *
- * @param {ve.dm.MWTemplateSpecModel} spec Template specification
  */
 ve.ui.MWParameterSearchWidget.prototype.buildIndex = function () {
-	var i, len, name, label, aliases, description,
-		spec = this.template.getSpec(),
-		knownParams = spec.getParameterNames();
+	var spec = this.template.getSpec(),
+		knownParams = spec.getKnownParameterNames();
 
 	this.index.length = 0;
-	for ( i = 0, len = knownParams.length; i < len; i++ ) {
-		name = knownParams[ i ];
+	for ( var i = 0; i < knownParams.length; i++ ) {
+		var name = knownParams[ i ];
 		// Skip parameters already in use
 		if ( this.template.hasParameter( name ) ) {
 			continue;
 		}
-		label = spec.getParameterLabel( name );
-		aliases = spec.getParameterAliases( name );
-		description = spec.getParameterDescription( name );
+		var label = spec.getParameterLabel( name ),
+			aliases = spec.getParameterAliases( name ),
+			description = spec.getParameterDescription( name );
 
 		this.index.push( {
 			// Query information
@@ -128,20 +124,20 @@ ve.ui.MWParameterSearchWidget.prototype.buildIndex = function () {
  * Handle media query response events.
  */
 ve.ui.MWParameterSearchWidget.prototype.addResults = function () {
-	var i, len, item, textMatch, nameMatch, remainder,
+	var textMatch, nameMatch, remainder,
 		exactMatch = false,
-		value = this.query.getValue().trim().replace( /[|{}]/g, '' ),
+		value = this.query.getValue().trim().replace( /[={|}]+/g, '' ),
 		query = value.toLowerCase(),
 		hasQuery = !!query.length,
 		items = [];
 
 	this.results.clearItems();
 
-	for ( i = 0, len = this.index.length; i < len; i++ ) {
-		item = this.index[ i ];
+	for ( var i = 0; i < this.index.length; i++ ) {
+		var item = this.index[ i ];
 		if ( hasQuery ) {
-			textMatch = item.text.indexOf( query ) >= 0;
-			nameMatch = item.names.indexOf( query ) >= 0;
+			textMatch = item.text.indexOf( query ) !== -1;
+			nameMatch = item.names.indexOf( query ) !== -1;
 		}
 		if ( !hasQuery || textMatch || nameMatch ) {
 			// Only show exact matches for deprecated params
@@ -149,12 +145,12 @@ ve.ui.MWParameterSearchWidget.prototype.addResults = function () {
 				continue;
 			}
 			items.push( new ve.ui.MWParameterResultWidget( { data: item } ) );
-			if ( hasQuery && nameMatch ) {
+			if ( hasQuery && nameMatch && item.names.split( '|' ).indexOf( query ) !== -1 ) {
 				exactMatch = true;
 			}
 		}
 		if ( !hasQuery && !this.showAll && items.length >= this.limit ) {
-			remainder = len - i;
+			remainder = this.index.length - i;
 			break;
 		}
 	}
@@ -165,7 +161,7 @@ ve.ui.MWParameterSearchWidget.prototype.addResults = function () {
 				name: value,
 				label: value,
 				aliases: [],
-				description: ve.msg( 'visualeditor-parameter-search-unknown' )
+				isUnknown: true
 			}
 		} ) );
 	}

@@ -25,11 +25,12 @@
 			"Winston Sung",
 			"Wong128hk",
 			"Wrightbus",
-			"Xiaomingyan"
+			"Xiaomingyan",
+			"Weather Top Wizard"
 		]
 	},
 	"wikieditor": "進階 wikitext 編輯介面",
-	"wikieditor-desc": "提供高級、可擴充的 Wiki 文字編輯介面",
+	"wikieditor-desc": "提供進階、可擴充的 wikitext 編輯介面",
 	"wikieditor-wikitext-tab": "wiki語法",
 	"wikieditor-loading": "讀取中...",
 	"wikieditor-toolbar": "編輯工具列",

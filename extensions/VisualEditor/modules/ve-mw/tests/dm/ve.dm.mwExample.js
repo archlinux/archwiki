@@ -12,9 +12,8 @@
  */
 ve.dm.mwExample = {};
 
-ve.dm.mwExample.createExampleDocument = function ( name, store ) {
-	return ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.mwExample );
-};
+ve.dm.mwExample.createExampleDocument = ( name, store ) =>
+	ve.dm.example.createExampleDocumentFromObject( name, store, ve.dm.mwExample );
 
 ve.dm.mwExample.MWTransclusion = {
 	blockOpen:
@@ -664,8 +663,8 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		modify: function ( model ) {
-			var data = [ 'x', [ ve.dm.example.bold ] ],
+		modify: ( model ) => {
+			const data = [ 'x', [ ve.dm.example.bold ] ],
 				linearData = ve.dm.example.preprocessAnnotations( [ data ], model.getStore() );
 			model.data.data.splice( 3, 0, linearData.data[ 0 ] );
 		},
@@ -725,8 +724,8 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		modify: function ( model ) {
-			var data = [ 'x', [ ve.dm.example.bold ] ],
+		modify: ( model ) => {
+			const data = [ 'x', [ ve.dm.example.bold ] ],
 				linearData = ve.dm.example.preprocessAnnotations( [ data ], model.getStore() );
 			model.data.data.splice( 3, 0, linearData.data[ 0 ] );
 		},
@@ -797,8 +796,8 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		modify: function ( model ) {
-			model.data.modifyData( 0, function ( item ) {
+		modify: ( model ) => {
+			model.data.modifyData( 0, ( item ) => {
 				item.attributes.wikitable = false;
 				item.attributes.sortable = false;
 			} );
@@ -1190,8 +1189,8 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: '/internalList' }
 		],
 		storeItems: ve.dm.mwExample.MWTransclusion.blockStoreItems,
-		modify: function ( model ) {
-			model.data.modifyData( 0, function ( item ) {
+		modify: ( model ) => {
+			model.data.modifyData( 0, ( item ) => {
 				item.attributes.mw.parts[ 0 ].template.params[ '1' ].wt = 'Hello, globe!';
 			} );
 		},
@@ -1227,8 +1226,8 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: '/internalList' }
 		],
 		storeItems: ve.dm.mwExample.MWTransclusion.inlineStoreItems,
-		modify: function ( model ) {
-			model.data.modifyData( 1, function ( item ) {
+		modify: ( model ) => {
+			model.data.modifyData( 1, ( item ) => {
 				item.attributes.mw.parts[ 0 ].template.params[ '1' ].wt = '5,678';
 			} );
 		},
@@ -1391,8 +1390,8 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		modify: function ( model ) {
-			model.data.modifyData( 0, function ( item ) {
+		modify: ( model ) => {
+			model.data.modifyData( 0, ( item ) => {
 				item.attributes.mw.attrs.lang = 'php5';
 			} );
 		}
@@ -1431,8 +1430,8 @@ ve.dm.mwExample.domToDataCases = {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		],
-		modify: function ( model ) {
-			model.data.modifyData( 1, function ( item ) {
+		modify: ( model ) => {
+			model.data.modifyData( 1, ( item ) => {
 				item.attributes.mw.body.extsrc = '\\relative c\' { d d d e e e }';
 			} );
 		}
@@ -1981,8 +1980,8 @@ ve.dm.mwExample.domToDataCases = {
 	},
 	'mw:Nowiki unwraps when text modified': {
 		data: ve.dm.mwExample.mwNowiki,
-		modify: function ( model ) {
-			model.data.modifyData( 7, function ( item ) {
+		modify: ( model ) => {
+			model.data.modifyData( 7, ( item ) => {
 				item[ 0 ] = 'z';
 			} );
 		},
@@ -1990,8 +1989,8 @@ ve.dm.mwExample.domToDataCases = {
 	},
 	'mw:Nowiki unwraps when annotations modified': {
 		data: ve.dm.mwExample.mwNowiki,
-		modify: function ( model ) {
-			model.data.modifyData( 7, function ( item ) {
+		modify: ( model ) => {
+			model.data.modifyData( 7, ( item ) => {
 				item[ 1 ].push( model.getStore().hash( ve.dm.example.createAnnotation( ve.dm.example.bold ) ) );
 			} );
 		},

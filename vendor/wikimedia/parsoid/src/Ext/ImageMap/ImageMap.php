@@ -3,7 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\ImageMap;
 
-use DOMDocumentFragment;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionError;
@@ -53,7 +53,7 @@ class ImageMap extends ExtensionTagHandler implements ExtensionModule {
 	/** @inheritDoc */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $src, array $extArgs
-	): DOMDocumentFragment {
+	): DocumentFragment {
 		$domFragment = $extApi->getTopLevelDoc()->createDocumentFragment();
 
 		$thumb = null;
@@ -105,7 +105,11 @@ class ImageMap extends ExtensionTagHandler implements ExtensionModule {
 					[ $options, $offset + strlen( $image ) ],
 				];
 
-				$thumb = $extApi->renderMedia( $image, $imageOpts, $error );
+				$thumb = $extApi->renderMedia(
+					$image, $imageOpts, $error,
+					// NOTE(T290044): Imagemaps are always rendered as blocks
+					true
+				);
 				if ( !$thumb ) {
 					throw new ExtensionError( $error );
 				}
@@ -114,7 +118,7 @@ class ImageMap extends ExtensionTagHandler implements ExtensionModule {
 				$imageNode = $anchor->firstChild;
 
 				// Could be a span
-				if ( $imageNode->nodeName !== 'img' ) {
+				if ( DOMCompat::nodeName( $imageNode ) !== 'img' ) {
 					throw new ExtensionError( 'imagemap_invalid_image' );
 				}
 				DOMUtils::assertElt( $imageNode );
@@ -123,10 +127,10 @@ class ImageMap extends ExtensionTagHandler implements ExtensionModule {
 				// factor when one is much larger than the other
 				// (sx+sy)/(x+y) = s
 
-				$thumbWidth = (int)$imageNode->getAttribute( 'width' );
-				$thumbHeight = (int)$imageNode->getAttribute( 'height' );
-				$imageWidth = (int)$imageNode->getAttribute( 'data-file-width' );
-				$imageHeight = (int)$imageNode->getAttribute( 'data-file-height' );
+				$thumbWidth = (int)( $imageNode->getAttribute( 'width' ) ?? '' );
+				$thumbHeight = (int)( $imageNode->getAttribute( 'height' ) ?? '' );
+				$imageWidth = (int)( $imageNode->getAttribute( 'data-file-width' ) ?? '' );
+				$imageHeight = (int)( $imageNode->getAttribute( 'data-file-height' ) ?? '' );
 
 				$denominator = $imageWidth + $imageHeight;
 				$numerator = $thumbWidth + $thumbHeight;
@@ -191,8 +195,8 @@ class ImageMap extends ExtensionTagHandler implements ExtensionModule {
 			}
 			DOMUtils::assertElt( $a );
 
-			$href = $a->getAttribute( 'href' );
-			$externLink = (bool)preg_match( "/^mw:ExtLink/", $a->getAttribute( 'rel' ) );
+			$href = $a->getAttribute( 'href' ) ?? '';
+			$externLink = str_starts_with( $a->getAttribute( 'rel' ) ?? '', "mw:ExtLink/" );
 			$alt = '';
 
 			$hasContent = $externLink || ( DOMDataUtils::getDataParsoid( $a )->stx ?? null ) === 'piped';
@@ -304,6 +308,9 @@ class ImageMap extends ExtensionTagHandler implements ExtensionModule {
 		}
 		$defaultAnchor->appendChild( $imageNode );
 		$thumb->replaceChild( $defaultAnchor, $anchor );
+
+		// For T22030
+		DOMCompat::getClassList( $thumb )->add( 'noresize' );
 
 		$domFragment->appendChild( $thumb );
 		return $domFragment;

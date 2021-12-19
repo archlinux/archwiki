@@ -47,7 +47,6 @@
 		context.showInvisibleChars = ( cookieEnabled === 1 );
 		cookieEnabled = parseInt( mw.cookie.get( 'codeEditor-' + context.instance + '-lineWrappingActive' ), 10 );
 		context.lineWrappingActive = ( cookieEnabled === 1 );
-		context.showSearchReplace = 0;
 
 		/*
 		 * Event Handlers
@@ -181,15 +180,13 @@
 					context.codeEditor.setShowInvisibles( context.showInvisibleChars );
 				};
 				toggleSearchReplace = function ( context ) {
-					context.showSearchReplace = !context.showSearchReplace;
-
-					if ( context.showSearchReplace ) {
-						ace.config.loadModule( 'ace/ext/searchbox', function ( e ) {
-							// ace.editor.searchBox.show();
-							e.Search( context.codeEditor, !0 );
-						} );
+					var searchBox = context.codeEditor.searchBox;
+					if ( searchBox && $( searchBox.element ).css( 'display' ) !== 'none' ) {
+						searchBox.hide();
 					} else {
-						context.codeEditor.searchBox.hide();
+						context.codeEditor.execCommand(
+							context.codeEditor.getReadOnly() ? 'find' : 'replace'
+						);
 					}
 				};
 				toggleLineWrapping = function ( context ) {
@@ -280,7 +277,7 @@
 								},
 								toggleSearchReplace: {
 									labelMsg: 'codeeditor-searchReplace-toggle',
-									type: 'toggle',
+									type: 'button',
 									oouiIcon: 'articleSearch',
 									action: {
 										type: 'callback',
@@ -374,10 +371,12 @@
 					context.codeEditor.getSession().setValue( $box.val() );
 					$box.textSelection( 'register', textSelectionFn );
 
-					// Disable some annoying commands
-					context.codeEditor.commands.removeCommand( 'replace' ); // ctrl+R
-					context.codeEditor.commands.removeCommand( 'transposeletters' ); // ctrl+T
-					context.codeEditor.commands.removeCommand( 'gotoline' ); // ctrl+L
+					// Disable some annoying keybindings
+					context.codeEditor.commands.bindKeys( {
+						'Ctrl-T': null,
+						'Ctrl-L': null,
+						'Command-L': null
+					} );
 
 					context.codeEditor.setReadOnly( $box.prop( 'readonly' ) );
 					context.codeEditor.setShowInvisibles( context.showInvisibleChars );

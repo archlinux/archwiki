@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
 use Wikimedia\ScopedCallback;
 
 abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
@@ -77,6 +78,7 @@ abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
 
 		unset( $options['factory'] );
 
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return Scribunto::newEngine( $options + $wgScribuntoEngineConf[$engine] );
 	}
 
@@ -715,7 +717,7 @@ abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
 		if ( $frame->depth >= $this->parser->mOptions->getMaxTemplateDepth() ) {
 			throw new Scribunto_LuaError( 'expandTemplate: template depth limit exceeded' );
 		}
-		if ( MWNamespace::isNonincludable( $title->getNamespace() ) ) {
+		if ( MediaWikiServices::getInstance()->getNamespaceInfo()->isNonincludable( $title->getNamespace() ) ) {
 			throw new Scribunto_LuaError( 'expandTemplate: template inclusion denied' );
 		}
 
@@ -756,7 +758,7 @@ abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
 		$args = array_merge( [], $args );
 
 		# Sort, since we can't rely on the order coming in from Lua
-		uksort( $args, function ( $a, $b ) {
+		uksort( $args, static function ( $a, $b ) {
 			if ( is_int( $a ) !== is_int( $b ) ) {
 				return is_int( $a ) ? -1 : 1;
 			}

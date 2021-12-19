@@ -3,9 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Ext\Gallery;
 
-use DOMDocumentFragment;
-use DOMElement;
 use stdClass;
+use Wikimedia\Parsoid\Core\MediaStructure;
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
@@ -46,11 +47,11 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 	 * Parse the gallery caption.
 	 * @param ParsoidExtensionAPI $extApi
 	 * @param array $extArgs
-	 * @return ?DOMDocumentFragment
+	 * @return ?DocumentFragment
 	 */
 	private function pCaption(
 		ParsoidExtensionAPI $extApi, array $extArgs
-	): ?DOMDocumentFragment {
+	): ?DocumentFragment {
 		return $extApi->extArgToDOM( $extArgs, 'caption' );
 	}
 
@@ -80,19 +81,21 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 		$imageOpts = [
 			"|{$mode->dimensions( $opts )}",
-			// NOTE: We add "none" here so that this renders in the block form
-			// (ie. figure) for an easier structure to manipulate.
-			'|none',
 			[ $imageOptStr, $lineStartOffset + strlen( $titleStr ) ],
 		];
 
-		$thumb = $extApi->renderMedia( $titleStr, $imageOpts );
-		if ( !$thumb || $thumb->nodeName !== 'figure' ) {
+		$thumb = $extApi->renderMedia(
+			$titleStr, $imageOpts, $error,
+			// Force block for an easier structure to manipulate, otherwise
+			// we have to pull the caption out of the data-mw
+			true
+		);
+		if ( !$thumb || DOMCompat::nodeName( $thumb ) !== 'figure' ) {
 			return null;
 		}
 
 		$doc = $thumb->ownerDocument;
-		$rdfaType = $thumb->getAttribute( 'typeof' );
+		$rdfaType = $thumb->getAttribute( 'typeof' ) ?? '';
 
 		// Detach figcaption as well
 		$figcaption = DOMCompat::querySelector( $thumb, 'figcaption' );
@@ -140,7 +143,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 	/** @inheritDoc */
 	public function sourceToDom(
 		ParsoidExtensionAPI $extApi, string $content, array $args
-	): DOMDocumentFragment {
+	): DocumentFragment {
 		$attrs = $extApi->extArgsToArray( $args );
 		$opts = new Opts( $extApi, $attrs );
 
@@ -148,7 +151,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 		// Prepare the lines for processing
 		$lines = explode( "\n", $content );
-		$lines = array_map( function ( $line ) use ( &$offset ) {
+		$lines = array_map( static function ( $line ) use ( &$offset ) {
 				$lineObj = [ 'line' => $line, 'offset' => $offset ];
 				$offset += strlen( $line ) + 1; // For the nl
 				return $lineObj;
@@ -162,7 +165,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		}, $lines );
 
 		// Drop invalid lines like "References: 5."
-		$lines = array_filter( $lines, function ( $lineObj ) {
+		$lines = array_filter( $lines, static function ( $lineObj ) {
 			return $lineObj !== null;
 		} );
 
@@ -174,11 +177,11 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 	/**
 	 * @param ParsoidExtensionAPI $extApi
-	 * @param DOMElement $node
+	 * @param Element $node
 	 * @return string
 	 */
 	private function contentHandler(
-		ParsoidExtensionAPI $extApi, DOMElement $node
+		ParsoidExtensionAPI $extApi, Element $node
 	): string {
 		$content = "\n";
 		for ( $child = $node->firstChild; $child; $child = $child->nextSibling ) {
@@ -187,7 +190,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 				DOMUtils::assertElt( $child );
 				// Ignore if it isn't a "gallerybox"
 				if (
-					$child->nodeName !== 'li' ||
+					DOMCompat::nodeName( $child ) !== 'li' ||
 					$child->getAttribute( 'class' ) !== 'gallerybox'
 				) {
 					break;
@@ -196,28 +199,25 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 				if ( !$thumb ) {
 					break;
 				}
-				// FIXME: The below would benefit from a refactoring that
-				// assumes the figure structure, as in the link handler.
-				$elt = DOMUtils::selectMediaElt( $thumb );
-				if ( $elt ) {
-					// FIXME: Should we preserve the original namespace?  See T151367
-					if ( $elt->hasAttribute( 'resource' ) ) {
-						$resource = $elt->getAttribute( 'resource' );
-						$content .= preg_replace( '#^\./#', '', $resource, 1 );
+				$ms = MediaStructure::parse( DOMUtils::firstNonSepChild( $thumb ) );
+				if ( $ms ) {
+					// FIXME: Dry all this out with T252246 / T262833
+					if ( $ms->hasResource() ) {
+						$resource = $ms->getResource();
+						$content .= PHPUtils::stripPrefix( $resource, './' );
 						// FIXME: Serializing of these attributes should
 						// match the link handler so that values stashed in
 						// data-mw aren't ignored.
-						if ( $elt->hasAttribute( 'alt' ) ) {
-							$alt = $elt->getAttribute( 'alt' );
+						if ( $ms->hasAlt() ) {
+							$alt = $ms->getAlt();
 							$content .= '|alt=' .
 								$extApi->escapeWikitext( $alt, $child, $extApi::IN_MEDIA );
 						}
-						// The first "a" is for the link, hopefully.
-						$a = DOMCompat::querySelector( $thumb, 'a' );
-						if ( $a && $a->hasAttribute( 'href' ) ) {
-							$href = $a->getAttribute( 'href' );
+						// FIXME: Handle missing media
+						if ( $ms->hasMediaUrl() && !$ms->isRedLink() ) {
+							$href = $ms->getMediaUrl();
 							if ( $href !== $resource ) {
-								$href = preg_replace( '#^\./#', '', $href, 1 );
+								$href = PHPUtils::stripPrefix( $href, './' );
 								$content .= '|link=' .
 									$extApi->escapeWikitext( $href, $child, $extApi::IN_MEDIA );
 							}
@@ -243,7 +243,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 					if ( !preg_match( '/^\s*$/D', $caption ) ) {
 						// Ensure that this only takes one line since gallery
 						// tag content is split by line
-						$caption = preg_replace( '/\n/', ' ', $caption );
+						$caption = str_replace( "\n", ' ', $caption );
 						$content .= '|' . $caption;
 					}
 				}
@@ -263,7 +263,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 
 	/** @inheritDoc */
 	public function domToWikitext(
-		ParsoidExtensionAPI $extApi, DOMElement $node, bool $wrapperUnmodified
+		ParsoidExtensionAPI $extApi, Element $node, bool $wrapperUnmodified
 	) {
 		$dataMw = DOMDataUtils::getDataMw( $node );
 		$dataMw->attrs = $dataMw->attrs ?? new stdClass;

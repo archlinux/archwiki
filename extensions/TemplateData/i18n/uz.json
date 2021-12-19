@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Malikxan",
 			"Sociologist",
-			"Ximik1991",
-			"Malikxan"
+			"Ximik1991"
 		]
 	},
 	"templatedata-doc-desc-empty": "Tavsif yoʻq.",
@@ -15,6 +15,7 @@
 	"templatedata-doc-param-name": "Parametr",
 	"templatedata-doc-param-status": "Status",
 	"templatedata-doc-param-status-optional": "ixtiyoriy",
+	"templatedata-doc-param-suggestedvalues": "Taklif etilgan qiymatlar",
 	"templatedata-doc-param-type": "Turi",
 	"templatedata-doc-param-type-content": "Kontent",
 	"templatedata-doc-param-type-date": "Sana",
@@ -57,6 +58,7 @@
 	"templatedata-modal-table-param-label": "Label ($1)",
 	"templatedata-modal-table-param-name": "Nomi",
 	"templatedata-modal-table-param-suggested": "Taklif etilgan",
+	"templatedata-modal-table-param-suggestedvalues": "Taklif etilgan qiymatlar",
 	"templatedata-modal-table-param-type": "Turi",
 	"templatedata-modal-title-addparam": "Yangi parametr qoʻshish",
 	"templatedata-modal-title-choose-language": "Tilni tanlash",

@@ -58,7 +58,7 @@ class MessageWidget extends Widget {
 		$this->initializeFlaggedElement( $config );
 
 		$this->setType( $config['type'] ?? $this->defaultType );
-		$this->setInline( isset( $config['inline'] ) && (bool)$config['inline'] );
+		$this->setInline( $config['inline'] ?? false );
 
 		// If an icon is passed in, set it again as setType will
 		// have overridden the setIcon call in the IconElement constructor

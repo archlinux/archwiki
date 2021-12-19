@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Adriendelucca",
 			"Fohanno",
 			"Fulup",
 			"Maoris",
 			"Pymouss",
-			"Y-M D",
-			"Adriendelucca"
+			"Y-M D"
 		]
 	},
 	"tooltip-ca-createsource": "Krouiñ kod mammennoù ar bajenn-mañ",
@@ -124,12 +124,13 @@
 	"visualeditor-dialog-transclusion-add-content": "Ouzhpennañ danvez",
 	"visualeditor-dialog-transclusion-add-param": "Ouzhpennañ titouroù all",
 	"visualeditor-dialog-transclusion-add-template": "Ouzhpennañ ar patrom",
+	"visualeditor-dialog-transclusion-collapse-options": "Dibarzhioù kuzhet",
 	"visualeditor-dialog-transclusion-content": "Danvez",
 	"visualeditor-dialog-transclusion-contextitem-description": "Ganet diwar : $1",
+	"visualeditor-dialog-transclusion-expand-options": "Diskouez an dibarzhioù",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Maezienn dispredet",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Dispredet eo ar vaezienn. $1",
 	"visualeditor-dialog-transclusion-loading": "O kargañ...",
-	"visualeditor-dialog-transclusion-multiple-mode": "Diskouez an dibarzhioù",
 	"visualeditor-dialog-transclusion-options": "Dibarzhioù",
 	"visualeditor-dialog-transclusion-param-default": "Dre ziouer : $1",
 	"visualeditor-dialog-transclusion-param-example": "da sk. $1",
@@ -144,8 +145,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Distreiñ",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Kenderc'hel memestra",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|maezienn|maeziennoù}} ret a vank",
-	"visualeditor-dialog-transclusion-single-mode": "Dibarzhioù kuzhet",
-	"visualeditor-dialog-transclusion-title": "Treuzklozadur",
 	"visualeditor-dialogbutton-media-tooltip": "Skeudennoù ha mediaoù",
 	"visualeditor-dialogbutton-meta-tooltip": "Arventennoù ar bajenn",
 	"visualeditor-dialogbutton-template-tooltip": "Patrom",
@@ -212,7 +211,7 @@
 	"visualeditor-parameter-input-placeholder": "Anv ar vaezienn",
 	"visualeditor-parameter-search-more": "Diskouez {{PLURAL:$1|ur vaezienn all|$1 maezienn all}}",
 	"visualeditor-parameter-search-no-unused": "Maezienn dizimplij ebet",
-	"visualeditor-parameter-search-unknown": "Maezienn dianav",
+	"visualeditor-parameter-search-unknown": "(Maezienn dianav)",
 	"visualeditor-preference-core-label": "Aozañ dre welet",
 	"visualeditor-preference-tabs": "Mod aozañ :",
 	"visualeditor-preference-tabs-remember-last": "Derc'hel soñj eus ma aozer diwezhañ",

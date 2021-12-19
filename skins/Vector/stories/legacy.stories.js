@@ -1,5 +1,6 @@
 import mustache from 'mustache';
-import '../resources/skins.vector.styles/skin-legacy.less';
+import '../resources/common/common.less';
+import '../resources/skins.vector.styles.legacy/skin-legacy.less';
 import legacySkinTemplate from '!!raw-loader!../includes/templates/skin-legacy.mustache';
 import {
 	LEGACY_TEMPLATE_DATA,

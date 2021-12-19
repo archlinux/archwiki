@@ -25,6 +25,7 @@ use LinkBatch;
 use Linker;
 use MediaTransformError;
 use MediaWiki\BadFileLookup;
+use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\HookContainer\HookContainer;
 use Parser;
 use ParserFactory;
@@ -45,8 +46,14 @@ class DataAccess implements IDataAccess {
 	/** @var HookContainer */
 	private $hookContainer;
 
+	/** @var ContentTransformer */
+	private $contentTransformer;
+
 	/** @var Parser */
 	private $parser;
+
+	/** @var \PPFrame */
+	private $ppFrame;
 
 	/** @var ?PageConfig */
 	private $previousPageConfig;
@@ -55,16 +62,21 @@ class DataAccess implements IDataAccess {
 	 * @param RepoGroup $repoGroup
 	 * @param BadFileLookup $badFileLookup
 	 * @param HookContainer $hookContainer
+	 * @param ContentTransformer $contentTransformer
 	 * @param ParserFactory $parserFactory A legacy parser factory,
 	 *   for PST/preprocessing/extension handling
 	 */
 	public function __construct(
-		RepoGroup $repoGroup, BadFileLookup $badFileLookup,
-		HookContainer $hookContainer, ParserFactory $parserFactory
+		RepoGroup $repoGroup,
+		BadFileLookup $badFileLookup,
+		HookContainer $hookContainer,
+		ContentTransformer $contentTransformer,
+		ParserFactory $parserFactory
 	) {
 		$this->repoGroup = $repoGroup;
 		$this->badFileLookup = $badFileLookup;
 		$this->hookContainer = $hookContainer;
+		$this->contentTransformer = $contentTransformer;
 
 		// Use the same legacy parser object for all calls to extension tag
 		// processing, for greater compatibility.
@@ -134,14 +146,16 @@ class DataAccess implements IDataAccess {
 				];
 			} else {
 				$titleObjs[$name] = $t;
-				$pdbk = $t->getPrefixedDBkey();
-				$pagemap[$t->getArticleID()] = $pdbk;
-				$classes[$pdbk] = $t->isRedirect() ? 'mw-redirect' : '';
 			}
 		}
 		$linkBatch = new LinkBatch( $titleObjs );
 		$linkBatch->execute();
 
+		foreach ( $titleObjs as $obj ) {
+			$pdbk = $obj->getPrefixedDBkey();
+			$pagemap[$obj->getArticleID()] = $pdbk;
+			$classes[$pdbk] = $obj->isRedirect() ? 'mw-redirect' : '';
+		}
 		$context_title = Title::newFromText( $pageConfig->getTitle() );
 		$this->hookContainer->run(
 			'GetLinkColours',
@@ -260,6 +274,12 @@ class DataAccess implements IDataAccess {
 			Title::newFromText( $pageConfig->getTitle() ), $pageConfig->getParserOptions(),
 			$outputType, $clearState, $pageConfig->getRevisionId() );
 		$this->parser->resetOutput();
+
+		// Retain a PPFrame object between preprocess requests since it contains
+		// some useful caches.
+		if ( $clearState ) {
+			$this->ppFrame = $this->parser->getPreprocessor()->newFrame();
+		}
 		return $this->parser;
 	}
 
@@ -269,9 +289,14 @@ class DataAccess implements IDataAccess {
 		// This could use prepareParser(), but it's only called once per page,
 		// so it's not essential.
 		$titleObj = Title::newFromText( $pageConfig->getTitle() );
-		return ContentHandler::makeContent( $wikitext, $titleObj, CONTENT_MODEL_WIKITEXT )
-			->preSaveTransform( $titleObj, $pageConfig->getParserOptions()->getUser(), $pageConfig->getParserOptions() )
-			->serialize();
+		$user = $pageConfig->getParserOptions()->getUserIdentity();
+		$content = ContentHandler::makeContent( $wikitext, $titleObj, CONTENT_MODEL_WIKITEXT );
+		return $this->contentTransformer->preSaveTransform(
+			$content,
+			$titleObj,
+			$user,
+			$pageConfig->getParserOptions()
+		)->serialize();
 	}
 
 	/** @inheritDoc */
@@ -284,7 +309,7 @@ class DataAccess implements IDataAccess {
 			'html' => $out->getText( [ 'unwrap' => true ] ),
 			'modules' => array_values( array_unique( $out->getModules() ) ),
 			'modulestyles' => array_values( array_unique( $out->getModuleStyles() ) ),
-			'jsconfigvars' => array_values( array_unique( $out->getJsConfigVars() ) ),
+			'jsconfigvars' => $out->getJsConfigVars(),
 			'categories' => $out->getCategories(),
 		];
 	}
@@ -293,13 +318,13 @@ class DataAccess implements IDataAccess {
 	public function preprocessWikitext( IPageConfig $pageConfig, string $wikitext ): array {
 		$parser = $this->prepareParser( $pageConfig, Parser::OT_PREPROCESS );
 		$out = $parser->getOutput();
-		$wikitext = $parser->replaceVariables( $wikitext );
+		$wikitext = $parser->replaceVariables( $wikitext, $this->ppFrame );
 		$wikitext = $parser->getStripState()->unstripBoth( $wikitext );
 		return [
 			'wikitext' => $wikitext,
 			'modules' => array_values( array_unique( $out->getModules() ) ),
 			'modulestyles' => array_values( array_unique( $out->getModuleStyles() ) ),
-			'jsconfigvars' => array_values( array_unique( $out->getJsConfigVars() ) ),
+			'jsconfigvars' => $out->getJsConfigVars(),
 			'categories' => $out->getCategories(),
 			'properties' => $out->getProperties()
 		];

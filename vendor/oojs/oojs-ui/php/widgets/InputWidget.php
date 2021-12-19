@@ -131,8 +131,8 @@ class InputWidget extends Widget {
 		}
 	}
 
-	public function setDisabled( $state ) {
-		parent::setDisabled( $state );
+	public function setDisabled( $disabled ) {
+		parent::setDisabled( $disabled );
 		if ( isset( $this->input ) ) {
 			if ( $this->isDisabled() ) {
 				$this->input->setAttributes( [ 'disabled' => 'disabled' ] );

@@ -31,6 +31,7 @@
 	"apihelp-visualeditoredit-param-cachekey": "이 키로 이전의 serializeforcache 요청 결과를 사용합니다. $1html을 덮어씁니다.",
 	"apihelp-visualeditoredit-param-captchaid": "캡차 ID입니다. (캡차 응답으로 저장할 때)",
 	"apihelp-visualeditoredit-param-captchaword": "캡차의 응답입니다. (캡차 응답으로 저장할 때)",
+	"apihelp-visualeditoredit-param-plugins": "API 요청과 관련된 플러그인입니다.",
 	"apihelp-visualeditoredit-param-etag": "보낼 ETag.",
 	"apihelp-visualeditoredit-param-html": "위키텍스트 대신 Parsoid로 보낼 HTML입니다.",
 	"apihelp-visualeditoredit-param-minor": "사소한 편집의 표시입니다.",

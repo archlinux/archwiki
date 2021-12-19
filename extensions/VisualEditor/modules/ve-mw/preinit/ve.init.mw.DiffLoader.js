@@ -31,13 +31,12 @@
 		 * @return {ve.dm.Document|null} Document, or null if an invalid response
 		 */
 		getModelFromResponse: function ( response, section ) {
-			var doc,
-				// This method is only called after actually loading these, see `parseDocumentModulePromise`
-				// eslint-disable-next-line no-undef
-				targetClass = ve.init.mw.ArticleTarget,
+			// This method is only called after actually loading these, see `parseDocumentModulePromise`
+			// eslint-disable-next-line no-undef
+			var targetClass = ve.init.mw.ArticleTarget,
 				data = response ? ( response.visualeditor || response.visualeditoredit ) : null;
 			if ( data && typeof data.content === 'string' ) {
-				doc = targetClass.static.parseDocument( data.content, 'visual', section, section !== null );
+				var doc = targetClass.static.parseDocument( data.content, 'visual', section, section !== null );
 				mw.libs.ve.stripRestbaseIds( doc );
 				return targetClass.static.createModelFromDom( doc, 'visual' );
 			}
@@ -54,13 +53,11 @@
 		 * @return {jQuery.Promise} Promise which resolves with a document model
 		 */
 		fetchRevision: function ( revId, pageName, section, parseDocumentModulePromise ) {
-			var cacheKey;
-
 			pageName = pageName || mw.config.get( 'wgRelevantPageName' );
 			parseDocumentModulePromise = parseDocumentModulePromise || $.Deferred().resolve().promise();
 			section = section !== undefined ? section : null;
 
-			cacheKey = revId + ( section !== null ? '/' + section : '' );
+			var cacheKey = revId + ( section !== null ? '/' + section : '' );
 
 			revCache[ cacheKey ] = revCache[ cacheKey ] ||
 				mw.libs.ve.targetLoader.requestParsoidData(
@@ -94,13 +91,11 @@
 		 * @return {jQuery.Promise} Promise which resolves with a ve.dm.VisualDiff generator function
 		 */
 		getVisualDiffGeneratorPromise: function ( oldIdOrPromise, newIdOrPromise, parseDocumentModulePromise, oldPageName, newPageName ) {
-			var oldRevPromise, newRevPromise;
-
 			parseDocumentModulePromise = parseDocumentModulePromise || $.Deferred().resolve().promise();
 			oldPageName = oldPageName || mw.config.get( 'wgRelevantPageName' );
 
-			oldRevPromise = typeof oldIdOrPromise === 'number' ? this.fetchRevision( oldIdOrPromise, oldPageName, null, parseDocumentModulePromise ) : oldIdOrPromise;
-			newRevPromise = typeof newIdOrPromise === 'number' ? this.fetchRevision( newIdOrPromise, newPageName, null, parseDocumentModulePromise ) : newIdOrPromise;
+			var oldRevPromise = typeof oldIdOrPromise === 'number' ? this.fetchRevision( oldIdOrPromise, oldPageName, null, parseDocumentModulePromise ) : oldIdOrPromise;
+			var newRevPromise = typeof newIdOrPromise === 'number' ? this.fetchRevision( newIdOrPromise, newPageName, null, parseDocumentModulePromise ) : newIdOrPromise;
 
 			return $.when( oldRevPromise, newRevPromise, parseDocumentModulePromise ).then( function ( oldDoc, newDoc ) {
 				// TODO: Differ expects newDoc to be derived from oldDoc and contain all its store data.

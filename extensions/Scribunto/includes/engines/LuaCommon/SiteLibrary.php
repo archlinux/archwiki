@@ -23,7 +23,8 @@ class Scribunto_LuaSiteLibrary extends Scribunto_LuaLibraryBase {
 			'interwikiMap' => [ $this, 'interwikiMap' ],
 		];
 		$parser = $this->getParser();
-		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$services = MediaWikiServices::getInstance();
+		$contLang = $services->getContentLanguage();
 		$info = [
 			'siteName' => $GLOBALS['wgSitename'],
 			'server' => $GLOBALS['wgServer'],
@@ -37,27 +38,28 @@ class Scribunto_LuaSiteLibrary extends Scribunto_LuaLibraryBase {
 		if ( !self::$namespacesCache || self::$namespacesCacheLang !== $contLang->getCode() ) {
 			$namespaces = [];
 			$namespacesByName = [];
+			$namespaceInfo = $services->getNamespaceInfo();
 			foreach ( $contLang->getFormattedNamespaces() as $ns => $title ) {
-				$canonical = MWNamespace::getCanonicalName( $ns );
+				$canonical = $namespaceInfo->getCanonicalName( $ns );
 				$namespaces[$ns] = [
 					'id' => $ns,
 					'name' => $title,
 					'canonicalName' => strtr( $canonical, '_', ' ' ),
-					'hasSubpages' => MWNamespace::hasSubpages( $ns ),
-					'hasGenderDistinction' => MWNamespace::hasGenderDistinction( $ns ),
-					'isCapitalized' => MWNamespace::isCapitalized( $ns ),
-					'isContent' => MWNamespace::isContent( $ns ),
-					'isIncludable' => !MWNamespace::isNonincludable( $ns ),
-					'isMovable' => MWNamespace::isMovable( $ns ),
-					'isSubject' => MWNamespace::isSubject( $ns ),
-					'isTalk' => MWNamespace::isTalk( $ns ),
-					'defaultContentModel' => MWNamespace::getNamespaceContentModel( $ns ),
+					'hasSubpages' => $namespaceInfo->hasSubpages( $ns ),
+					'hasGenderDistinction' => $namespaceInfo->hasGenderDistinction( $ns ),
+					'isCapitalized' => $namespaceInfo->isCapitalized( $ns ),
+					'isContent' => $namespaceInfo->isContent( $ns ),
+					'isIncludable' => !$namespaceInfo->isNonincludable( $ns ),
+					'isMovable' => $namespaceInfo->isMovable( $ns ),
+					'isSubject' => $namespaceInfo->isSubject( $ns ),
+					'isTalk' => $namespaceInfo->isTalk( $ns ),
+					'defaultContentModel' => $namespaceInfo->getNamespaceContentModel( $ns ),
 					'aliases' => [],
 				];
 				if ( $ns >= NS_MAIN ) {
-					$namespaces[$ns]['subject'] = MWNamespace::getSubject( $ns );
-					$namespaces[$ns]['talk'] = MWNamespace::getTalk( $ns );
-					$namespaces[$ns]['associated'] = MWNamespace::getAssociated( $ns );
+					$namespaces[$ns]['subject'] = $namespaceInfo->getSubject( $ns );
+					$namespaces[$ns]['talk'] = $namespaceInfo->getTalk( $ns );
+					$namespaces[$ns]['associated'] = $namespaceInfo->getAssociated( $ns );
 				} else {
 					$namespaces[$ns]['subject'] = $ns;
 				}

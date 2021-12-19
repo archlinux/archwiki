@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fanjiayi"
+			"MinecraftAustralia"
 		]
 	},
 	"vector-action-delete": "Tamate",
 	"vector-action-move": "Une",
 	"vector-action-protect": "Puipui",
+	"vector-view-create": "Tufugatia",
 	"vector-view-edit": "Fakahakohako"
 }

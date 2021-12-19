@@ -233,12 +233,12 @@ $specialPageAliases['sq'] = [
 	'ReplaceText' => [ 'ZëvendësoTekstin' ],
 ];
 
-/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+/** Serbian (Cyrillic script) (српски (ћирилица)) */
 $specialPageAliases['sr-ec'] = [
 	'ReplaceText' => [ 'ЗамениТекст', 'Замени_текст' ],
 ];
 
-/** Serbian (Latin script) (srpski (latinica)‎) */
+/** Serbian (Latin script) (srpski (latinica)) */
 $specialPageAliases['sr-el'] = [
 	'ReplaceText' => [ 'ZameniTekst', 'Zameni_tekst' ],
 ];
@@ -283,12 +283,12 @@ $specialPageAliases['zh'] = [
 	'ReplaceText' => [ '替换文本', '替換文本', '取代文字' ],
 ];
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'ReplaceText' => [ '替换文本' ],
 ];
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）) */
 $specialPageAliases['zh-hant'] = [
 	'ReplaceText' => [ '替換文字' ],
 ];

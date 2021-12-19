@@ -65,7 +65,7 @@ LanguageSearchWidget.prototype.onQueryChange = function () {
 /**
  * Set available languages to show
  *
- * @param {string[]} availableLanguages Available language codes to show, all if undefined
+ * @param {string[]} [availableLanguages] Available language codes to show, all if undefined
  */
 LanguageSearchWidget.prototype.setAvailableLanguages = function ( availableLanguages ) {
 	var i, iLen, languageResult, data;

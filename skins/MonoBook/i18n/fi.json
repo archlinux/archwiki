@@ -5,7 +5,8 @@
 			"Crt",
 			"Jack Phoenix",
 			"McSalama",
-			"Nike"
+			"Nike",
+			"MITO"
 		]
 	},
 	"skinname-monobook": "Monobook",
@@ -17,8 +18,8 @@
 	"monobook-jumptonavigation": "Siirry navigaatioon",
 	"monobook-jumptosearch": "Siirry hakuun",
 	"monobook-more-actions": "Lisää",
+	"cactions-mobile": "Sivun toiminnot",
 	"monobook-cactions-label": "Sivun toiminnot",
 	"monobook-notifications-link": "Ilmoitukset ($1)",
-	"monobook-notifications-link-none": "Ilmoitukset",
-	"monobook-responsive-label": "Ota käyttöön responsiivinen MonoBook"
+	"monobook-notifications-link-none": "Ilmoitukset"
 }

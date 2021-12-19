@@ -6,16 +6,23 @@
  */
 
 /**
- * MediaWiki template model.
+ * Represents a template invocation that's part of a (possibly unbalanced) sequence of template
+ * invocations and raw wikitext snippets. Meant to be an item in a {@see ve.dm.MWTransclusionModel}.
+ * Holds a back-reference to its parent.
+ *
+ * Holds a reference to the specification of the template, i.e. how the template is documented via
+ * TemplateData. The actual invocation might be entirely different, missing parameters as well as
+ * containing undocumented ones.
  *
  * @class
  * @extends ve.dm.MWTransclusionPartModel
  *
  * @constructor
- * @param {ve.dm.MWTransclusionModel} transclusion Transclusion
+ * @param {ve.dm.MWTransclusionModel} transclusion
  * @param {Object} target Template target
- * @param {string} target.wt Original wikitext of target
- * @param {string} [target.href] Hypertext reference to target
+ * @param {string} target.wt Template name as originally used in the wikitext, including optional
+ *  whitespace
+ * @param {string} [target.href] Hypertext reference to target, e.g. "./Template:Example"
  */
 ve.dm.MWTemplateModel = function VeDmMWTemplateModel( transclusion, target ) {
 	// Parent constructor
@@ -26,7 +33,7 @@ ve.dm.MWTemplateModel = function VeDmMWTemplateModel( transclusion, target ) {
 
 	// TODO: Either here or in uses of this constructor we need to validate the title
 	this.title = target.href ? mw.libs.ve.normalizeParsoidResourceName( target.href ) : null;
-	this.sequence = null;
+	this.orderedParameterNames = null;
 	this.params = {};
 	this.spec = new ve.dm.MWTemplateSpecModel( this );
 	this.originalData = null;
@@ -39,13 +46,24 @@ OO.inheritClass( ve.dm.MWTemplateModel, ve.dm.MWTransclusionPartModel );
 /* Events */
 
 /**
+ * Emitted when a new parameter was added to the template.
+ *
  * @event add
  * @param {ve.dm.MWParameterModel} param Added param
  */
 
 /**
+ * Emitted when a parameter was removed from the template.
+ *
  * @event remove
  * @param {ve.dm.MWParameterModel} param Removed param
+ */
+
+/**
+ * Emitted when anything changed, e.g. a parameter was added or removed, or a parameter's value
+ * edited.
+ *
+ * @event change
  */
 
 /* Static Methods */
@@ -57,13 +75,13 @@ OO.inheritClass( ve.dm.MWTemplateModel, ve.dm.MWTransclusionPartModel );
  *
  * @param {ve.dm.MWTransclusionModel} transclusion Transclusion template is in
  * @param {Object} data Template data
+ * @param {Object.<string,{wt:string}>} data.params
  * @return {ve.dm.MWTemplateModel} New template model
  */
 ve.dm.MWTemplateModel.newFromData = function ( transclusion, data ) {
-	var key,
-		template = new ve.dm.MWTemplateModel( transclusion, data.target );
+	var template = new ve.dm.MWTemplateModel( transclusion, data.target );
 
-	for ( key in data.params ) {
+	for ( var key in data.params ) {
 		template.addParameter(
 			new ve.dm.MWParameterModel( template, key, data.params[ key ].wt )
 		);
@@ -85,7 +103,7 @@ ve.dm.MWTemplateModel.newFromData = function ( transclusion, data ) {
  * @return {ve.dm.MWTemplateModel|null} New template model
  */
 ve.dm.MWTemplateModel.newFromName = function ( transclusion, name ) {
-	var href, title,
+	var title,
 		templateNs = mw.config.get( 'wgNamespaceIds' ).template;
 	if ( name instanceof mw.Title ) {
 		title = name;
@@ -94,7 +112,7 @@ ve.dm.MWTemplateModel.newFromName = function ( transclusion, name ) {
 		title = mw.Title.newFromText( name, templateNs );
 	}
 	if ( title !== null ) {
-		href = title.getPrefixedText();
+		var href = title.getPrefixedText();
 		return new ve.dm.MWTemplateModel( transclusion, { href: href, wt: name } );
 	}
 
@@ -104,8 +122,6 @@ ve.dm.MWTemplateModel.newFromName = function ( transclusion, name ) {
 /* Methods */
 
 /**
- * Get template target.
- *
  * @return {Object} Template target
  */
 ve.dm.MWTemplateModel.prototype.getTarget = function () {
@@ -113,17 +129,14 @@ ve.dm.MWTemplateModel.prototype.getTarget = function () {
 };
 
 /**
- * Get template title.
- *
- * @return {string|null} Template title, if available
+ * @return {string|null} Prefixed template title including the "Template:" namespace, if available.
+ *  Use {@see ve.dm.MWTemplateSpecModel.getLabel} for a human-readable label without the namespace.
  */
 ve.dm.MWTemplateModel.prototype.getTitle = function () {
 	return this.title;
 };
 
 /**
- * Get template specification.
- *
  * @return {ve.dm.MWTemplateSpecModel} Template specification
  */
 ve.dm.MWTemplateModel.prototype.getSpec = function () {
@@ -131,122 +144,114 @@ ve.dm.MWTemplateModel.prototype.getSpec = function () {
 };
 
 /**
- * Get all params.
+ * Get all parameters that are currently present in this template invocation in the order as they
+ * originally appear in the wikitext. This is critical for {@see serialize}. Might contain
+ * placeholders with the parameter name "".
  *
- * @return {Object.<string,ve.dm.MWParameterModel>} Parameters keyed by name
+ * @return {Object.<string,ve.dm.MWParameterModel>} Parameters keyed by name or alias
  */
 ve.dm.MWTemplateModel.prototype.getParameters = function () {
 	return this.params;
 };
 
 /**
- * Get a parameter.
- *
- * @param {string} name Parameter name
- * @return {ve.dm.MWParameterModel} Parameter
+ * @param {string} name Parameter name or alias as originally used in the wikitext
+ * @return {ve.dm.MWParameterModel|undefined}
  */
 ve.dm.MWTemplateModel.prototype.getParameter = function ( name ) {
 	return this.params[ name ];
 };
 
 /**
- * Check if a parameter exists.
+ * Check if a parameter with this name or one of its aliases is currently part of this template.
  *
- * @param {string} name Parameter name
- * @return {boolean} Parameter exists
+ * @param {string} name Parameter name or alias
+ * @return {boolean} Parameter is in the template
  */
 ve.dm.MWTemplateModel.prototype.hasParameter = function ( name ) {
-	var i, len, primaryName, names;
-
-	// Check if name (which may be an alias) is present in the template
-	if ( this.params[ name ] ) {
-		return true;
-	}
-
-	// Check if the name is known at all
-	if ( this.spec.isParameterKnown( name ) ) {
-		primaryName = this.spec.getParameterName( name );
-		// Check for primary name (may be the same as name)
-		if ( this.params[ primaryName ] ) {
-			return true;
-		}
-		// Check for other aliases (may include name)
-		names = this.spec.getParameterAliases( primaryName );
-		for ( i = 0, len = names.length; i < len; i++ ) {
-			if ( this.params[ names[ i ] ] ) {
-				return true;
-			}
-		}
-	}
-
-	return false;
+	return this.getOriginalParameterName( name ) in this.params;
 };
 
 /**
- * Get ordered list of parameter names.
- *
- * Numeric names, whether strings or real numbers, are placed at the beginning, followed by
- * alphabetically sorted names.
- *
- * @return {string[]} List of parameter names
+ * @param {string} name Parameter name or alias
+ * @return {string} Parameter name or alias as originally used in the wikitext
  */
-ve.dm.MWTemplateModel.prototype.getParameterNames = function () {
-	var i, len, index, paramOrder, paramNames;
-
-	if ( !this.sequence ) {
-		paramOrder = this.spec.getParameterOrder();
-		paramNames = Object.keys( this.params );
-
-		this.sequence = [];
-		// Known parameters first
-		for ( i = 0, len = paramOrder.length; i < len; i++ ) {
-			index = paramNames.indexOf( paramOrder[ i ] );
-			if ( index !== -1 ) {
-				this.sequence.push( paramOrder[ i ] );
-				paramNames.splice( index, 1 );
-			}
-		}
-		// Unknown parameters in alpha-numeric order second, empty string at the very end
-		paramNames.sort( function ( a, b ) {
-			var aIsNaN = isNaN( a ),
-				bIsNaN = isNaN( b );
-
-			if ( a === '' ) {
-				return 1;
-			}
-			if ( b === '' ) {
-				return -1;
-			}
-			if ( aIsNaN && bIsNaN ) {
-				// Two strings
-				return a < b ? -1 : a === b ? 0 : 1;
-			}
-			if ( aIsNaN ) {
-				// A is a string
-				return 1;
-			}
-			if ( bIsNaN ) {
-				// B is a string
-				return -1;
-			}
-			// Two numbers
-			return a - b;
-		} );
-		ve.batchPush( this.sequence, paramNames );
+ve.dm.MWTemplateModel.prototype.getOriginalParameterName = function ( name ) {
+	if ( name in this.params ) {
+		return name;
 	}
-	return this.sequence;
+	var aliases = this.spec.getParameterAliases( name );
+	// FIXME: Should use .filter() when we dropped IE11 support
+	for ( var i = 0; i < aliases.length; i++ ) {
+		if ( aliases[ i ] in this.params ) {
+			return aliases[ i ];
+		}
+	}
+	return this.spec.getPrimaryParameterName( name );
+};
+
+/**
+ * Get all current and potential parameter names in a canonical order that's always the same,
+ * unrelated to how the parameters appear in the wikitext. Parameter names and aliases documented
+ * via TemplateData are first, in their documented order. Undocumented parameters are sorted with
+ * numeric names first, followed by alphabetically sorted names. The unnamed placeholder parameter
+ * is last.
+ *
+ * @return {string[]}
+ */
+ve.dm.MWTemplateModel.prototype.getAllParametersOrdered = function () {
+	var spec = this.spec,
+		parameters = spec.getCanonicalParameterOrder();
+
+	// Restore aliases originally used in the wikitext. The spec doesn't know which alias was used.
+	for ( var name in this.params ) {
+		if ( spec.isParameterAlias( name ) ) {
+			parameters.splice(
+				// This can never fail because only documented parameters can have aliases
+				parameters.indexOf( spec.getPrimaryParameterName( name ) ),
+				1,
+				name
+			);
+		}
+	}
+
+	// Restore the placeholder, if present. The spec doesn't keep track of placeholders.
+	if ( '' in this.params ) {
+		parameters.push( '' );
+	}
+
+	// TODO: cache results
+	return parameters;
+};
+
+/**
+ * Returns the same parameters as {@see getParameters}, i.e. parameters that are currently present
+ * in this template invocation, but sorted in a canonical order for presentational purposes.
+ *
+ * Don't use this if you need the parameters as they originally appear in the wikitext, or if you
+ * don't care about an order. Use {@see getParameters} together with `Object.keys()` instead.
+ *
+ * @return {string[]} Sorted list of parameter names
+ */
+ve.dm.MWTemplateModel.prototype.getOrderedParameterNames = function () {
+	if ( !this.orderedParameterNames ) {
+		var params = this.params;
+		this.orderedParameterNames = this.getAllParametersOrdered().filter( function ( name ) {
+			return name in params;
+		} );
+	}
+	return this.orderedParameterNames;
 };
 
 /**
  * Get parameter from its ID.
  *
+ * @private
  * @param {string} id Parameter ID
  * @return {ve.dm.MWParameterModel|null} Parameter with matching ID, null if no parameters match
  */
 ve.dm.MWTemplateModel.prototype.getParameterFromId = function ( id ) {
-	var name;
-
-	for ( name in this.params ) {
+	for ( var name in this.params ) {
 		if ( this.params[ name ].getId() === id ) {
 			return this.params[ name ];
 		}
@@ -260,26 +265,35 @@ ve.dm.MWTemplateModel.prototype.getParameterFromId = function ( id ) {
  *
  * @param {ve.dm.MWParameterModel} param Parameter to add
  * @fires add
+ * @fires change
  */
 ve.dm.MWTemplateModel.prototype.addParameter = function ( param ) {
 	var name = param.getName();
-	this.sequence = null;
+	if ( name in this.params ) {
+		return;
+	}
+
+	this.orderedParameterNames = null;
 	this.params[ name ] = param;
 	this.spec.fillFromTemplate();
+	// This forwards change events from the nested ve.dm.MWParameterModel upwards. The array
+	// syntax is a way to call `this.emit( 'change' )`.
 	param.connect( this, { change: [ 'emit', 'change' ] } );
 	this.emit( 'add', param );
 	this.emit( 'change' );
 };
 
 /**
- * Remove parameter from template.
+ * Remove a parameter from this MWTemplateModel, and emit events which result in removing the
+ * parameter from the UI. Note this does *not* remove the parameter from the linked specification.
  *
- * @param {ve.dm.MWParameterModel} param Parameter to remove
+ * @param {ve.dm.MWParameterModel} [param]
  * @fires remove
+ * @fires change
  */
 ve.dm.MWTemplateModel.prototype.removeParameter = function ( param ) {
 	if ( param ) {
-		this.sequence = null;
+		this.orderedParameterNames = null;
 		delete this.params[ param.getName() ];
 		param.disconnect( this );
 		this.emit( 'remove', param );
@@ -291,24 +305,19 @@ ve.dm.MWTemplateModel.prototype.removeParameter = function ( param ) {
  * @inheritdoc
  */
 ve.dm.MWTemplateModel.prototype.addPromptedParameters = function () {
-	var i, len, name, j, aliases, aliasLen, foundAlias,
-		addedCount = 0,
-		spec = this.getSpec(),
-		names = spec.getParameterNames();
+	var addedCount = 0,
+		params = this.params,
+		spec = this.spec,
+		names = spec.getKnownParameterNames();
 
-	for ( i = 0, len = names.length; i < len; i++ ) {
-		name = names[ i ];
-		aliases = spec.getParameterAliases( name );
-		foundAlias = false;
-		for ( j = 0, aliasLen = aliases.length; j < aliasLen; j++ ) {
-			if ( Object.prototype.hasOwnProperty.call( this.params, aliases[ j ] ) ) {
-				foundAlias = true;
-				break;
-			}
-		}
+	for ( var i = 0; i < names.length; i++ ) {
+		var name = names[ i ];
+		var foundAlias = spec.getParameterAliases( name ).some( function ( alias ) {
+			return alias in params;
+		} );
 		if (
 			!foundAlias &&
-			!this.params[ name ] &&
+			!params[ name ] &&
 			(
 				spec.isParameterRequired( name ) ||
 				spec.isParameterSuggested( name )
@@ -325,7 +334,9 @@ ve.dm.MWTemplateModel.prototype.addPromptedParameters = function () {
 /**
  * Set original data, to be used as a base for serialization.
  *
+ * @private
  * @param {Object} data Original data
+ * @param {Object.<string,Object>} [data.params]
  */
 ve.dm.MWTemplateModel.prototype.setOriginalData = function ( data ) {
 	this.originalData = data;
@@ -335,14 +346,13 @@ ve.dm.MWTemplateModel.prototype.setOriginalData = function ( data ) {
  * @inheritdoc
  */
 ve.dm.MWTemplateModel.prototype.serialize = function () {
-	var name, origName,
-		origData = this.originalData || {},
+	var origData = this.originalData || {},
 		origParams = origData.params || {},
-		template = { target: this.getTarget(), params: {} },
-		spec = this.getSpec(),
-		params = this.getParameters();
+		template = { target: this.target, params: {} },
+		spec = this.spec,
+		params = this.params;
 
-	for ( name in params ) {
+	for ( var name in params ) {
 		if ( name === '' ) {
 			continue;
 		}
@@ -353,12 +363,12 @@ ve.dm.MWTemplateModel.prototype.serialize = function () {
 			// …unless they were present before the edit
 			!Object.prototype.hasOwnProperty.call( origParams, name ) &&
 			// …unless they are required (T276989)
-			!( spec.isParameterKnown( name ) && spec.isParameterRequired( name ) )
+			!spec.isParameterRequired( name )
 		) {
 			continue;
 		}
 
-		origName = params[ name ].getOriginalName();
+		var origName = params[ name ].getOriginalName();
 		template.params[ origName ] = ve.extendObject(
 			{},
 			origParams[ origName ],
@@ -376,18 +386,21 @@ ve.dm.MWTemplateModel.prototype.serialize = function () {
 /**
  * @inheritdoc
  */
-ve.dm.MWTemplateModel.prototype.getWikitext = function () {
-	var param,
-		wikitext = this.getTarget().wt,
-		params = this.getParameters();
+ve.dm.MWTemplateModel.prototype.containsValuableData = function () {
+	var params = this.params;
 
-	for ( param in params ) {
-		if ( param === '' ) {
-			continue;
+	return Object.keys( params ).some( function ( name ) {
+		// Skip unnamed placeholders
+		if ( !name ) {
+			return false;
 		}
-		wikitext += '|' + param + '=' +
-			ve.dm.MWTransclusionNode.static.escapeParameter( params[ param ].getValue() );
-	}
 
-	return '{{' + wikitext + '}}';
+		var param = params[ name ],
+			value = param.getValue();
+		return value &&
+			// This will automatically be restored, see {@see ve.dm.MWParameterModel.getValue}
+			value !== param.getAutoValue() &&
+			// While this isn't always meaningless, it typically is, and it's easy to restore
+			value !== param.getDefaultValue();
+	} );
 };

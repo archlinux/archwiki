@@ -3,11 +3,11 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
-use DOMElement;
-use DOMNode;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\DiffUtils;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
-use Wikimedia\Parsoid\Html2Wt\WTSUtils;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 
@@ -19,8 +19,8 @@ class TDHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function handle(
-		DOMElement $node, SerializerState $state, bool $wrapperUnmodified = false
-	): ?DOMNode {
+		Element $node, SerializerState $state, bool $wrapperUnmodified = false
+	): ?Node {
 		$dp = DOMDataUtils::getDataParsoid( $node );
 		$usableDP = $this->stxInfoValidForTableCell( $state, $node );
 		$attrSepSrc = $usableDP ? ( $dp->attrSepSrc ?? null ) : null;
@@ -45,14 +45,14 @@ class TDHandler extends DOMHandler {
 		);
 		$inWideTD = (bool)preg_match( '/\|\||^{{!}}{{!}}/', $tdTag );
 		$leadingSpace = $this->getLeadingSpace( $state, $node, '' );
-		WTSUtils::emitStartTag( $tdTag . $leadingSpace, $node, $state );
-		$tdHandler = function ( $state, $text, $opts ) use ( $node, $inWideTD ) {
+		$state->emitChunk( $tdTag . $leadingSpace, $node );
+		$tdHandler = static function ( $state, $text, $opts ) use ( $node, $inWideTD ) {
 			return $state->serializer->wteHandlers->tdHandler( $node, $inWideTD, $state, $text, $opts );
 		};
 
 		$nextTd = DOMUtils::nextNonSepSibling( $node );
 		$nextUsesRowSyntax = DOMUtils::isElt( $nextTd )
-			&& $nextTd instanceof DOMElement // for static analyzers
+			&& $nextTd instanceof Element // for static analyzers
 			&& ( DOMDataUtils::getDataParsoid( $nextTd )->stx ?? null ) === 'row';
 
 		// For empty cells, emit a single whitespace to make wikitext
@@ -64,7 +64,6 @@ class TDHandler extends DOMHandler {
 
 		$state->serializeChildren( $node, $tdHandler );
 
-		// PORT-FIXME does regexp whitespace semantics change matter?
 		if ( !preg_match( '/\s$/D', $state->currLine->text ) ) {
 			$trailingSpace = null;
 			if ( $nextUsesRowSyntax ) {
@@ -86,8 +85,8 @@ class TDHandler extends DOMHandler {
 	}
 
 	/** @inheritDoc */
-	public function before( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
-		if ( $otherNode->nodeName === 'td'
+	public function before( Element $node, Node $otherNode, SerializerState $state ): array {
+		if ( DOMCompat::nodeName( $otherNode ) === 'td'
 			&& ( DOMDataUtils::getDataParsoid( $node )->stx ?? null ) === 'row'
 		) {
 			// force single line
@@ -98,7 +97,7 @@ class TDHandler extends DOMHandler {
 	}
 
 	/** @inheritDoc */
-	public function after( DOMElement $node, DOMNode $otherNode, SerializerState $state ): array {
+	public function after( Element $node, Node $otherNode, SerializerState $state ): array {
 		return [ 'min' => 0, 'max' => $this->maxNLsInTable( $node, $otherNode ) ];
 	}
 

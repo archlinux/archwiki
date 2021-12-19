@@ -12,7 +12,7 @@ export { vectorMenuTemplate };
  */
 export const moreData = {
 	'is-dropdown': true,
-	class: 'vector-menu-dropdown',
+	class: 'vector-menu-dropdown vector-menu-dropdown-noicon',
 	label: 'More',
 	id: 'p-cactions',
 	'html-user-language-attributes': htmlUserLanguageAttributes,
@@ -35,7 +35,7 @@ export const moreData = {
  */
 export const variantsData = {
 	'is-dropdown': true,
-	class: 'vector-menu-dropdown',
+	class: 'vector-menu-dropdown vector-menu-dropdown-noicon',
 	label: '新加坡简体',
 	id: 'p-variants',
 	'html-user-language-attributes': htmlUserLanguageAttributes,

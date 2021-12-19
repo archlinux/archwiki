@@ -17,6 +17,6 @@ interface RenameUserCompleteHook {
 	 * @param string $old The old username
 	 * @param string $new The new username
 	 */
-	public function onRenameUserComplete( int $uid, string $old, string $new ) : void;
+	public function onRenameUserComplete( int $uid, string $old, string $new ): void;
 
 }

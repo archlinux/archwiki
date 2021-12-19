@@ -47,7 +47,10 @@
 	"replacetext_continue": "{{Identical|Continue}}",
 	"replacetext_announce": "Used as a label for a checkbox on [[Special:ReplaceText]]\n\nParameter:\n* $1 - Holds the name of Special:RecentChanges",
 	"replacetext_editsummary": "Used as Edit Summary in [[Special:ReplaceText]]. Parameters:\n* $1 - target string\n* $2 - replacement string",
+	"replacetext_reminder": "Used at the end of success message in [[Special:MovePage]]. Parameters:\n* $1 - link to ReplaceText page",
+	"replacetext_cfg_error": "Title of error page for configuration errors for ReplaceText",
+	"replacetext_no_compress": "Notice shown to administrator of wiki configured with $wgCompressRevisions",
+	"replacetext_no_external_stores": "Notice shown to administrator of wiki configured with $wgExternalStores",
 	"right-replacetext": "{{doc-right|replacetext}}",
-	"action-replacetext": "{{doc-action|replacetext}}",
-	"replacetext_reminder": "Used at the end of success message in [[Special:MovePage]]. Parameters:\n* $1 - link to ReplaceText page"
+	"action-replacetext": "{{doc-action|replacetext}}"
 }

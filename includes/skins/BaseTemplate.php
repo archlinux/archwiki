@@ -22,13 +22,65 @@ use Wikimedia\WrappedString;
 use Wikimedia\WrappedStringList;
 
 /**
- * New base template for a skin's template extended from QuickTemplate
- * this class features helper methods that provide common ways of interacting
- * with the data stored in the QuickTemplate
+ * Extended QuickTemplate with additional MediaWiki-specific helper methods.
+ *
+ * @todo Phase this class out and make it an alias for QuickTemplate. Move methods
+ *  individually as-appropriate either down to QuickTemplate, or (with deprecation)
+ *  up to SkinTemplate.
  *
  * @stable to extend
  */
 abstract class BaseTemplate extends QuickTemplate {
+
+	/**
+	 * @internal for usage by BaseTemplate or SkinTemplate.
+	 * @param Config $config
+	 * @param Skin $skin
+	 * @return string
+	 */
+	public static function getCopyrightIconHTML( Config $config, Skin $skin ): string {
+		$out = '';
+		$footerIcons = $config->get( 'FooterIcons' );
+		$copyright = $footerIcons['copyright']['copyright'] ?? null;
+		// T291325: $wgFooterIcons['copyright']['copyright'] can return an array.
+		if ( $copyright !== null ) {
+			$out = $skin->makeFooterIcon( $copyright );
+		} elseif ( $config->get( 'RightsIcon' ) ) {
+			$icon = htmlspecialchars( $config->get( 'RightsIcon' ) );
+			$url = $config->get( 'RightsUrl' );
+			if ( $url ) {
+				$out .= '<a href="' . htmlspecialchars( $url ) . '">';
+			}
+			$text = htmlspecialchars( $config->get( 'RightsText' ) );
+			$out .= "<img src=\"$icon\" alt=\"$text\" width=\"88\" height=\"31\" />";
+			if ( $url ) {
+				$out .= '</a>';
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * @internal for usage by BaseTemplate or SkinTemplate.
+	 * @param Config $config
+	 * @return string of HTML
+	 */
+	public static function getPoweredByHTML( Config $config ): string {
+		$resourceBasePath = $config->get( 'ResourceBasePath' );
+		$url1 = htmlspecialchars(
+			"$resourceBasePath/resources/assets/poweredby_mediawiki_88x31.png"
+		);
+		$url1_5 = htmlspecialchars(
+			"$resourceBasePath/resources/assets/poweredby_mediawiki_132x47.png"
+		);
+		$url2 = htmlspecialchars(
+			"$resourceBasePath/resources/assets/poweredby_mediawiki_176x62.png"
+		);
+		$text = '<a href="https://www.mediawiki.org/"><img src="' . $url1
+			. '" srcset="' . $url1_5 . ' 1.5x, ' . $url2 . ' 2x" '
+			. 'height="31" width="88" alt="Powered by MediaWiki" loading="lazy" /></a>';
+		return $text;
+	}
 
 	/**
 	 * Get a Message object with its context set
@@ -69,8 +121,6 @@ abstract class BaseTemplate extends QuickTemplate {
 			$toolbox = array_merge( $toolbox, $this->data['sidebar']['TOOLBOX'] ?? [] );
 		}
 
-		// T253416: Deprecated hook
-		$this->getHookRunner()->onBaseTemplateToolbox( $this, $toolbox );
 		return $toolbox;
 	}
 
@@ -157,21 +207,6 @@ abstract class BaseTemplate extends QuickTemplate {
 			}
 		}
 
-		// HACK: Compatibility with extensions still using SkinTemplateToolboxEnd
-		$hookContents = null;
-		if ( isset( $boxes['TOOLBOX'] ) ) {
-			ob_start();
-			// We pass an extra 'true' at the end so extensions using BaseTemplateToolbox
-			// can abort and avoid outputting double toolbox links
-			$this->getHookRunner()->onSkinTemplateToolboxEnd( $this, true );
-			$hookContents = ob_get_contents();
-			ob_end_clean();
-			if ( !trim( $hookContents ) ) {
-				$hookContents = null;
-			}
-		}
-		// END hack
-
 		if ( isset( $options['htmlOnly'] ) && $options['htmlOnly'] === true ) {
 			foreach ( $boxes as $boxName => $box ) {
 				if ( is_array( $box['content'] ) ) {
@@ -179,52 +214,28 @@ abstract class BaseTemplate extends QuickTemplate {
 					foreach ( $box['content'] as $key => $val ) {
 						$content .= "\n	" . $this->getSkin()->makeListItem( $key, $val );
 					}
-					// HACK, shove the toolbox end onto the toolbox if we're rendering itself
-					if ( $hookContents ) {
-						$content .= "\n	$hookContents";
-					}
-					// END hack
 					$content .= "\n</ul>\n";
 					$boxes[$boxName]['content'] = $content;
 				}
 			}
-		} elseif ( $hookContents ) {
-			$boxes['TOOLBOXEND'] = [
-				'id' => 'p-toolboxend',
-				'header' => $boxes['TOOLBOX']['header'],
-				'generated' => false,
-				'content' => "<ul>{$hookContents}</ul>",
-			];
-			// HACK: Make sure that TOOLBOXEND is sorted next to TOOLBOX
-			$boxes2 = [];
-			foreach ( $boxes as $key => $box ) {
-				if ( $key === 'TOOLBOXEND' ) {
-					continue;
-				}
-				$boxes2[$key] = $box;
-				if ( $key === 'TOOLBOX' ) {
-					$boxes2['TOOLBOXEND'] = $boxes['TOOLBOXEND'];
-				}
-			}
-			$boxes = $boxes2;
-			// END hack
 		}
 
 		return $boxes;
 	}
 
 	/**
-	 * @deprecated since 1.35 use Skin::getAfterPortlet directly
+	 * @deprecated since 1.35 (emits deprecation warnings since 1.37), use Skin::getAfterPortlet directly
 	 * @param string $name
 	 */
 	protected function renderAfterPortlet( $name ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		echo $this->getAfterPortlet( $name );
 	}
 
 	/**
 	 * Allows extensions to hook into known portlets and add stuff to them
 	 *
-	 * @deprecated since 1.35 use Skin::getAfterPortlet directly
+	 * @deprecated since 1.35 (emits deprecation warnings since 1.37), use Skin::getAfterPortlet directly
 	 *
 	 * @param string $name
 	 *
@@ -232,6 +243,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * @since 1.29
 	 */
 	protected function getAfterPortlet( $name ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		$html = '';
 		$content = '';
 		$this->getHookRunner()->onBaseTemplateAfterPortlet( $this, $name, $content );
@@ -430,7 +442,7 @@ abstract class BaseTemplate extends QuickTemplate {
 	 * @since 1.25
 	 */
 	public function getIndicators() {
-		$out = "<div class=\"mw-indicators mw-body-content\">\n";
+		$out = "<div class=\"mw-indicators\">\n";
 		foreach ( $this->data['indicators'] as $id => $content ) {
 			$out .= Html::rawElement(
 				'div',

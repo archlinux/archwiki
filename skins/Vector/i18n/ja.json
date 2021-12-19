@@ -6,6 +6,7 @@
 			"Fryed-peach",
 			"Kkairri",
 			"Marine-Blue",
+			"MathXplore",
 			"Omotecho",
 			"Otokoume",
 			"Penn Station",
@@ -14,10 +15,9 @@
 			"Tmv",
 			"Whym",
 			"Yusuke1109",
+			"しぃ",
 			"青子守歌",
-			"MathXplore",
-			"RYOUMA1117",
-			"しぃ"
+			"RYOUMA1117"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -45,5 +45,13 @@
 	"vector-jumptosearch": "検索に移動",
 	"vector-jumptocontent": "コンテンツにスキップ",
 	"vector-more-actions": "その他",
-	"vector-search-loader": "検索候補を読み込んでいます"
+	"vector-search-loader": "検索候補を読み込んでいます",
+	"vector-anon-user-menu-pages": "ログアウトした編集者のページ",
+	"vector-anon-user-menu-pages-learn": "もっと詳しく",
+	"vector-anon-user-menu-pages-label": "編集の詳細",
+	"vector-personal-more-label": "ユーザーリンク",
+	"vector-main-menu-tooltip": "メインメニュー",
+	"tooltip-vector-anon-user-menu-title": "その他の操作",
+	"vector-menu-checkbox-expanded": "拡張",
+	"vector-menu-checkbox-collapsed": "折り畳む"
 }

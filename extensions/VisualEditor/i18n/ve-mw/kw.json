@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"George Animal",
-			"Kw-Moon",
-			"Nrowe",
-			"Purodha",
 			"GwikorFrank",
-			"MinecraftAustralia"
+			"Kw-Moon",
+			"MinecraftAustralia",
+			"Nrowe",
+			"Purodha"
 		]
 	},
 	"tooltip-ca-createsource": "Gwruthyl koden bennfenten an folen ma",
@@ -14,6 +14,7 @@
 	"tooltip-ca-ve-edit": "Golegi an folen ma",
 	"visualeditor-beta-warning": "Mar tewgh erbynn kudynnow teknogel ha hwi ow kolegi, gwrewgh aga derivas.",
 	"visualeditor-browserwarning": "Yth esowgh ow tevnydhya peurel nag yw skoodhys yn sodhogel gans an janjyel welesek.",
+	"visualeditor-ca-createlocaldescriptionsource": "Keworra deskrifans leel",
 	"visualeditor-ca-createsource": "Gwruthyl pennfenten",
 	"visualeditor-ca-editsource": "Pennfenten",
 	"visualeditor-ca-editsource-section": "pennfenten",
@@ -45,7 +46,6 @@
 	"visualeditor-dialog-transclusion-placeholder": "Skantlyn nowyth",
 	"visualeditor-dialog-transclusion-remove-content": "Dilea dalgh",
 	"visualeditor-dialog-transclusion-remove-template": "Dilea skantlyn",
-	"visualeditor-dialog-transclusion-title": "Treuskludyans",
 	"visualeditor-dialogbutton-media-tooltip": "Media",
 	"visualeditor-dialogbutton-meta-tooltip": "Settyansow an folen",
 	"visualeditor-dialogbutton-transclusion-tooltip": "Treuskludyans",

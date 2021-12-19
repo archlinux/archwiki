@@ -110,9 +110,9 @@
 					if ( error ) {
 						OO.ui.alert(
 							$( '<p>' ).append(
-								ve.htmlMsg( 'visualeditor-corrupted-document-error', $( '<pre>' ).text( error.stack ) )
+								ve.htmlMsg( 'visualeditor-rebase-corrupted-document-error', $( '<pre>' ).text( error.stack ) )
 							),
-							{ title: ve.msg( 'visualeditor-corrupted-document-title' ), size: 'large' }
+							{ title: ve.msg( 'visualeditor-rebase-corrupted-document-title' ), size: 'large' }
 						).then( function () {
 							// eslint-disable-next-line no-use-before-define
 							showForm( true );

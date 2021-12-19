@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"McDutchie",
 			"SPQRobin",
-			"Siebrand",
-			"McDutchie"
+			"Siebrand"
 		]
 	},
 	"imagemap_desc": "Maakt aanklikbare imagemaps mogelijk met het label <code>&lt;imagemap&gt;</code>",

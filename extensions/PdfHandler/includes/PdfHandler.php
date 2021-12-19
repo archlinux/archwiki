@@ -9,10 +9,8 @@ use MediaTransformError;
 use MediaTransformOutput;
 use MediaWiki\MediaWikiServices;
 use PoolCounterWorkViaCallback;
-use ResourceLoader;
 use ThumbnailImage;
 use TransformParameterError;
-use Wikimedia\AtEase\AtEase;
 
 /**
  * Copyright © 2007 Martin Seidel (Xarax) <jodeldi@gmx.de>
@@ -37,6 +35,11 @@ use Wikimedia\AtEase\AtEase;
  */
 
 class PdfHandler extends ImageHandler {
+	/**
+	 * Keep in sync with pdfhandler.messages in extension.json
+	 *
+	 * @see getWarningConfig
+	 */
 	private const MESSAGES = [
 		'main' => 'pdf-file-page-warning',
 		'header' => 'pdf-file-page-warning-header',
@@ -50,19 +53,14 @@ class PdfHandler extends ImageHandler {
 	private const LARGE_FILE = 1e7;
 
 	/**
-	 * @return bool
+	 * Key for getHandlerState for value of type PdfImage
 	 */
-	public function isEnabled() {
-		global $wgPdfProcessor, $wgPdfPostProcessor, $wgPdfInfo;
+	private const STATE_PDF_IMAGE = 'pdfImage';
 
-		if ( !isset( $wgPdfProcessor ) || !isset( $wgPdfPostProcessor ) || !isset( $wgPdfInfo ) ) {
-			wfDebug( "PdfHandler is disabled, please set the following\n" );
-			wfDebug( "variables in LocalSettings.php:\n" );
-			wfDebug( "\$wgPdfProcessor, \$wgPdfPostProcessor, \$wgPdfInfo\n" );
-			return false;
-		}
-		return true;
-	}
+	/**
+	 * Key for getHandlerState for dimension info
+	 */
+	private const STATE_DIMENSION_INFO = 'pdfDimensionInfo';
 
 	/**
 	 * @param File $file
@@ -196,7 +194,7 @@ class PdfHandler extends ImageHandler {
 		if ( $image->getSize() >= self::LARGE_FILE ) {
 			$work = new PoolCounterWorkViaCallback( 'GetLocalFileCopy', sha1( $image->getName() ),
 				[
-					'doWork' => function () use ( $image ) {
+					'doWork' => static function () use ( $image ) {
 						return $image->getLocalRefPath();
 					}
 				]
@@ -259,65 +257,32 @@ class PdfHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param File $image
+	 * @param \MediaHandlerState $state
 	 * @param string $path
 	 * @return PdfImage
-	 * @suppress PhanUndeclaredProperty
 	 */
-	private function getPdfImage( $image, $path ) {
-		if ( !$image ) {
+	private function getPdfImage( $state, $path ) {
+		$pdfimg = $state->getHandlerState( self::STATE_PDF_IMAGE );
+		if ( !$pdfimg ) {
 			$pdfimg = new PdfImage( $path );
-		} elseif ( !isset( $image->pdfImage ) ) {
-			$pdfimg = $image->pdfImage = new PdfImage( $path );
-		} else {
-			$pdfimg = $image->pdfImage;
+			$state->setHandlerState( self::STATE_PDF_IMAGE, $pdfimg );
 		}
-
 		return $pdfimg;
 	}
 
 	/**
-	 * @param File $image
-	 * @return bool|array
-	 */
-	private function getMetaArray( $image ) {
-		if ( isset( $image->pdfMetaArray ) ) {
-			return $image->pdfMetaArray;
-		}
-
-		$metadata = $image->getMetadata();
-
-		if ( !$this->isMetadataValid( $image, $metadata ) ) {
-			wfDebug( "Pdf metadata is invalid or missing, should have been fixed in upgradeRow\n" );
-			return false;
-		}
-
-		$work = new PoolCounterWorkViaCallback(
-			'PdfHandler-unserialize-metadata',
-			$image->getName(),
-			[
-				/**
-				 * @suppress PhanUndeclaredProperty
-				 */
-				'doWork' => function () use ( $image, $metadata ) {
-					AtEase::suppressWarnings();
-					$image->pdfMetaArray = unserialize( $metadata );
-					AtEase::restoreWarnings();
-				},
-			]
-		);
-		$work->execute();
-
-		return $image->pdfMetaArray;
-	}
-
-	/**
-	 * @param File $image
+	 * @param \MediaHandlerState $state
 	 * @param string $path
 	 * @return array|bool
 	 */
-	public function getImageSize( $image, $path ) {
-		return $this->getPdfImage( $image, $path )->getImageSize();
+	public function getSizeAndMetadata( $state, $path ) {
+		$metadata = $this->getPdfImage( $state, $path )->retrieveMetaData();
+		$sizes = PdfImage::getPageSize( $metadata, 1 );
+		if ( $sizes ) {
+			return $sizes + [ 'metadata' => $metadata ];
+		} else {
+			return [ 'metadata' => $metadata ];
+		}
 	}
 
 	/**
@@ -338,23 +303,14 @@ class PdfHandler extends ImageHandler {
 	}
 
 	/**
-	 * @param File $image
-	 * @param string $path
-	 * @return string
-	 */
-	public function getMetadata( $image, $path ) {
-		return serialize( $this->getPdfImage( $image, $path )->retrieveMetaData() );
-	}
-
-	/**
-	 * @param File $image
-	 * @param string $metadata
+	 * @param File $file
 	 * @return bool
 	 */
-	public function isMetadataValid( $image, $metadata ) {
-		if ( !$metadata || $metadata === serialize( [] ) ) {
+	public function isFileMetadataValid( $file ) {
+		$data = $file->getMetadataItems( [ 'mergedMetadata', 'pages' ] );
+		if ( !isset( $data['pages'] ) ) {
 			return self::METADATA_BAD;
-		} elseif ( strpos( $metadata, 'mergedMetadata' ) === false ) {
+		} elseif ( !isset( $data['mergedMetadata'] ) ) {
 			return self::METADATA_COMPATIBLE;
 		}
 		return self::METADATA_GOOD;
@@ -366,24 +322,14 @@ class PdfHandler extends ImageHandler {
 	 * @return bool|array
 	 */
 	public function formatMetadata( $image, $context = false ) {
-		$meta = $image->getMetadata();
+		$mergedMetadata = $image->getMetadataItem( 'mergedMetadata' );
 
-		if ( !$meta ) {
-			return false;
-		}
-		AtEase::suppressWarnings();
-		$meta = unserialize( $meta );
-		AtEase::restoreWarnings();
-
-		if ( !isset( $meta['mergedMetadata'] )
-			|| !is_array( $meta['mergedMetadata'] )
-			|| count( $meta['mergedMetadata'] ) < 1
-		) {
+		if ( !is_array( $mergedMetadata ) || !count( $mergedMetadata ) ) {
 			return false;
 		}
 
 		// Inherited from MediaHandler.
-		return $this->formatMetadataHelper( $meta['mergedMetadata'], $context );
+		return $this->formatMetadataHelper( $mergedMetadata, $context );
 	}
 
 	/** @inheritDoc */
@@ -437,29 +383,30 @@ class PdfHandler extends ImageHandler {
 	}
 
 	protected function getDimensionInfo( File $file ) {
-		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		return $cache->getWithSetCallback(
-			$cache->makeKey( 'file-pdf', 'dimensions', $file->getSha1() ),
-			$cache::TTL_INDEFINITE,
-			function () use ( $file ) {
-				$data = $this->getMetaArray( $file );
-				if ( !$data || !isset( $data['Pages'] ) ) {
-					return false;
+		$info = $file->getHandlerState( self::STATE_DIMENSION_INFO );
+		if ( !$info ) {
+			$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+			$info = $cache->getWithSetCallback(
+				$cache->makeKey( 'file-pdf', 'dimensions', $file->getSha1() ),
+				$cache::TTL_INDEFINITE,
+				static function () use ( $file ) {
+					$data = $file->getMetadataItems( PdfImage::ITEMS_FOR_PAGE_SIZE );
+					if ( !$data || !isset( $data['Pages'] ) ) {
+						return false;
+					}
+
+					$dimsByPage = [];
+					$count = intval( $data['Pages'] );
+					for ( $i = 1; $i <= $count; $i++ ) {
+						$dimsByPage[$i] = PdfImage::getPageSize( $data, $i );
+					}
+
+					return [ 'pageCount' => $count, 'dimensionsByPage' => $dimsByPage ];
 				}
-
-				// lower peak RAM
-				unset( $data['text'] );
-
-				$dimsByPage = [];
-				$count = intval( $data['Pages'] );
-				for ( $i = 1; $i <= $count; $i++ ) {
-					$dimsByPage[$i] = PdfImage::getPageSize( $data, $i );
-				}
-
-				return [ 'pageCount' => $count, 'dimensionsByPage' => $dimsByPage ];
-			},
-			[ 'pcTTL' => $cache::TTL_INDEFINITE ]
-		);
+			);
+		}
+		$file->setHandlerState( self::STATE_DIMENSION_INFO, $info );
+		return $info;
 	}
 
 	/**
@@ -468,11 +415,11 @@ class PdfHandler extends ImageHandler {
 	 * @return bool
 	 */
 	public function getPageText( File $image, $page ) {
-		$data = $this->getMetaArray( $image );
-		if ( !$data || !isset( $data['text'] ) || !isset( $data['text'][$page - 1] ) ) {
+		$pageTexts = $image->getMetadataItem( 'text' );
+		if ( !is_array( $pageTexts ) || !isset( $pageTexts[$page - 1] ) ) {
 			return false;
 		}
-		return $data['text'][$page - 1];
+		return $pageTexts[$page - 1];
 	}
 
 	/**
@@ -489,13 +436,7 @@ class PdfHandler extends ImageHandler {
 		];
 	}
 
-	/**
-	 * Register a module with the warning messages in it.
-	 * @param ResourceLoader &$resourceLoader
-	 */
-	public static function registerWarningModule( &$resourceLoader ) {
-		$resourceLoader->register( 'pdfhandler.messages', [
-			'messages' => array_values( self::MESSAGES ),
-		] );
+	public function useSplitMetadata() {
+		return true;
 	}
 }

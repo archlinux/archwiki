@@ -9,18 +9,15 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html;
 
-use DOMDocument;
-use DOMNode;
 use Generator;
-use RemexHtml\Tokenizer\PlainAttributes;
-use RemexHtml\TreeBuilder\Dispatcher;
 use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\Document;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
-use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\NlTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\TagTk;
@@ -34,6 +31,8 @@ use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\PrepareDOM;
+use Wikimedia\RemexHtml\Tokenizer\PlainAttributes;
+use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
 
 class HTML5TreeBuilder extends PipelineStage {
 	/** @var int */
@@ -45,7 +44,7 @@ class HTML5TreeBuilder extends PipelineStage {
 	/** @var int */
 	private $tableDepth;
 
-	/** @var DOMDocument */
+	/** @var Document */
 	private $doc;
 
 	/** @var Dispatcher */
@@ -134,9 +133,9 @@ class HTML5TreeBuilder extends PipelineStage {
 	}
 
 	/**
-	 * @return DOMNode
+	 * @return Node
 	 */
-	public function finalizeDOM(): DOMNode {
+	public function finalizeDOM(): Node {
 		// Check if the EOFTk actually made it all the way through, and flag the
 		// page where it did not!
 		if ( isset( $this->lastToken ) && !( $this->lastToken instanceof EOFTk ) ) {
@@ -168,7 +167,7 @@ class HTML5TreeBuilder extends PipelineStage {
 		// which must be reinserted, again before storing ...
 		$seenDataIds = [];
 		$t = new DOMTraverser();
-		$t->addHandler( null, function ( ...$args ) use ( &$seenDataIds ) {
+		$t->addHandler( null, static function ( ...$args ) use ( &$seenDataIds ) {
 			return PrepareDOM::handler( $seenDataIds, ...$args );
 		} );
 		$t->traverse( $this->env, $node, [], $this->atTopLevel, null );
@@ -177,24 +176,16 @@ class HTML5TreeBuilder extends PipelineStage {
 	}
 
 	/**
-	 * @param array $maybeAttribs
+	 * @param array $kvArr
 	 * @return array
 	 */
-	private function kvArrToAttr( array $maybeAttribs ): array {
-		return array_reduce( $maybeAttribs, function ( $prev, $next ) {
-			$prev[$next->k] = $next->v;
-			return $prev;
-		}, [] );
-	}
+	private function kvArrToAttr( array $kvArr ): array {
+		$attribs = [];
+		foreach ( $kvArr as $kv ) {
+			$attribs[$kv->k] = $kv->v;
 
-	/**
-	 * @param array $maybeAttribs
-	 * @return array
-	 */
-	private function kvArrToFoster( array $maybeAttribs ): array {
-		return array_map( function ( $attr ) {
-			return [ $attr->k, $attr->v ];
-		}, $maybeAttribs );
+		}
+		return $attribs;
 	}
 
 	/**
@@ -204,19 +195,16 @@ class HTML5TreeBuilder extends PipelineStage {
 	 * @param object $dataAttribs
 	 * @return array
 	 */
-	public function stashDataAttribs( array $attribs, object $dataAttribs ): array {
+	private function stashDataAttribs( array $attribs, object $dataAttribs ): array {
 		$data = [ 'parsoid' => $dataAttribs ];
-		$attribs = array_filter( $attribs, function ( $attr ) use ( &$data ) {
-				if ( $attr->k === 'data-mw' ) {
-					Assert::invariant( !isset( $data['mw'] ), "data-mw already set." );
-					$data['mw'] = json_decode( $attr->v );
-					return false;
-				}
-				return true;
-		} );
+		if ( isset( $attribs['data-mw'] ) ) {
+			Assert::invariant( !isset( $data['mw'] ), "data-mw already set." );
+			$data['mw'] = json_decode( $attribs['data-mw'] );
+			unset( $attribs['data-mw'] );
+		}
 		// Store in the top level doc since we'll be importing the nodes after treebuilding
 		$docId = DOMDataUtils::stashObjectInDoc( $this->env->topLevelDoc, (object)$data );
-		$attribs[] = new KV( DOMDataUtils::DATA_OBJECT_ATTR_NAME, (string)$docId );
+		$attribs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] = (string)$docId;
 		return $attribs;
 	}
 
@@ -228,10 +216,14 @@ class HTML5TreeBuilder extends PipelineStage {
 	 */
 	public function processToken( $token ): void {
 		if ( $this->pipelineId === 0 ) {
-			$this->env->bumpWt2HtmlResourceUse( 'token' );
+			if ( $this->env->bumpWt2HtmlResourceUse( 'token' ) === false ) {
+				// `false` indicates that this bump pushed us over the threshold
+				// We don't want to log every token above that, which would be `null`
+				$this->env->log( 'warn', "wt2html: token limit exceeded" );
+			}
 		}
 
-		$attribs = $token->attribs ?? [];
+		$attribs = isset( $token->attribs ) ? $this->kvArrToAttr( $token->attribs ) : [];
 		$dataAttribs = $token->dataAttribs ?? (object)[ 'tmp' => new stdClass ];
 
 		if ( !isset( $dataAttribs->tmp ) ) {
@@ -249,7 +241,7 @@ class HTML5TreeBuilder extends PipelineStage {
 
 		$attribs = $this->stashDataAttribs( $attribs, $dataAttribs );
 
-		$this->env->log( 'trace/html', $this->pipelineId, function () use ( $token ) {
+		$this->env->log( 'trace/html', $this->pipelineId, static function () use ( $token ) {
 			return PHPUtils::jsonEncode( $token );
 		} );
 
@@ -268,9 +260,9 @@ class HTML5TreeBuilder extends PipelineStage {
 			// text node so that we can detect fostered content that came from
 			// a transclusion.
 			$this->env->log( 'debug/html', $this->pipelineId, 'Inserting shadow transclusion meta' );
-			$this->dispatcher->startTag( 'meta', new PlainAttributes( $this->kvArrToAttr( [
-				new KV( 'typeof', 'mw:TransclusionShadow' )
-			] ) ), true, 0, 0 );
+			$this->dispatcher->startTag( 'meta',
+				new PlainAttributes( [ 'typeof' => 'mw:TransclusionShadow' ] ),
+				true, 0, 0 );
 		}
 
 		if ( is_string( $token ) || $token instanceof NlTk ) {
@@ -294,22 +286,22 @@ class HTML5TreeBuilder extends PipelineStage {
 				// like the navbox
 				if ( !$this->inTransclusion ) {
 					$this->env->log( 'debug/html', $this->pipelineId, 'Inserting foster box meta' );
-					$this->dispatcher->startTag( 'table', new PlainAttributes( $this->kvArrToAttr( [
-						new KV( 'typeof', 'mw:FosterBox' )
-					] ) ), false, 0, 0 );
+					$this->dispatcher->startTag( 'table',
+						new PlainAttributes( [ 'typeof' => 'mw:FosterBox' ] ),
+						false, 0, 0 );
 				}
 			}
 			$this->dispatcher->startTag(
-				$tName, new PlainAttributes( $this->kvArrToAttr( $attribs ) ), false, 0, 0
+				$tName, new PlainAttributes( $attribs ), false, 0, 0
 			);
 			if ( empty( $dataAttribs->autoInsertedStart ) ) {
 				$this->env->log( 'debug/html', $this->pipelineId, 'Inserting shadow meta for', $tName );
 				$attrs = $this->stashDataAttribs( [
-					new KV( 'typeof', 'mw:StartTag' ),
-					new KV( 'data-stag', "{$tName}:{$dataAttribs->tmp->tagId}" )
+					'typeof' => 'mw:StartTag',
+					'data-stag' => "{$tName}:{$dataAttribs->tmp->tagId}"
 				], Utils::clone( $dataAttribs ) );
 				$this->dispatcher->comment(
-					WTUtils::fosterCommentData( 'mw:shadow', $this->kvArrToFoster( $attrs ) ),
+					WTUtils::fosterCommentData( 'mw:shadow', $attrs ),
 					0, 0
 				);
 			}
@@ -334,7 +326,7 @@ class HTML5TreeBuilder extends PipelineStage {
 					'#^mw:Includes/(OnlyInclude|IncludeOnly|NoInclude)(/|$)#'
 				);
 				if ( !$shouldFoster ) {
-					$prop = $token->getAttribute( 'property' ) ?: '';
+					$prop = $token->getAttribute( 'property' ) ?? '';
 					$shouldFoster = preg_match( '/^(mw:PageProp\/[a-zA-Z]*)\b/', $prop );
 				}
 				if ( !$shouldFoster ) {
@@ -347,7 +339,7 @@ class HTML5TreeBuilder extends PipelineStage {
 					$this->dispatcher->comment(
 						WTUtils::fosterCommentData(
 							$token->getAttribute( 'typeof' ) ?? '',
-							$this->kvArrToFoster( $attribs )
+							$attribs
 						), 0, 0
 					);
 					$wasInserted = true;
@@ -356,12 +348,9 @@ class HTML5TreeBuilder extends PipelineStage {
 
 			if ( !$wasInserted ) {
 				$this->dispatcher->startTag(
-					$tName, new PlainAttributes( $this->kvArrToAttr( $attribs ) ), true, 0, 0
+					$tName, new PlainAttributes( $attribs ), false, 0, 0
 				);
 				if ( !Utils::isVoidElement( $tName ) ) {
-					// PORT-FIXME: startTag has a self-closed flag?
-					// VOID_ELEMENTS are automagically treated as self-closing by
-					// the tree builder
 					$this->dispatcher->endTag( $tName, 0, 0 );
 				}
 			}
@@ -373,15 +362,10 @@ class HTML5TreeBuilder extends PipelineStage {
 			$this->dispatcher->endTag( $tName, 0, 0 );
 			if ( empty( $dataAttribs->autoInsertedEnd ) ) {
 				$this->env->log( 'debug/html', $this->pipelineId, 'Inserting shadow meta for', $tName );
-				$attrs = array_merge(
-					$attribs,
-					[
-						new KV( 'typeof', 'mw:EndTag' ),
-						new KV( 'data-etag', $tName )
-					]
-				);
+				$attribs['typeof'] = 'mw:EndTag';
+				$attribs['data-etag'] = $tName;
 				$this->dispatcher->comment(
-					WTUtils::fosterCommentData( 'mw:shadow', $this->kvArrToFoster( $attrs ) ),
+					WTUtils::fosterCommentData( 'mw:shadow', $attribs ),
 					0, 0
 				);
 			}

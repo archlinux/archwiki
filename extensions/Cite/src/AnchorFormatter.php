@@ -31,7 +31,7 @@ class AnchorFormatter {
 	 *
 	 * @return string A key for use in wikitext
 	 */
-	public function refKey( string $key, string $num = null ) : string {
+	public function refKey( string $key, string $num = null ): string {
 		$prefix = $this->messageLocalizer->msg( 'cite_reference_link_prefix' )->text();
 		$suffix = $this->messageLocalizer->msg( 'cite_reference_link_suffix' )->text();
 		if ( $num !== null ) {
@@ -51,7 +51,7 @@ class AnchorFormatter {
 	 *
 	 * @return string A key for use in wikitext
 	 */
-	public function getReferencesKey( string $key ) : string {
+	public function getReferencesKey( string $key ): string {
 		$prefix = $this->messageLocalizer->msg( 'cite_references_link_prefix' )->text();
 		$suffix = $this->messageLocalizer->msg( 'cite_references_link_suffix' )->text();
 
@@ -65,7 +65,7 @@ class AnchorFormatter {
 	 *
 	 * @return string
 	 */
-	private function normalizeKey( string $key ) : string {
+	private function normalizeKey( string $key ): string {
 		$ret = Sanitizer::escapeIdForAttribute( $key );
 		$ret = preg_replace( '/__+/', '_', $ret );
 		$ret = Sanitizer::safeEncodeAttribute( $ret );

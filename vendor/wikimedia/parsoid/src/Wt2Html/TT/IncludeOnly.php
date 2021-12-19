@@ -15,7 +15,6 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
  */
 class IncludeOnly extends TokenCollector {
 	/**
-	 * IncludeOnly constructor.
 	 * @param TokenTransformManager $manager
 	 * @param array $options options
 	 */
@@ -53,9 +52,9 @@ class IncludeOnly extends TokenCollector {
 
 	/**
 	 * @param array $collection
-	 * @return array
+	 * @return TokenHandlerResult
 	 */
-	protected function transformation( array $collection ): array {
+	protected function transformation( array $collection ): TokenHandlerResult {
 		$start = array_shift( $collection );
 
 		// Handle self-closing tag case specially!
@@ -72,8 +71,7 @@ class IncludeOnly extends TokenCollector {
 				$token->addAttribute( 'data-mw', $datamw );
 			}
 			return ( $this->options['isInclude'] ) ?
-			[ 'tokens' => [] ] :
-			[ 'tokens' => [ $token ] ];
+				new TokenHandlerResult( [] ) : new TokenHandlerResult( [ $token ] );
 		}
 
 		$tokens = [];
@@ -82,7 +80,7 @@ class IncludeOnly extends TokenCollector {
 
 		if ( $this->options['isInclude'] ) {
 			// Just pass through the full collection including delimiters
-			$tokens = array_merge( $tokens, $collection );
+			$tokens = $collection;
 		} elseif ( empty( $this->options['inTemplate'] ) ) {
 			// Content is stripped
 			// Add meta tags for open and close for roundtripping.
@@ -93,7 +91,7 @@ class IncludeOnly extends TokenCollector {
 			// and can be handled similarly by downstream handlers.
 			$name = 'mw:Includes/IncludeOnly';
 			$tokens[] = TokenCollector::buildStrippedMetaToken( $this->manager, $name,
-				$start, ( $eof ) ? null : $end );
+				$start, $eof ? null : $end );
 
 			if ( $start->dataAttribs->src ) {
 				$dataMw = PHPUtils::jsonEncode( [ 'src' => $start->dataAttribs->src ] );
@@ -116,6 +114,6 @@ class IncludeOnly extends TokenCollector {
 			$tokens[] = $end;
 		}
 
-		return [ 'tokens' => $tokens ];
+		return new TokenHandlerResult( $tokens );
 	}
 }

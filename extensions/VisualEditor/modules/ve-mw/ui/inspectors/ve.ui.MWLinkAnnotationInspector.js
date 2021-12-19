@@ -165,7 +165,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.onLabelInputChange = function () {
 /**
  * Handle change events on the internal link widget
  *
- * @param {ve.dm.MWInternalLinkAnnotation} annotation Annotation
+ * @param {ve.dm.MWInternalLinkAnnotation} annotation
  */
 ve.ui.MWLinkAnnotationInspector.prototype.onInternalLinkChange = function () {
 	this.updateActions();
@@ -193,7 +193,7 @@ ve.ui.MWLinkAnnotationInspector.prototype.onInternalLinkSearchResultsChoose = fu
 /**
  * Handle change events on the external link widget
  *
- * @param {ve.dm.MWExternalLinkAnnotation} annotation Annotation
+ * @param {ve.dm.MWExternalLinkAnnotation} annotation
  */
 ve.ui.MWLinkAnnotationInspector.prototype.onExternalLinkChange = function () {
 	this.updateActions();

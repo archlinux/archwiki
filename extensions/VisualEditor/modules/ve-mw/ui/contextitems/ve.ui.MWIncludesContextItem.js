@@ -46,23 +46,25 @@ ve.ui.MWIncludesContextItem.static.modelClasses = [
 /* Methods */
 
 ve.ui.MWIncludesContextItem.prototype.getLabelMessage = function () {
-	var map = {
-		'mw:Includes/NoInclude': mw.message( 'visualeditor-includes-noinclude-start' ).text(),
-		'mw:Includes/NoInclude/End': mw.message( 'visualeditor-includes-noinclude-end' ).text(),
-		'mw:Includes/OnlyInclude': mw.message( 'visualeditor-includes-onlyinclude-start' ).text(),
-		'mw:Includes/OnlyInclude/End': mw.message( 'visualeditor-includes-onlyinclude-end' ).text(),
-		'mw:Includes/IncludeOnly': mw.message( 'visualeditor-includes-includeonly' ).text()
-	};
-	return map[ this.model.getAttribute( 'type' ) ];
+	var key = {
+		'mw:Includes/NoInclude': 'visualeditor-includes-noinclude-start',
+		'mw:Includes/NoInclude/End': 'visualeditor-includes-noinclude-end',
+		'mw:Includes/OnlyInclude': 'visualeditor-includes-onlyinclude-start',
+		'mw:Includes/OnlyInclude/End': 'visualeditor-includes-onlyinclude-end',
+		'mw:Includes/IncludeOnly': 'visualeditor-includes-includeonly'
+	}[ this.model.getAttribute( 'type' ) ];
+	// eslint-disable-next-line mediawiki/msg-doc
+	return key ? mw.message( key ).text() : '';
 };
 
 ve.ui.MWIncludesContextItem.prototype.getDescriptionMessage = function () {
-	var map = {
-		'mw:Includes/NoInclude': mw.message( 'visualeditor-includes-noinclude-description' ).parseDom(),
-		'mw:Includes/OnlyInclude': mw.message( 'visualeditor-includes-onlyinclude-description' ).parseDom(),
-		'mw:Includes/IncludeOnly': mw.message( 'visualeditor-includes-includeonly-description' ).parseDom()
-	};
-	return map[ this.model.getAttribute( 'type' ) ] || '';
+	var key = {
+		'mw:Includes/NoInclude': 'visualeditor-includes-noinclude-description',
+		'mw:Includes/OnlyInclude': 'visualeditor-includes-onlyinclude-description',
+		'mw:Includes/IncludeOnly': 'visualeditor-includes-includeonly-description'
+	}[ this.model.getAttribute( 'type' ) ];
+	// eslint-disable-next-line mediawiki/msg-doc
+	return key ? mw.message( key ).parseDom() : '';
 };
 
 /**

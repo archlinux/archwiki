@@ -1,0 +1,73 @@
+@import '../../common/variables.less';
+@import 'mediawiki.mixins.less';
+@import '../layouts/screen.less';
+@import '../../skins.vector.styles.legacy/components/Sidebar.less';
+@import './checkboxHack.less';
+
+.mw-sidebar-action {
+	// Align with the portal heading/links
+	// `.portal` + `.portal .body`
+	margin: 8px @margin-end-portal 8px @margin-start-portal + @margin-start-portal-body;
+}
+
+.mw-sidebar-action-link {
+	font-size: @font-size-portal-list-item;
+	font-weight: bold;
+}
+
+#mw-sidebar-button {
+	&:before {
+		// Equals `#555`, closest to `#54595d` on background-color `#fff`.
+		opacity: 0.67;
+		/* @embed */
+		background-image: url( images/chevronHorizontal-ltr.svg );
+
+		#mw-sidebar-checkbox:not( :checked ) ~ .mw-header & {
+			/* @embed */
+			background-image: url( images/menu.svg );
+		}
+	}
+
+	&:hover {
+		&:before {
+			opacity: 1;
+		}
+	}
+}
+
+// Use the MediaWiki checkbox hack class from checkboxHack.less. This class exists on the
+// checkbox input for the menu panel.
+#mw-sidebar-checkbox:not( :checked ) ~ .mw-workspace-container .mw-sidebar {
+	// Turn off presentation so that screen readers get the same effect as visually hiding.
+	// Visibility and opacity can be animated. If animation is unnecessary, use `display: none`
+	// instead to avoid hidden rendering.
+	visibility: hidden;
+	opacity: 0;
+	.transform( translateX( -100% ) );
+}
+
+// Disable transitions on page load. No-JS users will unfortunately miss out. A similar pattern is
+// used in Minerva's DropDownList. See enableCssAnimations() in skin.vector.js/index.js for context
+// and additional details on how this class is added.
+.vector-animations-ready {
+	// Enable transition on all widths by default.
+	.mw-sidebar {
+		@timing: @transition-duration-base ease-out;
+		.transition( transform @timing, opacity @timing, visibility @timing; );
+	}
+
+	@media ( max-width: @width-breakpoint-tablet ) {
+		.mw-sidebar {
+			transition: none;
+		}
+	}
+
+	// Enable sidebar button transitions.
+	#mw-sidebar-button {
+		.transition(
+			background-color @transition-duration-base,
+			border-color @transition-duration-base,
+			box-shadow @transition-duration-base;
+		);
+	}
+}

@@ -66,12 +66,13 @@ class MultipartUtils {
 
 		$result = '';
 		if ( $input[0] === '"' ) {
-			for ( $i = 1; $i < strlen( $input ); $i++ ) {
+			$length = strlen( $input );
+			for ( $i = 1; $i < $length; $i++ ) {
 				$char = $input[$i];
-				if ( $char === '\\' && $i < strlen( $input ) - 1 ) {
+				if ( $char === '\\' && $i < $length - 1 ) {
 					$result .= $input[++$i];
 				} elseif ( $char === '"' ) {
-					if ( $i !== strlen( $input ) - 1 ) {
+					if ( $i !== $length - 1 ) {
 						throw new MultipartError( "Invalid quoted string" );
 					}
 					break;
@@ -80,7 +81,8 @@ class MultipartUtils {
 				}
 			}
 		} else {
-			for ( $i = 0; $i < strlen( $input ); $i++ ) {
+			$length = strlen( $input );
+			for ( $i = 0; $i < $length; $i++ ) {
 				$char = $input[$i];
 				$ord = ord( $char );
 				if ( strpos( $tspecials, $char ) !== false

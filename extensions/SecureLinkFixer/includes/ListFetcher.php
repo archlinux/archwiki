@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2018-2019 Kunal Mehta <legoktm@member.fsf.org>
+ * Copyright (C) 2018-2019 Kunal Mehta <legoktm@debian.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class ListFetcher {
 	 *
 	 * @return string[]
 	 */
-	public function getLatestInfo() : array {
+	public function getLatestInfo(): array {
 		// phpcs:ignore Generic.Files.LineLength
 		$feedUrl = 'https://hg.mozilla.org/mozilla-central/atom-log/tip/security/manager/ssl/nsSTSPreloadList.inc';
 		$feed = file_get_contents( $feedUrl );

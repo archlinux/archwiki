@@ -163,7 +163,7 @@ class TimelessTemplate extends BaseTemplate {
 					)
 				) .
 				$this->getClear() .
-				Html::rawElement( 'div', [ 'class' => 'mw-body-content', 'id' => 'bodyContent' ],
+				Html::rawElement( 'div', [ 'id' => 'bodyContent' ],
 					$this->getContentSub() .
 					$this->get( 'bodytext' ) .
 					$this->getClear()
@@ -283,7 +283,16 @@ class TimelessTemplate extends BaseTemplate {
 			$bodyDivOptions['id'] = $options['body-id'];
 		}
 
-		$afterPortlet = $this->getAfterPortlet( $name );
+		$afterPortlet = '';
+		$content = $this->getSkin()->getAfterPortlet( $name );
+		if ( $content !== '' ) {
+			$afterPortlet = Html::rawElement(
+				'div',
+				[ 'class' => [ 'after-portlet', 'after-portlet-' . $name ] ],
+				$content
+			);
+		}
+
 		if ( $name === 'lang' ) {
 			$this->afterLangPortlet = $afterPortlet;
 		}
@@ -1003,7 +1012,10 @@ class TimelessTemplate extends BaseTemplate {
 
 			if ( isset( $allCats['hidden'] ) ) {
 				$hiddenCatClass = [ 'mw-hidden-catlinks' ];
-				if ( $skin->getUser()->getBoolOption( 'showhiddencats' ) ) {
+				if ( MediaWikiServices::getInstance()
+					->getUserOptionsLookup()
+					->getBoolOption( $skin->getUser(), 'showhiddencats' )
+				) {
 					$hiddenCatClass[] = 'mw-hidden-cats-user-shown';
 				} elseif ( $skin->getTitle()->getNamespace() == NS_CATEGORY ) {
 					$hiddenCatClass[] = 'mw-hidden-cats-ns-shown';

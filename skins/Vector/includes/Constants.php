@@ -121,7 +121,30 @@ final class Constants {
 	 */
 	public const REQUIREMENT_LANGUAGE_IN_HEADER = 'LanguageInHeader';
 
+	/**
+	 * Defines whether or not the Language in header A/B test is running. See
+	 * https://phabricator.wikimedia.org/T280825 for additional detail about the test.
+	 *
+	 * Note well that if the associated config value is falsy, then we fall back to choosing the
+	 * language treatment based on the `VectorLanguageInHeader` config variable.
+	 *
+	 * @var string
+	 */
+	public const CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST = 'VectorLanguageInHeaderTreatmentABTest';
+
 	// These are used for query parameters.
+	/**
+	 * If undefined and AB test enabled, user will be bucketed as usual.
+	 *
+	 * If set, overrides the language in header AB test config:
+	 *
+	 * 'languageinheader=0' will show existing treatment.
+	 * 'languageinheader=1' will show new treatment.
+	 *
+	 * @var string
+	 */
+	public const QUERY_PARAM_LANGUAGE_IN_HEADER = 'languageinheader';
+
 	/**
 	 * Override the skin version user preference and site Config. See readme.
 	 * @var string
@@ -142,6 +165,26 @@ final class Constants {
 	 * @var string
 	 */
 	public const REQUIREMENT_USE_WVUI_SEARCH = 'VectorUseWvuiSearch';
+
+	/**
+	 * @var string
+	 */
+	public const QUERY_PARAM_STICKY_HEADER = 'vectorstickyheader';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_STICKY_HEADER = 'VectorStickyHeader';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_STICKY_HEADER = 'StickyHeader';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_STICKY_HEADER = 'StickyHeader';
 
 	/**
 	 * The `mediawiki.searchSuggest` protocol piece of the SearchSatisfaction instrumention reads
@@ -183,6 +226,7 @@ final class Constants {
 	/**
 	 * This class is for namespacing constants only. Forbid construction.
 	 * @throws FatalError
+	 * @return never
 	 */
 	private function __construct() {
 		throw new FatalError( "Cannot construct a utility class." );

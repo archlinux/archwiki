@@ -51,6 +51,11 @@ $namespaceNames['av'] = [
 	NS_GADGET_DEFINITION_TALK => 'Гаджеталъул_баян_чӀезабиялъул_бахӀс',
 ];
 
+$namespaceNames['az'] = [
+	NS_GADGET => 'Qadcet',
+	NS_GADGET_TALK => 'Qadcet müzakirəsi',
+];
+
 $namespaceNames['azb'] = [
 	NS_GADGET => 'آلت',
 	NS_GADGET_TALK => 'آلت_دانیشیغی',
@@ -219,6 +224,20 @@ $namespaceNames['lrc'] = [
 	NS_GADGET_DEFINITION_TALK => 'چأک_چئنە_توضییا_گأجئت',
 ];
 
+$namespaceNames['ms'] = [
+	NS_GADGET => 'Alat',
+	NS_GADGET_TALK => 'Perbincangan_alat',
+	NS_GADGET_DEFINITION => 'Penerangan_alat',
+	NS_GADGET_DEFINITION_TALK => 'Perbincangan_penerangan_alat',
+];
+
+$namespaceNames['ms-arab'] = [
+	NS_GADGET => 'الت',
+	NS_GADGET_TALK => 'ڤربينچڠن_الت',
+	NS_GADGET_DEFINITION => 'ڤنرڠن_الت',
+	NS_GADGET_DEFINITION_TALK => 'ڤربينچڠن_ڤنرڠن_الت',
+];
+
 $namespaceNames['mwl'] = [
 	NS_GADGET => 'Gadget',
 	NS_GADGET_TALK => 'Cumbersa_gadget',
@@ -325,10 +344,10 @@ $namespaceNames['sr-el'] = [
 ];
 
 $namespaceNames['ti'] = [
-	NS_GADGET => 'መሳርሕያ',
-	NS_GADGET_TALK => 'መሳርሕያ_ምይይጥ',
-	NS_GADGET_DEFINITION => 'መሳርሕያ_መብርሂ',
-	NS_GADGET_DEFINITION_TALK => 'መሳርሕያ_መብርሂ_ምይይጥ',
+	NS_GADGET => 'መሳርሒ',
+	NS_GADGET_TALK => 'ምይይጥ_መሳርሒ',
+	NS_GADGET_DEFINITION => 'መብርሂ_መሳርሒ',
+	NS_GADGET_DEFINITION_TALK => 'ምይይጥ_መብርሂ_መሳርሒ',
 ];
 
 $namespaceNames['ur'] = [

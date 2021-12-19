@@ -105,14 +105,13 @@ ve.SelectionState.prototype.equalsSelection = function ( other ) {
  * N.B. Range objects do not show whether the selection is backwards
  *
  * @param {HTMLDocument} doc The owner document of the selection nodes
- * @return {Range|null} Range
+ * @return {Range|null}
  */
 ve.SelectionState.prototype.getNativeRange = function ( doc ) {
-	var range;
 	if ( this.anchorNode === null ) {
 		return null;
 	}
-	range = doc.createRange();
+	var range = doc.createRange();
 	try {
 		if ( this.isBackwards ) {
 			range.setStart( this.focusNode, this.focusOffset );

@@ -107,6 +107,9 @@ class Server {
 		if ( $action === 'healthz' ) {
 			$this->showHealth();
 			return;
+		} elseif ( $action === 'spec' ) {
+			$this->showSpec();
+			return;
 		}
 
 		if ( $this->validateAction( $action ) ) {
@@ -202,7 +205,8 @@ class Server {
 	public function forgetConfig( $name ) {
 		if ( isset( $this->config[$name] ) && is_string( $this->config[$name] ) ) {
 			$conf =& $this->config[$name];
-			for ( $i = 0; $i < strlen( $conf ); $i++ ) {
+			$length = strlen( $conf );
+			for ( $i = 0; $i < $length; $i++ ) {
 				$conf[$i] = ' ';
 			}
 			unset( $conf );
@@ -320,6 +324,14 @@ class Server {
 			'__' => 'Shellbox running',
 			'pid' => getmypid()
 		] );
+	}
+
+	/**
+	 * spec action
+	 */
+	private function showSpec() {
+		header( 'Content-Type: application/json' );
+		echo file_get_contents( __DIR__ . '/spec.json' );
 	}
 
 	/**

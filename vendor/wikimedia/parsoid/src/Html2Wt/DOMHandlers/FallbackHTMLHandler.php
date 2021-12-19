@@ -3,10 +3,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
-use DOMElement;
-use DOMNode;
+use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Html2Wt\SerializerState;
-use Wikimedia\Parsoid\Html2Wt\WTSUtils;
+use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
@@ -22,8 +22,8 @@ class FallbackHTMLHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function handle(
-		DOMElement $node, SerializerState $state, bool $wrapperUnmodified = false
-	): ?DOMNode {
+		Element $node, SerializerState $state, bool $wrapperUnmodified = false
+	): ?Node {
 		$serializer = $state->serializer;
 
 		// Wikitext supports the following list syntax:
@@ -35,15 +35,15 @@ class FallbackHTMLHandler extends DOMHandler {
 		$serializer->handleLIHackIfApplicable( $node );
 
 		$tag = $serializer->serializeHTMLTag( $node, $wrapperUnmodified );
-		WTSUtils::emitStartTag( $tag, $node, $state );
+		$state->emitChunk( $tag, $node );
 
 		if ( $node->hasChildNodes() ) {
 			$inPHPBlock = $state->inPHPBlock;
 			if (
-				TokenUtils::tagOpensBlockScope( $node->nodeName ) ||
+				TokenUtils::tagOpensBlockScope( DOMCompat::nodeName( $node ) ) ||
 				// Blockquote is special in that it doesn't suppress paragraphs
 				// but does suppress pre wrapping
-				$node->nodeName === 'blockquote'
+				DOMCompat::nodeName( $node ) === 'blockquote'
 			) {
 				$state->inPHPBlock = true;
 			}
@@ -52,7 +52,7 @@ class FallbackHTMLHandler extends DOMHandler {
 			// and wrapped in encapsulation.  When that version is no longer
 			// accepted for serialization, we can remove this backwards
 			// compatibility code.
-			if ( $node->nodeName === 'pre' ) {
+			if ( DOMCompat::nodeName( $node ) === 'pre' ) {
 				// Handle html-pres specially
 				// 1. If the node has a leading newline, add one like it (logic copied from VE)
 				// 2. If not, and it has a data-parsoid strippedNL flag, add it back.
@@ -61,8 +61,7 @@ class FallbackHTMLHandler extends DOMHandler {
 				$lostLine = '';
 				$fc = $node->firstChild;
 				if ( $fc && DOMUtils::isText( $fc ) ) {
-					 preg_match( '/^\n/', $fc->nodeValue, $m );
-					$lostLine = $m[0] ?? '';
+					$lostLine = str_starts_with( $fc->nodeValue, "\n" ) ? "\n" : '';
 				}
 
 				if ( !$lostLine && ( DOMDataUtils::getDataParsoid( $node )->strippedNL ?? false ) ) {
@@ -77,7 +76,7 @@ class FallbackHTMLHandler extends DOMHandler {
 		}
 
 		$endTag = $serializer->serializeHTMLEndTag( $node, $wrapperUnmodified );
-		WTSUtils::emitEndTag( $endTag, $node, $state );
+		$state->emitChunk( $endTag, $node );
 		return $node->nextSibling;
 	}
 }
