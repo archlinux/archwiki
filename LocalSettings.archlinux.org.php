@@ -187,6 +187,7 @@ wfLoadSkin( 'MonoBook' );
 wfLoadSkin( 'Vector' );
 $wgVectorResponsive = true;
 $wgVectorDefaultSkinVersion = '2';
+$wgVectorDefaultSkinVersionForNewAccounts = '2';
 wfLoadExtension( 'ArchLinux' );
 $wgDefaultSkin = 'vector';
 $wgDefaultUserOptions['skin'] = 'vector';
