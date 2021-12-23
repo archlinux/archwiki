@@ -66,6 +66,29 @@ body.skin-vector.skin--responsive {
   div#mw-panel {
     background-image: none;
   }
+
+  div.mw-content-container, div.mw-article-toolbar-container {
+    max-width:none;
+  }
+  @media screen and (min-width: @width-breakpoint-desktop-wide) {
+    div.mw-workspace-container, div.mw-content-container, div.mw-page-container {
+      max-width:120em;
+    }
+    div.mw-content-container, div.mw-article-toolbar-container {
+      margin-left:11em;
+    }
+    div.mw-sidebar{
+      transform:translateX(0%) !important;
+      visibility:visible !important;
+      opacity:1 !important;
+    }
+    label#mw-sidebar-button{
+      visibility:hidden;
+    }
+    div#mw-panel {
+      background: none;
+    }
+  }
 }
 
 // Legacy Vector
