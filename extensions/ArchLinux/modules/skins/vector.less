@@ -61,6 +61,11 @@ body.skin-vector.skin--responsive {
   div.mw-page-container {
     background-color: @body-background-color;
   }
+
+  // Disable sidebar's gradient as it conflicts with the background color
+  div#mw-panel {
+    background-image: none;
+  }
 }
 
 // Legacy Vector
