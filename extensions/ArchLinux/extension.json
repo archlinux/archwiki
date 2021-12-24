@@ -30,6 +30,7 @@
         "arch_common.less"
       ],
       "skinStyles": {
+        "timeless": "skins/timeless.less",
         "vector": "skins/vector.less",
         "vector-2022": "skins/vector.less",
         "monobook": "skins/monobook.less"
