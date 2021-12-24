@@ -1,0 +1,95 @@
+@import '../arch_definitions';
+
+/* disable default mediawiki logo  */
+#p-logo {
+    display: none !important;
+}
+
+/* make room for archnavbar and disable fixed searchbar */
+body, #mw-content-container {
+    margin-top: 0;
+    background-color: @body-background-color;
+}
+#mw-content-container {
+    border-bottom: none;
+    padding-top: .5em;
+}
+#mw-header-hack, #mw-header-nav-hack {
+    display: none !important;
+}
+#mw-header-container {
+    position: initial;
+    background: @body-background-color;
+}
+#mw-content {
+    border: @content-border-style;
+}
+#content {
+    border: none;
+    background: transparent;
+}
+
+/* z-order fix */
+#personal-inner {
+    z-index: 200;
+}
+
+/* integrate footer into page background */
+#mw-footer {
+    padding-left: 16em;
+    padding-right: 18em;
+}
+#mw-footer > * {
+    font-size: .8em;
+}
+.mw-footer-container {
+    border-top: none;
+    line-height: 1;
+    color: inherit;
+    box-shadow: none;
+}
+.mw-footer-container a, a {
+    color: @link-color-normal;
+    &:active {
+        color: @link-color-active;
+    }
+    &:hover {
+        color: @link-color-hover;
+    }
+    &:visited {
+        color: @link-color-visited;
+        &:hover {
+            color: @link-color-hover;
+        }
+    }
+}
+
+
+/* fixes for specific widths */
+@media screen and (max-width:1339px) {
+    #mw-footer {
+        padding-right: 1em;
+    }
+}
+@media screen and (min-width:851px) and (max-width:1099px) {
+    #mw-footer {
+        padding-left: 1em;
+    }
+    #mw-content {
+        margin-top: 1.75em;
+    }
+}
+@media screen and (max-width:850px) {
+    #mw-footer {
+        padding-left: 1em;
+    }
+    #p-logo-text, #site-navigation h2, #site-tools h2, #user-tools h2 {
+        top: 75px;
+    }
+    .sidebar-inner, .dropdown {
+        top: 7.75em;
+    }
+    #menus-cover {
+        top: 65px;
+    }
+}
