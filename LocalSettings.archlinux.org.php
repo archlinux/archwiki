@@ -411,6 +411,18 @@ $wgDefaultUserOptions['usecodemirror'] = 1;
 
 
 ##
+## Additional links in the footer
+##
+
+$wgHooks['SkinAddFooterLinks'][] = function ( Skin $skin, string $key, array &$footerlinks ) {
+    if ( $key === 'places' ) {
+        $footerlinks['code-of-conduct'] = $skin->footerLink( 'code-of-conduct-desc', 'code-of-conduct-page' );
+        $footerlinks['terms-of-service'] = $skin->footerLink( 'terms-of-service-desc', 'terms-of-service-page' );
+    };
+};
+
+
+##
 ## Temporary settings for maintenance
 ##
 
