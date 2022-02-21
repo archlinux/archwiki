@@ -409,6 +409,8 @@ wfLoadExtension( 'WikiEditor' );
 wfLoadExtension( 'CodeMirror' );
 $wgDefaultUserOptions['usecodemirror'] = 1;
 
+# Syntax highlighting for JavaScript, CSS and Lua
+wfLoadExtension( 'CodeEditor' );
 
 ##
 ## Temporary settings for maintenance
