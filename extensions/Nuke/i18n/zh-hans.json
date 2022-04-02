@@ -15,7 +15,8 @@
 			"Yfdyh000",
 			"铁桶",
 			"阿pp",
-			"Xiplus"
+			"Xiplus",
+			"Stang"
 		]
 	},
 	"nuke": "大量删除",
@@ -34,6 +35,7 @@
 	"nuke-maxpages": "最大页面数：",
 	"nuke-editby": "由[[Special:Contributions/$1|{{GENDER:$1|$1}}]]创建",
 	"nuke-deleted": "已删除页面'''$1'''。",
+	"nuke-deletion-queued": "页面'''$1'''已进入队列等待删除。",
 	"nuke-not-deleted": "'''无法'''删除[[:$1]]页面。",
 	"nuke-delete-more": "[[Special:Nuke|删除更多页面]]",
 	"nuke-pattern": "页面名称的SQL LIKE模式（例如%）：",

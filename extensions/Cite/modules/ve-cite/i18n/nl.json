@@ -54,6 +54,7 @@
 	"cite-ve-changedesc-reflist-responsive-unset": "Referentielijst gewijzigd naar één kolom",
 	"cite-ve-citationneeded-button": "Citaat toevoegen",
 	"cite-ve-citationneeded-reason": "Opgegevn reden:",
+	"cite-ve-citationneeded-title": "Referentie gewenst",
 	"cite-ve-dialog-reference-editing-reused": "Deze referentie wordt $1 {{PLURAL:$1|keer}} gebruikt op deze pagina.",
 	"cite-ve-dialog-reference-editing-reused-long": "Deze referentie wordt $1 {{PLURAL:$1|keer}} gebruikt op deze pagina. Wijzigingen die u hier maakt, zijn van toepassing op alle plaatsen waar deze referentie gebruikt wordt.",
 	"cite-ve-dialog-reference-options-group-label": "Deze groep gebruiken",

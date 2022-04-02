@@ -30,7 +30,7 @@
 	"replacetext_success": "'$1' essera reimplaciate per '$2' in $3 {{PLURAL:$3|pagina|paginas}}.",
 	"replacetext_noreplacement": "Nulle pagina esseva trovate que contine le catena de characteres '$1'.",
 	"replacetext_nomove": "Nulle pagina esseva trovate con un titulo que contine '$1'.",
-	"replacetext_nosuchcategory": "Nulle categoria existe con le nomine '$1'.",
+	"replacetext_nosuchcategory": "Nulle categoria existe con le nomine \"$1\".",
 	"replacetext_return": "Retornar al formulario.",
 	"replacetext_warning": "'''Attention:''' Il ha $1 {{PLURAL:$1|pagina|paginas}} que contine ja le nove texto, \"$2\".\nSi tu face iste reimplaciamento, tu non potera distinguer inter tu reimplaciamentos e iste texto ja existente.",
 	"replacetext_blankwarning": "Post que le nove texto es vacue, iste operation non essera reversibile; continuar?",

@@ -21,7 +21,7 @@
 	"templatedata-doc-param-name": "פרמטר",
 	"templatedata-doc-param-status": "מצב",
 	"templatedata-doc-param-status-deprecated": "מיושן",
-	"templatedata-doc-param-status-optional": "לא דרוש",
+	"templatedata-doc-param-status-optional": "לא חובה",
 	"templatedata-doc-param-status-required": "דרוש",
 	"templatedata-doc-param-status-suggested": "מוצע",
 	"templatedata-doc-param-suggestedvalues": "ערכים מוצעים",

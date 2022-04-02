@@ -711,13 +711,22 @@ class Title implements LinkTarget, PageIdentity, IDBAccessObject {
 	 * @return Title
 	 */
 	public static function newMainPage( MessageLocalizer $localizer = null ) {
+		static $recursionGuard = false;
+		if ( $recursionGuard ) {
+			// Somehow parsing the message contents has fallen back to the
+			// main page (bare local interwiki), so use the hardcoded
+			// fallback (T297571).
+			return self::newFromText( 'Main Page' );
+		}
 		if ( $localizer ) {
 			$msg = $localizer->msg( 'mainpage' );
 		} else {
 			$msg = wfMessage( 'mainpage' );
 		}
 
+		$recursionGuard = true;
 		$title = self::newFromText( $msg->inContentLanguage()->text() );
+		$recursionGuard = false;
 
 		// Every page renders at least one link to the Main Page (e.g. sidebar).
 		// If the localised value is invalid, don't produce fatal errors that
@@ -4217,7 +4226,7 @@ class Title implements LinkTarget, PageIdentity, IDBAccessObject {
 	 * If this ID is 0, this means the page does not exist.
 	 *
 	 * @see getArticleID()
-	 * @since 1.35
+	 * @since 1.36, since 1.35.6 as an alias of getArticleId()
 	 *
 	 * @param string|false $wikiId The wiki ID expected by the caller.
 	 *

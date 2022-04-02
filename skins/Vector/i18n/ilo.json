@@ -6,6 +6,7 @@
 		]
 	},
 	"vector-skin-desc": "Moderno a bersion ti MonoBook nga addaan iti baro a langa ken adu kadagiti naserbi a panagpasayaat",
+	"vector-language-button-label": "{{PLURAL:$1|$1 a pagsasao|dagiti $1 a pagsasao}}",
 	"vector-action-addsection": "Agnayon iti topiko",
 	"vector-action-delete": "Ikkaten",
 	"vector-action-move": "Iyalis",

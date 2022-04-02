@@ -11,13 +11,14 @@
 			"Stens51",
 			"Warrakkk",
 			"WikiPhoenix",
-			"JRyan"
+			"JRyan",
+			"Sabelöga"
 		]
 	},
 	"multimediaviewer-desc": "Expandera miniatyrer i en större storlek i fulkskärmsgränssnitt.",
 	"multimediaviewer-optin-pref": "Aktivera <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Mediavisaren]</span>",
 	"multimediaviewer-file-page": "Gå till motsvarande filsida",
-	"multimediaviewer-repository-local": "Mer detaljer",
+	"multimediaviewer-repository-local": "Fler detaljer",
 	"multimediaviewer-datetime-created": "Skapades: $1",
 	"multimediaviewer-datetime-uploaded": "Laddades upp: $1",
 	"multimediaviewer-credit-fallback": "Visa information om skapare",
@@ -96,7 +97,7 @@
 	"multimediaviewer-medium-embed-dimensions": "Medium $1",
 	"multimediaviewer-small-embed-dimensions": "Liten $1",
 	"multimediaviewer-description-page-button-text": "Fler detaljer om denna fil",
-	"multimediaviewer-description-page-popup-text": "Mer detaljer om den här filen på $1",
+	"multimediaviewer-description-page-popup-text": "Fler detaljer om den här filen på $1",
 	"multimediaviewer-commons-subtitle": "Det fria mediearkivet",
 	"multimediaviewer-view-expanded": "Öppna i Mediavisare",
 	"multimediaviewer-view-config": "Konfigurering",

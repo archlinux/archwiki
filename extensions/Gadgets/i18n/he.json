@@ -37,5 +37,6 @@
 	"right-gadgets-edit": "עריכת דפי JavaScript ו־CSS של גאדג'טים",
 	"action-gadgets-edit": "לערוך את דף ה־JavaScript או את דף ה־CSS של הגאדג'ט הזה",
 	"right-gadgets-definition-edit": "עריכת הגדרות של גאדג'טים",
-	"action-gadgets-definition-edit": "לערוך את הגדרת הגאדג'ט הזה"
+	"action-gadgets-definition-edit": "לערוך את הגדרת הגאדג'ט הזה",
+	"gadgets-wrong-contentmodel": "דפים במרחב השם {{ns:2302}} צריכים להשתייך למודל התוכן GadgetDefinition."
 }

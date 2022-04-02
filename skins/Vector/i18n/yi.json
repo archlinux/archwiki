@@ -3,12 +3,14 @@
 		"authors": [
 			"Har-wradim",
 			"Joystick",
-			"פוילישער"
+			"פוילישער",
+			"Castillerian"
 		]
 	},
 	"skinname-vector": "וועקטאר",
 	"vector-skin-desc": "מאדערנע ווערסיע פון מאנאבוק מיט פרישן אויסזען און א סך באניצער־פריינדלעכקייט פארבעסערונגען",
 	"vector.css": "/* אלע CSS דא וועל ווערן געלאדן פֿאר באניצער פונעם וועקטאר סקין */",
+	"vector-language-button-label": "{{PLURAL:$1|$1 שפּראַך|$1 שפּראַכן}}",
 	"vector-action-addsection": "צושטעלן טעמע",
 	"vector-action-delete": "אויסמעקן",
 	"vector-action-move": "באַוועגן",

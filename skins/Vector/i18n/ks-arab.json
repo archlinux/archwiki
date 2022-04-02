@@ -6,11 +6,13 @@
 			"Teashae"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1زَبان|$1 زَبانہٕ}}",
+	"vector-action-addsection": "نٔو موضوٗع",
 	"vector-action-delete": "مِٹٲیو",
 	"vector-action-move": "پکناوُن",
 	"vector-action-protect": "رٲچھؠ",
 	"vector-view-create": "تَخلیٖق",
-	"vector-view-edit": "اؠڈِٹ",
+	"vector-view-edit": "تَبدیٖل",
 	"vector-view-history": "تَوأریٖخ وُچھِو",
 	"vector-view-view": "پَرُن",
 	"vector-more-actions": "بێیہِ"

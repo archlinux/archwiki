@@ -3,8 +3,20 @@
 		"authors": [
 			"Aefgh39622",
 			"Ans",
-			"Horus"
+			"Horus",
+			"Bebiezaza"
 		]
 	},
-	"timeless-notloggedin": "ยังไม่ได้เข้าสู่ระบบ"
+	"timeless-anonymous": "ไม่ระบุตัวตน",
+	"timeless-loggedinas": "เข้าสู่ระบบในชื่อ '''$1'''",
+	"timeless-notloggedin": "ยังไม่ได้เข้าสู่ระบบ",
+	"timeless-pagelog": "ดูปูมของหน้านี้",
+	"timeless-more": "เพิ่มเติม",
+	"timeless-sitetools": "เครื่องมือวิกิ",
+	"timeless-pageactions": "เครื่องมือหน้า",
+	"timeless-action-addsection": "เพิ่มหัวข้อ",
+	"timeless-view-view": "เนื้อหา",
+	"timeless-pagemisc": "เพิ่มเติม",
+	"timeless-namespaces": "เนมสเปซ",
+	"timeless-languages": "ภาษา"
 }

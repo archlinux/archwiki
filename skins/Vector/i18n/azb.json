@@ -6,9 +6,11 @@
 			"E THP",
 			"Ebrahimi-amir",
 			"Ilğım",
-			"Mousa"
+			"Mousa",
+			"Bir morty"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 دیل|$1 دیل‌لر}}",
 	"vector-action-addsection": "مؤوضوع آرتیر",
 	"vector-action-delete": "سیل",
 	"vector-action-move": "داشی",

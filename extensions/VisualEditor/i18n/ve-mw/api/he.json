@@ -12,7 +12,7 @@
 	"apierror-visualeditor-docserver-http-error": "ביצירת קשר עם שרת Parsoid/RESTBase אירעה שגיאה: $1",
 	"apierror-visualeditor-docserver-http": "ביצירת קשר עם שרת Parsoid/RESTBase אירעה שגיאה (HTTP $1)",
 	"apierror-visualeditor-docserver-unconfigured": "ה־VirtualRESTService של שרת המסמך אינו מוגדר; למידע נוסף: https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "ביצירת קשר עם שרת Parsoid/RESTBase אירעה שגיאה (אין תגובה)",
+	"apierror-visualeditor-docserver": "אירעה שגיאה ביצירת קשר עם שרת Parsoid/RESTBase (אין תשובה)",
 	"apierror-visualeditor-latestnotfound": "לא נמצאה הגרסה האחרונה של הכותרת",
 	"apihelp-visualeditor-description": "החזרת HTML5 של דף משירות Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "בעת שמירה, להגדיר את זה בתור חותם־הזמן של הגרסה שנשמרת. זה משמש לזיהוי התנגשויות.",

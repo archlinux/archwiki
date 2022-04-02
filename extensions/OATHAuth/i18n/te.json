@@ -2,11 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Arjunaraoc",
-			"Jedimaster26"
+			"Jedimaster26",
+			"Chaduvari"
 		]
 	},
 	"oathauth-prefs-label": "రెండు-విధాల (Two-factor) ధృవీకరణ:",
 	"action-oathauth-api-all": "OATH స్థితి గమనించండి",
 	"oauthauth-ui-no-module": "ఏవీ చేతనంగా లేవు",
-	"oathauth-ui-manage": "నిర్వహించు"
+	"oathauth-ui-manage": "నిర్వహించు",
+	"oathauth-prefs-disabledgroups": "అచేతనంగా ఉన్న {{PLURAL:$1|గుంపు|గుంపులు}}:",
+	"oathauth-prefs-disabledgroups-help": "[[Special:Manage Two-factor authentication|రెండు-అంశాల ఆథెంటికేషన్ను]] చేతనం చేసుకునేంత వరకూ {{PLURAL:$1|ఈ గ్రూపులో|ఈ గ్రూపుల్లో}} {{GENDER:$2|మీ సభ్యత్వాన్ని}} అచేతనం చేసారు."
 }

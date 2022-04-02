@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Sureshkhole",
-			"V.narsikar"
+			"V.narsikar",
+			"SaldırganSincap"
 		]
 	},
 	"scribunto-desc": "मिडीयाविकी पानांमध्ये स्क्रिप्टींग भाषा अंतर्भूत करण्यासाठीचा आराखडा",
@@ -11,7 +12,7 @@
 	"scribunto-parser-dialog-title": "लेखन त्रुटी",
 	"scribunto-error-short": "लेखन त्रुटी:$1",
 	"scribunto-error-long": "लेखन त्रुटी:\n\n\n$1",
-	"scribunto-doc-page-name": "विभाग:$1/doc",
+	"scribunto-doc-page-name": "Module:$1/doc",
 	"scribunto-doc-page-does-not-exist": "''[[$1]] येथे या विभागाचे दस्तावेजीकरण तयार करु शकता''",
 	"scribunto-doc-page-header": "'''हे [[$1]]साठी असलेले दस्तावेजीकरण पान आहे'''",
 	"scribunto-console-title": "डिबग संचालक",

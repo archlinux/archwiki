@@ -9,7 +9,7 @@
 		]
 	},
 	"skinname-vector": "ვექტორული",
-	"vector-skin-desc": "მონობუკის ახალი ვერსია სრულად ახალი იერსახითა და მრავალი გამოყენებადი გაუმჯობესებებით",
+	"vector-skin-desc": "მონობუკის ახალი ვერსია სრულად ახალი იერსახითა და მრავალი გამოყენებადი გაუმჯობესებით",
 	"prefs-vector-enable-vector-1-label": "Legacy Vector-ის გამოყენება",
 	"prefs-vector-enable-vector-1-help": "მომდევნო რამდენიმე წელში ჩვენ თანდათან ვანახლებთ ვექტორულ გარეკანს. Legacy Vector ძველი იერსახის აღდგენის შესაძლებლობას მოგცემთ (2019 წლის დეკემბრის მდგომარეობით). განახლებებზე მეტის გასაგებად, ეწვიეთ [[mw:Reading/Web/Desktop_Improvements|პროექტის გვერდს]].",
 	"vector-opt-out": "ძველი იერსახის აღდგენა",
@@ -33,5 +33,13 @@
 	"vector-jumptosearch": "ძიებაზე გადასვლა",
 	"vector-jumptocontent": "შინაარსზე გადასვლა",
 	"vector-more-actions": "მეტი",
-	"vector-search-loader": "იტვირთვება ძიების შეთავაზებები"
+	"vector-search-loader": "იტვირთვება ძიების შეთავაზებები",
+	"vector-anon-user-menu-pages": "გვერდები სისტემიდან გამოსული რედაქტორებისათვის",
+	"vector-anon-user-menu-pages-learn": "გაიგეთ მეტი",
+	"vector-anon-user-menu-pages-label": "რედაქტირების შესახებ მეტის გაგება",
+	"vector-personal-more-label": "მომხმარებლის ბმულები",
+	"vector-main-menu-tooltip": "მთავარი მენიუ",
+	"tooltip-vector-anon-user-menu-title": "მეტი პარამეტრები",
+	"vector-menu-checkbox-expanded": "გაშლილი",
+	"vector-menu-checkbox-collapsed": "დახურული"
 }

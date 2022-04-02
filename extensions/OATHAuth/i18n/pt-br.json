@@ -6,7 +6,8 @@
 			"Eduardoaddad",
 			"Felipe L. Ewald",
 			"Luk3",
-			"Tark"
+			"Tark",
+			"TheEduGobi"
 		]
 	},
 	"oathauth-desc": "Fornece suporte a autenticação usando HMAC com base em senhas de uso único",
@@ -86,6 +87,11 @@
 	"oathauth-switch-method-warning": "Ao mudar para o método de autenticação de dois fatores $2, o método atual ($1) será desativado e todos os dados associados ao método de autenticação atual serão excluídos",
 	"oathauth-totp-disable-warning": "Você não poderá mais usar o dispositivo de autenticação registrado nesta conta. Todos os tokens de rascunho associados a esta conta serão invalidados.",
 	"oathauth-invalidrequest": "Pedido inválido",
+	"notification-header-oathauth-disable": "A autenticação em duas etapas foi desativada para a sua conta.",
+	"notification-body-oathauth-disable": "Se você não fez isso, sua conta pode ter sido comprometida.",
+	"notification-body-oathauth-disable-other": "Se você não solicitou isso, entre em contato com um administrador.",
+	"oathauth-notifications-disable-help": "Ajuda",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} possui autenticação de dois fatores ativada.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} não possui autenticação de dois fatores ativada."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} não possui autenticação de dois fatores ativada.",
+	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desativado|Grupos desativados}}:"
 }

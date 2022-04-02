@@ -3,7 +3,8 @@
 		"authors": [
 			"Mikalai Udodau",
 			"Vlad5250",
-			"Yury Tarasievich"
+			"Yury Tarasievich",
+			"Chadyka"
 		]
 	},
 	"skinname-monobook": "Манабук",
@@ -11,5 +12,12 @@
 	"monobook.css": "/* CSS, упісаны сюды, будзе дзейнічаць на браўзер кожнага чытача з актыўнай світай Monobook */",
 	"monobook.js": "/* Any JavaScript here will be loaded for users using the MonoBook skin */",
 	"monobook-jumptotop": "вярнуцца ўверх",
-	"monobook-more-actions": "Яшчэ"
+	"monobook-jumptopersonal": "інструменты ўдзельніка",
+	"monobook-jumptonavigation": "Перайсьці да навігацыі",
+	"monobook-jumptosearch": "Перайсці да пошуку",
+	"monobook-more-actions": "Яшчэ",
+	"cactions-mobile": "Дзеянні на старонцы",
+	"monobook-cactions-label": "Дзеянні на старонцы",
+	"monobook-notifications-link": "Паведамленні ($1)",
+	"monobook-notifications-link-none": "Паведамленні"
 }

@@ -34,5 +34,6 @@
 	"right-gadgets-edit": "Edit gadget JavaScript and CSS pages",
 	"action-gadgets-edit": "edit this gadget JavaScript or CSS page",
 	"right-gadgets-definition-edit": "Edit gadget definitions",
-	"action-gadgets-definition-edit": "edit this gadget definition"
+	"action-gadgets-definition-edit": "edit this gadget definition",
+	"gadgets-wrong-contentmodel": "Pages in {{ns:2302}} namespace must be of GadgetDefinition content model."
 }

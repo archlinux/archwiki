@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Felis",
-			"Jun Misugi"
+			"Jun Misugi",
+			"F Samaritani"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 linga|$1 linghi}}",
 	"vector-action-addsection": "Aggiungì oggettu",
 	"vector-action-delete": "Canzella",
 	"vector-action-move": "Ippustha",

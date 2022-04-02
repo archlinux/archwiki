@@ -168,8 +168,9 @@ class OATHUserRepository {
 	/**
 	 * @param OATHUser $user
 	 * @param string $clientInfo
+	 * @param bool $self Whether they disabled it themselves
 	 */
-	public function remove( OATHUser $user, $clientInfo ) {
+	public function remove( OATHUser $user, $clientInfo, bool $self ) {
 		$this->getDB( DB_PRIMARY )->delete(
 			'oathauth_users',
 			[ 'id' => MediaWikiServices::getInstance()
@@ -186,6 +187,7 @@ class OATHUserRepository {
 			'user' => $userName,
 			'clientip' => $clientInfo,
 		] );
+		Notifications\Manager::notifyDisabled( $user, $self );
 	}
 
 	/**

@@ -18,7 +18,9 @@
 			"Xiplus",
 			"Yfdyh000",
 			"Xzonn",
-			"落花有意12138"
+			"落花有意12138",
+			"Lakejason0",
+			"Stang"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -47,7 +49,7 @@
 	"vector-jumptocontent": "跳到内容",
 	"vector-more-actions": "更多",
 	"vector-search-loader": "正在加载搜索建议",
-	"vector-anon-user-menu-pages": "登出编辑者的页面",
+	"vector-anon-user-menu-pages": "未登录编辑者的页面",
 	"vector-anon-user-menu-pages-learn": "了解详情",
 	"vector-anon-user-menu-pages-label": "了解有关编辑的更多信息",
 	"vector-personal-more-label": "用户链接",

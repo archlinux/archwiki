@@ -51,5 +51,6 @@
 	"right-gadgets-edit": "編輯小工具的 JavaScript 與 CSS 頁面",
 	"action-gadgets-edit": "編輯這個小工具的 JavaScript 或 CSS 頁面",
 	"right-gadgets-definition-edit": "編輯小工具定義",
-	"action-gadgets-definition-edit": "編輯此小工具的定義"
+	"action-gadgets-definition-edit": "編輯此小工具的定義",
+	"gadgets-wrong-contentmodel": "在{{ns:2302}}命名空間的頁面必須是GadgetDefinition內容模型。"
 }

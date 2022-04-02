@@ -12,7 +12,8 @@
 			"ديفيد",
 			"زكريا",
 			"محمد أحمد عبد الفتاح",
-			"Hubaishan"
+			"Hubaishan",
+			"SaldırganSincap"
 		]
 	},
 	"templatedata-desc": "تخزين بيانات وسائط القالب",
@@ -92,6 +93,7 @@
 	"templatedata-modal-placeholder-add-new-map-input": "جارٍ إضافة خريطة جديدة...",
 	"templatedata-modal-placeholder-paramkey": "اسم المعامل",
 	"templatedata-modal-placeholder-mapinfo": "هذا القالب ليس له كائن خرائط",
+	"templatedata-modal-placeholder-prompt-map-name": "أدخل اسم الخريطة",
 	"templatedata-modal-search-input-placeholder": "اختر اسم اللغة أو رمزها",
 	"templatedata-modal-table-param-actions": "إجراءات",
 	"templatedata-modal-table-param-aliases": "أسماء بديلة (بينها فواصل)",

@@ -9,7 +9,8 @@
 			"Mcuteangel",
 			"Omid.koli",
 			"Omidh",
-			"Reza1615"
+			"Reza1615",
+			"Beginneruser"
 		]
 	},
 	"multimediaviewer-desc": "تصاویر بندانگشتی در اندازهٔ بزرگ‌تر داخل یک رابط کاربری تمام‌صفحه گسترش یابند.",
@@ -66,6 +67,7 @@
 	"multimediaviewer-download-small-button-name": "دریافت اندازهٔ کوچک",
 	"multimediaviewer-download-medium-button-name": "دریافت اندازهٔ متوسط",
 	"multimediaviewer-download-large-button-name": "دریافت اندازهٔ بزرگ",
+	"multimediaviewer-download-xl-button-name": "دریافت اندازهٔ خیلی بزرگ",
 	"multimediaviewer-link-to-page": "پیوند به صفحهٔ توضیحات پرونده",
 	"multimediaviewer-link-to-file": "پیوند به پروندهٔ اصلی",
 	"multimediaviewer-share-explanation": "نسخه بردارید و به آزادی پیوند را به اشتراک بگذارید",

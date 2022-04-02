@@ -9,7 +9,10 @@
 			"Melos",
 			"Pietrodn",
 			"Sakretsu",
-			"Scompo"
+			"Scompo",
+			"Ajeje Brazorf",
+			"ValterVB",
+			"Pierpao"
 		]
 	},
 	"vector-skin-desc": "Versione moderna del MonoBook con un aspetto rinnovato e molti miglioramenti dell'usabilità",
@@ -31,5 +34,7 @@
 	"vector-view-history": "Cronologia",
 	"vector-view-view": "Leggi",
 	"vector-view-viewsource": "Visualizza wikitesto",
-	"vector-more-actions": "Altro"
+	"vector-more-actions": "Altro",
+	"vector-anon-user-menu-pages": "Pagine per utenti anonimi",
+	"vector-anon-user-menu-pages-learn": "ulteriori informazioni"
 }

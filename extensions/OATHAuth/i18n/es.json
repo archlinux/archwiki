@@ -86,6 +86,9 @@
 	"oathauth-disable-method-warning-button-label": "Confirma y continúa",
 	"oathauth-switch-method-warning-header": "Confirmar el cambio a un método distinto de autenticación",
 	"oathauth-invalidrequest": "Solicitud no válida",
+	"notification-header-oathauth-disable": "Se ha desactivado la autenticación en dos pasos de {{GENDER:$2|tu}} cuenta.",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} tiene activada la autenticación en dos pasos.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} no tiene activada la autenticación en dos pasos."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} no tiene activada la autenticación en dos pasos.",
+	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desactivado|Grupos desactivados}}:",
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Tu}} pertenencia {{PLURAL:$1|al siguiente grupo|a los siguientes grupos}} de usuario están desactivados hasta que actives la [[Special:Manage Two-factor authentication|autenticación en dos pasos]]."
 }

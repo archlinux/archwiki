@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Misteld"
+			"Misteld",
+			"Samatics"
 		]
 	},
-	"captcha-label": "KAPTSHA"
+	"captcha-label": "CAPTCHA"
 }

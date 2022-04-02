@@ -10,7 +10,8 @@
 			"Movyn",
 			"Reza1615",
 			"الناز",
-			"درفش کاویانی"
+			"درفش کاویانی",
+			"Beginneruser"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "کپچا برای آن کلید یافت نشد",
@@ -51,7 +52,7 @@
 	"apihelp-visualeditoredit-param-section": "بخشی که برای انجام‌دادن است.",
 	"apihelp-visualeditoredit-param-sectiontitle": "عنوان برای بخش جدید.",
 	"apihelp-visualeditoredit-param-starttimestamp": "در زمان ذخیره کردن، این را برای زمان بارگیری نسخه تنظیم کنید. برای تشخیص تعارض ویرایش کاربرد دارد.",
-	"apihelp-visualeditoredit-param-summary": "خلاصه ویرایش.",
+	"apihelp-visualeditoredit-param-summary": "خلاصهٔ ویرایش.",
 	"apihelp-visualeditoredit-param-wikitext": "برای کار با ویکی‌متن.",
 	"apihelp-visualeditoredit-summary": "ذخیره صفحه HTML5 به مدیاویکی (تبدیل به متن ویکی با سرویس پارسوید)"
 }

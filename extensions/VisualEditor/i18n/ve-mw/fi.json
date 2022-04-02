@@ -29,7 +29,9 @@
 			"VezonThunder",
 			"Kyykaarme",
 			"Rönttönen",
-			"TMg"
+			"TMg",
+			"Moottori",
+			"Korjaus1"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -434,6 +436,6 @@
 	"visualeditor-wikitext-warning": "Käytät visuaalista muokkainta – [[{{MediaWiki:visualeditor-wikitext-warning-link}}|wikiteksti]] ei toimi täällä. Napsauta ”vaihda”-painiketta vaihtaaksesi wikitekstin muokkaustilaan milloin tahansa ilman, että menetät tekemiäsi muutoksia.",
 	"visualeditor-wikitext-warning-title": "Wikikoodia havaittu",
 	"visualeditor-wikitextconvert-title": "Muunnetaanko muotoilu wikitekstiksi?",
-	"visualeditor-wikitextconvert-message": "Liitit muotoiltua sisältöä. Muunnetaanko se muunnetaan wikitekstimuotoon?",
+	"visualeditor-wikitextconvert-message": "Liitit muotoiltua sisältöä. Muunnetaanko se wikitekstimuotoon?",
 	"visualeditor-wikitextconvert-convert": "Muunna wikitekstiksi"
 }

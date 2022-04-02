@@ -8,7 +8,8 @@
 			"Mr. Ibrahem",
 			"Yahya Sakhnini",
 			"ديفيد",
-			"زكريا"
+			"زكريا",
+			"SaldırganSincap"
 		]
 	},
 	"scribunto-desc": "إطار عمل لتضمين لغات البرمجة النصية في صفحات ميدياويكي",
@@ -57,8 +58,11 @@
 	"scribunto-limitreport-timeusage": "زمن لوا المستغرق",
 	"scribunto-limitreport-timeusage-value": "$1/$2 ثواني",
 	"scribunto-limitreport-virtmemusage": "حجم لوا الافتراضي",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|بايت}}",
 	"scribunto-limitreport-estmemusage": "استخدام الذاكرة المقدر للوا",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|بايت}}",
 	"scribunto-limitreport-memusage": "ذاكرة لوا المستخدمة",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|بايت}}",
 	"scribunto-limitreport-profile": "ملف تعريف لوا",
 	"scribunto-limitreport-profile-ms": "$1 مللي ثانية",
 	"scribunto-limitreport-logs": "سجل لوا",

@@ -4,14 +4,25 @@
 			"CoderSI",
 			"Noor2020",
 			"Sociologist",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Malikxan"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich]]",
 	"tag-visualeditor-description": "Tahrir [[{{MediaWiki:visualeditor-descriptionpagelink}}|koʻrib tahrirlagich]] yordamida bajarildi",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich]]: tekshirish",
+	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich: tekshirish]]",
+	"tag-visualeditor-wikitext": "2017-yilgi manba tahrirlagichi",
+	"tag-visualeditor-wikitext-description": "Tahrir 2017-yilgi manba tahrirlagichidan foydalanib amalga oshirildi.",
+	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Koʻrib tahrirlagich: almashtirildi]]",
+	"tag-visualeditor-switched-description": "Foydalanuvchi koʻrib tahrirlagichdan foydalanib tahrirlashni boshladi, keyin vikimatn tahrirlagichiga oʻzgartirdi.",
 	"visualeditor-feedback-link": "Project:Koʻrib tahrirlagich/Fikrlar",
-	"visualeditor-feedback-tool": "Fikr qoldirish",
+	"visualeditor-feedback-tool": "Bu dastur haqida fikr qoldirish",
 	"visualeditor-help-label": "Qoʻllanmani oʻqing",
-	"visualeditor-help-title": "Tahrirlagichdan foydalanish boʻyicha foydalanuvchilar qoʻllanmasi"
+	"visualeditor-help-title": "Tahrirlagichdan foydalanish boʻyicha foydalanuvchilar qoʻllanmasi",
+	"visualeditor-welcomedialog-action": "Tahrirlashni boshlash",
+	"visualeditor-welcomedialog-content": "Har kim hissa qoʻshishi mumkin va qoʻshgan har bir yaxshilanish yordam boʻladi.",
+	"visualeditor-welcomedialog-content-thanks": "Dunyoni koʻproq kashf qilishda yordam berganingiz uchun tashakkur!",
+	"visualeditor-welcomedialog-switch": "Manba tahrirlagichiga almashtirish",
+	"visualeditor-welcomedialog-switch-ve": "Koʻrib tahrirlagichga almashtirish",
+	"visualeditor-welcomedialog-title": "$2ga {{GENDER:$1|xush kelibsiz}}"
 }

@@ -38,7 +38,7 @@
 	"replacetext_success": "„$1“ wird durch „$2“ in $3 {{PLURAL:$3|Seite|Seiten}} ersetzt.",
 	"replacetext_noreplacement": "Es wurde keine Seite gefunden, die den Text „$1“ enthält.",
 	"replacetext_nomove": "Es wurde keine Seite gefunden, deren Titel den Text „$1“ enthält.",
-	"replacetext_nosuchcategory": "Es ist keine Kategorie namens „$1“ vorhanden.",
+	"replacetext_nosuchcategory": "Es ist keine Kategorie mit dem Namen „$1“ vorhanden.",
 	"replacetext_return": "Zurück zum Formular.",
 	"replacetext_warning": "'''Warnung:''' $1 {{PLURAL:$1|Seite enthält|Seiten enthalten}} bereits den zu ersetzenden Textteil „$2“.\nSofern du nun die {{PLURAL:$1|Ersetzung|Ersetzungen}} durchführst, ist eine spätere Unterscheidung zwischen den nunmehr zu ersetzenden und den bereits vorhandenen Textteilen nicht mehr möglich.",
 	"replacetext_blankwarning": "'''Warnung:''' Da der zu ersetzende Textteil leer ist, kann die Operation nicht rückgängig gemacht werden. Möchtest du dennoch fortfahren?",

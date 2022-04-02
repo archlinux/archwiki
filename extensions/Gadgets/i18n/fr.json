@@ -20,7 +20,8 @@
 			"Windes",
 			"Wladek92",
 			"Zcqsc06",
-			"Zetud"
+			"Zetud",
+			"Ajeje Brazorf"
 		]
 	},
 	"gadgets-desc": "Permet aux utilisateurs de choisir des [[Special:Gadgets|gadgets CSS et Javascripts]] personnalisés dans leurs [[Special:Preferences#mw-prefsection-gadgets|préférences]]",
@@ -52,5 +53,6 @@
 	"right-gadgets-edit": "Modifier les pages JavaScript et CSS de gadget",
 	"action-gadgets-edit": "modifier la page JavaScript ou CSS de ce gadget",
 	"right-gadgets-definition-edit": "Modifier les définitions des gadget",
-	"action-gadgets-definition-edit": "modifier la définition de ce gadget"
+	"action-gadgets-definition-edit": "modifier la définition de ce gadget",
+	"gadgets-wrong-contentmodel": "Les pages dans l’espace de noms {{ns:2302}} doivent provenir du modèle de contenu GadgetDefinition."
 }

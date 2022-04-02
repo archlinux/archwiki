@@ -9,7 +9,8 @@
 			"Minh Nguyen",
 			"Nguyên Lê",
 			"Quenhitran",
-			"Trần Nguyễn Minh Huy"
+			"Trần Nguyễn Minh Huy",
+			"Bluetpp"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Sách",
@@ -24,8 +25,10 @@
 	"cite-ve-changedesc-reflist-group-to": "Nhóm danh sách chú thích đổi từ nhóm chung thành “$1”",
 	"cite-ve-changedesc-reflist-responsive-set": "Xếp danh sách chú thích tham khảo thành nhiều cột",
 	"cite-ve-changedesc-reflist-responsive-unset": "Xếp lại danh sách chú thích tham khảo thành một cột",
+	"cite-ve-citationneeded-title": "Cần chú thích",
 	"cite-ve-dialog-reference-editing-reused": "Chú thích này được sử dụng {{PLURAL:$1|một lần|2=hai lần|$1 lần}} trên trang này.",
-	"cite-ve-dialog-reference-options-group-label": "Nhóm cước chú",
+	"cite-ve-dialog-reference-editing-reused-long": "Chú thích này được sử dụng {{PLURAL:$1|một lần|2=hai lần|$1 lần}} trên trang này. Các thay đổi được tạo ra ở đây sẽ được áp dụng ở tất cả những nơi chú thích này được tái sử dụng.",
+	"cite-ve-dialog-reference-options-group-label": "Sử dụng nhóm này",
 	"cite-ve-dialog-reference-options-group-placeholder": "Tham khảo chung",
 	"cite-ve-dialog-reference-options-name-label": "ID để tái sử dụng cước chú",
 	"cite-ve-dialog-reference-options-responsive-label": "Bố trí cột tùy chiều rộng",
@@ -38,7 +41,7 @@
 	"cite-ve-dialog-referenceslist-title": "Danh sách chú thích tham khảo",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Cải thiện nội dung của bạn bằng cách thêm nguồn gốc để lấy thông tin. Bạn có thể chú thích các cuốn sách, tờ báo, và trang Web.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Chú thích",
-	"cite-ve-dialogbutton-reference-full-label": "Biểu mẫu cơ bản",
+	"cite-ve-dialogbutton-reference-full-label": "Cơ bản",
 	"cite-ve-dialogbutton-reference-title": "Chú thích",
 	"cite-ve-dialogbutton-reference-tooltip": "Cơ bản",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Danh sách chú thích tham khảo",

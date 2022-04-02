@@ -16,7 +16,8 @@
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"תומר ט"
+			"תומר ט",
+			"לואיקה"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "ספר",
@@ -48,7 +49,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "רשימת הערות שוליים כלליות",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "רשימת הערות שוליים בקבוצה \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "רשימת הערות שוליים",
-	"cite-ve-dialogbutton-citation-educationpopup-text": "משפר את התוכן באמצעות הוספת מקורות מידע. {{GENDER:|אתה יכול|את יכולה}} לצטט מתוך ספרים, עיתונים ואתרים.",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "משפר את התוכן באמצעות הוספת מקורות מידע. {{GENDER:|אתה יכול|את יכולה|ביכולתך}} לצטט מתוך ספרים, עיתונים ואתרי אינטרנט.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "הערות שוליים",
 	"cite-ve-dialogbutton-reference-full-label": "פשוטה",
 	"cite-ve-dialogbutton-reference-title": "הערת שוליים",

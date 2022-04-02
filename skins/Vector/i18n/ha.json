@@ -2,9 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Ammarpad",
-			"DonCamillo"
+			"DonCamillo",
+			"Edith Nwobu",
+			"Em-em",
+			"Gwanki",
+			"Salihu aliyu"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 asụsụ|$1 asụsụga}}",
 	"vector-action-addsection": "Sabon sashe",
 	"vector-action-delete": "Soke",
 	"vector-action-move": "Gusarwa",

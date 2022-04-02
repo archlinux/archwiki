@@ -9,7 +9,8 @@
 			"Mr. Ibrahem",
 			"OsamaK",
 			"ديفيد",
-			"روخو"
+			"روخو",
+			"SaldırganSincap"
 		]
 	},
 	"gadgets-desc": "يسمح للمستخدمين باختيار [[Special:Gadgets|إضافات سي إس إس وجافاسكريبت]] معدلة في [[Special:Preferences#mw-prefsection-gadgets|تفضيلاتهم]]",
@@ -41,5 +42,6 @@
 	"right-gadgets-edit": "تعديل صفحات JavaScript و CSS للإضافات",
 	"action-gadgets-edit": "تعديل هذه الأداة جافا سكريبت أو CSS الصفحة",
 	"right-gadgets-definition-edit": "تعديل تعريفات الإضافات",
-	"action-gadgets-definition-edit": "تعديل تعريف الادوات"
+	"action-gadgets-definition-edit": "تعديل تعريف الادوات",
+	"gadgets-wrong-contentmodel": "يجب أن تكون الصفحات الموجودة في مساحة الاسم {{ns:2302}} من نموذج محتوى GadgetDefinition."
 }

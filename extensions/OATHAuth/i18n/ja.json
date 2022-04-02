@@ -9,7 +9,8 @@
 			"Siglite3",
 			"Suyama",
 			"Yusuke1109",
-			"ネイ"
+			"ネイ",
+			"MathXplore"
 		]
 	},
 	"oathauth-desc": "HMAC に基づいたワンタイムパスワードを使用する認証機能を提供する",
@@ -68,6 +69,7 @@
 	"oathauth-ui-general-help": "'''多要素認証''' ('''MFA''') とは、アクセス権を求める利用者に対し、2つ以上の異なる証拠（要素）を提示させる認証方法です:知識（本人が知っていること）、所有（本人が持っているもの）、生体（本人の身体的特徴） [https://ja.wikipedia.org/wiki/%E5%A4%9A%E8%A6%81%E7%B4%A0%E8%AA%8D%E8%A8%BC 詳細情報]",
 	"oathauth-totp-description": "TOTP (Time-based One-Time Password algorithm) は HOTP (HMAC-based One-time Password algorithm) を拡張したアルゴリズムで、現在の時刻からワンタイムパスワードを生成します。",
 	"oathauth-switch-method-warning": "認証方式を$2に切り替えると現在の認証方式（$1）は無効化されます。現在の認証方式に関連付けられているすべてのデータは削除されます。",
+	"oathauth-notifications-disable-help": "ヘルプ",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}}は二要素認証を有効化しています。",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}は二要素認証を有効化していません。"
 }

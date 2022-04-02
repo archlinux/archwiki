@@ -9,7 +9,8 @@
 			"Metalhead64",
 			"MuratTheTurkish",
 			"Sushi",
-			"Umherirrender"
+			"Umherirrender",
+			"Wnme"
 		]
 	},
 	"oathauth-desc": "Ermöglicht die Authentifizierung mit HMAC-gestützten Einmalpasswörtern",
@@ -51,7 +52,7 @@
 	"action-oathauth-enable": "die Zwei-Faktor-Authentifizierung zu aktivieren",
 	"oathauth-auth-token-label": "Token",
 	"oathauth-auth-token-help": "Das Einmalpasswort, verwendet als zweiter Faktor der Zwei-Faktor-Authentifizierung.",
-	"oathauth-auth-ui": "Bitte einen Verifizierungscode vom Authentifizierungsgerät eingeben",
+	"oathauth-auth-ui": "Bitte gib einen Verifizierungscode von deinem Authentifizierungsgerät ein.",
 	"oathauth-throttled": "Zu viele Verifizierungsversuche! Bitte warte $1.",
 	"oathauth-login-failed": "Verifizierung fehlgeschlagen.",
 	"oathauth-describe-provider": "Zwei-Faktor-Authentifizierung (OATH).",
@@ -79,7 +80,7 @@
 	"oathauth-enable-page-title": "Aktiviere $1",
 	"oathauth-action-exclusive-to-2fa": "Diese Aktion kann nur von Benutzern durchgeführt werden, die eine Zwei-Faktor-Authentifizierung aktiviert haben.",
 	"oathauth-ui-available-modules": "Verfügbare Methoden",
-	"oathauth-ui-general-help": "\"Multi-Factor Authentication\" (\"MFA\") ist eine Authentifizierungsmethode, bei der einem Computerbenutzer der Zugriff erst gewährt wird, nachdem zwei oder mehr Beweise (oder Faktoren) für einen Authentifizierungsmechanismus erfolgreich vorgelegt wurden: Wissen (etwas, das der Benutzer und nur der Benutzer weiß), Besitz (etwas, das der Benutzer und nur der Benutzer hat) und Inhärenz (etwas, das der Benutzer und nur der Benutzer ist). [https://de.wikipedia.org/wiki/Multi-Faktor-Authentisierung Weiterlesen]",
+	"oathauth-ui-general-help": "'''Multi-Faktor-Authentifizierung''' '''(MFA)''' ist eine Authentifizierungsmethode, bei der einem Computerbenutzer der Zugriff erst gewährt wird, nachdem zwei oder mehr Beweise (oder Faktoren) für einen Authentifizierungsmechanismus erfolgreich vorgelegt wurden: Wissen (etwas, das der Benutzer und nur der Benutzer weiß), Besitz (etwas, das der Benutzer und nur der Benutzer hat) und Inhärenz (etwas, das der Benutzer und nur der Benutzer ist). [https://de.wikipedia.org/wiki/Multi-Faktor-Authentisierung Mehr zum Thema...]",
 	"oathauth-totp-description": "Der zeitbasierte Einmalpasswortalgorithmus (TOTP) ist eine Erweiterung des HMAC-basierten Einmalpasswortalgorithmus (HOTP), der ein Einmalpasswort generiert, indem die Eindeutigkeit der aktuellen Zeit verwendet wird.",
 	"oathauth-disable-method-warning-header": "Deaktivieren einer Authentifizierungsmethode bestätigen",
 	"oathauth-disable-method-warning-button-label": "Bestätigen und fortfahren",
@@ -88,6 +89,12 @@
 	"oathauth-switch-method-warning": "Wenn du zur Zwei-Faktor-Authentifizierungsmethode $2 wechselst, wird die aktuelle Methode ($1) deaktiviert und alle Daten, die der aktuellen Authentifizierungsmethode zugeordnet sind, werden gelöscht",
 	"oathauth-totp-disable-warning": "Du kannst das mit diesem Konto registrierte Authentifizierungsgerät nicht mehr verwenden. Alle mit diesem Konto verknüpften geheimen Schlüssel werden ungültig.",
 	"oathauth-invalidrequest": "Ungültige Anfrage",
+	"notification-header-oathauth-disable": "Die Zwei-Faktor-Authentifizierung wurde für {{GENDER:$2|dein Konto}} deaktiviert.",
+	"notification-body-oathauth-disable": "Wenn {{GENDER:$2|du}} dies nicht getan hast, kann {{GENDER:$2|dein Konto}} kompromittiert worden sein.",
+	"notification-body-oathauth-disable-other": "Wenn {{GENDER:$2|du}} dies nicht beantragt hast, solltest {{GENDER:$2|du}} einen Administrator kontaktieren.",
+	"oathauth-notifications-disable-help": "Hilfe",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} hat die Zwei-Faktor-Authentifizierung aktiviert.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} hat die Zwei-Faktor-Authentifizierung nicht aktiviert."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} hat die Zwei-Faktor-Authentifizierung nicht aktiviert.",
+	"oathauth-prefs-disabledgroups": "Deaktiverte {{PLURAL:$1|Gruppe|Gruppen}}:",
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Deine Mitgliedschaft}} in {{PLURAL:$1|der Gruppe|den Gruppen}} ist deaktiviert, bis du die [[Special:Manage Two-factor authentication|Zwei-Faktor-Authentifizierung]] aktivierst."
 }

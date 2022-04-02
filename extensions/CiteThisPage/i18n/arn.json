@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Kaniw",
-			"Remember the dot"
+			"Remember the dot",
+			"Manke ruLpa"
 		]
 	},
 	"citethispage": "Konvmpan",
-	"citethispage-desc": "Yomvmi kiñe wicu aztapvl ñi [[Special:Cite|konvmpan]] mew ka jasun kvzawpeyvm mew",
-	"citethispage-link": "Konvmpape faci xoy",
+	"citethispage-desc": "Püñamtun kiñe wichun tapülh [[Special:CiteThisPage|konümpayalu]] ka kiñe trarintuku küzawpeyüm ñi peal mew",
+	"citethispage-link": "Konümpape fachi tapülh",
 	"tooltip-citethispage": "Cumley konvmpageay faci xoy",
 	"citethispage-change-submit": "Konvmpan",
 	"citethispage-change-target": "Aztapvl:"

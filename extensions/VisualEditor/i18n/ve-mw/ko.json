@@ -231,6 +231,7 @@
 	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "편집 계속",
 	"visualeditor-dialog-transclusion-reset-confirmation-reset": "틀 제거",
 	"visualeditor-dialog-transclusion-feedback-message": "틀 검색 결과를 개선하기 위한 최근 작업이 완료되었습니다. 변경 사항에 대해 자세히 알아보거나 피드백을 남기려면 [//meta.wikimedia.org/wiki/WMDE_Technical_Wishes/Finding_and_inserting_templates 프로젝트 페이지]를 방문하십시오.",
+	"visualeditor-dialog-transclusion-wikitext": "위키텍스트",
 	"visualeditor-dialogbutton-media-tooltip": "이미지 및 미디어",
 	"visualeditor-dialogbutton-meta-tooltip": "문서 설정",
 	"visualeditor-dialogbutton-template-tooltip": "틀",

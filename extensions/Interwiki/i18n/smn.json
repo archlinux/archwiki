@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Seipinne"
 		]
 	},
+	"interwiki_reasonfield": "Suijâ:",
 	"interwiki_addbutton": "Lasseet"
 }

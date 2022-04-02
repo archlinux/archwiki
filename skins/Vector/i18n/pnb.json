@@ -6,6 +6,7 @@
 			"Khalid Mahmood"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 بولی|$1 بولیاں}}",
 	"vector-action-addsection": "مضمون پاؤ",
 	"vector-action-delete": "مکاؤ",
 	"vector-action-move": "لے چلو",

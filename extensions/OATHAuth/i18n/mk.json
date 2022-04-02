@@ -81,6 +81,12 @@
 	"oathauth-switch-method-warning": "Префрлајќи се на двочинителската заверка $2, тековниот начин ($1) ќе биде оневозможен, а воедно ќе се избришат сите податоци поврзани со него",
 	"oathauth-totp-disable-warning": "Повеќе нема да можете да го користите уредот за заверка пријавен со оваа сметка. Сите грепки поврзани со сметкава ќе бидат поништени.",
 	"oathauth-invalidrequest": "Неважечко барање",
+	"notification-header-oathauth-disable": "Двочинителската заверка е оневозможена на {{GENDER:$2|вашата сметка}}.",
+	"notification-body-oathauth-disable": "Доколку {{GENDER:$2|вие самите}} не сте го направиле ова, можно е {{GENDER:$2|вашата сметка}} да е пробиена.",
+	"notification-body-oathauth-disable-other": "Доколку {{GENDER:$2|вие самите}} не сте го побарале ова, тогаш {{GENDER:$2|обратете се}} кај администратор.",
+	"oathauth-notifications-disable-help": "Помош",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} има овозможено двочинителска заверка.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} нема овозможено двочинителска заверка."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} нема овозможено двочинителска заверка.",
+	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Оневозможена група|Оневозможени групи}}:",
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Вашето членство}} во {{PLURAL:$1|оваа група|овие групи}} е оневозможено додека не овозможите [[Special:Manage Two-factor authentication|двочинителска заверка]]."
 }

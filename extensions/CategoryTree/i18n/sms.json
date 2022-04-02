@@ -17,8 +17,8 @@
 	"categorytree-num-pages": "$1 S",
 	"categorytree-num-files": "$1 T",
 	"categorytree-load": "čuäʹjet",
-	"categorytree-no-subcategories": "ij vueʹllkategoria",
+	"categorytree-no-subcategories": "vueʹllkategoria jie leäkku",
 	"categorytree-no-parent-categories": "ij pâʹjjkategoria",
-	"categorytree-no-pages": "ij ni seeid leʹbe vueʹllkategoria",
+	"categorytree-no-pages": "seeid leʹbe vueʹllkategoria jie leäkku ni voops",
 	"categorytree-not-found": "Kategoria <i>$1</i> ij käunnʼjam"
 }

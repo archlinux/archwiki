@@ -6,7 +6,8 @@
 			"Froztbyte",
 			"Hylle",
 			"Peter Alberti",
-			"Saederup92"
+			"Saederup92",
+			"Dipsacus fullonum"
 		]
 	},
 	"renameuser": "Omdøb bruger",
@@ -31,6 +32,7 @@
 	"renameuser-page-exists": "Siden $1 eksisterer allerede og kan ikke automatisk overskrives.",
 	"renameuser-page-moved": "Siden $1 er flyttet til $2.",
 	"renameuser-page-unmoved": "Siden $1 kunne ikke flyttes til $2.",
+	"renameuser-warning-currentblock": "Denne bruger er [$1 i øjeblikket blokeret].",
 	"log-name-renameuser": "Brugeromdøbningslog",
 	"log-description-renameuser": "Dette er en log over omdøbninger af brugernavne.",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|omdøbte}} brugeren $4 ({{PLURAL:$6|$6 redigering|$6 redigeringer}}) til {{GENDER:$7|$5}}",

@@ -30,6 +30,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Foydalanuvchi",
 	"templatedata-doc-params": "Andoza parametrlari",
 	"templatedata-editbutton": "„TemplateData“ni boshqarish",
+	"templatedata-exists-on-related-page": "Eʼtibor bering: „[[$1]]“ sahifasida allaqachon TemplateData bloki mavjud.",
 	"templatedata-helplink": "TemplateData haqida maʼlumot",
 	"templatedata-modal-button-add-language": "Til qoʻshish",
 	"templatedata-modal-button-addparam": "Parametr qoʻshish",

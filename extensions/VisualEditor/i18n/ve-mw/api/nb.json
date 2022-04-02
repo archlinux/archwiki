@@ -39,6 +39,7 @@
 	"apihelp-visualeditoredit-param-cachekey": "Bruk resultatet fra en tidligere serializeforcache-forespørsel med denne nøkkelen. Overstyrer $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha-ID (når det lagres med en captcha-respons).",
 	"apihelp-visualeditoredit-param-captchaword": "Svar på captcha (når det lagres med en captcha-respons).",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Vilkårlig data sendt av en plugin med API-forespørselen.",
 	"apihelp-visualeditoredit-param-etag": "ETag som sendes.",
 	"apihelp-visualeditoredit-param-html": "HTML som sendes til Parsoid for å konverteres til wikitekst.",
 	"apihelp-visualeditoredit-param-minor": "Merk som mindre redigering.",

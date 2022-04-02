@@ -35,8 +35,8 @@
 	"gadgets-uses": "This is used as a verb in third-person singular. It appears in front of a script name. Example: \"''Uses: Gadget-UTCLiveClock.js''\"\n\nSee [[meta:Special:Gadgets|Gadgets page in meta.wikimedia.org]]\n{{Identical|Use}}",
 	"gadgets-required-rights": "Parameters:\n* $1 - a list in wikitext.\n* $2 - the number of items in list $1 for PLURAL use.",
 	"gadgets-required-skins": "Parameters:\n* $1 - a comma separated list.\n* $2 - the number of items in list $1 for PLURAL use.",
-	"gadgets-default": "Used in [[Special:Gadgets]], if the extension is enabled for everyone by the Wiki's default settings.",
-	"gadgets-legacy": "Used on [[Special:Gadgets]], if the extension contains legacy scripts and doesn't use ResourceLoader yet.",
+	"gadgets-default": "Used in [[Special:Gadgets]], if the gadget is enabled for everyone by the Wiki's default settings.",
+	"gadgets-legacy": "Used on [[Special:Gadgets]], if the gadget contains legacy scripts and doesn't use ResourceLoader yet.",
 	"gadgets-export": "Used on [[Special:Gadgets]]. This is a verb, not noun.\n{{Identical|Export}}",
 	"gadgets-export-title": "Used as page title. Example: [[Special:Gadgets/export/editbuttons]]",
 	"gadgets-not-found": "Used as error message. Parameters:\n* $1 - gadget name",
@@ -47,5 +47,6 @@
 	"right-gadgets-edit": "{{doc-right|gadgets-edit}}",
 	"action-gadgets-edit": "{{doc-action|gadgets-edit}}",
 	"right-gadgets-definition-edit": "{{doc-right|gadgets-definition-edit}}",
-	"action-gadgets-definition-edit": "{{doc-action|gadgets-definition-edit}}"
+	"action-gadgets-definition-edit": "{{doc-action|gadgets-definition-edit}}",
+	"gadgets-wrong-contentmodel": "Error message shown while trying to change the content model of a page in gadget definition namespace to other than GadgetDefinition."
 }

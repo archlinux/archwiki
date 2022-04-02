@@ -8,7 +8,8 @@
 			"Reza1615",
 			"Wayiran",
 			"ZxxZxxZ",
-			"Jeeputer"
+			"Jeeputer",
+			"Beginneruser"
 		]
 	},
 	"cite-desc": "برچسب‌های <code>&lt;ref&gt;</code> و <code>&lt;references&gt;</code> را برای یادکرد اضافه می‌کند",
@@ -20,8 +21,8 @@
 	"cite_error_ref_no_input": "برچسب <code>&lt;ref&gt;</code> نامعتبر؛ یادکردهای بدون نام باید محتوا داشته باشند",
 	"cite_error_references_duplicate_key": "برچسب <code>&lt;ref&gt;</code> نامعتبر؛ نام «$1» چندین بار با محتوای متفاوت تعریف شده‌است",
 	"cite_error_references_invalid_parameters": "پارامتر نامعتبر در برچسب <code><references></code> نامعتبر",
-	"cite_error_references_no_backlink_label": "برچسب‌های پساپیوند سفارشی به انتها رسید. موارد جدیدی را در پیغام [[MediaWiki:Cite references link many format backlink labels]] تعریف کنید.",
-	"cite_error_no_link_label_group": "برچسب‌های پساپیوند سفارشی برای گروه «$1» به انتها رسید. موارد جدیدی را در پیغام [[MediaWiki:$2]] کنید.",
+	"cite_error_references_no_backlink_label": "برچسب‌های پساپیوند سفارشی به انتها رسید. موارد جدیدی را در پیام [[MediaWiki:Cite references link many format backlink labels]] تعریف کنید.",
+	"cite_error_no_link_label_group": "برچسب‌های پساپیوند سفارشی برای گروه «$1» به انتها رسید. موارد جدیدی را در پیام [[MediaWiki:$2]] کنید.",
 	"cite_error_references_no_text": "برچسب <code>&lt;ref&gt;</code> نامعتبر؛ متنی برای ارجاع‌های با نام <code>$1</code> وارد نشده‌است",
 	"cite_error_included_ref": "برچسب تمام‌کنندهٔ <code>&lt;/ref&gt;</code> برای برچسب <code>&lt;ref&gt;</code> پیدا نشد",
 	"cite_error_group_refs_without_references": "برچسب <code>&lt;ref&gt;</code> برای گروهی به نام «$1» وجود دارد، اما برچسب متناظر با <code>&lt;references group=\"$1\"/&gt;</code> یافت نشد.",

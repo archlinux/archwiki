@@ -9,6 +9,7 @@
 			"Zanatos"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 لوغة|$1 لوغات}}",
 	"vector-action-addsection": "زيد شي موضوع",
 	"vector-action-delete": "محي",
 	"vector-action-move": "حوّل",
@@ -19,6 +20,6 @@
 	"vector-view-edit": "بدل",
 	"vector-view-history": "تاريخ",
 	"vector-view-view": "قرا",
-	"vector-view-viewsource": "شوف المصدر",
+	"vector-view-viewsource": "شوف لمصدر",
 	"vector-more-actions": "كتر"
 }

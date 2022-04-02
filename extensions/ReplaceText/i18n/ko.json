@@ -36,7 +36,7 @@
 	"replacetext_success": "\"$1\" 문자열은 문서 $3개에서 \"$2\" 문자열로 바뀔 것입니다.",
 	"replacetext_noreplacement": "\"$1\" 문자열을 포함하고 있는 문서가 없습니다.",
 	"replacetext_nomove": "\"$1\" 문자열을 포함하고 있는 문서 제목이 없습니다.",
-	"replacetext_nosuchcategory": "\"$1\" 문자열을 포함하고 있는 분류가 없습니다.",
+	"replacetext_nosuchcategory": "\"$1\" 이름을 포함하는 분류가 없습니다.",
 	"replacetext_return": "양식으로 돌아갑니다.",
 	"replacetext_warning": "\"$2\" 문자열을 포함하고 있는 문서 $1개가 이미 있습니다. 이 찾아 바꾸기를 실행하면, 이미 존재하는 \"$2\" 문자열과 더 이상 구분되지 않을 것입니다.\n찾아 바꾸기를 계속하겠습니까?",
 	"replacetext_blankwarning": "바꿀 문자열이 비어 있으므로 이 동작은 되돌릴 수 없습니다.\n계속하시겠습니까?",

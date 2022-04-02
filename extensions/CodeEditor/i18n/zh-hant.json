@@ -4,10 +4,11 @@
 			"Cwlin0416",
 			"Kly",
 			"LNDDYL",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Winston Sung"
 		]
 	},
-	"codeeditor-desc": "支援 JavaScript 與 CSS 語法醒目標示編輯使用 [https://ace.c9.io/ Ace 編輯器]",
+	"codeeditor-desc": "透過使用 [https://ace.c9.io/ Ace 編輯器]支援 JavaScript 與 CSS 語法醒目標示編輯",
 	"codeeditor-next-annotation": "前往下一個註解",
 	"codeeditor-toolbar-toggle": "切換原始碼編輯器",
 	"codeeditor-save-with-errors": "該文件內有錯誤，您是否確定要發布？",

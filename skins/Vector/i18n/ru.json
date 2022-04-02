@@ -14,7 +14,11 @@
 			"Stjn",
 			"Sunpriat",
 			"Thothsum",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Jack who built the house",
+			"Pacha Tchernof",
+			"Serhio Magpie",
+			"Tanzun"
 		]
 	},
 	"skinname-vector": "Векторное",
@@ -46,5 +50,6 @@
 	"vector-anon-user-menu-pages-learn": "узнать больше",
 	"vector-anon-user-menu-pages-label": "Подробнее о редактировании",
 	"vector-personal-more-label": "Пользовательские ссылки",
-	"vector-main-menu-tooltip": "Главное меню"
+	"vector-main-menu-tooltip": "Главное меню",
+	"tooltip-vector-anon-user-menu-title": "Больше возможностей"
 }

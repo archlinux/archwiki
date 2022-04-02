@@ -7,6 +7,10 @@
 			"Samatics"
 		]
 	},
+	"categorytree-portlet": "Adà lẹ",
+	"categorytree-category": "Adà:",
+	"categorytree-mode-all": "Weda lẹpo",
+	"categorytree-collapse": "Bọ̀",
 	"categorytree-expand": "hẹn gblo",
 	"categorytree-member-counts": "E hẹn {{PLURAL:$1|tẹnmẹtẹnmẹ 1|$1tẹnmẹtẹnmẹ lẹ}}, {{PLURAL:$2|weda 1|$2 weda lẹ }}, po{{PLURAL:$3|wepo 1|$3 wepo lẹ}}",
 	"categorytree-num-categories": "$1 S",

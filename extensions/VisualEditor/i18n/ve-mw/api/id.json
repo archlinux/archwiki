@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Gombang",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Daud I.F. Argana"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Tidak ditemukan serialisasi tembolok dengan kunci tersebut",
@@ -36,6 +37,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Gunakan hasil dari permintaan serializeforcache dengan kunci ini sebelumnya. Menimpa $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "ID Captcha (ketika menyimpan dengan respons captcha).",
 	"apihelp-visualeditoredit-param-captchaword": "Jawaban captcha (ketika menyimpan dengan respons captcha).",
+	"apihelp-visualeditoredit-param-plugins": "Plugin yang terkait dengan permintaan API.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Sembarang data yang dikirim oleh plugin dengan permintaan API.",
 	"apihelp-visualeditoredit-param-etag": "ETag untuk dikirim.",
 	"apihelp-visualeditoredit-param-html": "HTML untuk mengirim ke Parsoid sebagai pengganti teks wiki.",
 	"apihelp-visualeditoredit-param-minor": "Tandai sebagai suntingan kecil.",

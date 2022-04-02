@@ -3,7 +3,8 @@
 		"authors": [
 			"BaRaN6161 TURK",
 			"Joseph",
-			"Vito Genovese"
+			"Vito Genovese",
+			"SaldırganSincap"
 		]
 	},
 	"replacetext": "Metni değiştir",
@@ -32,7 +33,7 @@
 	"replacetext_success": "\"$1\", \"$2\" ile {{PLURAL:$3|bir sayfada|$3 sayfada}} değiştirecektir.",
 	"replacetext_noreplacement": "\"$1\" dizgisini içeren herhangi bir sayfa bulunamadı.",
 	"replacetext_nomove": "\"$1\" ibaresini içeren isimli sayfa bulunamadı.",
-	"replacetext_nosuchcategory": "\"$1\" adında bir kategori mevcut değil.",
+	"replacetext_nosuchcategory": "\"$1\" adında bir kategori yok.",
 	"replacetext_return": "Forma dön.",
 	"replacetext_warning": "'''Uyarı:''' {{PLURAL:$1|zaten içeren bir sayfa|zaten içeren bir sayfa}} yedek dizgiyi, \"$1\" içeren bir $2 sayfa var. Bu değişimi yaparsanız, değiştirmelerinizi bu dizelerden ayıramazsınız.",
 	"replacetext_blankwarning": "Değiştirme dizgisi boş olduğu için bu işlem geri alınamayacak.\nDevam etmek istiyor musunuz?",

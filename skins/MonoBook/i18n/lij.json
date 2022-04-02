@@ -1,16 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Giromin Cangiaxo"
+			"Giromin Cangiaxo",
+			"N. Longo"
 		]
 	},
-	"monobook-desc": "A pelle clascica da MediaWiki da-o 2004, ciamâ coscì pe-a foto in gianch'e neigro de 'n libbro into sfondo da paggina",
-	"monobook-jumptotop": "torna in simma",
-	"monobook-jumptopersonal": "strumenti utente",
-	"monobook-jumptonavigation": "Sata a-a navegassion",
-	"monobook-jumptosearch": "Sata a-a serchia",
+	"monobook-desc": "A skin clàscica de MediaWiki da-o 2004, ciamâ coscì pî-a föto in giànch'e néigro de 'n lìbbro mìssa cómme sfóndo da pàgina",
+	"monobook-jumptotop": "tórna in çìmma",
+	"monobook-jumptopersonal": "struménti uténte",
+	"monobook-jumptonavigation": "Sâta a-a navegaçión",
+	"monobook-jumptosearch": "Sâta a-a çèrchia",
 	"monobook-more-actions": "Âtro",
-	"monobook-cactions-label": "Assioin de paggina",
-	"monobook-notifications-link": "Notiffiche ($1)",
-	"monobook-notifications-link-none": "Notiffiche"
+	"cactions-mobile": "Açioìn in sciâ pàgina",
+	"monobook-cactions-label": "Açioìn in sciâ pàgina",
+	"monobook-notifications-link": "Notìfiche ($1)",
+	"monobook-notifications-link-none": "Notìfiche"
 }

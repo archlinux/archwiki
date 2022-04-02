@@ -12,7 +12,8 @@
 			"Shirayuki",
 			"Siebrand",
 			"Snævar",
-			"Umherirrender"
+			"Umherirrender",
+			"Jon Harald Søby"
 		]
 	},
 	"scribunto-desc": "{{desc|name=Scribunto|url=https://www.mediawiki.org/wiki/Extension:Scribunto}}",
@@ -32,7 +33,7 @@
 	"scribunto-console-clear": "Used as button text which enables to clear the console.\n{{Identical|Clear}}",
 	"scribunto-console-cleared": "Message displayed in the console when the module source has been changed.",
 	"scribunto-console-cleared-session-lost": "Message displayed in the console when the session has expired.",
-	"scribunto-common-error-category": "Tracking category for pages with errors from #invoke",
+	"scribunto-common-error-category": "{{tracking category name}}\nTracking category for pages with errors from #invoke",
 	"scribunto-common-error-category-desc": "Description on [[Special:TrackingCategories]] for the {{msg-mw|scribunto-common-error-category}} tracking category.",
 	"scribunto-common-nosuchmodule": "Error message displayed when referencing a non-existing module. Parameters:\n* $1 - (Unused)\n* $2 - the title of the module",
 	"scribunto-common-nofunction": "Error message displayed when not specifying a function to call.",
@@ -58,7 +59,7 @@
 	"scribunto-luastandalone-gone": "Exception message.",
 	"scribunto-luastandalone-signal": "Exception message. Parameters:\n* $1 - (Unused)\n* $2 - an exit status (may also be a signal name)",
 	"scribunto-luastandalone-exited": "Exception message. Parameters:\n* $1 - (Unused)\n* $2 - an exit status",
-	"scribunto-module-with-errors-category": "Name of [[mw:Help:Tracking categories|tracking category]] where modules saved with errors are listed.\n\nSee also:\n* {{msg-mw|scribunto-module-with-errors-category-desc}}",
+	"scribunto-module-with-errors-category": "{{tracking category name}}\nName of [[mw:Help:Tracking categories|tracking category]] where modules saved with errors are listed.\n\nSee also:\n* {{msg-mw|scribunto-module-with-errors-category-desc}}",
 	"scribunto-module-with-errors-category-desc": "Description on [[Special:TrackingCategories]] for the {{msg-mw|scribunto-module-with-errors-category}} tracking category.",
 	"scribunto-limitreport-timeusage": "Label for the \"Lua time usage\" row in the limit report table.\n\nSee also:\n* {{msg-mw|Scribunto-limitreport-timeusage-value}}",
 	"scribunto-limitreport-timeusage-value": "Format for the \"Lua time usage\" value in the limit report table. Parameters:\n* $1 - the usage in seconds\n* $2 - the maximum\nSee also:\n* {{msg-mw|Scribunto-limitreport-timeusage}}\n{{Identical|Second}}",

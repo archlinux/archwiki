@@ -11,12 +11,13 @@
 	"skinname-vector": "Vektor",
 	"vector-skin-desc": "Moderne ferzje fan MonoBoek mei in fris oansjoch en protte noflike ferbetterings",
 	"prefs-vector-enable-vector-1-label": "De âlde bewende Vektor brûke",
-	"prefs-vector-enable-vector-1-help": "Yn 'e kommende pear jier geane wy de Vektor-foarmjouwing stadichoan bywurkje. Mei 'de âlde bewende Vektor' kinne jo it oansjoch fan de âlde ferzje fan Vektor (fan desimber 2019) behâlde. Gean nei ús [[mw:Reading/Web/Desktop_Improvements|projektside]] at jo mear witte wolle oer de oanpassings.",
+	"prefs-vector-enable-vector-1-help": "Yn 'e kommende pear jier sille wy de Vektor-foarmjouwing stadichoan bywurkje. Mei 'de âlde bewende Vektor' kinne jo it oansjoch fan de âlde ferzje fan Vektor (fan desimber 2019) behâlde. Gean nei ús [[mw:Reading/Web/Desktop_Improvements|projektside]] at jo mear witte wolle oer de oanpassings.",
 	"vector-opt-out": "Alde oansjoch weromsette",
-	"vector-opt-out-tooltip": "Jo ynstellings wizigje en gean werom nei it âlde oansjoch fan 'e foarmjouwing (bewende Vektor)",
+	"vector-opt-out-tooltip": "Jo ynstellings wizigje om werom te gean nei it âlde oansjoch fan 'e foarmjouwing (bewende Vektor)",
 	"vector.css": "/* Al it CSS hjirre sil foar brûkers fan de Vector-foarmjouwing laden wurde */",
 	"vector.js": "/* Al it JavaScript hjirre sil foar brûkers fan de Vector-foarmjouwing laden wurde */",
 	"vector-action-toggle-sidebar": "Sydbalke omklappe",
+	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-action-addsection": "Nij mêd",
 	"vector-action-delete": "Wiskje",
 	"vector-action-move": "Omneame",
@@ -32,5 +33,11 @@
 	"vector-jumptosearch": "Springe nei sykjen",
 	"vector-jumptocontent": "Springe nei ynhâld",
 	"vector-more-actions": "Mear",
-	"vector-search-loader": "Laden fan syksuggestjes"
+	"vector-search-loader": "Laden fan syksuggestjes",
+	"vector-anon-user-menu-pages": "Siden foar ôfmelde meidoggers",
+	"vector-anon-user-menu-pages-learn": "mear witte",
+	"vector-anon-user-menu-pages-label": "Mear witte oer bewurkjen",
+	"vector-personal-more-label": "Meidoggerkeppelings",
+	"vector-main-menu-tooltip": "Haadmenu",
+	"tooltip-vector-anon-user-menu-title": "Mear opsjes"
 }

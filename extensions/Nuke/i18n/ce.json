@@ -26,7 +26,7 @@
 	"nuke-pattern": "SQL LIKE кеп (масал., %) агӀонан цӀеран:",
 	"nuke-nopages-global": "[[Special:RecentChanges|Кеста бинчу хийцамашкахь]] керла агӀонаш йац.",
 	"nuke-viewchanges": "ХӀоттина болу хийцам",
-	"nuke-namespace": "Къастае меттиган цӀе:",
+	"nuke-namespace": "Къастайе меттиган цӀе:",
 	"nuke-linkoncontribs": "Дуккха дӀайахар",
 	"nuke-linkoncontribs-text": "ХӀокху декъашхочо кхоьллина агӀонаш йерриге дӀайаха",
 	"nuke-confirm": "Ахьа {{PLURAL:$1|дӀайохкуш йу цхьа агӀо|$1 дӀайохкуш йу агӀо}}. Лаьий хьуна, иза кхочушдан?"

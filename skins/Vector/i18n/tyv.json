@@ -3,10 +3,12 @@
 		"authors": [
 			"Agilight",
 			"Sborsody",
-			"Монгуш Салим"
+			"Монгуш Салим",
+			"Riverman"
 		]
 	},
 	"skinname-vector": "Вектор",
+	"vector-language-button-label": "{{PLURAL:$1|$1 дыл}}",
 	"vector-action-addsection": "Тема немээр",
 	"vector-action-delete": "Казыыр",
 	"vector-action-move": "Өскээр адаар",

@@ -4,7 +4,8 @@
 			"Cwlin0416",
 			"Kly",
 			"LNDDYL",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"Tranve"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "使用該金鑰查無已快取的序列化內容",
@@ -52,6 +53,6 @@
 	"apihelp-visualeditoredit-param-starttimestamp": "在儲存時，請將此設定爲該頁面載入的時間戳記。 用於偵測編輯衝突。",
 	"apihelp-visualeditoredit-param-summary": "編輯摘要。",
 	"apihelp-visualeditoredit-param-tags": "更改標籤來套用到編輯上。",
-	"apihelp-visualeditoredit-param-wikitext": "要操作的 wiki 文字。",
+	"apihelp-visualeditoredit-param-wikitext": "要操作的 wikitext。",
 	"apihelp-visualeditoredit-summary": "儲存一個 HTML5 頁面至 MediaWiki (透過 Parsoid 服務轉換爲 WikiText)。"
 }

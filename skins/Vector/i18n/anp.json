@@ -4,6 +4,7 @@
 			"Angpradesh"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 भाषा|$1 भाषा सिनी}}",
 	"vector-action-addsection": "विषय जोड़ऽ",
 	"vector-action-delete": "मेटाबऽ",
 	"vector-action-move": "चलऽ",

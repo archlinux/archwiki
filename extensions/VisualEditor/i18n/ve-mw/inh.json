@@ -3,7 +3,8 @@
 		"authors": [
 			"Adam-Yourist",
 			"ElizaMag",
-			"Умар"
+			"Умар",
+			"Ӏабдуррашид"
 		]
 	},
 	"tooltip-ca-ve-edit": "Ху́вца ер оагIув",
@@ -23,7 +24,7 @@
 	"visualeditor-preference-betatempdisable": "ХIанзарчоа дIадоаде визуальни хувцар, бета-эрше из мел долча хана",
 	"visualeditor-preference-newwikitexteditor-description": "Хьалотае вики-текста керда раж визуальни редактора чу. Цунга визуальни редактора дукха кечалаш я, цун тара йола дизайн лелаю, иштта уж хувцам бара ши раж дIа-хьа етта аттагIа да.",
 	"visualeditor-preference-newwikitexteditor-label": "Вики-текста керда раж",
-	"visualeditor-preference-visualdiffpage-description": "Хьалотае керда визуальни раж эршаш вIаши юстача оагIонашка.",
+	"visualeditor-preference-visualdiffpage-description": "Хьалсага керда визуальни раж эршаш вӀаший юстача оагӀонашка.",
 	"visualeditor-preference-visualdiffpage-label": "Эршаш визуальни вIаши йистар",
 	"visualeditor-savedialog-label-create": "Хьакхолла оагIув"
 }

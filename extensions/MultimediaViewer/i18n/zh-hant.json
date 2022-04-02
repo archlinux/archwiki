@@ -10,7 +10,8 @@
 			"Liuxinyu970226",
 			"Simon Shek",
 			"Winston Sung",
-			"Xiplus"
+			"Xiplus",
+			"Tranve"
 		]
 	},
 	"multimediaviewer-desc": "使用全螢幕介面以較大尺寸的方式顯示展開後的縮圖",
@@ -81,7 +82,7 @@
 	"multimediaviewer-link-to-page": "連結至檔案描述頁面",
 	"multimediaviewer-link-to-file": "連結至原始檔案",
 	"multimediaviewer-share-explanation": "複製並自由的分享該連結",
-	"multimediaviewer-embed-wt": "wiki語法",
+	"multimediaviewer-embed-wt": "Wikitext",
 	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-embed-explanation": "使用此程式碼內嵌該檔案",
 	"multimediaviewer-text-embed-credit-text-bl": "由 $1, $2, $3",

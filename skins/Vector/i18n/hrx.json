@@ -6,6 +6,7 @@
 			"Paul Beppler"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 Sproch|$1 Sproche}}",
 	"vector-action-addsection": "Abschnitt hinzufüche",
 	"vector-action-delete": "Lösche",
 	"vector-action-move": "Verschiebe",
@@ -14,7 +15,7 @@
 	"vector-action-unprotect": "Seiteschutz ännre",
 	"vector-view-create": "Erstelle",
 	"vector-view-edit": "Beaarvete",
-	"vector-view-history": "Versionsgeschichd",
+	"vector-view-history": "Versionsgeschicht",
 	"vector-view-view": "Lese",
 	"vector-view-viewsource": "Quelltext oonzeiche",
 	"vector-more-actions": "Meh"

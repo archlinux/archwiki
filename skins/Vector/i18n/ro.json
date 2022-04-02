@@ -30,10 +30,13 @@
 	"vector-view-edit": "Modificare",
 	"vector-view-history": "Istoric",
 	"vector-view-view": "Lectură",
-	"vector-view-viewsource": "Vedeți sursă",
+	"vector-view-viewsource": "Vedeți sursa",
 	"vector-jumptonavigation": "Sari la navigare",
 	"vector-jumptosearch": "Sari la căutare",
 	"vector-jumptocontent": "Sari la conținut",
 	"vector-more-actions": "Mai mult",
-	"vector-search-loader": "Se încarcă sugestiile de căutare"
+	"vector-search-loader": "Se încarcă sugestiile de căutare",
+	"vector-anon-user-menu-pages": "Pagini pentru editorii neautentificați",
+	"vector-anon-user-menu-pages-learn": "aflați mai mult",
+	"vector-anon-user-menu-pages-label": "Aflați mai mult despre editare"
 }

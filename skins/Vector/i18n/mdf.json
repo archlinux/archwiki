@@ -5,6 +5,7 @@
 			"Numulunj pilgae"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 кяль|$1 кяльхть}}",
 	"vector-action-addsection": "Поладомс мезень колга корхтамс",
 	"vector-action-delete": "Нардамс",
 	"vector-action-move": "Шашфтомс",

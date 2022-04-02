@@ -2,10 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Rizkiahmadz",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Daud I.F. Argana"
 		]
 	},
 	"apihelp-templatedata-description": "Ambil data yang disimpan oleh ekstensi DataTemplat.",
+	"apihelp-templatedata-summary": "Mengambil data yang disimpan oleh ekstensi DataTemplat.",
 	"apihelp-templatedata-example-1": "Kembalian Data untuk [[Template:Stub]] dan [[Template:Example]]",
-	"apihelp-templatedata-param-lang": "Kembalikan nilai yang telah dilokalisasi dalam bahasa ini. Secara baku seluruh terjemahan yang tersedia akan dikembalikan."
+	"apihelp-templatedata-param-lang": "Kembalikan nilai yang telah dilokalisasi dalam bahasa ini. Secara baku seluruh terjemahan yang tersedia akan dikembalikan.",
+	"apierror-templatedata-corrupt": "Halaman datatemplat #$1 mengandung data yang tidak sah: $2",
+	"apiwarn-templatedata-deprecation-format": "Format keluaran standar akan berubah menjadi <kbd>jsonfm</kbd> pada masa mendatang. Tolong tetapkan <kbd>format=json</kbd> secara eksplisit."
 }

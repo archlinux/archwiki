@@ -37,5 +37,6 @@
 	"right-gadgets-edit": "Redigere tilleggsfunksjoners JavaScript- og CSS-sider",
 	"action-gadgets-edit": "redigere denne tilleggsfunksjonens JavaScript- eller CSS-side",
 	"right-gadgets-definition-edit": "Redigere tilleggsfunksjonsdefinisjonene",
-	"action-gadgets-definition-edit": "redigere denne tilleggsfunksjonens definisjon"
+	"action-gadgets-definition-edit": "redigere denne tilleggsfunksjonens definisjon",
+	"gadgets-wrong-contentmodel": "Sider i navnerommet «{{ns:2302}}» må ha innholdsmodellen GadgetDefinition."
 }

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"categorytree": "Cây thể loại",
@@ -14,9 +15,9 @@
 	"categorytree-go": "Hiển thị",
 	"categorytree-parents": "Các thể loại mẹ",
 	"categorytree-mode-label": "Chế độ:",
-	"categorytree-mode-categories": "Chỉ liệt kê các thể loại",
-	"categorytree-mode-pages": "các trang ngoại trừ trang tập tin",
-	"categorytree-mode-all": "tất cả các trang",
+	"categorytree-mode-categories": "chỉ liệt kê thể loại",
+	"categorytree-mode-pages": "không liệt kê tập tin",
+	"categorytree-mode-all": "liệt kê mọi trang",
 	"categorytree-collapse": "đóng",
 	"categorytree-expand": "mở",
 	"categorytree-member-counts": "Có $1 thể loại con, $2 trang, và $3 tập tin",

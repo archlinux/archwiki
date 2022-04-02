@@ -10,7 +10,8 @@
 			"Laaknor",
 			"Macofe",
 			"Nghtwlkr",
-			"Simny"
+			"Simny",
+			"Abuluntu"
 		]
 	},
 	"wikieditor": "Avansert grensesnitt for redigering av wikitekst",
@@ -58,6 +59,9 @@
 	"wikieditor-toolbar-tool-file-title": "Sett inn fil",
 	"wikieditor-toolbar-file-target": "Filnavn:",
 	"wikieditor-toolbar-file-caption": "Bildetekst:",
+	"wikieditor-toolbar-file-alt": "Alternativ tekst:",
+	"wikieditor-toolbar-file-alt-help": "Dette feltet kan brukes for å gi en beskrivelse av filen til noen som ikke kan se den. Beskrivelsen bør være tilstrekkelig til at de kan forstå hva filen skulle formidle av informasjon. Dette er helt avgjørende for blinde og svaksynte som benytter skjermlesere eller nettlesere som kun viser tekst.",
+	"wikieditor-toolbar-file-alt-help-label": "(Vis hjelp)",
 	"wikieditor-toolbar-file-size": "Størrelse:",
 	"wikieditor-toolbar-file-float": "Justering:",
 	"wikieditor-toolbar-file-default": "(standard)",

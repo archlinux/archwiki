@@ -29,6 +29,7 @@
 	"renameuser-page-exists": "Siden $1 finnes allerede, og kunne ikke erstattes automatisk.",
 	"renameuser-page-moved": "Siden $1 har blitt flyttet til $2.",
 	"renameuser-page-unmoved": "Siden $1 kunne ikke flyttes til $2.",
+	"renameuser-warning-currentblock": "Denne brukeren er [$1 for tiden blokkert].",
 	"log-name-renameuser": "Omdøpingslogg",
 	"log-description-renameuser": "Dette er en logg over endrede brukernavn",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|omdøpte}} brukeren $4 ({{PLURAL:$6|$6 redigering|$6 redigeringer}}) til {{GENDER:$7|$5}}",

@@ -27,7 +27,8 @@
 			"فلورانس",
 			"محمد أحمد عبد الفتاح",
 			"محمد عصام",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"SaldırganSincap"
 		]
 	},
 	"collabpad-doctitle": "كولاب باد: $1",
@@ -217,11 +218,13 @@
 	"visualeditor-dialog-transclusion-title-edit-known-template": "تعديل: $1",
 	"visualeditor-dialog-transclusion-title-edit-transclusion": "محتوى القالب",
 	"visualeditor-dialog-transclusion-template-search": "البحث عن قالب",
+	"visualeditor-dialog-transclusion-template-search-help": "جِد القالب الذي تودّ إضافته بالبحث عبر كلماتٍ مفتاحيّة. من المرجح أن تعمل القوالب التي لها  وصوف بشكلٍ جيّدٍ مع هذا المحرر (المحرر المرئي).",
 	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "مواصلة التعديل",
 	"visualeditor-dialogbutton-media-tooltip": "الصور والوسائط",
 	"visualeditor-dialogbutton-meta-tooltip": "إعدادات الصفحة",
 	"visualeditor-dialogbutton-template-tooltip": "قالب",
 	"visualeditor-dialogbutton-transclusion-tooltip": "تضمين",
+	"visualeditor-dismissible-message-close": "إغلاق الرسالة وعدم إظهارها مستقبلًا",
 	"visualeditor-donebutton-tooltip": "انتهيت من التعديل",
 	"visualeditor-editconflict": "تعذر حفظ التغييرات الخاصة لوجود تضارب تحرير. أتود{{GENDER:||ين}} تصويب التضارب يدويا؟",
 	"visualeditor-editingtabdialog-body": "تتذكر {{SITENAME}} الآن أي محرر تفضل. يمكنك التبديل بين وضعيتي التحرير أثناء تعديلك، ويمكنك تغيير تفضيلك لاحقًا.",
@@ -232,6 +235,8 @@
 	"visualeditor-editsummary": "صف ما غيرته",
 	"visualeditor-editsummary-characters-remaining": "عدد الحروف المتبقية",
 	"visualeditor-educationpopup-dismiss": "فهمت",
+	"visualeditor-expandable-less": "أقل",
+	"visualeditor-expandable-more": "المزيد",
 	"visualeditor-feedback-defaultmessage": "مسار: $1",
 	"visualeditor-formatdropdown-format-mw-heading1": "عنوان الصفحة",
 	"visualeditor-formatdropdown-format-mw-heading2": "عنوان",
@@ -246,7 +251,7 @@
 	"visualeditor-linkinspector-convert-link-isbn": "تحويل إلى الرابط ISBN",
 	"visualeditor-linkinspector-convert-link-pmid": "حول إلى وصلة PMID",
 	"visualeditor-linkinspector-convert-link-rfc": "تحويل إلى الرابط RFC",
-	"visualeditor-linkinspector-educationpopup-text": "اربط الكلمات المهمة بمقالات اخرى في ويكيبيديا أو حتى بموقع آخر، لتمكين القارئ من فهم مرادها.",
+	"visualeditor-linkinspector-educationpopup-text": "اربط الكلمات المهمة بمقالاتٍ أخرى في ويكيبيديا أو حتى بموقع آخر، لتمكين القارئ من فهم مرادها.",
 	"visualeditor-linkinspector-educationpopup-title": "وصلات",
 	"visualeditor-linkinspector-illegal-title": "عنوان الصفحة غير صحيح",
 	"visualeditor-linkinspector-invalid-external": "أدخل المسار كاملا، على سبيل المثال https://example.org",
@@ -348,7 +353,7 @@
 	"visualeditor-parameter-input-placeholder": "اسم الحقل",
 	"visualeditor-parameter-search-more": "أظهر {{PLURAL:$1|الحقل الآخر|الحقلين الآخرين|الحقول ال‍$1 الأخرى}}",
 	"visualeditor-parameter-search-no-unused": "كل الحقول مستخدمة",
-	"visualeditor-parameter-search-unknown": "حقل غير معروف",
+	"visualeditor-parameter-search-unknown": "(حقل غير معروف)",
 	"visualeditor-preference-betatempdisable": "عطل المحرر المرئي مؤقتا ما دام في الطور التجريبي.",
 	"visualeditor-preference-core-description": "تمكين المحرر المرئي. لن يكون متوفرًا في صفحات النقاش ونطاقات أخرى.",
 	"visualeditor-preference-core-discussion-link": "//mediawiki.org/wiki/Special:MyLanguage/VisualEditor/Feedback",
@@ -412,6 +417,6 @@
 	"visualeditor-wikitext-warning": "أنت تستخدم المحرر المرئي، و[[{{MediaWiki:visualeditor-wikitext-warning-link}}|نص الويكي]] لا يعمل هنا. للاحتفاظ بتعديلاتك وإكمال التحرير عن طريق المصدر، اضغط على زر التحويل.",
 	"visualeditor-wikitext-warning-title": "يوجد نص ويكي",
 	"visualeditor-wikitextconvert-title": "تحويل التنسيق إلى نص الويكي؟",
-	"visualeditor-wikitextconvert-message": "يحتوي المحتوى الملصق الخاص بك على تنسيق، هل يجب تحويله إلى نص الويكي، أم إدراجه كنص عادي؟",
+	"visualeditor-wikitextconvert-message": "لقد قمت بلصق المحتوى بتنسيق غني. هل ترغب في تحويل هذا التنسيق إلى نص ويكي؟",
 	"visualeditor-wikitextconvert-convert": "تحويل إلى نص الويكي"
 }

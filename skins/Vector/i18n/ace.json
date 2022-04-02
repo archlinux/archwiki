@@ -5,6 +5,7 @@
 			"Si Gam Acèh"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 bahsa}}",
 	"vector-action-addsection": "Tamah bhaih",
 	"vector-action-delete": "Sampôh",
 	"vector-action-move": "Pupinah",

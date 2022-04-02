@@ -9,6 +9,7 @@
 		]
 	},
 	"skinname-vector": "Вéктора",
+	"vector-language-button-label": "{{PLURAL:$1|$1 мотт}}",
 	"vector-action-addsection": "Тема тӀатоха",
 	"vector-action-delete": "ДӀаяккха",
 	"vector-action-move": "ЦӀи хувца",

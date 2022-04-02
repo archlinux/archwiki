@@ -24,7 +24,7 @@
 	"gadgets-required-skins": "Saadaval {{PLURAL:$2|järgmise kujundusega|järgmiste kujundustega}}: $1.",
 	"gadgets-default": "Vaikimisi kõigile lubatud.",
 	"gadgets-legacy": "Tööriist on laadimata. Palun kohanda ResourceLoaderiga. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Lisateave])",
-	"gadgets-export": "Ekspordi",
+	"gadgets-export": "ekspordi",
 	"gadgets-export-title": "Tööriista eksportimine",
 	"gadgets-not-found": "Tööriista \"$1\" ei leidu.",
 	"gadgets-export-text": "Klõpsa nuppu \"{{int:gadgets-export-download}}\", et eksportida tööriist $1; salvesta allalaaditav fail;\nmine sihtvikis leheküljele Special:Import ja laadi see üles. Seejärel lisa järgnev leheküljele MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nSul peavad olema sihtvikis vajalikud õigused (kaasa arvatud õigus redigeerida süsteemi sõnumeid) ja üleslaaditavate failide kaudu importimine peab olema lubatud.",

@@ -17,7 +17,7 @@
 	"vector.css": "/* CSS i denne fila vil gjelde alle som bruker drakta Vector */",
 	"vector.js": "/* Javascript i denne fila vil gjelde for brukere av drakta Vector */",
 	"vector-action-toggle-sidebar": "Vis/skjul sidefelt",
-	"vector-language-button-label": "{{PLURAL:$1|$1 språk|$1 språk}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 språk}}",
 	"vector-action-addsection": "Nytt emne",
 	"vector-action-delete": "Slett",
 	"vector-action-move": "Flytt",
@@ -33,5 +33,13 @@
 	"vector-jumptosearch": "Hopp til søk",
 	"vector-jumptocontent": "Hopp til innhold",
 	"vector-more-actions": "Mer",
-	"vector-search-loader": "Laster søkeforslag"
+	"vector-search-loader": "Laster søkeforslag",
+	"vector-anon-user-menu-pages": "Sider for utloggede bidragsytere",
+	"vector-anon-user-menu-pages-learn": "lær mer",
+	"vector-anon-user-menu-pages-label": "Lær mer om redigering",
+	"vector-personal-more-label": "Brukerlenker",
+	"vector-main-menu-tooltip": "Hovedmeny",
+	"tooltip-vector-anon-user-menu-title": "Flere alternativer",
+	"vector-menu-checkbox-expanded": "utvidet",
+	"vector-menu-checkbox-collapsed": "sammenslått"
 }

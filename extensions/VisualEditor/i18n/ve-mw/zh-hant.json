@@ -34,7 +34,9 @@
 			"Zhxy 519",
 			"和平奮鬥救地球",
 			"烈羽",
-			"TMg"
+			"TMg",
+			"Tranve",
+			"列维劳德"
 		]
 	},
 	"collabpad-doctitle": "CollabPad：$1",
@@ -357,8 +359,8 @@
 	"visualeditor-preference-core-description": "開啟視覺化編輯器，目前尚未支援對話頁面及其他命名空間。",
 	"visualeditor-preference-core-label": "視覺化編輯",
 	"visualeditor-preference-enable": "開啟視覺化編輯器，將可於以下{{PLURAL:$2|命名空間}}使用：$1",
-	"visualeditor-preference-newwikitexteditor-description": "在視覺化編輯器中開啟新版維基文字模式。它擁有視覺化編輯器中提供的很多工具，使用了類似的設計，並允許更好地在兩個編輯器之間切換。",
-	"visualeditor-preference-newwikitexteditor-enable": "在視覺化編輯器裡使用 wiki 文字模式，以取代其它不同的 wiki 文字編輯器。",
+	"visualeditor-preference-newwikitexteditor-description": "在視覺化編輯器中開啟新版wikitext模式。它擁有視覺化編輯器中提供的很多工具，使用了類似的設計，並允許更好地在兩個編輯器之間切換。",
+	"visualeditor-preference-newwikitexteditor-enable": "在視覺化編輯器裡使用 wikitext 模式，以取代其它不同的 wikitext 編輯器。",
 	"visualeditor-preference-newwikitexteditor-label": "新版wikitext模式",
 	"visualeditor-preference-tabs": "編輯模式：",
 	"visualeditor-preference-tabs-multi-tab": "同時顯示兩種編輯器頁籤",
@@ -374,7 +376,7 @@
 	"visualeditor-rebase-client-title-help": "在儲存前，您可檢閱更改內容。",
 	"visualeditor-recreate": "此頁面在您編輯的這段期間已被刪除，請點選 \"$1\" 重新建立頁面。",
 	"visualeditor-redirect-description": "重新導向至 $1",
-	"visualeditor-savedialog-error-badtoken": "工作階段失效，我們無法儲存您的編輯。",
+	"visualeditor-savedialog-error-badtoken": "連線階段已失效，我們無法儲存您的編輯。",
 	"visualeditor-savedialog-identify-anon": "您是否要以匿名使用者的身份來儲存頁面？ 您的 IP 位址將記錄於本頁面的編輯歷史中。",
 	"visualeditor-savedialog-identify-trylogin": "您已登出，請在其他頁籤登入後再試一次。",
 	"visualeditor-savedialog-identify-user": "您目前以 [[User:$1|$1]] 的身份登入。 若您儲存本次的編輯，修訂歷史記錄將會記錄此帳號。",
@@ -392,7 +394,7 @@
 	"visualeditor-savedialog-label-visual-diff-report": "報告此次更改的不正確顯示",
 	"visualeditor-savedialog-review-nosummary": "無編輯摘要",
 	"visualeditor-savedialog-review-visual": "視覺化",
-	"visualeditor-savedialog-review-wikitext": "wiki語法",
+	"visualeditor-savedialog-review-wikitext": "Wikitext",
 	"visualeditor-savedialog-title-conflict": "衝突",
 	"visualeditor-savedialog-title-preview": "預覽您的變更",
 	"visualeditor-savedialog-title-review": "複核您的變更",
@@ -408,14 +410,14 @@
 	"visualeditor-special-characters-group-other": "經常使用",
 	"visualeditor-templatesused-tool": "使用的模板",
 	"visualeditor-title-error": "無效標題。",
-	"visualeditor-toload": "現在將載入編輯器，若您再幾秒過後仍看到此訊息，請 [$1 重新載入此頁面]。",
+	"visualeditor-toload": "現在將載入編輯器，若您再幾秒過後仍看到此訊息，請[$1 重新載入頁面]。",
 	"visualeditor-tooltip-non-breaking-space": "不換行空格",
 	"visualeditor-usernamespacepagelink": "Project:使用者命名空間",
 	"visualeditor-version-label": "版本",
 	"visualeditor-wikitext-progress": "wikitext 轉換中",
 	"visualeditor-wikitext-warning": "您正在使用視覺化編輯器 - 此編輯器目前不支援 [[{{MediaWiki:visualeditor-wikitext-warning-link}}|WikiText]]。 若要保留您現有的資料並切換回原始碼編輯器，請點選切換按鈕。",
-	"visualeditor-wikitext-warning-title": "偵測到 Wiki 標記語言",
-	"visualeditor-wikitextconvert-title": "轉換格式為wiki文字？",
+	"visualeditor-wikitext-warning-title": "偵測到 wikitext 標記",
+	"visualeditor-wikitextconvert-title": "轉換格式為wikitext？",
 	"visualeditor-wikitextconvert-message": "您貼上的內容包含格式。它應轉換為wiki文字，還是以純文字插入？",
-	"visualeditor-wikitextconvert-convert": "轉換為wiki文字"
+	"visualeditor-wikitextconvert-convert": "轉換為wikitext"
 }

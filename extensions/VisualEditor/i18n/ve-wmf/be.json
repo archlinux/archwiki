@@ -4,7 +4,8 @@
 			"Artsiom91",
 			"Vlad5250",
 			"Чаховіч Уладзіслаў",
-			"ZlyiLev"
+			"ZlyiLev",
+			"Chadyka"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Візуальны рэдактар]]",
@@ -18,9 +19,11 @@
 	"visualeditor-feedback-link": "Project:VisualEditor/Водгукі",
 	"visualeditor-feedback-tool": "Пакінуць водгук",
 	"visualeditor-help-label": "Чытаць кіраўніцтва карыстальніка",
+	"visualeditor-help-title": "Дапаможнік у карыстанні рэдактарам",
 	"visualeditor-welcomedialog-action": "Пачаць рэдагаванне",
 	"visualeditor-welcomedialog-content": "Правіць можа кожны, і кожнае паляпшэнне ў дапамогу.",
 	"visualeditor-welcomedialog-content-thanks": "Дзякуй, што дапамагаеце свету даведацца больш!",
+	"visualeditor-welcomedialog-switch": "Пераключыцца на рэдактар зыходнага коду",
 	"visualeditor-welcomedialog-switch-ve": "Пераключыцца на візуальны рэдактар",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|Вітаем}} у {{grammar:родны|$2}}"
 }

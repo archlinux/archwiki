@@ -13,7 +13,9 @@
 			"Xiaomingyan",
 			"Xiplus",
 			"Yfdyh000",
-			"沈澄心"
+			"沈澄心",
+			"GuoPC",
+			"Tranve"
 		]
 	},
 	"templatedata-desc": "实现模板参数的数据存储（使用JSON）",
@@ -60,7 +62,7 @@
 	"templatedata-invalid-length": "数据过大，无法保存（{{formatnum:$1}}{{PLURAL:$1|字节}}，{{PLURAL:$2|限制是}}{{formatnum:$2}}）",
 	"templatedata-invalid-missing": "找不到必填的属性“$1”。",
 	"templatedata-invalid-param": "无效参数“$1”被用于属性“$2”。",
-	"templatedata-invalid-parse": "JSON中语法错误。",
+	"templatedata-invalid-parse": "JSON中含有语法错误。",
 	"templatedata-invalid-type": "属性“$1”的预期类型为“$2”。",
 	"templatedata-invalid-unknown": "意外的属性“$1”。",
 	"templatedata-invalid-value": "属性“$1”的值无效。",

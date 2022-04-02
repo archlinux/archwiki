@@ -18,7 +18,8 @@
 			"Waihorace",
 			"Winston Sung",
 			"Wrightbus",
-			"Xiplus"
+			"Xiplus",
+			"Ericliu1912"
 		]
 	},
 	"renameuser": "重新命名使用者",
@@ -48,7 +49,7 @@
 	"log-description-renameuser": "此頁面為使用者名稱修改日誌。",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|重新命名}}使用者 $4（已編輯 {{PLURAL:$6|$6 次}}）為 {{GENDER:$7|$5}}",
 	"logentry-renameuser-renameuser-legacier": "$1 重新命名使用者 $4 為 {{GENDER:$7|$5}}",
-	"renameuser-move-log": "重新命名{{GENDER:$2|使用者}} \"[[User:$1|$1]]\" 為 \"[[User:$2|$2]]\" 時已自動移動使用者相關頁面",
+	"renameuser-move-log": "重新命名{{GENDER:$2|使用者}}「[[User:$1|$1]]」為「[[User:$2|$2]]」時已自動移動頁面",
 	"action-renameuser": "重新命名使用者",
 	"right-renameuser": "重新命名使用者",
 	"renameuser-renamed-notice": "本使用者已重新命名。\n下列為重新命名日誌以提供參考。"

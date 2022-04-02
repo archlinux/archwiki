@@ -113,6 +113,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Преглед",
 	"wikieditor-toolbar-tool-table-insert": "Вметни",
 	"wikieditor-toolbar-tool-table-cancel": "Откажи",
+	"wikieditor-toolbar-tool-table-example-text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut nec purus diam. Sed aliquam imperdiet nunc quis lacinia. Donec rutrum consectetur placerat. Sed volutpat neque non purus faucibus id ultricies enim euismod.",
 	"wikieditor-toolbar-tool-table-toomany": "Не можете да вметнувате табела со повеќе од $1 {{PLURAL:$1|ќелија|ќелии}} со овој дијалог.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Не внесовте важечки број на редови или столбови.",
 	"wikieditor-toolbar-tool-table-zero": "Не можете да вметнувате табела со нула редови или столбови.",

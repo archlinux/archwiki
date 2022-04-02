@@ -6,7 +6,8 @@
 			"Peter Alberti",
 			"Saederup92",
 			"Weblars",
-			"Antonla"
+			"Antonla",
+			"Jan Friberg"
 		]
 	},
 	"vector-skin-desc": "Moderne version af MonoBook med frisk udseende og mange forbedringer af brugervenligheden",
@@ -15,6 +16,7 @@
 	"vector-opt-out": "Skift til det gamle udseende",
 	"vector-opt-out-tooltip": "Ændr indstillingerne for at gå tilbage til det gamle udseende (klassisk Vector)",
 	"vector-action-toggle-sidebar": "Vis/skjul venstremenuen",
+	"vector-language-button-label": "{{PLURAL:$1|$1 sprog}}",
 	"vector-action-addsection": "Tilføj emne",
 	"vector-action-delete": "Slet",
 	"vector-action-move": "Flyt",
@@ -30,6 +32,13 @@
 	"vector-jumptosearch": "Spring til søgning",
 	"vector-jumptocontent": "Spring til indhold",
 	"vector-more-actions": "Mere",
+	"vector-search-loader": "Henter søgeforslag",
+	"vector-anon-user-menu-pages": "Sider for redaktører som er logget ud",
 	"vector-anon-user-menu-pages-learn": "lær mere",
-	"vector-main-menu-tooltip": "Hovedmenu"
+	"vector-anon-user-menu-pages-label": "Læs mere om redigering",
+	"vector-personal-more-label": "Brugerlinks",
+	"vector-main-menu-tooltip": "Hovedmenu",
+	"tooltip-vector-anon-user-menu-title": "Flere mugligheder",
+	"vector-menu-checkbox-expanded": "udvidet",
+	"vector-menu-checkbox-collapsed": "Sammenfoldet"
 }

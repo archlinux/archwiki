@@ -136,7 +136,7 @@ class DisableOATHForUser extends FormSpecialPage {
 		}
 
 		$oathUser->disable();
-		$this->userRepo->remove( $oathUser, $this->getRequest()->getIP() );
+		$this->userRepo->remove( $oathUser, $this->getRequest()->getIP(), false );
 
 		$logEntry = new ManualLogEntry( 'oath', 'disable-other' );
 		$logEntry->setPerformer( $this->getUser() );

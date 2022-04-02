@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Akapochtli",
-			"Fluence"
+			"Fluence",
+			"Languaeditor"
 		]
 	},
+	"interwiki_edit": "Xikpatla",
 	"interwiki_reasonfield": "Īxtlamatiliztli:",
 	"interwiki_addbutton": "Ticcetiliz"
 }

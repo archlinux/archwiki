@@ -34,6 +34,7 @@
 	"nuke-maxpages": "Maksymalna liczba stron:",
 	"nuke-editby": "Utworzona przez {{GENDER:$1|użytkownika|użytkowniczkę}} [[Special:Contributions/$1|$1]]",
 	"nuke-deleted": "Strona '''$1''' została usunięta.",
+	"nuke-deletion-queued": "Strona '''$1''' została ustawiona w kolejce do usunięcia.",
 	"nuke-not-deleted": "Strony [[:$1]] '''nie można''' usunąć.",
 	"nuke-delete-more": "[[Special:Nuke|Usuń więcej stron]]",
 	"nuke-pattern": "Wzór SQL LIKE (np. %) nazwy strony:",

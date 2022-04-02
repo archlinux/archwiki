@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kandar"
+			"Kandar",
+			"Daud I.F. Argana"
 		]
 	},
 	"vector-skin-desc": "MonoBook vérsi modéren dina pidangan anu leuwih anyar jeung leuwih hadé",
+	"vector-language-button-label": "{{PLURAL:$1|$1 basa}}",
 	"vector-action-addsection": "Tambah jejer",
 	"vector-action-delete": "Hapus",
 	"vector-action-move": "Pindahkeun",

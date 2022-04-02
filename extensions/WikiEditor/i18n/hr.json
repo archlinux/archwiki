@@ -134,7 +134,7 @@
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Zamijeni sve",
 	"wikieditor-toolbar-tool-replace-close": "Zatvori",
 	"wikieditor-toolbar-tool-replace-nomatch": "Pretraživanje nije pronašlo ništa.",
-	"wikieditor-toolbar-tool-replace-success": "$1 {{PLURAL:$1|zamjena načinjena|zamjene načinjene|zamjena načinjeno}}.",
+	"wikieditor-toolbar-tool-replace-success": "{{PLURAL:$1|Načinjena $1 zamjena|Načinjene $1 zamjene|Načinjeno $1 zamjena}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Niste unijeli ništa za pretragu.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Izraz koji ste unijeli nije ispravan: $1",
 	"wikieditor-toolbar-tool-replace-word": "Podudaranje cijele riječi",

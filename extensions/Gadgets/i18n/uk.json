@@ -47,5 +47,6 @@
 	"right-gadgets-edit": "Редагування сторінок додатків на JavaScript та CSS",
 	"action-gadgets-edit": "редагування JavaScript- чи CSS-сторінки цього гаджета",
 	"right-gadgets-definition-edit": "Редагування визначень гаджетів",
-	"action-gadgets-definition-edit": "редагування визначення цього гаджета"
+	"action-gadgets-definition-edit": "редагування визначення цього гаджета",
+	"gadgets-wrong-contentmodel": "Сторінки у просторі назв {{ns:2302}} повинні мати модель вмісту GadgetDefinition."
 }

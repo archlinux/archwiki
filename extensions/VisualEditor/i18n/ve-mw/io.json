@@ -240,6 +240,7 @@
 	"visualeditor-recreate": "La pagino efacesis dum ke vu redaktis ol. Kliktez $1 por rikrear ol.",
 	"visualeditor-redirect-description": "Ridirektar a $1",
 	"visualeditor-savedialog-error-badtoken": "Ni ne povis registragar vua redakto pro ke la sesiono esis ne plus valida.",
+	"visualeditor-savedialog-identify-trylogin": "Vu ne pluse esas enrejistrita. Komencez altra sesiono en altra pagino, e probez itere enirar.",
 	"visualeditor-savedialog-identify-user": "Vu nun ja enrejistresis kom [[User:$1|$1]]. Vua redakti asociesos kun ca konto, se vu konzervez ca redakti.",
 	"visualeditor-savedialog-label-create": "Krear pagino",
 	"visualeditor-savedialog-label-publish-short": "Editar",

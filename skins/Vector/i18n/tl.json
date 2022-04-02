@@ -3,12 +3,14 @@
 		"authors": [
 			"AnakngAraw",
 			"GinawaSaHapon",
-			"Sky Harbor"
+			"Sky Harbor",
+			"Ianlopez1115"
 		]
 	},
 	"skinname-vector": "Vector",
 	"vector.css": "/* Ang inilagay na CSS dito ay makakaapekto sa mga tagagamit ng pabalat na Vector */",
 	"vector.js": "/* Ang anumang JavaScript dito ay ikakarga para sa mga tagagamit na gumagamit ng pabalat na Vector */",
+	"vector-language-button-label": "{{PLURAL:$1|$1 wika|$1 mga wika}}",
 	"vector-action-addsection": "Magdagdag ng paksa",
 	"vector-action-delete": "Burahin",
 	"vector-action-move": "Ilipat",

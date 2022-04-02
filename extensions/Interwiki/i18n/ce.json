@@ -31,6 +31,9 @@
 	"logentry-interwiki-iw_add": "$1 {{GENDER:$2|тӀетоьхна}} префикс «$4» ($5) (trans: $6; local: $7) йукъарвики-таблицехь",
 	"logentry-interwiki-iw_edit": "$1 {{GENDER:$2|хийцина}} префикс «$4» ($5) (trans: $6; local: $7) йукъарвики-таблицехь",
 	"logentry-interwiki-iw_delete": "$1 {{GENDER:$2|дӀайаьккхина}} префикс «$4» йукъарвики-таблицан чуьра",
-	"log-description-interwiki": "ХӀара [[Special:Interwiki|юкъарвики таблицан]] хицаман тептар ду.",
-	"interwiki-links": "Йукъарвикийн префиксаш"
+	"log-description-interwiki": "ХӀара [[Special:Interwiki|йукъарвики таблицан]] хицаман тептар ду.",
+	"interwiki-links": "Йукъарвикийн префиксаш",
+	"interwiki-language-links": "Меттанийнйуккъара префиксаш",
+	"interwiki-global-language-links": "Глобалан меттанийнйуккъара префиксаш",
+	"interwiki-global-language-description": "ХӀара префиксаш билгалла меттанийн кодашка тера йу уьш лелора йу «{{int:otherlanguages}}» могӀам кхуллуш, агӀонан тӀетухуш. ХӀунда аьлча уьш йу глобалан конфигурацин йкъара, дӀайолалун вики чохь бен хийца ца ло. Глобалан меттанийнйукъара билгалонаш локалан тӀейаха ца ло."
 }

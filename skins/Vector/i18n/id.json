@@ -8,7 +8,8 @@
 			"Naufal06",
 			"Rachmat04",
 			"Rex",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Daud I.F. Argana"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -38,5 +39,11 @@
 	"vector-more-actions": "Lainnya",
 	"vector-search-loader": "Memuat saran pencarian",
 	"vector-anon-user-menu-pages": "Halaman penyunting yang telah keluar log",
-	"vector-anon-user-menu-pages-learn": "pelajari lebih lanjut"
+	"vector-anon-user-menu-pages-learn": "pelajari lebih lanjut",
+	"vector-anon-user-menu-pages-label": "Pelajari lebih lanjut tentang menyunting",
+	"vector-personal-more-label": "Pranala pengguna",
+	"vector-main-menu-tooltip": "Menu utama",
+	"tooltip-vector-anon-user-menu-title": "Opsi lainnya",
+	"vector-menu-checkbox-expanded": "dikembangkan",
+	"vector-menu-checkbox-collapsed": "diciutkan"
 }

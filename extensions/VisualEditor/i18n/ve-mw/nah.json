@@ -3,15 +3,16 @@
 		"authors": [
 			"Akapochtli",
 			"Neil P. Quinn",
-			"Taresi"
+			"Taresi",
+			"Languaeditor"
 		]
 	},
 	"tooltip-ca-ve-edit": "Xicpatla inin tlahcuilolli",
-	"visualeditor-ca-createsource": "Ticchihuaz itzintiliz",
-	"visualeditor-ca-editsource": "Ticpatlaz itzintiliz",
-	"visualeditor-ca-editsource-section": "Ticpatlaz itzintiliz",
+	"visualeditor-ca-createsource": "Xikchiwa itsintilis",
+	"visualeditor-ca-editsource": "Xikpatla itsintilis",
+	"visualeditor-ca-editsource-section": "xikpatla itsintilis",
 	"visualeditor-dialog-media-content-filename": "Tlahcuiloltocaitl",
-	"visualeditor-dialog-media-search-tab-search": "Tlatemoliztli",
+	"visualeditor-dialog-media-search-tab-search": "Xiktemo",
 	"visualeditor-mweditmodesource-warning-cancel": "Moxitiniz",
 	"visualeditor-version-label": "Machiyopohualiztli"
 }

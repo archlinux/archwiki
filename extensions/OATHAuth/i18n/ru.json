@@ -18,7 +18,9 @@
 			"Saimongoltinio",
 			"Serhio Magpie",
 			"Vlad5250",
-			"MirandaBlack"
+			"MirandaBlack",
+			"Tanzun",
+			"Pacha Tchernof"
 		]
 	},
 	"oathauth-desc": "Обеспечивает поддержку проверки подлинности с помощью HMAC на основе одноразовых паролей",
@@ -96,6 +98,10 @@
 	"oathauth-switch-method-warning": "При переключении на метод двухфакторной аутентификации $2 текущий метод ($1) будет отключен, а все данные, связанные с текущим методом аутентификации, будут удалены.",
 	"oathauth-totp-disable-warning": "Вы больше не сможете использовать устройство аутентификации, зарегистрированное в этой учетной записи. Все скретч-токены, связанные с этой учетной записью, будут аннулированы.",
 	"oathauth-invalidrequest": "Неверный запрос",
+	"notification-header-oathauth-disable": "Двухфакторная идентификация отключена для {{GENDER:$2|вашего аккаунта}}.",
+	"oathauth-notifications-disable-help": "Справка",
 	"oathauth-verify-enabled": "У {{GENDER:$1|$1}} включена двухфакторная аутентификация.",
-	"oathauth-verify-disabled": "У {{GENDER:$1|$1}} не включена двухфакторная аутентификация."
+	"oathauth-verify-disabled": "У {{GENDER:$1|$1}} не включена двухфакторная аутентификация.",
+	"oathauth-prefs-disabledgroups": "Отключенн{{PLURAL:$1|ая группа|ые группы}}:",
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Ваше членство}} в {{PLURAL:$1|этой группе|этих группах}} отключено, пока вы не включите [[Special:Manage Two-factor authentication|двухфакторную аутентификацию]]."
 }

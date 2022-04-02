@@ -12,7 +12,8 @@
 			"Mjbmr",
 			"Reza1615",
 			"ZxxZxxZ",
-			"جواد"
+			"جواد",
+			"Beginneruser"
 		]
 	},
 	"scribunto-desc": "چارچوبی برای تعبیه‌کردن زبان‌های اسکریپتی در صفحه‌های مدیاویکی",
@@ -50,7 +51,7 @@
 	"scribunto-luastandalone-proc-error": "خطای لوآ: نمی‌تواند فرایند را ایجاد کند.",
 	"scribunto-luastandalone-proc-error-msg": "خطای لوا: روند نتوانست ایجاد شود: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "خطای لوآ: نتوانست روند را ایجاد کند: proc_open در دسترس نیست. دستور پیکربندی \"disable_functions\"پی‌اچ‌پی‌ را بررسی کنید.",
-	"scribunto-luastandalone-decode-error": "خطای لوآ: خطای داخلی: نمی‌تواند پیغام را کدبرداری کند.",
+	"scribunto-luastandalone-decode-error": "خطای لوآ: خطای داخلی: نمی‌تواند پیام را کدبرداری کند.",
 	"scribunto-luastandalone-write-error": "خطای لوآ: خطای داخلی: خطا در نوشتن لوله.",
 	"scribunto-luastandalone-read-error": "خطای لوآ: خطای داخلی: خطا در خواندن لوله.",
 	"scribunto-luastandalone-gone": "خطای لوآ: خطای داخلی: مفسر قبلاً خارج شده است.",

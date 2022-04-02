@@ -34,5 +34,6 @@
 	"right-gadgets-edit": "Менување на JavaScript- и CSS-страниците на алатка",
 	"action-gadgets-edit": "менување на JavaScript- и CSS-страниците на алатка",
 	"right-gadgets-definition-edit": "Менување на определбите на алатка",
-	"action-gadgets-definition-edit": "менување на определбата на оваа алатка"
+	"action-gadgets-definition-edit": "менување на определбата на оваа алатка",
+	"gadgets-wrong-contentmodel": "Страниците во именскиот простор {{ns:2302}} мора да бидат од содржинскиот модел GadgetDefinition."
 }

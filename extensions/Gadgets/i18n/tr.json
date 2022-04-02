@@ -50,5 +50,6 @@
 	"right-gadgets-edit": "Küçük araç, JavaScript ve CSS sayfalarını düzenle",
 	"action-gadgets-edit": "bu küçük aracı JavaScript veya CSS sayfasına düzenleme",
 	"right-gadgets-definition-edit": "Küçük araç tanımlarını düzenle",
-	"action-gadgets-definition-edit": "bu küçük araç tanımını düzenleme"
+	"action-gadgets-definition-edit": "bu küçük araç tanımını düzenleme",
+	"gadgets-wrong-contentmodel": "{{ns:2302}} ad alanındaki sayfalar GadgetDefinition içerik modelinde olmalıdır."
 }

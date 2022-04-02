@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../',
         'aliases' => array(),
-        'reference' => '65e1254de9f5225ca6d61a98f504c9443f187ed4',
+        'reference' => 'ad8664735ade8441177d29a0d2ee04b5110ab96d',
         'name' => '__root__',
         'dev' => false,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../',
             'aliases' => array(),
-            'reference' => '65e1254de9f5225ca6d61a98f504c9443f187ed4',
+            'reference' => 'ad8664735ade8441177d29a0d2ee04b5110ab96d',
             'dev_requirement' => false,
         ),
         'christian-riesen/base32' => array(
@@ -65,12 +65,12 @@
             'dev_requirement' => false,
         ),
         'guzzlehttp/psr7' => array(
-            'pretty_version' => '1.7.0',
-            'version' => '1.7.0.0',
+            'pretty_version' => '1.8.5',
+            'version' => '1.8.5.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../guzzlehttp/psr7',
             'aliases' => array(),
-            'reference' => '53330f47520498c0ae1f61f7e2c90f55690c06a3',
+            'reference' => '337e3ad8e5716c15f9657bd214d16cc5e69df268',
             'dev_requirement' => false,
         ),
         'jakobo/hotp-php' => array(
@@ -108,12 +108,6 @@
             'aliases' => array(),
             'reference' => 'cf3761126c1da853bc7fd127e8471e5bfdde911e',
             'dev_requirement' => false,
-        ),
-        'paragonie/random_compat' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '9.99.99',
-            ),
         ),
         'pear/console_getopt' => array(
             'pretty_version' => 'v1.4.3',
@@ -271,19 +265,13 @@
                 0 => 'v1.10.11',
             ),
         ),
-        'symfony/polyfill-php72' => array(
-            'dev_requirement' => false,
-            'replaced' => array(
-                0 => '1.12.0',
-            ),
-        ),
         'symfony/polyfill-php80' => array(
-            'pretty_version' => 'v1.23.1',
-            'version' => '1.23.1.0',
+            'pretty_version' => 'v1.25.0',
+            'version' => '1.25.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-php80',
             'aliases' => array(),
-            'reference' => '1100343ed1a92e3a38f9ae122fc0eb21602547be',
+            'reference' => '4407588e0d3f1f52efb65fbe92babe41f37fe50c',
             'dev_requirement' => false,
         ),
         'wikimedia/assert' => array(

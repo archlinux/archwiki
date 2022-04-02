@@ -263,25 +263,20 @@ class GadgetHooks {
 		Status $status,
 		$summary
 	) {
-		$title = $context->getTitle();
-
-		if ( !$title->inNamespace( NS_GADGET_DEFINITION ) ) {
-			return true;
-		}
-
-		if ( !$content instanceof GadgetDefinitionContent ) {
-			// This should not be possible?
-			throw new Exception(
-				"Tried to save non-GadgetDefinitionContent to {$title->getPrefixedText()}"
-			);
-		}
-
-		$validateStatus = $content->validate();
-		if ( !$validateStatus->isGood() ) {
-			$status->merge( $validateStatus );
-			// @todo Remove this line after this extension do not support mediawiki version 1.36 and before
-			$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
-			return false;
+		if ( $content instanceof GadgetDefinitionContent ) {
+			$validateStatus = $content->validate();
+			if ( !$validateStatus->isGood() ) {
+				$status->merge( $validateStatus );
+				// @todo Remove this line after this extension do not support mediawiki version 1.36 and before
+				$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
+				return false;
+			}
+		} else {
+			$title = $context->getTitle();
+			if ( $title->inNamespace( NS_GADGET_DEFINITION ) ) {
+				$status->merge( Status::newFatal( "gadgets-wrong-contentmodel" ) );
+				return false;
+			}
 		}
 
 		return true;

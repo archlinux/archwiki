@@ -14,7 +14,8 @@
 			"Ykhwong",
 			"YuzaTea",
 			"아라",
-			"Anont"
+			"Anont",
+			"Kwj2772"
 		]
 	},
 	"multimediaviewer-desc": "섬네일을 전체 화면 인터페이스에서 더 큰 크기로 확장합니다.",
@@ -40,6 +41,8 @@
 	"multimediaviewer-permission-viewmore": "더 보기",
 	"multimediaviewer-restriction-aus-reserve": "이 사진은 오스트레일리아 연방 보호 구역에서 찍은 것으로 허가 없이는 상업적 이익을 위해 사용될 수 없습니다.",
 	"multimediaviewer-restriction-communist": "이 이미지에는 일부 국가에서 금지될 수 있는 공산주의 휘장이 포함되어 있습니다.",
+	"multimediaviewer-restriction-currency": "이 이미지는 화폐 단위를 묘사한 것으로, 법적 제한을 받을 수 있습니다.",
+	"multimediaviewer-restriction-design": "이 이미지 소재의 디자인은 저작권이 있을 수 있고, 그 밖의 법적 제한을 받을 수 있습니다.",
 	"multimediaviewer-restriction-fan-art": "이 이미지는 팬 아트의 작품이며 재사용은 법적 제한을 받을 수 있습니다.",
 	"multimediaviewer-restriction-ihl": "이 이미지에는 국제인도법에 의해 제한되는 기호가 포함되어 있습니다.",
 	"multimediaviewer-restriction-insignia": "이 이미지에는 법적 제한을 받을 수 있는 공식 휘장이 포함되어 있습니다.",
@@ -55,6 +58,8 @@
 	"multimediaviewer-optin-mmv": "미디어 뷰어 사용",
 	"multimediaviewer-optout-pending-mmv": "미디어 뷰어를 비활성화하는 중",
 	"multimediaviewer-optin-pending-mmv": "미디어 뷰어를 활성화하는 중",
+	"multimediaviewer-optout-help": "이미지를 볼 때 미디어 뷰어를 더 이상 사용하지 않습니다. 다시 사용하려면 아무 이미지 옆에 있는 \"{{int:multimediaviewer-view-expanded}}\" 버튼을 클릭하십시오. 그리고 나서 \"{{int:multimediaviewer-optin-mmv}}\"를 클릭하십시오.",
+	"multimediaviewer-optin-help": "이미지를 표시할 때 미디어 뷰어를 사용합니다.",
 	"multimediaviewer-geoloc-north": "북",
 	"multimediaviewer-geoloc-east": "동",
 	"multimediaviewer-geoloc-south": "남",
@@ -120,6 +125,7 @@
 	"multimediaviewer-enable-text-header": "기본적으로 모든 파일에 대해 이 미디어 보기 기능을 사용하도록 설정합니다.",
 	"multimediaviewer-enable-submit-button": "미디어 뷰어 활성화",
 	"multimediaviewer-enable-confirmation-header": "모든 파일에 대해 미디어 뷰어를 활성화하였습니다",
+	"multimediaviewer-enable-confirmation-text": "다음에 $1에서 섬네일을 클릭하면, 미디어 뷰어를 사용합니다.",
 	"multimediaviewer-enable-alert": "미디어 뷰어가 지금 비활성화되어 있습니다",
 	"multimediaviewer-disable-info-title": "미디어 뷰어를 비활성화시켰습니다",
 	"multimediaviewer-disable-info": "미디어 뷰어를 사용하여 개별 파일을 계속 볼 수 있습니다."

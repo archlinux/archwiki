@@ -5,6 +5,7 @@
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 languej|$1 languej-dem}}",
+	"vector-action-addsection": "put anoda tin we dem fit tok abaut",
 	"vector-action-move": "Muv-am",
 	"vector-view-create": "Mek-am",
 	"vector-view-edit": "Chenj-am",

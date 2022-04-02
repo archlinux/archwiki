@@ -8,6 +8,7 @@
 	},
 	"vector.css": "/* CSS اللى هنا حتأثر على اليوزرز اللى بيستخدموا واجهة فكتور */",
 	"vector.js": "/* اى جافاسكريبت هنا حتتحمل لكل يوزر بيستخدم واجهة فكتور */",
+	"vector-language-button-label": "{{PLURAL:$1|$1 لغه|$1 لغات}}",
 	"vector-action-addsection": "ضيف موضوع",
 	"vector-action-delete": "مسح",
 	"vector-action-move": "نقل",

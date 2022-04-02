@@ -5,7 +5,8 @@
 			"HanV",
 			"Patio",
 			"SPQRobin",
-			"Siebrand"
+			"Siebrand",
+			"Nickthijssen1994"
 		]
 	},
 	"replacetext": "Tekst vervangen",
@@ -34,7 +35,7 @@
 	"replacetext_success": "\"$1\" wordt in $3 {{PLURAL:$3|pagina|pagina's}} vervangen door \"$2\".",
 	"replacetext_noreplacement": "Er waren geen pagina's die de tekst '$1' bevatten.",
 	"replacetext_nomove": "Er zijn geen pagina's gevonden met \"$1\" in de naam.",
-	"replacetext_nosuchcategory": "De categorie \"$1\" bestaat niet.",
+	"replacetext_nosuchcategory": "Er bestaat geen categorie met de naam \"$1\".",
 	"replacetext_return": "Terugkeren naar het formulier.",
 	"replacetext_warning": "'''Waarschuwing:''' Er {{PLURAL:$1|is één pagina|zijn $1 pagina's}} die het te vervangen tekstdeel al \"$2\" al {{PLURAL:$1|bevat|bevatten}}.\nAls u nu doorgaat met vervangen, kunt u geen onderscheid meer maken.",
 	"replacetext_blankwarning": "Omdat u tekst vervangt door niets, kan deze handeling niet ongedaan gemaakt worden. Wilt u doorgaan?",

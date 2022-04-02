@@ -16,7 +16,7 @@
 	"categorytree-mode-label": "Раж:",
 	"categorytree-mode-categories": "алхха оагӀаташ",
 	"categorytree-mode-all": "еррига оагIонаш",
-	"categorytree-expand": "хьадоаржаде",
+	"categorytree-expand": "хьагойта",
 	"categorytree-member-counts": "Укхо чулоац: $1 {{PLURAL:$1|1=кӀалоагӀат}}, $2 {{PLURAL:$2|1=оагӀув}}, $3 {{PLURAL:$3|1=файл}}",
 	"categorytree-num-categories": "$1 К",
 	"categorytree-num-pages": "$1 Оа",

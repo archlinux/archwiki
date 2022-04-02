@@ -7,20 +7,27 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\OATHAuth\OATHAuth;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Permissions\Hook\GetUserPermissionsErrorsHook;
+use MediaWiki\Permissions\Hook\UserGetRightsHook;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\SpecialPage\Hook\AuthChangeFormFieldsHook;
+use MediaWiki\User\Hook\UserEffectiveGroupsHook;
+use MediaWiki\User\UserGroupManager;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\LabelWidget;
+use RequestContext;
 use SpecialPage;
 use Title;
 use User;
+use UserGroupMembership;
 
 class HookHandler implements
 	AuthChangeFormFieldsHook,
 	GetPreferencesHook,
-	getUserPermissionsErrorsHook
+	getUserPermissionsErrorsHook,
+	UserEffectiveGroupsHook,
+	UserGetRightsHook
 {
 	/**
 	 * @var OATHUserRepository
@@ -33,6 +40,11 @@ class HookHandler implements
 	private $permissionManager;
 
 	/**
+	 * @var UserGroupManager
+	 */
+	private $userGroupManager;
+
+	/**
 	 * @var Config
 	 */
 	private $config;
@@ -41,11 +53,13 @@ class HookHandler implements
 	 * @param OATHUserRepository $userRepo
 	 * @param PermissionManager $permissionManager
 	 * @param Config $config
+	 * @param UserGroupManager $userGroupManager
 	 */
-	public function __construct( $userRepo, $permissionManager, $config ) {
+	public function __construct( $userRepo, $permissionManager, $config, $userGroupManager ) {
 		$this->userRepo = $userRepo;
 		$this->permissionManager = $permissionManager;
 		$this->config = $config;
+		$this->userGroupManager = $userGroupManager;
 	}
 
 	/**
@@ -123,7 +137,71 @@ class HookHandler implements
 			'section' => 'personal/info',
 		];
 
+		$dbGroups = $this->userGroupManager->getUserGroups( $user );
+		$disabledGroups = $this->getDisabledGroups( $user, $dbGroups );
+		if ( $module === null && $disabledGroups ) {
+			$context = RequestContext::getMain();
+			$list = [];
+			foreach ( $disabledGroups as $disabledGroup ) {
+				$list[] = UserGroupMembership::getLink( $disabledGroup, $context, 'html' );
+			}
+			$info = $context->getLanguage()->commaList( $list );
+			$disabledInfo = [ 'oathauth-disabledgroups' => [
+				// @phan-suppress-next-line SecurityCheck-XSS T183174
+				'type' => 'info',
+				'label-message' => [ 'oathauth-prefs-disabledgroups',
+					\Message::numParam( count( $disabledGroups ) ) ],
+				'help-message' => [ 'oathauth-prefs-disabledgroups-help',
+					\Message::numParam( count( $disabledGroups ) ), $user->getName() ],
+				'default' => $info,
+				'raw' => true,
+				'section' => 'personal/info',
+			] ];
+			// Insert right after "Member of groups"
+			$preferences = wfArrayInsertAfter( $preferences, $disabledInfo, 'usergroups' );
+		}
+
 		return true;
+	}
+
+	/**
+	 * Return the groups that this user is supposed to be in, but are disabled
+	 * because 2FA isn't enabled
+	 *
+	 * @param User $user
+	 * @param string[] $groups All groups the user is supposed to be in
+	 * @return string[] Groups the user should be disabled in
+	 */
+	private function getDisabledGroups( User $user, array $groups ): array {
+		$requiredGroups = $this->config->get( 'OATHRequiredForGroups' );
+		// Bail early if:
+		// * No configured restricted groups
+		// * The user is not in any of the restricted groups
+		$intersect = array_intersect( $groups, $requiredGroups );
+		if ( !$requiredGroups || !$intersect ) {
+			return [];
+		}
+
+		$oathUser = $this->userRepo->findByUser( $user );
+		if ( $oathUser->getModule() === null ) {
+			// Not enabled, strip the groups
+			return $intersect;
+		} else {
+			return [];
+		}
+	}
+
+	/**
+	 * Remove groups if 2FA is required for them and it's not enabled
+	 *
+	 * @param User $user User to get groups for
+	 * @param string[] &$groups Current effective groups
+	 */
+	public function onUserEffectiveGroups( $user, &$groups ) {
+		$disabledGroups = $this->getDisabledGroups( $user, $groups );
+		if ( $disabledGroups ) {
+			$groups = array_diff( $groups, $disabledGroups );
+		}
 	}
 
 	/**
@@ -149,5 +227,24 @@ class HookHandler implements
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * If a user has groups disabled for not having 2FA enabled, make sure they
+	 * have "oathauth-enable" so they can turn it on
+	 *
+	 * @param User $user User to get rights for
+	 * @param string[] &$rights Current rights
+	 */
+	public function onUserGetRights( $user, &$rights ) {
+		if ( in_array( 'oathauth-enable', $rights ) ) {
+			return;
+		}
+
+		$dbGroups = $this->userGroupManager->getUserGroups( $user );
+		if ( $this->getDisabledGroups( $user, $dbGroups ) ) {
+			// Has some disabled groups, add oathauth-enable
+			$rights[] = 'oathauth-enable';
+		}
 	}
 }

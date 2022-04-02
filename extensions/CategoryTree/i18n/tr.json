@@ -11,7 +11,8 @@
 			"Runningfridgesrule",
 			"Stultiwikia",
 			"Superyetkin",
-			"Vito Genovese"
+			"Vito Genovese",
+			"SaldırganSincap"
 		]
 	},
 	"categorytree": "Kategori ağacı",
@@ -39,7 +40,7 @@
 	"categorytree-no-subcategories": "alt kategori yok",
 	"categorytree-no-parent-categories": "üst kategori yok",
 	"categorytree-no-pages": "alt kategori veya madde yok",
-	"categorytree-not-found": "<i>\"$1\"</i> isimli kategori bulunamadı",
+	"categorytree-not-found": "<i>$1</i> kategorisi bulunamadı",
 	"categorytree-error": "Veri yükleme sorunu.",
-	"categorytree-retry": "Lütfen kısa süre için bekleyin, sonra bir kere daha deneyin."
+	"categorytree-retry": "Lütfen biraz bekleyin ve tekrar deneyin."
 }

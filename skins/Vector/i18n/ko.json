@@ -9,7 +9,8 @@
 			"MemphisA5",
 			"Revi",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"메이"
 		]
 	},
 	"skinname-vector": "벡터",
@@ -18,8 +19,8 @@
 	"prefs-vector-enable-vector-1-help": "향후 몇 년 동안 벡터 스킨을 점진적으로 업데이트할 것입니다. 레거시 벡터를 사용하면 이전 버전의 벡터를 볼 수 있습니다(2019년 12월 기준). 업데이트에 관해 더 알아보려면 [[mw:Reading/Web/Desktop_Improvements|프로젝트 페이지]]로 가십시오.",
 	"vector-opt-out": "이전 스타일로 전환",
 	"vector-opt-out-tooltip": "내 설정을 과거의 스킨 모습(레거시 벡터)으로 되돌립니다",
-	"vector.css": "/* 이 CSS 설정은 벡터 스킨을 사용하는 사용자에게 적용됩니다 */",
-	"vector.js": "/* 이 자바스크립트 설정은 벡터 스킨을 사용하는 사용자에게 적용됩니다 */",
+	"vector.css": "/* 여기의 모든 CSS는 벡터 스킨을 사용하는 사용자에게 로드됩니다 */",
+	"vector.js": "/* 여기의 자바스크립트는 벡터 스킨을 사용하는 사용자에게 적용됩니다 */",
 	"vector-action-toggle-sidebar": "사이드바 토글",
 	"vector-language-button-label": "{{PLURAL:$1|$1개 언어}}",
 	"vector-action-addsection": "새 주제",

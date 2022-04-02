@@ -5,6 +5,7 @@
 			"Kambai Akau"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|a̱lyem $1|lilyem $1}}",
 	"vector-action-addsection": "Mbeang a̱pyia̱ a̱lyiat",
 	"vector-action-delete": "Ti̱n",
 	"vector-action-move": "Shyei",

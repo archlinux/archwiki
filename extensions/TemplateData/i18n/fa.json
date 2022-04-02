@@ -15,7 +15,8 @@
 			"Ladsgroup",
 			"Reza1615",
 			"Saadat",
-			"Sunfyre"
+			"Sunfyre",
+			"Beginneruser"
 		]
 	},
 	"templatedata-desc": "پیاده‌سازی ذخیره‌سازی داده‌های پارامترهای الگو (با استفاده از جی‌سن)",
@@ -61,7 +62,7 @@
 	"templatedata-invalid-format": "انتظار می‌رود که ویژگی «$1» برابر با «inline»، «block» یا یک رشتهٔ قالب‌بندی معتبر باشد.",
 	"templatedata-invalid-length": "داده‌ها برای ذخیره‌سازی بسیار بزرگ هستند ({{formatnum:$1}} {{PLURAL:$1|بایت|بایت}}، {{formatnum:$2}} {{PLURAL:$2|حداکثر طول مجاز است}})",
 	"templatedata-invalid-missing": "ویژگی مورد نیاز «$1» پیدا نشد.",
-	"templatedata-invalid-param": "پارامتر «$1» برای خاصیت «$2» نامعتبر است.",
+	"templatedata-invalid-param": "پارامتر «$1» برای ویژگی «$2» نامعتبر است.",
 	"templatedata-invalid-parse": "خطای نحوی در جی‌سن.",
 	"templatedata-invalid-type": "انتظار می‌رود ویژگی «$1» از نوع «$2» باشد.",
 	"templatedata-invalid-unknown": "ویژگی «$1» غیرمنتظره است.",

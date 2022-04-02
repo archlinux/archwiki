@@ -14,7 +14,8 @@
 			"Servien",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Southparkfan"
+			"Southparkfan",
+			"Nickthijssen1994"
 		]
 	},
 	"multimediaviewer-desc": "Miniatuurafbeeldingen schermvullend weergeven.",
@@ -46,6 +47,10 @@
 	"multimediaviewer-optout-pending-mmv": "MediaViewer uitschakelen",
 	"multimediaviewer-optin-pending-mmv": "MediaViewer inschakelen",
 	"multimediaviewer-optin-help": "De MediaViewer wordt gebruikt voor het weergeven van afbeeldingen.",
+	"multimediaviewer-geoloc-north": "NB",
+	"multimediaviewer-geoloc-east": "OL",
+	"multimediaviewer-geoloc-south": "ZB",
+	"multimediaviewer-geoloc-west": "WL",
 	"multimediaviewer-geolocation": "Locatie: $1",
 	"multimediaviewer-reuse-link": "Dit bestand delen of invoegen",
 	"multimediaviewer-reuse-loading-placeholder": "Bezig met laden...",

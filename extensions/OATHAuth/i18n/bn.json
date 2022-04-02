@@ -3,7 +3,8 @@
 		"authors": [
 			"Aftabuzzaman",
 			"Elias Ahmmad",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"MdsShakil"
 		]
 	},
 	"oathauth-desc": "HMAC ভিত্তিক এক-কালীন পাসওয়ার্ড ব্যবহার করে প্রমাণীকরণ প্রদান করে",
@@ -31,6 +32,7 @@
 	"oathauth-disable-for-user": "একজন ব্যবহারকারীর দুই-ধাপের প্রমাণীকরণ নিষ্ক্রিয় করুন",
 	"right-oathauth-disable-for-user": "একজন ব্যবহারকারীর দুই-ধাপের প্রমাণীকরণ নিষ্ক্রিয় করা",
 	"action-oathauth-disable-for-user": "একজন ব্যবহারকারীর দুই-ধাপের প্রমাণীকরণ নিষ্ক্রিয় করার",
+	"action-oathauth-verify-user": "কোনও ব্যবহারকারীর দুই ধাপের প্রমাণীকরণ সক্রিয় আছে কিনা তা যাচাই করার",
 	"oathauth-disable-intro": "মহৎ শক্তির সাথে, মহৎ দায়িত্ব আসে",
 	"oathauth-enteruser": "ব্যবহারকারী নাম:",
 	"oathauth-enterdisablereason": "নিষ্ক্রিয় করার কারণ:",
@@ -60,6 +62,7 @@
 	"oathauth-ui-available-modules": "উপলব্ধ পদ্ধতিসমূহ",
 	"oathauth-disable-method-warning-button-label": "নিশ্চিত করছি ও অগ্রসর হোন",
 	"oathauth-invalidrequest": "অবৈধ অনুরোধ",
+	"oathauth-notifications-disable-help": "সাহায্য",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} দুই-ধাপের প্রমাণীকরণ সক্রিয় করেছেন।",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}-এর দুই-ধাপের প্রমাণীকরণ সক্রিয় করা নেই।"
 }

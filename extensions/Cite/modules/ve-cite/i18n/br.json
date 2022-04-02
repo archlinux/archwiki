@@ -13,10 +13,14 @@
 	"visualeditor-cite-tool-name-news": "Keleier",
 	"visualeditor-cite-tool-name-web": "Lec'hienn",
 	"cite-ve-citationneeded-button": "Ouzhpennañ ur meneg",
+	"cite-ve-citationneeded-reason": "Abeg roet:",
+	"cite-ve-citationneeded-title": "Afer zo un daveenn",
 	"cite-ve-dialog-reference-options-group-label": "Implijout ar strollad-mañ",
+	"cite-ve-dialog-reference-options-group-placeholder": "Daveennoù hollek",
 	"cite-ve-dialog-reference-options-section": "Dibarzhioù",
 	"cite-ve-dialog-reference-title": "Daveennoù",
 	"cite-ve-dialog-reference-useexisting-tool": "Adimplijout",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "Roll an daveennoù evit ar strollad \"$1\"",
 	"cite-ve-dialog-referenceslist-title": "Roll an daveennoù",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Menegoù",
 	"cite-ve-dialogbutton-reference-full-label": "Diazez",
@@ -25,5 +29,6 @@
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Roll an daveennoù",
 	"cite-ve-toolbar-group-label": "Menegiñ",
 	"cite-ve-othergroup-item": "Daveenn $1",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Daveennoù"
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Daveennoù",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Anv strollad an daveenn : $1"
 }

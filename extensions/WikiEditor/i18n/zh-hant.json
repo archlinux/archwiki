@@ -26,17 +26,18 @@
 			"Wong128hk",
 			"Wrightbus",
 			"Xiaomingyan",
-			"Weather Top Wizard"
+			"Weather Top Wizard",
+			"Tranve"
 		]
 	},
 	"wikieditor": "進階 wikitext 編輯介面",
 	"wikieditor-desc": "提供進階、可擴充的 wikitext 編輯介面",
-	"wikieditor-wikitext-tab": "wiki語法",
+	"wikieditor-wikitext-tab": "Wikitext",
 	"wikieditor-loading": "讀取中...",
 	"wikieditor-toolbar": "編輯工具列",
 	"wikieditor-toolbar-desc": "使編輯頁面更簡單的頁面工具列",
 	"wikieditor-toolbar-preference": "啟用編輯工具列",
-	"wikieditor-toolbar-preference-help": "這有時被稱為「2010 wiki 文字編輯器」。",
+	"wikieditor-toolbar-preference-help": "這有時被稱為「2010 wikitext 編輯器」。",
 	"wikieditor-toolbar-loading": "讀取中...",
 	"wikieditor-toolbar-tool-bold": "粗體",
 	"wikieditor-toolbar-tool-bold-example": "粗體文字",

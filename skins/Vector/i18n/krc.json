@@ -7,6 +7,7 @@
 		]
 	},
 	"skinname-vector": "Вектор",
+	"vector-language-button-label": "{{PLURAL:$1|$1 тил}}",
 	"vector-action-addsection": "Джангы тема къош",
 	"vector-action-delete": "Кетер",
 	"vector-action-move": "Атын ауушдур",

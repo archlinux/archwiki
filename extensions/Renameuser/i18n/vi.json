@@ -3,7 +3,8 @@
 		"authors": [
 			"Dinhxuanduyet",
 			"Minh Nguyen",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"renameuser": "Đổi tên thành viên",
@@ -23,7 +24,7 @@
 	"renameusererrorexists": "{{GENDER:$1|thành viên}} \"<nowiki>$1</nowiki>\" đã tồn tại.",
 	"renameusererrorinvalid": "Tên thành viên “<nowiki>$1</nowiki>” không hợp lệ.",
 	"renameuser-error-request": "Có trục trặc trong tiếp nhận yêu cầu. Xin hãy quay lại và thử lần nữa.",
-	"renameuser-error-same-user": "Bạn không thể đổi tên thành viên sang tên y hệt như vậy.",
+	"renameuser-error-same-user": "Bạn không thể đổi tên thành viên thành tên mới giống với tên cũ.",
 	"renameusersuccess": "Thành viên “<nowiki>$1</nowiki>” đã được đổi tên thành “<nowiki>$2</nowiki>”.",
 	"renameuser-page-exists": "Trang $1 đã tồn tại và không thể bị tự động ghi đè.",
 	"renameuser-page-moved": "Trang $1 đã được di chuyển đến $2.",

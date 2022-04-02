@@ -10,7 +10,7 @@
 			"Vitorvicentevalente"
 		]
 	},
-	"multimediaviewer-desc": "Ampliar miniaturas para tamanho maior em ecrã cheio.",
+	"multimediaviewer-desc": "Ampliar miniaturas para tamanho maior numa interface em ecrã cheio",
 	"multimediaviewer-optin-pref": "Ativar <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Visualizador Multimédia]</span>",
 	"multimediaviewer-file-page": "Ir para a página de ficheiro correspondente",
 	"multimediaviewer-repository-local": "Mais detalhes",
@@ -41,7 +41,7 @@
 	"multimediaviewer-restriction-ihl": "Esta imagem contém símbolos restringidos pelo Direito Humanitário Internacional",
 	"multimediaviewer-restriction-insignia": "Esta imagem contém uma insígnia oficial que pode estar sujeita a restrições legais.",
 	"multimediaviewer-restriction-ita-mibac": "Esta imagem reproduz uma propriedade que pertence à herança cultural italiana e está restringida pela lei italiana.",
-	"multimediaviewer-restriction-nazi": "Esta imagem contém uma insígnia nazista ou outra considerada fascista que pode ser proibida em alguns países.",
+	"multimediaviewer-restriction-nazi": "Esta imagem contém uma insígnia nazi ou outra considerada fascista que pode ser proibida em alguns países.",
 	"multimediaviewer-restriction-personality": "Esta imagem contém pessoas que podem deter direitos de restrição legal de certas reutilizações da imagem sem autorização.",
 	"multimediaviewer-restriction-trademarked": "Esta imagem contém conteúdos que podem estar sujeitos a legislação sobre marcas registadas.",
 	"multimediaviewer-restriction-default": "O uso desta imagem pode estar restringido por disposições legais fora do âmbito da legislação de direitos de autor. Veja a página de descrição do ficheiro para detalhes.",

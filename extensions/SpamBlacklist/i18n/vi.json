@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Minh Nguyen"
+			"Minh Nguyen",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"spam-blacklist": " # Các địa chỉ URL ngoài trùng với một khoản trong danh sách này bị cấm không được thêm vào trang nào.\n # Danh sách này chỉ có hiệu lực ở wiki này; hãy xem thêm “danh sách đen toàn cầu”.\n # Có tài liệu hướng dẫn tại https://www.mediawiki.org/wiki/Extension:SpamBlacklist\n #<!-- leave this line exactly as it is --> <pre>\n#\n# Cú pháp:\n#  * Các lời ghi chú bắt đầu với ký tự “#” và tiếp tục cho đến cuối dòng.\n#  * Các dòng không để trống là một mảnh biểu thức chính quy, nó chỉ trùng với tên máy chủ trong địa chỉ URL.\n\n #</pre> <!-- leave this line exactly as it is -->",
@@ -15,7 +16,7 @@
 	"spam-blacklist-desc": "Công cụ cho phép chống spam bằng cách cấm những URL trong trang và địa chỉ thư điện tử của thành viên đăng ký khớp với các biểu thức chính quy trong danh sách đen",
 	"log-name-spamblacklist": "Nhật trình chặn spam vì danh sách đen",
 	"log-description-spamblacklist": "Nhật trình này ghi các lần chặn spam vì nằm vào danh sách đen.",
-	"logentry-spamblacklist-hit": "{{GENDER:$2}}$1 bị danh sách đen chống spam ngăn không được thêm $4 vào $3.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2}}$1 bị danh sách đen chống spam chặn tác vụ thêm $4 vào $3.",
 	"right-spamblacklistlog": "Xem nhật trình chặn spam vì danh sách đen",
 	"action-spamblacklistlog": "xem nhật trình chặn spam vì danh sách đen"
 }

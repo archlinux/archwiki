@@ -127,7 +127,7 @@ class ApiOATHValidate extends ApiBase {
 				=> 'apihelp-oathvalidate-example-1',
 			'action=oathvalidate&user=Example&totp=123456&token=123ABC'
 				=> 'apihelp-oathvalidate-example-2',
-			'action=oathvalidate&user=Example&data={"totp":"123456"}&token=123ABC'
+			'action=oathvalidate&user=Example&data={"token":"123456"}&token=123ABC'
 				=> 'apihelp-oathvalidate-example-3',
 		];
 	}

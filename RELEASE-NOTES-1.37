@@ -1,5 +1,57 @@
 = MediaWiki 1.37 =
 
+== MediaWiki 1.37.2 ==
+
+This is a security and maintenance release of the MediaWiki 1.37 branch.
+
+=== Changes since MediaWiki 1.37.1 ===
+* (T298261) Fix support for Composer 2.2.
+* (T298283) composer.json: Add wikimedia/composer-merge-plugin to allow-plugins.
+* Update doctrine/dbal (3.0.0 => 3.1.5).
+* (T296898) Add entry point name to disabled Session exception if possible.
+* (T298564) MemcachedClient: Add support for IPv6.
+* (T297543, CVE-2022-28202) SECURITY: properly escape output used within galleries and
+  Special:RevisionDelete.
+* (T289956) WatchAction: Fix bug that prevents showing proper success
+  message in the noscript fallback mode.
+* (T268847) Suppress deprecation warnings from libxml_disable_entity_loader().
+* (T283275) Fix PHP 8.0 failure of RefreshSecondaryDataUpdateTest.
+* (T283275) Fix PHP 8.0 failure of WikiExporterFactoryTest.
+* (T275673) objectcache: Avoid getCurrentTime() call in MapCacheLRU::has().
+* (T275673) objectcache: split up MapCacheLRU::getAge() to avoid conditional
+  overhead.
+* Fix the json schema and the extension processor for Parsoid extension modules.
+* (T299696) update.php: Avoid passing null to substr.
+* (T195807, T256401) Fix signature of DatabasePostgres::buildGroupConcatField.
+* In PHP 8.1 don't throw exceptions from mysqli.
+* (T289926) SiteConfiguration: Don't pass null to str_replace().
+* (T264735) Fix deprecation warning from CURLPIPE_HTTP1.
+* (T260735) Stop using is_resource() where possible.
+* (T289879) Apply ReturnTypeWillChange to various implementations of built in
+  interfaces.
+* (T299312) Implement __serialize/__unserialize for PHP 8.1 support.
+* ExtensionRegistry: Add process cache for lazy attributes.
+* (T301041) ApiPageSet: Add "missing": true to missing revisions.
+* Allow ParsoidModules extension schema to register services.
+* (T300462) SpecialUndelete: Do not show empty comments as deleted.
+* (T297708) Allow setting max execution time to several special pages.
+* (T205349) LinkCache: Try invalidating cache before throwing.
+* (T302540) composer.json: Add ext-calendar to require.
+* (T302540) composer.json: Add ext-simplexml to require-dev.
+* (T302540) composer.json: Add various PHP extensions to suggests.
+* Upgrading symfony/polyfill-php80 (v1.23.1 => v1.25.0).
+* (T304008) Don't re-check "Move subpages" on Special:MovePage after a warning.
+* (T293576) listFiles: Display file name instead of version.
+* (T303871) Fix @since of Title::getId().
+* (T303560) Installer: Check correct PCRE_CONFIG_NEWLINE value.
+* wrapOldPasswords: add \n to two output calls.
+* (T297571, CVE-2022-28201) Title::newMainPage() goes into an infinite recursion loop
+  if it points to a local interwiki.
+* (T297731, CVE-2022-28203) Requesting Special:NewFiles on a wiki with many file
+  uploads with actor as a condition can result in a DoS.
+* (T297754, CVE-2022-28204) Special:WhatLinksHere can result in a DoS when a page is
+  used on a extremely large number of other pages.
+
 == MediaWiki 1.37.1 ==
 
 This is a security and maintenance release of the MediaWiki 1.37 branch.
@@ -15,8 +67,8 @@ This is a security and maintenance release of the MediaWiki 1.37 branch.
   undo actions.
 * (T297574, CVE-2021-45038) SECURITY: Fix permissions check in action=rollback.
 * (T34716, T297416) SECURITY: Require 'read' right for most actions.
-* (T271037, CVE-2021-44856) SECURITY: Fix use of EditFilterMergedContent hook when
-  changing content model.
+* (T271037, CVE-2021-44856) SECURITY: Fix use of EditFilterMergedContent hook
+  when changing content model.
 
 == MediaWiki 1.37.0 ==
 
@@ -42,7 +94,8 @@ This is a security and maintenance release of the MediaWiki 1.37 branch.
 
 === Changes since MediaWiki 1.37.0-rc.0 ===
 * (T294043) checkStorage: pass no parameters to WikiRevision::getContent().
-* (T292763, CVE-2021-44856) SECURITY: Do not cache private wiki completion results.
+* (T292763, CVE-2021-44856) SECURITY: Do not cache private wiki completion
+  results.
 * (T293783) ApiQueryImageInfo: don't show empty comments as deleted.
 * (T294316) Revert "Mark ApiClientLogin/ApiLogin as requiring write mode".
 * (T294796) JobQueueRedis: Replace deprecated zSize with zCard.
@@ -143,7 +196,7 @@ For notes on 1.36.x and older releases, see HISTORY.
 === External library changes in 1.37 ===
 
 ==== New external libraries ====
-* Added symfony/polyfill-php80 1.23.1.
+* Added symfony/polyfill-php80 1.25.0.
 * Added whatwg-fetch 3.6.2.
 * Added wikimedia/normalized-exception 1.0.1.
 
@@ -166,6 +219,7 @@ For notes on 1.36.x and older releases, see HISTORY.
 
 ===== Changed development-only external libraries =====
 * Updated qunit from 2.10.0 to 2.16.0.
+* Updated doctrine/dbal from 3.0.0 to 3.1.5.
 
 ==== Removed external libraries ====
 * The pimple/pimple development-only library has been removed.

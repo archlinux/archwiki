@@ -16,7 +16,7 @@
 	"multimediaviewer-metadata-error": "Impossibil caregà i dati de l'imagin (eror: $1)",
 	"multimediaviewer-thumbnail-error": "Ne rincress, el fail el po vesser minga mostrad",
 	"multimediaviewer-thumbnail-error-description": "El par che ghe sia un problema tecnich. Semai che 'l persista te podet $1. Eror: $2",
-	"multimediaviewer-thumbnail-error-retry": "prova anmò",
+	"multimediaviewer-thumbnail-error-retry": "prova an'mò",
 	"multimediaviewer-thumbnail-error-report": "segnala el problema",
 	"multimediaviewer-license-cc-pd": "Domini Publich",
 	"multimediaviewer-license-pd": "Domini Publich",

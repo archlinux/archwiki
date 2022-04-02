@@ -7,7 +7,9 @@
 			"Horus",
 			"Octahedron80",
 			"Patsagorn Y.",
-			"Woraponboonkerd"
+			"Woraponboonkerd",
+			"Bebiezaza",
+			"Trisorn Triboon"
 		]
 	},
 	"skinname-vector": "เวกเตอร์",
@@ -35,5 +37,9 @@
 	"vector-jumptosearch": "ไปยังการค้นหา",
 	"vector-jumptocontent": "ข้ามไปเนื้อหา",
 	"vector-more-actions": "เพิ่มเติม",
-	"vector-search-loader": "กำลังโหลดคำแนะนำการค้นหา"
+	"vector-search-loader": "กำลังโหลดคำแนะนำการค้นหา",
+	"vector-anon-user-menu-pages": "หน้าสำหรับผู้แก้ไขที่ออกจากระบบ",
+	"vector-anon-user-menu-pages-learn": "เรียนรู้เพิ่มเติม",
+	"vector-main-menu-tooltip": "เมนูหลัก",
+	"tooltip-vector-anon-user-menu-title": "ตัวเลือกเพิ่มเติม"
 }

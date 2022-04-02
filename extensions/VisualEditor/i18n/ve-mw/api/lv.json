@@ -23,6 +23,7 @@
 	"apihelp-visualeditor-param-wikitext": "Vikiteksts, ko nosūtīt Parsoid konvertācijai uz HTML (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "Atgriež HTML5 kodu lapai no Parsoid servisa.",
 	"apihelp-visualeditoredit-description": "Saglabā HTML5 lapu MediaWiki (pārveidotu vikitekstā ar Parsoid servisu).",
+	"apihelp-visualeditoredit-param-cachekey": "Izmantojiet iepriekšējā serializeforcache pieprasījuma rezultātu ar šo atslēgu. Ignorē $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (saglabājot ar captcha atbildi).",
 	"apihelp-visualeditoredit-param-captchaword": "Atbilde uz captcha (saglabājot ar captcha atbildi).",
 	"apihelp-visualeditoredit-param-plugins": "Ar šo API pieprasījumu saistītie spraudņi",

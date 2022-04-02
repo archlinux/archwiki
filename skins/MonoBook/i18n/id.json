@@ -4,7 +4,8 @@
 			"Arifin.wijaya",
 			"Iwan Novirion",
 			"Rex",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Daud I.F. Argana"
 		]
 	},
 	"skinname-monobook": "MonoBook",
@@ -16,6 +17,7 @@
 	"monobook-jumptonavigation": "Loncat ke navigasi",
 	"monobook-jumptosearch": "Loncat ke pencarian",
 	"monobook-more-actions": "Lainnya",
+	"cactions-mobile": "Tindakan halaman",
 	"monobook-cactions-label": "Tindakan halaman",
 	"monobook-notifications-link": "Pemberitahuan ($1)",
 	"monobook-notifications-link-none": "Pemberitahuan"

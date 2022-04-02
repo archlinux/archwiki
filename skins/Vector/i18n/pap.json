@@ -5,6 +5,7 @@
 			"ObaTango"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idioma}}",
 	"vector-action-addsection": "Añadí un tópiko",
 	"vector-action-move": "Move",
 	"vector-view-create": "Krea",

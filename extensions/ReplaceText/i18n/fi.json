@@ -8,7 +8,8 @@
 			"Silvonen",
 			"Str4nd",
 			"Usp",
-			"Valtlait"
+			"Valtlait",
+			"Markus Mikkonen"
 		]
 	},
 	"replacetext": "Korvaa teksti",
@@ -36,7 +37,7 @@
 	"replacetext_success": "”$1” korvataan tekstillä ”$2” {{PLURAL:$3|yhdellä sivulla|$3 sivulla}}.",
 	"replacetext_noreplacement": "Tekstin ”$1” leipätekstissään sisältäviä sivuja ei löytynyt.",
 	"replacetext_nomove": "Sivuja, joiden nimessä on ”$1”, ei ole.",
-	"replacetext_nosuchcategory": "Luokkaa ”$1” ei ole.",
+	"replacetext_nosuchcategory": "Luokkaa nimellä \"$1\" ei ole.",
 	"replacetext_return": "Palaa lomakkeeseen.",
 	"replacetext_warning": "'''Varoitus:''' {{PLURAL:$1|$1 sivu| $1 sivua}} sisältää jo korvaavan tekstin, ”$2”.\nKorvauksen jälkeen korvatut ja jo tekstin sisältäneet kohdat eivät erotu toisistaan.",
 	"replacetext_blankwarning": "'''Varoitus:''' Koska korvaava teksti on tyhjä, operaatiota ei voi palauttaa käänteisellä korvauksella.",

@@ -10,7 +10,7 @@
 	"scribunto-module-line": "saajeest $1 raddalâsâst $2",
 	"scribunto-doc-page-name": "Module:$1/raavâ",
 	"scribunto-doc-page-does-not-exist": "''Taan mooduul ravvuu puáhtá rähtiđ siijđon [[$1]]''",
-	"scribunto-doc-page-header": "'''Taat lii raavâsijđo modulin [[$1]]'''",
+	"scribunto-doc-page-header": "'''Taat lii raavâsijđo modulân [[$1]]'''",
 	"scribunto-common-error-category-desc": "Siijđost leijee modulij kieđâvuššâm ääigi tábáhtui feilâ.",
 	"scribunto-common-no-details": "Lasetiäđuh iä lah finnimnáál.",
 	"scribunto-lua-in-function": "funktiost ”$1”",

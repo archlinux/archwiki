@@ -39,7 +39,7 @@
 	"oathauth-disable-for-user": "Tweetrapsauthenticatie voor een gebruiker uitschakelen",
 	"right-oathauth-disable-for-user": "Tweetrapsauthenticatie voor gebruikers uitschakelen",
 	"action-oathauth-disable-for-user": "tweetrapsauthenticatie voor gebruikers uit te schakelen",
-	"right-oathauth-verify-user": "Controleer of een gebruiker tweetrapsauthenticatie heeft ingeschakeld",
+	"right-oathauth-verify-user": "Controleren of een gebruiker tweetrapsauthenticatie heeft ingeschakeld",
 	"right-oathauth-view-log": "Toegang hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"action-oathauth-view-log": "toegang te hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"oathauth-enteruser": "Gebruikersnaam:",

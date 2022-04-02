@@ -5,6 +5,7 @@
 			"Rueter"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 кель|$1 кельть}}",
 	"vector-action-addsection": "Поладомс мезде кортамс",
 	"vector-action-delete": "Нардамс",
 	"vector-action-move": "Печтевтемс",

@@ -35,7 +35,7 @@
 	"replacetext_success": "'$1' sarà sostituito con '$2' in $3 {{PLURAL:$3|pagina|pagine}}.",
 	"replacetext_noreplacement": "Non sono state trovate pagine contenenti il testo '$1'.",
 	"replacetext_nomove": "Non sono state trovate pagine il cui titolo contiene '$1'.",
-	"replacetext_nosuchcategory": "Non esiste categoria con il nome \"$1\".",
+	"replacetext_nosuchcategory": "Non esiste alcuna categoria con il nome \"$1\".",
 	"replacetext_return": "Torna al modulo.",
 	"replacetext_warning": "{{PLURAL:$1|C'è già $1 pagina che contiene|Ci sono già $1 pagine che contengono}} il testo di sostituzione, \"$2\". Se si effettua questa sostituzione non si sarà in grado di separare le sostituzioni da questi testi. Continuare con la sostituzione?",
 	"replacetext_blankwarning": "Poiché il testo di sostituzione è vuoto, l'operazione non sarà reversibile. Si desidera continuare?",

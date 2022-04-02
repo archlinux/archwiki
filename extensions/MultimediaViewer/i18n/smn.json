@@ -1,13 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Seipinne"
 		]
 	},
+	"multimediaviewer-optin-mmv": "Vääldi Mediakeččee kiävtun",
 	"multimediaviewer-download-link": "Luođii taam tiätuvuárhá",
 	"multimediaviewer-download-original-button-name": "Luođii algâalgâlii tiätuvuárhá",
 	"multimediaviewer-link-to-file": "Liŋkkâ algâalgâlâš tiätuvuárkán",
 	"multimediaviewer-embed-wt": "Wikitekstâ",
 	"multimediaviewer-html-embed-credit-link-text": "Liŋkkâ",
-	"multimediaviewer-original-embed-dimensions": "Algâalgâlâš tiätuvuárkká $1"
+	"multimediaviewer-default-embed-dimensions": "Miniatyyrkuuvij nabdosstuárudâh",
+	"multimediaviewer-original-embed-dimensions": "Algâalgâlâš tiätuvuárkká $1",
+	"multimediaviewer-options-tooltip": "Vääldi Mediakeččee kiävtun teikkâ meddâlist kiävtust",
+	"multimediaviewer-enable-dialog-header": "Vääldi Mediakeččee kiävtun?",
+	"multimediaviewer-enable-submit-button": "Vääldi Mediakeččee kiävtun"
 }

@@ -24,6 +24,7 @@
 	"captcha-label": "CAPTCHA",
 	"captcha-help": "CAPTCHAn ratkaisu",
 	"captcha-info-help": "CAPTCHAn kuvaus",
+	"captcha-id-label": "CAPTCHA-tunnus",
 	"captcha-id-help": "Tämä arvo pitäisi lähettää takaisin muuttumattomana.",
 	"captcha-addurl": "Muokkauksesi sisältää uusia linkkejä muille sivuille.\nAutomatisoitujen roskamuokkausten välttämiseksi ratkaise alla oleva tehtävä ja kirjoita vastauksesi kenttään, jotta voisit tallentaa muokkauksesi ([[Special:Captcha/help|lisätietoa]]):",
 	"captcha-badlogin": "Automatisoidun salasanan murtamisen estämiseksi ratkaise alla oleva tehtävä ja kirjoita vastaus kenttään ([[Special:Captcha/help|lisätietoa]]):",

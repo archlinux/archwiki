@@ -30,7 +30,8 @@
 			"Vojtěch Dostál",
 			"Walter Klosse",
 			"YjM",
-			"ශ්වෙත"
+			"ශ්වෙත",
+			"Fraxinus.cs"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -187,6 +188,8 @@
 	"visualeditor-dialog-transclusion-absent-template": "Šablona „$1“ zatím neexistuje.",
 	"visualeditor-dialog-transclusion-add-content": "Přidat obsah",
 	"visualeditor-dialog-transclusion-add-param": "Přidat více údajů",
+	"visualeditor-dialog-transclusion-add-param-placeholder": "Název parametru",
+	"visualeditor-dialog-transclusion-add-param-save": "Přidat parametr",
 	"visualeditor-dialog-transclusion-add-template": "Přidat šablonu",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Přidat nezdokumentovaný parametr",
 	"visualeditor-dialog-transclusion-collapse-options": "Skrýt možnosti",
@@ -230,6 +233,7 @@
 	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "Pokračovat v editaci",
 	"visualeditor-dialog-transclusion-reset-confirmation-reset": "Odstranit šablonu",
 	"visualeditor-dialog-transclusion-feedback-message": "Nedávno byla dokončena práce na vylepšení výsledků vyhledávání šablon. Pokud se chcete o změnách dozvědět více nebo zanechat zpětnou vazbu, přejděte na [//meta.wikimedia.org/wiki/WMDE_Technical_Wishes/Finding_and_inserting_templates stránku projektu].",
+	"visualeditor-dialog-transclusion-wikitext": "Wikitext",
 	"visualeditor-dialogbutton-media-tooltip": "Obrázky a média",
 	"visualeditor-dialogbutton-meta-tooltip": "Nastavení stránky",
 	"visualeditor-dialogbutton-template-tooltip": "Šablona",
@@ -391,6 +395,7 @@
 	"visualeditor-preference-visualdiffpage-discussion-link": "//www.mediawiki.org/wiki/Talk:VisualEditor/Diffs",
 	"visualeditor-preference-visualdiffpage-label": "Vizuální rozdíly verzí",
 	"visualeditor-rebase-client-export": "Export",
+	"visualeditor-rebase-client-export-start": "Exportovat…",
 	"visualeditor-rebase-client-import": "Importovat",
 	"visualeditor-rebase-client-import-name": "Název stránky",
 	"visualeditor-rebase-client-title-help": "Před uložením budete moci zkontrolovat změny.",

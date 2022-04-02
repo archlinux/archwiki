@@ -4,14 +4,22 @@
 			"Yupik"
 		]
 	},
+	"templatedata-doc-param-example": "Ouddmiârkk",
+	"templatedata-doc-param-name": "Paramettar",
+	"templatedata-doc-param-status-optional": "vaʹlljeemnallšem",
 	"templatedata-doc-param-type-date": "Peiʹvvmieʹrr",
 	"templatedata-doc-param-type-wiki-file-name": "Teâttõs",
 	"templatedata-doc-param-type-wiki-page-name": "Seiddnõmm",
 	"templatedata-doc-param-type-wiki-template-name": "Mall",
 	"templatedata-doc-param-type-wiki-user-name": "Õõʹnni",
 	"templatedata-modal-button-add-language": "Lââʹzzet ǩiõl",
+	"templatedata-modal-button-addparam": "Lââʹzzet paramettar",
 	"templatedata-modal-button-saveparam": "Ruõkk",
+	"templatedata-modal-placeholder-paramkey": "Paramettarnõmm",
 	"templatedata-modal-table-param-example": "Ouddmiârkk ($1)",
+	"templatedata-modal-table-param-name": "Nõmm",
+	"templatedata-modal-table-param-suggestedvalues-placeholder": "Lââʹzzet äärv...",
+	"templatedata-modal-title-addparam": "Lââʹzzet ođđ paramettar",
 	"templatedata-modal-title-choose-language": "Vaʹlljed ǩiõl",
 	"templatedata-modal-title-language": "Ǩiõll"
 }

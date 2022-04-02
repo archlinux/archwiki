@@ -94,6 +94,13 @@
 	"oathauth-switch-method-warning": "Generic message warning the user of token/data loss when switching to an alternative method.\n$1 - Current method name, $2 - Name of the method that is being switched to",
 	"oathauth-totp-disable-warning": "TOTP specific warning message when disabling/switching to alternative 2FA method",
 	"oathauth-invalidrequest": "Generic error message that is displayed when request cannot be processed due to an unpredicted reason",
+	"notification-header-oathauth-disable": "Notification header for when two-factor authentication has been disabled.\n$2 - Name of user for GENDER",
+	"notification-body-oathauth-disable": "Notification body text for when two-factor authentication has been disabled.\n$2 - Name of user for GENDER",
+	"notification-body-oathauth-disable-other": "Notification body text for when two-factor authentication has been disabled by an administrator or sysadmin.\n$2 - Name of user for GENDER.",
+	"oathauth-notifications-disable-help": "Link text for the help link in the notification\n{{identical|Help}}",
+	"oathauth-notifications-disable-helplink": "{{notranslate}}",
 	"oathauth-verify-enabled": "Notice that a user has 2FA enabled, shown on success at [[Special:VerifyOATHForUser]].\n$1 - Name of user",
-	"oathauth-verify-disabled": "Notice that a user does not have 2FA enabled, shown on success at [[Special:VerifyOATHForUser]].\n$1 - Name of user"
+	"oathauth-verify-disabled": "Notice that a user does not have 2FA enabled, shown on success at [[Special:VerifyOATHForUser]].\n$1 - Name of user",
+	"oathauth-prefs-disabledgroups": "Label on Special:Preferences for groups in which the user's membership has been disabled for a lack of two-factor authentication.\n$1 - Number of groups",
+	"oathauth-prefs-disabledgroups-help": "Help message shown on Special:Preferences for the {{mw-msg|oathauth-prefs-disabledgroups}} field.\n$1 - Number of groups\n$2 - User name for GENDER"
 }

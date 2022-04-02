@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Geopoet"
+			"Geopoet",
+			"Daramlagon"
 		]
 	},
 	"cite-desc": "Minadugang nin <code>&lt;ref[ name=id]&gt;</code> asin <code>&lt;references/&gt;</code> na mga tatak, para sa mga toltolan",
-	"cite_error": "Sambiton an kasalaan: $1",
+	"cite_error": "Error sa pag-cite: $1",
 	"cite_error_ref_numeric_key": "Imbalido an <code>&lt;ref&gt;</code> tatak; an pangaran dae puwede na magin sarong simplehon na bilog na numero. Maggamit nin sarong deskriptibong titulo",
 	"cite_error_ref_no_key": "Imbalido an <code>&lt;ref&gt;</code> tatak; an mga toltolan na mayong kalamnan dapat magkaigwa nin pangaran",
 	"cite_error_ref_too_many_keys": "Imbalido an <code>&lt;ref&gt;</code> tatak; imbalidong mga pangaran, e.g. grabe kadakol",

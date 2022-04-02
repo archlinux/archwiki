@@ -335,7 +335,7 @@
 	"visualeditor-parameter-search-more": "Prikaži još {{PLURAL:$1|jedno polje|$1 polja}}",
 	"visualeditor-parameter-search-no-unused": "Nema nekorištenih parametara",
 	"visualeditor-parameter-search-unknown": "(Nepoznato polje)",
-	"visualeditor-preference-betatempdisable": "Onemogući vizualno uređivanje dok je u beta fazi",
+	"visualeditor-preference-betatempdisable": "Onemogući vizualno uređivanje dok je u beta-fazi",
 	"visualeditor-preference-core-description": "Omogućavanje VisualEditora. Uređivanje VisualEditorom neće biti moguće na stranicama za razgovor i u nekim drugim imenskim prostorima.",
 	"visualeditor-preference-core-label": "Vizualno uređivanje",
 	"visualeditor-preference-enable": "Omogući vizualni uređivač. Bit će dostupan u {{PLURAL:$2|imenskom prostoru|sljedećim imenskim prostorima}}: $1",

@@ -44,7 +44,10 @@
 		"AuthChangeFormFields": "main",
 		"LoadExtensionSchemaUpdates": "\\MediaWiki\\Extension\\OATHAuth\\Hook\\LoadExtensionSchemaUpdates\\UpdateTables::callback",
 		"GetPreferences": "main",
-		"getUserPermissionsErrors": "main"
+		"getUserPermissionsErrors": "main",
+		"UserEffectiveGroups": "main",
+		"UserGetRights": "main",
+		"BeforeCreateEchoEvent": "\\MediaWiki\\Extension\\OATHAuth\\Notifications\\Manager::onBeforeCreateEchoEvent"
 	},
 	"HookHandlers": {
 		"main": {
@@ -52,7 +55,8 @@
 			"services": [
 				"OATHUserRepository",
 				"PermissionManager",
-				"MainConfig"
+				"MainConfig",
+				"UserGroupManager"
 			]
 		}
 	},
@@ -73,6 +77,9 @@
 			"value": false
 		},
 		"OATHExclusiveRights": {
+			"value": []
+		},
+		"OATHRequiredForGroups": {
 			"value": []
 		}
 	},

@@ -11,7 +11,8 @@
 			"OsamaK",
 			"Samer",
 			"Zanatos",
-			"ديفيد"
+			"ديفيد",
+			"SaldırganSincap"
 		]
 	},
 	"captcha-edit": "لتعديل هذه الصفحة، من فضلك قم بحل المهمة بالأسفل وأدخل الإجابة في الصندوق ([[Special:Captcha/help|مزيد من المعلومات]]):",
@@ -42,5 +43,5 @@
 	"confirmedit-preview-validity": "الصلاحية",
 	"confirmedit-preview-valid": "صحيح",
 	"confirmedit-preview-invalid": "غير صحيح",
-	"confirmedit-preview-description": "الجدول التالي يعرض قائمة الخطوط على هذه الصفحة وما إذا كانت عنوان أيبي أو نطاق أيبي صحيح. لو أن الخط هو عنوان أيبي أو نطاق أيبي صحيح، فستتم إضافته للقائمة البيضاء للCAPTCHA لكن السطور غير الصحيحة سيتم تجاهلها. كمثال على نطاق أيبي صحيح: 69.208.0.0/16 والذي يبدأ من 69.208.0.0 إلى 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix المزيد من المعلومات] حول حساب نطاق عناوين أيبي."
+	"confirmedit-preview-description": "الجدول التالي يعرض قائمة الخطوط على هذه الصفحة وما إذا كانت عنوان أيبي أو نطاق أيبي صحيح. لو أن الخط هو عنوان أيبي أو نطاق أيبي صحيح، سيتم استبعاده من اختبارات CAPTCHA ولكن سيتم تجاهل الأسطر غير الصالحة. كمثال على نطاق أيبي صحيح: 69.208.0.0/16 والذي يبدأ من 69.208.0.0 إلى 69.208.255.255. [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Range_blocks#Calculating_the_CIDR_suffix المزيد من المعلومات] حول حساب نطاق عناوين أيبي."
 }

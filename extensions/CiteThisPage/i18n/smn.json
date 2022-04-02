@@ -2,9 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Trondtr",
-			"Yupik"
+			"Yupik",
+			"Seipinne",
+			"Muotâ"
 		]
 	},
+	"citethispage": "Čujostiäđuh",
+	"citethispage-desc": "Lasseet toimâsiijđo [[Special:CiteThisPage|käldeid]] já liiŋkâ tyejiniävuid.",
 	"citethispage-link": "Lovnii taam siijđo",
-	"tooltip-citethispage": "Tiäđuh taan siijđo lovniimist"
+	"tooltip-citethispage": "Tiäđuh taan siijđo lovniimist",
+	"citethispage-change-submit": "Čuujoot",
+	"citethispage-change-target": "Sijđo:"
 }

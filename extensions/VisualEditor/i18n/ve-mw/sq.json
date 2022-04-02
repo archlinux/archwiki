@@ -16,7 +16,8 @@
 			"Ritam",
 			"TMg",
 			"Techlik",
-			"Vyolla"
+			"Vyolla",
+			"Klein Muçi"
 		]
 	},
 	"collabpad-doctitle": "KolabPad: $1",
@@ -232,7 +233,7 @@
 	"visualeditor-dialog-transclusion-wikitext": "Tekst wiki",
 	"visualeditor-dialogbutton-media-tooltip": "Imazhe dhe media",
 	"visualeditor-dialogbutton-meta-tooltip": "Rregullime faqeje",
-	"visualeditor-dialogbutton-template-tooltip": "Gjedhe",
+	"visualeditor-dialogbutton-template-tooltip": "Stampë",
 	"visualeditor-dialogbutton-transclusion-tooltip": "Ndërpërfshirje",
 	"visualeditor-dismissible-message-close": "Mbyll mesazhin dhe mos e shfaq përsëri",
 	"visualeditor-donebutton-tooltip": "Përpunimi mbaroi",

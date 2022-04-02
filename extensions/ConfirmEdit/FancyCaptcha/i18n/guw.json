@@ -3,11 +3,12 @@
 		"authors": [
 			"Anthonymodec",
 			"Gadarawamo",
-			"Misteld"
+			"Misteld",
+			"Samatics"
 		]
 	},
-	"fancycaptcha-captcha": "Pọn hihọ",
-	"fancycaptcha-accountcreate": "Nado glọnalihona nọtẹn intanẹti tọn Tata lẹ hunhun gbọn ọdinatẹ lẹ Dali, mi biọdọ ani kan nuhe amọ to odo to gbà ehe mẹ ([[Special:Captcha/help|more info]]):",
-	"fancycaptcha-imgcaptcha-ph": "Kan wekinkan he a mo to yedide lo ji",
-	"fancycaptcha-reload-text": "Fakọna"
+	"fancycaptcha-captcha": "Gbadopọnna ninọmẹ hihọ́ tọn",
+	"fancycaptcha-accountcreate": "Nado basi-hihọ́na wiki sọn adà lẹ hunhun na yede gbọn ọdinatẹ lẹ dali, mi biọdọ a ni kàn nuhe a mọ to odo do apotin ehe mẹ ([[Special:Captcha/help|nudọnamẹ dogọ]]):",
+	"fancycaptcha-imgcaptcha-ph": "Kàn wekun he a mọ to yẹdide lọ ji",
+	"fancycaptcha-reload-text": "Vọ́ ẹ hùn"
 }

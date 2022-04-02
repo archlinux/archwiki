@@ -42,7 +42,9 @@
 			"Supernino",
 			"Toa",
 			"Una giornata uggiosa '94",
-			"Wikitoni"
+			"Wikitoni",
+			"Mannivu",
+			"Pierpao"
 		]
 	},
 	"collabpad-import-subtitle": "Importato da $1",
@@ -224,6 +226,8 @@
 	"visualeditor-dialog-transclusion-title-insert-template": "Inserisci un template",
 	"visualeditor-dialog-transclusion-title-insert-known-template": "Inserisci: $1",
 	"visualeditor-dialog-transclusion-title-edit-known-template": "Modifica: $1",
+	"visualeditor-dialog-transclusion-template-search": "Ricerca template",
+	"visualeditor-dialog-transclusion-template-search-help": "Trova il template che vuoi inserire cercandolo con una parola chiave che lo identifichi. Con questo editor (VisuaEditor) è più probabile riuscire a individuare i template che abbiano una descrizione.",
 	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "Continuare a modificare",
 	"visualeditor-dialog-transclusion-reset-confirmation-reset": "Rimuovi template",
 	"visualeditor-dialog-transclusion-wikitext": "Wikitesto",

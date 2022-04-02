@@ -10,13 +10,14 @@
 			"Revi",
 			"ToePeu",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"MemphisA5"
 		]
 	},
 	"interwiki": "인터위키 데이터 보기 및 편집",
 	"interwiki-title-norights": "인터위키 데이터 보기",
 	"interwiki-desc": "인터위키 테이블을 보거나 고칠 수 있는 [[Special:Interwiki|특수 문서]]를 추가합니다",
-	"interwiki_intro": "이 문서는 다른 위키나 외부 사이트로 빠르게 링크하는 데 쓰이는 단축 접두어를 정의하는 인터위키 테이블에 대한 둘러보기입니다. 권장되는 사용법에 대해서는 [//www.mediawiki.org/wiki/Extension:Interwiki MediaWiki.org에 있는 설명서]를 읽어주십시오.",
+	"interwiki_intro": "이 문서는 다른 위키나 외부 사이트로 빠르게 링크하는 데 쓰이는 단축 접두어를 정의하는 인터위키 테이블에 대한 둘러보기입니다. 권장되는 사용법에 대해서는 [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki MediaWiki.org에 있는 설명서]를 읽어주십시오.",
 	"interwiki-legend-label": "범례",
 	"interwiki_prefix": "접두어",
 	"interwiki-prefix-label": "접두어:",

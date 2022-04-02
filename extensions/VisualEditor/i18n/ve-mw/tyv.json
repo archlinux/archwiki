@@ -3,12 +3,14 @@
 		"authors": [
 			"Agilight",
 			"Көпек",
-			"Монгуш Салим"
+			"Монгуш Салим",
+			"Riverman"
 		]
 	},
 	"tooltip-ca-createsource": "Үндезин сөзүглелдер \"эдикчизи\"-биле арынны чаяар",
 	"tooltip-ca-editsource": "Арынның үндезин сөзүглелин эдер",
 	"tooltip-ca-ve-edit": "Бо арынны эдер",
+	"visualeditor-ca-createlocaldescriptionsource": "Локалдыг тайылбыр дөзү немээр",
 	"visualeditor-ca-createsource": "Чаяар",
 	"visualeditor-ca-editsource": "Вики-сөзүглелди эдер",
 	"visualeditor-ca-editsource-section": "вики-сөзүглелди эдер",
@@ -16,6 +18,7 @@
 	"visualeditor-ca-ve-edit-section": "Визуалдыг эдикчи",
 	"visualeditor-categories-tool": "Аңгылалдар",
 	"visualeditor-desc": "MediaWiki-ге херек Визуалдыг эдикчи",
+	"visualeditor-descriptionpagelink": "Project:ВизуалдыгЭдикчи",
 	"visualeditor-dialog-media-goback": "Дедир",
 	"visualeditor-dialog-media-info-artist": "$1 чүдүрген",
 	"visualeditor-dialog-media-info-audiofile": "Аадың файл",

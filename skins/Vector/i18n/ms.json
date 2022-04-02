@@ -4,7 +4,8 @@
 			"Anakmalaysia",
 			"Aurora",
 			"Izington",
-			"Pizza1016"
+			"Pizza1016",
+			"Tofeiku"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -33,5 +34,6 @@
 	"vector-search-loader": "Memuat cadangan carian",
 	"vector-anon-user-menu-pages": "Halaman untuk penyunting log keluar",
 	"vector-anon-user-menu-pages-learn": "Ketahui lebih lanjut",
-	"vector-personal-more-label": "Pautan pengguna"
+	"vector-personal-more-label": "Pautan pengguna",
+	"vector-main-menu-tooltip": "Menu utama"
 }

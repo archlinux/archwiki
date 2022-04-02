@@ -11,7 +11,8 @@
 			"Wehwei",
 			"Xiplus",
 			"Zhxy 519",
-			"Winston Sung"
+			"Winston Sung",
+			"Tranve"
 		]
 	},
 	"templatedata-desc": "實現模板參數的資料儲存（使用 JSON）",
@@ -117,7 +118,7 @@
 	"templatedata-modal-title-language": "語言",
 	"templatedata-modal-title-paramorder": "參數順序",
 	"templatedata-modal-title-templatedesc": "模板描述 ($1)",
-	"templatedata-modal-title-templateformat": "建議的 wiki 文字格式",
+	"templatedata-modal-title-templateformat": "建議的 wikitext 格式",
 	"templatedata-modal-title-templateformatstring": "自訂格式字串",
 	"templatedata-modal-title-templateparam-details": "參數詳細資料：$1",
 	"templatedata-modal-title-templateparams": "模板參數"

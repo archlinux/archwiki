@@ -5,6 +5,7 @@
 			"Tocaibon"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 lenghe|$1 lenghis}}",
 	"vector-action-addsection": "Gnove sezion",
 	"vector-action-delete": "Elimine",
 	"vector-action-move": "Môf",

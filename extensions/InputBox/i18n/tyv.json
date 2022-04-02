@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Agilight",
-			"Sborsody"
+			"Sborsody",
+			"Riverman"
 		]
 	},
+	"inputbox-tryexact": "Ылаптыг дүгжүрүн шенээр",
 	"inputbox-createarticle": "Арын чаяар",
 	"inputbox-ns-main": "Кол"
 }

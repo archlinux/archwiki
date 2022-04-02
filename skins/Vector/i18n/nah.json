@@ -3,19 +3,20 @@
 		"authors": [
 			"Akapochtli",
 			"Ricardo gs",
-			"Taresi"
+			"Taresi",
+			"Languaeditor"
 		]
 	},
 	"vector-action-addsection": "Xicahxilti netlahtolpepechtiliztli",
-	"vector-action-delete": "Xicpolo",
-	"vector-action-move": "Xiczaca",
+	"vector-action-delete": "Xikixpolo",
+	"vector-action-move": "Xiksaka",
 	"vector-action-protect": "Xicpiya",
 	"vector-action-undelete": "Xicmāquīxti",
 	"vector-action-unprotect": "Xicpatla tlapiyaliztli",
-	"vector-view-create": "Ticchihuaz",
-	"vector-view-edit": "Ticpatlaz",
+	"vector-view-create": "Xikchiwa",
+	"vector-view-edit": "Xikpatla",
 	"vector-view-history": "Tiquittaz tlahtollotl",
-	"vector-view-view": "Tamapohuaz",
+	"vector-view-view": "Xikixpowa",
 	"vector-view-viewsource": "Xiquitta tzintiliztli",
-	"vector-more-actions": "Ocachi"
+	"vector-more-actions": "Achiyok"
 }

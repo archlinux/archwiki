@@ -2,13 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Celestinesucess",
-			"Ed g2s"
+			"Ed g2s",
+			"Naa2Darkoa",
+			"Ampimd"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buukuu",
 	"visualeditor-cite-tool-name-journal": "Atesɛm krataa",
 	"visualeditor-cite-tool-name-news": "Nsɛm",
+	"cite-ve-changedesc-ref-group-both": "Beae kuo a ɛdi nsesaeɛ firi \"$1\" de kɔ \"$2\"",
 	"cite-ve-dialog-reference-useexisting-tool": "Fa yɛ adeɛ bio",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Bebea nsɛm no fri",
-	"cite-ve-dialogbutton-reference-tooltip": "Titirew"
+	"cite-ve-dialogbutton-reference-tooltip": "Titirew",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Beaɛ yɛnya mmoa"
 }

@@ -22,6 +22,7 @@
 	"vector-opt-out": "Ravêr asayışê verêni",
 	"vector-opt-out-tooltip": "Kehan asayışê cildi şiyayışi rê eyaranê ho bıvurnê  (Vektoro kehan)",
 	"vector-action-toggle-sidebar": "Toggle sidebar",
+	"vector-language-button-label": "{{PLURAL:$1|$1 zıwan|$1 zıwani}}",
 	"vector-action-addsection": "Mewzu ake",
 	"vector-action-delete": "Bestere",
 	"vector-action-move": "Bıkırışe",

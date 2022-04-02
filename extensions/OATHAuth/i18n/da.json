@@ -41,5 +41,6 @@
 	"oathauth-disable-method-warning-header": "Bekræft at du vil deaktivere metoden",
 	"oathauth-disable-method-warning-button-label": "Bekræft og fortsæt",
 	"oathauth-disable-method-warning": "Hvis du deaktiverer tofaktorgodkendelsesmetoden $1 vil du ikke længere kunne bruge denne metode til at logge ind, og de data som er tilknyttet denne metode bliver slettet.",
-	"oathauth-totp-disable-warning": "Du vil ikke længere kunne bruge godkendelsesenheden som er registreret til denne konto. Alle engangsnøgler knyttet til denne konto vil blive deaktiveret."
+	"oathauth-totp-disable-warning": "Du vil ikke længere kunne bruge godkendelsesenheden som er registreret til denne konto. Alle engangsnøgler knyttet til denne konto vil blive deaktiveret.",
+	"oathauth-notifications-disable-help": "Hjælp"
 }

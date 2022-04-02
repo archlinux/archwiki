@@ -36,7 +36,7 @@
 	"categorytree-num-files": "$1 F",
 	"categorytree-num-empty": "vide",
 	"categorytree-load": "charger",
-	"categorytree-loading": "chargement...",
+	"categorytree-loading": "chargement en cours...",
 	"categorytree-nothing-found": "rien trouvé",
 	"categorytree-no-subcategories": "aucune sous-catégorie",
 	"categorytree-no-parent-categories": "aucune catégorie parente",

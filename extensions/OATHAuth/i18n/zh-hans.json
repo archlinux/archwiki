@@ -20,7 +20,9 @@
 			"ZhuofanWu",
 			"佛壁灯",
 			"科劳",
-			"铁桶"
+			"铁桶",
+			"Tranve",
+			"Stang"
 		]
 	},
 	"oathauth-desc": "提供“基于HMAC的一次性密码”的身份验证支持",
@@ -28,7 +30,7 @@
 	"verifyoathforuser": "验证双重身份验证状态",
 	"oath": "OATHAuth",
 	"specialpages-group-oath": "双重身份验证",
-	"oathauth-account": "账户名称：",
+	"oathauth-account": "账号名称：",
 	"oathauth-secret": "双重身份验证密钥：",
 	"oathauth-enable": "启用双重身份验证",
 	"oathauth-scratchtokens": "以下列表是可一次性使用的备用代码列表。每个代码只能使用一次，用于紧急用途。请将它们记录并保存在一个安全的位置。如果您遗失了手机，唯一能够找回您的账户的方法就是这些代码。'''这些代码以后永远不会再显示'''。",
@@ -100,6 +102,10 @@
 	"oathauth-switch-method-warning": "切换到$2双重身份验证方法后，目前的方法（$1）将被停用，且与当前身份验证方法关联的所有数据将被删除",
 	"oathauth-totp-disable-warning": "您将无法再次使用和此账号关联的设备进行认证。所有与该账号关联的临时密码均会失效。",
 	"oathauth-invalidrequest": "无效请求",
+	"notification-header-oathauth-disable": "{{GENDER:$2|您的帐户}}已禁用双因素验证。",
+	"notification-body-oathauth-disable": "如果{{GENDER:$2|您}}并未这么做，{{GENDER:$2|您的帐户}}可能已被入侵。",
+	"notification-body-oathauth-disable-other": "如果{{GENDER:$2|您}}并未提出此要求，{{GENDER:$2|您}}应当联系管理员。",
+	"oathauth-notifications-disable-help": "帮助",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}}已启用双重身份验证。",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}未启用双重身份验证。"
 }

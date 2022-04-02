@@ -23,6 +23,7 @@
 	"require": {
 		"composer/semver": "3.2.4",
 		"cssjanus/cssjanus": "2.1.0",
+		"ext-calendar": "*",
 		"ext-ctype": "*",
 		"ext-dom": "*",
 		"ext-fileinfo": "*",
@@ -44,7 +45,7 @@
 		"psr/container": "1.1.1",
 		"psr/log": "1.1.3",
 		"ralouphie/getallheaders": "3.0.3",
-		"symfony/polyfill-php80": "1.23.1",
+		"symfony/polyfill-php80": "1.25.0",
 		"wikimedia/assert": "0.5.0",
 		"wikimedia/at-ease": "2.1.0",
 		"wikimedia/base-convert": "2.0.1",
@@ -77,8 +78,9 @@
 		"zordius/lightncandy": "1.2.6"
 	},
 	"require-dev": {
+		"ext-simplexml": "*",
 		"composer/spdx-licenses": "1.5.4",
-		"doctrine/dbal": "3.0.0",
+		"doctrine/dbal": "3.1.5",
 		"doctrine/sql-formatter": "1.1.1",
 		"giorgiosironi/eris": "^0.10.0",
 		"hamcrest/hamcrest-php": "^2.0",
@@ -104,8 +106,20 @@
 	"suggest": {
 		"ext-apcu": "Local data cache for greatly improved performance",
 		"ext-curl": "Improved http communication abilities",
+		"ext-gd": "Support for Graphics Draw",
+		"ext-gmp": "Support for arbitrary-length integers",
+		"ext-intl": "ICU integration",
+		"ext-mysqli": "Allows MediaWiki to use MySQL/MariaDB as a database",
 		"ext-openssl": "Cryptographical functions",
+		"ext-pdo": "Allows MediaWiki to use SQLite as a database",
+		"ext-pgsql": "Allows MediaWiki to use PostgreSQL as a database",
+		"ext-posix": "Process control",
+		"ext-pcntl": "Process control",
+		"ext-readline": "Improved command line support",
+		"ext-sockets": "Socket support",
 		"ext-wikidiff2": "Diff accelerator",
+		"ext-yaml": "Improved YAML parsing performance",
+		"ext-zlib": "gzip compressiion",
 		"monolog/monolog": "Flexible debug logging system",
 		"nmred/kafka-php": "Send debug log events to kafka"
 	},
@@ -135,6 +149,7 @@
 		"pre-update-cmd": "ComposerHookHandler::onPreUpdate",
 		"post-install-cmd": "ComposerVendorHtaccessCreator::onEvent",
 		"post-update-cmd": "ComposerVendorHtaccessCreator::onEvent",
+		"releasenotes": "@phpunit:entrypoint --group ReleaseNotes",
 		"test": [
 			"composer lint .",
 			"composer phpcs ."
@@ -152,7 +167,10 @@
 	},
 	"config": {
 		"optimize-autoloader": true,
-		"prepend-autoloader": false
+		"prepend-autoloader": false,
+		"allow-plugins": {
+			"wikimedia/composer-merge-plugin": true
+		}
 	},
 	"extra": {
 		"merge-plugin": {

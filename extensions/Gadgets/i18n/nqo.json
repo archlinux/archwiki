@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lancine.kounfantoh.fofana"
+		]
+	},
+	"gadgetusage-usercount": "ߟߊ߬ߓߊ߰ߙߊ߬ߟߊ ߟߎ߬ ߦߙߌߞߊ",
+	"gadgetusage-activeusers": "ߟߊ߬ߓߊ߰ߙߊ߬ߟߊ ߞߎ߲߬ߞߍ߲ߘߍ",
+	"gadgetusage-default": "ߓߐߛߎ߲",
+	"gadgets-uses": "ߟߊ߬ߓߊ߰ߙߊ߬ߟߊ ߟߎ߬",
+	"gadgets-required-rights": "{{PLURAL:|ߤߊߞߍ ߣߌ߲߬|ߤߊߞߍ $2 ߢߌ߲߬ ߠߎ߫}} ߡߊߢߌߣߌ߲ߣߍ߲߫: \n\n$1",
+	"gadgets-export-download": "ߟߊ߬ߖߌ߰ߒ߬ߞߎ߲߬ߠߌ߲"
+}

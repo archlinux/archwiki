@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Trondtr",
-			"Yupik"
+			"Yupik",
+			"Seipinne"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 kielâ|$1 kiellâd}}",
 	"vector-action-addsection": "Lasseet fáádá",
 	"vector-action-delete": "Siho",
 	"vector-action-move": "Sirde",
@@ -14,5 +16,10 @@
 	"vector-view-history": "Čääiti historjá",
 	"vector-view-view": "Luuvâ",
 	"vector-view-viewsource": "Čääiti käldeekoodi",
-	"vector-more-actions": "Eenâb"
+	"vector-jumptonavigation": "Njuškii navigistmân",
+	"vector-jumptosearch": "Njuškii ucâmân",
+	"vector-jumptocontent": "Njuškii siskáldâsân",
+	"vector-more-actions": "Eenâb",
+	"vector-main-menu-tooltip": "Uáivivaljiittâh",
+	"tooltip-vector-anon-user-menu-title": "Lase valjiimeh"
 }
