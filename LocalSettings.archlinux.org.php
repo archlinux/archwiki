@@ -333,14 +333,28 @@ wfLoadExtension( 'Nuke' );
 
 # AbuseFilter extension
 wfLoadExtension( 'AbuseFilter' );
-$wgGroupPermissions['*']['abusefilter-view'] = true;
-$wgGroupPermissions['*']['abusefilter-log'] = true;
-$wgGroupPermissions['*']['abusefilter-log-detail'] = true;
+$wgAbuseFilterLogPrivateDetailsAccess = true;
+$wgAbuseFilterPrivateDetailsForceReason = true;
+
+$wgGroupPermissions['*']['abusefilter-view'] = false;
+$wgGroupPermissions['*']['abusefilter-log'] = false;
+$wgGroupPermissions['*']['abusefilter-log-detail'] = false;
+$wgGroupPermissions['cosysop']['abusefilter-view'] = true;
+$wgGroupPermissions['cosysop']['abusefilter-log'] = true;
+$wgGroupPermissions['cosysop']['abusefilter-log-detail'] = true;
 $wgGroupPermissions['sysop']['abusefilter-modify'] = true;
-$wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
+$wgGroupPermissions['sysop']['abusefilter-view'] = true;
+$wgGroupPermissions['sysop']['abusefilter-log'] = true;
+$wgGroupPermissions['sysop']['abusefilter-log-detail'] = true;
 $wgGroupPermissions['sysop']['abusefilter-privatedetails'] = true;
-$wgGroupPermissions['sysop']['abusefilter-privatedetails-log'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
+$wgGroupPermissions['sysop']['abusefilter-modify-global'] = true;
 $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
+$wgGroupPermissions['sysop']['abusefilter-view-private'] = true;
+$wgGroupPermissions['sysop']['abusefilter-log-private'] = true;
+$wgGroupPermissions['sysop']['abusefilter-hide-log'] = true;
+$wgGroupPermissions['sysop']['abusefilter-hidden-log'] = true;
+$wgGroupPermissions['sysop']['abusefilter-privatedetails-log'] = true;
 
 # filter groups
 $wgAbuseFilterValidGroups = array( 'default', 'proofed' );
