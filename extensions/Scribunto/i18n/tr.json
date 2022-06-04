@@ -6,10 +6,10 @@
 			"McDutchie",
 			"MuratTheTurkish",
 			"Sadrettin",
+			"SaldırganSincap",
 			"Sezgin İbiş",
 			"Violetanka",
-			"Vito Genovese",
-			"SaldırganSincap"
+			"Vito Genovese"
 		]
 	},
 	"scribunto-desc": "Betik dillerini MediaWiki sayfalarına gömmek için çerçeve",
@@ -44,6 +44,7 @@
 	"scribunto-lua-error-location": "Lua hatası $1: $2.",
 	"scribunto-lua-error": "Lua hatası: $2.",
 	"scribunto-lua-notarrayreturn": "Betik hatası: Modül $2 değerini döndürdü. Bir aktarım tablosu döndürmesi gerekiyor.",
+	"scribunto-lua-warning": "Betik uyarısı: $1",
 	"scribunto-luastandalone-proc-error": "Lua hatası: İşlem oluşturulamıyor.",
 	"scribunto-luastandalone-proc-error-msg": "Lua hatası: İşlem oluşturulamıyor: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua hatası: İşlem oluşturulamıyor: proc_open mevcut değil. PHP'nin \"disable_functions\" yapılandırma yönergesini kontrol edin.",

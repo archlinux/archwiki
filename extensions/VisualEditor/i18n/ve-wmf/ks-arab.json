@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Iflaq"
+		]
+	},
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ظٲہِر اؠڈِٹ]]",
+	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ظٲہِر اؠڈِٹ خانَس]] مَنٛز کَرنہٕ آمِت اؠڈِٹ",
+	"tag-visualeditor-wikitext": "2017 کوڈ اؠڈِٹ خانہٕ",
+	"visualeditor-welcomedialog-switch": "کوڈ اؠڈِٹ خانَس مَنٛز گٔژھِو",
+	"visualeditor-welcomedialog-switch-ve": "ظٲہِر اؠڈِٹ خانَس مَنٛز گٔژھِو",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|خٲر مَقدَم}}، $2"
+}

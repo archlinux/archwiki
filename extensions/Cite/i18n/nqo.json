@@ -5,6 +5,7 @@
 		]
 	},
 	"cite_error": "ߝߎ߬ߕߎ߲߬ߕߌ ߞߏߝߐ߫: $1",
+	"cite_error_references_invalid_parameters": "ߟߊ߬ߓߍ߲߬ߢߐ߲߰ߡߦߊ߬ߘߊ ߓߍ߲߬ߓߊߟߌ <code>&Lt; ߦߟߌߡߊߛߙߋ ߟߎ߬ &GT;</code> ߞߊ߲ߠߊߛߓߍ ߟߊ߫",
 	"cite-tracking-category-cite-error": "ߝߎ߬ߕߎ߲߬ߕߌ߫ ߦߟߌߡߊߛߙߋ ߦߋ߫ ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߟߊ߫",
 	"cite-tracking-category-cite-error-desc": "ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߦߋ߫ ߦߌߟߡߊ ߣߌ߲߬ ߘߐ߫߸ ߝߎ߬ߕߎ߲߬ߕߌ ߦߴߏ߬ ߟߎ߫ ߟߊ߫ ߞߊ߬ ߓߐ߫ ߦߟߌߡߊߛߙߋ ߞߊ߲ߠߊߛߓߍ ߟߎ߬ ߟߊߓߊ߯ߙߊ ߡߊ߬.",
 	"cite_references_link_accessibility_label": "ߌ ߕߐ߬ߡߐ߲߬ ߛߊ߲ߝߍ߬",

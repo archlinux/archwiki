@@ -35,16 +35,23 @@ require_once __DIR__ . '/Maintenance.php';
  * @ingroup Maintenance
  */
 class BackupReader extends Maintenance {
+	/** @var int */
 	public $reportingInterval = 100;
+	/** @var int */
 	public $pageCount = 0;
+	/** @var int */
 	public $revCount = 0;
+	/** @var bool */
 	public $dryRun = false;
+	/** @var bool */
 	public $uploads = false;
+	/** @var int */
 	protected $uploadCount = 0;
+	/** @var string|false */
 	public $imageBasePath = false;
 	/** @var array|false */
 	public $nsFilter = false;
-	/** @var bool|resource */
+	/** @var resource|false */
 	public $stderr;
 	/** @var callable|null */
 	protected $importCallback;
@@ -52,7 +59,7 @@ class BackupReader extends Maintenance {
 	protected $logItemCallback;
 	/** @var callable|null */
 	protected $uploadCallback;
-	/** @var int */
+	/** @var float */
 	protected $startTime;
 
 	public function __construct() {
@@ -282,6 +289,9 @@ TEXT
 		}
 
 		$file = fopen( $filename, 'rt' );
+		if ( $file === false ) {
+			$this->fatalError( error_get_last()['message'] ?? 'Could not open file' );
+		}
 
 		return $this->importFromHandle( $file );
 	}

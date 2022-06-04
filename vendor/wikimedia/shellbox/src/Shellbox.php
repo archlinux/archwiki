@@ -145,7 +145,13 @@ class Shellbox {
 				// Add surrounding quotes
 				$retVal .= '"' . $arg . '"';
 			} else {
-				$retVal .= escapeshellarg( $arg );
+				// In PHP 8.0+, the locale is "C" unless setlocale() has been
+				// called, regardless of the environment. So escapeshellarg()
+				// will strip non-ASCII bytes to avoid misinterpretation by a
+				// shell that uses GBK or a similar character set. So we roll
+				// our own, but UnboxedExecutor will filter the environment to
+				// avoid misinterpretation.
+				$retVal .= "'" . str_replace( "'", "'\\''", $arg ) . "'";
 			}
 		}
 		return $retVal;

@@ -42,24 +42,24 @@ ve.ui.MWWikitextAction.static.methods = [ 'toggleWrapSelection', 'wrapSelection'
  * @return {boolean} Action was executed
  */
 ve.ui.MWWikitextAction.prototype.toggleWrapSelection = function ( before, after, placeholder, expandOffsetsCallback, unwrapOffsetsCallback ) {
-	var contextRange, data, range, textBefore, textAfter, expandOffsets, unwrapOffsets,
-		originalFragment = this.surface.getModel().getFragment( null, false, true /* excludeInsertions */ ),
+	var originalFragment = this.surface.getModel().getFragment( null, false, true /* excludeInsertions */ ),
 		fragment = originalFragment;
 
+	var textBefore, textAfter;
 	if ( expandOffsetsCallback ) {
-		contextRange = fragment.expandLinearSelection( 'siblings' ).getSelection().getCoveringRange();
-		data = fragment.getDocument().data;
-		range = fragment.getSelection().getCoveringRange();
+		var contextRange = fragment.expandLinearSelection( 'siblings' ).getSelection().getCoveringRange();
+		var data = fragment.getDocument().data;
+		var range = fragment.getSelection().getCoveringRange();
 		textBefore = data.getText( true, new ve.Range( contextRange.start, range.start ) );
 		textAfter = data.getText( true, new ve.Range( range.end, contextRange.end ) );
-		expandOffsets = expandOffsetsCallback( textBefore, textAfter );
+		var expandOffsets = expandOffsetsCallback( textBefore, textAfter );
 		if ( expandOffsets ) {
 			fragment = originalFragment.adjustLinearSelection( expandOffsets[ 0 ], expandOffsets[ 1 ] );
 		}
 	}
 
 	if ( unwrapOffsetsCallback ) {
-		unwrapOffsets = unwrapOffsetsCallback( fragment.getText(), textBefore, textAfter );
+		var unwrapOffsets = unwrapOffsetsCallback( fragment.getText(), textBefore, textAfter );
 		if ( unwrapOffsets ) {
 			fragment.unwrapText( unwrapOffsets[ 0 ], unwrapOffsets[ 1 ] );
 		} else {
@@ -102,17 +102,16 @@ ve.ui.MWWikitextAction.prototype.wrapSelection = function ( before, after, place
  * @return {boolean} Action was executed
  */
 ve.ui.MWWikitextAction.prototype.wrapLine = function ( before, after, placeholder, unwrapOffsetsCallback ) {
-	var i, wrappedFragment, unwrapped,
-		fragment, unwrapOffsets,
-		originalFragment = this.surface.getModel().getFragment( null, false, true /* excludeInsertions */ ),
+	var originalFragment = this.surface.getModel().getFragment( null, false, true /* excludeInsertions */ ),
 		selectedNodes = originalFragment.getLeafNodes();
 
-	for ( i = selectedNodes.length - 1; i >= 0; i-- ) {
+	var unwrapped = false;
+	for ( var i = selectedNodes.length - 1; i >= 0; i-- ) {
 		if ( selectedNodes.length > 1 && selectedNodes[ i ].nodeRange.isCollapsed() ) {
 			continue;
 		}
-		fragment = this.surface.getModel().getLinearFragment( selectedNodes[ i ].nodeRange, true );
-		unwrapOffsets = unwrapOffsetsCallback && unwrapOffsetsCallback( fragment.getText() );
+		var fragment = this.surface.getModel().getLinearFragment( selectedNodes[ i ].nodeRange, true );
+		var unwrapOffsets = unwrapOffsetsCallback && unwrapOffsetsCallback( fragment.getText() );
 
 		if ( selectedNodes.length === 1 && originalFragment.getSelection().isCollapsed() ) {
 			originalFragment = fragment;
@@ -123,7 +122,7 @@ ve.ui.MWWikitextAction.prototype.wrapLine = function ( before, after, placeholde
 			unwrapped = true;
 		}
 
-		wrappedFragment = fragment.wrapText( before, after, placeholder );
+		var wrappedFragment = fragment.wrapText( before, after, placeholder );
 		if ( !unwrapped && wrappedFragment !== fragment ) {
 			if ( !ve.dm.LinearData.static.isElementData(
 				wrappedFragment.collapseToStart().adjustLinearSelection( -1, 0 ).getData()[ 0 ]

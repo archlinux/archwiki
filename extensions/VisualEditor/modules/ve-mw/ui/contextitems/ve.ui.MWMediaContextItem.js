@@ -16,15 +16,13 @@
  * @param {Object} config Configuration options
  */
 ve.ui.MWMediaContextItem = function VeUiMWMediaContextItem( context, model ) {
-	var mediaClass;
-
 	// Parent constructor
 	ve.ui.MWMediaContextItem.super.apply( this, arguments );
 
 	// Initialization
 	this.$element.addClass( 've-ui-mwMediaContextItem' );
 
-	mediaClass = model.getAttribute( 'mediaClass' ) || 'Image';
+	var mediaClass = model.getAttribute( 'mediaClass' ) || 'Image';
 
 	this.setIcon( model.getAttribute( 'isError' ) ? 'imageBroken' : {
 		Image: 'image',

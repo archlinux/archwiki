@@ -7,9 +7,9 @@
 			"Obsuser",
 			"Prevodim",
 			"Srdjan m",
+			"TMg",
 			"Zoranzoki21",
-			"Сербијана",
-			"TMg"
+			"Сербијана"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -191,7 +191,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Datoteka",
 	"visualeditor-dialogbutton-meta-tooltip": "Podešavanja stranice",
 	"visualeditor-dialogbutton-template-tooltip": "Šablon",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Uključivanje",
 	"visualeditor-donebutton-tooltip": "Uređivanje je završeno",
 	"visualeditor-editconflict": "Nije moguće sačuvati promene zbog sukoba izmena. Želite {{GENDER:|li}} da ručno rešite sukob?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} sada pamti koji uređivač preferirate. Možete da prebacujete režime uređivanja dok uređujete, a kasnije i da promenite svoja podešavanja.",

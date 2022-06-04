@@ -21,5 +21,7 @@
 	"cactions-mobile": "Sidåtgärder",
 	"monobook-cactions-label": "Sidåtgärder",
 	"monobook-notifications-link": "Aviseringar ($1)",
-	"monobook-notifications-link-none": "Aviseringar"
+	"monobook-notifications-link-none": "Aviseringar",
+	"monobook-view-history": "Historik",
+	"monobook-action-undelete": "Återställ {{PLURAL:$1|en version|$1 versioner}}"
 }

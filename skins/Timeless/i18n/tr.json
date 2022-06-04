@@ -5,6 +5,7 @@
 			"HakanIST",
 			"MuratTheTurkish",
 			"Rapsar",
+			"SaldırganSincap",
 			"Sayginer"
 		]
 	},
@@ -26,5 +27,7 @@
 	"timeless-pagetools": "Sayfa eylemleri",
 	"timeless-languages": "Diller",
 	"timeless-projects": "Diğer projeler",
-	"timeless.js": "/* Buradaki tüm JavaScript, Timeless arayüz kullanıcıları için yüklenecek */"
+	"timeless.js": "/* Buradaki tüm JavaScript, Timeless arayüz kullanıcıları için yüklenecek */",
+	"timeless-view-history": "Geçmiş",
+	"timeless-action-undelete": "{{PLURAL:$1|Bir düzenlemeyi|$1 düzenlemeyi}} geri getir"
 }

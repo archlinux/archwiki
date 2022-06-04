@@ -17,5 +17,7 @@
 	"timeless-pagemisc": "Тағы",
 	"timeless-namespaces": "Есім кеңістіктері",
 	"timeless-pagetools": "Бет әрекеттері",
-	"timeless-languages": "Тілдер"
+	"timeless-languages": "Тілдер",
+	"timeless-view-history": "Тарихы",
+	"timeless-action-undelete": "{{PLURAL:$1|өңдеме|$1 өңдеме}} жойылуын болдырмау"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Умар"
+			"Умар",
+			"Reedy"
 		]
 	},
 	"oathauth-desc": "НМАСан гӀоьнца бакъхиларна таллам барехь гӀо латтадо, цкъа лелочу паролашца",
@@ -13,7 +14,7 @@
 	"oathauth-token": "Токен",
 	"oathauth-disable": "шина-факторан аутентификаци дӀайайъа",
 	"oathauth-failedtovalidateoath": "Шина-факторан аутентификацин хаамаш хьажа цаделий",
-	"oathauth-disabledoath": "шина-факторан аутентификаци дӀаяйина",
+	"oathauth-disabledoath": "шина-факторан аутентификаци дӀайайина",
 	"oathauth-prefs-label": "Шина-факторан аутентификаци:",
 	"oathauth-step1": "Ког 1: Шина-факторан аутентификацин программа чуйаккха",
 	"oathauth-step1-test": "Шина-факторан аутентификацин программа чуйаккха, иза хила мега телефонан программа (масала, Google Authenticator) йа кхиин",
@@ -28,9 +29,9 @@
 	"oathauth-auth-ui": "Дехар до, хьайн телефон тӀера код дӀайазйе, хьажархьама:",
 	"oathauth-login-failed": "Таллар кхочушдан цаделий.",
 	"oathauth-describe-provider": "Шина-факторан аутентификаци (OATH).",
-	"grant-oath": "Шина-факторан аутентификаци (OAUTH) тӀекхачар",
+	"grant-oath": "Шина-факторан аутентификаци (OATH) тӀекхачар",
 	"action-oathauth-api-all": "Хьажа OATH статус",
-	"oauthauth-ui-no-module": "Латина йац",
+	"oathauth-ui-no-module": "Латина йац",
 	"oathauth-module-totp-label": "TOTP (цкъа мега пароль)",
 	"oathauth-ui-manage": "Урхалладар",
 	"oathmanage": "Шина-факторан аутентификацина урхалладар",

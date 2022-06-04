@@ -153,6 +153,7 @@ abstract class MultipartAction {
 	 * @param string $message
 	 * @param int $code
 	 * @throws ShellboxError
+	 * @return never
 	 */
 	protected function error( $message, $code = 500 ) {
 		throw new ShellboxError( $message, $code );

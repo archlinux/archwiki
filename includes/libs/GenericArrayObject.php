@@ -190,7 +190,7 @@ abstract class GenericArrayObject extends ArrayObject {
 	/**
 	 * @see Serializable::serialize
 	 *
-	 * @since 1.37.2
+	 * @since 1.38
 	 *
 	 * @return array
 	 */
@@ -228,7 +228,7 @@ abstract class GenericArrayObject extends ArrayObject {
 	/**
 	 * @see Serializable::unserialize
 	 *
-	 * @since 1.37.2
+	 * @since 1.38
 	 *
 	 * @param array $serializationData
 	 */

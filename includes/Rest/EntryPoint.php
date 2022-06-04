@@ -9,6 +9,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Rest\BasicAccess\CompoundAuthorizer;
 use MediaWiki\Rest\BasicAccess\MWBasicAuthorizer;
+use MediaWiki\Rest\Reporter\MWErrorReporter;
 use MediaWiki\Rest\Validator\Validator;
 use RequestContext;
 use Title;
@@ -75,14 +76,15 @@ class EntryPoint {
 			$authority,
 			$objectFactory,
 			$restValidator,
+			new MWErrorReporter(),
 			$services->getHookContainer()
 		) )->setCors( $cors );
 	}
 
 	/**
-	 * @return ?RequestInterface The RequestInterface object used by this entry point.
+	 * @return RequestInterface The RequestInterface object used by this entry point.
 	 */
-	public static function getMainRequest(): ?RequestInterface {
+	public static function getMainRequest(): RequestInterface {
 		if ( self::$mainRequest === null ) {
 			$conf = MediaWikiServices::getInstance()->getMainConfig();
 			self::$mainRequest = new RequestFromGlobals( [
@@ -107,10 +109,11 @@ class EntryPoint {
 		$conf = $services->getMainConfig();
 
 		$responseFactory = new ResponseFactory( self::getTextFormatters( $services ) );
+		$responseFactory->setSendExceptionBacktrace( $conf->get( 'ShowExceptionDetails' ) );
 
 		$cors = new CorsUtils(
 			new ServiceOptions(
-				CorsUtils::CONSTRUCTOR_OPTIONS, $services->getMainConfig()
+				CorsUtils::CONSTRUCTOR_OPTIONS, $conf
 			),
 			$responseFactory,
 			$context->getUser()

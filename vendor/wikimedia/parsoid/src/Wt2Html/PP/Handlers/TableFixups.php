@@ -6,8 +6,11 @@ namespace Wikimedia\Parsoid\Wt2Html\PP\Handlers;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\Sanitizer;
+use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -159,15 +162,22 @@ class TableFixups {
 
 			// Assimilate $tpl's data-mw and data-parsoid pi info
 			$dmw = DOMDataUtils::getDataMw( $tpl );
-			foreach ( $dmw->parts as $tplInfo ) {
-				// Template index is relative  to other transclusions.
+			foreach ( $dmw->parts ?? [] as $part ) {
+				// Template index is relative to other transclusions.
 				// This index is used to extract whitespace information from
 				// data-parsoid and that array only includes info for templates.
 				// So skip over strings here.
-				if ( !is_string( $tplInfo ) ) {
-					$tplInfo->template->i = $index++;
+				if ( !is_string( $part ) ) {
+					// Cloning is strictly not needed here, but mimicing
+					// code in WrapSectionsState.php
+					$part = clone $part;
+					if ( isset( $part->template ) ) {
+						$part->template->i = $index++;
+					} else {
+						$part->templatearg->i = $index++;
+					}
 				}
-				$parts[] = $tplInfo;
+				$parts[] = $part;
 			}
 			PHPUtils::pushArray( $pi, $tplDp->pi ?? [ [] ] );
 			DOMDataUtils::setDataMw( $tpl, null );
@@ -233,11 +243,11 @@ class TableFixups {
 	 * @param Env $env
 	 * @param Element $cell known to be <td> / <th>
 	 * @param ?Element $templateWrapper
-	 * @return array
+	 * @return ?array
 	 */
 	public function collectAttributishContent(
 		Env $env, Element $cell, ?Element $templateWrapper
-	): array {
+	): ?array {
 		$buf = [];
 		$nowikis = [];
 		$transclusions = $templateWrapper ? [ $templateWrapper ] : [];
@@ -251,10 +261,16 @@ class TableFixups {
 			&$traverse, &$buf, &$nowikis, &$transclusions
 		): bool {
 			while ( $child ) {
-				if ( DOMUtils::isComment( $child ) ) {
+				if ( $child instanceof Comment ) {
 					// Legacy parser strips comments during parsing => drop them.
-				} elseif ( DOMUtils::isText( $child ) ) {
-					$buf[] = $child->nodeValue;
+				} elseif ( $child instanceof Text ) {
+					$text = $child->nodeValue;
+					$buf[] = $text;
+
+					// Are we done accumulating?
+					if ( preg_match( '/(?:^|[^|])\|(?:[^|]|$)/D', $text ) ) {
+						return true;
+					}
 				} else {
 					'@phan-var Element $child';  /** @var Element $child */
 					if ( DOMUtils::hasTypeOf( $child, 'mw:Transclusion' ) ) {
@@ -289,26 +305,21 @@ class TableFixups {
 					}
 				}
 
-				// Are we done accumulating?
-				if ( count( $buf ) > 0 &&
-					preg_match( '/(?:^|[^|])\|(?:[^|]|$)/D', PHPUtils::lastItem( $buf ) )
-				) {
-					return true;
-				}
-
 				$child = $child->nextSibling;
 			}
 
 			return false;
 		};
 
-		$traverse( $cell->firstChild );
-
-		return [
-			'txt' => implode( '', $buf ),
-			'nowikis' => $nowikis,
-			'transclusions' => $transclusions,
-		];
+		if ( $traverse( $cell->firstChild ) ) {
+			return [
+				'txt' => implode( '', $buf ),
+				'nowikis' => $nowikis,
+				'transclusions' => $transclusions,
+			];
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -345,6 +356,9 @@ class TableFixups {
 		$env = $frame->getEnv();
 		// Collect attribute content and examine it
 		$attributishContent = $this->collectAttributishContent( $env, $cell, $templateWrapper );
+		if ( !$attributishContent ) {
+			return;
+		}
 
 		/**
 		 * FIXME: These checks are insufficient.
@@ -362,18 +376,11 @@ class TableFixups {
 		 * }
 		 */
 
-		$attrText = $attributishContent['txt'] ?? '';
-		// Check for the pipe character in the attributish text.
-		if ( !preg_match( '/^[^|]+\|([^|]|$)/D', $attrText ) ) {
+		$attrText = $attributishContent['txt'];
+		if ( !preg_match( '/(^[^|]+\|)([^|]|$)/D', $attrText, $matches ) ) {
 			return;
 		}
-
-		// Try to re-parse the attributish text content
-		if ( !preg_match( '/^[^|]+\|/', $attrText, $matches ) ) {
-			return;
-		}
-
-		$attributishPrefix = $matches[0];
+		$attributishPrefix = $matches[1];
 
 		// Splice in nowiki content.  We added in <nowiki> markers to prevent the
 		// above regexps from matching on nowiki-protected chars.
@@ -438,7 +445,7 @@ class TableFixups {
 		//     Ex: |class="foo"{{1x|1={{!}}title="x"{{!}}foo}}
 		//         should parse as <td class="foo">title="x"|foo</td>
 		$cellDp = DOMDataUtils::getDataParsoid( $cell );
-		if ( !isset( $cellDp->tmp->noAttrs ) ) {
+		if ( !$cellDp->getTempFlag( TempData::NO_ATTRS ) ) {
 			return false;
 		}
 
@@ -458,7 +465,7 @@ class TableFixups {
 		// We let the more general 'reparseTemplatedAttributes' code handle
 		// this scenario for now.
 		$prevDp = DOMDataUtils::getDataParsoid( $prev );
-		if ( !isset( $prevDp->tmp->noAttrs ) ) {
+		if ( !$prevDp->getTempFlag( TempData::NO_ATTRS ) ) {
 			return false;
 		}
 
@@ -470,7 +477,11 @@ class TableFixups {
 
 		// Reparse the attributish prefix
 		$attributeTokens = $this->tokenizer->tokenizeTableCellAttributes( $reparseSrc, false );
-		Assert::invariant( is_array( $attributeTokens ), "Expected successful parse of $reparseSrc" );
+		if ( !is_array( $attributeTokens ) ) {
+			$frame->getEnv()->log( "error/wt2html",
+				"TableFixups: Failed to successfully reparse $reparseSrc as table cell attributes" );
+			return false;
+		}
 
 		// Note that `row_syntax_table_args` (the rule used for tokenizing above)
 		// returns an array consisting of [table_attributes, spaces, pipe]
@@ -504,7 +515,7 @@ class TableFixups {
 		$dp = DOMDataUtils::getDataParsoid( $cell );
 		if ( $isTd && // only | can separate attributes & content => $cell has to be <td>
 			WTUtils::isFirstEncapsulationWrapperNode( $cell ) && // See long comment below
-			!isset( $dp->tmp->failedReparse ) &&
+			!$dp->getTempFlag( TempData::FAILED_REPARSE ) &&
 			!isset( $dp->stx ) // has to be first cell of the row
 		) {
 			// Parsoid parses content of templates independent of top-level content.
@@ -530,7 +541,7 @@ class TableFixups {
 		$testRE = $isTd ? '/[|]/' : '/[!|]/';
 		$child = $cell->firstChild;
 		while ( $child ) {
-			if ( DOMUtils::isText( $child ) && preg_match( $testRE, $child->textContent ) ) {
+			if ( $child instanceof Text && preg_match( $testRE, $child->textContent ) ) {
 				return self::OTHER_REPARSE;
 			}
 
@@ -584,14 +595,14 @@ class TableFixups {
 				// Clear property and retry $cell for other reparses
 				// The DOMTraverser will resume the handler on the
 				// returned $cell.
-				DOMDataUtils::getDataParsoid( $cell )->tmp->failedReparse = true;
+				DOMDataUtils::getDataParsoid( $cell )->setTempFlag( TempData::FAILED_REPARSE );
 				return $cell;
 			}
 		}
 
 		// If the cell didn't have attrs, extract and reparse templated attrs
 		$dp = DOMDataUtils::getDataParsoid( $cell );
-		if ( isset( $dp->tmp->noAttrs ) ) {
+		if ( $dp->getTempFlag( TempData::NO_ATTRS ) ) {
 			$templateWrapper = DOMUtils::hasTypeOf( $cell, 'mw:Transclusion' ) ? $cell : null;
 			$this->reparseTemplatedAttributes( $frame, $cell, $templateWrapper );
 		}
@@ -612,10 +623,10 @@ class TableFixups {
 
 			if ( $newCell ) {
 				$newCell->appendChild( $child );
-			} elseif ( DOMUtils::isText( $child ) || $this->isSimpleTemplatedSpan( $child ) ) {
+			} elseif ( $child instanceof Text || $this->isSimpleTemplatedSpan( $child ) ) {
 				// FIXME: This skips over scenarios like <div>foo||bar</div>.
 				$cellName = DOMCompat::nodeName( $cell );
-				$hasSpanWrapper = !DOMUtils::isText( $child );
+				$hasSpanWrapper = !( $child instanceof Text );
 				$match = null;
 
 				if ( $isTd ) {
@@ -664,7 +675,7 @@ class TableFixups {
 
 					// Set data-parsoid noAttrs flag
 					$newCellDP = DOMDataUtils::getDataParsoid( $newCell );
-					$newCellDP->tmp->noAttrs = true;
+					$newCellDP->setTempFlag( TempData::NO_ATTRS );
 				}
 			}
 

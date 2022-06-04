@@ -9,9 +9,10 @@
 			"Liangent",
 			"Liuxinyu970226",
 			"Simon Shek",
+			"Tranve",
 			"Winston Sung",
 			"Xiplus",
-			"Tranve"
+			"列维劳德"
 		]
 	},
 	"multimediaviewer-desc": "使用全螢幕介面以較大尺寸的方式顯示展開後的縮圖",
@@ -56,9 +57,7 @@
 	"multimediaviewer-restriction-trademarked": "此圖片包含受商標法限制的內容。",
 	"multimediaviewer-restriction-default": "此圖片可能受到版權法以外的法律規範所限制。請查看檔案描述頁面來獲得詳情內容。",
 	"multimediaviewer-restriction-default-and-others": "此圖片可能受到版權法以外的法律規範進一步限制。請查看檔案描述頁面來獲得詳情內容。",
-	"multimediaviewer-about-mmv": "關於此介面：",
-	"multimediaviewer-discuss-mmv": "討論",
-	"multimediaviewer-help-mmv": "說明",
+	"multimediaviewer-about-mmv": "關於 Media Viewer：",
 	"multimediaviewer-optout-mmv": "停用媒體檢視器",
 	"multimediaviewer-optin-mmv": "開啟媒體檢視器",
 	"multimediaviewer-optout-pending-mmv": "正在停用媒體檢視器",

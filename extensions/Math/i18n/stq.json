@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Maartenvdbent",
+			"Pyt"
+		]
+	},
+	"math_failure": "Parser-Failer",
+	"math_syntax_error": "Syntaxfailer",
+	"math_unknown_error": "Uunbekoande Failer",
+	"math_unknown_function": "Uunbekoande Funktion",
+	"mw_math_mathml": "MathML",
+	"mw_math_png": "Altied as PNG deerstaale",
+	"mw_math_source": "As TeX beläite (foar Textbrowsere)",
+	"prefs-math": "TeX"
+}

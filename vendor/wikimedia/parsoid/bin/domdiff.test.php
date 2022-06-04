@@ -24,9 +24,8 @@ $domDiff = new DOMDiff( $mockEnv );
 $domDiff->diff( $body1, $body2 );
 
 $opts = [
-	'env' => $mockEnv,
 	'keepTmp' => true,
 	'storeDiffMark' => true,
 	'quiet' => true
 ];
-ContentUtils::dumpDOM( $body2, 'DIFF-marked DOM',  $opts );
+print ContentUtils::dumpDOM( $body2, 'DIFF-marked DOM',  $opts );

@@ -9,5 +9,7 @@
 	"timeless-more": "ਹੋਰ",
 	"timeless-pageactions": "ਸਫ਼ੇ ਦੇ ਸੰਦ",
 	"timeless-pagemisc": "ਹੋਰ",
-	"timeless-languages": "ਭਾਸ਼ਾਵਾਂ"
+	"timeless-languages": "ਭਾਸ਼ਾਵਾਂ",
+	"timeless-view-history": "ਅਤੀਤ",
+	"timeless-action-undelete": "{{PLURAL:$1|ਇੱਕ ਸੋਧ|$1 ਸੋਧਾਂ}} ਹਟਾਉਣਾ-ਵਾਪਸ"
 }

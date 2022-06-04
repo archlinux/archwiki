@@ -4,14 +4,12 @@
  * @copyright 2011-2020 VisualEditor Team and others; see http://ve.mit-license.org
  */
 
-QUnit.module( 've.ui.FragmentInspector (MW)', QUnit.newMwEnvironment( {
+QUnit.module( 've.ui.FragmentInspector (MW)', ve.test.utils.newMwEnvironment( {
 	beforeEach() {
 		// Mock XHR for mw.Api()
 		this.server = this.sandbox.useFakeServer();
 		this.server.respondImmediately = true;
-		ve.test.utils.mwEnvironment.beforeEach.call( this );
-	},
-	afterEach: ve.test.utils.mwEnvironment.afterEach
+	}
 } ) );
 
 /* Tests */

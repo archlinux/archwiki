@@ -3,7 +3,7 @@ base32
 
 Base32 Encoder/Decoder for PHP according to [RFC 4648](https://tools.ietf.org/html/rfc4648).
 
-[![Build Status](https://secure.travis-ci.org/ChristianRiesen/base32.png)](http://travis-ci.org/ChristianRiesen/base32)
+![CI](https://github.com/ChristianRiesen/base32/workflows/CI/badge.svg)
 
 [![Latest Stable Version](https://poser.pugx.org/christian-riesen/base32/v/stable.png)](https://packagist.org/packages/christian-riesen/base32) [![Total Downloads](https://poser.pugx.org/christian-riesen/base32/downloads.png)](https://packagist.org/packages/christian-riesen/base32) [![Latest Unstable Version](https://poser.pugx.org/christian-riesen/base32/v/unstable.png)](https://packagist.org/packages/christian-riesen/base32) [![License](https://poser.pugx.org/christian-riesen/base32/license.png)](https://packagist.org/packages/christian-riesen/base32)
 
@@ -34,6 +34,8 @@ $encoded = Base32::encode($string);
 // $decoded is again 'fooba'
 $decoded = Base32::decode($encoded);
 ```
+
+You can also use the extended hex alphabet by using the `Base32Hex` class instead.
 
 About
 =====

@@ -32,7 +32,9 @@ class TDHandler extends DOMHandler {
 		// T149209: Special case to deal with scenarios
 		// where the previous sibling put us in a SOL state
 		// (or will put in a SOL state when the separator is emitted)
-		if ( $state->onSOL || ( $state->sep->constraints['min'] ?? 0 ) > 0 ) {
+		$min = $state->sep->constraints['min'] ?? 0;
+		$max = $state->sep->constraints['max'] ?? 1;
+		if ( $min > 0 || ( $max > 0 && str_contains( $state->sep->src ?? '', "\n" ) ) ) {
 			$startTagSrc = preg_replace( '/\|\|/', '|', $startTagSrc, 1 );
 			$startTagSrc = preg_replace( '/{{!}}{{!}}/', '{{!}}', $startTagSrc, 1 );
 		}
@@ -51,8 +53,7 @@ class TDHandler extends DOMHandler {
 		};
 
 		$nextTd = DOMUtils::nextNonSepSibling( $node );
-		$nextUsesRowSyntax = DOMUtils::isElt( $nextTd )
-			&& $nextTd instanceof Element // for static analyzers
+		$nextUsesRowSyntax = $nextTd instanceof Element
 			&& ( DOMDataUtils::getDataParsoid( $nextTd )->stx ?? null ) === 'row';
 
 		// For empty cells, emit a single whitespace to make wikitext
@@ -77,7 +78,7 @@ class TDHandler extends DOMHandler {
 				}
 			}
 			if ( $trailingSpace ) {
-				$state->appendSep( $trailingSpace, $node );
+				$state->appendSep( $trailingSpace );
 			}
 		}
 

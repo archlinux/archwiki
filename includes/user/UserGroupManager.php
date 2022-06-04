@@ -56,11 +56,14 @@ class UserGroupManager implements IDBAccessObject {
 	 */
 	public const CONSTRUCTOR_OPTIONS = [
 		'AddGroups',
+		'AutoConfirmAge',
+		'AutoConfirmCount',
 		'Autopromote',
 		'AutopromoteOnce',
 		'AutopromoteOnceLogInRC',
 		'EmailAuthentication',
 		'ImplicitGroups',
+		'GroupInheritsPermissions',
 		'GroupPermissions',
 		'GroupsAddToSelf',
 		'GroupsRemoveFromSelf',
@@ -189,12 +192,15 @@ class UserGroupManager implements IDBAccessObject {
 	 * @return string[] internal group names
 	 */
 	public function listAllGroups(): array {
-		return array_values( array_diff(
-			array_merge(
-				array_keys( $this->options->get( 'GroupPermissions' ) ),
-				array_keys( $this->options->get( 'RevokePermissions' ) )
-			),
-			$this->listAllImplicitGroups()
+		return array_values( array_unique(
+			array_diff(
+				array_merge(
+					array_keys( $this->options->get( 'GroupPermissions' ) ),
+					array_keys( $this->options->get( 'RevokePermissions' ) ),
+					array_keys( $this->options->get( 'GroupInheritsPermissions' ) )
+				),
+				$this->listAllImplicitGroups()
+			)
 		) );
 	}
 
@@ -535,7 +541,7 @@ class UserGroupManager implements IDBAccessObject {
 				}
 				return false;
 			case APCOND_EDITCOUNT:
-				$reqEditCount = $cond[1];
+				$reqEditCount = $cond[1] ?? $this->options->get( 'AutoConfirmCount' );
 
 				// T157718: Avoid edit count lookup if specified edit count is 0 or invalid
 				if ( $reqEditCount <= 0 ) {
@@ -543,8 +549,9 @@ class UserGroupManager implements IDBAccessObject {
 				}
 				return $user->isRegistered() && $this->userEditTracker->getUserEditCount( $user ) >= $reqEditCount;
 			case APCOND_AGE:
+				$reqAge = $cond[1] ?? $this->options->get( 'AutoConfirmAge' );
 				$age = time() - (int)wfTimestampOrNull( TS_UNIX, $user->getRegistration() );
-				return $age >= $cond[1];
+				return $age >= $reqAge;
 			case APCOND_AGE_FROM_EDIT:
 				$age = time() - (int)wfTimestampOrNull(
 					TS_UNIX, $this->userEditTracker->getFirstEditTimestamp( $user ) );
@@ -807,7 +814,7 @@ class UserGroupManager implements IDBAccessObject {
 		// Purge old, expired memberships from the DB
 		$fname = __METHOD__;
 		DeferredUpdates::addCallableUpdate( function () use ( $fname ) {
-			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
+			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA, [], $this->dbDomain );
 			$hasExpiredRow = (bool)$dbr->selectField( 'user_groups', '1',
 				[ 'ug_expiry < ' . $dbr->addQuotes( $dbr->timestamp() ) ],
 				$fname

@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Умар"
+		]
+	},
+	"apihelp-query+abusefilters-param-prop": "Муьлха билгалонаш оьшуш йу.",
+	"apihelp-query+abuselog-param-prop": "Муьлха билгалонаш оьшуш йу.",
+	"apihelp-query+abuselog-example-1": "Гайта тептар чуьра тӀеххьара дӀайаздарш",
+	"apihelp-query+abuselog-example-2": "Гайта [[API]] тептар чуьра тӀеххьара дӀайаздарш"
+}

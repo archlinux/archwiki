@@ -56,10 +56,10 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 	public function setStart( $node, int $offset ): void {
 		'@phan-var Node $node'; // @var Node $node
 		if ( $node instanceof \Wikimedia\IDLeDOM\DocumentType ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		if ( $offset > $node->_length() ) {
-			throw Util::error( 'IndexSizeError' );
+			Util::error( 'IndexSizeError' );
 		}
 		$bp = new BoundaryPoint( $node, $offset );
 		if (
@@ -78,10 +78,10 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 	public function setEnd( $node, int $offset ): void {
 		'@phan-var Node $node'; // @var Node $node
 		if ( $node instanceof \Wikimedia\IDLeDOM\DocumentType ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		if ( $offset > $node->_length() ) {
-			throw Util::error( 'IndexSizeError' );
+			Util::error( 'IndexSizeError' );
 		}
 		$bp = new BoundaryPoint( $node, $offset );
 		if (
@@ -126,7 +126,7 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 		'@phan-var Node $node'; // @var Node $node
 		$parent = $node->getParentNode();
 		if ( $parent === null ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		$this->setStart( $parent, $node->_getSiblingIndex() );
 	}
@@ -138,7 +138,7 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 		'@phan-var Node $node'; // @var Node $node
 		$parent = $node->getParentNode();
 		if ( $parent === null ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		$this->setStart( $parent, $node->_getSiblingIndex() + 1 );
 	}
@@ -150,7 +150,7 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 		'@phan-var Node $node'; // @var Node $node
 		$parent = $node->getParentNode();
 		if ( $parent === null ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		$this->setEnd( $parent, $node->_getSiblingIndex() );
 	}
@@ -162,7 +162,7 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 		'@phan-var Node $node'; // @var Node $node
 		$parent = $node->getParentNode();
 		if ( $parent === null ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		$this->setEnd( $parent, $node->_getSiblingIndex() + 1 );
 	}
@@ -185,7 +185,7 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 		'@phan-var Node $node'; // @var Node $node
 		$parent = $node->getParentNode();
 		if ( $parent === null ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		$index = $node->_getSiblingIndex();
 		$this->_start = new BoundaryPoint( $parent, $index );
@@ -198,7 +198,7 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 	public function selectNodeContents( $node ): void {
 		'@phan-var Node $node'; // @var Node $node
 		if ( $node instanceof \Wikimedia\IDLeDOM\DocumentType ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		$length = $node->_length();
 		$this->_start = new BoundaryPoint( $node, 0 );
@@ -225,10 +225,10 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 			$thisPoint = $this->_end;
 			break;
 		default:
-			throw Util::error( 'NotSupportedError' );
+			Util::error( 'NotSupportedError' );
 		}
 		if ( $this->_root() !== $sourceRange->_root() ) {
-			throw Util::error( 'WrongDocumentError' );
+			Util::error( 'WrongDocumentError' );
 		}
 		switch ( $how ) {
 		case self::START_TO_START:
@@ -240,7 +240,7 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 			$otherPoint = $sourceRange->_end;
 			break;
 		default:
-			throw Util::error( 'NotSupportedError' );
+			Util::error( 'NotSupportedError' );
 		}
 		return $thisPoint->compare( $otherPoint );
 	}
@@ -277,10 +277,10 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 			return false;
 		}
 		if ( $node instanceof \Wikimedia\IDLeDOM\DocumentType ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		if ( $offset > $node->_length() ) {
-			throw Util::error( 'IndexSizeError' );
+			Util::error( 'IndexSizeError' );
 		}
 		$bp = new BoundaryPoint( $node, $offset );
 		if ( $bp->compare( $this->_start ) < 0 ) {
@@ -301,13 +301,13 @@ class Range extends AbstractRange implements \Wikimedia\IDLeDOM\Range {
 	public function comparePoint( $node, int $offset ): int {
 		'@phan-var Node $node'; // @var Node $node
 		if ( self::_nodeRoot( $node ) !== $this->_root() ) {
-			throw Util::error( 'WrongDocumentError' );
+			Util::error( 'WrongDocumentError' );
 		}
 		if ( $node instanceof \Wikimedia\IDLeDOM\DocumentType ) {
-			throw Util::error( 'InvalidNodeTypeError' );
+			Util::error( 'InvalidNodeTypeError' );
 		}
 		if ( $offset > $node->_length() ) {
-			throw Util::error( 'IndexSizeError' );
+			Util::error( 'IndexSizeError' );
 		}
 		$bp = new BoundaryPoint( $node, $offset );
 		if ( $bp->compare( $this->_start ) < 0 ) {

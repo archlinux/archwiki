@@ -23,8 +23,7 @@ use ErrorPageError;
 use Html;
 use JobQueueGroup;
 use MediaWiki\MediaWikiServices;
-use MovePage;
-use MWNamespace;
+use MediaWiki\Revision\SlotRecord;
 use OOUI;
 use PermissionsError;
 use SpecialPage;
@@ -34,6 +33,7 @@ use Xml;
 
 class SpecialReplaceText extends SpecialPage {
 	private $target;
+	private $targetString;
 	private $replacement;
 	private $use_regex;
 	private $category;
@@ -105,6 +105,7 @@ class SpecialReplaceText extends SpecialPage {
 		$request = $this->getRequest();
 
 		$this->target = $request->getText( 'target' );
+		$this->targetString = preg_replace( "/\\n/", "&#8629;", $this->target );
 		$this->replacement = $request->getText( 'replacement' );
 		$this->use_regex = $request->getBool( 'use_regex' );
 		$this->category = $request->getText( 'category' );
@@ -114,7 +115,8 @@ class SpecialReplaceText extends SpecialPage {
 		$this->doAnnounce = $request->getBool( 'doAnnounce' );
 		$this->selected_namespaces = $this->getSelectedNamespaces();
 
-		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+		$services = MediaWikiServices::getInstance();
+		$linkRenderer = $services->getLinkRenderer();
 
 		if ( $request->getCheck( 'continue' ) && $this->target === '' ) {
 			$this->showForm( 'replacetext_givetarget' );
@@ -131,12 +133,17 @@ class SpecialReplaceText extends SpecialPage {
 			}
 
 			$jobs = $this->createJobsForTextReplacements();
-			JobQueueGroup::singleton()->push( $jobs );
+			if ( method_exists( $services, 'getJobQueueGroup' ) ) {
+				// MW 1.37+
+				$services->getJobQueueGroup()->push( $jobs );
+			} else {
+				JobQueueGroup::singleton()->push( $jobs );
+			}
 
 			$count = $this->getLanguage()->formatNum( count( $jobs ) );
 			$out->addWikiMsg(
 				'replacetext_success',
-				"<code><nowiki>{$this->target}</nowiki></code>",
+				"<code><nowiki>{$this->targetString}</nowiki></code>",
 				"<code><nowiki>{$this->replacement}</nowiki></code>",
 				$count
 			);
@@ -182,33 +189,31 @@ class SpecialReplaceText extends SpecialPage {
 			// If no results were found, check to see if a bad
 			// category name was entered.
 			if ( count( $titles_for_edit ) == 0 && count( $titles_for_move ) == 0 ) {
-				$category_title = null;
+				$category_title_exists = true;
 
 				if ( !empty( $this->category ) ) {
 					$category_title = Title::makeTitleSafe( NS_CATEGORY, $this->category );
 					if ( !$category_title->exists() ) {
-						$category_title = null;
+						$category_title_exists = false;
+						$link = $linkRenderer->makeLink(
+							$category_title,
+							ucfirst( $this->category )
+						);
+						$out->addHTML(
+							$this->msg( 'replacetext_nosuchcategory' )->rawParams( $link )->escaped()
+						);
 					}
 				}
 
-				if ( $category_title !== null ) {
-					$link = $linkRenderer->makeLink(
-						$category_title,
-						ucfirst( $this->category )
+				if ( $this->edit_pages && $category_title_exists ) {
+					$out->addWikiMsg(
+						'replacetext_noreplacement',
+						"<code><nowiki>{$this->targetString}</nowiki></code>"
 					);
-					$out->addHTML(
-						$this->msg( 'replacetext_nosuchcategory' )->rawParams( $link )->escaped()
-					);
-				} else {
-					if ( $this->edit_pages ) {
-						$out->addWikiMsg(
-							'replacetext_noreplacement', "<code><nowiki>{$this->target}</nowiki></code>"
-						);
-					}
+				}
 
-					if ( $this->move_pages ) {
-						$out->addWikiMsg( 'replacetext_nomove', "<code><nowiki>{$this->target}</nowiki></code>" );
-					}
+				if ( $this->move_pages && $category_title_exists ) {
+					$out->addWikiMsg( 'replacetext_nomove', "<code><nowiki>{$this->targetString}</nowiki></code>" );
 				}
 				// link back to starting form
 				$out->addHTML(
@@ -262,7 +267,7 @@ class SpecialReplaceText extends SpecialPage {
 		$replacement_params['use_regex'] = $this->use_regex;
 		$replacement_params['edit_summary'] = $this->msg(
 			'replacetext_editsummary',
-			$this->target, $this->replacement
+			$this->targetString, $this->replacement
 		)->inContentLanguage()->plain();
 		$replacement_params['create_redirect'] = false;
 		$replacement_params['watch_page'] = false;
@@ -278,21 +283,35 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		$jobs = [];
+		$pages_to_edit = [];
 		// These are OOUI checkboxes - we don't determine whether they
 		// were checked by their value (which will be null), but rather
 		// by whether they were submitted at all.
 		foreach ( $request->getValues() as $key => $value ) {
-			if ( $key !== 'replace' && $key !== 'use_regex' ) {
-				if ( strpos( $key, 'move-' ) !== false ) {
-					$title = Title::newFromID( (int)substr( $key, 5 ) );
-					$replacement_params['move_page'] = true;
-				} else {
-					$title = Title::newFromID( (int)$key );
-				}
+			if ( $key === 'replace' || $key === 'use_regex' ) {
+				continue;
+			}
+			if ( strpos( $key, 'move-' ) !== false ) {
+				$title = Title::newFromID( (int)substr( $key, 5 ) );
+				$replacement_params['move_page'] = true;
 				if ( $title !== null ) {
 					$jobs[] = new Job( $title, $replacement_params );
 				}
+				unset( $replacement_params['move_page'] );
+			} elseif ( strpos( $key, '|' ) !== false ) {
+				// Bundle multiple edits to the same page for a different slot into one job
+				list( $page_id, $role ) = explode( '|', $key, 2 );
+				$pages_to_edit[$page_id][] = $role;
 			}
+		}
+		// Create jobs for the bundled page edits
+		foreach ( $pages_to_edit as $page_id => $roles ) {
+			$title = Title::newFromID( (int)$page_id );
+			$replacement_params['roles'] = $roles;
+			if ( $title !== null ) {
+				$jobs[] = new Job( $title, $replacement_params );
+			}
+			unset( $replacement_params['roles'] );
 		}
 
 		return $jobs;
@@ -320,9 +339,11 @@ class SpecialReplaceText extends SpecialPage {
 			if ( $title == null ) {
 				continue;
 			}
+
 			// @phan-suppress-next-line SecurityCheck-ReDoS target could be a regex from user
 			$context = $this->extractContext( $row->old_text, $this->target, $this->use_regex );
-			$titles_for_edit[] = [ $title, $context ];
+			$role = $this->extractRole( (int)$row->slot_role_id );
+			$titles_for_edit[] = [ $title, $context, $role ];
 		}
 
 		return $titles_for_edit;
@@ -348,6 +369,7 @@ class SpecialReplaceText extends SpecialPage {
 			$this->use_regex
 		);
 
+		$movePageFactory = MediaWikiServices::getInstance()->getMovePageFactory();
 		foreach ( $res as $row ) {
 			$title = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
 			if ( $title == null ) {
@@ -361,7 +383,7 @@ class SpecialReplaceText extends SpecialPage {
 				$this->use_regex
 			);
 
-			$mvPage = new MovePage( $title, $new_title );
+			$mvPage = $movePageFactory->newMovePage( $title, $new_title );
 			$moveStatus = $mvPage->isValidMove();
 			$permissionStatus = $mvPage->checkPermissions( $this->getUser(), null );
 
@@ -434,7 +456,7 @@ class SpecialReplaceText extends SpecialPage {
 				'form',
 				[
 					'id' => 'powersearch',
-					'action' => $this->getPageTitle()->getFullURL(),
+					'action' => $this->getPageTitle()->getLocalURL(),
 					'method' => 'post'
 				]
 			) . "\n" .
@@ -597,8 +619,9 @@ class SpecialReplaceText extends SpecialPage {
 		// Try not to make too many assumptions about namespace numbering.
 		$rows = [];
 		$tables = "";
+		$namespaceInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
 		foreach ( $namespaces as $ns => $name ) {
-			$subj = MWNamespace::getSubject( $ns );
+			$subj = $namespaceInfo->getSubject( $ns );
 			if ( !array_key_exists( $subj, $rows ) ) {
 				$rows[$subj] = "";
 			}
@@ -641,7 +664,7 @@ class SpecialReplaceText extends SpecialPage {
 		$formOpts = [
 			'id' => 'choose_pages',
 			'method' => 'post',
-			'action' => $this->getPageTitle()->getFullUrl()
+			'action' => $this->getPageTitle()->getLocalURL()
 		];
 		$out->addHTML(
 			Xml::openElement( 'form', $formOpts ) . "\n" .
@@ -678,7 +701,7 @@ class SpecialReplaceText extends SpecialPage {
 		if ( count( $titles_for_edit ) > 0 ) {
 			$out->addWikiMsg(
 				'replacetext_choosepagesforedit',
-				"<code><nowiki>{$this->target}</nowiki></code>",
+				"<code><nowiki>{$this->targetString}</nowiki></code>",
 				"<code><nowiki>{$this->replacement}</nowiki></code>",
 				$wgLang->formatNum( count( $titles_for_edit ) )
 			);
@@ -687,12 +710,16 @@ class SpecialReplaceText extends SpecialPage {
 				/**
 				 * @var $title Title
 				 */
-				list( $title, $context ) = $title_and_context;
+				list( $title, $context, $role ) = $title_and_context;
 				$checkbox = new OOUI\CheckboxInputWidget( [
-					'name' => $title->getArticleID(),
+					'name' => $title->getArticleID() . "|" . $role,
 					'selected' => true
 				] );
-				$labelText = $linkRenderer->makeLink( $title, null ) . "<br /><small>$context</small>";
+				if ( $role === SlotRecord::MAIN ) {
+					$labelText = $linkRenderer->makeLink( $title, null ) . "<br /><small>$context</small>";
+				} else {
+					$labelText = $linkRenderer->makeLink( $title, null ) . " ($role) <br /><small>$context</small>";
+				}
 				$checkboxLabel = new OOUI\LabelWidget( [
 					'label' => new OOUI\HtmlSnippet( $labelText )
 				] );
@@ -708,7 +735,7 @@ class SpecialReplaceText extends SpecialPage {
 		if ( count( $titles_for_move ) > 0 ) {
 			$out->addWikiMsg(
 				'replacetext_choosepagesformove',
-				$this->target, $this->replacement, $wgLang->formatNum( count( $titles_for_move ) )
+				$this->targetString, $this->replacement, $wgLang->formatNum( count( $titles_for_move ) )
 			);
 			foreach ( $titles_for_move as $title ) {
 				$out->addHTML(
@@ -806,7 +833,6 @@ class SpecialReplaceText extends SpecialPage {
 			$contextBefore = $wgLang->truncateForDatabase( $contextBefore, -$cw, '...', false );
 			$contextAfter = $wgLang->truncateForDatabase( $contextAfter, $cw, '...', false );
 
-			// @phan-suppress-next-line SecurityCheck-DoubleEscaped T290624
 			$context .= $this->convertWhiteSpaceToHTML( $contextBefore );
 			$snippet = $this->convertWhiteSpaceToHTML( substr( $text, $index, $len ) );
 			if ( $use_regex ) {
@@ -817,10 +843,23 @@ class SpecialReplaceText extends SpecialPage {
 			}
 			$context .= preg_replace( $targetStr, '<span class="ext-replacetext-searchmatch">\0</span>', $snippet );
 
-			// @phan-suppress-next-line SecurityCheck-DoubleEscaped T290624
 			$context .= $this->convertWhiteSpaceToHTML( $contextAfter );
 		}
+
+		// Display newlines as "line break" characters.
+		$context = str_replace( "\n", '&#8629;', $context );
 		return $context;
+	}
+
+	/**
+	 * Extracts the role name
+	 *
+	 * @param int $role_id
+	 * @return string
+	 */
+	private function extractRole( $role_id ) {
+		$roleStore = MediaWikiServices::getInstance()->getSlotRoleStore();
+		return $roleStore->getName( $role_id );
 	}
 
 	private function convertWhiteSpaceToHTML( $message ) {

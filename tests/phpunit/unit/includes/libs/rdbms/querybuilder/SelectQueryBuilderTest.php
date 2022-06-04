@@ -130,6 +130,14 @@ class SelectQueryBuilderTest extends PHPUnit\Framework\TestCase {
 		$this->assertSQL( 'SELECT * FROM a LEFT JOIN b ON ((aa=bb))' );
 	}
 
+	public function testStraightJoin() {
+		$this->sqb
+			->table( 'a' )
+			->straightJoin( 'b', 'b', 'aa=bb' )
+			->fields( '*' );
+		$this->assertSQL( 'SELECT * FROM a JOIN b ON ((aa=bb))' );
+	}
+
 	public function testAutoAliasedJoin() {
 		$this->sqb
 			->table( 'a' )
@@ -411,9 +419,9 @@ class SelectQueryBuilderTest extends PHPUnit\Framework\TestCase {
 		$this->assertSQL( 'EXPLAIN SELECT * FROM t' );
 	}
 
-	public function testStraightJoin() {
+	public function testStraightJoinOption() {
 		$this->sqb
-			->straightJoin()
+			->straightJoinOption()
 			->select( '1' )
 			->from( 't' );
 		$this->assertSQL( 'SELECT /*! STRAIGHT_JOIN */ 1 FROM t' );
@@ -494,7 +502,6 @@ class SelectQueryBuilderTest extends PHPUnit\Framework\TestCase {
 	public function testFetchRowCountWithField() {
 		$this->sqb->table( 't' )->field( 'f' )->caller( __METHOD__ );
 		$this->sqb->fetchRowCount();
-		// phpcs:ignore Generic.Files.LineLength.TooLong
 		$this->assertEquals( 'SELECT COUNT(*) AS rowcount FROM (SELECT 1 FROM t WHERE (f IS NOT NULL)  ) tmp_count',
 			$this->db->getLastSqls() );
 	}
@@ -517,7 +524,6 @@ class SelectQueryBuilderTest extends PHPUnit\Framework\TestCase {
 		$this->db->begin( __METHOD__ );
 		$this->sqb->lockForUpdate();
 		$this->db->rollback( __METHOD__ );
-		// phpcs:ignore Generic.Files.LineLength.TooLong
 		$this->assertEquals( 'BEGIN; SELECT COUNT(*) AS rowcount FROM (SELECT 1 FROM t WHERE a = \'b\'   FOR UPDATE) tmp_count; ROLLBACK',
 			$this->db->getLastSqls() );
 	}

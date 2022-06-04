@@ -9,7 +9,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.36.0"
+		"MediaWiki": ">= 1.37.0"
 	},
 	"ExtensionMessagesFiles": {
 		"RenameuserAliases": "Renameuser.alias.php"
@@ -29,14 +29,14 @@
 	},
 	"HookHandlers": {
 		"main": {
-			"class": "RenameuserHooks",
+			"class": "MediaWiki\\Extension\\Renameuser\\Hooks",
 			"services": [
 				"PermissionManager"
 			]
 		}
 	},
 	"JobClasses": {
-		"renameUser": "RenameUserJob"
+		"renameUser": "MediaWiki\\Extension\\Renameuser\\RenameUserJob"
 	},
 	"GroupPermissions": {
 		"bureaucrat": {
@@ -44,14 +44,14 @@
 		}
 	},
 	"LogActionsHandlers": {
-		"renameuser/renameuser": "RenameuserLogFormatter"
+		"renameuser/renameuser": "MediaWiki\\Extension\\Renameuser\\RenameuserLogFormatter"
 	},
 	"AvailableRights": [
 		"renameuser"
 	],
 	"SpecialPages": {
 		"Renameuser": {
-			"class": "SpecialRenameuser",
+			"class": "MediaWiki\\Extension\\Renameuser\\SpecialRenameuser",
 			"services": [
 				"HookContainer",
 				"ContentLanguage",
@@ -64,18 +64,22 @@
 			]
 		}
 	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Renameuser\\": "includes/"
+	},
 	"AutoloadClasses": {
 		"RenameUserAbortHook": "includes/Hook/RenameUserAbortHook.php",
-		"RenameuserHookRunner": "includes/RenameuserHookRunner.php",
-		"RenameuserHooks": "includes/RenameuserHooks.php",
-		"RenameUserJob": "includes/RenameUserJob.php",
-		"RenameuserLogFormatter": "includes/RenameuserLogFormatter.php",
+		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserAbortHook": "includes/Hook/RenameUserAbortHook.php",
 		"RenameUserPreRenameHook": "includes/Hook/RenameUserPreRenameHook.php",
+		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserPreRenameHook": "includes/Hook/RenameUserPreRenameHook.php",
 		"RenameUserCompleteHook": "includes/Hook/RenameUserCompleteHook.php",
+		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserCompleteHook": "includes/Hook/RenameUserCompleteHook.php",
 		"RenameuserSQL": "includes/RenameuserSQL.php",
+		"MediaWiki\\Extension\\Renameuser\\RenameuserSQL": "includes/RenameuserSQL.php",
 		"RenameUserSQLHook": "includes/Hook/RenameUserSQLHook.php",
+		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserSQLHook": "includes/Hook/RenameUserSQLHook.php",
 		"RenameUserWarningHook": "includes/Hook/RenameUserWarningHook.php",
-		"SpecialRenameuser": "includes/SpecialRenameuser.php"
+		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserWarningHook": "includes/Hook/RenameUserWarningHook.php"
 	},
 	"manifest_version": 2
 }

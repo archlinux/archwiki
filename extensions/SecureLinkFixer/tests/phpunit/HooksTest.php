@@ -19,12 +19,12 @@
 namespace MediaWiki\SecureLinkFixer\Test;
 
 use MediaWiki\SecureLinkFixer\Hooks;
-use MediaWikiTestCase;
+use MediaWikiIntegrationTestCase;
 
 /**
  * @covers \MediaWiki\SecureLinkFixer\Hooks
  */
-class HooksTest extends MediaWikiTestCase {
+class HooksTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideOnLinkerMakeExternalLink

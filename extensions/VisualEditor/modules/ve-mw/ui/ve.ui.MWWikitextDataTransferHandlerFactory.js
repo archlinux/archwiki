@@ -12,13 +12,12 @@
  * @constructor
  */
 ve.ui.MWWikitextDataTransferHandlerFactory = function VeUiMwWikitextDataTransferHandlerFactory() {
-	var name,
-		factory = this;
+	var factory = this;
 
 	// Parent constructor
 	ve.ui.MWWikitextDataTransferHandlerFactory.super.apply( this, arguments );
 
-	for ( name in ve.ui.dataTransferHandlerFactory.registry ) {
+	for ( var name in ve.ui.dataTransferHandlerFactory.registry ) {
 		this.register( ve.ui.dataTransferHandlerFactory.registry[ name ] );
 	}
 
@@ -48,8 +47,7 @@ OO.inheritClass( ve.ui.MWWikitextDataTransferHandlerFactory, ve.ui.DataTransferH
  */
 ve.ui.MWWikitextDataTransferHandlerFactory.prototype.create = function () {
 	// Parent method
-	var doc,
-		handler = ve.ui.MWWikitextDataTransferHandlerFactory.super.prototype.create.apply( this, arguments ),
+	var handler = ve.ui.MWWikitextDataTransferHandlerFactory.super.prototype.create.apply( this, arguments ),
 		resolve = handler.resolve.bind( handler );
 
 	function isPlain( data ) {
@@ -57,11 +55,10 @@ ve.ui.MWWikitextDataTransferHandlerFactory.prototype.create = function () {
 	}
 
 	handler.resolve = function ( dataOrDoc ) {
-		var annotations, text;
 		if ( typeof dataOrDoc === 'string' || ( Array.isArray( dataOrDoc ) && dataOrDoc.every( isPlain ) ) ) {
 			resolve( dataOrDoc );
 		} else {
-			doc = dataOrDoc instanceof ve.dm.Document ?
+			var doc = dataOrDoc instanceof ve.dm.Document ?
 				dataOrDoc :
 				// The handler may have also written items to the store
 				new ve.dm.Document( new ve.dm.ElementLinearData( handler.surface.getModel().getDocument().getStore(), dataOrDoc ) );
@@ -70,9 +67,9 @@ ve.ui.MWWikitextDataTransferHandlerFactory.prototype.create = function () {
 			// with no title, whose href is equal to the contained text. This
 			// avoids a stutter in the common case of pasting a link into the
 			// document.
-			annotations = doc.data.getAnnotationsFromRange( new ve.Range( 0, doc.data.getLength() ) );
+			var annotations = doc.data.getAnnotationsFromRange( new ve.Range( 0, doc.data.getLength() ) );
 			if ( annotations.getLength() === 1 ) {
-				text = doc.data.getText();
+				var text = doc.data.getText();
 				if ( annotations.get( 0 ).getAttribute( 'href' ) === text ) {
 					return resolve( text );
 				}

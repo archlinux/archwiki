@@ -3,6 +3,7 @@
 		"authors": [
 			"DDPAT",
 			"Dim Grits",
+			"Ice bulldog",
 			"Matma Rex",
 			"Piramidion",
 			"Ата"
@@ -20,5 +21,7 @@
 	"cactions-mobile": "Дії на сторінці",
 	"monobook-cactions-label": "Дії над сторінкою",
 	"monobook-notifications-link": "Сповіщення ($1)",
-	"monobook-notifications-link-none": "Сповіщення"
+	"monobook-notifications-link-none": "Сповіщення",
+	"monobook-view-history": "Історія",
+	"monobook-action-undelete": "Відновити $1 {{PLURAL:$1|редагування|редагування|редагувань}}"
 }

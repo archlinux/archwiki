@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.model', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Thumbnail constructor sanity check', function ( assert ) {
+	QUnit.test( 'Thumbnail constructor sense check', function ( assert ) {
 		var width = 23,
 			height = 42,
 			url = 'http://example.com/foo.jpg',
@@ -35,7 +35,7 @@
 		}
 	} );
 
-	QUnit.test( 'ThumbnailWidth constructor sanity check', function ( assert ) {
+	QUnit.test( 'ThumbnailWidth constructor sense check', function ( assert ) {
 		var cssWidth = 23,
 			cssHeight = 29,
 			screenWidth = 42,

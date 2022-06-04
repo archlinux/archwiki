@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Bennylin",
+			"Daud I.F. Argana",
 			"Farras",
 			"IvanLanin",
 			"Iwan Novirion",
 			"Kenrick95",
-			"WongKentir",
-			"Daud I.F. Argana"
+			"WongKentir"
 		]
 	},
 	"gadgets-desc": "Memungkinkan pengguna memilih [[Special:Gadgets|perkakas CSS dan JavaScript]] melalui [[Special:Preferences#mw-prefsection-gadgets|preferensi]] mereka",
@@ -24,11 +24,15 @@
 	"gadgetusage-default": "Baku",
 	"gadgets-title": "Perkakas",
 	"gadgets-pagetext": "Berikut adalah daftar perkakas istimewa yang dapat diaktifkan pengguna melalui [[Special:Preferences#mw-prefsection-gadgets|halaman preferensi]] mereka sebagaimana didefinisikan oleh [[MediaWiki:Gadgets-definition]]. Tinjauan berikut memberikan kemudahan akses ke dalam halaman pesan sistem yang mendefinisikan deskripsi dan kode masing-masing perkakas.",
+	"gadgets-editdescription": "Sunting deskripsi",
+	"gadgets-viewdescription": "Lihat deskripsi",
 	"gadgets-uses": "Penggunaan",
 	"gadgets-required-rights": "Memerlukan {{PLURAL:$2|hak|hak-hak}} berikut:\n\n$1",
 	"gadgets-required-skins": "Tersedia dalam {{PLURAL:$2|$1 kulit|kulit berikut: $1}}.",
+	"gadgets-required-actions": "Bekerja pada {{PLURAL:$2|tindakan halaman: $1}}.",
 	"gadgets-default": "Diaktifkan untuk semua orang secara bawaan.",
 	"gadgets-legacy": "Perkakas tidak dimuat. Tolong migrasi ke ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Pelajari lebih lanjut])",
+	"gadgets-packaged": "Perkakas ini [https://www.mediawiki.org/wiki/ResourceLoader/Package_files dipaketkan], dengan titik masuknya adalah $1",
 	"gadgets-export": "Ekspor",
 	"gadgets-export-title": "Ekspor perkakas",
 	"gadgets-not-found": "Perkakas \"$1\" tidak ditemukan.",
@@ -40,5 +44,6 @@
 	"action-gadgets-edit": "mengubah halaman JavaScript atau CSS perkakas ini",
 	"right-gadgets-definition-edit": "Mengubah definisi perkakas",
 	"action-gadgets-definition-edit": "mengubah definisi perkakas ini",
-	"gadgets-wrong-contentmodel": "Halaman dalam ruang nama {{ns:2302}} harus mematuhi model konten GadgetDefinition."
+	"gadgets-wrong-contentmodel": "Halaman dalam ruang nama {{ns:2302}} harus mematuhi model konten GadgetDefinition.",
+	"gadgets-supports-urlload": "Perkakas ini mendukung pemuatan melalui URL dengan parameter kueri <code>?withgadget</code>."
 }

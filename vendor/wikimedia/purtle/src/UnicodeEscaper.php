@@ -36,7 +36,7 @@ namespace Wikimedia\Purtle;
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @copyright Copyright (c) 2009-2013 Nicholas J Humfrey
- * @license http://www.opensource.org/licenses/bsd-license.php
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD-2-Clause
  */
 class UnicodeEscaper {
 

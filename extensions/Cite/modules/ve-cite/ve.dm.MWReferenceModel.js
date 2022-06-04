@@ -9,7 +9,7 @@
  * MediaWiki reference model.
  *
  * @class
- * @mixins OO.EventEmitter
+ * @mixin OO.EventEmitter
  *
  * @constructor
  * @param {ve.dm.Document} parentDoc Document that contains or will contain the reference
@@ -83,8 +83,7 @@ ve.dm.MWReferenceModel.prototype.findInternalItem = function ( surfaceModel ) {
  */
 ve.dm.MWReferenceModel.prototype.insertInternalItem = function ( surfaceModel ) {
 	// Create new internal item
-	var item,
-		doc = surfaceModel.getDocument(),
+	var doc = surfaceModel.getDocument(),
 		internalList = doc.getInternalList();
 
 	// Fill in data
@@ -92,7 +91,7 @@ ve.dm.MWReferenceModel.prototype.insertInternalItem = function ( surfaceModel ) 
 	this.setListGroup( 'mwReference/' + this.group );
 
 	// Insert internal reference item into document
-	item = internalList.getItemInsertion( this.listGroup, this.listKey, [] );
+	var item = internalList.getItemInsertion( this.listGroup, this.listKey, [] );
 	surfaceModel.change( item.transaction );
 	this.setListIndex( item.index );
 
@@ -114,27 +113,26 @@ ve.dm.MWReferenceModel.prototype.insertInternalItem = function ( surfaceModel ) 
  * @param {ve.dm.Surface} surfaceModel Surface model of main document
  */
 ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) {
-	var i, len, txs, group, refNodes, keyIndex, itemNodeRange,
-		doc = surfaceModel.getDocument(),
+	var doc = surfaceModel.getDocument(),
 		internalList = doc.getInternalList(),
 		listGroup = 'mwReference/' + this.group;
 
 	// Group/key has changed
 	if ( this.listGroup !== listGroup ) {
 		// Get all reference nodes with the same group and key
-		group = internalList.getNodeGroup( this.listGroup );
-		refNodes = group.keyedNodes[ this.listKey ] ?
+		var group = internalList.getNodeGroup( this.listGroup );
+		var refNodes = group.keyedNodes[ this.listKey ] ?
 			group.keyedNodes[ this.listKey ].slice() :
 			[ group.firstNodes[ this.listIndex ] ];
 		// Check for name collision when moving items between groups
-		keyIndex = internalList.getKeyIndex( this.listGroup, this.listKey );
+		var keyIndex = internalList.getKeyIndex( this.listGroup, this.listKey );
 		if ( keyIndex !== undefined ) {
 			// Resolve name collision by generating a new list key
 			this.listKey = 'auto/' + internalList.getNextUniqueNumber();
 		}
 		// Update the group name of all references nodes with the same group and key
-		txs = [];
-		for ( i = 0, len = refNodes.length; i < len; i++ ) {
+		var txs = [];
+		for ( var i = 0, len = refNodes.length; i < len; i++ ) {
 			txs.push( ve.dm.TransactionBuilder.static.newFromAttributeChanges(
 				doc,
 				refNodes[ i ].getOuterRange().start,
@@ -145,7 +143,7 @@ ve.dm.MWReferenceModel.prototype.updateInternalItem = function ( surfaceModel ) 
 		this.listGroup = listGroup;
 	}
 	// Update internal node content
-	itemNodeRange = internalList.getItemNode( this.listIndex ).getRange();
+	var itemNodeRange = internalList.getItemNode( this.listIndex ).getRange();
 	surfaceModel.change( ve.dm.TransactionBuilder.static.newFromRemoval( doc, itemNodeRange, true ) );
 	surfaceModel.change(
 		ve.dm.TransactionBuilder.static.newFromDocumentInsertion( doc, itemNodeRange.start, this.getDocument() )
@@ -172,7 +170,9 @@ ve.dm.MWReferenceModel.prototype.insertReferenceNode = function ( surfaceFragmen
 		.insertContent( [
 			{
 				type: 'mwReference',
-				attributes: attributes
+				attributes: attributes,
+				// See ve.dm.MWReferenceNode.static.cloneElement
+				originalDomElementsHash: Math.random()
 			},
 			{ type: '/mwReference' }
 		] );

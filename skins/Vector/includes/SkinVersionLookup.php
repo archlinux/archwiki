@@ -23,6 +23,7 @@
 namespace Vector;
 
 use Config;
+use MediaWiki\User\UserOptionsLookup;
 use User;
 use WebRequest;
 
@@ -61,6 +62,10 @@ final class SkinVersionLookup {
 	 * @var Config
 	 */
 	private $config;
+	/**
+	 * @var UserOptionsLookup
+	 */
+	private $userOptionsLookup;
 
 	/**
 	 * This constructor accepts all dependencies needed to obtain the skin version. The dependencies
@@ -69,11 +74,18 @@ final class SkinVersionLookup {
 	 * @param WebRequest $request
 	 * @param User $user
 	 * @param Config $config
+	 * @param UserOptionsLookup $userOptionsLookup
 	 */
-	public function __construct( WebRequest $request, User $user, Config $config ) {
+	public function __construct(
+		WebRequest $request,
+		User $user,
+		Config $config,
+		UserOptionsLookup $userOptionsLookup
+	) {
 		$this->request = $request;
 		$this->user = $user;
 		$this->config = $config;
+		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -95,6 +107,26 @@ final class SkinVersionLookup {
 	 * @throws \ConfigException
 	 */
 	public function getVersion(): string {
+		$migrationMode = $this->config->get( 'VectorSkinMigrationMode' );
+		$useSkin = $this->request->getVal(
+			Constants::QUERY_PARAM_SKIN
+		);
+		// In migration mode, the useskin parameter is the source of truth.
+		if ( $migrationMode ) {
+			if ( $useSkin ) {
+				return $useSkin === Constants::SKIN_NAME_LEGACY ?
+					Constants::SKIN_VERSION_LEGACY :
+					Constants::SKIN_VERSION_LATEST;
+			}
+		}
+		// [[phab:T299971]]
+		if ( $useSkin === Constants::SKIN_NAME_MODERN ) {
+			return Constants::SKIN_VERSION_LATEST;
+		}
+
+		// If skin key is not vector, then version should be considered legacy.
+
+		// If skin is "Vector" invoke additional skin versioning detection.
 		// Obtain the skin version from the 1) `useskinversion` URL query parameter override, 2) the
 		// user preference, 3) the configured default for logged in users, 4) or the site default.
 		//
@@ -104,16 +136,41 @@ final class SkinVersionLookup {
 		// had their user preferences initialized in `Hooks::onLocalUserCreated()`, that means all
 		// subsequent requests to `User->getOption()` that do not have a preference set are either
 		// existing accounts or anonymous users. Login state makes the distinction.
+		$skin = $this->userOptionsLookup->getOption(
+			$this->user,
+			Constants::PREF_KEY_SKIN
+		);
+
+		if ( $skin === Constants::SKIN_NAME_MODERN ) {
+			return Constants::SKIN_VERSION_LATEST;
+		}
+
+		$skinVersionPref = $this->userOptionsLookup->getOption(
+			$this->user,
+			Constants::PREF_KEY_SKIN_VERSION,
+			$this->config->get(
+				$this->user->isRegistered()
+					? Constants::CONFIG_KEY_DEFAULT_SKIN_VERSION_FOR_EXISTING_ACCOUNTS
+					: Constants::CONFIG_KEY_DEFAULT_SKIN_VERSION
+			)
+		);
+
+		// If we are in migration mode...
+		if ( $migrationMode ) {
+			// ... we must check the skin version preference for logged in users.
+			// No need to check for anons as wgDefaultSkin has already been consulted at this point.
+			if (
+				$this->user->isRegistered() &&
+				$skin === Constants::SKIN_NAME_LEGACY &&
+				$skinVersionPref === Constants::SKIN_VERSION_LATEST
+			) {
+				return Constants::SKIN_VERSION_LATEST;
+			}
+			return Constants::SKIN_VERSION_LEGACY;
+		}
 		return (string)$this->request->getVal(
 			Constants::QUERY_PARAM_SKIN_VERSION,
-			$this->user->getOption(
-				Constants::PREF_KEY_SKIN_VERSION,
-				$this->config->get(
-					$this->user->isRegistered()
-						? Constants::CONFIG_KEY_DEFAULT_SKIN_VERSION_FOR_EXISTING_ACCOUNTS
-						: Constants::CONFIG_KEY_DEFAULT_SKIN_VERSION
-				)
-			)
+			$skinVersionPref
 		);
 	}
 }

@@ -4,8 +4,8 @@
 			"Cwek",
 			"FakeGreenHand",
 			"Liuxinyu970226",
-			"Xiaomingyan",
-			"TsuyaMarisa"
+			"TsuyaMarisa",
+			"Xiaomingyan"
 		]
 	},
 	"skinname-monobook": "MonoBook",
@@ -20,5 +20,7 @@
 	"cactions-mobile": "页面操作",
 	"monobook-cactions-label": "页面操作",
 	"monobook-notifications-link": "通知（$1）",
-	"monobook-notifications-link-none": "通知"
+	"monobook-notifications-link-none": "通知",
+	"monobook-view-history": "历史",
+	"monobook-action-undelete": "还原{{PLURAL:$1|一次编辑|$1次编辑}}"
 }

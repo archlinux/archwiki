@@ -17,12 +17,16 @@
 	"gadgetusage-activeusers": "Utent ativ",
 	"gadgetusage-default": "Predefinid",
 	"gadgets-title": "Acessori",
-	"gadgets-pagetext": "Chì de sota a gh'è la lista di acessori che i utent i poden ativà in su la soa pagina di [[Special:Preferences#mw-prefsection-gadgets|preferenze]], second conforma ai [[MediaWiki:Gadgets-definition|definizzion]]. Questa veduda la foniss un mezz comod de andágh dent ai pagine di messagg de sistema che definissen la descrizzion e 'l codes per ciaschedun di acessori.",
+	"gadgets-pagetext": "Chì de sota a gh'è la lista di acessori che i utent i poden ativà in su la soa pagina di [[Special:Preferences#mw-prefsection-gadgets|preferenze]], tant 'me che l'è definid in di [[MediaWiki:Gadgets-definition|definizzion]]. Questa veduda la foniss un mez comod de andágh dent ai pagine di messagg de sistema che definissen la descrizzion e 'l codes per ciaschedun di acessori.",
+	"gadgets-editdescription": "Modifega la descrizzion",
+	"gadgets-viewdescription": "Varda la descrizzion",
 	"gadgets-uses": "Drova",
 	"gadgets-required-rights": "{{PLURAL:$2|EGhe voeur quel dirit chì|A ghe voeuren 'sti dirit chì}}:\n\n$1",
 	"gadgets-required-skins": "Disponibil {{PLURAL:$2|per quell tempa chì $1|per 'sti tema chì: $1}}.",
+	"gadgets-required-actions": "Lavoregh adree a {{PLURAL:$2|\"$1\" azzion de la pagina|'sti azzion de la pagina chì: $1}}.",
 	"gadgets-default": "Ativad per tucc, per impostazzion predefinida.",
 	"gadgets-legacy": "Acessori minga caregad. Migra a ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Per savenn pussee])",
+	"gadgets-packaged": "Quest acessori chì l'è [https://www.mediawiki.org/wiki/ResourceLoader/Package_files packaged], el pont de entrada a l'è $1",
 	"gadgets-export": "Esporta",
 	"gadgets-export-title": "Esporta acessori",
 	"gadgets-not-found": "Acessori \"$1\" minga trovad.",
@@ -34,5 +38,6 @@
 	"action-gadgets-edit": "modifega quell acessori Javascript chì o la pagina CSS",
 	"right-gadgets-definition-edit": "Modifega i definizzion di acessori",
 	"action-gadgets-definition-edit": "modifegà i definizzin di acessori",
-	"gadgets-wrong-contentmodel": "I pagine del spazzi di nom {{ns:2302}} i gh'hann de vegnì del modell de contegnud GadgetDefinition."
+	"gadgets-wrong-contentmodel": "I pagine del spazzi di nom {{ns:2302}} i gh'hann de vegnì del modell de contegnud GadgetDefinition.",
+	"gadgets-supports-urlload": "Quell acessori el suporta el caregament per mez de URL cont el parametro de query <code>?withgadget</code> ."
 }

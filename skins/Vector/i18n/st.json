@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gustave London"
+			"Gustave London",
+			"Amire80"
 		]
 	},
 	"vector-view-edit": "Fetola",
-	"vector-view-history": "sheba histori",
+	"vector-view-history": "Sheba histori",
 	"vector-more-actions": "Lihlooho Tse Ling"
 }

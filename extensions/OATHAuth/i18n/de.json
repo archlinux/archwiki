@@ -65,7 +65,7 @@
 	"oath-log-header": "Diese Ereignisse verfolgen Änderungen des Zwei-Faktor-Authentifizierungs-Status von Benutzern",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|deaktivierte}} die Zwei-Faktor-Authentifizierung von $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|prüfte}}, ob bei $3 die Zwei-Faktor-Authentifizierung aktiviert war",
-	"oauthauth-ui-no-module": "nicht aktiviert",
+	"oathauth-ui-no-module": "nicht aktiviert",
 	"oathauth-module-invalid": "Das vom Benutzer registrierte OATHAuth-Modul ist ungültig.",
 	"oathauth-module-totp-label": "TOTP (Einmal-Token)",
 	"oathauth-ui-manage": "Verwalten",

@@ -19,5 +19,7 @@
 	"cactions-mobile": "문서 행위",
 	"monobook-cactions-label": "문서 행위",
 	"monobook-notifications-link": "알림 ($1)",
-	"monobook-notifications-link-none": "알림"
+	"monobook-notifications-link-none": "알림",
+	"monobook-view-history": "역사",
+	"monobook-action-undelete": "{{PLURAL:$1|편집 한 개|편집 $1개}} 되살리기"
 }

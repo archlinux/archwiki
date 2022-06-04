@@ -1,8 +1,4 @@
 /**
- * @external MenuDefinition
- */
-
-/**
  * @param {string} name
  * @return {string}
  */

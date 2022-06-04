@@ -7,7 +7,8 @@
 			"Daimona Eaytoy",
 			"Darth Kule",
 			"F. Cosoleto",
-			"Nemo bis"
+			"Nemo bis",
+			"Sakretsu"
 		]
 	},
 	"nuke": "Cancellazione di massa",
@@ -26,6 +27,7 @@
 	"nuke-maxpages": "Numero massimo di pagine:",
 	"nuke-editby": "Creata da [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "La pagina '''$1''' è stata cancellata.",
+	"nuke-deletion-queued": "La pagina '''$1''' è stata messa in coda per la cancellazione.",
 	"nuke-not-deleted": "La pagina [[:$1]] '''non può''' essere cancellata.",
 	"nuke-delete-more": "[[Special:Nuke|Cancella altre pagine]]",
 	"nuke-pattern": "Pattern SQL LIKE (ad esempio %) per il nome della pagina:",

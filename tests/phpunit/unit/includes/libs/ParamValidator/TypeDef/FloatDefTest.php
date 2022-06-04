@@ -154,60 +154,12 @@ class FloatDefTest extends TypeDefTestCase {
 		];
 	}
 
-	/** @dataProvider provideLocales */
-	public function testStringifyValue_localeWeirdness( $locale ) {
-		static $cats = [ LC_ALL, LC_MONETARY, LC_NUMERIC ];
-
-		$curLocales = [];
-		foreach ( $cats as $c ) {
-			$curLocales[$c] = setlocale( $c, '0' );
-			if ( $curLocales[$c] === false ) {
-				$this->markTestSkipped( 'Locale support is unavailable' );
-			}
-		}
-		try {
-			foreach ( $cats as $c ) {
-				if ( setlocale( $c, $locale ) === false ) {
-					$this->markTestSkipped( "Locale \"$locale\" is unavailable" );
-				}
-			}
-
-			$typeDef = $this->getInstance( new SimpleCallbacks( [] ), [] );
-			$this->assertSame( '123456.789', $typeDef->stringifyValue( 'test', 123456.789, [], [] ) );
-			$this->assertSame( '-123456.789', $typeDef->stringifyValue( 'test', -123456.789, [], [] ) );
-			$this->assertSame( '1.0e+20', $typeDef->stringifyValue( 'test', 1e20, [], [] ) );
-			$this->assertSame( '1.0e-20', $typeDef->stringifyValue( 'test', 1e-20, [], [] ) );
-		} finally {
-			foreach ( $curLocales as $c => $v ) {
-				setlocale( $c, $v );
-			}
-		}
-	}
-
-	public function provideLocales() {
-		return [
-			// May as well test these.
-			[ 'C' ],
-			[ 'C.UTF-8' ],
-
-			// Some hopefullt-common locales with decimal_point = ',' and thousands_sep = '.'
-			[ 'de_DE' ],
-			[ 'de_DE.utf8' ],
-			[ 'es_ES' ],
-			[ 'es_ES.utf8' ],
-
-			// This one, on my system at least, has decimal_point as U+066B.
-			[ 'ps_AF' ],
-		];
-	}
-
 	public function provideGetInfo() {
 		return [
 			'Basic test' => [
 				[],
 				[ 'min' => null, 'max' => null ],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_TYPE => '<message key="paramvalidator-help-type-float"><text>1</text></message>',
 				],
 			],
@@ -219,9 +171,7 @@ class FloatDefTest extends TypeDefTestCase {
 				],
 				[ 'min' => 1, 'max' => 100 ],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					FloatDef::PARAM_MIN => '<message key="paramvalidator-help-type-number-minmax"><text>2</text><num>1</num><num>100</num></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_TYPE => '<message key="paramvalidator-help-type-float"><text>2</text></message>',
 				],
 			],

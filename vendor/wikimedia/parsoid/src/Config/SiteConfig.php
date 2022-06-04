@@ -4,15 +4,17 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Config;
 
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use Wikimedia\Assert\Assert;
-use Wikimedia\ObjectFactory;
+use Wikimedia\ObjectFactory\ObjectFactory;
+use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
-use Wikimedia\Parsoid\Core\ExtensionContentModelHandler;
-use Wikimedia\Parsoid\Core\WikitextContentModelHandler;
+use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Ext\Cite\Cite;
-use Wikimedia\Parsoid\Ext\ContentModelHandler as ExtContentModelHandler;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\Gallery\Gallery;
@@ -22,9 +24,11 @@ use Wikimedia\Parsoid\Ext\LST\LST;
 use Wikimedia\Parsoid\Ext\Nowiki\Nowiki;
 use Wikimedia\Parsoid\Ext\Poem\Poem;
 use Wikimedia\Parsoid\Ext\Pre\Pre;
-use Wikimedia\Parsoid\Ext\Translate\Translate;
+use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 /**
  * Site-level configuration interface for Parsoid
@@ -49,10 +53,18 @@ abstract class SiteConfig {
 	private $variables;
 
 	/** @var array|null */
-	private $functionHooks;
+	protected $functionSynonyms;
 
 	/** @var string[] */
 	private $protocolsRegexes = [];
+
+	/**
+	 * FIXME: not private so that ParserTests can reset these variables
+	 * since they reuse site config and other objects between tests for
+	 * efficiency reasons.
+	 * @var array|null
+	 */
+	protected $interwikiMapNoNamespaces;
 
 	/**
 	 * FIXME: not private so that ParserTests can reset these variables
@@ -80,7 +92,6 @@ abstract class SiteConfig {
 		Cite::class,
 		LST::class,
 		Poem::class,
-		Translate::class,
 		ImageMap::class,
 	];
 
@@ -111,9 +122,9 @@ abstract class SiteConfig {
 		$this->getExtensionModules(); // ensure it's initialized w/ core modules
 		if ( is_string( $configOrSpec ) || isset( $configOrSpec['class'] ) || isset( $configOrSpec['factory'] ) ) {
 			// Treat this as an object factory spec for an ExtensionModule
-			// ObjectFactory::getObjectFromSpec accepts an array, not just a callable (phan bug)
+			// ObjectFactory::createObject accepts an array, not just a callable (phan bug)
 			// @phan-suppress-next-line PhanTypeInvalidCallableArraySize
-			$module = ObjectFactory::getObjectFromSpec( $configOrSpec, [
+			$module = $this->getObjectFactory()->createObject( $configOrSpec, [
 				'allowClassName' => true,
 				'assertClass' => ExtensionModule::class,
 			] );
@@ -184,12 +195,7 @@ abstract class SiteConfig {
 	/** @var bool */
 	protected $scrubBidiChars = false;
 
-	/**
-	 * PORT-FIXME: This used to mean that the site had the Linter extension
-	 * installed but we've co-opted it to mean linting is enabled.
-	 *
-	 * @var bool
-	 */
+	/** @var bool */
 	protected $linterEnabled = false;
 
 	/** var ?array */
@@ -451,6 +457,24 @@ abstract class SiteConfig {
 	abstract public function interwikiMap(): array;
 
 	/**
+	 * Interwiki link data, after removing items that conflict with namespace names.
+	 * (In case of such conflict, namespace wins, interwiki is ignored.)
+	 * @return array[] See interwikiMap()
+	 */
+	public function interwikiMapNoNamespaces(): array {
+		if ( $this->interwikiMapNoNamespaces === null ) {
+			$map = $this->interwikiMap();
+			foreach ( array_keys( $map ) as $key ) {
+				if ( $this->namespaceId( $key ) !== null ) {
+					unset( $map[$key] );
+				}
+			}
+			$this->interwikiMapNoNamespaces = $map;
+		}
+		return $this->interwikiMapNoNamespaces;
+	}
+
+	/**
 	 * Match interwiki URLs
 	 * @param string $href Link to match against
 	 * @return string[]|null Two values [ string $key, string $target ] on success, null on no match.
@@ -459,7 +483,7 @@ abstract class SiteConfig {
 		if ( $this->iwMatcher === null ) {
 			$keys = [ [], [] ];
 			$patterns = [ [], [] ];
-			foreach ( $this->interwikiMap() as $key => $iw ) {
+			foreach ( $this->interwikiMapNoNamespaces() as $key => $iw ) {
 				$lang = (int)( !empty( $iw['language'] ) );
 
 				$url = $iw['url'];
@@ -554,7 +578,7 @@ abstract class SiteConfig {
 	 *
 	 * @return string Regex character class (i.e. the bit that goes inside `[]`)
 	 */
-	abstract public function legalTitleChars() : string;
+	abstract public function legalTitleChars(): string;
 
 	/**
 	 * Link prefix regular expression.
@@ -657,16 +681,118 @@ abstract class SiteConfig {
 	abstract public function server(): string;
 
 	/**
-	 * Get the base URL for loading resource modules
-	 * This is the $wgLoadScript config value.
+	 * Export content metadata via meta tags (and via a stylesheet
+	 * for now to aid some clients).
 	 *
-	 * This base class provides the default value.
-	 * Derived classes should override appropriately.
-	 *
-	 * @return string
+	 * @param Document $document
+	 * @param ContentMetadataCollector $metadata
+	 * @param string $defaultTitle The default title to display, as an
+	 *   unescaped string
+	 * @param string $lang
 	 */
-	public function getModulesLoadURI(): string {
-		return $this->server() . $this->scriptpath() . '/load.php';
+	abstract public function exportMetadataToHead(
+		Document $document,
+		ContentMetadataCollector $metadata,
+		string $defaultTitle,
+		string $lang
+	): void;
+
+	/**
+	 * Helper function to create <head> elements from metadata.
+	 * @param Document $document
+	 * @param string $modulesLoadURI
+	 * @param string[] $modules
+	 * @param string[] $moduleStyles
+	 * @param array<string,mixed> $jsConfigVars
+	 * @param string $htmlTitle The display title, as escaped HTML
+	 * @param string $lang
+	 */
+	protected function exportMetadataHelper(
+		Document $document,
+		string $modulesLoadURI,
+		array $modules,
+		array $moduleStyles,
+		array $jsConfigVars,
+		string $htmlTitle,
+		string $lang
+	): void {
+		// Display title
+		$titleElement = DOMCompat::querySelector( $document, 'title' );
+		if ( !$titleElement ) {
+			$titleElement = DOMUtils::appendToHead( $document, 'title' );
+		}
+		DOMCompat::setInnerHTML( $titleElement, $htmlTitle );
+		// JsConfigVars
+		$content = null;
+		try {
+			if ( $jsConfigVars ) {
+				$content = PHPUtils::jsonEncode( $jsConfigVars );
+			}
+		} catch ( \Exception $e ) {
+			// Similar to ResourceLoader::makeConfigSetScript.  See T289358
+			$this->getLogger()->log(
+				LogLevel::WARNING,
+				'JSON serialization of config data failed. ' .
+				'This usually means the config data is not valid UTF-8.'
+			);
+		}
+		if ( $content ) {
+			DOMUtils::appendToHead( $document, 'meta', [
+				'property' => 'mw:jsConfigVars',
+				'content' => $content,
+			] );
+		}
+		// Styles from modules returned from preprocessor / parse requests
+		if ( $modules ) {
+			// mw:generalModules can be processed via JS (and async) and are usually (but
+			// not always) JS scripts.
+			DOMUtils::appendToHead( $document, 'meta', [
+				'property' => 'mw:generalModules',
+				'content' => implode( '|', array_unique( $modules ) )
+			] );
+		}
+		// Styles from modules returned from preprocessor / parse requests
+		if ( $moduleStyles ) {
+			// mw:moduleStyles are CSS modules that are render-blocking.
+			DOMUtils::appendToHead( $document, 'meta', [
+				'property' => 'mw:moduleStyles',
+				'content' => implode( '|', array_unique( $moduleStyles ) )
+			] );
+		}
+		/*
+		* While unnecessary for Wikimedia clients, a stylesheet url in
+		* the <head> is useful for clients like Kiwix and others who
+		* might not want to process the meta tags to construct the
+		* resourceloader url.
+		*
+		* Given that these clients will be consuming Parsoid HTML outside
+		* a MediaWiki skin, the clients are effectively responsible for
+		* their own "skin". But, once again, as a courtesy, we are
+		* hardcoding the vector skin modules for them. But, note that
+		* this may cause page elements to render differently than how
+		* they render on Wikimedia sites with the vector skin since this
+		* is probably missing a number of other modules.
+		*
+		* All that said, note that JS-generated parts of the page will
+		* still require them to have more intimate knowledge of how to
+		* process the JS modules. Except for <graph>s, page content
+		* doesn't require JS modules at this point. So, where these
+		* clients want to invest in the necessary logic to construct a
+		* better resourceloader url, they could simply delete / ignore
+		* this stylesheet.
+		*/
+		$moreStyles = array_merge( $moduleStyles, [
+			'mediawiki.skinning.content.parsoid',
+			// Use the base styles that API output and fallback skin use.
+			'mediawiki.skinning.interface',
+			// Make sure to include contents of user generated styles
+			// e.g. MediaWiki:Common.css / MediaWiki:Mobile.css
+			'site.styles'
+		] );
+		$styleURI = $modulesLoadURI . '?lang=' . $lang . '&modules=' .
+			PHPUtils::encodeURIComponent( implode( '|', array_unique( $moreStyles ) ) ) .
+			'&only=styles&skin=vector';
+		DOMUtils::appendToHead( $document, 'link', [ 'rel' => 'stylesheet', 'href' => $styleURI ] );
 	}
 
 	/**
@@ -785,43 +911,44 @@ abstract class SiteConfig {
 	/**
 	 * @return array
 	 */
-	abstract protected function getFunctionHooks(): array;
+	abstract protected function getMagicWords(): array;
 
 	/**
+	 * Does the SiteConfig provide precomputed function synonyms?
+	 * If no, the SiteConfig is expected to provide an implementation
+	 * for updateFunctionSynonym.
+	 * @return bool
+	 */
+	protected function haveComputedFunctionSynonyms(): bool {
+		return true;
+	}
+
+	/**
+	 * Get a list of precomputed function synonyms
 	 * @return array
 	 */
-	abstract protected function getMagicWords(): array;
+	protected function getFunctionSynonyms(): array {
+		return [];
+	}
+
+	/**
+	 * @param string $func
+	 * @param string $magicword
+	 * @param bool $caseSensitive
+	 */
+	protected function updateFunctionSynonym( string $func, string $magicword, bool $caseSensitive ): void {
+		throw new \RuntimeException( "Unexpected code path!" );
+	}
 
 	private function populateMagicWords() {
 		if ( !empty( $this->magicWordMap ) ) {
 			return;
 		}
 
-		// FIXME: This feels broken. This should come from Core / API ?
-		$noHashFunctions = PHPUtils::makeSet( [
-			'ns', 'nse', 'urlencode', 'lcfirst', 'ucfirst', 'lc', 'uc',
-			'localurl', 'localurle', 'fullurl', 'fullurle', 'canonicalurl',
-			'canonicalurle', 'formatnum', 'grammar', 'gender', 'plural', 'bidi',
-			'numberofpages', 'numberofusers', 'numberofactiveusers',
-			'numberofarticles', 'numberoffiles', 'numberofadmins',
-			'numberingroup', 'numberofedits', 'language',
-			'padleft', 'padright', 'anchorencode', 'defaultsort', 'filepath',
-			'pagesincategory', 'pagesize', 'protectionlevel', 'protectionexpiry',
-			'namespacee', 'namespacenumber', 'talkspace', 'talkspacee',
-			'subjectspace', 'subjectspacee', 'pagename', 'pagenamee',
-			'fullpagename', 'fullpagenamee', 'rootpagename', 'rootpagenamee',
-			'basepagename', 'basepagenamee', 'subpagename', 'subpagenamee',
-			'talkpagename', 'talkpagenamee', 'subjectpagename',
-			'subjectpagenamee', 'pageid', 'revisionid', 'revisionday',
-			'revisionday2', 'revisionmonth', 'revisionmonth1', 'revisionyear',
-			'revisiontimestamp', 'revisionuser', 'cascadingsources',
-			// Special callbacks in core
-			'namespace', 'int', 'displaytitle', 'pagesinnamespace',
-		] );
-
-		$this->magicWordMap = $this->mwAliases = $this->variables = $this->functionHooks = [];
+		$this->magicWordMap = $this->mwAliases = $this->variables = [];
 		$variablesMap = PHPUtils::makeSet( $this->getVariableIDs() );
-		$functionHooksMap = PHPUtils::makeSet( $this->getFunctionHooks() );
+		$this->functionSynonyms = $this->getFunctionSynonyms();
+		$haveSynonyms = $this->haveComputedFunctionSynonyms();
 		foreach ( $this->getMagicWords() as $magicword => $aliases ) {
 			$caseSensitive = array_shift( $aliases );
 			foreach ( $aliases as $alias ) {
@@ -834,15 +961,8 @@ abstract class SiteConfig {
 				if ( isset( $variablesMap[$magicword] ) ) {
 					$this->variables[$alias] = $magicword;
 				}
-				if ( isset( $functionHooksMap[$magicword] ) ) {
-					$falias = $alias;
-					if ( substr( $falias, -1 ) === ':' ) {
-						$falias = substr( $falias, 0, -1 );
-					}
-					if ( !isset( $noHashFunctions[$magicword] ) ) {
-						$falias = '#' . $falias;
-					}
-					$this->functionHooks[$falias] = $magicword;
+				if ( !$haveSynonyms ) {
+					$this->updateFunctionSynonym( $alias, $magicword, (bool)$caseSensitive );
 				}
 			}
 		}
@@ -873,7 +993,17 @@ abstract class SiteConfig {
 	 */
 	public function getMagicWordForFunctionHook( string $str ): ?string {
 		$this->populateMagicWords();
-		return $this->functionHooks[$str] ?? null;
+		if ( isset( $this->functionSynonyms[1][$str] ) ) {
+			return $this->functionSynonyms[1][$str];
+		} else {
+			# Case insensitive functions
+			$str = mb_strtolower( $str );
+			if ( isset( $this->functionSynonyms[0][$str] ) ) {
+				return $this->functionSynonyms[0][$str];
+			} else {
+				return null;
+			}
+		}
 	}
 
 	/**
@@ -973,7 +1103,7 @@ abstract class SiteConfig {
 		// from the SiteConfig.  Further, we probably need a hook here so
 		// Parsoid can handle media options defined in extensions... in
 		// particular timedmedia_* magic words from Extension:TimedMediaHandler
-		$mws = array_keys( WikitextConstants::$Media['PrefixOptions'] );
+		$mws = array_keys( Consts::$Media['PrefixOptions'] );
 		return $this->getParameterizedAliasMatcher( $mws );
 	}
 
@@ -1157,6 +1287,36 @@ abstract class SiteConfig {
 	abstract protected function getNonNativeExtensionTags(): array;
 
 	/**
+	 * Return an object factory to use when instantiating extensions.
+	 * (This is assumed to be plumbed up to an appropriate service container.)
+	 * @return ObjectFactory The object factory to use for extensions
+	 */
+	public function getObjectFactory(): ObjectFactory {
+		// Default implementation returns an object factory with an
+		// empty service container.
+		return new ObjectFactory( new class() implements ContainerInterface {
+
+			/**
+			 * @param string $id
+			 * @return never
+			 */
+			public function get( $id ) {
+				throw new class( "Empty service container" ) extends \Error
+					implements NotFoundExceptionInterface {
+				};
+			}
+
+			/**
+			 * @param string $id
+			 * @return false
+			 */
+			public function has( $id ): bool {
+				return false;
+			}
+		} );
+	}
+
+	/**
 	 * FIXME: might benefit from T250230 (caching) but see T270307 --
 	 * currently SiteConfig::unregisterExtensionModule() is called
 	 * during testing, which requires invalidating $this->extConfig.
@@ -1170,12 +1330,10 @@ abstract class SiteConfig {
 		$this->extConfig = [
 			'allTags'        => [],
 			'parsoidExtTags' => [],
+			'annotationTags' => [],
 			'domProcessors'  => [],
 			'contentModels'  => [],
 		];
-		// We always support wikitext
-		$this->extConfig['contentModels']['wikitext'] =
-			new WikitextContentModelHandler();
 
 		// There may be some tags defined by the parent wiki which have no
 		// associated parsoid modules; for now we handle these by invoking
@@ -1200,15 +1358,19 @@ abstract class SiteConfig {
 		);
 		$name = $extConfig['name'];
 
-		if ( isset( $extConfig['tags'] ) ) {
-			// These are extension tag handlers.  They have
-			// wt2html (sourceToDom), html2wt (domToWikitext), and
-			// linter functionality.
-			foreach ( $extConfig['tags'] as $tagConfig ) {
-				$lowerTagName = mb_strtolower( $tagConfig['name'] );
-				$this->extConfig['allTags'][$lowerTagName] = true;
-				$this->extConfig['parsoidExtTags'][$lowerTagName] = $tagConfig;
-			}
+		// These are extension tag handlers.  They have
+		// wt2html (sourceToDom), html2wt (domToWikitext), and
+		// linter functionality.
+		foreach ( $extConfig['tags'] ?? [] as $tagConfig ) {
+			$lowerTagName = mb_strtolower( $tagConfig['name'] );
+			$this->extConfig['allTags'][$lowerTagName] = true;
+			$this->extConfig['parsoidExtTags'][$lowerTagName] = $tagConfig;
+		}
+
+		foreach ( $extConfig['annotations'] ?? [] as $aTag ) {
+			$lowerTagName = mb_strtolower( $aTag );
+			$this->extConfig['allTags'][$lowerTagName] = true;
+			$this->extConfig['annotationTags'][$lowerTagName] = true;
 		}
 
 		// Extension modules may also register dom processors.
@@ -1218,23 +1380,17 @@ abstract class SiteConfig {
 			$this->extConfig['domProcessors'][$name] = $extConfig['domProcessors'];
 		}
 
-		if ( isset( $extConfig['contentModels'] ) ) {
-			foreach ( $extConfig['contentModels'] as $cm => $spec ) {
-				// For compatibility with mediawiki core, the first
-				// registered extension wins.
-				if ( isset( $this->extConfig['contentModels'][$cm] ) ) {
-					continue;
-				}
-				// Wrap the handler so we can give it a sanitized
-				// ParsoidExtensionAPI object.
-				$handler = new ExtensionContentModelHandler(
-					ObjectFactory::getObjectFromSpec( $spec, [
-						'allowClassName' => true,
-						'assertClass' => ExtContentModelHandler::class,
-					] )
-				);
-				$this->extConfig['contentModels'][$cm] = $handler;
+		foreach ( $extConfig['contentModels'] ?? [] as $cm => $spec ) {
+			// For compatibility with mediawiki core, the first
+			// registered extension wins.
+			if ( isset( $this->extConfig['contentModels'][$cm] ) ) {
+				continue;
 			}
+			$handler = $this->getObjectFactory()->createObject( $spec, [
+				'allowClassName' => true,
+				'assertClass' => ContentModelHandler::class,
+			] );
+			$this->extConfig['contentModels'][$cm] = $handler;
 		}
 	}
 
@@ -1249,15 +1405,14 @@ abstract class SiteConfig {
 	}
 
 	/**
+	 * Return a ContentModelHandler for the specified $contentmodel, if one is registered.
+	 * If null is returned, will use the default wikitext content model handler.
+	 *
 	 * @param string $contentmodel
 	 * @return ContentModelHandler|null
 	 */
 	public function getContentModelHandler( string $contentmodel ): ?ContentModelHandler {
-		// For now, fallback to 'wikitext' as the default handler
-		// FIXME: This is bogus, but this is just so suppress noise in our
-		// logs till we get around to handling all these other content models.
-		return ( $this->getExtConfig() )['contentModels'][$contentmodel] ??
-			( $this->getExtConfig() )['contentModels']['wikitext'];
+		return ( $this->getExtConfig() )['contentModels'][$contentmodel] ?? null;
 	}
 
 	/**
@@ -1269,6 +1424,23 @@ abstract class SiteConfig {
 	 */
 	public function isExtensionTag( string $name ): bool {
 		return isset( $this->getExtensionTagNameMap()[$name] );
+	}
+
+	/**
+	 * @param string $tagName is $tagName an annotation tag?
+	 * @return bool
+	 */
+	public function isAnnotationTag( string $tagName ): bool {
+		return $this->getExtConfig()['annotationTags'][mb_strtolower( $tagName )] ?? false;
+	}
+
+	/**
+	 * Get an array of defined annotation tags in lower case
+	 * @return array
+	 */
+	public function getAnnotationTags(): array {
+		$extConfig = $this->getExtConfig();
+		return array_keys( $extConfig['annotationTags'] );
 	}
 
 	/**
@@ -1291,18 +1463,24 @@ abstract class SiteConfig {
 		return $extConfig['parsoidExtTags'][mb_strtolower( $tagName )] ?? null;
 	}
 
+	private $tagHandlerCache = [];
+
 	/**
 	 * @param string $tagName Extension tag name
 	 * @return ExtensionTagHandler|null
 	 *   Returns the implementation of the named extension, if there is one.
 	 */
 	public function getExtTagImpl( string $tagName ): ?ExtensionTagHandler {
-		$tagConfig = $this->getExtTagConfig( $tagName );
-		return isset( $tagConfig['handler'] ) ?
-			ObjectFactory::getObjectFromSpec( $tagConfig['handler'], [
-				'allowClassName' => true,
-				'assertClass' => ExtensionTagHandler::class,
-			] ) : null;
+		if ( !array_key_exists( $tagName, $this->tagHandlerCache ) ) {
+			$tagConfig = $this->getExtTagConfig( $tagName );
+			$this->tagHandlerCache[$tagName] = isset( $tagConfig['handler'] ) ?
+				$this->getObjectFactory()->createObject( $tagConfig['handler'], [
+					'allowClassName' => true,
+					'assertClass' => ExtensionTagHandler::class,
+				] ) : null;
+		}
+
+		return $this->tagHandlerCache[$tagName];
 	}
 
 	/**

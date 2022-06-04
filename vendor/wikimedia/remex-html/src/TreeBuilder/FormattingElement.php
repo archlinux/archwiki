@@ -7,6 +7,3 @@ namespace Wikimedia\RemexHtml\TreeBuilder;
  */
 interface FormattingElement {
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( FormattingElement::class, 'RemexHtml\TreeBuilder\FormattingElement' );

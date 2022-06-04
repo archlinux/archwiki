@@ -51,6 +51,7 @@ class Text extends CharacterData implements \Wikimedia\IDLeDOM\Text {
 	 * @return bool
 	 */
 	protected function _subclassIsEqualNode( Node $node ): bool {
+		'@phan-var Text $node'; /** @var Text $node */
 		return ( $this->_data === $node->_data );
 	}
 
@@ -83,21 +84,27 @@ class Text extends CharacterData implements \Wikimedia\IDLeDOM\Text {
 	}
 
 	/**
-	 * @param int $offset Offset *in UTF-16 code units*
+	 * NOTE: see discussion of UTF-16 code units -vs- unicode code
+	 * points in CharacterData::substringData(). Be careful!
+	 *
+	 * @param int $offset Offset *in unicode code points*
 	 * @return Text
 	 */
 	public function splitText( $offset ) {
-		$data = $this->_getDataUTF16();
-		if ( $offset * 2 > strlen( $data ) || $offset < 0 ) {
+		$len = $this->getLength();
+
+		if ( $offset > $len || $offset < 0 ) {
 			Util::error( "IndexSizeError" );
 		}
 
-		$newdata = substr( $data, $offset * 2 );
-		// Avoid converting newdata to UTF8 if we don't need to
+		$data = $this->getData();
+		$newdata = mb_substr( $data, $offset, null, "utf8" );
+
 		$newnode = new Text( $this->_nodeDocument, $newdata );
-		$newnode->_isUtf16 = true;
-		// Same: this is already UTF-16 thanks to the _getDataUTF16 call above
-		$this->_data = substr( $data, 0, $offset * 2 );
+		$newnode->_charLength = $len - $offset;
+
+		$this->_data = mb_substr( $data, 0, $offset, "utf8" );
+		$this->_charLength = $offset;
 
 		$parent = $this->getParentNode();
 

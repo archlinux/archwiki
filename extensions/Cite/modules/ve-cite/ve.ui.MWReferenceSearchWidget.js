@@ -58,7 +58,6 @@ ve.ui.MWReferenceSearchWidget.prototype.onQueryChange = function () {
  * @param {ve.dm.InternalList} internalList Internal list
  */
 ve.ui.MWReferenceSearchWidget.prototype.setInternalList = function ( internalList ) {
-	var i, iLen, groupNames, groupName, groups = internalList.getNodeGroups();
 
 	if ( this.results.findSelectedItem() ) {
 		this.results.findSelectedItem().setSelected( false );
@@ -68,9 +67,10 @@ ve.ui.MWReferenceSearchWidget.prototype.setInternalList = function ( internalLis
 	this.internalList.connect( this, { update: 'onInternalListUpdate' } );
 	this.internalList.getListNode().connect( this, { update: 'onListNodeUpdate' } );
 
-	groupNames = Object.keys( groups );
-	for ( i = 0, iLen = groupNames.length; i < iLen; i++ ) {
-		groupName = groupNames[ i ];
+	var groups = internalList.getNodeGroups();
+	var groupNames = Object.keys( groups );
+	for ( var i = 0, iLen = groupNames.length; i < iLen; i++ ) {
+		var groupName = groupNames[ i ];
 		if ( groupName.lastIndexOf( 'mwReference/' ) !== 0 ) {
 			continue;
 		}
@@ -91,8 +91,7 @@ ve.ui.MWReferenceSearchWidget.prototype.setInternalList = function ( internalLis
  * @param {string[]} groupsChanged A list of groups which have changed in this transaction
  */
 ve.ui.MWReferenceSearchWidget.prototype.onInternalListUpdate = function ( groupsChanged ) {
-	var i, len;
-	for ( i = 0, len = groupsChanged.length; i < len; i++ ) {
+	for ( var i = 0, len = groupsChanged.length; i < len; i++ ) {
 		if ( groupsChanged[ i ].indexOf( 'mwReference/' ) === 0 ) {
 			this.built = false;
 			break;
@@ -117,51 +116,47 @@ ve.ui.MWReferenceSearchWidget.prototype.onListNodeUpdate = function () {
  * @method
  */
 ve.ui.MWReferenceSearchWidget.prototype.buildIndex = function () {
-	var n, i, iLen, j, jLen, refModel, group, groupName, groupNames, view, text, firstNodes, indexOrder,
-		refGroup, refNode, matches, name, citation,
-		groups = this.internalList.getNodeGroups();
+	var groups = this.internalList.getNodeGroups();
 
 	if ( this.built ) {
 		return;
 	}
 
-	function extractAttrs() {
-		text += ' ' + this.getAttribute( 'href' );
-	}
+	var text;
 
 	this.index = [];
-	groupNames = Object.keys( groups ).sort();
+	var groupNames = Object.keys( groups ).sort();
 
-	for ( i = 0, iLen = groupNames.length; i < iLen; i++ ) {
-		groupName = groupNames[ i ];
+	for ( var i = 0, iLen = groupNames.length; i < iLen; i++ ) {
+		var groupName = groupNames[ i ];
 		if ( groupName.lastIndexOf( 'mwReference/' ) !== 0 ) {
 			continue;
 		}
-		group = groups[ groupName ];
-		firstNodes = group.firstNodes;
-		indexOrder = group.indexOrder;
+		var group = groups[ groupName ];
+		var firstNodes = group.firstNodes;
+		var indexOrder = group.indexOrder;
 
-		n = 0;
-		for ( j = 0, jLen = indexOrder.length; j < jLen; j++ ) {
-			refNode = firstNodes[ indexOrder[ j ] ];
+		var n = 0;
+		for ( var j = 0, jLen = indexOrder.length; j < jLen; j++ ) {
+			var refNode = firstNodes[ indexOrder[ j ] ];
 			// Exclude placeholder references
 			if ( refNode.getAttribute( 'placeholder' ) ) {
 				continue;
 			}
 			// Only increment counter for real references
 			n++;
-			refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( refNode );
-			view = new ve.ui.MWPreviewElement(
+			var refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( refNode );
+			var view = new ve.ui.MWPreviewElement(
 				this.internalList.getItemNode( refModel.getListIndex() )
 			);
 
-			refGroup = refModel.getGroup();
-			citation = ( refGroup && refGroup.length ? refGroup + ' ' : '' ) + n;
+			var refGroup = refModel.getGroup();
+			var citation = ( refGroup && refGroup.length ? refGroup + ' ' : '' ) + n;
 			// Use [\s\S]* instead of .* to catch esoteric whitespace (T263698)
-			matches = refModel.getListKey().match( /^literal\/([\s\S]*)$/ );
-			name = matches && matches[ 1 ] || '';
+			var matches = refModel.getListKey().match( /^literal\/([\s\S]*)$/ );
+			var name = matches && matches[ 1 ] || '';
 			// Hide previously auto-generated reference names
-			if ( name.match( /^:[0-9]+$/ ) ) {
+			if ( /^:[0-9]+$/.test( name ) ) {
 				name = '';
 			}
 
@@ -174,7 +169,10 @@ ve.ui.MWReferenceSearchWidget.prototype.buildIndex = function () {
 			// Make visible text, citation and reference name searchable
 			text = [ view.$element.text().toLowerCase(), citation, name ].join( ' ' );
 			// Make URLs searchable
-			view.$element.find( 'a[href]' ).each( extractAttrs );
+			// eslint-disable-next-line no-loop-func
+			view.$element.find( 'a[href]' ).each( function () {
+				text += ' ' + this.getAttribute( 'href' );
+			} );
 
 			this.index.push( {
 				$element: view.$element,
@@ -207,17 +205,16 @@ ve.ui.MWReferenceSearchWidget.prototype.isIndexEmpty = function () {
  * @method
  */
 ve.ui.MWReferenceSearchWidget.prototype.addResults = function () {
-	var i, len, item, $citation, $name,
-		query = this.query.getValue().trim().toLowerCase(),
+	var query = this.query.getValue().trim().toLowerCase(),
 		items = [];
 
-	for ( i = 0, len = this.index.length; i < len; i++ ) {
-		item = this.index[ i ];
+	for ( var i = 0, len = this.index.length; i < len; i++ ) {
+		var item = this.index[ i ];
 		if ( item.text.indexOf( query ) >= 0 ) {
-			$citation = $( '<div>' )
+			var $citation = $( '<div>' )
 				.addClass( 've-ui-mwReferenceSearchWidget-citation' )
 				.text( '[' + item.citation + ']' );
-			$name = $( '<div>' )
+			var $name = $( '<div>' )
 				.addClass( 've-ui-mwReferenceSearchWidget-name' )
 				.text( item.name );
 			items.push(

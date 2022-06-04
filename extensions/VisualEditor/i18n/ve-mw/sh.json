@@ -9,8 +9,8 @@
 			"Sf",
 			"Srdjan m",
 			"Srđan",
-			"Zoranzoki21",
-			"TMg"
+			"TMg",
+			"Zoranzoki21"
 		]
 	},
 	"tooltip-ca-createsource": "Stvorite izvorni kod ove stranice",
@@ -169,7 +169,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Medijska datoteka",
 	"visualeditor-dialogbutton-meta-tooltip": "Postavke stranice",
 	"visualeditor-dialogbutton-template-tooltip": "Šablon",
-	"visualeditor-dialogbutton-transclusion-tooltip": "kao šablon",
 	"visualeditor-donebutton-tooltip": "Uređivanje završeno",
 	"visualeditor-editconflict": "Vaše izmjene se nisu mogle sačuvati zbog sukoba uređivanja. Da li bi ste sukob {{GENDER:|mogli}} razriješiti ručno?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} sada pamti koji uređivać (editor) preferirate.",

@@ -52,8 +52,6 @@ ve.dm.BlockImageNode.static.preserveHtmlAttributes = function ( attribute ) {
 
 ve.dm.BlockImageNode.static.handlesOwnChildren = true;
 
-ve.dm.BlockImageNode.static.ignoreChildren = true;
-
 ve.dm.BlockImageNode.static.childNodeTypes = [ 'imageCaption' ];
 
 ve.dm.BlockImageNode.static.matchTagNames = [ 'figure' ];
@@ -88,7 +86,7 @@ ve.dm.BlockImageNode.static.toDataElement = function ( domElements, converter ) 
 		return [
 			dataElement,
 			{ type: 'imageCaption' },
-			{ type: 'imageCaption' },
+			{ type: '/imageCaption' },
 			{ type: '/' + this.name }
 		];
 	} else {

@@ -15,6 +15,7 @@
  * @constructor
  * @param {ve.ui.MWCategoryWidget} categoryWidget
  * @param {Object} [config] Configuration options
+ * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
  * @cfg {mw.Api} [api] API object to use, uses Target#getContentApi if not specified
  */
 ve.ui.MWCategoryInputWidget = function VeUiMWCategoryInputWidget( categoryWidget, config ) {
@@ -223,6 +224,7 @@ ve.ui.MWCategoryInputWidget.prototype.getLookupMenuOptionsFromData = function ( 
 
 /**
  * @inheritdoc
+ * @fires choose
  */
 ve.ui.MWCategoryInputWidget.prototype.onLookupMenuChoose = function ( item ) {
 	this.emit( 'choose', item );
@@ -252,7 +254,7 @@ ve.ui.MWCategoryInputWidget.prototype.getCategoryWidgetFromName = function ( nam
 				.text( labelText )
 				.append(
 					$( '<br>' ),
-					document.createTextNode( '↳ ' ),
+					$( document.createTextNode( '↳ ' ) ),
 					$( '<span>' ).text( mw.Title.newFromText( name ).getMainText() )
 				)
 		} );

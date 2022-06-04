@@ -17,6 +17,9 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 	/** @var DatabaseSqlite */
 	protected $db;
 
+	/** @var array|null */
+	protected $currentTableInfo;
+
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -48,7 +51,7 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 				'agent' => 'unit-tests',
 				'serverName' => null,
 				'flags' => DBO_DEFAULT,
-				'variables' => [],
+				'variables' => [ 'synchronous' => 'NORMAL', 'temp_store' => 'MEMORY' ],
 				'profiler' => null,
 				'topologyRole' => Database::ROLE_STREAMING_MASTER,
 				'topologicalMaster' => null,
@@ -328,92 +331,9 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 	public function testEntireSchema() {
 		global $IP;
 
-		$result = Sqlite::checkSqlSyntax( "$IP/maintenance/tables.sql" );
-		if ( $result !== true ) {
-			$this->fail( $result );
-		}
-		$this->assertTrue( true ); // avoid test being marked as incomplete due to lack of assertions
-	}
+		$result = Sqlite::checkSqlSyntax( "$IP/maintenance/sqlite/tables-generated.sql" );
 
-	/**
-	 * Runs upgrades of older databases and compares results with current schema
-	 * @coversNothing
-	 */
-	public function testUpgrades() {
-		global $IP;
-
-		// Versions tested
-		$versions = [
-			'1.27',
-			'1.28',
-			'1.29',
-			'1.30',
-			'1.31',
-			'1.32',
-			'1.33',
-			'1.34',
-			'1.35',
-		];
-
-		// Mismatches for these columns we can safely ignore
-		$ignoredColumns = [];
-
-		$currentDB = DatabaseSqlite::newStandaloneInstance( ':memory:' );
-		$currentDB->sourceFile( "$IP/maintenance/tables.sql" );
-		$currentDB->sourceFile( "$IP/maintenance/sqlite/tables-generated.sql" );
-
-		$currentTables = $this->getTables( $currentDB );
-		sort( $currentTables );
-
-		foreach ( $versions as $version ) {
-			$versions = "upgrading from $version to " . MW_VERSION;
-			$db = $this->prepareTestDB( $version );
-			$tables = $this->getTables( $db );
-			$this->assertEquals( $currentTables, $tables, "Different tables $versions" );
-			foreach ( $tables as $table ) {
-				$currentCols = $this->getColumns( $currentDB, $table );
-				$cols = $this->getColumns( $db, $table );
-				$this->assertEquals(
-					array_keys( $currentCols ),
-					array_keys( $cols ),
-					"Mismatching columns for table \"$table\" $versions"
-				);
-				foreach ( $currentCols as $name => $column ) {
-					$fullName = "$table.$name";
-					$this->assertEquals(
-						(bool)$column->pk,
-						(bool)$cols[$name]->pk,
-						"PRIMARY KEY status does not match for column $fullName $versions"
-					);
-					if ( !in_array( $fullName, $ignoredColumns ) ) {
-						$this->assertEquals(
-							(bool)$column->notnull,
-							(bool)$cols[$name]->notnull,
-							"NOT NULL status does not match for column $fullName $versions"
-						);
-						if ( $cols[$name]->dflt_value === 'NULL' ) {
-							$cols[$name]->dflt_value = null;
-						}
-						if ( $column->dflt_value === 'NULL' ) {
-							$column->dflt_value = null;
-						}
-						$this->assertEquals(
-							$column->dflt_value,
-							$cols[$name]->dflt_value,
-							"Default values does not match for column $fullName $versions"
-						);
-					}
-				}
-				$currentIndexes = $this->getIndexes( $currentDB, $table );
-				$indexes = $this->getIndexes( $db, $table );
-				$this->assertEquals(
-					array_keys( $currentIndexes ),
-					array_keys( $indexes ),
-					"mismatching indexes for table \"$table\" $versions"
-				);
-			}
-			$db->close();
-		}
+		$this->assertTrue( $result, $result );
 	}
 
 	/**
@@ -454,7 +374,7 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 		$this->assertTrue( $db->close(), "closing database" );
 	}
 
-	private function prepareTestDB( $version ) {
+	private function initAndUpgradeTestDB( $startingVersion ) {
 		static $maint = null;
 		if ( $maint === null ) {
 			$maint = new FakeMaintenance();
@@ -463,7 +383,7 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 
 		global $IP;
 		$db = DatabaseSqlite::newStandaloneInstance( ':memory:' );
-		$db->sourceFile( "$IP/tests/phpunit/data/db/sqlite/tables-$version.sql" );
+		$db->sourceFile( "$IP/tests/phpunit/data/db/sqlite/tables-$startingVersion.sql" );
 		$updater = DatabaseUpdater::newForDB( $db, false, $maint );
 		$updater->doUpdates( [ 'core' ] );
 
@@ -471,20 +391,18 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 	}
 
 	private function getTables( $db ) {
-		$list = array_flip( $db->listTables() );
-		$excluded = [
-			'external_user', // removed from core in 1.22
-			'math', // moved out of core in 1.18
-			'trackbacks', // removed from core in 1.19
-			'searchindex',
-			'searchindex_content',
-			'searchindex_segments',
-			'searchindex_segdir',
-		];
-		foreach ( $excluded as $t ) {
-			unset( $list[$t] );
-		}
-		$list = array_flip( $list );
+		$list = array_diff(
+			$db->listTables(),
+			[
+				'external_user', // removed from core in 1.22
+				'math', // moved out of core in 1.18
+				'trackbacks', // removed from core in 1.19
+				'searchindex',
+				'searchindex_content',
+				'searchindex_segments',
+				'searchindex_segdir',
+			]
+		);
 		sort( $list );
 
 		return $list;
@@ -529,24 +447,6 @@ class DatabaseSqliteTest extends \MediaWikiIntegrationTestCase {
 		$res = $db->query( 'SELECT "a" LIKE "A" AS a' );
 		$row = $res->fetchRow();
 		$this->assertFalse( (bool)$row['a'] );
-	}
-
-	/**
-	 * @covers DatabaseSqlite::numFields
-	 */
-	public function testNumFields() {
-		$db = DatabaseSqlite::newStandaloneInstance( ':memory:' );
-
-		$databaseCreation = $db->query( 'CREATE TABLE a ( a_1 )', __METHOD__ );
-		$this->assertInstanceOf( ResultWrapper::class, $databaseCreation, "Failed to create table a" );
-		$res = $db->select( 'a', '*' );
-		$this->assertSame( 0, $db->numFields( $res ), "expects to get 0 fields for an empty table" );
-		$insertion = $db->insert( 'a', [ 'a_1' => 10 ], __METHOD__ );
-		$this->assertTrue( $insertion, "Insertion failed" );
-		$res = $db->select( 'a', '*' );
-		$this->assertSame( 1, $db->numFields( $res ), "wrong number of fields" );
-
-		$this->assertTrue( $db->close(), "closing database" );
 	}
 
 	/**

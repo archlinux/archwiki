@@ -163,6 +163,3 @@ class TreeMutationTracer implements TreeHandler {
 		$this->handleMutation( __FUNCTION__, func_get_args() );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TreeMutationTracer::class, 'RemexHtml\TreeBuilder\TreeMutationTracer' );

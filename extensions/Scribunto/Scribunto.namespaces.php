@@ -8,14 +8,21 @@
 
 $namespaceNames = [];
 
+$namespaceAliases = [];
+
 $namespaceNames['en'] = [
 	828 => 'Module',
 	829 => 'Module_talk',
 ];
 
 $namespaceNames['ab'] = [
-	828 => 'Амодул',
-	829 => 'Амодул_ахцәажәара',
+	828 => 'Амодуль',
+	829 => 'Амодуль_ахцәажәара',
+];
+
+$namespaceAliases['ab'] = [
+	'Амодул' => 828,
+	'Амодул_ахцәажәара' => 829,
 ];
 
 $namespaceNames['alt'] = [
@@ -468,6 +475,16 @@ $namespaceNames['sat'] = [
 	829 => 'ᱢᱳᱰᱩᱞ_ᱜᱟᱞᱢᱟᱨᱟᱣ',
 ];
 
+$namespaceNames['scn'] = [
+	828 => 'Mòdulu',
+	829 => 'Discussioni_mòdulu',
+];
+
+$namespaceAliases['scn'] = [
+	'Modulo' => 828,
+	'Discussioni_modulo' => 829,
+];
+
 $namespaceNames['sd'] = [
 	828 => 'ماڊيول',
 	829 => 'ماڊيول_بحث',
@@ -594,8 +611,8 @@ $namespaceNames['yue'] = [
 ];
 
 $namespaceNames['zh'] = [
-	828 => '模块',
-	829 => '模块讨论',
+	828 => 'Module',
+	829 => 'Module_talk',
 ];
 
 $namespaceNames['zh-hans'] = [
@@ -603,7 +620,25 @@ $namespaceNames['zh-hans'] = [
 	829 => '模块讨论',
 ];
 
+$namespaceAliases['zh-hans'] = [
+	'模块' => 828,
+	'模组' => 828,
+	'模块对话' => 829,
+	'模块讨论' => 829,
+	'模组对话' => 829,
+	'模组讨论' => 829,
+];
+
 $namespaceNames['zh-hant'] = [
 	828 => '模組',
 	829 => '模組討論',
+];
+
+$namespaceAliases['zh-hant'] = [
+	'模組' => 828,
+	'模塊' => 828,
+	'模組對話' => 829,
+	'模組討論' => 829,
+	'模塊對話' => 829,
+	'模塊討論' => 829,
 ];

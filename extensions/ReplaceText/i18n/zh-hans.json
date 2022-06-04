@@ -7,9 +7,9 @@
 			"Mywood",
 			"Onecountry",
 			"PhiLiP",
-			"Yfdyh000",
 			"Xiplus",
-			"Xzonn"
+			"Xzonn",
+			"Yfdyh000"
 		]
 	},
 	"replacetext": "替换文字",
@@ -47,6 +47,8 @@
 	"replacetext_editsummary": "文本替换 - 替换“$1”为“$2”",
 	"replacetext_reminder": "要同时修改其他页面中链入此页面的链接，请前往$1。",
 	"replacetext_cfg_error": "ReplaceText配置错误",
+	"replacetext_no_compress": "您的wiki将无法使用ReplaceText：如果$wgCompressRevisions设置为true，则无法运行文本替换。",
+	"replacetext_no_external_stores": "您的wiki将无法使用ReplaceText：如果$wgExternalStores非空，则无法运行文本替换。",
 	"right-replacetext": "在整个wiki进行字符串替换",
 	"action-replacetext": "在整个wiki进行字符串替换"
 }

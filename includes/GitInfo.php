@@ -23,6 +23,7 @@
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 use Wikimedia\AtEase\AtEase;
 
@@ -115,12 +116,13 @@ class GitInfo {
 	 * @since 1.24
 	 */
 	protected static function getCacheFilePath( $repoDir ) {
-		global $IP, $wgGitInfoCacheDirectory;
-
-		if ( $wgGitInfoCacheDirectory ) {
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$gitInfoCacheDirectory = $config->get( 'GitInfoCacheDirectory' );
+		$baseDir = $config->get( 'BaseDirectory' );
+		if ( $gitInfoCacheDirectory ) {
 			// Convert both $IP and $repoDir to canonical paths to protect against
 			// $IP having changed between the settings files and runtime.
-			$realIP = realpath( $IP );
+			$realIP = realpath( $baseDir );
 			$repoName = realpath( $repoDir );
 			if ( $repoName === false ) {
 				// Unit tests use fake path names
@@ -134,7 +136,7 @@ class GitInfo {
 			// a filename
 			$repoName = strtr( $repoName, DIRECTORY_SEPARATOR, '-' );
 			$fileName = 'info' . $repoName . '.json';
-			$cachePath = "{$wgGitInfoCacheDirectory}/{$fileName}";
+			$cachePath = "{$gitInfoCacheDirectory}/{$fileName}";
 			if ( is_readable( $cachePath ) ) {
 				return $cachePath;
 			}
@@ -144,14 +146,13 @@ class GitInfo {
 	}
 
 	/**
-	 * Get the singleton for the repo at $IP
+	 * Get the singleton for the repo at MW_INSTALL_PATH
 	 *
 	 * @return GitInfo
 	 */
 	public static function repo() {
 		if ( self::$repo === null ) {
-			global $IP;
-			self::$repo = new self( $IP );
+			self::$repo = new self( MW_INSTALL_PATH );
 		}
 		return self::$repo;
 	}
@@ -228,20 +229,20 @@ class GitInfo {
 	 * @return int|bool Commit date (UNIX timestamp) or false
 	 */
 	public function getHeadCommitDate() {
-		global $wgGitBin;
+		$gitBin = MediaWikiServices::getInstance()->getMainConfig()->get( 'GitBin' );
 
 		if ( !isset( $this->cache['headCommitDate'] ) ) {
 			$date = false;
 
 			// Suppress warnings about any open_basedir restrictions affecting $wgGitBin (T74445).
-			$isFile = AtEase::quietCall( 'is_file', $wgGitBin );
+			$isFile = AtEase::quietCall( 'is_file', $gitBin );
 			if ( $isFile &&
-				is_executable( $wgGitBin ) &&
+				is_executable( $gitBin ) &&
 				!Shell::isDisabled() &&
 				$this->getHead() !== false
 			) {
 				$cmd = [
-					$wgGitBin,
+					$gitBin,
 					'show',
 					'-s',
 					'--format=format:%ct',
@@ -317,9 +318,9 @@ class GitInfo {
 			$config = "{$this->basedir}/config";
 			$url = false;
 			if ( is_readable( $config ) ) {
-				Wikimedia\suppressWarnings();
+				AtEase::suppressWarnings();
 				$configArray = parse_ini_file( $config, true );
-				Wikimedia\restoreWarnings();
+				AtEase::restoreWarnings();
 				$remote = false;
 
 				// Use the "origin" remote repo if available or any other repo if not.
@@ -424,10 +425,10 @@ class GitInfo {
 	 * @return array
 	 */
 	protected static function getViewers() {
-		global $wgGitRepositoryViewers;
+		$gitRepositoryViewers = MediaWikiServices::getInstance()->getMainConfig()->get( 'GitRepositoryViewers' );
 
 		if ( self::$viewers === false ) {
-			self::$viewers = $wgGitRepositoryViewers;
+			self::$viewers = $gitRepositoryViewers;
 			Hooks::runner()->onGitViewers( self::$viewers );
 		}
 

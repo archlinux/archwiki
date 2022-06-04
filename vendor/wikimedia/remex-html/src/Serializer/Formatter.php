@@ -63,6 +63,3 @@ interface Formatter {
 	 */
 	public function doctype( $name, $public, $system );
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Formatter::class, 'RemexHtml\Serializer\Formatter' );

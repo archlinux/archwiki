@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"BRUTE",
+			"David1010",
+			"MIKHEIL",
+			"SHOTHA",
+			"Tokoko"
+		]
+	},
+	"minerva-talk-add-topic": "თემის დამატება",
+	"mobile-frontend-editor-edit": "რედაქტირება",
+	"mobile-frontend-editor-redlink-create": "გვერდის შექმნა",
+	"mobile-frontend-editor-redlink-explain": "ეს გვერდი ჯერ არ შექმნილა.",
+	"mobile-frontend-editor-redlink-leave": "არა, გმადლობთ.",
+	"mobile-frontend-history": "ნახეთ გვერდის რედაქტირებათა ისტორია.",
+	"mobile-frontend-home-button": "მთავარი",
+	"mobile-frontend-language-article-heading": "სხვა ენაზე წაკითხვა",
+	"mobile-frontend-languages-not-available": "ეს გვერდი სხვა ენებზე ხელმისაწვდომი არაა.",
+	"mobile-frontend-main-menu-button-tooltip": "მთავარი მენიუს გახსნა",
+	"mobile-frontend-main-menu-contributions": "წვლილი",
+	"mobile-frontend-main-menu-login": "შესვლა",
+	"mobile-frontend-main-menu-logout": "გასვლა",
+	"mobile-frontend-main-menu-nearby": "სიახლოვეს",
+	"mobile-frontend-main-menu-settings": "პარამეტრები",
+	"mobile-frontend-main-menu-watchlist": "კონტროლის სია",
+	"mobile-frontend-meta-data-issues": "გვერდს აქვს რაღაც პრობლემა",
+	"mobile-frontend-meta-data-issues-categories": "ამ კატეგორიის შესახებ",
+	"mobile-frontend-meta-data-issues-header": "პრობლემა",
+	"mobile-frontend-meta-data-issues-header-talk": "ამ გვერდის შესახებ",
+	"mobile-frontend-meta-data-issues-talk": "ამ განხილვის გვერდის შესახებ",
+	"mobile-frontend-pageaction-edit-tooltip": "გვერდის წამყვანი სექციის რედაქტირება",
+	"mobile-frontend-placeholder": "ძიება {{SITENAME}}",
+	"mobile-frontend-random-button": "შემთხვევითი",
+	"mobile-frontend-talk-back-to-filepage": "\"$1\" ფაილზე დაბრუნება.",
+	"mobile-frontend-talk-back-to-page": "დაბრუნდი \"$1\"-ზე.",
+	"mobile-frontend-user-button-tooltip": "მაჩვენე შეტყობინებები",
+	"mobile-frontend-user-newmessages": "განხილვის გვერდზე ახალი შეტყობინებები გაქვთ",
+	"mobile-frontend-user-page-contributions": "წვლილი",
+	"mobile-frontend-user-page-member-since": "წევრი $1-დან",
+	"mobile-frontend-user-page-talk": "განხილვა",
+	"minerva-page-actions-overflow": "მეტი"
+}

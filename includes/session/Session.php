@@ -23,6 +23,7 @@
 
 namespace MediaWiki\Session;
 
+use MediaWiki\MediaWikiServices;
 use Psr\Log\LoggerInterface;
 use User;
 use WebRequest;
@@ -410,9 +411,11 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * @return string[] Encryption key, HMAC key
 	 */
 	private function getSecretKeys() {
-		global $wgSessionSecret, $wgSecretKey, $wgSessionPbkdf2Iterations;
-
-		$wikiSecret = $wgSessionSecret ?: $wgSecretKey;
+		$mainConfig = MediaWikiServices::getInstance()->getMainConfig();
+		$sessionSecret = $mainConfig->get( 'SessionSecret' );
+		$secretKey = $mainConfig->get( 'SecretKey' );
+		$sessionPbkdf2Iterations = $mainConfig->get( 'SessionPbkdf2Iterations' );
+		$wikiSecret = $sessionSecret ?: $secretKey;
 		$userSecret = $this->get( 'wsSessionSecret', null );
 		if ( $userSecret === null ) {
 			$userSecret = \MWCryptRand::generateHex( 32 );
@@ -420,7 +423,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 		}
 		$iterations = $this->get( 'wsSessionPbkdf2Iterations', null );
 		if ( $iterations === null ) {
-			$iterations = $wgSessionPbkdf2Iterations;
+			$iterations = $sessionPbkdf2Iterations;
 			$this->set( 'wsSessionPbkdf2Iterations', $iterations );
 		}
 
@@ -436,7 +439,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 * @return array
 	 */
 	private static function getEncryptionAlgorithm() {
-		global $wgSessionInsecureSecrets;
+		$sessionInsecureSecrets = MediaWikiServices::getInstance()->getMainConfig()->get( 'SessionInsecureSecrets' );
 
 		if ( self::$encryptionAlgorithm === null ) {
 			if ( function_exists( 'openssl_encrypt' ) ) {
@@ -451,7 +454,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 				}
 			}
 
-			if ( $wgSessionInsecureSecrets ) {
+			if ( $sessionInsecureSecrets ) {
 				// @todo: import a pure-PHP library for AES instead of this
 				self::$encryptionAlgorithm = [ 'insecure' ];
 				return self::$encryptionAlgorithm;
@@ -640,7 +643,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 *  rather than array_key_exists(). So do that.
 	 * @inheritDoc
 	 */
-	public function offsetExists( $offset ) {
+	public function offsetExists( $offset ): bool {
 		$data = &$this->backend->getData();
 		return isset( $data[$offset] );
 	}
@@ -653,6 +656,7 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	 *  be created with a null value, and does not raise a PHP warning.
 	 * @inheritDoc
 	 */
+	#[\ReturnTypeWillChange]
 	public function &offsetGet( $offset ) {
 		$data = &$this->backend->getData();
 		if ( !array_key_exists( $offset, $data ) ) {
@@ -663,12 +667,12 @@ class Session implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/** @inheritDoc */
-	public function offsetSet( $offset, $value ) {
+	public function offsetSet( $offset, $value ): void {
 		$this->set( $offset, $value );
 	}
 
 	/** @inheritDoc */
-	public function offsetUnset( $offset ) {
+	public function offsetUnset( $offset ): void {
 		$this->remove( $offset );
 	}
 

@@ -10,10 +10,12 @@ use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Api\DataAccess;
 use Wikimedia\Parsoid\Config\Api\PageConfig;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Mocks\MockPageConfig;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Tools\ScriptUtils;
@@ -42,7 +44,15 @@ class TestRunner {
 		],
 		[
 			'prefix' => 'local',
-			'url' => 'http://doesnt.matter.org/$1',
+			'url' => 'http://example.org/wiki/$1',
+			'local' => true,
+			'localinterwiki' => true
+		],
+		[
+			// Local interwiki that matches a namespace name (T228616)
+			'prefix' => 'project',
+			'url' => 'http://example.org/wiki/$1',
+			'local' => true,
 			'localinterwiki' => true
 		],
 		[
@@ -85,7 +95,7 @@ class TestRunner {
 		],
 		[
 			'prefix' => 'mi',
-			'url' => 'http://mi.wikipedia.org/wiki/$1',
+			'url' => 'http://example.org/wiki/$1',
 			// better for testing if one of the
 			// localinterwiki prefixes is also a language
 			'language' => 'Test',
@@ -212,7 +222,9 @@ class TestRunner {
 			// Unused; needed to satisfy Env signature requirements
 			new MockPageConfig( [], new MockPageContent( [ 'main' => '' ] ) ),
 			// Unused; needed to satisfy Env signature requirements
-			$this->dataAccess
+			$this->dataAccess,
+			// Unused; needed to satisfy Env signature requirements
+			new StubMetadataCollector( $this->siteConfig->getLogger() )
 		);
 
 		// Init interwiki map to parser tests info.
@@ -244,6 +256,7 @@ class TestRunner {
 			$this->siteConfig,
 			$pageConfig,
 			$this->dataAccess,
+			new StubMetadataCollector( $this->siteConfig->getLogger() ),
 			$this->envOptions
 		);
 
@@ -256,13 +269,14 @@ class TestRunner {
 
 	/**
 	 * Parser the test file and set up articles and test cases
+	 * @param array $options
 	 */
-	private function buildTests(): void {
+	private function buildTests( array $options ): void {
 		// Startup by loading .txt test file
-		$warnFunc = static function ( string $warnMsg ):void {
+		$warnFunc = static function ( string $warnMsg ): void {
 			error_log( $warnMsg );
 		};
-		$normFunc = function ( string $title ):string {
+		$normFunc = function ( string $title ): string {
 			return $this->dummyEnv->normalizedTitleKey( $title, false, true );
 		};
 		$testReader = TestFileReader::read(
@@ -276,10 +290,12 @@ class TestRunner {
 			$this->articles[$key] = $art->text;
 			$this->mockApi->addArticle( $key, $art );
 		}
-		if ( $this->knownFailuresPath ) {
-			error_log( 'Loaded known failures from ' . $this->knownFailuresPath );
-		} else {
-			error_log( 'No known failures found.' );
+		if ( !ScriptUtils::booleanOption( $options['quieter'] ?? '' ) ) {
+			if ( $this->knownFailuresPath ) {
+				error_log( 'Loaded known failures from ' . $this->knownFailuresPath );
+			} else {
+				error_log( 'No known failures found.' );
+			}
 		}
 	}
 
@@ -420,7 +436,7 @@ class TestRunner {
 						// Change node wrapper
 						// (sufficient to insert a random attr)
 						case 1:
-							if ( DOMUtils::isElt( $child ) ) {
+							if ( $child instanceof Element ) {
 								$child->setAttribute( 'data-foobar', $randomString() );
 							} else {
 								$env->log( 'error',
@@ -453,7 +469,7 @@ class TestRunner {
 		$body = DOMCompat::getBody( $doc );
 
 		if ( $env->hasDumpFlag( 'dom:post-changes' ) ) {
-			ContentUtils::dumpDOM( $body, 'Original DOM' );
+			$env->writeDump( ContentUtils::dumpDOM( $body, 'Original DOM' ) );
 		}
 
 		if ( $test->changes === [ 5 ] ) {
@@ -467,8 +483,10 @@ class TestRunner {
 		}
 
 		if ( $env->hasDumpFlag( 'dom:post-changes' ) ) {
-			error_log( 'Change tree : ' . json_encode( $test->changes ) . "\n" );
-			ContentUtils::dumpDOM( $body, 'Edited DOM' );
+			$env->writeDump(
+				'Change tree : ' . json_encode( $test->changes ) . "\n" .
+				ContentUtils::dumpDOM( $body, 'Edited DOM' )
+			);
 		}
 	}
 
@@ -496,10 +514,13 @@ class TestRunner {
 				( !WTUtils::isEncapsulationWrapper( $node ) &&
 					// These wrappers can only be edited in restricted ways.
 					// Simpler to just block all editing on them.
-					!DOMUtils::matchTypeOf( $node, '#^mw:(Entity|Placeholder|DisplaySpace)(/|$)#' ) &&
+						!DOMUtils::matchTypeOf( $node,
+							'#^mw:(Entity|Placeholder|DisplaySpace|Annotation|ExtendedAnnRange)(/|$)#'
+					) &&
 					// Deleting these wrappers is tantamount to removing the
 					// references-tag encapsulation wrappers, which results in errors.
-					!preg_match( '/\bmw-references-wrap\b/', $node->getAttribute( 'class' ) ?? '' )
+					!preg_match( '/\bmw-references-wrap\b/', $node->getAttribute( 'class' ) ?? ''
+					)
 				);
 		};
 
@@ -516,12 +537,17 @@ class TestRunner {
 				return false;
 			}
 
+			if ( WTUtils::isMarkerAnnotation( $node ) ) {
+				return true;
+			}
+
 			// - Image wrapper is an uneditable image elt.
 			// - Any node nested in an image elt that is not a fig-caption
 			//   is an uneditable image elt.
 			// - Entity spans are uneditable as well
 			// - Placeholder is defined to be uneditable in the spec
-			return DOMUtils::matchTypeOf( $node, '#^mw:(Image|Video|Audio|Entity|Placeholder|DisplaySpace)(/|$)#' ) || (
+			return DOMUtils::matchTypeOf( $node,
+					'#^mw:(Image|Video|Audio|Entity|Placeholder|DisplaySpace|ExtendedAnnRange)(/|$)#' ) || (
 				DOMCompat::nodeName( $node ) !== 'figcaption' &&
 				$node->parentNode &&
 				DOMCompat::nodeName( $node->parentNode ) !== 'body' &&
@@ -555,7 +581,6 @@ class TestRunner {
 			$children = $node->childNodes ? iterator_to_array( $node->childNodes ) : [];
 			foreach ( $children as $child ) {
 				$changeType = $defaultChangeType;
-
 				if ( $domSubtreeIsEditable( $child ) ) {
 					if ( $nodeIsUneditable( $child ) || $alea->random() < 0.5 ) {
 						// This call to random is a hack to preserve the current
@@ -570,7 +595,7 @@ class TestRunner {
 							$changeType = $defaultChangeType;
 						}
 					} else {
-						if ( !DOMUtils::isElt( $child ) ) {
+						if ( !( $child instanceof Element ) ) {
 							// Text or comment node -- valid changes: 2, 3, 4
 							// since we cannot set attributes on these
 							$changeType = floor( $alea->random() * 3 ) + 2;
@@ -581,6 +606,7 @@ class TestRunner {
 				}
 
 				$changelist[] = $changeType;
+
 			}
 
 			return $hasChangeMarkers( $changelist ) ? $changelist : [];
@@ -808,7 +834,8 @@ class TestRunner {
 			$env->setupTopLevelDoc();
 		}
 		$handler = $env->getContentHandler();
-		$doc = $handler->toDOM( $env );
+		$extApi = new ParsoidExtensionAPI( $env );
+		$doc = $handler->toDOM( $extApi );
 		return $doc;
 	}
 
@@ -834,7 +861,8 @@ class TestRunner {
 		}
 		$handler = $env->getContentHandler();
 		$env->topLevelDoc = $doc;
-		return $handler->fromDOM( $env, $selserData );
+		$extApi = new ParsoidExtensionAPI( $env );
+		return $handler->fromDOM( $extApi, $selserData );
 	}
 
 	/**
@@ -1031,8 +1059,7 @@ class TestRunner {
 
 		$normOpts = [
 			'parsoidOnly' => $parsoidOnly,
-			'preserveIEW' => isset( $test->options['parsoid']['preserveIEW'] ),
-			'scrubWikitext' => isset( $test->options['parsoid']['scrubWikitext'] )
+			'preserveIEW' => isset( $test->options['parsoid']['preserveIEW'] )
 		];
 
 		$normalizedOut = TestUtils::normalizeOut( $out, $normOpts );
@@ -1216,7 +1243,7 @@ class TestRunner {
 	 * @return array
 	 */
 	private function updateKnownFailures( array $options ): array {
-		// Sanity check in case any tests were removed but we didn't update
+		// Check in case any tests were removed but we didn't update
 		// the knownFailures
 		$knownFailuresChanged = false;
 		$allModes = $options['wt2html'] && $options['wt2wt'] &&
@@ -1287,16 +1314,14 @@ class TestRunner {
 		}
 
 		// print out the summary
-		// note: these stats won't necessarily be useful if someone
-		// reimplements the reporting methods, since that's where we
-		// increment the stats.
-		$failures = $options['reportSummary'](
+		$options['reportSummary'](
 			$options['modes'], $this->stats, $this->testFileName,
-			$this->testFilter, $knownFailuresChanged
+			$this->testFilter, $knownFailuresChanged, $options
 		);
 
 		// we're done!
 		// exit status 1 == uncaught exception
+		$failures = $this->stats->allFailures();
 		$exitCode = ( $failures > 0 || $knownFailuresChanged ) ? 2 : 0;
 		if ( ScriptUtils::booleanOption( $options['exit-zero'] ?? null ) ) {
 			$exitCode = 0;
@@ -1406,7 +1431,6 @@ class TestRunner {
 
 			// Process test-specific options
 			$defaults = [
-				'scrubWikitext' => false,
 				'wrapSections' => false
 			]; // override for parser tests
 			foreach ( $defaults as $opt => $defaultVal ) {
@@ -1424,7 +1448,16 @@ class TestRunner {
 			if ( ( $test->options['wgrawhtml'] ?? null ) === '1' ) {
 				$this->siteConfig->registerParserTestExtension( new RawHTML() );
 			}
+
+			if ( isset( $test->options['thumbsize'] ) ) {
+				$this->siteConfig->thumbsize = (int)$test->options['thumbsize'];
+			}
+			if ( isset( $test->options['annotations'] ) ) {
+				$this->siteConfig->registerParserTestExtension( new DummyAnnotation() );
+			}
 		}
+		// Ensure this is always registered!
+		$this->siteConfig->registerParserTestExtension( new ParserHook() );
 
 		$this->buildTasks( $test, $targetModes, $options );
 	}
@@ -1450,7 +1483,7 @@ class TestRunner {
 			];
 		}
 
-		$this->buildTests();
+		$this->buildTests( $options );
 
 		if ( isset( $options['maxtests'] ) ) {
 			$n = $options['maxtests'];
@@ -1461,9 +1494,6 @@ class TestRunner {
 			}
 		}
 
-		// Register parser tests parser hook
-		$this->siteConfig->registerParserTestExtension( new ParserHook() );
-
 		$this->envOptions = [
 			'wrapSections' => false,
 			'nativeTemplateExpansion' => true,
@@ -1472,7 +1502,10 @@ class TestRunner {
 		ScriptUtils::setDebuggingFlags( $this->envOptions, $options );
 		ScriptUtils::setTemplatingAndProcessingFlags( $this->envOptions, $options );
 
-		if ( ScriptUtils::booleanOption( $options['quiet'] ?? null ) ) {
+		if (
+			ScriptUtils::booleanOption( $options['quiet'] ?? null )
+			|| ScriptUtils::booleanOption( $options['quieter'] ?? null )
+		) {
 			$this->envOptions['logLevels'] = [ 'fatal', 'error' ];
 		}
 

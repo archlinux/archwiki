@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.provider.Api', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Api constructor sanity check', function ( assert ) {
+	QUnit.test( 'Api constructor sense check', function ( assert ) {
 		var api = { get: function () {} },
 			options = {},
 			apiProvider = new mw.mmv.provider.Api( api, options ),

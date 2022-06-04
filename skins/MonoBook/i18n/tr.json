@@ -4,7 +4,8 @@
 			"BaRaN6161 TURK",
 			"Dbl2010",
 			"Joseph",
-			"Rapsar"
+			"Rapsar",
+			"SaldırganSincap"
 		]
 	},
 	"monobook-desc": "Sayfa 2004'teki bir kitabın siyah beyaz fotoğrafından sonra adlandırılan 2004'ten bu yana klasik MediaWiki görünümü",
@@ -17,5 +18,7 @@
 	"cactions-mobile": "Sayfa eylemleri",
 	"monobook-cactions-label": "Sayfa eylemleri",
 	"monobook-notifications-link": "Bildirimler ($1)",
-	"monobook-notifications-link-none": "Bildirimler"
+	"monobook-notifications-link-none": "Bildirimler",
+	"monobook-view-history": "Geçmiş",
+	"monobook-action-undelete": "{{PLURAL:$1|Bir düzenlemeyi|$1 düzenlemeyi}} geri getir"
 }

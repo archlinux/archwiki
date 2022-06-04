@@ -20,19 +20,21 @@
  * @file
  */
 
+use Wikimedia\AtEase\AtEase;
+
 /**
  * Diff-based history compression
  * Requires xdiff 1.5+ and zlib
  */
 class DiffHistoryBlob implements HistoryBlob {
-	/** @var array Uncompressed item cache */
+	/** @var string[] Uncompressed item cache */
 	public $mItems = [];
 
 	/** @var int Total uncompressed size */
 	public $mSize = 0;
 
 	/**
-	 * @var array Array of diffs. If a diff D from A to B is notated D = B - A,
+	 * @var array|null Array of diffs. If a diff D from A to B is notated D = B - A,
 	 * and Z is an empty string:
 	 *
 	 *              { item[map[i]] - item[map[i-1]]   where i > 0
@@ -44,11 +46,11 @@ class DiffHistoryBlob implements HistoryBlob {
 	/** @var array The diff map, see above */
 	public $mDiffMap;
 
-	/** @var int The key for getText()
+	/** @var string The key for getText()
 	 */
 	public $mDefaultKey;
 
-	/** @var string Compressed storage */
+	/** @var string|null Compressed storage */
 	public $mCompressed;
 
 	/** @var bool True if the object is locked against further writes */
@@ -77,7 +79,7 @@ class DiffHistoryBlob implements HistoryBlob {
 	/**
 	 * @throws MWException
 	 * @param string $text
-	 * @return int
+	 * @return string
 	 */
 	public function addItem( $text ) {
 		if ( $this->mFrozen ) {
@@ -87,7 +89,7 @@ class DiffHistoryBlob implements HistoryBlob {
 		$this->mItems[] = $text;
 		$this->mSize += strlen( $text );
 		$this->mDiffs = null; // later
-		return count( $this->mItems ) - 1;
+		return (string)( count( $this->mItems ) - 1 );
 	}
 
 	/**
@@ -95,7 +97,7 @@ class DiffHistoryBlob implements HistoryBlob {
 	 * @return string
 	 */
 	public function getItem( $key ) {
-		return $this->mItems[$key];
+		return $this->mItems[(int)$key];
 	}
 
 	/**
@@ -195,9 +197,9 @@ class DiffHistoryBlob implements HistoryBlob {
 	private function diff( $t1, $t2 ) {
 		# Need to do a null concatenation with warnings off, due to bugs in the current version of xdiff
 		# "String is not zero-terminated"
-		Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		$diff = xdiff_string_rabdiff( $t1, $t2 ) . '';
-		Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 		return $diff;
 	}
 
@@ -208,9 +210,9 @@ class DiffHistoryBlob implements HistoryBlob {
 	 */
 	private function patch( $base, $diff ) {
 		if ( function_exists( 'xdiff_string_bpatch' ) ) {
-			Wikimedia\suppressWarnings();
+			AtEase::suppressWarnings();
 			$text = xdiff_string_bpatch( $base, $diff ) . '';
-			Wikimedia\restoreWarnings();
+			AtEase::restoreWarnings();
 			return $text;
 		}
 

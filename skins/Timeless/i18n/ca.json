@@ -25,5 +25,7 @@
 	"timeless-pagetools": "Accions de pàgina",
 	"timeless-languages": "Llengües",
 	"timeless-projects": "Altres projectes",
-	"timeless.js": "/* Qualsevol codi JavaScript afegit aquí es carregarà per als usuaris que utilitzin l'aparença Timeless */"
+	"timeless.js": "/* Qualsevol codi JavaScript afegit aquí es carregarà per als usuaris que utilitzin l'aparença Timeless */",
+	"timeless-view-history": "Historial",
+	"timeless-action-undelete": "Restaura {{PLURAL:$1|l'edició eliminada|$1 edicions eliminades}}"
 }

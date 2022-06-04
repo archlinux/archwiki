@@ -27,5 +27,7 @@
 	"timeless-languages": "Języki",
 	"timeless-projects": "Inne projekty",
 	"timeless.css": "/* Umieszczony tutaj kod CSS zostanie załadowany przez użytkowników korzystających ze skórki Timeless */",
-	"timeless.js": "/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Timeless */"
+	"timeless.js": "/* Umieszczony tutaj kod JavaScript zostanie załadowany wyłącznie przez użytkowników korzystających ze skórki Timeless */",
+	"timeless-view-history": "Historia",
+	"timeless-action-undelete": "odtwórz {{PLURAL:$1|1 wersję|$1 wersje|$1 wersji}}"
 }

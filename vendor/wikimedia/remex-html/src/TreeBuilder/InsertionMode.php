@@ -120,6 +120,3 @@ abstract class InsertionMode {
 
 	abstract public function endDocument( $pos );
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InsertionMode::class, 'RemexHtml\TreeBuilder\InsertionMode' );

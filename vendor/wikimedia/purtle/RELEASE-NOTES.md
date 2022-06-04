@@ -1,5 +1,9 @@
 # Purtle release notes
 
+## Version 1.0.8 (2021-06-17)
+* Require PHP 7.2 or later
+* Fix phpcs issues
+
 ## Version 1.0.7 (2018-03-20)
 * Add JSON-LD support
 * Improve speed of `N3Quoter::escapeLiteral`

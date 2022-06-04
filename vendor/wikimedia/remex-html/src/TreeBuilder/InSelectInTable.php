@@ -74,6 +74,3 @@ class InSelectInTable extends InsertionMode {
 		$this->dispatcher->inSelect->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InSelectInTable::class, 'RemexHtml\TreeBuilder\InSelectInTable' );

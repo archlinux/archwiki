@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"1233qwer1234qwer4",
+			"Omnipaedista"
+		]
+	},
+	"math_failure": "Executare non potest",
+	"math_syntax_error": "erratum syntaxis",
+	"math_unknown_error": "error ignotus",
+	"math_unknown_function": "functio ignota",
+	"mw_math_mathml": "MathML",
+	"mw_math_png": "Semper vertere PNG",
+	"mw_math_source": "Stet ut TeX (pro navigatri texti)",
+	"prefs-math": "Interpretatio artis mathematicae"
+}

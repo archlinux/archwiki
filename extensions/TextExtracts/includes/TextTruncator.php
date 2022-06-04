@@ -2,7 +2,7 @@
 
 namespace TextExtracts;
 
-use MWTidy;
+use MediaWiki\MediaWikiServices;
 
 /**
  * This class needs to understand HTML as well as plain text. It tries to not break HTML tags, but
@@ -102,7 +102,7 @@ class TextTruncator {
 	 */
 	private function tidy( $text ) {
 		if ( $this->useTidy ) {
-			$text = MWTidy::tidy( $text );
+			$text = MediaWikiServices::getInstance()->getTidy()->tidy( $text );
 		}
 
 		return trim( $text );

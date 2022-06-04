@@ -25,6 +25,8 @@
  * @file
  */
 
+use Wikimedia\AtEase\AtEase;
+
 /**
  * Class to extract and validate Exif data from jpeg (and possibly tiff) files.
  * @ingroup Media
@@ -87,7 +89,7 @@ class Exif {
 	/** @var string The basename of the file being processed */
 	private $basename;
 
-	/** @var string The private log to log to, e.g. 'exif' */
+	/** @var string|false The private log to log to, e.g. 'exif' */
 	private $log = false;
 
 	/** @var string The byte order of the file. Needed because php's extension
@@ -292,9 +294,9 @@ class Exif {
 
 		$this->debugFile( __FUNCTION__, true );
 		if ( function_exists( 'exif_read_data' ) ) {
-			Wikimedia\suppressWarnings();
-			$data = exif_read_data( $this->file, 0, true );
-			Wikimedia\restoreWarnings();
+			AtEase::suppressWarnings();
+			$data = exif_read_data( $this->file, '', true );
+			AtEase::restoreWarnings();
 		} else {
 			throw new MWException( "Internal error: exif_read_data not present. " .
 				"\$wgShowEXIF may be incorrectly set or not checked by an extension." );
@@ -368,7 +370,7 @@ class Exif {
 			// functions ran earlier. But multiplying such a string by -1
 			// doesn't work well, so convert.
 			list( $num, $denom ) = explode( '/', $this->mFilteredExifData['GPSAltitude'] );
-			$this->mFilteredExifData['GPSAltitude'] = $num / $denom;
+			$this->mFilteredExifData['GPSAltitude'] = (int)$num / (int)$denom;
 
 			if ( isset( $this->mFilteredExifData['GPSAltitudeRef'] ) ) {
 				switch ( $this->mFilteredExifData['GPSAltitudeRef'] ) {
@@ -474,17 +476,17 @@ class Exif {
 					break;
 			}
 			if ( $charset ) {
-				Wikimedia\suppressWarnings();
+				AtEase::suppressWarnings();
 				$val = iconv( $charset, 'UTF-8//IGNORE', $val );
-				Wikimedia\restoreWarnings();
+				AtEase::restoreWarnings();
 			} else {
 				// if valid utf-8, assume that, otherwise assume windows-1252
 				$valCopy = $val;
 				UtfNormal\Validator::quickIsNFCVerify( $valCopy ); // validates $valCopy.
 				if ( $valCopy !== $val ) {
-					Wikimedia\suppressWarnings();
+					AtEase::suppressWarnings();
 					$val = iconv( 'Windows-1252', 'UTF-8//IGNORE', $val );
-					Wikimedia\restoreWarnings();
+					AtEase::restoreWarnings();
 				}
 			}
 
@@ -517,7 +519,7 @@ class Exif {
 
 	/**
 	 * Convert gps in exif form to a single floating point number
-	 * for example 10 degress 20`40`` S -> -10.34444
+	 * for example 10 degrees 20`40`` S -> -10.34444
 	 * @param string $prop A GPS coordinate exif tag name (like GPSLongitude)
 	 */
 	private function exifGPStoNumber( $prop ) {
@@ -529,11 +531,11 @@ class Exif {
 			&& ( $dir === 'N' || $dir === 'S' || $dir === 'E' || $dir === 'W' )
 		) {
 			list( $num, $denom ) = explode( '/', $loc[0] );
-			$res = $num / $denom;
+			$res = (int)$num / (int)$denom;
 			list( $num, $denom ) = explode( '/', $loc[1] );
-			$res += ( $num / $denom ) * ( 1 / 60 );
+			$res += ( (int)$num / (int)$denom ) * ( 1 / 60 );
 			list( $num, $denom ) = explode( '/', $loc[2] );
-			$res += ( $num / $denom ) * ( 1 / 3600 );
+			$res += ( (int)$num / (int)$denom ) * ( 1 / 3600 );
 
 			if ( $dir === 'S' || $dir === 'W' ) {
 				$res *= -1; // make negative

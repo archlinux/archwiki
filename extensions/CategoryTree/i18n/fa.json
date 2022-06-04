@@ -9,7 +9,8 @@
 			"Leyth",
 			"Mjbmr",
 			"Rtemis",
-			"ZxxZxxZ"
+			"ZxxZxxZ",
+			"Beginneruser"
 		]
 	},
 	"categorytree": "درخت رده",
@@ -22,7 +23,7 @@
 	"categorytree-parents": "والدین",
 	"categorytree-mode-label": "حالت:",
 	"categorytree-mode-categories": "فقط رده‌ها",
-	"categorytree-mode-pages": "صفحه‌ها به غیر از پرونده‌ها",
+	"categorytree-mode-pages": "صفحه‌های غیر از پرونده‌ها",
 	"categorytree-mode-all": "تمام صفحه‌ها",
 	"categorytree-collapse": "نهفتن",
 	"categorytree-expand": "گسترش",
@@ -38,6 +39,6 @@
 	"categorytree-no-parent-categories": "فاقد ردهٔ بالاتر",
 	"categorytree-no-pages": "هیچ صفحه یا زیررده‌ای ندارد",
 	"categorytree-not-found": "ردهٔ <i>$1</i> یافت نشد",
-	"categorytree-error": "اشکال در دریافت اطلاعات.",
-	"categorytree-retry": "لطفاً کمی صبر کنید و دوباره امتحان کنید."
+	"categorytree-error": "مشکل بارگیری اطلاعات.",
+	"categorytree-retry": "لطفاً یک لحظه صبر کنید و دوباره تلاش کنید."
 }

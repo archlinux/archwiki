@@ -3,9 +3,9 @@
 		"authors": [
 			"Anthonymodec",
 			"Gadarawamo",
+			"Joshateji",
 			"Misteld",
-			"Samatics",
-			"Joshateji"
+			"Samatics"
 		]
 	},
 	"visualeditor-ca-createlocaldescriptionsource": "Yi nujlẹdonugo paa dogọ",
@@ -14,6 +14,6 @@
 	"visualeditor-ca-editsource-section": "jla asisado",
 	"visualeditor-descriptionpagelink": "Project:Nujladonu nupinpọn tọn",
 	"visualeditor-dialog-transclusion-action-save": "Sẹdo",
-	"visualeditor-dialog-transclusion-reset-confirmation-title": "Be a na leko nado din ya?",
+	"visualeditor-dialog-transclusion-confirmation-reject": "Zindonukọn to azọ́n towe mẹ",
 	"visualeditor-dismissible-message-close": "Su wekanhlanme bo maso dohia"
 }

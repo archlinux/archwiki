@@ -23,7 +23,7 @@
  * @constructor
  * @param {jQuery} [$focusable=this.$element] Primary element user is focusing on
  * @param {Object} [config] Configuration options
- * @param {jQuery} [$bounding=$focusable] Element to consider for bounding box calculations (e.g.
+ * @cfg {jQuery} [$bounding=$focusable] Element to consider for bounding box calculations (e.g.
  *   attaching inspectors)
  * @cfg {string[]} [classes] CSS classes to be added to the highlight container
  */
@@ -450,7 +450,7 @@ ve.ce.FocusableNode.prototype.onFocusableMouseDown = function ( e ) {
 		return;
 	}
 
-	if ( !this.isInContentEditable() ) {
+	if ( this.isInContentEditableDisabled() ) {
 		return;
 	}
 
@@ -497,7 +497,7 @@ ve.ce.FocusableNode.prototype.onFocusableMouseDown = function ( e ) {
  * @param {jQuery.Event} e Double click event
  */
 ve.ce.FocusableNode.prototype.onFocusableDblClick = function () {
-	if ( !this.isInContentEditable() ) {
+	if ( this.isInContentEditableDisabled() ) {
 		return;
 	}
 	if ( this.getModel().isEditable() ) {
@@ -552,7 +552,7 @@ ve.ce.FocusableNode.prototype.onFocusableDragEnd = function () {
  * @param {jQuery.Event} e Mouse enter event
  */
 ve.ce.FocusableNode.prototype.onFocusableMouseEnter = function () {
-	if ( !this.root.getSurface().dragging && !this.root.getSurface().resizing && this.isInContentEditable() ) {
+	if ( !this.root.getSurface().dragging && !this.root.getSurface().resizing && !this.isInContentEditableDisabled() ) {
 		this.createHighlights();
 	}
 };
@@ -761,11 +761,12 @@ ve.ce.FocusableNode.prototype.positionHighlights = function () {
 	this.calculateHighlights();
 	this.$highlights.empty()
 		// Append something selectable for right-click copy
-		.append( $( '<span>' ).addClass( 've-ce-focusableNode-highlight-selectable' ).html( '&nbsp;' ) );
+		.append( $( '<span>' ).addClass( 've-ce-focusableNode-highlight-selectable' ).text( '\u00a0' ) );
 
 	for ( var i = 0, l = this.rects.length; i < l; i++ ) {
+		var $highlight = this.createHighlight();
 		this.$highlights.append(
-			this.createHighlight().css( {
+			$highlight.css( {
 				top: this.rects[ i ].top,
 				left: this.rects[ i ].left,
 				width: this.rects[ i ].width,
@@ -823,8 +824,8 @@ ve.ce.FocusableNode.prototype.getStartAndEndRects = function () {
  * Check if the rendering is visible
  *
  * "Visible", in this case, is defined as any of:
- *  * contains any non-whitespace text
- *  * is greater than 8px x 8px in dimensions
+ * - contains any non-whitespace text
+ * - is greater than 8px x 8px in dimensions
  *
  * @return {boolean} The node has a visible rendering
  */
@@ -844,4 +845,20 @@ ve.ce.FocusableNode.prototype.hasRendering = function () {
 		}
 	} );
 	return visible;
+};
+
+/**
+ * Check if the node is inside a ve.ce.ContentEditableNode with editing disabled
+ *
+ * Ignore nodes which just disable CE in the DOM manually (e.g. TableNode)
+ * as focusables should still be highlightable in these.
+ *
+ * @return {boolean} Editing disabled
+ */
+ve.ce.FocusableNode.prototype.isInContentEditableDisabled = function () {
+	return !!this.traverseUpstream( function ( node ) {
+		return !(
+			node.isContentEditable && !node.isContentEditable()
+		);
+	} );
 };

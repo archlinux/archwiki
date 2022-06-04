@@ -1,56 +1,52 @@
 /** @module search */
-var
+
+const
 	Vue = require( 'vue' ).default || require( 'vue' ),
 	App = require( './App.vue' ),
 	config = require( './config.json' );
 
 /**
- * @param {HTMLElement} searchForm
- * @param {HTMLInputElement} search
- * @param {string|null} searchPageTitle title of page used for searching e.g. Special:Search
- *  If null then this will default to Special:Search.
+ * @param {Element} searchBox
  * @return {void}
  */
-function initApp( searchForm, search, searchPageTitle ) {
-	// eslint-disable-next-line no-new
-	new Vue( {
-		el: searchForm,
-		/**
-		 *
-		 * @param {Function} createElement
-		 * @return {Vue.VNode}
-		 */
-		render: function ( createElement ) {
-			return createElement( App, {
-				props: $.extend( {
-					autofocusInput: search === document.activeElement,
-					action: searchForm.getAttribute( 'action' ),
-					searchAccessKey: search.getAttribute( 'accessKey' ),
-					searchPageTitle: searchPageTitle,
-					searchTitle: search.getAttribute( 'title' ),
-					searchPlaceholder: search.getAttribute( 'placeholder' ),
-					searchQuery: search.value
-				},
-				// Pass additional config from server.
-				config
-				)
-			} );
-		}
-	} );
+function initApp( searchBox ) {
+	const searchForm = searchBox.querySelector( '.vector-search-box-form' ),
+		titleInput = /** @type {HTMLInputElement|null} */ (
+			searchBox.querySelector( 'input[name=title]' )
+		),
+		search = /** @type {HTMLInputElement|null} */ ( searchBox.querySelector( 'input[name="search"]' ) ),
+		searchPageTitle = titleInput && titleInput.value;
+
+	if ( !searchForm || !search || !titleInput ) {
+		throw new Error( 'Attempted to create Vue search element from an incompatible element.' );
+	}
+
+	// @ts-ignore
+	Vue.createMwApp(
+		App, $.extend( {
+			id: searchForm.id,
+			autofocusInput: search === document.activeElement,
+			action: searchForm.getAttribute( 'action' ),
+			searchAccessKey: search.getAttribute( 'accessKey' ),
+			searchPageTitle: searchPageTitle,
+			searchTitle: search.getAttribute( 'title' ),
+			searchPlaceholder: search.getAttribute( 'placeholder' ),
+			searchQuery: search.value,
+			autoExpandWidth: searchBox ? searchBox.classList.contains( 'vector-search-box-auto-expand-width' ) : false
+		// Pass additional config from server.
+		}, config )
+	)
+		.mount( searchForm.parentNode );
 }
 /**
  * @param {Document} document
  * @return {void}
  */
 function main( document ) {
-	var
-		searchForm = /** @type {HTMLElement} */ ( document.querySelector( '#searchform' ) ),
-		titleInput = /** @type {HTMLInputElement|null} */ (
-			searchForm.querySelector( 'input[name=title]' )
-		),
-		search = /** @type {HTMLInputElement|null} */ ( document.getElementById( 'searchInput' ) );
-	if ( search && searchForm ) {
-		initApp( searchForm, search, titleInput && titleInput.value );
-	}
+	const searchBoxes = document.querySelectorAll( '.vector-search-box' );
+
+	searchBoxes.forEach( ( searchBox ) => {
+		initApp( searchBox );
+	} );
 }
 main( document );

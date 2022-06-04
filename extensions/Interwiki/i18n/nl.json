@@ -6,11 +6,11 @@
 			"Mainframe98",
 			"Mar(c)",
 			"McDutchie",
+			"Romaine",
 			"SPQRobin",
 			"Siebrand",
 			"Sjoerddebruin",
-			"Tvdm",
-			"Romaine"
+			"Tvdm"
 		]
 	},
 	"interwiki": "Interwikigegevens bekijken en wijzigen",
@@ -39,7 +39,7 @@
 	"interwiki_deleting": "U bent voorvoegsel \"$1\" aan het verwijderen.",
 	"interwiki_deleted": "Voorvoegsel \"$1\" is verwijderd uit de interwikitabel.",
 	"interwiki_delfailed": "Voorvoegsel \"$1\" kon niet worden verwijderd uit de interwikitabel.",
-	"interwiki-logtext": "Logboeken bekijken",
+	"interwiki-logtext": "Logboek bekijken",
 	"interwiki_addtext": "Voeg een interwiki of taal voorvoegsel toe",
 	"interwiki-addtext-local": "Voeg een lokaal interwiki- of taalvoorvoegsel toe",
 	"interwiki-addtext-nolang": "Voeg een interwikivoorvoegsel toe",

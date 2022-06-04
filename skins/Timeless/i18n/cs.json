@@ -30,5 +30,7 @@
 	"timeless-languages": "Jazyky",
 	"timeless-projects": "Na jiných projektech",
 	"timeless.css": "/* Zde uvedené CSS bude ovlivňovat pouze „Nadčasový“ vzhled */",
-	"timeless.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele „Nadčasového“ vzhledu */"
+	"timeless.js": "/* Zde uvedený JavaScript bude použit pouze pro uživatele „Nadčasového“ vzhledu */",
+	"timeless-view-history": "Historie",
+	"timeless-action-undelete": "Obnovit $1 {{PLURAL:$1|verzi|verze|verzí}}"
 }

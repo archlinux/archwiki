@@ -16,5 +16,7 @@
 	"cactions-mobile": "Дејства врз страници",
 	"monobook-cactions-label": "Дејства врз страници",
 	"monobook-notifications-link": "Известувања ($1)",
-	"monobook-notifications-link-none": "Известувања"
+	"monobook-notifications-link-none": "Известувања",
+	"monobook-view-history": "Историја",
+	"monobook-action-undelete": "Врати {{PLURAL:$1|едно уредување|$1 уредувања}}"
 }

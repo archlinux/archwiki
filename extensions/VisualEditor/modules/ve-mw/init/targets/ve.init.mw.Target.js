@@ -12,8 +12,8 @@
  * @extends ve.init.Target
  *
  * @constructor
- * @param {Object} [config] Configuration options
- * @cfg {string[]} [surfaceClasses] Surface classes to apply
+ * @param {Object} config
+ * @cfg {string[]} [surfaceClasses=[]] Surface classes to apply
  */
 ve.init.mw.Target = function VeInitMwTarget( config ) {
 	this.surfaceClasses = config.surfaceClasses || [];
@@ -203,12 +203,12 @@ ve.init.mw.Target.prototype.createModelFromDom = function () {
  * @param {string} documentString
  * @param {string} mode
  * @param {string|null} [section] Section. Use null to unwrap all sections.
- * @param {boolean} [onlySection] Only return the requested section, otherwise returns the
+ * @param {boolean} [onlySection=false] Only return the requested section, otherwise returns the
  *  whole document with just the requested section still wrapped (visual mode only).
  * @return {HTMLDocument|string} HTML document, or document string (source mode)
  */
 ve.init.mw.Target.static.parseDocument = function ( documentString, mode, section, onlySection ) {
-	var doc, sectionNode;
+	var doc;
 	if ( mode === 'source' ) {
 		// Parent method
 		doc = ve.init.mw.Target.super.static.parseDocument.call( this, documentString, mode );
@@ -217,7 +217,7 @@ ve.init.mw.Target.static.parseDocument = function ( documentString, mode, sectio
 		doc = ve.parseXhtml( documentString );
 		if ( section !== undefined ) {
 			if ( onlySection ) {
-				sectionNode = doc.body.querySelector( '[data-mw-section-id="' + section + '"]' );
+				var sectionNode = doc.body.querySelector( '[data-mw-section-id="' + section + '"]' );
 				doc.body.innerHTML = '';
 				if ( sectionNode ) {
 					doc.body.appendChild( sectionNode );
@@ -229,6 +229,9 @@ ve.init.mw.Target.static.parseDocument = function ( documentString, mode, sectio
 		}
 		// Strip legacy IDs, for example in section headings
 		mw.libs.ve.stripParsoidFallbackIds( doc.body );
+		// Re-duplicate deduplicated TemplateStyles, for correct rendering when editing a section or
+		// when templates are removed during the edit
+		mw.libs.ve.reduplicateStyles( doc.body );
 		// Fix relative or missing base URL if needed
 		this.fixBase( doc );
 	}
@@ -300,10 +303,8 @@ ve.init.mw.Target.prototype.createTargetWidget = function ( config ) {
  * @inheritdoc
  */
 ve.init.mw.Target.prototype.createSurface = function ( dmDoc, config ) {
-	var importRules;
-
 	if ( config && config.mode === 'source' ) {
-		importRules = ve.copy( this.constructor.static.importRules );
+		var importRules = ve.copy( this.constructor.static.importRules );
 		importRules.all = importRules.all || {};
 		// Preserve empty linebreaks on paste in source editor
 		importRules.all.keepEmptyContentBranches = true;
@@ -341,10 +342,8 @@ ve.init.mw.Target.prototype.setupSurface = function ( doc ) {
 	var target = this;
 	setTimeout( function () {
 		// Build model
-		var dmDoc;
-
 		target.track( 'trace.convertModelFromDom.enter' );
-		dmDoc = target.constructor.static.createModelFromDom( doc, target.getDefaultMode() );
+		var dmDoc = target.constructor.static.createModelFromDom( doc, target.getDefaultMode() );
 		target.track( 'trace.convertModelFromDom.exit' );
 
 		// Build DM tree now (otherwise it gets lazily built when building the CE tree)
@@ -362,8 +361,7 @@ ve.init.mw.Target.prototype.setupSurface = function ( doc ) {
  * @inheritdoc
  */
 ve.init.mw.Target.prototype.addSurface = function () {
-	var surface,
-		target = this;
+	var target = this;
 
 	// Clear dummy surfaces
 	// TODO: Move to DesktopArticleTarget
@@ -372,7 +370,7 @@ ve.init.mw.Target.prototype.addSurface = function () {
 	// Create ui.Surface (also creates ce.Surface and dm.Surface and builds CE tree)
 	this.track( 'trace.createSurface.enter' );
 	// Parent method
-	surface = ve.init.mw.Target.super.prototype.addSurface.apply( this, arguments );
+	var surface = ve.init.mw.Target.super.prototype.addSurface.apply( this, arguments );
 	// Add classes specific to surfaces attached directly to the target,
 	// as opposed to TargetWidget surfaces
 	if ( !surface.inTargetWidget ) {
@@ -411,19 +409,23 @@ ve.init.mw.Target.prototype.setSurface = function ( surface ) {
 };
 
 /**
- * Intiailise autosave, recovering changes if applicable
+ * Intialise autosave, recovering changes if applicable
+ *
+ * @param {boolean} [suppressNotification=false] Don't notify the user if changes are recovered
  */
-ve.init.mw.Target.prototype.initAutosave = function () {
+ve.init.mw.Target.prototype.initAutosave = function ( suppressNotification ) {
 	var target = this,
 		surfaceModel = this.getSurface().getModel();
 	if ( this.recovered ) {
 		// Restore auto-saved transactions if document state was recovered
 		try {
 			surfaceModel.restoreChanges();
-			ve.init.platform.notify(
-				ve.msg( 'visualeditor-autosave-recovered-text' ),
-				ve.msg( 'visualeditor-autosave-recovered-title' )
-			);
+			if ( !suppressNotification ) {
+				ve.init.platform.notify(
+					ve.msg( 'visualeditor-autosave-recovered-text' ),
+					ve.msg( 'visualeditor-autosave-recovered-title' )
+				);
+			}
 		} catch ( e ) {
 			mw.log.warn( e );
 			ve.init.platform.notify(
@@ -533,14 +535,12 @@ ve.init.mw.Target.prototype.refreshUser = function ( doc ) {
  * @return {jQuery.Promise} Abortable promise which resolves with a wikitext string
  */
 ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) {
-	var xhr, params;
-
 	// Shortcut for empty document
 	if ( !doc.data.hasContent() ) {
 		return ve.createDeferred().resolve( '' );
 	}
 
-	params = {
+	var params = {
 		action: 'visualeditoredit',
 		paction: 'serialize',
 		html: ve.dm.converter.getDomFromModel( doc ).body.innerHTML,
@@ -552,7 +552,7 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
 		params.etag = this.etag;
 	}
 
-	xhr = this.getContentApi( doc ).postWithToken( 'csrf',
+	var xhr = this.getContentApi( doc ).postWithToken( 'csrf',
 		params,
 		{ contentType: 'multipart/form-data' }
 	);

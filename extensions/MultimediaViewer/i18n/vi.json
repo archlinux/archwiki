@@ -5,8 +5,8 @@
 			"Macofe",
 			"Max20091",
 			"Minh Nguyen",
-			"Withoutaname",
-			"Nghiemtrongdai VN"
+			"Nghiemtrongdai VN",
+			"Withoutaname"
 		]
 	},
 	"multimediaviewer-desc": "Mở rộng hình thu nhỏ ở kích thước lớn hơn trong giao diện toàn màn hình",
@@ -50,8 +50,6 @@
 	"multimediaviewer-restriction-default": "Hình ảnh này có thể được kiểm soát bởi những điều khoản luật pháp ngoài luật quyền tác giả. Xem chi tiết tại trang miêu tả tập tin.",
 	"multimediaviewer-restriction-default-and-others": "Hình ảnh này có thể được kiểm soát thêm bởi những điều khoản luật pháp ngoài luật quyền tác giả. Xem chi tiết tại trang miêu tả tập tin.",
 	"multimediaviewer-about-mmv": "Giới thiệu về giao diện này",
-	"multimediaviewer-discuss-mmv": "Thảo luận",
-	"multimediaviewer-help-mmv": "Trợ giúp",
 	"multimediaviewer-optout-mmv": "Tắt cửa sổ phương tiện",
 	"multimediaviewer-optin-mmv": "Bật cửa sổ phương tiện",
 	"multimediaviewer-optout-pending-mmv": "Tắt cửa sổ phương tiện",

@@ -20,8 +20,8 @@
 	"pfunc_expr_unrecognised_punctuation": "שגיאה בביטוי: תו פיסוק בלתי מזוהה, \"$1\".",
 	"pfunc_expr_unclosed_bracket": "שגיאה בביטוי: סוגריים בלתי סגורים",
 	"pfunc_expr_division_by_zero": "חלוקה באפס.",
-	"pfunc_expr_invalid_argument": "ארגומנט בלתי תקין לפונקציה $1: < -1 או > 1",
-	"pfunc_expr_invalid_argument_ln": "ארגומנט בלתי תקין לפונקציה ln: <= 0",
+	"pfunc_expr_invalid_argument": "ארגומנט בלתי־תקין לפונקציה $1: קטן מ־‎-1 או גדול מ־1.",
+	"pfunc_expr_invalid_argument_ln": "ארגומנט בלתי־תקין לפונקציה ln: קטן מ־0 או שווה ל־0.",
 	"pfunc_expr_unknown_error": "שגיאה בביטוי: שגיאה בלתי־ידועה ($1)",
 	"pfunc_expr_not_a_number": "התוצאה של $1 אינה מספר",
 	"pfunc_string_too_long": "שגיאה: המחרוזת עוברת את גבול התווים המותר, $1"

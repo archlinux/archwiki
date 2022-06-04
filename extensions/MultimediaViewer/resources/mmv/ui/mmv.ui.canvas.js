@@ -231,9 +231,9 @@
 	C.attach = function () {
 		var canvas = this;
 
-		$( window ).on( 'resize.mmv-canvas', $.debounce( 100, function () {
+		$( window ).on( 'resize.mmv-canvas', mw.util.debounce( function () {
 			canvas.$mainWrapper.trigger( $.Event( 'mmv-resize-end' ) );
-		} ) );
+		}, 100 ) );
 
 		this.$imageWrapper.on( 'click.mmv-canvas', function () {
 			if ( canvas.$container.closest( '.metadata-panel-is-open' ).length > 0 ) {

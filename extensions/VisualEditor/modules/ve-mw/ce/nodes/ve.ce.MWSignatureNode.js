@@ -57,12 +57,11 @@ ve.ce.MWSignatureNode.static.getDescription = function () {
 
 // Update the timestamp on inserted signatures every minute.
 setInterval( function () {
-	var updatedSignatures, i, sig,
-		liveSignatures = ve.ce.MWSignatureNode.static.liveSignatures;
+	var liveSignatures = ve.ce.MWSignatureNode.static.liveSignatures;
 
-	updatedSignatures = [];
-	for ( i = 0; i < liveSignatures.length; i++ ) {
-		sig = liveSignatures[ i ];
+	var updatedSignatures = [];
+	for ( var i = 0; i < liveSignatures.length; i++ ) {
+		var sig = liveSignatures[ i ];
 		try {
 			sig.forceUpdate();
 			updatedSignatures.push( sig );
@@ -91,14 +90,13 @@ ve.ce.MWSignatureNode.prototype.onSetup = function () {
  * @inheritdoc
  */
 ve.ce.MWSignatureNode.prototype.onTeardown = function () {
-	var index,
-		liveSignatures = this.constructor.static.liveSignatures;
+	var liveSignatures = this.constructor.static.liveSignatures;
 
 	// Parent method
 	ve.ce.MWSignatureNode.super.prototype.onTeardown.call( this );
 
 	// Stop tracking
-	index = liveSignatures.indexOf( this );
+	var index = liveSignatures.indexOf( this );
 	if ( index !== -1 ) {
 		liveSignatures.splice( index, 1 );
 	}
@@ -108,7 +106,6 @@ ve.ce.MWSignatureNode.prototype.onTeardown = function () {
  * @inheritdoc ve.ce.GeneratedContentNode
  */
 ve.ce.MWSignatureNode.prototype.generateContents = function () {
-	var wikitext, deferred, xhr, doc;
 	// Parsoid doesn't support pre-save transforms. PHP parser doesn't support Parsoid's
 	// meta attributes (that may or may not be required).
 
@@ -116,11 +113,11 @@ ve.ce.MWSignatureNode.prototype.generateContents = function () {
 	// in order seems slightly saner.
 
 	// We must have only one top-level node, this is the easiest way.
-	wikitext = '<span>~~~~</span>';
-	doc = this.getModel().getDocument();
+	var wikitext = '<span>~~~~</span>';
+	var doc = this.getModel().getDocument();
 
-	deferred = ve.createDeferred();
-	xhr = ve.init.target.getContentApi( doc ).post( {
+	var deferred = ve.createDeferred();
+	var xhr = ve.init.target.getContentApi( doc ).post( {
 		action: 'parse',
 		text: wikitext,
 		contentmodel: 'wikitext',

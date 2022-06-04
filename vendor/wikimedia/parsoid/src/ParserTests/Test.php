@@ -115,12 +115,11 @@ class Test extends Item {
 	private const WARN_DEPRECATED_KEYS = [
 		'input',
 		'result',
-		# Don't hard-deprecate +tidy or +untidy quite yet, too noisy.
-		#'html/php+tidy',
-		#'html/*+tidy',
-		#'html+tidy',
-		#'html/php+untidy',
-		#'html+untidy',
+		'html/php+tidy',
+		'html/*+tidy',
+		'html+tidy',
+		'html/php+untidy',
+		'html+untidy',
 	];
 
 	/**
@@ -213,5 +212,4 @@ class Test extends Item {
 
 		return $this->pageName;
 	}
-
 }

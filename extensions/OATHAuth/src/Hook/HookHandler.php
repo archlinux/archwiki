@@ -110,7 +110,7 @@ class HookHandler implements
 		$module = $oathUser->getModule();
 
 		$moduleLabel = $module === null ?
-			wfMessage( 'oauthauth-ui-no-module' ) :
+			wfMessage( 'oathauth-ui-no-module' ) :
 			$module->getDisplayName();
 
 		$manageButton = new ButtonWidget( [

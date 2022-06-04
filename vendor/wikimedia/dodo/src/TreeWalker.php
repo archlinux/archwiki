@@ -6,6 +6,9 @@ namespace Wikimedia\Dodo;
 
 use Wikimedia\Dodo\Internal\UnimplementedTrait;
 
+/**
+ * @phan-forbid-undeclared-magic-properties
+ */
 abstract class TreeWalker implements \Wikimedia\IDLeDOM\TreeWalker {
 	// Helper functions from IDLeDOM
 	use \Wikimedia\IDLeDOM\Helper\TreeWalker;

@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Seipinne",
 			"Trondtr",
-			"Yupik",
-			"Seipinne"
+			"Yupik"
 		]
 	},
-	"vector-language-button-label": "{{PLURAL:$1|$1 kielâ|$1 kiellâd}}",
+	"vector-languages": "Kielah",
+	"vector-language-button-label": "{{PLURAL:$1|$1 kielâ|$1 kielâ|$1 kielâ|$1 kiellâd}}",
 	"vector-action-addsection": "Lasseet fáádá",
 	"vector-action-delete": "Siho",
 	"vector-action-move": "Sirde",

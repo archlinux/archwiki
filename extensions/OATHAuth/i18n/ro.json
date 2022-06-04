@@ -18,7 +18,7 @@
 	"right-oathauth-enable": "Activează autentificarea cu doi factori",
 	"action-oathauth-enable": "activează autentificarea cu doi factori",
 	"oathauth-auth-ui": "Va rugam introduceti codul de autentificare de pe dispozitivul dumneavoastra.",
-	"oauthauth-ui-no-module": "Niciuna activată",
+	"oathauth-ui-no-module": "Niciuna activată",
 	"oathauth-ui-manage": "Administrare",
 	"oathmanage": "Administrare autentificare cu doi factori"
 }

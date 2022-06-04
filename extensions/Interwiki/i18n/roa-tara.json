@@ -15,6 +15,7 @@
 	"interwiki_url": "URL",
 	"interwiki-url-label": "URL:",
 	"interwiki_url_intro": "Modelle pe le URL. 'U segnaposte $1 avène sostituite da <em>nomepàgene</em> jndr'à <code>[<nowiki />[prefix:<em>nomepàgene</em>]]</code>.",
+	"interwiki-api-label": "API:",
 	"interwiki_local": "Inoltre",
 	"interwiki-local-label": "Inoltre",
 	"interwiki_local_0_intro": "Richieste HTTP de fore a 'a uicchi locale ste ause stu prefisse inderuicchi jndr'à URL ca ve spiccie jndr'à pàgene de errore \"{{int:badtitle}}\".",

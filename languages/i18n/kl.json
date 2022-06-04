@@ -7,7 +7,8 @@
 			"Kaniina (on kl.wikipedia.org)",
 			"Qaqqalik",
 			"לערי ריינהארט",
-			"아라"
+			"아라",
+			"StarrySky"
 		]
 	},
 	"sunday": "Sapaat",
@@ -79,15 +80,20 @@
 	"searchbutton": "Ujarlerit",
 	"go": "Ikunnarit",
 	"searcharticle": "Tassunngarit",
+	"view-history": "Oqalutt.",
 	"history": "Oqaluttuassartaa",
 	"history_short": "Oqaluttuassartaa",
 	"printableversion": "Naqikkuminartoq",
 	"permalink": "Ataavartumik innersuut",
+	"view-view": "Takuuk",
 	"edit": "Aaqqissoruk",
+	"view-edit": "Aaqqissoruk",
 	"create": "Pilersiguk",
+	"view-create": "Pilersiguk",
 	"delete": "Peeruk",
 	"protect": "Illersoruk",
 	"protect_change": "allannguutit",
+	"action-unprotect": "Illersorunnaaruk",
 	"unprotect": "Illersorunnaaruk",
 	"newpage": "Qupperneq nutaaq",
 	"talkpagelinktext": "Oqallinneq",
@@ -132,6 +138,7 @@
 	"nstab-template": "Ilisserut",
 	"nstab-help": "Ikiuutit",
 	"nstab-category": "Sumut atassuseq",
+	"mainpage-nstab": "Saqqaa",
 	"viewsource": "Toqqavia takuuk",
 	"protectedpagetext": "Una qupperneq allaffigineqarnissamut illersugaavoq.",
 	"viewsourcetext": "Qupperneq takusinnaavat aamma sanarfia kopeersinnaavat:",
@@ -218,6 +225,7 @@
 	"saveprefs": "Toqqukkit",
 	"yourlanguage": "Oqaatsit:",
 	"group-sysop": "Administratorit",
+	"action-addsection": "Imm. nutaaq",
 	"action-move": "Nuuguk",
 	"action-protect": "Illersoruk",
 	"recentchanges": "Allannguutit kingulliit",
@@ -352,5 +360,7 @@
 	"monthsall": "tamarmik",
 	"autosumm-new": "Qupperneq pilersippaa '$1'",
 	"specialpages": "Quppernerit immikkut ittut",
-	"searchsuggest-search": "Ujarlerit"
+	"searchsuggest-search": "Ujarlerit",
+	"skin-action-protect": "Illersoruk",
+	"skin-action-move": "Nuuguk"
 }

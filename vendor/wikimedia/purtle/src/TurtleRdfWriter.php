@@ -63,6 +63,9 @@ class TurtleRdfWriter extends N3RdfWriterBase {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writeSubject( $base, $local = null ) {
 		if ( $local !== null ) {
 			$this->write( "$base:$local" );
@@ -71,6 +74,9 @@ class TurtleRdfWriter extends N3RdfWriterBase {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writePredicate( $base, $local = null ) {
 		if ( $base === 'a' ) {
 			$this->write( 'a' );
@@ -83,6 +89,9 @@ class TurtleRdfWriter extends N3RdfWriterBase {
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writeResource( $base, $local = null ) {
 		if ( $local !== null ) {
 			$this->write( "$base:$local" );

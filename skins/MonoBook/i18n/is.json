@@ -8,5 +8,7 @@
 	"skinname-monobook": "MonoBook",
 	"monobook-desc": "Klassískt skinn MediaWiki síðan 2004, nefnt eftir svart-hvítu myndinni af bókinni í bakgrunni síðunnar",
 	"monobook.css": "/* Það sem sett er hingað er bætt við MonoBook stilsniðið fyrir allan vefinn */",
-	"monobook.js": "/* Allt JavaScript sem sett er hér mun hafa áhrif á notendur MonoBook-skinnsins. */"
+	"monobook.js": "/* Allt JavaScript sem sett er hér mun hafa áhrif á notendur MonoBook-skinnsins. */",
+	"monobook-view-history": "Breytingaskrá",
+	"monobook-action-undelete": "Endurvekja {{PLURAL:$1|$1 breytingu|$1 breytingar}}"
 }

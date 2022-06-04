@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Liuxinyu970226",
+			"Sunny00217"
+		]
+	},
+	"abusefilter-log-search-user": "用戶：",
+	"abusefilter-tools-reautoconfirm-user": "用戶：",
+	"abusefilter-edit-action-blockautopromote": "撤銷用戶自動確認狀態",
+	"abusefilter-edit-action-blocktalk": "阻止用戶和/或 IP 位址在封禁期間編輯自己的對話頁",
+	"abusefilter-history-user": "用戶",
+	"abusefilter-history-select-user": "用戶："
+}

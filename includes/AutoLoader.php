@@ -79,7 +79,7 @@ class AutoLoader {
 						'/' .
 						strtr( $relativeClass, '\\', '/' ) .
 						'.php';
-					if ( file_exists( $file ) ) {
+					if ( is_file( $file ) ) {
 						$filename = $file;
 						break;
 					}
@@ -98,8 +98,7 @@ class AutoLoader {
 		// Make an absolute path, this improves performance by avoiding some stat calls
 		// Optimisation: use string offset access instead of substr
 		if ( $filename[0] !== '/' && $filename[1] !== ':' ) {
-			global $IP;
-			$filename = "$IP/$filename";
+			$filename = __DIR__ . '/../' . $filename;
 		}
 
 		return $filename;
@@ -148,6 +147,7 @@ class AutoLoader {
 			'MediaWiki\\Config\\' => __DIR__ . '/config/',
 			'MediaWiki\\Content\\' => __DIR__ . '/content/',
 			'MediaWiki\\DB\\' => __DIR__ . '/db/',
+			'MediaWiki\\Deferred\\LinksUpdate\\' => __DIR__ . '/deferred/LinksUpdate/',
 			'MediaWiki\\Diff\\' => __DIR__ . '/diff/',
 			'MediaWiki\\Edit\\' => __DIR__ . '/edit/',
 			'MediaWiki\\EditPage\\' => __DIR__ . '/editpage/',

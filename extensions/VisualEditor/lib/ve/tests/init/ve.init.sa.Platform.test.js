@@ -10,11 +10,10 @@ QUnit.module( 've.init.sa.Platform', {
 		// by creating an sa.Platform
 		this.originalPlatform = ve.init.platform;
 		this.purgeKeys = function () {
-			var key,
-				i = localStorage.length;
+			var i = localStorage.length;
 			// Loop backwards since removal affects the key index
 			while ( i-- ) {
-				key = localStorage.key( i );
+				var key = localStorage.key( i );
 				if ( key.indexOf( 've-test-' ) === 0 ) {
 					localStorage.removeItem( key );
 				}
@@ -70,7 +69,7 @@ QUnit.test( 'messages', function ( assert ) {
 	var platform = new ve.init.sa.Platform();
 
 	return platform.getInitializedPromise().then( function () {
-		assert.ok(
+		assert.true(
 			/^<?platformtest-foo>?$/.test( platform.getMessage( 'platformtest-foo' ) ),
 			'return plain key as fallback, possibly wrapped in brackets'
 		);
@@ -92,7 +91,7 @@ QUnit.test( 'messages', function ( assert ) {
 			'return plain message with $# replacements'
 		);
 
-		assert.ok(
+		assert.true(
 			/^<?platformtest-quux>?$/.test( platform.getMessage( 'platformtest-quux' ) ),
 			'return plain key as fallback, possibly wrapped in brackets (after set up)'
 		);
@@ -103,7 +102,7 @@ QUnit.test( 'parsedMessage', function ( assert ) {
 	var platform = new ve.init.sa.Platform();
 
 	return platform.getInitializedPromise().then( function () {
-		assert.ok(
+		assert.true(
 			/^(&lt;)?platformtest-quux(&gt;)?$/.test( platform.getParsedMessage( 'platformtest-quux' ) ),
 			'any brackets in fallbacks are HTML-escaped'
 		);

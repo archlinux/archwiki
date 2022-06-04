@@ -195,6 +195,7 @@ trait ChildNode /* implements \Wikimedia\IDLeDOM\ChildNode */ {
 		}
 
 		$parent = $this->_parentNode;
+		'@phan-var ContainerNode $parent'; /** @var ContainerNode $parent */
 
 		if ( $parent->_childNodes !== null ) {
 			$parent->_childNodes->_splice( $this->_getSiblingIndex(), 1 );

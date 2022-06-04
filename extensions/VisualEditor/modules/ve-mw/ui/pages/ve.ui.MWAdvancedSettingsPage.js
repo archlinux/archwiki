@@ -152,15 +152,10 @@ ve.ui.MWAdvancedSettingsPage.prototype.onDisplayTitleInputChange = function () {
 /**
  * @inheritdoc
  */
-ve.ui.MWAdvancedSettingsPage.prototype.setOutlineItem = function () {
-	// Parent method
-	ve.ui.MWAdvancedSettingsPage.super.prototype.setOutlineItem.apply( this, arguments );
-
-	if ( this.outlineItem ) {
-		this.outlineItem
-			.setIcon( 'settings' )
-			.setLabel( ve.msg( 'visualeditor-dialog-meta-advancedsettings-section' ) );
-	}
+ve.ui.MWAdvancedSettingsPage.prototype.setupOutlineItem = function () {
+	this.outlineItem
+		.setIcon( 'settings' )
+		.setLabel( ve.msg( 'visualeditor-dialog-meta-advancedsettings-section' ) );
 };
 
 /* Indexing option methods */
@@ -195,40 +190,37 @@ ve.ui.MWAdvancedSettingsPage.prototype.onNewSectionEditLinkOptionChange = functi
  * Setup settings page.
  *
  * @param {ve.dm.MetaList} metaList Meta list
- * @param {Object} [config] Configuration options
+ * @param {Object} config
  * @param {Object} [config.data] Dialog setup data
- * @param {boolean} [config.isReadOnly] Dialog is in read-only mode
+ * @param {boolean} [config.isReadOnly=false] Dialog is in read-only mode
  * @return {jQuery.Promise}
  */
 ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( metaList, config ) {
-	var indexingField, indexingOption, indexingType,
-		newSectionEditField, newSectionEditLinkOption, newSectionEditLinkType,
-		displayTitleItem, displayTitle,
-		advancedSettingsPage = this;
+	var advancedSettingsPage = this;
 
 	this.metaList = metaList;
 
 	// Indexing items
-	indexingField = this.indexing.getField();
-	indexingOption = this.getMetaItem( 'mwIndex' );
-	indexingType = indexingOption && indexingOption.getAttribute( 'property' ) || 'default';
+	var indexingField = this.indexing.getField();
+	var indexingOption = this.getMetaItem( 'mwIndex' );
+	var indexingType = indexingOption && indexingOption.getAttribute( 'property' ) || 'default';
 	indexingField
 		.selectItemByData( indexingType )
 		.setDisabled( config.isReadOnly );
 	this.indexingOptionTouched = false;
 
 	// New section edit link items
-	newSectionEditField = this.newEditSectionLink.getField();
-	newSectionEditLinkOption = this.getMetaItem( 'mwNewSectionEdit' );
-	newSectionEditLinkType = newSectionEditLinkOption && newSectionEditLinkOption.getAttribute( 'property' ) || 'default';
+	var newSectionEditField = this.newEditSectionLink.getField();
+	var newSectionEditLinkOption = this.getMetaItem( 'mwNewSectionEdit' );
+	var newSectionEditLinkType = newSectionEditLinkOption && newSectionEditLinkOption.getAttribute( 'property' ) || 'default';
 	newSectionEditField
 		.selectItemByData( newSectionEditLinkType )
 		.setDisabled( config.isReadOnly );
 	this.newSectionEditLinkOptionTouched = false;
 
 	// Display title items
-	displayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
-	displayTitle = displayTitleItem && displayTitleItem.getAttribute( 'content' ) || '';
+	var displayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
+	var displayTitle = displayTitleItem && displayTitleItem.getAttribute( 'content' ) || '';
 	if ( !displayTitle ) {
 		displayTitle = mw.Title.newFromText( ve.init.target.getPageName() ).getPrefixedText();
 	}
@@ -254,10 +246,7 @@ ve.ui.MWAdvancedSettingsPage.prototype.setup = function ( metaList, config ) {
  * @param {Object} [data] Dialog tear down data
  */
 ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
-	var currentIndexingItem, newIndexingData, newIndexingItem,
-		currentNewSectionEditLinkItem, newNewSectionEditLinkData, newNewSectionEditLinkItem,
-		currentDisplayTitleItem, newDisplayTitle, newDisplayTitleItem,
-		advancedSettingsPage = this;
+	var advancedSettingsPage = this;
 
 	// Data initialization
 	data = data || {};
@@ -266,8 +255,8 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	}
 
 	// Indexing items
-	currentIndexingItem = this.getMetaItem( 'mwIndex' );
-	newIndexingData = this.indexing.getField().findSelectedItem();
+	var currentIndexingItem = this.getMetaItem( 'mwIndex' );
+	var newIndexingData = this.indexing.getField().findSelectedItem();
 
 	// Alter the indexing option flag iff it's been touched & is actually different
 	if ( this.indexingOptionTouched ) {
@@ -276,7 +265,7 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 				currentIndexingItem.remove();
 			}
 		} else {
-			newIndexingItem = { type: 'mwIndex', attributes: { property: newIndexingData.data } };
+			var newIndexingItem = { type: 'mwIndex', attributes: { property: newIndexingData.data } };
 
 			if ( !currentIndexingItem ) {
 				this.metaList.insertMeta( newIndexingItem );
@@ -289,8 +278,8 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	}
 
 	// New section edit link items
-	currentNewSectionEditLinkItem = this.getMetaItem( 'mwNewSectionEdit' );
-	newNewSectionEditLinkData = this.newEditSectionLink.getField().findSelectedItem();
+	var currentNewSectionEditLinkItem = this.getMetaItem( 'mwNewSectionEdit' );
+	var newNewSectionEditLinkData = this.newEditSectionLink.getField().findSelectedItem();
 
 	// Alter the new section edit option flag iff it's been touched & is actually different
 	if ( this.newSectionEditLinkOptionTouched ) {
@@ -299,7 +288,7 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 				currentNewSectionEditLinkItem.remove();
 			}
 		} else {
-			newNewSectionEditLinkItem = { type: 'mwNewSectionEdit', attributes: { property: newNewSectionEditLinkData.data } };
+			var newNewSectionEditLinkItem = { type: 'mwNewSectionEdit', attributes: { property: newNewSectionEditLinkData.data } };
 
 			if ( !currentNewSectionEditLinkItem ) {
 				this.metaList.insertMeta( newNewSectionEditLinkItem );
@@ -312,12 +301,12 @@ ve.ui.MWAdvancedSettingsPage.prototype.teardown = function ( data ) {
 	}
 
 	// Display title items
-	currentDisplayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
-	newDisplayTitle = this.displayTitleInput.getValue();
+	var currentDisplayTitleItem = this.getMetaItem( 'mwDisplayTitle' );
+	var newDisplayTitle = this.displayTitleInput.getValue();
 	if ( newDisplayTitle === mw.Title.newFromText( ve.init.target.getPageName() ).getPrefixedText() ) {
 		newDisplayTitle = '';
 	}
-	newDisplayTitleItem = { type: 'mwDisplayTitle', attributes: { content: newDisplayTitle } };
+	var newDisplayTitleItem = { type: 'mwDisplayTitle', attributes: { content: newDisplayTitle } };
 
 	// Alter the display title flag iff it's been touched & is actually different
 	if ( this.displayTitleTouched ) {

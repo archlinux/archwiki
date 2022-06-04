@@ -84,6 +84,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 				array_replace( self::DEFAULT_CONFIG, $configOverrides )
 			),
 			$parsoidSettings,
+			$this->createSimpleObjectFactory(),
 			$this->createMockOrOverride( Language::class, $serviceOverrides ),
 			new NullStatsdDataFactory(),
 			$this->createMockOrOverride( MagicWordFactory::class, $serviceOverrides ),
@@ -155,11 +156,6 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			'server',
 			'blabla'
 		];
-		yield 'getModulesLoadURI' => [
-			[ 'LoadScript' => 'blabla' ],
-			'getModulesLoadURI',
-			'blabla'
-		];
 		yield 'timezoneOffset' => [
 			[ 'LocalTZoffset' => 42 ],
 			'timezoneOffset',
@@ -193,7 +189,6 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MWParsoid\Config\SiteConfig::script
 	 * @covers \MWParsoid\Config\SiteConfig::scriptpath
 	 * @covers \MWParsoid\Config\SiteConfig::server
-	 * @covers \MWParsoid\Config\SiteConfig::getModulesLoadURI
 	 * @covers \MWParsoid\Config\SiteConfig::timezoneOffset
 	 * @covers \MWParsoid\Config\SiteConfig::getMaxTemplateDepth
 	 * @covers \MWParsoid\Config\SiteConfig::legalTitleChars
@@ -219,16 +214,10 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 			'nativeGalleryEnabled',
 			true
 		];
-		yield 'widthOption' => [
-			[ 'thumbsize' => 4242 ],
-			'widthOption',
-			4242
-		];
 	}
 
 	/**
 	 * @covers \MWParsoid\Config\SiteConfig::nativeGalleryEnabled()
-	 * @covers \MWParsoid\Config\SiteConfig::widthOption()
 	 * @dataProvider provideParsoidSettingPassed
 	 * @param array $settings
 	 * @param string $method
@@ -284,8 +273,9 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 		yield 'getVariableIDs' => [
 			MagicWordFactory::class, 'getVariableIDs', [], [ 'blabla' ], 'getVariableIDs', [ 'blabla' ]
 		];
-		yield 'getFunctionHooks' => [
-			Parser::class, 'getFunctionHooks', [], [ 'blabla' ], 'getFunctionHooks', [ 'blabla' ]
+		yield 'getFunctionSynonyms' => [
+			Parser::class, 'getFunctionSynonyms', [], [ 0 => [ 'blabla' ], 1 => [ 'blabla' ] ],
+			'getFunctionSynonyms', [ 0 => [ 'blabla' ], 1 => [ 'blabla' ] ]
 		];
 		yield 'getMagicWords' => [
 			Language::class, 'getMagicWords', [], [ 'blabla' ], 'getMagicWords', [ 'blabla' ]
@@ -308,7 +298,7 @@ class SiteConfigTest extends MediaWikiUnitTestCase {
 	 * @covers \MWParsoid\Config\SiteConfig::rtl
 	 * @covers \MWParsoid\Config\SiteConfig::widthOption
 	 * @covers \MWParsoid\Config\SiteConfig::getVariableIDs
-	 * @covers \MWParsoid\Config\SiteConfig::getFunctionHooks
+	 * @covers \MWParsoid\Config\SiteConfig::getFunctionSynonyms
 	 * @covers \MWParsoid\Config\SiteConfig::getMagicWords
 	 * @covers \MWParsoid\Config\SiteConfig::getNonNativeExtensionTags
 	 * @param string $serviceClass

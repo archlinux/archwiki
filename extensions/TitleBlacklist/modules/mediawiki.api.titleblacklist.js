@@ -5,7 +5,7 @@
 
 	$.extend( mw.Api.prototype, {
 		/**
-		 * Convinience method for `action=titleblacklist`.
+		 * Convenience method for `action=titleblacklist`.
 		 *
 		 * @param {mw.Title|string} title
 		 * @param {Function} [ok] Success callback (deprecated)

@@ -86,13 +86,11 @@ ve.ui.MWExtensionWindow.prototype.getInputPlaceholder = function () {
 ve.ui.MWExtensionWindow.prototype.getSetupProcess = function ( data, process ) {
 	data = data || {};
 	return process.next( function () {
-		var dir, mwData;
-
 		// Initialization
 		this.whitespace = [ '', '' ];
 
 		if ( this.selectedNode ) {
-			mwData = this.selectedNode.getAttribute( 'mw' );
+			var mwData = this.selectedNode.getAttribute( 'mw' );
 			// mwData.body can be null in <selfclosing/> extensions
 			this.input.setValueAndWhitespace( ( mwData.body && mwData.body.extsrc ) || '' );
 			this.originalMwData = mwData;
@@ -106,7 +104,7 @@ ve.ui.MWExtensionWindow.prototype.getSetupProcess = function ( data, process ) {
 
 		this.input.$input.attr( 'placeholder', this.getInputPlaceholder() );
 
-		dir = this.constructor.static.dir || data.dir;
+		var dir = this.constructor.static.dir || data.dir;
 		this.input.setDir( dir );
 		this.input.setReadOnly( this.isReadOnly() );
 
@@ -170,10 +168,9 @@ ve.ui.MWExtensionWindow.prototype.updateActions = function () {
  * @return {boolean} mwData would be modified
  */
 ve.ui.MWExtensionWindow.prototype.isModified = function () {
-	var mwDataCopy, modified;
-
+	var modified;
 	if ( this.originalMwData ) {
-		mwDataCopy = ve.copy( this.originalMwData );
+		var mwDataCopy = ve.copy( this.originalMwData );
 		this.updateMwData( mwDataCopy );
 		modified = !ve.compare( this.originalMwData, mwDataCopy );
 	} else {
@@ -209,10 +206,9 @@ ve.ui.MWExtensionWindow.prototype.getNewElement = function () {
  * Insert or update the node in the document model from the new values
  */
 ve.ui.MWExtensionWindow.prototype.insertOrUpdateNode = function () {
-	var mwData, element,
-		surfaceModel = this.getFragment().getSurface();
+	var surfaceModel = this.getFragment().getSurface();
 	if ( this.selectedNode ) {
-		mwData = ve.copy( this.selectedNode.getAttribute( 'mw' ) );
+		var mwData = ve.copy( this.selectedNode.getAttribute( 'mw' ) );
 		this.updateMwData( mwData );
 		surfaceModel.change(
 			ve.dm.TransactionBuilder.static.newFromAttributeChanges(
@@ -222,7 +218,7 @@ ve.ui.MWExtensionWindow.prototype.insertOrUpdateNode = function () {
 			)
 		);
 	} else {
-		element = this.getNewElement();
+		var element = this.getNewElement();
 		this.updateMwData( element.attributes.mw );
 		// Collapse returns a new fragment, so update this.fragment
 		this.fragment = this.getFragment().collapseToEnd();

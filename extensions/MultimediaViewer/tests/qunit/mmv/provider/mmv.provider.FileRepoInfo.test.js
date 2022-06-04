@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.provider.FileRepoInfo', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'FileRepoInfo constructor sanity check', function ( assert ) {
+	QUnit.test( 'FileRepoInfo constructor sense check', function ( assert ) {
 		var api = { get: function () {} },
 			fileRepoInfoProvider = new mw.mmv.provider.FileRepoInfo( api );
 

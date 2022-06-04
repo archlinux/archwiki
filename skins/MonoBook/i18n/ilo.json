@@ -12,5 +12,7 @@
 	"monobook-more-actions": "Adu pay",
 	"monobook-cactions-label": "Tigtignay ti panid",
 	"monobook-notifications-link": "Dagiti pakaammo ($1)",
-	"monobook-notifications-link-none": "Dagiti pakaammo"
+	"monobook-notifications-link-none": "Dagiti pakaammo",
+	"monobook-view-history": "Pakasaritaan",
+	"monobook-action-undelete": "Isubli ti pannakaikkat {{PLURAL:$1|ti maysa a naurnos|dagiti $1 a naurnos}}"
 }

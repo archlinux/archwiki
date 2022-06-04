@@ -4,7 +4,6 @@
  * That doesn't happen in this file but the linter still throws an error.
  * https://github.com/wikimedia/eslint-plugin-mediawiki/blob/master/docs/rules/class-doc.md
  */
-/* eslint-disable mediawiki/class-doc */
 
 /** @interface VectorResourceLoaderVirtualConfig */
 /** @interface MediaWikiPageReadyModule */
@@ -16,15 +15,15 @@ var /** @type {VectorResourceLoaderVirtualConfig} */
 	CAN_TEST_SEARCH = !!(
 		window.performance &&
 		/* eslint-disable compat/compat */
+		// @ts-ignore
 		performance.mark &&
+		// @ts-ignore
 		performance.measure &&
 		performance.getEntriesByName ),
 	/* eslint-enable compat/compat */
 	LOAD_START_MARK = 'mwVectorVueSearchLoadStart',
 	LOAD_END_MARK = 'mwVectorVueSearchLoadEnd',
 	LOAD_MEASURE = 'mwVectorVueSearchLoadStartToLoadEnd',
-	SEARCH_FORM_ID = 'simpleSearch',
-	SEARCH_INPUT_ID = 'searchInput',
 	SEARCH_LOADING_CLASS = 'search-form__loader';
 
 /**
@@ -34,18 +33,22 @@ var /** @type {VectorResourceLoaderVirtualConfig} */
  * After the search module is loaded, executes a function to remove
  * the loading indicator.
  *
- * @param {HTMLElement} element search input.
+ * @param {Element} element search input.
  * @param {string} moduleName resourceLoader module to load.
- * @param {function(): void} afterLoadFn function to execute after search module loads.
+ * @param {string|null} startMarker
+ * @param {null|function(): void} afterLoadFn function to execute after search module loads.
  */
-function loadSearchModule( element, moduleName, afterLoadFn ) {
-	var SHOULD_TEST_SEARCH = CAN_TEST_SEARCH && moduleName === 'skins.vector.search';
+function loadSearchModule( element, moduleName, startMarker, afterLoadFn ) {
+	var SHOULD_TEST_SEARCH = CAN_TEST_SEARCH &&
+		moduleName === 'skins.vector.search';
 
 	function requestSearchModule() {
-		if ( SHOULD_TEST_SEARCH ) {
-			performance.mark( LOAD_START_MARK );
+		if ( SHOULD_TEST_SEARCH && startMarker !== null && afterLoadFn !== null ) {
+			performance.mark( startMarker );
+			mw.loader.using( moduleName, afterLoadFn );
+		} else {
+			mw.loader.load( moduleName );
 		}
-		mw.loader.using( moduleName, afterLoadFn );
 		element.removeEventListener( 'focus', requestSearchModule );
 	}
 
@@ -72,8 +75,8 @@ function renderSearchLoadingIndicator( event ) {
 
 	if (
 		!( event.currentTarget instanceof HTMLElement ) ||
-		!( event.target instanceof HTMLInputElement ) ||
-		!( input.id === SEARCH_INPUT_ID ) ) {
+		!( event.target instanceof HTMLInputElement )
+	) {
 		return;
 	}
 
@@ -96,7 +99,7 @@ function renderSearchLoadingIndicator( event ) {
  * Attaches or detaches the event listeners responsible for activating
  * the loading indicator.
  *
- * @param {HTMLElement} element
+ * @param {Element} element
  * @param {boolean} attach
  * @param {function(Event): void} eventCallback
  */
@@ -116,11 +119,15 @@ function setLoadingIndicatorListeners( element, attach, eventCallback ) {
 
 /**
  * Marks when the lazy load has completed.
+ *
+ * @param {string} startMarker
+ * @param {string} endMarker
+ * @param {string} measureMarker
  */
-function markLoadEnd() {
-	if ( performance.getEntriesByName( LOAD_START_MARK ).length ) {
-		performance.mark( LOAD_END_MARK );
-		performance.measure( LOAD_MEASURE, LOAD_START_MARK, LOAD_END_MARK );
+function markLoadEnd( startMarker, endMarker, measureMarker ) {
+	if ( performance.getEntriesByName( startMarker ).length ) {
+		performance.mark( endMarker );
+		performance.measure( measureMarker, startMarker, endMarker );
 	}
 }
 
@@ -131,51 +138,61 @@ function markLoadEnd() {
  * @param {Document} document
  */
 function initSearchLoader( document ) {
-	var searchForm = document.getElementById( SEARCH_FORM_ID ),
-		searchInput = document.getElementById( SEARCH_INPUT_ID ),
-		shouldUseCoreSearch;
+	var searchBoxes = document.querySelectorAll( '.vector-search-box' ),
+		isWikidata = mw.config.get( 'wgWikiID' ) === 'wikidatawiki';
 
 	// Allow developers to defined $wgVectorSearchHost in LocalSettings to target different APIs
 	if ( config.wgVectorSearchHost ) {
 		mw.config.set( 'wgVectorSearchHost', config.wgVectorSearchHost );
 	}
 
-	if ( !searchForm || !searchInput ) {
+	if ( !searchBoxes.length ) {
 		return;
 	}
 
-	shouldUseCoreSearch = !document.body.classList.contains( 'skin-vector-search-vue' );
-
 	/**
-	 * 1. If $wgVectorUseWvuiSearch is false,
-	 *    or we are in a browser that doesn't support fetch
-	 *    load the legacy searchSuggest module. The check for window.fetch
-	 *    can be removed when IE11 support is finally officially dropped.
-	 * 2. If we're using a different search module, enable the loading indicator
-	 *    before the search module loads.
+	 * 1. If we are in a browser that doesn't support ES6 fall back to non-JS version.
+	 * 2. Disable on Wikidata per T281318 until the REST API is ready.
 	 **/
-	if ( shouldUseCoreSearch || !window.fetch ) {
-		loadSearchModule( searchInput, 'mediawiki.searchSuggest', function () {} );
-	} else {
-		// Remove tooltips while Vue search is still loading
-		searchInput.setAttribute( 'autocomplete', 'off' );
-		searchInput.removeAttribute( 'title' );
-		setLoadingIndicatorListeners( searchForm, true, renderSearchLoadingIndicator );
-		loadSearchModule(
-			searchInput,
-			'skins.vector.search',
-			function () {
-				markLoadEnd();
+	if ( isWikidata || mw.loader.getState( 'skins.vector.search' ) === null ) {
+		document.body.classList.remove(
+			'skin-vector-search-vue'
+		);
+		return;
+	}
 
+	Array.prototype.forEach.call( searchBoxes, function ( searchBox ) {
+		var searchInner = searchBox.querySelector( 'form > div' ),
+			searchInput = searchBox.querySelector( 'input[name="search"]' ),
+			clearLoadingIndicators = function () {
 				setLoadingIndicatorListeners(
-					/** @type {HTMLElement} */ ( searchForm ),
+					// @ts-ignore
+					searchInner,
 					false,
 					renderSearchLoadingIndicator
 				);
-			}
-		);
+			},
+			isPrimarySearch = searchInput && searchInput.getAttribute( 'id' ) === 'searchInput';
 
-	}
+		if ( !searchInput || !searchInner ) {
+			return;
+		}
+		// Remove tooltips while Vue search is still loading
+		searchInput.setAttribute( 'autocomplete', 'off' );
+		searchInput.removeAttribute( 'title' );
+		setLoadingIndicatorListeners( searchInner, true, renderSearchLoadingIndicator );
+		loadSearchModule(
+			searchInput,
+			'skins.vector.search',
+			isPrimarySearch ? LOAD_START_MARK : null,
+			// Make sure we clearLoadingIndicators so that event listeners are removed.
+			// Note, loading Vue.js will remove the element from the DOM.
+			isPrimarySearch ? function () {
+				markLoadEnd( LOAD_START_MARK, LOAD_END_MARK, LOAD_MEASURE );
+				clearLoadingIndicators();
+			} : clearLoadingIndicators
+		);
+	} );
 }
 
 module.exports = {

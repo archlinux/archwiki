@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Daniel Kinzler, brightbyte.de",
 			"FriedhelmW",
 			"Geitost",
@@ -11,8 +12,7 @@
 			"The Evil IP address",
 			"Tiin",
 			"Umherirrender",
-			"✓",
-			"Brettchenweber"
+			"✓"
 		]
 	},
 	"gadgets-desc": "Ermöglicht es Benutzern, in ihren [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] vordefinierte [[Special:Gadgets|CSS- und JavaScript-Helferlein]] zu aktivieren",
@@ -29,11 +29,15 @@
 	"gadgetusage-default": "Standard",
 	"gadgets-title": "Helferlein",
 	"gadgets-pagetext": "Liste besonderer, in [[MediaWiki:Gadgets-definition]] festgelegter Helferlein, die für alle Benutzer in den [[Special:Preferences#mw-prefsection-gadgets|persönlichen Einstellungen]] verfügbar sind.\nDiese Übersicht bietet direkten Zugang zu den MediaWiki-Systemnachrichten, welche die Beschreibung sowie den Programmcode jedes Helferleins enthalten.",
+	"gadgets-editdescription": "Beschreibung bearbeiten",
+	"gadgets-viewdescription": "Beschreibung anzeigen",
 	"gadgets-uses": "Benutzt",
 	"gadgets-required-rights": "Erfordert die {{PLURAL:$2|folgende Berechtigung|folgenden Berechtigungen}}:\n\n$1",
 	"gadgets-required-skins": "Verfügbar bei {{PLURAL:$2|der folgenden Benutzeroberfläche|den folgenden Benutzeroberflächen}}: $1.",
+	"gadgets-required-actions": "Gilt für die {{PLURAL:$2|Seitenaktion „$1“|folgenden Seitenaktionen: $1}}.",
 	"gadgets-default": "Für alle standardmäßig aktiviert.",
 	"gadgets-legacy": "Das Helferlein ist nicht geladen. Bitte stelle auf den ResourceLoader um. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Weitere Informationen])",
+	"gadgets-packaged": "Dieses Helferlein ist [https://www.mediawiki.org/wiki/ResourceLoader/Package_files gepackt], der Einstiegpunkt ist $1.",
 	"gadgets-export": "Exportieren",
 	"gadgets-export-title": "Export der Helferlein",
 	"gadgets-not-found": "Helferlein „$1“ wurde nicht gefunden.",
@@ -45,5 +49,6 @@
 	"action-gadgets-edit": "diese JavaScript- oder CSS-Seite des Helferleins zu bearbeiten",
 	"right-gadgets-definition-edit": "Definitionen von Helferlein bearbeiten",
 	"action-gadgets-definition-edit": "diese Definition des Helferleins zu bearbeiten",
-	"gadgets-wrong-contentmodel": "Seiten im {{ns:2302}}-Namensraum müssen das Inhaltsmodell GadgetDefinition haben."
+	"gadgets-wrong-contentmodel": "Seiten im {{ns:2302}}-Namensraum müssen das Inhaltsmodell GadgetDefinition haben.",
+	"gadgets-supports-urlload": "Dieses Helferlein unterstützt das Laden über eine URL mit dem Query-Parameter <code>?withgadget</code>"
 }

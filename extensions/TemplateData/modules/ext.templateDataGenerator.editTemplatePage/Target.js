@@ -15,8 +15,7 @@ var Dialog = require( './Dialog.js' ),
  * @param {Object} config
  */
 function Target( $textarea, config ) {
-	var $helpLink, relatedPage,
-		target = this;
+	var target = this;
 
 	// Parent constructor
 	Target.super.call( this, config );
@@ -40,7 +39,7 @@ function Target( $textarea, config ) {
 	} )
 		.toggle( false );
 
-	$helpLink = $( '<a>' )
+	var $helpLink = $( '<a>' )
 		.attr( {
 			href: mw.msg( 'templatedata-helplink-target' ),
 			target: '_blank'
@@ -64,25 +63,24 @@ function Target( $textarea, config ) {
 	} );
 
 	// Check if there's already a templatedata in a related page
-	relatedPage = this.isDocPage ? this.parentPage : this.pageName + '/' + this.docSubpage;
+	var relatedPage = this.isDocPage ? this.parentPage : this.pageName + '/' + this.docSubpage;
 	this.sourceHandler.getApi( relatedPage )
 		.then( function ( result ) {
-			var msg, content,
-				response = result.query.pages[ result.query.pageids[ 0 ] ];
+			var response = result.query.pages[ result.query.pageids[ 0 ] ];
 			// HACK: When checking whether a related page (parent for /doc page or
 			// vice versa) already has a templatedata string, we shouldn't
 			// ask for the 'templatedata' action but rather the actual content
 			// of the related page, otherwise we get embedded templatedata and
 			// wrong information is presented.
 			if ( response.missing === undefined ) {
-				content = response.revisions[ 0 ][ '*' ];
+				var content = response.revisions[ 0 ][ '*' ];
 				// There's a templatedata string
 				if ( content.match( /<templatedata>/i ) ) {
 					// HACK: Setting a link in the messages doesn't work. The bug report offers
 					// a somewhat hacky work around that includes setting a separate message
 					// to be parsed.
 					// https://phabricator.wikimedia.org/T49395#490610
-					msg = mw.message( 'templatedata-exists-on-related-page', relatedPage ).plain();
+					var msg = mw.message( 'templatedata-exists-on-related-page', relatedPage ).plain();
 					mw.messages.set( { 'templatedata-string-exists-hack-message': msg } );
 					msg = new OO.ui.HtmlSnippet(
 						mw.message( 'templatedata-string-exists-hack-message' ).parse()
@@ -187,10 +185,9 @@ Target.prototype.onEditOpenDialogButton = function () {
 						}
 					]
 				} ).closed.then( function ( data ) {
-					var model;
 					if ( data && data.action === 'accept' ) {
 						// Open the dialog with an empty model
-						model = Model.static.newFromObject(
+						var model = Model.static.newFromObject(
 							null,
 							target.sourceHandler.getTemplateSourceCodeParams()
 						);
@@ -209,10 +206,10 @@ Target.prototype.onEditOpenDialogButton = function () {
  * @param {Object} newTemplateData New templatedata
  */
 Target.prototype.replaceTemplateData = function ( newTemplateData ) {
-	var matches, templateDataOutput,
-		templateDataJSON = JSON.stringify( newTemplateData, null, '\t' ),
+	var templateDataJSON = JSON.stringify( newTemplateData, null, '\t' ),
 		templatedataPattern = /(<templatedata>\s*)([\s\S]*?)\s*<\/templatedata>/i;
 
+	var matches, templateDataOutput;
 	if ( ( matches = this.originalWikitext.match( templatedataPattern ) ) ) {
 		// Move cursor to select withing existing <templatedata> and whitespace
 		this.$textarea.textSelection( 'setSelection', {
@@ -235,7 +232,7 @@ Target.prototype.replaceTemplateData = function ( newTemplateData ) {
 			}
 		}
 
-		if ( this.originalWikitext.substr( -1 ) !== '\n' ) {
+		if ( this.originalWikitext.slice( -1 ) !== '\n' ) {
 			templateDataOutput = '\n' + templateDataOutput;
 		}
 	}

@@ -15,8 +15,7 @@ ve.ui.sequenceRegistry.register(
 	new ve.ui.Sequence( 'wikitextHeading', 'heading2', [ { type: 'paragraph' }, '=', '=' ], 2 )
 );
 ( function () {
-	var level;
-	for ( level = 3; level <= 6; level++ ) {
+	for ( var level = 3; level <= 6; level++ ) {
 		ve.ui.sequenceRegistry.register(
 			new ve.ui.Sequence(
 				'wikitextHeadingLevel' + level, 'heading' + level,

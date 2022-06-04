@@ -60,6 +60,6 @@
 	"apihelp-visualeditoredit-param-starttimestamp": "При сохранении, установите время изменения. Это используется для обнаружения конфликтов редактирования.",
 	"apihelp-visualeditoredit-param-summary": "Редактировать описание изменений.",
 	"apihelp-visualeditoredit-param-tags": "Изменить метки, чтобы применить к редактированию.",
-	"apihelp-visualeditoredit-param-wikitext": "Викитекст для действий.",
-	"apihelp-visualeditoredit-summary": "Сохранить HTML5-страницу в MediaWiki (сконвертированную в викитекст с помощью Parsoid)."
+	"apihelp-visualeditoredit-param-wikitext": "Вики-текст, с которым нужно взаимодействовать.",
+	"apihelp-visualeditoredit-summary": "Сохранить в MediaWiki страницу в формате HTML5 (сконвертированную в вики-текст с помощью Parsoid)."
 }

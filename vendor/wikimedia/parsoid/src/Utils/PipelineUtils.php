@@ -3,10 +3,8 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
-use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\DOM\Attr;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -14,6 +12,8 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\NodeList;
 use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
@@ -55,7 +55,7 @@ class PipelineUtils {
 			new KV( 'contextTok', $token, $token->dataAttribs->tsr->expandTsrV() ),
 			new KV( 'content', $content, $srcOffsets->expandTsrV() ),
 			new KV( 'inlineContext', ( $opts['inlineContext'] ?? false ) ? "1" : "0" ),
-			new KV( 'inPHPBLock', ( $opts['inPHPBLock'] ?? false ) ? "1" : "0" ),
+			new KV( 'inPHPBlock', ( $opts['inPHPBlock'] ?? false ) ? "1" : "0" ),
 		] );
 	}
 
@@ -76,8 +76,8 @@ class PipelineUtils {
 	 *    - string pipelineType
 	 *    - array  pipelineOpts
 	 *    - array  tplArgs - if set, defines parameters for the child frame
-	 *    - string tplArgs.name
-	 *    - array  tplArgs.attribs
+	 *      - string tplArgs['name']
+	 *      - KV[]   tplArgs['attribs']
 	 *    - string srcText - if set, defines the source text for the expansion
 	 *    - SourceRange  srcOffsets - if set, defines the range within the
 	 *          source text that $content corresponds to
@@ -191,14 +191,14 @@ class PipelineUtils {
 	 * are stored outside the DOM.
 	 *
 	 * @param Element $node
-	 * @param Attr[] $attrs
+	 * @param string[] $attrs
 	 * @return array
 	 */
 	private static function domAttrsToTagAttrs( Element $node, array $attrs ): array {
 		$out = [];
-		foreach ( $attrs as $a ) {
-			if ( $a->name !== DOMDataUtils::DATA_OBJECT_ATTR_NAME ) {
-				$out[] = new KV( $a->name, $a->value );
+		foreach ( $attrs as $name => $value ) {
+			if ( $name !== DOMDataUtils::DATA_OBJECT_ATTR_NAME ) {
+				$out[] = new KV( $name, $value );
 			}
 		}
 		if ( DOMDataUtils::validDataMw( $node ) ) {
@@ -217,7 +217,7 @@ class PipelineUtils {
 	private static function convertDOMtoTokens( Node $node, array $tokBuf ): array {
 		if ( $node instanceof Element ) {
 			$nodeName = DOMCompat::nodeName( $node );
-			$attrInfo = self::domAttrsToTagAttrs( $node, DOMCompat::attributes( $node ) );
+			$attrInfo = self::domAttrsToTagAttrs( $node, DOMUtils::attributes( $node ) );
 
 			if ( Utils::isVoidElement( $nodeName ) ) {
 				$tokBuf[] = new SelfclosingTagTk( $nodeName, $attrInfo['attrs'], $attrInfo['dataAttrs'] );
@@ -229,7 +229,7 @@ class PipelineUtils {
 				$endTag = new EndTagTk( $nodeName );
 				// Keep stx parity
 				if ( WTUtils::isLiteralHTMLNode( $node ) ) {
-					$endTag->dataAttribs = PHPUtils::arrayToObject( [ 'stx' => 'html' ] );
+					$endTag->dataAttribs->stx = 'html';
 				}
 				$tokBuf[] = $endTag;
 			}
@@ -333,7 +333,7 @@ class PipelineUtils {
 			// in a fosterable position after treebuilding is done, which isn't
 			// roundtrippable.
 			$wrapperName = 'span';
-		} elseif ( !DOMUtils::isElt( $node ) ) {
+		} elseif ( !( $node instanceof Element ) ) {
 			$wrapperName = 'span';
 		} else {
 			$wrapperName = DOMCompat::nodeName( $node );
@@ -346,24 +346,23 @@ class PipelineUtils {
 				!$node->hasAttribute( 'data-parsoid' ),
 				"Expected node to have its data attributes loaded" );
 
-			$nodeData = Utils::clone( DOMDataUtils::getNodeData( $node ) );
+			$nodeData = DOMDataUtils::getNodeData( $node )->clone();
 
 			if ( $wrapperName !== DOMCompat::nodeName( $node ) ) {
 				// Create a copy of the node without children
 				$workNode = $node->ownerDocument->createElement( $wrapperName );
 
 				// Copy over attributes
-				foreach ( DOMCompat::attributes( $node ) as $attribute ) {
-					'@phan-var Attr $attribute'; // @var Attr $attribute
+				foreach ( DOMUtils::attributes( $node ) as $name => $value ) {
 					// "typeof" is ignored since it'll be removed below.
-					if ( $attribute->name !== 'typeof' ) {
-						$workNode->setAttribute( $attribute->name, $attribute->value );
+					if ( $name !== 'typeof' ) {
+						$workNode->setAttribute( $name, $value );
 					}
 				}
 
 				// We are applying a different wrapper.
 				// So, node's data-parsoid isn't applicable.
-				$nodeData->parsoid = new stdClass;
+				$nodeData->parsoid = new DataParsoid;
 			} else {
 				// Shallow clone since we don't want to convert the whole tree to tokens.
 				$workNode = $node->cloneNode( false );
@@ -446,18 +445,14 @@ class PipelineUtils {
 
 		// Pass through setDSR flag
 		if ( !empty( $opts['setDSR'] ) ) {
-			if ( !$firstWrapperToken->dataAttribs->tmp ) {
-				$firstWrapperToken->dataAttribs->tmp = new stdClass;
-			}
-			$firstWrapperToken->dataAttribs->tmp->setDSR = $opts['setDSR'];
+			$firstWrapperToken->dataAttribs->setTempFlag(
+				TempData::SET_DSR, $opts['setDSR'] );
 		}
 
 		// Pass through fromCache flag
 		if ( !empty( $opts['fromCache'] ) ) {
-			if ( !$firstWrapperToken->dataAttribs->tmp ) {
-				$firstWrapperToken->dataAttribs->tmp = new stdClass;
-			}
-			$firstWrapperToken->dataAttribs->tmp->fromCache = $opts['fromCache'];
+			$firstWrapperToken->dataAttribs->setTempFlag(
+				TempData::FROM_CACHE, $opts['fromCache'] );
 		}
 
 		// Transfer the tsr.
@@ -493,8 +488,9 @@ class PipelineUtils {
 		foreach ( $textCommentAccum as $n ) {
 			$span->appendChild( $n );
 		}
-		DOMDataUtils::setDataParsoid( $span,
-			(object)[ 'tmp' => PHPUtils::arrayToObject( [ 'wrapper' => true ] ) ] );
+		$dp = new DataParsoid;
+		$dp->setTempFlag( TempData::WRAPPER );
+		DOMDataUtils::setDataParsoid( $span, $dp );
 		$textCommentAccum = [];
 	}
 
@@ -527,7 +523,7 @@ class PipelineUtils {
 				}
 				continue;
 			}
-			if ( DOMUtils::isText( $node ) || DOMUtils::isComment( $node ) ) {
+			if ( $node instanceof Text || $node instanceof Comment ) {
 				$textCommentAccum[] = $node;
 			} elseif ( count( $textCommentAccum ) ) {
 				self::wrapAccum( $doc, $textCommentAccum );

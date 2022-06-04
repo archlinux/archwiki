@@ -18,7 +18,7 @@
 							var $sections = context.modules.toolbar.$toolbar.find( 'div.sections' );
 							var $tabs = context.modules.toolbar.$toolbar.find( 'div.tabs' );
 							for ( var section in data[ type ] ) {
-								if ( section === 'main' ) {
+								if ( section === 'main' || section === 'secondary' ) {
 									// Section
 									context.modules.toolbar.$toolbar.prepend(
 										toolbarModule.fn.buildSection(
@@ -365,7 +365,7 @@
 						}
 						return $button;
 					case 'select':
-						var menuId = 'menu-' + ( new Date() ).getTime();
+						var menuId = 'menu-' + Date.now();
 						var $select = $( '<div>' )
 							.attr( { rel: id, class: 'tool tool-select' } );
 						var $options = $( '<div>' ).addClass( 'options' );
@@ -428,6 +428,18 @@
 						);
 						$select.append( $( '<div>' ).addClass( 'menu' ).append( $options ) );
 						return $select;
+					case 'element':
+						// A raw 'element' type can be {htmlString|Element|Text|Array|jQuery|OO.ui.HTMLSnippet|function}.
+						var $element = $( '<div>' )
+							.attr( { rel: id, class: 'tool tool-element' } );
+						if ( tool.element instanceof OO.ui.HtmlSnippet ) {
+							$element.append( tool.element.toString() );
+						} else if ( typeof tool.element === 'function' ) {
+							$element.append( tool.element( context ) );
+						} else {
+							$element.append( tool.element );
+						}
+						return $element;
 					default:
 						return null;
 				}
@@ -581,11 +593,18 @@
 				}
 				if ( character && 'action' in character && 'label' in character ) {
 					actions[ character.label ] = character.action;
-					if ( character.titleMsg !== undefined ) {
+					if ( character.titleMsg !== undefined || character.title !== undefined ) {
+						var title;
+						if ( character.titleMsg !== undefined ) {
+							// eslint-disable-next-line mediawiki/msg-doc
+							title = mw.msg( character.titleMsg );
+						} else {
+							title = character.title;
+						}
+
 						return mw.html.element(
 							'span',
-							// eslint-disable-next-line mediawiki/msg-doc
-							{ rel: character.label, title: mw.msg( character.titleMsg ) },
+							{ rel: character.label, title: title },
 							character.label
 						);
 					} else {
@@ -685,7 +704,7 @@
 				toolbarModule.fn.reallyBuildSection( context, id, section, $section, section.deferLoad );
 
 				// Show or hide section
-				if ( id !== 'main' ) {
+				if ( id !== 'main' && id !== 'secondary' ) {
 					$section.attr( 'aria-expanded', show ? 'true' : 'false' );
 
 					if ( show ) {
@@ -767,7 +786,7 @@
 					$sections = $( '<div>' ).addClass( 'sections' ).appendTo( context.modules.toolbar.$toolbar );
 				context.modules.toolbar.$toolbar.append( $( '<div>' ).css( 'clear', 'both' ) );
 				for ( var section in config ) {
-					if ( section === 'main' ) {
+					if ( section === 'main' || section === 'secondary' ) {
 						context.modules.toolbar.$toolbar.prepend(
 							toolbarModule.fn.buildSection( context, section, config[ section ] )
 						);

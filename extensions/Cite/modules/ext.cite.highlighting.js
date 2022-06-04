@@ -38,8 +38,7 @@
 	 * @return {jQuery}
 	 */
 	function makeUpArrowLink( $backlinkWrapper ) {
-		var upArrow,
-			textNode = $backlinkWrapper[ 0 ].firstChild,
+		var textNode = $backlinkWrapper[ 0 ].firstChild,
 			accessibilityLabel = mw.msg( 'cite_references_link_accessibility_back_label' ),
 			$upArrowLink = $( '<a>' )
 				.addClass( 'mw-cite-up-arrow-backlink' )
@@ -59,7 +58,7 @@
 			return $upArrowLink;
 		}
 
-		upArrow = textNode.data.trim();
+		var upArrow = textNode.data.trim();
 		// The text node typically contains "↑ ", and we need to keep the space.
 		textNode.data = textNode.data.replace( upArrow, '' );
 
@@ -94,8 +93,7 @@
 	mw.hook( 'wikipage.content' ).add( function ( $content ) {
 		// We are going to use the ID in the code below, so better be sure one is there.
 		$content.find( '.reference[id] > a' ).on( 'click', function () {
-			var $backlink,
-				id = $( this ).parent().attr( 'id' );
+			var id = $( this ).parent().attr( 'id' );
 
 			$content.find( '.mw-cite-targeted-backlink' ).removeClass( 'mw-cite-targeted-backlink' );
 
@@ -105,7 +103,7 @@
 			}
 
 			// The :not() skips the duplicate link created below. Relevant when double clicking.
-			$backlink = $content.find( '.references a[href="#' + $.escapeSelector( id ) + '"]:not(.mw-cite-up-arrow-backlink)' )
+			var $backlink = $content.find( '.references a[href="#' + $.escapeSelector( id ) + '"]:not(.mw-cite-up-arrow-backlink)' )
 				.first()
 				.addClass( 'mw-cite-targeted-backlink' );
 

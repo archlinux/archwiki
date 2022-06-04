@@ -59,15 +59,9 @@
 		form.toggle( false );
 
 		modulePromise.done( function () {
-			var dummySurface, surfaceModel,
-				isNewAuthor = !ve.init.platform.sessionStorage.get( 've-collab-author' ),
-				username = mw.user.getName(),
-				progressDeferred = ve.createDeferred();
-
 			target = ve.init.mw.targetFactory.create( 'collab', title, conf.rebaserUrl, { importTitle: importTitle } );
 			// If the target emits a 'close' event (via the toolbar back button on mobile) then go to the landing page.
 			target.once( 'close', function () {
-				// eslint-disable-next-line no-use-before-define
 				showForm( true );
 			} );
 
@@ -79,11 +73,12 @@
 			$( '#firstHeading' ).addClass( 've-init-mw-desktopArticleTarget-uneditableContent' );
 
 			// Add a dummy surface while the doc is loading
-			dummySurface = target.addSurface( ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( '' ) ) );
+			var dummySurface = target.addSurface( ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( '' ) ) );
 			dummySurface.setReadOnly( true );
 
 			// TODO: Create the correct model surface type (ve.ui.Surface#createModel)
-			surfaceModel = new ve.dm.Surface( ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( '' ) ) );
+			var surfaceModel = new ve.dm.Surface( ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( '' ) ) );
+			var username = mw.user.getName();
 			surfaceModel.createSynchronizer(
 				mw.config.get( 'wgWikiID' ) + '/' + title.toString(),
 				{
@@ -95,6 +90,7 @@
 				}
 			);
 
+			var progressDeferred = ve.createDeferred();
 			dummySurface.createProgress( progressDeferred.promise(), ve.msg( 'visualeditor-rebase-client-connecting' ), true );
 
 			surfaceModel.synchronizer.once( 'initDoc', function ( error ) {
@@ -108,20 +104,19 @@
 					// Don't add the surface until the history has been applied
 					target.addSurface( surfaceModel );
 					if ( error ) {
+						var $errorMsg = ve.htmlMsg( 'visualeditor-rebase-corrupted-document-error', $( '<pre>' ).text( error.stack ) );
 						OO.ui.alert(
-							$( '<p>' ).append(
-								ve.htmlMsg( 'visualeditor-rebase-corrupted-document-error', $( '<pre>' ).text( error.stack ) )
-							),
+							$( '<p>' ).append( $errorMsg ),
 							{ title: ve.msg( 'visualeditor-rebase-corrupted-document-title' ), size: 'large' }
 						).then( function () {
-							// eslint-disable-next-line no-use-before-define
 							showForm( true );
 						} );
 						return;
 					}
 					target.once( 'surfaceReady', function () {
 						initPromise.then( function () {
-							surfaceModel.selectFirstContentOffset();
+							target.getSurface().getView().selectFirstSelectableContentOffset();
+							var isNewAuthor = !ve.init.platform.sessionStorage.get( 've-collab-author' );
 							// For new anon users, open the author list so they can set their name
 							if ( isNewAuthor && !username ) {
 								// Something (an animation?) steals focus during load, so wait a bit
@@ -135,13 +130,12 @@
 
 					if ( target.importTitle && !surfaceModel.getDocument().getCompleteHistoryLength() ) {
 						initPromise = mw.libs.ve.targetLoader.requestParsoidData( target.importTitle.toString(), { targetName: 'collabpad' } ).then( function ( response ) {
-							var doc, dmDoc, fragment,
-								data = response.visualeditor;
+							var data = response.visualeditor;
 
 							if ( data && data.content ) {
-								doc = target.constructor.static.parseDocument( data.content );
-								dmDoc = target.constructor.static.createModelFromDom( doc );
-								fragment = surfaceModel.getLinearFragment( new ve.Range( 0, 2 ) );
+								var doc = target.constructor.static.parseDocument( data.content );
+								var dmDoc = target.constructor.static.createModelFromDom( doc );
+								var fragment = surfaceModel.getLinearFragment( new ve.Range( 0, 2 ) );
 								fragment.insertDocument( dmDoc );
 
 								target.etag = data.etag;
@@ -205,7 +199,6 @@
 			progressBar.toggle( false );
 		} ).fail( function ( err ) {
 			mw.log.error( err );
-			// eslint-disable-next-line no-use-before-define
 			showForm( true );
 		} );
 	}

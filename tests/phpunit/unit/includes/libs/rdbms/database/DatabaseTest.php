@@ -11,7 +11,7 @@ use Wikimedia\Rdbms\DBUnexpectedError;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 use Wikimedia\Rdbms\LBFactorySingle;
-use Wikimedia\Rdbms\TransactionProfiler;
+use Wikimedia\Rdbms\TransactionManager;
 use Wikimedia\RequestTimeout\CriticalSectionScope;
 use Wikimedia\TestingAccessWrapper;
 
@@ -240,7 +240,7 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 		// Ask for the connection so that LB sets internal state
 		// about this connection being the primary connection
 		$lb = $lbFactory->getMainLB();
-		$conn = $lb->openConnection( $lb->getWriterIndex() );
+		$conn = $lb->getConnection( $lb->getWriterIndex() );
 		$this->assertSame( $db, $conn, 'Same DB instance' );
 		$this->assertTrue( $db->getFlag( DBO_TRX ), 'DBO_TRX is set' );
 
@@ -334,7 +334,7 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 		// Ask for the connection so that LB sets internal state
 		// about this connection being the primary connection
 		$lb = $lbFactory->getMainLB();
-		$conn = $lb->openConnection( $lb->getWriterIndex() );
+		$conn = $lb->getConnection( $lb->getWriterIndex() );
 		$this->assertSame( $db, $conn, 'Same DB instance' );
 
 		$this->assertFalse( $lb->hasPrimaryChanges() );
@@ -444,12 +444,10 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 		static $abstractMethods = [
 			'fetchAffectedRowCount',
 			'closeConnection',
-			'dataSeek',
 			'doQuery',
 			'fetchObject',
 			'fetchRow',
 			'fieldInfo',
-			'fieldName',
 			'getSoftwareLink',
 			'getServerVersion',
 			'getType',
@@ -457,7 +455,6 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 			'insertId',
 			'lastError',
 			'lastErrno',
-			'numFields',
 			'numRows',
 			'open',
 			'strencode',
@@ -472,7 +469,6 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 			) ) ) )
 			->getMock();
 		$wdb = TestingAccessWrapper::newFromObject( $db );
-		$wdb->trxProfiler = new TransactionProfiler();
 		$wdb->connLogger = new \Psr\Log\NullLogger();
 		$wdb->queryLogger = new \Psr\Log\NullLogger();
 		$wdb->replLogger = new \Psr\Log\NullLogger();
@@ -483,6 +479,7 @@ class DatabaseTest extends PHPUnit\Framework\TestCase {
 		$wdb->currentDomain = DatabaseDomain::newUnspecified();
 
 		$db->method( 'getServer' )->willReturn( '*dummy*' );
+		$db->setTransactionManager( new TransactionManager() );
 
 		return $db;
 	}

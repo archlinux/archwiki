@@ -14,7 +14,13 @@ final class Constants {
 	 * This is tightly coupled to the ConfigRegistry field in skin.json.
 	 * @var string
 	 */
-	public const SKIN_NAME = 'vector';
+	public const SKIN_NAME_MODERN = 'vector-2022';
+
+	/**
+	 * This is tightly coupled to the ConfigRegistry field in skin.json.
+	 * @var string
+	 */
+	public const SKIN_NAME_LEGACY = 'vector';
 
 	// These are tightly coupled to PREF_KEY_SKIN_VERSION and skin.json's configs. See skin.json for
 	// documentation.
@@ -68,6 +74,11 @@ final class Constants {
 	 */
 	public const CONFIG_KEY_DEFAULT_SIDEBAR_VISIBLE_FOR_ANONYMOUS_USER =
 		'VectorDefaultSidebarVisibleForAnonymousUser';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_SKIN = 'skin';
 
 	/**
 	 * @var string
@@ -152,19 +163,10 @@ final class Constants {
 	public const QUERY_PARAM_SKIN_VERSION = 'useskinversion';
 
 	/**
+	 * Override the skin user preference and site Config. See readme.
 	 * @var string
 	 */
-	public const FEATURE_USE_WVUI_SEARCH = 'UseWvuiSearch';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_KEY_USE_WVUI_SEARCH = 'VectorUseWvuiSearch';
-
-	/**
-	 * @var string
-	 */
-	public const REQUIREMENT_USE_WVUI_SEARCH = 'VectorUseWvuiSearch';
+	public const QUERY_PARAM_SKIN = 'useskin';
 
 	/**
 	 * @var string
@@ -174,7 +176,17 @@ final class Constants {
 	/**
 	 * @var string
 	 */
+	public const QUERY_PARAM_STICKY_HEADER_EDIT = 'vectorstickyheaderedit';
+
+	/**
+	 * @var string
+	 */
 	public const CONFIG_STICKY_HEADER = 'VectorStickyHeader';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_STICKY_HEADER_EDIT = 'VectorStickyHeaderEdit';
 
 	/**
 	 * @var string
@@ -184,7 +196,25 @@ final class Constants {
 	/**
 	 * @var string
 	 */
+	public const REQUIREMENT_STICKY_HEADER_EDIT = 'StickyHeaderEdit';
+
+	/**
+	 * @var string
+	 */
 	public const FEATURE_STICKY_HEADER = 'StickyHeader';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_STICKY_HEADER_EDIT = 'StickyHeaderEdit';
+
+	/**
+	 * Defines whether the Sticky Header A/B test is running. See
+	 * https://phabricator.wikimedia.org/T292587 for additional detail about the test.
+	 *
+	 * @var string
+	 */
+	public const CONFIG_STICKY_HEADER_TREATMENT_AB_TEST_ENROLLMENT = 'VectorWebABTestEnrollment';
 
 	/**
 	 * The `mediawiki.searchSuggest` protocol piece of the SearchSatisfaction instrumention reads
@@ -212,16 +242,69 @@ final class Constants {
 	public const SEARCH_BOX_INPUT_LOCATION_DEFAULT = 'header-navigation';
 
 	/**
-	 * Defines whether or not the Core/Vue.js Search Widget A/B test is running. See
-	 * https://phabricator.wikimedia.org/T261647 for additional detail about the test.
-	 *
-	 * Note well that if the associated config value is falsy, then we fall back to choosing the
-	 * search widget treatment based on the `VectorUseWvuiSearch` config variable (see
-	 * `resources/skins.vector.js/searchLoader.js`).
-	 *
 	 * @var string
 	 */
-	public const CONFIG_SEARCH_TREATMENT_AB_TEST = 'VectorSearchTreatmentABTest';
+	public const REQUIREMENT_IS_MAIN_PAGE = 'IsMainPage';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_LANGUAGE_IN_MAIN_PAGE_HEADER = 'LanguageInMainPageHeader';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_LANGUAGE_IN_MAIN_PAGE_HEADER = 'VectorLanguageInMainPageHeader';
+
+	/**
+	 * @var string
+	 */
+	public const QUERY_PARAM_LANGUAGE_IN_MAIN_PAGE_HEADER = 'languageinmainpageheader';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_LANGUAGE_IN_MAIN_PAGE_HEADER = 'LanguageInMainPageHeader';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_LANGUAGE_ALERT_IN_SIDEBAR = 'LanguageAlertInSidebar';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_LANGUAGE_ALERT_IN_SIDEBAR = 'VectorLanguageAlertInSidebar';
+
+	/**
+	 * @var string
+	 */
+	public const QUERY_PARAM_LANGUAGE_ALERT_IN_SIDEBAR = 'languagealertinsidebar';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_LANGUAGE_ALERT_IN_SIDEBAR = 'LanguageAlertInSidebar';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_TABLE_OF_CONTENTS = 'TableOfContents';
+
+	/**
+	 * @var string
+	 */
+	public const CONFIG_TABLE_OF_CONTENTS = 'VectorTableOfContents';
+
+	/**
+	 * @var string
+	 */
+	public const QUERY_PARAM_TABLE_OF_CONTENTS = 'tableofcontents';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_TABLE_OF_CONTENTS = 'TableOfContents';
 
 	/**
 	 * This class is for namespacing constants only. Forbid construction.

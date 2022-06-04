@@ -14,5 +14,6 @@
 	"vector-view-edit": "Вуайхэ",
 	"vector-view-history": "История",
 	"vector-view-view": "Ло̄гкэ",
-	"vector-more-actions": "Вя̄л"
+	"vector-more-actions": "Вя̄л",
+	"vector-searchsuggest-containing": "О̄дзэ лыстэнҍ, мэ̄йн лӣ <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

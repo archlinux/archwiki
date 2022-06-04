@@ -21,5 +21,7 @@
 	"timeless-namespaces": "Nummraim",
 	"timeless-pagetools": "Säitenaktiounen",
 	"timeless-languages": "Sproochen",
-	"timeless-projects": "Aner Projeten"
+	"timeless-projects": "Aner Projeten",
+	"timeless-view-history": "Versiounen",
+	"timeless-action-undelete": "$1 {{PLURAL:$1|Versioun|Versioune}} restauréieren"
 }

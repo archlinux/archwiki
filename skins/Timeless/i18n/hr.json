@@ -24,5 +24,7 @@
 	"timeless-pagetools": "Radnje na stranici",
 	"timeless-languages": "Jezici",
 	"timeless-projects": "Drugi projekti",
-	"timeless.js": "/* Sav kôd JavaScripta na ovoj stranici bit će učitan upotrebljavačima izgleda Timeless */"
+	"timeless.js": "/* Sav kôd JavaScripta na ovoj stranici bit će učitan upotrebljavačima izgleda Timeless */",
+	"timeless-view-history": "Stare izmjene",
+	"timeless-action-undelete": "Vrati {{PLURAL:$1|$1 uređivanje|$1 uređivanja}}"
 }

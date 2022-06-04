@@ -1,10 +1,5 @@
 <?php
-
-namespace Cdb;
-
 /**
- * Native CDB file reader and writer.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,14 +14,15 @@ namespace Cdb;
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
  */
 
+namespace Cdb;
+
 /**
- * Read from a CDB file.
- * Native and pure PHP implementations are provided.
- * http://cr.yp.to/cdb.html
+ * Read data from a CDB file.
+ * Native C and pure PHP implementations are provided.
+ *
+ * @see http://cr.yp.to/cdb.html
  */
 abstract class Reader {
 	/**
@@ -38,7 +34,6 @@ abstract class Reader {
 	 * Open a file and return a subclass instance
 	 *
 	 * @param string $fileName
-	 *
 	 * @return Reader
 	 */
 	public static function open( $fileName ) {
@@ -51,6 +46,7 @@ abstract class Reader {
 	 * Returns true if the native extension is available
 	 *
 	 * @return bool
+	 * @codeCoverageIgnore
 	 */
 	public static function haveExtension() {
 		if ( !function_exists( 'dba_handlers' ) ) {

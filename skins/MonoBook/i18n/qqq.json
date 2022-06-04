@@ -24,5 +24,8 @@
 	"cactions-mobile": "Header for the content actions menu (tabs on the top of the page)",
 	"monobook-cactions-label": "Header for the content actions menu (tabs on the top of the page)",
 	"monobook-notifications-link": "Label for Extension:Notifications link in mobile personal toolbar\n\nParameters:\n* $1 - number of current alerts/notifications",
-	"monobook-notifications-link-none": "Label for Extension:Notifications link in mobile personal toolbar when no notifications present\n{{Identical|Notification}}"
+	"monobook-notifications-link-none": "Label for Extension:Notifications link in mobile personal toolbar when no notifications present\n{{Identical|Notification}}",
+	"monobook-view-history": "Text used on the history tab.\n\n{{Identical|History}}",
+	"monobook-action-undelete": "It is a tab label. Parameters:\n* $1 - number of edits",
+	"monobook-action-addsection": "{{notranslate}}\nText of the new section tab (the one next to the \"edit\" tab on non-Vector skins).\n\nSee also:\n* {{msg-mw|Addsection}}\n* {{msg-mw|Accesskey-ca-addsection}}\n* {{msg-mw|Tooltip-ca-addsection}}"
 }

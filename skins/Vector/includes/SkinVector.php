@@ -22,17 +22,53 @@
  * @ingroup Skins
  */
 
+namespace Vector;
+
+use Action;
+use ExtensionRegistry;
+use Html;
+use Linker;
 use MediaWiki\MediaWikiServices;
-use Vector\Constants;
-use Vector\Hooks;
-use Vector\VectorServices;
+use RuntimeException;
+use SkinMustache;
+use SkinTemplate;
+use SpecialPage;
+use Title;
 
 /**
- * Skin subclass for Vector
+ * Skin subclass for Vector that may be the new or old version of Vector.
+ *
  * @ingroup Skins
  * Skins extending SkinVector are not supported
+ *
  * @package Vector
  * @internal
+ *
+ * # Migration Plan (please remove stages when done)
+ *
+ * Stage 1:
+ * In future when we are ready to transition to two separate skins in this order:
+ * - Use $wgSkipSkins to hide vector-2022.
+ * - Remove skippable field from the `vector-2022` skin version. This will defer the code to the
+ *   configuration option wgSkipSkins
+ * - Set $wgVectorSkinMigrationMode = true and unset the Vector entry in wgSkipSkins
+ * - for one wiki, to trial run. This will expose Vector in preferences. The new Vector will show
+ *   as Vector (2022) to begin with and the skin version preference will be hidden.
+ * - Check VectorPrefDiffInstrumentation instrumentation is still working.
+ *
+ * Stage 2:
+ * - Set $wgVectorSkinMigrationMode = true for all wikis and update skin preference labels
+ *   (See Iebe60b560069c8cfcdeed3f5986b8be35501dcbc). This will hide the skin version
+ *    preference, and update the skin preference instead.
+ * - We will set $wgDefaultSkin = 'vector-2022'; for desktop improvements wikis.
+ *  - Run script that updates prefs table, migrating any rows where skin=vector AND
+ *    skinversion = 2 to skin=vector22, skinversion=2
+ *
+ * Stage 3:
+ *  - Move all modern code into SkinVector22.
+ *  - Move legacy skin code from SkinVector to SkinVectorLegacy.
+ *  - Update skin.json `vector` key to point to SkinVectorLegacy.
+ *  - SkinVector left as alias if necessary.
  */
 class SkinVector extends SkinMustache {
 	/** @var null|array for caching purposes */
@@ -47,8 +83,72 @@ class SkinVector extends SkinMustache {
 	private const NO_ICON = [
 		'icon' => 'none',
 		'is-quiet' => true,
+		'tabindex' => '-1',
 		'class' => 'sticky-header-icon'
 	];
+	private const TALK_ICON = [
+		'href' => '#',
+		'id' => 'ca-talk-sticky-header',
+		'event' => 'talk-sticky-header',
+		'icon' => 'wikimedia-speechBubbles',
+		'is-quiet' => true,
+		'tabindex' => '-1',
+		'class' => 'sticky-header-icon'
+	];
+	private const HISTORY_ICON = [
+		'href' => '#',
+		'id' => 'ca-history-sticky-header',
+		'event' => 'history-sticky-header',
+		'icon' => 'wikimedia-history',
+		'is-quiet' => true,
+		'tabindex' => '-1',
+		'class' => 'sticky-header-icon'
+	];
+	// Event and icon will be updated depending on watchstar state
+	private const WATCHSTAR_ICON = [
+		'href' => '#',
+		'id' => 'ca-watchstar-sticky-header',
+		'event' => 'watch-sticky-header',
+		'icon' => 'wikimedia-star',
+		'is-quiet' => true,
+		'tabindex' => '-1',
+		'class' => 'sticky-header-icon mw-watchlink'
+	];
+	private const EDIT_VE_ICON = [
+		'href' => '#',
+		'id' => 'ca-ve-edit-sticky-header',
+		'event' => 've-edit-sticky-header',
+		'icon' => 'wikimedia-edit',
+		'is-quiet' => true,
+		'tabindex' => '-1',
+		'class' => 'sticky-header-icon'
+	];
+	private const EDIT_WIKITEXT_ICON = [
+		'href' => '#',
+		'id' => 'ca-edit-sticky-header',
+		'event' => 'wikitext-edit-sticky-header',
+		'icon' => 'wikimedia-wikiText',
+		'is-quiet' => true,
+		'tabindex' => '-1',
+		'class' => 'sticky-header-icon'
+	];
+	private const EDIT_PROTECTED_ICON = [
+		'href' => '#',
+		'id' => 'ca-viewsource-sticky-header',
+		'event' => 've-edit-protected-sticky-header',
+		'icon' => 'wikimedia-editLock',
+		'is-quiet' => true,
+		'tabindex' => '-1',
+		'class' => 'sticky-header-icon'
+	];
+	private const SEARCH_SHOW_THUMBNAIL_CLASS = 'vector-search-box-show-thumbnail';
+	private const SEARCH_AUTO_EXPAND_WIDTH_CLASS = 'vector-search-box-auto-expand-width';
+	private const STICKY_HEADER_ENABLED_CLASS = 'vector-sticky-header-enabled';
+	private const TABLE_OF_CONTENTS_ENABLED_CLASS = 'vector-toc-enabled';
+	private const CLASS_QUIET_BUTTON = 'mw-ui-button mw-ui-quiet';
+	private const CLASS_PROGRESSIVE = 'mw-ui-progressive';
+	private const CLASS_ICON_BUTTON = 'mw-ui-icon mw-ui-icon-element';
+	private const CLASS_ICON_LABEL = 'mw-ui-icon mw-ui-icon-before';
 
 	/**
 	 * T243281: Code used to track clicks to opt-out link.
@@ -63,11 +163,26 @@ class SkinVector extends SkinMustache {
 	private const OPT_OUT_LINK_TRACKING_CODE = 'vctw1';
 
 	/**
-	 * Whether or not the legacy version of the skin is being used.
+	 * @param string $icon the name of the icon without wikimedia- prefix.
+	 * @return string
+	 */
+	private function iconClass( $icon ) {
+		if ( $icon ) {
+			return 'mw-ui-icon-wikimedia-' . $icon;
+		}
+		return '';
+	}
+
+	/**
+	 * Whether the legacy version of the skin is being used.
 	 *
 	 * @return bool
 	 */
-	private function isLegacy(): bool {
+	protected function isLegacy(): bool {
+		$options = $this->getOptions();
+		if ( $options['name'] === Constants::SKIN_NAME_MODERN ) {
+			return false;
+		}
 		$isLatestSkinFeatureEnabled = MediaWikiServices::getInstance()
 			->getService( Constants::SERVICE_FEATURE_MANAGER )
 			->isFeatureEnabled( Constants::FEATURE_LATEST_SKIN );
@@ -76,36 +191,13 @@ class SkinVector extends SkinMustache {
 	}
 
 	/**
-	 * Overrides template, styles and scripts module when skin operates
-	 * in legacy mode.
-	 *
-	 * @inheritDoc
-	 * @param array|null $options Note; this param is only optional for internal purpose.
-	 * 		Do not instantiate Vector, use SkinFactory to create the object instead.
-	 * 		If you absolutely must to, this paramater is required; you have to provide the
-	 * 		skinname with the `name` key. That's do it with `new SkinVector( ['name' => 'vector'] )`.
-	 * 		Failure to do that, will lead to fatal exception.
-	 */
-	public function __construct( $options = [] ) {
-		if ( $this->isLegacy() ) {
-			$options['scripts'] = [ 'skins.vector.legacy.js' ];
-			$options['styles'] = [ 'skins.vector.styles.legacy' ];
-			$options['template'] = 'skin-legacy';
-			unset( $options['link'] );
-		}
-
-		parent::__construct( $options );
-	}
-
-	/**
 	 * Calls getLanguages with caching.
 	 * @return array
 	 */
-	private function getLanguagesCached(): array {
-		if ( $this->languages !== null ) {
-			return $this->languages;
+	protected function getLanguagesCached(): array {
+		if ( $this->languages === null ) {
+			$this->languages = $this->getLanguages();
 		}
-		$this->languages = $this->getLanguages();
 		return $this->languages;
 	}
 
@@ -129,31 +221,54 @@ class SkinVector extends SkinMustache {
 	}
 
 	/**
+	 * @param string $location Either 'top' or 'bottom' is accepted.
 	 * @return bool
 	 */
-	private function isLanguagesInHeader() {
+	protected function isLanguagesInContentAt( $location ) {
+		if ( !$this->canHaveLanguages() ) {
+			return false;
+		}
 		$featureManager = VectorServices::getFeatureManager();
-		// Disable button on pages without languages (based on Wikibase RepoItemLinkGenerator class)
-
-		return $this->canHaveLanguages() && $featureManager->isFeatureEnabled(
+		$inContent = $featureManager->isFeatureEnabled(
 			Constants::FEATURE_LANGUAGE_IN_HEADER
 		);
+		$isMainPage = $this->getTitle() ? $this->getTitle()->isMainPage() : false;
+
+		switch ( $location ) {
+			case 'top':
+				return $isMainPage ? $inContent && $featureManager->isFeatureEnabled(
+					Constants::FEATURE_LANGUAGE_IN_MAIN_PAGE_HEADER
+				) : $inContent;
+			case 'bottom':
+				return $inContent && $isMainPage && !$featureManager->isFeatureEnabled(
+					Constants::FEATURE_LANGUAGE_IN_MAIN_PAGE_HEADER
+				);
+			default:
+				throw new RuntimeException( 'unknown language button location' );
+		}
 	}
 
 	/**
-	 * If in modern Vector and no languages possible, OR the languages in header button
-	 * is enabled but language array is empty, then we shouldn't show the langauge list.
+	 * Whether or not the languages are out of the sidebar and in the content either at
+	 * the top or the bottom.
 	 * @return bool
 	 */
-	private function shouldHideLanguages() {
-		return !$this->isLegacy() &&
-			!$this->canHaveLanguages() ||
-			// NOTE: T276950 - This should be revisited when an empty state for the language button is chosen.
-			( $this->isLanguagesInHeader() && empty( $this->getLanguagesCached() ) );
+	private function isLanguagesInContent() {
+		return $this->isLanguagesInContentAt( 'top' ) || $this->isLanguagesInContentAt( 'bottom' );
 	}
 
 	/**
-	 * Returns HTML for the create account button inside the anon user links
+	 * Show the ULS button if it's modern Vector, languages in header is enabled,
+	 * and the language array isn't empty. Hide it otherwise.
+	 * @return bool
+	 */
+	protected function shouldHideLanguages() {
+		// NOTE: T276950 - This should be revisited when an empty state for the language button is chosen.
+		return $this->isLegacy() || !$this->isLanguagesInContent() || empty( $this->getLanguagesCached() );
+	}
+
+	/**
+	 * Returns HTML for the create account link inside the anon user links
 	 * @param string[] $returnto array of query strings used to build the login link
 	 * @param string[] $class array of CSS classes to add.
 	 * @param bool $includeIcon Set true to include icon CSS classes.
@@ -162,21 +277,29 @@ class SkinVector extends SkinMustache {
 	private function getCreateAccountHTML( $returnto, $class, $includeIcon ) {
 		$createAccountData = $this->buildCreateAccountData( $returnto );
 		$createAccountData['single-id'] = 'pt-createaccount';
+		unset( $createAccountData['icon'] );
 
 		if ( $includeIcon ) {
 			$class = array_merge(
 				$class,
 				[
-					'mw-ui-icon mw-ui-icon-before',
-					'mw-ui-icon-wikimedia-' . ( $createAccountData[ 'icon' ] ?? '' )
+					self::CLASS_ICON_LABEL,
+					$this->iconClass( $createAccountData[ 'icon' ] ?? '' )
 				]
 			);
 		}
 
 		$createAccountData['class'] = $class;
-		$htmlCreateAccount = $this->makeLink( 'create-account', $createAccountData );
+		return $this->makeLink( 'create-account', $createAccountData );
+	}
 
-		return $htmlCreateAccount;
+	/**
+	 * Returns HTML for the watchlist link inside user links
+	 * @param array|null $watchlistMenuData (optional)
+	 * @return string
+	 */
+	private function getWatchlistHTML( $watchlistMenuData = null ) {
+		return $watchlistMenuData ? $watchlistMenuData['html-items'] : '';
 	}
 
 	/**
@@ -192,13 +315,13 @@ class SkinVector extends SkinMustache {
 		$loginData['class']  = [
 			'vector-menu-content-item',
 			'vector-menu-content-item-login',
-			'mw-ui-icon mw-ui-icon-before',
-			'mw-ui-icon-wikimedia-' . ( $loginData[ 'icon' ] ?? '' )
+			self::CLASS_ICON_LABEL,
+			$this->iconClass( $loginData[ 'icon' ] ?? '' )
 		];
 
 		$learnMoreLinkData = [
 			'text' => $this->msg( 'vector-anon-user-menu-pages-learn' )->text(),
-			'href' => Title::newFromText( 'Help:Introduction' )->getLocalURL(),
+			'href' => Title::newFromText( $this->msg( 'vector-intro-page' )->text() )->getLocalURL(),
 			'aria-label' => $this->msg( 'vector-anon-user-menu-pages-label' )->text(),
 		];
 		$learnMoreLink = $this->makeLink( '', $learnMoreLinkData );
@@ -226,11 +349,12 @@ class SkinVector extends SkinMustache {
 		$logoutLinkData['class'] = [
 			'vector-menu-content-item',
 			'vector-menu-content-item-logout',
-			'mw-ui-icon mw-ui-icon-before',
-			'mw-ui-icon-wikimedia-' . ( $logoutLinkData[ 'icon' ] ?? '' )
+			self::CLASS_ICON_LABEL,
+			$this->iconClass( $logoutLinkData[ 'icon' ] ?? '' )
 		];
 
 		return $templateParser->processTemplate( 'UserLinks__logout', [
+			'msg-tooltip-pt-logout' => $this->msg( 'tooltip-pt-logout' ),
 			'htmlLogout' => $this->makeLink( 'logout', $logoutLinkData )
 		] );
 	}
@@ -246,8 +370,7 @@ class SkinVector extends SkinMustache {
 		$returnto = $this->getReturnToParam();
 		$useCombinedLoginLink = $this->useCombinedLoginLink();
 		$htmlCreateAccount = $this->getCreateAccountHTML( $returnto, [
-			'mw-ui-button',
-			'mw-ui-quiet'
+			self::CLASS_QUIET_BUTTON
 		], false );
 
 		$templateParser = $this->getTemplateParser();
@@ -266,14 +389,15 @@ class SkinVector extends SkinMustache {
 			'data-user-interface-preferences' => $menuData[ 'data-user-interface-preferences' ],
 			'data-notifications' => $menuData[ 'data-notifications' ],
 			'data-user-page' => $menuData[ 'data-user-page' ],
+			'html-vector-watchlist' => $this->getWatchlistHTML( $menuData[ 'data-vector-user-menu-overflow' ] ?? null ),
 		] );
 		$userMoreData = [
-			"id" => 'p-personal-more',
-			"class" => 'mw-portlet mw-portlet-personal-more vector-menu vector-user-menu-more',
-			"html-items" => $userMoreHtmlItems,
-			"label" => $this->msg( 'vector-personal-more-label' ),
-			"heading-class" => 'vector-menu-heading',
-			"is-dropdown" => false,
+			'id' => 'p-personal-more',
+			'class' => 'mw-portlet mw-portlet-personal-more vector-menu vector-user-menu-more',
+			'html-items' => $userMoreHtmlItems,
+			'label' => $this->msg( 'vector-personal-more-label' ),
+			'heading-class' => 'vector-menu-heading',
+			'is-dropdown' => false,
 		];
 
 		$userMenuData = $menuData[ 'data-user-menu' ];
@@ -302,21 +426,133 @@ class SkinVector extends SkinMustache {
 	}
 
 	/**
+	 * Updates modules for use in legacy Vector skin.
+	 * Do not repeat this pattern. Will be addressed in T291098.
+	 * @inheritDoc
+	 */
+	public function getDefaultModules() {
+		// FIXME: Do not repeat this pattern. Will be addressed in T291098.
+		if ( $this->isLegacy() ) {
+			$this->options['scripts'] = SkinVectorLegacy::getScriptsOption();
+			$this->options['styles'] = SkinVectorLegacy::getStylesOption();
+		} else {
+			$this->options['scripts'] = SkinVector22::getScriptsOption();
+			$this->options['styles'] = SkinVector22::getStylesOption();
+		}
+		return parent::getDefaultModules();
+	}
+
+	/**
+	 * Updates HTML generation for use in legacy Vector skin.
+	 * Do not repeat this pattern. Will be addressed in T291098.
+	 *
+	 * @inheritDoc
+	 */
+	public function generateHTML() {
+		if ( $this->isLegacy() ) {
+			$this->options['template'] = SkinVectorLegacy::getTemplateOption();
+		}
+		return parent::generateHTML();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getHtmlElementAttributes() {
+		$original = parent::getHtmlElementAttributes();
+
+		if ( VectorServices::getFeatureManager()->isFeatureEnabled( Constants::FEATURE_STICKY_HEADER ) ) {
+			// T290518: Add scroll padding to root element when the sticky header is
+			// enabled. This class needs to be server rendered instead of added from
+			// JS in order to correctly handle situations where the sticky header
+			// isn't visible yet but we still need scroll padding applied (e.g. when
+			// the user navigates to a page with a hash fragment in the URI). For this
+			// reason, we can't rely on the `vector-sticky-header-visible` class as it
+			// is added too late.
+			//
+			// Please note that this class applies scroll padding which does not work
+			// when applied to the body tag in Chrome, Safari, and Firefox (and
+			// possibly others). It must instead be applied to the html tag.
+			$original['class'] = implode( ' ', [ $original['class'] ?? '', self::STICKY_HEADER_ENABLED_CLASS ] );
+		}
+
+		if ( VectorServices::getFeatureManager()->isFeatureEnabled( Constants::FEATURE_TABLE_OF_CONTENTS ) ) {
+			$original['class'] = implode( ' ', [ $original['class'] ?? '', self::TABLE_OF_CONTENTS_ENABLED_CLASS ] );
+		}
+
+		return $original;
+	}
+
+	/**
 	 * Generate data needed to generate the sticky header.
-	 * Lack of i18n is intentional and will be done as part of follow up work.
+	 * @param array $searchBoxData
+	 * @param bool $includeEditIcons
 	 * @return array
 	 */
-	private function getStickyHeaderData() {
-		return [
-			'title' => 'Audre Lorde',
-			'heading' => 'Introduction',
-			'data-primary-action' => !$this->shouldHideLanguages() ? $this->getULSButtonData() : '',
-			'data-button-start' => self::NO_ICON,
-			'data-button-end' => self::NO_ICON,
-			'data-buttons' => [
-				self::NO_ICON, self::NO_ICON, self::NO_ICON, self::NO_ICON
-			]
+	private function getStickyHeaderData( $searchBoxData, $includeEditIcons ): array {
+		$btns = [
+			self::TALK_ICON,
+			self::HISTORY_ICON,
+			self::WATCHSTAR_ICON,
 		];
+		if ( $includeEditIcons ) {
+			$btns[] = self::EDIT_WIKITEXT_ICON;
+			$btns[] = self::EDIT_PROTECTED_ICON;
+			$btns[] = self::EDIT_VE_ICON;
+		}
+
+		// Show sticky ULS if the ULS extension is enabled and the ULS in header is not hidden
+		$showStickyULS = ExtensionRegistry::getInstance()->isLoaded( 'UniversalLanguageSelector' )
+			&& !$this->shouldHideLanguages();
+		return [
+			'data-primary-action' => $showStickyULS ?
+				$this->getULSButtonData() : null,
+			'data-button-start' => [
+				'label' => $this->msg( 'search' ),
+				'icon' => 'wikimedia-search',
+				'is-quiet' => true,
+				'tabindex' => '-1',
+				'class' => 'vector-sticky-header-search-toggle',
+				'event' => 'ui.' . $searchBoxData['form-id'] . '.icon'
+			],
+			'data-search' => $searchBoxData,
+			'data-buttons' => $btns,
+		];
+	}
+
+	/**
+	 * Generate data needed to create SidebarAction item.
+	 * @param array $htmlData data to make a link or raw html
+	 * @param array $headingOptions optional heading for the html
+	 * @return array keyed data for the SidebarAction template
+	 */
+	private function makeSidebarActionData( array $htmlData = [], array $headingOptions = [] ): array {
+		$htmlContent = '';
+		// Populates the sidebar as a standalone link or custom html.
+		if ( array_key_exists( 'link', $htmlData ) ) {
+			$htmlContent = $this->makeLink( 'link', $htmlData['link'] );
+		} elseif ( array_key_exists( 'html-content', $htmlData ) ) {
+			$htmlContent = $htmlData['html-content'];
+		}
+
+		return $headingOptions + [
+			'html-content' => $htmlContent,
+		];
+	}
+
+	/**
+	 * Determines if the language switching alert box should be in the sidebar.
+	 *
+	 * @return bool
+	 */
+	private function shouldLanguageAlertBeInSidebar(): bool {
+		$featureManager = VectorServices::getFeatureManager();
+		$isMainPage = $this->getTitle() ? $this->getTitle()->isMainPage() : false;
+		$shouldShowOnMainPage = $isMainPage && !empty( $this->getLanguagesCached() ) &&
+			$featureManager->isFeatureEnabled( Constants::FEATURE_LANGUAGE_IN_MAIN_PAGE_HEADER );
+		return ( $this->isLanguagesInContentAt( 'top' ) && !$isMainPage && !$this->shouldHideLanguages() &&
+			$featureManager->isFeatureEnabled( Constants::FEATURE_LANGUAGE_ALERT_IN_SIDEBAR ) ) ||
+			$shouldShowOnMainPage;
 	}
 
 	/**
@@ -325,9 +561,17 @@ class SkinVector extends SkinMustache {
 	public function getTemplateData(): array {
 		$skin = $this;
 		$out = $skin->getOutput();
-		$title = $out->getTitle();
-		$parentData = parent::getTemplateData();
+		$parentData = $this->decoratePortletsData( parent::getTemplateData() );
+		$featureManager = VectorServices::getFeatureManager();
 
+		// SkinVector sometimes serves new Vector as part of removing the
+		// skin version user preference. TCho avoid T302461 we need to unset it here.
+		// This shouldn't be run on SkinVector22.
+		if ( $this->getSkinName() === 'vector' ) {
+			unset( $parentData['data-toc'] );
+		}
+
+		//
 		// Naming conventions for Mustache parameters.
 		//
 		// Value type (first segment):
@@ -344,39 +588,63 @@ class SkinVector extends SkinMustache {
 		//   It should be followed by the name of the hook in hyphenated lowercase.
 		//
 		// Conditionally used values must use null to indicate absence (not false or '').
-
 		$commonSkinData = array_merge( $parentData, [
-			'is-article' => (bool)$out->isArticle(),
-
-			'is-anon' => $this->getUser()->isAnon(),
-
-			'is-mainpage' => $title->isMainPage(),
-			// Remember that the string '0' is a valid title.
-			// From OutputPage::getPageTitle, via ::setPageTitle().
-			'html-title' => $out->getPageTitle(),
-
-			'html-categories' => $skin->getCategories(),
+			'is-legacy' => $this->isLegacy(),
 
 			'input-location' => $this->getSearchBoxInputLocation(),
 
 			'sidebar-visible' => $this->isSidebarVisible(),
 
-			'is-language-in-header' => $this->isLanguagesInHeader(),
-
-			'data-vector-sticky-header' => VectorServices::getFeatureManager()->isFeatureEnabled(
+			'is-language-in-content' => $this->isLanguagesInContent(),
+			'is-language-in-content-top' => $this->isLanguagesInContentAt( 'top' ),
+			'is-language-in-content-bottom' => $this->isLanguagesInContentAt( 'bottom' ),
+			'data-search-box' => $this->getSearchData(
+				$parentData['data-search-box'],
+				!$this->isLegacy(),
+				// is primary mode of search
+				true,
+				'searchform',
+				true
+			),
+			'data-vector-sticky-header' => $featureManager->isFeatureEnabled(
 				Constants::FEATURE_STICKY_HEADER
-			) ? $this->getStickyHeaderData() : false,
+			) ? $this->getStickyHeaderData(
+				$this->getSearchData(
+					$parentData['data-search-box'],
+					// Collapse inside search box is disabled.
+					false,
+					false,
+					'vector-sticky-search-form',
+					false
+				),
+				$featureManager->isFeatureEnabled(
+					Constants::FEATURE_STICKY_HEADER_EDIT
+				)
+			) : false,
+			'data-toc' => $this->getTocData( $parentData['data-toc'] ?? [] )
 		] );
 
 		if ( $skin->getUser()->isRegistered() ) {
+			$migrationMode = $this->getConfig()->get( 'VectorSkinMigrationMode' );
+			$query = $migrationMode ? 'useskin=vector&' : '';
 			// Note: This data is also passed to legacy template where it is unused.
-			$commonSkinData['data-emphasized-sidebar-action'] = [
+			$optOutUrl = [
+				'text' => $this->msg( 'vector-opt-out' )->text(),
 				'href' => SpecialPage::getTitleFor(
 					'Preferences',
 					false,
-					'mw-prefsection-rendering-skin-skin-prefs'
-				)->getLinkURL( 'wprov=' . self::OPT_OUT_LINK_TRACKING_CODE ),
+					$migrationMode ? 'mw-prefsection-rendering-skin' : 'mw-prefsection-rendering-skin-skin-prefs'
+				)->getLinkURL( $query . 'wprov=' . self::OPT_OUT_LINK_TRACKING_CODE ),
+				'title' => $this->msg( 'vector-opt-out-tooltip' )->text(),
+				'active' => false,
 			];
+			$htmlData = [
+				'link' => $optOutUrl,
+			];
+			$commonSkinData['data-emphasized-sidebar-action'][] = $this->makeSidebarActionData(
+				$htmlData,
+				[]
+			);
 		}
 
 		if ( !$this->isLegacy() ) {
@@ -385,14 +653,45 @@ class SkinVector extends SkinMustache {
 				$commonSkinData['is-anon'],
 				$commonSkinData['data-search-box']
 			);
+
+			// T295555 Add language switch alert message temporarily (to be removed).
+			if ( $this->shouldLanguageAlertBeInSidebar() ) {
+				$languageSwitchAlert = [
+					'html-content' => Html::noticeBox(
+						$this->msg( 'vector-language-redirect-to-top' )->parse(),
+						'vector-language-sidebar-alert'
+					),
+				];
+				$headingOptions = [
+					'heading' => $this->msg( 'vector-languages' )->plain(),
+				];
+				$commonSkinData['data-vector-language-switch-alert'][] = $this->makeSidebarActionData(
+					$languageSwitchAlert,
+					$headingOptions
+				);
+			}
 		}
 
-		$commonSkinData['data-search-box'] = $this->getSearchData(
-			$commonSkinData['data-search-box'],
-			!$this->isLegacy()
-		);
-
 		return $commonSkinData;
+	}
+
+	/**
+	 * Annotates table of contents data with Vector-specific information.
+	 *
+	 * @param array $tocData
+	 * @return array
+	 */
+	private function getTocData( array $tocData ): array {
+		if ( empty( $tocData ) ) {
+			return [];
+		}
+
+		return array_merge( $tocData, [
+			'vector-is-collapse-sections-enabled' =>
+				$tocData[ 'number-section-count'] >= $this->getConfig()->get(
+					'VectorTableOfContentsCollapseAtCount'
+				)
+		] );
 	}
 
 	/**
@@ -400,22 +699,34 @@ class SkinVector extends SkinMustache {
 	 *
 	 * @param array $searchBoxData
 	 * @param bool $isCollapsible
+	 * @param bool $isPrimary
+	 * @param string $formId
+	 * @param bool $autoExpandWidth
 	 * @return array modified version of $searchBoxData
 	 */
-	private function getSearchData( array $searchBoxData, bool $isCollapsible ) {
-		$searchClass = 'vector-search-box';
+	private function getSearchData(
+		array $searchBoxData,
+		bool $isCollapsible,
+		bool $isPrimary,
+		string $formId,
+		bool $autoExpandWidth
+	) {
+		$searchClass = 'vector-search-box-vue ';
 
 		if ( $isCollapsible ) {
-			$searchClass .= ' vector-search-box-collapses';
+			$searchClass .= ' vector-search-box-collapses ';
 		}
 
-		if ( $this->shouldSearchExpand() ) {
-			$searchClass .= ' vector-search-box-show-thumbnail';
+		if ( $this->doesSearchHaveThumbnails() ) {
+			$searchClass .= ' ' . self::SEARCH_SHOW_THUMBNAIL_CLASS .
+				( $autoExpandWidth ? ' ' . self::SEARCH_AUTO_EXPAND_WIDTH_CLASS : '' );
 		}
 
 		// Annotate search box with a component class.
-		$searchBoxData['class'] = $searchClass;
+		$searchBoxData['class'] = trim( $searchClass );
 		$searchBoxData['is-collapsible'] = $isCollapsible;
+		$searchBoxData['is-primary'] = $isPrimary;
+		$searchBoxData['form-id'] = $formId;
 
 		// At lower resolutions the search input is hidden search and only the submit button is shown.
 		// It should behave like a form submit link (e.g. submit the form with no input value).
@@ -464,19 +775,13 @@ class SkinVector extends SkinMustache {
 	}
 
 	/**
-	 * Determines whether or not the search input should expand when focused
-	 * before WVUI search is loaded. In WVUI, the search input expands to
-	 * accomodate thumbnails in the suggestion list. When thumbnails are
-	 * disabled, the input should not expand. Note this is only relevant for WVUI
-	 * search (not legacy search).
+	 * Returns `true` if WVUI is enabled to show thumbnails and `false` otherwise.
+	 * Note this is only relevant for WVUI search (not legacy search).
 	 *
 	 * @return bool
 	 */
-	private function shouldSearchExpand(): bool {
-		$featureManager = VectorServices::getFeatureManager();
-
-		return $featureManager->isFeatureEnabled( Constants::FEATURE_USE_WVUI_SEARCH ) &&
-			$this->getConfig()->get( 'VectorWvuiSearchOptions' )['showThumbnail'];
+	private function doesSearchHaveThumbnails(): bool {
+		return $this->getConfig()->get( 'VectorWvuiSearchOptions' )['showThumbnail'];
 	}
 
 	/**
@@ -487,7 +792,9 @@ class SkinVector extends SkinMustache {
 	private function isSidebarVisible() {
 		$skin = $this->getSkin();
 		if ( $skin->getUser()->isRegistered() ) {
-			$userPrefSidebarState = $skin->getUser()->getOption(
+			$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+			$userPrefSidebarState = $userOptionsLookup->getOption(
+				$skin->getUser(),
 				Constants::PREF_KEY_SIDEBAR_VISIBLE
 			);
 
@@ -507,15 +814,15 @@ class SkinVector extends SkinMustache {
 	}
 
 	/**
-	 * Returns ULS button label
+	 * Returns ULS button label within the context of the translated message taking a placeholder.
 	 *
+	 * @param string $message
 	 * @return string
 	 */
-	private function getULSLabel() {
-		$label = $this->msg( 'vector-language-button-label' )
+	private function getULSLabel( string $message ) {
+		return $this->msg( $message )
 			->numParams( count( $this->getLanguagesCached() ) )
 			->escaped();
-		return $label;
 	}
 
 	/**
@@ -528,8 +835,10 @@ class SkinVector extends SkinMustache {
 			'id' => 'p-lang-btn-sticky-header',
 			'class' => 'mw-interlanguage-selector',
 			'is-quiet' => true,
-			'label' => $this->getULSLabel(),
+			'tabindex' => '-1',
+			'label' => $this->getULSLabel( 'vector-language-button-label' ),
 			'html-vector-button-icon' => Hooks::makeIcon( 'wikimedia-language' ),
+			'event' => 'ui.dropdown-p-lang-btn-sticky-header'
 		];
 	}
 
@@ -541,13 +850,15 @@ class SkinVector extends SkinMustache {
 	private function getULSPortletData() {
 		$languageButtonData = [
 			'id' => 'p-lang-btn',
-			'label' => $this->getULSLabel(),
+			'label' => $this->getULSLabel( 'vector-language-button-label' ),
+			'aria-label' => $this->getULSLabel( 'vector-language-button-aria-label' ),
 			// ext.uls.interface attaches click handler to this selector.
 			'checkbox-class' => ' mw-interlanguage-selector ',
-			'html-vector-heading-icon' => Hooks::makeIcon( 'wikimedia-language' ),
+			'html-vector-heading-icon' => Hooks::makeIcon( 'wikimedia-language-progressive' ),
 			'heading-class' =>
 				' vector-menu-heading ' .
-				' mw-ui-button mw-ui-quiet'
+				self::CLASS_QUIET_BUTTON . ' ' .
+				self::CLASS_PROGRESSIVE
 			];
 
 		// Adds class to hide language button
@@ -586,10 +897,11 @@ class SkinVector extends SkinMustache {
 				$portletData['class'] .= $this->loggedin ?
 					' vector-user-menu-logged-in' :
 					' vector-user-menu-logged-out';
-				$portletData['heading-class'] .= ' mw-ui-button mw-ui-quiet mw-ui-icon mw-ui-icon-element';
+				$portletData['heading-class'] .= ' ' . self::CLASS_QUIET_BUTTON . ' ' .
+					self::CLASS_ICON_BUTTON . ' ';
 				$portletData['heading-class'] .= $this->loggedin ?
-					' mw-ui-icon-wikimedia-userAvatar' :
-					' mw-ui-icon-wikimedia-ellipsis';
+					$this->iconClass( 'userAvatar' ) :
+					$this->iconClass( 'ellipsis' );
 			}
 		}
 		switch ( $portletData['id'] ) {
@@ -601,7 +913,7 @@ class SkinVector extends SkinMustache {
 				break;
 		}
 
-		if ( $portletData['id'] === 'p-lang' && $this->isLanguagesInHeader() ) {
+		if ( $portletData['id'] === 'p-lang' && $this->isLanguagesInContent() ) {
 			$portletData = array_merge( $portletData, $this->getULSPortletData() );
 		}
 		$class = $portletData['class'];
@@ -610,30 +922,63 @@ class SkinVector extends SkinMustache {
 	}
 
 	/**
-	 * @inheritDoc
+	 * Performs updates to all portlets.
+	 *
+	 * @param array $data
 	 * @return array
 	 */
-	protected function getPortletData(
-		$label,
-		array $urls = []
+	private function decoratePortletsData( array $data ) {
+		foreach ( $data['data-portlets'] as $key => $pData ) {
+			$data['data-portlets'][$key] = $this->decoratePortletData(
+				$key,
+				$pData
+			);
+		}
+		$sidebar = $data['data-portlets-sidebar'];
+		$sidebar['data-portlets-first'] = $this->decoratePortletData(
+			'navigation', $sidebar['data-portlets-first']
+		);
+		$rest = $sidebar['array-portlets-rest'];
+		foreach ( $rest as $key => $pData ) {
+			$rest[$key] = $this->decoratePortletData(
+				$pData['id'], $pData
+			);
+		}
+		$sidebar['array-portlets-rest'] = $rest;
+		$data['data-portlets-sidebar'] = $sidebar;
+		return $data;
+	}
+
+	/**
+	 * Performs the following updates to portlet data:
+	 * - Adds concept of menu types
+	 * - Marks the selected variant in the variant portlet
+	 * - modifies tooltips of personal and user-menu portlets
+	 * @param string $key
+	 * @param array $portletData
+	 * @return array
+	 */
+	private function decoratePortletData(
+		string $key,
+		array $portletData
 	): array {
-		switch ( $label ) {
-			case 'user-menu':
-			case 'actions':
-			case 'variants':
+		switch ( $key ) {
+			case 'data-user-menu':
+			case 'data-actions':
+			case 'data-variants':
 				$type = self::MENU_TYPE_DROPDOWN;
 				break;
-			case 'views':
-			case 'namespaces':
+			case 'data-views':
+			case 'data-namespaces':
 				$type = self::MENU_TYPE_TABS;
 				break;
-			case 'notifications':
-			case 'personal':
-			case 'user-page':
+			case 'data-notifications':
+			case 'data-personal':
+			case 'data-user-page':
 				$type = self::MENU_TYPE_DEFAULT;
 				break;
-			case 'lang':
-				$type = $this->isLanguagesInHeader() ?
+			case 'data-languages':
+				$type = $this->isLanguagesInContent() ?
 					self::MENU_TYPE_DROPDOWN : self::MENU_TYPE_PORTAL;
 				break;
 			default:
@@ -642,33 +987,34 @@ class SkinVector extends SkinMustache {
 		}
 
 		$portletData = $this->decoratePortletClass(
-			parent::getPortletData( $label, $urls ),
+			$portletData,
 			$type
 		);
 
 		// Special casing for Variant to change label to selected.
 		// Hopefully we can revisit and possibly remove this code when the language switcher is moved.
-		if ( $label === 'variants' ) {
-			foreach ( $urls as $key => $item ) {
-			// Check the class of the item for a `selected` class and if so, propagate the items
-			// label to the main label.
-				if ( isset( $item['class'] ) && stripos( $item['class'], 'selected' ) !== false ) {
-					$portletData['label'] = $item['text'];
-				}
-			}
+		if ( $key === 'data-variants' ) {
+			$languageConverterFactory = MediaWikiServices::getInstance()->getLanguageConverterFactory();
+			$pageLang = $this->getTitle()->getPageLanguage();
+			$converter = $languageConverterFactory->getLanguageConverter( $pageLang );
+			$portletData['label'] = $pageLang->getVariantname(
+				$converter->getPreferredVariant()
+			);
+			// T289523 Add aria-label data to the language variant switcher.
+			$portletData['aria-label'] = $this->msg( 'vector-language-variant-switcher-label' );
 		}
 
 		// T287494 We use tooltip messages to provide title attributes on hover over certain menu icons. For modern
 		// Vector, the "tooltip-p-personal" key is set to "User menu" which is appropriate for the user icon (dropdown
 		// indicator for user links menu) for logged-in users. This overrides the tooltip for the user links menu icon
 		// which is an ellipsis for anonymous users.
-		if ( $label === 'user-menu' && !$this->isLegacy() && !$this->loggedin ) {
+		if ( $key === 'data-user-menu' && !$this->isLegacy() && !$this->loggedin ) {
 			$portletData['html-tooltip'] = Linker::tooltip( 'vector-anon-user-menu-title' );
 		}
 
 		// Set tooltip to empty string for the personal menu for both logged-in and logged-out users to avoid showing
 		// the tooltip for legacy version.
-		if ( $label === 'personal' && $this->isLegacy() ) {
+		if ( $key === 'data-personal' && $this->isLegacy() ) {
 			$portletData['html-tooltip'] = '';
 		}
 
@@ -677,3 +1023,5 @@ class SkinVector extends SkinMustache {
 		];
 	}
 }
+
+class_alias( SkinVector::class, 'SkinVector' );

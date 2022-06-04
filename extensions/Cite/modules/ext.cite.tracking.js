@@ -17,9 +17,6 @@ mw.loader.using( 'ext.eventLogging' ).then( function () {
 
 	$( function () {
 		var isReferencePreviewsEnabled = mw.config.get( 'wgPopupsReferencePreviews', false ),
-			loggingTopic = isReferencePreviewsEnabled ?
-				'event.ReferencePreviewsCite' :
-				'event.ReferencePreviewsBaseline',
 			samplingRate = isReferencePreviewsEnabled ? 1 : 1000;
 
 		if ( !navigator.sendBeacon ||
@@ -30,6 +27,9 @@ mw.loader.using( 'ext.eventLogging' ).then( function () {
 			return;
 		}
 
+		var loggingTopic = isReferencePreviewsEnabled ?
+			'event.ReferencePreviewsCite' :
+			'event.ReferencePreviewsBaseline';
 		// eslint-disable-next-line no-jquery/no-global-selector
 		$( '#mw-content-text' ).on(
 			'click',

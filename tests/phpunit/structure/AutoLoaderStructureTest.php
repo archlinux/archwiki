@@ -101,15 +101,12 @@ class AutoLoaderStructureTest extends MediaWikiIntegrationTestCase {
 				$filePath = self::fixSlashes( $file );
 			}
 
-			if ( !file_exists( $filePath ) ) {
+			if ( !is_file( $filePath ) ) {
 				$actual[$class] = "[file '$filePath' does not exist]";
 				continue;
 			}
 
-			Wikimedia\suppressWarnings();
-			$contents = file_get_contents( $filePath );
-			Wikimedia\restoreWarnings();
-
+			$contents = @file_get_contents( $filePath );
 			if ( $contents === false ) {
 				$actual[$class] = "[couldn't read file '$filePath']";
 				continue;

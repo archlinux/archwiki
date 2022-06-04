@@ -398,34 +398,16 @@
 	 * Initializes two about links at the bottom of the panel.
 	 */
 	MPP.initializeAboutLinks = function () {
-		var separator = ' | ';
-
 		this.$mmvAboutLink = $( '<a>' )
 			.prop( 'href', mw.config.get( 'wgMultimediaViewer' ).infoLink )
 			.text( mw.message( 'multimediaviewer-about-mmv' ).text() )
 			.addClass( 'mw-mmv-about-link' )
 			.on( 'click', function () { mw.mmv.actionLogger.log( 'about-page' ); } );
 
-		this.$mmvDiscussLink = $( '<a>' )
-			.prop( 'href', mw.config.get( 'wgMultimediaViewer' ).discussionLink )
-			.text( mw.message( 'multimediaviewer-discuss-mmv' ).text() )
-			.addClass( 'mw-mmv-discuss-link' )
-			.on( 'click', function () { mw.mmv.actionLogger.log( 'discuss-page' ); } );
-
-		this.$mmvHelpLink = $( '<a>' )
-			.prop( 'href', mw.config.get( 'wgMultimediaViewer' ).helpLink )
-			.text( mw.message( 'multimediaviewer-help-mmv' ).text() )
-			.addClass( 'mw-mmv-help-link' )
-			.on( 'click', function () { mw.mmv.actionLogger.log( 'help-page' ); } );
-
 		this.$mmvAboutLinks = $( '<div>' )
 			.addClass( 'mw-mmv-about-links' )
 			.append(
-				this.$mmvAboutLink,
-				separator,
-				this.$mmvDiscussLink,
-				separator,
-				this.$mmvHelpLink
+				this.$mmvAboutLink
 			)
 			.appendTo( this.$imageMetadata );
 	};

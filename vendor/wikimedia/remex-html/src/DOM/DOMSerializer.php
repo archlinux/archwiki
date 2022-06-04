@@ -121,6 +121,3 @@ class DOMSerializer implements AbstractSerializer {
 		$this->builder->reparentChildren( $element, $newParent, $sourceStart );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( DOMSerializer::class, 'RemexHtml\DOM\DOMSerializer' );

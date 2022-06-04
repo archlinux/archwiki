@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Macofe"
+		]
+	},
+	"math_failure": "分析失败",
+	"math_syntax_error": "文法错误",
+	"math_unknown_error": "未知错误",
+	"math_unknown_function": "未知函数",
+	"mw_math_mathml": "尽可能用MathML （试验中）",
+	"mw_math_png": "全部使用PNG图像",
+	"mw_math_source": "显示系LaTeX代码 （文字浏览器用）",
+	"prefs-math": "数学公式"
+}

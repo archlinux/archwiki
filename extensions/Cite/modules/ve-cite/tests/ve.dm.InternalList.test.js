@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-QUnit.module( 've.dm.InternalList (Cite)', ve.test.utils.mwEnvironment );
+QUnit.module( 've.dm.InternalList (Cite)', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 
@@ -185,12 +185,11 @@ QUnit.test( 'addNode/removeNode', function ( assert ) {
 } );
 
 QUnit.test( 'getItemInsertion', function ( assert ) {
-	var insertion, index,
-		doc = ve.dm.citeExample.createExampleDocument( 'references' ),
+	var doc = ve.dm.citeExample.createExampleDocument( 'references' ),
 		internalList = doc.getInternalList();
 
-	insertion = internalList.getItemInsertion( 'mwReference/', 'literal/foo', [] );
-	index = internalList.getItemNodeCount();
+	var insertion = internalList.getItemInsertion( 'mwReference/', 'literal/foo', [] );
+	var index = internalList.getItemNodeCount();
 	assert.strictEqual( insertion.index, index, 'Insertion creates a new reference' );
 	assert.deepEqual(
 		insertion.transaction.getOperations(),
@@ -214,10 +213,10 @@ QUnit.test( 'getItemInsertion', function ( assert ) {
 } );
 
 QUnit.test( 'getUniqueListKey', function ( assert ) {
-	var generatedName,
-		doc = ve.dm.citeExample.createExampleDocument( 'references' ),
+	var doc = ve.dm.citeExample.createExampleDocument( 'references' ),
 		internalList = doc.getInternalList();
 
+	var generatedName;
 	generatedName = internalList.getUniqueListKey( 'mwReference/', 'auto/0', 'literal/:' );
 	assert.strictEqual( generatedName, 'literal/:0', '0 maps to 0' );
 	generatedName = internalList.getUniqueListKey( 'mwReference/', 'auto/1', 'literal/:' );

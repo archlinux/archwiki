@@ -66,14 +66,14 @@ class PreHandler extends DOMHandler {
 		$state->emitChunk( $content, $node );
 
 		// Preserve separator source
-		$state->appendSep( $trailingNL, $node );
+		$state->appendSep( $trailingNL );
 		return $node->nextSibling;
 	}
 
 	/** @inheritDoc */
 	public function before( Element $node, Node $otherNode, SerializerState $state ): array {
-		if ( DOMCompat::nodeName( $otherNode ) === 'pre'
-			&& $otherNode instanceof Element // for static analyzers
+		if ( $otherNode instanceof Element // for static analyzers
+			&& DOMCompat::nodeName( $otherNode ) === 'pre'
 			&& ( DOMDataUtils::getDataParsoid( $otherNode )->stx ?? null ) !== 'html'
 		) {
 			return [ 'min' => 2 ];
@@ -84,8 +84,8 @@ class PreHandler extends DOMHandler {
 
 	/** @inheritDoc */
 	public function after( Element $node, Node $otherNode, SerializerState $state ): array {
-		if ( DOMCompat::nodeName( $otherNode ) === 'pre'
-			&& $otherNode instanceof Element // for static analyzers
+		if ( $otherNode instanceof Element // for static analyzers
+			&& DOMCompat::nodeName( $otherNode ) === 'pre'
 			&& ( DOMDataUtils::getDataParsoid( $otherNode )->stx ?? null ) !== 'html'
 		) {
 			return [ 'min' => 2 ];

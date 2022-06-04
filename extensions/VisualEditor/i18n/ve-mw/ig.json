@@ -3,7 +3,9 @@
 		"authors": [
 			"Tochiprecious",
 			"Ukabia",
-			"Uzoma Ozurumba"
+			"Uzoma Ozurumba",
+			"Edith Nwobu",
+			"Izuchi Onyeike"
 		]
 	},
 	"tooltip-ca-ve-edit": "Mèzi ihu â",
@@ -19,6 +21,8 @@
 	"visualeditor-dialog-meta-categories-data-label": "Ụdàkọ",
 	"visualeditor-dialog-meta-categories-section": "Ụdàkọ",
 	"visualeditor-dialog-meta-settings-toc-disable": "Emelaème",
+	"visualeditor-dialog-transclusion-add-param-error-exists-selected": "E nweghị ike itinye ntụ \"$2\" ugboro abụọ.",
+	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "Nke\n oke \"$2\" adịlarị maka ojiji. Biko lelee nhọrọ ndị dị na sidebar.",
 	"visualeditor-linkinspector-educationpopup-title": "Òjikọ",
 	"visualeditor-mweditmodesource-warning-cancel": "Hapụ̀",
 	"visualeditor-savedialog-label-save-short": "Dònye",

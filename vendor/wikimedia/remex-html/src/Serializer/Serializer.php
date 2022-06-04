@@ -356,6 +356,3 @@ class Serializer implements AbstractSerializer {
 		return substr( $s, 2, -3 ) . "\n";
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Serializer::class, 'RemexHtml\Serializer\Serializer' );

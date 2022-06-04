@@ -136,7 +136,8 @@ class PageImages {
 			return;
 		}
 
-		$thumbSetting = $context->getUser()->getOption( 'thumbsize' );
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		$thumbSetting = $userOptionsLookup->getOption( $context->getUser(), 'thumbsize' );
 		$thumbSize = $wgThumbLimits[$thumbSetting];
 
 		$thumb = $imageFile->transform( [ 'width' => $thumbSize ] );
@@ -258,13 +259,19 @@ class PageImages {
 			return;
 		}
 
-		// See https://developers.facebook.com/docs/sharing/best-practices?locale=en_US#tags
-		$thumb = $imageFile->transform( [ 'width' => 1200 ] );
-		if ( !$thumb ) {
-			return;
+		// Open Graph protocol -- https://ogp.me/
+		// Multiple images are supported according to https://ogp.me/#array
+		// See https://developers.facebook.com/docs/sharing/best-practices?locale=en_US#images
+		// See T282065: WhatsApp expects an image <300kB
+		foreach ( [ 1200, 800, 640 ] as $width ) {
+			$thumb = $imageFile->transform( [ 'width' => $width ] );
+			if ( !$thumb ) {
+				continue;
+			}
+			$out->addMeta( 'og:image', wfExpandUrl( $thumb->getUrl(), PROTO_CANONICAL ) );
+			$out->addMeta( 'og:image:width', strval( $thumb->getWidth() ) );
+			$out->addMeta( 'og:image:height', strval( $thumb->getHeight() ) );
 		}
-
-		$out->addMeta( 'og:image', wfExpandUrl( $thumb->getUrl(), PROTO_CANONICAL ) );
 	}
 
 }

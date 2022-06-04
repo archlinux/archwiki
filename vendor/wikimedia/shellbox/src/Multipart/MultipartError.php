@@ -2,8 +2,10 @@
 
 namespace Shellbox\Multipart;
 
+use Exception;
+
 /**
  * Exception base class for multipart errors
  */
-class MultipartError extends \Exception {
+class MultipartError extends Exception {
 }

@@ -34,12 +34,13 @@
 	function expandNode( $link ) {
 		// Show the children node
 		var $children = $link.parents( '.CategoryTreeItem' )
-			.siblings( '.CategoryTreeChildren' );
-		$children.show();
+			.siblings( '.CategoryTreeChildren' )
+			.css( 'display', '' );
 
-		$link
-			.attr( 'title', mw.msg( 'categorytree-collapse' ) )
-			.attr( 'data-ct-state', 'expanded' );
+		$link.attr( {
+			title: mw.msg( 'categorytree-collapse' ),
+			'data-ct-state': 'expanded'
+		} );
 
 		if ( !$link.data( 'ct-loaded' ) ) {
 			loadChildren( $link, $children );
@@ -54,11 +55,13 @@
 	function collapseNode( $link ) {
 		// Hide the children node
 		$link.parents( '.CategoryTreeItem' )
-			.siblings( '.CategoryTreeChildren' ).hide();
+			.siblings( '.CategoryTreeChildren' )
+			.css( 'display', 'none' );
 
-		$link
-			.attr( 'title', mw.msg( 'categorytree-expand' ) )
-			.attr( 'data-ct-state', 'collapsed' );
+		$link.attr( {
+			title: mw.msg( 'categorytree-expand' ),
+			'data-ct-state': 'collapsed'
+		} );
 	}
 
 	/**
@@ -164,33 +167,20 @@
 			data = data.categorytree.html;
 
 			if ( data === '' ) {
-				switch ( ctMode ) {
-					// CategoryTreeMode::CATEGORIES = 0
-					case 0:
-						data = mw.msg( 'categorytree-no-subcategories' );
-						break;
-					// CategoryTreeMode::PAGES = 10
-					case 10:
-						data = mw.msg( 'categorytree-no-pages' );
-						break;
-					// CategoryTreeMode::PARENTS = 100
-					case 100:
-						data = mw.msg( 'categorytree-no-parent-categories' );
-						break;
-					// CategoryTreeMode::ALL = 20
-					default:
-						data = mw.msg( 'categorytree-nothing-found' );
-				}
-
-				$data = $( '<i>' ).addClass( 'CategoryTreeNotice' ).text( data );
+				$data = $( '<i>' ).addClass( 'CategoryTreeNotice' )
+					// eslint-disable-next-line mediawiki/msg-doc
+					.text( mw.msg( {
+						0: 'categorytree-no-subcategories',
+						10: 'categorytree-no-pages',
+						100: 'categorytree-no-parent-categories'
+					}[ ctMode ] || 'categorytree-nothing-found' ) );
 			} else {
 				$data = $( $.parseHTML( data ) );
 				attachHandler( $data );
 			}
 
 			$children.empty().append( $data );
-		} )
-			.fail( error );
+		} ).fail( error );
 	};
 
 	// Register click events

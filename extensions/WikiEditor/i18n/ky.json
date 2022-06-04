@@ -3,11 +3,10 @@
 		"authors": [
 			"Chorobek",
 			"Macofe",
-			"Викиней"
+			"Викиней",
+			"Amire80"
 		]
 	},
-	"wikieditor-loading": "Жүктөлүүдө...",
-	"wikieditor-toolbar-loading": "Жүктөлүүдө...",
 	"wikieditor-toolbar-tool-bold": "Калың",
 	"wikieditor-toolbar-tool-bold-example": "Калың текст",
 	"wikieditor-toolbar-tool-italic": "Жантык",
@@ -109,7 +108,7 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Калың жана жантык текст'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Калың &amp; жантык текст</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "Ички шилтеме",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Барактын баш сөзү|Шилтеменин тексти]]<br />[[Барактын баш сөзү]]",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Барактын баш сөзү]]<br />[[Барактын баш сөзү|Шилтеменин тексти]]",
 	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Шилтеменин тексти</a><br /><a href='#'>Барактын баш сөзү</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Сырткы шилтеме",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Шилтеменин тексти]<br />[http://www.example.org]<br />http://www.example.org",

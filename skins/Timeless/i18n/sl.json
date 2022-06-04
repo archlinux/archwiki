@@ -19,5 +19,7 @@
 	"timeless-pagemisc": "Več",
 	"timeless-namespaces": "Imenski prostori",
 	"timeless-pagetools": "Dejanja strani",
-	"timeless-languages": "Jeziki"
+	"timeless-languages": "Jeziki",
+	"timeless-view-history": "Zgodovina",
+	"timeless-action-undelete": "Vrni $1 {{PLURAL:$1|urejanje|urejanji|urejanja|urejanj}}"
 }

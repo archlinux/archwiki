@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Arifin.wijaya",
+			"Daud I.F. Argana",
 			"Iwan Novirion",
 			"Rex",
-			"William Surya Permana",
-			"Daud I.F. Argana"
+			"William Surya Permana"
 		]
 	},
 	"skinname-monobook": "MonoBook",
@@ -20,5 +20,7 @@
 	"cactions-mobile": "Tindakan halaman",
 	"monobook-cactions-label": "Tindakan halaman",
 	"monobook-notifications-link": "Pemberitahuan ($1)",
-	"monobook-notifications-link-none": "Pemberitahuan"
+	"monobook-notifications-link-none": "Pemberitahuan",
+	"monobook-view-history": "Riwayat",
+	"monobook-action-undelete": "Batal hapus {{PLURAL:$1|$1 suntingan}}"
 }

@@ -2,6 +2,7 @@
 
 use MediaWiki\Interwiki\ClassicInterwikiLookup;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\RestrictionStore;
 
 /**
@@ -42,8 +43,10 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 
 		$editor = $this->getTestSysop()->getUser();
 
+		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
+
 		// Page for getContent test
-		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestPage' ) );
+		$page = $wikiPageFactory->newFromTitle( Title::newFromText( 'ScribuntoTestPage' ) );
 		$page->doUserEditContent(
 			new WikitextContent(
 				'{{int:mainpage}}<includeonly>...</includeonly><noinclude>...</noinclude>'
@@ -54,13 +57,13 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 		$this->testPageId = $page->getId();
 
 		// Pages for redirectTarget tests
-		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestRedirect' ) );
+		$page = $wikiPageFactory->newFromTitle( Title::newFromText( 'ScribuntoTestRedirect' ) );
 		$page->doUserEditContent(
 			new WikitextContent( '#REDIRECT [[ScribuntoTestTarget]]' ),
 			$editor,
 			'Summary'
 		);
-		$page = WikiPage::factory( Title::newFromText( 'ScribuntoTestNonRedirect' ) );
+		$page = $wikiPageFactory->newFromTitle( Title::newFromText( 'ScribuntoTestNonRedirect' ) );
 		$page->doUserEditContent(
 			new WikitextContent( 'Not a redirect.' ),
 			$editor,
@@ -191,18 +194,18 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 		$engine = $this->getEngine();
 		$interpreter = $engine->getInterpreter();
 		$this->assertFalse(
-			$engine->getParser()->getOutput()->getFlag( 'vary-page-id' ), 'sanity check'
+			$engine->getParser()->getOutput()->getOutputFlag( ParserOutputFlags::VARY_PAGE_ID ), 'sanity check'
 		);
 
 		$interpreter->callFunction( $interpreter->loadString(
 			"local _ = $code", 'reference title but not id'
 		) );
-		$this->assertFalse( $engine->getParser()->getOutput()->getFlag( 'vary-page-id' ) );
+		$this->assertFalse( $engine->getParser()->getOutput()->getOutputFlag( ParserOutputFlags::VARY_PAGE_ID ) );
 
 		$interpreter->callFunction( $interpreter->loadString(
 			"local _ = $code.id", 'reference id'
 		) );
-		$this->assertSame( $flag, $engine->getParser()->getOutput()->getFlag( 'vary-page-id' ) );
+		$this->assertSame( $flag, $engine->getParser()->getOutput()->getOutputFlag( ParserOutputFlags::VARY_PAGE_ID ) );
 	}
 
 	public function provideVaryPageId() {

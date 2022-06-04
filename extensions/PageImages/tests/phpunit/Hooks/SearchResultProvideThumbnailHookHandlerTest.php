@@ -5,7 +5,7 @@ namespace PageImages\Tests\Hooks;
 use LocalFile;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
-use MediaWikiTestCase;
+use MediaWikiIntegrationTestCase;
 use PageImages\Hooks\SearchResultProvideThumbnailHookHandler;
 use PageImages\PageImages;
 use PageProps;
@@ -17,7 +17,7 @@ use ThumbnailImage;
  *
  * @group PageImages
  */
-class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiTestCase {
+class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * Creates mock object for LocalFile
 	 * @param int $size

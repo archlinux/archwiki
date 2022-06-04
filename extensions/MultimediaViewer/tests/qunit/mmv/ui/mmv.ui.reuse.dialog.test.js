@@ -24,7 +24,7 @@
 
 	QUnit.module( 'mmv.ui.reuse.Dialog', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var reuseDialog = makeReuseDialog( this.sandbox );
 
 		assert.ok( reuseDialog, 'Reuse UI element is created.' );
@@ -177,7 +177,7 @@
 		assertDialogDoesNotCatchClicks();
 	} );
 
-	QUnit.test( 'set()/empty() sanity check:', function ( assert ) {
+	QUnit.test( 'set()/empty() sense check:', function ( assert ) {
 		var reuseDialog = makeReuseDialog( this.sandbox ),
 			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
 			src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Foobar.jpg',

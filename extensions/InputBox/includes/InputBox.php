@@ -6,7 +6,14 @@
  * @ingroup Extensions
  */
 
-use MediaWiki\MediaWikiServices;
+namespace MediaWiki\Extension\InputBox;
+
+use ExtensionRegistry;
+use Html;
+use Parser;
+use Sanitizer;
+use SpecialPage;
+use Xml;
 
 /**
  * InputBox class
@@ -15,6 +22,7 @@ class InputBox {
 
 	/* Fields */
 
+	/** @var Parser */
 	private $mParser;
 	private $mType = '';
 	private $mWidth = 50;
@@ -80,12 +88,11 @@ class InputBox {
 			case 'search2':
 				return $this->getSearchForm2();
 			default:
+				$key = $this->mType === '' ? 'inputbox-error-no-type' : 'inputbox-error-bad-type';
 				return Xml::tags( 'div', null,
 					Xml::element( 'strong',
 						[ 'class' => 'error' ],
-						strlen( $this->mType ) > 0
-							? wfMessage( 'inputbox-error-bad-type', $this->mType )->text()
-							: wfMessage( 'inputbox-error-no-type' )->text()
+						wfMessage( $key, $this->mType )->text()
 					)
 				);
 		}
@@ -174,15 +181,15 @@ class InputBox {
 			'dir' => $this->mDir
 		] );
 
-		if ( $this->mPrefix != '' ) {
+		if ( $this->mPrefix !== '' ) {
 			$htmlOut .= Html::hidden( 'prefix', $this->mPrefix );
 		}
 
-		if ( $this->mSearchFilter != '' ) {
+		if ( $this->mSearchFilter !== '' ) {
 			$htmlOut .= Html::hidden( 'searchfilter', $this->mSearchFilter );
 		}
 
-		if ( $this->mTour != '' ) {
+		if ( $this->mTour !== '' ) {
 			$htmlOut .= Html::hidden( 'tour', $this->mTour );
 		}
 
@@ -191,7 +198,7 @@ class InputBox {
 		// Determine namespace checkboxes
 		$namespacesArray = explode( ',', $this->mNamespaces );
 		if ( $this->mNamespaces ) {
-			$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+			$contLang = $this->mParser->getContentLanguage();
 			$namespaces = $contLang->getNamespaces();
 			$nsAliases = array_merge( $contLang->getNamespaceAliases(), $wgNamespaceAliases );
 			$showNamespaces = [];
@@ -207,7 +214,7 @@ class InputBox {
 				}
 
 				$mainMsg = wfMessage( 'inputbox-ns-main' )->inContentLanguage()->text();
-				if ( $userNS == 'Main' || $userNS == $mainMsg ) {
+				if ( $userNS === 'Main' || $userNS === $mainMsg ) {
 					$i = 0;
 				} elseif ( array_search( $userNS, $namespaces ) ) {
 					$i = array_search( $userNS, $namespaces );
@@ -226,11 +233,11 @@ class InputBox {
 			foreach ( $showNamespaces as $i => $name ) {
 				$checked = [];
 				// Namespace flagged with "**" or if it's the only one
-				if ( ( isset( $checkedNS[$i] ) && $checkedNS[$i] ) || count( $showNamespaces ) == 1 ) {
+				if ( ( isset( $checkedNS[$i] ) && $checkedNS[$i] ) || count( $showNamespaces ) === 1 ) {
 					$checked = [ 'checked' => 'checked' ];
 				}
 
-				if ( count( $showNamespaces ) == 1 ) {
+				if ( count( $showNamespaces ) === 1 ) {
 					// Checkbox
 					$htmlOut .= Xml::element( 'input',
 						[
@@ -259,7 +266,7 @@ class InputBox {
 
 			// Line break
 			$htmlOut .= $this->mBR;
-		} elseif ( $type == 'search' ) {
+		} elseif ( $type === 'search' ) {
 			// Go button
 			$htmlOut .= Xml::element( 'input',
 				[
@@ -283,7 +290,7 @@ class InputBox {
 		);
 
 		// Hidden fulltext param for IE (bug 17161)
-		if ( $type == 'fulltext' ) {
+		if ( $type === 'fulltext' ) {
 			$htmlOut .= Html::hidden( 'fulltext', 'Search' );
 		}
 
@@ -381,7 +388,7 @@ class InputBox {
 	public function getCreateForm() {
 		global $wgScript;
 
-		if ( $this->mType == "comment" ) {
+		if ( $this->mType === 'comment' ) {
 			if ( !$this->mButtonLabel ) {
 				$this->mButtonLabel = wfMessage( 'inputbox-postcomment' )->text();
 			}
@@ -432,7 +439,7 @@ class InputBox {
 		if ( $this->mMinor !== null ) {
 			$htmlOut .= Html::hidden( 'minor', $this->mMinor );
 		}
-		if ( $this->mType == 'comment' ) {
+		if ( $this->mType === 'comment' ) {
 			$htmlOut .= Html::hidden( 'section', 'new' );
 		}
 
@@ -607,7 +614,7 @@ class InputBox {
 			list( $name, $value ) = explode( '=', $line, 2 );
 			$name = strtolower( trim( $name ) );
 			$value = Sanitizer::decodeCharReferences( trim( $value ) );
-			if ( $name == 'preloadparams[]' ) {
+			if ( $name === 'preloadparams[]' ) {
 				// We have to special-case this one because it's valid for it to appear more than once.
 				$this->mPreloadparams[] = $value;
 			} else {
@@ -667,7 +674,7 @@ class InputBox {
 		}
 
 		// Insert a line break if configured to do so
-		$this->mBR = ( strtolower( $this->mBR ) == "no" ) ? ' ' : '<br />';
+		$this->mBR = ( strtolower( $this->mBR ) === 'no' ) ? ' ' : '<br />';
 
 		// Validate the width; make sure it's a valid, positive integer
 		$this->mWidth = intval( $this->mWidth <= 0 ? 50 : $this->mWidth );
@@ -675,6 +682,12 @@ class InputBox {
 		// Validate background color
 		if ( !$this->isValidColor( $this->mBGColor ) ) {
 			$this->mBGColor = 'transparent';
+		}
+
+		// T297725: De-obfuscate attempts to trick people into making edits to .js pages
+		$target = $this->mType === 'commenttitle' ? $this->mPage : $this->mDefaultText;
+		if ( $this->mHidden && $this->mPreload && substr( $target, -3 ) === '.js' ) {
+			$this->mHidden = false;
 		}
 	}
 
@@ -712,7 +725,7 @@ REGEX;
 	}
 
 	private function bgColorStyle() {
-		if ( $this->mBGColor != 'transparent' ) {
+		if ( $this->mBGColor !== 'transparent' ) {
 			return 'background-color: ' . $this->mBGColor . ';';
 		}
 		return '';
@@ -745,9 +758,7 @@ REGEX;
 	 * @return string
 	 */
 	private function languageConvert( $text ) {
-		$lang = $this->mParser->getTargetLanguage();
-		$langConv = MediaWikiServices::getInstance()->getLanguageConverterFactory()
-			->getLanguageConverter( $lang );
+		$langConv = $this->mParser->getTargetLanguageConverter();
 		if ( $langConv->hasVariants() && strpos( $text, '-{' ) !== false ) {
 			$text = $langConv->convert( $text );
 		}

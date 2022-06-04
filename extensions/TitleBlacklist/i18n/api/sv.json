@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hannarosendeloitte",
 			"Lokal Profil",
-			"WikiPhoenix",
-			"Hannarosendeloitte"
+			"WikiPhoenix"
 		]
 	},
 	"apihelp-titleblacklist-description": "Validera en sidtitel, filnamn eller användarnamn mot TitleBlacklist.",

@@ -7,5 +7,7 @@
 	},
 	"skinname-monobook": "მონობუკი",
 	"monobook.css": "/* აქ ჩასმული CSS გავლენას იქონიებს Monobook ინტერფეისის მომხმარებლებზე */",
-	"monobook-more-actions": "მეტი"
+	"monobook-more-actions": "მეტი",
+	"monobook-view-history": "ისტორია",
+	"monobook-action-undelete": "გააუქმე წაშლა {{PLURAL:$1|ერთი რედაქტირება|$1 რედაქტირება}}"
 }

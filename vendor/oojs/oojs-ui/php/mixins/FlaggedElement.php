@@ -37,7 +37,7 @@ trait FlaggedElement {
 		$this->setFlags( $config['flags'] ?? null );
 
 		$this->registerConfigCallback( function ( &$config ) {
-			if ( !empty( $this->flags ) ) {
+			if ( $this->flags ) {
 				$config['flags'] = $this->getFlags();
 			}
 		} );

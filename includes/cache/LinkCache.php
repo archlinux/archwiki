@@ -25,6 +25,7 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Page\PageStoreRecord;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -96,18 +97,6 @@ class LinkCache implements LoggerAwareInterface {
 	 */
 	public function setLogger( LoggerInterface $logger ) {
 		$this->logger = $logger;
-	}
-
-	/**
-	 * Get an instance of this class.
-	 *
-	 * @return LinkCache
-	 * @deprecated since 1.28, hard deprecated since 1.37
-	 * Use MediaWikiServices::getLinkCache instead
-	 */
-	public static function singleton() {
-		wfDeprecated( __METHOD__, '1.28' );
-		return MediaWikiServices::getInstance()->getLinkCache();
 	}
 
 	/**
@@ -294,6 +283,7 @@ class LinkCache implements LoggerAwareInterface {
 	public function addGoodLinkObj( $id, $page, $len = -1, $redir = null,
 		$revision = 0, $model = null, $lang = null
 	) {
+		wfDeprecated( __METHOD__, '1.38' );
 		$this->addGoodLinkObjFromRow( $page, (object)[
 			'page_id' => (int)$id,
 			'page_namespace' => $page->getNamespace(),
@@ -392,18 +382,18 @@ class LinkCache implements LoggerAwareInterface {
 	 * @return array
 	 */
 	public static function getSelectFields() {
-		global $wgPageLanguageUseDB;
+		$pageLanguageUseDB = MediaWikiServices::getInstance()->getMainConfig()->get( 'PageLanguageUseDB' );
 
-		$fields = [
-			'page_id',
-			'page_len',
-			'page_is_redirect',
-			'page_latest',
-			'page_restrictions',
-			'page_content_model',
-		];
+		$fields = array_merge(
+			PageStoreRecord::REQUIRED_FIELDS,
+			[
+				'page_len',
+				'page_restrictions',
+				'page_content_model',
+			]
+		);
 
-		if ( $wgPageLanguageUseDB ) {
+		if ( $pageLanguageUseDB ) {
 			$fields[] = 'page_lang';
 		}
 
@@ -488,7 +478,7 @@ class LinkCache implements LoggerAwareInterface {
 					$setOpts += Database::getCacheSetOptions( $dbr );
 
 					$row = $fetchCallback( $dbr, $ns, $dbkey, [] );
-					$mtime = $row ? wfTimestamp( TS_UNIX, $row->page_touched ) : false;
+					$mtime = $row ? (int)wfTimestamp( TS_UNIX, $row->page_touched ) : false;
 					$ttl = $this->wanCache->adaptiveTTL( $mtime, $ttl );
 
 					return $row;

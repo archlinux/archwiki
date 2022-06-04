@@ -6,8 +6,8 @@
 			"Incelemeelemani",
 			"Joseph",
 			"MuratTheTurkish",
-			"Vito Genovese",
-			"SaldırganSincap"
+			"SaldırganSincap",
+			"Vito Genovese"
 		]
 	},
 	"spam-blacklist": " #<!-- bu satırı olduğu gibi bırakın --> <pre>\n # Bu listeyle eşleşen dış bağlantılar, bir sayfaya eklendiğinde engellenecektir. \n # Bu liste yalnızca bu vikiyi etkiler; ayrıca küresel kara listeye bakın.\n # Belge için https://www.mediawiki.org/wiki/Extension:SpamBlacklist/tr adresine bakın\n#\n# Sözdizimi aşağıdaki gibidir:\n#  * \"#\" karakterinden satır sonuna kadar her şey bir yorumdur\n#  * Boş olmayan her satır, yalnızca URL'lerin içindeki ana bilgisayarlarla eşleşecek bir düzenli ifade parçasıdır\n\n #</pre> <!-- bu satırı olduğu gibi bırakın -->",

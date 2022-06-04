@@ -91,6 +91,7 @@
 	"searchbutton": "Krax",
 	"go": "Zux",
 	"searcharticle": "Zux",
+	"view-history": "Maktabzabno",
 	"history": "Maktabzabno diFaṭo",
 	"history_short": "Maktabzabno",
 	"updatedmarker": "aŞuḥlofe datsimi miNaqa du3boroayḍi ḥaroyo",
@@ -98,8 +99,11 @@
 	"permalink": "Asiruṭo aminoyto",
 	"print": "Ṫba³",
 	"view": "Qray",
+	"view-view": "Qray",
 	"edit": "Mşaḥlaf",
+	"view-edit": "Mşaḥlaf",
 	"create": "Xlaq",
+	"view-create": "Xlaq",
 	"delete": "Slag",
 	"protect": "Mastar",
 	"protect_change": "mşaḥlaf",
@@ -318,6 +322,7 @@
 	"group-user": "Hadome",
 	"group-all": "(kulle)",
 	"newuserlogpage": "User creation log",
+	"action-addsection": "Maḥat Fusoqo ḥaṭo",
 	"action-edit": "Mşaḥlaf iFaṭaṭe",
 	"action-move": "Mtaxar",
 	"action-delete": "Slag",
@@ -573,5 +578,8 @@
 	"duration-weeks": "$1 {{PLURAL:$1|Şabṭo|Şabe}}",
 	"duration-years": "$1 {{PLURAL:$1|Şato|Şnaye}}",
 	"duration-decades": "$1 {{PLURAL:$1|decade|decades}}",
-	"duration-centuries": "$1 {{PLURAL:$1|Doro|Dore}}"
+	"duration-centuries": "$1 {{PLURAL:$1|Doro|Dore}}",
+	"skin-action-protect": "Mastar",
+	"skin-action-delete": "Slag",
+	"skin-action-move": "Mtaxar"
 }

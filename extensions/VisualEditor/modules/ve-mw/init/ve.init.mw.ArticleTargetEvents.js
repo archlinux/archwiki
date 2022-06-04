@@ -40,7 +40,7 @@ ve.init.mw.ArticleTargetEvents = function VeInitMwArticleTargetEvents( target ) 
  * @param {Object} data Additional data describing the event, encoded as an object
  */
 ve.init.mw.ArticleTargetEvents.prototype.track = function ( topic, data ) {
-	ve.track( topic, $.extend( {
+	ve.track( topic, ve.extendObject( {
 		mode: this.target.surface ? this.target.surface.getMode() : this.target.getDefaultMode()
 	}, data ) );
 };
@@ -125,9 +125,8 @@ ve.init.mw.ArticleTargetEvents.prototype.onSaveComplete = function ( data ) {
  * @param {string} code Error code
  */
 ve.init.mw.ArticleTargetEvents.prototype.trackSaveError = function ( code ) {
-	var key, data,
-		// Maps mwtiming types to mwedit types
-		typeMap = {
+	// Maps mwtiming types to mwedit types
+	var typeMap = {
 			badtoken: 'userBadToken',
 			assertanonfailed: 'userNewUser',
 			assertuserfailed: 'userNewUser',
@@ -144,7 +143,7 @@ ve.init.mw.ArticleTargetEvents.prototype.trackSaveError = function ( code ) {
 		// (for historical reasons; this sucks)
 		specialTypes = [ 'editconflict' ];
 
-	key = 'performance.user.saveError';
+	var key = 'performance.user.saveError';
 	if ( specialTypes.indexOf( code ) !== -1 ) {
 		key += '.' + code;
 	}
@@ -154,7 +153,7 @@ ve.init.mw.ArticleTargetEvents.prototype.trackSaveError = function ( code ) {
 		type: code
 	} );
 
-	data = {
+	var data = {
 		message: code,
 		type: typeMap[ code ] || 'responseUnknown',
 		timing: ve.now() - this.timings.saveInitiated + ( this.timings.serializeForCache || 0 )

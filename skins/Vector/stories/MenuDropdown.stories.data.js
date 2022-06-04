@@ -1,7 +1,3 @@
-/**
- * @external MenuDefinition
- */
-
 import vectorMenuTemplate from '!!raw-loader!../includes/templates/Menu.mustache';
 import { htmlUserLanguageAttributes } from './utils';
 

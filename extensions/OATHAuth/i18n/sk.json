@@ -50,7 +50,7 @@
 	"oath-log-name": "Záznam dvojfaktorovej autentifikácie",
 	"oath-log-header": "Tieto udalosti zaznamenávajú zmeny stavu dvojfaktorovej autentifikácie používateľov.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$1|vypol|vypla}} dvojfaktorovú autentifikáciu {{GENDER:$2|používateľa|používateľky}} $3.",
-	"oauthauth-ui-no-module": "Nie je zapnuté",
+	"oathauth-ui-no-module": "Nie je zapnuté",
 	"oathauth-module-totp-label": "TOTP (jednorazový token)",
 	"oathauth-ui-manage": "Spravovať",
 	"oathmanage": "Spravovanie dvojfaktorovej autentifikácie",

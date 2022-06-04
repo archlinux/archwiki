@@ -47,7 +47,7 @@ use LogicException;
  * Every iteration of beginPrimaryChanges()/commitPrimaryChanges() is called a "transaction round".
  * Rounds are useful on the primary DB connections because they make single-DB (and by and large
  * multi-DB) updates in web requests all-or-nothing. Also, transactions on replica DBs are useful
- * when REPEATABLE-READ or SERIALIZABLE isolation is used because all foriegn keys and constraints
+ * when REPEATABLE-READ or SERIALIZABLE isolation is used because all foreign keys and constraints
  * hold across separate queries in the DB transaction since the data appears within a consistent
  * point-in-time snapshot.
  *
@@ -130,7 +130,8 @@ interface ILoadBalancer {
 	 *  - defaultGroup: Default query group; the generic group if not specified [optional]
 	 *  - hostname : The name of the current server [optional]
 	 *  - cliMode: Whether the execution context is a CLI script [optional]
-	 *  - profiler : Class name or instance with profileIn()/profileOut() methods [optional]
+	 *  - profiler : Callback that takes a section name argument and returns
+	 *      a ScopedCallback instance that ends the profile section in its destructor [optional]
 	 *  - trxProfiler: TransactionProfiler instance [optional]
 	 *  - replLogger: PSR-3 logger instance [optional]
 	 *  - connLogger: PSR-3 logger instance [optional]
@@ -160,7 +161,7 @@ interface ILoadBalancer {
 	 * @return string
 	 * @since 1.36
 	 */
-	public function getClusterName();
+	public function getClusterName(): string;
 
 	/**
 	 * Get the local (and default) database domain ID of connection handles
@@ -169,14 +170,14 @@ interface ILoadBalancer {
 	 * @return string Database domain ID; this specifies DB name, schema, and table prefix
 	 * @since 1.31
 	 */
-	public function getLocalDomainID();
+	public function getLocalDomainID(): string;
 
 	/**
 	 * @param DatabaseDomain|string|bool $domain Database domain
 	 * @return string Value of $domain if it is foreign or the local domain otherwise
 	 * @since 1.32
 	 */
-	public function resolveDomainID( $domain );
+	public function resolveDomainID( $domain ): string;
 
 	/**
 	 * Close all connection and redefine the local domain for testing or schema creation
@@ -204,7 +205,7 @@ interface ILoadBalancer {
 	 * This takes into account load ratios and lag times. It should return a consistent
 	 * index during the life time of the load balancer. This initially checks replica DBs
 	 * for connectivity to avoid returning an unusable server. This means that connections
-	 * might be attempted by calling this method (usally one at the most but possibly more).
+	 * might be attempted by calling this method (usually one at the most but possibly more).
 	 * Subsequent calls with the same $group will not need to make new connection attempts
 	 * since the acquired connection for each group is preserved.
 	 *
@@ -230,23 +231,9 @@ interface ILoadBalancer {
 	public function waitFor( $pos );
 
 	/**
-	 * Set the primary wait position and wait for a generic replica DB to catch up to it
-	 *
-	 * This method is only intented for use a throttling mechanism for high-volume updates.
-	 * Unlike waitFor(), failure does not effect getLaggedReplicaMode()/laggedReplicaUsed().
-	 *
-	 * This can be used a faster proxy for waitForAll()
-	 *
-	 * @param DBPrimaryPos|bool $pos Primary position or false
-	 * @param int|null $timeout Max seconds to wait; default is mWaitTimeout
-	 * @return bool Success (able to connect and no timeouts reached)
-	 */
-	public function waitForOne( $pos, $timeout = null );
-
-	/**
 	 * Set the primary wait position and wait for ALL replica DBs to catch up to it
 	 *
-	 * This method is only intented for use a throttling mechanism for high-volume updates.
+	 * This method is only intended for use a throttling mechanism for high-volume updates.
 	 * Unlike waitFor(), failure does not effect getLaggedReplicaMode()/laggedReplicaUsed().
 	 *
 	 * @param DBPrimaryPos|bool $pos Primary position or false
@@ -349,6 +336,7 @@ interface ILoadBalancer {
 	 * @param int $flags Bitfield of class CONN_* constants
 	 * @return IDatabase|false This returns false on failure if CONN_SILENCE_ERRORS is set
 	 * @throws DBError If no live handle could be obtained and CONN_SILENCE_ERRORS is not set
+	 * @internal Only for use within ILoadBalancer/ILoadMonitor
 	 */
 	public function getServerConnection( $i, $domain, $flags = 0 );
 
@@ -383,7 +371,7 @@ interface ILoadBalancer {
 	 * @param int $flags Bitfield of CONN_* class constants (e.g. CONN_TRX_AUTOCOMMIT)
 	 * @return DBConnRef
 	 */
-	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 );
+	public function getConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): IDatabase;
 
 	/**
 	 * Get a lazy-connecting database handle reference for a server index
@@ -402,11 +390,12 @@ interface ILoadBalancer {
 	 * @param string[]|string $groups Query group(s) in preference order; [] for the default group
 	 * @param string|bool $domain DB domain ID or false for the local domain
 	 * @param int $flags Bitfield of CONN_* class constants
-	 * @return DBConnRef Live connection handle
+	 * @return IDatabase Live connection handle
 	 * @throws DBError If no live handle could be obtained
 	 * @throws DBAccessError If disable() was previously called
+	 * @deprecated since 1.38 use getConnectionRef instead
 	 */
-	public function getLazyConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): DBConnRef;
+	public function getLazyConnectionRef( $i, $groups = [], $domain = false, $flags = 0 ): IDatabase;
 
 	/**
 	 * Get a live database handle, suitable for migrations and schema changes, for a server index
@@ -451,7 +440,7 @@ interface ILoadBalancer {
 	 * This counts both servers using streaming replication from the primary server and
 	 * servers that just have a clone of the static dataset found on the primary server
 	 *
-	 * @return int
+	 * @return bool
 	 * @since 1.34
 	 */
 	public function hasReplicaServers();
@@ -469,10 +458,10 @@ interface ILoadBalancer {
 	 * It is possible for some replicas to be configured with "is static" but not
 	 * others, though it generally should either be set for all or none of the replicas.
 	 *
-	 * If this returns zero, this means that there is generally no reason to execute
+	 * If this returns false, this means that there is generally no reason to execute
 	 * replication wait logic for session consistency and lag reduction.
 	 *
-	 * @return int
+	 * @return bool
 	 * @since 1.34
 	 */
 	public function hasStreamingReplicaServers();
@@ -483,7 +472,7 @@ interface ILoadBalancer {
 	 * @param int $i Specific server index
 	 * @return string Readable server name, falling back to the hostname or IP address
 	 */
-	public function getServerName( $i );
+	public function getServerName( $i ): string;
 
 	/**
 	 * Return the server configuration map for the server with the specified index
@@ -522,13 +511,6 @@ interface ILoadBalancer {
 	public function getPrimaryPos();
 
 	/**
-	 * @deprecated since 1.37 Use getPrimaryPos() instead.
-	 * @return DBPrimaryPos|bool Returns false if not applicable
-	 * @throws DBError
-	 */
-	public function getMasterPos();
-
-	/**
 	 * Get the highest DB replication position for chronology control purposes
 	 *
 	 * If there is only a primary server then this returns false. If replication is present
@@ -538,7 +520,7 @@ interface ILoadBalancer {
 	 * at least as up-to-date as queries (prior to this method call) on the old connections.
 	 *
 	 * This can be useful for implementing session consistency, where the session
-	 * will be resumed accross multiple HTTP requests or CLI script instances.
+	 * will be resumed across multiple HTTP requests or CLI script instances.
 	 *
 	 * @return DBPrimaryPos|bool Replication position or false if not applicable
 	 * @since 1.34
@@ -584,7 +566,7 @@ interface ILoadBalancer {
 	/**
 	 * Run pre-commit callbacks and defer execution of post-commit callbacks
 	 *
-	 * Use this only for mutli-database commits
+	 * Use this only for multi-database commits
 	 *
 	 * @param string $fname Caller name
 	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
@@ -594,17 +576,9 @@ interface ILoadBalancer {
 	public function finalizePrimaryChanges( $fname = __METHOD__, $owner = null );
 
 	/**
-	 * @deprecated since 1.37 Use finalizePrimaryChanges() instead.
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 * @return int Number of pre-commit callbacks run (since 1.32)
-	 */
-	public function finalizeMasterChanges( $fname = __METHOD__, $owner = null );
-
-	/**
 	 * Perform all pre-commit checks for things like replication safety
 	 *
-	 * Use this only for mutli-database commits
+	 * Use this only for multi-database commits
 	 *
 	 * @param array $options Includes:
 	 *   - maxWriteDuration : max write query duration time in seconds
@@ -614,16 +588,6 @@ interface ILoadBalancer {
 	 * @since 1.37
 	 */
 	public function approvePrimaryChanges( array $options, $fname = __METHOD__, $owner = null );
-
-	/**
-	 * @deprecated since 1.37; please use approvePrimaryChanges() instead.
-	 * @param array $options Includes:
-	 *   - maxWriteDuration : max write query duration time in seconds
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 * @throws DBTransactionError
-	 */
-	public function approveMasterChanges( array $options, $fname = __METHOD__, $owner = null );
 
 	/**
 	 * Flush any primary transaction snapshots and set DBO_TRX (if DBO_DEFAULT is set)
@@ -642,14 +606,6 @@ interface ILoadBalancer {
 	public function beginPrimaryChanges( $fname = __METHOD__, $owner = null );
 
 	/**
-	 * @deprecated since 1.37; please use beginPrimaryChanges() instead.
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 * @throws DBExpectedError
-	 */
-	public function beginMasterChanges( $fname = __METHOD__, $owner = null );
-
-	/**
 	 * Issue COMMIT on all open primary connections to flush changes and view snapshots
 	 * @param string $fname Caller name
 	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
@@ -657,14 +613,6 @@ interface ILoadBalancer {
 	 * @since 1.37
 	 */
 	public function commitPrimaryChanges( $fname = __METHOD__, $owner = null );
-
-	/**
-	 * @deprecated since 1.37; please use commitPrimaryChanges() instead.
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 * @throws DBExpectedError
-	 */
-	public function commitMasterChanges( $fname = __METHOD__, $owner = null );
 
 	/**
 	 * Consume and run all pending post-COMMIT/ROLLBACK callbacks and commit dangling transactions
@@ -677,14 +625,6 @@ interface ILoadBalancer {
 	public function runPrimaryTransactionIdleCallbacks( $fname = __METHOD__, $owner = null );
 
 	/**
-	 * @deprecated since 1.37; please use runPrimaryTransactionIdleCallbacks() instead.
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 * @return Exception|null The first exception or null if there were none
-	 */
-	public function runMasterTransactionIdleCallbacks( $fname = __METHOD__, $owner = null );
-
-	/**
 	 * Run all recurring post-COMMIT/ROLLBACK listener callbacks
 	 *
 	 * @param string $fname Caller name
@@ -695,14 +635,6 @@ interface ILoadBalancer {
 	public function runPrimaryTransactionListenerCallbacks( $fname = __METHOD__, $owner = null );
 
 	/**
-	 * @deprecated since 1.37; please use runPrimaryTransactionListenerCallbacks() instead.
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 * @return Exception|null The first exception or null if there were none
-	 */
-	public function runMasterTransactionListenerCallbacks( $fname = __METHOD__, $owner = null );
-
-	/**
 	 * Issue ROLLBACK only on primary, only if queries were done on connection
 	 * @param string $fname Caller name
 	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
@@ -710,14 +642,6 @@ interface ILoadBalancer {
 	 * @since 1.37
 	 */
 	public function rollbackPrimaryChanges( $fname = __METHOD__, $owner = null );
-
-	/**
-	 * @deprecated since 1.37; please use rollbackPrimaryChanges() instead.
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 * @throws DBExpectedError
-	 */
-	public function rollbackMasterChanges( $fname = __METHOD__, $owner = null );
 
 	/**
 	 * Commit all replica DB transactions so as to flush any REPEATABLE-READ or SSI snapshots
@@ -739,23 +663,10 @@ interface ILoadBalancer {
 	public function flushPrimarySnapshots( $fname = __METHOD__, $owner = null );
 
 	/**
-	 * @deprecated since 1.37; please use flushPrimarySnapshots() instead.
-	 * @param string $fname Caller name
-	 * @param int|null $owner ID of the calling instance (e.g. the LBFactory ID)
-	 */
-	public function flushMasterSnapshots( $fname = __METHOD__, $owner = null );
-
-	/**
 	 * @return bool Whether a primary connection is already open
 	 * @since 1.37
 	 */
 	public function hasPrimaryConnection();
-
-	/**
-	 * @deprecated since 1.37; please use hasPrimaryConnection() instead.
-	 * @return bool Whether a primary connection is already open
-	 */
-	public function hasMasterConnection();
 
 	/**
 	 * Whether there are pending changes or callbacks in a transaction by this thread
@@ -765,23 +676,11 @@ interface ILoadBalancer {
 	public function hasPrimaryChanges();
 
 	/**
-	 * @deprecated since 1.37; please use hasPrimaryChanges() instead.
-	 * @return bool
-	 */
-	public function hasMasterChanges();
-
-	/**
 	 * Get the timestamp of the latest write query done by this thread
 	 * @return float|bool UNIX timestamp or false
 	 * @since 1.37
 	 */
 	public function lastPrimaryChangeTimestamp();
-
-	/**
-	 * @deprecated since 1.37; please use lastPrimaryChangeTimestamp() instead.
-	 * @return float|bool UNIX timestamp or false
-	 */
-	public function lastMasterChangeTimestamp();
 
 	/**
 	 * Check if this load balancer object had any recent or still
@@ -794,25 +693,12 @@ interface ILoadBalancer {
 	public function hasOrMadeRecentPrimaryChanges( $age = null );
 
 	/**
-	 * @deprecated since 1.37; please use hasOrMadeRecentPrimaryChanges() instead.
-	 * @param float|null $age How many seconds ago is "recent" [defaults to mWaitTimeout]
-	 * @return bool
-	 */
-	public function hasOrMadeRecentMasterChanges( $age = null );
-
-	/**
 	 * Get the list of callers that have pending primary changes
 	 *
 	 * @return string[] List of method names
 	 * @since 1.37
 	 */
 	public function pendingPrimaryChangeCallers();
-
-	/**
-	 * @deprecated since 1.37; please use pendingPrimaryChangeCallers() instead.
-	 * @return string[] List of method names
-	 */
-	public function pendingMasterChangeCallers();
 
 	/**
 	 * @note This method will trigger a DB connection if not yet done
@@ -823,7 +709,7 @@ interface ILoadBalancer {
 
 	/**
 	 * Checks whether the database for generic connections this request was both:
-	 *   - a) Already choosen due to a prior connection attempt
+	 *   - a) Already chosen due to a prior connection attempt
 	 *   - b) Considered highly "lagged"
 	 *
 	 * @note This method will never cause a new DB connection
@@ -837,13 +723,6 @@ interface ILoadBalancer {
 	 * @return string|bool Reason the primary is read-only or false if it is not
 	 */
 	public function getReadOnlyReason( $domain = false );
-
-	/**
-	 * Disables/enables lag checks
-	 * @param null|bool $mode
-	 * @return bool
-	 */
-	public function allowLagged( $mode = null );
 
 	/**
 	 * @return bool
@@ -864,20 +743,6 @@ interface ILoadBalancer {
 	 * @since 1.37
 	 */
 	public function forEachOpenPrimaryConnection( $callback, array $params = [] );
-
-	/**
-	 * @deprecated since 1.37; please use forEachOpenPrimaryConnection() instead.
-	 * @param callable $callback
-	 * @param array $params
-	 */
-	public function forEachOpenMasterConnection( $callback, array $params = [] );
-
-	/**
-	 * Call a function with each open replica DB connection object
-	 * @param callable $callback
-	 * @param array $params
-	 */
-	public function forEachOpenReplicaConnection( $callback, array $params = [] );
 
 	/**
 	 * Get the name and lag time of the most-lagged replica server
@@ -917,16 +782,6 @@ interface ILoadBalancer {
 	 * @since 1.37
 	 */
 	public function waitForPrimaryPos( IDatabase $conn, $pos = false, $timeout = 10 );
-
-	/**
-	 * @deprecated since 1.37; please use waitForPrimaryPos() instead.
-	 * @param IDatabase $conn Replica DB
-	 * @param DBPrimaryPos|bool $pos Primary position; default: current position
-	 * @param int $timeout Timeout in seconds [optional]
-	 * @return bool Success
-	 * @since 1.34
-	 */
-	public function waitForMasterPos( IDatabase $conn, $pos = false, $timeout = 10 );
 
 	/**
 	 * Set a callback via IDatabase::setTransactionListener() on

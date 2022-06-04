@@ -102,7 +102,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "{{technical}}\nPlaceholder for new map name prompter. See [[:mw:Extension:TemplateData#Maps object]].",
 	"templatedata-modal-search-input-placeholder": "Placeholder text for language search panel.",
 	"templatedata-modal-table-param-actions": "Label for a parameter property input: Parameter actions in the table\n{{Identical|Action}}",
-	"templatedata-modal-table-param-aliases": "Label for a parameter property input: Aliases of the parameter, instruct the user to separate aliases with commas.",
+	"templatedata-modal-table-param-aliases": "Label for a parameter property input: Aliases of the parameter.",
 	"templatedata-modal-table-param-autovalue": "Label for a parameter property input: Parameter auto value in the table",
 	"templatedata-modal-table-param-default": "Label for a parameter property input: Default value of the parameter.\n\nParameters:\n* $1 - currently showing language\n{{Identical|Default}}",
 	"templatedata-modal-table-param-deprecated": "Label for a parameter property input: Deprecated status of the parameter.\n{{Identical|Deprecated}}",

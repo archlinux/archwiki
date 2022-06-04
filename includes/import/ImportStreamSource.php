@@ -23,7 +23,9 @@
  * @file
  * @ingroup SpecialPage
  */
+
 use MediaWiki\MediaWikiServices;
+use Wikimedia\AtEase\AtEase;
 
 /**
  * Imports a XML dump from a file (either from file upload, files on disk, or HTTP)
@@ -59,9 +61,9 @@ class ImportStreamSource implements ImportSource {
 	 * @return Status
 	 */
 	public static function newFromFile( $filename ) {
-		Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		$file = fopen( $filename, 'rt' );
-		Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 		if ( !$file ) {
 			return Status::newFatal( "importcantopen" );
 		}
@@ -112,7 +114,7 @@ class ImportStreamSource implements ImportSource {
 	 * @return Status
 	 */
 	public static function newFromURL( $url, $method = 'GET' ) {
-		global $wgHTTPImportTimeout;
+		$httpImportTimeout = MediaWikiServices::getInstance()->getMainConfig()->get( 'HTTPImportTimeout' );
 		wfDebug( __METHOD__ . ": opening $url" );
 		# Use the standard HTTP fetch function; it times out
 		# quicker and sorts out user-agent problems which might
@@ -123,7 +125,7 @@ class ImportStreamSource implements ImportSource {
 			$url,
 			[
 				'followRedirects' => true,
-				'timeout' => $wgHTTPImportTimeout
+				'timeout' => $httpImportTimeout
 			],
 			__METHOD__
 		);

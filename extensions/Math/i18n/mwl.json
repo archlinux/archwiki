@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Athena in Wonderland",
+			"Cecílio",
+			"MCruz",
+			"MokaAkashiyaPT"
+		]
+	},
+	"math-visualeditor-mwlatexinspector-display": "Amostrar",
+	"math-visualeditor-symbol-group-math-typefaces": "Fuontes",
+	"math-tracking-category-error": "Páiginas cun erros de formataçon matemática",
+	"math-tracking-category-render-error": "Páiginas cun erros de cumposiçon de eimaige matemática",
+	"mw_math_latexml": "LaTeXML (spurmental; outeliza MathML)",
+	"mw_math_mathml": "MathML, cun SVG ó PNG an altarnatiba (recomendado pa nabegadores modernos i ferramientas d'acessibelidade)",
+	"mw_math_png": "Eimaiges PNG",
+	"mw_math_source": "Fuonte LaTeX (pa nabegadores de testo)",
+	"prefs-math": "Matemática",
+	"mathstatus": "Stado de la formataçon matemática"
+}

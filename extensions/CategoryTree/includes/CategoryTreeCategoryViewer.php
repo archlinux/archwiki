@@ -40,7 +40,7 @@ class CategoryTreeCategoryViewer extends CategoryViewer {
 
 			$options = $this->getConfig()->get( 'CategoryTreeCategoryPageOptions' );
 
-			$mode = $this->getRequest()->getVal( 'mode' );
+			$mode = $this->getRequest()->getRawVal( 'mode' );
 			if ( $mode !== null ) {
 				$options['mode'] = CategoryTree::decodeMode( $mode );
 			}

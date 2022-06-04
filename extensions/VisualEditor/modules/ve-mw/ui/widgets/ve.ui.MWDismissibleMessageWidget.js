@@ -54,6 +54,7 @@ ve.ui.MWDismissibleMessageWidget.static.storageKeyPrefix = 'mwe-visualeditor-hid
  * Generates a local storage key using both a shared prefix and
  * the message's key {@see mw.Message}.
  *
+ * @private
  * @return {string} The local storage key
  */
 ve.ui.MWDismissibleMessageWidget.prototype.getStorageKey = function () {
@@ -63,6 +64,7 @@ ve.ui.MWDismissibleMessageWidget.prototype.getStorageKey = function () {
 /**
  * Respond to dismiss button click event.
  *
+ * @private
  * @fires close
  */
 ve.ui.MWDismissibleMessageWidget.prototype.onDismissClick = function () {

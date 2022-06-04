@@ -14,10 +14,13 @@ namespace MediaWiki\Extension\VisualEditor;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\User\UserIdentity;
+use OutputPage;
+use Skin;
 
 class VisualEditorHookRunner implements
 	VisualEditorApiVisualEditorEditPreSaveHook,
-	VisualEditorApiVisualEditorEditPostSaveHook
+	VisualEditorApiVisualEditorEditPostSaveHook,
+	VisualEditorBeforeEditorHook
 {
 
 	public const SERVICE_NAME = 'VisualEditorHookRunner';
@@ -70,5 +73,16 @@ class VisualEditorHookRunner implements
 			$saveResult,
 			&$apiResponse
 		], [ 'abortable' => false ] );
+	}
+
+	/** @inheritDoc */
+	public function onVisualEditorBeforeEditor(
+		OutputPage $output,
+		Skin $skin
+	): bool {
+		return $this->hookContainer->run( 'VisualEditorBeforeEditor', [
+			$output,
+			$skin
+		], [ 'abortable' => true ] );
 	}
 }

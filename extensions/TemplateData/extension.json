@@ -15,25 +15,22 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.36.0"
+		"MediaWiki": ">= 1.38.0"
 	},
 	"APIModules": {
-		"templatedata": "ApiTemplateData"
+		"templatedata": "MediaWiki\\Extension\\TemplateData\\Api\\ApiTemplateData"
 	},
-	"AutoloadClasses": {
-		"TemplateDataHooks": "includes/TemplateDataHooks.php",
-		"TemplateDataBlob": "includes/TemplateDataBlob.php",
-		"TemplateDataCompressedBlob": "includes/TemplateDataCompressedBlob.php",
-		"ApiTemplateData": "includes/api/ApiTemplateData.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\TemplateData\\": "includes/"
 	},
 	"Hooks": {
-		"EditPage::showEditForm:fields": "TemplateDataHooks::onEditPageShowEditFormFields",
-		"ParserFirstCallInit": "TemplateDataHooks::onParserFirstCallInit",
-		"PageContentSave": "TemplateDataHooks::onPageContentSave",
-		"ResourceLoaderRegisterModules": "TemplateDataHooks::onResourceLoaderRegisterModules",
-		"EditPage::showEditForm:initial": "TemplateDataHooks::onEditPage",
-		"ParserFetchTemplateData": "TemplateDataHooks::onParserFetchTemplateData",
-		"MakeGlobalVariablesScript": "TemplateDataHooks::onMakeGlobalVariablesScript"
+		"EditPage::showEditForm:fields": "MediaWiki\\Extension\\TemplateData\\Hooks::onEditPageShowEditFormFields",
+		"ParserFirstCallInit": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFirstCallInit",
+		"MultiContentSave": "MediaWiki\\Extension\\TemplateData\\Hooks::onMultiContentSave",
+		"ResourceLoaderRegisterModules": "MediaWiki\\Extension\\TemplateData\\Hooks::onResourceLoaderRegisterModules",
+		"EditPage::showEditForm:initial": "MediaWiki\\Extension\\TemplateData\\Hooks::onEditPage",
+		"ParserFetchTemplateData": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFetchTemplateData",
+		"MakeGlobalVariablesScript": "MediaWiki\\Extension\\TemplateData\\Hooks::onMakeGlobalVariablesScript"
 	},
 	"MessagesDirs": {
 		"TemplateData": [

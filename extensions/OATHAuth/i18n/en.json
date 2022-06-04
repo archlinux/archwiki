@@ -58,7 +58,7 @@
 	"oath-log-header": "These events track changes to users' two-factor authentication status.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|disabled}} the two-factor authentication of $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|checked}} if $3 had two-factor authentication enabled",
-	"oauthauth-ui-no-module": "None enabled",
+	"oathauth-ui-no-module": "None enabled",
 	"oathauth-module-invalid": "The OATHAuth module that the user has registered is invalid.",
 	"oathauth-module-totp-label": "TOTP (one-time token)",
 	"oathauth-ui-manage": "Manage",

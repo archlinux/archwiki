@@ -8,6 +8,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use Wikimedia\AtEase\AtEase;
 
 /**
  * @ingroup Extensions
@@ -135,9 +136,10 @@ class TitleBlacklist {
 					return '';
 				}
 			} else {
-				$page = WikiPage::factory( $title );
+				$page = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
 				if ( $page->exists() ) {
-					return ContentHandler::getContentText( $page->getContent() );
+					$content = $page->getContent();
+					return ( $content instanceof TextContent ) ? $content->getText() : "";
 				}
 			}
 		} elseif ( $source['type'] == 'url' && count( $source ) >= 2 ) {
@@ -336,19 +338,19 @@ class TitleBlacklist {
 	public function validate( array $blacklist ) {
 		$badEntries = [];
 		foreach ( $blacklist as $e ) {
-			Wikimedia\suppressWarnings();
+			AtEase::suppressWarnings();
 			$regex = $e->getRegex();
 			// @phan-suppress-next-line SecurityCheck-ReDoS
 			if ( preg_match( "/{$regex}/u", '' ) === false ) {
 				$badEntries[] = $e->getRaw();
 			}
-			Wikimedia\restoreWarnings();
+			AtEase::restoreWarnings();
 		}
 		return $badEntries;
 	}
 
 	/**
-	 * Inidcates whether user can override blacklist on certain action.
+	 * Indicates whether user can override blacklist on certain action.
 	 *
 	 * @param User $user
 	 * @param string $action Action

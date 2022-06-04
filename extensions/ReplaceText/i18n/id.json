@@ -43,8 +43,8 @@
 	"replacetext_editsummary": "Penggantian teks - \"$1\" menjadi \"$2\"",
 	"replacetext_reminder": "Untuk memodifikasi pranala ke halaman ini dalam halaman yang lain, tuju ke $1.",
 	"replacetext_cfg_error": "Konfigurasi ReplaceText mengalami galat",
-	"replacetext_no_compress": "Wiki Anda tidak akan berfungsi dengan ReplaceTest: Penggantian teks tidak dapat dijalankan jika $wgCompressRevisions diatur menjadi true.",
-	"replacetext_no_external_stores": "Wiki Anda tidak akan berfungsi dengan ReplaceTest: Penggantian teks tidak dapat dijalankan jika $wgExternalStores tidak kosong.",
+	"replacetext_no_compress": "Wiki Anda tidak akan berfungsi dengan ReplaceText: Penggantian teks tidak dapat dijalankan jika $wgCompressRevisions diatur menjadi true.",
+	"replacetext_no_external_stores": "Wiki Anda tidak akan berfungsi dengan ReplaceText: Penggantian teks tidak dapat dijalankan jika $wgExternalStores tidak kosong.",
 	"right-replacetext": "Melakukan penggantian seluruh teks kalimat di wiki ini",
 	"action-replacetext": "lakukan penggantian rentetan di seluruh wiki"
 }

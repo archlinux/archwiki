@@ -6,7 +6,6 @@ namespace Wikimedia\Parsoid\Html2Wt;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -20,6 +19,7 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 class Separators {
 	/*
@@ -69,12 +69,12 @@ class Separators {
 
 	/**
 	 * @param Node $n
-	 * @return string|null
+	 * @return int|null
 	 */
 	private static function precedingSeparatorTextLen( Node $n ): ?int {
 		// Given the CSS white-space property and specifically,
 		// "pre" and "pre-line" values for this property, it seems that any
-		// sane HTML editor would have to preserve IEW in HTML documents
+		// sensible HTML editor would have to preserve IEW in HTML documents
 		// to preserve rendering. One use-case where an editor might change
 		// IEW drastically would be when the user explicitly requests it
 		// (Ex: pretty-printing of raw source code).
@@ -244,7 +244,7 @@ class Separators {
 				$sepType === 'parent-child' &&
 				!DOMUtils::isContentNode( DOMUtils::firstNonDeletedChild( $nodeA ) ) &&
 				!(
-					isset( WikitextConstants::$HTML['ChildTableTags'][DOMCompat::nodeName( $nodeB )] ) &&
+					isset( Consts::$HTML['ChildTableTags'][DOMCompat::nodeName( $nodeB )] ) &&
 					!WTUtils::isLiteralHTMLNode( $nodeB )
 				)
 			) {
@@ -541,7 +541,7 @@ class Separators {
 
 			$stripLeadingSpace = ( !empty( $constraintInfo['onSOL'] ) || $forceSOL ) &&
 				$nodeB && !WTUtils::isLiteralHTMLNode( $nodeB ) &&
-				isset( WikitextConstants::$HTMLTagsRequiringSOLContext[DOMCompat::nodeName( $nodeB )] );
+				isset( Consts::$HTMLTagsRequiringSOLContext[DOMCompat::nodeName( $nodeB )] );
 			if ( !$isIndentPreSafe || $stripLeadingSpace ) {
 				// Wrap non-nl ws from last line, but preserve comments.
 				// This avoids triggering indent-pres.
@@ -629,7 +629,7 @@ class Separators {
 		}
 
 		'@phan-var Element|DocumentFragment $parentNode'; // @var Element|DocumentFragment $parentNode
-		if ( isset( WikitextConstants::$WikitextTagsWithTrimmableWS[DOMCompat::nodeName( $parentNode )] ) &&
+		if ( isset( Consts::$WikitextTagsWithTrimmableWS[DOMCompat::nodeName( $parentNode )] ) &&
 			( $origNode instanceof Element || !preg_match( '/^[ \t]/', $origNode->nodeValue ) )
 		) {
 			// Don't reintroduce whitespace that's already been captured as a DisplaySpace
@@ -703,7 +703,7 @@ class Separators {
 
 		$sep = null;
 		'@phan-var Element|DocumentFragment $parentNode'; // @var Element|DocumentFragment $parentNode
-		if ( isset( WikitextConstants::$WikitextTagsWithTrimmableWS[DOMCompat::nodeName( $parentNode )] ) &&
+		if ( isset( Consts::$WikitextTagsWithTrimmableWS[DOMCompat::nodeName( $parentNode )] ) &&
 			( $origNode instanceof Element || !preg_match( '/[ \t]$/', $origNode->nodeValue ) )
 		) {
 			// Don't reintroduce whitespace that's already been captured as a DisplaySpace
@@ -795,8 +795,8 @@ class Separators {
 			$origSepNeeded && !$state->inModifiedContent &&
 			!WTSUtils::nextToDeletedBlockNodeInWT( $prevNode, true ) &&
 			!WTSUtils::nextToDeletedBlockNodeInWT( $node, false ) &&
-			WTSUtils::origSrcValidInEditedContext( $state->getEnv(), $prevNode ) &&
-			WTSUtils::origSrcValidInEditedContext( $state->getEnv(), $node );
+			WTSUtils::origSrcValidInEditedContext( $state, $prevNode ) &&
+			WTSUtils::origSrcValidInEditedContext( $state, $node );
 
 		if ( $origSepNeededAndUsable ) {
 			if ( $prevNode instanceof Element ) {
@@ -820,7 +820,7 @@ class Separators {
 					$endDsr = DOMDataUtils::getDataParsoid( $prevNode->previousSibling )->dsr->end ?? null;
 					$correction = null;
 					if ( is_int( $endDsr ) ) {
-						if ( DOMUtils::isComment( $prevNode ) ) {
+						if ( $prevNode instanceof Comment ) {
 							'@phan-var Comment $prevNode'; // @var Comment $prevNode
 							$correction = WTUtils::decodedCommentLength( $prevNode );
 						} else {
@@ -1007,8 +1007,6 @@ class Separators {
 				if ( $sep !== null ) {
 					$state->sep->src .= $sep;
 				}
-			} else {
-				$sep = null;
 			}
 		}
 

@@ -49,7 +49,7 @@ ve.dm.MWExtensionNode.static.childNodeTypes = [];
 ve.dm.MWExtensionNode.static.tagName = null;
 
 /**
- * Name of the extension and the parser tag name.
+ * Name of the MediaWiki parser extension tag. (Not related to the name of the MediaWiki extension.)
  *
  * @static
  * @property {string}
@@ -68,11 +68,10 @@ ve.dm.MWExtensionNode.static.getMatchRdfaTypes = function () {
  * @param {string} [type] Type to give dataElement, defaults to static.name
  */
 ve.dm.MWExtensionNode.static.toDataElement = function ( domElements, converter, type ) {
-	var dataElement,
-		mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+	var mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
 
-	dataElement = {
+	var dataElement = {
 		type: type || this.name,
 		attributes: {
 			mw: mwData,
@@ -97,10 +96,9 @@ ve.dm.MWExtensionNode.static.cloneElement = function () {
 };
 
 ve.dm.MWExtensionNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var el, els, value,
-		store = converter.getStore(),
-		originalMw = dataElement.attributes.originalMw;
+	var originalMw = dataElement.attributes.originalMw;
 
+	var els;
 	// If the transclusion is unchanged just send back the
 	// original DOM elements so selser can skip over it
 	if (
@@ -110,6 +108,8 @@ ve.dm.MWExtensionNode.static.toDomElements = function ( dataElement, doc, conver
 		// originalDomElements is also used for CE rendering so return a copy
 		els = ve.copyDomElements( converter.getStore().value( dataElement.originalDomElementsHash ), doc );
 	} else {
+		var store = converter.getStore();
+		var value;
 		if (
 			converter.doesModeNeedRendering() &&
 			// Use getHashObjectForRendering to get the rendering from the store
@@ -119,7 +119,7 @@ ve.dm.MWExtensionNode.static.toDomElements = function ( dataElement, doc, conver
 			// meaningful to paste into external applications
 			els = ve.copyDomElements( value, doc );
 		} else {
-			el = doc.createElement( this.tagName );
+			var el = doc.createElement( this.tagName );
 			el.setAttribute( 'typeof', 'mw:Extension/' + this.getExtensionName( dataElement ) );
 			el.setAttribute( 'data-mw', JSON.stringify( dataElement.attributes.mw ) );
 			els = [ el ];
@@ -136,7 +136,7 @@ ve.dm.MWExtensionNode.static.getHashObject = function ( dataElement ) {
 };
 
 /**
- * Get the extension's name
+ * Get name of the MediaWiki parser extension tag.
  *
  * Static version for toDomElements
  *
@@ -149,14 +149,13 @@ ve.dm.MWExtensionNode.static.getExtensionName = function () {
 };
 
 ve.dm.MWExtensionNode.static.describeChanges = function ( attributeChanges, attributes, element ) {
-	var tools, change,
-		descriptions = [],
+	var descriptions = [],
 		fromBody = attributeChanges.mw.from.body,
 		toBody = attributeChanges.mw.to.body;
 
 	if ( attributeChanges.mw ) {
 		// HACK: Try to generate an '<Extension> has changed' message using the associated tool's title
-		tools = ve.ui.toolFactory.getRelatedItems( [ ve.dm.nodeFactory.createFromElement( element ) ] );
+		var tools = ve.ui.toolFactory.getRelatedItems( [ ve.dm.nodeFactory.createFromElement( element ) ] );
 		if ( tools.length ) {
 			descriptions.push( ve.msg( 'visualeditor-changedesc-unknown',
 				OO.ui.resolveMsg( ve.ui.toolFactory.lookup( tools[ 0 ].name ).static.title )
@@ -164,7 +163,7 @@ ve.dm.MWExtensionNode.static.describeChanges = function ( attributeChanges, attr
 		}
 		// Compare body - default behaviour in #describeChange does nothing
 		if ( !ve.compare( fromBody, toBody ) ) {
-			change = this.describeChange( 'body', {
+			var change = this.describeChange( 'body', {
 				from: fromBody && fromBody.extsrc,
 				to: toBody && toBody.extsrc
 			} );
@@ -197,7 +196,7 @@ ve.dm.MWExtensionNode.static.describeChange = function ( key ) {
 /* Methods */
 
 /**
- * Get the extension's name
+ * Get name of the MediaWiki parser extension tag.
  *
  * @return {string} Extension name
  */

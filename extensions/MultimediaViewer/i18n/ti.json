@@ -17,8 +17,6 @@
 	"multimediaviewer-permission-link": "ውዕላት ርኣይ",
 	"multimediaviewer-permission-link-hide": "ውዕላት ሕባእ",
 	"multimediaviewer-permission-viewmore": "ተወሳኺ ርኣይ",
-	"multimediaviewer-discuss-mmv": "ምይይጥ",
-	"multimediaviewer-help-mmv": "ሓገዝ",
 	"multimediaviewer-geoloc-north": "ሰሜን",
 	"multimediaviewer-geoloc-east": "ምብራቕ",
 	"multimediaviewer-geoloc-south": "ደቡብ",
@@ -37,6 +35,7 @@
 	"multimediaviewer-fullscreen-popup-text": "ኣብ ምሉእ ምርኢት ኣርእይ",
 	"multimediaviewer-defullscreen-popup-text": "ምሉእ ምርኢት ውጻዕ",
 	"multimediaviewer-title-popup-text": "መግለጺ",
+	"multimediaviewer-download-attribution-cta": "ከመይ ከም ዝኾነ ኣርእየኒ",
 	"multimediaviewer-options-learn-more": "ተወሳኺ ፍለጥ",
 	"multimediaviewer-option-cancel-button": "ኣትርፍ"
 }

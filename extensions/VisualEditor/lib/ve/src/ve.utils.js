@@ -382,13 +382,11 @@ ve.batchSplice = function ( arr, offset, remove, data ) {
 		} else {
 			// Standard Array.prototype.splice() function implemented using .slice() and .push().
 			splice = function ( off, rem /* , d */ ) {
-				var d, begin, remd, end;
+				var d = Array.prototype.slice.call( arguments, 2 );
 
-				d = Array.prototype.slice.call( arguments, 2 );
-
-				begin = this.slice( 0, off );
-				remd = this.slice( off, off + rem );
-				end = this.slice( off + rem );
+				var begin = this.slice( 0, off );
+				var remd = this.slice( off, off + rem );
+				var end = this.slice( off + rem );
 
 				this.length = 0;
 				ve.batchPush( this, begin );
@@ -787,6 +785,12 @@ ve.getDomElementSummary = function ( element, includeHtml, getAttributeSummary )
 	if ( element.attributes ) {
 		for ( i = 0; i < element.attributes.length; i++ ) {
 			var name = element.attributes[ i ].name;
+			if ( name === 'about' ) {
+				// The about attribute is non-deterministic as we generate a new random
+				// one whenever a node is cloned (see ve.dm.Node.static.cloneElement).
+				// Exclude it from node comparisons.
+				continue;
+			}
 			var value = element.attributes[ i ].value;
 			summary.attributes[ name ] = getAttributeSummary ? getAttributeSummary( name, value ) : value;
 		}

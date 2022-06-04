@@ -127,7 +127,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Medii",
 	"visualeditor-dialogbutton-meta-tooltip": "Sivun azetukset",
 	"visualeditor-dialogbutton-template-tooltip": "Šablon",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Sizällyttämine",
 	"visualeditor-donebutton-tooltip": "Kohendamine valmis",
 	"visualeditor-editconflict": "Kohenduksii ei voidu tallendua samanaigahizen kohenduksen täh. Tahtotgo keskevyttiä samanaigahizet kohendukset manualizesti?",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|ilmoitus|ilmoitustu}}",

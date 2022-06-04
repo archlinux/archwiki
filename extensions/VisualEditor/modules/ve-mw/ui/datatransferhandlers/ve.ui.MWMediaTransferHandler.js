@@ -40,10 +40,9 @@ ve.ui.MWMediaTransferHandler.static.extensions = [ 'jpg', 'jpeg', 'png', 'gif', 
  * @inheritdoc
  */
 ve.ui.MWMediaTransferHandler.prototype.process = function () {
-	var action,
-		file = this.item.getAsFile();
+	var file = this.item.getAsFile();
 
-	action = ve.ui.actionFactory.create( 'window', this.surface );
+	var action = ve.ui.actionFactory.create( 'window', this.surface );
 	action.open( 'media', { file: file } );
 
 	this.insertableDataDeferred.reject();

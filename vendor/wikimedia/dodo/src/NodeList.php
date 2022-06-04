@@ -5,9 +5,10 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Dodo;
 
-/******************************************************************************
+/**
  * NodeList.php
- * ------------
+ *
+ * @phan-forbid-undeclared-magic-properties
  */
 /* Played fairly straight. Used for Node::childNodes when in "array mode". */
 class NodeList implements \Wikimedia\IDLeDOM\NodeList {

@@ -4,19 +4,20 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Dodo;
 
-use RemexHtml\DOM\DOMBuilder;
-use RemexHtml\Tokenizer\NullTokenHandler;
-use RemexHtml\Tokenizer\Tokenizer;
-use RemexHtml\TreeBuilder\Dispatcher;
-use RemexHtml\TreeBuilder\Element as TreeElement;
-use RemexHtml\TreeBuilder\TreeBuilder;
 use Wikimedia\Dodo\Internal\BadXMLException;
 use Wikimedia\IDLeDOM\DOMParserSupportedType;
+use Wikimedia\RemexHtml\DOM\DOMBuilder;
+use Wikimedia\RemexHtml\Tokenizer\NullTokenHandler;
+use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
+use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
+use Wikimedia\RemexHtml\TreeBuilder\Element as TreeElement;
+use Wikimedia\RemexHtml\TreeBuilder\TreeBuilder;
 use XMLReader;
 
 /**
  * DOMParser
  * @see https://dom.spec.whatwg.org/#interface-domparser
+ * @phan-forbid-undeclared-magic-properties
  */
 class DOMParser implements \Wikimedia\IDLeDOM\DOMParser {
 
@@ -146,7 +147,7 @@ class DOMParser implements \Wikimedia\IDLeDOM\DOMParser {
 				/** @inheritDoc */
 				public function insertElement(
 					$preposition, $refElement,
-					\RemexHtml\TreeBuilder\Element $element,
+					TreeElement $element,
 					$void, $sourceStart, $sourceLength
 				) {
 					if ( $element->name === 'head' && $sourceLength > 0 ) {
@@ -192,6 +193,52 @@ class DOMParser implements \Wikimedia\IDLeDOM\DOMParser {
 					$element->userData = $node;
 					return $node;
 				}
+
+				/**
+				 * This is a reimplementation for efficiency only; the
+				 * code should be identical to (and kept in sync with)
+				 * Remex.  We just use method access instead of getters,
+				 * since this is a hot path through the HTML parser.
+				 * @inheritDoc
+				 */
+				public function characters(
+					$preposition, $refElement, $text, $start, $length,
+					$sourceStart, $sourceLength
+				) {
+					// Parse $preposition and $refElement as in self::insertNode()
+					if ( $preposition === TreeBuilder::ROOT ) {
+						$parent = $this->doc;
+						$refNode = null;
+					} elseif ( $preposition === TreeBuilder::BEFORE ) {
+						$parent = $refElement->userData->parentNode;
+						$refNode = $refElement->userData;
+					} else {
+						$parent = $refElement->userData;
+						$refNode = null;
+					}
+					// https://html.spec.whatwg.org/#insert-a-character
+					// If the adjusted insertion location is in a Document node, then
+					// return.
+					if ( $parent === $this->doc ) {
+						return;
+					}
+					$data = substr( $text, $start, $length );
+					// If there is a Text node immediately before the adjusted insertion
+					// location, then append data to that Text node's data.
+					if ( $refNode === null ) {
+						$prev = $parent->getLastChild();
+					} else {
+						/** @var Node $refNode */
+						$prev = $refNode->getPreviousSibling();
+					}
+					if ( $prev !== null && $prev->getNodeType() === XML_TEXT_NODE ) {
+						'@phan-var CharacterData $prev'; /** @var CharacterData $prev */
+						$prev->appendData( $data );
+					} else {
+						$node = $this->doc->createTextNode( $data );
+						$parent->insertBefore( $node, $refNode );
+					}
+				}
 		};
 		$treeBuilder = new TreeBuilder( $domBuilder, [
 			'ignoreErrors' => true
@@ -221,6 +268,7 @@ class DOMParser implements \Wikimedia\IDLeDOM\DOMParser {
 		}
 
 		$result = $domBuilder->getFragment();
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $result;
 	}
 

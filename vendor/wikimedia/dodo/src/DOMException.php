@@ -10,6 +10,7 @@ namespace Wikimedia\Dodo;
  * ----------------
  * (Mostly) implements the WebIDL-1 DOMException interface
  * https://www.w3.org/TR/WebIDL-1/#idl-DOMException*
+ * @phan-forbid-undeclared-magic-properties
  */
 class DOMException extends \Exception implements \Wikimedia\IDLeDOM\DOMException {
 

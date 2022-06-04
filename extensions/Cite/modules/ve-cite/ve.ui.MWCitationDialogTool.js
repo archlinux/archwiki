@@ -43,16 +43,15 @@ ve.ui.MWCitationDialogTool.static.template = null;
  * @inheritdoc
  */
 ve.ui.MWCitationDialogTool.static.isCompatibleWith = function ( model ) {
-	var internalItem, branches, leaves,
-		compatible = ve.ui.MWCitationDialogTool.super.static.isCompatibleWith.call( this, model );
+	var compatible = ve.ui.MWCitationDialogTool.super.static.isCompatibleWith.call( this, model );
 
 	if ( compatible && this.template ) {
 		// Check if content of the reference node contains only a template with the same name as
 		// this.template
-		internalItem = model.getInternalItem();
-		branches = internalItem.getChildren();
+		var internalItem = model.getInternalItem();
+		var branches = internalItem.getChildren();
 		if ( branches.length === 1 && branches[ 0 ].canContainContent() ) {
-			leaves = branches[ 0 ].getChildren();
+			var leaves = branches[ 0 ].getChildren();
 			if ( leaves.length === 1 && leaves[ 0 ] instanceof ve.dm.MWTransclusionNode ) {
 				return leaves[ 0 ].isSingleTemplate( this.template );
 			}

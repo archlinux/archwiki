@@ -13,7 +13,7 @@
  * @extends ve.ui.TargetWidget
  *
  * @constructor
- * @param {Object} [config] Configuration options
+ * @param {Object} config
  * @cfg {string[]} [surfaceClasses] Surface classes to apply
  */
 ve.ui.MWTargetWidget = function VeUiMWTargetWidget( config ) {

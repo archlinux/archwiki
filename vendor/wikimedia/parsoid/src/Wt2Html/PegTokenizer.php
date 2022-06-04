@@ -6,13 +6,9 @@ declare( strict_types = 1 );
  * separate PEG grammar file
  * (Grammar.pegphp)
  *
- * Use along with a {@link Wt2Html/HTML5TreeBuilder} and the
+ * Use along with a {@link Wt2Html/TreeBuilder/TreeBuilderStage} and the
  * {@link DOMPostProcessor}(s) for HTML output.
  */
-
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingParamTag
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingReturn
 
 namespace Wikimedia\Parsoid\Wt2Html;
 
@@ -77,12 +73,14 @@ class PegTokenizer extends PipelineStage {
 	}
 
 	/**
-	 * PORT-FIXME: Update docs
+	 * See PipelineStage::process docs as well. This doc block refines
+	 * the generic arg types to be specific to this pipeline stage.
 	 *
-	 * @param string $input FIXME
-	 * @param ?array $opts FIXME
-	 * - sol: (bool) Whether input should be processed in start-of-line context.
-	 * @return array|bool FIXME
+	 * @param string $input wikitext to tokenize
+	 * @param ?array $opts
+	 * - atTopLevel: (bool) Whether we are processing the top-level document
+	 * - sol: (bool) Whether input should be processed in start-of-line context
+	 * @return array|false The token array, or false for a syntax error
 	 */
 	public function process( $input, ?array $opts = null ) {
 		Assert::invariant( is_string( $input ), "Input should be a string" );
@@ -142,6 +140,8 @@ class PegTokenizer extends PipelineStage {
 	 *
 	 * @param string $text
 	 * @param array $args
+	 * - sol: (bool) Whether input should be processed in start-of-line context.
+	 * - startRule: (string) which tokenizer rule to tokenize with
 	 * @return array|false The token array, or false for a syntax error
 	 */
 	public function tokenizeSync( string $text, array $args = [] ) {
@@ -162,7 +162,7 @@ class PegTokenizer extends PipelineStage {
 		$profile = null;
 		if ( $this->env->profiling() ) {
 			$profile = $this->env->getCurrentProfile();
-			$start = PHPUtils::getStartHRTime();
+			$start = microtime( true );
 		}
 
 		try {
@@ -174,7 +174,7 @@ class PegTokenizer extends PipelineStage {
 
 		if ( $profile ) {
 			$profile->bumpTimeUse(
-				'PEG', PHPUtils::getHRTimeDifferential( $start ), 'PEG' );
+				'PEG', 1000 * ( microtime( true ) - $start ), 'PEG' );
 		}
 		return $toks;
 	}
@@ -197,34 +197,12 @@ class PegTokenizer extends PipelineStage {
 	}
 
 	/**
-	 * Determine whether a string is a valid URL
-	 *
-	 * @deprecated Use tokenizeURL()
-	 *
-	 * @param string $text
-	 * @return bool
-	 */
-	public function tokenizesAsURL( string $text ): bool {
-		return $this->tokenizeURL( $text ) !== false;
-	}
-
-	/**
 	 * Tokenize a URL.
 	 * @param string $text
 	 * @return array|false Array of tokens/strings or false on error
 	 */
 	public function tokenizeURL( string $text ) {
 		return $this->tokenizeAs( $text, 'url', /* sol */true );
-	}
-
-	/**
-	 * Tokenize an extlink.
-	 * @param string $text
-	 * @param bool $sol
-	 * @return array|false Array of tokens/strings or false on error
-	 */
-	public function tokenizeExtlink( string $text, bool $sol ) {
-		return $this->tokenizeAs( $text, 'extlink', $sol );
 	}
 
 	/**
@@ -250,5 +228,13 @@ class PegTokenizer extends PipelineStage {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function resetState( array $opts ): void {
+		TokenizerUtils::resetAnnotationIncludeRegex();
+		parent::resetState( $opts );
 	}
 }

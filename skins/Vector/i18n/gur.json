@@ -5,9 +5,11 @@
 			"Akandee1",
 			"Amoramah",
 			"Ayire Adongo",
-			"Dnshitobu"
+			"Dnshitobu",
+			"Amire80"
 		]
 	},
+	"vector-language-variant-switcher-label": "Tee tɔgum buuri",
 	"vector-action-addsection": "Pa’asɛ sɔsezure",
 	"vector-action-delete": "Saalum",
 	"vector-action-move": "Lɛgum",
@@ -16,5 +18,6 @@
 	"vector-view-edit": "Demese",
 	"vector-view-history": "Bisɛ nabara la",
 	"vector-view-view": "Kãalɛ",
-	"vector-more-actions": "Zoe, zoe"
+	"vector-more-actions": "Zoe, zoe",
+	"vector-intro-page": "Help:Pɔsega"
 }

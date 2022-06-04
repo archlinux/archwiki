@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 /**
  * General token sanitizer. Strips out (or encapsulates) unsafe and disallowed
@@ -13,7 +14,6 @@
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Parsoid\Config\SiteConfig;
-use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
@@ -21,6 +21,7 @@ use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
 
@@ -52,7 +53,7 @@ class SanitizerHandler extends TokenHandler {
 		$l = null;
 		$kv = null;
 		$attribs = $token->attribs ?? null;
-		$allowedTags = WikitextConstants::$Sanitizer['AllowedLiteralTags'];
+		$allowedTags = Consts::$Sanitizer['AllowedLiteralTags'];
 
 		if ( TokenUtils::isHTMLTag( $token )
 			&& ( empty( $allowedTags[$token->getName()] )
@@ -63,7 +64,7 @@ class SanitizerHandler extends TokenHandler {
 				// Just get the original token source, so that we can avoid
 				// whitespace differences.
 				$token = $token->getWTSource( $frame );
-			} elseif ( !$token instanceof EndTagTk ) {
+			} elseif ( !( $token instanceof EndTagTk ) ) {
 				// Handle things without a TSR: For example template or extension
 				// content. Whitespace in these is not necessarily preserved.
 				$buf = '<' . $token->getName();
@@ -122,7 +123,7 @@ class SanitizerHandler extends TokenHandler {
 	 */
 	public function __construct( TokenTransformManager $manager, array $options ) {
 		parent::__construct( $manager, $options );
-		$this->inTemplate = !empty( $options['inTemplate'] );
+		$this->inTemplate = $options['inTemplate'];
 	}
 
 	/**

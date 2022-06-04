@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"SaldırganSincap",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"SaldırganSincap"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"codeeditor-desc": "بناء على ذلك، أبرز التحرير لصفحات جافا سكريبت وCSS باستخدام [https://ace.c9.io/ محرر Ace]",

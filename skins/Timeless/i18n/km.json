@@ -20,5 +20,7 @@
 	"timeless-namespaces": "លំហឈ្មោះ",
 	"timeless-pagetools": "អំពើធ្វើលើទំព័រ",
 	"timeless-languages": "ភាសា",
-	"timeless-projects": "គម្រោងផ្សេងៗទៀត"
+	"timeless-projects": "គម្រោងផ្សេងៗទៀត",
+	"timeless-view-history": "ប្រវត្តិ",
+	"timeless-action-undelete": "ឈប់លុប{{PLURAL:$1|កំណែប្រែមួយ|កំណែប្រែចំនួន$1}}វិញ"
 }

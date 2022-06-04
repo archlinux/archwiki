@@ -3,7 +3,7 @@
 namespace PageImages\Tests;
 
 use IContextSource;
-use MediaWikiTestCase;
+use MediaWikiIntegrationTestCase;
 use OutputPage;
 use PageImages\PageImages;
 use SkinTemplate;
@@ -18,7 +18,7 @@ use Title;
  * @license WTFPL
  * @author Thiemo Kreuz
  */
-class PageImagesTest extends MediaWikiTestCase {
+class PageImagesTest extends MediaWikiIntegrationTestCase {
 
 	public function testPagePropertyNames() {
 		$this->assertSame( 'page_image', PageImages::PROP_NAME );

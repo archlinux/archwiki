@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\Uri;
 use MediaWiki\Permissions\SimpleAuthority;
 use MediaWiki\Rest\BasicAccess\MWBasicAuthorizer;
 use MediaWiki\Rest\Handler;
+use MediaWiki\Rest\Reporter\PHPErrorReporter;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\ResponseFactory;
 use MediaWiki\Rest\Router;
@@ -13,7 +14,7 @@ use MediaWiki\Rest\Validator\Validator;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use Psr\Container\ContainerInterface;
-use Wikimedia\ObjectFactory;
+use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
  * @covers \MediaWiki\Rest\BasicAccess\BasicAuthorizerBase
@@ -41,6 +42,7 @@ class MWBasicRequestAuthorizerTest extends MediaWikiUnitTestCase {
 			$authority,
 			$objectFactory,
 			new Validator( $objectFactory, $request, $authority ),
+			new PHPErrorReporter(),
 			$this->createHookContainer()
 		);
 	}

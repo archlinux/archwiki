@@ -2,49 +2,35 @@
 
 namespace Cite\Tests\Unit;
 
-use Cite\ResourceLoader\CiteDataModule;
+use Cite\ResourceLoader\CiteVisualEditorModule;
 use Message;
 use ResourceLoaderContext;
-use WebRequest;
 
 /**
- * @covers \Cite\ResourceLoader\CiteDataModule
+ * @covers \Cite\ResourceLoader\CiteVisualEditorModule
  *
  * @license GPL-2.0-or-later
  */
 class CiteDataModuleTest extends \MediaWikiUnitTestCase {
 
-	protected function setUp(): void {
-		global $wgRequest;
-
-		parent::setUp();
-		$wgRequest = $this->createMock( WebRequest::class );
-	}
-
 	public function testGetScript() {
-		$module = new CiteDataModule();
+		$module = new CiteVisualEditorModule();
 		$context = $this->createResourceLoaderContext();
 
 		$this->assertSame(
-			've.init.platform.addMessages({"cite-tool-definition.json":' .
-				'"[{\"name\":\"n\",\"title\":\"t\"}]"});',
-			$module->getScript( $context )
+			've.ui.mwCitationTools = [{"name":"n","title":"t"}];',
+			$module->makePrependedScript( $context )
 		);
 	}
 
-	public function testGetDependencies() {
-		$module = new CiteDataModule();
-
-		$this->assertContainsOnly( 'string', $module->getDependencies() );
-	}
-
 	public function testGetDefinitionSummary() {
-		$module = new CiteDataModule();
+		$module = new CiteVisualEditorModule();
 		$context = $this->createResourceLoaderContext();
+		$summary = $module->getDefinitionSummary( $context );
 
-		$this->assertSame(
-			$module->getScript( $context ),
-			$module->getDefinitionSummary( $context )[0]['script']
+		$this->assertStringContainsString(
+			'{"name":"n","title":"t"}',
+			array_pop( $summary )['script']
 		);
 	}
 
@@ -53,19 +39,19 @@ class CiteDataModuleTest extends \MediaWikiUnitTestCase {
 		$msg->method( 'inContentLanguage' )
 			->willReturnSelf();
 		$msg->method( 'plain' )
-			->willReturnOnConsecutiveCalls( '', '[{"name":"n"}]', '[{"name":"n","title":"t"}]' );
+			->willReturnOnConsecutiveCalls( '', '[{"name":"n"}]' );
 		$msg->method( 'text' )
 			->willReturn( 't' );
 
-		$context = $this->createMock( ResourceLoaderContext::class );
+		$context = $this->createStub( ResourceLoaderContext::class );
 		$context->method( 'msg' )
 			->withConsecutive(
 				[ 'cite-tool-definition.json' ],
 				[ 'visualeditor-cite-tool-definition.json' ],
-				[ 'visualeditor-cite-tool-name-n' ],
-				[ 'cite-tool-definition.json' ]
+				[ 'visualeditor-cite-tool-name-n' ]
 			)
 			->willReturn( $msg );
+		$context->method( 'encodeJson' )->willReturnCallback( 'json_encode' );
 		return $context;
 	}
 

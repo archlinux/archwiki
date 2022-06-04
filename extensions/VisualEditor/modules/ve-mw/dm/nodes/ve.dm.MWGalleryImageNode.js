@@ -41,24 +41,23 @@ ve.dm.MWGalleryImageNode.static.matchFunction = function ( element ) {
 ve.dm.MWGalleryImageNode.static.parentNodeTypes = [ 'mwGallery' ];
 
 ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converter ) {
-	var li, img, captionNode, caption, filename, dataElement, figureInline;
-
 	// TODO: Improve handling of missing files. See 'isError' in MWBlockImageNode#toDataElement
-	li = domElements[ 0 ];
-	img = li.querySelector( 'img,audio,video,span[resource]' );
-	figureInline = img.parentNode.parentNode;
+	var li = domElements[ 0 ];
+	var img = li.querySelector( 'img,audio,video,span[resource]' );
+	var figureInline = img.parentNode.parentNode;
 
 	// Get caption (may be missing for mode="packed-hover" galleries)
-	captionNode = li.querySelector( '.gallerytext' );
+	var captionNode = li.querySelector( '.gallerytext' );
 	if ( captionNode ) {
 		captionNode = captionNode.cloneNode( true );
 		// If showFilename is 'yes', the filename is also inside the caption, so throw this out
-		filename = captionNode.querySelector( '.galleryfilename' );
+		var filename = captionNode.querySelector( '.galleryfilename' );
 		if ( filename ) {
 			filename.remove();
 		}
 	}
 
+	var caption;
 	if ( captionNode ) {
 		caption = converter.getDataFromDomClean( captionNode, { type: 'mwGalleryImageCaption' } );
 	} else {
@@ -70,7 +69,7 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 		];
 	}
 
-	dataElement = {
+	var dataElement = {
 		type: this.name,
 		attributes: {
 			resource: './' + mw.libs.ve.normalizeParsoidResourceName( img.getAttribute( 'resource' ) ),
@@ -108,6 +107,10 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc ) {
 	innerDiv.setAttribute( 'typeof', 'mw:Image' );
 
 	// TODO: Support editing the link
+	// FIXME: Dropping the href causes Parsoid to mark the node as wrapper modified,
+	// making the whole gallery subtree edited, preventing selser.  When fixing,
+	// preserving the imgWrapperClassAttr, as in the MW*ImageNodes, will also be
+	// necessary.
 	// a.setAttribute( 'href', model.attributes.src );
 
 	img.setAttribute( 'resource', model.attributes.resource );

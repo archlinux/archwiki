@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
@@ -26,23 +27,6 @@ class PHPUtils {
 			$n >>= 8;
 		} while ( $n > 0 );
 		return rtrim( strtr( base64_encode( $str ), '+/', '-_' ), '=' );
-	}
-
-	/**
-	 * Return accurate system time
-	 * @return float time in seconds since Jan 1 1970 GMT accurate to the microsecond
-	 */
-	public static function getStartHRTime(): float {
-		return microtime( true );
-	}
-
-	/**
-	 * Return millisecond accurate system time differential
-	 * @param float $previousTime
-	 * @return float milliseconds
-	 */
-	public static function getHRTimeDifferential( float $previousTime ): float {
-		return ( microtime( true ) - $previousTime ) * 1000;
 	}
 
 	/**
@@ -106,35 +90,6 @@ class PHPUtils {
 	 */
 	public static function makeSet( array $a ): array {
 		return array_fill_keys( $a, true );
-	}
-
-	/**
-	 * PORT-FIXME: To be removed once all uses of this have disappeared
-	 * Convert array to associative array usable as a key-value Map
-	 *
-	 * Instead of
-	 *
-	 *     $var = PHPUtils::makeMap( [
-	 *         [ 'key1', 'value1' ],
-	 *         [ 'key2', 'value2' ],
-	 *     ] );
-	 *
-	 * just do
-	 *
-	 *     $var = [
-	 *         'key1' => 'value1',
-	 *         'key2' => 'value2',
-	 *     ];
-	 *
-	 * Unlike JS objects, PHP's associative arrays already preserve order.
-	 *
-	 * @param array $a
-	 * @return array
-	 */
-	public static function makeMap( array $a ) {
-		throw new \BadMethodCallException(
-			'Don\'t use this, just declare your associative array directly'
-		);
 	}
 
 	/**

@@ -28,5 +28,7 @@
 	"timeless-pagetools": "Радње за страницу",
 	"timeless-languages": "Језици",
 	"timeless-projects": "Други пројекти",
-	"timeless.js": "/* JavaScript постављен на овој страници учитаће се свим корисницима безвременске теме */"
+	"timeless.js": "/* JavaScript постављен на овој страници учитаће се свим корисницима безвременске теме */",
+	"timeless-view-history": "Историја",
+	"timeless-action-undelete": "Врати {{PLURAL:$1|избрисану измену|$1 избрисане измене|$1 избрисаних измена}}"
 }

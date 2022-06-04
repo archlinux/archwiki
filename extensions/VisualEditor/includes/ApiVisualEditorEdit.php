@@ -33,6 +33,9 @@ class ApiVisualEditorEdit extends ApiBase {
 	/** @var PageEditStash */
 	private $pageEditStash;
 
+	/** @var SkinFactory */
+	private $skinFactory;
+
 	/**
 	 * @param ApiMain $main
 	 * @param string $name Name of this module
@@ -40,6 +43,7 @@ class ApiVisualEditorEdit extends ApiBase {
 	 * @param RevisionLookup $revisionLookup
 	 * @param IBufferingStatsdDataFactory $statsdDataFactory
 	 * @param PageEditStash $pageEditStash
+	 * @param SkinFactory $skinFactory
 	 */
 	public function __construct(
 		ApiMain $main,
@@ -47,7 +51,8 @@ class ApiVisualEditorEdit extends ApiBase {
 		VisualEditorHookRunner $hookRunner,
 		RevisionLookup $revisionLookup,
 		IBufferingStatsdDataFactory $statsdDataFactory,
-		PageEditStash $pageEditStash
+		PageEditStash $pageEditStash,
+		SkinFactory $skinFactory
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
@@ -55,6 +60,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		$this->revisionLookup = $revisionLookup;
 		$this->statsdDataFactory = $statsdDataFactory;
 		$this->pageEditStash = $pageEditStash;
+		$this->skinFactory = $skinFactory;
 	}
 
 	/**
@@ -117,14 +123,21 @@ class ApiVisualEditorEdit extends ApiBase {
 	 * Load into an array the output of MediaWiki's parser for a given revision
 	 *
 	 * @param int $newRevId The revision to load
+	 * @param array $params Original request params
 	 * @return array|false The parsed of the save attempt
 	 */
-	protected function parseWikitext( $newRevId ) {
+	protected function parseWikitext( $newRevId, array $params ) {
 		$apiParams = [
 			'action' => 'parse',
 			'oldid' => $newRevId,
 			'prop' => 'text|revid|categorieshtml|displaytitle|subtitle|modules|jsconfigvars',
+			'useskin' => $params['useskin'],
 		];
+		// Boolean parameters must be omitted completely to be treated as false.
+		// Param is added by hook in MobileFrontend, so it may be unset.
+		if ( isset( $params['mobileformat'] ) && $params['mobileformat'] ) {
+			$apiParams['mobileformat'] = '1';
+		}
 
 		$context = new DerivativeContext( $this->getContext() );
 		$context->setRequest(
@@ -167,8 +180,7 @@ class ApiVisualEditorEdit extends ApiBase {
 
 		if ( $displaytitle !== false ) {
 			// Escape entities as in OutputPage::setPageTitle()
-			$displaytitle = Sanitizer::normalizeCharReferences(
-				Sanitizer::removeHTMLtags( $displaytitle ) );
+			$displaytitle = Sanitizer::removeSomeTags( $displaytitle );
 		}
 
 		return [
@@ -253,10 +265,10 @@ class ApiVisualEditorEdit extends ApiBase {
 		$this->statsdDataFactory->increment( "editstash.ve_serialization_cache.set_" . $status );
 
 		// Also parse and prepare the edit in case it might be saved later
-		$page = WikiPage::factory( $title );
+		$pageUpdater = WikiPage::factory( $title )->newPageUpdater( $this->getUser() );
 		$content = ContentHandler::makeContent( $wikitext, $title, CONTENT_MODEL_WIKITEXT );
 
-		$status = $this->pageEditStash->parseAndCache( $page, $content, $this->getUser(), '' );
+		$status = $this->pageEditStash->parseAndCache( $pageUpdater, $content, $this->getUser(), '' );
 		if ( $status === $this->pageEditStash::ERROR_NONE ) {
 			$logger = LoggerFactory::getInstance( 'StashEdit' );
 			$logger->debug( "Cached parser output for VE content key '$key'." );
@@ -376,7 +388,6 @@ class ApiVisualEditorEdit extends ApiBase {
 		if ( !$title->canExist() ) {
 			$this->dieWithError( 'apierror-pagecannotexist' );
 		}
-		'@phan-var Title $title';
 		$this->getErrorFormatter()->setContextTitle( $title );
 
 		$parserParams = [];
@@ -437,7 +448,7 @@ class ApiVisualEditorEdit extends ApiBase {
 
 				// Return result of parseWikitext instead of saveWikitext so that the
 				// frontend can update the page rendering without a refresh.
-				$parseWikitextResult = $this->parseWikitext( $newRevId );
+				$parseWikitextResult = $this->parseWikitext( $newRevId, $params );
 				if ( $parseWikitextResult === false ) {
 					$this->dieWithError( 'apierror-visualeditor-docserver', 'docserver' );
 				}
@@ -562,6 +573,10 @@ class ApiVisualEditorEdit extends ApiBase {
 			'captchaid' => null,
 			'captchaword' => null,
 			'cachekey' => null,
+			'useskin' => [
+				ApiBase::PARAM_TYPE => array_keys( $this->skinFactory->getInstalledSkins() ),
+				ApiBase::PARAM_HELP_MSG => 'apihelp-parse-param-useskin',
+			],
 			'tags' => [
 				ParamValidator::PARAM_ISMULTI => true,
 			],

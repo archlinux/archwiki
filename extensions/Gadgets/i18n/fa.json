@@ -5,13 +5,13 @@
 			"Bersam",
 			"Ebraminio",
 			"Huji",
+			"Jeeputer",
 			"Ladsgroup",
 			"Mjbmr",
 			"Reza1615",
 			"Wayiran",
 			"ZxxZxxZ",
-			"Beginneruser",
-			"Jeeputer"
+			"Beginneruser"
 		]
 	},
 	"gadgets-desc": "به کاربرها امکان انتخاب [[Special:Gadgets|ابزارهای شخصی سی‌اس‌اس و جاوااسکریپت]] را از طریق صفحهٔ [[Special:Preferences#mw-prefsection-gadgets|ترجیحات]] می‌دهد",
@@ -28,6 +28,8 @@
 	"gadgetusage-default": "پیش‌فرض",
 	"gadgets-title": "ابزارها",
 	"gadgets-pagetext": "در زیر فهرستی از ابزارهای ویژه‌ای که کاربران می‌توانند از طریق [[Special:Preferences#mw-prefsection-gadgets|صفحهٔ ترجیحاتشان]] فعال کنند می‌بینید، که مطابق آن چه است که در صفحهٔ [[MediaWiki:Gadgets-definition|تعاریف]] تعریف شده‌است.\nاین خلاصه کمک می‌کند که به صفحه‌های پیام سامانه‌ای که توضیحات و کد هر ابزار را شامل می‌شوند به راحتی دست پیدا کنید.",
+	"gadgets-editdescription": "ویرایش توصیف",
+	"gadgets-viewdescription": "مشاهدهٔ توصیف",
 	"gadgets-uses": "برنامه",
 	"gadgets-required-rights": "به {{PLURAL:$2|امتیاز|امتیازات}} روبرو نیاز است:\n\n$1",
 	"gadgets-required-skins": "قابل دسترس در {{PLURAL:$2|پوستهٔ $1|پوسته‌های $1}}.",

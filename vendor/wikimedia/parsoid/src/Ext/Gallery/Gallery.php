@@ -7,6 +7,7 @@ use stdClass;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Ext\DOMDataUtils;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
@@ -126,7 +127,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 			 $capChild !== null;
 			 $capChild = $capChild->nextSibling ) {
 			if (
-				DOMUtils::isText( $capChild ) &&
+				$capChild instanceof Text &&
 				preg_match( '/^\s*$/D', $capChild->nodeValue )
 			) {
 				// skip blank text nodes
@@ -308,5 +309,13 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 			// and we prefer editing it there.
 			unset( $argDict->attrs->caption );
 		}
+	}
+
+	/** @inheritDoc */
+	public function diffHandler(
+		ParsoidExtensionAPI $extApi, callable $domDiff, Element $origNode,
+		Element $editedNode
+	): bool {
+		return call_user_func( $domDiff, $origNode, $editedNode );
 	}
 }

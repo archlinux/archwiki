@@ -15,5 +15,7 @@
 	"monobook-more-actions": "Més",
 	"monobook-cactions-label": "Accions de la pàgina",
 	"monobook-notifications-link": "Notificacions ($1)",
-	"monobook-notifications-link-none": "Notificacions"
+	"monobook-notifications-link-none": "Notificacions",
+	"monobook-view-history": "Historial",
+	"monobook-action-undelete": "Restaura {{PLURAL:$1|l'edició eliminada|$1 edicions eliminades}}"
 }

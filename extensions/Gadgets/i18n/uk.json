@@ -7,6 +7,7 @@
 			"Base",
 			"DDPAT",
 			"Dim Grits",
+			"Ice bulldog",
 			"Lxlalexlxl",
 			"Olvin",
 			"Piramidion",
@@ -32,11 +33,15 @@
 	"gadgetusage-default": "За замовчуванням",
 	"gadgets-title": "Додатки",
 	"gadgets-pagetext": "Нижче наведено перелік гаджетів, які можна ввімкнути на [[Special:Preferences#mw-prefsection-gadgets|сторінці налаштувань]]. Цей перелік задано на [[MediaWiki:Gadgets-definition|сторінці визначень]].\nТаким чином, можна отримати простий доступ до системних сторінок, де задається опис кожного гаджету та його код.",
+	"gadgets-editdescription": "Редагувати опис",
+	"gadgets-viewdescription": "Переглянути опис",
 	"gadgets-uses": "Використовує",
 	"gadgets-required-rights": "{{PLURAL:$2|1=Потрібне право|Потрібні такі права}}:\n\n$1",
 	"gadgets-required-skins": "Доступний на {{PLURAL:$2|1=$1 skin|таких темах оформлення: $1}}.",
+	"gadgets-required-actions": "Працює для {{PLURAL:$2|дії «$1» на сторінці|таких дій на сторінці: $1}}.",
 	"gadgets-default": "Увімкнено для всіх за замовчуванням.",
 	"gadgets-legacy": "Гаджет не завантажено. Будь ласка, здійсніть міграцію на ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Дізнатися більше])",
+	"gadgets-packaged": "Цей додаток [https://www.mediawiki.org/wiki/ResourceLoader/Package_files запаковано], його точка входу — $1",
 	"gadgets-export": "Експортувати",
 	"gadgets-export-title": "Експорт гаджета",
 	"gadgets-not-found": "Гаджет \"$1\" не знайдено.",
@@ -48,5 +53,6 @@
 	"action-gadgets-edit": "редагування JavaScript- чи CSS-сторінки цього гаджета",
 	"right-gadgets-definition-edit": "Редагування визначень гаджетів",
 	"action-gadgets-definition-edit": "редагування визначення цього гаджета",
-	"gadgets-wrong-contentmodel": "Сторінки у просторі назв {{ns:2302}} повинні мати модель вмісту GadgetDefinition."
+	"gadgets-wrong-contentmodel": "Сторінки у просторі назв {{ns:2302}} повинні мати модель вмісту GadgetDefinition.",
+	"gadgets-supports-urlload": "Цей додаток підтримує завантаження через використання параметра <code>?withgadget</code> в URL."
 }

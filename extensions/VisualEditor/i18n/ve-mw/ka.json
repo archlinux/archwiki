@@ -12,10 +12,10 @@
 			"Otogi",
 			"Pras",
 			"Silovan",
+			"TMg",
 			"Tokoko",
 			"Გიო ოქრო",
-			"Იო ოქრო",
-			"TMg"
+			"Იო ოქრო"
 		]
 	},
 	"tooltip-ca-createsource": "ამ გვერდის წყაროს კოდის შექმნა",
@@ -165,7 +165,7 @@
 	"visualeditor-dialog-transclusion-loading": "იტვირთება...",
 	"visualeditor-dialog-transclusion-no-template-description": "თარგს „$1“ ჯერ კიდევ არ აქვს აღწერა, თუმცა შესაძლოა იპოვოთ რაიმე ინფორმაცია [[$2|თარგის გვერდზე]].",
 	"visualeditor-dialog-transclusion-options": "პარამეტრები",
-	"visualeditor-dialog-transclusion-param-default": "საწყისი: $1",
+	"visualeditor-dialog-transclusion-param-default": "ნაგულისხმები: $1",
 	"visualeditor-dialog-transclusion-param-example": "მნიშვნელობის მაგალითი: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "მაგალითი: $1",
 	"visualeditor-dialog-transclusion-param-info": "ველის აღწერილობა",
@@ -180,10 +180,10 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "განაგრძე ამის მიუხედავად",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "მოთხოვნილი {{PLURAL:$1|პარამეტრი|პარამეტრი}} დაკარგულია",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "დარწმუნებული ხართ, რომ „$1“ {{PLURAL:$2|პარამეტრის|პარამეტრის}}  შევსების გარეშე გსურთ გაგრძელება?",
+	"visualeditor-dialog-transclusion-feedback-message": "ბოლო სამუშაოები თარგის ძიების შედეგების გასაუჯობესებლად ჩატარდა. ცვლილებების შესახებ მეტის გასაგებად ან უკუკავშირის დასატოვებლად, გადადით [//meta.wikimedia.org/wiki/Special:MyLanguage/WMDE_Technical_Wishes/Finding_and_inserting_templates პროექტის გვერდზე].",
 	"visualeditor-dialogbutton-media-tooltip": "სურათები და მედია",
 	"visualeditor-dialogbutton-meta-tooltip": "გვერდის პარამეტრები",
 	"visualeditor-dialogbutton-template-tooltip": "თარგი",
-	"visualeditor-dialogbutton-transclusion-tooltip": "ჩანართი",
 	"visualeditor-donebutton-tooltip": "რედაქტირება დასრულდა",
 	"visualeditor-editconflict": "თქვენი ცვლილებების შენახვა ვერ მოხერხდა, რადგან რედაქტირების კონფლიქტი მოხდა. {{GENDER:|თქვენ}} გსურთ კონფლიქტის ხელით გადაჭრა?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} შეინახავს თქვენთვის სასურველ რედაქტორს. თქვენ შეგიძლიათ რეჟიმების შეცვლა რედაქტირების დროს ან მოგვიანებით.",

@@ -1,11 +1,26 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser;
+
+use Exception;
+use Html;
+use Language;
+use LogEventsList;
+use LogPage;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
+use OutputPage;
+use PermissionsError;
+use ReadOnlyError;
+use SpecialPage;
+use Title;
+use TitleFactory;
+use UserBlockedError;
+use Xml;
 
 /**
  * Special page that allows authorised users to rename
@@ -111,7 +126,7 @@ class SpecialRenameuser extends SpecialPage {
 		$warnings = [];
 		if ( $oun && $nun && !$request->getCheck( 'confirmaction' ) ) {
 			$oldU = $this->userFactory->newFromName( $oldusername->getText(), $this->userFactory::RIGOR_NONE );
-			if ( $oldU && $oldU->isBlocked() ) {
+			if ( $oldU && $oldU->getBlock() ) {
 				$warnings[] = [
 					'renameuser-warning-currentblock',
 					SpecialPage::getTitleFor( 'Log', 'block' )->getFullURL( [ 'page' => $oun ] )

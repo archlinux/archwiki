@@ -137,6 +137,19 @@ ve.dm.MWTemplateModel.prototype.getTitle = function () {
 };
 
 /**
+ * @return {string|null} Prefixed page name including the `Template:` namespace, but with syntax
+ *  elements like `subst:` stripped.
+ */
+ve.dm.MWTemplateModel.prototype.getTemplateDataQueryTitle = function () {
+	// FIXME: This currently doesn't strip localized versions of these magic words.
+	// Strip magic words {{subst:…}} and {{safesubst:…}}, see MagicWordFactory::$mSubstIDs
+	var name = this.target.wt.replace( /^\s*(?:safe)?subst:/i, '' ),
+		templateNs = mw.config.get( 'wgNamespaceIds' ).template,
+		title = mw.Title.newFromText( name, templateNs );
+	return title ? title.getPrefixedText() : this.getTitle();
+};
+
+/**
  * @return {ve.dm.MWTemplateSpecModel} Template specification
  */
 ve.dm.MWTemplateModel.prototype.getSpec = function () {

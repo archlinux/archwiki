@@ -28,5 +28,7 @@
 	"timeless-pagetools": "Acciones de página",
 	"timeless-languages": "Idiomas",
 	"timeless-projects": "Otros proyectos",
-	"timeless.js": "/* Cualquier código JavaScript escrito aquí se cargará para todos los usuarios que usen la apariencia Timeless */"
+	"timeless.js": "/* Cualquier código JavaScript escrito aquí se cargará para todos los usuarios que usen la apariencia Timeless */",
+	"timeless-view-history": "Historial",
+	"timeless-action-undelete": "Restaurar {{PLURAL:$1|una edición|$1 ediciones}}"
 }

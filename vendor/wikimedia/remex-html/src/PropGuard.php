@@ -19,6 +19,3 @@ trait PropGuard {
 		}
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( PropGuard::class, 'RemexHtml\PropGuard' );

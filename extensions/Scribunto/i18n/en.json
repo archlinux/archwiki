@@ -39,6 +39,7 @@
 	"scribunto-lua-error-location": "Lua error $1: $2.",
 	"scribunto-lua-error": "Lua error: $2.",
 	"scribunto-lua-notarrayreturn": "Script error: The module returned a $2 value. It is supposed to return an export table.",
+	"scribunto-lua-warning": "Script warning: $1",
 	"scribunto-luastandalone-proc-error": "Lua error: Cannot create process.",
 	"scribunto-luastandalone-proc-error-msg": "Lua error: Cannot create process: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua error: Cannot create process: proc_open is not available. Check PHP's \"disable_functions\" configuration directive.",

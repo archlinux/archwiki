@@ -64,7 +64,7 @@ class TraceFormatter {
 		$prepName = self::getPrepositionName( $preposition );
 		$refTag = self::getDebugTag( $refNode );
 
-		return "characters \"$excerpt\", $prepName $refTag, pos=$sourceStart";
+		return "characters \"$excerpt\", $prepName $refTag, pos=$sourceStart, len=$sourceLength";
 	}
 
 	public static function insertElement( $preposition, $refNode, Element $element, $void,
@@ -74,12 +74,12 @@ class TraceFormatter {
 		$refTag = self::getDebugTag( $refNode );
 		$elementTag = self::getDebugTag( $element );
 		$voidMsg = $void ? 'void' : '';
-		return "insert $elementTag $voidMsg, $prepName $refTag, pos=$sourceStart";
+		return "insert $elementTag $voidMsg, $prepName $refTag, pos=$sourceStart, len=$sourceLength";
 	}
 
 	public static function endTag( Element $element, $sourceStart, $sourceLength ) {
 		$elementTag = self::getDebugTag( $element );
-		return "end $elementTag, pos=$sourceStart";
+		return "end $elementTag, pos=$sourceStart, len=$sourceLength";
 	}
 
 	public static function doctype( $name, $public, $system, $quirks, $sourceStart, $sourceLength
@@ -91,7 +91,7 @@ class TraceFormatter {
 		];
 		$quirksMsg = $quirksTypes[$quirks];
 		return "doctype $name, public=\"$public\", system=\"$system\", " .
-			"$quirksMsg, pos=$sourceStart";
+			"$quirksMsg, pos=$sourceStart, len=$sourceLength";
 	}
 
 	public static function comment( $preposition, $refNode, $text, $sourceStart, $sourceLength ) {
@@ -99,7 +99,7 @@ class TraceFormatter {
 		$refTag = self::getDebugTag( $refNode );
 		$excerpt = self::excerpt( $text );
 
-		return "comment \"$excerpt\", $prepName $refTag, pos=$sourceStart";
+		return "comment \"$excerpt\", $prepName $refTag, pos=$sourceStart, len=$sourceLength";
 	}
 
 	public static function error( $text, $pos ) {
@@ -122,6 +122,3 @@ class TraceFormatter {
 		return "reparent children of $elementTag under $newParentTag, pos=$sourceStart";
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TraceFormatter::class, 'RemexHtml\TreeBuilder\TraceFormatter' );

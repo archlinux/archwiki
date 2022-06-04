@@ -10,15 +10,17 @@ The Assert class provides several static methods for checking various kinds of a
 The most common kind is to check the type of a parameter, typically in a constructor or a
 setter method:
 
-    function setFoo( $foo ) {
-        Assert::parameterType( 'integer', $foo, 'foo' );
-        Assert::parameter( $foo > 0, 'foo', 'must be greater than 0' );
-    }
+```php
+function setFoo( $foo ) {
+    Assert::parameterType( 'integer', $foo, 'foo' );
+    Assert::parameter( $foo > 0, 'foo', 'must be greater than 0' );
+}
 
-    function __construct( $bar, array $bazz ) {
-        Assert::parameterType( 'Me\MyApp\SomeClass', $bar );
-        Assert::parameterElementType( 'int', $bazz );
-    }
+function __construct( $bar, array $bazz ) {
+    Assert::parameterType( 'Me\MyApp\SomeClass', $bar );
+    Assert::parameterElementType( 'int', $bazz );
+}
+```
 
 Checking parameters, or other assertions such as pre- or postconditions, is not recommended for
 performance critical regions of the code, since evaluating expressions and calling the assertion

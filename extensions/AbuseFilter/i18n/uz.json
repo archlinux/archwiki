@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"Malikxan",
+			"Sociologist"
+		]
+	},
+	"abuselog": "Filtrlash qaydlari",
+	"abusefilter-blocker": "Suisteʼmollar filtri",
+	"right-abusefilter-modify": "Suisteʼmollar filtrlarini yaratish yoki oʻzgartirish",
+	"right-abusefilter-view": "Suisteʼmollar filtrlarini koʻrish",
+	"right-abusefilter-log": "filtrlash qaydlarini koʻrish",
+	"action-abusefilter-modify": "suisteʼmollar filtrlarini oʻzgartirish",
+	"action-abusefilter-view": "suisteʼmollar filtrlarini koʻrish",
+	"action-abusefilter-log": "filtrlash qaydlarini koʻrish",
+	"abusefilter-log-search-user": "Foydalanuvchi:",
+	"abusefilter-log-noactions": "hech qaysi",
+	"abusefilter-log-noactions-filter": "Hech qaysi",
+	"abusefilter-log-linkoncontribs": "filtrlash qaydlari",
+	"abusefilter-log-linkoncontribs-text": "Ushbu foydalanuvchi haqida filtrlash qaydlaridagi yozuvlar",
+	"abusefilter-log-linkonhistory": "suisteʼmollar qaydlarini koʻrish",
+	"abusefilter-log-linkonhistory-text": "Bu sahifaga doir suisteʼmollar qaydlarini koʻrish",
+	"abusefilter-log-linkonundelete": "suisteʼmollar qaydlarini koʻrish",
+	"abusefilter-log-linkonundelete-text": "Bu sahifaga doir suisteʼmollar qaydlarini koʻrish",
+	"abusefilter-log-hide-reason": "Sabab:",
+	"abusefilter-log-hide-reason-other": "Boshqa/qoʻshimcha sabab:",
+	"abusefilter-log-hide-show": "Koʻrsat",
+	"abusefilter-log-hide-hide": "Yashir",
+	"abusefilter-edit-builder-vars-user-name": "Hisob yozuvi nomi",
+	"abusefilter-revert-reasonfield": "Sabab:",
+	"abusefilter-log-name": "Filtrlash qaydlari"
+}

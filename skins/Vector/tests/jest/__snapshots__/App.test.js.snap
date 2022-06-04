@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App renders a typeahead search component 1`] = `
+<wvui-typeahead-search-stub
+  accesskey="f"
+  aria-label="Search MediaWiki"
+  buttonlabel="searchbutton"
+  client="[object Object]"
+  domain="localhost"
+  formaction=""
+  highlightquery="true"
+  id="searchform"
+  initialinputvalue=""
+  placeholder="Search MediaWiki"
+  searchpagetitle="Special:Search"
+  showdescription="true"
+  showthumbnail="true"
+  suggestionslabel="searchresults"
+  title="search"
+  urlgenerator="[object Object]"
+>
+  <input
+    name="title"
+    type="hidden"
+    value="Special:Search"
+  />
+   
+  <input
+    name="wprov"
+    type="hidden"
+    value="acrw1"
+  />
+  <span />
+</wvui-typeahead-search-stub>
+`;

@@ -1,16 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
+			"Saurmandal",
 			"Sfic",
 			"Siddhartha Ghai",
+			"ThisIsACreeper0101",
 			"आलोक",
 			"रोहित रावत",
-			"ThisIsACreeper0101",
-			"AnupamM",
-			"Saurmandal"
+			"AnupamM"
 		]
 	},
 	"skinname-vector": "वेक्टर",
+	"tooltip-pt-watchlist-2": "आप द्वारा ध्यान दिए हुए पृष्ठों की सूची",
 	"vector-skin-desc": "MonoBook का आधुनिक संस्करण, जो ताज़ा रूप में और उपयोग में सुधार के साथ है",
 	"prefs-vector-enable-vector-1-label": "लिगेसी Vector का उपयोग करें",
 	"prefs-vector-enable-vector-1-help": "अगले कुछ सालों में हम Vector स्किन को धीरे धीरे अपडेट करेंगे। लिगेसी Vector की मदद से आप Vector का पुराना संस्करण देख सकते हैं (दिसंबर 2019 के अनुसार)। अद्यतनों के बारे में अधिक जानने के लिए हमारे [[mw:Reading/Web/Desktop_Improvements|परियोजना पृष्ठ]] पर जाएँ।",
@@ -18,7 +19,11 @@
 	"vector-opt-out-tooltip": "अपने सेटिंग्स को बदलकर स्किन के पुराने दिखावट (लिगेसी Vector) पर वापस जाएँ",
 	"vector.css": "/* सीएसएस यहाँ डालने से वेक्टर त्वचा चुने लोगों को प्रभावित करेगा */",
 	"vector-action-toggle-sidebar": "साइडबार को टॉगल करें",
+	"vector-languages": "भाषाएँ",
+	"vector-language-button-aria-label": "दूसरे भाषा में लेख पर जाएँ। {{PLURAL:$1|$1 भाषा|$1 भाषाओं}} में उपलब्ध",
 	"vector-language-button-label": "{{PLURAL:$1|$1 भाषा|$1 भाषाएँ}}",
+	"vector-language-redirect-to-top": "इस {{SITENAME}} पर भाषा की कड़ियाँ पृष्ठ के ऊपर की तरफ लेख के शीर्षक के पास हैं। [[#p-lang-btn|ऊपर जाएँ]]।",
+	"vector-language-variant-switcher-label": "भाषा का प्रकार बदलें",
 	"vector-action-addsection": "विषय जोड़ें",
 	"vector-action-delete": "हटाएँ",
 	"vector-action-move": "स्थानांतरित करें",
@@ -35,6 +40,8 @@
 	"vector-jumptocontent": "सामग्री पर जाएँ",
 	"vector-more-actions": "अधिक",
 	"vector-search-loader": "खोज सुझाव लोड हो रहे हैं",
+	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> वाले पृष्ठ खोजें",
+	"vector-intro-page": "Help:परिचय",
 	"vector-anon-user-menu-pages": "लॉग-आउट किए गए संपादकों के लिए पृष्ठ",
 	"vector-anon-user-menu-pages-learn": "अधिक जानें",
 	"vector-anon-user-menu-pages-label": "संपादन के बारे में अधिक जानें",

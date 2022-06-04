@@ -1,0 +1,13 @@
+/*!
+ * VisualEditor UserInterface MWLatexContextItem styles.
+ *
+ * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @license MIT
+ */
+
+.ve-ui-mwLatexContextItem .ve-ui-linearContextItem-body {
+	/* Specify a valid second value to fix size in Chrome/FF */
+	font-family: monospace, 'Courier';
+	white-space: pre-wrap;
+	max-height: 10em;
+}

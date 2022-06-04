@@ -7,15 +7,14 @@
 			"NehalDaveND",
 			"Pooja.srivastava",
 			"Sfic",
-			"Siddhartha Ghai"
+			"Siddhartha Ghai",
+			"Abijeet Patro"
 		]
 	},
 	"wikieditor": "उन्नत विकिपाठ्य सम्पादन अंतरफ़लक",
 	"wikieditor-desc": "प्रदान करता है एक विकितेक्ष्त् एदितिङ् इन्तेर्फचे और् बहुत् सुविधा प्रदान कर्ता है मॉड्यूल",
 	"wikieditor-wikitext-tab": "विकिपाठ्य",
-	"wikieditor-loading": "लदान",
 	"wikieditor-toolbar": "संपादन उपकरण पट्टी",
-	"wikieditor-toolbar-loading": "लोड हो रहा है...",
 	"wikieditor-toolbar-tool-bold": "गहरा",
 	"wikieditor-toolbar-tool-bold-example": "मोटे अक्षर",
 	"wikieditor-toolbar-tool-italic": "तिरछा",
@@ -45,7 +44,6 @@
 	"wikieditor-toolbar-tool-link-int-invalid": "आपके द्वारा निर्दिष्ट शीर्षक अमान्य है।",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "आंतरिक लिंक",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "बाहरी कड़ियाँ",
-	"wikieditor-toolbar-tool-link-empty": "आप लिंक करने के लिए कुछ दर्ज़ नहीं किए थे ।",
 	"wikieditor-toolbar-tool-file": "संलग्न फ़ाइल",
 	"wikieditor-toolbar-tool-file-example": "उदाहरण.jpg",
 	"wikieditor-toolbar-tool-file-title": "फ़ाइल सम्मिलित करें",
@@ -185,5 +183,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:सदस्यनाम'>सदस्यनाम</a> (<a href='#' title='$2:सदस्यनाम'>वार्ता</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "इनडेंट",
 	"wikieditor-toolbar-help-content-indent-syntax": "सामान्य लेख<br />:इनडेंटेड लेख<br />::इनडेंटेड लेख",
-	"wikieditor-toolbar-help-content-indent-result": "सामान्य लेख<dl><dd>इनडेंटेड लेख<dl><dd>इनडेंटेड लेख</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "सामान्य लेख<dl><dd>इनडेंटेड लेख<dl><dd>इनडेंटेड लेख</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "पूर्वावलोकन"
 }

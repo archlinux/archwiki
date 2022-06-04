@@ -36,9 +36,9 @@ ve.dm.MWInternalLinkAnnotation.static.matchRdfaTypes = [ 'mw:WikiLink', 'mw:Medi
 ve.dm.MWInternalLinkAnnotation.static.allowedRdfaTypes = [ 'mw:Error' ];
 
 ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, converter ) {
-	var targetData,
-		resource = domElements[ 0 ].getAttribute( 'resource' );
+	var resource = domElements[ 0 ].getAttribute( 'resource' );
 
+	var targetData;
 	if ( resource ) {
 		targetData = mw.libs.ve.parseParsoidResourceName( resource );
 	} else {
@@ -71,8 +71,7 @@ ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, co
  * @return {Object} The element.
  */
 ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title, rawTitle ) {
-	var element,
-		target = title.toText(),
+	var target = title.toText(),
 		namespaceIds = mw.config.get( 'wgNamespaceIds' );
 
 	if ( title.getNamespaceId() === namespaceIds.file || title.getNamespaceId() === namespaceIds.category ) {
@@ -85,7 +84,7 @@ ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title, r
 		target += '#' + title.getFragment();
 	}
 
-	element = {
+	var element = {
 		type: this.name,
 		attributes: {
 			title: target,

@@ -1,6 +1,3 @@
-/**
- * @external MenuDefinition
- */
 import menuTemplate from '!!raw-loader!../includes/templates/Menu.mustache';
 import { helperMakeMenuData } from './utils';
 

@@ -282,7 +282,7 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 				$parserOptions = $this->getParserOptions();
 				if ( $parserOptions->getInterfaceMessage() ) {
 					$genderCache = MediaWikiServices::getInstance()->getGenderCache();
-					$gender = $genderCache->getGenderOf( $parserOptions->getUser(), __METHOD__ );
+					$gender = $genderCache->getGenderOf( $parserOptions->getUserIdentity(), __METHOD__ );
 				}
 			}
 		}

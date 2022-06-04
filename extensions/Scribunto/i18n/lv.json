@@ -30,6 +30,7 @@
 	"scribunto-module-with-errors-category-desc": "Modulī ir kļūda.",
 	"scribunto-limitreport-timeusage": "Lua laika lietojums",
 	"scribunto-limitreport-timeusage-value": "$1/$2 sekundes",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|baiti|baits|baiti}}",
 	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|baiti|baits|baiti}}",
 	"scribunto-limitreport-memusage": "Lua atmiņas lietojums",
 	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|baiti|baits|baiti}}",

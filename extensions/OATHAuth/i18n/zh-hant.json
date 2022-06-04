@@ -14,7 +14,8 @@
 			"Winston Sung",
 			"Xiplus",
 			"予弦",
-			"神樂坂秀吉"
+			"神樂坂秀吉",
+			"DinoWP"
 		]
 	},
 	"oathauth-desc": "提供基於 HMAC 的一次性密碼驗證支援",
@@ -69,7 +70,7 @@
 	"oath-log-header": "這些事件追蹤著使用者之雙重認證狀態的變更。",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|停用了}} $3 的雙因素驗證",
 	"logentry-oath-verify": "$1{{GENDER:$2|已檢查}}$3是否啟用雙重認證。",
-	"oauthauth-ui-no-module": "全部停用",
+	"oathauth-ui-no-module": "全部停用",
 	"oathauth-module-invalid": "使用者已註冊的 OATHAuth 模阻無效。",
 	"oathauth-module-totp-label": "TOTP（一次性權杖）",
 	"oathauth-ui-manage": "管理",

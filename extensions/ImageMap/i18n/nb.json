@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jon Harald Søby",
-			"Abuluntu"
+			"Abuluntu",
+			"Jon Harald Søby"
 		]
 	},
 	"imagemap_desc": "Gjør at man kan bruke klikkbare bilder ved hjelp av <code>&lt;imagemap&gt;</code>.",

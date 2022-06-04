@@ -4,10 +4,10 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Config\WikitextConstants as Consts;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 /**
  * This file contains general utilities for token transforms.
@@ -125,6 +125,7 @@ class Utils {
 	 * @return string
 	 */
 	public static function phpURLEncode( $txt ) {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new \BadMethodCallException( 'Use urlencode( $txt ) instead' );
 	}
 
@@ -387,6 +388,7 @@ class Utils {
 	 * @return object
 	 */
 	public static function getStar( $revision ) {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		/*
 		$content = $revision;
 		if ( $revision && isset( $revision->slots ) ) {
@@ -399,6 +401,7 @@ class Utils {
 	}
 
 	/**
+	 * FIXME: This feels broken.
 	 * Magic words masquerading as templates.
 	 * @return array
 	 */

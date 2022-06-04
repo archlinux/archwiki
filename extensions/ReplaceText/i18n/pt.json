@@ -48,6 +48,9 @@
 	"replacetext_announce": "Anunciar estas edições através da página $1 e das páginas vigiadas.",
 	"replacetext_editsummary": "Substituição de texto - \"$1\" por \"$2\"",
 	"replacetext_reminder": "Para alterar também as ligações para esta página nas páginas afluentes, vá a $1.",
+	"replacetext_cfg_error": "Erro de configuração da substituição de texto",
+	"replacetext_no_compress": "A sua wiki não funcionará com substituição de texto: as substituições de texto não podem ocorrer se $wgCompressRevisions estiver definido como verdadeiro.",
+	"replacetext_no_external_stores": "A sua wiki não funcionará com substituição de texto: as substituições de texto não podem ocorrer se $wgExternalStores não estiver vazio.",
 	"right-replacetext": "Fazer substituições de texto em toda a wiki",
 	"action-replacetext": "fazer substituições de texto em toda a wiki"
 }

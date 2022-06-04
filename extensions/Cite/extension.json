@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.35.0"
+		"MediaWiki": ">= 1.38.0"
 	},
 	"MessagesDirs": {
 		"Cite": [
@@ -97,10 +97,8 @@
 				"mobile"
 			]
 		},
-		"ext.cite.visualEditor.data": {
-			"class": "Cite\\ResourceLoader\\CiteDataModule"
-		},
 		"ext.cite.visualEditor": {
+			"class": "Cite\\ResourceLoader\\CiteVisualEditorModule",
 			"localBasePath": "modules/ve-cite",
 			"remoteExtPath": "Cite/modules/ve-cite",
 			"scripts": [
@@ -133,10 +131,10 @@
 				"oojs-ui.styles.icons-editing-citation",
 				"oojs-ui.styles.icons-interactions",
 				"ext.cite.visualEditor.core",
-				"ext.cite.visualEditor.data",
 				"ext.cite.style",
 				"ext.cite.styles",
 				"ext.visualEditor.mwtransclusion",
+				"ext.visualEditor.base",
 				"ext.visualEditor.mediawiki"
 			],
 			"messages": [

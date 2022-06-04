@@ -36,7 +36,8 @@ class SelectWidget extends Widget {
 			'oo-ui-selectWidget-unpressed',
 		] );
 		$this->setAttributes( [
-			'role' => 'listbox'
+			'role' => 'listbox',
+			'aria-multiselectable' => $this->multiselect ? 'true' : 'false',
 		] );
 
 		$this->addItems( $config['items'] );

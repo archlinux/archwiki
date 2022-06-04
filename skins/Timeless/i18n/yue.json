@@ -19,5 +19,7 @@
 	"timeless-pagemisc": "多啲",
 	"timeless-namespaces": "空間名",
 	"timeless-pagetools": "版嘅動作",
-	"timeless-languages": "話"
+	"timeless-languages": "話",
+	"timeless-view-history": "史",
+	"timeless-action-undelete": "取消剷走$1次修改"
 }

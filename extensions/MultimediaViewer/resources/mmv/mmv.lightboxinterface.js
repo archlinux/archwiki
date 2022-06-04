@@ -189,9 +189,9 @@
 		this.handleEvent( 'keydown', function ( e ) { ui.keydown( e ); } );
 
 		// mousemove generates a ton of events, which is why we throttle it
-		this.handleEvent( 'mousemove.lip', $.throttle( 250, function ( e ) {
+		this.handleEvent( 'mousemove.lip', mw.util.throttle( function ( e ) {
 			ui.mousemove( e );
-		} ) );
+		}, 250 ) );
 
 		this.handleEvent( 'mmv-faded-out', function ( e ) { ui.fadedOut( e ); } );
 		this.handleEvent( 'mmv-fade-stopped', function ( e ) { ui.fadeStopped( e ); } );

@@ -25,7 +25,7 @@ interface Attributes extends \ArrayAccess, \IteratorAggregate {
 	 * but is not compliant with the spec, which states that duplicate
 	 * attributes must be removed.
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	public function count();
 
@@ -36,7 +36,14 @@ interface Attributes extends \ArrayAccess, \IteratorAggregate {
 	 * @param Attributes $other
 	 */
 	public function merge( Attributes $other );
-}
 
-// Retain the old namespace for backwards compatibility.
-class_alias( Attributes::class, 'RemexHtml\Tokenizer\Attributes' );
+	/**
+	 * It's efficient to assume that attributes are immutable when cloning
+	 * nodes due to AFE reconstruction or AAA. So by default, this returns
+	 * $this. But users can override it if attribute cloning needs special
+	 * handling.
+	 *
+	 * @return Attributes
+	 */
+	public function clone();
+}

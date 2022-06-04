@@ -7,11 +7,11 @@
 			"Ebraminio",
 			"Hamid rostami",
 			"Huji",
+			"Jeeputer",
 			"Ladsgroup",
 			"Mjbmr",
 			"Omidh",
 			"Reza1615",
-			"Jeeputer",
 			"Beginneruser"
 		]
 	},
@@ -37,7 +37,7 @@
 	"interwiki_1": "بله",
 	"interwiki_0": "خیر",
 	"interwiki_error": "خطا: جدول میان‌ویکی خالی است، یا چیز دیگری مشکل دارد.",
-	"interwiki-cached": "اطلاعات میان‌ویکی ذخیره شده‌است. اصلاح ذخیره ممکن نیست.",
+	"interwiki-cached": "اطلاعات میان‌ویکی در حافظه نهان شد. اصلاح حافظۀ نهان ممکن نیست.",
 	"interwiki_edit": "ویرایش",
 	"interwiki_reasonfield": "دلیل:",
 	"interwiki_deleting": "شما در حال حذف کردن پیشوند «$1» هستید.",

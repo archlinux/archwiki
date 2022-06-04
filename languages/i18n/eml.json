@@ -16,7 +16,6 @@
 	"tog-hidecategorization": "Lōga l'elèinch dal categoréi dal pâgini.",
 	"tog-extendwatchlist": "Fà vèder tóti 'l mudéfichi a i tgnû 'd ôc specêl, mìa sōl l'ûltma",
 	"tog-usenewrc": "Unés al mudéfichi per pògin int al j ûltmi mudéfichi e int i tgnû 'd ôc specêl",
-	"tog-numberheadings": "Numerasiòun avtomâtica di tétol ed sesiòun",
 	"tog-editondblclick": "Mudéfica dal pàgini cun un dòpi cléch",
 	"tog-editsectiononrightclick": "Mudéfica dal sesiòun cun un cléch a dréta in séma 'l tétol",
 	"tog-watchcreations": "Zûnta al pàgini fâti e i file carghê a i tgnû 'd ôc specêl",
@@ -98,7 +97,9 @@
 	"printableversion": "Versiòun ch'la 's pōl stampêr",
 	"permalink": "Colegamèint fés",
 	"print": "Stampèr",
+	"view-view": "Lēś",
 	"edit": "Mudéfica",
+	"view-edit": "Mudéfica",
 	"create-local": "Śòunta na descrisiòun lochèla",
 	"delete": "Scanşèla",
 	"protect": "Prutēz",
@@ -195,5 +196,7 @@
 	"mw-widgets-abandonedit-discard": "Ann fer chèś ai cambiamèint",
 	"mw-widgets-abandonedit-keep": "Cuntinuèr l'editasiòun",
 	"mw-widgets-mediasearch-input-placeholder": "Serchèr un média",
-	"mw-widgets-mediasearch-noresults": "Mìa catê nisùn risultê."
+	"mw-widgets-mediasearch-noresults": "Mìa catê nisùn risultê.",
+	"view-create-local": "Śòunta na descrisiòun lochèla",
+	"skin-action-protect": "Prutēz"
 }

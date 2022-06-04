@@ -36,7 +36,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use User;
 use WebRequest;
-use Wikimedia\ObjectFactory;
 
 /**
  * This serves as the entry point to the MediaWiki session handling system.
@@ -123,7 +122,7 @@ class SessionManager implements SessionManagerInterface {
 	/** @var SessionId[] */
 	private $allSessionIds = [];
 
-	/** @var string[] */
+	/** @var true[] */
 	private $preventUsers = [];
 
 	/**
@@ -460,9 +459,10 @@ class SessionManager implements SessionManagerInterface {
 	protected function getProviders() {
 		if ( $this->sessionProviders === null ) {
 			$this->sessionProviders = [];
+			$objectFactory = MediaWikiServices::getInstance()->getObjectFactory();
 			foreach ( $this->config->get( 'SessionProviders' ) as $spec ) {
 				/** @var SessionProvider */
-				$provider = ObjectFactory::getObjectFromSpec( $spec );
+				$provider = $objectFactory->createObject( $spec );
 				$provider->init(
 					$this->logger,
 					$this->config,
@@ -605,7 +605,7 @@ class SessionManager implements SessionManagerInterface {
 		$newParams = [];
 
 		if ( $blob !== false ) {
-			// Sanity check: blob must be an array, if it's saved at all
+			// Double check: blob must be an array, if it's saved at all
 			if ( !is_array( $blob ) ) {
 				$this->logger->warning( 'Session "{session}": Bad data', [
 					'session' => $info->__toString(),
@@ -614,7 +614,7 @@ class SessionManager implements SessionManagerInterface {
 				return $failHandler();
 			}
 
-			// Sanity check: blob has data and metadata arrays
+			// Double check: blob has data and metadata arrays
 			if ( !isset( $blob['data'] ) || !is_array( $blob['data'] ) ||
 				!isset( $blob['metadata'] ) || !is_array( $blob['metadata'] )
 			) {
@@ -628,7 +628,7 @@ class SessionManager implements SessionManagerInterface {
 			$data = $blob['data'];
 			$metadata = $blob['metadata'];
 
-			// Sanity check: metadata must be an array and must contain certain
+			// Double check: metadata must be an array and must contain certain
 			// keys, if it's saved at all
 			if ( !array_key_exists( 'userId', $metadata ) ||
 				!array_key_exists( 'userName', $metadata ) ||
@@ -1055,7 +1055,7 @@ class SessionManager implements SessionManagerInterface {
 			return;
 		}
 		$mwuser = $session->getRequest()->getCookie( 'mwuser-sessionId' );
-		$now = \MWTimestamp::now( TS_UNIX );
+		$now = (int)\MWTimestamp::now( TS_UNIX );
 
 		// Record (and possibly log) that the IP is using the current session.
 		// Don't touch the stored data unless we are changing the IP or re-adding an expired one.

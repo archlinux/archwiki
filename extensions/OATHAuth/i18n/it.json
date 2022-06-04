@@ -50,7 +50,7 @@
 	"oath-log-name": "Autenticazione a due fattori",
 	"oath-log-header": "Questi eventi monitorano i cambiamenti di stato dell'autenticazione a due fattori.",
 	"logentry-oath-verify": "$1 {{GENDER:$2|ha controllato}} se $3 ha l'autenticazione a due fattori abilitata",
-	"oauthauth-ui-no-module": "Non attivato",
+	"oathauth-ui-no-module": "Non attivato",
 	"oathauth-module-totp-label": "TOTP (token monouso)",
 	"oathauth-ui-manage": "Gestisci",
 	"oathmanage": "Gestisci autenticazione a due fattori",

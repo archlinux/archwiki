@@ -17,6 +17,8 @@
  * @param {string} name Unique symbolic name of page
  * @param {Object} [config] Configuration options
  * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
+ * @cfg {boolean} [expandedParamList=false] If the {@see ve.ui.MWParameterSearchWidget} results
+ *  should be initially expanded
  */
 ve.ui.MWParameterPlaceholderPage = function VeUiMWParameterPlaceholderPage( parameter, name, config ) {
 	var veConfig = mw.config.get( 'wgVisualEditorConfig' );
@@ -80,6 +82,7 @@ OO.inheritClass( ve.ui.MWParameterPlaceholderPage, OO.ui.PageLayout );
 /**
  * Respond to the parameter search widget showAll event
  *
+ * @private
  * @fires showAll
  */
 ve.ui.MWParameterPlaceholderPage.prototype.onParameterShowAll = function () {
@@ -89,21 +92,21 @@ ve.ui.MWParameterPlaceholderPage.prototype.onParameterShowAll = function () {
 /**
  * @inheritdoc
  */
-ve.ui.MWParameterPlaceholderPage.prototype.setOutlineItem = function () {
-	// Parent method
-	ve.ui.MWParameterPlaceholderPage.super.prototype.setOutlineItem.apply( this, arguments );
-
-	if ( this.outlineItem ) {
-		this.outlineItem
-			.setIcon( 'parameter' )
-			.setMovable( false )
-			.setRemovable( true )
-			.setLevel( 1 )
-			.setFlags( [ 'placeholder' ] )
-			.setLabel( ve.msg( 'visualeditor-dialog-transclusion-add-param' ) );
-	}
+ve.ui.MWParameterPlaceholderPage.prototype.setupOutlineItem = function () {
+	this.outlineItem
+		.setIcon( 'parameter' )
+		.setMovable( false )
+		.setRemovable( true )
+		.setLevel( 1 )
+		.setFlags( [ 'placeholder' ] )
+		.setLabel( ve.msg( 'visualeditor-dialog-transclusion-add-param' ) );
 };
 
+/**
+ * @private
+ * @param {string} name
+ * @fires focusTemplateParameterById
+ */
 ve.ui.MWParameterPlaceholderPage.prototype.onParameterChoose = function ( name ) {
 	this.addParameterSearch.query.setValue( '' );
 
@@ -123,6 +126,9 @@ ve.ui.MWParameterPlaceholderPage.prototype.onParameterChoose = function ( name )
 	} );
 };
 
+/**
+ * @private
+ */
 ve.ui.MWParameterPlaceholderPage.prototype.onRemoveButtonClick = function () {
 	this.parameter.remove();
 };

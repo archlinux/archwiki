@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Felis",
+			"Jun Misugi"
+		]
+	},
+	"math_failure": "Errori i'l'anàrisi sintàttigga",
+	"math_syntax_error": "errori di sintassi",
+	"math_unknown_error": "errori ischunisciddu",
+	"math_unknown_function": "funtzioni ischuniscidda \"$1\"",
+	"mw_math_mathml": "Usa MathML si pussìbiri (ippirimintari)",
+	"mw_math_png": "Musthra sempri in PNG",
+	"mw_math_source": "Lassa in fuimmaddu TeX (pa nabiggadori testhuari)",
+	"prefs-math": "Fòimmuri matemàtigghi"
+}

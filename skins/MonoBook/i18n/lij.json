@@ -14,5 +14,7 @@
 	"cactions-mobile": "Açioìn in sciâ pàgina",
 	"monobook-cactions-label": "Açioìn in sciâ pàgina",
 	"monobook-notifications-link": "Notìfiche ($1)",
-	"monobook-notifications-link-none": "Notìfiche"
+	"monobook-notifications-link-none": "Notìfiche",
+	"monobook-view-history": "Cronologîa",
+	"monobook-action-undelete": "Recuppera {{PLURAL:$1|una revixon|$1 revixoin}}"
 }

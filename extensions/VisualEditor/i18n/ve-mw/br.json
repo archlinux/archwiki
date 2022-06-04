@@ -6,7 +6,8 @@
 			"Fulup",
 			"Maoris",
 			"Pymouss",
-			"Y-M D"
+			"Y-M D",
+			"Huñvreüs"
 		]
 	},
 	"collabpad-import-subtitle": "Enporzhiet eus $1",
@@ -162,7 +163,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Skeudennoù ha mediaoù",
 	"visualeditor-dialogbutton-meta-tooltip": "Arventennoù ar bajenn",
 	"visualeditor-dialogbutton-template-tooltip": "Patrom",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Treuzklozadur",
 	"visualeditor-donebutton-tooltip": "Echuet kemmañ",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|c'hemenn|kemenn}}",
 	"visualeditor-editnotices-tooltip": "Kemmañ an alioù",
@@ -197,6 +197,7 @@
 	"visualeditor-media-title-image": "Skeudenn",
 	"visualeditor-media-title-video": "Video",
 	"visualeditor-meta-tool": "Arventennoù",
+	"visualeditor-mweditmode-tooltip": "Cheñch gwelaozer",
 	"visualeditor-mweditmodesource-progress": "Cheñch evit an aozañ dre ar c'hod...",
 	"visualeditor-mweditmodesource-warning-cancel": "Nullañ",
 	"visualeditor-mweditmodesource-warning-switch-discard": "Dilezel ma c'hemmoù ha cheñch",

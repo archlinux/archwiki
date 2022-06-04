@@ -21,5 +21,7 @@
 	"timeless-namespaces": "Mga ngalan-espasyo",
 	"timeless-pagetools": "Mga galaw ng pahina",
 	"timeless-languages": "Mga wika",
-	"timeless.js": "/* Ang anumang JavaScript dito ay ikakarga para sa mga tagagamit na gumagamit ng pabalat na Timeless */"
+	"timeless.js": "/* Ang anumang JavaScript dito ay ikakarga para sa mga tagagamit na gumagamit ng pabalat na Timeless */",
+	"timeless-view-history": "Kasaysayan",
+	"timeless-action-undelete": "Baligtarin ang pagbura ng {{PLURAL:$1|isang pagbabago|$1 pagbabago}}"
 }

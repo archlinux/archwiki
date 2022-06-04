@@ -35,7 +35,7 @@
 		};
 	}
 
-	QUnit.test( 'EmbedFileFormatter constructor sanity check', function ( assert ) {
+	QUnit.test( 'EmbedFileFormatter constructor sense check', function ( assert ) {
 		var formatter = new mw.mmv.EmbedFileFormatter();
 		assert.ok( formatter, 'constructor with no argument works' );
 	} );
@@ -229,7 +229,7 @@
 			}
 		} );
 
-		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-b: (multimediaviewer-credit: Author, Source), link)', 'Sanity check' );
+		assert.strictEqual( txt, '(multimediaviewer-text-embed-credit-text-b: (multimediaviewer-credit: Author, Source), link)', 'Sense check' );
 
 		txt = formatter.getCreditText( {
 			repoInfo: {
@@ -276,7 +276,7 @@
 		assert.strictEqual(
 			html,
 			'(multimediaviewer-html-embed-credit-text-b: (multimediaviewer-credit: Author, Source), <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
-			'Sanity check'
+			'Sense check'
 		);
 
 		html = formatter.getCreditHtml( {
@@ -303,7 +303,7 @@
 		assert.strictEqual(
 			html,
 			'(multimediaviewer-html-embed-credit-text-bl: (multimediaviewer-credit: Author, Source), <a href="http://www.wtfpl.net/">WTFPL v2</a>, <a href="some link">(multimediaviewer-html-embed-credit-link-text)</a>)',
-			'Sanity check'
+			'Sense check'
 		);
 	} );
 }() );

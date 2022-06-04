@@ -28,12 +28,12 @@ abstract class RdfWriterBase implements RdfWriter {
 	 */
 	private $subs = [];
 
-	const STATE_START = 0;
-	const STATE_DOCUMENT = 5;
-	const STATE_SUBJECT = 10;
-	const STATE_PREDICATE = 11;
-	const STATE_OBJECT = 12;
-	const STATE_FINISH = 666;
+	protected const STATE_START = 0;
+	protected const STATE_DOCUMENT = 5;
+	protected const STATE_SUBJECT = 10;
+	protected const STATE_PREDICATE = 11;
+	protected const STATE_OBJECT = 12;
+	protected const STATE_FINISH = 666;
 
 	/**
 	 * @var string the current state
@@ -74,18 +74,18 @@ abstract class RdfWriterBase implements RdfWriter {
 	/**
 	 * Role ID for writers that will generate a full RDF document.
 	 */
-	const DOCUMENT_ROLE = 'document';
-	const SUBDOCUMENT_ROLE = 'sub';
+	public const DOCUMENT_ROLE = 'document';
+	public const SUBDOCUMENT_ROLE = 'sub';
 
 	/**
 	 * Role ID for writers that will generate a single inline blank node.
 	 */
-	const BNODE_ROLE = 'bnode';
+	private const BNODE_ROLE = 'bnode';
 
 	/**
 	 * Role ID for writers that will generate a single inline RDR statement.
 	 */
-	const STATEMENT_ROLE = 'statement';
+	private const STATEMENT_ROLE = 'statement';
 
 	/**
 	 * @var string The writer's role, see the XXX_ROLE constants.
@@ -555,7 +555,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 * about a subject. Depending on the requirements of the output format, the implementation
 	 * may be empty.
 	 *
-	 * @note: $base and $local are given as passed to about() and processed by expandSubject().
+	 * @note $base and $local are given as passed to about() and processed by expandSubject().
 	 *
 	 * @param string $base
 	 * @param string|null $local
@@ -566,7 +566,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 * Must be implemented to generate output that represents the association of a predicate
 	 * with a subject that was previously defined by a call to writeSubject().
 	 *
-	 * @note: $base and $local are given as passed to say() and processed by expandPredicate().
+	 * @note $base and $local are given as passed to say() and processed by expandPredicate().
 	 *
 	 * @param string $base
 	 * @param string|null $local
@@ -577,7 +577,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 * Must be implemented to generate output that represents a resource used as the object
 	 * of a statement.
 	 *
-	 * @note: $base and $local are given as passed to is() and processed by expandObject().
+	 * @note $base and $local are given as passed to is() and processed by expandObject().
 	 *
 	 * @param string $base
 	 * @param string|null $local
@@ -597,7 +597,7 @@ abstract class RdfWriterBase implements RdfWriter {
 	 * Must be implemented to generate output that represents a (typed) literal used as the object
 	 * of a statement.
 	 *
-	 * @note: $typeBase and $typeLocal are given as passed to value() and processed by expandType().
+	 * @note $typeBase and $typeLocal are given as passed to value() and processed by expandType().
 	 *
 	 * @param string $value the value encoded as a string
 	 * @param string|null $typeBase

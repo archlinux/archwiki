@@ -10,7 +10,7 @@
 		title="{{msg-vector-main-menu-tooltip}}">
 		{{msg-vector-action-toggle-sidebar}}
 	</label>
-	{{>Logo}}
+	{{#data-logos}}{{>Logo}}{{/data-logos}}
 	{{#data-search-box}}{{>SearchBox}}{{/data-search-box}}
 	{{#data-vector-user-links}}{{>UserLinks}}{{/data-vector-user-links}}
 </header>

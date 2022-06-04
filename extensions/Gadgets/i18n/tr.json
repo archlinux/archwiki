@@ -13,12 +13,12 @@
 			"Koc61",
 			"Mizunee",
 			"MuratTheTurkish",
+			"SaldırganSincap",
 			"Sezgin İbiş",
 			"SwornToTranslate29",
 			"TmY e12",
 			"ToprakM",
-			"Vito Genovese",
-			"SaldırganSincap"
+			"Vito Genovese"
 		]
 	},
 	"gadgets-desc": "Kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihlerinde]] özel [[Special:Gadgets|CSS ve JavaScript küçük araçlarını]] seçmelerine izin verir",
@@ -35,11 +35,15 @@
 	"gadgetusage-default": "Varsayılan",
 	"gadgets-title": "Küçük araçlar",
 	"gadgets-pagetext": "Aşağıdaki kullanıcıların [[Special:Preferences#mw-prefsection-gadgets|tercihler sayfasında]] etkin hale getirebileceği, [[MediaWiki:Gadgets-definition|tanımlarla]] belirtildiği gibi, özel küçüj araçların bir listesidir.\nBu genel bakış, her küçük aracın tanımını ve kodunu belirten sistem mesaj sayfalarına kolay erişim sağlar.",
+	"gadgets-editdescription": "Açıklamayı düzenle",
+	"gadgets-viewdescription": "Açıklamayı gör",
 	"gadgets-uses": "Kullanımlar",
 	"gadgets-required-rights": "Aşağıda gösterilen {{PLURAL:$2|hak|haklar}} gereklidir:\n\n$1",
 	"gadgets-required-skins": "Kullanılabilecek {{PLURAL:$2|$1 tema|temalar: $1}}.",
+	"gadgets-required-actions": "{{PLURAL:$2|\"$1\" sayfa eyleminde çalışıyor|Aşağıdaki sayfa eylemlerinde çalışıyor: $1}}.",
 	"gadgets-default": "Herkes için varsayılan olarak etkindir.",
 	"gadgets-legacy": "Küçük aracı yüklenmedi. Lütfen ResourceLoader'a taşıyın. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Daha fazla bilgi edinin])",
+	"gadgets-packaged": "Bu küçük araç,[https://www.mediawiki.org/wiki/ResourceLoader/Package_files paketlidir] ve giriş noktası $1 betik dosyasıdır",
 	"gadgets-export": "Dışa aktar",
 	"gadgets-export-title": "Küçük araç dışa aktarımı",
 	"gadgets-not-found": "Küçük araç \"$1\" bulunamadı.",
@@ -51,5 +55,6 @@
 	"action-gadgets-edit": "bu küçük aracı JavaScript veya CSS sayfasına düzenleme",
 	"right-gadgets-definition-edit": "Küçük araç tanımlarını düzenle",
 	"action-gadgets-definition-edit": "bu küçük araç tanımını düzenleme",
-	"gadgets-wrong-contentmodel": "{{ns:2302}} ad alanındaki sayfalar GadgetDefinition içerik modelinde olmalıdır."
+	"gadgets-wrong-contentmodel": "{{ns:2302}} ad alanındaki sayfalar GadgetDefinition içerik modelinde olmalıdır.",
+	"gadgets-supports-urlload": "Bu küçük aracı, <code>?withgadget</code> sorgu parametresiyle URL üzerinden yüklemeyi destekler."
 }

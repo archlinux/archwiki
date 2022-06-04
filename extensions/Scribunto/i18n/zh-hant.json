@@ -43,6 +43,7 @@
 	"scribunto-lua-error-location": "Lua 錯誤 $1：$2。",
 	"scribunto-lua-error": "Lua 錯誤：$2。",
 	"scribunto-lua-notarrayreturn": "腳本錯誤：模組回傳 $2 數值，該模組應該回傳匯出資料表。",
+	"scribunto-lua-warning": "腳本警告：$1",
 	"scribunto-luastandalone-proc-error": "Lua 錯誤：無法建立程序。",
 	"scribunto-luastandalone-proc-error-msg": "Lua 錯誤：無法建立程序：$2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua 錯誤：無法建立程序：proc_open 無法使用。檢查 PHP 的 \"disable_functions\" 設定宣告。",

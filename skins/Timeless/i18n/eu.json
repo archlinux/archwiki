@@ -22,5 +22,7 @@
 	"timeless-pagemisc": "Gehiago",
 	"timeless-namespaces": "Izen-tarteak",
 	"timeless-pagetools": "Orriaren aukerak",
-	"timeless-languages": "Hizkuntzak"
+	"timeless-languages": "Hizkuntzak",
+	"timeless-view-history": "Ikusi historia",
+	"timeless-action-undelete": "Berreskuratu {{PLURAL:$1|aldaketa bat|$1 aldaketa}}"
 }

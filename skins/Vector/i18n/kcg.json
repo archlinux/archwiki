@@ -12,7 +12,8 @@
 	"vector-action-protect": "Cam",
 	"vector-view-create": "Khwuk",
 	"vector-view-edit": "Jhyuk",
-	"vector-view-history": "Li nkhang gbangbang",
+	"vector-view-history": "Nwuan nkhang",
 	"vector-view-view": "Fang",
-	"vector-more-actions": "Nkyang njhyang"
+	"vector-more-actions": "Nkyang njhyang",
+	"vector-searchsuggest-containing": "Zop ngwat na̱ byia̱ <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

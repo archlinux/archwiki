@@ -5,8 +5,9 @@
 			"Kyoww"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1ぬ口}}",
 	"vector-action-addsection": "話題追加",
-	"vector-action-delete": "削除",
+	"vector-action-delete": "ちゃーすん",
 	"vector-action-move": "移動",
 	"vector-action-protect": "保護",
 	"vector-view-create": "ちゅくゆん",

@@ -63,7 +63,8 @@ class PlainAttributes implements Attributes {
 	public function count() {
 		return count( $this->data );
 	}
-}
 
-// Retain the old namespace for backwards compatibility.
-class_alias( PlainAttributes::class, 'RemexHtml\Tokenizer\PlainAttributes' );
+	public function clone() {
+		return $this;
+	}
+}

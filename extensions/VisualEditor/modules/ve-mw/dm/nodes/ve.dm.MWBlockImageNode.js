@@ -48,8 +48,6 @@ ve.dm.MWBlockImageNode.static.preserveHtmlAttributes = function ( attribute ) {
 
 ve.dm.MWBlockImageNode.static.handlesOwnChildren = true;
 
-ve.dm.MWBlockImageNode.static.ignoreChildren = true;
-
 ve.dm.MWBlockImageNode.static.childNodeTypes = [ 'mwImageCaption' ];
 
 ve.dm.MWBlockImageNode.static.matchTagNames = [ 'figure' ];
@@ -66,50 +64,47 @@ ve.dm.MWBlockImageNode.static.classAttributes = {
 };
 
 ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter ) {
-	var dataElement, newDimensions, attributes,
-		figure, imgWrapper, img, captionNode, caption,
-		classAttr, typeofAttrs, errorIndex, width, height, href, targetData, types,
-		mwDataJSON, mwData;
+	var figure = domElements[ 0 ];
+	var imgWrapper = figure.children[ 0 ]; // <a> or <span>
+	var img = imgWrapper.children[ 0 ]; // <img>, <video> or <audio>
+	var captionNode = figure.children[ 1 ]; // <figcaption> or undefined
+	var classAttr = figure.getAttribute( 'class' );
+	var typeofAttrs = figure.getAttribute( 'typeof' ).trim().split( /\s+/ );
+	var mwDataJSON = figure.getAttribute( 'data-mw' );
+	var mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
+	var errorIndex = typeofAttrs.indexOf( 'mw:Error' );
+	var isError = errorIndex !== -1;
+	var width = img.getAttribute( isError ? 'data-width' : 'width' );
+	var height = img.getAttribute( isError ? 'data-height' : 'height' );
 
-	figure = domElements[ 0 ];
-	imgWrapper = figure.children[ 0 ]; // <a> or <span>
-	img = imgWrapper.children[ 0 ]; // <img>, <video> or <audio>
-	captionNode = figure.children[ 1 ]; // <figcaption> or undefined
-	classAttr = figure.getAttribute( 'class' );
-	typeofAttrs = figure.getAttribute( 'typeof' ).trim().split( /\s+/ );
-	mwDataJSON = figure.getAttribute( 'data-mw' );
-	mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
-	errorIndex = typeofAttrs.indexOf( 'mw:Error' );
-	width = img.getAttribute( 'width' );
-	height = img.getAttribute( 'height' );
-
-	href = imgWrapper.getAttribute( 'href' );
+	var href = imgWrapper.getAttribute( 'href' );
 	if ( href ) {
 		// Convert absolute URLs to relative if the href refers to a page on this wiki.
 		// Otherwise Parsoid generates |link= options for copy-pasted images (T193253).
-		targetData = mw.libs.ve.getTargetDataFromHref( href, converter.getTargetHtmlDocument() );
+		var targetData = mw.libs.ve.getTargetDataFromHref( href, converter.getTargetHtmlDocument() );
 		if ( targetData.isInternal ) {
 			href = './' + targetData.rawTitle;
 		}
 	}
 
-	if ( errorIndex !== -1 ) {
+	if ( isError ) {
 		typeofAttrs.splice( errorIndex, 1 );
 	}
 
-	types = this.rdfaToTypes[ typeofAttrs[ 0 ] ];
+	var types = this.rdfaToTypes[ typeofAttrs[ 0 ] ];
 
-	attributes = {
+	var attributes = {
 		mediaClass: types.mediaClass,
 		type: types.frameType,
 		src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
 		href: href,
+		imgWrapperClassAttr: imgWrapper.getAttribute( 'class' ),
 		resource: img.getAttribute( 'resource' ),
 		width: width !== null && width !== '' ? +width : null,
 		height: height !== null && height !== '' ? +height : null,
 		alt: img.getAttribute( 'alt' ),
 		mw: mwData,
-		isError: errorIndex !== -1
+		isError: isError
 	};
 
 	this.setClassAttributes( attributes, classAttr );
@@ -132,7 +127,7 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 			// rather than default MediaWiki configuration dimensions.
 			// We must force local wiki default in edit mode for default
 			// size images.
-			newDimensions = this.scaleToThumbnailSize( attributes );
+			var newDimensions = this.scaleToThumbnailSize( attributes );
 			if ( newDimensions ) {
 				attributes.width = newDimensions.width;
 				attributes.height = newDimensions.height;
@@ -140,6 +135,7 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 		}
 	}
 
+	var caption;
 	if ( captionNode ) {
 		caption = converter.getDataFromDomClean( captionNode, { type: 'mwImageCaption' } );
 	} else {
@@ -151,7 +147,7 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 		];
 	}
 
-	dataElement = { type: this.name, attributes: attributes };
+	var dataElement = { type: this.name, attributes: attributes };
 
 	this.storeGeneratedContents( dataElement, dataElement.attributes.src, converter.getStore() );
 
@@ -163,20 +159,20 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 // TODO: At this moment node is not resizable but when it will be then adding defaultSize class
 // should be more conditional.
 ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) {
-	var width, height, srcAttr,
-		dataElement = data[ 0 ],
-		mediaClass = dataElement.attributes.mediaClass,
+	var dataElement = data[ 0 ],
+		attributes = dataElement.attributes,
+		mediaClass = attributes.mediaClass,
 		figure = doc.createElement( 'figure' ),
-		imgWrapper = doc.createElement( dataElement.attributes.href ? 'a' : 'span' ),
-		img = doc.createElement( dataElement.attributes.isError ? 'span' : this.typesToTags[ mediaClass ] ),
+		imgWrapper = doc.createElement( attributes.href ? 'a' : 'span' ),
+		img = doc.createElement( attributes.isError ? 'span' : this.typesToTags[ mediaClass ] ),
 		wrapper = doc.createElement( 'div' ),
-		classAttr = this.getClassAttrFromAttributes( dataElement.attributes ),
+		classAttr = this.getClassAttrFromAttributes( attributes ),
 		captionData = data.slice( 1, -1 );
 
 	// RDFa type
-	figure.setAttribute( 'typeof', this.getRdfa( mediaClass, dataElement.attributes.type ) );
-	if ( !ve.isEmptyObject( dataElement.attributes.mw ) ) {
-		figure.setAttribute( 'data-mw', JSON.stringify( dataElement.attributes.mw ) );
+	figure.setAttribute( 'typeof', this.getRdfa( mediaClass, attributes.type, attributes.isError ) );
+	if ( !ve.isEmptyObject( attributes.mw ) ) {
+		figure.setAttribute( 'data-mw', JSON.stringify( attributes.mw ) );
 	}
 
 	if ( classAttr ) {
@@ -184,34 +180,51 @@ ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) 
 		figure.className = classAttr;
 	}
 
-	if ( dataElement.attributes.href ) {
-		imgWrapper.setAttribute( 'href', dataElement.attributes.href );
+	if ( attributes.href ) {
+		imgWrapper.setAttribute( 'href', attributes.href );
 	}
 
-	width = dataElement.attributes.width;
-	height = dataElement.attributes.height;
+	if ( attributes.imgWrapperClassAttr ) {
+		// eslint-disable-next-line mediawiki/class-doc
+		imgWrapper.className = attributes.imgWrapperClassAttr;
+	}
+
+	var width = attributes.width;
+	var height = attributes.height;
 	// If defaultSize is set, and was set on the way in, use the original width and height
 	// we got on the way in.
-	if ( dataElement.attributes.defaultSize ) {
-		if ( dataElement.attributes.originalWidth !== undefined ) {
-			width = dataElement.attributes.originalWidth;
+	if ( attributes.defaultSize ) {
+		if ( attributes.originalWidth !== undefined ) {
+			width = attributes.originalWidth;
 		}
-		if ( dataElement.attributes.originalHeight !== undefined ) {
-			height = dataElement.attributes.originalHeight;
+		if ( attributes.originalHeight !== undefined ) {
+			height = attributes.originalHeight;
 		}
 	}
 
-	srcAttr = this.typesToSrcAttrs[ mediaClass ];
-	if ( srcAttr && !dataElement.attributes.isError ) {
-		img.setAttribute( srcAttr, dataElement.attributes.src );
+	var srcAttr = this.typesToSrcAttrs[ mediaClass ];
+	if ( srcAttr && !attributes.isError ) {
+		img.setAttribute( srcAttr, attributes.src );
 	}
+	if ( attributes.isError ) {
+		if ( converter.isForPreview() ) {
+			imgWrapper.classList.add( 'new' );
+		}
+		var filename = mw.libs.ve.normalizeParsoidResourceName( attributes.resource || '' );
+		img.appendChild( doc.createTextNode( filename ) );
+	}
+
+	if ( width !== null ) {
+		img.setAttribute( attributes.isError ? 'data-width' : 'width', width );
+	}
+	if ( height !== null ) {
+		img.setAttribute( attributes.isError ? 'data-width' : 'height', height );
+	}
+
+	img.setAttribute( 'resource', attributes.resource );
 	// TODO: This does not make sense for broken images (when img is a span node)
-	img.setAttribute( 'width', width );
-	img.setAttribute( 'height', height );
-	img.setAttribute( 'resource', dataElement.attributes.resource );
-	// TODO: This does not make sense for broken images (when img is a span node)
-	if ( typeof dataElement.attributes.alt === 'string' ) {
-		img.setAttribute( 'alt', dataElement.attributes.alt );
+	if ( typeof attributes.alt === 'string' ) {
+		img.setAttribute( 'alt', attributes.alt );
 	}
 	figure.appendChild( imgWrapper );
 	imgWrapper.appendChild( img );

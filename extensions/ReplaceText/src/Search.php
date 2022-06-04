@@ -40,7 +40,7 @@ class Search {
 
 		$dbr = wfGetDB( DB_REPLICA );
 		$tables = [ 'page', 'revision', 'text', 'slots', 'content' ];
-		$vars = [ 'page_id', 'page_namespace', 'page_title', 'old_text' ];
+		$vars = [ 'page_id', 'page_namespace', 'page_title', 'old_text', 'slot_role_id' ];
 		if ( $use_regex ) {
 			$comparisonCond = self::regexCond( $dbr, 'old_text', $search );
 		} else {

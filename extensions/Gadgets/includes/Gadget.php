@@ -11,6 +11,16 @@
  * @license GPL-2.0-or-later
  */
 
+namespace MediaWiki\Extension\Gadgets;
+
+use InvalidArgumentException;
+use MediaWiki\Extension\Gadgets\Content\GadgetDefinitionContent;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\User\UserIdentity;
+use ResourceLoader;
+use Skin;
+
 /**
  * Wrapper for one gadget.
  */
@@ -18,7 +28,7 @@ class Gadget {
 	/**
 	 * Increment this when changing class structure
 	 */
-	public const GADGET_CLASS_VERSION = 9;
+	public const GADGET_CLASS_VERSION = 13;
 
 	public const CACHE_TTL = 86400;
 
@@ -26,6 +36,8 @@ class Gadget {
 	private $scripts = [];
 	/** @var string[] */
 	private $styles = [];
+	/** @var string[] */
+	private $datas = [];
 	/** @var string[] */
 	private $dependencies = [];
 	/** @var string[] */
@@ -41,6 +53,8 @@ class Gadget {
 	/** @var string[] */
 	private $requiredRights = [];
 	/** @var string[] */
+	private $requiredActions = [];
+	/** @var string[] */
 	private $requiredSkins = [];
 	/** @var string[] */
 	private $targets = [ 'desktop' ];
@@ -48,16 +62,21 @@ class Gadget {
 	private $onByDefault = false;
 	/** @var bool */
 	private $hidden = false;
+	/** @var bool */
+	private $package = false;
 	/** @var string */
 	private $type = '';
 	/** @var string|null */
 	private $category;
+	/** @var bool */
+	private $supportsUrlLoad = false;
 
 	public function __construct( array $options ) {
 		foreach ( $options as $member => $option ) {
 			switch ( $member ) {
 				case 'scripts':
 				case 'styles':
+				case 'datas':
 				case 'dependencies':
 				case 'peers':
 				case 'messages':
@@ -65,12 +84,15 @@ class Gadget {
 				case 'definition':
 				case 'resourceLoaded':
 				case 'requiredRights':
+				case 'requiredActions':
 				case 'requiredSkins':
 				case 'targets':
 				case 'onByDefault':
 				case 'type':
 				case 'hidden':
+				case 'package':
 				case 'category':
+				case 'supportsUrlLoad':
 					$this->{$member} = $option;
 					break;
 				default:
@@ -96,11 +118,15 @@ class Gadget {
 			'resourceLoaded' => true,
 			'requiredRights' => $data['settings']['rights'],
 			'onByDefault' => $data['settings']['default'],
+			'package' => $data['settings']['package'],
 			'hidden' => $data['settings']['hidden'],
+			'requiredActions' => $data['settings']['actions'],
 			'requiredSkins' => $data['settings']['skins'],
 			'category' => $data['settings']['category'],
+			'supportsUrlLoad' => $data['settings']['supportsUrlLoad'],
 			'scripts' => array_map( $prefixGadgetNs, $data['module']['scripts'] ),
 			'styles' => array_map( $prefixGadgetNs, $data['module']['styles'] ),
+			'datas' => array_map( $prefixGadgetNs, $data['module']['datas'] ),
 			'dependencies' => $data['module']['dependencies'],
 			'peers' => $data['module']['peers'],
 			'messages' => $data['module']['messages'],
@@ -176,20 +202,21 @@ class Gadget {
 	/**
 	 * Checks whether this gadget is enabled for given user
 	 *
-	 * @param User $user user to check against
+	 * @param UserIdentity $user user to check against
 	 * @return bool
 	 */
-	public function isEnabled( $user ) {
-		return (bool)$user->getOption( "gadget-{$this->name}", $this->onByDefault );
+	public function isEnabled( UserIdentity $user ) {
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		return (bool)$userOptionsLookup->getOption( $user, "gadget-{$this->name}", $this->onByDefault );
 	}
 
 	/**
 	 * Checks whether given user has permissions to use this gadget
 	 *
-	 * @param User $user The user to check against
+	 * @param Authority $user The user to check against
 	 * @return bool
 	 */
-	public function isAllowed( User $user ) {
+	public function isAllowed( Authority $user ) {
 		if ( count( $this->requiredRights ) ) {
 			return $user->isAllowedAll( ...$this->requiredRights );
 		}
@@ -212,6 +239,29 @@ class Gadget {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isPackaged(): bool {
+		// A packaged gadget needs to have a main script, so there must be at least one script
+		return $this->package && $this->supportsResourceLoader() && count( $this->scripts ) > 0;
+	}
+
+	/**
+	 * @param string $action The action name
+	 * @return bool
+	 */
+	public function isActionSupported( string $action ): bool {
+		if ( count( $this->requiredActions ) === 0 ) {
+			return true;
+		}
+		// Don't require specifying 'submit' action in addition to 'edit'
+		if ( $action == 'submit' ) {
+			$action = 'edit';
+		}
+		return in_array( $action, $this->requiredActions );
+	}
+
+	/**
 	 * Check if this gadget is compatible with a skin
 	 *
 	 * @param Skin $skin The skin to check against
@@ -219,8 +269,15 @@ class Gadget {
 	 */
 	public function isSkinSupported( Skin $skin ) {
 		return ( count( $this->requiredSkins ) === 0
-				|| in_array( $skin->getSkinName(), $this->requiredSkins )
-			);
+			|| in_array( $skin->getSkinName(), $this->requiredSkins )
+		);
+	}
+
+	/**
+	 * @return bool Whether the gadget can be loaded with `?withgadget` query parameter.
+	 */
+	public function supportsUrlLoad() {
+		return $this->supportsUrlLoad;
 	}
 
 	/**
@@ -234,9 +291,9 @@ class Gadget {
 	 * @return bool Whether this gadget has resources that can be loaded via ResourceLoader
 	 */
 	public function hasModule() {
-		return count( $this->styles )
-			+ ( $this->supportsResourceLoader() ? count( $this->scripts ) : 0 )
-				> 0;
+		return (
+			count( $this->styles ) + ( $this->supportsResourceLoader() ? count( $this->scripts ) : 0 )
+		) > 0;
 	}
 
 	/**
@@ -261,10 +318,17 @@ class Gadget {
 	}
 
 	/**
+	 * @return array Array of pages with JSON (including namespace)
+	 */
+	public function getJSONs(): array {
+		return $this->isPackaged() ? $this->datas : [];
+	}
+
+	/**
 	 * @return array Array of all of this gadget's resources
 	 */
 	public function getScriptsAndStyles() {
-		return array_merge( $this->scripts, $this->styles );
+		return array_merge( $this->scripts, $this->styles, $this->getJSONs() );
 	}
 
 	/**
@@ -322,6 +386,14 @@ class Gadget {
 	}
 
 	/**
+	 * Returns array of page actions on which the gadget runs
+	 * @return string[]
+	 */
+	public function getRequiredActions() {
+		return $this->requiredActions;
+	}
+
+	/**
 	 * Returns array of skins where this gadget works
 	 * @return string[]
 	 */
@@ -340,8 +412,10 @@ class Gadget {
 		// Similar to ResourceLoaderWikiModule default
 		if ( $this->styles && !$this->scripts && !$this->dependencies ) {
 			return 'styles';
-		} else {
-			return 'general';
 		}
+
+		return 'general';
 	}
 }
+
+class_alias( Gadget::class, 'Gadget' );

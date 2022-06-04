@@ -22,6 +22,3 @@ interface DOMFormatter {
 	 */
 	public function formatDOMElement( DOMElement $element, $contents );
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( DOMFormatter::class, 'RemexHtml\DOM\DOMFormatter' );

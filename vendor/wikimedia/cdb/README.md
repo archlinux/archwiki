@@ -10,19 +10,24 @@ In cases where `dba_*` functions are not present or are not compiled with CDB
 support, a pure-PHP implementation is provided for falling back.
 
 Additional documentation about the library can be found on
-[MediaWiki.org](https://www.mediawiki.org/wiki/CDB).
+[mediawiki.org](https://www.mediawiki.org/wiki/CDB).
 
 
 Usage
 -----
 
-    // Reading a CDB file
-    $cdb = \Cdb\Reader::open( 'db.cdb' );
-    $foo = $cdb->get( 'somekey' );
+```php
+// Reading a CDB file
+$cdb = Cdb\Reader::open( 'db.cdb' );
+$foo = $cdb->get( 'somekey' );
 
-    // Writing to a CDB file
-    $cdb = \Cdb\Writer::open( 'anotherdb.cdb' );
-    $cdb->set( 'somekey', $foo );
+// Writing to a CDB file
+$cdb = Cdb\Writer::open( 'anotherdb.cdb' );
+$cdb->set( 'somekey', $foo );
+```
+
+    // Using the CLI
+    $ cdb ./myfile.cdb [get|list|match] <parameter>
 
 
 Running tests

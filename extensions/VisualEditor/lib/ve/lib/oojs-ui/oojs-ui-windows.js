@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.42.0
+ * OOUI v0.43.2-pre (630d30f69c)
  * https://www.mediawiki.org/wiki/OOUI
  *
- * Copyright 2011–2021 OOUI Team and other contributors.
+ * Copyright 2011–2022 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2021-08-19T04:44:48Z
+ * Date: 2022-03-11T22:31:30Z
  */
 ( function ( OO ) {
 
@@ -29,10 +29,10 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {string} [action] Symbolic name of the action (e.g., ‘continue’ or ‘cancel’).
- * @cfg {string[]} [modes] Symbolic names of the modes (e.g., ‘edit’ or ‘read’) in which the action
- *  should be made available. See the action set's {@link OO.ui.ActionSet#setMode setMode} method
- *  for more information about setting modes.
+ * @cfg {string} [action=''] Symbolic name of the action (e.g., ‘continue’ or ‘cancel’).
+ * @cfg {string[]} [modes=[]] Symbolic names of the modes (e.g., ‘edit’ or ‘read’) in which the
+ *  action should be made available. See the action set's {@link OO.ui.ActionSet#setMode setMode}
+ *  method for more information about setting modes.
  * @cfg {boolean} [framed=false] Render the action button with a frame
  */
 OO.ui.ActionWidget = function OoUiActionWidget( config ) {
@@ -1762,8 +1762,9 @@ OO.ui.WindowManager.prototype.toggleGlobalEvents = function ( on ) {
 			if ( stackDepth === 0 ) {
 				scrollWidth = window.innerWidth - document.documentElement.clientWidth;
 				bodyMargin = parseFloat( $body.css( 'margin-right' ) ) || 0;
-				$body.addClass( 'oo-ui-windowManager-modal-active' );
-				$body.css( 'margin-right', bodyMargin + scrollWidth );
+				$body
+					.addClass( 'oo-ui-windowManager-modal-active' )
+					.css( 'margin-right', bodyMargin + scrollWidth );
 			}
 			stackDepth++;
 			this.globalEvents = true;
@@ -1775,8 +1776,9 @@ OO.ui.WindowManager.prototype.toggleGlobalEvents = function ( on ) {
 		} );
 		stackDepth--;
 		if ( stackDepth === 0 ) {
-			$body.removeClass( 'oo-ui-windowManager-modal-active' );
-			$body.css( 'margin-right', '' );
+			$body
+				.removeClass( 'oo-ui-windowManager-modal-active' )
+				.css( 'margin-right', '' );
 		}
 		this.globalEvents = false;
 	}
@@ -2305,12 +2307,12 @@ OO.ui.Window.prototype.updateSize = function () {
  * To set the size of the window, use the #setSize method.
  *
  * @param {Object} dim CSS dimension properties
- * @param {string|number} [dim.width] Width
- * @param {string|number} [dim.minWidth] Minimum width
- * @param {string|number} [dim.maxWidth] Maximum width
+ * @param {string|number} [dim.width=''] Width
+ * @param {string|number} [dim.minWidth=''] Minimum width
+ * @param {string|number} [dim.maxWidth=''] Maximum width
  * @param {string|number} [dim.height] Height, omit to set based on height of contents
- * @param {string|number} [dim.minHeight] Minimum height
- * @param {string|number} [dim.maxHeight] Maximum height
+ * @param {string|number} [dim.minHeight=''] Minimum height
+ * @param {string|number} [dim.maxHeight=''] Maximum height
  * @chainable
  * @return {OO.ui.Window} The window, for chaining
  */

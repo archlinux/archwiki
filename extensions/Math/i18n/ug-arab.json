@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sahran"
+		]
+	},
+	"math_failure": "تەھلىل قىلالمىدى",
+	"math_syntax_error": "گرامماتىكىلىق خاتالىق",
+	"math_unknown_error": "نامەلۇم خاتالىق",
+	"math_unknown_function": "نامەلۇم فونكسىيە",
+	"mw_math_mathml": "ئامال بار MathML ئىشلىتىدۇ (سىناق)",
+	"mw_math_png": "ھەمىشە PNG ئىشلەت",
+	"mw_math_source": "TeX كودى كۆرسەت (تېكست توركۆرگۈ ئىشلەتكەندە)",
+	"prefs-math": "ماتېماتېكىلىق فورمۇلا"
+}

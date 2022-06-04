@@ -674,6 +674,3 @@ class InBody extends InsertionMode {
 		}
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InBody::class, 'RemexHtml\TreeBuilder\InBody' );

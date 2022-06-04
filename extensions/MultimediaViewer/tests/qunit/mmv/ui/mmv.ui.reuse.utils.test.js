@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mw.mmv.ui.reuse.utils', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var utils = new mw.mmv.ui.Utils();
 
 		assert.ok( utils, 'ReuseUtils object is created.' );

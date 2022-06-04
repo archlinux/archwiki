@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Anont",
 			"Comjun04",
 			"Freebiekr",
 			"Hwangjy9",
@@ -9,13 +10,12 @@
 			"Jerrykim306",
 			"Jskang",
 			"Keysuck",
+			"Kwj2772",
 			"Priviet",
 			"Revi",
 			"Ykhwong",
 			"YuzaTea",
-			"아라",
-			"Anont",
-			"Kwj2772"
+			"아라"
 		]
 	},
 	"multimediaviewer-desc": "섬네일을 전체 화면 인터페이스에서 더 큰 크기로 확장합니다.",
@@ -51,9 +51,7 @@
 	"multimediaviewer-restriction-trademarked": "이 이미지에는 상표법의 적용을 받을 수 있는 콘텐츠가 포함되어 있습니다.",
 	"multimediaviewer-restriction-default": "이 이미지는 저작권법 이외의 법률 조항에 의해 제한될 수 있습니다. 자세한 내용은 파일 설명을 참조하십시오.",
 	"multimediaviewer-restriction-default-and-others": "이 이미지는 저작권법 이외의 다른 법률 조항에 의해 더욱 제한될 수 있습니다. 자세한 내용은 파일 설명을 참조하십시오.",
-	"multimediaviewer-about-mmv": "이 인터페이스 정보",
-	"multimediaviewer-discuss-mmv": "토론",
-	"multimediaviewer-help-mmv": "도움말",
+	"multimediaviewer-about-mmv": "미디어 뷰어 정보",
 	"multimediaviewer-optout-mmv": "미디어 뷰어 사용 안 함",
 	"multimediaviewer-optin-mmv": "미디어 뷰어 사용",
 	"multimediaviewer-optout-pending-mmv": "미디어 뷰어를 비활성화하는 중",

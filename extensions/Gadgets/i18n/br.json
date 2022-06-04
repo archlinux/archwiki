@@ -13,6 +13,7 @@
 	"gadgetusage-usercount": "Niver a implijerien",
 	"gadgets-title": "Bitrakoù",
 	"gadgets-pagetext": "A-is ez eus ur roll eus ar bitrakoù a c'hall bezañ gweredekaet gant an implijerien war o fajenn [[Special:Preferences#mw-prefsection-gadgets|penndibaboù]], evel m'eo termenet en [[MediaWiki:Gadgets-definition|termenadurioù]].\nAr sell hollek-mañ a bourchas ur moned aes d'ar pajennoù kemennadennoù reizhiad a dermen deskrivadur ha kod pep bitrak.",
+	"gadgets-editdescription": "Kemmañ an deskrivadur",
 	"gadgets-uses": "A implij",
 	"gadgets-required-rights": "Rekis eo kaout an {{PLURAL:$2|aotre|aotreoù}} da-heul : \n$1",
 	"gadgets-required-skins": "Hegerz gant ar {{PLURAL:$2|gwiskadur $1|gwiskadurioù da-heul : $1}}.",

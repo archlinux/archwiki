@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2015 Timo Tijhof <krinklemail@gmail.com>
+ * Copyright 2015 Timo Tijhof
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,14 +26,16 @@
 
 namespace Wikimedia;
 
+use DomainException;
+
 class WrappedString {
 	/** @var string */
 	protected $value;
 
-	/** @var string */
+	/** @var string|null */
 	protected $prefix;
 
-	/** @var string */
+	/** @var string|null */
 	protected $suffix;
 
 	/**
@@ -42,22 +44,34 @@ class WrappedString {
 	 * @param string|null $suffix
 	 */
 	public function __construct( $value, $prefix = null, $suffix = null ) {
+		$prefixlen = strlen( $prefix );
+		if ( $prefixlen && substr( $value, 0, $prefixlen ) !== $prefix ) {
+			throw new DomainException( 'Prefix must match value' );
+		}
+		$suffixlen = strlen( $suffix );
+		if ( $suffixlen && substr( $value, -$suffixlen ) !== $suffix ) {
+			throw new DomainException( 'Suffix must match value' );
+		}
+
 		$this->value = $value;
 		$this->prefix = $prefix;
 		$this->suffix = $suffix;
 	}
 
 	/**
-	 * @param string $value
+	 * @param string $value Value of a WrappedString with the same prefix and suffix
 	 * @return WrappedString Newly wrapped string
 	 */
 	protected function extend( $value ) {
 		$wrap = clone $this;
 		$suffixlen = strlen( $this->suffix );
+		// Remove the suffix (temporarily), to open the string for merging.
 		if ( $suffixlen ) {
 			$wrap->value = substr( $this->value, 0, -$suffixlen );
 		}
-		$wrap->value .= substr( $value, strlen( $this->prefix ) );
+		// Append the next value without prefix, thus ending with the suffix again.
+		$prefixlen = strlen( $this->prefix );
+		$wrap->value .= substr( $value, $prefixlen );
 		return $wrap;
 	}
 

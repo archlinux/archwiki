@@ -1,0 +1,46 @@
+!! Version 2
+
+!! test
+PageImages with one image
+!! options
+property=page_image_free
+!! wikitext
+[[File:Foobar.jpg]]
+!! html
+<p><a href="/wiki/File:Foobar.jpg" class="image"><img alt="Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" /></a>
+</p>
+property[page_image_free]=Foobar.jpg
+!! end
+
+!! test
+PageImages with two images
+!! options
+property=page_image_free
+!! wikitext
+[[File:Thumb.png]]
+[[File:Foobar.jpg]]
+!! html
+<p><a href="/wiki/File:Thumb.png" class="image"><img alt="Thumb.png" src="http://example.com/images/e/ea/Thumb.png" decoding="async" width="135" height="135" /></a>
+<a href="/wiki/File:Foobar.jpg" class="image"><img alt="Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" /></a>
+</p>
+property[page_image_free]=Foobar.jpg
+!! end
+
+!! test
+PageImages with best excluded by wgPageImagesLeadSectionOnly
+!! options
+property=page_image_free
+!! wikitext
+[[File:Thumb.png]]
+
+== Section ==
+
+[[File:Foobar.jpg]]
+!! html
+<p><a href="/wiki/File:Thumb.png" class="image"><img alt="Thumb.png" src="http://example.com/images/e/ea/Thumb.png" decoding="async" width="135" height="135" /></a>
+</p>
+<h2><span class="mw-headline" id="Section">Section</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/index.php?title=Parser_test&amp;action=edit&amp;section=1" title="Edit section: Section">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p><a href="/wiki/File:Foobar.jpg" class="image"><img alt="Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" decoding="async" width="1941" height="220" /></a>
+</p>
+property[page_image_free]=Thumb.png
+!! end

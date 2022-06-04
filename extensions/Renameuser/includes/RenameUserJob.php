@@ -1,6 +1,12 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser;
+
+use InvalidArgumentException;
+use Job;
+use LogicException;
 use MediaWiki\MediaWikiServices;
+use Title;
 
 /**
  * Custom job to perform updates on tables in busier environments

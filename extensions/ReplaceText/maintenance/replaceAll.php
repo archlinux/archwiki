@@ -31,8 +31,8 @@
 namespace MediaWiki\Extension\ReplaceText;
 
 use Maintenance;
+use MediaWiki\MediaWikiServices;
 use MWException;
-use MWNamespace;
 use TitleArrayFromResult;
 use User;
 
@@ -187,7 +187,7 @@ class ReplaceAll extends Maintenance {
 
 	private function listNamespaces() {
 		$this->output( "Index\tNamespace\n" );
-		$nsList = MWNamespace::getCanonicalNamespaces();
+		$nsList = MediaWikiServices::getInstance()->getNamespaceInfo()->getCanonicalNamespaces();
 		ksort( $nsList );
 		foreach ( $nsList as $int => $val ) {
 			if ( $val == "" ) {
@@ -227,7 +227,7 @@ EOF;
 		if ( !$nsall && !$ns ) {
 			$namespaces = [ NS_MAIN ];
 		} else {
-			$canonical = MWNamespace::getCanonicalNamespaces();
+			$canonical = MediaWikiServices::getInstance()->getNamespaceInfo()->getCanonicalNamespaces();
 			$canonical[NS_MAIN] = "_";
 			$namespaces = array_flip( $canonical );
 			if ( !$nsall ) {

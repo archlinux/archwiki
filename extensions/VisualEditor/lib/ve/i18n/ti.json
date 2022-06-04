@@ -4,7 +4,7 @@
 			"Joanmp17"
 		]
 	},
-	"visualeditor": "ርእየታዊ መታዓራረይ",
+	"visualeditor": "ርእየታዊ ኣርታዒ",
 	"visualeditor-aliencontextitem-title": "ውልቀ ነገር",
 	"visualeditor-align-desc-center": "ማእከል",
 	"visualeditor-align-desc-default": "ንቡር",
@@ -51,7 +51,7 @@
 	"visualeditor-find-and-replace-next-button": "ዝቕጽል ድለይ",
 	"visualeditor-find-and-replace-replace-all-button": "ኩሉ ተክእ",
 	"visualeditor-find-and-replace-replace-text": "ተክእ",
-	"visualeditor-find-and-replace-results": "$1 ካብ $2",
+	"visualeditor-find-and-replace-results": "$1 ናይ $2",
 	"visualeditor-find-and-replace-title": "ድለይን ተክእን",
 	"visualeditor-formatdropdown-format-heading-label": "ኣርእስቲ (1-6)",
 	"visualeditor-formatdropdown-format-heading1": "ኣርእስቲ 1",
@@ -77,7 +77,7 @@
 	"visualeditor-languageinspector-title": "ቋንቋ",
 	"visualeditor-languageinspector-widget-changelang": "ቋንቋ ምረጽ",
 	"visualeditor-languageinspector-widget-label-direction": "ኣንፈት",
-	"visualeditor-languageinspector-widget-label-langcode": "ናይ ቋንቋ ኮድ",
+	"visualeditor-languageinspector-widget-label-langcode": "ኮድ ቋንቋ",
 	"visualeditor-languageinspector-widget-label-language": "ቋንቋ",
 	"visualeditor-linkcontext-label-label": "ጽሑፍ",
 	"visualeditor-linkcontext-remove": "መጋጠሚ ኣልግስ",

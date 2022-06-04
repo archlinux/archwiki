@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt;
 
@@ -8,10 +9,13 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\AutoURLLinkText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\ExtLinkText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\MagicLinkText;
 use Wikimedia\Parsoid\Html2Wt\ConstrainedText\WikiLinkText;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -21,6 +25,7 @@ use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\UrlUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wt2Html\TokenizerUtils;
 
 /**
  * Serializes link markup.
@@ -34,10 +39,10 @@ class LinkHandlerUtils {
 	 * Split a string based on a prefix and suffix
 	 *
 	 * @param string $contentString
-	 * @param stdClass $dp Containing ->prefix and ->tail
+	 * @param DataParsoid $dp Containing ->prefix and ->tail
 	 * @return stdClass
 	 */
-	private static function splitLinkContentString( string $contentString, stdClass $dp ): stdClass {
+	private static function splitLinkContentString( string $contentString, DataParsoid $dp ): stdClass {
 		$tail = $dp->tail ?? '';
 		$prefix = $dp->prefix ?? '';
 
@@ -76,7 +81,7 @@ class LinkHandlerUtils {
 		$href = $node->getAttribute( 'href' ) ?? '';
 		if ( ( $href[0] ?? '' ) === '/' && ( $href[1] ?? '' ) !== '/' ) {
 			// protocol-less but absolute.  let's find a base href
-			foreach ( $env->getSiteConfig()->interwikiMap() as $prefix => $interwikiInfo ) {
+			foreach ( $env->getSiteConfig()->interwikiMapNoNamespaces() as $prefix => $interwikiInfo ) {
 				if ( isset( $interwikiInfo['localinterwiki'] ) && isset( $interwikiInfo['url'] ) ) {
 					$base = $interwikiInfo['url'];
 
@@ -145,7 +150,7 @@ class LinkHandlerUtils {
 		$contentString = '';
 		$child = $node->firstChild;
 		while ( $child ) {
-			if ( DOMUtils::isText( $child ) ) {
+			if ( $child instanceof Text ) {
 				$contentString .= $child->nodeValue;
 			} elseif ( DOMUtils::hasTypeOf( $child, 'mw:DisplaySpace' ) ) {
 				$contentString .= ' ';
@@ -278,8 +283,8 @@ class LinkHandlerUtils {
 		}
 
 		// Check if the href matches any of our interwiki URL patterns
-		$interWikiMatch = $siteConfig->interWikiMatcher( $href );
-		if ( $interWikiMatch &&
+		$interwikiMatch = $siteConfig->interwikiMatcher( $href );
+		if ( $interwikiMatch &&
 			// Question mark is a valid title char, so it won't fail the test below,
 			// but gets percent encoded on the way out since it has special
 			// semantics in a url.  That will break the url we're serializing, so
@@ -288,14 +293,14 @@ class LinkHandlerUtils {
 			// changes, we can reduce this by always stripping off the fragment
 			// identifier, since in "html5" mode, that isn't encoded.  At present,
 			// we can only do that if we know it's a local interwiki link.
-			strpos( $interWikiMatch[1], '?' ) === false &&
+			strpos( $interwikiMatch[1], '?' ) === false &&
 			// Ensure we have a valid link target, otherwise falling back to extlink
 			// is preferable, since it won't serialize as a link.
 			(
-				$interWikiMatch[1] === '' || !self::escapeLinkTarget(
+				$interwikiMatch[1] === '' || !self::escapeLinkTarget(
 					// Append the prefix since we want to validate the target
 					// with respect to it being an interwiki.
-					$interWikiMatch[0] . ':' . $interWikiMatch[1],
+					$interwikiMatch[0] . ':' . $interwikiMatch[1],
 					$state
 				)->invalidLink
 			) &&
@@ -313,9 +318,9 @@ class LinkHandlerUtils {
 				$rtData->type = 'mw:WikiLink';
 			}
 			$rtData->isInterwiki = true;
-			$iwMap = $siteConfig->interwikiMap();
+			$iwMap = $siteConfig->interwikiMapNoNamespaces();
 			// could this be confused with a language link?
-			$iwi = $iwMap[self::normalizeIWP( $interWikiMatch[0] )] ?? null;
+			$iwi = $iwMap[self::normalizeIWP( $interwikiMatch[0] )] ?? null;
 			$rtData->isInterwikiLang = $iwi && isset( $iwi['language'] );
 			// is this our own wiki?
 			$rtData->isLocal = $iwi && isset( $iwi['localinterwiki'] );
@@ -338,7 +343,7 @@ class LinkHandlerUtils {
 				// Leave the target alone!
 			} else {
 				if ( $rtData->type === 'mw:PageProp/Language' ) {
-					$targetValue = implode( ':', $interWikiMatch );
+					$targetValue = implode( ':', $interwikiMatch );
 					// Strip initial colon
 					if ( $targetValue[0] === ':' ) {
 						$targetValue = substr( $targetValue, 1 );
@@ -346,20 +351,20 @@ class LinkHandlerUtils {
 					$target['value'] = $targetValue;
 				} elseif (
 					$oldPrefix && ( // Should we preserve the old prefix?
-						strcasecmp( $oldPrefix[1], $interWikiMatch[0] ) === 0 ||
+						strcasecmp( $oldPrefix[1], $interwikiMatch[0] ) === 0 ||
 						// Check if the old prefix mapped to the same URL as
 						// the new one. Use the old one if that's the case.
 						// Example: [[w:Foo]] vs. [[:en:Foo]]
 						( $iwMap[self::normalizeIWP( $oldPrefix[1] )]['url'] ?? null )
-							=== ( $iwMap[self::normalizeIWP( $interWikiMatch[0] )]['url'] ?? null )
+							=== ( $iwMap[self::normalizeIWP( $interwikiMatch[0] )]['url'] ?? null )
 					)
 				) {
 					// Reuse old prefix capitalization
 					if ( Utils::decodeWtEntities( substr( $target['value'], strlen( $oldPrefix[1] ) + 1 ) )
-						!== $interWikiMatch[1]
+						!== $interwikiMatch[1]
 					) {
 						// Modified, update target.value.
-						$target['value'] = $localPrefix . $oldPrefix[1] . ':' . $interWikiMatch[1];
+						$target['value'] = $localPrefix . $oldPrefix[1] . ':' . $interwikiMatch[1];
 					}
 					// Ensure that we generate an interwiki link and not a language link!
 					if ( $rtData->isInterwikiLang && $target['value'][0] !== ':' ) {
@@ -367,13 +372,23 @@ class LinkHandlerUtils {
 					}
 				} else { // Else: preserve old encoding
 					if ( !empty( $rtData->isLocal ) ) {
-						// - interwikiMatch will be ":en", ":de", etc.
+						// - interwikiMatch[0] will be something like ":en" or "w"
 						// - This tests whether the interwiki-like link is actually
 						// a local wikilink.
-						$target['value'] = $interWikiMatch[1];
+
+						$target['value'] = $interwikiMatch[1];
+						// interwikiMatch[1] may start with a language link prefix,
+						// ensure that we generate interwiki link syntax in that case. (T292022)
+						if (
+							preg_match( '/^([^:]+):/', $target['value'], $match ) &&
+							!empty( $iwMap[self::normalizeIWP( $match[1] )]['language'] )
+						) {
+							$target['value'] = ':' . $target['value'];
+						}
+
 						$rtData->isInterwiki = $rtData->isInterwikiLang = false;
 					} else {
-						$target['value'] = implode( ':', $interWikiMatch );
+						$target['value'] = implode( ':', $interwikiMatch );
 					}
 				}
 			}
@@ -448,19 +463,32 @@ class LinkHandlerUtils {
 			( $target['value'] === $contentStr || self::getHref( $env, $node ) === $contentStr ) &&
 			// protocol-relative url links not allowed in text
 			// (see autourl rule in peg tokenizer, T32269)
-			!str_starts_with( $contentStr, '//' ) && Utils::isProtocolValid( $contentStr, $env );
+			!str_starts_with( $contentStr, '//' ) && Utils::isProtocolValid( $contentStr, $env ) &&
+			!self::hasAutoUrlTerminatingChars( $contentStr );
+	}
+
+	/**
+	 * The legacy parser Parser.php::makeFreeExternalLink terminates an autourl when encountering
+	 * some characters; since we wish to mimic that behaviour we need this method to check whether
+	 * the provided URL is in that case.
+	 * @param string $url
+	 * @return bool
+	 */
+	private static function hasAutoUrlTerminatingChars( string $url ): bool {
+		$sep = TokenizerUtils::getAutoUrlTerminatingChars( str_split( $url ) );
+		return str_contains( $sep, mb_substr( $url, -1 ) );
 	}
 
 	/**
 	 * Figure out if we need a piped or simple link
 	 * @param Env $env
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param array $target
 	 * @param stdClass $linkData
 	 * @return bool
 	 */
 	private static function isSimpleWikiLink(
-		Env $env, stdClass $dp, array $target, stdClass $linkData
+		Env $env, DataParsoid $dp, array $target, stdClass $linkData
 	): bool {
 		$canUseSimple = false;
 		$contentString = $linkData->content->string ?? null;
@@ -485,7 +513,13 @@ class LinkHandlerUtils {
 			// stripped when deriving the content string.
 			// Strip ./ prefixes as well since they are relative link prefixes
 			// added to all titles.
-			$strippedTargetValue = preg_replace( '#^(:|\./)#', '', $target['value'], 1 );
+			// The prefix stripping, when it occurs, also includes spaces before the prefix.
+			// Finally, we also remove trailing spaces because these are removed for <a> links
+			// by DOMNormalizer::moveTrailingSpacesOut, and we wouldn't want that to lead to the
+			// link getting piped for only that reason.
+			$strippedTargetValue = rtrim(
+				preg_replace( '#^\s*(:|\./)#', '', $target['value'], 1 )
+			);
 			$decodedTarget = Utils::decodeWtEntities( $strippedTargetValue );
 			// Deal with the protocol-relative link scenario as well
 			$hrefHasProto = preg_match( '#^(\w+:)?//#', $linkData->href );
@@ -548,7 +582,7 @@ class LinkHandlerUtils {
 		$contentParts = null;
 		$contentSrc = '';
 		$isPiped = false;
-		$requiresEscaping = true;
+		$needsEscaping = true;
 		$env = $state->getEnv();
 		$siteConfig = $env->getSiteConfig();
 		$target = $linkData->target;
@@ -635,7 +669,7 @@ class LinkHandlerUtils {
 						// in which case we don't want the ':'.
 						$nextNode = $node->nextSibling;
 						if ( !(
-							$nextNode && $nextNode instanceof Element && DOMCompat::nodeName( $nextNode ) === 'link' &&
+							$nextNode instanceof Element && DOMCompat::nodeName( $nextNode ) === 'link' &&
 							$nextNode->getAttribute( 'rel' ) === 'mw:PageProp/Category' &&
 							$nextNode->getAttribute( 'href' ) === $node->getAttribute( 'href' )
 						) ) {
@@ -695,16 +729,16 @@ class LinkHandlerUtils {
 				$linkData->tail = $contentParts->tail;
 				$dp->prefix = $contentParts->prefix;
 				$linkData->prefix = $contentParts->prefix;
-				$requiresEscaping = false;
+				$needsEscaping = false;
 			} else {
 				$contentSrc = $linkData->content->string ?? '';
-				$requiresEscaping = empty( $linkData->content->fromsrc );
+				$needsEscaping = empty( $linkData->content->fromsrc );
 			}
 
 			if ( $contentSrc === '' && $linkData->type !== 'mw:PageProp/Category' ) {
 				// Protect empty link content from PST pipe trick
 				$contentSrc = '<nowiki/>';
-				$requiresEscaping = false;
+				$needsEscaping = false;
 			}
 
 			$linkTarget = $target['value'];
@@ -765,10 +799,10 @@ class LinkHandlerUtils {
 
 			// For non-piped content, use the original invalid link text
 			$pipedText = $isPiped ? $contentSrc : $linkTarget;
-			$state->escapeText = $requiresEscaping;
+			$state->needsEscaping = $needsEscaping;
 			$state->emitChunk( $linkData->prefix . $pipedText . $linkData->tail, $node );
 		} else {
-			if ( $isPiped && $requiresEscaping ) {
+			if ( $isPiped && $needsEscaping ) {
 				// We are definitely not in sol context since content
 				// will be preceded by "[[" or "[" text in target wikitext.
 				$pipedText = '|' . $state->serializer->wteHandlers
@@ -906,15 +940,19 @@ class LinkHandlerUtils {
 				);
 			}
 		} else {
-			$safeAttr = array_flip( [
-				'href', 'rel', 'class', 'title', DOMDataUtils::DATA_OBJECT_ATTR_NAME
-			] );
+			$safeAttr = [
+				'href' => true,
+				'rel' => true,
+				'class' => true,
+				'title' => true,
+				DOMDataUtils::DATA_OBJECT_ATTR_NAME => true
+			];
 
 			$isComplexLink = false;
-			foreach ( DOMCompat::attributes( $node ) as $attr ) {
+			foreach ( DOMUtils::attributes( $node ) as $name => $value ) {
 				// XXX: Don't drop rel and class in every case once a tags are
 				// actually supported in the MW default config?
-				if ( $attr->name && !isset( $safeAttr[$attr->name] ) ) {
+				if ( !isset( $safeAttr[$name] ) ) {
 					$isComplexLink = true;
 					break;
 				}
@@ -926,7 +964,7 @@ class LinkHandlerUtils {
 				);
 			} else {
 				$media = DOMUtils::selectMediaElt( $node );  // TODO: Handle missing media too
-				$isFigure = ( $media instanceof Element && $media->parentNode === $node );
+				$isFigure = $media instanceof Element && $media->parentNode === $node;
 				if ( $isFigure ) {
 					// this is a basic html figure: <a><img></a>
 					self::figureHandler( $state, $node, new MediaStructure( $media, $node ) );
@@ -1040,7 +1078,7 @@ class LinkHandlerUtils {
 			return $null;
 		};
 		// Return ref to the array element in case it is modified
-		$getLastOpt = static function & ( $key ) use ( &$outerDP ) : ?array {
+		$getLastOpt = static function & ( $key ) use ( &$outerDP ): ?array {
 			$null = null;
 			$opts = $outerDP->optList ?? [];
 			for ( $i = count( $opts ) - 1;  $i >= 0;  $i-- ) {
@@ -1111,8 +1149,12 @@ class LinkHandlerUtils {
 		} elseif ( $linkElt && $linkElt->hasAttribute( 'href' ) ) {
 			$link = $state->serializer->serializedImageAttrVal( $outerElt, $linkElt, 'href' );
 			if ( empty( $link['fromsrc'] ) ) {
-				// strip page parameter if present on href
-				$strippedHref = preg_replace( '#[?]page=\d+$#D', '', $linkElt->getAttribute( 'href' ) ?? '' );
+				// strip page or lang parameter if present on href
+				$strippedHref = preg_replace(
+					'#[?]((?:page=\d+)|(?:lang=[a-z]+(?:-[a-z]+)*))$#Di',
+					'',
+					$linkElt->getAttribute( 'href' ) ?? ''
+				);
 				if ( $strippedHref === $elt->getAttribute( 'resource' ) ) {
 					// default link: same place as resource
 					$link = $resource;
@@ -1144,7 +1186,7 @@ class LinkHandlerUtils {
 			// fragment, however, we need some way of marking this as being
 			// inModifiedContent so that any bare text is assured to be escaped
 			$captionElt = $outerElt->ownerDocument->createElement( 'div' );
-			DOMDataUtils::getDataParsoid( $captionElt )->tmp->isNew = true;
+			DOMDataUtils::getDataParsoid( $captionElt )->setTempFlag( TempData::IS_NEW );
 			DOMUtils::migrateChildren( $fragment, $captionElt );
 			// Needs a parent node in order for WTS to be happy
 			$fragment->appendChild( $captionElt );

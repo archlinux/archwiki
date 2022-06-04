@@ -1,7 +1,7 @@
 ( function () {
 	QUnit.module( 'mmv.ThumbnailWidthCalculator', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'ThumbnailWidthCalculator constructor sanity check', function ( assert ) {
+	QUnit.test( 'ThumbnailWidthCalculator constructor sense check', function ( assert ) {
 		var badWidthBuckets = [],
 			goodWidthBuckets = [ 1 ],
 			thumbnailWidthCalculator;
@@ -45,7 +45,7 @@
 	} );
 
 	// Old tests for the default bucket sizes. Preserved because why not.
-	QUnit.test( 'We get sane image sizes when we ask for them', function ( assert ) {
+	QUnit.test( 'We get sensible image sizes when we ask for them', function ( assert ) {
 		var twc = new mw.mmv.ThumbnailWidthCalculator();
 
 		assert.strictEqual( twc.findNextBucket( 200 ), 320, 'Low target size gives us lowest possible size bucket' );

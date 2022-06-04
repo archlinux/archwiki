@@ -39,5 +39,7 @@
 
 .ve-ui-overlay .mw-body-content {
 	/* Fix font-size for surfaces inside UI overlays */
-	font-size: 1em;
+	/* Increase specificity to deal with :not selector hack in core's typography.less */
+	/* stylelint-disable-next-line declaration-no-important */
+	font-size: 1em !important;
 }

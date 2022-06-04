@@ -58,7 +58,7 @@ abstract class ApiFormatBase extends ApiBase {
 	 * When getIsHtml() returns true, the return value here is used for syntax
 	 * highlighting but the client sees text/html.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	abstract public function getMimeType();
 
@@ -329,7 +329,7 @@ abstract class ApiFormatBase extends ApiBase {
 			} else {
 				// API handles its own clickjacking protection.
 				// Note, that $wgBreakFrames will still override $wgApiFrameOptions for format mode.
-				$out->allowClickjacking();
+				$out->setPreventClickjacking( false );
 				$out->output();
 			}
 		} else {

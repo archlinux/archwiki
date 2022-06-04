@@ -63,6 +63,3 @@ class FastFormatter implements Formatter {
 		return "<!--$text-->";
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( FastFormatter::class, 'RemexHtml\Serializer\FastFormatter' );

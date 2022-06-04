@@ -112,7 +112,7 @@ ve.ui.MWMagicLinkNodeInspector.prototype.getSetupProcess = function ( data ) {
 			'visualeditor-magiclinknodeinspector-title-' + type.toLowerCase() :
 			null;
 
-	data = $.extend( {
+	data = ve.extendObject( {
 		// The following messages are used here
 		// * visualeditor-magiclinknodeinspector-title-isbn
 		// * visualeditor-magiclinknodeinspector-title-pmid
@@ -145,8 +145,7 @@ ve.ui.MWMagicLinkNodeInspector.prototype.getTeardownProcess = function ( data ) 
 	data = data || {};
 	return ve.ui.MWMagicLinkNodeInspector.super.prototype.getTeardownProcess.call( this, data )
 		.first( function () {
-			var content, annotation, annotations,
-				surfaceView = this.manager.getSurface().getView(),
+			var surfaceView = this.manager.getSurface().getView(),
 				surfaceModel = this.getFragment().getSurface(),
 				doc = surfaceModel.getDocument(),
 				nodeRange = this.selectedNode.getOuterRange(),
@@ -160,13 +159,13 @@ ve.ui.MWMagicLinkNodeInspector.prototype.getTeardownProcess = function ( data ) 
 					ve.dm.TransactionBuilder.static.newFromRemoval( doc, nodeRange )
 				);
 			} else if ( convert ) {
-				annotation = ve.dm.MWMagicLinkNode.static.annotationFromContent(
+				var annotation = ve.dm.MWMagicLinkNode.static.annotationFromContent(
 					value
 				);
 				if ( annotation ) {
-					annotations = doc.data.getAnnotationsFromOffset( nodeRange.start ).clone();
+					var annotations = doc.data.getAnnotationsFromOffset( nodeRange.start ).clone();
 					annotations.push( annotation );
-					content = value.split( '' );
+					var content = value.split( '' );
 					ve.dm.Document.static.addAnnotationsToData( content, annotations );
 					surfaceModel.change(
 						ve.dm.TransactionBuilder.static.newFromReplacement( doc, nodeRange, content )

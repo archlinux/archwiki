@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Daud I.F. Argana",
 			"Iwan Novirion",
 			"Rachmat.Wahidi",
 			"Rachmat04",
-			"William Surya Permana",
-			"Daud I.F. Argana"
+			"William Surya Permana"
 		]
 	},
 	"oathauth-desc": "Memberikan dukungan otentikasi menggunakan kata sandi sekali-pakai berbasis HMAC",
@@ -61,7 +61,7 @@
 	"oath-log-header": "Peristiwa ini melacak perubahan status otentikasi dua faktor pengguna.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|nonaktifkan}} otentikasi dua faktor dari $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|memeriksa}} apakah $3 menyalakan autentikasi dua faktor",
-	"oauthauth-ui-no-module": "Tidak aktif",
+	"oathauth-ui-no-module": "Tidak aktif",
 	"oathauth-module-invalid": "Modul OATHAuth yang pengguna daftarkan tidak valid.",
 	"oathauth-module-totp-label": "KSSW (token sekali-pakai)",
 	"oathauth-ui-manage": "Atur",

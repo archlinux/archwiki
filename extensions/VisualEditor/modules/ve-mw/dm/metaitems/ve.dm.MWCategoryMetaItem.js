@@ -49,8 +49,7 @@ ve.dm.MWCategoryMetaItem.static.toDataElement = function ( domElements ) {
 };
 
 ve.dm.MWCategoryMetaItem.static.toDomElements = function ( dataElement, doc ) {
-	var href, encodedCategory,
-		domElement = doc.createElement( 'link' ),
+	var domElement = doc.createElement( 'link' ),
 		category = dataElement.attributes.category || '',
 		sortkey = dataElement.attributes.sortkey || '',
 		origCategory = dataElement.attributes.origCategory || '',
@@ -62,13 +61,14 @@ ve.dm.MWCategoryMetaItem.static.toDomElements = function ( dataElement, doc ) {
 	} else {
 		sortkey = encodeURIComponent( sortkey );
 	}
+	var encodedCategory;
 	if ( normalizedOrigCategory === category ) {
 		encodedCategory = origCategory;
 	} else {
 		encodedCategory = encodeURIComponent( category );
 	}
 	domElement.setAttribute( 'rel', 'mw:PageProp/Category' );
-	href = './' + encodedCategory;
+	var href = './' + encodedCategory;
 	if ( sortkey !== '' ) {
 		href += '#' + sortkey;
 	}

@@ -112,10 +112,9 @@ ve.init.mw.Platform.prototype.getConfig = mw.config.get.bind( mw.config );
  * @inheritdoc
  */
 ve.init.mw.Platform.prototype.getUserConfig = function ( keys ) {
-	var values, parsedValues;
 	if ( Array.isArray( keys ) ) {
-		values = mw.user.options.get( keys );
-		parsedValues = {};
+		var values = mw.user.options.get( keys );
+		var parsedValues = {};
 		Object.keys( values ).forEach( function ( value ) {
 			parsedValues[ value ] = JSON.parse( values[ value ] );
 		} );
@@ -138,8 +137,6 @@ ve.init.mw.Platform.prototype.getUserConfig = function ( keys ) {
  * @inheritdoc
  */
 ve.init.mw.Platform.prototype.setUserConfig = function ( keyOrValueMap, value ) {
-	var jsonValues, jsonValue;
-
 	// T214963: Don't try to set user preferences for logged-out users, it doesn't work
 	if ( mw.user.isAnon() ) {
 		return false;
@@ -150,7 +147,7 @@ ve.init.mw.Platform.prototype.setUserConfig = function ( keyOrValueMap, value ) 
 			return false;
 		}
 		// JSON encode all the values for API storage
-		jsonValues = {};
+		var jsonValues = {};
 		Object.keys( keyOrValueMap ).forEach( function ( key ) {
 			jsonValues[ key ] = JSON.stringify( keyOrValueMap[ key ] );
 		} );
@@ -161,7 +158,7 @@ ve.init.mw.Platform.prototype.setUserConfig = function ( keyOrValueMap, value ) 
 			return false;
 		}
 		// JSON encode the value for API storage
-		jsonValue = JSON.stringify( value );
+		var jsonValue = JSON.stringify( value );
 		ve.init.target.getLocalApi().saveOption( keyOrValueMap, jsonValue );
 		return mw.user.options.set( keyOrValueMap, jsonValue );
 	}
@@ -179,8 +176,7 @@ ve.init.mw.Platform.prototype.createSessionStorage = function () {
  * @inheritdoc
  */
 ve.init.mw.Platform.prototype.addParsedMessages = function ( messages ) {
-	var key;
-	for ( key in messages ) {
+	for ( var key in messages ) {
 		this.parsedMessages[ key ] = messages[ key ];
 	}
 };
@@ -245,11 +241,10 @@ ve.init.mw.Platform.prototype.fetchSpecialCharList = function () {
 			otherGroupName = mw.msg( 'visualeditor-special-characters-group-other' ),
 			otherMsg = mw.message( 'visualeditor-quick-access-characters.json' ).plain(),
 			// TODO: This information should be available upstream in mw.language.specialCharacters
-			rtlGroups = [ 'arabic', 'arabicextended', 'hebrew' ],
-			other, groupObject;
+			rtlGroups = [ 'arabic', 'arabicextended', 'hebrew' ];
 
 		try {
-			other = JSON.parse( otherMsg );
+			var other = JSON.parse( otherMsg );
 			if ( other ) {
 				characters.other = {
 					label: otherGroupName,
@@ -264,7 +259,7 @@ ve.init.mw.Platform.prototype.fetchSpecialCharList = function () {
 
 		// eslint-disable-next-line no-jquery/no-each-util
 		$.each( specialCharacterGroups, function ( groupName, groupCharacters ) {
-			groupObject = {}; // button label => character data to insert
+			var groupObject = {}; // button label => character data to insert
 			// eslint-disable-next-line no-jquery/no-each-util
 			$.each( groupCharacters, function ( charKey, charVal ) {
 				var key, val;

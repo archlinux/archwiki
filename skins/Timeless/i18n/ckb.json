@@ -20,5 +20,7 @@
 	"timeless-namespaces": "بۆشایی ناوەکان",
 	"timeless-pagetools": "بژاردەکانی پەڕە",
 	"timeless-languages": "زمانەکان",
-	"timeless-projects": "پرۆژەکانی تر"
+	"timeless-projects": "پرۆژەکانی تر",
+	"timeless-view-history": "مێژوو",
+	"timeless-action-undelete": "{{PLURAL:$1|یەک گۆڕانکاریی|$1 گۆڕانکاریی}} سڕاوە بەجێبھێنەرەوە"
 }

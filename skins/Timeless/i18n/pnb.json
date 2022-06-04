@@ -6,5 +6,7 @@
 	},
 	"timeless-more": "ہور",
 	"timeless-pagemisc": "ہور",
-	"timeless-languages": "بولیاں"
+	"timeless-languages": "بولیاں",
+	"timeless-view-history": "ریکارڈ",
+	"timeless-action-undelete": "مٹانا واپس {{PLURAL:$1|اکتبدیلی|$1 تبدیلی}}"
 }

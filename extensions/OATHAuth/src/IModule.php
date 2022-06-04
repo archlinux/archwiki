@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\OATHAuth;
 
+use IContextSource;
 use MediaWiki\Auth\AbstractSecondaryAuthenticationProvider;
 use MediaWiki\Extension\OATHAuth\HTMLForm\IManageForm;
 use Message;
@@ -42,7 +43,7 @@ interface IModule {
 	 * but it might not be true for all future modules
 	 *
 	 * @param OATHUser $user
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isEnabled( OATHUser $user );
 
@@ -51,7 +52,7 @@ interface IModule {
 	 *
 	 * @param OATHUser $user
 	 * @param array $data
-	 * @return boolean
+	 * @return bool
 	 */
 	public function verify( OATHUser $user, array $data );
 
@@ -59,9 +60,15 @@ interface IModule {
 	 * @param string $action
 	 * @param OATHUser $user
 	 * @param OATHUserRepository $repo
+	 * @param IContextSource $context
 	 * @return IManageForm|null if no form is available for given action
 	 */
-	public function getManageForm( $action, OATHUser $user, OATHUserRepository $repo );
+	public function getManageForm(
+		$action,
+		OATHUser $user,
+		OATHUserRepository $repo,
+		IContextSource $context
+	);
 
 	/**
 	 * Return Message object for the short text to be displayed as description

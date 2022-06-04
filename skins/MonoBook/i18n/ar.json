@@ -18,5 +18,7 @@
 	"monobook-more-actions": "مزيد",
 	"monobook-cactions-label": "أفعال الصفحة",
 	"monobook-notifications-link": "الإشعارات ($1)",
-	"monobook-notifications-link-none": "الإشعارات"
+	"monobook-notifications-link-none": "الإشعارات",
+	"monobook-view-history": "التاريخ",
+	"monobook-action-undelete": "استرجاع {{PLURAL:$1||تعديل واحد|تعديلين|$1 تعديلات|$1 تعديلاً|$1 تعديل}}"
 }

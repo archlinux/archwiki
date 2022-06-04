@@ -32,5 +32,7 @@
 	"timeless-languages": "语言",
 	"timeless-projects": "其他项目",
 	"timeless.css": "/* 这里放置的CSS将应用于Timeless皮肤 */",
-	"timeless.js": "/* 将为Timeless皮肤的用户加载此处的所有JavaScript  */"
+	"timeless.js": "/* 将为Timeless皮肤的用户加载此处的所有JavaScript  */",
+	"timeless-view-history": "历史",
+	"timeless-action-undelete": "还原{{PLURAL:$1|一次编辑|$1次编辑}}"
 }

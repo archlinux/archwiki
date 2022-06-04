@@ -6,7 +6,8 @@
 			"NikosLikomitros",
 			"Nikosgranturismogt",
 			"Panos78",
-			"Protnet"
+			"Protnet",
+			"Norhorn"
 		]
 	},
 	"disableoathforuser": "Απενεργοποίηση ελέγχου ταυτότητας δύο παραγόντων για ένα χρήστη",
@@ -18,7 +19,7 @@
 	"oathauth-prefs-label": "Ταυτοποίηση μέσω δύο παραγόντων:",
 	"oathauth-enteruser": "Όνομα χρήστη:",
 	"grant-oath": "Πρόσβαση σε πληροφορίες ταυτοποίησης δύο παραγόντων (OATH) για εαυτόν και άλλους",
-	"oauthauth-ui-no-module": "Καμία ενεργοποιημένη",
+	"oathauth-ui-no-module": "Καμία ενεργοποιημένη",
 	"oathauth-ui-manage": "Διαχείριση",
 	"oathmanage": "Διαχείριση πιστοποίησης 2 βημάτων",
 	"oathauth-ui-not-enabled-modules": "Εναλλαγή σε εναλλακτική μέθοδο",

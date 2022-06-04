@@ -81,6 +81,3 @@ class RelayTokenHandler implements TokenHandler {
 		$this->nextHandler->comment( $text, $sourceStart, $sourceLength );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( RelayTokenHandler::class, 'RemexHtml\Tokenizer\RelayTokenHandler' );

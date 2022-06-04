@@ -1,0 +1,27 @@
+[
+	{
+		"name": "oathauth_users",
+		"columns": [
+			{
+				"name": "id",
+				"comment": "User ID",
+				"type": "integer",
+				"options": { "notnull": true }
+			},
+			{
+				"name": "module",
+				"comment": "Module user has selected",
+				"type": "string",
+				"options": { "notnull": true, "length": 255 }
+			},
+			{
+				"name": "data",
+				"comment": "Data",
+				"type": "blob",
+				"options": { "length": 65530, "notnull": false }
+			}
+		],
+		"indexes": [],
+		"pk": [ "id" ]
+	}
+]

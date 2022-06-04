@@ -82,10 +82,10 @@ class SubmoduleDefTest extends TypeDefTestCase {
 		] );
 		$manager->addModule( 'mod3', 'xyz', MockApi::class );
 
-		$this->assertSame( $api, $api->getModuleFromPath( 'testmod' ), 'sanity check' );
-		$this->assertSame( $dep, $api->getModuleFromPath( 'testmod+dep' ), 'sanity check' );
-		$this->assertSame( $int, $api->getModuleFromPath( 'testmod+int' ), 'sanity check' );
-		$this->assertSame( $depint, $api->getModuleFromPath( 'testmod+depint' ), 'sanity check' );
+		$this->assertSame( $api, $api->getModuleFromPath( 'testmod' ) );
+		$this->assertSame( $dep, $api->getModuleFromPath( 'testmod+dep' ) );
+		$this->assertSame( $int, $api->getModuleFromPath( 'testmod+int' ) );
+		$this->assertSame( $depint, $api->getModuleFromPath( 'testmod+depint' ) );
 
 		return $api;
 	}
@@ -249,7 +249,6 @@ class SubmoduleDefTest extends TypeDefTestCase {
 					'internalvalues' => [ 'depint', 'int' ],
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_TYPE => '<message key="paramvalidator-help-type-enum"><text>1</text><list listType="comma"><text>[[Special:ApiHelp/testmod+mod1|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot;&gt;mod1&lt;/span&gt;]]</text><text>[[Special:ApiHelp/testmod+mod2|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot;&gt;mod2&lt;/span&gt;]]</text><text>[[Special:ApiHelp/testmod+recurse|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot;&gt;recurse&lt;/span&gt;]]</text><text>[[Special:ApiHelp/testmod+dep|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot; class=&quot;apihelp-deprecated-value&quot;&gt;dep&lt;/span&gt;]]</text><text>[[Special:ApiHelp/testmod+int|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot; class=&quot;apihelp-internal-value&quot;&gt;int&lt;/span&gt;]]</text><text>[[Special:ApiHelp/testmod+depint|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot; class=&quot;apihelp-deprecated-value apihelp-internal-value&quot;&gt;depint&lt;/span&gt;]]</text></list><num>6</num></message>',
 					ParamValidator::PARAM_ISMULTI => null,
 				],
@@ -277,7 +276,6 @@ class SubmoduleDefTest extends TypeDefTestCase {
 					'deprecatedvalues' => [ 'xyz' ],
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_TYPE => '<message key="paramvalidator-help-type-enum"><text>2</text><list listType="comma"><text>[[Special:ApiHelp/testmod+mod3|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot;&gt;mod3&lt;/span&gt;]]</text><text>[[Special:ApiHelp/testmod+mod4|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot;&gt;mod4&lt;/span&gt;]]</text><text>[[Special:ApiHelp/testmod+dep|&lt;span dir=&quot;ltr&quot; lang=&quot;en&quot; class=&quot;apihelp-deprecated-value&quot;&gt;xyz&lt;/span&gt;]]</text></list><num>3</num></message>',
 					ParamValidator::PARAM_ISMULTI => null,
 				],

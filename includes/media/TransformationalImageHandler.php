@@ -25,6 +25,7 @@
  * @file
  * @ingroup Media
  */
+
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Shell\Shell;
 
@@ -133,6 +134,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 			'dstPath' => $dstPath,
 			'dstUrl' => $dstUrl,
 			'interlace' => $params['interlace'] ?? false,
+			'isFilePageThumb' => $params['isFilePageThumb'] ?? false,
 		];
 
 		if ( isset( $params['quality'] ) && $params['quality'] === 'low' ) {
@@ -174,8 +176,8 @@ abstract class TransformationalImageHandler extends ImageHandler {
 		}
 
 		if ( $image->isTransformedLocally() && !$this->isImageAreaOkForThumbnaling( $image, $params ) ) {
-			global $wgMaxImageArea;
-			return new TransformTooBigImageAreaError( $params, $wgMaxImageArea );
+			$maxImageArea = MediaWikiServices::getInstance()->getMainConfig()->get( 'MaxImageArea' );
+			return new TransformTooBigImageAreaError( $params, $maxImageArea );
 		}
 
 		if ( $flags & self::TRANSFORM_LATER ) {
@@ -319,7 +321,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	 * If there is a problem with the output path, it returns "client"
 	 * to do client side scaling.
 	 *
-	 * @param string $dstPath
+	 * @param string|null $dstPath
 	 * @param bool $checkDstPath Check that $dstPath is valid
 	 * @return string|callable One of client, im, custom, gd, imext, or a callable
 	 */
@@ -342,7 +344,13 @@ abstract class TransformationalImageHandler extends ImageHandler {
 			'height' => $scalerParams['clientHeight']
 		];
 
-		return new ThumbnailImage( $image, $image->getUrl(), null, $params );
+		$url = $image->getUrl();
+		if ( isset( $scalerParams['isFilePageThumb'] ) && $scalerParams['isFilePageThumb'] ) {
+			// Use a versioned URL on file description pages
+			$url = $image->getFilePageThumbUrl( $url );
+		}
+
+		return new ThumbnailImage( $image, $url, null, $params );
 	}
 
 	/**
@@ -525,9 +533,10 @@ abstract class TransformationalImageHandler extends ImageHandler {
 			$cache->makeGlobalKey( 'imagemagick-version' ),
 			$cache::TTL_HOUR,
 			static function () use ( $method ) {
-				global $wgImageMagickConvertCommand;
+				$imageMagickConvertCommand = MediaWikiServices::getInstance()
+					->getMainConfig()->get( 'ImageMagickConvertCommand' );
 
-				$cmd = Shell::escape( $wgImageMagickConvertCommand ) . ' -version';
+				$cmd = Shell::escape( $imageMagickConvertCommand ) . ' -version';
 				wfDebug( $method . ": Running convert -version" );
 				$retval = '';
 				$return = wfShellExecWithStderr( $cmd, $retval );
@@ -608,7 +617,7 @@ abstract class TransformationalImageHandler extends ImageHandler {
 	 * @since 1.25
 	 */
 	public function isImageAreaOkForThumbnaling( $file, &$params ) {
-		global $wgMaxImageArea;
+		$maxImageArea = MediaWikiServices::getInstance()->getMainConfig()->get( 'MaxImageArea' );
 
 		# For historical reasons, hook starts with BitmapHandler
 		$checkImageAreaHookResult = null;
@@ -620,12 +629,17 @@ abstract class TransformationalImageHandler extends ImageHandler {
 			return (bool)$checkImageAreaHookResult;
 		}
 
+		if ( $maxImageArea === false ) {
+			// Checking is disabled, fine to thumbnail
+			return true;
+		}
+
 		$srcWidth = $file->getWidth( $params['page'] );
 		$srcHeight = $file->getHeight( $params['page'] );
 
-		if ( $srcWidth * $srcHeight > $wgMaxImageArea
+		if ( $srcWidth * $srcHeight > $maxImageArea
 			&& !( $file->getMimeType() == 'image/jpeg'
-				&& $this->getScalerType( false, false ) == 'im' )
+				&& $this->getScalerType( null, false ) == 'im' )
 		) {
 			# Only ImageMagick can efficiently downsize jpg images without loading
 			# the entire file in memory

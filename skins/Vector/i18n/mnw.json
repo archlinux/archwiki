@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Htawmonzel"
+			"Htawmonzel",
+			"咽頭べさ"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 အရေဝ်ဘာသာ|$1 အရေဝ်ဘာသာဂမၠိုင်}}",
 	"vector-action-addsection": "စုတ် ပရူပရာ",
 	"vector-action-delete": "ပလီု",
 	"vector-action-move": "ပြံင်ပဆုဲ",

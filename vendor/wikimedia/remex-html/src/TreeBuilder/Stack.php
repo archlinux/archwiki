@@ -116,7 +116,7 @@ abstract class Stack {
 	/**
 	 * Get the number of elements in the stack.
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	abstract public function length();
 
@@ -145,6 +145,3 @@ abstract class Stack {
 		return $s;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Stack::class, 'RemexHtml\TreeBuilder\Stack' );

@@ -5,9 +5,7 @@ namespace Wikimedia\Parsoid\Wt2Html;
 
 use Closure;
 use DateTime;
-use Exception;
 use Generator;
-use Wikimedia\ObjectFactory;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
@@ -22,6 +20,7 @@ use Wikimedia\Parsoid\Utils\DOMTraverser;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Utils;
+use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\CleanUp;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\DedupeStyles;
 use Wikimedia\Parsoid\Wt2Html\PP\Handlers\DisplaySpace;
@@ -44,6 +43,7 @@ use Wikimedia\Parsoid\Wt2Html\PP\Processors\MigrateTrailingNLs;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\Normalize;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\ProcessTreeBuilderFixups;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\PWrap;
+use Wikimedia\Parsoid\Wt2Html\PP\Processors\WrapAnnotations;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\WrapSections;
 use Wikimedia\Parsoid\Wt2Html\PP\Processors\WrapTemplates;
 
@@ -153,14 +153,14 @@ class DOMPostProcessor extends PipelineStage {
 				$classNameOrSpec = $p['Processor'];
 				if ( empty( $p['isExtPP'] ) ) {
 					// Internal processor w/ ::run() method, class name given
-					// @phan-suppress-next-line PhanNonClassMethodCall
 					$c = new $classNameOrSpec();
 					$p['proc'] = function ( ...$args ) use ( $c ) {
 						return $c->run( $this->env, ...$args );
 					};
 				} else {
 					// Extension post processor, object factory spec given
-					$c = ObjectFactory::getObjectFromSpec( $classNameOrSpec, [
+					$objectFactory = $this->env->getSiteConfig()->getObjectFactory();
+					$c = $objectFactory->createObject( $classNameOrSpec, [
 						'allowClassName' => true,
 						'assertClass' => ExtDOMProcessor::class,
 					] );
@@ -181,6 +181,7 @@ class DOMPostProcessor extends PipelineStage {
 		$options = $this->options;
 		$seenIds = &$this->seenIds;
 		$usedIdIndex = [];
+		$abouts = [];
 
 		$tableFixer = new TableFixups( $env );
 
@@ -238,6 +239,7 @@ class DOMPostProcessor extends PipelineStage {
 			// Run this after 'ProcessTreeBuilderFixups' because the mw:StartTag
 			// and mw:EndTag metas would otherwise interfere with the
 			// firstChild/lastChild check that this pass does.
+			// FIXME: those metas no longer exist
 			[
 				'Processor' => MigrateTemplateMarkerMetas::class,
 				'shortcut' => 'migrate-metas'
@@ -250,12 +252,55 @@ class DOMPostProcessor extends PipelineStage {
 			[
 				'Processor' => ComputeDSR::class,
 				'shortcut' => 'dsr',
-				'omit' => !empty( $options['inTemplate'] )
+				'omit' => $options['inTemplate']
 			],
 			[
 				'Processor' => WrapTemplates::class,
 				'shortcut' => 'tplwrap',
-				'omit' => !empty( $options['inTemplate'] )
+				'omit' => $options['inTemplate']
+			],
+			[
+				'name' => 'AddAnnotationIds',
+				'shortcut' => 'ann-ids',
+				'isTraverser' => true,
+				'handlers' => [
+					[
+						'nodeName' => 'meta',
+						'action' => static function ( $node, $env ) use ( &$abouts ) {
+							$isStart = false;
+							$t = WTUtils::extractAnnotationType( $node, $isStart );
+							if ( $t !== null ) {
+								$about = null;
+								if ( $isStart ) {
+									// The 'mwa' prefix is specific to annotations;
+									// if other DOM ranges are to use this mechanism, another prefix
+									// should be used.
+									$about = $env->newAnnotationId();
+									if ( !array_key_exists( $t, $abouts ) ) {
+										$abouts[$t] = [];
+									}
+									array_push( $abouts[$t], $about );
+								} else {
+									if ( array_key_exists( $t, $abouts ) ) {
+										$about = array_pop( $abouts[$t] );
+									}
+								}
+								if ( $about !== null ) {
+									$datamw = DOMDataUtils::getDataMw( $node );
+									$datamw->rangeId = $about;
+									DOMDataUtils::setDataMw( $node, $datamw );
+								}
+							}
+							return true;
+						}
+					]
+				],
+				'withAnnotations' => true
+			],
+			[
+				'Processor' => WrapAnnotations::class,
+				'shortcut' => 'annwrap',
+				'withAnnotations' => true
 			],
 			// 1. Link prefixes and suffixes
 			// 2. Unpack DOM fragments
@@ -442,7 +487,6 @@ class DOMPostProcessor extends PipelineStage {
 				'Processor' => AddRedLinks::class,
 				'shortcut' => 'redlinks',
 				'skipNested' => true,
-				'omit' => $env->noDataAccess(),
 			],
 			[
 				'name' => 'DisplaySpace',
@@ -533,130 +577,7 @@ class DOMPostProcessor extends PipelineStage {
 	 */
 	public function resetState( array $options ): void {
 		parent::resetState( $options );
-
-		// $this->env->getPageConfig()->meta->displayTitle = null;
 		$this->seenIds = [];
-	}
-
-	/**
-	 * Create an element in the document.head with the given attrs.
-	 *
-	 * @param Document $document
-	 * @param string $tagName
-	 * @param array $attrs
-	 */
-	private function appendToHead( Document $document, string $tagName, array $attrs = [] ): void {
-		$elt = $document->createElement( $tagName );
-		DOMUtils::addAttributes( $elt, $attrs );
-		( DOMCompat::getHead( $document ) )->appendChild( $elt );
-	}
-
-	/**
-	 * While unnecessary for Wikimedia clients, a stylesheet url in the <head>
-	 * is useful for clients like Kiwix and others who might not want to process
-	 * the meta tags to construct the resourceloader url.
-	 *
-	 * Given that these clients will be consuming Parsoid HTML outside a MediaWiki skin,
-	 * the clients are effectively responsible for their own "skin". But, once again,
-	 * as a courtesy, we are hardcoding the vector skin modules for them. But, note
-	 * that this may cause page elements to render differently than how they render
-	 * on Wikimedia sites with the vector skin since this is probably missing a number
-	 * of other modules.
-	 *
-	 * All that said, note that JS-generated parts of the page will still require them
-	 * to have more intimate knowledge of how  to process the JS modules. Except for
-	 * <graph>s, page content doesn't require JS modules at this point. So, where these
-	 * clients want to invest in the necessary logic to construct a better resourceloader
-	 * url, they could simply delete / ignore this stylesheet.
-	 *
-	 * @param Document $document
-	 * @param Env $env
-	 * @param string $lang
-	 * @param array $styleModules
-	 */
-	private function addCourtesyBasicStyleSheet(
-		Document $document, Env $env, string $lang, array $styleModules
-	): void {
-		$styleModules = array_unique( array_merge( $styleModules, [
-			'mediawiki.skinning.content.parsoid',
-			// Use the base styles that API output and fallback skin use.
-			'mediawiki.skinning.interface',
-			// Make sure to include contents of user generated styles
-			// e.g. MediaWiki:Common.css / MediaWiki:Mobile.css
-			'site.styles'
-		] ) );
-
-		$styleURI = $env->getSiteConfig()->getModulesLoadURI() .
-			'?lang=' . $lang . '&modules=' .
-			PHPUtils::encodeURIComponent( implode( '|', $styleModules ) ) .
-			'&only=styles&skin=vector';
-		$this->appendToHead( $document, 'link', [ 'rel' => 'stylesheet', 'href' => $styleURI ] );
-	}
-
-	/**
-	 * Export used style modules via a meta tag (and via a stylesheet for now to aid some clients)
-	 * @param Document $document
-	 * @param Env $env
-	 * @param string $lang
-	 */
-	private function exportStyleModules( Document $document, Env $env, string $lang ): void {
-		// Styles from modules returned from preprocessor / parse requests
-		$styleModules = $env->getOutputProperties()['modulestyles'] ?? [];
-		if ( $styleModules ) {
-			// FIXME: Maybe think about using an associative array or DS\Set
-			$styleModules = array_unique( $styleModules );
-
-			// mw:styleModules are CSS modules that are render-blocking.
-			$this->appendToHead( $document, 'meta', [
-				'property' => 'mw:styleModules',
-				'content' => implode( '|', $styleModules )
-			] );
-		}
-
-		$this->addCourtesyBasicStyleSheet( $document, $env, $lang, $styleModules );
-	}
-
-	/**
-	 * Export general modules (usually JS scripts) via a meta tag
-	 * @param Document $document
-	 * @param Env $env
-	 */
-	private function exportGeneralModules( Document $document, Env $env ): void {
-		// Styles from modules returned from preprocessor / parse requests
-		$generalModules = $env->getOutputProperties()['modules'] ?? [];
-		if ( $generalModules ) {
-			// mw:generalModules can be processed via JS (and async) and are usually (but
-			// not always) JS scripts.
-			$this->appendToHead( $document, 'meta', [
-				'property' => 'mw:generalModules',
-				'content' => implode( '|', array_unique( $generalModules ) )
-			] );
-		}
-	}
-
-	/**
-	 * Export used JS config vars via a meta tag
-	 * @param Document $document
-	 * @param Env $env
-	 */
-	private function exportJSConfigVars( Document $document, Env $env ): void {
-		$vars = $env->getOutputProperties()['jsconfigvars'] ?? [];
-		if ( $vars ) {
-			try {
-				$content = PHPUtils::jsonEncode( $vars );
-			} catch ( Exception $e ) {
-				// Similar to ResourceLoader::makeConfigSetScript.  See T289358
-				$env->log(
-					'warn', 'JSON serialization of config data failed. ' .
-						'This usually means the config data is not valid UTF-8.'
-				);
-				return;
-			}
-			$this->appendToHead( $document, 'meta', [
-				'property' => 'mw:jsConfigVars',
-				'content' => $content,
-			] );
-		}
 	}
 
 	/**
@@ -696,13 +617,9 @@ class DOMPostProcessor extends PipelineStage {
 	 * @param Document $document
 	 */
 	public function addMetaData( Env $env, Document $document ): void {
-		// add <head> element if it was missing
-		if ( !( DOMCompat::getHead( $document ) instanceof Element ) ) {
-			$document->documentElement->insertBefore(
-				$document->createElement( 'head' ),
-				DOMCompat::getBody( $document )
-			);
-		}
+		// Set the charset in the <head> first.
+		// This also adds the <head> element if it was missing.
+		DOMUtils::appendToHead( $document, 'meta', [ 'charset' => 'utf-8' ] );
 
 		// add mw: and mwr: RDFa prefixes
 		$prefixes = [
@@ -729,12 +646,9 @@ class DOMPostProcessor extends PipelineStage {
 
 		// add <head> content based on page meta data:
 
-		// Set the charset first.
-		$this->appendToHead( $document, 'meta', [ 'charset' => 'utf-8' ] );
-
 		// Add page / revision metadata to the <head>
 		// PORT-FIXME: We will need to do some refactoring to eliminate
-		// this hardcoding. Probably even merge thi sinto metadataMap
+		// this hardcoding. Probably even merge this into metadataMap
 		$pageConfig = $env->getPageConfig();
 		$revProps = [
 			'id' => $pageConfig->getPageId(),
@@ -768,7 +682,7 @@ class DOMPostProcessor extends PipelineStage {
 			}
 
 			// <link> is used if there's a resource or href attribute.
-			$this->appendToHead( $document,
+			DOMUtils::appendToHead( $document,
 				isset( $attrs['resource'] ) || isset( $attrs['href'] ) ? 'link' : 'meta',
 				$attrs
 			);
@@ -785,7 +699,7 @@ class DOMPostProcessor extends PipelineStage {
 			str_replace( '_', ' ', $env->getSiteConfig()->mainpage() ) ===
 			str_replace( '_', ' ', $env->getPageConfig()->getTitle() )
 		) {
-			$this->appendToHead( $document, 'meta', [
+			DOMUtils::appendToHead( $document, 'meta', [
 				'property' => 'isMainPage',
 				'content' => 'true' /* HTML attribute values should be strings */
 			] );
@@ -793,7 +707,7 @@ class DOMPostProcessor extends PipelineStage {
 
 		// Set the parsoid content-type strings
 		// FIXME: Should we be using http-equiv for this?
-		$this->appendToHead( $document, 'meta', [
+		DOMUtils::appendToHead( $document, 'meta', [
 				'property' => 'mw:htmlVersion',
 				'content' => $env->getOutputContentVersion()
 			]
@@ -801,7 +715,7 @@ class DOMPostProcessor extends PipelineStage {
 		// Temporary backward compatibility for clients
 		// This could be skipped if we support a version downgrade path
 		// with a major version bump.
-		$this->appendToHead( $document, 'meta', [
+		DOMUtils::appendToHead( $document, 'meta', [
 				'property' => 'mw:html:version',
 				'content' => $env->getOutputContentVersion()
 			]
@@ -813,20 +727,13 @@ class DOMPostProcessor extends PipelineStage {
 			return PHPUtils::encodeURIComponent( $comp );
 		}, $expTitle );
 
-		$this->appendToHead( $document, 'link', [
+		DOMUtils::appendToHead( $document, 'link', [
 			'rel' => 'dc:isVersionOf',
 			'href' => $env->getSiteConfig()->baseURI() . implode( '/', $expTitle )
 		] );
 
-		DOMCompat::setTitle(
-			$document,
-			// PORT-FIXME: There isn't a place anywhere yet for displayTitle
-			/* $env->getPageConfig()->meta->displayTitle || */
-			$env->getPageConfig()->getTitle()
-		);
-
 		// Add base href pointing to the wiki root
-		$this->appendToHead( $document, 'base', [
+		DOMUtils::appendToHead( $document, 'base', [
 			'href' => $env->getSiteConfig()->baseURI()
 		] );
 
@@ -840,18 +747,19 @@ class DOMPostProcessor extends PipelineStage {
 		$body = DOMCompat::getBody( $document );
 		$body->setAttribute( 'lang', Utils::bcp47n( $lang ) );
 		$this->updateBodyClasslist( $body, $env );
-		$this->exportJSConfigVars( $document, $env );
-		$this->exportGeneralModules( $document, $env );
-		$this->exportStyleModules( $document, $env, $lang );
+		$env->getSiteConfig()->exportMetadataToHead(
+			$document, $env->getMetadata(),
+			$env->getPageConfig()->getTitle(), $lang
+		);
 
 		// Indicate whether LanguageConverter is enabled, so that downstream
 		// caches can split on variant (if necessary)
-		$this->appendToHead( $document, 'meta', [
+		DOMUtils::appendToHead( $document, 'meta', [
 				'http-equiv' => 'content-language',
 				'content' => $env->htmlContentLanguage()
 			]
 		);
-		$this->appendToHead( $document, 'meta', [
+		DOMUtils::appendToHead( $document, 'meta', [
 				'http-equiv' => 'vary',
 				'content' => $env->htmlVary()
 			]
@@ -875,11 +783,9 @@ class DOMPostProcessor extends PipelineStage {
 
 		if ( $hasDumpFlags && $env->hasDumpFlag( 'dom:post-builder' ) ) {
 			$opts = [];
-			ContentUtils::dumpDOM( $node, 'DOM: after tree builder', $opts );
+			$env->writeDump( ContentUtils::dumpDOM( $node, 'DOM: after tree builder', $opts ) );
 		}
 
-		$startTime = null;
-		$endTime = null;
 		$prefix = null;
 		$traceLevel = null;
 		$resourceCategory = null;
@@ -896,13 +802,15 @@ class DOMPostProcessor extends PipelineStage {
 				$prefix = '---';
 				$resourceCategory = 'DOMPasses:NESTED';
 			}
-			$startTime = PHPUtils::getStartHRTime();
-			$env->log( 'debug/time/dompp', $prefix . '; start=' . $startTime );
 		}
 
 		for ( $i = 0;  $i < count( $this->processors );  $i++ ) {
 			$pp = $this->processors[$i];
 			if ( !empty( $pp['skipNested'] ) && !$this->atTopLevel ) {
+				continue;
+			}
+
+			if ( !empty( $pp['withAnnotations'] ) && !$this->env->hasAnnotations ) {
 				continue;
 			}
 
@@ -915,8 +823,7 @@ class DOMPostProcessor extends PipelineStage {
 					" ",
 					( strlen( $pp['name'] ) < 30 ) ? 30 - strlen( $pp['name'] ) : 0
 				);
-				$ppStart = PHPUtils::getStartHRTime();
-				$env->log( 'debug/time/dompp', $prefix . '; ' . $ppName . ' start' );
+				$ppStart = microtime( true );
 			}
 
 			$opts = null;
@@ -927,8 +834,12 @@ class DOMPostProcessor extends PipelineStage {
 					'keepTmp' => true
 				];
 
-				if ( $env->hasDumpFlag( 'dom:pre-' . $pp['shortcut'] ) ) {
-					ContentUtils::dumpDOM( $node, 'DOM: pre-' . $pp['shortcut'], $opts );
+				if ( $env->hasDumpFlag( 'dom:pre-' . $pp['shortcut'] )
+					|| $env->hasDumpFlag( 'dom:pre-*' )
+				) {
+					$env->writeDump(
+						ContentUtils::dumpDOM( $node, 'DOM: pre-' . $pp['shortcut'], $opts )
+					);
 				}
 			}
 
@@ -936,16 +847,16 @@ class DOMPostProcessor extends PipelineStage {
 			// to how $this->frame may be updated.
 			$pp['proc']( $node, [ 'frame' => $this->frame ] + $this->options, $this->atTopLevel );
 
-			if ( $hasDumpFlags && $env->hasDumpFlag( 'dom:post-' . $pp['shortcut'] ) ) {
-				ContentUtils::dumpDOM( $node, 'DOM: post-' . $pp['shortcut'], $opts );
+			if ( $hasDumpFlags && ( $env->hasDumpFlag( 'dom:post-' . $pp['shortcut'] )
+				|| $env->hasDumpFlag( 'dom:post-*' ) )
+			) {
+				$env->writeDump(
+					ContentUtils::dumpDOM( $node, 'DOM: post-' . $pp['shortcut'], $opts )
+				);
 			}
 
 			if ( $profile ) {
-				$ppElapsed = PHPUtils::getHRTimeDifferential( $ppStart );
-				$env->log(
-					'debug/time/dompp',
-					$prefix . '; ' . $ppName . ' end; time = ' . $ppElapsed
-				);
+				$ppElapsed = 1000 * ( microtime( true ) - $ppStart );
 				if ( $this->atTopLevel ) {
 					$this->timeProfile .= str_pad( $prefix . '; ' . $ppName, 65 ) .
 						' time = ' .
@@ -953,15 +864,6 @@ class DOMPostProcessor extends PipelineStage {
 				}
 				$profile->bumpTimeUse( $resourceCategory, $ppElapsed, 'DOM' );
 			}
-		}
-
-		if ( $profile ) {
-			$endTime = PHPUtils::getStartHRTime();
-			$env->log(
-				'debug/time/dompp',
-				$prefix . '; end=' . number_format( $endTime, 2 ) . '; time = ' .
-				number_format( PHPUtils::getHRTimeDifferential( $startTime ), 2 )
-			);
 		}
 
 		// For sub-pipeline documents, we are done.
@@ -985,6 +887,7 @@ class DOMPostProcessor extends PipelineStage {
 	public function process( $node, array $opts = null ) {
 		'@phan-var Node $node'; // @var Node $node
 		$this->doPostProcess( $node );
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $node;
 	}
 

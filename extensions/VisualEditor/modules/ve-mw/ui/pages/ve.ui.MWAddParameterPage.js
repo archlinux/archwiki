@@ -31,42 +31,10 @@ ve.ui.MWAddParameterPage = function VeUiMWAddParameterPage( parameter, name, con
 	} )
 		.connect( this, { click: 'togglePlaceholder' } );
 
-	// Input field and button
-	this.paramInputField = new OO.ui.TextInputWidget( {
-		placeholder: ve.msg( 'visualeditor-dialog-transclusion-add-param-placeholder' )
-	} )
-		.connect( this, {
-			change: 'onParameterNameChanged',
-			enter: 'onParameterNameSubmitted'
-		} );
-	this.saveButton = new OO.ui.ButtonWidget( {
-		label: ve.msg( 'visualeditor-dialog-transclusion-add-param-save' ),
-		flags: [ 'primary', 'progressive' ],
-		disabled: true
-	} )
-		.connect( this, { click: 'onParameterNameSubmitted' } );
-
-	this.addParameterInputField = new OO.ui.ActionFieldLayout(
-		this.paramInputField,
-		this.saveButton,
-		{ classes: [ 've-ui-mwTransclusionDialog-addParameterFieldset-input' ] }
-	);
-
-	var link = this.template.getTitle() || this.template.getTarget().wt;
-	var $helpText = mw.message(
-		'visualeditor-dialog-transclusion-add-param-help',
-		link
-	).parseDom();
-	ve.init.platform.linkCache.styleElement( link, $helpText );
 	this.addParameterFieldset = new OO.ui.FieldsetLayout( {
 		label: this.addParameterInputHeader.$element,
-		helpInline: true,
-		help: $helpText,
-		classes: [ 've-ui-mwTransclusionDialog-addParameterFieldset' ],
-		$content: this.addParameterInputField.$element
+		classes: [ 've-ui-mwTransclusionDialog-addParameterFieldset' ]
 	} );
-
-	ve.targetLinksToNewWindow( this.addParameterFieldset.$element[ 0 ] );
 
 	// Init visibility
 	this.togglePlaceholder( false );
@@ -84,6 +52,62 @@ OO.inheritClass( ve.ui.MWAddParameterPage, OO.ui.PageLayout );
 /* Methods */
 
 /**
+ * @private
+ */
+ve.ui.MWAddParameterPage.prototype.initialize = function () {
+	this.template
+		.connect( this, {
+			// There is a "change" event, but it triggers way to often even for content changes
+			add: 'onTemplateParametersChanged',
+			remove: 'onTemplateParametersChanged'
+		} );
+
+	this.paramInputField = new OO.ui.TextInputWidget( {
+		placeholder: ve.msg( 'visualeditor-dialog-transclusion-add-param-placeholder' )
+	} )
+		.connect( this, {
+			change: 'updateParameterNameValidation',
+			enter: 'onParameterNameSubmitted'
+		} );
+	this.saveButton = new OO.ui.ButtonWidget( {
+		label: ve.msg( 'visualeditor-dialog-transclusion-add-param-save' ),
+		flags: [ 'primary', 'progressive' ],
+		disabled: true
+	} )
+		.connect( this, { click: 'onParameterNameSubmitted' } );
+
+	this.actionFieldLayout = new OO.ui.ActionFieldLayout(
+		this.paramInputField,
+		this.saveButton,
+		{
+			classes: [ 've-ui-mwTransclusionDialog-addParameterFieldset-input' ],
+			align: 'top'
+		}
+	);
+
+	var link = this.template.getTitle() || this.template.getTarget().wt;
+	var $helpText = mw.message(
+		'visualeditor-dialog-transclusion-add-param-help',
+		link
+	).parseDom();
+	ve.init.platform.linkCache.styleElement( link, $helpText.filter( 'a:not(.external)' ) );
+
+	// Copied from {@see OO.ui.FieldsetLayout} because there is no method to do this later
+	var helpWidget = new OO.ui.LabelWidget( {
+		label: $helpText,
+		classes: [ 'oo-ui-inline-help' ]
+	} );
+
+	ve.targetLinksToNewWindow( helpWidget.$element[ 0 ] );
+
+	this.addParameterFieldset.$element.append(
+		helpWidget.$element,
+		this.addParameterFieldset.$group,
+		this.actionFieldLayout.$element
+	);
+};
+
+/**
  * @inheritDoc OO.ui.PanelLayout
  */
 ve.ui.MWAddParameterPage.prototype.focus = function () {
@@ -98,18 +122,26 @@ ve.ui.MWAddParameterPage.prototype.focus = function () {
 
 /**
  * @private
+ */
+ve.ui.MWAddParameterPage.prototype.onTemplateParametersChanged = function () {
+	this.updateParameterNameValidation( this.paramInputField.getValue() );
+};
+
+/**
+ * @private
  * @param {string} value
  */
-ve.ui.MWAddParameterPage.prototype.onParameterNameChanged = function ( value ) {
+ve.ui.MWAddParameterPage.prototype.updateParameterNameValidation = function ( value ) {
 	var paramName = value.trim(),
 		errors = this.getValidationErrors( paramName );
 
-	this.addParameterInputField.setErrors( errors );
+	this.actionFieldLayout.setErrors( errors );
 	this.saveButton.setDisabled( !paramName || errors.length );
 };
 
 /**
  * @private
+ * @fires focusTemplateParameterById
  */
 ve.ui.MWAddParameterPage.prototype.onParameterNameSubmitted = function () {
 	var name = this.paramInputField.getValue().trim();
@@ -185,6 +217,9 @@ ve.ui.MWAddParameterPage.prototype.togglePlaceholder = function ( expand ) {
 		!this.isExpanded
 	);
 	if ( this.isExpanded ) {
+		if ( !this.paramInputField ) {
+			this.initialize();
+		}
 		this.paramInputField.focus();
 	}
 };
@@ -192,12 +227,12 @@ ve.ui.MWAddParameterPage.prototype.togglePlaceholder = function ( expand ) {
 /**
  * @inheritDoc OO.ui.PageLayout
  */
-ve.ui.MWAddParameterPage.prototype.setOutlineItem = function () {
-	// Parent method
-	ve.ui.MWAddParameterPage.super.prototype.setOutlineItem.apply( this, arguments );
-
-	if ( this.outlineItem ) {
+ve.ui.MWAddParameterPage.prototype.setupOutlineItem = function () {
+	this.outlineItem
+		// Basic properties to make the OO.ui.OutlineControlsWidget buttons behave sane
+		.setMovable( false )
+		.setRemovable( false )
+		.setLevel( 1 )
 		// This page should not be shown in the (BookletLayout-based) sidebar
-		this.outlineItem.$element.empty().removeAttr( 'class' );
-	}
+		.$element.empty().removeAttr( 'class' );
 };

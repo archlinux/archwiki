@@ -26,7 +26,7 @@ use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MWException;
-use Wikimedia\ObjectFactory;
+use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
  * Common factory to construct collation classes.
@@ -128,7 +128,11 @@ class CollationFactory {
 	 * @return Collation
 	 */
 	public function getCategoryCollation(): Collation {
-		return $this->makeCollation( $this->options->get( 'CategoryCollation' ) );
+		return $this->makeCollation( $this->getDefaultCollationName() );
+	}
+
+	public function getDefaultCollationName(): string {
+		return $this->options->get( 'CategoryCollation' );
 	}
 
 	/**
@@ -149,6 +153,16 @@ class CollationFactory {
 				],
 				'args' => [
 					$match[1],
+				]
+			] );
+		} elseif ( preg_match( '/^remote-uca-([A-Za-z@=-]+)$/', $collationName, $match ) ) {
+			return $this->instantiateCollation( [
+				'class' => \RemoteIcuCollation::class,
+				'services' => [
+					'ShellboxClientFactory'
+				],
+				'args' => [
+					$match[1]
 				]
 			] );
 		}

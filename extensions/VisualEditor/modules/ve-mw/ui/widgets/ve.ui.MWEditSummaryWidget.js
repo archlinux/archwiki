@@ -46,7 +46,7 @@ OO.mixinClass( ve.ui.MWEditSummaryWidget, OO.ui.mixin.LookupElement );
 
 /* Static properties */
 
-ve.ui.MWEditSummaryWidget.static.summarySplitter = /^(\/\*.*?\*\/\s*)?(.*)$/;
+ve.ui.MWEditSummaryWidget.static.summarySplitter = /^(\/\*.*?\*\/\s*)?([^]*)$/;
 
 /* Static methods */
 

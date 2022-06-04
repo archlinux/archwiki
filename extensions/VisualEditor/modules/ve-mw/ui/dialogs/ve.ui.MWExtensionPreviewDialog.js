@@ -49,23 +49,23 @@ ve.ui.MWExtensionPreviewDialog.prototype.initialize = function () {
 ve.ui.MWExtensionPreviewDialog.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWExtensionPreviewDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
-			var doc, element, rootNode, linearData;
+			var element;
 			if ( this.selectedNode ) {
 				element = this.selectedNode.getClonedElement();
 			} else {
 				element = this.getNewElement();
 			}
-			linearData = [ element, { type: '/' + element.type } ];
+			var linearData = [ element, { type: '/' + element.type } ];
 			if ( ve.dm.nodeFactory.isNodeContent( element.type ) ) {
 				linearData = [ { type: 'paragraph' } ].concat( linearData, { type: '/paragraph' } );
 			}
 			// We assume that WindowAction pass
-			doc = data.fragment.getDocument().cloneWithData( linearData.concat( [
+			var doc = data.fragment.getDocument().cloneWithData( linearData.concat( [
 				{ type: 'internalList' },
 				{ type: '/internalList' }
 			] ) );
 
-			rootNode = doc.getDocumentNode().children[ 0 ];
+			var rootNode = doc.getDocumentNode().children[ 0 ];
 			this.previewNode = doc.getNodesByType( element.type )[ 0 ];
 			this.previewElement.setModel( rootNode );
 		}, this );

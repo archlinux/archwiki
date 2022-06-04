@@ -38,7 +38,7 @@ class ParameterTypeException extends ParameterAssertionException {
 	/**
 	 * @return string
 	 */
-	public function getParameterType() {
+	public function getParameterType(): string {
 		return $this->parameterType;
 	}
 

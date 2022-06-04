@@ -3,6 +3,7 @@
 		"authors": [
 			"Kipala",
 			"Lloffiwr",
+			"Magotech",
 			"Muddyb",
 			"Muddyb Blast Producer"
 		]
@@ -53,6 +54,7 @@
 	"visualeditor-dialog-transclusion-add-param": "Weka paramita",
 	"visualeditor-dialog-transclusion-add-template": "Weka kigezo",
 	"visualeditor-dialog-transclusion-content": "Yaliyomo",
+	"visualeditor-dialog-transclusion-contextitem-loading": "inapakia",
 	"visualeditor-dialog-transclusion-options": "Chaguzi",
 	"visualeditor-dialog-transclusion-placeholder": "Kigezo kipya",
 	"visualeditor-dialog-transclusion-remove-content": "Ondoa yaliyomo",
@@ -60,7 +62,6 @@
 	"visualeditor-dialog-transclusion-remove-template": "Ondoa kigezo",
 	"visualeditor-dialogbutton-media-tooltip": "Faili",
 	"visualeditor-dialogbutton-meta-tooltip": "Mipangilio ya ukurasa",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Jumuisho",
 	"visualeditor-editconflict": "Mabadiliko yako hayakuweza kuhifadhiwa kwa sababu ya mgongano wa kiuhariri. Je, ungependa kutatua mgongano huu kikawaida?",
 	"visualeditor-editnotices-tool": "{{PLURAL:$1|tangazo|matangazo}} $1",
 	"visualeditor-editsummary": "Elezea kipi ulichobadilisha",

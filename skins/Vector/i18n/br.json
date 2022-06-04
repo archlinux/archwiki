@@ -3,16 +3,24 @@
 		"authors": [
 			"Adriendelucca",
 			"Fulup",
-			"Y-M D"
+			"Y-M D",
+			"Huñvreüs"
 		]
 	},
 	"skinname-vector": "Vektor",
-	"vector-skin-desc": "Stumm modern MonoBook freskaet e dres hag enni meur a wellaenn implijout",
+	"vector-skin-desc": "Pourchas a ra 2 wiskadur Vektor:\n* 2011 - Stumm modern MonoBook freskaet e dres hag enni meur a wellaenn implijout\n* 2022 - Vektor aozet evel perzh eus raktres [[mw:Desktop Improvements|Gwellaat ar burev]] ar WMF.",
+	"prefs-vector-enable-vector-1-label": "Ober gant stumm kozh Vektor",
+	"prefs-vector-enable-vector-1-help": "E-pad ar bloavezhioù a zeu e vo nevesaet ar gwiskadur Vektor tamm-ha-tamm. Gant stumm kozh Vektor e c’helloc’h gwelout stumm Vektor eus miz Du 2019. Evit gouzout hiroc’h diwar-benn an nevesaat, kit da [[mw:Reading/Web/Desktop_Improvements|bajenn ar raktres]].",
 	"vector-opt-out": "Distreiñ d'an tres kozh",
 	"vector-opt-out-tooltip": "Kemmañ hoc'h arventennoù evit distreiñ da dres kozh ar gwiskadur (Vector istorel)",
 	"vector.css": "/* Talvezout a raio ar CSS lakaet amañ evit implijerien ar gwiskadur Vektor */",
 	"vector.js": "/* Kement JavaScript amañ a vo karget evit an implijerien a ra gant ar gwiskadur Vektor */",
+	"vector-action-toggle-sidebar": "Diskwel/kuzhat ar varrenn gostez",
+	"vector-languages": "Yezhoù",
+	"vector-language-button-aria-label": "Mont d’ur pennad en ur yezh all. {{PLURAL:$1|$1 yezh}} a zo.",
 	"vector-language-button-label": "{{PLURAL:$1|$1 yezh|$1 yezhoù}}",
+	"vector-language-redirect-to-top": "Er {{SITENAME}}-mañ emañ al liammoù yezh e deroù ar bajenn en tu all da ditl ar pennad. [[#p-lang-btn|Mont d’an deroù]].",
+	"vector-language-variant-switcher-label": "Kemmañ adstumm yezh",
 	"vector-action-addsection": "Rannbennad nevez",
 	"vector-action-delete": "Diverkañ",
 	"vector-action-move": "Adenvel",
@@ -24,5 +32,16 @@
 	"vector-view-history": "Gwelet an istor",
 	"vector-view-view": "Lenn",
 	"vector-view-viewsource": "Sellet ouzh tarzh an destenn",
-	"vector-more-actions": "Muioc'h"
+	"vector-jumptonavigation": "Mont d’ar merdeerezh",
+	"vector-jumptosearch": "Mont d’ar c’hlask",
+	"vector-jumptocontent": "Mont d’an endalc’had",
+	"vector-more-actions": "Muioc'h",
+	"vector-search-loader": "O kargañ alioù klask",
+	"vector-searchsuggest-containing": "Klask pajennoù a zo <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> enno",
+	"vector-intro-page": "Help:Introduction",
+	"vector-anon-user-menu-pages": "Pajennoù evit implijerien digevreet",
+	"vector-anon-user-menu-pages-learn": "Gouzout hiroc'h",
+	"vector-anon-user-menu-pages-label": "Gouzout hiroc’h a-zivout degas kemmoù",
+	"vector-main-menu-tooltip": "Lañser pennañ",
+	"tooltip-vector-anon-user-menu-title": "Muioc'h a zibarzhioù"
 }

@@ -67,7 +67,7 @@ QUnit.test( 'Rebase', function ( assert ) {
 				// Client 2 receives abc and rebases over it
 				[ '2', 'receive' ],
 				[ '2', 'assert', function ( client ) {
-					assert.ok( Array.isArray( client.doc.completeHistory.storeLengthAtTransaction ), 'storeLengthAtTransaction array not clobbered by rebase' );
+					assert.true( Array.isArray( client.doc.completeHistory.storeLengthAtTransaction ), 'storeLengthAtTransaction array not clobbered by rebase' );
 				} ],
 				[ '2', 'assertHist', 'abc/AB?/CD!' ],
 				// Client 2 receives confirmation of AB
@@ -403,8 +403,7 @@ QUnit.test( 'Rebase', function ( assert ) {
 	];
 
 	function makeTransaction( doc, data ) {
-		var i, method,
-			builder = new ve.dm.TransactionBuilder();
+		var builder = new ve.dm.TransactionBuilder();
 		if ( data[ 0 ] === 'insert' ) {
 			data = [
 				[ 'pushRetain', data[ 1 ] ],
@@ -418,8 +417,8 @@ QUnit.test( 'Rebase', function ( assert ) {
 				[ 'pushRetain', data[ 3 ] ]
 			];
 		}
-		for ( i = 0; i < data.length; i++ ) {
-			method = data[ i ].shift();
+		for ( var i = 0; i < data.length; i++ ) {
+			var method = data[ i ].shift();
 			builder[ method ].apply( builder, data[ i ] );
 		}
 		return builder.getTransaction();
@@ -437,7 +436,6 @@ QUnit.test( 'Rebase', function ( assert ) {
 		} );
 
 		caseItem.ops.forEach( function ( op, i ) {
-			var client, action, txs, summary;
 			if ( op[ 0 ] === 'debugger' ) {
 				// eslint-disable-next-line no-debugger
 				debugger;
@@ -445,16 +443,17 @@ QUnit.test( 'Rebase', function ( assert ) {
 				return;
 			}
 
-			client = clients[ op[ 0 ] ];
-			action = op[ 1 ];
+			var client = clients[ op[ 0 ] ];
+			var action = op[ 1 ];
 			if ( action === 'apply' ) {
 				if ( Array.isArray( op[ 2 ] ) ) {
-					txs = op[ 2 ].map( makeTransaction.bind( null, client.doc ) );
+					var txs = op[ 2 ].map( makeTransaction.bind( null, client.doc ) );
 					client.applyTransactions( txs );
 				} else {
 					client.applyChange( ve.dm.Change.static.deserialize( op[ 2 ] ) );
 				}
 			} else if ( action === 'assertHist' ) {
+				var summary;
 				if ( op[ 0 ] === 'server' ) {
 					summary = server.getHistorySummary();
 				} else {

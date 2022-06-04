@@ -1,13 +1,5 @@
 <?php
-
-namespace Cdb\Writer;
-
-use Cdb\Exception;
-use Cdb\Writer;
-
 /**
- * DBA-based CDB reader/writer
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -22,15 +14,19 @@ use Cdb\Writer;
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
  */
 
+namespace Cdb\Writer;
+
+use Cdb\Exception;
+use Cdb\Writer;
+
 /**
- * Writer class which uses the DBA extension
+ * Writer class which uses the DBA extension (php-dba)
  */
 class DBA extends Writer {
 	/**
+	 * @param string $fileName
 	 * @throws Exception
 	 */
 	public function __construct( $fileName ) {

@@ -12,7 +12,9 @@
 			"Matiia",
 			"McDutchie",
 			"MuratTheTurkish",
-			"PoLuX124"
+			"PoLuX124",
+			"Danniel07",
+			"DiegoAmbrocio"
 		]
 	},
 	"oathauth-desc": "Proporciona compatibilidad con la autenticación mediante contraseñas en HMAC de un solo uso",
@@ -66,7 +68,7 @@
 	"oath-log-header": "Estos eventos registran los cambios en el estado de la autenticación en dos pasos en las cuentas de los usuarios.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|deshabilitó}} la autenticación en dos pasos de $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|verificó}} si $3 tenía activada la autenticación en dos pasos",
-	"oauthauth-ui-no-module": "No se activó ninguna",
+	"oathauth-ui-no-module": "No se activó ninguna",
 	"oathauth-module-invalid": "El módulo de OATHAuth registrado por el usuario no es válido.",
 	"oathauth-module-totp-label": "TOTP (autenticador de uso único)",
 	"oathauth-ui-manage": "Gestionar",
@@ -87,6 +89,7 @@
 	"oathauth-switch-method-warning-header": "Confirmar el cambio a un método distinto de autenticación",
 	"oathauth-invalidrequest": "Solicitud no válida",
 	"notification-header-oathauth-disable": "Se ha desactivado la autenticación en dos pasos de {{GENDER:$2|tu}} cuenta.",
+	"oathauth-notifications-disable-help": "Ayuda",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} tiene activada la autenticación en dos pasos.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} no tiene activada la autenticación en dos pasos.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desactivado|Grupos desactivados}}:",

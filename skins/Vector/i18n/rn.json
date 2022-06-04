@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Gilbert Ndihokubwayo",
-			"Amire80"
+			"Amire80",
+			"Gilbert Ndihokubwayo"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ururimi|$1 indimi}}",
@@ -11,5 +11,6 @@
 	"vector-view-edit": "Hinyanyura inyandiko",
 	"vector-view-history": "Raba uko vyagiye birakurikirana",
 	"vector-view-view": "Soma",
-	"vector-more-actions": "Ibindi"
+	"vector-more-actions": "Ibindi",
+	"vector-searchsuggest-containing": "Rondera impapuro zirimwo <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

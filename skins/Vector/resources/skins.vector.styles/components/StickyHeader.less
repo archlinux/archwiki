@@ -3,13 +3,14 @@
 
 .vector-sticky-header {
 	width: 100%;
+	height: @height-sticky-header;
 	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;
 	z-index: @z-index-header;
 	transform: translateY( -100% );
-	transition: transform 250ms linear;
+	transition: @transition-sticky-header;
 	display: flex;
 	align-items: center;
 	max-width: @max-width-page-container + @padding-horizontal-page-container + @padding-horizontal-page-container;
@@ -31,8 +32,13 @@
 		padding: 6px 25px;
 	}
 
-	// T289714 Hide the sticky header at lower resolutions.
-	@media ( max-width: @width-breakpoint-tablet ) {
+	// T298836 Hide the sticky header at lower resolutions.
+	@media ( max-width: @width-breakpoint-desktop ) {
+		display: none;
+	}
+
+	// Hide any open menus/search results unless sticky header is visible
+	&:not( .vector-sticky-header-visible ) > div {
 		display: none;
 	}
 
@@ -43,45 +49,101 @@
 	//
 	// Layout
 	//
-	&-start {
+	&-start,
+	&-end,
+	&-icons,
+	&-context-bar {
 		display: flex;
 		align-items: center;
 	}
 
-	&-end {
-		display: flex;
-		align-items: center;
+	&-start {
+		flex-grow: 1;
+		min-width: 0;
 	}
 
 	//
 	// Components
 	//
-	&-icons,
-	&-context-bar {
-		display: flex;
-		align-items: center;
-		white-space: nowrap;
-		margin: 0 15px;
-		padding-left: 30px;
-	}
-
 	&-context-bar {
 		border-left: 1px solid #c8c8c8;
+		margin: 0 15px;
+		padding-left: 30px;
+		white-space: nowrap;
+		min-width: 0;
 	}
 
 	&-context-bar-primary {
-		padding-right: 15px;
-		font-size: unit( 22 / @font-size-browser, em );
+		overflow: hidden;
+		font-family: @font-family-serif;
+		// T296320 closest standardized option to 22px (24px)
+		font-size: @font-size-heading-2;
+		text-overflow: ellipsis;
+
+		// T300134 Prevent text from wrapping in the sticky header.
+		wbr {
+			display: none;
+		}
 	}
 
-	&-context-bar-secondary {
-		&:before {
-			padding-right: 15px;
-			content: '|';
+	.vector-search-box {
+		// Hide the search box until the user toggles it.
+		display: none;
+	}
+
+	&.vector-header-search-toggled {
+		// .wvui-input__input left padding (36px) - the .wvui-icon svg width (20px)
+		// - the icon left padding (12px [1]) = 4px
+		// [1] see .wvui-typeahead-search--show-thumbnail .wvui-input__input:focus)
+		@margin-start-search-box: 4px;
+
+		.vector-sticky-header-search-toggle,
+		.vector-sticky-header-context-bar {
+			display: none;
+		}
+
+		.vector-search-box {
+			display: block;
+			flex-basis: unit( 500px / @font-size-browser / @font-size-base, em );
+			margin-left: @margin-start-search-box;
+		}
+
+		// T296318 Decrease the start margin of the search box to account for the
+		// icon's increased start position when the search component has thumbnails.
+		.vector-search-box-show-thumbnail {
+			margin-left: @margin-start-search-box - ( @size-search-expand / 2 );
+
+			.wvui-input__start-icon {
+				color: @colorGray2;
+			}
 		}
 	}
 }
 
 .client-nojs .vector-sticky-header {
 	display: none;
+}
+
+@media ( min-width: @width-breakpoint-tablet ) {
+	.client-js.vector-sticky-header-enabled {
+		// T290518: When the sticky header is enabled (feature flag is on, js is
+		// enabled, and viewport is at higher resolutions), add scroll padding to the
+		// root element. This is needed so that the sticky header does not overlap the
+		// top of an element when the URI has a hash fragment (e.g. when the user clicks
+		// a jump link) and when the user tabs through elements in reverse order.
+		//
+		// Please note that this class must be independent of the
+		// .vector-sticky-header-visible class to correctly handle situations where the
+		// sticky header isn't visible yet but we still need scroll padding applied
+		// (e.g. when the user navigates to a page with a hash fragment in the URI).
+		scroll-padding-top: @height-sticky-header;
+
+		// T289817 Override other sticky element offsets to ensure that other
+		// sticky elements (i.e. table headers) appear below the sticky header.
+		.mw-sticky-header-element,
+		.charts-stickyhead th {
+			/* stylelint-disable-next-line declaration-no-important */
+			top: @height-sticky-header !important;
+		}
+	}
 }

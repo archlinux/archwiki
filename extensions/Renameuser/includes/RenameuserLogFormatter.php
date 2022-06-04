@@ -1,5 +1,11 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser;
+
+use LogFormatter;
+use Message;
+use Title;
+
 /**
  * LogFormatter for renameuser/renameuser logs
  */

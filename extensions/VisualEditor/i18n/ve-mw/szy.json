@@ -3,8 +3,8 @@
 		"authors": [
 			"Benel",
 			"Bunukwiki",
-			"Tokoabibi",
-			"TMg"
+			"TMg",
+			"Tokoabibi"
 		]
 	},
 	"tooltip-ca-createsource": "patizeng tina kasabelih a yuensma-kodo",
@@ -161,7 +161,6 @@
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "piluceki kisu caay henay ku nisulitan $1\n{{PLURAL:$2|langat-pisinga’an}} a zasatu palalidtu haw?",
 	"visualeditor-dialogbutton-media-tooltip": "myiti",
 	"visualeditor-dialogbutton-meta-tooltip": "kasabelih setin",
-	"visualeditor-dialogbutton-transclusion-tooltip": "nicaliwan",
 	"visualeditor-donebutton-tooltip": "malahecitu mikawaway-kalumyiti",
 	"visualeditor-editconflict": "namakayza i mikawaway-kalumyiti sasula’cus, la’cus misuped ayzaay a misumadan. {{GENDER:|kisu}} a tiyungen misaungay ku sasula’cusay?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} ama i balucu’en tuway numisuay a kanamuhan pisaungay a sakawaw-kalumyiti-sakaluk, kapah tu kisu i mikawaway-kalumyiti sa ketun mibalic  mikawaway-kalumyiti muse, sawsawni misumad setin tu kanamuhan nu misu.",

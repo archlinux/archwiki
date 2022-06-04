@@ -3,11 +3,11 @@
 		"authors": [
 			"Ezagren",
 			"J Subhi",
-			"Macofe"
+			"Macofe",
+			"Amire80"
 		]
 	},
 	"wikieditor-wikitext-tab": "NaskahWiki",
-	"wikieditor-loading": "Mamuat",
 	"wikieditor-toolbar": "Kukuar pakakas mambabak",
 	"wikieditor-toolbar-tool-bold": "Kandal",
 	"wikieditor-toolbar-tool-bold-example": "Naskah kandal",
@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL nang Pian bariakan tampaknya marupakan tautan ka tungkaran wiki lain.\nApakah Pian handak maulahnya manjadi tautan internal?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Tautan dalam",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Tautan luar",
-	"wikieditor-toolbar-tool-link-empty": "Pian kada mambuati apa pun ka tautan.",
 	"wikieditor-toolbar-tool-file": "Maktub-akan barakas",
 	"wikieditor-toolbar-tool-file-example": "Cuntuh.jpg",
 	"wikieditor-toolbar-tool-reference": "Rujukan",
@@ -123,8 +122,8 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Naskah kandal &amp; hiring'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Naskah kandal &amp; hiring</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "Tautan dalam",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Judul tungkaran|Judul tautan]]<br />[[Judul tungkaran]]",
-	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Label tautan</a><br /><a href='#'>Judul tungkaran</a>",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Judul tungkaran]]<br />[[Judul tungkaran|Judul tautan]]",
+	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Judul tungkaran</a><br /><a href='#'>Label tautan</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Tautan luar",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.cuntuh.org Label tautan]<br />[http://www.cuntuh.org]<br />http://www.cuntuh.org",
 	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>Label pranala</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.cuntuh.org</a>",

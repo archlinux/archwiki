@@ -52,6 +52,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "Título para a nova secção.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Ao gravar, defina aqui a data e hora em que a página foi carregada. Usado para detetar conflitos de edição.",
 	"apihelp-visualeditoredit-param-summary": "Resumo da edição.",
+	"apihelp-visualeditoredit-param-tags": "Etiquetas de modificação a aplicar à revisão.",
 	"apihelp-visualeditoredit-param-wikitext": "O texto wiki para ser utilizado.",
 	"apihelp-visualeditoredit-summary": "Gravar no MediaWiki uma página HTML5 (convertida para texto wiki através do serviço Parsoid)."
 }

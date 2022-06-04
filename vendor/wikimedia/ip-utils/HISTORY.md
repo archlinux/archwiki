@@ -1,5 +1,25 @@
 # Release History
 
+## 4.0.0
+* Fix multiple phpcs codesniffer warnings (Zabe)
+
+-
+* build: Updating composer dependencies (libraryupgrader)
+* build: Cleanup and improve .phpcs.xml (Umherirrender)
+* build: Updating mediawiki/mediawiki-codesniffer to 37.0.0 (libraryupgrader)
+* build: Updating composer dependencies (libraryupgrader)
+* build: Updating mediawiki/mediawiki-codesniffer to 38.0.0 (libraryupgrader)
+* build: Updating mediawiki/mediawiki-phan-config to 0.11.1 (libraryupgrader)
+* tests: Add IPv4 test cases for IPUtils::splitHostAndPort() (Reedy)
+
+## 3.0.2
+* Remove redundant strpos/substr code from canonicalize() (Reedy)
+* Allow wikimedia/ip-set ^3.0.0 (Reedy)
+
+-
+* tests: Add test case to make IPUtils::parseRange6 100% covered (Reedy)
+* build: Updating composer dependencies (libraryupgrader)
+
 ## v3.0.1
 * Revert "Stop allowing invalid /0 subnet" (Reedy)
 * Update return type for IPUtils::parseCIDR6 (Reedy)

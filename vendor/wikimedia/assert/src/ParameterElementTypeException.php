@@ -38,7 +38,7 @@ class ParameterElementTypeException extends ParameterAssertionException {
 	/**
 	 * @return string
 	 */
-	public function getElementType() {
+	public function getElementType(): string {
 		return $this->elementType;
 	}
 

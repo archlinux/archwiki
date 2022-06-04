@@ -129,7 +129,6 @@ class CookieSessionProvider extends SessionProvider {
 				return null;
 			}
 
-			// Sanity check
 			if ( $userName !== null && $userInfo->getName() !== $userName ) {
 				$this->logger->warning(
 					'Session "{session}" requested with mismatched UserID and UserName cookies.',
@@ -304,7 +303,7 @@ class CookieSessionProvider extends SessionProvider {
 		if ( $loggedOut + 86400 > time() &&
 			$loggedOut !== (int)$this->getCookie( $request, 'LoggedOut', $this->cookieOptions['prefix'] )
 		) {
-			$request->response()->setCookie( 'LoggedOut', $loggedOut, $loggedOut + 86400,
+			$request->response()->setCookie( 'LoggedOut', (string)$loggedOut, $loggedOut + 86400,
 				$this->cookieOptions );
 		}
 	}

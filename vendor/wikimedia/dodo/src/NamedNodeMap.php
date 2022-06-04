@@ -7,7 +7,7 @@ namespace Wikimedia\Dodo;
 use Wikimedia\Dodo\Internal\UnimplementedTrait;
 use Wikimedia\Dodo\Internal\Util;
 
-/******************************************************************************
+/**
  * NamedNodeMap.php
  * ----------------
  * Implements a NamedNodeMap. Used to represent Element::attributes.
@@ -57,6 +57,7 @@ use Wikimedia\Dodo\Internal\Util;
  *      properly implemented, which made it much easier to read and write
  *      the attribute methods on the Element class.
  *
+ * @phan-forbid-undeclared-magic-properties
  */
 class NamedNodeMap implements \Wikimedia\IDLeDOM\NamedNodeMap {
 	// Stub out methods not yet implemented.

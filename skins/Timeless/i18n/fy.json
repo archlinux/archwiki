@@ -24,5 +24,7 @@
 	"timeless-languages": "Talen",
 	"timeless-projects": "Oare projekten",
 	"timeless.css": "/* Al it CSS hjirre sil foar brûkers fan de Tiidleas-foarmjouwing laden wurde */",
-	"timeless.js": "/* Al it JavaScript hjirre sil foar brûkers fan de Tiidleas-foarmjouwing laden wurde */"
+	"timeless.js": "/* Al it JavaScript hjirre sil foar brûkers fan de Tiidleas-foarmjouwing laden wurde */",
+	"timeless-view-history": "Skiednis",
+	"timeless-action-undelete": "$1 {{PLURAL:$1|ferzje|ferzjes}} weromsette"
 }

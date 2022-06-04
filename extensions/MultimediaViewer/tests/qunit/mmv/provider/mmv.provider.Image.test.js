@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.provider.Image', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Image constructor sanity check', function ( assert ) {
+	QUnit.test( 'Image constructor sense check', function ( assert ) {
 		var imageProvider = new mw.mmv.provider.Image();
 
 		assert.ok( imageProvider );

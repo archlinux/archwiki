@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.provider.ImageInfo', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'ImageInfo constructor sanity check', function ( assert ) {
+	QUnit.test( 'ImageInfo constructor sense check', function ( assert ) {
 		var api = { get: function () {} },
 			imageInfoProvider = new mw.mmv.provider.ImageInfo( api );
 

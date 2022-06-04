@@ -5,8 +5,8 @@
 			"Praveenp",
 			"Ranjithsiji",
 			"Santhosh.thottingal",
-			"Vssun",
-			"TMg"
+			"TMg",
+			"Vssun"
 		]
 	},
 	"tooltip-ca-createsource": "ഈ താളിന്റെ സ്രോതസ്സ് രൂപം സൃഷ്ടിക്കുക",
@@ -181,7 +181,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "ചിത്രങ്ങളും മീഡിയയും",
 	"visualeditor-dialogbutton-meta-tooltip": "താളിന്റെ സജ്ജീകരണങ്ങൾ",
 	"visualeditor-dialogbutton-template-tooltip": "ഫലകം",
-	"visualeditor-dialogbutton-transclusion-tooltip": "ഉൾപ്പെടുത്തൽ",
 	"visualeditor-donebutton-tooltip": "തിരുത്ത് പൂർത്തിയായി",
 	"visualeditor-editconflict": "താങ്കൾ വരുത്തിയ മാറ്റങ്ങൾ ഇടയ്ക്ക് മറ്റാരോ മാറ്റങ്ങൾ വരുത്തിയതിനാൽ സേവ് ചെയ്യാൻ കഴിയില്ല. തിരുത്തലുകൾ ഒത്തുചേരാത്തത് {{GENDER:|താങ്കൾ}} തന്നെ പരിഹരിക്കുന്നോ?",
 	"visualeditor-editingtabdialog-body": "താങ്കൾക്കേത് എഴുത്തുപകരണമാണ് താത്പര്യം എന്ന് ഇപ്പോൾ {{SITENAME}} ഓർത്തിരിക്കുന്നതാണ്. തിരുത്തുന്നതിനിടെ താങ്കൾക്ക് എഴുത്തുപകരണം മാറ്റാവുന്നതും, താങ്കളുടെ താത്പര്യം പിന്നീട് നൽകാവുന്നതുമാണ്.",

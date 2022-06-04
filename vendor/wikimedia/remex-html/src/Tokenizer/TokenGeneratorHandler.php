@@ -73,6 +73,3 @@ class TokenGeneratorHandler implements TokenHandler {
 			'sourceLength' => $sourceLength ];
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TokenGeneratorHandler::class, 'RemexHtml\Tokenizer\TokenGeneratorHandler' );

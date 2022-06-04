@@ -7,7 +7,8 @@
 			"Hanna Tardos",
 			"Misibacsi",
 			"Tacsipacsi",
-			"Tgr"
+			"Tgr",
+			"Máté"
 		]
 	},
 	"vector-skin-desc": "A MonoBook felület modern változata frissebb kinézettel és sok használhatóságot javító fejlesztéssel",
@@ -18,7 +19,9 @@
 	"vector.css": "/* Az összes itteni CSS betöltődik Vector felület használóinak */",
 	"vector.js": "/* Az összes itteni JavaScript betöltődik Vector felület használóinak */",
 	"vector-action-toggle-sidebar": "Oldalsáv megjelenítése vagy elrejtése",
+	"vector-languages": "Más nyelveken",
 	"vector-language-button-label": "$1 nyelv",
+	"vector-language-redirect-to-top": "Ezen a {{SITENAME}} oldalon a nyelvközi hivatkozások a lap tetején, a címmel átellenben találhatók. [[#p-lang-btn|Ugrás a tetejére.]]",
 	"vector-action-addsection": "Új téma nyitása",
 	"vector-action-delete": "Törlés",
 	"vector-action-move": "Átnevezés",

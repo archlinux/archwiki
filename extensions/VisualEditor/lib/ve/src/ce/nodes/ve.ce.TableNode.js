@@ -36,6 +36,10 @@ ve.ce.TableNode = function VeCeTableNode() {
 
 OO.inheritClass( ve.ce.TableNode, ve.ce.BranchNode );
 
+/* Static properties */
+
+ve.ce.TableNode.static.autoFocus = false;
+
 /* Methods */
 
 /**
@@ -64,7 +68,7 @@ ve.ce.TableNode.prototype.onSetup = function () {
 
 	this.$overlay = $( '<div>' )
 		.addClass( 've-ce-tableNodeOverlay oo-ui-element-hidden' )
-		.append( [
+		.append(
 			this.$selectionBox,
 			this.$selectionBoxAnchor,
 			this.nodeContext ? this.nodeContext.$element : undefined,
@@ -72,7 +76,7 @@ ve.ce.TableNode.prototype.onSetup = function () {
 			this.rowContext.$element,
 			this.$rowBracket,
 			this.$colBracket
-		] );
+		);
 	this.surface.surface.$blockers.append( this.$overlay );
 
 	// Events
@@ -231,7 +235,12 @@ ve.ce.TableNode.prototype.onTableMouseDown = function ( e ) {
 		// On mobile, fall through to the double-click behavior on a single tap --
 		// this will place the cursor within the cell, rather than remaining in
 		// table-selection mode.
-		this.onTableDblClick( e );
+		// As we just have only just set the table selection, the surface is in
+		// process of deactivating, so wait for the event loop to clear before
+		// continuing.
+		setTimeout( function () {
+			node.onTableDblClick( e );
+		} );
 	} else {
 		this.surface.$document.on( {
 			'mouseup touchend': this.onTableMouseUpHandler,

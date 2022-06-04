@@ -12,6 +12,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\AtEase\AtEase;
 
 /**
  * Base code for file repositories.
@@ -123,8 +124,8 @@ class FileRepo {
 	 */
 	protected $abbrvThreshold;
 
-	/** @var string The URL of the repo's favicon, if any */
-	protected $favicon;
+	/** @var null|string The URL to a favicon (optional, may be a server-local path URL). */
+	protected $favicon = null;
 
 	/** @var bool Whether all zones should be private (e.g. private wiki repo) */
 	protected $isPrivate;
@@ -263,22 +264,18 @@ class FileRepo {
 	}
 
 	/**
-	 * Check if a single zone or list of zones is defined for usage
+	 * Ensure that a single zone or list of zones is defined for usage
 	 *
 	 * @param string[]|string $doZones Only do a particular zones
 	 * @throws MWException
-	 * @return Status
 	 */
-	protected function initZones( $doZones = [] ) {
-		$status = $this->newGood();
+	protected function initZones( $doZones = [] ): void {
 		foreach ( (array)$doZones as $zone ) {
 			$root = $this->getZonePath( $zone );
 			if ( $root === null ) {
 				throw new MWException( "No '$zone' zone defined in the {$this->name} repo." );
 			}
 		}
-
-		return $status;
 	}
 
 	/**
@@ -804,7 +801,7 @@ class FileRepo {
 	/**
 	 * Make an url to this repo
 	 *
-	 * @param string|string[] $query Query string to append
+	 * @param string|array $query Query string to append
 	 * @param string $entry Entry point; defaults to index
 	 * @return string|false False on failure
 	 */
@@ -1036,7 +1033,7 @@ class FileRepo {
 
 	/**
 	 * Import a file from the local file system into the repo.
-	 * This does no locking nor journaling and overrides existing files.
+	 * This does no locking and overrides existing files.
 	 * This function can be used to write to otherwise read-only foreign repos.
 	 * This is intended for copying generated thumbnails into the repo.
 	 *
@@ -1057,7 +1054,7 @@ class FileRepo {
 
 	/**
 	 * Import a batch of files from the local file system into the repo.
-	 * This does no locking nor journaling and overrides existing files.
+	 * This does no locking and overrides existing files.
 	 * This function can be used to write to otherwise read-only foreign repos.
 	 * This is intended for copying generated thumbnails into the repo.
 	 *
@@ -1106,7 +1103,7 @@ class FileRepo {
 	}
 
 	/**
-	 * Purge a file from the repo. This does no locking nor journaling.
+	 * Purge a file from the repo. This does no locking.
 	 * This function can be used to write to otherwise read-only foreign repos.
 	 * This is intended for purging thumbnails.
 	 *
@@ -1135,7 +1132,7 @@ class FileRepo {
 	/**
 	 * Purge a batch of files from the repo.
 	 * This function can be used to write to otherwise read-only foreign repos.
-	 * This does no locking nor journaling and is intended for purging thumbnails.
+	 * This does no locking and is intended for purging thumbnails.
 	 *
 	 * @param string[] $paths List of virtual URLs or storage paths
 	 * @return Status
@@ -1292,10 +1289,7 @@ class FileRepo {
 
 		$backend = $this->backend; // convenience
 		// Try creating directories
-		$status = $this->initZones( 'public' );
-		if ( !$status->isOK() ) {
-			return $status;
-		}
+		$this->initZones( 'public' );
 
 		$status = $this->newGood( [] );
 
@@ -1335,7 +1329,7 @@ class FileRepo {
 
 			// Archive destination file if it exists.
 			// This will check if the archive file also exists and fail if does.
-			// This is a sanity check to avoid data loss. On Windows and Linux,
+			// This is a check to avoid data loss. On Windows and Linux,
 			// copy() will overwrite, so the existence check is vulnerable to
 			// race conditions unless a functioning LockManager is used.
 			// LocalFile also uses SELECT FOR UPDATE for synchronization.
@@ -1383,9 +1377,9 @@ class FileRepo {
 		}
 		// Cleanup for disk source files...
 		foreach ( $sourceFSFilesToDelete as $file ) {
-			Wikimedia\suppressWarnings();
+			AtEase::suppressWarnings();
 			unlink( $file ); // FS cleanup
-			Wikimedia\restoreWarnings();
+			AtEase::restoreWarnings();
 		}
 
 		return $status;
@@ -1396,7 +1390,7 @@ class FileRepo {
 	 * Callers are responsible for doing read-only and "writable repo" checks.
 	 *
 	 * @param string $dir Virtual URL (or storage path) of directory to clean
-	 * @return Status
+	 * @return Status Good status without value for success, fatal otherwise.
 	 */
 	protected function initDirectory( $dir ) {
 		$path = $this->resolveToStoragePathIfVirtual( $dir );
@@ -1435,7 +1429,7 @@ class FileRepo {
 	 * Checks existence of a file
 	 *
 	 * @param string $file Virtual URL (or storage path) of file to check
-	 * @return bool
+	 * @return bool|null Whether the file exists, or null in case of I/O errors
 	 */
 	public function fileExists( $file ) {
 		$result = $this->fileExistsBatch( [ $file ] );
@@ -1447,7 +1441,8 @@ class FileRepo {
 	 * Checks existence of an array of files.
 	 *
 	 * @param string[] $files Virtual URLs (or storage paths) of files to check
-	 * @return array Map of files and existence flags, or false
+	 * @return array<string|int,bool|null> Map of files and either bool indicating whether the files exist,
+	 *   or null in case of I/O errors
 	 */
 	public function fileExistsBatch( array $files ) {
 		$paths = array_map( [ $this, 'resolveToStoragePathIfVirtual' ], $files );
@@ -1499,10 +1494,7 @@ class FileRepo {
 		$this->assertWritableRepo(); // fail out if read-only
 
 		// Try creating directories
-		$status = $this->initZones( [ 'public', 'deleted' ] );
-		if ( !$status->isOK() ) {
-			return $status;
-		}
+		$this->initZones( [ 'public', 'deleted' ] );
 
 		$status = $this->newGood();
 
@@ -1524,7 +1516,7 @@ class FileRepo {
 			$archiveDir = dirname( $archivePath ); // does not touch FS
 
 			// Create destination directories
-			if ( !$this->initDirectory( $archiveDir )->isOK() ) {
+			if ( !$this->initDirectory( $archiveDir )->isGood() ) {
 				return $this->newFatal( 'directorycreateerror', $archiveDir );
 			}
 
@@ -1627,7 +1619,7 @@ class FileRepo {
 	 */
 	public function getFileProps( $virtualUrl ) {
 		$fsFile = $this->getLocalReference( $virtualUrl );
-		$mwProps = new MWFileProps( MediaWiki\MediaWikiServices::getInstance()->getMimeAnalyzer() );
+		$mwProps = new MWFileProps( MediaWikiServices::getInstance()->getMimeAnalyzer() );
 		if ( $fsFile ) {
 			$props = $mwProps->getPropsFromPath( $fsFile->getPath(), true );
 		} else {
@@ -1848,10 +1840,10 @@ class FileRepo {
 	 * @return string
 	 */
 	public function getDisplayName() {
-		global $wgSitename;
+		$sitename = MediaWikiServices::getInstance()->getMainConfig()->get( 'Sitename' );
 
 		if ( $this->isLocal() ) {
-			return $wgSitename;
+			return $sitename;
 		}
 
 		// 'shared-repo-name-wikimediacommons' is used when $wgUseInstantCommons = true
@@ -1989,13 +1981,23 @@ class FileRepo {
 		];
 
 		$optionalSettings = [
-			'url', 'thumbUrl', 'initialCapital', 'descBaseUrl', 'scriptDirUrl', 'articleUrl',
-			'fetchDescription', 'descriptionCacheExpiry', 'favicon'
+			'url',
+			'thumbUrl',
+			'initialCapital',
+			'descBaseUrl',
+			'scriptDirUrl',
+			'articleUrl',
+			'fetchDescription',
+			'descriptionCacheExpiry',
 		];
 		foreach ( $optionalSettings as $k ) {
 			if ( isset( $this->$k ) ) {
 				$ret[$k] = $this->$k;
 			}
+		}
+		if ( isset( $this->favicon ) ) {
+			// Expand any local path to full URL to improve API usability (T77093).
+			$ret['favicon'] = wfExpandUrl( $this->favicon );
 		}
 
 		return $ret;

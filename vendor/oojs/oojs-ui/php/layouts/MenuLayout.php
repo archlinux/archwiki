@@ -61,12 +61,10 @@ class MenuLayout extends Layout {
 
 		$this->menuWrapper->addClasses( [ 'oo-ui-menuLayout-menu' ] );
 		$this->contentWrapper->addClasses( [ 'oo-ui-menuLayout-content' ] );
-		$this->addClasses( [ 'oo-ui-menuLayout' ] );
-		if ( $this->expanded ) {
-			$this->addClasses( [ 'oo-ui-menuLayout-expanded' ] );
-		} else {
-			$this->addClasses( [ 'oo-ui-menuLayout-static' ] );
-		}
+		$this->addClasses( [
+			'oo-ui-menuLayout',
+			$this->expanded ? 'oo-ui-menuLayout-expanded' : 'oo-ui-menuLayout-static',
+		] );
 		if ( !empty( $config['menuPanel'] ) ) {
 			$this->setMenuPanel( $config['menuPanel'] );
 		}

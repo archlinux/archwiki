@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Chrumps",
+			"Halibutt",
+			"Rail",
+			"Railfail536",
+			"The Polish",
+			"Woytecr"
+		]
+	},
+	"apihelp-abusefiltercheckmatch-param-filter": "Pełny tekst filtru do sprawdzenia zgodności.",
+	"apihelp-abusefiltercheckmatch-param-vars": "Tablica zmiennych do testowania zakodowana w formacie JSON.",
+	"apihelp-abusefilterchecksyntax-description": "Sprawdź składnię filtra AbuseFilter.",
+	"apihelp-abusefilterchecksyntax-example-1": "Sprawdź składnię poprawnego filtra",
+	"apihelp-abusefilterchecksyntax-example-2": "Sprawdź składnię nieprawidłowego filtra",
+	"apihelp-abusefilterevalexpression-param-expression": "Wyrażenie do sprawdzenia.",
+	"apihelp-abusefilterunblockautopromote-param-user": "Nazwa użytkownika, którego chcesz odblokować.",
+	"apihelp-query+abusefilters-description": "Pokaż szczegóły filtrów nadużyć.",
+	"apihelp-query+abusefilters-summary": "Pokaż szczegóły filtrów nadużyć.",
+	"apihelp-query+abusefilters-param-startid": "ID filtra, od którego rozpocząć wyliczanie.",
+	"apihelp-query+abusefilters-param-endid": "ID filtra, na którym zakończyć wyliczanie.",
+	"apihelp-query+abusefilters-param-show": "Pokaż tylko filtry, które spełniają te kryteria.",
+	"apihelp-query+abusefilters-param-limit": "Maksymalna liczba filtrów do wyświetlenia.",
+	"apihelp-query+abusefilters-param-prop": "Właściwości do odczytu.",
+	"apihelp-query+abusefilters-example-1": "Lista uruchomionych filtrów publicznych",
+	"apihelp-query+abusefilters-example-2": "Pokaż szczegóły dotyczące filtrów",
+	"apihelp-query+abuselog-description": "Pokaż zdarzenia wyłapane przez jeden z filtrów nadużyć.",
+	"apihelp-query+abuselog-summary": "Pokaż zdarzenia, które zostały złapane przez jeden z filtrów nadużyć.",
+	"apihelp-query+abuselog-param-start": "Znacznik czasu, od którego zacząć wyliczanie.",
+	"apihelp-query+abuselog-param-end": "Znacznik czasu, na którym zakończyć wyliczanie.",
+	"apihelp-query+abuselog-param-filter-central": "Pokaż tylko wpisy, które zostały złapane przez filtry o podanych ID. Oddzielaj znakiem pionowej kreski.",
+	"apihelp-query+abuselog-param-prop": "Jakie właściwości uzyskać.",
+	"apihelp-query+abuselog-example-1": "Pokaż ostatnie wpisy w rejestrze",
+	"apihelp-query+abuselog-example-2": "Pokaż ostatnie wpisy w dzienniku [[API]]",
+	"apierror-abusefilter-canttest": "Nie masz uprawnień do testowania filtrów nadużyć.",
+	"apierror-abusefilter-cantcheck": "Nie masz uprawnień do sprawdzania składni filtru nadużyć.",
+	"apierror-abusefilter-badsyntax": "Filtr ma nieprawidłową składnię."
+}

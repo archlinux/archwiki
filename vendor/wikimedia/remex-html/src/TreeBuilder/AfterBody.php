@@ -69,6 +69,3 @@ class AfterBody extends InsertionMode {
 			$text, $sourceStart, $sourceLength );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( AfterBody::class, 'RemexHtml\TreeBuilder\AfterBody' );

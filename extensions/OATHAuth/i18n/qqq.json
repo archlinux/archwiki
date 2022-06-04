@@ -14,7 +14,9 @@
 			"Tyler Romeo <tylerromeo@gmail.com>",
 			"Umherirrender",
 			"Xiplus",
-			"Zoranzoki21"
+			"Zoranzoki21",
+			"MarcoAurelio",
+			"Reedy"
 		]
 	},
 	"oathauth-desc": "{{desc|name=OATH Auth|url=https://www.mediawiki.org/wiki/Extension:OATHAuth}}",
@@ -68,9 +70,9 @@
 	"oathauth-user-not-found": "Message that Special:DisableOATHForUser will display when no user account can be found with the name provided",
 	"oath-log-name": "The Special:Log log name that appears in the drop-down on the Special:Log page",
 	"oath-log-header": "The Special:Log description that appears on the Special:Log page when you filter logs on this specific log name",
-	"logentry-oath-disable-other": "The template of the log entry message\n\n* <code>$1</code> is the person disabling the two-factor authentication.\n* <code>$2</code> is the user whose 2FA is being disabled.\n* <code>$3</code> is the user whose 2FA is being disabled (again).",
-	"logentry-oath-verify": "The template of the log entry message\n\n* <code>$1</code> is the person verifying the two-factor authentication.\n* <code>$2</code> is the user whose 2FA is being verified.\n* <code>$3</code> is the user whose 2FA is being verified (again).",
-	"oauthauth-ui-no-module": "User preference value when no 2FA module is enabled",
+	"logentry-oath-disable-other": "{{Logentry|<kbd>Special:Log/oath</kbd>}}",
+	"logentry-oath-verify": "{{Logentry|<kbd>Special:Log/oath</kbd>}}",
+	"oathauth-ui-no-module": "User preference value when no 2FA module is enabled",
 	"oathauth-module-invalid": "Error message when the OATHAuth module registered by user is invalid",
 	"oathauth-module-totp-label": "User preference value when the TOTP module is enabled",
 	"oathauth-ui-manage": "Button on Special:Preferences, that leads to [[Special:OATHManage]]",

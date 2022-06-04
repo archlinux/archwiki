@@ -22,6 +22,7 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Preferences\DefaultPreferencesFactory;
 use MediaWiki\Preferences\PreferencesFactory;
 use MediaWiki\User\UserOptionsManager;
 
@@ -114,7 +115,7 @@ class ApiOptions extends ApiBase {
 		$prefs = $this->getPreferences();
 		$prefsKinds = $this->userOptionsManager->getOptionKinds( $user, $this->getContext(), $changes );
 
-		$htmlForm = null;
+		$htmlForm = new HTMLForm( DefaultPreferencesFactory::simplifyFormDescriptor( $prefs ), $this );
 		foreach ( $changes as $key => $value ) {
 			switch ( $prefsKinds[$key] ) {
 				case 'registered':
@@ -124,17 +125,14 @@ class ApiOptions extends ApiBase {
 						$validation = true;
 					} else {
 						// Validate
-						if ( $htmlForm === null ) {
-							// We need a dummy HTMLForm for the validate callback...
-							$htmlForm = new HTMLForm( [], $this );
-						}
-						$field = HTMLForm::loadInputFromParameters( $key, $prefs[$key], $htmlForm );
+						$field = $htmlForm->getField( $key );
 						$validation = $field->validate( $value, $this->userOptionsManager->getOptions( $user ) );
 					}
 					break;
 				case 'registered-multiselect':
 				case 'registered-checkmatrix':
 					// A key for a multiselect or checkmatrix option.
+					// TODO: Apply validation properly.
 					$validation = true;
 					$value = $value !== null ? (bool)$value : null;
 					break;

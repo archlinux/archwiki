@@ -21,5 +21,7 @@
 	"monobook-more-actions": "Více",
 	"monobook-cactions-label": "Možnosti stránky",
 	"monobook-notifications-link": "Upozornění ($1)",
-	"monobook-notifications-link-none": "Upozornění"
+	"monobook-notifications-link-none": "Upozornění",
+	"monobook-view-history": "Historie",
+	"monobook-action-undelete": "Obnovit $1 {{PLURAL:$1|verzi|verze|verzí}}"
 }

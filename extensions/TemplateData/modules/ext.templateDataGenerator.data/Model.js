@@ -129,8 +129,7 @@ Model.static.getAllProperties = function ( getFullData ) {
 			restrict: /[|=]|}}/
 		},
 		aliases: {
-			type: 'array',
-			delimiter: mw.msg( 'comma-separator' )
+			type: 'array'
 		},
 		label: {
 			type: 'string',
@@ -204,11 +203,10 @@ Model.static.getAllProperties = function ( getFullData ) {
  * @return {string[]} Property names
  */
 Model.static.getPropertiesWithLanguage = function () {
-	var prop,
-		result = [],
+	var result = [],
 		propDefinitions = this.getAllProperties( true );
 
-	for ( prop in propDefinitions ) {
+	for ( var prop in propDefinitions ) {
 		if ( propDefinitions[ prop ].allowLanguages ) {
 			result.push( prop );
 		}
@@ -224,9 +222,9 @@ Model.static.getPropertiesWithLanguage = function () {
  * @return {string[]} Clean array
  */
 Model.static.splitAndTrimArray = function ( str, delim ) {
-	var arr = [];
 	delim = delim || mw.msg( 'comma-separator' );
 
+	var arr = [];
 	str.split( delim ).forEach( function ( part ) {
 		var trimmed = part.trim();
 		if ( trimmed ) {
@@ -261,8 +259,7 @@ Model.static.arrayUnionWithoutEmpty = function () {
  * @return {Model} New model
  */
 Model.static.newFromObject = function ( tdObject, paramsInSource ) {
-	var param,
-		model = new Model();
+	var model = new Model();
 
 	model.setSourceCodeParameters( paramsInSource || [] );
 
@@ -276,7 +273,7 @@ Model.static.newFromObject = function ( tdObject, paramsInSource ) {
 
 	// Add params
 	if ( tdObject.params ) {
-		for ( param in tdObject.params ) {
+		for ( var param in tdObject.params ) {
 			model.addParam( param, tdObject.params[ param ] );
 		}
 	}
@@ -311,17 +308,12 @@ Model.static.newFromObject = function ( tdObject, paramsInSource ) {
  *  the model
  */
 Model.prototype.getMissingParams = function () {
-	var i,
-		result = [],
-		allParamNames = this.getAllParamNames();
+	var allParamNames = this.getAllParamNames(),
+		sourceCodeParameters = this.sourceCodeParameters;
 
-	// Check source code params
-	for ( i = 0; i < this.sourceCodeParameters.length; i++ ) {
-		if ( allParamNames.indexOf( this.sourceCodeParameters[ i ] ) === -1 ) {
-			result.push( this.sourceCodeParameters[ i ] );
-		}
-	}
-	return result;
+	return sourceCodeParameters.filter( function ( sourceCodeParameter ) {
+		return allParamNames.indexOf( sourceCodeParameter ) === -1;
+	} );
 };
 
 /**
@@ -330,31 +322,30 @@ Model.prototype.getMissingParams = function () {
  * @return {Object} Parameters added. -1 for failure.
  */
 Model.prototype.importSourceCodeParameters = function () {
-	var i, paramKey,
+	var model = this,
 		allParamNames = this.getAllParamNames(),
 		existingArray = [],
 		importedArray = [],
 		skippedArray = [];
 
 	// Check existing params
-	for ( i = 0; i < allParamNames.length; i++ ) {
-		paramKey = allParamNames[ i ];
-		if ( this.sourceCodeParameters.indexOf( paramKey ) !== -1 ) {
+	allParamNames.forEach( function ( paramKey ) {
+		if ( model.sourceCodeParameters.indexOf( paramKey ) !== -1 ) {
 			existingArray.push( paramKey );
 		}
-	}
+	} );
 
 	// Add sourceCodeParameters to the model
-	for ( i = 0; i < this.sourceCodeParameters.length; i++ ) {
+	this.sourceCodeParameters.forEach( function ( sourceCodeParameter ) {
 		if (
-			existingArray.indexOf( this.sourceCodeParameters[ i ] ) === -1 &&
-			this.addParam( this.sourceCodeParameters[ i ] )
+			existingArray.indexOf( sourceCodeParameter ) === -1 &&
+			model.addParam( sourceCodeParameter )
 		) {
-			importedArray.push( this.sourceCodeParameters[ i ] );
+			importedArray.push( sourceCodeParameter );
 		} else {
-			skippedArray.push( this.sourceCodeParameters[ i ] );
+			skippedArray.push( sourceCodeParameter );
 		}
-	}
+	} );
 
 	return {
 		imported: importedArray,
@@ -369,19 +360,18 @@ Model.prototype.importSourceCodeParameters = function () {
  * @return {string[]} Language codes in use
  */
 Model.prototype.getExistingLanguageCodes = function () {
-	var param, prop,
-		result = [],
-		languageProps = this.constructor.static.getPropertiesWithLanguage();
+	var result = [];
 
 	// Take languages from the template description
 	if ( $.isPlainObject( this.description ) ) {
 		result = Object.keys( this.description );
 	}
 
+	var languageProps = this.constructor.static.getPropertiesWithLanguage();
 	// Go over the parameters
-	for ( param in this.params ) {
+	for ( var param in this.params ) {
 		// Go over the properties
-		for ( prop in this.params[ param ] ) {
+		for ( var prop in this.params[ param ] ) {
 			if ( languageProps.indexOf( prop ) !== -1 ) {
 				result = this.constructor.static.arrayUnionWithoutEmpty( result, Object.keys( this.params[ param ][ prop ] ) );
 			}
@@ -401,14 +391,10 @@ Model.prototype.getExistingLanguageCodes = function () {
  * @fires change
  */
 Model.prototype.addParam = function ( key, paramData ) {
-	var prop, name, lang, propToSet,
-		existingNames = this.getAllParamNames(),
-		data = $.extend( true, {}, paramData ),
-		language = this.getDefaultLanguage(),
-		propertiesWithLanguage = this.constructor.static.getPropertiesWithLanguage(),
-		allProps = this.constructor.static.getAllProperties( true );
+	var existingNames = this.getAllParamNames(),
+		data = $.extend( true, {}, paramData );
 
-	name = key;
+	var name = key;
 	// Check that the parameter is not already in the model
 	if ( this.params[ key ] || existingNames.indexOf( key ) !== -1 ) {
 		// Change parameter key
@@ -439,8 +425,11 @@ Model.prototype.addParam = function ( key, paramData ) {
 
 	// Go over the rest of the data
 	if ( data ) {
-		for ( prop in data ) {
-			propToSet = prop;
+		var language = this.getDefaultLanguage();
+		var propertiesWithLanguage = this.constructor.static.getPropertiesWithLanguage();
+		var allProps = this.constructor.static.getAllProperties( true );
+		for ( var prop in data ) {
+			var propToSet = prop;
 			if (
 				// This is to make sure that forwards compatibility is achieved
 				// and the code doesn't die on properties that aren't valid
@@ -466,7 +455,7 @@ Model.prototype.addParam = function ( key, paramData ) {
 				$.isPlainObject( data[ prop ] )
 			) {
 				// Add all language properties
-				for ( lang in data[ prop ] ) {
+				for ( var lang in data[ prop ] ) {
 					this.setParamProperty( key, propToSet, data[ prop ], lang );
 				}
 			} else {
@@ -491,10 +480,9 @@ Model.prototype.addParam = function ( key, paramData ) {
  * @return {string[]} Used parameter names
  */
 Model.prototype.getAllParamNames = function () {
-	var key, param,
-		result = [];
-	for ( key in this.params ) {
-		param = this.params[ key ];
+	var result = [];
+	for ( var key in this.params ) {
+		var param = this.params[ key ];
 		result.push( param.name );
 		if ( param.aliases ) {
 			result = result.concat( param.aliases );
@@ -508,7 +496,7 @@ Model.prototype.getAllParamNames = function () {
  * Set the template description
  *
  * @param {string|Object} desc New template description
- * @param {Object} [language] Description language, if supplied. If not given,
+ * @param {string} [language] Description language, if supplied. If not given,
  *  will default to the wiki language.
  * @fires change-description
  * @fires change
@@ -544,7 +532,7 @@ Model.prototype.getTemplateDescription = function ( language ) {
 /**
  * Set the template description
  *
- * @param {string|Object} map New template map info
+ * @param {string|Object|undefined} map New template map info
  * @fires change-map
  * @fires change
  */
@@ -565,7 +553,7 @@ Model.prototype.setMapInfo = function ( map ) {
 /**
  * Get the template info.
  *
- * @return {string|Object} The template map info.
+ * @return {string|Object|undefined} The template map info.
  */
 Model.prototype.getMapInfo = function () {
 	return this.maps;
@@ -574,7 +562,7 @@ Model.prototype.getMapInfo = function () {
 /**
  * Get the template info.
  *
- * @return {Object} The Original template map info.
+ * @return {Object|undefined} The Original template map info.
  */
 Model.prototype.getOriginalMapsInfo = function () {
 	return this.originalMaps;
@@ -605,7 +593,7 @@ Model.prototype.getDefaultLanguage = function () {
 /**
  * Set template param order array.
  *
- * @param {string[]} orderArray Parameter key array in order
+ * @param {string[]} [orderArray] Parameter key array in order
  * @fires change-paramOrder
  * @fires change
  */
@@ -719,10 +707,8 @@ Model.prototype.getTemplateFormat = function () {
  * @fires change
  */
 Model.prototype.setParamProperty = function ( paramKey, prop, value, language ) {
-	var propertiesWithLanguage = this.constructor.static.getPropertiesWithLanguage(),
-		allProps = this.constructor.static.getAllProperties( true ),
-		status = false,
-		oldValue, newKey;
+	var allProps = this.constructor.static.getAllProperties( true ),
+		status = false;
 
 	language = language || this.getDefaultLanguage();
 	if ( !allProps[ prop ] ) {
@@ -730,11 +716,7 @@ Model.prototype.setParamProperty = function ( paramKey, prop, value, language ) 
 		return status;
 	}
 
-	if ( allProps[ prop ].type === 'array' && typeof value === 'string' ) {
-		// When we split the string, we want to use a trimmed delimiter
-		value = this.constructor.static.splitAndTrimArray( value, allProps[ prop ].delimiter.trim() );
-	}
-
+	var propertiesWithLanguage = this.constructor.static.getPropertiesWithLanguage();
 	// Check if the property is split by language code
 	if ( propertiesWithLanguage.indexOf( prop ) !== -1 ) {
 		// Initialize property if necessary
@@ -752,9 +734,10 @@ Model.prototype.setParamProperty = function ( paramKey, prop, value, language ) 
 	} else {
 		// Compare without language
 		if ( !this.constructor.static.compare( this.params[ paramKey ][ prop ], value ) ) {
-			oldValue = this.params[ paramKey ][ prop ];
+			var oldValue = this.params[ paramKey ][ prop ];
 			this.params[ paramKey ][ prop ] = value;
 
+			var newKey;
 			if ( prop === 'name' && oldValue !== value ) {
 				newKey = value;
 				// See if the parameters already has something with this new key
@@ -858,7 +841,7 @@ Model.prototype.getParamProperty = function ( paramKey, prop ) {
  * Retrieve a specific parameter data
  *
  * @param {string} key Parameter key
- * @return {Object} Parameter data
+ * @return {Object|undefined} Parameter data
  */
 Model.prototype.getParamData = function ( key ) {
 	return this.params[ key ];
@@ -949,12 +932,12 @@ Model.prototype.getOriginalTemplateDataObject = function () {
  * @return {Object} Templatedata object
  */
 Model.prototype.outputTemplateData = function () {
-	var paramKey, key, prop, oldKey, name, compareOrig, normalizedValue,
-		allProps = this.constructor.static.getAllProperties( true ),
+	var allProps = this.constructor.static.getAllProperties( true ),
 		original = this.getOriginalTemplateDataObject() || { params: {} },
 		result = $.extend( true, {}, original ),
 		defaultLang = this.getDefaultLanguage();
 
+	var normalizedValue;
 	// Template description
 	if ( this.description[ defaultLang ] !== undefined ) {
 		normalizedValue = this.propRemoveUnusedLanguages( this.description );
@@ -997,8 +980,8 @@ Model.prototype.outputTemplateData = function () {
 	}
 
 	// Go over parameters in data
-	for ( paramKey in this.params ) {
-		key = paramKey;
+	for ( var paramKey in this.params ) {
+		var key = paramKey;
 		if ( this.params[ key ].deleted ) {
 			delete result.params[ key ];
 			continue;
@@ -1011,8 +994,8 @@ Model.prototype.outputTemplateData = function () {
 		}
 
 		// Check if name was changed and change the key accordingly
-		name = this.params[ key ].name;
-		oldKey = key;
+		var name = this.params[ key ].name;
+		var oldKey = key;
 
 		// Notice for clarity:
 		// Whether the parameter name was changed or not the following
@@ -1028,7 +1011,7 @@ Model.prototype.outputTemplateData = function () {
 		}
 
 		// Go over all properties
-		for ( prop in allProps ) {
+		for ( var prop in allProps ) {
 			switch ( prop ) {
 				case 'deprecatedValue':
 				case 'name':
@@ -1085,17 +1068,20 @@ Model.prototype.outputTemplateData = function () {
 				default:
 					// Check if there's a value in the model
 					if ( this.params[ key ][ prop ] !== undefined ) {
+						var compareOrig = original.params[ oldKey ] && original.params[ oldKey ][ prop ];
 						if ( allProps[ prop ].allowLanguages ) {
 							normalizedValue = this.propRemoveUnusedLanguages( this.params[ key ][ prop ] );
 							// Check if this should be displayed with language object or directly as string
-							compareOrig = original.params[ oldKey ] ? original.params[ oldKey ][ prop ] : {};
-							if ( this.isOutputInLanguageObject( compareOrig, normalizedValue ) ) {
+							if ( this.isOutputInLanguageObject( compareOrig || {}, normalizedValue ) ) {
 								result.params[ name ][ prop ] = normalizedValue;
 							} else {
 								// Store only one language as a string
 								result.params[ name ][ prop ] = normalizedValue[ defaultLang ];
 							}
-						} else {
+						} else if ( this.params[ key ][ prop ] ||
+							// Add empty strings only if the property existed before (empty or not)
+							compareOrig !== undefined
+						) {
 							// Set up the result
 							result.params[ name ][ prop ] = this.params[ key ][ prop ];
 						}
@@ -1135,10 +1121,9 @@ Model.prototype.getNewValidParameterKey = function ( key ) {
  * @return {Object} Property data with only used language keys
  */
 Model.prototype.propRemoveUnusedLanguages = function ( propData ) {
-	var key,
-		result = {};
+	var result = {};
 	if ( $.isPlainObject( propData ) ) {
-		for ( key in propData ) {
+		for ( var key in propData ) {
 			if ( propData[ key ] ) {
 				result[ key ] = propData[ key ];
 			}

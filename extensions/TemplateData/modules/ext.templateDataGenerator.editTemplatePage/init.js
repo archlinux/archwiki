@@ -11,8 +11,7 @@
 'use strict';
 
 new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 'wgContentLanguage' ) } ).then( function () {
-	var pieces, isDocPage, target,
-		Target = require( './Target.js' ),
+	var Target = require( './Target.js' ),
 		pageName = mw.config.get( 'wgPageName' ),
 		docSubpage = mw.msg( 'templatedata-doc-subpage' ),
 		config = {
@@ -21,8 +20,8 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 		},
 		$textbox = $( '#wpTextbox1' );
 
-	pieces = pageName.split( '/' );
-	isDocPage = pieces.length > 1 && pieces[ pieces.length - 1 ] === docSubpage;
+	var pieces = pageName.split( '/' );
+	var isDocPage = pieces.length > 1 && pieces[ pieces.length - 1 ] === docSubpage;
 
 	config = {
 		pageName: pageName,
@@ -42,25 +41,26 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 	// Textbox wikitext editor
 	if ( $textbox.length ) {
 		// Prepare the editor
-		target = new Target( $textbox, config );
-		$( '#mw-content-text' ).prepend( target.$element );
+		var wtTarget = new Target( $textbox, config );
+		$( '#mw-content-text' ).prepend( wtTarget.$element );
 	}
+	var veTarget;
 	// Visual editor source mode
 	mw.hook( 've.activationComplete' ).add( function () {
 		var surface = ve.init.target.getSurface();
 		if ( surface.getMode() === 'source' ) {
 			// Source mode will have created a dummy textbox
 			$textbox = $( '#wpTextbox1' );
-			target = new Target( $textbox, config );
+			veTarget = new Target( $textbox, config );
 			// Use the same font size as main content text
-			target.$element.addClass( 'mw-body-content' );
-			$( '.ve-init-mw-desktopArticleTarget-originalContent' ).prepend( target.$element );
+			veTarget.$element.addClass( 'mw-body-content' );
+			$( '.ve-init-mw-desktopArticleTarget-originalContent' ).prepend( veTarget.$element );
 		}
 	} );
 	mw.hook( 've.deactivationComplete' ).add( function () {
-		if ( target ) {
-			target.destroy();
-			target = null;
+		if ( veTarget ) {
+			veTarget.destroy();
+			veTarget = null;
 		}
 	} );
 } );

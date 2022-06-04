@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": []
+	},
+	"math_failure": "譯不成",
+	"math_syntax_error": "語法有誤",
+	"math_unknown_error": "未知之誤",
+	"math_unknown_function": "未知函式",
+	"mw_math_mathml": "實驗者，堪為則作MathML。",
+	"mw_math_png": "屢作PNG",
+	"mw_math_source": "TeX依舊，純文覽器適也。",
+	"prefs-math": "數學"
+}

@@ -8,6 +8,7 @@
  * @license MIT
  */
 
+use MediaWiki\Extension\VisualEditor\VisualEditorHookRunner;
 use MediaWiki\MediaWikiServices;
 
 class VisualEditorHooks {
@@ -81,9 +82,14 @@ class VisualEditorHooks {
 	 * @param Skin $skin The skin that's going to build the UI.
 	 */
 	public static function onBeforePageDisplay( OutputPage $output, Skin $skin ) {
+		$services = MediaWikiServices::getInstance();
+		$hookRunner = new VisualEditorHookRunner( $services->getHookContainer() );
+		if ( !$hookRunner->onVisualEditorBeforeEditor( $output, $skin ) ) {
+			return;
+		}
 		if ( !(
 			ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) &&
-			MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' )
+			$services->getService( 'MobileFrontend.Context' )
 				->shouldDisplayMobileView()
 		) ) {
 			$output->addModules( [
@@ -93,8 +99,7 @@ class VisualEditorHooks {
 			$output->addModuleStyles( [ 'ext.visualEditor.desktopArticleTarget.noscript' ] );
 		}
 		// add scroll offset js variable to output
-		$veConfig = MediaWikiServices::getInstance()->getConfigFactory()
-			->makeConfig( 'visualeditor' );
+		$veConfig = $services->getConfigFactory()->makeConfig( 'visualeditor' );
 		$skinsToolbarScrollOffset = $veConfig->get( 'VisualEditorSkinToolbarScrollOffset' );
 		$toolbarScrollOffset = 0;
 		$skinName = $skin->getSkinName();
@@ -130,8 +135,10 @@ class VisualEditorHooks {
 	 * @return void
 	 */
 	public static function onDifferenceEngineViewHeader( DifferenceEngine $diff ) {
-		$veConfig = MediaWikiServices::getInstance()->getConfigFactory()
+		$services = MediaWikiServices::getInstance();
+		$veConfig = $services->getConfigFactory()
 			->makeConfig( 'visualeditor' );
+		$userOptionsLookup = $services->getUserOptionsLookup();
 		$output = RequestContext::getMain()->getOutput();
 		$user = RequestContext::getMain()->getUser();
 
@@ -139,9 +146,11 @@ class VisualEditorHooks {
 			// Enabled globally on wiki
 			$veConfig->get( 'VisualEditorEnableDiffPage' ) ||
 			// Enabled as user beta feature
-			$user->getOption( 'visualeditor-visualdiffpage' ) ||
+			$userOptionsLookup->getOption( $user, 'visualeditor-visualdiffpage' ) ||
+			// Enabled by query param (deprecated)
+			$output->getRequest()->getVal( 'visualdiff' ) !== null ||
 			// Enabled by query param
-			$output->getRequest()->getVal( 'visualdiff' ) !== null
+			$output->getRequest()->getVal( 'diffmode' ) === 'visual'
 		) ) {
 			return;
 		}
@@ -262,14 +271,16 @@ class VisualEditorHooks {
 	 * @return bool
 	 */
 	private static function enabledForUser( $user ) {
-		$veConfig = MediaWikiServices::getInstance()->getConfigFactory()
+		$services = MediaWikiServices::getInstance();
+		$veConfig = $services->getConfigFactory()
 			->makeConfig( 'visualeditor' );
+		$userOptionsLookup = $services->getUserOptionsLookup();
 		$isBeta = $veConfig->get( 'VisualEditorEnableBetaFeature' );
 
 		return ( $isBeta ?
-				$user->getOption( 'visualeditor-enable' ) :
-				!$user->getOption( 'visualeditor-betatempdisable' ) ) &&
-			!$user->getOption( 'visualeditor-autodisable' );
+			$userOptionsLookup->getOption( $user, 'visualeditor-enable' ) :
+			!$userOptionsLookup->getOption( $user, 'visualeditor-betatempdisable' ) ) &&
+			!$userOptionsLookup->getOption( $user, 'visualeditor-autodisable' );
 	}
 
 	/**
@@ -302,7 +313,9 @@ class VisualEditorHooks {
 	 * @return bool
 	 */
 	private static function isWikitextAvailable( $title, $user ) {
-		return $user->getOption( 'visualeditor-newwikitext' ) &&
+		$services = MediaWikiServices::getInstance();
+		$userOptionsLookup = $services->getUserOptionsLookup();
+		return $userOptionsLookup->getOption( $user, 'visualeditor-newwikitext' ) &&
 			$title->getContentModel() === 'wikitext';
 	}
 
@@ -331,7 +344,7 @@ class VisualEditorHooks {
 		if ( $req->getVal( 'venoscript' ) ) {
 			$req->response()->setCookie( 'VEE', 'wikitext', 0, [ 'prefix' => '' ] );
 			$services->getUserOptionsManager()->setOption( $user, 'visualeditor-editor', 'wikitext' );
-			if ( !wfReadOnly() && $user->isRegistered() ) {
+			if ( !$services->getReadOnlyMode()->isReadOnly() && $user->isRegistered() ) {
 				DeferredUpdates::addCallableUpdate( static function () use ( $user ) {
 					$user->saveSettings();
 				} );
@@ -377,6 +390,9 @@ class VisualEditorHooks {
 	private static function getEditPageEditor( User $user, WebRequest $req ) {
 		$config = MediaWikiServices::getInstance()->getConfigFactory()
 			->makeConfig( 'visualeditor' );
+		if ( $config->get( 'VisualEditorDisableForAnons' ) && !$user->isRegistered() ) {
+			return 'wikitext';
+		}
 		$isRedLink = $req->getBool( 'redlink' );
 		// On dual-edit-tab wikis, the edit page must mean the user wants wikitext,
 		// unless following a redlink
@@ -402,7 +418,10 @@ class VisualEditorHooks {
 			return 'wikitext';
 		}
 
-		switch ( $user->getOption( 'visualeditor-tabs' ) ) {
+		$services = MediaWikiServices::getInstance();
+		$userOptionsLookup = $services->getUserOptionsLookup();
+
+		switch ( $userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) ) {
 			case 'prefer-ve':
 				return 'visualeditor';
 			case 'prefer-wt':
@@ -438,7 +457,9 @@ class VisualEditorHooks {
 			// value is invalid.
 			!( $editor === 'visualeditor' || $editor === 'wikitext' )
 		) {
-			$editor = $user->getOption( 'visualeditor-editor' );
+			$services = MediaWikiServices::getInstance();
+			$userOptionsLookup = $services->getUserOptionsLookup();
+			$editor = $userOptionsLookup->getOption( $user, 'visualeditor-editor' );
 		}
 		return $editor;
 	}
@@ -452,7 +473,9 @@ class VisualEditorHooks {
 	 * @param array &$links Navigation links.
 	 */
 	public static function onSkinTemplateNavigation( SkinTemplate $skin, array &$links ) {
-		$config = MediaWikiServices::getInstance()->getConfigFactory()
+		$services = MediaWikiServices::getInstance();
+		$userOptionsLookup = $services->getUserOptionsLookup();
+		$config = $services->getConfigFactory()
 			->makeConfig( 'visualeditor' );
 
 		// Exit if there's no edit link for whatever reason (e.g. protected page)
@@ -460,10 +483,15 @@ class VisualEditorHooks {
 			return;
 		}
 
+		$hookRunner = new VisualEditorHookRunner( $services->getHookContainer() );
+		if ( !$hookRunner->onVisualEditorBeforeEditor( $skin->getOutput(), $skin ) ) {
+			return;
+		}
+
 		$user = $skin->getUser();
 		if (
 			$config->get( 'VisualEditorUseSingleEditTab' ) &&
-			$user->getOption( 'visualeditor-tabs' ) === 'prefer-wt'
+			$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'prefer-wt'
 		) {
 			return;
 		}
@@ -473,8 +501,8 @@ class VisualEditorHooks {
 			wfTimestampNow() < $config->get( 'VisualEditorSingleEditTabSwitchTimeEnd' ) &&
 			$user->isRegistered() &&
 			self::enabledForUser( $user ) &&
-			!$user->getOption( 'visualeditor-hidetabdialog' ) &&
-			$user->getOption( 'visualeditor-tabs' ) === 'remember-last'
+			!$userOptionsLookup->getOption( $user, 'visualeditor-hidetabdialog' ) &&
+			$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'remember-last'
 		) {
 			$dbr = wfGetDB( DB_REPLICA );
 			$revWhere = ActorMigration::newMigration()->getWhere( $dbr, 'rev_user', $user );
@@ -565,9 +593,9 @@ class VisualEditorHooks {
 					$isAvailable &&
 					$config->get( 'VisualEditorUseSingleEditTab' ) &&
 					(
-						$user->getOption( 'visualeditor-tabs' ) === 'prefer-ve' ||
+						$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'prefer-ve' ||
 						(
-							$user->getOption( 'visualeditor-tabs' ) === 'remember-last' &&
+							$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'remember-last' &&
 							$editor === 'visualeditor'
 						)
 					)
@@ -578,7 +606,7 @@ class VisualEditorHooks {
 					$isAvailable &&
 					(
 						!$config->get( 'VisualEditorUseSingleEditTab' ) ||
-						$user->getOption( 'visualeditor-tabs' ) === 'multi-tab'
+						$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'multi-tab'
 					)
 				) {
 					// Inject the VE tab before or after the edit tab
@@ -594,9 +622,9 @@ class VisualEditorHooks {
 				} elseif (
 					!$config->get( 'VisualEditorUseSingleEditTab' ) ||
 					!$isAvailable ||
-					$user->getOption( 'visualeditor-tabs' ) === 'multi-tab' ||
+					$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'multi-tab' ||
 					(
-						$user->getOption( 'visualeditor-tabs' ) === 'remember-last' &&
+						$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'remember-last' &&
 						$editor === 'wikitext'
 					)
 				) {
@@ -640,7 +668,7 @@ class VisualEditorHooks {
 			$rc->addTags( 'visualeditor-switched' );
 		}
 
-		$tags = explode( ',', $request->getVal( 'vetags' ) );
+		$tags = explode( ',', $request->getVal( 'vetags' ) ?? '' );
 		$tags = array_values( array_intersect( $tags, static::TAGS ) );
 		if ( $tags ) {
 			$rc->addTags( $tags );
@@ -663,7 +691,9 @@ class VisualEditorHooks {
 	public static function onSkinEditSectionLinks( Skin $skin, Title $title, $section,
 		$tooltip, &$result, $lang
 	) {
-		$config = MediaWikiServices::getInstance()->getConfigFactory()
+		$services = MediaWikiServices::getInstance();
+		$userOptionsLookup = $services->getUserOptionsLookup();
+		$config = $services->getConfigFactory()
 			->makeConfig( 'visualeditor' );
 
 		// Exit if we're in parserTests
@@ -693,9 +723,9 @@ class VisualEditorHooks {
 		$editor = self::getLastEditor( $user, $skin->getRequest() );
 		if (
 			!$config->get( 'VisualEditorUseSingleEditTab' ) ||
-			$user->getOption( 'visualeditor-tabs' ) === 'multi-tab' ||
+			$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'multi-tab' ||
 			(
-				$user->getOption( 'visualeditor-tabs' ) === 'remember-last' &&
+				$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) === 'remember-last' &&
 				$editor === 'wikitext'
 			)
 		) {
@@ -708,7 +738,7 @@ class VisualEditorHooks {
 		// Exit if we're using the single edit tab.
 		if (
 			$config->get( 'VisualEditorUseSingleEditTab' ) &&
-			$user->getOption( 'visualeditor-tabs' ) !== 'multi-tab'
+			$userOptionsLookup->getOption( $user, 'visualeditor-tabs' ) !== 'multi-tab'
 		) {
 			return;
 		}
@@ -783,7 +813,9 @@ class VisualEditorHooks {
 	 */
 	public static function onGetPreferences( User $user, array &$preferences ) {
 		global $wgLang;
-		$veConfig = MediaWikiServices::getInstance()->getConfigFactory()
+		$services = MediaWikiServices::getInstance();
+		$userOptionsLookup = $services->getUserOptionsLookup();
+		$veConfig = $services->getConfigFactory()
 			->makeConfig( 'visualeditor' );
 
 		if (
@@ -805,7 +837,7 @@ class VisualEditorHooks {
 				],
 				'section' => 'editing/editor'
 			];
-			if ( $user->getOption( 'visualeditor-autodisable' ) ) {
+			if ( $userOptionsLookup->getOption( $user, 'visualeditor-autodisable' ) ) {
 				$visualEnablePreference['default'] = false;
 			}
 			$preferences['visualeditor-enable'] = $visualEnablePreference;
@@ -817,8 +849,8 @@ class VisualEditorHooks {
 				'type' => 'toggle',
 				'label-message' => 'visualeditor-preference-betatempdisable',
 				'section' => 'editing/editor',
-				'default' => $user->getOption( 'visualeditor-betatempdisable' ) ||
-					$user->getOption( 'visualeditor-autodisable' )
+				'default' => $userOptionsLookup->getOption( $user, 'visualeditor-betatempdisable' ) ||
+					$userOptionsLookup->getOption( $user, 'visualeditor-autodisable' )
 			];
 		}
 
@@ -966,18 +998,18 @@ class VisualEditorHooks {
 		// On a wiki where betatempdisable is hidden and set to 0, if user sets enable=1
 		// then set autodisable=0
 		if (
-			$user->getOption( 'visualeditor-autodisable' ) &&
-			$user->getOption( 'visualeditor-enable' ) &&
-			!$user->getOption( 'visualeditor-betatempdisable' )
+			$userOptionsManager->getOption( $user, 'visualeditor-autodisable' ) &&
+			$userOptionsManager->getOption( $user, 'visualeditor-enable' ) &&
+			!$userOptionsManager->getOption( $user, 'visualeditor-betatempdisable' )
 		) {
 			$userOptionsManager->setOption( $user, 'visualeditor-autodisable', false );
 		} elseif (
 			// On a wiki where betatempdisable is hidden and set to 0, if user sets enable=0,
 			// then set autodisable=1
 			$veConfig->get( 'VisualEditorTransitionDefault' ) &&
-			!$user->getOption( 'visualeditor-betatempdisable' ) &&
-			!$user->getOption( 'visualeditor-enable' ) &&
-			!$user->getOption( 'visualeditor-autodisable' )
+			!$userOptionsManager->getOption( $user, 'visualeditor-betatempdisable' ) &&
+			!$userOptionsManager->getOption( $user, 'visualeditor-enable' ) &&
+			!$userOptionsManager->getOption( $user, 'visualeditor-autodisable' )
 		) {
 			$userOptionsManager->setOption( $user, 'visualeditor-autodisable', true );
 		}
@@ -1031,6 +1063,21 @@ class VisualEditorHooks {
 			)
 		);
 
+		$namespacesWithSubpages = $coreConfig->get( 'NamespacesWithSubpages' );
+		// Export as a list of namespaces where subpages are enabled instead of an object
+		// mapping namespaces to if subpages are enabled or not, so filter out disabled
+		// namespaces and then just use the keys. See T291729.
+		$namespacesWithSubpages = array_filter( $namespacesWithSubpages );
+		$namespacesWithSubpagesEnabled = array_keys( $namespacesWithSubpages );
+		// $wgNamespacesWithSubpages can include namespaces that don't exist, no need
+		// to include those in the JavaScript data. See T291727.
+		// Run this filtering after the filter for subpages being enabled, to reduce
+		// the number of calls needed to namespace info.
+		$nsInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
+		$namespacesWithSubpagesEnabled = array_values( array_filter(
+			$namespacesWithSubpagesEnabled,
+			[ $nsInfo, 'exists' ]
+		) );
 		$vars['wgVisualEditorConfig'] = [
 			'usePageImages' => $extensionRegistry->isLoaded( 'PageImages' ),
 			'usePageDescriptions' => $extensionRegistry->isLoaded( 'WikibaseClient' ),
@@ -1060,8 +1107,7 @@ class VisualEditorHooks {
 				$veConfig->get( 'VisualEditorEnableWikitextBetaFeature' )
 			),
 			'useChangeTagging' => $veConfig->get( 'VisualEditorUseChangeTagging' ),
-			'svgMaxSize' => $coreConfig->get( 'SVGMaxSize' ),
-			'namespacesWithSubpages' => $coreConfig->get( 'NamespacesWithSubpages' ),
+			'namespacesWithSubpages' => $namespacesWithSubpagesEnabled,
 			'specialBooksources' => urldecode( SpecialPage::getTitleFor( 'Booksources' )->getPrefixedURL() ),
 			'rebaserUrl' => $coreConfig->get( 'VisualEditorRebaserURL' ),
 			'restbaseUrl' => $coreConfig->get( 'VisualEditorRestbaseURL' ),
@@ -1153,15 +1199,16 @@ class VisualEditorHooks {
 		if ( $cookie === 'visualeditor' || $cookie === 'wikitext' ) {
 			$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 			DeferredUpdates::addUpdate( new AtomicSectionUpdate(
-				$lb->getLazyConnectionRef( DB_PRIMARY ),
+				$lb->getConnectionRef( DB_PRIMARY ),
 				__METHOD__,
 				static function () use ( $user, $cookie ) {
-					if ( wfReadOnly() ) {
+					$services = MediaWikiServices::getInstance();
+					if ( $services->getReadOnlyMode()->isReadOnly() ) {
 						return;
 					}
 
 					$uLatest = $user->getInstanceForUpdate();
-					MediaWikiServices::getInstance()->getUserOptionsManager()
+					$services->getUserOptionsManager()
 						->setOption( $uLatest, 'visualeditor-editor', $cookie );
 					$uLatest->saveSettings();
 				}

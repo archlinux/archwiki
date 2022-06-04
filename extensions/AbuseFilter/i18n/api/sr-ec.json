@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"BadDog"
+		]
+	},
+	"apihelp-abusefilterunblockautopromote-param-user": "Корисничко име корисника ког желите да деблокирате.",
+	"apihelp-query+abusefilters-description": "Прикажи детаље филтера злоупотреба.",
+	"apihelp-query+abusefilters-summary": "Прикажи детаље филтера злоупотреба.",
+	"apihelp-abuselogprivatedetails-param-reason": "Важећи разлог за проверу",
+	"apierror-abusefilter-badsyntax": "Филтер има неважећу синтаксу."
+}

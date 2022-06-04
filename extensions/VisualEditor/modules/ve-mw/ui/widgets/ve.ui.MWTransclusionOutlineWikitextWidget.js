@@ -9,7 +9,10 @@ ve.ui.MWTransclusionOutlineWikitextWidget = function VeUiMWTransclusionOutlineWi
 	// Parent constructor
 	ve.ui.MWTransclusionOutlineWikitextWidget.super.call( this, content, {
 		icon: 'wikiText',
-		label: ve.msg( 'visualeditor-dialog-transclusion-wikitext' )
+		label: ve.msg( 'visualeditor-dialog-transclusion-wikitext' ),
+		ariaDescriptionUnselected: ve.msg( 'visualeditor-dialog-transclusion-wikitext-widget-aria' ),
+		ariaDescriptionSelected: ve.msg( 'visualeditor-dialog-transclusion-wikitext-widget-aria-selected' ),
+		ariaDescriptionSelectedSingle: ve.msg( 'visualeditor-dialog-transclusion-wikitext-widget-aria-selected-single' )
 	} );
 };
 

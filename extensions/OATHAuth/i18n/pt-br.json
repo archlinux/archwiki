@@ -7,7 +7,8 @@
 			"Felipe L. Ewald",
 			"Luk3",
 			"Tark",
-			"TheEduGobi"
+			"TheEduGobi",
+			"YuriNikolai"
 		]
 	},
 	"oathauth-desc": "Fornece suporte a autenticação usando HMAC com base em senhas de uso único",
@@ -63,7 +64,7 @@
 	"oath-log-header": "Esses eventos rastreiam alterações no status de autenticação de dois fatores dos usuários.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|desabilitou}} a autenticação de dois fatores de $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|verificado}} se $3 tivessem autenticação de dois fatores ativada",
-	"oauthauth-ui-no-module": "Nenhum ativado",
+	"oathauth-ui-no-module": "Nenhum ativado",
 	"oathauth-module-invalid": "O módulo OATHAuth que o usuário registrou é inválido.",
 	"oathauth-module-totp-label": "TOTP (token único)",
 	"oathauth-ui-manage": "Gerenciar",

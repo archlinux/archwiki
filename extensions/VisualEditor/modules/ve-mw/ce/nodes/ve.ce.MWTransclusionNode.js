@@ -45,25 +45,25 @@ ve.ce.MWTransclusionNode.static.iconWhenInvisible = 'puzzle';
 /* Static Methods */
 
 /**
- * Get a list of descriptions of template parts in a transclusion node
+ * Get a list of descriptions of template parts in a transclusion node, excluding raw wikitext
+ * snippets.
  *
  * @static
  * @param {ve.dm.MWTransclusionNode} model Node model
- * @return {string[]} List of template part descriptions
+ * @return {(string|undefined)[]} List of template part descriptions
  */
 ve.ce.MWTransclusionNode.static.getTemplatePartDescriptions = function ( model ) {
 	return model.getPartsList().map( this.getTemplatePartDescription );
 };
 
 /**
- * Get a description of a template part in a transclusion node
+ * Get a description of a template part in a transclusion node, except it's a raw wikitext snippet.
  *
  * @static
  * @param {Object} part Template part
- * @return {string} Template part description
+ * @return {string|undefined}
  */
 ve.ce.MWTransclusionNode.static.getTemplatePartDescription = function ( part ) {
-	// Ignore parts that are just content
 	if ( part.templatePage ) {
 		return mw.Title.newFromText( part.templatePage )
 			.getRelativeText( mw.config.get( 'wgNamespaceIds' ).template );
@@ -93,7 +93,7 @@ ve.ce.MWTransclusionNode.static.getDescription = function ( model ) {
  */
 ve.ce.MWTransclusionNode.static.filterRendering = function ( contentNodes ) {
 	if ( !contentNodes.length ) {
-		return;
+		return [];
 	}
 
 	var whitespaceRegex = new RegExp( '^[' + ve.dm.Converter.static.whitespaceList + ']+$' );
@@ -135,12 +135,26 @@ ve.ce.MWTransclusionNode.static.filterRendering = function ( contentNodes ) {
 
 /* Methods */
 
+/** @inheritDoc */
+ve.ce.MWTransclusionNode.prototype.executeCommand = function () {
+	var contextItems = this.focusableSurface.getSurface().getContext().items;
+	if ( contextItems[ 0 ] instanceof ve.ui.MWTransclusionContextItem ) {
+		// Utilize the context item when it's there instead of triggering the command manually.
+		// Required to make the context item show the "Loading…" message (see T297773).
+		contextItems[ 0 ].onEditButtonClick( 'command' );
+		return;
+	}
+
+	// Parent method
+	ve.ce.FocusableNode.prototype.executeCommand.apply( this, arguments );
+};
+
 /**
  * @inheritdoc
  */
 ve.ce.MWTransclusionNode.prototype.generateContents = function ( config ) {
-	var xhr, deferred = ve.createDeferred();
-	xhr = ve.init.target.parseWikitextFragment(
+	var deferred = ve.createDeferred();
+	var xhr = ve.init.target.parseWikitextFragment(
 		( config && config.wikitext ) || this.model.getWikitext(),
 		true,
 		this.getModel().getDocument()

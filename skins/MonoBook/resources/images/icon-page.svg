@@ -5,7 +5,7 @@
 			<stop offset="0" stop-color="#b8d6f4"/>
 			<stop offset="1" stop-color="#fff"/>
 		</linearGradient>
-		<linearGradient id="b" x1="1.852" x2="1.852" y1="1.587" y2="3.175" gradientTransform="scale(3.77953)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+		<linearGradient xlink:href="#a" id="b" x1="1.852" x2="1.852" y1="1.587" y2="3.175" gradientTransform="scale(3.77953)" gradientUnits="userSpaceOnUse"/>
 	</defs>
 	<path fill="#8b8b8b" d="M.794.265v2.91h.264V.529h1.059v.53h.264V.264z"/>
 	<path fill="url(#b)" d="M5 4v8h5V4H5z" transform="scale(.26458)"/>

@@ -4,6 +4,7 @@
 			"Andriykopanytsia",
 			"Base",
 			"DDPAT",
+			"Ice bulldog",
 			"Movses",
 			"Piramidion",
 			"Ата"
@@ -29,5 +30,7 @@
 	"timeless-languages": "Мови",
 	"timeless-projects": "Інші проєкти",
 	"timeless.css": "/* Весь CSS тут буде завантажений для користувачів скіна Timeless */",
-	"timeless.js": "/* Увесь розміщений тут код JavaScript буде завантажений для всіх користувачів теми оформлення «Вічне» */"
+	"timeless.js": "/* Увесь розміщений тут код JavaScript буде завантажений для всіх користувачів теми оформлення «Вічне» */",
+	"timeless-view-history": "Історія",
+	"timeless-action-undelete": "Відновити $1 {{PLURAL:$1|редагування|редагування|редагувань}}"
 }

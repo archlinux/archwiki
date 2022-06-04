@@ -12,6 +12,7 @@
 		]
 	},
 	"skinname-vector": "Vector",
+	"tooltip-pt-watchlist-2": "Popis stranica čije promjene pratite",
 	"vector-skin-desc": "Osuvremenjena inačica MonoBooka s obnovljenim dizajnom i mnogim poboljšanjima u upotrebljivosti",
 	"prefs-vector-enable-vector-1-label": "Rabi staru inačicu izgleda Vector",
 	"prefs-vector-enable-vector-1-help": "Izgled sučelja Vector osvježavat će se tijekom nekoliko godina. Ova postavka omogućit će Vam upotrebu inačice Vectora iz prosinca 2019. Više o tehnološkome osuvremenjavanju saznajte na [[mw:Reading/Web/Desktop_Improvements|stranici  projekta na MediaWikiju]].",
@@ -20,7 +21,9 @@
 	"vector.css": "/* Sav kôd CSS-a na ovoj stranici bit će učitan upotrebljavačima izgleda Vector */",
 	"vector.js": "/* Sav kôd JavaScripta na ovoj stranici bit će učitan upotrebljavačima izgleda Vector */",
 	"vector-action-toggle-sidebar": "Uključi / isključi bočnu traku",
+	"vector-languages": "Drugi jezici",
 	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
+	"vector-language-redirect-to-top": "Poveznice na druge jezike nalaze se uz naslov članka, pri [[#p-lang-btn|vrhu stranice]].",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Izbriši",
 	"vector-action-move": "Premjesti",

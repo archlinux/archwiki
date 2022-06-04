@@ -6,12 +6,18 @@
 			"Умар"
 		]
 	},
-	"skinname-vector": "Векторан",
+	"skinname-vector": "Вектор, ширйеларг (2010)",
+	"skinname-vector-2022": "Вектор (2022 шо)",
+	"vector-specialversion-name": "Векторан",
 	"vector-skin-desc": "ХӀокху хенан MonoBook-ан верси кечдинчу карладахаршца а, дуккха а тодаршца юзабилити чохь",
 	"prefs-vector-enable-vector-1-label": "Лелайе Векторан темин шира верси",
 	"prefs-vector-enable-vector-1-help": "ТӀедогӀучу массийта шарахь «Векторан» тема карлайоккхура йу. «Векторан хьалхара версис» шуьна аьтту бо «Векторан» хьалхара вариант лело (2019 декабрь). Кхин сов цуьнах лаьцна хаа хьажа [[mw:Special:MyLanguage/Reading/Web/Desktop_Improvements|проектан агӀонга]].",
 	"vector-opt-out": "Латайе шира хатӀ",
+	"vector-opt-out-tooltip": "Шира тема латайан, хийца нисдаран гӀирс (Ширйелла векторан)",
+	"vector-action-toggle-sidebar": "АгӀорара панель хийца",
+	"vector-languages": "Меттанаш",
 	"vector-language-button-label": "{{PLURAL:$1|$1 мотт}}",
+	"vector-language-redirect-to-top": "ХӀокху сайтехь меттанийн хьажоргаш йу агӀонан йуьхьегехь, йаззаман цӀеран дуьхьала. [[#p-lang-btn|Йуьхье гӀо]].",
 	"vector-action-addsection": "Тема тӀетоха",
 	"vector-action-delete": "ДӀайаккхар",
 	"vector-action-move": "ЦӀе хийцар",
@@ -25,6 +31,12 @@
 	"vector-view-viewsource": "Билглонашка хьажа",
 	"vector-jumptonavigation": "Навигацин тӀегӀо",
 	"vector-jumptosearch": "Лахарна тӀегӀо",
+	"vector-jumptocontent": "Чулацаман тӀегӀо",
 	"vector-more-actions": "Кхин а",
+	"vector-search-loader": "Чудохуш ду лахаран кховдинарш",
+	"vector-intro-page": "Help:Хаам",
+	"vector-anon-user-menu-pages-learn": "совнаха хаа",
+	"vector-anon-user-menu-pages-label": "Хийцамашбарах мадарра",
+	"vector-main-menu-tooltip": "Коьрта меню",
 	"tooltip-vector-anon-user-menu-title": "Дукха таронаш"
 }

@@ -62,12 +62,12 @@ class LegacyHandler extends AbstractProcessingHandler {
 
 	/**
 	 * Log sink
-	 * @var resource
+	 * @var resource|null
 	 */
 	protected $sink;
 
 	/**
-	 * @var string
+	 * @var string|null
 	 */
 	protected $error;
 
@@ -90,7 +90,7 @@ class LegacyHandler extends AbstractProcessingHandler {
 	 * @param string $stream Stream URI
 	 * @param bool $useLegacyFilter Filter log events using legacy rules
 	 * @param int $level Minimum logging level that will trigger handler
-	 * @param bool $bubble Can handled meesages bubble up the handler stack?
+	 * @param bool $bubble Can handled messages bubble up the handler stack?
 	 */
 	public function __construct(
 		$stream,

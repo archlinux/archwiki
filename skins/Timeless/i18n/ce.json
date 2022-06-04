@@ -18,5 +18,7 @@
 	"timeless-pagemisc": "Кхин а",
 	"timeless-namespaces": "ЦӀерийн меттигаш",
 	"timeless-pagetools": "АгӀонгахь дийриш",
-	"timeless-languages": "Меттанаш"
+	"timeless-languages": "Меттанаш",
+	"timeless-view-history": "Истори",
+	"timeless-action-undelete": "МеттахӀоттайé $1 {{PLURAL:$1|нисйинарг|нисйинарш}}"
 }

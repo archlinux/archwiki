@@ -59,4 +59,4 @@ prof_flag( "done" );
 prof_print();
 
 /* Print the tree */
-echo $dom->saveHTML();
+//echo $dom->saveHTML();

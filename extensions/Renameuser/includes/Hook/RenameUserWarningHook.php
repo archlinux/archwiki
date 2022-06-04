@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser\Hook;
+
 /**
  * This is a hook handler interface, see docs/Hooks.md.
  * Use the hook name "RenameUserWarning" to register handlers implementing this interface.
@@ -22,3 +24,5 @@ interface RenameUserWarningHook {
 	public function onRenameUserWarning( string $oldUsername, string $newUsername, array &$warnings ): void;
 
 }
+
+class_alias( RenameUserWarningHook::class, 'RenameUserWarningHook' );

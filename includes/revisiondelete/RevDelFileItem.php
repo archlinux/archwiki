@@ -250,7 +250,7 @@ class RevDelFileItem extends RevDelItem {
 			];
 		}
 		$comment = $file->getDescription( File::FOR_THIS_USER, $user );
-		if ( $comment ) {
+		if ( ( $comment ?? '' ) !== '' ) {
 			$ret += [
 				'comment' => $comment,
 			];

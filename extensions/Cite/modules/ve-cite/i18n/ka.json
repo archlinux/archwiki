@@ -19,7 +19,7 @@
 	"visualeditor-cite-tool-name-journal": "ჟურნალი",
 	"visualeditor-cite-tool-name-news": "სიახლეები",
 	"visualeditor-cite-tool-name-web": "ვებ-გვერდი",
-	"cite-ve-dialog-reference-editing-reused": "ეს ბმული გვერდზე {{PLURAL:$1|ერთხელ|$-ჯერ}} გამოიყენება.",
+	"cite-ve-dialog-reference-editing-reused": "ეს ბმული გვერდზე {{PLURAL:$1|ერთხელ|2=ორჯერ|$-ჯერ}} გამოიყენება.",
 	"cite-ve-dialog-reference-options-group-label": "ამ ჯგუფის გამოყენება",
 	"cite-ve-dialog-reference-options-group-placeholder": "ზოგადი წყაროები",
 	"cite-ve-dialog-reference-options-name-label": "ხელმეორედ გამოყენება ამ სახელით",

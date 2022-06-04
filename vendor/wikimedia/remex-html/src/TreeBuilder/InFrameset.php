@@ -76,6 +76,3 @@ class InFrameset extends InsertionMode {
 		$builder->stopParsing( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InFrameset::class, 'RemexHtml\TreeBuilder\InFrameset' );

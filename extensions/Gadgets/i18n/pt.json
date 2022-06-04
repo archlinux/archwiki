@@ -26,11 +26,15 @@
 	"gadgetusage-default": "Padrão",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Segue-se uma lista de ''gadgets'' que podem ser ativados pelos utilizadores nas suas [[Special:Preferences#mw-prefsection-gadgets|preferências]], como estabelecido pelas [[MediaWiki:Gadgets-definition|definições]].\nEste resumo proporciona acesso fácil às páginas das mensagens de sistema que definem a descrição e o código de cada ''gadget''.",
+	"gadgets-editdescription": "Editar descrição",
+	"gadgets-viewdescription": "Ver descrição",
 	"gadgets-uses": "Utiliza",
 	"gadgets-required-rights": "Requer {{PLURAL:$2|o seguinte privilégio|os seguintes privilégios}}:\n\n$1",
 	"gadgets-required-skins": "Disponível {{PLURAL:$2|no tema $1|nos seguintes temas: $1}}",
+	"gadgets-required-actions": "Funciona {{PLURAL:$2|na operação \"$1\" da página|nas seguintes operações da página: $1}}.",
 	"gadgets-default": "Ativado para todos por padrão.",
 	"gadgets-legacy": "O ''gadget'' não foi carregado. Por favor, migre para o ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Saiba mais])",
+	"gadgets-packaged": "Este ''gadget'' está [https://www.mediawiki.org/wiki/ResourceLoader/Package_files empacotado], tendo como ponto de entrada $1",
 	"gadgets-export": "Exportar",
 	"gadgets-export-title": "Exportação de ''gadgets''",
 	"gadgets-not-found": "O ''gadget'' \"$1\" não foi encontrado.",
@@ -41,5 +45,7 @@
 	"right-gadgets-edit": "Editar páginas JavaScript e CSS de ''gadgets''",
 	"action-gadgets-edit": "editar a página JavaScript ou CSS deste ''gadget''",
 	"right-gadgets-definition-edit": "Editar definições de ''gadgets''",
-	"action-gadgets-definition-edit": "editar esta definição do ''gadget''"
+	"action-gadgets-definition-edit": "editar esta definição do ''gadget''",
+	"gadgets-wrong-contentmodel": "As páginas do espaço nominal {{ns:2302}} têm de ser do modelo de conteúdo GadgetDefinition.",
+	"gadgets-supports-urlload": "Este ''gadget'' suporta carregamento via URL com o parâmetro de consulta <code>?withgadget</code>."
 }

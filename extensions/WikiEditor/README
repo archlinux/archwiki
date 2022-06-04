@@ -1,7 +1,5 @@
 WikiEditor provides enhancements to the MediaWiki edit page
 
-# This extension requires MediaWiki 1.33 or higher.
-
 For installation, once the code is copied into your extensions directory, you can load it for your
 wiki by adding to LocalSettings.php the line:
 

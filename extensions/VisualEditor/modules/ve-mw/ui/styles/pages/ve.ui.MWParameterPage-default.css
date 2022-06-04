@@ -32,23 +32,13 @@
 	position: absolute;
 	top: -0.3125em;
 	right: 4em; /* 1.5em for PanelLayout's padding + 2.5em */
-	width: 25%;
 	text-align: right;
 	box-sizing: border-box;
 }
 
 .ve-ui-mwParameterPage-label {
-	display: inline;
-	vertical-align: middle;
 	font-size: 1.1em;
-	font-weight: bold;
 	line-height: 1.705em;
-}
-
-.ve-ui-mwParameterPage-statusIndicator {
-	display: inline-block;
-	vertical-align: middle;
-	opacity: 0.5;
 }
 
 .ve-ui-mwParameterPage-doc {
@@ -62,13 +52,9 @@
 	margin-top: 0;
 }
 
-.ve-ui-mwParameterPage-inlineDescription .ve-ui-expandableContent-container {
-	right: 2.5em;
-}
-
 .ve-ui-mwParameterPage-inlineDescription .ve-ui-mwParameterPage-doc {
 	font-size: inherit;
-	padding: 0 2.5em;
+	padding: 0;
 	clear: both;
 }
 
@@ -101,7 +87,7 @@
 }
 
 .ve-ui-mwParameterPage-field.ve-ui-mwParameterPage-inlineDescription {
-	padding: 0.25em 2.5em 2em;
+	padding-bottom: 2em;
 }
 
 .ve-ui-mwParameterPage .oo-ui-textInputWidget {

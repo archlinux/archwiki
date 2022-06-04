@@ -62,6 +62,3 @@ class SerializerNode {
 		return $this->name . '#' . $this->id;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( SerializerNode::class, 'RemexHtml\Serializer\SerializerNode' );

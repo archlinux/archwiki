@@ -16,6 +16,7 @@
 	"interwiki_url": "URL",
 	"interwiki-url-label": "URL:",
 	"interwiki_url_intro": "Предлошка за URL-адреси. Наместо $1 ќе биде поставено <em>име на страницата</em> во <code>[<nowiki />[претставка:<em>име на страницата</em>]]</code>.",
+	"interwiki-api-label": "Приложник:",
 	"interwiki_local": "Препратка",
 	"interwiki-local-label": "Препратка",
 	"interwiki_local_0_intro": "Надворешни HTTP-барања од месното вики користејќи го меѓујазичната претставка во URL-адресата ќе ви ја дадат грешката „{{int:badtitle}}“.",

@@ -16,5 +16,7 @@
 	"monobook-more-actions": "Méi",
 	"monobook-cactions-label": "Säitenaktiounen",
 	"monobook-notifications-link": "Notifikatiounen ($1)",
-	"monobook-notifications-link-none": "Notifikatiounen"
+	"monobook-notifications-link-none": "Notifikatiounen",
+	"monobook-view-history": "Versiounen",
+	"monobook-action-undelete": "$1 {{PLURAL:$1|Versioun|Versioune}} restauréieren"
 }

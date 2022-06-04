@@ -1,0 +1,15 @@
+<li id="toc-{{anchor}}"
+	class="sidebar-toc-list-item sidebar-toc-level-{{toclevel}}{{#is-top-level-section}}{{^vector-is-collapse-sections-enabled}} sidebar-toc-list-item-expanded{{/vector-is-collapse-sections-enabled}}{{/is-top-level-section}}">
+	<a class="sidebar-toc-link" href="#{{anchor}}">
+		<div class="sidebar-toc-text">
+		<span class="sidebar-toc-numb">{{number}}</span>{{{line}}}</div>
+	</a>
+	{{#is-top-level-section}}{{#is-parent-section}}
+		<button class="mw-ui-icon mw-ui-icon-wikimedia-downTriangle mw-ui-icon-small sidebar-toc-toggle"></button>
+	{{/is-parent-section}}{{/is-top-level-section}}
+	<ul class="sidebar-toc-list">
+		{{#array-sections}}
+		{{>TableOfContents__line}}
+		{{/array-sections}}
+	</ul>
+</li>

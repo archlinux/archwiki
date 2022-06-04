@@ -59,6 +59,3 @@ class BeforeHead extends InsertionMode {
 			->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( BeforeHead::class, 'RemexHtml\TreeBuilder\BeforeHead' );

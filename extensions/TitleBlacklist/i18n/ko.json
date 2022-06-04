@@ -12,7 +12,9 @@
 			"아라"
 		]
 	},
-	"action-titleblacklistlog": "제목 블랙리스트 로그를 봅니다",
+	"action-tboverride": "제목 또는 계정 이름 블랙리스트를 무시할",
+	"action-tboverride-account": "계정 이름 블랙리스트를 무시할",
+	"action-titleblacklistlog": "제목 블랙리스트 로그를 볼",
 	"log-name-titleblacklist": "제목 블랙리스트 기록",
 	"log-description-titleblacklist": "이 기록은 제목 블랙리스트 로그의 일치를 추적합니다.",
 	"logentry-titleblacklist-hit-username": "$1님이 제목 블랙리스트 $4 패턴과 일치하는 $3 계정을 만들려고 {{GENDER:$2|하였습니다}}.",

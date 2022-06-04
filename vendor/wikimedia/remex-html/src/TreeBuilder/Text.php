@@ -20,6 +20,7 @@ class Text extends InsertionMode {
 	}
 
 	public function startTag( $name, Attributes $attrs, $selfClose, $sourceStart, $sourceLength ) {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new TreeBuilderError( 'unexpected token' );
 	}
 
@@ -29,6 +30,3 @@ class Text extends InsertionMode {
 		$this->dispatcher->restoreMode();
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Text::class, 'RemexHtml\TreeBuilder\Text' );

@@ -40,9 +40,11 @@ OO.inheritClass( ve.init.mw.DesktopCollabTarget, ve.init.mw.CollabTarget );
  * Page modifications after editor load.
  */
 ve.init.mw.DesktopCollabTarget.prototype.transformPage = function () {
-	var title;
 	this.$originalContent.append( this.$element.siblings() );
+	var title;
 	if ( ( title = this.getImportTitle() ) ) {
+		// ve.htmlMsg returns `Node[]`
+		// eslint-disable-next-line no-jquery/no-html
 		$( '#contentSub' ).html(
 			ve.htmlMsg(
 				'collabpad-import-subtitle',
@@ -73,7 +75,7 @@ ve.init.mw.DesktopCollabTarget.prototype.attachToolbar = function () {
 	ve.init.mw.DesktopCollabTarget.super.prototype.attachToolbar.apply( this, arguments );
 
 	toolbar.$element.addClass(
-		've-init-mw-desktopArticleTarget-toolbar ve-init-mw-desktopArticleTarget-toolbar-open ve-init-mw-desktopArticleTarget-toolbar-opened'
+		've-init-mw-desktopArticleTarget-toolbar ve-init-mw-desktopArticleTarget-toolbar-open'
 	);
 	this.$element.prepend( toolbar.$element );
 };

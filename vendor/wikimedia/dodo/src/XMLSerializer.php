@@ -10,6 +10,7 @@ use Wikimedia\IDLeDOM\Node as INode;
 /**
  * XMLSerializer
  * @see https://w3c.github.io/DOM-Parsing/#the-xmlserializer-interface
+ * @phan-forbid-undeclared-magic-properties
  */
 class XMLSerializer implements \Wikimedia\IDLeDOM\XMLSerializer {
 

@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Ext\Nowiki;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Text;
@@ -13,6 +14,7 @@ use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Ext\Utils;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 
 /**
@@ -50,10 +52,10 @@ class Nowiki extends ExtensionTagHandler implements ExtensionModule {
 					// in the tokenizer.
 					$entity = $doc->createElement( 'span' );
 					DOMUtils::addTypeOf( $entity, 'mw:Entity' );
-					DOMDataUtils::setDataParsoid( $entity, (object)[
-						'src' => $t,
-						'srcContent' => $cc,
-					] );
+					$dp = new DataParsoid;
+					$dp->src = $t;
+					$dp->srcContent = $cc;
+					DOMDataUtils::setDataParsoid( $entity, $dp );
 					$entity->appendChild( $doc->createTextNode( $cc ) );
 					$span->appendChild( $entity );
 					continue;
@@ -114,7 +116,7 @@ class Nowiki extends ExtensionTagHandler implements ExtensionModule {
 			} elseif ( $child instanceof Text ) {
 				$out = $child->nodeValue;
 			} else {
-				Assert::invariant( DOMUtils::isComment( $child ), "Expected a comment here" );
+				Assert::invariant( $child instanceof Comment, "Expected a comment here" );
 				/* Comments can't be embedded in a <nowiki> */
 				$extApi->log( 'error/html2wt/nowiki',
 					'Discarded invalid embedded comment in a <nowiki>' );

@@ -21,6 +21,7 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
+ * @property {ve.dm.MWTransclusionModel|null} transclusionModel
  */
 ve.ui.MWTemplateDialog = function VeUiMWTemplateDialog( config ) {
 	// Parent constructor
@@ -68,7 +69,9 @@ ve.ui.MWTemplateDialog.static.bookletLayoutConfig = {
 ve.ui.MWTemplateDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.MWTemplateDialog.super.prototype.getReadyProcess.call( this, data )
 		.next( function () {
-			this.bookletLayout.focus( 1 );
+			if ( this.transclusionModel.isEmpty() ) {
+				this.bookletLayout.focus( 1 );
+			}
 
 			this.bookletLayout.stackLayout.getItems().forEach( function ( page ) {
 				if ( page instanceof ve.ui.MWParameterPage ) {
@@ -79,11 +82,11 @@ ve.ui.MWTemplateDialog.prototype.getReadyProcess = function ( data ) {
 };
 
 /**
- * Called when the transclusion model changes. E.g. parts changes, parameter values changes.
+ * Update dialog actions whenever the content changes.
  *
  * @private
  */
-ve.ui.MWTemplateDialog.prototype.onTransclusionModelChange = function () {
+ve.ui.MWTemplateDialog.prototype.touch = function () {
 	if ( this.loaded ) {
 		this.altered = true;
 		this.setApplicableStatus();
@@ -147,6 +150,7 @@ ve.ui.MWTemplateDialog.prototype.onReplacePart = function ( removed, added ) {
 
 				if ( names.length ) {
 					// Focus the first element when parameters are present
+					// FIXME: This hasn't worked in a long time, nor is it a desirable behavior.
 					reselect = added.getParameter( names[ 0 ] ).getId();
 				} else if ( shouldAddPlaceholder && !this.useNewSidebar ) {
 					page.addPlaceholderParameter();
@@ -164,15 +168,15 @@ ve.ui.MWTemplateDialog.prototype.onReplacePart = function ( removed, added ) {
 		}
 	}
 
-	if ( reselect ) {
-		this.focusPart( reselect );
+	if ( this.loaded ) {
+		if ( reselect ) {
+			this.focusPart( reselect );
+		}
 	}
 
-	if ( this.loaded && ( added || removed ) ) {
-		this.altered = true;
+	if ( added || removed ) {
+		this.touch();
 	}
-
-	this.setApplicableStatus();
 	this.updateTitle();
 };
 
@@ -221,10 +225,11 @@ ve.ui.MWTemplateDialog.prototype.onAddParameter = function ( param ) {
 		// Unconditionally focus parameter placeholders. Named parameters must be focused manually.
 		if ( !this.preventReselection && !param.getName() ) {
 			this.focusPart( param.getId() );
+		} else if ( !this.loaded ) {
+			page.scrollElementIntoView();
 		}
 
-		this.altered = true;
-		this.setApplicableStatus();
+		this.touch();
 
 		if ( page instanceof ve.ui.MWParameterPage ) {
 			page.updateSize();
@@ -248,12 +253,10 @@ ve.ui.MWTemplateDialog.prototype.onRemoveParameter = function ( param ) {
 		this.focusPart( reselect.getName() );
 	}
 
+	this.bookletLayout.stackLayout.unsetCurrentItem();
 	this.bookletLayout.removePages( [ page ] );
 
-	if ( this.loaded ) {
-		this.altered = true;
-		this.setApplicableStatus();
-	}
+	this.touch();
 };
 
 /**
@@ -265,10 +268,7 @@ ve.ui.MWTemplateDialog.prototype.onRemoveParameter = function ( param ) {
  * @private
  */
 ve.ui.MWTemplateDialog.prototype.setApplicableStatus = function () {
-	var parts = this.transclusionModel && this.transclusionModel.getParts(),
-		startsWithPlaceholder = parts && parts[ 0 ] instanceof ve.dm.MWTemplatePlaceholderModel,
-		canSave = !startsWithPlaceholder;
-
+	var canSave = !this.transclusionModel.isEmpty();
 	this.actions.setAbilities( { done: canSave && this.altered } );
 };
 
@@ -322,16 +322,16 @@ ve.ui.MWTemplateDialog.prototype.getSelectedNode = function ( data ) {
  * @protected
  */
 ve.ui.MWTemplateDialog.prototype.updateTitle = function () {
-	var parts = this.transclusionModel && this.transclusionModel.getParts(),
-		title = ve.msg( 'visualeditor-dialog-transclusion-loading' );
+	var title = ve.msg( 'visualeditor-dialog-transclusion-loading' );
 
-	if ( parts && parts.length === 1 ) {
-		if ( parts[ 0 ] instanceof ve.dm.MWTemplateModel ) {
+	if ( this.transclusionModel.isSingleTemplate() ) {
+		var part = this.transclusionModel.getParts()[ 0 ];
+		if ( part instanceof ve.dm.MWTemplateModel ) {
 			title = ve.msg(
 				this.getMode() === 'insert' ?
 					'visualeditor-dialog-transclusion-title-insert-known-template' :
 					'visualeditor-dialog-transclusion-title-edit-known-template',
-				parts[ 0 ].getSpec().getLabel()
+				part.getSpec().getLabel()
 			);
 		} else {
 			title = ve.msg( 'visualeditor-dialog-transclusion-title-insert-template' );
@@ -440,9 +440,10 @@ ve.ui.MWTemplateDialog.prototype.getActionProcess = function ( action ) {
 					// eslint-disable-next-line camelcase
 					templateEvent.user_edit_count_bucket = editCountBucket;
 				}
-				for ( var i = 0; i < dialog.transclusionModel.getParts().length; i++ ) {
-					if ( dialog.transclusionModel.getParts()[ i ].getTitle ) {
-						templateEvent.template_names.push( dialog.transclusionModel.getParts()[ i ].getTitle() );
+				var parts = dialog.transclusionModel.getParts();
+				for ( var i = 0; i < parts.length; i++ ) {
+					if ( parts[ i ].getTitle ) {
+						templateEvent.template_names.push( parts[ i ].getTitle() );
 					}
 				}
 				mw.track( 'event.VisualEditorTemplateDialogUse', templateEvent );
@@ -477,7 +478,7 @@ ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
 			// Events
 			this.transclusionModel.connect( this, {
 				replace: 'onReplacePart',
-				change: 'onTransclusionModelChange'
+				change: 'touch'
 			} );
 
 			// Detach the form while building for performance
@@ -486,37 +487,28 @@ ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
 			// with OOUI logic for marking fields as invalid (T199838). We set it back to true below.
 			this.bookletLayout.autoFocus = false;
 
-			if ( this.useNewSidebar ) {
+			if ( this.useNewSidebar && this.bookletLayout.isOutlined() ) {
 				// FIXME: This is created at the wrong time. That's why we run into the situation
 				//  where an old instance exists. Should be in initialize().
 				if ( !this.pocSidebar ) {
-					this.pocSidebar = new ve.ui.MWTransclusionOutlineContainerWidget();
+					this.pocSidebar = new ve.ui.MWTransclusionOutlineWidget();
 					this.pocSidebar.connect( this, {
 						focusPageByName: 'focusPart',
 						filterPagesByName: 'onFilterPagesByName',
-						updateOutlineControlButtons: 'onUpdateOutlineControlButtons'
+						selectedTransclusionPartChanged: 'onSelectedTransclusionPartChanged'
 					} );
-					// FIXME: Check if we can merge these two "set"/"focusin" event handlers
-					this.bookletLayout.connect( this, {
-						set: 'onBookletLayoutSetPage'
-					} );
-					this.bookletLayout.stackLayout.$element.on(
-						'focusin',
-						this.onBookletLayoutPageFocused.bind( this )
-					);
 				} else {
 					this.pocSidebar.clear();
 				}
-				this.transclusionModel.connect( this.pocSidebar, {
-					replace: 'onReplacePart',
-					change: [ 'onTransclusionModelChange', this.transclusionModel ]
-				} );
+				this.transclusionModel.connect( this.pocSidebar, { replace: 'onReplacePart' } );
 			}
 
 			// Initialization
 			if ( !this.selectedNode ) {
 				if ( data.template ) {
-					// New specified template
+					// The template name is from MediaWiki:Visualeditor-cite-tool-definition.json,
+					// passed via a ve.ui.Command, which triggers a ve.ui.MWCitationAction, which
+					// executes ve.ui.WindowAction.open(), which opens this dialog.
 					var template = ve.dm.MWTemplateModel.newFromName(
 						this.transclusionModel, data.template
 					);
@@ -524,13 +516,13 @@ ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
 						this.initializeNewTemplateParameters.bind( this )
 					);
 				} else {
-					// New template placeholder
+					// Open the dialog to add a new template, always starting with a placeholder
 					promise = this.transclusionModel.addPart(
 						new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel )
 					);
 				}
 			} else {
-				// Load existing template
+				// Open the dialog to edit an existing template
 
 				// TODO tracking will only be implemented temporarily to answer questions on
 				// template usage for the Technical Wishes topic area see T258917
@@ -579,6 +571,10 @@ ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
 						dialog.bookletLayout.outlineSelectWidget.$element
 					);
 					dialog.bookletLayout.outlineSelectWidget.toggle( false );
+
+					if ( !dialog.transclusionModel.isSingleTemplate() ) {
+						dialog.pocSidebar.hideAllUnusedParameters();
+					}
 				}
 
 				dialog.bookletLayout.autoFocus = true;
@@ -607,6 +603,7 @@ ve.ui.MWTemplateDialog.prototype.initializeTemplateParameters = function () {};
 
 /**
  * @private
+ * @param {Object} visibility
  */
 ve.ui.MWTemplateDialog.prototype.onFilterPagesByName = function ( visibility ) {
 	for ( var pageName in visibility ) {
@@ -619,14 +616,21 @@ ve.ui.MWTemplateDialog.prototype.onFilterPagesByName = function ( visibility ) {
 
 /**
  * @private
+ * @param {string} partId
+ * @param {boolean} internal Used for internal calls to suppress events
  */
-ve.ui.MWTemplateDialog.prototype.onUpdateOutlineControlButtons = function ( pageName ) {
+ve.ui.MWTemplateDialog.prototype.onSelectedTransclusionPartChanged = function ( partId, internal ) {
+	var page = this.bookletLayout.getPage( partId );
+	if ( page && !internal ) {
+		page.scrollElementIntoView();
+	}
+
 	// FIXME: This hack re-implements what OO.ui.SelectWidget.selectItem would do, without firing
 	// the "select" event. This will stop working when we disconnect the old sidebar.
 	this.bookletLayout.getOutline().items.forEach( function ( item ) {
-		// This repeats what ve.ui.MWTransclusionOutlineContainerWidget.selectPartById did, but for
+		// This repeats what ve.ui.MWTransclusionOutlineWidget.setSelectionByPageName did, but for
 		// the old sidebar
-		item.setSelected( item.getData() === pageName );
+		item.setSelected( item.getData() === partId );
 	} );
 	this.bookletLayout.getOutlineControls().onOutlineChange();
 };
@@ -640,42 +644,14 @@ ve.ui.MWTemplateDialog.prototype.focusPart = function ( pageName ) {
 	if ( this.pocSidebar && pageName.indexOf( '/' ) === -1 ) {
 		// FIXME: This is currently needed because the event that adds a new part to the new sidebar
 		//  is executed later than this here.
-		setTimeout( this.pocSidebar.selectPartById.bind( this.pocSidebar, pageName ) );
-		this.bookletLayout.focus();
+		setTimeout( this.pocSidebar.setSelectionByPageName.bind( this.pocSidebar, pageName ) );
 		this.bookletLayout.setPage( pageName );
+		// The .setPage() call above does not necessarily call .focus(). This forces it.
+		this.bookletLayout.focus();
 	} else if ( this.bookletLayout.isOutlined() ) {
 		this.bookletLayout.getOutline().selectItemByData( pageName );
 	} else {
 		this.bookletLayout.setPage( pageName );
-	}
-};
-
-/**
- * @private
- * @param {OO.ui.PageLayout} page
- */
-ve.ui.MWTemplateDialog.prototype.onBookletLayoutSetPage = function ( page ) {
-	// FIXME: This triggers twice for the same page. Why?
-
-	// The sidebar (currently) can't focus individual template parameters with composite ids like
-	// "part_1/param1". Make sure at least the top-level part is focused.
-	var partId = page.getName().split( '/', 1 )[ 0 ];
-	this.pocSidebar.selectPartById( partId );
-};
-
-/**
- * Modeled after {@see OO.ui.BookletLayout.onStackLayoutFocus}.
- *
- * @private
- * @param {jQuery.Event} e
- */
-ve.ui.MWTemplateDialog.prototype.onBookletLayoutPageFocused = function ( e ) {
-	var $focusedPage = $( e.target ).closest( '.oo-ui-pageLayout' );
-	for ( var pageName in this.bookletLayout.pages ) {
-		if ( this.bookletLayout.getPage( pageName ).$element[ 0 ] === $focusedPage[ 0 ] ) {
-			this.pocSidebar.highlightSubItemByPageName( pageName );
-			break;
-		}
 	}
 };
 

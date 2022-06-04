@@ -59,6 +59,7 @@ class PHPUnitMaintClass {
 	 *
 	 * @param string $msg Error message
 	 * @param int $exitCode PHP exit status. Should be in range 1-254.
+	 * @return never
 	 */
 	private function fatalError( $msg, $exitCode = 1 ) {
 		echo $msg;
@@ -103,9 +104,7 @@ class PHPUnitMaintClass {
 		$wgShowExceptionDetails = true;
 		$wgShowHostnames = true;
 
-		Wikimedia\suppressWarnings();
-		set_time_limit( 0 );
-		Wikimedia\restoreWarnings();
+		@set_time_limit( 0 );
 
 		ini_set( 'memory_limit', -1 );
 
@@ -148,16 +147,17 @@ class PHPUnitMaintClass {
 	public function loadSettings() {
 		global $wgCommandLineMode, $IP;
 
-		$settingsFile = "$IP/LocalSettings.php";
+		$settingsFile = wfDetectLocalSettingsFile( $IP );
 		if ( getenv( 'PHPUNIT_WIKI' ) ) {
-			$bits = explode( '-', getenv( 'PHPUNIT_WIKI' ), 2 );
+			$wikiName = getenv( 'PHPUNIT_WIKI' );
+			$bits = explode( '-', $wikiName, 2 );
 			define( 'MW_DB', $bits[0] );
 			define( 'MW_PREFIX', $bits[1] ?? '' );
+			define( 'MW_WIKI_NAME', $wikiName );
 		}
 
 		if ( !is_readable( $settingsFile ) ) {
-			$this->fatalError( "A copy of your installation's LocalSettings.php\n" .
-				"must exist and be readable in the source directory." );
+			$this->fatalError( "The file $settingsFile must exist and be readable.\n" );
 		}
 		$wgCommandLineMode = true;
 
@@ -179,12 +179,11 @@ if ( strval( getenv( 'MW_INSTALL_PATH' ) ) === '' ) {
 define( 'MEDIAWIKI', true );
 
 $IP = getenv( 'MW_INSTALL_PATH' );
+require_once "$IP/includes/BootstrapHelperFunctions.php";
 
 $wrapper = new PHPUnitMaintClass();
 $wrapper->setup();
-
-// Define how settings are loaded (e.g. LocalSettings.php)
-define( 'MW_CONFIG_FILE', $wrapper->loadSettings() );
+$wrapper->loadSettings();
 
 function wfPHPUnitSetup() {
 	// phpcs:ignore MediaWiki.NamingConventions.ValidGlobalName.allowedPrefix

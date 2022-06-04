@@ -3,16 +3,18 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
-use stdClass;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Config\WikitextConstants as Consts;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
+use Wikimedia\Parsoid\Wikitext\Consts;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 
 /**
@@ -29,14 +31,20 @@ class WTUtils {
 	private const TPL_META_TYPE_REGEXP = '#^mw:(?:Transclusion|Param)(?:/End)?$#D';
 
 	/**
+	 * Regexp for checking marker metas typeofs representing
+	 * annotation markup
+	 */
+	public const ANNOTATION_META_TYPE_REGEXP = '#^mw:(?:Annotation/([\w\d]+))(?:/End)?$#uD';
+
+	/**
 	 * Check whether a node's data-parsoid object includes
 	 * an indicator that the original wikitext was a literal
 	 * HTML element (like table or p)
 	 *
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @return bool
 	 */
-	public static function hasLiteralHTMLMarker( stdClass $dp ): bool {
+	public static function hasLiteralHTMLMarker( DataParsoid $dp ): bool {
 		return isset( $dp->stx ) && $dp->stx === 'html';
 	}
 
@@ -46,9 +54,8 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isLiteralHTMLNode( ?Node $node ): bool {
-		return ( $node &&
-			$node instanceof Element &&
-			self::hasLiteralHTMLMarker( DOMDataUtils::getDataParsoid( $node ) ) );
+		return $node instanceof Element &&
+			self::hasLiteralHTMLMarker( DOMDataUtils::getDataParsoid( $node ) );
 	}
 
 	/**
@@ -79,11 +86,11 @@ class WTUtils {
 	 * anymore since mw:ExtLink is used for all the three link syntaxes.
 	 *
 	 * @param Element $node
-	 * @param ?stdClass $dp
+	 * @param ?DataParsoid $dp
 	 * @return bool
 	 */
 	public static function usesWikiLinkSyntax(
-		Element $node, ?stdClass $dp
+		Element $node, ?DataParsoid $dp
 	): bool {
 		// FIXME: Optimization from ComputeDSR to avoid refetching this property
 		// Is it worth the unnecessary code here?
@@ -103,11 +110,11 @@ class WTUtils {
 	 * multiple link types
 	 *
 	 * @param Element $node
-	 * @param ?stdClass $dp
+	 * @param ?DataParsoid $dp
 	 * @return bool
 	 */
 	public static function usesExtLinkSyntax(
-		Element $node, ?stdClass $dp
+		Element $node, ?DataParsoid $dp
 	): bool {
 		// FIXME: Optimization from ComputeDSR to avoid refetching this property
 		// Is it worth the unnecessary code here?
@@ -127,11 +134,11 @@ class WTUtils {
 	 * multiple link types
 	 *
 	 * @param Element $node
-	 * @param ?stdClass $dp
+	 * @param ?DataParsoid $dp
 	 * @return bool
 	 */
 	public static function usesURLLinkSyntax(
-		Element $node, ?stdClass $dp = null
+		Element $node, ?DataParsoid $dp = null
 	): bool {
 		// FIXME: Optimization from ComputeDSR to avoid refetching this property
 		// Is it worth the unnecessary code here?
@@ -151,11 +158,11 @@ class WTUtils {
 	 * multiple link types
 	 *
 	 * @param Element $node
-	 * @param ?stdClass $dp
+	 * @param ?DataParsoid $dp
 	 * @return bool
 	 */
 	public static function usesMagicLinkSyntax(
-		Element $node, ?stdClass $dp = null
+		Element $node, ?DataParsoid $dp = null
 	): bool {
 		if ( !$dp ) {
 			$dp = DOMDataUtils::getDataParsoid( $node );
@@ -210,8 +217,7 @@ class WTUtils {
 	}
 
 	/**
-	 * Check whether a node is a meta signifying the end of a template
-	 * expansion.
+	 * Check whether a node is a meta signifying the end of a template expansion.
 	 *
 	 * @param Node $node
 	 * @return bool
@@ -239,7 +245,6 @@ class WTUtils {
 			$node = $prev;
 			$prev = DOMUtils::previousNonDeletedSibling( $node );
 		} while (
-			$prev &&
 			$prev instanceof Element &&
 			$prev->getAttribute( 'about' ) === $about
 		);
@@ -249,11 +254,11 @@ class WTUtils {
 	}
 
 	/**
-	 * This tests whether a DOM $node is a new $node added during an edit session
-	 * or an existing $node from parsed wikitext.
+	 * This tests whether a DOM node is a new node added during an edit session
+	 * or an existing node from parsed wikitext.
 	 *
 	 * As written, this function can only be used on non-template/extension content
-	 * or on the top-level $nodes of template/extension content. This test will
+	 * or on the top-level nodes of template/extension content. This test will
 	 * return the wrong results on non-top-level $nodes of template/extension content.
 	 *
 	 * @param Node $node
@@ -268,8 +273,7 @@ class WTUtils {
 		// For template/extension content, newness should be
 		// checked on the encapsulation wrapper $node.
 		$node = self::findFirstEncapsulationWrapperNode( $node ) ?? $node;
-		$dp = DOMDataUtils::getDataParsoid( $node );
-		return !empty( $dp->tmp->isNew );
+		return DOMDataUtils::getDataParsoid( $node )->getTempFlag( TempData::IS_NEW );
 	}
 
 	/**
@@ -357,8 +361,8 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isRedirectLink( Node $node ): bool {
-		return DOMCompat::nodeName( $node ) === 'link' &&
-			DOMUtils::assertElt( $node ) &&
+		return $node instanceof Element &&
+			DOMCompat::nodeName( $node ) === 'link' &&
 			preg_match( '#\bmw:PageProp/redirect\b#', $node->getAttribute( 'rel' ) ?? '' );
 	}
 
@@ -381,8 +385,8 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isSolTransparentLink( Node $node ): bool {
-		return DOMCompat::nodeName( $node ) === 'link' &&
-			DOMUtils::assertElt( $node ) &&
+		return $node instanceof Element &&
+			DOMCompat::nodeName( $node ) === 'link' &&
 			preg_match( TokenUtils::SOL_TRANSPARENT_LINK_REGEX, $node->getAttribute( 'rel' ) ?? '' );
 	}
 
@@ -399,7 +403,7 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function emitsSolTransparentSingleLineWT( Node $node ): bool {
-		if ( DOMUtils::isText( $node ) ) {
+		if ( $node instanceof Text ) {
 			// NB: We differ here to meet the nl condition.
 			return (bool)preg_match( '/^[ \t]*$/D', $node->nodeValue );
 		} elseif ( self::isRenderingTransparentNode( $node ) ) {
@@ -436,23 +440,17 @@ class WTUtils {
 	 */
 	public static function isRenderingTransparentNode( Node $node ): bool {
 		// FIXME: Can we change this entire thing to
-		// DOMUtils::isComment($node) ||
+		// $node instanceof Comment ||
 		// DOMUtils::getDataParsoid($node).stx !== 'html' &&
 		// (DOMCompat::nodeName($node) === 'meta' || DOMCompat::nodeName($node) === 'link')
 		//
-		return DOMUtils::isComment( $node ) ||
+		return $node instanceof Comment ||
 			self::isSolTransparentLink( $node ) || (
 				// Catch-all for everything else.
+				$node instanceof Element &&
 				DOMCompat::nodeName( $node ) === 'meta' &&
-				DOMUtils::assertElt( $node ) &&
-				(
-					// (Start|End)Tag metas clone data-parsoid from the tokens
-					// they're shadowing, which trips up on the stx check.
-					// TODO: Maybe that data should be nested in a property?
-					DOMUtils::matchTypeOf( $node, '/^mw:(StartTag|EndTag)$/' ) !== null ||
-					!isset( DOMDataUtils::getDataParsoid( $node )->stx ) ||
-					DOMDataUtils::getDataParsoid( $node )->stx !== 'html'
-				)
+				!self::isMarkerAnnotation( $node ) &&
+				( DOMDataUtils::getDataParsoid( $node )->stx ?? '' ) !== 'html'
 			) || self::isFallbackIdSpan( $node );
 	}
 
@@ -536,9 +534,19 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isParsoidSectionTag( Node $node ): bool {
-		return DOMCompat::nodeName( $node ) === 'section' &&
-			DOMUtils::assertElt( $node ) &&
+		return $node instanceof Element &&
+			DOMCompat::nodeName( $node ) === 'section' &&
 			$node->hasAttribute( 'data-mw-section-id' );
+	}
+
+	/** Is $node a Parsoid-generated extended annotation wrapper
+	 * @param Node $node
+	 * @return bool
+	 */
+	public static function isExtendedAnnotationWrapperTag( Node $node ): bool {
+		return $node instanceof Element &&
+			$node->hasAttribute( 'typeof' ) &&
+			$node->getAttribute( 'typeof' ) === 'mw:ExtendedAnnRange';
 	}
 
 	/**
@@ -617,9 +625,8 @@ class WTUtils {
 
 		$node = $node->nextSibling;
 		while ( $node && (
-			$node instanceof Element &&
-			$node->getAttribute( 'about' ) === $about ||
-				DOMUtils::isFosterablePosition( $node ) && !DOMUtils::isElt( $node ) && DOMUtils::isIEW( $node )
+			( $node instanceof Element && $node->getAttribute( 'about' ) === $about ) ||
+			( DOMUtils::isFosterablePosition( $node ) && DOMUtils::isIEW( $node ) )
 		) ) {
 			$nodes[] = $node;
 			$node = $node->nextSibling;
@@ -781,63 +788,6 @@ class WTUtils {
 	}
 
 	/**
-	 * Conditional encoding is because, while treebuilding, the value goes
-	 * directly from token to dom node without the comment itself being
-	 * stringified and parsed where the comment encoding would be necessary.
-	 *
-	 * @param string $typeOf
-	 * @param array $attrs
-	 * @return string
-	 */
-	public static function fosterCommentData( string $typeOf, array $attrs ): string {
-		return PHPUtils::jsonEncode( [
-			// WARNING(T279451): The choice of "-type" as the key is because
-			// "-" will be encoded with self::encodeComment when comments come
-			// from source wikitext (see the grammar), so we can be sure when
-			// reinserting that the comments are internal to Parsoid
-			'-type' => $typeOf,
-			'attrs' => $attrs
-		] );
-	}
-
-	/**
-	 * @param Env $env
-	 * @param Node $node
-	 * @return ?Node
-	 */
-	public static function reinsertFosterableContent(
-		Env $env, Node $node
-	): ?Node {
-		if ( DOMUtils::isComment( $node ) && preg_match( '/^\{.+\}$/D', $node->nodeValue ) ) {
-			// Convert serialized meta tags back from comments.
-			// We use this trick because comments won't be fostered,
-			// providing more accurate information about where tags are expected
-			// to be found.
-			$data = json_decode( $node->nodeValue );
-			if ( $data === null ) {
-				// not a valid json attribute, do nothing
-				return null;
-			}
-			$type = $data->{'-type'} ?? '';
-			if ( str_starts_with( $type, 'mw:' ) ) {
-				$meta = $node->ownerDocument->createElement( 'meta' );
-				foreach ( $data->attrs as $key => $value ) {
-					try {
-						$meta->setAttribute( $key, $value );
-					} catch ( \Exception $e ) {
-						$env->log( 'warn', 'prepareDOM: Dropped invalid attribute',
-							$key, '=>', $value
-						);
-					}
-				}
-				$node->parentNode->replaceChild( $meta, $node );
-				return $meta;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * @param Env $env
 	 * @param Node $node
 	 * @return ?ExtensionTagHandler
@@ -861,8 +811,86 @@ class WTUtils {
 		$span = $doc->createElement( 'span' );
 		DOMUtils::addTypeOf( $span, 'mw:I18n' );
 		$dp = DOMDataUtils::getDataParsoid( $span );
-		$dp->tmp->i18n = $i18n;
+		$dp->getTemp()->i18n = $i18n;
 		$frag->appendChild( $span );
 		return $frag;
+	}
+
+	/** Check whether a node is an annotation meta; if yes, returns its type
+	 * @param Node $node
+	 * @return ?string
+	 */
+	public static function matchAnnotationMeta( Node $node ): ?string {
+		return DOMUtils::matchNameAndTypeOf( $node, 'meta', self::ANNOTATION_META_TYPE_REGEXP );
+	}
+
+	/**
+	 * Extract the annotation type, excluding potential "/End" suffix; returns null if not a valid
+	 * annotation meta. &$isStart is set to true if the annotation is a start tag, false otherwise.
+	 *
+	 * @param Node $node
+	 * @param bool &$isStart
+	 * @return ?string The matched type, or null if no match.
+	 */
+	public static function extractAnnotationType( Node $node, bool &$isStart = false ): ?string {
+		$t = DOMUtils::matchTypeOf( $node, self::ANNOTATION_META_TYPE_REGEXP );
+		if ( $t !== null && preg_match( self::ANNOTATION_META_TYPE_REGEXP, $t, $matches ) ) {
+			$isStart = !str_ends_with( $t, '/End' );
+			return $matches[1];
+		}
+		return null;
+	}
+
+	/**
+	 * Check whether a node is a meta signifying the start of an annotated part of the DOM
+	 *
+	 * @param Node $node
+	 * @return bool
+	 */
+	public static function isAnnotationStartMarkerMeta( Node $node ): bool {
+		if ( !$node instanceof Element || DOMCompat::nodeName( $node ) !== 'meta' ) {
+			return false;
+		}
+		$isStart = false;
+		$t = self::extractAnnotationType( $node, $isStart );
+		return $t !== null && $isStart;
+	}
+
+	/**
+	 * Check whether a node is a meta signifying the end of an annotated part of the DOM
+	 *
+	 * @param Node $node
+	 * @return bool
+	 */
+	public static function isAnnotationEndMarkerMeta( Node $node ): bool {
+		if ( !$node instanceof Element || DOMCompat::nodeName( $node ) !== 'meta' ) {
+			return false;
+		}
+		$isStart = false;
+		$t = self::extractAnnotationType( $node, $isStart );
+		return $t !== null && !$isStart;
+	}
+
+	/**
+	 * Check whether the meta tag was moved from its initial position
+	 * @param Node $node
+	 * @return bool
+	 */
+	public static function isMovedMetaTag( Node $node ): bool {
+		if ( $node instanceof Element && self::matchAnnotationMeta( $node ) !== null ) {
+			$parsoidData = DOMDataUtils::getDataParsoid( $node );
+			if ( isset( $parsoidData->wasMoved ) ) {
+				return $parsoidData->wasMoved;
+			}
+		}
+		return false;
+	}
+
+	/** Returns true if a node is a (start or end) annotation meta tag
+	 * @param ?Node $n
+	 * @return bool
+	 */
+	public static function isMarkerAnnotation( ?Node $n ): bool {
+		return $n !== null && self::matchAnnotationMeta( $n ) !== null;
 	}
 }

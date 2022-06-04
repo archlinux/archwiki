@@ -51,7 +51,7 @@
 	"oath-log-name": "Log otentikasi duo-faktor",
 	"oath-log-header": "Paristiwa ko malacak parubahan statuih otentikasi duo-faktor pangguno.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|nonaktipan}} otentikasi duo-faktor dari $3",
-	"oauthauth-ui-no-module": "Indak aktip",
+	"oathauth-ui-no-module": "Indak aktip",
 	"oathauth-module-totp-label": "KSSW (token sakali-pakai)",
 	"oathauth-ui-manage": "Atua",
 	"oathmanage": "Atua otentikasi duo-faktor",

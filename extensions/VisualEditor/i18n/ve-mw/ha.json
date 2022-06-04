@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"DonCamillo",
 			"Bashir Gwanki",
+			"DonCamillo",
 			"Em-em",
 			"Gwanki",
 			"Oby Ezeilo"
@@ -49,6 +49,7 @@
 	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "Eh",
 	"visualeditor-dialog-meta-settings-toc-force": "Koda yaushe",
 	"visualeditor-dialog-transclusion-action-save": "Ajiye",
-	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Koma baya",
-	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "Cigaba da gyarawa"
+	"visualeditor-dialog-transclusion-template-title-nonexistent": "Babu wannan samfurin.",
+	"visualeditor-dialog-transclusion-template-title-modifier": "Bayanan samfuri da [//www.mediawiki.org/wiki/Manual:Glossary#Parameter parameter] sunaye (idan akwai su) ba su samuwa lokacin gyara samfura ta amfani da masu gyara, kamar [//www.mediawiki.org/wiki/Help:Substitution subst].",
+	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Koma baya"
 }

@@ -18,7 +18,7 @@
  * Coordinates are relative to the source image, not the thumbnail.
  */
 
-namespace MediaWiki\Extensions\ImageMap;
+namespace MediaWiki\Extension\ImageMap;
 
 use ConfigFactory;
 use DOMDocument;
@@ -29,6 +29,7 @@ use OutputPage;
 use Parser;
 use Sanitizer;
 use Title;
+use Wikimedia\AtEase\AtEase;
 use Xml;
 
 class ImageMap {
@@ -119,9 +120,9 @@ class ImageMap {
 				$imageHTML = Sanitizer::normalizeCharReferences( $imageHTML );
 
 				$domDoc = new DOMDocument();
-				\Wikimedia\suppressWarnings();
+				AtEase::suppressWarnings();
 				$ok = $domDoc->loadXML( $imageHTML );
-				\Wikimedia\restoreWarnings();
+				AtEase::restoreWarnings();
 				if ( !$ok ) {
 					return self::error( 'imagemap_invalid_image' );
 				}
@@ -159,7 +160,7 @@ class ImageMap {
 					$typesText = $descTypesCanonical . ', ' . $typesText;
 				}
 				$types = array_map( 'trim', explode( ',', $typesText ) );
-				$type = trim( strtok( '' ) );
+				$type = trim( strtok( '' ) ?: '' );
 				$descType = array_search( $type, $types );
 				if ( $descType > 4 ) {
 					// A localized descType is used. Subtract 5 to reach the canonical desc type.
@@ -316,6 +317,13 @@ class ImageMap {
 			// Add a surrounding div, remove the default link to the description page
 			$anchor = $imageNode->parentNode;
 			$parent = $anchor->parentNode;
+
+			// Handle cases where there are no anchors, like `|link=`
+			if ( $anchor instanceof DOMDocument ) {
+				$parent = $anchor;
+				$anchor = $imageNode;
+			}
+
 			$div = $parent->insertBefore( new DOMElement( 'div' ), $anchor );
 			$div->setAttribute( 'class', 'noresize' );
 			if ( $defaultLinkAttribs ) {

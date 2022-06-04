@@ -7,9 +7,7 @@
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikitext",
-	"wikieditor-loading": "Ngamuat",
 	"wikieditor-toolbar": "Tulbar paranti ngédit",
-	"wikieditor-toolbar-loading": "Ngamuat…",
 	"wikieditor-toolbar-tool-bold": "Kandel",
 	"wikieditor-toolbar-tool-bold-example": "Tulisan kandel",
 	"wikieditor-toolbar-tool-italic": "Déngdék",
@@ -39,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL anu diasupkeun sigana tutumbu ka kaca wiki lianna. Badé didamel tutumbu internal?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Tutumbu internal",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Tutumbu éksternal",
-	"wikieditor-toolbar-tool-link-empty": "Anjeun teu ngasupkeun nanaon pikeun tutumbu.",
 	"wikieditor-toolbar-tool-file-example": "Conto.jpg",
 	"wikieditor-toolbar-tool-file-cancel": "Bolay",
 	"wikieditor-toolbar-tool-reference": "Rujukan",

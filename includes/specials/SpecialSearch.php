@@ -267,7 +267,7 @@ class SpecialSearch extends SpecialPage {
 		list( $this->limit, $this->offset ) = $request->getLimitOffsetForUser(
 			$this->getUser(),
 			20,
-			''
+			'searchlimit'
 		);
 		$this->mPrefix = $request->getVal( 'prefix', '' );
 		if ( $this->mPrefix !== '' ) {
@@ -321,7 +321,7 @@ class SpecialSearch extends SpecialPage {
 		}
 
 		$this->fulltext = $request->getVal( 'fulltext' );
-		$this->runSuggestion = (bool)$request->getVal( 'runsuggestion', true );
+		$this->runSuggestion = (bool)$request->getVal( 'runsuggestion', '1' );
 		$this->profile = $profile;
 	}
 
@@ -365,8 +365,7 @@ class SpecialSearch extends SpecialPage {
 	}
 
 	private function redirectOnExactMatch() {
-		global $wgSearchMatchRedirectPreference;
-		if ( !$wgSearchMatchRedirectPreference ) {
+		if ( !$this->getConfig()->get( 'SearchMatchRedirectPreference' ) ) {
 			// If the preference for whether to redirect is disabled, use the default setting
 			$defaultOptions = $this->userOptionsManager->getDefaultOptions();
 			return $defaultOptions['search-match-redirect'];
@@ -566,7 +565,7 @@ class SpecialSearch extends SpecialPage {
 	}
 
 	/**
-	 * @param Title $title
+	 * @param Title|null $title
 	 * @param int $num The number of search results found
 	 * @param null|ISearchResultSet $titleMatches Results from title search
 	 * @param null|ISearchResultSet $textMatches Results from text search
@@ -632,7 +631,7 @@ class SpecialSearch extends SpecialPage {
 		$this->outputHeader();
 		// TODO: Is this true? The namespace remember uses a user token
 		// on save.
-		$out->allowClickjacking();
+		$out->setPreventClickjacking( false );
 		$this->addHelpLink( 'Help:Searching' );
 
 		if ( strval( $term ) !== '' ) {

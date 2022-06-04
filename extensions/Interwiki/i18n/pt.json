@@ -11,7 +11,8 @@
 			"Malafaya",
 			"Vitorvicentevalente",
 			"Waldir",
-			555
+			555,
+			"McDutchie"
 		]
 	},
 	"interwiki": "Ver e manipular dados de interwikis",
@@ -40,7 +41,7 @@
 	"interwiki_deleting": "Está a apagar o prefixo \"$1\".",
 	"interwiki_deleted": "O prefixo \"$1\" foi removido da tabela de interwikis.",
 	"interwiki_delfailed": "Não foi possível remover o prefixo \"$1\" da tabela de interwikis.",
-	"interwiki-logtext": "Ver registos",
+	"interwiki-logtext": "Ver o registo",
 	"interwiki_addtext": "Adicionar um prefixo interwikis ou um prefixo interlínguas",
 	"interwiki-addtext-local": "Adicionar um prefixo interwikis, ou um prefixo interlínguas, local",
 	"interwiki-addtext-nolang": "Adicionar um prefixo interwikis",

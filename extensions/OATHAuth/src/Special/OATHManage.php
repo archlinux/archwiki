@@ -248,7 +248,12 @@ class OATHManage extends SpecialPage {
 	 * @param PanelLayout|null $panel
 	 */
 	private function addCustomContent( IModule $module, $panel = null ) {
-		$form = $module->getManageForm( $this->action, $this->authUser, $this->userRepo );
+		$form = $module->getManageForm(
+			$this->action,
+			$this->authUser,
+			$this->userRepo,
+			$this->getContext()
+		);
 		if ( $form === null || !$this->isValidFormType( $form ) ) {
 			return;
 		}

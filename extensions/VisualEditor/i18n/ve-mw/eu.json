@@ -8,10 +8,10 @@
 			"Mikel Ibaiba",
 			"Sator",
 			"Subi",
+			"TMg",
 			"Theklan",
 			"Unai Fdz. de Betoño",
-			"Xabier Armendaritz",
-			"TMg"
+			"Xabier Armendaritz"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -179,7 +179,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Multimedia fitxategiak",
 	"visualeditor-dialogbutton-meta-tooltip": "Orrialde-konfigurazioa",
 	"visualeditor-dialogbutton-template-tooltip": "Txantiloia",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Txertatu modelo bat",
 	"visualeditor-donebutton-tooltip": "Aldaketa burutua",
 	"visualeditor-editconflict": "Zure aldaketak ezin izan dira gorde, edizio gatazka bat izan delako. Gatazka eskuz konpondu nahi duzu?",
 	"visualeditor-editingtabdialog-ok": "Azken edizioan erabilitako editorea erabili",

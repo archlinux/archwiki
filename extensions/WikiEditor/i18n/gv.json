@@ -3,15 +3,14 @@
 		"authors": [
 			"MacTire02",
 			"Macofe",
-			"Shimmin Beg"
+			"Shimmin Beg",
+			"Amire80"
 		]
 	},
 	"wikieditor-wikitext-tab": "Teks wiki",
-	"wikieditor-loading": "Laadey",
 	"wikieditor-toolbar": "Barr greieyn reaghey",
 	"wikieditor-toolbar-desc": "Barr greieyn reaghey tooilley yn-ymmydey",
 	"wikieditor-toolbar-preference": "Lhiggey da barr greieyn reaghey tooilley yn-ymmydey",
-	"wikieditor-toolbar-loading": "Laadey...",
 	"wikieditor-toolbar-tool-bold": "Trome",
 	"wikieditor-toolbar-tool-bold-example": "Teks trome",
 	"wikieditor-toolbar-tool-italic": "Iddaalagh",
@@ -41,7 +40,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Rere y chiangley hug oo stiagh, t'eh jeeaghyn dy row eh foyd kiangley rish duillag wiki elley.\nBy vie lhiat jannoo kiangley çheusthie jeh?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Kiangley sthie",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Kiangley mooie",
-	"wikieditor-toolbar-tool-link-empty": "Cha dug oo stiagh red erbee dy chiangley rish.",
 	"wikieditor-toolbar-tool-file": "Coadan jingit",
 	"wikieditor-toolbar-tool-file-example": "Sampleyr.jpg",
 	"wikieditor-toolbar-tool-reference": "Imraa",
@@ -132,7 +130,7 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Teks trome &amp; iddaalagh'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Teks trome &amp; iddaalagh</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "Kiangley yn-veanagh",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Ennym duillag|Teks kiangley]]<br />[[Ennym duillag]]",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Ennym duillag]]<br />[[Ennym duillag|Teks kiangley]]",
 	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Teks kiangley</a><br /><a href='#'>Ennym duillag</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Kiangley mooie",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Teks kiangley]<br />[http://www.example.org]<br />http://www.example.org",

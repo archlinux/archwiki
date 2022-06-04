@@ -6,15 +6,13 @@
  */
 
 ( function () {
-	var n;
-
 	function fixTarget( target ) {
-		var i, iLen, toolGroup, label, group,
-			toolGroups = target.static.toolbarGroups;
+		var toolGroups = target.static.toolbarGroups;
 
+		var i, iLen;
 		if ( mw.config.get( 'wgCiteVisualEditorOtherGroup' ) ) {
 			for ( i = 0, iLen = toolGroups.length; i < iLen; i++ ) {
-				toolGroup = toolGroups[ i ];
+				var toolGroup = toolGroups[ i ];
 				if ( toolGroup.name === 'insert' && ( !toolGroup.demote || toolGroup.demote.indexOf( 'reference' ) === -1 ) ) {
 					toolGroup.demote = toolGroup.demote || [];
 					toolGroup.demote.push( { group: 'cite' }, 'reference', 'reference/existing' );
@@ -24,7 +22,7 @@
 			// Find the reference placeholder group and replace it
 			for ( i = 0, iLen = toolGroups.length; i < iLen; i++ ) {
 				if ( toolGroups[ i ].name === 'reference' ) {
-					toolGroups[ i ] = group = {
+					var group = {
 						// Change the name so it isn't replaced twice
 						name: 'cite',
 						type: 'list',
@@ -32,7 +30,7 @@
 						include: [ { group: 'cite' }, 'reference', 'reference/existing' ],
 						demote: [ 'reference', 'reference/existing' ]
 					};
-					label = OO.ui.deferMsg( 'cite-ve-toolbar-group-label' );
+					var label = OO.ui.deferMsg( 'cite-ve-toolbar-group-label' );
 					// Treat mobile targets differently
 					if ( target === ve.init.mw.MobileArticleTarget ) {
 						group.header = label;
@@ -41,13 +39,14 @@
 					} else {
 						group.label = label;
 					}
+					toolGroups[ i ] = group;
 					break;
 				}
 			}
 		}
 	}
 
-	for ( n in ve.init.mw.targetFactory.registry ) {
+	for ( var n in ve.init.mw.targetFactory.registry ) {
 		fixTarget( ve.init.mw.targetFactory.lookup( n ) );
 	}
 
@@ -72,9 +71,7 @@
 	 *
 	 */
 	( function () {
-		var tools,
-			limit = 5,
-			deprecatedIcons = {
+		var deprecatedIcons = {
 				'ref-cite-book': 'book',
 				'ref-cite-journal': 'journal',
 				'ref-cite-news': 'newspaper',
@@ -88,23 +85,12 @@
 				web: 'browser'
 			};
 
-		try {
-			// Must use mw.message to avoid JSON being parsed as Wikitext
-			tools = JSON.parse( mw.message( 'cite-tool-definition.json' ).plain() );
-		} catch ( e ) {}
-		if ( !tools ) {
-			try {
-				// Must use mw.message to avoid JSON being parsed as Wikitext
-				tools = JSON.parse( mw.message( 'visualeditor-cite-tool-definition.json' ).plain() );
-			} catch ( e ) {}
-		}
-
-		// Limit and expose
-		ve.ui.mwCitationTools = ( tools || [] ).slice( 0, limit );
+		// This is assigned server-side by CiteVisualEditorModule.php, before this file runs.
+		// Ensure it has a fallback, just in case.
+		ve.ui.mwCitationTools = ve.ui.mwCitationTools || [];
 
 		ve.ui.mwCitationTools.forEach( function ( item ) {
-			var name, tool, contextItem,
-				hasOwn = Object.prototype.hasOwnProperty,
+			var hasOwn = Object.prototype.hasOwnProperty,
 				data = { template: item.template, title: item.title };
 
 			if ( !item.icon && hasOwn.call( defaultIcons, item.name ) ) {
@@ -116,9 +102,9 @@
 			}
 
 			// Generate citation tool
-			name = 'cite-' + item.name;
+			var name = 'cite-' + item.name;
 			if ( !ve.ui.toolFactory.lookup( name ) ) {
-				tool = function GeneratedMWCitationDialogTool() {
+				var tool = function GeneratedMWCitationDialogTool() {
 					ve.ui.MWCitationDialogTool.apply( this, arguments );
 				};
 				OO.inheritClass( tool, ve.ui.MWCitationDialogTool );
@@ -145,7 +131,7 @@
 
 			// Generate citation context item
 			if ( !ve.ui.contextItemFactory.lookup( name ) ) {
-				contextItem = function GeneratedMWCitationContextItem() {
+				var contextItem = function GeneratedMWCitationContextItem() {
 					// Parent constructor
 					ve.ui.MWCitationContextItem.apply( this, arguments );
 				};

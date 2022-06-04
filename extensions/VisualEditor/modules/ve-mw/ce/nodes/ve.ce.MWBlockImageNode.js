@@ -17,13 +17,11 @@
  * @param {Object} [config] Configuration options
  */
 ve.ce.MWBlockImageNode = function VeCeMWBlockImageNode() {
-	var type, isError, $image, $missingImage, $focusable;
-
 	// Parent constructor
 	ve.ce.MWBlockImageNode.super.apply( this, arguments );
 
-	type = this.model.getAttribute( 'type' );
-	isError = this.model.getAttribute( 'isError' );
+	var type = this.model.getAttribute( 'type' );
+	var isError = this.model.getAttribute( 'isError' );
 
 	// DOM Hierarchy for MWBlockImageNode:
 	//   <figure> this.$element (ve-ce-mwBlockImageNode-{type})
@@ -31,10 +29,11 @@ ve.ce.MWBlockImageNode = function VeCeMWBlockImageNode() {
 	//       <img> this.$image
 	//     <figcaption> ve.ce.MWImageCaptionNode
 
+	var $image, $focusable;
 	// Build DOM:
 	if ( isError ) {
 		$image = $( [] );
-		$missingImage = $( '<span>' ).text( this.model.getFilename() );
+		var $missingImage = $( '<span>' ).text( this.model.getFilename() );
 		this.$a = $( '<a>' )
 			.addClass( 'new' )
 			.append( $missingImage );
@@ -43,7 +42,6 @@ ve.ce.MWBlockImageNode = function VeCeMWBlockImageNode() {
 		$image = $( '<img>' )
 			.attr( 'src', this.getResolvedAttribute( 'src' ) );
 		this.$a = $( '<a>' )
-			.addClass( 'image' )
 			.attr( 'href', this.getResolvedAttribute( 'href' ) )
 			.append( $image );
 		$focusable = $image;
@@ -85,7 +83,7 @@ ve.ce.MWBlockImageNode.static.tagName = 'figure';
 
 ve.ce.MWBlockImageNode.static.renderHtmlAttributes = false;
 
-ve.ce.MWBlockImageNode.static.transition = false;
+ve.ce.MWBlockImageNode.static.autoFocus = false;
 
 ve.ce.MWBlockImageNode.static.cssClasses = {
 	default: {
@@ -110,9 +108,7 @@ ve.ce.MWBlockImageNode.static.cssClasses = {
  * @param {string} [oldAlign] The old alignment, for removing classes
  */
 ve.ce.MWBlockImageNode.prototype.updateClasses = function ( oldAlign ) {
-	var alignClass,
-		align = this.model.getAttribute( 'align' ),
-		type = this.model.getAttribute( 'type' );
+	var align = this.model.getAttribute( 'align' );
 
 	if ( oldAlign && oldAlign !== align ) {
 		// Remove previous alignment
@@ -123,6 +119,8 @@ ve.ce.MWBlockImageNode.prototype.updateClasses = function ( oldAlign ) {
 			.removeClass( this.getCssClass( 'default', oldAlign ) );
 	}
 
+	var type = this.model.getAttribute( 'type' );
+	var alignClass;
 	if ( type !== 'none' && type !== 'frameless' ) {
 		alignClass = this.getCssClass( 'default', align );
 		this.$image.addClass( 've-ce-mwBlockImageNode-thumbimage' );
@@ -152,10 +150,7 @@ ve.ce.MWBlockImageNode.prototype.updateClasses = function ( oldAlign ) {
  * @param {Object} [dimensions] Dimension object containing width & height
  */
 ve.ce.MWBlockImageNode.prototype.updateSize = function ( dimensions ) {
-	var isError = this.model.getAttribute( 'isError' ),
-		type = this.model.getAttribute( 'type' ),
-		borderImage = this.model.getAttribute( 'borderImage' ),
-		hasBorderOrFrame = ( type !== 'none' && type !== 'frameless' ) || borderImage;
+	var isError = this.model.getAttribute( 'isError' );
 
 	if ( isError ) {
 		this.$element.css( { width: '', height: '' } );
@@ -170,6 +165,10 @@ ve.ce.MWBlockImageNode.prototype.updateSize = function ( dimensions ) {
 	}
 
 	this.$image.css( dimensions );
+
+	var type = this.model.getAttribute( 'type' );
+	var borderImage = this.model.getAttribute( 'borderImage' );
+	var hasBorderOrFrame = ( type !== 'none' && type !== 'frameless' ) || borderImage;
 
 	// Make sure $element is sharing the dimensions, otherwise 'middle' and 'none'
 	// positions don't work properly

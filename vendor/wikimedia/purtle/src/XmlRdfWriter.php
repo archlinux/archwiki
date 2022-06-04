@@ -42,18 +42,30 @@ class XmlRdfWriter extends RdfWriterBase {
 		return htmlspecialchars( $text, ENT_QUOTES );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandSubject( &$base, &$local ) {
 		$this->expandQName( $base, $local );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandPredicate( &$base, &$local ) {
 		$this->expandShorthand( $base, $local );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandResource( &$base, &$local ) {
 		$this->expandQName( $base, $local );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandType( &$base, &$local ) {
 		$this->expandQName( $base, $local );
 	}

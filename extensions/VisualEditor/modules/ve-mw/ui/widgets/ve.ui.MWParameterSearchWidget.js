@@ -15,6 +15,7 @@
  * @param {ve.dm.MWTemplateModel} template Template model
  * @param {Object} [config] Configuration options
  * @cfg {number|null} [limit=3] Limit on the number of initial options to show, null to show all
+ * @cfg {boolean} [showAll=false] If the results should be initially expanded, ignoring the limit
  */
 ve.ui.MWParameterSearchWidget = function VeUiMWParameterSearchWidget( template, config ) {
 	// Configuration initialization

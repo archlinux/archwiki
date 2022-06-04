@@ -24,8 +24,7 @@ class ActionFieldLayout extends FieldLayout {
 		// Allow passing positional parameters inside the config array
 		if ( is_array( $fieldWidget ) && isset( $fieldWidget['fieldWidget'] ) ) {
 			$config = $fieldWidget;
-			$fieldWidget = $config['fieldWidget'];
-			$buttonWidget = $config['buttonWidget'];
+			[ 'fieldWidget' => $fieldWidget, 'buttonWidget' => $buttonWidget ] = $config;
 		}
 
 		// Parent constructor

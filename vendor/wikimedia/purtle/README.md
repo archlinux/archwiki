@@ -13,11 +13,13 @@ The concrete classes implementing the common `RdfWriter` interface are:
 
 The PHP code would look something like this:
 
-    $writer = new TurtleRdfWriter();
+```php
+$writer = new TurtleRdfWriter();
 
-    $writer->prefix( 'acme', 'http://acme.test/terms/' );
+$writer->prefix( 'acme', 'http://acme.test/terms/' );
 
-    $writer->about( 'http://quux.test/Something' )
-      ->a( 'acme', 'Thing' )
-      ->say( 'acme', 'name' )->text( 'Thingy' )->text( 'Dingsda', 'de' )
-      ->say( 'acme', 'owner' )->is( 'http://quux.test/' );
+$writer->about( 'http://quux.test/Something' )
+  ->a( 'acme', 'Thing' )
+  ->say( 'acme', 'name' )->text( 'Thingy' )->text( 'Dingsda', 'de' )
+  ->say( 'acme', 'owner' )->is( 'http://quux.test/' );
+```

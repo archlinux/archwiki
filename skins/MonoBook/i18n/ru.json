@@ -7,8 +7,8 @@
 			"Movses",
 			"Okras",
 			"Ole Yves",
-			"Stjn",
-			"Pacha Tchernof"
+			"Pacha Tchernof",
+			"Stjn"
 		]
 	},
 	"skinname-monobook": "MonoBook",
@@ -23,5 +23,7 @@
 	"cactions-mobile": "Действия на странице",
 	"monobook-cactions-label": "Действия на странице",
 	"monobook-notifications-link": "Уведомления ($1)",
-	"monobook-notifications-link-none": "Уведомления"
+	"monobook-notifications-link-none": "Уведомления",
+	"monobook-view-history": "История",
+	"monobook-action-undelete": "Восстановить {{PLURAL:$1|$1 правку|$1 правки|$1 правок|1=правку}}"
 }

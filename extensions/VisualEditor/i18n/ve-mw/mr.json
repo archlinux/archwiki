@@ -8,12 +8,12 @@
 			"Praju23",
 			"Sureshkhole",
 			"Susheelkasab",
+			"TMg",
 			"V.narsikar",
 			"Ydyashad",
 			"अभय नातू",
 			"ज्ञानदा गद्रे-फडके",
-			"संतोष दहिवळ",
-			"TMg"
+			"संतोष दहिवळ"
 		]
 	},
 	"collabpad-doctitle": "सहसंपादनपत्र:$1",
@@ -175,7 +175,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "माध्यम (मिडिया)",
 	"visualeditor-dialogbutton-meta-tooltip": "पान मांडणी (सेटींग)",
 	"visualeditor-dialogbutton-template-tooltip": "साचा",
-	"visualeditor-dialogbutton-transclusion-tooltip": "आंतर्न्यास (ट्रांसक्लूजन)",
 	"visualeditor-donebutton-tooltip": "संपादन झाले",
 	"visualeditor-editconflict": "आपल्या संपादनाचे, इतर एका वेगळ्या संपादनाशी मतभेद होत असल्यामूळे आपले संपादन जतन होऊ शकले नाही.हा संपादनघोळ स्वहस्ते (मॅन्यूअली) निस्तरू शकणे {{GENDER:|आपणास}}  आवडेल काय?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} आता हे लक्षात ठेवते कि आपण कोणता संपादक अधिक पसंत करता. आपण संपादन पद्धती संपादन करतांनाच बदलवू शकता व नंतर आपला पसंतीक्रम बदलू शकता.",

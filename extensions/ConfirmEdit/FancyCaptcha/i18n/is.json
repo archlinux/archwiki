@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Snævar"
+			"Snævar",
+			"Sveinn í Felli"
 		]
 	},
+	"fancycaptcha-desc": "Líflegt CAPTCHA-mennskupróf fyrir staðfestingu breytinga",
 	"fancycaptcha-addurl": "Breytingin þín inniheldur viðbætta ytri tengla.\nTil þess að verjast sjálfvirku auglýsingarusli, biðjum við þig vinsamlegast að slá inn orðin sem birtast hér fyrir neðan í reitinn ([[Special:Captcha/help|frekari upplýsingar]]):",
 	"fancycaptcha-badlogin": "Til þess að verjast gegn sjálfvirkum leyniorðaárásum, biðjum við þig vinsamlegast að slá inn orðin sem birtast hér fyrir neðan í reitinn ([[Special:Captcha/help|frekari upplýsingar]]):",
 	"fancycaptcha-captcha": "Öryggis athugun",

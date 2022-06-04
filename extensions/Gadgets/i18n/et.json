@@ -19,9 +19,12 @@
 	"gadgetusage-default": "Vaikimisi",
 	"gadgets-title": "Tööriistad",
 	"gadgets-pagetext": "Allpool on nimekiri eririistadest, mida kasutajad saavad oma [[Special:Preferences#mw-prefsection-gadgets|eelistuste leheküljel]] sisse lülitada, nii nagu [[MediaWiki:Gadgets-definition|määratlustes]] määratletud. See ülevaade võimaldab kergesti ligi pääseda süsteemi sõnumilehekülgedele, milles on iga riista kirjeldus ja kood.",
+	"gadgets-editdescription": "muuda kirjeldust",
+	"gadgets-viewdescription": "vaata kirjeldust",
 	"gadgets-uses": "Kasutab",
 	"gadgets-required-rights": "Tarvis on {{PLURAL:$2|järgmist õigust|järgmisi õigusi}}:\n\n$1",
 	"gadgets-required-skins": "Saadaval {{PLURAL:$2|järgmise kujundusega|järgmiste kujundustega}}: $1.",
+	"gadgets-required-actions": "Töötab {{PLURAL:$2|lehetoimingul \"$1\"|järgmistel lehetoimingutel: $1}}.",
 	"gadgets-default": "Vaikimisi kõigile lubatud.",
 	"gadgets-legacy": "Tööriist on laadimata. Palun kohanda ResourceLoaderiga. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Lisateave])",
 	"gadgets-export": "ekspordi",
@@ -32,5 +35,6 @@
 	"right-gadgets-edit": "Muuta tööriistade JavaScripti ja CSS-lehekülgi",
 	"action-gadgets-edit": "muuta tööriistade JavaScripti ega CSS-lehekülgi",
 	"right-gadgets-definition-edit": "Muuta tööriistade määratlusi",
-	"action-gadgets-definition-edit": "muuta tööriistade määratlusi"
+	"action-gadgets-definition-edit": "muuta tööriistade määratlusi",
+	"gadgets-supports-urlload": "See tööriist toetab laadimist URL-i päringuparameetriga <code>?withgadget</code>."
 }

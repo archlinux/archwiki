@@ -48,11 +48,10 @@ ve.dm.MWMagicLinkNode.static.disallowedAnnotationTypes = [ 'link' ];
  * @return {boolean} True if the element is a magic link
  */
 ve.dm.MWMagicLinkNode.static.matchFunction = function ( element ) {
-	var i,
-		children = element.childNodes,
+	var children = element.childNodes,
 		href = element.getAttribute( 'href' );
 	// All children must be text nodes, or a <span> representing an entity.
-	for ( i = 0; i < children.length; i++ ) {
+	for ( var i = 0; i < children.length; i++ ) {
 		if ( children[ i ].nodeType === Node.TEXT_NODE ) {
 			continue;
 		}
@@ -322,16 +321,15 @@ ve.dm.MWMagicLinkIsbnType.prototype.getAnnotation = function () {
  * @inheritdoc
  */
 ve.dm.MWMagicLinkIsbnType.prototype.getCode = function () {
-	var spaceOrDash, isbnCode,
-		content = this.content;
+	var content = this.content;
 
 	if ( !/^ISBN[^-0-9][\s\S]+[0-9Xx]$/.test( content ) ) {
 		return null;
 	}
 
 	// Remove unicode whitespace and dashes
-	spaceOrDash = /[-\t \u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]+/g;
-	isbnCode = content.replace( spaceOrDash, '' ).replace( /^ISBN/, '' );
+	var spaceOrDash = /[-\t \u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]+/g;
+	var isbnCode = content.replace( spaceOrDash, '' ).replace( /^ISBN/, '' );
 
 	// Verify format of ISBN
 	if ( !/^(97[89])?\d{9}[0-9Xx]$/.test( isbnCode ) ) {
@@ -352,15 +350,14 @@ ve.dm.MWMagicLinkIsbnType.prototype.getHref = function () {
  * @inheritdoc
  */
 ve.dm.MWMagicLinkIsbnType.prototype.matchHref = function ( href ) {
-	var normalized,
-		conf = mw.config.get( 'wgVisualEditorConfig' ),
+	var conf = mw.config.get( 'wgVisualEditorConfig' ),
 		matches = /^(?:[.]+\/)*([^/]+)\/(\d+[Xx]?)$/.exec( href );
 
 	if ( !matches ) {
 		return false;
 	}
 	// conf.specialBooksources has localized name for Special:Booksources
-	normalized = mw.libs.ve.decodeURIComponentIntoArticleTitle( matches[ 1 ], true ).replace( ' ', '_' );
+	var normalized = mw.libs.ve.decodeURIComponentIntoArticleTitle( matches[ 1 ], true ).replace( ' ', '_' );
 	if ( normalized !== 'Special:BookSources' && normalized !== conf.specialBooksources ) {
 		return false;
 	}

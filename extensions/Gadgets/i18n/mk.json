@@ -19,11 +19,15 @@
 	"gadgetusage-default": "Стандардна",
 	"gadgets-title": "Алатки",
 	"gadgets-pagetext": "Ова е список на псоебни алатки кои корисниците можат да ги активираат на нивната [[Special:Preferences#mw-prefsection-gadgets|страница за нагодување]], наведени во [[MediaWiki:Gadgets-definition|определувањата]].\nОвој преглед дава лесен пристап до системските пораки кои го определуваат описот и кодот на секоја алатка.",
+	"gadgets-editdescription": "Измени опис",
+	"gadgets-viewdescription": "Погл. опис",
 	"gadgets-uses": "Користи",
 	"gadgets-required-rights": "{{PLURAL:$2|Го бара следново право|Ги бара следниве права}}:\n\n$1",
 	"gadgets-required-skins": "Достапно во {{PLURAL:$2|рувото $1|следниве рува: $1}}.",
+	"gadgets-required-actions": "Работи на {{PLURAL:$2|дејството „$1“|следниве дејства: $1}}.",
 	"gadgets-default": "Достапно за сите по основно",
 	"gadgets-legacy": "Алатката не е вчитана. Преселете се на „Вчитувач на ресурси“ (ResourceLoader). ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Дознајте повеќе])",
+	"gadgets-packaged": "Оваа алатка е [https://www.mediawiki.org/wiki/ResourceLoader/Package_files спакувана], а влезното место е $1",
 	"gadgets-export": "Извези",
 	"gadgets-export-title": "Извоз на алатка",
 	"gadgets-not-found": "Алатката „$1“ не е пронајдена.",
@@ -35,5 +39,6 @@
 	"action-gadgets-edit": "менување на JavaScript- и CSS-страниците на алатка",
 	"right-gadgets-definition-edit": "Менување на определбите на алатка",
 	"action-gadgets-definition-edit": "менување на определбата на оваа алатка",
-	"gadgets-wrong-contentmodel": "Страниците во именскиот простор {{ns:2302}} мора да бидат од содржинскиот модел GadgetDefinition."
+	"gadgets-wrong-contentmodel": "Страниците во именскиот простор {{ns:2302}} мора да бидат од содржинскиот модел GadgetDefinition.",
+	"gadgets-supports-urlload": "Оваа алатка поддржува вчитување преку со барачкиот параметар <code>?withgadget</code>."
 }

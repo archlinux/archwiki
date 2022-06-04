@@ -3,7 +3,7 @@
 /**
  * @covers QuestyCaptcha
  */
-class QuestyCaptchaTest extends MediaWikiTestCase {
+class QuestyCaptchaTest extends MediaWikiIntegrationTestCase {
 
 	public function setUp(): void {
 		parent::setUp();
