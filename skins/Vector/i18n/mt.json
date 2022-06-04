@@ -5,6 +5,13 @@
 			"Leli Forte"
 		]
 	},
+	"prefs-vector-enable-vector-1-help": "Fis-snin li ġejjin se naġġornaw id-dehra tal-Vector. Id-dehra tal-Vector l-antika se tħallik tara l-verżjoni preċedenti tal-Vector (sa Diċembru tal-2019). Biex tkun taf aktar dwar dawn l-aġġornament żur il-[[mw:Reading/Web/Desktop_Improvements|paġna tal-proġett]].",
+	"vector-opt-out": "Mur lura għad-dehra l-antika",
+	"vector-opt-out-tooltip": "Aqleb l-preferenzi tiegħi sabiex tmur lura għad-dehra l-antika (Vector antik)",
+	"vector-languages": "Lingwi",
+	"vector-language-button-aria-label": "Żur artiklu f'lingwa differenti. Disponibbli fi {{PLURAL:$1|$1 lingwa|$1 lingwi}}",
+	"vector-language-redirect-to-top": "Fuq {{SITENAME}} il-ħoloq tal-lingwi jinsabu fuq in-naħa ta' fuq tal-paġna, biswit it-titlu tal-artiklu. [[#p-lang-btn|Mur fuq]].",
+	"vector-language-variant-switcher-label": "Biddel il-varjant tal-lingwa",
 	"vector-action-addsection": "Żid diskussjoni",
 	"vector-action-delete": "Ħassar",
 	"vector-action-move": "Mexxi",
@@ -16,5 +23,16 @@
 	"vector-view-history": "Ara l-kronoloġija",
 	"vector-view-view": "Aqra",
 	"vector-view-viewsource": "Ara s-sors",
-	"vector-more-actions": "Aktar"
+	"vector-jumptonavigation": "Aqbeż lejn in-navigazzjoni",
+	"vector-jumptosearch": "Aqbeż lejn it-tfittxija",
+	"vector-jumptocontent": "Aqbeż għall-kontentut",
+	"vector-more-actions": "Aktar",
+	"vector-search-loader": "Is-suġġerimenti għat-tfittxija tegħlin",
+	"vector-searchsuggest-containing": "Fittex għal paġni li għandhom <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-intro-page": "Help:Introduction",
+	"vector-anon-user-menu-pages": "Il-paġni għal edituri anonimi",
+	"vector-anon-user-menu-pages-learn": "kun af aktar",
+	"vector-anon-user-menu-pages-label": "Tgħallem iktar dwar kif timmodifika",
+	"vector-main-menu-tooltip": "Menu prinċipali",
+	"tooltip-vector-anon-user-menu-title": "Aktar għażliet"
 }

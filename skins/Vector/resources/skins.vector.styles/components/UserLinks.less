@@ -25,10 +25,6 @@
 				a {
 					color: @color-base;
 					text-decoration: none;
-
-					.mw-ui-icon {
-						margin-right: 4px;
-					}
 				}
 
 				// Below tablet threshold, all menu items except the notification icons will collapse into the user menu
@@ -78,11 +74,6 @@
 			.mw-ui-icon ~ span {
 				.mixin-screen-reader-text();
 			}
-
-			// FIXME: For cached HTML only.
-			&.mw-ui-icon > span {
-				color: transparent;
-			}
 		}
 
 		.vector-menu-content {
@@ -103,14 +94,10 @@
 			}
 		}
 
-		// FIXME: Remove `li` selector when T289163 is addressed.
-		li,
 		.mw-list-item {
 			width: 100%;
 		}
 
-		// FIXME: Remove `li > a` selector when T289163 is addressed.
-		li > a,
 		.vector-menu-content-item,
 		.mw-list-item > a {
 			// Overrides .mw-ui-icon's `min-height` property to have a computed
@@ -135,7 +122,7 @@
 				.text-overflow( @visible: false );
 				// Overrides .mw-ui-icon's `line-height: 0` property so that the text is
 				// visible when not overflowing.
-				line-height: initial;
+				line-height: @line-height-nav-personal;
 			}
 
 			// Set hover color for "Create account" and "Login" menu items.
@@ -173,7 +160,7 @@
 		}
 	}
 
-	.vector-user-menu-logged-out h3 {
+	.vector-user-menu-logged-out .vector-menu-heading {
 		&:before {
 			height: 100%;
 		}
@@ -183,7 +170,7 @@
 		}
 	}
 
-	.vector-user-menu-logged-in h3 {
+	.vector-user-menu-logged-in .vector-menu-heading {
 		// FIXME: Ideally this variable should be accessible from mediawiki.skin.variables
 		// Remove it when we can.
 		@icon-padding-md: unit( 12 / @font-size-browser, em );

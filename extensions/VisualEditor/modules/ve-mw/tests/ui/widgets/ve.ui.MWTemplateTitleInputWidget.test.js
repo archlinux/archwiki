@@ -1,18 +1,12 @@
-( function () {
-	function enableCirrusSearchLookup( enabled ) {
-		const config = mw.config.get( 'wgVisualEditorConfig' );
-		config.cirrusSearchLookup = enabled !== false;
-		mw.config.set( 'wgVisualEditorConfig', config );
-	}
+{
+	const enableCirrusSearchLookup = function () {
+		// Config will be reset by newMwEnvironment's teardown
+		mw.config.set( 'wgVisualEditorConfig', ve.extendObject( {}, mw.config.get( 'wgVisualEditorConfig' ), {
+			cirrusSearchLookup: true
+		} ) );
+	};
 
-	QUnit.module( 've.ui.MWTemplateTitleInputWidget', QUnit.newMwEnvironment( {
-		beforeEach: function () {
-			enableCirrusSearchLookup( false );
-		},
-		afterEach() {
-			enableCirrusSearchLookup( false );
-		}
-	} ) );
+	QUnit.module( 've.ui.MWTemplateTitleInputWidget', ve.test.utils.newMwEnvironment() );
 
 	QUnit.test( 'default prefixsearch', ( assert ) => {
 		const widget = new ve.ui.MWTemplateTitleInputWidget(),
@@ -55,7 +49,7 @@
 		const widget = new ve.ui.MWTemplateTitleInputWidget( { showRedirectTargets: false } ),
 			apiParams = widget.getApiParams();
 
-		assert.notOk( 'gsrprop' in apiParams );
+		assert.false( 'gsrprop' in apiParams );
 	} );
 
 	QUnit.test( 'CirrusSearch: prefixsearch behavior', ( assert ) => {
@@ -180,4 +174,4 @@
 			'(redirectedfrom: Template:From)'
 		);
 	} );
-}() );
+}

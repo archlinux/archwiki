@@ -64,6 +64,15 @@
 					}
 				}
 			},
+			// Secondary section of the top toolbar (at right side when LTR).
+			secondary: {
+				type: 'toolbar',
+				groups: {
+					default: {
+						tools: {}
+					}
+				}
+			},
 			// Format section
 			advanced: {
 				labelMsg: 'wikieditor-toolbar-section-advanced',

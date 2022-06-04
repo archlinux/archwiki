@@ -88,8 +88,8 @@ ve.ui.MWSyntaxHighlightWindow.prototype.initialize = function () {
  * @param {string} value New value
  */
 ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange = function () {
-	var validity, inspector = this;
-	validity = this.language.getValidity();
+	var inspector = this;
+	var validity = this.language.getValidity();
 	validity.always( function () {
 		inspector.languageValid = validity.state() === 'resolved';
 		inspector.updateActions();

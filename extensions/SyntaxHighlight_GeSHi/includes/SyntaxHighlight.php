@@ -138,7 +138,7 @@ class SyntaxHighlight {
 		// Register CSS
 		// TODO: Consider moving to a separate method so that public method
 		// highlight() can be used without needing to know the module name.
-		$parser->getOutput()->addModuleStyles( 'ext.pygments' );
+		$parser->getOutput()->addModuleStyles( [ 'ext.pygments' ] );
 
 		return $out;
 	}
@@ -466,12 +466,12 @@ class SyntaxHighlight {
 	 * @param int $revId
 	 * @param ParserOptions $options
 	 * @param bool $generateHtml
-	 * @param ParserOutput &$output
+	 * @param ParserOutput &$parserOutput
 	 * @return bool
 	 * @since MW 1.21
 	 */
 	public static function onContentGetParserOutput( Content $content, Title $title,
-		$revId, ParserOptions $options, $generateHtml, ParserOutput &$output
+		$revId, ParserOptions $options, $generateHtml, ParserOutput &$parserOutput
 	) {
 		global $wgTextModelsToParse;
 
@@ -505,7 +505,7 @@ class SyntaxHighlight {
 		// Parse using the standard parser to get links etc. into the database, HTML is replaced below.
 		// We could do this using $content->fillParserOutput(), but alas it is 'protected'.
 		if ( in_array( $model, $wgTextModelsToParse ) ) {
-			$output = MediaWikiServices::getInstance()->getParser()
+			$parserOutput = MediaWikiServices::getInstance()->getParser()
 				->parse( $text, $title, $options, true, true, $revId );
 		}
 
@@ -515,9 +515,9 @@ class SyntaxHighlight {
 		}
 		$out = $status->getValue();
 
-		$output->addModuleStyles( 'ext.pygments' );
-		$output->addModules( 'ext.pygments.linenumbers' );
-		$output->setText( $out );
+		$parserOutput->addModuleStyles( [ 'ext.pygments' ] );
+		$parserOutput->addModules( [ 'ext.pygments.linenumbers' ] );
+		$parserOutput->setText( $out );
 
 		// Inform MediaWiki that we have parsed this page and it shouldn't mess with it.
 		return false;

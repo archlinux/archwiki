@@ -21,13 +21,14 @@
 			"Yury Katkov",
 			"Александр Сигачёв",
 			"Умар",
-			"아라"
+			"아라",
+			"Pacha Tchernof"
 		]
 	},
-	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальный редактор]]",
-	"tag-visualeditor-description": "Правка сделана с использованием [[{{MediaWiki:visualeditor-descriptionpagelink}}|визуального редактора]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальный редактор]]: проверить",
-	"tag-visualeditor-needcheck-description": "Правка с помощью [[{{MediaWiki:visualeditor-descriptionpagelink}}|визуального редактора]], в которой система обнаружила, возможно, непреднамеренно изменённую вики-разметку.",
+	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|правка через&nbsp;визуальный редактор]]",
+	"tag-visualeditor-description": "Правка, сделанная через [[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальный редактор]]",
+	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|правка через&nbsp;визуальный редактор]]: проверить",
+	"tag-visualeditor-needcheck-description": "Правка, сделанная через [[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальный редактор]], в которой система обнаружила вероятность непреднамеренного изменения вики-текста.",
 	"tag-visualeditor-wikitext": "редактор вики-текста 2017",
 	"tag-visualeditor-wikitext-description": "Правка сделана с помощью редактора вики-текста 2017",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|визуальный редактор]] отключён",

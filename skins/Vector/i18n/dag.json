@@ -5,10 +5,13 @@
 			"Alhaj Darajaati",
 			"Chirifo",
 			"Dnshitobu",
+			"Jahinfo",
 			"Masssly",
 			"Ruky Wunpini"
 		]
 	},
+	"vector-language-button-aria-label": "Kpemi lahabali bali sheli ni. Din be {{PLURAL:$1|$1 Balli |$1 Bala}}",
+	"vector-language-variant-switcher-label": "Taɣimi balli woliginsima",
 	"vector-action-addsection": "Pahimi yaɣili",
 	"vector-action-delete": "Nyahima",
 	"vector-action-move": "Tirisibu",

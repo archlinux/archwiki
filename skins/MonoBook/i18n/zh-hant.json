@@ -18,5 +18,7 @@
 	"cactions-mobile": "頁面操作",
 	"monobook-cactions-label": "頁面操作",
 	"monobook-notifications-link": "通知（$1）",
-	"monobook-notifications-link-none": "通知"
+	"monobook-notifications-link-none": "通知",
+	"monobook-view-history": "歷史",
+	"monobook-action-undelete": "取消刪除 {{PLURAL:$1|1|$1}} 個編輯"
 }

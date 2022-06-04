@@ -182,7 +182,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Slike i medije",
 	"visualeditor-dialogbutton-meta-tooltip": "Postavke stranice",
 	"visualeditor-dialogbutton-template-tooltip": "Šablon",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Uključivanje",
 	"visualeditor-donebutton-tooltip": "Uređivanje završeno",
 	"visualeditor-editconflict": "Izmjene nije moguće sačuvati zbog sukoba. Želite {{GENDER:|li}} ga riješiti ručno?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} odsad pamti koji uređivač preferirate. Možete promijeniti način uređivanja u bilo kojem trenutku, a svoj preferirani način možete promijeniti u postavkama.",

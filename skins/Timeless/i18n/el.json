@@ -25,5 +25,7 @@
 	"timeless-pagetools": "Ενέργειες σελίδας",
 	"timeless-languages": "Γλώσσες",
 	"timeless-projects": "Άλλα εγχειρήματα",
-	"timeless.js": "/* Όλη η JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Timeless skin */"
+	"timeless.js": "/* Όλη η JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Timeless skin */",
+	"timeless-view-history": "Ιστορικό",
+	"timeless-action-undelete": "Επαναφορά {{PLURAL:$1|μίας διαγεγραμμένης επεξεργασίας|$1 διαγεγραμμένων επεξεργασιών}}."
 }

@@ -31,10 +31,12 @@ use KuConverter;
 use Language;
 use ShiConverter;
 use SrConverter;
+use StubUserLang;
 use TgConverter;
 use TlyConverter;
 use TrivialLanguageConverter;
 use UzConverter;
+use Wikimedia\ObjectFactory\ObjectFactory;
 use ZhConverter;
 
 /**
@@ -49,22 +51,58 @@ class LanguageConverterFactory {
 	/**
 	 * @var array
 	 */
-	private $converterClasses = [
-		'ban' => BanConverter::class,
-		'crh' => CrhConverter::class,
-		'gan' => GanConverter::class,
-		'iu' => IuConverter::class,
-		'kk' => KkConverter::class,
-		'ku' => KuConverter::class,
-		'shi' => ShiConverter::class,
-		'sr' => SrConverter::class,
-		'tg' => TgConverter::class,
-		'tly' => TlyConverter::class,
-		'uz' => UzConverter::class,
-		'zh' => ZhConverter::class,
+	private $converterList = [
+		'ban' => [
+			'class' => BanConverter::class,
+		],
+		'crh' => [
+			'class' => CrhConverter::class,
+		],
+		'gan' => [
+			'class' => GanConverter::class,
+		],
+		'iu' => [
+			'class' => IuConverter::class,
+		],
+		'kk' => [
+			'class' => KkConverter::class,
+		],
+		'ku' => [
+			'class' => KuConverter::class,
+		],
+		'shi' => [
+			'class' => ShiConverter::class,
+		],
+		'sr' => [
+			'class' => SrConverter::class,
+		],
+		'tg' => [
+			'class' => TgConverter::class,
+		],
+		'tly' => [
+			'class' => TlyConverter::class,
+		],
+		'uz' => [
+			'class' => UzConverter::class,
+		],
+		'zh' => [
+			'class' => ZhConverter::class,
+		],
 	];
 
-	private $defaultConverterClass = TrivialLanguageConverter::class;
+	private const DEFAULT_CONVERTER = [
+		'class' => TrivialLanguageConverter::class,
+		'services' => [
+			'TitleFormatter',
+		]
+	];
+
+	private const EN_CONVERTER = [
+		'class' => EnConverter::class,
+	];
+
+	/** @var ObjectFactory */
+	private $objectFactory;
 
 	/**
 	 * @var bool Whether to disable language variant conversion.
@@ -82,20 +120,23 @@ class LanguageConverterFactory {
 	private $defaultLanguage;
 
 	/**
+	 * @param ObjectFactory $objectFactory
 	 * @param bool $usePigLatinVariant should pig variant of English be used
 	 * @param bool $isConversionDisabled Whether to disable language variant conversion
 	 * @param bool $isTitleConversionDisabled Whether to disable language variant conversion for links
-	 * @param callable $defaultLanguage - callback of () : Language, should return
+	 * @param callable $defaultLanguage callback of () : Language, should return
 	 * default language. Used in getLanguageConverter when $language is null.
 	 *
 	 * @internal Should be called from MediaWikiServices only.
 	 */
 	public function __construct(
+		ObjectFactory $objectFactory,
 		$usePigLatinVariant, $isConversionDisabled, $isTitleConversionDisabled,
 		callable $defaultLanguage
 	) {
+		$this->objectFactory = $objectFactory;
 		if ( $usePigLatinVariant ) {
-			$this->converterClasses['en'] = EnConverter::class;
+			$this->converterList['en'] = self::EN_CONVERTER;
 		}
 		$this->isConversionDisabled = $isConversionDisabled;
 		$this->isTitleConversionDisabled = $isTitleConversionDisabled;
@@ -103,20 +144,29 @@ class LanguageConverterFactory {
 	}
 
 	/**
-	 * Returns Converter's class name for given language code
+	 * Returns Converter instance for given language object
 	 *
-	 * @param string $code code for which class name should be provided
-	 * @return string
+	 * @param Language|StubUserLang $lang
+	 * @return ILanguageConverter
 	 */
-	private function classFromCode( string $code ): string {
-		$code = mb_strtolower( $code );
-		return $this->converterClasses[$code] ?? $this->defaultConverterClass;
+	private function instantiateConverter( $lang ): ILanguageConverter {
+		$code = mb_strtolower( $lang->getCode() );
+		$spec = $this->converterList[$code] ?? self::DEFAULT_CONVERTER;
+		// ObjectFactory::createObject accepts an array, not just a callable (phan bug)
+		// @phan-suppress-next-line PhanTypeInvalidCallableArrayKey,PhanTypeInvalidCallableArraySize
+		return $this->objectFactory->createObject(
+			$spec,
+			[
+				'assertClass' => ILanguageConverter::class,
+				'extraArgs' => [ $lang ],
+			]
+		);
 	}
 
 	/**
 	 * Provide a LanguageConverter for given language
 	 *
-	 * @param Language|null $language for which a LanguageConverter should be provided.
+	 * @param Language|StubUserLang|null $language for which a LanguageConverter should be provided.
 	 * If null then LanguageConverter provided for current content language as returned
 	 * by the callback provided to the constructor.
 	 *
@@ -127,9 +177,7 @@ class LanguageConverterFactory {
 		if ( isset( $this->cache[$lang->getCode()] ) ) {
 			return $this->cache[$lang->getCode()];
 		}
-		$class = $this->classFromCode( $lang->getCode() );
-
-		$converter = new $class( $lang );
+		$converter = $this->instantiateConverter( $lang );
 		$this->cache[$lang->getCode()] = $converter;
 		return $converter;
 	}
@@ -145,7 +193,7 @@ class LanguageConverterFactory {
 	/**
 	 * Whether to disable language variant conversion for titles.
 	 * @return bool
-	 * @deprecated 1.36 Should use ::isLinkConversionDisabled() instead
+	 * @deprecated since 1.36 Should use ::isLinkConversionDisabled() instead
 	 */
 	public function isTitleConversionDisabled() {
 		return $this->isTitleConversionDisabled;

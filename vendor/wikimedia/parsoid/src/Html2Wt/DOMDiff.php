@@ -3,13 +3,14 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt;
 
-use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
-use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -43,6 +44,9 @@ class DOMDiff {
 	 */
 	public $env;
 
+	/** @var ParsoidExtensionAPI */
+	public $extApi;
+
 	/**
 	 * @var array
 	 */
@@ -71,9 +75,10 @@ class DOMDiff {
 	 */
 	public function __construct( Env $env ) {
 		$this->env = $env;
+		$this->extApi = new ParsoidExtensionAPI( $env );
 		$this->specializedAttribHandlers = [
-			'data-mw' => function ( $nodeA, $dmwA, $nodeB, $dmwB ) {
-				return $this->dataMWEquals( $nodeA, $dmwA, $nodeB, $dmwB );
+			'data-mw' => static function ( $nodeA, $dmwA, $nodeB, $dmwB ) {
+				return $dmwA == $dmwB;
 			},
 			'data-parsoid' => static function ( $nodeA, $dpA, $nodeB, $dpB ) {
 				return $dpA == $dpB;
@@ -122,149 +127,6 @@ class DOMDiff {
 	}
 
 	/**
-	 * Test if two data-mw objects are identical.
-	 * - independent of order of attributes in data-mw
-	 * - html attributes are parsed to DOM and recursively compared
-	 * - for id attributes, the DOM fragments are fetched and compared.
-	 *
-	 * @param Node $nodeA
-	 * @param stdClass $dmwA
-	 * @param Node $nodeB
-	 * @param stdClass $dmwB
-	 * @return bool
-	 */
-	public function dataMWEquals(
-		Node $nodeA, stdClass $dmwA, Node $nodeB, stdClass $dmwB
-	): bool {
-		return $this->realDataMWEquals( $nodeA, (array)$dmwA, $nodeB, (array)$dmwB, [
-				'isTopLevel' => true,
-				'inDmwBody' => false
-			]
-		);
-	}
-
-	/**
-	 * According to [[mw:Specs/HTML]], `id` and `html` attributes are acceptable
-	 * formats in `data-mw.body` and in those contexts, they reference DOMs and
-	 * we are going to treat them as such.
-	 *
-	 * @param Node $nodeA
-	 * @param array $dmwA
-	 * @param Node $nodeB
-	 * @param array $dmwB
-	 * @param array $options
-	 * @return bool
-	 */
-	private function realDataMWEquals(
-		Node $nodeA, array $dmwA, Node $nodeB, array $dmwB, array $options
-	): bool {
-		$keysA = array_keys( $dmwA );
-		$keysB = array_keys( $dmwB );
-
-		// Some quick checks
-		if ( count( $keysA ) !== count( $keysB ) ) {
-			return false;
-		} elseif ( count( $keysA ) === 0 ) {
-			return true;
-		}
-
-		// Sort keys so we can traverse array and compare keys
-		sort( $keysA );
-		sort( $keysB );
-		for ( $i = 0; $i < count( $keysA ); $i++ ) {
-			$kA = $keysA[$i];
-			$kB = $keysB[$i];
-
-			if ( $kA !== $kB ) {
-				return false;
-			}
-
-			$vA = $dmwA[$kA];
-			$vB = $dmwB[$kA];
-
-			// Deal with null, undefined (and 0, '')
-			// since they cannot be inspected
-			if ( !$vA || !$vB ) {
-				if ( $vA !== $vB ) {
-					return false;
-				}
-			} elseif ( gettype( $vA ) !== gettype( $vB ) ) {
-				return false;
-			} elseif ( $kA === 'id' && ( $options['inDmwBody'] ?? null ) ) {
-				// So far, this is specified for Cite and relies on the "id"
-				// referring to an element in the top level dom, even though the
-				// <ref> itself may be in embedded content,
-				// https://www.mediawiki.org/wiki/Specs/HTML/Extensions/Cite#Ref_and_References
-				// FIXME: This doesn't work if the <references> section
-				// itself is in embedded content, since we aren't traversing
-				// in there.
-				$htmlA = DOMCompat::getElementById( $nodeA->ownerDocument, $vA );
-				$htmlB = DOMCompat::getElementById( $nodeB->ownerDocument, $vB );
-
-				if ( $htmlA && $htmlB && !$this->treeEquals( $htmlA, $htmlB, true ) ) {
-					return false;
-				} elseif ( !$htmlA || !$htmlB ) {
-					$type = DOMUtils::matchTypeOf( $nodeA, '#^mw:Extension/#' );
-					$extName = $type ? '---' : substr( $type, strlen( 'mw:Extension/' ) );
-					// Log error
-					if ( !$htmlA ) {
-						$this->env->log(
-							'error/domdiff/orig/' . $extName,
-							'extension src id ' . PHPUtils::jsonEncode( $vA ) . ' points to non-existent element for:',
-							DOMUtils::assertElt( $nodeA ) && DOMCompat::getOuterHTML( $nodeA )
-						);
-					}
-					if ( !$htmlB ) {
-						$this->env->log(
-							'error/domdiff/edited/' . $extName,
-							'extension src id ' . PHPUtils::jsonEncode( $vB ) . ' points to non-existent element for:',
-							DOMUtils::assertElt( $nodeB ) && DOMCompat::getOuterHTML( $nodeB )
-						);
-					}
-
-					// Fall back to default comparisons
-					if ( $vA !== $vB ) {
-						return false;
-					}
-				}
-			} elseif ( $kA === 'html' && ( $options['inDmwBody'] ?? null ) ) {
-				// It's important that the fragments are constructed from the
-				// correct node's ownerDocument so that the search by id above
-				// is looking in the right place
-				$fragmentA = ContentUtils::createAndLoadDocumentFragment(
-					$nodeA->ownerDocument, $vA, [ 'markNew' => true ]
-				);
-				$fragmentB = ContentUtils::createAndLoadDocumentFragment(
-					$nodeB->ownerDocument, $vB, [ 'markNew' => true ]
-				);
-				// For 'html' attributes, parse string and recursively compare DOM
-				if ( !$this->treeEquals( $fragmentA, $fragmentB, true ) ) {
-					return false;
-				}
-			} elseif ( is_object( $vA ) || is_array( $vA ) ) {
-				// For 'array' and 'object' attributes, recursively apply _dataMWEquals
-				$inDmwBody = ( $options['isTopLevel'] ?? null ) && $kA === 'body';
-				if ( !$this->realDataMWEquals(
-					$nodeA,
-					(array)$vA,
-					$nodeB,
-					(array)$vB,
-					[ 'inDmwBody' => $inDmwBody ]
-				) ) {
-					return false;
-				}
-			} elseif ( $vA !== $vB ) {
-				return false;
-			}
-
-			// Phew! survived this key
-		}
-
-		// Phew! survived all checks -- identical objects
-		return true;
-	}
-
-	/**
 	 * Test if two DOM nodes are equal.
 	 *
 	 * @param Node $nodeA
@@ -275,14 +137,14 @@ class DOMDiff {
 	public function treeEquals( Node $nodeA, Node $nodeB, bool $deep ): bool {
 		if ( $nodeA->nodeType !== $nodeB->nodeType ) {
 			return false;
-		} elseif ( DOMUtils::isText( $nodeA ) ) {
+		} elseif ( $nodeA instanceof Text ) {
 			// In the past we've had bugs where we let non-primitive strings
 			// leak into our DOM.  Safety first:
 			Assert::invariant( $nodeA->nodeValue === (string)$nodeA->nodeValue, '' );
 			Assert::invariant( $nodeB->nodeValue === (string)$nodeB->nodeValue, '' );
 			// ok, now do the comparison.
 			return $nodeA->nodeValue === $nodeB->nodeValue;
-		} elseif ( DOMUtils::isComment( $nodeA ) ) {
+		} elseif ( $nodeA instanceof Comment ) {
 			return WTUtils::decodeComment( $nodeA->nodeValue ) ===
 				WTUtils::decodeComment( $nodeB->nodeValue );
 		} elseif ( $nodeA instanceof Element || $nodeA instanceof DocumentFragment ) {
@@ -366,7 +228,6 @@ class DOMDiff {
 		$baseNode = $baseParentNode->firstChild;
 		$newNode = $newParentNode->firstChild;
 		$lookaheadNode = null;
-		$subtreeDiffers = null;
 		$foundDiffOverall = false;
 
 		while ( $baseNode && $newNode ) {
@@ -437,8 +298,8 @@ class DOMDiff {
 					if ( !( $savedNewNode instanceof Element ) ) {
 						$this->debug( '--found diff: modified text/comment--' );
 						$this->markNode( $savedNewNode, 'deleted', WTUtils::isBlockNodeWithVisibleWT( $baseNode ) );
-					} elseif ( DOMCompat::nodeName( $savedNewNode ) === DOMCompat::nodeName( $baseNode ) &&
-						DOMUtils::assertElt( $baseNode ) &&
+					} elseif ( $baseNode instanceof Element &&
+						DOMCompat::nodeName( $savedNewNode ) === DOMCompat::nodeName( $baseNode ) &&
 						( DOMDataUtils::getDataParsoid( $savedNewNode )->stx ?? null ) ===
 						( DOMDataUtils::getDataParsoid( $baseNode )->stx ?? null )
 					) {
@@ -446,16 +307,7 @@ class DOMDiff {
 						// Mark modified-wrapper, and recurse.
 						$this->debug( '--found diff: modified-wrapper--' );
 						$this->markNode( $savedNewNode, 'modified-wrapper' );
-						if ( !WTUtils::isEncapsulationWrapper( $baseNode ) &&
-							!WTUtils::isEncapsulationWrapper( $savedNewNode )
-						) {
-							// Dont recurse into template-like-content
-							$subtreeDiffers = $this->doDOMDiff( $baseNode, $savedNewNode );
-							if ( $subtreeDiffers ) {
-								$this->debug( '--found diff: subtree-changed--' );
-								$this->markNode( $newNode, 'subtree-changed' );
-							}
-						}
+						$this->subtreeDiffers( $baseNode, $savedNewNode );
 					} else {
 						// We now want to compare current newNode with the next baseNode.
 						$dontAdvanceNewNode = true;
@@ -472,17 +324,8 @@ class DOMDiff {
 				$this->markNode( $newParentNode, 'children-changed' );
 
 				$foundDiffOverall = true;
-			} elseif ( !WTUtils::isEncapsulationWrapper( $baseNode ) &&
-				!WTUtils::isEncapsulationWrapper( $newNode )
-			) {
-				$this->debug( '--shallow equal: recursing--' );
-				// Recursively diff subtrees if not template-like content
-				$subtreeDiffers = $this->doDOMDiff( $baseNode, $newNode );
-				if ( $subtreeDiffers ) {
-					$this->debug( '--found diff: subtree-changed--' );
-					$this->markNode( $newNode, 'subtree-changed' );
-				}
-				$foundDiffOverall = $subtreeDiffers || $foundDiffOverall;
+			} elseif ( $this->subtreeDiffers( $baseNode, $newNode ) ) {
+				$foundDiffOverall = true;
 			}
 
 			// And move on to the next pair (skipping over template HTML)
@@ -529,11 +372,65 @@ class DOMDiff {
 	 * ***************************************************/
 
 	/**
+	 * @param Node $baseNode
+	 * @param Node $newNode
+	 * @return bool
+	 */
+	private function subtreeDiffers( Node $baseNode, Node $newNode ): bool {
+		$baseEncapsulated = WTUtils::isEncapsulationWrapper( $baseNode );
+		$newEncapsulated = WTUtils::isEncapsulationWrapper( $newNode );
+
+		if ( !$baseEncapsulated && !$newEncapsulated ) {
+			$this->debug( '--shallow equal: recursing--' );
+			// Recursively diff subtrees if not template-like content
+			$subtreeDiffers = $this->doDOMDiff( $baseNode, $newNode );
+		} elseif ( $baseEncapsulated && $newEncapsulated ) {
+			'@phan-var Element $baseNode';  // @var Element $baseNode
+			'@phan-var Element $newNode';  // @var Element $newNode
+
+			$extType = DOMUtils::matchTypeOf( $baseNode, '!^mw:Extension/!' );
+			$ext = null;
+
+			if ( $extType ) {
+				$dataMw = DOMDataUtils::getDataMw( $baseNode );
+				// FIXME: The EncapsulatedContentHandler tries to get the name from
+				// the typeOf if it isn't in dataMw ...
+				$ext = $this->env->getSiteConfig()->getExtTagImpl( $dataMw->name ?? '' );
+			}
+
+			if (
+				$ext && ( DOMUtils::matchTypeOf( $newNode, '!^mw:Extension/!' ) === $extType )
+			) {
+				$this->debug( '--diffing extension content--' );
+				$subtreeDiffers = $ext->diffHandler(
+					$this->extApi, [ $this, 'doDOMDiff' ], $baseNode, $newNode
+				);
+			} else {
+				// Otherwise, for encapsulated content, we don't know about the subtree.
+				$subtreeDiffers = false;
+			}
+		} else {
+			// FIXME: Maybe $editNode should be marked as inserted to avoid
+			// losing any edits, at the cost of more normalization.
+			// $state->inModifiedContent is only set when we're in inserted
+			// content, so not sure this is currently doing all that much.
+			$subtreeDiffers = true;
+		}
+
+		if ( $subtreeDiffers ) {
+			$this->debug( '--found diff: subtree-changed--' );
+			$this->markNode( $newNode, 'subtree-changed' );
+		}
+		return $subtreeDiffers;
+	}
+
+	/**
 	 * @param Node $node
 	 * @param string $mark
 	 * @param bool $blockNodeDeleted
 	 */
 	private function markNode( Node $node, string $mark, bool $blockNodeDeleted = false ): void {
+		static $ignoreableNodeTypes = [ XML_DOCUMENT_NODE, XML_DOCUMENT_TYPE_NODE, XML_DOCUMENT_FRAG_NODE ];
 		$meta = null;
 		if ( $mark === 'deleted' ) {
 			// insert a meta tag marking the place where content used to be
@@ -541,16 +438,14 @@ class DOMDiff {
 		} else {
 			if ( $node instanceof Element ) {
 				DiffUtils::setDiffMark( $node, $this->env, $mark );
-			} elseif ( DOMUtils::isText( $node ) || DOMUtils::isComment( $node ) ) {
+			} elseif ( $node instanceof Text || $node instanceof Comment ) {
 				if ( $mark !== 'inserted' ) {
 					$this->env->log( 'error/domdiff',
 						'BUG! CHANGE-marker for ' . $node->nodeType . ' node is: ' . $mark
 					);
 				}
 				$meta = DiffUtils::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
-			} elseif ( $node->nodeType !== XML_DOCUMENT_NODE &&
-				$node->nodeType !== XML_DOCUMENT_TYPE_NODE
-			) {
+			} elseif ( array_search( $node->nodeType, $ignoreableNodeTypes, true ) === false ) {
 				$this->env->log( 'error/domdiff', 'Unhandled node type', $node->nodeType, 'in markNode!' );
 			}
 		}

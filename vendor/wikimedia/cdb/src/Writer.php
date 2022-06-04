@@ -1,10 +1,5 @@
 <?php
-
-namespace Cdb;
-
 /**
- * Native CDB file reader and writer.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,14 +14,15 @@ namespace Cdb;
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
  */
+
+namespace Cdb;
 
 /**
  * Write to a CDB file.
- * Native and pure PHP implementations are provided.
- * http://cr.yp.to/cdb.html
+ * Native C and pure PHP implementations are provided.
+ *
+ * @see http://cr.yp.to/cdb.html
  */
 abstract class Writer {
 	/**
@@ -36,13 +32,13 @@ abstract class Writer {
 
 	/**
 	 * File we'll be writing to when we're done
-	 * @var string
+	 * @var string $realFileName
 	 */
 	protected $realFileName;
 
 	/**
 	 * File we write to temporarily until we're done
-	 * @var string
+	 * @var string $tmpFileName
 	 */
 	protected $tmpFileName;
 
@@ -51,7 +47,6 @@ abstract class Writer {
 	 * The user must have write access to the directory, for temporary file creation.
 	 *
 	 * @param string $fileName
-	 *
 	 * @return Writer
 	 */
 	public static function open( $fileName ) {
@@ -81,7 +76,7 @@ abstract class Writer {
 	abstract public function close();
 
 	/**
-	 * If the object goes out of scope, close it for sanity
+	 * If the object goes out of scope, close it
 	 */
 	public function __destruct() {
 		if ( isset( $this->handle ) ) {

@@ -16,5 +16,7 @@
 	"cactions-mobile": "Aziune sus 'a pàgene",
 	"monobook-cactions-label": "Aziune sus 'a pàgene",
 	"monobook-notifications-link": "Notifeche ($1)",
-	"monobook-notifications-link-none": "Notifeche"
+	"monobook-notifications-link-none": "Notifeche",
+	"monobook-view-history": "Cunde",
+	"monobook-action-undelete": "Annulle {{PLURAL:$1|'nu camgiamende|$1 cangiaminde}}"
 }

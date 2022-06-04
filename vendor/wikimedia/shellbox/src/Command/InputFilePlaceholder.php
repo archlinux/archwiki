@@ -9,10 +9,12 @@ use Shellbox\ShellboxError;
  */
 class InputFilePlaceholder extends InputFile {
 	public function copyTo( $destPath ) {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new ShellboxError( __METHOD__ . ': not implemented' );
 	}
 
 	public function getStreamOrString() {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new ShellboxError( __METHOD__ . ': not implemented' );
 	}
 }

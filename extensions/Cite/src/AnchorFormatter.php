@@ -66,7 +66,7 @@ class AnchorFormatter {
 	 * @return string
 	 */
 	private function normalizeKey( string $key ): string {
-		$ret = Sanitizer::escapeIdForAttribute( $key );
+		$ret = Sanitizer::escapeIdForLink( $key );
 		$ret = preg_replace( '/__+/', '_', $ret );
 		$ret = Sanitizer::safeEncodeAttribute( $ret );
 

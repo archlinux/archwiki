@@ -4,5 +4,7 @@
 			"LeGuyanaisPure"
 		]
 	},
-	"timeless-languages": "Lanng"
+	"timeless-languages": "Lanng",
+	"timeless-view-history": "Listorik",
+	"timeless-action-undelete": "Rèstoré {{PLURAL:$1|roun modifikasyon|$1 modifikasyon}}"
 }

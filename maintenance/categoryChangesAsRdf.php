@@ -70,7 +70,7 @@ SPARQLD;
 	/**
 	 * List of processed page IDs,
 	 * so we don't try to process same thing twice
-	 * @var int[]
+	 * @var true[]
 	 */
 	protected $processed = [];
 
@@ -105,10 +105,10 @@ SPARQLD;
 		$now = new MWTimestamp();
 		$rcMaxAge = $this->getConfig()->get( 'RCMaxAge' );
 
-		if ( $now->getTimestamp() - $startTS->getTimestamp() > $rcMaxAge ) {
+		if ( (int)$now->getTimestamp( TS_UNIX ) - (int)$startTS->getTimestamp( TS_UNIX ) > $rcMaxAge ) {
 			$this->error( "Start timestamp too old, maximum RC age is $rcMaxAge!" );
 		}
-		if ( $now->getTimestamp() - $endTS->getTimestamp() > $rcMaxAge ) {
+		if ( (int)$now->getTimestamp( TS_UNIX ) - (int)$endTS->getTimestamp( TS_UNIX ) > $rcMaxAge ) {
 			$this->error( "End timestamp too old, maximum RC age is $rcMaxAge!" );
 		}
 

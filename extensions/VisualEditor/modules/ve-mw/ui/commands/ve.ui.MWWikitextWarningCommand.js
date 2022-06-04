@@ -30,12 +30,12 @@ OO.inheritClass( ve.ui.MWWikitextWarningCommand, ve.ui.Command );
  * @inheritdoc
  */
 ve.ui.MWWikitextWarningCommand.prototype.execute = function () {
-	var $message,
-		command = this;
+	var command = this;
 	if ( this.warning && this.warning.isOpen ) {
 		return false;
 	}
-	$message = $( '<div>' ).html( ve.init.platform.getParsedMessage( 'visualeditor-wikitext-warning' ) );
+	// eslint-disable-next-line no-jquery/no-html
+	var $message = $( '<div>' ).html( ve.init.platform.getParsedMessage( 'visualeditor-wikitext-warning' ) );
 	ve.targetLinksToNewWindow( $message[ 0 ] );
 	ve.init.platform.notify(
 		$message.contents(),

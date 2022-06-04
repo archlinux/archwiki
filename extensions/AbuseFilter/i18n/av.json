@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Omarov M.",
+			"Аль-Гимравий",
+			"Умар"
+		]
+	},
+	"abusefilter-log-hide-reason": "ГӀилла:",
+	"abusefilter-edit-action-block": "ГӀахьалчи ва/яги IP-адрес блокалда лъезе",
+	"abusefilter-revert-reasonfield": "ГӀилла:"
+}

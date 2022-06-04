@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extensions\ConfirmEdit\hCaptcha;
+namespace MediaWiki\Extension\ConfirmEdit\hCaptcha;
 
 use Html;
 use HTMLFormField;

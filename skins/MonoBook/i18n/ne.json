@@ -13,5 +13,7 @@
 	"monobook-more-actions": "थप",
 	"monobook-cactions-label": "पृष्ठ कार्यहरू",
 	"monobook-notifications-link": "सूचनाहरू ($1)",
-	"monobook-notifications-link-none": "सूचनाहरू"
+	"monobook-notifications-link-none": "सूचनाहरू",
+	"monobook-view-history": "पृष्ठको इतिहास",
+	"monobook-action-undelete": "{{PLURAL:$1|एउटा  मेटिएको सम्पादन|$1 मेटिएका सम्पादनहरू}} फर्काउने"
 }

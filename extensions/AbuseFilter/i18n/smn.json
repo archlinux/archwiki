@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Seipinne",
+			"Yupik"
+		]
+	},
+	"abusefilter-log-search-user": "Kevttee:",
+	"abusefilter-log-search-submit": "Uusâ",
+	"abusefilter-log-hidden-implicit": "(čiehhum, ko versio lii sikkum)",
+	"abusefilter-log-hide-reason": "Suijâ:",
+	"abusefilter-log-hide-show": "Čääiti",
+	"abusefilter-log-hide-hide": "Čievâ",
+	"abusefilter-log-hide-done-hide": "{{PLURAL:$1|čiehhum}}",
+	"abusefilter-list-lastmodified": "Majemustáá nubástittum",
+	"abusefilter-tools-reautoconfirm-user": "Kevttee:",
+	"abusefilter-edit-status-label": "Lovottuvah:",
+	"abusefilter-edit-throttle-groups-help": "Keejâ $1.",
+	"abusefilter-throttle-ip": "IP-čujottâs",
+	"abusefilter-throttle-page": "sijđo",
+	"abusefilter-edit-history": "Historjá:",
+	"abusefilter-history-foruser": "Kevttee $1 hammiimeh",
+	"abusefilter-history-hidden": "Čiehhum",
+	"abusefilter-history-timestamp": "Äigi",
+	"abusefilter-history-user": "Kevttee",
+	"abusefilter-history-select-user": "Kevttee:",
+	"abusefilter-history-diff": "Nubástusah",
+	"abusefilter-revert-reasonfield": "Suijâ:",
+	"abusefilter-test-load": "Luođii",
+	"abusefilter-examine-submit": "Uusâ"
+}

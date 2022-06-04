@@ -3,24 +3,23 @@
 		"authors": [
 			"Aftab1995",
 			"Aftabuzzaman",
+			"Ankan",
 			"Bellayet",
 			"Leemon2010",
 			"Macofe",
 			"Nasir8891",
 			"Wikitanvir",
 			"আফতাবুজ্জামান",
-			"Ankan"
+			"Yahya"
 		]
 	},
 	"wikieditor": "উন্নত উইকিপাঠ্য সম্পাদনার ইন্টারফেস",
 	"wikieditor-desc": "উন্নত, সম্প্রসারণযোগ্য উইকিপাঠ্য সম্পাদনার ইন্টারফেস প্রদান করে",
 	"wikieditor-wikitext-tab": "উইকিপাঠ্য",
-	"wikieditor-loading": "লোড করা হচ্ছে...",
 	"wikieditor-toolbar": "সম্পাদনা সরঞ্জামদণ্ড",
 	"wikieditor-toolbar-desc": "বেশি ব্যবহারযোগ্য সম্পাদনা পাতার সরঞ্জামদণ্ড",
 	"wikieditor-toolbar-preference": "সম্পাদনা সরঞ্জামদণ্ড সক্রিয় করুন",
 	"wikieditor-toolbar-preference-help": "এটিকে অনেকসময় '২০১০ উইকিপাঠ্য সম্পাদক' নামেও ডাকা হয়।",
-	"wikieditor-toolbar-loading": "লোড করা হচ্ছে...",
 	"wikieditor-toolbar-tool-bold": "গাঢ়",
 	"wikieditor-toolbar-tool-bold-example": "গাঢ় লেখা",
 	"wikieditor-toolbar-tool-italic": "বাঁকা",
@@ -43,15 +42,14 @@
 	"wikieditor-toolbar-tool-link-cancel": "বাতিল",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "পাতা রয়েছে",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "পাতা বিদ্যমান নেই",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "অবৈধ শিরোনাম",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "আপনার প্রদেয় শিরোনামটি বৈধ নয়।",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "বহিঃসংযোগ",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "পাতার অস্তিত্ব পরীক্ষা করা হচ্ছে...",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "দ্ব্যর্থতা নিরসন পাতা",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "এই পাতাটি বিষয়বস্তুভিত্তিক পাতা নয়, বরং একই ধরনের নামবিশিষ্ট পাতার তালিকা",
 	"wikieditor-toolbar-tool-link-int-invalid": "আপনার শিরোনামটি সঠিক নয়।",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "যে ইউআরএলটিকে আপনি নির্দেশ করেছেন, তা অন্য একটি উইকির পাতাকে নির্দেশ করছে। আপনি কী এটিকে একটি আন্তসংযোগে পরিবর্তিত করতে চান?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "আন্তঃসংযোগ",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "বহিঃসংযোগ",
-	"wikieditor-toolbar-tool-link-empty": "লিঙ্ক করা জন্য আপনি কোনো কিছু টাইপ করেননি।",
 	"wikieditor-toolbar-tool-file": "চিত্র ও মিডিয়া",
 	"wikieditor-toolbar-tool-file-example": "উদাহরণ.jpg",
 	"wikieditor-toolbar-tool-file-title": "ফাইল সংযোজন",
@@ -202,5 +200,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>ব্যবহারকারী নাম</a> (<a href='#' title='$2:Username'>আলাপ</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "প্রান্তিককরণ",
 	"wikieditor-toolbar-help-content-indent-syntax": "সাধারণ লেখ<br />:প্রান্তিককৃত লেখ<br />::প্রান্তিককৃত লেখ",
-	"wikieditor-toolbar-help-content-indent-result": "সাধারণ লেখ<dl><dd>প্রান্তিককৃত লেখ<dl><dd>প্রান্তিককৃত লেখ</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "সাধারণ লেখ<dl><dd>প্রান্তিককৃত লেখ<dl><dd>প্রান্তিককৃত লেখ</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "প্রাকদর্শন"
 }

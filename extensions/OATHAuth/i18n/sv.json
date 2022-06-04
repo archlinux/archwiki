@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Felba",
 			"Lokal Profil",
 			"Mjälten",
 			"Skalman",
-			"WikiPhoenix",
-			"Felba"
+			"WikiPhoenix"
 		]
 	},
 	"oathauth-desc": "Ger autentiseringsstöd med HMAC-baserade engångslösenord",
@@ -60,7 +60,7 @@
 	"oath-log-header": "Dessa händelser spårar ändringar i användares status för tvåfaktorautenting.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|avaktiverade}} tvåfaktorautenting för $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|kontrollerade}} om $3 har aktiverat tvåfaktorsautentisering",
-	"oauthauth-ui-no-module": "Ingen aktiverad",
+	"oathauth-ui-no-module": "Ingen aktiverad",
 	"oathauth-module-invalid": "OATHAuth-modulen som användaren har registrerat är ogiltig.",
 	"oathauth-module-totp-label": "TOTP (engångsnyckel)",
 	"oathauth-ui-manage": "Hantera",

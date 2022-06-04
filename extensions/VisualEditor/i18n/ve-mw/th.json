@@ -167,7 +167,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "ภาพและสื่อ",
 	"visualeditor-dialogbutton-meta-tooltip": "การตั้งค่าหน้า",
 	"visualeditor-dialogbutton-template-tooltip": "แม่แบบ",
-	"visualeditor-dialogbutton-transclusion-tooltip": "ใช้แม่แบบ",
 	"visualeditor-donebutton-tooltip": "เสร็จสิ้นการแก้ไข",
 	"visualeditor-editconflict": "ไม่สามารถบันทึกการเปลี่ยนแปลงเนื่องจากความขัดแย้งในการแก้ไข {{GENDER:|คุณ}}ต้องการแก้ไขความขัดแย้งด้วยตนเองหรือไม่",
 	"visualeditor-editingtabdialog-body": "ขณะนี้ {{SITENAME}} สามารถจดจำตัวแก้ไขที่คุณต้องการใช้ได้แล้ว คุณสามารถสลับโหมดการแก้ไขได้โดยสามารถเปลี่ยนค่ากำหนดนี้ได้ในภายหลัง",

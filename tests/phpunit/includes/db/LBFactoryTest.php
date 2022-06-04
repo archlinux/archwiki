@@ -23,7 +23,6 @@
  * @copyright © 2013 Wikimedia Foundation Inc.
  */
 
-use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\DatabaseDomain;
 use Wikimedia\Rdbms\IDatabase;
@@ -441,7 +440,7 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 
 		$db = $lb->getConnectionRef( DB_PRIMARY );
 		$this->assertEquals(
-			wfWikiID(),
+			WikiMap::getCurrentWikiId(),
 			$db->getDomainID()
 		);
 		unset( $db );
@@ -596,14 +595,12 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 		/** @var IDatabase $db */
 		$db = $lb->getConnection( DB_PRIMARY, [], $lb::DOMAIN_ANY );
 
-		AtEase::suppressWarnings();
 		try {
-			$this->assertFalse( $db->selectDomain( 'garbagedb' ) );
+			$this->assertFalse( @$db->selectDomain( 'garbagedb' ) );
 			$this->fail( "No error thrown." );
 		} catch ( \Wikimedia\Rdbms\DBQueryError $e ) {
 			$this->assertRegExp( '/[\'"]garbagedb[\'"]/', $e->getMessage() );
 		}
-		AtEase::restoreWarnings();
 	}
 
 	/**
@@ -677,7 +674,7 @@ class LBFactoryTest extends MediaWikiIntegrationTestCase {
 
 		$conn1 = $lb->getConnectionRef( DB_PRIMARY );
 		$this->assertEquals(
-			wfWikiID(),
+			WikiMap::getCurrentWikiId(),
 			$conn1->getDomainID()
 		);
 		unset( $conn1 );

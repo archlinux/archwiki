@@ -9,9 +9,9 @@
 			"Pio387",
 			"Rail",
 			"Railfail536",
+			"The Polish",
 			"WTM",
-			"Woytecr",
-			"The Polish"
+			"Woytecr"
 		]
 	},
 	"scribunto-desc": "Framework pozwalający na osadzanie języków skryptowych na stronach MediaWiki",
@@ -46,6 +46,7 @@
 	"scribunto-lua-error-location": "Błąd Lua $1: $2.",
 	"scribunto-lua-error": "Błąd Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Błąd skryptu: Moduł zwrócił wartość $2. Oczekiwano, że zwróci tabelę eksportu.",
+	"scribunto-lua-warning": "Błąd skryptu: $1",
 	"scribunto-luastandalone-proc-error": "Błąd Lua: Nie można utworzyć procesu.",
 	"scribunto-luastandalone-proc-error-msg": "Błąd Lua: Nie można utworzyć procesu: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Błąd Lua: Nie można utworzyć procesu: proc_open nie jest dostępny. Sprawdź dyrektywę „disable_functions” w konfiguracji PHP.",

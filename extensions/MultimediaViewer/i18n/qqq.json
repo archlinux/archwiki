@@ -70,8 +70,6 @@
 	"multimediaviewer-restriction-default": "Text of the tooltip for the default restriction label, that is displayed when hovered over.",
 	"multimediaviewer-restriction-default-and-others": "Text of the tooltip for the default restriction label when other restriction labels are present, that is displayed when hovered over.",
 	"multimediaviewer-about-mmv": "Text for a link to a page with more information about Media Viewer software.",
-	"multimediaviewer-discuss-mmv": "Text for a link to a page where the user can discuss the Media Viewer software.\n{{Identical|Discussion}}",
-	"multimediaviewer-help-mmv": "Text for a link to a page with help about Media Viewer software.\n{{Identical|Help}}",
 	"multimediaviewer-optout-mmv": "Text for the opt-out link. Clicking on the link will turn off MediaViewer.\n\nSee also:\n* {{msg-mw|Multimediaviewer-optout-pending-mmv}}\n* {{msg-mw|Multimediaviewer-optin-mmv}}",
 	"multimediaviewer-optin-mmv": "Text for the opt-back link. Clicking it will undo the opt-out.\n\nSee also:\n* {{msg-mw|Multimediaviewer-optin-pending-mmv}}\n* {{msg-mw|Multimediaviewer-optout-mmv}}",
 	"multimediaviewer-optout-pending-mmv": "Text shown for the opt-out link while the optout request is being processed.\n\nSee also:\n* {{msg-mw|Multimediaviewer-optout-mmv}}\n* {{msg-mw|Multimediaviewer-optin-pending-mmv}}",

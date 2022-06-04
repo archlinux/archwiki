@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Don Alessandro",
+			"Macofe"
+		]
+	},
+	"math_failure": "Айырыштырыламды",
+	"math_syntax_error": "синтаксис хатасы",
+	"math_unknown_error": "билинмеген хата",
+	"math_unknown_function": "бельгисиз функция",
+	"mw_math_mathml": "Мумкюн олса MathML (даа денъеме алында)",
+	"mw_math_png": "Даима PNG ресим форматына чевир",
+	"mw_math_source": "Денъиштирмеден LaTeX оларакъ ташла  (метин темелли браузерлер ичюн)",
+	"prefs-math": "Риязий (математик) ишаретлер"
+}

@@ -38,20 +38,6 @@ class DOMDiffTest extends TestCase {
 		$domDiff = new DOMDiff( $mockEnv );
 		$domDiff->diff( $oldBody, $body );
 
-		if ( count( $test['specs'] ) === 0 ) {
-			// Verify that body has no diff markers
-			// Dump DOM *with* diff marker attributes to ensure diff markers show up!
-			$opts = [
-				'env' => $mockEnv,
-				'keepTmp' => true,
-				'storeDiffMark' => true,
-				'quiet' => true
-			];
-			DOMDataUtils::visitAndStoreDataAttribs( $body, $opts );
-			$this->assertEquals( DOMCompat::getInnerHTML( $body ), $test['edit'] );
-			return;
-		}
-
 		foreach ( $test['specs'] as $spec ) {
 			if ( $spec['selector'] === 'body' ) { // Hmm .. why is this?
 				$node = $body;
@@ -68,7 +54,7 @@ class DOMDiffTest extends TestCase {
 				// precisely here. And, we need to revisit whether that
 				// page id comparison is still needed / useful.
 				$data = DOMDataUtils::getNodeData( $node );
-				$markers = $data->parsoid_diff->diff;
+				$markers = $data->parsoid_diff->diff ?? [];
 
 				$this->assertCount( count( $spec['markers'] ), $markers,
 					'number of markers does not match' );
@@ -94,7 +80,9 @@ class DOMDiffTest extends TestCase {
 					'desc' => 'ignore attribute order in a node',
 					'orig' => '<font size="1" class="x">foo</font>',
 					'edit' => '<font class="x" size="1">foo</font>',
-					'specs' => []
+					'specs' => [
+						[ 'selector' => 'font', 'markers' => [] ],
+					]
 				]
 			],
 			[

@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Erinamukuta",
 			"Kizito",
 			"Macofe",
-			"아라",
-			"Amire80"
+			"아라"
 		]
 	},
 	"tog-underline": "Enyunzi ebengako olukoloboze?",
@@ -14,7 +14,6 @@
 	"tog-newpageshidepatrolled": "Mu lukalala olw'empapula mpya tolaga ezimaz'okulawunibwa",
 	"tog-extendwatchlist": "Olukalala lw'empapula zengoberera lulabike mu bujjuvu, nga ebikyuse byonna mwebiri so ssi ebisinga obugya byokka",
 	"tog-usenewrc": "Olukalala olw'ebikyuse lweyambise obusobozi obw'enyongeza (kyetaagisa 'JavaScript')",
-	"tog-numberheadings": "Emitwe gy'emiko ku mpapula gibengako ennamba",
 	"tog-editondblclick": "Okunyiga eppeesa emirundi ebiri kubikkulenga w'okyusiza olupapula  (kyetaagisa 'JavaScript')",
 	"tog-editsectiononrightclick": "Okunyiga ku omutwe gw'omuko ku lupapula n'eppeesa erya ddyo kubikkulenga w'ogukyusiza (kyetaagisa 'JavaScript')",
 	"tog-watchcreations": "Empapula zenkolawo ziteekebwenga ku lukalala lw'ezo zengoberera",
@@ -137,6 +136,7 @@
 	"searchbutton": "Noonya",
 	"go": "Nona",
 	"searcharticle": "Nona",
+	"view-history": "Ennanda ya fayiro eno",
 	"history": "Ennanda y'olupapula luno",
 	"history_short": "Ennanda",
 	"updatedmarker": "ebikyusidwa okuva lwe nasemba okukebera",
@@ -144,13 +144,17 @@
 	"permalink": "Kolawo enyunzi egguka ku lupapula luno nga bwe lufaanana ku ssaawa eno",
 	"print": "Kubisa",
 	"view": "Lukebere",
+	"view-view": "Soma",
 	"edit": "Kyusa",
+	"view-edit": "Kyusa",
 	"create": "Kolawo",
+	"view-create": "Kolawo",
 	"delete": "Gyawo olupapula luno",
 	"undelete_short": "Julula {{PLURAL:$1|enkyukakyuka emu|enkyukakyuka $1}}",
 	"viewdeleted_short": "Kebera {{PLURAL:$1|oluwandika olwagyibwawo olumu|empandika ezagyibwawo $1}}",
 	"protect": "Ssiba",
 	"protect_change": "lusibe/lusumulule",
+	"action-unprotect": "Kyusa ebikugizo",
 	"unprotect": "Kyusa ebikugizo",
 	"newpage": "Lupapula lupya",
 	"talkpagelinktext": "yogera nange",
@@ -445,7 +449,6 @@
 	"edit-conflict": "Ebikyusidwamu bireesewo okusobagana.",
 	"edit-no-change": "Sisitemu ekubaze nga atalina ky'agikozeko, olw'okubanga ebiri ku lupapula obirese nga bwe wabisanze.",
 	"edit-already-exists": "Olupapula lw'ogeza okukolawo weruli, lwakolebwawo dda.<br />\nTekisobose kuddamu n'ate oulukolawo.",
-	"editwarning-warning": "Bw'ova ku lupapula luno kiyinza okuleetera enkyukakyuka z'olukozeko okuvawo.<br />\nBw'oba nga okola oyingidde mu sisitemu, okulabula kuno oyinza okukusirisa nga weyambisa<br />\nebiri mu kitundu ekya \"Kukyusa\" eky'omu \"Nteekateeka yange\".",
 	"expensive-parserfunction-warning": "'''Kulabula:''' Olupapula luno luliko ebiragiro eby'ekikebera engoberera y'amateeka g'empandika ebizito ebiyitiridde obungi.<br />\n<br />\nTerukkirizibwa kubaako {{PLURAL:$2|kiragiro ky'ekibekebera ngoberera y'amateeka g'empandika ekisukka|biragiro by'ekikebera mpandika y'amateeka g'empandika ebisukka}} mu $2. Kakano ebiragiro ebyo luliko {{PLURAL:$1|kimu|$1}}.",
 	"expensive-parserfunction-category": "Empapula eziriko ebiragiro eby'ekikebera engoberera y'amateeka g'empandika ebizito ebiyitiridde obungi",
 	"post-expand-template-inclusion-warning": "'''Kulabula:''' Entiba ez'okunonebwa ziyitiridde obungi.<br />\nEzimu zijjakulebwayo.",
@@ -550,6 +553,7 @@
 	"grouppage-sysop": "{{ns:project}}:Abateesiteesi",
 	"newuserlogpage": "Olukalala olw'ebifudeyo mu kukolawo akawunti empya",
 	"rightslog": "Olukalala lw'ebifudeyo ku by'endukusa za bamemba",
+	"action-addsection": "Tandikawo emboozi endala",
 	"action-edit": "olupapula luno okulukolamu nkyukakyuka",
 	"action-move": "Simbuliza",
 	"action-delete": "Gyawo olupapula luno",
@@ -645,7 +649,7 @@
 	"watchlist-options": "Enteetakeeka y'endaga ya mpapula zengoberera",
 	"watching": "Kikolebwako...",
 	"unwatching": "Kikolebwako...",
-	"deletepage": "Gyawo olupapula",
+	"deletepage-submit": "Gyawo olupapula",
 	"confirm": "Kakasa",
 	"confirmdeletetext": "Ogenda okugyawo olupapula n'ennanda ya lwo yonna.\n\nKakasa nti kino ky'oyagala, era nti otegeera bye kinaaleetawo, era nti kikkirizigana [[{{MediaWiki:Policy-url}}|n'enkola ya MediaWiki]].",
 	"actioncomplete": "Kiwedde",
@@ -680,6 +684,7 @@
 	"restriction-level": "Ddaala ly'okusibibwa:",
 	"restriction-edit": "Kyusa",
 	"restriction-move": "Simbuliza",
+	"action-viewdeleted": "Oyagala okulaba $1?",
 	"undeletebtn": "Luzzewo",
 	"undeletelink": "lukebere/luzzewo",
 	"undeletecomment": "Nsonga:",
@@ -847,5 +852,11 @@
 	"version-specialpages": "Empapula enjawule",
 	"fileduplicatesearch-submit": "Noonya",
 	"specialpages": "Empapula enjawule",
-	"tags-edit": "kyusa"
+	"tags-edit": "kyusa",
+	"deletepage": "Gyawo olupapula",
+	"nstab-mainpage": "Olupapula Olusinga Omugaso",
+	"skin-action-protect": "Ssiba",
+	"skin-action-undelete": "Zawo",
+	"skin-action-delete": "Gyawo olupapula luno",
+	"skin-action-move": "Simbuliza"
 }

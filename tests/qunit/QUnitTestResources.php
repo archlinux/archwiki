@@ -1,7 +1,5 @@
 <?php
 // These modules are only registered when $wgEnableJavaScriptTest is true
-// phpcs:disable Generic.Files.LineLength
-
 return [
 
 	'sinonjs' => [
@@ -70,6 +68,8 @@ return [
 			'tests/qunit/suites/resources/mediawiki/mediawiki.messagePoster.factory.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.String.byteLength.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.String.charAt.test.js',
+			'tests/qunit/suites/resources/mediawiki/mediawiki.String.lcFirst.test.js',
+			'tests/qunit/suites/resources/mediawiki/mediawiki.String.ucFirst.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.String.trimByteLength.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.storage.test.js',
 			'tests/qunit/suites/resources/mediawiki/mediawiki.template.test.js',
@@ -131,7 +131,7 @@ return [
 			'mediawiki.util',
 			'mediawiki.viewport',
 			'mediawiki.special.recentchanges',
-			'mediawiki.rcfilters.filters.dm',
+			'mediawiki.rcfilters.filters.ui',
 			'mediawiki.language',
 			'mediawiki.language.testdata',
 			'mediawiki.cldr',

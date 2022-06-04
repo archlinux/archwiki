@@ -18,8 +18,8 @@
 			"Shinjiman",
 			"Translatealcd",
 			"Waihorace",
-			"Xiplus",
-			"Winston Sung"
+			"Winston Sung",
+			"Xiplus"
 		]
 	},
 	"gadgets-desc": "讓使用者可以於[[Special:Preferences#mw-prefsection-gadgets|偏好設定]]自訂 [[Special:Gadgets|CSS 與 JavaScript 小工具]]",
@@ -36,11 +36,15 @@
 	"gadgetusage-default": "預設",
 	"gadgets-title": "小工具",
 	"gadgets-pagetext": "以下列出使用者可自行在[[Special:Preferences#mw-prefsection-gadgets|偏好設定頁面]]開啟的特殊小工具，此清單在[[MediaWiki:Gadgets-definition|定義]]所定義。此頁面可讓方便您存取定義各小工具描述與程式碼的系統訊息頁面。",
+	"gadgets-editdescription": "編輯描述",
+	"gadgets-viewdescription": "檢視描述",
 	"gadgets-uses": "使用",
 	"gadgets-required-rights": "需要以下{{PLURAL:$2|權限|權限}}：\n\n$1",
 	"gadgets-required-skins": "可用於{{PLURAL:$2|$1 外觀|下列外觀：$1}}。",
+	"gadgets-required-actions": "在{{PLURAL:$2|頁面操作「$1」時運作|以下頁面操作時運作：$1}}。",
 	"gadgets-default": "所有人預設開啟。",
 	"gadgets-legacy": "未載入小工具，請改使用 ResourceLoader。\n([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) 了解更多])",
+	"gadgets-packaged": "此小工具[https://www.mediawiki.org/wiki/ResourceLoader/Package_files 已封裝]，進入點位於$1",
 	"gadgets-export": "匯出",
 	"gadgets-export-title": "匯出小工具",
 	"gadgets-not-found": "查無小工具 \"$1\"。",
@@ -52,5 +56,6 @@
 	"action-gadgets-edit": "編輯這個小工具的 JavaScript 或 CSS 頁面",
 	"right-gadgets-definition-edit": "編輯小工具定義",
 	"action-gadgets-definition-edit": "編輯此小工具的定義",
-	"gadgets-wrong-contentmodel": "在{{ns:2302}}命名空間的頁面必須是GadgetDefinition內容模型。"
+	"gadgets-wrong-contentmodel": "在{{ns:2302}}命名空間的頁面必須是GadgetDefinition內容模型。",
+	"gadgets-supports-urlload": "此小工具支援透過包含<code>?withgadget</code>查詢參數的URL來載入。"
 }

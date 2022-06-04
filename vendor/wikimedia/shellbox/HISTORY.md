@@ -1,5 +1,16 @@
 # Release History
 
+## 3.0.0 (2021-11-04)
+* Add RpcClient interface for remote code execution and a LocalRpcClient
+  implementation to be used as fallback when Shellbox server is not
+  available.
+* PSR-18 ClientInterface is now used instead of Shellbox own HttpClientInterface
+
+## 2.1.0 (2021-09-24)
+* Roll our own *nix shell escaping function, improving PHP 8 support
+  while still protecting against attacks using GBK locales by filtering
+  them out of the environment.
+
 ## 2.0.0 (2021-08-20)
 
 * Require PHP >=7.2.9, up from 7.2.0.

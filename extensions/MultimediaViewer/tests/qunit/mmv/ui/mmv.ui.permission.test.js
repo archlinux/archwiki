@@ -23,7 +23,7 @@
 		}
 	} ) );
 
-	QUnit.test( 'Constructor sanity check', function ( assert ) {
+	QUnit.test( 'Constructor sense check', function ( assert ) {
 		var $qf = $( '#qunit-fixture' ),
 			permission = new mw.mmv.ui.Permission( $qf );
 

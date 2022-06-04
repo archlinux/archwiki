@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Krun",
+			"Macofe",
+			"Quackor",
+			"Spacebirdy"
+		]
+	},
+	"mw_math_mathml": "MathML um møguligt (roynd)",
+	"mw_math_png": "Vís altíð sum PNG",
+	"mw_math_source": "Lat verða sum LaTeX (til tekstkagara)",
+	"prefs-math": "Støddfrøðiligir formlar"
+}

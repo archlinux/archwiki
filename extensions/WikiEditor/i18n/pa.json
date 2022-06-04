@@ -5,9 +5,7 @@
 		]
 	},
 	"wikieditor-wikitext-tab": "ਵਿਕੀਲਿਖਤ",
-	"wikieditor-loading": "ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…",
 	"wikieditor-toolbar": "ਸੰਦਬਕਸਾ ਸੋਧਿਆ ਜਾ ਰਿਹਾ ਹੈ",
-	"wikieditor-toolbar-loading": "ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…",
 	"wikieditor-toolbar-tool-bold": "ਮੋਟੇ ਅੱਖਰਾਂ ਵਿਚ",
 	"wikieditor-toolbar-tool-bold-example": "ਮੋਟੀ ਲਿਖਤ",
 	"wikieditor-toolbar-tool-italic": "ਟੇਢਾ",
@@ -36,7 +34,6 @@
 	"wikieditor-toolbar-tool-link-int-invalid": "ਤੁਹਾਡਾ ਦੱਸਿਆ ਹੋਇਆ ਸਿਰਲੇਖ ਗ਼ਲਤ ਹੈ।",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "ਅੰਦਰੂਨੀ ਕੜੀ",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "ਬਾਹਰੀ ਕੜੀ",
-	"wikieditor-toolbar-tool-link-empty": "ਤੁਸੀਂ ਕੁਝ ਜੋੜਨ ਲਈ ਭਰਿਆ ਹੀ ਨਹੀਂ।",
 	"wikieditor-toolbar-tool-file-example": "ਮਿਸਾਲ.jpg",
 	"wikieditor-toolbar-tool-file-title": "ਫ਼ਾਈਲ ਜੋੜੋ",
 	"wikieditor-toolbar-file-target": "ਫ਼ਾਈਲ ਦਾ ਨਾਂ:",

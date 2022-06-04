@@ -1,13 +1,5 @@
 <?php
 /**
- * @defgroup ExternalStorage ExternalStorage
- */
-
-use MediaWiki\MediaWikiServices;
-
-/**
- * Interface for data storage in external repositories.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,25 +18,11 @@ use MediaWiki\MediaWikiServices;
  * @file
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
- * Constructor class for key/value blob data kept in external repositories.
- *
- * Objects in external stores are defined by a special URL. The URL is of
- * the form "<store protocol>://<location>/<object name>". The protocol is used
- * to determine what ExternalStoreMedium class is used. The location identifies
- * particular storage instances or database clusters for store class to use.
- *
- * When an object is inserted into a store, the calling code uses a partial URL of
- * the form "<store protocol>://<location>" and receives the full object URL on success.
- * This is useful since object names can be sequential IDs, UUIDs, or hashes.
- * Callers are not responsible for unique name generation.
- *
- * External repositories might be populated by maintenance/async
- * scripts, thus partial moving of data may be possible, as well
- * as the possibility to have any storage format (i.e. for archives).
- *
  * @ingroup ExternalStorage
- * @deprecated 1.34 Use ExternalStoreFactory directly instead
+ * @deprecated since 1.34 Use the ExternalStoreAccess service instead.
  */
 class ExternalStore {
 	/**
@@ -53,7 +31,7 @@ class ExternalStore {
 	 * @param string $proto Type of external storage, should be a value in $wgExternalStores
 	 * @param array $params Associative array of ExternalStoreMedium parameters
 	 * @return ExternalStoreMedium|bool The store class or false on error
-	 * @deprecated 1.34
+	 * @deprecated since 1.34
 	 */
 	public static function getStoreObject( $proto, array $params = [] ) {
 		try {
@@ -72,7 +50,7 @@ class ExternalStore {
 	 * @param array $params Associative array of ExternalStoreMedium parameters
 	 * @return string|bool The text stored or false on error
 	 * @throws MWException
-	 * @deprecated 1.34
+	 * @deprecated since 1.34
 	 */
 	public static function fetchFromURL( $url, array $params = [] ) {
 		try {
@@ -94,7 +72,7 @@ class ExternalStore {
 	 * @param array $params Associative array of ExternalStoreMedium parameters
 	 * @return string|bool The URL of the stored data item, or false on error
 	 * @throws MWException
-	 * @deprecated 1.34
+	 * @deprecated since 1.34
 	 */
 	public static function insert( $url, $data, array $params = [] ) {
 		try {
@@ -114,7 +92,7 @@ class ExternalStore {
 	 * @return array Map from url to its data.  Data is either string when found
 	 *     or false on failure.
 	 * @throws MWException
-	 * @deprecated 1.34
+	 * @deprecated since 1.34
 	 */
 	public static function batchFetchFromURLs( array $urls ) {
 		return MediaWikiServices::getInstance()->getExternalStoreAccess()->fetchFromURLs( $urls );
@@ -130,7 +108,7 @@ class ExternalStore {
 	 * @param array $params Map of ExternalStoreMedium::__construct context parameters
 	 * @return string The URL of the stored data item
 	 * @throws MWException
-	 * @deprecated 1.34
+	 * @deprecated since 1.34
 	 */
 	public static function insertToDefault( $data, array $params = [] ) {
 		return MediaWikiServices::getInstance()->getExternalStoreAccess()->insert( $data, $params );
@@ -147,7 +125,7 @@ class ExternalStore {
 	 * @param array $params Map of ExternalStoreMedium::__construct context parameters
 	 * @return string The URL of the stored data item
 	 * @throws MWException
-	 * @deprecated 1.34
+	 * @deprecated since 1.34
 	 */
 	public static function insertWithFallback( array $tryStores, $data, array $params = [] ) {
 		return MediaWikiServices::getInstance()
@@ -160,7 +138,7 @@ class ExternalStore {
 	 * @param string $wiki
 	 * @return string The URL of the stored data item
 	 * @throws MWException
-	 * @deprecated 1.34 Use insertToDefault() with 'wiki' set
+	 * @deprecated since 1.34 Use insertToDefault() with 'wiki' set
 	 */
 	public static function insertToForeignDefault( $data, $wiki ) {
 		return MediaWikiServices::getInstance()

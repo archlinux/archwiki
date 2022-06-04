@@ -22,11 +22,15 @@
 	"gadgetusage-default": "Standard",
 	"gadgets-title": "Tilleggsfunksjoner",
 	"gadgets-pagetext": "Nedenfor er en liste over tilleggsfunksjoner brukere kan slå på i [[Special:Preferences#mw-prefsection-gadgets|innstillingene]], som definert på [[MediaWiki:Gadgets-definition]]. Denne oversikten gir lett tilgang til systembeskjedsidene som definerer hvert verktøys beskrivelse og kode.",
+	"gadgets-editdescription": "Rediger beskrivelse",
+	"gadgets-viewdescription": "Vis beskrivelse",
 	"gadgets-uses": "Bruk",
 	"gadgets-required-rights": "Krever følgende {{PLURAL:$2|rettighet|rettigheter}}:\n\n$1",
 	"gadgets-required-skins": "Tilgjengelig i {{PLURAL:$2|drakta $1|følgende drakter: $1}}.",
+	"gadgets-required-actions": "Virker på {{PLURAL:$2|sidehandlingen «$2»|følgende sidehandlinger: $1}}.",
 	"gadgets-default": "Aktivert for alle som standard",
 	"gadgets-legacy": "Tilleggsfunksjonen ble ikke lastet. Vennligst gå over til å bruke ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Lær mer])",
+	"gadgets-packaged": "Denne tilleggsfunksjonen [https://www.mediawiki.org/wiki/ResourceLoader/Package_files pakkes], og inngangspunktet er $1",
 	"gadgets-export": "Eksporter",
 	"gadgets-export-title": "Tilleggsfunksjon eksport",
 	"gadgets-not-found": "Tilleggsfunksjon «$1» ikke funnet.",
@@ -38,5 +42,6 @@
 	"action-gadgets-edit": "redigere denne tilleggsfunksjonens JavaScript- eller CSS-side",
 	"right-gadgets-definition-edit": "Redigere tilleggsfunksjonsdefinisjonene",
 	"action-gadgets-definition-edit": "redigere denne tilleggsfunksjonens definisjon",
-	"gadgets-wrong-contentmodel": "Sider i navnerommet «{{ns:2302}}» må ha innholdsmodellen GadgetDefinition."
+	"gadgets-wrong-contentmodel": "Sider i navnerommet «{{ns:2302}}» må ha innholdsmodellen GadgetDefinition.",
+	"gadgets-supports-urlload": "Denne tilleggsfunksjonen støtter lasting via URL med URL-parameteren <code>?withgadget</code>."
 }

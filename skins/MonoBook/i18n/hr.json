@@ -16,5 +16,7 @@
 	"monobook-more-actions": "Više",
 	"monobook-cactions-label": "Stranične radnje",
 	"monobook-notifications-link": "Obavijesti ($1)",
-	"monobook-notifications-link-none": "Obavijesti"
+	"monobook-notifications-link-none": "Obavijesti",
+	"monobook-view-history": "Stare izmjene",
+	"monobook-action-undelete": "Vrati {{PLURAL:$1|$1 uređivanje|$1 uređivanja}}"
 }

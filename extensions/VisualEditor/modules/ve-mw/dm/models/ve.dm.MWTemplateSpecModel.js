@@ -138,7 +138,7 @@ ve.dm.MWTemplateSpecModel.prototype.fillFromTemplate = function () {
  *  `{{example}}` when a template name is dynamically generated.
  */
 ve.dm.MWTemplateSpecModel.prototype.getLabel = function () {
-	var title = this.template.getTitle();
+	var title = this.template.getTemplateDataQueryTitle();
 	if ( title ) {
 		try {
 			// Normalize and remove namespace prefix if in the Template: namespace
@@ -210,7 +210,7 @@ ve.dm.MWTemplateSpecModel.prototype.getCanonicalParameterOrder = function () {
 
 		if ( aIsNaN && bIsNaN ) {
 			// Two strings
-			return a < b ? -1 : a === b ? 0 : 1;
+			return a.localeCompare( b );
 		}
 		if ( aIsNaN ) {
 			// A is a string
@@ -252,7 +252,7 @@ ve.dm.MWTemplateSpecModel.prototype.isParameterAlias = function ( name ) {
 };
 
 /**
- * @param name Parameter name or alias
+ * @param {string} name Parameter name or alias
  * @return {boolean}
  */
 ve.dm.MWTemplateSpecModel.prototype.isParameterDocumented = function ( name ) {

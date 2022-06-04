@@ -130,9 +130,7 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 		$wrap->setEnableFlags( 'warn' );
 
-		\Wikimedia\suppressWarnings();
-		ini_set( 'session.serialize_handler', $handler );
-		\Wikimedia\restoreWarnings();
+		@ini_set( 'session.serialize_handler', $handler );
 		if ( ini_get( 'session.serialize_handler' ) !== $handler ) {
 			$this->markTestSkipped( "Cannot set session.serialize_handler to \"$handler\"" );
 		}
@@ -296,13 +294,13 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 				return false;
 			} ],
 		] );
-		$this->assertNull( $manager->getSessionById( $id, true ), 'sanity check' );
+		$this->assertNull( $manager->getSessionById( $id, true ) );
 		session_write_close();
 
 		$this->mergeMwGlobalArrayValue( 'wgHooks', [
 			'SessionCheckInfo' => [],
 		] );
-		$this->assertNotNull( $manager->getSessionById( $id, true ), 'sanity check' );
+		$this->assertNotNull( $manager->getSessionById( $id, true ) );
 	}
 
 	public static function provideHandlers() {

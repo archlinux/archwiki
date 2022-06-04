@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kareyac",
+			"Сай",
+			"Санюн Вадик"
+		]
+	},
+	"abusefilter-log-search-user": "Пайдаланыше:",
+	"abusefilter-tools-reautoconfirm-user": "Пайдаланыше:",
+	"abusefilter-edit-status-label": "Иктешлымаш:",
+	"abusefilter-edit-history": "Историй:",
+	"abusefilter-history-user": "Пайдаланыше",
+	"abusefilter-revert-filter": "Фильтр:"
+}

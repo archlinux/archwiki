@@ -11,5 +11,7 @@
 	"timeless-pagemisc": "Wjace",
 	"timeless-namespaces": "Mjenowe rumy",
 	"timeless-languages": "Rěče",
-	"timeless-projects": "Druhe projekty"
+	"timeless-projects": "Druhe projekty",
+	"timeless-view-history": "wersije",
+	"timeless-action-undelete": "{{PLURAL:$1|jednu wersiju|$1 wersiji|$1 wersije|$1 wersijow}} wobnowić"
 }

@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bjh21",
+			"Caliburn",
+			"Chase me ladies, I'm the Cavalry",
+			"Shirayuki"
+		]
+	},
+	"abusefilter-edit-builder-funcs-ccnorm": "Normalise confusable characters (ccnorm)",
+	"abusefilter-edit-builder-funcs-norm": "Normalise (norm)",
+	"abusefilter-exception-unrecognisedkeyword": "Unrecognised keyword $2 at character $1.",
+	"abusefilter-exception-unrecognisedtoken": "Unrecognised token \"$2\" at character $1.",
+	"abusefilter-exception-unrecognisedvar": "Unrecognised variable $2 at character $1"
+}

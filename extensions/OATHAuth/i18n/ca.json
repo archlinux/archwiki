@@ -6,7 +6,7 @@
 		]
 	},
 	"oathauth-auth-ui": "Introduïu un codi de verificació provinent del vostre dispositiu d’autenticació.",
-	"oauthauth-ui-no-module": "No se n’ha habilitat cap",
+	"oathauth-ui-no-module": "No se n’ha habilitat cap",
 	"oathauth-module-totp-label": "TOTP (testimoni d’un sol ús)",
 	"oathauth-ui-manage": "Gestiona",
 	"oathmanage": "Gestiona autenticació de doble factor",

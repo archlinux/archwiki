@@ -12,9 +12,9 @@
 			"Reedy",
 			"Robotukas11",
 			"Shirayuki",
+			"TMg",
 			"Tomasdd",
-			"Zygimantus",
-			"TMg"
+			"Zygimantus"
 		]
 	},
 	"tooltip-ca-createsource": "Sukurti šio puslapio išeities kodą",
@@ -187,7 +187,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Paveikslėliai ir medija",
 	"visualeditor-dialogbutton-meta-tooltip": "Puslapio nustatymai",
 	"visualeditor-dialogbutton-template-tooltip": "Šablonas",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Intarpas",
 	"visualeditor-donebutton-tooltip": "Užbaigti redagavimą",
 	"visualeditor-editconflict": "Jūsų pakeitimai negali būti išsaugoti dėl redagavimo konflikto. Ar {{GENDER:|jūs}} norite išspręsti konfliktą rankiniu būdu?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} dabar prisimena, kurio redaktoriaus norite. Kai redaguojate galite keisti redagavimo režimus ir keisti nustatymus vėliau.",

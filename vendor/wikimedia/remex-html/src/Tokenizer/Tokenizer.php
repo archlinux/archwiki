@@ -1027,6 +1027,7 @@ class Tokenizer {
 				continue;
 			} else {
 				$this->fatal( 'unable to identify char ref submatch' );
+				// @phan-suppress-next-line PhanPluginUnreachableCode False positive that var is not defined
 				$codepoint = 0; // re-assure phan $codepoint will be defined
 			}
 
@@ -1297,6 +1298,7 @@ class Tokenizer {
 			PREG_SET_ORDER | PREG_OFFSET_CAPTURE, $this->pos );
 		if ( $count === false ) {
 			$this->throwPregError();
+			// @phan-suppress-next-line PhanPluginUnreachableCode False positive that var is not defined
 			$attribs = new PlainAttributes(); // reassure phan
 		} elseif ( $count ) {
 			$this->pos = $m[$count - 1][0][1] + strlen( $m[$count - 1][0][0] );
@@ -1458,6 +1460,7 @@ class Tokenizer {
 			return $state;
 		} else {
 			$this->fatal( 'failed to find an already-matched ">"' );
+			// @phan-suppress-next-line PhanPluginUnreachableCode False positive that var is not defined
 			$selfClose = false; // reassure phan
 		}
 		$this->pos = $pos;
@@ -1592,6 +1595,7 @@ REGEX;
 	 * and assertion-like sanity checks.
 	 * @param string $text The error message
 	 * @throws TokenizerError
+	 * @return never
 	 */
 	protected function fatal( $text ) {
 		throw new TokenizerError( __CLASS__ . ": " . $text );
@@ -1609,6 +1613,8 @@ REGEX;
 	 * - pcre.backtrack_limit exhausted: The backtrack limit should be at least
 	 *   double the input size, the defaults are way too small. Increase it in
 	 *   configuration.
+	 *
+	 * @return never
 	 */
 	protected function throwPregError() {
 		if ( defined( 'PREG_JIT_STACKLIMIT_ERROR' ) ) {
@@ -1646,6 +1652,3 @@ REGEX;
 		throw new TokenizerError( __CLASS__ . ": $msg" );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Tokenizer::class, 'RemexHtml\Tokenizer\Tokenizer' );

@@ -39,6 +39,7 @@
 	"scribunto-lua-in-function-at": "$1 ফাংশনে: $2 নং লাইনে",
 	"scribunto-lua-error-location": "লুয়া ত্রুটি $1: $2।",
 	"scribunto-lua-error": "লুয়া ত্রুটি: $2।",
+	"scribunto-lua-warning": "স্ক্রিপ্ট সতর্কতা: $1",
 	"scribunto-luastandalone-proc-error": "লুয়া ত্রুটি: প্রক্রিয়া তৈরি করা যাবে না।",
 	"scribunto-luastandalone-proc-error-msg": "লুয়া ত্রুটি: প্রক্রিয়া তৈরি করা যাবে না: $2",
 	"scribunto-luastandalone-decode-error": "লুয়া ত্রুটি: অভ্যন্তরীণ ত্রুটি: বার্তা ডিকোড করতে অক্ষম।",

@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 /**
  * General token sanitizer. Strips out (or encapsulates) unsafe and disallowed
@@ -95,24 +96,55 @@ class Sanitizer {
 	public const ID_FALLBACK = 1; // public because it is accessed in Headings handler
 
 	/** Characters that will be ignored in IDNs.
-	 * https://tools.ietf.org/html/rfc3454#section-3.1
+	 * https://datatracker.ietf.org/doc/html/rfc8264#section-9.13
+	 * https://www.unicode.org/Public/UCD/latest/ucd/DerivedCoreProperties.txt
 	 * Strip them before further processing so deny lists and such work.
 	 * Part of Sanitizer::cleanUrl in core.
 	 */
 	private const IDN_RE_G = "/
-				\\s|          # general whitespace
-				\xc2\xad|     # 00ad SOFT HYPHEN
-				\xe1\xa0\x86| # 1806 MONGOLIAN TODO SOFT HYPHEN
-				\xe2\x80\x8b| # 200b ZERO WIDTH SPACE
-				\xe2\x81\xa0| # 2060 WORD JOINER
-				\xef\xbb\xbf| # feff ZERO WIDTH NO-BREAK SPACE
-				\xcd\x8f|     # 034f COMBINING GRAPHEME JOINER
-				\xe1\xa0\x8b| # 180b MONGOLIAN FREE VARIATION SELECTOR ONE
-				\xe1\xa0\x8c| # 180c MONGOLIAN FREE VARIATION SELECTOR TWO
-				\xe1\xa0\x8d| # 180d MONGOLIAN FREE VARIATION SELECTOR THREE
-				\xe2\x80\x8c| # 200c ZERO WIDTH NON-JOINER
-				\xe2\x80\x8d| # 200d ZERO WIDTH JOINER
-				[\xef\xb8\x80-\xef\xb8\x8f] # fe00-fe0f VARIATION SELECTOR-1-16
+				\\s|      # general whitespace
+				\u{00AD}|               # SOFT HYPHEN
+				\u{034F}|               # COMBINING GRAPHEME JOINER
+				\u{061C}|               # ARABIC LETTER MARK
+				[\u{115F}-\u{1160}]|    # HANGUL CHOSEONG FILLER..
+							# HANGUL JUNGSEONG FILLER
+				[\u{17B4}-\u{17B5}]|    # KHMER VOWEL INHERENT AQ..
+							# KHMER VOWEL INHERENT AA
+				[\u{180B}-\u{180D}]|    # MONGOLIAN FREE VARIATION SELECTOR ONE..
+							# MONGOLIAN FREE VARIATION SELECTOR THREE
+				\u{180E}|               # MONGOLIAN VOWEL SEPARATOR
+				[\u{200B}-\u{200F}]|    # ZERO WIDTH SPACE..
+							# RIGHT-TO-LEFT MARK
+				[\u{202A}-\u{202E}]|    # LEFT-TO-RIGHT EMBEDDING..
+							# RIGHT-TO-LEFT OVERRIDE
+				[\u{2060}-\u{2064}]|    # WORD JOINER..
+							# INVISIBLE PLUS
+				\u{2065}|               # <reserved-2065>
+				[\u{2066}-\u{206F}]|    # LEFT-TO-RIGHT ISOLATE..
+							# NOMINAL DIGIT SHAPES
+				\u{3164}|               # HANGUL FILLER
+				[\u{FE00}-\u{FE0F}]|    # VARIATION SELECTOR-1..
+							# VARIATION SELECTOR-16
+				\u{FEFF}|               # ZERO WIDTH NO-BREAK SPACE
+				\u{FFA0}|               # HALFWIDTH HANGUL FILLER
+				[\u{FFF0}-\u{FFF8}]|    # <reserved-FFF0>..
+							# <reserved-FFF8>
+				[\u{1BCA0}-\u{1BCA3}]|  # SHORTHAND FORMAT LETTER OVERLAP..
+							# SHORTHAND FORMAT UP STEP
+				[\u{1D173}-\u{1D17A}]|  # MUSICAL SYMBOL BEGIN BEAM..
+							# MUSICAL SYMBOL END PHRASE
+				\u{E0000}|              # <reserved-E0000>
+				\u{E0001}|              # LANGUAGE TAG
+				[\u{E0002}-\u{E001F}]|  # <reserved-E0002>..
+							# <reserved-E001F>
+				[\u{E0020}-\u{E007F}]|  # TAG SPACE..
+							# CANCEL TAG
+				[\u{E0080}-\u{E00FF}]|  # <reserved-E0080>..
+							# <reserved-E00FF>
+				[\u{E0100}-\u{E01EF}]|  # VARIATION SELECTOR-17..
+							# VARIATION SELECTOR-256
+				[\u{E01F0}-\u{E0FFF}]|  # <reserved-E01F0>..
+							# <reserved-E0FFF>
 				/xuD";
 
 	private const GET_ATTRIBS_RE = '/^[:_\p{L}\p{N}][:_\.\-\p{L}\p{N}]*$/uD';
@@ -822,7 +854,7 @@ class Sanitizer {
 			&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', $v )
 			|| $k === 'about' && preg_match( '/^#mwt\d+$/D', $v )
 			|| $k === 'content'
-			&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', KV::lookup( $attrs, 'property' ) );
+			&& preg_match( '/(?:^|\s)mw:.+?(?=$|\s)/D', KV::lookup( $attrs, 'property' ) ?? '' );
 	}
 
 	/**
@@ -947,7 +979,7 @@ class Sanitizer {
 			}
 
 			// RDFa and microdata properties allow URLs, URIs and/or CURIs.
-			// Check them for sanity.
+			// Check them for validity.
 			if ( $k === 'rel' || $k === 'rev'
 				# RDFa
 				|| $k === 'about' || $k === 'property'

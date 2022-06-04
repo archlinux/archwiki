@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser\Hook;
+
 /**
  * This is a hook handler interface, see docs/Hooks.md.
  * Use the hook name "RenameUserComplete" to register handlers implementing this interface.
@@ -20,3 +22,5 @@ interface RenameUserCompleteHook {
 	public function onRenameUserComplete( int $uid, string $old, string $new ): void;
 
 }
+
+class_alias( RenameUserCompleteHook::class, 'RenameUserCompleteHook' );

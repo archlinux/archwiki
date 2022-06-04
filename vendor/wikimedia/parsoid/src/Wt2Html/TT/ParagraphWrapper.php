@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Config\WikitextConstants as Consts;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
@@ -14,6 +13,7 @@ use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\TokenUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
 
 /**
@@ -192,22 +192,23 @@ class ParagraphWrapper extends TokenHandler {
 	}
 
 	/**
-	 * Discard a newline token from buffer
+	 * Append tokens from the newline/whitespace buffer to the output array
+	 * until a newline is encountered. Increment the offset reference. Return
+	 * the newline token.
 	 *
-	 * @param array &$out array to process and update
+	 * @param array &$out array to append to
+	 * @param int &$offset The offset reference to update
 	 * @return Token|string
 	 */
-	public function discardOneNlTk( array &$out ) {
-		$i = 0;
+	public function processOneNlTk( array &$out, &$offset ) {
 		$n = count( $this->nlWsTokens );
-		while ( $i < $n ) {
-			$t = array_shift( $this->nlWsTokens );
+		while ( $offset < $n ) {
+			$t = $this->nlWsTokens[$offset++];
 			if ( $t instanceof NlTk ) {
 				return $t;
 			} else {
 				$out[] = $t;
 			}
-			$i++;
 		}
 
 		// FIXME: We should return null and fix callers
@@ -237,11 +238,13 @@ class ParagraphWrapper extends TokenHandler {
 						// Let us leave them all out of the p-wrapping.
 						$tplStartIndex = -1;
 						continue;
+					} elseif ( TokenUtils::isAnnotationStartToken( $t ) ) {
+						break;
 					}
 				}
 				// Not a transclusion meta; Check for nl/sol-transparent tokens
 				// and leave them out of the p-wrapping.
-				if ( !TokenUtils::isSolTransparent( $this->env, $t ) && !$t instanceof NlTk ) {
+				if ( !TokenUtils::isSolTransparent( $this->env, $t ) && !( $t instanceof NlTk ) ) {
 					break;
 				}
 			}
@@ -276,11 +279,13 @@ class ParagraphWrapper extends TokenHandler {
 						// Let us leave them all out of the p-wrapping.
 						$tplEndIndex = $i;
 						continue;
+					} elseif ( TokenUtils::isAnnotationEndToken( $t ) ) {
+						break;
 					}
 				}
 				// Not a transclusion meta; Check for nl/sol-transparent tokens
 				// and leave them out of the p-wrapping.
-				if ( !TokenUtils::isSolTransparent( $this->env, $t ) && !$t instanceof NlTk ) {
+				if ( !TokenUtils::isSolTransparent( $this->env, $t ) && !( $t instanceof NlTk ) ) {
 					break;
 				}
 			}
@@ -325,7 +330,7 @@ class ParagraphWrapper extends TokenHandler {
 			$this->env->log( 'trace/p-wrap', $this->pipelineId, '---->  ', static function () use( $res ) {
 				return PHPUtils::jsonEncode( $res );
 			} );
-			return new TokenHandlerResult( $res, false, true );
+			return new TokenHandlerResult( $res, true );
 		} else {
 			$this->resetCurrLine();
 			$this->newLineCount++;
@@ -346,6 +351,7 @@ class ParagraphWrapper extends TokenHandler {
 		$resToks = $this->tokenBuffer;
 		$newLineCount = $this->newLineCount;
 		$nlTk = null;
+		$nlOffset = 0;
 
 		$this->env->log( 'trace/p-wrap', $this->pipelineId, '        NL-count: ',
 			$newLineCount );
@@ -354,13 +360,13 @@ class ParagraphWrapper extends TokenHandler {
 			$this->closeOpenPTag( $resToks );
 
 			// First is emitted as a literal newline
-			$resToks[] = $this->discardOneNlTk( $resToks );
+			$resToks[] = $this->processOneNlTk( $resToks, $nlOffset );
 			$newLineCount -= 1;
 
 			$remainder = $newLineCount % 2;
 
 			while ( $newLineCount > 0 ) {
-				$nlTk = $this->discardOneNlTk( $resToks );
+				$nlTk = $this->processOneNlTk( $resToks, $nlOffset );
 				if ( $newLineCount % 2 === $remainder ) {
 					if ( $this->hasOpenPTag ) {
 						$resToks[] = new EndTagTk( 'p' );
@@ -381,13 +387,14 @@ class ParagraphWrapper extends TokenHandler {
 		if ( $this->currLineBlockTagSeen ) {
 			$this->closeOpenPTag( $resToks );
 			if ( $newLineCount === 1 ) {
-				$resToks[] = $this->discardOneNlTk( $resToks );
+				$resToks[] = $this->processOneNlTk( $resToks, $nlOffset );
 			}
 		}
 
 		// Gather remaining ws and nl tokens
-
-		PHPUtils::pushArray( $resToks, $this->nlWsTokens );
+		for ( $i = $nlOffset; $i < count( $this->nlWsTokens ); $i++ ) {
+			$resToks[] = $this->nlWsTokens[$i];
+		}
 
 		// reset buffers
 		$this->resetBuffers();
@@ -507,7 +514,7 @@ class ParagraphWrapper extends TokenHandler {
 					}
 				}
 				if ( $name === 'blockquote' ) {
-					$this->inBlockquote = ( !$token instanceof EndTagTk );
+					$this->inBlockquote = !( $token instanceof EndTagTk );
 				}
 			}
 			$this->currLineHasWrappableTokens = true;

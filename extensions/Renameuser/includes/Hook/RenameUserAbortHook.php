@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser\Hook;
+
 /**
  * This is a hook handler interface, see docs/Hooks.md.
  * Use the hook name "RenameUserAbort" to register handlers implementing this interface.
@@ -22,3 +24,5 @@ interface RenameUserAbortHook {
 	public function onRenameUserAbort( int $uid, string $old, string $new );
 
 }
+
+class_alias( RenameUserAbortHook::class, 'RenameUserAbortHook' );

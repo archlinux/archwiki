@@ -3,6 +3,7 @@
 		"authors": [
 			"01miki10",
 			"Crt",
+			"MITO",
 			"Nike",
 			"Olli",
 			"Pyscowicz",
@@ -23,6 +24,8 @@
 	"gadgetusage-default": "Oletus",
 	"gadgets-title": "Pienoisohjelmat",
 	"gadgets-pagetext": "Alla on lista pienoisohjelmista, joita käyttäjät voivat ottaa käyttöön [[Special:Preferences#mw-prefsection-gadgets|asetussivulta]]. Pienoisohjelmat määritetään [[MediaWiki:Gadgets-definition|täältä]].\n\nTämä lista antaa helpon pääsyn järjestelmäviesteihin, jotka sisältävät pienoisohjelmien kuvauksen ja koodin.",
+	"gadgets-editdescription": "Muokkaa kuvausta",
+	"gadgets-viewdescription": "Näytä kuvaus",
 	"gadgets-uses": "Käyttää",
 	"gadgets-required-rights": "Edellyttää {{PLURAL:$2|seuraavaa oikeutta|seuraavia oikeuksia}}:\n\n$1",
 	"gadgets-required-skins": "Saatavilla {{PLURAL:$2|seuraavaan ulkoasuun|seuraaviin ulkoasuihin}}: $1.",

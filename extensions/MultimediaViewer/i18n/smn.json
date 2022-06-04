@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik",
-			"Seipinne"
+			"Seipinne",
+			"Yupik"
 		]
 	},
 	"multimediaviewer-optin-mmv": "Vääldi Mediakeččee kiävtun",
+	"multimediaviewer-share-tab": "Jyevi",
 	"multimediaviewer-download-link": "Luođii taam tiätuvuárhá",
 	"multimediaviewer-download-original-button-name": "Luođii algâalgâlii tiätuvuárhá",
 	"multimediaviewer-link-to-file": "Liŋkkâ algâalgâlâš tiätuvuárkán",

@@ -33,7 +33,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.35 (also backported to 1.33.3 and 1.34.1)
  */
-define( 'MW_VERSION', '1.37.2' );
+define( 'MW_VERSION', '1.38.0' );
 
 /** @{
  * Obsolete IDatabase::makeList() constants
@@ -82,11 +82,11 @@ define( 'NS_CATEGORY_TALK', 15 );
 /** @{
  * Cache type
  */
-define( 'CACHE_ANYTHING', -1 );  // Use anything, as long as it works
-define( 'CACHE_NONE', 0 );       // Do not cache
-define( 'CACHE_DB', 1 );         // Store cache objects in the DB
-define( 'CACHE_MEMCACHED', 2 );  // MemCached, must specify servers in $wgMemCacheServers
-define( 'CACHE_ACCEL', 3 );      // APC or WinCache
+define( 'CACHE_ANYTHING', -1 ); // Use anything, as long as it works
+define( 'CACHE_NONE', 0 ); // Do not cache
+define( 'CACHE_DB', 1 ); // Store cache objects in the DB
+define( 'CACHE_MEMCACHED', 'memcached-php' ); // Backwards-compatability alias for Memcached
+define( 'CACHE_ACCEL', 3 ); // APC or WinCache
 /** @} */
 
 /** @{
@@ -172,8 +172,7 @@ define( 'SFH_OBJECT_ARGS', 2 );
 /** @} */
 
 /** @{
- * Autopromote conditions (must be here, so that they're loaded for
- * DefaultSettings.php before AutoLoader.php)
+ * Autopromote conditions
  */
 define( 'APCOND_EDITCOUNT', 1 );
 define( 'APCOND_AGE', 2 );

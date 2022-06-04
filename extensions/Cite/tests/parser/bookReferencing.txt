@@ -1,4 +1,5 @@
 !! version 2
+
 !! test
 Book Referencing attribute rejected by default
 !! config

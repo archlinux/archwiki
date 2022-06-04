@@ -79,10 +79,13 @@
 	right: 0;
 	bottom: 2.5em;
 	overflow: auto;
+	/* Compensate for 2 * 2px padding on the .oo-ui-outlineControlsWidget + 1px border */
+	margin-bottom: 5px;
 }
 
 .ve-ui-mwTransclusionDialog-single-transclusion .ve-ui-mwTemplateDialog-pocSidebar-debug-container {
 	bottom: 0;
+	margin-bottom: 0;
 }
 
 .ve-ui-mwTemplateDialog-pocSidebar-debug-container > .oo-ui-outlineSelectWidget {
@@ -97,6 +100,23 @@
 
 .ve-ui-mwTemplateDialog .oo-ui-outlineOptionWidget.oo-ui-flaggedElement-empty .oo-ui-labelElement-label {
 	color: #72777d;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar.ve-ui-mwTransclusionDialog-single-transclusion .ve-ui-mwTransclusionOutlineButtonWidget {
+	display: none;
+}
+
+.ve-ui-mwTransclusionOutlineTemplateWidget-sticky {
+	background-color: #fff;
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+.ve-ui-mwTransclusionDialog-single-transclusion .ve-ui-mwTransclusionOutlineTemplateWidget-sticky {
+	margin-top: -8px;
+	margin-bottom: 8px;
+	padding-top: 8px;
 }
 
 .ve-ui-mwTransclusionDialog .oo-ui-bookletLayout .oo-ui-fieldsetLayout > .oo-ui-labelElement-label {
@@ -148,9 +168,13 @@
 	display: inline-block;
 }
 
-.ve-ui-mwTransclusionOutlineContainerWidget {
+.ve-ui-mwTransclusionOutlineWidget {
 	/* .oo-ui-window-head uses a 1px outline which overlaps the top pixel of the sidebar */
 	padding-top: 1px;
+}
+
+.ve-ui-mwTransclusionOutline-ariaHidden {
+	display: none;
 }
 
 .ve-ui-mwTransclusionOutlineParameterSelectWidget:focus {
@@ -162,7 +186,7 @@
 .ve-ui-mwTransclusionOutlineParameterWidget {
 	overflow: hidden;
 	padding-bottom: 8px;
-	padding-left: 24px;
+	padding-left: 30px;
 	padding-top: 8px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -253,8 +277,32 @@
 	width: auto;
 }
 
+.ve-ui-mwTransclusionOutlineTemplateWidget-searchWidget:last-child {
+	/* Workaround to override oo-ui-inputWidget:last-child rule */
+	margin-right: 24px;
+}
+
 .ve-ui-mwTransclusionOutlineTemplateWidget-no-match {
 	font-style: italic;
 	color: #72777d;
 	margin: 8px 24px;
+}
+
+.ve-ui-mwTransclusionDialog-floatingHelpElement {
+	position: absolute;
+	right: 23px;
+	bottom: 23px;
+}
+
+.ve-ui-mwTransclusionDialog-floatingHelpElement-fieldsetLayout label {
+	margin-bottom: 16px;
+}
+
+.ve-ui-mwTransclusionDialog-floatingHelpElement-fieldsetLayout .oo-ui-buttonWidget {
+	width: 100%;
+}
+
+.ve-ui-mwTransclusionOutlineToggleUnusedWidget {
+	margin-top: -4px; /* reduce default margin to top element */
+	margin-left: 24px;
 }

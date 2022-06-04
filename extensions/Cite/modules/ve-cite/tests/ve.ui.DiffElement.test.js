@@ -7,8 +7,7 @@
 QUnit.module( 've.ui.DiffElement (Cite)' );
 
 QUnit.test( 'Diffing', function ( assert ) {
-	var i, len,
-		spacer = '<div class="ve-ui-diffElement-spacer">⋮</div>',
+	var spacer = '<div class="ve-ui-diffElement-spacer">⋮</div>',
 		ref = function ( text, num ) {
 			var dataMw = {
 				name: 'ref',
@@ -34,22 +33,16 @@ QUnit.test( 'Diffing', function ( assert ) {
 				expected:
 					spacer +
 					'<h2 data-diff-action="none">Notes</h2>' +
-					'<div class="ve-ui-diffElement-doc-child-change">' +
-						'<ol start="1">' +
-							'<li><p data-diff-action="none">Foo</p></li>' +
-						'</ol>' +
-						'<ol start="2">' +
-							'<li><div class="ve-ui-diffElement-doc-child-change">Bar<ins data-diff-action="insert"> ish</ins></div></li>' +
-						'</ol>' +
-						'<ol start="3">' +
-							'<li><p data-diff-action="none">Baz</p></li>' +
-						'</ol>' +
-					'</div>'
+					'<ol>' +
+						'<li value="1"><p data-diff-action="none">Foo</p></li>' +
+						'<li value="2">Bar<ins data-diff-action="insert"> ish</ins></li>' +
+						'<li value="3"><p data-diff-action="none">Baz</p></li>' +
+					'</ol>'
 			}
 		];
 
-	for ( i = 0, len = cases.length; i < len; i++ ) {
-		ve.test.utils.runDiffElementTest( assert, cases[ i ] );
-	}
+	cases.forEach( function ( caseItem ) {
+		ve.test.utils.runDiffElementTest( assert, caseItem );
+	} );
 
 } );

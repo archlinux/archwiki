@@ -60,7 +60,7 @@
 	"oath-log-header": "Disse hendelsene sporer endringer i statusen for totrinns pålogging for brukere.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|slo}} av totrinns pålogging for $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|sjekket}} om $3 hadde slått på totrinns pålogging",
-	"oauthauth-ui-no-module": "Ingen slått på",
+	"oathauth-ui-no-module": "Ingen slått på",
 	"oathauth-module-invalid": "OATHAuth-modulen brukeren har registrert er ugyldig.",
 	"oathauth-module-totp-label": "TOTP (éngangsnøkkel)",
 	"oathauth-ui-manage": "Behandle",

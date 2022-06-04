@@ -18,5 +18,7 @@
 	"monobook-more-actions": "Mais",
 	"monobook-cactions-label": "Ações da página",
 	"monobook-notifications-link": "Notificações ($1)",
-	"monobook-notifications-link-none": "Notificações"
+	"monobook-notifications-link-none": "Notificações",
+	"monobook-view-history": "Histórico",
+	"monobook-action-undelete": "Restaurar {{PLURAL:$1|uma edição|$1 edições}}"
 }

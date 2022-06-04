@@ -74,64 +74,6 @@
 	width: 100%;
 }
 
-/* Insert Link Dialog */
-#wikieditor-toolbar-link-int-target-status {
-	float: right;
-	line-height: 1.7em;
-}
-
-#wikieditor-toolbar-link-int-target,
-#wikieditor-toolbar-link-int-text {
-	width: 100%;
-}
-
-#wikieditor-toolbar-tool-link-int-target-label {
-	float: left;
-	line-height: 1.7em;
-}
-
-#wikieditor-toolbar-link-int-target-status-exists,
-#wikieditor-toolbar-link-int-target-status-notexists,
-#wikieditor-toolbar-link-int-target-status-invalid,
-#wikieditor-toolbar-link-int-target-status-external,
-#wikieditor-toolbar-link-int-target-status-loading,
-#wikieditor-toolbar-link-int-target-status-disambig {
-	padding-left: 30px;
-	background-position: 0 50%;
-	background-repeat: no-repeat;
-}
-
-#wikieditor-toolbar-link-int-target-status-exists {
-	.background-image('images/dialogs/insert-link-exists.png');
-	background-position: left;
-}
-
-#wikieditor-toolbar-link-int-target-status-notexists {
-	.background-image('images/dialogs/insert-link-notexists.png');
-	background-position: left;
-}
-
-#wikieditor-toolbar-link-int-target-status-invalid {
-	.background-image('images/dialogs/insert-link-invalid.png');
-	background-position: left;
-}
-
-#wikieditor-toolbar-link-int-target-status-external {
-	.background-image('images/dialogs/insert-link-external.png');
-	background-position: left;
-}
-
-#wikieditor-toolbar-link-int-target-status-loading {
-	.background-image('images/dialogs/loading-small.gif');
-	background-position: right;
-	height: 18px;
-}
-
-#wikieditor-toolbar-link-int-target-status-disambig {
-	.background-image('images/dialogs/insert-disambiguation.png');
-	background-position: left;
-}
-
 /* File dialog */
 #wikieditor-toolbar-file-target,
 #wikieditor-toolbar-file-caption,
@@ -184,37 +126,6 @@ body.rtl {
 				// stylelint-disable-next-line declaration-no-important
 				margin: 0.5em 0.4em 0.5em 0 !important;
 			}
-		}
-	}
-}
-
-/* Template Editor Dialogs */
-.wikiEditor-template-dialog-fields {
-	label {
-		text-transform: capitalize;
-		float: left;
-		width: 25%;
-		line-height: 2.25em;
-	}
-
-	textarea {
-		float: right;
-		width: 70%;
-		line-height: 1.5em;
-		height: 1.5em;
-	}
-
-	.wikiEditor-template-dialog-field-wrapper {
-		padding: 0.75em 0.33em;
-		border-bottom: 1px dashed #c8ccd1;
-		clear: both;
-
-		&:first-child {
-			padding-top: 0;
-		}
-
-		&:last-child {
-			border-bottom: 0;
 		}
 	}
 }

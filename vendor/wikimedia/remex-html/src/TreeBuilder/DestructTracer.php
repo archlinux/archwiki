@@ -54,6 +54,3 @@ class DestructTracer implements TreeHandler {
 		$newParent->userData = new DestructTracerNode( $this->callback, $newParent->getDebugTag() );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( DestructTracer::class, 'RemexHtml\TreeBuilder\DestructTracer' );

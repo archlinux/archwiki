@@ -110,7 +110,7 @@ class XCFHandler extends BitmapHandler {
 
 			return null;
 		}
-		# TODO: we might want to check for sane values of width and height
+		# TODO: we might want to check for correct values of width and height
 
 		wfDebug( __METHOD__ .
 			": canvas size of '$filename' is {$header['width']} x {$header['height']} px" );
@@ -168,7 +168,7 @@ class XCFHandler extends BitmapHandler {
 	/**
 	 * Must use "im" for XCF
 	 *
-	 * @param string $dstPath
+	 * @param string|null $dstPath
 	 * @param bool $checkDstPath
 	 * @return string
 	 */

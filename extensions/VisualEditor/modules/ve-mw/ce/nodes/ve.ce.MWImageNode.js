@@ -96,8 +96,7 @@ ve.ce.MWImageNode.prototype.onGeneratedContentNodeUpdate = function () {
  * @inheritdoc ve.ce.GeneratedContentNode
  */
 ve.ce.MWImageNode.prototype.generateContents = function () {
-	var xhr, params,
-		model = this.getModel(),
+	var model = this.getModel(),
 		width = model.getAttribute( 'width' ),
 		height = model.getAttribute( 'height' ),
 		mwData = model.getAttribute( 'mw' ) || {},
@@ -108,6 +107,7 @@ ve.ce.MWImageNode.prototype.generateContents = function () {
 		return deferred.reject().promise();
 	}
 
+	var params;
 	if ( mwData.thumbtime !== undefined ) {
 		params = 'seek=' + mwData.thumbtime;
 	} else if ( mwData.page !== undefined ) {
@@ -116,7 +116,7 @@ ve.ce.MWImageNode.prototype.generateContents = function () {
 		width = undefined;
 	}
 
-	xhr = ve.init.target.getContentApi( this.getModel().getDocument() ).get( {
+	var xhr = ve.init.target.getContentApi( this.getModel().getDocument() ).get( {
 		action: 'query',
 		prop: 'imageinfo',
 		iiprop: 'url',

@@ -46,7 +46,7 @@ class RadioSelectInputWidget extends InputWidget {
 
 	public function setValue( $value ) {
 		$this->value = $this->cleanUpValue( $value );
-		foreach ( $this->fields as &$field ) {
+		foreach ( $this->fields as $field ) {
 			$field->getField()->setSelected( $field->getField()->getValue() === $this->value );
 		}
 		return $this;

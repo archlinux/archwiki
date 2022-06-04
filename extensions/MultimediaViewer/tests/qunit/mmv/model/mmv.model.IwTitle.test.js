@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.model.IwTitle', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'constructor sanity test', function ( assert ) {
+	QUnit.test( 'constructor sense test', function ( assert ) {
 		var namespace = 4,
 			fullPageName = 'User_talk:John_Doe',
 			domain = 'en.wikipedia.org',

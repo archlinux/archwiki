@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Mocks;
 
@@ -90,11 +91,13 @@ class MockPageConfig extends PageConfig {
 
 	/** @inheritDoc */
 	public function getRevisionUser(): ?string {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new \BadMethodCallException( 'Not implemented' );
 	}
 
 	/** @inheritDoc */
 	public function getRevisionUserId(): ?int {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new \BadMethodCallException( 'Not implemented' );
 	}
 
@@ -105,6 +108,7 @@ class MockPageConfig extends PageConfig {
 
 	/** @inheritDoc */
 	public function getRevisionSize(): ?int {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new \BadMethodCallException( 'Not implemented' );
 	}
 

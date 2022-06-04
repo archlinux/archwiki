@@ -109,6 +109,3 @@ class Initial extends InsertionMode {
 			->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Initial::class, 'RemexHtml\TreeBuilder\Initial' );

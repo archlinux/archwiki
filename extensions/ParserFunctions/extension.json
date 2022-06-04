@@ -33,18 +33,18 @@
 	"Hooks": {
 		"ParserTestGlobals": "ParserFunctionsHookHandler",
 		"ParserFirstCallInit": "ParserFunctionsHookHandler",
-		"ScribuntoExternalLibraries": "MediaWiki\\Extensions\\ParserFunctions\\Hooks::onScribuntoExternalLibraries"
+		"ScribuntoExternalLibraries": "MediaWiki\\Extension\\ParserFunctions\\Hooks::onScribuntoExternalLibraries"
 	},
 	"HookHandlers": {
 		"ParserFunctionsHookHandler": {
-			"class": "MediaWiki\\Extensions\\ParserFunctions\\Hooks",
+			"class": "MediaWiki\\Extension\\ParserFunctions\\Hooks",
 			"services": [
 				"MainConfig"
 			]
 		}
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extensions\\ParserFunctions\\": "includes/"
+		"MediaWiki\\Extension\\ParserFunctions\\": "includes/"
 	},
 	"manifest_version": 2
 }

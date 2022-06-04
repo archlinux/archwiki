@@ -7,28 +7,31 @@
 
 /* Toolbar */
 
-.ve-init-mw-desktopArticleTarget-toolbar {
+.ve-init-mw-desktopArticleTarget-toolbar > .oo-ui-toolbar-bar {
+	opacity: 0;
+	transition: opacity 250ms ease;
+}
+
+.ve-init-mw-desktopArticleTarget-toolbar-open > .oo-ui-toolbar-bar {
+	opacity: 1;
+}
+
+.ve-init-mw-desktopArticleTarget-toolbar-preclose {
 	overflow: hidden;
 	transition: height 250ms ease;
 }
 
-.ve-init-mw-desktopArticleTarget-toolbar > .oo-ui-toolbar-bar {
-	transform: translateY( -100% );
+.ve-init-mw-desktopArticleTarget-toolbar-close {
+	height: 0;
+}
+
+.ve-init-mw-desktopArticleTarget-toolbar-preclose > .oo-ui-toolbar-bar {
 	transition: transform 250ms ease;
-}
-
-.ve-init-mw-desktopArticleTarget-toolbar-opened {
-	overflow: visible;
-}
-
-.ve-init-mw-desktopArticleTarget-toolbar-open > .oo-ui-toolbar-bar {
 	transform: translateY( 0 );
-	opacity: 1;
 }
 
-.ve-init-mw-desktopArticleTarget-toolbar-opened > .oo-ui-toolbar-bar {
-	/* Turn off transforms when done to avoid Safari rendering bugs (T202935) */
-	transform: none;
+.ve-init-mw-desktopArticleTarget-toolbar-close > .oo-ui-toolbar-bar {
+	transform: translateY( -100% );
 }
 
 .ve-tempSourceEditing .ve-init-mw-desktopArticleTarget-toolbar,

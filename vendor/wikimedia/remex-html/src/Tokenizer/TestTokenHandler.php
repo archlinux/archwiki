@@ -48,6 +48,3 @@ class TestTokenHandler implements TokenHandler {
 		$this->tokens[] = [ 'Comment', $text ];
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TestTokenHandler::class, 'RemexHtml\Tokenizer\TestTokenHandler' );

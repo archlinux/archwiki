@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lokal Profil",
-			"JRyan"
+			"JRyan",
+			"Lokal Profil"
 		]
 	},
 	"apihelp-spamblacklist-description": "Validera en eller flera URL:er mot SpamBlacklist.",

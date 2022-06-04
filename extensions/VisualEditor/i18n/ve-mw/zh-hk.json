@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"C933103",
-			"Liuxinyu970226"
+			"Liuxinyu970226",
+			"StarrySky"
 		]
 	},
+	"visualeditor-ca-editsource": "編輯原始碼",
 	"visualeditor-ca-editsource-section": "編輯原始碼",
 	"visualeditor-usernamespacepagelink": "Project:用戶命名空間"
 }

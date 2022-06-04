@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Antonla",
 			"Cgtdk",
 			"Christian List",
 			"EileenSanda",
@@ -20,8 +21,7 @@
 			"Simeondahl",
 			"SimmeD",
 			"Tehnix",
-			"Weblars",
-			"Antonla"
+			"Weblars"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -165,11 +165,9 @@
 	"visualeditor-dialog-transclusion-required-parameter": "Påkrævet felt",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Gå tilbage",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Fortsæt alligevel",
-	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "Fortsæt med at redigere",
 	"visualeditor-dialogbutton-media-tooltip": "Billeder og medier",
 	"visualeditor-dialogbutton-meta-tooltip": "Sideindstillinger",
 	"visualeditor-dialogbutton-template-tooltip": "Skabelon",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Indlejring",
 	"visualeditor-donebutton-tooltip": "Færdig med at redigere",
 	"visualeditor-editconflict": "Dine ændringer kunne ikke gemmes på grund af en redigeringskonflikt. Vil {{GENDER:|du}} løse konflikten manuelt?",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|meddelelse|meddelelser}}",

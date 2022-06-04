@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eleassar",
+			"RStular"
+		]
+	},
+	"apihelp-query+abuselog-param-logid": "Pokaži vnos s podano ID številko.",
+	"apihelp-query+abuselog-example-1": "Prikaži nedavne dnevniške zapise",
+	"apihelp-abuselogprivatedetails-param-reason": "Veljaven razlog za izvedbo preverjanja."
+}

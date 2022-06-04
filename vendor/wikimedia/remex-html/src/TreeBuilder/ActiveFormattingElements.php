@@ -332,6 +332,7 @@ class ActiveFormattingElements {
 			/** @var Element $node */
 			$s .= $node->getDebugTag();
 			if ( $node->nextNoah ) {
+				// @phan-suppress-next-line PhanNonClassMethodCall
 				$s .= " (noah sibling: " . $node->nextNoah->getDebugTag() .
 					')';
 			}
@@ -354,6 +355,3 @@ class ActiveFormattingElements {
 		return $this->tail;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( ActiveFormattingElements::class, 'RemexHtml\TreeBuilder\ActiveFormattingElements' );

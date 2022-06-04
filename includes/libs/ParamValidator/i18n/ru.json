@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Facenapalm",
 			"Okras",
 			"Stjn",
-			"WindEwriX",
-			"Facenapalm"
+			"WindEwriX"
 		]
 	},
 	"paramvalidator-badbool": "Некорректное значение «$2» для булевого параметра «$1». Передайте $3 для истинного значения, или $5 для ложного.",

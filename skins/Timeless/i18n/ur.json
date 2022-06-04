@@ -20,5 +20,7 @@
 	"timeless-namespaces": "نام ہائے فضا",
 	"timeless-pagetools": "کارروائیاں",
 	"timeless-languages": "زبانیں",
-	"timeless.js": "/* یہاں درج جاوا اسکرپٹ محض ان صارفین کے لیے لوڈ ہوگی جو ٹائم لیس پوشاک استعمال کر رہے ہیں */"
+	"timeless.js": "/* یہاں درج جاوا اسکرپٹ محض ان صارفین کے لیے لوڈ ہوگی جو ٹائم لیس پوشاک استعمال کر رہے ہیں */",
+	"timeless-view-history": "تاریخچہ",
+	"timeless-action-undelete": "بحال {{PLURAL:$1|ایک ترمیم|$1 ترامیم}}"
 }

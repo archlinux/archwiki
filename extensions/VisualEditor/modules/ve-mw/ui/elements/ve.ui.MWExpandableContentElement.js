@@ -8,7 +8,8 @@
  * @mixins OO.EventEmitter
  *
  * @constructor
- * @param {Object} [config] Configuration options
+ * @param {Object} config
+ * @cfg {jQuery} $content
  */
 ve.ui.MWExpandableContentElement = function VeUiMWExpandableContentElement( config ) {
 	// Parent constructor

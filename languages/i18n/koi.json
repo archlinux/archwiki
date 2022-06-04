@@ -94,8 +94,11 @@
 	"history_short": "Чулалöм",
 	"printableversion": "Печатайтан версия",
 	"permalink": "Пырся ыстöт",
+	"view-view": "Лыддьöтны",
 	"edit": "Веськöтны",
+	"view-edit": "Веськöтны",
 	"create": "Лöсьöтны",
+	"view-create": "Лöсьöтны",
 	"delete": "Чышкыны",
 	"protect": "Дорйыны",
 	"protect_change": "мöдкодьсьöтны",
@@ -371,7 +374,7 @@
 	"watchlist-options": "Синмалан нимлёз понда лöсьöтаннэз",
 	"watching": "Синмавны …",
 	"unwatching": "Дугдыны синмавны …",
-	"deletepage": "Чышкыны листбок",
+	"deletepage-submit": "Чышкыны листбок",
 	"delete-confirm": "Чышкыны \"$1\"",
 	"delete-legend": "Чышкыны",
 	"confirmdeletetext": "Тэ мöдан быдсöн чышкыны листбок (нето серпас) да  сылiсь история. Былись я тэ мöдан сiйö керны,  вежöртан я бура, мыйö этö вермас вайöтны,  и керан я этiйö [[{{MediaWiki:Policy-url}}]] туйдöттэз сьöртi",
@@ -536,5 +539,9 @@
 	"watchlisttools-edit": "Видзöтны/мöдкодьсьöтны нимлёдз",
 	"watchlisttools-raw": "Нимлёдз пöртны текстö",
 	"specialpages": "Тодильнöй листбоккез",
-	"htmlform-selectorother-other": "Мöдiк"
+	"deletepage": "Чышкыны листбок",
+	"htmlform-selectorother-other": "Мöдiк",
+	"nstab-mainpage": "Пондöтчан листбок",
+	"skin-action-protect": "Дорйыны",
+	"skin-action-delete": "Чышкыны"
 }

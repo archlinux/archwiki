@@ -5,16 +5,22 @@
 			"Renessaince"
 		]
 	},
+	"multimediaviewer-desc": "Разгарнуць мініятуры большага памеру ў поўнаэкранным інтэрфэйсе",
 	"multimediaviewer-optin-pref": "Уключыць <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About мэдыяпраглядальнік]</span>",
+	"multimediaviewer-file-page": "Перайсьці на старонку адпаведнага файлу",
 	"multimediaviewer-repository-local": "Падрабязьней",
 	"multimediaviewer-datetime-created": "Створаны: $1",
 	"multimediaviewer-datetime-uploaded": "Загружана: $1",
 	"multimediaviewer-credit": "$1 — $2",
+	"multimediaviewer-credit-fallback": "Паказаць інфармацыю пра аўтара",
+	"multimediaviewer-multiple-authors": "{{PLURAL:$1|яшчэ адзін аўтар|$1 іншыя аўтары|$1 іншых аўтараў}}",
+	"multimediaviewer-multiple-authors-combine": "$1 і $2",
+	"multimediaviewer-thumbnail-error-retry": "паўтарыць",
+	"multimediaviewer-license-cc-pd": "Грамадзкі набытак",
 	"multimediaviewer-permission-link": "паказаць умовы",
-	"multimediaviewer-about-mmv": "Пра гэты інтэрфэйс",
-	"multimediaviewer-discuss-mmv": "Абмеркаваньне",
-	"multimediaviewer-help-mmv": "Даведка",
+	"multimediaviewer-about-mmv": "Пра Мэдыяпраглядальнік",
 	"multimediaviewer-optin-mmv": "Уключыць мэдыяпраглядальнік",
+	"multimediaviewer-optin-pending-mmv": "Уключэньне мэдыяпраглядальніка",
 	"multimediaviewer-geolocation": "Месцазнаходжаньне: $1",
 	"multimediaviewer-reuse-link": "Падзяліцца або выкарыстаць гэты файл",
 	"multimediaviewer-share-tab": "Падзяліцца",
@@ -45,5 +51,6 @@
 	"multimediaviewer-enable-submit-button": "Уключыць мэдыяпраглядальнік",
 	"multimediaviewer-enable-confirmation-header": "Вы ўключылі мэдыяпраглядальнік для ўсіх файлаў",
 	"multimediaviewer-enable-confirmation-text": "Наступны раз, калі вы націсьніце на мініятуру на сайце $1, будзе выкарыстаны мэдыяпраглядальнік.",
-	"multimediaviewer-enable-alert": "Мэдыяпраглядальнік цяпер адключаны"
+	"multimediaviewer-enable-alert": "Мэдыяпраглядальнік цяпер адключаны",
+	"multimediaviewer-errorreport-privacywarning": "Падрабязнасьці памылкі далучаныя да справаздачы, якая будзе публічна даступнай. Калі вас гэта не задавальняе, можаце выправіць справаздачу ўнізе, выдаліўшы тыя зьвесткі, якімі вы ня хочаце дзяліцца."
 }

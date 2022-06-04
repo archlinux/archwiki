@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.model.Repo', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Repo constructor sanity check', function ( assert ) {
+	QUnit.test( 'Repo constructor sense check', function ( assert ) {
 		var displayName = 'Wikimedia Commons',
 			favicon = '//commons.wikimedia.org/favicon.ico',
 			apiUrl = '//commons.wikimedia.org/w/api.php',

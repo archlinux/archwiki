@@ -66,12 +66,14 @@ trait TabIndexedElement {
 	public function updateTabIndex() {
 		$disabled = $this->isDisabled();
 		if ( $this->tabIndex !== null ) {
-			$this->tabIndexed->setAttributes( [
-				// Do not index over disabled elements
-				'tabindex' => $disabled ? -1 : $this->tabIndex,
+			// Do not index over disabled elements
+			$this->tabIndexed->setAttributes( [ 'tabindex' => $disabled ? -1 : $this->tabIndex ] );
+			if ( $disabled ) {
 				// ChromeVox and NVDA do not seem to inherit this from parent elements
-				'aria-disabled' => ( $disabled ? 'true' : 'false' )
-			] );
+				$this->tabIndexed->setAttributes( [ 'aria-disabled' => 'true' ] );
+			} else {
+				$this->tabIndexed->removeAttributes( [ 'aria-disabled' ] );
+			}
 		} else {
 			$this->tabIndexed->removeAttributes( [ 'tabindex', 'aria-disabled' ] );
 		}

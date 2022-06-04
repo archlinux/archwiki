@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"NR Deblocked",
 			"ОйЛ"
 		]
 	},
@@ -9,7 +10,7 @@
 	"wikieditor-toolbar-tool-link": "съвѧꙁь",
 	"wikieditor-toolbar-tool-link-title": "съвѧꙁи приложєниѥ",
 	"wikieditor-toolbar-tool-link-insert": "съвѧꙁи приложєниѥ",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "страницѧ нѣстъ",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "страницѧ нѣстъ на {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "вънѣщьнꙗ съвѧꙁь",
 	"wikieditor-toolbar-tool-file-example": "Прикладъ.jpg",
 	"wikieditor-toolbar-tool-reference-cancel": "отъмѣтаниѥ",

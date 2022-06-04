@@ -12,18 +12,17 @@
 			"Protnet",
 			"ZaDiak",
 			"Απεργός",
-			"Περίεργος"
+			"Περίεργος",
+			"Norhorn"
 		]
 	},
 	"wikieditor": "Προηγμένη διεπαφή επεξεργασίας κειμένου wiki",
 	"wikieditor-desc": "Παρέχει μια προηγμένη, επεκτάσιμη διεπαφή επεξεργασίας κώδικα wiki",
 	"wikieditor-wikitext-tab": "Κείμενο wiki",
-	"wikieditor-loading": "Φόρτωση...",
 	"wikieditor-toolbar": "Εργαλειοθήκη επεξεργασίας",
 	"wikieditor-toolbar-desc": "Μπάρα εργαλείων επεξεργασίας σελίδων με περισσότερες δυνατότητες χρήσης",
 	"wikieditor-toolbar-preference": "Ενεργοποίηση της μπάρας επεξεργασίας",
 	"wikieditor-toolbar-preference-help": "Αυτή ορισμένες φορές καλείται «2010 wikitext editor» (επεξεργαστής κώδικα wiki 2010).",
-	"wikieditor-toolbar-loading": "Φόρτωση...",
 	"wikieditor-toolbar-tool-bold": "Έντονα",
 	"wikieditor-toolbar-tool-bold-example": "Έντονο κείμενο",
 	"wikieditor-toolbar-tool-italic": "Πλάγια",
@@ -54,7 +53,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Η διεύθυνση URL που ορίσατε φαίνεται πως προορίζεται για σύνδεσμο σε σελίδα σε άλλο βίκι.\nΘέλετε να τη μετατρέψετε σε εσωτερικό σύνδεσμο;",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Εσωτερικός σύνδεσμος",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Εξωτερικός σύνδεσμος",
-	"wikieditor-toolbar-tool-link-empty": "Δεν εισάγατε τίποτα για σύνδεση σε αυτό.",
 	"wikieditor-toolbar-tool-file": "Ενσωματωμένο αρχείο",
 	"wikieditor-toolbar-tool-file-example": "Paradeigma.jpg",
 	"wikieditor-toolbar-tool-file-title": "Εισαγωγή αρχείου",
@@ -196,5 +194,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Όνομα χρήστη</a> (<a href='#' title='$2:Username'>συζήτηση</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Οδόντωση",
 	"wikieditor-toolbar-help-content-indent-syntax": "Κανονικό κείμενο<br />:Παραγραφοποιημένο κείμενο<br />::Παραγραφοποιημένο κείμενο",
-	"wikieditor-toolbar-help-content-indent-result": "Κανονικό κείμενο<dl><dd>Παραγραφοποιημένο κείμενο<dl><dd>Παραγραφοποιημένο κείμενο</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Κανονικό κείμενο<dl><dd>Παραγραφοποιημένο κείμενο<dl><dd>Παραγραφοποιημένο κείμενο</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Προεπισκόπηση"
 }

@@ -1,0 +1,60 @@
+/*!
+ * VisualEditor UserInterface MWLatexDialog styles.
+ *
+ * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @license MIT
+ */
+
+.ve-ui-mwLatexDialog-content .oo-ui-bookletLayout-stackLayout {
+	padding: 0.5em;
+}
+
+.ve-ui-mwLatexDialog-content .oo-ui-bookletLayout-stackLayout h3 {
+	margin: 0 0 0.5em 0;
+	color: #888;
+	font-weight: normal;
+	font-size: 1em;
+}
+
+.ve-ui-mwLatexDialog-content .oo-ui-textInputWidget {
+	max-width: none;
+}
+
+.ve-ui-mwLatexDialog-menuLayout > .oo-ui-menuLayout-content {
+	border-bottom: 1px solid #e6e6e6;
+	box-shadow: 0 1px 0 0 rgba( 0, 0, 0, 0.05 );
+	overflow: auto;
+}
+
+.ve-ui-mwLatexDialog-menuLayout-short .oo-ui-menuLayout-menu {
+	height: 10em;
+}
+
+.ve-ui-mwLatexDialog-menuLayout-short .oo-ui-menuLayout-content {
+	bottom: 10em;
+}
+
+.ve-ui-mwLatexDialog-preview {
+	text-align: center;
+	line-height: 8em;
+	height: 8em;
+}
+
+.ve-ui-mwLatexDialog-menuLayout-short .ve-ui-mwLatexDialog-preview {
+	line-height: 5em;
+	height: 5em;
+}
+
+/* Reset line height for error messages */
+.ve-ui-mwLatexDialog-preview > p {
+	line-height: 1.6;
+}
+
+/* Ensures the preview image is vertically centred */
+.ve-ui-mwLatexDialog-preview .mwe-math-fallback-image-display {
+	display: inline-block;
+}
+
+.ve-ui-mwLatexDialog-symbols .oo-ui-outlineOptionWidget {
+	padding-left: 0.75em;
+}

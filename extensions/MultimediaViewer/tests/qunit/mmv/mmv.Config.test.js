@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.Config', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Constructor sanity test', function ( assert ) {
+	QUnit.test( 'Constructor sense test', function ( assert ) {
 		var config = new mw.mmv.Config( {}, {}, {}, {}, null );
 		assert.ok( config );
 	} );
@@ -129,7 +129,7 @@
 		assert.strictEqual( config.isMediaViewerEnabledOnClick(), false, 'Returns true for anon opted out via localSettings' );
 	} );
 
-	QUnit.test( 'setMediaViewerEnabledOnClick sanity check', function ( assert ) {
+	QUnit.test( 'setMediaViewerEnabledOnClick sense check', function ( assert ) {
 		var localStorage = mw.mmv.testHelpers.createLocalStorage( {
 				getItem: this.sandbox.stub(),
 				setItem: this.sandbox.stub(),

@@ -19,6 +19,3 @@ class Marker implements FormattingElement {
 		$this->type = $type;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Marker::class, 'RemexHtml\TreeBuilder\Marker' );

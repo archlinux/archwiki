@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Fitoschido",
-			"Xuacu"
+			"Xuacu",
+			"Reedy"
 		]
 	},
 	"oathauth-desc": "Ufre soporte d'identificación utilizando contraseñes pa una sola vez basaes en HMAC",
@@ -44,14 +45,14 @@
 	"oathauth-login-failed": "Falló la comprobación.",
 	"oathauth-describe-provider": "Identificación de dos factores (OATH).",
 	"grant-group-authentication": "Facer les aiciones d'autenticación propies y pa otros",
-	"grant-oath": "Acceder a la información d'autenticación en dos factores (OAuth) propies y pa otros",
+	"grant-oath": "Acceder a la información d'autenticación en dos factores (OATH) propies y pa otros",
 	"right-oathauth-api-all": "Consultar y validar la información OATH propia y d'otros",
 	"action-oathauth-api-all": "comprobar l'estatus OATH",
 	"oathauth-user-not-found": "Nun s'alcontró nenguna cuenta d'usuariu con esi nome",
 	"oath-log-name": "Rexistru d'identificación de dos factores",
 	"oath-log-header": "Estos eventos rexistren los cambeos nel estáu de la identificación en dos pasos de les cuentes de los usuarios.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|desactivó}} la identificación de dos factores de $3",
-	"oauthauth-ui-no-module": "Nengunu activáu",
+	"oathauth-ui-no-module": "Nengunu activáu",
 	"oathauth-module-invalid": "El módulu OATHAuth que rexistró l'usuariu ye inválidu.",
 	"oathauth-module-totp-label": "TOTP (pase d’un solu usu)",
 	"oathauth-ui-manage": "Alministrar",

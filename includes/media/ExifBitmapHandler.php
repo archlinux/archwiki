@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Handler for bitmap images with exif metadata.
  *
@@ -21,6 +22,8 @@
  * @ingroup Media
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Stuff specific to JPEG and (built-in) TIFF handler.
  * All metadata related, since both JPEG and TIFF support Exif.
@@ -37,7 +40,7 @@ class ExifBitmapHandler extends BitmapHandler {
 
 	public function convertMetadataVersion( $metadata, $version = 1 ) {
 		// basically flattens arrays.
-		$version = intval( explode( ';', $version, 2 )[0] );
+		$version = is_int( $version ) ? $version : intval( explode( ';', $version, 2 )[0] );
 		if ( $version < 1 || $version >= 2 ) {
 			return $metadata;
 		}
@@ -67,6 +70,11 @@ class ExifBitmapHandler extends BitmapHandler {
 			);
 		}
 
+		// Ignore Location shown if it is not a simple string
+		if ( isset( $metadata['LocationShown'] ) && !is_string( $metadata['LocationShown'] ) ) {
+			unset( $metadata['LocationShown'] );
+		}
+
 		foreach ( $metadata as &$val ) {
 			if ( is_array( $val ) ) {
 				// @phan-suppress-next-line SecurityCheck-DoubleEscaped Ambiguous with the true for nohtml
@@ -83,8 +91,8 @@ class ExifBitmapHandler extends BitmapHandler {
 	 * @return bool|int
 	 */
 	public function isFileMetadataValid( $image ) {
-		global $wgShowEXIF;
-		if ( !$wgShowEXIF ) {
+		$showEXIF = MediaWikiServices::getInstance()->getMainConfig()->get( 'ShowEXIF' );
+		if ( !$showEXIF ) {
 			# Metadata disabled and so an empty field is expected
 			return self::METADATA_GOOD;
 		}

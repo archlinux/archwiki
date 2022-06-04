@@ -8,7 +8,8 @@
 			"Karmadunya9-",
 			"Macofe",
 			"Pizza1016",
-			"TMg"
+			"TMg",
+			"Tofeiku"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -155,6 +156,7 @@
 	"visualeditor-dialog-transclusion-param-info": "Huraian parameter",
 	"visualeditor-dialog-transclusion-param-info-missing": "Tiada keterangan parameter yang sedia ada",
 	"visualeditor-dialog-transclusion-placeholder": "Templat baru",
+	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Cari templat",
 	"visualeditor-dialog-transclusion-raw-fallback": "Kembali kepada wikiteks kosong",
 	"visualeditor-dialog-transclusion-remove-content": "Padamkan isi kandungan",
 	"visualeditor-dialog-transclusion-remove-param": "Buang parameter",
@@ -168,7 +170,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Media",
 	"visualeditor-dialogbutton-meta-tooltip": "Tetapan laman",
 	"visualeditor-dialogbutton-template-tooltip": "Templat",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Transklusi",
 	"visualeditor-donebutton-tooltip": "Selesai menyunting",
 	"visualeditor-editconflict": "Suntingan anda tidak dapat disimpan disebabkan percanggahan antara suntingan. Adakah {{GENDER:|anda}} ingin menyelesaikan percanggahan ini secara manual?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} kini mengingati editor keutamaan anda. Anda boleh bertukar mod sambil menyunting, dan menukar keutamaan kemudian.",

@@ -3,10 +3,10 @@
 		"authors": [
 			"Meno25",
 			"Mr. Ibrahem",
+			"SaldırganSincap",
 			"Tala Ali",
 			"ديفيد",
-			"زكريا",
-			"SaldırganSincap"
+			"زكريا"
 		]
 	},
 	"syntaxhighlight-desc": "يوفر تمييزا لتركيب <code>&lt;syntaxhighlight&gt;</code> باستخدام [http://pygments.org/ Pygments - Python syntax highlighter]",

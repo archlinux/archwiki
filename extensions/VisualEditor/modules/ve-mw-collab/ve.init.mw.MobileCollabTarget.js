@@ -96,11 +96,9 @@ ve.init.mw.MobileCollabTarget.static.actionGroups = [];
 /**
  * @inheritdoc
  */
-ve.init.mw.MobileCollabTarget.prototype.setSurface = function ( surface ) {
-	surface.$element.addClass( 'content' );
-
-	// Parent method
-	ve.init.mw.MobileCollabTarget.super.prototype.setSurface.apply( this, arguments );
+ve.init.mw.MobileCollabTarget.prototype.getSurfaceClasses = function () {
+	var classes = ve.init.mw.MobileCollabTarget.super.prototype.getSurfaceClasses.call( this );
+	return classes.concat( [ 'content' ] );
 };
 
 /* Registration */

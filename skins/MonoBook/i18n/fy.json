@@ -16,5 +16,7 @@
 	"cactions-mobile": "Side-aksjes",
 	"monobook-cactions-label": "Side-aksjes",
 	"monobook-notifications-link": "Meldingen ($1)",
-	"monobook-notifications-link-none": "Meldingen"
+	"monobook-notifications-link-none": "Meldingen",
+	"monobook-view-history": "Skiednis",
+	"monobook-action-undelete": "$1 {{PLURAL:$1|ferzje|ferzjes}} weromsette"
 }

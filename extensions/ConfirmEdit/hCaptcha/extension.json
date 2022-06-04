@@ -14,11 +14,11 @@
 		]
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extensions\\ConfirmEdit\\hCaptcha\\": "includes/"
+		"MediaWiki\\Extension\\ConfirmEdit\\hCaptcha\\": "includes/"
 	},
 	"config": {
 		"CaptchaClass": {
-			"value": "MediaWiki\\Extensions\\ConfirmEdit\\hCaptcha\\HCaptcha"
+			"value": "MediaWiki\\Extension\\ConfirmEdit\\hCaptcha\\HCaptcha"
 		},
 		"HCaptchaProxy": {
 			"description": "Proxy to use for outbound PHP web requests to hCaptcha servers",
@@ -58,7 +58,7 @@
 	},
 	"HookHandlers": {
 		"resourceloader": {
-			"class": "MediaWiki\\Extensions\\ConfirmEdit\\hCaptcha\\Hooks\\ResourceLoaderHooks"
+			"class": "MediaWiki\\Extension\\ConfirmEdit\\hCaptcha\\Hooks\\ResourceLoaderHooks"
 		}
 	},
 	"attributes": {

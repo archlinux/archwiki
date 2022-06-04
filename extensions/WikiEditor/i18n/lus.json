@@ -6,7 +6,6 @@
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikithu",
-	"wikieditor-loading": "Nghâk lawks...",
 	"wikieditor-toolbar-tool-bold": "Tháu",
 	"wikieditor-toolbar-tool-bold-example": "Kutziak tháu",
 	"wikieditor-toolbar-tool-italic": "Äwn",
@@ -35,7 +34,6 @@
 	"wikieditor-toolbar-tool-link-int-invalid": "I hming ziah kha a dik lo.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Inzawm chhàwnna",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Zawmchhuahna",
-	"wikieditor-toolbar-tool-link-empty": "Zawm luhna tùra i ziak miah lo.",
 	"wikieditor-toolbar-tool-file": "Taksa telh",
 	"wikieditor-toolbar-tool-file-example": "Entirna.jpg",
 	"wikieditor-toolbar-tool-reference": "Ràwnte",

@@ -15,6 +15,8 @@
  * @constructor
  * @param {Object} imageInfo Image information object
  * @param {Object} [config] Configuration options
+ * @cfg {boolean} [isMobile=false]
+ * @cfg {boolean} [draggable=true]
  */
 ve.ui.MWGalleryItemWidget = function VeUiMWGalleryItemWidget( imageInfo, config ) {
 	this.resource = imageInfo.resource;
@@ -68,6 +70,8 @@ OO.mixinClass( ve.ui.MWGalleryItemWidget, OO.ui.mixin.TabIndexedElement );
 
 /**
  * Handle clicking on an item
+ *
+ * @fires edit
  */
 ve.ui.MWGalleryItemWidget.prototype.onItemClick = function () {
 	this.emit( 'edit', this );
@@ -78,6 +82,7 @@ ve.ui.MWGalleryItemWidget.prototype.onItemClick = function () {
  *
  * @param {jQuery.Event} e Key press event
  * @return {boolean}
+ * @fires edit
  */
 ve.ui.MWGalleryItemWidget.prototype.onItemKeyPress = function ( e ) {
 	if ( e.which === OO.ui.Keys.ENTER ) {

@@ -7,10 +7,10 @@
 			"Chirifo",
 			"Din-nani1",
 			"Dnshitobu",
+			"Jahinfo",
 			"Masssly",
 			"Munkaila Sulemana",
-			"Yakubu Fadilatu",
-			"Jahinfo"
+			"Yakubu Fadilatu"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -35,8 +35,7 @@
 	"visualeditor-dialog-meta-languages-label": "Bala",
 	"visualeditor-dialog-meta-settings-index-disable": "Aayi",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-force": "Eii",
+	"visualeditor-dialog-transclusion-template-title-nonexistent": "Lala dini ŋɔ kani.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Labi mi nyaaŋa",
-	"visualeditor-dialog-transclusion-suggestedvalues-warning": "Ŋɔ pala zaɣyin shali dinwuhiri ni di kutum ni template.",
-	"visualeditor-dialog-transclusion-title-edit-known-template": "Mali mi $1 n niŋ",
-	"visualeditor-dialog-transclusion-reset-confirmation-title": "Labimi nyaaŋa nti bɔ?"
+	"visualeditor-dialog-transclusion-title-edit-known-template": "Mali mi $1 n niŋ"
 }

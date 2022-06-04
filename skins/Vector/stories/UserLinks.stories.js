@@ -1,7 +1,7 @@
 import mustache from 'mustache';
-import { menuTemplate } from './Menu.stories.data';
 import { PERSONAL_MENU_TEMPLATE_DATA, USER_LINKS_LOGGED_IN_TEMPLATE_DATA, USER_LINKS_LOGGED_OUT_TEMPLATE_DATA } from './UserLinks.stories.data';
-import { userLinksTemplateLegacy, userLinksTemplate } from './UserLinks.stories.data';
+import { userLinksTemplateLegacy, userLinksTemplate,
+	USER_LINK_PARTIALS } from './UserLinks.stories.data';
 import '../resources/skins.vector.styles.legacy/components/UserLinks.less';
 import '../resources/skins.vector.styles/components/UserLinks.less';
 
@@ -14,9 +14,7 @@ export const legacyLoggedOut = () => mustache.render(
 	{
 		'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedOut
 	},
-	{
-		Menu: menuTemplate
-	}
+	USER_LINK_PARTIALS
 );
 
 export const legacyLoggedInWithEcho = () => mustache.render(
@@ -24,9 +22,7 @@ export const legacyLoggedInWithEcho = () => mustache.render(
 	{
 		'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho
 	},
-	{
-		Menu: menuTemplate
-	}
+	USER_LINK_PARTIALS
 );
 
 export const legacyLoggedInWithULS = () => mustache.render(
@@ -34,23 +30,17 @@ export const legacyLoggedInWithULS = () => mustache.render(
 	{
 		'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithULS
 	},
-	{
-		Menu: menuTemplate
-	}
+	USER_LINK_PARTIALS
 );
 
 export const loggedInUserLinks = () => mustache.render(
 	userLinksTemplate,
 	USER_LINKS_LOGGED_IN_TEMPLATE_DATA,
-	{
-		Menu: menuTemplate
-	}
+	USER_LINK_PARTIALS
 );
 
 export const loggedOutUserLinks = () => mustache.render(
 	userLinksTemplate,
 	USER_LINKS_LOGGED_OUT_TEMPLATE_DATA,
-	{
-		Menu: menuTemplate
-	}
+	USER_LINK_PARTIALS
 );

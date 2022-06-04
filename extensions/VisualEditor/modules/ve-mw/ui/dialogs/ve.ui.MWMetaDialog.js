@@ -77,7 +77,6 @@ ve.ui.MWMetaDialog.prototype.initialize = function () {
  * @return {boolean} Whether settings were changed.
  */
 ve.ui.MWMetaDialog.prototype.compareSettings = function () {
-
 	var newSettings = this.extractSettings();
 	return !ve.compare( newSettings, this.oldSettings );
 };
@@ -220,8 +219,7 @@ ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data ) {
 	data = data || {};
 	return ve.ui.MWMetaDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
-			var config,
-				surfaceModel = this.getFragment().getSurface(),
+			var surfaceModel = this.getFragment().getSurface(),
 				promises = [],
 				selectWidget = this.bookletLayout.outlineSelectWidget,
 				visualOnlyPages = [ 'categories', 'settings', 'advancedSettings', 'languages' ],
@@ -238,7 +236,7 @@ ve.ui.MWMetaDialog.prototype.getSetupProcess = function ( data ) {
 			// Force all previous transactions to be separate from this history state
 			surfaceModel.pushStaging();
 
-			config = {
+			var config = {
 				data: data,
 				isReadOnly: this.isReadOnly()
 			};

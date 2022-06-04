@@ -4,10 +4,10 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Html2Wt;
 
 use stdClass;
-use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\TagTk;
@@ -46,8 +46,8 @@ class WTSUtils {
 	 */
 	public static function getAttributeKVArray( Element $node ): array {
 		$kvs = [];
-		foreach ( DOMCompat::attributes( $node ) as $attrib ) {
-			$kvs[] = new KV( $attrib->name, $attrib->value );
+		foreach ( DOMUtils::attributes( $node ) as $name => $value ) {
+			$kvs[] = new KV( $name, $value );
 		}
 		return $kvs;
 	}
@@ -212,7 +212,7 @@ class WTSUtils {
 	 * @return bool
 	 */
 	public static function precedingSpaceSuppressesIndentPre( Node $node, Node $sepNode ): bool {
-		if ( $node !== $sepNode && DOMUtils::isText( $node ) ) {
+		if ( $node !== $sepNode && $node instanceof Text ) {
 			// if node is the same as sepNode, then the separator text
 			// at the beginning of it has been stripped out already, and
 			// we cannot use it to test it for indent-pre safety
@@ -249,15 +249,18 @@ class WTSUtils {
 	 * In selser mode, check if an unedited node's wikitext from source wikitext
 	 * is reusable as is.
 	 *
-	 * @param Env $env
+	 * @param SerializerState $state
 	 * @param Node $node
 	 * @return bool
 	 */
-	public static function origSrcValidInEditedContext( Env $env, Node $node ): bool {
+	public static function origSrcValidInEditedContext( SerializerState $state, Node $node ): bool {
+		$env = $state->getEnv();
 		$prev = null;
 
 		if ( WTUtils::isRedirectLink( $node ) ) {
 			return DOMUtils::atTheTop( $node->parentNode ) && !$node->previousSibling;
+		} elseif ( self::dsrContainsOpenExtendedRangeAnnotationTag( $node, $state ) ) {
+			return false;
 		} elseif ( DOMCompat::nodeName( $node ) === 'th' || DOMCompat::nodeName( $node ) === 'td' ) {
 			DOMUtils::assertElt( $node );
 			// The wikitext representation for them is dependent
@@ -281,7 +284,7 @@ class WTSUtils {
 			// showed up on the same line via the "||" or "!!" syntax, nothing
 			// to worry about.
 			return ( DOMDataUtils::getDataParsoid( $node )->stx ?? '' ) !== 'row';
-		} elseif ( DOMCompat::nodeName( $node ) === 'tr' && DOMUtils::assertElt( $node ) &&
+		} elseif ( $node instanceof Element && DOMCompat::nodeName( $node ) === 'tr' &&
 			empty( DOMDataUtils::getDataParsoid( $node )->startTagSrc )
 		) {
 			// If this <tr> didn't have a startTagSrc, it would have been
@@ -335,9 +338,41 @@ class WTSUtils {
 			}
 
 			return true;
+		} elseif ( WTUtils::isMovedMetaTag( $node ) ) {
+			return false;
 		} else {
 			return true;
 		}
+	}
+
+	/**
+	 * We keep track in $state of all extended ranges that are currently open by a <meta> tag.
+	 * This method checks whether the wikitext source pointed by the dsr of the node contains either
+	 * an opening or closing tag matching that annotation (<translate> or </translate> for example.)
+	 * @param Node $node
+	 * @param SerializerState $state
+	 * @return bool
+	 */
+	private static function dsrContainsOpenExtendedRangeAnnotationTag( Node $node,
+		SerializerState $state
+	): bool {
+		if ( empty( $state->openAnnotations ) || !$node instanceof Element ) {
+			return false;
+		}
+
+		$dsr = DOMDataUtils::getDataParsoid( $node )->dsr ?? null;
+		if ( !$dsr ) {
+			return false;
+		}
+		$src = $state->getOrigSrc( $dsr->innerStart(), $dsr->innerEnd() );
+		foreach ( $state->openAnnotations as $ann => $extended ) {
+			if ( $extended ) {
+				if ( preg_match( '</?' . $ann . '.*>', $src ) ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

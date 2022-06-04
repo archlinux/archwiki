@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Armando-Martin",
+			"Bruno44101",
 			"Dgstranz",
 			"Fitoschido",
 			"Jewbask",
@@ -47,6 +48,7 @@
 	"scribunto-lua-error-location": "Error de Lua $1: $2.",
 	"scribunto-lua-error": "Error de Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Error de secuencia de comandos: el módulo devolvió un valor $2. Debería devolver una tabla de exportación.",
+	"scribunto-lua-warning": "Advertencia de script: $1",
 	"scribunto-luastandalone-proc-error": "Error de Lua: No se puede crear el proceso.",
 	"scribunto-luastandalone-proc-error-msg": "Error de Lua: no se puede crear el proceso: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Error de Lua: No se puede crear el proceso: proc_open no está disponible. Comprueba la directiva de configuración de PHP «disable_functions».",

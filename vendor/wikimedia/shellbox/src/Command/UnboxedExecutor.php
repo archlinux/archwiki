@@ -190,6 +190,28 @@ class UnboxedExecutor {
 	}
 
 	/**
+	 * If the environment contains an unsafe character set, filter out the
+	 * variable.
+	 *
+	 * @param array &$env
+	 */
+	private function fixLocaleEnvironment( array &$env ) {
+		if ( PHP_OS_FAMILY === 'Windows' ) {
+			// Probably OK?
+			return;
+		}
+		foreach ( [ 'LC_CTYPE', 'LC_ALL', 'LANG' ] as $name ) {
+			if ( isset( $env[$name] )
+				&& preg_match( '/\.(gb\w*)/i', $env[$name] )
+			) {
+				$this->logger->warning( "Filtering out unsafe environment variable " .
+					"$name={$env[$name]}" );
+				unset( $env[$name] );
+			}
+		}
+	}
+
+	/**
 	 * @param Command $command
 	 * @return UnboxedResult
 	 * @throws ShellboxError
@@ -215,6 +237,7 @@ class UnboxedExecutor {
 		$options = $command->getProcOpenOptions();
 
 		$combinedEnvironment = $command->getEnvironment() + $this->getParentEnvironment();
+		$this->fixLocaleEnvironment( $combinedEnvironment );
 		$env = [];
 		foreach ( $combinedEnvironment as $name => $value ) {
 			$env[] = "$name=$value";

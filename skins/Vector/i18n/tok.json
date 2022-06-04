@@ -2,10 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Robin van der Vliet",
-			"Gtbot2007"
+			"Gtbot2007",
+			"LesVisages",
+			"שוקו מוקה"
 		]
 	},
 	"vector-action-delete": "o weka",
+	"vector-action-protect": "o awen",
+	"vector-view-create": "o pali",
 	"vector-view-edit": "o ante",
+	"vector-view-view": "lukin",
 	"vector-more-actions": "mute"
 }

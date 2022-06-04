@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"SADIQUI",
-			"Ideophagous"
+			"Ideophagous",
+			"SADIQUI"
 		]
 	},
 	"scribunto-lua-error": "خطأ لوا: $2.",

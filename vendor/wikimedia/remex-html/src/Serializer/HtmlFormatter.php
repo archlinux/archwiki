@@ -277,6 +277,3 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		return $s;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( HtmlFormatter::class, 'RemexHtml\Serializer\HtmlFormatter' );

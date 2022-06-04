@@ -11,7 +11,8 @@
 			"Pyscowicz",
 			"Silvonen",
 			"Stryn",
-			"Valtlait"
+			"Valtlait",
+			"Veikk0.ma"
 		]
 	},
 	"templatedata-desc": "Toteuta tietovarasto mallinen parametreille (käyttäen JSON:ia)",
@@ -83,7 +84,7 @@
 	"templatedata-modal-placeholder-paramkey": "Parametrin nimi",
 	"templatedata-modal-search-input-placeholder": "Etsi kielen nimen tai koodin mukaan",
 	"templatedata-modal-table-param-actions": "Toimenpiteet",
-	"templatedata-modal-table-param-aliases": "Aliakset (pilkulla erotettuna)",
+	"templatedata-modal-table-param-aliases": "Aliakset",
 	"templatedata-modal-table-param-autovalue": "Automaattinen arvo",
 	"templatedata-modal-table-param-default": "Oletus ($1)",
 	"templatedata-modal-table-param-deprecated": "Vanhentunut",

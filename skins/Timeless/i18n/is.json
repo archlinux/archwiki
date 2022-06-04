@@ -19,5 +19,7 @@
 	"timeless-pagemisc": "Meira",
 	"timeless-namespaces": "Nafnrými",
 	"timeless-pagetools": "Aðgerðir síðu",
-	"timeless-languages": "Tungumál"
+	"timeless-languages": "Tungumál",
+	"timeless-view-history": "Breytingaskrá",
+	"timeless-action-undelete": "Endurvekja {{PLURAL:$1|$1 breytingu|$1 breytingar}}"
 }

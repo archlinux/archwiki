@@ -176,15 +176,10 @@ ve.ui.MWSettingsPage.static.addMetaCheckbox = function ( metaName, label ) {
 /**
  * @inheritdoc
  */
-ve.ui.MWSettingsPage.prototype.setOutlineItem = function () {
-	// Parent method
-	ve.ui.MWSettingsPage.super.prototype.setOutlineItem.apply( this, arguments );
-
-	if ( this.outlineItem ) {
-		this.outlineItem
-			.setIcon( 'pageSettings' )
-			.setLabel( ve.msg( 'visualeditor-dialog-meta-settings-section' ) );
-	}
+ve.ui.MWSettingsPage.prototype.setupOutlineItem = function () {
+	this.outlineItem
+		.setIcon( 'pageSettings' )
+		.setLabel( ve.msg( 'visualeditor-dialog-meta-settings-section' ) );
 };
 
 /**
@@ -231,12 +226,10 @@ ve.ui.MWSettingsPage.prototype.onEnableRedirectChange = function ( value ) {
  * @return {boolean} Whether redirect link is valid.
  */
 ve.ui.MWSettingsPage.prototype.checkValidRedirect = function () {
-	var title;
 	if ( this.enableRedirectInput.isSelected() ) {
-		title = this.redirectTargetInput.getValue();
+		var title = this.redirectTargetInput.getValue();
 
 		if ( !mw.Title.newFromText( title ) ) {
-
 			/*
 			 * TODO more precise error message. Modify the Title.newFromText method in Title.js
 			 * my idea is to in the parse method instead of a boolean return a string with an error message (not an error code since the error string can have parameters),
@@ -285,31 +278,29 @@ ve.ui.MWSettingsPage.prototype.getMetaItem = function ( name ) {
  * Setup settings page.
  *
  * @param {ve.dm.MetaList} metaList Meta list
- * @param {Object} [config] Configuration options
+ * @param {Object} config
  * @param {Object} [config.data] Dialog setup data
- * @param {boolean} [config.isReadOnly] Dialog is in read-only mode
+ * @param {boolean} [config.isReadOnly=false] Dialog is in read-only mode
  * @return {jQuery.Promise}
  */
 ve.ui.MWSettingsPage.prototype.setup = function ( metaList, config ) {
-	var tableOfContentsMetaItem, tableOfContentsField, tableOfContentsMode,
-		redirectTargetItem, redirectTarget, redirectStatic,
-		settingsPage = this;
+	var settingsPage = this;
 
 	this.metaList = metaList;
 
 	// Table of Contents items
-	tableOfContentsField = this.tableOfContents.getField();
-	tableOfContentsMetaItem = this.getMetaItem( 'mwTOC' );
-	tableOfContentsMode = tableOfContentsMetaItem && tableOfContentsMetaItem.getAttribute( 'property' ) || 'default';
+	var tableOfContentsField = this.tableOfContents.getField();
+	var tableOfContentsMetaItem = this.getMetaItem( 'mwTOC' );
+	var tableOfContentsMode = tableOfContentsMetaItem && tableOfContentsMetaItem.getAttribute( 'property' ) || 'default';
 	tableOfContentsField
 		.selectItemByData( tableOfContentsMode )
 		.setDisabled( config.isReadOnly );
 	this.tableOfContentsTouched = false;
 
 	// Redirect items (disabled states set by change event)
-	redirectTargetItem = this.getMetaItem( 'mwRedirect' );
-	redirectTarget = redirectTargetItem && redirectTargetItem.getAttribute( 'title' ) || '';
-	redirectStatic = this.getMetaItem( 'mwStaticRedirect' );
+	var redirectTargetItem = this.getMetaItem( 'mwRedirect' );
+	var redirectTarget = redirectTargetItem && redirectTargetItem.getAttribute( 'title' ) || '';
+	var redirectStatic = this.getMetaItem( 'mwStaticRedirect' );
 	this.enableRedirectInput
 		.setSelected( !!redirectTargetItem )
 		.setDisabled( config.isReadOnly );
@@ -339,10 +330,7 @@ ve.ui.MWSettingsPage.prototype.setup = function ( metaList, config ) {
  * @param {Object} [data] Dialog tear down data
  */
 ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
-	var currentTableOfContents, newTableOfContentsData, newTableOfContentsItem,
-		currentRedirectTargetItem, newRedirectData, newRedirectItemData,
-		currentStaticRedirectItem, newStaticRedirectState,
-		settingsPage = this;
+	var settingsPage = this;
 
 	// Data initialisation
 	data = data || {};
@@ -351,16 +339,16 @@ ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
 	}
 
 	// Table of Contents items
-	currentTableOfContents = this.getMetaItem( 'mwTOC' );
-	newTableOfContentsData = this.tableOfContents.getField().findSelectedItem();
+	var currentTableOfContents = this.getMetaItem( 'mwTOC' );
+	var newTableOfContentsData = this.tableOfContents.getField().findSelectedItem();
 
 	// Redirect items
-	currentRedirectTargetItem = this.getMetaItem( 'mwRedirect' );
-	newRedirectData = this.redirectTargetInput.getValue();
-	newRedirectItemData = { type: 'mwRedirect', attributes: { title: newRedirectData } };
+	var currentRedirectTargetItem = this.getMetaItem( 'mwRedirect' );
+	var newRedirectData = this.redirectTargetInput.getValue();
+	var newRedirectItemData = { type: 'mwRedirect', attributes: { title: newRedirectData } };
 
-	currentStaticRedirectItem = this.getMetaItem( 'mwStaticRedirect' );
-	newStaticRedirectState = this.enableStaticRedirectInput.isSelected();
+	var currentStaticRedirectItem = this.getMetaItem( 'mwStaticRedirect' );
+	var newStaticRedirectState = this.enableStaticRedirectInput.isSelected();
 
 	// Alter the TOC option flag iff it's been touched & is actually different
 	if ( this.tableOfContentsTouched ) {
@@ -369,7 +357,7 @@ ve.ui.MWSettingsPage.prototype.teardown = function ( data ) {
 				currentTableOfContents.remove();
 			}
 		} else {
-			newTableOfContentsItem = { type: 'mwTOC', attributes: { property: newTableOfContentsData.data } };
+			var newTableOfContentsItem = { type: 'mwTOC', attributes: { property: newTableOfContentsData.data } };
 
 			if ( !currentTableOfContents ) {
 				this.metaList.insertMeta( newTableOfContentsItem );

@@ -71,7 +71,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Numm vun der Kaart aginn",
 	"templatedata-modal-search-input-placeholder": "Nom Numm oder nom Code vun der Sprooch sichen",
 	"templatedata-modal-table-param-actions": "Aktiounen",
-	"templatedata-modal-table-param-aliases": "Aliasen (Komma getrennt)",
+	"templatedata-modal-table-param-aliases": "Aliasen",
 	"templatedata-modal-table-param-autovalue": "Automatesche Wäert",
 	"templatedata-modal-table-param-default": "Standard ($1)",
 	"templatedata-modal-table-param-deprecated": "Net méi aktuell",

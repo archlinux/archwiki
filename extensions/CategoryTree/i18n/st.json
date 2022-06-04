@@ -1,20 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mapoza2"
+			"Mapoza2",
+			"Amire80"
 		]
 	},
-	"categorytree": "Lenane le Mekga",
+	"categorytree": "Lenane le mekga",
 	"categorytree-category": "Mokga:",
 	"categorytree-go": "Mpontshe lenane",
 	"categorytree-mode-categories": "mekga feela",
 	"categorytree-mode-pages": "maqephe ntle le ditshwantsho",
 	"categorytree-mode-all": "maqephe ohle",
-	"categorytree-collapse": "Nyenyefatsa",
-	"categorytree-expand": "Hodisa",
+	"categorytree-collapse": "nyenyefatsa",
+	"categorytree-expand": "hodisa",
 	"categorytree-load": "jara",
-	"categorytree-loading": "le ntse le jarwa",
-	"categorytree-nothing-found": "Ha ho a fumanwa letho",
+	"categorytree-loading": "le ntse le jarwa...",
+	"categorytree-nothing-found": "ha ho a fumanwa letho",
 	"categorytree-no-subcategories": "ntle le mekgana",
 	"categorytree-no-pages": "ntle le maqephe le mekgana",
 	"categorytree-not-found": "Mokga wa <i>$1</i> ha o a fumanwa"

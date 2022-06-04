@@ -45,8 +45,7 @@ ve.ui.MWInternalLinkContextItem.static.modelClasses = [ ve.dm.MWInternalLinkAnno
  * @return {jQuery} The jQuery object of the link context item
  */
 ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, model, htmlDoc, context ) {
-	var icon, $description,
-		title = model.getAttribute( 'lookupTitle' ),
+	var title = model.getAttribute( 'lookupTitle' ),
 		normalizedTitle = model.getAttribute( 'normalizedTitle' ),
 		href = model.getHref(),
 		titleObj = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( href ) ),
@@ -68,6 +67,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 	// Don't style as a self-link in the context menu (but do elsewhere)
 	$link.removeClass( 'mw-selflink' );
 
+	var icon;
 	if ( usePageImages ) {
 		icon = new OO.ui.IconWidget( { icon: 'page-existing' } );
 		$wrapper
@@ -93,7 +93,7 @@ ve.ui.MWInternalLinkContextItem.static.generateBody = function ( linkCache, mode
 				}
 			}
 			if ( usePageDescriptions && linkData.description ) {
-				$description = $( '<span>' )
+				var $description = $( '<span>' )
 					.addClass( 've-ui-mwInternalLinkContextItem-description' )
 					.text( linkData.description );
 				$wrapper.append( $description );
@@ -118,12 +118,13 @@ ve.ui.MWInternalLinkContextItem.prototype.getDescription = function () {
  * @inheritdoc
  */
 ve.ui.MWInternalLinkContextItem.prototype.renderBody = function () {
-	this.$body.empty().append( this.constructor.static.generateBody(
+	var $body = this.constructor.static.generateBody(
 		ve.init.platform.linkCache,
 		this.model,
 		this.context.getSurface().getModel().getDocument().getHtmlDocument(),
 		this.context
-	) );
+	);
+	this.$body.empty().append( $body );
 	if ( !this.context.isMobile() ) {
 		this.$body.append( this.$labelLayout );
 	}

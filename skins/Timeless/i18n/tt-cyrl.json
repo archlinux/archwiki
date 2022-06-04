@@ -23,5 +23,7 @@
 	"timeless-namespaces": "Исемнәр киңлекләре",
 	"timeless-pagetools": "Биттәге гамәлләр",
 	"timeless-languages": "Телләр",
-	"timeless-projects": "Башка проектлар"
+	"timeless-projects": "Башка проектлар",
+	"timeless-view-history": "Тарих",
+	"timeless-action-undelete": "$1 {{PLURAL:$1|төзәтмәне|$1 төзәтмә}} торгызу"
 }

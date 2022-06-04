@@ -61,8 +61,7 @@ ve.dm.MWNumberedExternalLinkNode.static.toDataElement = function ( domElements )
 };
 
 ve.dm.MWNumberedExternalLinkNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var counter, offset,
-		node = this,
+	var node = this,
 		domElement = doc.createElement( 'a' );
 
 	domElement.setAttribute( 'href', dataElement.attributes.href );
@@ -72,8 +71,8 @@ ve.dm.MWNumberedExternalLinkNode.static.toDomElements = function ( dataElement, 
 	// as external documents may not have the same stylesheet - and Firefox
 	// discards empty tags on copy.
 	if ( converter.isForClipboard() ) {
-		counter = 1;
-		offset = converter.documentData.indexOf( dataElement );
+		var counter = 1;
+		var offset = converter.documentData.indexOf( dataElement );
 
 		if ( offset !== -1 ) {
 			converter.documentData.slice( 0, offset ).forEach( function ( el ) {

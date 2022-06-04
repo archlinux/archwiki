@@ -5,8 +5,8 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-.ve-edit-source .mw-ui-icon,
-.ve-edit-visual .mw-ui-icon {
+.ve-edit-source .mw-ui-icon-wikiText,
+.ve-edit-visual .mw-ui-icon-eye {
 	position: absolute;
 	opacity: 0.65;
 	/* Align with pencil icon in the parent element */
@@ -20,7 +20,6 @@
 	display: none;
 }
 
-.mw-editsection .ve-edit-source,
-.mw-editsection .ve-edit-visual {
-	display: inline-block;
+.mw-editsection {
+	white-space: nowrap;
 }

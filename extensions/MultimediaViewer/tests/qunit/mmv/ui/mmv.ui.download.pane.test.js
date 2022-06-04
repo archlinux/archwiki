@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.ui.download.pane', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) );
 
 		assert.ok( download, 'download UI element is created.' );
@@ -132,7 +132,7 @@
 		download.handleSizeSwitch( download.downloadSizeMenu.getMenu().findSelectedItem() );
 	} );
 
-	QUnit.test( 'setButtonText() sanity check:', function ( assert ) {
+	QUnit.test( 'setButtonText() sense check:', function ( assert ) {
 		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) ),
 			message;
 

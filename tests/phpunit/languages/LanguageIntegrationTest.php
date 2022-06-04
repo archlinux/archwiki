@@ -6,6 +6,8 @@ use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFallback;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserIdentityValue;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group Language
@@ -425,6 +427,10 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 			[ 10, '***',
 				'<p><font style="font-weight:bold;">123456789</font></p>',
 				'<p><font style="font-weight:bold;">123456789</font></p>',
+			],
+			[ 10, '***',
+				'<p><font style="font-weight:bold;">123456789</font',
+				'<p><font style="font-weight:bold;">123456789</font</p>',
 			],
 		];
 	}
@@ -1361,7 +1367,6 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 	}
 
 	public static function provideCheckTitleEncodingData() {
-		// phpcs:disable Generic.Files.LineLength
 		return [
 			[ "" ],
 			[ "United States of America" ], // 7bit ASCII
@@ -1864,6 +1869,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 			[ 'zh-invalid', null, 'do not be fooled by arbitrarily composed language codes' ],
 			[ 'de-formal', null, 'de does not have converter' ],
 			[ 'de', null, 'de does not have converter' ],
+			[ 'ike-cans', 'iu', 'do not simply strip out the subcode' ],
 		];
 	}
 
@@ -1965,7 +1971,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		if ( is_array( $overrides ) ) {
 			$this->setMwGlobals( [ 'wgOverrideUcfirstCharacters' => $overrides ] );
 		}
-		$this->assertSame( $lang->ucfirst( $orig ), $expected, $desc );
+		$this->assertSame( $expected, $lang->ucfirst( $orig ), $desc );
 	}
 
 	public static function provideUcfirst() {
@@ -2087,7 +2093,7 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 		];
 		$this->setMwGlobals( $config );
 		$namespaces = $lang->getNamespaces();
-		$this->assertEquals( $expected, $namespaces );
+		$this->assertArraySubmapSame( $expected, $namespaces );
 	}
 
 	public function provideGetNamespaces() {
@@ -2190,4 +2196,36 @@ class LanguageIntegrationTest extends LanguageClassesTestCase {
 			],
 		];
 	}
+
+	/**
+	 * @covers Language::getGroupName
+	 */
+	public function testGetGroupName() {
+		$lang = $this->getLang();
+		$groupName = $lang->getGroupName( 'bot' );
+		$this->assertSame( 'Bots', $groupName );
+	}
+
+	/**
+	 * @covers Language::getGroupMemberName
+	 */
+	public function testGetGroupMemberName() {
+		$lang = $this->getLang();
+		$user = new UserIdentityValue( 1, 'user' );
+		$groupMemberName = $lang->getGroupMemberName( 'bot', $user );
+		$this->assertSame( 'bot', $groupMemberName );
+
+		$lang = $this->getServiceContainer()->getLanguageFactory()->getLanguage( 'qqx' );
+		$groupMemberName = $lang->getGroupMemberName( 'bot', $user );
+		$this->assertSame( '(group-bot-member: user)', $groupMemberName );
+	}
+
+	/**
+	 * @covers Language::msg
+	 */
+	public function testMsg() {
+		$lang = TestingAccessWrapper::newFromObject( $this->getLang() );
+		$this->assertSame( 'Line 1:', $lang->msg( 'lineno', '1' )->text() );
+	}
+
 }

@@ -12,6 +12,7 @@ use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Shellbox\Action\CallAction;
 use Shellbox\Action\ShellAction;
+use Throwable;
 
 /**
  * The Shellbox server main class
@@ -32,10 +33,7 @@ class Server {
 	/** @var ClientLogHandler|null */
 	private $clientLogHandler;
 
-	/**
-	 * @var array
-	 */
-	private static $defaultConfig = [
+	private const DEFAULT_CONFIG = [
 		'allowedActions' => [ 'call', 'shell' ],
 		'allowedRoutes' => null,
 		'routeSpecs' => [],
@@ -72,7 +70,7 @@ class Server {
 		set_error_handler( [ $this, 'handleError' ] );
 		try {
 			$this->guardedExecute( $configPath );
-		} catch ( \Throwable $e ) {
+		} catch ( Throwable $e ) {
 			$this->handleException( $e );
 		} finally {
 			set_error_handler( null );
@@ -175,7 +173,7 @@ class Server {
 			$config['secretKey'] = $key;
 		}
 
-		$this->config = $config + self::$defaultConfig;
+		$this->config = $config + self::DEFAULT_CONFIG;
 	}
 
 	/**
@@ -268,7 +266,7 @@ class Server {
 	/**
 	 * Handle an exception.
 	 *
-	 * @param \Throwable $exception
+	 * @param Throwable $exception
 	 */
 	private function handleException( $exception ) {
 		if ( $this->logger ) {
@@ -310,6 +308,7 @@ class Server {
 	 * @param string $message
 	 * @param string $file
 	 * @param int $line
+	 * @return never
 	 */
 	public function handleError( $level, $message, $file, $line ) {
 		throw new ShellboxError( "PHP error in $file line $line: $message" );

@@ -1,3 +1,5 @@
+@import 'mediawiki.ui/variables.less';
+
 .mw-apisandbox-toolbar {
 	background: #fff;
 	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
@@ -132,8 +134,14 @@
 	font-weight: bold;
 	color: #d33;
 }
+/* stylelint-enable selector-class-pattern */
 
-.apihelp-deprecated-value .oo-ui-labelElement-label {
+.mw-apisandbox-deprecated-value .oo-ui-labelElement-label {
 	text-decoration: line-through;
 }
-/* stylelint-enable selector-class-pattern */
+
+.oo-ui-menuOptionWidget .mw-apisandbox-flag {
+	line-height: 1.42857143em;
+	color: @color-base--subtle;
+	float: right;
+}

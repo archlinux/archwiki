@@ -48,7 +48,9 @@
 	"history_short": "Важвылӧм",
 	"printableversion": "Лэдзӧм версия",
 	"permalink": "Вежласьтӧм ыстӧд",
+	"view-view": "Лыддьыны",
 	"edit": "Вежны",
+	"view-edit": "Вежны",
 	"delete": "Бырӧдны",
 	"protect": "Дорйыны",
 	"newpage": "Выль лист бок",
@@ -102,7 +104,7 @@
 	"log": "Журналъяс",
 	"allarticles": "Став гижӧдъяс",
 	"mywatchlist": "Видзӧдӧм лыддьӧгӧй",
-	"deletepage": "Лист бокӧс бырӧдны",
+	"deletepage-submit": "Лист бокӧс бырӧдны",
 	"deletereason-dropdown": "* Типовые причины удаления\n** вандализм\n** по запросу автора\n** нарушение авторских прав\n* MediaWiki\n** Дубликат сообщения с translatewiki.net",
 	"protect-level-sysop": "Администраторъяс сӧмын",
 	"namespace": "Ним пространство:",
@@ -116,5 +118,8 @@
 	"tooltip-pt-userpage": "Пырысьлӧн лист бокӧй",
 	"tooltip-ca-talk": "Гижӧдлӧн сёрнитӧм лист бокӧй али Википедиялӧн дӧнъялӧм лист бокӧй",
 	"tooltip-ca-move": "Лист боклӧн ним вежны",
-	"specialpages": "Торъя лист бокъяс"
+	"specialpages": "Торъя лист бокъяс",
+	"deletepage": "Лист бокӧс бырӧдны",
+	"skin-action-protect": "Дорйыны",
+	"skin-action-move": "Ним вежны"
 }

@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\Interwiki;
 use Hooks as MWHooks;
 use Language;
 use MediaWiki\MediaWikiServices;
+use WikiMap;
 
 class Hooks {
 	/** @var bool */
@@ -28,11 +29,11 @@ class Hooks {
 
 		self::$shouldSkipIWCheck = (
 			$wgInterwikiCentralDB === null ||
-			$wgInterwikiCentralDB === wfWikiID()
+			$wgInterwikiCentralDB === WikiMap::getCurrentWikiId()
 		);
 		self::$shouldSkipILCheck = (
 			$wgInterwikiCentralInterlanguageDB === null ||
-			$wgInterwikiCentralInterlanguageDB === wfWikiID()
+			$wgInterwikiCentralInterlanguageDB === WikiMap::getCurrentWikiId()
 		);
 		if ( self::$shouldSkipIWCheck && self::$shouldSkipILCheck ) {
 			// Bail out early if _neither_ $wgInterwiki*CentralDB
@@ -79,7 +80,7 @@ class Hooks {
 			if ( !$res ) {
 				return true;
 			}
-			// Excplicitly make this an array since it's expected to be one
+			// Explicitly make this an array since it's expected to be one
 			$iwData = (array)$res;
 			// At this point, we can safely return false because we know that we have something
 			return false;
@@ -96,7 +97,7 @@ class Hooks {
 			if ( !$res ) {
 				return false;
 			}
-			// Excplicitly make this an array since it's expected to be one
+			// Explicitly make this an array since it's expected to be one
 			$iwData = (array)$res;
 			// At this point, we can safely return false because we know that we have something
 			return false;

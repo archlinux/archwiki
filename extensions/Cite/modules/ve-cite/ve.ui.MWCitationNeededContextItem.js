@@ -48,13 +48,11 @@ ve.ui.MWCitationNeededContextItem.static.label = OO.ui.deferMsg( 'cite-ve-citati
 /* Methods */
 
 ve.ui.MWCitationNeededContextItem.prototype.onAddClick = function () {
-	var promise,
-		contextItem = this,
+	var contextItem = this,
 		surface = this.context.getSurface(),
-		// TODO: This assumes Citoid is installed...
-		action = ve.ui.actionFactory.create( 'citoid', surface ),
 		encapsulatedWikitext = this.getCanonicalParam( 'encapsulate' );
 
+	var promise;
 	if ( encapsulatedWikitext ) {
 		this.addButton.setDisabled( true );
 		promise = ve.init.target.parseWikitextFragment( encapsulatedWikitext, false, this.model.getDocument() ).then( function ( response ) {
@@ -93,6 +91,8 @@ ve.ui.MWCitationNeededContextItem.prototype.onAddClick = function () {
 		promise = ve.createDeferred().resolve( false ).promise();
 	}
 
+	// TODO: This assumes Citoid is installed...
+	var action = ve.ui.actionFactory.create( 'citoid', surface );
 	promise.then( function ( inStaging ) {
 		action.open( true, undefined, inStaging );
 	} );
@@ -104,7 +104,6 @@ ve.ui.MWCitationNeededContextItem.prototype.onAddClick = function () {
  */
 ve.ui.MWCitationNeededContextItem.prototype.renderBody = function () {
 	var date = this.getCanonicalParam( 'date' ),
-		reason = this.getCanonicalParam( 'reason' ),
 		description = ve.msg( 'cite-ve-citationneeded-description' );
 
 	if ( date ) {
@@ -113,6 +112,8 @@ ve.ui.MWCitationNeededContextItem.prototype.renderBody = function () {
 
 	this.$body.empty();
 	this.$body.append( $( '<p>' ).addClass( 've-ui-mwCitationNeededContextItem-description' ).text( description ) );
+
+	var reason = this.getCanonicalParam( 'reason' );
 	if ( reason ) {
 		this.$body.append(
 			$( '<p>' ).addClass( 've-ui-mwCitationNeededContextItem-reason' ).append(

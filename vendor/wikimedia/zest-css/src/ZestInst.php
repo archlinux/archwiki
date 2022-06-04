@@ -22,6 +22,9 @@ use Throwable;
 
 class ZestInst {
 
+	/** @var ZestFunc[] */
+	private $compileCache = [];
+
 	/**
 	 * Helpers
 	 */
@@ -784,36 +787,30 @@ class ZestInst {
 		$this->addSelector0( ':read-write', function ( $el, $opts ): bool {
 			return !$this->selectors0[ ':read-only' ]( $el, $opts );
 		} );
-		$this->addSelector0( ':hover', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':hover is not supported.' );
-		} );
-		$this->addSelector0( ':active', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':active is not supported.' );
-		} );
-		$this->addSelector0( ':link', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':link is not supported.' );
-		} );
-		$this->addSelector0( ':visited', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':visited is not supported.' );
-		} );
-		$this->addSelector0( ':column', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':column is not supported.' );
-		} );
-		$this->addSelector0( ':nth-column', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':nth-column is not supported.' );
-		} );
-		$this->addSelector0( ':nth-last-column', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':nth-last-column is not supported.' );
-		} );
-		$this->addSelector0( ':current', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':current is not supported.' );
-		} );
-		$this->addSelector0( ':past', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':past is not supported.' );
-		} );
-		$this->addSelector0( ':future', function ( $el, $opts ): bool {
-			throw $this->newBadSelectorException( ':future is not supported.' );
-		} );
+		foreach ( [
+			':hover',
+			':active',
+			':link',
+			':visited',
+			':column',
+			':nth-column',
+			':nth-last-column',
+			':current',
+			':past',
+			':future',
+		] as $selector ) {
+			$this->addSelector0(
+				$selector,
+				/**
+				 * @param DOMNode $el
+				 * @param array $opts
+				 * @return never
+				 */
+				function ( $el, $opts ) use ( $selector ): bool {
+					throw $this->newBadSelectorException( $selector . ' is not supported.' );
+				}
+			);
+		}
 		// Non-standard, for compatibility purposes.
 		$this->addSelector1( ':contains', static function ( string $param ): callable {
 			return static function ( $el ) use ( $param ): bool {
@@ -1141,6 +1138,13 @@ class ZestInst {
 	 */
 
 	private function compile( string $sel ): ZestFunc {
+		if ( !isset( $this->compileCache[$sel] ) ) {
+			$this->compileCache[$sel] = $this->doCompile( $sel );
+		}
+		return $this->compileCache[$sel];
+	}
+
+	private function doCompile( string $sel ): ZestFunc {
 		$sel = preg_replace( '/^\s+|\s+$/', '', $sel );
 		$test = null;
 		$filter = [];
@@ -1485,6 +1489,7 @@ class ZestInst {
 			}
 		}
 		/* do things the hard/slow way */
+		// @phan-suppress-next-line PhanTypeMismatchReturn
 		return $this->findInternal( $sel, $context, $opts );
 	}
 
@@ -1542,7 +1547,7 @@ class ZestInst {
 		// \DOMDocument, otherwise use standards mode.
 		$doc = self::nodeIsDocument( $context ) ?
 			 $context : $context->ownerDocument;
-		return ( $doc instanceof DOMDocument ) ? false : true;
+		return !$doc instanceof DOMDocument;
 	}
 
 	/** @var ?ZestInst */

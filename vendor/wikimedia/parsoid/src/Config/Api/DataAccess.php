@@ -7,6 +7,7 @@ namespace Wikimedia\Parsoid\Config\Api;
 use Wikimedia\Parsoid\Config\DataAccess as IDataAccess;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\PageContent;
+use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Mocks\MockPageContent;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 
@@ -15,7 +16,7 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
  *
  * Note this is intended for testing, not performance.
  */
-class DataAccess implements IDataAccess {
+class DataAccess extends IDataAccess {
 
 	/** @var ApiHelper */
 	private $api;
@@ -154,7 +155,6 @@ class DataAccess implements IDataAccess {
 	/** @inheritDoc */
 	public function getFileInfo( PageConfig $pageConfig, array $files ): array {
 		$sc = $this->siteConfig;
-		$ret = array_fill_keys( array_keys( $files ), null );
 		if ( $sc && $sc->hasVideoInfo() ) {
 			$prefix = "vi";
 			$propName = "videoinfo";
@@ -162,7 +162,7 @@ class DataAccess implements IDataAccess {
 			$prefix = "ii";
 			$propName = "imageinfo";
 		}
-		$apiArgs = [
+		$apiArgs2 = [
 			'action' => 'query',
 			'format' => 'json',
 			'formatversion' => 2,
@@ -174,17 +174,26 @@ class DataAccess implements IDataAccess {
 			] )
 		];
 		if ( $prefix === 'vi' ) {
-			$apiArgs["viprop"] .= '|derivatives|timedtext';
+			$apiArgs2["viprop"] .= '|derivatives|timedtext';
 		}
-		foreach ( $files as $name => $dims ) {
+		$ret = [];
+		foreach ( $files as $file ) {
+			$apiArgs = $apiArgs2;  // Copy since we modify it
+			$name = $file[0];
+			$dims = $file[1];
+
 			$imgNS = $sc ? $sc->namespaceName( $sc->canonicalNamespaceId( "File" ) ) : "File";
 			$apiArgs['titles'] = "$imgNS:$name";
-			$needPage = isset( $dims['page'] );
+			$needsWidth = isset( $dims['page'] ) || isset( $dims['lang'] );
 			if ( isset( $dims['width'] ) ) {
 				$apiArgs["${prefix}urlwidth"] = $dims['width'];
-				if ( $needPage ) {
-					$apiArgs["${prefix}urlparam"] = "page{$dims['page']}-{$dims['width']}px";
-					$needPage = false;
+				if ( $needsWidth ) {
+					if ( isset( $dims['page'] ) ) {  // PDF
+						$apiArgs["${prefix}urlparam"] = "page{$dims['page']}-{$dims['width']}px";
+					} elseif ( isset( $dims['lang'] ) ) {  // SVG
+						$apiArgs["${prefix}urlparam"] = "lang{$dims['lang']}-{$dims['width']}px";
+					}
+					$needsWidth = false;
 				}
 			}
 			if ( isset( $dims['height'] ) ) {
@@ -196,20 +205,24 @@ class DataAccess implements IDataAccess {
 
 			do {
 				$data = $this->api->makeRequest( $apiArgs );
-				 // Expect exactly 1 row
+				// Expect exactly 1 row
 				$fileinfo = $data['query']['pages'][0][$propName][0];
 				// Corner case: if page is set, the core ImageInfo API doesn't
 				// respect it *unless* width is set as well.  So repeat the
 				// request if necessary.
 				if ( isset( $fileinfo['pagecount'] ) && !isset( $dims['page'] ) ) {
 					$dims['page'] = 1; # also ensures we won't get here again
-					$needPage = true;
+					$needsWidth = true;
 				}
-				if ( $needPage ) {
-					$needPage = false; # ensure we won't get here again
+				if ( $needsWidth && !isset( $fileinfo['filemissing'] ) ) {
+					$needsWidth = false; # ensure we won't get here again
 					$width = $fileinfo['width'];
 					$apiArgs["${prefix}urlwidth"] = $width;
-					$apiArgs["${prefix}urlparam"] = "page{$dims['page']}-{$width}px";
+					if ( isset( $dims['page'] ) ) {  // PDF
+						$apiArgs["${prefix}urlparam"] = "page{$dims['page']}-{$width}px";
+					} elseif ( isset( $dims['lang'] ) ) {  // SVG
+						$apiArgs["${prefix}urlparam"] = "lang{$dims['lang']}-{$width}px";
+					}
 					continue;
 				}
 				break;
@@ -234,9 +247,8 @@ class DataAccess implements IDataAccess {
 					}
 				}
 			}
-			$ret[$name] = $fileinfo;
+			$ret[] = $fileinfo;
 		}
-
 		return $ret;
 	}
 
@@ -270,76 +282,99 @@ class DataAccess implements IDataAccess {
 		return $ret;
 	}
 
+	/**
+	 * Transfer the metadata returned in an API result into our
+	 * ContentMetadataCollector.
+	 * @param array $data
+	 * @param ContentMetadataCollector $metadata
+	 */
+	private function mergeMetadata( array $data, ContentMetadataCollector $metadata ): void {
+		foreach ( ( $data['categories'] ?? [] ) as $c ) {
+			$metadata->addCategory( $c['category'], $c['sortkey'] );
+		}
+		$metadata->addModules( $data['modules'] ?? [] );
+		$metadata->addModuleStyles( $data['modulestyles'] ?? [] );
+		foreach ( ( $data['jsconfigvars'] ?? [] ) as $key => $value ) {
+			$strategy = 'write-once';
+			if ( is_array( $value ) ) {
+				// Strategy value will be exposed by change
+				// I974d9ecfb4ca8b22361d25c4c70fc5e55c39d5ed in core.
+				$strategy = $value['_mw-strategy'] ?? 'write-once';
+				unset( $value['_mw-strategy'] );
+			}
+			if ( $strategy === 'union' ) {
+				foreach ( $value as $item ) {
+					$metadata->appendJsConfigVar( $key, $item );
+				}
+			} else {
+				$metadata->setJsConfigVar( $key, $value );
+			}
+		}
+		foreach ( ( $data['externallinks'] ?? [] ) as $url ) {
+			$metadata->addExternalLink( $url );
+		}
+		foreach ( ( $data['properties'] ?? [] ) as $name => $value ) {
+			$metadata->setPageProperty( $name, $value );
+		}
+	}
+
 	/** @inheritDoc */
-	public function parseWikitext( PageConfig $pageConfig, string $wikitext ): array {
+	public function parseWikitext(
+		PageConfig $pageConfig,
+		ContentMetadataCollector $metadata,
+		string $wikitext
+	): string {
 		$revid = $pageConfig->getRevisionId();
 		$key = implode( ':', [ 'parse', md5( $pageConfig->getTitle() ), md5( $wikitext ), $revid ] );
-		$ret = $this->getCache( $key );
-		if ( $ret === null ) {
+		$data = $this->getCache( $key );
+		if ( $data === null ) {
 			$params = [
 				'action' => 'parse',
 				'title' => $pageConfig->getTitle(),
 				'text' => $wikitext,
 				'contentmodel' => 'wikitext',
-				'prop' => 'text|modules|jsconfigvars|categories',
+				'prop' => 'text|modules|jsconfigvars|categories|properties|externallinks',
 				'disablelimitreport' => 1,
 				'wrapoutputclass' => '',
+				'showstrategykeys' => 1,
 			];
 			if ( $revid !== null ) {
 				$params['revid'] = $revid;
 			}
 			$data = $this->api->makeRequest( $params )['parse'];
-
-			$cats = [];
-			foreach ( $data['categories'] as $c ) {
-				$cats[$c['category']] = $c['sortkey'];
-			}
-
-			$ret = [
-				'html' => $data['text'],
-				'modules' => $data['modules'] ?? [],
-				'modulestyles' => $data['modulestyles'] ?? [],
-				'jsconfigvars' => $data['jsconfigvars'] ?? [],
-				'categories' => $cats,
-			];
-			$this->setCache( $key, $ret );
+			$this->setCache( $key, $data );
 		}
-		return $ret;
+		$this->mergeMetadata( $data, $metadata );
+		return $data['text']; # HTML
 	}
 
 	/** @inheritDoc */
-	public function preprocessWikitext( PageConfig $pageConfig, string $wikitext ): array {
+	public function preprocessWikitext(
+		PageConfig $pageConfig,
+		ContentMetadataCollector $metadata,
+		string $wikitext
+	): string {
 		$revid = $pageConfig->getRevisionId();
 		$key = implode( ':', [ 'preprocess', md5( $pageConfig->getTitle() ), md5( $wikitext ), $revid ] );
-		$ret = $this->getCache( $key );
-		if ( $ret === null ) {
+		$data = $this->getCache( $key );
+		if ( $data === null ) {
 			$params = [
 				'action' => 'expandtemplates',
 				'title' => $pageConfig->getTitle(),
 				'text' => $wikitext,
-				'prop' => 'properties|wikitext|categories|modules|jsconfigvars',
+				'prop' => 'wikitext|modules|jsconfigvars|categories|properties',
+				'showstrategykeys' => 1,
 			];
 			if ( $revid !== null ) {
 				$params['revid'] = $revid;
 			}
 			$data = $this->api->makeRequest( $params )['expandtemplates'];
-
-			$cats = [];
-			foreach ( ( $data['categories'] ?? [] ) as $c ) {
-				$cats[$c['category']] = $c['sortkey'];
-			}
-
-			$ret = [
-				'wikitext' => $data['wikitext'],
-				'modules' => $data['modules'] ?? [],
-				'modulestyles' => $data['modulestyles'] ?? [],
-				'jsconfigvars' => $data['jsconfigvars'] ?? [],
-				'categories' => $cats,
-				'properties' => $data['properties'] ?? [],
-			];
-			$this->setCache( $key, $ret );
+			$this->setCache( $key, $data );
 		}
-		return $ret;
+
+		$this->mergeMetadata( $data, $metadata );
+
+		return $data['wikitext'];
 	}
 
 	/** @inheritDoc */

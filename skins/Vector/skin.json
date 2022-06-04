@@ -2,43 +2,79 @@
 	"name": "Vector",
 	"version": "1.0.0",
 	"author": [
+		"[https://www.mediawiki.org/wiki/Reading/Web/Team Readers Web Team]",
 		"Trevor Parscal",
 		"Roan Kattouw",
-		"..."
+		"Alex Hollender",
+		"Bernard Wang",
+		"Clare Ming",
+		"Jan Drewniak",
+		"Jon Robson",
+		"Nick Ray",
+		"Sam Smith",
+		"Stephen Niedzielski",
+		"Volker E."
 	],
 	"url": "https://www.mediawiki.org/wiki/Skin:Vector",
 	"descriptionmsg": "vector-skin-desc",
-	"namemsg": "skinname-vector",
+	"namemsg": "vector-specialversion-name",
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.37.0"
+		"MediaWiki": ">= 1.38.0"
 	},
 	"ValidSkinNames": {
+		"vector-2022": {
+			"class": "Vector\\SkinVector22",
+			"args": [
+				{
+					"name": "vector-2022",
+					"templateDirectory": "includes/templates",
+					"responsive": true,
+					"link": {
+						"text-wrapper": {
+							"tag": "span"
+						}
+					},
+					"bodyClasses": [
+						"skin-vector",
+						"skin-vector-search-vue"
+					],
+					"messages": [
+						"tooltip-p-logo",
+						"vector-opt-out-tooltip",
+						"vector-opt-out",
+						"vector-action-toggle-sidebar",
+						"vector-main-menu-tooltip",
+						"vector-menu-checkbox-expanded",
+						"vector-menu-checkbox-collapsed",
+						"vector-jumptosearch",
+						"vector-jumptocontent",
+						"search",
+						"searchbutton",
+						"searcharticle",
+						"searchsuggest-search",
+						"sitesubtitle",
+						"sitetitle",
+						"tagline"
+					]
+				}
+			]
+		},
 		"vector": {
-			"class": "SkinVector",
+			"class": "Vector\\SkinVector",
 			"@args": "See SkinVector::__construct for more detail.",
 			"args": [
 				{
 					"name": "vector",
-					"scripts": [
-						"skins.vector.js"
-					],
 					"templateDirectory": "includes/templates",
 					"responsive": true,
-					"styles": [
-						"mediawiki.ui.button",
-						"skins.vector.styles",
-						"skins.vector.icons",
-						"mediawiki.ui.icon"
-					],
+					"link": {
+						"text-wrapper": {
+							"tag": "span"
+						}
+					},
 					"messages": [
-						"createaccount",
-						"vector-anon-user-menu-pages",
-						"vector-anon-user-menu-pages-learn",
-						"vector-anon-user-menu-pages-label",
-						"vector-personal-more-label",
-						"otherlanguages",
 						"tooltip-p-logo",
 						"vector-opt-out-tooltip",
 						"vector-opt-out",
@@ -51,20 +87,19 @@
 						"vector-jumptosearch",
 						"vector-jumptocontent",
 						"search",
+						"searchbutton",
+						"searcharticle",
+						"searchsuggest-search",
 						"sitesubtitle",
 						"sitetitle",
 						"tagline"
-					],
-					"link": {
-						"text-wrapper": {
-							"tag": "span"
-						}
-					}
+					]
 				}
 			]
 		}
 	},
 	"SkinLessImportPaths": {
+		"vector-2022": "resources/mediawiki.less",
 		"vector": "resources/mediawiki.less"
 	},
 	"MessagesDirs": {
@@ -73,7 +108,8 @@
 		]
 	},
 	"AutoloadClasses": {
-		"SkinVector": "includes/SkinVector.php"
+		"SkinVector": "includes/SkinVector.php",
+		"Vector\\SkinVector": "includes/SkinVector.php"
 	},
 	"AutoloadNamespaces": {
 		"Vector\\": "includes/"
@@ -82,6 +118,8 @@
 		"vector": "GlobalVarConfig::newInstance"
 	},
 	"Hooks": {
+		"ResourceLoaderSiteModulePages": "Vector\\Hooks::onResourceLoaderSiteModulePages",
+		"ResourceLoaderSiteStylesModulePages": "Vector\\Hooks::onResourceLoaderSiteStylesModulePages",
 		"SkinPageReadyConfig": "Vector\\Hooks::onSkinPageReadyConfig",
 		"GetPreferences": "Vector\\Hooks::onGetPreferences",
 		"PreferencesFormPreSave": "Vector\\Hooks::onPreferencesFormPreSave",
@@ -91,7 +129,14 @@
 	},
 	"@note": "When modifying skins.vector.styles definition, make sure the installer still works",
 	"ResourceModules": {
+		"skins.vector.user": {
+			"class": "Vector\\ResourceLoader\\VectorResourceLoaderUserModule"
+		},
+		"skins.vector.user.styles": {
+			"class": "Vector\\ResourceLoader\\VectorResourceLoaderUserStylesModule"
+		},
 		"skins.vector.search": {
+			"es6": true,
 			"dependencies": [
 				"mediawiki.Uri",
 				"wvui-search"
@@ -99,6 +144,8 @@
 			"packageFiles": [
 				"resources/skins.vector.search/skins.vector.search.js",
 				"resources/skins.vector.search/instrumentation.js",
+				"resources/skins.vector.search/fetch.js",
+				"resources/skins.vector.search/restSearchClient.js",
 				"resources/skins.vector.search/App.vue",
 				{
 					"name": "resources/skins.vector.search/config.json",
@@ -108,7 +155,7 @@
 			"messages": [
 				"searchbutton",
 				"searchresults",
-				"searchsuggest-containing"
+				"vector-searchsuggest-containing"
 			]
 		},
 		"skins.vector.styles.legacy": {
@@ -119,6 +166,7 @@
 				"logo": true,
 				"content-media": true,
 				"content-links": true,
+				"content-links-external": false,
 				"interface": true,
 				"interface-message-box": true,
 				"interface-category": true,
@@ -142,6 +190,7 @@
 				"normalize": true,
 				"elements": true,
 				"content-links": true,
+				"content-links-external": false,
 				"content-media": true,
 				"content-tables": true,
 				"interface": true,
@@ -164,7 +213,7 @@
 				"parentheses-end"
 			]
 		},
-		"skins.vector.icons": {
+		"skins.vector.icons.js": {
 			"selectorWithVariant": ".mw-ui-icon-wikimedia-{name}-{variant}:before",
 			"selectorWithoutVariant": ".mw-ui-icon-wikimedia-{name}:before",
 			"useDataURI": false,
@@ -172,20 +221,70 @@
 			"class": "ResourceLoaderOOUIIconPackModule",
 			"variants": [],
 			"icons": [
+				"edit",
+				"editLock",
+				"halfStar",
+				"history",
+				"speechBubbles",
+				"star",
+				"unStar",
+				"wikiText"
+			]
+		},
+		"skins.vector.icons": {
+			"selectorWithVariant": ".mw-ui-icon-wikimedia-{name}-{variant}:before",
+			"selectorWithoutVariant": ".mw-ui-icon-wikimedia-{name}:before",
+			"useDataURI": false,
+			"defaultColor": "#000",
+			"class": "ResourceLoaderOOUIIconPackModule",
+			"variants": {
+				"progressive": {
+					"color": "#36c",
+					"global": true
+				}
+			},
+			"icons": [
 				"language",
 				"ellipsis",
 				"userAvatar",
 				"userTalk",
-				"markup",
+				"sandbox",
 				"search",
 				"settings",
 				"labFlask",
 				"unStar",
+				"watchlist",
 				"userContributions",
 				"logIn",
 				"logOut",
 				"imageGallery",
-				"userGroup"
+				"userGroup",
+				"downTriangle"
+			]
+		},
+		"skins.vector.es6": {
+			"es6": true,
+			"packageFiles": [
+				"resources/skins.vector.es6/main.js",
+				"resources/skins.vector.es6/searchToggle.js",
+				"resources/skins.vector.es6/stickyHeader.js",
+				"resources/skins.vector.es6/scrollObserver.js",
+				"resources/skins.vector.es6/AB.js",
+				"resources/skins.vector.es6/tableOfContents.js",
+				"resources/skins.vector.es6/sectionObserver.js",
+				"resources/skins.vector.es6/deferUntilFrame.js",
+				{
+					"name": "resources/skins.vector.es6/config.json",
+					"callback": "Vector\\Hooks::getVectorResourceLoaderConfig"
+				}
+			],
+			"dependencies": [
+				"mediawiki.user",
+				"skins.vector.icons.js",
+				"mediawiki.page.ready",
+				"mediawiki.page.watch.ajax",
+				"mediawiki.util",
+				"mediawiki.experiments"
 			]
 		},
 		"skins.vector.js": {
@@ -195,16 +294,15 @@
 					"name": "resources/skins.vector.js/config.json",
 					"callback": "Vector\\Hooks::getVectorResourceLoaderConfig"
 				},
-				"resources/skins.vector.js/stickyHeader.js",
 				"resources/skins.vector.js/dropdownMenus.js",
 				"resources/skins.vector.js/sidebar.js",
 				"resources/skins.vector.legacy.js/collapsibleTabs.js",
 				"resources/skins.vector.legacy.js/vector.js",
 				"resources/skins.vector.js/languageButton.js",
-				"resources/skins.vector.js/searchLoader.js",
-				"resources/skins.vector.js/searchToggle.js"
+				"resources/skins.vector.js/searchLoader.js"
 			],
 			"dependencies": [
+				"skins.vector.icons.js",
 				"mediawiki.page.ready",
 				"mediawiki.util"
 			],
@@ -227,6 +325,16 @@
 		"remoteSkinPath": "Vector"
 	},
 	"ResourceModuleSkinStyles": {
+		"vector-2022": {
+			"+ext.echo.styles.alert": "skinStyles/ext.echo.styles.alert.less",
+			"+mediawiki.action.view.redirectPage": "skinStyles/mediawiki.action.view.redirectPage.less",
+			"+mediawiki.notification": "skinStyles/mediawiki.notification.less",
+			"+oojs-ui-core.styles": "skinStyles/ooui.less",
+			"mediawiki.special": "skinStyles/mediawiki.special.less",
+			"+ext.relatedArticles.readMore": "skinStyles/ext.relatedArticles.readMore.less",
+			"+ext.uls.compactlinks": "skinStyles/ext.uls.compactlinks.less",
+			"+ext.uls.interface": "skinStyles/ext.uls.interface.less"
+		},
 		"vector": {
 			"+ext.echo.styles.alert": "skinStyles/ext.echo.styles.alert.less",
 			"jquery.tipsy": "skinStyles/jquery.tipsy.less",
@@ -250,7 +358,9 @@
 			"+mediawiki.notification": "skinStyles/mediawiki.notification.less",
 			"+oojs-ui-core.styles": "skinStyles/ooui.less",
 			"mediawiki.special": "skinStyles/mediawiki.special.less",
-			"+ext.relatedArticles.readMore": "skinStyles/ext.relatedArticles.readMore.less"
+			"+ext.relatedArticles.readMore": "skinStyles/ext.relatedArticles.readMore.less",
+			"+ext.uls.compactlinks": "skinStyles/ext.uls.compactlinks.less",
+			"+ext.uls.interface": "skinStyles/ext.uls.interface.less"
 		}
 	},
 	"config": {
@@ -300,12 +410,9 @@
 			"value": "1",
 			"description": "@var string:['2'|'1'] The version ('2' for latest, '1' for legacy) of the Vector skin to **set** for newly created user accounts. **The value is persisted as a user preference.** This configuration is not used for preexisting accounts (see VectorDefaultSkinVersionForExistingAccounts) and only ever executed once at new account creation time."
 		},
-		"VectorUseWvuiSearch": {
-			"value": true
-		},
-		"VectorSearchTreatmentABTest": {
+		"VectorSkinMigrationMode": {
 			"value": false,
-			"description": "@var boolean Enables or disables the search treatment A/B test. See https://phabricator.wikimedia.org/T261647 and associated tasks for additional detail."
+			"description": "@internal. For usage to fulfil [[phab:T291098]]"
 		},
 		"VectorWvuiSearchOptions": {
 			"value": {
@@ -321,10 +428,24 @@
 		},
 		"VectorLanguageInHeader": {
 			"value": {
+				"logged_in": true,
+				"logged_out": true
+			},
+			"description": "@var array Moves the language links from the sidebar into a menu beside the page title. Also moves the indicators to the line below, next to the tagline (siteSub)."
+		},
+		"VectorLanguageInMainPageHeader": {
+			"value": {
 				"logged_in": false,
 				"logged_out": false
 			},
-			"description": "@var array Moves the language links from the sidebar into a menu beside the page title. Also moves the indicators to the line below, next to the tagline (siteSub)."
+			"description": "@var When `VectorLanguageInHeader` is enabled, determines whether the Main Page's language button should be at the top or bottom of the content. The default position on the main page is at the bottom."
+		},
+		"VectorLanguageAlertInSidebar": {
+			"value": {
+				"logged_in": false,
+				"logged_out": false
+			},
+			"description": "@var When `VectorLanguageAlertInSidebar` is enabled, the language switch alert box is shown in the sidebar."
 		},
 		"VectorLanguageInHeaderTreatmentABTest": {
 			"value": false,
@@ -332,14 +453,52 @@
 		},
 		"VectorStickyHeader": {
 			"value": {
-				"logged_in": false,
+				"logged_in": true,
 				"logged_out": false
 			},
 			"description": "@var array Enables a persistent header that allows quick access to user links, editing tools, search and other links while scrolling down a page"
 		},
+		"VectorStickyHeaderEdit": {
+			"value": {
+				"logged_in": false,
+				"logged_out": false
+			},
+			"description": "@var array Enables the edit icons if $wgVectorStickyHeader is true."
+		},
+		"VectorWebABTestEnrollment": {
+			"value": {
+				"name": "vector.sticky_header",
+				"enabled": false,
+				"buckets": {
+					"unsampled": {
+						"samplingRate": 0.1
+					},
+					"control": {
+						"samplingRate": 0.3
+					},
+					"stickyHeaderDisabled": {
+						"samplingRate": 0.3
+					},
+					"stickyHeaderEnabled": {
+						"samplingRate": 0.3
+					}
+				}
+			},
+			"description": "An associative array of A/B test configs keyed by parameters noted in mediawiki.experiments.js."
+		},
 		"VectorDisableSidebarPersistence": {
 			"value": false,
 			"description": "@var boolean Temporary feature flag that disables saving the sidebar expanded/collapsed state as a user-preference (triggered via clicking the main menu icon). This is intended as a temporary kill-switch in the event that the DB is overloaded with writes to the user_options table."
+		},
+		"VectorTableOfContents": {
+			"value": {
+				"default": false
+			},
+			"description": "@var When `VectorTableOfContents` is enabled, the sticky table of contents is shown."
+		},
+		"VectorTableOfContentsCollapseAtCount": {
+			"value": 20,
+			"description": "@var When `VectorTableOfContents` is enabled, the minimum number of headings required to collapse all headings in the sticky table of contents by default."
 		}
 	},
 	"ServiceWiringFiles": [

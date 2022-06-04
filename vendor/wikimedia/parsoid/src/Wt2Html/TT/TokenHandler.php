@@ -35,10 +35,6 @@ abstract class TokenHandler {
 		$this->env = $manager->getEnv();
 		$this->options = $options;
 
-		// Initialize a few options to simplify checks elsewhere
-		$this->options['inTemplate'] = !empty( $this->options['inTemplate'] );
-		$this->options['expandTemplates'] = !empty( $this->options['expandTemplates'] );
-
 		// This is set if the token handler is disabled for the entire pipeline.
 		$this->disabled = false;
 
@@ -156,30 +152,11 @@ abstract class TokenHandler {
 				$res = null;
 			}
 
-			// onTag handler might return a retry signal
-			if ( $res && $res->retry ) {
-				if ( $res->tokens !== null ) {
-					array_splice( $tokens, $i, 1, $res->tokens );
-					$n = count( $tokens );
-				}
-				continue;
-			}
-
 			$modified = $res && $this->isModified( $token, $res );
 			if ( $modified ) {
 				$resTokens = $res->tokens;
 			} elseif ( $this->onAnyEnabled && ( !$res || !$res->skipOnAny ) ) {
 				$res = $this->onAny( $token );
-
-				// onAny handler might return a retry signal
-				if ( $res && $res->retry ) {
-					if ( $res->tokens !== null ) {
-						array_splice( $tokens, $i, 1, $res->tokens );
-						$n = count( $tokens );
-					}
-					continue;
-				}
-
 				$modified = $res && $this->isModified( $token, $res );
 				if ( $modified ) {
 					$resTokens = $res->tokens;

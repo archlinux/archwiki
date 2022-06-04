@@ -4,5 +4,7 @@
 			"Умар"
 		]
 	},
-	"apihelp-visualeditor-param-etag": "ETag дӀаяхьийта."
+	"apierror-visualeditor-difffailed": "Ӏалашйан цайелира",
+	"apihelp-visualeditor-param-etag": "ETag дӀайахьийта.",
+	"apihelp-visualeditoredit-param-etag": "ETag дӀайахьийта."
 }

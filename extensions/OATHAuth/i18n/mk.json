@@ -57,7 +57,7 @@
 	"oath-log-header": "Овие настани ги следат промените во двочинителската завереност на корисниците",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|му}} ја оневозможи двочинителската заверка на $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|провери}} дали $3 има овозможено двочинителска заверка",
-	"oauthauth-ui-no-module": "Ниеден не е овозможен",
+	"oathauth-ui-no-module": "Ниеден не е овозможен",
 	"oathauth-module-invalid": "Корисникот има пријавено неважечки модул на OATHAuth.",
 	"oathauth-module-totp-label": "TOTP (еднократна шифра)",
 	"oathauth-ui-manage": "Раководи",

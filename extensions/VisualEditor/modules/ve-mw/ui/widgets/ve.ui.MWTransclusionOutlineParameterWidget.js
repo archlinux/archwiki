@@ -16,8 +16,8 @@
  * @param {Object} config
  * @cfg {string} data Parameter name
  * @cfg {string} label
- * @cfg {boolean} [required] Required parameters can't be unchecked
- * @cfg {boolean} [selected] If the parameter is currently used (checked)
+ * @cfg {boolean} [required=false] Required parameters can't be unchecked
+ * @cfg {boolean} [selected=false] If the parameter is currently used (checked)
  */
 ve.ui.MWTransclusionOutlineParameterWidget = function VeUiMWTransclusionOutlineParameterWidget( config ) {
 	this.checkbox = new OO.ui.CheckboxInputWidget( {
@@ -56,6 +56,7 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineParameterWidget, OO.ui.OptionWidget 
 
 /**
  * @private
+ * @param {jQuery.Event} e
  */
 ve.ui.MWTransclusionOutlineParameterWidget.prototype.onMouseDown = function ( e ) {
 	// Mouse clicks conflict with the click handler in {@see OO.ui.SelectWidget}

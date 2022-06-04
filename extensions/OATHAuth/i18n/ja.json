@@ -3,14 +3,14 @@
 		"authors": [
 			"129femtoseconds",
 			"Marine-Blue",
+			"MathXplore",
 			"Ochaochaocha3",
 			"Omotecho",
 			"Shirayuki",
 			"Siglite3",
 			"Suyama",
 			"Yusuke1109",
-			"ネイ",
-			"MathXplore"
+			"ネイ"
 		]
 	},
 	"oathauth-desc": "HMAC に基づいたワンタイムパスワードを使用する認証機能を提供する",
@@ -39,8 +39,8 @@
 	"oathauth-verify-for-user": "利用者が二段階認証を有効にしているかどうか確認します",
 	"right-oathauth-disable-for-user": "利用者の二段階認証を無効化",
 	"action-oathauth-disable-for-user": "利用者の二段階認証の無効化",
-	"right-oathauth-verify-user": "利用者が二段階認証を有効にしているかどうか確認する",
-	"action-oathauth-verify-user": "利用者が二段階認証を有効にしているかどうか確認する",
+	"right-oathauth-verify-user": "利用者が二段階認証を有効にしているかどうか検証",
+	"action-oathauth-verify-user": "利用者が二段階認証を有効にしているかどうかの検証",
 	"right-oathauth-view-log": "二段階認証の変更記録を閲覧",
 	"action-oathauth-view-log": "二段階認証の変更記録の閲覧",
 	"oathauth-enteruser": "利用者名:",
@@ -55,7 +55,7 @@
 	"action-oathauth-api-all": "OATH 状態の確認",
 	"oath-log-name": "二段階認証の記録",
 	"oath-log-header": "これらのイベントは利用者の二段階認証の状態の変更を追跡します。",
-	"oauthauth-ui-no-module": "有効になっていません",
+	"oathauth-ui-no-module": "有効になっていません",
 	"oathauth-module-totp-label": "TOTP（ワンタイムトークン）",
 	"oathauth-ui-manage": "管理",
 	"oathmanage": "二段階認証の管理",

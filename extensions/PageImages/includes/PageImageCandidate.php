@@ -23,6 +23,9 @@ class PageImageCandidate implements JsonSerializable {
 	/** @var int */
 	private $handlerWidth = 0;
 
+	/** @var string */
+	private $frameClass = '';
+
 	/**
 	 * Private constructor.
 	 * Use self::newFromFileAndParams to instantiate.
@@ -43,6 +46,10 @@ class PageImageCandidate implements JsonSerializable {
 		if ( isset( $fileParams['handler']['width'] ) ) {
 			$instance->handlerWidth = $fileParams['handler']['width'] ?? 0;
 		}
+		if ( isset( $fileParams['frame']['class'] ) ) {
+			// $fileParams['frame']['class'] is set in Parser::makeImage
+			$instance->frameClass = $fileParams['frame']['class'] ?? '';
+		}
 		return $instance;
 	}
 
@@ -60,6 +67,9 @@ class PageImageCandidate implements JsonSerializable {
 		$instance->fullHeight = $array['fullheight'] ?? 0;
 		if ( isset( $array['handler']['width'] ) ) {
 			$instance->handlerWidth = $array['handler']['width'] ?? 0;
+		}
+		if ( isset( $array['frame']['class'] ) ) {
+			$instance->frameClass = $array['frame']['class'] ?? '';
 		}
 		return $instance;
 	}
@@ -93,6 +103,13 @@ class PageImageCandidate implements JsonSerializable {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getFrameClass(): string {
+		return $this->frameClass;
+	}
+
+	/**
 	 * @internal
 	 * @return array
 	 */
@@ -104,6 +121,9 @@ class PageImageCandidate implements JsonSerializable {
 			// Wrap in handler array for backwards-compatibility.
 			'handler' => [
 				'width' => $this->getHandlerWidth()
+			],
+			'frame' => [
+				'class' => $this->getFrameClass()
 			]
 		];
 	}

@@ -7,5 +7,7 @@
 	"skinname-monobook": "MonoBook",
 	"monobook.css": "La modeli CSS pozata hike afektos omni qui uzos la shablono \"MonoBook\"",
 	"monobook-jumptonavigation": "Navigado",
-	"monobook-jumptosearch": "Irez a serchilo"
+	"monobook-jumptosearch": "Irez a serchilo",
+	"monobook-view-history": "Versionaro",
+	"monobook-action-undelete": "Restaurar {{PLURAL:$1|1 redakto|$1 redakti}}"
 }

@@ -8,16 +8,16 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.35"
+		"MediaWiki": ">= 1.38"
 	},
 	"ValidSkinNames": {
 		"timeless": {
 			"displayname": "Timeless",
-			"class": "SkinTimeless",
+			"class": "MediaWiki\\Skin\\Timeless\\SkinTimeless",
 			"args": [
 				{
 					"name": "timeless",
-					"template": "TimelessTemplate",
+					"template": "MediaWiki\\Skin\\Timeless\\TimelessTemplate",
 					"responsive": true,
 					"styles": [
 						"skins.timeless"
@@ -54,7 +54,7 @@
 				"desktop",
 				"mobile"
 			],
-			"class": "TimelessVariablesModule",
+			"class": "MediaWiki\\Skin\\Timeless\\TimelessVariablesModule",
 			"features": {
 				"normalize": false,
 				"logo": true,
@@ -149,10 +149,8 @@
 			"+ext.wikiEditor.styles": "resources/extensions/WikiEditor.less"
 		}
 	},
-	"AutoloadClasses": {
-		"SkinTimeless": "includes/SkinTimeless.php",
-		"TimelessTemplate": "includes/TimelessTemplate.php",
-		"TimelessVariablesModule": "includes/TimelessVariablesModule.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Skin\\Timeless\\": "includes/"
 	},
 	"manifest_version": 2
 }

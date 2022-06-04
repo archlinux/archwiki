@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Pippinu",
 			"Santu",
 			"Sarvaturi",
-			"Tonyfroio",
-			"Ajeje Brazorf"
+			"Tonyfroio"
 		]
 	},
 	"skinname-monobook": "MonoBook",
@@ -17,5 +17,7 @@
 	"cactions-mobile": "Azzioni dâ pàggina",
 	"monobook-cactions-label": "Azzioni dâ pàggina",
 	"monobook-notifications-link": "Nutìfichi ($1)",
-	"monobook-notifications-link-none": "Nutìfichi"
+	"monobook-notifications-link-none": "Nutìfichi",
+	"monobook-view-history": "Crunuluggìa",
+	"monobook-action-undelete": "Annulla la cancillazzioni di {{PLURAL:$1|na virsioni|$1 virsioni}}"
 }

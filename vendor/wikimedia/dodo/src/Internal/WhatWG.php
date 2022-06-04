@@ -8,6 +8,7 @@ namespace Wikimedia\Dodo\Internal;
 
 use Wikimedia\Dodo\Attr;
 use Wikimedia\Dodo\Comment;
+use Wikimedia\Dodo\ContainerNode;
 use Wikimedia\Dodo\Document;
 use Wikimedia\Dodo\DocumentFragment;
 use Wikimedia\Dodo\DocumentType;
@@ -72,7 +73,7 @@ class WhatWG {
 			$node2 = $attr2->getOwnerElement();
 
 			if ( $attr1 !== null && $node1 !== null && $node2 === $node1 ) {
-				foreach ( $node2->attributes as $a ) {
+				foreach ( $node2->getAttributes() as $a ) {
 					if ( $a === $attr1 ) {
 						return Node::DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC + Node::DOCUMENT_POSITION_PRECEDING;
 					}
@@ -193,7 +194,7 @@ class WhatWG {
 			if ( $node->getNamespaceURI() !== null && $node->getPrefix() === $prefix ) {
 				return $node->getNamespaceURI();
 			}
-			foreach ( $node->attributes as $a ) {
+			foreach ( $node->getAttributes() as $a ) {
 				if ( $a->getNamespaceURI() === Util::NAMESPACE_XMLNS ) {
 					if ( ( $a->getPrefix() === 'xmlns' && $a->getLocalName() === $prefix )
 						 || ( $prefix === null && $a->getPrefix() === null && $a->getLocalName() === 'xmlns' ) ) {
@@ -250,7 +251,7 @@ class WhatWG {
 				return $node->getPrefix();
 			}
 
-			foreach ( $node->attributes as $a ) {
+			foreach ( $node->getAttributes() as $a ) {
 				if ( $a->getPrefix() === "xmlns" && $a->getValue() === $ns ) {
 					return $a->getLocalName();
 				}
@@ -281,11 +282,11 @@ class WhatWG {
 
 	/**
 	 * @param Node $child
-	 * @param Node $parent
+	 * @param ContainerNode $parent
 	 * @param ?Node $before
 	 * @param bool $replace
 	 */
-	public static function insert_before_or_replace( Node $child, Node $parent, ?Node $before, bool $replace ): void {
+	public static function insert_before_or_replace( Node $child, ContainerNode $parent, ?Node $before, bool $replace ): void {
 		/*
 		 * TODO: FACTOR: $before is intended to always be non-NULL
 		 * if $replace is true, but I think that could fail unless
@@ -309,6 +310,9 @@ class WhatWG {
 				// save this index
 				$ref_index = $before->_getSiblingIndex();
 			} else {
+				// phan can't tell that we've already tested $parent->_childNodes
+				// and know that it is non-null:
+				// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
 				$ref_index = count( $parent->_childNodes );
 			}
 			// If we are already a child of the specified parent, then the
@@ -360,6 +364,9 @@ class WhatWG {
 			}
 			if ( $parent->_childNodes !== null ) {
 				$firstIndex = ( $before === null ) ?
+					// phan can't tell that we've already tested
+					// $parent->_childNodes and know that it is non-null:
+					// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
 					count( $parent->_childNodes ) :
 					$before->_cachedSiblingIndex;
 				$parent->_childNodes->_splice(
@@ -647,7 +654,7 @@ class WhatWG {
 		 * DOM-LS: #1: If parent is not a Document, DocumentFragment,
 		 * or Element node, throw a HierarchyRequestError.
 		 */
-		switch ( $parent->nodeType ) {
+		switch ( $parent->getNodeType() ) {
 		case Node::DOCUMENT_NODE:
 		case Node::DOCUMENT_FRAGMENT_NODE:
 		case Node::ELEMENT_NODE:
@@ -767,7 +774,7 @@ class WhatWG {
 			}
 			/* #6b-2: DocumentType is following child. */
 			for ( $n = $child->getNextSibling(); $n !== null; $n = $n->getNextSibling() ) {
-				if ( $n->nodeType === Node::DOCUMENT_TYPE_NODE ) {
+				if ( $n->getNodeType() === Node::DOCUMENT_TYPE_NODE ) {
 					Util::error( "HierarchyRequestError" );
 				}
 			}
@@ -1158,6 +1165,7 @@ class WhatWG {
 						if (
 							$ignoreNamespaceDefinitionAttribute &&
 							// https://github.com/w3c/DOM-Parsing/issues/47
+							// @phan-suppress-next-line PhanCoalescingNeverNullInLoop Phan says getValue never returns null
 							( $attr->getValue() ?? '' ) !== ( $attr->getOwnerElement()->getNamespaceURI() ?? '' )
 						) {
 							continue;
@@ -1285,13 +1293,15 @@ class WhatWG {
 
 			$result[] = '<' . $tagname;
 
-			foreach ( $child->attributes as $a ) {
+			foreach ( $child->getAttributes() as $a ) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
 				$result[] = ' ' . self::_helper_attrname( $a );
 
 				/*
 				 * PORT: TODO: Need to ensure this value is NULL
 				 * rather than undefined?
 				 */
+				// @phan-suppress-next-line PhanImpossibleTypeComparisonInLoop Phan says getValue never returns null
 				if ( $a->getValue() !== null ) {
 					$result[] = '="' . self::_helper_escapeAttr( $a->getValue() ) . '"';
 				}

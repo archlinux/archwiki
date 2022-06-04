@@ -4,14 +4,14 @@
 			"Ahdan",
 			"C5st4wr6ch",
 			"Chinamoonroll",
+			"Daud I.F. Argana",
 			"Herryz",
 			"Hidayatsrf",
 			"Kenrick95",
 			"NoiX180",
 			"Rachmat04",
 			"Rizkiahmadz",
-			"William Surya Permana",
-			"Daud I.F. Argana"
+			"William Surya Permana"
 		]
 	},
 	"templatedata-desc": "Pengimplementasian penyimpanan data untuk parameter templat (dengan menggunakan JSON)",
@@ -94,7 +94,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Masukkan nama peta",
 	"templatedata-modal-search-input-placeholder": "Cari dengan nama atau kode bahasa",
 	"templatedata-modal-table-param-actions": "Tindakan",
-	"templatedata-modal-table-param-aliases": "Alias (pisahkan dengan koma)",
+	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Nilai otomatis",
 	"templatedata-modal-table-param-default": "Baku ($1)",
 	"templatedata-modal-table-param-deprecated": "Usang",

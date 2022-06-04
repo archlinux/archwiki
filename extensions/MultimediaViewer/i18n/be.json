@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Artsiom91",
-			"Chadyka"
+			"Chadyka",
+			"No Sleep till Krupki"
 		]
 	},
 	"multimediaviewer-desc": "Пашырае эскізы ў большы памер на ўвесь экран.",
@@ -41,9 +42,7 @@
 	"multimediaviewer-restriction-trademarked": "Гэта выява змяшчае матэрыял, які можа ахоўвацца законамі аб таварным знаку.",
 	"multimediaviewer-restriction-default": "Гэта выява можа быць абмежавана прававымі палажэннямі па-за законам аб аўтарскім праве. Глядзіце старонку апісання файла для падрабязнасцей.",
 	"multimediaviewer-restriction-default-and-others": "Гэта выява можа быць дадаткова абмежавана іншымі прававымі палажэннямі па-за законам аб аўтарскім праве. Глядзіце старонку апісання файла для падрабязнасцей.",
-	"multimediaviewer-about-mmv": "Пра гэты інтэрфейс",
-	"multimediaviewer-discuss-mmv": "Абмеркаванне",
-	"multimediaviewer-help-mmv": "Даведка",
+	"multimediaviewer-about-mmv": "Пра «Праглядчык медыяфайлаў»",
 	"multimediaviewer-optout-mmv": "Адключыць «Праглядальнік медыяфайлаў»",
 	"multimediaviewer-optin-mmv": "Уключыць «Праглядчык медыяфайлаў»",
 	"multimediaviewer-optout-pending-mmv": "Адключэнне «Праглядальніка медыяфайлаў»",

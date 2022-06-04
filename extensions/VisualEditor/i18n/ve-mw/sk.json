@@ -11,11 +11,11 @@
 			"Patrik L.",
 			"Robert Važan",
 			"Sudo77(new)",
+			"TMg",
 			"Teslaton",
 			"TomášPolonec",
 			"Vegetator",
-			"Yardom78",
-			"TMg"
+			"Yardom78"
 		]
 	},
 	"tooltip-ca-createsource": "Vytvoriť zdrojový kód tejto stránky",
@@ -181,7 +181,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Obrázky a multimédiá",
 	"visualeditor-dialogbutton-meta-tooltip": "Nastavenia stránky",
 	"visualeditor-dialogbutton-template-tooltip": "Šablóna",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Šablóna",
 	"visualeditor-donebutton-tooltip": "Editácia hotová",
 	"visualeditor-editconflict": "Zmeny nie je možné uložiť z dôvodu editačného konfliktu. Chcete vyriešiť editačný konflikt manuálne?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} si teraz pamätá, ktorý editor preferujete. Režim editácie môžete neskôr kedykoľvek zmeniť.",

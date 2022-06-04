@@ -31,16 +31,13 @@ OO.inheritClass( ve.ui.MWUseExistingReferenceCommand, ve.ui.Command );
  * @inheritdoc
  */
 ve.ui.MWUseExistingReferenceCommand.prototype.isExecutable = function ( fragment ) {
-	var groupName, groups;
-
 	// Parent method
 	if ( !ve.ui.MWUseExistingReferenceCommand.super.prototype.isExecutable.apply( this, arguments ) ) {
 		return false;
 	}
 
-	groups = fragment.getDocument().getInternalList().getNodeGroups();
-
-	for ( groupName in groups ) {
+	var groups = fragment.getDocument().getInternalList().getNodeGroups();
+	for ( var groupName in groups ) {
 		if ( groupName.lastIndexOf( 'mwReference/' ) === 0 && groups[ groupName ].indexOrder.length ) {
 			return true;
 		}

@@ -14,5 +14,7 @@
 	"monobook-more-actions": "Тагын",
 	"monobook-cactions-label": "Биттәге гамәлләр",
 	"monobook-notifications-link": "Хəбəрнамəләр ($1)",
-	"monobook-notifications-link-none": "Белдермәләр"
+	"monobook-notifications-link-none": "Белдермәләр",
+	"monobook-view-history": "Тарих",
+	"monobook-action-undelete": "$1 {{PLURAL:$1|төзәтмәне|$1 төзәтмә}} торгызу"
 }

@@ -4,5 +4,7 @@
 			"Къарачайлы"
 		]
 	},
-	"skinname-monobook": "Моно-китаб"
+	"skinname-monobook": "Моно-китаб",
+	"monobook-view-history": "Тарих",
+	"monobook-action-undelete": "{{PLURAL:$1|Бир тюрлендириуню$1 тюрлендириуню}} ызына сал"
 }

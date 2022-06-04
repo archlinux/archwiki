@@ -3,12 +3,13 @@
 		"authors": [
 			"Cekli829",
 			"NMW03",
-			"Wertuose"
+			"Wertuose",
+			"Serkanland"
 		]
 	},
 	"nuke": "Kütləvi silmə",
 	"action-nuke": "səhifələri kütləvi şəkildə silmək",
-	"nuke-desc": "İdarəçilərə [[Special:Nuke|səhifələri kütləvi şəkildə silmək]] hüququ verir.",
+	"nuke-desc": "İnzibatçılara [[Special:Nuke|səhifələri kütləvi şəkildə silmək]] hüququ verir.",
 	"nuke-nopages": "Son dəyişikliklərdə [[Special:Contributions/$1|{{GENDER:$1|$1}}]] tərəfindən yaradılmış yeni səhifə yoxdur.",
 	"nuke-list": "Aşağıdakı səhifələr [[Special:Contributions/$1|{{GENDER:$1|$1}}]] tərəfindən az öncə yaradılıb;\nsəbəbi yaz və silmək üçün düyməyə bas.",
 	"nuke-list-multiple": "Aşağıdakı səhifələr az öncə yaradılıb; \nsəbəbi yaz və silmək üçün düyməyə bas.",

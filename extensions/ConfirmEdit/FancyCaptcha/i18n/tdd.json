@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"咽頭べさ"
+		]
+	},
+	"fancycaptcha-captcha": "ᥐᥨᥖᥱᥖᥨᥭᥰ ᥘᥩᥒᥲᥞᥨᥛᥱᥘᥨᥛᥲ",
+	"fancycaptcha-accountcreate": "ᥖᥣᥱᥐᥦᥖᥱᥑᥦᥱ ᥟᥢᥴᥕᥣᥳᥐᥝᥰᥝᥤᥱᥑᥤᥱ ᥛᥫᥲᥞᥥᥖᥰᥟᥑᥩᥒᥳ, ᥞᥝᥰᥑᥬᥲᥖᥧᥐᥰᥕᥩᥢᥰ ᥓᥝᥲᥐᥝᥱ ᥞᥬᥲᥔᥬᥱᥙᥢᥴ ᥖᥨᥝᥴᥘᥤᥐᥲ ᥓᥫᥰᥟᥩᥐᥱᥛᥣᥰ ᥖᥤᥲᥢᥬᥰᥘᥩᥐᥰᥖᥬᥲᥢᥭᥳ ([[Special:Captcha/help|more info]]):",
+	"fancycaptcha-imgcaptcha-ph": "ᥙᥩᥳᥔᥬᥱᥙᥢᥴᥘᥤᥐᥲ ᥟᥢᥴᥓᥝᥲᥐᥝᥱ ᥘᥭᥲᥞᥢᥴ ᥐᥣᥲᥖᥤᥲᥢᥫᥴ ᥑᥦᥙᥰᥞᥣᥒᥲ",
+	"fancycaptcha-reload-text": "ᥑᥪᥢᥰᥔᥣᥢᥳ"
+}

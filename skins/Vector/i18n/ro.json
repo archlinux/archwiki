@@ -19,6 +19,8 @@
 	"vector-opt-out-tooltip": "Schimbați-vă preferințele pentru a trece la aspectul vechi al skinului Vector",
 	"vector.css": "/* CSS plasate aici vor afecta utilizatorii stilului Vector */",
 	"vector-action-toggle-sidebar": "Arată/ascunde bara laterală",
+	"vector-languages": "Limbi",
+	"vector-language-button-aria-label": "Mergeți la un articol în altă limbă. Disponibil în {{PLURAL:$1|$1 limbă|$1 limbi}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 limbă|$1 limbi}}",
 	"vector-action-addsection": "Adăugare subiect",
 	"vector-action-delete": "Ștergere",
@@ -36,6 +38,7 @@
 	"vector-jumptocontent": "Sari la conținut",
 	"vector-more-actions": "Mai mult",
 	"vector-search-loader": "Se încarcă sugestiile de căutare",
+	"vector-searchsuggest-containing": "Căutați după pagini care conțin <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
 	"vector-anon-user-menu-pages": "Pagini pentru editorii neautentificați",
 	"vector-anon-user-menu-pages-learn": "aflați mai mult",
 	"vector-anon-user-menu-pages-label": "Aflați mai mult despre editare"

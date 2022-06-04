@@ -1,0 +1,24 @@
+{
+	"@metadata": {
+		"authors": [
+			"Macofe",
+			"PiefPafPier",
+			"Pyt",
+			"Robin van der Vliet",
+			"Robin0van0der0vliet",
+			"Snakesteuben"
+		]
+	},
+	"math-visualeditor-mwchemdialog-title": "Skiekundeformule",
+	"math-visualeditor-mwcheminspector-title": "Skiekundeformule",
+	"math-visualeditor-mwlatexinspector-display-default": "Standert",
+	"math-visualeditor-mwmathdialog-title": "Wiskundeformule",
+	"math_failure": "Untsjutbere formule",
+	"math_syntax_error": "Sinboufout",
+	"math_unknown_error": "Unbekinde fout",
+	"math_unknown_function": "unbekinde funksje \"$1\"",
+	"mw_math_mathml": "MathML mei SVG- as PNG-tebekfal (oanbefelle foar moderne webblêders en tagonklikenshelpmiddels)",
+	"mw_math_png": "PNG-ôfbyldings",
+	"mw_math_source": "LaTeX-boarne (foar tekstblêders)",
+	"prefs-math": "Formules"
+}

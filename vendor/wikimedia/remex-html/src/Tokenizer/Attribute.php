@@ -24,6 +24,3 @@ class Attribute {
 		$this->value = $value;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Attribute::class, 'RemexHtml\Tokenizer\Attribute' );

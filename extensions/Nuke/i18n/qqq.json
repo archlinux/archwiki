@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Jeroen De Dauw",
 			"Jon Harald Søby",
 			"Liuxinyu970226",
@@ -13,8 +14,7 @@
 			"TTO",
 			"The Evil IP address",
 			"Umherirrender",
-			"Yekrats",
-			"Amire80"
+			"Yekrats"
 		]
 	},
 	"nuke": "{{doc-special|Nuke}}\nThe Nuke extension allows for sysops to delete a large number of pages (\"Mass delete\").\nFor more information, see https://www.mediawiki.org/wiki/Extension:Nuke\n{{Identical|Mass delete}}",

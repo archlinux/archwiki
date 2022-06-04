@@ -4,17 +4,17 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Html2Wt;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 /*
  * Tag minimization
@@ -51,13 +51,11 @@ class DOMNormalizer {
 
 	private static $specializedAttribHandlers;
 
-	/**
-	 * @var Env
-	 */
-	private $env;
-
-	private $inSelserMode;
+	/** @var bool */
 	private $inInsertedContent;
+
+	/** @var SerializerState */
+	private $state;
 
 	/**
 	 * @param SerializerState $state
@@ -71,8 +69,8 @@ class DOMNormalizer {
 			];
 		}
 
-		$this->env = $state->getEnv();
-		$this->inSelserMode = $state->selserMode;
+		$this->state = $state;
+
 		$this->inInsertedContent = false;
 	}
 
@@ -105,7 +103,8 @@ class DOMNormalizer {
 		}
 	}
 
-	/** Can a and b be merged into a single node?
+	/**
+	 * Can a and b be merged into a single node?
 	 * @param Node $a
 	 * @param Node $b
 	 * @return bool
@@ -144,7 +143,7 @@ class DOMNormalizer {
 	 */
 	private function isInsertedContent( Node $node ): bool {
 		while ( true ) {
-			if ( DiffUtils::hasInsertedDiffMark( $node, $this->env ) ) {
+			if ( DiffUtils::hasInsertedDiffMark( $node, $this->state->getEnv() ) ) {
 				return true;
 			}
 			if ( DOMUtils::atTheTop( $node ) ) {
@@ -160,7 +159,7 @@ class DOMNormalizer {
 	 * @return bool
 	 */
 	private function rewriteablePair( Node $a, Node $b ): bool {
-		if ( isset( WikitextConstants::$WTQuoteTags[DOMCompat::nodeName( $a )] ) ) {
+		if ( isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $a )] ) ) {
 			// For <i>/<b> pair, we need not check whether the node being transformed
 			// are new / edited, etc. since these minimization scenarios can
 			// never show up in HTML that came from parsed wikitext.
@@ -175,9 +174,8 @@ class DOMNormalizer {
 			// didn't originate from wikitext OR the HTML has been subsequently edited.
 			// In both cases, we want to transform the DOM.
 
-			return isset( WikitextConstants::$WTQuoteTags[DOMCompat::nodeName( $b )] );
-		} elseif ( $this->env->shouldScrubWikitext() && DOMCompat::nodeName( $a ) === 'a' ) {
-			// Link merging is only supported in scrubWikitext mode.
+			return isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $b )] );
+		} elseif ( DOMCompat::nodeName( $a ) === 'a' ) {
 			// For <a> tags, we require at least one of the two tags
 			// to be a newly created element.
 			return DOMCompat::nodeName( $b ) === 'a' && ( WTUtils::isNewElt( $a ) || WTUtils::isNewElt( $b ) );
@@ -191,8 +189,8 @@ class DOMNormalizer {
 	 * @param bool $dontRecurse
 	 */
 	public function addDiffMarks( Node $node, string $mark, bool $dontRecurse = false ): void {
-		$env = $this->env;
-		if ( !$this->inSelserMode || DiffUtils::hasDiffMark( $node, $env, $mark ) ) {
+		$env = $this->state->getEnv();
+		if ( !$this->state->selserMode || DiffUtils::hasDiffMark( $node, $env, $mark ) ) {
 			return;
 		}
 
@@ -215,7 +213,7 @@ class DOMNormalizer {
 
 		// Walk up the subtree and add 'subtree-changed' markers
 		$node = $node->parentNode;
-		while ( DOMUtils::isElt( $node ) && !DOMUtils::atTheTop( $node ) ) {
+		while ( $node instanceof Element && !DOMUtils::atTheTop( $node ) ) {
 			if ( DiffUtils::hasDiffMark( $node, $env, 'subtree-changed' ) ) {
 				return;
 			}
@@ -330,7 +328,7 @@ class DOMNormalizer {
 			}
 
 			// and drop any leading whitespace
-			if ( DOMUtils::isText( $sibling ) ) {
+			if ( $sibling instanceof Text ) {
 				$sibling->nodeValue = $rtl ? rtrim( $sibling->nodeValue ) : ltrim( $sibling->nodeValue );
 			}
 
@@ -354,12 +352,11 @@ class DOMNormalizer {
 		$autoInserted = isset( $dp->autoInsertedStart ) || isset( $dp->autoInsertedEnd );
 
 		$strippable =
-			DOMUtils::nodeEssentiallyEmpty( $node, false ) &&
+			DOMUtils::nodeEssentiallyEmpty( $node, false );
 			// Ex: "<a..>..</a><b></b>bar"
 			// From [[Foo]]<b/>bar usage found on some dewiki pages.
 			// FIXME: Should we enable this?
-			// @phan-suppress-next-line PhanImpossibleCondition
-			!( false /* used to be rt-test mode */ && ( $dp->stx ?? null ) === 'html' );
+			// !( false /* used to be rt-test mode */ && ( $dp->stx ?? null ) === 'html' );
 
 		if ( $strippable ) {
 			// Update diff markers (before the deletion)
@@ -378,14 +375,14 @@ class DOMNormalizer {
 		$next = DOMUtils::nextNonDeletedSibling( $node );
 		$last = DOMUtils::lastNonDeletedChild( $node );
 		$matches = null;
-		if ( DOMUtils::isText( $last ) &&
+		if ( $last instanceof Text &&
 			preg_match( '/\s+$/D', $last->nodeValue, $matches ) > 0
 		) {
 			$trailing = $matches[0];
 			$last->nodeValue = substr( $last->nodeValue, 0, -strlen( $trailing ) );
 			// Try to be a little smarter and drop the spaces if possible.
-			if ( $next && ( !DOMUtils::isText( $next ) || !preg_match( '/^\s+/', $next->nodeValue ) ) ) {
-				if ( !DOMUtils::isText( $next ) ) {
+			if ( $next && ( !( $next instanceof Text ) || !preg_match( '/^\s+/', $next->nodeValue ) ) ) {
+				if ( !( $next instanceof Text ) ) {
 					$txt = $node->ownerDocument->createTextNode( '' );
 					$node->parentNode->insertBefore( $txt, $next );
 					$next = $txt;
@@ -424,7 +421,7 @@ class DOMNormalizer {
 	 * @return Node|null
 	 */
 	public function stripBidiCharsAroundCategories( Node $node ): ?Node {
-		if ( !DOMUtils::isText( $node ) ||
+		if ( !( $node instanceof Text ) ||
 			( !WTUtils::isCategoryLink( $node->previousSibling ) &&
 				!WTUtils::isCategoryLink( $node->nextSibling ) )
 		) {
@@ -445,7 +442,7 @@ class DOMNormalizer {
 
 			if ( $oldLength !== $newLength ) {
 				// Log changes for editors benefit
-				$this->env->log( 'warn/html2wt/bidi',
+				$this->state->getEnv()->log( 'warn/html2wt/bidi',
 					'LRM/RLM unicode chars stripped around categories'
 				);
 			}
@@ -488,7 +485,7 @@ class DOMNormalizer {
 		}
 
 		if ( !$node->hasAttribute( 'href' ) ) {
-			$this->env->log(
+			$this->state->getEnv()->log(
 				'error/normalize',
 				'href is missing from a tag',
 				DOMCompat::getOuterHTML( $node )
@@ -523,7 +520,7 @@ class DOMNormalizer {
 	}
 
 	/**
-	 * scrubWikitext normalizations implemented right now:
+	 * Wikitext normalizations implemented right now:
 	 *
 	 * 1. Tag minimization (I/B tags) in normalizeSiblingPair
 	 * 2. Strip empty headings and style tags
@@ -565,14 +562,9 @@ class DOMNormalizer {
 			}
 		}
 
-		// The following are done only if scrubWikitext flag is enabled
-		if ( !$this->env->shouldScrubWikitext() ) {
-			return $node;
-		}
-
 		$next = null;
 
-		if ( $this->env->getSiteConfig()->scrubBidiChars() ) {
+		if ( $this->state->getEnv()->getSiteConfig()->scrubBidiChars() ) {
 			// Strip bidirectional chars around categories
 			// Note that this is being done everywhere,
 			// not just in selser mode
@@ -583,11 +575,12 @@ class DOMNormalizer {
 		}
 
 		// Skip unmodified content
-		if ( $this->inSelserMode && !DOMUtils::atTheTop( $node ) &&
-			!$this->inInsertedContent && !DiffUtils::hasDiffMarkers( $node, $this->env ) &&
+		if ( $this->state->selserMode && !DOMUtils::atTheTop( $node ) &&
+			!$this->inInsertedContent &&
+			!DiffUtils::hasDiffMarkers( $node, $this->state->getEnv() ) &&
 			// If orig-src is not valid, this in effect becomes
 			// an edited node and needs normalizations applied to it.
-			WTSUtils::origSrcValidInEditedContext( $this->env, $node )
+			WTSUtils::origSrcValidInEditedContext( $this->state, $node )
 		) {
 			return $node;
 		}
@@ -598,10 +591,11 @@ class DOMNormalizer {
 			$this->hoistLinks( $node, false );
 			$this->hoistLinks( $node, true );
 			$this->stripBRs( $node );
+
 			return $this->stripIfEmpty( $node );
 
 			// Quote tags
-		} elseif ( isset( WikitextConstants::$WTQuoteTags[DOMCompat::nodeName( $node )] ) ) {
+		} elseif ( isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $node )] ) ) {
 			return $this->stripIfEmpty( $node );
 
 			// Anchors
@@ -612,10 +606,13 @@ class DOMNormalizer {
 			// the case of links without any annotations,
 			// the positive test is semantically safer than the
 			// negative test.
-			if ( $node->getAttribute( 'rel' ) === 'mw:WikiLink' && $this->stripIfEmpty( $node ) !== $node ) {
+			if ( $node->getAttribute( 'rel' ) === 'mw:WikiLink' &&
+				$this->stripIfEmpty( $node ) !== $node
+			) {
 				return $next;
 			}
 			$this->moveTrailingSpacesOut( $node );
+
 			return $this->moveFormatTagOutsideATag( $node );
 
 			// Table cells
@@ -628,18 +625,18 @@ class DOMNormalizer {
 			// won't have escapable prefixes.
 			$stx = $dp->stx ?? null;
 			if ( $stx === 'html' ||
-				( DOMUtils::firstNonSepChild( $node->parentNode ) !== $node && $stx === 'row' )
-			) {
+				( DOMUtils::firstNonSepChild( $node->parentNode ) !== $node && $stx === 'row' ) ) {
 				return $node;
 			}
 
 			$first = DOMUtils::firstNonDeletedChild( $node );
 			// Emit a space before escapable prefix
 			// This is preferable to serializing with a nowiki.
-			if ( DOMUtils::isText( $first ) && strspn( $first->nodeValue, '-+}', 0, 1 ) ) {
+			if ( $first instanceof Text && strspn( $first->nodeValue, '-+}', 0, 1 ) ) {
 				$first->nodeValue = ' ' . $first->nodeValue;
 				$this->addDiffMarks( $first, 'inserted', true );
 			}
+
 			return $node;
 
 			// Font tags without any attributes
@@ -647,46 +644,60 @@ class DOMNormalizer {
 			$next = DOMUtils::nextNonDeletedSibling( $node );
 			DOMUtils::migrateChildren( $node, $node->parentNode, $node );
 			$node->parentNode->removeChild( $node );
+
 			return $next;
-
-			// T184755: Convert sequences of <p></p> nodes to sequences of
-			// <br/>, <p><br/>..other content..</p>, <p><br/><p/> to ensure
-			// they serialize to as many newlines as the count of <p></p> nodes.
-		} elseif ( $node instanceof Element && DOMCompat::nodeName( $node ) === 'p' &&
-			!WTUtils::isLiteralHTMLNode( $node ) &&
-			// Don't apply normalization to <p></p> nodes that
-			// were generated through deletions or other normalizations.
-			// FIXME: This trick fails for non-selser mode since
-			// diff markers are only added in selser mode.
-			DOMUtils::hasNChildren( $node, 0, true ) &&
-			// FIXME: Also, skip if this is the only child.
-			// Eliminates spurious test failures in non-selser mode.
-			!DOMUtils::hasNChildren( $node->parentNode, 1 )
-		) {
+		} elseif ( $node instanceof Element && DOMCompat::nodeName( $node ) === 'p'
+			&& !WTUtils::isLiteralHTMLNode( $node ) ) {
 			$next = DOMUtils::nextNonSepSibling( $node );
-			if ( $next && DOMCompat::nodeName( $next ) === 'p' && !WTUtils::isLiteralHTMLNode( $next ) ) {
-				// Replace 'node' (<p></p>) with a <br/> and make it the
-				// first child of 'next' (<p>..</p>). If 'next' was actually
-				// a <p></p> (i.e. empty), 'next' becomes <p><br/></p>
-				// which will serialize to 2 newlines.
-				$br = $node->ownerDocument->createElement( 'br' );
-				$next->insertBefore( $br, $next->firstChild );
-
-				// Avoid nested insertion markers
-				if ( !$this->isInsertedContent( $next ) ) {
-					$this->addDiffMarks( $br, 'inserted' );
-				}
-
-				// Delete node
-				$this->addDiffMarks( $node->parentNode, 'deleted' );
+			// Normalization of <p></p>, <p><br/></p>, <p><meta/></p> and the like to avoid
+			// extraneous new lines
+			if ( DOMUtils::hasNChildren( $node, 1 ) &&
+				WTUtils::isMarkerAnnotation( $node->firstChild )
+			) {
+				// Converts <p><meta /></p> (where meta is an annotation tag) to <meta /> without
+				// the wrapping <p> (that would typically be added by VE) to avoid getting too many
+				// newlines.
+				$ann = $node->firstChild;
+				DOMUtils::migrateChildren( $node, $node->parentNode, $node );
 				$node->parentNode->removeChild( $node );
+				return $ann;
+			} elseif (
+				// Don't apply normalization to <p></p> nodes that
+				// were generated through deletions or other normalizations.
+				// FIXME: This trick fails for non-selser mode since
+				// diff markers are only added in selser mode.
+				DOMUtils::hasNChildren( $node, 0, true ) &&
+				// FIXME: Also, skip if this is the only child.
+				// Eliminates spurious test failures in non-selser mode.
+				!DOMUtils::hasNChildren( $node->parentNode, 1 )
+			) {
+				// T184755: Convert sequences of <p></p> nodes to sequences of
+				// <br/>, <p><br/>..other content..</p>, <p><br/><p/> to ensure
+				// they serialize to as many newlines as the count of <p></p> nodes.
+				// Also handles <p><meta/></p> case for annotations.
+				if ( $next && DOMCompat::nodeName( $next ) === 'p' &&
+					!WTUtils::isLiteralHTMLNode( $next ) ) {
+					// Replace 'node' (<p></p>) with a <br/> and make it the
+					// first child of 'next' (<p>..</p>). If 'next' was actually
+					// a <p></p> (i.e. empty), 'next' becomes <p><br/></p>
+					// which will serialize to 2 newlines.
+					$br = $node->ownerDocument->createElement( 'br' );
+					$next->insertBefore( $br, $next->firstChild );
+
+					// Avoid nested insertion markers
+					if ( !$this->isInsertedContent( $next ) ) {
+						$this->addDiffMarks( $br, 'inserted' );
+					}
+
+					// Delete node
+					$this->addDiffMarks( $node->parentNode, 'deleted' );
+					$node->parentNode->removeChild( $node );
+				}
 			} else {
 				// We cannot merge the <br/> with 'next' because
 				// it is not a <p>..</p>.
 			}
-
 			return $next;
-
 		}
 		// Default
 		return $node;
@@ -797,22 +808,23 @@ class DOMNormalizer {
 			}
 
 			// Set insertion marker
-			$insertedSubtree = DiffUtils::hasInsertedDiffMark( $node, $this->env );
+			$insertedSubtree = DiffUtils::hasInsertedDiffMark( $node, $this->state->getEnv() );
 			if ( $insertedSubtree ) {
 				if ( $this->inInsertedContent ) {
 					// Dump debugging info
-					$options = [ 'storeDiffMark' => true, 'env' => $this->env, 'outBuffer' => [] ];
-					ContentUtils::dumpDOM( DOMCompat::getBody( $node->ownerDocument ),
+					$options = [ 'storeDiffMark' => true ];
+					$dump = ContentUtils::dumpDOM(
+						DOMCompat::getBody( $node->ownerDocument ),
 						'-- DOM triggering nested inserted dom-diff flags --',
 						$options
 					);
-					$this->env->log( 'error/html2wt/dom',
+					$this->state->getEnv()->log( 'error/html2wt/dom',
 						"--- Nested inserted dom-diff flags ---\n",
 						'Node:',
-						( DOMUtils::isElt( $node ) ) ? ContentUtils::ppToXML( $node ) : $node->textContent,
+						$node instanceof Element ? ContentUtils::ppToXML( $node ) : $node->textContent,
 						"\nNode's parent:",
 						ContentUtils::ppToXML( $node->parentNode ),
-						$options['outBuffer']
+						$dump
 					);
 				}
 				// FIXME: If this assert is removed, the above dumping code should
@@ -823,7 +835,7 @@ class DOMNormalizer {
 
 			// Post-order traversal: Process subtree first, and current node after.
 			// This lets multiple normalizations take effect cleanly.
-			if ( $recurse && DOMUtils::isElt( $node ) ) {
+			if ( $recurse && $node instanceof Element ) {
 				$this->processSubtree( $node, true );
 			}
 
@@ -847,9 +859,8 @@ class DOMNormalizer {
 
 	/**
 	 * @param Element|DocumentFragment $node
-	 * @return Node
 	 */
-	public function normalize( Node $node ): Node {
-		return $this->processNode( $node, true );
+	public function normalize( Node $node ) {
+		$this->processNode( $node, true );
 	}
 }

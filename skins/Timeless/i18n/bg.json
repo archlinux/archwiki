@@ -26,5 +26,7 @@
 	"timeless-pagetools": "Действия на страницата",
 	"timeless-languages": "Езици",
 	"timeless-projects": "Други проекти",
-	"timeless.js": "/* Всичкият JavaScript тук ще бъде зареден за потребители, използващи облика Timeless */"
+	"timeless.js": "/* Всичкият JavaScript тук ще бъде зареден за потребители, използващи облика Timeless */",
+	"timeless-view-history": "История",
+	"timeless-action-undelete": "Възстановяване на {{PLURAL:$1|една редакция|$1 редакции}}"
 }

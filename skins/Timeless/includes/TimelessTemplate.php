@@ -5,7 +5,17 @@
  * @ingroup Skins
  */
 
+namespace MediaWiki\Skin\Timeless;
+
+use BaseTemplate;
+use File;
+use Html;
+use Linker;
 use MediaWiki\MediaWikiServices;
+use MWDebug;
+use ResourceLoaderSkinModule;
+use Sanitizer;
+use SpecialPage;
 
 class TimelessTemplate extends BaseTemplate {
 
@@ -122,20 +132,13 @@ class TimelessTemplate extends BaseTemplate {
 	 * @return string html
 	 */
 	protected function getContentBlock() {
+		$templateData = $this->getSkin()->getTemplateData();
 		$html = Html::rawElement(
 			'div',
 			[ 'id' => 'content', 'class' => 'mw-body',  'role' => 'main' ],
 			$this->getSiteNotices() .
 			$this->getIndicators() .
-			Html::rawElement(
-				'h1',
-				[
-					'id' => 'firstHeading',
-					'class' => 'firstHeading',
-					'lang' => $this->get( 'pageLanguage' )
-				],
-				$this->get( 'title' )
-			) .
+			$templateData[ 'html-title-heading' ] .
 			Html::rawElement( 'div', [ 'id' => 'bodyContentOuter' ],
 				Html::rawElement( 'div', [ 'id' => 'siteSub' ], $this->getMsg( 'tagline' )->parse() ) .
 				Html::rawElement( 'div', [ 'id' => 'mw-page-header-links' ],
@@ -558,9 +561,7 @@ class TimelessTemplate extends BaseTemplate {
 	 * @return string html
 	 */
 	protected function getSearch() {
-		$html = '';
-
-		$html .= Html::openElement( 'div', [ 'class' => 'mw-portlet', 'id' => 'p-search' ] );
+		$html = Html::openElement( 'div', [ 'class' => 'mw-portlet', 'id' => 'p-search' ] );
 
 		$html .= Html::rawElement(
 			'h3',
@@ -587,9 +588,7 @@ class TimelessTemplate extends BaseTemplate {
 			)
 		);
 
-		$html .= Html::closeElement( 'div' );
-
-		return $html;
+		return $html . Html::closeElement( 'div' );
 	}
 
 	/**
@@ -615,9 +614,7 @@ class TimelessTemplate extends BaseTemplate {
 			$html .= $this->getPortlet( $name, $content );
 		}
 
-		$html = $this->getSidebarChunk( 'site-navigation', 'navigation', $html );
-
-		return $html;
+		return $this->getSidebarChunk( 'site-navigation', 'navigation', $html );
 	}
 
 	/**
@@ -656,9 +653,8 @@ class TimelessTemplate extends BaseTemplate {
 	 * @return string html
 	 */
 	protected function getPageToolSidebar() {
-		$pageTools = '';
 		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
-		$pageTools .= $this->getPortlet(
+		$pageTools = $this->getPortlet(
 			'cactions',
 			$this->pileOfTools['page-secondary'],
 			'timeless-pageactions'
@@ -697,7 +693,6 @@ class TimelessTemplate extends BaseTemplate {
 		// Preserve standard username label to allow customisation (T215822)
 		$userName = $personalTools['userpage']['links'][0]['text'] ?? $user->getName();
 
-		$html = '';
 		$extraTools = [];
 
 		// Remove anon placeholder
@@ -732,7 +727,7 @@ class TimelessTemplate extends BaseTemplate {
 			$dropdownHeader = $this->getMsg( 'timeless-anonymous' )->text();
 			$headerMsg = 'timeless-notloggedin';
 		}
-		$html .= Html::openElement( 'div', [ 'id' => 'user-tools' ] );
+		$html = Html::openElement( 'div', [ 'id' => 'user-tools' ] );
 
 		$html .= Html::rawElement( 'div', [ 'id' => 'personal' ],
 			Html::rawElement( 'h2', [],
@@ -789,18 +784,14 @@ class TimelessTemplate extends BaseTemplate {
 	 * @return string html
 	 */
 	protected function getContentSub() {
-		$html = '';
-
-		$html .= Html::openElement( 'div', [ 'id' => 'contentSub' ] );
+		$html = Html::openElement( 'div', [ 'id' => 'contentSub' ] );
 		if ( $this->data['subtitle'] ) {
 			$html .= $this->get( 'subtitle' );
 		}
 		if ( $this->data['undelete'] ) {
 			$html .= $this->get( 'undelete' );
 		}
-		$html .= Html::closeElement( 'div' );
-
-		return $html;
+		return $html . Html::closeElement( 'div' );
 	}
 
 	/**
@@ -851,7 +842,14 @@ class TimelessTemplate extends BaseTemplate {
 
 		// Tools specific to the page
 		$pileOfEditTools = [];
-		foreach ( $this->data['content_navigation'] as $navKey => $navBlock ) {
+		$contentNavigation = $this->data['content_navigation'];
+		// T300100: Do not use categories here. Already added to sidebar
+		unset(
+			$contentNavigation['category-normal'],
+			$contentNavigation['category-hidden']
+		);
+
+		foreach ( $contentNavigation as $navKey => $navBlock ) {
 			// Just use namespaces items as they are
 			if ( $navKey == 'namespaces' ) {
 				if ( $namespace < 0 && count( $navBlock ) < 2 ) {
@@ -899,8 +897,6 @@ class TimelessTemplate extends BaseTemplate {
 		// This is really dumb, and you're an idiot for doing it this way.
 		// Obviously if you're not the idiot who did this, I don't mean you.
 		foreach ( $pileOfEditTools as $navKey => $navBlock ) {
-			$currentSet = null;
-
 			if ( in_array( $navKey, [
 				'watch',
 				'unwatch'
@@ -995,7 +991,6 @@ class TimelessTemplate extends BaseTemplate {
 		$skin = $this->getSkin();
 		$catHeader = 'categories';
 		$catList = '';
-		$html = '';
 
 		$allCats = $skin->getOutput()->getCategoryLinks();
 		if ( !empty( $allCats ) ) {
@@ -1032,10 +1027,10 @@ class TimelessTemplate extends BaseTemplate {
 		}
 
 		if ( $catList !== '' ) {
-			$html = $this->getSidebarChunk( 'catlinks-sidebar', $catHeader, $catList );
+			return $this->getSidebarChunk( 'catlinks-sidebar', $catHeader, $catList );
 		}
 
-		return $html;
+		return '';
 	}
 
 	/**
@@ -1065,9 +1060,7 @@ class TimelessTemplate extends BaseTemplate {
 		// @phan-suppress-next-line SecurityCheck-DoubleEscaped
 		$html .= $this->getPortlet( $id, $categoriesHtml, $message );
 
-		$html .= Html::closeElement( 'div' );
-
-		return $html;
+		return $html . Html::closeElement( 'div' );
 	}
 
 	/**

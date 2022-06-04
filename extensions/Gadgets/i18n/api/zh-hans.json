@@ -3,9 +3,9 @@
 		"authors": [
 			"Dimension",
 			"Liuxinyu970226",
+			"SolidBlock",
 			"Yfdyh000",
-			"御坂美琴",
-			"SolidBlock"
+			"御坂美琴"
 		]
 	},
 	"apihelp-query+gadgetcategories-description": "返回小工具分类列表。",

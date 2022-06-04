@@ -178,8 +178,8 @@ class Tag {
 	 * @return $this
 	 */
 	public function removeContent( ...$content ) {
-		if ( is_array( $content[ 0 ] ) ) {
-			$content = $content[ 0 ];
+		if ( $content && is_array( $content[ 0 ] ) ) {
+			return $this->removeContent( ...$content[0] );
 		}
 		foreach ( $content as $item ) {
 			if ( !is_string( $item ) ) {
@@ -209,15 +209,14 @@ class Tag {
 	 * Objects that are already in $this->content will be moved
 	 * to the end of the list, not duplicated.
 	 *
-	 * @param string|Tag|HtmlSnippet|array $content Can be an array only if no $params are passed.
-	 * @param string|Tag|HtmlSnippet ...$params Content to append
+	 * @param string|Tag|HtmlSnippet|array ...$content Content to append
 	 * @return $this
 	 */
-	public function appendContent( $content, ...$params ) {
-		if ( !is_array( $content ) ) {
-			$content = func_get_args();
+	public function appendContent( ...$content ) {
+		if ( $content && is_array( $content[ 0 ] ) ) {
+			return $this->appendContent( ...$content[0] );
 		}
-		$this->removeContent( $content );
+		$this->removeContent( ...$content );
 		$this->content = array_merge( $this->content, $content );
 		return $this;
 	}
@@ -237,15 +236,15 @@ class Tag {
 	 * This, however, is not acceptable
 	 * * $tag->prependContent( [ $element1, $element2 ], $element3 );
 	 *
-	 * @param string|Tag|HtmlSnippet ...$content Content to prepend. Strings will be HTML-escaped
+	 * @param string|Tag|HtmlSnippet|array ...$content Content to prepend. Strings will be HTML-escaped
 	 *   for output, use a HtmlSnippet instance to prevent that.
 	 * @return $this
 	 */
 	public function prependContent( ...$content ) {
-		if ( is_array( $content[ 0 ] ) ) {
-			$content = $content[ 0 ];
+		if ( $content && is_array( $content[ 0 ] ) ) {
+			return $this->prependContent( ...$content[0] );
 		}
-		$this->removeContent( $content );
+		$this->removeContent( ...$content );
 		array_splice( $this->content, 0, 0, $content );
 		return $this;
 	}
@@ -452,7 +451,7 @@ class Tag {
 			// Use single-quotes around the attribute value in HTML, because
 			// some of the values might be JSON strings
 			// 1. Encode both single and double quotes (and other special chars)
-			$value = htmlspecialchars( $value, ENT_QUOTES );
+			$value = htmlspecialchars( $value ?? '', ENT_QUOTES );
 			// 2. Decode double quotes, for readability.
 			$value = str_replace( '&quot;', '"', $value );
 			// 3. Wrap attribute value in single quotes in the HTML.
@@ -484,7 +483,8 @@ class Tag {
 	/**
 	 * Magic method implementation.
 	 *
-	 * PHP doesn't allow __toString to throw exceptions and will trigger a fatal error if it does.
+	 * It was not possible to throw an exception from within a __toString() method prior to PHP 7.4.0.
+	 * Doing so will result in a fatal error.
 	 * This is a wrapper around the real toString() to convert them to errors instead.
 	 *
 	 * @return string
@@ -494,7 +494,6 @@ class Tag {
 			return $this->toString();
 		} catch ( Exception $ex ) {
 			trigger_error( (string)$ex, E_USER_ERROR );
-			return '';
 		}
 	}
 }

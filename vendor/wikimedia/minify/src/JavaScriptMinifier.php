@@ -1195,22 +1195,6 @@ class JavaScriptMinifier {
 	];
 
 	/**
-	 * @var array $expressionStates
-	 *
-	 * States that are like EXPRESSION, where true and false can be minified to !1 and !0.
-	 *
-	 * This array is augmented by self::ensureExpandedStates().
-	 */
-	private static $expressionStates = [
-		self::EXPRESSION           => true,
-		self::EXPRESSION_NO_NL     => true,
-		self::EXPRESSION_ARROWFUNC => true,
-		self::EXPRESSION_TERNARY   => true,
-		self::PAREN_EXPRESSION     => true,
-		self::PROPERTY_EXPRESSION  => true,
-	];
-
-	/**
 	 * Add copies of all states but with negative numbers to self::$model (if not already present),
 	 * to represent generator function states.
 	 */
@@ -1253,9 +1237,6 @@ class JavaScriptMinifier {
 		}
 		foreach ( self::$divStates as $state => $value ) {
 			self::$divStates[-$state] = $value;
-		}
-		foreach ( self::$expressionStates as $state => $value ) {
-			self::$expressionStates[-$state] = $value;
 		}
 	}
 
@@ -1341,7 +1322,8 @@ class JavaScriptMinifier {
 					$end--;
 				}
 
-			// Handle template strings: beginning (`) or continuation after a ${ expression (} + tail state)
+			// Handle template strings, either from "`" to begin a new string,
+			// or continuation after the "}" that ends a "${"-expression.
 			} elseif ( $ch === '`' || ( $ch === '}' && $topOfStack === self::TEMPLATE_STRING_TAIL ) ) {
 				if ( $ch === '}' ) {
 					// Pop the TEMPLATE_STRING_TAIL state off the stack
@@ -1356,6 +1338,13 @@ class JavaScriptMinifier {
 				// and $ characters followed by something other than { or `
 				do {
 					$end += strcspn( $s, '`$\\', $end ) + 1;
+					if ( $end - 1 < $length && $s[$end - 1] === '`' ) {
+						// End of the string, stop
+						// We don't do this in the while() condition because the $end++ in the
+						// backslash escape branch makes it difficult to do so without incorrectly
+						// considering an escaped backtick (\`) the end of the string
+						break;
+					}
 					if ( $end - 1 < $length && $s[$end - 1] === '\\' ) {
 						// Backslash escape. Skip the next character, and keep going
 						$end++;
@@ -1374,9 +1363,9 @@ class JavaScriptMinifier {
 						$state = self::TEMPLATE_STRING_HEAD;
 						break;
 					}
-				} while ( $end - 1 < $length && $s[$end - 1] !== '`' );
+				} while ( $end - 1 < $length );
 				if ( $end > $length ) {
-					// Loop wrongly assumed an end quote ended the search,
+					// Loop wrongly assumed an end quote or ${ ended the search,
 					// but search ended because we've reached the end. Correct $end.
 					// TODO: This is invalid and should throw.
 					$end--;
@@ -1508,16 +1497,6 @@ class JavaScriptMinifier {
 				// yield is treated as TYPE_RETURN inside a generator function (negative state)
 				// but as TYPE_LITERAL when not in a generator function (positive state)
 				$type = $state < 0 ? self::TYPE_RETURN : self::TYPE_LITERAL;
-			}
-
-			if (
-				$type === self::TYPE_LITERAL
-				&& ( $token === 'true' || $token === 'false' )
-				&& isset( self::$expressionStates[$state] )
-				&& $last !== '.'
-			) {
-				$token = ( $token === 'true' ) ? '!0' : '!1';
-				$ch = '!';
 			}
 
 			if ( $newlineFound && isset( self::$semicolon[$state][$type] ) ) {

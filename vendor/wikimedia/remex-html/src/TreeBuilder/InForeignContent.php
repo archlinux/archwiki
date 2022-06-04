@@ -214,9 +214,7 @@ class InForeignContent extends InsertionMode {
 	}
 
 	public function endDocument( $pos ) {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new TreeBuilderError( "unspecified, presumed unreachable" );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InForeignContent::class, 'RemexHtml\TreeBuilder\InForeignContent' );

@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Khun Kt",
 			"Ninjastrikers",
-			"咽頭べさ",
-			"Khun Kt"
+			"咽頭べさ"
 		]
 	},
+	"vector-languages": "ဘာႏသာႏငဝ်းငွါဖုံႏ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ဘာႏသာႏငဝ်းငွါ|$1 ဘာႏသာႏငဝ်းငွါဖိုင်ႏ}}",
 	"vector-action-addsection": "ထဲမ်သော့ꩻထဲင်း အကျောင်ꩻခရာႏတသာ",
 	"vector-action-delete": "ယားကုဲင်",
@@ -19,6 +20,7 @@
 	"vector-view-view": "ဟော်ꩻ",
 	"vector-view-viewsource": "ထွားအရွီးအခိုႏ",
 	"vector-more-actions": "ထဲင်းယင်း",
+	"vector-intro-page": "Help:ငဝ်းတယ်ႏအွဉ်",
 	"vector-anon-user-menu-pages-learn": "လွူꩻထွားထဲင်းအသွုပ်",
 	"vector-anon-user-menu-pages-label": "လွူꩻထွားထဲင်း မွဉ်းဖျင်ခရာႏအထဲင်း",
 	"vector-personal-more-label": "ကေားသုင်ꩻသား လိဉ့်ဖိုင်ႏ",

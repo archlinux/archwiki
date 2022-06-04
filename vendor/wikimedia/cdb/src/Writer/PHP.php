@@ -1,18 +1,5 @@
 <?php
-
-namespace Cdb\Writer;
-
-use Cdb\Exception;
-use Cdb\Util;
-use Cdb\Writer;
-
 /**
- * This is a port of D.J. Bernstein's CDB to PHP. It's based on the copy that
- * appears in PHP 5.3. Changes are:
- *    * Error returns replaced with exceptions
- *    * Exception thrown if sizes or offsets are between 2GB and 4GB
- *    * Some variables renamed
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,12 +14,19 @@ use Cdb\Writer;
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
  */
+
+namespace Cdb\Writer;
+
+use Cdb\Exception;
+use Cdb\Util;
+use Cdb\Writer;
 
 /**
  * CDB writer class
+ *
+ * This is a port of D.J. Bernstein's CDB to PHP. It's based on the copy that
+ * appears in PHP 5.3.
  */
 class PHP extends Writer {
 	protected $hplist;
@@ -52,7 +46,7 @@ class PHP extends Writer {
 			$this->throwException(
 				'Unable to open CDB file "' . $this->tmpFileName . '" for write.' );
 		}
-		$this->hplist = array();
+		$this->hplist = [];
 		$this->numentries = 0;
 		$this->pos = 2048; // leaving space for the pointer array, 256 * 8
 		if ( fseek( $this->handle, $this->pos ) == -1 ) {
@@ -122,10 +116,10 @@ class PHP extends Writer {
 	 * @param int $h
 	 */
 	protected function addend( $keylen, $datalen, $h ) {
-		$this->hplist[] = array(
+		$this->hplist[] = [
 			'h' => $h,
 			'p' => $this->pos
-		);
+		];
 
 		$this->numentries++;
 		$this->posplus( 8 );
@@ -163,7 +157,7 @@ class PHP extends Writer {
 		}
 
 		// Fill in $starts with the *end* indexes
-		$starts = array();
+		$starts = [];
 		$pos = 0;
 		for ( $i = 0; $i < 256; ++$i ) {
 			$pos += $counts[$i];
@@ -173,7 +167,12 @@ class PHP extends Writer {
 		// Excessively clever and indulgent code to simultaneously fill $packedTables
 		// with the packed hashtables, and adjust the elements of $starts
 		// to actually point to the starts instead of the ends.
-		$packedTables = array_fill( 0, $this->numentries, false );
+		if ( $this->numentries > 0 ) {
+			$packedTables = array_fill( 0, $this->numentries, false );
+		} else {
+			// array_fill(): Number of elements must be positive
+			$packedTables = [];
+		}
 		foreach ( $this->hplist as $item ) {
 			$packedTables[--$starts[255 & $item['h']]] = $item;
 		}
@@ -187,9 +186,9 @@ class PHP extends Writer {
 			$len = $count + $count;
 			$final .= pack( 'VV', $this->pos, $len );
 
-			$hashtable = array();
+			$hashtable = [];
 			for ( $u = 0; $u < $len; ++$u ) {
-				$hashtable[$u] = array( 'h' => 0, 'p' => 0 );
+				$hashtable[$u] = [ 'h' => 0, 'p' => 0 ];
 			}
 
 			// Fill the hashtable, using the next empty slot if the hashed slot

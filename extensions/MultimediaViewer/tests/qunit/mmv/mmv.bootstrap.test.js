@@ -320,7 +320,7 @@
 	} );
 
 	// FIXME: Tests suspended as they do not pass in QUnit 2.x+ – T192932
-	QUnit.skip( 'Validate new LightboxImage object has sane constructor parameters', function ( assert ) {
+	QUnit.skip( 'Validate new LightboxImage object has sensible constructor parameters', function ( assert ) {
 		var bootstrap,
 			$div,
 			$link,
@@ -343,7 +343,7 @@
 
 			// FIXME: fileLink doesn't match imgRegex (null)
 			assert.ok( fileLink.match( imgRegex ), 'Thumbnail URL used in creating new image object' );
-			assert.strictEqual( filePageLink, '', 'File page link is sane when creating new image object' );
+			assert.strictEqual( filePageLink, '', 'File page link is sensible when creating new image object' );
 			assert.strictEqual( fileTitle.title, fname, 'Filename is correct when passed into new image constructor' );
 			assert.strictEqual( index, 0, 'The only image we created in the gallery is set at index 0 in the images array' );
 			assert.ok( html.indexOf( ' src="' + imgSrc + '"' ) > 0, 'The image element passed in contains the src=... we want.' );

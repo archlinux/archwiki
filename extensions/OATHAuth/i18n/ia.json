@@ -57,7 +57,7 @@
 	"oath-log-header": "Iste eventos tracia le modificationes al stato de authentication bifactorial de usatores.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|disactivava}} le authentication bifactorial pro $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|verificava}} si $3 habeva activate le authentication bifactorial",
-	"oauthauth-ui-no-module": "Nihil activate",
+	"oathauth-ui-no-module": "Nihil activate",
 	"oathauth-module-invalid": "Le modulo OATHAuth que le usator ha registrate non es valide.",
 	"oathauth-module-totp-label": "TOTP (token a uso unic)",
 	"oathauth-ui-manage": "Gerer",

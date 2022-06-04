@@ -13,5 +13,7 @@
 	"monobook-more-actions": "Кхин а",
 	"monobook-cactions-label": "АгӀонгахь дийриш",
 	"monobook-notifications-link": "Хаам ($1)",
-	"monobook-notifications-link-none": "ДӀахаийтарш"
+	"monobook-notifications-link-none": "ДӀахаийтарш",
+	"monobook-view-history": "Истори",
+	"monobook-action-undelete": "МеттахӀоттайé $1 {{PLURAL:$1|нисйинарг|нисйинарш}}"
 }

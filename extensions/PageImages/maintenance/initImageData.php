@@ -6,6 +6,7 @@ if ( $IP === false ) {
 }
 require_once "$IP/maintenance/Maintenance.php";
 
+use MediaWiki\MediaWikiServices;
 use PageImages\Job\InitImageDataJob;
 
 /**
@@ -42,7 +43,7 @@ class InitImageData extends Maintenance {
 		$queue = null;
 		$maxPressure = $this->getOption( 'queue-pressure', 0 );
 		if ( $maxPressure > 0 ) {
-			$queue = JobQueueGroup::singleton();
+			$queue = MediaWikiServices::getInstance()->getJobQueueGroup();
 		}
 
 		do {
@@ -66,11 +67,11 @@ class InitImageData extends Maintenance {
 			}
 			if ( $this->hasOption( 'earlier-than' ) ) {
 				$conds[] = 'page_touched < '
-					. $dbr->addQuotes( $this->getOption( 'earlier-than' ) );
+					. $dbr->addQuotes( $dbr->timestamp( $this->getOption( 'earlier-than' ) ) );
 			}
 			if ( $this->hasOption( 'later-than' ) ) {
 				$conds[] = 'page_touched > '
-					. $dbr->addQuotes( $this->getOption( 'later-than' ) );
+					. $dbr->addQuotes( $dbr->timestamp( $this->getOption( 'later-than' ) ) );
 			}
 			$res = $dbr->select( $tables, $fields, $conds, __METHOD__,
 				[ 'LIMIT' => $this->mBatchSize, 'ORDER_BY' => 'page_id', 'GROUP BY' => 'page_id' ],

@@ -28,23 +28,30 @@ use Vector\HTMLForm\Fields\HTMLLegacySkinVersionField;
  * @group Vector
  * @coversDefaultClass \Vector\HTMLForm\Fields\HTMLLegacySkinVersionField
  */
-class HTMLLegacySkinVersionFieldTest extends \MediaWikiTestCase {
+class HTMLLegacySkinVersionFieldTest extends \MediaWikiIntegrationTestCase {
 
 	public function provideDefault() {
-		yield [ 'true' ];
-		yield [ 1 ];
+		return [
+			[ false, '0' ],
+			[ false, false ],
+			[ true, '1' ],
+			[ true, true ],
+		];
 	}
 
 	/**
 	 * @dataProvider provideDefault
 	 * @covers ::__construct
 	 */
-	public function testConstructValidatesDefault( $default ) {
-		$this->expectException( \Wikimedia\Assert\PreconditionException::class );
-
-		new HTMLLegacySkinVersionField( [
-			'default' => $default
+	public function testConstructValidatesDefault( $expected, $default ) {
+		$field = new HTMLLegacySkinVersionField( [
+			'default' => $default,
+			'fieldname' => 'VectorSkinVersion',
 		] );
+		$this->assertSame(
+			$expected,
+			$field->getDefault()
+		);
 	}
 
 	public function provideGetInput() {
@@ -65,7 +72,7 @@ class HTMLLegacySkinVersionFieldTest extends \MediaWikiTestCase {
 			'label-message' => 'prefs-vector-enable-vector-1-label',
 			'help-message' => 'prefs-vector-enable-vector-1-help',
 			'default' => true,
-			'hide-if' => [ '!==', 'wpskin', Constants::SKIN_NAME ],
+			'hide-if' => [ '!==', 'skin', Constants::SKIN_NAME_LEGACY ],
 		];
 		$skinVersionField = new HTMLLegacySkinVersionField( $params );
 		$checkField = new \HTMLCheckField( $params );
@@ -84,24 +91,32 @@ class HTMLLegacySkinVersionFieldTest extends \MediaWikiTestCase {
 	}
 
 	public function provideLoadDataFromRequest() {
-		yield [ null, Constants::SKIN_VERSION_LEGACY ];
-		yield [ true, Constants::SKIN_VERSION_LEGACY ];
-		yield [ false, Constants::SKIN_VERSION_LATEST ];
+		// User just load the form, fallback to default.
+		yield [ null, false, Constants::SKIN_VERSION_LEGACY ];
+		// User submit the form, load from request.
+		yield [ null, true, Constants::SKIN_VERSION_LATEST ];
+		yield [ true, true, Constants::SKIN_VERSION_LEGACY ];
+		// In normal request you can't get the 'false' value though.
+		yield [ false, true, Constants::SKIN_VERSION_LATEST ];
 	}
 
 	/**
 	 * @dataProvider provideLoadDataFromRequest
 	 * @covers ::loadDataFromRequest
 	 */
-	public function testLoadDataFromRequest( $wpVectorSkinVersion, $expectedResult ) {
+	public function testLoadDataFromRequest( $wpVectorSkinVersion, $wasPosted, $expectedResult ) {
 		$skinVerionField = new HTMLLegacySkinVersionField( [
 			'fieldname' => 'VectorSkinVersion',
 			'default' => true,
 		] );
 
-		$request = new \WebRequest();
-		$request->setVal( 'wpVectorSkinVersion', $wpVectorSkinVersion );
+		$requestData = [ 'wpVectorSkinVersion' => $wpVectorSkinVersion ];
+		if ( $wasPosted ) {
+			// Check field would load data from requst if it pass the isSubmitAttempt() check.
+			$requestData['wpEditToken'] = 'ABC123';
+		}
+		$request = new \FauxRequest( $requestData, $wasPosted );
 
-		$this->assertSame( $skinVerionField->loadDataFromRequest( $request ), $expectedResult );
+		$this->assertSame( $expectedResult, $skinVerionField->loadDataFromRequest( $request ) );
 	}
 }

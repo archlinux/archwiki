@@ -41,7 +41,7 @@ class DropdownInputWidget extends InputWidget {
 
 	public function setValue( $value ) {
 		$this->value = $this->cleanUpValue( $value );
-		foreach ( $this->options as &$opt ) {
+		foreach ( $this->options as $opt ) {
 			if ( $opt->getAttribute( 'value' ) === $this->value ) {
 				$opt->setAttributes( [ 'selected' => 'selected' ] );
 			} else {

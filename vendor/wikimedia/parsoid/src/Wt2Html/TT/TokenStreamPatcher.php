@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\KV;
@@ -114,6 +115,26 @@ class TokenStreamPatcher extends TokenHandler {
 	}
 
 	/**
+	 * Fully reprocess the output tokens from the tokenizer through
+	 * all the other handlers in stage 2.
+	 *
+	 * @param int $srcOffset
+	 * @param array $toks
+	 * @return array
+	 */
+	private function reprocessTokens( int $srcOffset, array $toks ): array {
+		// Update tsr
+		TokenUtils::shiftTokenTSR( $toks, $srcOffset );
+		$pipe = $this->env->getPipelineFactory()->getPipeline( "tokens/x-mediawiki" );
+		$pipe->init( [
+			'frame' => $this->manager->getFrame(),
+			'toplevel' => $this->atTopLevel,
+			// FIXME: What of the inTemplate/expandTemplate options here?
+		] );
+		return (array)$pipe->parse( $toks, [] );
+	}
+
+	/**
 	 * @param Token $token
 	 * @return array
 	 */
@@ -127,34 +148,7 @@ class TokenStreamPatcher extends TokenHandler {
 			// sol === false ensures that the pipe will not be parsed as a <td> again
 			$toks = $this->tokenizer->tokenizeSync( $str, [ 'sol' => false ] );
 			array_pop( $toks ); // pop EOFTk
-			// Update tsr
-			TokenUtils::shiftTokenTSR( $toks, $tsr->start );
-
-			$ret = [];
-			for ( $i = 0;  $i < count( $toks );  $i++ ) {
-				$t = $toks[$i];
-				if ( !$t ) {
-					continue;
-				}
-
-				// Reprocess magic words to completion.
-				// FIXME: This doesn't handle any templates that got retokenized.
-				// That requires processing this whole thing in a tokens/x-mediawiki
-				// pipeline which is not possible right now because TSP runs in the
-				// synchronous 3rd phase. So, not tackling that in this patch.
-				// This has been broken for the longest time and feels similar to
-				// https://gerrit.wikimedia.org/r/#/c/105018/
-				// All of these need uniform handling. To be addressed separately
-				// if this proves to be a real problem on production pages.
-				if ( $t instanceof SelfclosingTagTk && $t->getName() === 'template' ) {
-					$t = $this->templateHandler->processSpecialMagicWord(
-						$this->atTopLevel, $t ) ?? [ $t ];
-				} else {
-					$t = [ $t ];
-				}
-				PHPUtils::pushArray( $ret, $t );
-			}
-			return $ret;
+			return $this->reprocessTokens( $tsr->start, $toks );
 		} elseif ( !empty( $da->autoInsertedStart ) && !empty( $da->autoInsertedEnd ) ) {
 			return [ '' ];
 		} else {
@@ -206,7 +200,7 @@ class TokenStreamPatcher extends TokenHandler {
 				if ( $this->sol ) {
 					if ( $this->atTopLevel && str_starts_with( $token, '{|' ) ) {
 						// Reparse string with the 'table_start_tag' rule
-						// and shift tsr of result tokens by source offset
+						// and fully reprocess them.
 						$retoks = $this->tokenizer->tokenizeAs( $token, 'table_start_tag', /* sol */true );
 						if ( $retoks === false ) {
 							// XXX: The string begins with table start syntax,
@@ -215,8 +209,7 @@ class TokenStreamPatcher extends TokenHandler {
 							$this->env->log( 'error', 'Failed to tokenize table start tag.' );
 							$this->clearSOL();
 						} else {
-							TokenUtils::shiftTokenTSR( $retoks, $this->srcOffset );
-							$tokens = $retoks;
+							$tokens = $this->reprocessTokens( $this->srcOffset, $retoks );
 							$this->wikiTableNesting++;
 							$this->lastConvertedTableCellToken = null;
 						}
@@ -241,14 +234,7 @@ class TokenStreamPatcher extends TokenHandler {
 			case 'SelfclosingTagTk':
 				if ( $token->getName() === 'meta' && ( $token->dataAttribs->stx ?? '' ) !== 'html' ) {
 					$this->srcOffset = $token->dataAttribs->tsr->end ?? null;
-					if ( TokenUtils::hasTypeOf( $token, 'mw:TSRMarker' ) &&
-						$this->lastConvertedTableCellToken !== null &&
-						$this->lastConvertedTableCellToken->getName() === $token->getAttribute( 'data-etag' )
-					) {
-						// Swallow the token and clear the marker
-						$this->lastConvertedTableCellToken = null;
-						return new TokenHandlerResult( [] );
-					} elseif (
+					if (
 						count( $this->tokenBuf ) > 0 &&
 						TokenUtils::hasTypeOf( $token, 'mw:Transclusion' )
 					) {
@@ -273,18 +259,22 @@ class TokenStreamPatcher extends TokenHandler {
 							$i++;
 						}
 
+						$dp = new DataParsoid;
+						$dp->tokens = array_slice( $this->tokenBuf, 0, $i );
 						$toks = [
 							new SelfclosingTagTk( 'meta',
 								[ new KV( 'typeof', 'mw:EmptyLine' ) ],
-								(object)[ 'tokens' => array_slice( $this->tokenBuf, 0, $i ) ]
+								$dp
 							)
 						];
 						if ( $i < $n ) {
 							$toks[] = $this->tokenBuf[$i];
 							if ( $i + 1 < $n ) {
+								$dp = new DataParsoid;
+								$dp->tokens = array_slice( $this->tokenBuf, $i + 1 );
 								$toks[] = new SelfclosingTagTk( 'meta',
 									[ new KV( 'typeof', 'mw:EmptyLine' ) ],
-									(object)[ 'tokens' => array_slice( $this->tokenBuf, $i + 1 ) ]
+									$dp
 								);
 							}
 						}

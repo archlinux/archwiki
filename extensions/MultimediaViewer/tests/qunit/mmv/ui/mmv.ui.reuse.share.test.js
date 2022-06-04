@@ -22,7 +22,7 @@
 
 	QUnit.module( 'mmv.ui.reuse.share', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var share = makeShare();
 
 		assert.ok( share, 'Share UI element is created.' );

@@ -5,7 +5,8 @@
 			"Bhawani Gautam Rhk",
 			"Krish Dulal",
 			"NehalDaveND",
-			"हिमाल सुबेदी"
+			"हिमाल सुबेदी",
+			"Bada Kaji"
 		]
 	},
 	"categorytree": "श्रेणी वृक्ष",
@@ -22,9 +23,9 @@
 	"categorytree-collapse": "खुम्च्याउनु",
 	"categorytree-expand": "फैलाउनुहोस्",
 	"categorytree-member-counts": "मा {{PLURAL:$1|1 श्रेणी छ|$1 श्रेणीहरू छन्}}, {{PLURAL:$2|1 पृष्ठ छ|$2 पृष्ठहरू छन्}}, तथा {{PLURAL:$3|1 फाइल छ|$3 फाइलहरू छन्}}",
-	"categorytree-num-categories": "$1 C (श्रे)",
-	"categorytree-num-pages": "$1 P (पृ)",
-	"categorytree-num-files": "$1 F (फा)",
+	"categorytree-num-categories": "$1 (श्रे)",
+	"categorytree-num-pages": "$1 (पृ)",
+	"categorytree-num-files": "$1 (फा)",
 	"categorytree-num-empty": "रित्तो",
 	"categorytree-load": "चढाउने",
 	"categorytree-loading": "खुल्दै छ…",

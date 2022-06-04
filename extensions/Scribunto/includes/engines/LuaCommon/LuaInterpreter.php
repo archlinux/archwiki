@@ -6,7 +6,7 @@ abstract class Scribunto_LuaInterpreter {
 	 * If there is a pass error, a Scribunto_LuaError will be thrown.
 	 *
 	 * @param string $text The Lua source code
-	 * @param string $chunkName The chunk name
+	 * @param string $chunkName
 	 * @return mixed
 	 */
 	abstract public function loadString( $text, $chunkName );

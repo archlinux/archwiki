@@ -3,9 +3,9 @@
 		"authors": [
 			"Max20091",
 			"Minh Nguyen",
+			"NguoiDungKhongDinhDanh",
 			"Nguyên Lê",
-			"Vinhtantran",
-			"NguoiDungKhongDinhDanh"
+			"Vinhtantran"
 		]
 	},
 	"templatedata-desc": "Lưu trữ dữ liệu cho tham số bản mẫu (qua JSON)",

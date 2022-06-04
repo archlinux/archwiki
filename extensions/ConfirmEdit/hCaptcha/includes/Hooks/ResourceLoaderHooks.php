@@ -2,7 +2,7 @@
 
 declare( strict_types=1 );
 
-namespace MediaWiki\Extensions\ConfirmEdit\hCaptcha\Hooks;
+namespace MediaWiki\Extension\ConfirmEdit\hCaptcha\Hooks;
 
 use Config;
 use MediaWiki\MediaWikiServices;

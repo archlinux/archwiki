@@ -72,8 +72,7 @@ ve.ui.MWReferenceContextItem.prototype.getRendering = function () {
  * @return {jQuery|null}
  */
 ve.ui.MWReferenceContextItem.prototype.getReuseWarning = function () {
-	var
-		refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model ),
+	var refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model ),
 		group = this.getFragment().getDocument().getInternalList()
 			.getNodeGroup( refModel.getListGroup() );
 	if ( ve.getProp( group, 'keyedNodes', refModel.getListKey(), 'length' ) > 1 ) {
@@ -92,12 +91,11 @@ ve.ui.MWReferenceContextItem.prototype.getReuseWarning = function () {
  * @return {ve.dm.InternalItemNode|null} Reference item node
  */
 ve.ui.MWReferenceContextItem.prototype.getReferenceNode = function () {
-	var refModel;
 	if ( !this.model.isEditable() ) {
 		return null;
 	}
 	if ( !this.referenceNode ) {
-		refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
+		var refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( this.model );
 		this.referenceNode = this.getFragment().getDocument().getInternalList().getItemNode( refModel.getListIndex() );
 	}
 	return this.referenceNode;

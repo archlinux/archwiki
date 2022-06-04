@@ -5,5 +5,7 @@
 		]
 	},
 	"timeless-more": "كتر",
-	"timeless-pagemisc": "كتر"
+	"timeless-pagemisc": "كتر",
+	"timeless-view-history": "التاريخ",
+	"timeless-action-undelete": "سترجع {{PLURAL:$1|واحدتعديل|$1 تعديل}}"
 }

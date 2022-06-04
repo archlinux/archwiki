@@ -6,17 +6,22 @@ namespace Wikimedia\Parsoid\Wt2Html\PP\Processors;
 
 use stdClass;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Config\WikitextConstants as Consts;
 use Wikimedia\Parsoid\Core\DomSourceRange;
+use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 
 /**
@@ -248,7 +253,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 			if ( $c instanceof Element ) {
 				if (
 					DOMCompat::nodeName( $c ) === $name &&
-					empty( DOMDataUtils::getDataParsoid( $c )->autoInsertedInd )
+					empty( DOMDataUtils::getDataParsoid( $c )->autoInsertedEnd )
 				) {
 					return true;
 				}
@@ -347,10 +352,10 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * So, detect this pattern and flag for linter fixup.
 	 *
 	 * @param Node $c
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @return bool
 	 */
-	private function matchedOpenTagPairExists( Node $c, stdClass $dp ): bool {
+	private function matchedOpenTagPairExists( Node $c, DataParsoid $dp ): bool {
 		$lc = $c->lastChild;
 		if ( !$lc instanceof Element || DOMCompat::nodeName( $lc ) !== DOMCompat::nodeName( $c ) ) {
 			return false;
@@ -363,7 +368,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 		$prev = $lc->previousSibling;
 		// PORT-FIXME: Do we care about non-ASCII whitespace here?
-		if ( DOMUtils::isText( $prev ) && !preg_match( '/\s$/D', $prev->nodeValue ) ) {
+		if ( $prev instanceof Text && !preg_match( '/\s$/D', $prev->nodeValue ) ) {
 			return true;
 		}
 
@@ -389,15 +394,15 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *
 	 * @param Env $env
 	 * @param Element $c
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logTreeBuilderFixup(
-		Env $env, Element $c, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		// This might have been processed as part of
 		// misnested-tag category identification.
-		if ( !empty( $dp->tmp->linted ) ) {
+		if ( $dp->getTempFlag( TempData::LINTED ) ) {
 			return;
 		}
 
@@ -493,10 +498,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 					$adjNode = $this->getMatchingMisnestedNode( $c, $c );
 					if ( $adjNode ) {
 						$adjDp = DOMDataUtils::getDataParsoid( $adjNode );
-						if ( !isset( $adjDp->tmp ) ) {
-							$adjDp->tmp = new stdClass;
-						}
-						$adjDp->tmp->linted = true;
+						$adjDp->setTempFlag( TempData::LINTED );
 						$env->recordLint( 'misnested-tag', $lintObj );
 					} elseif ( !$this->endTagOptional( $c ) && empty( $dp->autoInsertedStart ) ) {
 						$lintObj['params']['inTable'] = DOMUtils::hasNameOrHasAncestorOfName( $c, 'table' );
@@ -527,12 +529,12 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *
 	 * @param Env $env
 	 * @param Element $node
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 * @return ?Element
 	 */
 	private function logFosteredContent(
-		Env $env, Element $node, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): ?Element {
 		$maybeTable = $node->nextSibling;
 		$clear = false;
@@ -583,11 +585,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * Log obsolete HTML tags
 	 * @param Env $env
 	 * @param Element $c
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logObsoleteHTMLTags(
-		Env $env, Element $c, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if ( !$this->obsoleteTagsRE ) {
 			$elts = [];
@@ -673,18 +675,42 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log bogus (=unrecognized) media options
+	 * Log issues with generated figures
+	 *
+	 *   1. captions on inline images without explicity alt options (T297443)
+	 *   2. bogus (=unrecognized) media options
 	 *
 	 * See - https://www.mediawiki.org/wiki/Help:Images#Syntax
 	 *
 	 * @param Env $env
 	 * @param Node $c
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
-	private function logBogusMediaOptions(
-		Env $env, Node $c, stdClass $dp, ?stdClass $tplInfo
+	private function logMediaIssues(
+		Env $env, Node $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
+		if ( !( $c instanceof Element ) ) {
+			return;
+		}
+
+		// if ( WTUtils::isInlineMedia( $c ) ) {
+		// 	$dmw = DOMDataUtils::getDataMw( $c );
+		// 	$media = $c->firstChild->firstChild ?? null;
+		// 	if (
+		// 		isset( $dmw->caption ) &&
+		// 		$media instanceof Element &&
+		// 		DOMCompat::nodeName( $media ) === 'img' &&
+		// 		!$media->hasAttribute( 'alt' )
+		// 	) {
+		// 		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
+		// 		$env->recordLint( 'inline-media-caption', [
+		// 			'dsr' => $this->findLintDSR( $templateInfo, $tplInfo, $dp->dsr ?? null ),
+		// 			'templateInfo' => $templateInfo
+		// 		] );
+		// 	}
+		// }
+
 		if ( WTUtils::isGeneratedFigure( $c ) && !empty( $dp->optList ) ) {
 			$items = [];
 			foreach ( $dp->optList as $item ) {
@@ -725,11 +751,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *
 	 * @param Env $env
 	 * @param Node $c
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logDeletableTables(
-		Env $env, Node $c, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Node $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if ( DOMCompat::nodeName( $c ) === 'table' ) {
 			$prev = DOMUtils::previousNonSepSibling( $c );
@@ -806,11 +832,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *
 	 * @param Env $env
 	 * @param Element $node
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logBadPWrapping(
-		Env $env, Element $node, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if (
 			!DOMUtils::isWikitextBlockNode( $node ) &&
@@ -839,11 +865,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * Log Tidy div span flip
 	 * @param Env $env
 	 * @param Element $node
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logTidyDivSpanFlip(
-		Env $env, Element $node, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		if ( DOMCompat::nodeName( $node ) !== 'span' ) {
 			return;
@@ -874,15 +900,15 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * Log tidy whitespace bug
 	 * @param Env $env
 	 * @param Node $node
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logTidyWhitespaceBug(
-		Env $env, Node $node, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Node $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		// We handle a run of nodes in one shot.
 		// No need to reprocess repeatedly.
-		if ( !empty( $dp->tmp->processedTidyWSBug ) ) {
+		if ( $dp->getTempFlag( TempData::PROCESSED_TIDY_WS_BUG ) ) {
 			return;
 		}
 
@@ -906,7 +932,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		while ( $node && !DOMUtils::isRemexBlockNode( $node ) &&
 			!in_array( DOMCompat::nodeName( $node ), [ 'hr', 'br', 'wbr' ], true )
 		) {
-			if ( DOMUtils::isText( $node ) || !$this->hasNoWrapCSS( $node ) ) {
+			if ( $node instanceof Text || !$this->hasNoWrapCSS( $node ) ) {
 				// No CSS property that affects whitespace.
 				$s = $node->textContent;
 				if ( preg_match( '/^([^\s]*)\s/', $s, $m ) ) { // PORT-FIXME: non-ASCII whitespace?
@@ -924,12 +950,12 @@ class Linter implements Wt2HtmlDOMProcessor {
 			} else {
 				// Find last non-comment child of node
 				$last = $node->lastChild;
-				while ( $last && DOMUtils::isComment( $last ) ) {
+				while ( $last instanceof Comment ) {
 					$last = $last->previousSibling;
 				}
 
 				$bug = false;
-				if ( $last && DOMUtils::isText( $last ) &&
+				if ( $last instanceof Text &&
 					preg_match( '/\s$/D', $last->nodeValue ) // PORT-FIXME: non-ASCII whitespace?
 				) {
 					// In this scenario, when Tidy hoists the whitespace to
@@ -957,7 +983,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 
 			// Move to the next non-comment sibling
 			$node = $node->nextSibling;
-			while ( $node && DOMUtils::isComment( $node ) ) {
+			while ( $node instanceof Comment ) {
 				$node = $node->nextSibling;
 			}
 		}
@@ -966,9 +992,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 			foreach ( $nowrapNodes as $o ) {
 				// Phan fails at applying the instanceof type restriction to the array member when analyzing the
 				// following call, but is fine when it's copied to a local variable.
-				$stupidPhan = $o['node'];
-				if ( $stupidPhan instanceof Element ) {
-					DOMDataUtils::getDataParsoid( $stupidPhan )->tmp->processedTidyWSBug = true;
+				$node = $o['node'];
+				if ( $node instanceof Element ) {
+					DOMDataUtils::getDataParsoid( $node )->setTempFlag( TempData::PROCESSED_TIDY_WS_BUG );
 				}
 			}
 		};
@@ -982,7 +1008,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		// Find run before startNode that doesn't have a whitespace break
 		$prev = $startNode->previousSibling;
 		while ( $prev && !DOMUtils::isRemexBlockNode( $prev ) ) {
-			if ( !DOMUtils::isComment( $prev ) ) {
+			if ( !( $prev instanceof Comment ) ) {
 				$s = $prev->textContent;
 				// Find the last \s in the string
 				if ( preg_match( '/\s([^\s]*)$/D', $s, $m ) ) { // PORT-FIXME: non-ASCII whitespace here?
@@ -1007,13 +1033,13 @@ class Linter implements Wt2HtmlDOMProcessor {
 		$n = count( $nowrapNodes ) - 1;
 		foreach ( $nowrapNodes as $i => $o ) {
 			if ( $o['tidybug'] && $i < $n && empty( $nowrapNodes[$i + 1]['hasLeadingWS'] ) ) {
-				$stupidPhan = $o['node']; // (see above)
+				$nowrapNode = $o['node']; // (see above)
 				$lintObj = [
 					'dsr' => $this->findLintDSR(
 						$templateInfo,
 						$tplInfo,
-						$stupidPhan instanceof Element
-							? DOMDataUtils::getDataParsoid( $stupidPhan )->dsr ?? null
+						$nowrapNode instanceof Element
+							? DOMDataUtils::getDataParsoid( $nowrapNode )->dsr ?? null
 							: null
 					),
 					'templateInfo' => $templateInfo,
@@ -1110,11 +1136,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * Log PHP parser bug
 	 * @param Env $env
 	 * @param Element $node
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logPHPParserBug(
-		Env $env, Element $node, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Element $node, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
 		$li = null;
 		// phpcs:ignore MediaWiki.ControlStructures.AssignmentInControlStructures.AssignmentInControlStructures
@@ -1154,11 +1180,11 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 *
 	 * @param Env $env
 	 * @param Element $c
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
 	private function logWikilinksInExtlinks(
-		Env $env, Element $c, stdClass $dp, ?stdClass $tplInfo
+		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
 	) {
 		if ( DOMCompat::nodeName( $c ) === 'a' && $c->getAttribute( 'rel' ) === 'mw:ExtLink' ) {
 			$lintError = false;
@@ -1225,7 +1251,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		$this->logDeletableTables( $env, $node, $dp, $tplInfo ); // For T161341
 		$this->logBadPWrapping( $env, $node, $dp, $tplInfo ); // For T161306
 		$this->logObsoleteHTMLTags( $env, $node, $dp, $tplInfo );
-		$this->logBogusMediaOptions( $env, $node, $dp, $tplInfo );
+		$this->logMediaIssues( $env, $node, $dp, $tplInfo ); // For T297443
 		$this->logTidyWhitespaceBug( $env, $node, $dp, $tplInfo );
 		$this->logTidyDivSpanFlip( $env, $node, $dp, $tplInfo );
 
@@ -1329,9 +1355,22 @@ class Linter implements Wt2HtmlDOMProcessor {
 			return;
 		}
 
+		// Track time spent linting so we can evaluate benefits
+		// of migrating this code off the critical path to its own
+		// post processor.
+		$metrics = $env->getSiteConfig()->metrics();
+		$timer = null;
+		if ( $metrics ) {
+			$timer = Timing::start( $metrics );
+		}
+
 		$this->extApi = new ParsoidExtensionAPI( $env );
 		$this->findLints( $root, $env );
 		$this->postProcessLints( $env->getLints(), $env );
+
+		if ( $metrics ) {
+			$timer->end( "linting" );
+		}
 	}
 
 }

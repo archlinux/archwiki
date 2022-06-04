@@ -5,7 +5,7 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.dm.SurfaceFragment (MW)', ve.test.utils.mwEnvironment );
+QUnit.module( 've.dm.SurfaceFragment (MW)', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
 

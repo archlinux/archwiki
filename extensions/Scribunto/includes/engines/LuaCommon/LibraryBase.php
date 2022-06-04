@@ -49,8 +49,6 @@ abstract class Scribunto_LuaLibraryBase {
 	abstract public function register();
 
 	/**
-	 * Get the engine
-	 *
 	 * @return Scribunto_LuaEngine engine
 	 */
 	protected function getEngine() {
@@ -58,8 +56,6 @@ abstract class Scribunto_LuaLibraryBase {
 	}
 
 	/**
-	 * Get the interpreter
-	 *
 	 * @return Scribunto_LuaInterpreter interpreter
 	 */
 	protected function getInterpreter() {
@@ -67,27 +63,21 @@ abstract class Scribunto_LuaLibraryBase {
 	}
 
 	/**
-	 * Get the parser
-	 *
-	 * @return Parser parser
+	 * @return Parser
 	 */
 	protected function getParser() {
 		return $this->engine->getParser();
 	}
 
 	/**
-	 * Get the title
-	 *
-	 * @return Title title
+	 * @return Title
 	 */
 	protected function getTitle() {
 		return $this->getEngine()->getTitle();
 	}
 
 	/**
-	 * Get the parser options
-	 *
-	 * @return ParserOptions parser options
+	 * @return ParserOptions
 	 */
 	protected function getParserOptions() {
 		return $this->engine->getParser()->getOptions();

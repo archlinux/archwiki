@@ -19,12 +19,12 @@
 namespace MediaWiki\SecureLinkFixer\Test;
 
 use MediaWiki\SecureLinkFixer\HSTSPreloadLookup;
-use MediaWikiTestCase;
+use MediaWikiIntegrationTestCase;
 
 /**
  * @covers \MediaWiki\SecureLinkFixer\HSTSPreloadLookup
  */
-class HSTSPreloadLookupTest extends MediaWikiTestCase {
+class HSTSPreloadLookupTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideIsPreloaded

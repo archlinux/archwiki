@@ -1,4 +1,10 @@
-QUnit.module( 've.ui.MWParameterPage', ve.test.utils.mwEnvironment );
+QUnit.module( 've.ui.MWParameterPage', ve.test.utils.newMwEnvironment( {
+	config: {
+		wgVisualEditorConfig: ve.extendObject( {}, mw.config.get( 'wgVisualEditorConfig' ), {
+			transclusionDialogSuggestedValues: true
+		} )
+	}
+} ) );
 
 [
 	[ undefined, '', ve.ui.MWLazyMultilineTextInputWidget ],
@@ -53,7 +59,42 @@ QUnit.module( 've.ui.MWParameterPage', ve.test.utils.mwEnvironment );
 	} )
 );
 
-// TODO: Test suggestedvalues
+[
+	[ undefined, OO.ui.ComboBoxInputWidget ],
+	[ 'content', OO.ui.ComboBoxInputWidget ],
+	[ 'line', OO.ui.ComboBoxInputWidget ],
+	[ 'number', OO.ui.ComboBoxInputWidget ],
+	[ 'boolean', ve.ui.MWLazyMultilineTextInputWidget ],
+	[ 'string', OO.ui.ComboBoxInputWidget ],
+	[ 'date', ve.ui.MWLazyMultilineTextInputWidget ],
+	[ 'unbalanced-wikitext', OO.ui.ComboBoxInputWidget ],
+	[ 'unknown', OO.ui.ComboBoxInputWidget ],
+	[ 'url', OO.ui.TextInputWidget ],
+	[ 'wiki-page-name', mw.widgets.TitleInputWidget ],
+	[ 'wiki-user-name', mw.widgets.UserInputWidget ],
+	[ 'wiki-file-name', mw.widgets.TitleInputWidget ],
+	[ 'wiki-template-name', mw.widgets.TitleInputWidget ]
+].forEach( ( [ type, expected ] ) =>
+	QUnit.test( `suggestedvalues: ${type}`, ( assert ) => {
+		const transclusion = new ve.dm.MWTransclusionModel(),
+			template = new ve.dm.MWTemplateModel( transclusion, {} ),
+			parameter = new ve.dm.MWParameterModel( template, 'p', '' );
+
+		template.getSpec().setTemplateData( { params: { p: {
+			type,
+			suggestedvalues: [ 'example' ]
+		} } } );
+
+		const page = new ve.ui.MWParameterPage( parameter ),
+			input = page.createValueInput();
+
+		assert.strictEqual( input.constructor.name, expected.prototype.constructor.name );
+		if ( input instanceof OO.ui.ComboBoxInputWidget ) {
+			assert.strictEqual( input.getMenu().getItemCount(), 1 );
+			assert.strictEqual( input.getMenu().items[ 0 ].getData(), 'example' );
+		}
+	} )
+);
 
 [
 	[

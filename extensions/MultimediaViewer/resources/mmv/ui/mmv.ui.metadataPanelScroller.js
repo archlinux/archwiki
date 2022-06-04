@@ -67,9 +67,9 @@
 			panel.keydown( e );
 		} );
 
-		$( window ).on( 'scroll.mmvp', $.throttle( 250, function () {
+		$( window ).on( 'scroll.mmvp', mw.util.throttle( function () {
 			panel.scroll();
-		} ) );
+		}, 250 ) );
 
 		this.$container.on( 'mmv-metadata-open', function () {
 			if ( !panel.hasOpenedMetadata && panel.localStorage.store ) {

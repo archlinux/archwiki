@@ -117,5 +117,7 @@
 .ve-ui-mwSaveDialog-preview .mw-body {
 	/* We use mw-body for realistic padding, but we don't need border/margin */
 	border: 0;
-	margin: 0;
+	/* Override specificity in Monobook */
+	/* stylelint-disable-next-line declaration-no-important */
+	margin: 0 !important;
 }

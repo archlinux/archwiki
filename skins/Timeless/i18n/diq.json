@@ -27,5 +27,7 @@
 	"timeless-pagetools": "Hereketê pele",
 	"timeless-languages": "Zıwani",
 	"timeless-projects": "Proceyê bini",
-	"timeless.js": "/* Her JavaScript karber Timeless skin gurenayış de tiya de bar bo*/"
+	"timeless.js": "/* Her JavaScript karber Timeless skin gurenayış de tiya de bar bo*/",
+	"timeless-view-history": "Tarix",
+	"timeless-action-undelete": "{{PLURAL:$1|nê vırnayışi|$1 vırnayışa}} peyser bıyarê"
 }

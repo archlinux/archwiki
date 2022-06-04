@@ -7,13 +7,10 @@ declare( strict_types = 1 );
  * (b) manipulating tokens, individually and as collections.
  */
 
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
-
 namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Assert\Assert;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Config\WikitextConstants as Consts;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
@@ -25,6 +22,7 @@ use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 class TokenUtils {
 	public const SOL_TRANSPARENT_LINK_REGEX =
@@ -77,7 +75,7 @@ class TokenUtils {
 	 * @return bool
 	 */
 	public static function isTemplateToken( $token ): bool {
-		return $token && $token instanceof SelfclosingTagTk && $token->getName() === 'template';
+		return $token instanceof SelfclosingTagTk && $token->getName() === 'template';
 	}
 
 	/**
@@ -165,7 +163,7 @@ class TokenUtils {
 			return (bool)preg_match( '/^\s*$/D', $token );
 		} elseif ( self::isSolTransparentLinkTag( $token ) ) {
 			return true;
-		} elseif ( $token instanceof CommentTk ) {
+		} elseif ( $token instanceof CommentTk && !self::isTranslationUnitMarker( $env, $token ) ) {
 			return true;
 		} elseif ( self::isBehaviorSwitch( $env, $token ) ) {
 			return true;
@@ -174,6 +172,19 @@ class TokenUtils {
 		} else {  // only metas left
 			return !( isset( $token->dataAttribs->stx ) && $token->dataAttribs->stx === 'html' );
 		}
+	}
+
+	/**
+	 * HACK: Returns true if $token looks like a TU marker (<!--T:XXX-->) and if we could be in a
+	 * translate-annotated page.
+	 * @param Env $env
+	 * @param CommentTk $token
+	 * @return bool
+	 */
+	public static function isTranslationUnitMarker( Env $env, CommentTk $token ): bool {
+		return $env->hasAnnotations &&
+			$env->getSiteConfig()->isAnnotationTag( 'translate' ) &&
+			preg_match( '/^T:/', $token->value ) === 1;
 	}
 
 	/**
@@ -457,7 +468,7 @@ class TokenUtils {
 	 */
 	public static function convertTokenOffsets(
 		string $s, string $from, string $to, array $tokens
-	) : void {
+	): void {
 		$offsets = []; /* @var array<int> $offsets */
 		self::collectOffsets( $tokens, static function ( $sr ) use ( &$offsets ) {
 			if ( $sr instanceof DomSourceRange ) {
@@ -714,5 +725,25 @@ class TokenUtils {
 		}
 
 		return $tokens;
+	}
+
+	/**
+	 * Checks whether the provided meta tag token is an annotation start token
+	 * @param Token $t
+	 * @return bool
+	 */
+	public static function isAnnotationStartToken( Token $t ): bool {
+		$type = self::matchTypeOf( $t, WTUtils::ANNOTATION_META_TYPE_REGEXP );
+		return $type !== null && !str_ends_with( $type, '/End' );
+	}
+
+	/**
+	 * Checks whether the provided meta tag token is an annotation end token
+	 * @param Token $t
+	 * @return bool
+	 */
+	public static function isAnnotationEndToken( Token $t ): bool {
+		$type = self::matchTypeOf( $t, WTUtils::ANNOTATION_META_TYPE_REGEXP );
+		return $type !== null && str_ends_with( $type, '/End' );
 	}
 }

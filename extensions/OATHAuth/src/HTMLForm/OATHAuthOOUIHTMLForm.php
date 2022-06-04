@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\OATHAuth\HTMLForm;
 
+use IContextSource;
 use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\OATHUser;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
@@ -56,14 +57,20 @@ abstract class OATHAuthOOUIHTMLForm extends OOUIHTMLForm implements IManageForm 
 	 * @param OATHUser $oathUser
 	 * @param OATHUserRepository $oathRepo
 	 * @param IModule $module
+	 * @param IContextSource $context
 	 */
-	public function __construct( OATHUser $oathUser, OATHUserRepository $oathRepo, IModule $module ) {
+	public function __construct(
+		OATHUser $oathUser,
+		OATHUserRepository $oathRepo,
+		IModule $module,
+		IContextSource $context
+	) {
 		$this->oathUser = $oathUser;
 		$this->oathRepo = $oathRepo;
 		$this->module = $module;
 		$this->logger = $this->getLogger();
 
-		parent::__construct( $this->getDescriptors(), null, "oathauth" );
+		parent::__construct( $this->getDescriptors(), $context, "oathauth" );
 	}
 
 	/**

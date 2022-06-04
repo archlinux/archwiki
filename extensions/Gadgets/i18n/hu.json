@@ -24,6 +24,8 @@
 	"gadgetusage-default": "Alapértelmezett",
 	"gadgets-title": "Segédeszközök",
 	"gadgets-pagetext": "Itt látható azon segédeszközök listája, amiket a felhasználók bekapcsolhatnak a [[Special:Preferences#mw-prefsection-gadgets|beállításaiknál]]. A lista a [[MediaWiki:Gadgets-definition|definíciókat]] tartalmazó lapon módosítható.\nEz az áttekintő lap egyszerű hozzáférést nyújt az eszközök kódját, illetve leírását tartalmazó rendszerüzenet-lapokhoz.",
+	"gadgets-editdescription": "Leírás szerkesztése",
+	"gadgets-viewdescription": "Leírás megtekintése",
 	"gadgets-uses": "Kód",
 	"gadgets-required-rights": "A következő {{PLURAL:$2|jogosultságra|jogosultságokra}} van szükség:\n\n$1",
 	"gadgets-required-skins": "{{PLURAL:$2|$1 felületen érhető el|Az alábbi felületeken érhető el: $1}}.",
@@ -38,5 +40,6 @@
 	"right-gadgets-edit": "segédeszközök JavaScript- és CSS-lapjainak szerkesztése",
 	"action-gadgets-edit": "ennek a segédeszköz-JavaScriptnek vagy -CSS-nek a szerkesztése",
 	"right-gadgets-definition-edit": "segédeszköz-definíciók szerkesztése",
-	"action-gadgets-definition-edit": "ennek a segédeszköz-definíciónak a szerkesztése"
+	"action-gadgets-definition-edit": "ennek a segédeszköz-definíciónak a szerkesztése",
+	"gadgets-supports-urlload": "Ez a segédeszköz betölthető a <code>?withgadget</code> URL-paraméterrel."
 }

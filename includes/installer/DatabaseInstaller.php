@@ -21,6 +21,7 @@
  * @ingroup Installer
  */
 
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\DBExpectedError;
@@ -497,6 +498,7 @@ abstract class DatabaseInstaller {
 	 * Get a name=>value map of MW configuration globals for the default values.
 	 * @stable to override
 	 * @return array
+	 * @return-taint none
 	 */
 	public function getGlobalDefaults() {
 		$defaults = [];
@@ -786,10 +788,10 @@ abstract class DatabaseInstaller {
 			return $status;
 		}
 		global $IP;
-		Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		$rows = file( "$IP/maintenance/interwiki.list",
 			FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
-		Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 		$interwikis = [];
 		if ( !$rows ) {
 			return Status::newFatal( 'config-install-interwiki-list' );

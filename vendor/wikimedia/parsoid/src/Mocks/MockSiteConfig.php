@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Mocks;
 
@@ -7,6 +8,9 @@ use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Parsoid\Config\SiteConfig;
+use Wikimedia\Parsoid\Config\StubMetadataCollector;
+use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Utils\Utils;
 
 class MockSiteConfig extends SiteConfig {
@@ -95,6 +99,32 @@ class MockSiteConfig extends SiteConfig {
 		return '//my.wiki.example/wikix/';
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function exportMetadataToHead(
+		Document $document,
+		ContentMetadataCollector $metadata,
+		string $defaultTitle,
+		string $lang
+	): void {
+		'@phan-var StubMetadataCollector $metadata'; // @var StubMetadataCollector $metadata
+		$moduleLoadURI = $this->server() . $this->scriptpath() . '/load.php';
+		// Look for a displaytitle.
+		$displayTitle = $metadata->getPageProperty( 'displaytitle' ) ??
+			// Use the default title, properly escaped
+			Utils::escapeHtml( $defaultTitle );
+		$this->exportMetadataHelper(
+			$document,
+			$moduleLoadURI,
+			$metadata->getModules(),
+			$metadata->getModuleStyles(),
+			$metadata->getJsConfigVars(),
+			$displayTitle,
+			$lang
+		);
+	}
+
 	public function redirectRegexp(): string {
 		return '/(?i:#REDIRECT)/';
 	}
@@ -147,6 +177,7 @@ class MockSiteConfig extends SiteConfig {
 
 	/** @inheritDoc */
 	public function specialPageLocalName( string $alias ): ?string {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new \BadMethodCallException( 'Not implemented' );
 	}
 
@@ -169,7 +200,7 @@ class MockSiteConfig extends SiteConfig {
 		return 'mywiki';
 	}
 
-	public function legalTitleChars() : string {
+	public function legalTitleChars(): string {
 		return ' %!"$&\'()*,\-.\/0-9:;=?@A-Z\\\\^_`a-z~\x80-\xFF+';
 	}
 
@@ -178,6 +209,7 @@ class MockSiteConfig extends SiteConfig {
 	}
 
 	protected function linkTrail(): string {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw new \BadMethodCallException(
 			'Should not be used. linkTrailRegex() is overridden here.' );
 	}
@@ -259,8 +291,13 @@ class MockSiteConfig extends SiteConfig {
 	}
 
 	/** @inheritDoc */
-	protected function getFunctionHooks(): array {
-		return []; // None for now
+	protected function haveComputedFunctionSynonyms(): bool {
+		return false;
+	}
+
+	/** @inheritDoc */
+	protected function updateFunctionSynonym( string $func, string $magicword, bool $caseSensitive ): void {
+		/* Nothing for now. Look at src/Config/Api/SiteConfig when mocking is needed. */
 	}
 
 	/** @inheritDoc */

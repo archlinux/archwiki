@@ -5,7 +5,8 @@
 			"ShockD",
 			"StanProg",
 			"Stoyan",
-			"Vlad5250"
+			"Vlad5250",
+			"Kareyac"
 		]
 	},
 	"oathauth-desc": "Осигурява поддръжка на удостоверяването посредством HMAC на базата на еднократни пароли",
@@ -44,7 +45,7 @@
 	"oathauth-user-not-found": "Не е открита потребителска сметка с това име",
 	"oath-log-name": "Дневник на двукомпонентното удостоверяване",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|изключи}} двукомпонентното удостоверяване на $3",
-	"oauthauth-ui-no-module": "Не е включено",
+	"oathauth-ui-no-module": "Не е включено",
 	"oathauth-ui-manage": "Управление",
 	"oathmanage": "Управление на двукомпонентното удостоверяване",
 	"oathauth-ui-enabled-module": "Включен метод за удостоверяване",

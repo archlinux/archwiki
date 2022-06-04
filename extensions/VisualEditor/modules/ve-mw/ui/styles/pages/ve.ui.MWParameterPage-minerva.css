@@ -9,22 +9,8 @@
 	display: none;
 }
 
-.ve-ui-mwParameterPage-label {
-	display: inline-block;
-	font-weight: bold;
-}
-
-.ve-ui-mwParameterPage-statusIndicator {
-	display: inline-block;
-	opacity: 0.5;
-}
-
 .ve-ui-mwParameterPage-inlineDescription {
 	max-width: 50em;
-}
-
-.ve-ui-mwParameterPage-inlineDescription .ve-ui-expandableContent-container {
-	right: 0;
 }
 
 .ve-ui-mwParameterPage-doc-required,

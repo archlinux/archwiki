@@ -20,6 +20,7 @@ declare( strict_types = 1 );
 
 namespace VEParsoid;
 
+use ConfigException;
 use MediaWiki\MediaWikiServices;
 use VEParsoid\Config\PageConfigFactory;
 use Wikimedia\Parsoid\Config\DataAccess;
@@ -36,7 +37,36 @@ class ParsoidServices {
 	}
 
 	public function getParsoidSettings(): array {
-		return $this->services->get( 'ParsoidSettings' );
+		// This is a unified place to get Parsoid settings.
+		$parsoidSettings = null;
+		try {
+			// This is where ParsoidSettings will live in MW 1.39
+			$parsoidSettings =
+				$this->services->getMainConfig()->get( 'ParsoidSettings' );
+		} catch ( ConfigException $e ) {
+			// Config option isn't defined (yet), use defaults */
+		}
+		// If VisualEditorParsoidSettings is defined, use that but
+		// complain, since this is deprecated.
+		$veConfig = $this->services->getConfigFactory()
+			->makeConfig( 'visualeditor' );
+		try {
+			$parsoidSettings =
+				$veConfig->get( 'VisualEditorParsoidSettings' );
+			// If the above didn't throw, warn the user that
+			// VisualEditorParsoidSettings is deprecated
+			wfDeprecated(
+				'$wgVisualEditorParsoidSettings',
+				'1.38',
+				'VisualEditor'
+			);
+		} catch ( ConfigException $e ) {
+			// The deprecated Config option isn't defined, that's good.
+		}
+		return ( $parsoidSettings ?? [] ) + [
+			# Default parsoid settings, for 'no config' install.
+			'useSelser' => true,
+		];
 	}
 
 	public function getParsoidSiteConfig(): SiteConfig {

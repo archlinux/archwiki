@@ -11,9 +11,9 @@
 			"Renardo",
 			"Robin van der Vliet",
 			"Shirayuki",
+			"TMg",
 			"Yekrats",
-			"YvesNevelsteen",
-			"TMg"
+			"YvesNevelsteen"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -169,6 +169,7 @@
 	"visualeditor-dialog-transclusion-collapse-options": "Kaŝi opciojn",
 	"visualeditor-dialog-transclusion-content": "Enhavo",
 	"visualeditor-dialog-transclusion-contextitem-description": "Generita de: $1",
+	"visualeditor-dialog-transclusion-contextitem-loading": "Ŝargado…",
 	"visualeditor-dialog-transclusion-expand-options": "Montri opciojn",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Evitinda kampo",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "La kampo estas evitinda. $1",
@@ -194,7 +195,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Bildoj kaj aŭdvidaĵoj",
 	"visualeditor-dialogbutton-meta-tooltip": "Paĝaj agordoj",
 	"visualeditor-dialogbutton-template-tooltip": "Ŝablono",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Ŝablono",
 	"visualeditor-donebutton-tooltip": "Finite eldonante",
 	"visualeditor-editconflict": "Viaj ŝanĝoj ne povis konserviĝi, pro redakta konflikto. Ĉu {{GENDER:|vi}} volas malaŭtomate solvi la konflikton?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} nun memoras la redaktilon preferatan de vi. Vi povas ŝalti aliajn reĝimojn dum redaktado, kaj poste ŝanĝi vian preferon.",

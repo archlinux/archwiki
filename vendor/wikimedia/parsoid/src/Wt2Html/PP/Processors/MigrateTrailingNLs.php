@@ -3,12 +3,13 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\PP\Processors;
 
-use stdClass;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -21,10 +22,10 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 
 	/**
 	 * @param Node $node
-	 * @param stdClass $dp
+	 * @param DataParsoid $dp
 	 * @return bool
 	 */
-	private function nodeEndsLineInWT( Node $node, stdClass $dp ): bool {
+	private function nodeEndsLineInWT( Node $node, DataParsoid $dp ): bool {
 		// These nodes either end a line in wikitext (tr, li, dd, ol, ul, dl, caption,
 		// p) or have implicit closing tags that can leak newlines to those that end a
 		// line (th, td)
@@ -80,7 +81,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 		// Don't allow migration out of a table if the table has had
 		// content fostered out of it.
 		$tableParent = $this->getTableParent( $node );
-		if ( $tableParent && DOMUtils::isElt( $tableParent->previousSibling ) ) {
+		if ( $tableParent && $tableParent->previousSibling instanceof Element ) {
 			$previousSibling = $tableParent->previousSibling;
 			'@phan-var Element $previousSibling'; // @var Element $previousSibling
 			if ( !empty( DOMDataUtils::getDataParsoid( $previousSibling )->fostered ) ) {
@@ -93,7 +94,11 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 		return empty( $dp->fostered ) &&
 			( $this->nodeEndsLineInWT( $node, $dp ) ||
 				!empty( $dp->autoInsertedEnd ) ||
-				( !$node->nextSibling && $node->parentNode &&
+				( !$node->nextSibling &&
+					// FIXME: bug compatibility, previously the end meta caused
+					// $node->nextSibling to be true for elements with end tags
+					empty( $dp->tmp->endTSR ) &&
+					$node->parentNode &&
 					$this->canMigrateNLOutOfNode( $node->parentNode ) ) );
 	}
 
@@ -122,8 +127,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 	 * @param Node $elt
 	 * @param Env $env
 	 */
-	private function doMigrateTrailingNLs( Node $elt, Env $env ) {
-		// Nothing to do for text and comment nodes
+	public function doMigrateTrailingNLs( Node $elt, Env $env ) {
 		if (
 			!( $elt instanceof Element ) &&
 			!( $elt instanceof DocumentFragment )
@@ -139,7 +143,7 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 		// "<table>\n<tr> || ||\n<td> a\n</table>"
 		// when walking backward vs. forward.
 		//
-		// Separately, walking backward also lets us ingore
+		// Separately, walking backward also lets us ignore
 		// newly added children after child (because of
 		// migrated newline nodes from child's DOM tree).
 		$child = $elt->lastChild;
@@ -161,19 +165,23 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 				$n = $n->previousSibling;
 			}
 
+			$isTdTh = DOMCompat::nodeName( $elt ) === 'td' || DOMCompat::nodeName( $elt ) === 'th';
+
 			// Find nodes that need to be migrated out:
 			// - a sequence of comment and newline nodes that is preceded by
 			// a non-migratable node (text node with non-white-space content
 			// or an element node).
 			$foundNL = false;
 			$tsrCorrection = 0;
-			while ( $n && ( DOMUtils::isText( $n ) || DOMUtils::isComment( $n ) ) ) {
+			while ( $n instanceof Text || $n instanceof Comment ) {
 				if ( $n instanceof Comment ) {
+					if ( $isTdTh ) {
+						break;
+					}
 					$firstEltToMigrate = $n;
-					// <!--comment-->
 					$tsrCorrection += WTUtils::decodedCommentLength( $n );
 				} else {
-					if ( preg_match( '/^[ \t\r\n]*\n[ \t\r\n]*$/D', $n->nodeValue ) ) {
+					if ( !$isTdTh && preg_match( '/^[ \t\r\n]*\n[ \t\r\n]*$/D', $n->nodeValue ) ) {
 						$foundNL = true;
 						$firstEltToMigrate = $n;
 						$partialContent = false;
@@ -198,24 +206,6 @@ class MigrateTrailingNLs implements Wt2HtmlDOMProcessor {
 			if ( $firstEltToMigrate && $foundNL ) {
 				$eltParent = $elt->parentNode;
 				$insertPosition = $elt->nextSibling;
-
-				// A marker meta-tag for an end-tag carries TSR information for the tag.
-				// It is important not to separate them by inserting content since that
-				// will affect accuracy of DSR computation for the end-tag as follows:
-				// end_tag.dsr->end = marker_meta.tsr->start - inserted_content.length
-				// But, that is incorrect since end_tag.dsr->end should be marker_meta.tsr->start
-				//
-				// So, if the insertPosition is in between an end-tag and
-				// its marker meta-tag, move past that marker meta-tag.
-				if ( $insertPosition &&
-					DOMUtils::isMarkerMeta( $insertPosition, 'mw:EndTag' )
-				) {
-					'@phan-var Element $insertPosition'; // @var Element $insertPosition
-					if ( $insertPosition->getAttribute( 'data-etag' ) === DOMCompat::nodeName( $elt )
-					) {
-						$insertPosition = $insertPosition->nextSibling;
-					}
-				}
 
 				$n = $firstEltToMigrate;
 				while ( $n !== $migrationBarrier ) {

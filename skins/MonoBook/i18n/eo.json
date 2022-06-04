@@ -16,5 +16,7 @@
 	"monobook-more-actions": "Pli",
 	"monobook-cactions-label": "Agoj pri paĝo",
 	"monobook-notifications-link": "Sciigoj ($1)",
-	"monobook-notifications-link-none": "Sciigoj"
+	"monobook-notifications-link-none": "Sciigoj",
+	"monobook-view-history": "Historio",
+	"monobook-action-undelete": "Malforigi {{PLURAL:$1|redakton|$1 redaktojn}}"
 }

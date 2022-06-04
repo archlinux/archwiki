@@ -70,7 +70,7 @@
 	 * should ensure the surface is not accessible while the type is being evaluated.
 	 *
 	 * @param {ve.dm.SurfaceFragment} surfaceFragment Surface fragment after which to insert.
-	 * @param {boolean|undefined} [forceType] Force the type to 'inline' or 'block'. If not
+	 * @param {string} [forceType] Force the type to 'inline' or 'block'. If not
 	 *   specified it will be evaluated asynchronously.
 	 * @return {jQuery.Promise} Promise which resolves when the node has been inserted. If
 	 *   forceType was specified this will be instant.
@@ -159,8 +159,7 @@
 	 * @return {jQuery.Promise} Promise, resolved when spec is loaded
 	 */
 	ve.dm.MWTransclusionModel.prototype.load = function ( data ) {
-		var deferred,
-			promises = [];
+		var promises = [];
 
 		// Convert single part format to multi-part format
 		// Parsoid doesn't use this format any more, but we accept it for backwards compatibility
@@ -171,6 +170,7 @@
 		if ( Array.isArray( data.parts ) ) {
 			for ( var i = 0; i < data.parts.length; i++ ) {
 				var part = data.parts[ i ];
+				var deferred;
 				if ( part.template ) {
 					deferred = ve.createDeferred();
 					promises.push( deferred.promise() );
@@ -203,15 +203,14 @@
 	 * @fires change
 	 */
 	ve.dm.MWTransclusionModel.prototype.resolveChangeQueue = function ( queue ) {
-		var i,
-			resolveQueue = [];
+		var resolveQueue = [];
 
-		for ( i = 0; i < queue.length; i++ ) {
+		for ( var i = 0; i < queue.length; i++ ) {
 			var item = queue[ i ],
 				remove = 0;
 
 			if ( item.add instanceof ve.dm.MWTemplateModel ) {
-				var title = item.add.getTitle();
+				var title = item.add.getTemplateDataQueryTitle();
 				if ( hasOwn.call( specCache, title ) && specCache[ title ] ) {
 					item.add.getSpec().setTemplateData( specCache[ title ] );
 				}
@@ -260,9 +259,9 @@
 		// We need to go back and resolve the deferreds after emitting change.
 		// Otherwise we get silly situations like a single change event being
 		// guaranteed after the transclusion loaded promise gets resolved.
-		for ( i = 0; i < resolveQueue.length; i++ ) {
-			resolveQueue[ i ].resolve();
-		}
+		resolveQueue.forEach( function ( queueItem ) {
+			queueItem.resolve();
+		} );
 	};
 
 	/**
@@ -285,13 +284,11 @@
 		for ( var i = 0; i < queue.length; i++ ) {
 			var item = queue[ i ];
 			if ( item.add instanceof ve.dm.MWTemplateModel ) {
-				var title = item.add.getTitle(),
+				var title = item.add.getTemplateDataQueryTitle(),
 					mwTitle = title ? mw.Title.newFromText( title, templateNamespaceId ) : null;
 				if (
 					// Skip titles that don't have a resolvable href
 					mwTitle &&
-					// Skip titles outside the template namespace
-					mwTitle.namespace === templateNamespaceId &&
 					// Skip already cached data
 					!hasOwn.call( specCache, title ) &&
 					// Skip duplicate titles in the same batch
@@ -416,13 +413,9 @@
 	};
 
 	/**
-	 * Get a unique ID for a part in the transclusion.
-	 *
-	 * This is used to give parts unique IDs, and returns a different value each time it's called.
-	 *
-	 * @return {number} Unique ID
+	 * @return {number} Next part ID, starting from 0, guaranteed to be unique for this transclusion
 	 */
-	ve.dm.MWTransclusionModel.prototype.getUniquePartId = function () {
+	ve.dm.MWTransclusionModel.prototype.nextUniquePartId = function () {
 		return this.uid++;
 	};
 
@@ -494,6 +487,25 @@
 	};
 
 	/**
+	 * @return {boolean} True if the transclusion is literally empty or contains only placeholders
+	 */
+	ve.dm.MWTransclusionModel.prototype.isEmpty = function () {
+		return this.parts.every( function ( part ) {
+			return part instanceof ve.dm.MWTemplatePlaceholderModel;
+		} );
+	};
+
+	/**
+	 * @return {boolean} True if this is a single template or template placeholder
+	 */
+	ve.dm.MWTransclusionModel.prototype.isSingleTemplate = function () {
+		return this.parts.length === 1 && (
+			this.parts[ 0 ] instanceof ve.dm.MWTemplateModel ||
+			this.parts[ 0 ] instanceof ve.dm.MWTemplatePlaceholderModel
+		);
+	};
+
+	/**
 	 * Get all parts.
 	 *
 	 * @return {ve.dm.MWTransclusionPartModel[]} Parts in transclusion
@@ -507,20 +519,23 @@
 	 *
 	 * Matching is performed against the first section of the `id`, delimited by a '/'.
 	 *
-	 * @param {string} id Any id, including slash-delimited template parameter ids
-	 * @return {ve.dm.MWTransclusionPartModel|null} Part with matching ID, if found
+	 * @param {string} [id] Any id, including slash-delimited template parameter ids
+	 * @return {ve.dm.MWTransclusionPartModel|undefined} Part with matching ID, if found
 	 */
 	ve.dm.MWTransclusionModel.prototype.getPartFromId = function ( id ) {
+		if ( !id ) {
+			return;
+		}
+
 		// For ids from ve.dm.MWParameterModel, compare against the part id
 		// of the parameter instead of the entire model id (e.g. "part_1" instead of "part_1/foo").
-		var partId = id.split( '/' )[ 0 ];
+		var partId = id.split( '/', 1 )[ 0 ];
 
 		for ( var i = 0; i < this.parts.length; i++ ) {
 			if ( this.parts[ i ].getId() === partId ) {
 				return this.parts[ i ];
 			}
 		}
-		return null;
 	};
 
 	/**
@@ -561,6 +576,15 @@
 		for ( var i = 0; i < this.parts.length; i++ ) {
 			this.parts[ i ].addPromptedParameters();
 		}
+	};
+
+	/**
+	 * @return {boolean} True if any transclusion part contains meaningful, non-default user input
+	 */
+	ve.dm.MWTransclusionModel.prototype.containsValuableData = function () {
+		return this.parts.some( function ( part ) {
+			return part.containsValuableData();
+		} );
 	};
 
 	/**

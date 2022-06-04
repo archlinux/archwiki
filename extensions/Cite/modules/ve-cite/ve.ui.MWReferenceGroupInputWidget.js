@@ -47,9 +47,8 @@ ve.ui.MWReferenceGroupInputWidget.prototype.populateMenu = function ( internalLi
 	this.menu.addItems( [ placeholderGroupItem ].concat(
 		Object.keys( internalList.getNodeGroups() ).map(
 			function ( groupInternalName ) {
-				var groupName;
 				if ( groupInternalName.indexOf( 'mwReference/' ) === 0 ) {
-					groupName = groupInternalName.slice( 'mwReference/'.length );
+					var groupName = groupInternalName.slice( 'mwReference/'.length );
 					if ( groupName ) {
 						return new OO.ui.MenuOptionWidget( { data: groupName, label: groupName } );
 					}

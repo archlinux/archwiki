@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Babanwalia",
+			"BukhariSaeed",
+			"Sony dandiwal",
+			"Tow",
+			"ਪ੍ਰਚਾਰਕ"
+		]
+	},
+	"mobile-frontend-editor-edit": "ਸੋਧੋ",
+	"mobile-frontend-editor-redlink-create": "ਸਫ਼ਾ ਬਣਾਓ",
+	"mobile-frontend-editor-redlink-explain": "ਇਹ ਸਫ਼ਾ ਹਾਲੇ ਬਣਾਇਆ ਨਹੀਂ ਗਿਆ ਹੈ।",
+	"mobile-frontend-editor-redlink-leave": "ਨਹੀਂ, ਧੰਨਵਾਦ।",
+	"mobile-frontend-home-button": "ਘਰ",
+	"mobile-frontend-language-article-heading": "ਕਿਸੇ ਹੋਰ ਬੋਲੀ ਵਿੱਚ ਪੜ੍ਹੋ",
+	"mobile-frontend-main-menu-button-tooltip": "ਮੁੱਖ ਮੀਨੂ ਖੋਲ੍ਹੋ",
+	"mobile-frontend-main-menu-login": "ਦਾਖਲ",
+	"mobile-frontend-main-menu-nearby": "ਨੇੜੇ",
+	"mobile-frontend-main-menu-settings": "ਪਸੰਦਾਂ",
+	"mobile-frontend-main-menu-watchlist": "ਨਿਗਰਾਨ-ਸੂਚੀ",
+	"mobile-frontend-meta-data-issues-header-talk": "ਇਸ ਸਫ਼ੇ ਬਾਬਤ",
+	"mobile-frontend-meta-data-issues-talk": "ਇਸ ਗੱਲਬਾਤ ਸਫ਼ੇ ਬਾਬਤ",
+	"mobile-frontend-pageaction-edit-tooltip": "ਇਸ ਸਫ਼ੇ ਦਾ ਅਗੇਤਰਾ ਹਿੱਸਾ ਸੋਧੋ।",
+	"mobile-frontend-placeholder": "{{SITENAME}} ਭਾਲ਼ੋ",
+	"mobile-frontend-random-button": "ਰਲ਼ਵਾਂ",
+	"mobile-frontend-user-page-contributions": "ਯੋਗਦਾਨ",
+	"mobile-frontend-user-page-talk": "ਗੱਲ-ਬਾਤ"
+}

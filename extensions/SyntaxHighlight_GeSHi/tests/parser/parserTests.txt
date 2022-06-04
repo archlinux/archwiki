@@ -96,12 +96,7 @@ b</source>
 
 * foo <source>a
 b</source>
-!! html+untidy
-<ul><li><div class="mw-highlight mw-content-ltr" dir="ltr"><pre>a
-b</pre></div></li></ul>
-<ul><li>foo <div class="mw-highlight mw-content-ltr" dir="ltr"><pre>a
-b</pre></div></li></ul>
-!! html+tidy
+!! html
 <ul><li><div class="mw-highlight mw-content-ltr" dir="ltr"><pre>a
 b</pre></div></li></ul>
 <ul><li>foo <div class="mw-highlight mw-content-ltr" dir="ltr"><pre>a
@@ -169,7 +164,7 @@ function doSomething() {
 		bar;
 	if (baz) {
 </syntaxhighlight>
-!! html+tidy
+!! html
 <div class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><pre><span></span><span class="kd">function</span> <span class="nx">doSomething</span><span class="p">()</span> <span class="p">{</span>
 <span class="hll">	<span class="kd">var</span>	<span class="nx">foo</span><span class="p">,</span>
 </span><span class="hll">		<span class="nx">bar</span><span class="p">;</span>
@@ -183,7 +178,7 @@ deprecated source tag adds tracking category
 cat
 !! wikitext
 <source lang="python">print('Hi')</source>
-!! html+tidy
+!! html
 cat=Pages_using_deprecated_source_tags sort=
 !! end
 
@@ -193,6 +188,6 @@ deprecated enclose option adds tracking category
 cat
 !! wikitext
 <syntaxhighlight enclose="none" lang="python">print('Hi')</syntaxhighlight>
-!! html+tidy
+!! html
 cat=Pages_using_deprecated_enclose_attributes sort=
 !! end

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Minh Nguyen"
+			"Minh Nguyen",
+			"NguoiDungKhongDinhDanh"
 		]
 	},
 	"inputbox-desc": "Thêm những biểu mẫu HTML đơn giản",
@@ -11,7 +12,7 @@
 	"inputbox-searchfulltext": "Tìm toàn văn",
 	"inputbox-createarticle": "Tạo trang",
 	"inputbox-movearticle": "Di chuyển trang",
-	"inputbox-postcomment": "Đề mục mới",
-	"inputbox-postcommenttitle": "Đề mục mới",
+	"inputbox-postcomment": "Mục mới",
+	"inputbox-postcommenttitle": "Mục mới",
 	"inputbox-ns-main": "Chính"
 }

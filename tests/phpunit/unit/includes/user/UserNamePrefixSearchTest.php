@@ -4,16 +4,15 @@ namespace MediaWiki\Tests\User;
 
 use InvalidArgumentException;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
-use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use MediaWikiUnitTestCase;
 use User;
-use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\LoadBalancer;
 
 /**
- * @covers MediaWiki\User\UserNamePrefixSearch
+ * @covers \MediaWiki\User\UserNamePrefixSearch
  * @author DannyS712
  */
 class UserNamePrefixSearchTest extends MediaWikiUnitTestCase {
@@ -51,7 +50,7 @@ class UserNamePrefixSearchTest extends MediaWikiUnitTestCase {
 				->willReturn( $hasHideuser );
 		}
 
-		$database = $this->createMock( Database::class );
+		$database = $this->createMock( DBConnRef::class );
 		$database->expects( $this->once() )
 			->method( 'anyString' )
 			->willReturn( 'anyStringGoesHere' );
@@ -94,7 +93,6 @@ class UserNamePrefixSearchTest extends MediaWikiUnitTestCase {
 
 		$userNamePrefixSearch = new UserNamePrefixSearch(
 			$loadBalancer,
-			$this->createNoOpMock( UserFactory::class ),
 			$userNameUtils
 		);
 		$res = $userNamePrefixSearch->search(
@@ -139,7 +137,6 @@ class UserNamePrefixSearchTest extends MediaWikiUnitTestCase {
 	public function testSearchInvalidAudience() {
 		$userNamePrefixSearch = new UserNamePrefixSearch(
 			$this->createMock( LoadBalancer::class ),
-			$this->createMock( UserFactory::class ),
 			$this->createMock( UserNameUtils::class )
 		);
 

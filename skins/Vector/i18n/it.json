@@ -1,28 +1,31 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Beta16",
 			"Darth Kule",
 			"Elitre",
 			"FRacco",
 			"Gianfranco",
 			"Melos",
+			"Pierpao",
 			"Pietrodn",
 			"Sakretsu",
 			"Scompo",
-			"Ajeje Brazorf",
-			"ValterVB",
-			"Pierpao"
+			"ValterVB"
 		]
 	},
-	"vector-skin-desc": "Versione moderna del MonoBook con un aspetto rinnovato e molti miglioramenti dell'usabilità",
+	"tooltip-pt-watchlist-2": "La lista delle pagine che stai tenendo sotto osservazione",
+	"vector-skin-desc": "Fornisce 2 temi Vector\n* 2011 - La versione moderna del MonoBook con un aspetto rinnovato e molti miglioramenti dell'usabilità\n* 2022 - Vector realizzata nell'ambito del progetto WMF [[mw:Desktop Improvements]]",
 	"prefs-vector-enable-vector-1-label": "Usa Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "Nei prossimi anni aggiorneremo gradualmente il tema Vector. Legacy Vector ti permetterà di visualizzare la vecchia versione di Vector (risalente al dicembre 2019). Per scoprirne di più sulle novità, visita la nostra [[mw:Reading/Web/Desktop_Improvements|pagina del progetto]].",
 	"vector-opt-out": "Torna al vecchio aspetto",
 	"vector-opt-out-tooltip": "Cambia le tue impostazioni per ritornare alla visualizzazione della skin precedente (legacy Vector)",
 	"vector.css": "/* Gli stili CSS inseriti qui si applicano agli utenti che usano il tema Vector */",
 	"vector.js": "/* Il codice JavaScript inserito qui viene caricato dagli utenti che usano il tema Vector */",
+	"vector-languages": "Lingue",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingua|$1 lingue}}",
+	"vector-language-redirect-to-top": "Su questa {{SITENAME}} gli interlink sono in cima alla pagina a destra del titolo. [[#p-lang-btn|Vai in cima]].",
 	"vector-action-addsection": "Aggiungi discussione",
 	"vector-action-delete": "Cancella",
 	"vector-action-move": "Sposta",
@@ -35,6 +38,9 @@
 	"vector-view-view": "Leggi",
 	"vector-view-viewsource": "Visualizza wikitesto",
 	"vector-more-actions": "Altro",
+	"vector-searchsuggest-containing": "Cerca le pagine che contengono <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-intro-page": "Aiuto:Introduzione",
 	"vector-anon-user-menu-pages": "Pagine per utenti anonimi",
-	"vector-anon-user-menu-pages-learn": "ulteriori informazioni"
+	"vector-anon-user-menu-pages-learn": "ulteriori informazioni",
+	"vector-main-menu-tooltip": "Menu principale"
 }

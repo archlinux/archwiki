@@ -28,47 +28,6 @@ ve.ui.MWTransclusionDialog = function VeUiMWTransclusionDialog( config ) {
 	// Properties
 	this.isSidebarExpanded = null;
 
-	this.resetConfirmation = new OO.ui.FieldsetLayout( {
-		classes: [ 'oo-ui-processDialog-errors' ]
-	} );
-	this.resetConfirmationTitle = new OO.ui.LabelWidget( {
-		label: OO.ui.deferMsg( 'visualeditor-dialog-transclusion-reset-confirmation-title' )
-	} );
-	this.resetConfirmationMessage = new OO.ui.MessageWidget( {
-		label: OO.ui.deferMsg( 'visualeditor-dialog-transclusion-reset-confirmation-message' ),
-		type: 'error'
-	} );
-	this.resetConfirmationCancelButton = new OO.ui.ButtonWidget( {
-		label: OO.ui.deferMsg( 'visualeditor-dialog-transclusion-reset-confirmation-cancel' )
-	} );
-	this.resetConfirmationResetButton = new OO.ui.ButtonWidget( {
-		label: OO.ui.deferMsg( 'visualeditor-dialog-transclusion-reset-confirmation-reset' ),
-		flags: [ 'primary', 'destructive' ]
-	} );
-
-	// Events
-	this.resetConfirmationCancelButton.connect( this, {
-		click: 'resetConfirmationHide'
-	} );
-	this.resetConfirmationResetButton.connect( this, {
-		click: 'resetConfirmationReset'
-	} );
-
-	// Initialization
-	this.resetConfirmation.addItems( [
-		new OO.ui.HorizontalLayout( {
-			items: [ this.resetConfirmationTitle ],
-			classes: [ 'oo-ui-processDialog-errors-title' ]
-		} ),
-		this.resetConfirmationMessage,
-		new OO.ui.HorizontalLayout( {
-			items: [ this.resetConfirmationCancelButton, this.resetConfirmationResetButton ],
-			classes: [ 'oo-ui-processDialog-errors-actions' ]
-		} )
-	] );
-	this.resetConfirmation.toggle( false );
-	this.$content.append( this.resetConfirmation.$element );
-
 	// Temporary feature flags
 	this.useInlineDescriptions = veConfig.transclusionDialogInlineDescriptions;
 	this.useBackButton = veConfig.transclusionDialogBackButton;
@@ -84,6 +43,9 @@ ve.ui.MWTransclusionDialog = function VeUiMWTransclusionDialog( config ) {
 	if ( this.useNewSidebar ) {
 		this.$element.addClass( 've-ui-mwTransclusionDialog-newSidebar' );
 	}
+
+	this.hotkeyTriggers = {};
+	this.$element.on( 'keydown', this.onKeyDown.bind( this ) );
 };
 
 /* Inheritance */
@@ -128,16 +90,20 @@ ve.ui.MWTransclusionDialog.static.smallScreenMaxWidth = 540;
  * @param {number} places Number of places to move the selected item
  */
 ve.ui.MWTransclusionDialog.prototype.onOutlineControlsMove = function ( places ) {
-	var parts = this.transclusionModel.getParts(),
-		itemId = this.findSelectedPartId();
+	var part = this.transclusionModel.getPartFromId( this.findSelectedItemId() );
+	if ( !part ) {
+		return;
+	}
 
-	if ( itemId ) {
-		var part = this.transclusionModel.getPartFromId( itemId );
-		// Move part to new location, and if dialog is loaded switch to new part page
-		var promise = this.transclusionModel.addPart( part, parts.indexOf( part ) + places );
-		if ( this.loaded && !this.preventReselection ) {
-			promise.done( this.focusPart.bind( this, part.getId() ) );
-		}
+	var newPlace = this.transclusionModel.getParts().indexOf( part ) + places;
+	if ( newPlace < 0 || newPlace >= this.transclusionModel.getParts().length ) {
+		return;
+	}
+
+	// Move part to new location, and if dialog is loaded switch to new part page
+	var promise = this.transclusionModel.addPart( part, newPlace );
+	if ( this.loaded && !this.preventReselection ) {
+		promise.done( this.focusPart.bind( this, part.getId() ) );
 	}
 };
 
@@ -147,39 +113,35 @@ ve.ui.MWTransclusionDialog.prototype.onOutlineControlsMove = function ( places )
  * @private
  */
 ve.ui.MWTransclusionDialog.prototype.onOutlineControlsRemove = function () {
-	var id = this.findSelectedPartId();
+	var controls = this.bookletLayout.getOutlineControls();
+	// T301914: Safe-guard for when a keyboard shortcut triggers this, instead of the actual button
+	if ( !controls.isVisible() ||
+		!controls.removeButton.isVisible() ||
+		controls.removeButton.isDisabled()
+	) {
+		return;
+	}
 
-	if ( id ) {
-		var part = this.transclusionModel.getPartFromId( id );
-		// Check if the part is the actual template, or one of its parameters
-		if ( part instanceof ve.dm.MWTemplateModel && id !== part.getId() ) {
-			var param = part.getParameterFromId( id );
-			if ( param instanceof ve.dm.MWParameterModel ) {
-				part.removeParameter( param );
-			}
-		} else if ( part instanceof ve.dm.MWTransclusionPartModel ) {
-			this.transclusionModel.removePart( part );
+	var itemId = this.findSelectedItemId(),
+		part = this.transclusionModel.getPartFromId( itemId );
+	// Check if the part is the actual template, or one of its parameters
+	// TODO: This applies to the old sidebar only and can be removed later
+	if ( part instanceof ve.dm.MWTemplateModel && itemId !== part.getId() ) {
+		var param = part.getParameterFromId( itemId );
+		if ( param ) {
+			param.remove();
 		}
+	} else if ( part instanceof ve.dm.MWTransclusionPartModel ) {
+		this.transclusionModel.removePart( part );
 	}
 };
 
 /**
- * Handle booklet layout focus.
+ * Create a new template part at the end of the transclusion.
  *
  * @private
  */
-ve.ui.MWTransclusionDialog.prototype.onBookletLayoutFocus = function () {
-	var currentPage = this.bookletLayout.getCurrentPage(),
-		isParameterPage = currentPage instanceof ve.ui.MWParameterPage;
-	this.bookletLayout.getOutlineControls().removeButton.setDisabled( isParameterPage );
-};
-
-/**
- * Handle add template button click events.
- *
- * @private
- */
-ve.ui.MWTransclusionDialog.prototype.onAddTemplateButtonClick = function () {
+ve.ui.MWTransclusionDialog.prototype.addTemplatePlaceholder = function () {
 	this.addPart( new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel ) );
 };
 
@@ -188,7 +150,7 @@ ve.ui.MWTransclusionDialog.prototype.onAddTemplateButtonClick = function () {
  *
  * @private
  */
-ve.ui.MWTransclusionDialog.prototype.onAddContentButtonClick = function () {
+ve.ui.MWTransclusionDialog.prototype.addContent = function () {
 	this.addPart( new ve.dm.MWTransclusionContentModel( this.transclusionModel ) );
 };
 
@@ -197,20 +159,21 @@ ve.ui.MWTransclusionDialog.prototype.onAddContentButtonClick = function () {
  *
  * @private
  */
-ve.ui.MWTransclusionDialog.prototype.onAddParameterButtonClick = function () {
-	var partId = this.findSelectedPartId();
-	if ( !partId ) {
-		return;
-	}
-
-	var part = this.transclusionModel.getPartFromId( partId );
+ve.ui.MWTransclusionDialog.prototype.addParameter = function () {
+	var part = this.transclusionModel.getPartFromId( this.findSelectedItemId() );
 	if ( !( part instanceof ve.dm.MWTemplateModel ) ) {
 		return;
 	}
 
 	// TODO: Use a distinct class for placeholder model rather than
 	// these magical "empty" constants.
-	part.addParameter( new ve.dm.MWParameterModel( part ) );
+	var placeholderParameter = new ve.dm.MWParameterModel( part );
+	part.addParameter( placeholderParameter );
+	this.focusPart( placeholderParameter.getId() );
+
+	if ( this.useInlineDescriptions ) {
+		this.autoExpandSidebar();
+	}
 };
 
 /**
@@ -219,16 +182,18 @@ ve.ui.MWTransclusionDialog.prototype.onAddParameterButtonClick = function () {
  * @private
  * @param {OO.ui.PageLayout} page Active page
  */
-ve.ui.MWTransclusionDialog.prototype.onBookletLayoutSet = function ( page ) {
-	var isPlaceholder = page instanceof ve.ui.MWTemplatePlaceholderPage,
+ve.ui.MWTransclusionDialog.prototype.onBookletLayoutSetPage = function ( page ) {
+	var isLastPlaceholder = page instanceof ve.ui.MWTemplatePlaceholderPage &&
+			this.transclusionModel.isSingleTemplate(),
 		acceptsNewParameters = page instanceof ve.ui.MWTemplatePage ||
-			page instanceof ve.ui.MWParameterPage,
-		isRequired = page instanceof ve.ui.MWParameterPage && page.parameter.isRequired(),
-		canNotRemove = isRequired ||
-			( isPlaceholder && this.transclusionModel.getParts().length === 1 );
+			page instanceof ve.ui.MWParameterPage;
 
 	this.addParameterButton.setDisabled( !acceptsNewParameters || this.isReadOnly() );
-	this.bookletLayout.getOutlineControls().removeButton.toggle( !canNotRemove );
+	this.bookletLayout.getOutlineControls().removeButton.toggle( !isLastPlaceholder );
+
+	if ( this.pocSidebar ) {
+		this.pocSidebar.setSelectionByPageName( page.getName() );
+	}
 };
 
 /**
@@ -241,34 +206,106 @@ ve.ui.MWTransclusionDialog.prototype.onReplacePart = function ( removed, added )
 	if ( parts.length === 0 ) {
 		this.addParameterButton.setDisabled( true );
 		this.addPart( new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel ) );
+	} else if ( parts.length > 1 ) {
+		this.bookletLayout.getOutlineControls().toggle( true );
+		this.$element.removeClass( 've-ui-mwTransclusionDialog-single-transclusion' );
 	}
 
-	this.multipartMessage.toggle( parts.length > 1 && this.useNewSidebar );
+	// multipart message
+	if ( this.useNewSidebar ) {
+		this.bookletLayout.stackLayout.$element.prepend( this.multipartMessage.$element );
+		this.multipartMessage.toggle( parts.length > 1 );
+	}
 
-	var canCollapse = this.isSingleTemplateTransclusion();
-	this.actions.setAbilities( { mode: canCollapse } );
+	this.autoExpandSidebar();
+	this.updateModeActionState();
 	this.updateActionSet();
 };
 
 /**
  * @private
- * @return {boolean} True if the dialog contains a single template or template placeholder. False
- *  otherwise. Also false if there is no data model connected yet.
  */
-ve.ui.MWTransclusionDialog.prototype.isSingleTemplateTransclusion = function () {
-	var parts = this.transclusionModel && this.transclusionModel.getParts();
+ve.ui.MWTransclusionDialog.prototype.setupHotkeyTriggers = function () {
+	// Lower-case modifier and key names as specified in {@see ve.ui.Trigger}
+	var isMac = ve.getSystemPlatform() === 'mac',
+		meta = isMac ? 'meta+' : 'ctrl+';
+	var hotkeys = {
+		addTemplate: meta + 'd',
+		addWikitext: meta + 'shift+y',
+		addParameter: meta + 'shift+d',
+		moveUp: meta + 'shift+up',
+		moveDown: meta + 'shift+down',
+		remove: meta + 'delete',
+		removeBackspace: meta + 'backspace'
+	};
 
-	return parts && parts.length === 1 && (
-		parts[ 0 ] instanceof ve.dm.MWTemplateModel ||
-		parts[ 0 ] instanceof ve.dm.MWTemplatePlaceholderModel
-	);
+	var notInTextFields = /^(?!INPUT|TEXTAREA)/i;
+	this.connectHotKeyBinding( hotkeys.addTemplate, this.addTemplatePlaceholder.bind( this ) );
+	this.connectHotKeyBinding( hotkeys.addWikitext, this.addContent.bind( this ) );
+	this.connectHotKeyBinding( hotkeys.addParameter, this.addParameter.bind( this ) );
+	this.connectHotKeyBinding( hotkeys.moveUp, this.onOutlineControlsMove.bind( this, -1 ), notInTextFields );
+	this.connectHotKeyBinding( hotkeys.moveDown, this.onOutlineControlsMove.bind( this, 1 ), notInTextFields );
+	this.connectHotKeyBinding( hotkeys.remove, this.onOutlineControlsRemove.bind( this ), notInTextFields );
+	if ( isMac ) {
+		this.connectHotKeyBinding( hotkeys.removeBackspace, this.onOutlineControlsRemove.bind( this ), notInTextFields );
+	}
+
+	this.addHotkeyToTitle( this.addTemplateButton, hotkeys.addTemplate );
+	this.addHotkeyToTitle( this.addContentButton, hotkeys.addWikitext );
+	this.addHotkeyToTitle( this.addParameterButton, hotkeys.addParameter );
+
+	var controls = this.bookletLayout.getOutlineControls();
+	this.addHotkeyToTitle( controls.upButton, hotkeys.moveUp );
+	this.addHotkeyToTitle( controls.downButton, hotkeys.moveDown );
+	this.addHotkeyToTitle( controls.removeButton, hotkeys.remove );
 };
 
 /**
- * @return {string|undefined}
+ * @private
+ * @param {string} hotkey
+ * @param {Function} handler
+ * @param {RegExp} [validTypes]
  */
-ve.ui.MWTransclusionDialog.prototype.findSelectedPartId = function () {
+ve.ui.MWTransclusionDialog.prototype.connectHotKeyBinding = function ( hotkey, handler, validTypes ) {
+	this.hotkeyTriggers[ hotkey ] = {
+		handler: handler,
+		validTypes: validTypes
+	};
+};
+
+/**
+ * @private
+ * @param {OO.ui.mixin.TitledElement} element
+ * @param {string} hotkey
+ */
+ve.ui.MWTransclusionDialog.prototype.addHotkeyToTitle = function ( element, hotkey ) {
+	// Separated with a space as in {@see OO.ui.Tool.updateTitle}
+	element.setTitle( element.getTitle() + ' ' + new ve.ui.Trigger( hotkey ).getMessage() );
+};
+
+/**
+ * Handles key down events.
+ *
+ * @protected
+ * @param {jQuery.Event} e Key down event
+ */
+ve.ui.MWTransclusionDialog.prototype.onKeyDown = function ( e ) {
+	var hotkey = new ve.ui.Trigger( e ).toString(),
+		trigger = this.hotkeyTriggers[ hotkey ];
+
+	if ( trigger && ( !trigger.validTypes || trigger.validTypes.test( e.target.nodeName ) ) ) {
+		trigger.handler();
+		e.preventDefault();
+		e.stopPropagation();
+	}
+};
+
+/**
+ * @return {string|undefined} Any id, including slash-delimited template parameter ids
+ */
+ve.ui.MWTransclusionDialog.prototype.findSelectedItemId = function () {
 	if ( this.pocSidebar ) {
+		// TODO: This can't return parameter ids any more when the old sidebar is gone
 		return this.pocSidebar.findSelectedPartId();
 	}
 
@@ -290,58 +327,104 @@ ve.ui.MWTransclusionDialog.prototype.getPageFromPart = function ( part ) {
 /**
  * Automatically expand or collapse the sidebar according to default logic.
  *
- * @private
+ * @protected
  */
 ve.ui.MWTransclusionDialog.prototype.autoExpandSidebar = function () {
-	var showSidebar;
+	var expandSidebar;
 
 	if ( this.useInlineDescriptions ) {
-		var isSmallScreen = $( window ).width() <= this.constructor.static.smallScreenMaxWidth;
-		showSidebar = !isSmallScreen;
-		this.$otherActions.toggleClass( 'oo-ui-element-hidden', !isSmallScreen );
+		var isSmallScreen = this.isNarrowScreen();
+
+		var showOtherActions = isSmallScreen ||
+			this.actions.getOthers().some( function ( action ) {
+				// Check for unknown actions, show the toolbar if any are available.
+				return action.action !== 'mode';
+			} );
+		this.actions.forEach( { actions: [ 'mode' ] }, function ( action ) {
+			action.toggle( isSmallScreen );
+		} );
+		this.$otherActions.toggleClass( 'oo-ui-element-hidden', !showOtherActions );
+
+		if ( isSmallScreen && this.transclusionModel.isEmpty() ) {
+			expandSidebar = false;
+		} else if ( isSmallScreen &&
+			// eslint-disable-next-line no-jquery/no-class-state
+			this.$content.hasClass( 've-ui-mwTransclusionDialog-small-screen' )
+		) {
+			// We did this already. If the sidebar is visible or not is now the user's decision.
+			return;
+		} else {
+			expandSidebar = !isSmallScreen;
+		}
+
 		this.$content.toggleClass( 've-ui-mwTransclusionDialog-small-screen', isSmallScreen );
 	} else {
-		showSidebar = !this.isSingleTemplateTransclusion();
+		expandSidebar = !this.transclusionModel.isSingleTemplate();
 	}
 
-	this.toggleSidebar( showSidebar );
+	this.toggleSidebar( expandSidebar );
 };
 
 /**
  * Set if the sidebar is visible (which means the dialog is expanded), or collapsed.
  *
- * @param {boolean} showSidebar
+ * @param {boolean} expandSidebar
  * @private
  */
-ve.ui.MWTransclusionDialog.prototype.toggleSidebar = function ( showSidebar ) {
-	if ( this.isSidebarExpanded === showSidebar ) {
+ve.ui.MWTransclusionDialog.prototype.toggleSidebar = function ( expandSidebar ) {
+	if ( this.isSidebarExpanded === expandSidebar ) {
 		return;
 	}
 
-	this.isSidebarExpanded = showSidebar;
+	this.isSidebarExpanded = expandSidebar;
 	this.$content
-		.toggleClass( 've-ui-mwTransclusionDialog-collapsed', !showSidebar )
-		.toggleClass( 've-ui-mwTransclusionDialog-expanded', showSidebar );
+		.toggleClass( 've-ui-mwTransclusionDialog-collapsed', !expandSidebar )
+		.toggleClass( 've-ui-mwTransclusionDialog-expanded', expandSidebar );
 
 	var dialogSizeSidebarExpanded = this.useInlineDescriptions ? 'larger' : 'large';
 	var dialogSizeSidebarCollapsed = this.useNewSidebar ? dialogSizeSidebarExpanded : 'medium';
 	this.ignoreNextWindowResizeEvent = true;
-	this.setSize( showSidebar ? dialogSizeSidebarExpanded : dialogSizeSidebarCollapsed );
+	this.setSize( expandSidebar ? dialogSizeSidebarExpanded : dialogSizeSidebarCollapsed );
 
-	this.bookletLayout.toggleOutline( showSidebar );
+	this.bookletLayout.toggleOutline( expandSidebar );
 	this.updateTitle();
 	this.updateModeActionState();
 
 	// HACK blur any active input so that its dropdown will be hidden and won't end
 	// up being mispositioned
 	this.$content.find( 'input:focus' ).trigger( 'blur' );
+
+	if ( this.useInlineDescriptions && this.pocSidebar && this.loaded && this.isNarrowScreen() ) {
+		// Reapply selection and scrolling when switching between panes.
+		// FIXME: decouple from descendants
+		var selectedPage = this.bookletLayout.stackLayout.getCurrentItem();
+		if ( selectedPage ) {
+			var name = selectedPage.getName();
+			var dialog = this;
+			// Align whichever panel is becoming visible, after animation completes.
+			// TODO: Should hook onto an animation promise—but is this possible when pure CSS?
+			setTimeout( function () {
+				if ( expandSidebar ) {
+					dialog.pocSidebar.setSelectionByPageName( name );
+				} else {
+					selectedPage.scrollElementIntoView();
+					// TODO: Find a reliable way to refocus.
+					// dialog.focusPart( name );
+				}
+			}, OO.ui.theme.getDialogTransitionDuration() );
+		}
+	}
+};
+
+ve.ui.MWTransclusionDialog.prototype.isNarrowScreen = function () {
+	return $( window ).width() <= this.constructor.static.smallScreenMaxWidth;
 };
 
 /**
  * @inheritdoc
  */
 ve.ui.MWTransclusionDialog.prototype.updateTitle = function () {
-	if ( !this.isSingleTemplateTransclusion() ) {
+	if ( !this.transclusionModel.isSingleTemplate() ) {
 		this.title.setLabel( ve.msg( 'visualeditor-dialog-transclusion-title-edit-transclusion' ) );
 	} else {
 		// Parent method
@@ -355,8 +438,7 @@ ve.ui.MWTransclusionDialog.prototype.updateTitle = function () {
  * @private
  */
 ve.ui.MWTransclusionDialog.prototype.updateModeActionState = function () {
-	var parts = this.transclusionModel && this.transclusionModel.getParts(),
-		isExpanded = this.isSidebarExpanded,
+	var isExpanded = this.isSidebarExpanded,
 		label = ve.msg( isExpanded ?
 			'visualeditor-dialog-transclusion-collapse-options' :
 			'visualeditor-dialog-transclusion-expand-options' );
@@ -366,18 +448,14 @@ ve.ui.MWTransclusionDialog.prototype.updateModeActionState = function () {
 		action.$button.attr( 'aria-expanded', isExpanded ? 1 : 0 );
 	} );
 
-	// Decide whether the button should be enabled or not. It needs to be:
-	// * disabled when we're in the initial add-new-template phase, because it's
-	//   meaningless
-	// * disabled if we're in a multi-part transclusion, because the sidebar's
-	//   forced open (this does not apply when using the new sidebar)
-	// * enabled if we're in a single-part transclusion, because the sidebar's
-	//   closed but can be opened to add more parts
-	if ( parts ) {
-		var canCollapse = !( parts[ 0 ] instanceof ve.dm.MWTemplatePlaceholderModel ) &&
-				( this.useInlineDescriptions || this.isSingleTemplateTransclusion() );
-		this.actions.setAbilities( { mode: canCollapse } );
-	}
+	// Old sidebar: Only a single template can be collapsed, except it's still the initial
+	// placeholder.
+	// New sidebar: The button is only visible on very narrow screens, {@see autoExpandSidebar}.
+	// It's always needed, except in the initial placeholder state.
+	var isInitialState = !isExpanded && this.transclusionModel.isEmpty(),
+		canCollapse = ( this.transclusionModel.isSingleTemplate() || this.useInlineDescriptions ) &&
+			!isInitialState;
+	this.actions.setAbilities( { mode: canCollapse } );
 };
 
 /**
@@ -387,18 +465,13 @@ ve.ui.MWTransclusionDialog.prototype.updateModeActionState = function () {
  */
 ve.ui.MWTransclusionDialog.prototype.addPart = function ( part ) {
 	var parts = this.transclusionModel.getParts(),
-		itemId = this.findSelectedPartId();
-
-	if ( part ) {
-		// Insert after selected part, or at the end if nothing is selected
-		var index = itemId ?
-			parts.indexOf( this.transclusionModel.getPartFromId( itemId ) ) + 1 :
-			parts.length;
-		// Add the part, and if dialog is loaded switch to part page
-		var promise = this.transclusionModel.addPart( part, index );
-		if ( this.loaded && !this.preventReselection ) {
-			promise.done( this.focusPart.bind( this, part.getId() ) );
-		}
+		selectedPart = this.transclusionModel.getPartFromId( this.findSelectedItemId() );
+	// Insert after selected part, or at the end if nothing is selected
+	var index = selectedPart ? parts.indexOf( selectedPart ) + 1 : parts.length;
+	// Add the part, and if dialog is loaded switch to part page
+	var promise = this.transclusionModel.addPart( part, index );
+	if ( this.loaded && !this.preventReselection ) {
+		promise.done( this.focusPart.bind( this, part.getId() ) );
 	}
 };
 
@@ -406,27 +479,38 @@ ve.ui.MWTransclusionDialog.prototype.addPart = function ( part ) {
  * @inheritdoc
  */
 ve.ui.MWTransclusionDialog.prototype.getActionProcess = function ( action ) {
-	if ( action === 'back' ) {
-		if ( !this.containsValuableData() ) {
-			return this.getActionProcess( 'reset' );
-		}
-		return new OO.ui.Process( function () {
-			this.resetConfirmation.toggle( true );
-		}, this );
-	}
+	var willLoseProgress = this.getMode() === 'insert' ?
+		// A new template with no parameters is not considered valuable.
+		this.transclusionModel.containsValuableData() :
+		// The user has changed a parameter, and is not on the template search page.
+		( this.altered && !this.transclusionModel.isEmpty() );
 
-	if ( action === 'reset' ) {
-		return new OO.ui.Process( function () {
-			this.resetDialog();
-		}, this );
+	switch ( action ) {
+		case 'back':
+			return new OO.ui.Process( function () {
+				if ( willLoseProgress ) {
+					ve.ui.MWConfirmationDialog.static.confirm(
+						'visualeditor-dialog-transclusion-back-confirmation-prompt',
+						this.resetDialog.bind( this )
+					);
+				} else {
+					this.resetDialog();
+				}
+			}, this );
+		case 'mode':
+			return new OO.ui.Process( function () {
+				this.toggleSidebar( !this.isSidebarExpanded );
+			}, this );
+		case '':
+			// close action
+			if ( willLoseProgress ) {
+				return new OO.ui.Process( function () {
+					ve.ui.MWConfirmationDialog.static.confirm(
+						'visualeditor-dialog-transclusion-close-confirmation-prompt',
+						this.close.bind( this ) );
+				}, this );
+			}
 	}
-
-	if ( action === 'mode' ) {
-		return new OO.ui.Process( function () {
-			this.toggleSidebar( !this.isSidebarExpanded );
-		}, this );
-	}
-
 	return ve.ui.MWTransclusionDialog.super.prototype.getActionProcess.call( this, action );
 };
 
@@ -445,35 +529,13 @@ ve.ui.MWTransclusionDialog.prototype.updateActionSet = function () {
 
 	if ( this.useBackButton ) {
 		var closeButton = this.actions.get( { flags: [ 'close' ] } ).pop(),
-			parts = this.transclusionModel && this.transclusionModel.getParts(),
-			isInitialPage = parts && parts.length === 1 && parts[ 0 ] instanceof ve.dm.MWTemplatePlaceholderModel,
-			isInsertMode = this.getMode() === 'insert',
-			isUsingClose = !isInsertMode || isInitialPage;
+			canGoBack = this.getMode() === 'insert' && !this.transclusionModel.isEmpty();
 
-		closeButton.toggle( isUsingClose );
-		backButton.toggle( !isUsingClose );
+		closeButton.toggle( !canGoBack );
+		backButton.toggle( canGoBack );
 	} else {
 		backButton.toggle( false );
 	}
-};
-
-/**
- * Dismisses the reset confirmation.
- *
- * @private
- */
-ve.ui.MWTransclusionDialog.prototype.resetConfirmationHide = function () {
-	this.resetConfirmation.toggle( false );
-};
-
-/**
- * Dismisses the reset confirmation and runs the reset action.
- *
- * @private
- */
-ve.ui.MWTransclusionDialog.prototype.resetConfirmationReset = function () {
-	this.resetConfirmationHide();
-	this.executeAction( 'reset' );
 };
 
 /**
@@ -492,17 +554,7 @@ ve.ui.MWTransclusionDialog.prototype.resetDialog = function () {
 		.addPart( new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel ), 0 )
 		.done( function () {
 			target.autoExpandSidebar();
-			target.updateModeActionState();
 		} );
-};
-
-/**
- * @return {boolean} True if any transclusion part contains meaningful, non-default user input
- */
-ve.ui.MWTransclusionDialog.prototype.containsValuableData = function () {
-	return this.transclusionModel.getParts().some( function ( part ) {
-		return part.containsValuableData();
-	} );
 };
 
 /**
@@ -536,35 +588,57 @@ ve.ui.MWTransclusionDialog.prototype.initialize = function () {
 		this.bookletLayout.getOutlineControls().addItems( [ this.addParameterButton ] );
 	}
 
+	this.setupHotkeyTriggers();
+
+	// multipart message gets attached in onReplacePart()
 	this.multipartMessage = new OO.ui.MessageWidget( {
-		label: ve.msg( 'visualeditor-dialog-transclusion-multipart-message' ),
+		label: mw.message( 'visualeditor-dialog-transclusion-multipart-message' ).parseDom(),
 		classes: [ 've-ui-mwTransclusionDialog-multipart-message' ]
 	} );
+	ve.targetLinksToNewWindow( this.multipartMessage.$element[ 0 ] );
+
+	if ( this.useNewSidebar || this.useInlineDescriptions ) {
+		var helpPopup = new ve.ui.MWFloatingHelpElement( {
+			label: mw.message( 'visualeditor-dialog-transclusion-help-title' ).text(),
+			title: mw.message( 'visualeditor-dialog-transclusion-help-title' ).text(),
+			$message: new OO.ui.FieldsetLayout( {
+				items: [
+					new OO.ui.LabelWidget( {
+						label: mw.message( 'visualeditor-dialog-transclusion-help-message' ).text()
+					} ),
+					this.getMessageButton( 'visualeditor-dialog-transclusion-help-page-help', 'helpNotice' ),
+					this.getMessageButton( 'visualeditor-dialog-transclusion-help-page-shortcuts', 'keyboard' ),
+					this.getMessageButton( 'visualeditor-dialog-transclusion-help-page-feedback', 'feedback' )
+				],
+				classes: [ 've-ui-mwTransclusionDialog-floatingHelpElement-fieldsetLayout' ]
+			} ).$element
+		} );
+		helpPopup.$element.addClass( 've-ui-mwTransclusionDialog-floatingHelpElement' );
+		helpPopup.$element.appendTo( this.$body );
+	}
 
 	// Events
 	if ( this.useInlineDescriptions ) {
 		this.getManager().connect( this, { resize: ve.debounce( this.onWindowResize.bind( this ) ) } );
 	}
-	this.bookletLayout.connect( this, { set: 'onBookletLayoutSet' } );
+	this.bookletLayout.connect( this, { set: 'onBookletLayoutSetPage' } );
 	this.bookletLayout.$menu.find( '[ role="listbox" ]' ).first()
 		.attr( 'aria-label', ve.msg( 'visualeditor-dialog-transclusion-templates-menu-aria-label' ) );
-	this.addTemplateButton.connect( this, { click: 'onAddTemplateButtonClick' } );
-	this.addContentButton.connect( this, { click: 'onAddContentButtonClick' } );
-	this.addParameterButton.connect( this, { click: 'onAddParameterButtonClick' } );
+	this.addTemplateButton.connect( this, { click: 'addTemplatePlaceholder' } );
+	this.addContentButton.connect( this, { click: 'addContent' } );
+	this.addParameterButton.connect( this, { click: 'addParameter' } );
 	this.bookletLayout.getOutlineControls().connect( this, {
 		move: 'onOutlineControlsMove',
 		remove: 'onOutlineControlsRemove'
 	} );
-	if ( this.useNewSidebar ) {
-		this.bookletLayout.$element.on( 'focusin', this.onBookletLayoutFocus.bind( this ) );
-		this.bookletLayout.stackLayout.$element.prepend( this.multipartMessage.$element );
-	}
 };
 
 /**
  * @inheritdoc
  */
 ve.ui.MWTransclusionDialog.prototype.getSetupProcess = function ( data ) {
+	this.onTearDownCallback = data && data.onTearDownCallback;
+
 	return ve.ui.MWTransclusionDialog.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
 			var isReadOnly = this.isReadOnly();
@@ -577,10 +651,10 @@ ve.ui.MWTransclusionDialog.prototype.getSetupProcess = function ( data ) {
 			} );
 
 			if ( this.useNewSidebar ) {
-				this.bookletLayout.getOutlineControls().toggle( !this.isSingleTemplateTransclusion() );
+				this.bookletLayout.getOutlineControls().toggle( !this.transclusionModel.isSingleTemplate() );
 				this.$element.toggleClass(
 					've-ui-mwTransclusionDialog-single-transclusion',
-					this.isSingleTemplateTransclusion()
+					this.transclusionModel.isSingleTemplate()
 				);
 			}
 
@@ -589,11 +663,20 @@ ve.ui.MWTransclusionDialog.prototype.getSetupProcess = function ( data ) {
 		}, this );
 };
 
+/** @inheritdoc */
+ve.ui.MWTransclusionDialog.prototype.getTeardownProcess = function () {
+	if ( this.onTearDownCallback ) {
+		this.onTearDownCallback();
+	}
+
+	return ve.ui.MWTransclusionDialog.super.prototype.getTeardownProcess.apply( this, arguments );
+};
+
 /**
  * @private
  */
 ve.ui.MWTransclusionDialog.prototype.onWindowResize = function () {
-	if ( !this.ignoreNextWindowResizeEvent ) {
+	if ( this.transclusionModel && !this.ignoreNextWindowResizeEvent ) {
 		this.autoExpandSidebar();
 	}
 	this.ignoreNextWindowResizeEvent = false;
@@ -612,6 +695,31 @@ ve.ui.MWTransclusionDialog.prototype.getSizeProperties = function () {
 	}
 
 	return sizeProps;
+};
+
+/**
+ * Converts a message link into an OO.ui.ButtonWidget with an icon.
+ *
+ * @private
+ * @param {string} message i18n message key
+ * @param {string} icon icon name
+ * @return {OO.ui.ButtonWidget}
+ */
+ve.ui.MWTemplateDialog.prototype.getMessageButton = function ( message, icon ) {
+	// Messages that can be used here:
+	// * visualeditor-dialog-transclusion-help-page-help
+	// * visualeditor-dialog-transclusion-help-page-feedback
+	var $link = mw.message( message ).parseDom(),
+		button = new OO.ui.ButtonWidget( {
+			label: $link.text(),
+			href: $link.attr( 'href' ),
+			target: '_blank',
+			flags: 'progressive',
+			icon: icon,
+			framed: false
+		} );
+	button.$button.attr( 'role', 'link' );
+	return button;
 };
 
 /* Registration */

@@ -14,16 +14,22 @@
  * @constructor
  * @param {Object} [config] Configuration options
  * @cfg {number} [namespace] Namespace to prepend to queries. Defaults to template namespace.
+ * @cfg {boolean} [showDescriptions] Show template descriptions from the TemplateData API
+ * @cfg {mw.Api} [api]
  */
 ve.ui.MWTemplateTitleInputWidget = function VeUiMWTemplateTitleInputWidget( config ) {
 	config = ve.extendObject( {}, {
 		namespace: mw.config.get( 'wgNamespaceIds' ).template,
 		// We don't need results to show up twice normalized and unnormalized
-		addQueryInput: false
+		addQueryInput: false,
+		icon: 'search',
+		placeholder: ve.msg( 'visualeditor-dialog-transclusion-placeholder-input-placeholder' )
 	}, config );
 
 	// Parent constructor
 	ve.ui.MWTemplateTitleInputWidget.super.call( this, config );
+	// All code below expects this, but ContentTranslation doesn't necessarily set it to 2
+	this.api.defaults.parameters.formatversion = 2;
 
 	this.showTemplateDescriptions = this.showDescriptions;
 	// Clear the showDescriptions flag for subsequent requests as we implement
@@ -53,7 +59,6 @@ ve.ui.MWTemplateTitleInputWidget.prototype.getApiParams = function ( query ) {
 		ve.extendObject( params, {
 			generator: 'search',
 			gsrsearch: params.gpssearch,
-			// gsrsort: 'incoming_links_desc',
 			gsrnamespace: params.gpsnamespace,
 			gsrlimit: params.gpslimit
 		} );
@@ -180,7 +185,7 @@ ve.ui.MWTemplateTitleInputWidget.prototype.getLookupRequest = function () {
 			return originalResponse;
 		}, function () {
 			// API request failed; most likely, we're on a wiki which doesn't have TemplateData.
-			return originalResponse;
+			return originalResponse || ve.createDeferred().reject();
 		} )
 		.promise( { abort: function () {} } );
 };
@@ -246,12 +251,12 @@ ve.ui.MWTemplateTitleInputWidget.prototype.addExactMatch = function ( response )
 		} );
 	if ( matchingRedirects.length ) {
 		for ( i = matchingRedirects.length; i--; ) {
-			var redirect = matchingRedirects[ i ];
+			var matchingRedirect = matchingRedirects[ i ];
 			// Offer redirects as separate options when the user's input is an exact match
 			unshiftPages( response.query.pages, {
-				pageid: redirect.pageid,
-				ns: redirect.ns,
-				title: redirect.redirecttitle
+				pageid: matchingRedirect.pageid,
+				ns: matchingRedirect.ns,
+				title: matchingRedirect.redirecttitle
 			} );
 		}
 		return response;

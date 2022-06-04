@@ -5,12 +5,14 @@
 			"Calak",
 			"Lost Whispers",
 			"Muhammed taha",
-			"Épine"
+			"Épine",
+			"ئارام بکر"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|دەستکاریی دیداری]]",
 	"tag-visualeditor-description": "دەستکاری بە [[{{MediaWiki:visualeditor-descriptionpagelink}}|دەستکاریکەری دیداری]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|دەستکاریکەری دیداری: تاوتوێ]]",
+	"tag-visualeditor-wikitext": "دەستکاریی سەرچاوەی ٢٠١٧",
 	"visualeditor-feedback-tool": "فیدباک دەربارەی ئەم نەرمامێرە بدە",
 	"visualeditor-help-label": "ڕێنوێنیی بەکارھێنەر بخوێنەرەوە",
 	"visualeditor-help-title": "ڕێنوێنی بەکارهێنانی ئەم دەستکاریکەرە",
@@ -19,5 +21,5 @@
 	"visualeditor-welcomedialog-content-thanks": "بۆ ھەر چاکسازییەک، خزمەتێکی زمانی کوردی و کوردستان دەکەیت. سوپاس!",
 	"visualeditor-welcomedialog-switch": "گۆڕین بۆ دەستکاریکەری سەرچاوە",
 	"visualeditor-welcomedialog-switch-ve": "گۆڕین بۆ دەستکاریکەری دیداری",
-	"visualeditor-welcomedialog-title": "بەخێربێیت بۆ $2"
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|بەخێربێیت}} بۆ $2"
 }

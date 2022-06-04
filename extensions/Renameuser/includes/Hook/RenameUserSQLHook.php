@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser\Hook;
+
+use MediaWiki\Extension\Renameuser\RenameuserSQL;
+
 /**
  * This is a hook handler interface, see docs/Hooks.md.
  * Use the hook name "RenameUserSQL" to register handlers implementing this interface.
@@ -18,3 +22,5 @@ interface RenameUserSQLHook {
 	public function onRenameUserSQL( RenameuserSQL $renameUserSql ): void;
 
 }
+
+class_alias( RenameUserSQLHook::class, 'RenameUserSQLHook' );

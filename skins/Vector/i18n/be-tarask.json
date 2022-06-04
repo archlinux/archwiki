@@ -2,16 +2,26 @@
 	"@metadata": {
 		"authors": [
 			"EugeneZelenko",
+			"Nieszczarda2",
 			"Red Winged Duck",
 			"Renessaince",
-			"Wizardist",
-			"Nieszczarda2"
+			"Wizardist"
 		]
 	},
-	"skinname-vector": "Вэктар",
-	"vector-skin-desc": "Сучасная вэрсія MonoBook з абноўленым выглядам і шматлікімі паляпшэньнямі",
+	"skinname-vector": "Стары Вэктар (2010)",
+	"skinname-vector-2022": "Вэктар (2022)",
+	"vector-specialversion-name": "Вэктар",
+	"tooltip-pt-watchlist-2": "Сьпіс старонак, за зьменамі якіх Вы назіраеце",
+	"vector-skin-desc": "Прадастаўляе 2 тэмы Вэктару:\n* 2011 — сучасная вэрсія MonoBook з абноўленым выглядам і шматлікімі паляпшэньнямі;\n* 2022 — Вэктар, збудаваны ў межах праекту ФВМ [[mw:Desktop Improvements]].",
+	"prefs-vector-enable-vector-1-label": "Выкарыстаць стары Вэктар",
 	"prefs-vector-enable-vector-1-help": "Цягам наступных некалькіх гадоў мы будзем паступова абнаўляць тэму „Вэктар“. Пераемны Вэктар дазволіць вам праглядаць старую вэрсію Вэктара (паводле стану на сьнежань 2019 року). Каб даведацца пра абнаўленьні болей, зайдзіце на старонку [[mw:Reading/Web/Desktop_Improvements|нашага праекту]].",
+	"vector-opt-out": "Пераключыцца на стары выгляд",
+	"vector-opt-out-tooltip": "Зьмяніце налады, каб вярнуцца да старой тэмы (старога Вэктару)",
+	"vector.css": "/* Усе зьмешчаныя тут CSS будуць загружаныя для ўдзельнікаў, якія выкарыстоўваюць тэму афармленьня Вэктар */",
+	"vector.js": "/* Увесь зьмешчаны тут JavaScript будзе загружаны для ўдзельнікаў, якія выкарыстоўваюць тэму афармленьня Вэктар */",
+	"vector-language-button-aria-label": "Перайсьці да артыкула на іншай мове. Выбраць з: {{PLURAL:$1|$1 language|$1 languages}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 мова|$1 мовы|$1 моваў}}",
+	"vector-language-redirect-to-top": "У гэтым праекце {{SITENAME}} моўныя спасылкі знаходзяцца ўверсе старонкі насупраць назвы артыкулу. [[#p-lang-btn|Перайсьці ўгору]].",
 	"vector-action-addsection": "Дадаць тэму",
 	"vector-action-delete": "Выдаліць",
 	"vector-action-move": "Перанесьці",

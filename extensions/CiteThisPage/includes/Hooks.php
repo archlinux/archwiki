@@ -10,13 +10,17 @@ class Hooks implements \MediaWiki\Hook\SidebarBeforeOutputHook {
 	/**
 	 * Checks, if the "cite this page" link should be added. By default the link is added to all
 	 * pages in the main namespace, and additionally to pages, which are in one of the namespaces
-	 * named in $wgCiteThisPageAddiotionalNamespaces.
+	 * named in $wgCiteThisPageAdditionalNamespaces.
 	 *
-	 * @param Title $title
-	 * @param Config $config
+	 * @param Title|null $title
+	 * @param Config|null $config
 	 * @return bool
 	 */
-	private static function shouldAddLink( Title $title, Config $config ) {
+	private static function shouldAddLink( ?Title $title, ?Config $config ) {
+		if ( !$title || !$config ) {
+			return false;
+		}
+
 		$additionalNamespaces = $config->get( 'CiteThisPageAdditionalNamespaces' );
 
 		return $title->isContentPage() ||

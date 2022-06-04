@@ -11,7 +11,8 @@
 			"OpusDEI",
 			"Otogi",
 			"Pras",
-			"아라"
+			"아라",
+			"Გიო ოქრო"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ვიზუალური რედაქტირება]]",
@@ -27,10 +28,10 @@
 	"visualeditor-help-label": "გაეცანით მომხმარებლის სახელმძღვანელოს",
 	"visualeditor-help-link": "mw:Special:MyLanguage/Help:VisualEditor/User guide",
 	"visualeditor-help-title": "რედაქტორის გამოყენების სახელმძღვანელო",
-	"visualeditor-welcomedialog-action": "დაიწყე რედაქტირება",
+	"visualeditor-welcomedialog-action": "დაიწყეთ რედაქტირება",
 	"visualeditor-welcomedialog-content": "რედაქტირება ყველას შეუძლია.",
 	"visualeditor-welcomedialog-content-thanks": "გმადლობთ თქვენი წვლილისათვის!",
-	"visualeditor-welcomedialog-switch": "წყაროს რედაქტირებაზე გადართვა",
+	"visualeditor-welcomedialog-switch": "წყაროს რედაქტორზე გადასვლა",
 	"visualeditor-welcomedialog-switch-ve": "ვიზუალურ რედაქტორზე გადასვლა",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|კეთილი იყოს თქვენი მობრძანება}} $2-ზე"
 }

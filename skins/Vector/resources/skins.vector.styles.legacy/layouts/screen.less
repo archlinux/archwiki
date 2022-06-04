@@ -113,7 +113,7 @@ body {
 }
 
 /* Search */
-#p-search {
+.vector-search-box {
 	float: left;
 	margin-right: 0.5em;
 	margin-left: 0.5em;
@@ -128,8 +128,7 @@ body {
 // Defined as `div`.
 // Provide extra element for gadgets due to `form` already carrying an `id`.
 // FIXME: This selector requires knowledge of the internals of the search component
-// and should not be used here.
-#simpleSearch {
+.vector-search-box-inner {
 	min-width: 5em;
 	// Support: IE 8, Firefox 18-, Chrome 19-, Safari 5.1-, Opera 19-, Android 4.4.4-.
 	width: 13.2em;
@@ -147,7 +146,7 @@ body {
 }
 
 // hide the heading of the first menu
-#p-logo + .mw-portlet h3 {
+#p-logo + .mw-portlet .vector-menu-heading {
 	display: none;
 }
 
@@ -180,7 +179,7 @@ body {
 		padding-left: 0.5em;
 	}
 
-	#p-search {
+	.vector-search-box {
 		margin-right: 1em;
 	}
 

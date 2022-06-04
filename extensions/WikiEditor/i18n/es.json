@@ -23,18 +23,20 @@
 			"Sophivorus",
 			"Translationista",
 			"Vivaelcelta",
-			"Yllelder"
+			"Yllelder",
+			"Danniel07",
+			"DiegoAmbrocio",
+			"Joanmp17",
+			"Josuert"
 		]
 	},
 	"wikieditor": "Interfaz avanzada de edición de wikitexto",
 	"wikieditor-desc": "Provee una interfaz avanzada y extensible de edición de wikitexto",
 	"wikieditor-wikitext-tab": "Wikitexto",
-	"wikieditor-loading": "Cargando…",
 	"wikieditor-toolbar": "Barra de herramientas de edición",
 	"wikieditor-toolbar-desc": "Barra de herramientas de la página de edición con usabilidad mejorada",
 	"wikieditor-toolbar-preference": "Activar la barra de herramientas de edición mejorada",
 	"wikieditor-toolbar-preference-help": "A veces se le llama «Editor de código 2010».",
-	"wikieditor-toolbar-loading": "Cargando...",
 	"wikieditor-toolbar-tool-bold": "Negrita",
 	"wikieditor-toolbar-tool-bold-example": "Texto en negrita",
 	"wikieditor-toolbar-tool-italic": "Cursiva",
@@ -55,9 +57,9 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Título del enlace:",
 	"wikieditor-toolbar-tool-link-insert": "Insertar enlace",
 	"wikieditor-toolbar-tool-link-cancel": "Cancelar",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "La página existe",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "No existe la página",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "El título no es válido",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Esta página existe en {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Esta página no existe en {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "El título especificado no es válido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Enlace externo",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Comprobando que la página existe…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Página de desambiguación",
@@ -65,7 +67,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "EL URL que has especificado parece que tenia como finalidad ser un vínculo para otra página wiki.\n¿Deseas hacerlo un vínculo interno?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Enlace interno",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Enlace externo",
-	"wikieditor-toolbar-tool-link-empty": "No has escrito nada a qué vincular.",
 	"wikieditor-toolbar-tool-file": "Imágenes y multimedia",
 	"wikieditor-toolbar-tool-file-example": "Ejemplo.jpg",
 	"wikieditor-toolbar-tool-file-title": "Insertar archivo",
@@ -215,5 +216,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Nombre de usuario</a> (<a href='#' title='$2:Username'>discusión</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Sangría",
 	"wikieditor-toolbar-help-content-indent-syntax": "Texto normal<br />:Texto con sangría<br />::Texto con sangría",
-	"wikieditor-toolbar-help-content-indent-result": "Texto normal<dl><dd>Texto con sangría<dl><dd>Texto con sangría</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Texto normal<dl><dd>Texto con sangría<dl><dd>Texto con sangría</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Vista previa"
 }

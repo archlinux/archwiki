@@ -11,7 +11,9 @@
 			"Lakejason0",
 			"Liuxinyu970226",
 			"MuratTheTurkish",
+			"Stang",
 			"Tiger",
+			"Tranve",
 			"VulpesVulpes825",
 			"WQL",
 			"WhitePhosphorus",
@@ -21,8 +23,7 @@
 			"佛壁灯",
 			"科劳",
 			"铁桶",
-			"Tranve",
-			"Stang"
+			"NACHOgao3"
 		]
 	},
 	"oathauth-desc": "提供“基于HMAC的一次性密码”的身份验证支持",
@@ -78,7 +79,7 @@
 	"oath-log-header": "这些事件记录了用户的双重身份验证状态变化。",
 	"logentry-oath-disable-other": "$1{{GENDER:$2|禁用了}}$3的双重身份验证",
 	"logentry-oath-verify": "$1{{GENDER:$2|检查了}}是否$3已启用双重身份验证",
-	"oauthauth-ui-no-module": "没有启用",
+	"oathauth-ui-no-module": "没有启用",
 	"oathauth-module-invalid": "用户已注册的OATHAuth模块无效。",
 	"oathauth-module-totp-label": "TOTP（基于时间的一次性密码）",
 	"oathauth-ui-manage": "管理",

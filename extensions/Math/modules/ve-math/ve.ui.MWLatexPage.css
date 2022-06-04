@@ -1,0 +1,55 @@
+/*!
+ * VisualEditor UserInterface MWLatexPage styles.
+ *
+ * @copyright 2011-2015 VisualEditor Team and others; see AUTHORS.txt
+ * @license MIT
+ */
+
+.ve-ui-mwLatexPage-symbol {
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	font-size: 1.5em;
+	width: 1.8em;
+	height: 1.8em;
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 0.1em 0.1em 0;
+	box-sizing: border-box;
+	border: 1px solid #e6e6e6;
+	-webkit-transition: border-color 200ms;
+	transition: border-color 200ms;
+}
+
+.ve-ui-mwLatexPage-symbol:hover {
+	border-color: #ccc;
+}
+
+.ve-ui-mwLatexPage-symbol-wide {
+	/* 2(symbol width) + margin */
+	width: 3.7em;
+}
+
+.ve-ui-mwLatexPage-symbol-wider {
+	/* 2.5(symbol width) + 1.5(margin) */
+	width: 4.65em;
+}
+
+.ve-ui-mwLatexPage-symbol-widest {
+	/* 3(symbol width) + 2(margin) */
+	width: 5.6em;
+}
+
+.ve-ui-mwLatexPage-symbol-contain {
+	background-size: contain;
+}
+
+.ve-ui-mwLatexPage-symbol-largeLayout {
+	height: 3.7em;
+	width: 4.65em;
+}
+
+.ve-ui-mwLatexPage-symbol-largeLayout.ve-ui-mwLatexPage-symbol-wide {
+	/* 5(symbol width) + 4(margin) */
+	width: 9.4em;
+}

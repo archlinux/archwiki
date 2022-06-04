@@ -14,6 +14,7 @@ use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Ext\PHPUtils;
 use Wikimedia\Parsoid\Ext\WTUtils;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 
 class References extends ExtensionTagHandler {
@@ -24,7 +25,7 @@ class References extends ExtensionTagHandler {
 	private static function hasRef( Node $node ): bool {
 		$c = $node->firstChild;
 		while ( $c ) {
-			if ( DOMUtils::isElt( $c ) ) {
+			if ( $c instanceof Element ) {
 				if ( WTUtils::isSealedFragmentOfType( $c, 'ref' ) ) {
 					return true;
 				}
@@ -370,7 +371,7 @@ class References extends ExtensionTagHandler {
 		);
 		DOMUtils::addTypeOf( $linkBack, 'mw:Extension/ref' );
 
-		$dataParsoid = new stdClass;
+		$dataParsoid = new DataParsoid;
 		if ( isset( $nodeDp->src ) ) {
 			$dataParsoid->src = $nodeDp->src;
 		}
@@ -507,7 +508,6 @@ class References extends ExtensionTagHandler {
 			} else {
 				unset( $dataMw->body );
 			}
-			// @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty
 			unset( $dp->selfClose );
 		}
 
@@ -627,7 +627,7 @@ class References extends ExtensionTagHandler {
 				} else {
 					$refsData->pushEmbeddedContentFlag();
 					// Look for <ref>s embedded in data attributes
-					$extApi->processHiddenHTMLInDataAttributes( $child,
+					$extApi->processHTMLHiddenInDataAttributes( $child,
 						function ( string $html ) use ( $extApi, $refsData ) {
 							return self::processEmbeddedRefs( $extApi, $refsData, $html );
 						}
@@ -688,7 +688,7 @@ class References extends ExtensionTagHandler {
 				} elseif ( DOMUtils::hasTypeOf( $child, 'mw:Extension/references' ) ) {
 					$processBodyHtml( $child );
 				} else {
-					$extApi->processHiddenHTMLInDataAttributes(
+					$extApi->processHTMLHiddenInDataAttributes(
 						$child, $processEmbeddedErrors
 					);
 				}
@@ -791,5 +791,32 @@ class References extends ExtensionTagHandler {
 		//
 		// Ignoring for now.
 		return $refs->nextSibling;
+	}
+
+	/** @inheritDoc */
+	public function diffHandler(
+		ParsoidExtensionAPI $extApi, callable $domDiff, Element $origNode,
+		Element $editedNode
+	): bool {
+		$origDataMw = DOMDataUtils::getDataMw( $origNode );
+		$editedDataMw = DOMDataUtils::getDataMw( $editedNode );
+
+		if ( isset( $origDataMw->body->html ) && isset( $editedDataMw->body->html ) ) {
+			$origFragment = $extApi->htmlToDom(
+				$origDataMw->body->html, $origNode->ownerDocument,
+				[ 'markNew' => true ]
+			);
+			$editedFragment = $extApi->htmlToDom(
+				$editedDataMw->body->html, $editedNode->ownerDocument,
+				[ 'markNew' => true ]
+			);
+			return call_user_func( $domDiff, $origFragment, $editedFragment );
+		}
+
+		// FIXME: Similar to DOMDiff::subtreeDiffers, maybe $editNode should
+		// be marked as inserted to avoid losing any edits, at the cost of
+		// more normalization
+
+		return false;
 	}
 }

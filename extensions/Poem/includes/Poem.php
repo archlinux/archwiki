@@ -1,5 +1,12 @@
 <?php
 
+namespace MediaWiki\Extension\Poem;
+
+use Html;
+use Parser;
+use PPFrame;
+use Sanitizer;
+
 /**
  * This class handles formatting poems in WikiText, specifically anything within
  * <poem></poem> tags.

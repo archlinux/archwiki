@@ -8,7 +8,8 @@
 			"Giuseppe Forte",
 			"Lucas2",
 			"Ontsed",
-			"Raoli"
+			"Raoli",
+			"Sakretsu"
 		]
 	},
 	"scribunto-desc": "Framework per incorporare linguaggi di scripting in pagine MediaWiki",
@@ -43,6 +44,7 @@
 	"scribunto-lua-error-location": "Errore Lua $1: $2.",
 	"scribunto-lua-error": "Errore Lua: $2.",
 	"scribunto-lua-notarrayreturn": "Errore script: il modulo ha restituito un valore $2. Avrebbe dovuto restituire una tabella in esportazione.",
+	"scribunto-lua-warning": "Avviso script: $1",
 	"scribunto-luastandalone-proc-error": "Errore Lua: impossibile creare il processo.",
 	"scribunto-luastandalone-proc-error-msg": "Errore Lua: impossibile creare il processo: $2.",
 	"scribunto-luastandalone-proc-error-proc-open": "Errore Lua: impossibile creare il processo: proc_open non è disponibile. Controlla la configurazione della direttiva PHP \"disable_functions\".",

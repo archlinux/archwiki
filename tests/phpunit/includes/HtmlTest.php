@@ -1,9 +1,6 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
-
 class HtmlTest extends MediaWikiIntegrationTestCase {
-	private $restoreWarnings;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -12,7 +9,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 			'wgUseMediaWikiUIEverywhere' => false,
 		] );
 
-		$langFactory = MediaWikiServices::getInstance()->getLanguageFactory();
+		$langFactory = $this->getServiceContainer()->getLanguageFactory();
 		$contLangObj = $langFactory->getLanguage( 'en' );
 
 		// Hardcode namespaces during test runs,
@@ -64,17 +61,6 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 			101 => "Personalizado discusión",
 		] );
 		$this->setUserLang( $userLangObj );
-
-		$this->restoreWarnings = false;
-	}
-
-	protected function tearDown(): void {
-		if ( $this->restoreWarnings ) {
-			$this->restoreWarnings = false;
-			Wikimedia\restoreWarnings();
-		}
-
-		parent::tearDown();
 	}
 
 	/**
@@ -504,7 +490,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testWarningBox() {
 		$this->assertEquals(
-			'<div class="warningbox">warn</div>',
+			'<div class="mw-message-box-warning warningbox mw-message-box">warn</div>',
 			Html::warningBox( 'warn' )
 		);
 	}
@@ -515,15 +501,15 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testErrorBox() {
 		$this->assertEquals(
-			'<div class="errorbox">err</div>',
+			'<div class="mw-message-box-error errorbox mw-message-box">err</div>',
 			Html::errorBox( 'err' )
 		);
 		$this->assertEquals(
-			'<div class="errorbox errorbox-custom-class"><h2>heading</h2>err</div>',
+			'<div class="mw-message-box-error errorbox errorbox-custom-class mw-message-box"><h2>heading</h2>err</div>',
 			Html::errorBox( 'err', 'heading', 'errorbox-custom-class' )
 		);
 		$this->assertEquals(
-			'<div class="errorbox"><h2>0</h2>err</div>',
+			'<div class="mw-message-box-error errorbox mw-message-box"><h2>0</h2>err</div>',
 			Html::errorBox( 'err', '0', '' )
 		);
 	}
@@ -534,11 +520,11 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testSuccessBox() {
 		$this->assertEquals(
-			'<div class="successbox">great</div>',
+			'<div class="mw-message-box-success successbox mw-message-box">great</div>',
 			Html::successBox( 'great' )
 		);
 		$this->assertEquals(
-			'<div class="successbox"><script>beware no escaping!</script></div>',
+			'<div class="mw-message-box-success successbox mw-message-box"><script>beware no escaping!</script></div>',
 			Html::successBox( '<script>beware no escaping!</script>' )
 		);
 	}
@@ -821,7 +807,7 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	 * @covers Html::srcSet
 	 */
 	public function testSrcSet( $images, $expected, $message ) {
-		$this->assertEquals( Html::srcSet( $images ), $expected, $message );
+		$this->assertEquals( $expected, Html::srcSet( $images ), $message );
 	}
 
 	public static function provideInlineScript() {
@@ -870,10 +856,11 @@ class HtmlTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testInlineScript( $code, $expected, $error = false ) {
 		if ( $error ) {
-			Wikimedia\suppressWarnings();
-			$this->restoreWarnings = true;
+			$html = @Html::inlineScript( $code );
+		} else {
+			$html = Html::inlineScript( $code );
 		}
-		$this->assertSame( Html::inlineScript( $code ), $expected );
+		$this->assertSame( $expected, $html );
 	}
 }
 

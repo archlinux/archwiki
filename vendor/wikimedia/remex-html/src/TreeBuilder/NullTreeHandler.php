@@ -78,6 +78,3 @@ class NullTreeHandler implements TreeHandler {
 	public function reparentChildren( Element $element, Element $newParent, $sourceStart ) {
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( NullTreeHandler::class, 'RemexHtml\TreeBuilder\NullTreeHandler' );

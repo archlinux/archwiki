@@ -163,7 +163,7 @@ class ApiExpandTemplates extends ApiBase {
 					}
 				}
 				if ( isset( $prop['properties'] ) ) {
-					$properties = $p_output->getProperties();
+					$properties = $p_output->getPageProperties();
 					if ( $properties ) {
 						ApiResult::setArrayType( $properties, 'BCkvp', 'name' );
 						ApiResult::setIndexedTagName( $properties, 'property' );
@@ -186,8 +186,9 @@ class ApiExpandTemplates extends ApiBase {
 					$retval['modulestyles'] = array_values( array_unique( $p_output->getModuleStyles() ) );
 				}
 				if ( isset( $prop['jsconfigvars'] ) ) {
+					$showStrategyKeys = (bool)( $params['showstrategykeys'] );
 					$retval['jsconfigvars'] =
-						ApiResult::addMetadataToResultVars( $p_output->getJsConfigVars() );
+						ApiResult::addMetadataToResultVars( $p_output->getJsConfigVars( $showStrategyKeys ) );
 				}
 				if ( isset( $prop['encodedjsconfigvars'] ) ) {
 					$retval['encodedjsconfigvars'] = FormatJson::encode(
@@ -231,6 +232,7 @@ class ApiExpandTemplates extends ApiBase {
 				ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
 			],
 			'includecomments' => false,
+			'showstrategykeys' => false,
 			'generatexml' => [
 				ApiBase::PARAM_TYPE => 'boolean',
 				ApiBase::PARAM_DEPRECATED => true,

@@ -6,10 +6,10 @@
 			"Meno25",
 			"Mido",
 			"Mr. Ibrahem",
+			"SaldırganSincap",
 			"Yahya Sakhnini",
 			"ديفيد",
-			"زكريا",
-			"SaldırganSincap"
+			"زكريا"
 		]
 	},
 	"scribunto-desc": "إطار عمل لتضمين لغات البرمجة النصية في صفحات ميدياويكي",
@@ -44,6 +44,7 @@
 	"scribunto-lua-error-location": "خطأ لوا $1: $2.",
 	"scribunto-lua-error": "خطأ لوا: $2.",
 	"scribunto-lua-notarrayreturn": "خطأ: أنتجت الوحدة قيمة $2، ومن المفترض أن تنتج جدول.",
+	"scribunto-lua-warning": "تحذير البرنامج النصي: $1",
 	"scribunto-luastandalone-proc-error": "خطأ لوا: لا يمكن إنشاء العملية.",
 	"scribunto-luastandalone-proc-error-msg": "خطأ لوا: لا يمكن إنشاء العملية: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "خطأ لوا: لا يمكن إنشاء العملية: proc_open غير متوفر; تحقق من توجيه تكوين \"disable_functions\" الخاص بـPHP.",

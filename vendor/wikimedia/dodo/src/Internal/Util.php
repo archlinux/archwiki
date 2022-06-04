@@ -71,6 +71,7 @@ class Util {
 	 * InvalidNodeTypeError, and DataCloneError
 	 *
 	 * For more information, see interfaces/DOMException.php
+	 * @return never
 	 */
 	public static function error( string $name, ?string $message = null ) {
 		throw new DOMException( $message, $name );

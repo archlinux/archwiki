@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.provider.GuessedThumbnailInfo', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Constructor sanity check', function ( assert ) {
+	QUnit.test( 'Constructor sense check', function ( assert ) {
 		var provider = new mw.mmv.provider.GuessedThumbnailInfo();
 		assert.ok( provider, 'Constructor call successful' );
 	} );

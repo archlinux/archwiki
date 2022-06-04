@@ -108,6 +108,3 @@ class InCell extends InsertionMode {
 		return $this->dispatcher->switchMode( Dispatcher::IN_ROW );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InCell::class, 'RemexHtml\TreeBuilder\InCell' );

@@ -12,7 +12,14 @@
  * @extends OO.ui.DecoratedOptionWidget
  *
  * @constructor
- * @param {Object} [config] Configuration options
+ * @param {Object} config
+ * @cfg {Object} data
+ * @cfg {string} [data.name] Parameter name
+ * @cfg {string[]} [data.aliases]
+ * @cfg {string} data.label
+ * @cfg {string} [data.description='']
+ * @cfg {boolean} [data.isUnknown=false] If the parameter is unknown, i.e. not documented via
+ *  TemplateData
  */
 ve.ui.MWParameterResultWidget = function VeUiMWParameterResultWidget( config ) {
 	// Configuration initialization
@@ -35,6 +42,7 @@ OO.inheritClass( ve.ui.MWParameterResultWidget, OO.ui.DecoratedOptionWidget );
 /**
  * Build the label element
  *
+ * @private
  * @return {jQuery}
  */
 ve.ui.MWParameterResultWidget.prototype.buildLabel = function () {

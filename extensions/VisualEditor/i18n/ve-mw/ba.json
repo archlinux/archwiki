@@ -8,6 +8,7 @@
 			"Irus",
 			"Lizalizaufa",
 			"Sagan",
+			"TMg",
 			"Азат Хәлилов",
 			"Айбикә",
 			"Айсар",
@@ -17,8 +18,7 @@
 			"Лилиә",
 			"Ләйсән",
 			"Рустам Нурыев",
-			"Янмурза Баки",
-			"TMg"
+			"Янмурза Баки"
 		]
 	},
 	"tooltip-ca-createsource": "Битте сығанаҡ код мөхәррирендә булдырырға",
@@ -179,7 +179,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Медианәмә",
 	"visualeditor-dialogbutton-meta-tooltip": "Бит көйләүҙәре",
 	"visualeditor-dialogbutton-template-tooltip": "Ҡалып",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Ҡушыу",
 	"visualeditor-donebutton-tooltip": "Мөхәррирләү тамам",
 	"visualeditor-editconflict": "Мөхәррирләү конфликты килеп сыҡҡас, һеҙҙең төҙәтеүҙәрҙе яҙҙырып булманы. Уны үҙ аллы хәл итергә теләйһегеҙме?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} — һеҙҙең өҫтөн һанаған мөхәррирҙе хәҙер иҫләй. Мөхәррирләү ваҡытында режимде алмаштыра йәки һуңғараҡ көйләүҙәрҙе үҙгәртә алаһығыҙ.",

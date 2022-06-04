@@ -19,6 +19,7 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget = function VeUiMWTransclusionOu
 	OO.ui.mixin.TabIndexedElement.call( this, {
 		tabIndex: this.isEmpty() ? -1 : 0
 	} );
+	ve.ui.MWAriaDescribe.call( this, config );
 
 	this.$element
 		.on( {
@@ -31,6 +32,7 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget = function VeUiMWTransclusionOu
 
 OO.inheritClass( ve.ui.MWTransclusionOutlineParameterSelectWidget, OO.ui.SelectWidget );
 OO.mixinClass( ve.ui.MWTransclusionOutlineParameterSelectWidget, OO.ui.mixin.TabIndexedElement );
+OO.mixinClass( ve.ui.MWTransclusionOutlineParameterSelectWidget, ve.ui.MWAriaDescribe );
 
 /* Events */
 
@@ -43,23 +45,14 @@ OO.mixinClass( ve.ui.MWTransclusionOutlineParameterSelectWidget, OO.ui.mixin.Tab
  * @param {boolean} selected
  */
 
-/**
- * This is fired instead of the "choose" event from the {@see OO.ui.SelectWidget} base class when
- * pressing enter/click on a parameter that's already selected.
- *
- * @event templateParameterClick
- * @param {ve.ui.MWTransclusionOutlineParameterWidget} item
- * @param {boolean} selected
- */
-
 /* Static Methods */
 
 /**
  * @param {Object} config
  * @param {string} config.data Parameter name
  * @param {string} config.label
- * @param {boolean} [config.required] Required parameters can't be unchecked
- * @param {boolean} [config.selected] If the parameter is currently used (checked)
+ * @param {boolean} [config.required=false] Required parameters can't be unchecked
+ * @param {boolean} [config.selected=false] If the parameter is currently used (checked)
  * @return {ve.ui.MWTransclusionOutlineParameterWidget}
  */
 ve.ui.MWTransclusionOutlineParameterSelectWidget.static.createItem = function ( config ) {
@@ -88,7 +81,7 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.addItems = function (
 };
 
 /**
- * @param {string} paramName
+ * @param {string} [paramName] Parameter name to highlight, e.g. "param1". Omit for no highlight.
  */
 ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.highlightParameter = function ( paramName ) {
 	var item = this.findItemFromData( paramName );
@@ -136,14 +129,14 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onFocus = function ()
 /**
  * @inheritDoc OO.ui.SelectWidget
  * @param {jQuery.Event} e
- * @fires templateParameterClick
+ * @fires choose
  */
 ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onMouseDown = function ( e ) {
 	if ( e.which === OO.ui.MouseButtons.LEFT ) {
 		var item = this.findTargetItem( e );
 		// Same as pressing enter, see below.
 		if ( item && item.isSelected() ) {
-			this.emit( 'templateParameterClick', item, item.isSelected() );
+			this.emit( 'choose', item, item.isSelected() );
 
 			// Don't call the parent, i.e. can't click to unselect the item
 			return false;
@@ -158,7 +151,6 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onMouseDown = functio
  * @param {KeyboardEvent} e
  * @fires choose
  * @fires templateParameterSelectionChanged
- * @fires templateParameterClick
  */
 ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onDocumentKeyDown = function ( e ) {
 	var item;
@@ -179,7 +171,13 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onDocumentKeyDown = f
 		case OO.ui.Keys.SPACE:
 			item = this.findHighlightedItem();
 			if ( item ) {
-				this[ item.isSelected() ? 'unselectItem' : 'selectItem' ]( item );
+				// Warning, this intentionally doesn't call .chooseItem() because we don't want this
+				// to fire a "choose" event!
+				if ( item.isSelected() ) {
+					this.unselectItem( item );
+				} else {
+					this.selectItem( item );
+				}
 				this.emit( 'templateParameterSelectionChanged', item, item.isSelected() );
 			}
 			e.preventDefault();
@@ -188,7 +186,7 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onDocumentKeyDown = f
 			item = this.findHighlightedItem();
 			// Same as clicking with the mouse, see above.
 			if ( item && item.isSelected() ) {
-				this.emit( 'templateParameterClick', item, item.isSelected() );
+				this.emit( 'choose', item, item.isSelected() );
 				e.preventDefault();
 
 				// Don't call the parent, i.e. can't use enter to unselect the item

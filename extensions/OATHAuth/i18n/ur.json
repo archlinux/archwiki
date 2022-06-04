@@ -43,7 +43,7 @@
 	"oathauth-user-not-found": "اس نام سے کوئی صارف کھاتہ نہیں ملا",
 	"oath-log-name": "نوشتہ دو مرحلہ توثیق",
 	"logentry-oath-disable-other": "$1 نے $3 کی دو مرحلہ توثیق کو {{GENDER:$2|غیر فعال کیا}}",
-	"oauthauth-ui-no-module": "کوئی بھی فعال نہیں",
+	"oathauth-ui-no-module": "کوئی بھی فعال نہیں",
 	"oathauth-module-totp-label": "TOTP (یک وقتی ٹوکن)",
 	"oathauth-ui-manage": "انتظام",
 	"oathmanage": "دو مرحلہ توثیق کا انتظام",

@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Language;
 
@@ -9,6 +10,7 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMTraverser;
@@ -108,8 +110,7 @@ class ConversionTraverser extends DOMTraverser {
 		?stdClass $tplInfo
 	) {
 		/* Look for `lang` attributes */
-		if ( DOMUtils::isElt( $node ) ) {
-			DOMUtils::assertElt( $node );
+		if ( $node instanceof Element ) {
 			if ( $node->hasAttribute( 'lang' ) ) {
 				$lang = $node->getAttribute( 'lang' ) ?? '';
 				// XXX validate lang! override fromLang?
@@ -225,7 +226,7 @@ class ConversionTraverser extends DOMTraverser {
 	) {
 		// Convert `alt` and `title` attributes on elements
 		// (Called before aHandler, so the `title` might get overwritten there)
-		if ( !DOMUtils::isElt( $node ) ) {
+		if ( !( $node instanceof Element ) ) {
 			return true;
 		}
 		DOMUtils::assertElt( $node );
@@ -303,7 +304,7 @@ class ConversionTraverser extends DOMTraverser {
 	): ?string {
 		if ( !$force ) {
 			for ( $child = $docFrag->firstChild; $child; $child = $child->nextSibling ) {
-				if ( !DOMUtils::isText( $child ) ) {
+				if ( !( $child instanceof Text ) ) {
 					return null; /* unsafe */
 				}
 			}

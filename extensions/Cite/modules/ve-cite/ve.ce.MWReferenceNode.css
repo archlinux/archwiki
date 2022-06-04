@@ -5,11 +5,6 @@
  * @license MIT
  */
 
-/* HACK: Hide Ref errors in templates */
-.mw-ext-cite-error {
-	display: none;
-}
-
 /* In IE, force hasLayout so the <sup>'s box gets measured correctly */
 .ve-init-target-ie .ve-ce-mwReferenceNode {
 	display: inline-block;

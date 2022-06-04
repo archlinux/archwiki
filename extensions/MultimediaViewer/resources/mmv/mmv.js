@@ -499,7 +499,7 @@
 		if ( !size.width || !size.height ) {
 			if ( recursion ) {
 				// this should not be possible, but an infinite recursion is nasty
-				// business, so we make a sanity check
+				// business, so we make a sense check
 				throw new Error( 'MediaViewer internal error: displayPlaceholderThumbnail recursion' );
 			}
 			this.imageInfoProvider.get( image.filePageTitle ).done( function ( imageInfo ) {

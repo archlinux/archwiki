@@ -143,6 +143,7 @@ class FilteredElementList extends HTMLCollection {
 
 	/** @inheritDoc */
 	public function namedItem( string $name ): ?Element {
+		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		throw $this->_unimplemented();
 	}
 }

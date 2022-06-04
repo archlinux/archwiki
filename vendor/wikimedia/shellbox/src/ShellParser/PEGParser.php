@@ -8,6 +8,8 @@ namespace Shellbox\ShellParser;
 	// @phan-file-suppress PhanNoopSwitchCases
 	// @phan-file-suppress PhanTypeMismatchArgument
 	// @phan-file-suppress PhanTypeComparisonFromArray
+	// @phan-file-suppress PhanPluginNeverReturnMethod
+	// @phan-file-suppress PhanPluginUnreachableCode
 
 
 class PEGParser extends \Wikimedia\WikiPEG\PEGParserBase {

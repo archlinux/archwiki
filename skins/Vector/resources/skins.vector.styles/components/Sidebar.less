@@ -4,15 +4,63 @@
 @import '../../skins.vector.styles.legacy/components/Sidebar.less';
 @import './checkboxHack.less';
 
+.mw-sidebar {
+	width: @width-grid-column-one;
+	// To avoid the white part of the gradient colliding with the sidebar links
+	// we apply top and bottom padding.
+	padding: 8px 0 40px @padding-left-sidebar;
+	background-image: linear-gradient( to bottom, @background-color-base 0%, @background-color-secondary--modern 10%, @background-color-secondary--modern 90%, @background-color-base 100% );
+	.box-sizing( border-box );
+}
+
+// Update styling when TOC is enabled
+.vector-toc-enabled .mw-sidebar {
+	width: @width-sidebar;
+	// Temporary magic number, will be calculated after TOC specs are finalized
+	padding: 12px 19px 12px 9px;
+	background-image: none;
+	background-color: @border-color-sidebar;
+	border: @border-base;
+}
+
 .mw-sidebar-action {
 	// Align with the portal heading/links
 	// `.portal` + `.portal .body`
 	margin: 8px @margin-end-portal 8px @margin-start-portal + @margin-start-portal-body;
-}
 
-.mw-sidebar-action-link {
-	font-size: @font-size-portal-list-item;
-	font-weight: bold;
+	// Styles for SidebarAction template.
+	.mw-sidebar-action-item {
+		h3.mw-sidebar-action-heading {
+			display: block;
+			background-image: url( ../common/images/portal-separator.png ); // Support: IE 9, Fx 3.6-15, Safari 5.1-6, Chrome 10-25
+			background-image: linear-gradient( to right, @border-color-portal-heading-transparent 0, @border-color-portal-heading 33%, @border-color-portal-heading 66%, @border-color-portal-heading-transparent 100% ); // Standard (Firefox 16+, IE 10+, Safari 6.1+, Chrome 26+)
+			background-position: center bottom;
+			background-repeat: no-repeat;
+			background-size: 100% @border-width-base;
+			color: @color-base--subtle;
+			margin: 0.75em 0;
+			border: 0;
+			padding: 0.3em 0;
+			font-size: @font-size-nav-main-heading;
+			font-weight: normal;
+			cursor: default;
+		}
+
+		.mw-sidebar-action-content {
+			> * {
+				font-size: @font-size-portal-list-item;
+			}
+
+			> a {
+				font-weight: bold;
+			}
+		}
+
+		// T295555 style overrides for temporary language switch alert (can be removed later ).
+		.vector-language-sidebar-alert {
+			padding: 0.75em;
+		}
+	}
 }
 
 #mw-sidebar-button {
@@ -44,6 +92,13 @@
 	visibility: hidden;
 	opacity: 0;
 	.transform( translateX( -100% ) );
+}
+
+@media ( min-width: ( @max-width-workspace-container + ( 2 * @padding-horizontal-page-container ) ) ) {
+	.mw-sidebar {
+		background: @background-color-page-container;
+		border-right: 1px solid @border-color-sidebar;
+	}
 }
 
 // Disable transitions on page load. No-JS users will unfortunately miss out. A similar pattern is

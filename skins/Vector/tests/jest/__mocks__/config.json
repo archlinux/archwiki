@@ -1,0 +1,20 @@
+{
+	"wgVectorWebABTestEnrollment": {
+		"name": "vector.sticky_header",
+		"enabled": true,
+		"buckets": {
+			"unsampled": {
+				"samplingRate": 0.1
+			},
+			"control": {
+				"samplingRate": 0.3
+			},
+			"stickyHeaderDisabled": {
+				"samplingRate": 0.3
+			},
+			"stickyHeaderEnabled": {
+				"samplingRate": 0.3
+			}
+		}
+	}
+}

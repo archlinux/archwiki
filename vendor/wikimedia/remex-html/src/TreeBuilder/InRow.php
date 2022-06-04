@@ -83,7 +83,7 @@ class InRow extends InsertionMode {
 				return;
 			}
 			$builder->clearStackBack( self::$tableRowContext, $sourceStart );
-			$builder->pop( $sourceStart, $sourceLength );
+			$builder->pop( $sourceStart, 0 );
 			$dispatcher->switchMode( Dispatcher::IN_TABLE_BODY )
 				->endTag( $name, $sourceStart, $sourceLength );
 			break;
@@ -124,6 +124,3 @@ class InRow extends InsertionMode {
 		$this->dispatcher->inTable->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InRow::class, 'RemexHtml\TreeBuilder\InRow' );

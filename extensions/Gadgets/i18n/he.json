@@ -22,11 +22,15 @@
 	"gadgetusage-default": "ברירת המחדל",
 	"gadgets-title": "גאדג'טים",
 	"gadgets-pagetext": "זוהי רשימה של סקריפטים שמשתמשים יכולים להתקין באמצעות [[Special:Preferences#mw-prefsection-gadgets|דף ההעדפות]] שלהם, כפי שהוגדרו ב[[MediaWiki:Gadgets-definition|הודעת המערכת המתאימה]].\nמכאן ניתן לגשת בקלות לדפי הודעות המערכת שמגדירים את התיאור והקוד של כל סקריפט.",
+	"gadgets-editdescription": "עריכת התיאור",
+	"gadgets-viewdescription": "הצגת התיאור",
 	"gadgets-uses": "משתמש בדפים",
 	"gadgets-required-rights": "{{PLURAL:$2|נדרשת ההרשאה הבאה|נדרשות ההרשאות הבאות}}:\n\n$1",
 	"gadgets-required-skins": "זמין {{PLURAL:$2|בערכות העיצוב הבאות: $1|בערכת העיצוב $1}}",
+	"gadgets-required-actions": "עובד {{PLURAL:$2|בפעולת הדף \"$1\"|בפעולות הדף הבאות: $1}}.",
 	"gadgets-default": "מופעל לכולם כברירת מחדל.",
 	"gadgets-legacy": "הגאדג'ט אינו טעון. נא לעדכן לשימוש ב־ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) מידע נוסף])",
+	"gadgets-packaged": "הגאדג'ט הזה [https://www.mediawiki.org/wiki/ResourceLoader/Package_files ארוז בחבילה], ונקודת הכניסה שלו היא $1",
 	"gadgets-export": "ייצוא",
 	"gadgets-export-title": "ייצוא גאדג'טים",
 	"gadgets-not-found": "הגאדג׳ט \"$1\" לא נמצא.",
@@ -38,5 +42,6 @@
 	"action-gadgets-edit": "לערוך את דף ה־JavaScript או את דף ה־CSS של הגאדג'ט הזה",
 	"right-gadgets-definition-edit": "עריכת הגדרות של גאדג'טים",
 	"action-gadgets-definition-edit": "לערוך את הגדרת הגאדג'ט הזה",
-	"gadgets-wrong-contentmodel": "דפים במרחב השם {{ns:2302}} צריכים להשתייך למודל התוכן GadgetDefinition."
+	"gadgets-wrong-contentmodel": "דפים במרחב השם {{ns:2302}} צריכים להשתייך למודל התוכן GadgetDefinition.",
+	"gadgets-supports-urlload": "הגאדג'ט הזה תומך בטעינה דרך URL רק עם פרמטר השאילתה <code dir=\"ltr\">?withgadget</code>."
 }

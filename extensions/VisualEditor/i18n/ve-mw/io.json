@@ -118,10 +118,12 @@
 	"visualeditor-dialog-transclusion-add-param-save": "Adjuntez parametro",
 	"visualeditor-dialog-transclusion-add-template": "Adjuntar shablono",
 	"visualeditor-dialog-transclusion-collapse-options": "Celar selekti",
+	"visualeditor-dialog-transclusion-confirmation-reject": "Durigar redaktado",
 	"visualeditor-dialog-transclusion-content": "Kontenajo",
 	"visualeditor-dialog-transclusion-contextitem-description": "Produktita de: $1",
 	"visualeditor-dialog-transclusion-expand-options": "Montrar selekti",
 	"visualeditor-dialog-transclusion-filter-no-match": "Nula asorto trovesis",
+	"visualeditor-dialog-transclusion-filter-show-all": "Montrez omna blanka spaci",
 	"visualeditor-dialog-transclusion-deprecated-parameter": "Obsoleta feldo",
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Feldo esas obsoleta. $1",
 	"visualeditor-dialog-transclusion-loading": "Ol kargesas…",
@@ -130,6 +132,7 @@
 	"visualeditor-dialog-transclusion-param-example": "Ex. $1",
 	"visualeditor-dialog-transclusion-param-info": "Feldo-deskripto",
 	"visualeditor-dialog-transclusion-param-info-missing": "Esas nula feldo-deskripto",
+	"visualeditor-dialog-transclusion-param-selection-aria-label": "Parametri en $1",
 	"visualeditor-dialog-transclusion-placeholder": "Adjuntar shablono",
 	"visualeditor-dialog-transclusion-raw-fallback": "Rekursar a simpla wikitexto",
 	"visualeditor-dialog-transclusion-remove-content": "Forigar kontenajo",
@@ -146,7 +149,6 @@
 	"visualeditor-dialog-transclusion-title-edit-known-template": "Redaktez: $1",
 	"visualeditor-dialogbutton-meta-tooltip": "Pagino-figurizo",
 	"visualeditor-dialogbutton-template-tooltip": "Shablono",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Transkluzo",
 	"visualeditor-donebutton-tooltip": "Me finis redaktar",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} nun memoras qua redaktilon vu preferas. Vu povas swichar redaktili dum redaktar, e chanjar vua prefero plu tarde.",
 	"visualeditor-editingtabdialog-ok": "Uzar la redaktilo quan me uzis lor mea lasta redakto",
@@ -268,5 +270,8 @@
 	"visualeditor-version-label": "Versiono",
 	"visualeditor-wikitext-progress": "Konvertanta wikitexto",
 	"visualeditor-wikitext-warning": "Vu uzas VisualEditor - [[{{MediaWiki:visualeditor-wikitext-warning-link}}|wikitext]] ne funcionas hike. Por swichar al bazala redaktilo irgatempe sen perdar vua chanji, kliktar la swicho-butono.",
-	"visualeditor-wikitext-warning-title": "Wikitexto-\"markup\" detektita"
+	"visualeditor-wikitext-warning-title": "Wikitexto-\"markup\" detektita",
+	"visualeditor-wikitextconvert-title": "Ka vu deziras konvertar formato ad Wikitexto?",
+	"visualeditor-wikitextconvert-message": "Vu skriptis kontenajo kun formato ''rich text'' (RTF). Ka vu deziras konvertar ca formato a Wikitexto?",
+	"visualeditor-wikitextconvert-convert": "Konvertez a Wikitexto"
 }

@@ -2,8 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Artsiom91",
+			"Chadyka",
 			"Maksim L.",
-			"Chadyka"
+			"No Sleep till Krupki"
 		]
 	},
 	"templatedata-desc": "Рэалізацыя сховішча звестак для параметраў шаблонаў (з дапамогай JSON)",
@@ -47,7 +48,7 @@
 	"templatedata-invalid-duplicate-value": "Уласцівасць «$1» («$3») — дублікат «$2».",
 	"templatedata-invalid-empty-array": "Уласцівасць «$1» павінна мець па меншай меры адно значэнне ў сваім масіве.",
 	"templatedata-invalid-format": "Чакаецца, што значэннем уласцівасці \"$1\" павінен быць \"inline\", \"block\" або радок карэктнага фармату.",
-	"templatedata-invalid-length": "Даныя занадта вялікія для захавання ({{formatnum:$1}} {{PLURAL:$1|байт|байты|байтаў}}, {{PLURAL:$2|ліміт:}} {{formatnum:$2}})",
+	"templatedata-invalid-length": "Даныя занадта вялікія для захавання ($1 {{PLURAL:$1|байт|байты|байтаў}}, {{PLURAL:$2|ліміт:}} $2)",
 	"templatedata-invalid-missing": "Абавязковая ўласцівасць «$1» не знойдзена.",
 	"templatedata-invalid-param": "Недапушчальны параметр «$1» для ўласцівасці «$2».",
 	"templatedata-invalid-parse": "Сінтаксічная памылка ў JSON.",
@@ -86,7 +87,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Увядзіце назву карты",
 	"templatedata-modal-search-input-placeholder": "Шукаць па назве або коду мовы",
 	"templatedata-modal-table-param-actions": "Дзеянні",
-	"templatedata-modal-table-param-aliases": "Псеўданімы (праз коску)",
+	"templatedata-modal-table-param-aliases": "Сінонімы",
 	"templatedata-modal-table-param-autovalue": "Аўтазначэнне",
 	"templatedata-modal-table-param-default": "Па змоўчанні ($1)",
 	"templatedata-modal-table-param-deprecated": "Састарэлы",

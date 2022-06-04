@@ -13,14 +13,13 @@
 			"Vago",
 			"Vugar 1981",
 			"Wertuose",
-			"Şeyx Şamil"
+			"Şeyx Şamil",
+			"Amire80"
 		]
 	},
 	"wikieditor-wikitext-tab": "Vikimətn",
-	"wikieditor-loading": "Yüklənir...",
 	"wikieditor-toolbar-preference": "Redaktə panelini aktivləşdir",
 	"wikieditor-toolbar-preference-help": "Bu funksiya bəzən \"2010 vikimətn redaktoru\" da adlanır.",
-	"wikieditor-toolbar-loading": "Yüklənir…",
 	"wikieditor-toolbar-tool-bold": "Qalın",
 	"wikieditor-toolbar-tool-bold-example": "Qalın mətn",
 	"wikieditor-toolbar-tool-italic": "Kursiv",
@@ -122,8 +121,8 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Qalın və kursiv mətn'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Qalın və kursiv mətn</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "Daxili keçid",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Səhifənin adı|Keçidin adı]]<br />[[Səhifənin adı]]",
-	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Keçidin adı</a><br /><a href='#'>Səhifənin adı</a>",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Səhifənin adı]]<br />[[Səhifənin adı|Keçidin adı]]",
+	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Səhifənin adı</a<br />><a href='#'>Keçidin adı</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Xarici keçid",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Keçidin adı]<br />[http://www.example.org]<br />http://www.example.org",
 	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>Keçidin adı</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.example.org</a>",

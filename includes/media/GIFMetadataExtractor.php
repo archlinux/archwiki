@@ -26,6 +26,8 @@
  * @ingroup Media
  */
 
+use Wikimedia\AtEase\AtEase;
+
 /**
  * GIF frame counter.
  *
@@ -172,9 +174,9 @@ class GIFMetadataExtractor {
 					UtfNormal\Validator::quickIsNFCVerify( $dataCopy );
 
 					if ( $dataCopy !== $data ) {
-						Wikimedia\suppressWarnings();
+						AtEase::suppressWarnings();
 						$data = iconv( 'windows-1252', 'UTF-8', $data );
-						Wikimedia\restoreWarnings();
+						AtEase::restoreWarnings();
 					}
 
 					$commentCount = count( $comment );
@@ -235,7 +237,6 @@ class GIFMetadataExtractor {
 						if ( substr( $xmp, -257, 3 ) !== "\x01\xFF\xFE"
 							|| substr( $xmp, -4 ) !== "\x03\x02\x01\x00"
 						) {
-							// this is just a sanity check.
 							throw new Exception( "XMP does not have magic trailer!" );
 						}
 

@@ -29,12 +29,26 @@ use Wikimedia\Parsoid\Utils\PHPUtils;
 		}
 		return $g->parse( $contents );
 	}
+
+	private function addLines( int $lineStart, array $item ) {
+		$item['filename'] = $this->filename;
+		$item['lineNumStart'] = $lineStart;
+		$item['lineNumEnd'] = $this->lineNum;
+		return $item;
+	}
 }
 
-testfile = format? testfile_options? lined_chunk+
+testfile =
+	comment_or_blank_line*
+	format?
+	comment_or_blank_line*
+	testfile_options?
+	lined_chunk+
 
-testfile_options = sec:option_section end_section {
-	return $sec['text'];
+testfile_options =
+	l:("" { return $this->lineNum; })
+	sec:option_section end_section {
+	return $this->addLines( $l, $sec );
 }
 
 /* Line number bookkeeping.
@@ -43,10 +57,7 @@ testfile_options = sec:option_section end_section {
 eol = nl:"\n" { $this->lineNum++; return $nl; }
 
 lined_chunk = l:("" { return $this->lineNum; }) c:chunk {
-	$c['filename'] = $this->filename;
-	$c['lineNumStart'] = $l;
-	$c['lineNumEnd'] = $this->lineNum;
-	return $c;
+	return $this->addLines($l, $c);
 }
 
 whitespace = [ \t]+
@@ -69,22 +80,33 @@ text = lines:line*
 }
 
 chunk =
-	comment
+	comment_or_blank_line
 	/ article
 	/ test
-	/ l: line { return [ 'type' => 'line', 'text' => $l ]; }
 	/ hooks
 	/ functionhooks
 
+	/* Final fallback production is a catch-all, since some ancient
+	 * parserTest files have garbage text between tests and in the old
+	 * hand-coded parser test parser this was just ignored as a comment.
+	 * We'll go ahead and parse it, then emit a warning in TestFileReader.
+	 */
+	/ l: line { return [ 'type' => 'line', 'text' => $l ]; }
+
 format =
+	l:("" { return $this->lineNum; })
 	"!!" ws? version_keyword ws+ v:$([0-9]+) rest_of_line {
-		return [ 'type' => 'version', 'text' => $v ];
+		return $this->addLines( $l, [ 'type' => 'version', 'text' => $v ] );
 	}
 
-version_keyword = [vV] [eE] [rR] [sS] [iI] [oO] [nN]
+version_keyword = 'version'i
 
 comment =
 	"#" text:rest_of_line { return [ 'type' => 'comment', 'text' => $text ]; }
+
+comment_or_blank_line =
+	comment
+	/ ws? nl:eol { return [ 'type' => 'line', 'text' => $nl ]; }
 
 article =
 	start_article title:line start_text text:text ( end_article / end_section )
@@ -160,7 +182,7 @@ test =
 }
 
 section =
-	"!!" ws? (!"end") (!"options") name:(c:[^ \t\r\n]+ { return implode( $c ); }) rest_of_line
+	"!!" ws? (!"test") (!"end") (!"options") name:(c:[^ \t\r\n]+ { return implode( $c ); }) rest_of_line
 	text:text
 {
 	return [ 'name' => $name, 'text' => $text ];
@@ -177,7 +199,7 @@ option_section =
 		}
 	}
 
-	return [ 'name' => 'options', 'text' => $o ];
+	return [ 'type' => 'section', 'name' => 'options', 'text' => $o ];
 }
 
 option_list = o:an_option ([ \t] / eol)+ rest:option_list?

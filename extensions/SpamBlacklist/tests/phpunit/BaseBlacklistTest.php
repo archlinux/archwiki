@@ -22,7 +22,7 @@
 /**
  * @covers BaseBlacklist
  */
-class BaseBlacklistTest extends MediaWikiTestCase {
+class BaseBlacklistTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @return array

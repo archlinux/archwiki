@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Arystanbek",
-			"Нұрлан Рахымжанов",
-			"TMg"
+			"TMg",
+			"Нұрлан Рахымжанов"
 		]
 	},
 	"tooltip-ca-createsource": "Бұл беттің қайнар мәтінін бастау",
@@ -146,7 +146,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Медиа",
 	"visualeditor-dialogbutton-meta-tooltip": "Бет баптаулары",
 	"visualeditor-dialogbutton-template-tooltip": "Үлгі",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Кіріcтірілген бет",
 	"visualeditor-donebutton-tooltip": "Өңдеу орындалды",
 	"visualeditor-editconflict": "Сіздің өзгертулеріңіз өңдеме қақтығысы себепті сақталмады. {{GENDER:|Сіз}} қақтығысты қолмен рұқсат еткіңіз келе ме?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} қазір сіз қалайтын өңдегішті есінде сақтайды.",

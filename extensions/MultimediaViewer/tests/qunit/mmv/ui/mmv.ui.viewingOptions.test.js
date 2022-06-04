@@ -13,7 +13,7 @@
 
 	QUnit.module( 'mmv.ui.viewingOptions', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Constructor sanity test', function ( assert ) {
+	QUnit.test( 'Constructor sense test', function ( assert ) {
 		var dialog = makeDialog();
 		assert.ok( dialog, 'Dialog is created successfully' );
 	} );

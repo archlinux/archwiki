@@ -128,7 +128,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Media",
 	"visualeditor-dialogbutton-meta-tooltip": "Sideinnstillingar",
 	"visualeditor-dialogbutton-template-tooltip": "Mal",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Malinkludering",
 	"visualeditor-editconflict": "Endringane dine kunne ikkje lagrast grunna ein endringskonflikt. Ynskjer {{GENDER:|du}} å løysa konflikten manuelt?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} hugsar no kva for ein tekstendrar du føretrekkjer. Du kan byta endringsmodus medan du endrar, og du kan endra innstillingane dine på eit seinare tidspunkt.",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|melding|meldingar}}",

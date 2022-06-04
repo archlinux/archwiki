@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Table of contents when \`vector-is-collapse-sections-enabled\` is false renders 1`] = `
+"<nav id=\\"mw-panel-toc\\" class=\\"sidebar-toc\\" role=\\"navigation\\" aria-labelledby=\\"sidebar-toc-header\\">
+	<div class=\\"sidebar-toc-header\\">
+		<h2 class=\\"sidebar-toc-title\\" aria-hidden=\\"true\\">Contents</h2>
+	</div>
+	<ul id=\\"table-of-contents\\">
+<li id=\\"toc-foo\\" class=\\"sidebar-toc-list-item sidebar-toc-level-1 sidebar-toc-list-item-expanded\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#foo\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">1</span>foo</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+	</ul>
+</li>
+<li id=\\"toc-bar\\" class=\\"sidebar-toc-list-item sidebar-toc-level-1 sidebar-toc-list-item-expanded\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#bar\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">2</span>bar</div>
+	</a>
+		<button class=\\"mw-ui-icon mw-ui-icon-wikimedia-downTriangle mw-ui-icon-small sidebar-toc-toggle\\"></button>
+	<ul class=\\"sidebar-toc-list\\">
+<li id=\\"toc-baz\\" class=\\"sidebar-toc-list-item sidebar-toc-level-2\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#baz\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">2.1</span>baz</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+<li id=\\"toc-qux\\" class=\\"sidebar-toc-list-item sidebar-toc-level-3\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#qux\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">2.1.1</span>qux</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+	</ul>
+</li>
+	</ul>
+</li>
+	</ul>
+</li>
+<li id=\\"toc-quux\\" class=\\"sidebar-toc-list-item sidebar-toc-level-1 sidebar-toc-list-item-expanded\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#quux\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">3</span>quux</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+	</ul>
+</li>
+	</ul>
+</nav>
+"
+`;
+
+exports[`Table of contents when \`vector-is-collapse-sections-enabled\` is true renders 1`] = `
+"<nav id=\\"mw-panel-toc\\" class=\\"sidebar-toc\\" role=\\"navigation\\" aria-labelledby=\\"sidebar-toc-header\\">
+	<div class=\\"sidebar-toc-header\\">
+		<h2 class=\\"sidebar-toc-title\\" aria-hidden=\\"true\\">Contents</h2>
+	</div>
+	<ul id=\\"table-of-contents\\">
+<li id=\\"toc-foo\\" class=\\"sidebar-toc-list-item sidebar-toc-level-1\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#foo\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">1</span>foo</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+	</ul>
+</li>
+<li id=\\"toc-bar\\" class=\\"sidebar-toc-list-item sidebar-toc-level-1\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#bar\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">2</span>bar</div>
+	</a>
+		<button class=\\"mw-ui-icon mw-ui-icon-wikimedia-downTriangle mw-ui-icon-small sidebar-toc-toggle\\"></button>
+	<ul class=\\"sidebar-toc-list\\">
+<li id=\\"toc-baz\\" class=\\"sidebar-toc-list-item sidebar-toc-level-2\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#baz\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">2.1</span>baz</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+<li id=\\"toc-qux\\" class=\\"sidebar-toc-list-item sidebar-toc-level-3\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#qux\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">2.1.1</span>qux</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+	</ul>
+</li>
+	</ul>
+</li>
+	</ul>
+</li>
+<li id=\\"toc-quux\\" class=\\"sidebar-toc-list-item sidebar-toc-level-1\\">
+	<a class=\\"sidebar-toc-link\\" href=\\"#quux\\">
+		<div class=\\"sidebar-toc-text\\">
+		<span class=\\"sidebar-toc-numb\\">3</span>quux</div>
+	</a>
+	<ul class=\\"sidebar-toc-list\\">
+	</ul>
+</li>
+	</ul>
+</nav>
+"
+`;

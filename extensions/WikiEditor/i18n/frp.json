@@ -2,17 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"ChrisPtDe",
-			"Macofe"
+			"Macofe",
+			"Amire80"
 		]
 	},
 	"wikieditor": "Entèrface avanciê de changement de vouiquitèxto",
 	"wikieditor-desc": "Balye una entèrface de changement de vouiquitèxto èxtensibla et un mouél de fonccionalitâts.",
 	"wikieditor-wikitext-tab": "Vouiquitèxto",
-	"wikieditor-loading": "Chargement",
 	"wikieditor-toolbar": "Bârra d’outils d’èdicion",
 	"wikieditor-toolbar-desc": "Bârra d’outils d’èdicion avouéc l’utilisabilitât mèlyorâ",
 	"wikieditor-toolbar-preference": "Activar la bârra d’outils d’èdicion mèlyorâ",
-	"wikieditor-toolbar-loading": "Chargement...",
 	"wikieditor-toolbar-tool-bold": "Grâs",
 	"wikieditor-toolbar-tool-bold-example": "Tèxto en grâs",
 	"wikieditor-toolbar-tool-italic": "Étalico",
@@ -42,7 +41,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "L’URL que vos éd spècefiâ semble liyér vers una ôtra pâge du vouiqui.\nVoléd-vos utilisar un lim de dedens a la place ?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Lim de dedens",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Lim de defôr",
-	"wikieditor-toolbar-tool-link-empty": "Vos éd ren buchiê que pouesse étre liyê.",
 	"wikieditor-toolbar-tool-file": "Fichiér entrebetâ",
 	"wikieditor-toolbar-tool-file-example": "Ègzemplo.jpg",
 	"wikieditor-toolbar-tool-file-title": "Entrebetar un fichiér",
@@ -144,7 +142,7 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Tèxto en grâs &amp; en étalico'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Tèxto en grâs &amp; en étalico</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "Lim de dedens",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Titro de la pâge|Tèxto du lim]]<br />[[Titro de la pâge]]",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Titro de la pâge]]<br />[[Titro de la pâge|Tèxto du lim]]",
 	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>Tèxto du lim</a><br /><a href='#'>Titro de la pâge</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Lim de defôr",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Tèxto du lim]<br />[http://www.example.org]<br />http://www.example.org",

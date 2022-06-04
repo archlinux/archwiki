@@ -16,7 +16,6 @@
  * @param {Object} [config] Configuration options
  */
 ve.ui.MWTocWidget = function VeUiMWTocWidget( surface, config ) {
-
 	// Parent constructor
 	ve.ui.MWTocWidget.super.call( this, config );
 
@@ -64,10 +63,9 @@ OO.inheritClass( ve.ui.MWTocWidget, OO.ui.Widget );
  * @param {ve.dm.MetaItem} metaItem
  */
 ve.ui.MWTocWidget.prototype.onMetaListInsert = function ( metaItem ) {
-	var property;
 	// Responsible for adding UI components
 	if ( metaItem instanceof ve.dm.MWTOCMetaItem ) {
-		property = metaItem.getAttribute( 'property' );
+		var property = metaItem.getAttribute( 'property' );
 		if ( property === 'mw:PageProp/forcetoc' ) {
 			this.mwTOCForce = true;
 		} else if ( property === 'mw:PageProp/notoc' ) {
@@ -83,9 +81,8 @@ ve.ui.MWTocWidget.prototype.onMetaListInsert = function ( metaItem ) {
  * @param {ve.dm.MetaItem} metaItem
  */
 ve.ui.MWTocWidget.prototype.onMetaListRemove = function ( metaItem ) {
-	var property;
 	if ( metaItem instanceof ve.dm.MWTOCMetaItem ) {
-		property = metaItem.getAttribute( 'property' );
+		var property = metaItem.getAttribute( 'property' );
 		if ( property === 'mw:PageProp/forcetoc' ) {
 			this.mwTOCForce = false;
 		} else if ( property === 'mw:PageProp/notoc' ) {
@@ -101,12 +98,11 @@ ve.ui.MWTocWidget.prototype.onMetaListRemove = function ( metaItem ) {
 ve.ui.MWTocWidget.prototype.initFromMetaList = function () {
 	var i = 0,
 		items = this.metaList.getItemsInGroup( 'mwTOC' ),
-		len = items.length,
-		property;
+		len = items.length;
 	if ( len > 0 ) {
 		for ( ; i < len; i++ ) {
 			if ( items[ i ] instanceof ve.dm.MWTOCMetaItem ) {
-				property = items[ i ].getAttribute( 'property' );
+				var property = items[ i ].getAttribute( 'property' );
 				if ( property === 'mw:PageProp/forcetoc' ) {
 					this.mwTOCForce = true;
 				}
@@ -157,9 +153,7 @@ ve.ui.MWTocWidget.prototype.updateNode = function ( viewNode ) {
  * Based on generateTOC in Linker.php
  */
 ve.ui.MWTocWidget.prototype.build = function () {
-	var i, l, level, levelDiff, tocNumber, modelNode, viewNode, tocBeforeNode,
-		$list, $text, $item, $link,
-		$newTocList = $( '<ul>' ),
+	var $newTocList = $( '<ul>' ),
 		nodes = this.doc.getNodesByType( 'mwHeading', true ),
 		surfaceView = this.surface.getView(),
 		documentView = surfaceView.getDocument(),
@@ -177,11 +171,12 @@ ve.ui.MWTocWidget.prototype.build = function () {
 		return false;
 	}
 
-	for ( i = 0, l = nodes.length; i < l; i++ ) {
-		modelNode = nodes[ i ];
-		level = modelNode.getAttribute( 'level' );
+	for ( var i = 0, l = nodes.length; i < l; i++ ) {
+		var modelNode = nodes[ i ];
+		var level = modelNode.getAttribute( 'level' );
 
 		if ( level > lastLevel ) {
+			var $list;
 			if ( stack.length ) {
 				$list = $( '<ul>' );
 				stack[ stack.length - 1 ].children().last().append( $list );
@@ -190,23 +185,24 @@ ve.ui.MWTocWidget.prototype.build = function () {
 			}
 			stack.push( $list );
 		} else if ( level < lastLevel ) {
-			levelDiff = lastLevel - level;
+			var levelDiff = lastLevel - level;
 			while ( levelDiff > 0 && stack.length > 1 ) {
 				stack.pop();
 				levelDiff--;
 			}
 		}
 
-		tocNumber = stack.map( getItemIndex ).join( '.' );
-		viewNode = documentView.getBranchNodeFromOffset( modelNode.getRange().start );
+		var tocNumber = stack.map( getItemIndex ).join( '.' );
+		var viewNode = documentView.getBranchNodeFromOffset( modelNode.getRange().start );
 		uri.query.section = ( i + 1 ).toString();
 		// The following classes are used here:
 		// * toclevel-1, toclevel-2, ...
 		// * tocsection-1, tocsection-2, ...
-		$item = $( '<li>' ).addClass( 'toclevel-' + stack.length ).addClass( 'tocsection-' + ( i + 1 ) );
-		$link = $( '<a>' ).attr( 'href', uri )
-			.append( '<span class="tocnumber">' + tocNumber + '</span> ' );
-		$text = $( '<span>' ).addClass( 'toctext' );
+		var $item = $( '<li>' ).addClass( 'toclevel-' + stack.length ).addClass( 'tocsection-' + ( i + 1 ) );
+		var $link = $( '<a>' ).attr( 'href', uri ).append(
+			$( '<span>' ).addClass( 'tocnumber' ).text( tocNumber )
+		);
+		var $text = $( '<span>' ).addClass( 'toctext' );
 
 		viewNode.$tocText = $text;
 		this.updateNode( viewNode );
@@ -221,7 +217,7 @@ ve.ui.MWTocWidget.prototype.build = function () {
 
 	if ( nodes.length ) {
 		this.rootLength = this.$tocList.children().length;
-		tocBeforeNode = documentView.getBranchNodeFromOffset( nodes[ 0 ].getRange().start );
+		var tocBeforeNode = documentView.getBranchNodeFromOffset( nodes[ 0 ].getRange().start );
 		tocBeforeNode.$element.before( this.$element );
 	} else {
 		this.rootLength = 0;

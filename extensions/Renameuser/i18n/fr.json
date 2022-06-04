@@ -25,7 +25,7 @@
 	"renameuser-desc": "Renomme un utilisateur (nécessite les droits de ''renameuser'')",
 	"renameuserold": "Nom actuel de l’utilisateur :",
 	"renameusernew": "Nouveau nom de l’utilisateur :",
-	"renameuserreason": "Raison(s) du changement de nom :",
+	"renameuserreason": "Motif :",
 	"renameusermove": "Renommer toutes les pages de l’utilisateur vers le nouveau nom",
 	"renameusersuppress": "Ne pas créer de redirection vers le nouveau nom",
 	"renameuserreserve": "Réserver l’ancien nom pour un usage futur",

@@ -657,7 +657,7 @@ class CiteUnitTest extends \MediaWikiUnitTestCase {
 		$mockOutput = $this->createMock( ParserOutput::class );
 		// This will be our most important assertion.
 		$mockOutput->expects( $this->once() )
-			->method( 'setProperty' )
+			->method( 'setPageProperty' )
 			->with( Cite::BOOK_REF_PROPERTY, true );
 
 		$mockParser = $this->createMock( Parser::class );

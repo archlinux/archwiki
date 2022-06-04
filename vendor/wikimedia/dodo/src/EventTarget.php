@@ -6,6 +6,9 @@ namespace Wikimedia\Dodo;
 
 use Wikimedia\Dodo\Internal\UnimplementedTrait;
 
+/**
+ * @phan-forbid-undeclared-magic-properties
+ */
 class EventTarget implements \Wikimedia\IDLeDOM\EventTarget {
 	// Stub out methods not yet implemented.
 	use \Wikimedia\IDLeDOM\Stub\EventTarget;

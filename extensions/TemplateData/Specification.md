@@ -305,9 +305,9 @@ To format a template invocation according to the format string, first split it i
 
 Begin with `StartFormat`, and replace the `Hole` with the name of the template to create the "output string".  If `StartFormat` begins with a newline and template is already at the start of a line (the character preceding this template invocation is a newline or the template is at the start of the output), delete the initial newline from the output string.
 
-For each parameter, if `ParameterFormat` begins with a newline and the last character in the output string is a newline, then delete the last character in the output string.  Then append `ParameterFormat` to the output string after replacing the first `Hole` with the name of the parameter and the second `Hole` with the value of the parameter.
+For each parameter, if `ParameterFormat` begins with a newline and the last line in the output string is nothing but whitespace and comments, then delete the newline from the beginning of the `ParameterFormat`.  Then append `ParameterFormat` to the output string after replacing the first `Hole` with the name of the parameter and the second `Hole` with the value of the parameter.
 
-Finally, if `EndFormat` begins with a newline and the last character in the output string is a newline, then delete the last character in the output string.  Append the `EndFormat` to the output string.
+Finally, if `EndFormat` begins with a newline and the last line in the output string is nothing but whitespace and comments, then delete the newline from the beginning of the `EndFormat`.  Or, if there were no parameters, also delete the newline from the beginning of the `EndFormat`.  Append the `EndFormat` to the output string.
 
 Some example format strings:
 
@@ -321,8 +321,7 @@ Block formatting: `{{_\n| _ = _\n}}`
 {{Foo
 | bar = baz
 | qux = quux
-}}{{Bar
-}}
+}}{{Bar}}
 ```
 
 No space before the parameter name, each template on its own line: `\n{{_\n|_ = _\n}}\n`
@@ -331,8 +330,7 @@ No space before the parameter name, each template on its own line: `\n{{_\n|_ = 
 |bar = baz
 |qux = quux
 }}
-{{Bar
-}}
+{{Bar}}
 ```
 
 Indent each parameter: `{{_\n |_ = _\n}}`
@@ -340,8 +338,7 @@ Indent each parameter: `{{_\n |_ = _\n}}`
 {{Foo
  |bar = baz
  |qux = quux
-}}{{Bar
-}}
+}}{{Bar}}
 ```
 
 Align all parameter names to a given length: `{{_\n|_______________ = _\n}}\n`
@@ -351,8 +348,7 @@ Align all parameter names to a given length: `{{_\n|_______________ = _\n}}\n`
 |qux             = quux
 |veryverylongparameter = bat
 }}
-{{Bar
-}}
+{{Bar}}
 ```
 
 Pipe characters at the end of the previous line: `{{_|\n  _______________ = _}}`

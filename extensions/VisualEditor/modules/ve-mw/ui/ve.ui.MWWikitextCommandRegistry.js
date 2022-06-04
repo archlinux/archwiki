@@ -139,20 +139,21 @@ ve.ui.wikitextCommandRegistry.register(
 );
 
 ( function () {
-	var i, heading = '';
 
 	function unformat( text ) {
 		/* Use lazy .+? in the middle so whitespace is matched to wrappers */
-		var headings, pre;
+		var headings;
 		if ( ( headings = text.match( /^((={1,6})\s*).+?(\s*\2\s*)$/ ) ) ) {
 			return [ headings[ 1 ].length, headings[ 3 ].length ];
 		}
+		var pre;
 		if ( ( pre = text.match( /^ +/ ) ) ) {
 			return [ pre[ 0 ].length, 0 ];
 		}
 	}
 
-	for ( i = 1; i <= 6; i++ ) {
+	var heading = '';
+	for ( var i = 1; i <= 6; i++ ) {
 		heading += '=';
 		ve.ui.wikitextCommandRegistry.register(
 			new ve.ui.Command(

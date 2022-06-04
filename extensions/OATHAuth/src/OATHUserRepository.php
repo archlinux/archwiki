@@ -155,12 +155,15 @@ class OATHUserRepository {
 			$this->logger->info( 'OATHAuth updated for {user} from {clientip}', [
 				'user' => $userName,
 				'clientip' => $clientInfo,
+				'oldoathtype' => $prevUser->getModule()->getName(),
+				'newoathtype' => $user->getModule()->getName(),
 			] );
 		} else {
 			// If findByUser() has returned false, there was no user row or cache entry
 			$this->logger->info( 'OATHAuth enabled for {user} from {clientip}', [
 				'user' => $userName,
 				'clientip' => $clientInfo,
+				'oathtype' => $user->getModule()->getName(),
 			] );
 		}
 	}
@@ -186,6 +189,7 @@ class OATHUserRepository {
 		$this->logger->info( 'OATHAuth disabled for {user} from {clientip}', [
 			'user' => $userName,
 			'clientip' => $clientInfo,
+			'oathtype' => $user->getModule()->getName(),
 		] );
 		Notifications\Manager::notifyDisabled( $user, $self );
 	}

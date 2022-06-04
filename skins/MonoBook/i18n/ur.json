@@ -5,5 +5,7 @@
 		]
 	},
 	"skinname-monobook": "مونوبک",
-	"monobook-desc": "سنہ 2004ء سے زیر استعمال میڈیاویکی کی معیاری پوشاک"
+	"monobook-desc": "سنہ 2004ء سے زیر استعمال میڈیاویکی کی معیاری پوشاک",
+	"monobook-view-history": "تاریخچہ",
+	"monobook-action-undelete": "بحال {{PLURAL:$1|ایک ترمیم|$1 ترامیم}}"
 }

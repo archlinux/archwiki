@@ -38,19 +38,19 @@
 		}
 	],
 	"ContentHandlers": {
-		"GadgetDefinition": "GadgetDefinitionContentHandler"
+		"GadgetDefinition": "MediaWiki\\Extension\\Gadgets\\Content\\GadgetDefinitionContentHandler"
 	},
 	"AvailableRights": [
 		"gadgets-edit",
 		"gadgets-definition-edit"
 	],
 	"SpecialPages": {
-		"Gadgets": "SpecialGadgets",
-		"GadgetUsage": "SpecialGadgetUsage"
+		"Gadgets": "MediaWiki\\Extension\\Gadgets\\SpecialGadgets",
+		"GadgetUsage": "MediaWiki\\Extension\\Gadgets\\SpecialGadgetUsage"
 	},
 	"APIListModules": {
-		"gadgetcategories": "ApiQueryGadgetCategories",
-		"gadgets": "ApiQueryGadgets"
+		"gadgetcategories": "MediaWiki\\Extension\\Gadgets\\Api\\ApiQueryGadgetCategories",
+		"gadgets": "MediaWiki\\Extension\\Gadgets\\Api\\ApiQueryGadgets"
 	},
 	"MessagesDirs": {
 		"Gadgets": [
@@ -66,37 +66,33 @@
 		"gadgets-definition"
 	],
 	"AutoloadClasses": {
-		"ApiQueryGadgetCategories": "includes/api/ApiQueryGadgetCategories.php",
-		"ApiQueryGadgets": "includes/api/ApiQueryGadgets.php",
 		"Gadget": "includes/Gadget.php",
-		"GadgetHooks": "includes/GadgetHooks.php",
-		"GadgetResourceLoaderModule": "includes/GadgetResourceLoaderModule.php",
-		"SpecialGadgets": "includes/SpecialGadgets.php",
-		"SpecialGadgetUsage": "includes/SpecialGadgetUsage.php",
 		"GadgetRepo": "includes/GadgetRepo.php",
-		"GadgetDefinitionNamespaceRepo": "includes/GadgetDefinitionNamespaceRepo.php",
-		"MediaWikiGadgetsDefinitionRepo": "includes/MediaWikiGadgetsDefinitionRepo.php",
-		"GadgetDefinitionContent": "includes/content/GadgetDefinitionContent.php",
-		"GadgetDefinitionContentHandler": "includes/content/GadgetDefinitionContentHandler.php",
-		"GadgetDefinitionValidator": "includes/content/GadgetDefinitionValidator.php",
-		"GadgetDefinitionSecondaryDataUpdate": "includes/content/GadgetDefinitionSecondaryDataUpdate.php",
-		"GadgetDefinitionDeletionUpdate": "includes/content/GadgetDefinitionDeletionUpdate.php"
+		"MediaWiki\\Extension\\Gadgets\\Gadget": "includes/Gadget.php",
+		"MediaWiki\\Extension\\Gadgets\\GadgetRepo": "includes/GadgetRepo.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Gadgets\\": "includes/"
+	},
+	"TestAutoloadClasses": {
+		"GadgetTestUtils": "tests/phpunit/GadgetTestUtils.php"
 	},
 	"Hooks": {
-		"PageSaveComplete": "GadgetHooks::onPageSaveComplete",
-		"BeforePageDisplay": "GadgetHooks::beforePageDisplay",
-		"CodeEditorGetPageLanguage": "GadgetHooks::onCodeEditorGetPageLanguage",
-		"ContentHandlerDefaultModelFor": "GadgetHooks::onContentHandlerDefaultModelFor",
-		"EditFilterMergedContent": "GadgetHooks::onEditFilterMergedContent",
-		"UserGetDefaultOptions": "GadgetHooks::userGetDefaultOptions",
-		"GetPreferences": "GadgetHooks::getPreferences",
-		"ResourceLoaderRegisterModules": "GadgetHooks::registerModules",
-		"wgQueryPages": "GadgetHooks::onwgQueryPages",
-		"DeleteUnknownPreferences": "GadgetHooks::onDeleteUnknownPreferences"
+		"PageSaveComplete": "MediaWiki\\Extension\\Gadgets\\Hooks::onPageSaveComplete",
+		"BeforePageDisplay": "MediaWiki\\Extension\\Gadgets\\Hooks::beforePageDisplay",
+		"CodeEditorGetPageLanguage": "MediaWiki\\Extension\\Gadgets\\Hooks::onCodeEditorGetPageLanguage",
+		"ContentHandlerDefaultModelFor": "MediaWiki\\Extension\\Gadgets\\Hooks::onContentHandlerDefaultModelFor",
+		"EditFilterMergedContent": "MediaWiki\\Extension\\Gadgets\\Hooks::onEditFilterMergedContent",
+		"UserGetDefaultOptions": "MediaWiki\\Extension\\Gadgets\\Hooks::userGetDefaultOptions",
+		"GetPreferences": "MediaWiki\\Extension\\Gadgets\\Hooks::getPreferences",
+		"PreferencesGetLegend": "MediaWiki\\Extension\\Gadgets\\Hooks::onPreferencesGetLegend",
+		"ResourceLoaderRegisterModules": "MediaWiki\\Extension\\Gadgets\\Hooks::registerModules",
+		"wgQueryPages": "MediaWiki\\Extension\\Gadgets\\Hooks::onwgQueryPages",
+		"DeleteUnknownPreferences": "MediaWiki\\Extension\\Gadgets\\Hooks::onDeleteUnknownPreferences"
 	},
 	"config": {
 		"GadgetsRepoClass": {
-			"value": "MediaWikiGadgetsDefinitionRepo"
+			"value": "MediaWiki\\Extension\\Gadgets\\MediaWikiGadgetsDefinitionRepo"
 		},
 		"SpecialGadgetUsageActiveUsers": {
 			"value": true

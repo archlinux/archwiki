@@ -4,6 +4,7 @@
 			"Jun Misugi"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 Sprooche|$1 Sproochn}}",
 	"vector-action-addsection": "Abschnidd hinzufüchen",
 	"vector-action-move": "Forschie'm",
 	"vector-view-create": "Ärschdelln",

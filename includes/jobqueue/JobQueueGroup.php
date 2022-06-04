@@ -32,7 +32,7 @@ use Wikimedia\UUID\GlobalIdGenerator;
 class JobQueueGroup {
 	/**
 	 * @var JobQueueGroup[]
-	 * @deprecated 1.37
+	 * @deprecated since 1.37
 	 */
 	protected static $instances = [];
 
@@ -107,7 +107,7 @@ class JobQueueGroup {
 	}
 
 	/**
-	 * @deprecated 1.37 Use JobQueueGroupFactory::makeJobQueueGroup
+	 * @deprecated since 1.37 Use JobQueueGroupFactory::makeJobQueueGroup
 	 * @param bool|string $domain Wiki domain ID
 	 * @return JobQueueGroup
 	 */
@@ -118,7 +118,7 @@ class JobQueueGroup {
 	/**
 	 * Destroy the singleton instances
 	 *
-	 * @deprecated 1.37
+	 * @deprecated since 1.37
 	 * @return void
 	 */
 	public static function destroySingletons() {
@@ -175,7 +175,19 @@ class JobQueueGroup {
 
 		$jobsByType = []; // (job type => list of jobs)
 		foreach ( $jobs as $job ) {
-			$jobsByType[$job->getType()][] = $job;
+			$type = $job->getType();
+			if ( isset( $this->jobTypeConfiguration[$type] ) ) {
+				$jobsByType[$type][] = $job;
+			} else {
+				if (
+					isset( $this->jobTypeConfiguration['default']['typeAgnostic'] ) &&
+					$this->jobTypeConfiguration['default']['typeAgnostic']
+				) {
+					$jobsByType['default'][] = $job;
+				} else {
+					$jobsByType[$type][] = $job;
+				}
+			}
 		}
 
 		foreach ( $jobsByType as $type => $jobs ) {
@@ -476,7 +488,7 @@ class JobQueueGroup {
 	 * @throws InvalidArgumentException
 	 */
 	private function assertValidJobs( array $jobs ) {
-		foreach ( $jobs as $job ) { // sanity checks
+		foreach ( $jobs as $job ) {
 			if ( !( $job instanceof IJobSpecification ) ) {
 				$type = is_object( $job ) ? get_class( $job ) : gettype( $job );
 				throw new InvalidArgumentException( "Expected IJobSpecification objects, got " . $type );

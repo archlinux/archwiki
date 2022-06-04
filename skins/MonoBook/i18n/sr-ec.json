@@ -17,5 +17,7 @@
 	"monobook-more-actions": "Више",
 	"monobook-cactions-label": "Радње за страницу",
 	"monobook-notifications-link": "Обавештења ($1)",
-	"monobook-notifications-link-none": "Обавештења"
+	"monobook-notifications-link-none": "Обавештења",
+	"monobook-view-history": "Историја",
+	"monobook-action-undelete": "Врати {{PLURAL:$1|избрисану измену|$1 избрисане измене|$1 избрисаних измена}}"
 }

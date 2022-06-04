@@ -4,12 +4,6 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\ParserTests;
 
 class TestFileReader {
-	/**
-	 * @var int
-	 * @deprecated Use $this->fileOptions['version'] instead.
-	 */
-	public $testFormat;
-
 	/** @var array File-level options and requirements for these parser tests */
 	public $fileOptions = [];
 
@@ -18,12 +12,6 @@ class TestFileReader {
 
 	/** @var Article[] */
 	public $articles = [];
-
-	/**
-	 * @var array
-	 * @deprecated Use $this->fileOptions['requirements'] instead.
-	 */
-	public $requirements = [];
 
 	/**
 	 * @var ?string Path to known failures file, or null if does not exist
@@ -70,18 +58,44 @@ class TestFileReader {
 		string $testFilePath, ?string $knownFailuresPath,
 		?callable $warnFunc = null, ?callable $normalizeFunc = null
 	) {
-		$this->knownFailuresPath = $knownFailuresPath;
+		$this->knownFailuresPath = $knownFailuresPath && is_readable( $knownFailuresPath ) ?
+			$knownFailuresPath : null;
 		$parsedTests = Grammar::load( $testFilePath );
-		$testFormat = $parsedTests[0];
-		$this->fileOptions = $parsedTests[1] ?? [];
-		$rawTestItems = $parsedTests[2];
-		if ( $testFormat === null ) {
-			$this->testFormat = 1;
-		} else {
-			$this->testFormat = intval( $testFormat['text'] );
-			$this->fileOptions['version'] = strval( $this->testFormat );
+		// Start off with any comments before `!! format`
+		$rawTestItems = $parsedTests[0];
+		$testFormat = $parsedTests[1];
+		if ( $testFormat != null ) {
+			// If `!!format` was present, existing comments applied to the
+			// format declaration, not the first item.
+			$rawTestItems = [];
 		}
-		$knownFailures = $knownFailuresPath && is_readable( $knownFailuresPath ) ?
+
+		// Add any comments after `!! format`
+		array_splice( $rawTestItems, count( $rawTestItems ), 0, $parsedTests[2] );
+		if ( $parsedTests[3] == null ) {
+			$this->fileOptions = [];
+		} else {
+			$this->fileOptions = $parsedTests[3]['text'];
+			// If `!!options` was present, existing comments applied to the
+			// file options, not the first item.
+			$rawTestItems = [];
+		}
+
+		// Add the rest of the comments and items appearing after `!!options`
+		array_splice( $rawTestItems, count( $rawTestItems ), 0, $parsedTests[4] );
+
+		if ( $testFormat !== null ) {
+			if ( isset( $this->fileOptions['version'] ) ) {
+				( new Item( $parsedTests[3] ) )->error( 'Duplicate version specification' );
+			} else {
+				$this->fileOptions['version'] = $testFormat['text'];
+			}
+		}
+		if ( !isset( $this->fileOptions['version'] ) ) {
+			$this->fileOptions['version'] = '1';
+		}
+
+		$knownFailures = $this->knownFailuresPath !== null ?
 			json_decode( file_get_contents( $knownFailuresPath ), true ) :
 			null;
 
@@ -155,10 +169,5 @@ class TestFileReader {
 			}
 			unset( $item );
 		}
-		// Backward compatibility for core
-		if ( isset( $this->fileOptions['version'] ) ) {
-			$this->testFormat = intval( $this->fileOptions['version'] );
-		}
-		$this->requirements = $this->fileOptions['requirements'] ?? [];
 	}
 }

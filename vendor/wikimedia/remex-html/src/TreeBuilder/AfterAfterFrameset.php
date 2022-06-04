@@ -44,6 +44,3 @@ class AfterAfterFrameset extends InsertionMode {
 		$this->builder->comment( [ TreeBuilder::ROOT, null ], $text, $sourceStart, $sourceLength );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( AfterAfterFrameset::class, 'RemexHtml\TreeBuilder\AfterAfterFrameset' );

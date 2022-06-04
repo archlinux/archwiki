@@ -5,8 +5,11 @@ use MediaWiki\Logger\LegacySpi;
 use MediaWiki\Logger\LogCapturingSpi;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\ProperPageIdentity;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Permissions\UltimateAuthority;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\User\UserIdentityValue;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestResult;
 use Psr\Log\LoggerInterface;
@@ -184,8 +187,9 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	 */
 	final public static function mediaWikiSetUpBeforeClass(): void {
 		global $IP;
-		if ( !file_exists( "$IP/LocalSettings.php" ) ) {
-				echo "File \"$IP/LocalSettings.php\" could not be found. "
+		$settingsFile = wfDetectLocalSettingsFile( $IP );
+		if ( !is_file( $settingsFile ) ) {
+				echo "The file $settingsFile could not be found. "
 				. "Test case " . static::class . " extends " . self::class . " "
 				. "which requires a working MediaWiki installation.\n"
 				. ( new RuntimeException() )->getTraceAsString();
@@ -295,10 +299,11 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 
 		$title = ( $title === null ) ? 'UTPage-' . rand( 0, 100000 ) : $title;
 		$title = is_string( $title ) ? Title::newFromText( $title ) : $title;
-		$page = WikiPage::factory( $title );
+		$wikiPageFactory = MediaWikiServices::getInstance()->getWikiPageFactory();
+		$page = $wikiPageFactory->newFromTitle( $title );
 
 		if ( $page->exists() ) {
-			$page->doDeleteArticleReal( 'Testing', static::getTestSysop()->getUser() );
+			$this->deletePage( $page );
 		}
 
 		return $page;
@@ -675,6 +680,17 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 		}
 
 		return $this->localServices;
+	}
+
+	/**
+	 * Get a configuration variable
+	 *
+	 * @param string $name
+	 * @return mixed
+	 * @since 1.38
+	 */
+	protected function getConfVar( $name ) {
+		return $this->getServiceContainer()->getMainConfig()->get( $name );
 	}
 
 	/**
@@ -1403,9 +1419,10 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 			);
 			// an edit always attempt to purge backlink links such as history
 			// pages. That is unnecessary.
-			JobQueueGroup::singleton()->get( 'htmlCacheUpdate' )->delete();
+			$jobQueueGroup = MediaWikiServices::getInstance()->getJobQueueGroup();
+			$jobQueueGroup->get( 'htmlCacheUpdate' )->delete();
 			// WikiPages::doEditUpdates randomly adds RC purges
-			JobQueueGroup::singleton()->get( 'recentChangesUpdate' )->delete();
+			$jobQueueGroup->get( 'recentChangesUpdate' )->delete();
 
 			// doUserEditContent() probably started the session via
 			// User::loadFromSession(). Close it now.
@@ -1434,9 +1451,11 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 
 		Hooks::runner()->onUnitTestsBeforeDatabaseTeardown();
 
+		$services = MediaWikiServices::getInstance();
+		$jobQueueGroup = $services->getJobQueueGroup();
 		foreach ( $wgJobClasses as $type => $class ) {
 			// Delete any jobs under the clone DB (or old prefix in other stores)
-			JobQueueGroup::singleton()->get( $type )->delete();
+			$jobQueueGroup->get( $type )->delete();
 		}
 
 		if ( self::$dbClone ) {
@@ -1446,7 +1465,7 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 
 		// T219673: close any connections from code that failed to call reuseConnection()
 		// or is still holding onto a DBConnRef instance (e.g. in a singleton).
-		MediaWikiServices::getInstance()->getDBLoadBalancerFactory()->closeAll();
+		$services->getDBLoadBalancerFactory()->closeAll();
 		CloneDatabase::changePrefix( self::$oldTablePrefix );
 
 		self::$oldTablePrefix = false;
@@ -1458,8 +1477,9 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	 *
 	 * @param IMaintainableDatabase $db Database to use
 	 * @param string|null $prefix Prefix to use for test tables. If not given, the prefix is determined
-	 *        automatically for $db.
-	 * @return bool True if tables were cloned, false if only the prefix was changed
+	 *   automatically for $db.
+	 * @return CloneDatabase|null A CloneDatabase object if tables were cloned,
+	 *   or null if the connection has already had its tables cloned.
 	 */
 	protected static function setupDatabaseWithTestPrefix(
 		IMaintainableDatabase $db,
@@ -1469,27 +1489,28 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 			$prefix = self::getTestPrefixFor( $db );
 		}
 
-		if ( !isset( $db->_originalTablePrefix ) ) {
-			$oldPrefix = $db->tablePrefix();
-			if ( $oldPrefix === $prefix ) {
-				// table already has the correct prefix, but presumably no cloned tables
-				$oldPrefix = self::$oldTablePrefix;
-			}
-
-			$db->tablePrefix( $oldPrefix );
-			$tablesCloned = self::listTables( $db );
-			self::$dbClone = new CloneDatabase( $db, $tablesCloned, $prefix, $oldPrefix );
-			self::$dbClone->useTemporaryTables( self::$useTemporaryTables );
-			self::$dbClone->cloneTableStructure();
-
-			$db->tablePrefix( $prefix );
-			$db->_originalTablePrefix = $oldPrefix;
-
-			$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
-			$lb->setTempTablesOnlyMode( self::$useTemporaryTables, $db->getDomainID() );
+		if ( isset( $db->_originalTablePrefix ) ) {
+			return null;
 		}
 
-		return true;
+		$oldPrefix = $db->tablePrefix();
+		if ( $oldPrefix === $prefix ) {
+			// table already has the correct prefix, but presumably no cloned tables
+			$oldPrefix = self::$oldTablePrefix;
+		}
+
+		$db->tablePrefix( $oldPrefix );
+		$tablesCloned = self::listTables( $db );
+		$dbClone = new CloneDatabase( $db, $tablesCloned, $prefix, $oldPrefix );
+		$dbClone->useTemporaryTables( self::$useTemporaryTables );
+		$dbClone->cloneTableStructure();
+
+		$db->tablePrefix( $prefix );
+		$db->_originalTablePrefix = $oldPrefix;
+
+		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
+		$lb->setTempTablesOnlyMode( self::$useTemporaryTables, $db->getDomainID() );
+		return $dbClone;
 	}
 
 	public static function setupAllTestDBs( $db, ?string $testPrefix = null, ?bool $useTemporaryTables = null ) {
@@ -1548,8 +1569,9 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 
 		self::$dbSetup = true;
 
-		if ( !self::setupDatabaseWithTestPrefix( $db, $prefix ) ) {
-			return;
+		$dbClone = self::setupDatabaseWithTestPrefix( $db, $prefix );
+		if ( $dbClone ) {
+			self::$dbClone = $dbClone;
 		}
 
 		Hooks::runner()->onUnitTestsAfterDatabaseSetup( $db, $prefix );
@@ -2265,12 +2287,9 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	protected function markTestSkippedIfNoDiff3() {
 		global $wgDiff3;
 
-		# This check may also protect against code injection in
-		# case of broken installations.
-		Wikimedia\suppressWarnings();
-		$haveDiff3 = $wgDiff3 && file_exists( $wgDiff3 );
-		Wikimedia\restoreWarnings();
-
+		// This check may also protect against code injection in
+		// case of broken installations.
+		$haveDiff3 = $wgDiff3 && @is_file( $wgDiff3 );
 		if ( !$haveDiff3 ) {
 			$this->markTestSkipped( "Skip test, since diff3 is not configured" );
 		}
@@ -2315,7 +2334,7 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	/**
 	 * Registers the given hook handler for the duration of the current test case.
 	 *
-	 * @param string $hookName Hook name
+	 * @param string $hookName
 	 * @param mixed $handler Value suitable for a hook handler
 	 * @param bool $replace (optional) Default is to replace all existing handlers for the given hook.
 	 *        Set false to add to existing handler list.
@@ -2404,6 +2423,18 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 	}
 
 	/**
+	 * @param ProperPageIdentity $page
+	 * @param string $summary
+	 * @param Authority|null $deleter
+	 */
+	protected function deletePage( ProperPageIdentity $page, string $summary = '', Authority $deleter = null ): void {
+		$deleter = $deleter ?? new UltimateAuthority( new UserIdentityValue( 0, 'MediaWiki default' ) );
+		MediaWikiServices::getInstance()->getDeletePageFactory()
+			->newDeletePage( $page, $deleter )
+			->deleteUnsafe( $summary );
+	}
+
+	/**
 	 * Revision-deletes a revision.
 	 *
 	 * @param RevisionRecord|int $rev Revision to delete
@@ -2483,5 +2514,3 @@ abstract class MediaWikiIntegrationTestCase extends PHPUnit\Framework\TestCase {
 		}
 	}
 }
-
-class_alias( 'MediaWikiIntegrationTestCase', 'MediaWikiTestCase' );

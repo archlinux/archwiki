@@ -188,6 +188,10 @@ final class OverridableConfigRequirement implements Requirement {
 				'logged_in' => $thisConfig,
 				'logged_out' => $thisConfig,
 			];
+		} elseif ( array_key_exists( 'default', $thisConfig ) ) {
+			$thisConfig = [
+				'default' => $thisConfig['default'],
+			];
 		} else {
 			$thisConfig = [
 				'logged_in' => $thisConfig['logged_in'] ?? false,
@@ -196,6 +200,8 @@ final class OverridableConfigRequirement implements Requirement {
 		}
 
 		// Fallback to config.
-		return $thisConfig[ $this->user->isRegistered() ? 'logged_in' : 'logged_out' ];
+		return array_key_exists( 'default', $thisConfig ) ?
+			$thisConfig[ 'default' ] :
+			$thisConfig[ $this->user->isRegistered() ? 'logged_in' : 'logged_out' ];
 	}
 }

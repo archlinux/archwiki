@@ -5,6 +5,12 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
+.ve-init-mw-desktopArticleTarget-loading-overlay {
+	/* Center progress bar within toolbar */
+	/* ( 44 - 14.688 ) / 2 */
+	top: 14.656px;
+}
+
 .ve-init-mw-desktopArticleTarget-toolbar,
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder {
 	/* Enforce different font-size for all UI elements of VisualEditor. The difference is tiny, but
@@ -25,6 +31,7 @@
 	background-image: linear-gradient( to bottom, #fff 0, #f1f7fb 100% );
 }
 
+.ve-init-mw-desktopArticleTarget-toolbarPlaceholder-floating,
 .ve-init-mw-desktopArticleTarget-toolbarPlaceholder-open {
 	height: 44px;
 }

@@ -4,12 +4,14 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\ClientError;
+use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
+use Wikimedia\Parsoid\Wikitext\Consts;
 use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
 use Wikimedia\RemexHtml\DOM\DOMBuilder;
 use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
@@ -119,16 +121,6 @@ class DOMUtils {
 		}
 	}
 
-	/**
-	 * Check whether this is a DOM element node.
-	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param ?Node $node
-	 * @return bool
-	 */
-	public static function isElt( ?Node $node ): bool {
-		return $node && $node->nodeType === XML_ELEMENT_NODE;
-	}
-
 	// phpcs doesn't like @phan-assert...
 	// phpcs:disable MediaWiki.Commenting.FunctionAnnotations.UnrecognizedAnnotation
 
@@ -138,32 +130,11 @@ class DOMUtils {
 	 * @phan-assert Element $node
 	 * @param ?Node $node
 	 * @return bool Always returns true
+	 * @phan-assert Element $node
 	 */
 	public static function assertElt( ?Node $node ): bool {
 		Assert::invariant( $node instanceof Element, "Expected an element" );
 		return true;
-	}
-
-	// phpcs:enable MediaWiki.Commenting.FunctionAnnotations.UnrecognizedAnnotation
-
-	/**
-	 * Check whether this is a DOM text node.
-	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param ?Node $node
-	 * @return bool
-	 */
-	public static function isText( ?Node $node ): bool {
-		return $node && $node->nodeType === XML_TEXT_NODE;
-	}
-
-	/**
-	 * Check whether this is a DOM comment node.
-	 * @see http://dom.spec.whatwg.org/#dom-node-nodetype
-	 * @param ?Node $node
-	 * @return bool
-	 */
-	public static function isComment( ?Node $node ): bool {
-		return $node && $node->nodeType === XML_COMMENT_NODE;
 	}
 
 	/**
@@ -171,11 +142,10 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isRemexBlockNode( ?Node $node ): bool {
-		return self::isElt( $node ) &&
-			!isset( WikitextConstants::$HTML['OnlyInlineElements'][DOMCompat::nodeName( $node )] ) &&
-			// From \\MediaWiki\Tidy\RemexCompatMunger::$metadataElements
-			// This is a superset but matches `emitsSolTransparentWT` below
-			!isset( WikitextConstants::$HTML['MetaTags'][DOMCompat::nodeName( $node )] );
+		return $node instanceof Element &&
+			!isset( Consts::$HTML['OnlyInlineElements'][DOMCompat::nodeName( $node )] ) &&
+			// This is a superset of \\MediaWiki\Tidy\RemexCompatMunger::$metadataElements
+			!isset( Consts::$HTML['MetaDataTags'][DOMCompat::nodeName( $node )] );
 	}
 
 	/**
@@ -192,7 +162,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isFormattingElt( ?Node $node ): bool {
-		return $node && isset( WikitextConstants::$HTML['FormattingTags'][DOMCompat::nodeName( $node )] );
+		return $node && isset( Consts::$HTML['FormattingTags'][DOMCompat::nodeName( $node )] );
 	}
 
 	/**
@@ -201,7 +171,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isQuoteElt( ?Node $node ): bool {
-		return $node && isset( WikitextConstants::$WTQuoteTags[DOMCompat::nodeName( $node )] );
+		return $node && isset( Consts::$WTQuoteTags[DOMCompat::nodeName( $node )] );
 	}
 
 	/**
@@ -335,13 +305,14 @@ class DOMUtils {
 	 *
 	 * @param Node $node
 	 * @param string $name
-	 * @return ?Node
+	 * @return ?Element
 	 */
-	public static function findAncestorOfName( Node $node, string $name ): ?Node {
+	public static function findAncestorOfName( Node $node, string $name ): ?Element {
 		$node = $node->parentNode;
 		while ( $node && DOMCompat::nodeName( $node ) !== $name ) {
 			$node = $node->parentNode;
 		}
+		'@phan-var Element $node'; // @var Element $node
 		return $node;
 	}
 
@@ -487,7 +458,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isFosterablePosition( ?Node $n ): bool {
-		return $n && isset( WikitextConstants::$HTML['FosterablePosition'][DOMCompat::nodeName( $n->parentNode )] );
+		return $n && isset( Consts::$HTML['FosterablePosition'][DOMCompat::nodeName( $n->parentNode )] );
 	}
 
 	/**
@@ -507,7 +478,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isList( ?Node $n ): bool {
-		return $n && isset( WikitextConstants::$HTML['ListTags'][DOMCompat::nodeName( $n )] );
+		return $n && isset( Consts::$HTML['ListTags'][DOMCompat::nodeName( $n )] );
 	}
 
 	/**
@@ -517,7 +488,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isListItem( ?Node $n ): bool {
-		return $n && isset( WikitextConstants::$HTML['ListItemTags'][DOMCompat::nodeName( $n )] );
+		return $n && isset( Consts::$HTML['ListItemTags'][DOMCompat::nodeName( $n )] );
 	}
 
 	/**
@@ -601,7 +572,7 @@ class DOMUtils {
 	 */
 	public static function hasElementChild( Node $node ): bool {
 		for ( $child = $node->firstChild; $child; $child = $child->nextSibling ) {
-			if ( self::isElt( $child ) ) {
+			if ( $child instanceof Element ) {
 				return true;
 			}
 		}
@@ -616,7 +587,7 @@ class DOMUtils {
 	 */
 	public static function hasBlockElementDescendant( Node $node ): bool {
 		for ( $child = $node->firstChild; $child; $child = $child->nextSibling ) {
-			if ( self::isElt( $child ) &&
+			if ( $child instanceof Element &&
 				( self::isWikitextBlockNode( $child ) || // Is a block-level node
 				self::hasBlockElementDescendant( $child ) ) // or has a block-level child or grandchild or..
 			) {
@@ -634,7 +605,7 @@ class DOMUtils {
 	 */
 	public static function isIEW( ?Node $node ): bool {
 		// ws-only
-		return self::isText( $node ) && preg_match( '/^\s*$/D', $node->nodeValue );
+		return $node instanceof Text && preg_match( '/^\s*$/D', $node->nodeValue );
 	}
 
 	/**
@@ -664,7 +635,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isContentNode( ?Node $node ): bool {
-		return !self::isComment( $node ) &&
+		return !( $node instanceof Comment ) &&
 			!self::isIEW( $node ) &&
 			!self::isDiffMarker( $node );
 	}
@@ -700,7 +671,7 @@ class DOMUtils {
 	}
 
 	/**
-	 * Get the previous non seperator sibling node.
+	 * Get the previous non separator sibling node.
 	 *
 	 * @param Node $node
 	 * @return Node|null
@@ -714,7 +685,7 @@ class DOMUtils {
 	}
 
 	/**
-	 * Get the next non seperator sibling node.
+	 * Get the next non separator sibling node.
 	 *
 	 * @param Node $node
 	 * @return Node|null
@@ -813,8 +784,8 @@ class DOMUtils {
 		$child = $node->firstChild;
 		while ( $child ) {
 			if ( !self::isDiffMarker( $child )
-				&& !self::isText( $child )
-				&& !self::isComment( $child )
+				&& !( $child instanceof Text )
+				&& !( $child instanceof Comment )
 			) {
 				return false;
 			}
@@ -834,13 +805,13 @@ class DOMUtils {
 	public static function nodeEssentiallyEmpty( Node $node, bool $strict = false ): bool {
 		$n = $node->firstChild;
 		while ( $n ) {
-			if ( self::isElt( $n ) && !self::isDiffMarker( $n ) ) {
+			if ( $n instanceof Element && !self::isDiffMarker( $n ) ) {
 				return false;
-			} elseif ( self::isText( $n ) &&
+			} elseif ( $n instanceof Text &&
 				( $strict || !preg_match( '/^[ \t]*$/D',  $n->nodeValue ) )
 			) {
 				return false;
-			} elseif ( self::isComment( $n ) ) {
+			} elseif ( $n instanceof Comment ) {
 				return false;
 			}
 			$n = $n->nextSibling;
@@ -859,7 +830,7 @@ class DOMUtils {
 	public static function treeHasElement( Node $node, string $tagName ): bool {
 		$node = $node->firstChild;
 		while ( $node ) {
-			if ( self::isElt( $node ) ) {
+			if ( $node instanceof Element ) {
 				if ( DOMCompat::nodeName( $node ) === $tagName || self::treeHasElement( $node, $tagName ) ) {
 					return true;
 				}
@@ -876,7 +847,7 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isTableTag( Node $node ): bool {
-		return isset( WikitextConstants::$HTML['TableTags'][DOMCompat::nodeName( $node )] );
+		return isset( Consts::$HTML['TableTags'][DOMCompat::nodeName( $node )] );
 	}
 
 	/**
@@ -934,6 +905,29 @@ class DOMUtils {
 	}
 
 	/**
+	 * Create an element in the document head with the given attrs.
+	 * Creates the head element in the document if needed.
+	 *
+	 * @param Document $document
+	 * @param string $tagName
+	 * @param array $attrs
+	 * @return Element The newly-appended Element
+	 */
+	public static function appendToHead( Document $document, string $tagName, array $attrs = [] ): Element {
+		$elt = $document->createElement( $tagName );
+		self::addAttributes( $elt, $attrs );
+		$head = DOMCompat::getHead( $document );
+		if ( !$head ) {
+			$head = $document->createElement( 'head' );
+			$document->documentElement->insertBefore(
+				$head, DOMCompat::getBody( $document )
+			);
+		}
+		$head->appendChild( $elt );
+		return $elt;
+	}
+
+	/**
 	 * innerHTML and outerHTML are not defined on DocumentFragment.
 	 *
 	 * Defined similarly to DOMCompat::getInnerHTML()
@@ -982,6 +976,51 @@ class DOMUtils {
 	 * @return bool
 	 */
 	public static function isRawTextElement( Node $node ): bool {
-		return isset( WikitextConstants::$HTML['RawTextElements'][DOMCompat::nodeName( $node )] );
+		return isset( Consts::$HTML['RawTextElements'][DOMCompat::nodeName( $node )] );
+	}
+
+	/**
+	 * Is 'n' a block tag, or does the subtree rooted at 'n' have a block tag
+	 * in it?
+	 *
+	 * @param Node $n
+	 * @return bool
+	 */
+	public static function hasBlockTag( Node $n ): bool {
+		if ( self::isRemexBlockNode( $n ) ) {
+			return true;
+		}
+		$c = $n->firstChild;
+		while ( $c ) {
+			if ( self::hasBlockTag( $c ) ) {
+				return true;
+			}
+			$c = $c->nextSibling;
+		}
+		return false;
+	}
+
+	/**
+	 * Get an associative array of attributes, suitable for serialization.
+	 *
+	 * Add the xmlns attribute if available, to workaround PHP's surprising
+	 * behavior with the xmlns attribute: HTML is *not* an XML document,
+	 * but various parts of PHP (including our misnamed XMLSerializer) pretend
+	 * that it is, sort of.
+	 *
+	 * @param Element $element
+	 * @return string[]
+	 * @see https://phabricator.wikimedia.org/T235295
+	 */
+	public static function attributes( $element ): array {
+		$result = [];
+		// The 'xmlns' attribute is "invisible" T235295
+		if ( $element->hasAttribute( 'xmlns' ) ) {
+			$result['xmlns'] = $element->getAttribute( 'xmlns' );
+		}
+		foreach ( $element->attributes as $attr ) {
+			$result[$attr->name] = $attr->value;
+		}
+		return $result;
 	}
 }

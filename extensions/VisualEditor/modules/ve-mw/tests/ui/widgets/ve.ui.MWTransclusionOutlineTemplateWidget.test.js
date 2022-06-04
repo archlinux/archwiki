@@ -2,28 +2,33 @@ QUnit.module( 've.ui.MWTransclusionOutlineTemplateWidget' );
 
 QUnit.test( 'Constructor', ( assert ) => {
 	const transclusion = new ve.dm.MWTransclusionModel(),
-		template = new ve.dm.MWTemplateModel( transclusion, { wt: 'Example' } ),
+		template = ve.dm.MWTemplateModel.newFromData( transclusion, {
+			target: { wt: 'Example' },
+			params: { 1: {}, 2: {}, 3: {}, 4: {} }
+		} ),
 		widget = new ve.ui.MWTransclusionOutlineTemplateWidget( template );
 
 	assert.strictEqual( widget.getData(), 'part_0' );
 	assert.strictEqual(
-		widget.$element.find( '.ve-ui-mwTransclusionOutlineButtonWidget' ).text(),
+		widget.$element.find( '.ve-ui-mwTransclusionOutlineButtonWidget .oo-ui-buttonElement-button' ).text(),
 		'Example'
 	);
-	assert.notOk( widget.searchWidget.isVisible() );
-	assert.notOk( widget.infoWidget.isVisible() );
+	assert.true( widget.searchWidget.isVisible() );
+	assert.false( widget.infoWidget.isVisible() );
 } );
 
 QUnit.test( 'insertCheckboxAtCanonicalPosition()', ( assert ) => {
-	function assertOrder( widget, expected ) {
-		assert.deepEqual( widget.parameters.items.map( ( item ) => item.data ), expected );
+	function assertOrder( w, expected ) {
+		assert.deepEqual( w.parameterList.items.map( ( item ) => item.data ), expected );
 	}
 
 	const transclusion = new ve.dm.MWTransclusionModel(),
 		template = ve.dm.MWTemplateModel.newFromData( transclusion, {
-			target: {},
+			target: { wt: '' },
 			params: { b: {}, e: {} }
 		} );
+	// Skip .addPart(), the TemplateData API, specCache and everything related
+	transclusion.parts.push( template );
 	template.getSpec().setTemplateData( {
 		params: {
 			e: { deprecated: true },
@@ -41,8 +46,8 @@ QUnit.test( 'insertCheckboxAtCanonicalPosition()', ( assert ) => {
 
 	let insertAt = widget.findCanonicalPosition( 'h' );
 	// Most minimal mock instead of an actual ve.ui.MWTransclusionOutlineParameterWidget
-	widget.parameters.addItems( [ new OO.ui.Widget( { data: 'h' } ) ], insertAt );
-	// Deprecated param appears at it's canonical position via paramOrder
+	widget.parameterList.addItems( [ new OO.ui.Widget( { data: 'h' } ) ], insertAt );
+	// Deprecated param appears at its canonical position via paramOrder
 	assert.strictEqual( insertAt, 1 );
 	assertOrder( widget, [ 'g', 'h', 'e', 'b' ] );
 
@@ -59,33 +64,39 @@ QUnit.test( 'insertCheckboxAtCanonicalPosition()', ( assert ) => {
 	template.getSpec().seenParameterNames.a2 = true;
 	insertAt = widget.findCanonicalPosition( 'a2' );
 	// Most minimal mock instead of an actual ve.ui.MWTransclusionOutlineParameterWidget
-	widget.parameters.addItems( [ new OO.ui.Widget( { data: 'a2' } ) ], insertAt );
+	widget.parameterList.addItems( [ new OO.ui.Widget( { data: 'a2' } ) ], insertAt );
 	assert.strictEqual( insertAt, 4 );
 	assertOrder( widget, [ 'g', 'h', 'e', 'a1', 'a2', 'b' ] );
 } );
 
-QUnit.test( 'filterParameters() on an empty template', ( assert ) => {
+QUnit.test( 'filterParameters() when it cannot find anything', ( assert ) => {
 	const transclusion = new ve.dm.MWTransclusionModel(),
-		template = new ve.dm.MWTemplateModel( transclusion, {} ),
+		template = ve.dm.MWTemplateModel.newFromData( transclusion, {
+			target: { wt: '' },
+			params: { 1: {}, 2: {}, 3: {}, 4: {} }
+		} ),
 		widget = new ve.ui.MWTransclusionOutlineTemplateWidget( template );
-
 	let eventsFired = 0;
 	widget.connect( this, {
 		filterParametersById: ( visibility ) => {
-			assert.deepEqual( visibility, {} );
+			assert.deepEqual( visibility, {
+				'part_0/1': false,
+				'part_0/2': false,
+				'part_0/3': false,
+				'part_0/4': false
+			} );
 			eventsFired++;
 		}
 	} );
-
-	widget.filterParameters( '' );
-	assert.ok( widget.infoWidget.isVisible() );
+	widget.filterParameters( 'b' );
+	assert.true( widget.infoWidget.isVisible() );
 	assert.strictEqual( eventsFired, 1 );
 } );
 
 QUnit.test( 'filterParameters() considers everything from the spec', ( assert ) => {
 	const transclusion = new ve.dm.MWTransclusionModel(),
 		template = ve.dm.MWTemplateModel.newFromData( transclusion, {
-			target: {},
+			target: { wt: '' },
 			params: { a: {}, b: {}, c: {}, d: {}, e: {} }
 		} ),
 		widget = new ve.ui.MWTransclusionOutlineTemplateWidget( template );
@@ -113,8 +124,8 @@ QUnit.test( 'filterParameters() considers everything from the spec', ( assert ) 
 		}
 	} );
 
-	assert.ok( widget.searchWidget.isVisible() );
+	assert.true( widget.searchWidget.isVisible() );
 	widget.filterParameters( ' A ' );
-	assert.notOk( widget.infoWidget.isVisible() );
+	assert.false( widget.infoWidget.isVisible() );
 	assert.strictEqual( eventsFired, 1 );
 } );

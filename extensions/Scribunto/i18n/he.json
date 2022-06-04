@@ -39,6 +39,7 @@
 	"scribunto-lua-error-location": "שגיאת לואה $1: $2.",
 	"scribunto-lua-error": "שגיאת לואה: $2.",
 	"scribunto-lua-notarrayreturn": "שגיאת תסריט: היחידה החזירה ערך $2. היא אמורה להחזיר טבלת שמות מיוצאים.",
+	"scribunto-lua-warning": "אזהרת תסריט: $1",
 	"scribunto-luastandalone-proc-error": "שגיאת לואה: לא ניתן ליצור תהליך.",
 	"scribunto-luastandalone-proc-error-msg": "שגיאת לואה: לא ניתן ליצור תהליך: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "שגיאת לואה: לא ניתן ליצור תהליך: הפונקציה proc_open אינה זמינה. נא לבדוק את ההגדרה \"disable_functions\" של PHP.",

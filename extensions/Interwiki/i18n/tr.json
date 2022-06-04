@@ -6,10 +6,10 @@
 			"Joseph",
 			"Karduelis",
 			"MuratTheTurkish",
+			"SaldırganSincap",
 			"Suelnur",
 			"Violetanka",
-			"Vito Genovese",
-			"SaldırganSincap"
+			"Vito Genovese"
 		]
 	},
 	"interwiki": "Vikilerarası veriyi görüntüle ve düzenle",
@@ -56,9 +56,9 @@
 	"interwiki-submit-empty": "Önek ve URL boş bırakılamaz.",
 	"interwiki-submit-invalidurl": "URL protokolü geçersiz.",
 	"log-name-interwiki": "Vikiarası tablo günlüğü",
-	"logentry-interwiki-iw_add": "$1, \"$4\" ($5) öneki (görüntü: $6; yerel: $7) vikiarası tablosuna {{GENDER:$2|ekledi}}",
-	"logentry-interwiki-iw_edit": "$1, \"$4\" ($5) öneki (görüntü: $6; yerel: $7) vikiarası tablosunda {{GENDER:$2|değiştirdi}}",
-	"logentry-interwiki-iw_delete": "$1 viki arası tablosundan \"$4\" öneki {{GENDER:$2|kaldırıldı}}",
+	"logentry-interwiki-iw_add": "$1, vikiarası tablosuna \"$4\" ($5) öneki (yansıtma: $6; yerel: $7) {{GENDER:$2|ekledi}}",
+	"logentry-interwiki-iw_edit": "$1, vikiarası tablosunda \"$4\" ($5) önekini (yansıtma: $6; yerel: $7) {{GENDER:$2|değiştirdi}}",
+	"logentry-interwiki-iw_delete": "$1, vikiarası tablosundan \"$4\" önekini {{GENDER:$2|kaldırdı}}",
 	"log-description-interwiki": "Bu [[Special:Interwiki|vikiarası tablosu]] öğesinde yapılan değişikliklerin günlüğüdür.",
 	"right-interwiki": "Vikiarası verilerini düzenle",
 	"action-interwiki": "bu vikiarası girdisini düzenle",

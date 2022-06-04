@@ -19,5 +19,7 @@
 	"timeless-namespaces": "Menné priestory",
 	"timeless-pagetools": "Možnosti stránky",
 	"timeless-languages": "Jazyky",
-	"timeless.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Timeless */"
+	"timeless.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Timeless */",
+	"timeless-view-history": "História",
+	"timeless-action-undelete": "Obnoviť {{PLURAL:$1|jednu úpravu|$1 úpravy|$1 úprav}}"
 }

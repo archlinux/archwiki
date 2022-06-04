@@ -11,6 +11,7 @@
 			"Kumikami",
 			"Linuxmetel",
 			"Los688",
+			"MathXplore",
 			"Miya",
 			"Omotecho",
 			"Otokoume",
@@ -20,6 +21,7 @@
 			"Suyama",
 			"Takot",
 			"Wat",
+			"Whym",
 			"Yusuke1109",
 			"赤城。"
 		]
@@ -64,6 +66,8 @@
 	"visualeditor-changedir-tool-rtl": "右横書き (RTL) で表示",
 	"visualeditor-clearbutton-tooltip": "装飾解除",
 	"visualeditor-clipboard-copy": "コピー",
+	"visualeditor-clipboard-copy-fail": "クリップボードにコピーできませんでした。",
+	"visualeditor-clipboard-copy-success": "クリップボードにコピーされました。",
 	"visualeditor-clipboard-cut": "切り取り",
 	"visualeditor-clipboard-paste": "貼り付け",
 	"visualeditor-clipboard-paste-special": "プレーンテキストとして貼り付け",
@@ -177,7 +181,7 @@
 	"visualeditor-rebase-client-author-name": "名前",
 	"visualeditor-rebase-client-connecting": "接続中...",
 	"visualeditor-rebase-client-document-create-edit": "作成/編集",
-	"visualeditor-rebase-client-document-name": "ドキュメント名（任意）",
+	"visualeditor-rebase-client-document-name": "ドキュメント名（省略可能）",
 	"visualeditor-rebase-missing-document-error": "サーバー上にページが見つかりません。データの消失を防ぐために、文章をコピー & ペーストして残してください。",
 	"visualeditor-rebase-missing-document-title": "ページが見つかりません",
 	"visualeditor-shortcuts-clipboard": "クリップボード",

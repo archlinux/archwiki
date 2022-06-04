@@ -30,6 +30,7 @@ use RuntimeException;
 use Throwable;
 use UDPTransport;
 use WikiMap;
+use Wikimedia\AtEase\AtEase;
 
 /**
  * PSR-3 logger that mimics the historic implementation of MediaWiki's former
@@ -41,8 +42,7 @@ use WikiMap;
  * - `$wgDBerrorLog`
  * - `$wgDBerrorLogTZ`
  *
- * See documentation in DefaultSettings.php for detailed explanations of each
- * variable.
+ * See docs/Configuration.ms for detailed explanations of these settings.
  *
  * @see \MediaWiki\Logger\LoggerFactory
  * @since 1.25
@@ -66,7 +66,7 @@ class LegacyLogger extends AbstractLogger {
 	private const LEVEL_INFINITY = 999;
 
 	/**
-	 * Convert \Psr\Log\LogLevel constants into int for sane comparisons
+	 * Convert \Psr\Log\LogLevel constants into int for sensible comparisons
 	 * These are the same values that Monolog uses
 	 *
 	 * @var array
@@ -224,7 +224,7 @@ class LegacyLogger extends AbstractLogger {
 
 		if ( $channel === 'wfLogDBError' ) {
 			// wfLogDBError messages are emitted if a database log location is
-			// specfied.
+			// specified.
 			$shouldEmit = (bool)$wgDBerrorLog;
 
 		} elseif ( $channel === 'wfDebug' ) {
@@ -248,7 +248,7 @@ class LegacyLogger extends AbstractLogger {
 					$shouldEmit = $level >= self::$levelMapping[$logConfig['level']];
 				}
 			} else {
-				// Emit unless the config value is explictly false.
+				// Emit unless the config value is explicitly false.
 				$shouldEmit = $logConfig !== false;
 			}
 
@@ -515,7 +515,7 @@ class LegacyLogger extends AbstractLogger {
 			$transport = UDPTransport::newFromString( $file );
 			$transport->emit( $text );
 		} else {
-			\Wikimedia\suppressWarnings();
+			AtEase::suppressWarnings();
 			$exists = file_exists( $file );
 			$size = $exists ? filesize( $file ) : false;
 			if ( !$exists ||
@@ -523,7 +523,7 @@ class LegacyLogger extends AbstractLogger {
 			) {
 				file_put_contents( $file, $text, FILE_APPEND );
 			}
-			\Wikimedia\restoreWarnings();
+			AtEase::restoreWarnings();
 		}
 	}
 

@@ -1,15 +1,14 @@
-( function () {
-
+{
 	QUnit.module( 've.dm.MWTransclusionContentModel' );
 
 	/**
 	 * @return {ve.dm.MWTransclusionModel} but it's a mock
 	 */
-	function createTransclusionModel() {
+	const createTransclusionModel = function () {
 		return {
-			getUniquePartId: () => 0
+			nextUniquePartId: () => 0
 		};
-	}
+	};
 
 	[
 		[ undefined, false ],
@@ -26,4 +25,4 @@
 		} )
 	);
 
-}() );
+}

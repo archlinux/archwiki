@@ -5,7 +5,6 @@ namespace Wikimedia\Parsoid\Html2Wt;
 
 use Composer\Semver\Semver;
 use Wikimedia\Parsoid\Config\Env;
-use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\DOM\Comment;
@@ -19,6 +18,7 @@ use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\Timing;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 /**
  * This is a Serializer class that will compare two versions of a DOM
@@ -79,7 +79,7 @@ class SelectiveSerializer {
 		// wrapped, when nested list items are added, the previously last child of
 		// a list item become an intermediate child in the new DOM. Without the span
 		// wrapper, trailing trimmed whitespace gets dropped.
-		$inListItem = isset( WikitextConstants::$HTML['ListItemTags'][$nodeName] );
+		$inListItem = isset( Consts::$HTML['ListItemTags'][$nodeName] );
 		foreach ( DOMCompat::querySelectorAll( $body, $nodeName ) as $elt ) {
 			if ( WTUtils::isLiteralHTMLNode( $elt ) ) {
 				continue;
@@ -157,6 +157,7 @@ class SelectiveSerializer {
 						$elt->insertBefore( $span, $c );
 						$span->appendChild( $doc->createTextNode( $text ) );
 						$c->nodeValue = $nl;
+						// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 						$start += $numOfNls;
 					} else {
 						$elt->replaceChild( $span, $c );
@@ -227,9 +228,11 @@ class SelectiveSerializer {
 			$r = $this->selserData->oldText;
 		} else {
 			if ( $this->trace || $this->env->hasDumpFlag( 'dom:post-dom-diff' ) ) {
-				$options = [ 'storeDiffMark' => true, 'env' => $this->env ];
-				ContentUtils::dumpDOM( $oldBody, 'OLD DOM ', $options );
-				ContentUtils::dumpDOM( $body, 'DOM after running DOMDiff', $options );
+				$options = [ 'storeDiffMark' => true ];
+				$this->env->writeDump(
+					ContentUtils::dumpDOM( $oldBody, 'OLD DOM ', $options ) . "\n" .
+					ContentUtils::dumpDOM( $body, 'DOM after running DOMDiff', $options )
+				);
 			}
 
 			// Call the WikitextSerializer to do our bidding

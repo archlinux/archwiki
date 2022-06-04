@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"ChrisPtDe"
+		]
+	},
+	"math_failure": "Èrror d’analise sintaxica",
+	"math_syntax_error": "èrror de sintaxa",
+	"math_unknown_error": "èrror encognua",
+	"math_unknown_function": "fonccion encognua",
+	"mw_math_mathml": "MathML se possiblo (èxpèrimentâl)",
+	"mw_math_png": "Tojorn fâre una émâge PNG",
+	"mw_math_source": "Lèssiér lo code TeX originâl",
+	"prefs-math": "Rendu de les formules matèmatiques"
+}

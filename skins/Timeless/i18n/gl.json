@@ -19,5 +19,7 @@
 	"timeless-pagemisc": "Máis",
 	"timeless-namespaces": "Espazos de nomes",
 	"timeless-pagetools": "Accións de páxina",
-	"timeless-languages": "Linguas"
+	"timeless-languages": "Linguas",
+	"timeless-view-history": "Historial",
+	"timeless-action-undelete": "Restaurar {{PLURAL:$1|unha edición|$1 edicións}}"
 }

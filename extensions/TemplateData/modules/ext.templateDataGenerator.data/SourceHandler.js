@@ -43,8 +43,7 @@ OO.mixinClass( SourceHandler, OO.EventEmitter );
  * @return {jQuery.Promise} API promise
  */
 SourceHandler.prototype.getApi = function ( page, getTemplateData ) {
-	var config,
-		type = getTemplateData ? 'templatedata' : 'query',
+	var type = getTemplateData ? 'templatedata' : 'query',
 		api = new mw.Api(),
 		baseConfig = {
 			action: type,
@@ -52,6 +51,7 @@ SourceHandler.prototype.getApi = function ( page, getTemplateData ) {
 			redirects: getTemplateData ? 1 : 0
 		};
 
+	var config;
 	if ( type === 'query' ) {
 		config = $.extend( baseConfig, {
 			prop: 'revisions',
@@ -168,19 +168,20 @@ SourceHandler.prototype.getParametersFromTemplateSource = function ( wikitext ) 
  * @return {string[]} An array of parameters that appear in the template code
  */
 SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateCode ) {
-	var matches, normalizedParamName,
-		paramNames = [],
+	var paramNames = [],
 		normalizedParamNames = [],
 		// This regex matches the one in TemplateDataBlob.php
-		paramExtractor = /{{3,}([^#]*?)([<|]|}{3,})/mg;
+		paramExtractor = /{{{+([^\n#={|}]*?)([<|]|}}})/mg;
 
-	// Strip everything in nowiki tags and HTML comments
+	// Ignore non-wikitext content in comments and wikitext-escaping tags
 	templateCode = templateCode.replace( /<!--[\s\S]*?-->/g, '' )
-		.replace( /<nowiki\s*>[\s\S]*?<\/nowiki\s*>/g, '' );
+		.replace( /<nowiki\s*>[\s\S]*?<\/nowiki\s*>/g, '' )
+		.replace( /<pre\s*>[\s\S]*?<\/pre\s*>/g, '' );
 
+	var matches;
 	while ( ( matches = paramExtractor.exec( templateCode ) ) !== null ) {
 		// This normalization process is repeated in PHP in TemplateDataBlob.php
-		normalizedParamName = matches[ 1 ].replace( /[-_ ]+/, ' ' ).trim().toLowerCase();
+		var normalizedParamName = matches[ 1 ].replace( /[-_ ]+/, ' ' ).trim().toLowerCase();
 		if ( !normalizedParamName || normalizedParamNames.indexOf( normalizedParamName ) !== -1 ) {
 			continue;
 		}
@@ -201,9 +202,7 @@ SourceHandler.prototype.extractParametersFromTemplateCode = function ( templateC
  * templatedata string was found.
  */
 SourceHandler.prototype.findModelInString = function ( templateDataString ) {
-	var parts;
-
-	parts = templateDataString.match(
+	var parts = templateDataString.match(
 		/<templatedata>([\s\S]*?)<\/templatedata>/i
 	);
 

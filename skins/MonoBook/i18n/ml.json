@@ -11,5 +11,7 @@
 	"monobook-jumptotop": "തിരികെ മുകളിലേക്ക്",
 	"monobook-jumptopersonal": "ഉപയോക്തൃ ഉപകരണങ്ങൾ",
 	"monobook-more-actions": "കൂടുതൽ",
-	"monobook-cactions-label": "താളിലെ പ്രവൃത്തികൾ"
+	"monobook-cactions-label": "താളിലെ പ്രവൃത്തികൾ",
+	"monobook-view-history": "നാൾവഴി",
+	"monobook-action-undelete": "{{PLURAL:$1|ഒരു തിരുത്ത്|$1 തിരുത്തുകൾ}} പുനഃസ്ഥാപിക്കുക"
 }

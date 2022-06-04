@@ -1,0 +1,97 @@
+@import '../../common/variables.less';
+@import 'mediawiki.mixins.less';
+
+// Header sizes defined in the description of T246170 and comment T246170#5957100
+@padding-vertical-header: 0.125em;
+@margin-top-header: 0.625em;
+@margin-bottom-header: 0.3125em;
+
+// Logo sizes per specification in T245190.
+@height-logo-icon: 3.125em;
+
+// Canonical version of spec: T270202
+@min-width-search: unit( 150px / @font-size-browser / @font-size-base, em ); // 10.71428571em @ 16 & 0.875em
+@min-width-search-desktop: unit( 350px / @font-size-browser / @font-size-base, em ); // 25em @ 16 & 0.875em
+@max-width-search: unit( 500px / @font-size-browser / @font-size-base, em ); // 35.71428571em @ 16 & 0.875em
+
+.mw-header {
+	// A min-height is set to account for projects where no icon is set.
+	min-height: @height-logo-icon;
+	margin: @margin-top-header 0 @margin-bottom-header 0;
+	padding: @padding-vertical-header 0;
+	// Vertical centering of header elements (IE>=11), requires flex.
+	// Non-flex fallback for IE<=9: float rule on the child elements.
+	.flex-display();
+	flex-wrap: nowrap;
+	// https://caniuse.com/#search=align-items
+	align-items: center;
+
+	#mw-sidebar-button {
+		float: left; // Browser: IE9 support - button as flex-child fallback.
+		margin-right: @margin-horizontal-sidebar-button-icon; // Accidentally the same.
+	}
+
+	.vector-search-box {
+		float: left;
+		z-index: @z-index-menu;
+		flex-grow: 1;
+	}
+
+	@media ( min-width: @width-breakpoint-desktop ) {
+		@margin-start-search: 40px;
+
+		.vector-search-box {
+			margin-left: unit( @margin-start-search / @font-size-browser / @font-size-base, em ); // 2.85714286em @ 16 & 0.875em
+			margin-right: @margin-end-search;
+
+			// Support: IE 8, Firefox 18-, Chrome 19-, Safari 5.1-, Opera 19-, Android 4.4.4-.
+			width: 13.2em;
+			// Support: Modern browsers, responsive width.
+			width: 20vw;
+			max-width: 100%;
+			min-width: @min-width-search-desktop;
+			flex-basis: @min-width-search;
+
+			> div {
+				max-width: @max-width-search;
+			}
+
+			&.vector-search-box-auto-expand-width {
+				margin-left: unit( ( @margin-start-search - @size-search-expand ) / @font-size-browser / @font-size-base, em ); // 1.14285714em @ 16 & 0.875em
+
+				> div {
+					max-width: @max-width-search + unit( @size-search-expand / @font-size-browser / @font-size-base, em ); // 37.42857143em @ 16 & 0.875em
+				}
+			}
+		}
+	}
+
+	/**
+	 * Toggles the visibility of the search box at lower resolutions.
+	 */
+	@media ( max-width: @width-breakpoint-desktop ) {
+		&.vector-header-search-toggled {
+			#mw-sidebar-button,
+			.mw-logo,
+			.search-toggle {
+				display: none;
+			}
+
+			.vector-search-box-collapses > div {
+				display: block;
+			}
+
+			.vector-search-box {
+				// T284242#7206507: Widen the suggestion results to the edge of the search
+				// button at small resolutions.
+				position: relative;
+				margin-left: @padding-horizontal-tabs;
+				margin-right: @margin-end-search;
+			}
+
+			.wvui-typeahead-search__wrapper {
+				position: static;
+			}
+		}
+	}
+}

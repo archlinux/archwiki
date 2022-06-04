@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Codex Sinaiticus"
+		]
+	},
+	"math_failure": "ዘርዛሪው ተሳነው",
+	"math_syntax_error": "የሰዋሰው ስህተት",
+	"math_unknown_error": "የማይታወቅ ስኅተት",
+	"math_unknown_function": "የማይታወቅ ተግባር",
+	"mw_math_mathml": "MathML ከተቻለ (የሙከራ)",
+	"mw_math_png": "ሁልጊዜ እንደ PNG",
+	"prefs-math": "የሂሳብ መልክ"
+}

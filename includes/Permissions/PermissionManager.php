@@ -29,8 +29,7 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageIdentity;
-use MediaWiki\Revision\RevisionLookup;
-use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\UserGroupManager;
@@ -84,8 +83,8 @@ class PermissionManager {
 	/** @var SpecialPageFactory */
 	private $specialPageFactory;
 
-	/** @var RevisionLookup */
-	private $revisionLookup;
+	/** @var RedirectLookup */
+	private $redirectLookup;
 
 	/** @var NamespaceInfo */
 	private $nsInfo;
@@ -109,7 +108,7 @@ class PermissionManager {
 	private $userCache;
 
 	/** @var string[][] Cached user rights */
-	private $usersRights = null;
+	private $usersRights = [];
 
 	/**
 	 * Temporary user rights, valid for the current request only.
@@ -213,35 +212,35 @@ class PermissionManager {
 	/**
 	 * @param ServiceOptions $options
 	 * @param SpecialPageFactory $specialPageFactory
-	 * @param RevisionLookup $revisionLookup
 	 * @param NamespaceInfo $nsInfo
 	 * @param GroupPermissionsLookup $groupPermissionsLookup
 	 * @param UserGroupManager $userGroupManager
 	 * @param BlockErrorFormatter $blockErrorFormatter
 	 * @param HookContainer $hookContainer
 	 * @param UserCache $userCache
+	 * @param RedirectLookup $redirectLookup
 	 */
 	public function __construct(
 		ServiceOptions $options,
 		SpecialPageFactory $specialPageFactory,
-		RevisionLookup $revisionLookup,
 		NamespaceInfo $nsInfo,
 		GroupPermissionsLookup $groupPermissionsLookup,
 		UserGroupManager $userGroupManager,
 		BlockErrorFormatter $blockErrorFormatter,
 		HookContainer $hookContainer,
-		UserCache $userCache
+		UserCache $userCache,
+		RedirectLookup $redirectLookup
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
 		$this->specialPageFactory = $specialPageFactory;
-		$this->revisionLookup = $revisionLookup;
 		$this->nsInfo = $nsInfo;
 		$this->groupPermissionsLookup = $groupPermissionsLookup;
 		$this->userGroupManager = $userGroupManager;
 		$this->blockErrorFormatter = $blockErrorFormatter;
 		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->userCache = $userCache;
+		$this->redirectLookup = $redirectLookup;
 	}
 
 	/**
@@ -787,26 +786,23 @@ class PermissionManager {
 		// There is no way to instantiate an action by restriction. However, this
 		// will get the action where the restriction is the same. This may result
 		// in actions being blocked that shouldn't be.
-		$actionObj = null;
-		if ( Action::exists( $action ) ) {
-			// TODO: this drags a ton of dependencies in, would be good to avoid Article
-			//  instantiation and decouple it creating an ActionPermissionChecker interface
-			// Creating an action will perform several database queries to ensure that
-			// the action has not been overridden by the content type.
-			// FIXME: avoid use of RequestContext since it drags in User and Title dependencies
-			//  probably we may use fake context object since it's unlikely that Action uses it
-			//  anyway. It would be nice if we could avoid instantiating the Action at all.
-			$title = Title::newFromLinkTarget( $page, 'clone' );
-			$context = RequestContext::getMain();
-			$actionObj = Action::factory(
-				$action,
-				Article::newFromTitle( $title, $context ),
-				$context
-			);
-			// Ensure that the retrieved action matches the restriction.
-			if ( $actionObj && $actionObj->getRestriction() !== $action ) {
-				$actionObj = null;
-			}
+		// TODO: this drags a ton of dependencies in, would be good to avoid Article
+		//  instantiation and decouple it creating an ActionPermissionChecker interface
+		// Creating an action will perform several database queries to ensure that
+		// the action has not been overridden by the content type.
+		// FIXME: avoid use of RequestContext since it drags in User and Title dependencies
+		//  probably we may use fake context object since it's unlikely that Action uses it
+		//  anyway. It would be nice if we could avoid instantiating the Action at all.
+		$title = Title::newFromLinkTarget( $page, 'clone' );
+		$context = RequestContext::getMain();
+		$actionObj = Action::factory(
+			$action,
+			Article::newFromTitle( $title, $context ),
+			$context
+		);
+		// Ensure that the retrieved action matches the restriction.
+		if ( $actionObj && $actionObj->getRestriction() !== $action ) {
+			$actionObj = null;
 		}
 
 		// If no action object is returned, assume that the action requires unblock
@@ -1315,9 +1311,7 @@ class PermissionManager {
 				&& !$this->userHasAnyRight( $user, 'edituserjs', 'editmyuserjsredirect' )
 			) {
 				// T207750 - do not allow users to edit a redirect if they couldn't edit the target
-				$rev = $this->revisionLookup->getRevisionByTitle( $title );
-				$content = $rev ? $rev->getContent( 'main', RevisionRecord::RAW ) : null;
-				$target = $content ? $content->getUltimateRedirectTarget() : null;
+				$target = $this->redirectLookup->getRedirectTarget( $title );
 				if ( $target && (
 						!$target->inNamespace( NS_USER )
 						|| !preg_match( '/^' . preg_quote( $user->getName(), '/' ) . '\//', $target->getText() )
@@ -1478,7 +1472,7 @@ class PermissionManager {
 			$rightsCacheKey = $this->getRightsCacheKey( $user );
 			unset( $this->usersRights[ $rightsCacheKey ] );
 		} else {
-			$this->usersRights = null;
+			$this->usersRights = [];
 		}
 	}
 
@@ -1637,7 +1631,7 @@ class PermissionManager {
 	 *
 	 * @param int $index Namespace ID (index) to check
 	 * @param UserIdentity|null $user User to check
-	 * @return array
+	 * @return string[]
 	 */
 	public function getNamespaceRestrictionLevels( $index, UserIdentity $user = null ) {
 		if ( !isset( $this->options->get( 'NamespaceProtection' )[$index] ) ) {

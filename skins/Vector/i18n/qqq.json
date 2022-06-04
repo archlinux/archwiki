@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Amire80",
 			"Darth Kule",
 			"EugeneZelenko",
@@ -11,10 +12,14 @@
 			"Raymond",
 			"Shirayuki",
 			"Tacsipacsi",
+			"Thibaut120094",
 			"Umherirrender"
 		]
 	},
 	"skinname-vector": "{{name}}",
+	"skinname-vector-2022": "{{name}}",
+	"vector-specialversion-name": "{{name}}",
+	"tooltip-pt-watchlist-2": "Watchlist link tooltip.",
 	"vector-skin-desc": "{{desc|what=skin|name=Vector|url=https://www.mediawiki.org/wiki/Skin:Vector}}",
 	"prefs-vector-enable-vector-1-label": "Label for the checkbox to force Legacy Vector operation accessible via Special:Preferences. When this checkbox is enabled, the December 2019 of Vector is used. When this checkbox is disabled, the actively developed version of Vector is used instead.",
 	"prefs-vector-enable-vector-1-help": "Detail explaining the operation of the prefs-vector-enable-vector-1-label checkbox.",
@@ -23,7 +28,11 @@
 	"vector.css": "{{optional}}",
 	"vector.js": "{{optional}}",
 	"vector-action-toggle-sidebar": "Accessibility label for the button that toggles the sidebar's visibility, as well as audible presentation for screen readers.",
+	"vector-languages": "Label for language alert in sidebar when language switching is in header\n\n{{Identical|Language}}",
+	"vector-language-button-aria-label": "Accessibility label for language button dropdown menu in modern Vector.\n* $1 - the count of languages available, supports plural",
 	"vector-language-button-label": "Label for language button in modern Vector.\n\nArguments:\n* $1 number of languages, supports plural",
+	"vector-language-redirect-to-top": "Explains language links location at top of page and provides link to top. See also [[:phab:T295555]].",
+	"vector-language-variant-switcher-label": "Label for the language variant switcher.",
 	"vector-action-addsection": "Used in the Vector skin. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}\n{{Identical|Add topic}}",
 	"vector-action-delete": "Used in the Vector skin, as the name of a tab at the top of the page. See for example {{canonicalurl:Translating:MediaWiki|useskin=vector}}\n\n{{Identical|Delete}}",
 	"vector-action-move": "The \"Move\" action renames pages.\n\nUsed in the Vector skin, on the tabs at the top of the page. See for example {{canonicalurl:Talk:Main_Page|useskin=vector}}\n\n{{Identical|Move}}",
@@ -40,6 +49,8 @@
 	"vector-jumptocontent": "Accessibility link for jumping to the content and skipping the navigation. Visually hidden by default.",
 	"vector-more-actions": "Label in the Vector skin's menu for the less-important or rarer actions which are not shown as tabs (like moving the page, or for sysops deleting or protecting the page), as well as (for users with a narrow viewing window in their browser) the less-important tab actions which the user's browser is unable to fit in. {{Identical|More}}",
 	"vector-search-loader": "Text to display below search input while the search suggestion module is loading",
+	"vector-searchsuggest-containing": "Label used in the special item of the search suggestions list which gives the user an option to perform a full text search for the term. Used in the WVUI typeahead search component.",
+	"vector-intro-page": "Introduction or tutorial page for the wiki. Typically either Project/Help:Introduction ([[d:Q3945]]) or Project/Help:Tutorial ([[d:Q915263]]).",
 	"vector-anon-user-menu-pages": "Label describing the anon editor links in the anon user menu",
 	"vector-anon-user-menu-pages-learn": "Lowercase text of link that goes to Help:Introduction and helps the user learn more about editing",
 	"vector-anon-user-menu-pages-label": "Accessible version of 'vector-anon-user-menu-pages' link text, prompts user to learn more about editing",

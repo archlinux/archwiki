@@ -95,8 +95,7 @@ ve.ui.MWInternalLinkAnnotationWidget.prototype.getTextInputWidget = function () 
  * @inheritdoc
  */
 ve.ui.MWInternalLinkAnnotationWidget.prototype.onTextChange = function ( value ) {
-	var targetData,
-		htmlDoc = this.getElementDocument(),
+	var htmlDoc = this.getElementDocument(),
 		namespacesWithSubpages = mw.config.get( 'wgVisualEditorConfig' ).namespacesWithSubpages,
 		basePageObj = mw.Title.newFromText( mw.config.get( 'wgRelevantPageName' ) );
 	// Specific thing we want to check: has a valid URL for an internal page
@@ -104,7 +103,7 @@ ve.ui.MWInternalLinkAnnotationWidget.prototype.onTextChange = function ( value )
 	// page title. This has to happen /here/ because a URL can reference a
 	// valid page while not being a valid Title (e.g. if it contains a "%").
 	if ( ve.init.platform.getExternalLinkUrlProtocolsRegExp().test( value ) ) {
-		targetData = mw.libs.ve.getTargetDataFromHref(
+		var targetData = mw.libs.ve.getTargetDataFromHref(
 			value,
 			htmlDoc
 		);
@@ -112,7 +111,7 @@ ve.ui.MWInternalLinkAnnotationWidget.prototype.onTextChange = function ( value )
 			value = targetData.title;
 			this.input.query.setValue( targetData.title );
 		}
-	} else if ( namespacesWithSubpages[ basePageObj.namespace ] && value[ 0 ] === '/' ) {
+	} else if ( namespacesWithSubpages.indexOf( basePageObj.namespace ) !== -1 && value[ 0 ] === '/' ) {
 		// This does make it more-difficult to deliberately link to a page in the
 		// default namespace that starts with a / when you're on a subpage-allowing
 		// namespace. However, the exact same trick you need to know to make it work

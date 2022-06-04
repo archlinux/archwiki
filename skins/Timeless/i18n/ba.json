@@ -19,5 +19,7 @@
 	"timeless-pagemisc": "Тағы",
 	"timeless-namespaces": "Исем арауыҡтары",
 	"timeless-pagetools": "Биттәге ғәмәлдәр",
-	"timeless-languages": "Телдәр"
+	"timeless-languages": "Телдәр",
+	"timeless-view-history": "Тарих",
+	"timeless-action-undelete": "$1 {{PLURAL:$1|үҙгәртеүҙе}} тергеҙергә"
 }

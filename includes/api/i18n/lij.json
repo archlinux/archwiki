@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Giromin Cangiaxo",
-			"S4b1nuz E.656",
-			"N. Longo"
+			"N. Longo",
+			"S4b1nuz E.656"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Doocomentaçión]] (in ingléize)\n* [[mw:Special:MyLanguage/API:Etiquette|Etiquette & lìnie goìdda in sce l'utilìzzo]]\n* [[mw:Special:MyLanguage/API:FAQ|FAQ]] (in ingléize)\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api.lists.wikimedia.org/ Mailing list]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/ Anónçi in sce l'API]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Bug & domànde]\n</div>\n<strong>Stâto:</strong> l'API MediaWiki a l'é 'n'interfàccia méuia e stàbile ch'a l'é ativaménte suportâ e megioâ. Scibén che amiémmo de evitâlo, poriêscimo dovéi fâ de modìfiche che càozan di fonçionâ mâ; inscrîvise a-a [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ mailing list in scî anónçi de l'API MediaWiki] pe êse informòu in scî agiornaménti.\n\n<strong>Instruçioìn eræ:</strong> quànde són dæte a-e API de instruçioìn eræ, 'n'intestaçión HTTP a saiâ mandâ co-o mesàggio \"MediaWiki-API-Error\" e, ségge o valô de l'intestaçión, ségge o còdice d'erô, saiàn inpòstæ co-o mæximo valô. Pe ciù informaçioìn, lêze [[mw:Special:MyLanguage/API:Errors_and_warnings|API:Eroî e avertiménti]] (in ingléize).\n\n<p class=\"mw-apisandbox-link\"><strong>Test:</strong> pe provâ façilménte e domànde API, védde [[Special:ApiSandbox]].</p>",
@@ -20,6 +20,7 @@
 	"apihelp-main-param-responselanginfo": "Inclùddi e léngoe dêuviæ pe <var>uselang</var> e <var>errorlang</var> into rizultâto.",
 	"apihelp-main-param-origin": "Quànde ti ti gh'intri inte l'API dêuviàndo 'na cross-domain AJAX request (CORS), seleçionâla a-o domìnio òriginâle. Quésto o dêve êse fæto inte ògni domànda pre-flight, e dónca o dêve êse pàrte da domànda URI (e no do córpo POST).\n\nPe domànde outenticæ, quésto o dêve coincìdde co-ina de òrìgine into tìtolo <code>Origin</code>, dónca o dêve inpostòu ciù ò mêno cómme <kbd>https://en.wikipedia.org</kbd> ò <kbd>https://meta.wikimedia.org</kbd>. Se 'sto paràmetro chi o no coincìdde co-o tìtolo <code>Origin</code>, a rispòsta a saiâ 'n erô 403. Se 'sto paràmetro chi o coincìdde co-o tìtolo <code>Origin</code>, e l'òrigine a l'é permìssa, i tìtoli code>Access-Control-Allow-Origin</code> e <code>Access-Control-Allow-Credentials</code> saiàn mostræ.\n\nPe domànde no outenticæ, specificâ o valô <kbd>*</kbd>. Quésto o portiâ a mostrâ o tìtolo <code>Access-Control-Allow-Origin</code>, ma <code>Access-Control-Allow-Credentials</code> o saiâ <code>false</code> e tùtti i dæti specìfichi de l'uténte saiàn limitæ.",
 	"apihelp-main-param-uselang": "Léngoa da dêuviâ inta traduçión di mesàggi. <kbd>[[Special:ApiHelp/query+siteinfo|action=query&meta=siteinfo]]</kbd> con <kbd>siprop=languages</kbd> o restitoìsce 'na lìsta de còdichi de léngoe, ò specificâ <kbd>user</kbd> pe dêuviâ e atoâli preferénse lengoìstiche de l'uténte, ò specificâ <kbd>content</kbd> pe dêuviâ a léngoa di contegnûi de 'sta wiki chi.",
+	"apihelp-main-param-variant": "Variànte da léngoa. O fonçiónn-a sôlo se a léngoa de bâze a supòrta a conversción de vàriante.",
 	"apihelp-main-param-errorformat": "Formâto da dêuviâ pe-i tèsti de avîso ò de erô",
 	"apihelp-main-paramvalue-errorformat-plaintext": "Wikitèsto con tag HTML levæ e entitæ sostitoîe.",
 	"apihelp-main-paramvalue-errorformat-wikitext": "Wikitèsto no analizòu.",
@@ -91,7 +92,7 @@
 	"apihelp-compare-param-topst": "Fâ 'na trasformaçión pre-sarvatàggio in sce <var>totext</var>.",
 	"apihelp-compare-param-toslots": "Sostitoî o contegnûo da revixón specificâ da <var>totitle</var>, <var>toid</var> ò <var>torev</var>.\n\nQuésto paràmetro o specìfica i spàççi che dêvan êse modìficæ. Dêuviâ <var>totext-&#x7B;slot}</var>, <var>tocontentmodel-&#x7B;slot}</var> e <var>tocontentformat-&#x7B;slot}</var> pe specificâ o contegnûo de ògni slot.",
 	"apihelp-compare-param-totext-{slot}": "Tèsto do spàçio specificòu. Se òmésso, 'sto spàçio chi o saiâ levòu da-a revixón.",
-	"apihelp-compare-param-tosection-{slot}": "Quànde <var>totext-&#x7B;slot}</var> o l'é o contegnûo de 'na sôla seçión, quésto o l'é o sò nùmero de seçión. O sò saiâ unîo inta revixón specificâ da <var>totitle</var>, <var>toid</var> ò <var>torev</var> cómme pe 'na modìfica de seçión.",
+	"apihelp-compare-param-tosection-{slot}": "Quànde <var>totext-&#x7B;slot}</var> o l'é o contegnûo de 'na sôla seçión, quésto o l'é o sò nùmero de seçión. O saiâ unîo inta revixón specificâ da <var>totitle</var>, <var>toid</var> ò <var>torev</var> cómme pe 'na modìfica de seçión.",
 	"apihelp-compare-param-tocontentmodel-{slot}": "Modéllo de contegnûo de <var>totext-&#x7B;slot}</var>. Se o no l'é fornîo, o saiâ supòsto in sciâ bâze di âtri paràmetri.",
 	"apihelp-compare-param-tocontentformat-{slot}": "Formâto da mìssa in série do contegnûo de <var>totext-&#x7B;slot}</var>.",
 	"apihelp-compare-param-totext": "Specificâ <kbd>toslots=main</kbd> e dêuviâ pe cóntra <var>totext-main</var>.",
@@ -121,6 +122,7 @@
 	"apihelp-delete-param-pageid": "ID de pàgina da pàgina da scancelâ. O no peu êse dêuviòu insémme con <var>$1title</var>.",
 	"apihelp-delete-param-reason": "Raxón da scancelaçión. S'a no saiâ indicâ, a saiâ dêuviâ 'na raxón generâ aotomaticaménte.",
 	"apihelp-delete-param-tags": "Modificâ i tag da aplicâ a-a vôxe into regìstro de scancelaçioìn.",
+	"apihelp-delete-param-deletetalk": "Scancélla a pàgina de discusción, s'a l'exìste.",
 	"apihelp-delete-param-watch": "O l'azónze a pàgina a-a lìsta di òservæ speciâli de l'uténte corénte.",
 	"apihelp-delete-param-watchlist": "Azónze o levâ sénsa condiçioìn a pàgina da-a lìsta di òservæ speciâli\nde l'uténte in particolâ, dêuviâ e preferénse (ignoræ pe-i bot) ò no cangiâ e pàgine òservæ.",
 	"apihelp-delete-param-watchlistexpiry": "Moménto de scadénsa di òservæ speciâli. Òmétte do tùtto 'sto paràmetro chi pe no cangiâ a dæta de scadénsa atoâle.",
@@ -132,7 +134,7 @@
 	"apihelp-edit-summary": "Crêa e modìfica pàgine.",
 	"apihelp-edit-param-title": "Tìtolo da pàgina da modificâ. O no peu êse dêuviòu insémme a <var>$1pageid</var>.",
 	"apihelp-edit-param-pageid": "ID de pàgina da pàgina da modificâ. O no peu êse dêuviòu insémme a <var>$1title</var>.",
-	"apihelp-edit-param-section": "Nummero de seçion. <kbd>0</kbd> pe-a seçion de d'ato, <kbd>new</kbd> pe 'na noeuva seçion.",
+	"apihelp-edit-param-section": "Identificatîvo de seçión. <kbd>0</kbd> pe-a seçión de d'âto, <kbd>new</kbd> pe 'na nêuva seçión. De spésso o l'é 'n intrêgo poxitîvo ma o poriéiva êse no numérico ascì.",
 	"apihelp-edit-param-sectiontitle": "O tìtolo pe 'na nêuva seçión.",
 	"apihelp-edit-param-text": "Contegnûo da pàgina.",
 	"apihelp-edit-param-summary": "Ògètto da modìfica. O l'é tìtolo da seçión ascì se $1section=new e $1sectiontitle o no l'è inpostòu.",

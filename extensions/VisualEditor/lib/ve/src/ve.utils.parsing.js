@@ -54,6 +54,56 @@ ve.elementTypes = {
 };
 
 /**
+ * Match a specific HTML tag that appears once, e.g. 'html' or 'body'
+ *
+ * @param {string} html Document HTML
+ * @param {string} tag Tag name
+ * @return {Array|null} Regex match, null if not found
+ */
+ve.matchTag = function ( html, tag ) {
+	return html.match(
+		new RegExp( '<' + tag + '(>|\\s[^>]*>)' )
+	);
+};
+
+/**
+ * Add a tag to `<head>` using HTML string splicing
+ *
+ * @param {string} docHtml Document HTML
+ * @param {string} tagHtml Tag HTML to be added to `<head>`
+ * @return {string} Document HTML
+ */
+ve.addHeadTag = function ( docHtml, tagHtml ) {
+	/**
+	 * Splice text after a regex match
+	 *
+	 * @param {Array} match Regex match
+	 * @param {string} text Text to insert
+	 * @return {string}
+	 */
+	function insertAfter( match, text ) {
+		var offset = match.index + match[ 0 ].length;
+		return docHtml.slice( 0, offset ) +
+			text +
+			docHtml.slice( offset );
+	}
+
+	var headMatch = ve.matchTag( docHtml, 'head' );
+	if ( headMatch ) {
+		return insertAfter( headMatch, tagHtml );
+	} else {
+		var htmlMatch = ve.matchTag( docHtml, 'html' );
+		if ( htmlMatch ) {
+			// <html> but no <head>
+			return insertAfter( htmlMatch, '<head>' + tagHtml + '</head>' );
+		} else {
+			// No <html> or </head>
+			return '<head>' + tagHtml + '</head>' + docHtml;
+		}
+	}
+};
+
+/**
  * Create an HTMLDocument from an HTML string.
  *
  * The html parameter is supposed to be a full HTML document with a doctype and an `<html>` tag.
@@ -68,137 +118,24 @@ ve.elementTypes = {
  * @return {HTMLDocument} Document constructed from the HTML string
  */
 ve.createDocumentFromHtml = function ( html ) {
-	if ( html !== '' && html.indexOf( '<body' ) === -1 ) {
-		// When the given HTML fragment starts with a <meta> or <style> element, it is placed in the
-		// automatically generated <head> rather than <body>, and breaks our assumptions. (T273234)
-		html = '<body>' + html + '</body>';
+	if ( html !== '' ) {
+		if ( !ve.matchTag( html, 'body' ) ) {
+			// When the given HTML fragment starts with a <meta> or <style> element, it is placed in the
+			// automatically generated <head> rather than <body>, and breaks our assumptions. (T273234)
+			html = '<body>' + html + '</body>';
+		}
+		// Add iOS hack (T116525)
+		html = ve.addHeadTag( html, '<meta name="format-detection" content="telephone=no" data-ve-tmp/>' );
 	}
 
-	var newDocument = ve.createDocumentFromHtmlUsingDomParser( html );
-	if ( newDocument ) {
-		return newDocument;
-	}
-
-	newDocument = ve.createDocumentFromHtmlUsingIframe( html );
-	if ( newDocument ) {
-		return newDocument;
-	}
-
-	return ve.createDocumentFromHtmlUsingInnerHtml( html );
-};
-
-/**
- * Private method for creating an HTMLDocument using the DOMParser
- *
- * @private
- * @param {string} html
- * @return {HTMLDocument|undefined} Document constructed from the HTML string or undefined if it failed
- */
-ve.createDocumentFromHtmlUsingDomParser = function ( html ) {
 	// Support: IE
 	// IE doesn't like empty strings
-	html = html || '<body></body>';
+	var newDocument = new DOMParser().parseFromString( html || '<body></body>', 'text/html' );
 
-	try {
-		var newDocument = new DOMParser().parseFromString( html, 'text/html' );
-		if ( newDocument ) {
-			return newDocument;
-		}
-	} catch ( e ) { }
-};
-
-/**
- * Private fallback for browsers which don't support DOMParser
- *
- * @private
- * @param {string} html
- * @return {HTMLDocument|undefined} Document constructed from the HTML string or undefined if it failed
- */
-ve.createDocumentFromHtmlUsingIframe = function ( html ) {
-	// Here's what this fallback code should look like:
-	//
-	//     var newDocument = document.implementation.createHtmlDocument( '' );
-	//     newDocument.open();
-	//     newDocument.write( html );
-	//     newDocument.close();
-	//     return newDocument;
-	//
-	// Sadly, it's impossible:
-	// * On Firefox 20, calling open()/write() doesn't actually do anything, including writing.
-	//   This is reported as Firefox bug 867102.
-	// * On Opera 12, calling open()/write() behaves as if called on window.document, replacing the
-	//   entire contents of the page with new HTML. This is reported as Opera bug DSK-384486.
-	//
-	// Funnily, in all of those browsers it's apparently perfectly legal and possible to access the
-	// newly created document's DOM itself, including modifying documentElement's innerHTML, which
-	// would achieve our goal. But that requires some nasty magic to strip off the <html></html> tag
-	// itself, so we're not doing that. (We can't use .outerHTML, either, as the spec disallows
-	// assigning to it for the root element.)
-	//
-	// There is one more way - create an <iframe>, append it to current document, and access its
-	// contentDocument. The only browser having issues with that is Opera (sometimes the accessible
-	// value is not actually a Document, but something which behaves just like an empty regular
-	// object…), so we're detecting that and using the innerHTML hack described above.
-
-	// Support: Firefox 20
-	// Support: Opera 12
-
-	html = html || '<body></body>';
-
-	// Create an invisible iframe
-	var iframe = document.createElement( 'iframe' );
-	iframe.setAttribute( 'frameborder', '0' );
-	iframe.setAttribute( 'width', '0' );
-	iframe.setAttribute( 'height', '0' );
-	// Attach it to the document. We have to do this to get a new document out of it
-	document.documentElement.appendChild( iframe );
-	// Write the HTML to it
-	var newDocument = ( iframe.contentWindow && iframe.contentWindow.document ) || iframe.contentDocument;
-	newDocument.open();
-	newDocument.write( html ); // Party like it's 1995!
-	newDocument.close();
-	// Detach the iframe
-	iframe.parentNode.removeChild( iframe );
-
-	if ( !newDocument.documentElement || newDocument.documentElement.cloneNode( false ) === undefined ) {
-		// Surprise! The document is not a document! Only happens on Opera.
-		// (Or its nodes are not actually nodes, while the document
-		// *is* a document. This only happens when debugging with Dragonfly.)
-		return;
-	}
-
-	return newDocument;
-};
-
-/**
- * Private fallback for browsers which don't support iframe technique
- *
- * @private
- * @param {string} html
- * @return {HTMLDocument} Document constructed from the HTML string
- */
-ve.createDocumentFromHtmlUsingInnerHtml = function ( html ) {
-	var newDocument = document.implementation.createHTMLDocument( '' );
-
-	html = html || '<body></body>';
-
-	// Carefully unwrap the HTML out of the root node (and doctype, if any).
-	newDocument.documentElement.innerHTML = html
-		.replace( /^\s*(?:<!doctype[^>]*>)?\s*<html[^>]*>/i, '' )
-		.replace( /<\/html>\s*$/i, '' );
-
-	// Preserve <html> attributes, if any
-	var htmlAttributes = html.match( /<html([^>]*>)/i );
-	if ( htmlAttributes && htmlAttributes[ 1 ] ) {
-		var wrapper = document.createElement( 'div' );
-		wrapper.innerHTML = '<div ' + htmlAttributes[ 1 ] + '></div>';
-		var attributes = wrapper.firstChild.attributes;
-		for ( var i = 0; i < attributes.length; i++ ) {
-			newDocument.documentElement.setAttribute(
-				attributes[ i ].name,
-				attributes[ i ].value
-			);
-		}
+	// Remove iOS hack
+	var tmpMeta = newDocument.querySelector( 'meta[data-ve-tmp]' );
+	if ( tmpMeta ) {
+		tmpMeta.parentNode.removeChild( tmpMeta );
 	}
 
 	return newDocument;
@@ -370,17 +307,16 @@ ve.transformStyleAttributes = function ( html, unmask ) {
 		var toAttr = unmask ? maskAttrs[ i ] : 'data-ve-' + maskAttrs[ i ];
 		// eslint-disable-next-line no-loop-func
 		$( xmlDoc ).find( '[' + fromAttr + ']' ).each( function () {
-			var toAttrValue, fromAttrNormalized,
-				fromAttrValue = this.getAttribute( fromAttr );
+			var fromAttrValue = this.getAttribute( fromAttr );
 
 			if ( unmask ) {
 				this.removeAttribute( fromAttr );
 
 				// If the data-ve- version doesn't normalize to the same value,
 				// the attribute must have changed, so don't overwrite it
-				fromAttrNormalized = ve.normalizeAttributeValue( toAttr, fromAttrValue, this.nodeName );
+				var fromAttrNormalized = ve.normalizeAttributeValue( toAttr, fromAttrValue, this.nodeName );
 				// toAttr can't not be set, but IE returns null if the value was ''
-				toAttrValue = this.getAttribute( toAttr ) || '';
+				var toAttrValue = this.getAttribute( toAttr ) || '';
 				if ( toAttrValue !== fromAttrNormalized ) {
 					return;
 				}

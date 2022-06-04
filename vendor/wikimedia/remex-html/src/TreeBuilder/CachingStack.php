@@ -426,6 +426,3 @@ class CachingStack extends Stack {
 		}
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( CachingStack::class, 'RemexHtml\TreeBuilder\CachingStack' );

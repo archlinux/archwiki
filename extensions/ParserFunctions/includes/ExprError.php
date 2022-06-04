@@ -16,7 +16,7 @@
  *
  */
 
-namespace MediaWiki\Extensions\ParserFunctions;
+namespace MediaWiki\Extension\ParserFunctions;
 
 use Exception;
 use Message;

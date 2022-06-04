@@ -35,18 +35,18 @@ OO.inheritClass( ve.ui.MWMobileSaveDialog, ve.ui.MWSaveDialog );
  * @inheritdoc
  */
 ve.ui.MWMobileSaveDialog.prototype.initialize = function () {
-	var mobile, skin, licenseMsg;
-
 	// Parent method
 	ve.ui.MWMobileSaveDialog.super.prototype.initialize.call( this );
 
 	this.$reviewVisualDiff.addClass( 'content' );
+	this.previewPanel.$element.addClass( 'content' );
 
 	if ( mw.mobileFrontend ) {
-		mobile = mw.mobileFrontend.require( 'mobile.startup' );
-		skin = mobile.Skin.getSingleton();
-		licenseMsg = skin.getLicenseMsg();
+		var mobile = mw.mobileFrontend.require( 'mobile.startup' );
+		var skin = mobile.Skin.getSingleton();
+		var licenseMsg = skin.getLicenseMsg();
 		if ( licenseMsg ) {
+			// eslint-disable-next-line no-jquery/no-html
 			this.$license.html( licenseMsg );
 		}
 	}

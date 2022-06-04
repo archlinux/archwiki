@@ -178,7 +178,8 @@ class ApiQueryInfo extends ApiQueryBase {
 			// clutter queries
 			$cont = explode( '|', $this->params['continue'] );
 			$this->dieContinueUsageIf( count( $cont ) != 2 );
-			$conttitle = $this->titleFactory->makeTitleSafe( $cont[0], $cont[1] );
+			$conttitle = $this->titleFactory->makeTitleSafe( (int)$cont[0], $cont[1] );
+			$this->dieContinueUsageIf( !$conttitle );
 			foreach ( $this->everything as $pageid => $title ) {
 				if ( Title::compare( $title, $conttitle ) >= 0 ) {
 					break;
@@ -370,11 +371,8 @@ class ApiQueryInfo extends ApiQueryBase {
 		}
 
 		if ( $this->fld_displaytitle ) {
-			if ( isset( $this->displaytitles[$pageid] ) ) {
-				$pageInfo['displaytitle'] = $this->displaytitles[$pageid];
-			} else {
-				$pageInfo['displaytitle'] = $title->getPrefixedText();
-			}
+			$pageInfo['displaytitle'] = $this->displaytitles[$pageid] ??
+				htmlspecialchars( $title->getPrefixedText(), ENT_NOQUOTES );
 		}
 
 		if ( $this->fld_varianttitles && isset( $this->variantTitles[$pageid] ) ) {

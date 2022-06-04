@@ -25,7 +25,7 @@ ve.dm.MWTransclusionPartModel = function VeDmMWTransclusionPartModel( transclusi
 
 	// Properties
 	this.transclusion = transclusion;
-	this.id = 'part_' + this.transclusion.getUniquePartId();
+	this.id = 'part_' + this.transclusion.nextUniquePartId();
 };
 
 /* Inheritance */

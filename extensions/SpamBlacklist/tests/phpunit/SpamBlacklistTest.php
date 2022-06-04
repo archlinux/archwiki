@@ -7,7 +7,7 @@ use MediaWiki\MediaWikiServices;
  * @group Database
  * @covers SpamBlacklist
  */
-class SpamBlacklistTest extends MediaWikiTestCase {
+class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @var SpamBlacklist
 	 */

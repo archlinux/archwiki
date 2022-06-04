@@ -17,5 +17,7 @@
 	"timeless-pagemisc": "झिक्क",
 	"timeless-namespaces": "नामठौरअन",
 	"timeless-pagetools": "पन्ना क्रियाअन",
-	"timeless-languages": "भाषाअन"
+	"timeless-languages": "भाषाअन",
+	"timeless-view-history": "पानाको इतिहास",
+	"timeless-action-undelete": "{{PLURAL:$1|एक  मेट्याको सम्पादन|$1 मेट्याका सम्पादनहरू}} फर्काउन्या"
 }

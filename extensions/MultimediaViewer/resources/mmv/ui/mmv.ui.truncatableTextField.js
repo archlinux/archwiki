@@ -106,7 +106,7 @@
 	};
 
 	TTFP.attach = function () {
-		$( window ).on( 'resize.mmv-ttf', $.debounce( 100, this.repaint.bind( this ) ) );
+		$( window ).on( 'resize.mmv-ttf', mw.util.debounce( this.repaint.bind( this ), 100 ) );
 	};
 
 	TTFP.unattach = function () {

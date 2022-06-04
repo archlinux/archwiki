@@ -45,8 +45,8 @@ class CiteParserTagHooks {
 		}
 
 		$parserOutput = $parser->getOutput();
-		$parserOutput->addModules( 'ext.cite.ux-enhancements' );
-		$parserOutput->addModuleStyles( 'ext.cite.styles' );
+		$parserOutput->addModules( [ 'ext.cite.ux-enhancements' ] );
+		$parserOutput->addModuleStyles( [ 'ext.cite.styles' ] );
 
 		$frame->setVolatile();
 		return $result;

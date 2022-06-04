@@ -5,7 +5,7 @@
 		]
 	},
 	"cite-desc": "<code>&lt;ref[ name=id]&gt;</code> а <code>&lt;references/&gt;</code> тегаш тӀетовжарийн тӀетуху",
-	"cite_error": "ГӀалат дешнаш далорна $1",
+	"cite_error": "Цитатийн гӀалат: $1",
 	"cite_error_ref_numeric_key": "Нийса йоцу тег <code>&lt;ref&gt;</code>;\nцӀе дуьззина терахь хилийла дац. Лелайе йозанан цӀе",
 	"cite_error_ref_no_key": "Схьайоьлу тег <code>&lt;ref&gt;</code> — нийса йац йа цӀе гӀалате йу.",
 	"cite_error_ref_too_many_keys": "Нийса йоцу тег <code>&lt;ref&gt;</code>;\nгӀалатан цӀерш, тӀех дукха хила мега",
@@ -14,7 +14,7 @@
 	"cite_error_references_invalid_parameters": "Нийса йоцу тег <code>&lt;references&gt;</code>;\nпараметраш шорйина йац.\nЛелайе <code>&lt;references /&gt;</code>",
 	"cite_error_references_no_backlink_label": "Хьаьркаш тоьаш дац йуха йалочу гиперхьажоргашна. Системнан хаам [[MediaWiki:Cite references link many format backlink labels]] шорбан беза",
 	"cite_error_no_link_label_group": "Тобан «$1» декъашхойн билгалонаш чекхйаьлла. Хаам [[MediaWiki:$2]] чохь билгалйе кхин тӀе йерш.",
-	"cite_error_references_no_text": "Тег <code>&lt;ref&gt;</code> нийса йац; тIетовжаран <code>$1</code> йоза йаздина дац",
+	"cite_error_references_no_text": "<code>&lt;ref&gt;</code> тег нийса йац; кху <code>$1</code> тIетовжаран йоза йаздина дац",
 	"cite_error_included_ref": "ДӀакъовлуш йолу тег йац <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Тобан «$1» йолуш йолу тегашца <code>&lt;ref&gt;</code> йогӀуш йолу тег <code>&lt;references group=\"$1\"/&gt;</code> ца карийна",
 	"cite_error_references_group_mismatch": "Теган <code>&lt;ref&gt;</code> <code>&lt;references&gt;</code> йукъахь нийса йоцу тобанаш йу атрибутийн «$1».",

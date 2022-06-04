@@ -17,14 +17,12 @@
  * @extends OO.ui.Widget
  * @param {jQuery} $target Element to attach to
  * @param {Object} config Configuration options
- * @param {string} popupTitle Popup title
- * @param {string} popupText Popup text
- * @param {string} [popupImage] Popup image class
- * @param {string} [trackingName] Tracking name
+ * @cfg {string} popupTitle
+ * @cfg {string|jQuery} popupText
+ * @cfg {string} [popupImage] Popup image class
+ * @cfg {string} [trackingName]
  */
 ve.ui.MWEducationPopupWidget = function VeUiMwEducationPopup( $target, config ) {
-	var $popupContent;
-
 	config = config || {};
 
 	// HACK: Do not display on platforms other than desktop
@@ -50,11 +48,17 @@ ve.ui.MWEducationPopupWidget = function VeUiMwEducationPopup( $target, config ) 
 	this.trackingName = config.trackingName;
 	this.$pulsatingDot = $( '<div>' ).addClass( 'mw-pulsating-dot' );
 
-	$popupContent = $( '<div>' ).append(
+	var $popupContent = $( '<div>' ).append(
 		$( '<h3>' ).text( config.popupTitle ),
-		$( '<p>' ).text( config.popupText ),
+		// eslint-disable-next-line no-jquery/no-append-html
+		$( '<p>' ).append(
+			config.popupText instanceof $ ?
+				config.popupText :
+				document.createTextNode( config.popupText )
+		),
 		this.popupCloseButton.$element
 	);
+	ve.targetLinksToNewWindow( $popupContent[ 0 ] );
 	if ( config.popupImage ) {
 		$popupContent.prepend(
 			// eslint-disable-next-line mediawiki/class-doc
@@ -77,7 +81,6 @@ ve.ui.MWEducationPopupWidget = function VeUiMwEducationPopup( $target, config ) 
 
 	// DOME
 	this.$element.addClass( 've-ui-educationPopup' ).append( this.$pulsatingDot, this.popup.$element );
-
 };
 
 /* Inheritance */
@@ -112,15 +115,13 @@ ve.ui.MWEducationPopupWidget.prototype.onTargetMouseDown = function () {
  * Click handler for the popup close button
  */
 ve.ui.MWEducationPopupWidget.prototype.onPopupCloseButtonClick = function () {
-	var mouseLeft;
-
 	this.$target.off( 'mousedown', this.onTargetMouseDownHandler );
 	this.popup.toggle( false );
 
 	ve.init.target.openEducationPopup = null;
 	mw.libs.ve.stopShowingEducationPopups();
 
-	mouseLeft = { which: OO.ui.MouseButtons.LEFT };
+	var mouseLeft = { which: OO.ui.MouseButtons.LEFT };
 	this.$target
 		.trigger( $.Event( 'mousedown', mouseLeft ) )
 		.trigger( $.Event( 'mouseup', mouseLeft ) )

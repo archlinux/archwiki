@@ -14,6 +14,7 @@ use Wikimedia\Dodo\Internal\Util;
  * Implemented version: http://www.w3.org/TR/2015/WD-dom-20150618/#nodeiterator
  *
  * Latest version: http://www.w3.org/TR/dom/#nodeiterator
+ * @phan-forbid-undeclared-magic-properties
  */
 class NodeIterator implements \Wikimedia\IDLeDOM\NodeIterator {
 	// Stub out methods not yet implemented.

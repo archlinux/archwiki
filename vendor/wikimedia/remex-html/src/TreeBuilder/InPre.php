@@ -49,6 +49,3 @@ class InPre extends InsertionMode {
 			->comment( $text, $sourceStart, $sourceLength );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InPre::class, 'RemexHtml\TreeBuilder\InPre' );

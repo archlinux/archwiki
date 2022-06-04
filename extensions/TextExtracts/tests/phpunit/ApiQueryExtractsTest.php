@@ -14,7 +14,7 @@ use Wikimedia\TestingAccessWrapper;
  *
  * @license GPL-2.0-or-later
  */
-class ApiQueryExtractsTest extends \MediaWikiTestCase {
+class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 	use MediaWikiCoversValidator;
 
 	private function newInstance() {
@@ -53,7 +53,14 @@ class ApiQueryExtractsTest extends \MediaWikiTestCase {
 		$langConvFactory->method( 'getLanguageConverter' )
 			->willReturn( $this->createMock( ILanguageConverter::class ) );
 
-		return new ApiQueryExtracts( $query, '', $configFactory, $cache, $langConvFactory );
+		return new ApiQueryExtracts(
+			$query,
+			'',
+			$configFactory,
+			$cache,
+			$langConvFactory,
+			$this->getServiceContainer()->getWikiPageFactory()
+		);
 	}
 
 	public function testMemCacheHelpers() {
@@ -90,14 +97,14 @@ class ApiQueryExtractsTest extends \MediaWikiTestCase {
 		$params = $instance->getAllowedParams();
 		$this->assertIsArray( $params );
 
-		$this->assertSame( $params['chars'][\ApiBase::PARAM_MIN], 1 );
-		$this->assertSame( $params['chars'][\ApiBase::PARAM_MAX], 1200 );
+		$this->assertSame( 1, $params['chars'][\ApiBase::PARAM_MIN] );
+		$this->assertSame( 1200, $params['chars'][\ApiBase::PARAM_MAX] );
 
-		$this->assertSame( $params['limit'][\ApiBase::PARAM_DFLT], 20 );
-		$this->assertSame( $params['limit'][\ApiBase::PARAM_TYPE], 'limit' );
-		$this->assertSame( $params['limit'][\ApiBase::PARAM_MIN], 1 );
-		$this->assertSame( $params['limit'][\ApiBase::PARAM_MAX], 20 );
-		$this->assertSame( $params['limit'][\ApiBase::PARAM_MAX2], 20 );
+		$this->assertSame( 20, $params['limit'][\ApiBase::PARAM_DFLT] );
+		$this->assertSame( 'limit', $params['limit'][\ApiBase::PARAM_TYPE] );
+		$this->assertSame( 1, $params['limit'][\ApiBase::PARAM_MIN] );
+		$this->assertSame( 20, $params['limit'][\ApiBase::PARAM_MAX] );
+		$this->assertSame( 20, $params['limit'][\ApiBase::PARAM_MAX2] );
 	}
 
 	/**

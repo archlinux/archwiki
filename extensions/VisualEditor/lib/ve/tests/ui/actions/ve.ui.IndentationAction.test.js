@@ -29,10 +29,6 @@ QUnit.test( 'increase/decrease', function ( assert ) {
 				data.splice( 11, 2, { type: '/list' }, { type: 'paragraph' } );
 				data.splice( 19, 2, { type: '/paragraph' }, { type: 'list', attributes: { style: 'bullet' } } );
 			},
-			expectedOriginalData: function ( data ) {
-				// generated: 'wrapper' is removed by the action and not restored by undo
-				delete data[ 12 ].internal;
-			},
 			undo: true,
 			msg: 'decrease indentation on partial selection of list item "Item 2"'
 		},
@@ -46,11 +42,6 @@ QUnit.test( 'increase/decrease', function ( assert ) {
 				data.splice( 16, 1, { type: 'list', attributes: { style: 'bullet' } } );
 				delete data[ 0 ].internal;
 				delete data[ 8 ].internal;
-			},
-			expectedOriginalData: function ( data ) {
-				// generated: 'wrapper' is removed by the action and not restored by undo
-				delete data[ 2 ].internal;
-				delete data[ 12 ].internal;
 			},
 			undo: true,
 			msg: 'decrease indentation on Items 1 & 2'
@@ -67,19 +58,19 @@ QUnit.test( 'increase/decrease', function ( assert ) {
 			msg: 'increase indentation on Items 1 & 2'
 		},
 		{
-			html: '<ul><li><table><tr><td>A</td><tr></table></li></ul>',
+			html: '<ul><li><table><tr><td>A</td></tr></table></li></ul>',
 			rangeOrSelection: new ve.Range( 2 ),
 			method: 'decrease',
 			expectedRangeOrSelection: new ve.Range( 0 ),
 			expectedData: function ( data ) {
-				data.splice( 15, 2 );
+				data.splice( 13, 2 );
 				data.splice( 0, 2 );
 			},
 			undo: true,
 			msg: 'decrease indentation in slug'
 		},
 		{
-			html: '<ul><li><table><tr><td>A</td><tr></table></li></ul>',
+			html: '<ul><li><table><tr><td>A</td></tr></table></li></ul>',
 			rangeOrSelection: new ve.Range( 2 ),
 			method: 'increase',
 			expectedRangeOrSelection: new ve.Range( 4 ),
@@ -106,7 +97,7 @@ QUnit.test( 'increase/decrease', function ( assert ) {
 			msg: 'decrease indentation of double-indented item'
 		},
 		{
-			html: '<table><tr><td>A</td><tr></table>',
+			html: '<table><tr><td>A</td></tr></table>',
 			rangeOrSelection: {
 				type: 'table',
 				tableRange: new ve.Range( 0, 13 ),

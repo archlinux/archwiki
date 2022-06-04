@@ -4,5 +4,7 @@
 			"Servien"
 		]
 	},
-	"timeless-languages": "Spraken"
+	"timeless-languages": "Spraken",
+	"timeless-view-history": "Historie",
+	"timeless-action-undelete": "{{PLURAL:$1|ene Version|$1 Versionen}} wedderhalen"
 }

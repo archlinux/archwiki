@@ -12,18 +12,17 @@
 			"Turin",
 			"V111P",
 			"Vodnokon4e",
-			"Wizardist"
+			"Wizardist",
+			"Kareyac"
 		]
 	},
 	"wikieditor": "Подобрен интерфейс за редактиране на уикитекст",
 	"wikieditor-desc": "Предлага съвременен, разширяем интерфейс за редактиране на уикитекст",
 	"wikieditor-wikitext-tab": "Уикитекст",
-	"wikieditor-loading": "Зареждане...",
 	"wikieditor-toolbar": "Лента за редактиране",
 	"wikieditor-toolbar-desc": "Лента за редактиране с подобрени възможности за използваемост",
 	"wikieditor-toolbar-preference": "Включване на лентата за редактиране",
 	"wikieditor-toolbar-preference-help": "Известно още като „редактор на уикитекст от 2010 година“.",
-	"wikieditor-toolbar-loading": "Зареждане...",
 	"wikieditor-toolbar-tool-bold": "Получер текст",
 	"wikieditor-toolbar-tool-bold-example": "Получер текст",
 	"wikieditor-toolbar-tool-italic": "Курсивен текст",
@@ -54,7 +53,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-адресът, който сте задали, изглежда като връзка към друга уики-страница.\nИскате ли препратката да бъде вътрешна?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Вътрешна препратка",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Външна препратка",
-	"wikieditor-toolbar-tool-link-empty": "Не сте въвели адрес на препратката.",
 	"wikieditor-toolbar-tool-file": "Изображения и медия",
 	"wikieditor-toolbar-tool-file-example": "Пример.jpg",
 	"wikieditor-toolbar-tool-file-title": "Вмъкване на файл",
@@ -203,5 +201,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Потребителско име</a> (<a href='#' title='$2:Username'>беседа</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Отстъп",
 	"wikieditor-toolbar-help-content-indent-syntax": "Текст без отстъп<br />:Текст с единичен отстъп<br />::Текст с двоен отстъп",
-	"wikieditor-toolbar-help-content-indent-result": "Текст без отстъп<dl><dd>Текст с единичен отстъп<dl><dd>Текст с двоен отстъп</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Текст без отстъп<dl><dd>Текст с единичен отстъп<dl><dd>Текст с двоен отстъп</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Предварителен преглед"
 }

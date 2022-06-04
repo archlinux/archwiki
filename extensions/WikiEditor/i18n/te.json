@@ -9,12 +9,10 @@
 	},
 	"wikieditor": "ఉన్నత వికీపాఠ్య దిద్దుబాటు ముఖాంతరం",
 	"wikieditor-wikitext-tab": "వికీపాఠ్యం",
-	"wikieditor-loading": "లోడవుతూంది",
 	"wikieditor-toolbar": "ఎడిటింగ్ టూల్‌బార్",
 	"wikieditor-toolbar-desc": "మెరుగైన ఉపయోగశీలతో దిద్దుబాటు పేజీ పనిముట్లపట్టీ",
 	"wikieditor-toolbar-preference": "సవరణ టూల్ బార్   సచేతనం",
 	"wikieditor-toolbar-preference-help": "దీనిని కొన్నిసార్లు '2010 వికీటెక్స్ట్ ఎడిటర్'  అంటారు.",
-	"wikieditor-toolbar-loading": "లోడవుతోంది...",
 	"wikieditor-toolbar-tool-bold": "బొద్దు",
 	"wikieditor-toolbar-tool-bold-example": "బొద్దు పాఠ్యం",
 	"wikieditor-toolbar-tool-italic": "వాలు",
@@ -45,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "మీరు ఇచ్చిన చిరునామాని బట్టి మీరు మరో వికీ పేజీకి లంకె చేర్చాలని ఉద్దేశించినట్టుంది. దాన్ని అంతర్గత లంకెగా మార్చాలనుకుంటున్నారా?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "అంతర్గత లంకె",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "బయటి లంకె",
-	"wikieditor-toolbar-tool-link-empty": "మీరు దేనికి లంకె వెయ్యాలో పేర్కొనలేదు.",
 	"wikieditor-toolbar-tool-file": "ఫైలు చొప్పించు",
 	"wikieditor-toolbar-file-target": "దస్త్రం పేరు:",
 	"wikieditor-toolbar-file-size": "పరిమాణం:",
@@ -156,5 +153,6 @@
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "సమయముద్రతో సంతకం",
 	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>వాడుకరిపేరు</a> (<a href='#' title='$2:Username'>చర్చ</a>) 15:54, 10 జూన్ 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "సంతకం",
-	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>వాడుకరిపేరు</a> (<a href='#' title='$2:Username'>చర్చ</a>)"
+	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>వాడుకరిపేరు</a> (<a href='#' title='$2:Username'>చర్చ</a>)",
+	"wikieditor-realtimepreview-preview": "మునుజూపు"
 }

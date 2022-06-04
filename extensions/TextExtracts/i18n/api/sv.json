@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lokal Profil",
-			"Dhallin"
+			"Dhallin",
+			"Lokal Profil"
 		]
 	},
 	"apihelp-query+extracts-description": "Returnerar klartext eller begränsad HTML-extrakt av de givna sidorna.",

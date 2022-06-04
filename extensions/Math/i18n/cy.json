@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lloffiwr",
+			"Macofe",
+			"Robin Owain"
+		]
+	},
+	"math-desc": "Arddangos fformwla mathemategol rhwng y tagiau <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"math_failure": "Wedi methu dosrannu",
+	"math_syntax_error": "gwall cystrawen",
+	"math_unknown_error": "gwall anhysbys",
+	"math_unknown_function": "ffwythiant anhysbys, '$1'",
+	"mw_math_mathml": "MathML os yn bosib (arbrofol)",
+	"mw_math_png": "Delweddau PNG",
+	"mw_math_source": "Gadewch fel côd LaTeX (ar gyfer porwyr testun)",
+	"prefs-math": "Mathemateg"
+}

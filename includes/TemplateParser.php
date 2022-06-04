@@ -51,15 +51,10 @@ class TemplateParser {
 
 	/**
 	 * @param string|null $templateDir
-	 * @param BagOStuff|null|true $cache Read-write cache
-	 *  If set to true, caching is disabled (deprecated since 1.35).
+	 * @param BagOStuff|null $cache Read-write cache
 	 */
-	public function __construct( $templateDir = null, $cache = null ) {
+	public function __construct( $templateDir = null, ?BagOStuff $cache = null ) {
 		$this->templateDir = $templateDir ?: __DIR__ . '/templates';
-		if ( $cache === true ) {
-			wfDeprecated( __CLASS__ . ' with $forceRecompile', '1.35' );
-			$cache = new EmptyBagOStuff();
-		}
 		$this->cache = $cache ?: ObjectCache::getLocalServerInstance( CACHE_ANYTHING );
 
 		// Do not add more flags here without discussion.
@@ -116,9 +111,11 @@ class TemplateParser {
 			return $this->renderers[$templateKey];
 		}
 
-		// Fetch a secret key for building a keyed hash of the PHP code
-		$config = MediaWikiServices::getInstance()->getMainConfig();
-		$secretKey = $config->get( 'SecretKey' );
+		// Fetch a secret key for building a keyed hash of the PHP code.
+		// Note that this may be called before MediaWiki is fully initialized.
+		$secretKey = MediaWikiServices::hasInstance()
+			? MediaWikiServices::getInstance()->getMainConfig()->get( 'SecretKey' )
+			: null;
 
 		if ( $secretKey ) {
 			// See if the compiled PHP code is stored in the server-local cache.
@@ -258,6 +255,8 @@ class TemplateParser {
 			// Check anyway for paranoia
 			throw new RuntimeException( "Could not compile template `{$filename}`" );
 		}
+
+		$files = array_values( array_unique( $files ) );
 
 		return [
 			'phpCode' => $compiled,

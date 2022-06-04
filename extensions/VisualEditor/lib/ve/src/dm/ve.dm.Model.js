@@ -122,7 +122,7 @@ ve.dm.Model.static.matchFunction = null;
  *
  * For these purposes, annotations are considered content. Meta-items can occur anywhere, so if
  * a meta-element is returned no special action is taken. Note that "alienate" always means an alien
- * *node* (ve.dm.AlienNode) will be generated, never an alien meta-item (ve.dm.AlienMetaItem),
+ * **node** (ve.dm.AlienNode) will be generated, never an alien meta-item (ve.dm.AlienMetaItem),
  * regardless of whether the subclass attempting the conversion is a node or a meta-item.
  *
  * The returned linear model element must have a type property set to a registered model name
@@ -277,8 +277,16 @@ ve.dm.Model.static.describeChange = function ( key, change ) {
 		return ve.htmlMsg( 'visualeditor-changedesc-set', key, this.wrapText( 'ins', change.to ) );
 	} else if ( change.to === undefined ) {
 		return ve.htmlMsg( 'visualeditor-changedesc-unset', key, this.wrapText( 'del', change.from ) );
+	} else if ( key === 'listItemDepth' ) {
+		// listItemDepth is a special key used on nodes which have isDiffedAsList set
+		if ( change.to > change.from ) {
+			return ve.msg( 'visualeditor-changedesc-list-indent' );
+		} else if ( change.to < change.from ) {
+			return ve.msg( 'visualeditor-changedesc-list-outdent' );
+		}
 	} else {
-		var diff = this.getAttributeDiff( change.from.toString(), change.to.toString() );
+		// Use String() for string casting as values could be null
+		var diff = this.getAttributeDiff( String( change.from ), String( change.to ) );
 		if ( diff ) {
 			return ve.htmlMsg( 'visualeditor-changedesc-changed-diff', key, diff );
 		} else {

@@ -35,7 +35,7 @@ function init() {
 				// Then animate from the 1px to the expanded width.
 				expandedWidth = $cactions.width();
 				// eslint-disable-next-line no-jquery/no-animate
-				$cactions.find( 'h3' )
+				$cactions
 					.css( 'width', '1px' )
 					.animate( { width: expandedWidth }, 'normal' );
 			}
@@ -44,7 +44,7 @@ function init() {
 			// If we're removing the last child node right now, hide the dropdown
 			if ( $cactions.find( 'li' ).length === 1 ) {
 				// eslint-disable-next-line no-jquery/no-animate
-				$cactions.find( 'h3' ).animate( { width: '1px' }, 'normal', function () {
+				$cactions.animate( { width: '1px' }, 'normal', function () {
 					$( this ).attr( 'style', '' );
 					mw.util.hidePortlet( cactionsId );
 				} );

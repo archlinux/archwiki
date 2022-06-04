@@ -50,6 +50,3 @@ class TokenGenerator {
 		}
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TokenGenerator::class, 'RemexHtml\Tokenizer\TokenGenerator' );

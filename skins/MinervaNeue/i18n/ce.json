@@ -1,0 +1,41 @@
+{
+	"@metadata": {
+		"authors": [
+			"Исмаил Садуев",
+			"Умар"
+		]
+	},
+	"minerva-last-modified-date": "ТӀаьххьара хийцам бина $1 $2",
+	"minerva-talk-add-topic": "ТӀетоха дийцар",
+	"mobile-frontend-editor-edit": "Нисйе",
+	"minerva-download": "Схьаэца",
+	"mobile-frontend-editor-redlink-create": "АгӀо кхолла",
+	"mobile-frontend-editor-redlink-leave": "ХӀан-хӀа, баркалла.",
+	"mobile-frontend-history": "ХӀокху агӀонан исторега хьажар.",
+	"mobile-frontend-home-button": "ЦӀехьа",
+	"mobile-frontend-language-article-heading": "Йеша кхечу маттахь",
+	"mobile-frontend-languages-not-available": "ХӀара агӀо кхечу меттанашна тӀекхочуш йац.",
+	"mobile-frontend-main-menu-button-tooltip": "Коьрта меню схьаелла",
+	"mobile-frontend-main-menu-contributions": "Къинхьегам",
+	"mobile-frontend-main-menu-login": "Довзийтар",
+	"mobile-frontend-main-menu-logout": "Болх дӀаберзор",
+	"mobile-frontend-main-menu-nearby": "Уллехь",
+	"mobile-frontend-main-menu-settings": "Параметраш",
+	"mobile-frontend-main-menu-watchlist": "Тергаме могӀам",
+	"mobile-frontend-meta-data-issues": "АгӀонгахь долу хаттарш",
+	"mobile-frontend-meta-data-issues-categories": "ХӀокху категорех лаьцна",
+	"mobile-frontend-meta-data-issues-header": "Хаттарш",
+	"mobile-frontend-meta-data-issues-header-talk": "ХӀокху агӀонах лаьцна",
+	"mobile-frontend-meta-data-issues-talk": "ХӀокху дийцарийн агӀонах лаьцна",
+	"mobile-frontend-notifications-filter": "Луьттург",
+	"mobile-frontend-placeholder": "{{grammar:prepositional|{{SITENAME}}}} чухула леха",
+	"mobile-frontend-random-button": "Нисделларг",
+	"mobile-frontend-talk-back-to-page": "Йуха гӀо «$1» агӀонг.",
+	"mobile-frontend-user-button-tooltip": "Гайта сан хаамаш",
+	"mobile-frontend-user-newmessages": "Хьан дийцарийн агӀонгахь керла хаамаш бу",
+	"mobile-frontend-user-page-contributions": "Къинхьегам",
+	"mobile-frontend-user-page-talk": "Дийцар",
+	"minerva-user-menu-button": "Декъашхочун меню",
+	"minerva-skin-desc": "Дуьххьара адаптан телефонан кечйаран тема.",
+	"skin-minerva-issue-learn-more": "Цул совнаха хаа"
+}

@@ -62,9 +62,9 @@ mw.libs.ve.WelcomeDialog.prototype.getSetupProcess = function ( data ) {
 		message: $( '<span>' )
 			.addClass( 've-init-mw-welcomeDialog-content' )
 			.append(
-				document.createTextNode( mw.msg( 'visualeditor-welcomedialog-content' ) ),
+				$( document.createTextNode( mw.msg( 'visualeditor-welcomedialog-content' ) ) ),
 				$( '<br>' ),
-				document.createTextNode( mw.msg( 'visualeditor-welcomedialog-content-thanks' ) )
+				$( document.createTextNode( mw.msg( 'visualeditor-welcomedialog-content-thanks' ) ) )
 			)
 	}, data );
 

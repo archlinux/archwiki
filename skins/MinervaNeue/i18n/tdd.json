@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"咽頭べさ"
+		]
+	},
+	"minerva-talk-add-topic": "ᥗᥦᥛᥴᥔᥬᥱ ᥞᥨᥝᥴᥑᥩᥲ",
+	"mobile-frontend-editor-edit": "ᥛᥨᥢᥳᥛᥦᥰ",
+	"mobile-frontend-history": "ᥖᥨᥭᥰ ᥙᥪᥢᥰᥛᥦᥰᥗᥖᥰ ᥑᥩᥒᥴ ᥢᥣᥲᥘᥤᥐᥲᥟᥢᥴᥢᥭᥳ.",
+	"mobile-frontend-home-button": "ᥞᥨᥝᥴᥞᥦᥐᥲ",
+	"mobile-frontend-language-article-heading": "ᥚᥣᥱᥔᥣᥱᥐᥣᥛᥰ",
+	"mobile-frontend-main-menu-contributions": "ᥘᥩᥒᥲᥑᥝᥲᥞᥨᥛᥲ",
+	"mobile-frontend-main-menu-login": "ᥘᥩᥐᥳᥟᥤᥢᥱ",
+	"mobile-frontend-main-menu-logout": "ᥘᥩᥐᥳᥟᥩᥐᥳ",
+	"mobile-frontend-main-menu-nearby": "ᥞᥤᥛᥰᥓᥛᥴ",
+	"mobile-frontend-main-menu-settings": "ᥐᥣᥢᥴᥖᥒᥲ",
+	"mobile-frontend-main-menu-watchlist": "ᥔᥥᥢᥲᥛᥣᥭᥴᥙᥬᥳᥖᥨᥭᥰ",
+	"mobile-frontend-meta-data-issues": "ᥑᥩᥲᥑᥢᥴ ᥢᥣᥲᥘᥤᥐᥲ",
+	"mobile-frontend-meta-data-issues-categories": "ᥘᥩᥒᥲᥙᥫᥒᥴᥗᥣᥢᥲᥟᥢᥴᥢᥭᥳ",
+	"mobile-frontend-meta-data-issues-header": "ᥑᥩᥲᥑᥢᥴ ᥢᥣᥲᥘᥤᥐᥲ",
+	"mobile-frontend-pageaction-edit-tooltip": "ᥛᥦᥰᥗᥖᥰ ᥖᥩᥢᥲᥐᥢᥴᥢᥣᥛᥰᥞᥨᥝᥴ ᥑᥩᥒᥴᥢᥣᥰᥘᥤᥐᥲᥢᥭᥳ",
+	"mobile-frontend-placeholder": "ᥑᥨᥢᥳᥞᥣᥴ {{SITENAME}}",
+	"mobile-frontend-random-button": "ᥞᥢᥱᥖᥛᥱ",
+	"mobile-frontend-user-page-contributions": "ᥘᥩᥒᥲᥑᥝᥲᥞᥨᥛᥲ",
+	"mobile-frontend-user-page-talk": "ᥖᥩᥢᥲᥟᥧᥙᥱ",
+	"minerva-page-actions-overflow": "ᥢᥛᥴᥘᥫᥴ",
+	"minerva-page-actions-info": "ᥘᥩᥢᥳᥑᥣᥝᥱᥢᥣᥲᥘᥤᥐᥲ",
+	"minerva-page-actions-permalink": "ᥞᥥᥒᥰᥐᥩᥒᥳ ᥛᥢᥲᥐᥪᥛᥰ",
+	"minerva-page-actions-backlinks": "ᥞᥥᥒᥰᥐᥩᥒᥳ ᥟᥢᥴᥛᥤᥰᥖᥤᥲᥢᥭᥲᥙᥥᥢᥴᥔᥒᥴ",
+	"minerva-page-actions-cite": "ᥟᥤᥒᥴᥢᥣᥲᥘᥤᥐᥲᥢᥭᥳ",
+	"minerva-page-actions-move": "ᥑᥣᥭᥳ",
+	"minerva-page-actions-delete": "ᥛᥩᥖᥱᥙᥦᥖᥲ",
+	"minerva-page-actions-protect": "ᥞᥥᥳᥐᥒᥲ",
+	"minerva-page-actions-logs": "ᥔᥣᥭᥴᥛᥣᥭᥴ",
+	"minerva-page-actions-wikibase": "{{WBREPONAME}} ᥛᥤᥱᥐᥤᥰ",
+	"minerva-page-actions-language-switcher": "ᥚᥣᥱᥔᥣᥱᥐᥣᥛᥰ",
+	"minerva-page-actions-history": "ᥙᥪᥢᥰ",
+	"skin-minerva-mobile-option-MinervaShowCategories": "ᥙᥫᥒᥴᥗᥣᥢᥲ"
+}

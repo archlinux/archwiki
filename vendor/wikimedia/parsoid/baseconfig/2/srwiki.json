@@ -6,11 +6,11 @@
             "sitename": "Википедија",
             "mainpageisdomainroot": false,
             "logo": "//sr.wikipedia.org/static/images/project-logos/srwiki.png",
-            "generator": "MediaWiki 1.37.0-wmf.9",
-            "phpversion": "7.2.34-18+0~20210223.60+debian10~1.gbpb21322+wmf1",
+            "generator": "MediaWiki 1.38.0-wmf.25",
+            "phpversion": "7.2.34-18+0~20210223.60+debian10~1.gbpb21322+wmf5",
             "phpsapi": "fpm-fcgi",
             "dbtype": "mysql",
-            "dbversion": "10.4.19-MariaDB-log",
+            "dbversion": "10.4.24-MariaDB-log",
             "imagewhitelistenabled": false,
             "langconversion": true,
             "linkconversion": true,
@@ -23,8 +23,8 @@
             "allunicodefixes": false,
             "fixarabicunicode": true,
             "fixmalayalamunicode": true,
-            "git-hash": "8b7b7ffdb2fb19d088129177b827fbc281a86c44",
-            "git-branch": "wmf/1.37.0-wmf.9",
+            "git-hash": "2b818a673c023b166b17bbf49216a03460a0751a",
+            "git-branch": "wmf/1.38.0-wmf.25",
             "case": "first-letter",
             "lang": "sr",
             "fallback": [
@@ -55,7 +55,7 @@
             "writeapi": true,
             "maxarticlesize": 2097152,
             "timezone": "Europe/Berlin",
-            "timeoffset": 120,
+            "timeoffset": 60,
             "articlepath": "/wiki/$1",
             "scriptpath": "/w",
             "script": "/w/index.php",
@@ -63,7 +63,7 @@
             "server": "//sr.wikipedia.org",
             "servername": "sr.wikipedia.org",
             "wikiid": "srwiki",
-            "time": "2021-06-24T13:07:39Z",
+            "time": "2022-03-15T18:31:45Z",
             "misermode": true,
             "uploadsenabled": true,
             "maxuploadsize": 4294967296,
@@ -113,7 +113,7 @@
                     "height": 2048
                 }
             ],
-            "favicon": "//sr.wikipedia.org/static/favicon/wikipedia.ico",
+            "favicon": "https://sr.wikipedia.org/static/favicon/wikipedia.ico",
             "centralidlookupprovider": "CentralAuth",
             "allcentralidlookupproviders": [
                 "CentralAuth",
@@ -128,7 +128,7 @@
             "categorycollation": "uca-sr-u-kn",
             "wmf-config": {
                 "wmfMasterDatacenter": "eqiad",
-                "wmfEtcdLastModifiedIndex": 398365,
+                "wmfEtcdLastModifiedIndex": 457619,
                 "wmgCirrusSearchDefaultCluster": "local",
                 "wgCirrusSearchDefaultCluster": "eqiad"
             },
@@ -506,11 +506,23 @@
             },
             {
                 "id": 4,
+                "alias": "VP"
+            },
+            {
+                "id": 4,
                 "alias": "Vikipedija"
             },
             {
                 "id": 4,
+                "alias": "WP"
+            },
+            {
+                "id": 4,
                 "alias": "Wikipedia"
+            },
+            {
+                "id": 4,
+                "alias": "ВП"
             },
             {
                 "id": 5,
@@ -2365,6 +2377,13 @@
                 "case-sensitive": false
             },
             {
+                "name": "related",
+                "aliases": [
+                    "related"
+                ],
+                "case-sensitive": false
+            },
+            {
                 "name": "noexternallanglinks",
                 "aliases": [
                     "noexternallanglinks"
@@ -2412,6 +2431,13 @@
                     "commaseparatedlist"
                 ],
                 "case-sensitive": false
+            },
+            {
+                "name": "expectedUnconnectedPage",
+                "aliases": [
+                    "__EXPECTED_UNCONNECTED_PAGE__"
+                ],
+                "case-sensitive": true
             },
             {
                 "name": "pagesusingpendingchanges",
@@ -2554,13 +2580,6 @@
                 "case-sensitive": false
             },
             {
-                "name": "related",
-                "aliases": [
-                    "related"
-                ],
-                "case-sensitive": false
-            },
-            {
                 "name": "translation",
                 "aliases": [
                     "translation"
@@ -2571,6 +2590,13 @@
                 "name": "PAGEBANNER",
                 "aliases": [
                     "PAGEBANNER"
+                ],
+                "case-sensitive": false
+            },
+            {
+                "name": "function",
+                "aliases": [
+                    "function"
                 ],
                 "case-sensitive": false
             },
@@ -3040,6 +3066,11 @@
             {
                 "prefix": "dpd",
                 "url": "http://lema.rae.es/dpd/?key=$1",
+                "protorel": false
+            },
+            {
+                "prefix": "dpla",
+                "url": "https://dp.la/item/$1",
                 "protorel": false
             },
             {
@@ -3538,6 +3569,12 @@
                 "protorel": false
             },
             {
+                "prefix": "listarchive",
+                "local": true,
+                "url": "https://lists.wikimedia.org/hyperkitty/$1",
+                "protorel": false
+            },
+            {
                 "prefix": "liswiki",
                 "url": "https://liswiki.org/wiki/$1",
                 "protorel": false
@@ -3585,7 +3622,7 @@
             {
                 "prefix": "mail",
                 "local": true,
-                "url": "https://lists.wikimedia.org/mailman/listinfo/$1",
+                "url": "https://lists.wikimedia.org/postorius/lists/$1.lists.wikimedia.org/",
                 "protorel": false
             },
             {
@@ -3944,7 +3981,7 @@
             },
             {
                 "prefix": "quarry",
-                "url": "https://quarry.wmflabs.org/$1",
+                "url": "https://quarry.wmcloud.org/$1",
                 "protorel": false
             },
             {
@@ -4258,6 +4295,11 @@
                 "protorel": false
             },
             {
+                "prefix": "twl",
+                "url": "https://wikipedialibrary.wmflabs.org/search/?q=$1",
+                "protorel": false
+            },
+            {
                 "prefix": "tyvawiki",
                 "url": "http://www.tyvawiki.org/index.php?title=$1",
                 "protorel": false
@@ -4339,6 +4381,12 @@
                 "prefix": "vrtwiki",
                 "local": true,
                 "url": "https://vrt-wiki.wikimedia.org/wiki/$1",
+                "protorel": false
+            },
+            {
+                "prefix": "vrts",
+                "local": true,
+                "url": "https://ticket.wikimedia.org/otrs/index.pl?Action=AgentTicketZoom&TicketID=$1",
                 "protorel": false
             },
             {
@@ -4509,6 +4557,11 @@
                 "prefix": "wikisource",
                 "local": true,
                 "url": "https://en.wikisource.org/wiki/$1",
+                "protorel": false
+            },
+            {
+                "prefix": "wikisp",
+                "url": "https://wikisp.org/wiki/$1",
                 "protorel": false
             },
             {
@@ -5094,7 +5147,7 @@
             {
                 "prefix": "ab",
                 "local": true,
-                "language": "Аҧсшәа",
+                "language": "аԥсшәа",
                 "url": "https://ab.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -5145,6 +5198,13 @@
                 "local": true,
                 "language": "አማርኛ",
                 "url": "https://am.wikipedia.org/wiki/$1",
+                "protorel": false
+            },
+            {
+                "prefix": "ami",
+                "local": true,
+                "language": "Pangcah",
+                "url": "https://ami.wikipedia.org/wiki/$1",
                 "protorel": false
             },
             {
@@ -5507,7 +5567,7 @@
             {
                 "prefix": "cv",
                 "local": true,
-                "language": "Чӑвашла",
+                "language": "чӑвашла",
                 "url": "https://cv.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -5523,6 +5583,13 @@
                 "local": true,
                 "language": "dansk",
                 "url": "https://da.wikipedia.org/wiki/$1",
+                "protorel": false
+            },
+            {
+                "prefix": "dag",
+                "local": true,
+                "language": "dagbanli",
+                "url": "https://dag.wikipedia.org/wiki/$1",
                 "protorel": false
             },
             {
@@ -5955,7 +6022,7 @@
             {
                 "prefix": "inh",
                 "local": true,
-                "language": "ГӀалгӀай",
+                "language": "гӀалгӀай",
                 "url": "https://inh.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -6039,7 +6106,7 @@
             {
                 "prefix": "kbd",
                 "local": true,
-                "language": "Адыгэбзэ",
+                "language": "адыгэбзэ",
                 "url": "https://kbd.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -6165,7 +6232,7 @@
             {
                 "prefix": "ky",
                 "local": true,
-                "language": "Кыргызча",
+                "language": "кыргызча",
                 "url": "https://ky.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -6613,7 +6680,7 @@
             {
                 "prefix": "os",
                 "local": true,
-                "language": "Ирон",
+                "language": "ирон",
                 "url": "https://os.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -6723,6 +6790,13 @@
                 "protorel": false
             },
             {
+                "prefix": "pwn",
+                "local": true,
+                "language": "pinayuanan",
+                "url": "https://pwn.wikipedia.org/wiki/$1",
+                "protorel": false
+            },
+            {
                 "prefix": "qu",
                 "local": true,
                 "language": "Runa Simi",
@@ -6746,7 +6820,7 @@
             {
                 "prefix": "rn",
                 "local": true,
-                "language": "Kirundi",
+                "language": "ikirundi",
                 "url": "https://rn.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -6860,6 +6934,13 @@
                 "local": true,
                 "language": "srpskohrvatski / српскохрватски",
                 "url": "https://sh.wikipedia.org/wiki/$1",
+                "protorel": false
+            },
+            {
+                "prefix": "shi",
+                "local": true,
+                "language": "Taclḥit",
+                "url": "https://shi.wikipedia.org/wiki/$1",
                 "protorel": false
             },
             {
@@ -7406,7 +7487,7 @@
             {
                 "prefix": "zh-tw",
                 "local": true,
-                "language": "中文（台灣）",
+                "language": "中文（臺灣）",
                 "url": "https://zh.wikipedia.org/wiki/$1",
                 "protorel": false
             },
@@ -7802,10 +7883,14 @@
             }
         },
         "defaultoptions": {
-            "monobook-responsive": true,
             "globaluserpage": true,
             "rcenhancedfilters-seen-highlight-button-counter": 0,
+            "advancedsearch-disable": false,
             "usebetatoolbar": 1,
+            "usecodemirror": 0,
+            "betafeatures-auto-enroll": false,
+            "popupsreferencepreviews": 0,
+            "popups-reference-previews": 0,
             "visualeditor-autodisable": 0,
             "visualeditor-betatempdisable": 0,
             "visualeditor-editor": "visualeditor",
@@ -7827,20 +7912,28 @@
             "echo-dont-email-read-notifications": false,
             "echo-subscriptions-web-edit-thank": true,
             "echo-subscriptions-email-edit-thank": false,
+            "discussiontools-betaenable": 0,
             "discussiontools-editmode": "",
             "discussiontools-newtopictool": 1,
             "discussiontools-replytool": 1,
-            "discussiontools-sourcemodetoolbar": 0,
+            "discussiontools-sourcemodetoolbar": 1,
             "discussiontools-topicsubscription": 1,
-            "discussiontools-abtest": "",
+            "discussiontools-autotopicsub": 0,
+            "discussiontools-abtest2": "",
             "usecodeeditor": 1,
+            "revisionslider-disable": false,
+            "twocolconflict-enabled": 1,
             "eventlogging-display-web": 0,
+            "eventlogging-display-console": 0,
             "uls-preferences": "",
             "compact-language-links": 1,
             "echo-subscriptions-web-cx": true,
+            "cx": false,
             "cx-enable-entrypoints": true,
             "cx-entrypoint-fd-status": "notshown",
             "cx_campaign_newarticle_shown": false,
+            "rcshowwikidata": 0,
+            "wlshowwikibase": 0,
             "echo-subscriptions-web-oauth-owner": true,
             "echo-subscriptions-email-oauth-owner": true,
             "echo-subscriptions-web-oauth-admin": true,
@@ -7851,6 +7944,7 @@
             "oresHighlight": false,
             "oresRCHideNonDamaging": false,
             "oresWatchlistHideNonDamaging": false,
+            "twl-notified": null,
             "ccmeonemails": 0,
             "date": "default",
             "diffonly": 0,
@@ -7876,18 +7970,17 @@
             "nickname": "",
             "pst-cssjs": 1,
             "norollbackdiff": 0,
-            "numberheadings": 0,
             "previewonfirst": 0,
             "previewontop": 1,
             "rcdays": 7,
             "rcenhancedfilters-disable": 0,
             "rclimit": 50,
             "search-match-redirect": true,
+            "search-special-page": "Search",
             "showhiddencats": false,
             "shownumberswatching": 1,
             "showrollbackconfirmation": 0,
-            "skin": "vector",
-            "stubthreshold": 0,
+            "skin": "vector-2022",
             "thumbsize": 4,
             "underline": 2,
             "uselivepreview": 0,
@@ -7913,9 +8006,10 @@
             "useeditwarning": 1,
             "prefershttps": 1,
             "requireemail": 0,
-            "wlshowwikibase": 0,
+            "skin-responsive": 1,
             "wikilove-enabled": 1,
             "echo-cross-wiki-notifications": 1,
+            "growthexperiments-addimage-desktop": 1,
             "centralnotice-display-campaign-type-advocacy": 1,
             "centralnotice-display-campaign-type-article-writing": 1,
             "centralnotice-display-campaign-type-photography": 1,
@@ -7924,8 +8018,9 @@
             "centralnotice-display-campaign-type-governance": 1,
             "centralnotice-display-campaign-type-maintenance": 1,
             "centralnotice-display-campaign-type-special": 1,
-            "timecorrection": "System|120",
+            "timecorrection": "System|60",
             "language": "sr",
+            "variant": "sr",
             "variant-ban": "ban",
             "variant-en": "en",
             "variant-crh": "crh",
@@ -7934,72 +8029,158 @@
             "variant-kk": "kk",
             "variant-ku": "ku",
             "variant-shi": "shi",
-            "variant": "sr",
+            "variant-sr": "sr",
             "variant-tg": "tg",
             "variant-uz": "uz",
             "variant-zh": "zh",
-            "searchNs0": true,
-            "gadget-confirmationRollback-mobile": 1,
+            "searchNs0": 1,
+            "searchNs1": 0,
+            "searchNs2": 0,
+            "searchNs3": 0,
+            "searchNs4": 0,
+            "searchNs5": 0,
+            "searchNs6": 0,
+            "searchNs7": 0,
+            "searchNs8": 0,
+            "searchNs9": 0,
+            "searchNs10": 0,
+            "searchNs11": 0,
+            "searchNs12": 0,
+            "searchNs13": 0,
+            "searchNs14": 0,
+            "searchNs15": 0,
+            "searchNs100": 0,
+            "searchNs101": 0,
+            "searchNs118": 0,
+            "searchNs119": 0,
+            "searchNs828": 0,
+            "searchNs829": 0,
+            "searchNs2300": 0,
+            "searchNs2301": 0,
+            "searchNs2302": 0,
+            "searchNs2303": 0,
             "gadget-ReferenceTooltips": 1,
+            "gadget-DisambiguationLinks": 0,
+            "gadget-markblocked": 0,
+            "gadget-imagelinks": 0,
+            "gadget-exlinks": 0,
+            "gadget-Navigation_popups": 0,
+            "gadget-GoogleTrans": 0,
+            "gadget-PrintOptions": 0,
+            "gadget-removeAccessKeys": 0,
             "gadget-watchlist-notice": 1,
-            "gadget-WatchlistBase": 1,
             "gadget-WatchlistGreenIndicators": 1,
             "gadget-WatchlistGreenIndicatorsMono": 1,
             "gadget-SubtleUpdatemarker": 1,
-            "gadget-HotCat": 1,
             "gadget-charinsert": 1,
             "gadget-refToolbar": 1,
-            "gadget-extra-toolbar-buttons": 1,
-            "cirrussearch-pref-completion-profile": "fuzzy",
+            "gadget-HotCat": 0,
+            "gadget-Cat-a-lot": 0,
+            "gadget-defaultsummaries": 0,
+            "gadget-Shortdesc-helper-loader": 0,
+            "gadget-BrzoBrisanje": 0,
+            "gadget-ProveIt": 0,
+            "gadget-Poruke": 0,
+            "gadget-DotsSyntaxHighlighter": 0,
+            "gadget-wikEd": 0,
+            "gadget-LocalLiveClock": 0,
+            "gadget-edittop": 0,
+            "gadget-addsection-plus": 0,
+            "gadget-XTools-ArticleInfo": 0,
+            "gadget-ToDoList": 0,
+            "gadget-RevisionID": 0,
+            "gadget-PatrolLog": 0,
+            "gadget-purgetab": 0,
+            "gadget-widensearch": 0,
+            "gadget-OldDiff": 0,
+            "gadget-confirmationRollback-mobile": 1,
+            "gadget-modrollback": 0,
+            "gadget-Quick_patrol": 0,
+            "gadget-CleanDeleteReasons": 0,
+            "gadget-contribsrange": 0,
+            "gadget-RTRC": 0,
+            "tmh-videojs": false,
             "multimediaviewer-enable": 1,
-            "popups": "0",
             "mf_amc_optin": "0",
             "echo-email-format": "html",
             "echo-subscriptions-email-system": true,
             "echo-subscriptions-web-system": true,
+            "echo-subscriptions-push-system": true,
             "echo-subscriptions-email-system-noemail": false,
             "echo-subscriptions-web-system-noemail": true,
+            "echo-subscriptions-push-system-noemail": true,
             "echo-subscriptions-email-system-emailonly": false,
             "echo-subscriptions-web-system-emailonly": true,
+            "echo-subscriptions-push-system-emailonly": true,
             "echo-subscriptions-email-user-rights": true,
             "echo-subscriptions-web-user-rights": true,
+            "echo-subscriptions-push-user-rights": true,
             "echo-subscriptions-email-other": false,
             "echo-subscriptions-web-other": true,
+            "echo-subscriptions-push-other": true,
             "echo-subscriptions-email-edit-user-talk": false,
             "echo-subscriptions-web-edit-user-talk": true,
+            "echo-subscriptions-push-edit-user-talk": true,
             "echo-subscriptions-email-reverted": false,
             "echo-subscriptions-web-reverted": true,
+            "echo-subscriptions-push-reverted": true,
             "echo-subscriptions-email-article-linked": false,
             "echo-subscriptions-web-article-linked": false,
+            "echo-subscriptions-push-article-linked": false,
             "echo-subscriptions-email-mention": false,
             "echo-subscriptions-web-mention": true,
+            "echo-subscriptions-push-mention": true,
             "echo-subscriptions-email-mention-failure": false,
             "echo-subscriptions-web-mention-failure": false,
+            "echo-subscriptions-push-mention-failure": false,
             "echo-subscriptions-email-mention-success": false,
             "echo-subscriptions-web-mention-success": false,
+            "echo-subscriptions-push-mention-success": false,
             "echo-subscriptions-email-emailuser": false,
             "echo-subscriptions-web-emailuser": true,
+            "echo-subscriptions-push-emailuser": true,
             "echo-subscriptions-email-thank-you-edit": false,
             "echo-subscriptions-web-thank-you-edit": true,
+            "echo-subscriptions-push-thank-you-edit": true,
+            "echo-subscriptions-push-login-fail": true,
+            "echo-subscriptions-push-login-success": true,
+            "echo-subscriptions-push-edit-thank": true,
+            "echo-subscriptions-email-dt-subscription": false,
+            "echo-subscriptions-web-dt-subscription": true,
+            "echo-subscriptions-push-dt-subscription": true,
             "echo-subscriptions-email-cx": false,
+            "echo-subscriptions-push-cx": true,
+            "echo-subscriptions-email-ge-mentorship": false,
+            "echo-subscriptions-web-ge-mentorship": true,
+            "echo-subscriptions-push-ge-mentorship": true,
             "echo-subscriptions-email-wikibase-action": false,
             "echo-subscriptions-web-wikibase-action": true,
-            "twocolconflict-enabled": 1,
+            "echo-subscriptions-push-wikibase-action": true,
+            "cirrussearch-pref-completion-profile": "fuzzy",
+            "popups": "0",
             "growthexperiments-help-panel-tog-help-panel": false,
             "homepage_mobile_discovery_notice_seen": true,
-            "growthexperiments-homepage-suggestededits-guidance-blue-dot": "{\"vector\":{\"link-recommendation\":true},\"minerva\":{\"link-recommendation\":true}}",
+            "growthexperiments-homepage-suggestededits-guidance-blue-dot": "{\"vector\":{\"link-recommendation\":true,\"image-recommendation\":true},\"minerva\":{\"link-recommendation\":true,\"image-recommendation\":true}}",
+            "growthexperiments-homepage-enable": false,
+            "growthexperiments-homepage-pt-link": false,
             "growthexperiments-tour-help-panel": true,
             "growthexperiments-tour-homepage-mentorship": true,
             "growthexperiments-tour-homepage-welcome": true,
-            "growthexperiments-tour-homepage-discovery": true
+            "growthexperiments-tour-homepage-discovery": true,
+            "growthexperiments-starred-mentees": "",
+            "growthexperiments-mentor-dashboard-seen": 0,
+            "growthexperiments-mentor-dashboard-last-update": null,
+            "growthexperiments-mentee-overview-filters": "{\"minedits\":1,\"maxedits\":500}",
+            "growthexperiments-homepage-mentorship-enabled": 1,
+            "growthexperiments-mentorship-weight": 2
         },
         "specialpagealiases": [
             {
                 "realname": "BrokenRedirects",
                 "aliases": [
-                    "ПокваренаПреусмерења",
                     "Покварена_преусмерења",
                     "Неисправна_преусмерења",
+                    "ПокваренаПреусмерења",
                     "BrokenRedirects"
                 ]
             },
@@ -8015,14 +8196,15 @@
             {
                 "realname": "DoubleRedirects",
                 "aliases": [
-                    "ДвострукаПреусмерења",
                     "Двострука_преусмерења",
+                    "ДвострукаПреусмерења",
                     "DoubleRedirects"
                 ]
             },
             {
                 "realname": "Longpages",
                 "aliases": [
+                    "Дуге_странице",
                     "ДугачкеСтранице",
                     "ДугачкеСтране",
                     "LongPages"
@@ -8031,6 +8213,7 @@
             {
                 "realname": "Ancientpages",
                 "aliases": [
+                    "Најстарије_странице",
                     "НајстаријеСтранице",
                     "НајстаријиЧланци",
                     "AncientPages"
@@ -8047,6 +8230,7 @@
             {
                 "realname": "Fewestrevisions",
                 "aliases": [
+                    "Најмање_измена",
                     "НајмањеИзмена",
                     "ЧланциСаНајмањеРевизија",
                     "FewestRevisions"
@@ -8055,30 +8239,31 @@
             {
                 "realname": "Withoutinterwiki",
                 "aliases": [
-                    "БезМеђувикија",
                     "Без_међувикија",
+                    "БезМеђувикија",
                     "WithoutInterwiki"
                 ]
             },
             {
                 "realname": "Protectedpages",
                 "aliases": [
-                    "ЗаштићенеСтранице",
                     "Заштићене_странице",
+                    "ЗаштићенеСтранице",
                     "ProtectedPages"
                 ]
             },
             {
                 "realname": "Protectedtitles",
                 "aliases": [
-                    "ЗаштићениНаслови",
                     "Заштићени_наслови",
+                    "ЗаштићениНаслови",
                     "ProtectedTitles"
                 ]
             },
             {
                 "realname": "Shortpages",
                 "aliases": [
+                    "Кратке_странице",
                     "КраткеСтранице",
                     "КраткиЧланци",
                     "ShortPages"
@@ -8087,6 +8272,7 @@
             {
                 "realname": "Uncategorizedcategories",
                 "aliases": [
+                    "Некатегорисане_категорије",
                     "НекатегорисанеКатегорије",
                     "КатегоријеБезКатегорија",
                     "UncategorizedCategories"
@@ -8095,6 +8281,7 @@
             {
                 "realname": "Uncategorizedimages",
                 "aliases": [
+                    "Некатегорисане_датотеке",
                     "НекатегорисанеДатотеке",
                     "СликеБезКатегорија",
                     "UncategorizedFiles",
@@ -8104,15 +8291,17 @@
             {
                 "realname": "Uncategorizedpages",
                 "aliases": [
+                    "Некатегорисане_странице",
                     "НекатегорисанеСтранице",
-                    "ЧланциБезКатегорија",
                     "Чланци_без_категорија",
+                    "ЧланциБезКатегорија",
                     "UncategorizedPages"
                 ]
             },
             {
                 "realname": "Uncategorizedtemplates",
                 "aliases": [
+                    "Некатегорисани_шаблони",
                     "НекатегорисаниШаблони",
                     "ШаблониБезКатегорија",
                     "UncategorizedTemplates"
@@ -8121,6 +8310,7 @@
             {
                 "realname": "Unusedcategories",
                 "aliases": [
+                    "Неупотребљене_категорије",
                     "НеискоришћенеКатегорије",
                     "UnusedCategories"
                 ]
@@ -8128,6 +8318,7 @@
             {
                 "realname": "Unusedimages",
                 "aliases": [
+                    "Неупотребљене_датотеке",
                     "НеискоришћенеДатотеке",
                     "НеискоришћенеСлике",
                     "UnusedFiles",
@@ -8137,6 +8328,7 @@
             {
                 "realname": "Unusedtemplates",
                 "aliases": [
+                    "Неупотребљени_шаблони",
                     "НеискоришћениШаблони",
                     "UnusedTemplates"
                 ]
@@ -8144,6 +8336,7 @@
             {
                 "realname": "Unwatchedpages",
                 "aliases": [
+                    "Ненадгледане_странице",
                     "НенадгледанеСтранице",
                     "UnwatchedPages"
                 ]
@@ -8151,6 +8344,7 @@
             {
                 "realname": "Wantedcategories",
                 "aliases": [
+                    "Тражене_категорије",
                     "ТраженеКатегорије",
                     "WantedCategories"
                 ]
@@ -8158,6 +8352,7 @@
             {
                 "realname": "Wantedfiles",
                 "aliases": [
+                    "Тражене_датотеке",
                     "ТраженеДатотеке",
                     "ТраженеСлике",
                     "WantedFiles"
@@ -8166,6 +8361,7 @@
             {
                 "realname": "Wantedpages",
                 "aliases": [
+                    "Тражене_странице",
                     "ТраженеСтранице",
                     "ТраженеСтране",
                     "WantedPages",
@@ -8175,6 +8371,7 @@
             {
                 "realname": "Wantedtemplates",
                 "aliases": [
+                    "Тражени_шаблони",
                     "ТражениШаблони",
                     "WantedTemplates"
                 ]
@@ -8182,14 +8379,15 @@
             {
                 "realname": "Allpages",
                 "aliases": [
-                    "СвеСтранице",
                     "Све_странице",
+                    "СвеСтранице",
                     "AllPages"
                 ]
             },
             {
                 "realname": "Prefixindex",
                 "aliases": [
+                    "Странице_с_префиксом",
                     "СтраницеСаПрефиксом",
                     "PrefixIndex"
                 ]
@@ -8204,14 +8402,15 @@
             {
                 "realname": "Listredirects",
                 "aliases": [
-                    "СписакПреусмерења",
                     "Списак_преусмерења",
+                    "СписакПреусмерења",
                     "ListRedirects"
                 ]
             },
             {
                 "realname": "PagesWithProp",
                 "aliases": [
+                    "Странице_са_својством",
                     "СтраницеСаСвојством",
                     "PagesWithProp",
                     "Pageswithprop",
@@ -8222,6 +8421,7 @@
             {
                 "realname": "TrackingCategories",
                 "aliases": [
+                    "Категорије_за_праћење",
                     "КатегоријеЗаПраћење",
                     "TrackingCategories"
                 ]
@@ -8229,8 +8429,8 @@
             {
                 "realname": "Userlogin",
                 "aliases": [
-                    "КорисничкаПријава",
                     "Корисничка_пријава",
+                    "КорисничкаПријава",
                     "UserLogin",
                     "Login"
                 ]
@@ -8238,8 +8438,8 @@
             {
                 "realname": "Userlogout",
                 "aliases": [
-                    "КорисничкаОдјава",
                     "Корисничка_одјава",
+                    "КорисничкаОдјава",
                     "UserLogout",
                     "Logout"
                 ]
@@ -8247,14 +8447,15 @@
             {
                 "realname": "CreateAccount",
                 "aliases": [
-                    "ОтвориНалог",
                     "Отвори_налог",
+                    "ОтвориНалог",
                     "CreateAccount"
                 ]
             },
             {
                 "realname": "LinkAccounts",
                 "aliases": [
+                    "Повежи_налоге",
                     "ПовежиНалоге",
                     "LinkAccounts"
                 ]
@@ -8262,6 +8463,7 @@
             {
                 "realname": "UnlinkAccounts",
                 "aliases": [
+                    "Одвежи_налоге",
                     "ОдвежиНалоге",
                     "УклониПовезивањеНалога",
                     "UnlinkAccounts"
@@ -8270,6 +8472,7 @@
             {
                 "realname": "ChangeCredentials",
                 "aliases": [
+                    "Промени_акредитиве",
                     "ПромениАкредитиве",
                     "ChangeCredentials"
                 ]
@@ -8277,6 +8480,7 @@
             {
                 "realname": "RemoveCredentials",
                 "aliases": [
+                    "Уклони_акредитиве",
                     "УклониАкредитиве",
                     "RemoveCredentials"
                 ]
@@ -8284,8 +8488,8 @@
             {
                 "realname": "Activeusers",
                 "aliases": [
-                    "АктивниКорисници",
                     "Активни_корисници",
+                    "АктивниКорисници",
                     "ActiveUsers"
                 ]
             },
@@ -8310,6 +8514,7 @@
             {
                 "realname": "BlockList",
                 "aliases": [
+                    "Списак_блокада",
                     "СписакБлокада",
                     "СписакБлокираних",
                     "ПописБлокираних",
@@ -8321,7 +8526,9 @@
             {
                 "realname": "AutoblockList",
                 "aliases": [
+                    "Списак_аутоблокада",
                     "СписакАутоблокова",
+                    "Аутоблокаде",
                     "Аутоблокови",
                     "AutoblockList",
                     "ListAutoblocks"
@@ -8330,6 +8537,7 @@
             {
                 "realname": "ChangePassword",
                 "aliases": [
+                    "Промени_лозинку",
                     "ПромениЛозинку",
                     "ChangePassword",
                     "ResetPass",
@@ -8339,6 +8547,7 @@
             {
                 "realname": "BotPasswords",
                 "aliases": [
+                    "Лозинке_ботова",
                     "ЛозинкеБотова",
                     "BotPasswords"
                 ]
@@ -8346,6 +8555,7 @@
             {
                 "realname": "PasswordReset",
                 "aliases": [
+                    "Ресетовање_лозинке",
                     "РесетовањеЛозинке",
                     "PasswordReset"
                 ]
@@ -8353,6 +8563,7 @@
             {
                 "realname": "DeletedContributions",
                 "aliases": [
+                    "Избрисани_доприноси",
                     "ОбрисаниДоприноси",
                     "DeletedContributions"
                 ]
@@ -8368,6 +8579,7 @@
             {
                 "realname": "ResetTokens",
                 "aliases": [
+                    "Ресетуј_токене",
                     "РесетујЖетоне",
                     "ResetTokens"
                 ]
@@ -8384,8 +8596,9 @@
             {
                 "realname": "Listgrouprights",
                 "aliases": [
-                    "СписакКорисничкихПрава",
+                    "Списак_права_корисничких_група",
                     "Списак_корисничких_права",
+                    "СписакКорисничкихПрава",
                     "ListGroupRights",
                     "UserGroupRights"
                 ]
@@ -8393,6 +8606,7 @@
             {
                 "realname": "Listgrants",
                 "aliases": [
+                    "Списак_дозвола",
                     "СписакДозвола",
                     "ListGrants"
                 ]
@@ -8400,10 +8614,10 @@
             {
                 "realname": "Listusers",
                 "aliases": [
-                    "СписакКорисника",
-                    "КорисничкиСписак",
                     "Списак_корисника",
+                    "СписакКорисника",
                     "Кориснички_списак",
+                    "КорисничкиСписак",
                     "ListUsers",
                     "UserList",
                     "Users"
@@ -8412,24 +8626,25 @@
             {
                 "realname": "Listadmins",
                 "aliases": [
+                    "Списак_администратора",
                     "СписакАдминистратора",
                     "ПописАдминистратора",
-                    "Списак_администратора",
                     "ListAdmins"
                 ]
             },
             {
                 "realname": "Listbots",
                 "aliases": [
+                    "Списак_ботова",
                     "СписакБотова",
                     "ПописБотова",
-                    "Списак_ботова",
                     "ListBots"
                 ]
             },
             {
                 "realname": "Userrights",
                 "aliases": [
+                    "Корисничка_права",
                     "КорисничкаПрава",
                     "UserRights",
                     "MakeSysop",
@@ -8439,6 +8654,7 @@
             {
                 "realname": "EditWatchlist",
                 "aliases": [
+                    "Уреди_списак_надгледања",
                     "УредиСписакНадгледања",
                     "EditWatchlist"
                 ]
@@ -8446,6 +8662,7 @@
             {
                 "realname": "PasswordPolicies",
                 "aliases": [
+                    "Правила_о_лозинкама",
                     "ПравилаЗаЛозинке",
                     "PasswordPolicies"
                 ]
@@ -8453,6 +8670,7 @@
             {
                 "realname": "Newimages",
                 "aliases": [
+                    "Нове_датотеке",
                     "НовеДатотеке",
                     "НовиФајлови",
                     "НовеСлике",
@@ -8473,14 +8691,15 @@
             {
                 "realname": "Watchlist",
                 "aliases": [
-                    "СписакНадгледања",
                     "Списак_надгледања",
+                    "СписакНадгледања",
                     "Watchlist"
                 ]
             },
             {
                 "realname": "Newpages",
                 "aliases": [
+                    "Нове_странице",
                     "НовеСтранице",
                     "НовеСтране",
                     "NewPages"
@@ -8489,14 +8708,15 @@
             {
                 "realname": "Recentchanges",
                 "aliases": [
-                    "СкорашњеИзмене",
                     "Скорашње_измене",
+                    "СкорашњеИзмене",
                     "RecentChanges"
                 ]
             },
             {
                 "realname": "Recentchangeslinked",
                 "aliases": [
+                    "Повезане_измене",
                     "СроднеИзмене",
                     "RecentChangesLinked",
                     "RelatedChanges"
@@ -8512,9 +8732,9 @@
             {
                 "realname": "Listfiles",
                 "aliases": [
+                    "Списак_датотека",
                     "СписакДатотека",
                     "СписакСлика",
-                    "Списак_датотека",
                     "ListFiles",
                     "FileList",
                     "ImageList"
@@ -8523,14 +8743,16 @@
             {
                 "realname": "Filepath",
                 "aliases": [
-                    "ПутањаДатотеке",
+                    "Путања_до_датотеке",
                     "Путања_датотеке",
+                    "ПутањаДатотеке",
                     "FilePath"
                 ]
             },
             {
                 "realname": "MediaStatistics",
                 "aliases": [
+                    "Статистика_датотека",
                     "СтатистикеМедија",
                     "MediaStatistics"
                 ]
@@ -8538,6 +8760,7 @@
             {
                 "realname": "MIMEsearch",
                 "aliases": [
+                    "Претрага_по_MIME-у",
                     "MIME_претрага",
                     "MIMESearch"
                 ]
@@ -8545,6 +8768,7 @@
             {
                 "realname": "FileDuplicateSearch",
                 "aliases": [
+                    "Претрага_дупликата_датотека",
                     "ПретрагаДупликатаДатотека",
                     "FileDuplicateSearch"
                 ]
@@ -8567,6 +8791,7 @@
             {
                 "realname": "ListDuplicatedFiles",
                 "aliases": [
+                    "Списак_дуплираних_датотека",
                     "СписакДупликата",
                     "ListDuplicatedFiles",
                     "ListFileDuplicates"
@@ -8575,6 +8800,7 @@
             {
                 "realname": "ApiSandbox",
                 "aliases": [
+                    "Песак_API-ја",
                     "API_песак",
                     "АПИ_песак",
                     "ApiSandbox"
@@ -8583,6 +8809,7 @@
             {
                 "realname": "Statistics",
                 "aliases": [
+                    "Статистика",
                     "Статистике",
                     "Statistics",
                     "Stats"
@@ -8591,8 +8818,8 @@
             {
                 "realname": "Allmessages",
                 "aliases": [
-                    "СвеПоруке",
                     "Све_поруке",
+                    "СвеПоруке",
                     "AllMessages"
                 ]
             },
@@ -8607,24 +8834,27 @@
             {
                 "realname": "Lockdb",
                 "aliases": [
+                    "Закључај_базу_података",
                     "ЗакључајБазуПодатака",
-                    "ЗакључајБазу",
                     "Закључај_базу",
+                    "ЗакључајБазу",
                     "LockDB"
                 ]
             },
             {
                 "realname": "Unlockdb",
                 "aliases": [
+                    "Откључај_базу_података",
                     "ОткључајБазуПодатака",
-                    "ОткључајБазу",
                     "Откључај_базу",
+                    "ОткључајБазу",
                     "UnlockDB"
                 ]
             },
             {
                 "realname": "LinkSearch",
                 "aliases": [
+                    "Претрага_веза",
                     "ПретрагаВеза",
                     "LinkSearch"
                 ]
@@ -8632,9 +8862,9 @@
             {
                 "realname": "Randompage",
                 "aliases": [
+                    "Насумична_страница",
                     "СлучајнаСтраница",
                     "СлучајнаСтрана",
-                    "Насумична_страница",
                     "Random",
                     "RandomPage"
                 ]
@@ -8642,6 +8872,7 @@
             {
                 "realname": "RandomInCategory",
                 "aliases": [
+                    "Насумична_страница_у_категорији",
                     "Случајна_страница_у_категорији",
                     "Случајна_страна_у_категорији",
                     "RandomInCategory"
@@ -8650,6 +8881,7 @@
             {
                 "realname": "Randomredirect",
                 "aliases": [
+                    "Насумично_преусмерење",
                     "СлучајноПреусмерење",
                     "RandomRedirect"
                 ]
@@ -8657,6 +8889,7 @@
             {
                 "realname": "Randomrootpage",
                 "aliases": [
+                    "Насумична_коренска_страница",
                     "СлучајнаОсновнаСтраница",
                     "СлучајнаОсновнаСтрана",
                     "RandomRootpage"
@@ -8665,6 +8898,7 @@
             {
                 "realname": "GoToInterwiki",
                 "aliases": [
+                    "Посети_међувики",
                     "ПосетиМеђувики",
                     "GoToInterwiki"
                 ]
@@ -8672,6 +8906,7 @@
             {
                 "realname": "Mostlinkedcategories",
                 "aliases": [
+                    "Најповезаније_категорије",
                     "НајповезанијеКатегорије",
                     "MostLinkedCategories",
                     "MostUsedCategories"
@@ -8680,6 +8915,7 @@
             {
                 "realname": "Mostimages",
                 "aliases": [
+                    "Најповезаније_датотеке",
                     "НајповезанијеДатотеке",
                     "НајповезанијеСлике",
                     "MostLinkedFiles",
@@ -8690,6 +8926,7 @@
             {
                 "realname": "Mostinterwikis",
                 "aliases": [
+                    "Највише_међувикија",
                     "НајвишеМеђувикија",
                     "MostInterwikis"
                 ]
@@ -8697,6 +8934,7 @@
             {
                 "realname": "Mostlinked",
                 "aliases": [
+                    "Најповезаније_странице",
                     "НајповезанијеСтранице",
                     "НајповезанијеСтране",
                     "MostLinkedPages",
@@ -8706,6 +8944,7 @@
             {
                 "realname": "Mostlinkedtemplates",
                 "aliases": [
+                    "Најповезанији_шаблони",
                     "НајповезанијиШаблони",
                     "MostTranscludedPages",
                     "MostLinkedTemplates",
@@ -8715,6 +8954,7 @@
             {
                 "realname": "Mostcategories",
                 "aliases": [
+                    "Највише_категорија",
                     "НајвишеКатегорија",
                     "ЧланциСаНајвишеКатегорија",
                     "MostCategories"
@@ -8723,6 +8963,7 @@
             {
                 "realname": "Mostrevisions",
                 "aliases": [
+                    "Највише_измена",
                     "НајвишеИзмена",
                     "НајвишеРевизија",
                     "ЧланциСаНајвишеРевизија",
@@ -8732,8 +8973,8 @@
             {
                 "realname": "ComparePages",
                 "aliases": [
-                    "УпоредиСтранице",
                     "Упореди_странице",
+                    "УпоредиСтранице",
                     "ComparePages"
                 ]
             },
@@ -8761,6 +9002,7 @@
             {
                 "realname": "Whatlinkshere",
                 "aliases": [
+                    "Шта_води_довде",
                     "ШтаВодиОвде",
                     "Шта_је_повезано_овде",
                     "WhatLinksHere"
@@ -8769,14 +9011,16 @@
             {
                 "realname": "MergeHistory",
                 "aliases": [
-                    "СпојиИсторију",
+                    "Обједини_историју",
                     "Споји_историју",
+                    "СпојиИсторију",
                     "MergeHistory"
                 ]
             },
             {
                 "realname": "ExpandTemplates",
                 "aliases": [
+                    "Прошири_шаблоне",
                     "ПрошириШаблоне",
                     "ExpandTemplates"
                 ]
@@ -8784,6 +9028,7 @@
             {
                 "realname": "ChangeContentModel",
                 "aliases": [
+                    "Промени_садржински_модел",
                     "ПромениМоделСадржаја",
                     "ИзмениМоделСадржаја",
                     "ChangeContentModel"
@@ -8792,14 +9037,16 @@
             {
                 "realname": "Booksources",
                 "aliases": [
-                    "КњижевниИзвори",
+                    "Штампани_извори",
                     "ШтампаниИзвори",
+                    "КњижевниИзвори",
                     "BookSources"
                 ]
             },
             {
                 "realname": "ApiHelp",
                 "aliases": [
+                    "Помоћ_око_API-ја",
                     "API_помоћ",
                     "ApiHelp"
                 ]
@@ -8807,8 +9054,16 @@
             {
                 "realname": "Blankpage",
                 "aliases": [
+                    "Празна_страница",
                     "ПразнаСтраница",
                     "BlankPage"
+                ]
+            },
+            {
+                "realname": "DeletePage",
+                "aliases": [
+                    "DeletePage",
+                    "Delete"
                 ]
             },
             {
@@ -8821,6 +9076,7 @@
             {
                 "realname": "EditPage",
                 "aliases": [
+                    "Уреди_страницу",
                     "УредиСтраницу",
                     "Уреди",
                     "EditPage",
@@ -8830,6 +9086,7 @@
             {
                 "realname": "EditTags",
                 "aliases": [
+                    "Уреди_ознаке",
                     "УредиОзнаке",
                     "EditTags"
                 ]
@@ -8837,6 +9094,7 @@
             {
                 "realname": "Emailuser",
                 "aliases": [
+                    "Пошаљи_имејл_кориснику",
                     "ПошаљиИмејлКориснику",
                     "EmailUser",
                     "Email"
@@ -8845,18 +9103,18 @@
             {
                 "realname": "Movepage",
                 "aliases": [
+                    "Премести_страницу",
                     "ПреместиСтраницу",
                     "Премести",
                     "Преусмери",
-                    "Премести_страницу",
                     "MovePage"
                 ]
             },
             {
                 "realname": "Mycontributions",
                 "aliases": [
-                    "МојиДоприноси",
                     "Моји_доприноси",
+                    "МојиДоприноси",
                     "Моји_прилози",
                     "MyContributions"
                 ]
@@ -8864,32 +9122,32 @@
             {
                 "realname": "MyLanguage",
                 "aliases": [
-                    "МојЈезик",
                     "Мој_језик",
+                    "МојЈезик",
                     "MyLanguage"
                 ]
             },
             {
                 "realname": "Mypage",
                 "aliases": [
-                    "МојаСтраница",
                     "Моја_страница",
+                    "МојаСтраница",
                     "MyPage"
                 ]
             },
             {
                 "realname": "Mytalk",
                 "aliases": [
-                    "МојРазговор",
                     "Мој_разговор",
+                    "МојРазговор",
                     "MyTalk"
                 ]
             },
             {
                 "realname": "PageHistory",
                 "aliases": [
-                    "ИсторијаСтранице",
                     "Историја_странице",
+                    "ИсторијаСтранице",
                     "Историја",
                     "PageHistory",
                     "History"
@@ -8903,6 +9161,13 @@
                 ]
             },
             {
+                "realname": "ProtectPage",
+                "aliases": [
+                    "ProtectPage",
+                    "Protect"
+                ]
+            },
+            {
                 "realname": "Purge",
                 "aliases": [
                     "Освежи",
@@ -8912,6 +9177,7 @@
             {
                 "realname": "Myuploads",
                 "aliases": [
+                    "Моја_отпремања",
                     "МојаОтпремања",
                     "Моја_слања",
                     "MyUploads",
@@ -8921,6 +9187,7 @@
             {
                 "realname": "AllMyUploads",
                 "aliases": [
+                    "Сва_моја_отпремања",
                     "СваМојаОтпремања",
                     "СвеМојеДатотеке",
                     "AllMyUploads",
@@ -8930,8 +9197,8 @@
             {
                 "realname": "NewSection",
                 "aliases": [
-                    "НовиОдељак",
                     "Нови_одељак",
+                    "НовиОдељак",
                     "NewSection",
                     "Newsection"
                 ]
@@ -8939,6 +9206,7 @@
             {
                 "realname": "PermanentLink",
                 "aliases": [
+                    "Трајна_веза",
                     "ТрајнаВеза",
                     "Привремена_веза",
                     "PermanentLink",
@@ -8955,6 +9223,7 @@
             {
                 "realname": "Revisiondelete",
                 "aliases": [
+                    "Брисање_измене",
                     "БрисањеИзмене",
                     "УклањањеИзмене",
                     "RevisionDelete"
@@ -8963,6 +9232,7 @@
             {
                 "realname": "RunJobs",
                 "aliases": [
+                    "Изврши_послове",
                     "ИзвршиПослове",
                     "RunJobs"
                 ]
@@ -8970,17 +9240,18 @@
             {
                 "realname": "Specialpages",
                 "aliases": [
+                    "Посебне_странице",
                     "ПосебнеСтранице",
                     "ПосебнеСтране",
-                    "СпецијалнеСтране",
-                    "Посебне_странице",
                     "Специјалне_странице",
+                    "СпецијалнеСтране",
                     "SpecialPages"
                 ]
             },
             {
                 "realname": "PageData",
                 "aliases": [
+                    "Подаци_странице",
                     "ПодациСтранице",
                     "PageData"
                 ]
@@ -8995,6 +9266,7 @@
             {
                 "realname": "Confirmemail",
                 "aliases": [
+                    "Потврди_имејл",
                     "ПотврдиИмејл",
                     "ПотврдиЕ-пошту",
                     "Потврда_е-поште",
@@ -9004,6 +9276,7 @@
             {
                 "realname": "Invalidateemail",
                 "aliases": [
+                    "Откажи_потврду_имејла",
                     "ПоништиИмејл",
                     "InvalidateEmail"
                 ]
@@ -9011,6 +9284,7 @@
             {
                 "realname": "ChangeEmail",
                 "aliases": [
+                    "Промени_имејл",
                     "ПромениИмејл",
                     "ПромениИмејлАдресу",
                     "ChangeEmail"
@@ -9258,13 +9532,6 @@
                 ]
             },
             {
-                "realname": "GlobalUserMerge",
-                "aliases": [
-                    "Глобално_спајање_корисника",
-                    "GlobalUserMerge"
-                ]
-            },
-            {
                 "realname": "ApiFeatureUsage",
                 "aliases": [
                     "Употреба_извршилачке_функције",
@@ -9388,18 +9655,18 @@
                 ]
             },
             {
-                "realname": "History",
-                "aliases": [
-                    "Историја",
-                    "History"
-                ]
-            },
-            {
                 "realname": "MobileDiff",
                 "aliases": [
                     "МобилнеРазлике",
                     "Мобилне_разлике",
                     "MobileDiff"
+                ]
+            },
+            {
+                "realname": "History",
+                "aliases": [
+                    "Историја",
+                    "History"
                 ]
             },
             {
@@ -9506,17 +9773,15 @@
                 ]
             },
             {
-                "realname": "TwoColConflictProvideSubmittedText",
+                "realname": "TopicSubscriptions",
                 "aliases": [
-                    "ProvideSubmittedText"
+                    "TopicSubscriptions"
                 ]
             },
             {
-                "realname": "UserMerge",
+                "realname": "TwoColConflictProvideSubmittedText",
                 "aliases": [
-                    "СпајањеКорисника",
-                    "Спајање_корисника",
-                    "UserMerge"
+                    "ProvideSubmittedText"
                 ]
             },
             {
@@ -9669,9 +9934,46 @@
                 ]
             },
             {
+                "realname": "MentorDashboard",
+                "aliases": [
+                    "MentorDashboard"
+                ]
+            },
+            {
+                "realname": "QuitMentorship",
+                "aliases": [
+                    "QuitMentorship"
+                ]
+            },
+            {
                 "realname": "EditGrowthConfig",
                 "aliases": [
                     "EditGrowthConfig"
+                ]
+            },
+            {
+                "realname": "Nearby",
+                "aliases": [
+                    "У_близини",
+                    "Близу",
+                    "Оближње",
+                    "У_близини",
+                    "Близу",
+                    "Оближње",
+                    "Nearby",
+                    "Nearby"
+                ]
+            },
+            {
+                "realname": "Investigate",
+                "aliases": [
+                    "Investigate"
+                ]
+            },
+            {
+                "realname": "InvestigateBlock",
+                "aliases": [
+                    "InvestigateBlock"
                 ]
             },
             {
@@ -9686,27 +9988,6 @@
                 "aliases": [
                     "Глобални_ред_за_преименовање",
                     "GlobalRenameQueue"
-                ]
-            },
-            {
-                "realname": "Nearby",
-                "aliases": [
-                    "У_близини",
-                    "Близу",
-                    "Оближње",
-                    "Nearby"
-                ]
-            },
-            {
-                "realname": "Investigate",
-                "aliases": [
-                    "Investigate"
-                ]
-            },
-            {
-                "realname": "InvestigateBlock",
-                "aliases": [
-                    "InvestigateBlock"
                 ]
             },
             {
@@ -9752,26 +10033,26 @@
             "<langconvert>",
             "<timeline>",
             "<hiero>",
-            "<inputbox>",
             "<imagemap>",
             "<source>",
             "<syntaxhighlight>",
             "<poem>",
-            "<categorytree>",
             "<score>",
             "<dynamicpagelist>",
             "<templatestyles>",
             "<templatedata>",
-            "<math>",
-            "<ce>",
-            "<chem>",
             "<graph>",
-            "<maplink>",
-            "<mapframe>",
             "<charinsert>",
             "<ref>",
             "<references>",
-            "<section>"
+            "<inputbox>",
+            "<categorytree>",
+            "<section>",
+            "<math>",
+            "<ce>",
+            "<chem>",
+            "<maplink>",
+            "<mapframe>"
         ],
         "functionhooks": [
             "ns",
@@ -9847,7 +10128,6 @@
             "tag",
             "formatdate",
             "displaytitle",
-            "categorytree",
             "target",
             "babel",
             "coordinates",
@@ -9864,6 +10144,7 @@
             "expr",
             "rel2abs",
             "titleparts",
+            "categorytree",
             "lst",
             "lstx",
             "lsth",

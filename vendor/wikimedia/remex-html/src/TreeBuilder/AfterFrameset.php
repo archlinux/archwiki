@@ -51,6 +51,3 @@ class AfterFrameset extends InsertionMode {
 		$this->builder->stopParsing( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( AfterFrameset::class, 'RemexHtml\TreeBuilder\AfterFrameset' );

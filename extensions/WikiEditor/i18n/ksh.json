@@ -1,17 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Purodha"
+			"Purodha",
+			"Amire80"
 		]
 	},
 	"wikieditor": "Fottjeschredde Beärbeide un Änndere för der WikkiTäx.",
 	"wikieditor-desc": "Brängk en Müjjeleschkeit för Wikkitäx ennzejävve un ze ändere en et Wikki, di mer ußboue kann, un di noch allerhand Kröhmsches met dobei hät.",
 	"wikieditor-wikitext-tab": "Wikkitäx",
-	"wikieditor-loading": "Ben aam Lahde&nbsp;…",
 	"wikieditor-toolbar": "Werkzüsh för et Ändere",
 	"wikieditor-toolbar-desc": "Verbesserte Werkzüsh för et Ändere",
 	"wikieditor-toolbar-preference": "Donn et ußföerlesh Werkzüsh för et Ändere aanzeije (bruch Java_Skripp)",
-	"wikieditor-toolbar-loading": "Ben aam Lahde&nbsp;…",
 	"wikieditor-toolbar-tool-bold": "Fätte Schreff",
 	"wikieditor-toolbar-tool-bold-example": "Fätte Schreff",
 	"wikieditor-toolbar-tool-italic": "Scheive Schreff",
@@ -42,7 +41,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Ding <i lang=\"en\">URL</i> schingk obb en Sigg em Wiki sellver ze jon. Wells De ene ääschte Lengk en et Wiki druß maache?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Ene Lengk en et Wiki",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Ene Lengk uß em Wiki moh ußerhallef",
-	"wikieditor-toolbar-tool-link-empty": "Mer han nix faßjehallde för ne Lingk drop ze maache.",
 	"wikieditor-toolbar-tool-file": "Enjefösch Dattei",
 	"wikieditor-toolbar-tool-file-example": "Beld_Beishpöll.jpeg",
 	"wikieditor-toolbar-tool-file-title": "Dattei ennfööje",
@@ -146,7 +144,7 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Fätt un scheive Schreff'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Fätt un scheive Schreff</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "Lengk en et Wiki",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[Sigge_Tittel|Täx för dä Lengk]]<br />[[Sigge_Tittel]]",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[Sigge_Tittel]]<br />[[Sigge_Tittel|Täx för dä Lengk]]",
 	"wikieditor-toolbar-help-content-ilink-result": "<a href=\"#\">Täx för dä Lengk</a><br /><a href=\"#\">Sigge_Tittel</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "Lengk noh ußerhallf vum Wiki",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Täx för dä Lengk]<br />[http://www.example.org]<br />http://www.example.org",

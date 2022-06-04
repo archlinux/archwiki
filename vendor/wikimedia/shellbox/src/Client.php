@@ -4,20 +4,23 @@ namespace Shellbox;
 
 use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use ReflectionClass;
 use Shellbox\Command\OutputFile;
 use Shellbox\Command\OutputGlob;
 use Shellbox\Multipart\MultipartReader;
 use Shellbox\Multipart\MultipartUtils;
+use Shellbox\RPC\RpcClient;
 
 /**
  * A generic client which executes actions on the Shellbox server
  */
-class Client {
-	/** @var HttpClientInterface */
+class Client implements RPCClient {
+	/** @var ClientInterface */
 	private $httpClient;
 	/** @var UriInterface */
 	private $uri;
@@ -27,12 +30,18 @@ class Client {
 	private $logger;
 
 	/**
-	 * @param HttpClientInterface $httpClient An object which requests an HTTP
-	 *   resource
+	 * @param ClientInterface $httpClient An object which requests an HTTP resource.
+	 *   It is permissible to throw an exception for propagation back to the
+	 *   caller. However, a successfully received response with a status code
+	 *   of >=400 should ideally be returned to Shellbox as a ResponseInterface,
+	 *   so that Shellbox can parse and rethrow its own error messages. With Guzzle
+	 *   this could be achieved by passing setting RequestOptions::HTTP_ERROR option
+	 *   to false when creating the client.
+	 *
 	 * @param UriInterface $uri The base URI of the server
 	 * @param string $key The key for HMAC authentication
 	 */
-	public function __construct( HttpClientInterface $httpClient, UriInterface $uri, $key ) {
+	public function __construct( ClientInterface $httpClient, UriInterface $uri, $key ) {
 		$this->httpClient = $httpClient;
 		$this->uri = $uri;
 		$this->key = $key;
@@ -46,31 +55,11 @@ class Client {
 		$this->logger = $logger;
 	}
 
-	/**
-	 * Call a PHP function remotely.
-	 *
-	 * @param string $routeName A short string identifying the function
-	 * @param array|string $functionName A JSON-serializable callback
-	 * @param array $params Function parameters. If "binary" is false or absent,
-	 *   the parameters must be JSON-serializable, which means that any strings
-	 *   must be valid UTF-8. If "binary" is true, the parameters must all be
-	 *   strings.
-	 * @param array $options An associative array of options:
-	 *    - sources: An array of source file paths, to be executed on the
-	 *      remote side prior to calling the function.
-	 *    - classes: An array of class names. The source files for the classes
-	 *      will be identified using reflection, and the files will be sent to
-	 *      the server as if they were specified in the "sources" array.
-	 *    - binary: If true, $params will be sent as 8-bit clean strings, and the
-	 *      return value will be similarly converted to a string.
-	 * @return mixed
-	 * @throws ShellboxError
-	 */
 	public function call( $routeName, $functionName, $params = [], $options = [] ) {
 		$sources = $options['sources'] ?? [];
 		$binary = !empty( $options['binary'] );
 		foreach ( $options['classes'] ?? [] as $class ) {
-			$rc = new \ReflectionClass( $class );
+			$rc = new ReflectionClass( $class );
 			$sources[] = $rc->getFileName();
 		}
 		$sources = array_unique( $sources );
@@ -170,7 +159,7 @@ class Client {
 			$bodyStream
 		);
 
-		$response = $this->httpClient->send( $request );
+		$response = $this->httpClient->sendRequest( $request );
 		$contentType = $response->getHeaderLine( 'Content-Type' );
 		if ( $response->getStatusCode() !== 200 ) {
 			if ( $contentType === 'application/json' ) {

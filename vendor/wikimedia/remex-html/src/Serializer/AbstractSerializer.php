@@ -11,6 +11,3 @@ interface AbstractSerializer extends TreeHandler {
 	 */
 	public function getResult();
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( AbstractSerializer::class, 'RemexHtml\Serializer\AbstractSerializer' );

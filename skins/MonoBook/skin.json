@@ -88,7 +88,8 @@
 			"styles": "resources/skin.js.less",
 			"dependencies": [
 				"oojs-ui.styles.icons-alerts",
-				"mediawiki.util"
+				"mediawiki.util",
+				"mediawiki.user"
 			],
 			"messages": [
 				"monobook-notifications-link",

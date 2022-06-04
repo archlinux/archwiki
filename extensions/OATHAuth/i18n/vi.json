@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
-			"Vinhtantran"
+			"Vinhtantran",
+			"NguoiDungKhongDinhDanh",
+			"NguyenHung"
 		]
 	},
 	"oathauth-desc": "Cho phép xác nhận dùng các mật khẩu một lần dựa trên mã xác thực thông điệp được băm (HMAC)",
@@ -11,10 +13,10 @@
 	"oath": "Xác thực OATH",
 	"specialpages-group-oath": "Xác thực dùng hai nhân tố",
 	"oathauth-account": "Tên tài khoản:",
-	"oathauth-secret": "Chìa khóa bí mật để xác thực dùng hai nhân tố:",
+	"oathauth-secret": "Chìa khóa bí mật của xác thực hai nhân tố:",
 	"oathauth-enable": "Xác thực dùng hai nhân tố",
 	"oathauth-scratchtokens": "Dưới đây là danh sách các mã dùng một lần. Các mã này chỉ có thể dùng một lần khi khẩn cấp. Xin hãy ghi xuống các mã này và lưu giữ chúng ở một nơi an toàn. Nếu bạn mất điện thoại của bạn, các mã này là cách duy nhất để cứu tài khoản của bạn. '''Các mã này sẽ không bao giờ hiển thị nữa'''.",
-	"oathauth-token": "Chìa khóa",
+	"oathauth-token": "Token",
 	"oathauth-disable": "Tắt xác thực dùng hai nhân tố",
 	"oathauth-validatedoath": "Đã xác nhận thông tin xác thực dùng hai nhân tố. Từ nay sẽ áp dụng việc xác thực dùng hai nhân tố.",
 	"oathauth-noscratchforvalidation": "Bạn không thể sử dụng mã thẻ để xác thực dùng hai nhân tố. Các mã thẻ chỉ để sao lưu hoặc sử dụng tình cờ. Xin hãy nhập mã xác nhận từ trình xác thực của bạn.",
@@ -43,7 +45,7 @@
 	"oathauth-user-not-does-not-have-oath-enabled": "Thành viên này không bật xác thực dùng hai nhân tố, nên không thể tắt",
 	"right-oathauth-enable": "Xác thực dùng hai nhân tố",
 	"action-oathauth-enable": "xác thực dùng hai nhân tố",
-	"oathauth-auth-token-label": "Chìa khóa",
+	"oathauth-auth-token-label": "Token",
 	"oathauth-auth-token-help": "Mật khẩu dùng một lần được sử dụng làm nhân tố thứ hai trong quá trình xác thực dùng hai nhân tố.",
 	"oathauth-auth-ui": "Xin hãy nhập một mã xác nhận từ máy xác thực của bạn.",
 	"oathauth-throttled": "Đã cố xác nhận danh tính nhiều lần quá! Xin hãy chờ $1.",
@@ -58,7 +60,7 @@
 	"oath-log-header": "Các sự kiện này theo dõi sự thay đổi trạng thái xác thực dùng hai nhân tố của người dùng.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2}}đã tắt xác thực dùng hai nhân tố của $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2}}đã kiểm tra xem $3 có bật xác thực dùng hai nhân tố không",
-	"oauthauth-ui-no-module": "Không kích hoạt",
+	"oathauth-ui-no-module": "Không kích hoạt",
 	"oathauth-module-invalid": "Người dùng đã đăng ký mô-đun OATHAuth không hợp lệ.",
 	"oathauth-module-totp-label": "Mã một lần theo thời điểm",
 	"oathauth-ui-manage": "Quản lý",

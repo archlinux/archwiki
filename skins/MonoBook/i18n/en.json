@@ -14,5 +14,8 @@
 	"cactions-mobile": "Page actions",
 	"monobook-cactions-label": "Page actions",
 	"monobook-notifications-link": "Notifications ($1)",
-	"monobook-notifications-link-none": "Notifications"
+	"monobook-notifications-link-none": "Notifications",
+	"monobook-view-history": "History",
+	"monobook-action-undelete": "Undelete {{PLURAL:$1|one edit|$1 edits}}",
+	"monobook-action-addsection": "+"
 }

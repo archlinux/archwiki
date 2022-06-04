@@ -14,9 +14,9 @@
 			"Mark85296341",
 			"Oapbtommy",
 			"Waihorace",
+			"Winston Sung",
 			"Wrightbus",
-			"Xiplus",
-			"Winston Sung"
+			"Xiplus"
 		]
 	},
 	"interwiki": "檢視並編輯跨wiki資料",
@@ -30,6 +30,7 @@
 	"interwiki_url": "網址",
 	"interwiki-url-label": "網址：",
 	"interwiki_url_intro": "模板的 URL。當使用上述語法時，提示文字 $1 會替換為 <code>[<nowiki />[prefix:<em>pagename</em>]]</code> 中\n的 <em>pagename</em>。",
+	"interwiki-api-label": "API：",
 	"interwiki_local": "轉送",
 	"interwiki-local-label": "轉送",
 	"interwiki_local_0_intro": "外部 HTTP 請求本地 wiki 在 URL 中使用此跨 wiki 字首會顯示 \"{{int:badtitle}}\" 錯誤頁面。",

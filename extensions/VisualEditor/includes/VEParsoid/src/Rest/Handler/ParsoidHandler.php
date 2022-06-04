@@ -26,6 +26,7 @@ use Composer\Semver\Semver;
 use ExtensionRegistry;
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use LogicException;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
@@ -33,17 +34,19 @@ use MediaWiki\Rest\Response;
 use MediaWiki\Rest\ResponseException;
 use MediaWiki\Revision\RevisionAccessException;
 use MobileContext;
+use ParserOutput;
 use RequestContext;
 use Title;
 use UIDGenerator;
-use VEParsoid\Config\PageConfigFactory;
 use VEParsoid\ParsoidServices;
 use VEParsoid\Rest\FormatHelper;
+use WikiMap;
 use Wikimedia\Http\HttpAcceptParser;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\ParamValidator\ValidationException;
 use Wikimedia\Parsoid\Config\DataAccess;
 use Wikimedia\Parsoid\Config\PageConfig;
+use Wikimedia\Parsoid\Config\PageConfigFactory;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\PageBundle;
@@ -93,6 +96,7 @@ abstract class ParsoidHandler extends Handler {
 		$parsoidServices = new ParsoidServices( $services );
 		// @phan-suppress-next-line PhanTypeInstantiateAbstractStatic
 		return new static(
+			// Use fallback chain for parsoid settings
 			$parsoidServices->getParsoidSettings(),
 			$parsoidServices->getParsoidSiteConfig(),
 			$parsoidServices->getParsoidPageConfigFactory(),
@@ -213,13 +217,8 @@ abstract class ParsoidHandler extends Handler {
 			// We would like to deprecate use of this flag: T181657
 			'body_only' => $request->getQueryParams()['body_only'] ?? $body['body_only'] ?? null,
 			'errorEnc' => FormatHelper::ERROR_ENCODING[$opts['format']] ?? 'plain',
-			'iwp' => wfWikiID(), // PORT-FIXME verify
+			'iwp' => WikiMap::getCurrentWikiId(), // PORT-FIXME verify
 			'subst' => (bool)( $request->getQueryParams()['subst'] ?? $body['subst'] ?? null ),
-			'scrubWikitext' => (bool)( $body['scrub_wikitext']
-				?? $request->getQueryParams()['scrub_wikitext']
-				?? $body['scrubWikitext']
-				?? $request->getQueryParams()['scrubWikitext']
-				?? false ),
 			'offsetType' => $body['offsetType']
 				?? $request->getQueryParams()['offsetType']
 				// Lint requests should return UCS2 offsets by default
@@ -249,7 +248,6 @@ abstract class ParsoidHandler extends Handler {
 			'prefix' => $attribs['iwp'],
 			'domain' => $request->getPathParam( 'domain' ),
 			'pageName' => $attribs['pageName'],
-			'scrubWikitext' => $attribs['scrubWikitext'],
 			'offsetType' => $attribs['offsetType'],
 			'cookie' => $request->getHeaderLine( 'Cookie' ),
 			'reqId' => $request->getHeaderLine( 'X-Request-Id' ),
@@ -361,6 +359,7 @@ abstract class ParsoidHandler extends Handler {
 		// introduced as a post-parse transform.  So although we pass a
 		// User here, it only currently affects the output in obscure
 		// corner cases; see PageConfigFactory::create() for more.
+		// @phan-suppress-next-line PhanUndeclaredMethod method defined in subtype
 		return $this->pageConfigFactory->create(
 			$title, $user, $revision, $wikitextOverride, $pagelanguageOverride,
 			$this->parsoidSettings
@@ -585,9 +584,10 @@ abstract class ParsoidHandler extends Handler {
 			}
 			$response = $this->getResponseFactory()->createJson( $lints );
 		} else {
+			$parserOutput = new ParserOutput();
 			try {
 				$out = $parsoid->wikitext2html(
-					$pageConfig, $reqOpts, $headers
+					$pageConfig, $reqOpts, $headers, $parserOutput
 				);
 			} catch ( ClientError $e ) {
 				throw new HttpException( $e->getMessage(), 400 );
@@ -610,11 +610,52 @@ abstract class ParsoidHandler extends Handler {
 				$tid = UIDGenerator::newUUIDv1();
 				$response->addHeader( 'Etag', "W/\"{$oldid}/{$tid}\"" );
 			}
-		}
 
-		$parseTiming->end( "wt2html.$mstr.parse" );
-		$metrics->timing( "wt2html.$mstr.size.output", $response->getBody()->getSize() );
-		$timing->end( 'wt2html.total' );
+			// FIXME: For pagebundle requests, this can be somewhat inflated
+			// because of pagebundle json-encoding overheads
+			$outSize = $response->getBody()->getSize();
+			$parseTime = $parseTiming->end( "wt2html.$mstr.parse" );
+			$timing->end( 'wt2html.total' );
+			$metrics->timing( "wt2html.$mstr.size.output", $outSize );
+
+			// Ignore slow parse metrics for non-oldid parses
+			if ( $mstr === 'pageWithOldid' ) {
+				if ( $parseTime > 3000 ) {
+					LoggerFactory::getInstance( 'slow-parsoid' )
+						->info( 'Parsing {title} was slow, took {time} seconds', [
+							'time' => number_format( $parseTime / 1000, 2 ),
+							'title' => $pageConfig->getTitle(),
+						] );
+				}
+
+				if ( $parseTime > 10 && $outSize > 100 ) {
+					// * Don't bother with this metric for really small parse times
+					//   p99 for initialization time is ~7ms according to grafana.
+					//   So, 10ms ensures that startup overheads don't skew the metrics
+					// * For body_only=false requests, <head> section isn't generated
+					//   and if the output is small, per-request overheads can skew
+					//   the timePerKB metrics.
+
+					// FIXME: This is slightly misleading since there are fixed costs
+					// for generating output like the <head> section and should be factored in,
+					// but this is good enough for now as a useful first degree of approxmation.
+					$timePerKB = $parseTime * 1024 / $outSize;
+					$metrics->timing( 'wt2html.timePerKB', $timePerKB );
+
+					if ( $timePerKB > 500 ) {
+						// At 100ms/KB, even a 100KB page which isn't that large will take 10s.
+						// So, we probably want to shoot for a threshold under 100ms.
+						// But, let's start with 500ms+ outliers first and see what we uncover.
+						LoggerFactory::getInstance( 'slow-parsoid' )
+							->info( 'Parsing {title} was slow, timePerKB took {timePerKB} ms, total: {time} seconds', [
+								'time' => number_format( $parseTime / 1000, 2 ),
+								'timePerKB' => number_format( $timePerKB, 1 ),
+								'title' => $pageConfig->getTitle(),
+							] );
+					}
+				}
+			}
+		}
 
 		if ( $wikitext !== null ) {
 			// Don't cache requests when wt is set in case somebody uses
@@ -821,7 +862,6 @@ abstract class ParsoidHandler extends Handler {
 
 		try {
 			$wikitext = $parsoid->dom2wikitext( $pageConfig, $doc, [
-				'scrubWikitext' => $envOptions['scrubWikitext'],
 				'inputContentVersion' => $envOptions['inputContentVersion'],
 				'offsetType' => $envOptions['offsetType'],
 				'contentmodel' => $opts['contentmodel'] ?? null,
@@ -833,8 +873,11 @@ abstract class ParsoidHandler extends Handler {
 			throw new HttpException( $e->getMessage(), 413 );
 		}
 
-		$timing->end( 'html2wt.total' );
-		$metrics->timing( 'html2wt.size.output', strlen( $wikitext ) );
+		if ( $html ) {  // Avoid division by zero
+			$total = $timing->end( 'html2wt.total' );
+			$metrics->timing( 'html2wt.size.output', strlen( $wikitext ) );
+			$metrics->timing( 'html2wt.timePerInputKB', $total * 1024 / strlen( $html ) );
+		}
 
 		$response = $this->getResponseFactory()->create();
 		FormatHelper::setContentType( $response, FormatHelper::FORMAT_WIKITEXT );

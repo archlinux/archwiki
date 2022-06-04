@@ -14,7 +14,7 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use Message;
 use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
-use Wikimedia\ObjectFactory;
+use Wikimedia\ObjectFactory\ObjectFactory;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -80,7 +80,7 @@ class ApiParamValidator {
 		],
 		'user' => [
 			'class' => UserDef::class,
-			'services' => [ 'UserFactory', 'TitleFactory', 'UserNameUtils' ]
+			'services' => [ 'UserIdentityLookup', 'TitleParser', 'UserNameUtils' ]
 		],
 		'upload' => [ 'class' => UploadDef::class ],
 	];
@@ -204,11 +204,6 @@ class ApiParamValidator {
 
 		if ( !is_array( $settings ) ) {
 			$settings = [];
-		}
-
-		if ( array_key_exists( ApiBase::PARAM_VALUE_LINKS, $settings ) ) {
-			$ret['issues'][ApiBase::PARAM_VALUE_LINKS]
-				= 'PARAM_VALUE_LINKS was deprecated in MediaWiki 1.35';
 		}
 
 		if ( !is_bool( $settings[ApiBase::PARAM_RANGE_ENFORCE] ?? false ) ) {
@@ -368,7 +363,7 @@ class ApiParamValidator {
 	}
 
 	/**
-	 * Valiate a parameter value using a settings array
+	 * Validate a parameter value using a settings array
 	 *
 	 * @param ApiBase $module
 	 * @param string $name Parameter name, unprefixed

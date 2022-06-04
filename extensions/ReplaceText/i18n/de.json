@@ -47,8 +47,8 @@
 	"replacetext_editsummary": "Textersetzung - „$1“ durch „$2“",
 	"replacetext_reminder": "Um auch Links auf diese Seite in anderen Seiten zu verändern, gehe zu $1.",
 	"replacetext_cfg_error": "ReplaceText-Konfigurationsfehler",
-	"replacetext_no_compress": "Deine Wiki wird nicht mit ReplaceTest funktionieren: Textersetzungen können nicht ausgeführt werden, wenn $wgCompressRevisions auf true gesetzt ist.",
-	"replacetext_no_external_stores": "Dein Wiki wird nicht mit ReplaceTest funktionieren: Textersetzungen können nicht ausgeführt werden, wenn $wgExternalStores gesetzt ist.",
+	"replacetext_no_compress": "Deine Wiki wird nicht mit ReplaceText funktionieren: Textersetzungen können nicht ausgeführt werden, wenn $wgCompressRevisions auf true gesetzt ist.",
+	"replacetext_no_external_stores": "Dein Wiki wird nicht mit ReplaceText funktionieren: Textersetzungen können nicht ausgeführt werden, wenn $wgExternalStores gesetzt ist.",
 	"right-replacetext": "Textersetzung für das gesamte Wiki durchführen",
 	"action-replacetext": "im gesamten Wiki Zeichenfolgeersetzungen durchzuführen"
 }

@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Atabek",
+			"Jiemurat"
+		]
+	},
+	"math_syntax_error": "sintaksikalıq qa'telik",
+	"math_unknown_error": "belgisiz qa'telik",
+	"math_unknown_function": "belgisiz funktsiya",
+	"prefs-math": "Formulalar"
+}

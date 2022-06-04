@@ -26,5 +26,7 @@
 	"timeless-pagetools": "Ações de página",
 	"timeless-languages": "Línguas",
 	"timeless-projects": "Outros projetos",
-	"timeless.js": "/* Todo o código JavaScript colocado aqui será carregado para os utilizadores do tema Timeless */"
+	"timeless.js": "/* Todo o código JavaScript colocado aqui será carregado para os utilizadores do tema Timeless */",
+	"timeless-view-history": "Histórico",
+	"timeless-action-undelete": "Restaurar {{PLURAL:$1|uma edição|$1 edições}}"
 }

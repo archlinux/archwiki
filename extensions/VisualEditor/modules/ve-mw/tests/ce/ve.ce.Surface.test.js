@@ -5,65 +5,9 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-QUnit.module( 've.ce.Surface (MW)', ve.test.utils.mwEnvironment );
+QUnit.module( 've.ce.Surface (MW)', ve.test.utils.newMwEnvironment() );
 
 /* Tests */
-
-QUnit.test( 'handleLinearDelete', ( assert ) => {
-	const done = assert.async(),
-		blocklength = ve.dm.mwExample.MWBlockImage.data.length,
-		cases = [
-			// This asserts that getRelativeRange (via getRelativeOffset) doesn't try to
-			// enter a handleOwnChildren node
-			{
-				htmlOrDoc:
-					ve.dm.mwExample.MWBlockImage.html +
-					'<ul><li><p>Foo</p></li><li><p>Bar</p></li></ul>',
-				rangeOrSelection: new ve.Range( blocklength + 3 ),
-				keys: [ 'BACKSPACE' ],
-				expectedData: ( data ) => {
-					// remove the first list item, and replace its wrapped paragraph outside
-					// the start of the list
-					data.splice(
-						blocklength, 8,
-						{ type: 'paragraph' },
-						'F', 'o', 'o',
-						{ type: '/paragraph' },
-						{ type: 'list', attributes: { style: 'bullet' } }
-					);
-				},
-				expectedRangeOrSelection: new ve.Range( blocklength + 1 ),
-				msg: 'Backspace in a list next to a block image doesn\'t merge into the caption'
-			},
-			{
-				htmlOrDoc:
-					ve.dm.mwExample.MWBlockImage.html +
-					'<ul><li><p></p></li></ul>',
-				rangeOrSelection: new ve.Range( blocklength + 3 ),
-				keys: [ 'BACKSPACE' ],
-				expectedData: ( data ) => {
-					data.splice(
-						blocklength, 6,
-						{ type: 'paragraph' },
-						{ type: '/paragraph' }
-					);
-				},
-				expectedRangeOrSelection: new ve.Range( blocklength + 1 ),
-				msg: 'Backspace in an empty list next to a block image removes the list'
-			}
-		];
-
-	let promise = Promise.resolve();
-	cases.forEach( ( caseItem ) => {
-		promise = promise.then( () =>
-			ve.test.utils.runSurfaceHandleSpecialKeyTest( assert, caseItem )
-		);
-	} );
-
-	promise.finally( () => {
-		done();
-	} );
-} );
 
 QUnit.test( 'beforePaste/afterPaste', ( assert ) => {
 	const cases = [

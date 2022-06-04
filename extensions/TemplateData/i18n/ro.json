@@ -59,6 +59,7 @@
 	"templatedata-modal-button-removemap": "Elimină harta",
 	"templatedata-modal-button-restoreparam": "Restaurează parametrul",
 	"templatedata-modal-button-saveparam": "Salvare",
+	"templatedata-modal-confirmcancel": "Sunteți {{GENDER:|sigur|sigură}} că doriți să vă respingeți schimbările?",
 	"templatedata-modal-current-language": "Limba curentă: $1",
 	"templatedata-modal-errormsg": "S-au detectat erori. Asigurați-vă că nu există nume de parametri duplicate sau goale și că numele parametrului nu include „$1”, „$2” sau „$3”.",
 	"templatedata-modal-errormsg-import-noparams": "Niciun parametru nou descoperit în timpul importării.",

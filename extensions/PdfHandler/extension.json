@@ -32,6 +32,9 @@
 		},
 		"PdfInfo": {
 			"value": "/usr/bin/pdfinfo"
+		},
+		"PdfHandlerShell": {
+			"value": "/bin/sh"
 		}
 	},
 	"MessagesDirs": {

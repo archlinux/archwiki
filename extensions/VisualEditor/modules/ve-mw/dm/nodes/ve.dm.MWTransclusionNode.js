@@ -138,8 +138,7 @@ ve.dm.MWTransclusionNode.static.toDataElement = function ( domElements, converte
 };
 
 ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var els, value,
-		store = converter.getStore(),
+	var store = converter.getStore(),
 		originalMw = dataElement.attributes.originalMw,
 		originalDomElements = store.value( dataElement.originalDomElementsHash );
 
@@ -152,6 +151,7 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		return node;
 	}
 
+	var els;
 	// If the transclusion is unchanged just send back the
 	// original DOM elements so selser can skip over it
 	if (
@@ -161,6 +161,7 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		// originalDomElements is also used for CE rendering so return a copy
 		els = ve.copyDomElements( originalDomElements, doc );
 	} else {
+		var value;
 		if (
 			converter.doesModeNeedRendering() &&
 			// Use getHashObjectForRendering to get the rendering from the store
@@ -213,9 +214,8 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		var viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
 		if ( !viewNode.hasRendering() ) {
 			viewNode.onSetup();
-			viewNode.$element
-				.append( viewNode.createInvisibleIcon() )
-				.attr( 'title', dataElement.attributes.text );
+			// HACK: Force the icon to render immediately
+			viewNode.updateInvisibleIconSync( true );
 			els = viewNode.$element.toArray();
 			viewNode.destroy();
 			return els;
@@ -225,8 +225,7 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 };
 
 ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) {
-	var param, paramChanges,
-		descriptions = [ ve.msg( 'visualeditor-changedesc-mwtransclusion' ) ];
+	var descriptions = [ ve.msg( 'visualeditor-changedesc-mwtransclusion' ) ];
 
 	// This method assumes that the behavior of isDiffComparable above remains
 	// the same, so it doesn't have to consider whether the actual template
@@ -249,6 +248,7 @@ ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) 
 		// attribute. We'll restructure this so that we can pretend template
 		// params are the direct attributes of the template.
 		var params = {};
+		var param;
 		for ( param in attributeChanges.mw.from.parts[ 0 ].template.params ) {
 			params[ param ] = { from: getLabel( attributeChanges.mw.from.parts[ 0 ].template.params[ param ] ) };
 		}
@@ -258,6 +258,7 @@ ve.dm.MWTransclusionNode.static.describeChanges = function ( attributeChanges ) 
 				params[ param ]
 			);
 		}
+		var paramChanges;
 		for ( param in params ) {
 			// All we know is that *something* changed, without the normal
 			// helpful just-being-given-the-changed-bits, so we have to filter
@@ -376,21 +377,20 @@ ve.dm.MWTransclusionNode.static.escapeParameter = function ( param ) {
  * @return {string} Wikitext
  */
 ve.dm.MWTransclusionNode.static.getWikitext = function ( content ) {
-	var i, len, part, template, param,
-		wikitext = '';
+	var wikitext = '';
 
 	// Normalize to multi template format
 	if ( content.params ) {
 		content = { parts: [ { template: content } ] };
 	}
 	// Build wikitext from content
-	for ( i = 0, len = content.parts.length; i < len; i++ ) {
-		part = content.parts[ i ];
+	for ( var i = 0, len = content.parts.length; i < len; i++ ) {
+		var part = content.parts[ i ];
 		if ( part.template ) {
 			// Template
-			template = part.template;
+			var template = part.template;
 			wikitext += '{{' + template.target.wt;
-			for ( param in template.params ) {
+			for ( var param in template.params ) {
 				wikitext += '|' + param + '=' +
 					this.escapeParameter( template.params[ param ].wt );
 			}

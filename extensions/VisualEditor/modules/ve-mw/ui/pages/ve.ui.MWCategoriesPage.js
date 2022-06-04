@@ -90,15 +90,10 @@ OO.inheritClass( ve.ui.MWCategoriesPage, OO.ui.PageLayout );
 /**
  * @inheritdoc
  */
-ve.ui.MWCategoriesPage.prototype.setOutlineItem = function () {
-	// Parent method
-	ve.ui.MWCategoriesPage.super.prototype.setOutlineItem.apply( this, arguments );
-
-	if ( this.outlineItem ) {
-		this.outlineItem
-			.setIcon( 'tag' )
-			.setLabel( ve.msg( 'visualeditor-dialog-meta-categories-section' ) );
-	}
+ve.ui.MWCategoriesPage.prototype.setupOutlineItem = function () {
+	this.outlineItem
+		.setIcon( 'tag' )
+		.setLabel( ve.msg( 'visualeditor-dialog-meta-categories-section' ) );
 };
 
 /**
@@ -147,11 +142,9 @@ ve.ui.MWCategoriesPage.prototype.onUpdateSortKey = function ( item ) {
  * @param {ve.dm.MetaItem} metaItem
  */
 ve.ui.MWCategoriesPage.prototype.onMetaListInsert = function ( metaItem ) {
-	var index;
-
 	// Responsible for adding UI components
 	if ( metaItem.element.type === 'mwCategory' ) {
-		index = this.metaList.getItemsInGroup( 'mwCategory' ).indexOf( metaItem );
+		var index = this.metaList.getItemsInGroup( 'mwCategory' ).indexOf( metaItem );
 		this.categoryWidget.addItems(
 			[ this.getCategoryItemFromMetaListItem( metaItem ) ],
 			index
@@ -165,10 +158,8 @@ ve.ui.MWCategoriesPage.prototype.onMetaListInsert = function ( metaItem ) {
  * @param {ve.dm.MetaItem} metaItem
  */
 ve.ui.MWCategoriesPage.prototype.onMetaListRemove = function ( metaItem ) {
-	var item;
-
 	if ( metaItem.element.type === 'mwCategory' ) {
-		item = this.categoryWidget.categories[ this.getCategoryItemFromMetaListItem( metaItem ).value ];
+		var item = this.categoryWidget.categories[ this.getCategoryItemFromMetaListItem( metaItem ).value ];
 		this.categoryWidget.removeItems( [ item ] );
 	}
 };
@@ -188,12 +179,11 @@ ve.ui.MWCategoriesPage.prototype.getDefaultSortKeyItem = function () {
  * @return {Object[]} items
  */
 ve.ui.MWCategoriesPage.prototype.getCategoryItems = function () {
-	var i,
-		items = [],
+	var items = [],
 		categories = this.metaList.getItemsInGroup( 'mwCategory' );
 
 	// Loop through MwCategories and build out items
-	for ( i = 0; i < categories.length; i++ ) {
+	for ( var i = 0; i < categories.length; i++ ) {
 		items.push( this.getCategoryItemFromMetaListItem( categories[ i ] ) );
 	}
 	return items;
@@ -240,15 +230,13 @@ ve.ui.MWCategoriesPage.prototype.getCategoryItemForInsertion = function ( item, 
  * Setup categories page.
  *
  * @param {ve.dm.MetaList} metaList Meta list
- * @param {Object} [config] Configuration options
+ * @param {Object} config
  * @param {Object} [config.data] Dialog setup data
- * @param {boolean} [config.isReadOnly] Dialog is in read-only mode
+ * @param {boolean} [config.isReadOnly=false] Dialog is in read-only mode
  * @return {jQuery.Promise}
  */
 ve.ui.MWCategoriesPage.prototype.setup = function ( metaList, config ) {
-	var defaultSortKeyItem,
-		promise,
-		page = this;
+	var page = this;
 
 	this.metaList = metaList;
 	this.metaList.connect( this, {
@@ -256,9 +244,9 @@ ve.ui.MWCategoriesPage.prototype.setup = function ( metaList, config ) {
 		remove: 'onMetaListRemove'
 	} );
 
-	defaultSortKeyItem = this.getDefaultSortKeyItem();
+	var defaultSortKeyItem = this.getDefaultSortKeyItem();
 
-	promise = this.categoryWidget.addItems( this.getCategoryItems() ).then( function () {
+	var promise = this.categoryWidget.addItems( this.getCategoryItems() ).then( function () {
 		page.categoryWidget.setDisabled( config.isReadOnly );
 	} );
 

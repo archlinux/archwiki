@@ -1,9 +1,12 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html;
 
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Tokens\EOFTk;
+use Wikimedia\Parsoid\Tokens\KV;
+use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
@@ -39,7 +42,7 @@ class Frame {
 	/**
 	 * @param Title $title
 	 * @param Env $env
-	 * @param array $args
+	 * @param KV[] $args
 	 * @param string $srcText
 	 * @param ?Frame $parentFrame
 	 */
@@ -92,7 +95,7 @@ class Frame {
 	/**
 	 * Create a new child frame.
 	 * @param Title $title
-	 * @param array $args
+	 * @param KV[] $args
 	 * @param string $srcText
 	 * @return Frame
 	 */
@@ -128,8 +131,8 @@ class Frame {
 			'pipelineType' => 'tokens/x-mediawiki',
 			'pipelineOpts' => [
 				'isInclude' => $this->depth > 0,
-				'expandTemplates' => !empty( $options['expandTemplates'] ),
-				'inTemplate' => !empty( $options['inTemplate'] )
+				'expandTemplates' => $options['expandTemplates'],
+				'inTemplate' => $options['inTemplate']
 			],
 			'sol' => true,
 			'srcOffsets' => $options['srcOffsets'] ?? null,
@@ -171,5 +174,52 @@ class Frame {
 
 		// No loop detected.
 		return null;
+	}
+
+	/**
+	 * @param mixed $arg
+	 * @param SourceRange $srcOffsets
+	 * @return array
+	 */
+	private function expandArg( $arg, SourceRange $srcOffsets ): array {
+		if ( is_string( $arg ) ) {
+			return [ $arg ];
+		} else {
+			return $this->expand( $arg, [
+				'expandTemplates' => false,
+				'inTemplate' => false,
+				'srcOffsets' => $srcOffsets,
+			] );
+		}
+	}
+
+	/**
+	 * @param array $args
+	 * @param KV[] $attribs
+	 * @param array $toks
+	 * @return array
+	 */
+	private function lookupArg( array $args, array $attribs, array $toks ): array {
+		$argName = trim( TokenUtils::tokensToString( $toks ) );
+		$res = $args['dict'][$argName] ?? null;
+
+		if ( $res !== null ) {
+			$res = isset( $args['namedArgs'][$argName] ) ? TokenUtils::tokenTrim( $res ) : $res;
+			return is_string( $res ) ? [ $res ] : $res;
+		} elseif ( count( $attribs ) > 1 ) {
+			return $this->expandArg( $attribs[1]->v, $attribs[1]->srcOffsets->value );
+		} else {
+			return [ '{{{' . $argName . '}}}' ];
+		}
+	}
+
+	/**
+	 * @param Token $tplArgToken
+	 * @return array tokens representing the arg value
+	 */
+	public function expandTemplateArg( Token $tplArgToken ): array {
+		$attribs = $tplArgToken->attribs;
+		$toks = $this->expandArg( $attribs[0]->k, $attribs[0]->srcOffsets->key );
+		return $this->lookupArg( $this->args->named(), $attribs, $toks );
 	}
 }

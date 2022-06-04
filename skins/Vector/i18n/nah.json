@@ -2,12 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Akapochtli",
+			"Languaeditor",
 			"Ricardo gs",
-			"Taresi",
-			"Languaeditor"
+			"Taresi"
 		]
 	},
-	"vector-action-addsection": "Xicahxilti netlahtolpepechtiliztli",
+	"vector-action-addsection": "Xikpiwi tlanehnewilli",
 	"vector-action-delete": "Xikixpolo",
 	"vector-action-move": "Xiksaka",
 	"vector-action-protect": "Xicpiya",
@@ -15,7 +15,7 @@
 	"vector-action-unprotect": "Xicpatla tlapiyaliztli",
 	"vector-view-create": "Xikchiwa",
 	"vector-view-edit": "Xikpatla",
-	"vector-view-history": "Tiquittaz tlahtollotl",
+	"vector-view-history": "Xikitta tololli",
 	"vector-view-view": "Xikixpowa",
 	"vector-view-viewsource": "Xiquitta tzintiliztli",
 	"vector-more-actions": "Achiyok"

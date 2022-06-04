@@ -4,12 +4,15 @@
 			"Samatics"
 		]
 	},
-	"vector-language-button-label": "{{PLURAL:$1|$1 languej|$1 languej-dem}}",
-	"vector-action-addsection": "put anoda tin we dem fit tok abaut",
+	"vector-language-button-label": "{{PLURAL:$1|$1 langwej|$1 langwej-dem}}",
+	"vector-action-addsection": "Put anoda topik",
+	"vector-action-delete": "Komot-am",
 	"vector-action-move": "Muv-am",
+	"vector-action-protect": "Protet-am",
 	"vector-view-create": "Mek-am",
 	"vector-view-edit": "Chenj-am",
-	"vector-view-history": "Si di tins we don hapun hia",
+	"vector-view-history": "Si wetin don hapun hie",
 	"vector-view-view": "Rid-am",
-	"vector-more-actions": "Si oda tins:"
+	"vector-more-actions": "Si oda tins:",
+	"vector-searchsuggest-containing": "Find pej-dem wey get <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

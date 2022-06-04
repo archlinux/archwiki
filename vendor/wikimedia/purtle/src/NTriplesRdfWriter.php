@@ -34,19 +34,31 @@ class NTriplesRdfWriter extends N3RdfWriterBase {
 		];
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandSubject( &$base, &$local ) {
 		$this->expandQName( $base, $local );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writeSubject( $base, $local = null ) {
 		// noop
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandPredicate( &$base, &$local ) {
 		$this->expandShorthand( $base, $local ); // e.g. ( 'a', null ) => ( 'rdf', 'type' )
 		$this->expandQName( $base, $local ); // e.g. ( 'acme', 'foo' ) => ( 'http://acme.test/foo', null )
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writePredicate( $base, $local = null ) {
 		// noop
 	}
@@ -57,20 +69,32 @@ class NTriplesRdfWriter extends N3RdfWriterBase {
 		$this->writeRef( $this->currentPredicate[0], $this->currentPredicate[1] );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandResource( &$base, &$local ) {
 		$this->expandQName( $base, $local );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function expandType( &$base, &$local ) {
 		$this->expandQName( $base, $local );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writeResource( $base, $local = null ) {
 		$this->writeSubjectAndObject();
 		$this->write( ' ' );
 		$this->writeRef( $base, $local );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writeText( $text, $language = null ) {
 		$this->writeSubjectAndObject();
 		$this->write( ' ' );

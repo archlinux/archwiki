@@ -37,6 +37,7 @@
 	"scribunto-lua-error-location": "Грешка во Lua $1: $2",
 	"scribunto-lua-error": "Грешка во Lua: $2",
 	"scribunto-lua-notarrayreturn": "Грешка во скриптата: Модулот даде $2 вредност. Треба да врати извозна табела.",
+	"scribunto-lua-warning": "Предупредување од скриптата: $1",
 	"scribunto-luastandalone-proc-error": "Грешка во Lua: не можам да ја создадам постапката",
 	"scribunto-luastandalone-proc-error-msg": "Грешка во Lua: не можам да ја создадам постапката: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Гречка во Lua: Не можам да ја создадам постапката: proc_open е недостапен. Проверете ја наредбата „disable_functions“ во поставките за PHP.",

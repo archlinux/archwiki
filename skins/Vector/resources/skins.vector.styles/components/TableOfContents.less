@@ -1,0 +1,103 @@
+@import '../../common/variables.less';
+
+@subcategory-indent: 8px;
+
+.sidebar-toc {
+	width: @width-sidebar;
+	max-height: 90vh;
+	padding: 20px 12px 20px 26px;
+	.box-sizing( border-box );
+	overflow: auto;
+	background-color: @border-color-sidebar;
+	border: @border-base;
+
+	.sidebar-toc-header {
+		padding-bottom: 12px;
+	}
+
+	.sidebar-toc-title {
+		font-weight: bold;
+		font-size: @font-size-heading-3;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+
+	.sidebar-toc-link > * {
+		// Prevent click events on the link's contents so that we can use event
+		// delegation and have the target be the anchor element instead.
+		pointer-events: none;
+	}
+
+	.sidebar-toc-numb {
+		display: none;
+	}
+
+	.sidebar-toc-text {
+		padding-bottom: 5px;
+	}
+
+	#table-of-contents,
+	.sidebar-toc-list {
+		margin: 0;
+		list-style: none;
+		line-height: 18px;
+	}
+
+	.sidebar-toc-list-item {
+		display: block;
+		position: relative;
+		list-style-type: none;
+		padding-left: @subcategory-indent;
+
+		a {
+			color: @color-base;
+			font-size: @font-size-base;
+		}
+	}
+
+	.sidebar-toc-list-item.sidebar-toc-level-1 {
+		padding-left: 0;
+
+		& > a {
+			color: @color-link;
+		}
+	}
+}
+
+// Highlight active section
+.sidebar-toc .sidebar-toc-list-item-active > .sidebar-toc-link {
+	font-weight: bold;
+}
+
+.sidebar-toc .sidebar-toc-toggle {
+	// For no-js users, toggling is disabled and icon is hidden
+	display: none;
+	cursor: pointer;
+}
+
+// Collapse ToC sections by default, excluding no-js or prefers-reduced-motion
+@media ( prefers-reduced-motion: no-preference ) {
+	.client-js .sidebar-toc {
+		.sidebar-toc-level-1 .sidebar-toc-list-item {
+			display: none;
+		}
+
+		.sidebar-toc-level-1.sidebar-toc-list-item-expanded .sidebar-toc-list-item {
+			display: block;
+		}
+
+		.sidebar-toc-toggle {
+			position: absolute;
+			display: block;
+			font-size: 0.7em; // reduces size of toggle icon (by an arbitrary amount)
+			top: 4px; // visually center icon (at least at default font size)
+			left: -18px;
+			transform: rotate( -90deg );
+		}
+
+		.sidebar-toc-level-1.sidebar-toc-list-item-expanded .sidebar-toc-toggle {
+			transform: rotate( 0deg );
+		}
+	}
+}

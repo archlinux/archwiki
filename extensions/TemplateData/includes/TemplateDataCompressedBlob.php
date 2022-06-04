@@ -4,6 +4,11 @@
  * @ingroup Extensions
  */
 
+namespace MediaWiki\Extension\TemplateData;
+
+use Message;
+use Status;
+
 /**
  * Represents the information about a template,
  * coming from the JSON blob in the <templatedata> tags
@@ -28,7 +33,11 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 		if ( $status->isOK() ) {
 			$length = strlen( $this->getJSONForDatabase() );
 			if ( $length > self::MAX_LENGTH ) {
-				return Status::newFatal( 'templatedata-invalid-length', $length, self::MAX_LENGTH );
+				return Status::newFatal(
+					'templatedata-invalid-length',
+					Message::numParam( $length ),
+					Message::numParam( self::MAX_LENGTH )
+				);
 			}
 		}
 		return $status;
@@ -48,7 +57,7 @@ class TemplateDataCompressedBlob extends TemplateDataBlob {
 	/**
 	 * Just initialize the data, compression to be done later.
 	 *
-	 * @param stdClass|null $data Template data
+	 * @param mixed $data Template data
 	 */
 	protected function __construct( $data ) {
 		parent::__construct( $data );

@@ -75,6 +75,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "మ్యాపు పేరు ఇవ్వండి",
 	"templatedata-modal-search-input-placeholder": "భాష పేరుతో గానీ, కోడ్‌తో గానీ వెతకండి",
 	"templatedata-modal-table-param-actions": "చర్యలు",
+	"templatedata-modal-table-param-aliases": "మారుపేర్లు",
 	"templatedata-modal-table-param-autovalue": "ఆటో విలువ",
 	"templatedata-modal-table-param-default": "డిఫాల్టు ($1)",
 	"templatedata-modal-table-param-deprecated": "వాడుకలో లేదు",

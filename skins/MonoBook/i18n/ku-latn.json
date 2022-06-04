@@ -10,5 +10,7 @@
 	"monobook-jumptopersonal": "amûrên bikarhênerê",
 	"monobook-jumptonavigation": "Here nagîvasyonê",
 	"monobook-jumptosearch": "Here lêgerînê",
-	"monobook-more-actions": "Zêdetir"
+	"monobook-more-actions": "Zêdetir",
+	"monobook-view-history": "Dîrok",
+	"monobook-action-undelete": "Dîsa {{PLURAL:$1|guhertineke|$1 guhertinan}} çêke"
 }

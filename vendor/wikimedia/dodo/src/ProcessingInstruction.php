@@ -67,6 +67,7 @@ class ProcessingInstruction extends CharacterData implements \Wikimedia\IDLeDOM\
 	 * @return bool
 	 */
 	protected function _subclassIsEqualNode( Node $node ): bool {
+		'@phan-var ProcessingInstruction $node'; /** @var ProcessingInstruction $node */
 		return ( $this->_target === $node->_target && $this->_data === $node->_data );
 	}
 

@@ -103,6 +103,3 @@ class InCaption extends InsertionMode {
 		$this->dispatcher->inBody->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InCaption::class, 'RemexHtml\TreeBuilder\InCaption' );

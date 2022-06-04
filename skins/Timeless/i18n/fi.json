@@ -25,5 +25,7 @@
 	"timeless-languages": "Kielet",
 	"timeless-projects": "Muut projektit",
 	"timeless.css": "/* Tämä sivu sisältää Ajaton-ulkoasua muuttavia tyylejä. */",
-	"timeless.js": "/* Tämän sivun JavaScript-koodi liitetään Ajaton-tyyliin */"
+	"timeless.js": "/* Tämän sivun JavaScript-koodi liitetään Ajaton-tyyliin */",
+	"timeless-view-history": "Historia",
+	"timeless-action-undelete": "Palauta {{PLURAL:$1|yksi muokkaus|$1 muokkausta}}"
 }

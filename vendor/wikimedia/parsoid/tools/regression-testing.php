@@ -109,7 +109,7 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 	 * @param string|null $hostname The host on which to execute the command.
 	 * @throws Error if the command does not successfully execute
 	 */
-	private function ssh( array $cmd, string $hostname = null ):void {
+	private function ssh( array $cmd, string $hostname = null ): void {
 		array_unshift( $cmd, 'ssh', $this->hostname( $hostname ) );
 		$this->sh( $cmd );
 	}
@@ -122,7 +122,7 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 	 * @param string|array<string> ...$commands
 	 * @return array<string>
 	 */
-	private static function cmd( ...$commands ):array {
+	private static function cmd( ...$commands ): array {
 		return array_merge( ...array_map( static function ( $item ) {
 			return is_string( $item ) ? explode( ' ', $item ) : $item;
 		}, $commands ) );
@@ -188,12 +188,17 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 			[ '-o', $resultPath ]
 		);
 
-		$this->dashes( "Checking out $commit" );
+		$this->dashes( "Checking out $commit on scandium" );
 		$this->ssh( self::cmd(
 			$cdDir, '&&',
 			'git checkout', [ $commit ], '&&',
 			$restartPHP
 		), 'scandium.eqiad.wmnet' );
+		# Check out on testreduce1001 as well to ensure HTML version changes
+		# don't trip up our test script and we don't have to mess with passing in
+		# the --contentVersion option in most scenarios
+		$this->dashes( "Checking out $commit on testreduce1001" );
+		$this->ssh( self::cmd( $cdDir, '&&', 'git checkout', [ $commit ] ), 'testreduce1001.eqiad.wmnet' );
 
 		$this->dashes( "Running tests" );
 		$this->ssh( self::cmd(
@@ -253,20 +258,43 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 	}
 
 	/**
+	 * Helper function to dump results
+	 * @param array $res
+	 */
+	private function printResults( array $res ): void {
+		foreach ( $res as $test => $testRes ) {
+			echo( "\t$test\t=> " );
+			foreach ( $testRes as $type => $count ) {
+				echo( "$type: $count; " );
+			}
+			echo( "\n" );
+		}
+	}
+
+	/**
 	 * Compare the results for the given titles.
 	 * @param string[] $titles The titles to compare
 	 * @param string $knownGood the oracle commit
 	 * @param string $maybeBad the test commit
 	 */
-	public function compareResults( $titles, $knownGood, $maybeBad ):void {
+	public function compareResults( $titles, $knownGood, $maybeBad ): void {
 		$this->dashes( "Comparing results" );
 		$oracleResults = $this->readResults( $knownGood );
 		$commitResults = $this->readResults( $maybeBad );
+		$numErrorsOracle = 0;
+		$numErrorsCommit = 0;
+		$numTitles = count( $titles );
 
 		$summary = [ 'degraded' => [], 'improved' => [] ];
 		foreach ( $titles as $title ) {
 			$oracleRes = $oracleResults[$title] ?? null;
 			$commitRes = $commitResults[$title] ?? null;
+			if ( $oracleRes['html2wt']['error'] ?? 0 ) {
+				$numErrorsOracle++;
+			}
+			if ( $commitRes['html2wt']['error'] ?? 0 ) {
+				$numErrorsCommit++;
+			}
 			if ( self::deepEquals( $oracleRes, $commitRes ) ) {
 				if ( !$this->hasOption( 'quiet' ) ) {
 					echo( "$title\n" );
@@ -274,11 +302,12 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 				}
 			} else {
 				// emit these differences even in 'quiet' mode
+				$this->dashes( null, true );
 				echo( "$title\n" );
 				echo( "$knownGood (known good) results:\n" );
-				var_dump( $oracleRes );
+				$this->printResults( $oracleRes );
 				echo( "$maybeBad (maybe bad) results:\n" );
-				var_dump( $commitRes );
+				$this->printResults( $commitRes );
 				$degraded = static function ( $newRes, $oldRes ) {
 					// NOTE: We are conservatively assuming that even if semantic
 					// errors go down but syntactic errors go up, it is a degradation.
@@ -298,13 +327,23 @@ class RegressionTesting extends \Wikimedia\Parsoid\Tools\Maintenance {
 		if ( count( $summary['improved'] ) > 0 ) {
 			echo( "Pages that seem to have improved (feel free to verify in other ways):\n" );
 			echo( implode( "\n", $summary['improved'] ) );
+			echo( "\n" );
 			$this->dashes( null, true );
 		}
 		if ( count( $summary['degraded'] ) > 0 ) {
 			echo( "Pages needing investigation:\n" );
 			echo( implode( "\n", $summary['degraded'] ) );
+			echo( "\n" );
 		} else {
 			echo( "*** No pages need investigation ***\n" );
+		}
+
+		# Sanity check
+		if ( $numErrorsOracle === $numTitles ) {
+			error_log( "\n***** ALL runs for $knownGood errored! *****" );
+		}
+		if ( $numErrorsCommit === $numTitles ) {
+			error_log( "\n***** ALL runs for $maybeBad errored! *****" );
 		}
 	}
 

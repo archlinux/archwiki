@@ -26,7 +26,7 @@ QUnit.test( 'getRenderedContents', ( assert ) => {
 				[ 'd', [ { type: 'textStyle/bold' } ] ],
 				{
 					type: 'alienInline',
-					originalDomElements: $( '<span rel="ve:Alien">e</span>' ).toArray(),
+					originalDomElements: $.parseHTML( '<span rel="ve:Alien">e</span>' ),
 					annotations: [ { type: 'textStyle/bold' } ]
 				},
 				{ type: '/alienInline' },

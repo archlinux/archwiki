@@ -23,39 +23,3 @@
 .ve-ui-mwTemplatePage-description-missing {
 	font-style: italic;
 }
-
-.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-statusIndicator.oo-ui-indicator-required {
-	display: none;
-}
-
-.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-menuLayout-content > .oo-ui-bookletLayout-stackLayout {
-	/* Wo don't want anything to collapse left/right, so shouldn't use margin */
-	padding: 0 48px;
-}
-
-.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout,
-.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-doc,
-.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-info,
-.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-field {
-	padding: 0;
-}
-
-.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout,
-.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwTransclusionDialog-multipart-message {
-	/* This top/bottom margin is meant to collapse with the next one */
-	margin: 48px 0 16px 0;
-}
-
-.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .ve-ui-mwParameterPage,
-.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .ve-ui-mwParameterPlaceholderPage {
-	/* Tighter margins within a group of parameters. */
-	margin-top: 16px;
-}
-
-.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout:last-child {
-	margin-bottom: 48px;
-}
-
-.ve-ui-mwTransclusionDialog-template-note {
-	margin-top: 16px;
-}

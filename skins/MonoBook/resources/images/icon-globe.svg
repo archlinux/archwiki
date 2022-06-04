@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 4.233 4.233">
 	<defs>
-		<radialGradient id="d" cx="26.167" cy="7.091" r="5" fx="26.167" fy="7.091" gradientTransform="matrix(.37042 0 0 .26458 -8.105 -.024)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
-		<radialGradient id="c" cx="7.144" cy="1.587" r="1.521" fx="7.144" fy="1.587" gradientTransform="matrix(1.2174 0 0 .86957 -6.845 .207)" gradientUnits="userSpaceOnUse" xlink:href="#b"/>
+		<radialGradient xlink:href="#a" id="d" cx="26.167" cy="7.091" r="5" fx="26.167" fy="7.091" gradientTransform="matrix(.37042 0 0 .26458 -8.105 -.024)" gradientUnits="userSpaceOnUse"/>
+		<radialGradient xlink:href="#b" id="c" cx="7.144" cy="1.587" r="1.521" fx="7.144" fy="1.587" gradientTransform="matrix(1.2174 0 0 .86957 -6.845 .207)" gradientUnits="userSpaceOnUse"/>
 		<linearGradient id="b">
 			<stop offset="0" stop-color="#f6f9fe"/>
 			<stop offset="1" stop-color="#60acf9"/>

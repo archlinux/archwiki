@@ -1,7 +1,3 @@
-/**
- * @external MenuDefinition
- */
-
 import { htmlUserLanguageAttributes } from './utils';
 
 /**

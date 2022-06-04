@@ -7,6 +7,7 @@ use Closure;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
+use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\Core\Sanitizer;
 use Wikimedia\Parsoid\DOM\Document;
@@ -25,6 +26,7 @@ use Wikimedia\Parsoid\Utils\Title;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wikitext\Wikitext;
 use Wikimedia\Parsoid\Wt2Html\DOMPostProcessor;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 
@@ -165,6 +167,17 @@ class ParsoidExtensionAPI {
 	 */
 	public function getPageConfig(): PageConfig {
 		return $this->env->getPageConfig();
+	}
+
+	/**
+	 * Get the ContentMetadataCollector corresponding to the top-level page.
+	 * In Parsoid integrated mode this will typically be an instance of
+	 * core's `ParserOutput` class.
+	 *
+	 * @return ContentMetadataCollector
+	 */
+	public function getMetadata(): ContentMetadataCollector {
+		return $this->env->getMetadata();
 	}
 
 	/**
@@ -362,7 +375,7 @@ class ParsoidExtensionAPI {
 	 * every whitespace character to a single space.
 	 * @param KV[] $extArgs
 	 * @param string $key should be lower-case
-	 * @param bool $context
+	 * @param string $context
 	 * @return ?DocumentFragment
 	 */
 	public function extArgToDOM(
@@ -469,7 +482,7 @@ class ParsoidExtensionAPI {
 	 * @param Element $elt The node whose data attributes need to be examined
 	 * @param Closure $proc The processor that will process the embedded HTML
 	 */
-	public function processHiddenHTMLInDataAttributes( Element $elt, Closure $proc ): void {
+	public function processHTMLHiddenInDataAttributes( Element $elt, Closure $proc ): void {
 		/* -----------------------------------------------------------------
 		 * FIXME: This works but feels special cased, maybe?
 		 *
@@ -539,11 +552,25 @@ class ParsoidExtensionAPI {
 	): void {
 		DOMUtils::migrateChildren( $from, $to );
 		DOMDataUtils::setDataParsoid(
-			$to, Utils::clone( DOMDataUtils::getDataParsoid( $from ) )
+			$to, DOMDataUtils::getDataParsoid( $from )->clone()
 		);
 		DOMDataUtils::setDataMw(
 			$to, Utils::clone( DOMDataUtils::getDataMw( $from ) )
 		);
+	}
+
+	/**
+	 * Equivalent of 'preprocessWikitext' from Parser.php in core.
+	 * - expands templates
+	 * - replaces magic variables
+	 * This does not run any hooks however since that would be unexpected.
+	 * This also doesn't support replacing template args from a frame.
+	 *
+	 * @param string $wikitext
+	 * @return string preprocessed wikitext
+	 */
+	public function preprocessWikitext( string $wikitext ): string {
+		return Wikitext::preprocess( $this->env, $wikitext )['src'];
 	}
 
 	/**
@@ -552,11 +579,15 @@ class ParsoidExtensionAPI {
 	 * to convert HTML to DOM that will be passed into Parsoid's code processing code.
 	 *
 	 * @param string $html
+	 * @param ?Document $doc XXX You probably don't want to be doing this
+	 * @param ?array $options
 	 * @return DocumentFragment
 	 */
-	public function htmlToDom( string $html ): DocumentFragment {
+	public function htmlToDom(
+		string $html, ?Document $doc = null, ?array $options = []
+	): DocumentFragment {
 		return ContentUtils::createAndLoadDocumentFragment(
-			$this->getTopLevelDoc(), $html
+			$doc ?? $this->getTopLevelDoc(), $html, $options
 		);
 	}
 
@@ -854,16 +885,18 @@ class ParsoidExtensionAPI {
 
 	/**
 	 * @param array $modules
+	 * @deprecated Use ::getMetadata()->addModules() instead.
 	 */
 	public function addModules( array $modules ) {
-		$this->env->addOutputProperty( 'modules', $modules );
+		$this->getMetadata()->addModules( $modules );
 	}
 
 	/**
 	 * @param array $modulestyles
+	 * @deprecated Use ::getMetadata()->addModuleStyles() instead.
 	 */
 	public function addModuleStyles( array $modulestyles ) {
-		$this->env->addOutputProperty( 'modulestyles', $modulestyles );
+		$this->getMetadata()->addModuleStyles( $modulestyles );
 	}
 
 }

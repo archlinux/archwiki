@@ -70,7 +70,7 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 
 	// Temporary switch for verbose template search.
 	if ( mw.config.get( 'wgVisualEditorConfig' ).templateSearchImprovements ) {
-		var dialogTitle = this.placeholder.getTransclusion().parts.length === 1 ?
+		var dialogTitle = this.placeholder.getTransclusion().isSingleTemplate() ?
 			'visualeditor-dialog-transclusion-template-search' :
 			'visualeditor-dialog-transclusion-add-template';
 
@@ -109,7 +109,7 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 		} )
 			.connect( this, { click: 'onRemoveButtonClick' } );
 
-		if ( this.placeholder.getTransclusion().parts.length === 1 ) {
+		if ( this.placeholder.getTransclusion().isSingleTemplate() ) {
 			this.removeButton.toggle( false );
 		}
 		this.$element.append( this.removeButton.$element );
@@ -125,28 +125,26 @@ OO.inheritClass( ve.ui.MWTemplatePlaceholderPage, OO.ui.PageLayout );
 /**
  * @inheritdoc
  */
-ve.ui.MWTemplatePlaceholderPage.prototype.setOutlineItem = function () {
-	// Parent method
-	ve.ui.MWTemplatePlaceholderPage.super.prototype.setOutlineItem.apply( this, arguments );
-
-	var dialogTitle = ( this.placeholder.getTransclusion().parts.length === 1 &&
+ve.ui.MWTemplatePlaceholderPage.prototype.setupOutlineItem = function () {
+	var dialogTitle = ( this.placeholder.getTransclusion().isSingleTemplate() &&
 		mw.config.get( 'wgVisualEditorConfig' ).templateSearchImprovements ) ?
 		'visualeditor-dialog-transclusion-template-search' :
 		'visualeditor-dialog-transclusion-add-template';
 
-	if ( this.outlineItem ) {
-		this.outlineItem
-			.setIcon( 'puzzle' )
-			.setMovable( true )
-			.setRemovable( true )
-			.setFlags( [ 'placeholder' ] )
-			// The following messages are used here:
-			// * visualeditor-dialog-transclusion-template-search
-			// * visualeditor-dialog-transclusion-add-template
-			.setLabel( ve.msg( dialogTitle ) );
-	}
+	this.outlineItem
+		.setIcon( 'puzzle' )
+		.setMovable( true )
+		.setRemovable( true )
+		.setFlags( [ 'placeholder' ] )
+		// The following messages are used here:
+		// * visualeditor-dialog-transclusion-template-search
+		// * visualeditor-dialog-transclusion-add-template
+		.setLabel( ve.msg( dialogTitle ) );
 };
 
+/**
+ * @inheritDoc OO.ui.PanelLayout
+ */
 ve.ui.MWTemplatePlaceholderPage.prototype.focus = function () {
 	// The parent method would focus the first element, which might be the message widget
 	this.addTemplateInput.focus();
@@ -156,6 +154,9 @@ ve.ui.MWTemplatePlaceholderPage.prototype.focus = function () {
 	this.addTemplateInput.lookupMenu.width = this.addTemplateInput.$input[ 0 ].clientWidth;
 };
 
+/**
+ * @private
+ */
 ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
 	var transclusion = this.placeholder.getTransclusion(),
 		menu = this.addTemplateInput.getLookupMenu();
@@ -194,10 +195,16 @@ ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
 	}
 };
 
+/**
+ * @private
+ */
 ve.ui.MWTemplatePlaceholderPage.prototype.onTemplateInputChange = function () {
 	this.addTemplateButton.setDisabled( this.addTemplateInput.getMWTitle() === null );
 };
 
+/**
+ * @private
+ */
 ve.ui.MWTemplatePlaceholderPage.prototype.onRemoveButtonClick = function () {
 	this.placeholder.remove();
 };

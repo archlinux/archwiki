@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\DOM\Attr;
 use Wikimedia\Parsoid\DOM\CharacterData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -87,6 +86,7 @@ class DOMCompat {
 			/** @var Element $element */
 			if ( self::nodeName( $element ) === 'body' || self::nodeName( $element ) === 'frameset' ) {
 				$document->body = $element; // Caching!
+				// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 				return $element;
 			}
 		}
@@ -111,6 +111,7 @@ class DOMCompat {
 			/** @var Element $element */
 			if ( self::nodeName( $element ) === 'head' ) {
 				$document->head = $element; // Caching!
+				// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 				return $element;
 			}
 		}
@@ -139,8 +140,7 @@ class DOMCompat {
 		if ( !$titleElement ) {
 			$headElement = self::getHead( $document );
 			if ( $headElement ) {
-				$titleElement = $document->createElement( 'title' );
-				$headElement->appendChild( $titleElement );
+				$titleElement = DOMUtils::appendToHead( $document, 'title' );
 			}
 		}
 		if ( $titleElement ) {
@@ -158,6 +158,7 @@ class DOMCompat {
 		$parent = $node->parentNode;
 		if ( $parent && $parent->nodeType === XML_ELEMENT_NODE ) {
 			/** @var Element $parent */
+			// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 			return $parent;
 		}
 		return null;
@@ -183,6 +184,7 @@ class DOMCompat {
 			$node, '$node' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument Zest is declared to take DOMDocument\DOMElement
 		$elements = Zest::getElementsById( $node, $id );
+		// @phan-suppress-next-line PhanTypeMismatchReturn
 		return $elements[0] ?? null;
 	}
 
@@ -200,46 +202,6 @@ class DOMCompat {
 	public static function setIdAttribute( $element, string $id ): void {
 		$element->setAttribute( 'id', $id );
 		$element->setIdAttribute( 'id', true );// phab:T232390
-	}
-
-	/**
-	 * Workaround bug in PHP's Element::$attributes that fails to enumerate
-	 * attributes named `xmlns`.
-	 *
-	 * @param Element $element
-	 * @return Attr[]
-	 * @see https://phabricator.wikimedia.org/T235295
-	 */
-	public static function attributes( $element ): array {
-		$result = [];
-		// The 'xmlns' attribute is "invisible" T235295
-		if ( $element->hasAttribute( 'xmlns' ) ) {
-			// $element->getAttributeNode actually returns a DOMNameSpaceNode
-			// This is read-only, unlike the other Attr objects
-			$attr = $element->ownerDocument->createAttributeNS(
-				'http://www.w3.org/2000/xmlns/', 'xmlns'
-			);
-			$attr->value = $element->getAttribute( 'xmlns' );
-			$result[] = $attr;
-		}
-		foreach ( $element->attributes as $attr ) {
-			// These are Attr objects
-			$result[] = $attr;
-		}
-		return $result;
-	}
-
-	/**
-	 * Workaround bug in PHP's Element::hasAttributes() that fails to
-	 * enumerate attributes named `xmlns`.
-	 *
-	 * @param Element $element
-	 * @return bool True if the element has any attributes
-	 * @see https://phabricator.wikimedia.org/T235295
-	 */
-	public static function hasAttributes( $element ): bool {
-		// The 'xmlns' attribute is "invisible" T235295
-		return $element->hasAttributes() || $element->hasAttribute( 'xmlns' );
 	}
 
 	/**
@@ -288,6 +250,7 @@ class DOMCompat {
 		while ( $lastChild && $lastChild->nodeType !== XML_ELEMENT_NODE ) {
 			$lastChild = $lastChild->previousSibling;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $lastChild;
 	}
 
@@ -344,6 +307,7 @@ class DOMCompat {
 		while ( $previousSibling && $previousSibling->nodeType !== XML_ELEMENT_NODE ) {
 			$previousSibling = $previousSibling->previousSibling;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $previousSibling;
 	}
 
@@ -366,6 +330,7 @@ class DOMCompat {
 		while ( $nextSibling && $nextSibling->nodeType !== XML_ELEMENT_NODE ) {
 			$nextSibling = $nextSibling->nextSibling;
 		}
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $nextSibling;
 	}
 

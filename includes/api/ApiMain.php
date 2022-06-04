@@ -28,6 +28,7 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Rest\HeaderParser\Origin;
 use MediaWiki\Session\SessionManager;
 use MediaWiki\User\UserFactory;
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\Timestamp\TimestampException;
 
 /**
@@ -112,7 +113,14 @@ class ApiMain extends ApiBase {
 				'PasswordReset',
 			]
 		],
-		'query' => ApiQuery::class,
+		'query' => [
+			'class' => ApiQuery::class,
+			'services' => [
+				'ObjectFactory',
+				'DBLoadBalancer',
+				'WikiExporterFactory',
+			]
+		],
 		'expandtemplates' => [
 			'class' => ApiExpandTemplates::class,
 			'services' => [
@@ -131,7 +139,9 @@ class ApiMain extends ApiBase {
 				'ContentHandlerFactory',
 				'Parser',
 				'WikiPageFactory',
+				'ContentRenderer',
 				'ContentTransformer',
+				'CommentFormatter',
 			]
 		],
 		'stashedit' => [
@@ -164,6 +174,7 @@ class ApiMain extends ApiBase {
 				'NamespaceInfo',
 				'ActorMigration',
 				'UserFactory',
+				'CommentFormatter',
 			]
 		],
 		'feedrecentchanges' => [
@@ -200,6 +211,7 @@ class ApiMain extends ApiBase {
 				'SlotRoleRegistry',
 				'ContentHandlerFactory',
 				'ContentTransformer',
+				'CommentFormatter',
 			]
 		],
 		'checktoken' => [
@@ -221,6 +233,7 @@ class ApiMain extends ApiBase {
 			'class' => ApiPurge::class,
 			'services' => [
 				'WikiPageFactory',
+				'TitleFormatter',
 			],
 		],
 		'setnotificationtimestamp' => [
@@ -245,6 +258,7 @@ class ApiMain extends ApiBase {
 				'RepoGroup',
 				'WatchlistManager',
 				'UserOptionsLookup',
+				'DeletePageFactory',
 			]
 		],
 		'undelete' => [
@@ -252,6 +266,8 @@ class ApiMain extends ApiBase {
 			'services' => [
 				'WatchlistManager',
 				'UserOptionsLookup',
+				'UndeletePageFactory',
+				'WikiPageFactory',
 			]
 		],
 		'protect' => [
@@ -301,6 +317,7 @@ class ApiMain extends ApiBase {
 				'WikiPageFactory',
 				'WatchlistManager',
 				'UserOptionsLookup',
+				'RedirectLookup',
 			]
 		],
 		'upload' => [
@@ -446,7 +463,7 @@ class ApiMain extends ApiBase {
 		]
 	];
 
-	/** @var ApiFormatBase */
+	/** @var ApiFormatBase|null */
 	private $mPrinter;
 
 	/** @var ApiModuleManager */
@@ -871,7 +888,7 @@ class ApiMain extends ApiBase {
 				&& SessionManager::getGlobalSession()->isPersistent()
 			)
 		) {
-			$this->getContext()->getOutput()->enableClientCache( false );
+			$this->getContext()->getOutput()->disableClientCache();
 			$this->getContext()->getOutput()->considerCacheSettingsFinal();
 		}
 
@@ -1496,7 +1513,8 @@ class ApiMain extends ApiBase {
 	 * @return array
 	 */
 	private function getMaxLag() {
-		$dbLag = MediaWikiServices::getInstance()->getDBLoadBalancer()->getMaxLag();
+		$services = MediaWikiServices::getInstance();
+		$dbLag = $services->getDBLoadBalancer()->getMaxLag();
 		$lagInfo = [
 			'host' => $dbLag[0],
 			'lag' => $dbLag[1],
@@ -1506,7 +1524,7 @@ class ApiMain extends ApiBase {
 		$jobQueueLagFactor = $this->getConfig()->get( 'JobQueueIncludeInMaxLagFactor' );
 		if ( $jobQueueLagFactor ) {
 			// Turn total number of jobs into seconds by using the configured value
-			$totalJobs = array_sum( JobQueueGroup::singleton()->getQueueSizes() );
+			$totalJobs = array_sum( $services->getJobQueueGroup()->getQueueSizes() );
 			$jobQueueLag = $totalJobs / (float)$jobQueueLagFactor;
 			if ( $jobQueueLag > $lagInfo['lag'] ) {
 				$lagInfo = [
@@ -1661,9 +1679,9 @@ class ApiMain extends ApiBase {
 			$this->getRequest()->response()->statusHeader( 304 );
 
 			// Avoid outputting the compressed representation of a zero-length body
-			Wikimedia\suppressWarnings();
+			AtEase::suppressWarnings();
 			ini_set( 'zlib.output_compression', 0 );
-			Wikimedia\restoreWarnings();
+			AtEase::restoreWarnings();
 			wfResetOutputBuffers( false );
 
 			return false;
@@ -2183,6 +2201,7 @@ class ApiMain extends ApiBase {
 			'uselang' => [
 				ApiBase::PARAM_DFLT => self::API_DEFAULT_USELANG,
 			],
+			'variant' => null,
 			'errorformat' => [
 				ApiBase::PARAM_TYPE => [ 'plaintext', 'wikitext', 'html', 'raw', 'none', 'bc' ],
 				ApiBase::PARAM_DFLT => 'bc',
@@ -2239,16 +2258,16 @@ class ApiMain extends ApiBase {
 		// TODO inject stuff, see T265644
 		$groupPermissionsLookup = MediaWikiServices::getInstance()->getGroupPermissionsLookup();
 		foreach ( self::RIGHTS_MAP as $right => $rightMsg ) {
-			$help['permissions'] .= Html::element( 'dt', null, $right );
+			$help['permissions'] .= Html::element( 'dt', [], $right );
 
 			$rightMsg = $this->msg( $rightMsg['msg'], $rightMsg['params'] )->parse();
-			$help['permissions'] .= Html::rawElement( 'dd', null, $rightMsg );
+			$help['permissions'] .= Html::rawElement( 'dd', [], $rightMsg );
 
 			$groups = array_map( static function ( $group ) {
 				return $group == '*' ? 'all' : $group;
 			}, $groupPermissionsLookup->getGroupsWithPermission( $right ) );
 
-			$help['permissions'] .= Html::rawElement( 'dd', null,
+			$help['permissions'] .= Html::rawElement( 'dd', [],
 				$this->msg( 'api-help-permissions-granted-to' )
 					->numParams( count( $groups ) )
 					->params( Message::listParam( $groups ) )
@@ -2274,7 +2293,7 @@ class ApiMain extends ApiBase {
 				'',
 				$idFallback
 			);
-			// Ensure we have a sane anchor
+			// Ensure we have a sensible anchor
 			if ( $id !== 'main/datatypes' && $idFallback !== 'main/datatypes' ) {
 				$headline = '<div id="main/datatypes"></div>' . $headline;
 			}
@@ -2321,7 +2340,7 @@ class ApiMain extends ApiBase {
 				'',
 				$idFallback
 			);
-			// Ensure we have a sane anchor
+			// Ensure we have a sensible anchor
 			if ( $id !== 'main/templatedparams' && $idFallback !== 'main/templatedparams' ) {
 				$headline = '<div id="main/templatedparams"></div>' . $headline;
 			}
@@ -2349,7 +2368,7 @@ class ApiMain extends ApiBase {
 				'',
 				$idFallback
 			);
-			// Ensure we have a sane anchor
+			// Ensure we have a sensible anchor
 			if ( $id !== 'main/credits' && $idFallback !== 'main/credits' ) {
 				$headline = '<div id="main/credits"></div>' . $headline;
 			}

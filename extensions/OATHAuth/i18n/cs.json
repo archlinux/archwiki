@@ -57,7 +57,7 @@
 	"oath-log-name": "Kniha dvoufaktorové autentizace",
 	"oath-log-header": "Tyto události zaznamenávají změny stavu dvoufaktorové autentizace uživatelů.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$1|vypnul|vypnula}} dvoufaktorovou autentizaci {{GENDER:$2|uživatele|uživatelky}} $3.",
-	"oauthauth-ui-no-module": "Není zapnuto",
+	"oathauth-ui-no-module": "Není zapnuto",
 	"oathauth-module-invalid": "Modul dvoufaktorového ověřování zaregistrovaný uživatelem je neplatný.",
 	"oathauth-module-totp-label": "TOTP (jednorázový token)",
 	"oathauth-ui-manage": "Spravovat",

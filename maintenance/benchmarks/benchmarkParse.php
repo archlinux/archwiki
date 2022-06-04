@@ -91,7 +91,7 @@ class BenchmarkParse extends Maintenance {
 				$this->fatalError( "The page did not exist at that time" );
 			}
 
-			$revision = $revLookup->getRevisionById( $id );
+			$revision = $revLookup->getRevisionById( (int)$id );
 		} else {
 			$revision = $revLookup->getRevisionByTitle( $title );
 		}
@@ -159,9 +159,8 @@ class BenchmarkParse extends Maintenance {
 	 */
 	private function runParser( RevisionRecord $revision ) {
 		$content = $revision->getContent( SlotRecord::MAIN );
-		$title = Title::newFromLinkTarget( $revision->getPageAsLinkTarget() );
-
-		$content->getParserOutput( $title, $revision->getId() );
+		$contentRenderer = MediaWikiServices::getInstance()->getContentRenderer();
+		$contentRenderer->getParserOutput( $content, $revision->getPage(), $revision->getId() );
 		if ( $this->clearLinkCache ) {
 			$this->linkCache->clear();
 		}

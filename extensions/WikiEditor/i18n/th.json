@@ -2,24 +2,23 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
+			"Ans",
 			"Horus",
 			"Korrawit",
 			"Macofe",
 			"Octahedron80",
+			"Thas Tayapongsak",
 			"Woraponboonkerd",
-			"Ans",
-			"Thas Tayapongsak"
+			"Trisorn Triboon"
 		]
 	},
 	"wikieditor": "อินเทอร์เฟซการแก้ไขข้อความวิกิขั้นสูง",
 	"wikieditor-desc": "จัดเตรียมอินเทอร์เฟซการแก้ไขข้อความวิกิขั้นสูงที่ขยายได้",
 	"wikieditor-wikitext-tab": "ข้อความวิกิ",
-	"wikieditor-loading": "กำลังโหลด...",
 	"wikieditor-toolbar": "แถบเครื่องมือการแก้ไข",
 	"wikieditor-toolbar-desc": "แถบเครื่องมือเสริมความสามารถการใช้งานในการแก้ไขหน้า",
 	"wikieditor-toolbar-preference": "เปิดใช้งานแถบเครื่องมือการแก้ไข",
 	"wikieditor-toolbar-preference-help": "คุณลักษณะนี้บางครั้งถูกเรียกว่า 'ตัวแก้ไขข้อความวิกิปี 2553'",
-	"wikieditor-toolbar-loading": "กำลังโหลด...",
 	"wikieditor-toolbar-tool-bold": "ตัวหนา",
 	"wikieditor-toolbar-tool-bold-example": "ข้อความตัวหนา",
 	"wikieditor-toolbar-tool-italic": "ตัวเอน",
@@ -40,17 +39,16 @@
 	"wikieditor-toolbar-tool-link-ext-text": "ข้อความลิงก์:",
 	"wikieditor-toolbar-tool-link-insert": "แทรกลิงก์",
 	"wikieditor-toolbar-tool-link-cancel": "ยกเลิก",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "มีหน้านี้",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "ไม่มีหน้านี้",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "ชื่อเรื่องไม่ถูกต้อง",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "มีหน้านี้อยู่ที่ {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "ไม่มีหน้านี้อยู่ที่ {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "ชื่อเรื่องที่คุณระบุไม่ถูกต้อง",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "ลิงก์ภายนอก",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "กำลังตรวจสอบการมีอยู่เดิมของหน้าดังกล่าว...",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "หน้าแก้ความกำกวม",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "หน้านี้ไม่ใช่หน้าเนื้อหา แต่เป็นหน้าแก้ความกำกวม",
 	"wikieditor-toolbar-tool-link-int-invalid": "ชื่อเรื่องที่คุณกำหนดไม่ถูกต้อง",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL ที่คุณระบุดูเหมือนว่ามีเจตนาเพื่อเป็นลิงก์ไปยังหน้าวิกิอื่น\nคุณต้องการทำให้เป็นลิงก์ภายในหรือไม่?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "ลิงก์ภายใน",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "ลิงก์ภายนอก",
-	"wikieditor-toolbar-tool-link-empty": "คุณไม่ได้ป้อนสิ่งที่จะเชื่อมโยงไป",
 	"wikieditor-toolbar-tool-file": "ไฟล์ที่ฝัง",
 	"wikieditor-toolbar-tool-file-example": "ตัวอย่าง.jpg",
 	"wikieditor-toolbar-tool-file-title": "แทรกไฟล์",
@@ -191,5 +189,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>ชื่อผู้ใช้</a> (<a href='#' title='$2:Username'>คุย</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "ย่อหน้า",
 	"wikieditor-toolbar-help-content-indent-syntax": "บรรทัดปกติ<br />:บรรทัดย่อหน้า<br />::บรรทัดย่อหน้า",
-	"wikieditor-toolbar-help-content-indent-result": "บรรทัดปกติ<dl><dd>บรรทัดย่อหน้า<dl><dd>บรรทัดย่อหน้า</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "บรรทัดปกติ<dl><dd>บรรทัดย่อหน้า<dl><dd>บรรทัดย่อหน้า</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "แสดงตัวอย่าง"
 }

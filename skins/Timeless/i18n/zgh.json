@@ -11,5 +11,7 @@
 	"timeless-view-view": "ⵖⵔ",
 	"timeless-pagemisc": "ⵓⴳⴳⴰⵔ",
 	"timeless-languages": "ⵜⵓⵜⵍⴰⵢⵉⵏ",
-	"timeless-projects": "ⵉⵙⵏⴼⴰⵕⵏ ⵢⴰⴹⵏⵉⵏ"
+	"timeless-projects": "ⵉⵙⵏⴼⴰⵕⵏ ⵢⴰⴹⵏⵉⵏ",
+	"timeless-view-history": "ⴰⵎⵣⵔⵓⵢ",
+	"timeless-action-undelete": "ⴰⵙⵡⵔⵔⵉ ⵏ {{PLURAL:$1|ⵢⴰⵏ ⵓⵙⵏⴼⵍ|$1 ⵉⵙⵏⴼⵍⵏ}}"
 }

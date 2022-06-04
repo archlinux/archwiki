@@ -14,5 +14,7 @@
 	"monobook-jumptotop": "กลับไปด้านบน",
 	"monobook-jumptonavigation": "ไปยังการนำทาง",
 	"monobook-jumptosearch": "ไปยังการค้นหา",
-	"monobook-more-actions": "เพิ่มเติม"
+	"monobook-more-actions": "เพิ่มเติม",
+	"monobook-view-history": "ประวัติ",
+	"monobook-action-undelete": "กู้คืน {{PLURAL:$1|}}$1 การแก้ไข"
 }

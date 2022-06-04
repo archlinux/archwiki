@@ -1,0 +1,19 @@
+@import 'mediawiki.ui/variables.less';
+
+/* stylelint-disable selector-max-id */
+#wpTextbox1,
+.mw-editform #wpTextbox1 {
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
+	resize: none;
+	height: 100%;
+	min-height: auto;
+	max-height: none;
+}
+
+.wikiEditor-ui .wikiEditor-ui-view {
+	border-bottom: 0;
+}
+
+.ext-WikiEditor-ResizingDragBar-ns {
+	border-top: 1px solid @colorGray12;
+}

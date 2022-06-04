@@ -14,6 +14,7 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
+ * @cfg {string} [orientation='vertical']
  */
 ve.ui.MWGalleryGroupWidget = function VeUiMWGalleryGroupWidget( config ) {
 	// Configuration initialization
@@ -23,7 +24,7 @@ ve.ui.MWGalleryGroupWidget = function VeUiMWGalleryGroupWidget( config ) {
 	ve.ui.MWGalleryGroupWidget.super.apply( this, arguments );
 
 	// Mixin constructors
-	OO.ui.mixin.DraggableGroupElement.call( this, $.extend( {}, config, { $group: this.$element } ) );
+	OO.ui.mixin.DraggableGroupElement.call( this, ve.extendObject( {}, config, { $group: this.$element } ) );
 
 	// Events
 	this.aggregate( {

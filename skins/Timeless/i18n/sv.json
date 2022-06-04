@@ -27,5 +27,7 @@
 	"timeless-languages": "Språk",
 	"timeless-projects": "Andra projekt",
 	"timeless.css": "/* All CSS här kommer att läsas in för de som använder utseendet Timeless */",
-	"timeless.js": "/* All JavaScript här kommer att laddas för dem som använder utseendet Timeless */"
+	"timeless.js": "/* All JavaScript här kommer att laddas för dem som använder utseendet Timeless */",
+	"timeless-view-history": "Historik",
+	"timeless-action-undelete": "Återställ {{PLURAL:$1|en version|$1 versioner}}"
 }

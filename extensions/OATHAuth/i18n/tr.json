@@ -69,7 +69,7 @@
 	"oath-log-header": "Bu olaylar, kullanıcıların iki öğeli kimlik doğrulama durumundaki değişiklikleri izler.",
 	"logentry-oath-disable-other": "$1, $3 iki faktörlü kimlik doğrulama {{GENDER:$2|devre dışı bıraktı}}",
 	"logentry-oath-verify": "$1, $3 iki faktörlü kimlik doğrulamanın etkin olup olmadığını {{GENDER:$2|kontrol etti}}",
-	"oauthauth-ui-no-module": "Hiçbiri etkin değil",
+	"oathauth-ui-no-module": "Hiçbiri etkin değil",
 	"oathauth-module-invalid": "Kullanıcının kaydettiği OATHAuth modülü geçersiz.",
 	"oathauth-module-totp-label": "TOTP (bir defalık anahtar)",
 	"oathauth-ui-manage": "Yönet",

@@ -37,6 +37,13 @@ class Grammar extends \Wikimedia\WikiPEG\PEGParserBase {
 		return $g->parse( $contents );
 	}
 
+	private function addLines( int $lineStart, array $item ) {
+		$item['filename'] = $this->filename;
+		$item['lineNumStart'] = $lineStart;
+		$item['lineNumEnd'] = $this->lineNum;
+		return $item;
+	}
+
 
 	// cache init
 	
@@ -46,72 +53,72 @@ class Grammar extends \Wikimedia\WikiPEG\PEGParserBase {
 		0 => ["type" => "end", "description" => "end of input"],
 1 => ["type" => "literal", "value" => "!!", "description" => "\"!!\""],
 2 => ["type" => "class", "value" => "[0-9]", "description" => "[0-9]"],
-3 => ["type" => "class", "value" => "[ \\t]", "description" => "[ \\t]"],
-4 => ["type" => "class", "value" => "[vV]", "description" => "[vV]"],
-5 => ["type" => "class", "value" => "[eE]", "description" => "[eE]"],
-6 => ["type" => "class", "value" => "[rR]", "description" => "[rR]"],
-7 => ["type" => "class", "value" => "[sS]", "description" => "[sS]"],
-8 => ["type" => "class", "value" => "[iI]", "description" => "[iI]"],
-9 => ["type" => "class", "value" => "[oO]", "description" => "[oO]"],
-10 => ["type" => "class", "value" => "[nN]", "description" => "[nN]"],
-11 => ["type" => "class", "value" => "[^\\n]", "description" => "[^\\n]"],
-12 => ["type" => "literal", "value" => "options", "description" => "\"options\""],
-13 => ["type" => "literal", "value" => "end", "description" => "\"end\""],
-14 => ["type" => "literal", "value" => "\x0a", "description" => "\"\\n\""],
-15 => ["type" => "literal", "value" => "#", "description" => "\"#\""],
-16 => ["type" => "literal", "value" => "article", "description" => "\"article\""],
-17 => ["type" => "literal", "value" => "text", "description" => "\"text\""],
-18 => ["type" => "literal", "value" => "endarticle", "description" => "\"endarticle\""],
-19 => ["type" => "literal", "value" => "test", "description" => "\"test\""],
-20 => ["type" => "class", "value" => "[^ \\t\\r\\n]", "description" => "[^ \\t\\r\\n]"],
-21 => ["type" => "literal", "value" => "hooks", "description" => "\"hooks\""],
-22 => ["type" => "literal", "value" => ":", "description" => "\":\""],
-23 => ["type" => "literal", "value" => "endhooks", "description" => "\"endhooks\""],
-24 => ["type" => "literal", "value" => "functionhooks", "description" => "\"functionhooks\""],
-25 => ["type" => "literal", "value" => "endfunctionhooks", "description" => "\"endfunctionhooks\""],
-26 => ["type" => "class", "value" => "[^ \\t\\n=!]", "description" => "[^ \\t\\n=!]"],
-27 => ["type" => "literal", "value" => "=", "description" => "\"=\""],
-28 => ["type" => "literal", "value" => ",", "description" => "\",\""],
-29 => ["type" => "literal", "value" => "[[", "description" => "\"[[\""],
-30 => ["type" => "class", "value" => "[^\\]\\n]", "description" => "[^\\]\\n]"],
-31 => ["type" => "literal", "value" => "]]", "description" => "\"]]\""],
-32 => ["type" => "class", "value" => "[\\\"]", "description" => "[\\\"]"],
-33 => ["type" => "class", "value" => "[^\\\\\\\"\\n]", "description" => "[^\\\\\\\"\\n]"],
-34 => ["type" => "literal", "value" => "\\", "description" => "\"\\\\\""],
-35 => ["type" => "class", "value" => "[^ \\t\\n\\\"\\'\\[\\]=,!\\{]", "description" => "[^ \\t\\n\\\"\\'\\[\\]=,!\\{]"],
-36 => ["type" => "literal", "value" => "{", "description" => "\"{\""],
-37 => ["type" => "class", "value" => "[^\\\"\\{\\}\\n]", "description" => "[^\\\"\\{\\}\\n]"],
-38 => ["type" => "literal", "value" => "}", "description" => "\"}\""],
+3 => ["type" => "literal", "value" => "#", "description" => "\"#\""],
+4 => ["type" => "class", "value" => "[ \\t]", "description" => "[ \\t]"],
+5 => ["type" => "literal", "value" => "\x0a", "description" => "\"\\n\""],
+6 => ["type" => "literal", "value" => "version", "description" => "\"version\""],
+7 => ["type" => "class", "value" => "[^\\n]", "description" => "[^\\n]"],
+8 => ["type" => "literal", "value" => "options", "description" => "\"options\""],
+9 => ["type" => "literal", "value" => "end", "description" => "\"end\""],
+10 => ["type" => "literal", "value" => "article", "description" => "\"article\""],
+11 => ["type" => "literal", "value" => "text", "description" => "\"text\""],
+12 => ["type" => "literal", "value" => "endarticle", "description" => "\"endarticle\""],
+13 => ["type" => "literal", "value" => "test", "description" => "\"test\""],
+14 => ["type" => "class", "value" => "[^ \\t\\r\\n]", "description" => "[^ \\t\\r\\n]"],
+15 => ["type" => "literal", "value" => "hooks", "description" => "\"hooks\""],
+16 => ["type" => "literal", "value" => ":", "description" => "\":\""],
+17 => ["type" => "literal", "value" => "endhooks", "description" => "\"endhooks\""],
+18 => ["type" => "literal", "value" => "functionhooks", "description" => "\"functionhooks\""],
+19 => ["type" => "literal", "value" => "endfunctionhooks", "description" => "\"endfunctionhooks\""],
+20 => ["type" => "class", "value" => "[^ \\t\\n=!]", "description" => "[^ \\t\\n=!]"],
+21 => ["type" => "literal", "value" => "=", "description" => "\"=\""],
+22 => ["type" => "literal", "value" => ",", "description" => "\",\""],
+23 => ["type" => "literal", "value" => "[[", "description" => "\"[[\""],
+24 => ["type" => "class", "value" => "[^\\]\\n]", "description" => "[^\\]\\n]"],
+25 => ["type" => "literal", "value" => "]]", "description" => "\"]]\""],
+26 => ["type" => "class", "value" => "[\\\"]", "description" => "[\\\"]"],
+27 => ["type" => "class", "value" => "[^\\\\\\\"\\n]", "description" => "[^\\\\\\\"\\n]"],
+28 => ["type" => "literal", "value" => "\\", "description" => "\"\\\\\""],
+29 => ["type" => "class", "value" => "[^ \\t\\n\\\"\\'\\[\\]=,!\\{]", "description" => "[^ \\t\\n\\\"\\'\\[\\]=,!\\{]"],
+30 => ["type" => "literal", "value" => "{", "description" => "\"{\""],
+31 => ["type" => "class", "value" => "[^\\\"\\{\\}\\n]", "description" => "[^\\\"\\{\\}\\n]"],
+32 => ["type" => "literal", "value" => "}", "description" => "\"}\""],
 	];
 
 	// actions
-	private function a0($v) {
-
-		return [ 'type' => 'version', 'text' => $v ];
-	
+	private function a0($nl) {
+ return [ 'type' => 'line', 'text' => $nl ]; 
 }
-private function a1($sec) {
-
-	return $sec['text'];
-
-}
-private function a2() {
+private function a1() {
  return $this->lineNum; 
 }
-private function a3($l, $c) {
+private function a2($l, $v) {
 
-	$c['filename'] = $this->filename;
-	$c['lineNumStart'] = $l;
-	$c['lineNumEnd'] = $this->lineNum;
-	return $c;
+		return $this->addLines( $l, [ 'type' => 'version', 'text' => $v ] );
+	
+}
+private function a3($l, $sec) {
+
+	return $this->addLines( $l, $sec );
 
 }
-private function a4($c) {
+private function a4($l, $c) {
+
+	return $this->addLines($l, $c);
+
+}
+private function a5($text) {
+ return [ 'type' => 'comment', 'text' => $text ]; 
+}
+private function a6($nl) {
+ $this->lineNum++; return $nl; 
+}
+private function a7($c) {
 
 	return implode($c);
 
 }
-private function a5($opts) {
+private function a8($opts) {
 
 	$o = [];
 	if ( $opts && count($opts) > 0 ) {
@@ -120,16 +127,13 @@ private function a5($opts) {
 		}
 	}
 
-	return [ 'name' => 'options', 'text' => $o ];
+	return [ 'type' => 'section', 'name' => 'options', 'text' => $o ];
 
 }
-private function a6($l) {
+private function a9($l) {
  return [ 'type' => 'line', 'text' => $l ]; 
 }
-private function a7($nl) {
- $this->lineNum++; return $nl; 
-}
-private function a8($o, $rest) {
+private function a10($o, $rest) {
 
 	$result = [ $o ];
 	if ( $rest && count( $rest ) > 0 ) {
@@ -138,10 +142,7 @@ private function a8($o, $rest) {
 	return $result;
 
 }
-private function a9($text) {
- return [ 'type' => 'comment', 'text' => $text ]; 
-}
-private function a10($title, $text) {
+private function a11($title, $text) {
 
 	return [
 		'type' => 'article',
@@ -150,7 +151,7 @@ private function a10($title, $text) {
 	];
 
 }
-private function a11($testName, $sections) {
+private function a12($testName, $sections) {
 
 	$test = [
 		'type' => 'test',
@@ -187,11 +188,6 @@ private function a11($testName, $sections) {
 	return $test;
 
 }
-private function a12($line) {
-
-	return $line;
-
-}
 private function a13($text) {
 
 	return [ 'type' => 'hooks', 'text' => $text ];
@@ -202,33 +198,38 @@ private function a14($text) {
 	return [ 'type' => 'functionhooks', 'text' => $text ];
 
 }
-private function a15($k, $v) {
+private function a15($line) {
+
+	return $line;
+
+}
+private function a16($k, $v) {
 
 	return [ 'k' => strtolower( $k ), 'v' => $v ?? '' ];
 
 }
-private function a16($lines) {
+private function a17($lines) {
 
 	return implode("\n", $lines);
 
 }
-private function a17($c) {
+private function a18($c) {
  return implode( $c ); 
 }
-private function a18($name, $text) {
+private function a19($name, $text) {
 
 	return [ 'name' => $name, 'text' => $text ];
 
 }
-private function a19($ovl) {
+private function a20($ovl) {
 
 	return count( $ovl ) === 1 ? $ovl[0] : $ovl;
 
 }
-private function a20($v, $ovl) {
+private function a21($v, $ovl) {
  return $ovl; 
 }
-private function a21($v, $rest) {
+private function a22($v, $rest) {
 
 	$result = [ $v ];
 	if ( $rest && count( $rest ) > 0 ) {
@@ -237,7 +238,7 @@ private function a21($v, $rest) {
 	return $result;
 
 }
-private function a22($v) {
+private function a23($v) {
 
 	if ( $v[0] === '"' || $v[0] === '{' ) { // } is needed to make pegjs happy
 		return PHPUtils::jsonDecode( $v );
@@ -245,7 +246,7 @@ private function a22($v) {
 	return $v;
 
 }
-private function a23($v) {
+private function a24($v) {
 
 	// Perhaps we should canonicalize the title?
 	// Protect with JSON.stringify just in case the link target starts with
@@ -253,20 +254,20 @@ private function a23($v) {
 	return PHPUtils::jsonEncode( implode( $v ) );
 
 }
-private function a24($c) {
+private function a25($c) {
  return "\\" . $c; 
 }
-private function a25($v) {
+private function a26($v) {
 
 	return '"' . implode( $v ) . '"';
 
 }
-private function a26($v) {
+private function a27($v) {
 
 	return implode( $v );
 
 }
-private function a27($v) {
+private function a28($v) {
 
 	return "{" . implode( $v ) . "}";
 
@@ -276,101 +277,73 @@ private function a27($v) {
 	private function parsetestfile($silence) {
   // start seq_1
   $p1 = $this->currPos;
-  $r3 = $this->parseformat($silence);
-  if ($r3===self::$FAILED) {
-    $r3 = null;
+  $r3 = [];
+  for (;;) {
+    $r4 = $this->parsecomment_or_blank_line($silence);
+    if ($r4!==self::$FAILED) {
+      $r3[] = $r4;
+    } else {
+      break;
+    }
   }
-  $r4 = $this->parsetestfile_options($silence);
+  // free $r4
+  $r4 = $this->parseformat($silence);
   if ($r4===self::$FAILED) {
     $r4 = null;
   }
   $r5 = [];
   for (;;) {
-    $r6 = $this->parselined_chunk($silence);
+    $r6 = $this->parsecomment_or_blank_line($silence);
     if ($r6!==self::$FAILED) {
       $r5[] = $r6;
     } else {
       break;
     }
   }
-  if (count($r5) === 0) {
-    $r5 = self::$FAILED;
+  // free $r6
+  $r6 = $this->parsetestfile_options($silence);
+  if ($r6===self::$FAILED) {
+    $r6 = null;
   }
-  if ($r5===self::$FAILED) {
+  $r7 = [];
+  for (;;) {
+    $r8 = $this->parselined_chunk($silence);
+    if ($r8!==self::$FAILED) {
+      $r7[] = $r8;
+    } else {
+      break;
+    }
+  }
+  if (count($r7) === 0) {
+    $r7 = self::$FAILED;
+  }
+  if ($r7===self::$FAILED) {
     $this->currPos = $p1;
     $r2 = self::$FAILED;
     goto seq_1;
   }
-  // free $r6
-  $r2 = [$r3,$r4,$r5];
+  // free $r8
+  $r2 = [$r3,$r4,$r5,$r6,$r7];
   seq_1:
   // free $r2,$p1
   return $r2;
 }
-private function parseformat($silence) {
+private function parsecomment_or_blank_line($silence) {
+  // start choice_1
+  $r1 = $this->parsecomment($silence);
+  if ($r1!==self::$FAILED) {
+    goto choice_1;
+  }
   $p2 = $this->currPos;
   // start seq_1
   $p3 = $this->currPos;
-  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "!!", $this->currPos, 2, false) === 0) {
-    $r4 = "!!";
-    $this->currPos += 2;
-  } else {
-    if (!$silence) {$this->fail(1);}
-    $r4 = self::$FAILED;
-    $r1 = self::$FAILED;
-    goto seq_1;
+  $r4 = $this->discardwhitespace($silence);
+  if ($r4===self::$FAILED) {
+    $r4 = null;
   }
-  $r5 = $this->discardwhitespace($silence);
+  $r5 = $this->parseeol($silence);
+  // nl <- $r5
   if ($r5===self::$FAILED) {
-    $r5 = null;
-  }
-  $r6 = $this->discardversion_keyword($silence);
-  if ($r6===self::$FAILED) {
-    $this->currPos = $p3;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  $r7 = self::$FAILED;
-  for (;;) {
-    $r8 = $this->discardwhitespace($silence);
-    if ($r8!==self::$FAILED) {
-      $r7 = true;
-    } else {
-      break;
-    }
-  }
-  if ($r7===self::$FAILED) {
-    $this->currPos = $p3;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  // free $r8
-  $p9 = $this->currPos;
-  $r8 = self::$FAILED;
-  for (;;) {
-    $r10 = $this->input[$this->currPos] ?? '';
-    if (preg_match("/^[0-9]/", $r10)) {
-      $this->currPos++;
-      $r8 = true;
-    } else {
-      $r10 = self::$FAILED;
-      if (!$silence) {$this->fail(2);}
-      break;
-    }
-  }
-  // v <- $r8
-  if ($r8!==self::$FAILED) {
-    $r8 = substr($this->input, $p9, $this->currPos - $p9);
-  } else {
-    $r8 = self::$FAILED;
-    $this->currPos = $p3;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  // free $r10
-  // free $p9
-  $r10 = $this->discardrest_of_line($silence);
-  if ($r10===self::$FAILED) {
     $this->currPos = $p3;
     $r1 = self::$FAILED;
     goto seq_1;
@@ -379,7 +352,96 @@ private function parseformat($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a0($r8);
+    $r1 = $this->a0($r5);
+  }
+  // free $p3
+  choice_1:
+  return $r1;
+}
+private function parseformat($silence) {
+  $p2 = $this->currPos;
+  // start seq_1
+  $p3 = $this->currPos;
+  $p5 = $this->currPos;
+  $r4 = '';
+  // l <- $r4
+  if ($r4!==self::$FAILED) {
+    $this->savedPos = $p5;
+    $r4 = $this->a1();
+  } else {
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "!!", $this->currPos, 2, false) === 0) {
+    $r6 = "!!";
+    $this->currPos += 2;
+  } else {
+    if (!$silence) {$this->fail(1);}
+    $r6 = self::$FAILED;
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r7 = $this->discardwhitespace($silence);
+  if ($r7===self::$FAILED) {
+    $r7 = null;
+  }
+  $r8 = $this->discardversion_keyword($silence);
+  if ($r8===self::$FAILED) {
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r9 = self::$FAILED;
+  for (;;) {
+    $r10 = $this->discardwhitespace($silence);
+    if ($r10!==self::$FAILED) {
+      $r9 = true;
+    } else {
+      break;
+    }
+  }
+  if ($r9===self::$FAILED) {
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  // free $r10
+  $p11 = $this->currPos;
+  $r10 = self::$FAILED;
+  for (;;) {
+    $r12 = $this->input[$this->currPos] ?? '';
+    if (preg_match("/^[0-9]/", $r12)) {
+      $this->currPos++;
+      $r10 = true;
+    } else {
+      $r12 = self::$FAILED;
+      if (!$silence) {$this->fail(2);}
+      break;
+    }
+  }
+  // v <- $r10
+  if ($r10!==self::$FAILED) {
+    $r10 = substr($this->input, $p11, $this->currPos - $p11);
+  } else {
+    $r10 = self::$FAILED;
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  // free $r12
+  // free $p11
+  $r12 = $this->discardrest_of_line($silence);
+  if ($r12===self::$FAILED) {
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r1 = true;
+  seq_1:
+  if ($r1!==self::$FAILED) {
+    $this->savedPos = $p2;
+    $r1 = $this->a2($r4, $r10);
   }
   // free $p3
   return $r1;
@@ -388,14 +450,25 @@ private function parsetestfile_options($silence) {
   $p2 = $this->currPos;
   // start seq_1
   $p3 = $this->currPos;
-  $r4 = $this->parseoption_section($silence);
-  // sec <- $r4
-  if ($r4===self::$FAILED) {
+  $p5 = $this->currPos;
+  $r4 = '';
+  // l <- $r4
+  if ($r4!==self::$FAILED) {
+    $this->savedPos = $p5;
+    $r4 = $this->a1();
+  } else {
     $r1 = self::$FAILED;
     goto seq_1;
   }
-  $r5 = $this->discardend_section($silence);
-  if ($r5===self::$FAILED) {
+  $r6 = $this->parseoption_section($silence);
+  // sec <- $r6
+  if ($r6===self::$FAILED) {
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r7 = $this->discardend_section($silence);
+  if ($r7===self::$FAILED) {
     $this->currPos = $p3;
     $r1 = self::$FAILED;
     goto seq_1;
@@ -404,7 +477,7 @@ private function parsetestfile_options($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a1($r4);
+    $r1 = $this->a3($r4, $r6);
   }
   // free $p3
   return $r1;
@@ -418,7 +491,7 @@ private function parselined_chunk($silence) {
   // l <- $r4
   if ($r4!==self::$FAILED) {
     $this->savedPos = $p5;
-    $r4 = $this->a2();
+    $r4 = $this->a1();
   } else {
     $r1 = self::$FAILED;
     goto seq_1;
@@ -434,7 +507,36 @@ private function parselined_chunk($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a3($r4, $r6);
+    $r1 = $this->a4($r4, $r6);
+  }
+  // free $p3
+  return $r1;
+}
+private function parsecomment($silence) {
+  $p2 = $this->currPos;
+  // start seq_1
+  $p3 = $this->currPos;
+  if (($this->input[$this->currPos] ?? null) === "#") {
+    $this->currPos++;
+    $r4 = "#";
+  } else {
+    if (!$silence) {$this->fail(3);}
+    $r4 = self::$FAILED;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r5 = $this->parserest_of_line($silence);
+  // text <- $r5
+  if ($r5===self::$FAILED) {
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r1 = true;
+  seq_1:
+  if ($r1!==self::$FAILED) {
+    $this->savedPos = $p2;
+    $r1 = $this->a5($r5);
   }
   // free $p3
   return $r1;
@@ -448,89 +550,39 @@ private function discardwhitespace($silence) {
       $r1 = true;
     } else {
       $r2 = self::$FAILED;
-      if (!$silence) {$this->fail(3);}
+      if (!$silence) {$this->fail(4);}
       break;
     }
   }
   // free $r2
   return $r1;
 }
-private function discardversion_keyword($silence) {
-  // start seq_1
-  $p1 = $this->currPos;
-  $r3 = $this->input[$this->currPos] ?? '';
-  if ($r3 === "v" || $r3 === "V") {
+private function parseeol($silence) {
+  $p2 = $this->currPos;
+  // nl <- $r3
+  if (($this->input[$this->currPos] ?? null) === "\x0a") {
     $this->currPos++;
+    $r3 = "\x0a";
   } else {
-    $r3 = self::$FAILED;
-    if (!$silence) {$this->fail(4);}
-    $r2 = self::$FAILED;
-    goto seq_1;
-  }
-  $r4 = $this->input[$this->currPos] ?? '';
-  if ($r4 === "e" || $r4 === "E") {
-    $this->currPos++;
-  } else {
-    $r4 = self::$FAILED;
     if (!$silence) {$this->fail(5);}
-    $this->currPos = $p1;
-    $r2 = self::$FAILED;
-    goto seq_1;
+    $r3 = self::$FAILED;
   }
-  $r5 = $this->input[$this->currPos] ?? '';
-  if ($r5 === "r" || $r5 === "R") {
-    $this->currPos++;
+  $r1 = $r3;
+  if ($r1!==self::$FAILED) {
+    $this->savedPos = $p2;
+    $r1 = $this->a6($r3);
+  }
+  return $r1;
+}
+private function discardversion_keyword($silence) {
+  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "version", $this->currPos, 7, true) === 0) {
+    $r1 = substr($this->input, $this->currPos, 7);
+    $this->currPos += 7;
   } else {
-    $r5 = self::$FAILED;
     if (!$silence) {$this->fail(6);}
-    $this->currPos = $p1;
-    $r2 = self::$FAILED;
-    goto seq_1;
+    $r1 = self::$FAILED;
   }
-  $r6 = $this->input[$this->currPos] ?? '';
-  if ($r6 === "s" || $r6 === "S") {
-    $this->currPos++;
-  } else {
-    $r6 = self::$FAILED;
-    if (!$silence) {$this->fail(7);}
-    $this->currPos = $p1;
-    $r2 = self::$FAILED;
-    goto seq_1;
-  }
-  $r7 = $this->input[$this->currPos] ?? '';
-  if ($r7 === "i" || $r7 === "I") {
-    $this->currPos++;
-  } else {
-    $r7 = self::$FAILED;
-    if (!$silence) {$this->fail(8);}
-    $this->currPos = $p1;
-    $r2 = self::$FAILED;
-    goto seq_1;
-  }
-  $r8 = $this->input[$this->currPos] ?? '';
-  if ($r8 === "o" || $r8 === "O") {
-    $this->currPos++;
-  } else {
-    $r8 = self::$FAILED;
-    if (!$silence) {$this->fail(9);}
-    $this->currPos = $p1;
-    $r2 = self::$FAILED;
-    goto seq_1;
-  }
-  $r9 = $this->input[$this->currPos] ?? '';
-  if ($r9 === "n" || $r9 === "N") {
-    $this->currPos++;
-  } else {
-    $r9 = self::$FAILED;
-    if (!$silence) {$this->fail(10);}
-    $this->currPos = $p1;
-    $r2 = self::$FAILED;
-    goto seq_1;
-  }
-  $r2 = true;
-  seq_1:
-  // free $r2,$p1
-  return $r2;
+  return $r1;
 }
 private function discardrest_of_line($silence) {
   $p2 = $this->currPos;
@@ -544,7 +596,7 @@ private function discardrest_of_line($silence) {
       $r4[] = $r5;
     } else {
       $r5 = self::$FAILED;
-      if (!$silence) {$this->fail(11);}
+      if (!$silence) {$this->fail(7);}
       break;
     }
   }
@@ -560,7 +612,7 @@ private function discardrest_of_line($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a4($r4);
+    $r1 = $this->a7($r4);
   }
   // free $p3
   return $r1;
@@ -586,7 +638,7 @@ private function parseoption_section($silence) {
     $r6 = "options";
     $this->currPos += 7;
   } else {
-    if (!$silence) {$this->fail(12);}
+    if (!$silence) {$this->fail(8);}
     $r6 = self::$FAILED;
     $this->currPos = $p3;
     $r1 = self::$FAILED;
@@ -611,7 +663,7 @@ private function parseoption_section($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a5($r9);
+    $r1 = $this->a8($r9);
   }
   // free $p3
   return $r1;
@@ -636,7 +688,7 @@ private function discardend_section($silence) {
     $r5 = "end";
     $this->currPos += 3;
   } else {
-    if (!$silence) {$this->fail(13);}
+    if (!$silence) {$this->fail(9);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -659,7 +711,7 @@ private function discardend_section($silence) {
 }
 private function parsechunk($silence) {
   // start choice_1
-  $r1 = $this->parsecomment($silence);
+  $r1 = $this->parsecomment_or_blank_line($silence);
   if ($r1!==self::$FAILED) {
     goto choice_1;
   }
@@ -671,21 +723,56 @@ private function parsechunk($silence) {
   if ($r1!==self::$FAILED) {
     goto choice_1;
   }
+  $r1 = $this->parsehooks($silence);
+  if ($r1!==self::$FAILED) {
+    goto choice_1;
+  }
+  $r1 = $this->parsefunctionhooks($silence);
+  if ($r1!==self::$FAILED) {
+    goto choice_1;
+  }
   $p2 = $this->currPos;
   $r3 = $this->parseline($silence);
   // l <- $r3
   $r1 = $r3;
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a6($r3);
-    goto choice_1;
+    $r1 = $this->a9($r3);
   }
-  $r1 = $this->parsehooks($silence);
-  if ($r1!==self::$FAILED) {
-    goto choice_1;
-  }
-  $r1 = $this->parsefunctionhooks($silence);
   choice_1:
+  return $r1;
+}
+private function parserest_of_line($silence) {
+  $p2 = $this->currPos;
+  // start seq_1
+  $p3 = $this->currPos;
+  $r4 = [];
+  for (;;) {
+    $r5 = self::charAt($this->input, $this->currPos);
+    if ($r5 !== '' && !($r5 === "\x0a")) {
+      $this->currPos += strlen($r5);
+      $r4[] = $r5;
+    } else {
+      $r5 = self::$FAILED;
+      if (!$silence) {$this->fail(7);}
+      break;
+    }
+  }
+  // c <- $r4
+  // free $r5
+  $r5 = $this->discardeol($silence);
+  if ($r5===self::$FAILED) {
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r1 = true;
+  seq_1:
+  if ($r1!==self::$FAILED) {
+    $this->savedPos = $p2;
+    $r1 = $this->a7($r4);
+  }
+  // free $p3
   return $r1;
 }
 private function discardeol($silence) {
@@ -695,13 +782,13 @@ private function discardeol($silence) {
     $this->currPos++;
     $r3 = "\x0a";
   } else {
-    if (!$silence) {$this->fail(14);}
+    if (!$silence) {$this->fail(5);}
     $r3 = self::$FAILED;
   }
   $r1 = $r3;
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a7($r3);
+    $r1 = $this->a6($r3);
   }
   return $r1;
 }
@@ -724,7 +811,7 @@ private function parseoption_list($silence) {
       goto choice_1;
     } else {
       $r6 = self::$FAILED;
-      if (!$silence) {$this->fail(3);}
+      if (!$silence) {$this->fail(4);}
     }
     $r6 = $this->discardeol($silence);
     choice_1:
@@ -749,36 +836,7 @@ private function parseoption_list($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a8($r4, $r6);
-  }
-  // free $p3
-  return $r1;
-}
-private function parsecomment($silence) {
-  $p2 = $this->currPos;
-  // start seq_1
-  $p3 = $this->currPos;
-  if (($this->input[$this->currPos] ?? null) === "#") {
-    $this->currPos++;
-    $r4 = "#";
-  } else {
-    if (!$silence) {$this->fail(15);}
-    $r4 = self::$FAILED;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  $r5 = $this->parserest_of_line($silence);
-  // text <- $r5
-  if ($r5===self::$FAILED) {
-    $this->currPos = $p3;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  $r1 = true;
-  seq_1:
-  if ($r1!==self::$FAILED) {
-    $this->savedPos = $p2;
-    $r1 = $this->a9($r5);
+    $r1 = $this->a10($r4, $r6);
   }
   // free $p3
   return $r1;
@@ -828,7 +886,7 @@ private function parsearticle($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a10($r5, $r7);
+    $r1 = $this->a11($r5, $r7);
   }
   // free $p3
   return $r1;
@@ -876,43 +934,7 @@ private function parsetest($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a11($r5, $r6);
-  }
-  // free $p3
-  return $r1;
-}
-private function parseline($silence) {
-  $p2 = $this->currPos;
-  // start seq_1
-  $p3 = $this->currPos;
-  $p4 = $this->currPos;
-  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "!!", $this->currPos, 2, false) === 0) {
-    $r5 = "!!";
-    $this->currPos += 2;
-  } else {
-    $r5 = self::$FAILED;
-  }
-  if ($r5 === self::$FAILED) {
-    $r5 = false;
-  } else {
-    $r5 = self::$FAILED;
-    $this->currPos = $p4;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  // free $p4
-  $r6 = $this->parserest_of_line($silence);
-  // line <- $r6
-  if ($r6===self::$FAILED) {
-    $this->currPos = $p3;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  $r1 = true;
-  seq_1:
-  if ($r1!==self::$FAILED) {
-    $this->savedPos = $p2;
-    $r1 = $this->a12($r6);
+    $r1 = $this->a12($r5, $r6);
   }
   // free $p3
   return $r1;
@@ -991,6 +1013,42 @@ private function parsefunctionhooks($silence) {
   // free $p3
   return $r1;
 }
+private function parseline($silence) {
+  $p2 = $this->currPos;
+  // start seq_1
+  $p3 = $this->currPos;
+  $p4 = $this->currPos;
+  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "!!", $this->currPos, 2, false) === 0) {
+    $r5 = "!!";
+    $this->currPos += 2;
+  } else {
+    $r5 = self::$FAILED;
+  }
+  if ($r5 === self::$FAILED) {
+    $r5 = false;
+  } else {
+    $r5 = self::$FAILED;
+    $this->currPos = $p4;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  // free $p4
+  $r6 = $this->parserest_of_line($silence);
+  // line <- $r6
+  if ($r6===self::$FAILED) {
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  $r1 = true;
+  seq_1:
+  if ($r1!==self::$FAILED) {
+    $this->savedPos = $p2;
+    $r1 = $this->a15($r6);
+  }
+  // free $p3
+  return $r1;
+}
 private function parsean_option($silence) {
   $p2 = $this->currPos;
   // start seq_1
@@ -1010,40 +1068,7 @@ private function parsean_option($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a15($r4, $r5);
-  }
-  // free $p3
-  return $r1;
-}
-private function parserest_of_line($silence) {
-  $p2 = $this->currPos;
-  // start seq_1
-  $p3 = $this->currPos;
-  $r4 = [];
-  for (;;) {
-    $r5 = self::charAt($this->input, $this->currPos);
-    if ($r5 !== '' && !($r5 === "\x0a")) {
-      $this->currPos += strlen($r5);
-      $r4[] = $r5;
-    } else {
-      $r5 = self::$FAILED;
-      if (!$silence) {$this->fail(11);}
-      break;
-    }
-  }
-  // c <- $r4
-  // free $r5
-  $r5 = $this->discardeol($silence);
-  if ($r5===self::$FAILED) {
-    $this->currPos = $p3;
-    $r1 = self::$FAILED;
-    goto seq_1;
-  }
-  $r1 = true;
-  seq_1:
-  if ($r1!==self::$FAILED) {
-    $this->savedPos = $p2;
-    $r1 = $this->a4($r4);
+    $r1 = $this->a16($r4, $r5);
   }
   // free $p3
   return $r1;
@@ -1068,7 +1093,7 @@ private function discardstart_article($silence) {
     $r5 = "article";
     $this->currPos += 7;
   } else {
-    if (!$silence) {$this->fail(16);}
+    if (!$silence) {$this->fail(10);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1109,7 +1134,7 @@ private function discardstart_text($silence) {
     $r5 = "text";
     $this->currPos += 4;
   } else {
-    if (!$silence) {$this->fail(17);}
+    if (!$silence) {$this->fail(11);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1146,7 +1171,7 @@ private function parsetext($silence) {
   $r1 = $r3;
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a16($r3);
+    $r1 = $this->a17($r3);
   }
   return $r1;
 }
@@ -1170,7 +1195,7 @@ private function discardend_article($silence) {
     $r5 = "endarticle";
     $this->currPos += 10;
   } else {
-    if (!$silence) {$this->fail(18);}
+    if (!$silence) {$this->fail(12);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1211,7 +1236,7 @@ private function discardstart_test($silence) {
     $r5 = "test";
     $this->currPos += 4;
   } else {
-    if (!$silence) {$this->fail(19);}
+    if (!$silence) {$this->fail(13);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1250,9 +1275,9 @@ private function parsesection($silence) {
     $r5 = null;
   }
   $p6 = $this->currPos;
-  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "end", $this->currPos, 3, false) === 0) {
-    $r7 = "end";
-    $this->currPos += 3;
+  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "test", $this->currPos, 4, false) === 0) {
+    $r7 = "test";
+    $this->currPos += 4;
   } else {
     $r7 = self::$FAILED;
   }
@@ -1267,9 +1292,9 @@ private function parsesection($silence) {
   }
   // free $p6
   $p6 = $this->currPos;
-  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "options", $this->currPos, 7, false) === 0) {
-    $r8 = "options";
-    $this->currPos += 7;
+  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "end", $this->currPos, 3, false) === 0) {
+    $r8 = "end";
+    $this->currPos += 3;
   } else {
     $r8 = self::$FAILED;
   }
@@ -1284,41 +1309,58 @@ private function parsesection($silence) {
   }
   // free $p6
   $p6 = $this->currPos;
-  $r10 = [];
+  if ($this->currPos >= $this->inputLength ? false : substr_compare($this->input, "options", $this->currPos, 7, false) === 0) {
+    $r9 = "options";
+    $this->currPos += 7;
+  } else {
+    $r9 = self::$FAILED;
+  }
+  if ($r9 === self::$FAILED) {
+    $r9 = false;
+  } else {
+    $r9 = self::$FAILED;
+    $this->currPos = $p6;
+    $this->currPos = $p3;
+    $r1 = self::$FAILED;
+    goto seq_1;
+  }
+  // free $p6
+  $p6 = $this->currPos;
+  $r11 = [];
   for (;;) {
     if (strcspn($this->input, " \x09\x0d\x0a", $this->currPos, 1) !== 0) {
-      $r11 = self::consumeChar($this->input, $this->currPos);
-      $r10[] = $r11;
+      $r12 = self::consumeChar($this->input, $this->currPos);
+      $r11[] = $r12;
     } else {
-      $r11 = self::$FAILED;
-      if (!$silence) {$this->fail(20);}
+      $r12 = self::$FAILED;
+      if (!$silence) {$this->fail(14);}
       break;
     }
   }
-  if (count($r10) === 0) {
-    $r10 = self::$FAILED;
+  if (count($r11) === 0) {
+    $r11 = self::$FAILED;
   }
-  // c <- $r10
-  // free $r11
-  $r9 = $r10;
-  // name <- $r9
-  if ($r9!==self::$FAILED) {
+  // c <- $r11
+  // free $r12
+  $r10 = $r11;
+  // name <- $r10
+  if ($r10!==self::$FAILED) {
     $this->savedPos = $p6;
-    $r9 = $this->a17($r10);
+    $r10 = $this->a18($r11);
   } else {
     $this->currPos = $p3;
     $r1 = self::$FAILED;
     goto seq_1;
   }
-  $r11 = $this->discardrest_of_line($silence);
-  if ($r11===self::$FAILED) {
+  $r12 = $this->discardrest_of_line($silence);
+  if ($r12===self::$FAILED) {
     $this->currPos = $p3;
     $r1 = self::$FAILED;
     goto seq_1;
   }
-  $r12 = $this->parsetext($silence);
-  // text <- $r12
-  if ($r12===self::$FAILED) {
+  $r13 = $this->parsetext($silence);
+  // text <- $r13
+  if ($r13===self::$FAILED) {
     $this->currPos = $p3;
     $r1 = self::$FAILED;
     goto seq_1;
@@ -1327,7 +1369,7 @@ private function parsesection($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a18($r9, $r12);
+    $r1 = $this->a19($r10, $r13);
   }
   // free $p3
   return $r1;
@@ -1352,7 +1394,7 @@ private function discardstart_hooks($silence) {
     $r5 = "hooks";
     $this->currPos += 5;
   } else {
-    if (!$silence) {$this->fail(21);}
+    if (!$silence) {$this->fail(15);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1362,7 +1404,7 @@ private function discardstart_hooks($silence) {
     $this->currPos++;
     $r6 = ":";
   } else {
-    if (!$silence) {$this->fail(22);}
+    if (!$silence) {$this->fail(16);}
     $r6 = self::$FAILED;
     $r6 = null;
   }
@@ -1401,7 +1443,7 @@ private function discardend_hooks($silence) {
     $r5 = "endhooks";
     $this->currPos += 8;
   } else {
-    if (!$silence) {$this->fail(23);}
+    if (!$silence) {$this->fail(17);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1442,7 +1484,7 @@ private function discardstart_functionhooks($silence) {
     $r5 = "functionhooks";
     $this->currPos += 13;
   } else {
-    if (!$silence) {$this->fail(24);}
+    if (!$silence) {$this->fail(18);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1452,7 +1494,7 @@ private function discardstart_functionhooks($silence) {
     $this->currPos++;
     $r6 = ":";
   } else {
-    if (!$silence) {$this->fail(22);}
+    if (!$silence) {$this->fail(16);}
     $r6 = self::$FAILED;
     $r6 = null;
   }
@@ -1491,7 +1533,7 @@ private function discardend_functionhooks($silence) {
     $r5 = "endfunctionhooks";
     $this->currPos += 16;
   } else {
-    if (!$silence) {$this->fail(25);}
+    if (!$silence) {$this->fail(19);}
     $r5 = self::$FAILED;
     $this->currPos = $p1;
     $r2 = self::$FAILED;
@@ -1501,7 +1543,7 @@ private function discardend_functionhooks($silence) {
     $this->currPos++;
     $r6 = ":";
   } else {
-    if (!$silence) {$this->fail(22);}
+    if (!$silence) {$this->fail(16);}
     $r6 = self::$FAILED;
     $r6 = null;
   }
@@ -1529,7 +1571,7 @@ private function parseoption_name($silence) {
       $r3[] = $r4;
     } else {
       $r4 = self::$FAILED;
-      if (!$silence) {$this->fail(26);}
+      if (!$silence) {$this->fail(20);}
       break;
     }
   }
@@ -1541,7 +1583,7 @@ private function parseoption_name($silence) {
   $r1 = $r3;
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a4($r3);
+    $r1 = $this->a7($r3);
   }
   return $r1;
 }
@@ -1557,7 +1599,7 @@ private function parseoption_value($silence) {
     $this->currPos++;
     $r5 = "=";
   } else {
-    if (!$silence) {$this->fail(27);}
+    if (!$silence) {$this->fail(21);}
     $r5 = self::$FAILED;
     $this->currPos = $p3;
     $r1 = self::$FAILED;
@@ -1578,7 +1620,7 @@ private function parseoption_value($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a19($r7);
+    $r1 = $this->a20($r7);
   }
   // free $p3
   return $r1;
@@ -1604,7 +1646,7 @@ private function parseoption_value_list($silence) {
     $this->currPos++;
     $r9 = ",";
   } else {
-    if (!$silence) {$this->fail(28);}
+    if (!$silence) {$this->fail(22);}
     $r9 = self::$FAILED;
     $this->currPos = $p7;
     $r5 = self::$FAILED;
@@ -1625,7 +1667,7 @@ private function parseoption_value_list($silence) {
   seq_2:
   if ($r5!==self::$FAILED) {
     $this->savedPos = $p6;
-    $r5 = $this->a20($r4, $r11);
+    $r5 = $this->a21($r4, $r11);
   } else {
     $r5 = null;
   }
@@ -1635,7 +1677,7 @@ private function parseoption_value_list($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a21($r4, $r5);
+    $r1 = $this->a22($r4, $r5);
   }
   // free $p3
   return $r1;
@@ -1661,7 +1703,7 @@ private function parsean_option_value($silence) {
   $r1 = $r3;
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a22($r3);
+    $r1 = $this->a23($r3);
   }
   return $r1;
 }
@@ -1673,7 +1715,7 @@ private function parselink_target_value($silence) {
     $r4 = "[[";
     $this->currPos += 2;
   } else {
-    if (!$silence) {$this->fail(29);}
+    if (!$silence) {$this->fail(23);}
     $r4 = self::$FAILED;
     $r1 = self::$FAILED;
     goto seq_1;
@@ -1686,7 +1728,7 @@ private function parselink_target_value($silence) {
       $r5[] = $r6;
     } else {
       $r6 = self::$FAILED;
-      if (!$silence) {$this->fail(30);}
+      if (!$silence) {$this->fail(24);}
       break;
     }
   }
@@ -1696,7 +1738,7 @@ private function parselink_target_value($silence) {
     $r6 = "]]";
     $this->currPos += 2;
   } else {
-    if (!$silence) {$this->fail(31);}
+    if (!$silence) {$this->fail(25);}
     $r6 = self::$FAILED;
     $this->currPos = $p3;
     $r1 = self::$FAILED;
@@ -1706,7 +1748,7 @@ private function parselink_target_value($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a23($r5);
+    $r1 = $this->a24($r5);
   }
   // free $p3
   return $r1;
@@ -1720,7 +1762,7 @@ private function parsequoted_value($silence) {
     $this->currPos++;
   } else {
     $r4 = self::$FAILED;
-    if (!$silence) {$this->fail(32);}
+    if (!$silence) {$this->fail(26);}
     $r1 = self::$FAILED;
     goto seq_1;
   }
@@ -1732,7 +1774,7 @@ private function parsequoted_value($silence) {
       goto choice_1;
     } else {
       $r6 = self::$FAILED;
-      if (!$silence) {$this->fail(33);}
+      if (!$silence) {$this->fail(27);}
     }
     $p7 = $this->currPos;
     // start seq_2
@@ -1741,7 +1783,7 @@ private function parsequoted_value($silence) {
       $this->currPos++;
       $r9 = "\\";
     } else {
-      if (!$silence) {$this->fail(34);}
+      if (!$silence) {$this->fail(28);}
       $r9 = self::$FAILED;
       $r6 = self::$FAILED;
       goto seq_2;
@@ -1752,7 +1794,7 @@ private function parsequoted_value($silence) {
       $this->currPos += strlen($r10);
     } else {
       $r10 = self::$FAILED;
-      if (!$silence) {$this->fail(11);}
+      if (!$silence) {$this->fail(7);}
       $this->currPos = $p8;
       $r6 = self::$FAILED;
       goto seq_2;
@@ -1761,7 +1803,7 @@ private function parsequoted_value($silence) {
     seq_2:
     if ($r6!==self::$FAILED) {
       $this->savedPos = $p7;
-      $r6 = $this->a24($r10);
+      $r6 = $this->a25($r10);
     }
     // free $p8
     choice_1:
@@ -1778,7 +1820,7 @@ private function parsequoted_value($silence) {
     $this->currPos++;
   } else {
     $r6 = self::$FAILED;
-    if (!$silence) {$this->fail(32);}
+    if (!$silence) {$this->fail(26);}
     $this->currPos = $p3;
     $r1 = self::$FAILED;
     goto seq_1;
@@ -1787,7 +1829,7 @@ private function parsequoted_value($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a25($r5);
+    $r1 = $this->a26($r5);
   }
   // free $p3
   return $r1;
@@ -1801,7 +1843,7 @@ private function parseplain_value($silence) {
       $r3[] = $r4;
     } else {
       $r4 = self::$FAILED;
-      if (!$silence) {$this->fail(35);}
+      if (!$silence) {$this->fail(29);}
       break;
     }
   }
@@ -1813,7 +1855,7 @@ private function parseplain_value($silence) {
   $r1 = $r3;
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a26($r3);
+    $r1 = $this->a27($r3);
   }
   return $r1;
 }
@@ -1825,7 +1867,7 @@ private function parsejson_value($silence) {
     $this->currPos++;
     $r4 = "{";
   } else {
-    if (!$silence) {$this->fail(36);}
+    if (!$silence) {$this->fail(30);}
     $r4 = self::$FAILED;
     $r1 = self::$FAILED;
     goto seq_1;
@@ -1838,7 +1880,7 @@ private function parsejson_value($silence) {
       goto choice_1;
     } else {
       $r6 = self::$FAILED;
-      if (!$silence) {$this->fail(37);}
+      if (!$silence) {$this->fail(31);}
     }
     $r6 = $this->parsequoted_value($silence);
     if ($r6!==self::$FAILED) {
@@ -1862,7 +1904,7 @@ private function parsejson_value($silence) {
     $this->currPos++;
     $r6 = "}";
   } else {
-    if (!$silence) {$this->fail(38);}
+    if (!$silence) {$this->fail(32);}
     $r6 = self::$FAILED;
     $this->currPos = $p3;
     $r1 = self::$FAILED;
@@ -1872,26 +1914,9 @@ private function parsejson_value($silence) {
   seq_1:
   if ($r1!==self::$FAILED) {
     $this->savedPos = $p2;
-    $r1 = $this->a27($r5);
+    $r1 = $this->a28($r5);
   }
   // free $p3
-  return $r1;
-}
-private function parseeol($silence) {
-  $p2 = $this->currPos;
-  // nl <- $r3
-  if (($this->input[$this->currPos] ?? null) === "\x0a") {
-    $this->currPos++;
-    $r3 = "\x0a";
-  } else {
-    if (!$silence) {$this->fail(14);}
-    $r3 = self::$FAILED;
-  }
-  $r1 = $r3;
-  if ($r1!==self::$FAILED) {
-    $this->savedPos = $p2;
-    $r1 = $this->a7($r3);
-  }
   return $r1;
 }
 

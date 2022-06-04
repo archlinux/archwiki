@@ -144,7 +144,7 @@ class SpecialComparePages extends SpecialPage {
 				$de = $contentHandler->createDifferenceEngine( $form->getContext(),
 					$rev1,
 					$rev2,
-					null, // rcid
+					0, // rcid
 					( $data['Action'] == 'purge' ),
 					( $data['Unhide'] == '1' )
 				);
@@ -176,7 +176,7 @@ class SpecialComparePages extends SpecialPage {
 		if ( $value === '' || $value === null ) {
 			return true;
 		}
-		$revisionRecord = $this->revisionLookup->getRevisionById( $value );
+		$revisionRecord = $this->revisionLookup->getRevisionById( (int)$value );
 		if ( $revisionRecord === null ) {
 			return $this->msg( 'compare-revision-not-exists' )->parseAsBlock();
 		}

@@ -50,7 +50,7 @@
 	"oath-log-name": "Evidencija dvočiniteljske potvrde:",
 	"oath-log-header": "Ovi događaji prate promjene u dvočiniteljskoj zavjerenosti korisnika",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|jemu}} je onemogućio dvočiniteljsku potvrdu $3",
-	"oauthauth-ui-no-module": "Nijedan nije omogućen",
+	"oathauth-ui-no-module": "Nijedan nije omogućen",
 	"oathauth-ui-manage": "Upravljaj",
 	"oathmanage": "Upravljanje dvočiniteljske potvrde",
 	"oathauth-ui-not-enabled-modules": "Prebaci se na alternativnu metodu",
