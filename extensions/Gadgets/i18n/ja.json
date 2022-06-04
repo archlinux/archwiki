@@ -1,11 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"1108-Kiju",
 			"2nd-player",
 			"Aotake",
 			"Fryed-peach",
 			"JtFuruhata",
 			"Marine-Blue",
+			"MathXplore",
 			"Mzm5zbC3",
 			"Omotecho",
 			"Otokoume",
@@ -31,6 +33,8 @@
 	"gadgetusage-default": "既定",
 	"gadgets-title": "ガジェット",
 	"gadgets-pagetext": "以下は、利用者が[[Special:Preferences#mw-prefsection-gadgets|{{int:preferences}}]]で有効化できるガジェットの一覧です。これらは[[MediaWiki:Gadgets-definition|定義ページ]]で定義されています。\nこの概要ページでは、各ガジェットの説明やプログラム コードを定義しているシステム メッセージ ページへの簡単なアクセスを提供します。",
+	"gadgets-editdescription": "説明を編集",
+	"gadgets-viewdescription": "説明を表示する",
 	"gadgets-uses": "使用するファイル",
 	"gadgets-required-rights": "以下の{{PLURAL:$2|権限}}が必要です:\n\n$1",
 	"gadgets-required-skins": "{{PLURAL:$2|$1外装で利用できます|以下の外装で利用できます: $1}}。",

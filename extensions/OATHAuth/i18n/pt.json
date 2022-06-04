@@ -60,7 +60,7 @@
 	"oath-log-header": "Estes eventos registam alterações do estado da autenticação de dois fatores dos utilizadores.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|desativou}} a autenticação de dois fatores de $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|verificou}} se $3 tem a autenticação de dois fatores ativada",
-	"oauthauth-ui-no-module": "Nenhum ativado",
+	"oathauth-ui-no-module": "Nenhum ativado",
 	"oathauth-module-invalid": "O módulo OATHAuth que o utilizador registou é inválido.",
 	"oathauth-module-totp-label": "TOTP (chave de uso único)",
 	"oathauth-ui-manage": "Gerir",

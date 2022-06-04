@@ -180,6 +180,3 @@ class InTable extends InsertionMode {
 		$this->dispatcher->inBody->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InTable::class, 'RemexHtml\TreeBuilder\InTable' );

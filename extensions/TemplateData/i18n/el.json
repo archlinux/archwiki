@@ -87,7 +87,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Εισαγάγετε το όνομα του χάρτη",
 	"templatedata-modal-search-input-placeholder": "Αναζήτηση με το όνομα ή τον κωδικό γλώσσας",
 	"templatedata-modal-table-param-actions": "Ενέργειες",
-	"templatedata-modal-table-param-aliases": "Ψευδώνυμα (χωρισμένα με κόμμα)",
+	"templatedata-modal-table-param-aliases": "Αλλώνυμα",
 	"templatedata-modal-table-param-autovalue": "Αυτόματη τιμή",
 	"templatedata-modal-table-param-default": "Προεπιλογή ($1)",
 	"templatedata-modal-table-param-deprecated": "Παρωχημένη",

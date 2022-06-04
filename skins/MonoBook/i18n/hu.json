@@ -16,5 +16,7 @@
 	"monobook-more-actions": "Több",
 	"monobook-cactions-label": "Lapműveletek",
 	"monobook-notifications-link": "Értesítések ($1)",
-	"monobook-notifications-link-none": "Értesítések"
+	"monobook-notifications-link-none": "Értesítések",
+	"monobook-view-history": "Laptörténet",
+	"monobook-action-undelete": "{{PLURAL:$1|Egy|$1}} szerkesztés helyreállítása"
 }

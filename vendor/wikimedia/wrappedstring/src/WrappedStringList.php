@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2016 Timo Tijhof <krinklemail@gmail.com>
+ * Copyright 2016 Timo Tijhof
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the

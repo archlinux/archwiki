@@ -1,0 +1,13 @@
+@import 'mediawiki.mixins';
+
+.mw-changeslist-time {
+	display: none;
+}
+
+.mw-index-pager-list-header:not( .mw-index-pager-list-header-first ) + ul {
+	margin-top: 0;
+}
+
+.mw-index-pager-list-header {
+	.mixin-screen-reader-text();
+}

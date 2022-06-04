@@ -45,6 +45,8 @@ function init() {
 
 		// call our resize handler to setup the page
 		rAF( $.collapsibleTabs.handleResize );
+		// When adding new links, a resize should be triggered (T139830).
+		mw.hook( 'util.addPortletLink' ).add( $.collapsibleTabs.handleResize );
 		return this;
 	};
 	$.collapsibleTabs = {

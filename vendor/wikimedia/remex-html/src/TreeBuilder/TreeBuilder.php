@@ -439,7 +439,7 @@ class TreeBuilder {
 		}
 		do {
 			$newElement = $this->insertForeign( HTMLData::NS_HTML, $entry->name,
-				$entry->attrs, false, $sourceStart, 0 );
+				$entry->attrs->clone(), false, $sourceStart, 0 );
 			$this->afe->replace( $entry, $newElement );
 			$entry = $newElement->nextAFE;
 		} while ( $entry );
@@ -602,7 +602,7 @@ class TreeBuilder {
 				// entry for node in the stack of open elements with an entry
 				// for the new element, and let node be the new element. [13.7]
 				$newElt = new Element(
-					$node->namespace, $node->name, $node->attrs );
+					$node->namespace, $node->name, $node->attrs->clone() );
 				$afe->replace( $node, $newElt );
 				$stack->replace( $node, $newElt );
 				$node = $newElt;
@@ -640,7 +640,7 @@ class TreeBuilder {
 			// Create an element for the token for which the formatting element
 			// was created, with furthest block as the intended parent. [15]
 			$newElt2 = new Element(
-				$fmtElt->namespace, $fmtElt->name, $fmtElt->attrs );
+				$fmtElt->namespace, $fmtElt->name, $fmtElt->attrs->clone() );
 
 			// Take all of the child nodes of the furthest block and append
 			// them to the element created in the last step. [16]
@@ -889,6 +889,3 @@ class TreeBuilder {
 		$this->tokenizer = null;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TreeBuilder::class, 'RemexHtml\TreeBuilder\TreeBuilder' );

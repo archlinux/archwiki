@@ -4,32 +4,32 @@
  * @module wt2html/tokenizer_utils
  */
 
-// phpcs:disable MediaWiki.WhiteSpace.SpaceBeforeSingleLineComment.SingleSpaceBeforeSingleLineComment
-// phpcs:disable Generic.Functions.OpeningFunctionBraceKernighanRitchie.BraceOnNewLine
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingParamTag
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingReturn
-
 declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html;
 
 use Wikimedia\Parsoid\Config\Env;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
-use Wikimedia\Parsoid\Tokens\KV;
 use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
+use Wikimedia\Parsoid\Tokens\Token;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 class TokenizerUtils {
 	private static $protectAttrsRegExp;
+	private static $inclAnnRegExp;
 
 	/**
 	 * @param mixed $e
 	 * @param ?array &$res
+	 * @return mixed (same type as $e)
+	 * @throws \Exception
 	 */
 	private static function internalFlatten( $e, ?array &$res ) {
 		// Don't bother flattening if we dont have an array
@@ -60,10 +60,20 @@ class TokenizerUtils {
 		return $e;
 	}
 
+	/**
+	 * If $a is an array, this recursively flattens all nested arrays.
+	 * @param mixed $a
+	 * @return mixed
+	 */
 	public static function flattenIfArray( $a ) {
 		return self::internalFlatten( $a, $res );
 	}
 
+	/**
+	 * FIXME: document
+	 * @param mixed $c
+	 * @return mixed
+	 */
 	public static function flattenString( $c ) {
 		$out = self::flattenStringlist( $c );
 		if ( count( $out ) === 1 && is_string( $out[0] ) ) {
@@ -73,6 +83,11 @@ class TokenizerUtils {
 		}
 	}
 
+	/**
+	 * FIXME: document
+	 * @param mixed $c
+	 * @return mixed
+	 */
 	public static function flattenStringlist( $c ) {
 		$out = [];
 		$text = '';
@@ -98,16 +113,36 @@ class TokenizerUtils {
 		return $out;
 	}
 
-	public static function getAttrVal( $value, int $start, int $end ) {
+	/**
+	 * @param mixed $value
+	 * @param int $start start of TSR range
+	 * @param int $end end of TSR range
+	 * @return array
+	 */
+	public static function getAttrVal( $value, int $start, int $end ): array {
 		return [ 'value' => $value, 'srcOffsets' => new SourceRange( $start, $end ) ];
 	}
 
+	/**
+	 * Build a token array representing <tag>$content</tag> alongwith
+	 * appropriate attributes and TSR info set on the tokens.
+	 *
+	 * @param string $tagName
+	 * @param string $wtChar
+	 * @param mixed $attrInfo
+	 * @param SourceRange $tsr
+	 * @param int $endPos
+	 * @param mixed $content
+	 * @param bool $addEndTag
+	 * @return array (of tokens)
+	 */
 	public static function buildTableTokens(
 		string $tagName, string $wtChar, $attrInfo, SourceRange $tsr,
-		int $endPos, $content, bool $addEndTag = false ): array
-	{
+		int $endPos, $content, bool $addEndTag = false
+	): array {
 		$a = null;
-		$dp = (object)[ 'tsr' => $tsr ];
+		$dp = new DataParsoid;
+		$dp->tsr = $tsr;
 
 		if ( !$attrInfo ) {
 			$a = [];
@@ -115,7 +150,7 @@ class TokenizerUtils {
 				// Add a flag that indicates that the tokenizer didn't
 				// encounter a "|...|" attribute box. This is useful when
 				// deciding which <td>/<th> cells need attribute fixups.
-				$dp->tmp = PHPUtils::arrayToObject( [ 'noAttrs' => true ] );
+				$dp->setTempFlag( TempData::NO_ATTRS );
 			}
 		} else {
 			$a = $attrInfo[0];
@@ -130,10 +165,13 @@ class TokenizerUtils {
 			}
 		}
 
-		$dataAttribs = (object)[ 'tsr' => new SourceRange( $endPos, $endPos ) ];
-		$endTag = null;
+		$tokens = [ new TagTk( $tagName, $a, $dp ) ];
+		PHPUtils::pushArray( $tokens, $content );
+
 		if ( $addEndTag ) {
-			$endTag = new EndTagTk( $tagName, [], $dataAttribs );
+			$dataAttribs = new DataParsoid;
+			$dataAttribs->tsr = new SourceRange( $endPos, $endPos );
+			$tokens[] = new EndTagTk( $tagName, [], $dataAttribs );
 		} else {
 			// We rely on our tree builder to close the table cell (td/th) as needed.
 			// We cannot close the cell here because cell content can come from
@@ -141,27 +179,33 @@ class TokenizerUtils {
 			// parsing context in which the td was opened:
 			//   Ex: {{1x|{{!}}foo}}{{1x|bar}} has to output <td>foobar</td>
 			//
-			// But, add a marker meta-tag to capture tsr info.
-			// SSS FIXME: Unsure if this is actually helpful, but adding it in just in case.
-			// Can test later and strip it out if it doesn't make any diff to rting.
-			$endTag = new SelfclosingTagTk( 'meta', [
-					new KV( 'typeof', 'mw:TSRMarker' ),
-					new KV( 'data-etag', $tagName )
-				], $dataAttribs
-			);
+			// Previously a meta marker was added here for DSR computation, but
+			// that's complicated now that marker meta handling has been removed
+			// from ComputeDSR.
 		}
 
-		return array_merge(
-			[ new TagTk( $tagName, $a, $dp ) ],
-			$content,
-			[ $endTag ] );
+		return $tokens;
 	}
 
+	/**
+	 * Build a token representing <tag>, <tag />, or </tag>
+	 * with appropriate attributes set on the token.
+	 *
+	 * @param string $name
+	 * @param string $lcName
+	 * @param array $attribs
+	 * @param mixed $endTag
+	 * @param bool $selfClose
+	 * @param SourceRange $tsr
+	 * @return Token
+	 */
 	public static function buildXMLTag( string $name, string $lcName, array $attribs, $endTag,
 		bool $selfClose, SourceRange $tsr
-	) {
+	): Token {
 		$tok = null;
-		$da = (object)[ 'tsr' => $tsr, 'stx' => 'html' ];
+		$da = new DataParsoid;
+		$da->tsr = $tsr;
+		$da->stx = 'html';
 
 		if ( $name !== $lcName ) {
 			$da->srcTagName = $name;
@@ -184,8 +228,14 @@ class TokenizerUtils {
 	 * active higher-level rules in inline and other nested rules.
 	 * Those inner rules are then exited, so that the outer rule can
 	 * handle the end marker.
+	 * @param string $input
+	 * @param int $pos
+	 * @param array $stops
+	 * @param Env $env
+	 * @return bool
+	 * @throws \Exception
 	 */
-	public static function inlineBreaks( string $input, int $pos, array $stops ) {
+	public static function inlineBreaks( string $input, int $pos, array $stops, Env $env ): bool {
 		$c = $input[$pos];
 		$c2 = $input[$pos + 1] ?? '';
 
@@ -194,16 +244,27 @@ class TokenizerUtils {
 				if ( $stops['arrow'] && $c2 === '>' ) {
 					return true;
 				}
-				return $stops['equal']
-					|| $stops['h']
-					&& ( $pos === strlen( $input ) - 1
-					// possibly more equals followed by spaces or comments
-					|| preg_match( '/^=*(?:[ \t]|<\!--(?:(?!-->).)*-->)*(?:[\r\n]|$)/sD',
-						substr( $input, $pos + 1 )
-					) );
+				if ( $stops['equal'] ) {
+					return true;
+				}
+				if ( $stops['h'] ) {
+					if ( self::$inclAnnRegExp === null ) {
+						$tags = array_merge(
+							[ 'noinclude', 'includeonly', 'onlyinclude' ],
+							$env->getSiteConfig()->getAnnotationTags()
+						);
+						self::$inclAnnRegExp = '|<\/?(?:' . implode( '|', $tags ) . ')>';
+					}
+					return ( $pos === strlen( $input ) - 1
+						// possibly more equals followed by spaces or comments
+						|| preg_match( '/^=*(?:[ \t]|<\!--(?:(?!-->).)*-->'
+								. self::$inclAnnRegExp . ')*(?:[\r\n]|$)/sD',
+							substr( $input, $pos + 1 ) ) );
+				}
+				return false;
 
 			case '|':
-				return !$stops['extTag'] && (
+				return !$stops['annOrExtTag'] && (
 					$stops['templateArg']
 					|| $stops['tableCellArg']
 					|| $stops['linkdesc']
@@ -297,8 +358,12 @@ class TokenizerUtils {
 		}
 	}
 
-	/** Pop off the end comments, if any. */
-	public static function popComments( array &$attrs ) {
+	/**
+	 * Pop off the end comments, if any.
+	 * @param array &$attrs
+	 * @return array|null
+	 */
+	public static function popComments( array &$attrs ): ?array {
 		$buf = [];
 		for ( $i = count( $attrs ) - 1;  $i > -1;  $i-- ) {
 			$kv = $attrs[$i];
@@ -329,8 +394,27 @@ class TokenizerUtils {
 		}
 	}
 
+	/** Get a string containing all the autourl terminating characters (as in legacy parser
+	 * Parser.php::makeFreeExternalLink). This list is slightly context-dependent because the
+	 * inclusion of the right parenthesis depends on whether the provided character array $arr
+	 * contains a left parenthesis.
+	 * @param array $arr
+	 * @return string
+	 */
+	public static function getAutoUrlTerminatingChars( array $arr ): string {
+		$chars = Consts::$strippedUrlCharacters;
+		if ( array_search( '(', $arr, true ) === false ) {
+			$chars .= ')';
+		}
+		return $chars;
+	}
+
+	/**
+	 * @param Env $env
+	 * @param mixed $token
+	 */
 	public static function enforceParserResourceLimits( Env $env, $token ) {
-		if ( $token && ( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) ) {
+		if ( $token instanceof TagTk || $token instanceof SelfclosingTagTk ) {
 			$resource = null;
 			switch ( $token->getName() ) {
 				case 'listItem':
@@ -355,7 +439,14 @@ class TokenizerUtils {
 		}
 	}
 
-	public static function protectAttrs( string $name ) {
+	/**
+	 * Protect Parsoid-inserted attributes by escaping them to prevent
+	 * Parsoid-HTML spoofing in wikitext.
+	 *
+	 * @param string $name
+	 * @return string
+	 */
+	public static function protectAttrs( string $name ): string {
 		if ( self::$protectAttrsRegExp === null ) {
 			self::$protectAttrsRegExp = "/^(about|data-mw.*|data-parsoid.*|data-x.*|" .
 				DOMDataUtils::DATA_OBJECT_ATTR_NAME .
@@ -364,7 +455,19 @@ class TokenizerUtils {
 		return preg_replace( self::$protectAttrsRegExp, 'data-x-$1', $name );
 	}
 
-	public static function isIncludeTag( $name ) {
+	/**
+	 * Is this an include directive?
+	 * @param string $name
+	 * @return bool
+	 */
+	public static function isIncludeTag( string $name ): bool {
 		return $name === 'includeonly' || $name === 'noinclude' || $name === 'onlyinclude';
+	}
+
+	/**
+	 * Resets $inclAnnRegExp to null to avoid test environment side effects
+	 */
+	public static function resetAnnotationIncludeRegex(): void {
+		self::$inclAnnRegExp = null;
 	}
 }

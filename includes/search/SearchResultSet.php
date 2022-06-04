@@ -32,7 +32,7 @@ class SearchResultSet extends BaseSearchResultSet {
 	/**
 	 * Cache of titles.
 	 * Lists titles of the result set, in the same order as results.
-	 * @var Title[]
+	 * @var Title[]|null
 	 */
 	private $titles;
 
@@ -81,7 +81,7 @@ class SearchResultSet extends BaseSearchResultSet {
 	 *
 	 * Return null if no total hits number is supported.
 	 *
-	 * @return int
+	 * @return int|null
 	 */
 	public function getTotalHits() {
 		return null;
@@ -143,7 +143,7 @@ class SearchResultSet extends BaseSearchResultSet {
 	 * Return a result set of hits on other (multiple) wikis associated with this one
 	 *
 	 * @param int $type
-	 * @return ISearchResultSet[]
+	 * @return ISearchResultSet[]|null
 	 */
 	public function getInterwikiResults( $type = self::SECONDARY_RESULTS ) {
 		return null;

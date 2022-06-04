@@ -1,0 +1,1 @@
+ALTER TABLE /*_*/mathoid ADD math_png mediumblob;

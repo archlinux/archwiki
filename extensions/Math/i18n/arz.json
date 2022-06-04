@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ghaly",
+			"Macofe",
+			"Meno25",
+			"Ramsis II"
+		]
+	},
+	"math_failure": "الاعراب فشل",
+	"math_syntax_error": "غلط فى تركيب الجملة",
+	"math_unknown_error": "غلط مش معروف",
+	"math_unknown_function": "وظيفة مش معروفة \"$1\"",
+	"mw_math_mathml": "اعرض بصيغة MathML لو ممكن (تحت التجريب)",
+	"mw_math_png": "دايما اعرض PNG",
+	"mw_math_source": "اعرض على هيئة LaTeX (للبراوزرات النصية)",
+	"prefs-math": "رياضة"
+}

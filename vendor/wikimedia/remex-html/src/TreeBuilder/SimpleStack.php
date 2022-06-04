@@ -201,6 +201,3 @@ class SimpleStack extends Stack {
 		return false;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( SimpleStack::class, 'RemexHtml\TreeBuilder\SimpleStack' );

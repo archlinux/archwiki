@@ -43,12 +43,11 @@ ve.ui.MWWikitextPasteContextItem.static.editable = false;
  * @inheritdoc
  */
 ve.ui.MWWikitextPasteContextItem.prototype.renderBody = function () {
-	var convertButton,
-		fragment = this.model.fragment,
+	var fragment = this.model.fragment,
 		doc = this.model.doc,
 		contextRange = this.model.contextRange;
 
-	convertButton = new OO.ui.ButtonWidget( {
+	var convertButton = new OO.ui.ButtonWidget( {
 		label: ve.msg( 'visualeditor-wikitextconvert-convert' ),
 		flags: [ 'progressive' ]
 	} ).on( 'click', function () {

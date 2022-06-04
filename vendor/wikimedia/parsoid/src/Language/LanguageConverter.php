@@ -36,6 +36,7 @@ use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
@@ -272,6 +273,7 @@ class LanguageConverter {
 			$guesser = new ConstantLanguageGuesser( $sourceVariant );
 		} else {
 			$guesser = new MachineLanguageGuesser(
+				// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
 				$langconv->getMachine(), $rootNode, $targetVariant
 			);
 		}
@@ -288,7 +290,7 @@ class LanguageConverter {
 			$dmwv = DOMDataUtils::getJSONAttribute( $span, 'data-mw-variant', null );
 			if ( $dmwv->rt ?? false ) {
 				$dp = DOMDataUtils::getDataParsoid( $span );
-				$dp->tmp->isNew = true;
+				$dp->setTempFlag( TempData::IS_NEW );
 			}
 		}
 

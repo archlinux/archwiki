@@ -1,21 +1,18 @@
 @import 'mediawiki.mixins.less';
-@import 'mediawiki.ui/variables.less';
 @import '../../common/variables.less';
-
-// Search portlet.
-#p-search h3 {
-	.mixin-screen-reader-text();
-}
 
 // Defined as `div`.
 // Provide extra element for gadgets due to `form` already carrying an `id`.
-#simpleSearch {
+.vector-search-box-inner {
 	position: relative;
 	height: 100%;
 }
 
 // The search input.
-#searchInput {
+// Note that these rules only apply to the non-Vue enabled search input field.
+// When Vue.js has loaded this element will no longer be in the page and subsituted with
+// a WVUI element.
+.vector-search-box-input {
 	background-color: rgba( 255, 255, 255, 0.5 );
 	color: @color-base--emphasized;
 	width: 100%;
@@ -39,12 +36,12 @@
 	// Support: Firefox.
 	-moz-appearance: textfield;
 
-	#simpleSearch:hover & {
+	.vector-search-box-inner:hover & {
 		border-color: @colorGray7;
 	}
 
 	&:focus,
-	#simpleSearch:hover &:focus {
+	.vector-search-box-inner:hover &:focus {
 		outline: 0;
 		border-color: @border-color-base--focus;
 		box-shadow: @box-shadow-base--focus;
@@ -65,8 +62,7 @@
 
 // The search buttons. Fallback and search button are displayed in the same position,
 // and if both are present the fulltext search one obscures the 'Go' one.
-#searchButton,
-#mw-searchButton {
+.searchButton {
 	background-color: transparent;
 	position: absolute;
 	top: @border-width-base;
@@ -90,7 +86,7 @@
 	z-index: @z-index-search-button;
 }
 
-#searchButton {
+.searchButton[ name='go' ] {
 	background: no-repeat center/unit( 16 / @font-size-browser / @font-size-search-input, em ) url( images/search.svg );
 	opacity: 0.67;
 }

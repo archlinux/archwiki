@@ -191,7 +191,7 @@ class BacklinkCache {
 	 * @param string $table
 	 * @param int|bool $startId
 	 * @param int|bool $endId
-	 * @param int $max
+	 * @param int|float $max Integer, or INF for no max
 	 * @return TitleArrayFromResult
 	 */
 	public function getLinks( $table, $startId = false, $endId = false, $max = INF ) {
@@ -296,7 +296,7 @@ class BacklinkCache {
 	 * on the page table.
 	 * @param string $table
 	 * @throws MWException
-	 * @return array|null
+	 * @return array
 	 */
 	protected function getConditions( $table ) {
 		$prefix = $this->getPrefix( $table );
@@ -352,11 +352,11 @@ class BacklinkCache {
 	/**
 	 * Get the approximate number of backlinks
 	 * @param string $table
-	 * @param int $max Only count up to this many backlinks
+	 * @param int|float $max Only count up to this many backlinks, or INF for no max
 	 * @return int
 	 */
 	public function getNumLinks( $table, $max = INF ) {
-		global $wgUpdateRowsPerJob;
+		$updateRowsPerJob = MediaWikiServices::getInstance()->getMainConfig()->get( 'UpdateRowsPerJob' );
 
 		// 1) try partition cache ...
 		if ( isset( $this->partitionCache[$table] ) ) {
@@ -393,11 +393,11 @@ class BacklinkCache {
 		if ( is_infinite( $max ) ) { // no limit at all
 			// Use partition() since it will batch the query and skip the JOIN.
 			// Use $wgUpdateRowsPerJob just to encourage cache reuse for jobs.
-			$this->partition( $table, $wgUpdateRowsPerJob ); // updates $this->partitionCache
-			return $this->partitionCache[$table][$wgUpdateRowsPerJob]['numRows'];
-		} else { // probably some sane limit
+			$this->partition( $table, $updateRowsPerJob ); // updates $this->partitionCache
+			return $this->partitionCache[$table][$updateRowsPerJob]['numRows'];
+		} else {
 			// Fetch the full title info, since the caller will likely need it next
-			$count = $this->getLinks( $table, false, false, $max )->count();
+			$count = iterator_count( $this->getLinkPages( $table, false, false, $max ) );
 			if ( $count < $max ) { // full count
 				$this->wanCache->set( $memcKey, $count, self::CACHE_EXPIRY );
 			}
@@ -528,7 +528,7 @@ class BacklinkCache {
 				$end = (int)$row->page_id;
 			}
 
-			# Sanity check order
+			# Check order
 			if ( $start && $end && $start > $end ) {
 				throw new MWException( __METHOD__ . ': Internal error: query result out of order' );
 			}

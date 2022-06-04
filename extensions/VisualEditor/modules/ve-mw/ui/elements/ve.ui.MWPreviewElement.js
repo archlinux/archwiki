@@ -14,6 +14,8 @@
  * @constructor
  * @param {ve.dm.Node} [model]
  * @param {Object} [config]
+ * @cfg {boolean} [useView=false] Use the view HTML, and don't bother generating model HTML, which
+ *  is a bit slower
  */
 ve.ui.MWPreviewElement = function VeUiMwPreviewElement() {
 	// Parent constructor

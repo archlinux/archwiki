@@ -9,8 +9,7 @@ QUnit.module( 've.dm.Document' );
 /* Tests */
 
 QUnit.test( 'constructor', function ( assert ) {
-	var data, htmlDoc,
-		doc = ve.dm.example.createExampleDocument();
+	var doc = ve.dm.example.createExampleDocument();
 
 	assert.equalNodeTree( doc.getDocumentNode(), ve.dm.example.tree, 'node tree matches example data' );
 	assert.throws(
@@ -73,11 +72,11 @@ QUnit.test( 'constructor', function ( assert ) {
 	assert.strictEqual( doc.getMetadata().join( ',' ), ',,,', 'Empty metadata array' );
 	assert.strictEqual( doc.getHtmlDocument().body.innerHTML, '', 'Empty HTML document is created' );
 
-	htmlDoc = ve.createDocumentFromHtml( 'abcd' );
+	var htmlDoc = ve.createDocumentFromHtml( 'abcd' );
 	doc = new ve.dm.Document( [ 'a', 'b', 'c', 'd' ], htmlDoc );
 	assert.strictEqual( doc.getHtmlDocument(), htmlDoc, 'Provided HTML document is used' );
 
-	data = new ve.dm.ElementLinearData(
+	var data = new ve.dm.ElementLinearData(
 		new ve.dm.HashValueStore(),
 		[ { type: 'paragraph' }, { type: '/paragraph' } ]
 	);
@@ -91,18 +90,16 @@ QUnit.test( 'constructor', function ( assert ) {
 } );
 
 QUnit.test( 'newBlankDocument', function ( assert ) {
-	var doc;
+	var doc = ve.dm.Document.static.newBlankDocument();
 
-	doc = ve.dm.Document.static.newBlankDocument();
-
-	assert.ok( doc instanceof ve.dm.Document, 'newBlankDocument creates a document' );
+	assert.true( doc instanceof ve.dm.Document, 'newBlankDocument creates a document' );
 	assert.strictEqual( doc.data.data[ 0 ].internal.generated, 'empty', 'Creates an "empty" paragraph with no args' );
 
 	doc = ve.dm.Document.static.newBlankDocument( 'wrapper' );
 	assert.strictEqual( doc.data.data[ 0 ].internal.generated, 'wrapper', 'Creates an "wrapper" paragraph when requested' );
 
 	doc = ve.dm.Document.static.newBlankDocument( null );
-	assert.notOk( 'internal' in doc.data.data[ 0 ], 'Creates an regular paragraph with null' );
+	assert.false( 'internal' in doc.data.data[ 0 ], 'Creates an regular paragraph with null' );
 } );
 
 QUnit.test( 'getData', function ( assert ) {
@@ -153,7 +150,7 @@ QUnit.test( 'cloneFromRange', function ( assert ) {
 
 	cases.forEach( function ( caseItem ) {
 		var doc1 = ve.dm.example.createExampleDocument( caseItem.doc ),
-			doc2 = doc.cloneFromRange( caseItem.range );
+			doc2 = doc1.cloneFromRange( caseItem.range );
 		assert.deepEqual( doc2.data.data, caseItem.expectedData,
 			caseItem.msg + ': sliced data' );
 		assert.notStrictEqual( doc2.data[ 0 ], caseItem.expectedData[ 0 ],
@@ -162,6 +159,8 @@ QUnit.test( 'cloneFromRange', function ( assert ) {
 			caseItem.msg + ': store is copied' );
 		assert.notStrictEqual( doc2.store, doc1.store,
 			caseItem.msg + ': store is a clone, not the same' );
+		assert.strictEqual( doc2.getStorage(), doc1.getStorage(),
+			caseItem.msg + ': persistentStorage is copied' );
 	} );
 } );
 
@@ -502,14 +501,13 @@ QUnit.test( 'getBranchNodeFromOffset', function ( assert ) {
 } );
 
 QUnit.test( 'hasSlugAtOffset', function ( assert ) {
-	var i, l,
-		expected = {
+	var expected = {
 			0: true,
 			10: true
 		},
 		doc = ve.dm.example.createExampleDocument( 'alienData' );
 
-	for ( i = 0, l = doc.data.getLength(); i <= l; i++ ) {
+	for ( var i = 0, l = doc.data.getLength(); i <= l; i++ ) {
 		assert.strictEqual( doc.hasSlugAtOffset( i ), !!expected[ i ], 'hasSlugAtOffset ' + i + ' = ' + !!expected[ i ] );
 	}
 
@@ -541,34 +539,6 @@ QUnit.test( 'getOuterLength', function ( assert ) {
 		doc.getDocumentNode().getOuterLength(),
 		ve.dm.example.data.length,
 		'document does not have elements around it'
-	);
-} );
-
-QUnit.test( 'rebuildNodes', function ( assert ) {
-	var tree,
-		doc = ve.dm.example.createExampleDocument(),
-		documentNode = doc.getDocumentNode();
-	// Rebuild table without changes
-	doc.rebuildNodes( documentNode, 1, 1, 5, 32 );
-	assert.equalNodeTree(
-		documentNode,
-		ve.dm.example.tree,
-		'rebuild without changes'
-	);
-
-	// XXX: Create a new document node tree from the old one
-	tree = new ve.dm.DocumentNode( ve.dm.example.tree.getChildren() );
-	// Replace table with paragraph
-	doc.data.batchSplice( 5, 32, [ { type: 'paragraph' }, 'a', 'b', 'c', { type: '/paragraph' } ] );
-	tree.splice( 1, 1, new ve.dm.ParagraphNode(
-		doc.data.getData( 5 ), [ new ve.dm.TextNode( 3 ) ]
-	) );
-	// Rebuild with changes
-	doc.rebuildNodes( documentNode, 1, 1, 5, 5 );
-	assert.equalNodeTree(
-		documentNode,
-		tree,
-		'replace table with paragraph'
 	);
 } );
 
@@ -680,7 +650,7 @@ QUnit.test( 'shallowCloneFromRange', function ( assert ) {
 			expected: [
 				{ type: 'paragraph' },
 				{ type: '/paragraph' },
-				{ type: 'alienBlock', originalDomElements: $( '<foobar />' ).toArray() },
+				{ type: 'alienBlock', originalDomElements: $.parseHTML( '<foobar />' ) },
 				{ type: '/alienBlock' }
 			],
 			originalRange: new ve.Range( 1, 3 ),
@@ -865,7 +835,7 @@ QUnit.test( 'shallowCloneFromRange', function ( assert ) {
 			range: new ve.Range( 6, 8 ),
 			expected: [
 				{ type: 'paragraph', internal: { generated: 'wrapper' } },
-				{ type: 'alienInline', originalDomElements: $( '<foobar />' ).toArray() },
+				{ type: 'alienInline', originalDomElements: $.parseHTML( '<foobar />' ) },
 				{ type: '/alienInline' },
 				{ type: '/paragraph' }
 			],
@@ -893,7 +863,7 @@ QUnit.test( 'shallowCloneFromRange', function ( assert ) {
 			expected: [
 				{ type: 'paragraph', internal: { generated: 'wrapper' } },
 				'o', 'o',
-				{ type: 'alienInline', originalDomElements: $( '<foobar />' ).toArray() },
+				{ type: 'alienInline', originalDomElements: $.parseHTML( '<foobar />' ) },
 				{ type: '/alienInline' },
 				{ type: '/paragraph' }
 			],
@@ -903,8 +873,7 @@ QUnit.test( 'shallowCloneFromRange', function ( assert ) {
 	];
 
 	cases.forEach( function ( caseItem ) {
-		var slice,
-			doc = ve.dm.example.createExampleDocument( caseItem.doc ),
+		var doc = ve.dm.example.createExampleDocument( caseItem.doc ),
 			expectedData = ve.dm.example.preprocessAnnotations( caseItem.expected.slice(), doc.getStore() ).getData(),
 			range = new ve.Range( 0, caseItem.expected.length );
 
@@ -912,7 +881,7 @@ QUnit.test( 'shallowCloneFromRange', function ( assert ) {
 			{ type: 'internalList' },
 			{ type: '/internalList' }
 		] );
-		slice = doc.shallowCloneFromRange( caseItem.range );
+		var slice = doc.shallowCloneFromRange( caseItem.range );
 		assert.equalLinearDataWithDom(
 			doc.getStore(),
 			slice.getData(),
@@ -951,7 +920,7 @@ QUnit.test( 'getNearestCursorOffset', function ( assert ) {
 	var cases = [
 		{
 			name: 'example',
-			htmlDoc: ve.dm.example.html,
+			doc: ve.dm.example.createExampleDocument(),
 			expected: {
 				// 10 offsets per row
 				'-1': [
@@ -976,31 +945,45 @@ QUnit.test( 'getNearestCursorOffset', function ( assert ) {
 		},
 		{
 			name: 'figcaption',
-			htmlDoc: ve.dm.example.figcaptionHtml,
+			doc: ve.dm.example.createExampleDocument( 'figcaption' ),
 			expected: {
 				// 10 offsets per row
 				'-1': [
-					// The results here look incorrect.
-					// Should be `6, 6` instead of `-1, -1`?
-					1, 1, 2, 2, -1, -1, 6, 7, 7, 7,
-					2, 11, 12, 12, 12
+					1, 1, 2, 2, 2, 2, 6, 7, 7, 7,
+					7, 11, 12, 12, 12
 				],
 				1: [
-					// Should be `7, 7` instead of `-1, -1`?
-					1, 1, 2, 11, 6, 6, 6, 7, -1, -1,
+					1, 1, 2, 6, 6, 6, 6, 7, 11, 11,
 					11, 11, 12, 12, 12
+				]
+			}
+		},
+		{
+			name: 'internalData',
+			doc: ve.dm.example.createExampleDocument( 'internalData' ),
+			expected: {
+				// TODO: Better define behaviour around ignoreChildren node
+				// boundaries so the offsets are less erratic here.
+				// 10 offsets per row
+				'-1': [
+					1, 1, 2, 3, 4, 4, 4, -1, 8, 9,
+					10, 11, 11, 4, -1, 15, 16, 17, 18, 18,
+					4, 4, 22, 23, 24, 25, 26
+				],
+				1: [
+					1, 1, 2, 3, 4, 4, 4, 8, 8, 9,
+					10, 11, -1, 4, 15, 15, 16, 17, 18, -1,
+					4, 22, 22, 23, 24, 25, 26
 				]
 			}
 		}
 	];
 
 	cases.forEach( function ( caseItem ) {
-		var dir, i,
-			doc = ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml( caseItem.htmlDoc ) );
-		for ( dir = -1; dir <= 1; dir += 2 ) {
-			for ( i = 0; i < doc.data.getLength(); i++ ) {
+		for ( var dir = -1; dir <= 1; dir += 2 ) {
+			for ( var i = 0; i < caseItem.doc.data.getLength(); i++ ) {
 				assert.strictEqual(
-					doc.getNearestCursorOffset( i, dir ),
+					caseItem.doc.getNearestCursorOffset( i, dir ),
 					caseItem.expected[ dir ][ i ],
 					'Document "' + caseItem.name + '" - Direction: ' + dir + ' Offset: ' + i
 				);
@@ -1032,8 +1015,7 @@ QUnit.test( 'Selection equality', function ( assert ) {
 } );
 
 QUnit.test( 'findText (plain text)', function ( assert ) {
-	var ranges,
-		supportsIntl = ve.supportsIntl,
+	var supportsIntl = ve.supportsIntl,
 		doc = ve.dm.converter.getModelFromDom( ve.createDocumentFromHtml(
 			// 0
 			'<p>Foo bar fooq.</p>' +
@@ -1282,7 +1264,7 @@ QUnit.test( 'findText (plain text)', function ( assert ) {
 
 	cases.forEach( function ( caseItem ) {
 		doc.lang = caseItem.lang || 'en';
-		ranges = doc.findText( caseItem.query, caseItem.options );
+		var ranges = doc.findText( caseItem.query, caseItem.options );
 		assert.deepEqual( ranges, caseItem.ranges, caseItem.msg );
 		if ( !caseItem.options.diacriticInsensitiveString ) {
 			ve.supportsIntl = false;

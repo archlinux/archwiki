@@ -8,5 +8,7 @@
 	"monobook-jumptopersonal": "lietotāja rīki",
 	"monobook-more-actions": "Vairāk",
 	"cactions-mobile": "Lapas darbības",
-	"monobook-cactions-label": "Lapas darbības"
+	"monobook-cactions-label": "Lapas darbības",
+	"monobook-view-history": "Vēsture",
+	"monobook-action-undelete": "Atjaunot $1 {{PLURAL:$1|versijas|versiju|versijas}}"
 }

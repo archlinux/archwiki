@@ -11,7 +11,7 @@ class EmergencyTimeoutException extends TimeoutException {
 	 * @param float $limit The limit (in seconds) which has expired
 	 */
 	public function __construct( $name, $limit ) {
-		parent::__construct( "The critical section \"$name\" timed out after $limit seconds",
+		parent::__construct( "The critical section \"$name\" timed out after {limit} seconds",
 			$limit );
 	}
 }

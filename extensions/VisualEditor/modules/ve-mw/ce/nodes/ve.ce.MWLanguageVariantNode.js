@@ -54,8 +54,7 @@ ve.ce.MWLanguageVariantNode.static.getDescription = function ( model ) {
 	// This is shown when you hover over the node.
 	var variantInfo = model.getVariantInfo(),
 		messageKey = 'visualeditor-mwlanguagevariant-' + model.getRuleType(),
-		languageCodes = [],
-		languageString;
+		languageCodes = [];
 	if ( variantInfo.name ) {
 		languageCodes = [ variantInfo.name.t ];
 	} else if ( variantInfo.filter ) {
@@ -69,7 +68,7 @@ ve.ce.MWLanguageVariantNode.static.getDescription = function ( model ) {
 			return item.l;
 		} );
 	}
-	languageString = languageCodes.map( function ( code ) {
+	var languageString = languageCodes.map( function ( code ) {
 		return ve.init.platform.getLanguageName( code.toLowerCase() );
 	} ).join( ve.msg( 'comma-separator' ) );
 	// The following messages can be used here:
@@ -107,11 +106,10 @@ ve.ce.MWLanguageVariantNode.prototype.onUpdate = function () {
  * node / hovering.
  */
 ve.ce.MWLanguageVariantNode.prototype.getInvisibleIconLabel = function () {
-	var $element,
-		variantInfo = this.model.getVariantInfo();
+	var variantInfo = this.model.getVariantInfo();
 
 	if ( this.model.isHidden() ) {
-		$element = $( '<div>' );
+		var $element = $( '<div>' );
 		this.model.constructor.static.insertPreviewElements(
 			// For compactness, just annotate hidden rule w/ its
 			// current variant output.

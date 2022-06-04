@@ -6,5 +6,7 @@
 	},
 	"skinname-monobook": "Жеке кітап (monobook)",
 	"monobook.css": "/* Мында орналастырылған CSS тек «Дара кітап» (monobook) мәнерін пайдаланушыларына ықпал етеді */",
-	"monobook.js": "/* Мындағы JavaScript тек «Дара кітап» (monobook) мәнерін пайдаланушылар үшін жегіледі */"
+	"monobook.js": "/* Мындағы JavaScript тек «Дара кітап» (monobook) мәнерін пайдаланушылар үшін жегіледі */",
+	"monobook-view-history": "Тарихы",
+	"monobook-action-undelete": "{{PLURAL:$1|өңдеме|$1 өңдеме}} жойылуын болдырмау"
 }

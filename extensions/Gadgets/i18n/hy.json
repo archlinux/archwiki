@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Aram1985",
+			"Kareyac",
 			"Xelgen",
-			"Աշոտ1997",
-			"Kareyac"
+			"Աշոտ1997"
 		]
 	},
 	"gadgets-desc": "Թույլ է տալիս օգտագործողներին ընտրել հատուկ [[Special:Gadgets|ՍիԷսԷս և ՋավաՍկիրպտ (CSS and JavaScript) գադջեթներ]] իրանց [[Special:Preferences#mw-prefsection-gadgets|նախընտրությունների]] էջում։",
@@ -13,6 +13,7 @@
 	"gadgets": "Գադջեթներ",
 	"gadgetusage-gadget": "Գադջեթ",
 	"gadgets-title": "Գադջեթներ",
+	"gadgets-editdescription": "Խմբագրել նկարագրությունը",
 	"gadgets-uses": "Օգտագործում է",
 	"gadgets-required-rights": "Անհրաժեշտ են հետևյալ {{PLURAL:$2|իրավունքը|իրավունքները}}:\n\n$1",
 	"gadgets-required-skins": "Հասանելի է {{PLURAL:$2|$1 արտաքին տեսքով|$1 արտաքին տեսքերով}}։",

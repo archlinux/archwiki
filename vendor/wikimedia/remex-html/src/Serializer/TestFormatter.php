@@ -172,6 +172,3 @@ class TestFormatter implements Formatter, DOMFormatter {
 		return $this->formatElement( $node->namespaceURI, $node->nodeName, $attrs, $content );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TestFormatter::class, 'RemexHtml\Serializer\TestFormatter' );

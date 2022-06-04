@@ -166,6 +166,7 @@ class Ref extends ExtensionTagHandler {
 						$bodyElt = $bodyElt->cloneNode( true );
 						foreach ( $bodyElt->childNodes as $child ) {
 							if ( DOMUtils::hasTypeOf( $child, 'mw:Cite/Follow' ) ) {
+								// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
 								DOMCompat::remove( $child );
 							}
 						}
@@ -180,5 +181,67 @@ class Ref extends ExtensionTagHandler {
 		}
 
 		return $startTagSrc . $src . '</' . $dataMw->name . '>';
+	}
+
+	/** @inheritDoc */
+	public function diffHandler(
+		ParsoidExtensionAPI $extApi, callable $domDiff, Element $origNode,
+		Element $editedNode
+	): bool {
+		$origDataMw = DOMDataUtils::getDataMw( $origNode );
+		$editedDataMw = DOMDataUtils::getDataMw( $editedNode );
+
+		if ( isset( $origDataMw->body->id ) && isset( $editedDataMw->body->id ) ) {
+			$origId = $origDataMw->body->id;
+			$editedId = $editedDataMw->body->id;
+
+			// So far, this is specified for Cite and relies on the "id"
+			// referring to an element in the top level dom, even though the
+			// <ref> itself may be in embedded content,
+			// https://www.mediawiki.org/wiki/Specs/HTML/Extensions/Cite#Ref_and_References
+			// FIXME: This doesn't work if the <references> section
+			// itself is in embedded content, since we aren't traversing
+			// in there.
+			$origHtml = DOMCompat::getElementById( $origNode->ownerDocument, $origId );
+			$editedHtml = DOMCompat::getElementById( $editedNode->ownerDocument, $editedId );
+
+			if ( $origHtml && $editedHtml ) {
+				return call_user_func( $domDiff, $origHtml, $editedHtml );
+			} else {
+				// Log error
+				if ( !$origHtml ) {
+					$extApi->log(
+						'error/domdiff/orig/ref',
+						"extension src id {$origId} points to non-existent element for:",
+						DOMCompat::getOuterHTML( $origNode )
+					);
+				}
+				if ( !$editedHtml ) {
+					$extApi->log(
+						// use info level to avoid logspam for CX edits where translated
+						// docs might reference nodes not copied over from orig doc.
+						'info/domdiff/edited/ref',
+						"extension src id {$editedId} points to non-existent element for:",
+						DOMCompat::getOuterHTML( $editedNode )
+					);
+				}
+			}
+		} elseif ( isset( $origDataMw->body->html ) && isset( $editedDataMw->body->html ) ) {
+			$origFragment = $extApi->htmlToDom(
+				$origDataMw->body->html, $origNode->ownerDocument,
+				[ 'markNew' => true ]
+			);
+			$editedFragment = $extApi->htmlToDom(
+				$editedDataMw->body->html, $editedNode->ownerDocument,
+				[ 'markNew' => true ]
+			);
+			return call_user_func( $domDiff, $origFragment, $editedFragment );
+		}
+
+		// FIXME: Similar to DOMDiff::subtreeDiffers, maybe $editNode should
+		// be marked as inserted to avoid losing any edits, at the cost of
+		// more normalization
+
+		return false;
 	}
 }

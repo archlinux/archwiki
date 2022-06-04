@@ -8,7 +8,7 @@ use Wikimedia\Message\DataMessageValue;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Message\ParamType;
 use Wikimedia\Message\ScalarParam;
-use Wikimedia\ObjectFactory;
+use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
  * @covers Wikimedia\ParamValidator\ParamValidator
@@ -82,7 +82,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 			->setConstructorArgs( [ $callbacks ] );
 		$def1 = $mb->getMockForAbstractClass();
 		$def2 = $mb->getMockForAbstractClass();
-		$this->assertNotSame( $def1, $def2, 'sanity check' );
+		$this->assertNotSame( $def1, $def2, 'consistency check' );
 
 		$factory = $this->getMockBuilder( ObjectFactory::class )
 			->setConstructorArgs( [ $this->getMockForAbstractClass( ContainerInterface::class ) ] )
@@ -335,7 +335,6 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				],
 				[
 					'issues' => [
-						// phpcs:ignore Generic.Files.LineLength.TooLong
 						ParamValidator::PARAM_ISMULTI_LIMIT2 => 'PARAM_ISMULTI_LIMIT2 must be greater than or equal to PARAM_ISMULTI_LIMIT1, but 10 < 100',
 					],
 					'allowedKeys' => $multiKeys,
@@ -1093,7 +1092,6 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				[
 					ParamValidator::PARAM_DEPRECATED => '<message key="paramvalidator-help-deprecated"></message>',
 					ParamValidator::PARAM_REQUIRED => '<message key="paramvalidator-help-required"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_DEFAULT => '<message key="paramvalidator-help-default"><plaintext>1234</plaintext></message>',
 				],
 			],
@@ -1105,13 +1103,9 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					ParamValidator::PARAM_DEFAULT => '',
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI => '<message key="paramvalidator-help-multi-separate"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI_LIMIT1 => '<message key="paramvalidator-help-multi-max"><num>50</num><num>500</num></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ALL => '<message key="paramvalidator-help-multi-all"><plaintext>*</plaintext></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_DEFAULT => '<message key="paramvalidator-help-default-empty"></message>',
 				],
 			],
@@ -1120,9 +1114,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					ParamValidator::PARAM_ISMULTI => true,
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI => '<message key="paramvalidator-help-multi-separate"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI_LIMIT1 => '<message key="paramvalidator-help-multi-max"><num>50</num><num>500</num></message>',
 				],
 				[],
@@ -1136,11 +1128,8 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					ParamValidator::PARAM_ALL => 'all',
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI => '<message key="paramvalidator-help-multi-separate"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI_LIMIT1 => '<message key="paramvalidator-help-multi-max"><num>10</num><num>15</num></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ALL => '<message key="paramvalidator-help-multi-all"><plaintext>all</plaintext></message>',
 				],
 			],
@@ -1150,9 +1139,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					ParamValidator::PARAM_ISMULTI_LIMIT2 => 10,
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI => '<message key="paramvalidator-help-multi-separate"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI_LIMIT1 => '<message key="paramvalidator-help-multi-max-simple"><num>50</num></message>',
 				],
 			],
@@ -1164,7 +1151,6 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					ParamValidator::PARAM_ISMULTI_LIMIT2 => 2,
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI => '<message key="paramvalidator-help-multi-separate"></message>',
 				],
 			],
@@ -1176,9 +1162,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					ParamValidator::PARAM_ISMULTI_LIMIT2 => 10,
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI => '<message key="paramvalidator-help-multi-separate"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI_LIMIT1 => '<message key="paramvalidator-help-multi-max"><num>4</num><num>10</num></message>',
 				],
 			],
@@ -1191,9 +1175,7 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 					ParamValidator::PARAM_ALLOW_DUPLICATES => true,
 				],
 				[
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI => '<message key="paramvalidator-help-multi-separate"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI_LIMIT1 => '<message key="paramvalidator-help-multi-max-simple"><num>4</num></message>',
 				],
 			],
@@ -1206,10 +1188,8 @@ class ParamValidatorTest extends \PHPUnit\Framework\TestCase {
 				[
 					ParamValidator::PARAM_REQUIRED => '<message key="paramvalidator-help-required"></message>',
 					ParamValidator::PARAM_TYPE => '<message key="paramvalidator-help-type-help"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_ISMULTI_LIMIT1 => '<message key="paramvalidator-help-multi-max"><num>50</num><num>500</num></message>',
 					'foobar' => '<message key="foobaz"></message>',
-					// phpcs:ignore Generic.Files.LineLength.TooLong
 					ParamValidator::PARAM_DEFAULT => '<message key="paramvalidator-help-default"><text>XX</text></message>',
 				],
 				[

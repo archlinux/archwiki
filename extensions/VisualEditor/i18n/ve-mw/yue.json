@@ -8,9 +8,9 @@
 			"Ktchankt",
 			"Moon0319",
 			"Roy17",
+			"TMg",
 			"William915",
-			"Yueman",
-			"TMg"
+			"Yueman"
 		]
 	},
 	"tooltip-ca-createsource": "整呢版嘅代碼出嚟",
@@ -154,7 +154,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "聲畫",
 	"visualeditor-dialogbutton-meta-tooltip": "版嘅設定",
 	"visualeditor-dialogbutton-template-tooltip": "模",
-	"visualeditor-dialogbutton-transclusion-tooltip": "嵌入",
 	"visualeditor-donebutton-tooltip": "做完改動",
 	"visualeditor-editconflict": "由於編輯衝突，{{GENDER:|你|妳|你}}嘅修改記唔低。{{GENDER:|你|妳|你}}想唔想人手解決呢個衝突？",
 	"visualeditor-editingtabdialog-ok": "用我上次用過嘅編輯器",

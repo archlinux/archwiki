@@ -24,11 +24,9 @@ use Wikimedia\Dodo\Internal\Util;
  *      - supportedFeatures array was moved to a static variable inside of
  *        DOMImplementation->hasFeature(), and renamed to $supported.
  *
- */
-
-/**
  * Each Document must have its own instance of
  * a DOMImplementation object
+ * @phan-forbid-undeclared-magic-properties
  */
 class DOMImplementation implements \Wikimedia\IDLeDOM\DOMImplementation {
 	// Stub out methods not yet implemented.

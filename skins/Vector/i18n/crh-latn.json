@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Don Alessandro"
+			"Don Alessandro",
+			"TayfunEt."
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 til|$1 tiller}}",
 	"vector-action-addsection": "Mevzu qoş",
 	"vector-action-delete": "Yoq et",
 	"vector-action-move": "Adını deñiştir",

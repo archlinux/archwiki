@@ -116,8 +116,7 @@ ve.init.mw.ApiResponseCache.prototype.getCached = function ( name ) {
  * @fires add
  */
 ve.init.mw.ApiResponseCache.prototype.set = function ( entries ) {
-	var name;
-	for ( name in entries ) {
+	for ( var name in entries ) {
 		if ( !Object.prototype.hasOwnProperty.call( this.deferreds, name ) ) {
 			this.deferreds[ name ] = ve.createDeferred();
 		}
@@ -145,18 +144,16 @@ ve.init.mw.ApiResponseCache.prototype.getRequestPromise = null;
  * @fires add
  */
 ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
-	var subqueue, queue,
-		cache = this;
+	var cache = this;
 
 	function rejectSubqueue( rejectQueue ) {
-		var i, len;
-		for ( i = 0, len = rejectQueue.length; i < len; i++ ) {
+		for ( var i = 0, len = rejectQueue.length; i < len; i++ ) {
 			cache.deferreds[ rejectQueue[ i ] ].reject();
 		}
 	}
 
 	function processResult( data ) {
-		var i, pageid, page, processedPage, from, mappedTitles = [],
+		var mappedTitles = [],
 			pages = ( data.query && data.query.pages ) || data.pages,
 			processed = {};
 
@@ -165,17 +162,18 @@ ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
 		} );
 
 		if ( pages ) {
-			for ( pageid in pages ) {
+			var page, processedPage;
+			for ( var pageid in pages ) {
 				page = pages[ pageid ];
 				processedPage = cache.constructor.static.processPage( page );
 				if ( processedPage !== undefined ) {
 					processed[ page.title ] = processedPage;
 				}
 			}
-			for ( i = 0; i < mappedTitles.length; i++ ) {
+			for ( var i = 0; i < mappedTitles.length; i++ ) {
 				// Locate the title in mapped titles, if any.
 				if ( mappedTitles[ i ].to === page.title ) {
-					from = mappedTitles[ i ].fromencoded === '' ?
+					var from = mappedTitles[ i ].fromencoded === '' ?
 						decodeURIComponent( mappedTitles[ i ].from ) :
 						mappedTitles[ i ].from;
 					processed[ from ] = processedPage;
@@ -186,10 +184,10 @@ ve.init.mw.ApiResponseCache.prototype.processQueue = function () {
 		}
 	}
 
-	queue = this.queue;
+	var queue = this.queue;
 	this.queue = [];
 	while ( queue.length ) {
-		subqueue = queue.splice( 0, 50 ).map( this.constructor.static.normalizeTitle );
+		var subqueue = queue.splice( 0, 50 ).map( this.constructor.static.normalizeTitle );
 		this.getRequestPromise( subqueue )
 			.then( processResult )
 

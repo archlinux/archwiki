@@ -476,6 +476,7 @@ class Document extends ContainerNode implements \Wikimedia\IDLeDOM\Document {
 		$els = $this->getElementsByTagName( 'title' );
 		'@phan-var FilteredElementList $els'; // @var FilteredElementList $els
 		$els->_traverse( 0 ); // performance hack, halt after finding first title
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $els->item( 0 );
 	}
 
@@ -774,6 +775,7 @@ class Document extends ContainerNode implements \Wikimedia\IDLeDOM\Document {
 	 * @inheritDoc
 	 */
 	public function importNode( $node, bool $deep = false ): Node {
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return $this->adoptNode( $node->cloneNode( $deep ) );
 	}
 
@@ -845,7 +847,7 @@ class Document extends ContainerNode implements \Wikimedia\IDLeDOM\Document {
 		$clone = parent::cloneNode( false );
 		'@phan-var Document $clone'; // @var Document $clone
 
-		if ( $deep === false ) {
+		if ( !$deep ) {
 			/* Return shallow clone */
 			$clone->_updateDoctypeAndDocumentElement();
 			return $clone;

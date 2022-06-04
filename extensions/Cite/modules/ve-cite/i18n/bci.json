@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kjeanclaude"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Floua",
+	"visualeditor-cite-tool-name-journal": "Journali",
+	"visualeditor-cite-tool-name-news": "Mein noun ndè moun",
+	"visualeditor-cite-tool-name-web": "Site web",
+	"cite-ve-citationneeded-button": "Fa sran nouan noun ndè koun goua sou",
+	"cite-ve-citationneeded-reason": "Liké nga i ti'n:",
+	"cite-ve-dialog-reference-options-group-label": "Fa groupou nga",
+	"cite-ve-dialog-reference-options-name-label": "Fa i ékoun ôni douman nga",
+	"cite-ve-dialog-reference-options-section": "I yowlè ouflè vié moun",
+	"cite-ve-dialog-reference-useexisting-tool": "Fa i ékoun",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Sran nouan noun ndè moun",
+	"cite-ve-dialogbutton-reference-full-label": "Bo bolè sou ningué",
+	"cite-ve-dialogbutton-reference-tooltip": "Bo bolè sou ningué",
+	"cite-ve-toolbar-group-label": "Fa sran nouan noun ndè koun goua sou",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Liké nga bé nian sou yé moun"
+}

@@ -59,7 +59,7 @@
 	"oath-log-name": "Evidencija dvofaktorske autentifikacije",
 	"oath-log-header": "Ovi događaji prate promjene statusa dvofaktorske autentifikacije suradnika/suradnice.",
 	"logentry-oath-disable-other": "{{GENDER:$2|suradnik $1 je onemogućio je|suradnica $1 onemogućila je|suradnik/suradnica $1 onemogućio/onemogućila}} je dvofaktorsku autentifikaciju suradnika/suradnice $3",
-	"oauthauth-ui-no-module": "Nije omogućeno",
+	"oathauth-ui-no-module": "Nije omogućeno",
 	"oathauth-module-invalid": "Nije valjan modul OATHAuth-a koji je registrirao suradnik.",
 	"oathauth-module-totp-label": "TOTP (jednokratni kôd)",
 	"oathauth-ui-manage": "Upravljaj",

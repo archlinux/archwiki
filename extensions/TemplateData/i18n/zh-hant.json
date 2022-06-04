@@ -8,11 +8,11 @@
 			"LNDDYL",
 			"Liuxinyu970226",
 			"Simon Shek",
+			"Tranve",
 			"Wehwei",
-			"Xiplus",
-			"Zhxy 519",
 			"Winston Sung",
-			"Tranve"
+			"Xiplus",
+			"Zhxy 519"
 		]
 	},
 	"templatedata-desc": "實現模板參數的資料儲存（使用 JSON）",
@@ -56,7 +56,7 @@
 	"templatedata-invalid-duplicate-value": "屬性 \"$1\" (\"$3\") 與 \"$2\" 重複。",
 	"templatedata-invalid-empty-array": "屬性 \"$1\" 陣列中至少需有一個值。",
 	"templatedata-invalid-format": "參數「$1」應為「inline」、「block」，或有效的格式字串。",
-	"templatedata-invalid-length": "資料太大，無法儲存 ({{formatnum:$1}} {{PLURAL:$1|位元組}}，{{PLURAL:$2|上限是}} {{formatnum:$2}})",
+	"templatedata-invalid-length": "資料太大，無法儲存 ({{PLURAL:$1}} {{PLURAL:$1|位元組}}，{{PLURAL:$2|上限是}} {{PLURAL:$2}})",
 	"templatedata-invalid-missing": "找不到必填的屬性 \"$1\"。",
 	"templatedata-invalid-param": "給屬性 \"$2\" 的參數 \"$1\" 無效。",
 	"templatedata-invalid-parse": "JSON 語法錯誤。",
@@ -95,7 +95,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "輸入映射名稱",
 	"templatedata-modal-search-input-placeholder": "依語言名稱或代碼搜尋",
 	"templatedata-modal-table-param-actions": "操作",
-	"templatedata-modal-table-param-aliases": "別名 (逗號分隔)",
+	"templatedata-modal-table-param-aliases": "別名",
 	"templatedata-modal-table-param-autovalue": "自動值",
 	"templatedata-modal-table-param-default": "預設值 ($1)",
 	"templatedata-modal-table-param-deprecated": "不建議使用",

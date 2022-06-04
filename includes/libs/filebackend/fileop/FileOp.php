@@ -21,6 +21,7 @@
  * @ingroup FileBackend
  */
 use Psr\Log\LoggerInterface;
+use Wikimedia\RequestTimeout\TimeoutException;
 
 /**
  * FileBackend helper class for representing operations.
@@ -48,8 +49,6 @@ abstract class FileOp {
 	protected $failed = false;
 	/** @var bool */
 	protected $async = false;
-	/** @var string */
-	protected $batchId;
 	/** @var bool */
 	protected $cancelled = false;
 
@@ -124,15 +123,6 @@ abstract class FileOp {
 	}
 
 	/**
-	 * Set the batch UUID this operation belongs to
-	 *
-	 * @param string $batchId
-	 */
-	final public function setBatchId( $batchId ) {
-		$this->batchId = $batchId;
-	}
-
-	/**
 	 * Get the value of the parameter with the given name
 	 *
 	 * @param string $name
@@ -201,46 +191,6 @@ abstract class FileOp {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Get the file journal entries for this file operation
-	 *
-	 * @param array $oPredicates Pre-op info about files (format of FileOp::newPredicates)
-	 * @param array $nPredicates Post-op info about files (format of FileOp::newPredicates)
-	 * @return array
-	 */
-	final public function getJournalEntries( array $oPredicates, array $nPredicates ) {
-		if ( $this->cancelled ) {
-			return []; // this is a no-op
-		}
-		$nullEntries = [];
-		$updateEntries = [];
-		$deleteEntries = [];
-		foreach ( $this->storagePathsReadOrChanged() as $path ) {
-			$nullEntries[] = [ // assertion for recovery
-				'op' => 'null',
-				'path' => $path,
-				'newSha1' => $this->fileSha1( $path, $oPredicates )
-			];
-		}
-		foreach ( $this->storagePathsChanged() as $path ) {
-			if ( $nPredicates[self::ASSUMED_SHA1][$path] === false ) { // deleted
-				$deleteEntries[] = [
-					'op' => 'delete',
-					'path' => $path,
-					'newSha1' => ''
-				];
-			} else { // created/updated
-				$updateEntries[] = [
-					'op' => $this->fileExists( $path, $oPredicates ) ? 'update' : 'create',
-					'path' => $path,
-					'newSha1' => $nPredicates[self::ASSUMED_SHA1][$path]
-				];
-			}
-		}
-
-		return array_merge( $nullEntries, $updateEntries, $deleteEntries );
 	}
 
 	/**
@@ -454,7 +404,7 @@ abstract class FileOp {
 	 * precheckDestExistence() helper function to get the source file size.
 	 * Subclasses should overwrite this if the source is not in storage.
 	 *
-	 * @return string|bool Returns false on failure
+	 * @return int|false|null Returns false on failure
 	 */
 	protected function getSourceSize() {
 		return null; // N/A
@@ -464,7 +414,7 @@ abstract class FileOp {
 	 * precheckDestExistence() helper function to get the source file SHA-1.
 	 * Subclasses should overwrite this if the source is not in storage.
 	 *
-	 * @return string|bool Returns false on failure
+	 * @return string|false|null Returns false on failure
 	 */
 	protected function getSourceSha1Base36() {
 		return null; // N/A
@@ -499,7 +449,7 @@ abstract class FileOp {
 	 *
 	 * @param string $source Storage path
 	 * @param array $predicates
-	 * @return int False on failure
+	 * @return int|false False on failure
 	 */
 	final protected function fileSize( $source, array $predicates ) {
 		if ( isset( $predicates[self::ASSUMED_SIZE][$source] ) ) {
@@ -557,7 +507,9 @@ abstract class FileOp {
 		$params['failedAction'] = $action;
 		try {
 			$this->logger->error( static::class .
-				" failed (batch #{$this->batchId}): " . FormatJson::encode( $params ) );
+				" failed: " . FormatJson::encode( $params ) );
+		} catch ( TimeoutException $e ) {
+			throw $e;
 		} catch ( Exception $e ) {
 			// bad config? debug log error?
 		}

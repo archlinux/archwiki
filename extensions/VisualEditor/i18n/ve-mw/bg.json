@@ -154,7 +154,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Изображения и медия",
 	"visualeditor-dialogbutton-meta-tooltip": "Настройки на страницата",
 	"visualeditor-dialogbutton-template-tooltip": "Шаблон",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Включване",
 	"visualeditor-donebutton-tooltip": "Редактирането е завършено",
 	"visualeditor-editconflict": "Промените ви не могат да бъдат съхранени, поради конфликт на редакции. Бихте ли желали да разрешите конфликта ръчно?",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|забележка|забележки}}",

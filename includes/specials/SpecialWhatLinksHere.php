@@ -152,7 +152,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 	 * * offset=0|123&dir=next/prev (current), where namespace 0 page ID 123 is the last excluded one
 	 *
 	 * @param FormOptions $opts
-	 * @return array( int $offsetNamespace, int $offsetPageID, string $dir )
+	 * @return array
 	 */
 	private function parseOffsetAndDir( FormOptions $opts ): array {
 		$from = $opts->getValue( 'from' );
@@ -198,7 +198,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 	 * @param int $offsetPageID Display from this article ID (excluded)
 	 * @param string $dir 'next' or 'prev'
 	 */
-	private function showIndirectLinks( $level, $target, $limit, $offsetNamespace = 0, $offsetPageID = 0, $dir = 'next' ) {
+	private function showIndirectLinks(
+		$level, $target, $limit, $offsetNamespace = 0, $offsetPageID = 0, $dir = 'next'
+	) {
 		$out = $this->getOutput();
 		$dbr = $this->loadBalancer->getConnectionRef( ILoadBalancer::DB_REPLICA );
 
@@ -255,9 +257,9 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 			$conds['redirect'][] = "rd_from $rel $offsetPageID";
 			$conds['templatelinks'][] = "(tl_from_namespace = $offsetNamespace AND tl_from $rel $offsetPageID " .
 				"OR tl_from_namespace $rel $offsetNamespace)";
-			$conds['pagelinks'][] =  "(pl_from_namespace = $offsetNamespace AND pl_from $rel $offsetPageID " .
+			$conds['pagelinks'][] = "(pl_from_namespace = $offsetNamespace AND pl_from $rel $offsetPageID " .
 				"OR pl_from_namespace $rel $offsetNamespace)";
-			$conds['imagelinks'][] =  "(il_from_namespace = $offsetNamespace AND il_from $rel $offsetPageID " .
+			$conds['imagelinks'][] = "(il_from_namespace = $offsetNamespace AND il_from $rel $offsetPageID " .
 				"OR il_from_namespace $rel $offsetNamespace)";
 		}
 
@@ -396,7 +398,7 @@ class SpecialWhatLinksHere extends IncludableSpecialPage {
 				return $rowA->page_namespace < $rowB->page_namespace ? -1 : 1;
 			}
 			if ( $rowA->page_id !== $rowB->page_id ) {
-				return $rowA->page_id < $rowB->page_id ? - 1 : 1;
+				return $rowA->page_id < $rowB->page_id ? -1 : 1;
 			}
 			return 0;
 		} );

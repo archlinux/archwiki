@@ -1,13 +1,13 @@
 <template>
 	<wvui-typeahead-search
-		id="searchform"
+		:id="id"
 		ref="searchForm"
 		:client="getClient"
 		:domain="domain"
-		:footer-search-text="$i18n( 'searchsuggest-containing' ).text()"
 		:suggestions-label="$i18n( 'searchresults' ).text()"
 		:accesskey="searchAccessKey"
 		:title="searchTitle"
+		:article-path="articlePath"
 		:placeholder="searchPlaceholder"
 		:aria-label="searchPlaceholder"
 		:search-page-title="searchPageTitle"
@@ -18,40 +18,43 @@
 		:show-thumbnail="showThumbnail"
 		:show-description="showDescription"
 		:highlight-query="highlightQuery"
+		:auto-expand-width="autoExpandWidth"
 		@fetch-start="instrumentation.onFetchStart"
 		@fetch-end="instrumentation.onFetchEnd"
 		@suggestion-click="instrumentation.onSuggestionClick"
 		@submit="onSubmit"
 	>
-		<input type="hidden"
-			name="title"
-			:value="searchPageTitle"
-		>
-		<input type="hidden"
-			name="wprov"
-			:value="wprov"
-		>
+		<template #default>
+			<input type="hidden"
+				name="title"
+				:value="searchPageTitle"
+			>
+			<input type="hidden"
+				name="wprov"
+				:value="wprov"
+			>
+		</template>
+		<template #search-footer-text="{ searchQuery }">
+			<span v-i18n-html:vector-searchsuggest-containing="[ searchQuery ]"></span>
+		</template>
 	</wvui-typeahead-search>
 </template>
 
 <script>
 /* global SubmitEvent */
-var wvui = require( 'wvui-search' ),
+const wvui = require( 'wvui-search' ),
+	client = require( './restSearchClient.js' ),
 	instrumentation = require( './instrumentation.js' );
 
 module.exports = {
 	name: 'App',
 	components: wvui,
-	mounted: function () {
+	mounted() {
 		// access the element associated with the wvui-typeahead-search component
 		// eslint-disable-next-line no-jquery/variable-pattern
-		var wvuiSearchForm = this.$refs.searchForm.$el;
+		const wvuiSearchForm = this.$refs.searchForm.$el;
 
 		if ( this.autofocusInput ) {
-			// TODO: The wvui-typeahead-search component accepts an id prop but does not
-			// display that value as an HTML attribute on the form element.
-			wvuiSearchForm.querySelector( 'form' ).setAttribute( 'id', 'searchform' );
-
 			// TODO: The wvui-typeahead-search component does not accept an autofocus parameter
 			// or directive. This can be removed when its does.
 			wvuiSearchForm.querySelector( 'input' ).focus();
@@ -59,22 +62,30 @@ module.exports = {
 	},
 	computed: {
 		/**
+		 * @return {string}
+		 */
+		articlePath: () => mw.config.get( 'wgScript' ),
+		/**
 		 * Allow wikis eg. Hebrew Wikipedia to replace the default search API client
 		 *
-		 * @return {void|Object}
+		 * @return {module:restSearchClient~SearchClient}
 		 */
-		getClient: function () {
-			return mw.config.get( 'wgVectorSearchClient', undefined );
+		getClient: () => {
+			return client( mw.config );
 		},
-		language: function () {
+		language: () => {
 			return mw.config.get( 'wgUserLanguage' );
 		},
-		domain: function () {
+		domain: () => {
 			// It might be helpful to allow this to be configurable in future.
 			return mw.config.get( 'wgVectorSearchHost', location.host );
 		}
 	},
 	props: {
+		id: {
+			type: String,
+			required: true
+		},
 		searchPageTitle: {
 			type: String,
 			default: 'Special:Search'
@@ -117,9 +128,13 @@ module.exports = {
 		highlightQuery: {
 			type: Boolean,
 			default: true
+		},
+		autoExpandWidth: {
+			type: Boolean,
+			default: false
 		}
 	},
-	data: function () {
+	data() {
 		return {
 			// -1 here is the default "active suggestion index" defined in the
 			// `wvui-typeahead-search` component (see
@@ -133,7 +148,7 @@ module.exports = {
 		/**
 		 * @param {SubmitEvent} event
 		 */
-		onSubmit: function ( event ) {
+		onSubmit( event ) {
 			this.wprov = instrumentation.getWprovFromResultIndex( event.index );
 
 			instrumentation.listeners.onSubmit( event );

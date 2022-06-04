@@ -1,5 +1,5 @@
-@import 'mediawiki.ui/variables.less';
 @import 'mediawiki.skin.variables.less';
+@import 'mediawiki.ui/variables.less';
 
 // Sizing calculation primitives.
 @font-size-root: 100%;
@@ -109,6 +109,14 @@
 @font-size-tabs: unit( 13 / @font-size-browser, em ); // Equals `0.8125em`.
 @padding-horizontal-tabs: 8px;
 
+// Menu button
+@margin-horizontal-sidebar-button-icon: unit( 12px / @font-size-browser, em ); // 0.75em @ 16
+
+// Sidebar
+@margin-toc-start-content: 16em;
+@space-end-sidebar: 2em;
+@width-sidebar: @margin-toc-start-content - @space-end-sidebar;
+
 // Search
 @min-width-search-button: 28px;
 @width-search-button: unit( 28 / @font-size-browser / @font-size-search-input, em );
@@ -116,9 +124,17 @@
 // Derived from @spacing-start-typeahead-search-figure + @spacing-end-typeahead-search-figure in WVUI
 // https://gerrit.wikimedia.org/g/wvui/+/refs/changes/93/650593/10/src/components/typeahead-search/TypeaheadSearch.vue#645
 @size-search-expand: 24px;
+@margin-end-search: 12px;
 
 // language button
 @height-lang-button: unit( 32 / @font-size-browser, em );
+
+// T296321 For sticky header, set an explicit height. This is needed for scroll padding
+// and for other sticky elements on the page. Setting the height in relative units enables
+// the header's height to adapt to the browser's font size setting. Because
+// this variable is used to determine top offsets for sticky elements where the
+// font-size might not be 16px, using rem avoids the cascading effects of em units.
+@height-sticky-header: unit( 50px / @font-size-browser, rem );
 
 // Z-indices
 // See skinStyles/jquery.ui/jquery.ui.datepicker.css.
@@ -149,6 +165,8 @@
 
 // Transitions
 @transition-duration-base: 100ms;
+// Sticky header hide/show transition
+@transition-sticky-header: transform 250ms linear;
 
 //
 // Layout

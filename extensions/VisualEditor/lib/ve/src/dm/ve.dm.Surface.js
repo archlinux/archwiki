@@ -16,7 +16,7 @@
  * @param {ve.dm.Document} doc Document model to create surface for
  * @param {ve.dm.BranchNode} [attachedRoot] Node to surface; default is document node
  * @param {Object} [config] Configuration options
- * @cfg {boolean} [sourceMode] Source editing mode
+ * @cfg {boolean} [sourceMode=false] Source editing mode
  */
 ve.dm.Surface = function VeDmSurface( doc, attachedRoot, config ) {
 	// Support old (doc, config) argument order
@@ -77,6 +77,7 @@ ve.dm.Surface = function VeDmSurface( doc, attachedRoot, config ) {
 		precommit: 'onDocumentPreCommit'
 	} );
 	this.storeChangesListener = this.storeChanges.bind( this );
+	this.storeDocStorageListener = this.storeDocStorage.bind( this );
 };
 
 /* Inheritance */
@@ -897,6 +898,8 @@ ve.dm.Surface.prototype.setSelection = function ( selection ) {
 
 /**
  * Place the selection at the first content offset in the document.
+ *
+ * @deprecated Use ve.ce.Surface#selectFirstSelectableContentOffset
  */
 ve.dm.Surface.prototype.selectFirstContentOffset = function () {
 	var firstOffset = this.getDocument().data.getNearestContentOffset(
@@ -914,6 +917,8 @@ ve.dm.Surface.prototype.selectFirstContentOffset = function () {
 
 /**
  * Place the selection at the last content offset in the document.
+ *
+ * @deprecated Use ve.ce.Surface#selectLastSelectableContentOffset
  */
 ve.dm.Surface.prototype.selectLastContentOffset = function () {
 	var data = this.getDocument().data,
@@ -1366,6 +1371,18 @@ ve.dm.Surface.prototype.storeChanges = function () {
 };
 
 /**
+ * Store persistent document storage into session storage
+ */
+ve.dm.Surface.prototype.storeDocStorage = function () {
+	if ( this.autosaveFailed ) {
+		return;
+	}
+
+	var dmDoc = this.getDocument();
+	this.storage.setObject( this.autosavePrefix + 've-docstorage', dmDoc.getStorage() );
+};
+
+/**
  * Set an document ID for autosave.
  *
  * For session storage this is only required if there is more
@@ -1382,6 +1399,7 @@ ve.dm.Surface.prototype.setAutosaveDocId = function ( docId ) {
  */
 ve.dm.Surface.prototype.startStoringChanges = function () {
 	this.on( 'undoStackChange', this.storeChangesListener );
+	this.getDocument().on( 'storage', this.storeDocStorageListener );
 };
 
 /**
@@ -1389,6 +1407,7 @@ ve.dm.Surface.prototype.startStoringChanges = function () {
  */
 ve.dm.Surface.prototype.stopStoringChanges = function () {
 	this.off( 'undoStackChange', this.storeChangesListener );
+	this.getDocument().off( 'storage', this.storeDocStorageListener );
 };
 
 /**
@@ -1410,6 +1429,11 @@ ve.dm.Surface.prototype.restoreChanges = function () {
 			surface.breakpoint();
 		} );
 		restored = !!changes.length;
+
+		this.getDocument().setStorage(
+			this.storage.getObject( this.autosavePrefix + 've-docstorage' ) || {}
+		);
+
 		var selection;
 		try {
 			selection = ve.dm.Selection.static.newFromJSON(

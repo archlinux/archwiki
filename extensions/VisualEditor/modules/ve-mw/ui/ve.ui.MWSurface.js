@@ -23,7 +23,7 @@ ve.ui.MWSurface = function VeUiMWSurface() {
 	this.onDocumentViewLangChange();
 	this.$element.addClass( 've-ui-mwSurface' );
 	// T164790
-	this.getView().$attachedRootNode.addClass( 'mw-parser-output' );
+	this.getView().$attachedRootNode.addClass( 'mw-parser-output mw-show-empty-elt' );
 };
 
 /* Inheritance */

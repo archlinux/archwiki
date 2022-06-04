@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kaszeba",
+			"Macofe",
+			"Warszk"
+		]
+	},
+	"math_failure": "Parser nie rozmiôł rozpòznac",
+	"mw_math_mathml": "Wëskrzëniwôj jakno MathML jeżlë mòżlëwé (eksperimentalné)",
+	"mw_math_png": "Òbrôzë PNG",
+	"mw_math_source": "Òstawi jakno LaTeX (dlô tekstowich przezérników)",
+	"prefs-math": "Matematika"
+}

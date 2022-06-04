@@ -1,12 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hasslaebetch"
+			"Hasslaebetch",
+			"Abdul Fatawu 352",
+			"Amire80"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 buudi-gomde|$1 buudi-goma}}",
+	"vector-action-addsection": "Paase wɛɛbgẽ",
+	"vector-action-delete": "Yẽese",
 	"vector-action-move": "Kedme",
+	"vector-action-protect": "Kogle",
 	"vector-view-create": "Naane",
 	"vector-view-edit": "Tekre",
+	"vector-view-history": "Gese kibare",
 	"vector-view-view": "Karme",
 	"vector-more-actions": "Paase"
 }

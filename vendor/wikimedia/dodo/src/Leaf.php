@@ -40,7 +40,6 @@ abstract class Leaf /* domino helper */ extends Node {
 	 */
 	final public function insertBefore( $node, $refChild = null ): Node {
 		Util::error( "HierarchyRequestError" );
-		throw new \Error( "impossible" ); // for phan
 	}
 
 	/**
@@ -48,7 +47,6 @@ abstract class Leaf /* domino helper */ extends Node {
 	 */
 	final public function replaceChild( $node, $refChild ): Node {
 		Util::error( "HierarchyRequestError" );
-		throw new \Error( "impossible" ); // for phan
 	}
 
 	/**
@@ -56,7 +54,6 @@ abstract class Leaf /* domino helper */ extends Node {
 	 */
 	final public function removeChild( $node ): Node {
 		Util::error( "NotFoundError" );
-		throw new \Error( "impossible" ); // for phan
 	}
 
 	/**

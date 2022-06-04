@@ -1,8 +1,6 @@
 function logEvent( eventName ) {
-	var event, editCountBucket;
-
 	/* eslint-disable camelcase */
-	event = {
+	var event = {
 		action: eventName,
 		page_id: mw.config.get( 'wgArticleId' ),
 		page_title: mw.config.get( 'wgTitle' ),
@@ -12,12 +10,12 @@ function logEvent( eventName ) {
 		user_id: mw.user.getId()
 	};
 
-	editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
+	var editCountBucket = mw.config.get( 'wgUserEditCountBucket' );
 	if ( editCountBucket !== null ) {
 		event.user_edit_count_bucket = editCountBucket;
 	}
-
 	/* eslint-enable camelcase */
+
 	mw.track( 'event.TemplateDataEditor', event );
 }
 

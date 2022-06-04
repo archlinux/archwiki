@@ -4,12 +4,10 @@
 			"Pyscowicz"
 		]
 	},
-	"wikieditor-loading": "Ladathaan...",
 	"wikieditor-toolbar": "Työkalupalkki mookkaukseen",
 	"wikieditor-toolbar-desc": "Mookkaussivun työkalupalkki paremmalla käytettävyyellä.",
 	"wikieditor-toolbar-preference": "Ota käythöön työkalupalkki mookkauksissa",
 	"wikieditor-toolbar-preference-help": "Tätä kutsutaan joskus '2010 wikitekstimookkaimeksi'.",
-	"wikieditor-toolbar-loading": "Ladathaan...",
 	"wikieditor-toolbar-tool-ilink": "Sisäinen länkki",
 	"wikieditor-toolbar-tool-ilink-example": "Länkin otsikko",
 	"wikieditor-toolbar-tool-xlink": "Ulkonen länkki (muista http://-etuliite)",

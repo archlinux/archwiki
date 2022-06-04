@@ -4,10 +4,10 @@
 			"EugeneZelenko",
 			"Red Winged Duck",
 			"Renessaince",
+			"TMg",
 			"Wizardist",
 			"Zedlik",
-			"Чаховіч Уладзіслаў",
-			"TMg"
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -172,7 +172,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Выявы і мультымэдыі",
 	"visualeditor-dialogbutton-meta-tooltip": "Налады старонкі",
 	"visualeditor-dialogbutton-template-tooltip": "Шаблён",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Уключэньне",
 	"visualeditor-editconflict": "Не атрымалася захаваць вашыя зьмены з-за канфлікту рэдагаваньняў. Ці {{GENDER:|не жадаеце}} разьвязаць канфлікт уласнаруч?",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|заўвага|заўвагі|заўваг}}",
 	"visualeditor-editnotices-tooltip": "Заўвагі да рэдагаваньня",

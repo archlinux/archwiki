@@ -7,8 +7,10 @@
 			"Simbu123"
 		]
 	},
-	"skinname-vector": "ভেক্টৰ",
-	"vector-skin-desc": "নতুন ৰূপ আৰু বহুতো ব্যৱহাৰযোগ্যতাৰ উন্নতিৰ সৈতে ম'ন'বুকৰ আধুনিক সংস্কৰণ",
+	"skinname-vector": "পুৰণা ভেক্টৰ (২০১০)",
+	"skinname-vector-2022": "ভেক্টৰ (২০২২)",
+	"vector-specialversion-name": "ভেক্টৰ",
+	"vector-skin-desc": "২টা ভেক্টৰ ৰূপ প্ৰদান কৰে:\n* ২০১১ - নতুন ৰূপ আৰু বহুতো ব্যৱহাৰযোগ্যতাৰ উন্নতিৰ সৈতে ম'ন'বুকৰ আধুনিক সংস্কৰণ।\n* ২০২২ - WMF-ৰ [[mw:Desktop Improvements]] প্ৰকল্পৰ অংশ হিচাপে নিৰ্মিত ভেক্টৰ।",
 	"prefs-vector-enable-vector-1-label": "পুৰণা ভেক্টৰ ব্যৱহাৰ কৰক",
 	"prefs-vector-enable-vector-1-help": "পৰৱৰ্তী কেইবছৰমানত, আমি ক্ৰমান্বয়ে ভেক্টৰ আৱৰণ আপডেট কৰিম। পুৰণা ভেক্টৰ আৱৰণে আপোনাক ভেক্টৰৰ পুৰণি সংস্কৰণ চাবলৈ অনুমতি দিব (ডিচেম্বৰ ২০১৯ লৈকে)। আপডেটবোৰৰ বিষয়ে অধিক জানিবলৈ, আমাৰ [[mw:Reading/Web/Desktop_Improvements|প্ৰকল্প পৃষ্ঠালৈ]] যাওক।",
 	"vector-opt-out": "পুৰণি ৰূপলৈ যাওক",
@@ -16,7 +18,11 @@
 	"vector.css": "/* ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো CSS লোড কৰা হ'ব */",
 	"vector.js": "/* ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো জাভাস্ক্ৰিপ্ট লোড কৰা হ'ব */",
 	"vector-action-toggle-sidebar": "পাৰ্শ্বদণ্ড টগল কৰক",
+	"vector-languages": "ভাষা",
+	"vector-language-button-aria-label": "অন্য এটা ভাষাৰ প্ৰবন্ধলৈ যাওক। {{PLURAL:$1|$1টা ভাষাত}} উপলব্ধ।",
 	"vector-language-button-label": "{{PLURAL:$1|$1টা ভাষা}}",
+	"vector-language-redirect-to-top": "এই {{SITENAME}}ত ভাষাৰ সংযোগসমূহ প্ৰবন্ধৰ শিৰোনামৰ কাষত পৃষ্ঠাৰ ওপৰত আছে। [[#p-lang-btn|ওপৰলৈ যাওক]]।",
+	"vector-language-variant-switcher-label": "ভাষাৰ প্ৰকাৰ সলনি কৰক",
 	"vector-action-addsection": "বিষয় যোগ",
 	"vector-action-delete": "বিলোপ কৰক",
 	"vector-action-move": "স্থানান্তৰ কৰক",
@@ -32,5 +38,12 @@
 	"vector-jumptosearch": "সন্ধানলৈ যাওক",
 	"vector-jumptocontent": "সমললৈ যাওক",
 	"vector-more-actions": "অধিক",
-	"vector-search-loader": "সন্ধান পৰামৰ্শ লোড কৰা হৈছে"
+	"vector-search-loader": "সন্ধান পৰামৰ্শ লোড কৰা হৈছে",
+	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> থকা পৃষ্ঠাসমূহ সন্ধান কৰক",
+	"vector-intro-page": "Help:পৰিচয়",
+	"vector-anon-user-menu-pages": "লগ-আউট কৰা সদস্যৰ বাবে পৃষ্ঠাসমূহ",
+	"vector-anon-user-menu-pages-learn": "অধিক শিকক",
+	"vector-anon-user-menu-pages-label": "সম্পাদনাৰ বিষয়ে অধিক জানক",
+	"vector-main-menu-tooltip": "মুখ্য মেনু",
+	"tooltip-vector-anon-user-menu-title": "অধিক বিকল্প"
 }

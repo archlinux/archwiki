@@ -1,14 +1,5 @@
 <?php
-
-namespace Cdb\Reader;
-
-use Cdb\Reader;
-use Wikimedia\Assert\Assert;
-
 /**
- * Hash implements the CdbReader interface based on an associative
- * PHP array (a.k.a "hash").
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,26 +14,24 @@ use Wikimedia\Assert\Assert;
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
  */
+
+namespace Cdb\Reader;
+
+use Cdb\Reader;
 
 /**
  * Hash implements the CdbReader interface based on an associative
  * PHP array (a.k.a "hash").
  */
 class Hash extends Reader {
-
-	/**
-	 * @var string
-	 */
+	/** @var string $data */
 	private $data;
 
 	/**
-	 * A queue of keys to return from nextkey(),
-	 * initialized by firstkey();
+	 * A queue of keys to return from nextkey(), initialized by firstkey();
 	 *
-	 * @var string[]|null
+	 * @var string[]|null $keys
 	 */
 	private $keys = null;
 
@@ -62,7 +51,7 @@ class Hash extends Reader {
 	 * Close the file. Optional, you can just let the variable go out of scope.
 	 */
 	public function close() {
-		$this->data = array();
+		$this->data = [];
 		$this->keys = null;
 	}
 

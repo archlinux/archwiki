@@ -3,7 +3,8 @@
 		"authors": [
 			"Fohanno",
 			"Fulup",
-			"Y-M D"
+			"Y-M D",
+			"Huñvreüs"
 		]
 	},
 	"interwiki": "Gwelet hag aozañ ar roadennoù etrewiki",
@@ -16,7 +17,7 @@
 	"interwiki_prefix_intro": "Rakger etrewiki da vezañ implijet en <code>[<nowiki />[prefix:<em>anv ar bajenn</em>]]</code> en ereadur wikitestenn.",
 	"interwiki_url_intro": "Patrom evit an URLoù. Erlec'hiet e vo $1 gant <em>anv ar bajenn</em> ar wikitestenn, pa vez graet gant an ereadur wikitestenn a-us.",
 	"interwiki_local": "Treuzkas",
-	"interwiki-local-label": "Treuzkas :",
+	"interwiki-local-label": "Treuzkas",
 	"interwiki_local_0_intro": "nac'het, stanket alies gant \"pajenn nann-kavet\",",
 	"interwiki_local_1_intro": "Adkaset war-du an URL tal roet e termenadurioù al liammoù etrewiki (da lavaret eo e vez gwelet evel daveennoù er pajennoù lec'hel)",
 	"interwiki_trans": "Treuzkludañ",

@@ -18,6 +18,9 @@ ve.ui.MWCitationDialog = function VeUiMWCitationDialog( config ) {
 	// Parent constructor
 	ve.ui.MWCitationDialog.super.call( this, config );
 
+	// Override feature set.
+	this.useBackButton = false;
+
 	// Properties
 	this.referenceModel = null;
 	this.referenceNode = null;
@@ -26,13 +29,26 @@ ve.ui.MWCitationDialog = function VeUiMWCitationDialog( config ) {
 
 /* Inheritance */
 
-OO.inheritClass( ve.ui.MWCitationDialog, ve.ui.MWTemplateDialog );
+OO.inheritClass( ve.ui.MWCitationDialog, ve.ui.MWTransclusionDialog );
 
 /* Static Properties */
 
 ve.ui.MWCitationDialog.static.name = 'cite';
 
 /* Methods */
+
+/**
+ * Hide the "show options" button when using the old workflow.
+ */
+ve.ui.MWCitationDialog.prototype.autoExpandSidebar = function () {
+	ve.ui.MWCitationDialog.super.prototype.autoExpandSidebar.call( this );
+
+	if ( !this.useInlineDescriptions && !this.useNewSidebar && !this.isSidebarExpanded ) {
+		this.actions.forEach( { actions: [ 'mode' ] }, function ( action ) {
+			action.toggle( false );
+		} );
+	}
+};
 
 /**
  * Get the reference node to be edited.
@@ -53,12 +69,12 @@ ve.ui.MWCitationDialog.prototype.getReferenceNode = function () {
  * @inheritdoc
  */
 ve.ui.MWCitationDialog.prototype.getSelectedNode = function () {
-	var branches, leaves, transclusionNode,
-		referenceNode = this.getReferenceNode();
+	var referenceNode = this.getReferenceNode();
 
+	var transclusionNode;
 	if ( referenceNode ) {
-		branches = referenceNode.getInternalItem().getChildren();
-		leaves = branches &&
+		var branches = referenceNode.getInternalItem().getChildren();
+		var leaves = branches &&
 			branches.length === 1 &&
 			branches[ 0 ].canContainContent() &&
 			branches[ 0 ].getChildren();
@@ -135,27 +151,7 @@ ve.ui.MWCitationDialog.prototype.setApplicableStatus = function () {
 	// Parent method disables 'done' if no changes were made (this is okay for us), and
 	// disables 'insert' if transclusion is empty (but it is never empty in our case).
 	// Instead, disable 'insert' if no parameters were added.
-	this.actions.setAbilities( { insert: this.hasUsefulParameter() } );
-};
-
-/**
- * Works out whether there are any set parameters that aren't just placeholders
- *
- * @return {boolean}
- */
-ve.ui.MWCitationDialog.prototype.hasUsefulParameter = function () {
-	var name, page;
-
-	for ( name in this.bookletLayout.pages ) {
-		page = this.bookletLayout.pages[ name ];
-		if (
-			page instanceof ve.ui.MWParameterPage &&
-			page.valueInput.getValue() !== ''
-		) {
-			return true;
-		}
-	}
-	return false;
+	this.actions.setAbilities( { insert: this.transclusionModel.containsValuableData() } );
 };
 
 /**

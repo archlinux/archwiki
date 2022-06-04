@@ -2,18 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Fatz",
+			"Hubaishan",
 			"Maroen1990",
 			"Meno25",
 			"Mido",
 			"Mr. Ibrahem",
+			"SaldırganSincap",
 			"Shbib Al-Subaie",
 			"Test Create account",
 			"Yahya Sakhnini",
 			"ديفيد",
 			"زكريا",
-			"محمد أحمد عبد الفتاح",
-			"Hubaishan",
-			"SaldırganSincap"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"templatedata-desc": "تخزين بيانات وسائط القالب",
@@ -57,7 +57,7 @@
 	"templatedata-invalid-duplicate-value": "الخاصية \"$1\" (\"$3\") مكررة عن \"$2\".",
 	"templatedata-invalid-empty-array": "يجب أن تعطى للخاصية \"$1\" على الأقل قيمة واحدة في مصفوفتها.",
 	"templatedata-invalid-format": "الخاصية \"$1\" متوقع أن تكون \"inline\"، \"block\" أو سلسلة حروف صياغة صحيحة.",
-	"templatedata-invalid-length": "لم تحفظ البيانات لكبر حجمها ({{formatnum:$1}} {{PLURAL:$1|بايت|بايتات}}، {{PLURAL:$2|الحجم الأقصى}} {{formatnum:$2}})",
+	"templatedata-invalid-length": "لم تحفظ البيانات لكبر حجمها ($1 {{PLURAL:$1|بايت|بايتات}}، {{PLURAL:$2|الحجم الأقصى}} $2)",
 	"templatedata-invalid-missing": "خاصية \"$1\" ضرورية.",
 	"templatedata-invalid-param": "معامل غير صحيح \"$1\" للخاصية \"$2\".",
 	"templatedata-invalid-parse": "خطأ نحوي",
@@ -96,7 +96,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "أدخل اسم الخريطة",
 	"templatedata-modal-search-input-placeholder": "اختر اسم اللغة أو رمزها",
 	"templatedata-modal-table-param-actions": "إجراءات",
-	"templatedata-modal-table-param-aliases": "أسماء بديلة (بينها فواصل)",
+	"templatedata-modal-table-param-aliases": "أسماء بديلة",
 	"templatedata-modal-table-param-autovalue": "قيمة تلقائية",
 	"templatedata-modal-table-param-default": "افتراضي ($1)",
 	"templatedata-modal-table-param-deprecated": "تم الاستغناء عنه",

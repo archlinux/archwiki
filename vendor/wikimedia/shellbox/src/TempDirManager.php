@@ -2,6 +2,7 @@
 
 namespace Shellbox;
 
+use DirectoryIterator;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -61,7 +62,7 @@ class TempDirManager {
 	 * @param string $path
 	 */
 	private function deleteDirectory( $path ) {
-		foreach ( new \DirectoryIterator( $path ) as $fileInfo ) {
+		foreach ( new DirectoryIterator( $path ) as $fileInfo ) {
 			if ( $fileInfo->isDot() ) {
 				continue;
 			}

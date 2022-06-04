@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Gmelfi",
 			"Melos",
 			"Pippinu",
-			"Sarvaturi",
-			"Ajeje Brazorf"
+			"Sarvaturi"
 		]
 	},
 	"vector-skin-desc": "Virsioni muderna di MonoBook cu n'aspettu novu e tanti migghiuramenti nta l'usabbilità",
+	"vector-languages": "Lingui",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingua|$1 lingui}}",
 	"vector-action-addsection": "Agghiunci n'argumentu",
 	"vector-action-delete": "Cancella",
@@ -22,6 +23,7 @@
 	"vector-view-view": "Leggi",
 	"vector-view-viewsource": "Talìa la surgenti",
 	"vector-more-actions": "Àutri cosi",
+	"vector-intro-page": "Help:Ntroduzzioni",
 	"vector-anon-user-menu-pages-learn": "àutri nfurmazzioni",
 	"vector-personal-more-label": "Liami pi l'utenti",
 	"vector-main-menu-tooltip": "Menu principali",

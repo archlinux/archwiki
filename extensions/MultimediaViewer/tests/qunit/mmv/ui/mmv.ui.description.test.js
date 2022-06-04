@@ -1,7 +1,7 @@
 ( function () {
 	QUnit.module( 'mmv.ui.description', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var description = new mw.mmv.ui.Description( $( '#qunit-fixture' ) );
 
 		assert.ok( description, 'Image description UI element is created' );

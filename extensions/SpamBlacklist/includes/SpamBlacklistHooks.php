@@ -4,6 +4,7 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Storage\EditResult;
 use MediaWiki\User\UserIdentity;
+use Wikimedia\Assert\PreconditionException;
 
 /**
  * Hooks for the spam blacklist extension
@@ -38,19 +39,34 @@ class SpamBlacklistHooks implements
 		$minoredit
 	) {
 		$title = $context->getTitle();
-		$stashedEdit = MediaWikiServices::getInstance()->getPageEditStash()->checkCache(
-			$title,
-			$content,
-			$user
-		);
-		if ( $stashedEdit ) {
-			/** @var ParserOutput $output */
-			$pout = $stashedEdit->output;
-		} else {
-			$pout = $content->getParserOutput( $title, null, null, false );
+		try {
+			// Try getting the update directly
+			$updater = $context->getWikiPage()->getCurrentUpdate();
+			$pout = $updater->getParserOutputForMetaData();
+		} catch ( PreconditionException | LogicException $exception ) {
+			$services = MediaWikiServices::getInstance();
+			$stashedEdit = $services->getPageEditStash()->checkCache(
+				$title,
+				$content,
+				$user
+			);
+			if ( $stashedEdit ) {
+				// Try getting the value from edit stash
+				/** @var ParserOutput $output */
+				$pout = $stashedEdit->output;
+			} else {
+				// Last resort, parse the page.
+				$contentRenderer = $services->getContentRenderer();
+				$pout = $contentRenderer->getParserOutput(
+					$content,
+					$title,
+					null,
+					null,
+					false
+				);
+			}
 		}
 		$links = array_keys( $pout->getExternalLinks() );
-
 		// HACK: treat the edit summary as a link if it contains anything
 		// that looks like it could be a URL or e-mail address.
 		if ( preg_match( '/\S(\.[^\s\d]{2,}|[\/@]\S)/', $summary ) ) {
@@ -218,8 +234,9 @@ class SpamBlacklistHooks implements
 
 		// get the link from the not-yet-saved page content.
 		$content = ContentHandler::makeContent( $pageText, $title );
-		$parserOptions = ParserOptions::newCanonical( 'canonical' );
-		$output = $content->getParserOutput( $title, null, $parserOptions );
+		$parserOptions = ParserOptions::newFromAnon();
+		$contentRenderer = MediaWikiServices::getInstance()->getContentRenderer();
+		$output = $contentRenderer->getParserOutput( $content, $title, null, $parserOptions );
 		$links = array_keys( $output->getExternalLinks() );
 
 		// HACK: treat comment as a link if it contains anything

@@ -1,5 +1,9 @@
 # Release History
 
+## zest-css 2.0.2 (2021-10-14)
+* Update wikimedia/remex-html to 2.3.2 (dev dependency)
+* Add a compilation cache to speed up repeated matches.
+
 ## zest-css 2.0.1 (2021-08-07)
 * Bug fix: in some cases the ` ` and `>` combinators, as well as the
   `:dir` and `:lang` selectors, could attempt to match against a

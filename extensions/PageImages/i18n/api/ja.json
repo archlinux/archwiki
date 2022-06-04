@@ -3,8 +3,8 @@
 		"authors": [
 			"2nd-player",
 			"Shirayuki",
-			"Yusuke1109",
-			"Sou0012"
+			"Sou0012",
+			"Yusuke1109"
 		]
 	},
 	"apihelp-query+pageimages-description": "サムネイルや写真の有無など、ページ上の画像に関する情報を返します。",

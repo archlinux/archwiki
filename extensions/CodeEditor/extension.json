@@ -16,9 +16,17 @@
 		}
 	},
 	"Hooks": {
-		"EditPage::showEditForm:initial": "CodeEditorHooks::editPageShowEditFormInitial",
-		"EditPage::showReadOnlyForm:initial": "CodeEditorHooks::editPageShowEditFormInitial",
-		"GetPreferences": "CodeEditorHooks::getPreferences"
+		"EditPage::showEditForm:initial": "CodeEditorHooks",
+		"EditPage::showReadOnlyForm:initial": "CodeEditorHooks",
+		"GetPreferences": "CodeEditorHooks"
+	},
+	"HookHandlers": {
+		"CodeEditorHooks": {
+			"class": "MediaWiki\\Extension\\CodeEditor\\Hooks",
+			"services": [
+				"UserOptionsLookup"
+			]
+		}
 	},
 	"MessagesDirs": {
 		"CodeEditor": [
@@ -132,8 +140,8 @@
 		"localBasePath": "modules",
 		"remoteExtPath": "CodeEditor/modules"
 	},
-	"AutoloadClasses": {
-		"CodeEditorHooks": "includes/CodeEditorHooks.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\CodeEditor\\": "includes/"
 	},
 	"manifest_version": 2
 }

@@ -11,7 +11,7 @@
 	"oathauth-token": "Gettone",
 	"oathauth-disable": "Disabbilite l'Autendicazione a Doje Fattore",
 	"oathauth-auth-token-label": "Gettone",
-	"oauthauth-ui-no-module": "None abbilitate",
+	"oathauth-ui-no-module": "None abbilitate",
 	"oathauth-module-totp-label": "TOTP (gettone use e gette)",
 	"oathauth-ui-manage": "Gestisce",
 	"oathauth-ui-not-enabled-modules": "Cange a 'nu metode alternative",

@@ -1,7 +1,6 @@
 <?php
 
 use MediaWiki\Languages\LanguageConverterFactory;
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
@@ -24,8 +23,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	private const SCREEN_MEDIA_QUERY = 'screen and (min-width: 982px)';
 	private const SCREEN_ONLY_MEDIA_QUERY = 'only screen and (min-width: 982px)';
-
-	// phpcs:disable Generic.Files.LineLength
 	private const RSS_RC_LINK = '<link rel="alternate" type="application/rss+xml" title=" RSS feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=rss"/>';
 	private const ATOM_RC_LINK = '<link rel="alternate" type="application/atom+xml" title=" Atom feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=atom"/>';
 
@@ -493,13 +490,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			$callback( $op, $this );
 		}
 
-		// Avoid a complaint about not being able to disable compression
-		Wikimedia\suppressWarnings();
-		try {
-			$this->assertEquals( $expected, $op->checkLastModified( $timestamp ) );
-		} finally {
-			Wikimedia\restoreWarnings();
-		}
+		// Ignore complaint about not being able to disable compression
+		$this->assertEquals( $expected, @$op->checkLastModified( $timestamp ) );
 	}
 
 	public function provideCheckLastModified() {
@@ -616,6 +608,30 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers OutputPage::setRobotPolicy
+	 * @covers OutputPage::setRobotsOptions
+	 * @covers OutputPage::setIndexPolicy
+	 * @covers OutputPage::getHeadLinksArray
+	 */
+	public function testSetRobotsOptions() {
+		$op = $this->newInstance();
+		$op->setRobotPolicy( 'noindex, nofollow' );
+		$op->setRobotsOptions( [ 'max-snippet' => '500' ] );
+		$op->setIndexPolicy( 'index' );
+
+		$links = $op->getHeadLinksArray();
+		$this->assertContains( '<meta name="robots" content="index,nofollow,max-snippet:500"/>', $links );
+
+		$op->setFollowPolicy( 'follow' );
+		$links = $op->getHeadLinksArray();
+		$this->assertContains(
+			'<meta name="robots" content="max-snippet:500"/>',
+			$links,
+			'When index,follow (browser default) omit'
+		);
+	}
+
+	/**
+	 * @covers OutputPage::setRobotPolicy
 	 * @covers OutputPage::getRobotPolicy
 	 */
 	public function testGetRobotPolicy() {
@@ -727,15 +743,35 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		// HTML title should change as well
 		$this->assertSame( $this->getMsgText( $op, 'pagetitle', 'foobar' ), $op->getHTMLTitle() );
 
-		// Test set to text with good and bad HTML.  We don't try to be comprehensive here, that
-		// belongs in Sanitizer tests.
-		$op->setPageTitle( '<script>a</script>&amp;<i>b</i>' );
+		// Test set to text with good and bad HTML.  We don't try to be *too*
+		// comprehensive here, that belongs in Sanitizer tests, but we'll
+		// address the issues specifically noted in T298401/T67747 at least...
+		$sanitizerTests = [
+			[
+				'input' => '<script>a</script>&amp;<i>b</i>',
+				'getPageTitle' => '&lt;script&gt;a&lt;/script&gt;&amp;<i>b</i>',
+				'getHTMLTitle' => '<script>a</script>&b',
+			],
+			[
+				'input' => '<code style="display:none">', # T298401
+				'getPageTitle' => '<code style="display:none"></code>',
+				'getHTMLTitle' => '',
+			],
+			[
+				'input' => '<b>Foo bar<b>', # T67747
+				'getPageTitle' => '<b>Foo bar<b></b></b>',
+				'getHTMLTitle' => 'Foo bar',
+			],
+		];
+		foreach ( $sanitizerTests as $case ) {
+			$op->setPageTitle( $case['input'] );
 
-		$this->assertSame( '&lt;script&gt;a&lt;/script&gt;&amp;<i>b</i>', $op->getPageTitle() );
-		$this->assertSame(
-			$this->getMsgText( $op, 'pagetitle', '<script>a</script>&b' ),
-			$op->getHTMLTitle()
-		);
+			$this->assertSame( $case['getPageTitle'], $op->getPageTitle() );
+			$this->assertSame(
+				$this->getMsgText( $op, 'pagetitle', $case['getHTMLTitle'] ),
+				$op->getHTMLTitle()
+			);
+		}
 
 		// Test set to message
 		$text = $this->getMsgText( $op, 'mainpage' );
@@ -2054,19 +2090,14 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 *  initialMaxage => Maxage to set before calling adaptCdnTTL() (default 86400)
 	 */
 	public function testAdaptCdnTTL( array $args, $expected, array $options = [] ) {
-		try {
-			MWTimestamp::setFakeTime( self::$fakeTime );
+		MWTimestamp::setFakeTime( self::$fakeTime );
 
-			$op = $this->newInstance();
-			// Set a high maxage so that it will get reduced by adaptCdnTTL().  The default maxage
-			// is 0, so adaptCdnTTL() won't mutate the object at all.
-			$initial = $options['initialMaxage'] ?? 86400;
-			$op->setCdnMaxage( $initial );
-
-			$op->adaptCdnTTL( ...$args );
-		} finally {
-			MWTimestamp::setFakeTime( false );
-		}
+		$op = $this->newInstance();
+		// Set a high maxage so that it will get reduced by adaptCdnTTL().  The default maxage
+		// is 0, so adaptCdnTTL() won't mutate the object at all.
+		$initial = $options['initialMaxage'] ?? 86400;
+		$op->setCdnMaxage( $initial );
+		$op->adaptCdnTTL( ...$args );
 
 		$wrapper = TestingAccessWrapper::newFromObject( $op );
 
@@ -2119,11 +2150,47 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers OutputPage::enableClientCache
+	 * @covers OutputPage::disableClientCache
 	 * @covers OutputPage::addParserOutputMetadata
 	 * @covers OutputPage::addParserOutput
 	 */
 	public function testClientCache() {
+		$op = $this->newInstance();
+		$op->considerCacheSettingsFinal();
+
+		// Test initial value
+		$this->assertSame( true, $op->couldBePublicCached() );
+
+		// Test setting to false
+		$op->disableClientCache();
+		$this->assertSame( false, $op->couldBePublicCached() );
+
+		// Test that a cacheable ParserOutput doesn't set to true
+		$pOutCacheable = $this->createParserOutputStub( 'isCacheable', true );
+		$op->addParserOutputMetadata( $pOutCacheable );
+		$this->assertSame( false, $op->couldBePublicCached() );
+
+		// Reset to true
+		$op = $this->newInstance();
+		$op->considerCacheSettingsFinal();
+		$this->assertSame( true, $op->couldBePublicCached() );
+
+		// Test that an uncacheable ParserOutput does set to false
+		$pOutUncacheable = $this->createParserOutputStub( 'isCacheable', false );
+		$op->addParserOutput( $pOutUncacheable );
+		$this->assertSame( false, $op->couldBePublicCached() );
+	}
+
+	/**
+	 * This test can be safely removed when the deprecated
+	 * OutputPage::enableClientCache() is removed.
+	 * @covers OutputPage::enableClientCache
+	 */
+	public function testEnableClientCache() {
+		// OutputPage::enableClientCache() is deprecated, so this test
+		// will emit warnings.
+		$this->hideDeprecated( 'OutputPage::enableClientCache' );
+
 		$op = $this->newInstance();
 
 		// Test initial value
@@ -2136,19 +2203,18 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( false, $op->enableClientCache( null ) );
 		// Test that calling with null doesn't change the value
 		$this->assertSame( false, $op->enableClientCache( null ) );
-
-		// Test that a cacheable ParserOutput doesn't set to true
-		$pOutCacheable = $this->createParserOutputStub( 'isCacheable', true );
-		$op->addParserOutputMetadata( $pOutCacheable );
+		// Using ::disableClientCache() works, too
+		$op->disableClientCache();
 		$this->assertSame( false, $op->enableClientCache( null ) );
 
 		// Test setting back to true
 		$this->assertSame( false, $op->enableClientCache( true ) );
 		$this->assertSame( true, $op->enableClientCache( null ) );
 
-		// Test that an uncacheable ParserOutput does set to false
-		$pOutUncacheable = $this->createParserOutputStub( 'isCacheable', false );
-		$op->addParserOutput( $pOutUncacheable );
+		// For completeness, test that ::disableClientCache() also sets it
+		// to false.
+		$this->assertSame( true, $op->enableClientCache( null ) );
+		$op->disableClientCache();
 		$this->assertSame( false, $op->enableClientCache( null ) );
 	}
 
@@ -2442,8 +2508,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers OutputPage::preventClickjacking
-	 * @covers OutputPage::allowClickjacking
+	 * @covers OutputPage::setPreventClickjacking
 	 * @covers OutputPage::getPreventClickjacking
 	 * @covers OutputPage::addParserOutputMetadata
 	 * @covers OutputPage::addParserOutput
@@ -2452,26 +2517,26 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op = $this->newInstance();
 		$this->assertTrue( $op->getPreventClickjacking() );
 
-		$op->allowClickjacking();
+		$op->setPreventClickjacking( false );
 		$this->assertFalse( $op->getPreventClickjacking() );
 
-		$op->preventClickjacking();
+		$op->setPreventClickjacking( true );
 		$this->assertTrue( $op->getPreventClickjacking() );
 
-		$op->preventClickjacking( false );
+		$op->setPreventClickjacking( false );
 		$this->assertFalse( $op->getPreventClickjacking() );
 
-		$pOut1 = $this->createParserOutputStub( 'preventClickjacking', true );
+		$pOut1 = $this->createParserOutputStub( 'getPreventClickjacking', true );
 		$op->addParserOutputMetadata( $pOut1 );
 		$this->assertTrue( $op->getPreventClickjacking() );
 
 		// The ParserOutput can't allow, only prevent
-		$pOut2 = $this->createParserOutputStub( 'preventClickjacking', false );
+		$pOut2 = $this->createParserOutputStub( 'getPreventClickjacking', false );
 		$op->addParserOutputMetadata( $pOut2 );
 		$this->assertTrue( $op->getPreventClickjacking() );
 
 		// Reset to test with addParserOutput()
-		$op->allowClickjacking();
+		$op->setPreventClickjacking( false );
 		$this->assertFalse( $op->getPreventClickjacking() );
 
 		$op->addParserOutput( $pOut1 );
@@ -2484,7 +2549,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @dataProvider provideGetFrameOptions
 	 * @covers OutputPage::getFrameOptions
-	 * @covers OutputPage::preventClickjacking
+	 * @covers OutputPage::setPreventClickjacking
 	 */
 	public function testGetFrameOptions(
 		$breakFrames, $preventClickjacking, $editPageFrameOptions, $expected
@@ -2493,7 +2558,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'BreakFrames' => $breakFrames,
 			'EditPageFrameOptions' => $editPageFrameOptions,
 		] );
-		$op->preventClickjacking( $preventClickjacking );
+		$op->setPreventClickjacking( $preventClickjacking );
 
 		$this->assertSame( $expected, $op->getFrameOptions() );
 	}
@@ -2526,7 +2591,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$method = $class->getMethod( 'makeResourceLoaderLink' );
 		$method->setAccessible( true );
 		$ctx = new RequestContext();
-		$skinFactory = MediaWikiServices::getInstance()->getSkinFactory();
+		$skinFactory = $this->getServiceContainer()->getSkinFactory();
 		$ctx->setSkin( $skinFactory->makeSkin( 'fallback' ) );
 		$ctx->setLanguage( 'en' );
 		$out = new OutputPage( $ctx );
@@ -2581,7 +2646,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideMakeResourceLoaderLink() {
-		// phpcs:disable Generic.Files.LineLength
 		return [
 			// Single only=scripts load
 			[
@@ -2649,7 +2713,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		// Set up stubs
 		$ctx = new RequestContext();
-		$skinFactory = MediaWikiServices::getInstance()->getSkinFactory();
+		$skinFactory = $this->getServiceContainer()->getSkinFactory();
 		$ctx->setSkin( $skinFactory->makeSkin( 'fallback' ) );
 		$ctx->setLanguage( 'en' );
 		$op = $this->getMockBuilder( OutputPage::class )
@@ -2681,7 +2745,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function provideBuildExemptModules() {
-		// phpcs:disable Generic.Files.LineLength
 		return [
 			'empty' => [
 				'exemptStyleModules' => [],
@@ -2700,7 +2763,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				'exemptStyleModules' => [ 'site' => [ 'site.styles' ], 'user' => [ 'user.styles' ] ],
 				'<meta name="ResourceLoaderDynamicStyles" content=""/>' . "\n" .
 				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=site.styles&amp;only=styles"/>' . "\n" .
-				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=user.styles&amp;only=styles&amp;version=15pue"/>',
+				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=user.styles&amp;only=styles&amp;version=tgzos"/>',
 			],
 			'custom modules' => [
 				'exemptStyleModules' => [
@@ -2711,7 +2774,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=example.site.a%2Cb&amp;only=styles"/>' . "\n" .
 				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=site.styles&amp;only=styles"/>' . "\n" .
 				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=example.user&amp;only=styles&amp;version={blankCombi}"/>' . "\n" .
-				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=user.styles&amp;only=styles&amp;version=15pue"/>',
+				'<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=user.styles&amp;only=styles&amp;version=tgzos"/>',
 			],
 		];
 		// phpcs:enable
@@ -2737,12 +2800,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'ResourceBasePath' => $basePath,
 			'UploadDirectory' => $uploadDir,
 			'UploadPath' => $uploadPath,
+			'BaseDirectory' => $baseDir
 		] );
 
 		// Some of these paths don't exist and will cause warnings
-		Wikimedia\suppressWarnings();
-		$actual = OutputPage::transformResourcePath( $conf, $path );
-		Wikimedia\restoreWarnings();
+		$actual = @OutputPage::transformResourcePath( $conf, $path );
 
 		$this->assertEquals( $expected ?: $path, $actual );
 	}
@@ -2817,8 +2879,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 *
 	 * Asserts that $expectedReturn is returned.
 	 *
-	 * options['printableQuery'] - value of query string for printable, or omitted for none
-	 * options['handheldQuery'] - value of query string for handheld, or omitted for none
+	 * options['queryData'] - value of query string
 	 * options['media'] - passed into the method under the same name
 	 * options['expectedReturn'] - expected return value
 	 * options['message'] - PHPUnit message for assertion
@@ -2826,14 +2887,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 * @param array $args Key-value array of arguments as shown above
 	 */
 	protected function assertTransformCssMediaCase( $args ) {
-		$queryData = [];
-		if ( isset( $args['printableQuery'] ) ) {
-			$queryData['printable'] = $args['printableQuery'];
-		}
-
-		if ( isset( $args['handheldQuery'] ) ) {
-			$queryData['handheld'] = $args['handheldQuery'];
-		}
+		$queryData = $args['queryData'] ?? [];
 
 		$fauxRequest = new FauxRequest( $queryData, false );
 		$this->setRequest( $fauxRequest );
@@ -2849,28 +2903,28 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testPrintRequests() {
 		$this->assertTransformCssMediaCase( [
-			'printableQuery' => '1',
+			'queryData' => [ 'printable' => '1' ],
 			'media' => 'screen',
 			'expectedReturn' => null,
 			'message' => 'On printable request, screen returns null'
 		] );
 
 		$this->assertTransformCssMediaCase( [
-			'printableQuery' => '1',
+			'queryData' => [ 'printable' => '1' ],
 			'media' => self::SCREEN_MEDIA_QUERY,
 			'expectedReturn' => null,
 			'message' => 'On printable request, screen media query returns null'
 		] );
 
 		$this->assertTransformCssMediaCase( [
-			'printableQuery' => '1',
+			'queryData' => [ 'printable' => '1' ],
 			'media' => self::SCREEN_ONLY_MEDIA_QUERY,
 			'expectedReturn' => null,
 			'message' => 'On printable request, screen media query with only returns null'
 		] );
 
 		$this->assertTransformCssMediaCase( [
-			'printableQuery' => '1',
+			'queryData' => [ 'printable' => '1' ],
 			'media' => 'print',
 			'expectedReturn' => '',
 			'message' => 'On printable request, media print returns empty string'
@@ -2915,27 +2969,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Tests handheld behavior
-	 *
-	 * @covers OutputPage::transformCssMedia
-	 */
-	public function testHandheld() {
-		$this->assertTransformCssMediaCase( [
-			'handheldQuery' => '1',
-			'media' => 'handheld',
-			'expectedReturn' => '',
-			'message' => 'On request with handheld querystring and media is handheld, returns empty string'
-		] );
-
-		$this->assertTransformCssMediaCase( [
-			'handheldQuery' => '1',
-			'media' => 'screen',
-			'expectedReturn' => null,
-			'message' => 'On request with handheld querystring and media is screen, returns null'
-		] );
-	}
-
-	/**
 	 * @covers OutputPage::isTOCEnabled
 	 * @covers OutputPage::addParserOutputMetadata
 	 * @covers OutputPage::addParserOutput
@@ -2962,10 +2995,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 * @covers ResourceLoaderSkinModule::getPreloadLinks
 	 * @covers ResourceLoaderSkinModule::getLogoPreloadlinks
 	 */
-	public function testPreloadLinkHeaders( $config, $result, $installPath = null ) {
-		if ( $installPath ) {
-			$this->setMwGlobals( [ 'IP' => $installPath ] );
-		}
+	public function testPreloadLinkHeaders( $config, $result ) {
 		$ctx = $this->createMock( ResourceLoaderContext::class );
 		$module = new ResourceLoaderSkinModule();
 		$module->setConfig( new HashConfig( $config + ResourceLoaderTestCase::getSettings() ) );
@@ -3029,9 +3059,9 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 						'1x' => '/w/test.jpg',
 					],
 					'UploadPath' => '/w/images',
+					'BaseDirectory' => dirname( __DIR__ ) . '/data/media'
 				],
 				'Link: </w/test.jpg?edcf2>;rel=preload;as=image',
-				dirname( __DIR__ ) . '/data/media',
 			],
 		];
 	}
@@ -3070,11 +3100,16 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testSendCacheControl( array $options = [], array $expectations = [] ) {
 		$output = $this->newInstance( [
-			'LoggedOutMaxAge' => $options['loggedOutMaxAge'] ?? 0,
 			'UseCdn' => $options['useCdn'] ?? false,
 		] );
+		$output->considerCacheSettingsFinal();
 
-		$output->enableClientCache( $options['enableClientCache'] ?? true );
+		$cacheable = $options['enableClientCache'] ?? true;
+		if ( !$cacheable ) {
+			$output->disableClientCache();
+		}
+		$this->assertEquals( $cacheable, $output->couldBePublicCached() );
+
 		$output->setCdnMaxage( $options['cdnMaxAge'] ?? 0 );
 
 		if ( isset( $options['lastModified'] ) ) {
@@ -3113,20 +3148,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'Default' => [],
 			'Logged out max-age' => [
 				[
-					'loggedOutMaxAge' => 300,
-				],
-				[
-					'Cache-Control' => 'private, must-revalidate, max-age=300',
+					'Cache-Control' => 'private, must-revalidate, max-age=0',
 				],
 			],
 			'Cookies' => [
 				[
-					'cookie' => true,
-				],
-			],
-			'Cookies with logged out max-age' => [
-				[
-					'loggedOutMaxAge' => 300,
 					'cookie' => true,
 				],
 			],

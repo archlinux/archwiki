@@ -19,7 +19,7 @@
 
 	QUnit.module( 'mmv.model.License', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'License constructor sanity check', function ( assert ) {
+	QUnit.test( 'License constructor sense check', function ( assert ) {
 		var license,
 			shortName = 'CC-BY-SA-3.0',
 			internalName = 'cc-by-sa-3.0',

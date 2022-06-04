@@ -73,6 +73,3 @@ class TokenSerializer implements TokenHandler {
 		$this->output .= '<!--' . $text . '-->';
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TokenSerializer::class, 'RemexHtml\Tokenizer\TokenSerializer' );

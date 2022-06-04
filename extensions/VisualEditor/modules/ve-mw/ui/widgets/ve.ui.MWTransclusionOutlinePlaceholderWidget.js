@@ -6,7 +6,7 @@
  * @param {ve.dm.MWTemplatePlaceholderModel} placeholder
  */
 ve.ui.MWTransclusionOutlinePlaceholderWidget = function VeUiMWTransclusionOutlinePlaceholderWidget( placeholder ) {
-	var label = placeholder.getTransclusion().getParts().length === 1 ?
+	var label = placeholder.getTransclusion().isSingleTemplate() ?
 		ve.msg( 'visualeditor-dialog-transclusion-template-search' ) :
 		ve.msg( 'visualeditor-dialog-transclusion-add-template' );
 

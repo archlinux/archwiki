@@ -5,14 +5,15 @@
  * @license MIT
  */
 
-QUnit.module( 've.dm.Converter (Cite)', ve.test.utils.mwEnvironment );
+QUnit.module( 've.dm.Converter (Cite)', ve.test.utils.newMwEnvironment() );
 
 QUnit.test( 'getModelFromDom', function ( assert ) {
-	var msg, caseItem,
-		cases = ve.dm.citeExample.domToDataCases;
+	var cases = ve.dm.citeExample.domToDataCases;
 
-	for ( msg in cases ) {
-		caseItem = ve.copy( cases[ msg ] );
+	for ( var msg in cases ) {
+		var caseItem = ve.copy( cases[ msg ] );
+		// TODO: Cite tests contain unsecaped < in attrs, handle this upstream somehow
+		caseItem.ignoreXmlWarnings = true;
 		if ( caseItem.mwConfig ) {
 			mw.config.set( caseItem.mwConfig );
 		}
@@ -22,11 +23,12 @@ QUnit.test( 'getModelFromDom', function ( assert ) {
 } );
 
 QUnit.test( 'getDomFromModel', function ( assert ) {
-	var msg, caseItem,
-		cases = ve.dm.citeExample.domToDataCases;
+	var cases = ve.dm.citeExample.domToDataCases;
 
-	for ( msg in cases ) {
-		caseItem = ve.copy( cases[ msg ] );
+	for ( var msg in cases ) {
+		var caseItem = ve.copy( cases[ msg ] );
+		// TODO: Cite tests contain unsecaped < in attrs, handle this upstream somehow
+		caseItem.ignoreXmlWarnings = true;
 		if ( caseItem.mwConfig ) {
 			mw.config.set( caseItem.mwConfig );
 		}

@@ -9,7 +9,7 @@ rm -f .storybook/resolve-imports/mediawiki.skin.variables.less
 cp resources/mediawiki.less/mediawiki.skin.variables.less .storybook/resolve-imports/
 
 # Fetch resources via curl, `-sSL` silently, Show only errors, Location header and also with a 3XX response code.
-curl -sS "https://en.wikipedia.org/w/load.php?only=styles&skin=vector&debug=true&modules=ext.echo.styles.badge|ext.uls.pt|wikibase.client.init|mediawiki.skinning.interface|mediawiki.ui.icon|mediawiki.ui.button" -o .storybook/integration.less
+curl -sS "https://www.mediawiki.org/w/load.php?only=styles&skin=vector&debug=true&modules=ext.echo.styles.badge|ext.uls.pt|wikibase.client.init|mediawiki.skinning.interface|mediawiki.ui.icon|mediawiki.ui.button" -o .storybook/integration.less
 curl -sSL "https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/core/+/master/resources/src/mediawiki.less/mediawiki.skin.defaults.less?format=TEXT" | base64 --decode > .storybook/resolve-imports/mediawiki.skin.defaults.less
 curl -sSL "https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/core/+/master/resources/src/mediawiki.less/mediawiki.mixins.less?format=TEXT" | base64 --decode > .storybook/resolve-imports/mediawiki.mixins.less
 curl -sSL "https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/core/+/master/resources/src/mediawiki.less/mediawiki.ui/variables.less?format=TEXT" | base64 --decode > .storybook/resolve-imports/mediawiki.ui/variables.less

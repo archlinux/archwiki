@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.provider.ThumbnailInfo', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'ThumbnailInfo constructor sanity check', function ( assert ) {
+	QUnit.test( 'ThumbnailInfo constructor sense check', function ( assert ) {
 		var api = { get: function () {} },
 			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
 

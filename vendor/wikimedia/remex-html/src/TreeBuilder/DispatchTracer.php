@@ -99,6 +99,3 @@ class DispatchTracer implements TokenHandler {
 		$this->wrap( __FUNCTION__, $sourceStart, $sourceLength, func_get_args() );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( DispatchTracer::class, 'RemexHtml\TreeBuilder\DispatchTracer' );

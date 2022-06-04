@@ -16,9 +16,9 @@
 			<stop offset=".484" stop-color="#faee8e"/>
 			<stop offset="1" stop-color="#e4ba2f"/>
 		</linearGradient>
-		<linearGradient id="f" x1="2.873" x2="3.241" y1="1.013" y2="1.373" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
-		<linearGradient id="e" x1="1.147" x2="1.323" y1="2.716" y2="3.175" gradientUnits="userSpaceOnUse" xlink:href="#b"/>
-		<linearGradient id="d" x1="1.587" x2="2.381" y1="1.587" y2="2.381" gradientUnits="userSpaceOnUse" xlink:href="#c"/>
+		<linearGradient xlink:href="#a" id="f" x1="2.873" x2="3.241" y1="1.013" y2="1.373" gradientUnits="userSpaceOnUse"/>
+		<linearGradient xlink:href="#b" id="e" x1="1.147" x2="1.323" y1="2.716" y2="3.175" gradientUnits="userSpaceOnUse"/>
+		<linearGradient xlink:href="#c" id="d" x1="1.587" x2="2.381" y1="1.587" y2="2.381" gradientUnits="userSpaceOnUse"/>
 	</defs>
 	<path fill="url(#d)" fill-rule="evenodd" d="M1.058 2.117 2.25.926l.794.794-1.19 1.19z"/>
 	<path fill="url(#e)" fill-rule="evenodd" d="m1.19 2.249-.396.132-.133.926.927-.132.132-.397z"/>

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abuluntu",
 			"Danmichaelo",
 			"Event",
 			"Haakon K",
@@ -10,19 +11,16 @@
 			"Laaknor",
 			"Macofe",
 			"Nghtwlkr",
-			"Simny",
-			"Abuluntu"
+			"Simny"
 		]
 	},
 	"wikieditor": "Avansert grensesnitt for redigering av wikitekst",
 	"wikieditor-desc": "Gir et avansert, utvidbart tekstredigeringsgrensesnitt",
 	"wikieditor-wikitext-tab": "Wikitekst",
-	"wikieditor-loading": "Laster…",
 	"wikieditor-toolbar": "Verktøylinje for redigering",
 	"wikieditor-toolbar-desc": "Verktøylinje for redigering med utvidet brukervennlighet",
 	"wikieditor-toolbar-preference": "Aktiver utvidet verktøylinje for redigering",
 	"wikieditor-toolbar-preference-help": "Dette kalles av og til «2010-redigereren».",
-	"wikieditor-toolbar-loading": "Laster…",
 	"wikieditor-toolbar-tool-bold": "Fet",
 	"wikieditor-toolbar-tool-bold-example": "Fet tekst",
 	"wikieditor-toolbar-tool-italic": "Kursiv",
@@ -43,17 +41,16 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Lenketekst:",
 	"wikieditor-toolbar-tool-link-insert": "Sett inn lenke",
 	"wikieditor-toolbar-tool-link-cancel": "Avbryt",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "Siden finnes",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Siden finnes ikke",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ugyldig tittel",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Siden finnes på {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Siden finnes ikke på {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Tittelen du oppga er ugyldig.",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ekstern lenke",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kontrollerer om siden finnes…",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Pekerside",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Denne siden er ikke en innholdsside, men en liste over emner med lignende navn",
 	"wikieditor-toolbar-tool-link-int-invalid": "Tittelen du gav er ugyldig",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URLen du la inn ser ut som en lenke til en annen wikiside. Vil du gjøre den til en internlenke?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Intern lenke",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "Ekstern lenke",
-	"wikieditor-toolbar-tool-link-empty": "Du skrev ikke inn noe å lenke til",
 	"wikieditor-toolbar-tool-file": "Bilder og media",
 	"wikieditor-toolbar-tool-file-example": "Eksempel.jpg",
 	"wikieditor-toolbar-tool-file-title": "Sett inn fil",
@@ -203,5 +200,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Brukernavn</a> (<a href='#' title='$2:Username'>diskusjon</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Innrykk",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal tekst<br />:Innrykket tekst<br />::Innrykket tekst",
-	"wikieditor-toolbar-help-content-indent-result": "Normal tekst<dl><dd>Innrykket tekst<dl><dd>Innrykket tekst</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normal tekst<dl><dd>Innrykket tekst<dl><dd>Innrykket tekst</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "Redigering gjort med [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (wikitekst-redigeringsmotoren fra 2010)"
 }

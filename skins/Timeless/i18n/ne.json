@@ -9,5 +9,7 @@
 	"timeless-notloggedin": "प्रवेश नगरिएको",
 	"timeless-more": "थप",
 	"timeless-userpagetools": "प्रयोकर्तापृष्ठ उपकरणहरू",
-	"timeless-languages": "भाषाहरू"
+	"timeless-languages": "भाषाहरू",
+	"timeless-view-history": "पृष्ठको इतिहास",
+	"timeless-action-undelete": "{{PLURAL:$1|एउटा  मेटिएको सम्पादन|$1 मेटिएका सम्पादनहरू}} फर्काउने"
 }

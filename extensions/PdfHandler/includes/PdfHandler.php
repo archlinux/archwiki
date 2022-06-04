@@ -230,7 +230,7 @@ class PdfHandler extends ImageHandler {
 			"-quality",
 			$wgPdfHandlerJpegQuality,
 			"-resize",
-			$width,
+			(string)$width,
 			"-",
 			$dstPath
 		);
@@ -247,13 +247,13 @@ class PdfHandler extends ImageHandler {
 				sprintf( 'thumbnail failed on %s: error %d "%s" from "%s"',
 				wfHostname(), $retval, trim( $err ), $cmd ) );
 			return new MediaTransformError( 'thumbnail_error', $width, $height, $err );
-		} else {
-			return new ThumbnailImage( $image, $dstUrl, $dstPath, [
-				'width' => $width,
-				'height' => $height,
-				'page' => $page,
-			] );
 		}
+
+		return new ThumbnailImage( $image, $dstUrl, $dstPath, [
+			'width' => $width,
+			'height' => $height,
+			'page' => $page,
+		] );
 	}
 
 	/**
@@ -262,12 +262,12 @@ class PdfHandler extends ImageHandler {
 	 * @return PdfImage
 	 */
 	private function getPdfImage( $state, $path ) {
-		$pdfimg = $state->getHandlerState( self::STATE_PDF_IMAGE );
-		if ( !$pdfimg ) {
-			$pdfimg = new PdfImage( $path );
-			$state->setHandlerState( self::STATE_PDF_IMAGE, $pdfimg );
+		$pdfImg = $state->getHandlerState( self::STATE_PDF_IMAGE );
+		if ( !$pdfImg ) {
+			$pdfImg = new PdfImage( $path );
+			$state->setHandlerState( self::STATE_PDF_IMAGE, $pdfImg );
 		}
-		return $pdfimg;
+		return $pdfImg;
 	}
 
 	/**
@@ -280,9 +280,9 @@ class PdfHandler extends ImageHandler {
 		$sizes = PdfImage::getPageSize( $metadata, 1 );
 		if ( $sizes ) {
 			return $sizes + [ 'metadata' => $metadata ];
-		} else {
-			return [ 'metadata' => $metadata ];
 		}
+
+		return [ 'metadata' => $metadata ];
 	}
 
 	/**
@@ -304,15 +304,18 @@ class PdfHandler extends ImageHandler {
 
 	/**
 	 * @param File $file
-	 * @return bool
+	 * @return bool|int
 	 */
 	public function isFileMetadataValid( $file ) {
 		$data = $file->getMetadataItems( [ 'mergedMetadata', 'pages' ] );
 		if ( !isset( $data['pages'] ) ) {
 			return self::METADATA_BAD;
-		} elseif ( !isset( $data['mergedMetadata'] ) ) {
+		}
+
+		if ( !isset( $data['mergedMetadata'] ) ) {
 			return self::METADATA_COMPATIBLE;
 		}
+
 		return self::METADATA_GOOD;
 	}
 
@@ -382,6 +385,10 @@ class PdfHandler extends ImageHandler {
 		return false;
 	}
 
+	/**
+	 * @param File $file
+	 * @return bool|mixed
+	 */
 	protected function getDimensionInfo( File $file ) {
 		$info = $file->getHandlerState( self::STATE_DIMENSION_INFO );
 		if ( !$info ) {

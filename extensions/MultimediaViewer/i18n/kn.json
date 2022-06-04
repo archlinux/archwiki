@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"MSG17",
 			"Nayvik",
 			"Pavanaja",
 			"Vikassy",
-			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ",
-			"MSG17"
+			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
 		]
 	},
 	"multimediaviewer-desc": "ಚಿಕ್ಕ ಚಿತ್ರವನ್ನು ಪೂರ್ತಿ ಪರದೆಗೆ ದೊಡ್ಡದು ಮಾಡಿ",
@@ -23,8 +23,6 @@
 	"multimediaviewer-permission-link": "ಶರತ್ತುಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
 	"multimediaviewer-permission-viewmore": "ಹೆಚ್ಚಿನದ್ದನ್ನು ವೀಕ್ಷಿಸಿ",
 	"multimediaviewer-about-mmv": "ಈ ಇಂಟರ್ಫೇಸ್ ಕುರಿತು",
-	"multimediaviewer-discuss-mmv": "ಚರ್ಚೆ",
-	"multimediaviewer-help-mmv": "ಸಹಾಯ",
 	"multimediaviewer-geolocation": "ಸ್ಥಾನ: $1",
 	"multimediaviewer-reuse-link": "ಈ ಫೈಲನ್ನು ಬಳಸಿ",
 	"multimediaviewer-reuse-loading-placeholder": "ಉತ್ಪೂರಿತವಾಗುತ್ತಿದೆ",

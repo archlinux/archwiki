@@ -32,17 +32,22 @@
 
 .ve-ui-surface-source .ve-ui-surface-placeholder,
 .ve-ui-surface-source .ve-ce-attachedRootNode {
-	/* Support: Blink, Gecko, Webkit */
-	/* Specify a valid second value to fix size, see T176636 */
-	font-family: monospace, monospace;
 	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	-moz-tab-size: 4;
 	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	tab-size: 4;
 }
 
+.ve-ui-surface-source-font {
+	/* Support: Blink, Gecko, Webkit */
+	/* Specify a valid second value to fix size, see T176636 */
+	font-family: monospace, monospace;
+}
+
 .ve-ui-surface-source .ve-ce-paragraphNode {
-	margin: 0;
+	/* Clear paragraph margin, regardless of specificity, so it looks more like a textarea */
+	/* stylelint-disable-next-line declaration-no-important */
+	margin: 0 !important;
 	word-wrap: break-word;
 	white-space: pre-wrap;
 }

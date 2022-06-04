@@ -4,5 +4,7 @@
 			"ToJack"
 		]
 	},
-	"timeless-projects": "Лоиҳаҳои дигар"
+	"timeless-projects": "Лоиҳаҳои дигар",
+	"timeless-view-history": "Таърих",
+	"timeless-action-undelete": "Эҳёи {{PLURAL:$1|вироиш|$1 вироишот}}"
 }

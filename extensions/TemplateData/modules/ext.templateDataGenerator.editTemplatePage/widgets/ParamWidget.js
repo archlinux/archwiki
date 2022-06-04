@@ -37,8 +37,7 @@ OO.mixinClass( ParamWidget, OO.ui.mixin.DraggableElement );
  * Build the parameter label in the parameter select widget
  */
 ParamWidget.prototype.buildParamLabel = function () {
-	var i, len,
-		keys = this.aliases.slice(),
+	var keys = this.aliases.slice(),
 		$paramLabel = $( '<div>' )
 			.addClass( 'tdg-templateDataParamWidget-param-name' ),
 		$aliases = $( '<div>' )
@@ -51,13 +50,13 @@ ParamWidget.prototype.buildParamLabel = function () {
 	$paramLabel.text( this.label || this.key );
 	$description.text( this.description );
 
-	for ( i = 0, len = keys.length; i < len; i++ ) {
+	keys.forEach( function ( key ) {
 		$aliases.append(
 			$( '<span>' )
 				.addClass( 'tdg-templateDataParamWidget-param-alias' )
-				.text( keys[ i ] )
+				.text( key )
 		);
-	}
+	} );
 
 	this.setLabel( $aliases.add( $paramLabel ).add( $description ) );
 };

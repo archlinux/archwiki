@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Antonla",
 			"Byrial",
 			"Christian List",
 			"HenrikKbh",
 			"Morten LJ",
-			"Peter Alberti",
-			"Antonla"
+			"Peter Alberti"
 		]
 	},
 	"pfunc_desc": "Udvider parser med logiske funktioner",

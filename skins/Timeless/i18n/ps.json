@@ -18,5 +18,7 @@
 	"timeless-pagemisc": "نور",
 	"timeless-namespaces": "نومتشيالونه",
 	"timeless-pagetools": "د مخ چارې",
-	"timeless-languages": "ژبې"
+	"timeless-languages": "ژبې",
+	"timeless-view-history": "پېښليک",
+	"timeless-action-undelete": "{{PLURAL:$1|يو سمون|$1 سمونې}} ناړنگول"
 }

@@ -26,6 +26,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionStatus;
 use Psr\Log\LoggerInterface;
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\ChronologyProtector;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\ScopedCallback;
@@ -41,7 +42,7 @@ class MediaWiki {
 	/** @var Config */
 	private $config;
 
-	/** @var string Cache what action this request is */
+	/** @var string|null Cache what action this request is */
 	private $action;
 	/** @var int Class DEFER_* constant; how non-blocking post-response tasks should run */
 	private $postSendStrategy;
@@ -560,7 +561,6 @@ class MediaWiki {
 	 */
 	public function run() {
 		try {
-			$this->setDBProfilingAgent();
 			$this->main();
 		} catch ( Exception $e ) {
 			$context = $this->context;
@@ -587,17 +587,6 @@ class MediaWiki {
 		}
 
 		$this->doPostOutputShutdown();
-	}
-
-	/**
-	 * Add a comment to future SQL queries for easy SHOW PROCESSLIST interpretation
-	 */
-	private function setDBProfilingAgent() {
-		$services = MediaWikiServices::getInstance();
-		$name = $this->context->getUser()->getName();
-		$services->getDBLoadBalancerFactory()->setAgentName(
-			mb_strlen( $name ) > 15 ? mb_substr( $name, 0, 15 ) . '...' : $name
-		);
 	}
 
 	/**
@@ -691,7 +680,13 @@ class MediaWiki {
 		wfDebug( __METHOD__ . ': primary transaction round committed' );
 
 		// Run updates that need to block the client or affect output (this is the last chance)
-		DeferredUpdates::doUpdates( 'run', DeferredUpdates::PRESEND );
+		DeferredUpdates::doUpdates(
+			'run',
+			$config->get( 'ForceDeferredUpdatesPreSend' )
+				? DeferredUpdates::ALL
+				: DeferredUpdates::PRESEND
+		);
+
 		wfDebug( __METHOD__ . ': pre-send deferred updates completed' );
 
 		// Persist the session to avoid race conditions on subsequent requests by the client
@@ -731,7 +726,7 @@ class MediaWiki {
 			}
 
 			if ( $isCrossWikiRedirect ) {
-				if ( $output->getRedirect() ) { // sanity
+				if ( $output->getRedirect() ) {
 					$safeUrl = $lbFactory->appendShutdownCPIndexAsQuery(
 						$output->getRedirect(),
 						$cpIndex
@@ -843,7 +838,7 @@ class MediaWiki {
 		// Since the headers and output where already flushed, disable WebResponse setters
 		// during post-send processing to warnings and unexpected behavior (T191537)
 		WebResponse::disableForPostSend();
-		// Run post-send updates while preventing further output for sanity...
+		// Run post-send updates while preventing further output...
 		ob_start( static function () {
 			return ''; // do not output uncaught exceptions
 		} );
@@ -870,21 +865,6 @@ class MediaWiki {
 
 		$output = $this->context->getOutput();
 		$request = $this->context->getRequest();
-
-		// Send Ajax requests to the Ajax dispatcher.
-		if ( $request->getRawVal( 'action' ) === 'ajax' ) {
-			// Set a dummy title, because $wgTitle == null might break things
-			$title = Title::makeTitle( NS_SPECIAL, 'Badtitle/performing an AJAX call in '
-				. __METHOD__
-			);
-			$this->context->setTitle( $title );
-			$wgTitle = $title;
-
-			$dispatcher = new AjaxDispatcher( $this->config );
-			$dispatcher->performAction( $this->context->getUser() );
-
-			return;
-		}
 
 		// Get title from request parameters,
 		// is set on the fly by parseTitle the first time.
@@ -1069,7 +1049,7 @@ class MediaWiki {
 		// by MW_SETUP_CALLBACK and can also cause the client to wait on deferred updates
 		if ( function_exists( 'apache_setenv' ) ) {
 			// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-			@apache_setenv( 'no-gzip', 1 );
+			@apache_setenv( 'no-gzip', '1' );
 		}
 
 		if (
@@ -1079,7 +1059,7 @@ class MediaWiki {
 			in_array( http_response_code(), [ 200, 404 ], true ) &&
 			// The queue of (post-send) deferred updates is non-empty
 			DeferredUpdates::pendingUpdatesCount() &&
-			// Any buffered output is not spread out accross multiple output buffers
+			// Any buffered output is not spread out across multiple output buffers
 			ob_get_level() <= 1 &&
 			// It is not too late to set additional HTTP headers
 			!headers_sent()
@@ -1138,10 +1118,20 @@ class MediaWiki {
 		);
 
 		// Do any deferred jobs; preferring to run them now if a client will not wait on them
-		DeferredUpdates::doUpdates( 'run' );
+		DeferredUpdates::doUpdates();
 
-		// Log profiling data, e.g. in the database or UDP
-		wfLogProfilingData();
+		// Handle external profiler outputs.
+		// Any embedded profiler outputs were already processed in outputResponsePayload().
+		$profiler = Profiler::instance();
+		$profiler->logData();
+
+		self::emitBufferedStatsdData(
+			MediaWikiServices::getInstance()->getStatsdDataFactory(),
+			$this->config
+		);
+
+		// Send metrics gathered by MetricsFactory
+		MediaWikiServices::getInstance()->getMetricsFactory()->flush();
 
 		// Commit and close up!
 		$lbFactory->commitPrimaryChanges( __METHOD__ );
@@ -1152,6 +1142,25 @@ class MediaWiki {
 
 	/**
 	 * Send out any buffered statsd data according to sampling rules
+	 *
+	 * For web requests, this is called once by MediaWiki::restInPeace(),
+	 * which is post-send (after the response is sent to the client).
+	 *
+	 * For maintenance scripts, especially long-running CLI scripts, it is called
+	 * more often, to avoid OOM, since we buffer stats (T181385), based on the
+	 * following heuristics:
+	 *
+	 * - Long-running scripts that involve database writes often use transactions
+	 *   to commit chunks of work. We flush from IDatabase::setTransactionListener,
+	 *   as wired up by MWLBFactory::applyGlobalState.
+	 *
+	 * - Long-running scripts that involve database writes but don't need any
+	 *   transactions will still periodically wait for replication to be
+	 *   graceful to the databases. We flush from ILBFactory::setWaitForReplicationListener
+	 *   as wired up by MWLBFactory::applyGlobalState.
+	 *
+	 * - Any other long-running scripts will probably report progress to stdout
+	 *   in some way. We also flush from Maintenance::output().
 	 *
 	 * @param IBufferingStatsdDataFactory $stats
 	 * @param Config $config
@@ -1218,7 +1227,7 @@ class MediaWiki {
 			$port = $info['port'];
 		}
 
-		Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		$sock = $host ? fsockopen(
 			$host,
 			$port,
@@ -1227,7 +1236,7 @@ class MediaWiki {
 			// If it takes more than 100ms to connect to ourselves there is a problem...
 			0.100
 		) : false;
-		Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 
 		$invokedWithSuccess = true;
 		if ( $sock ) {

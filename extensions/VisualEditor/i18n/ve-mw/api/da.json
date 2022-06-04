@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Kenn.jensen",
-			"Jan Friberg"
+			"Jan Friberg",
+			"Kenn.jensen"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Ingen mellomlagret serialisering fundet med den nøgle",

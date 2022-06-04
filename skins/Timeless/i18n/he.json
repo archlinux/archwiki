@@ -25,5 +25,7 @@
 	"timeless-pagetools": "פעולות דף",
 	"timeless-languages": "שפות",
 	"timeless-projects": "מיזמים אחרים",
-	"timeless.js": "/* כל קוד הג'אווה סקריפט כאן ייטען עבור מי שמשתמש בעיצוב \"מחוץ לזמן\" */"
+	"timeless.js": "/* כל קוד הג'אווה סקריפט כאן ייטען עבור מי שמשתמש בעיצוב \"מחוץ לזמן\" */",
+	"timeless-view-history": "היסטוריה",
+	"timeless-action-undelete": "שחזור {{PLURAL:$1|עריכה אחת|$1 עריכות}}"
 }

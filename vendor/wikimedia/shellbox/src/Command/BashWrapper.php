@@ -2,6 +2,8 @@
 
 namespace Shellbox\Command;
 
+use Shellbox\Shellbox;
+
 /**
  * A ulimit/cgroup wrapper implemented as a bash script
  */
@@ -29,12 +31,12 @@ class BashWrapper extends Wrapper {
 		$filesize = intval( $command->getFileSizeLimit() );
 
 		if ( $time > 0 || $mem > 0 || $filesize > 0 || $wallTime > 0 ) {
-			$cmd = '/bin/bash ' . escapeshellarg( __DIR__ . '/limit.sh' ) . ' ' .
-				escapeshellarg( $command->getCommandString() ) . ' ' .
-				escapeshellarg(
+			$cmd = '/bin/bash ' . Shellbox::escape( __DIR__ . '/limit.sh' ) . ' ' .
+				Shellbox::escape( $command->getCommandString() ) . ' ' .
+				Shellbox::escape(
 					"SB_INCLUDE_STDERR=" . ( $command->getIncludeStderr() ? '1' : '' ) . ';' .
 					"SB_CPU_LIMIT=$time; " .
-					'SB_CGROUP=' . escapeshellarg( $this->cgroup ) . '; ' .
+					'SB_CGROUP=' . Shellbox::escape( $this->cgroup ) . '; ' .
 					"SB_MEM_LIMIT=$mem; " .
 					"SB_FILE_SIZE_LIMIT=$filesize; " .
 					"SB_WALL_CLOCK_LIMIT=$wallTime; " .

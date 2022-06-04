@@ -333,6 +333,7 @@ class MultipartReader {
 	 *
 	 * @param string $message
 	 * @throws MultipartError
+	 * @return never
 	 */
 	private function error( $message ) {
 		throw new MultipartError( "Error reading multipart content: $message" );

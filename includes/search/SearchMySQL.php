@@ -25,6 +25,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use Wikimedia\AtEase\AtEase;
 
 /**
  * Search engine hook for MySQL
@@ -40,7 +41,7 @@ class SearchMySQL extends SearchDatabase {
 	 * a WHERE condition and an ORDER BY expression
 	 *
 	 * @param string $filteredText
-	 * @param string $fulltext
+	 * @param bool $fulltext
 	 *
 	 * @return array
 	 */
@@ -58,9 +59,9 @@ class SearchMySQL extends SearchDatabase {
 			$contLang = $services->getContentLanguage();
 			$langConverter = $services->getLanguageConverterFactory()->getLanguageConverter( $contLang );
 			foreach ( $m as $bits ) {
-				Wikimedia\suppressWarnings();
+				AtEase::suppressWarnings();
 				list( /* all */, $modifier, $term, $nonQuoted, $wildcard ) = $bits;
-				Wikimedia\restoreWarnings();
+				AtEase::restoreWarnings();
 
 				if ( $nonQuoted != '' ) {
 					$term = $nonQuoted;
@@ -243,7 +244,7 @@ class SearchMySQL extends SearchDatabase {
 	private function queryNamespaces( &$query ) {
 		if ( is_array( $this->namespaces ) ) {
 			if ( count( $this->namespaces ) === 0 ) {
-				$this->namespaces[] = '0';
+				$this->namespaces[] = NS_MAIN;
 			}
 			$query['conds']['page_namespace'] = $this->namespaces;
 		}
@@ -416,15 +417,14 @@ class SearchMySQL extends SearchDatabase {
 
 		// Periods within things like hostnames and IP addresses
 		// are also important -- we want a search for "example.com"
-		// or "192.168.1.1" to work sanely.
+		// or "192.168.1.1" to work sensibly.
 		// MySQL's search seems to ignore them, so you'd match on
 		// "example.wikipedia.com" and "192.168.83.1" as well.
-		$out = preg_replace(
+		return preg_replace(
 			"/(\w)\.(\w|\*)/u",
 			"$1u82e$2",
-			$out );
-
-		return $out;
+			$out
+		);
 	}
 
 	/**

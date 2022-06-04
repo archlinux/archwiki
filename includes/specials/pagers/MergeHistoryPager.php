@@ -29,6 +29,8 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class MergeHistoryPager extends ReverseChronologicalPager {
 
+	public $mGroupByDate = true;
+
 	/** @var SpecialMergeHistory */
 	public $mForm;
 
@@ -49,21 +51,21 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 
 	/**
 	 * @param SpecialMergeHistory $form
-	 * @param array $conds
-	 * @param PageIdentity $source
-	 * @param PageIdentity $dest
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param ILoadBalancer $loadBalancer
 	 * @param RevisionStore $revisionStore
+	 * @param array $conds
+	 * @param PageIdentity $source
+	 * @param PageIdentity $dest
 	 */
 	public function __construct(
 		SpecialMergeHistory $form,
-		$conds,
-		PageIdentity $source,
-		PageIdentity $dest,
 		LinkBatchFactory $linkBatchFactory,
 		ILoadBalancer $loadBalancer,
-		RevisionStore $revisionStore
+		RevisionStore $revisionStore,
+		$conds,
+		PageIdentity $source,
+		PageIdentity $dest
 	) {
 		$this->mForm = $form;
 		$this->mConds = $conds;
@@ -85,7 +87,7 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 		$this->revisionStore = $revisionStore;
 	}
 
-	protected function getStartBody() {
+	protected function doBatchLookups() {
 		# Do a link batch query
 		$this->mResult->seek( 0 );
 		$batch = $this->linkBatchFactory->newLinkBatch();
@@ -109,8 +111,20 @@ class MergeHistoryPager extends ReverseChronologicalPager {
 
 		$batch->execute();
 		$this->mResult->seek( 0 );
+	}
 
-		return '';
+	/**
+	 * @inheritDoc
+	 */
+	protected function getStartBody() {
+		return "<section class='mw-pager-body'>\n";
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getEndBody() {
+		return "</section>\n";
 	}
 
 	public function formatRow( $row ) {

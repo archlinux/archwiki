@@ -48,6 +48,27 @@
 		};
 	}
 
+	function addABTestData( data, addToken ) {
+		// DiscussionTools New Topic A/B test for logged out users
+		if ( !mw.config.get( 'wgDiscussionToolsABTest' ) ) {
+			return;
+		}
+		if ( mw.user.isAnon() ) {
+			var tokenData = mw.storage.getObject( 'DTNewTopicABToken' );
+			if ( !tokenData ) {
+				return;
+			}
+			var anonid = parseInt( tokenData.token.slice( 0, 8 ), 16 );
+			data.bucket = anonid % 2 === 0 ? 'test' : 'control';
+			if ( addToken ) {
+				// eslint-disable-next-line camelcase
+				data.anonymous_user_token = tokenData.token;
+			}
+		} else if ( mw.user.options.get( 'discussiontools-abtest2' ) ) {
+			data.bucket = mw.user.options.get( 'discussiontools-abtest2' );
+		}
+	}
+
 	var actionPrefixMap = {
 		firstChange: 'first_change',
 		saveIntent: 'save_intent',
@@ -83,9 +104,7 @@
 			data.user_class = 'IP';
 		}
 
-		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
-			data.bucket = mw.user.options.get( 'discussiontools-abtest' );
-		}
+		addABTestData( data, true );
 
 		// Schema's kind of a mess of special properties
 		if ( data.action === 'init' || data.action === 'abort' || data.action === 'saveFailure' ) {
@@ -119,10 +138,8 @@
 			integration: 'page',
 			editor_interface: 'wikitext'
 		};
+		addABTestData( data );
 		/* eslint-enable camelcase */
-		if ( mw.user.options.get( 'discussiontools-abtest' ) ) {
-			data.bucket = mw.user.options.get( 'discussiontools-abtest' );
-		}
 		return data;
 	} );
 
@@ -152,8 +169,8 @@
 			$editingSessionIdInput = $( '#editingStatsId' ),
 			origText = $textarea.val();
 
-		// Tracking Javascript support: T263505
-		$( '#wikieditorJavascriptSupport' ).val( 'yes' );
+		// T263505, T249038
+		$( '#wikieditorUsed' ).val( 'yes' );
 
 		if ( $editingSessionIdInput.length ) {
 			editingSessionId = $editingSessionIdInput.val();
@@ -178,8 +195,15 @@
 					} );
 				} );
 			}
+			var $form = $textarea.closest( 'form' );
+			if ( mw.user.options.get( 'uselivepreview' ) ) {
+				$form.find( '#wpPreview' ).on( 'click', function () {
+					logEditFeature( 'preview', 'preview-live' );
+				} );
+			}
+
 			var submitting;
-			$textarea.closest( 'form' ).on( 'submit', function () {
+			$form.on( 'submit', function () {
 				submitting = true;
 			} );
 			var onUnloadFallback = window.onunload;

@@ -1,5 +1,12 @@
 # Assert release notes
 
+## Version 0.5.1 (2021-12-21)
+* Added `UnreachableException` to indicate unreachable code paths, as the
+  phan hints added in 0.5.0 prevent using a constant false `$condition` in
+  `Assert::invariant()` for this purpose.
+* When providing types, `'true'` or `'false'` can be specified rather than
+  `'bool'` if only one of them should be allowed.
+
 ## Version 0.5.0 (2020-02-13)
 * Raised required PHP version from 7.0 to 7.2
 * Passing multiple types as an array (instead of pipe-separated strings) is now

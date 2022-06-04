@@ -11,14 +11,11 @@
 
 <div id="mw-panel" class="mw-sidebar">
 	{{#data-portlets-first}}{{>Menu}}{{/data-portlets-first}}
-	{{#data-emphasized-sidebar-action}}
-	<div class="mw-sidebar-action">
-		<a class="mw-sidebar-action-link" title="{{msg-vector-opt-out-tooltip}}"
-			href="{{href}}">{{msg-vector-opt-out}}</a>
-	</div>
-	{{/data-emphasized-sidebar-action}}
+	{{#data-emphasized-sidebar-action}}{{>SidebarAction}}{{/data-emphasized-sidebar-action}}
 	{{#array-portlets-rest}}{{>Menu}}{{/array-portlets-rest}}
-	{{^is-language-in-header}}
+	{{^is-language-in-content}}
 	{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
-	{{/is-language-in-header}}
+	{{/is-language-in-content}}
+	{{! T295555 Add language switch alert message temporarily (to be removed). }}
+	{{#data-vector-language-switch-alert}}{{>SidebarAction}}{{/data-vector-language-switch-alert}}
 </div>

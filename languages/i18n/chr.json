@@ -75,8 +75,11 @@
 	"permalink": "ᏂᎪᎯᎸ ᏕᎬᏔᏛ",
 	"print": "ᎦᎴᏯᏛ",
 	"view": "ᎯᎪᎵᏯ",
+	"view-view": "ᎠᎪᎵᏰᏗᏊ",
 	"edit": "ᎦᏁᏟᏴᏓ ᎰᏪᎸᎦ",
+	"view-edit": "ᎦᏁᏟᏴᏓ ᎰᏪᎸᎦ",
 	"create": "ᎪᏢᏗ",
+	"view-create": "ᎪᏢᏗ",
 	"delete": "ᎧᎵ ᎠᏍᎪᎸᏛᎯ",
 	"talkpagelinktext": "ᎧᏃᎮᎸᏗ",
 	"specialpage": "ᎤᏤᎵᏛ ᏚᏆᏓᏛ",
@@ -328,5 +331,8 @@
 	"pagelang-reason": "ᎤᏰᎸᏗ",
 	"mediastatistics-header-audio": "ᎤᏃᏴᎬ",
 	"mediastatistics-header-video": "ᏗᏓᏴᎳᏛᏍᎩ",
-	"authmanager-email-label": "ᎠᎾᎦᎵᏍᎩ ᎪᏪᎵ"
+	"authmanager-email-label": "ᎠᎾᎦᎵᏍᎩ ᎪᏪᎵ",
+	"nstab-mainpage": "ᎤᎵᎮᎵᏍᏗ",
+	"skin-action-delete": "ᎧᎵ ᎠᏍᎪᎸᏛᎯ",
+	"skin-action-move": "ᎯᎲᎾ"
 }

@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lajsikonik",
+			"Timpul",
+			"Uostofchuodnego"
+		]
+	},
+	"math_failure": "Niy idzie spokopić",
+	"math_syntax_error": "feler składnie",
+	"math_unknown_error": "ńyznany feler",
+	"math_unknown_function": "ńyznano funkcyjo",
+	"mw_math_mathml": "MathML jak dostympny (eksperymyntalne)",
+	"mw_math_png": "Zawše gyneruj grafika PNG",
+	"mw_math_source": "Uostow w TeXu (dla přyglůndarek tekstowych)",
+	"prefs-math": "Wzory"
+}

@@ -162,7 +162,7 @@ HTML;
 		global $wgReCaptchaSiteKey;
 		return [
 			'type' => 'recaptchanocaptcha',
-			'mime' => 'image/png',
+			'mime' => 'application/javascript',
 			'key' => $wgReCaptchaSiteKey,
 		];
 	}

@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.ui.Canvas', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Constructor sanity check', function ( assert ) {
+	QUnit.test( 'Constructor sense check', function ( assert ) {
 		var $qf = $( '#qunit-fixture' ),
 			canvas = new mw.mmv.ui.Canvas( $qf, $qf, $qf );
 

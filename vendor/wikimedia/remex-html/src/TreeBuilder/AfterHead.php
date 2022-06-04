@@ -110,6 +110,3 @@ class AfterHead extends InsertionMode {
 			->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( AfterHead::class, 'RemexHtml\TreeBuilder\AfterHead' );

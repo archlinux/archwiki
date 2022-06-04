@@ -1,0 +1,1 @@
+ALTER TABLE /*_*/mathlatexml MODIFY  math_mathml mediumtext;

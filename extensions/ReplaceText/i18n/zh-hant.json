@@ -47,6 +47,8 @@
 	"replacetext_editsummary": "文字取代 - \"$1\" 取代為 \"$2\"",
 	"replacetext_reminder": "要同時變動在其它頁面上連至此頁面的連結，請前往 $1。",
 	"replacetext_cfg_error": "ReplaceText 設置錯誤",
+	"replacetext_no_compress": "您的 wiki 無法運作 ReplaceText：若 $wgCompressRevisions 設定成 true，無法執行文字替換。",
+	"replacetext_no_external_stores": "您的 wiki 無法運作 ReplaceText：若 $wgExternalStores 非空值，無法執行文字替換。",
 	"right-replacetext": "對整個 Wiki 進行字串取代。",
 	"action-replacetext": "對整個 Wiki 進行字串取代。"
 }

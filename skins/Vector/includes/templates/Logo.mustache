@@ -3,7 +3,6 @@
 	string link-mainpage link to the main page (from SkinMustache in core)
 	string msg-sitesubtitle the contents of the sitesubtitle message key
 }}
-{{#data-logos}}
 <a href="{{link-mainpage}}" class="mw-logo">
 	{{#icon}}
 	{{! alt is provided for valid HTML but given aria-hidden not needed. }}
@@ -13,7 +12,7 @@
 	<span class="mw-logo-container">
 		{{#wordmark}}
 		<img class="mw-logo-wordmark" alt="{{msg-sitetitle}}"
-			src="{{src}}" width="{{width}}" height="{{height}}">
+			src="{{src}}" style="{{style}}">
 		{{/wordmark}}
 		{{^wordmark}}
 		<strong class="mw-logo-wordmark">{{msg-sitetitle}}</strong>
@@ -21,8 +20,7 @@
 		{{#tagline}}
 		<img class="mw-logo-tagline"
 			alt="{{msg-sitesubtitle}}"
-			src="{{src}}" width="{{width}}" height="{{height}}">
+			src="{{src}}" width="{{width}}" height="{{height}}" style="{{style}}">
 		{{/tagline}}
 	</span>
 </a>
-{{/data-logos}}

@@ -71,11 +71,15 @@
 	"history": "Versi riolo leppaë",
 	"history_short": "ᨕᨊᨘ ᨆᨑᨗᨕᨚᨒᨚ",
 	"permalink": "Pranala permanen",
+	"view-view": "ᨅᨌ",
 	"edit": "ᨄᨉᨙᨌᨙᨂᨗ",
+	"view-edit": "ᨄᨉᨙᨌᨙᨂᨗ",
 	"create": "ᨆᨙᨅᨘ",
+	"view-create": "ᨆᨙᨅᨘ",
 	"delete": "Peddé",
 	"protect": "Accalinruŋi",
 	"protect_change": "pinra",
+	"action-unprotect": "Téccalinruŋi",
 	"unprotect": "Téccalinruŋi",
 	"newpage": "Leppa baru",
 	"talkpagelinktext": "Bicara",
@@ -308,5 +312,8 @@
 	"specialpages-group-pagetools": "Tool leppaë",
 	"specialpages-group-wiki": "Data sibawa tool wiki",
 	"specialpages-group-spam": "Tool spam",
-	"blankpage": "Leppa kosoŋë"
+	"blankpage": "Leppa kosoŋë",
+	"nstab-mainpage": "ᨒᨙᨁᨚ-ᨒᨙᨁᨚ",
+	"skin-action-protect": "Accalinruŋi",
+	"skin-action-move": "Paléccé'"
 }

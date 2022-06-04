@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
-			"Vinhtantran",
-			"NguoiDungKhongDinhDanh"
+			"NguoiDungKhongDinhDanh",
+			"Vinhtantran"
 		]
 	},
 	"cite-desc": "Thêm các thẻ <code>&lt;ref[ name=id]&gt;</code> và <code>&lt;references/&gt;</code> để ghi chú thích hoặc nguồn tham khảo",

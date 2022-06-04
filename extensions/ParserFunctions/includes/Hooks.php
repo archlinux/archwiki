@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extensions\ParserFunctions;
+namespace MediaWiki\Extension\ParserFunctions;
 
 use Config;
 use Parser;
@@ -42,30 +42,29 @@ class Hooks implements
 	 */
 	public function onParserFirstCallInit( $parser ) {
 		// These functions accept DOM-style arguments
-		$class = ParserFunctions::class;
-		$parser->setFunctionHook( 'if', "$class::if", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifeq', "$class::ifeq", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'switch', "$class::switch", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifexist', "$class::ifexist", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'ifexpr', "$class::ifexpr", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'iferror', "$class::iferror", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'time', "$class::time", Parser::SFH_OBJECT_ARGS );
-		$parser->setFunctionHook( 'timel', "$class::localTime", Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'if', [ ParserFunctions::class, 'if' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'ifeq', [ ParserFunctions::class, 'ifeq' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'switch', [ ParserFunctions::class, 'switch' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'ifexist', [ ParserFunctions::class, 'ifexist' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'ifexpr', [ ParserFunctions::class, 'ifexpr' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'iferror', [ ParserFunctions::class, 'iferror' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'time', [ ParserFunctions::class, 'time' ], Parser::SFH_OBJECT_ARGS );
+		$parser->setFunctionHook( 'timel', [ ParserFunctions::class, 'localTime' ], Parser::SFH_OBJECT_ARGS );
 
-		$parser->setFunctionHook( 'expr', "$class::expr" );
-		$parser->setFunctionHook( 'rel2abs', "$class::rel2abs" );
-		$parser->setFunctionHook( 'titleparts', "$class::titleparts" );
+		$parser->setFunctionHook( 'expr', [ ParserFunctions::class, 'expr' ] );
+		$parser->setFunctionHook( 'rel2abs', [ ParserFunctions::class, 'rel2abs' ] );
+		$parser->setFunctionHook( 'titleparts', [ ParserFunctions::class, 'titleparts' ] );
 
 		// String Functions: enable if configured
 		if ( $this->config->get( 'PFEnableStringFunctions' ) ) {
-			$parser->setFunctionHook( 'len',       "$class::runLen" );
-			$parser->setFunctionHook( 'pos',       "$class::runPos" );
-			$parser->setFunctionHook( 'rpos',      "$class::runRPos" );
-			$parser->setFunctionHook( 'sub',       "$class::runSub" );
-			$parser->setFunctionHook( 'count',     "$class::runCount" );
-			$parser->setFunctionHook( 'replace',   "$class::runReplace" );
-			$parser->setFunctionHook( 'explode',   "$class::runExplode" );
-			$parser->setFunctionHook( 'urldecode', "$class::runUrlDecode" );
+			$parser->setFunctionHook( 'len', [ ParserFunctions::class, 'runLen' ] );
+			$parser->setFunctionHook( 'pos', [ ParserFunctions::class, 'runPos' ] );
+			$parser->setFunctionHook( 'rpos', [ ParserFunctions::class, 'runRPos' ] );
+			$parser->setFunctionHook( 'sub', [ ParserFunctions::class, 'runSub' ] );
+			$parser->setFunctionHook( 'count', [ ParserFunctions::class, 'runCount' ] );
+			$parser->setFunctionHook( 'replace', [ ParserFunctions::class, 'runReplace' ] );
+			$parser->setFunctionHook( 'explode', [ ParserFunctions::class, 'runExplode' ] );
+			$parser->setFunctionHook( 'urldecode', [ ParserFunctions::class, 'runUrlDecode' ] );
 		}
 	}
 

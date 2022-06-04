@@ -34,7 +34,7 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 			'transformVia404' => false,
 			'backend' => new FSFileBackend( [
 				'name' => 'local-backend',
-				'wikiId' => wfWikiID(),
+				'wikiId' => WikiMap::getCurrentWikiId(),
 				'containerPaths' => [
 					'cont1' => "/testdir/local-backend/tempimages/cont1",
 					'cont2' => "/testdir/local-backend/tempimages/cont2"
@@ -299,15 +299,6 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers File::getUser
-	 */
-	public function testGetUserForNonExistingFile() {
-		$this->hideDeprecated( 'File::getUser' );
-		$file = ( new LocalRepo( self::getDefaultInfo() ) )->newFile( 'test!' );
-		$this->assertSame( 'Unknown user', $file->getUser() );
-	}
-
-	/**
 	 * @covers LocalFile::getUploader
 	 */
 	public function testGetUploaderForNonExistingFile() {
@@ -389,7 +380,7 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 			$this->getServiceContainer()->getRepoGroup()->getLocalRepo(),
 			'20201105235242'
 		);
-		$this->assertInstanceOf( File::class, $file, 'Sanity: created a test file' );
+		$this->assertInstanceOf( File::class, $file, 'Created a test file' );
 		return $file;
 	}
 
@@ -507,41 +498,50 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers File::getDescriptionText
+	 * @covers LocalFile::getDescriptionText
 	 */
-	public function testDescriptionTextForNonExistingFile() {
+	public function testDescriptionText_NonExisting() {
 		$file = ( new LocalRepo( self::getDefaultInfo() ) )->newFile( 'test!' );
 		$this->assertFalse( $file->getDescriptionText() );
+	}
+
+	/**
+	 * @covers LocalFile::getDescriptionText
+	 */
+	public function testDescriptionText_Existing() {
+		$this->assertTrue( $this->editPage(
+			__METHOD__,
+			'TEST CONTENT',
+			'',
+			NS_FILE
+		)->isOK() );
+		$file = ( new LocalRepo( self::getDefaultInfo() ) )->newFile( __METHOD__ );
+		$this->assertStringContainsString( 'TEST CONTENT', $file->getDescriptionText() );
 	}
 
 	public function provideLoadFromDBAndCache() {
 		return [
 			'legacy' => [
-				// phpcs:ignore Generic.Files.LineLength
 				'a:6:{s:10:"frameCount";i:0;s:9:"loopCount";i:1;s:8:"duration";d:0;s:8:"bitDepth";i:16;s:9:"colorType";s:10:"truecolour";s:8:"metadata";a:2:{s:8:"DateTime";s:19:"2019:07:30 13:52:32";s:15:"_MW_PNG_VERSION";i:1;}}',
 				[],
 				false,
 			],
 			'json' => [
-				// phpcs:ignore Generic.Files.LineLength
 				'{"data":{"frameCount":0,"loopCount":1,"duration":0,"bitDepth":16,"colorType":"truecolour","metadata":{"DateTime":"2019:07:30 13:52:32","_MW_PNG_VERSION":1}}}',
 				[],
 				false,
 			],
 			'json with blobs' => [
-				// phpcs:ignore Generic.Files.LineLength
 				'{"blobs":{"colorType":"__BLOB0__"},"data":{"frameCount":0,"loopCount":1,"duration":0,"bitDepth":16,"metadata":{"DateTime":"2019:07:30 13:52:32","_MW_PNG_VERSION":1}}}',
 				[ '"truecolour"' ],
 				false,
 			],
 			'large (>100KB triggers uncached case)' => [
-				// phpcs:ignore Generic.Files.LineLength
 				'{"data":{"large":"' . str_repeat( 'x', 102401 ) . '","frameCount":0,"loopCount":1,"duration":0,"bitDepth":16,"colorType":"truecolour","metadata":{"DateTime":"2019:07:30 13:52:32","_MW_PNG_VERSION":1}}}',
 				[],
 				102401,
 			],
 			'large json blob' => [
-				// phpcs:ignore Generic.Files.LineLength
 				'{"blobs":{"large":"__BLOB0__"},"data":{"frameCount":0,"loopCount":1,"duration":0,"bitDepth":16,"colorType":"truecolour","metadata":{"DateTime":"2019:07:30 13:52:32","_MW_PNG_VERSION":1}}}',
 				[ '"' . str_repeat( 'x', 102401 ) . '"' ],
 				102401,
@@ -561,7 +561,7 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 	 *   or false if there will be no such item.
 	 */
 	public function testLoadFromDBAndCache( $meta, $blobs, $largeItemSize ) {
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 
 		$cache = new HashBagOStuff;
 		$this->setService(
@@ -921,7 +921,7 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testReserializeMetadata( $input, $expected ) {
 		$dbw = wfGetDB( DB_PRIMARY );
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$norm = $services->getActorNormalization();
 		$user = $this->getTestSysop()->getUserIdentity();
 		$actorId = $norm->acquireActorId( $user, $dbw );
@@ -991,7 +991,7 @@ class LocalFileTest extends MediaWikiIntegrationTestCase {
 			] )
 		] );
 		$dbw = wfGetDB( DB_PRIMARY );
-		$services = MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 		$norm = $services->getActorNormalization();
 		$user = $this->getTestSysop()->getUserIdentity();
 		$actorId = $norm->acquireActorId( $user, $dbw );

@@ -97,7 +97,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Wprowadź nazwę mapy",
 	"templatedata-modal-search-input-placeholder": "Szukaj według nazwy języka lub jego kodu",
 	"templatedata-modal-table-param-actions": "Działania",
-	"templatedata-modal-table-param-aliases": "Aliasy (oddzielone przecinkami)",
+	"templatedata-modal-table-param-aliases": "Aliasy",
 	"templatedata-modal-table-param-autovalue": "Wartość automatyczna",
 	"templatedata-modal-table-param-default": "Domyślnie ($1)",
 	"templatedata-modal-table-param-deprecated": "Przestarzały",

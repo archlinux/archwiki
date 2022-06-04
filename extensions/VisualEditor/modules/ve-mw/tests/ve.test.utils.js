@@ -5,10 +5,10 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-( function () {
-	function MWDummyTarget() {
+{
+	const MWDummyTarget = function MWDummyTarget() {
 		MWDummyTarget.super.call( this );
-	}
+	};
 	OO.inheritClass( MWDummyTarget, ve.test.utils.DummyTarget );
 	MWDummyTarget.prototype.setDefaultMode = () => {};
 	MWDummyTarget.prototype.isSaveable = () => true;
@@ -23,20 +23,22 @@
 
 	ve.test.utils.MWDummyTarget = MWDummyTarget;
 
-	function MWDummyPlatform() {
+	const MWDummyPlatform = function MWDummyPlatform() {
 		MWDummyPlatform.super.apply( this, arguments );
 		// Disable some API requests from platform
 		this.imageInfoCache = null;
-	}
+	};
 	OO.inheritClass( MWDummyPlatform, ve.init.mw.Platform );
 	MWDummyPlatform.prototype.getMessage = ( ...args ) => args.join( ',' );
 	MWDummyPlatform.prototype.getHtmlMessage = ( ...args ) => {
 		const $wrapper = $( '<div>' );
 		args.forEach( ( arg, i ) => {
 			if ( i > 0 ) {
-				$wrapper.append( ',' );
+				$wrapper[ 0 ].appendChild( document.createTextNode( ',' ) );
 			}
-			$wrapper.append( arg );
+			// Strings are converted to text nodes
+			// eslint-disable-next-line no-jquery/no-append-html
+			$wrapper.append( typeof arg === 'string' ? document.createTextNode( arg ) : arg );
 		} );
 		// Merge text nodes
 		$wrapper[ 0 ].normalize();
@@ -44,7 +46,7 @@
 	};
 	ve.test.utils.MWDummyPlatform = MWDummyPlatform;
 
-	ve.test.utils.mwEnvironment = ( function () {
+	{
 		const setEditorPreference = mw.libs.ve.setEditorPreference,
 			dummySetEditorPreference = () => ve.createDeferred().resolve().promise(),
 			overrides = [
@@ -68,7 +70,7 @@
 		// Unregister mwTarget
 		ve.init.target = coreTarget;
 
-		function setupOverrides() {
+		const setupOverrides = function () {
 			for ( let i = 0; i < overrides.length; i++ ) {
 				ve.dm.modelRegistry.register( overrides[ i ] );
 			}
@@ -84,9 +86,9 @@
 			// Ensure the current target is appended to the current fixture
 			// eslint-disable-next-line no-jquery/no-global-selector
 			$( '#qunit-fixture' ).append( ve.init.target.$element );
-		}
+		};
 
-		function teardownOverrides() {
+		const teardownOverrides = function () {
 			for ( let i = 0; i < overrides.length; i++ ) {
 				ve.dm.modelRegistry.unregister( overrides[ i ] );
 			}
@@ -99,16 +101,34 @@
 			ve.init.platform = corePlatform;
 			ve.init.target = coreTarget;
 			mw.libs.ve.setEditorPreference = setEditorPreference;
-		}
+		};
 
 		// On load, teardown overrides so the first core tests run correctly
 		teardownOverrides();
 
-		return {
+		// Deprecated, use ve.test.utils.newMwEnvironment
+		ve.test.utils.mwEnvironment = {
 			beforeEach: setupOverrides,
 			afterEach: teardownOverrides
 		};
-	}() );
+		ve.test.utils.newMwEnvironment = function ( env ) {
+			env = env || {};
+			return QUnit.newMwEnvironment( ve.extendObject( {}, env, {
+				beforeEach: function () {
+					setupOverrides.call( this );
+					if ( env.beforeEach ) {
+						env.beforeEach.call( this );
+					}
+				},
+				afterEach: function () {
+					teardownOverrides.call( this );
+					if ( env.afterEach ) {
+						env.afterEach.call( this );
+					}
+				}
+			} ) );
+		};
+	}
 
 	const getDomElementSummaryCore = ve.getDomElementSummary;
 
@@ -131,4 +151,4 @@
 			}
 			return value;
 		} );
-}() );
+}

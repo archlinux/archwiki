@@ -3,17 +3,16 @@
 		"authors": [
 			"Dudi",
 			"Macofe",
-			"Meno25"
+			"Meno25",
+			"Amire80"
 		]
 	},
 	"wikieditor": "Interface متقدم بتاع تعديل wikitext",
 	"wikieditor-desc": "بيدّى interface بتاع wikitext بينفع يتكبّر و modules كتيره بتنفع تعمل مميزات",
 	"wikieditor-wikitext-tab": "Wikitext",
-	"wikieditor-loading": "بيلوّد",
 	"wikieditor-toolbar": "شريط عدّة التحرير",
 	"wikieditor-toolbar-desc": "عدّل صفحة العدّة بالenhanced usability",
 	"wikieditor-toolbar-preference": "فعل التولبار بتاع التعديل",
-	"wikieditor-toolbar-loading": "بتلوّد...",
 	"wikieditor-toolbar-tool-bold": "Bold",
 	"wikieditor-toolbar-tool-bold-example": "Bold text",
 	"wikieditor-toolbar-tool-italic": "Italic",
@@ -44,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "الURL اللى حددته باين عليه انه كان مقصود انه يحوّل على صفحة ويكى تانيه. عايز تخلّيه لينك جوّانى؟",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "لينك جوّانى",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "لينك برّانى",
-	"wikieditor-toolbar-tool-link-empty": "انت ما حطّيتش اى حاجه علشان يتوصّل عليها.",
 	"wikieditor-toolbar-tool-file": "Embedded file",
 	"wikieditor-toolbar-tool-file-example": "Example.jpg",
 	"wikieditor-toolbar-tool-file-title": "حط ملف",
@@ -147,8 +145,8 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''Bold &amp; italic text'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>Bold &amp; italic text</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "لينك جوّانى",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[اسم الصفحه|اسم اللينك]]<br />[[اسم الصفحه]]",
-	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>اسم اللينك</a><br /><a href='#'>اسم الصفحه</a>",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[اسم الصفحه]]<br />[[اسم الصفحه|اسم اللينك]]",
+	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>اسم الصفحه</a><br /><a href='#'>اسم اللينك</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "لينك برّانى",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org اسم اللينك]<br />[http://www.example.org]<br />http://www.example.org",
 	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>اسم اللينك</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.example.org</a>",

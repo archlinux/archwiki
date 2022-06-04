@@ -1,0 +1,39 @@
+/*!
+ * VisualEditor MediaWiki UserInterface TemplatePage styles.
+ *
+ * @copyright 2011-2020 VisualEditor Team and others; see AUTHORS.txt
+ * @license The MIT License (MIT); see LICENSE.txt
+ */
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-menuLayout-content > .oo-ui-bookletLayout-stackLayout {
+	/* We don't want anything to collapse left/right, so shouldn't use margin */
+	padding: 0 48px;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout,
+.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-doc,
+.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-info,
+.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-field,
+.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-field.ve-ui-mwParameterPage-inlineDescription {
+	padding: 0;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout,
+.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwTransclusionDialog-multipart-message {
+	/* This top/bottom margin is meant to collapse with the next one */
+	margin: 48px 0 16px 0;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .ve-ui-mwParameterPage,
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .ve-ui-mwParameterPlaceholderPage {
+	/* Tighter margins within a group of parameters. */
+	margin-top: 16px;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .oo-ui-bookletLayout-stackLayout > .oo-ui-panelLayout:last-child {
+	margin-bottom: 48px;
+}
+
+.ve-ui-mwTransclusionDialog-template-note {
+	margin-top: 16px;
+}

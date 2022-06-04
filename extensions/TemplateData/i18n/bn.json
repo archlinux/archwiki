@@ -4,9 +4,11 @@
 			"Aftab1995",
 			"Aftabuzzaman",
 			"Leemon2010",
+			"Tahmid",
 			"Tauhid16",
 			"Titodutta",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"খাত্তাব হাসান"
 		]
 	},
 	"templatedata-doc-desc-empty": "বিবরণ নেই।",
@@ -45,7 +47,7 @@
 	"templatedata-exists-on-related-page": "অনুগ্রহ করে লক্ষ্য করুন: সংশ্লিষ্ট \"[[$1]]\" পাতায় ইতিমধ্যেই টেমপ্লেটডাটা ব্লক রয়েছে।",
 	"templatedata-helplink": "টেমপ্লেটডাটা সম্পর্কে তথ্য",
 	"templatedata-invalid-format": "বিশিষ্ট \"$1\" \"inline\", \"block\", বা একটি বৈধ বিন্যাসের স্ট্রিং হতে হবে।",
-	"templatedata-invalid-length": "সংরক্ষণ করার জন্য ডেটা খুব বড় ({{formatnum:$1}} {{PLURAL:$1|বাইট}}, {{PLURAL:$2|সর্বোচ্চ সীমা}} {{formatnum:$2}})",
+	"templatedata-invalid-length": "সংরক্ষণ করার জন্য উপাত্ত খুব বড় ($1 {{PLURAL:$1|বাইট}}, {{PLURAL:$2|সর্বোচ্চ সীমা}} হল $2)",
 	"templatedata-invalid-parse": "JSON-এর মধ্যে বাক্যগঠনে ত্রুটি।",
 	"templatedata-modal-button-add-language": "ভাষা যোগ করুন",
 	"templatedata-modal-button-addparam": "প্যারামিটার যোগ করুন",
@@ -76,7 +78,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "মানচিত্রের নাম লিখুন",
 	"templatedata-modal-search-input-placeholder": "ভাষার নাম বা কোড অনুযায়ী অনুসন্ধান করুন",
 	"templatedata-modal-table-param-actions": "কার্যসমূহ",
-	"templatedata-modal-table-param-aliases": "উপনামগুলো (কমা দিয়ে পৃথক করুন)",
+	"templatedata-modal-table-param-aliases": "উপনাম",
 	"templatedata-modal-table-param-autovalue": "স্বয়ংক্রিয় মান",
 	"templatedata-modal-table-param-default": "পূর্বনির্ধারিত ($1)",
 	"templatedata-modal-table-param-deprecated": "অবচিত",

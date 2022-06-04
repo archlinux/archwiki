@@ -1,19 +1,18 @@
-( function () {
-
+{
 	QUnit.module( 've.dm.MWTemplateSpecModel' );
 
 	/**
 	 * @param {string[]} [parameterNames]
 	 * @return {ve.dm.MWTemplateModel} but it's a mock
 	 */
-	function createTemplateMock( parameterNames ) {
+	const createTemplateMock = function ( parameterNames ) {
 		const params = {};
 		( parameterNames || [] ).forEach( ( name ) => {
 			params[ name ] = {};
 		} );
 		return {
 			params,
-			getTitle: () => null,
+			getTemplateDataQueryTitle: () => null,
 			getTarget: () => {
 				return { wt: 'RawTemplateName' };
 			},
@@ -21,7 +20,7 @@
 				return this.params;
 			}
 		};
-	}
+	};
 
 	QUnit.test( 'Basic behavior on empty template', ( assert ) => {
 		const template = createTemplateMock(),
@@ -109,6 +108,23 @@
 		assert.deepEqual( spec.getParameterSets(), [], 'getParameterSets' );
 		assert.deepEqual( spec.getMaps(), {}, 'getMaps' );
 	} );
+
+	[
+		[ 'a_a', 'b_b', 'A a', 'parses .wt if possible' ],
+		[ 'subst:a_a', 'b_b', 'A a', 'resolves subst:' ],
+		[ '{{a_a}}', './Template:b_b', 'B b', 'strips template namespace' ],
+		[ '{{a_a}}', './Talk:b_b', 'Talk:B b', 'does not strip other namespaces' ],
+		[ '{{a_a}}', './b_b', ':B b', 'title in main namespace must be prefixed' ],
+		[ '{{a_a}}', './Template:{{b_b}}', 'Template:{{b b}}', 'falls back to unmodified href if invalid' ]
+	].forEach( ( [ wt, href, expected, message ] ) =>
+		QUnit.test( 'getLabel: ' + message, ( assert ) => {
+			const transclusion = new ve.dm.MWTransclusionModel(),
+				template = new ve.dm.MWTemplateModel( transclusion, { wt, href } ),
+				spec = new ve.dm.MWTemplateSpecModel( template );
+
+			assert.strictEqual( spec.getLabel(), expected );
+		} )
+	);
 
 	[
 		undefined,
@@ -288,7 +304,7 @@
 			const template = createTemplateMock(),
 				spec = new ve.dm.MWTemplateSpecModel( template );
 
-			assert.notOk( spec.isDocumented(), 'undocumented by default' );
+			assert.false( spec.isDocumented(), 'undocumented by default' );
 
 			spec.setTemplateData( templateData );
 			assert.strictEqual( spec.isDocumented(), expected );
@@ -316,4 +332,4 @@
 		assert.strictEqual( spec.getParameterDeprecationDescription( 'p' ), '' );
 	} );
 
-}() );
+}

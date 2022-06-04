@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"CoderSI",
+			"Malikxan",
 			"Noor2020",
 			"Sociologist",
-			"පසිඳු කාවින්ද",
-			"Malikxan"
+			"පසිඳු කාවින්ද"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Kitob",
@@ -30,7 +30,7 @@
 	"cite-ve-dialog-reference-options-responsive-label": "Moslashuvchan ustun maketidan foydalanish",
 	"cite-ve-dialog-reference-options-section": "Opsiyalar",
 	"cite-ve-dialog-reference-placeholder": "Manbangizni bu yerga yozing yoki qayerdandir nusxalab bu yerga qoʻshib qoʻying yoki manba andozasini kiriting.",
-	"cite-ve-dialog-reference-title": "Izoh",
+	"cite-ve-dialog-reference-title": "Manba",
 	"cite-ve-dialog-reference-useexisting-tool": "Takror foydalanish",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Umumiy manbalar roʻyxati",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "„$1“ guruhi uchun manbalar roʻyxati",
@@ -38,7 +38,7 @@
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Manbalar",
 	"cite-ve-dialogbutton-reference-full-label": "Asos",
 	"cite-ve-dialogbutton-reference-title": "Manba",
-	"cite-ve-dialogbutton-reference-tooltip": "Izoh",
+	"cite-ve-dialogbutton-reference-tooltip": "Asos",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Izohlar roʻyxati",
 	"cite-ve-reference-input-placeholder": "Siz qanaqa dalil keltirmoqchisiz?",
 	"cite-ve-toolbar-group-label": "Manba qoʻshish",

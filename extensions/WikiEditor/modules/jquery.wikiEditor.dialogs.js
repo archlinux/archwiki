@@ -120,61 +120,13 @@
 					.appendTo( document.body )
 					.each( module.init )
 					.dialog( configuration );
-				if ( !( 'resizeme' in module ) || module.resizeme ) {
-					$dialogDiv
-						.on( 'dialogopen', dialogsModule.fn.resize )
-						.find( '.ui-tabs' ).on( 'tabsshow', function () {
-							$( this ).closest( '.ui-dialog-content' ).each(
-								dialogsModule.fn.resize );
-						} );
-				}
+
 				$dialogDiv.on( 'dialogclose', function () {
 					context.fn.restoreSelection();
 				} );
 
 				// Let the outside world know we set up this dialog
 				context.$textarea.trigger( 'wikiEditor-dialogs-loaded-' + name );
-			},
-
-			/**
-			 * Resize a dialog so its contents fit
-			 *
-			 * Usage: dialog.each( resize ); or dialog.on( 'blah', resize );
-			 * NOTE: This function assumes $.ui.dialog has already been loaded
-			 */
-			resize: function () {
-				var $wrapper = $( this ).closest( '.ui-dialog' ),
-					oldWidth = $wrapper.width(),
-					// Make sure elements don't wrapped so we get an accurate idea of whether they really fit. Also temporarily show
-					// hidden elements. Work around jQuery bug where <div style="display: inline;"/> inside a dialog is both
-					// :visible and :hidden
-					// eslint-disable-next-line no-jquery/no-sizzle
-					$oldHidden = $( this ).find( '*' ).not( ':visible' );
-
-				// Save the style attributes of the hidden elements to restore them later. Calling hide() after show() messes up
-				// for elements hidden with a class
-				$oldHidden.each( function () {
-					$( this ).data( 'oldstyle', $( this ).attr( 'style' ) );
-				} );
-				$oldHidden.show();
-				var oldWS = $( this ).css( 'white-space' );
-				$( this ).css( 'white-space', 'nowrap' );
-				if ( $wrapper.width() <= $( this ).get( 0 ).scrollWidth ) {
-					var thisWidth = $( this ).data( 'thisWidth' ) ? $( this ).data( 'thisWidth' ) : 0;
-					thisWidth = Math.max( $( this ).get( 0 ).width, thisWidth );
-					$( this ).width( thisWidth );
-					$( this ).data( 'thisWidth', thisWidth );
-					var wrapperWidth = $( this ).data( 'wrapperWidth' ) ? $( this ).data( 'wrapperWidth' ) : 0;
-					wrapperWidth = Math.max( $wrapper.get( 0 ).scrollWidth, wrapperWidth );
-					$wrapper.width( wrapperWidth );
-					$( this ).data( 'wrapperWidth', wrapperWidth );
-					$( this ).dialog( { width: $wrapper.width() } );
-					$wrapper.css( 'left', parseInt( $wrapper.css( 'left' ), 10 ) - ( $wrapper.width() - oldWidth ) / 2 );
-				}
-				$( this ).css( 'white-space', oldWS );
-				$oldHidden.each( function () {
-					$( this ).attr( 'style', $( this ).data( 'oldstyle' ) );
-				} );
 			}
 		},
 

@@ -154,6 +154,7 @@ ve.dm.MWParameterModel.prototype.getType = function () {
 
 /**
  * @param {string} value
+ * @fires change
  */
 ve.dm.MWParameterModel.prototype.setValue = function ( value ) {
 	if ( this.value !== value ) {

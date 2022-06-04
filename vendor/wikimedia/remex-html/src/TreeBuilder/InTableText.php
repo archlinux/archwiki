@@ -52,6 +52,14 @@ class InTableText extends InsertionMode {
 	}
 
 	/**
+	 * Flush the pending table text and restore the mode
+	 */
+	public function flush() {
+		$this->processPendingCharacters();
+		$this->dispatcher->restoreMode();
+	}
+
+	/**
 	 * Common code for the "anything else" case. Process the pending table
 	 * character tokens.
 	 */
@@ -81,6 +89,3 @@ class InTableText extends InsertionMode {
 		}
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InTableText::class, 'RemexHtml\TreeBuilder\InTableText' );

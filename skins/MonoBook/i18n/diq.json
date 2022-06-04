@@ -16,5 +16,7 @@
 	"monobook-more-actions": "Zêde",
 	"monobook-cactions-label": "Hereketê pele",
 	"monobook-notifications-link": "Tebliğê ($1)",
-	"monobook-notifications-link-none": "Tebliği"
+	"monobook-notifications-link-none": "Tebliği",
+	"monobook-view-history": "Tarix",
+	"monobook-action-undelete": "{{PLURAL:$1|nê vırnayışi|$1 vırnayışa}} peyser bıyarê"
 }

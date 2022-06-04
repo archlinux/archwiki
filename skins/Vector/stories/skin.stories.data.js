@@ -1,7 +1,3 @@
-/**
- * @external Indicator
- */
-
 import { htmlUserLanguageAttributes } from './utils';
 import { placeholder } from './utils';
 
@@ -92,6 +88,7 @@ const DATA_INDICATORS = [ {
 
 export const LEGACY_TEMPLATE_DATA = {
 	'html-title': 'Vector 2019',
+	'html-title-heading': '<h1 id="firstHeading" class="firstHeading">Vector 2019</h1>',
 	'is-article': true,
 	'msg-tagline': 'From Wikipedia, the free encyclopedia',
 	'html-user-language-attributes': htmlUserLanguageAttributes,

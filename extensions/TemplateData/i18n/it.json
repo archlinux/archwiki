@@ -6,6 +6,7 @@
 			"Gianfranco",
 			"Giuseppe Forte",
 			"Macofe",
+			"Mannivu",
 			"Nivit",
 			"Ruthven"
 		]
@@ -51,7 +52,7 @@
 	"templatedata-invalid-duplicate-value": "La proprietà \"$1\" (\"$3\") è un duplicato di \"$2\".",
 	"templatedata-invalid-empty-array": "La proprietà \"$1\" deve avere almeno un valore nella sua matrice.",
 	"templatedata-invalid-format": "Proprietà \"$1\" dovrebbe essere \"inline\", \"block\" o una stringa di formato valido.",
-	"templatedata-invalid-length": "Troppi dati da salvare ({{formatnum:$1}} {{PLURAL:$1|byte}}, {{PLURAL:$2|limite è}} {{formatnum:$2}})",
+	"templatedata-invalid-length": "Troppi dati da salvare ($1 {{PLURAL:$1|byte}}, {{PLURAL:$2|limite è}} $2)",
 	"templatedata-invalid-missing": "Proprietà obbligatoria \"$1\" non trovata.",
 	"templatedata-invalid-param": "Parametro non valido \"$1\" per la proprietà \"$2\".",
 	"templatedata-invalid-parse": "Errore di sintassi in JSON.",
@@ -87,7 +88,7 @@
 	"templatedata-modal-placeholder-paramkey": "Nome del parametro",
 	"templatedata-modal-search-input-placeholder": "Cerca per nome della lingua o codice",
 	"templatedata-modal-table-param-actions": "Azioni",
-	"templatedata-modal-table-param-aliases": "Alias (separati da virgola)",
+	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Valore automatico",
 	"templatedata-modal-table-param-default": "Predefinito ($1)",
 	"templatedata-modal-table-param-deprecated": "Deprecato",

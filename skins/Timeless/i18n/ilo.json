@@ -19,5 +19,7 @@
 	"timeless-namespaces": "Dagiti nagan ti espasio",
 	"timeless-pagetools": "Tigtignay ti panid",
 	"timeless-languages": "Dagiti pagsasao",
-	"timeless.js": "/* Iti ania man a JavaScript ditoy ket maikarganto para kadagiti agar-aramat nga agus-usar iti kudil a Timeless */"
+	"timeless.js": "/* Iti ania man a JavaScript ditoy ket maikarganto para kadagiti agar-aramat nga agus-usar iti kudil a Timeless */",
+	"timeless-view-history": "Pakasaritaan",
+	"timeless-action-undelete": "Isubli ti pannakaikkat {{PLURAL:$1|ti maysa a naurnos|dagiti $1 a naurnos}}"
 }

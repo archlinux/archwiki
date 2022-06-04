@@ -18,5 +18,7 @@
 	"monobook-more-actions": "Meer",
 	"monobook-cactions-label": "Pagina-acties",
 	"monobook-notifications-link": "Meldingen ($1)",
-	"monobook-notifications-link-none": "Meldingen"
+	"monobook-notifications-link-none": "Meldingen",
+	"monobook-view-history": "Geschiedenis",
+	"monobook-action-undelete": "{{PLURAL:$1|één bewerking|$1 bewerkingen}} terugplaatsen"
 }

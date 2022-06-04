@@ -17,5 +17,7 @@
 	"monobook-more-actions": "Περισσότερα",
 	"monobook-cactions-label": "Ενέργειες σελίδας",
 	"monobook-notifications-link": "Ειδοποιήσεις ($1)",
-	"monobook-notifications-link-none": "Ενημερώσεις"
+	"monobook-notifications-link-none": "Ενημερώσεις",
+	"monobook-view-history": "Ιστορικό",
+	"monobook-action-undelete": "Επαναφορά {{PLURAL:$1|μίας διαγεγραμμένης επεξεργασίας|$1 διαγεγραμμένων επεξεργασιών}}."
 }

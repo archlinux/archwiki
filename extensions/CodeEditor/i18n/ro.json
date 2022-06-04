@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Minisarm",
-			"Strainu",
-			"NGC 54"
+			"NGC 54",
+			"Strainu"
 		]
 	},
 	"codeeditor-desc": "Editare prin evidențierea sintaxei pentru pagini JavaScript și CSS utilizând [https://ace.c9.io/ editorul Ace]",

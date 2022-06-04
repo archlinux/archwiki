@@ -31,10 +31,10 @@ use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
-use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Storage\PageUpdaterFactory;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
@@ -131,7 +131,12 @@ class MovePage {
 		'MaximumMovedPages',
 	];
 
+	/** @var PageUpdaterFactory */
+	private $pageUpdaterFactory;
+
 	/**
+	 * @internal Extensions should use the MovePageFactory.
+	 *
 	 * @param Title $oldTitle
 	 * @param Title $newTitle
 	 * @param ServiceOptions|null $options
@@ -148,6 +153,7 @@ class MovePage {
 	 * @param UserEditTracker|null $userEditTracker
 	 * @param MovePageFactory|null $movePageFactory
 	 * @param CollationFactory|null $collationFactory
+	 * @param PageUpdaterFactory|null $pageUpdaterFactory
 	 * @deprecated since 1.34, hard deprecated since 1.37. Use MovePageFactory instead.
 	 */
 	public function __construct(
@@ -166,7 +172,8 @@ class MovePage {
 		UserFactory $userFactory = null,
 		UserEditTracker $userEditTracker = null,
 		MovePageFactory $movePageFactory = null,
-		CollationFactory $collationFactory = null
+		CollationFactory $collationFactory = null,
+		PageUpdaterFactory $pageUpdaterFactory = null
 	) {
 		if ( !$options ) {
 			wfDeprecatedMsg(
@@ -202,6 +209,7 @@ class MovePage {
 		$this->userEditTracker = $userEditTracker ?? $services()->getUserEditTracker();
 		$this->movePageFactory = $movePageFactory ?? $services()->getMovePageFactory();
 		$this->collationFactory = $collationFactory ?? $services()->getCollationFactory();
+		$this->pageUpdaterFactory = $pageUpdaterFactory ?? $services()->getPageUpdaterFactory();
 	}
 
 	/**
@@ -308,7 +316,7 @@ class MovePage {
 	}
 
 	/**
-	 * Does various sanity checks that the move is
+	 * Does various checks that the move is
 	 * valid. Only things based on the two titles
 	 * should be checked here.
 	 *
@@ -390,7 +398,7 @@ class MovePage {
 	}
 
 	/**
-	 * Sanity checks for when a file is being moved
+	 * Checks for when a file is being moved
 	 *
 	 * @return Status
 	 */
@@ -487,7 +495,7 @@ class MovePage {
 			return $status;
 		}
 
-		return $this->moveUnsafe( $user, $reason, $createRedirect, $changeTags );
+		return $this->moveUnsafe( $user, $reason ?? '', $createRedirect, $changeTags );
 	}
 
 	/**
@@ -495,7 +503,7 @@ class MovePage {
 	 *
 	 * @param Authority $performer
 	 * @param string|null $reason
-	 * @param bool|null $createRedirect Ignored if user doesn't have suppressredirect permission
+	 * @param bool $createRedirect Ignored if user doesn't have suppressredirect permission
 	 * @param string[] $changeTags Change tags to apply to the entry in the move log
 	 * @return Status
 	 */
@@ -521,7 +529,7 @@ class MovePage {
 			$createRedirect = true;
 		}
 
-		return $this->moveUnsafe( $performer->getUser(), $reason, $createRedirect, $changeTags );
+		return $this->moveUnsafe( $performer->getUser(), $reason ?? '', $createRedirect, $changeTags );
 	}
 
 	/**
@@ -646,7 +654,7 @@ class MovePage {
 	}
 
 	/**
-	 * Moves *without* any sort of safety or sanity checks. Hooks can still fail the move, however.
+	 * Moves *without* any sort of safety or other checks. Hooks can still fail the move, however.
 	 *
 	 * @param UserIdentity $user
 	 * @param string $reason
@@ -665,7 +673,7 @@ class MovePage {
 			return $status;
 		}
 
-		$dbw = $this->loadBalancer->getConnection( DB_PRIMARY );
+		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
 		$dbw->startAtomic( __METHOD__, IDatabase::ATOMIC_CANCELABLE );
 
 		$this->hookRunner->onTitleMoveStarting( $this->oldTitle, $this->newTitle, $userObj );
@@ -677,41 +685,13 @@ class MovePage {
 		$moveAttemptResult = $this->moveToInternal( $user, $this->newTitle, $reason, $createRedirect,
 			$changeTags );
 
-		if ( $moveAttemptResult instanceof Status ) {
+		if ( !$moveAttemptResult->isGood() ) {
 			// T265779: Attempt to delete target page failed
 			$dbw->cancelAtomic( __METHOD__ );
 			return $moveAttemptResult;
 		} else {
-			$nullRevision = $moveAttemptResult;
-		}
-
-		// Refresh the sortkey for this row.  Be careful to avoid resetting
-		// cl_timestamp, which may disturb time-based lists on some sites.
-		// @todo This block should be killed, it's duplicating code
-		// from LinksUpdate::getCategoryInsertions() and friends.
-		$prefixes = $dbw->select(
-			'categorylinks',
-			[ 'cl_sortkey_prefix', 'cl_to' ],
-			[ 'cl_from' => $pageid ],
-			__METHOD__
-		);
-		$type = $this->nsInfo->getCategoryLinkType( $this->newTitle->getNamespace() );
-		$collation = $this->collationFactory->getCategoryCollation();
-		foreach ( $prefixes as $prefixRow ) {
-			$prefix = $prefixRow->cl_sortkey_prefix;
-			$catTo = $prefixRow->cl_to;
-			$dbw->update( 'categorylinks',
-				[
-					'cl_sortkey' => $collation->getSortKey(
-							$this->newTitle->getCategorySortkey( $prefix ) ),
-					'cl_collation' => $this->options->get( 'CategoryCollation' ),
-					'cl_type' => $type,
-					'cl_timestamp=cl_timestamp' ],
-				[
-					'cl_from' => $pageid,
-					'cl_to' => $catTo ],
-				__METHOD__
-			);
+			$nullRevision = $moveAttemptResult->getValue()['nullRevision'];
+			'@phan-var RevisionRecord $nullRevision';
 		}
 
 		$redirid = $this->oldTitle->getArticleID();
@@ -720,7 +700,7 @@ class MovePage {
 			# Protect the redirect title as the title used to be...
 			$res = $dbw->select(
 				'page_restrictions',
-				[ 'pr_type', 'pr_level', 'pr_cascade', 'pr_user', 'pr_expiry' ],
+				[ 'pr_type', 'pr_level', 'pr_cascade', 'pr_expiry' ],
 				[ 'pr_page' => $pageid ],
 				__METHOD__,
 				'FOR UPDATE'
@@ -732,7 +712,6 @@ class MovePage {
 					'pr_type' => $row->pr_type,
 					'pr_level' => $row->pr_level,
 					'pr_cascade' => $row->pr_cascade,
-					'pr_user' => $row->pr_user,
 					'pr_expiry' => $row->pr_expiry
 				];
 			}
@@ -749,16 +728,12 @@ class MovePage {
 			}
 
 			// reread inserted pr_ids for log relation
-			$insertedPrIds = $dbw->select(
+			$logRelationsValues = $dbw->selectFieldValues(
 				'page_restrictions',
 				'pr_id',
 				[ 'pr_page' => $redirid ],
 				__METHOD__
 			);
-			$logRelationsValues = [];
-			foreach ( $insertedPrIds as $prid ) {
-				$logRelationsValues[] = $prid->pr_id;
-			}
 
 			// Update the protection log
 			$logEntry = new ManualLogEntry( 'protect', 'move_prot' );
@@ -772,25 +747,6 @@ class MovePage {
 			$logEntry->addTags( $changeTags );
 			$logId = $logEntry->insert();
 			$logEntry->publish( $logId );
-		}
-
-		// Update *_from_namespace fields as needed
-		if ( $this->oldTitle->getNamespace() != $this->newTitle->getNamespace() ) {
-			$dbw->update( 'pagelinks',
-				[ 'pl_from_namespace' => $this->newTitle->getNamespace() ],
-				[ 'pl_from' => $pageid ],
-				__METHOD__
-			);
-			$dbw->update( 'templatelinks',
-				[ 'tl_from_namespace' => $this->newTitle->getNamespace() ],
-				[ 'tl_from' => $pageid ],
-				__METHOD__
-			);
-			$dbw->update( 'imagelinks',
-				[ 'il_from_namespace' => $this->newTitle->getNamespace() ],
-				[ 'il_from' => $pageid ],
-				__METHOD__
-			);
 		}
 
 		# Update watchlists
@@ -838,7 +794,7 @@ class MovePage {
 			)
 		);
 
-		return Status::newGood();
+		return $moveAttemptResult;
 	}
 
 	/**
@@ -877,11 +833,15 @@ class MovePage {
 	 * @param bool $createRedirect Whether to leave a redirect at the old title. Does not check
 	 *   if the user has the suppressredirect right
 	 * @param string[] $changeTags Change tags to apply to the entry in the move log
-	 * @return RevisionRecord|Status The revision created by the move or Status object on failure
+	 * @return Status Status object with the following value on success:
+	 *   [
+	 *     'nullRevision' => The ("null") revision created by the move (RevisionRecord)
+	 *     'redirectRevision' => The initial revision of the redirect if it was created (RevisionRecord|null)
+	 *   ]
 	 */
 	private function moveToInternal( UserIdentity $user, &$nt, $reason = '', $createRedirect = true,
 		array $changeTags = []
-	) {
+	): Status {
 		if ( $nt->getArticleId( Title::READ_LATEST ) ) {
 			$moveOverRedirect = true;
 			$logType = 'move_redir';
@@ -956,7 +916,7 @@ class MovePage {
 			$comment .= wfMessage( 'colon-separator' )->inContentLanguage()->text() . $reason;
 		}
 
-		$dbw = $this->loadBalancer->getConnection( DB_PRIMARY );
+		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
 
 		$oldpage = $this->wikiPageFactory->newFromTitle( $this->oldTitle );
 		$oldcountable = $oldpage->isCountable();
@@ -1018,61 +978,33 @@ class MovePage {
 		$this->hookRunner->onRevisionFromEditComplete(
 			$newpage, $nullRevision, $nullRevision->getParentId(), $user, $fakeTags );
 
-		$newpage->doEditUpdates( $nullRevision, $user,
-			[ 'changed' => false, 'moved' => true, 'oldcountable' => $oldcountable ] );
+		$options = [
+			'changed' => false,
+			'moved' => true,
+			'oldtitle' => $this->oldTitle,
+			'oldcountable' => $oldcountable,
+			'causeAction' => 'edit-page',
+			'causeAgent' => $user->getName(),
+		];
+
+		$updater = $this->pageUpdaterFactory->newDerivedPageDataUpdater( $newpage );
+		$updater->prepareUpdate( $nullRevision, $options );
+		$updater->doUpdates();
 
 		WikiPage::onArticleCreate( $nt );
 
 		# Recreate the redirect, this time in the other direction.
+		$redirectRevision = null;
 		if ( $redirectContent ) {
 			$redirectArticle = $this->wikiPageFactory->newFromTitle( $this->oldTitle );
 			$redirectArticle->loadFromRow( false, WikiPage::READ_LOCKING ); // T48397
-			$newid = $redirectArticle->insertOn( $dbw );
-			if ( $newid ) { // sanity
-				$this->oldTitle->resetArticleID( $newid );
-				$redirectRevRecord = new MutableRevisionRecord( $this->oldTitle );
-				$redirectRevRecord->setPageId( $newid )
-					->setUser( $user )
-					->setComment( $commentObj )
-					->setContent( SlotRecord::MAIN, $redirectContent )
-					->setTimestamp( MWTimestamp::now( TS_MW ) );
-
-				$inserted = $this->revisionStore->insertRevisionOn(
-					$redirectRevRecord,
-					$dbw
-				);
-				$redirectRevId = $inserted->getId();
-				$redirectArticle->updateRevisionOn( $dbw, $inserted, 0 );
-
-				$fakeTags = [];
-				$this->hookRunner->onRevisionFromEditComplete(
-					$redirectArticle,
-					$inserted,
-					false,
-					$user,
-					$fakeTags
-				);
-
-				// Clear all caches to make sure no stale information is used
-				// when parsing the newly created redirect. Without this, moves would fail
-				// under certain conditions when Lua core runs on the new page.
-				// It is not entirely clear why this is needed, we just found that
-				// it fixes the issue at hand (T279832).
-				Title::clearCaches();
-
-				$redirectArticle->doEditUpdates(
-					$inserted,
-					$user,
-					[ 'created' => true ]
-				);
-
-				// make a copy because of log entry below
-				$redirectTags = $changeTags;
-				if ( in_array( 'mw-new-redirect', ChangeTags::getSoftwareTags() ) ) {
-					$redirectTags[] = 'mw-new-redirect';
-				}
-				ChangeTags::addTags( $redirectTags, null, $redirectRevId, null );
-			}
+			$redirectRevision = $redirectArticle->newPageUpdater( $user )
+				->setContent( SlotRecord::MAIN, $redirectContent )
+				->addTags( $changeTags )
+				->addSoftwareTag( 'mw-new-redirect' )
+				->setUsePageCreationLog( false )
+				->setFlags( EDIT_SUPPRESS_RC )
+				->saveRevision( $commentObj );
 		}
 
 		# Log the move
@@ -1081,6 +1013,9 @@ class MovePage {
 		$logEntry->addTags( $changeTags );
 		$logEntry->publish( $logid );
 
-		return $nullRevision;
+		return Status::newGood( [
+			'nullRevision' => $nullRevision,
+			'redirectRevision' => $redirectRevision,
+		] );
 	}
 }

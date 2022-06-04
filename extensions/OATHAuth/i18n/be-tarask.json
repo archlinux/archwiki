@@ -54,7 +54,7 @@
 	"action-oathauth-api-all": "праверыць статус OATH",
 	"oathauth-user-not-found": "Ня знойдзены ўдзельнік з такім імем",
 	"oath-log-name": "Журнал двухфактарнай аўтэнтыфікацыі",
-	"oauthauth-ui-no-module": "Ня ўключаная",
+	"oathauth-ui-no-module": "Ня ўключаная",
 	"oathauth-ui-manage": "Кіраваньне",
 	"oathmanage": "Кіраваньне двухфактарнай аўтэнтыфікацыяй",
 	"oathauth-ui-enabled-module": "Уключаны мэтад аўтэнтыфікацыі",

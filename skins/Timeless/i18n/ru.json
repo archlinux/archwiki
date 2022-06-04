@@ -27,5 +27,7 @@
 	"timeless-pagetools": "Действия на странице",
 	"timeless-languages": "Языки",
 	"timeless-projects": "Другие проекты",
-	"timeless.js": "/* Размещённый здесь JavaScript код будет загружаться для пользователей, использующих тему оформления Timeless */"
+	"timeless.js": "/* Размещённый здесь JavaScript код будет загружаться для пользователей, использующих тему оформления Timeless */",
+	"timeless-view-history": "История",
+	"timeless-action-undelete": "Восстановить {{PLURAL:$1|$1 правку|$1 правки|$1 правок|1=правку}}"
 }

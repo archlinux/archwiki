@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Ainali",
+			"Ayaibrahim",
 			"Lokal Profil",
 			"Sabelöga",
-			"WikiPhoenix",
-			"Ayaibrahim"
+			"WikiPhoenix"
 		]
 	},
 	"apihelp-query+pageimages-description": "Returnerar information om bilder på sidan, så som miniatyrer och närvaro av fotografier.",

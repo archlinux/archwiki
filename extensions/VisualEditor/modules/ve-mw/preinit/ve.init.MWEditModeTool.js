@@ -31,13 +31,9 @@ OO.inheritClass( mw.libs.ve.MWEditModeTool, OO.ui.Tool );
 /* Static Properties */
 
 mw.libs.ve.MWEditModeTool.static.editMode = null;
-
 mw.libs.ve.MWEditModeTool.static.group = 'editMode';
-
 mw.libs.ve.MWEditModeTool.static.autoAddToCatchall = false;
-
 mw.libs.ve.MWEditModeTool.static.autoAddToGroup = false;
-
 mw.libs.ve.MWEditModeTool.static.unavailableTooltip = null;
 
 /* Methods */
@@ -109,7 +105,9 @@ mw.libs.ve.MWEditModeSourceTool = function VeUiMWEditModeSourceTool() {
 	// Parent constructor
 	mw.libs.ve.MWEditModeSourceTool.super.apply( this, arguments );
 };
+
 OO.inheritClass( mw.libs.ve.MWEditModeSourceTool, mw.libs.ve.MWEditModeTool );
+
 mw.libs.ve.MWEditModeSourceTool.static.editMode = 'source';
 mw.libs.ve.MWEditModeSourceTool.static.name = 'editModeSource';
 mw.libs.ve.MWEditModeSourceTool.static.icon = 'wikiText';
@@ -131,7 +129,9 @@ mw.libs.ve.MWEditModeVisualTool = function VeUiMWEditModeVisualTool() {
 	// Parent constructor
 	mw.libs.ve.MWEditModeVisualTool.super.apply( this, arguments );
 };
+
 OO.inheritClass( mw.libs.ve.MWEditModeVisualTool, mw.libs.ve.MWEditModeTool );
+
 mw.libs.ve.MWEditModeVisualTool.static.editMode = 'visual';
 mw.libs.ve.MWEditModeVisualTool.static.name = 'editModeVisual';
 mw.libs.ve.MWEditModeVisualTool.static.icon = 'eye';

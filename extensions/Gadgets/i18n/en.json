@@ -19,11 +19,15 @@
 	"gadgets-definition": "",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Below is a list of special gadgets users can enable on their [[Special:Preferences#mw-prefsection-gadgets|preferences page]], as defined by the [[MediaWiki:Gadgets-definition|definitions]].\nThis overview provides easy access to the system message pages that define each gadget's description and code.",
+	"gadgets-editdescription": "Edit description",
+	"gadgets-viewdescription": "View description",
 	"gadgets-uses": "Uses",
 	"gadgets-required-rights": "Requires the following {{PLURAL:$2|right|rights}}:\n\n$1",
 	"gadgets-required-skins": "Available on the {{PLURAL:$2|$1 skin|following skins: $1}}.",
+	"gadgets-required-actions": "Works on the {{PLURAL:$2|\"$1\" page action|following page actions: $1}}.",
 	"gadgets-default": "Enabled for everyone by default.",
 	"gadgets-legacy": "Gadget is not loaded. Please migrate to ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Learn more])",
+	"gadgets-packaged": "This gadget is [https://www.mediawiki.org/wiki/ResourceLoader/Package_files packaged], with entry point being $1",
 	"gadgets-export": "Export",
 	"gadgets-export-title": "Gadget export",
 	"gadgets-not-found": "Gadget \"$1\" not found.",
@@ -35,5 +39,6 @@
 	"action-gadgets-edit": "edit this gadget JavaScript or CSS page",
 	"right-gadgets-definition-edit": "Edit gadget definitions",
 	"action-gadgets-definition-edit": "edit this gadget definition",
-	"gadgets-wrong-contentmodel": "Pages in {{ns:2302}} namespace must be of GadgetDefinition content model."
+	"gadgets-wrong-contentmodel": "Pages in {{ns:2302}} namespace must be of GadgetDefinition content model.",
+	"gadgets-supports-urlload": "This gadget supports loading via URL with <code>?withgadget</code> query parameter."
 }

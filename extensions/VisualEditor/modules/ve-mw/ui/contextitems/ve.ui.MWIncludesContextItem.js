@@ -45,6 +45,9 @@ ve.ui.MWIncludesContextItem.static.modelClasses = [
 
 /* Methods */
 
+/**
+ * @return {string}
+ */
 ve.ui.MWIncludesContextItem.prototype.getLabelMessage = function () {
 	var key = {
 		'mw:Includes/NoInclude': 'visualeditor-includes-noinclude-start',
@@ -57,6 +60,9 @@ ve.ui.MWIncludesContextItem.prototype.getLabelMessage = function () {
 	return key ? mw.message( key ).text() : '';
 };
 
+/**
+ * @return {jQuery}
+ */
 ve.ui.MWIncludesContextItem.prototype.getDescriptionMessage = function () {
 	var key = {
 		'mw:Includes/NoInclude': 'visualeditor-includes-noinclude-description',
@@ -64,21 +70,20 @@ ve.ui.MWIncludesContextItem.prototype.getDescriptionMessage = function () {
 		'mw:Includes/IncludeOnly': 'visualeditor-includes-includeonly-description'
 	}[ this.model.getAttribute( 'type' ) ];
 	// eslint-disable-next-line mediawiki/msg-doc
-	return key ? mw.message( key ).parseDom() : '';
+	return key ? mw.message( key ).parseDom() : $( [] );
 };
 
 /**
  * @inheritdoc
  */
 ve.ui.MWIncludesContextItem.prototype.renderBody = function () {
-	var wikitext;
-
 	this.$body.empty();
 
-	this.$body.append( this.getDescriptionMessage() ).append( mw.msg( 'word-separator' ) );
+	var $desc = this.getDescriptionMessage();
+	this.$body.append( $desc, $( document.createTextNode( mw.msg( 'word-separator' ) ) ) );
 
 	if ( this.model.getAttribute( 'mw' ) ) {
-		wikitext = this.model.getAttribute( 'mw' ).src;
+		var wikitext = this.model.getAttribute( 'mw' ).src;
 		// The opening and closing tags are included, eww
 		wikitext = wikitext.replace( /^<includeonly>\s*([\s\S]*)\s*<\/includeonly>$/, '$1' );
 		this.$body.append( $( '<pre>' )
@@ -91,7 +96,8 @@ ve.ui.MWIncludesContextItem.prototype.renderBody = function () {
 		);
 	}
 
-	this.$body.append( mw.message( 'visualeditor-includes-documentation' ).parseDom() );
+	var $docMsg = mw.message( 'visualeditor-includes-documentation' ).parseDom();
+	this.$body.append( $docMsg );
 };
 
 /* Registration */

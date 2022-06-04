@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
@@ -30,7 +31,7 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
  *                  (if we enter the PRE_COLLECT state)
  * PRE_COLLECT   -- we will need to generate a pre-block and are collecting
  *                  content for it.
- * MULTILINE_PRE -- we might need to extend the pre-block to multiple lines.
+ * SOL_AFTER_PRE -- we might need to extend the pre-block to multiple lines.
  *                  (depending on whether we see a white-space tok or not)
  * IGNORE        -- nothing to do for the rest of the line.
  * ```
@@ -57,17 +58,17 @@ use Wikimedia\Parsoid\Wt2Html\TokenTransformManager;
  * | PRE           | --- sol-tr  --> | PRE           | SOL-TR-TOKS << tok       |
  * | PRE           | --- other   --> | PRE_COLLECT   | TOKS = SOL-TR-TOKS + tok |
  * + --------------+-----------------+---------------+--------------------------+
- * | PRE_COLLECT   | --- nl      --> | MULTILINE_PRE | save nl token            |
+ * | PRE_COLLECT   | --- nl      --> | SOL_AFTER_PRE | save nl token            |
  * | PRE_COLLECT   | --- eof     --> | SOL           | gen-pre                  |
  * | PRE_COLLECT   | --- blk tag --> | IGNORE        | gen-prepurge (#)         |
  * | PRE_COLLECT   | --- any     --> | PRE_COLLECT   | TOKS << tok              |
  * + --------------+-----------------+---------------+--------------------------+
- * | MULTILINE_PRE | --- nl      --> | SOL           | gen-pre                  |
- * | MULTILINE_PRE | --- eof     --> | SOL           | gen-pre                  |
- * | MULTILINE_PRE | --- ws      --> | PRE_COLLECT   | pop saved nl token (##)  |
+ * | SOL_AFTER_PRE | --- nl      --> | SOL           | gen-pre                  |
+ * | SOL_AFTER_PRE | --- eof     --> | SOL           | gen-pre                  |
+ * | SOL_AFTER_PRE | --- ws      --> | PRE_COLLECT   | pop saved nl token (##)  |
  * |               |                 |               | TOKS = SOL-TR-TOKS + tok |
- * | MULTILINE_PRE | --- sol-tr  --> | MULTILINE_PRE | SOL-TR-TOKS << tok       |
- * | MULTILINE_PRE | --- any     --> | IGNORE        | gen-pre                  |
+ * | SOL_AFTER_PRE | --- sol-tr  --> | SOL_AFTER_PRE | SOL-TR-TOKS << tok       |
+ * | SOL_AFTER_PRE | --- any     --> | IGNORE        | gen-pre                  |
  * + --------------+-----------------+---------------+--------------------------+
  * | IGNORE        | --- nl      --> | SOL           | purge                    |
  * | IGNORE        | --- eof     --> | SOL           | purge                    |
@@ -85,7 +86,7 @@ class PreHandler extends TokenHandler {
 	private const STATE_SOL = 1;
 	private const STATE_PRE = 2;
 	private const STATE_PRE_COLLECT = 3;
-	private const STATE_MULTILINE_PRE = 4;
+	private const STATE_SOL_AFTER_PRE = 4;
 	private const STATE_IGNORE = 5;
 
 	/** @var int */
@@ -96,7 +97,7 @@ class PreHandler extends TokenHandler {
 	private $preTSR;
 	/** @var array<Token> */
 	private $tokens;
-	/** @var array<Token> */
+	/** @var array<Token|string> */
 	private $preCollectCurrentLine;
 	/** @var Token|string|null */
 	private $preWSToken;
@@ -111,11 +112,11 @@ class PreHandler extends TokenHandler {
 	 */
 	private static function stateStr(): array {
 		return [
-			1 => 'sol        ',
-			2 => 'pre        ',
-			3 => 'pre_collect',
-			4 => 'multiline  ',
-			5 => 'ignore     '
+			1 => 'sol          ',
+			2 => 'pre          ',
+			3 => 'pre_collect  ',
+			4 => 'sol_after_pre',
+			5 => 'ignore       '
 		];
 	}
 
@@ -167,11 +168,11 @@ class PreHandler extends TokenHandler {
 	}
 
 	/**
-	 * Pops the last new line from the $ret array
+	 * Pushes the last new line onto the $ret array
 	 *
 	 * @param array &$ret
 	 */
-	private function popLastNL( array &$ret ): void {
+	private function pushLastNL( array &$ret ): void {
 		if ( $this->lastNlTk ) {
 			$ret[] = $this->lastNlTk;
 			$this->lastNlTk = null;
@@ -239,7 +240,7 @@ class PreHandler extends TokenHandler {
 	 * @return array
 	 */
 	private function getResultAndReset( $token ): array {
-		$this->popLastNL( $this->tokens );
+		$this->pushLastNL( $this->tokens );
 
 		$ret = $this->tokens;
 		if ( $this->preWSToken ) {
@@ -270,7 +271,8 @@ class PreHandler extends TokenHandler {
 		if ( count( $this->tokens ) > 0 ) {
 			$da = null;
 			if ( $this->preTSR !== -1 ) {
-				$da = (object)[ 'tsr' => new SourceRange( $this->preTSR, $this->preTSR + 1 ) ];
+				$da = new DataParsoid;
+				$da->tsr = new SourceRange( $this->preTSR, $this->preTSR + 1 );
 			}
 			$ret = array_merge( [ new TagTk( 'pre', [], $da ) ], $this->tokens, [ new EndTagTk( 'pre' ) ] );
 		}
@@ -280,7 +282,7 @@ class PreHandler extends TokenHandler {
 			$ret[] = $this->multiLinePreWSToken;
 			$this->multiLinePreWSToken = null;
 		}
-		$this->popLastNL( $ret );
+		$this->pushLastNL( $ret );
 
 		// sol-transparent toks
 		PHPUtils::pushArray( $ret, $this->solTransparentTokens );
@@ -316,6 +318,7 @@ class PreHandler extends TokenHandler {
 		$env = $this->env;
 
 		$env->log( 'trace/pre', $this->pipelineId, 'NL    |',
+			$this->state, ':',
 			self::stateStr()[$this->state], '|',
 			static function () use ( $token ) {
 				return PHPUtils::jsonEncode( $token );
@@ -344,10 +347,10 @@ class PreHandler extends TokenHandler {
 				$ret = [];
 				$this->resetPreCollectCurrentLine();
 				$this->lastNlTk = $token;
-				$this->state = self::STATE_MULTILINE_PRE;
+				$this->state = self::STATE_SOL_AFTER_PRE;
 				break;
 
-			case self::STATE_MULTILINE_PRE:
+			case self::STATE_SOL_AFTER_PRE:
 				$this->preWSToken = null;
 				$this->multiLinePreWSToken = null;
 				$ret = $this->processPre( $token );
@@ -373,7 +376,7 @@ class PreHandler extends TokenHandler {
 			}
 		);
 
-		return new TokenHandlerResult( $ret, false, true );
+		return new TokenHandlerResult( $ret, true );
 	}
 
 	/**
@@ -381,6 +384,7 @@ class PreHandler extends TokenHandler {
 	 */
 	public function onEnd( EOFTk $token ): ?TokenHandlerResult {
 		$this->env->log( 'trace/pre', $this->pipelineId, 'eof   |',
+			$this->state, ':',
 			self::stateStr()[$this->state], '|',
 			static function () use ( $token ) {
 				return PHPUtils::jsonEncode( $token );
@@ -394,7 +398,7 @@ class PreHandler extends TokenHandler {
 				break;
 
 			case self::STATE_PRE_COLLECT:
-			case self::STATE_MULTILINE_PRE:
+			case self::STATE_SOL_AFTER_PRE:
 				$this->preWSToken = null;
 				$this->multiLinePreWSToken = null;
 				$this->resetPreCollectCurrentLine();
@@ -417,7 +421,7 @@ class PreHandler extends TokenHandler {
 			}
 		);
 
-		return new TokenHandlerResult( $ret, false, true );
+		return new TokenHandlerResult( $ret, true );
 	}
 
 	/**
@@ -442,12 +446,28 @@ class PreHandler extends TokenHandler {
 	}
 
 	/**
+	 * Collect a token when in a known-pre state
+	 * @param Token|string $token
+	 */
+	private function collectTokenInPreState( $token ): void {
+		if ( TokenUtils::isSolTransparent( $this->env, $token ) ) { // continue watching
+			$this->solTransparentTokens[] = $token;
+		} else {
+			$this->preCollectCurrentLine = $this->solTransparentTokens;
+			$this->preCollectCurrentLine[] = $token;
+			$this->solTransparentTokens = [];
+			$this->state = self::STATE_PRE_COLLECT;
+		}
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function onAny( $token ): ?TokenHandlerResult {
 		$env = $this->env;
 
-		$env->log( 'trace/pre', $this->pipelineId, 'any   |', $this->state, ':',
+		$env->log( 'trace/pre', $this->pipelineId, 'any   |',
+			$this->state, ':',
 			self::stateStr()[$this->state], '|',
 			static function () use ( $token ) {
 				return PHPUtils::jsonEncode( $token );
@@ -470,10 +490,9 @@ class PreHandler extends TokenHandler {
 					$this->preWSToken = $token[0];
 					$this->state = self::STATE_PRE;
 					if ( strlen( $token ) > 1 ) {
-						// Treat everything after the first space
-						// as a new token
+						// Collect the rest of the string and continue
 						// (`substr` not `mb_substr` since we know space is ASCII)
-						$this->onAny( substr( $token, 1 ) );
+						$this->collectTokenInPreState( substr( $token, 1 ) );
 					}
 				} elseif ( TokenUtils::isSolTransparent( $env, $token ) ) {
 					// continue watching ...
@@ -495,10 +514,7 @@ class PreHandler extends TokenHandler {
 					$ret = $this->getResultAndReset( $token );
 					$this->moveToIgnoreState();
 				} else {
-					$this->preCollectCurrentLine = $this->solTransparentTokens;
-					$this->preCollectCurrentLine[] = $token;
-					$this->solTransparentTokens = [];
-					$this->state = self::STATE_PRE_COLLECT;
+					$this->collectTokenInPreState( $token );
 				}
 				break;
 
@@ -512,9 +528,9 @@ class PreHandler extends TokenHandler {
 				}
 				break;
 
-			case self::STATE_MULTILINE_PRE:
+			case self::STATE_SOL_AFTER_PRE:
 				if ( is_string( $token ) && preg_match( '/^ /', $token ) ) {
-					$this->popLastNL( $this->tokens );
+					$this->pushLastNL( $this->tokens );
 					$this->state = self::STATE_PRE_COLLECT;
 					$this->preWSToken = null;
 
@@ -527,7 +543,11 @@ class PreHandler extends TokenHandler {
 					if ( strlen( $token ) > 1 ) {
 						// Treat everything after the first space as a new token
 						// (`substr` not `mb_substr` since we know space is ASCII)
-						$this->onAny( substr( $token, 1 ) );
+						// Collect the rest of the string and continue.
+						//
+						// This is inlined handling of 'case self::STATE_PRE_COLLECT'
+						// scenario for a string.
+						$this->preCollectCurrentLine[] = substr( $token, 1 );
 					}
 				} elseif ( TokenUtils::isSolTransparent( $env, $token ) ) { // continue watching
 					$this->solTransparentTokens[] = $token;

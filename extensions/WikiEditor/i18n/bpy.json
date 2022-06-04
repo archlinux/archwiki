@@ -2,17 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Macofe",
-			"Usingha"
+			"Usingha",
+			"Amire80"
 		]
 	},
 	"wikieditor": "উচ উইকিটেক্সট পাতানির ইন্টারফেসহান",
 	"wikieditor-desc": "উইকি-টেক্ট পতানির কা সালকরানি একরব অসারে ইন্টারফেস বারো আরাকউ ফিচার দিতই মডিউল",
 	"wikieditor-wikitext-tab": "উইকিটেক্সট",
-	"wikieditor-loading": "আনরাঙ",
 	"wikieditor-toolbar": "পতানির টুলবার",
 	"wikieditor-toolbar-desc": "বপ ব্যবহারঅর পতানির পাতা অতার টুলবার",
 	"wikieditor-toolbar-preference": "লিঙপা পতার টুলবার ফঙে থ",
-	"wikieditor-toolbar-loading": "লোডিং…",
 	"wikieditor-toolbar-tool-bold": "গাঢ়পা",
 	"wikieditor-toolbar-tool-bold-example": "গাঢ়পা ইকা",
 	"wikieditor-toolbar-tool-italic": "ইটালিক",
@@ -42,7 +41,6 @@
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "যে ইউআরএলহান মাতানি অর অর আরাক উইকির পাতাহানরে বুঝার। ভিতরর মিরাপ সিলকরানি মনারাইথাঙ?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "ভিতরর মিলাপ",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-ext": "বারেদের লগে মিলাপ",
-	"wikieditor-toolbar-tool-link-empty": "মিলাপ কারানির কা কিত্তাউ না ইকরলে।",
 	"wikieditor-toolbar-tool-file": "এম্বেডেড ফাইলগ",
 	"wikieditor-toolbar-tool-file-example": "Example.jpg",
 	"wikieditor-toolbar-tool-reference": "রেফারেন্সহানি",
@@ -133,8 +131,8 @@
 	"wikieditor-toolbar-help-content-bolditalic-syntax": "'''''গাঢ়পা &amp; ইটালিক মেয়েক'''''",
 	"wikieditor-toolbar-help-content-bolditalic-result": "<strong><em>গাঢ়পা &amp; ইটালিক মেয়েক</em></strong>",
 	"wikieditor-toolbar-help-content-ilink-description": "ভিতরর মিলাপ",
-	"wikieditor-toolbar-help-content-ilink-syntax": "[[পাতার চিঙনাঙ|মিলাপর লেবেল]]<br />[[পাতার চিঙনাঙ]]",
-	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>মিলাপ লেবেল</a><br /><a href='#'>পাতার চিঙনাঙ</a>",
+	"wikieditor-toolbar-help-content-ilink-syntax": "[[পাতার চিঙনাঙ]]<br />[[পাতার চিঙনাঙ|মিলাপর লেবেল]]",
+	"wikieditor-toolbar-help-content-ilink-result": "<a href='#'>পাতার চিঙনাঙ</a><br /><a href='#'>মিলাপ লেবেল</a>",
 	"wikieditor-toolbar-help-content-xlink-description": "বারেদের লগে মিলাপ",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org মিরাপ লেবেল]<br />[http://www.example.org]<br />http://www.example.org",
 	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>মিলাপ লেবেল</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.example.org</a>",

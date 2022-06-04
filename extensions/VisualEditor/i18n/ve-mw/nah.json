@@ -2,17 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Akapochtli",
+			"Languaeditor",
 			"Neil P. Quinn",
-			"Taresi",
-			"Languaeditor"
+			"Taresi"
 		]
 	},
 	"tooltip-ca-ve-edit": "Xicpatla inin tlahcuilolli",
-	"visualeditor-ca-createsource": "Xikchiwa itsintilis",
-	"visualeditor-ca-editsource": "Xikpatla itsintilis",
-	"visualeditor-ca-editsource-section": "xikpatla itsintilis",
+	"visualeditor-ca-createsource": "Xikchiwa itsintlan",
+	"visualeditor-ca-editsource": "Xikpatla itsintlan",
+	"visualeditor-ca-editsource-section": "xikpatla itsintlan",
 	"visualeditor-dialog-media-content-filename": "Tlahcuiloltocaitl",
 	"visualeditor-dialog-media-search-tab-search": "Xiktemo",
-	"visualeditor-mweditmodesource-warning-cancel": "Moxitiniz",
+	"visualeditor-mweditmodesource-warning-cancel": "Xikxolewa",
 	"visualeditor-version-label": "Machiyopohualiztli"
 }

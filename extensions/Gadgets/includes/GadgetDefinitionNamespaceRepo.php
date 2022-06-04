@@ -1,9 +1,15 @@
 <?php
 
+namespace MediaWiki\Extension\Gadgets;
+
+use InvalidArgumentException;
+use MediaWiki\Extension\Gadgets\Content\GadgetDefinitionContent;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
+use Title;
+use WANObjectCache;
 use Wikimedia\Rdbms\Database;
 
 /**
@@ -17,6 +23,11 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 	 * individual gadgets should be cached for (1 day)
 	 */
 	private const CACHE_TTL = 86400;
+
+	/**
+	 * @var string
+	 */
+	protected $titlePrefix = 'Gadget:';
 
 	/**
 	 * @var WANObjectCache
@@ -98,6 +109,13 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 	 */
 	public function purgeGadgetIdsList() {
 		$this->wanCache->touchCheckKey( $this->getGadgetIdsKey() );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getGadgetDefinitionTitle( string $id ): ?Title {
+		return Title::makeTitleSafe( NS_GADGET_DEFINITION, $id );
 	}
 
 	/**

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Amire80",
 			"Fryed-peach",
 			"Isarra",
@@ -29,6 +30,7 @@
 	"interwiki_url": "{{optional}}\nUsed on [[Special:Interwiki]] as a column header of the table.\n\nSee also:\n*{{msg-mw|Interwiki-url-label}}\n{{Identical|URL}}",
 	"interwiki-url-label": "{{optional}}\nUsed on [[Special:Interwiki]] as a field label in a form.\n\nSee also:\n* {{msg-mw|interwiki url}}\n{{Identical|URL}}",
 	"interwiki_url_intro": "Used on [[Special:Interwiki]] so as to explain the data in the {{msg-mw|Interwiki url}} column of the table.\n\nParameters:\n* $1 is being rendered verbatim. It refers to the syntax of the values listed in the \"prefix\" column, and does not mark a substitutable variable of this message.",
+	"interwiki-api-label": "{{optional}}\nUsed on [[Special:Interwiki]] as a field label in a form.\n\n{{Identical|API}}",
 	"interwiki_local": "Used on [[Special:Interwiki]] as a column header.\n\n{{Identical|Forward}}",
 	"interwiki-local-label": "Field label for the interwiki property \"local\", to set if an HTTP request to the local wiki with this interwiki prefix in the URL is redirected to the target URL given in the interwiki link definitions.\n{{Identical|Forward}}",
 	"interwiki_local_0_intro": "Used on [[Special:Interwiki]] so as to describe the meaning of the value 0 in the {{msg-mw|Interwiki local}} column of the table.\n\nRefers to {{msg-mw|Badtitle}}.\n\nSee also:\n* {{msg-mw|Interwiki local 1 intro}}",

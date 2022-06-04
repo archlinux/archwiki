@@ -43,7 +43,7 @@ ve.dm.ElementLinearData.static.endWordRegExp = new RegExp(
  * have the same text data. Anything semantically irrelevant is filtered
  * out first.
  *
- * When changing, ensure that ve.dm.Transaction.static.compareElementsUnannotatedSimple
+ * When changing, ensure that ve.dm.Transaction.static.compareElementsForTranslate
  * is also updated.
  *
  * @param {Object|Array|string} a First element
@@ -53,6 +53,10 @@ ve.dm.ElementLinearData.static.endWordRegExp = new RegExp(
 ve.dm.ElementLinearData.static.compareElementsUnannotated = function ( a, b ) {
 	var aPlain = a,
 		bPlain = b;
+
+	if ( a === b ) {
+		return true;
+	}
 
 	if ( Array.isArray( a ) ) {
 		aPlain = a[ 0 ];
@@ -720,10 +724,10 @@ ve.dm.ElementLinearData.prototype.hasAnnotationsInRange = function ( range ) {
 ve.dm.ElementLinearData.prototype.trimOuterSpaceFromRange = function ( range ) {
 	var start = range.start,
 		end = range.end;
-	while ( this.getCharacterData( end - 1 ).match( /\s/ ) ) {
+	while ( /^\s+$/.test( this.getCharacterData( end - 1 ) ) ) {
 		end--;
 	}
-	while ( start < end && this.getCharacterData( start ).match( /\s/ ) ) {
+	while ( start < end && /^\s+$/.test( this.getCharacterData( start ) ) ) {
 		start++;
 	}
 	return range.to < range.end ? new ve.Range( end, start ) : new ve.Range( start, end );
@@ -1157,7 +1161,10 @@ ve.dm.ElementLinearData.prototype.remapInternalListKeys = function ( internalLis
 	for ( var i = 0, ilen = this.data.length; i < ilen; i++ ) {
 		if ( this.isOpenElementData( i ) ) {
 			var nodeClass = ve.dm.nodeFactory.lookup( this.getType( i ) );
-			nodeClass.static.remapInternalListKeys( this.data[ i ], internalList );
+			// eslint-disable-next-line no-loop-func
+			this.modifyData( i, function ( item ) {
+				nodeClass.static.remapInternalListKeys( item, internalList );
+			} );
 		}
 	}
 };
@@ -1184,7 +1191,6 @@ ve.dm.ElementLinearData.prototype.remapAnnotationHash = function ( oldHash, newH
 			// Common case, cheap, avoid the isArray check
 			continue;
 		} else {
-			// eslint-disable-next-line no-loop-func
 			this.modifyData( i, function ( item ) {
 				if ( Array.isArray( item ) ) {
 					remap( item[ 1 ] );
@@ -1375,7 +1381,9 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 				// Get last open type from the stack
 				!ve.dm.nodeFactory.doesNodeHaveSignificantWhitespace( elementStack[ elementStack.length - 1 ].type )
 			) {
-				if ( this.getCharacterData( i + 1 ).match( /\s/ ) || this.getCharacterData( i - 1 ).match( /\s/ ) ) {
+				if ( /^\s+$/.test( this.getCharacterData( i + 1 ) ) ||
+					/^\s+$/.test( this.getCharacterData( i - 1 ) )
+				) {
 					// If whitespace-adjacent, remove the newline to avoid double spaces
 					this.splice( i, 1 );
 					len--;
@@ -1385,9 +1393,11 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 				} else {
 					// …otherwise replace it with a space
 					if ( typeof this.getData( i ) === 'string' ) {
-						this.data[ i ] = ' ';
+						this.setData( i, ' ' );
 					} else {
-						this.data[ i ][ 0 ] = ' ';
+						this.modifyData( i, function ( item ) {
+							item[ 0 ] = ' ';
+						} );
 					}
 				}
 			}
@@ -1425,7 +1435,10 @@ ve.dm.ElementLinearData.prototype.sanitize = function ( rules ) {
 			if ( rules.nodeSanitization ) {
 				var nodeClass = ve.dm.modelRegistry.lookup( this.getType( i ) );
 				// Perform per-class sanitizations:
-				nodeClass.static.sanitize( this.getData( i ), rules );
+				// eslint-disable-next-line no-loop-func
+				this.modifyData( i, function ( item ) {
+					nodeClass.static.sanitize( item, rules );
+				} );
 			}
 			if ( rules.removeOriginalDomElements ) {
 				this.modifyData( i, function ( item ) {

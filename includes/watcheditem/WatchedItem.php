@@ -45,7 +45,7 @@ class WatchedItem {
 	private $user;
 
 	/**
-	 * @var null|string the value of the wl_notificationtimestamp field
+	 * @var bool|null|string the value of the wl_notificationtimestamp field
 	 */
 	private $notificationTimestamp;
 
@@ -67,7 +67,7 @@ class WatchedItem {
 	/**
 	 * @param UserIdentity $user
 	 * @param LinkTarget|PageIdentity $target deprecated passing LinkTarget since 1.36
-	 * @param null|string $notificationTimestamp the value of the wl_notificationtimestamp field
+	 * @param bool|null|string $notificationTimestamp the value of the wl_notificationtimestamp field
 	 * @param null|string $expiry Optional expiry timestamp in any format acceptable to wfTimestamp()
 	 */
 	public function __construct(
@@ -194,8 +194,8 @@ class WatchedItem {
 			return null;
 		}
 
-		$unixTimeExpiry = MWTimestamp::convert( TS_UNIX, $expiry );
-		$diffInSeconds = $unixTimeExpiry - wfTimestamp();
+		$unixTimeExpiry = (int)MWTimestamp::convert( TS_UNIX, $expiry );
+		$diffInSeconds = $unixTimeExpiry - (int)wfTimestamp( TS_UNIX );
 		$diffInDays = $diffInSeconds / self::SECONDS_IN_A_DAY;
 
 		if ( $diffInDays < 1 ) {

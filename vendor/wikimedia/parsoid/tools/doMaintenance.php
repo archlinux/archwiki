@@ -41,10 +41,14 @@ if ( !$maintClass || !class_exists( $maintClass ) ) {
 /** @var Maintenance $maintenance */
 $maintenance = new $maintClass();
 
-// Basic sanity checks and such
+// Basic setup checks and such
 $maintenance->setup();
 
 $maintenance->finalSetup();
+
+// Set an appropriate locale (T291234)
+// Matches core's Setup.php
+putenv( "LC_ALL=" . setlocale( LC_ALL, 'C.UTF-8', 'C' ) );
 
 $maintenance->validateParamsAndArgs();
 

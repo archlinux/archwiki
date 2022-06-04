@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Base class for the output of file transformation methods.
  *
@@ -21,6 +22,8 @@
  * @ingroup Media
  */
 
+use MediaWiki\MediaWikiServices;
+
 /**
  * Base class for the output of MediaHandler::doTransform() and File::transform().
  *
@@ -42,13 +45,13 @@ abstract class MediaTransformOutput {
 	/** @var int Image height */
 	protected $height;
 
-	/** @var string URL path to the thumb */
+	/** @var string|false URL path to the thumb */
 	protected $url;
 
 	/** @var bool|string */
 	protected $page;
 
-	/** @var bool|string Filesystem path to the thumb */
+	/** @var string|null|false Filesystem path to the thumb */
 	protected $path;
 
 	/** @var bool|string Language code, false if not set */
@@ -242,8 +245,9 @@ abstract class MediaTransformOutput {
 		if ( $linkAttribs ) {
 			return Xml::tags( 'a', $linkAttribs, $contents );
 		} else {
-			global $wgParserEnableLegacyMediaDOM;
-			if ( $wgParserEnableLegacyMediaDOM ) {
+			$parserEnableLegacyMediaDOM = MediaWikiServices::getInstance()
+				->getMainConfig()->get( 'ParserEnableLegacyMediaDOM' );
+			if ( $parserEnableLegacyMediaDOM ) {
 				return $contents;
 			} else {
 				return Xml::tags( 'span', null, $contents );
@@ -277,9 +281,12 @@ abstract class MediaTransformOutput {
 			'href' => $this->file->getTitle()->getLocalURL( $query ),
 		];
 
-		global $wgParserEnableLegacyMediaDOM;
-		if ( $wgParserEnableLegacyMediaDOM ) {
+		$parserEnableLegacyMediaDOM = MediaWikiServices::getInstance()
+			->getMainConfig()->get( 'ParserEnableLegacyMediaDOM' );
+		if ( $parserEnableLegacyMediaDOM ) {
 			$attribs['class'] = 'image';
+		} else {
+			$attribs['class'] = 'mw-file-description';
 		}
 
 		if ( $title ) {

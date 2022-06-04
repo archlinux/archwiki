@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Girmitya",
+			"Thakurji"
+		]
+	},
+	"math_failure": "Parse nai kare sakaa",
+	"math_syntax_error": "syntax me galti",
+	"math_unknown_error": "galti ke nai samajhta",
+	"math_unknown_function": "nai samajhta ki ii kon chij khatir hai",
+	"mw_math_mathml": "MathML hoe sake tab (experimental)",
+	"mw_math_png": "PNG ke sab time render karo",
+	"mw_math_source": "TeX ke rakam chhorr do (text browsers ke khatir)"
+}

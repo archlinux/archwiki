@@ -14,7 +14,7 @@
  *
  * @constructor
  * @param {Object} [config] Configuration options
- * @cfg {Object} [toolbarConfig] Configuration options for the toolbar
+ * @cfg {Object} [toolbarConfig={}] Configuration options for the toolbar
  * @cfg {Object} [toolbarGroups] Toolbar groups, defaults to this.constructor.static.toolbarGroups
  * @cfg {Object} [actionGroups] Toolbar groups, defaults to this.constructor.static.actionGroups
  * @cfg {string[]} [modes] Available editing modes. Defaults to static.modes
@@ -404,9 +404,10 @@ ve.init.Target.prototype.getScrollContainer = function () {
  * Handle scroll container scroll events
  */
 ve.init.Target.prototype.onContainerScroll = function () {
-	var toolbar = this.getToolbar();
+	// Don't use getter as it creates the toolbar
+	var toolbar = this.toolbar;
 
-	if ( toolbar.isFloatable() ) {
+	if ( toolbar && toolbar.isFloatable() ) {
 		var wasFloating = toolbar.isFloating();
 		var scrollTop = this.$scrollContainer.scrollTop();
 
@@ -522,6 +523,7 @@ ve.init.Target.prototype.createSurface = function ( dmDocOrSurface, config ) {
 ve.init.Target.prototype.getSurfaceConfig = function ( config ) {
 	return ve.extendObject( {
 		$scrollContainer: this.$scrollContainer,
+		$scrollListener: this.$scrollListener,
 		commandRegistry: ve.ui.commandRegistry,
 		sequenceRegistry: ve.ui.sequenceRegistry,
 		dataTransferHandlerFactory: ve.ui.dataTransferHandlerFactory,
@@ -670,8 +672,8 @@ ve.init.Target.prototype.setupToolbar = function ( surface ) {
 
 	toolbar.setup( this.toolbarGroups, surface );
 	actions.setup( this.actionGroups, surface );
-	this.attachToolbar();
 	toolbar.$actions.append( actions.$element );
+	this.attachToolbar();
 	var rAF = window.requestAnimationFrame || setTimeout;
 	rAF( this.onContainerScrollHandler );
 };

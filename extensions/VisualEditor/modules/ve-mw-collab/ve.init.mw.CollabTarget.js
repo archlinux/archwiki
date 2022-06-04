@@ -19,7 +19,7 @@
  */
 ve.init.mw.CollabTarget = function VeInitMwCollabTarget( title, rebaserUrl, config ) {
 	config = config || {};
-	config.toolbarConfig = $.extend( {
+	config.toolbarConfig = ve.extendObject( {
 		shadow: true,
 		actions: true,
 		floatable: true

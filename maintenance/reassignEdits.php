@@ -71,11 +71,11 @@ class ReassignEdits extends Maintenance {
 	 *
 	 * @param User &$from User to take edits from
 	 * @param User &$to User to assign edits to
-	 * @param bool $rc Update the recent changes table
+	 * @param bool $updateRC Update the recent changes table
 	 * @param bool $report Don't change things; just echo numbers
 	 * @return int Number of entries changed, or that would be changed
 	 */
-	private function doReassignEdits( &$from, &$to, $rc = false, $report = false ) {
+	private function doReassignEdits( &$from, &$to, $updateRC = false, $report = false ) {
 		$actorTableSchemaMigrationStage = $this->getConfig()->get( 'ActorTableSchemaMigrationStage' );
 		$dbw = $this->getDB( DB_PRIMARY );
 		$this->beginTransaction( $dbw, __METHOD__ );
@@ -85,53 +85,48 @@ class ReassignEdits extends Maintenance {
 		# Count things
 		$this->output( "Checking current edits..." );
 		$revQueryInfo = ActorMigration::newMigration()->getWhere( $dbw, 'rev_user', $from );
-		$res = $dbw->select(
+		$revisionRows = $dbw->selectRowCount(
 			[ 'revision' ] + $revQueryInfo['tables'],
-			'COUNT(*) AS count',
+			'*',
 			$revQueryInfo['conds'],
 			__METHOD__,
 			[],
 			$revQueryInfo['joins']
 		);
-		$row = $dbw->fetchObject( $res );
-		$cur = $row->count;
-		$this->output( "found {$cur}.\n" );
+		$this->output( "found {$revisionRows}.\n" );
 
 		$this->output( "Checking deleted edits..." );
-		$res = $dbw->select(
+		$archiveRows = $dbw->selectRowCount(
 			[ 'archive' ],
-			'COUNT(*) AS count',
+			'*',
 			[ 'ar_actor' => $fromActorId ],
 			__METHOD__
 		);
-		$row = $dbw->fetchObject( $res );
-		$del = $row->count;
-		$this->output( "found {$del}.\n" );
+		$this->output( "found {$archiveRows}.\n" );
 
 		# Don't count recent changes if we're not supposed to
-		if ( $rc ) {
+		if ( $updateRC ) {
 			$this->output( "Checking recent changes..." );
-			$res = $dbw->select(
+			$recentChangesRows = $dbw->selectRowCount(
 				[ 'recentchanges' ],
-				'COUNT(*) AS count',
+				'*',
 				[ 'rc_actor' => $fromActorId ],
 				__METHOD__
 			);
-			$row = $dbw->fetchObject( $res );
-			$rec = $row->count;
-			$this->output( "found {$rec}.\n" );
+			$this->output( "found {$recentChangesRows}.\n" );
 		} else {
-			$rec = 0;
+			$recentChangesRows = 0;
 		}
 
-		$total = $cur + $del + $rec;
+		$total = $revisionRows + $archiveRows + $recentChangesRows;
 		$this->output( "\nTotal entries to change: {$total}\n" );
 
 		$toActorId = $actorNormalization->acquireActorId( $to, $dbw );
-		if ( !$report ) {
-			if ( $total ) {
+		if ( !$report && $total ) {
+			$this->output( "\n" );
+			if ( $revisionRows ) {
 				# Reassign edits
-				$this->output( "\nReassigning current edits..." );
+				$this->output( "Reassigning current edits..." );
 				if ( $actorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_TEMP ) {
 					$dbw->update(
 						'revision_actor_temp',
@@ -148,29 +143,33 @@ class ReassignEdits extends Maintenance {
 						__METHOD__
 					);
 				}
-				$this->output( "done.\nReassigning deleted edits..." );
+				$this->output( "done.\n" );
+			}
+
+			if ( $archiveRows ) {
+				$this->output( "Reassigning deleted edits..." );
 				$dbw->update( 'archive',
 					[ 'ar_actor' => $toActorId ],
 					[ 'ar_actor' => $fromActorId ],
 					__METHOD__
 				);
 				$this->output( "done.\n" );
-				# Update recent changes if required
-				if ( $rc ) {
-					$this->output( "Updating recent changes..." );
-					$dbw->update( 'recentchanges',
-						[ 'rc_actor' => $toActorId ],
-						[ 'rc_actor' => $fromActorId ],
-						__METHOD__
-					);
-					$this->output( "done.\n" );
-				}
+			}
+			# Update recent changes if required
+			if ( $recentChangesRows ) {
+				$this->output( "Updating recent changes..." );
+				$dbw->update( 'recentchanges',
+					[ 'rc_actor' => $toActorId ],
+					[ 'rc_actor' => $fromActorId ],
+					__METHOD__
+				);
+				$this->output( "done.\n" );
 			}
 		}
 
 		$this->commitTransaction( $dbw, __METHOD__ );
 
-		return (int)$total;
+		return $total;
 	}
 
 	/**

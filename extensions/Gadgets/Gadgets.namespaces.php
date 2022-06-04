@@ -182,6 +182,13 @@ $namespaceNames['he'] = [
 	NS_GADGET_DEFINITION_TALK => 'שיחת_הגדרת_גאדג\'ט',
 ];
 
+$namespaceNames['hi'] = [
+	NS_GADGET => 'गैजेट',
+	NS_GADGET_TALK => 'गैजेट वार्ता',
+	NS_GADGET_DEFINITION => 'गैजेट परिभाषा',
+	NS_GADGET_DEFINITION_TALK => 'गैजेट परिभाषा वार्ता',
+];
+
 $namespaceNames['inh'] = [
 	NS_GADGET => 'Гаджет',
 	NS_GADGET_TALK => 'Гаджет_ювцар',
@@ -250,6 +257,13 @@ $namespaceNames['mzn'] = [
 	NS_GADGET_TALK => 'گجت_گپ',
 	NS_GADGET_DEFINITION => 'گجت_توضیحات',
 	NS_GADGET_DEFINITION_TALK => 'گجت_توضیحات_گپ',
+];
+
+$namespaceNames['my'] = [
+	NS_GADGET => 'ကိရိယာငယ်',
+	NS_GADGET_TALK => 'ကိရိယာငယ်_ဆွေးနွေးချက်',
+	NS_GADGET_DEFINITION => 'ကိရိယာငယ်_အဓိပ္ပာယ်',
+	NS_GADGET_DEFINITION_TALK => 'ကိရိယာငယ်_အဓိပ္ပာယ်_ဆွေးနွေးချက်',
 ];
 
 $namespaceNames['nap'] = [

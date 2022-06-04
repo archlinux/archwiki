@@ -21,7 +21,7 @@
 	"oathauth-step3": "ნაბიჯი 3: ჩაიწერეთ დაკაწრული კოდები",
 	"oathauth-step4": "ნაბიჯი 4: ვერიფიკაცია",
 	"oathauth-entertoken": "დასადასტურებლად შეიყვანეთ კოდი თქვენი მობილური აპლიკაციიდან",
-	"oauthauth-ui-no-module": "არ არის ჩართული",
+	"oathauth-ui-no-module": "არ არის ჩართული",
 	"oathauth-module-totp-label": "TOTP (ერთჯერადი ტოკენი)",
 	"oathauth-ui-manage": "მართვა",
 	"oathmanage": "ორფაქტორიანი ავთენტიკაციის მართვა",

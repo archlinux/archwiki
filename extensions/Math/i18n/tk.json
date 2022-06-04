@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Hanberke"
+		]
+	},
+	"math_failure": "Derňäp bolmady",
+	"math_syntax_error": "sintaktik säwlik",
+	"math_unknown_error": "näbelli säwlik",
+	"math_unknown_function": "näbelli funksiýa",
+	"mw_math_mathml": "Mümkin bolsa MathML (eksperimental)",
+	"mw_math_png": "Hemişe PNG öwür",
+	"mw_math_source": "TeX-ligine galdyr (tekst brauzerleri üçin)",
+	"prefs-math": "Matematiki formulalar"
+}

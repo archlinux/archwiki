@@ -258,6 +258,12 @@ $specialPageAliases['mt'] = [
 	'Gadgets' => [ 'Aġġeġġi', 'Aċċessorji' ],
 ];
 
+/** Burmese (မြန်မာဘာသာ) */
+$specialPageAliases['my'] = [
+	'Gadgets' => [ 'ကိရိယာငယ်များ' ],
+	'GadgetUsage' => [ 'ကိရိယာငယ်အသုံးပြုမှု' ],
+];
+
 /** Neapolitan (napulitano) */
 $specialPageAliases['nap'] = [
 	'Gadgets' => [ 'Pazzielle' ],

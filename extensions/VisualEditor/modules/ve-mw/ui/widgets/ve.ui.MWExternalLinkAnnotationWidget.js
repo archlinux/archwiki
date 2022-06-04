@@ -51,7 +51,7 @@ ve.ui.MWExternalLinkAnnotationWidget.static.getAnnotationFromText = function ( v
  * @return {OO.ui.TextInputWidget} Text input widget
  */
 ve.ui.MWExternalLinkAnnotationWidget.static.createExternalLinkInputWidget = function ( config ) {
-	var inputWidget = new OO.ui.TextInputWidget( $.extend( {}, config, {
+	var inputWidget = new OO.ui.TextInputWidget( ve.extendObject( {}, config, {
 		icon: 'linkExternal',
 		type: 'url',
 		validate: function ( text ) {

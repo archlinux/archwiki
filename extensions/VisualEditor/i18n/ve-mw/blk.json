@@ -3,8 +3,8 @@
 		"authors": [
 			"Khun Kt",
 			"Ninjastrikers",
-			"咽頭べさ",
-			"လွိုင်ႏအာထင်ႏထိုထဲင်း"
+			"လွိုင်ႏအာထင်ႏထိုထဲင်း",
+			"咽頭べさ"
 		]
 	},
 	"collabpad-import-subtitle": "$1 ဒင်ႏသော့ꩻခါꩻဒျာႏ",
@@ -96,14 +96,15 @@
 	"visualeditor-dialog-transclusion-add-param-save": "ထဲမ်သော့ꩻ ပါရာမီတာ",
 	"visualeditor-dialog-transclusion-add-template": "ထဲမ်သော့ꩻ တမ်းပလေက်",
 	"visualeditor-dialog-transclusion-content": "ဟော်ꩻထွားရီးတာႏ",
+	"visualeditor-dialog-transclusion-help-title": "တမ်းပလေက်မွဉ်းဖျင်မုꩻ အစွဲးအကမ်း",
 	"visualeditor-dialog-transclusion-loading": "အဝ်ႏဒင်ႏဝွန်ႏကျာꩻ...",
 	"visualeditor-dialog-transclusion-options": "လွိုက်ပဲင်ႏခွင်ꩻ",
 	"visualeditor-dialog-transclusion-param-default": "အွောန်ႏစွူနုဲင်းအလီꩻ: $1",
 	"visualeditor-dialog-transclusion-param-example": "ဥပမာႏ $1",
 	"visualeditor-dialog-transclusion-param-example-long": "ဥပမာႏ: $1",
+	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "ထိုမ်ႏတမ်းပလေက်",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "သဲင်ꩻချာ",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "နုဲင်းမုဲင်ꩻမုဲင်ꩻတယဝ်း၊ မာꩻသွုပ်ဟုဲင်း",
-	"visualeditor-dialog-transclusion-reset-confirmation-cancel": "မာꩻသွုပ် မွဉ်းဖျင်မုꩻ",
 	"visualeditor-dialog-transclusion-wikitext": "ဝီခီလိတ်ယာႏ",
 	"visualeditor-dialogbutton-media-tooltip": "ရုက်ပုင်ႏဖိုင်ႏတောမ်ႏ မီဒီယာ",
 	"visualeditor-dialogbutton-meta-tooltip": "လိတ်မဲ့ငါ အပွိုင်အဆင်ဖိုင်ႏ",

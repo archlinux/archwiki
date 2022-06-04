@@ -5,7 +5,8 @@
 			"Gadarawamo",
 			"Hunpatinjob",
 			"Misteld",
-			"Samatics"
+			"Samatics",
+			"Atej2*"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ogbè|$1 ogbè lẹ}}",
@@ -18,5 +19,6 @@
 	"vector-view-history": "Pọ́n kandai",
 	"vector-view-view": "Hia",
 	"vector-more-actions": "Dogọ",
+	"vector-searchsuggest-containing": "Dín weda he bẹ <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> hẹn lẹ",
 	"vector-anon-user-menu-pages-learn": "Plọnnu dogọ"
 }

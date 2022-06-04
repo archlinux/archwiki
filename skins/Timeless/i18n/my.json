@@ -20,5 +20,7 @@
 	"timeless-namespaces": "အမည်ညွှန်းများ",
 	"timeless-pagetools": "စာမျက်နှာ ဆောင်ရွက်ချက်များ",
 	"timeless-languages": "ဘာသာစကားများ",
-	"timeless-projects": "အခြား ပရောဂျက်များ"
+	"timeless-projects": "အခြား ပရောဂျက်များ",
+	"timeless-view-history": "ရာဇဝင်",
+	"timeless-action-undelete": "{{PLURAL:$1|တည်းဖြတ်မှုတစ်ခု|တည်းဖြတ်မှု $1 ခုတို့}}ကို မဖျက်တော့ရန်"
 }

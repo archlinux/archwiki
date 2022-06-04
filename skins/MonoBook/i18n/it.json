@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Beta16",
 			"Darth Kule",
-			"Sannita",
-			"Ajeje Brazorf"
+			"Sannita"
 		]
 	},
 	"monobook-desc": "Il tema classico di MediaWiki dal 2004, prende il nome dall'immagine in bianco e nero del libro usata come sfondo della pagina",
@@ -18,5 +18,7 @@
 	"cactions-mobile": "Azioni sulla pagina",
 	"monobook-cactions-label": "Azioni sulla pagina",
 	"monobook-notifications-link": "Notifiche ($1)",
-	"monobook-notifications-link-none": "Notifiche"
+	"monobook-notifications-link-none": "Notifiche",
+	"monobook-view-history": "Cronologia",
+	"monobook-action-undelete": "Recupera {{PLURAL:$1|una versione|$1 versioni}}"
 }

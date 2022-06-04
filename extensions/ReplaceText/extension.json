@@ -1,6 +1,6 @@
 {
 	"name": "Replace Text",
-	"version": "1.4.2",
+	"version": "1.7-alpha",
 	"author": [
 		"Yaron Koren",
 		"Niklas Laxström",
@@ -10,7 +10,7 @@
 	"descriptionmsg": "replacetext-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.32.0"
+		"MediaWiki": ">= 1.35.0"
 	},
 	"type": "specialpage",
 	"GroupPermissions": {

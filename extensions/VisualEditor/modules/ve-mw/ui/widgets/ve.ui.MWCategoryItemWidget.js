@@ -14,8 +14,12 @@
  * @mixins OO.ui.mixin.DraggableElement
  *
  * @constructor
- * @param {Object} [config] Configuration options
- * @cfg {Object} [item] Category item
+ * @param {Object} config
+ * @cfg {Object} item Category item
+ * @cfg {string} item.name Category name
+ * @cfg {string} item.value
+ * @cfg {string} [item.sortKey='']
+ * @cfg {ve.dm.MWCategoryMetaItem} item.metaItem
  * @cfg {boolean} [hidden] Whether the category is hidden or not
  * @cfg {boolean} [missing] Whether the category's description page is missing
  * @cfg {string} [redirectTo] The name of the category this category's page redirects to.

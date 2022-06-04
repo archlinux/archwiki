@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Adam N.",
 			"Armando-Martin",
 			"Avengium",
 			"Crazymadlover",
 			"Dalton2",
+			"Dgstranz",
 			"Fitoschido",
 			"Geryescalier",
 			"Ihojose",
@@ -18,8 +20,11 @@
 			"Vivaelcelta"
 		]
 	},
-	"skinname-vector": "Vector",
-	"vector-skin-desc": "Versión moderna de MonoBook, con un aspecto actualizado y muchas mejoras de usabilidad",
+	"skinname-vector": "Versión heredada de Vector (2010)",
+	"skinname-vector-2022": "Vector (2022)",
+	"vector-specialversion-name": "Vector",
+	"tooltip-pt-watchlist-2": "Una lista de páginas que tienes señaladas para seguir los cambios",
+	"vector-skin-desc": "Proporciona dos apariencias de Vector:\n* 2011 - Versión moderna de MonoBook, con un aspecto actualizado y muchas mejoras de usabilidad\n* 2022 - Vector construido como parte del proyecto [[mw:Desktop Improvements|Mejoras a la IU de escritorio]] de la Fundación Wikimedia.",
 	"prefs-vector-enable-vector-1-label": "Utilizar versión heredada de Vector",
 	"prefs-vector-enable-vector-1-help": "Durante los próximos años, actualizaremos gradualmente la piel Vector. La versión heredada de Vector te permitirá ver la versión anterior de Vector (a diciembre de 2019). Para obtener más información sobre las actualizaciones, ve a nuestra [[mw:Reading/Web/Desktop_Improvements|página del proyecto]].",
 	"vector-opt-out": "Cambiar a la apariencia anterior",
@@ -27,7 +32,11 @@
 	"vector.css": "/* Todo CSS colocado en esta página será cargado para los usuarios que usen la apariencia \"Vector\" */",
 	"vector.js": "/* Todo código JavaScript escrito aquí se cargará para todos los usuarios de la apariencia Vector */",
 	"vector-action-toggle-sidebar": "Mostrar u ocultar la barra lateral",
+	"vector-languages": "Idiomas",
+	"vector-language-button-aria-label": "Ir a un artículo en otro idioma. Disponible en {{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idiomas}}",
+	"vector-language-redirect-to-top": "En este {{SITENAME}} los enlaces interlingüísticos están situados en la parte superior de la página, a la derecha del título. [[#p-lang-btn|Subir]].",
+	"vector-language-variant-switcher-label": "Cambiar variante de idioma",
 	"vector-action-addsection": "Añadir tema",
 	"vector-action-delete": "Borrar",
 	"vector-action-move": "Trasladar",
@@ -44,6 +53,8 @@
 	"vector-jumptocontent": "Ir al contenido",
 	"vector-more-actions": "Más",
 	"vector-search-loader": "Cargando sugerencias de búsqueda",
+	"vector-searchsuggest-containing": "Buscar páginas que contengan <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-intro-page": "Help:Introducción",
 	"vector-anon-user-menu-pages": "Páginas para editores desconectados",
 	"vector-anon-user-menu-pages-learn": "más información",
 	"vector-anon-user-menu-pages-label": "Obtenga más información sobre editar",

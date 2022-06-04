@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Pippinu",
 			"Santu",
-			"Sarvaturi",
-			"Ajeje Brazorf"
+			"Sarvaturi"
 		]
 	},
 	"spam-blacklist": " #<!-- nun canciari nenti di sta riga --> <pre>\n# Li URL fora dû sito ca currispùnnunu â lista di sècutu vènunu bluccati.\n# La lista vali sulu pi stu situ; fari rifirimentu macari â blacklist glubbali.\n# Pâ ducumentazzioni talìa https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:SpamBlacklist\n# \n# La sintassi è  chista:\n#  * Tuttu chiddu ca veni doppu nu caràttiri \"#\" è nu cummentu, nzinu ca finisci la riga\n#  * Tutti li righi non vacanti sunnu frammenti di sprissioni riulari ca s'àpplicanu sulu ô nomu di l'host nti li URL\n #</pre> <!-- non canciari nenti di sta riga -->",

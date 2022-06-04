@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lancine.kounfantoh.fofana"
+		]
+	},
+	"math-visualeditor-mwchemdialog-title": "ߖߎ߲ߛߊ ߛߏ߯ߙߏߟߊ߲",
+	"math-visualeditor-mwcheminspector-title": "ߖߎ߲ߛߊ ߛߏ߯ߙߏߟߊ߲",
+	"math-visualeditor-mwlatexcontextitem-quickedit": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲߬ ߞߊߟߌߡߊ߲",
+	"math-visualeditor-mwlatexdialog-card-formula": "ߛߏ߯ߙߏߟߊ߲",
+	"math-visualeditor-mwlatexdialog-card-options": "ߢߣߊߕߊߟߌ",
+	"math-visualeditor-mwlatexinspector-display": "ߦߌ߬ߘߊ߬ߟߌ",
+	"math-visualeditor-mwlatexinspector-display-inline": "ߜߊ߲߬ߞߎ߲߬ߣߍ߲",
+	"math-visualeditor-mwmathdialog-title": "ߘߡߊ߬ߟߐ߲ ߛߏ߯ߙߏߟߊ߲",
+	"math-visualeditor-symbol-group-chem-greek": "ߜ߭ߙߍ߬ߞߌ߬ ߞߟߏߘߋ߲ ߠߎ߬",
+	"math-visualeditor-symbol-group-math-greek": "ߜ߭ߙߍ߬ߞߌ߬ ߛߓߍߛߎ߲",
+	"math-visualeditor-symbol-group-math-hebrew": "ߋߓߙߋ߫ ߛߓߍߛߎ߲",
+	"math-visualeditor-symbol-group-math-special": "ߞߙߍߞߙߍߣߍ߲",
+	"math-tracking-category-error": "ߘߡߊ߬ߟߐ߲ ߝߎ߬ߕߎ߲߬ߕߌ ߦߋ߫ ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߟߊ߫",
+	"math-tracking-category-error-desc": "ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߦߋ߫ ߦߌߟߡߊ ߣߌ߲߬ ߘߐ߫߸ ߝߎ߬ߕߎ߲߬ߕߌ ߦߴߏ߬ ߟߎ߫ ߟߊ߫ ߞߊ߬ ߝߘߊ߫ ߘߡߊ߬ߟߐ߲ ߞߊ߲ߠߊߛߓߍ ߟߎ߬ ߟߊߓߊ߯ߙߊ ߡߊ߬.",
+	"math_unknown_error": "ߝߎ߬ߕߎ߲߬ߕߌ߬ ߡߊߟߐ߲ߓߊߟߌ",
+	"math_unknown_function": "ߗߋߘߊ߫  \"$1\" ߡߊߟߐ߲ߓߊߟߌ",
+	"mw_math_png": "PNG ߖߌ߬ߦߊ߬ߓߍ ߟߎ߫",
+	"mathstatus": "ߘߡߊ߬ߟߐ߲ ߛߌ߰ߝߊߘߌ ߟߎ߫",
+	"mathwikibase": "ߘߡߊ߬ߟߐ߲ ߛߏ߯ߙߏߟߊ߲ ߞߎ߲߬ߠߊ߬ߝߏߣߌ߲",
+	"math-wikibase-header": "ߘߡߊ߬ߟߐ߲߬ߠߊ߬ߞߊ ߝߌ߬ߛߌ ߟߎ߬ ߞߎ߲߬ߠߊ߬ߝߏߣߌ߲",
+	"math-wikibase-formula": "ߛߏ߯ߙߏߟߊ߲",
+	"math-wikibase-formula-name": "ߕߐ߮",
+	"math-wikibase-formula-type": "ߛߎ߯ߦߊ",
+	"math-wikibase-formula-description": "ߞߊ߲߬ߛߓߍߟߌ",
+	"math-wikibase-formula-information": "ߘߡߊ߬ߟߐ߲ ߛߏ߯ߙߏߟߊ߲ ߞߎ߲߬ߠߊ߬ߝߏߣߌ߲",
+	"math-wikibase-special-error-header": "ߝߎ߬ߕߎ߲߬ߕߌ"
+}

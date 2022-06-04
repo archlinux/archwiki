@@ -43,6 +43,7 @@
 	"scribunto-lua-error-location": "$1 Lua 오류: $2.",
 	"scribunto-lua-error": "Lua 오류: $2.",
 	"scribunto-lua-notarrayreturn": "스크립트 오류: 모듈이 $2 값을 반환했습니다. 내보내기 테이블을 반환해야 합니다.",
+	"scribunto-lua-warning": "스크립트 경고: $1",
 	"scribunto-luastandalone-proc-error": "Lua 오류: 프로세스를 생성할 수 없습니다.",
 	"scribunto-luastandalone-proc-error-msg": "Lua 오류: 프로세스를 생성할 수 없습니다: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua 오류: 프로세스를 생성할 수 없습니다: proc_open은 사용할 수 없습니다. PHP의 \"disable_functions\" 설정을 확인하십시오.",

@@ -52,8 +52,7 @@ ve.ui.MWNumberedExternalLinkNodeContextItem.prototype.isDeletable = function () 
  * @inheritdoc
  */
 ve.ui.MWNumberedExternalLinkNodeContextItem.prototype.onLabelButtonClick = function () {
-	var annotation, annotations, content,
-		surfaceModel = this.context.getSurface().getModel(),
+	var surfaceModel = this.context.getSurface().getModel(),
 		surfaceView = this.context.getSurface().getView(),
 		doc = surfaceModel.getDocument(),
 		nodeRange = this.model.getOuterRange();
@@ -63,15 +62,15 @@ ve.ui.MWNumberedExternalLinkNodeContextItem.prototype.onLabelButtonClick = funct
 	// perhaps be consolidated into a reusable "replace node with annotated
 	// text and select that text" method somewhere appropriate.
 
-	annotation = new ve.dm.MWExternalLinkAnnotation( {
+	var annotation = new ve.dm.MWExternalLinkAnnotation( {
 		type: 'link/mwExternal',
 		attributes: {
 			href: this.model.getHref()
 		}
 	} );
-	annotations = doc.data.getAnnotationsFromOffset( nodeRange.start ).clone();
+	var annotations = doc.data.getAnnotationsFromOffset( nodeRange.start ).clone();
 	annotations.push( annotation );
-	content = this.model.getHref().split( '' );
+	var content = this.model.getHref().split( '' );
 	ve.dm.Document.static.addAnnotationsToData( content, annotations );
 	surfaceModel.change(
 		ve.dm.TransactionBuilder.static.newFromReplacement( doc, nodeRange, content )

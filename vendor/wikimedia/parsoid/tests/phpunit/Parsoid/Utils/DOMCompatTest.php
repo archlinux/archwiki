@@ -394,7 +394,7 @@ HTML;
 			],
 
 			// context
-			'context sanity check' => [
+			'context check' => [
 				'html' => $html1,
 				'selector' => '.xxx',
 				'context' => null,
@@ -653,6 +653,6 @@ HTML;
 		// not the workaround version in DOMCompat::getElementById()
 		$q = $doc->getElementById( 'this-is-an-id' );
 		$this->assertNotEquals( $q, null );
-		$this->assertEquals( $q->getAttribute( 'id' ), 'this-is-an-id' );
+		$this->assertEquals( 'this-is-an-id', $q->getAttribute( 'id' ) );
 	}
 }

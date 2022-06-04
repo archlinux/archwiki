@@ -86,10 +86,10 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 	/**
 	 * Check a string first parameter
 	 * @param string $name Function name, for errors
-	 * @param mixed $s Value to check
+	 * @param mixed &$s Value to check
 	 * @param bool $checkEncoding Whether to validate UTF-8 encoding.
 	 */
-	private function checkString( $name, $s, $checkEncoding = true ) {
+	private function checkString( $name, &$s, $checkEncoding = true ) {
 		if ( $this->getLuaType( $s ) == 'number' ) {
 			$s = (string)$s;
 		} else {
@@ -314,8 +314,8 @@ class Scribunto_LuaUstringLibrary extends Scribunto_LuaLibraryBase {
 		if ( $j < $i ) {
 			return [ '' ];
 		}
-		$i = max( 1, min( $i, $len + 1 ) );
-		$j = max( 1, min( $j, $len + 1 ) );
+		$i = max( 1, min( (int)$i, $len + 1 ) );
+		$j = max( 1, min( (int)$j, $len + 1 ) );
 		$s = mb_substr( $s, $i - 1, $j - $i + 1, 'UTF-8' );
 		return [ $s ];
 	}

@@ -40,6 +40,7 @@
 	"right-oathauth-disable-for-user": "Tweetrapsauthenticatie voor gebruikers uitschakelen",
 	"action-oathauth-disable-for-user": "tweetrapsauthenticatie voor gebruikers uit te schakelen",
 	"right-oathauth-verify-user": "Controleren of een gebruiker tweetrapsauthenticatie heeft ingeschakeld",
+	"action-oathauth-verify-user": "controleren of een gebruiker tweetrapsauthenticatie heeft ingeschakeld",
 	"right-oathauth-view-log": "Toegang hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"action-oathauth-view-log": "toegang te hebben tot het logboek met wijzigingen aan tweetrapsauthenticatie",
 	"oathauth-enteruser": "Gebruikersnaam:",
@@ -60,7 +61,8 @@
 	"oath-log-name": "Tweetrapsauthenticatie logboek",
 	"oath-log-header": "Deze gebeurtenissen houden wijzigen bij aan de tweetrapsauthenticatiestatus van gebruikers.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|schakelde}} de tweetrapsauthenticatie van $3 uit",
-	"oauthauth-ui-no-module": "Geen ingesteld",
+	"logentry-oath-verify": "$1 {{GENDER:$2|heeft gecheckt}} of $3 de tweetrapsauthenticatie heeft ingeschakeld",
+	"oathauth-ui-no-module": "Geen ingesteld",
 	"oathauth-module-totp-label": "TOTP (eenmalig token)",
 	"oathauth-ui-manage": "Beheren",
 	"oathmanage": "Tweetrapsauthenticatie beheren",
@@ -74,5 +76,9 @@
 	"oathauth-ui-general-help": "'''Multi-factor authentication''' ('''MFA''') is een authenticatiemethode waarbij een computergebruiker alleen toegang krijgt na het succesvol presenteren van twee of meer bewijsstukken (of factoren) in een authenticatiemechanisme: kennis (iets wat de gebruiker en alleen de gebruiker weet), bezit (iets dat de gebruiker alleen de gebruiker heeft), en inherent (iets wat de gebruiker en alleen de gebruiker is). [https://nl.wikipedia.org/wiki/Multifactorauthenticatie Lees meer]",
 	"oathauth-totp-description": "De Time-based One-Time Password algorithm (TOTP) is een extensie van het op HMAC gebaseerde eenmalige wachtwoord-algoritme (HOTP) dat een eenmalig wachtwoord genereert door in plaats daarvan het unieke van het de huidige tijdstip te gebruiken.",
 	"oathauth-disable-method-warning-button-label": "Bevestigen en doorgaan",
-	"oathauth-invalidrequest": "Ongeldige aanvraag"
+	"oathauth-invalidrequest": "Ongeldige aanvraag",
+	"notification-body-oathauth-disable": "Als {{GENDER:$2|u}} dit niet gedaan heeft, kan {{GENDER:$2|uw account}} wellicht gehackt zijn.",
+	"oathauth-notifications-disable-help": "Hulp",
+	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Groep|Groepen}} uitschakelen:",
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Uw lidmaatschap}} in {{PLURAL:$1|deze groep|deze groepen}} is uitgeschakeld totdat u [[Special:Manage Two-factor authentication|tweetrapsauthenticatie]] heeft ingeschakeld."
 }

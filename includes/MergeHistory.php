@@ -25,6 +25,7 @@ use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\Authority;
@@ -139,7 +140,7 @@ class MergeHistory {
 		$this->timestamp = $timestamp;
 
 		// Get the database
-		$this->dbw = $loadBalancer->getConnection( DB_PRIMARY );
+		$this->dbw = $loadBalancer->getConnectionRef( DB_PRIMARY );
 
 		$this->contentHandlerFactory = $contentHandlerFactory;
 		$this->revisionStore = $revisionStore;
@@ -247,7 +248,7 @@ class MergeHistory {
 	}
 
 	/**
-	 * Does various sanity checks that the merge is
+	 * Does various checks that the merge is
 	 * valid. Only things based on the two pages
 	 * should be checked here.
 	 *
@@ -302,7 +303,8 @@ class MergeHistory {
 	 * @return Status status of the history merge
 	 */
 	public function merge( Authority $performer, $reason = '' ) {
-		global $wgActorTableSchemaMigrationStage;
+		$actorTableSchemaMigrationStage = MediaWikiServices::getInstance()
+			->getMainConfig()->get( 'ActorTableSchemaMigrationStage' );
 
 		$status = new Status();
 
@@ -333,14 +335,14 @@ class MergeHistory {
 		}
 
 		// Update denormalized revactor_page too
-		if ( $wgActorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_TEMP ) {
+		if ( $actorTableSchemaMigrationStage & SCHEMA_COMPAT_WRITE_TEMP ) {
 			$this->dbw->update(
 				'revision_actor_temp',
 				[ 'revactor_page' => $this->dest->getId() ],
 				[
 					'revactor_page' => $this->source->getId(),
 					// Slightly hacky, but should work given the values assigned in this class
-					str_replace( 'rev_timestamp', 'revactor_timestamp', $this->getTimeWhere() )
+					str_replace( 'rev_timestamp', 'revactor_timestamp', $this->getTimeWhere() ?? '' )
 				],
 				__METHOD__
 			);
@@ -496,7 +498,7 @@ class MergeHistory {
 			// revisions are now tied to a different title and its content model
 			// does not support redirects, so we cannot leave a new revision on it.
 			// This deletion does not depend on userright but may still fails. If it
-			// fails, it will be communicated in the status reponse.
+			// fails, it will be communicated in the status response.
 			$reason = wfMessage( 'mergehistory-source-deleted-reason' )->inContentLanguage()->plain();
 			$deletionStatus = $newPage->doDeleteArticleReal( $reason, $user );
 			// Notify callers that the source page has been deleted.

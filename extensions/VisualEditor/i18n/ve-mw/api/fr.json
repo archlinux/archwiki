@@ -60,6 +60,6 @@
 	"apihelp-visualeditoredit-param-starttimestamp": "Lors de l’enregistrement, règle ceci avec l’horodatage du moment où la page a été chargée. Utilisé pour détecter les conflits d’édition.",
 	"apihelp-visualeditoredit-param-summary": "Modifier le résumé.",
 	"apihelp-visualeditoredit-param-tags": "Modifier les balises à appliquer à la modification.",
-	"apihelp-visualeditoredit-param-wikitext": "Le wikitexte avec lequel travailler.",
-	"apihelp-visualeditoredit-summary": "Enregistrer une page HTML5 dans Médiawiki (convertie en wikitexte via le service Parsoid)."
+	"apihelp-visualeditoredit-param-wikitext": "Le wikicode avec lequel agir.",
+	"apihelp-visualeditoredit-summary": "Enregistrer une page HTML5 en MediaWiki (convertie en wikicode via le service Parsoid)."
 }

@@ -90,7 +90,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Унесите назив мапе",
 	"templatedata-modal-search-input-placeholder": "Претражите по имену или коду језика",
 	"templatedata-modal-table-param-actions": "Радње",
-	"templatedata-modal-table-param-aliases": "Псеудоними (раздвојени зарезима)",
+	"templatedata-modal-table-param-aliases": "Псеудоними",
 	"templatedata-modal-table-param-autovalue": "Аутоматска вредност",
 	"templatedata-modal-table-param-default": "Подразумевано ($1)",
 	"templatedata-modal-table-param-deprecated": "Застарело",

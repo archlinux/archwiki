@@ -99,15 +99,13 @@ ve.dm.MWLanguageVariantNode.static.migrateFieldNames = function ( dataMwv ) {
  * @inheritdoc
  */
 ve.dm.MWLanguageVariantNode.static.toDataElement = function ( domElements, converter ) {
-	var dataElement,
-		isInline,
-		firstElement = domElements[ 0 ],
+	var firstElement = domElements[ 0 ],
 		dataMwvJSON = firstElement.getAttribute( 'data-mw-variant' ),
 		dataMwv = dataMwvJSON ? JSON.parse( dataMwvJSON ) : {};
 
 	this.migrateFieldNames( dataMwv );
 
-	dataElement = {
+	var dataElement = {
 		attributes: {
 			variantInfo: dataMwv,
 			originalVariantInfo: dataMwvJSON
@@ -119,7 +117,7 @@ ve.dm.MWLanguageVariantNode.static.toDataElement = function ( domElements, conve
 		return dataElement;
 	}
 
-	isInline = this.isHybridInline( domElements, converter );
+	var isInline = this.isHybridInline( domElements, converter );
 	dataElement.type = isInline ? this.inlineType : this.blockType;
 	return dataElement;
 };
@@ -282,13 +280,10 @@ ve.dm.MWLanguageVariantNode.static.matchLanguage = function ( items ) {
 	var userVariant = mw.config.get( 'wgUserVariant' ),
 		fallbacks = mw.config.get( 'wgVisualEditor' ).pageVariantFallbacks,
 		languageCodes =
-			( userVariant ? [ userVariant ] : [] ).concat( fallbacks || [] ),
-		code,
-		i,
-		j;
-	for ( j = 0; j < languageCodes.length; j++ ) {
-		code = languageCodes[ j ].toLowerCase();
-		for ( i = 0; i < items.length; i++ ) {
+			( userVariant ? [ userVariant ] : [] ).concat( fallbacks || [] );
+	for ( var j = 0; j < languageCodes.length; j++ ) {
+		var code = languageCodes[ j ].toLowerCase();
+		for ( var i = 0; i < items.length; i++ ) {
 			if (
 				items[ i ].l === '*' ||
 				items[ i ].l.toLowerCase() === code

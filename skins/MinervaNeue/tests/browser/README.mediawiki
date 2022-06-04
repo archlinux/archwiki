@@ -1,0 +1,72 @@
+= Git history =
+Browser tests were migrated here from MobileFrontend.
+For any git history prior to the migration, please review the git history of MobileFrontend (see https://gerrit.wikimedia.org/r/364325).
+
+= Setup =
+Include the LocalSettings.php in this folder into your MediaWiki LocalSettings.php.
+Note including this in a production instance is not advised given it fiddles with permissions.
+
+<pre>
+include_once "$IP/skins/MinervaNeue/tests/browser/LocalSettings.php";
+</pre>
+
+Further tweaks may be necessary to run tests that are not tagged @integration:
+* Ensure you have [//www.mediawiki.org/wiki/Extension:ConfirmEdit Extension:ConfirmEdit] installed
+** and setup with FancyCaptcha
+* The VisualEditor, Cite, and Echo extensions should be installed to run the full suite of tests
+* Create an account Selenium_newuser which has an edit count of 0
+* Create an account and store the username in MEDIAWIKI_USER which has
+** an edit count of greater than 0
+** Ensure user has bureaucrat and admin rights (set via Special:UserRights)
+
+==== Selenium tests ====
+
+To run the Selenium tests you will have to install Ruby (for the exact
+version see Gemfile), the latest versions of RubyGems and Firefox.
+
+The easiest way to install Ruby on *nix is RVM (https://rvm.io/) and on
+Windows RubyInstaller (http://rubyinstaller.org/).
+
+Open terminal in tests/browser. Update RubyGems and install required
+gems with:
+
+  gem update --system
+  gem install bundler
+  bundle install
+
+Environment variables MEDIAWIKI_USER and MEDIAWIKI_PASSWORD are required for
+tests that require a logged in user. For local testing, create a test user on your local wiki
+and export the user and password as the values for those variables.
+For example:
+
+  export MEDIAWIKI_USER=<username here> # Linux/Unix/Mac
+  set MEDIAWIKI_USER=<username here> # Windows
+
+  export MEDIAWIKI_PASSWORD=<password here> # Linux/Unix/Mac
+  set MEDIAWIKI_PASSWORD=<password here> # Windows
+
+In addition to this create another user which will be reserved for new uploads
+"Selenium_newuser". The password for this user should be the same as
+MEDIAWIKI_PASSWORD
+
+Tests that use steps that create pages (create_page_api_steps.rb) need to set
+the MEDIAWIKI_API_URL environment variable, e.g.
+export MEDIAWIKI_API_URL=http://en.wikipedia.beta.wmflabs.org/w/api.php
+
+Run the tests from the Minerva directory with:
+
+  bundle exec cucumber tests/browser/features
+
+If you want to run a single set of tests, go to the tests/browser directory and
+call 'bundle exec cucumber' with the path to the test file. For example, to run
+only the watchlist tests:
+
+  bundle exec cucumber features/watchstar.feature
+
+XML report (for Jenkins) is created at tests/browser/reports/junit.
+
+Jenkins is hosted at https://wmf.ci.cloudbees.com/ and it drives
+browsers at http://saucelabs.com/
+
+For more information about running Selenium tests please see
+https://github.com/wikimedia/mediawiki-selenium

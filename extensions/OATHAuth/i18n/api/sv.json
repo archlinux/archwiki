@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"WikiPhoenix",
-			"Felba"
+			"Felba",
+			"WikiPhoenix"
 		]
 	},
 	"apihelp-query+oath-description": "Kolla för att se om tvåfaktorsautentisering (OATH) är aktiverat för en användare.",

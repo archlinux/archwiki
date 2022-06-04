@@ -22,10 +22,10 @@
 			"SMP",
 			"SenyorFontal",
 			"Ssola",
+			"TMg",
 			"Toniher",
 			"Unapersona",
-			"Vriullop",
-			"TMg"
+			"Vriullop"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -205,7 +205,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Imatges i multimèdia",
 	"visualeditor-dialogbutton-meta-tooltip": "Configuració de la pàgina",
 	"visualeditor-dialogbutton-template-tooltip": "Plantilla",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Inclusió",
 	"visualeditor-donebutton-tooltip": "He acabat d'editar",
 	"visualeditor-editconflict": "Els canvis no s'han pogut desar a causa d'un conflicte d'edició. {{GENDER:|Voleu}} resoldre el conflicte manualment?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} ara recorda quin editor preferiu. Podeu canviar de sistema d'edició mentre editeu, i a Preferències",

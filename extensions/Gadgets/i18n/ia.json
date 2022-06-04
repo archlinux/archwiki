@@ -18,11 +18,15 @@
 	"gadgetusage-default": "Predefinite",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Infra es un lista de gadgets special que le usatores pote activar in lor [[Special:Preferences#mw-prefsection-gadgets|paginas de preferentias]], secundo le [[MediaWiki:Gadgets-definition|definitiones]].\nIste supervista permitte le accesso commode al paginas de messages de systema que defini le description e codice de cata gadget.",
+	"gadgets-editdescription": "Modificar description",
+	"gadgets-viewdescription": "Vider description",
 	"gadgets-uses": "Usa",
 	"gadgets-required-rights": "Require le sequente {{PLURAL:$2|derecto|derectos}}:\n\n$1",
 	"gadgets-required-skins": "Disponibile con le {{PLURAL:$2|apparentia $1|sequente apparentias: $1}}.",
+	"gadgets-required-actions": "Habera effecto sur le {{PLURAL:$2|pagina de action \"$1\"|sequente paginas de action: $1}}.",
 	"gadgets-default": "Activate pro omnes per predefinition.",
 	"gadgets-legacy": "Le gadget non es cargate. Per favor migra a ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Leger plus])",
+	"gadgets-packaged": "Iste gadget es [https://www.mediawiki.org/wiki/ResourceLoader/Package_files impacchettate], con puncto de entrata $1",
 	"gadgets-export": "Exportar",
 	"gadgets-export-title": "Exportation de gadget",
 	"gadgets-not-found": "Gadget \"$1\" non trovate.",
@@ -33,5 +37,7 @@
 	"right-gadgets-edit": "Modificar paginas JavaScript e CSS de gadgets",
 	"action-gadgets-edit": "modificar le pagina JavaScript o CSS de iste gadget",
 	"right-gadgets-definition-edit": "Modificar definitiones de gadgets",
-	"action-gadgets-definition-edit": "modificar le definition de iste gadget"
+	"action-gadgets-definition-edit": "modificar le definition de iste gadget",
+	"gadgets-wrong-contentmodel": "Paginas in le spatio de nomines {{ns:2302}} debe esser del modello de contento GadgetDefinition.",
+	"gadgets-supports-urlload": "Iste gadget supporta le cargamento via URL con le parametro de consulta <code>?withgadget</code>."
 }

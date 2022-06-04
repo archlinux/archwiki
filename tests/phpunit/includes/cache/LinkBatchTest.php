@@ -4,7 +4,6 @@ use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
-use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -161,7 +160,7 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 				$bad["$title"] = $title;
 			} );
 
-		$services = \MediaWiki\MediaWikiServices::getInstance();
+		$services = $this->getServiceContainer();
 
 		$batch = new LinkBatch(
 			[],
@@ -183,9 +182,7 @@ class LinkBatchTest extends MediaWikiIntegrationTestCase {
 		$batch->add( NS_MAIN, 'X_' );
 		$batch->add( NS_MAIN, '' );
 
-		AtEase::suppressWarnings();
-		$batch->execute();
-		AtEase::restoreWarnings();
+		@$batch->execute();
 
 		$this->assertArrayHasKey( $existing1->getTitleValue()->__toString(), $good );
 		$this->assertArrayHasKey( $existing2->getTitleValue()->__toString(), $good );

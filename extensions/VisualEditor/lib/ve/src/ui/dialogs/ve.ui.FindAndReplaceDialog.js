@@ -223,7 +223,7 @@ ve.ui.FindAndReplaceDialog.prototype.getSetupProcess = function ( data ) {
 			// Events
 			this.surface.getModel().connect( this, { documentUpdate: 'onSurfaceModelDocumentUpdate' } );
 			this.surface.getView().connect( this, { position: 'onSurfaceViewPosition' } );
-			ve.addPassiveEventListener( this.surface.getView().$window[ 0 ], 'scroll', this.onWindowScrollThrottled );
+			ve.addPassiveEventListener( this.surface.$scrollListener[ 0 ], 'scroll', this.onWindowScrollThrottled );
 
 			this.updateFragments();
 			this.clearRenderedResultsCache();
@@ -253,7 +253,7 @@ ve.ui.FindAndReplaceDialog.prototype.getTeardownProcess = function ( data ) {
 			// Events
 			this.surface.getModel().disconnect( this );
 			surfaceView.disconnect( this );
-			ve.removePassiveEventListener( this.surface.getView().$window[ 0 ], 'scroll', this.onWindowScrollThrottled );
+			ve.removePassiveEventListener( this.surface.$scrollListener[ 0 ], 'scroll', this.onWindowScrollThrottled );
 
 			var selection;
 			if ( this.fragments.length ) {
@@ -421,7 +421,7 @@ ve.ui.FindAndReplaceDialog.prototype.renderFragments = function () {
 
 	// When there are a large number of results, calculate the viewport range for clipping
 	if ( this.results > 50 ) {
-		var viewportRange = this.surface.getView().getViewportRange();
+		var viewportRange = this.surface.getView().getViewportRange( true, 50 );
 		for ( var i = 0; i < this.results; i++ ) {
 			var selection = this.fragments[ i ].getSelection();
 			if ( viewportRange && selection.getRange().start < viewportRange.start ) {
@@ -466,6 +466,8 @@ ve.ui.FindAndReplaceDialog.prototype.renderRangeOfFragments = function ( range )
 	}
 	for ( i = range.start; i < range.end; i++ ) {
 		if ( this.renderedResultsCache[ i ] ) {
+			// These array elements are all jQuery collections
+			// eslint-disable-next-line no-jquery/no-append-html
 			this.$findResults.append( this.renderedResultsCache[ i ] );
 		} else {
 			var rects = this.surface.getView().getSelection( this.fragments[ i ].getSelection() ).getSelectionRects();
@@ -532,7 +534,7 @@ ve.ui.FindAndReplaceDialog.prototype.highlightFocused = function ( scrollIntoVie
 	if ( scrollIntoView ) {
 		surfaceView = this.surface.getView();
 		var offset = top + surfaceView.$element.offset().top;
-		var windowScrollTop = surfaceView.$window.scrollTop() + this.surface.padding.top;
+		var windowScrollTop = this.surface.$scrollContainer.scrollTop() + this.surface.padding.top;
 		var windowScrollHeight = surfaceView.$window.height() - this.surface.padding.top;
 
 		if ( offset < windowScrollTop || offset > windowScrollTop + windowScrollHeight ) {

@@ -2,6 +2,7 @@
 
 use MediaWiki\CheckUser\Hooks;
 use MediaWiki\MediaWikiServices;
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\Database;
 
 class SpamBlacklist extends BaseBlacklist {
@@ -109,9 +110,9 @@ class SpamBlacklist extends BaseBlacklist {
 				wfDebugLog( 'SpamBlacklist', "Excluding whitelisted URLs from " . count( $whitelists ) .
 					" regexes: " . implode( ', ', $whitelists ) . "\n" );
 				foreach ( $whitelists as $regex ) {
-					Wikimedia\suppressWarnings();
+					AtEase::suppressWarnings();
 					$newLinks = preg_replace( $regex, '', $links );
-					Wikimedia\restoreWarnings();
+					AtEase::restoreWarnings();
 					if ( is_string( $newLinks ) ) {
 						// If there wasn't a regex error, strip the matching URLs
 						$links = $newLinks;
@@ -124,10 +125,10 @@ class SpamBlacklist extends BaseBlacklist {
 				" regexes: " . implode( ', ', $blacklists ) . "\n" );
 			$retVal = false;
 			foreach ( $blacklists as $regex ) {
-				Wikimedia\suppressWarnings();
+				AtEase::suppressWarnings();
 				$matches = [];
 				$check = ( preg_match_all( $regex, $links, $matches ) > 0 );
-				Wikimedia\restoreWarnings();
+				AtEase::restoreWarnings();
 				if ( $check ) {
 					wfDebugLog( 'SpamBlacklist', "Match!\n" );
 					$ip = RequestContext::getMain()->getRequest()->getIP();

@@ -12,22 +12,36 @@
 	background-color: #c8ccd1;
 }
 
-.ve-ui-mwParameterPage-warning {
-	color: #202122; /* @wmui-color-base10 */
-	font-weight: normal;
-	margin-top: 0.5em;
-}
-
-.ve-ui-mwParameterPage-warning .oo-ui-iconElement-icon {
-	opacity: 0.87;
-}
-
 .ve-ui-mwParameterPage-info {
 	margin-bottom: 0.5em;
 }
 
+.ve-ui-mwParameterPage-label {
+	display: inline;
+	vertical-align: middle;
+	font-weight: bold;
+	overflow-wrap: break-word;
+}
+
+.ve-ui-mwParameterPage-statusIndicator {
+	display: inline-block;
+	vertical-align: middle;
+	opacity: 0.5;
+}
+
 .ve-ui-mwParameterPage-inlineDescription {
 	position: relative;
+	/* FIXME remove when sidebar feature flag is gone T303386 */
+	padding-left: 2.5em;
+}
+
+.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-inlineDescription {
+	/* FIXME remove when sidebar feature flag is gone T303386 */
+	padding-left: 0;
+}
+
+.ve-ui-mwParameterPage-inlineDescription > .ve-ui-expandableContent-container {
+	right: 0;
 }
 
 .ve-ui-mwParameterPage-undocumentedLabel {

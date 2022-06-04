@@ -30,6 +30,10 @@ abstract class N3RdfWriterBase extends RdfWriterBase {
 		$this->quoter = $quoter ?: new N3Quoter();
 	}
 
+	/**
+	 * @param string $base
+	 * @param string|null $local
+	 */
 	protected function writeRef( $base, $local = null ) {
 		if ( $local === null ) {
 			if ( $base === 'a' ) {
@@ -42,6 +46,10 @@ abstract class N3RdfWriterBase extends RdfWriterBase {
 		}
 	}
 
+	/**
+	 * @param string $iri
+	 * @param bool $trustIRI
+	 */
 	protected function writeIRI( $iri, $trustIRI = false ) {
 		if ( !$trustIRI ) {
 			$iri = $this->quoter->escapeIRI( $iri );
@@ -49,6 +57,9 @@ abstract class N3RdfWriterBase extends RdfWriterBase {
 		$this->write( "<$iri>" );
 	}
 
+	/**
+	 * @inheritDoc
+	 */
 	protected function writeText( $text, $language = null ) {
 		$value = $this->quoter->escapeLiteral( $text );
 		$this->write( '"' . $value . '"' );
@@ -65,7 +76,7 @@ abstract class N3RdfWriterBase extends RdfWriterBase {
 	 */
 	protected function writeValue( $value, $typeBase, $typeLocal = null ) {
 		$value = $this->quoter->escapeLiteral( $value );
-		$this->write( '"' . $value. '"' );
+		$this->write( '"' . $value . '"' );
 
 		if ( $typeBase !== null ) {
 			$this->write( '^^' );

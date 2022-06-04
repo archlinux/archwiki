@@ -14,6 +14,7 @@ use Wikimedia\Dodo\Internal\Util;
  *
  * @see https://dom.spec.whatwg.org/#domtokenlist
  * @package Wikimedia\Dodo
+ * @phan-forbid-undeclared-magic-properties
  */
 class DOMTokenList implements \Wikimedia\IDLeDOM\DOMTokenList {
 	// Stub out methods not yet implemented.

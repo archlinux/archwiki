@@ -13,5 +13,7 @@
 	"monobook-more-actions": "Болей",
 	"monobook-cactions-label": "Дзеяньні на старонцы",
 	"monobook-notifications-link": "Паведамленьні ($1)",
-	"monobook-notifications-link-none": "Паведамленьні"
+	"monobook-notifications-link-none": "Паведамленьні",
+	"monobook-view-history": "Гісторыя",
+	"monobook-action-undelete": "Аднавіць $1 {{PLURAL:$1|рэдагаваньне|рэдагаваньні|рэдагаваньняў}}"
 }

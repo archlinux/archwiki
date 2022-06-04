@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Config;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentModelHandler;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Core\Sanitizer;
@@ -12,7 +13,6 @@ use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\Logger\ParsoidLogger;
 use Wikimedia\Parsoid\Parsoid;
 use Wikimedia\Parsoid\Tokens\Token;
-use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\Title;
@@ -20,16 +20,11 @@ use Wikimedia\Parsoid\Utils\TitleException;
 use Wikimedia\Parsoid\Utils\TitleNamespace;
 use Wikimedia\Parsoid\Utils\TokenUtils;
 use Wikimedia\Parsoid\Utils\Utils;
+use Wikimedia\Parsoid\Wikitext\ContentModelHandler as WikitextContentModelHandler;
 use Wikimedia\Parsoid\Wt2Html\Frame;
 use Wikimedia\Parsoid\Wt2Html\PageConfigFrame;
 use Wikimedia\Parsoid\Wt2Html\ParserPipelineFactory;
-use Wikimedia\RemexHtml\DOM\DOMBuilder;
-use Wikimedia\RemexHtml\Tokenizer\PlainAttributes;
-use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
-use Wikimedia\RemexHtml\TreeBuilder\Dispatcher;
-use Wikimedia\RemexHtml\TreeBuilder\TreeBuilder;
-
-// phpcs:disable MediaWiki.Commenting.FunctionComment.MissingDocumentationPublic
+use Wikimedia\Parsoid\Wt2Html\TreeBuilder\RemexPipeline;
 
 /**
  * Environment/Envelope class for Parsoid
@@ -48,6 +43,9 @@ class Env {
 	/** @var DataAccess */
 	private $dataAccess;
 
+	/** @var ContentMetadataCollector */
+	private $metadata;
+
 	/**
 	 * The top-level frame for this conversion.  This largely wraps the
 	 * PageConfig.
@@ -60,14 +58,6 @@ class Env {
 	// XXX In the future, perhaps replace PageConfig with the Frame, and
 	// add $this->currentFrame (relocated from TokenTransformManager) if/when
 	// we've removed async parsing.
-
-	/**
-	 * @var bool Are data accesses disabled?
-	 *
-	 * FIXME: This can probably moved to a NoDataAccess instance, rather than
-	 * being an explicit mode of Parsoid.  See T229469
-	 */
-	private $noDataAccess;
 
 	/**
 	 * @var bool Are we using native template expansion?
@@ -119,6 +109,9 @@ class Env {
 	/** @var int used to generate uids as needed during this parse */
 	private $uid = 1;
 
+	/** @var int used to generate annotation uids as needed during this parse */
+	private $annUid = 0;
+
 	/** @var array[] Lints recorded */
 	private $lints = [];
 
@@ -136,9 +129,6 @@ class Env {
 
 	/** @var ParsoidLogger */
 	private $parsoidLogger;
-
-	/** @var bool */
-	private $scrubWikitext = false;
 
 	/**
 	 * The default content version that Parsoid assumes it's serializing or
@@ -188,11 +178,8 @@ class Env {
 	/** @var Document */
 	private $domDiff;
 
-	/**
-	 * Page properties (module resources primarily) that need to be output
-	 * @var array
-	 */
-	private $outputProps = [];
+	/** @var bool */
+	public $hasAnnotations;
 
 	/**
 	 * PORT-FIXME: public currently
@@ -226,26 +213,37 @@ class Env {
 	public $extensionCache = [];
 
 	/**
-	 * Prevent GC from collecting the PHP wrapper around the libxml doc
+	 * The current top-level document. During wt2html, this will be the document
+	 * associated with the RemexPipeline. During html2wt, this will be the
+	 * input document, typically passed as a constructor option.
+	 *
 	 * @var Document
 	 */
 	public $topLevelDoc;
 
-	/** @var Dispatcher */
-	private $dispatcher;
+	/**
+	 * The RemexPipeline used during a wt2html operation.
+	 *
+	 * @var RemexPipeline|null
+	 */
+	private $remexPipeline;
+
+	/**
+	 * @var WikitextContentModelHandler
+	 */
+	private $wikitextContentModelHandler;
 
 	/**
 	 * @param SiteConfig $siteConfig
 	 * @param PageConfig $pageConfig
 	 * @param DataAccess $dataAccess
+	 * @param ContentMetadataCollector $metadata
 	 * @param ?array $options
 	 *  - wrapSections: (bool) Whether `<section>` wrappers should be added.
 	 *  - pageBundle: (bool) Sets ids on nodes and stores data-* attributes in a JSON blob.
-	 *  - scrubWikitext: (bool) Indicates emit "clean" wikitext.
 	 *  - traceFlags: (array) Flags indicating which components need to be traced
 	 *  - dumpFlags: (bool[]) Dump flags
 	 *  - debugFlags: (bool[]) Debug flags
-	 *  - noDataAccess: boolean
 	 *  - nativeTemplateExpansion: boolean
 	 *  - discardDataParsoid: boolean
 	 *  - offsetType: 'byte' (default), 'ucs2', 'char'
@@ -264,7 +262,10 @@ class Env {
 	 *      it gets initialized for parsing.
 	 */
 	public function __construct(
-		SiteConfig $siteConfig, PageConfig $pageConfig, DataAccess $dataAccess,
+		SiteConfig $siteConfig,
+		PageConfig $pageConfig,
+		DataAccess $dataAccess,
+		ContentMetadataCollector $metadata,
 		?array $options = null
 	) {
 		self::checkPlatform();
@@ -272,10 +273,8 @@ class Env {
 		$this->siteConfig = $siteConfig;
 		$this->pageConfig = $pageConfig;
 		$this->dataAccess = $dataAccess;
+		$this->metadata = $metadata;
 		$this->topFrame = new PageConfigFrame( $this, $pageConfig, $siteConfig );
-		if ( isset( $options['scrubWikitext'] ) ) {
-			$this->scrubWikitext = !empty( $options['scrubWikitext'] );
-		}
 		if ( isset( $options['wrapSections'] ) ) {
 			$this->wrapSections = !empty( $options['wrapSections'] );
 		}
@@ -294,7 +293,6 @@ class Env {
 		}
 		$this->htmlVariantLanguage = $options['htmlVariantLanguage'] ?? null;
 		$this->wtVariantLanguage = $options['wtVariantLanguage'] ?? null;
-		$this->noDataAccess = !empty( $options['noDataAccess'] );
 		$this->nativeTemplateExpansion = !empty( $options['nativeTemplateExpansion'] );
 		$this->discardDataParsoid = !empty( $options['discardDataParsoid'] );
 		$this->requestOffsetType = $options['offsetType'] ?? 'byte';
@@ -308,14 +306,15 @@ class Env {
 			'dumpFlags' => $this->dumpFlags,
 			'traceFlags' => $this->traceFlags
 		] );
-		if ( $this->hasTraceFlag( 'time' ) || $this->hasTraceFlag( 'time/dompp' ) ) {
+		if ( $this->hasTraceFlag( 'time' ) ) {
 			$this->profiling = true;
 		}
 		$this->setupTopLevelDoc( $options['topLevelDoc'] ?? null );
+		$this->wikitextContentModelHandler = new WikitextContentModelHandler( $this );
 	}
 
 	/**
-	 * Check to see if the PHP platform is sane
+	 * Check to see if the PHP platform is sensible
 	 */
 	private static function checkPlatform() {
 		static $checked;
@@ -417,6 +416,14 @@ class Env {
 	}
 
 	/**
+	 * Write out a string (because it was requested by dumpFlags)
+	 * @param string $str
+	 */
+	public function writeDump( string $str ) {
+		error_log( $str );
+	}
+
+	/**
 	 * Get the site config
 	 * @return SiteConfig
 	 */
@@ -440,8 +447,12 @@ class Env {
 		return $this->dataAccess;
 	}
 
-	public function noDataAccess(): bool {
-		return $this->noDataAccess;
+	/**
+	 * Return the ContentMetadataCollector.
+	 * @return ContentMetadataCollector
+	 */
+	public function getMetadata(): ContentMetadataCollector {
+		return $this->metadata;
 	}
 
 	public function nativeTemplateExpansionEnabled(): bool {
@@ -473,6 +484,10 @@ class Env {
 		return $this->wrapSections;
 	}
 
+	/**
+	 * Get the pipeline factory.
+	 * @return ParserPipelineFactory
+	 */
 	public function getPipelineFactory(): ParserPipelineFactory {
 		return $this->pipelineFactory;
 	}
@@ -701,6 +716,22 @@ class Env {
 	}
 
 	/**
+	 * Generate a new annotation uid
+	 * @return int
+	 */
+	public function generateAnnotationUID(): int {
+		return $this->annUid++;
+	}
+
+	/**
+	 * Generate a new annotation id
+	 * @return string
+	 */
+	public function newAnnotationId(): string {
+		return "mwa" . $this->generateAnnotationUID();
+	}
+
+	/**
 	 * Generate a new about id
 	 * @return string
 	 */
@@ -734,7 +765,7 @@ class Env {
 
 	/**
 	 * When an environment is constructed, we initialize a document (and
-	 * dispatcher to it) to be used throughout the parse.
+	 * RemexPipeline) to be used throughout the parse.
 	 *
 	 * @param ?Document $topLevelDoc
 	 */
@@ -742,71 +773,28 @@ class Env {
 		if ( $topLevelDoc ) {
 			$this->topLevelDoc = $topLevelDoc;
 		} else {
-			list(
-				$this->topLevelDoc,
-				$this->dispatcher
-			) = $this->createDocumentDispatcher();
+			$this->remexPipeline = new RemexPipeline( $this );
+			$this->topLevelDoc = $this->remexPipeline->doc;
 		}
 		DOMDataUtils::prepareDoc( $this->topLevelDoc );
 	}
 
 	/**
 	 * @param bool $atTopLevel
-	 * @return array
+	 * @return RemexPipeline
 	 */
-	public function fetchDocumentDispatcher( bool $atTopLevel ): array {
+	public function fetchRemexPipeline( bool $atTopLevel ): RemexPipeline {
 		if ( $atTopLevel ) {
-			return [ $this->topLevelDoc, $this->dispatcher ];
+			return $this->remexPipeline;
 		} else {
-			// Shouldn't need a bag since children are migrated to a fragment
-			// of the top level doc immediately after the tree is built and
-			// before data objects are loaded.
-			return $this->createDocumentDispatcher();
+			$pipeline = new RemexPipeline( $this );
+			// Attach the top-level bag to the document, for the convenience
+			// of code that modifies the data within the RemexHtml TreeBuilder
+			// pipeline, prior to the migration of nodes to the top-level
+			// document.
+			DOMDataUtils::prepareChildDoc( $this->topLevelDoc, $pipeline->doc );
+			return $pipeline;
 		}
-	}
-
-	/**
-	 * Returns a document and dispatcher to it.
-	 *
-	 * The dispatcher tracks the insertion mode and relays token events to
-	 * specific handlers.
-	 *
-	 * Since we do our own tokenizing, the dispatcher is needed as our
-	 * entrypoint to tree building.
-	 *
-	 * @return array
-	 */
-	private function createDocumentDispatcher(): array {
-		// The options to DOMBuilder should be kept in sync with its other
-		// uses, so grep for it before changing
-		$domBuilder = new class( [
-			'suppressHtmlNamespace' => true,
-			# 'suppressIdAttribute' => true,
-			#'domExceptionClass' => \Wikimdedia\Dodo\DOMException::class,
-		] ) extends DOMBuilder {
-				/** @inheritDoc */
-				protected function createDocument(
-					string $doctypeName = null,
-					string $public = null,
-					string $system = null
-				) {
-					// @phan-suppress-next-line PhanTypeMismatchReturn
-					return DOMCompat::newDocument( $doctypeName === 'html' );
-				}
-		};
-		$dispatcher = new Dispatcher( new TreeBuilder( $domBuilder ) );
-
-		// PORT-FIXME: Necessary to setEnableCdataCallback
-		$tokenizer = new Tokenizer( $dispatcher, '', [ 'ignoreErrors' => true ] );
-
-		$dispatcher->startDocument( $tokenizer, null, null );
-		$dispatcher->doctype( 'html', '', '', false, 0, 0 );
-		$dispatcher->startTag( 'body', new PlainAttributes(), false, 0, 0 );
-
-		$doc = $domBuilder->getFragment();
-		'@phan-var Document $doc'; // @var Document $doc
-
-		return [ $doc, $dispatcher ];
 	}
 
 	/**
@@ -1002,12 +990,13 @@ class Env {
 	): ContentModelHandler {
 		$contentmodel = $contentmodel ?? $this->pageConfig->getContentModel();
 		$handler = $this->siteConfig->getContentModelHandler( $contentmodel );
-		if ( !$handler ) {
-			$this->log( 'warn', "Unknown contentmodel $contentmodel" );
-			$contentmodel = 'wikitext';
-			$handler = $this->siteConfig->getContentModelHandler( $contentmodel );
+		if ( !$handler && $contentmodel !== 'wikitext' ) {
+			// For now, fallback to 'wikitext' as the default handler
+			// FIXME: This is bogus, but this is just so suppress noise in our
+			// logs till we get around to handling all these other content models.
+			// $this->log( 'warn', "Unknown contentmodel $contentmodel" );
 		}
-		return $handler;
+		return $handler ?? $this->wikitextContentModelHandler;
 	}
 
 	/**
@@ -1019,14 +1008,6 @@ class Env {
 		return $this->siteConfig->langConverterEnabledForLanguage(
 			$this->pageConfig->getPageLanguage()
 		);
-	}
-
-	/**
-	 * Indicates emit "clean" wikitext compared to what we would if we didn't normalize HTML
-	 * @return bool
-	 */
-	public function shouldScrubWikitext(): bool {
-		return $this->scrubWikitext;
 	}
 
 	/**
@@ -1069,27 +1050,6 @@ class Env {
 	 */
 	public function getWtVariantLanguage(): ?string {
 		return $this->wtVariantLanguage;
-	}
-
-	/**
-	 * Update K=[V1,V2,...] that might need to be output as part of the
-	 * generated HTML.  Ex: module styles, modules scripts, ...
-	 *
-	 * @param string $key
-	 * @param array $value
-	 */
-	public function addOutputProperty( string $key, array $value ): void {
-		if ( !isset( $this->outputProps[$key] ) ) {
-			$this->outputProps[$key] = [];
-		}
-		$this->outputProps[$key] = array_merge( $this->outputProps[$key], $value );
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getOutputProperties(): array {
-		return $this->outputProps;
 	}
 
 	/**

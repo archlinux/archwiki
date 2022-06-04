@@ -3,6 +3,7 @@
 		"authors": [
 			"Alp Er Tunqa",
 			"Amir a57",
+			"Bir morty",
 			"Ebrahimi-amir",
 			"Koroğlu",
 			"Mousa",
@@ -41,6 +42,9 @@
 	"visualeditor-dialog-meta-settings-toc-disable": "هئچ واخت",
 	"visualeditor-dialog-meta-settings-toc-force": "هر واخت",
 	"visualeditor-dialog-meta-templatesused-noresults": "هئچ بیر شابلون تاپیلمادی.",
+	"visualeditor-dialog-transclusion-confirmation-discard": "دییشیکلیکدن وازگئچ",
+	"visualeditor-dialog-transclusion-contextitem-loading": "یوکلنیر...",
+	"visualeditor-dialog-transclusion-help-page-shortcuts": "[//www.mediawiki.org/wiki/Special:MyLanguage/VisualEditor/Portal/Keyboard_shortcuts#Template_editor_dialog_shortcuts_and_keyboard_interactions کیبورد شوْرتکاتلاری]",
 	"visualeditor-dialogbutton-meta-tooltip": "صفحه تنظیملری",
 	"visualeditor-languages-tool": "دیل‌لر",
 	"visualeditor-linkinspector-button-link-external": "ائشیگه باغلانتی",

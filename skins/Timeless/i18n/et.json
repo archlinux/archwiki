@@ -20,5 +20,7 @@
 	"timeless-pagemisc": "Veel",
 	"timeless-projects": "Teistes projektides",
 	"timeless.css": "/* Siin asuv kaskaadilaadistik laaditakse kõigi kujunduse Timeless kasutajate jaoks. */",
-	"timeless.js": "/* Siin asuv JavaScript laaditakse kõigi kujunduse Timeless kasutajate jaoks. */"
+	"timeless.js": "/* Siin asuv JavaScript laaditakse kõigi kujunduse Timeless kasutajate jaoks. */",
+	"timeless-view-history": "Ajalugu",
+	"timeless-action-undelete": "Taasta {{PLURAL:$1|üks muudatus|$1 muudatust}}"
 }

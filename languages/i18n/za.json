@@ -73,12 +73,16 @@
 	"searchbutton": "Ra",
 	"go": "Bae",
 	"searcharticle": "Bae",
+	"view-history": "Cazyawj lizsij",
 	"history": "Lizsij",
 	"history_short": "Lizsij",
 	"printableversion": "Gojyaenq banj",
 	"permalink": "Gaeq-lamh kaemdaengz",
+	"view-view": "Doeg",
 	"edit": "gaij",
+	"view-edit": "gaij",
 	"create": "Laeb",
+	"view-create": "Laeb",
 	"delete": "Duz",
 	"protect": "Hahdiuz",
 	"protect_change": "gaij",
@@ -235,5 +239,9 @@
 	"watchlisttools-view": "Cazyawj gaij mizgven",
 	"specialpages": "Doenghmae daegxsei",
 	"tags-edit": "gaij",
-	"searchsuggest-search": "Ra {{SITENAME}}"
+	"searchsuggest-search": "Ra {{SITENAME}}",
+	"nstab-mainpage": "Feanzcieng",
+	"skin-action-protect": "Hahdiuz",
+	"skin-action-delete": "Ca",
+	"skin-action-move": "Daen"
 }

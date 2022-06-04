@@ -23,7 +23,7 @@
 		return new mw.mmv.ui.StripeButtons( $fixture );
 	}
 
-	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var buttons,
 			oldMwUserIsAnon = mw.user.isAnon;
 
@@ -43,7 +43,7 @@
 		mw.user.isAnon = oldMwUserIsAnon;
 	} );
 
-	QUnit.test( 'set()/empty() sanity test:', function ( assert ) {
+	QUnit.test( 'set()/empty() sense test:', function ( assert ) {
 		var buttons = createStripeButtons(),
 			fakeImageInfo = { descriptionUrl: '//commons.wikimedia.org/wiki/File:Foo.jpg' },
 			fakeRepoInfo = { displayName: 'Wikimedia Commons', isCommons: function () { return true; } };

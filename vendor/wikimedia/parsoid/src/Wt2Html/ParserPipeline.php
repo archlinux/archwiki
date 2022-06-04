@@ -165,6 +165,8 @@ class ParserPipeline {
 	 *
 	 * @param string $input Input wikitext
 	 * @param array $opts
+	 *  - atTopLevel: (bool) Whether we are processing the top-level document
+	 *  - sol: (bool) Whether input should be processed in start-of-line context
 	 * @return Document|array final DOM or array of token chnks
 	 */
 	public function parseChunkily( string $input, array $opts ) {
@@ -217,10 +219,10 @@ class ParserPipeline {
 			$srcText = $initialState['srcText'] ?? null;
 			if ( isset( $tplArgs['title'] ) ) {
 				$title = $tplArgs['title'];
-				$args = $tplArgs['attribs'];
+				$args = $tplArgs['attribs']; // KV[]
 			} else {
 				$title = $frame->getTitle();
-				$args = $frame->getArgs()->args;
+				$args = $frame->getArgs()->args; // KV[]
 			}
 			$frame = $frame->newChild( $title, $args, $srcText );
 		}

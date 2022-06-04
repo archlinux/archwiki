@@ -7,7 +7,8 @@
 			"Spacebirdy",
 			"Sveinn í Felli",
 			"Ævar Arnfjörð Bjarmason",
-			"לערי ריינהארט"
+			"לערי ריינהארט",
+			"LoveIceLang"
 		]
 	},
 	"renameuser": "Breyta notandanafni",
@@ -34,7 +35,7 @@
 	"renameuser-page-unmoved": "Ekki var hægt að færa síðuna $1 á $2.",
 	"log-name-renameuser": "Skrá yfir nafnabreytingar notanda",
 	"log-description-renameuser": "Þetta er skrá yfir breytingar á notendanöfnum.",
-	"logentry-renameuser-renameuser": "$1 breytti {{GENDER:$2|notendanafni}} $4 ({{PLURAL:$6|$6 breyting|$6 breytingar}}) í {{GENDER:$7|$5}}",
+	"logentry-renameuser-renameuser": "$1 breytti {{GENDER:$2|notandanafni}} $4 ({{PLURAL:$6|$6 breyting|$6 breytingar}}) í {{GENDER:$7|$5}}",
 	"renameuser-move-log": "Færði síðuna sjálfvirkt þegar {{GENDER:$2|notendanafni}} \"[[User:$1|$1]]\" var breytt í \"[[User:$2|$2]]\"",
 	"action-renameuser": "endurnefna notendur",
 	"right-renameuser": "Endurnefna notendur",

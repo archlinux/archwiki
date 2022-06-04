@@ -30,5 +30,7 @@
 	"timeless-languages": "言語",
 	"timeless-projects": "他プロジェクト",
 	"timeless.css": "/* ここにあるすべてのCSSは、Timeless外装を使用している利用者に対して読み込まれます */",
-	"timeless.js": "/* ここにあるすべてのJavaScriptは、Timeless外装を使用している利用者に対して読み込まれます */"
+	"timeless.js": "/* ここにあるすべてのJavaScriptは、Timeless外装を使用している利用者に対して読み込まれます */",
+	"timeless-view-history": "履歴",
+	"timeless-action-undelete": "{{PLURAL:$1|$1 編集}}を復元"
 }

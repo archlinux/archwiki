@@ -22,7 +22,7 @@ ve.ui.MWTransclusionContextItem = function VeUiMWTransclusionContextItem() {
 	// Initialization
 	this.$element.addClass( 've-ui-mwTransclusionContextItem' );
 	if ( !this.model.isSingleTemplate() ) {
-		this.setLabel( ve.msg( 'visualeditor-dialogbutton-transclusion-tooltip' ) );
+		this.setLabel( ve.msg( 'visualeditor-dialog-transclusion-title-edit-transclusion' ) );
 	}
 };
 
@@ -68,7 +68,7 @@ ve.ui.MWTransclusionContextItem.static.isCompatibleWith =
  */
 ve.ui.MWTransclusionContextItem.prototype.isDeletable = function () {
 	var veConfig = mw.config.get( 'wgVisualEditorConfig' );
-	return veConfig.transclusionDialogBackButton;
+	return veConfig.transclusionDialogBackButton || ve.ui.MWTransclusionContextItem.super.prototype.isDeletable.call( this );
 };
 
 /**
@@ -84,9 +84,9 @@ ve.ui.MWTransclusionContextItem.prototype.getDescription = function () {
 };
 
 /**
- * @inheritdoc
+ * @param {string} [source] Source for tracking in {@see ve.ui.WindowAction.open}
  */
-ve.ui.MWTransclusionContextItem.prototype.onEditButtonClick = function () {
+ve.ui.MWTransclusionContextItem.prototype.onEditButtonClick = function ( source ) {
 	var surfaceModel = this.context.getSurface().getModel(),
 		selection = surfaceModel.getSelection();
 
@@ -96,8 +96,36 @@ ve.ui.MWTransclusionContextItem.prototype.onEditButtonClick = function () {
 		)[ 0 ] );
 	}
 
-	// Parent method
-	ve.ui.MWTransclusionContextItem.super.prototype.onEditButtonClick.apply( this, arguments );
+	this.toggleLoadingVisualization( true );
+
+	// This replaces what the parent does because we can't store the `onTearDownCallback` argument
+	// in the {@see ve.ui.commandRegistry}.
+	this.getCommand().execute( this.context.getSurface(), [
+		// This will be passed as `name` and `data` arguments to {@see ve.ui.WindowAction.open}
+		ve.ui.MWTransclusionDialog.static.name,
+		{
+			onTearDownCallback: this.toggleLoadingVisualization.bind( this )
+		}
+	], source || 'context' );
+	this.emit( 'command' );
+};
+
+/**
+ * @private
+ * @param {boolean} [isLoading=false]
+ */
+ve.ui.MWTransclusionContextItem.prototype.toggleLoadingVisualization = function ( isLoading ) {
+	this.editButton.setDisabled( isLoading );
+	if ( isLoading ) {
+		this.originalEditButtonLabel = this.editButton.getLabel();
+		this.editButton.setLabel( ve.msg( 'visualeditor-dialog-transclusion-contextitem-loading' ) );
+	} else if ( this.originalEditButtonLabel ) {
+		this.editButton.setLabel( this.originalEditButtonLabel );
+	}
+
+	if ( this.isDeletable() ) {
+		this.deleteButton.toggle( !isLoading );
+	}
 };
 
 /* Registration */

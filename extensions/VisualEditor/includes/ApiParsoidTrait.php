@@ -153,7 +153,7 @@ trait ApiParsoidTrait {
 				[
 					'code' => $response['code'],
 					'trace' => ( new Exception )->getTraceAsString(),
-					'response' => $response['body'],
+					'response' => [ 'body' => $response['body'] ],
 					'requestPath' => $path,
 					'requestIfMatch' => $reqheaders['If-Match'] ?? '',
 				]
@@ -188,12 +188,12 @@ trait ApiParsoidTrait {
 	 *
 	 * If the oldid is invalid, an API error will be reported.
 	 *
-	 * @param Title $title Page title
+	 * @param Title|null $title Page title, not required if $oldid is used
 	 * @param int|string|null $oldid Optional revision ID.
 	 *  Should be an integer but will validate and convert user input strings.
 	 * @return RevisionRecord A revision record
 	 */
-	protected function getValidRevision( Title $title, $oldid = null ): RevisionRecord {
+	protected function getValidRevision( Title $title = null, $oldid = null ): RevisionRecord {
 		$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
 		if ( $oldid === null || $oldid === 0 ) {
 			return $this->getLatestRevision( $title );
@@ -314,6 +314,7 @@ trait ApiParsoidTrait {
 	 * @param string|null $code See ApiErrorFormatter::addError()
 	 * @param array|null $data See ApiErrorFormatter::addError()
 	 * @param int|null $httpCode HTTP error code to use
+	 * @return never
 	 */
 	abstract public function dieWithError( $msg, $code = null, $data = null, $httpCode = null );
 

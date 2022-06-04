@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Minh Nguyen",
-			"Nguyên Lê",
-			"Nghiemtrongdai VN"
+			"Nghiemtrongdai VN",
+			"Nguyên Lê"
 		]
 	},
 	"skinname-timeless": "Vượt thời gian",
@@ -26,5 +26,7 @@
 	"timeless-languages": "Ngôn ngữ",
 	"timeless-projects": "Dự án khác",
 	"timeless.css": "/* Tất cả mã CSS tại đây sẽ được tải khi người dùng sử dụng giao diện Vượt thời gian */",
-	"timeless.js": "/* Tất cả mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện Vượt thời gian */"
+	"timeless.js": "/* Tất cả mã JavaScript tại đây sẽ được tải khi người dùng sử dụng giao diện Vượt thời gian */",
+	"timeless-view-history": "Lịch sử",
+	"timeless-action-undelete": "Phục hồi {{PLURAL:$1|một sửa đổi|$1 sửa đổi}}"
 }

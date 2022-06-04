@@ -11,7 +11,7 @@
  */
 
 /**
- * @typedef {SuggestionClickEvent} SubmitEvent
+ * @typedef {SuggestionClickEvent} SearchSubmitEvent
  */
 
-/* exported SuggestionClickEvent, SubmitEvent, FetchEndEvent */
+/* exported SuggestionClickEvent, SuggestionSubmitEvent, FetchEndEvent */

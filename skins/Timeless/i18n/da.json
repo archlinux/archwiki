@@ -23,5 +23,7 @@
 	"timeless-pagetools": "Sidehandlinger",
 	"timeless-languages": "Sprog",
 	"timeless-projects": "Andre projekter",
-	"timeless.js": "/* Enhver JavaScript her vil blive indlæst for brugere der bruger Timeless udseendet */"
+	"timeless.js": "/* Enhver JavaScript her vil blive indlæst for brugere der bruger Timeless udseendet */",
+	"timeless-view-history": "Historik",
+	"timeless-action-undelete": "Gendan {{PLURAL:$1|én redigering|$1 redigeringer}}"
 }

@@ -24,5 +24,7 @@
 	"timeless-pagetools": "Tindakan halaman",
 	"timeless-languages": "Bahasa",
 	"timeless-projects": "Proyek lain",
-	"timeless.js": "/* Semua JavaScript di sini akan dimuatkan untuk para pengguna yang menggunakan kulit Timeless */"
+	"timeless.js": "/* Semua JavaScript di sini akan dimuatkan untuk para pengguna yang menggunakan kulit Timeless */",
+	"timeless-view-history": "Riwayat",
+	"timeless-action-undelete": "Batal hapus {{PLURAL:$1|$1 suntingan}}"
 }

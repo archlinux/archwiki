@@ -237,11 +237,24 @@
 		data = {
 			section: 'info',
 			page: 'emoticons',
-			characters: [ ':)', ':))', ':(', '<3', ';)' ]
+			characters: [
+				':)', ':))', ':(', '<3', ';)',
+				{
+					label: ':-s',
+					title: 'unsure-face',
+					action: {
+						type: 'replace',
+						options: {
+							peri: ':-s',
+							selectPeri: false
+						}
+					}
+				} ]
 		};
 		assert.strictEqual( this.$ui.find( '*[rel="info"].section *[rel="emoticons"].page *[rel=":))"]' ).length, 0, 'Before adding characters' );
 		this.$target.wikiEditor( 'addToToolbar', data );
 		assert.strictEqual( this.$ui.find( '*[rel="info"].section *[rel="emoticons"].page *[rel=":))"]' ).length, 1, 'After adding characters' );
+		assert.strictEqual( this.$ui.find( '*[rel="info"].section *[rel="emoticons"].page *[title="unsure-face"]' ).length, 1, 'After adding characters find the set title' );
 
 		// Remove character
 		data = {

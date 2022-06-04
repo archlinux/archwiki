@@ -20,5 +20,7 @@
 	"timeless-namespaces": "Прасторы назваў",
 	"timeless-pagetools": "Дзеяньні на старонцы",
 	"timeless-languages": "Мовы",
-	"timeless.js": "/* Усе JavaScript, зьмешчаныя тут, будуць загружаныя для удзельнікаў, якія выкарыстоўваюць тэму афармленьня Timeless */"
+	"timeless.js": "/* Усе JavaScript, зьмешчаныя тут, будуць загружаныя для ўдзельнікаў, якія выкарыстоўваюць тэму афармленьня Timeless */",
+	"timeless-view-history": "Гісторыя",
+	"timeless-action-undelete": "Аднавіць $1 {{PLURAL:$1|рэдагаваньне|рэдагаваньні|рэдагаваньняў}}"
 }

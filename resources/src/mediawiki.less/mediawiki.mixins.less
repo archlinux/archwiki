@@ -10,6 +10,7 @@
 
 /* stylelint-disable selector-class-pattern */
 
+// Deprecated in MW v1.38.0, use unprefixed `background-image:` now.
 .background-image( @url ) {
 	background-image: url( @url );
 }
@@ -24,6 +25,7 @@
 	background-image: linear-gradient( to bottom, @startColor @startPos, @endColor @endPos );
 }
 
+// Deprecated in MW v1.38.0, use unprefixed `list-style-image:` now.
 .list-style-image( @url ) {
 	list-style-image: url( @url );
 }
@@ -65,6 +67,15 @@
 		text-overflow: @value;
 		white-space: nowrap;
 	}
+}
+
+// Enable (`text` or `element`) or prevent (`none`) text/element selection.
+// Since MW 1.38
+.user-select( @value ) {
+	-webkit-user-select: @value; // Chrome 4-53, Safari 3.1-, Opera 15-40, Android 2.1-4.4.4
+	-moz-user-select: @value; // Firefox 2-68
+	-ms-user-select: @value; // IE 10-11, Edge 12-18
+	user-select: @value;
 }
 
 // Deprecated in MW v1.37.0, use unprefixed `transform:` now.

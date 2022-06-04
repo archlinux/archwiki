@@ -9,14 +9,15 @@ require_once __DIR__ . '/../tools/Maintenance.php';
 
 use Composer\Factory;
 use Composer\IO\NullIO;
-
 use MediaWiki\MediaWikiServices;
 use MWParsoid\ParsoidServices;
 use Wikimedia\Parsoid\Config\Api\ApiHelper;
 use Wikimedia\Parsoid\Config\Api\DataAccess;
 use Wikimedia\Parsoid\Config\Api\PageConfig;
 use Wikimedia\Parsoid\Config\Api\SiteConfig;
+use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ClientError;
+use Wikimedia\Parsoid\Core\ContentMetadataCollector;
 use Wikimedia\Parsoid\Core\PageBundle;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\Mocks\MockDataAccess;
@@ -38,6 +39,9 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 
 	/** @var PageConfig */
 	private $pageConfig;
+
+	/** @var ContentMetadataCollector */
+	private $metadata;
 
 	/** @var Parsoid */
 	private $parsoid;
@@ -125,11 +129,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		$this->addOption(
 			'pageBundle',
 			'Output pagebundle JSON'
-		);
-		$this->addOption(
-			'scrubWikitext',
-			'Apply wikitext scrubbing while serializing.  This is also used ' .
-			'for a mode of normalization (--normalize) applied when parsing.'
 		);
 		$this->addOption(
 			'wrapSections',
@@ -271,6 +270,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$configOpts['revid'] ?? null,
 			$configOpts['pageContent'] ?? null
 		);
+		$this->metadata = new \ParserOutput();
 		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
@@ -286,7 +286,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			'title' => $siteConfig->mainpage(),
 			'loadData' => true,
 		] );
-
+		$this->metadata = new StubMetadataCollector();
 		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
@@ -296,11 +296,11 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 	private function setupMockConfig( array $configOpts ) {
 		$siteConfig = new MockSiteConfig( $configOpts );
 		$dataAccess = new MockDataAccess( $configOpts );
-		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
-
 		$pageContent = new MockPageContent( [ 'main' =>
 			$configOpts['pageContent'] ?? '' ] );
 		$this->pageConfig = new MockPageConfig( $configOpts, $pageContent );
+		$this->metadata = new StubMetadataCollector();
+		$this->parsoid = new Parsoid( $siteConfig, $dataAccess );
 	}
 
 	/**
@@ -335,7 +335,7 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 
 		try {
 			return $this->parsoid->wikitext2html(
-				$this->pageConfig, $parsoidOpts
+				$this->pageConfig, $parsoidOpts, $headers, $this->metadata
 			);
 		} catch ( ClientError $e ) {
 			$this->error( $e->getMessage() );
@@ -376,7 +376,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 			$html = TestUtils::normalizeOut(
 				$html, [
 					'parsoidOnly' => $this->getOption( 'normalize' ) === 'parsoid',
-					'scrubWikitext' => $this->hasOption( 'scrubWikitext' ),
 				]
 			);
 		}
@@ -439,7 +438,10 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 				$this->getOption( 'restURL' ), $matches ) &&
 				 !preg_match(
 				'#^(?:https?://[a-z.]+)?/w/rest.php/([a-z.]+)/v3/page/pagebundle/([^/?]+)(?:/([^/?]+))?#',
-				$this->getOption( 'restURL' ), $matches )
+				$this->getOption( 'restURL' ), $matches ) &&
+				!preg_match(
+					'#^(?:https?://[a-z.]+)?/w/rest\.php/([a-z.]+)/v3/transform/wikitext/to/pagebundle/([^/?]+)#',
+					$this->getOption( 'restURL' ), $matches )
 			) {
 				# XXX we could extend this to process other URLs, but the
 				# above are the most common seen in error logs
@@ -480,7 +482,6 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 		}
 
 		$parsoidOpts += [
-			"scrubWikitext" => $this->hasOption( 'scrubWikitext' ),
 			"body_only" => ScriptUtils::booleanOption( $this->getOption( 'body_only' ) ),
 			"wrapSections" => $this->hasOption( 'wrapSections' ),
 			// This ensures we can run --linting and get lint output.
@@ -573,6 +574,8 @@ class Parse extends \Wikimedia\Parsoid\Tools\Maintenance {
 				$mean = $total / $count;
 				$this->output( "Mean: $mean ms\n" );
 			}
+			$this->output( sprintf( "Peak memory usage: %.2f MiB\n",
+				memory_get_peak_usage() / 1048576 ) );
 		} else {
 			$this->output( $callback() );
 			if ( self::posix_isatty( STDOUT ) ) {

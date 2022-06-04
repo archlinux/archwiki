@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajeje Brazorf",
 			"Delhovlyn",
 			"Djiboun",
 			"Dr Brains",
@@ -20,8 +21,7 @@
 			"Windes",
 			"Wladek92",
 			"Zcqsc06",
-			"Zetud",
-			"Ajeje Brazorf"
+			"Zetud"
 		]
 	},
 	"gadgets-desc": "Permet aux utilisateurs de choisir des [[Special:Gadgets|gadgets CSS et Javascripts]] personnalisés dans leurs [[Special:Preferences#mw-prefsection-gadgets|préférences]]",
@@ -38,11 +38,15 @@
 	"gadgetusage-default": "Par défaut",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Voici une liste de gadgets que les utilisateurs peuvent activer dans leur [[Special:Preferences#mw-prefsection-gadgets|page de préférences]], tel que défini dans les [[MediaWiki:Gadgets-definition|définitions]].\nCette vue d’ensemble donne un accès rapide aux pages de messages système qui définissent la description et le code de chaque gadget.",
+	"gadgets-editdescription": "Modifier la description",
+	"gadgets-viewdescription": "Afficher la description",
 	"gadgets-uses": "Utilise",
 	"gadgets-required-rights": "Requiert {{PLURAL:$2|le droit suivant|les droits suivants}} : \n\n$1.",
 	"gadgets-required-skins": "Disponible sur {{PLURAL:$2|l’habillage suivant|les habillages suivants}} : $1.",
+	"gadgets-required-actions": "Travaille sur {{PLURAL:$2|l’action de page « $1 »|les actions de page suivantes : $1}}.",
 	"gadgets-default": "Activé pour tout le monde par défaut.",
 	"gadgets-legacy": "Le gadget n’est pas chargé. Veuillez migrer vers ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) En savoir plus])",
+	"gadgets-packaged": "Ce gadget est [https://www.mediawiki.org/wiki/ResourceLoader/Package_files mis en paquet], avec comme point d’entrée $1",
 	"gadgets-export": "Exporter",
 	"gadgets-export-title": "Export de gadget",
 	"gadgets-not-found": "Gadget « $1 » non trouvé.",
@@ -54,5 +58,6 @@
 	"action-gadgets-edit": "modifier la page JavaScript ou CSS de ce gadget",
 	"right-gadgets-definition-edit": "Modifier les définitions des gadget",
 	"action-gadgets-definition-edit": "modifier la définition de ce gadget",
-	"gadgets-wrong-contentmodel": "Les pages dans l’espace de noms {{ns:2302}} doivent provenir du modèle de contenu GadgetDefinition."
+	"gadgets-wrong-contentmodel": "Les pages dans l’espace de noms {{ns:2302}} doivent provenir du modèle de contenu GadgetDefinition.",
+	"gadgets-supports-urlload": "Ce gadget prend en charge le chargement via URL avec le paramètre de requête <code>?withgadget</code>."
 }

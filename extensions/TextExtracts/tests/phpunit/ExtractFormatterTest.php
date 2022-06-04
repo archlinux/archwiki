@@ -2,7 +2,7 @@
 
 namespace TextExtracts\Test;
 
-use MediaWikiTestCase;
+use MediaWikiIntegrationTestCase;
 use TextExtracts\ExtractFormatter;
 
 /**
@@ -11,7 +11,7 @@ use TextExtracts\ExtractFormatter;
  *
  * @license GPL-2.0-or-later
  */
-class ExtractFormatterTest extends MediaWikiTestCase {
+class ExtractFormatterTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider provideExtracts

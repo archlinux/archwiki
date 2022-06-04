@@ -27,6 +27,7 @@ use Wikimedia\Rdbms\DBError;
 use Wikimedia\Rdbms\DBReadOnlyRoleError;
 use Wikimedia\Rdbms\LoadBalancer;
 use Wikimedia\Rdbms\LoadMonitorNull;
+use Wikimedia\Rdbms\TransactionManager;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -360,8 +361,8 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 		// statements such as CREATE TABLE.
 		$useAtomicSection = in_array( $db->getType(), [ 'sqlite', 'postgres' ], true );
 		try {
-			$db->dropTable( 'some_table' ); // clear for sanity
-			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
+			$db->dropTable( 'some_table' );
+			$this->assertNotEquals( TransactionManager::STATUS_TRX_ERROR, $db->trxStatus() );
 
 			if ( $useAtomicSection ) {
 				$db->startAtomic( __METHOD__ );
@@ -371,12 +372,12 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 				$db->query( "CREATE TABLE $table (id INT, time INT)", __METHOD__ ),
 				"table created"
 			);
-			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
+			$this->assertNotEquals( TransactionManager::STATUS_TRX_ERROR, $db->trxStatus() );
 			$this->assertNotFalse(
 				$db->query( "DELETE FROM $table WHERE id=57634126", __METHOD__ ),
 				"delete query"
 			);
-			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
+			$this->assertNotEquals( TransactionManager::STATUS_TRX_ERROR, $db->trxStatus() );
 		} finally {
 			if ( !$useAtomicSection ) {
 				// Drop the table to clean up, ignoring any error.
@@ -384,7 +385,7 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 			}
 			// Rollback the atomic section for sqlite's benefit.
 			$db->rollback( __METHOD__, 'flush' );
-			$this->assertNotEquals( $db::STATUS_TRX_ERROR, $db->trxStatus() );
+			$this->assertNotEquals( TransactionManager::STATUS_TRX_ERROR, $db->trxStatus() );
 		}
 	}
 
@@ -442,7 +443,6 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \Wikimedia\Rdbms\LoadBalancer::getConnection()
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::openConnection()
 	 * @covers \Wikimedia\Rdbms\LoadBalancer::getAnyOpenConnection()
 	 * @covers \Wikimedia\Rdbms\LoadBalancer::getWriterIndex()
 	 */
@@ -491,7 +491,6 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::openConnection()
 	 * @covers \Wikimedia\Rdbms\LoadBalancer::getWriterIndex()
 	 * @covers \Wikimedia\Rdbms\LoadBalancer::forEachOpenPrimaryConnection()
 	 * @covers \Wikimedia\Rdbms\LoadBalancer::setTransactionListener()
@@ -524,8 +523,8 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 			'localDomain' => new DatabaseDomain( $wgDBname, null, $this->dbPrefix() )
 		] );
 
-		$conn1 = $lb->openConnection( $lb->getWriterIndex(), false );
-		$conn2 = $lb->openConnection( $lb->getWriterIndex(), '' );
+		$conn1 = $lb->getConnection( $lb->getWriterIndex(), [], false );
+		$conn2 = $lb->getConnection( $lb->getWriterIndex(), [], '' );
 
 		$count = 0;
 		$lb->forEachOpenPrimaryConnection( static function () use ( &$count ) {
@@ -624,10 +623,10 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 			$conn->clearFlag( $conn::DBO_TRX );
 
 			$res = $conn->query( $sql, __METHOD__ );
-			$this->assertEquals( $v, $conn->fetchRow( $res ) );
+			$this->assertEquals( $v, $res->fetchRow() );
 
 			$res = $conn->query( $sql, __METHOD__, $conn::QUERY_REPLICA_ROLE );
-			$this->assertEquals( $v, $conn->fetchRow( $res ) );
+			$this->assertEquals( $v, $res->fetchRow() );
 		}
 
 		$wConn->getScopedLockAndFlush( 'key', __METHOD__, 1 );
@@ -653,18 +652,6 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 		$lb = $this->newMultiServerLocalLoadBalancer();
 
 		$rConn = $lb->getConnectionRef( 1 );
-
-		$this->expectException( DBReadOnlyRoleError::class );
-		$rConn->query( 'DELETE FROM sometesttable WHERE 1=0' );
-	}
-
-	/**
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::getConnectionRef()
-	 */
-	public function testLazyDBConnRefWritesReplicaRoleIndex() {
-		$lb = $this->newMultiServerLocalLoadBalancer();
-
-		$rConn = $lb->getLazyConnectionRef( 1 );
 
 		$this->expectException( DBReadOnlyRoleError::class );
 		$rConn->query( 'DELETE FROM sometesttable WHERE 1=0' );
@@ -766,32 +753,6 @@ class LoadBalancerTest extends MediaWikiIntegrationTestCase {
 		// Make sure that no infinite loop occurs (T226678)
 		$rGeneric = $lb->getConnectionRef( DB_REPLICA );
 		$this->assertEquals( $lb->getWriterIndex(), $rGeneric->getLBInfo( 'serverIndex' ) );
-	}
-
-	/**
-	 * @covers \Wikimedia\Rdbms\LoadBalancer::getLazyConnectionRef
-	 */
-	public function testGetLazyConnectionRef() {
-		$lb = $this->newMultiServerLocalLoadBalancer();
-
-		$rPrimary = $lb->getLazyConnectionRef( DB_PRIMARY );
-		$rReplica = $lb->getLazyConnectionRef( 1 );
-		$this->assertFalse( $lb->getAnyOpenConnection( 0 ) );
-		$this->assertFalse( $lb->getAnyOpenConnection( 1 ) );
-
-		$rPrimary->getType();
-		$rReplica->getType();
-		$rPrimary->getDomainID();
-		$rReplica->getDomainID();
-		$this->assertFalse( $lb->getAnyOpenConnection( 0 ) );
-		$this->assertFalse( $lb->getAnyOpenConnection( 1 ) );
-
-		$rPrimary->query( "SELECT 1", __METHOD__ );
-		$this->assertNotFalse( $lb->getAnyOpenConnection( 0 ) );
-
-		$rReplica->query( "SELECT 1", __METHOD__ );
-		$this->assertNotFalse( $lb->getAnyOpenConnection( 0 ) );
-		$this->assertNotFalse( $lb->getAnyOpenConnection( 1 ) );
 	}
 
 	/**

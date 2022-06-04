@@ -109,6 +109,3 @@ class RelayTreeHandler implements TreeHandler {
 		$this->nextHandler->reparentChildren( $element, $newParent, $sourceStart );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( RelayTreeHandler::class, 'RemexHtml\TreeBuilder\RelayTreeHandler' );

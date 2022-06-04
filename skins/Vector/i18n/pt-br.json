@@ -11,9 +11,9 @@
 			"He7d3r",
 			"Helder.wiki",
 			"Jaideraf",
+			"Luan",
 			"Opraco",
-			555,
-			"Luan"
+			555
 		]
 	},
 	"skinname-vector": "Vector",
@@ -25,7 +25,9 @@
 	"vector.css": "/* Todos os CSS colocado aqui serão carregados para usuários do tema Vector */",
 	"vector.js": "/* Todos os JavaScript aqui colocado será carregado para usuários do tema Vector */",
 	"vector-action-toggle-sidebar": "Alternar barra lateral",
+	"vector-language-button-aria-label": "Vá para um artigo em outro idioma. Disponível em {{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idiomas}}",
+	"vector-language-variant-switcher-label": "Alterar a variante de idioma",
 	"vector-action-addsection": "Adicionar tópico",
 	"vector-action-delete": "Excluir",
 	"vector-action-move": "Mover",
@@ -42,6 +44,8 @@
 	"vector-jumptocontent": "Ir para o conteúdo",
 	"vector-more-actions": "Mais",
 	"vector-search-loader": "Carregando sugestões de pesquisa",
+	"vector-searchsuggest-containing": "Procurar pelas páginas contendo <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-intro-page": "Wikipédia:Boas-vindas",
 	"vector-anon-user-menu-pages": "Páginas para editores conectados",
 	"vector-anon-user-menu-pages-learn": "saiba mais",
 	"vector-anon-user-menu-pages-label": "Saiba mais sobre edição",

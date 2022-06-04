@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"ChrisiPK",
+			"Giftpflanze",
+			"Kghbln",
+			"MichaelFrey",
+			"The Evil IP address",
+			"Umherirrender"
+		]
+	},
+	"abusefilter-warning": "'''Achtung:''' Diese Aktion wurde als potentiell unkonstruktiv erkannt.\nSolche Beiträge werden meist sehr schnell entfernt. In wiederholten und besonders schlimmen Fällen wird Ihr Benutzerkonto bzw. Ihre IP-Adresse gesperrt.\nWenn Sie meinen, dass diese Aktion sinnvoll ist, können Sie sie zum Bestätigen erneut speichern.\nKurzbeschreibung der verletzten Regel: $1",
+	"abusefilter-disallowed": "Diese Aktion wurde automatisch als schädlich erkannt und deshalb nicht ausgeführt.\nSofern Sie denken, dass Ihr Beitrag konstruktiv war, wenden Sie sich bitte an einen Administrator und schildern ihm, was Sie beizutragen versucht haben.\nKurzbeschreibung der verletzten Regel: $1",
+	"abusefilter-blocked-display": "Diese Aktion wurde automatisch als schädlich erkannt und nicht ausgeführt.\nFerner wurden Ihr Benutzerkonto und alle Ihnen zugehörigen IP-Adressen gesperrt.\nWenn Sie denken, dass es sich hierbei um einen Fehler handelt, wenden Sie sich bitte an einen Administrator.\nKurzbeschreibung der verletzten Regel: $1",
+	"abusefilter-degrouped": "Diese Aktion wurde als schädlich erkannt und nicht ausgeführt.\nDa es möglich ist, dass Ihr Benutzerkonto kompromittiert wurde, wurden Ihnen alle gewährten Rechte genommen.\nWenn Sie denken, dass es sich hierbei um einen Fehler handelt, so wenden Sie sich bitte an einen Bürokraten und schilderen ihm, was Sie gerade getan haben, damit Ihre Rechte wiederhergestellt werden können.\nKurzbeschreibung der verletzten Regel: $1",
+	"abusefilter-autopromote-blocked": "Diese Aktion wurde als schädlich erkannt und nicht ausgeführt.\nZusätzlich wurden Ihnen als Sicherheitsmaßnahme einige automatisch vergebene Rechte kurzzeitig genommen.\nKurzbeschreibung der verletzten Regel: $1",
+	"abusefilter-blockreason": "Sie wurden durch einen Missbrauchsfilter automatisch gesperrt. Beschreibung der zutreffenden Regel: $1",
+	"abusefilter-degroupreason": "Ihre Berechtigungen wurden durch einen Missbrauchsfilter automatisch beschränkt.\nBeschreibung der Regel: $1",
+	"abusefilter-log-cannot-see-details": "Sie haben nicht die Berechtigung, Einzelheiten zur dieser Eingabe einzusehen.",
+	"abusefilter-log-details-hidden": "Sie können die Details dieses Eintrags nicht einsehen, da sie vor der Öffentlichkeit verborgen sind.",
+	"abusefilter-log-hide-forbidden": "Sie haben nicht die Berechtigung, die Einträge des Missbrauchsfilter-Logbuchs auszublenden.",
+	"abusefilter-reautoconfirm-notallowed": "Sie sind nicht berechtigt, Benutzer wieder zu automatisch bestätigten Benutzern zu machen.",
+	"abusefilter-edit-oldwarning": "<strong>Sie bearbeiten nicht die aktuelle, sondern eine ältere Version dieses Filters. Die Statistik gilt nur für die letzte Version des Filters. Wenn Sie speichern, wird diese als aktuelle Version neu gespeichert. </strong> &bull; [[Special:AbuseFilter/history/$2|Zurück zur Versionsgeschichte des Filters]]",
+	"abusefilter-edit-denied": "Sie können die Einzelheiten zu diesem Filter nicht einsehen, da sie verborgen sind.",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Ihre Änderungen]] am [[Special:AbuseFilter/$1|Filter „$3“]] wurden erfolgreich gespeichert.",
+	"abusefilter-edit-badsyntax": "Der von Ihnen spezifizierte Filter enthält einen Syntaxfehler. Die Parserausgabe lautete: <pre>$1</pre>",
+	"abusefilter-edit-restricted": "Sie können diesen Filter nicht bearbeiten, weil er eine oder mehrere verbotene Aktionen enthält.\nBitten Sie einen Benutzer, der verbotene Aktionen hinzufügen kann, darum, die Änderung für Sie vorzunehmen.",
+	"abusefilter-edit-notallowed": "Es ist Ihnen nicht erlaubt, Missbrauchsfilter zu erstellen oder zu bearbeiten",
+	"abusefilter-revert-intro": "Mit diesem Formular können alle Änderungen durch den Missbrauchsfilter aufgrund von Filter $1 rückgängig gemacht werden.\nBitte verwenden Sie dieses Werkzeug mit Vorsicht.",
+	"abusefilter-revert-preview-intro": "Unten sind die Aktionen des Missbrauchsfilters angegeben, die hiermit rückgängig gemacht werden.\nBitte überprüfen Sie sie sorgfältig und klicken Sie dann auf „{{int:abusefilter-revert-confirm}}“, um Ihre Auswahl zu bestätigen.",
+	"abusefilter-revert-success": "Sie haben alle Aktionen des Missbrauchsfilters, die aufgrund von [[Special:AbuseFilter/$1|Filter $2]] vorgenommen wurden, rückgängig gemacht.",
+	"abusefilter-test-intro": "Mit dieser Seite kann ein Filter probeweise auf die {{PLURAL:$1|letzte Änderung|letzten $1 Änderungen}} angewendet werden.\nUm einen bestehenden Filter zu laden, geben Sie seine Filter-ID in das Feld unterhalb des Bearbeiten-Textfeldes ein und klicken Sie auf den „Laden“-Button.",
+	"abusefilter-import-intro": "Sie können diese Schnittstelle verwenden, um Filter aus anderen Wikis zu importieren. Klicken Sie im Quellwiki auf die Schaltfläche „<abusefilter-edit-export>“ innerhalb von „<abusefilter-tools-subtitle>“. Kopieren Sie dort den erscheinenden Code, fügen Sie ihn hier ein und klicken Sie dann auf die Schaltfläche „<abusefilter-import-submit>“."
+}

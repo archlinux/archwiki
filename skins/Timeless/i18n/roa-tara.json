@@ -24,5 +24,7 @@
 	"timeless-languages": "Lènghe",
 	"timeless-projects": "Otre pruggette",
 	"timeless.css": "/* Tutte le CSS aqquà avène carecate pe le utinde ca ausane 'a masckere Timeless */",
-	"timeless.js": "/* Tutte le JavaScript aqquà avène carecate pe le utinde ca ausane 'a masckere Timeless */"
+	"timeless.js": "/* Tutte le JavaScript aqquà avène carecate pe le utinde ca ausane 'a masckere Timeless */",
+	"timeless-view-history": "Cunde",
+	"timeless-action-undelete": "Annulle {{PLURAL:$1|'nu camgiamende|$1 cangiaminde}}"
 }

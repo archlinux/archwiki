@@ -1,6 +1,4 @@
 <div id="mw-navigation">
-	<h2>{{msg-navigation-heading}}</h2>
-	{{#data-portlets-sidebar}}{{>Sidebar}}{{/data-portlets-sidebar}}
 	<div id="mw-head">
 		<div class="mw-article-toolbar-container">
 			{{#data-portlets}}
@@ -15,4 +13,5 @@
 			{{/data-portlets}}
 		</div>
 	</div>
+	{{#data-portlets-sidebar}}{{>Sidebar}}{{/data-portlets-sidebar}}
 </div>

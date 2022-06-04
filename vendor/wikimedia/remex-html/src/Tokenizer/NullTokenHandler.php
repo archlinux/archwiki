@@ -56,6 +56,3 @@ class NullTokenHandler implements TokenHandler {
 	public function comment( $text, $sourceStart, $sourceLength ) {
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( NullTokenHandler::class, 'RemexHtml\Tokenizer\NullTokenHandler' );

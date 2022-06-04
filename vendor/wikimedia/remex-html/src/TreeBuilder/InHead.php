@@ -162,6 +162,3 @@ class InHead extends InsertionMode {
 			->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InHead::class, 'RemexHtml\TreeBuilder\InHead' );

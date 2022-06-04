@@ -1,0 +1,23 @@
+@import '../../minerva.less/minerva.variables.less';
+@import '../../minerva.less/minerva.mixins.less';
+
+// stylelint-disable selector-max-id
+.page-Main_Page {
+	// FIXME: #section_0 rule can be removed > 1 week after
+	// I2ffdedd64414ffb3c6e441391a75fd6e744847a4 is in production.
+	.mw-first-heading,
+	#section_0 {
+		border: 0;
+	}
+
+	&.is-authenticated {
+		.pre-content {
+			display: block;
+		}
+	}
+
+	#page-secondary-actions a {
+		margin-top: 1em;
+	}
+}
+// stylelint-enable selector-max-id

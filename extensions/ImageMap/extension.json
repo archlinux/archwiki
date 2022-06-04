@@ -14,10 +14,10 @@
 		]
 	},
 	"Hooks": {
-		"ParserFirstCallInit": "MediaWiki\\Extensions\\ImageMap\\ImageMap::onParserFirstCallInit"
+		"ParserFirstCallInit": "MediaWiki\\Extension\\ImageMap\\ImageMap::onParserFirstCallInit"
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extensions\\ImageMap\\": "includes/"
+		"MediaWiki\\Extension\\ImageMap\\": "includes/"
 	},
 	"manifest_version": 2
 }

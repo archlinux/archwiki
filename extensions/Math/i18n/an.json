@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Juanpabl",
+			"Macofe"
+		]
+	},
+	"math_failure": "Error en o codigo",
+	"math_syntax_error": "error de sintaxi",
+	"math_unknown_error": "error esconoxita",
+	"math_unknown_function": "función esconoxita",
+	"mw_math_mathml": "MathML si ye posible (esperimental)",
+	"mw_math_png": "Producir siempre PNG",
+	"mw_math_source": "Deixar como LaTeX (ta navegadores en formato texto)",
+	"prefs-math": "Esprisions matematicas"
+}

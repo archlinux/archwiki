@@ -6,5 +6,7 @@
 	},
 	"timeless-more": "Πλείω",
 	"timeless-pagemisc": "Πλείω",
-	"timeless-languages": "Γλῶσσαι"
+	"timeless-languages": "Γλῶσσαι",
+	"timeless-view-history": "Ἱστορία",
+	"timeless-action-undelete": "Ἐπανορθοῦν {{PLURAL:$1|ἕνα μεταγραφὲν|$1 μεταγραφέντα}}"
 }

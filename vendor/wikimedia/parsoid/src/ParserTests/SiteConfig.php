@@ -34,6 +34,9 @@ class SiteConfig extends ApiSiteConfig {
 	 */
 	public $responsiveReferences;
 
+	/** @var int */
+	public $thumbsize;
+
 	/** @var LoggerInterface */
 	public $suppressLogger;
 
@@ -49,7 +52,6 @@ class SiteConfig extends ApiSiteConfig {
 
 		$opts['logger'] = $logger;
 		parent::__construct( $api, $opts );
-		$this->registerParserTestExtension( new ParserHook() );
 
 		// Needed for bidi-char-scrubbing html2wt tests.
 		$this->scrubBidiChars = true;
@@ -106,6 +108,9 @@ class SiteConfig extends ApiSiteConfig {
 		$this->disableSubpagesForNS( 0 );
 		$this->unregisterParserTestExtension( new StyleTag() );
 		$this->unregisterParserTestExtension( new RawHTML() );
+		$this->unregisterParserTestExtension( new ParserHook() );
+		$this->unregisterParserTestExtension( new DummyAnnotation() );
+		$this->thumbsize = null;
 	}
 
 	/**
@@ -228,6 +233,10 @@ class SiteConfig extends ApiSiteConfig {
 		return 0;
 	}
 
+	public function widthOption(): int {
+		return $this->thumbsize ?? 180;  // wgThumbLimits setting in core ParserTestRunner
+	}
+
 	/**
 	 * Register an extension for use in parser tests
 	 * @param ExtensionModule $ext
@@ -249,21 +258,18 @@ class SiteConfig extends ApiSiteConfig {
 		foreach ( ( $extConfig['tags'] ?? [] ) as $tagConfig ) {
 			$lowerTagName = mb_strtolower( $tagConfig['name'] );
 			unset( $this->extConfig['allTags'][$lowerTagName] );
-			unset( $this->extConfig['nativeTags'][$lowerTagName] );
+			unset( $this->extConfig['parsoidExtTags'][$lowerTagName] );
+		}
+
+		foreach ( ( $extConfig['annotations'] ?? [] ) as $annotationTag ) {
+			$lowerTagName = mb_strtolower( $annotationTag );
+			unset( $this->extConfig['allTags'][$lowerTagName] );
+			unset( $this->extConfig['annotationTags'][$lowerTagName] );
 		}
 
 		if ( isset( $extConfig['domProcessors'] ) ) {
 			unset( $this->extConfig['domProcessors'][$name] );
 		}
-
-		/*
-		 * FIXME: Leaving styles behind for now since they are harmless
-		 * and we cannot unset styles without resetting all styles across
-		 * all registered extensions.
-		 *
-		 * If unregistering extensions becomes a broader use case beyond
-		 * parser tests, we might want to handle this by tracking styles separately.
-		 */
 
 		/*
 		 * FIXME: Unsetting contentmodels is also tricky with the current

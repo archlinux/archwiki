@@ -5,12 +5,12 @@
 			"Crazymadlover",
 			"Giro720",
 			"Hamilton Abreu",
+			"Luan",
 			"Malafaya",
 			"MokaAkashiyaPT",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious",
-			"Luan"
+			"Waldyrious"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -39,5 +39,6 @@
 	"vector-jumptocontent": "Saltar para o conteúdo",
 	"vector-more-actions": "Mais",
 	"vector-search-loader": "A carregar sugestões de pesquisa",
+	"vector-intro-page": "Wikipédia:Boas-vindas",
 	"vector-anon-user-menu-pages-label": "Saiba mais sobre edição"
 }

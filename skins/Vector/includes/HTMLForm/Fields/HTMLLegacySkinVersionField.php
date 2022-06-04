@@ -3,7 +3,6 @@
 namespace Vector\HTMLForm\Fields;
 
 use Vector\Constants;
-use Wikimedia\Assert\Assert;
 
 /**
  * The field on Special:Preferences (and Special:GlobalPreferences) that allows the user to
@@ -34,10 +33,13 @@ final class HTMLLegacySkinVersionField extends \HTMLFormField {
 	 * @inheritDoc
 	 */
 	public function __construct( $params ) {
-		Assert::precondition(
-			is_bool( $params['default'] ),
-			'The "default" param must be a boolean.'
-		);
+		/**
+		 * HTMLCheckField must be given a boolean as the 'default' value.
+		 * Since MW 1.38.0-wmf.9, we could be given a boolean or a string.
+		 * @see T296068
+		 */
+		$params['default'] = $params['default'] === true ||
+			$params['default'] === Constants::SKIN_VERSION_LEGACY;
 
 		parent::__construct( $params );
 

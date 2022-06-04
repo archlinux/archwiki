@@ -1,8 +1,3 @@
-/**
- * @external LogoOptions
- * @external LogoTemplateData
- */
-
 import logoTemplate from '!!raw-loader!../includes/templates/Logo.mustache';
 import wordmarkSrc from '../.storybook/resolve-imports/assets/wordmark.svg';
 import tagelineScr from '../.storybook/resolve-imports/assets/tagline.svg';

@@ -20,7 +20,7 @@ class VisualEditorDataModule extends ResourceLoaderModule {
 	 */
 	public function getScript( ResourceLoaderContext $context ) {
 		$msgInfo = $this->getMessageInfo( $context );
-		$parsedMessages = $msgInfo['parsed'];
+		$parsedMessages = [];
 		$plainMessages = [];
 		foreach ( $msgInfo['parse'] as $msgKey => $msgObj ) {
 			$parsedMessages[ $msgKey ] = $msgObj->parse();
@@ -38,6 +38,30 @@ class VisualEditorDataModule extends ResourceLoaderModule {
 	}
 
 	/**
+	 * Get the definition summary for this module.
+	 *
+	 * @param ResourceLoaderContext $context
+	 * @return array
+	 */
+	public function getDefinitionSummary( ResourceLoaderContext $context ) {
+		$summary = parent::getDefinitionSummary( $context );
+
+		$msgVersion = [];
+		$msgInfo = $this->getMessageInfo( $context );
+		$msgInfo = array_merge( $msgInfo['parse'], $msgInfo['plain'] );
+		foreach ( $msgInfo as $msgKey => $msgObj ) {
+			$msgVersion[ $msgKey ] = [
+				// Include the text of the message, in case the canonical translation changes
+				$msgObj->plain(),
+				// Include the page touched time, in case the on-wiki override is invalidated
+				Title::makeTitle( NS_MEDIAWIKI, ucfirst( $msgObj->getKey() ) )->getTouched(),
+			];
+		}
+		$summary[] = [ 've-messages' => $msgVersion ];
+		return $summary;
+	}
+
+	/**
 	 * @param ResourceLoaderContext $context Object containing information about the state of this
 	 *   specific loader request.
 	 * @return array[] Messages in various states of parsing
@@ -45,7 +69,7 @@ class VisualEditorDataModule extends ResourceLoaderModule {
 	protected function getMessageInfo( ResourceLoaderContext $context ) {
 		$editSubmitButtonLabelPublish = $this->getConfig()
 			->get( 'EditSubmitButtonLabelPublish' );
-		$saveButtonLabelKey = $editSubmitButtonLabelPublish ? 'publishpage' : 'savearticle';
+		$saveButtonLabelKey = $editSubmitButtonLabelPublish ? 'publishchanges' : 'savechanges';
 		$saveButtonLabel = $context->msg( $saveButtonLabelKey )->text();
 
 		// Messages to be exported as parsed html
@@ -54,16 +78,6 @@ class VisualEditorDataModule extends ResourceLoaderModule {
 			'summary' => $context->msg( 'summary' ),
 			'visualeditor-browserwarning' => $context->msg( 'visualeditor-browserwarning' ),
 			'visualeditor-wikitext-warning' => $context->msg( 'visualeditor-wikitext-warning' ),
-		];
-
-		// Copyright warning (already parsed)
-		$parsedMsgs = [
-			'copyrightwarning' => EditPage::getCopyrightWarning(
-				// Use a dummy title
-				Title::newFromText( 'Dwimmerlaik' ),
-				'parse',
-				$context->getLanguage()
-			),
 		];
 
 		// Messages to be exported as plain text
@@ -84,8 +98,6 @@ class VisualEditorDataModule extends ResourceLoaderModule {
 
 		return [
 			'parse' => $parseMsgs,
-			// Already parsed
-			'parsed' => $parsedMsgs,
 			'plain' => $plainMsgs,
 		];
 	}

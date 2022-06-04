@@ -1,0 +1,9 @@
+{{! `heading` is optional. }}
+<div class="mw-sidebar-action">
+	<div class="mw-sidebar-action-item">
+		{{#heading}}<h3 class="mw-sidebar-action-heading">{{.}}</h3>{{/heading}}
+		<div class="mw-sidebar-action-content">
+		{{{html-content}}}
+		</div>
+	</div>
+</div>

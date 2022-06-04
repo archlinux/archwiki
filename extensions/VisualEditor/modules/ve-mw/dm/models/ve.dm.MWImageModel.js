@@ -15,20 +15,18 @@
  * @param {ve.dm.Document} parentDoc Document that contains or will contain the image
  * @param {Object} [config] Configuration options
  * @cfg {string} [resourceName] The resource name of the given media file
- * @cfg {Object} [currentDimensions] Current dimensions, width & height
- * @cfg {Object} [minDimensions] Minimum dimensions, width & height
- * @cfg {boolean} [isDefaultSize] Object is using its default size dimensions
+ * @cfg {Object} [currentDimensions={}] Current dimensions, width & height
+ * @cfg {Object} [minDimensions={}] Minimum dimensions, width & height
+ * @cfg {boolean} [isDefaultSize=false] Object is using its default size dimensions
  */
 ve.dm.MWImageModel = function VeDmMWImageModel( parentDoc, config ) {
-	var scalable, currentDimensions, minDimensions;
-
 	config = config || {};
 
 	// Mixin constructors
 	OO.EventEmitter.call( this );
 
 	// Properties
-	this.attributesCache = null;
+	this.attributesCache = {};
 
 	// Image properties
 	this.parentDoc = parentDoc;
@@ -49,6 +47,11 @@ ve.dm.MWImageModel = function VeDmMWImageModel( parentDoc, config ) {
 	this.imageResourceName = '';
 	this.imageHref = '';
 
+	// FIXME: This is blindly being preserved but may not apply if, say,
+	// a link is no longer pointing to a file description page.  When support
+	// for editing the |link= media option is added, take it into account.
+	this.imgWrapperClassAttr = null;
+
 	this.boundingBox = null;
 	this.initialHash = {};
 
@@ -61,10 +64,10 @@ ve.dm.MWImageModel = function VeDmMWImageModel( parentDoc, config ) {
 	}
 
 	// Create scalable
-	currentDimensions = config.currentDimensions || {};
-	minDimensions = config.minDimensions || {};
+	var currentDimensions = config.currentDimensions || {};
+	var minDimensions = config.minDimensions || {};
 
-	scalable = new ve.dm.Scalable( {
+	var scalable = new ve.dm.Scalable( {
 		currentDimensions: {
 			width: currentDimensions.width,
 			height: currentDimensions.height
@@ -122,11 +125,10 @@ ve.dm.MWImageModel.static.infoCache = {};
  * @return {ve.dm.MWImageNode} An image node
  */
 ve.dm.MWImageModel.static.createImageNode = function ( attributes, imageType ) {
-	var attrs, newNode, newDimensions,
-		defaultThumbSize = mw.config.get( 'wgVisualEditorConfig' )
-			.thumbLimits[ mw.user.options.get( 'thumbsize' ) ];
+	var defaultThumbSize = mw.config.get( 'wgVisualEditorConfig' )
+		.thumbLimits[ mw.user.options.get( 'thumbsize' ) ];
 
-	attrs = ve.extendObject( {
+	var attrs = ve.extendObject( {
 		mediaClass: 'Image',
 		type: 'thumb',
 		align: 'default',
@@ -136,7 +138,7 @@ ve.dm.MWImageModel.static.createImageNode = function ( attributes, imageType ) {
 	}, attributes );
 
 	if ( attrs.defaultSize ) {
-		newDimensions = ve.dm.MWImageNode.static.scaleToThumbnailSize( attrs, attrs.mediaType );
+		var newDimensions = ve.dm.MWImageNode.static.scaleToThumbnailSize( attrs, attrs.mediaType );
 		if ( newDimensions ) {
 			attrs.width = newDimensions.width;
 			attrs.height = newDimensions.height;
@@ -145,7 +147,7 @@ ve.dm.MWImageModel.static.createImageNode = function ( attributes, imageType ) {
 
 	imageType = imageType || 'mwBlockImage';
 
-	newNode = ve.dm.nodeFactory.createFromElement( {
+	var newNode = ve.dm.nodeFactory.createFromElement( {
 		type: imageType,
 		attributes: attrs
 	} );
@@ -182,6 +184,7 @@ ve.dm.MWImageModel.static.newFromImageAttributes = function ( attrs, parentDoc )
 	imgModel.setImageSource( attrs.src );
 	imgModel.setFilename( new mw.Title( mw.libs.ve.normalizeParsoidResourceName( attrs.resource ) ).getMainText() );
 	imgModel.setImageHref( attrs.href );
+	imgModel.setImgWrapperClassAttr( attrs.imgWrapperClassAttr );
 
 	// Set bounding box
 	imgModel.setBoundingBox( {
@@ -282,6 +285,11 @@ ve.dm.MWImageModel.prototype.changeImageSource = function ( attrs, APIinfo ) {
 	if ( attrs.href ) {
 		this.setImageHref( attrs.href );
 	}
+
+	if ( attrs.imgWrapperClassAttr ) {
+		this.setImgWrapperClassAttr( attrs.imgWrapperClassAttr );
+	}
+
 	if ( attrs.resource ) {
 		this.setImageResourceName( attrs.resource );
 		this.setFilename( new mw.Title( mw.libs.ve.normalizeParsoidResourceName( attrs.resource ) ).getMainText() );
@@ -296,22 +304,25 @@ ve.dm.MWImageModel.prototype.changeImageSource = function ( attrs, APIinfo ) {
 	this.scalable.clearDefaultDimensions();
 	this.scalable.clearMaxDimensions();
 	this.scalable.clearMinDimensions();
+	// This is a different image so clear the attributes cache
+	delete this.attributesCache.originalWidth;
+	delete this.attributesCache.originalHeight;
 
 	// If we already have dimensions from the API, use them
 	if ( APIinfo ) {
-		imageModel.scalable.setOriginalDimensions( {
+		this.scalable.setOriginalDimensions( {
 			width: APIinfo.width,
 			height: APIinfo.height
 		} );
 		// Update media type
-		imageModel.setMediaType( APIinfo.mediatype );
+		this.setMediaType( APIinfo.mediatype );
 		// Update defaults
 		ve.dm.MWImageNode.static.syncScalableToType(
-			imageModel.getType(),
+			this.getType(),
 			APIinfo.mediatype,
-			imageModel.scalable
+			this.scalable
 		);
-		imageModel.updateScalableDetails( {
+		this.updateScalableDetails( {
 			width: APIinfo.width,
 			height: APIinfo.height
 		} );
@@ -382,12 +393,11 @@ ve.dm.MWImageModel.prototype.getBoundingBox = function () {
  * @param {ve.dm.Surface} surfaceModel Surface model of main document
  */
 ve.dm.MWImageModel.prototype.updateImageNode = function ( node, surfaceModel ) {
-	var captionRange, captionNode,
-		doc = surfaceModel.getDocument();
+	var doc = surfaceModel.getDocument();
 
 	// Update the caption
 	if ( node.getType() === 'mwBlockImage' ) {
-		captionNode = node.getCaptionNode();
+		var captionNode = node.getCaptionNode();
 		if ( !captionNode ) {
 			// There was no caption before, so insert one now
 			surfaceModel.getFragment()
@@ -398,7 +408,7 @@ ve.dm.MWImageModel.prototype.updateImageNode = function ( node, surfaceModel ) {
 			captionNode = node.getCaptionNode();
 		}
 
-		captionRange = captionNode.getRange();
+		var captionRange = captionNode.getRange();
 
 		// Remove contents of old caption
 		surfaceModel.change(
@@ -439,15 +449,14 @@ ve.dm.MWImageModel.prototype.updateImageNode = function ( node, surfaceModel ) {
  * @throws {Error} Unknown image node type
  */
 ve.dm.MWImageModel.prototype.insertImageNode = function ( fragment ) {
-	var offset, contentToInsert, selectedNode,
-		nodeType = this.getImageNodeType(),
+	var nodeType = this.getImageNodeType(),
 		surfaceModel = fragment.getSurface();
 
 	if ( !( fragment.getSelection() instanceof ve.dm.LinearSelection ) ) {
 		return fragment;
 	}
 
-	selectedNode = fragment.getSelectedNode();
+	var selectedNode = fragment.getSelectedNode();
 
 	// If there was a previous node, remove it first
 	if ( selectedNode ) {
@@ -455,8 +464,9 @@ ve.dm.MWImageModel.prototype.insertImageNode = function ( fragment ) {
 		fragment.removeContent();
 	}
 
-	contentToInsert = this.getData();
+	var contentToInsert = this.getData();
 
+	var offset;
 	switch ( nodeType ) {
 		case 'mwInlineImage':
 			if ( selectedNode && selectedNode.type === 'mwBlockImage' ) {
@@ -501,8 +511,7 @@ ve.dm.MWImageModel.prototype.insertImageNode = function ( fragment ) {
  * @return {Array} Linear data
  */
 ve.dm.MWImageModel.prototype.getData = function () {
-	var data,
-		originalAttrs = ve.copy( this.getOriginalImageAttributes() ),
+	var originalAttrs = ve.copy( this.getOriginalImageAttributes() ),
 		editAttributes = ve.extendObject( originalAttrs, this.getUpdatedAttributes() ),
 		nodeType = this.getImageNodeType();
 
@@ -514,7 +523,7 @@ ve.dm.MWImageModel.prototype.getData = function () {
 		delete editAttributes.isError;
 	}
 
-	data = [
+	var data = [
 		{
 			type: nodeType,
 			attributes: editAttributes
@@ -534,9 +543,9 @@ ve.dm.MWImageModel.prototype.getData = function () {
  * @return {Object} Updated attributes
  */
 ve.dm.MWImageModel.prototype.getUpdatedAttributes = function () {
-	var attrs, currentDimensions,
-		origAttrs = this.getOriginalImageAttributes();
+	var origAttrs = this.getOriginalImageAttributes();
 
+	var currentDimensions;
 	// Adjust default dimensions if size is set to default
 	if ( this.scalable.isDefault() && this.scalable.getDefaultDimensions() ) {
 		currentDimensions = this.scalable.getDefaultDimensions();
@@ -544,7 +553,7 @@ ve.dm.MWImageModel.prototype.getUpdatedAttributes = function () {
 		currentDimensions = this.getCurrentDimensions();
 	}
 
-	attrs = {
+	var attrs = {
 		mediaClass: this.getMediaClass(),
 		type: this.getType(),
 		width: currentDimensions.width,
@@ -567,6 +576,7 @@ ve.dm.MWImageModel.prototype.getUpdatedAttributes = function () {
 
 	attrs.src = this.getImageSource();
 	attrs.href = this.getImageHref();
+	attrs.imgWrapperClassAttr = this.getImgWrapperClassAttr();
 	attrs.resource = this.getImageResourceName();
 
 	return attrs;
@@ -1040,6 +1050,7 @@ ve.dm.MWImageModel.prototype.setSizeType = function ( type ) {
  * @see #getAlignment
  *
  * @param {string} align Alignment
+ * @fires alignmentChange
  */
 ve.dm.MWImageModel.prototype.setAlignment = function ( align ) {
 	if ( align === 'default' ) {
@@ -1057,6 +1068,7 @@ ve.dm.MWImageModel.prototype.setAlignment = function ( align ) {
  * @see #getVerticalAlignment
  *
  * @param {string} valign Alignment
+ * @fires alignmentChange
  */
 ve.dm.MWImageModel.prototype.setVerticalAlignment = function ( valign ) {
 	this.verticalAlignment = valign;
@@ -1120,6 +1132,20 @@ ve.dm.MWImageModel.prototype.getImageResourceName = function () {
  */
 ve.dm.MWImageModel.prototype.getImageHref = function () {
 	return this.imageHref;
+};
+
+/**
+ * @param {string|null} classAttr
+ */
+ve.dm.MWImageModel.prototype.setImgWrapperClassAttr = function ( classAttr ) {
+	this.imgWrapperClassAttr = classAttr;
+};
+
+/**
+ * @return {string|null}
+ */
+ve.dm.MWImageModel.prototype.getImgWrapperClassAttr = function () {
+	return this.imgWrapperClassAttr;
 };
 
 /**

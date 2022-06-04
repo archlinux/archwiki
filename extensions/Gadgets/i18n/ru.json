@@ -9,6 +9,7 @@
 			"Illusion",
 			"Jack who built the house",
 			"Kaganer",
+			"Kareyac",
 			"Mailman",
 			"MaxSem",
 			"NBS",
@@ -16,10 +17,9 @@
 			"Ping08",
 			"VasilievVV",
 			"Vlad5250",
+			"WindEwriX",
 			"Александр Сигачёв",
-			"Лилиә",
-			"Kareyac",
-			"WindEwriX"
+			"Лилиә"
 		]
 	},
 	"gadgets-desc": "Позволяет участникам выбирать в своих [[Special:Preferences#mw-prefsection-gadgets|настройках]] те или иные [[Special:Gadgets|CSS- и JavaScript-гаджеты]]",
@@ -36,9 +36,12 @@
 	"gadgetusage-default": "По умолчанию",
 	"gadgets-title": "Гаджеты",
 	"gadgets-pagetext": "Ниже приведён список гаджетов, которые участники могут включить на своей странице настроек, в соответствии со списком на странице [[MediaWiki:Gadgets-definition|определений]].\nЭтот список позволяет легко получить доступ к страницам системных сообщений, определяющих описания и исходные коды гаджетов.",
+	"gadgets-editdescription": "Править описание",
+	"gadgets-viewdescription": "Смотреть описание",
 	"gadgets-uses": "Использует",
 	"gadgets-required-rights": "{{PLURAL:$2|1=Требуется право|Требуются права}}:\n\n$1",
 	"gadgets-required-skins": "Доступен в {{PLURAL:$2|1=теме оформления «$1»|следующих темах оформления: $1}}.",
+	"gadgets-required-actions": "Работает на {{PLURAL:$2|странице действия <code>$1</code>|страницах следующих действий: <code>$1</code>}}.",
 	"gadgets-default": "Включён для всех по умолчанию.",
 	"gadgets-legacy": "Гаджет не загружен. Пожалуйста, исправьте код этого гаджета, чтобы он вызывался с помощью ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Узнать подробности])",
 	"gadgets-export": "Экспортировать",
@@ -52,5 +55,6 @@
 	"action-gadgets-edit": "редактирование JavaScript или CSS-страницы этого гаджета",
 	"right-gadgets-definition-edit": "Правка описаний гаджетов",
 	"action-gadgets-definition-edit": "редактирование определения этого гаджета",
-	"gadgets-wrong-contentmodel": "Страницы в пространстве имён {{ns:2302}} должны иметь модель содержимого GadgetDefinition."
+	"gadgets-wrong-contentmodel": "Страницы в пространстве имён {{ns:2302}} должны иметь модель содержимого GadgetDefinition.",
+	"gadgets-supports-urlload": "Гаджет поддерживает загрузку с использованием параметра <code>?withgadget</code> в URL."
 }

@@ -56,38 +56,6 @@ class ExtensionHandler extends TokenHandler {
 	}
 
 	/**
-	 * Process extension metadata and record it somewhere (Env state or the DOM)
-	 *
-	 * @param DocumentFragment $domFragment
-	 * @param array $ret
-	 */
-	private function processExtMetadata( DocumentFragment $domFragment, array $ret ): void {
-		// Add the modules to the page data
-		$this->env->addOutputProperty( 'modules', $ret['modules'] );
-		$this->env->addOutputProperty( 'modulestyles', $ret['modulestyles'] );
-		$this->env->addOutputProperty( 'jsconfigvars', $ret['jsconfigvars'] );
-
-		/*  - categories: (array) [ Category name => sortkey ] */
-		// Add the categories which were added by extensions directly into the
-		// page and not as in-text links
-		foreach ( $ret['categories'] as $name => $sortkey ) {
-			$link = $domFragment->ownerDocument->createElement( "link" );
-			$link->setAttribute( "rel", "mw:PageProp/Category" );
-			$href = $this->env->getSiteConfig()->relativeLinkPrefix() .
-				"Category:" . PHPUtils::encodeURIComponent( (string)$name );
-			if ( $sortkey ) {
-				$href .= "#" . PHPUtils::encodeURIComponent( $sortkey );
-			}
-			$link->setAttribute( "href", $href );
-
-			$domFragment->appendChild(
-				$domFragment->ownerDocument->createTextNode( "\n" )
-			);
-			$domFragment->appendChild( $link );
-		}
-	}
-
-	/**
 	 * @param Token $token
 	 * @return TokenHandlerResult
 	 */
@@ -101,7 +69,7 @@ class ExtensionHandler extends TokenHandler {
 		if ( $siteConfig->namespaceIsTalk( $pageConfig->getNS() ) ) {
 			$metrics = $siteConfig->metrics();
 			if ( $metrics ) {
-				$metrics->increment( "extension.ns.talk.name.{$extensionName}.count" );
+				$metrics->increment( "extension.talk.{$extensionName}" );
 			}
 		}
 
@@ -136,6 +104,7 @@ class ExtensionHandler extends TokenHandler {
 			}
 			if ( $domFragment !== false ) {
 				if ( $domFragment !== null ) {
+					// Turn this document fragment into a token
 					$toks = $this->onDocumentFragment(
 						$nativeExt, $token, $domFragment, $errors
 					);
@@ -161,32 +130,22 @@ class ExtensionHandler extends TokenHandler {
 			$toks = PipelineUtils::encapsulateExpansionHTML(
 				$env, $token, $cachedExpansion, [ 'fromCache' => true ]
 			);
-		} elseif ( $env->noDataAccess() ) {
-			$err = [ 'key' => 'mw-extparse-error' ];
-			$domFragment = WTUtils::createLocalizationFragment(
-				$env->topLevelDoc, $err
-			);
-			$toks = $this->onDocumentFragment(
-				$nativeExt, $token, $domFragment, [ $err ]
-			);
 		} else {
-			$start = PHPUtils::getStartHRTime();
+			$start = microtime( true );
 			$ret = $env->getDataAccess()->parseWikitext(
-				$pageConfig, $token->getAttribute( 'source' )
+				$pageConfig, $env->getMetadata(), $token->getAttribute( 'source' )
 			);
 			if ( $env->profiling() ) {
 				$profile = $env->getCurrentProfile();
-				$profile->bumpMWTime( "Extension", PHPUtils::getHRTimeDifferential( $start ), "api" );
+				$profile->bumpMWTime( "Extension", 1000 * ( microtime( true ) - $start ), "api" );
 				$profile->bumpCount( "Extension" );
 			}
 
 			$domFragment = DOMUtils::parseHTMLToFragment(
 				$env->topLevelDoc,
 				// Strip a paragraph wrapper, if any, before parsing HTML to DOM
-				preg_replace( '#(^<p>)|(\n</p>$)#D', '', $ret['html'] )
+				preg_replace( '#(^<p>)|(\n</p>(' . Utils::COMMENT_REGEXP_FRAGMENT . '|\s)*$)#D', '', $ret )
 			);
-
-			$this->processExtMetadata( $domFragment, $ret );
 
 			$toks = $this->onDocumentFragment(
 				$nativeExt, $token, $domFragment, []
@@ -301,7 +260,7 @@ class ExtensionHandler extends TokenHandler {
 
 			// Update data-parsoid
 			$dp = DOMDataUtils::getDataParsoid( $firstNode );
-			$dp->tsr = Utils::clone( $extToken->dataAttribs->tsr );
+			$dp->tsr = clone $extToken->dataAttribs->tsr;
 			$dp->src = $extToken->dataAttribs->src;
 			DOMDataUtils::setDataParsoid( $firstNode, $dp );
 		}

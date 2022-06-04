@@ -27,5 +27,7 @@
 	"timeless-pagetools": "Pagina-acties",
 	"timeless-languages": "Talen",
 	"timeless-projects": "Andere projecten",
-	"timeless.js": "/* JavaScript die hier wordt geplaatst heeft alleen invloed op gebruikers die het uiterlijk Timeless gebruiken */"
+	"timeless.js": "/* JavaScript die hier wordt geplaatst heeft alleen invloed op gebruikers die het uiterlijk Timeless gebruiken */",
+	"timeless-view-history": "Geschiedenis",
+	"timeless-action-undelete": "{{PLURAL:$1|één bewerking|$1 bewerkingen}} terugplaatsen"
 }

@@ -9,6 +9,7 @@ use Wikimedia\Dodo\Internal\BoundaryPoint;
 /**
  * An abstract range.
  * @see https://dom.spec.whatwg.org/#concept-range
+ * @phan-forbid-undeclared-magic-properties
  */
 class AbstractRange implements \Wikimedia\IDLeDOM\AbstractRange {
 

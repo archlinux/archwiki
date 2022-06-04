@@ -20,7 +20,7 @@
 
 	QUnit.module( 'mmv.ui.reuse.Embed', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sanity test, object creation and UI construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var embed = new mw.mmv.ui.reuse.Embed( $qf );
 
 		assert.ok( embed, 'Embed UI element is created.' );

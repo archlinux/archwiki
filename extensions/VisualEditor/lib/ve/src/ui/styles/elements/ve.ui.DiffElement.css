@@ -15,6 +15,14 @@
 	display: block;
 }
 
+.ve-ui-diffElement-content {
+	overflow-x: auto;
+	position: relative;
+	/* Render 5px padding so highlight outlines are visible */
+	margin-left: -5px;
+	padding-left: 5px;
+}
+
 .ve-ui-diffElement-hasDescriptions .ve-ui-diffElement-content {
 	margin-right: 16em;
 	padding-right: 1em;
@@ -43,7 +51,7 @@
 .ve-ui-diffElement-overlays {
 	position: absolute;
 	opacity: 0.5;
-	z-index: 1;
+	z-index: 2;
 	pointer-events: none;
 }
 
@@ -108,17 +116,15 @@
 }
 
 [ data-diff-action='insert' ],
-[ data-diff-action='insert' ] > ins,
 [ data-diff-action='remove' ],
 [ data-diff-action='change-insert' ],
 [ data-diff-action='change-remove' ] {
 	text-decoration: inherit;
 }
 
+/* Prevent collapsing added/removed spaces (T170114), but only inline (T300444) */
 ins[ data-diff-action='insert' ],
-[ data-diff-action='insert' ] > ins,
-del[ data-diff-action='remove' ],
-[ data-diff-action='remove' ] > del { /* stylelint-disable-line no-descending-specificity */
+del[ data-diff-action='remove' ] {
 	white-space: pre-wrap;
 }
 
@@ -159,13 +165,11 @@ figure[ data-diff-action='remove' ] > figcaption {
 	display: none;
 }
 
-del[ data-diff-action='remove' ],
-[ data-diff-action='remove' ] > del { /* stylelint-disable-line no-descending-specificity */
+[ data-diff-action='remove' ] {
 	text-decoration: line-through;
 }
 
-del[ data-diff-action='remove' ]:hover,
-[ data-diff-action='remove' ]:hover > del {
+[ data-diff-action='remove' ]:hover {
 	text-decoration: none;
 }
 
@@ -179,10 +183,19 @@ del[ data-diff-action='remove' ]:hover,
 
 [ data-diff-action='none' ]:not( [ data-diff-move ] ) {
 	opacity: 0.4;
-	/* opacity increases stacking order, so reduce it again */
-	z-index: -1;
-	position: relative;
 }
+
+/* stylelint-disable no-descending-specificity */
+[ data-diff-action='insert' ],
+[ data-diff-action='remove' ],
+[ data-diff-action='change-insert' ],
+[ data-diff-action='change-remove' ],
+[ data-diff-move ] {
+	/* Create new stacking context to match one created by opacity on data-diff-action=none (T190916) */
+	position: relative;
+	z-index: 1;
+}
+/* stylelint-enable no-descending-specificity */
 
 [ data-diff-move ] {
 	background: #eaecf0; /* base80 */

@@ -23,9 +23,9 @@
 			"MokaAkashiyaPT",
 			"Opraco",
 			"SandroHc",
+			"TMg",
 			"Toliño",
-			"Vitorvicentevalente",
-			"TMg"
+			"Vitorvicentevalente"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -212,7 +212,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Imagens e multimédia",
 	"visualeditor-dialogbutton-meta-tooltip": "Configurações da página",
 	"visualeditor-dialogbutton-template-tooltip": "Predefinição",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Transclusão",
 	"visualeditor-donebutton-tooltip": "Edição concluída",
 	"visualeditor-editconflict": "Não foi possível gravar as suas alterações devido a um conflito de edição. Quer resolver o conflito manualmente?",
 	"visualeditor-editingtabdialog-body": "A wiki {{SITENAME}} agora memoriza o seu editor preferido. Pode alternar os modos de edição à medida que faz edições e mudar a preferência posteriormente.",

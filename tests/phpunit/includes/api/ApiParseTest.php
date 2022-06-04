@@ -22,7 +22,7 @@
 
 use MediaWiki\Revision\RevisionRecord;
 use Psr\Container\ContainerInterface;
-use Wikimedia\ObjectFactory;
+use Wikimedia\ObjectFactory\ObjectFactory;
 
 /**
  * @group API
@@ -100,6 +100,9 @@ class ApiParseTest extends ApiTestCase {
 
 		$html = substr( $html, strlen( $expectedStart ) );
 
+		$possibleParserCache = '/\n<!-- Saved in (?>parser cache|RevisionOutputCache) (?>.*?\n -->)\n/';
+		$html = preg_replace( $possibleParserCache, '', $html );
+
 		if ( $res[1]->getBool( 'disablelimitreport' ) ) {
 			$expectedEnd = "</div>";
 			$this->assertSame( $expectedEnd, substr( $html, -strlen( $expectedEnd ) ) );
@@ -112,7 +115,7 @@ class ApiParseTest extends ApiTestCase {
 		} else {
 			$expectedEnd = '#\n<!-- \nNewPP limit report\n(?>.+?\n-->)\n' .
 				'<!--\nTransclusion expansion time report \(%,ms,calls,template\)\n(?>.*?\n-->)\n' .
-				'(\n<!-- Saved in (?>parser cache|RevisionOutputCache) (?>.*?\n -->)\n)?</div>$#s';
+				'</div>$#s';
 			$this->assertRegExp( $expectedEnd, $html );
 
 			$html = preg_replace( $expectedEnd, '', $html );
@@ -300,17 +303,12 @@ class ApiParseTest extends ApiTestCase {
 
 		$this->db->delete( 'revision', [ 'rev_id' => $status->value['revision-record']->getId() ] );
 
-		// Suppress warning in WikiPage::getContentModel
-		Wikimedia\suppressWarnings();
-		try {
-			$this->doApiRequest( [
-				'action' => 'parse',
-				'page' => $name,
-				'section' => 1,
-			] );
-		} finally {
-			Wikimedia\restoreWarnings();
-		}
+		// Ignore warning from WikiPage::getContentModel
+		@$this->doApiRequest( [
+			'action' => 'parse',
+			'page' => $name,
+			'section' => 1,
+		] );
 	}
 
 	public function testNewSectionWithPage() {
@@ -589,7 +587,7 @@ class ApiParseTest extends ApiTestCase {
 			'prop' => 'headhtml',
 		] );
 
-		// Just do a rough sanity check
+		// Just do a rough check
 		$this->assertRegExp( '#<!DOCTYPE.*<html.*<head.*</head>.*<body#s',
 			$res[0]['parse']['headhtml'] );
 		$this->assertArrayNotHasKey( 'warnings', $res[0] );
@@ -922,4 +920,31 @@ class ApiParseTest extends ApiTestCase {
 			. var_export( self::getErrorFormatter()->arrayFromStatus( $ex->getStatusValue() ), true )
 		);
 	}
+
+	public function testDisplayTitle() {
+		$res = $this->doApiRequest( [
+			'action' => 'parse',
+			'title' => 'Art&copy',
+			'text' => '{{DISPLAYTITLE:art&copy}}foo',
+			'prop' => 'displaytitle',
+		] );
+
+		$this->assertSame(
+			'art&amp;copy',
+			$res[0]['parse']['displaytitle']
+		);
+
+		$res = $this->doApiRequest( [
+			'action' => 'parse',
+			'title' => 'Art&copy',
+			'text' => 'foo',
+			'prop' => 'displaytitle',
+		] );
+
+		$this->assertSame(
+			'Art&amp;copy',
+			$res[0]['parse']['displaytitle']
+		);
+	}
+
 }

@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.model.TaskQueue', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'TaskQueue constructor sanity check', function ( assert ) {
+	QUnit.test( 'TaskQueue constructor sense check', function ( assert ) {
 		var taskQueue = new mw.mmv.model.TaskQueue();
 
 		assert.ok( taskQueue, 'TaskQueue created successfully' );

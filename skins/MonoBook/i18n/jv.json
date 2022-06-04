@@ -15,5 +15,7 @@
 	"monobook-more-actions": "Liyané",
 	"monobook-cactions-label": "Laku kaca",
 	"monobook-notifications-link": "Pambiwara ($1)",
-	"monobook-notifications-link-none": "Pambiwara"
+	"monobook-notifications-link-none": "Pambiwara",
+	"monobook-view-history": "Sajarah",
+	"monobook-action-undelete": "Wurung busak {{PLURAL:$1|sabesutan|$1 besutan}}"
 }

@@ -5,6 +5,7 @@ namespace Wikimedia\Parsoid\ParserTests;
 
 use Error;
 use Exception;
+use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
@@ -20,7 +21,7 @@ use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 
 class TestUtils {
-	/** @var mixed $consoleColor */
+	/** @var mixed */
 	private static $consoleColor;
 
 	/**
@@ -48,14 +49,14 @@ class TestUtils {
 	 * @param array $options
 	 *  - parsoidOnly (bool) Is this test Parsoid Only? Optional. Default: false
 	 *  - preserveIEW (bool) Should inter-element WS be preserved? Optional. Default: false
-	 *  - scrubWikitext (bool) Are we running html2wt in scrubWikitext mode? Optional. Default: false
+	 *  - hackyNormalize (bool) Apply the normalizer to the html. Optional. Default: false
 	 * @return string
 	 */
 	public static function normalizeOut( $domBody, array $options = [] ): string {
 		$parsoidOnly = !empty( $options['parsoidOnly'] );
 		$preserveIEW = !empty( $options['preserveIEW'] );
 
-		if ( !empty( $options['scrubWikitext'] ) ) {
+		if ( !empty( $options['hackyNormalize'] ) ) {
 			// Mock env obj
 			//
 			// FIXME: This is ugly.
@@ -65,7 +66,7 @@ class TestUtils {
 			//     That feels like a carryover of 2013 era code.
 			//     If possible, get rid of it and diff-mark dependency
 			//     on the env object.
-			$mockEnv = new MockEnv( [ 'scrubWikitext' => true ] );
+			$mockEnv = new MockEnv( [] );
 			$mockSerializer = new WikitextSerializer( [ 'env' => $mockEnv ] );
 			$mockState = new SerializerState( $mockSerializer, [ 'selserMode' => false ] );
 			if ( is_string( $domBody ) ) {
@@ -74,7 +75,7 @@ class TestUtils {
 				$domBody = DOMCompat::getBody( $doc );
 			}
 			DOMDataUtils::visitAndLoadDataAttribs( $domBody, [ 'markNew' => true ] );
-			$domBody = ( new DOMNormalizer( $mockState ) )->normalize( $domBody );
+			( new DOMNormalizer( $mockState ) )->normalize( $domBody );
 			DOMDataUtils::visitAndStoreDataAttribs( $domBody );
 		} elseif ( is_string( $domBody ) ) {
 			$domBody = DOMCompat::getBody( DOMUtils::parseHTML( $domBody ) );
@@ -128,7 +129,7 @@ class TestUtils {
 			// <meta> tags stripped out, allowing the html2wt test to verify that
 			// the <nowiki> is correctly added during WTS, while still allowing
 			// the html2html and wt2html versions of the test to pass as a
-			// sanity check.  If <meta>s were not stripped, these tests would all
+			// validity check.  If <meta>s were not stripped, these tests would all
 			// have to be modified and split up.  Not worth it at this time.
 			// (see commit 689b22431ad690302420d049b10e689de6b7d426)
 			$out = preg_replace( '#<span typeof="mw:Nowiki"></span>#', '', $out );
@@ -209,7 +210,7 @@ class TestUtils {
 	 */
 	private static function unwrapSpan(
 		Node $parent, Node $node, ?string $stripSpanTypeof
-	):void {
+	): void {
 		// first recurse to unwrap any spans in the immediate children.
 		self::cleanSpans( $node, $stripSpanTypeof );
 		// now unwrap this span.
@@ -260,7 +261,7 @@ class TestUtils {
 		if ( !$opts['parsoidOnly'] ) {
 			for ( $child = $node->firstChild;  $child;  $child = $next ) {
 				$next = $child->nextSibling;
-				if ( DOMUtils::isComment( $child ) ) {
+				if ( $child instanceof Comment ) {
 					$node->removeChild( $child );
 				}
 			}
@@ -306,13 +307,13 @@ class TestUtils {
 			$prev = $child->previousSibling;
 			$next = $child->nextSibling;
 			if ( self::newlineAround( $child ) ) {
-				if ( $prev && $prev instanceof Text ) {
+				if ( $prev instanceof Text ) {
 					$prev->data = preg_replace( '/\s*$/uD', "\n", $prev->data, 1 );
 				} else {
 					$prev = $node->ownerDocument->createTextNode( "\n" );
 					$node->insertBefore( $prev, $child );
 				}
-				if ( $next && $next instanceof Text ) {
+				if ( $next instanceof Text ) {
 					$next->data = preg_replace( '/^\s*/u', "\n", $next->data, 1 );
 				} else {
 					$next = $node->ownerDocument->createTextNode( "\n" );
@@ -344,6 +345,7 @@ class TestUtils {
 			'inPRE' => false
 		];
 		// clone body first, since we're going to destructively mutate it.
+		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return self::normalizeIEWVisitor( $body->cloneNode( true ), $opts );
 	}
 

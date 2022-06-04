@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Antonla",
 			"Christian List",
 			"HenrikKbh",
 			"Kaare",
-			"Peter Alberti",
-			"Antonla"
+			"Peter Alberti"
 		]
 	},
 	"fancycaptcha-addurl": "Din ændring tilføjer nye eksterne henvisninger.\nFor at beskytte mod automatiseret spam, skal du indtaste ordene som vises i feltet nedenfor. ([[Special:Captcha/help|mere information]]):",

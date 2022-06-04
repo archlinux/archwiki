@@ -35,5 +35,7 @@
 	"timeless-languages": "Langues",
 	"timeless-projects": "Autres projets",
 	"timeless.css": "/* Tout CSS placé ici sera chargé avec les pages accédées par les utilisateurs de l’habillage Timeless */",
-	"timeless.js": "/* Tout code JavaScript placé ici sera chargé avec les pages accédées par les utilisateurs de l’habillage Timeless */"
+	"timeless.js": "/* Tout code JavaScript placé ici sera chargé avec les pages accédées par les utilisateurs de l’habillage Timeless */",
+	"timeless-view-history": "Historique",
+	"timeless-action-undelete": "Restaurer {{PLURAL:$1|une modification|$1 modifications}}"
 }

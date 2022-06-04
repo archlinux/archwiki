@@ -36,11 +36,10 @@ ve.dm.MWIncludesNode.static.matchRdfaTypes = [
  * @inheritdoc
  */
 ve.dm.MWIncludesNode.static.toDataElement = function ( domElements ) {
-	var dataElement,
-		mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
+	var mwDataJSON = domElements[ 0 ].getAttribute( 'data-mw' ),
 		type = domElements[ 0 ].getAttribute( 'typeof' );
 
-	dataElement = {
+	var dataElement = {
 		type: 'mwIncludes',
 		attributes: {
 			type: type
@@ -65,15 +64,13 @@ ve.dm.MWIncludesNode.static.toDataElement = function ( domElements ) {
  * @inheritdoc
  */
 ve.dm.MWIncludesNode.static.toDomElements = function ( dataElement, doc, converter ) {
-	var el, els;
-
-	el = doc.createElement( 'meta' );
+	var el = doc.createElement( 'meta' );
 	el.setAttribute( 'typeof', dataElement.attributes.type );
 	if ( dataElement.attributes.mw ) {
 		el.setAttribute( 'data-mw', JSON.stringify( dataElement.attributes.mw ) );
 	}
 
-	els = [ el ];
+	var els = [ el ];
 	if ( dataElement.attributes.type === 'mw:Includes/IncludeOnly' ) {
 		// includeonly nodes have an implicit closing tag
 		els = els.concat( ve.dm.MWIncludesNode.static.toDomElements( {

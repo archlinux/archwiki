@@ -3,7 +3,6 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Html2Wt\DOMHandlers;
 
-use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -11,11 +10,11 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 /**
  * Factory for picking the right DOMHandler for a DOM element.
- * Porting note: this class is based on DOMHandlers.js and WikitextSerializer.getDOMHandler
- * PORT-FIXME: memoize handlers, maybe
+ * FIXME: memoize handlers, maybe?
  */
 class DOMHandlerFactory {
 
@@ -122,7 +121,7 @@ class DOMHandlerFactory {
 			return new BodyHandler();
 		}
 
-		if ( !$node || !DOMUtils::isElt( $node ) ) {
+		if ( !( $node instanceof Element ) ) {
 			return new DOMHandler();
 		}
 		'@phan-var Element $node';/** @var Element $node */
@@ -145,8 +144,8 @@ class DOMHandlerFactory {
 
 		// If in a HTML table tag, serialize table tags in the table
 		// using HTML tags, instead of native wikitext tags.
-		if ( isset( WikitextConstants::$HTML['ChildTableTags'][DOMCompat::nodeName( $node )] )
-			 && !isset( WikitextConstants::$ZeroWidthWikitextTags[DOMCompat::nodeName( $node )] )
+		if ( isset( Consts::$HTML['ChildTableTags'][DOMCompat::nodeName( $node )] )
+			 && !isset( Consts::$ZeroWidthWikitextTags[DOMCompat::nodeName( $node )] )
 			 && WTUtils::inHTMLTableTag( $node )
 		) {
 			return new FallbackHTMLHandler();

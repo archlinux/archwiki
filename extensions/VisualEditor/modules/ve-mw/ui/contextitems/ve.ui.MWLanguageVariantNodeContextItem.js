@@ -75,8 +75,7 @@ ve.ui.MWLanguageVariantNodeContextItem.prototype.renderBody = function () {
 		$header = $( '<tr>' ),
 		variantInfo = this.model.getVariantInfo(),
 		type = this.model.getRuleType(),
-		isHidden = this.model.isHidden(),
-		languageCodes;
+		isHidden = this.model.isHidden();
 
 	$table.addClass(
 		've-ui-mwLanguageVariantNodeContextItem-rule-table'
@@ -87,14 +86,14 @@ ve.ui.MWLanguageVariantNodeContextItem.prototype.renderBody = function () {
 		case 'filter':
 		case 'name':
 			$header
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-name-label' )
 				) )
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-code-label' )
 				) );
 
-			languageCodes = ( type === 'filter' ) ?
+			var languageCodes = ( type === 'filter' ) ?
 				variantInfo.filter.l : [ variantInfo.name.t ];
 			languageCodes.forEach( function ( code ) {
 				var name = ve.init.platform.getLanguageName( code.toLowerCase() );
@@ -111,21 +110,24 @@ ve.ui.MWLanguageVariantNodeContextItem.prototype.renderBody = function () {
 
 		case 'oneway':
 			$header
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-name-label' )
 				) )
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-code-label' )
 				) )
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-text-from-label' )
 				) )
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-text-to-label' )
 				) );
 
 			variantInfo.oneway.forEach( function ( item ) {
+				// Safe HTML from the parser
+				// eslint-disable-next-line no-jquery/no-html
 				var $fromText = $( '<td>' ).html( item.f ),
+					// eslint-disable-next-line no-jquery/no-html
 					$toText = $( '<td>' ).html( item.t ),
 					code = item.l,
 					name = ve.init.platform.getLanguageName( code.toLowerCase() );
@@ -141,19 +143,20 @@ ve.ui.MWLanguageVariantNodeContextItem.prototype.renderBody = function () {
 
 		case 'twoway':
 			$header
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-name-label' )
 				) )
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-code-label' )
 				) )
-				.append( $( '<th>' ).append(
+				.append( $( '<th>' ).text(
 					ve.msg( 'visualeditor-mwlanguagevariantcontextitem-rule-text-twoway-label' )
 				) );
 
 			variantInfo.twoway.forEach( function ( item ) {
 				var code = item.l,
 					name = ve.init.platform.getLanguageName( code.toLowerCase() ),
+					// eslint-disable-next-line no-jquery/no-html
 					$text = $( '<td>' ).html( item.t );
 				ve.dm.MWLanguageVariantNode.static.processVariants(
 					$text[ 0 ], { showHidden: true }

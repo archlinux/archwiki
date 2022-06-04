@@ -38,7 +38,7 @@ trait GroupElement {
 	 * @return bool Group is empty
 	 */
 	public function isEmpty() {
-		return !count( $this->items );
+		return $this->items === [];
 	}
 
 	/**

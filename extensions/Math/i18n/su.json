@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Irwangatot",
+			"Kandar"
+		]
+	},
+	"math_failure": "Peta ''parse'' gagal",
+	"math_syntax_error": "Kasalahan rumpaka",
+	"math_unknown_error": "Kasalahan teu kanyahoan",
+	"math_unknown_function": "fungsi teu kanyahoan",
+	"mw_math_mathml": "Mun bisa MathML (uji coba)",
+	"mw_math_png": "Jieun wae PNG",
+	"mw_math_source": "Antep salaku TeX (pikeun panyungsi tulisan)",
+	"prefs-math": "Maté"
+}

@@ -19,5 +19,7 @@
 	"timeless-pagemisc": "Àutri cosi",
 	"timeless-namespaces": "Namespace",
 	"timeless-languages": "Lingui",
-	"timeless-projects": "Àutri pruggetti"
+	"timeless-projects": "Àutri pruggetti",
+	"timeless-view-history": "Crunuluggìa",
+	"timeless-action-undelete": "Annulla la cancillazzioni di {{PLURAL:$1|na virsioni|$1 virsioni}}"
 }

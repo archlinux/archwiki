@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Vickylin77s",
-			"Amire80"
+			"Amire80",
+			"Vickylin77s"
 		]
 	},
 	"tooltip-ca-ve-edit": "misinanot to inian a felih",
@@ -17,7 +17,6 @@
 	"visualeditor-dialog-meta-categories-section": "　pisakilac",
 	"visualeditor-dialog-template-title": " sampolo",
 	"visualeditor-dialogbutton-template-tooltip": " sampolo",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Micaliw micokaymas",
 	"visualeditor-mweditmodesource-warning-cancel": "Sawaden miforic",
 	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "lalengatan",
 	"visualeditor-mwlanguagevariantinspector-filter-text-label": "tanenengan",

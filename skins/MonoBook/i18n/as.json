@@ -15,5 +15,7 @@
 	"monobook-more-actions": "অধিক",
 	"monobook-cactions-label": "পৃষ্ঠাৰ কাৰ্য",
 	"monobook-notifications-link": "জাননী ($1)",
-	"monobook-notifications-link-none": "জাননী"
+	"monobook-notifications-link-none": "জাননী",
+	"monobook-view-history": "ইতিহাস",
+	"monobook-action-undelete": "{{PLURAL:$1|বিলোপিত পৃষ্ঠাৰ|$1 সংখ্যক বিলোপিত পৃষ্ঠাৰ}} পূৰ্ববৎকৰণ"
 }

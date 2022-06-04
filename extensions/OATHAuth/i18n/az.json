@@ -51,6 +51,6 @@
 	"oathauth-throttled": "Çox saylı doğrulama cəhdi! Zəhmət olmasa $1 gözləyin.",
 	"oathauth-login-failed": "Doğrulama uğursuz oldu.",
 	"oathauth-describe-provider": "İki faktorlu autentifikasiya (OATH).",
-	"oauthauth-ui-no-module": "Qoşulmayıb",
+	"oathauth-ui-no-module": "Qoşulmayıb",
 	"oathauth-ui-manage": "İdarə et"
 }

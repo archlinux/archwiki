@@ -9,7 +9,7 @@
 	position: relative;
 	line-height: 1.125em;
 
-	h3 {
+	.vector-menu-heading {
 		color: @color-base--subtle;
 		position: relative;
 		display: block;
@@ -64,13 +64,18 @@
 	.vector-menu-checkbox-expanded,
 	.vector-menu-checkbox-collapsed {
 		.mixin-screen-reader-text();
-		display: none;
 	}
 
-	// Reveal correct "expanded" status text to screen readers based off checked status.
+	// Reveal correct "expanded" or "collapsed" status text to screen readers based off checked status.
+	// !important needed to override `.mw-ui-button.mw-ui-icon-element:not(.mw-ui-icon-with-label-desktop) span` rule in core
 	.vector-menu-checkbox:checked + .vector-menu-heading .vector-menu-checkbox-expanded,
 	.vector-menu-checkbox:not( :checked ) + .vector-menu-heading .vector-menu-checkbox-collapsed {
-		display: inline;
+		display: inline !important; /* stylelint-disable-line declaration-no-important */
+	}
+
+	.vector-menu-checkbox:not( :checked ) + .vector-menu-heading .vector-menu-checkbox-expanded,
+	.vector-menu-checkbox:checked + .vector-menu-heading .vector-menu-checkbox-collapsed {
+		display: none !important; /* stylelint-disable-line declaration-no-important */
 	}
 
 	// Hide and show menu content based off checked status.
@@ -110,7 +115,7 @@
 	}
 }
 
-#mw-head .vector-menu-dropdown h3 {
+#mw-head .vector-menu-dropdown .vector-menu-heading {
 	// Tab separator: Outer end (right in LTR) border of "Actions" menu.
 	background-position: right bottom;
 	float: left;
@@ -119,17 +124,17 @@
 	// `padding-right` >= `1px` effectively moves the "background border" outside of the element to
 	// act like a real border. It is necessary for `.vector-menu-dropdown .vector-menu-content-list` dropdown to align well.
 	// 0.5em equals `8px` at computed `font-size` of `14px` as visually harmonically with
-	// `padding-left` in `.vector-menu-dropdown h3 a`
+	// `padding-left` in `.vector-menu-dropdown .vector-menu-heading a`
 	padding-right: unit( 24 / @font-size-tabs / @font-size-browser, em );
 }
 
 // Tab Separators
 // `.vector-menu-tabs`: Outer start border (left in LTR) of tab row.
 // `.vector-menu-tabs a`: Border between tabs and outer end (right in LTR) border.
-// `#mw-head .vector-menu-dropdown h3`: // Outer end (right in LTR) border of "Actions" menu.
+// `#mw-head .vector-menu-dropdown .vector-menu-heading`: // Outer end (right in LTR) border of "Actions" menu.
 .vector-menu-tabs,
 .vector-menu-tabs a,
-#mw-head .vector-menu-dropdown h3 {
+#mw-head .vector-menu-dropdown .vector-menu-heading {
 	// Support: IE 9, which doesn't understand `linear-gradient`.
 	background-image: url( images/tab-separator.png );
 	background-image: linear-gradient( to bottom, rgba( 167, 215, 249, 0 ) 0, @border-color-content 100% );
@@ -159,11 +164,8 @@
 	}
 }
 
-// FIXME: `mw-portlet-` selectors are for cached HTML. Remove after 1 week. (T283757)
-.mw-portlet-variants,
-.mw-portlet-cactions,
 .vector-menu-dropdown-noicon {
-	h3 {
+	.vector-menu-heading {
 		// `padding-top` needs to scale with font-size.
 		padding-top: 1.25em;
 		padding-left: 8px;
@@ -173,7 +175,7 @@
 	}
 
 	// Add focus state to legacy menu dropdown buttons (i.e. p-variants, p-cactions)
-	.vector-menu-checkbox:focus + h3 {
+	.vector-menu-checkbox:focus + .vector-menu-heading {
 		// Simulate browser focus ring
 		outline: dotted 1px; // Firefox style
 		outline: auto -webkit-focus-ring-color; // Webkit style

@@ -29,6 +29,7 @@ require_once __DIR__ . '/../Maintenance.php';
 require_once __DIR__ . '/../../includes/export/WikiExporter.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Settings\SettingsBuilder;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 use Wikimedia\Rdbms\LoadBalancer;
 
@@ -37,37 +38,61 @@ use Wikimedia\Rdbms\LoadBalancer;
  * @ingroup Maintenance
  */
 abstract class BackupDumper extends Maintenance {
+	/** @var bool */
 	public $reporting = true;
-	public $pages = null; // all pages
-	public $skipHeader = false; // don't output <mediawiki> and <siteinfo>
-	public $skipFooter = false; // don't output </mediawiki>
+	/** @var string[]|null null means all pages */
+	public $pages = null;
+	/** @var bool don't output <mediawiki> and <siteinfo> */
+	public $skipHeader = false;
+	/** @var bool don't output </mediawiki> */
+	public $skipFooter = false;
+	/** @var int */
 	public $startId = 0;
+	/** @var int */
 	public $endId = 0;
+	/** @var int */
 	public $revStartId = 0;
+	/** @var int */
 	public $revEndId = 0;
+	/** @var bool */
 	public $dumpUploads = false;
+	/** @var bool */
 	public $dumpUploadFileContents = false;
+	/** @var bool */
 	public $orderRevs = false;
+	/** @var array|null */
 	public $limitNamespaces = [];
-	/** @var bool|resource */
+	/** @var resource|false */
 	public $stderr;
 
+	/** @var int */
 	protected $reportingInterval = 100;
+	/** @var int */
 	protected $pageCount = 0;
+	/** @var int */
 	protected $revCount = 0;
-	protected $schemaVersion = null; // use default
-	protected $server = null; // use default
-	protected $sink = null; // Output filters
+	/** @var string|null null means use default */
+	protected $schemaVersion = null;
+	/** @var string|null null means use default */
+	protected $server = null;
+	/** @var DumpMultiWriter|DumpOutput|null Output filters */
+	protected $sink = null;
+	/** @var float */
 	protected $lastTime = 0;
+	/** @var int */
 	protected $pageCountLast = 0;
+	/** @var int */
 	protected $revCountLast = 0;
 
+	/** @var string[] */
 	protected $outputTypes = [];
+	/** @var string[] */
 	protected $filterTypes = [];
 
+	/** @var int */
 	protected $ID = 0;
 
-	/** @var int */
+	/** @var float */
 	protected $startTime;
 	/** @var int */
 	protected $pageCountPart;
@@ -75,7 +100,7 @@ abstract class BackupDumper extends Maintenance {
 	protected $revCountPart;
 	/** @var int */
 	protected $maxCount;
-	/** @var int */
+	/** @var float */
 	protected $timeOfCheckpoint;
 	/** @var ExportProgressFilter */
 	protected $egress;
@@ -134,11 +159,13 @@ abstract class BackupDumper extends Maintenance {
 			'<type>[:<options>]. <types>s: latest, notalk, namespace', false, true, false, true );
 		$this->addOption( 'report', 'Report position and speed after every n pages processed. ' .
 			'Default: 100.', false, true );
-		$this->addOption( 'schema-version', 'Schema version to use for output. ' .
-			'Default: ' . WikiExporter::schemaVersion(), false, true );
 		$this->addOption( 'server', 'Force reading from MySQL server', false, true );
 		$this->addOption( '7ziplevel', '7zip compression level for all 7zip outputs. Used for ' .
 			'-mx option to 7za command.', false, true );
+		// NOTE: we can't know the default schema version yet, since configuration has not been
+		//       loaded when this constructor is called. To work around this, we re-declare
+		//       this option in validateParamsAndArgs().
+		$this->addOption( 'schema-version', 'Schema version to use for output.', false, true );
 
 		if ( $args ) {
 			// Args should be loaded and processed so that dump() can be called directly
@@ -146,6 +173,15 @@ abstract class BackupDumper extends Maintenance {
 			$this->loadWithArgv( $args );
 			$this->processOptions();
 		}
+	}
+
+	public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
+		parent::finalSetup( $settingsBuilder );
+		// re-declare the --schema-version option to include the default schema version
+		// in the description.
+		$schemaVersion = $settingsBuilder->getConfig()->get( 'XmlDumpSchemaVersion' );
+		$this->addOption( 'schema-version', 'Schema version to use for output. ' .
+			'Default: ' . $schemaVersion, false, true );
 	}
 
 	/**
@@ -292,7 +328,13 @@ abstract class BackupDumper extends Maintenance {
 		$this->initProgress( $history );
 
 		$db = $this->backupDb();
-		$exporter = new WikiExporter( $db, $history, $text, $this->limitNamespaces );
+		$services = MediaWikiServices::getInstance();
+		$exporter = $services->getWikiExporterFactory()->getWikiExporter(
+			$db,
+			$history,
+			$text,
+			$this->limitNamespaces
+		);
 		$exporter->setSchemaVersion( $this->schemaVersion );
 		$exporter->dumpUploads = $this->dumpUploads;
 		$exporter->dumpUploadFileContents = $this->dumpUploadFileContents;

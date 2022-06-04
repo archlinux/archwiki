@@ -2,6 +2,7 @@
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\SlotRecord;
 
@@ -295,7 +296,7 @@ class Scribunto_LuaTitleLibrary extends Scribunto_LuaLibraryBase {
 
 		if ( $title->equals( $this->getTitle() ) ) {
 			$parserOutput = $this->getParser()->getOutput();
-			$parserOutput->setFlag( 'vary-revision-sha1' );
+			$parserOutput->setOutputFlag( ParserOutputFlags::VARY_REVISION_SHA1 );
 			$parserOutput->setRevisionUsedSha1Base36( $rev ? $rev->getSha1() : '' );
 			wfDebug( __METHOD__ . ": set vary-revision-sha1 for '$title'" );
 		}
@@ -476,7 +477,9 @@ class Scribunto_LuaTitleLibrary extends Scribunto_LuaLibraryBase {
 		$this->checkType( 'recordVaryFlag', 2, $flag, 'string' );
 		$title = Title::newFromText( $text );
 		if ( $title && $title->equals( $this->getTitle() ) ) {
-			$this->getParser()->getOutput()->setFlag( $flag );
+			// XXX note that we don't check this against the values defined
+			// in ParserOutputFlags
+			$this->getParser()->getOutput()->setOutputFlag( $flag );
 		}
 		return [];
 	}

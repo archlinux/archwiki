@@ -1,0 +1,74 @@
+[
+	{
+		"name": "mathoid",
+		"columns": [
+			{
+				"name": "math_inputhash",
+				"type": "binary",
+				"options": {
+					"notnull": true,
+					"length": 16,
+					"fixed": false
+				}
+			},
+			{
+				"name": "math_input",
+				"type": "text",
+				"options": {
+					"notnull": true,
+					"length": 65535
+				}
+			},
+			{
+				"name": "math_tex",
+				"type": "text",
+				"options": {
+					"notnull": false,
+					"length": 65535
+				}
+			},
+			{
+				"name": "math_mathml",
+				"type": "text",
+				"options": {
+					"notnull": false,
+					"length": 65535
+				}
+			},
+			{
+				"name": "math_svg",
+				"type": "text",
+				"options": {
+					"notnull": false,
+					"length": 65535
+				}
+			},
+			{
+				"name": "math_style",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": false
+				}
+			},
+			{
+				"name": "math_input_type",
+				"type": "mwtinyint",
+				"options": {
+					"notnull": false
+				}
+			},
+			{
+				"name": "math_png",
+				"type": "blob",
+				"options": {
+					"notnull": false,
+					"length": 16777215
+				}
+			}
+		],
+		"indexes": [],
+		"pk": [
+			"math_inputhash"
+		]
+	}
+]

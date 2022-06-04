@@ -12,5 +12,7 @@
 	"monobook-more-actions": "Plu",
 	"monobook-cactions-label": "Actiones de págine",
 	"monobook-notifications-link": "Notificationes ($1)",
-	"monobook-notifications-link-none": "Notificationes"
+	"monobook-notifications-link-none": "Notificationes",
+	"monobook-view-history": "Historico de versiones",
+	"monobook-action-undelete": "Restaurar {{PLURAL:$1|1 modification|$1 modificationes}}"
 }

@@ -136,11 +136,13 @@ class Hooks implements
 	 * @return bool|string of link
 	 */
 	private function getCategorySidebarBox() {
-		global $wgCategoryTreeSidebarRoot, $wgCategoryTreeSidebarOptions;
-		if ( !$wgCategoryTreeSidebarRoot ) {
+		if ( !$this->config->get( 'CategoryTreeSidebarRoot' ) ) {
 			return false;
 		}
-		return self::parserHook( $wgCategoryTreeSidebarRoot, $wgCategoryTreeSidebarOptions );
+		return $this->parserHook(
+			$this->config->get( 'CategoryTreeSidebarRoot' ),
+			$this->config->get( 'CategoryTreeSidebarOptions' )
+		);
 	}
 
 	/**
@@ -235,7 +237,7 @@ class Hooks implements
 	 * @return bool|void True or no return value to continue or false to abort
 	 */
 	public function onArticleFromTitle( $title, &$article, $context ) {
-		if ( $title->getNamespace() == NS_CATEGORY ) {
+		if ( $title->getNamespace() === NS_CATEGORY ) {
 			$article = new CategoryTreeCategoryPage( $title );
 		}
 	}
@@ -248,15 +250,14 @@ class Hooks implements
 	 * @return bool
 	 */
 	public function onOutputPageMakeCategoryLinks( $out, $categories, &$links ) {
-		global $wgCategoryTreePageCategoryOptions, $wgCategoryTreeHijackPageCategories;
-
-		if ( !$wgCategoryTreeHijackPageCategories ) {
+		if ( !$this->config->get( 'CategoryTreeHijackPageCategories' ) ) {
 			// Not enabled, don't do anything
 			return true;
 		}
 
+		$options = $this->config->get( 'CategoryTreePageCategoryOptions' );
 		foreach ( $categories as $category => $type ) {
-			$links[$type][] = $this->parserHook( $category, $wgCategoryTreePageCategoryOptions, null, null, true );
+			$links[$type][] = $this->parserHook( $category, $options, null, null, true );
 		}
 		CategoryTree::setHeaders( $out );
 
@@ -327,10 +328,7 @@ class Hooks implements
 			return;
 		}
 
-		$cat = null;
-		if ( isset( $specialPage->categoryTreeCategories[$catTitle->getDBkey()] ) ) {
-			$cat = $specialPage->categoryTreeCategories[$catTitle->getDBkey()];
-		}
+		$cat = $specialPage->categoryTreeCategories[$catTitle->getDBkey()] ?? null;
 
 		$html .= CategoryTree::createCountString( $specialPage->getContext(), $cat, 0 );
 	}

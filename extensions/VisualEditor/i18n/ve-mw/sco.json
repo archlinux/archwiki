@@ -144,7 +144,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Media",
 	"visualeditor-dialogbutton-meta-tooltip": "Page settins",
 	"visualeditor-dialogbutton-template-tooltip": "Template",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Transclusion",
 	"visualeditor-editconflict": "Yer chynges coudna be hained cause o aen eedit conflict. Woud {{GENDER:|ye}} like tae resolve the conflict manuallie?",
 	"visualeditor-editnotices-tool": "$1 {{PLURAL:$1|notice|notices}}",
 	"visualeditor-editnotices-tooltip": "Eidit notices",

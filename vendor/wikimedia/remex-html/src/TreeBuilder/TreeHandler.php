@@ -164,6 +164,3 @@ interface TreeHandler {
 	public function reparentChildren( Element $element, Element $newParent, $sourceStart );
 
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TreeHandler::class, 'RemexHtml\TreeBuilder\TreeHandler' );

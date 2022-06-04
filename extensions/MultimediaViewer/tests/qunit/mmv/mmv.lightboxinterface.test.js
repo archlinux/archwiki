@@ -17,7 +17,7 @@
 		}
 	} ) );
 
-	QUnit.test( 'Sanity test, object creation and ui construction', function ( assert ) {
+	QUnit.test( 'Sense test, object creation and ui construction', function ( assert ) {
 		var lightbox = new mw.mmv.LightboxInterface();
 
 		stubScrollTo();

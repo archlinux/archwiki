@@ -52,7 +52,7 @@
 	"oath-log-name": "Dnevnik dvostopenjskega preverjanja pristnosti",
 	"oath-log-header": "Ti dogodki beležijo spremembe uporabnikovega statusa dvostopenjskega preverjanja pristnosti.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|je izključil}} dvostopenjsko preverjanje pristnosti od $3",
-	"oauthauth-ui-no-module": "Noben ni omogočen",
+	"oathauth-ui-no-module": "Noben ni omogočen",
 	"oathauth-module-totp-label": "TOTP (enkratni žeton)",
 	"oathauth-ui-manage": "Upravljaj",
 	"oathmanage": "Upravljaj dvostopenjsko preverjanje pristnosti",

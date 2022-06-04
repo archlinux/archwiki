@@ -4,9 +4,11 @@
 			"Arystanbek",
 			"Daniyar",
 			"GaiJin",
-			"Kaztrans"
+			"Kaztrans",
+			"Hedeyohu22"
 		]
 	},
+	"vector-language-button-label": "$1 тіл",
 	"vector-action-addsection": "Тақырып қосу",
 	"vector-action-delete": "Жою",
 	"vector-action-move": "Атауын өзгерту",

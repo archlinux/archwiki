@@ -44,7 +44,7 @@ class Assert {
 	 * @throws PreconditionException if $condition is not true.
 	 * @phan-assert-true-condition $condition
 	 */
-	public static function precondition( $condition, $description ) {
+	public static function precondition( $condition, $description ): void {
 		if ( !$condition ) {
 			throw new PreconditionException( "Precondition failed: $description" );
 		}
@@ -67,7 +67,7 @@ class Assert {
 	 * @throws ParameterAssertionException if $condition is not true.
 	 * @phan-assert-true-condition $condition
 	 */
-	public static function parameter( $condition, $name, $description ) {
+	public static function parameter( $condition, $name, $description ): void {
 		if ( !$condition ) {
 			throw new ParameterAssertionException( $name, $description );
 		}
@@ -97,7 +97,7 @@ class Assert {
 	 *         instance of) $type.
 	 *
 	 */
-	public static function parameterType( $types, $value, $name ) {
+	public static function parameterType( $types, $value, $name ): void {
 		if ( is_string( $types ) ) {
 			$types = explode( '|', $types );
 		}
@@ -117,7 +117,7 @@ class Assert {
 	 *
 	 * @throws ParameterTypeException if one of the keys in the array $value is not of type $type.
 	 */
-	public static function parameterKeyType( $type, $value, $name ) {
+	public static function parameterKeyType( $type, $value, $name ): void {
 		self::parameterType( 'array', $value, $name );
 
 		if ( $type !== 'integer' && $type !== 'string' ) {
@@ -143,7 +143,7 @@ class Assert {
 	 *
 	 * @param string|string[] $types The elements' expected type. Can be the name of a native type
 	 *        or a class or interface. Multiple types can be given in an array (or a string separated
-	 *        by a pipe character ("|"), for compatibility with versions before 5.0).
+	 *        by a pipe character ("|"), for compatibility with versions before 0.5.0).
 	 * @param array $value The parameter's actual value. If this is not an array,
 	 *        a ParameterTypeException is raised.
 	 * @param string $name The name of the parameter that was checked.
@@ -153,7 +153,7 @@ class Assert {
 	 *         (or, for objects, is not an instance of) $type.
 	 *
 	 */
-	public static function parameterElementType( $types, $value, $name ) {
+	public static function parameterElementType( $types, $value, $name ): void {
 		self::parameterType( 'array', $value, $name );
 		if ( is_string( $types ) ) {
 			$types = explode( '|', $types );
@@ -173,8 +173,9 @@ class Assert {
 	 * @param string $name
 	 *
 	 * @throws ParameterTypeException if $value is not a non-empty string.
+	 * @phan-assert non-empty-string $value
 	 */
-	public static function nonEmptyString( $value, $name ) {
+	public static function nonEmptyString( $value, $name ): void {
 		if ( !is_string( $value ) || $value === '' ) {
 			throw new ParameterTypeException( $name, 'non-empty string' );
 		}
@@ -185,7 +186,7 @@ class Assert {
 	 * This is very similar Assert::invariant() but is intended for use only after a computation
 	 * is complete.
 	 *
-	 * @note This is intended for sanity-checks in the implementation of complex algorithms.
+	 * @note This is intended for double checking in the implementation of complex algorithms.
 	 * Note however that it should not be used in performance hotspots, since evaluating
 	 * $condition and calling postcondition() costs time.
 	 *
@@ -197,7 +198,7 @@ class Assert {
 	 * @throws PostconditionException
 	 * @phan-assert-true-condition $condition
 	 */
-	public static function postcondition( $condition, $description ) {
+	public static function postcondition( $condition, $description ): void {
 		if ( !$condition ) {
 			throw new PostconditionException( "Postcondition failed: $description" );
 		}
@@ -207,7 +208,13 @@ class Assert {
 	 * Checks an invariant, that is, throws a InvariantException if $condition is false.
 	 * This is very similar Assert::postcondition() but is intended for use throughout the code.
 	 *
-	 * @note This is intended for sanity-checks in the implementation of complex algorithms.
+	 * @note The $condition is expected to be falsifiable.  If you are trying
+	 * to indicate that a code path is unreachable, use
+	 * `throw new UnreachableException( 'why this code is unreachable' )`
+	 * instead of `Assert::invariant( false, '…' )`.  Code checking tools
+	 * will complain about the latter.
+	 *
+	 * @note This is intended for double checking in the implementation of complex algorithms.
 	 * Note however that it should not be used in performance hotspots, since evaluating
 	 * $condition and calling invariant() costs time.
 	 *
@@ -219,7 +226,7 @@ class Assert {
 	 * @throws InvariantException
 	 * @phan-assert-true-condition $condition
 	 */
-	public static function invariant( $condition, $description ) {
+	public static function invariant( $condition, $description ): void {
 		if ( !$condition ) {
 			throw new InvariantException( "Invariant failed: $description" );
 		}
@@ -231,7 +238,7 @@ class Assert {
 	 *
 	 * @return bool
 	 */
-	private static function hasType( $value, array $allowedTypes ) {
+	private static function hasType( $value, array $allowedTypes ): bool {
 		// Apply strtolower because gettype returns "NULL" for null values.
 		$type = strtolower( gettype( $value ) );
 
@@ -251,6 +258,13 @@ class Assert {
 			return true;
 		}
 
+		if ( $value === false && in_array( 'false', $allowedTypes ) ) {
+			return true;
+		}
+		if ( $value === true && in_array( 'true', $allowedTypes ) ) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -260,7 +274,7 @@ class Assert {
 	 *
 	 * @return bool
 	 */
-	private static function isInstanceOf( $value, array $allowedTypes ) {
+	private static function isInstanceOf( $value, array $allowedTypes ): bool {
 		foreach ( $allowedTypes as $type ) {
 			if ( $value instanceof $type ) {
 				return true;

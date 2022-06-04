@@ -125,6 +125,7 @@ class VerifyOATHForUser extends FormSpecialPage {
 
 		$this->enabledStatus = $result;
 
+		// message used: logentry-oath-verify
 		$logEntry = new ManualLogEntry( 'oath', 'verify' );
 		$logEntry->setPerformer( $this->getUser() );
 		$logEntry->setTarget( $user->getUserPage() );

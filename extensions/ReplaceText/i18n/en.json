@@ -39,8 +39,8 @@
 	"replacetext_editsummary": "Text replacement - \"$1\" to \"$2\"",
 	"replacetext_reminder": "To also modify links to this page in other pages, go to $1.",
 	"replacetext_cfg_error": "ReplaceText configuration error",
-	"replacetext_no_compress": "Your wiki will not work with ReplaceTest: Text replacements cannot be run if $wgCompressRevisions is set to true.",
-	"replacetext_no_external_stores": "Your wiki will not work with ReplaceTest: Text replacements cannot be run if $wgExternalStores is non-empty.",
+	"replacetext_no_compress": "Your wiki will not work with ReplaceText: Text replacements cannot be run if $wgCompressRevisions is set to true.",
+	"replacetext_no_external_stores": "Your wiki will not work with ReplaceText: Text replacements cannot be run if $wgExternalStores is non-empty.",
 	"right-replacetext": "Make string replacements on the entire wiki",
 	"action-replacetext": "make string replacements on the entire wiki"
 }

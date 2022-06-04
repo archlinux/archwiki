@@ -41,10 +41,10 @@ OO.mixinClass( ve.dm.TestRebaseClient, ve.dm.RebaseClient );
  * Therefore this format is ambiguous unless the test transactions are chosen very carefully.
  * The summary 'abc' could represent any of the following changes (amongst others):
  *
- * * Append 'abc'
- * * Append 'a', then append 'bc'
- * * Append 'a' then prepend 'bc'
- * * Append 'a' then prepend 'b' then append 'c'
+ * - Append 'abc'
+ * - Append 'a', then append 'bc'
+ * - Append 'a' then prepend 'bc'
+ * - Append 'a' then prepend 'b' then append 'c'
  *
  * @param {ve.dm.Change} change The document history
  * @param {number} [commitLength] The point above which the transactions are uncommitted
@@ -52,17 +52,16 @@ OO.mixinClass( ve.dm.TestRebaseClient, ve.dm.RebaseClient );
  * @return {string} Compact summary of the history
  */
 ve.dm.TestRebaseClient.static.historySummary = function ( change, commitLength, sentLength ) {
-	var committed, sent, unsent,
-		parts = [];
+	var parts = [];
 	if ( commitLength === undefined ) {
 		commitLength = change.transactions.length;
 	}
 	if ( sentLength === undefined ) {
 		sentLength = change.transactions.length;
 	}
-	committed = change.transactions.slice( 0, commitLength );
-	sent = change.transactions.slice( commitLength, sentLength );
-	unsent = change.transactions.slice( sentLength );
+	var committed = change.transactions.slice( 0, commitLength );
+	var sent = change.transactions.slice( commitLength, sentLength );
+	var unsent = change.transactions.slice( sentLength );
 
 	function joinText( transactions ) {
 		return transactions.map( function ( transaction ) {
@@ -135,9 +134,8 @@ ve.dm.TestRebaseClient.prototype.removeFromHistory = function ( change ) {
 };
 
 ve.dm.TestRebaseClient.prototype.deliverOne = function () {
-	var item, rebased;
-	item = this.outgoing[ this.outgoingPointer++ ];
-	rebased = this.server.applyChange(
+	var item = this.outgoing[ this.outgoingPointer++ ];
+	var rebased = this.server.applyChange(
 		ve.dm.TestRebaseServer.static.fakeDocName,
 		this.getAuthorId(),
 		item.backtrack,

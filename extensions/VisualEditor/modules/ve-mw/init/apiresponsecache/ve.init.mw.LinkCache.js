@@ -65,13 +65,13 @@ ve.init.mw.LinkCache.static.processPage = function ( page ) {
  *
  * @param {string} title
  * @param {jQuery} $element Element to style
- * @param {boolean} hasFragment Whether the link goes to a fragment
+ * @param {boolean} [hasFragment=false] Whether the link goes to a fragment
  */
 ve.init.mw.LinkCache.prototype.styleElement = function ( title, $element, hasFragment ) {
-	var promise,
-		cache = this,
+	var cache = this,
 		cachedMissingData = this.getCached( '_missing/' + title );
 
+	var promise;
 	// Use the synchronous missing link cache data if it exists
 	if ( cachedMissingData ) {
 		promise = ve.createDeferred().resolve( cachedMissingData ).promise();
@@ -140,8 +140,8 @@ ve.init.mw.LinkCache.prototype.setAssumeExistence = function ( assume ) {
  * @param {Object} entries Object keyed by page title, with the values being data objects
  */
 ve.init.mw.LinkCache.prototype.setMissing = function ( entries ) {
-	var name, missingEntries = {};
-	for ( name in entries ) {
+	var missingEntries = {};
+	for ( var name in entries ) {
 		missingEntries[ '_missing/' + name ] = entries[ name ];
 	}
 	this.set( missingEntries );

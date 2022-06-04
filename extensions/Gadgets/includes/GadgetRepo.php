@@ -1,6 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\Gadgets;
+
+use InvalidArgumentException;
 use MediaWiki\Linker\LinkTarget;
+use Title;
 
 abstract class GadgetRepo {
 
@@ -8,6 +12,11 @@ abstract class GadgetRepo {
 	 * @var GadgetRepo|null
 	 */
 	private static $instance;
+
+	/**
+	 * @var string
+	 */
+	protected $titlePrefix;
 
 	/**
 	 * Get the ids of the gadgets provided by this repository
@@ -62,6 +71,18 @@ abstract class GadgetRepo {
 	}
 
 	/**
+	 * Given a gadget ID, return the title of the page where the gadget is
+	 * defined (or null if the given repo does not have per-gadget definition
+	 * pages).
+	 *
+	 * @param string $id
+	 * @return Title|null
+	 */
+	public function getGadgetDefinitionTitle( string $id ): ?Title {
+		return null;
+	}
+
+	/**
 	 * Get a list of gadgets sorted by category
 	 *
 	 * @return array [ 'category' => [ 'name' => $gadget ] ]
@@ -81,13 +102,29 @@ abstract class GadgetRepo {
 	}
 
 	/**
+	 * Get the script file name without the "MediaWiki:Gadget-" or "Gadget:" prefix.
+	 * This name is used by the client-side require() so that require("Data.json") resolves
+	 * to either "MediaWiki:Gadget-Data.json" or "Gadget:Data.json" depending on the
+	 * $wgGadgetsRepoClass configuration, enabling easy migration between the configuration modes.
+	 *
+	 * @param string $titleText
+	 * @return string
+	 */
+	public function titleWithoutPrefix( string $titleText ): string {
+		$numReplaces = 1; // there will only one occurrence of the prefix
+		return str_replace( $this->titlePrefix, '', $titleText, $numReplaces );
+	}
+
+	/**
 	 * Get the configured default GadgetRepo.
 	 *
 	 * @return GadgetRepo
 	 */
 	public static function singleton() {
 		if ( self::$instance === null ) {
-			global $wgGadgetsRepoClass; // @todo use Config here
+			// @todo use Config here
+			global $wgGadgetsRepoClass;
+			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 			self::$instance = new $wgGadgetsRepoClass();
 		}
 		return self::$instance;
@@ -102,3 +139,5 @@ abstract class GadgetRepo {
 		self::$instance = $repo;
 	}
 }
+
+class_alias( GadgetRepo::class, 'GadgetRepo' );

@@ -6,10 +6,11 @@
 			"Fohanno",
 			"Fulup",
 			"VIGNERON",
-			"Y-M D"
+			"Y-M D",
+			"Huñvreüs"
 		]
 	},
-	"captcha-edit": "A-raok gellout kemmañ ar bajenn-mañ e c'houlenner ouzhoc'h respont d'ar jedadenn eeun a-is ha lakaat an disoc'h er vaezienn ([[Special:Captcha/help|Petra eo se?]])",
+	"captcha-edit": "A-raok gellout kemmañ ar bajenn-mañ e c'houlenner ouzhoc'h respont d'ar boelladenn a-is ha lakaat an disoc'h er voest ([[Special:Captcha/help|muioc’h a ditouroù]])",
 	"captcha-desc": "Pourchas a ra teknikoù CAPTCHA evit en em wareziñ diouzh ar strob hag an diskuliañ gerioù-tremen",
 	"captcha-label": "CAPTCHA",
 	"captcha-info-help": "Deskrivadur ar c'hCAPTCHA.",

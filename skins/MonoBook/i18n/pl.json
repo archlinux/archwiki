@@ -19,5 +19,7 @@
 	"monobook-more-actions": "Więcej",
 	"monobook-cactions-label": "Działania na stronie",
 	"monobook-notifications-link": "Powiadomienia ($1)",
-	"monobook-notifications-link-none": "Powiadomienia"
+	"monobook-notifications-link-none": "Powiadomienia",
+	"monobook-view-history": "Historia",
+	"monobook-action-undelete": "odtwórz {{PLURAL:$1|1 wersję|$1 wersje|$1 wersji}}"
 }

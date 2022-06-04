@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Fitoschido",
-			"Macofe",
-			"Jakeukalane"
+			"Jakeukalane",
+			"Macofe"
 		]
 	},
 	"apihelp-query+gadgetcategories-description": "Devuelve una lista de categorías de accesorios.",

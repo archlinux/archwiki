@@ -231,22 +231,22 @@ class DOMBuilder implements TreeHandler {
 			if ( $attr->namespaceURI === null
 				&& strpos( $attr->localName, ':' ) !== false
 			) {
-				// FIXME: this apparently works to create a prefixed localName
-				// in the null namespace, but this is probably taking advantage
-				// of a bug in PHP's DOM library, and screws up in various
-				// interesting ways. For example, attributes created in this
-				// way can't be discovered via hasAttribute() or hasAttributeNS().
-				$attrNode = $this->doc->createAttribute( $attr->localName );
-				$attrNode->value = $attr->value;
 				try {
+					// FIXME: this apparently works to create a prefixed localName
+					// in the null namespace, but this is probably taking advantage
+					// of a bug in PHP's DOM library, and screws up in various
+					// interesting ways. For example, attributes created in this
+					// way can't be discovered via hasAttribute() or hasAttributeNS().
+					$attrNode = $this->doc->createAttribute( $attr->localName );
+					$attrNode->value = $attr->value;
 					$node->setAttributeNodeNS( $attrNode );
 				} catch ( \Throwable $e ) {
 					$this->rethrowIfNotDomException( $e );
 					'@phan-var \DOMException $e'; /** @var \DOMException $e */
-					$node->setAttributeNS(
-						$attr->namespaceURI,
-						$this->coerceName( $attr->qualifiedName ),
-						$attr->value );
+					$attrNode = $this->doc->createAttribute(
+						$this->coerceName( $attr->localName ) );
+					$attrNode->value = $attr->value;
+					$node->setAttributeNodeNS( $attrNode );
 				}
 			} else {
 				try {
@@ -354,12 +354,12 @@ class DOMBuilder implements TreeHandler {
 			if ( $attr->namespaceURI === null
 				&& strpos( $attr->localName, ':' ) !== false
 			) {
-				// As noted in createNode(), we can't use hasAttribute() here.
-				// However, we can use the return value of setAttributeNodeNS()
-				// instead.
-				$attrNode = $this->doc->createAttribute( $attr->localName );
-				$attrNode->value = $attr->value;
 				try {
+					// As noted in createNode(), we can't use hasAttribute() here.
+					// However, we can use the return value of setAttributeNodeNS()
+					// instead.
+					$attrNode = $this->doc->createAttribute( $attr->localName );
+					$attrNode->value = $attr->value;
 					$replaced = $node->setAttributeNodeNS( $attrNode );
 				} catch ( \Throwable $e ) {
 					$this->rethrowIfNotDomException( $e );
@@ -419,6 +419,3 @@ class DOMBuilder implements TreeHandler {
 		}
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( DOMBuilder::class, 'RemexHtml\DOM\DOMBuilder' );

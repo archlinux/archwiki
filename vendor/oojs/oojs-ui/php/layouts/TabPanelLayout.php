@@ -21,15 +21,11 @@ class TabPanelLayout extends PanelLayout {
 	 */
 	protected $label;
 	/**
-	 * @var TabOptionWidget
-	 */
-	protected $tabItem;
-	/**
 	 * @var bool
 	 */
 	protected $active;
 	/**
-	 * @var array
+	 * @var array Config for a {@see TabOptionWidget}
 	 */
 	protected $tabItemConfig;
 
@@ -37,7 +33,8 @@ class TabPanelLayout extends PanelLayout {
 	 * @param string $name Unique symbolic name of tab panel
 	 * @param array $config Configuration options
 	 *      - string|HtmlSnippet $config['label'] Label for tab panel's tab
-	 *      - array $config['tabItemConfig'] Additional tab item config
+	 *      - array $config['tabItemConfig'] Additional config for the {@see TabOptionWidget} that
+	 *        represents this panel in an {@see IndexLayout}
 	 */
 	public function __construct( $name, array $config = [] ) {
 		// Allow passing positional parameters inside the config array
@@ -64,7 +61,7 @@ class TabPanelLayout extends PanelLayout {
 	public function getConfig( &$config ) {
 		$config['name'] = $this->name;
 		$config['label'] = $this->label;
-		if ( !empty( $this->tabItemConfig ) ) {
+		if ( $this->tabItemConfig ) {
 			$config['tabItemConfig'] = $this->tabItemConfig;
 		}
 		// scrollable default has changed to true
@@ -82,20 +79,6 @@ class TabPanelLayout extends PanelLayout {
 
 	public function getTabItemConfig() {
 		return $this->tabItemConfig;
-	}
-
-	public function setTabItem( $tabItem ) {
-		$this->tabItem = $tabItem;
-		$this->setupTabItem();
-		return $this;
-	}
-
-	public function setupTabItem() {
-		// TODO: Set aria-labelledby/aria-controls as in .js
-		if ( $this->label ) {
-			$this->tabItem->setLabel( $this->label );
-		}
-		return $this;
 	}
 
 	public function getLabel() {

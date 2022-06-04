@@ -7,7 +7,7 @@ HTML open/close tags and JavaScript boilerplate.
 
 Here is how you use it:
 
-<pre lang="php">
+```php
 use Wikimedia\WrappedString;
 
 $buffer = [
@@ -16,7 +16,7 @@ $buffer = [
 ];
 $output = WrappedString::join( "\n", $buffer );
 // Result: '[foobar]'
-</pre>
+```
 
 License
 -------

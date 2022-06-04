@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Auth\AuthenticationRequest;
+use MediaWiki\Extension\Math\MathRenderer;
 
 class MathCaptcha extends SimpleCaptcha {
 

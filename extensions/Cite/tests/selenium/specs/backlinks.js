@@ -32,7 +32,7 @@ describe( 'Cite backlinks', function () {
 		CitePage.getReference( 2 ).click();
 		assert(
 			CitePage.getCiteSubBacklink( 2 ).getAttribute( 'class' )
-				.indexOf( 'mw-cite-targeted-backlink' ) !== -1,
+				.includes( 'mw-cite-targeted-backlink' ),
 			'the jump mark symbol of the backlink is highlighted'
 		);
 	} );

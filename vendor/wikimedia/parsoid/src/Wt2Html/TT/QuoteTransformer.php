@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\NodeData\DataParsoid;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\EOFTk;
 use Wikimedia\Parsoid\Tokens\NlTk;
@@ -100,7 +101,7 @@ class QuoteTransformer extends TokenHandler {
 	 * @inheritDoc
 	 */
 	public function onTag( Token $token ): ?TokenHandlerResult {
-		$tkName = is_string( $token ) ? '' : $token->getName();
+		$tkName = $token->getName();
 		if ( $tkName === 'mw-quote' ) {
 			return $this->onQuote( $token );
 		} elseif ( $tkName === 'td' || $tkName === 'th' ) {
@@ -310,7 +311,9 @@ class QuoteTransformer extends TokenHandler {
 		if ( $tsr ) {
 			$tsr = new SourceRange( $tsr->start + 1, $tsr->end );
 		}
-		$newbold = new SelfclosingTagTk( 'mw-quote', [], (object)[ "tsr" => $tsr ] );
+		$dp = new DataParsoid;
+		$dp->tsr = $tsr;
+		$newbold = new SelfclosingTagTk( 'mw-quote', [], $dp );
 		$newbold->setAttribute( "value", "''" ); // italic!
 		$this->chunks[$i] = [ $newbold ];
 	}
@@ -404,15 +407,15 @@ class QuoteTransformer extends TokenHandler {
 		}
 		if ( $state === 'b' || $state === 'ib' ) {
 			$this->currentChunk[] = new EndTagTk( 'b' );
-			$this->last["b"]->dataAttribs->autoInsertedEnd = true;
+			$this->last["b"]->dataAttribs->autoInsertedEndToken = true;
 		}
 		if ( $state === 'i' || $state === 'bi' || $state === 'ib' ) {
 			$this->currentChunk[] = new EndTagTk( 'i' );
-			$this->last["i"]->dataAttribs->autoInsertedEnd = true;
+			$this->last["i"]->dataAttribs->autoInsertedEndToken = true;
 		}
 		if ( $state === 'bi' ) {
 			$this->currentChunk[] = new EndTagTk( 'b' );
-			$this->last["b"]->dataAttribs->autoInsertedEnd = true;
+			$this->last["b"]->dataAttribs->autoInsertedEndToken = true;
 		}
 	}
 
@@ -435,9 +438,9 @@ class QuoteTransformer extends TokenHandler {
 		for ( $i = 0; $i < $numTags; $i++ ) {
 			if ( $tsr ) {
 				if ( $i === 0 && $ignoreBogusTwo ) {
-					$this->last[$tags[$i]->getName()]->dataAttribs->autoInsertedEnd = true;
+					$this->last[$tags[$i]->getName()]->dataAttribs->autoInsertedEndToken = true;
 				} elseif ( $i === 2 && $ignoreBogusTwo ) {
-					$tags[$i]->dataAttribs->autoInsertedStart = true;
+					$tags[$i]->dataAttribs->autoInsertedStartToken = true;
 				} elseif ( $tags[$i]->getName() === 'b' ) {
 					$tags[$i]->dataAttribs->tsr = new SourceRange( $startpos, $startpos + 3 );
 					$startpos = $tags[$i]->dataAttribs->tsr->end;

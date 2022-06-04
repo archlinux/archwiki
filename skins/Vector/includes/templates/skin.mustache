@@ -15,7 +15,6 @@
 	string html-body-content
 	string html-categories
 	string html-after-content
-	string msg-navigation-heading
 	LogoOptions data-logos
 	object data-portlets
 	MenuDefinition data-portlets.data-personal
@@ -35,7 +34,7 @@
 }}
 <div class="mw-page-container">
 	<a class="mw-jump-link" href="#content">{{msg-vector-jumptocontent}}</a>
-	<div class="mw-page-container-inner">
+	<div class="mw-page-container-inner {{#data-toc}} vector-toc-visible{{/data-toc}}">
 
 <input
 	type="checkbox"
@@ -44,36 +43,40 @@
 	{{#sidebar-visible}}checked{{/sidebar-visible}}>
 
 {{>Header}}
+
 <div class="mw-workspace-container">
 	{{>Navigation}}
+	<div class="mw-table-of-contents-container mw-sticky-header-element">
+		{{#data-toc}}{{>TableOfContents}}{{/data-toc}}
+	</div>
 	<div class="mw-content-container">
 {{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
 <main id="content" class="mw-body" role="main">
 	<a id="top"></a>
 	<div id="siteNotice">{{{html-site-notice}}}</div>
 
-	{{^is-language-in-header}}
+	{{^is-language-in-content}}
 	{{>Indicators}}
-	<h1 id="firstHeading" class="firstHeading" {{{html-user-language-attributes}}}>{{{html-title}}}</h1>
-	{{/is-language-in-header}}
+	{{{html-title-heading}}}
+	{{/is-language-in-content}}
 
-	{{#is-language-in-header}}
+	{{#is-language-in-content}}
 	<header class="mw-body-header">
-		{{^is-mainpage}}
+		{{#is-language-in-content-top}}
 			{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
-		{{/is-mainpage}}
-		<h1 id="firstHeading" class="firstHeading" {{{html-user-language-attributes}}}>{{{html-title}}}</h1>
+		{{/is-language-in-content-top}}
+		{{{html-title-heading}}}
 		{{>Indicators}}
 		{{#is-article}}
 			<div id="siteSub" class="noprint">{{msg-tagline}}</div>
 		{{/is-article}}
 	</header>
-	{{/is-language-in-header}}
+	{{/is-language-in-content}}
 
 	<div id="bodyContent" class="vector-body">
-		{{^is-language-in-header}}
+		{{^is-language-in-content}}
 			{{#is-article}}<div id="siteSub" class="noprint">{{msg-tagline}}</div>{{/is-article}}
-		{{/is-language-in-header}}
+		{{/is-language-in-content}}
 		<div id="contentSub"{{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
 		<div id="contentSub2">{{{html-undelete-link}}}</div>
 		{{{html-user-message}}}
@@ -81,11 +84,9 @@
 		{{{html-categories}}}
 	</div>
 
-	{{#is-mainpage}}
-	{{#is-language-in-header}}
-		{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
-	{{/is-language-in-header}}
-	{{/is-mainpage}}
+	{{#is-language-in-content-bottom}}
+	{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
+	{{/is-language-in-content-bottom}}
 
 </main>
 {{{html-after-content}}}
@@ -99,6 +100,4 @@
 </div>
 	</div> {{! END mw-page-container-inner }}
 </div> {{! END mw-page-container }}
-{{#data-vector-sticky-header}}
-{{>StickyHeader}}
-{{/data-vector-sticky-header}}
+{{#data-vector-sticky-header}}{{>StickyHeader}}{{/data-vector-sticky-header}}

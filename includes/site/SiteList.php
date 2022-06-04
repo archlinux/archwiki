@@ -334,7 +334,7 @@ class SiteList extends GenericArrayObject {
 	/**
 	 * @see GenericArrayObject::__unserialize
 	 *
-	 * @since 1.37.2
+	 * @since 1.38
 	 *
 	 * @param array $serializationData
 	 */

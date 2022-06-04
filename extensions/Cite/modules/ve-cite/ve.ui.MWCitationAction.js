@@ -6,9 +6,9 @@
  */
 
 /**
- * Link action.
+ * Citation action.
  *
- * Opens either MWLinkAnnotationInspector or MWLinkNodeInspector depending on what is selected.
+ * Opens the {@see ve.ui.MWCitationDialog} (via it's name "cite") in VisualEditor.
  *
  * @class
  * @extends ve.ui.Action

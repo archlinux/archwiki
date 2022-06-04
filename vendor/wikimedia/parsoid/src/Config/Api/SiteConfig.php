@@ -10,8 +10,12 @@ use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Wikimedia\Parsoid\Config\SiteConfig as ISiteConfig;
+use Wikimedia\Parsoid\Config\StubMetadataCollector;
+use Wikimedia\Parsoid\Core\ContentMetadataCollector;
+use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\Mocks\MockMetrics;
 use Wikimedia\Parsoid\Utils\ConfigUtils;
+use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\UrlUtils;
 use Wikimedia\Parsoid\Utils\Utils;
 
@@ -164,6 +168,7 @@ class SiteConfig extends ISiteConfig {
 		// Superclass value reset since parsertests reuse SiteConfig objects
 		$this->linkTrailRegex = false;
 		$this->magicWordMap = null;
+		$this->interwikiMapNoNamespaces = null;
 	}
 
 	/**
@@ -235,9 +240,14 @@ class SiteConfig extends ISiteConfig {
 		$this->widthOption = $data['general']['thumblimits'][$data['defaultoptions']['thumbsize']];
 		$this->protocols = $data['protocols'];
 		$this->apiVariables = $data['variables'];
-		$this->apiFunctionHooks = $data['functionhooks'];
+		$this->apiFunctionHooks = PHPUtils::makeSet( $data['functionhooks'] );
 
 		// Process namespace data from API
+		$this->nsNames = [];
+		$this->nsCase = [];
+		$this->nsIds = [];
+		$this->nsCanon = [];
+		$this->nsWithSubpages = [];
 		foreach ( $data['namespaces'] as $ns ) {
 			$this->addNamespace( $ns );
 		}
@@ -337,6 +347,8 @@ class SiteConfig extends ISiteConfig {
 				break;
 			}
 		}
+		// `$this->nsNames[14]` is set earlier by the calls to `$this->addNamespace( $ns )`
+		// @phan-suppress-next-line PhanCoalescingAlwaysNull
 		$category = $this->quoteTitleRe( $this->nsNames[14] ?? 'Category', '@' );
 		if ( $category !== 'Category' ) {
 			$category = "(?:$category|Category)";
@@ -424,6 +436,10 @@ class SiteConfig extends ISiteConfig {
 	/** @inheritDoc */
 	public function namespaceId( string $name ): ?int {
 		$this->loadSiteData();
+		$ns = $this->canonicalNamespaceId( $name );
+		if ( $ns !== null ) {
+			return $ns;
+		}
 		return $this->nsIds[Utils::normalizeNamespaceName( $name )] ?? null;
 	}
 
@@ -467,7 +483,7 @@ class SiteConfig extends ISiteConfig {
 		return $this->siteData['wikiid'];
 	}
 
-	public function legalTitleChars() : string {
+	public function legalTitleChars(): string {
 		$this->loadSiteData();
 		return $this->siteData['legaltitlechars'];
 	}
@@ -533,15 +549,33 @@ class SiteConfig extends ISiteConfig {
 		return $this->siteData['server'];
 	}
 
-	/** @inheritDoc */
-	public function getModulesLoadURI(): string {
-		// In JS, you could override the load uri
-		// via conf.parsoid.modulesLoadURI, but custom values aren't
-		// exported via siteinfo.
-		// Parsoid/JS always makes this protocol-relative, so match
+	/**
+	 * @inheritDoc
+	 */
+	public function exportMetadataToHead(
+		Document $document,
+		ContentMetadataCollector $metadata,
+		string $defaultTitle,
+		string $lang
+	): void {
+		'@phan-var StubMetadataCollector $metadata'; // @var StubMetadataCollector $metadata
+		$moduleLoadURI = $this->server() . $this->scriptpath() . '/load.php';
+		// Parsoid/JS always made this protocol-relative, so match
 		// that (for now at least)
-		$path = parent::getModulesLoadURI();
-		return preg_replace( '#^https?://#', '//', $path );
+		$moduleLoadURI = preg_replace( '#^https?://#', '//', $moduleLoadURI );
+		// Look for a displaytitle.
+		$displayTitle = $metadata->getPageProperty( 'displaytitle' ) ??
+			// Use the default title, properly escaped
+			Utils::escapeHtml( $defaultTitle );
+		$this->exportMetadataHelper(
+			$document,
+			$moduleLoadURI,
+			$metadata->getModules(),
+			$metadata->getModuleStyles(),
+			$metadata->getJsConfigVars(),
+			$displayTitle,
+			$lang
+		);
 	}
 
 	public function redirectRegexp(): string {
@@ -581,9 +615,55 @@ class SiteConfig extends ISiteConfig {
 	}
 
 	/** @inheritDoc */
-	protected function getFunctionHooks(): array {
-		$this->loadSiteData();
-		return $this->apiFunctionHooks;
+	protected function haveComputedFunctionSynonyms(): bool {
+		return false;
+	}
+
+	private static $noHashFunctions = null;
+
+	/** @inheritDoc */
+	protected function updateFunctionSynonym( string $func, string $magicword, bool $caseSensitive ): void {
+		if ( !$this->apiFunctionHooks ) {
+			$this->loadSiteData();
+		}
+		if ( isset( $this->apiFunctionHooks[$magicword] ) ) {
+			if ( !self::$noHashFunctions ) {
+				// FIXME: This is an approximation only computed in non-integrated mode for
+				// commandline and developer testing. This set is probably not up to date
+				// and also doesn't reflect no-hash functions registered by extensions
+				// via setFunctionHook calls. As such, you might run into GOTCHAs during
+				// debugging of production issues in standalone / API config mode.
+				self::$noHashFunctions = PHPUtils::makeSet( [
+					'ns', 'nse', 'urlencode', 'lcfirst', 'ucfirst', 'lc', 'uc',
+					'localurl', 'localurle', 'fullurl', 'fullurle', 'canonicalurl',
+					'canonicalurle', 'formatnum', 'grammar', 'gender', 'plural', 'bidi',
+					'numberofpages', 'numberofusers', 'numberofactiveusers',
+					'numberofarticles', 'numberoffiles', 'numberofadmins',
+					'numberingroup', 'numberofedits', 'language',
+					'padleft', 'padright', 'anchorencode', 'defaultsort', 'filepath',
+					'pagesincategory', 'pagesize', 'protectionlevel', 'protectionexpiry',
+					'namespacee', 'namespacenumber', 'talkspace', 'talkspacee',
+					'subjectspace', 'subjectspacee', 'pagename', 'pagenamee',
+					'fullpagename', 'fullpagenamee', 'rootpagename', 'rootpagenamee',
+					'basepagename', 'basepagenamee', 'subpagename', 'subpagenamee',
+					'talkpagename', 'talkpagenamee', 'subjectpagename',
+					'subjectpagenamee', 'pageid', 'revisionid', 'revisionday',
+					'revisionday2', 'revisionmonth', 'revisionmonth1', 'revisionyear',
+					'revisiontimestamp', 'revisionuser', 'cascadingsources',
+					// Special callbacks in core
+					'namespace', 'int', 'displaytitle', 'pagesinnamespace',
+				] );
+			}
+
+			$syn = $func;
+			if ( substr( $syn, -1 ) === ':' ) {
+				$syn = substr( $syn, 0, -1 );
+			}
+			if ( !isset( self::$noHashFunctions[$magicword] ) ) {
+				$syn = '#' . $syn;
+			}
+			$this->functionSynonyms[intval( $caseSensitive )][$syn] = $magicword;
+		}
 	}
 
 	/** @inheritDoc */

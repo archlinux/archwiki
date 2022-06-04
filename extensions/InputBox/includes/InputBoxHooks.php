@@ -6,44 +6,69 @@
  * @ingroup Extensions
  */
 
+namespace MediaWiki\Extension\InputBox;
+
+use Article;
+use Config;
+use MediaWiki;
+use MediaWiki\Hook\MediaWikiPerformActionHook;
+use MediaWiki\Hook\ParserFirstCallInitHook;
+use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
+use OutputPage;
+use Parser;
+use SpecialPage;
+use Title;
+use User;
+use WebRequest;
+
 /**
  * InputBox hooks
  */
-class InputBoxHooks {
+class InputBoxHooks implements
+	ParserFirstCallInitHook,
+	SpecialPageBeforeExecuteHook,
+	MediaWikiPerformActionHook
+{
+
+	/** @var Config */
+	private $config;
+
+	/**
+	 * @param Config $config
+	 */
+	public function __construct(
+		Config $config
+	) {
+		$this->config = $config;
+	}
 
 	/**
 	 * Initialization
 	 * @param Parser $parser
-	 * @return true
 	 */
-	public static function register( Parser $parser ) {
+	public function onParserFirstCallInit( $parser ) {
 		// Register the hook with the parser
-		$parser->setHook( 'inputbox', [ 'InputBoxHooks', 'render' ] );
-
-		// Continue
-		return true;
+		$parser->setHook( 'inputbox', [ $this, 'render' ] );
 	}
 
 	/**
 	 * Prepend prefix to wpNewTitle if necessary
 	 * @param SpecialPage $special
 	 * @param string $subPage
-	 * @return true
 	 */
-	public static function onSpecialPageBeforeExecute( $special, $subPage ) {
+	public function onSpecialPageBeforeExecute( $special, $subPage ) {
 		$request = $special->getRequest();
 		$prefix = $request->getText( 'prefix', '' );
 		$title = $request->getText( 'wpNewTitle', '' );
 		$search = $request->getText( 'search', '' );
 		$searchfilter = $request->getText( 'searchfilter', '' );
-		if ( $special->getName() == 'Movepage' && $prefix !== '' && $title !== '' ) {
+		if ( $special->getName() === 'Movepage' && $prefix !== '' && $title !== '' ) {
 			$request->setVal( 'wpNewTitle', $prefix . $title );
 			$request->unsetVal( 'prefix' );
 		}
-		if ( $special->getName() == 'Search' && $searchfilter !== '' ) {
+		if ( $special->getName() === 'Search' && $searchfilter !== '' ) {
 			$request->setVal( 'search', $search . ' ' . $searchfilter );
 		}
-		return true;
 	}
 
 	/**
@@ -53,7 +78,7 @@ class InputBoxHooks {
 	 * @param Parser $parser
 	 * @return string
 	 */
-	public static function render( $input, $args, Parser $parser ) {
+	public function render( $input, $args, Parser $parser ) {
 		// Create InputBox
 		$inputBox = new InputBox( $parser );
 
@@ -76,7 +101,7 @@ class InputBoxHooks {
 	 * @param MediaWiki $wiki
 	 * @return bool
 	 */
-	public static function onMediaWikiPerformAction(
+	public function onMediaWikiPerformAction(
 		$output,
 		$article,
 		$title,
@@ -98,9 +123,7 @@ class InputBoxHooks {
 		unset( $params['prefix'] );
 		$params['title'] = $title;
 
-		global $wgScript;
-		// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
-		$output->redirect( wfAppendQuery( $wgScript, $params ), '301' );
+		$output->redirect( wfAppendQuery( $this->config->get( 'Script' ), $params ), '301' );
 		return false;
 	}
 }

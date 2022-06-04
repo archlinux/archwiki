@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bencemac",
+			"Dj",
+			"Wolf Rex"
+		]
+	},
+	"apihelp-abusefiltercheckmatch-description": "vars, rcid vagy logid szükséges, de csak egyet lehet használni.",
+	"apihelp-abusefilterchecksyntax-description": "Egy Vandálszűrő szintaxisának ellenőrzése.",
+	"apihelp-abusefilterchecksyntax-summary": "Egy Vandálszűrő szintaxisának ellenőrzése.",
+	"apihelp-abusefilterchecksyntax-example-1": "Egy érvényes szűrő szintaxisának ellenőrzése",
+	"apihelp-abusefilterchecksyntax-example-2": "Egy érvénytelen szűrő szintaxisának ellenőrzése",
+	"apihelp-abusefilterunblockautopromote-param-user": "A szerkesztő felhasználóneve, akinek blokkját fel akarod oldani.",
+	"apihelp-query+abusefilters-description": "Vandálszűrők részleteinek megjelenítése.",
+	"apihelp-query+abusefilters-summary": "Vandálszűrők részleteinek megjelenítése.",
+	"apihelp-query+abusefilters-example-1": "Az engedélyezett nyilvános szűrők listázása.",
+	"apihelp-query+abuselog-example-1": "Friss naplóbejegyzések mutatása",
+	"apierror-abusefilter-canttest": "Nincs jogosultságod Vandálszűrők teszteléshez.",
+	"apierror-abusefilter-cantcheck": "Nincs jogosultságod a vandálszűrők szintaxisának ellenőrzéséhez.",
+	"apierror-abusefilter-nosuchlogid": "Nincsen $1. számú bejegyzés a Vandálszűrő-naplóban.",
+	"apierror-abusefilter-badsyntax": "A szűrő szintaktikailag hibás."
+}

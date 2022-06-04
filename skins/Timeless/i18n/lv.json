@@ -15,5 +15,7 @@
 	"timeless-namespaces": "Vārdtelpas",
 	"timeless-pagetools": "Lapas darbības",
 	"timeless-languages": "Valodas",
-	"timeless-projects": "Citi projekti"
+	"timeless-projects": "Citi projekti",
+	"timeless-view-history": "Vēsture",
+	"timeless-action-undelete": "Atjaunot $1 {{PLURAL:$1|versijas|versiju|versijas}}"
 }

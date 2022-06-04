@@ -9,36 +9,29 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Dodo;
 
-/* TODO PORT:
-* The Window is not a particularly relevant interface for our
-* use case of building and manipulating a document quickly.
-* We will, afaik, not need any of the interfaces provided here,
-* since we are operating in a somewhat "headless" mode.
-*
-* Consider eliminating this, or stubbing it.
-*/
+use Wikimedia\Dodo\Internal\UnimplementedTrait;
 
-/*
- use Dodo\interfaces\DOMImplementation;
- use Dodo\interfaces\EventTarget;
+/**
+ * The Window is not a particularly relevant interface for our
+ * use case of building and manipulating a document quickly.
+ * We will, afaik, not need any of the interfaces provided here,
+ * since we are operating in a somewhat "headless" mode.
+ *
+ * Consider eliminating this, or stubbing it.
+ * @phan-forbid-undeclared-magic-properties
+ */
+class Window extends EventTarget implements \Wikimedia\IDLeDOM\Window {
+	// DOM mixins
+	use GlobalEventHandlers;
+	use WindowEventHandlers;
 
- use Dodo\interfaces\browser\Location;
- use Dodo\interfaces\browser\History;
- use Dodo\interfaces\browser\Console;
- use Dodo\interfaces\browser\NavigatorID;
+	// Stub out methods not yet implements.
+	use \Wikimedia\IDLeDOM\Stub\Window;
+	use UnimplementedTrait;
 
- use Dodo\utils;
+	// Helper functions from IDLeDOM
+	use \Wikimedia\IDLeDOM\Helper\Window;
 
- require_once("interfaces/DOMImplementation.php");
- require_once("interfaces/EventTarget.php");
-
- require_once("interfaces/browser/Console.php");
- require_once("interfaces/browser/History.php");
- require_once("interfaces/browser/Location.php");
- require_once("interfaces/browser/NavigatorID.php");
-*/
-
-class Window extends EventTarget {
 	public $document;
 	public $console = null;
 	public $history = null;
@@ -113,13 +106,4 @@ class Window extends EventTarget {
 		}
 		*/
 	}
-
-	/* TODO: This is a completely broken implementation */
-	public function getComputedStyle( $elt ) {
-		return $elt->style;
-	}
 }
-
-/* TODO: Make this work with Window properly */
-//utils.expose(require('./WindowTimers'), Window);
-//utils.expose(require('./impl'), Window);

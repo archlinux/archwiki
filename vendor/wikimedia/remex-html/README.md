@@ -24,7 +24,6 @@ RemexHtml presently lacks:
 
 - Encoding support. The input is expected to be valid UTF-8.
 - Scripting.
-- XML infoset coercion and XHTML serialization.
 - Precise compliance with specified parse error generation.
 
 RemexHtml aims to be compliant with W3C recommendation HTML 5.1, except for

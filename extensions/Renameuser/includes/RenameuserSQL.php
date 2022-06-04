@@ -1,7 +1,14 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser;
+
+use Job;
+use ManualLogEntry;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
+use SpecialLog;
+use Title;
+use User;
 
 /**
  * Class which performs the actual renaming of users
@@ -265,15 +272,7 @@ class RenameuserSQL {
 			}
 
 			// Insert jobs into queue!
-			while ( true ) {
-				$row = $dbw->fetchObject( $res );
-				if ( !$row ) {
-					# If there are any job rows left, add it to the queue as one job
-					if ( $jobParams['count'] > 0 ) {
-						$jobs[] = Job::factory( 'renameUser', $oldTitle, $jobParams );
-					}
-					break;
-				}
+			foreach ( $res as $row ) {
 				# Since the ORDER BY is ASC, set the min timestamp with first row
 				if ( $jobParams['count'] === 0 ) {
 					$jobParams['minTimestamp'] = $row->$timestampC;
@@ -290,6 +289,10 @@ class RenameuserSQL {
 					$jobParams['maxTimestamp'] = '0';
 					$jobParams['count'] = 0;
 				}
+			}
+			# If there are any job rows left, add it to the queue as one job
+			if ( $jobParams['count'] > 0 ) {
+				$jobs[] = Job::factory( 'renameUser', $oldTitle, $jobParams );
 			}
 		}
 
@@ -314,7 +317,7 @@ class RenameuserSQL {
 		// jobs will see that the transaction was not committed and will cancel themselves.
 		$count = count( $jobs );
 		if ( $count > 0 ) {
-			JobQueueGroup::singleton()->push( $jobs );
+			MediaWikiServices::getInstance()->getJobQueueGroupFactory()->makeJobQueueGroup()->push( $jobs );
 			$this->debug( "Queued $count jobs for {$this->old} to {$this->new}" );
 		}
 
@@ -357,3 +360,5 @@ class RenameuserSQL {
 		);
 	}
 }
+
+class_alias( RenameuserSQL::class, 'RenameuserSQL' );

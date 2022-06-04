@@ -133,8 +133,7 @@ ve.dm.MWImageNode.static.isDiffComparable = function ( element, other ) {
 };
 
 ve.dm.MWImageNode.static.describeChanges = function ( attributeChanges, attributes ) {
-	var key, sizeFrom, sizeTo, change,
-		customKeys = [ 'width', 'height', 'defaultSize', 'src', 'href' ],
+	var customKeys = [ 'width', 'height', 'defaultSize', 'src', 'href' ],
 		descriptions = [];
 
 	function describeSize( width, height ) {
@@ -142,6 +141,7 @@ ve.dm.MWImageNode.static.describeChanges = function ( attributeChanges, attribut
 	}
 
 	if ( 'width' in attributeChanges || 'height' in attributeChanges ) {
+		var sizeFrom, sizeTo;
 		if ( attributeChanges.defaultSize && attributeChanges.defaultSize.from === true ) {
 			sizeFrom = ve.msg( 'visualeditor-mediasizewidget-sizeoptions-default' );
 		} else {
@@ -163,13 +163,13 @@ ve.dm.MWImageNode.static.describeChanges = function ( attributeChanges, attribut
 			ve.htmlMsg( 'visualeditor-changedesc-image-size', this.wrapText( 'del', sizeFrom ), this.wrapText( 'ins', sizeTo ) )
 		);
 	}
-	for ( key in attributeChanges ) {
+	for ( var key in attributeChanges ) {
 		if ( customKeys.indexOf( key ) === -1 ) {
 			if ( key === 'borderImage' && !attributeChanges.borderImage.from && !attributeChanges.borderImage.to ) {
 				// Skip noise from the data model
 				continue;
 			}
-			change = this.describeChange( key, attributeChanges[ key ] );
+			var change = this.describeChange( key, attributeChanges[ key ] );
 			descriptions.push( change );
 		}
 	}
@@ -189,6 +189,8 @@ ve.dm.MWImageNode.static.describeChange = function ( key, change ) {
 				this.wrapText( 'del', ve.msg( 'visualeditor-align-desc-' + change.from ) ),
 				this.wrapText( 'ins', ve.msg( 'visualeditor-align-desc-' + change.to ) )
 			);
+		case 'originalWidth':
+		case 'originalHeight':
 		case 'originalClasses':
 		case 'unrecognizedClasses':
 			return;
@@ -257,11 +259,10 @@ ve.dm.MWImageNode.static.resizeToBoundingBox = function ( imageDimensions, bound
  * @param {ve.dm.Scalable} scalable The scalable object to update
  */
 ve.dm.MWImageNode.static.syncScalableToType = function ( type, mediaType, scalable ) {
-	var originalDimensions, dimensions,
-		defaultThumbSize = mw.config.get( 'wgVisualEditorConfig' )
-			.thumbLimits[ mw.user.options.get( 'thumbsize' ) ];
+	var defaultThumbSize = mw.config.get( 'wgVisualEditorConfig' )
+		.thumbLimits[ mw.user.options.get( 'thumbsize' ) ];
 
-	originalDimensions = scalable.getOriginalDimensions();
+	var originalDimensions = scalable.getOriginalDimensions();
 
 	// We can only set default dimensions if we have the original ones
 	if ( originalDimensions ) {
@@ -269,6 +270,7 @@ ve.dm.MWImageNode.static.syncScalableToType = function ( type, mediaType, scalab
 			// Set the default size to that in the wiki configuration if
 			// 1. The original image width is not smaller than the default
 			// 2. If the image is an SVG drawing
+			var dimensions;
 			if ( originalDimensions.width >= defaultThumbSize || mediaType === 'DRAWING' ) {
 				dimensions = ve.dm.Scalable.static.getDimensionsFromValue( {
 					width: defaultThumbSize
@@ -312,9 +314,8 @@ ve.dm.MWImageNode.static.syncScalableToType = function ( type, mediaType, scalab
 			scalable.setEnforcedMax( false );
 		}
 	}
-	// TODO: Some day, when svgMaxSize works properly in MediaWiki
-	// we can add it back as max dimension consideration:
-	// mw.config.get( 'wgVisualEditorConfig' ).svgMaxSize
+	// TODO: Some day, when $wgSvgMaxSize works properly in MediaWiki
+	// we can add it back as max dimension consideration.
 };
 
 /**
@@ -368,8 +369,7 @@ ve.dm.MWImageNode.prototype.getFilename = function () {
  * @inheritdoc
  */
 ve.dm.MWImageNode.prototype.getScalable = function () {
-	var oldMediaType,
-		imageNode = this;
+	var imageNode = this;
 	if ( !this.scalablePromise ) {
 		this.scalablePromise = ve.dm.MWImageNode.static.getScalablePromise( this.getFilename() );
 		// If the promise was already resolved before getScalablePromise returned, then jQuery will execute the done straight away.
@@ -380,7 +380,7 @@ ve.dm.MWImageNode.prototype.getScalable = function () {
 					width: info.width,
 					height: info.height
 				} );
-				oldMediaType = imageNode.mediaType;
+				var oldMediaType = imageNode.mediaType;
 				// Update media type
 				imageNode.mediaType = info.mediatype;
 				// Update according to type

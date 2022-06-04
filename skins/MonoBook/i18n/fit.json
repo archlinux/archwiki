@@ -10,5 +10,7 @@
 	"monobook-jumptosearch": "Siiry hakuun",
 	"monobook-more-actions": "Lissää",
 	"monobook-notifications-link": "Ilmotukset ($1)",
-	"monobook-notifications-link-none": "Ilmotukset"
+	"monobook-notifications-link-none": "Ilmotukset",
+	"monobook-view-history": "Histuuria",
+	"monobook-action-undelete": "Palauta {{PLURAL:$1|yksi mookkaus|$1 mookkausta}}"
 }

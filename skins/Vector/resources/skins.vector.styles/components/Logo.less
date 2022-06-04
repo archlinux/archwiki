@@ -17,6 +17,9 @@
 	margin-right: 10px;
 	// Hide mobile icon at lower resolutions and defer to wordmark
 	display: none;
+	@size-mw-logo-icon: unit( 50 / @font-size-browser, em );
+	width: @size-mw-logo-icon;
+	height: @size-mw-logo-icon;
 
 	@media ( min-width: @width-breakpoint-tablet ) {
 		display: block;
@@ -54,12 +57,10 @@
 .mw-logo-wordmark {
 	display: block;
 	margin: 0 auto;
-	font-size: 1.4em;
 }
 
 .mw-logo-tagline {
 	// For browsers which do not support flexbox.
 	display: block;
 	margin: 5px auto 0;
-	font-size: 0.7em;
 }

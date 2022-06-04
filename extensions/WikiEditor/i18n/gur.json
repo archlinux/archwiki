@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"Akandee1",
+			"Akoonaba"
+		]
+	},
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Pɛɛge kana boɛ {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Pɛɛge kana ka boɛ bona {{Zi'ia la yu'urɛ}}",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Yele-zuo la tı fu baŋɛ la pa'alɛ la yelemiŋerɛ",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Pɛɛge kana dagi contɛnti pɛɛge,ka kulisi la zuyelisi'ia yu'ura n wɔn taaba"
+}

@@ -4,7 +4,7 @@
 			"Awangba Mangang"
 		]
 	},
-	"cite-desc": "ꯍꯥꯞꯆꯤꯟꯂꯨ<code>&lt;ꯂꯧ[ name=id]&gt;</code> ꯑꯃꯁꯨꯡ <code>&lt;ꯃꯇꯦꯡ ꯂꯧꯔꯛꯐꯝꯁꯤꯡ/&gt;</code> ꯊꯦꯡꯕ, ꯄꯥꯊꯣꯛꯅꯕꯒꯤ",
+	"cite-desc": "ꯍꯥꯞꯆꯤꯟꯂꯨ<code>&lt;ꯂꯧ&gt;</code> ꯑꯃꯁꯨꯡ <code>&lt;ꯃꯇꯦꯡ ꯂꯧꯔꯛꯐꯝꯁꯤꯡ/&gt;</code> ꯊꯦꯡꯕ, ꯄꯥꯊꯣꯛꯅꯕꯒꯤ",
 	"cite_error": "Cite ꯑꯔꯥꯟꯕ: $1",
 	"cite_error_ref_invalid_dir": "ꯑꯍꯥꯡꯕ<code>&lt;ref&gt;</code> tag; dir attribute \"$1\" ꯁꯤ ꯃꯁꯛ ꯈꯪꯗꯦ ꯫ ꯁꯣꯏꯗꯅꯥ ꯑꯣꯏꯒꯅꯤ ꯑꯣꯏꯗꯒꯤ ꯌꯦꯠꯇꯥ ꯅꯌꯇ꯭ꯔꯒ ꯌꯦꯠꯇꯒꯤ ꯑꯣꯏꯗ",
 	"cite_error_references_no_backlink_label": "Ran out of custom backlink labels. Define more in the [[MediaWiki:Cite references link many format backlink labels]] message.!!FUZZY!!",

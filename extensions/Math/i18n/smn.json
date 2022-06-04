@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Seipinne",
+			"Yupik"
+		]
+	},
+	"math_unknown_error": "tubdâmettum feilâ",
+	"math_unknown_function": "tubdâmettum funktio \"$1\"",
+	"mw_math_mathml": "MathML, sehe SVG teikkâ PNG verrin (avžuuttum tááláš laađđâmijd já älkkeekiävtutyejiniävuid)",
+	"mw_math_png": "PNG-koveh",
+	"mw_math_source": "Čääiti LaTeX-häämist (tekstâlaađđâmáid)",
+	"prefs-math": "Matematiik",
+	"math-wikibase-formula-name": "Nommâ"
+}

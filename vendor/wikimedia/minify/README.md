@@ -2,7 +2,7 @@
 
 Minify is a PHP library for minification of JavaScript code and CSS stylesheets.
 
-### Quick start
+## Quick start
 
 Install using [Composer](https://getcomposer.org/), from [Packagist.org](https://packagist.org/packages/wikimedia/minify):
 
@@ -10,7 +10,7 @@ Install using [Composer](https://getcomposer.org/), from [Packagist.org](https:/
 composer require wikimedia/minify
 ```
 
-### Usage
+## Usage
 
 ```php
 use Wikimedia\Minify\JavaScriptMinifier;
@@ -47,12 +47,24 @@ $output = CSSMin::minify( $input );
 // .foo,.bar{prop:value}
 ```
 
-### Contribute
+## Known limitations
+
+The following trade-offs were made for improved runtime performance and code
+simplicity. If they cause problems in real-world applications without trivial
+workarounds, please let us know!
+
+* [T37492](https://phabricator.wikimedia.org/T37492): In CSS, content within quoted
+  strings that looks like source code are sometimes minified.
+
+* [T287631](https://phabricator.wikimedia.org/T287631): In CSS, writing a URL
+  over multiple lines with escaped line-breaks is not supported.
+
+## Contribute
 
 * Issue tracker: <https://phabricator.wikimedia.org/tag/wikimedia-minify/>
 * Source code: <https://gerrit.wikimedia.org/g/mediawiki/libs/Minify>
 * Submit patches via Gerrit: <https://www.mediawiki.org/wiki/Developer_account>
 
-### See also
+## See also
 
 * High-level documentation: <https://www.mediawiki.org/wiki/ResourceLoader/Architecture>

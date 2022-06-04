@@ -27,6 +27,7 @@
 	"scribunto-lua-error-location": "Lua tõrge $1: $2.",
 	"scribunto-lua-error": "Lua tõrge: $2.",
 	"scribunto-lua-notarrayreturn": "Skriptitõrge: Moodul peaks väljastama eksporditabeli, kuid väljastas $2-tüüpi väärtuse.",
+	"scribunto-lua-warning": "Skripti hoiatus: $1",
 	"scribunto-module-with-errors-category": "Tõrgetega Scribunto-moodulid",
 	"scribunto-module-with-errors-category-desc": "Moodulis on tõrge.",
 	"scribunto-limitreport-timeusage": "Lua ajakasutus",

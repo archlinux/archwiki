@@ -39,11 +39,18 @@
 /**
  * @typedef {Object} SearchData
  * @property {string|null} msg-search
+ * @property {string|null} msg-searchbutton
+ * @property {string|null} msg-searcharticle
  * @property {string} [html-user-language-attributes]
+ * @property {boolean} is-primary is this the primary method of search?
  * @property {string} form-action URL
+ * @property {string} form-id
  * @property {string|null} html-input
  * @property {string|null} [class] of the menu
  * @property {string|null} page-title the title of the search page
+ * @property {string} html-input-attributes
+ * @property {string} html-button-fulltext-attributes
+ * @property {string} html-button-go-attributes
  * @property {string|null} html-button-search-fallback
  * @property {string|null} html-button-search
  * @property {string} [input-location] An identifier corresponding the position of the search

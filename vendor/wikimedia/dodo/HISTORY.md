@@ -1,5 +1,15 @@
 # Change Log
 
+## Dodo 0.4.0 (2021-10-25)
+* Allow use of wikimedia/remex-html 3.0.0.
+* Use 'code point' units for CharacterData methods, not 'UTF-16 code units'
+  * This is compatible with modern PHP, which has used 'code point' units
+    since PHP5.
+* Window now implements the proper IDLeDOM interfaces.
+* Dodo classes now use @phan-forbid-undeclared-magic-properties.
+  * This may cause new phan warnings in user code.
+* Test case generation improvements.
+
 ## Dodo 0.3.0 (2021-08-08)
 * Update to wikimedia/zest-css 2.0.1.
 * Update to wikimedia/idle-dom 0.10.0.

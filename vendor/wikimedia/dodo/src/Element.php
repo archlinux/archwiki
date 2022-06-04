@@ -307,6 +307,7 @@ class Element extends ContainerNode implements \Wikimedia\IDLeDOM\Element {
 
 		if ( $this->_attributes !== null ) {
 			foreach ( $this->_attributes as $a ) {
+				// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType
 				$clone->setAttributeNodeNS( $a->cloneNode() );
 			}
 		}
@@ -460,13 +461,13 @@ class Element extends ContainerNode implements \Wikimedia\IDLeDOM\Element {
 		$a = $this->getAttributes()->getNamedItem( $qname );
 
 		if ( $a === null ) {
-			if ( $force === null || $force === true ) {
+			if ( $force === null || $force ) {
 				$this->setAttribute( $qname, "" );
 				return true;
 			}
 			return false;
 		} else {
-			if ( $force === null || $force === false ) {
+			if ( $force === null || !$force ) {
 				$this->removeAttribute( $qname );
 				return false;
 			}
@@ -780,6 +781,7 @@ class Element extends ContainerNode implements \Wikimedia\IDLeDOM\Element {
 		) {
 			$next = $parent->getNextElementSibling();
 			if ( $next ) {
+				// @phan-suppress-next-line PhanTypeMismatchReturn
 				return $next;
 			}
 		}
@@ -841,6 +843,7 @@ class Element extends ContainerNode implements \Wikimedia\IDLeDOM\Element {
 		// to include only those with $this as an exclusive ancestor, since
 		// we expect only 0 or 1 results from Document::_getElementsById()
 		// (only if $this->isConnected though!)
+		// @phan-suppress-next-line PhanTypeMismatchReturn
 		return iterator_to_array( new FilteredElementList(
 			$this,
 			static function ( Element $el ) use ( $id ): bool {
@@ -872,7 +875,7 @@ class Element extends ContainerNode implements \Wikimedia\IDLeDOM\Element {
 	 */
 	private static function _localNameElementFilter( string $lname ): callable {
 		return static function ( $el ) use ( $lname ) {
-			return $el->localName === $lname;
+			return $el->getLocalName() === $lname;
 		};
 	}
 

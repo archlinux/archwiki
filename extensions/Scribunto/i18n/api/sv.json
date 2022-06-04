@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Hannarosendeloitte",
 			"Lokal Profil",
-			"WikiPhoenix",
-			"Hannarosendeloitte"
+			"WikiPhoenix"
 		]
 	},
 	"apihelp-scribunto-console-description": "Intern modul för att betjäna XHR-förfrågningar från Scribunto-konsolen.",

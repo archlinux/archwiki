@@ -44,7 +44,7 @@ class ParameterAssertionException extends InvalidArgumentException implements As
 	/**
 	 * @return string
 	 */
-	public function getParameterName() {
+	public function getParameterName(): string {
 		return $this->parameterName;
 	}
 

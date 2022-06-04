@@ -42,30 +42,29 @@ ve.ui.MWTableDialog.prototype.getValues = function () {
  * @inheritdoc
  */
 ve.ui.MWTableDialog.prototype.initialize = function () {
-	var wikitableField, sortableField, collapsibleField, collapsedField;
 	// Parent method
 	ve.ui.MWTableDialog.super.prototype.initialize.call( this );
 
 	this.wikitableToggle = new OO.ui.ToggleSwitchWidget();
-	wikitableField = new OO.ui.FieldLayout( this.wikitableToggle, {
+	var wikitableField = new OO.ui.FieldLayout( this.wikitableToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-wikitable' )
 	} );
 
 	this.sortableToggle = new OO.ui.ToggleSwitchWidget();
-	sortableField = new OO.ui.FieldLayout( this.sortableToggle, {
+	var sortableField = new OO.ui.FieldLayout( this.sortableToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-sortable' )
 	} );
 
 	this.collapsibleToggle = new OO.ui.ToggleSwitchWidget();
-	collapsibleField = new OO.ui.FieldLayout( this.collapsibleToggle, {
+	var collapsibleField = new OO.ui.FieldLayout( this.collapsibleToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-collapsible' )
 	} );
 
 	this.collapsedToggle = new OO.ui.ToggleSwitchWidget();
-	collapsedField = new OO.ui.FieldLayout( this.collapsedToggle, {
+	var collapsedField = new OO.ui.FieldLayout( this.collapsedToggle, {
 		align: 'left',
 		label: ve.msg( 'visualeditor-dialog-table-collapsed' )
 	} );
@@ -115,10 +114,9 @@ ve.ui.MWTableDialog.prototype.getSetupProcess = function ( data ) {
 ve.ui.MWTableDialog.prototype.getActionProcess = function ( action ) {
 	return ve.ui.MWTableDialog.super.prototype.getActionProcess.call( this, action )
 		.next( function () {
-			var surfaceModel, fragment;
 			if ( action === 'done' ) {
-				surfaceModel = this.getFragment().getSurface();
-				fragment = surfaceModel.getLinearFragment( this.getFragment().getSelection().tableRange, true );
+				var surfaceModel = this.getFragment().getSurface();
+				var fragment = surfaceModel.getLinearFragment( this.getFragment().getSelection().tableRange, true );
 				fragment.changeAttributes( {
 					wikitable: this.wikitableToggle.getValue(),
 					sortable: this.sortableToggle.getValue(),

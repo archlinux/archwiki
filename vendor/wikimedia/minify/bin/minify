@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php declare( strict_types=1 );
 
-if ( !is_file( __DIR__ . '/../vendor/autoload.php' ) && is_file( __DIR__ . '/../../../vendor/autoload.php' ) ) {
+if ( !is_file( __DIR__ . '/../vendor/autoload.php' ) && is_file( __DIR__ . '/../../../autoload.php' ) ) {
 	// Allow use within a vendor directory, in which case we're under vendor/:org/:package
 	require_once __DIR__ . '/../../../autoload.php';
 } else {

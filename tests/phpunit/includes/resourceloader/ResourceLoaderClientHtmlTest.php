@@ -73,11 +73,8 @@ class ResourceLoaderClientHtmlTest extends PHPUnit\Framework\TestCase {
 				],
 			],
 			'styleDeprecations' => [
-				Xml::encodeJsCall(
-					'mw.log.warn',
-					[ 'This page is using the deprecated ResourceLoader module "test.styles.deprecated".
-Deprecation message.' ]
-				)
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				'mw.log.warn("This page is using the deprecated ResourceLoader module \\"test.styles.deprecated\\".\\nDeprecation message.");'
 			],
 		];
 
@@ -105,8 +102,6 @@ Deprecation message.' ]
 		$client->setExemptStates( [
 			'test.exempt' => 'ready',
 		] );
-
-		// phpcs:disable Generic.Files.LineLength
 		$expected = '<script>'
 			. 'document.documentElement.className="client-js";'
 			. 'RLCONF={"key":"value"};'
@@ -133,8 +128,6 @@ Deprecation message.' ]
 			self::makeContext(),
 			[ 'target' => 'example' ]
 		);
-
-		// phpcs:disable Generic.Files.LineLength
 		$expected = '<script>document.documentElement.className="client-js";</script>' . "\n"
 			. '<script async="" src="/w/load.php?lang=nl&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;target=example"></script>';
 		// phpcs:enable
@@ -150,8 +143,6 @@ Deprecation message.' ]
 			self::makeContext(),
 			[ 'safemode' => '1' ]
 		);
-
-		// phpcs:disable Generic.Files.LineLength
 		$expected = '<script>document.documentElement.className="client-js";</script>' . "\n"
 			. '<script async="" src="/w/load.php?lang=nl&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;safemode=1"></script>';
 		// phpcs:enable
@@ -167,8 +158,6 @@ Deprecation message.' ]
 			self::makeContext(),
 			[ 'target' => null ]
 		);
-
-		// phpcs:disable Generic.Files.LineLength
 		$expected = '<script>document.documentElement.className="client-js";</script>' . "\n"
 			. '<script async="" src="/w/load.php?lang=nl&amp;modules=startup&amp;only=scripts&amp;raw=1"></script>';
 		// phpcs:enable
@@ -189,7 +178,6 @@ Deprecation message.' ]
 		$client->setModuleStyles( [
 			'test.styles.deprecated',
 		] );
-		// phpcs:disable Generic.Files.LineLength
 		$expected = '<script>(RLQ=window.RLQ||[]).push(function(){'
 			. 'mw.log.warn("This page is using the deprecated ResourceLoader module \"test.styles.deprecated\".\nDeprecation message.");'
 			. '});</script>';
@@ -199,7 +187,6 @@ Deprecation message.' ]
 	}
 
 	public static function provideMakeLoad() {
-		// phpcs:disable Generic.Files.LineLength
 		return [
 			[
 				'context' => [],

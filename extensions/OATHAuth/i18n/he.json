@@ -4,10 +4,10 @@
 			"Amire80",
 			"Guycn2",
 			"Matanya",
+			"N100a",
 			"Steeve815",
 			"Strayblues",
-			"Uziel302",
-			"N100a"
+			"Uziel302"
 		]
 	},
 	"oathauth-desc": "תמיכה באימות באמצעות סיסמאות חד־פעמיות מבוססות HMAC",
@@ -62,7 +62,7 @@
 	"oath-log-header": "האירועים האלה עוקבים אחרי שינויים במצב האימות הדו־שלבי של משתמשים.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|כיבה|כיבתה}} אימות דו־שלבי עבור $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|בדק|בדקה}} אם אצל $3 מופעל אימות דו־שלבי",
-	"oauthauth-ui-no-module": "לא מופעל אף אחד",
+	"oathauth-ui-no-module": "לא מופעל אף אחד",
 	"oathauth-module-invalid": "מודול ה־OATHAuth שהמשתמש רשם אינו תקין.",
 	"oathauth-module-totp-label": "TOTP (אסימון חד־פעמי)",
 	"oathauth-ui-manage": "ניהול",

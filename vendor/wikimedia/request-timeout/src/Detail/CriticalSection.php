@@ -26,7 +26,8 @@ class CriticalSection {
 	public function __construct( $name, $emergencyLimit, $emergencyCallback ) {
 		$this->name = $name;
 		if ( !$emergencyCallback ) {
-			$emergencyCallback = function () use ( $name, $emergencyLimit ) {
+			/** @return never */
+			$emergencyCallback = static function () use ( $name, $emergencyLimit ) {
 				throw new EmergencyTimeoutException( $name, $emergencyLimit );
 			};
 		}

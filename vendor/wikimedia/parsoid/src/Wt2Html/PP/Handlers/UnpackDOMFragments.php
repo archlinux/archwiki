@@ -9,6 +9,7 @@ use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Utils\ContentUtils;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
@@ -84,7 +85,7 @@ class UnpackDOMFragments {
 					}
 					$dp->dsr = new DomSourceRange( $newOffset, $newOffset, null, null );
 					$dp->misnested = true;
-				} elseif ( !empty( $dp->tmp->wrapper ) ) {
+				} elseif ( $dp->getTempFlag( TempData::WRAPPER ) ) {
 					// Unnecessary wrapper added above -- strip it.
 					$next = $node->firstChild ?: $node->nextSibling;
 					DOMUtils::migrateChildren( $node, $node->parentNode, $node );
@@ -97,40 +98,6 @@ class UnpackDOMFragments {
 		$dsrFixer->addHandler( null, $fixHandler );
 		$dsrFixer->traverse( $env, $fragment->firstChild );
 		$fixHandler( $fragment );
-	}
-
-	/**
-	 * @param Node $node
-	 * @param int $delta
-	 */
-	public static function addDeltaToDSR( Node $node, int $delta ): void {
-		// Add 'delta' to dsr->start and dsr->end for nodes in the subtree
-		// node's dsr has already been updated
-		$child = $node->firstChild;
-		while ( $child ) {
-			if ( $child instanceof Element ) {
-				$dp = DOMDataUtils::getDataParsoid( $child );
-				if ( !empty( $dp->dsr ) ) {
-					// SSS FIXME: We've exploited partial DSR information
-					// in propagating DSR values across the DOM.  But, worth
-					// revisiting at some point to see if we want to change this
-					// so that either both or no value is present to eliminate these
-					// kind of checks.
-					//
-					// Currently, it can happen that one or the other
-					// value can be null.  So, we should try to udpate
-					// the dsr value in such a scenario.
-					if ( is_int( $dp->dsr->start ) ) {
-						$dp->dsr->start += $delta;
-					}
-					if ( is_int( $dp->dsr->end ) ) {
-						$dp->dsr->end += $delta;
-					}
-				}
-				self::addDeltaToDSR( $child, $delta );
-			}
-			$child = $child->nextSibling;
-		}
 	}
 
 	/**
@@ -246,8 +213,10 @@ class UnpackDOMFragments {
 		// content etc).
 		// TODO: Make sure that is the only reason for not having a DSR here.
 		$dsr = $dp->dsr ?? null;
-		if ( $dsr &&
-			!( empty( $dp->tmp->setDSR ) && empty( $dp->tmp->fromCache ) && empty( $dp->fostered ) )
+		if ( $dsr && !(
+			!$dp->getTempFlag( TempData::SET_DSR )
+			&& !$dp->getTempFlag( TempData::FROM_CACHE )
+			&& empty( $dp->fostered ) )
 		) {
 			DOMUtils::assertElt( $contentNode );
 			$cnDP = DOMDataUtils::getDataParsoid( $contentNode );
@@ -262,16 +231,10 @@ class UnpackDOMFragments {
 				$cnDP->dsr = $dsr;
 			} else { // non-transcluded images
 				$cnDP->dsr = new DomSourceRange( $dsr->start, $dsr->end, 2, 2 );
-				// Reused image -- update dsr by tsrDelta on all
-				// descendents of 'firstChild' which is the <figure> tag
-				$tsrDelta = $dp->tmp->tsrDelta ?? 0;
-				if ( $tsrDelta ) {
-					self::addDeltaToDSR( $contentNode, $tsrDelta );
-				}
 			}
 		}
 
-		if ( !empty( $dp->tmp->fromCache ) ) {
+		if ( $dp->getTempFlag( TempData::FROM_CACHE ) ) {
 			// Replace old about-id with new about-id that is
 			// unique to the global page environment object.
 			//

@@ -13,5 +13,7 @@
 	"timeless-more": "Više",
 	"timeless-pagemisc": "Više",
 	"timeless-namespaces": "Imenski prostori",
-	"timeless-languages": "Jezici"
+	"timeless-languages": "Jezici",
+	"timeless-view-history": "Historija",
+	"timeless-action-undelete": "Vrati {{PLURAL:$1|izbrisanu izmjenu|$1 izbrisane izmjene|$1 izbrisanih izmjena}}"
 }

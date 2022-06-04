@@ -50,6 +50,3 @@ class InTextarea extends InsertionMode {
 			->comment( $text, $sourceStart, $sourceLength );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InTextarea::class, 'RemexHtml\TreeBuilder\InTextarea' );

@@ -191,6 +191,3 @@ class Element implements FormattingElement {
 		return $this->htmlName . '#' . $this->uid;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( Element::class, 'RemexHtml\TreeBuilder\Element' );

@@ -19,15 +19,16 @@
  * @param {HTMLDocument} [htmlDocument] HTML document the data was converted from, if any.
  *  If omitted, a new document will be created. If data is an HTMLDocument, this parameter is
  *  ignored.
- * @param {ve.dm.Document} [parentDocument] Document to use as root for created nodes, used in #rebuildNodes
+ * @param {ve.dm.Document} [parentDocument] Document to use as root for created nodes, used when cloning
  * @param {ve.dm.InternalList} [internalList] Internal list to clone; passed when creating a document slice
  * @param {Array} [innerWhitespace] Inner whitespace to clone; passed when creating a document slice
  * @param {string} [lang] Language code
  * @param {string} [dir='ltr'] Directionality (ltr/rtl)
  * @param {ve.dm.Document} [originalDocument] Original document form which this was cloned.
  * @param {boolean} [sourceMode] Document is in source mode
+ * @param {Object} [persistentStorage] Persistent storage object
  */
-ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, internalList, innerWhitespace, lang, dir, originalDocument, sourceMode ) {
+ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, internalList, innerWhitespace, lang, dir, originalDocument, sourceMode, persistentStorage ) {
 	// Parent constructor
 	ve.dm.Document.super.call( this, new ve.dm.DocumentNode() );
 
@@ -80,6 +81,7 @@ ve.dm.Document = function VeDmDocument( data, htmlDocument, parentDocument, inte
 		this.completeHistory.storeLengthAtTransaction.push( this.store.getLength() );
 	}
 	this.htmlDocument = htmlDocument || ve.createDocumentFromHtml( '' );
+	this.persistentStorage = persistentStorage || {};
 };
 
 /* Inheritance */
@@ -702,7 +704,11 @@ ve.dm.Document.prototype.cloneWithData = function ( data, copyInternalList, deta
 		// lang+dir
 		this.getLang(), this.getDir(),
 		// originalDocument
-		this
+		this,
+		// sourceMode
+		this.sourceMode,
+		// persistentStorage
+		this.getStorage()
 	);
 	if ( copyInternalList && !detachedCopy ) {
 		// Record the length of the internal list at the time the slice was created so we can
@@ -1085,64 +1091,23 @@ ve.dm.Document.prototype.getDataFromNode = function ( node ) {
 };
 
 /**
- * Rebuild one or more nodes following a change in document data.
- *
- * The data provided to this method may contain either one node or multiple sibling nodes, but it
- * must be balanced and valid. Data provided to this method also may not contain any content at the
- * top level. The tree is updated during this operation.
- *
- * Process:
- *
- *  1. Nodes between {index} and {index} + {numNodes} in {parent} will be removed
- *  2. Data will be retrieved from this.data using {offset} and {newLength}
- *  3. A document fragment will be generated from the retrieved data
- *  4. The document fragment's nodes will be inserted into {parent} at {index}
- *
- * Use cases:
- *
- *  1. Rebuild old nodes and offset data after a change to the linear model.
- *  2. Insert new nodes and offset data after a insertion in the linear model.
- *
- * @param {ve.dm.Node} parent Parent of the node(s) being rebuilt
- * @param {number} index Index within parent to rebuild or insert nodes
- *
- *  - If {numNodes} == 0: Index to insert nodes at
- *  - If {numNodes} >= 1: Index of first node to rebuild
- * @param {number} numNodes Total number of nodes to rebuild
- *
- *  - If {numNodes} == 0: Nothing will be rebuilt, but the node(s) built from data will be
- *    inserted before {index}. To insert nodes at the end, use number of children in 'parent'
- *  - If {numNodes} == 1: Only the node at {index} will be rebuilt
- *  - If {numNodes} > 1: The node at {index} and the next {numNodes-1} nodes will be rebuilt
- * @param {number} offset Linear model offset to rebuild from
- * @param {number} newLength Length of data in linear model to rebuild or insert nodes for
- */
-ve.dm.Document.prototype.rebuildNodes = function ( parent, index, numNodes, offset, newLength ) {
-	// Get a slice of the document where it's been changed
-	var data = this.data.sliceObject( offset, offset + newLength ),
-		// Build document fragment from data
-		// Use plain ve.dm.Document, instead of whatever this.constructor is.
-		documentFragment = new ve.dm.Document( data, this.htmlDocument, this ),
-		// Get generated child nodes from the document fragment
-		addedNodes = documentFragment.getDocumentNode().getChildren(),
-		// Replace nodes in the model tree
-		removedNodes = ve.batchSplice( parent, index, numNodes, addedNodes );
-
-	this.updateNodesByType( addedNodes, removedNodes );
-};
-
-/**
  * Rebuild the entire node tree from linear model data.
  */
 ve.dm.Document.prototype.rebuildTree = function () {
-	var documentNode = this.getDocumentNode();
-	this.rebuildNodes(
-		documentNode,
-		0,
-		documentNode.getChildren().length,
-		0,
-		this.data.getLength()
-	);
+	// Never rebuild above the attachedRoot node as that would destroy
+	// that node, and invalidate all references to it (T293254)
+	var rootNode = this.attachedRoot || this.getDocumentNode();
+	var range = rootNode.getRange();
+	var data = this.data.sliceObject( range.start, range.end );
+	// Build document fragment from data
+	// Use plain ve.dm.Document, instead of whatever this.constructor is.
+	var documentFragment = new ve.dm.Document( data, this.htmlDocument, this );
+	// Get generated child nodes from the document fragment
+	var addedNodes = documentFragment.getDocumentNode().getChildren();
+	// Replace nodes in the model tree
+	var removedNodes = ve.batchSplice( rootNode, 0, rootNode.getChildren().length, addedNodes );
+
+	this.updateNodesByType( addedNodes, removedNodes );
 };
 
 /**
@@ -1431,13 +1396,15 @@ ve.dm.Document.prototype.fixupInsertion = function ( data, offset ) {
 			// Make sure that opening this element here does not violate the parent/children/content
 			// rules. If it does, insert stuff to fix it
 
-			// If this node is content, check that the containing node can contain content. If not,
-			// wrap in a paragraph
+			// If this node is content, check that the containing node can contain content.
+			// If not, add a wrapper paragraph
 			if ( ve.dm.nodeFactory.isNodeContent( childType ) &&
 				!ve.dm.nodeFactory.canNodeContainContent( parentType )
 			) {
 				childType = 'paragraph';
-				openings.unshift( ve.dm.nodeFactory.getDataElement( childType ) );
+				var wrapper = ve.dm.nodeFactory.getDataElement( childType );
+				ve.setProp( wrapper, 'internal', 'generated', 'wrapper' );
+				openings.unshift( wrapper );
 			}
 
 			// Check that this node is allowed to have the containing node as its parent. If not,
@@ -1689,7 +1656,6 @@ ve.dm.Document.prototype.findText = function ( query, options ) {
 				sensitivity = options.caseSensitiveString ? 'variant' : 'accent';
 			}
 			// Intl is only used browser clients
-			// eslint-disable-next-line no-undef
 			compare = new Intl.Collator( this.lang, { sensitivity: sensitivity } ).compare;
 		} else {
 			// Support: Firefox<29, Chrome<24, Safari<10
@@ -1775,4 +1741,37 @@ ve.dm.Document.prototype.getLang = function () {
  */
 ve.dm.Document.prototype.getDir = function () {
 	return this.dir;
+};
+
+/**
+ * Set a key/value pair in persistent static storage, or restore the whole store
+ *
+ * Storage is used for static variables related to document state,
+ * such as InternalList's nextUniqueNumber.
+ *
+ * @param {string|Object} [keyOrStorage] Key, or storage object to restore
+ * @param {Mixed} [value] Serializable value, if key is set
+ * @fires storage
+ */
+ve.dm.Document.prototype.setStorage = function ( keyOrStorage, value ) {
+	if ( typeof keyOrStorage === 'string' ) {
+		this.persistentStorage[ keyOrStorage ] = value;
+		this.emit( 'storage' );
+	} else {
+		this.persistentStorage = keyOrStorage;
+	}
+};
+
+/**
+ * Get a value from the persistent static storage, or the whole store
+ *
+ * @param {string} [key] Key
+ * @return {Mixed|Object} Value at key, or whole storage object if key not provided
+ */
+ve.dm.Document.prototype.getStorage = function ( key ) {
+	if ( key ) {
+		return this.persistentStorage[ key ];
+	} else {
+		return this.persistentStorage;
+	}
 };

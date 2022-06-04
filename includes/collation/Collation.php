@@ -31,26 +31,28 @@ abstract class Collation {
 	private static $instance;
 
 	/**
-	 * @deprecated 1.37 Use MediaWikiServices::getCollationFactory()->getCategoryCollation()
+	 * @deprecated since 1.37 Use MediaWikiServices::getCollationFactory()->getCategoryCollation()
 	 * @since 1.16.3
 	 * @return Collation
 	 */
 	public static function singleton() {
+		wfDeprecated( __METHOD__, '1.37' );
 		if ( !self::$instance ) {
-			global $wgCategoryCollation;
-			self::$instance = self::factory( $wgCategoryCollation );
+			$categoryCollation = MediaWikiServices::getInstance()->getMainConfig()->get( 'CategoryCollation' );
+			self::$instance = self::factory( $categoryCollation );
 		}
 		return self::$instance;
 	}
 
 	/**
 	 * @since 1.16.3
-	 * @deprecated 1.37 Use MediaWikiServices::getCollationFactory()->makeCollation()
+	 * @deprecated since 1.37 Use MediaWikiServices::getCollationFactory()->makeCollation()
 	 * @throws MWException
 	 * @param string $collationName
 	 * @return Collation
 	 */
 	public static function factory( $collationName ) {
+		wfDeprecated( __METHOD__, '1.37' );
 		return MediaWikiServices::getInstance()->getCollationFactory()->makeCollation( $collationName );
 	}
 
@@ -68,6 +70,20 @@ abstract class Collation {
 	 * @return string Binary sortkey
 	 */
 	abstract public function getSortKey( $string );
+
+	/**
+	 * Get multiple sort keys
+	 *
+	 * @param string[] $strings
+	 * @return string[]
+	 */
+	public function getSortKeys( $strings ) {
+		$ret = [];
+		foreach ( $strings as $key => $s ) {
+			$ret[$key] = $this->getSortKey( $s );
+		}
+		return $ret;
+	}
 
 	/**
 	 * Given a string, return the logical "first letter" to be used for

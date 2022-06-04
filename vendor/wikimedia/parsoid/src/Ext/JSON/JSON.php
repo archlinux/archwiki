@@ -10,10 +10,10 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Ext\JSON;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Parsoid\Core\ContentModelHandler;
 use Wikimedia\Parsoid\Core\SelserData;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\Element;
-use Wikimedia\Parsoid\Ext\ContentModelHandler;
 use Wikimedia\Parsoid\Ext\DOMUtils;
 use Wikimedia\Parsoid\Ext\ExtensionModule;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
@@ -142,7 +142,7 @@ class JSON extends ContentModelHandler implements ExtensionModule {
 			return;
 		} elseif ( is_bool( $val ) ) {
 			DOMCompat::getClassList( $parent )->add( 'mw-json-boolean' );
-			$parent->textContent = [ 'false', 'true' ][$val === true];
+			$parent->textContent = $val ? 'true' : 'false';
 			return;
 		} elseif ( is_int( $val ) || is_float( $val ) ) {
 			DOMCompat::getClassList( $parent )->add( 'mw-json-number' );
@@ -298,8 +298,7 @@ class JSON extends ContentModelHandler implements ExtensionModule {
 	private function valueCellFrom( Element $el ) {
 		Assert::invariant( DOMCompat::nodeName( $el ) === 'td', 'Expected tagName = td' );
 		$table = $el->firstChild;
-		if ( $table && DOMUtils::isElt( $table ) ) {
-			DOMUtils::assertElt( $table );
+		if ( $table instanceof Element ) {
 			if ( DOMCompat::getClassList( $table )->contains( 'mw-json-array' ) ) {
 				return self::arrayTableFrom( $table );
 			} elseif ( DOMCompat::getClassList( $table )->contains( 'mw-json-object' ) ) {

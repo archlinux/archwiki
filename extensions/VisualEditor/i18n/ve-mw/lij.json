@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Giromin Cangiaxo",
+			"N. Longo",
 			"S4b1nuz E.656",
-			"TMg",
-			"N. Longo"
+			"TMg"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -185,7 +185,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Inmaggine e file murtimediæ",
 	"visualeditor-dialogbutton-meta-tooltip": "Impostassioin paggina",
 	"visualeditor-dialogbutton-template-tooltip": "Modello",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Transcruxon",
 	"visualeditor-donebutton-tooltip": "Modiffica fæta",
 	"visualeditor-editconflict": "E modiffiche aportæ no poruan ese sarvæ pe via de 'n confrito d'edission. {{GENDER:|Ti voeu}} miga resciorve o confrito manualmente?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} d'oua in avanti o s'aregorda quæ o l'è l'editor che ti prefeisci. Ti poeu scangiâ e modalitæ mentre t'ê aproeuvo a fâ modiffiche, e cangiâ e to preferense ciu tardi.",

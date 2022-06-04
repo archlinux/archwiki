@@ -24,13 +24,13 @@
 		"PageImages\\Tests\\": "tests/phpunit/"
 	},
 	"Hooks": {
-		"AfterParserFetchFileAndTitle": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onAfterParserFetchFileAndTitle",
 		"ApiOpenSearchSuggest": "PageImages\\PageImages::onApiOpenSearchSuggest",
 		"BeforePageDisplay": "PageImages\\PageImages::onBeforePageDisplay",
 		"InfoAction": "PageImages\\PageImages::onInfoAction",
+		"ParserAfterTidy": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserAfterTidy",
+		"ParserModifyImageHTML": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserModifyImageHTML",
+		"ParserTestGlobals": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserTestGlobals",
 		"SearchResultProvideThumbnail": "PageImages\\Hooks\\SearchResultProvideThumbnailHookHandler::onSearchResultProvideThumbnail",
-		"LinksUpdate": "PageImages\\Hooks\\LinksUpdateHookHandler::onLinksUpdate",
-		"ParserMakeImageParams": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserMakeImageParams",
 		"SpecialMobileEditWatchlist::images": "PageImages\\PageImages::onSpecialMobileEditWatchlistImages"
 	},
 	"JobClasses": {
@@ -38,7 +38,7 @@
 	},
 	"config": {
 		"PageImagesScores": {
-			"description": "Images <120px are usually from maintenace or stub templates; >600px are panoramas, less suitable.",
+			"description": "Images <120px are usually from maintenance or stub templates; >600px are panoramas, less suitable.",
 			"value": {
 				"position": [
 					8,
@@ -86,10 +86,7 @@
 			]
 		},
 		"PageImagesLeadSectionOnly": {
-			"description": [
-				"Temporary feature flag - Whether page images should be restricted to those in section id 0.",
-				"FIXME: Please remove a month after it has defaulted to true on the cluster (T152115)"
-			],
+			"description": "Whether page images should be restricted to those in section 0",
 			"value": true
 		},
 		"PageImagesAPIDefaultLicense": {

@@ -6,10 +6,11 @@
 			"Armin1392",
 			"Ebraminio",
 			"Huji",
+			"LordProfo",
 			"Omidh",
 			"Reza1615",
 			"Wayiran",
-			"LordProfo"
+			"Beginneruser"
 		]
 	},
 	"replacetext": "جایگزینی متن",
@@ -32,7 +33,7 @@
 	"replacetext_cannotmove": "این {{PLURAL:$1|صفحه|صفحه‌ها}} نمی‌توانند منتقل شوند:",
 	"replacetext_formovedpages": "برای صفحه‌های منتقل‌شده:",
 	"replacetext_savemovedpages": "ذخیره‌سازی عنوان‌های قدیم به عنوان تغییر مسیرهایی به عنوان‌های تازه",
-	"replacetext_watchmovedpages": "‌پی‌گیری این صفحات",
+	"replacetext_watchmovedpages": "پیگیری این صفحه‌ها",
 	"replacetext_invertselections": "وارانه کردن انتخاب‌ها",
 	"replacetext_replace": "جایگزین کن",
 	"replacetext_success": "در $3 {{PLURAL:$3|صفحه|صفحه}} «$1» با «$2» جایگزین می‌شود.",

@@ -85,7 +85,9 @@
 	"printableversion": "Printindi versione",
 	"permalink": "Permananti linke",
 	"print": "Printa",
+	"view-view": "Lekte",
 	"edit": "Immodifika",
+	"view-edit": "Immodifika",
 	"delete": "Ekarta",
 	"protect": "Protekte",
 	"newpage": "Novi pagine",
@@ -195,7 +197,6 @@
 	"filedesc": "Resume",
 	"fileuploadsummary": "Resume:",
 	"watchthisupload": "Observa disi pagine",
-	"listfiles_search_for": "Sercha imaje nome:",
 	"listfiles_name": "Nome",
 	"listfiles_user": "Usere",
 	"listfiles_size": "Grandeso (bites)",
@@ -289,5 +290,7 @@
 	"version": "Versione",
 	"version-specialpages": "Spesial pagines",
 	"version-software-version": "Versione",
-	"specialpages": "Spesial pagines"
+	"specialpages": "Spesial pagines",
+	"skin-action-protect": "Protekte",
+	"skin-action-delete": "Ekarta"
 }

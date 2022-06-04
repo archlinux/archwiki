@@ -38,12 +38,11 @@
 			textSelectionFn,
 			hasErrorsOnSave = false,
 			selectedLine = 0,
-			cookieEnabled,
 			returnFalse = function () { return false; },
 			api = new mw.Api();
 
 		// Initialize state
-		cookieEnabled = parseInt( mw.cookie.get( 'codeEditor-' + context.instance + '-showInvisibleChars' ), 10 );
+		var cookieEnabled = parseInt( mw.cookie.get( 'codeEditor-' + context.instance + '-showInvisibleChars' ), 10 );
 		context.showInvisibleChars = ( cookieEnabled === 1 );
 		cookieEnabled = parseInt( mw.cookie.get( 'codeEditor-' + context.instance + '-lineWrappingActive' ), 10 );
 		context.lineWrappingActive = ( cookieEnabled === 1 );
@@ -80,13 +79,10 @@
 				return true;
 			},
 			codeEditorSave: function () {
-				var i,
-					annotations = context.codeEditor.getSession().getAnnotations();
-				for ( i = 0; i < annotations.length; i++ ) {
-					if ( annotations[ i ].type === 'error' ) {
-						hasErrorsOnSave = true;
-						break;
-					}
+				if ( context.codeEditor.getSession().getAnnotations().some( function ( ann ) {
+					return ann.type === 'error';
+				} ) ) {
+					hasErrorsOnSave = true;
 				}
 			},
 			codeEditorSync: function () {
@@ -121,15 +117,13 @@
 				OO.ui.prompt( mw.msg( 'codeeditor-gotoline-prompt' ), {
 					textInput: { placeholder: mw.msg( 'codeeditor-gotoline-placeholder' ) }
 				} ).done( function ( result ) {
-					var matches, line, column;
-
 					if ( !result ) {
 						return;
 					}
 
-					matches = result.split( ':' );
-					line = 0;
-					column = 0;
+					var matches = result.split( ':' );
+					var line = 0;
+					var column = 0;
 
 					if ( matches.length > 0 ) {
 						line = +matches[ 0 ];
@@ -152,59 +146,53 @@
 				} );
 			},
 			setupCodeEditorToolbar: function () {
-				var toggleEditor,
-					toggleInvisibleChars,
-					toggleSearchReplace,
-					toggleLineWrapping,
-					indent, outdent, gotoLine;
+				var toggleEditor = function ( ctx ) {
+					ctx.codeEditorActive = !ctx.codeEditorActive;
 
-				toggleEditor = function ( context ) {
-					context.codeEditorActive = !context.codeEditorActive;
+					ctx.fn.setCodeEditorPreference( ctx.codeEditorActive );
+					ctx.fn.updateCodeEditorToolbarButton();
 
-					context.fn.setCodeEditorPreference( context.codeEditorActive );
-					context.fn.updateCodeEditorToolbarButton();
-
-					if ( context.codeEditorActive ) {
+					if ( ctx.codeEditorActive ) {
 						// set it back up!
-						context.fn.setupCodeEditor();
+						ctx.fn.setupCodeEditor();
 					} else {
-						context.fn.disableCodeEditor();
+						ctx.fn.disableCodeEditor();
 					}
 				};
-				toggleInvisibleChars = function ( context ) {
-					context.showInvisibleChars = !context.showInvisibleChars;
+				var toggleInvisibleChars = function ( ctx ) {
+					ctx.showInvisibleChars = !ctx.showInvisibleChars;
 
-					context.fn.changeCookieValue( 'showInvisibleChars', context.showInvisibleChars ? 1 : 0 );
-					context.fn.updateInvisibleCharsButton();
+					ctx.fn.changeCookieValue( 'showInvisibleChars', ctx.showInvisibleChars ? 1 : 0 );
+					ctx.fn.updateInvisibleCharsButton();
 
-					context.codeEditor.setShowInvisibles( context.showInvisibleChars );
+					ctx.codeEditor.setShowInvisibles( ctx.showInvisibleChars );
 				};
-				toggleSearchReplace = function ( context ) {
-					var searchBox = context.codeEditor.searchBox;
+				var toggleSearchReplace = function ( ctx ) {
+					var searchBox = ctx.codeEditor.searchBox;
 					if ( searchBox && $( searchBox.element ).css( 'display' ) !== 'none' ) {
 						searchBox.hide();
 					} else {
-						context.codeEditor.execCommand(
-							context.codeEditor.getReadOnly() ? 'find' : 'replace'
+						ctx.codeEditor.execCommand(
+							ctx.codeEditor.getReadOnly() ? 'find' : 'replace'
 						);
 					}
 				};
-				toggleLineWrapping = function ( context ) {
-					context.lineWrappingActive = !context.lineWrappingActive;
+				var toggleLineWrapping = function ( ctx ) {
+					ctx.lineWrappingActive = !ctx.lineWrappingActive;
 
-					context.fn.changeCookieValue( 'lineWrappingActive', context.lineWrappingActive ? 1 : 0 );
-					context.fn.updateLineWrappingButton();
+					ctx.fn.changeCookieValue( 'lineWrappingActive', ctx.lineWrappingActive ? 1 : 0 );
+					ctx.fn.updateLineWrappingButton();
 
-					context.codeEditor.getSession().setUseWrapMode( context.lineWrappingActive );
+					ctx.codeEditor.getSession().setUseWrapMode( ctx.lineWrappingActive );
 				};
-				indent = function ( context ) {
-					context.codeEditor.execCommand( 'indent' );
+				var indent = function ( ctx ) {
+					ctx.codeEditor.execCommand( 'indent' );
 				};
-				outdent = function ( context ) {
-					context.codeEditor.execCommand( 'outdent' );
+				var outdent = function ( ctx ) {
+					ctx.codeEditor.execCommand( 'outdent' );
 				};
-				gotoLine = function ( context ) {
-					context.codeEditor.execCommand( 'gotolinecolumn' );
+				var gotoLine = function ( ctx ) {
+					ctx.codeEditor.execCommand( 'gotolinecolumn' );
 				};
 
 				context.api.addToToolbar( context, {
@@ -321,14 +309,12 @@
 
 				api.saveOption( 'usecodeeditor', prefValue ? 1 : 0 )
 					.fail( function ( code, result ) {
-						var message;
-
 						if ( code === 'http' && result.textStatus === 'abort' ) {
 							// Request was aborted. Ignore error
 							return;
 						}
 
-						message = 'Failed to set code editor preference: ' + code;
+						var message = 'Failed to set code editor preference: ' + code;
 						if ( result.error && result.error.info ) {
 							message += '\n' + result.error.info;
 						}
@@ -339,11 +325,9 @@
 			 * Sets up the iframe in place of the textarea to allow more advanced operations
 			 */
 			setupCodeEditor: function () {
-				var $box, lang, basePath, container, editdiv, session;
-
-				$box = context.$textarea;
-				lang = mw.config.get( 'wgCodeEditorCurrentLanguage' );
-				basePath = mw.config.get( 'wgExtensionAssetsPath', '' );
+				var $box = context.$textarea;
+				var lang = mw.config.get( 'wgCodeEditorCurrentLanguage' );
+				var basePath = mw.config.get( 'wgExtensionAssetsPath', '' );
 				if ( basePath.slice( 0, 2 ) === '//' ) {
 					// ACE uses web workers, which have importScripts, which don't like relative links.
 					// This is a problem only when the assets are on another server, so this rewrite should suffice
@@ -357,8 +341,8 @@
 					// We'll stub this out to sit on top of it...
 					// line-height is needed to compensate for oddity in WikiEditor extension, which zeroes the line-height on a parent container
 					// eslint-disable-next-line no-jquery/no-parse-html-literal
-					container = context.$codeEditorContainer = $( '<div style="position: relative"><div class="editor" style="line-height: 1.5em; top: 0; left: 0; right: 0; bottom: 0; position: absolute;"></div></div>' ).insertAfter( $box );
-					editdiv = container.find( '.editor' );
+					var container = context.$codeEditorContainer = $( '<div style="position: relative"><div class="editor" style="line-height: 1.5em; top: 0; left: 0; right: 0; bottom: 0; position: absolute;"></div></div>' ).insertAfter( $box );
+					var editdiv = container.find( '.editor' );
 
 					$box.css( 'display', 'none' );
 					container.height( $box.height() );
@@ -398,7 +382,7 @@
 						.on( 'submit', context.evt.codeEditorSubmit )
 						.find( '#wpSave' ).on( 'click', context.evt.codeEditorSave );
 
-					session = context.codeEditor.getSession();
+					var session = context.codeEditor.getSession();
 
 					// Use proper tabs
 					session.setUseSoftTabs( false );
@@ -473,10 +457,8 @@
 			 */
 			codeEditorMonitorFragment: function () {
 				function onHashChange() {
-					var regexp, result;
-
-					regexp = /#mw-ce-l(\d+)/;
-					result = regexp.exec( window.location.hash );
+					var regexp = /#mw-ce-l(\d+)/;
+					var result = regexp.exec( window.location.hash );
 
 					if ( result === null ) {
 						return;
@@ -536,10 +518,7 @@
 				 * Update all the information in the status bar
 				 */
 				function updateStatusBar() {
-					var i, c, r,
-						status,
-						annotation,
-						errors = 0,
+					var errors = 0,
 						warnings = 0,
 						infos = 0,
 						distance,
@@ -552,8 +531,8 @@
 					// Reset the next annotation
 					nextAnnotation = null;
 
-					for ( i = 0; i < annotations.length; i++ ) {
-						annotation = annotations[ i ];
+					for ( var i = 0; i < annotations.length; i++ ) {
+						var annotation = annotations[ i ];
 						distance = Math.abs( currentLine - annotation.row );
 
 						if ( distance < shortestDistance ) {
@@ -607,7 +586,7 @@
 					// The cursor position has changed
 					if ( shouldUpdateSelection || shouldUpdateLineInfo ) {
 						// Adapted from Ajax.org's ace/ext/statusbar module
-						status = [];
+						var status = [];
 
 						if ( editor.$vimModeHandler ) {
 							addToStatus( status, editor.$vimModeHandler.getStatusText() );
@@ -615,10 +594,10 @@
 							addToStatus( status, 'REC' );
 						}
 
-						c = editor.selection.lead;
+						var c = editor.selection.lead;
 						addToStatus( status, ( c.row + 1 ) + ':' + c.column, '' );
 						if ( !editor.selection.isEmpty() ) {
-							r = editor.getSelectionRange();
+							var r = editor.getSelectionRange();
 							addToStatus( status, '(' + ( r.end.row - r.start.row ) + ':' + ( r.end.column - r.start.column ) + ')' );
 						}
 						status.pop();
@@ -686,9 +665,8 @@
 		saveAndExtend = function ( base, extended ) {
 			// eslint-disable-next-line no-jquery/no-map-util
 			$.map( extended, function ( func, name ) {
-				var orig;
 				if ( name in base ) {
-					orig = base[ name ];
+					var orig = base[ name ];
 					base[ name ] = function () {
 						if ( context.codeEditorActive ) {
 							return func.apply( this, arguments );
@@ -754,13 +732,11 @@
 			 * @return {jQuery}
 			 */
 			encapsulateSelection: function ( options ) {
-				var sel, range, selText, isSample, text;
-
 				// Does not yet handle 'ownline', 'splitlines' option
-				sel = context.codeEditor.getSelection();
-				range = sel.getRange();
-				selText = textSelectionFn.getSelection();
-				isSample = false;
+				var sel = context.codeEditor.getSelection();
+				var range = sel.getRange();
+				var selText = textSelectionFn.getSelection();
+				var isSample = false;
 
 				if ( !selText ) {
 					selText = options.peri;
@@ -769,7 +745,7 @@
 					selText = options.peri;
 				}
 
-				text = options.pre;
+				var text = options.pre;
 				text += selText;
 				text += options.post;
 				context.codeEditor.insert( text );
@@ -798,14 +774,12 @@
 			 * @return {jQuery}
 			 */
 			setSelection: function ( options ) {
-				var doc, lines, offsetToPos, start, end, sel, range;
-
 				// Ace stores positions for ranges as row/column pairs.
 				// To convert from character offsets, we'll need to iterate through the document
-				doc = context.codeEditor.getSession().getDocument();
-				lines = doc.getAllLines();
+				var doc = context.codeEditor.getSession().getDocument();
+				var lines = doc.getAllLines();
 
-				offsetToPos = function ( offset ) {
+				var offsetToPos = function ( offset ) {
 					var row, col, pos;
 
 					row = 0;
@@ -820,11 +794,11 @@
 					col = offset - pos;
 					return { row: row, column: col };
 				};
-				start = offsetToPos( options.start );
-				end = offsetToPos( options.end );
+				var start = offsetToPos( options.start );
+				var end = offsetToPos( options.end );
 
-				sel = context.codeEditor.getSelection();
-				range = sel.getRange();
+				var sel = context.codeEditor.getSelection();
+				var range = sel.getRange();
 				range.setStart( start.row, start.column );
 				range.setEnd( end.row, end.column );
 				sel.setSelectionRange( range );

@@ -44,7 +44,7 @@ ve.ce.MWNumberedExternalLinkNode = function VeCeMWNumberedExternalLinkNode() {
 		// unicorn-like img tag or the actual apparent link text ("[1]", hitherto shown
 		// with CSS generated content) would fall foul of this bug. Use a zero-width
 		// space so it doesn't change the appearance.
-		.prepend( document.createTextNode( '\u200B' ) );
+		.prepend( $( document.createTextNode( '\u200B' ) ) );
 
 	// Events
 	this.model.connect( this, { update: 'onUpdate' } );

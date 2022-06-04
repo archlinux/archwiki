@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Dicto23456",
+			"Gramo Džukić",
 			"Gramo6",
 			"KHMELNYTSKYIA",
 			"Tkalyn"
@@ -13,5 +14,6 @@
 	"visualeditor-descriptionpagelink": "Project:Візуалный едітор",
 	"visualeditor-dialog-meta-languages-link-label": "Звязана сторінка",
 	"visualeditor-dialog-meta-languages-section": "Языкы",
+	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Найти шаблон",
 	"visualeditor-languages-tool": "Языкы"
 }

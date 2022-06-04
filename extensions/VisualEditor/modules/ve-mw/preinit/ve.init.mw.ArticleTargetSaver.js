@@ -82,13 +82,29 @@
 					'div[id="kloutify"]', // T69006
 					'div[id^="mittoHidden"]', // T70900
 					'div.hon.certificateLink', // HON (T209619)
-					'div.donut-container' // Web of Trust (T189148)
+					'div.donut-container', // Web of Trust (T189148)
+					'div.shield-container' // Web of Trust (T297862)
 				].join( ',' ) )
-				.remove();
+				.each( function () {
+					function truncate( text, l ) {
+						return text.length > l ? text.slice( 0, l ) + '…' : text;
+					}
+					var errorMessage = 'DOM content matching deny list found:\n' + truncate( this.outerHTML, 100 ) +
+						'\nContext:\n' + truncate( this.parentNode.outerHTML, 200 );
+					mw.log.error( errorMessage );
+					var err = new Error( errorMessage );
+					err.name = 'VeDomDenyListWarning';
+					mw.errorLogger.logError( err, 'error.visualeditor' );
+					$( this ).remove();
+				} );
 
 			// data-mw-section-id is copied to headings by mw.libs.ve.unwrapParsoidSections
 			// Remove these to avoid triggering selser.
 			$( newDoc ).find( '[data-mw-section-id]:not( section )' ).removeAttr( 'data-mw-section-id' );
+
+			// Deduplicate styles (we re-duplicated them in ve.init.mw.Target.static.parseDocument)
+			// to let selser recognize the nodes and avoid dirty diffs.
+			mw.libs.ve.deduplicateStyles( newDoc.body );
 
 			// Add doctype manually
 			// ve.serializeXhtml is loaded separately from utils.parsing
@@ -218,10 +234,14 @@
 				{
 					action: 'visualeditoredit',
 					paction: 'save',
+					useskin: mw.config.get( 'skin' ),
+					// Same as OO.ui.isMobile()
+					mobileformat: !!mw.config.get( 'wgMFMode' ),
 					formatversion: 2,
 					errorformat: 'html',
 					errorlang: mw.config.get( 'wgUserLanguage' ),
-					errorsuselocal: true
+					errorsuselocal: true,
+					editingStatsId: window.ve && window.ve.init && window.ve.init.editingSessionId
 				},
 				data
 			);

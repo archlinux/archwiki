@@ -96,6 +96,3 @@ class InHeadNoscript extends InsertionMode {
 			->endDocument( $pos );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( InHeadNoscript::class, 'RemexHtml\TreeBuilder\InHeadNoscript' );

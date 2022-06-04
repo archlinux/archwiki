@@ -1,5 +1,12 @@
 <?php
 
+namespace MediaWiki\Extension\Renameuser;
+
+use MediaWiki\Extension\Renameuser\Hook\RenameUserAbortHook;
+use MediaWiki\Extension\Renameuser\Hook\RenameUserCompleteHook;
+use MediaWiki\Extension\Renameuser\Hook\RenameUserPreRenameHook;
+use MediaWiki\Extension\Renameuser\Hook\RenameUserSQLHook;
+use MediaWiki\Extension\Renameuser\Hook\RenameUserWarningHook;
 use MediaWiki\HookContainer\HookContainer;
 
 class RenameuserHookRunner implements

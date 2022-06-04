@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Innocentbunny",
+			"Saurmandal",
 			"Sfic",
 			"ThisIsACreeper0101"
 		]
@@ -25,5 +26,7 @@
 	"timeless-pagetools": "पृष्ठ कार्य",
 	"timeless-languages": "भाषाएँ",
 	"timeless-projects": "अन्य परियोजनाएँ",
-	"timeless.js": "/* यहाँ पर स्थित कोई भी जावास्क्रिप्ट केवल टाइमलेस त्वचा का उपयोग करने वाले सदस्यों हेतु ही लोड होगा। */"
+	"timeless.js": "/* यहाँ पर स्थित कोई भी जावास्क्रिप्ट केवल टाइमलेस त्वचा का उपयोग करने वाले सदस्यों हेतु ही लोड होगा। */",
+	"timeless-view-history": "इतिहास",
+	"timeless-action-undelete": "{{PLURAL:$1|एक हटाया गया|$1 हटाए गए}} बदलाव वापस लायें"
 }

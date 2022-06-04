@@ -883,7 +883,11 @@ abstract class Scribunto_LuaEngine extends ScribuntoEngineBase {
 		$args = func_get_args();
 		$this->checkString( 'addWarning', $args, 0 );
 
-		$this->getParser()->getOutput()->addWarning( $text );
+		// Message localization has to happen on the Lua side
+		$this->getParser()->getOutput()->addWarningMsg(
+			'scribunto-lua-warning',
+			$text
+		);
 	}
 
 	/**

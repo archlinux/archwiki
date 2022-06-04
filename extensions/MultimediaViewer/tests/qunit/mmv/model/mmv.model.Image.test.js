@@ -18,7 +18,7 @@
 ( function () {
 	QUnit.module( 'mmv.model.Image', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Image model constructor sanity check', function ( assert ) {
+	QUnit.test( 'Image model constructor sense check', function ( assert ) {
 		var
 			title = mw.Title.newFromText( 'File:Foobar.jpg' ),
 			name = 'Foo bar',

@@ -12,9 +12,9 @@
 			"Macofe",
 			"Maria zaos",
 			"McDutchie",
+			"TMg",
 			"Toliño",
-			"Vivaelcelta",
-			"TMg"
+			"Vivaelcelta"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -198,7 +198,6 @@
 	"visualeditor-dialogbutton-media-tooltip": "Imaxes e ficheiros multimedia",
 	"visualeditor-dialogbutton-meta-tooltip": "Configuración da páxina",
 	"visualeditor-dialogbutton-template-tooltip": "Modelo",
-	"visualeditor-dialogbutton-transclusion-tooltip": "Transclusión",
 	"visualeditor-donebutton-tooltip": "Edición rematada",
 	"visualeditor-editconflict": "Non se puideron gardar os cambios debido a un conflito de edición. {{GENDER:|Quere}} resolver o conflito manualmente?",
 	"visualeditor-editingtabdialog-body": "{{SITENAME}} agora lembra que editor prefire. Pode cambia entre os modos de edición mentres edita, e cambiar a súa preferencia despois.",

@@ -27,7 +27,7 @@ ve.dm.Transaction = function VeDmTransaction( operations, authorId ) {
 	this.operations = operations || [];
 	// TODO: remove this backwards-incompatibility check
 	this.operations.forEach( function ( op ) {
-		if ( op.type && op.type.match( /meta/i ) ) {
+		if ( op.type && /meta/i.test( op.type ) ) {
 			throw new Error( 'Metadata ops are no longer supported' );
 		}
 	} );
@@ -131,6 +131,10 @@ ve.dm.Transaction.static.deserialize = function ( data ) {
 ve.dm.Transaction.static.compareElementsForTranslate = function ( a, b ) {
 	var aPlain = a,
 		bPlain = b;
+
+	if ( a === b ) {
+		return true;
+	}
 
 	if ( Array.isArray( a ) ) {
 		aPlain = a[ 0 ];

@@ -34,7 +34,7 @@ OO.inheritClass( LanguageResultWidget, OO.ui.OptionWidget );
  * @chainable
  */
 LanguageResultWidget.prototype.updateLabel = function ( query, matchedProperty ) {
-	var $highlighted, data = this.getData();
+	var data = this.getData();
 
 	// Reset text
 	this.$name.text( data.name );
@@ -42,7 +42,7 @@ LanguageResultWidget.prototype.updateLabel = function ( query, matchedProperty )
 
 	// Highlight where applicable
 	if ( matchedProperty ) {
-		$highlighted = this.constructor.static.highlightQuery( data[ matchedProperty ], query );
+		var $highlighted = this.constructor.static.highlightQuery( data[ matchedProperty ], query );
 		if ( matchedProperty === 'name' ) {
 			this.$name.empty().append( $highlighted );
 		} else {

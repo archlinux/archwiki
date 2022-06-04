@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Language;
 
@@ -6,9 +7,9 @@ use stdClass;
 use Wikimedia\LangConv\FstReplacementMachine;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
+use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMPostOrder;
-use Wikimedia\Parsoid\Utils\DOMUtils;
 
 /**
  * Use a {@Link ReplacementMachine} to predict the best "source language" for every node in a DOM.
@@ -50,7 +51,7 @@ class MachineLanguageGuesser extends LanguageGuesser {
 					  $child;
 					  $child = $child->nextSibling
 				) {
-					if ( DOMUtils::isText( $child ) ) {
+					if ( $child instanceof Text ) {
 						$countMap = [];
 						foreach ( $codes as $invertCode ) {
 							$countMap[$invertCode] = $machine->countBrackets(

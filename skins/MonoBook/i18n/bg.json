@@ -15,5 +15,7 @@
 	"monobook-more-actions": "Още",
 	"monobook-cactions-label": "Действия на страницата",
 	"monobook-notifications-link": "Известия ($1)",
-	"monobook-notifications-link-none": "Известия"
+	"monobook-notifications-link-none": "Известия",
+	"monobook-view-history": "История",
+	"monobook-action-undelete": "Възстановяване на {{PLURAL:$1|една редакция|$1 редакции}}"
 }

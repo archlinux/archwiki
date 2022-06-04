@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.37"
+		"MediaWiki": ">= 1.38.0"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -21,27 +21,36 @@
 		]
 	},
 	"Hooks": {
-		"EditPage::showEditForm:initial": [
-			"WikiEditorHooks::editPageShowEditFormInitial"
-		],
-		"GetPreferences": [
-			"WikiEditorHooks::getPreferences"
-		],
-		"EditPage::showEditForm:fields": [
-			"WikiEditorHooks::editPageShowEditFormFields"
-		],
-		"EditPage::attemptSave": [
-			"WikiEditorHooks::editPageAttemptSave"
-		],
-		"EditPage::attemptSave:after": [
-			"WikiEditorHooks::editPageAttemptSaveAfter"
-		]
+		"EditPage::showEditForm:initial": "WikiEditorHooks",
+		"GetPreferences": "WikiEditorHooks",
+		"EditPage::showEditForm:fields": "WikiEditorHooks",
+		"EditPage::attemptSave": "WikiEditorHooks",
+		"EditPage::attemptSave:after": "WikiEditorHooks",
+		"EditPageGetPreviewContent": "WikiEditorHooks",
+		"ListDefinedTags": "WikiEditorHooks",
+		"ChangeTagsListActive": "WikiEditorHooks",
+		"RecentChange_save": "WikiEditorHooks"
+	},
+	"HookHandlers": {
+		"WikiEditorHooks": {
+			"class": "MediaWiki\\Extension\\WikiEditor\\Hooks",
+			"services": [
+				"MainConfig",
+				"UserEditTracker",
+				"UserOptionsLookup"
+			]
+		}
 	},
 	"ResourceModules": {
 		"ext.wikiEditor": {
 			"group": "ext.wikiEditor",
 			"packageFiles": [
 				"ext.wikiEditor.js",
+				"insertlink/TitleInputField.js",
+				"insertlink/TitleInputWidget.js",
+				"insertlink/TitleOptionWidget.js",
+				"insertlink/LinkTextField.js",
+				"insertlink/LinkTypeField.js",
 				"jquery.wikiEditor.js",
 				"jquery.wikiEditor.toolbar.js",
 				"jquery.wikiEditor.toolbar.config.js",
@@ -49,11 +58,13 @@
 				"jquery.wikiEditor.dialogs.config.js",
 				{
 					"name": "data.json",
-					"callback": "WikiEditorHooks::getModuleData",
-					"versionCallback": "WikiEditorHooks::getModuleDataSummary"
+					"callback": "MediaWiki\\Extension\\WikiEditor\\Hooks::getModuleData",
+					"versionCallback": "MediaWiki\\Extension\\WikiEditor\\Hooks::getModuleDataSummary"
 				}
 			],
 			"styles": [
+				"insertlink/TitleInputField.less",
+				"insertlink/LinkTypeField.less",
 				"jquery.wikiEditor.less",
 				"jquery.wikiEditor.toolbar.less",
 				"jquery.wikiEditor.dialogs.less",
@@ -72,15 +83,12 @@
 			},
 			"templates": {
 				"dialogInsertFile.html": "templates/dialogInsertFile.html",
-				"dialogInsertLink.html": "templates/dialogInsertLink.html",
 				"dialogInsertReference.html": "templates/dialogInsertReference.html",
 				"dialogInsertTable.html": "templates/dialogInsertTable.html",
 				"dialogReplace.html": "templates/dialogReplace.html"
 			},
 			"messages": [
 				"wikieditor-wikitext-tab",
-				"wikieditor-loading",
-				"wikieditor-toolbar-loading",
 				"wikieditor-toolbar-tool-bold",
 				"wikieditor-toolbar-tool-bold-example",
 				"wikieditor-toolbar-tool-italic",
@@ -111,7 +119,6 @@
 				"wikieditor-toolbar-tool-link-lookslikeinternal",
 				"wikieditor-toolbar-tool-link-lookslikeinternal-int",
 				"wikieditor-toolbar-tool-link-lookslikeinternal-ext",
-				"wikieditor-toolbar-tool-link-empty",
 				"wikieditor-toolbar-tool-file",
 				"wikieditor-toolbar-tool-file-example",
 				"wikieditor-toolbar-tool-reference",
@@ -270,8 +277,6 @@
 			],
 			"dependencies": [
 				"jquery.cookie",
-				"jquery.throttle-debounce",
-				"jquery.suggestions",
 				"jquery.textSelection",
 				"jquery.ui",
 				"mediawiki.api",
@@ -281,6 +286,7 @@
 				"mediawiki.Title",
 				"mediawiki.user",
 				"mediawiki.util",
+				"mediawiki.widgets",
 				"oojs-ui.styles.icons-content",
 				"oojs-ui.styles.icons-editing-advanced",
 				"oojs-ui.styles.icons-editing-citation",
@@ -294,6 +300,26 @@
 		"ext.wikiEditor.styles": {
 			"group": "ext.wikiEditor",
 			"styles": "ext.wikiEditor.toolbar.styles.less"
+		},
+		"ext.wikiEditor.realtimepreview": {
+			"dependencies": [
+				"ext.wikiEditor",
+				"mediawiki.page.preview"
+			],
+			"messages": [
+				"wikieditor-realtimepreview-preview"
+			],
+			"packageFiles": [
+				"realtimepreview/init.js",
+				"realtimepreview/RealtimePreview.js",
+				"realtimepreview/ResizingDragBar.js",
+				"realtimepreview/TwoPaneLayout.js"
+			],
+			"styles": [
+				"realtimepreview/RealtimePreview.less",
+				"realtimepreview/ResizingDragBar.less",
+				"realtimepreview/TwoPaneLayout.less"
+			]
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -380,8 +406,14 @@
 		"wikieditor-toolbar-help-content-indent-syntax",
 		"wikieditor-toolbar-help-content-indent-result"
 	],
-	"AutoloadClasses": {
-		"WikiEditorHooks": "includes/WikiEditorHooks.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\WikiEditor\\": "includes/"
+	},
+	"config": {
+		"WikiEditorRealtimePreview": {
+			"description": "Whether to enable the Realtime Preview feature.",
+			"value": false
+		}
 	},
 	"manifest_version": 2
 }

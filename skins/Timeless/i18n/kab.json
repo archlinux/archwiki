@@ -17,5 +17,7 @@
 	"timeless-pagemisc": "Ugar",
 	"timeless-namespaces": "Tallunin n isemawen",
 	"timeless-pagetools": "Tigawin n usebter",
-	"timeless-languages": "Tutlayin"
+	"timeless-languages": "Tutlayin",
+	"timeless-view-history": "Amazray",
+	"timeless-action-undelete": "Fakk amḥay n {{PLURAL:$1|yiwen ubeddel|$1 yibeddlen}}"
 }

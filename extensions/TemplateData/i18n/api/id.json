@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Daud I.F. Argana",
 			"Rizkiahmadz",
-			"William Surya Permana",
-			"Daud I.F. Argana"
+			"William Surya Permana"
 		]
 	},
 	"apihelp-templatedata-description": "Ambil data yang disimpan oleh ekstensi DataTemplat.",

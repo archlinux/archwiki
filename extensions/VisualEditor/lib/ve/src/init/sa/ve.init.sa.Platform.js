@@ -55,12 +55,16 @@ ve.init.sa.Platform.prototype.notify = function ( message, title ) {
 
 	if ( title ) {
 		$notification.append(
+			// Never appends strings directly
+			// eslint-disable-next-line no-jquery/no-append-html
 			$( '<div>' ).addClass( 've-init-notification-title' ).append(
 				typeof title === 'string' ? document.createTextNode( title ) : title
 			)
 		);
 	}
 	$notification.append(
+		// Never appends strings directly
+		// eslint-disable-next-line no-jquery/no-append-html
 		$( '<div>' ).addClass( 've-init-notification-message' ).append(
 			typeof message === 'string' ? document.createTextNode( message ) : message
 		)
@@ -128,7 +132,7 @@ ve.init.sa.Platform.prototype.getMessage = $.i18n;
  */
 ve.init.sa.Platform.prototype.parseNumber = function ( value ) {
 	// TODO: Support separated numbers such as (en)123,456.78 or (fr)123.456,78
-	return +value;
+	return parseFloat( value );
 };
 
 /**

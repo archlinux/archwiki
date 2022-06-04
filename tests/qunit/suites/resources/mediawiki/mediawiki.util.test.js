@@ -315,7 +315,7 @@
 			link,
 			{
 				tagName: 'LI',
-				attributes: { id: 't-foo' },
+				attributes: { id: 't-foo', class: 'mw-list-item mw-list-item-js' },
 				contents: [
 					{
 						tagName: 'A',
@@ -343,7 +343,7 @@
 			link,
 			{
 				tagName: 'LI',
-				attributes: { id: 't-foo' },
+				attributes: { id: 't-foo', class: 'mw-list-item mw-list-item-js' },
 				contents: [
 					{
 						tagName: 'A',
@@ -601,14 +601,14 @@
 				mw.util.setOptionsForTest( { GenerateThumbnailOnParse: false } );
 				data = mw.util.parseImageUrl( thisCase.url );
 				if ( thisCase.name !== undefined ) {
-					assert.ok( data, 'Parses successfully' );
+					assert.notStrictEqual( data, null, 'Parses successfully' );
 					assert.strictEqual( data.name, thisCase.name, 'File name is correct' );
 					assert.strictEqual( data.width, thisCase.width, 'Width is correct' );
 					if ( thisCase.resizedUrl ) {
-						assert.ok( data.resizeUrl, 'resizeUrl is set' );
+						assert.strictEqual( typeof data.resizeUrl, 'function', 'resizeUrl is set' );
 						assert.strictEqual( data.resizeUrl( 1000 ), thisCase.resizedUrl, 'Resized URL is correct' );
 					} else {
-						assert.notOk( data.resizeUrl, 'resizeUrl is not set' );
+						assert.strictEqual( data.resizeUrl, null, 'resizeUrl is not set' );
 					}
 				} else {
 					assert.strictEqual( data, null, thisCase.typeOfUrl + ', should not produce an mw.Title object' );
@@ -622,7 +622,7 @@
 			mw.util.setOptionsForTest( { GenerateThumbnailOnParse: true } );
 			this.sandbox.stub( mw.config.values, 'wgScript', '/w' );
 			resizeUrl = mw.util.parseImageUrl( '//upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Princess_Alexandra_of_Denmark_%28later_Queen_Alexandra%2C_wife_of_Edward_VII%29_with_her_two_eldest_sons%2C_Prince_Albert_Victor_%28Eddy%29_and_George_Frederick_Ernest_Albert_%28later_George_V%29.jpg/939px-thumbnail.jpg' ).resizeUrl;
-			assert.ok( resizeUrl, 'resizeUrl is set' );
+			assert.strictEqual( typeof resizeUrl, 'function', 'resizeUrl is set' );
 			assert.strictEqual( resizeUrl( 500 ), '/w?title=Special:Redirect/file/Princess_Alexandra_of_Denmark_(later_Queen_Alexandra,_wife_of_Edward_VII)_with_her_two_eldest_sons,_Prince_Albert_Victor_(Eddy)_and_George_Frederick_Ernest_Albert_(later_George_V).jpg&width=500', 'Resized URL is correct' );
 		} );
 	} );
@@ -666,21 +666,76 @@
 			q = [],
 			done = assert.async();
 
-		fn = mw.util.debounce( 0, function ( data ) {
+		fn = mw.util.debounce( function ( data ) {
+			q.push( data );
+		}, 5 );
+
+		fn( 1 );
+		setTimeout( function () {
+			fn( 2 );
+			setTimeout( function () {
+				fn( 3 );
+				setTimeout( function () {
+					assert.deepEqual(
+						q,
+						[ 3 ],
+						'Last one ran'
+					);
+					done();
+				}, 10 );
+			} );
+		} );
+	} );
+
+	QUnit.test( 'debounce immediate', function ( assert ) {
+		var fn,
+			q = [],
+			done = assert.async();
+
+		fn = mw.util.debounce( function ( data ) {
+			q.push( data );
+		}, 5, true );
+
+		fn( 1 );
+		setTimeout( function () {
+			fn( 2 );
+			setTimeout( function () {
+				fn( 3 );
+				setTimeout( function () {
+					assert.deepEqual(
+						q,
+						[ 1 ],
+						'First one ran'
+					);
+					done();
+				}, 10 );
+			} );
+		} );
+	} );
+
+	QUnit.test( 'debounce (old signature)', function ( assert ) {
+		var fn,
+			q = [],
+			done = assert.async();
+
+		fn = mw.util.debounce( 5, function ( data ) {
 			q.push( data );
 		} );
 
 		fn( 1 );
-		fn( 2 );
-		fn( 3 );
-
 		setTimeout( function () {
-			assert.deepEqual(
-				q,
-				[ 3 ],
-				'Last one ran'
-			);
-			done();
+			fn( 2 );
+			setTimeout( function () {
+				fn( 3 );
+				setTimeout( function () {
+					assert.deepEqual(
+						q,
+						[ 3 ],
+						'Last one ran'
+					);
+					done();
+				}, 10 );
+			} );
 		} );
 	} );
 
@@ -705,7 +760,7 @@
 		);
 
 		util.init();
-		assert.ok( util.$content instanceof $, 'jQuery object' );
+		assert.true( util.$content instanceof $, 'jQuery object' );
 		assert.strictEqual( mw.util.$content[ 0 ], node, 'node' );
 		assert.strictEqual( mw.util.$content.length, 1, 'length' );
 	} );
@@ -717,15 +772,76 @@
 		);
 
 		util.init();
-		assert.ok( util.$content instanceof $, 'jQuery object' );
+		assert.true( util.$content instanceof $, 'jQuery object' );
 		assert.strictEqual( mw.util.$content[ 0 ], node, 'node' );
 		assert.strictEqual( mw.util.$content.length, 1, 'length' );
 	} );
 
 	QUnit.test( 'init (body fallback)', function ( assert ) {
 		util.init();
-		assert.ok( util.$content instanceof $, 'jQuery object' );
+		assert.true( util.$content instanceof $, 'jQuery object' );
 		assert.strictEqual( mw.util.$content[ 0 ], document.body, 'node' );
 		assert.strictEqual( mw.util.$content.length, 1, 'length' );
+	} );
+
+	QUnit.test( 'sanitizeIP', function ( assert ) {
+		var IPaddress = [
+			[ 'FC:0:0:0:0:0:0:100', 'fc::100', 'IPv6 with "::" and 2 words' ],
+			[ 'FC:0:0:0:0:0:100:A', 'fc::100:a', 'IPv6 with "::" and 3 words' ],
+			[ 'FC:0:0:0:0:100:A:D', 'fc::100:a:d', 'IPv6 with "::" and 4 words' ],
+			[ 'FC:0:0:0:100:A:D:1', 'fc::100:a:d:1', 'IPv6 with "::" and 5 words' ],
+			[ 'FC:0:0:100:A:D:1:E', 'fc::100:a:d:1:e', 'IPv6 with "::" and 6 words' ],
+			[ 'FC:0:100:A:D:1:E:AC', 'fc::100:a:d:1:e:ac', 'IPv6 with "::" and 7 words' ],
+			[ '2001:0:0:0:0:0:0:DF', '2001::df', 'IPv6 with "::" and 2 words' ],
+			[ '2001:5C0:1400:A:0:0:0:DF', '2001:5c0:1400:a::df', 'IPv6 with "::" and 5 words' ],
+			[ '2001:5C0:1400:A:0:0:DF:2', '2001:5c0:1400:a::df:2', 'IPv6 with "::" and 6 words' ],
+			[ '2001:DB8:A:0:0:0:0:123/64', '2001:db8:a::123/64', 'IPv6 with "::" and 6 words' ],
+			[ '1.24.52.13', '1.24.52.13', 'IPv4 no change' ],
+			[ '1.24.52.13', '01.024.052.013', 'IPv4 strip leading 0s' ],
+			[ '1.2.5.1', '001.002.005.001', 'IPv4 strip multiple leading 0s' ],
+			[ '100.240.52.130', '100.240.52.130', 'IPv4 don\'t strip meaningful trailing 0s' ],
+			[ '0.0.52.0', '00.000.52.00', 'IPv4 strip meaningless multiple 0s' ],
+			[ '0.0.52.0/32', '00.000.52.00/32', 'IPv4 range strip meaningless multiple 0s' ],
+			[ 'not an IP', 'not an IP', 'Not an IP' ],
+			[ null, ' ', 'Empty string' ],
+			[ '1.24.52.13', ' 1.24.52.13 ', 'IPv4 trim whitespace from start and end of the string' ],
+			[ '0:0:0:0:0:0:0:1', '::1', 'IPv6 starts with ::' ],
+			[ '2001:DB8:0:0:0:FF00:42:8329', '2001:0db8:0000:0000:0000:ff00:0042:8329', 'IPv6 remove leading zeros from each block.' ],
+			[ 'FE80:0:0:0:0:0:0:0/10', 'fe80::/10', 'IPv6 :: at the end' ]
+		];
+		IPaddress.forEach( function ( ipCase ) {
+			assert.strictEqual( util.sanitizeIP( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
+		} );
+	} );
+
+	QUnit.test( 'prettifyIP', function ( assert ) {
+		var IPaddress = [
+			[ 'fc::100', 'FC::100', 'IPv6 change to lowercase' ],
+			[ '1.24.52.13', '1.24.52.13', 'IPv4 no change' ],
+			[ '0.0.52.0/32', '00.000.52.00/32', 'IPv4 range strip meaningless multiple 0s' ],
+			[ null, ' ', 'Empty string' ],
+			[ '2001:db8:a::123/64', '2001:db8:a:0000:0000:0000:0000:123/64', 'IPv6 range Replace consecutive zeros with :: ' ],
+			[ '2001:db8::ff00:42:8329', '2001:DB8:0:0:0:FF00:42:8329', 'IPv6 Replace consecutive zeros with ::' ],
+			[ '2001::15:0:0:1a2b', '2001:0000:0000:0000:0015:0000:0000:1a2b', 'IPv6 only replace longest consecutive zeros with ::' ],
+			[ '2001:0:0:15::1a2b', '2001:0000:0000:0015:0000:0000:0000:1a2b', 'IPv6 only replace longest consecutive zeros with ::' ],
+			[ '2001::15:0:0:3:1a2b', '2001:0000:0000:0015:0000:0000:0003:1a2b', 'IPv6 replace first match of longest consecutive zeros with ::' ]
+		];
+		IPaddress.forEach( function ( ipCase ) {
+			assert.strictEqual( util.prettifyIP( ipCase[ 1 ] ), ipCase[ 0 ], ipCase[ 2 ] );
+		} );
+
+	} );
+
+	QUnit.test( 'repeatString', function ( assert ) {
+		var strings = [
+			[ '::', ':', 2, 'Return string count(2) times' ],
+			[ ' :  : ', ' : ', 2, 'String with spaces' ],
+			[ ':', ':', -1, 'No change if count is out of range' ],
+			[ ':', ':', Infinity, 'No change if count is out of range' ],
+			[ '', '', 2, 'No change if empty string is passed' ]
+		];
+		strings.forEach( function ( stringCase ) {
+			assert.strictEqual( util.repeatString( stringCase[ 1 ], stringCase[ 2 ] ), stringCase[ 0 ], stringCase[ 3 ] );
+		} );
 	} );
 }() );

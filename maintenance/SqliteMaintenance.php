@@ -23,6 +23,7 @@
 
 use MediaWiki\MediaWikiServices;
 
+use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\DatabaseSqlite;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -54,7 +55,7 @@ class SqliteMaintenance extends Maintenance {
 		}
 
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
-		$dbw = $lb->getConnection( DB_PRIMARY );
+		$dbw = $lb->getConnectionRef( DB_PRIMARY );
 		if ( !( $dbw instanceof DatabaseSqlite ) ) {
 			$this->error( "This maintenance script requires a SQLite database.\n" );
 
@@ -111,12 +112,12 @@ class SqliteMaintenance extends Maintenance {
 		$dbw->query( 'BEGIN IMMEDIATE TRANSACTION', __METHOD__ );
 		$ourFile = $dbw->getDbFilePath();
 		$this->output( "   Copying database file $ourFile to $fileName..." );
-		Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		if ( !copy( $ourFile, $fileName ) ) {
 			$err = error_get_last();
 			$this->error( "      {$err['message']}" );
 		}
-		Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 		$this->output( "   Releasing lock...\n" );
 		$dbw->query( 'COMMIT TRANSACTION', __METHOD__ );
 	}

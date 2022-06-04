@@ -20,5 +20,7 @@
 	"timeless-namespaces": "ယီးနယ်မိဉ်ꩻဖိုင်ႏ",
 	"timeless-pagetools": "လိတ်မဲ့ငါခွုမ်မာꩻချက်ဖိုင်ႏ",
 	"timeless-languages": "ဘာႏသာႏငဝ်းငွါဖုံႏ",
-	"timeless-projects": "ပရောစဲစ်အလင်ဖိုင်ႏ"
+	"timeless-projects": "ပရောစဲစ်အလင်ဖိုင်ႏ",
+	"timeless-view-history": "ရာႏဇာႏဝင်ႏ",
+	"timeless-action-undelete": "ယားကုဲင်တဝ်းဒွုမ် {{PLURAL:$1| ခြပ်ချော်ꩻမုꩻတဗာႏ| $1 ခြပ်ချော်ꩻမုꩻဖိုင်ႏ}}"
 }

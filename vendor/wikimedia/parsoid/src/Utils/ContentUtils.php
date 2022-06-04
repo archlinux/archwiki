@@ -36,7 +36,6 @@ class ContentUtils {
 	 * @return string
 	 */
 	public static function ppToXML( Node $node, array $options = [] ): string {
-		// We really only want to pass along `$options['keepTmp']`
 		DOMDataUtils::visitAndStoreDataAttribs( $node, $options );
 		return self::toXML( $node, $options );
 	}
@@ -112,21 +111,22 @@ class ContentUtils {
 	}
 
 	/**
-	 * Strip Parsoid-inserted section wrappers and fallback id spans with
+	 * Strip Parsoid-inserted section, annotation wrappers, and fallback id spans with
 	 * HTML4 ids for headings from the DOM.
 	 *
 	 * @param Element $node
 	 */
-	public static function stripSectionTagsAndFallbackIds( Element $node ): void {
+	public static function stripUnnecessaryWrappersAndFallbackIds( Element $node ): void {
 		$n = $node->firstChild;
 		while ( $n ) {
 			$next = $n->nextSibling;
 			if ( $n instanceof Element ) {
 				// Recurse into subtree before stripping this
-				self::stripSectionTagsAndFallbackIds( $n );
+				self::stripUnnecessaryWrappersAndFallbackIds( $n );
 
-				// Strip <section> tags
-				if ( WTUtils::isParsoidSectionTag( $n ) ) {
+				// Strip <section> tags and synthetic extended-annotation-region wrappers
+				if ( WTUtils::isParsoidSectionTag( $n ) ||
+					WTUtils::isExtendedAnnotationWrapperTag( $n ) ) {
 					DOMUtils::migrateChildren( $n, $n->parentNode, $n );
 					$n->parentNode->removeChild( $n );
 				}
@@ -137,45 +137,6 @@ class ContentUtils {
 				}
 			}
 			$n = $next;
-		}
-	}
-
-	/**
-	 * @param Node $node
-	 * @param Node $clone
-	 * @param array $options
-	 */
-	private static function cloneData(
-		Node $node, Node $clone, array $options
-	): void {
-		if ( !( $node instanceof Element ) ) {
-			return;
-		}
-		DOMUtils::assertElt( $clone );
-
-		$d = DOMDataUtils::getNodeData( $node );
-		DOMDataUtils::setNodeData( $clone,  Utils::clone( $d ) );
-		$node = $node->firstChild;
-		$clone = $clone->firstChild;
-		while ( $node ) {
-			self::cloneData( $node, $clone, $options );
-			$node = $node->nextSibling;
-			$clone = $clone->nextSibling;
-		}
-	}
-
-	/**
-	 * @param array $buf
-	 * @param array &$opts
-	 */
-	private static function emit( array $buf, array &$opts ): void {
-		$str = implode( "\n", $buf ) . "\n";
-		if ( isset( $opts['outBuffer'] ) ) {
-			$opts['outBuffer'] .= $str;
-		} elseif ( isset( $opts['outStream'] ) ) {
-			fwrite( $opts['outStream'], $str . "\n" );
-		} else {
-			error_log( $str );
 		}
 	}
 
@@ -204,10 +165,11 @@ class ContentUtils {
 				$dp->dsr = $dsrFunc( clone $dp->dsr );
 				// We don't need to setDataParsoid because dp is not a copy
 			}
-			if ( ( $dp->tmp->origDSR ?? null ) !== null ) {
+			$tmp = $dp->getTemp();
+			if ( ( $tmp->origDSR ?? null ) !== null ) {
 				// Even though tmp shouldn't escape Parsoid, go ahead and
 				// convert to enable hybrid testing.
-				$dp->tmp->origDSR = $dsrFunc( clone $dp->tmp->origDSR );
+				$tmp->origDSR = $dsrFunc( clone $tmp->origDSR );
 			}
 			if ( ( $dp->extTagOffsets ?? null ) !== null ) {
 				$dp->extTagOffsets = $dsrFunc( clone $dp->extTagOffsets );
@@ -366,54 +328,67 @@ class ContentUtils {
 	}
 
 	/**
+	 * @param Node $node
+	 * @param array $options
+	 * @return string
+	 */
+	private static function dumpNode( Node $node, array $options ): string {
+		return self::toXML( $node, $options + [ 'saveData' => true ] );
+	}
+
+	/**
 	 * Dump the DOM with attributes.
 	 *
 	 * @param Node $rootNode
 	 * @param string $title
-	 * @param array &$options
+	 * @param array $options Associative array of options:
+	 *   - dumpFragmentMap: Dump the fragment map from env
+	 *   - quiet: Suppress separators
+	 *
+	 * storeDataAttribs options:
+	 *   - discardDataParsoid
+	 *   - keepTmp
+	 *   - storeInPageBundle
+	 *   - storeDiffMark
+	 *   - env
+	 *   - idIndex
+	 *
+	 * XMLSerializer options:
+	 *   - smartQuote
+	 *   - innerXML
+	 *   - captureOffsets
+	 *   - addDoctype
+	 * @return string The dump result
 	 */
 	public static function dumpDOM(
-		Node $rootNode, string $title, array &$options = []
-	): void {
-		if ( !empty( $options['storeDiffMark'] ) || !empty( $options['dumpFragmentMap'] ) ) {
+		Node $rootNode, string $title = '', array $options = []
+	): string {
+		if ( !empty( $options['dumpFragmentMap'] ) ) {
 			Assert::invariant( isset( $options['env'] ), "env should be set" );
 		}
 
-		if ( $rootNode instanceof Element ) {
-			// cloneNode doesn't clone data => walk DOM to clone it
-			$clonedRoot = $rootNode->cloneNode( true );
-			self::cloneData( $rootNode, $clonedRoot, $options );
-		} else {
-			$clonedRoot = $rootNode;
-		}
-
-		$buf = [];
+		$buf = '';
 		if ( empty( $options['quiet'] ) ) {
-			$buf[] = '----- ' . $title . ' -----';
+			$buf .= "----- {$title} -----\n";
 		}
-
-		$buf[] = self::ppToXML( $clonedRoot, $options );
-		self::emit( $buf, $options );
+		$buf .= self::dumpNode( $rootNode, $options ) . "\n";
 
 		// Dump cached fragments
 		if ( !empty( $options['dumpFragmentMap'] ) ) {
 			foreach ( $options['env']->getDOMFragmentMap() as $k => $fragment ) {
-				$buf = [];
-				$buf[] = str_repeat( '=', 15 );
-				$buf[] = 'FRAGMENT ' . $k;
-				$buf[] = '';
-				self::emit( $buf, $options );
-
-				$newOpts = $options;
-				$newOpts['dumpFragmentMap'] = false;
-				$newOpts['quiet'] = true;
-				self::dumpDOM( is_array( $fragment ) ? $fragment[0] : $fragment, '', $newOpts );
+				$buf .= str_repeat( '=', 15 ) . "\n";
+				$buf .= "FRAGMENT {$k}\n";
+				$buf .= self::dumpNode(
+					is_array( $fragment ) ? $fragment[0] : $fragment,
+					$options
+				) . "\n";
 			}
 		}
 
 		if ( empty( $options['quiet'] ) ) {
-			self::emit( [ str_repeat( '-', mb_strlen( $title ) + 12 ) ], $options );
+			$buf .= str_repeat( '-', mb_strlen( $title ) + 12 ) . "\n";
 		}
+		return $buf;
 	}
 
 }

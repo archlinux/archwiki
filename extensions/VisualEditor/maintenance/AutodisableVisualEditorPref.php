@@ -19,6 +19,7 @@ $maintenancePath = getenv( 'MW_INSTALL_PATH' ) !== false
 require_once $maintenancePath;
 
 class AutodisableVisualEditorPref extends Maintenance {
+
 	/**
 	 * @inheritDoc
 	 */

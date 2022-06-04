@@ -77,7 +77,7 @@
 	"cite-ve-dialog-reference-title": "Référence",
 	"cite-ve-dialog-reference-useexisting-tool": "déjà présente",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Liste de références générales",
-	"cite-ve-dialog-referenceslist-contextitem-description-named": "Liste de références pour le groupe « $1 »",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "Liste de références pour le groupe « $1 »",
 	"cite-ve-dialog-referenceslist-title": "Liste des références",
 	"cite-ve-dialogbutton-citation-educationpopup-text": "Améliore votre contenu en ajoutant des sources d’information. Vous pouvez ajouter comme références des livres, des articles de journaux et des sites web.",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "Références",
@@ -86,7 +86,7 @@
 	"cite-ve-dialogbutton-reference-tooltip": "basique",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "Liste des références",
 	"cite-ve-reference-input-placeholder": "Chercher dans les références actuelles",
-	"cite-ve-referenceslist-isempty": "Il n’y a aucune référence du groupe « $1 » sur cette page à inclure dans cette liste.",
+	"cite-ve-referenceslist-isempty": "Il n’y a aucune référence du groupe « $1 » sur cette page à inclure dans cette liste.",
 	"cite-ve-referenceslist-isempty-default": "Il n’y a aucune référence sur cette page à inclure dans cette liste.",
 	"cite-ve-referenceslist-missingref": "Cette référence est définie dans un modèle ou un autre bloc généré et ne peut pour le moment être modifiée qu’en mode source.",
 	"cite-ve-referenceslist-missingref-in-list": "Cette référence est définie dans un modèle ou un autre bloc généré et ne peut actuellement être prévisualisée qu’en mode source.",
@@ -94,5 +94,5 @@
 	"cite-ve-toolbar-group-label": "Sourcer",
 	"cite-ve-othergroup-item": "Référence $1",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Références",
-	"visualeditor-internal-list-diff-group-name-mwreference": "Nom de groupe de la référence : « $1 »"
+	"visualeditor-internal-list-diff-group-name-mwreference": "Nom de groupe de la référence : « $1 »"
 }

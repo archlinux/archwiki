@@ -1,29 +1,8 @@
-/*!
- * This file is currently loaded as part of the 'mediawiki' module and therefore
- * concatenated to mediawiki.js and executed at the same time. This file exists
- * to help prepare for splitting up the 'mediawiki' module.
- * This effort is tracked at https://phabricator.wikimedia.org/T192623
- *
- * In short:
- *
- * - mediawiki.js will be reduced to the minimum needed to define mw.loader and
- *   mw.config, and then moved to its own private "mediawiki.loader" module that
- *   can be embedded within the StartupModule response.
- *
- * - mediawiki.base.js and other files in this directory will remain part of the
- *   "mediawiki" module, and will remain a default/implicit dependency for all
- *   regular modules, just like jquery and wikibits already are.
- */
 'use strict';
 
-var queue,
-	slice = Array.prototype.slice,
-	hooks = Object.create( null ),
-	mwLoaderTrack = mw.track,
-	trackCallbacks = $.Callbacks( 'memory' ),
-	trackHandlers = [];
+var slice = Array.prototype.slice;
 
-// Apply site-level config
+// Apply site-level data
 mw.config.set( require( './config.json' ) );
 
 // Load other files in the package
@@ -36,52 +15,41 @@ require( './legacy.wikibits.js' );
  *
  * Similar to the Message class in MediaWiki PHP.
  *
- * Format defaults to 'text'.
- *
  *     @example
  *
  *     var obj, str;
  *     mw.messages.set( {
  *         'hello': 'Hello world',
  *         'hello-user': 'Hello, $1!',
- *         'welcome-user': 'Welcome back to $2, $1! Last visit by $1: $3'
+ *         'welcome-user': 'Welcome back to $2, $1! Last visit by $1: $3',
+ *         'so-unusual': 'You will find: $1'
  *     } );
  *
- *     obj = new mw.Message( mw.messages, 'hello' );
+ *     obj = mw.message( 'hello' );
  *     mw.log( obj.text() );
  *     // Hello world
  *
- *     obj = new mw.Message( mw.messages, 'hello-user', [ 'John Doe' ] );
- *     mw.log( obj.text() );
- *     // Hello, John Doe!
- *
- *     obj = new mw.Message( mw.messages, 'welcome-user', [ 'John Doe', 'Wikipedia', '2 hours ago' ] );
- *     mw.log( obj.text() );
- *     // Welcome back to Wikipedia, John Doe! Last visit by John Doe: 2 hours ago
- *
- *     // Using mw.message shortcut
  *     obj = mw.message( 'hello-user', 'John Doe' );
  *     mw.log( obj.text() );
  *     // Hello, John Doe!
  *
- *     // Using mw.msg shortcut
+ *     obj = mw.message( 'welcome-user', 'John Doe', 'Wikipedia', '2 hours ago' );
+ *     mw.log( obj.text() );
+ *     // Welcome back to Wikipedia, John Doe! Last visit by John Doe: 2 hours ago
+ *
+ *     // Using mw.msg shortcut, always in "text' format.
  *     str = mw.msg( 'hello-user', 'John Doe' );
  *     mw.log( str );
  *     // Hello, John Doe!
  *
  *     // Different formats
- *     obj = new mw.Message( mw.messages, 'hello-user', [ 'John "Wiki" <3 Doe' ] );
+ *     obj = mw.message( 'so-unusual', 'Time "after" <time>' );
  *
- *     obj.format = 'text';
- *     str = obj.toString();
- *     // Same as:
- *     str = obj.text();
- *
- *     mw.log( str );
- *     // Hello, John "Wiki" <3 Doe!
+ *     mw.log( obj.text() );
+ *     // You will find: Time "after" <time>
  *
  *     mw.log( obj.escaped() );
- *     // Hello, John &quot;Wiki&quot; &lt;3 Doe!
+ *     // You will find: Time &quot;after&quot; &lt;time&gt;
  *
  * @class mw.Message
  *
@@ -91,11 +59,9 @@ require( './legacy.wikibits.js' );
  * @param {Array} [parameters]
  */
 function Message( map, key, parameters ) {
-	this.format = 'text';
 	this.map = map;
 	this.key = key;
 	this.parameters = parameters || [];
-	return this;
 }
 
 Message.prototype = {
@@ -108,9 +74,11 @@ Message.prototype = {
 	 *
 	 * This function will not be called for nonexistent messages.
 	 *
+	 * @private For internal use by mediawiki.jqueryMsg only
+	 * @param {string} format
 	 * @return {string} Parsed message
 	 */
-	parser: function () {
+	parser: function ( format ) {
 		var text = this.map.get( this.key );
 		if (
 			mw.config.get( 'wgUserLanguage' ) === 'qqx' &&
@@ -119,7 +87,7 @@ Message.prototype = {
 			text = '(' + this.key + '$*)';
 		}
 		text = mw.format.apply( null, [ text ].concat( this.parameters ) );
-		if ( this.format === 'parse' ) {
+		if ( format === 'parse' ) {
 			// We don't know how to parse anything, so escape it all
 			text = mw.html.escape( text );
 		}
@@ -142,12 +110,19 @@ Message.prototype = {
 	},
 
 	/**
-	 * Convert message object to its string form based on current format.
+	 * Convert message object to a string using the "text"-format .
 	 *
-	 * @return {string} Message as a string in the current form, or `<key>` if key
+	 * This exists for implicit string type casting only.
+	 * Do not call this directly. Use mw.Message#text() instead, one of the
+	 * other format methods.
+	 *
+	 * @private
+	 * @param {string} [format="text"] Internal parameter. Uses "text" if called
+	 *  implicitly through string casting.
+	 * @return {string} Message in the given format, or `⧼key⧽` if the key
 	 *  does not exist.
 	 */
-	toString: function () {
+	toString: function ( format ) {
 		if ( !this.exists() ) {
 			// Use ⧼key⧽ as text if key does not exist
 			// Err on the side of safety, ensure that the output
@@ -160,68 +135,64 @@ Message.prototype = {
 			return '⧼' + mw.html.escape( this.key ) + '⧽';
 		}
 
-		if ( this.format === 'plain' || this.format === 'text' || this.format === 'parse' ) {
-			return this.parser();
+		if ( !format ) {
+			format = 'text';
 		}
 
-		// Format: 'escaped'
-		return mw.html.escape( this.parser() );
+		if ( format === 'plain' || format === 'text' || format === 'parse' ) {
+			return this.parser( format );
+		}
+
+		// Format: 'escaped' (including for any invalid format, default to safe escape)
+		return mw.html.escape( this.parser( 'escaped' ) );
 	},
 
 	/**
-	 * Change format to 'parse' and convert message to string
+	 * Parse message as wikitext and return HTML.
 	 *
-	 * If jqueryMsg is loaded, this parses the message text from wikitext
-	 * (where supported) to HTML
-	 *
-	 * Otherwise, it is equivalent to plain.
+	 * If jqueryMsg is loaded, this transforms text and parses a subset of supported wikitext
+	 * into HTML. Without jqueryMsg, it is equivalent to #escaped.
 	 *
 	 * @return {string} String form of parsed message
 	 */
 	parse: function () {
-		this.format = 'parse';
-		return this.toString();
+		return this.toString( 'parse' );
 	},
 
 	/**
-	 * Change format to 'plain' and convert message to string
+	 * Return message plainly.
 	 *
-	 * This substitutes parameters, but otherwise does not change the
-	 * message text.
+	 * This substitutes parameters, but otherwise does not transform the
+	 * message content.
 	 *
 	 * @return {string} String form of plain message
 	 */
 	plain: function () {
-		this.format = 'plain';
-		return this.toString();
+		return this.toString( 'plain' );
 	},
 
 	/**
-	 * Change format to 'text' and convert message to string
+	 * Format message with text transformations applied.
 	 *
-	 * If jqueryMsg is loaded, {{-transformation is done where supported
-	 * (such as {{plural:}}, {{gender:}}, {{int:}}).
-	 *
-	 * Otherwise, it is equivalent to plain
+	 * If jqueryMsg is loaded, `{{`-transformation is done for supported
+	 * magic words such as `{{plural:}}`, `{{gender:}}`, and `{{int:}}`.
+	 * Without jqueryMsg, it is equivalent to #plain.
 	 *
 	 * @return {string} String form of text message
 	 */
 	text: function () {
-		this.format = 'text';
-		return this.toString();
+		return this.toString( 'text' );
 	},
 
 	/**
-	 * Change the format to 'escaped' and convert message to string
+	 * Format message and return as escaped text in HTML.
 	 *
-	 * This is equivalent to using the 'text' format (see #text), then
-	 * HTML-escaping the output.
+	 * This is equivalent to the #text format, which is then HTML-escaped.
 	 *
 	 * @return {string} String form of html escaped message
 	 */
 	escaped: function () {
-		this.format = 'escaped';
-		return this.toString();
+		return this.toString( 'escaped' );
 	},
 
 	/**
@@ -335,7 +306,9 @@ mw.message = function ( key ) {
  * @return {string}
  */
 mw.msg = function () {
-	return mw.message.apply( mw, arguments ).toString();
+	// Shortcut must process text transformations by default
+	// if mediawiki.jqueryMsg is loaded. (T46459)
+	return mw.message.apply( mw, arguments ).text();
 };
 
 /**
@@ -350,6 +323,10 @@ mw.notify = function ( message, options ) {
 		return mw.notification.notify( message, options );
 	} );
 };
+
+var mwLoaderTrack = mw.track;
+var trackCallbacks = $.Callbacks( 'memory' );
+var trackHandlers = [];
 
 /**
  * Track an analytic event.
@@ -398,7 +375,6 @@ mw.trackSubscribe = function ( topic, callback ) {
 	}
 
 	trackHandlers.push( [ handler, callback ] );
-
 	trackCallbacks.add( handler );
 };
 
@@ -460,6 +436,8 @@ trackCallbacks.fire( mw.trackQueue );
  *
  * @class mw.hook
  */
+
+var hooks = Object.create( null );
 
 /**
  * Create an instance of mw.hook.
@@ -647,6 +625,16 @@ mw.html = {
 };
 
 /**
+ * Get the names of all registered ResourceLoader modules.
+ *
+ * @member mw.loader
+ * @return {string[]}
+ */
+mw.loader.getModuleNames = function () {
+	return Object.keys( mw.loader.moduleRegistry );
+};
+
+/**
  * Execute a function after one or more modules are ready.
  *
  * Use this method if you need to dynamically control which modules are loaded
@@ -757,8 +745,10 @@ mw.user = {
 	tokens: new mw.Map()
 };
 
+mw.user.options.set( require( './user.json' ) );
+
 // Process callbacks for modern browsers (Grade A) that require modules.
-queue = window.RLQ;
+var queue = window.RLQ;
 // Replace temporary RLQ implementation from startup.js with the
 // final implementation that also processes callbacks that can
 // require modules. It must also support late arrivals of

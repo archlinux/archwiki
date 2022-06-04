@@ -18,5 +18,7 @@
 	"timeless-pagemisc": "Mai",
 	"timeless-namespaces": "Espacis de noms",
 	"timeless-pagetools": "Accions de pagina",
-	"timeless-languages": "Lengas"
+	"timeless-languages": "Lengas",
+	"timeless-view-history": "Istoric",
+	"timeless-action-undelete": "Restablir {{PLURAL:$1|1 modificacion| $1 modificacions}}"
 }

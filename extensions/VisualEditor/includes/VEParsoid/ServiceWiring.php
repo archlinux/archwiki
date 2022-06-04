@@ -24,6 +24,7 @@ use MediaWiki\MediaWikiServices;
 use VEParsoid\Config\DataAccess as MWDataAccess;
 use VEParsoid\Config\PageConfigFactory as MWPageConfigFactory;
 use VEParsoid\Config\SiteConfig as MWSiteConfig;
+use VEParsoid\ParsoidServices;
 use Wikimedia\Parsoid\Config\Api\DataAccess as ApiDataAccess;
 use Wikimedia\Parsoid\Config\Api\SiteConfig as ApiSiteConfig;
 use Wikimedia\Parsoid\Config\DataAccess;
@@ -32,41 +33,27 @@ use Wikimedia\Parsoid\Config\SiteConfig;
 global $wgVisualEditorParsoidAutoConfig;
 if (
 	ExtensionRegistry::getInstance()->isLoaded( 'Parsoid' ) ||
-	!$wgVisualEditorParsoidAutoConfig
+	!$wgVisualEditorParsoidAutoConfig ||
+	// Compatibility: we're going to move this code to core eventually; this
+	// ensures we yield gracefully to core's implementation when it exists.
+	class_exists( '\MediaWiki\Parser\Parsoid\ParsoidServices' )
 ) {
 	return [];
 }
 
 return [
 
-	'ParsoidSettings' => static function ( MediaWikiServices $services ): array {
-		# Unified location for default parsoid settings.
-
-		$veConfig = $services->getConfigFactory()
-			->makeConfig( 'visualeditor' );
-		$parsoidSettings = [
-			# Default parsoid settings, for 'no config' install.
-			'useSelser' => true,
-		];
-		try {
-			$parsoidSettings =
-				$veConfig->get( 'VisualEditorParsoidSettings' )
-				+ $parsoidSettings;
-		} catch ( ConfigException $e ) {
-			/* Config option isn't defined, use defaults */
-		}
-		return $parsoidSettings;
-	},
-
 	'ParsoidSiteConfig' => static function ( MediaWikiServices $services ): SiteConfig {
-		$mainConfig = $services->getMainConfig();
-		$parsoidSettings = $services->get( 'ParsoidSettings' );
+		$parsoidSettings = ( new ParsoidServices( $services ) )
+			->getParsoidSettings(); # use fallback chain for parsoid settings
 		if ( !empty( $parsoidSettings['debugApi'] ) ) {
 			return ApiSiteConfig::fromSettings( $parsoidSettings );
 		}
+		$mainConfig = $services->getMainConfig();
 		return new MWSiteConfig(
 			new ServiceOptions( MWSiteConfig::CONSTRUCTOR_OPTIONS, $mainConfig ),
 			$parsoidSettings,
+			$services->getObjectFactory(),
 			$services->getContentLanguage(),
 			$services->getStatsdDataFactory(),
 			$services->getMagicWordFactory(),
@@ -80,7 +67,8 @@ return [
 			// These arguments are temporary and will be removed once
 			// better solutions are found.
 			$services->getParser(), // T268776
-			$mainConfig // T268777
+			$mainConfig, // T268777
+			$services->getHookContainer() // T300546
 		);
 	},
 
@@ -90,7 +78,8 @@ return [
 	},
 
 	'ParsoidDataAccess' => static function ( MediaWikiServices $services ): DataAccess {
-		$parsoidSettings = $services->get( 'ParsoidSettings' );
+		$parsoidSettings = ( new ParsoidServices( $services ) )
+			->getParsoidSettings(); # use fallback chain for parsoid settings
 		if ( !empty( $parsoidSettings['debugApi'] ) ) {
 			return ApiDataAccess::fromSettings( $parsoidSettings );
 		}

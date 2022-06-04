@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Daud I.F. Argana",
 			"Gombang",
-			"William Surya Permana",
-			"Daud I.F. Argana"
+			"William Surya Permana"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Tidak ditemukan serialisasi tembolok dengan kunci tersebut",

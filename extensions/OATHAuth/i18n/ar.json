@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"FiberAhmed",
 			"Meno25",
 			"MuratTheTurkish",
 			"ديفيد",
 			"علاء",
-			"محمد أحمد عبد الفتاح",
-			"FiberAhmed"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"oathauth-desc": "يوفر دعم المصادقة باستخدام كلمات مرور لمرة واحدة تستند إلى HMAC",
@@ -57,7 +57,7 @@
 	"oath-log-name": "سجل التوثيق ذي العاملين",
 	"oath-log-header": "تتبع هذه الأحداث التغييرات على حالة التوثيق ذي العاملين المستخدمين.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|عطل|عطلت}} التوثيق ذي العاملين ل$3",
-	"oauthauth-ui-no-module": "لا شيء مُمكَّن",
+	"oathauth-ui-no-module": "لا شيء مُمكَّن",
 	"oathauth-module-invalid": "وحدة OATHAuth التي قام المستخدم بتسجيلها غير صالحة.",
 	"oathauth-module-totp-label": "TOTP (رمز مميز لمرة واحدة)",
 	"oathauth-ui-manage": "إدارة",

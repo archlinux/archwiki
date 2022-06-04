@@ -57,9 +57,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 	// Call grand-parent
 	return ve.ui.AnnotationInspector.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
-			var text, matches, matchTitle, range, contextFragment, contextRange, linkMatches, linkRange, title, namespaceId,
-				inspectorTitle,
-				wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
+			var wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
 				internalLinkParser = this.constructor.static.internalLinkParser,
 				fragment = this.getFragment();
 
@@ -68,6 +66,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 				return ve.createDeferred().reject().promise();
 			}
 
+			var linkMatches;
 			// Initialize range
 			if ( !data.noExpand ) {
 				if ( !fragment.getSelection().isCollapsed() ) {
@@ -77,21 +76,22 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 				// Expand to existing link, if present
 				// Find all links in the paragraph and see which one contains
 				// the current selection.
-				contextFragment = fragment.expandLinearSelection( 'siblings' );
-				contextRange = contextFragment.getSelection().getCoveringRange();
-				range = fragment.getSelection().getCoveringRange();
-				text = contextFragment.getText();
+				var contextFragment = fragment.expandLinearSelection( 'siblings' );
+				var contextRange = contextFragment.getSelection().getCoveringRange();
+				var range = fragment.getSelection().getCoveringRange();
+				var text = contextFragment.getText();
 				internalLinkParser.lastIndex = 0;
+				var matches;
 				while ( ( matches = internalLinkParser.exec( text ) ) !== null ) {
-					matchTitle = mw.Title.newFromText( matches[ 1 ] );
+					var matchTitle = mw.Title.newFromText( matches[ 1 ] );
 					if ( !matchTitle ) {
 						continue;
 					}
-					linkRange = new ve.Range(
+					var linkRange = new ve.Range(
 						contextRange.start + matches.index,
 						contextRange.start + matches.index + matches[ 0 ].length
 					);
-					namespaceId = mw.Title.newFromText( matches[ 1 ] ).getNamespaceId();
+					var namespaceId = mw.Title.newFromText( matches[ 1 ] ).getNamespaceId();
 					if (
 						linkRange.containsRange( range ) && !(
 							// Ignore File:/Category:, but not :File:/:Category:
@@ -125,6 +125,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 			this.fragment = fragment;
 			this.initialLabelText = this.fragment.getText();
 
+			var title;
 			if ( linkMatches ) {
 				// Group 1 is the link target, group 2 is the label after | if present
 				title = mw.Title.newFromText( linkMatches[ 1 ] );
@@ -140,7 +141,7 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getSetupProcess = function ( d
 				this.initialAnnotation = this.newInternalLinkAnnotationFromTitle( title );
 			}
 
-			inspectorTitle = ve.msg(
+			var inspectorTitle = ve.msg(
 				this.isReadOnly() ?
 					'visualeditor-linkinspector-title' : (
 						!linkMatches ?
@@ -170,14 +171,14 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 	// Call grand-parent
 	return ve.ui.FragmentInspector.prototype.getTeardownProcess.call( this, data )
 		.first( function () {
-			var insert, labelText, labelTitle, targetText, targetTitle, namespaceId, prefix,
-				wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
+			var wgNamespaceIds = mw.config.get( 'wgNamespaceIds' ),
 				annotation = this.getAnnotation(),
 				fragment = this.getFragment(),
 				insertion = this.getInsertionText();
 
 			if ( data && data.action === 'done' && annotation ) {
-				insert = this.initialSelection.isCollapsed() && insertion.length;
+				var insert = this.initialSelection.isCollapsed() && insertion.length;
+				var labelText;
 				if ( insert ) {
 					fragment.insertContent( insertion );
 					labelText = insertion;
@@ -190,14 +191,16 @@ ve.ui.MWWikitextLinkAnnotationInspector.prototype.getTeardownProcess = function 
 					if ( labelText.indexOf( ']]' ) !== -1 ) {
 						labelText = labelText.replace( /(\]{2,})/g, '<nowiki>$1</nowiki>' );
 					}
-					labelTitle = mw.Title.newFromText( labelText );
+					var labelTitle = mw.Title.newFromText( labelText );
+					var targetText;
 					if ( !labelTitle || labelTitle.getPrefixedText() !== annotation.getAttribute( 'normalizedTitle' ) ) {
 						targetText = annotation.getAttribute( 'normalizedTitle' ) + '|';
 					} else {
 						targetText = '';
 					}
-					targetTitle = mw.Title.newFromText( annotation.getAttribute( 'normalizedTitle' ) );
-					namespaceId = targetTitle.getNamespaceId();
+					var targetTitle = mw.Title.newFromText( annotation.getAttribute( 'normalizedTitle' ) );
+					var namespaceId = targetTitle.getNamespaceId();
+					var prefix;
 					if (
 						( targetText + labelText )[ 0 ] !== ':' && (
 							namespaceId === wgNamespaceIds.file ||

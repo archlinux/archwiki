@@ -21,6 +21,8 @@
  * @ingroup Media
  */
 
+use Wikimedia\AtEase\AtEase;
+
 /**
  * Media handler abstract base class for images
  *
@@ -181,7 +183,6 @@ abstract class ImageHandler extends MediaHandler {
 	private function validateThumbParams( &$width, &$height, $srcWidth, $srcHeight, $mimeType ) {
 		$width = intval( $width );
 
-		# Sanity check $width
 		if ( $width <= 0 ) {
 			wfDebug( __METHOD__ . ": Invalid destination width: $width" );
 
@@ -222,9 +223,9 @@ abstract class ImageHandler extends MediaHandler {
 	}
 
 	public function getImageSize( $image, $path ) {
-		Wikimedia\suppressWarnings();
+		AtEase::suppressWarnings();
 		$gis = getimagesize( $path );
-		Wikimedia\restoreWarnings();
+		AtEase::restoreWarnings();
 
 		return $gis;
 	}
@@ -282,16 +283,14 @@ abstract class ImageHandler extends MediaHandler {
 	 * @return string
 	 */
 	public function getLongDesc( $file ) {
-		global $wgLang;
 		$pages = $file->pageCount();
-		$size = htmlspecialchars( $wgLang->formatSize( $file->getSize() ) );
 		if ( $pages === false || $pages <= 1 ) {
 			$msg = wfMessage( 'file-info-size' )->numParams( $file->getWidth(),
-				$file->getHeight() )->params( $size,
+				$file->getHeight() )->sizeParams( $file->getSize() )->params(
 					'<span class="mime-type">' . $file->getMimeType() . '</span>' )->parse();
 		} else {
 			$msg = wfMessage( 'file-info-size-pages' )->numParams( $file->getWidth(),
-				$file->getHeight() )->params( $size,
+				$file->getHeight() )->sizeParams( $file->getSize() )->params(
 					'<span class="mime-type">' . $file->getMimeType() . '</span>' )->numParams( $pages )->parse();
 		}
 

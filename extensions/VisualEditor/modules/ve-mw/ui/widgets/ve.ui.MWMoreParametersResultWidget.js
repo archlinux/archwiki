@@ -12,9 +12,9 @@
  * @extends OO.ui.DecoratedOptionWidget
  *
  * @constructor
- * @param {Object} [config] Configuration options
- * @param {Mixed} [config.data] Item data
- * @param {number} [config.data.remainder] Remaining items that can be shown
+ * @param {Object} config
+ * @cfg {Object} data
+ * @cfg {number} data.remainder Number of remaining items currently not shown
  */
 ve.ui.MWMoreParametersResultWidget = function VeUiMWMoreParametersResultWidget( config ) {
 	// Configuration initialization
@@ -37,6 +37,7 @@ OO.inheritClass( ve.ui.MWMoreParametersResultWidget, OO.ui.DecoratedOptionWidget
 /**
  * Build the label element
  *
+ * @private
  * @return {jQuery}
  */
 ve.ui.MWMoreParametersResultWidget.prototype.buildLabel = function () {

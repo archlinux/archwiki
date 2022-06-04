@@ -16,5 +16,7 @@
 	"cactions-mobile": "Tác vụ trang",
 	"monobook-cactions-label": "Tác vụ trang",
 	"monobook-notifications-link": "Thông báo ($1)",
-	"monobook-notifications-link-none": "Thông báo"
+	"monobook-notifications-link-none": "Thông báo",
+	"monobook-view-history": "Lịch sử",
+	"monobook-action-undelete": "Phục hồi {{PLURAL:$1|một sửa đổi|$1 sửa đổi}}"
 }

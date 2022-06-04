@@ -3,17 +3,22 @@
 		"authors": [
 			"Gastaz",
 			"Giromin Cangiaxo",
-			"S4b1nuz E.656",
-			"N. Longo"
+			"N. Longo",
+			"S4b1nuz E.656"
 		]
 	},
+	"tooltip-pt-watchlist-2": "A lìsta de pàgine che ti t'æ sótta òservaçión",
 	"vector-skin-desc": "Versción modèrna do MonoBook co-ina câa renovâ e di bèlli avantàggi inte l'adêuviabilitæ",
 	"prefs-vector-enable-vector-1-label": "Adêuvia Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "Inti ànni a vegnî ciàn cianìn agiorniêmo a skin do Vector. O Vector Legacy o te permetiâ d'amiâ a versción vêgia do Vector ascì (do dexénbre 2019). Pe savéine de ciù in scî agiornaménti, vànni a-a nòstra [[mw:Reading/Web/Desktop_Improvements|pàgina do progètto]].",
 	"vector-opt-out": "Tórna a-a vêgia câa",
 	"vector-opt-out-tooltip": "Càngia e tò inpostaçioìn pe tornâ a-a vizoalizaçión da vêgia skin (legacy Vector)",
 	"vector-action-toggle-sidebar": "Atîva/Disatîva a bâra laterâle",
+	"vector-languages": "Léngoe",
+	"vector-language-button-aria-label": "Vànni a l'artìcolo inte 'n'âtra léngoa. Disponìbile in {{PLURAL:$1|$1 léngoa|$1 léngoe}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 léngoa|$1 léngoe}}",
+	"vector-language-redirect-to-top": "Inte 'sta Wikipedia chi, i ligàmmi a-e léngoe són mìssi in çìmma a-a pàgina, da-arénte a-o sò tìtolo. [[#p-lang-btn|Vànni in çìmma]].",
+	"vector-language-variant-switcher-label": "Càngia variànte da léngoa",
 	"vector-action-addsection": "Azónzi discusción",
 	"vector-action-delete": "Scancélla",
 	"vector-action-move": "Méscia",
@@ -30,6 +35,8 @@
 	"vector-jumptocontent": "Sâta a-o contegnûo",
 	"vector-more-actions": "Âtro",
 	"vector-search-loader": "Caregaménto di sugeriménti de çèrchia",
+	"vector-searchsuggest-containing": "Çèrca inte pàgine che contêgnan <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-intro-page": "Help:Introduçión",
 	"vector-anon-user-menu-pages": "Pàgine pe-i contribotoî no conésci",
 	"vector-anon-user-menu-pages-learn": "Pe savéine de ciù",
 	"vector-anon-user-menu-pages-label": "Pe savéine de ciù in scê modìfiche",

@@ -1,0 +1,15 @@
+== Math 3.0.0 ==
+
+Math 3.0.0 is an alpha-quality branch and is not recommended for use in
+production.
+
+=== Configuration changes in 3.0.0 ===
+
+
+=== New features in 3.0.0 ===
+* (T87941) Add extension.json, empty php entry point.
+* (T106631,T88324) Convert the math integer constants to string constants.
+* (T106630) Rename constants.
+* (T99369) Remove client-side MathJax support.
+
+=== Bug fixes in 3.0.0 ===

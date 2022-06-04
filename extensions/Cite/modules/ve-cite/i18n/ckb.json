@@ -5,13 +5,15 @@
 			"Muhammed taha",
 			"Pirehelokan",
 			"Sarchia",
-			"Serwan"
+			"Serwan",
+			"ئارام بکر"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "کتێب",
 	"visualeditor-cite-tool-name-journal": "بڵاوکراوە",
 	"visualeditor-cite-tool-name-news": "هەواڵ",
 	"visualeditor-cite-tool-name-web": "ماڵپەڕ",
+	"cite-ve-citationneeded-reason": "ھۆکاری دراو:",
 	"cite-ve-dialog-reference-options-group-label": "ئەم گرووپە بەکاربھێنە",
 	"cite-ve-dialog-reference-options-group-placeholder": "سەرچاوە گشتییەکان",
 	"cite-ve-dialog-reference-options-section": "ھەڵبژاردەکان",
@@ -19,6 +21,7 @@
 	"cite-ve-dialog-reference-useexisting-tool": "بەکارھێنانەوە",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "پێڕستی سەرچاوە گشتییەکان",
 	"cite-ve-dialog-referenceslist-title": "پێرستی سەرچاوە",
+	"cite-ve-dialogbutton-reference-full-label": "بنەڕەتی",
 	"cite-ve-dialogbutton-reference-title": "سەرچاوە",
 	"cite-ve-dialogbutton-reference-tooltip": "بنەڕەتی",
 	"cite-ve-dialogbutton-referenceslist-tooltip": "پێرستی سەرچاوەکان",

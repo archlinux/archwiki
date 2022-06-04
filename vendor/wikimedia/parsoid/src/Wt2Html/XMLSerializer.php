@@ -4,7 +4,6 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html;
 
 use Wikimedia\Assert\Assert;
-use Wikimedia\Parsoid\Config\WikitextConstants;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -12,9 +11,11 @@ use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMDataUtils;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\WTUtils;
+use Wikimedia\Parsoid\Wikitext\Consts;
 
 /**
  * Stand-alone XMLSerializer for DOM3 documents.
@@ -68,6 +69,43 @@ class XMLSerializer {
 	}
 
 	/**
+	 * Modify the attribute array, replacing data-object-id with JSON
+	 * encoded data.  This is just a debugging hack, not to be confused with
+	 * DOMDataUtils::storeDataAttribs()
+	 *
+	 * @param Element $node
+	 * @param array &$attrs
+	 * @param bool $keepTmp
+	 * @param bool $storeDiffMark
+	 */
+	private static function dumpDataAttribs(
+		Element $node, array &$attrs, bool $keepTmp, bool $storeDiffMark
+	) {
+		if ( !isset( $attrs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] ) ) {
+			return;
+		}
+		$nd = DOMDataUtils::getNodeData( $node );
+		$pd = $nd->parsoid_diff ?? null;
+		if ( $pd && $storeDiffMark ) {
+			$attrs['data-parsoid-diff'] = PHPUtils::jsonEncode( $pd );
+		}
+		$dp = $nd->parsoid;
+		if ( $dp ) {
+			if ( !$keepTmp ) {
+				$dp = clone $dp;
+				// @phan-suppress-next-line PhanTypeObjectUnsetDeclaredProperty
+				unset( $dp->tmp );
+			}
+			$attrs['data-parsoid'] = PHPUtils::jsonEncode( $dp );
+		}
+		$dmw = $nd->mw;
+		if ( $dmw ) {
+			$attrs['data-mw'] = PHPUtils::jsonEncode( $dmw );
+		}
+		unset( $attrs[DOMDataUtils::DATA_OBJECT_ATTR_NAME] );
+	}
+
+	/**
 	 * Serialize an HTML DOM3 node to XHTML. The XHTML and associated information will be fed
 	 * step-by-step to the callback given in $accum.
 	 * @param Node $node
@@ -79,7 +117,8 @@ class XMLSerializer {
 	 * @return void
 	 */
 	private static function serializeToString( Node $node, array $options, callable $accum ): void {
-		$child = null;
+		$smartQuote = $options['smartQuote'];
+		$saveData = $options['saveData'];
 		switch ( $node->nodeType ) {
 			case XML_ELEMENT_NODE:
 				DOMUtils::assertElt( $node );
@@ -87,10 +126,12 @@ class XMLSerializer {
 				$nodeName = DOMCompat::nodeName( $node );
 				$localName = $node->localName;
 				$accum( '<' . $localName, $node );
-				foreach ( DOMCompat::attributes( $node ) as $attr ) {
-					$an = $attr->name;
-					$av = $attr->value;
-					if ( $options['smartQuote']
+				$attrs = DOMUtils::attributes( $node );
+				if ( $saveData ) {
+					self::dumpDataAttribs( $node, $attrs, $options['keepTmp'], $options['storeDiffMark'] );
+				}
+				foreach ( $attrs as $an => $av ) {
+					if ( $smartQuote
 						// More double quotes than single quotes in value?
 						&& substr_count( $av, '"' ) > substr_count( $av, "'" )
 					) {
@@ -106,7 +147,7 @@ class XMLSerializer {
 					}
 				}
 				if ( $child || (
-					!isset( WikitextConstants::$HTML['VoidTags'][$nodeName] ) &&
+					!isset( Consts::$HTML['VoidTags'][$nodeName] ) &&
 					!isset( self::$alsoSerializeAsVoid[$nodeName] )
 				) ) {
 					$accum( '>', $node, 'start' );
@@ -249,7 +290,10 @@ class XMLSerializer {
 	 *   - smartQuote (bool, default true): use single quotes for attributes when that's less escaping
 	 *   - innerXML (bool, default false): only serialize the contents of $node, exclude $node itself
 	 *   - captureOffsets (bool, default false): return tag position data (see below)
-	 *   - addDoctype (bool default true): prepend a DOCTYPE when a full HTML document is serialized
+	 *   - addDoctype (bool, default true): prepend a DOCTYPE when a full HTML document is serialized
+	 *   - saveData (bool, default false): Copy the NodeData into JSON attributes. This is for
+	 *     debugging purposes only, the normal code path is to use DOMDataUtils::storeDataAttribs().
+	 *   - keepTmp (bool, default false): When saving data, include DataParsoid::$tmp.
 	 * @return array An array with the following data:
 	 *   - html: the serialized HTML
 	 *   - offsets: the start and end position of each element in the HTML, in a
@@ -266,6 +310,9 @@ class XMLSerializer {
 			'innerXML' => false,
 			'captureOffsets' => false,
 			'addDoctype' => true,
+			'saveData' => false,
+			'keepTmp' => false,
+			'storeDiffMark' => false,
 		];
 		if ( $node instanceof Document ) {
 			$node = $node->documentElement;

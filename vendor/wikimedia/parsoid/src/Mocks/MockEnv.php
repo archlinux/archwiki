@@ -1,9 +1,11 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Mocks;
 
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageContent;
+use Wikimedia\Parsoid\Config\StubMetadataCollector;
 
 class MockEnv extends Env {
 
@@ -31,7 +33,8 @@ class MockEnv extends Env {
 		}
 		$siteConfig = $opts['siteConfig'] ?? new MockSiteConfig( $opts );
 		$dataAccess = $opts['dataAccess'] ?? new MockDataAccess( $opts );
-		parent::__construct( $siteConfig, $pageConfig, $dataAccess, $opts );
+		$metadata = new StubMetadataCollector( $siteConfig->getLogger() );
+		parent::__construct( $siteConfig, $pageConfig, $dataAccess, $metadata, $opts );
 	}
 
 	/**

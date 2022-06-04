@@ -20,6 +20,7 @@ namespace Wikimedia\Dodo;
  * but it could, and probably should.
  *
  * TODO: Should probably lean heavily on existing PHP URL-parsing functions?
+ * @phan-forbid-undeclared-magic-properties
  */
 class URL {
 

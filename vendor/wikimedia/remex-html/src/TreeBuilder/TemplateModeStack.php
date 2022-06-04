@@ -44,6 +44,3 @@ class TemplateModeStack {
 		return $this->current === null;
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TemplateModeStack::class, 'RemexHtml\TreeBuilder\TemplateModeStack' );

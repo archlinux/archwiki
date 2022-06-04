@@ -95,6 +95,3 @@ interface TokenHandler {
 	 */
 	public function comment( $text, $sourceStart, $sourceLength );
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( TokenHandler::class, 'RemexHtml\Tokenizer\TokenHandler' );

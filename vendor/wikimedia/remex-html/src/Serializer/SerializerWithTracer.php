@@ -91,6 +91,3 @@ class SerializerWithTracer extends Serializer {
 		$this->handle( __FUNCTION__, func_get_args() );
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( SerializerWithTracer::class, 'RemexHtml\Serializer\SerializerWithTracer' );

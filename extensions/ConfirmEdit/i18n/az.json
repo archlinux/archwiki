@@ -3,7 +3,8 @@
 		"authors": [
 			"Dağlı95",
 			"NMW03",
-			"Vugar 1981"
+			"Vugar 1981",
+			"Serkanland"
 		]
 	},
 	"captcha-edit": "Bu səhifəni redaktə etmək üçün sizdən aşağıdakı tapşırığı həll etməyinizi və cavabını qutuya yazmağınızı xahiş edirik ([[Special:Captcha/help|daha ətraflı]]):",
@@ -14,5 +15,5 @@
 	"captcha-create": "Səhifəni yaratmaq üçün aşağıdakı tapşırığı həll edin və cavabını qutuya yazın ([[Special:Captcha/help|daha ətraflı]]):",
 	"captchahelp-title": "CAPTCHA kömək",
 	"captchahelp-cookies-needed": "Bunun işləməsi üçün brauzerinizdə kukilər aktivləşdirilməlidir.",
-	"captchahelp-text": "Hər bir kəsin məlumat yerləşdirməsinə imkan verən Vikipediya və buna bənzər saytlar tez-tez avtomatlaşdırılmış proqramların köməyi ilə link əlavə edən spamerlərin hədəfinə çevrilir. \nBelə linkləri sonradan məzmundan silmək mümkün olsa da, hər halda bu cür spam fəaliyyəti əhəmiyyətli dərəcədə narahatçılıq yaradır.\n\nBu narahatçılığı azaltmaq və müəyyən dərəcədə aradan qaldırmaq üçün Vikipediya sizə qeydiyyatdan keçərkən, eləcə də burada fəaliyyət göstərərkən rəngli və ya \"kələ-kötür\" simvollar göstərə və sizdən bu simvolları müəyyən xanalara daxil etməyinizi istəyə bilər. Bunun əsas səbəbi - bu əməliyyatın avtomatlaşdırılmasının xeyli çətin olması və əksər insanların bu əmrləri avtomatlaşdırılmış proqramlardan daha dəqiq yerinə yetirə bilməsidir.\n\nTəəssüf ki, bu, görmə qabiliyyəti zəif olanlar və ya yalnız oxumaq üçün nəzərdə tutulan brouzerdən istifadə edənlər üçün problemlər yaradır. Əgər siz bu cür problemlərlə üzləşmisinizsə, çəkinmədən [[Special:ListAdmins|idarəçilərə]] müraciət edə və onlardan kömək istəyə bilərsiniz.\n\nBrauzerinizdə \"Geri\" düyməsini basaraq redaktə səhifəsinə qayıda bilərsiniz."
+	"captchahelp-text": "Hər bir kəsin məlumat yerləşdirməsinə imkan verən Vikipediya və buna bənzər saytlar tez-tez avtomatlaşdırılmış proqramların köməyi ilə link əlavə edən spamerlərin hədəfinə çevrilir. \nBelə linkləri sonradan məzmundan silmək mümkün olsa da, hər halda bu cür spam fəaliyyəti əhəmiyyətli dərəcədə narahatçılıq yaradır.\n\nBu narahatçılığı azaltmaq və müəyyən dərəcədə aradan qaldırmaq üçün Vikipediya sizə qeydiyyatdan keçərkən, eləcə də burada fəaliyyət göstərərkən rəngli və ya \"kələ-kötür\" simvollar göstərə və sizdən bu simvolları müəyyən xanalara daxil etməyinizi istəyə bilər. Bunun əsas səbəbi - bu əməliyyatın avtomatlaşdırılmasının xeyli çətin olması və əksər insanların bu əmrləri avtomatlaşdırılmış proqramlardan daha dəqiq yerinə yetirə bilməsidir.\n\nTəəssüf ki, bu, görmə qabiliyyəti zəif olanlar və ya yalnız oxumaq üçün nəzərdə tutulan brouzerdən istifadə edənlər üçün problemlər yaradır. Əgər siz bu cür problemlərlə üzləşmisinizsə, çəkinmədən [[Special:ListAdmins|inzibatçılara]] müraciət edə və onlardan kömək istəyə bilərsiniz.\n\nBrauzerinizdə \"Geri\" düyməsini basaraq redaktə səhifəsinə qayıda bilərsiniz."
 }

@@ -14,5 +14,7 @@
 	"timeless-namespaces": "Imenski prostori",
 	"timeless-pagetools": "Radnje na stranicama",
 	"timeless-languages": "Jezici",
-	"timeless-projects": "Ostali projekti"
+	"timeless-projects": "Ostali projekti",
+	"timeless-view-history": "Historija",
+	"timeless-action-undelete": "Vrati {{PLURAL:$1|izbrisanu izmjenu|$1 izbrisane izmjene|$1 izbrisanih izmjena}}"
 }

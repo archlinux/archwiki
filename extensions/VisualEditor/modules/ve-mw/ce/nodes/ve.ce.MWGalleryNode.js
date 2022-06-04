@@ -62,11 +62,9 @@ ve.ce.MWGalleryNode.static.primaryCommandName = 'gallery';
  * Handle model update events.
  */
 ve.ce.MWGalleryNode.prototype.onUpdate = function () {
-	var mwAttrs, defaults, mode, imageWidth, imagePadding;
-
-	mwAttrs = this.model.getAttribute( 'mw' ).attrs;
-	defaults = mw.config.get( 'wgVisualEditorConfig' ).galleryOptions;
-	mode = mwAttrs.mode || defaults.mode;
+	var mwAttrs = this.model.getAttribute( 'mw' ).attrs;
+	var defaults = mw.config.get( 'wgVisualEditorConfig' ).galleryOptions;
+	var mode = mwAttrs.mode || defaults.mode;
 
 	// `.attr( …, undefined )` does nothing - it's required to use `null` to remove an attribute.
 	// (This also clears the 'max-width', set below, if it's not needed.)
@@ -74,8 +72,8 @@ ve.ce.MWGalleryNode.prototype.onUpdate = function () {
 
 	if ( mwAttrs.perrow && ( mode === 'traditional' || mode === 'nolines' ) ) {
 		// Magic 30 and 8 matches the code in ve.ce.MWGalleryImageNode
-		imageWidth = parseInt( mwAttrs.widths || defaults.imageWidth );
-		imagePadding = ( mode === 'traditional' ? 30 : 0 );
+		var imageWidth = parseInt( mwAttrs.widths || defaults.imageWidth );
+		var imagePadding = ( mode === 'traditional' ? 30 : 0 );
 		this.$element.css( 'max-width', mwAttrs.perrow * ( imageWidth + imagePadding + 8 ) );
 	}
 };

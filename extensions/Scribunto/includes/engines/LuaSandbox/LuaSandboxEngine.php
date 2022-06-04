@@ -137,13 +137,13 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 	}
 
 	/** @inheritDoc */
-	public function reportLimitData( ParserOutput $output ) {
+	public function reportLimitData( ParserOutput $parserOutput ) {
 		$data = $this->getLimitReportData();
 		foreach ( $data as $k => $v ) {
-			$output->setLimitReportData( $k, $v );
+			$parserOutput->setLimitReportData( $k, $v );
 		}
 		if ( isset( $data['scribunto-limitreport-logs'] ) ) {
-			$output->addModules( 'ext.scribunto.logs' );
+			$parserOutput->addModules( [ 'ext.scribunto.logs' ] );
 		}
 	}
 

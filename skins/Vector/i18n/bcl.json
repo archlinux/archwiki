@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Daramlagon",
 			"Filipinayzd",
 			"Geopoet",
-			"ShimunUfesoj",
-			"Daramlagon"
+			"ShimunUfesoj"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 lenggwahe|$1 mga lenggwahe}}",

@@ -83,12 +83,12 @@ ve.ui.MWSyntaxHighlightDialog.prototype.initialize = function () {
  * @inheritdoc MWSyntaxHighlightWindow
  */
 ve.ui.MWSyntaxHighlightDialog.prototype.onLanguageInputChange = function () {
-	var validity, dialog = this;
+	var dialog = this;
 
 	// Mixin method
 	ve.ui.MWSyntaxHighlightWindow.prototype.onLanguageInputChange.call( this );
 
-	validity = this.language.getValidity();
+	var validity = this.language.getValidity();
 	validity.always( function () {
 		var language = ve.dm.MWSyntaxHighlightNode.static.convertLanguageToAce( dialog.language.getValue() );
 		dialog.input.setLanguage( validity.state() === 'resolved' ? language : 'text' );

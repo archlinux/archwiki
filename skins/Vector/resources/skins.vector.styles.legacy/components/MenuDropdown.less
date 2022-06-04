@@ -1,10 +1,9 @@
+@import '../../common/variables.less';
+@import 'mediawiki.mixins.less';
+
 // Extends the common MenuDropdown, but allows it to be opened via hover.
 
 .vector-menu-dropdown:not( .vector-user-menu ) {
-	li {
-		font-size: @font-size-tabs;
-	}
-
 	&:hover .vector-menu-content {
 		opacity: 1;
 		visibility: visible;
@@ -12,7 +11,16 @@
 }
 
 .vector-menu-checkbox {
-	&:checked + h3:after {
+	&:checked + .vector-menu-heading:after {
 		transform: scaleY( -1 );
+	}
+}
+
+.vector-menu-dropdown {
+	li {
+		a {
+			// Historic value.
+			padding: unit( ( 8.125px / @font-size-browser ), em );
+		}
 	}
 }

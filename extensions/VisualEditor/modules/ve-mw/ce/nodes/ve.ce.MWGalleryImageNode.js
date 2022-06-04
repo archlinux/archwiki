@@ -16,11 +16,6 @@
  * @param {Object} [config] Configuration options
  */
 ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
-	var attributes, galleryMwAttrs, mode, imagePadding,
-		outerDivWidth, imageHeight, innerDivHeight, innerDivMargin, innerDivWidth,
-		$thumbDiv, $innerDiv, $a, $img, resourceTitle,
-		defaults = mw.config.get( 'wgVisualEditorConfig' ).galleryOptions;
-
 	// Parent constructor
 	ve.ce.MWGalleryImageNode.super.apply( this, arguments );
 
@@ -33,21 +28,23 @@ ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 	//     <a> filenameA (galleryfilename)
 	//     <figcaption> ve.ce.MWGalleryImageCaptionNode
 
-	attributes = model.getAttributes();
-	galleryMwAttrs = model.parent.getAttributes().mw.attrs;
+	var defaults = mw.config.get( 'wgVisualEditorConfig' ).galleryOptions;
+	var attributes = model.getAttributes();
+	var galleryMwAttrs = model.parent.getAttributes().mw.attrs;
 
 	// Putting all this setup in the constructor works because MWGalleryImageNodes are never updated,
 	// only created from scratch
 
 	// These dimensions are different depending on the gallery mode.
 	// (This only vaguely approximates the actual rendering.)
-	mode = galleryMwAttrs.mode || defaults.mode;
+	var mode = galleryMwAttrs.mode || defaults.mode;
+	var innerDivWidth, innerDivHeight, innerDivMargin, outerDivWidth;
 	if ( mode === 'traditional' || mode === 'nolines' || mode === 'slideshow' ) {
-		imagePadding = ( mode === 'traditional' ? 30 : 0 );
+		var imagePadding = ( mode === 'traditional' ? 30 : 0 );
 		innerDivWidth = parseInt( galleryMwAttrs.widths || defaults.imageWidth ) + imagePadding;
 		innerDivHeight = parseInt( galleryMwAttrs.heights || defaults.imageHeight ) + imagePadding;
 		if ( mode === 'traditional' ) {
-			imageHeight = parseInt( attributes.height );
+			var imageHeight = parseInt( attributes.height );
 			innerDivMargin = ( ( innerDivHeight - imageHeight ) / 2 ) + 'px auto';
 		} else {
 			innerDivMargin = 0;
@@ -60,20 +57,19 @@ ve.ce.MWGalleryImageNode = function VeCeMWGalleryImageNode( model ) {
 		outerDivWidth = innerDivWidth + 4;
 	}
 
-	resourceTitle = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( attributes.resource ) );
+	var resourceTitle = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( attributes.resource ) );
 
 	this.$element
 		.addClass( 'gallerybox' )
 		.css( 'width', outerDivWidth + 'px' );
-	$thumbDiv = $( '<div>' )
+	var $thumbDiv = $( '<div>' )
 		.addClass( 'thumb' )
 		.css( 'width', innerDivWidth + 'px' )
 		.css( 'height', innerDivHeight + 'px' );
-	$innerDiv = $( '<span>' )
+	var $innerDiv = $( '<span>' )
 		.css( 'margin', innerDivMargin );
-	$a = $( '<a>' )
-		.addClass( 'image' );
-	$img = $( '<img>' )
+	var $a = $( '<a>' );
+	var $img = $( '<img>' )
 		.attr( 'resource', attributes.resource )
 		.attr( 'alt', attributes.altText )
 		.attr( 'src', attributes.src )

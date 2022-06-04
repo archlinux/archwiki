@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bhawani Gautam",
+			"Bhawani Gautam Rhk",
+			"NehalDaveND",
+			"सरोज कुमार ढकाल"
+		]
+	},
+	"math-visualeditor-mwlatexinspector-display": "दृश्य",
+	"math-visualeditor-mwlatexinspector-display-block": "रोक्ने",
+	"math-visualeditor-mwlatexinspector-display-default": "पूर्वनिर्धारित",
+	"math_failure": "पढ्न सकिएन",
+	"math_syntax_error": "सूत्र (syntax) त्रुटि",
+	"math_unknown_error": "अज्ञात समस्या",
+	"math_unknown_function": "अज्ञात निर्देशन",
+	"mw_math_png": "जहिले  PNG खोल्ने",
+	"mw_math_source": "यसलाई TeX को रुपमा  छोड्ने(पाठ प्रदर्शको लागि)",
+	"prefs-math": "गणित"
+}

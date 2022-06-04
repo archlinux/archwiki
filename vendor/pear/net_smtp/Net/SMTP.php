@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP Version 5 and 7                                                  |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1997-2019 Jon Parise and Chuck Hagenbuch               |
+// | Copyright (c) 1997-2021 Jon Parise and Chuck Hagenbuch               |
 // | All rights reserved.                                                 |
 // |                                                                      |
 // | Redistribution and use in source and binary forms, with or without   |
@@ -568,7 +568,59 @@ class Net_SMTP
 
         return PEAR::raiseError('No supported authentication methods');
     }
-
+    
+    /**
+     * Establish STARTTLS Connection.
+     *
+     * @return mixed Returns a PEAR_Error with an error message on any
+     *               kind of failure, true on success, or false if SSL/TLS
+     *               isn't available.
+     * @since 1.10.0
+     */
+    public function starttls()
+    {
+        /* We can only attempt a TLS connection if one has been requested,
+         * we're running PHP 5.1.0 or later, have access to the OpenSSL
+         * extension, are connected to an SMTP server which supports the
+         * STARTTLS extension, and aren't already connected over a secure
+         * (SSL) socket connection. */
+        if (version_compare(PHP_VERSION, '5.1.0', '>=')
+            && extension_loaded('openssl') && isset($this->esmtp['STARTTLS'])
+            && strncasecmp($this->host, 'ssl://', 6) !== 0
+            ) {
+                /* Start the TLS connection attempt. */
+                if (PEAR::isError($result = $this->put('STARTTLS'))) {
+                    return $result;
+                }
+                if (PEAR::isError($result = $this->parseResponse(220))) {
+                    return $result;
+                }
+                if (isset($this->socket_options['ssl']['crypto_method'])) {
+                    $crypto_method = $this->socket_options['ssl']['crypto_method'];
+                } else {
+                    /* STREAM_CRYPTO_METHOD_TLS_ANY_CLIENT constant does not exist
+                     * and STREAM_CRYPTO_METHOD_SSLv23_CLIENT constant is
+                     * inconsistent across PHP versions. */
+                    $crypto_method = STREAM_CRYPTO_METHOD_TLS_CLIENT
+                    | @STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT
+                    | @STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+                }
+                if (PEAR::isError($result = $this->socket->enableCrypto(true, $crypto_method))) {
+                    return $result;
+                } elseif ($result !== true) {
+                    return PEAR::raiseError('STARTTLS failed');
+                }
+                
+                /* Send EHLO again to recieve the AUTH string from the
+                 * SMTP server. */
+                $this->negotiate();
+            } else {
+                return false;
+            }
+            
+            return true;
+    }
+        
     /**
      * Attempt to do SMTP authentication.
      *
@@ -591,36 +643,11 @@ class Net_SMTP
          * extension, are connected to an SMTP server which supports the
          * STARTTLS extension, and aren't already connected over a secure
          * (SSL) socket connection. */
-        if ($tls && version_compare(PHP_VERSION, '5.1.0', '>=')
-            && extension_loaded('openssl') && isset($this->esmtp['STARTTLS'])
-            && strncasecmp($this->host, 'ssl://', 6) !== 0
-        ) {
+        if ($tls) {
             /* Start the TLS connection attempt. */
-            if (PEAR::isError($result = $this->put('STARTTLS'))) {
-                return $result;
+            if (PEAR::isError($starttls = $this->starttls())) {
+                return $starttls;
             }
-            if (PEAR::isError($result = $this->parseResponse(220))) {
-                return $result;
-            }
-            if (isset($this->socket_options['ssl']['crypto_method'])) {
-                $crypto_method = $this->socket_options['ssl']['crypto_method'];
-            } else {
-                /* STREAM_CRYPTO_METHOD_TLS_ANY_CLIENT constant does not exist
-                 * and STREAM_CRYPTO_METHOD_SSLv23_CLIENT constant is
-                 * inconsistent across PHP versions. */
-                $crypto_method = STREAM_CRYPTO_METHOD_TLS_CLIENT
-                                 | @STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT
-                                 | @STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
-            }
-            if (PEAR::isError($result = $this->socket->enableCrypto(true, $crypto_method))) {
-                return $result;
-            } elseif ($result !== true) {
-                return PEAR::raiseError('STARTTLS failed');
-            }
-
-            /* Send EHLO again to recieve the AUTH string from the
-             * SMTP server. */
-            $this->negotiate();
         }
 
         if (empty($this->esmtp['AUTH'])) {

@@ -6956,6 +6956,3 @@ class HTMLData {
 		65534, 65535, 0, 16777215,
 		983040, 1114111, 0, 16777215 ];
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( HTMLData::class, 'RemexHtml\HTMLData' );

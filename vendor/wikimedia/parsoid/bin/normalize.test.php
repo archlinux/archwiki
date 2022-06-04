@@ -23,9 +23,9 @@ $body = DOMCompat::getBody( $doc );
 $norm = new DOMNormalizer( $mockState );
 $norm->normalize( $body );
 
-$opts = [ 'env' => $mockEnv,
+$opts = [
 	'keepTmp' => true,
 	'storeDiffMark' => true,
 ];
-ContentUtils::dumpDOM( $body, 'DOM post-normalization', $opts );
+print ContentUtils::dumpDOM( $body, 'DOM post-normalization', $opts );
 print "\n";

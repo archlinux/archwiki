@@ -24,9 +24,9 @@ namespace MediaWiki\Extension\ReplaceText;
 use CommentStoreComment;
 use Job as JobParent;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Revision\SlotRecord;
-use MovePage;
+use RecentChange;
 use RequestContext;
+use TextContent;
 use Title;
 use User;
 use WatchAction;
@@ -91,7 +91,7 @@ class Job extends JobParent {
 
 			$reason = $this->params['edit_summary'];
 			$create_redirect = $this->params['create_redirect'];
-			$mvPage = new MovePage( $this->title, $new_title );
+			$mvPage = MediaWikiServices::getInstance()->getMovePageFactory()->newMovePage( $this->title, $new_title );
 			$mvStatus = $mvPage->move( $current_user, $reason, $create_redirect );
 			if ( !$mvStatus->isOK() ) {
 				$this->error = "replaceText: error while moving: " . $this->title->getPrefixedDBkey() .
@@ -104,50 +104,95 @@ class Job extends JobParent {
 					// MW 1.37+
 					MediaWikiServices::getInstance()->getWatchlistManager()->addWatch( $current_user, $new_title );
 				} else {
+					// Method was removed, but we only invoke it in versions its
+					// still available, suppress phan error
+					// @phan-suppress-next-line PhanUndeclaredStaticMethod
 					WatchAction::doWatch( $new_title, $current_user );
 				}
 
 			}
 		} else {
-			if ( $this->title->getContentModel() !== CONTENT_MODEL_WIKITEXT ) {
-				$this->error = 'replaceText: Wiki page "' .
-					$this->title->getPrefixedDBkey() . '" does not hold regular wikitext.';
-				return false;
-			}
 			$wikiPage = new WikiPage( $this->title );
-			$wikiPageContent = $wikiPage->getContent();
-			if ( $wikiPageContent === null ) {
+			$latestRevision = $wikiPage->getRevisionRecord();
+
+			if ( $latestRevision === null ) {
 				$this->error =
-					'replaceText: No contents found for wiki page at "' . $this->title->getPrefixedDBkey() . '."';
+					'replaceText: No revision found for wiki page at "' . $this->title->getPrefixedDBkey() . '".';
 				return false;
 			}
-			$article_text = $wikiPageContent->getNativeData();
 
-			$target_str = $this->params['target_str'];
-			$replacement_str = $this->params['replacement_str'];
-			$num_matches = 0;
-
-			if ( $this->params['use_regex'] ) {
-				$new_text =
-					preg_replace( '/' . $target_str . '/Uu', $replacement_str, $article_text, -1, $num_matches );
+			if ( isset( $this->params['roles'] ) ) {
+				$slotRoles = $this->params['roles'];
 			} else {
-				$new_text = str_replace( $target_str, $replacement_str, $article_text, $num_matches );
+				$slotRoles = $latestRevision->getSlotRoles();
 			}
 
-			// If there's at least one replacement, modify the page,
+			$revisionSlots = $latestRevision->getSlots();
+			$updater = $wikiPage->newPageUpdater( $current_user );
+			$hasMatches = false;
+
+			foreach ( $slotRoles as $role ) {
+				if ( !$revisionSlots->hasSlot( $role ) ) {
+					$this->error =
+						'replaceText: Slot "' . $role .
+						'" does not exist for wiki page "' . $this->title->getPrefixedDBkey() . '".';
+					return false;
+				}
+
+				$slotContent = $revisionSlots->getContent( $role );
+
+				if ( $slotContent->getModel() !== CONTENT_MODEL_WIKITEXT ) {
+					// The slot does not contain wikitext, give an error.
+					$this->error =
+						'replaceText: Slot "' . $role .
+						'" does not hold regular wikitext for wiki page "' . $this->title->getPrefixedDBkey() . '".';
+					return false;
+				}
+
+				if ( !( $slotContent instanceof TextContent ) ) {
+					// Sanity check: Does the slot actually contain TextContent?
+					$this->error =
+						'replaceText: Slot "' . $role .
+						'" does not hold regular wikitext for wiki page "' . $this->title->getPrefixedDBkey() . '".';
+					return false;
+				}
+
+				$slot_text = $slotContent->getText();
+
+				$target_str = $this->params['target_str'];
+				$replacement_str = $this->params['replacement_str'];
+				$num_matches = 0;
+
+				if ( $this->params['use_regex'] ) {
+					$new_text =
+						preg_replace( '/' . $target_str . '/Uu', $replacement_str, $slot_text, -1, $num_matches );
+				} else {
+					$new_text = str_replace( $target_str, $replacement_str, $slot_text, $num_matches );
+				}
+
+				// If there's at least one replacement, modify the slot.
+				if ( $num_matches > 0 ) {
+					$hasMatches = true;
+					$updater->setContent( $role, new WikitextContent( $new_text ) );
+				}
+			}
+
+			// If at least one slot is edited, modify the page,
 			// using the passed-in edit summary.
-			if ( $num_matches > 0 ) {
-				$updater = $wikiPage->newPageUpdater( $current_user );
-				$updater->setContent( SlotRecord::MAIN, new WikitextContent( $new_text ) );
+			if ( $hasMatches ) {
 				$edit_summary = CommentStoreComment::newUnsavedComment( $this->params['edit_summary'] );
 				$flags = EDIT_MINOR;
 				if ( $permissionManager->userHasRight( $current_user, 'bot' ) ) {
 					$flags |= EDIT_FORCE_BOT;
 				}
 				if ( isset( $this->params['doAnnounce'] ) &&
-					 !$this->params['doAnnounce'] ) {
+					!$this->params['doAnnounce'] ) {
 					$flags |= EDIT_SUPPRESS_RC;
 					# fixme log this action
+				}
+				if ( $permissionManager->userHasRight( $current_user, 'patrol' ) ||
+					$permissionManager->userHasRight( $current_user, 'autopatrol' ) ) {
+					$updater->setRcPatrolStatus( RecentChange::PRC_PATROLLED );
 				}
 				$updater->saveRevision( $edit_summary, $flags );
 			}

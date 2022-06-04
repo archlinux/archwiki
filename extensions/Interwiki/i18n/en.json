@@ -19,6 +19,7 @@
 	"interwiki_url": "URL",
 	"interwiki-url-label": "URL:",
 	"interwiki_url_intro": "Template for URLs. The placeholder $1 will be replaced by the <em>pagename</em> in <code>[<nowiki />[prefix:<em>pagename</em>]]</code>.",
+	"interwiki-api-label": "API:",
 	"interwiki_local": "Forward",
 	"interwiki-local-label": "Forward",
 	"interwiki_local_0_intro": "External HTTP requests to the local wiki using this interwiki prefix in the URL will result in a \"{{int:badtitle}}\" error page.",

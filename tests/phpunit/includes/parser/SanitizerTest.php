@@ -15,6 +15,7 @@ class SanitizerTest extends MediaWikiIntegrationTestCase {
 	 * @param bool $escaped Whether sanitizer let the tag in or escape it (ie: '&lt;video&gt;')
 	 */
 	public function testRemovehtmltagsOnHtml5Tags( $tag, $escaped ) {
+		$this->hideDeprecated( Sanitizer::class . '::removeHTMLtags' );
 		if ( $escaped ) {
 			$this->assertEquals( "&lt;$tag&gt;",
 				Sanitizer::removeHTMLtags( "<$tag>" )
@@ -22,6 +23,47 @@ class SanitizerTest extends MediaWikiIntegrationTestCase {
 		} else {
 			$this->assertEquals( "<$tag></$tag>\n",
 				Sanitizer::removeHTMLtags( "<$tag></$tag>\n" )
+			);
+		}
+	}
+
+	/**
+	 * @covers Sanitizer::internalRemoveHTMLtags
+	 * @dataProvider provideHtml5Tags
+	 *
+	 * @param string $tag Name of an HTML5 element (ie: 'video')
+	 * @param bool $escaped Whether sanitizer let the tag in or escape it (ie: '&lt;video&gt;')
+	 */
+	public function testInternalRemoveHtmlTagsOnHtml5Tags( $tag, $escaped ) {
+		if ( $escaped ) {
+			$this->assertEquals( "&lt;$tag&gt;",
+				Sanitizer::internalRemoveHtmlTags( "<$tag>" )
+			);
+		} else {
+			$this->assertEquals( "<$tag></$tag>\n",
+				Sanitizer::internalRemoveHtmlTags( "<$tag></$tag>\n" )
+			);
+		}
+	}
+
+	/**
+	 * @covers Sanitizer::removeSomeTags
+	 * @dataProvider provideHtml5Tags
+	 *
+	 * @param string $tag Name of an HTML5 element (ie: 'video')
+	 * @param bool $escaped Whether sanitizer let the tag in or escape it (ie: '&lt;video&gt;')
+	 */
+	public function testRemoveSomeTagsOnHtml5Tags( $tag, $escaped ) {
+		if ( $escaped ) {
+			$this->assertEquals( "&lt;$tag&gt;",
+				Sanitizer::removeSomeTags( "<$tag>" )
+			);
+		} else {
+			$this->assertEquals( "<$tag></$tag>\n",
+				Sanitizer::removeSomeTags( "<$tag></$tag>\n" )
+			);
+			$this->assertEquals( "<$tag></$tag>",
+				Sanitizer::removeSomeTags( "<$tag>" )
 			);
 		}
 	}
@@ -72,7 +114,24 @@ class SanitizerTest extends MediaWikiIntegrationTestCase {
 	 * @covers Sanitizer::removeHTMLtags
 	 */
 	public function testRemoveHTMLtags( $input, $output, $msg = null ) {
+		$this->hideDeprecated( Sanitizer::class . '::removeHTMLtags' );
 		$this->assertEquals( $output, Sanitizer::removeHTMLtags( $input ), $msg );
+	}
+
+	/**
+	 * @dataProvider dataRemoveHTMLtags
+	 * @covers Sanitizer::internalRemoveHtmlTags
+	 */
+	public function testInternalRemoveHTMLtags( $input, $output, $msg = null ) {
+		$this->assertEquals( $output, Sanitizer::internalRemoveHtmlTags( $input ), $msg );
+	}
+
+	/**
+	 * @dataProvider dataRemoveHTMLtags
+	 * @covers Sanitizer::removeSomeTags
+	 */
+	public function testRemoveSomeTags( $input, $output, $msg = null ) {
+		$this->assertEquals( $output, Sanitizer::removeSomeTags( $input ), $msg );
 	}
 
 	/**
@@ -285,6 +344,28 @@ class SanitizerTest extends MediaWikiIntegrationTestCase {
 			[ 'foo bar', 'foo', 'bar' ],
 			[ '#1 #2', '#1', '#2' ],
 			[ '+1 +2', '+1', '+2' ],
+		];
+	}
+
+	/**
+	 * Test cleanUrl
+	 *
+	 * @dataProvider provideCleanUrl
+	 * @covers Sanitizer::cleanUrl
+	 */
+	public function testCleanUrl( string $input, string $output ) {
+		$this->assertEquals( $output, Sanitizer::cleanUrl( $input ) );
+	}
+
+	public static function provideCleanUrl() {
+		return [
+			[ 'http://www.example.com/file.txt', 'http://www.example.com/file.txt' ],
+			[
+				"https://www.exa\u{00AD}\u{200B}\u{2060}\u{FEFF}" .
+				"\u{034F}\u{180B}\u{180C}\u{180D}\u{200C}\u{200D}" .
+				"\u{FE00}\u{FE08}\u{FE0F}mple.com",
+				'https://www.example.com'
+			],
 		];
 	}
 

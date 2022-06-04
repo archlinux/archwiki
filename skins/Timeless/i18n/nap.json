@@ -19,5 +19,7 @@
 	"timeless-pagemisc": "Cchiù",
 	"timeless-namespaces": "Namespace",
 	"timeless-pagetools": "Aziune 'e paggena",
-	"timeless-languages": "Llengue"
+	"timeless-languages": "Llengue",
+	"timeless-view-history": "Cronologgia",
+	"timeless-action-undelete": "Arremedia {{PLURAL:$1|na verziona|$1 vverziune}}"
 }

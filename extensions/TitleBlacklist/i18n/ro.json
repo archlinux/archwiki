@@ -8,7 +8,8 @@
 			"Stelistcristi"
 		]
 	},
-	"log-name-titleblacklist": "Jurnal listă neagră titluri",
+	"log-name-titleblacklist": "Jurnal listă titluri interzise",
+	"log-description-titleblacklist": "Aceste evenimente notează potrivirile cu lista titlurilor interzise.",
 	"titleblacklist-desc": "Permite administratorilor să interzică crearea de pagini și de conturi de utilizator, folosind o [[MediaWiki:Titleblacklist|listă neagră]] și o [[MediaWiki:Titlewhitelist|listă albă]]",
 	"titleblacklist": "# Aceasta este lista neagră pentru titluri. Nu pot fi create titluri și conturi care corespund la una din expresiile regulate de aici.\n# Folosiți „#” pentru comentarii.\n# În mod implicit nu contează majusculele.",
 	"titlewhitelist": "# Aceasta este lista albă pentru titluri. Folosiți „#” pentru comentarii. \n# În mod implicit nu contează majusculele.",

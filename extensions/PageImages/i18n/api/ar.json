@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"ديفيد",
-			"SaldırganSincap"
+			"SaldırganSincap",
+			"ديفيد"
 		]
 	},
 	"apihelp-query+pageimages-description": "يعرض معلومات حول الصور على الصفحة، مثل الصورة المصغرة ووجود الصور.",
