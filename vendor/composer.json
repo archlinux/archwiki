@@ -21,6 +21,7 @@
 		"guzzlehttp/promises": "1.5.1",
 		"guzzlehttp/psr7": "2.1.2",
 		"jakobo/hotp-php": "2.0.0",
+		"justinrainbow/json-schema": "5.2.11",
 		"liuggio/statsd-php-client": "1.0.18",
 		"monolog/monolog": "2.2.0",
 		"oojs/oojs-ui": "0.43.2",

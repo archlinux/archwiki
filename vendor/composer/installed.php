@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../',
         'aliases' => array(),
-        'reference' => 'c99c85fdc3d155d2101b82cd9be1d99c2badcc5d',
+        'reference' => '687e92a77c3791a7439e2a09d3fde6e56aa59ee7',
         'name' => '__root__',
         'dev' => false,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../',
             'aliases' => array(),
-            'reference' => 'c99c85fdc3d155d2101b82cd9be1d99c2badcc5d',
+            'reference' => '687e92a77c3791a7439e2a09d3fde6e56aa59ee7',
             'dev_requirement' => false,
         ),
         'christian-riesen/base32' => array(
@@ -80,6 +80,15 @@
             'install_path' => __DIR__ . '/../jakobo/hotp-php',
             'aliases' => array(),
             'reference' => 'ff2f13d1918001e54b3f49deb1d366bcfcc98437',
+            'dev_requirement' => false,
+        ),
+        'justinrainbow/json-schema' => array(
+            'pretty_version' => '5.2.11',
+            'version' => '5.2.11.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../justinrainbow/json-schema',
+            'aliases' => array(),
+            'reference' => '2ab6744b7296ded80f8cc4f9509abbff393399aa',
             'dev_requirement' => false,
         ),
         'liuggio/statsd-php-client' => array(
