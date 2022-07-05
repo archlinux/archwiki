@@ -31,6 +31,7 @@
       ],
       "skinStyles": {
         "vector": "skins/vector.less",
+        "vector-2022": "skins/vector.less",
         "monobook": "skins/monobook.less"
       },
       "position": "top"
