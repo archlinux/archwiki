@@ -42,7 +42,7 @@ nav.vector-menu-tabs {
   }
 }
 
-// New Vector; see https://www.mediawiki.org/wiki/Skin:Vector#wgVectorResponsive
+// Vector in responsive mode; https://www.mediawiki.org/wiki/Skin:Vector#wgVectorResponsive
 body.skin-vector.skin--responsive {
   nav.vector-menu-tabs {
     li.selected {
@@ -56,7 +56,10 @@ body.skin-vector.skin--responsive {
   li:not(:first-child).selected {
     margin-left: -1 * @content-border-width;
   }
+}
 
+// Vector legacy and Vector 2022
+body.skin-vector {
   // Set background color
   div.mw-page-container {
     background-color: @body-background-color;
@@ -68,7 +71,7 @@ body.skin-vector.skin--responsive {
   }
 }
 
-// Legacy Vector
+// Vector legacy
 body.skin-vector-legacy {
   div#mw-head,
   .mw-header {
