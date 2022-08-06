@@ -17,7 +17,9 @@
 			"ديفيد",
 			"زكريا",
 			"علاء",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"Asma",
+			"Michel Bakni"
 		]
 	},
 	"wikieditor": "الواجهة المتقدمة لتعديل نص ويكي",
@@ -47,12 +49,12 @@
 	"wikieditor-toolbar-tool-link-ext-text": "نص الوصلة:",
 	"wikieditor-toolbar-tool-link-insert": "أدرج الوصلة",
 	"wikieditor-toolbar-tool-link-cancel": "إلغاء",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "الصفحة موجودة",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "الصفحة غير موجودة",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "عنوان غير صحيح",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "الصفحة موجودة على {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "الصفحة غير موجودة على {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "العنوان الذي اخترته غير صالح",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "وصلة خارجية",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "يلتمس وجود الصفحة...",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "صفحة توضيح",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "هذه الصفحة ليست صفحة محتوى، ولكنها قائمة بالمواضيع ذات الأسماء المُشابهة.",
 	"wikieditor-toolbar-tool-link-int-invalid": "العنوان الذي اخترته غير صالح.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "يبدو أن المُراد بالمسار الذي حددته وصلة إلى صفحة ويكي أخرى. أتريد أن تجعلها وصلة داخلية؟",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "وصلة داخلية",
@@ -62,6 +64,8 @@
 	"wikieditor-toolbar-tool-file-title": "أدرج الملف",
 	"wikieditor-toolbar-file-target": "اسم الملف:",
 	"wikieditor-toolbar-file-caption": "التعليق:",
+	"wikieditor-toolbar-file-alt": "نص بديل:",
+	"wikieditor-toolbar-file-alt-help-label": "(أظهر المساعدة)",
 	"wikieditor-toolbar-file-size": "الحجم:",
 	"wikieditor-toolbar-file-float": "ناحية:",
 	"wikieditor-toolbar-file-default": "(غيابي)",
@@ -138,7 +142,7 @@
 	"wikieditor-toolbar-tool-replace-success": "أجري {{PLURAL:$1|استبدال|استبدال واحد|استبدالان|$1 استبدالات|$1 استبدالا|$1 استبدال}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "لم تكتب شيئا لتبحث عنه.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "التعبير النمطي الذي أدخلته غير صالح: $1",
-	"wikieditor-toolbar-tool-replace-word": "قم بمطابقة الكلمة كلها",
+	"wikieditor-toolbar-tool-replace-word": "طابق الكلمة كلها",
 	"wikieditor-toolbar-section-characters": "أحرف خاصة",
 	"wikieditor-toolbar-section-help": "مساعدة",
 	"wikieditor-toolbar-help-heading-description": "وصف",
@@ -203,5 +207,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>اسم المستخدم</a> (<a href='#' title='$2:Username'>ناقش</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "إزاحة",
 	"wikieditor-toolbar-help-content-indent-syntax": "نص عادي<br />:نص مزاح<br />::نص مزاح",
-	"wikieditor-toolbar-help-content-indent-result": "نص عادي<dl><dd>نص مزاح<dl><dd>نص مزاح</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "نص عادي<dl><dd>نص مزاح<dl><dd>نص مزاح</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "معاينة"
 }

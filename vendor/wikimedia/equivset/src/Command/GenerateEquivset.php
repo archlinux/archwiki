@@ -18,6 +18,7 @@
 
 namespace Wikimedia\Equivset\Command;
 
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,8 +48,8 @@ class GenerateEquivset extends Command {
 	public function __construct( $dataDir = '', $distDir = '' ) {
 		parent::__construct();
 
-		$this->dataDir = $dataDir ? $dataDir : __DIR__ . '/../../data';
-		$this->distDir = $distDir ? $distDir : __DIR__ . '/../../dist';
+		$this->dataDir = $dataDir ?: __DIR__ . '/../../data';
+		$this->distDir = $distDir ?: __DIR__ . '/../../dist';
 	}
 
 	/**
@@ -69,7 +70,7 @@ class GenerateEquivset extends Command {
 	public function execute( InputInterface $input, OutputInterface $output ) {
 		$lines = file( $this->dataDir . '/equivset.in' );
 		if ( !$lines ) {
-			throw new \Exception( "Unable to open equivset.in" );
+			throw new Exception( "Unable to open equivset.in" );
 		}
 
 		# \s matches \xa0 in non-unicode mode, which is not what we want

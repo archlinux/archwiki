@@ -29,7 +29,7 @@ class SpecialGadgets extends SpecialPage {
 	 * @param string|null $par Parameters passed to the page
 	 */
 	public function execute( $par ) {
-		$parts = explode( '/', $par );
+		$parts = $par !== null ? explode( '/', $par ) : [];
 
 		if ( count( $parts ) == 2 && $parts[0] == 'export' ) {
 			$this->showExportForm( $parts[1] );

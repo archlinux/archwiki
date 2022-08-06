@@ -41,7 +41,7 @@
 	"apihelp-visualeditor-param-stash": "Lors de l’enregistrement, mettre ceci à vrai si vous voulez utiliser l’API de réserve.",
 	"apihelp-visualeditor-param-wikitext": "Wikicode à envoyer à Parsoid pour être converti en HTML (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "Renvoie une page HTML5 du service Parsoid.",
-	"apihelp-visualeditoredit-description": "Enregistre une page HTML5 en Mediawiki (convertie en wikicode via le service Parsoid).",
+	"apihelp-visualeditoredit-description": "Enregistre une page HTML5 en MediaWiki (convertie en wikicode via le service Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Lors de l’enregistrement, initialiser ceci avec l’horodatage de la version de la page qui était modifiée. Utilisé pour détecter les conflits d’édition.",
 	"apihelp-visualeditoredit-param-cachekey": "Utilise le résultat d’une précédente requête <tt>serializeforcache</tt> avec cette clé. Ceci remplace $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Identifiant CAPTCHA (lors d’un enregistrement avec une réponse CAPTCHA).",

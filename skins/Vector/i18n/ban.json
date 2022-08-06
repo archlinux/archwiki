@@ -29,5 +29,6 @@
 	"vector-jumptocontent": "Cebur nuju daging",
 	"vector-more-actions": "Lianan",
 	"vector-search-loader": "Ngamuat saran parerehan",
+	"vector-searchsuggest-containing": "Selehin kaca sané madaging <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
 	"vector-anon-user-menu-pages-learn": "pelajahin malih"
 }

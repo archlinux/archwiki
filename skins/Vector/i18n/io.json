@@ -24,6 +24,7 @@
 	"vector-jumptonavigation": "Irez a navigado",
 	"vector-jumptosearch": "Irez a serchilo",
 	"vector-more-actions": "Pluse",
+	"vector-searchsuggest-containing": "Serchar pagini kontenanta <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
 	"vector-main-menu-tooltip": "Chef-menuo",
 	"tooltip-vector-anon-user-menu-title": "Plusa selekti"
 }

@@ -5,7 +5,8 @@
 			"Als-Holder",
 			"J. 'mach' wust",
 			"Matma Rex",
-			"Melancholie"
+			"Melancholie",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-desc": "Wändet automatischi Heurischtike uf Änderigen aa.",
@@ -152,7 +153,7 @@
 	"abusefilter-edit-denied": "Du chasch d Detail vu däm Filter nit bschaue, wel si versteckt sin.",
 	"abusefilter-edit-main": "Filterparameter",
 	"abusefilter-edit-done-subtitle": "Filter bearbeitet",
-	"abusefilter-edit-done": "Dyyni Änderige am Filter $1 sin erfolgryych gspycheret wore.",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Dyyni Änderige]] am [[Special:AbuseFilter/$1|Filter $3]] sin erfolgryych gspycheret wore.",
 	"abusefilter-edit-badsyntax": "Im Filter, wu Du spezifiziert hesch, het s e Syntaxfähler. D Parseruusgab isch: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Du chasch dää Filter nit bearbeite, wel s do eini oder meh bschränkti Aktione din het. Bitte frog e Benutzer, wu s Rächt het, bschränkti Aktion zuezfiege, ass är des fir Dii macht.",
 	"abusefilter-edit-viewhistory": "Versionsgschicht vum Filter aaluege",

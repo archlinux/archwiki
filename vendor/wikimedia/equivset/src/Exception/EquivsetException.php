@@ -18,9 +18,11 @@
 
 namespace Wikimedia\Equivset\Exception;
 
+use Exception;
+
 /**
  * Equivset Exception
  */
-class EquivsetException extends \Exception {
+class EquivsetException extends Exception {
 
 }

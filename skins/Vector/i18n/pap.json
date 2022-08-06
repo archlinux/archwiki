@@ -5,12 +5,15 @@
 			"ObaTango"
 		]
 	},
-	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idioma}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 idioma}}",
 	"vector-action-addsection": "Añadí un tópiko",
+	"vector-action-delete": "Kita",
 	"vector-action-move": "Move",
+	"vector-action-protect": "Protehá",
 	"vector-view-create": "Krea",
 	"vector-view-edit": "Editá",
 	"vector-view-history": "Bista di e historia",
 	"vector-view-view": "Lesa",
-	"vector-more-actions": "Mas"
+	"vector-more-actions": "Mas",
+	"vector-searchsuggest-containing": "Buska página ku tin <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

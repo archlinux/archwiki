@@ -12,7 +12,8 @@
 			"Muhammed taha",
 			"Sarchia",
 			"Épine",
-			"ئارام بکر"
+			"ئارام بکر",
+			"Aram"
 		]
 	},
 	"wikieditor": "ڕووکاری پێشکەوتووی دەستکاریکردنی ویکیدەق",
@@ -35,7 +36,7 @@
 	"wikieditor-toolbar-tool-link-int-target": "پەڕەی مەبەست یان URL:",
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "ناونیشانی پەڕە یان URL",
 	"wikieditor-toolbar-tool-link-int-text": "دەق بۆ نیشاندان:",
-	"wikieditor-toolbar-tool-link-int-text-tooltip": "دقێک کە نیشان ئەدرێت",
+	"wikieditor-toolbar-tool-link-int-text-tooltip": "دەقێک کە نیشان دەدرێت",
 	"wikieditor-toolbar-tool-link-ext": "بۆ وێب‌پەڕەیەکی دەرەکی",
 	"wikieditor-toolbar-tool-link-ext-target": "بەستەری URL:",
 	"wikieditor-toolbar-tool-link-ext-text": "دەقی بەستەر:",
@@ -56,6 +57,8 @@
 	"wikieditor-toolbar-tool-file-title": "تێخستنی پەڕگە",
 	"wikieditor-toolbar-file-target": "ناوی پەرگە:",
 	"wikieditor-toolbar-file-caption": "ڕاڤە:",
+	"wikieditor-toolbar-file-alt": "دەقی جێگرەوە:",
+	"wikieditor-toolbar-file-alt-help-label": "(یارمەتی پیشاندە)",
 	"wikieditor-toolbar-file-size": "قەبارە:",
 	"wikieditor-toolbar-file-float": "لاگرتن:",
 	"wikieditor-toolbar-file-default": "(بنچینەیی)",
@@ -104,6 +107,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! سەردێڕی ١\n! سەردێڕی ٢\n! سەردێڕی ٣\n|-\n| ڕیزی ١، خانەی ١\n| ڕیزی ١، خانەی ٢\n| ڕیزی ١، خانەی ٣\n|-\n| ڕیزی ٢، خانەی ١\n| ڕیزی ٢، خانەی ٢\n| ڕیزی ٢، خانەی ٣",
 	"wikieditor-toolbar-tool-table-example-cell-text": "دەقی خانە",
 	"wikieditor-toolbar-tool-table-example-header": "دەقی سەردێڕ",
+	"wikieditor-toolbar-tool-table-example-caption": "دەقی شرۆڤەی وێنە",
 	"wikieditor-toolbar-tool-table-title": "دانانی خشتە",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "ڕیزەکان",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "ستوونەکان",
@@ -114,7 +118,7 @@
 	"wikieditor-toolbar-tool-table-preview": "پێشبینین",
 	"wikieditor-toolbar-tool-table-insert": "تێخستن",
 	"wikieditor-toolbar-tool-table-cancel": "ھەڵوەشاندنەوە",
-	"wikieditor-toolbar-tool-table-toomany": "تێخستنی خشتەیەک بە زۆرتر لە $1 خانەوە بەم ئامرازەوە ناکرێ.",
+	"wikieditor-toolbar-tool-table-toomany": "تێخستنی خشتەیەک بە زۆرتر لە $1 خانەوە بەم ئامرازە ناکرێت.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "ژمارەیەکی دروستت بۆ ڕیزەکان یان ستوونەکان نەداوە.",
 	"wikieditor-toolbar-tool-table-zero": "ناتوانی خشتەیەک بێ ھیچ ڕیز یان ستوونێک تێبخەی",
 	"wikieditor-toolbar-tool-replace": "دۆزینەوە و لەجێدانان",
@@ -128,7 +132,7 @@
 	"wikieditor-toolbar-tool-replace-button-replaceall": "ھەموویان جێگیر بکە",
 	"wikieditor-toolbar-tool-replace-close": "دایخە",
 	"wikieditor-toolbar-tool-replace-nomatch": "گەڕانەکەت لەگەڵ ھیچ شتێک نەگونجا.",
-	"wikieditor-toolbar-tool-replace-success": "$1 جێگرتنەوە ئەنجامدرا.",
+	"wikieditor-toolbar-tool-replace-success": "$1 جێگرتنەوە کرا.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "ھیچ شتێکت بۆ گەڕان ڕەچاو نەکردوو.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "ئەو regular expression کە نووسیوتە گونجاو نییە: $1",
 	"wikieditor-toolbar-tool-replace-word": "ڕێک لەگەڵ وشەکە بیگونجێنە",
@@ -192,5 +196,7 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>ناوی بەکارھێنەر</a> (<a href='#' title='$2:Username'>لێدوان</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "پێشبردن",
 	"wikieditor-toolbar-help-content-indent-syntax": "دەقی ئاسایی<br />:دەقی پێشچوو<br />::دەقی پێشچوو",
-	"wikieditor-toolbar-help-content-indent-result": "دەقی ئاسایی<dl><dd>دەقی پێشچوو<dl><dd>دەقی پێشچوو</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "دەقی ئاسایی<dl><dd>دەقی پێشچوو<dl><dd>دەقی پێشچوو</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "دەستکاری بە بەکارھێنانی [[mw:Special:MyLanguage/Extension:WikiEditor|دەستکاریکەری ویکی]] (دەستکاریکەری ویکیدەقی ٢٠١٠) کراوە",
+	"wikieditor-realtimepreview-preview": "پێشبینین"
 }

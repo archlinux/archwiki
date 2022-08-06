@@ -13,7 +13,8 @@
 			"Jaideraf",
 			"Luan",
 			"Opraco",
-			555
+			555,
+			"YuriNikolai"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -25,6 +26,7 @@
 	"vector.css": "/* Todos os CSS colocado aqui serão carregados para usuários do tema Vector */",
 	"vector.js": "/* Todos os JavaScript aqui colocado será carregado para usuários do tema Vector */",
 	"vector-action-toggle-sidebar": "Alternar barra lateral",
+	"vector-languages": "Idiomas",
 	"vector-language-button-aria-label": "Vá para um artigo em outro idioma. Disponível em {{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-language-variant-switcher-label": "Alterar a variante de idioma",

@@ -11,7 +11,8 @@
 			"Matma Rex",
 			"Nemo bis",
 			"Nick1915",
-			"S4b1nuz E.656"
+			"S4b1nuz E.656",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-desc": "Àplica dele eurìstiche automatiche a le modifiche.",
@@ -156,7 +157,7 @@
 	"abusefilter-edit-denied": "No te podi védar i detagli de sto filtro, parché i xe sconti al pùblico.",
 	"abusefilter-edit-main": "Parametri del filtro",
 	"abusefilter-edit-done-subtitle": "Filtro modifegà",
-	"abusefilter-edit-done": "Te ghè salvà i to canbiamenti al filtro $1.",
+	"abusefilter-edit-done": "Te ghè salvà i to canbiamenti al [[Special:AbuseFilter/$1|filtro $3]].",
 	"abusefilter-edit-badsyntax": "Ghe xe un eròr de sintassi in tel filtro che te ghè specificà.\nDe seguito vien riportà l'output del parser: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "No se pole modificare sto filtro in quanto el contien dele azioni riservà.\nChiedere a un utente abilità a l'inserimento de azioni riservà de fare la modifica.",
 	"abusefilter-edit-viewhistory": "Varda el storico de sto filtro",

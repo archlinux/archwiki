@@ -65,7 +65,7 @@
 	"templatedata-modal-json-error-replace": "Замяна",
 	"templatedata-modal-placeholder-paramkey": "Име на параметъра",
 	"templatedata-modal-table-param-actions": "Действия",
-	"templatedata-modal-table-param-aliases": "Псевдоними (разделени със запетая)",
+	"templatedata-modal-table-param-aliases": "Псевдоними",
 	"templatedata-modal-table-param-autovalue": "Автоматична стойност",
 	"templatedata-modal-table-param-deprecated": "Непрепоръчителен",
 	"templatedata-modal-table-param-description": "Описание ($1)",

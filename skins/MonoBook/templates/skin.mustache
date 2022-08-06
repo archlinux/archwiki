@@ -57,7 +57,7 @@
 		{{#data-portlets-sidebar.data-portlets-first}}{{>Portlet}}{{/data-portlets-sidebar.data-portlets-first}}
 		{{#data-search-box}}
 		<div role="search" class="portlet" id="p-search">
-			<h3 id="p-search-label" dir="ltr" lang="en-GB"><label for="searchInput">{{msg-search}}</label></h3>
+			<h3 id="p-search-label" {{{html-user-language-attributes}}}><label for="searchInput">{{msg-search}}</label></h3>
 			<div class="pBody" id="searchBody">
 				<form action="{{form-action}}" id="searchform"><input type="hidden" value="{{page-title}}" name="title">{{{html-input}}}{{{html-button-search}}} {{{html-button-search-fallback}}}</form>
 			</div>

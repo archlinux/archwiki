@@ -41,6 +41,7 @@
 	"vector-jumptocontent": "ข้ามไปเนื้อหา",
 	"vector-more-actions": "เพิ่มเติม",
 	"vector-search-loader": "กำลังโหลดคำแนะนำการค้นหา",
+	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
 	"vector-anon-user-menu-pages": "หน้าสำหรับผู้แก้ไขที่ออกจากระบบ",
 	"vector-anon-user-menu-pages-learn": "เรียนรู้เพิ่มเติม",
 	"vector-main-menu-tooltip": "เมนูหลัก",

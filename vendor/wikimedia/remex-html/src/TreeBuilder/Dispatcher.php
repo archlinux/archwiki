@@ -49,6 +49,8 @@ class Dispatcher implements TokenHandler {
 
 	/**
 	 * The handler class for each insertion mode
+	 *
+	 * @var array
 	 */
 	protected static $handlerClasses = [
 		self::INITIAL => Initial::class,

@@ -12,6 +12,8 @@ use Wikimedia\RemexHtml\HTMLData;
 class HtmlFormatter implements Formatter, DOMFormatter {
 	/**
 	 * The elements for which a closing tag is omitted.
+	 *
+	 * @var array<string,bool>
 	 */
 	protected $voidElements = [
 		'area' => true,
@@ -38,6 +40,8 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 	/**
 	 * The elements which need a leading newline in their contents to be
 	 * duplicated, since the parser strips a leading newline.
+	 *
+	 * @var array<string,bool>
 	 */
 	protected $prefixLfElements = [
 		'pre' => true,
@@ -47,6 +51,8 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 
 	/**
 	 * The elements which have unescaped contents.
+	 *
+	 * @var array<string,bool>
 	 */
 	protected $rawTextElements = [
 		'style' => true,
@@ -57,16 +63,22 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		'noframes' => true,
 		'plaintext' => true,
 	];
+
 	/**
 	 * The escape table for attribute values
+	 *
+	 * @var array<string,string>
 	 */
 	protected $attributeEscapes = [
 		'&' => '&amp;',
 		"\xc2\xa0" => '&nbsp;',
 		'"' => '&quot;',
 	];
+
 	/**
 	 * The escape table for text nodes
+	 *
+	 * @var array<string,string>
 	 */
 	protected $textEscapes = [
 		'&' => '&amp;',
@@ -77,6 +89,8 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 
 	/**
 	 * Attribute namespaces which have unqualified local names
+	 *
+	 * @var array<string,bool>
 	 */
 	protected $unqualifiedNamespaces = [
 		HTMLData::NS_HTML => true,

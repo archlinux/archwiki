@@ -205,7 +205,7 @@ class SpecialAbuseLog extends AbuseFilterSpecialPage {
 
 		$this->checkPermissions();
 
-		$args = explode( '/', $parameter );
+		$args = $parameter !== null ? explode( '/', $parameter ) : [];
 
 		if ( count( $args ) === 2 && $args[0] === 'private' ) {
 			$this->showPrivateDetails( (int)$args[1] );

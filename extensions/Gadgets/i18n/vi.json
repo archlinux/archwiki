@@ -10,7 +10,7 @@
 	},
 	"gadgets-desc": "Để các thành viên chọn những [[Special:Gadgets|tiện ích]] đặc chế bằng CSS và JavaScript trong [[Special:Preferences#mw-prefsection-gadgets|tùy chọn]]",
 	"prefs-gadgets": "Tiện ích",
-	"gadgets-prefstext": "Dưới đây là danh sách các tiện ích đặc biệt mà bạn có thể kích hoạt cho tài khoản của mình.\nNhững tiện ích này chủ yếu dựa trên JavaScript, do đó bạn phải kích hoạt JavaScript trong trình duyệt để các tiện ích này hoạt động.\nChú ý rằng những tiện ích này sẽ không có tác dụng trong trang tùy chọn cá nhân.\n\nCũng chú ý rằng những tiện ích đặc biệt này không phải là một phần của phần mềm MediaWiki, mà thường được phát triển và bảo trì bởi những thành viên ở wiki của họ. Những quản lý ở từng ngôn ngữ có thể sửa đổi các tiện ích có sẵn từ các danh sách [[MediaWiki:Gadgets-definition|định nghĩa]] và [[Special:Gadgets|miêu tả]]. Xem các tiện ích theo số người dùng tại wiki này tại [[Special:GadgetUsage|Thống kê sử dụng tiện ích]].",
+	"gadgets-prefstext": "Bạn có thể kích hoạt các tiện ích đặc biệt bên dưới.\nCác tiện ích này chủ yếu dựa trên JavaScript, do đó bạn phải kích hoạt JavaScript trong trình duyệt để các tiện ích này hoạt động.\nChú ý rằng những tiện ích này sẽ không có tác dụng trong trang tùy chọn cá nhân.\n\nCũng chú ý rằng những tiện ích đặc biệt này không phải là một phần của phần mềm MediaWiki, mà thường được phát triển và bảo trì bởi những thành viên ở wiki của họ.\nCác bảo quản viên giao diện ở từng ngôn ngữ có thể sửa đổi các [[MediaWiki:Gadgets-definition|định nghĩa]], và các bảo quản viên có thể sửa đổi các [[Special:Gadgets|lời miêu tả]], ở đấy có thể xem mã nguồn của mọi tiện ích. Xem các tiện ích theo số người dùng tại wiki này tại [[Special:GadgetUsage|Thống kê sử dụng tiện ích]].",
 	"gadgets": "Tiện ích",
 	"gadgetusage": "Thống kê sử dụng tiện ích",
 	"gadgetusage-gadget": "Tiện ích",
@@ -22,11 +22,15 @@
 	"gadgetusage-default": "Mặc định",
 	"gadgets-title": "Tiện ích",
 	"gadgets-pagetext": "Dưới đây là danh sách các tiện ích đặc biệt mà thành viên có thể dùng tại [[Special:Preferences#mw-prefsection-gadgets|trang tùy chọn cá nhân]] của họ, theo [[MediaWiki:Gadgets-definition|định nghĩa]]. Trang tổng quan này cung cấp cách tiếp cận dễ dàng đến trang các thông điệp hệ thống để định nghĩa miêu tả và mã của từng tiện ích.",
+	"gadgets-editdescription": "Sửa miêu tả",
+	"gadgets-viewdescription": "Xem miêu tả",
 	"gadgets-uses": "Sử dụng",
 	"gadgets-required-rights": "Cần {{PLURAL:$2|quyền|các quyền}} sau:\n\n$1",
 	"gadgets-required-skins": "Có sẵn trên {{PLURAL:$2|giao diện $1|các giao diện: $1}}.",
+	"gadgets-required-actions": "Hoạt động với {{PLURAL:$2|tác vụ trang “$1”|các tác vụ trang sau: $1}}.",
 	"gadgets-default": "Được kích hoạt cho tất cả mọi người theo mặc định.",
 	"gadgets-legacy": "Tiện ích không được tải. Xin vui lòng chuyển đổi tiện ích qua hệ thống ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Tìm hiểu thêm])",
+	"gadgets-packaged": "Tiện ích này được [https://www.mediawiki.org/wiki/ResourceLoader/Package_files gói lại], điểm vào lệnh là $1",
 	"gadgets-export": "Xuất",
 	"gadgets-export-title": "Xuất tiện ích",
 	"gadgets-not-found": "Không tìm thấy tiện ích “$1”.",
@@ -37,5 +41,7 @@
 	"right-gadgets-edit": "Sửa đổi trang tiện ích JavaScript và CSS",
 	"action-gadgets-edit": "sửa đổi trang tiện ích JavaScript hoặc CSS này",
 	"right-gadgets-definition-edit": "Sửa đổi các định nghĩa tiện ích",
-	"action-gadgets-definition-edit": "sửa đổi định nghĩa của tiện ích này"
+	"action-gadgets-definition-edit": "sửa đổi định nghĩa của tiện ích này",
+	"gadgets-wrong-contentmodel": "Các trang trong không gian tên {{ns:2302}} phải có mô hình nội dung GadgetDefinition.",
+	"gadgets-supports-urlload": "Có thể tải tiện ích này bằng cách thêm tham số truy vấn <code>?withgadget</code> vào URL."
 }

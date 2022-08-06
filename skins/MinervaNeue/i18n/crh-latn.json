@@ -5,6 +5,7 @@
 			"TayfunEt."
 		]
 	},
+	"minerva-talk-add-topic": "Mevzu qoş",
 	"mobile-frontend-editor-edit": "Deñiştir",
 	"mobile-frontend-history": "Bu saifeniñ deñiştirilme tarihını köster.",
 	"mobile-frontend-home-button": "Baş Saife",
@@ -13,5 +14,9 @@
 	"mobile-frontend-main-menu-nearby": "Yaqında",
 	"mobile-frontend-main-menu-settings": "Sazlamalar",
 	"mobile-frontend-placeholder": "{{SITENAME}} içinde qıdır",
-	"mobile-frontend-random-button": "Rastkele"
+	"mobile-frontend-random-button": "Rastkele",
+	"minerva-talk-explained": "Azırda laf etilgen mevzular",
+	"minerva-talk-explained-empty": "Mına muzakere saifesinde mevzu yoq.",
+	"minerva-talk-full-page": "Viki saifesi kibi oqu",
+	"minerva-talk-reply-success": "Cevap berildi."
 }

@@ -202,23 +202,23 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.4.1",
-            "version_normalized": "7.4.1.0",
+            "version": "7.4.5",
+            "version_normalized": "7.4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "ee0a041b1760e6a53d2a39c8c34115adc2af2c79"
+                "reference": "1dd98b0564cb3f6bd16ce683cb755f94c10fbd82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/ee0a041b1760e6a53d2a39c8c34115adc2af2c79",
-                "reference": "ee0a041b1760e6a53d2a39c8c34115adc2af2c79",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/1dd98b0564cb3f6bd16ce683cb755f94c10fbd82",
+                "reference": "1dd98b0564cb3f6bd16ce683cb755f94c10fbd82",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/promises": "^1.5",
-                "guzzlehttp/psr7": "^1.8.3 || ^2.1",
+                "guzzlehttp/psr7": "^1.9 || ^2.4",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
                 "symfony/deprecation-contracts": "^2.2 || ^3.0"
@@ -238,7 +238,7 @@
                 "ext-intl": "Required for Internationalized Domain Name (IDN) support",
                 "psr/log": "Required for using the Log middleware"
             },
-            "time": "2021-12-06T18:43:05+00:00",
+            "time": "2022-06-20T22:16:13+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -247,12 +247,12 @@
             },
             "installation-source": "dist",
             "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\": "src/"
-                },
                 "files": [
                     "src/functions_include.php"
-                ]
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -309,7 +309,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.4.1"
+                "source": "https://github.com/guzzle/guzzle/tree/7.4.5"
             },
             "funding": [
                 {
@@ -416,17 +416,17 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.1.2",
-            "version_normalized": "2.1.2.0",
+            "version": "2.4.0",
+            "version_normalized": "2.4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "b36d463b214c76ed12b924bae0445f3531bb1686"
+                "reference": "13388f00956b1503577598873fffb5ae994b5737"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/b36d463b214c76ed12b924bae0445f3531bb1686",
-                "reference": "b36d463b214c76ed12b924bae0445f3531bb1686",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/13388f00956b1503577598873fffb5ae994b5737",
+                "reference": "13388f00956b1503577598873fffb5ae994b5737",
                 "shasum": ""
             },
             "require": {
@@ -447,11 +447,11 @@
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
             },
-            "time": "2022-03-20T21:51:23+00:00",
+            "time": "2022-06-20T21:43:11+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1-dev"
+                    "dev-master": "2.4-dev"
                 }
             },
             "installation-source": "dist",
@@ -514,7 +514,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.1.2"
+                "source": "https://github.com/guzzle/psr7/tree/2.4.0"
             },
             "funding": [
                 {
@@ -1453,27 +1453,27 @@
         },
         {
             "name": "pleonasm/bloom-filter",
-            "version": "1.0.2",
-            "version_normalized": "1.0.2.0",
+            "version": "1.0.3",
+            "version_normalized": "1.0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pleonasm/bloom-filter.git",
-                "reference": "4a3292c9f83a778c44271bf4e4f6be1204b87f7b"
+                "reference": "57c8cf69148fea2327dcf96b21ce50df7ede1dfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pleonasm/bloom-filter/zipball/4a3292c9f83a778c44271bf4e4f6be1204b87f7b",
-                "reference": "4a3292c9f83a778c44271bf4e4f6be1204b87f7b",
+                "url": "https://api.github.com/repos/pleonasm/bloom-filter/zipball/57c8cf69148fea2327dcf96b21ce50df7ede1dfc",
+                "reference": "57c8cf69148fea2327dcf96b21ce50df7ede1dfc",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4"
+                "php": ">=7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8 || ^5.7 || ^6.4",
-                "satooshi/php-coveralls": "^1.0.1"
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^6.5 || ^7.5 || ^8.5 || ^9.4"
             },
-            "time": "2018-03-03T21:16:42+00:00",
+            "time": "2022-05-02T23:00:47+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1501,7 +1501,7 @@
             "support": {
                 "email": "matthew.nagi@base-2.net",
                 "issues": "https://github.com/pleonasm/bloom-filter/issues",
-                "source": "https://github.com/pleonasm/bloom-filter/tree/master"
+                "source": "https://github.com/pleonasm/bloom-filter/tree/1.0.3"
             },
             "install-path": "../pleonasm/bloom-filter"
         },
@@ -2489,32 +2489,33 @@
         },
         {
             "name": "wikimedia/common-passwords",
-            "version": "v0.3.0",
-            "version_normalized": "0.3.0.0",
+            "version": "v0.4.0",
+            "version_normalized": "0.4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/common-passwords.git",
-                "reference": "5b51a88a27e17f485ba1295ee6916620686cd5a5"
+                "reference": "e16d64009724401d8ab870724322b88d11baa75c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/common-passwords/zipball/5b51a88a27e17f485ba1295ee6916620686cd5a5",
-                "reference": "5b51a88a27e17f485ba1295ee6916620686cd5a5",
+                "url": "https://api.github.com/repos/wikimedia/common-passwords/zipball/e16d64009724401d8ab870724322b88d11baa75c",
+                "reference": "e16d64009724401d8ab870724322b88d11baa75c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.9",
-                "pleonasm/bloom-filter": "1.0.2"
+                "pleonasm/bloom-filter": "1.0.3"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "35.0.0",
+                "mediawiki/mediawiki-codesniffer": "39.0.0",
+                "mediawiki/mediawiki-phan-config": "0.11.1",
                 "mediawiki/minus-x": "1.1.1",
-                "ockcyp/covers-validator": "1.3.3",
-                "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
+                "ockcyp/covers-validator": "1.4.0",
+                "php-parallel-lint/php-console-highlighter": "1.0.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.2",
                 "phpunit/phpunit": "^8.5"
             },
-            "time": "2021-01-31T00:23:58+00:00",
+            "time": "2022-05-21T18:52:09+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2536,7 +2537,7 @@
             "homepage": "https://www.mediawiki.org/wiki/CommonPasswords",
             "support": {
                 "issues": "https://github.com/wikimedia/common-passwords/issues",
-                "source": "https://github.com/wikimedia/common-passwords/tree/v0.3.0"
+                "source": "https://github.com/wikimedia/common-passwords/tree/v0.4.0"
             },
             "install-path": "../wikimedia/common-passwords"
         },
@@ -2675,17 +2676,17 @@
         },
         {
             "name": "wikimedia/equivset",
-            "version": "1.4.2",
-            "version_normalized": "1.4.2.0",
+            "version": "1.4.3",
+            "version_normalized": "1.4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/Equivset.git",
-                "reference": "f41a259526a5597e1c3cb3cf745d1f1af6d36a00"
+                "reference": "5a51cb593f762c4535e6f092e6db53c45407ffd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/Equivset/zipball/f41a259526a5597e1c3cb3cf745d1f1af6d36a00",
-                "reference": "f41a259526a5597e1c3cb3cf745d1f1af6d36a00",
+                "url": "https://api.github.com/repos/wikimedia/Equivset/zipball/5a51cb593f762c4535e6f092e6db53c45407ffd9",
+                "reference": "5a51cb593f762c4535e6f092e6db53c45407ffd9",
                 "shasum": ""
             },
             "require": {
@@ -2693,18 +2694,20 @@
                 "wikimedia/utfnormal": "^1.1.0 || ^2.0.0 || ^3.0.1"
             },
             "require-dev": {
-                "mediawiki/mediawiki-codesniffer": "34.0.0",
-                "mediawiki/minus-x": "1.1.0",
+                "ext-json": "*",
+                "mediawiki/mediawiki-codesniffer": "39.0.0",
+                "mediawiki/mediawiki-phan-config": "0.11.1",
+                "mediawiki/minus-x": "1.1.1",
                 "mikey179/vfsstream": "^1.6",
-                "ockcyp/covers-validator": "1.3.3",
-                "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.2.0",
+                "ockcyp/covers-validator": "1.4.0",
+                "php-parallel-lint/php-console-highlighter": "1.0.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.2",
                 "phpunit/phpunit": "^8.5 || ^9.5",
                 "rregeer/phpunit-coverage-check": "~0.1.4",
                 "symfony/console": "^3.3 || ^4 || ^5",
                 "symfony/var-dumper": "^3.3 || ^4 || ^5"
             },
-            "time": "2021-01-30T09:31:47+00:00",
+            "time": "2022-06-28T22:52:16+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2730,7 +2733,7 @@
             "homepage": "https://www.mediawiki.org/wiki/Equivset",
             "support": {
                 "issues": "https://github.com/wikimedia/Equivset/issues",
-                "source": "https://github.com/wikimedia/Equivset/tree/1.4.2"
+                "source": "https://github.com/wikimedia/Equivset/tree/1.4.3"
             },
             "install-path": "../wikimedia/equivset"
         },
@@ -3459,17 +3462,17 @@
         },
         {
             "name": "wikimedia/remex-html",
-            "version": "3.0.1",
-            "version_normalized": "3.0.1.0",
+            "version": "3.0.2",
+            "version_normalized": "3.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/remex-html.git",
-                "reference": "962d1b028d505f488b77ded093cacce9a0855f29"
+                "reference": "a471c8d472a6e80fc4f7a5a77c10758c24325d43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/remex-html/zipball/962d1b028d505f488b77ded093cacce9a0855f29",
-                "reference": "962d1b028d505f488b77ded093cacce9a0855f29",
+                "url": "https://api.github.com/repos/wikimedia/remex-html/zipball/a471c8d472a6e80fc4f7a5a77c10758c24325d43",
+                "reference": "a471c8d472a6e80fc4f7a5a77c10758c24325d43",
                 "shasum": ""
             },
             "require": {
@@ -3480,16 +3483,16 @@
             },
             "require-dev": {
                 "ext-json": "*",
-                "mediawiki/mediawiki-codesniffer": "38.0.0",
-                "mediawiki/mediawiki-phan-config": "0.11.0",
+                "mediawiki/mediawiki-codesniffer": "39.0.0",
+                "mediawiki/mediawiki-phan-config": "0.11.1",
                 "mediawiki/minus-x": "1.1.1",
-                "ockcyp/covers-validator": "1.3.3",
-                "php-parallel-lint/php-console-highlighter": "0.5.0",
-                "php-parallel-lint/php-parallel-lint": "1.3.1",
+                "ockcyp/covers-validator": "1.4.0",
+                "php-parallel-lint/php-console-highlighter": "1.0.0",
+                "php-parallel-lint/php-parallel-lint": "1.3.2",
                 "phpunit/phpunit": "^8.5 || ^9.5",
                 "wikimedia/update-history": "1.0.1"
             },
-            "time": "2021-11-18T23:37:04+00:00",
+            "time": "2022-06-27T22:21:17+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3510,7 +3513,7 @@
             "description": "Fast HTML 5 parser",
             "homepage": "https://www.mediawiki.org/wiki/RemexHtml",
             "support": {
-                "source": "https://github.com/wikimedia/remex-html/tree/3.0.1"
+                "source": "https://github.com/wikimedia/remex-html/tree/3.0.2"
             },
             "install-path": "../wikimedia/remex-html"
         },

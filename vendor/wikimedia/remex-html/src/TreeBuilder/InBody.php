@@ -13,13 +13,22 @@ use Wikimedia\RemexHtml\Tokenizer\Tokenizer;
 class InBody extends InsertionMode {
 	/**
 	 * The tag names h1-h6, which are referred to at a couple of points.
+	 * @var array<string,bool>
 	 */
-	private static $headingNames = [ 'h1' => true, 'h2' => true, 'h3' => true, 'h4' => true,
-		'h5' => true, 'h6' => true ];
+	private static $headingNames = [
+		'h1' => true,
+		'h2' => true,
+		'h3' => true,
+		'h4' => true,
+		'h5' => true,
+		'h6' => true
+	];
 
 	/**
 	 * The tag names which can be closed by </body> or </html> without causing
 	 * an error.
+	 *
+	 * @var array<string,bool>
 	 */
 	private static $implicitClose = [
 		'dd' => true,

@@ -7,7 +7,8 @@
 			"ThisIsACreeper0101",
 			"आलोक",
 			"रोहित रावत",
-			"AnupamM"
+			"AnupamM",
+			"Abijeet Patro"
 		]
 	},
 	"skinname-vector": "वेक्टर",
@@ -31,7 +32,7 @@
 	"vector-action-undelete": "हटाना वापस लें",
 	"vector-action-unprotect": "सुरक्षा बदलें",
 	"vector-view-create": "बनाएँ",
-	"vector-view-edit": "संपादित करें",
+	"vector-view-edit": "सम्पादन",
 	"vector-view-history": "इतिहास देखें",
 	"vector-view-view": "पढ़ें",
 	"vector-view-viewsource": "स्रोत देखें",
@@ -40,7 +41,7 @@
 	"vector-jumptocontent": "सामग्री पर जाएँ",
 	"vector-more-actions": "अधिक",
 	"vector-search-loader": "खोज सुझाव लोड हो रहे हैं",
-	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> वाले पृष्ठ खोजें",
+	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> से युक्त पृष्ठ खोजें",
 	"vector-intro-page": "Help:परिचय",
 	"vector-anon-user-menu-pages": "लॉग-आउट किए गए संपादकों के लिए पृष्ठ",
 	"vector-anon-user-menu-pages-learn": "अधिक जानें",

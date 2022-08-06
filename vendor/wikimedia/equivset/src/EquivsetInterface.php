@@ -18,6 +18,8 @@
 
 namespace Wikimedia\Equivset;
 
+use LogicException;
+
 /**
  * Equivset
  */
@@ -50,7 +52,7 @@ interface EquivsetInterface {
 	public function isEqual( $str1, $str2 );
 
 	/**
-	 * Deteremines if an equivalent character exists.
+	 * Determine if an equivalent character exists.
 	 *
 	 * @param string $key The character that was used.
 	 *
@@ -65,7 +67,7 @@ interface EquivsetInterface {
 	 *
 	 * @return string The equivalent character.
 	 *
-	 * @throws \LogicException If character does not exist.
+	 * @throws LogicException If character does not exist.
 	 */
 	public function get( $key );
 }

@@ -18,5 +18,5 @@
 	"monobook-notifications-link": "הודעות ($1)",
 	"monobook-notifications-link-none": "הודעות",
 	"monobook-view-history": "היסטוריה",
-	"monobook-action-undelete": "שחזור {{PLURAL:$1|עריכה אחת|$1 עריכות}}"
+	"monobook-action-undelete": "שחזור {{PLURAL:$1|עריכה אחת|$1 עריכות}} ממחיקה"
 }

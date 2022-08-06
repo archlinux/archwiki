@@ -9,7 +9,8 @@
 			"Nemo bis",
 			"Papuass",
 			"Silraks",
-			"Zuiks"
+			"Zuiks",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-desc": "Pielieto automātiskas heiristikas labojumiem",
@@ -175,7 +176,7 @@
 	"abusefilter-edit-denied": "Sīkāka informācija par šo filtru nav publiski pieejama.",
 	"abusefilter-edit-main": "Filtra parametri",
 	"abusefilter-edit-done-subtitle": "Filtra rediģēšana pabeigta",
-	"abusefilter-edit-done": "Jūs esat veiksmīgi saglabājis izmaiņas filtram $1.",
+	"abusefilter-edit-done": "Jūs esat veiksmīgi saglabājis izmaiņas [[Special:AbuseFilter/$1|filtram $3]].",
 	"abusefilter-edit-badsyntax": "Norādītajā filtrā ir sintakses kļūda.\nParsētāja izvads:<pre>$1</pre>",
 	"abusefilter-edit-restricted": "Tu nevari rediģēt šo filtru, jo tas satur vienu vai vairākas ierobežotās darbības.\nLūdzu, pajautā lietotājam, kuram ir tiesības pievienot ierobežotās darbības, veikt izmaiņas tavā vietā.",
 	"abusefilter-edit-viewhistory": "Apskatīt šī filtra vēsturi",

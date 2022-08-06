@@ -8,8 +8,10 @@
 		]
 	},
 	"skinname-vector": "Vector",
-	"vector.css": "/* Ang inilagay na CSS dito ay makakaapekto sa mga tagagamit ng pabalat na Vector */",
-	"vector.js": "/* Ang anumang JavaScript dito ay ikakarga para sa mga tagagamit na gumagamit ng pabalat na Vector */",
+	"skinname-vector-2022": "Vector (2022)",
+	"vector-specialversion-name": "Vector",
+	"vector.css": "/* Ang lahat ng CSS dito ay ikakarga para sa mga tagagamit ng pabalat na Vector */",
+	"vector.js": "/* Ang lahat ng JavaScript dito ay ikakarga para sa mga tagagamit ng pabalat na Vector */",
 	"vector-language-button-label": "{{PLURAL:$1|$1 wika|$1 mga wika}}",
 	"vector-action-addsection": "Magdagdag ng paksa",
 	"vector-action-delete": "Burahin",
@@ -22,5 +24,6 @@
 	"vector-view-history": "Tingnan ang kasaysayan",
 	"vector-view-view": "Basahin",
 	"vector-view-viewsource": "Tingnan ang pinagmulan",
-	"vector-more-actions": "Higit pa"
+	"vector-more-actions": "Higit pa",
+	"vector-searchsuggest-containing": "Maghanap ng mga pahina na naglalaman ng <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

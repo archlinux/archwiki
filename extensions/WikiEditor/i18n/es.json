@@ -27,7 +27,8 @@
 			"Danniel07",
 			"DiegoAmbrocio",
 			"Joanmp17",
-			"Josuert"
+			"Josuert",
+			"MarcoAurelio"
 		]
 	},
 	"wikieditor": "Interfaz avanzada de edición de wikitexto",
@@ -217,5 +218,6 @@
 	"wikieditor-toolbar-help-content-indent-description": "Sangría",
 	"wikieditor-toolbar-help-content-indent-syntax": "Texto normal<br />:Texto con sangría<br />::Texto con sangría",
 	"wikieditor-toolbar-help-content-indent-result": "Texto normal<dl><dd>Texto con sangría<dl><dd>Texto con sangría</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "Edición realizada usando [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (editor de wikitexto de 2010)",
 	"wikieditor-realtimepreview-preview": "Vista previa"
 }

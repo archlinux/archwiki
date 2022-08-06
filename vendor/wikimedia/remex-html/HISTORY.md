@@ -1,10 +1,13 @@
 # Release History
 
-## Remex 3.0.1 (2021-11-19)
+## RemexHtml 3.0.2 (2022-06-27)
+* Specify return types to make PHP 8.1 happy.
+
+## RemexHtml 3.0.1 (2021-11-19)
 * Fix duplicate sourceLength output for <tr></table>.
 * In DOMBuilder, catch invalid character errors from createAttribute.
 
-## Remex 3.0.0 (2021-10-25)
+## RemexHtml 3.0.0 (2021-10-25)
 * Removed the RemexHtml\ namespace aliases.
 * Added Attributes::clone()
 * Added Dispatcher::flushTableText().

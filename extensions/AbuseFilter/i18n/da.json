@@ -273,7 +273,7 @@
 	"abusefilter-edit-builder-funcs-rmwhitespace": "Fjern tomrum (rmwhitespace)",
 	"abusefilter-edit-builder-funcs-rmspecials": "Fjern specialtegn (rmspecials)",
 	"abusefilter-edit-builder-funcs-ip_in_range": "Er IP i intervallet? (ip_in_range)",
-	"abusefilter-edit-builder-funcs-contains-any": "Søgestreng for flere understrenge (contains_any)",
+	"abusefilter-edit-builder-funcs-contains-any": "Søgestreng for flere understrenge i OR-tilstand. (contains_any)",
 	"abusefilter-edit-builder-funcs-substr": "Understreng (substr)",
 	"abusefilter-edit-builder-funcs-strpos": "Placering af understreng i streng (strpos)",
 	"abusefilter-edit-builder-funcs-str_replace": "Erstat understreng med streng (str_replace)",

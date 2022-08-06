@@ -24,6 +24,8 @@ class Serializer implements AbstractSerializer {
 
 	/**
 	 * The error callback
+	 *
+	 * @var callable|null
 	 */
 	private $errorCallback;
 
@@ -47,11 +49,15 @@ class Serializer implements AbstractSerializer {
 	/**
 	 * True if we are parsing a fragment. The children of the <html> element
 	 * will be serialized, instead of the whole document.
+	 *
+	 * @var bool
 	 */
 	private $isFragment;
 
 	/**
 	 * The result string
+	 *
+	 * @var string
 	 */
 	private $result = '';
 

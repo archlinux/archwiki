@@ -5,7 +5,8 @@
 			"Maxí",
 			"Snævar",
 			"Sveinn í Felli",
-			"Ævar Arnfjörð Bjarmason"
+			"Ævar Arnfjörð Bjarmason",
+			"Sveinki"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -26,5 +27,6 @@
 	"vector-view-history": "Breytingaskrá",
 	"vector-view-view": "Lesa",
 	"vector-view-viewsource": "Sýna frumkóða",
-	"vector-more-actions": "Meira"
+	"vector-more-actions": "Meira",
+	"vector-searchsuggest-containing": "Leita að síðum sem innihalda <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }
