@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Matma Rex",
-			"Pyt"
+			"Pyt",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-desc": "Woant automatiske Heuristike ap Annerengen an.",
@@ -116,7 +117,7 @@
 	"abusefilter-edit-denied": "Du koast do Details fon disse Sieuwe nit ienkiekje, deeruum dät do ferstopped sunt",
 	"abusefilter-edit-main": "Sieuweparametere",
 	"abusefilter-edit-done-subtitle": "Sieuwe beoarbaided",
-	"abusefilter-edit-done": "Dien Annerengen an ju Sieuwe $1 wuuden mäd Ärfoulch spiekerd.",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Dien Annerengen]] an ju [[Special:AbuseFilter/$1|Sieuwe $3]] wuuden mäd Ärfoulch spiekerd.",
 	"abusefilter-edit-badsyntax": "Ju fon die spezifizierde Sieuwe änthaalt n Syntaxfailer. Ju Parseruutgoawe lutte: <pre>$1</pre>",
 	"abusefilter-edit-viewhistory": "Versionsgeskichte fon ju Sieuwe bekiekje",
 	"abusefilter-edit-history": "Geskichte:",

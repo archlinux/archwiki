@@ -8,9 +8,11 @@
 			"Mayooranathan",
 			"Shanmugamp7",
 			"Surya Prakash.S.A.",
-			"TRYPPN"
+			"TRYPPN",
+			"Siddhan"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 மொழி|$1 மொழிகள்}}",
 	"vector-action-addsection": "தலைப்பைச் சேர்",
 	"vector-action-delete": "நீக்குக",
 	"vector-action-move": "நகர்த்தவும்",
@@ -22,5 +24,6 @@
 	"vector-view-history": "வரலாற்றைக் காட்டவும்",
 	"vector-view-view": "படிக்கவும்",
 	"vector-view-viewsource": "மூலத்தைக் காட்டவும்",
-	"vector-more-actions": "மேலும்"
+	"vector-more-actions": "மேலும்",
+	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> உள்ளடக்கிய பக்கங்களை தேடு"
 }

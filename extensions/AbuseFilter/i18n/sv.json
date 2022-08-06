@@ -227,7 +227,7 @@
 	"abusefilter-edit-status-label": "Statistik:",
 	"abusefilter-edit-status": "Av {{PLURAL:$1|den senaste handlingen|de senaste $1 handlingarna}} har detta filter matchat $2 ($3 %).\nI genomsnitt ligger körtiden på $4 ms och konsumerar $5 {{PLURAL:$5|villkor}} av villkorsgränsen.",
 	"abusefilter-edit-throttled-warning": "'''Varning:''' Detta filter flaggades automatiskt som skadligt. Följande {{PLURAL:$2|åtgärder}} kommer inte utföras av säkerhetsskäl: $1. Kontrollera om stora mängder matchningar är förväntat. Om det är det kan du spara om filtret för att ta bort denna begränsning.",
-	"abusefilter-edit-throttled-warning-no-actions": "'''Varning:''' Detta filter flaggades automatiskt som skadligt. Inga åtgärder inaktiverades automatiskt, men var god kontrollera om det högfrekventa matchningarna förväntades. I så fall kan du ignorera denna varning.",
+	"abusefilter-edit-throttled-warning-no-actions": "'''Varning:''' Detta filter flaggades automatiskt som skadligt. Inga åtgärder inaktiverades automatiskt, men var god kontrollera om den höga frekvensen matchningar förväntades. I så fall kan du ignorera denna varning.",
 	"abusefilter-edit-new": "Nytt filter",
 	"abusefilter-edit-save": "Spara filter",
 	"abusefilter-edit-id": "Filter-ID:",

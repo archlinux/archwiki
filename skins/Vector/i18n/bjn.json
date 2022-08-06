@@ -15,8 +15,9 @@
 	"vector-action-unprotect": "Palindungan",
 	"vector-view-create": "Ulah",
 	"vector-view-edit": "Babak",
-	"vector-view-history": "Tiringi sajarah",
+	"vector-view-history": "Janaki riwayat",
 	"vector-view-view": "Baca",
-	"vector-view-viewsource": "Tiringi asal mula",
-	"vector-more-actions": "Lainnya"
+	"vector-view-viewsource": "Janaki asal-mulanya",
+	"vector-more-actions": "Lainnya",
+	"vector-searchsuggest-containing": "Gagai laman nang baisi <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

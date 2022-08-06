@@ -39,21 +39,21 @@ class LazyAttributes implements Attributes {
 		}
 	}
 
-	public function offsetExists( $offset ) {
+	public function offsetExists( $offset ): bool {
 		if ( $this->attributes === null ) {
 			$this->init();
 		}
 		return isset( $this->attributes[$offset] );
 	}
 
-	public function &offsetGet( $offset ) {
+	public function &offsetGet( $offset ): string {
 		if ( $this->attributes === null ) {
 			$this->init();
 		}
 		return $this->attributes[$offset];
 	}
 
-	public function offsetSet( $offset, $value ) {
+	public function offsetSet( $offset, $value ): void {
 		if ( $this->attributes === null ) {
 			$this->init();
 		}
@@ -63,7 +63,7 @@ class LazyAttributes implements Attributes {
 		}
 	}
 
-	public function offsetUnset( $offset ) {
+	public function offsetUnset( $offset ): void {
 		if ( $this->attributes === null ) {
 			$this->init();
 		}
@@ -92,14 +92,14 @@ class LazyAttributes implements Attributes {
 		return $this->attrObjects;
 	}
 
-	public function count() {
+	public function count(): int {
 		if ( $this->attributes === null ) {
 			return count( $this->data );
 		}
 		return count( $this->attributes );
 	}
 
-	public function getIterator() {
+	public function getIterator(): \ArrayIterator {
 		if ( $this->attributes === null ) {
 			$this->init();
 		}

@@ -3,7 +3,8 @@
 		"authors": [
 			"Derugon",
 			"Gomoko",
-			"Wladek92"
+			"Wladek92",
+			"Urhixidur"
 		]
 	},
 	"apihelp-query+pageimages-description": "Retourne des informations sur les images de la page, comme par exemple les vignettes et la présence de photos.",
@@ -11,7 +12,7 @@
 	"apihelp-query+pageimages-example-1": "Obtenir le nom et la vignette de <kbd>100</kbd> pixels d’une image sur la page <kbd>Albert Einstein</kbd>.",
 	"apihelp-query+pageimages-param-prop": "Quelles informations renvoyer :\n;thumbnail:URL et dimensions de l’image miniature associée avec la page, s’il y en a une.\n;original:URL et dimensions de l’image associée avec la page, s’il y en a une.\n;name:Titre de l’image.",
 	"apihelp-query+pageimages-param-thumbsize": "Largeur maximale en pixels des images des vignettes.",
-	"apihelp-query+pageimages-param-langcode": "Code pour la langue dans laquelle l’image va être affichée, si plusieurs langues sont supportées",
+	"apihelp-query+pageimages-param-langcode": "Code pour la langue dans laquelle l’image va être affichée, si plusieurs langues sont prises en charge",
 	"apihelp-query+pageimages-param-limit": "Propriétés concernant le nombre de pages à retourner.",
 	"apihelp-query+pageimages-param-license": "Limite les images de page à un certain type de licence",
 	"apihelp-query+pageimages-paramvalue-license-free": "images libres uniquement",

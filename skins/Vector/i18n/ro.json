@@ -41,5 +41,7 @@
 	"vector-searchsuggest-containing": "Căutați după pagini care conțin <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
 	"vector-anon-user-menu-pages": "Pagini pentru editorii neautentificați",
 	"vector-anon-user-menu-pages-learn": "aflați mai mult",
-	"vector-anon-user-menu-pages-label": "Aflați mai mult despre editare"
+	"vector-anon-user-menu-pages-label": "Aflați mai mult despre editare",
+	"vector-main-menu-tooltip": "Meniul principal",
+	"tooltip-vector-anon-user-menu-title": "Mai multe opțiuni"
 }

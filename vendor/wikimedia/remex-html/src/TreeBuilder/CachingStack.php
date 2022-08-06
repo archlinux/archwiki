@@ -49,6 +49,8 @@ class CachingStack extends Stack {
 	 * to. All formatting elements are included as SCOPE_DEFAULT since the AAA
 	 * involves pulling an item out of the AFE list and checking if it is in
 	 * scope.
+	 *
+	 * @var array
 	 */
 	private static $predicateMap = [
 		'a' => self::SCOPE_DEFAULT,
@@ -120,6 +122,8 @@ class CachingStack extends Stack {
 
 	/**
 	 * The stack of open elements
+	 *
+	 * @var array
 	 */
 	private $elements = [];
 
@@ -162,6 +166,8 @@ class CachingStack extends Stack {
 	/**
 	 * The number of <template> elements in the stack of open elements. This
 	 * speeds up the hot function hasTemplate().
+	 *
+	 * @var int
 	 */
 	private $templateCount;
 

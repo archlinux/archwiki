@@ -11,8 +11,8 @@
 	"vector-action-protect": "Protet-am",
 	"vector-view-create": "Mek-am",
 	"vector-view-edit": "Chenj-am",
-	"vector-view-history": "Si wetin don hapun hie",
-	"vector-view-view": "Rid-am",
+	"vector-view-history": "See wetin don hapun hie",
+	"vector-view-view": "Read-am",
 	"vector-more-actions": "Si oda tins:",
 	"vector-searchsuggest-containing": "Find pej-dem wey get <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

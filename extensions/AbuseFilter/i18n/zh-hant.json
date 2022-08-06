@@ -43,7 +43,8 @@
 			"Zanhsieh",
 			"Zhxy 519",
 			"逆襲的天邪鬼",
-			"SunAfterRain"
+			"SunAfterRain",
+			"Diskdance"
 		]
 	},
 	"abusefilter-desc": "對編輯行為自動進行條件判定",
@@ -612,6 +613,8 @@
 	"tag-abusefilter-condition-limit": "達到條件限制",
 	"tag-abusefilter-condition-limit-description": "不能被所有啟用的[[Special:AbuseFilter|防濫用過濾器]]檢查的編輯或其他日誌活動（[[mw:Extension:AbuseFilter/Conditions|幫助]]）。",
 	"notification-header-throttle-filter": "{{GENDER:$1|您}}近期編輯的$2號防濫用過濾器被限制。",
+	"notification-header-throttle-filter-actions": "{{GENDER:$1|您}}最近編輯的防濫用過濾器$2有很高的匹配率，以下的{{PLURAL:$4|操作}}被自動停用：$3。",
+	"notification-header-throttle-filter-no-actions": "{{GENDER:$1|您}}最近編輯的防濫用過濾器$2有很高的匹配率，不過沒有任何操作被自動停用。",
 	"notification-subject-throttle-filter": "{{GENDER:$1|您}}近期編輯的一個防濫用過濾器在{{SITENAME}}被限制",
 	"notification-link-text-show-filter": "顯示過濾器"
 }

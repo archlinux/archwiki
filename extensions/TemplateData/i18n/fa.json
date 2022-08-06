@@ -60,7 +60,7 @@
 	"templatedata-invalid-duplicate-value": "ویژگی «$1» («$3») تکرار «$2» است.",
 	"templatedata-invalid-empty-array": "ویژگی «$1» باید حداقل یک مقدار در آرایه‌اش داشته باشد.",
 	"templatedata-invalid-format": "انتظار می‌رود که ویژگی «$1» برابر با «inline»، «block» یا یک رشتهٔ قالب‌بندی معتبر باشد.",
-	"templatedata-invalid-length": "داده‌ها برای ذخیره‌سازی بسیار بزرگ هستند ({{formatnum:$1}} {{PLURAL:$1|بایت|بایت}}، {{formatnum:$2}} {{PLURAL:$2|حداکثر طول مجاز است}})",
+	"templatedata-invalid-length": "داده‌ها برای ذخیره‌سازی بسیار بزرگ هستند ($1 {{PLURAL:$1|بایت}}، حداکثر طول مجاز $2 {{PLURAL:$2|است}})",
 	"templatedata-invalid-missing": "ویژگی مورد نیاز «$1» پیدا نشد.",
 	"templatedata-invalid-param": "پارامتر «$1» برای ویژگی «$2» نامعتبر است.",
 	"templatedata-invalid-parse": "خطای نحوی در جی‌سن.",

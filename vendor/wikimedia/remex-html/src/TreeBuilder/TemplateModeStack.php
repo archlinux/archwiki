@@ -17,6 +17,8 @@ class TemplateModeStack {
 
 	/**
 	 * The remainder of the stack
+	 *
+	 * @var array
 	 */
 	private $nonCurrentModes = [];
 

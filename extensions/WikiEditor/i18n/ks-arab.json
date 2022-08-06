@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Iflaq"
+		]
+	},
+	"wikieditor-wikitext-tab": "وِکی مَتَن",
+	"wikieditor-toolbar-tool-bold": "مۄٹ",
+	"wikieditor-toolbar-tool-bold-example": "مۄٹ مَتَن",
+	"wikieditor-toolbar-tool-italic": "ہول",
+	"wikieditor-toolbar-tool-italic-example": "ہول مَتَن",
+	"wikieditor-toolbar-tool-ilink": "اۆنٛدروٗنی لِنک",
+	"wikieditor-toolbar-tool-ilink-example": "لِنک عُنٛوان",
+	"wikieditor-toolbar-tool-xlink": "بیٖروٗنی لِنک  ( http:// چھُ ضۆروٗری گۄڈٕ)",
+	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com لِنک ناو",
+	"wikieditor-toolbar-tool-link": "لِنک",
+	"wikieditor-toolbar-tool-link-title": "لِنک کٔرِو دَرٕج",
+	"wikieditor-toolbar-tool-link-cancel": "مَنسوٗخ",
+	"wikieditor-toolbar-tool-reference": "حَوالہٕ",
+	"wikieditor-toolbar-tool-newline": "نٕو لٲن",
+	"wikieditor-toolbar-tool-table": "ڈَبہٕ",
+	"wikieditor-toolbar-tool-table-example-old": "-\n! سَرنامہٕ 1\n! سَرنامہٕ 2\n! سَرنامہٕ 3\n|-\n| صَف 1، خانہٕ 1\n| صَف 1، خانہٕ 2\n| صَف 1، خانہٕ 3\n|-\n| صَف 2، خانہٕ 1\n| صَف 2، خانہٕ 2\n| صَف 2، خانہٕ 3",
+	"wikieditor-toolbar-tool-table-example-cell-text": "خانُک مَتَن",
+	"wikieditor-toolbar-tool-table-example-header": "سَرنامُک مَتَن",
+	"wikieditor-toolbar-tool-table-insert": "دَرٕج کٔرِو",
+	"wikieditor-toolbar-tool-table-cancel": "مَنسوٗخ",
+	"wikieditor-toolbar-section-characters": "خاص اَچھَر",
+	"wikieditor-toolbar-section-help": "مَدَتھ",
+	"wikieditor-realtimepreview-preview": "نُمٲیِش"
+}

@@ -21,27 +21,27 @@ class PlainAttributes implements Attributes {
 		}
 	}
 
-	public function offsetExists( $key ) {
+	public function offsetExists( $key ): bool {
 		return isset( $this->data[$key] );
 	}
 
-	public function &offsetGet( $key ) {
+	public function &offsetGet( $key ): string {
 		return $this->data[$key];
 	}
 
-	public function offsetSet( $key, $value ) {
+	public function offsetSet( $key, $value ): void {
 		$this->data[$key] = $value;
 		if ( $this->attrObjects !== null ) {
 			$this->attrObjects[$key] = new Attribute( $key, null, null, $key, $value );
 		}
 	}
 
-	public function offsetUnset( $key ) {
+	public function offsetUnset( $key ): void {
 		unset( $this->data[$key] );
 		unset( $this->attrObjects[$key] );
 	}
 
-	public function getIterator() {
+	public function getIterator(): \ArrayIterator {
 		return new \ArrayIterator( $this->data );
 	}
 

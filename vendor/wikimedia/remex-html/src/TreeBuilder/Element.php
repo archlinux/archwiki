@@ -68,7 +68,17 @@ class Element implements FormattingElement {
 	/**
 	 * Internal to ActiveFormattingElements.
 	 */
-	public $prevAFE, $nextAFE, $nextNoah;
+	public $prevAFE;
+
+	/**
+	 * Internal to ActiveFormattingElements.
+	 */
+	public $nextAFE;
+
+	/**
+	 * Internal to ActiveFormattingElements.
+	 */
+	public $nextNoah;
 
 	/**
 	 * The cache for getNoahKey()
@@ -90,6 +100,8 @@ class Element implements FormattingElement {
 
 	/**
 	 * The next unique ID to be used
+	 *
+	 * @var int
 	 */
 	private static $nextUid = 1;
 

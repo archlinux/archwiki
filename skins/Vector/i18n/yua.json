@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lorenzoitza"
+			"Lorenzoitza",
+			"26agcp"
 		]
 	},
+	"vector-action-delete": "Tupej",
 	"vector-view-edit": "K'eex",
 	"vector-view-history": "Ba'ax a ilmaj",
 	"vector-view-view": "Xook",

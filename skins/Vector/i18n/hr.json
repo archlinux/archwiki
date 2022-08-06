@@ -11,9 +11,9 @@
 			"Tivek"
 		]
 	},
-	"skinname-vector": "Vector",
+	"skinname-vector": "Vector (stara inačica iz 2010.)",
 	"tooltip-pt-watchlist-2": "Popis stranica čije promjene pratite",
-	"vector-skin-desc": "Osuvremenjena inačica MonoBooka s obnovljenim dizajnom i mnogim poboljšanjima u upotrebljivosti",
+	"vector-skin-desc": "Postoje dvije varijante Vectora:\n* 2011. - Moderna varijante MonoBooka s osvježenim izgledom i mnogim poboljšanjima.\n* 2022. - Vector izrađen kao dio projekta WMF [[mw:Desktop Improvements]].",
 	"prefs-vector-enable-vector-1-label": "Rabi staru inačicu izgleda Vector",
 	"prefs-vector-enable-vector-1-help": "Izgled sučelja Vector osvježavat će se tijekom nekoliko godina. Ova postavka omogućit će Vam upotrebu inačice Vectora iz prosinca 2019. Više o tehnološkome osuvremenjavanju saznajte na [[mw:Reading/Web/Desktop_Improvements|stranici  projekta na MediaWikiju]].",
 	"vector-opt-out": "Prebaci na stari izgled",
@@ -22,8 +22,10 @@
 	"vector.js": "/* Sav kôd JavaScripta na ovoj stranici bit će učitan upotrebljavačima izgleda Vector */",
 	"vector-action-toggle-sidebar": "Uključi / isključi bočnu traku",
 	"vector-languages": "Drugi jezici",
+	"vector-language-button-aria-label": "Idi na druge jezične varijante članka. Dostupan je na {{PLURAL:$1|$1 jeziku|$1 jezika}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
 	"vector-language-redirect-to-top": "Poveznice na druge jezike nalaze se uz naslov članka, pri [[#p-lang-btn|vrhu stranice]].",
+	"vector-language-variant-switcher-label": "Promijeni jezičnu varijantu",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Izbriši",
 	"vector-action-move": "Premjesti",

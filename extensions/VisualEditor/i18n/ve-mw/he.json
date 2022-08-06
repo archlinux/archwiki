@@ -196,7 +196,7 @@
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "לחזור לחיפוש? העריכות תלכנה לאיבוד ולא יהיה אפשר לשחזר אותן.",
 	"visualeditor-dialog-transclusion-close-confirmation-prompt": "לסגור את עורך התבניות? העריכות ילכו לאיבוד ולא יהיה אפשר לשחזר אותם.",
 	"visualeditor-dialog-transclusion-collapse-options": "הסתרת אפשרויות",
-	"visualeditor-dialog-transclusion-confirmation-discard": "ביטול העריכות",
+	"visualeditor-dialog-transclusion-confirmation-discard": "זריקת העריכות",
 	"visualeditor-dialog-transclusion-confirmation-reject": "להמשיך לערוך",
 	"visualeditor-dialog-transclusion-content": "תוכן",
 	"visualeditor-dialog-transclusion-contextitem-description": "נוצרה מתוך: $1",

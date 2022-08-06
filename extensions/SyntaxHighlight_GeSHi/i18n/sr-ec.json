@@ -18,7 +18,7 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(ниједан)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Бројеви редова",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Број почетног реда",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Рачунарски кôд",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Рачунарски код",
 	"syntaxhighlight-error-pygments-invocation-failure": "Нисам успео да позовем Pygments",
 	"syntaxhighlight-error-unknown-language": "Непознат језик „$1“",
 	"syntaxhighlight-error-exceeds-size-limit": "Тренутна величина кода  ($1 {{PLURAL:$1|бајт|бајта|бајтова}}) прекорачава горњу границу од $2 {{PLURAL:$1|бајт|бајта|бајтова}}"

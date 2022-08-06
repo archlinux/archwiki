@@ -25,7 +25,7 @@ class SerializerNode {
 
 	/**
 	 * @var bool The void flag as in TreeHandler::insertElement
-	 * @see \RemexHtml\TreeBuilder\TreeHandler::insertElement
+	 * @see \Wikimedia\RemexHtml\TreeBuilder\TreeHandler::insertElement
 	 */
 	public $void;
 
@@ -34,6 +34,8 @@ class SerializerNode {
 
 	/**
 	 * Arbitrary user data can be placed here.
+	 *
+	 * @var mixed
 	 */
 	public $snData;
 

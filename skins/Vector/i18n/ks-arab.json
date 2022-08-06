@@ -15,5 +15,6 @@
 	"vector-view-edit": "اؠڈِٹ",
 	"vector-view-history": "تَوأریٖخ وُچھِو",
 	"vector-view-view": "پَرُن",
-	"vector-more-actions": "بێیہِ"
+	"vector-more-actions": "بێیہِ",
+	"vector-searchsuggest-containing": "صَفَن کٔرِو تَلاش یِمَن مَنٛز <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> چھُ"
 }

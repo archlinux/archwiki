@@ -227,7 +227,7 @@
 	"abusefilter-edit-throttle-groups-help-text": "la documentació a mediawiki.org",
 	"abusefilter-throttle-ip": "Adreça IP",
 	"abusefilter-throttle-user": "compte d’usuari",
-	"abusefilter-throttle-range": "interval /16",
+	"abusefilter-throttle-range": "interval IP",
 	"abusefilter-throttle-creationdate": "data de creació del compte",
 	"abusefilter-throttle-editcount": "recompte d’edicions",
 	"abusefilter-throttle-site": "tot el lloc web",

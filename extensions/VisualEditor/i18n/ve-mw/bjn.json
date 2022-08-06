@@ -10,5 +10,6 @@
 	"visualeditor-ca-createsource": "Ulah (naskah wiki)",
 	"visualeditor-ca-editsource": "Babak asal mulanya",
 	"visualeditor-ca-editsource-section": "babak asal mulanya",
-	"visualeditor-descriptionpagelink": "Project:VisualEditor"
+	"visualeditor-descriptionpagelink": "Project:VisualEditor",
+	"visualeditor-dialog-media-info-artist": "Diunggah ulih $1"
 }

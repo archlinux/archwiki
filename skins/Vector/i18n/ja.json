@@ -20,7 +20,8 @@
 			"Yusuke1109",
 			"しぃ",
 			"ひまり",
-			"青子守歌"
+			"青子守歌",
+			"春春眠眠"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -35,6 +36,7 @@
 	"vector-action-toggle-sidebar": "サイドバーの切り替え",
 	"vector-languages": "言語",
 	"vector-language-button-label": "{{PLURAL:$1|$1の言語版}}",
+	"vector-language-redirect-to-top": "この{{SITENAME}}では言語間リンクがページの先頭にある記事タイトルの向かい側に設置されています。[[#p-lang-btn|ページの先頭をご覧ください]]。",
 	"vector-action-addsection": "話題追加",
 	"vector-action-delete": "削除",
 	"vector-action-move": "移動",

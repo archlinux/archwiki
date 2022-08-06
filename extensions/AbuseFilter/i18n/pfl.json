@@ -4,7 +4,8 @@
 			"Als-Holder",
 			"Manuae",
 			"Matma Rex",
-			"Xqt"
+			"Xqt",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-desc": "Bnudzd selbschddendisch Medoode uff Ännarunge",
@@ -154,7 +155,7 @@
 	"abusefilter-edit-denied": "Du konschda Nejares iwade Siewb ned õgugge, s'isch vaschdeggld.",
 	"abusefilter-edit-main": "Siewb Kenngreeß",
 	"abusefilter-edit-done-subtitle": "Siewb g'änad",
-	"abusefilter-edit-done": "Du hoschd die Ännarunge õm Siewb $1 gschbaischad.",
+	"abusefilter-edit-done": "Du hoschd die [[Special:AbuseFilter/history/$1/diff/prev/$2|Ännarunge]] õm [[Special:AbuseFilter/$1|Siewb $3]] gschbaischad.",
 	"abusefilter-edit-badsyntax": "Doi Siewb hoddn Sindaxfehla.\nDe Parser hodd ausgewwe: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Du konschd õn dem Siewb ned schaffe, waila vabodene Maßnõhme hodd.\nFrochn Middawaida, wu so Maßnõhme dzufiesche konn, des fa disch zu mache.",
 	"abusefilter-edit-viewhistory": "Gschischd vum Siewb õgugge",

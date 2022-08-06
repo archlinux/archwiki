@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mdupont"
+			"Mdupont",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-import-button": "filtër Import",
@@ -19,7 +20,7 @@
 	"abusefilter-edit-denied": "Ju nuk mund të shihni detajet e këtij filtri, sepse ajo është e fshehur prej pamjes publike.",
 	"abusefilter-edit-main": "parametrave Filter",
 	"abusefilter-edit-done-subtitle": "Filter redaktuar",
-	"abusefilter-edit-done": "Ju keni ruajtur me sukses ndryshimet tuaja për të filtruar $1.",
+	"abusefilter-edit-done": "Ju keni ruajtur me sukses ndryshimet tuaja për të [[Special:AbuseFilter/$1|filtruar $3]].",
 	"abusefilter-edit-badsyntax": "Nuk është një gabim i sintaksës në filtër të caktuar. Prodhimit nga parser ishte: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Ju nuk mund të modifikoni këtë filtër, sepse përmban një ose më shumë veprime të kufizuara. Ju lutem, kërkoni një përdorues me leje për të shtuar veprime të kufizuara për të bërë ndryshimin për ju.",
 	"abusefilter-edit-viewhistory": "Shiko historinë e këtij filtri i",

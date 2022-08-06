@@ -34,11 +34,6 @@ class HasherList implements JsonSerializable
         if (false === $testHash) {
             throw new RuntimeException("The algorithm `$algo` is invalid.");
         }
-
-        $hashSize = strlen($testHash);
-        if ($maxResult > pow(2, 32) && $hashSize === 4) {
-            throw new RangeException("$algo is a 32 bit hash but your maxResult is greater than 32 bits");
-        }
     }
 
     /**
@@ -94,6 +89,7 @@ class HasherList implements JsonSerializable
     /**
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [

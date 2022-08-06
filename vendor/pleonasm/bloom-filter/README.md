@@ -1,8 +1,5 @@
 # A Bloom Filter for PHP #
 
-[![Build Status](https://travis-ci.org/pleonasm/bloom-filter.png?branch=master)](https://travis-ci.org/pleonasm/bloom-filter)
-[![Coverage Status](https://coveralls.io/repos/pleonasm/bloom-filter/badge.png)](https://coveralls.io/r/pleonasm/bloom-filter)
-
 This is a well tested implementation of a [Bloom Filter](http://en.wikipedia.org/wiki/Bloom_filter)
 for PHP. It has the following features:
 
@@ -82,9 +79,21 @@ Also note that `json_encode()` will take the binary bit array and base64
 encode it. So if you have a large array, it will get about 33% bigger on
 serialization.
 
+### Other Notes ###
+
+Under the hood, the hashing mechanism used is actually an HMAC of whatever
+algorithm you pick. In general, PHP's hash extension is not happy if you pick
+a non-cryptographically secure algo to calculate an HMAC so just don't do it
+with this library and everything will work just fine.
+
+This may not come up if you're using PHP 7.1 specifically, but generally the
+hash you use must output at least 64 bits. Things like adler32 or crc32 not
+okay to use even if they don't throw an error in PHP 7.1.
+
 ## Requirements ##
 
-This project requires PHP 5.4 or newer.
+This project requires PHP 7.1 or newer. That said, version 1.0.2 of
+bloom-filter is available for PHP 5.4 to 7.0 and will work just fine.
 
 ## License ##
 

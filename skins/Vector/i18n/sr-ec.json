@@ -42,7 +42,7 @@
 	"vector-jumptocontent": "Пређи на садржај",
 	"vector-more-actions": "Више",
 	"vector-search-loader": "Учитавам предлоге претраге",
-	"vector-searchsuggest-containing": "Претрага страница које садрже <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Претражи странице које садрже <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
 	"vector-anon-user-menu-pages": "Странице за одјављене уреднике",
 	"vector-anon-user-menu-pages-learn": "детаљније",
 	"vector-anon-user-menu-pages-label": "Детаљније о уређивању",

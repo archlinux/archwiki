@@ -414,8 +414,11 @@ class DOMBuilder implements TreeHandler {
 		$node = $element->userData;
 		/** @var \DOMElement $newParentNode */
 		$newParentNode = $newParent->userData;
+		'@phan-var \DOMElement $newParentNode';
 		while ( $node->firstChild !== $newParentNode ) {
-			$newParentNode->appendChild( $node->firstChild );
+			$firstChild = $node->firstChild;
+			'@phan-var \DOMNode $firstChild';
+			$newParentNode->appendChild( $firstChild );
 		}
 	}
 }

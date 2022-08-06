@@ -5,7 +5,8 @@
 			"Joachim Mos",
 			"Matma Rex",
 			"Servien",
-			"Slomox"
+			"Slomox",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-desc": "Föhrt automaatsch heuristische Analysen op Ännern ut",
@@ -133,7 +134,7 @@
 	"abusefilter-edit-denied": "Du kannst de Details för dissen Filter nich ankieken, de sünd versteken.",
 	"abusefilter-edit-main": "Filterparameters",
 	"abusefilter-edit-done-subtitle": "Filter ännert",
-	"abusefilter-edit-done": "Dien Ännern an’n Filter $1 sünd nu spiekert.",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Dien Ännern]] an’n [[Special:AbuseFilter/$1|Filter $3]] sünd nu spiekert.",
 	"abusefilter-edit-badsyntax": "De vun di angeven Filter hett en Syntaxfehler.\nDe Parserutgaav weer: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Du kannst dissen Filter nich ännern, dor sünd een oder mehr verbadene Akschonen in.\nFraag en Bruker, de verbadene Akschonen tofögen dröff, dat he dat för di deit.",
 	"abusefilter-edit-viewhistory": "Versionsgeschicht för’n Filter ankieken",

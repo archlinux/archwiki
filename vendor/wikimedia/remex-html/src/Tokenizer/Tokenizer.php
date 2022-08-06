@@ -75,7 +75,11 @@ class Tokenizer {
 	protected const REPLACEMENT_CHAR = "\xef\xbf\xbd";
 	protected const BYTE_ORDER_MARK = "\xef\xbb\xbf";
 
-	// A list of "common well-behaved entities", used to optimize fast paths
+	/**
+	 * A list of "common well-behaved entities", used to optimize fast paths
+	 *
+	 * @var array<string,string>
+	 */
 	private static $commonEntities = [
 		'&amp;' => '&',
 		'&apos;' => "'",
@@ -1028,7 +1032,7 @@ class Tokenizer {
 			} else {
 				$this->fatal( 'unable to identify char ref submatch' );
 				// @phan-suppress-next-line PhanPluginUnreachableCode False positive that var is not defined
-				$codepoint = 0; // re-assure phan $codepoint will be defined
+				$codepoint = 0;
 			}
 
 			// Interpret $codepoint
@@ -1299,7 +1303,7 @@ class Tokenizer {
 		if ( $count === false ) {
 			$this->throwPregError();
 			// @phan-suppress-next-line PhanPluginUnreachableCode False positive that var is not defined
-			$attribs = new PlainAttributes(); // reassure phan
+			$attribs = new PlainAttributes();
 		} elseif ( $count ) {
 			$this->pos = $m[$count - 1][0][1] + strlen( $m[$count - 1][0][0] );
 			$attribs = new LazyAttributes( $m, function ( $m ) {
@@ -1382,7 +1386,8 @@ class Tokenizer {
 				}
 			} else {
 				$value = '';
-				$pos = -1; // reassure phan
+				// reassure phan
+				$pos = -1;
 			}
 			if ( $additionalAllowedChar && !$this->ignoreErrors ) {
 				// After attribute value (quoted) state
@@ -1461,7 +1466,7 @@ class Tokenizer {
 		} else {
 			$this->fatal( 'failed to find an already-matched ">"' );
 			// @phan-suppress-next-line PhanPluginUnreachableCode False positive that var is not defined
-			$selfClose = false; // reassure phan
+			$selfClose = false;
 		}
 		$this->pos = $pos;
 		if ( $isEndTag ) {
@@ -1592,7 +1597,7 @@ REGEX;
 
 	/**
 	 * Throw an exception for a specified reason. This is used for API errors
-	 * and assertion-like sanity checks.
+	 * and assertion-like checks.
 	 * @param string $text The error message
 	 * @throws TokenizerError
 	 * @return never

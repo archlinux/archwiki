@@ -81,7 +81,7 @@
 	"templatedata-modal-format-null": "დაუზუსტებელი",
 	"templatedata-modal-format-placeholder": "თარგის პარამეტრის ფორმატი",
 	"templatedata-modal-json-error-replace": "ჩანაცვლება",
-	"templatedata-modal-notice-import-numparams": "$1 ახალი პარამეტრის იმპორტირება მოხდა: $2",
+	"templatedata-modal-notice-import-numparams": "$1 ახალი პარამეტრის გადმოტანა მოხდა: $2",
 	"templatedata-modal-placeholder-add-new-map-input": "ახალი მაპინგის დამატება...",
 	"templatedata-modal-placeholder-paramkey": "პარამეტრის სახელი",
 	"templatedata-modal-placeholder-mapinfo": "ამ თარგს არ აქვს მაპინგის ობიექტები",

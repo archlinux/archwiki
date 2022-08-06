@@ -226,6 +226,7 @@
 	"abusefilter-edit-status-label": "Statystyki:",
 	"abusefilter-edit-status": "{{PLURAL:$1|Dla ostatniej $1 akcji|W ostatnich $1 akcjach}} ten filtr pasował do $2 ($3%).\nŚredni czas wykonania wyniósł $4 ms. Wykorzystano $5 {{PLURAL:$5|warunek|warunki|warunków}} z limitu.",
 	"abusefilter-edit-throttled-warning": "'''Uwaga:''' Ten filtr został automatyczne oznaczony jako groźny. Ze względu bezpieczeństwa, {{PLURAL:$2|ta akcja nie zostanie wykonana|te akcje nie zostaną wykonane}}: $1. Sprawdź, czy wysoka częstość dopasowań jest oczekiwana. Jeśli tak, zapisz filtr ponownie, by usunąć to ograniczenie.",
+	"abusefilter-edit-throttled-warning-no-actions": "'''Uwaga:''' Ten filtr został automatycznie oznaczony jako szkodliwy. Żadne akcje nie zostały zablokowane, ale upewnij się, że wysoka częstość dopasowań jest oczekiwana. Jeśli tak, zignoruj to ostrzeżenie.",
 	"abusefilter-edit-new": "Nowy filtr",
 	"abusefilter-edit-save": "Zapisz filtr",
 	"abusefilter-edit-id": "ID filtru",
@@ -603,6 +604,8 @@
 	"tag-abusefilter-condition-limit": "osiągnięto limit warunku",
 	"tag-abusefilter-condition-limit-description": "Edycje lub inne operacje które nie mogły zostać sprzawdzone przez wszystkie aktywne [[Special:AbuseFilter|filtry nadużyć]] ([[mw:Extension:AbuseFilter/Conditions|pomoc]]).",
 	"notification-header-throttle-filter": "Filtr nadużyć $2, który ostatnio {{GENDER:$1|edytowałeś|edytowałaś|edytowałeś(-aś)}} został ograniczony.",
+	"notification-header-throttle-filter-actions": "Filtr nadużyć $2, który ostatnio {{GENDER:$1|edytowałeś|edytowałaś|edytowałeś(-aś)}} był często aktywowany, dlatego {{PLURAL:$4|następująca akcja została wyłączona|następujące akcje zostały wyłączone}} automatycznie: $3.",
+	"notification-header-throttle-filter-no-actions": "Filtr nadużyć $2, który ostatnio {{GENDER:$1|edytowałeś|edytowałaś|edytowałeś(-aś)}} był często aktywowany, ale żadna akcja nie została automatycznie wyłączona.",
 	"notification-subject-throttle-filter": "Filtr nadużyć, który ostatnio {{GENDER:$1|edytowałeś|edytowałaś|edytowałeś(-aś)}} został ograniczony na {{GRAMMAR:MS.lp|{{SITENAME}}}}",
 	"notification-link-text-show-filter": "Pokaż filtr"
 }

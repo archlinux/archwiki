@@ -9,7 +9,8 @@
 			"Reza1615",
 			"Wayiran",
 			"Beginneruser",
-			"LordProfo"
+			"LordProfo",
+			"Jeeputer"
 		]
 	},
 	"renameuser": "تغییر نام کاربر",
@@ -34,6 +35,7 @@
 	"renameuser-page-exists": "صفحهٔ $1 از قبل وجود داشته و به طور خودکار قابل بازنویسی نیست.",
 	"renameuser-page-moved": "صفحهٔ $1 به $2 انتقال داده شد.",
 	"renameuser-page-unmoved": "امکان انتقال صفحهٔ $1 به $2 وجود ندارد.",
+	"renameuser-warning-currentblock": "دسترسی این کاربر [$1 بسته شده‌است].",
 	"log-name-renameuser": "سیاهه تغییر نام کاربر",
 	"log-description-renameuser": "این سیاههٔ تغییر نام کاربران است.",
 	"logentry-renameuser-renameuser": "$1 نام $4 ({{PLURAL:$6|$6 ویرایش}}) را به {{GENDER:$7|$5}} {{GENDER:$2|تغییر داد}}",

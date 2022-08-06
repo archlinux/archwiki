@@ -12,6 +12,7 @@
 	"prefs-vector-enable-vector-1-label": "Използване на стария Vector",
 	"vector-opt-out": "Превключване към стария изглед",
 	"vector-action-toggle-sidebar": "Превключване на страничната лента",
+	"vector-language-button-label": "{{PLURAL:$1|$1 език|$1 езика}}",
 	"vector-action-addsection": "Добавяне на тема",
 	"vector-action-delete": "Изтриване",
 	"vector-action-move": "Преместване",
@@ -26,5 +27,6 @@
 	"vector-jumptonavigation": "Направо към навигацията",
 	"vector-jumptosearch": "Направо към търсенето",
 	"vector-jumptocontent": "Направо към съдържанието",
-	"vector-more-actions": "Още"
+	"vector-more-actions": "Още",
+	"vector-searchsuggest-containing": "Търсене на страници съдържащи <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

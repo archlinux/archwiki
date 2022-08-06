@@ -245,7 +245,7 @@
 	"abusefilter-edit-lastmod-text": "$3, $4 Uhr von $2",
 	"abusefilter-edit-hitcount": "Treffer des Filters:",
 	"abusefilter-edit-consequences": "Bei Treffer auszuführende Aktionen",
-	"abusefilter-edit-action-warn": "Benutzer erhält einen Warnhinweis und kann die Aktionen mit einem erneuten Klick auf „{{int:visualeditor-savedialog-title-save}}“ abspeichern.",
+	"abusefilter-edit-action-warn": "Führe die Aktion erst aus, nachdem der Benutzer einen Warnhinweis erhalten hat",
 	"abusefilter-edit-action-disallow": "Die vom Benutzer vorgesehene Aktion nicht ausführen.",
 	"abusefilter-edit-action-blockautopromote": "Das Benutzerrecht „Automatisch bestätigter Benutzer“ entziehen.",
 	"abusefilter-edit-action-degroup": "Benutzer aus allen Gruppen mit Sonderrechten entfernen",

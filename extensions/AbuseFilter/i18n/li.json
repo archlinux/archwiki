@@ -4,7 +4,8 @@
 			"Fitoschido",
 			"Matma Rex",
 			"Ooswesthoesbes",
-			"Pahles"
+			"Pahles",
+			"1233qwer1234qwer4"
 		]
 	},
 	"abusefilter-desc": "Veurtj automatisch heuristische analyse oet op bewerkinge",
@@ -157,7 +158,7 @@
 	"abusefilter-edit-denied": "De moogs de details dezer filter neet bekieke, omdet die neet zichber vrielik zeen.",
 	"abusefilter-edit-main": "Filterparamaeter",
 	"abusefilter-edit-done-subtitle": "Filter bewirk",
-	"abusefilter-edit-done": "De wieziginge aan de filter $1 zeen opgeslage.",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|De wieziginge]] aan de [[Special:AbuseFilter/$1|filter $3]] zeen opgeslage.",
 	"abusefilter-edit-badsyntax": "D'r zit 'n syntaxisfout in de opgegaeve filter.\nDe oetveur van de parser waas: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Doe kins deze filter neet bewèrken ómdet dezen ein of mier beperkde hanjelinge bevat.\nVraog 'ne gebroeker mit toestömming óm beperkde hanjelingen toe te vogen óm de wieziging veur dich te make.",
 	"abusefilter-edit-viewhistory": "Bekiek gesjiedenès vanne filter",

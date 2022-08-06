@@ -62,7 +62,7 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Unused at the moment",
 	"wikieditor-toolbar-tool-link-insert": "{{Identical|Insert link}}",
 	"wikieditor-toolbar-tool-link-cancel": "{{Identical|Cancel}}",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "Text shown when the title the user entered exists.\n\nThe wikitext <code><nowiki>{{SITENAME}}</nowiki></code> must not be translated in messages, it is a builtin Mediawiki parser function (some wikis may define some translated aliases only for use on their local content pages). On this wiki it generates “{{SITENAME}}”, but its value will effectively change on every localized version of Wikipedia, or on every other wiki.",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Text shown when the title the user entered exists.\n\nThe wikitext <code><nowiki>{{SITENAME}}</nowiki></code> must not be translated in messages, it is a builtin MediaWiki parser function (some wikis may define some translated aliases only for use on their local content pages). On this wiki it generates “{{SITENAME}}”, but its value will effectively change on every localized version of Wikipedia, or on every other wiki.",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Text shown when the title the user entered does not exist",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Text shown when the title the user entered is invalid.\n{{Identical|Invalid title}}",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Text shown when the link target the user entered points to an external web site\n{{Identical|External link}}",

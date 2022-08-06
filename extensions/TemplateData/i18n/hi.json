@@ -4,7 +4,8 @@
 			"Ajeetsinghawadhi",
 			"Phoenix303",
 			"Sfic",
-			"Siddhartha Ghai"
+			"Siddhartha Ghai",
+			"Saurmandal"
 		]
 	},
 	"templatedata-desc": "साँचा प्राचलों के लिए डाटा स्टोरेज सुविधा प्रदान करता है (JSON के प्रयोग द्वारा)",
@@ -61,7 +62,7 @@
 	"templatedata-modal-json-error-replace": "बदलें",
 	"templatedata-modal-notice-import-numparams": "$1 {{PLURAL:$1|नया प्राचल आयात किया गया|नये प्राचल आयत किये गये}}।",
 	"templatedata-modal-table-param-actions": "क्रियाएँ",
-	"templatedata-modal-table-param-aliases": "अन्य नाम (कोमा द्वारा अलग किये हुए)",
+	"templatedata-modal-table-param-aliases": "उपनाम",
 	"templatedata-modal-table-param-default": "मूल ($1)",
 	"templatedata-modal-table-param-description": "विवरण ($1)",
 	"templatedata-modal-table-param-example": "उदाहरण ($1)",
