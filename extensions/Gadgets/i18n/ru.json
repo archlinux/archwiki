@@ -44,6 +44,7 @@
 	"gadgets-required-actions": "Работает на {{PLURAL:$2|странице действия <code>$1</code>|страницах следующих действий: <code>$1</code>}}.",
 	"gadgets-default": "Включён для всех по умолчанию.",
 	"gadgets-legacy": "Гаджет не загружен. Пожалуйста, исправьте код этого гаджета, чтобы он вызывался с помощью ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Узнать подробности])",
+	"gadgets-packaged": "Этот гаджет [https://www.mediawiki.org/wiki/ResourceLoader/Package_files упакован], точка входа — $1",
 	"gadgets-export": "Экспортировать",
 	"gadgets-export-title": "Экспорт гаджета",
 	"gadgets-not-found": "Гаджет «$1» не найден.",

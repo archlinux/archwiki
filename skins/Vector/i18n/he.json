@@ -3,7 +3,8 @@
 		"authors": [
 			"Amire80",
 			"Guycn2",
-			"Rotemliss"
+			"Rotemliss",
+			"דגש"
 		]
 	},
 	"skinname-vector": "וקטור ישן (2010)",
@@ -24,7 +25,7 @@
 	"vector-action-delete": "מחיקה",
 	"vector-action-move": "העברה",
 	"vector-action-protect": "הגנה",
-	"vector-action-undelete": "שחזור ממחיקה",
+	"vector-action-undelete": "ביטול מחיקה",
 	"vector-action-unprotect": "שינוי הגנה",
 	"vector-view-create": "יצירה",
 	"vector-view-edit": "עריכה",

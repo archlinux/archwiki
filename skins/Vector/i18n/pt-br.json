@@ -14,11 +14,12 @@
 			"Luan",
 			"Opraco",
 			555,
-			"YuriNikolai"
+			"YuriNikolai",
+			"Duke of Wikipädia"
 		]
 	},
 	"skinname-vector": "Vector",
-	"vector-skin-desc": "Versão moderna do MonoBook com um visual limpo e várias melhorias de usabilidade",
+	"vector-skin-desc": "Fornece 2 temas Vector:\n* 2011 - Versão moderna do MonoBook com um aspeto fresco e várias melhorias de usabilidade.\n* 2022 - O Vector criado como parte do projeto [[mw:Desktop Improvements|Melhoramentos do ambiente de trabalho]] da WMF.",
 	"prefs-vector-enable-vector-1-label": "Usar Vector legado",
 	"prefs-vector-enable-vector-1-help": "Nos próximos anos, atualizaremos gradualmente o tema Vector. O Vector legado permitirá que você visualize a versão antiga do Vector (a partir de dezembro de 2019). Para saber mais sobre as atualizações, acesse nossa [[mw:Reading/Web/Desktop_Improvements|página do projeto]].",
 	"vector-opt-out": "Mudar para aparência antiga",
@@ -47,7 +48,7 @@
 	"vector-more-actions": "Mais",
 	"vector-search-loader": "Carregando sugestões de pesquisa",
 	"vector-searchsuggest-containing": "Procurar pelas páginas contendo <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
-	"vector-intro-page": "Wikipédia:Boas-vindas",
+	"vector-intro-page": "Help:Introduction",
 	"vector-anon-user-menu-pages": "Páginas para editores conectados",
 	"vector-anon-user-menu-pages-learn": "saiba mais",
 	"vector-anon-user-menu-pages-label": "Saiba mais sobre edição",

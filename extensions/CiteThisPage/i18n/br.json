@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fulup"
+			"Fulup",
+			"Huñvreüs"
 		]
 	},
 	"citethispage": "Menegiñ",
-	"citethispage-desc": "Ouzhpennañ a ra ur bajenn dibar [[Special:Cite|arroud]] hag ul liamm er voest ostilhoù",
+	"citethispage-desc": "Ouzhpennañ a ra ur bajenn dibar [[Special:CiteThisPage|arroud]] hag ul liamm war-zu ar voest ostilhoù",
 	"citethispage-link": "Menegiñ ar pennad-mañ",
 	"tooltip-citethispage": "Titouroù war an doare da venegiñ ar bajenn-mañ",
 	"citethispage-change-submit": "Menegiñ",

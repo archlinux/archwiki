@@ -2,9 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Jon Harald Søby (WMNO)",
-			"Yupik"
+			"Yupik",
+			"Trondtr"
 		]
 	},
+	"visualeditor-ca-editsource": "Rievdat gáldu",
+	"visualeditor-ca-editsource-section": "Rievdat gáldu",
 	"visualeditor-categories-tool": "Kategoriijat",
 	"visualeditor-dialog-media-choose-image": "Geavat dán gova",
 	"visualeditor-dialog-media-content-filename": "Fiilanamma",

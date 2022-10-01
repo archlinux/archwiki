@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Atabek"
+			"Atabek",
+			"Inabat Allanova"
 		]
 	},
-	"fancycaptcha-accountcreate": "Jan'a akkauntlardın' avtomatik jaratılıwının' aldın alıw ushın, to'mendegi\nko'rsetilgen so'zlerdi kiritin'([[{{ns:special}}:Captcha/help|ko'birek mag'lıwmat]]):"
+	"fancycaptcha-captcha": "Qáwipsizlik tekseriwi",
+	"fancycaptcha-accountcreate": "Wiki-di avtomatlastırılǵan esap jaratıwdan qorǵaw ushın sizden tómendegi maydanǵa ([[Special:Captcha/help|Tolıq  maǵlıwmat]]) sózlerin kirgiziwińizdi so'raymiz:",
+	"fancycaptcha-imgcaptcha-ph": "Súwrette kórgen tekstti kiritiń",
+	"fancycaptcha-reload-text": "Jańalaw"
 }

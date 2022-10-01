@@ -19,5 +19,6 @@
 	"vector-view-history": "Vêre l’historico",
 	"vector-view-view": "Liére",
 	"vector-view-viewsource": "Vêre lo tèxto sôrsa",
-	"vector-more-actions": "Més"
+	"vector-more-actions": "Més",
+	"vector-searchsuggest-containing": "Rechèrchiér les pâges que contegnont <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

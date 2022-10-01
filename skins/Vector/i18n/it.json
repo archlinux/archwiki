@@ -12,7 +12,10 @@
 			"Pietrodn",
 			"Sakretsu",
 			"Scompo",
-			"ValterVB"
+			"ValterVB",
+			"Amire80",
+			"GpieroMW",
+			"Patafisik WMF"
 		]
 	},
 	"tooltip-pt-watchlist-2": "La lista delle pagine che stai tenendo sotto osservazione",
@@ -26,7 +29,7 @@
 	"vector-languages": "Lingue",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingua|$1 lingue}}",
 	"vector-language-redirect-to-top": "Su questa {{SITENAME}} gli interlink sono in cima alla pagina a destra del titolo. [[#p-lang-btn|Vai in cima]].",
-	"vector-action-addsection": "Aggiungi discussione",
+	"vector-action-addsection": "Aggiungi argomento",
 	"vector-action-delete": "Cancella",
 	"vector-action-move": "Sposta",
 	"vector-action-protect": "Proteggi",
@@ -39,7 +42,7 @@
 	"vector-view-viewsource": "Visualizza wikitesto",
 	"vector-more-actions": "Altro",
 	"vector-searchsuggest-containing": "Cerca le pagine che contengono <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
-	"vector-intro-page": "Aiuto:Introduzione",
+	"vector-intro-page": "Help:Introduzione",
 	"vector-anon-user-menu-pages": "Pagine per utenti anonimi",
 	"vector-anon-user-menu-pages-learn": "ulteriori informazioni",
 	"vector-main-menu-tooltip": "Menu principale"

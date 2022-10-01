@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "ꠇꠤꠔꠣꠛ/ꠛꠁ",
+	"visualeditor-cite-tool-name-journal": "ꠎꠣꠞꠘꠣꠟ",
+	"visualeditor-cite-tool-name-news": "ꠈꠛꠞ",
+	"visualeditor-cite-tool-name-web": "ꠎꠣꠟꠤꠇꠥꠑꠣ",
+	"cite-ve-citationneeded-button": "ꠟꠈ ꠄꠉꠥ ꠎꠥꠉꠇꠞꠂꠘ",
+	"cite-ve-citationneeded-reason": "ꠇꠣꠞꠘ ꠖꠤꠍꠂꠘ:",
+	"cite-ve-citationneeded-title": "ꠟꠈ ꠅꠞ ꠖꠞꠇꠣꠞ ꠀꠍꠦ",
+	"cite-ve-dialog-reference-options-group-placeholder": "ꠡꠣꠗꠣꠞꠘ ꠟꠈꠟꠣꠕꠥꠞꠣ",
+	"cite-ve-dialog-reference-options-name-label": "ꠅꠃꠘꠣꠝꠦ ꠢꠤꠞꠛꠣꠞ ꠛꠦꠛꠀꠞ ꠇꠞꠂꠘ",
+	"cite-ve-dialog-reference-options-section": "ꠃꠙꠣꠄꠀꠁꠘꠔ / ꠙꠕꠅꠇꠟ",
+	"cite-ve-dialog-reference-title": "ꠟꠈ",
+	"cite-ve-dialog-reference-useexisting-tool": "ꠢꠤꠞꠛꠣꠞ ꠛꠦꠛꠀꠞ",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "ꠡꠣꠗꠣꠞꠘ ꠟꠈ ꠅꠞ ꠟꠤꠡ꠆ꠐꠣꠁꠘ",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "ꠟꠈ ꠅꠉꠥꠁꠘ",
+	"cite-ve-dialogbutton-reference-full-label": "ꠡꠣꠗꠣꠞꠘ",
+	"cite-ve-dialogbutton-reference-title": "ꠟꠈ",
+	"cite-ve-dialogbutton-reference-tooltip": "ꠡꠣꠗꠣꠞꠘ",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "ꠟꠈꠟꠣꠕꠥꠞꠣꠞ ꠟꠤꠡ꠆ꠐ",
+	"cite-ve-toolbar-group-label": "ꠟꠈ ꠖꠦꠅꠀ",
+	"cite-ve-othergroup-item": "$1 ꠟꠈ",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "ꠟꠈꠟꠣꠕꠥꠞꠣ"
+}

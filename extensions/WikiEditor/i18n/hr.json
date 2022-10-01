@@ -45,7 +45,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Naslov koji ste naveli nije valjan",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Vanjska poveznica",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Provjera postoji li stranica...",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Razdvojbena stranica",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Ova stranica nije stranica sa sadržajem, već popis tema sa sličnim nazivima",
 	"wikieditor-toolbar-tool-link-int-invalid": "Naslov koji ste naveli nije valjan.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL koji ste predali čini se namijenjen kao poveznica na drugu wiki stranicu.\nŽelite li napraviti unutrašnju poveznicu?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Unutarnja poveznica",
@@ -200,5 +200,7 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Suradničko ime</a> (<a href='#' title='$2:Username'>razgovor</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Uvlaka",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normalni tekst<br />:Uvučeni tekst <br />::Uvučeni tekst",
-	"wikieditor-toolbar-help-content-indent-result": "Normalni tekst<dl><dd>Uvučeni tekst<dl><dd>Uvučeni tekst</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normalni tekst<dl><dd>Uvučeni tekst<dl><dd>Uvučeni tekst</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "Uređivanje načinjeno pomoću [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]]a (uređivač wikiteksta iz 2010.)",
+	"wikieditor-realtimepreview-preview": "Pretpregled"
 }

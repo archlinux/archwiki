@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Abbas dhothar",
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Bgo eiu"
 		]
 	},
 	"collabpad-doctitle": "کولیب پیڈ: $1",
@@ -14,9 +15,9 @@
 	"visualeditor-autosave-modified-prompt-reject": "نویں اڈیٹ شروع کرو",
 	"visualeditor-backbutton-tooltip": "پچھے جاؤ",
 	"visualeditor-ca-createlocaldescriptionsource": "آپنی لکھت رلاؤ",
-	"visualeditor-ca-createsource": "مڈھ بناؤ",
-	"visualeditor-ca-editsource": "سورس وچ لکھو",
-	"visualeditor-ca-editsource-section": "سورس وچ لکھو",
+	"visualeditor-ca-createsource": "سروت بݨاؤ",
+	"visualeditor-ca-editsource": "سروت سودھو",
+	"visualeditor-ca-editsource-section": "سروت سودھو",
 	"visualeditor-ca-ve-create": "ویژوئل ایڈیٹر",
 	"visualeditor-ca-ve-edit": "ویژوئل ایڈیٹر",
 	"visualeditor-ca-ve-edit-section": "ویژوئل ایڈیٹر",

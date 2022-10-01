@@ -20,7 +20,9 @@
 	"apihelp-abusefilterevalexpression-description": "Ocjenjuje izraz u Filtru za zloupotrebe.",
 	"apihelp-abusefilterevalexpression-summary": "Ocjenjuje izraz u Filtru za zloupotrebe.",
 	"apihelp-abusefilterevalexpression-param-expression": "Izraz što se treba procjeniti.",
+	"apihelp-abusefilterevalexpression-param-prettyprint": "Treba li rezultat biti lijepo ispisan.",
 	"apihelp-abusefilterevalexpression-example-1": "Ocijeni jednostavan izraz",
+	"apihelp-abusefilterevalexpression-example-2": "Procijenite jednostavan izraz, oblikujući rezultat",
 	"apihelp-abusefilterunblockautopromote-description": "Uklanja blok na autounapređivanje određenog korisnika, dobiven zbog posljedice filtra za zlouporabu.",
 	"apihelp-abusefilterunblockautopromote-summary": "Uklanja blok na autounapređivanje određenog korisnika, dobiven zbog posljedice filtra za zlouporabu.",
 	"apihelp-abusefilterunblockautopromote-param-user": "Korisničko ime korisnika kojog želite deblokirati.",
@@ -42,6 +44,7 @@
 	"apihelp-query+abuselog-param-user": "Prikaži samo stavke za danog korisnika ili IP adresu.",
 	"apihelp-query+abuselog-param-title": "Prikaži samo stavke što se odnose na datu stranicu.",
 	"apihelp-query+abuselog-param-filter": "Prikaži samo stavke za događaje uhvaćene danom filterskom naznakom. Odijelite pravim crtima; i prefiksom \"$1\" za globalne filtre.",
+	"apihelp-query+abuselog-param-filter-central": "Prikaži samo unose koje su uhvatili dane naznake filtera. Odvojite cijevima.",
 	"apihelp-query+abuselog-param-limit": "Najviše stavki u popisima.",
 	"apihelp-query+abuselog-param-prop": "Koja svojstva dati.",
 	"apihelp-query+abuselog-param-wiki": "Od kojog wikija se prikazuju pogodci.",
@@ -54,6 +57,7 @@
 	"apihelp-abuselogprivatedetails-example-1": "Daj osobne podatke za unos u Evidenciji zloupotreba s naznakom 1, koristeći razlog",
 	"apierror-abusefilter-canttest": "Nemate dopuštenje da isprobate filtre za zlouporabu.",
 	"apierror-abusefilter-cantcheck": "Nemate dopuštenje da provjerite sintaksu filtara za zlouporabu.",
+	"apierror-abusefilter-canteval": "Nemate dozvolu za procjenu izraza Filtera zloupotrebe.",
 	"apierror-abusefilter-nosuchlogid": "Nema unosa u zapisniku zlouporabe s naznakom $1.",
 	"apierror-abusefilter-badsyntax": "Filter nema valjanu sintaksu."
 }

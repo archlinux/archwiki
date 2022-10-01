@@ -10,7 +10,8 @@
 			"Siddhartha Ghai",
 			"आलोक",
 			"जनक राज भट्ट",
-			"संजीव कुमार"
+			"संजीव कुमार",
+			"Saurmandal"
 		]
 	},
 	"math-desc": "<code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code> टैगों के बीच गणितीय सूत्र रेंडर करें",
@@ -64,8 +65,8 @@
 	"math_unknown_function": "अज्ञात फंक्शन '$1'",
 	"mw_math_latexml": "लेटेक्सएमएल (प्रयोगात्मक; मैथ॰एम॰एल का प्रयोग करता है)",
 	"mw_math_mathml": "MathML अगर हो सके तो (प्रायोगिक)",
-	"mw_math_png": "पीएनजी छवियाँ",
-	"mw_math_source": "उसे TeX ही रखें (पाठ ब्राउज़र के लिये)",
+	"mw_math_png": "PNG चित्र",
+	"mw_math_source": "LaTeX का इस्तेमाल करें (टेक्स्ट ब्राउज़रों के लिए)",
 	"prefs-math": "गणित",
 	"mathstatus": "गणित स्थिति",
 	"datatypes-type-math": "गणितीय व्यंजक",

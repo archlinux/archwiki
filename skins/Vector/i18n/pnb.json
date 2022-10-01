@@ -3,18 +3,19 @@
 		"authors": [
 			"Abbas dhothar",
 			"Arslan",
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Bgo eiu"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 بولی|$1 بولیاں}}",
 	"vector-action-addsection": "مضمون پاؤ",
-	"vector-action-delete": "مکاؤ",
+	"vector-action-delete": "مٹاؤ",
 	"vector-action-move": "لے چلو",
 	"vector-action-protect": "بچاؤ",
 	"vector-action-undelete": "واپس لیاؤ",
 	"vector-action-unprotect": "تبدیلی بچاؤ",
-	"vector-view-create": "بناؤ",
-	"vector-view-edit": "لِکھو",
+	"vector-view-create": "بݨاؤ",
+	"vector-view-edit": "سودھو",
 	"vector-view-history": "تریخ دیکھو",
 	"vector-view-view": "پڑھو",
 	"vector-view-viewsource": "سورس ویکھو",

@@ -19,7 +19,8 @@
 			"Sertion",
 			"Technic2",
 			"Warrakkk",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"JohanahoJ"
 		]
 	},
 	"wikieditor": "Avancerat gränssnitt för redigering av wikitext",
@@ -49,12 +50,12 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Länktext:",
 	"wikieditor-toolbar-tool-link-insert": "Lägg till länk",
 	"wikieditor-toolbar-tool-link-cancel": "Avbryt",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "Sidan existerar",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sidan existerar inte",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ogiltig titel",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Sidan finns på {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sidan finns inte på {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Den angivna titeln är ogiltig",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Extern länk",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kontrollerar om sidan existerar...",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Förgreningssida",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Detta är inte en innehållssida, utan en lista över ämnen med liknande namn",
 	"wikieditor-toolbar-tool-link-int-invalid": "Titeln du angav är ogiltig.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL:en du specificerade ser ut att vara avsed som en länk till en annan wikisida. Vill du göra den till en intern länk?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Intern länk",
@@ -209,5 +210,6 @@
 	"wikieditor-toolbar-help-content-indent-description": "Indrag",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal text<br />:indragen text<br />::indragen text",
 	"wikieditor-toolbar-help-content-indent-result": "Normal text<dl><dd>indragen text<dl><dd>indragen text</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "Redigering gjord med [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 års wikitextredigerare)",
 	"wikieditor-realtimepreview-preview": "Förhandsgranska"
 }

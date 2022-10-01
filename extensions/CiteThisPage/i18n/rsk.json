@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Keresturec"
+			"Keresturec",
+			"Vlad5250"
 		]
 	},
-	"citethispage-link": "Цитируй тот бок"
+	"citethispage-link": "Цитируй тот бок",
+	"citethispage-change-submit": "Цитируй",
+	"citethispage-change-target": "Бок:"
 }

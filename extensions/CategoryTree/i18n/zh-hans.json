@@ -9,7 +9,9 @@
 			"PhiLiP",
 			"Shinjiman",
 			"Shizhao",
-			"Xiaomingyan"
+			"Xiaomingyan",
+			"Lakejason0",
+			"Stang"
 		]
 	},
 	"categorytree": "分类树",
@@ -31,13 +33,13 @@
 	"categorytree-num-pages": "$1个页面",
 	"categorytree-num-files": "$1个文件",
 	"categorytree-num-empty": "空",
-	"categorytree-load": "载入",
-	"categorytree-loading": "正在载入...",
+	"categorytree-load": "加载",
+	"categorytree-loading": "正在加载…",
 	"categorytree-nothing-found": "没找到",
 	"categorytree-no-subcategories": "无子分类",
 	"categorytree-no-parent-categories": "无父分类",
 	"categorytree-no-pages": "没有页面或子分类",
 	"categorytree-not-found": "找不到分类“$1”",
-	"categorytree-error": "载入数据出错。",
+	"categorytree-error": "加载数据出错。",
 	"categorytree-retry": "请稍后重试。"
 }

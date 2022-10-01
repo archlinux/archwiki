@@ -4,11 +4,13 @@
 			"Bhawani Gautam",
 			"Bhawani Gautam Rhk",
 			"NehalDaveND",
-			"सरोज कुमार ढकाल"
+			"सरोज कुमार ढकाल",
+			"Bada Kaji",
+			"बडा काजी"
 		]
 	},
 	"math-visualeditor-mwlatexinspector-display": "दृश्य",
-	"math-visualeditor-mwlatexinspector-display-block": "रोक्ने",
+	"math-visualeditor-mwlatexinspector-display-block": "निषेध गर्नुहोस्",
 	"math-visualeditor-mwlatexinspector-display-default": "पूर्वनिर्धारित",
 	"math_failure": "पढ्न सकिएन",
 	"math_syntax_error": "सूत्र (syntax) त्रुटि",

@@ -1,11 +1,13 @@
 {
 	"@metadata": {
-		"authors": []
+		"authors": [
+			"Matma Rex"
+		]
 	},
 	"apierror-visualeditor-badcachekey": "Nije pronađena keširana serijalizacija sa tim ključem",
 	"apierror-visualeditor-difffailed": "Prikaz razlike nije uspeo",
 	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService za server dokumenata nije definisan; pogledajte https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "Greška pri kontaktiranju servera Parsoid/RESTbase (nema odgovora)",
+	"apierror-visualeditor-docserver": "Greška pri kontaktiranju servera Parsoid/RESTBase (nema odgovora)",
 	"apierror-visualeditor-latestnotfound": "Nije moguće pronaći najnoviju izmenu za naslov.",
 	"apihelp-visualeditor-description": "Vraća HTML5 za stranicu korišćenjem usluge Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Kada čuvate, postavite ovo na vremensku oznaku izmene koja je bila uređena. Koristi se za otkrivanje sukoba izmena.",

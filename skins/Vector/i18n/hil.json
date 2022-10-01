@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Anjoeli9806",
-			"Redhotchili23"
+			"Redhotchili23",
+			"Kai theos en ho logos"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 ka pinulongan|$1 ka mga pinulongan}}",
 	"vector-action-addsection": "Magdugang sing topiko",
 	"vector-action-delete": "Panason",
 	"vector-action-move": "Saylohon",

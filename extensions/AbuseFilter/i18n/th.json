@@ -93,6 +93,7 @@
 	"abusefilter-log-detailslink": "รายละเอียด",
 	"abusefilter-log-diff": "แตกต่าง",
 	"abusefilter-log-hidelink": "ปรับทัศนวิสัย",
+	"abusefilter-log-description-not-available": "ไม่สามารถใช้ได้",
 	"abusefilter-log-details-legend": "รายละเอียดสำหรับหน่วยรายการบันทึก $1",
 	"abusefilter-log-details-var": "ตัวแปร",
 	"abusefilter-log-details-val": "ค่า",

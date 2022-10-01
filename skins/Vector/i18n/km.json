@@ -2,11 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"គីមស៊្រុន",
-			"វ័ណថារិទ្ធ"
+			"វ័ណថារិទ្ធ",
+			"Sovichet"
 		]
 	},
 	"skinname-vector": "វ៉ិចទ័រ​​",
 	"vector.css": "/* CSS បានដាក់ទីនេះនឹងមានអនុភាពលើអ្នកប្រើប្រាស់នៃសំបក Vector */",
+	"vector-languages": "ភាសា",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ភាសា}}",
 	"vector-action-addsection": "បន្ថែម​ប្រធានបទ​",
 	"vector-action-delete": "លុបចោល",
 	"vector-action-move": "ប្តូរទីតាំង",

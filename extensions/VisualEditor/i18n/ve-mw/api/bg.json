@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Vodnokon4e",
-			"Лорд Бъмбъри"
+			"Лорд Бъмбъри",
+			"StanProg"
 		]
 	},
 	"apihelp-visualeditor-description": "Връща HTML5 за страница от услугата Parsoid.",
@@ -10,7 +11,7 @@
 	"apihelp-visualeditor-param-paction": "Действие за извършване.",
 	"apihelp-visualeditor-param-page": "Страница, върху която да се извършат действията.",
 	"apihelp-visualeditoredit-param-etag": "ETag за изпращане.",
-	"apihelp-visualeditoredit-param-minor": "Маркиране като малка редакция.",
+	"apihelp-visualeditoredit-param-minor": "Отбелязване като малка редакция.",
 	"apihelp-visualeditoredit-param-paction": "Действие за извършване.",
 	"apihelp-visualeditoredit-param-page": "Страница, върху която да се извършат действията.",
 	"apihelp-visualeditoredit-param-section": "Раздел, върху който да се извършат действията.",

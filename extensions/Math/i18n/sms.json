@@ -4,6 +4,10 @@
 			"Yupik"
 		]
 	},
+	"math-visualeditor-symbol-group-chem-isotopes": "Isotoopp",
+	"math-visualeditor-symbol-group-math-logic": "Logikk",
+	"prefs-math": "Matematikk",
 	"math-wikibase-formula-name": "Nõmm",
+	"math-wikibase-formula-description": "Deskriptt",
 	"math-wikibase-special-error-header": "Vââʹǩǩ"
 }

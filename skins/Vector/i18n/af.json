@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Byeboer",
-			"Naudefj"
+			"Naudefj",
+			"Rooiratel"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 tale}}",
 	"vector-action-addsection": "Nuwe onderwerp",
 	"vector-action-delete": "Skrap",
 	"vector-action-move": "Skuif",

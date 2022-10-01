@@ -7,15 +7,16 @@
 			"Lokal Profil",
 			"Technic2",
 			"Warrakkk",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Matma Rex"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Ingen cachelagrad serialisering hittades med nyckeln",
 	"apierror-visualeditor-difffailed": "Diff misslyckades",
 	"apierror-visualeditor-docserver-http-error": "Fel i kontakten med Parsoid/RESTBase-servern: $1",
-	"apierror-visualeditor-docserver-http": "Fel uppstod när Parsoid/RESTbase-servern kontaktades (HTTP $1)",
+	"apierror-visualeditor-docserver-http": "Fel uppstod när Parsoid/RESTBase-servern kontaktades (HTTP $1)",
 	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService för dokumentservern är inte definierad; se https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "Fel uppstod när Parsoid/RESTbase-servern kontaktades (inget svar)",
+	"apierror-visualeditor-docserver": "Fel uppstod när Parsoid/RESTBase-servern kontaktades (inget svar)",
 	"apierror-visualeditor-latestnotfound": "Kunde inte hitta den senaste sidversionen för titeln",
 	"apihelp-visualeditor-description": "Returnerar HTML5 för en sida från Parsoid-tjänsten.",
 	"apihelp-visualeditor-param-basetimestamp": "När du sparar, ställ in denna till tidsstämpel för versionen som redigerades. Används för att upptäcka redigeringskonflikter.",

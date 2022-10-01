@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jon Harald Søby"
+			"Jon Harald Søby",
+			"Telaneo"
 		]
 	},
 	"apihelp-query+oath-description": "Sjekk om totrinns pålogging (OATH) er slått på for en bruker.",

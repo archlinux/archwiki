@@ -22,7 +22,9 @@
 			"予弦",
 			"沈澄心",
 			"神樂坂秀吉",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"Diskdance",
+			"Stang"
 		]
 	},
 	"multimediaviewer-desc": "在全屏界面中以较大尺寸显示缩略图。",
@@ -86,7 +88,7 @@
 	"multimediaviewer-geoloc-west": "W",
 	"multimediaviewer-geolocation": "位置：$1",
 	"multimediaviewer-reuse-link": "分享或嵌入该文件",
-	"multimediaviewer-reuse-loading-placeholder": "正在载入……",
+	"multimediaviewer-reuse-loading-placeholder": "正在加载……",
 	"multimediaviewer-reuse-copy-share": "选择并复制（如果支持）链接以分享该文件",
 	"multimediaviewer-reuse-copy-embed": "选择并复制（如果支持）代码以嵌入该文件",
 	"multimediaviewer-share-tab": "分享",

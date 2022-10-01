@@ -17,6 +17,7 @@
 	"oathauth-enterverifyreason": "Grond fir Nozekucken",
 	"grant-group-authentication": "Authentifikatiouns-Aktioune fir sech selwer a fir Anerer maachen",
 	"action-oathauth-api-all": "OATH-Status nokucken",
+	"oathauth-ui-no-module": "Net aktivéiert",
 	"oathauth-enable-generic": "Aschalten",
 	"oathauth-disable-generic": "Ausschalten",
 	"oathauth-invalidrequest": "Net-valabel Ufro",

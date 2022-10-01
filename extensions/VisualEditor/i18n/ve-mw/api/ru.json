@@ -13,15 +13,16 @@
 			"Perevod16",
 			"Smigles",
 			"Sunpriat",
-			"Vlad5250"
+			"Vlad5250",
+			"Matma Rex"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Не найдено кэшированной сериализации с этим ключом",
 	"apierror-visualeditor-difffailed": "Сравнение не удалось",
-	"apierror-visualeditor-docserver-http-error": "Ошибка при обращении к серверу Parsoid/RESTbase: $1",
-	"apierror-visualeditor-docserver-http": "Ошибка при обращении к серверу Parsoid/RESTbase (HTTP $1)",
+	"apierror-visualeditor-docserver-http-error": "Ошибка при обращении к серверу Parsoid/RESTBase: $1",
+	"apierror-visualeditor-docserver-http": "Ошибка при обращении к серверу Parsoid/RESTBase (HTTP $1)",
 	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService для сервера документов не определён; см. раздел https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "Ошибка при обращении к серверу Parsoid/RESTbase (нет ответа)",
+	"apierror-visualeditor-docserver": "Ошибка при обращении к серверу Parsoid/RESTBase (нет ответа)",
 	"apierror-visualeditor-latestnotfound": "Не удалось найти последнюю версию для заголовка",
 	"apihelp-visualeditor-description": "Возвращает HTML5 для страницы с сервиса Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "При сохранении, установите время изменения. Это используется для обнаружения конфликтов редактирования.",

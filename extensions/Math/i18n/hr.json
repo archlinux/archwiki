@@ -82,9 +82,13 @@
 	"mathwikibase": "Informacije o matematičkim formulama",
 	"datatypes-type-math": "Matematički izraz",
 	"wikibase-listdatatypes-math-head": "Matematički izraz",
+	"math-wikibase-header": "Informacije o matematičkim stavkama",
 	"math-wikibase-formula": "Formula",
 	"math-wikibase-formula-name": "Ime",
 	"math-wikibase-formula-type": "Vrsta",
 	"math-wikibase-formula-description": "Opis",
+	"math-wikibase-special-form-header": "Navedite naslov formule:",
+	"math-wikibase-special-form-placeholder": "Naslov formule",
+	"math-wikibase-special-form-button": "Zatraži informacije",
 	"math-wikibase-special-error-header": "Pogreška"
 }

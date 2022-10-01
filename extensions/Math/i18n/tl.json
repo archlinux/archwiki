@@ -3,13 +3,14 @@
 		"authors": [
 			"AnakngAraw",
 			"GinawaSaHapon",
-			"Leeheonjin"
+			"Leeheonjin",
+			"Jojit fb"
 		]
 	},
 	"math-desc": "I-render ang mga pormulang pangmatematika sa pagitan ng mga tag na <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
 	"math-visualeditor-mwchemdialog-title": "Pormulang kemikal",
 	"math-visualeditor-mwcheminspector-title": "Pormulang kemikal",
-	"math-visualeditor-mwlatexcontextitem-quickedit": "Mabilisang edit",
+	"math-visualeditor-mwlatexcontextitem-quickedit": "Mabilisang pagbago",
 	"math-visualeditor-mwlatexdialog-card-formula": "Pormula",
 	"math-visualeditor-mwlatexdialog-card-options": "Pagsasaayos",
 	"math-visualeditor-mwlatexinspector-display": "Pagpapakita",

@@ -26,7 +26,8 @@
 			"Umeaboy",
 			"Warrakkk",
 			"WikiPhoenix",
-			"Larske"
+			"Larske",
+			"JohanahoJ"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -147,7 +148,7 @@
 	"visualeditor-dialog-meta-settings-index-disable": "Nej",
 	"visualeditor-dialog-meta-settings-index-force": "Ja",
 	"visualeditor-dialog-meta-settings-index-help": "Du kan tvinga sökmotorer att lista den här sidan i deras relevanta resultat eller tvinga dem att inte göra detta. Detta alternativ påverkar inte webbplatsens sökning.",
-	"visualeditor-dialog-meta-settings-index-label": "Låt denna sidan indexeras av sökmotorer",
+	"visualeditor-dialog-meta-settings-index-label": "Låt denna sida indexeras av sökmotorer",
 	"visualeditor-dialog-meta-settings-label": "Sidinställningar",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-default": "Standard",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-disable": "Nej",

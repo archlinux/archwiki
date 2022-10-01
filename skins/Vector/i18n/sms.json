@@ -10,10 +10,13 @@
 	"vector-action-delete": "Jaukkâd",
 	"vector-action-move": "Seeʹrd",
 	"vector-action-protect": "Suõjjâd",
+	"vector-action-undelete": "Maaccât",
 	"vector-view-create": "Raaj",
 	"vector-view-edit": "Muuʹtt",
 	"vector-view-history": "Čuäʹjet historia",
 	"vector-view-view": "Looǥǥ",
 	"vector-view-viewsource": "Čuäʹjet käivvkood",
-	"vector-more-actions": "Lââʹzz"
+	"vector-more-actions": "Lââʹzz",
+	"vector-anon-user-menu-pages-learn": "lââʹssteâđ",
+	"vector-main-menu-tooltip": "Väʹlddvaʹlljõk"
 }

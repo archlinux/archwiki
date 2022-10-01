@@ -3,7 +3,8 @@
 		"authors": [
 			"Nirajan pant",
 			"Parbat subedi",
-			"RajeshPandey"
+			"RajeshPandey",
+			"Bada Kaji"
 		]
 	},
 	"nuke": "धेरैवटा हटाउने",
@@ -16,5 +17,6 @@
 	"nuke-not-deleted": "[[:$1]] पृष्ठ मेट्न '''सकिएन'''।",
 	"nuke-delete-more": "[[Special:Nuke|अरू पृष्ठहरू मेट्नुहोस]]",
 	"nuke-pattern": "पृष्ठको नामको लागि SQL LIKE ढाँचा (e.g. %):",
-	"nuke-nopages-global": "[[Special:RecentChanges|नयाँ परिवर्तनहरू]]मा कुनै नयाँ पृष्ठ छैनन।"
+	"nuke-nopages-global": "[[Special:RecentChanges|नयाँ परिवर्तनहरू]]मा कुनै नयाँ पृष्ठ छैनन।",
+	"nuke-linkoncontribs": "सामूहिक रूपमा मेट्नुहोस्"
 }

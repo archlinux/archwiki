@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"बिप्लब आनन्द"
+			"बिप्लब आनन्द",
+			"बडा काजी"
 		]
 	},
 	"wikieditor": "उन्नत विकिपाठ्य सम्पादन इन्टरफेस",
@@ -16,7 +17,7 @@
 	"wikieditor-toolbar-tool-ilink-example": "लिङ्क शीर्षक",
 	"wikieditor-toolbar-tool-xlink": "बाह्य लिङ्क (यादि राखी http:// उपसर्ग)",
 	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com लिङ्क शीर्षक",
-	"wikieditor-toolbar-tool-link": "लिङ्क",
+	"wikieditor-toolbar-tool-link": "कडी",
 	"wikieditor-toolbar-tool-link-title": "लिङ्क सम्मिलित करी",
 	"wikieditor-toolbar-tool-link-int": "एक विकि पृष्ठधरि",
 	"wikieditor-toolbar-tool-link-int-target": "लक्ष्य पृष्ठ या युआरएल:",

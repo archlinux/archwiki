@@ -151,7 +151,7 @@
 	"abusefilter-edit-denied": "Vos pouede pas vêre los dètalys de cél filtro perce qu’il est cachiê a la vua du publico.",
 	"abusefilter-edit-main": "Paramètres du filtro",
 	"abusefilter-edit-done-subtitle": "Filtro changiê",
-	"abusefilter-edit-done": "Vos éd encartâ avouéc reusséta voutros changements du [[Special:AbuseFilter/$1|filtro $3]].",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Voutros changements]] du [[Special:AbuseFilter/$1|filtro $3]] sont étâs enregistrâs.",
 	"abusefilter-edit-badsyntax": "Lo filtro que vos éd spècefiâ at una èrror de sintaxa.\nLo rèsultat du parsor ére : <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Vos pouede pas changiér cél filtro perce que contint yona ou ben un mouél d’accions rètrentes.\nDemandâd a un usanciér ôtorisâ a apondre des accions rètrentes de fâre lo changement por vos.",
 	"abusefilter-edit-viewhistory": "Vêre l’historico de ceti filtro",

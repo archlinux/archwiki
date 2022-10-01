@@ -5,6 +5,7 @@
 			"Teitei Para"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 reihchâ|$1 reihchâzy}}",
 	"vector-action-addsection": "Chôtlâhpi khô",
 	"vector-action-delete": "ParaoHip",
 	"vector-action-move": "Paly",
@@ -13,5 +14,6 @@
 	"vector-view-edit": "Taopathi",
 	"vector-view-history": "Chhichânazy palâ teih",
 	"vector-view-view": "Reih teih",
-	"vector-more-actions": "Ahluhviapa"
+	"vector-more-actions": "Ahluhviapa",
+	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> ahlaopa châhmiazy tlua teh"
 }

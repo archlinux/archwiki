@@ -7,6 +7,7 @@
 			"Gomada"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 ziman}}",
 	"vector-action-addsection": "Mijarekê lê zêde bike",
 	"vector-action-delete": "Jê bibe",
 	"vector-action-move": "Nav biguherîne",

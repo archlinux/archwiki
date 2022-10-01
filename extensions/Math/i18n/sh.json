@@ -62,5 +62,9 @@
 	"mw_math_mathml": "MathML sa SVG ili PNG za rezervu (preporučljivo za moderne preglednike i pristupačnostne alate)",
 	"mw_math_png": "PNG slike",
 	"mw_math_source": "LaTeX izvor (za tekstualne preglednike)",
-	"prefs-math": "Prikazivanje matematike"
+	"prefs-math": "Prikazivanje matematike",
+	"mathstatus": "Stanje prikaza matematičkih formula",
+	"mathwikibase": "Informacije o matematičkim formulama",
+	"datatypes-type-math": "Matematički izraz",
+	"wikibase-listdatatypes-math-head": "Matematički izraz"
 }

@@ -8,7 +8,8 @@
 			"Minisarm",
 			"NGC 54",
 			"Strainu",
-			"Tanea.d"
+			"Tanea.d",
+			"Amire80"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -22,6 +23,7 @@
 	"vector-languages": "Limbi",
 	"vector-language-button-aria-label": "Mergeți la un articol în altă limbă. Disponibil în {{PLURAL:$1|$1 limbă|$1 limbi}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 limbă|$1 limbi}}",
+	"vector-language-redirect-to-top": "Pe acest wiki {{SITENAME}}, legăturile limbii sunt situate în partea de sus a paginii în rând cu titlul articolului. [[#p-lang-btn|Mergi sus]].",
 	"vector-action-addsection": "Adăugare subiect",
 	"vector-action-delete": "Ștergere",
 	"vector-action-move": "Redenumire",

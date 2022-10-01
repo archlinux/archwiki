@@ -3,7 +3,8 @@
 		"authors": [
 			"Insübrich",
 			"Ninonino",
-			"Salvemm el lombard"
+			"Salvemm el lombard",
+			"Amire80"
 		]
 	},
 	"tooltip-pt-watchlist-2": "Ona lista di pagine che te see 'dree a tegnì d'oeugg per i modifeghe.",
@@ -19,7 +20,7 @@
 	"vector-language-redirect-to-top": "In su questa ̻{{SITENAME}} chì i ligam de la lengua a inn metud in scima a la pagina in facia del titol de l'articol. [[#p-lang-btn|Va in scima]].",
 	"vector-language-variant-switcher-label": "Cambia la variant de la lengua",
 	"vector-action-addsection": "Sgionta un argoment",
-	"vector-action-delete": "Scancela",
+	"vector-action-delete": "Scancella",
 	"vector-action-move": "Sposta",
 	"vector-action-protect": "Protensg",
 	"vector-action-undelete": "Recupera",

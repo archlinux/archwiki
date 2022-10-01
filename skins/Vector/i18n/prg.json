@@ -3,20 +3,24 @@
 		"authors": [
 			"Nertiks",
 			"Nērtiks Jōrgesuns",
-			"Peteris"
+			"Peteris",
+			"Tīgelika",
+			"Amire80"
 		]
 	},
-	"vector-language-button-aria-label": "Kitawīdinais artīkelas billin, preiēiminan en {{PLURAL:$1|$1 billai|$1 bilāmans}}",
+	"vector-language-button-aria-label": "Jaīs en artīkelin pra kittan billin. Preiēiminan en {{PLURAL:$1|$1 bilāmans|$1 billai|$1 bilāmans}}",
+	"vector-language-button-label": "$1 {{PLURAL:$1|billas|bilā|billas}}",
 	"vector-language-variant-switcher-label": "Kitawīdinais billas wariāntin",
 	"vector-action-addsection": "Preidāis tēman",
 	"vector-action-delete": "Āupausinais",
 	"vector-action-move": "Prapīdais",
 	"vector-action-protect": "Kūnsteis",
-	"vector-action-unprotect": "Etkūnteis",
+	"vector-action-unprotect": "Kitawīdintun pakūnsnan",
 	"vector-view-create": "Teīkeis",
 	"vector-view-edit": "Redigīs",
 	"vector-view-history": "Enwaidinnais istōrijan",
 	"vector-view-view": "Skaitāis",
-	"vector-view-viewsource": "Enwaidinnais appun",
-	"vector-more-actions": "Tūls"
+	"vector-view-viewsource": "Wīdais appun",
+	"vector-more-actions": "Tūls",
+	"vector-searchsuggest-containing": "Laukīs pāusans turīnts <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

@@ -2,9 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Ibrahima",
-			"Ibrahima Malal Sarr"
+			"Ibrahima Malal Sarr",
+			"Amire80",
+			"Musaddam Idriss"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|ɗemngal|$1 ɗemngal}}",
 	"vector-action-addsection": "Ɓeydi toɓɓere",
 	"vector-action-delete": "Momtu",
 	"vector-action-move": "Dirtin",

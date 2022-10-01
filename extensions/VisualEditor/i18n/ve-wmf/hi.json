@@ -12,7 +12,7 @@
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका]]",
-	"tag-visualeditor-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका]] से किया गया सम्पादन",
+	"tag-visualeditor-description": "संपादन [[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका]] के उपयोग द्वारा किया गया",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका: जाँचें]]",
 	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|यथादृश्य संपादिका]] से किया गया सम्पादन जिसमें सिस्टम ने पाया है कि विकिटेक्स्ट में अनपेक्षित बदलाव हो सकते हैं।",
 	"tag-visualeditor-wikitext": "2017 स्रोत संपादन",

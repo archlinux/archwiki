@@ -10,8 +10,12 @@
 		]
 	},
 	"cite_error": "Sitat səhvi: $1",
+	"cite_error_ref_numeric_key": "Xətalı <code>&lt;ref&gt;</code> etiketi; istinad adlandırması yalnız rəqəm ola bilməz. Daha yaxşı başlıqdan istifadə edin",
+	"cite_error_ref_too_many_keys": "Xətalı <code>&lt;ref&gt;</code> etiketi: adlandırma uyğunsuzdur",
 	"cite_error_references_duplicate_key": "Xətalı <code>&lt;ref&gt;</code> etiketi; \"$1\" adı bir neçə dəfə müxtəlif məzmunla verilib",
 	"cite_error_references_missing_key": "<references> daxilindəki \"$1\" adlı <ref> teqi əvvəlki mətndə istifadə olunmur",
 	"cite-tracking-category-cite-error": "İstinad xətası olan səhifələr",
-	"cite_section_preview_references": "İstinadların sınaq göstərişi"
+	"cite_section_preview_references": "İstinadların sınaq göstərişi",
+	"cite_warning": "İstinad xəbərdarlığı: $1",
+	"cite_warning_sectionpreview_no_text": "<code>$1</code> adlı <code>&lt;ref&gt;</code> istinad etiketi ya cari bölmədən kənarda müəyyən edildiyinə, ya da ümumiyyətlə müəyyən edilmədiyinə görə göstərilə bilmir."
 }

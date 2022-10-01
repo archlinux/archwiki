@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Arystanbek"
+			"Arystanbek",
+			"СеніңШешең"
 		]
 	},
-	"interwiki": "интеруики деректерін қарау және өңдеу",
-	"interwiki-title-norights": "Интеруики дерегін қарау",
+	"interwiki": "Уикиаралық деректерді көру және өңдеу",
+	"interwiki-title-norights": "Уикиаралық деректерді көру",
 	"interwiki_intro": "Бұл интеруики кестесін шолып шығу",
 	"interwiki_prefix": "Префикс",
 	"interwiki-prefix-label": "Префикс",

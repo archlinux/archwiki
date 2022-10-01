@@ -19,5 +19,6 @@
 	"vector-view-history": "Féach ar stair",
 	"vector-view-view": "Léigh",
 	"vector-view-viewsource": "Féach ar fhoinse",
-	"vector-more-actions": "Tuilleadh"
+	"vector-more-actions": "Tuilleadh",
+	"vector-searchsuggest-containing": "Cuardaigh leathanaigh ina bhfuil <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

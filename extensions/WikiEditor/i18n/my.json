@@ -39,6 +39,7 @@
 	"wikieditor-toolbar-tool-file-title": "ဖိုင်ထည့်ရန်",
 	"wikieditor-toolbar-file-target": "ဖိုင်အမည်:",
 	"wikieditor-toolbar-file-caption": "ပုံစာ",
+	"wikieditor-toolbar-file-alt-help-label": "(အကူအညီပြပါ)",
 	"wikieditor-toolbar-file-size": "အရွယ်အစား",
 	"wikieditor-toolbar-file-default": "(နဂိုအတိုင်း)",
 	"wikieditor-toolbar-tool-file-insert": "ထည့်သွင်းရန်",
@@ -66,6 +67,10 @@
 	"wikieditor-toolbar-tool-table-preview": "နမူနာ",
 	"wikieditor-toolbar-tool-table-insert": "ထည့်သွင်းရန်",
 	"wikieditor-toolbar-tool-table-cancel": "မလုပ်တော့ပါ",
+	"wikieditor-toolbar-tool-replace-button-findnext": "ရှေ့တွင် ရှာရန်",
+	"wikieditor-toolbar-tool-replace-button-replace": "အစားထိုးရန်",
+	"wikieditor-toolbar-tool-replace-button-replaceall": "အကုန်လုံး အစားထိုးရန်",
+	"wikieditor-toolbar-tool-replace-close": "ပိတ်ရန်",
 	"wikieditor-toolbar-section-characters": "အထူးအက္ခရာများ",
 	"wikieditor-toolbar-section-help": "အကူအညီ",
 	"wikieditor-toolbar-help-heading-description": "ဖော်ပြချက်",
@@ -75,5 +80,6 @@
 	"wikieditor-toolbar-help-page-discussion": "ဆွေးနွေးချက်",
 	"wikieditor-toolbar-help-content-ilink-description": "ပြင်ပ လင့်ခ်",
 	"wikieditor-toolbar-help-content-xlink-description": "ပြင်ပ လင့်ခ်",
-	"wikieditor-toolbar-help-content-reference-description": "ကိုးကား"
+	"wikieditor-toolbar-help-content-reference-description": "ကိုးကား",
+	"wikieditor-realtimepreview-preview": "ကြိုတင်အစမ်းကြည့်ရှုရန်"
 }

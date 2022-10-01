@@ -21,11 +21,15 @@
 	"gadgetusage-default": "Výchozí",
 	"gadgets-title": "Udělátka",
 	"gadgets-pagetext": "Níže je přehled speciálních udělátek, která si uživatelé mohou zapnout ve svém [[Special:Preferences#mw-prefsection-gadgets|nastavení]]. Jejich seznam lze upravovat na stránce [[MediaWiki:Gadgets-definition]].\nTento přehled poskytuje jednoduchý přístup k&nbsp;systémovým hlášením, která definují zdrojový kód a&nbsp;popis každého udělátka.",
+	"gadgets-editdescription": "Editovat popis",
+	"gadgets-viewdescription": "Zobrazit popis",
 	"gadgets-uses": "používá",
 	"gadgets-required-rights": "Vyžaduje následující {{PLURAL:$2|oprávnění}}:\n\n$1",
 	"gadgets-required-skins": "Dostupné {{PLURAL:$2|pro vzhled $1|pro následující vzhledy: $1}}.",
+	"gadgets-required-actions": "Funguje na {{PLURAL:$2|akci stránky „$1“|následující akce stránky: $1}}.",
 	"gadgets-default": "Implicitně zapnuto všem.",
 	"gadgets-legacy": "Udělátko se nenačítá. Převeďte ho prosím na ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Více informací])",
+	"gadgets-packaged": "Toto udělátko používá [https://www.mediawiki.org/wiki/ResourceLoader/Package_files balíčky], vstupním bodem je $1",
 	"gadgets-export": "Exportovat",
 	"gadgets-export-title": "Export udělátka",
 	"gadgets-not-found": "Udělátko „$1“ nebylo nalezeno.",
@@ -36,5 +40,7 @@
 	"right-gadgets-edit": "Editace stránek s JavaScriptem a CSS udělátek",
 	"action-gadgets-edit": "editovat stránku s JavaScriptem nebo CSS tohoto udělátka",
 	"right-gadgets-definition-edit": "Editace definic udělátek",
-	"action-gadgets-definition-edit": "editovat definici tohoto udělátka"
+	"action-gadgets-definition-edit": "editovat definici tohoto udělátka",
+	"gadgets-wrong-contentmodel": "Stránky ve jmenném prostoru {{ns:2302}} musí mít jako model obsahu ''GadgetDefinition''.",
+	"gadgets-supports-urlload": "Toto udělátko podporuje načítání prostřednictví URL pomocí parametru <code>?withgadget</code>."
 }

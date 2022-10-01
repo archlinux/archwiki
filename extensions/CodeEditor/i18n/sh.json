@@ -7,7 +7,7 @@
 	"codeeditor-desc": "Uređivanje s istaknutom sintaksom za JavaScript i kaskadne stilske stranice (CSS) koristeći urednik [https://ace.c9.io/ Ace]",
 	"codeeditor-next-annotation": "Idi na sljedeću pribilješku",
 	"codeeditor-toolbar-toggle": "Uključi/isključi uređivač kôda",
-	"codeeditor-save-with-errors": "Postoje pogreške u dokumentu. Sigurno li želite ga spremiti?",
+	"codeeditor-save-with-errors": "U dokumentu ima pogrešaka. Jeste li sigurni da ga želite spremiti?",
 	"codeeditor-invisibleChars-toggle": "Ukl/iskl. nevidljive znakove",
 	"codeeditor-lineWrapping-toggle": "Ukl/iskl. prijelom",
 	"codeeditor-searchReplace-toggle": "Ukl/iskl. dijalog za pretragu i zamjenu",

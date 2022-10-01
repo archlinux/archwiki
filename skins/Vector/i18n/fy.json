@@ -5,7 +5,8 @@
 			"PiefPafPier",
 			"Robin van der Vliet",
 			"Robin0van0der0vliet",
-			"SK-luuut"
+			"SK-luuut",
+			"Amire80"
 		]
 	},
 	"skinname-vector": "Fektor âld & bewend (2010)",
@@ -21,7 +22,7 @@
 	"vector.js": "/* Al it JavaScript hjirre sil foar brûkers fan de Fektor-foarmjouwing laden wurde */",
 	"vector-action-toggle-sidebar": "Sydbalke omklappe",
 	"vector-languages": "Talen",
-	"vector-language-button-aria-label": "Nei in artikel yn in oare taal gean. Beskikber yn {{PLURAL:$1|$1 taal|$1 talen}}",
+	"vector-language-button-aria-label": "Nei it artikel yn in oare taal gean. Beskikber yn {{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-language-redirect-to-top": "Hjir op {{GRAMMAR:l|{{SITENAME}}}} steane de taalkeppelings boppe-oan 'e side tsjinoer de titel fan 't artikel. [[#p-lang-btn|Nei boppen]].",
 	"vector-language-variant-switcher-label": "Taalfariant feroarje",
@@ -29,7 +30,7 @@
 	"vector-action-delete": "Wiskje",
 	"vector-action-move": "Omneame",
 	"vector-action-protect": "Skoattelje",
-	"vector-action-undelete": "Wer teplak sette",
+	"vector-action-undelete": "Wiskjen weromdraaie",
 	"vector-action-unprotect": "Befeiliging wizigje",
 	"vector-view-create": "Oanmeitsje",
 	"vector-view-edit": "Bewurkje",

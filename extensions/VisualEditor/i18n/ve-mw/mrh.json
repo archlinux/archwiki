@@ -6,12 +6,30 @@
 			"Teitei Para"
 		]
 	},
-	"tooltip-ca-ve-edit": "He châhmia he taopathi",
+	"collabpad-doctitle": "CollabPad: $1",
+	"collabpad-import-subtitle": "$1 tawhta thlapa",
+	"collabpad": "CollabPad",
+	"tooltip-ca-createsource": "He hmia châta hnawh code tao teh",
+	"tooltip-ca-edit": "wikichâ hmâpa ta he hmia he paraih teh",
+	"tooltip-ca-editsource": "He hmia hnawh code he paraih teh",
+	"tooltip-ca-ve-edit": "He châhmia he paraih teh",
+	"visualeditor-advancedsettings-tool": "Riasâhpa taopathinazy",
+	"visualeditor-autosave-modified-prompt-accept": "Paraih pazao",
+	"visualeditor-autosave-modified-prompt-reject": "Paraihna thiehpa sâkha pathao",
+	"visualeditor-autosave-modified-prompt-title": "Na paraihpa {{GENDER:|nâ}} thao pathi khohpa?",
+	"visualeditor-autosave-not-recovered-text": "Pasopa a châ leipa na pathlaipazy cha a thaoh pathi thai khao aw vei.",
+	"visualeditor-autosave-not-recovered-title": "Thaopathipa pathlaipa hlaotloh vei",
+	"visualeditor-autosave-recovered-text": "Nâma pachô leipa a pathlaipazy cha anotata thaopa a châ haw.",
+	"visualeditor-autosave-recovered-title": "Âpathlaipazy thaopa a châ",
+	"visualeditor-backbutton-tooltip": "Hnôhlâ kua",
 	"visualeditor-ca-createlocaldescriptionsource": "Vâtlâh palâsana hnawh khô teih",
 	"visualeditor-ca-createsource": "Hnawh tao",
 	"visualeditor-ca-editsource": "Hnawh rohpathi",
 	"visualeditor-ca-editsource-section": "ahnawh taopathi",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
+	"visualeditor-dialog-transclusion-add-template": "Template khô teh",
 	"visualeditor-rebase-client-export-start": "Papua...",
-	"visualeditor-rebase-client-title-help": "Na pachô hlâta â pathlainazy na moh thei."
+	"visualeditor-rebase-client-title-help": "Na pachô hlâta â pathlainazy na moh thei.",
+	"visualeditor-version-label": "Version",
+	"visualeditor-wikitextconvert-convert": "Wikichâ palie"
 }

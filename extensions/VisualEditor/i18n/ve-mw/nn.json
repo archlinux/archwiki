@@ -125,6 +125,8 @@
 	"visualeditor-dialog-transclusion-required-parameter-description": "Dette feltet må fyllast ut",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Gå attende",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Hald fram likevel",
+	"visualeditor-dialog-transclusion-title-insert-template": "Set inn ein mal",
+	"visualeditor-dialog-transclusion-title-insert-known-template": "Set inn: $1",
 	"visualeditor-dialogbutton-media-tooltip": "Media",
 	"visualeditor-dialogbutton-meta-tooltip": "Sideinnstillingar",
 	"visualeditor-dialogbutton-template-tooltip": "Mal",

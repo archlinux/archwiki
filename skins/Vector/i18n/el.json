@@ -10,10 +10,11 @@
 			"Omnipaedista",
 			"Protnet",
 			"ZaDiak",
-			"Αντιγόνη"
+			"Αντιγόνη",
+			"Norhorn"
 		]
 	},
-	"vector-skin-desc": "Σύγχρονη έκδοση του MonoBook με φρέσκια ματιά και πολλές βελτιώσεις χρηστικότητας",
+	"vector-skin-desc": "Παρέχει 2 Vector θέματα:\n* 2011 - Τη σύγχρονη έκδοση του MonoBook με φρέσκια εμφάνιση και πολλές βελτιώσεις στη χρηστικότητα.\n* 2022 - Το Vector που δημιουργήθηκε ως μέρος του έργου [[mw:Desktop Improvements]] του WMF.",
 	"prefs-vector-enable-vector-1-label": "Χρήση του Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "Κατά τα επόμενα χρόνια, θα αναβαθμίζουμε σταδιακά το περιβάλλον Vector. Το Legacy Vector θα σας επιτρέψει να δείτε την παλιά έκδοση του Vector (ως τον Δεκέμβριο του 2019). Για να μάθετε περισσότερα σχετικά με τις αναβαθμίσεις, μεταβείτε στη [[mw:Reading/Web/Desktop_Improvements|σελίδα του έργου]] μας.",
 	"vector-opt-out": "Εναλλαγή στην παλιά εμφάνιση",
@@ -21,7 +22,11 @@
 	"vector.css": "/* Όλα τα CSS εδώ θα φορτώσουν για χρήστες του Vector skin */",
 	"vector.js": "/* Όλη η JavaScript εδώ θα φορτωθεί για χρήστες που χρησιμοποιούν το Vector skin */",
 	"vector-action-toggle-sidebar": "Εναλλαγή πλευρικής στήλης",
+	"vector-languages": "Γλώσσες",
+	"vector-language-button-aria-label": "Μεταβείτε σε ένα λήμμα σε άλλη γλώσσα. Διαθέσιμο σε {{PLURAL:$1|μία γλώσσα|$1 γλώσσες}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 γλώσσα|$1 γλώσσες}}",
+	"vector-language-redirect-to-top": "Σε αυτή τη {{SITENAME}} οι σύνδεσμοι γλώσσας βρίσκονται στο επάνω μέρος της σελίδας απέναντι από τον τίτλο του λήμματος. [[#p-lang-btn|Μετάβαση στην κορυφή]].",
+	"vector-language-variant-switcher-label": "Αλλαγή παραλλαγής γλώσσας",
 	"vector-action-addsection": "Προσθήκη θέματος",
 	"vector-action-delete": "Διαγραφή",
 	"vector-action-move": "Μετακίνηση",
@@ -37,5 +42,11 @@
 	"vector-jumptosearch": "Πήδηση στην αναζήτηση",
 	"vector-jumptocontent": "Μετάβαση στο περιεχόμενο",
 	"vector-more-actions": "Περισσότερα",
-	"vector-search-loader": "Φόρτωση προτάσεων αναζήτησης"
+	"vector-search-loader": "Φόρτωση προτάσεων αναζήτησης",
+	"vector-intro-page": "Help:Εισαγωγή",
+	"vector-anon-user-menu-pages": "Σελίδες για αποσυνδεμένους συντάκτες",
+	"vector-anon-user-menu-pages-learn": "μάθετε περισσότερα",
+	"vector-anon-user-menu-pages-label": "Μάθετε περισσότερα σχετικά με την επεξεργασία",
+	"vector-main-menu-tooltip": "Κύριο μενού",
+	"tooltip-vector-anon-user-menu-title": "Περισσότερες επιλογές"
 }

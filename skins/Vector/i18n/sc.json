@@ -5,9 +5,11 @@
 			"Marzedu",
 			"Taxandru",
 			"Uharteko",
-			"Via maxima"
+			"Via maxima",
+			"L2212"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 limba|$1 limbas}}",
 	"vector-action-addsection": "Agiunghe cuntierra",
 	"vector-action-delete": "Burra",
 	"vector-action-move": "Move",

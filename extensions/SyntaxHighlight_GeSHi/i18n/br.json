@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Fulup"
+			"Fulup",
+			"Huñvreüs"
 		]
 	},
-	"syntaxhighlight-desc": "Talvezout a ra da lakaat an ereadur war wel dre ar valizenn <code>&lt;syntaxhighlight&gt;</code> en ur ober gant [http://pygments.org/ Pygments]",
+	"syntaxhighlight-desc": "Talvezout a ra da lakaat an ereadur war wel dre ar valizenn <code>&lt;syntaxhighlight&gt;</code> en ur ober gant [http://pygments.org/ Pygments - liver ereadur Python]",
+	"syntaxhighlight-error-category": "Pajennoù gant fazioù livañ ereadurezh",
 	"syntaxhighlight-enclose-category": "Pajennoù a ra gant atributoù enframmet dispredet",
 	"syntaxhighlight-enclose-category-desc": "Ober a ra an dreistlinennañ ereadurel war ar bajenn gant un ereadur enframmet dispredet.",
 	"syntaxhighlight-source-category": "Pajennoù a ra gant tikedennoù tarzh dispredet",

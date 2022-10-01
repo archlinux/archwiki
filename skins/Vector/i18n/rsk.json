@@ -2,17 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Keresturec"
+			"Keresturec",
+			"Vlad5250"
 		]
 	},
+	"vector-languages": "Язики",
 	"vector-language-button-label": "{{PLURAL:$1|$1 язик|$1 язики}}",
 	"vector-action-addsection": "Додай тему",
 	"vector-action-delete": "Посцерай",
 	"vector-action-move": "Пременовац",
 	"vector-action-protect": "Защициц",
+	"vector-action-unprotect": "Премень защиту",
 	"vector-view-create": "Витвориц",
 	"vector-view-edit": "Ушориц",
 	"vector-view-history": "Опать историю",
 	"vector-view-view": "Читай",
-	"vector-more-actions": "Вецей"
+	"vector-view-viewsource": "Опатриц жридлови код",
+	"vector-more-actions": "Вецей",
+	"vector-anon-user-menu-pages-learn": "дознайце вецей"
 }

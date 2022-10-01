@@ -11,7 +11,8 @@
 			"Macofe",
 			"Numulunj pilgae",
 			"Vlad5250",
-			"아라"
+			"아라",
+			"Amire80"
 		]
 	},
 	"tog-underline": "Сюлмафкснень алга китькстамс:",
@@ -169,7 +170,7 @@
 	"action-unprotect": "Араламать полафтомс",
 	"unprotect": "Араламать полафтомс",
 	"newpage": "Од лопа",
-	"talkpagelinktext": "Корхтама",
+	"talkpagelinktext": "корхтама",
 	"specialpage": "Башка тевонь лопа",
 	"personaltools": "Эсь кядьёнкст",
 	"talk": "Корхнема",
@@ -627,7 +628,7 @@
 	"prefs-rc": "Мекольце полафнемат",
 	"prefs-watchlist": "Мельгеванома",
 	"prefs-watchlist-days": "Мъзяра шит няфтемс мельгеваномаса:",
-	"prefs-watchlist-days-max": "Maximum $1 {{PLURAL:$1|day|days}}",
+	"prefs-watchlist-days-max": "Максимум $1 {{PLURAL:$1|шит}}",
 	"prefs-watchlist-edits": "Иньоцю полафнематнень лувкссь няфтеви келептьф мельгеваномаса:",
 	"prefs-watchlist-edits-max": "(максимум луфкс: 1000)",
 	"prefs-misc": "Калмоча",
@@ -1720,7 +1721,6 @@
 	"revdelete-unrestricted": "системонь вятиксненди кардафксне валхтфт",
 	"rightsnone": "(аш)",
 	"searchsuggest-search": "Вешендемс {{SITENAME}}-ста",
-	"view-view-foreign": "Ванк $1са",
 	"view-create-local": "Поладомс азондомать",
 	"view-edit-local": "Петнемс тя азондомать",
 	"skin-action-protect": "Араламс",

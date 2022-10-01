@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jun Misugi"
+			"Jun Misugi",
+			"F Samaritani"
 		]
 	},
-	"inputbox-tryexact": "Eseguì tzercha pritzisa"
+	"inputbox-tryexact": "Eseguì tzercha pritzisa",
+	"inputbox-movearticle": "Ippustha la pàgina",
+	"inputbox-ns-main": "Prinzipari"
 }

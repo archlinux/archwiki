@@ -86,6 +86,7 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Kompli xorta waħda",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "Meħtieġa  {{PLURAL:$1| parametru obligatorju nieqes|parametri obligatorji nieqsa}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Żgur li tixtieq tkompli mingħajr ma tagħti l- {{PLURAL:$2|parametru|parametri}} $1?",
+	"visualeditor-dialog-transclusion-see-template": "Il-mudelli huma maħluqa mill-utenti u jista' ma jkollhomx id-deskrizzjoni kompluta. Iktar informazzjoni tista' tkun disponibbli fuq il-[[$2|paġna tal-mudell]].",
 	"visualeditor-languages-tool": "Lingwi",
 	"visualeditor-mweditmodeve-popup-title": "Qlibt fuq il-modifika tas-sors",
 	"visualeditor-version-label": "Verżjoni"

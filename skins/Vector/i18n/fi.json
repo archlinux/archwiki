@@ -12,13 +12,14 @@
 			"Pxos",
 			"Pyscowicz",
 			"SuperPete",
-			"Rönttönen"
+			"Rönttönen",
+			"Amire80"
 		]
 	},
 	"skinname-vector": "Vanha Vektori (2010)",
 	"skinname-vector-2022": "Vektori (2022)",
 	"vector-specialversion-name": "Vektori",
-	"vector-skin-desc": "Tarjoaa 2 Vector-ulkoasua:\n* 2011 - MonoBookin moderni versio, jossa on tuore ulkoasu ja monia käytettävyysparannuksia.\n* 2022 - Vector, joka rakennettiin osana WMF [[mw:Desktop Improvements]] -projektia.",
+	"vector-skin-desc": "Tarjoaa 2 Vektori-ulkoasua:\n* 2011 - Monobookin moderni versio, jossa on tuore ulkoasu ja monia käytettävyysparannuksia.\n* 2022 - Vektori, joka rakennettiin osana WMF:n [[mw:Desktop Improvements]] -projektia.",
 	"prefs-vector-enable-vector-1-label": "Käytä vanhaa Vektoria",
 	"prefs-vector-enable-vector-1-help": "Seuraavien muutaman vuoden aikana päivitämme Vektori-ulkoasua vaiheittain. Vanha Vektori mahdollistaa Vektorin vanhan (joulukuu 2019) version käyttämisen. Saadaksesi lisätietoa päivityksistä katso [[mw:Reading/Web/Desktop_Improvements|projektisivumme]].",
 	"vector-opt-out": "Vaihda vanhaan ulkoasuun",

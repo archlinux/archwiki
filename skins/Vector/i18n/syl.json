@@ -1,9 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"এম আবু সাঈদ"
+			"এম আবু সাঈদ",
+			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 ꠝꠣꠔ|$1 ꠝꠣꠔꠣꠁꠘ}}",
+	"vector-action-addsection": "ꠐꠙꠤꠇ ꠡꠥꠞꠥ ꠈꠞꠁꠘ",
+	"vector-action-delete": "ꠙꠣꠟꠣꠃꠇ꠆ꠇꠣ",
+	"vector-action-move": "ꠢꠞꠣꠅ",
+	"vector-action-protect": "ꠞꠇꠇꠣ ꠈꠞꠣ",
 	"vector-view-create": "ꠛꠣꠘꠣꠅ",
 	"vector-view-edit": "ꠟꠦꠈ",
 	"vector-view-history": "ꠁꠔꠤꠀꠡ ꠖꠦꠈꠇꠣ",

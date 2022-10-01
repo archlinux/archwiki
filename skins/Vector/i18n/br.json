@@ -4,7 +4,8 @@
 			"Adriendelucca",
 			"Fulup",
 			"Y-M D",
-			"Huñvreüs"
+			"Huñvreüs",
+			"Amire80"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -18,7 +19,7 @@
 	"vector-action-toggle-sidebar": "Diskwel/kuzhat ar varrenn gostez",
 	"vector-languages": "Yezhoù",
 	"vector-language-button-aria-label": "Mont d’ur pennad en ur yezh all. {{PLURAL:$1|$1 yezh}} a zo.",
-	"vector-language-button-label": "{{PLURAL:$1|$1 yezh|$1 yezhoù}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 yezh}}",
 	"vector-language-redirect-to-top": "Er {{SITENAME}}-mañ emañ al liammoù yezh e deroù ar bajenn en tu all da ditl ar pennad. [[#p-lang-btn|Mont d’an deroù]].",
 	"vector-language-variant-switcher-label": "Kemmañ adstumm yezh",
 	"vector-action-addsection": "Rannbennad nevez",

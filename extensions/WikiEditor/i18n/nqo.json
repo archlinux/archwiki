@@ -50,6 +50,7 @@
 	"wikieditor-toolbar-file-alt-help-label": "(ߘߍ߬ߡߍ߲߬ߠߌ߲ ߦߌ߬ߘߊ߬)",
 	"wikieditor-toolbar-file-size": "ߢߊ߲ߞߊ߲:",
 	"wikieditor-toolbar-file-float": "ߟߐ߬ߖߟߎ߬ߡߊ߬ߟߌ:",
+	"wikieditor-toolbar-file-default": "(ߘߊ߲ߛߎ߲)",
 	"wikieditor-toolbar-file-format": "ߖߙߎߡߎ߲:",
 	"wikieditor-toolbar-file-format-none": "ߝߏߦߌ߬",
 	"wikieditor-toolbar-tool-file-insert": "ߊ߬ ߝߙߊ߬",
@@ -91,8 +92,11 @@
 	"wikieditor-toolbar-tool-table-example-header": "ߛߟߊ ߛߓߍߟߌ",
 	"wikieditor-toolbar-tool-table-example-caption": "ߞߘߐߦߌߘߊ ߛߓߍߟߌ",
 	"wikieditor-toolbar-tool-table-title": "ߥߟߊ߬ߟߋ߲ ߝߊ߬ߙߊ߫",
+	"wikieditor-toolbar-tool-table-dimensions-rows": "ߛߌ߬ߕߊߙߌ",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "ߛߐ߲ߞߐ ߟߎ߫",
 	"wikieditor-toolbar-tool-table-dimensions-header": "ߛߟߊߟߊ߫ ߛߌߕߊߙߌ ߝߙߊ߬",
+	"wikieditor-toolbar-tool-table-wikitable": "ߘߊ߲߬ߝߍ߬ߟߊ ߦߋ߫ ߞߍߢߊ ߡߍ߲ ߠߊ߫",
+	"wikieditor-toolbar-tool-table-sortable": "ߥߟߊ߬ߟߋ߲ ߞߍ߫ ߘߕߐ߬ߡߐ߲߬ߕߊ ߘߌ߫",
 	"wikieditor-toolbar-tool-table-example": "ߟߊߒߡߊ߫ ߘߐ߫",
 	"wikieditor-toolbar-tool-table-preview": "ߟߊ߬ߕߎ߲߰ߠߊ",
 	"wikieditor-toolbar-tool-table-insert": "ߊ߬ ߝߙߊ߬",
@@ -111,6 +115,8 @@
 	"wikieditor-toolbar-tool-replace-nomatch": "ߌ ߟߊ߫ ߢߌߣߌ߲ߠߌ߲ ߡߊ߫ ߓߍ߲߬ ߝߋ߲߫ ߛߌ߫ ߡߊ߬.",
 	"wikieditor-toolbar-tool-replace-success": "{{PLURAL:|ߣߘߐ߬ߓߌߟߊ $1|ߣߘߐ߬ߓߌߟߊ $1 ߟߎ߫}}",
 	"wikieditor-toolbar-tool-replace-emptysearch": "ߌ ߡߊ߫ ߝߋ߲߫ ߛߌ߫ ߟߊߘߏ߲߬ ߡߍ߲ ߢߌߣߌ߲ߕߊ ߦߋ߫.",
+	"wikieditor-toolbar-section-characters": "ߞߟߏߘߋ߲߫ ߞߙߍߞߙߍߣߍ߲ ߠߎ߬",
 	"wikieditor-toolbar-section-help": "ߘߍ߬ߡߍ߲߬ߠߌ߲",
+	"tag-wikieditor-description": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߡߍ߲ ߠߎ߬ ߞߍߣߍ߲߫ ߦߋ߫ [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] ߟߊߓߊ߯ߙߊߟߌ ߘߐ߫ (߂߀߁߀ ߥߞߌߞߟߏߜߍ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߟߊ߲) ߠߊ߫",
 	"wikieditor-realtimepreview-preview": "ߢߍߦߋߟߌ"
 }

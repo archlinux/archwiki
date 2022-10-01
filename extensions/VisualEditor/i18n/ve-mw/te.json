@@ -152,6 +152,8 @@
 	"visualeditor-dialog-transclusion-collapse-options": "ఎంపికలను దాచు",
 	"visualeditor-dialog-transclusion-content": "విషయము",
 	"visualeditor-dialog-transclusion-expand-options": "ఎంపికలను చూపించు",
+	"visualeditor-dialog-transclusion-help-message": "మూసలు కంటెంటు ఆకృతీకరణకు తోడ్పడతాయి. మూసలో ఉన్న వికల్పాలను ఈ ఎడిటరులో ఎడమవైపున చూపిస్తుంది. కుడివైపున, ఆ వికల్పాలకు విలువలు ఇవ్వవచ్చు.",
+	"visualeditor-dialog-transclusion-help-page-help": "[//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide/te#మూసల్లో దిద్దుబాటు చెయ్యడం మూసల్లో దిద్దుబాటు చెయ్యడంలో సహాయం]",
 	"visualeditor-dialog-transclusion-help-page-shortcuts": "[//www.mediawiki.org/wiki/Special:MyLanguage/VisualEditor/Portal/Keyboard_shortcuts#Template_editor_dialog_shortcuts_and_keyboard_interactions కీబోర్డు షార్ట్‌కట్లు]",
 	"visualeditor-dialog-transclusion-loading": "వస్తోంది…",
 	"visualeditor-dialog-transclusion-more-template-description": "\"$1\" మూస గురించి మరింత సమాచారం [[{{ns:template}}:$1|దాని పేజీలో]] ఉండవచ్చు.",

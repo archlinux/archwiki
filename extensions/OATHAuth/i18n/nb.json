@@ -4,7 +4,8 @@
 			"Jeblad",
 			"Jon Harald Søby",
 			"MuratTheTurkish",
-			"Njardarlogar"
+			"Njardarlogar",
+			"Telaneo"
 		]
 	},
 	"oathauth-desc": "Muliggjør autentiseringsstøtte med bruk av HMAC-baserte engangspassord",
@@ -18,7 +19,7 @@
 	"oathauth-scratchtokens": "Følgende liste er en liste over engangspassord. Disse kan kun brukes én gang, og bør kun brukes i nødstilfelle. Skriv dem ned og legg dem på et lurt sted. Om du mister telefonen din vil disse passordene være eneste måte å få tilbake kontoen din. '''Disse passordene vil aldri vises igjen.'''",
 	"oathauth-token": "Tegn",
 	"oathauth-disable": "Slå av totrinns pålogging",
-	"oathauth-validatedoath": "Validerte akkreditiver for totrinns pålogging. Totrinns pålogging blir nå iverksatt.",
+	"oathauth-validatedoath": "Totrinns pålogging legitimert. Det er nå tatt i bruk.",
 	"oathauth-noscratchforvalidation": "Du kan ikke bruke en engangskode for å bekrefte totrinns pålogging. Engangskoder er kun til backup og nødsbruk. Bruk en bekreftelseskode fra kodegeneratoren din.",
 	"oathauth-failedtovalidateoath": "Kunne ikke validere akkeriditiver for totrinns pålogging",
 	"oathauth-disabledoath": "Totrinns pålogging er nå slått av.",
@@ -84,6 +85,11 @@
 	"oathauth-switch-method-warning": "Ved å bytte til metode $2 for totrinns pålogging vil den gjeldende metoden ($1) bli slått av, og dataene som er tilknyttet den metoden blir slettet",
 	"oathauth-totp-disable-warning": "Du vil ikke lenger kunne bruke autentiseringsenheten som er registrert med denne kontoen. Alle engangsnøkler knyttet til denne kontoen vil deaktiveres.",
 	"oathauth-invalidrequest": "Ugyldig forespørsel",
+	"notification-header-oathauth-disable": "Tofaktorautentisering har blitt skrudd av på {{GENDER:$2|brukeren din}}.",
+	"notification-body-oathauth-disable": "Hvis {{GENDER:$2|du}} ikke gjorde dette, kan {{GENDER:$2|kontoen tin}} ha blitt kompromittert.",
+	"notification-body-oathauth-disable-other": "Hvis {{GENDER:$2|du}} ikke ba om dette, burde {{GENDER:$2|du}} ta kontakt med en administrator.",
+	"oathauth-notifications-disable-help": "Hjelp",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} har slått på totrinns pålogging.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} har ikke slått på totrinns pålogging."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} har ikke slått på totrinns pålogging.",
+	"oathauth-prefs-disabledgroups": "Skrudd av for {{PLURAL:$1|gruppen|gruppene}}:"
 }

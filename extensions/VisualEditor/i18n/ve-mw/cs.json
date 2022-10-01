@@ -216,7 +216,7 @@
 	"visualeditor-dialog-transclusion-filter-show-all": "Zobrazit všechna pole",
 	"visualeditor-dialog-transclusion-filter-title": "Vyhledávání parametru pro $1",
 	"visualeditor-dialog-transclusion-help-title": "Podpora editace šablon",
-	"visualeditor-dialog-transclusion-help-message": "Šablony poskytují formátování obsahu. Tento editor na levé straně zobrazuje, jaké možnosti šablona nabízí, a pravé straně k nim lze přidávat hodnoty.",
+	"visualeditor-dialog-transclusion-help-message": "Šablony poskytují formátování obsahu. Tento editor na levé straně zobrazuje, jaké možnosti šablona nabízí, a na pravé straně k nim lze přidávat hodnoty.",
 	"visualeditor-dialog-transclusion-help-page-feedback": "[//meta.wikimedia.org/wiki/Special:MyLanguage/Talk:WMDE_Technical_Wishes/VisualEditor_template_dialog_improvements Zpětná vazba]",
 	"visualeditor-dialog-transclusion-help-page-help": "[//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide#Editing_templates Nápověda k editaci šablon]",
 	"visualeditor-dialog-transclusion-help-page-shortcuts": "[//www.mediawiki.org/wiki/Special:MyLanguage/VisualEditor/Portal/Keyboard_shortcuts#Template_editor_dialog_shortcuts_and_keyboard_interactions Klávesové zkratky]",

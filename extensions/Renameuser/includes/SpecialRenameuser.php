@@ -14,8 +14,6 @@ use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNamePrefixSearch;
 use MediaWiki\User\UserNameUtils;
 use OutputPage;
-use PermissionsError;
-use ReadOnlyError;
 use SpecialPage;
 use Title;
 use TitleFactory;
@@ -80,11 +78,7 @@ class SpecialRenameuser extends SpecialPage {
 	/**
 	 * Show the special page
 	 *
-	 * @param mixed $par Parameter passed to the page
-	 *
-	 * @throws PermissionsError
-	 * @throws ReadOnlyError
-	 * @throws UserBlockedError
+	 * @param null|string $par Parameter passed to the page
 	 */
 	public function execute( $par ) {
 		$this->setHeaders();
@@ -107,8 +101,9 @@ class SpecialRenameuser extends SpecialPage {
 
 		$request = $this->getRequest();
 
-		$usernames = explode( '/', $par, 2 ); // this works as "/" is not valid in usernames
-		$oldnamePar = trim( str_replace( '_', ' ', $request->getText( 'oldusername', $usernames[0] ) ) );
+		// this works as "/" is not valid in usernames
+		$usernames = $par !== null ? explode( '/', $par, 2 ) : [];
+		$oldnamePar = trim( str_replace( '_', ' ', $request->getText( 'oldusername', $usernames[0] ?? '' ) ) );
 		$oldusername = $this->titleFactory->makeTitle( NS_USER, $oldnamePar );
 		$newnamePar = $usernames[1] ?? '';
 		$newnamePar = trim( str_replace( '_', ' ', $request->getText( 'newusername', $newnamePar ) ) );

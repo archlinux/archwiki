@@ -51,7 +51,7 @@
 	"scribunto-lua-error-location": "Erreur Lua $1 : $2.",
 	"scribunto-lua-error": "Erreur Lua : $2.",
 	"scribunto-lua-notarrayreturn": "Erreur de script : le module a renvoyé une valeur de type $2. Il est supposé renvoyer un tableau d’exportations.",
-	"scribunto-lua-warning": "Avertissement du script : $1",
+	"scribunto-lua-warning": "Avertissement du script : $1",
 	"scribunto-luastandalone-proc-error": "Erreur Lua : impossible de créer le processus.",
 	"scribunto-luastandalone-proc-error-msg": "Erreur Lua : impossible de créer le processus : $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Erreur Lua : impossible de créer le processus : proc_open n’est pas disponible. Vérifiez la directive de configuration PHP « disable_functions ».",

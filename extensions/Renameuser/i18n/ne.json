@@ -2,7 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"NehalDaveND",
-			"बिप्लब आनन्द"
+			"बिप्लब आनन्द",
+			"Bada Kaji",
+			"बडा काजी"
 		]
 	},
 	"renameuser": "प्रयोगकर्ता पुनर्नामाकरण",
@@ -15,6 +17,7 @@
 	"renameuserwarnings": "चेतावनीहरू:",
 	"renameusersubmit": "बुझाउने",
 	"renameuser-page-exists": "$1 पृष्ठ पहिले देखि नै रहेको छ र स्वत: अधिलेखन गर्न सकिएन ।",
-	"renameuser-page-moved": " $1 पृष्ठलाई $2 मा सारियो ।",
-	"renameuser-page-unmoved": "$1 पृष्ठलाई $2 मा सार्न सकिएन ।"
+	"renameuser-page-moved": "$1 पृष्ठलाई $2मा सारियो।",
+	"renameuser-page-unmoved": "$1 पृष्ठलाई $2 मा सार्न सकिएन ।",
+	"renameuser-move-log": "{{GENDER:$2|प्रयोगकर्ता}} \"$1\"लाई \"$2\"मा पुन: नामाकरण गर्दा पृष्ठ स्वचालित रूपमा सारियो"
 }

@@ -8,7 +8,8 @@
 			"Misibacsi",
 			"Tacsipacsi",
 			"Tgr",
-			"Máté"
+			"Máté",
+			"Mmarci72"
 		]
 	},
 	"vector-skin-desc": "A MonoBook felület modern változata frissebb kinézettel és sok használhatóságot javító fejlesztéssel",
@@ -20,8 +21,10 @@
 	"vector.js": "/* Az összes itteni JavaScript betöltődik Vector felület használóinak */",
 	"vector-action-toggle-sidebar": "Oldalsáv megjelenítése vagy elrejtése",
 	"vector-languages": "Más nyelveken",
+	"vector-language-button-aria-label": "Ugrás egy más nyelvű szócikkre. Elérhető $1 {{PLURAL:$1|nyelven}}",
 	"vector-language-button-label": "$1 nyelv",
 	"vector-language-redirect-to-top": "Ezen a {{SITENAME}} oldalon a nyelvközi hivatkozások a lap tetején, a címmel átellenben találhatók. [[#p-lang-btn|Ugrás a tetejére.]]",
+	"vector-language-variant-switcher-label": "Nyelvvariáns váltása",
 	"vector-action-addsection": "Új téma nyitása",
 	"vector-action-delete": "Törlés",
 	"vector-action-move": "Átnevezés",
@@ -41,5 +44,7 @@
 	"vector-anon-user-menu-pages": "Lapok kijelentkezett szerkesztőknek",
 	"vector-anon-user-menu-pages-learn": "további információk",
 	"vector-anon-user-menu-pages-label": "Tudj meg többet a szerkesztésről",
-	"vector-personal-more-label": "Felhasználói hivatkozások"
+	"vector-personal-more-label": "Felhasználói hivatkozások",
+	"vector-main-menu-tooltip": "Főmenü",
+	"tooltip-vector-anon-user-menu-title": "További lehetőségek"
 }

@@ -28,6 +28,7 @@
 	"renameuser-page-exists": "Stranica $1 već postoji i ne može se automatski presnimiti.",
 	"renameuser-page-moved": "Stranica $1 je premeštena na $2.",
 	"renameuser-page-unmoved": "Strana $1 se ne može premestiti na $2.",
+	"renameuser-warning-currentblock": "Ovaj korisnik je [$1 trenutno blokiran].",
 	"log-name-renameuser": "Evidencija preimenovanja",
 	"log-description-renameuser": "Ovo je evidencija izmjena preimenovanja korisnika.",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|preimenovao|preimenovala}} je korisnika $4 ({{PLURAL:$6|$6 izmjena|$6 izmjene|$6 izmjena}}) na {{GENDER:$7|$5}}",

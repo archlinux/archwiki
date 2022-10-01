@@ -10,7 +10,9 @@
 			"Naufal06",
 			"Rachmat04",
 			"Uchup19",
-			"William Surya Permana"
+			"William Surya Permana",
+			"ANukuma",
+			"Gombang"
 		]
 	},
 	"minerva-last-modified-date": "Terakhir diubah pada $1, pukul $2",
@@ -80,5 +82,5 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Lihat kategori halaman",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Perlakuan masalah halaman yang ditingkatkan",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Masalah halaman (Templat:ambox) akan disebariskan dalam artikel.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sayangnya, mengelompokkan hasil per halaman tidak tersedia di mobile. Jika Anda ingin menggunakan fitur kelompokkan per halaman tolong kunjungi situs desktopnya."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sayangnya, mengelompokkan hasil per halaman tidak tersedia pada tampilan seluler. Jika Anda ingin menggunakan fitur kelompokkan per halaman, mohon kunjungi situs desktopnya."
 }

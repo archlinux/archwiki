@@ -29,6 +29,7 @@
 	"oathauth-entertoken": "Въведете код от устройството Ви за удостоверяване, за проверка:",
 	"oathauth-disable-for-user": "Деактивиране на двукомпонентно удостоверяване на потребител",
 	"right-oathauth-disable-for-user": "Деактивиране на двукомпонентно удостоверяване на потребител",
+	"action-oathauth-disable-for-user": "деактивиране на двукомпонентно удостоверяване на потребител",
 	"oathauth-disable-intro": "С голямата сила идва голяма отговорност",
 	"oathauth-enteruser": "Потребителско име:",
 	"oathauth-enterdisablereason": "Причина за изключване:",
@@ -53,5 +54,6 @@
 	"oathauth-disable-generic": "Изключване",
 	"oathauth-disable-page-title": "Изключване на $1",
 	"oathauth-enable-page-title": "Включване на $1",
-	"oathauth-ui-available-modules": "Налични методи"
+	"oathauth-ui-available-modules": "Налични методи",
+	"oathauth-notifications-disable-help": "Помощ"
 }

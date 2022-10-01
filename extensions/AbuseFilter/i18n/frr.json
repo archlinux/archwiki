@@ -15,7 +15,8 @@
 	"abusefilter-log-linkoncontribs": "Masbrükfilter-Logbuk",
 	"abusefilter-log-linkoncontribs-text": "Masbrükfilter-Logbuk för {{GENDER:$1|det/didiar brüker}}",
 	"abusefilter-list": "Aaltumaal",
-	"abusefilter-topnav": "'''Masbrük-filter nawigatjuun'''",
+	"abusefilter-list-options-further-options": "Muar ütjwool:",
+	"abusefilter-topnav": "'''Masbrük Filter nawigatsion'''",
 	"abusefilter-log-name": "Masbrükfilter-Logbuk",
 	"abusefilter-diff-info": "Grünjdooten"
 }

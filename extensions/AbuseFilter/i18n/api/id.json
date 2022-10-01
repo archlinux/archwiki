@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Daud I.F. Argana",
-			"Hidayatsrf"
+			"Hidayatsrf",
+			"Robfirstname"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Melihat apakah sebuah Filter Penyalahgunaan sesuai dengan seperangkat variabel, sebuah suntingan, atau sebuah kejadian yang dicatat Filter Penyalahgunaan.\n\nvars, rcid atau logid diwajibkan tetapi hanya satu yang bisa digunakan.",
@@ -15,6 +16,7 @@
 	"apihelp-query+abusefilters-description": "Tampilkan detail filter penyalahgunaan.",
 	"apihelp-query+abusefilters-summary": "Tampilkan detail filter penyalahgunaan.",
 	"apihelp-query+abuselog-example-1": "Tampilkan entri log terkini",
+	"apihelp-query+abuselog-example-2": "Lihat catatan terbaru untuk [[API]]",
 	"apierror-abusefilter-canttest": "Anda tidak memiliki izin untuk menguji filter penyalahgunaan",
 	"apierror-abusefilter-cantcheck": "Anda tidak memiliki izin untuk memeriksa sintaksis filter penyalahgunaan",
 	"apierror-abusefilter-badsyntax": "Filter berisi sintaksis yang tidak sah"

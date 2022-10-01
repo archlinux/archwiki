@@ -49,6 +49,7 @@
 	"wikieditor-toolbar-tool-file-title": "Set inn fil",
 	"wikieditor-toolbar-file-target": "Filnamn:",
 	"wikieditor-toolbar-file-caption": "Skildring:",
+	"wikieditor-toolbar-file-alt-help": "Du kan bruka dette valfrie feltet for å gje ei tekstskildring av fila for dei som ikkje kan sjå henne. Skildringa bør vera nok til at ein kan skjøna meininga med fila og informasjonen ho gjev. Dette er avgjerande for blinde brukarar og andre som nyttar skjermlesarar eller nettlesarar som berre viser tekst.",
 	"wikieditor-toolbar-file-size": "Storleik:",
 	"wikieditor-toolbar-file-float": "Stad:",
 	"wikieditor-toolbar-file-default": "(standard)",

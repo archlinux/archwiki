@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Fohanno",
-			"Fulup"
+			"Fulup",
+			"Huñvreüs"
 		]
 	},
 	"categorytree": "Gwezennadur ar rummadoù",
 	"categorytree-portlet": "Rummadoù",
 	"categorytree-legend": "Gwelet gwezennadur ar rummad",
 	"categorytree-desc": "Furchal a ra ent dinamek [[Special:CategoryTree|framm ar rummadoù]]",
-	"categorytree-header": "Merkit anv ur rummad evit gwelet petra zo ennañ e stumm ur gwezennadur.\nNotit e rankit kaout an arc'hwelioù JavaScript araokaet anvet AJAX.\nM'eo kozh-mat stumm ho merdeer pe m'eo diweredekaet JavaScript ganeoc'h, ne'z aio ket en-dro.",
+	"categorytree-header": "Merkit anv ur rummad evit gwelet petra zo ennañ e stumm ur gwezennadur. (Rankout a rit kaout JavaScript.)",
 	"categorytree-category": "Rummad :",
 	"categorytree-go": "Diskouez ar gwezennadur",
 	"categorytree-parents": "Usrummadoù",

@@ -8,12 +8,14 @@
 			"Hugo.arg",
 			"Matasg",
 			"Perkunas",
-			"Tomasdd"
+			"Tomasdd",
+			"Pavel1513"
 		]
 	},
 	"skinname-vector": "Vektorinė",
 	"vector-skin-desc": "Moderni MonoBook versija su šviežiausia išvaizda ir daugybe panaudojamumo patobulinimų",
 	"prefs-vector-enable-vector-1-label": "Naudoti senąją vektorinę išvaizdą",
+	"vector-language-button-label": "{{PLURAL:$1|$1 kalba|$1 kalbų}}",
 	"vector-action-addsection": "Pridėti temą",
 	"vector-action-delete": "Ištrinti",
 	"vector-action-move": "Pervardyti",

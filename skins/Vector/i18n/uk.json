@@ -51,7 +51,7 @@
 	"vector-search-loader": "Завантажуються підказки пошуку",
 	"vector-searchsuggest-containing": "Знайдіть сторінки, що містять <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
 	"vector-intro-page": "Help:Вступ",
-	"vector-anon-user-menu-pages": "Сторінка для редакторів, які вийшли з системи",
+	"vector-anon-user-menu-pages": "Сторінки для редакторів, які не ввійшли в систему",
 	"vector-anon-user-menu-pages-learn": "дізнатися більше",
 	"vector-anon-user-menu-pages-label": "Дізнатися більше про редагування",
 	"vector-personal-more-label": "Посилання користувачів",

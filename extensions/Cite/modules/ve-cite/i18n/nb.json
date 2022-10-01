@@ -36,7 +36,7 @@
 	"cite-ve-citationneeded-reason": "Angitt årsak:",
 	"cite-ve-citationneeded-title": "Trenger referanse",
 	"cite-ve-dialog-reference-editing-reused": "Denne referansen er brukt {{PLURAL:$1|én gang|$1  ganger}} på denne siden.",
-	"cite-ve-dialog-reference-editing-reused-long": "Denne referansen er brukt {{PLURAL:$1|én gang|2=to ganger|$1 ganger}} på denne siden. Endringer gjort her vil brukes alle steder hvor referansen er gjenbrukt.",
+	"cite-ve-dialog-reference-editing-reused-long": "Denne referansen er brukt {{PLURAL:$1|én gang|$1 ganger}} på denne siden. Endringer gjort her vil brukes {{PLURAL:$1|2=begge|alle}} stedene referansen er gjenbrukt.",
 	"cite-ve-dialog-reference-options-group-label": "Bruk denne gruppen",
 	"cite-ve-dialog-reference-options-group-placeholder": "Generelle referanser",
 	"cite-ve-dialog-reference-options-name-label": "Gjenbruk med dette navnet",

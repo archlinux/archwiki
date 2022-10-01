@@ -3,10 +3,12 @@
 		"authors": [
 			"Benel",
 			"Bunukwiki",
-			"Tokoabibi"
+			"Tokoabibi",
+			"Akamycoco"
 		]
 	},
 	"vector-skin-desc": "ayzaay a MonoBook, izaw baluhayay a nuhekalan atu yadah pisaungayay a sakapahay.",
+	"vector-language-button-label": "{{PLURAL:$1|$1 kamu}}",
 	"vector-action-addsection": "micunus sasakamuen",
 	"vector-action-delete": "misipu",
 	"vector-action-move": "milimad",

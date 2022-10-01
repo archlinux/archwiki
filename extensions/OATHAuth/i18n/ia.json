@@ -81,6 +81,12 @@
 	"oathauth-switch-method-warning": "Si tu cambia al methodo de authentication bifactorial $2, le methodo actual ($1) essera disactivate e tote le datos associate con le methodo de authentication actual essera delite.",
 	"oathauth-totp-disable-warning": "Tu non plus potera usar le apparato de authentication registrate pro iste conto. Tote le tokens a uso unic associate a iste conto essera invalidate.",
 	"oathauth-invalidrequest": "Requesta invalide",
+	"notification-header-oathauth-disable": "Le authentication bifactorial ha essite disactivate sur {{GENDER:$2|tu conto}}.",
+	"notification-body-oathauth-disable": "Si {{GENDER:$2|tu}} non ha facite isto, es possibile que tu conto ha essite compromittite.",
+	"notification-body-oathauth-disable-other": "Si {{GENDER:$2|tu}} non ha requestate isto, tu deberea contactar un administrator.",
+	"oathauth-notifications-disable-help": "Adjuta",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} ha activate le authentication bifactorial.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} non ha activate le authentication bifactorial."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} non ha activate le authentication bifactorial.",
+	"oathauth-prefs-disabledgroups": "Gruppo{{PLURAL:$1||s}} disactivate:",
+	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Tu membrato}} de iste gruppo{{PLURAL:$1||s}} es disactivate usque tu activa le [[Special:Manage Two-factor authentication|authentication bifactorial]]."
 }

@@ -35,7 +35,7 @@
 	"interwiki_added": "Predpono »$1« smo dodali v tabelo interwikijev.",
 	"interwiki_addfailed": "Predpone »$1« ni mogoče dodati tabeli interwiki.\nMorda že obstaja v tabeli interwiki.",
 	"interwiki_edittext": "Urejanje predpone interwiki",
-	"interwiki_editintro": "Urejate predpono interwiki.\nNe pozabite, da lahko to prekine obstoječe povezave.",
+	"interwiki_editintro": "Urejate interviki predpono.\nNe pozabite, da lahko to prekine obstoječe povezave.",
 	"interwiki_edited": "Predpono »$1« smo v tabeli interwikijev spremenili.",
 	"interwiki_editerror": "Predpone »$1« ni mogoče spremeniti v tabeli interwiki.\nMorda ne obstaja.",
 	"interwiki-badprefix": "Navedena predpona interwiki »$1« vsebuje neveljavne znake.",

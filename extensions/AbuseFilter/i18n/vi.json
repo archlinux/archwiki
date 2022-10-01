@@ -258,7 +258,7 @@
 	"abusefilter-edit-disallow-other": "Tin nhắn khác",
 	"abusefilter-edit-disallow-other-label": "Tên trang của thông điệp khác:\n:''(không bao gồm tiền tố “MediaWiki:”)''",
 	"abusefilter-edit-disallow-actions": "Hành động",
-	"abusefilter-edit-disallow-preview": "Hiện/Ẩn xem trước của thông điệp được chọn",
+	"abusefilter-edit-disallow-preview": "Hiện/ẩn xem trước của thông điệp được chọn",
 	"abusefilter-edit-disallow-edit": "Tạo/Sửa đổi thông điệp được chọn",
 	"abusefilter-edit-tag-tag": "[[Special:Tags|Các thẻ]] để áp dụng (mỗi thẻ một dòng):",
 	"abusefilter-edit-tag-placeholder": "Thêm các thẻ (từng thẻ một hoặc ngăn cách bằng dấu phẩy)",

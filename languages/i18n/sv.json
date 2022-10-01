@@ -90,7 +90,9 @@
 			"Where next Columbus?",
 			"WikiPhoenix",
 			"לערי ריינהארט",
-			"아라"
+			"아라",
+			"JohanahoJ",
+			"Myskoxen"
 		]
 	},
 	"tog-underline": "Stryk under länkar:",
@@ -676,6 +678,7 @@
 	"changeemail-submit": "Ändra e-post",
 	"changeemail-throttled": "Du har gjort för många inloggningsförsök.\nVänta $1 innan du försöker igen.",
 	"changeemail-nochange": "Ange en annan ny e-postadress.",
+	"changeemail-maxlength": "Din e-postadress bör ha max 255 tecken.",
 	"resettokens": "Återställ nycklar",
 	"resettokens-text": "Du kan återställa nycklar som tillåter åtkomst till vissa privata uppgifter som är associerade till ditt konto här.\n\nDu bör återställa om du av misstag delade dem med någon eller om ditt konto har äventyrats.",
 	"resettokens-no-tokens": "Det finns inga nycklar att återställa.",
@@ -2467,7 +2470,7 @@
 	"changecontentmodel-nodirectediting": "Innehållsmodellen $1 stöder inte direkt redigering",
 	"changecontentmodel-emptymodels-title": "Inget innehållsmodeller finns tillgängliga",
 	"changecontentmodel-emptymodels-text": "Innehållet på [[:$1]] kan inte konverteras till någon typ.",
-	"log-name-contentmodel": "Ändringslogg för innehållsmodellen",
+	"log-name-contentmodel": "Ändringslogg för innehållsmodell",
 	"log-description-contentmodel": "Denna sida listar ändringar i innehållsmodellen för sidor och sidor som skapades med en annan innehållsmodell än den som är standard.",
 	"logentry-contentmodel-new": "$1 {{GENDER:$2|skapade}} sidan $3 med den icke-standardiserade innehållsmodellen \"$5\"",
 	"logentry-contentmodel-change": "$1 {{GENDER:$2|ändrade}} innehållsmodellen för sidan $3 från \"$4\" till \"$5\"",

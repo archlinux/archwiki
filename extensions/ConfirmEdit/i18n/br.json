@@ -14,7 +14,7 @@
 	"captcha-desc": "Pourchas a ra teknikoù CAPTCHA evit en em wareziñ diouzh ar strob hag an diskuliañ gerioù-tremen",
 	"captcha-label": "CAPTCHA",
 	"captcha-info-help": "Deskrivadur ar c'hCAPTCHA.",
-	"captcha-addurl": "Liammoù diavaez nevez zo bet ouzhpennet ganeoc'h. A-benn talañ ouzh ar strob emgefre skrivit disoc'h ar jedadennig eeun-mañ er stern : <br />([[Special:Captcha/help|Petra eo se?]])",
+	"captcha-addurl": "Liammoù diavaez nevez zo bet ouzhpennet ganeoc'h.\nA-benn talañ ouzh ar strob emgefre, diskoulmit ar boelladenn da heul mar plij ha merkit ar respont ar voest evit enrollañ ho kemm ([[Special:Captcha/help|gouzout hiroc’h]]):",
 	"captcha-badlogin": "A-benn talañ ouzh preizhadur emgefre ar gerioù-tremen e c'houlenner ouzhoc'h jediñ an tamm oberiadenn ha skrivañ an disoc'h anezhi er vaezienn a-is ([[Special:Captcha/help|Petra eo se ?]]):",
 	"captcha-createaccount": "A-benn hor sikour da dalañ ouzh ar c'hrouiñ kontoù emgefre, jedit an tamm oberiadenn ha skrivañ an disoc'h anezhi er vaezienn a-is ([[Special:Captcha/help|gouzout hiroc'h]]) :",
 	"captcha-createaccount-fail": "Pe e vank ar c'hod CAPTCHA pe ez eo fall.",

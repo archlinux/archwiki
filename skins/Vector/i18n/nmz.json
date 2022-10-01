@@ -5,7 +5,7 @@
 			"GastonJeremiah"
 		]
 	},
-	"vector-language-button-label": "{{PLURAL:$1|gwɛɛlb $ 1|$1 lam}}",
+	"vector-language-button-label": "{{PLURAL:$1|gwɛɛlb $1|$1 lam}}",
 	"vector-action-addsection": "Hewlb gwɛɛtjugu",
 	"vector-action-delete": "Kpii",
 	"vector-action-move": "Tɔtg",

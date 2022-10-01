@@ -34,6 +34,7 @@
 	"gadgets-required-skins": "{{PLURAL:$2|$1 스킨에서 사용 가능합니다.|다음 스킨에서 사용 가능합니다: $1}}",
 	"gadgets-default": "기본적으로 모든 사람에게 활성화되어 있습니다.",
 	"gadgets-legacy": "소도구가 로드되지 않았습니다. ResourceLoader로 전환해주세요. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) 더 알아보기])",
+	"gadgets-packaged": "이 소도구는 [https://www.mediawiki.org/wiki/ResourceLoader/Package_files 패키지화]되었으며, 진입접은 $1입니다.",
 	"gadgets-export": "내보내기",
 	"gadgets-export-title": "소도구 내보내기",
 	"gadgets-not-found": "\"$1\" 소도구를 찾을 수 없습니다.",
