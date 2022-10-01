@@ -20,7 +20,8 @@
 			"孟天皓",
 			"御坂美琴",
 			"阿pp",
-			"飞舞回堂前"
+			"飞舞回堂前",
+			"Lakejason0"
 		]
 	},
 	"gadgets-desc": "让用户在其[[Special:Preferences#mw-prefsection-gadgets|参数设置]]中选择自定义[[Special:Gadgets|CSS和JavaScript工具]]",
@@ -36,7 +37,7 @@
 	"gadgetusage-activeusers": "活跃用户",
 	"gadgetusage-default": "默认",
 	"gadgets-title": "小工具",
-	"gadgets-pagetext": "下面是用户可以在其[[Special:Preferences#mw-prefsection-gadgets|参数设置页面]]启用的特殊小工具的列表，这些小工具是由[[MediaWiki:Gadgets-definition|定义页]]定义的。这个概览可以让您便捷访问定义了每个小工具的说明和代码的系统信息页面。",
+	"gadgets-pagetext": "下面是用户可以在其[[Special:Preferences#mw-prefsection-gadgets|参数设置页面]]启用的特殊小工具的列表，这些小工具是由[[MediaWiki:Gadgets-definition|定义页]]定义的。这个概览可以让您便捷访问定义了每个小工具的说明和代码的系统消息页面。",
 	"gadgets-editdescription": "添加说明",
 	"gadgets-viewdescription": "查看说明",
 	"gadgets-uses": "使用",
@@ -49,7 +50,7 @@
 	"gadgets-export": "导出",
 	"gadgets-export-title": "导出小工具",
 	"gadgets-not-found": "找不到“$1”小工具。",
-	"gadgets-export-text": "要导出$1小工具，请单击“{{int:gadgets-export-download}}”按钮，保存下载的文件，前往目标wiki的Special:Import并将文件上传。然后添加下内容至MediaWiki:Gadgets-definition页面：\n<pre>$2</pre>\n您必须在目标wiki上拥有适当的权限（包括编辑系统信息的权限），并且启用从文件上传导入。",
+	"gadgets-export-text": "要导出$1小工具，请单击“{{int:gadgets-export-download}}”按钮，保存下载的文件，前往目标wiki的Special:Import并将文件上传。然后添加以下内容至MediaWiki:Gadgets-definition页面：\n<pre>$2</pre>\n您必须在目标wiki上拥有适当的权限（包括编辑系统消息的权限），并且启用从文件上传导入。",
 	"gadgets-export-download": "下载",
 	"gadgets-validate-notset": "未设置属性<code>$1</code>。",
 	"gadgets-validate-wrongtype": "属性<code>$1</code>的类型必须为<code>$2</code>，而不是<code>$3</code>。",
@@ -57,5 +58,6 @@
 	"action-gadgets-edit": "编辑此小工具的JavaScript或CSS页面",
 	"right-gadgets-definition-edit": "编辑小工具定义",
 	"action-gadgets-definition-edit": "编辑此小工具的定义",
-	"gadgets-wrong-contentmodel": "在{{ns:2302}} 命名空间的页码必须在定义的内容模型中。"
+	"gadgets-wrong-contentmodel": "在{{ns:2302}} 命名空间的页码必须在定义的内容模型中。",
+	"gadgets-supports-urlload": "此小工具支持通过包含<code>?withgadget</code>查询的URL来加载。"
 }

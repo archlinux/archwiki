@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"咽頭べさ"
+			"咽頭べさ",
+			"Aey Tai Nuea"
 		]
 	},
 	"tooltip-ca-ve-edit": "ᥛᥨᥢᥳᥛᥦᥰ ᥢᥣᥲᥘᥤᥐᥲᥢᥭᥳ",
 	"visualeditor-backbutton-tooltip": "ᥐᥣᥱᥚᥣᥭᥱᥘᥒᥴ",
-	"visualeditor-ca-createlocaldescriptionsource": "ᥗᥦᥛᥴᥔᥬᥱ ᥑᥩᥲᥔᥙᥰᥘᥦᥒᥰᥘᥨᥝᥱᥐᥦᥱ",
-	"visualeditor-ca-createsource": "ᥐᥩᥱᥔᥣᥒᥲᥒᥝᥲᥒᥣᥱ",
-	"visualeditor-ca-editsource": "ᥛᥦᥰᥗᥖᥰᥒᥝᥲᥒᥣᥱ",
-	"visualeditor-ca-editsource-section": "ᥛᥦᥰᥗᥖᥰᥒᥝᥲᥒᥣᥱ",
+	"visualeditor-ca-createlocaldescriptionsource": "ᥗᥦᥛᥴ ᥔᥬᥱ ᥑᥨᥝᥲ ᥔᥙᥴ ᥘᥦᥒᥰ ᥘᥨᥝᥱ ᥐᥥᥱ",
+	"visualeditor-ca-createsource": "ᥐᥨᥝᥱ ᥔᥣᥒᥲ ᥒᥝᥲ ᥒᥣᥱ",
+	"visualeditor-ca-editsource": "ᥛᥥᥰ ᥗᥖᥴ ᥒᥝᥲ ᥒᥣᥱ",
+	"visualeditor-ca-editsource-section": "ᥛᥥᥰ ᥗᥖᥴ ᥒᥝᥲ ᥒᥣᥱ",
 	"visualeditor-categories-tool": "ᥙᥫᥒᥴᥗᥣᥢᥲ",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
 	"visualeditor-dialog-media-content-section": "ᥞᥨᥝᥴᥑᥩᥲ",

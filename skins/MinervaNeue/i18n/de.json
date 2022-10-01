@@ -8,7 +8,8 @@
 			"Umherirrender",
 			"WikiBayer",
 			"Wnme",
-			"Lucas Werkmeister"
+			"Lucas Werkmeister",
+			"Brettchenweber"
 		]
 	},
 	"minerva-last-modified-date": "Zuletzt bearbeitet am $1 um $2",
@@ -40,7 +41,7 @@
 	"mobile-frontend-notifications-filter": "Filter",
 	"mobile-frontend-pageaction-edit-tooltip": "Bearbeite den Einführungsabschnitt für diese Seite",
 	"mobile-frontend-placeholder": "{{SITENAME}} durchsuchen",
-	"mobile-frontend-random-button": "Zufall",
+	"mobile-frontend-random-button": "Zufällige Seite",
 	"mobile-frontend-redirected-from": "Weitergeleitet von „[[$1]]“",
 	"mobile-frontend-talk-back-to-filepage": "Zurück zur Datei „$1“.",
 	"mobile-frontend-talk-back-to-page": "Zurück zur Seite „$1“.",

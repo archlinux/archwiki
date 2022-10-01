@@ -23,7 +23,7 @@
 	"action-oathauth-enable": "gweradekaat an dilesadur div-elfenn",
 	"oathauth-auth-token-label": "Jetouer",
 	"oathauth-auth-token-help": "Ar ger-tremen a dalv ur wech hepken implijet evel eil elfenn an dilesadur div-elfenn.",
-	"oathauth-auth-ui": "Roit ur c’hod gwiriañ eus ho ardivink dilesañ mar plij.",
+	"oathauth-auth-ui": "Roit ur c’hod gwiriañ eus hoc’h ardivink dilesañ mar plij.",
 	"oathauth-login-failed": "Gwiriañ c’hwitet",
 	"oathauth-describe-provider": "Dilesadur div-elfenn (OATH).",
 	"grant-oath": "Gwelout titouroù an dilesadur div-elfenn (OATH) evit an holl",

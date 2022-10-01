@@ -14,7 +14,8 @@
 			"PoLuX124",
 			"Rodney Araujo",
 			"Themasterriot",
-			"Tiberius1701"
+			"Tiberius1701",
+			"Francodiaz7"
 		]
 	},
 	"multimediaviewer-desc": "Expande las miniaturas a un tamaño mayor en una vista de pantalla completa",
@@ -53,7 +54,7 @@
 	"multimediaviewer-restriction-trademarked": "Esta imagen incluye contenido que puede estar sujeto a leyes sobre registro de marcas.",
 	"multimediaviewer-restriction-default": "Esta imagen puede estar restringida por disposiciones legales no relacionadas con la propiedad intelectual. Consulta la página de descripción para obtener detalles.",
 	"multimediaviewer-restriction-default-and-others": "Esta imagen puede estar aún restringida por disposiciones legales no relacionadas con la propiedad intelectual. Consulta la página de descripción del archivo para obtener detalles.",
-	"multimediaviewer-about-mmv": "Acerca de esta interfaz",
+	"multimediaviewer-about-mmv": "Acerca de Media Viewer",
 	"multimediaviewer-optout-mmv": "Desactivar el visor multimedia",
 	"multimediaviewer-optin-mmv": "Activar el visor multimedia",
 	"multimediaviewer-optout-pending-mmv": "Desactivando el visor multimedia",

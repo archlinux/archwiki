@@ -1,26 +1,27 @@
 {
 	"@metadata": {
 		"authors": [
-			"咽頭べさ"
+			"咽頭べさ",
+			"Aey Tai Nuea"
 		]
 	},
 	"minerva-talk-add-topic": "ᥗᥦᥛᥴᥔᥬᥱ ᥞᥨᥝᥴᥑᥩᥲ",
 	"mobile-frontend-editor-edit": "ᥛᥨᥢᥳᥛᥦᥰ",
-	"mobile-frontend-history": "ᥖᥨᥭᥰ ᥙᥪᥢᥰᥛᥦᥰᥗᥖᥰ ᥑᥩᥒᥴ ᥢᥣᥲᥘᥤᥐᥲᥟᥢᥴᥢᥭᥳ.",
-	"mobile-frontend-home-button": "ᥞᥨᥝᥴᥞᥦᥐᥲ",
-	"mobile-frontend-language-article-heading": "ᥚᥣᥱᥔᥣᥱᥐᥣᥛᥰ",
+	"mobile-frontend-history": "ᥖᥨᥭᥰ ᥙᥪᥢᥰ ᥛᥥᥰ ᥗᥖᥴ ᥑᥩᥒᥴ ᥘᥣᥲ ᥘᥤᥐ ᥟᥢ ᥘᥭᥳ.",
+	"mobile-frontend-home-button": "ᥞᥨᥝᥴ ᥘᥣᥲ ᥖᥥᥰ",
+	"mobile-frontend-language-article-heading": "ᥚᥣᥱ ᥔᥣᥱ ᥑᥣᥛᥰ",
 	"mobile-frontend-main-menu-contributions": "ᥘᥩᥒᥲᥑᥝᥲᥞᥨᥛᥲ",
-	"mobile-frontend-main-menu-login": "ᥘᥩᥐᥳᥟᥤᥢᥱ",
+	"mobile-frontend-main-menu-login": "ᥘᥩᥐᥳ ᥟᥤᥢᥱ",
 	"mobile-frontend-main-menu-logout": "ᥘᥩᥐᥳᥟᥩᥐᥳ",
 	"mobile-frontend-main-menu-nearby": "ᥞᥤᥛᥰᥓᥛᥴ",
-	"mobile-frontend-main-menu-settings": "ᥐᥣᥢᥴᥖᥒᥲ",
+	"mobile-frontend-main-menu-settings": "ᥐᥣᥢ ᥖᥒᥲ",
 	"mobile-frontend-main-menu-watchlist": "ᥔᥥᥢᥲᥛᥣᥭᥴᥙᥬᥳᥖᥨᥭᥰ",
 	"mobile-frontend-meta-data-issues": "ᥑᥩᥲᥑᥢᥴ ᥢᥣᥲᥘᥤᥐᥲ",
 	"mobile-frontend-meta-data-issues-categories": "ᥘᥩᥒᥲᥙᥫᥒᥴᥗᥣᥢᥲᥟᥢᥴᥢᥭᥳ",
 	"mobile-frontend-meta-data-issues-header": "ᥑᥩᥲᥑᥢᥴ ᥢᥣᥲᥘᥤᥐᥲ",
 	"mobile-frontend-pageaction-edit-tooltip": "ᥛᥦᥰᥗᥖᥰ ᥖᥩᥢᥲᥐᥢᥴᥢᥣᥛᥰᥞᥨᥝᥴ ᥑᥩᥒᥴᥢᥣᥰᥘᥤᥐᥲᥢᥭᥳ",
-	"mobile-frontend-placeholder": "ᥑᥨᥢᥳᥞᥣᥴ {{SITENAME}}",
-	"mobile-frontend-random-button": "ᥞᥢᥱᥖᥛᥱ",
+	"mobile-frontend-placeholder": "ᥔᥩᥐ ᥞᥣᥴ {{SITENAME}}",
+	"mobile-frontend-random-button": "ᥞᥢᥱ ᥖᥛᥱ",
 	"mobile-frontend-user-page-contributions": "ᥘᥩᥒᥲᥑᥝᥲᥞᥨᥛᥲ",
 	"mobile-frontend-user-page-talk": "ᥖᥩᥢᥲᥟᥧᥙᥱ",
 	"minerva-page-actions-overflow": "ᥢᥛᥴᥘᥫᥴ",

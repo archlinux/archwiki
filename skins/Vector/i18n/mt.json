@@ -2,15 +2,20 @@
 	"@metadata": {
 		"authors": [
 			"Chrisportelli",
-			"Leli Forte"
+			"Leli Forte",
+			"ToniSant",
+			"Amire80"
 		]
 	},
+	"vector-skin-desc": "Tipprovdi żewġ dehriet tal-Vector:\n* 2011 - Il-verżjoni moderna tal-MonoBook b'dehra friska u titjib fl-użabilità.\n* 2022 - Il-Vector mibni bħala parti mill-proġett tal-WMF [[mw:Desktop Improvements]]",
+	"prefs-vector-enable-vector-1-label": "Uża l-verżjoni preċedenti tal-Vector",
 	"prefs-vector-enable-vector-1-help": "Fis-snin li ġejjin se naġġornaw id-dehra tal-Vector. Id-dehra tal-Vector l-antika se tħallik tara l-verżjoni preċedenti tal-Vector (sa Diċembru tal-2019). Biex tkun taf aktar dwar dawn l-aġġornament żur il-[[mw:Reading/Web/Desktop_Improvements|paġna tal-proġett]].",
 	"vector-opt-out": "Mur lura għad-dehra l-antika",
 	"vector-opt-out-tooltip": "Aqleb l-preferenzi tiegħek sabiex tmur lura għad-dehra l-antika (Vector antik)",
 	"vector-languages": "Lingwi",
 	"vector-language-button-aria-label": "Żur artiklu f'lingwa differenti. Disponibbli fi {{PLURAL:$1|$1 lingwa|$1 lingwi}}",
-	"vector-language-redirect-to-top": "Fuq il-{{SITENAME}}, il-ħoloq tal-lingwi jinsabu fuq in-naħa ta' fuq tal-paġna, biswit it-titlu tal-artiklu. [[#p-lang-btn|Mur fuq]].",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lingwa|$1 lingwi}}",
+	"vector-language-redirect-to-top": "Fuq il-{{SITENAME}}, il-ħoloq tal-lingwi jinsabu fuq in-naħa ta' fuq tal-paġna, ħdejn it-titlu tal-artiklu. [[#p-lang-btn|Mur fuq]].",
 	"vector-language-variant-switcher-label": "Biddel il-varjant tal-lingwa",
 	"vector-action-addsection": "Żid diskussjoni",
 	"vector-action-delete": "Ħassar",

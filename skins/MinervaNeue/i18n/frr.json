@@ -20,5 +20,6 @@
 	"mobile-frontend-placeholder": "Schük üüb {{SITENAME}}",
 	"mobile-frontend-random-button": "Tufaal",
 	"mobile-frontend-talk-back-to-page": "Turag tu det sidj \"$1\".",
-	"mobile-frontend-user-button-tooltip": "Min bööd uunwise"
+	"mobile-frontend-user-button-tooltip": "Min bööd uunwise",
+	"minerva-user-menu-button": "Brükermenüü"
 }

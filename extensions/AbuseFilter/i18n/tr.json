@@ -284,7 +284,7 @@
 	"abusefilter-block-anon": "Anonim kullanıcıları engelle",
 	"abusefilter-block-user": "kayıtlı kullanıcıları engelle",
 	"abusefilter-block-talk": "mesaj sayfası engellendi",
-	"abusefilter-edit-denied": "Bu süzgecin ayrıntılarını göremeyebilirsiniz, çünkü umumi görünümden gizlenmiş.",
+	"abusefilter-edit-denied": "Bu süzgecin ayrıntılarını göremezsiniz, zira umumi görünümden gizlenmiş.",
 	"abusefilter-edit-main": "Filtre parametreleri",
 	"abusefilter-edit-done-subtitle": "Süzgeç değiştirildi",
 	"abusefilter-edit-done": "[[Special:AbuseFilter/$1|$3 süzgeci]] için [[Special:AbuseFilter/history/$1/diff/prev/$2|değişiklikleriniz]] kaydedildi.",

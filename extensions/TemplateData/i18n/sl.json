@@ -72,7 +72,7 @@
 	"templatedata-modal-errormsg": "Najdene so bile napake. Prepričajte se, da ni praznih ali podvojenih imen parametrov in da imena parametrov ne vsebujejo nobenega »$1«, »$2« ali »$3«.",
 	"templatedata-modal-errormsg-duplicate-name": "Odkrita je bila napaka. Izbrano ime se že uporablja za drug parameter.",
 	"templatedata-modal-errormsg-import-noparams": "Pri uvozu ni bil najden noben nov parameter.",
-	"templatedata-modal-format-block": "Blok",
+	"templatedata-modal-format-block": "Blokiranje",
 	"templatedata-modal-format-custom": "Po meri",
 	"templatedata-modal-format-inline": "V vrstici",
 	"templatedata-modal-format-null": "Nedoločeno",

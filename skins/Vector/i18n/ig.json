@@ -5,10 +5,14 @@
 			"Ukabia",
 			"Uzoma Ozurumba",
 			"Edith Nwobu",
-			"Pasjoesscc"
+			"Pasjoesscc",
+			"Oby Ezeilo",
+			"Amire80",
+			"Ifexin",
+			"Timzy D'Great"
 		]
 	},
-	"vector-language-button-label": "{{PLURAL:$1|$1 asụsụ|asụsụ}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 asụsụ}}",
 	"vector-action-addsection": "Tinyé Okwu",
 	"vector-action-delete": "Kàcha",
 	"vector-action-move": "Papụ̀",
@@ -16,10 +20,10 @@
 	"vector-action-undelete": "Á gbàkashikwà",
 	"vector-action-unprotect": "Nchẹdo mgbanwe",
 	"vector-view-create": "Kèe",
-	"vector-view-edit": "Mèzi",
-	"vector-view-history": "Lèe ị̀ta",
+	"vector-view-edit": "Dezie",
+	"vector-view-history": "Lèe onye rụrụ ọrụ a",
 	"vector-view-view": "Gụ̀ọ",
-	"vector-view-viewsource": "Zi mkpurụ",
+	"vector-view-viewsource": "Lee ebeosi",
 	"vector-more-actions": "Ọzọ",
 	"vector-searchsuggest-containing": "Chọọ peeji ndị gụnyere <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

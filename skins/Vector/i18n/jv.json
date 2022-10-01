@@ -4,7 +4,9 @@
 			"Naufal06",
 			"NoiX180",
 			"Pras",
-			"Sumbukompor"
+			"Sumbukompor",
+			"Amire80",
+			"Bennylin"
 		]
 	},
 	"skinname-vector": "Vèktor",
@@ -30,5 +32,7 @@
 	"vector-jumptosearch": "Menyang panggolèkan",
 	"vector-jumptocontent": "Menyang kontèn",
 	"vector-more-actions": "Liyané",
-	"vector-search-loader": "Ngemot pamrayoganing panggolèk"
+	"vector-search-loader": "Ngemot pamrayoganing panggolèk",
+	"vector-anon-user-menu-pages": "Kaca pambesut kang metu log",
+	"vector-anon-user-menu-pages-learn": "sinaoni candhaké"
 }

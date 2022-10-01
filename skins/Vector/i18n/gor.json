@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Marwan Mohamad"
+			"Marwan Mohamad",
+			"Bennylin"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|Bahasa $1}}",
 	"vector-action-addsection": "Duhengi topik",
 	"vector-action-delete": "Luluta",
 	"vector-action-move": "Heyiya",

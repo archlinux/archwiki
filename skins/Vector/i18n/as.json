@@ -4,7 +4,8 @@
 			"Bishnu Saikia",
 			"Chaipau",
 			"Gitartha.bordoloi",
-			"Simbu123"
+			"Simbu123",
+			"Amire80"
 		]
 	},
 	"skinname-vector": "পুৰণা ভেক্টৰ (২০১০)",
@@ -17,7 +18,7 @@
 	"vector-opt-out-tooltip": "আৱৰণৰ পুৰণি ৰূপলৈ ঘূৰি যাবলৈ আপোনাৰ ছেটিংছ সলনি কৰক (পুৰণা ভেক্টৰ)",
 	"vector.css": "/* ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো CSS লোড কৰা হ'ব */",
 	"vector.js": "/* ভেক্টৰ আৱৰণৰ ব্যৱহাৰকাৰীসকলৰ বাবে ইয়াত সকলো জাভাস্ক্ৰিপ্ট লোড কৰা হ'ব */",
-	"vector-action-toggle-sidebar": "পাৰ্শ্বদণ্ড টগল কৰক",
+	"vector-action-toggle-sidebar": "পাৰ্শ্বদণ্ড টগ'ল কৰক",
 	"vector-languages": "ভাষা",
 	"vector-language-button-aria-label": "অন্য এটা ভাষাৰ প্ৰবন্ধলৈ যাওক। {{PLURAL:$1|$1টা ভাষাত}} উপলব্ধ।",
 	"vector-language-button-label": "{{PLURAL:$1|$1টা ভাষা}}",

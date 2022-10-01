@@ -4,11 +4,12 @@
 			"Babamamadidiane",
 			"Lancine.kounfantoh.fofana",
 			"Lanciné.kounfantoh.fofana",
-			"Youssoufkadialy"
+			"Youssoufkadialy",
+			"Amire80"
 		]
 	},
 	"vector-languages": "ߞߊ߲ ߠߎ߬",
-	"vector-language-button-label": "{{PLURAL:ߞߊ߲ $1|ߞߊ߲ $1 ߠߎ߬}}",
+	"vector-language-button-label": "{{PLURAL:$1|ߞߊ߲ $1|ߞߊ߲ $1 ߠߎ߬}}",
 	"vector-action-addsection": "ߥߟߊ߬ߘߊ߫ ߝߙߊ߬",
 	"vector-action-delete": "ߊ߬ ߖߏ߬ߛߌ߬",
 	"vector-action-move": "ߊ߬ ߛߋ߲߬ߓߐ߫",

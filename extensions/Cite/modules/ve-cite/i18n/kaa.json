@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nurlan",
+			"Inabat Allanova"
+		]
+	},
+	"visualeditor-cite-tool-name-book": "Kitap",
+	"visualeditor-cite-tool-name-journal": "Jurnal",
+	"visualeditor-cite-tool-name-news": "Jańalıqlar",
+	"visualeditor-cite-tool-name-web": "Veb-sayt",
+	"cite-ve-changedesc-ref-group-both": "Maǵlıwmat toparı \" $1\" dan \" $2\" ǵa ózgertirildi",
+	"cite-ve-changedesc-ref-group-from": "Maǵlıwmat toparı \" $1\" dan ulıwma toparǵa ózgertirildi",
+	"cite-ve-changedesc-ref-group-to": "Maǵlıwmat toparı ulıwma topardan “$1” ǵa ózgertirildi"
+}

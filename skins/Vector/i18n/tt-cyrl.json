@@ -5,11 +5,13 @@
 			"Don Alessandro",
 			"Rinatus",
 			"Ильнар",
-			"Рашат Якупов"
+			"Рашат Якупов",
+			"Ерней"
 		]
 	},
 	"skinname-vector": "Сызымлы",
 	"vector-skin-desc": "Хәзерге заманга туры килгән MonoBook күренеше, яңа бизәлеш һәм яңа мөмкинлекләр",
+	"vector-language-button-label": "{{PLURAL:$1|$1 тел}}",
 	"vector-action-addsection": "Яңа тема өстәү",
 	"vector-action-delete": "Бетерү",
 	"vector-action-move": "Күчерү",

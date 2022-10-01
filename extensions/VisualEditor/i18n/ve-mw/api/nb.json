@@ -5,7 +5,8 @@
 			"Danmichaelo",
 			"Jeblad",
 			"Jon Harald Søby",
-			"Kingu"
+			"Kingu",
+			"Matma Rex"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Ingen mellomlagret serialisering funnet med den nøkkelen",
@@ -13,7 +14,7 @@
 	"apierror-visualeditor-docserver-http-error": "Feil under kontakt med Parsoid/RESTBase-tjeneren: $1",
 	"apierror-visualeditor-docserver-http": "Feil under kontakt med Parsoid/RESTBase-tjeneren (HTTP $1)",
 	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService for dokumentservern er ikke definert; se https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "Feil under kontakt med Parsoid/RESTbase-tjeneren (ingen respons)",
+	"apierror-visualeditor-docserver": "Feil under kontakt med Parsoid/RESTBase-tjeneren (ingen respons)",
 	"apierror-visualeditor-latestnotfound": "Kunne ikke finne siste revisjon for tittelen",
 	"apihelp-visualeditor-description": "Returnerer HTML5 for en side fra Parsoid-tjenesten.",
 	"apihelp-visualeditor-param-basetimestamp": "Ved lagring, sett denne til tidsstempelet for revisjonen som ble redigert. Brukes for å oppdage redigeringskonflikter.",

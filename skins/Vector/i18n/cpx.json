@@ -1,10 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"ChoiChong"
+			"ChoiChong",
+			"Kahin He"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1语言}}",
 	"vector-action-delete": "刪",
 	"vector-action-move": "移动",
-	"vector-view-edit": "修改"
+	"vector-action-protect": "保护",
+	"vector-view-create": "創建",
+	"vector-view-edit": "修改",
+	"vector-view-history": "看历史",
+	"vector-view-view": "读",
+	"vector-more-actions": "価兮"
 }

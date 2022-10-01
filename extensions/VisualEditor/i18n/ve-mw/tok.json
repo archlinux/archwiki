@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robin van der Vliet"
+			"Robin van der Vliet",
+			"LesVisages"
 		]
 	},
+	"visualeditor-ca-editsource": "o ante e ilo toki",
+	"visualeditor-ca-editsource-section": "o ante e toki ilo",
 	"visualeditor-dialog-meta-languages-name-label": "toki",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "toki"
 }

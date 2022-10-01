@@ -7,17 +7,33 @@
 			"RajeshPandey",
 			"बिप्लब आनन्द",
 			"राम प्रसाद जोशी",
-			"सरोज कुमार ढकाल"
+			"सरोज कुमार ढकाल",
+			"Bada Kaji",
+			"बडा काजी"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "पुस्तकहरू",
 	"visualeditor-cite-tool-name-journal": "जर्नल",
 	"visualeditor-cite-tool-name-news": "समाचार",
 	"visualeditor-cite-tool-name-web": "वेबसाइट",
+	"cite-ve-citationneeded-button": "सन्दर्भ थप्नुहोस्",
+	"cite-ve-citationneeded-reason": "दिइएको कारण:",
+	"cite-ve-citationneeded-title": "सन्दर्भ आवश्यक छ",
+	"cite-ve-dialog-reference-options-group-label": "यो समूह प्रयोग गर्नुहोस्",
+	"cite-ve-dialog-reference-options-group-placeholder": "सामान्य सन्दर्भ",
+	"cite-ve-dialog-reference-options-name-label": "यो नाम द्वारा पुन: प्रयोग गर्नुहोस्",
 	"cite-ve-dialog-reference-options-section": "विकल्पहरू",
 	"cite-ve-dialog-reference-title": "सन्दर्भ",
 	"cite-ve-dialog-reference-useexisting-tool": "पुनः प्रयोग",
+	"cite-ve-dialog-referenceslist-contextitem-description-general": "सामान्य सन्दर्भहरूको सूची",
+	"cite-ve-dialog-referenceslist-contextitem-description-named": "समूह \"$1\"को लागि सन्दर्भहरूको सूची",
+	"cite-ve-dialog-referenceslist-title": "सन्दर्भ सूची",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "सन्दर्भहरू",
+	"cite-ve-dialogbutton-reference-full-label": "सामान्य",
 	"cite-ve-dialogbutton-reference-title": "सन्दर्भ",
 	"cite-ve-dialogbutton-reference-tooltip": "सामान्य",
-	"cite-ve-toolbar-group-label": "उर्ध्वभरण"
+	"cite-ve-dialogbutton-referenceslist-tooltip": "सन्दर्भ सामग्रीहरू",
+	"cite-ve-toolbar-group-label": "उर्ध्वभरण",
+	"cite-ve-othergroup-item": "$1 सन्दर्भ",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "सन्दर्भहरू"
 }

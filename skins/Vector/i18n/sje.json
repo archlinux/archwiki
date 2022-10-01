@@ -5,6 +5,7 @@
 			"Olve Utne"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 giella|$1 giela}}",
 	"vector-action-addsection": "Lasedä ábdnasav",
 	"vector-action-delete": "Gádodä",
 	"vector-action-move": "Sirde",

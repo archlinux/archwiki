@@ -1,15 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
-			"Joetaras"
+			"Joetaras",
+			"Matma Rex"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Nisciuna serializzazzione cesciate ha state acchiate cu sta chiave",
 	"apierror-visualeditor-difffailed": "Diff fallite",
-	"apierror-visualeditor-docserver-http-error": "Errore condattanne 'u server Parsoid/RESTbase: $1",
-	"apierror-visualeditor-docserver-http": "Errore condattanne 'u server Parsoid/RESTbase (HTTP $1)",
+	"apierror-visualeditor-docserver-http-error": "Errore condattanne 'u server Parsoid/RESTBase: $1",
+	"apierror-visualeditor-docserver-http": "Errore condattanne 'u server Parsoid/RESTBase (HTTP $1)",
 	"apierror-visualeditor-docserver-unconfigured": "'U servizie VirtualRESTService pe server d'u documende non g'è definite; 'ndruche https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "Errore condattanne 'u server Parsoid/RESTbase (nisciuna resposte)",
+	"apierror-visualeditor-docserver": "Errore condattanne 'u server Parsoid/RESTBase (nisciuna resposte)",
 	"apierror-visualeditor-latestnotfound": "Non ge s epò acchià l'urtema revisione pu titole",
 	"apihelp-visualeditor-description": "Tuèrne HTML5 pe 'na pàgene da 'u servizie Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Quanne ste reggistre, 'mboste quiste cumme orarie d'a revisione ca ha state cangiate. Ausate pe acchià conflitte de cangiaminde.",

@@ -5,6 +5,9 @@
 			"Papuass"
 		]
 	},
+	"vector-opt-out": "Pārslēgties uz veco izskatu",
+	"vector-action-toggle-sidebar": "Pārslēgt sānjoslu",
+	"vector-languages": "Valodas",
 	"vector-language-button-label": "{{PLURAL:$1|$1 valodas|$1 valoda|$1 valodas}}",
 	"vector-action-addsection": "Jauna sadaļa",
 	"vector-action-delete": "Dzēst",
@@ -19,6 +22,7 @@
 	"vector-view-viewsource": "Aplūkot kodu",
 	"vector-more-actions": "Vairāk",
 	"vector-anon-user-menu-pages-learn": "uzzināt vairāk",
+	"vector-anon-user-menu-pages-label": "Uzzini vairāk par rediģēšanu",
 	"vector-main-menu-tooltip": "Galvenā izvēlne",
 	"tooltip-vector-anon-user-menu-title": "Vairāk iespēju"
 }

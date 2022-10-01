@@ -449,7 +449,7 @@
 	"visualeditor-loaderror-wrongmode": "נעשה ניסיון לטעון את העורך במצב לא נכון (סוג נתונים: \"$1\", מצב עורך: \"$2\").",
 	"visualeditor-settings-tool": "הגדרות דף",
 	"visualeditor-special-characters-group-other": "נפוצים",
-	"visualeditor-templatesused-tool": "תבניות שמשמשות כאן",
+	"visualeditor-templatesused-tool": "תבניות בשימוש",
 	"visualeditor-title-error": "כותרת בלתי־תקינה.",
 	"visualeditor-toload": "העורך ייטען עכשיו. אם ההודעה הזאת עדיין מופיעה אחרי כמה שניות, [$1 נא לרענן את הדף].",
 	"visualeditor-tooltip-non-breaking-space": "רווח ללא מעבר שורה",

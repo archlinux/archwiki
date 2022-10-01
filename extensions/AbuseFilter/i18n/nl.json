@@ -32,7 +32,8 @@
 			"Trijnstel",
 			"Tvdm",
 			"Wiki13",
-			"Xbaked potatox"
+			"Xbaked potatox",
+			"DiGro"
 		]
 	},
 	"abusefilter-desc": "Voert automatisch heuristische analyse uit op bewerkingen",
@@ -59,7 +60,7 @@
 	"right-abusefilter-modify-restricted": "Filters met beperkte handelingen wijzigen",
 	"right-abusefilter-revert": "Alle wijzigingen door een filter terugdraaien",
 	"right-abusefilter-view-private": "Als beperkt zichtbaar gemarkeerde filters bekijken",
-	"right-abusefilter-log-private": "Logboekregels bekijken voor filters die gemarkeerd zijn als persoonlijk",
+	"right-abusefilter-log-private": "Logboekvermeldingen bekijken van misbruikfilters die als persoonlijk zijn gemarkeerd",
 	"right-abusefilter-hide-log": "Meldingen in het filterlogboek verbergen",
 	"right-abusefilter-hidden-log": "Verborgen meldingen in het filterlogboek bekijken",
 	"right-abusefilter-modify-global": "Globale misbruikfilters aanmaken of aanpassen",
@@ -72,7 +73,7 @@
 	"action-abusefilter-modify-restricted": "filters met beperkte handelingen te wijzigen",
 	"action-abusefilter-revert": "alle wijzigingen door een bepaald filter terug te draaien",
 	"action-abusefilter-view-private": "als beperkt zichtbaar gemarkeerde filters te bekijken",
-	"action-abusefilter-log-private": "Logboeken weergeven van misbruikfilters die zijn gemarkeerd als privé.",
+	"action-abusefilter-log-private": "logboekvermeldingen te bekijken van misbruikfilters die als persoonlijk zijn gemarkeerd",
 	"action-abusefilter-hide-log": "meldingen in het filterlogboek te verbergen",
 	"action-abusefilter-hidden-log": "verborgen meldingen in het filterlogboek te bekijken",
 	"action-abusefilter-modify-global": "globale misbruikfilters aan te maken of aan te passen",

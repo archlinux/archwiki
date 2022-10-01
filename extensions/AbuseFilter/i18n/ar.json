@@ -29,7 +29,9 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"وهراني"
+			"وهراني",
+			"Dr-Taher",
+			"NEHAOUA"
 		]
 	},
 	"abusefilter-desc": "يطبق قواعد آلية على التعديلات.",
@@ -219,7 +221,8 @@
 	"abusefilter-edit-oldwarning-view": "<strong>أنت تعرض نسخة قديمة من هذا المرشح\nالإحصاءات المقتبسة تخص أحدث إصدار من المرشح.</strong> &bull;\n[[Special:AbuseFilter/history/$2|ارجع إلى سجل هذا المرشح]].",
 	"abusefilter-edit-status-label": "إحصاءات:",
 	"abusefilter-edit-status": "من آخر $1 {{PLURAL:$1|تعديل}}، هذا المرشح طابق $2 ($3%).\nفي المتوسط​​، تبلغ مدة تشغيله $4 مللي ثانية، ويستهلك $5 {{PLURAL:$5|شرط|شروط}} لحد الشرط.",
-	"abusefilter-edit-throttled-warning": "'''تحذير:'''تم التعليم على هذا المرشح تلقائيا على أنه ضار; كتدبير أمان، لن يتم تنفيذ الإجراءات التالية ($1)، تُرجَى مراجعة و[[mw:Extension:AbuseFilter/Conditions|تحسين]] شروطك لإزالة هذا التقييد",
+	"abusefilter-edit-throttled-warning": "'''تحذير:'''عُلّم على هذا المرشح تلقائيا على أنه ضار; كتدبير أمان، لن {{PLURAL:$2|يُنفذ الإجراء التالي|تُنفذ الإجراءات التالية}}: ($1)، يُرجَى التحقق مما إذا كان من المتوقع ارتفاع معدل التوافقات. إذا كان الأمر كذلك، يمكنك حفظ المُرشح مرة أخرى لإزالة هذا القيد.",
+	"abusefilter-edit-throttled-warning-no-actions": "'''تحذير:''' وُضعت علامة على هذا الفلتر تلقائيًا على أنه ضار. لم تُعطل أي إجراءات تلقائيًا، ولكن يرجى التحقق مما إذا كان من المتوقع ارتفاع معدل التطابقات. إذا كان الأمر كذلك، يمكنك تجاهل هذا التحذير.",
 	"abusefilter-edit-new": "مرشح جديد",
 	"abusefilter-edit-save": "حفظ المرشح",
 	"abusefilter-edit-id": "رقم المرشح:",
@@ -597,6 +600,8 @@
 	"tag-abusefilter-condition-limit": "تم الوصول إلى حد الشرط",
 	"tag-abusefilter-condition-limit-description": "التعديلات أو الأحداث الأخرى التي لا يمكن التحقق منها من قبل جميع [[Special:AbuseFilter|مرشحات الإساءة]] النشطة ([[mw:Extension:AbuseFilter/Conditions|مساعدة]]).",
 	"notification-header-throttle-filter": "مرشح الإساءة رقم $2 {{GENDER:$1|الذي}} عدلته مؤخراً مخنوق.",
+	"notification-header-throttle-filter-actions": "مرشح الإساءة $2 الذي {{GENDER:$1|عدلته}} مؤخرًا كان لديه معدل مرتفع من التطابقات و {{PLURAL:$4| عُطل الإجراء| عُطلت الإجراءات}} تلقائيًا: $3.",
+	"notification-header-throttle-filter-no-actions": "مرشح الإساءة $2  الذي {{GENDER:$1| عدلته}} مؤخرًا كان يحتوي على معدل مرتفع من التطابقات ولكن لم يتم تعطيل أي إجراءات تلقائيًا.",
 	"notification-subject-throttle-filter": "مُرشِّح الإساءة {{GENDER:$1|الذي}} عدلته قد خُنق في {{SITENAME}}.",
 	"notification-link-text-show-filter": "أظهر المرشح"
 }

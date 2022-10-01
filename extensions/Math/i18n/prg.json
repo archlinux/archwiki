@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nertiks"
+			"Nertiks",
+			"Tīgelika"
 		]
 	},
 	"math_failure": "Parsers ni mazēi skaitātun",
 	"math_syntax_error": "sīntaksis blānda",
 	"math_unknown_error": "niwaistā blānda",
-	"math_unknown_function": "niwaistā funkciōni",
+	"math_unknown_function": "niwaistā funkciōni \"$1\"",
 	"mw_math_mathml": "MathML ik mazīngi (eksperimentālai)",
 	"mw_math_png": "Wisaddan teīkeis PNG grāfikin",
 	"mw_math_source": "Palaīdeis en TeX-as fōrmatu (per tekstas lasātlins)",

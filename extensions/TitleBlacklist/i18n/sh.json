@@ -2,9 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Kolega2357",
-			"OC Ripper"
+			"OC Ripper",
+			"Vlad5250"
 		]
 	},
-	"right-tboverride": "Zaobilaženje spiska zabranjenih naslova",
-	"right-tboverride-account": "Zaobilaženje spiska zabranjenih korisničkih imena"
+	"action-tboverride": "zaobilaženje zabranjenih naslova ili korisničkih imena",
+	"action-tboverride-account": "zaobilaženje zabranjenih korisničkih imena",
+	"action-titleblacklistlog": "pregled evidencije zabranjenih naslova",
+	"log-name-titleblacklist": "Evidencija zabranjenih naslova",
+	"right-tboverride": "Zaobilaženje zabranjenih naslova ili korisničkih imena",
+	"right-tboverride-account": "Zaobilaženje zabranjenih korisničkih imena",
+	"right-titleblacklistlog": "Pregled evidencije zabranjenih naslova"
 }

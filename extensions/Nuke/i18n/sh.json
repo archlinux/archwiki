@@ -21,6 +21,7 @@
 	"nuke-maxpages": "Najveći broj stranica:",
 	"nuke-editby": "Napravio [[Special:Contributions/$1|$1]]",
 	"nuke-deleted": "Stranica '''$1''' je obrisana.",
+	"nuke-deletion-queued": "Stranica '''$1''' je na čekanju za brisanje.",
 	"nuke-not-deleted": "'''Ne mogu''' da obrišem stranicu [[:$1]].",
 	"nuke-delete-more": "[[Special:Nuke|Obriši još stranica]]",
 	"nuke-pattern": "Obrazac SQL LIKE-a (npr. %) za ime stranice:",

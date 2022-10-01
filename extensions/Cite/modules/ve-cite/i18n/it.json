@@ -29,7 +29,8 @@
 			"Statix64",
 			"Stefania.scaramuzzi",
 			"Supernino",
-			"Una giornata uggiosa '94"
+			"Una giornata uggiosa '94",
+			"Vivbod"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libro",
@@ -39,7 +40,11 @@
 	"cite-ve-changedesc-ref-group-both": "Il gruppo di note è cambiato da \"$1\" a \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "Il gruppo di note è cambiato da \"$1\" al gruppo generale",
 	"cite-ve-changedesc-ref-group-to": "Il gruppo di note è cambiato dal gruppo generale a \"$1\"",
+	"cite-ve-changedesc-reflist-group-both": "Elenco gruppo note cambiato da \"$1\" a \"$2\"",
+	"cite-ve-changedesc-reflist-group-from": "Elenco gruppo note cambiato da \"$1\" a gruppo generale",
+	"cite-ve-changedesc-reflist-group-to": "Elenco gruppo note cambiato da gruppo generale a \"$1\"",
 	"cite-ve-citationneeded-button": "Aggiungi una citazione",
+	"cite-ve-citationneeded-reason": "Motivo fornito:",
 	"cite-ve-citationneeded-title": "Citazione necessaria",
 	"cite-ve-dialog-reference-editing-reused": "Questo riferimento è usato {{PLURAL:$1|una volta|2=due volte|$1 volte}} su questa pagina.",
 	"cite-ve-dialog-reference-editing-reused-long": "Questo riferimento è usato {{PLURAL:$1|1 volta|$1 volte}} su questa pagina. Le modifiche fatte qui saranno applicate ovunque questo riferimento sia riusato.",

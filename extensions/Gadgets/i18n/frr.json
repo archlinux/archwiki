@@ -18,6 +18,6 @@
 	"gadgets-export": "Eksport",
 	"gadgets-export-title": "Eksport faan letj halpers",
 	"gadgets-not-found": "Letj halper \"$1\" ei fünjen.",
-	"gadgets-export-text": "Am di letj halper $1 tu eksportiarin, trak üüb „{{int:gadgets-export-download}}“ an seekre det datei üüb dan reegner. Do gung tu \"Spezial:Import\" üüb det wiki, huar di letj halper importiaret wurd skal an schüür det datei huuch. Skriiw do noch didiar tekst üüb det sidj MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nHuar dü det importiare wel, brükst dü jo nuadag brükerrochten tu importiarin an uk det brükerrocht, am MediaWiki-süsteemnoorachten tu bewerkin. An do skal natüürelk det importiarin uun detdiar wiki aktiwiaret wees.",
+	"gadgets-export-text": "Am di letj halper $1 tu eksportiarin, trak üüb „{{int:gadgets-export-download}}“ an seekre det datei üüb dan reegner. Do gung tu Spezial:Import üüb det wiki, huar di letj halper importiaret wurd skal an sjüür det datei huuch. Skriiw do noch didiar tekst üüb det sidj MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nHuar dü det importiare wel, brükst dü jo nuadag brükerrochten tu importiarin an uk det brükerrocht, am MediaWiki-süsteemnoorachten tu bewerkin. An do skal natüürelk det importiarin uun detdiar wiki aktiwiaret wees.",
 	"gadgets-export-download": "Deelloose"
 }

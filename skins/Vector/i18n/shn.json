@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Saiddzone",
-			"Saimawnkham"
+			"Saimawnkham",
+			"Amire80"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ၽႃႇသႃႇၵႂၢမ်း}}",
@@ -11,7 +12,7 @@
 	"vector-action-move": "ၶၢႆႉ",
 	"vector-action-protect": "ႁေႉၵင်ႈ",
 	"vector-view-create": "သၢင်ႈ",
-	"vector-view-edit": "မူၼ်ႉမႄး",
+	"vector-view-edit": "မႄးထတ်း",
 	"vector-view-history": "တူၺ်းပိုၼ်း",
 	"vector-view-view": "လူတူၺ်း",
 	"vector-view-viewsource": "တူၺ်း ငဝ်ႈငႃႇ",

@@ -12,7 +12,8 @@
 			"Olsi",
 			"Vanished 456321456",
 			"Vlad5250",
-			"아라"
+			"아라",
+			"Amire80"
 		]
 	},
 	"tog-underline": "Nënvizoji vegzat",
@@ -167,7 +168,7 @@
 	"action-unprotect": "Hiq mbrojtjen",
 	"unprotect": "Hiq mbrojtjen",
 	"newpage": "Faqe e re",
-	"talkpagelinktext": "Bisedo",
+	"talkpagelinktext": "bisedo",
 	"specialpage": "Faqe speciale",
 	"personaltools": "Vegla vetjake",
 	"talk": "Bisedimi",
@@ -579,7 +580,7 @@
 	"prefs-rc": "Ndryshimet e freskëta",
 	"prefs-watchlist": "Lista e mbikëqyrjeve",
 	"prefs-watchlist-days": "Numri i ditëve me i tregue në listën e mbikëqyrjeve:",
-	"prefs-watchlist-days-max": "Maximum $1 {{PLURAL:$1|day|days}}",
+	"prefs-watchlist-days-max": "Maksimalisht $1 {{PLURAL:$1|ditë}}",
 	"prefs-watchlist-edits": "Numri maksimal i ndryshimeve që tregohen në listën e zgjânueme të mbikëqyrjes:",
 	"prefs-watchlist-edits-max": "Numri maksimal: 1000",
 	"prefs-misc": "Të ndryshme",
@@ -1027,7 +1028,6 @@
 	"special-characters-group-telugu": "Telugu",
 	"special-characters-group-sinhala": "Sinhala",
 	"special-characters-group-gujarati": "Guxharati",
-	"view-view-foreign": "Shiko në $1",
 	"view-edit-local": "Redakto përshkrimin vendor",
 	"skin-action-protect": "Mbroj",
 	"skin-action-undelete": "Kthe fshimjen mbrapsht",

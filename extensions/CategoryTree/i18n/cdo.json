@@ -3,7 +3,8 @@
 		"authors": [
 			"Davidzdh",
 			"GnuDoyng",
-			"Yejianfei"
+			"Yejianfei",
+			"唐吉訶德的侍從"
 		]
 	},
 	"categorytree": "類別樹",
@@ -13,7 +14,8 @@
 	"categorytree-mode-categories": "囇有類別",
 	"categorytree-mode-pages": "無文件其頁面",
 	"categorytree-mode-all": "全部頁面",
-	"categorytree-expand": "Kŭi",
+	"categorytree-collapse": "āng",
+	"categorytree-expand": "hiêng",
 	"categorytree-member-counts": "Bău-guák $1 bĭh cṳ̄-hŭng-lôi,$2 bĭh hiĕk-miêng, $3 bĭh ùng-giông",
 	"categorytree-num-categories": "$1 lôi",
 	"categorytree-num-pages": "$1 hiĕk",

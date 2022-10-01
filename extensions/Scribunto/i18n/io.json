@@ -8,6 +8,7 @@
 	"scribunto-line": "che la lineo $1",
 	"scribunto-module-line": "en $1, che la lineo $2",
 	"scribunto-doc-page-does-not-exist": "''Dokumentizo por ica modulo povas kreesar ye [[$1]]''",
+	"scribunto-console-clear": "Efacar",
 	"scribunto-common-error-category": "Pagini kun erori pri script",
 	"scribunto-common-nosuchmodule": "Eroro pri script: Ica modulo ne existas \"$2\".",
 	"scribunto-lua-error-location": "Lua eroro $1: $2.",

@@ -7,6 +7,7 @@
 	"apihelp-query+oath-description": "Provjera je li dvočiniteljska potvrda (OATH) omogućena za određenog korisnika.",
 	"apihelp-query+oath-summary": "Provjera je li dvočiniteljska potvrda (OATH) omogućena za određenog korisnika.",
 	"apihelp-query+oath-param-user": "Za koji korisnik treba pružiti informacije. Po podrazumevanom: trenutni korisnik.",
+	"apihelp-query+oath-param-reason": "Razlog za upit statusa OATH.",
 	"apihelp-query+oath-example-1": "Daj informacije za trenutnog korisnika.",
 	"apihelp-query+oath-example-2": "Daj informacije za korisnika <kbd>Primjer</kbd>",
 	"apihelp-oathvalidate-description": "Provjeri žeton za dvočiniteljsku potvrdu (OATH).",

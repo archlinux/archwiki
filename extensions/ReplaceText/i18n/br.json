@@ -3,7 +3,8 @@
 		"authors": [
 			"Fohanno",
 			"Fulup",
-			"Y-M D"
+			"Y-M D",
+			"Huñvreüs"
 		]
 	},
 	"replacetext": "Erlec'hiañ an destenn",
@@ -32,7 +33,7 @@
 	"replacetext_success": "\"$1\" a vo erlec'hiet gant \"$2\" e $3 pajenn{{PLURAL:$3||}}.",
 	"replacetext_noreplacement": "N'eus bet kavet pajenn ebet gant an neudennad « $1 ».",
 	"replacetext_nomove": "N'eo bet kavet pennad ebet gant \"$1\" en ul lodenn eus an titl.",
-	"replacetext_nosuchcategory": "N'eus rummad ebet en anv « $1 ».",
+	"replacetext_nosuchcategory": "N'eus rummad ebet anvet « $1 ».",
 	"replacetext_return": "Distreiñ d'ar furmskrid.",
 	"replacetext_warning": "'''Diwallit :''' {{PLURAL:$1| $1 bajenn enni| $1 pajenn enno}} ar steudad arouezennoù erlec'hiañ zo dija, \"$2\". Ma kasit ar cheñchamant da benn ne vo ket posupl diforc'hañ ar cheñchamantoù degaset ganeoc'h diouzh an neudennadoù-se ken.",
 	"replacetext_blankwarning": "'''Diwallit : ''' Dre m'eo goullo ar steudad erlec'hiañ, ne vo ket tu da zizober an urzh-mañ.",

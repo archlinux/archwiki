@@ -88,7 +88,8 @@
 			"Önni",
 			"לערי ריינהארט",
 			"아라",
-			555
+			555,
+			"Marinaazev"
 		]
 	},
 	"tog-underline": "Sublinhar hiperligações:",
@@ -210,6 +211,7 @@
 	"index-category": "Páginas indexadas",
 	"noindex-category": "Páginas não indexadas",
 	"broken-file-category": "Páginas com hiperligações quebradas para ficheiros",
+	"categoryviewer-pagedlinks": "($1) ($2)",
 	"about": "Sobre",
 	"article": "Página de conteúdo",
 	"newwindow": "(abre numa janela nova)",
@@ -675,6 +677,7 @@
 	"changeemail-submit": "Alterar correio eletrónico",
 	"changeemail-throttled": "Realizou demasiadas tentativas de início de sessão.\nAguarde $1 antes de tentar novamente, por favor.",
 	"changeemail-nochange": "Insira um novo endereço de correio eletrónico, por favor.",
+	"changeemail-maxlength": "O seu correio eletrónico deve ter no máximo 255 carateres.",
 	"resettokens": "Redefinir chaves",
 	"resettokens-text": "Pode redefinir aqui as chaves de acesso a certos dados privados associados à sua conta.\n\nDeve fazê-lo se as divulgou acidentalmente a alguém ou se a sua conta tiver sido comprometida.",
 	"resettokens-no-tokens": "Não há chaves para redefinir.",
@@ -808,7 +811,7 @@
 	"edit-slots-cannot-remove": "{{PLURAL:$1|O seguinte segmento é obrigatório e não pode ser removido|Os seguintes segmentos são obrigatórios e não podem ser removidos}}: $2.",
 	"edit-slots-missing": "{{PLURAL:$1|Falta o seguinte segmento|Faltam os seguintes segmentos}}: $2.",
 	"postedit-confirmation-created": "A página foi criada.",
-	"postedit-confirmation-restored": "A página foi restaurada.",
+	"postedit-confirmation-restored": "Esta página foi restaurada.",
 	"postedit-confirmation-saved": "A sua edição foi gravada.",
 	"postedit-confirmation-published": "A sua edição foi publicada.",
 	"edit-already-exists": "Não foi possível criar uma página nova.\nEla já existia.",
@@ -3708,7 +3711,7 @@
 	"feedback-subject": "Assunto:",
 	"feedback-submit": "Enviar",
 	"feedback-terms": "Entendo que as informações de meu agente de utilizador inclui a informação acerca da versão exata de meu navegador e sistema operacional e que serão partilhadas publicamente juntamente aos meus comentários.",
-	"feedback-termsofuse": "Concordo em fornecer comentários de acordo com as Condições de Uso.",
+	"feedback-termsofuse": "Concordo em fornecer comentários de acordo com as condições de utilização.",
 	"feedback-thanks": "Obrigado! O seu comentário foi adicionado à página \"[$2 $1]\".",
 	"feedback-thanks-title": "Obrigado!",
 	"feedback-useragent": "Agente de utilizador:",

@@ -218,7 +218,7 @@
 	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "Este parámetro \"$2\" ya está disponible para su uso. Por favor comprueba las opciones en la barra lateral.",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Nombre del parámetro",
 	"visualeditor-dialog-transclusion-add-param-save": "Añadir parámetro",
-	"visualeditor-dialog-transclusion-add-template": "Añadir una plantilla",
+	"visualeditor-dialog-transclusion-add-template": "Añadir plantilla",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Añadir parámetro sin documentar",
 	"visualeditor-dialog-transclusion-collapse-options": "Ocultar opciones",
 	"visualeditor-dialog-transclusion-confirmation-reject": "Seguir editando",

@@ -11,6 +11,7 @@
 	"vector-opt-out": "Oguna'ö zikhala satua",
 	"vector-opt-out-tooltip": "Bulö'ö stelan na'omasi'ö mangawuli furi ba zikhala satua (legacy Vector/Vector Satua)",
 	"vector-action-toggle-sidebar": "Oroma'ö/bini'ö nahia ba zinga",
+	"vector-language-button-label": "{{PLURAL:$1|$1 li}}",
 	"vector-action-addsection": "Nönö mbörö huhuo",
 	"vector-action-delete": "Tibo'ö",
 	"vector-action-move": "Fawu'a",
@@ -26,5 +27,6 @@
 	"vector-jumptosearch": "Ae ba wangalui",
 	"vector-jumptocontent": "Ae ba nösi",
 	"vector-more-actions": "Tohu-tohunia",
-	"vector-search-loader": "Mama'anö duma-duma ni'alui"
+	"vector-search-loader": "Mama'anö duma-duma ni'alui",
+	"vector-searchsuggest-containing": "Alui nga'örö si so bakha <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
 }

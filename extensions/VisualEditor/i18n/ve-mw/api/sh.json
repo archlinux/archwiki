@@ -5,16 +5,19 @@
 			"OC Ripper",
 			"Sf",
 			"Vlad5250",
-			"Zoranzoki21"
+			"Zoranzoki21",
+			"Matma Rex"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Nisam našao međuspremljenu serijalizaciju za taj ključ",
 	"apierror-visualeditor-difffailed": "Prikaz razlike nije uspjeo",
+	"apierror-visualeditor-docserver-http-error": "Greška pri kontaktiranju servera Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-unconfigured": "Nije određen VirtualRESTService za dokumentan server; pogl. https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "Greška pri kontaktiranju servera Parsoid/RESTbase",
+	"apierror-visualeditor-docserver": "Greška pri kontaktiranju servera Parsoid/RESTBase",
 	"apierror-visualeditor-latestnotfound": "Nisam mogao naći posljednje uređivanje naslova",
 	"apihelp-visualeditor-description": "Vraća HTML5 za stranicu sa servisa Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Kada snimate, postavite ovo za vremenski pečat revizije koja je bila uređena. Koristi se za otkrivanje sukoba uređivanja.",
+	"apihelp-visualeditor-param-badetag": "Ako je RESTBase upit vratio naizgled nevažeći ETag, proslijedi ga ovdje za potrebe zapisivanja.",
 	"apihelp-visualeditor-param-cachekey": "Za serialize ili diff, koristite rezultat prethodnog serializeforcache zahtjeva sa ovim ključem. Premošćuje $1html.",
 	"apihelp-visualeditor-param-editintro": "Izmijenite uvod da biste dodali obavještenja.",
 	"apihelp-visualeditor-param-etag": "ETag za slanje.",
@@ -36,6 +39,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "Koristite rezultat prethodnog serializeforcache zahtjeva sa ovim ključem. Premošćuje $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Captcha ID (za snimanje uz captcha odgovor).",
 	"apihelp-visualeditoredit-param-captchaword": "Odgovorite captchi (za snimanje sa captcha odgovorom).",
+	"apihelp-visualeditoredit-param-plugins": "Dodaci povezani s ovim priložničkim zahtjevom.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "Proizvoljni podaci koje šalje dodatak s priložničkim zahtjevom.",
 	"apihelp-visualeditoredit-param-etag": "ETag za slanje.",
 	"apihelp-visualeditoredit-param-html": "HTML poslan Parsoidu u zamjenu za wikitest.",
 	"apihelp-visualeditoredit-param-minor": "Označite kao manje uređivanje.",
@@ -47,6 +52,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "Naziv na novi podnaslov",
 	"apihelp-visualeditoredit-param-starttimestamp": "Kada snimate, postavite ovo za vremenski pečat trenutka kada je revizija učitana. Koristi se za otkrivanje sukoba uređivanja.",
 	"apihelp-visualeditoredit-param-summary": "Sažetak izmjene",
+	"apihelp-visualeditoredit-param-tags": "Oznake promjena primjenjlive na izmjenu.",
 	"apihelp-visualeditoredit-param-wikitext": "Sa kojim wikitekstom treba djelovati.",
 	"apihelp-visualeditoredit-summary": "Snimite HTML5-stranicu u MediaWiki (pretvara se u wikitekst preko servisa Parsoid)."
 }

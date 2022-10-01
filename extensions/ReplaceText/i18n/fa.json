@@ -37,7 +37,7 @@
 	"replacetext_invertselections": "وارونه‌کردن انتخاب‌ها",
 	"replacetext_replace": "جایگزین کن",
 	"replacetext_success": "«$1» با «$2» در {{PLURAL:$3|یک صفحه|$3 صفحه}} جایگزین خواهد شد.",
-	"replacetext_noreplacement": "صفحه‌ای دربرگیرندهٔ رشتهٔ «$1» پیدا نشد.",
+	"replacetext_noreplacement": "صفحه‌ٔ شامل رشتهٔ \"$1\" پیدا نشد.",
 	"replacetext_nomove": "صفحه‌ای که عنوانش دارای «$1» باشد پیدا نشد.",
 	"replacetext_nosuchcategory": "رده‌ای با نام «$1» وجود ندارد.",
 	"replacetext_return": "بازگشت به فرم.",

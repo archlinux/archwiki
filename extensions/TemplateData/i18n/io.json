@@ -38,5 +38,6 @@
 	"templatedata-modal-table-param-description": "Deskripto ($1)",
 	"templatedata-modal-table-param-example": "Exemplo ($1)",
 	"templatedata-modal-table-param-label": "Etiketo ($1)",
+	"templatedata-modal-table-param-name": "Nomo",
 	"templatedata-modal-title-language": "Linguo"
 }

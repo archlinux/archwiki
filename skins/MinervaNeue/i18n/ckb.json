@@ -5,7 +5,8 @@
 			"Calak",
 			"Sarchia",
 			"Épine",
-			"ئارام بکر"
+			"ئارام بکر",
+			"Aram"
 		]
 	},
 	"minerva-last-modified-date": "دواجار لە $2ی $1 دەستکاری کراوە",
@@ -36,7 +37,7 @@
 	"mobile-frontend-pageaction-edit-tooltip": "بەشی پێشەکیی ئەم پەڕەیە دەستکاری بکە.",
 	"mobile-frontend-placeholder": "لە {{SITENAME}}دا بگەڕێ",
 	"mobile-frontend-random-button": "بە ھەڵکەوت",
-	"mobile-frontend-redirected-from": "ڕەوانەکرا لە «[[$1]]»",
+	"mobile-frontend-redirected-from": "لە «[[$1]]»ەوە ڕەوانە کراوە",
 	"mobile-frontend-talk-back-to-filepage": "بگەڕێوە بۆ پەڕگەی \"$1\".",
 	"mobile-frontend-talk-back-to-page": "بگەڕێوە بۆ پەڕەی \"$1\".",
 	"mobile-frontend-talk-back-to-projectpage": "بگەڕێوە بۆ پەڕەی پرۆژەی \"$1\".",

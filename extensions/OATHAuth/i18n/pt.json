@@ -84,6 +84,12 @@
 	"oathauth-switch-method-warning": "Ao mudar para o método de autenticação de dois fatores $2, o método de autenticação atual ($1) será desativado e todos os dados associados a este método serão eliminados",
 	"oathauth-totp-disable-warning": "Deixará de poder usar o dispositivo de autenticação registado para esta conta. Todas as chaves associadas a esta conta serão invalidadas.",
 	"oathauth-invalidrequest": "Pedido inválido",
+	"notification-header-oathauth-disable": "A autenticação de dois fatores foi desativada na sua conta.{{GENDER:$2|}}",
+	"notification-body-oathauth-disable": "Se não foi você a fazê-lo, a sua conta pode ter sido comprometida.{{GENDER:$2|}}",
+	"notification-body-oathauth-disable-other": "Se não pediu isto deve contactar um administrador.{{GENDER:$2|}}",
+	"oathauth-notifications-disable-help": "Ajuda",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} tem a autenticação de dois fatores ativada.",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}} não tem a autenticação de dois fatores ativada."
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}} não tem a autenticação de dois fatores ativada.",
+	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desativado|Grupos desativados}}:",
+	"oathauth-prefs-disabledgroups-help": "A sua inclusão {{PLURAL:$1|neste grupo|nestes grupos}} está desativada até ter ativado a [[Special:Manage Two-factor authentication|autenticação de dois fatores]].{{GENDER:$2|}}"
 }

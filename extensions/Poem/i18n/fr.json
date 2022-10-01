@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Grondin"
+			"Grondin",
+			"Verdy p"
 		]
 	},
-	"poem-desc": "Ajoute la balise <code>&lt;poem&gt;</code> pour le formatage des poèmes"
+	"poem-desc": "Ajoute la balise <code>&lt;poem&gt;</code> pour le formatage des poèmes."
 }

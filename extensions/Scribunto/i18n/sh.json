@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"OC Ripper"
+			"OC Ripper",
+			"Vlad5250"
 		]
 	},
+	"scribunto-desc": "Sučelje za inkorporiranje skriptnih jezika u stranice MediaWikija",
+	"scribunto-line": "na liniji $1",
 	"scribunto-lua-error": "Lua pogreška: $2."
 }

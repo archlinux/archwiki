@@ -88,7 +88,7 @@
 	"templatedata-modal-button-removemap": "Supprimer la correspondance",
 	"templatedata-modal-button-restoreparam": "Restaurer les paramètres",
 	"templatedata-modal-button-saveparam": "Enregistrer",
-	"templatedata-modal-confirmcancel": "Êtes-vous sûr de vouloir annuler vos modifications ?",
+	"templatedata-modal-confirmcancel": "Êtes-vous sûr{{GENDER:||e}} de vouloir annuler vos modifications ?",
 	"templatedata-modal-current-language": "Langue actuelle : $1",
 	"templatedata-modal-errormsg": "Des erreurs ont été trouvées. Assurez-vous qu’il n’y a pas de noms de paramètre vides ou dupliqués, et que les noms de paramètres ne comprennent aucun « $1 », « $2 » ou « $3 ».",
 	"templatedata-modal-errormsg-duplicate-name": "Erreur trouvée. Le nom choisi est déjà utilisé par un autre paramètre.",

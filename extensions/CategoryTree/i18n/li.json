@@ -20,7 +20,7 @@
 	"categorytree-mode-all": "alle pazjena's",
 	"categorytree-collapse": "inklappe",
 	"categorytree-expand": "oetklappe",
-	"categorytree-member-counts": "bevat {{PLURAL:$1|éin ondercategorie|$1 ondercategorië}}, {{PLURAL:$2|éin pagina|$2 pagina's}} en {{PLURAL:$3|éin bestand|$3 bestande}}",
+	"categorytree-member-counts": "mit {{PLURAL:$1|ein óngercategorie|$1 óngercategorië}}, {{PLURAL:$2|ein pagina|$2 pagina's}} en {{PLURAL:$3|ei bestandj|$3 bestenj}}",
 	"categorytree-num-categories": "$1 C",
 	"categorytree-num-pages": "$1 P",
 	"categorytree-num-files": "$1 B",

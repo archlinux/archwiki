@@ -3,7 +3,8 @@
 		"authors": [
 			"Bugoslav",
 			"MaGa",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"Ponor"
 		]
 	},
 	"minerva-last-modified-date": "Zadnji put uređivano $1, u $2.",
@@ -44,7 +45,7 @@
 	"mobile-frontend-user-button-tooltip": "Prikaži moje obavijesti",
 	"mobile-frontend-user-newmessages": "Imate nove poruke na Vašoj stranici za razgovor",
 	"mobile-frontend-user-page-contributions": "Doprinosi",
-	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Pridružio|Pridružila|Pridružili ste}} se $1",
+	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Pridružio|Pridružila|Pridružio/pridružila}} se $1",
 	"mobile-frontend-user-page-talk": "Razgovor",
 	"minerva-user-menu-button": "Korisnički izbornik",
 	"minerva-user-navigation": "Navigacija suradnika",

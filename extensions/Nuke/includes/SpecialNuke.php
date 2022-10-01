@@ -59,7 +59,7 @@ class SpecialNuke extends SpecialPage {
 		}
 
 		$req = $this->getRequest();
-		$target = trim( $req->getText( 'target', $par ) );
+		$target = trim( $req->getText( 'target', $par ?? '' ) );
 
 		// Normalise name
 		if ( $target !== '' ) {

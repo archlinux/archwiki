@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"פוילישער"
+			"פוילישער",
+			"Pacha Tchernof"
 		]
 	},
 	"templatedata-doc-desc-empty": "קיין באשרייבונג.",
@@ -48,10 +49,10 @@
 	"templatedata-invalid-value": "אומגילטיקער ווערט פֿאר אייגנשאפֿט \"$1\".",
 	"templatedata-modal-button-add-language": "צולייגן שפראך",
 	"templatedata-modal-button-addparam": "צולייגן פאראמעטער",
-	"templatedata-modal-button-apply": "אנווענדן",
+	"templatedata-modal-button-apply": "אָנװענדן",
 	"templatedata-modal-button-back": "צוריק",
 	"templatedata-modal-button-cancel": "אַנולירן",
-	"templatedata-modal-button-changelang": "ענדערן שפראך",
+	"templatedata-modal-button-changelang": "ענדערן שפּראַך",
 	"templatedata-modal-button-delparam": "אוועקנעמען פאראמעטער אינפארמאציע",
 	"templatedata-modal-button-done": "ערליידיקט",
 	"templatedata-modal-button-importParams": "אימפארטירן פאראמעטערס",
@@ -66,6 +67,7 @@
 	"templatedata-modal-json-error-replace": "אויסבײַטן",
 	"templatedata-modal-notice-import-numparams": "$1  {{PLURAL:$1|נייער פאראמעטער איז|נייע פאראמעטערס זענען }} געווארן אימפארטירט: $2",
 	"templatedata-modal-placeholder-paramkey": "פאראמעטער נאמען",
+	"templatedata-modal-placeholder-mapinfo": "דער דאזיגער מוסטער האט נישט קיין מאפע־אביעקט",
 	"templatedata-modal-search-input-placeholder": "זוכן לויט שפראך־נאמען אדער קאד",
 	"templatedata-modal-table-param-actions": "אַקציעס",
 	"templatedata-modal-table-param-autovalue": "אויטא־ווערט",

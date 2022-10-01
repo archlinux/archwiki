@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Crucifunked",
-			"Fitoschido"
+			"Fitoschido",
+			"Julio Nepote"
 		]
 	},
 	"tooltip-ca-ve-edit": "Eital esta páhina",
-	"visualeditor-ca-editsource": "Eital coigu",
+	"visualeditor-ca-editsource": "Editá'l códigu",
 	"visualeditor-ca-editsource-section": "eital coigu",
 	"visualeditor-descriptionpagelink": "Project:EitolVisual"
 }

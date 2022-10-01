@@ -257,7 +257,7 @@
 	"abusefilter-edit-throttle-placeholder": "Separar com vírgulas para combinar com E e inserir uma a uma para combinar com OU",
 	"abusefilter-throttle-ip": "endereço IP",
 	"abusefilter-throttle-user": "conta de utilizador",
-	"abusefilter-throttle-range": "gama /16",
+	"abusefilter-throttle-range": "gama de endereços IP",
 	"abusefilter-throttle-creationdate": "data de criação da conta",
 	"abusefilter-throttle-editcount": "contagem de edições",
 	"abusefilter-throttle-site": "todo o ''site''",

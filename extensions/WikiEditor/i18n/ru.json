@@ -23,7 +23,10 @@
 			"Stjn",
 			"Temuri rajavi",
 			"Vlad5250",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"DonRumata",
+			"Pacha Tchernof",
+			"WindEwriX"
 		]
 	},
 	"wikieditor": "Расширенный интерфейс редактирования вики-текста",
@@ -53,7 +56,7 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Текст ссылки:",
 	"wikieditor-toolbar-tool-link-insert": "Вставить ссылку",
 	"wikieditor-toolbar-tool-link-cancel": "Отмена",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "Страница существует на {{GRAMMAR:prepositional|{{SITENAME}}}}",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Страница существует в {{GRAMMAR:prepositional|{{SITENAME}}}}",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Эта страница не существует на {{GRAMMAR:prepositional|{{SITENAME}}}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Указанное вами название недействительно",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Внешняя ссылка",
@@ -70,7 +73,7 @@
 	"wikieditor-toolbar-file-caption": "Подпись:",
 	"wikieditor-toolbar-file-alt": "Альтернативный текст:",
 	"wikieditor-toolbar-file-alt-help": "Вы можете использовать это необязательное поле, чтобы написать текстовое описание для людей, которые не могут видеть файл. Описание должно быть достаточным, чтобы они могли понять цель и информацию, предоставляемую медиа-элементом. Это жизненно важно для слепых пользователей и других людей, использующих программы чтения с экрана или текстовые браузеры.",
-	"wikieditor-toolbar-file-alt-help-label": "(Показать помощь)",
+	"wikieditor-toolbar-file-alt-help-label": "(Показать справку)",
 	"wikieditor-toolbar-file-size": "Размер:",
 	"wikieditor-toolbar-file-float": "Выравнивание:",
 	"wikieditor-toolbar-file-default": "(по умолчанию)",

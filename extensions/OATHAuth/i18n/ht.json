@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Schery19"
+			"Schery19",
+			"Amire80"
 		]
 	},
-	"oathauth-module-totp-label": "TOTP (one-time token)",
+	"oathauth-module-totp-label": "TOTP (tikè pou sèvi yon sèl fwa)",
 	"oathauth-ui-manage": "Jere",
 	"oathauth-enable-generic": "Aktive",
 	"oathauth-disable-generic": "Dezaktive",

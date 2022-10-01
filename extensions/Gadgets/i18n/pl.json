@@ -46,5 +46,7 @@
 	"right-gadgets-edit": "Edycja gadżetów JavaScript oraz stron CSS",
 	"action-gadgets-edit": "edytowania tego gadżetu JavaScript lub strony CSS",
 	"right-gadgets-definition-edit": "Edycja definicji gadżetów",
-	"action-gadgets-definition-edit": "edytowania tej definicji gadżetu"
+	"action-gadgets-definition-edit": "edytowania tej definicji gadżetu",
+	"gadgets-wrong-contentmodel": "Strony w przestrzeni nazw {{ns:2302}} muszą mieć model zawartości GadgetDefinition.",
+	"gadgets-supports-urlload": "Ten gadżet obsługuje ładowanie przez adres URL z parametrem <code>?withgadget</code>."
 }

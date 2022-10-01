@@ -5,7 +5,7 @@
 			"Saosukham"
 		]
 	},
-	"tooltip-ca-ve-edit": "မူၼ်ႉမႄး ၼႃႈလိၵ်ႈၼႆႉ",
+	"tooltip-ca-ve-edit": "မႄးထတ်း ၼႃႈလိၵ်ႈၼႆႉ",
 	"visualeditor-backbutton-tooltip": "ၵႂႃႇၽၢႆႇလင်",
 	"visualeditor-ca-createlocaldescriptionsource": "ထႅမ်သႂ်ႇ ၶေႃႈသပ်းလႅင်းလူဝ်ႇၵႄႇ",
 	"visualeditor-ca-createsource": "ၵေႃႇသၢင်ႈငဝ်ႈငႃႇ",
@@ -16,7 +16,14 @@
 	"visualeditor-dialog-meta-categories-input-movecategorylabel": "ၶၢႆႉပိူင်ထၢၼ်ႈၸူးတီႈၼႆႈ",
 	"visualeditor-dialog-meta-categories-input-placeholder": "ထႅမ်သႂ်ႇ ပိူင်ထၢၼ်ႈ",
 	"visualeditor-donebutton-tooltip": "ႁဵတ်းယဝ်ႉ လွင်ႈထတ်း",
+	"visualeditor-mweditmodeve-popup-body": "ၼဵၵ်းတီႈၼိူဝ် ဢၢႆႇၵွၼ်ႇၼႆႉသေၵေႃႈ ၸဝ်ႈၵဝ်ႇ ၸၢင်ႈလၢႆႈၸူးလႆႈၶိုၼ်း လွင်ႈမႄးထတ်း တႃႁၼ်ယူႇ ၵူႈၶၢဝ်း။",
+	"visualeditor-mweditmodeve-progress": "တိုၵ်ႉလၢႆႈၸူး လွင်ႈမႄးထတ်း တႃႁၼ်...",
+	"visualeditor-mweditmodeve-title": "လၢႆႈၸူး လွင်ႈမႄးထတ်း တႃႁၼ်ၼႄႇ",
+	"visualeditor-mweditmodeve-tool-unavailable": "လွင်ႈမႄးထတ်း တႃႁၼ် ဢမ်ႇၸႂ်ႉလႆႈ တီႈၼႆႈ",
+	"visualeditor-mweditmodeve-warning": "ၸဝ်ႈၵဝ်ႇ တိုၵ်ႉလၢႆႈၸူး လွင်ႈမႄးထတ်း တႃႁၼ်ယူႇ။\nၸွင်ႇၸဝ်ႈၵဝ်ႇ ၶႂ်ႈသိုပ်ႇႁဵတ်းၵႂႃႇႁိုဝ်။",
+	"visualeditor-mweditmodewt-popup-title": "ၸဝ်ႈၵဝ်ႇ လၢႆႈၸူး လွင်ႈမႄးထတ်း တႃႁၼ် ယဝ်ႉယဝ်ႈ",
 	"visualeditor-preference-betatempdisable": "ႁပ်းၸႂ်ႉ တူဝ်မႄးထတ်းတႃႁၼ် ၸူဝ်ႈၶၢဝ်း ၽွင်းမၼ်းပဵၼ်ဝႆႉ ပီႇတႃႇ",
+	"visualeditor-preference-core-label": "လွင်ႈမႄးထတ်း တႃႁၼ်",
 	"visualeditor-savedialog-label-review": "ထတ်းသၢင်ႈ လွင်ႈလႅၵ်ႈလၢႆႈၸဝ်ႈၵဝ်ႇ",
 	"visualeditor-savedialog-label-save-short": "ၵဵပ်းသိမ်း",
 	"visualeditor-savedialog-title-preview": "တူၺ်ႈလူင်ႈၼႃႈ လွင်ႈလႅင်ႈလၢႆႈၸဝ်ႈၵဝ်ႇ",

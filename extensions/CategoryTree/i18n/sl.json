@@ -3,7 +3,8 @@
 		"authors": [
 			"Dbc334",
 			"Freakolowsky",
-			"editors of sl.wikipedia"
+			"editors of sl.wikipedia",
+			"Eleassar"
 		]
 	},
 	"categorytree": "Drevo kategorij",
@@ -16,7 +17,7 @@
 	"categorytree-parents": "Starši",
 	"categorytree-mode-label": "Način:",
 	"categorytree-mode-categories": "samo kategorije",
-	"categorytree-mode-pages": "strani z izjemo slik",
+	"categorytree-mode-pages": "strani razen slik",
 	"categorytree-mode-all": "vse strani",
 	"categorytree-collapse": "skrči",
 	"categorytree-expand": "razširi",

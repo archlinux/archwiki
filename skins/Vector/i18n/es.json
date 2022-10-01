@@ -17,7 +17,10 @@
 			"Miguel2706",
 			"Platonides",
 			"Rodney Araujo",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"Amire80",
+			"DarkGames26",
+			"DiegoAmbrocio"
 		]
 	},
 	"skinname-vector": "Versión heredada de Vector (2010)",
@@ -35,7 +38,7 @@
 	"vector-languages": "Idiomas",
 	"vector-language-button-aria-label": "Ir a un artículo en otro idioma. Disponible en {{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idiomas}}",
-	"vector-language-redirect-to-top": "En este {{SITENAME}} los enlaces interlingüísticos están situados en la parte superior de la página, a la derecha del título. [[#p-lang-btn|Subir]].",
+	"vector-language-redirect-to-top": "En este {{SITENAME}}, los enlaces de idiomas se encuentran en la parte superior de la página, frente al título del artículo. [[#p-lang-btn|Ir arriba]].",
 	"vector-language-variant-switcher-label": "Cambiar variante de idioma",
 	"vector-action-addsection": "Añadir tema",
 	"vector-action-delete": "Borrar",

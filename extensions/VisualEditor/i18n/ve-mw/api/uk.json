@@ -7,7 +7,8 @@
 			"Ice bulldog",
 			"Movses",
 			"Piramidion",
-			"Ата"
+			"Ата",
+			"Matma Rex"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Не знайдено кешованої серіалізованої інформації з таким ключем",
@@ -15,7 +16,7 @@
 	"apierror-visualeditor-docserver-http-error": "Помилка підключення до серверу Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-http": "Помилка підключення до серверу Parsoid/RESTBase (HTTP $1)",
 	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService для сервера документа не визначено; див. https://www.mediawiki.org/wiki/Extension:VisualEditor",
-	"apierror-visualeditor-docserver": "Не вдалося зв'язатися із сервером Parsoid/RESTbase (немає відповіді)",
+	"apierror-visualeditor-docserver": "Не вдалося зв'язатися із сервером Parsoid/RESTBase (немає відповіді)",
 	"apierror-visualeditor-latestnotfound": "Не вдалося знайти останню версію для цієї назви",
 	"apihelp-visualeditor-description": "Повертає HTML5 для сторінки від сервісу Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "При збереженні, встановіть тут мітку часу, коли сторінка була редагована. Використовується для виявлення конфліктів редагування.",

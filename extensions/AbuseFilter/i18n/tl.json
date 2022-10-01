@@ -369,7 +369,7 @@
 	"abusefilter-diff-pattern": "Mga kalagayan ng pansala",
 	"abusefilter-diff-invalid": "Hindi nagawang makuha ang hiniling na mga bersyon",
 	"abusefilter-diff-backhistory": "Magbalik sa kasaysayan ng pansala",
-	"abusefilter-import-intro": "Magagamit ang hangganang-mukhang ito upang makapag-angkat ng mga pansala mula sa ibang mga wiki.\nDoon sa pinagmulang wiki, pindutin ang \"{{int:abusefilter-edit-export}}\" na nasa ilalim ng \"{{int:abusefilter-edit-tools}}\" sa ibabaw ng hangganang-mukhang pambago.\nKopyahin mula sa kahong pangteksto na lilitaw, at idikit ito sa kahong pangtekstong ito, matapos ay pindutin ang \"{{int:abusefilter-import-submit}}\".",
+	"abusefilter-import-intro": "Magagamit ang interface na ito upang makapag-angkat ng mga pansala mula sa ibang mga wiki.\nDoon sa pinagmulang wiki, pindutin ang \"{{int:abusefilter-edit-export}}\" na nasa ilalim ng \"{{int:abusefilter-edit-tools}}\" sa ibabaw ng interface ng pambago.\nKopyahin mula sa kahong pangteksto na lilitaw, at idikit ito sa kahong pangtekstong ito, matapos ay pindutin ang \"{{int:abusefilter-import-submit}}\".",
 	"abusefilter-import-submit": "Angkatin ang dato",
 	"abusefilter-group-default": "Likas na pagtatakda"
 }

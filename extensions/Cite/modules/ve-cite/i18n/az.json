@@ -24,7 +24,7 @@
 	"cite-ve-changedesc-reflist-responsive-set": "İstinadlar siyahısı responsiv sütunlarda göstərilmək üçün dəyişdirildi",
 	"cite-ve-changedesc-reflist-responsive-unset": "İstinad siyahısı yalnızca bir sütunda göstərilmək üçün dəyişdirildi",
 	"cite-ve-citationneeded-button": "İstinad əlavə et",
-	"cite-ve-citationneeded-description": "Bir redaktor, bu iddianın etibarlı bir mənbəyə istinad edilməsinə ehtiyac olduğunu bildirdi.",
+	"cite-ve-citationneeded-description": "Bir istifadəçi bu iddianın etibarlı bir mənbəyə istinad edilməsinə ehtiyac olduğunu bildirib.",
 	"cite-ve-citationneeded-reason": "Verilmiş səbəb:",
 	"cite-ve-citationneeded-title": "İstinad lazımdır",
 	"cite-ve-dialog-reference-editing-reused": "Bu istinad bu səhifədə {{PLURAL:$1|1 dəfə|2=2 dəfə|$1 dəfə}} istifadə edilib.",

@@ -42,7 +42,7 @@
 	"replacetext_success": "„$1” zostanie zastąpiony przez „$2” na $3 {{PLURAL:$3|stronie|stronach}}.",
 	"replacetext_noreplacement": "Nie znaleziono stron zawierających tekst „$1”.",
 	"replacetext_nomove": "Nie znaleziono żadnych stron o tytule zawierającym „$1”.",
-	"replacetext_nosuchcategory": "Kategoria „$1” nie istnieje.",
+	"replacetext_nosuchcategory": "Nie istnieje kategoria o nazwie „$1”.",
 	"replacetext_return": "Powrót do formularza.",
 	"replacetext_warning": "'''Uwaga:''' {{PLURAL:$1|Jest $1 strona zawierająca|Są $1 strony zawierające|Jest $1 stron zawierających}} tekst „$2”, którym chcesz zastępować. Jeśli wykonasz zastępowanie nie będzie możliwe odseparowanie Twoich zastąpień od tych tekstów.",
 	"replacetext_blankwarning": "'''Uwaga:''' Ponieważ ciąg znaków, którym ma być wykonane zastępowanie jest pusty, operacja będzie nieodwracalna. Czy kontynuować?",
@@ -51,6 +51,8 @@
 	"replacetext_editsummary": "Zastępowanie tekstu – „$1” na „$2”",
 	"replacetext_reminder": "Aby zaktualizować również linki do tej strony w innych miejscach, przejdź do $1.",
 	"replacetext_cfg_error": "Błąd konfiguracji ReplaceText",
+	"replacetext_no_compress": "Twoja wiki nie będzie działać z ReplaceText: zamiany tekstu nie mogą być uruchamiane, jeśli $wgCompressRevisions jest ustawione na true.",
+	"replacetext_no_external_stores": "Twoja wiki nie będzie działać z ReplaceText: zamiany tekstu nie mogą być uruchomione, jeśli $wgExternalStores nie jest puste.",
 	"right-replacetext": "Wykonywanie zastępowania tekstu w całej wiki",
 	"action-replacetext": "wykonywania zastępowania tekstu w całej wiki"
 }

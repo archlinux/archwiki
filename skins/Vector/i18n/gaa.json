@@ -4,9 +4,11 @@
 			"Amire80",
 			"Flixtey",
 			"Gkbediako",
-			"Mybluberet"
+			"Mybluberet",
+			"Owula kpakpo"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 wiemɔ|$1 wiemɔi}}",
 	"vector-action-addsection": "Kɛ mlijaa yitso afata he",
 	"vector-action-delete": "Jiemɔ",
 	"vector-action-move": "Tsi",

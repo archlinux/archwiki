@@ -1,18 +1,21 @@
 {
 	"@metadata": {
 		"authors": [
-			"Atabek"
+			"Atabek",
+			"Nurlan"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 til}}",
 	"vector-action-addsection": "Tema qosıw",
-	"vector-action-delete": "O'shiriw",
-	"vector-action-move": "Ko'shiriw",
-	"vector-action-protect": "Qorg'aw",
+	"vector-action-delete": "Óshiriw",
+	"vector-action-move": "Kóshiriw",
+	"vector-action-protect": "Qorǵaw",
 	"vector-action-undelete": "Qayta tiklew",
-	"vector-action-unprotect": "Qorg'awdı o'zgertiw",
+	"vector-action-unprotect": "Qorǵawdı ózgertiw",
 	"vector-view-create": "Jaratıw",
-	"vector-view-edit": "O'zgertiw",
-	"vector-view-history": "Tariyxın ko'riw",
+	"vector-view-edit": "Redaktorlaw",
+	"vector-view-history": "Tariyxın kóriw",
 	"vector-view-view": "Oqıw",
-	"vector-view-viewsource": "Deregin ko'riw"
+	"vector-view-viewsource": "Kodın kóriw",
+	"vector-more-actions": "Jáne"
 }

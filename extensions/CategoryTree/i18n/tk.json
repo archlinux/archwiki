@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hanberke"
+			"Hanberke",
+			"TayfunEt."
 		]
 	},
 	"categorytree": "Kategoriýa agajy",
@@ -12,6 +13,7 @@
 	"categorytree-category": "Kategoriýa:",
 	"categorytree-go": "Agajy görkez",
 	"categorytree-parents": "Ene kategoriýalar",
+	"categorytree-mode-label": "Mod:",
 	"categorytree-mode-categories": "diňe kategoriýalar",
 	"categorytree-mode-pages": "faýldan başga sahypalar",
 	"categorytree-mode-all": "ähli sahypalar",
@@ -21,6 +23,7 @@
 	"categorytree-num-categories": "$1 K",
 	"categorytree-num-pages": "$1 S",
 	"categorytree-num-files": "$1 F",
+	"categorytree-num-empty": "boş",
 	"categorytree-load": "ýükle",
 	"categorytree-loading": "ýüklenýär...",
 	"categorytree-nothing-found": "hiç zat tapylmady",

@@ -40,8 +40,8 @@
 	"wikieditor-toolbar-tool-link-ext-text": "লিঙ্কের লেখা:",
 	"wikieditor-toolbar-tool-link-insert": "লিংক যোগ করো",
 	"wikieditor-toolbar-tool-link-cancel": "বাতিল",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "পাতা রয়েছে",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "পাতা বিদ্যমান নেই",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "{{SITENAME}}-এ এই পাতাটি বিদ্যমান রয়েছে",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "{{SITENAME}}-এ এই পাতাটি বিদ্যমান নেই",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "আপনার প্রদেয় শিরোনামটি বৈধ নয়।",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "বহিঃসংযোগ",
 	"wikieditor-toolbar-tool-link-int-target-status-loading": "পাতার অস্তিত্ব পরীক্ষা করা হচ্ছে...",
@@ -201,5 +201,6 @@
 	"wikieditor-toolbar-help-content-indent-description": "প্রান্তিককরণ",
 	"wikieditor-toolbar-help-content-indent-syntax": "সাধারণ লেখ<br />:প্রান্তিককৃত লেখ<br />::প্রান্তিককৃত লেখ",
 	"wikieditor-toolbar-help-content-indent-result": "সাধারণ লেখ<dl><dd>প্রান্তিককৃত লেখ<dl><dd>প্রান্তিককৃত লেখ</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|উইকিসম্পাদক]] ব্যবহার করে সম্পাদনা করা হয়েছে (২০১০ উইকিপাঠ্য সম্পাদক)",
 	"wikieditor-realtimepreview-preview": "প্রাকদর্শন"
 }

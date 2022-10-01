@@ -45,7 +45,7 @@
 	"oathauth-login-failed": "Potrditev je spodletela.",
 	"oathauth-describe-provider": "Dvostopenjsko preverjanje pristnosti (OATH).",
 	"grant-group-authentication": "Izvedi dejanja za preverjanje pristnosti zase ali za druge",
-	"grant-oath": "Prikaži informacije dvostopenjskega preverjanja pristnosti (OATH) zase ali za druge",
+	"grant-oath": "Dostop do podatkov dvostopenjskega preverjanja pristnosti (OATH) zase in za druge",
 	"right-oathauth-api-all": "Preišči in potrdi informacije OATH zase ali za druge",
 	"action-oathauth-api-all": "preveri stanje OATH",
 	"oathauth-user-not-found": "Ni bilo mogoče najti uporabniškega računa s tem imenom",

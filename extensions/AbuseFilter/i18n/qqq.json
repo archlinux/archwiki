@@ -551,7 +551,7 @@
 	"abusefilter-test-shownegative": "Used as label on [[Special:AbuseFilter/test]]",
 	"abusefilter-test-syntaxerr": "Refers to {{msg-mw|Abusefilter-edit-check}}.",
 	"abusefilter-test-badtitle": "Message if a bad title is entered on [[Special:AbuseFilter/test]]",
-	"abusefilter-test-action": "Used as label on [[Special:AbuseFilter/test]]",
+	"abusefilter-test-action": "Used as label on [[Special:AbuseFilter/test]]\n{{Identical|Type of action}}",
 	"abusefilter-test-search-type-all": "Option allowing to show every type of action.",
 	"abusefilter-test-search-type-edit": "Option allowing to only show edits.",
 	"abusefilter-test-search-type-move": "Option allowing to only show moves.",

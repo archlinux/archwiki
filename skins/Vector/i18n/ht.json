@@ -4,19 +4,30 @@
 			"Boukman",
 			"Internoob",
 			"Masterches",
-			"Tisave"
+			"Tisave",
+			"Amire80"
 		]
 	},
+	"vector-languages": "Lang yo",
+	"vector-language-button-aria-label": "Ale nan yon atik nan yon lòt lang. Disponib nan {{PLURAL:$1|$1 lang}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 lang}}",
+	"vector-language-redirect-to-top": "Sou {{SITENAME}} sa a lyen lang yo nan tèt paj la anfas tit atik la. [[#p-lang-btn|Ale nan tèt]].",
+	"vector-language-variant-switcher-label": "Chanje variant lang",
 	"vector-action-addsection": "Ajoute yon sijè",
 	"vector-action-delete": "Efase",
 	"vector-action-move": "Chanje non",
 	"vector-action-protect": "Pwoteje",
 	"vector-action-undelete": "Retabli",
-	"vector-action-unprotect": "Pa pwoteje",
+	"vector-action-unprotect": "Chanje nivo pwoteksyon",
 	"vector-view-create": "Kreye",
 	"vector-view-edit": "Modifye",
 	"vector-view-history": "Gade istorik",
 	"vector-view-view": "Li",
-	"vector-view-viewsource": "Wè kòd tèks sa a",
-	"vector-more-actions": "Plis"
+	"vector-view-viewsource": "Wè kòd paj la",
+	"vector-more-actions": "Plis",
+	"vector-anon-user-menu-pages": "Paj yo pou editè ki dekonekte yo",
+	"vector-anon-user-menu-pages-learn": "aprann plis",
+	"vector-anon-user-menu-pages-label": "Aprann plis sou modifikasyon",
+	"vector-main-menu-tooltip": "Meni prensipal la",
+	"tooltip-vector-anon-user-menu-title": "Plis opsyon"
 }

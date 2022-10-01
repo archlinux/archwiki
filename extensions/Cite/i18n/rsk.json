@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Keresturec"
+			"Keresturec",
+			"Vlad5250"
 		]
 	},
-	"cite_error": "Погришне цитированє: $1"
+	"cite_error": "Погришне цитированє: $1",
+	"cite_warning": "Спозоренє за референцированє: $1"
 }

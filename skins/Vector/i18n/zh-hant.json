@@ -13,7 +13,9 @@
 			"Tranve",
 			"Winston Sung",
 			"Xiplus",
-			"LuciferianThomas"
+			"LuciferianThomas",
+			"Diskdance",
+			"Jonathan5566"
 		]
 	},
 	"skinname-vector": "舊版Vector（2010）",
@@ -30,7 +32,7 @@
 	"vector-languages": "語言",
 	"vector-language-button-aria-label": "前往別種語言的條目。有 {{PLURAL:$1|$1}} 種語言可用",
 	"vector-language-button-label": "{{PLURAL:$1|$1}} 種語言",
-	"vector-language-redirect-to-top": "在此{{SITENAME}}上，語言連結位於頁面頂端的條目標題旁。[[#p-lang-btn|前往頂端]]。",
+	"vector-language-redirect-to-top": "在{{SITENAME}}中，語言連結位於頁面頂端的條目標題旁。[[#p-lang-btn|前往頂端]]。",
 	"vector-language-variant-switcher-label": "變更語言變體",
 	"vector-action-addsection": "新增話題",
 	"vector-action-delete": "刪除",

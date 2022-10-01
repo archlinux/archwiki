@@ -25,7 +25,8 @@
 			"Translatobecomer",
 			"Vlad5250",
 			"Wikisaurus",
-			"Ядерный Трамвай"
+			"Ядерный Трамвай",
+			"Pacha Tchernof"
 		]
 	},
 	"math-desc": "Отображает математические формулы в тегах <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -90,8 +91,8 @@
 	"math-test-fail": "Тестирование ''$1'' <span style=\"color:red\">не прошло</span>.",
 	"math-test-start": "\nЗапуск бэкэнд-тестов для режима рендеринга ''$1''.",
 	"math-test-success": "Тестирование «$1» <span style=\"color:green\">прошло успешно</span>.",
-	"math-test-contains-diff": "Возвращенная строка $1 не содержит ожидаемой строки $2.",
-	"math-test-equals-diff": "Возвращенная строка $1 отличается от ожидаемой строки $2.",
+	"math-test-contains-diff": "Возвращённая строка $1 не содержит ожидаемой строки $2.",
+	"math-test-equals-diff": "Возвращённая строка $1 отличается от ожидаемой строки $2.",
 	"math-tracking-category-error": "Страницы с ошибками в формулах",
 	"math-tracking-category-error-desc": "Страницы в этой категории имеют ошибки в использовании математических тегов.",
 	"math-tracking-category-mhchem-deprecation": "Страницы, использующие химические теги в устаревшем формате",

@@ -168,7 +168,7 @@
 	"visualeditor-dialog-meta-settings-displaytitle-enable": "Включить отображаемый заголовок",
 	"visualeditor-dialog-meta-settings-displaytitle-help": "Принудительно изменить заголовок страницы.",
 	"visualeditor-dialog-meta-settings-hiddencat-help": "Предотвратить отображение этой категории в списках тех категорий, что в неё включены. Это может быть полезно для редакторов, но не для большинства читателей. Таким образом можно создать, категорию, например, отображающую страницы, нуждающиеся в иллюстрациях.",
-	"visualeditor-dialog-meta-settings-hiddencat-label": "Скрытые категории",
+	"visualeditor-dialog-meta-settings-hiddencat-label": "Скрытая категория",
 	"visualeditor-dialog-meta-settings-index-default": "По умолчанию",
 	"visualeditor-dialog-meta-settings-index-disable": "Нет",
 	"visualeditor-dialog-meta-settings-index-force": "Да",

@@ -4,7 +4,8 @@
 			"Fwolff",
 			"Joris Darlington Quarshie",
 			"MinecraftAustralia",
-			"Naudefj"
+			"Naudefj",
+			"Rooiratel"
 		]
 	},
 	"mobile-frontend-editor-edit": "Wysig",
@@ -12,7 +13,7 @@
 	"mobile-frontend-editor-redlink-explain": "Dié bladsy is nog nie geskep nie.",
 	"mobile-frontend-editor-redlink-leave": "Nee dankie",
 	"mobile-frontend-history": "Wys wysigingsgeskiedenis van dié bladsy.",
-	"mobile-frontend-home-button": "Tuisblad",
+	"mobile-frontend-home-button": "Tuis",
 	"mobile-frontend-language-article-heading": "Taal",
 	"mobile-frontend-languages-not-available": "Dié bladsy is nie beskikbaar in ander tale nie.",
 	"mobile-frontend-main-menu-button-tooltip": "Maak hoofkeuseskerm oop",
@@ -24,7 +25,7 @@
 	"mobile-frontend-main-menu-watchlist": "Dophoulys",
 	"mobile-frontend-pageaction-edit-tooltip": "Wysig die inleidende afdeling van hierdie bladsy.",
 	"mobile-frontend-placeholder": "Deursoek {{SITENAME}}",
-	"mobile-frontend-random-button": "Lukrake blad",
+	"mobile-frontend-random-button": "Lukraak",
 	"mobile-frontend-redirected-from": "Aangestuur vanaf \"[[$1]]\"",
 	"mobile-frontend-talk-back-to-filepage": "Terug na die lêer \"$1\".",
 	"mobile-frontend-talk-back-to-page": "Terug na \"$1\"-bladsy.",

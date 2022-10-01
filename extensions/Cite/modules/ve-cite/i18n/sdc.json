@@ -1,12 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jun Misugi"
+			"Jun Misugi",
+			"F Samaritani"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Libru",
+	"visualeditor-cite-tool-name-journal": "Gionnari",
 	"visualeditor-cite-tool-name-news": "Nutizii",
 	"visualeditor-cite-tool-name-web": "Situ",
 	"cite-ve-dialog-reference-options-group-label": "Utirizà kisthu gruppu",
-	"cite-ve-dialog-reference-options-section": "Ozioni"
+	"cite-ve-dialog-reference-options-section": "Ozioni",
+	"cite-ve-dialog-reference-title": "Prifirenzi",
+	"cite-ve-dialogbutton-reference-title": "Prifirenzi",
+	"cite-ve-toolbar-group-label": "Zità",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Prifirenzi"
 }

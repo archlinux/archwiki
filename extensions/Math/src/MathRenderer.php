@@ -537,7 +537,11 @@ abstract class MathRenderer {
 		}
 		$refererHeader = RequestContext::getMain()->getRequest()->getHeader( 'REFERER' );
 		if ( $refererHeader ) {
-			parse_str( parse_url( $refererHeader, PHP_URL_QUERY ), $refererParam );
+			$url = parse_url( $refererHeader, PHP_URL_QUERY );
+			if ( !is_string( $url ) ) {
+				return false;
+			}
+			parse_str( $url, $refererParam );
 			if ( isset( $refererParam['action'] ) && $refererParam['action'] === 'purge' ) {
 				$this->logger->debug( 'Re-Rendering on user request' );
 				return true;

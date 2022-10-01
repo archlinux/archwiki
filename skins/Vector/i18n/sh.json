@@ -5,9 +5,11 @@
 			"Conquistador",
 			"OC Ripper",
 			"Srdjan m",
-			"Srđan"
+			"Srđan",
+			"Vlad5250"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
 	"vector-action-addsection": "Dodaj temu",
 	"vector-action-delete": "Brisanje",
 	"vector-action-move": "Premjesti",

@@ -3,10 +3,11 @@
 		"authors": [
 			"Albertas",
 			"Eitvys200",
-			"Naktis"
+			"Naktis",
+			"Matma Rex"
 		]
 	},
-	"apierror-visualeditor-docserver": "Klaida susisiekiant su Parsoid/RESTbase serveriu",
+	"apierror-visualeditor-docserver": "Klaida susisiekiant su Parsoid/RESTBase serveriu",
 	"apihelp-visualeditor-description": "Grąžina puslapio HTML5 iš Parsoid paslaugos.",
 	"apihelp-visualeditor-param-basetimestamp": "Išsaugodami nustatykite į redaguotos versijos laiko žymą. Naudojamas, kai reikia aptikti redagavimo konfliktus.",
 	"apihelp-visualeditor-param-cachekey": "Nuoseklinimui ar pakeitimams naudoti prieš tai buvusią serializeforcache užklausą su šiuo raktu. Perdengia $1html.",

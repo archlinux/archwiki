@@ -96,7 +96,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Insira o nome do mapa",
 	"templatedata-modal-search-input-placeholder": "Buscar por nome ou código de idioma",
 	"templatedata-modal-table-param-actions": "Ações",
-	"templatedata-modal-table-param-aliases": "Nomes alternativos (separados por vírgula)",
+	"templatedata-modal-table-param-aliases": "Nomes alternativos",
 	"templatedata-modal-table-param-autovalue": "Valor automático",
 	"templatedata-modal-table-param-default": "Padrão ($1)",
 	"templatedata-modal-table-param-deprecated": "Obsoleto",

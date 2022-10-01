@@ -21,5 +21,6 @@
 	"monobook-notifications-link": "Notifications ($1)",
 	"monobook-notifications-link-none": "Notifications",
 	"monobook-view-history": "Historique",
-	"monobook-action-undelete": "Restaurer {{PLURAL:$1|une modification|$1 modifications}}"
+	"monobook-action-undelete": "Restaurer {{PLURAL:$1|une modification|$1 modifications}}",
+	"monobook-action-addsection": "+"
 }

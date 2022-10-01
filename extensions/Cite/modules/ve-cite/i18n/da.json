@@ -33,7 +33,7 @@
 	"cite-ve-citationneeded-button": "Tilføj en citering",
 	"cite-ve-citationneeded-description": "En bruger har angivet, at denne påstand har brug for en reference til en troværdig kilde.",
 	"cite-ve-citationneeded-title": "Citering mangler",
-	"cite-ve-dialog-reference-editing-reused": "Denne reference er brugt $1 {{PLURAL:$1|en gang|2=to gange|$1 gange}} på denne side.",
+	"cite-ve-dialog-reference-editing-reused": "Denne reference er brugt {{PLURAL:$1|en gang|2=to gange|$1 gange}} på denne side.",
 	"cite-ve-dialog-reference-editing-reused-long": "Denne reference er brugt {{PLURAL:$1|en gang|2=to gange|$1 gange}} på denne side. Ændringer foretaget her vil slå igennem alle steder, hvor denne reference anvendes.",
 	"cite-ve-dialog-reference-options-group-label": "Brug denne gruppe",
 	"cite-ve-dialog-reference-options-group-placeholder": "Generelle referencer",
