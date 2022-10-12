@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Okras",
+			"Kareyac",
+			"Pacha Tchernof"
+		]
+	},
+	"darkmode-desc": "Переключаемая тёмная тема для пользовательского интерфейса MediaWiki",
+	"darkmode-link": "Тёмная тема",
+	"darkmode-link-tooltip": "Включите тёмный режим",
+	"darkmode-default-link": "Режим по умолчанию",
+	"darkmode-default-link-tooltip": "Выключить тёмный режим"
+}

@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Gomoko",
+			"Thibaut120094",
+			"Wladek92",
+			"Verdy p"
+		]
+	},
+	"darkmode-desc": "Un mode sombre basculable pour l’interface utilisateur de MediaWiki",
+	"darkmode-link": "Mode sombre",
+	"darkmode-link-tooltip": "Activer le mode sombre",
+	"darkmode-default-link": "Mode par défaut",
+	"darkmode-default-link-tooltip": "Désactiver le mode sombre"
+}

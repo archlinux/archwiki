@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bas dehaan",
+			"Romaine"
+		]
+	},
+	"darkmode-desc": "Een configureerbare donkere modus voor de MediaWiki gebruikersinterface",
+	"darkmode-link": "Donkere modus",
+	"darkmode-default-link": "Standaard modus"
+}

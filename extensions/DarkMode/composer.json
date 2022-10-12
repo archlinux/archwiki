@@ -1,0 +1,20 @@
+{
+	"require-dev": {
+		"mediawiki/mediawiki-codesniffer": "38.0.0",
+		"mediawiki/minus-x": "1.1.1",
+		"php-parallel-lint/php-console-highlighter": "0.5.0",
+		"php-parallel-lint/php-parallel-lint": "1.3.1"
+	},
+	"scripts": {
+		"fix": [
+			"minus-x fix .",
+			"phpcbf"
+		],
+		"test": [
+			"parallel-lint . --exclude vendor --exclude node_modules",
+			"@phpcs",
+			"minus-x check ."
+		],
+		"phpcs": "phpcs -sp --cache"
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Banjo"
+		]
+	},
+	"darkmode-desc": "Un modo escuro alternativo para o interface de usuario MediaWiki",
+	"darkmode-link": "Modo escuro",
+	"darkmode-default-link": "Modo por defecto"
+}
