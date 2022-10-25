@@ -30,3 +30,11 @@
 	path = extensions/DarkMode
 	url = https://github.com/wikimedia/mediawiki-extensions-DarkMode.git
 	branch = REL1_41
+[submodule "extensions/PluggableAuth"]
+	path = extensions/PluggableAuth
+	url = https://github.com/wikimedia/mediawiki-extensions-PluggableAuth.git
+	branch = REL1_41
+[submodule "extensions/OpenIDConnect"]
+	path = extensions/OpenIDConnect
+	url = https://github.com/wikimedia/mediawiki-extensions-OpenIDConnect.git
+	branch = REL1_41
