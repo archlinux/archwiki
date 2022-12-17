@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Utils;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
@@ -241,7 +242,7 @@ class PipelineUtils {
 			// getWrapperTokens calls convertDOMToTokens with a Element
 			// and children of dom elements are always text/comment/elements
 			// which are all covered above.
-			PHPUtils::unreachable( "Should never get here!" );
+			throw new UnreachableException( "Should never get here!" );
 		}
 
 		return $tokBuf;
@@ -499,9 +500,14 @@ class PipelineUtils {
 	 * top-level nodes are elements.
 	 *
 	 * @param NodeList $nodes List of DOM nodes to wrap, mix of node types.
-	 * @param ?Node $startAfter
+	 * @param ?Node $startAt
+	 * @param ?Node $stopAt
 	 */
-	public static function addSpanWrappers( $nodes, ?Node $startAfter = null ): void {
+	public static function addSpanWrappers(
+		$nodes,
+		?Node $startAt = null,
+		?Node $stopAt = null
+	): void {
 		$textCommentAccum = [];
 		$doc = $nodes->item( 0 )->ownerDocument;
 
@@ -515,18 +521,21 @@ class PipelineUtils {
 			$nodeBuf[] = $node;
 		}
 
-		$start = ( $startAfter === null );
+		$start = ( $startAt === null );
 		foreach ( $nodeBuf as $node ) {
 			if ( !$start ) {
-				if ( $startAfter === $node ) {
-					$start = true;
+				if ( $startAt !== $node ) {
+					continue;
 				}
-				continue;
+				$start = true;
 			}
 			if ( $node instanceof Text || $node instanceof Comment ) {
 				$textCommentAccum[] = $node;
 			} elseif ( count( $textCommentAccum ) ) {
 				self::wrapAccum( $doc, $textCommentAccum );
+			}
+			if ( $node === $stopAt ) {
+				break;
 			}
 		}
 
@@ -607,7 +616,7 @@ class PipelineUtils {
 					}
 
 					if ( $key ) {
-						PHPUtils::unreachable( 'Callsite was not ported!' );
+						throw new UnreachableException( 'Callsite was not ported!' );
 						// FIXME: makeExpansion return type changed
 						// $expAccum[$key] = self::makeExpansion( $env, $nodes );
 					}

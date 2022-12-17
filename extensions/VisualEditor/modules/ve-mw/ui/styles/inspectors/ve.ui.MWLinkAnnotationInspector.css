@@ -35,3 +35,9 @@
 .ve-ui-mwLinkAnnotationInspector .oo-ui-tabSelectWidget-frameless {
 	margin: 0 0.75em;
 }
+
+.ve-ui-mwLinkAnnotationInspector .oo-ui-tabSelectWidget-frameless .oo-ui-tabOptionWidget {
+	/* Prevent long sitenames from messing up the layout (T309443). */
+	/* OOUI already has styles with text-overflow: ellipsis, we just need to define a width to enable it. */
+	max-width: 50%;
+}

@@ -9,7 +9,7 @@
 	emphasized-sidebar-action data-emphasized-sidebar-action For displaying an emphasized action in the sidebar.
 }}
 
-<div id="mw-panel" class="mw-sidebar">
+<nav id="mw-panel" class="mw-sidebar" aria-label="{{msg-vector-site-nav-label}}" role="navigation">
 	{{#data-portlets-first}}{{>Menu}}{{/data-portlets-first}}
 	{{#data-emphasized-sidebar-action}}{{>SidebarAction}}{{/data-emphasized-sidebar-action}}
 	{{#array-portlets-rest}}{{>Menu}}{{/array-portlets-rest}}
@@ -18,4 +18,4 @@
 	{{/is-language-in-content}}
 	{{! T295555 Add language switch alert message temporarily (to be removed). }}
 	{{#data-vector-language-switch-alert}}{{>SidebarAction}}{{/data-vector-language-switch-alert}}
-</div>
+</nav>

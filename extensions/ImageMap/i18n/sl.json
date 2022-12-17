@@ -5,7 +5,7 @@
 			"Eleassar"
 		]
 	},
-	"imagemap_desc": "Omogoča klikljive zemljevide slik na odjemalski strani z uporabo značke <code>&lt;imagemap&gt;</code>",
+	"imagemap_desc": "T uporabo značke <code>&lt;imagemap&gt;</code> omogoča klikljive zemljevide slik na odjemalski strani",
 	"imagemap_no_image": "Napaka: v prvi vrstici morate navesti sliko",
 	"imagemap_invalid_image": "Napaka: slika je neveljavna ali ne obstaja",
 	"imagemap_bad_image": "Napaka: Slika ni dovoljena na tej strani.",

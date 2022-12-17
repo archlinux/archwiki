@@ -1,16 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Abijeet Patro",
+			"Amire80",
 			"Ansumang",
 			"Karthi.dr",
 			"Macofe",
 			"NehalDaveND",
 			"Pooja.srivastava",
-			"Sfic",
-			"Siddhartha Ghai",
-			"Abijeet Patro",
 			"Saurmandal",
-			"Amire80"
+			"Sfic",
+			"Siddhartha Ghai"
 		]
 	},
 	"wikieditor": "उन्नत विकिटेक्स्ट संपादन इंटरफ़ेस",
@@ -44,7 +44,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "यह पृष्ठ {{SITENAME}} पर मौजूद नहीं है",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "निर्धारित शीर्षक अमान्य है",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "बाहरी कड़ी",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "पृष्ठ अस्तित्व की जाँच...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "यह पृष्ठ सामग्री पृष्ठ नहीं, बल्कि मिलते-जुलते नामों वाले विषयों की एक सूची है",
 	"wikieditor-toolbar-tool-link-int-invalid": "निर्धारित शीर्षक अमान्य है।",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "निर्धारित URL से ऐसा लगता है कि यह किसी दूसरे विकि पृष्ठ से जुड़ा है।\nक्या आप इसे एक आंतरिक कड़ी बनाना चाहेंगे?",
@@ -201,5 +200,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "साधारण टेक्स्ट<br />:इनडेंट किया हुआ टेक्स्ट<br />::इनडेंट किया हुआ टेक्स्ट",
 	"wikieditor-toolbar-help-content-indent-result": "साधारण टेक्स्ट<dl><dd>इनडेंट किया हुआ टेक्स्ट<dl><dd>इनडेंट किया हुआ टेक्स्ट</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "संपादन [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 विकिटेक्स्ट एडिटर) की मदद से किया गया है",
-	"wikieditor-realtimepreview-preview": "पूर्वावलोकन"
+	"wikieditor-realtimepreview-preview": "पूर्वावलोकन",
+	"wikieditor-realtimepreview-error": "पूर्वावलोकन लोड नहीं हो रहा है",
+	"wikieditor-realtimepreview-reload": "पुनः लोड करें",
+	"wikieditor-realtimepreview-beta-label": "लाइव पूर्वावलोकन",
+	"wikieditor-realtimepreview-beta-desc": "[[mw:Special:MyLanguage/Extension:WikiEditor|2010 एडिटर]] के अंदर ही देखें कि विकिटेक्स्ट के बदलाव पाठकों को कैसे दिखेंगे।",
+	"wikieditor-realtimepreview-reload-title": "लाइव पूर्वावलोकन क्षेत्र को पुनः लोड करें",
+	"wikieditor-realtimepreview-manual": "अपने संपादन का पूर्वावलोकन खुद देखने के लिए पुनः लोड करें।",
+	"wikieditor-realtimepreview-onboarding-title": "लाइव पूर्वावलोकन",
+	"wikieditor-realtimepreview-onboarding-body": "लाइव पूर्वावलोकन देखकर पता करें कि पाठकों को आपका संपादन किस तरह से दिखेगा।",
+	"wikieditor-realtimepreview-onboarding-button": "हाँ, समझ आ गया"
 }

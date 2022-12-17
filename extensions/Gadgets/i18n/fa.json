@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Alpineer",
+			"Beginneruser",
 			"Bersam",
 			"Ebraminio",
 			"Huji",
@@ -10,8 +11,7 @@
 			"Mjbmr",
 			"Reza1615",
 			"Wayiran",
-			"ZxxZxxZ",
-			"Beginneruser"
+			"ZxxZxxZ"
 		]
 	},
 	"gadgets-desc": "به کاربرها امکان انتخاب [[Special:Gadgets|ابزارهای شخصی سی‌اس‌اس و جاوااسکریپت]] را از طریق صفحهٔ [[Special:Preferences#mw-prefsection-gadgets|ترجیحات]] می‌دهد",

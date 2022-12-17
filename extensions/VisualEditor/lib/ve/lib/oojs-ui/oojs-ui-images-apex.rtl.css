@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.43.2-pre (630d30f69c)
+ * OOUI v0.44.3
  * https://www.mediawiki.org/wiki/OOUI
  *
  * Copyright 2011–2022 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2022-03-11T22:31:38Z
+ * Date: 2022-08-17T13:09:39Z
  */
 .oo-ui-icon-arrowNext {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/arrowNext-rtl.svg);
@@ -692,6 +692,12 @@
 .oo-ui-icon-code {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/code.svg);
 }
+.oo-ui-icon-copy {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/copy-rtl.svg);
+}
+.oo-ui-icon-cut {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/cut-rtl.svg);
+}
 .oo-ui-icon-hieroglyph {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/hieroglyph.svg);
 }
@@ -742,6 +748,9 @@
 }
 .oo-ui-icon-outline {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/outline-rtl.svg);
+}
+.oo-ui-icon-paste {
+  background-image: /* @embed */ url(themes/wikimediaui/images/icons/paste-rtl.svg);
 }
 .oo-ui-icon-puzzle {
   background-image: /* @embed */ url(themes/wikimediaui/images/icons/puzzle-rtl.svg);

@@ -455,17 +455,19 @@ ve.dm.SurfaceFragment.prototype.containsOnlyText = function () {
  * @return {ve.dm.AnnotationSet} All annotation objects range is covered by
  */
 ve.dm.SurfaceFragment.prototype.getAnnotations = function ( all ) {
-	var selection = this.getSelection(),
-		annotations = new ve.dm.AnnotationSet( this.getDocument().getStore() );
+	var selection = this.getSelection();
 
 	if ( selection.isCollapsed() ) {
 		return this.surface.getInsertionAnnotations();
 	} else {
+		var annotations = null;
 		var ranges = selection.getRanges( this.getDocument() );
 		for ( var i = 0, l = ranges.length; i < l; i++ ) {
-			var rangeAnnotations = this.getDocument().data.getAnnotationsFromRange( ranges[ i ], all );
-			if ( !i ) {
-				// First range, annotations must be empty
+			var rangeAnnotations = this.getDocument().data.getAnnotationsFromRange( ranges[ i ], all, true );
+			if ( !rangeAnnotations ) {
+				continue;
+			}
+			if ( !annotations ) {
 				annotations = rangeAnnotations;
 			} else if ( all ) {
 				annotations.addSet( rangeAnnotations );
@@ -482,7 +484,7 @@ ve.dm.SurfaceFragment.prototype.getAnnotations = function ( all ) {
 				}
 			}
 		}
-		return annotations;
+		return annotations || new ve.dm.AnnotationSet( this.getDocument().getStore() );
 	}
 };
 
@@ -603,9 +605,11 @@ ve.dm.SurfaceFragment.prototype.getSiblingNodes = function () {
  *
  * @param {string} type Node type to match
  * @param {Object} [attributes] Node attributes to match
+ * @param {boolean} [matchFirstAncestorOfType] Require the match to be the first of its type, e.g. if type is 'list',
+ *  only match the first 'list' ancestor, then check if the attributes match.
  * @return {boolean} Nodes have a matching ancestor
  */
-ve.dm.SurfaceFragment.prototype.hasMatchingAncestor = function ( type, attributes ) {
+ve.dm.SurfaceFragment.prototype.hasMatchingAncestor = function ( type, attributes, matchFirstAncestorOfType ) {
 	var selection = this.getSelection();
 
 	var all;
@@ -613,9 +617,17 @@ ve.dm.SurfaceFragment.prototype.hasMatchingAncestor = function ( type, attribute
 		var nodes = this.getSelectedLeafNodes();
 		all = !!nodes.length;
 		for ( var i = 0, len = nodes.length; i < len; i++ ) {
-			if ( !nodes[ i ].hasMatchingAncestor( type, attributes ) ) {
-				all = false;
-				break;
+			if ( matchFirstAncestorOfType ) {
+				var node = nodes[ i ].findMatchingAncestor( type );
+				if ( !( node && node.compareAttributes( attributes ) ) ) {
+					all = false;
+					break;
+				}
+			} else {
+				if ( !nodes[ i ].hasMatchingAncestor( type, attributes ) ) {
+					all = false;
+					break;
+				}
 			}
 		}
 	} else if ( selection instanceof ve.dm.TableSelection ) {

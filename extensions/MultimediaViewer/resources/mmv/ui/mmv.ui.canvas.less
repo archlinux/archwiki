@@ -49,11 +49,14 @@
 	margin-right: auto;
 	margin-left: auto;
 	cursor: pointer;
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	cursor: zoom-in;
 
 	&.blurred {
-		filter: blur( 3px );
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		-webkit-filter: blur( 3px );
+		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
+		filter: blur( 3px );
 		opacity: 0.8;
 	}
 

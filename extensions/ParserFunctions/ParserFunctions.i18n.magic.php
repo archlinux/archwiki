@@ -411,7 +411,7 @@ $magicWords['ko'] = [
 	'urldecode' => [ 0, '주소디코딩:' ],
 ];
 
-/** Kurdish (Latin script) (Kurdî (latînî)‎) */
+/** Kurdish (Latin script) (Kurdî (latînî)) */
 $magicWords['ku-latn'] = [
 	'len' => [ 0, '#ziman' ],
 ];
@@ -614,7 +614,7 @@ $magicWords['ru'] = [
 	'replace' => [ 0, 'замена' ],
 ];
 
-/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+/** Serbian (Cyrillic script) (српски (ћирилица)) */
 $magicWords['sr-ec'] = [
 	'default' => [ 0, '#подразумевано' ],
 	'time' => [ 0, 'време' ],
@@ -758,7 +758,7 @@ $magicWords['zh'] = [
 	'explode' => [ 0, '爆炸', '炸开' ],
 ];
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Simplified Chinese (中文（简体）) */
 $magicWords['zh-hans'] = [
 	'expr' => [ 0, '表达式' ],
 	'if' => [ 0, '若', '如果' ],
@@ -781,7 +781,7 @@ $magicWords['zh-hans'] = [
 	'urldecode' => [ 0, 'url解码' ],
 ];
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）) */
 $magicWords['zh-hant'] = [
 	'expr' => [ 0, '表達式' ],
 	'if' => [ 0, '若' ],

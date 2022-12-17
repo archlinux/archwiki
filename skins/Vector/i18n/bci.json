@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Kjeanclaude"
 		]
 	},
@@ -14,5 +15,5 @@
 	"vector-view-history": "Nian laa sa",
 	"vector-view-view": "Kanngan",
 	"vector-more-actions": "Ouflè ékun",
-	"vector-searchsuggest-containing": "Kounndè floué boué moun nga liké nga wo noun: <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Kounndè floué boué moun nga liké nga wo noun: <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

@@ -16,8 +16,8 @@
  *
  * Meant to be in a 1:1 relationship to {@see ve.dm.MWTemplateModel}.
  *
- * The actual, unmodified specification can be found in {@see specCache} in
- * {@see ve.dm.MWTransclusionModel}.
+ * The actual, unmodified specification can be found in the {@see templateData} property and in a
+ * local `specCache` in {@see ve.dm.MWTransclusionModel}.
  *
  * See https://github.com/wikimedia/mediawiki-extensions-TemplateData/blob/master/Specification.md
  * for the latest version of the TemplateData specification.
@@ -242,8 +242,6 @@ ve.dm.MWTemplateSpecModel.prototype.isKnownParameterOrAlias = function ( name ) 
 };
 
 /**
- * Check if a parameter name is an alias.
- *
  * @param {string} name Parameter name or alias
  * @return {boolean}
  */

@@ -25,7 +25,7 @@ ve.dm.MWTransclusionPartModel = function VeDmMWTransclusionPartModel( transclusi
 
 	// Properties
 	this.transclusion = transclusion;
-	this.id = 'part_' + this.transclusion.nextUniquePartId();
+	this.id = this.transclusion.nextUniquePartId();
 };
 
 /* Inheritance */
@@ -78,15 +78,6 @@ ve.dm.MWTransclusionPartModel.prototype.remove = function () {
  */
 ve.dm.MWTransclusionPartModel.prototype.serialize = function () {
 	return undefined;
-};
-
-/**
- * Add all non-existing required and suggested parameters, if any.
- *
- * @return {number} Number of parameters added
- */
-ve.dm.MWTransclusionPartModel.prototype.addPromptedParameters = function () {
-	return 0;
 };
 
 /**

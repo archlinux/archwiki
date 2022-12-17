@@ -3,9 +3,9 @@
 		"authors": [
 			"Derugon",
 			"Gomoko",
-			"Wladek92",
 			"Urhixidur",
-			"Verdy p"
+			"Verdy p",
+			"Wladek92"
 		]
 	},
 	"apihelp-query+pageimages-description": "Retourne des informations sur les images de la page, comme par exemple les vignettes et la présence de photos.",

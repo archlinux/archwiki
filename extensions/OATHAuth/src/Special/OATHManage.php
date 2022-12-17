@@ -175,7 +175,7 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function addInactiveHTML() {
-		foreach ( $this->auth->getAllModules() as $key => $module ) {
+		foreach ( $this->auth->getAllModules() as $module ) {
 			if ( $this->isModuleEnabled( $module ) ) {
 				continue;
 			}
@@ -351,7 +351,7 @@ class OATHManage extends SpecialPage {
 	}
 
 	private function hasAlternativeModules() {
-		foreach ( $this->auth->getAllModules() as $key => $module ) {
+		foreach ( $this->auth->getAllModules() as $module ) {
 			if ( !$this->isModuleEnabled( $module ) ) {
 				return true;
 			}

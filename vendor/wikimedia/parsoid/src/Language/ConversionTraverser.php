@@ -3,7 +3,6 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Language;
 
-use stdClass;
 use Wikimedia\Assert\Assert;
 use Wikimedia\LangConv\ReplacementMachine;
 use Wikimedia\Parsoid\Config\Env;
@@ -84,15 +83,9 @@ class ConversionTraverser extends DOMTraverser {
 	/**
 	 * @param Element $el
 	 * @param Env $env
-	 * @param array $options
-	 * @param bool $atTopLevel
-	 * @param ?stdClass $tplInfo
 	 * @return ?Node|bool
 	 */
-	private function noConvertHandler(
-		Element $el, Env $env, array $options, bool $atTopLevel,
-		?stdClass $tplInfo
-	) {
+	private function noConvertHandler( Element $el, Env $env ) {
 		// Don't touch the inside of this node!
 		return $el->nextSibling;
 	}
@@ -100,15 +93,9 @@ class ConversionTraverser extends DOMTraverser {
 	/**
 	 * @param Node $node
 	 * @param Env $env
-	 * @param array $options
-	 * @param bool $atTopLevel
-	 * @param ?stdClass $tplInfo
 	 * @return ?Node|bool
 	 */
-	private function anyHandler(
-		Node $node, Env $env, array $options, bool $atTopLevel,
-		?stdClass $tplInfo
-	) {
+	private function anyHandler( Node $node, Env $env ) {
 		/* Look for `lang` attributes */
 		if ( $node instanceof Element ) {
 			if ( $node->hasAttribute( 'lang' ) ) {
@@ -123,15 +110,9 @@ class ConversionTraverser extends DOMTraverser {
 	/**
 	 * @param Element $el
 	 * @param Env $env
-	 * @param array $options
-	 * @param bool $atTopLevel
-	 * @param ?stdClass $tplInfo
 	 * @return ?Node|bool
 	 */
-	private function langContextHandler(
-		Element $el, Env $env, array $options, bool $atTopLevel,
-		?stdClass $tplInfo
-	) {
+	private function langContextHandler( Element $el, Env $env ) {
 		$this->fromLang = $this->guesser->guessLang( $el );
 		$el->setAttribute( 'data-mw-variant-lang', $this->fromLang );
 		return true; // Continue with other handlers
@@ -140,15 +121,9 @@ class ConversionTraverser extends DOMTraverser {
 	/**
 	 * @param Node $node
 	 * @param Env $env
-	 * @param array $options
-	 * @param bool $atTopLevel
-	 * @param ?stdClass $tplInfo
 	 * @return ?Node|bool
 	 */
-	private function textHandler(
-		Node $node, Env $env, array $options, bool $atTopLevel,
-		?stdClass $tplInfo
-	) {
+	private function textHandler( Node $node, Env $env ) {
 		Assert::invariant( $this->fromLang !== null, 'Text w/o a context' );
 		// @phan-suppress-next-line PhanTypeMismatchArgument,PhanTypeMismatchReturn both declared as DOMNode
 		return $this->machine->replace( $node, $this->toLang, $this->fromLang );
@@ -157,18 +132,11 @@ class ConversionTraverser extends DOMTraverser {
 	/**
 	 * @param Element $el
 	 * @param Env $env
-	 * @param array $options
-	 * @param bool $atTopLevel
-	 * @param ?stdClass $tplInfo
 	 * @return ?Node|bool
 	 */
-	private function aHandler(
-		Element $el, Env $env, array $options, bool $atTopLevel,
-		?stdClass $tplInfo
-	) {
+	private function aHandler( Element $el, Env $env ) {
 		// Is this a wikilink?  If so, extract title & convert it
-		$rel = $el->getAttribute( 'rel' ) ?? '';
-		if ( $rel === 'mw:WikiLink' ) {
+		if ( DOMUtils::hasRel( $el, 'mw:WikiLink' ) ) {
 			$href = preg_replace( '#^(\.\.?/)+#', '', $el->getAttribute( 'href' ) ?? '', 1 );
 			$fromPage = Utils::decodeURI( $href );
 			$toPageFrag = $this->machine->convert(
@@ -185,10 +153,10 @@ class ConversionTraverser extends DOMTraverser {
 				$el->setAttribute( 'title', str_replace( '_', ' ', $toPage ) );
 			}
 			$el->setAttribute( 'href', "./{$toPage}" );
-		} elseif ( $rel === 'mw:WikiLink/Interwiki' ) {
+		} elseif ( DOMUtils::hasRel( $el, 'mw:WikiLink/Interwiki' ) ) {
 			// Don't convert title or children of interwiki links
 			return $el->nextSibling;
-		} elseif ( $rel === 'mw:ExtLink' ) {
+		} elseif ( DOMUtils::hasRel( $el, 'mw:ExtLink' ) ) {
 			// WTUtils.usesURLLinkSyntax uses data-parsoid, so don't use it,
 			// but syntactic free links should also have class="external free"
 			if ( DOMCompat::getClassList( $el )->contains( 'free' ) ) {
@@ -215,15 +183,9 @@ class ConversionTraverser extends DOMTraverser {
 	/**
 	 * @param Node $node
 	 * @param Env $env
-	 * @param array $options
-	 * @param bool $atTopLevel
-	 * @param ?stdClass $tplInfo
 	 * @return ?Node|bool
 	 */
-	private function attrHandler(
-		Node $node, Env $env, array $options, bool $atTopLevel,
-		?stdClass $tplInfo
-	) {
+	private function attrHandler( Node $node, Env $env ) {
 		// Convert `alt` and `title` attributes on elements
 		// (Called before aHandler, so the `title` might get overwritten there)
 		if ( !( $node instanceof Element ) ) {
@@ -234,7 +196,7 @@ class ConversionTraverser extends DOMTraverser {
 			if ( !$node->hasAttribute( $attr ) ) {
 				continue;
 			}
-			if ( $attr === 'title' && $node->getAttribute( 'rel' ) === 'mw:WikiLink' ) {
+			if ( $attr === 'title' && DOMUtils::hasRel( $node, 'mw:WikiLink' ) ) {
 				// We've already converted the title in aHandler above.
 				continue;
 			}
@@ -262,15 +224,9 @@ class ConversionTraverser extends DOMTraverser {
 	 *
 	 * @param Element $el
 	 * @param Env $env
-	 * @param array $options
-	 * @param bool $atTopLevel
-	 * @param ?stdClass $tplInfo
 	 * @return ?Node|bool
 	 */
-	private function lcHandler(
-		Element $el, Env $env, array $options, bool $atTopLevel,
-		?stdClass $tplInfo
-	) {
+	private function lcHandler( Element $el, Env $env ) {
 		if ( !DOMUtils::hasTypeOf( $el, 'mw:LanguageVariant' ) ) {
 			return true; /* not language converter markup */
 		}

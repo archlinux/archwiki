@@ -6,14 +6,15 @@
 			"Hmxhmx",
 			"MaGa",
 			"Roberta F.",
-			"SpeedyGonsales"
+			"SpeedyGonsales",
+			"Ponor"
 		]
 	},
 	"nuke": "Skupno brisanje",
 	"nuke-desc": "Daje administratorima mogućnost [[Special:Nuke|skupnog brisanja]] stranica",
 	"nuke-nopages": "Nema novih stranica suradnika [[Special:Contributions/$1|$1]] među nedavnim promjenama.",
 	"nuke-list": "Sljedeće stranice stvorio je suradnik [[Special:Contributions/$1|$1]]; napišite zaključak i pritisnite puce za njihovo brisanje.",
-	"nuke-defaultreason": "Skupno brisanje stranica suradnika $1",
+	"nuke-defaultreason": "Skupno brisanje stranica {{GENDER:$1|suradnika|suradnice|suradnika/suradnice}} [[Special:Contributions/$1|$1]]",
 	"nuke-tools": "Ova ekstenzija omogućava skupno brisanje stranica (članaka) nekog prijavljenog ili neprijavljenog suradnika. Upišite ime ili IP adresu za dobivanje popisa stranica koje je moguće obrisati:",
 	"nuke-submit-user": "Kreni",
 	"nuke-submit-delete": "Obriši označeno",

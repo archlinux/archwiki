@@ -12,7 +12,6 @@ use File;
 use Html;
 use Linker;
 use MediaWiki\MediaWikiServices;
-use MWDebug;
 use ResourceLoaderSkinModule;
 use Sanitizer;
 use SpecialPage;
@@ -58,10 +57,7 @@ class TimelessTemplate extends BaseTemplate {
 		$this->pileOfTools = $this->getPageTools();
 		$userLinks = $this->getUserLinks();
 
-		// Open html, body elements, etc
-		$html = $this->get( 'headelement' );
-
-		$html .= Html::openElement( 'div', [ 'id' => 'mw-wrapper', 'class' => $userLinks['class'] ] );
+		$html = Html::openElement( 'div', [ 'id' => 'mw-wrapper', 'class' => $userLinks['class'] ] );
 
 		$html .= Html::rawElement( 'div', [ 'id' => 'mw-header-container', 'class' => 'ts-container' ],
 			Html::rawElement( 'div', [ 'id' => 'mw-header', 'class' => 'ts-inner' ],
@@ -111,15 +107,6 @@ class TimelessTemplate extends BaseTemplate {
 		);
 
 		$html .= Html::closeElement( 'div' );
-
-		// BaseTemplate::printTrail() stuff (has no get version)
-		// Required for RL to run
-		$html .= MWDebug::getDebugHTML( $this->getSkin()->getContext() );
-		$html .= $this->get( 'bottomscripts' );
-		$html .= $this->get( 'reporttime' );
-
-		$html .= Html::closeElement( 'body' );
-		$html .= Html::closeElement( 'html' );
 
 		// The unholy echo
 		echo $html;
@@ -531,11 +518,13 @@ class TimelessTemplate extends BaseTemplate {
 		}
 		if ( $part !== 'text' ) {
 			$logoImage = $this->getLogoImage( $config->get( 'TimelessLogo' ) );
-			if ( $logoImage === false && isset( $logos['icon'] ) ) {
-				$logoSrc = $logos['icon'];
-				$logoImage = Html::element( 'img', [
-					'src' => $logoSrc,
-				] );
+			if ( $logoImage === false ) {
+				$logoSrc = $logos['svg'] ?? $logos['icon'] ?? '';
+				if ( $logoSrc !== '' ) {
+					$logoImage = Html::element( 'img', [
+						'src' => $logoSrc,
+					] );
+				}
 			}
 
 			$html .= Html::rawElement(
@@ -843,11 +832,6 @@ class TimelessTemplate extends BaseTemplate {
 		// Tools specific to the page
 		$pileOfEditTools = [];
 		$contentNavigation = $this->data['content_navigation'];
-		// T300100: Do not use categories here. Already added to sidebar
-		unset(
-			$contentNavigation['category-normal'],
-			$contentNavigation['category-hidden']
-		);
 
 		foreach ( $contentNavigation as $navKey => $navBlock ) {
 			// Just use namespaces items as they are

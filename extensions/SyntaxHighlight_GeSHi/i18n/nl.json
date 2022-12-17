@@ -7,7 +7,8 @@
 			"Romaine",
 			"SPQRobin",
 			"Siebrand",
-			"Tvdm"
+			"Tvdm",
+			"McDutchie"
 		]
 	},
 	"syntaxhighlight-desc": "Voorziet in het markeren van syntaxis voor <code>&lt;syntaxhighlight&gt;</code> met [http://pygments.org/ Pygments]",
@@ -23,5 +24,5 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Toon regelnummers",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Codeblok",
 	"syntaxhighlight-error-unknown-language": "Onbekende taal \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "Code grootte is $1 {{PLURAL:$1|bytes}} en overschrijdt de maximale waarde van $2 {{PLURAL:$2|bytes}}"
+	"syntaxhighlight-error-exceeds-size-limit": "Codegrootte van $1 byte{{PLURAL:$1||s}} overschrijdt het toegestane maximum van $2 byte{{PLURAL:$2||s}}"
 }

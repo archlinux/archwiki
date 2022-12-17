@@ -20,8 +20,8 @@ class ViewEditPage extends Page {
 
 	get submitButton() { return $( '#mw-abusefilter-editing-form input[type="submit"]' ); }
 
-	get error() { return $( '.errorbox' ); }
-	get warning() { return $( '.warningbox' ); }
+	get error() { return $( '.mw-message-box-error' ); }
+	get warning() { return $( '.mw-message-box-warning' ); }
 
 	submit() {
 		this.submitButton.waitForClickable();

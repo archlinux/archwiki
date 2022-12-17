@@ -1,11 +1,6 @@
-/*!
- * VisualEditor user interface MWTransclusionOutlineWidget class.
- *
- * @license The MIT License (MIT); see LICENSE.txt
- */
-
 /**
- * Container for transclusion, may contain a single or multiple templates.
+ * Container for the entire transclusion dialog sidebar, may contain a single or
+ * multiple templates or raw wikitext snippets.
  *
  * @class
  * @extends OO.ui.Widget
@@ -37,20 +32,17 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineWidget, OO.ui.Widget );
  */
 
 /**
- * @event focusPageByName
+ * Respond to the intent to select a sidebar item
+ *
+ * @event sidebarItemSelected
  * @param {string} pageName Unique id of the {@see OO.ui.BookletLayout} page, e.g. something like
  *  "part_1" or "part_1/param1".
+ * @param {boolean} [soft] If true, don't focus the content pane.  Defaults to false.
  */
 
-/**
- * @event selectedTransclusionPartChanged
- * @param {string} partId Unique id of the {@see ve.dm.MWTransclusionPartModel}, e.g. something like
- *  "part_1".
- * @param {boolean} internal Used for internal calls to suppress events
- */
+/* Methods */
 
 /**
- * @private
  * @param {ve.dm.MWTransclusionPartModel|null} removed Removed part
  * @param {ve.dm.MWTransclusionPartModel|null} added Added part
  * @param {number} [newPosition]
@@ -65,15 +57,14 @@ ve.ui.MWTransclusionOutlineWidget.prototype.onReplacePart = function ( removed, 
 };
 
 /**
- * @private
+ * Handle spacebar in a part header
+ *
  * @param {string} pageName
- * @fires focusPageByName
+ * @fires sidebarItemSelected
  */
-ve.ui.MWTransclusionOutlineWidget.prototype.onTransclusionPartSelected = function ( pageName ) {
-	this.emit( 'focusPageByName', pageName );
+ve.ui.MWTransclusionOutlineWidget.prototype.onTransclusionPartSoftSelected = function ( pageName ) {
+	this.emit( 'sidebarItemSelected', pageName, true );
 };
-
-/* Methods */
 
 /**
  * @private
@@ -97,17 +88,19 @@ ve.ui.MWTransclusionOutlineWidget.prototype.removePartWidget = function ( part )
  * @fires filterPagesByName
  */
 ve.ui.MWTransclusionOutlineWidget.prototype.addPartWidget = function ( part, newPosition, removed ) {
-	var widget;
+	var keys = Object.keys( this.partWidgets ),
+		onlyPart = keys.length === 1 && this.partWidgets[ keys[ 0 ] ];
+	if ( onlyPart instanceof ve.ui.MWTransclusionOutlineTemplateWidget ) {
+		// To recalculate the height of the sticky header when we enter multi-part mode
+		onlyPart.recalculateStickyHeaderHeight();
+	}
 
+	var widget;
 	if ( part instanceof ve.dm.MWTemplateModel ) {
 		widget = new ve.ui.MWTransclusionOutlineTemplateWidget( part, removed instanceof ve.dm.MWTemplatePlaceholderModel );
 		// This forwards events from the nested ve.ui.MWTransclusionOutlineTemplateWidget upwards.
-		// The array syntax is a way to call `this.emit( 'filterParameters' )`.
 		widget.connect( this, {
-			// We can forward these events as is. The parameter's unique ids are reused as page
-			// names in {@see ve.ui.MWTemplateDialog.onAddParameter}.
-			focusTemplateParameterById: [ 'emit', 'focusPageByName' ],
-			filterParametersById: [ 'emit', 'filterPagesByName' ]
+			filterParametersById: 'onFilterParametersByName'
 		} );
 	} else if ( part instanceof ve.dm.MWTemplatePlaceholderModel ) {
 		widget = new ve.ui.MWTransclusionOutlinePlaceholderWidget( part );
@@ -116,8 +109,8 @@ ve.ui.MWTransclusionOutlineWidget.prototype.addPartWidget = function ( part, new
 	}
 
 	widget.connect( this, {
-		transclusionPartSoftSelected: 'setSelectionByPageName',
-		transclusionPartSelected: 'onTransclusionPartSelected'
+		transclusionPartSoftSelected: 'onTransclusionPartSoftSelected',
+		transclusionOutlineItemSelected: [ 'emit', 'sidebarItemSelected' ]
 	} );
 
 	this.partWidgets[ part.getId() ] = widget;
@@ -125,6 +118,11 @@ ve.ui.MWTransclusionOutlineWidget.prototype.addPartWidget = function ( part, new
 		this.$element.children().eq( newPosition ).before( widget.$element );
 	} else {
 		this.$element.append( widget.$element );
+	}
+
+	if ( widget instanceof ve.ui.MWTransclusionOutlineTemplateWidget ) {
+		// We can do this only after the widget is visible on screen
+		widget.recalculateStickyHeaderHeight();
 	}
 };
 
@@ -139,53 +137,67 @@ ve.ui.MWTransclusionOutlineWidget.prototype.hideAllUnusedParameters = function (
 	}
 };
 
-/**
- * This is inspired by {@see OO.ui.SelectWidget.selectItem}, but isn't one.
- *
- * @param {string} pageName
- * @fires selectedTransclusionPartChanged
- */
-ve.ui.MWTransclusionOutlineWidget.prototype.setSelectionByPageName = function ( pageName ) {
-	var partId = pageName.split( '/', 1 )[ 0 ],
-		isParameterId = pageName.length > partId.length,
-		changed = false;
-
+ve.ui.MWTransclusionOutlineWidget.prototype.initializeAllStickyHeaderHeights = function () {
 	for ( var id in this.partWidgets ) {
-		var partWidget = this.partWidgets[ id ],
-			selected = id === partId;
-
-		if ( partWidget.isSelected() !== selected ) {
-			partWidget.setSelected( selected );
-			if ( selected && !isParameterId ) {
-				partWidget.scrollElementIntoView();
-			}
-			changed = true;
+		var partWidget = this.partWidgets[ id ];
+		if ( partWidget instanceof ve.ui.MWTransclusionOutlineTemplateWidget ) {
+			partWidget.recalculateStickyHeaderHeight();
 		}
-
-		if ( selected &&
-			partWidget instanceof ve.ui.MWTransclusionOutlineTemplateWidget &&
-			isParameterId
-		) {
-			var paramName = pageName.slice( partId.length + 1 );
-			partWidget.highlightParameter( paramName );
-		}
-	}
-
-	if ( changed ) {
-		this.emit( 'selectedTransclusionPartChanged', partId, isParameterId );
 	}
 };
 
 /**
- * This is inspired by {@see OO.ui.SelectWidget.findSelectedItem}, but isn't one.
+ * This is inspired by {@see OO.ui.SelectWidget.selectItem}, but isn't one.
  *
+ * @param {string} [pageName] Symbolic name of page. Omit to remove current selection.
+ */
+ve.ui.MWTransclusionOutlineWidget.prototype.setSelectionByPageName = function ( pageName ) {
+	var selectedPartId = pageName ? pageName.split( '/', 1 )[ 0 ] : null,
+		isParameter = pageName ? pageName.length > selectedPartId.length : false;
+
+	for ( var partId in this.partWidgets ) {
+		var partWidget = this.partWidgets[ partId ],
+			selected = partId === pageName;
+
+		partWidget.setSelected( selected );
+		if ( selected && !isParameter ) {
+			partWidget.scrollElementIntoView();
+		}
+
+		if ( partWidget instanceof ve.ui.MWTransclusionOutlineTemplateWidget ) {
+			var selectedParamName = ( partId === selectedPartId && isParameter ) ?
+				pageName.slice( selectedPartId.length + 1 ) : null;
+			partWidget.setParameter( selectedParamName );
+		}
+	}
+};
+
+/**
+ * @param {string} pageName
+ * @param {boolean} hasValue
+ */
+ve.ui.MWTransclusionOutlineWidget.prototype.toggleHasValueByPageName = function ( pageName, hasValue ) {
+	var idParts = pageName.split( '/', 2 ),
+		templatePartWidget = this.partWidgets[ idParts[ 0 ] ];
+
+	templatePartWidget.toggleHasValue( idParts[ 1 ], hasValue );
+};
+
+/**
+ * Checks if the provided DOM element belongs to the DOM structure of one of the top-level
+ * {@see ve.ui.MWTransclusionOutlinePartWidget}s, and returns its id. Useful for e.g. mouse click or
+ * keyboard handlers.
+ *
+ * @param {HTMLElement} element
  * @return {string|undefined} Always a top-level part id, e.g. "part_0"
  */
-ve.ui.MWTransclusionOutlineWidget.prototype.findSelectedPartId = function () {
-	for ( var id in this.partWidgets ) {
-		var part = this.partWidgets[ id ];
-		if ( part.isSelected() ) {
-			return part.getData();
+ve.ui.MWTransclusionOutlineWidget.prototype.findPartIdContainingElement = function ( element ) {
+	if ( element ) {
+		for ( var id in this.partWidgets ) {
+			var part = this.partWidgets[ id ];
+			if ( $.contains( part.$element[ 0 ], element ) ) {
+				return id;
+			}
 		}
 	}
 };
@@ -200,4 +212,14 @@ ve.ui.MWTransclusionOutlineWidget.prototype.clear = function () {
 			.$element.remove();
 	}
 	this.partWidgets = {};
+};
+
+/**
+ * @private
+ * @param {Object.<string,boolean>} visibility
+ * @fires filterPagesByName
+ */
+ve.ui.MWTransclusionOutlineWidget.prototype.onFilterParametersByName = function ( visibility ) {
+	this.emit( 'filterPagesByName', visibility );
+	this.setSelectionByPageName();
 };

@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\VariableGenerator;
 
 use Content;
+use LogicException;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
@@ -107,6 +108,11 @@ class RunVariableGenerator extends VariableGenerator {
 		}
 
 		$oldContent = $oldRevRecord->getContent( SlotRecord::MAIN, RevisionRecord::RAW );
+		if ( !$oldContent ) {
+			// @codeCoverageIgnoreStart
+			throw new LogicException( 'Content cannot be null' );
+			// @codeCoverageIgnoreEnd
+		}
 		$oldAfText = $this->textExtractor->revisionToString( $oldRevRecord, $this->user );
 
 		// XXX: Recreate what the new revision will probably be so we can get the full AF
@@ -119,7 +125,7 @@ class RunVariableGenerator extends VariableGenerator {
 		// stringified contents as well, e.g. for line endings normalization (T240115).
 		// Don't treat content model change as null edit though.
 		if (
-			( $oldContent && $content->equals( $oldContent ) ) ||
+			$content->equals( $oldContent ) ||
 			( $oldContent->getModel() === $content->getModel() && strcmp( $oldAfText, $text ) === 0 )
 		) {
 			return null;

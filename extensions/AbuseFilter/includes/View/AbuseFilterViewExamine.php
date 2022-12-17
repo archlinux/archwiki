@@ -23,25 +23,18 @@ use MediaWiki\Revision\RevisionRecord;
 use OOUI;
 use RecentChange;
 use Title;
+use Wikimedia\Rdbms\ILoadBalancer;
 use Xml;
 
 class AbuseFilterViewExamine extends AbuseFilterView {
 	/**
-	 * @var string The user whose entries we're examinating
+	 * @var string The rules of the filter we're examining
 	 */
-	public $mSearchUser;
+	private $testFilter;
 	/**
-	 * @var string The start time of the search period
+	 * @var ILoadBalancer
 	 */
-	public $mSearchPeriodStart;
-	/**
-	 * @var string The end time of the search period
-	 */
-	public $mSearchPeriodEnd;
-	/**
-	 * @var string The ID of the filter we're examinating
-	 */
-	public $mTestFilter;
+	private $loadBalancer;
 	/**
 	 * @var FilterLookup
 	 */
@@ -68,6 +61,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	private $varGeneratorFactory;
 
 	/**
+	 * @param ILoadBalancer $loadBalancer
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param FilterLookup $filterLookup
 	 * @param EditBoxBuilderFactory $boxBuilderFactory
@@ -81,6 +75,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	 * @param array $params
 	 */
 	public function __construct(
+		ILoadBalancer $loadBalancer,
 		AbuseFilterPermissionManager $afPermManager,
 		FilterLookup $filterLookup,
 		EditBoxBuilderFactory $boxBuilderFactory,
@@ -94,6 +89,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
+		$this->loadBalancer = $loadBalancer;
 		$this->filterLookup = $filterLookup;
 		$this->boxBuilderFactory = $boxBuilderFactory;
 		$this->varBlobStore = $varBlobStore;
@@ -110,13 +106,13 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$out = $this->getOutput();
 		$out->setPageTitle( $this->msg( 'abusefilter-examine' ) );
 		$out->addHelpLink( 'Extension:AbuseFilter/Rules format' );
-		if ( $this->afPermManager->canUseTestTools( $this->getUser() ) ) {
+		if ( $this->afPermManager->canUseTestTools( $this->getAuthority() ) ) {
 			$out->addWikiMsg( 'abusefilter-examine-intro' );
 		} else {
 			$out->addWikiMsg( 'abusefilter-examine-intro-examine-only' );
 		}
 
-		$this->loadParameters();
+		$this->testFilter = $this->getRequest()->getText( 'testfilter' );
 
 		// Check if we've got a subpage
 		if ( count( $this->mParams ) > 1 && is_numeric( $this->mParams[1] ) ) {
@@ -143,27 +139,24 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 				'label-message' => 'abusefilter-test-user',
 				'type' => 'user',
 				'ipallowed' => true,
-				'default' => $this->mSearchUser,
 			],
 			'SearchPeriodStart' => [
 				'label-message' => 'abusefilter-test-period-start',
 				'type' => 'datetime',
-				'default' => $this->mSearchPeriodStart,
 				'min' => $min,
 				'max' => $max,
 			],
 			'SearchPeriodEnd' => [
 				'label-message' => 'abusefilter-test-period-end',
 				'type' => 'datetime',
-				'default' => $this->mSearchPeriodEnd,
 				'min' => $min,
 				'max' => $max,
 			],
 		];
-		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() );
-		$htmlForm->setWrapperLegendMsg( 'abusefilter-examine-legend' )
+		HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() )
+			->addHiddenField( 'testfilter', $this->testFilter )
+			->setWrapperLegendMsg( 'abusefilter-examine-legend' )
 			->setSubmitTextMsg( 'abusefilter-examine-submit' )
-			->setFormIdentifier( 'examine-select-date' )
 			->setSubmitCallback( [ $this, 'showResults' ] )
 			->showAlways();
 	}
@@ -175,8 +168,36 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	 * @return bool
 	 */
 	public function showResults( array $formData, HTMLForm $form ): bool {
-		$changesList = new AbuseFilterChangesList( $this->getContext(), $this->mTestFilter );
-		$pager = new AbuseFilterExaminePager( $this, $changesList );
+		$changesList = new AbuseFilterChangesList( $this->getContext(), $this->testFilter );
+
+		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+		$conds = $this->buildVisibilityConditions( $dbr, $this->getAuthority() );
+		$conds[] = $this->buildTestConditions( $dbr );
+
+		// Normalise username
+		$userTitle = Title::newFromText( $formData['SearchUser'], NS_USER );
+		$userName = $userTitle ? $userTitle->getText() : '';
+
+		if ( $userName !== '' ) {
+			$rcQuery = RecentChange::getQueryInfo();
+			$conds[$rcQuery['fields']['rc_user_text']] = $userName;
+		}
+
+		$startTS = strtotime( $formData['SearchPeriodStart'] );
+		if ( $startTS ) {
+			$conds[] = 'rc_timestamp>=' . $dbr->addQuotes( $dbr->timestamp( $startTS ) );
+		}
+		$endTS = strtotime( $formData['SearchPeriodEnd'] );
+		if ( $endTS ) {
+			$conds[] = 'rc_timestamp<=' . $dbr->addQuotes( $dbr->timestamp( $endTS ) );
+		}
+		$pager = new AbuseFilterExaminePager(
+			$changesList,
+			$this->linkRenderer,
+			$dbr,
+			$this->getTitle( 'examine' ),
+			$conds
+		);
 
 		$output = $changesList->beginRecentChangesList()
 			. $pager->getNavigationBar()
@@ -184,7 +205,7 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 			. $pager->getNavigationBar()
 			. $changesList->endRecentChangesList();
 
-		$form->addPostText( $output );
+		$form->addPostHtml( $output );
 		return true;
 	}
 
@@ -220,8 +241,8 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 	 */
 	public function showExaminerForLogEntry( $logid ) {
 		// Get data
-		$dbr = wfGetDB( DB_REPLICA );
-		$user = $this->getUser();
+		$dbr = $this->loadBalancer->getConnection( DB_REPLICA );
+		$performer = $this->getAuthority();
 		$out = $this->getOutput();
 
 		$row = $dbr->selectRow(
@@ -248,12 +269,12 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 			// Conservatively assume that it's hidden, like in SpecialAbuseLog
 			$isHidden = true;
 		}
-		if ( !$this->afPermManager->canSeeLogDetailsForFilter( $user, $isHidden ) ) {
+		if ( !$this->afPermManager->canSeeLogDetailsForFilter( $performer, $isHidden ) ) {
 			$out->addWikiMsg( 'abusefilter-log-cannot-see-details' );
 			return;
 		}
 
-		$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $user, $this->afPermManager );
+		$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $performer, $this->afPermManager );
 		if ( $visibility !== SpecialAbuseLog::VISIBILITY_VISIBLE ) {
 			if ( $visibility === SpecialAbuseLog::VISIBILITY_HIDDEN ) {
 				$msg = 'abusefilter-log-details-hidden';
@@ -291,15 +312,15 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$output->addModules( 'ext.abuseFilter.examine' );
 
 		// Add test bit
-		if ( $this->afPermManager->canUseTestTools( $this->getUser() ) ) {
+		if ( $this->afPermManager->canUseTestTools( $this->getAuthority() ) ) {
 			$boxBuilder = $this->boxBuilderFactory->newEditBoxBuilder(
 				$this,
-				$this->getUser(),
+				$this->getAuthority(),
 				$output
 			);
 
 			$tester = Xml::tags( 'h2', null, $this->msg( 'abusefilter-examine-test' )->parse() );
-			$tester .= $boxBuilder->buildEditBox( $this->mTestFilter, false, false, false );
+			$tester .= $boxBuilder->buildEditBox( $this->testFilter, false, false, false );
 			$tester .= $this->buildFilterLoader();
 			$html .= Xml::tags( 'div', [ 'id' => 'mw-abusefilter-examine-editor' ], $tester );
 			$html .= Xml::tags( 'p',
@@ -331,18 +352,4 @@ class AbuseFilterViewExamine extends AbuseFilterView {
 		$output->addHTML( $html );
 	}
 
-	/**
-	 * Loads parameters from request
-	 */
-	public function loadParameters() {
-		$request = $this->getRequest();
-		$this->mSearchPeriodStart = $request->getText( 'wpSearchPeriodStart' );
-		$this->mSearchPeriodEnd = $request->getText( 'wpSearchPeriodEnd' );
-		$this->mTestFilter = $request->getText( 'testfilter' );
-
-		// Normalise username
-		$searchUsername = $request->getText( 'wpSearchUser' );
-		$userTitle = Title::newFromText( $searchUsername, NS_USER );
-		$this->mSearchUser = $userTitle ? $userTitle->getText() : '';
-	}
 }

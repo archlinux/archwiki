@@ -29,7 +29,8 @@
 	 */
 	function MultimediaViewer( config ) {
 		var apiCacheMaxAge = 86400, // one day (24 hours * 60 min * 60 sec)
-			apiCacheFiveMinutes = 300; // 5 min * 60 sec
+			apiCacheFiveMinutes = 300, // 5 min * 60 sec
+			api = new mw.Api();
 
 		/**
 		 * @property {mw.mmv.Config}
@@ -47,7 +48,7 @@
 		 * @property {mw.mmv.provider.ImageInfo}
 		 * @private
 		 */
-		this.imageInfoProvider = new mw.mmv.provider.ImageInfo( new mw.mmv.logging.Api( 'imageinfo' ), {
+		this.imageInfoProvider = new mw.mmv.provider.ImageInfo( api, {
 			language: this.config.language(),
 			maxage: apiCacheFiveMinutes
 		} );
@@ -56,14 +57,14 @@
 		 * @property {mw.mmv.provider.FileRepoInfo}
 		 * @private
 		 */
-		this.fileRepoInfoProvider = new mw.mmv.provider.FileRepoInfo( new mw.mmv.logging.Api( 'filerepoinfo' ),
+		this.fileRepoInfoProvider = new mw.mmv.provider.FileRepoInfo( api,
 			{ maxage: apiCacheMaxAge } );
 
 		/**
 		 * @property {mw.mmv.provider.ThumbnailInfo}
 		 * @private
 		 */
-		this.thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( new mw.mmv.logging.Api( 'thumbnailinfo' ),
+		this.thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api,
 			{ maxage: apiCacheMaxAge } );
 
 		/**
@@ -114,7 +115,7 @@
 		/**
 		 * @property {mw.mmv.logging.ViewLogger} view -
 		 */
-		this.viewLogger = new mw.mmv.logging.ViewLogger( this.config, window, mw.mmv.actionLogger );
+		this.viewLogger = new mw.mmv.logging.ViewLogger( this.config, window );
 
 		/**
 		 * Stores whether the real image was loaded and displayed already.
@@ -198,7 +199,7 @@
 	 * @param {mw.mmv.LightboxInterface} ui lightbox that got resized
 	 */
 	MMVP.resize = function ( ui ) {
-		var imageWidths, canvasDimensions,
+		var imageWidths,
 			viewer = this,
 			image = this.thumbs[ this.currentIndex ].image,
 			ext = this.thumbs[ this.currentIndex ].title.getExtension().toLowerCase();
@@ -207,9 +208,6 @@
 
 		if ( image ) {
 			imageWidths = ui.canvas.getCurrentImageWidths();
-			canvasDimensions = ui.canvas.getDimensions();
-
-			mw.mmv.dimensionLogger.logDimensions( imageWidths, canvasDimensions, 'resize' );
 
 			this.fetchThumbnailForLightboxImage(
 				image, imageWidths.real
@@ -258,7 +256,6 @@
 	 */
 	MMVP.loadImage = function ( image, initialImage, useReplaceState ) {
 		var imageWidths,
-			canvasDimensions,
 			imagePromise,
 			metadataPromise,
 			pluginsPromise,
@@ -300,11 +297,8 @@
 		// this.preloadFullscreenThumbnail( image ); // disabled - #474
 
 		imageWidths = this.ui.canvas.getCurrentImageWidths();
-		canvasDimensions = this.ui.canvas.getDimensions();
 
-		start = ( new Date() ).getTime();
-
-		mw.mmv.dimensionLogger.logDimensions( imageWidths, canvasDimensions, 'show' );
+		start = Date.now();
 
 		imagePromise = this.fetchThumbnailForLightboxImage( image, imageWidths.real, extraStatsDeferred );
 
@@ -324,20 +318,6 @@
 					return;
 				}
 
-				if ( viewer.imageDisplayedCount++ === 0 ) {
-					mw.mmv.durationLogger.stop( 'click-to-first-image' );
-
-					metadataPromise.then( function ( imageInfo, repoInfo ) {
-						if ( imageInfo && imageInfo.anonymizedUploadDateTime ) {
-							mw.mmv.durationLogger.record( 'click-to-first-image', {
-								uploadTimestamp: imageInfo.anonymizedUploadDateTime
-							} );
-						}
-
-						return $.Deferred().resolve( imageInfo, repoInfo );
-					} );
-				}
-
 				// eslint-disable-next-line mediawiki/class-doc
 				imageElement.className = 'mw-mmv-final-image ' + image.filePageTitle.getExtension().toLowerCase();
 				imageElement.alt = image.alt;
@@ -346,7 +326,7 @@
 					$( document ).trigger( $.Event( 'mmv-metadata', { viewer: viewer, image: image, imageInfo: metadata[ 0 ] } ) );
 				} );
 
-				viewer.displayRealThumbnail( thumbnail, imageElement, imageWidths, ( new Date() ).getTime() - start );
+				viewer.displayRealThumbnail( thumbnail, imageElement, imageWidths, Date.now() - start );
 
 				return $.Deferred().resolve( thumbnail, imageElement );
 			},
@@ -364,10 +344,6 @@
 
 				if ( viewer.currentIndex !== image.index ) {
 					return;
-				}
-
-				if ( viewer.metadataDisplayedCount++ === 0 ) {
-					mw.mmv.durationLogger.stop( 'click-to-first-metadata' ).record( 'click-to-first-metadata' );
 				}
 
 				viewer.ui.panel.setImageInfo( image, imageInfo, repoInfo );
@@ -451,8 +427,6 @@
 	 * @param {number} loadTime Time it took to load the thumbnail
 	 */
 	MMVP.displayRealThumbnail = function ( thumbnail, imageElement, imageWidths, loadTime ) {
-		var viewer = this;
-
 		this.realThumbnailShown = true;
 
 		this.setImage( this.ui, thumbnail, imageElement, imageWidths );
@@ -467,10 +441,6 @@
 		}
 
 		this.viewLogger.attach( thumbnail.url );
-
-		mw.mmv.actionLogger.log( 'image-view' ).then( function ( wasEventLogged ) {
-			viewer.viewLogger.setLastViewLogged( wasEventLogged );
-		} );
 	};
 
 	/**
@@ -717,7 +687,7 @@
 
 		this.thumbnailPreloadQueue = this.pushLightboxImagesIntoQueue( function ( lightboxImage, extraStatsDeferred ) {
 			return function () {
-				var imageWidths, canvasDimensions;
+				var imageWidths;
 
 				// viewer.ui.canvas.getLightboxImageWidths needs the viewer to be open
 				// because it needs to read the size of visible elements
@@ -726,9 +696,6 @@
 				}
 
 				imageWidths = viewer.ui.canvas.getLightboxImageWidths( lightboxImage );
-				canvasDimensions = viewer.ui.canvas.getDimensions();
-
-				mw.mmv.dimensionLogger.logDimensions( imageWidths, canvasDimensions, 'preload' );
 
 				return viewer.fetchThumbnailForLightboxImage( lightboxImage, imageWidths.real, extraStatsDeferred );
 			};
@@ -743,10 +710,8 @@
 	 * @param {mw.mmv.LightboxImage} image
 	 */
 	MMVP.preloadFullscreenThumbnail = function ( image ) {
-		var imageWidths = this.ui.canvas.getLightboxImageWidthsForFullscreen( image ),
-			canvasDimensions = this.ui.canvas.getDimensions( true );
+		var imageWidths = this.ui.canvas.getLightboxImageWidthsForFullscreen( image );
 
-		mw.mmv.dimensionLogger.logDimensions( imageWidths, canvasDimensions, 'preload' );
 		this.fetchThumbnailForLightboxImage( image, imageWidths.real );
 	};
 
@@ -876,7 +841,6 @@
 	 * Opens the next image
 	 */
 	MMVP.nextImage = function () {
-		mw.mmv.actionLogger.log( 'next-image' );
 		this.loadIndex( this.currentIndex + 1 );
 	};
 
@@ -884,7 +848,6 @@
 	 * Opens the previous image
 	 */
 	MMVP.prevImage = function () {
-		mw.mmv.actionLogger.log( 'prev-image' );
 		this.loadIndex( this.currentIndex - 1 );
 	};
 

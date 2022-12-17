@@ -44,7 +44,7 @@
 		}
 	},
 	"APIModules": {
-		"titleblacklist": "ApiQueryTitleBlacklist"
+		"titleblacklist": "MediaWiki\\Extension\\TitleBlacklist\\Api\\ApiQueryTitleBlacklist"
 	},
 	"MessagesDirs": {
 		"TitleBlacklist": [
@@ -53,13 +53,13 @@
 		]
 	},
 	"AutoloadClasses": {
+		"MediaWiki\\Extension\\TitleBlacklist\\TitleBlacklist": "includes/TitleBlacklist.php",
 		"TitleBlacklist": "includes/TitleBlacklist.php",
-		"TitleBlacklistEntry": "includes/TitleBlacklistEntry.php",
-		"TitleBlacklistHooks": "includes/TitleBlacklistHooks.php",
-		"TitleBlacklistAuthenticationRequest": "includes/TitleBlacklistAuthenticationRequest.php",
-		"TitleBlacklistPreAuthenticationProvider": "includes/TitleBlacklistPreAuthenticationProvider.php",
-		"Scribunto_LuaTitleBlacklistLibrary": "includes/Scribunto_LuaTitleBlacklistLibrary.php",
-		"ApiQueryTitleBlacklist": "includes/api/ApiQueryTitleBlacklist.php"
+		"MediaWiki\\Extension\\TitleBlacklist\\TitleBlacklistEntry": "includes/TitleBlacklistEntry.php",
+		"TitleBlacklistEntry": "includes/TitleBlacklistEntry.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\TitleBlacklist\\": "includes/"
 	},
 	"ResourceModules": {
 		"mediawiki.api.titleblacklist": {
@@ -97,11 +97,11 @@
 		"MovePageCheckPermissions": "TitleBlacklistHookHandler",
 		"EditFilter": "TitleBlacklistHookHandler",
 		"PageSaveComplete": "TitleBlacklistHookHandler",
-		"ScribuntoExternalLibraries": "TitleBlacklistHooks::onScribuntoExternalLibraries"
+		"ScribuntoExternalLibraries": "MediaWiki\\Extension\\TitleBlacklist\\Hooks::onScribuntoExternalLibraries"
 	},
 	"HookHandlers": {
 		"TitleBlacklistHookHandler": {
-			"class": "TitleBlacklistHooks"
+			"class": "MediaWiki\\Extension\\TitleBlacklist\\Hooks"
 		}
 	},
 	"config": {
@@ -128,7 +128,7 @@
 	"AuthManagerAutoConfig": {
 		"preauth": {
 			"TitleBlacklistPreAuthenticationProvider": {
-				"class": "TitleBlacklistPreAuthenticationProvider"
+				"class": "MediaWiki\\Extension\\TitleBlacklist\\TitleBlacklistPreAuthenticationProvider"
 			}
 		}
 	},

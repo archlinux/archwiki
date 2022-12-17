@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Saiddzone",
-			"Saimawnkham",
-			"Amire80"
+			"Saimawnkham"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ၽႃႇသႃႇၵႂၢမ်း}}",
@@ -14,8 +14,8 @@
 	"vector-view-create": "သၢင်ႈ",
 	"vector-view-edit": "မႄးထတ်း",
 	"vector-view-history": "တူၺ်းပိုၼ်း",
-	"vector-view-view": "လူတူၺ်း",
+	"vector-view-view": "ဢၢၼ်ႇ",
 	"vector-view-viewsource": "တူၺ်း ငဝ်ႈငႃႇ",
 	"vector-more-actions": "ၼမ်လိူဝ်",
-	"vector-searchsuggest-containing": "ၶူၼ်ႉႁႃ တွၼ်ႈတႃႇ ၼႃႈလိၵ်ႈ ၸိူဝ်းၶဝ်ႈပႃးဝႆႉ <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "ၶူၼ်ႉႁႃ တွၼ်ႈတႃႇ ၼႃႈလိၵ်ႈ ၸိူဝ်းၶဝ်ႈပႃးဝႆႉ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

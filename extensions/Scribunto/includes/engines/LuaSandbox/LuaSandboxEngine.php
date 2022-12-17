@@ -1,6 +1,18 @@
 <?php
 
-class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
+namespace MediaWiki\Extension\Scribunto\Engines\LuaSandbox;
+
+use Html;
+use Language;
+use LuaSandbox;
+use MediaWiki\MediaWikiServices;
+use ParserOutput;
+use Scribunto_LuaEngine;
+use Scribunto_LuaInterpreterBadVersionError;
+use Scribunto_LuaInterpreterNotFoundError;
+use Title;
+
+class LuaSandboxEngine extends Scribunto_LuaEngine {
 	/** @var array */
 	public $options;
 	/** @var bool */
@@ -9,7 +21,7 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 	protected $lineCache = [];
 
 	/**
-	 * @var Scribunto_LuaSandboxInterpreter
+	 * @var LuaSandboxInterpreter
 	 */
 	protected $interpreter;
 
@@ -23,7 +35,7 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 	/** @inheritDoc */
 	public function getSoftwareInfo( array &$software ) {
 		try {
-			Scribunto_LuaSandboxInterpreter::checkLuaSandboxVersion();
+			LuaSandboxInterpreter::checkLuaSandboxVersion();
 		} catch ( Scribunto_LuaInterpreterNotFoundError $e ) {
 			// They shouldn't be using this engine if the extension isn't
 			// loaded. But in case they do for some reason, let's not have
@@ -84,13 +96,13 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 		}
 
 		$percentProfile = $this->interpreter->getProfilerFunctionReport(
-			Scribunto_LuaSandboxInterpreter::PERCENT
+			LuaSandboxInterpreter::PERCENT
 		);
 		if ( !count( $percentProfile ) ) {
 			return $ret;
 		}
 		$timeProfile = $this->interpreter->getProfilerFunctionReport(
-			Scribunto_LuaSandboxInterpreter::SECONDS
+			LuaSandboxInterpreter::SECONDS
 		);
 
 		$lines = [];
@@ -152,8 +164,6 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 	 * @suppress SecurityCheck-DoubleEscaped phan false positive
 	 */
 	public function formatLimitData( $key, &$value, &$report, $isHTML, $localize ) {
-		global $wgLang;
-		$lang = $localize ? $wgLang : Language::factory( 'en' );
 		switch ( $key ) {
 			case 'scribunto-limitreport-logs':
 				if ( $isHTML ) {
@@ -188,6 +198,9 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 				Html::openElement( 'tr' ) .
 				Html::openElement( 'td', [ 'colspan' => 2 ] ) .
 				Html::openElement( 'table' );
+
+			$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+
 			foreach ( $value as $line ) {
 				$name = $line[0];
 				$location = '';
@@ -195,7 +208,8 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 					$name = $m[1];
 					$title = Title::newFromText( $m[2] );
 					if ( $title && $title->hasContentModel( CONTENT_MODEL_SCRIBUNTO ) ) {
-						$location = '&lt;' . Linker::link( $title ) . ":{$m[3]}&gt;";
+						$location = '&lt;' .
+							$linkRenderer->makeLink( $title ) . ":{$m[3]}&gt;";
 					} else {
 						$location = htmlspecialchars( "<{$m[2]}:{$m[3]}>" );
 					}
@@ -241,6 +255,6 @@ class Scribunto_LuaSandboxEngine extends Scribunto_LuaEngine {
 	}
 
 	protected function newInterpreter() {
-		return new Scribunto_LuaSandboxInterpreter( $this, $this->options );
+		return new LuaSandboxInterpreter( $this, $this->options );
 	}
 }

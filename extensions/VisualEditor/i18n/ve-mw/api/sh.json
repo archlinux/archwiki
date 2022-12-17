@@ -2,17 +2,17 @@
 	"@metadata": {
 		"authors": [
 			"Kizule",
+			"Matma Rex",
 			"OC Ripper",
 			"Sf",
 			"Vlad5250",
-			"Zoranzoki21",
-			"Matma Rex"
+			"Zoranzoki21"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Nisam našao međuspremljenu serijalizaciju za taj ključ",
 	"apierror-visualeditor-difffailed": "Prikaz razlike nije uspjeo",
 	"apierror-visualeditor-docserver-http-error": "Greška pri kontaktiranju servera Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-unconfigured": "Nije određen VirtualRESTService za dokumentan server; pogl. https://www.mediawiki.org/wiki/Extension:VisualEditor",
+	"apierror-visualeditor-docserver-http": "Greška pri kontaktiranju servera Parsoid/RESTBase (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Greška pri kontaktiranju servera Parsoid/RESTBase",
 	"apierror-visualeditor-latestnotfound": "Nisam mogao naći posljednje uređivanje naslova",
 	"apihelp-visualeditor-description": "Vraća HTML5 za stranicu sa servisa Parsoid.",

@@ -60,7 +60,7 @@ class BlockAutopromote extends Consequence implements HookAborterConsequence, Re
 	/**
 	 * @inheritDoc
 	 */
-	public function revert( $info, UserIdentity $performer, string $reason ): bool {
+	public function revert( UserIdentity $performer, string $reason ): bool {
 		return $this->blockAutopromoteStore->unblockAutopromote(
 			$this->parameters->getUser(),
 			$performer,

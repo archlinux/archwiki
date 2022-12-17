@@ -1,6 +1,6 @@
 <?php
 
-class Scribunto_LuaStandaloneTest extends Scribunto_LuaEngineUnitTestBase {
+class LuaStandaloneTest extends Scribunto_LuaEngineUnitTestBase {
 	/** @inheritDoc */
 	protected static $moduleName = 'StandaloneTests';
 

@@ -75,7 +75,7 @@
 		assert.strictEqual( imageData.latitude, latitude, 'Latitude is set correctly' );
 		assert.strictEqual( imageData.longitude, longitude, 'Longitude is set correctly' );
 		assert.deepEqual( imageData.restrictions, restrictions, 'Restrictions is set correctly' );
-		assert.ok( imageData.thumbUrls, 'Thumb URL cache is set up properly' );
+		assert.true( $.isPlainObject( imageData.thumbUrls ), 'Thumb URL cache is set up properly' );
 	} );
 
 	QUnit.test( 'hasCoords()', function ( assert ) {
@@ -141,11 +141,9 @@
 		assert.strictEqual( Image.parseExtmeta( missingData, 'string' ), undefined,
 			'Extmeta missing data parsed correctly.' );
 
-		try {
+		assert.throws( function () {
 			Image.parseExtmeta( stringData, 'strong' );
-		} catch ( e ) {
-			assert.ok( e, 'Exception is thrown on invalid argument' );
-		}
+		}, 'Exception is thrown on invalid argument' );
 	} );
 
 }() );

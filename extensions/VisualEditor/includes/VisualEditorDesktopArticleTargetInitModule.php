@@ -10,9 +10,12 @@
  * @license MIT
  */
 
-use MediaWiki\MediaWikiServices;
+namespace MediaWiki\Extension\VisualEditor;
 
-class VisualEditorDesktopArticleTargetInitModule extends ResourceLoaderFileModule {
+use MediaWiki\MediaWikiServices;
+use MediaWiki\ResourceLoader\FileModule;
+
+class VisualEditorDesktopArticleTargetInitModule extends FileModule {
 
 	/**
 	 * @inheritDoc
@@ -31,8 +34,11 @@ class VisualEditorDesktopArticleTargetInitModule extends ResourceLoaderFileModul
 		// Check the localisation cache for which skins have a custom message for this.
 		// We only need this for the current skin, but ResourceLoader's message cache
 		// does not fragment by skin.
-		foreach ( $services->getSkinFactory()->getSkinNames() as $skname => $unused ) {
-			foreach ( [ 'edit', 'create' ] as $msgKey ) {
+		foreach ( [ 'edit', 'create' ] as $msgKey ) {
+			// MediaWiki defaults
+			$messages[] = "skin-view-$msgKey";
+			foreach ( $services->getSkinFactory()->getSkinNames() as $skname => $unused ) {
+				// Per-skin overrides
 				// Messages: vector-view-edit, vector-view-create
 				// Disable database lookups for site-level message overrides as they
 				// are expensive and not needed here (T221294). We only care whether the

@@ -41,7 +41,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "הדף הזה אינו קיים באתר {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "הכותרת שכתבת אינה תקינה",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "קישור חיצוני",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "בדיקה האם הדף קיים...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "זה אינו דף תוכן, אלא רשימת נושאים בעלי שמות דומים",
 	"wikieditor-toolbar-tool-link-int-invalid": "הכותרת שצוינה אינה תקינה.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "הכתובת שציינת נראית כאילו היא מיועדת לקשר לדף אחר בוויקי.\nהאם ברצונך להפוך זאת לקישור פנימי?",
@@ -199,5 +198,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "טקסט רגיל<br />:טקסט מוזח<br />::טקסט מוזח",
 	"wikieditor-toolbar-help-content-indent-result": "טקסט רגיל<dl><dd>טקסט מוזח<dl><dd>טקסט מוזח</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "עריכה שנעשתה באמצעות [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (עורך קוד ויקי 2010)",
-	"wikieditor-realtimepreview-preview": "תצוגה מקדימה"
+	"wikieditor-realtimepreview-preview": "תצוגה מקדימה",
+	"wikieditor-realtimepreview-error": "תצוגה מקדימה לא נטענת",
+	"wikieditor-realtimepreview-reload": "רענון",
+	"wikieditor-realtimepreview-beta-label": "תצוגה מקדימה בזמן־אמת",
+	"wikieditor-realtimepreview-beta-desc": "אפשרות לראות איך שינויים בקוד הוויקי יופיעו לקוראים בתוך [[mw:Special:MyLanguage/Extension:WikiEditor|עורך קוד ויקי 2010]].",
+	"wikieditor-realtimepreview-reload-title": "רענון חלונית התצוגה המקדימה בזמן־אמת",
+	"wikieditor-realtimepreview-manual": "נא לרענן כדי לעשות תצוגה מקדימה ידנית של העריכות שלך.",
+	"wikieditor-realtimepreview-onboarding-title": "תצוגה מקדימה בזמן־אמת",
+	"wikieditor-realtimepreview-onboarding-body": "הצגה של איך העריכות תיראינה לקוראים באמצעות תצוגה מקדימה בזמן־אמת.",
+	"wikieditor-realtimepreview-onboarding-button": "בסדר, הבנתי"
 }

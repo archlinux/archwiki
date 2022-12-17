@@ -1,4 +1,7 @@
 /**
+ * Top-level part in the template dialog sidebar, representing a raw wikitext
+ * snippet.
+ *
  * @class
  * @extends ve.ui.MWTransclusionOutlinePartWidget
  *
@@ -14,6 +17,8 @@ ve.ui.MWTransclusionOutlineWikitextWidget = function VeUiMWTransclusionOutlineWi
 		ariaDescriptionSelected: ve.msg( 'visualeditor-dialog-transclusion-wikitext-widget-aria-selected' ),
 		ariaDescriptionSelectedSingle: ve.msg( 'visualeditor-dialog-transclusion-wikitext-widget-aria-selected-single' )
 	} );
+
+	this.$element.addClass( 've-ui-mwTransclusionOutlineWikitextWidget' );
 };
 
 /* Inheritance */

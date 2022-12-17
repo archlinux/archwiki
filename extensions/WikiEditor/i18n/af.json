@@ -40,7 +40,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Die bladsy bestaan nie",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ongeldige bladsynaam",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Eksterne skakel",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kontroleer of die bladsy reeds bestaan...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Dubbelsinnigheidsbladsy",
 	"wikieditor-toolbar-tool-link-int-invalid": "Die titel wat u verskaf het is ongeldig.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Die URL wat u verskaf het lyk asof dit bedoel is as skakel na 'n ander wikibladsy.\nWil u dit na 'n interne skakel verander?",

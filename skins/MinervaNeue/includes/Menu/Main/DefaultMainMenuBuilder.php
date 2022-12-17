@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Minerva\Menu\Main;
 
-use Hooks;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
@@ -98,6 +97,19 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 	}
 
 	/**
+	 * Builds the anonymous settings group.
+	 *
+	 * @inheritDoc
+	 */
+	public function getSettingsGroup(): Group {
+		$group = new Group( 'pt-preferences' );
+		if ( $this->showMobileOptions && !$this->user->isRegistered() ) {
+			$this->definitions->insertMobileOptionsItem( $group );
+		}
+		return $group;
+	}
+
+	/**
 	 * Builds the personal tools menu item group.
 	 *
 	 * ... by adding the Watchlist, Settings, and Log{in,out} menu items in the given order.
@@ -148,9 +160,6 @@ final class DefaultMainMenuBuilder implements IMainMenuBuilder {
 				}
 			}
 		}
-
-		// Allow other extensions to add or override tools
-		Hooks::run( 'MobileMenu', [ 'personal', &$group ], '1.38' );
 		return $group;
 	}
 }

@@ -3,12 +3,12 @@
 		"authors": [
 			"Alp Er Tunqa",
 			"Amir a57",
+			"Amire80",
 			"E THP",
 			"Ebrahimi-amir",
 			"Ilğım",
 			"Koroğlu",
-			"Mousa",
-			"Amire80"
+			"Mousa"
 		]
 	},
 	"wikieditor-wikitext-tab": "ویکی‌متن",
@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "صحیفه مؤوجود دئییل",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "گئچرسیز آد",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "ائشیک باغلانتی",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "صحیفه‌نین اولدوغو یوخلانیر...",
 	"wikieditor-toolbar-tool-link-int-invalid": "وئردیگینیز باشلیق گئچرسیزدیر.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "سیز وئردیگینیز آدرس، آیری ویکی صحیفه‌سینه باغلانان نظره گلیر.\nاونو ایچری باغلانتی‌یه چئویرمگینی ایسته‌ییرسینیز؟",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "ایچری باغلانتی‌سی",

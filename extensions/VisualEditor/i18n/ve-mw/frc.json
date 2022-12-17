@@ -12,9 +12,6 @@
 	"visualeditor-dialog-media-choose-image": "User cette image",
 	"visualeditor-dialog-media-content-filename": "Nom du fichier",
 	"visualeditor-dialog-media-goback": "Retourner",
-	"visualeditor-dialog-media-info-credit": "Crédit",
-	"visualeditor-dialog-media-info-imagedescription": "Description complète",
 	"visualeditor-dialog-media-info-moreinfo": "Plus informations",
-	"visualeditor-dialog-media-info-readmore": "Lire davantage",
-	"visualeditor-dialog-media-searchselect": "Choisir"
+	"visualeditor-dialog-media-info-readmore": "Lire davantage"
 }

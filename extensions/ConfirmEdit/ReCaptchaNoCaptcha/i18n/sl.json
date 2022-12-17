@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eleassar"
+		]
+	},
+	"renocaptcha-addurl": "Vaše urejanje vključuje nove zunanje povezave. Za zaščito vikija pred samodejnim smetjem vas prijazno prosimo, da rešite naslednji CAPTCHA:",
+	"renocaptcha-createaccount": "Za zaščito vikija pred samodejnim ustvarjanjem računov vas prijazno prosimo, da rešite naslednji CAPTCHA:"
+}

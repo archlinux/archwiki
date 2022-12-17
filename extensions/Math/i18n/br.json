@@ -4,9 +4,9 @@
 			"Adriendelucca",
 			"Fohanno",
 			"Fulup",
+			"Huñvreüs",
 			"Macofe",
-			"Y-M D",
-			"Huñvreüs"
+			"Y-M D"
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Formulenn gimiek",
@@ -20,7 +20,7 @@
 	"math-tracking-category-texvc-deprecation-desc": "Ar pajennoù implijet er rummad-mañ a ra gant ur furmad dispredet eus an tikedennoù metematik",
 	"math_unknown_error": "fazi dianav",
 	"math_unknown_function": "arc'hwel dianav \"$1\"",
-	"mw_math_mathml": "MathML",
+	"mw_math_mathml": "MathML gant kiladenn PNG (gallout a ra MathML bezañ gweredekaat gant ur plugin merdeer)",
 	"mw_math_png": "Skeudennoù PNG",
 	"mw_math_source": "Leuskel ar c'hod LaTeX orin",
 	"prefs-math": "Tres jedoniel",

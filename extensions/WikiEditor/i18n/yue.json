@@ -42,7 +42,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "頁唔存在",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "唔正確嘅標題",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "外部連結",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "檢查果版係唔係到...",
 	"wikieditor-toolbar-tool-link-int-invalid": "你打嘅標題係錯嘅",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "條URL應該係連去其他Wiki頁面嘅，你打唔打算做一個內部連結？",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "內部連結",

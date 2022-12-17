@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Wladek92",
-			"Verdy p"
+			"Verdy p",
+			"Wladek92"
 		]
 	},
 	"apihelp-scribunto-console-description": "Module interne pour répondre aux requêtes XHR à partir de la console Scribunto.",

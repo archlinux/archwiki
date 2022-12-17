@@ -36,7 +36,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Iste pagina non existe sur {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Le titulo que tu ha specificate es invalide",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ligamine externe",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Verifica existentia del pagina...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Iste pagina non es un pagina de contento, ma un lista de subjectos con nomines similar",
 	"wikieditor-toolbar-tool-link-int-invalid": "Le titulo que tu specificava es invalide.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Le URL que tu specificava pare esser intendite como ligamine a un altere pagina wiki.\nVole tu facer lo un ligamine interne?",

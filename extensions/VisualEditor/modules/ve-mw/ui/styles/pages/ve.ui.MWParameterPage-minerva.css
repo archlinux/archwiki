@@ -5,10 +5,6 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-.ve-ui-mwParameterPage-actions {
-	display: none;
-}
-
 .ve-ui-mwParameterPage-inlineDescription {
 	max-width: 50em;
 }
@@ -20,24 +16,10 @@
 	color: #54595d;
 }
 
-.ve-ui-mwParameterPage-infoButton,
-.ve-ui-mwParameterPage-removeButton {
-	display: none;
-}
-
-.ve-ui-mwParameterPage-field {
-	padding-top: 0.25em;
+.ve-ui-mwParameterPage-inlineDescription > .ve-ui-expandableContent-container {
+	right: 0;
 }
 
 .ve-ui-mwParameterPage .oo-ui-textInputWidget textarea {
 	height: 2.5em;
-}
-
-.ve-ui-mwParameterPage-addUndocumented {
-	display: none;
-	margin: 1em 0 0.5em 0;
-}
-
-.ve-ui-mwParameterPage:last-child .ve-ui-mwParameterPage-addUndocumented {
-	display: block;
 }

@@ -5,18 +5,18 @@
 			"Alifakoor",
 			"Alirezaaa",
 			"BMRG14",
+			"Beginneruser",
 			"Ebraminio",
 			"Huji",
 			"Jeeputer",
 			"Ladsgroup",
 			"Mjbmr",
 			"MohandesWiki",
+			"Mojtabakd",
 			"Physicsch",
 			"Reza1615",
 			"Wayiran",
-			"ZxxZxxZ",
-			"Beginneruser",
-			"Mojtabakd"
+			"ZxxZxxZ"
 		]
 	},
 	"wikieditor": "رابط ویرایش پیشرفته ویکی‌متن",
@@ -50,7 +50,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "این صفحه در {{SITENAME}} موجود نیست",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "عنوانی که مشخص کردید نامعتبر است",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "پیوند به بیرون",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "بررسی وجود داشتن صفحه...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "این صفحه محتوایی نیست، بلکه فهرستی است از موضوعاتی با نام‌های مشابه",
 	"wikieditor-toolbar-tool-link-int-invalid": "عنوان تعیین‌شده نامعتبر است.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "نشانی اینترنتی که وارد کردید به شکلی است که نمایانگر یک پیوند به صفحه‌ای داخل ویکی است. آیا می‌خواهید آن را به یک پیوند داخلی تبدیل کنید؟",
@@ -208,5 +207,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "متن عادی<br />:متن تورفته<br />::متن تورفته",
 	"wikieditor-toolbar-help-content-indent-result": "متن عادی<dl><dd>متن تورفته<dl><dd>متن تورفته</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "ویرایش ایجاد شده با استفاده از [[mw:Special:MyLanguage/Extension:WikiEditor|ویکی‌ادیتور]] (ویرایشگر ویکی‌ادیتور ۲۰۱۰)",
-	"wikieditor-realtimepreview-preview": "پیش‌نمایش"
+	"wikieditor-realtimepreview-preview": "پیش‌نمایش",
+	"wikieditor-realtimepreview-error": "پیش‌نمایش در حال بارگیری نیست",
+	"wikieditor-realtimepreview-reload": "تازه‌سازی",
+	"wikieditor-realtimepreview-beta-label": "پیش‌نمایش زنده",
+	"wikieditor-realtimepreview-beta-desc": "مشاهدهٔ چگونگی نمایش تغییرات ویکی‌متن به مخاطبان درون [[mw:Special:MyLanguage/Extension:WikiEditor|ویرایشگر ۲۰۱۰]].",
+	"wikieditor-realtimepreview-reload-title": "بارگیری مجدد پنجرهٔ پیش‌نمایش زنده",
+	"wikieditor-realtimepreview-manual": "برای پیش‌نمایش دستی ویرایش‌هایتان، لطفاً صفحه را مجدداً بارگیری کنید.",
+	"wikieditor-realtimepreview-onboarding-title": "پیش‌نمایش زنده",
+	"wikieditor-realtimepreview-onboarding-body": "نحوهٔ نمایش ویرایش‌های شما به مخاطبان را به‌واسطهٔ پیش‌نمایش زندهٔ آن‌ها مشاهده کنید.",
+	"wikieditor-realtimepreview-onboarding-button": "باشه، فهمیدم"
 }

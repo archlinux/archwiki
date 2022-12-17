@@ -5,7 +5,8 @@ namespace MediaWiki\Extension\AbuseFilter\Api;
 use ApiBase;
 use ApiMain;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
-use User;
+use MediaWiki\ParamValidator\TypeDef\UserDef;
+use Wikimedia\ParamValidator\ParamValidator;
 
 class UnblockAutopromote extends ApiBase {
 
@@ -33,15 +34,7 @@ class UnblockAutopromote extends ApiBase {
 		$this->checkUserRightsAny( 'abusefilter-modify' );
 
 		$params = $this->extractRequestParams();
-		$target = User::newFromName( $params['user'] );
-
-		if ( $target === false ) {
-			$encParamName = $this->encodeParamName( 'user' );
-			$this->dieWithError(
-				[ 'apierror-baduser', $encParamName, wfEscapeWikiText( $params['user'] ) ],
-				"baduser_{$encParamName}"
-			);
-		}
+		$target = $params['user'];
 
 		$block = $this->getUser()->getBlock();
 		if ( $block && $block->isSitewide() ) {
@@ -49,14 +42,13 @@ class UnblockAutopromote extends ApiBase {
 		}
 
 		$msg = $this->msg( 'abusefilter-tools-restoreautopromote' )->inContentLanguage()->text();
-		$blockAutopromoteStore = $this->afBlockAutopromoteStore;
-		$res = $blockAutopromoteStore->unblockAutopromote( $target, $this->getUser(), $msg );
+		$res = $this->afBlockAutopromoteStore->unblockAutopromote( $target, $this->getUser(), $msg );
 
 		if ( !$res ) {
 			$this->dieWithError( [ 'abusefilter-reautoconfirm-none', $target->getName() ], 'notsuspended' );
 		}
 
-		$finalResult = [ 'user' => $params['user'] ];
+		$finalResult = [ 'user' => $target->getName() ];
 		$this->getResult()->addValue( null, $this->getModuleName(), $finalResult );
 	}
 
@@ -83,8 +75,10 @@ class UnblockAutopromote extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'user' => [
-				ApiBase::PARAM_TYPE => 'user',
-				ApiBase::PARAM_REQUIRED => true
+				ParamValidator::PARAM_TYPE => 'user',
+				ParamValidator::PARAM_REQUIRED => true,
+				UserDef::PARAM_RETURN_OBJECT => true,
+				UserDef::PARAM_ALLOWED_USER_TYPES => [ 'name' ],
 			],
 			'token' => null,
 		];

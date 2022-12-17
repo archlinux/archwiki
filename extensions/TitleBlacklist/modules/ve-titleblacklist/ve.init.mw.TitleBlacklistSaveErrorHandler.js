@@ -14,8 +14,8 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		};
 
 		ve.init.mw.TitleBlacklistSaveErrorHandler.static.process = function ( data, target ) {
-			// Handle warnings/errors from Extension:TitleBlacklist
-			target.showSaveError( target.extractErrorMessages( data ), false );
+			// Handle errors from Extension:TitleBlacklist
+			target.showSaveError( target.extractErrorMessages( data ) );
 			// Emit event for tracking. TODO: This is a bad design
 			target.emit( 'saveErrorTitleBlacklist' );
 		};

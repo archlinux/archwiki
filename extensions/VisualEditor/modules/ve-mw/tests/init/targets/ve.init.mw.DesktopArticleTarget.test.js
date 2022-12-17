@@ -32,6 +32,7 @@ QUnit.test( 'init', ( assert ) => {
 						message: '<b>object notice</b> message'
 					}
 				],
+				copyrightWarning: '<div id="editpage-copywarn">Blah blah</div>',
 				checkboxesDef: {
 					wpMinoredit: {
 						id: 'wpMinoredit',
@@ -58,11 +59,6 @@ QUnit.test( 'init', ( assert ) => {
 					'tooltip-watch': 'Add this page to your watchlist',
 					watchthis: 'Watch this page'
 				},
-				templates: '<div class="templatesUsed"></div>',
-				links: {
-					missing: [],
-					known: 1
-				},
 				protectedClasses: '',
 				basetimestamp: '20161119005107',
 				starttimestamp: '20180831122319',
@@ -88,9 +84,7 @@ QUnit.test( 'init', ( assert ) => {
 							'<section data-mw-section-id="0" id="mwAQ"></section>' +
 						'</body>' +
 					'</html>',
-				etag: '"1804/a4fc0409-ad18-11e8-9b45-dd8cefbedb6d"',
-				switched: false,
-				fromEditedState: false
+				etag: '"1804/a4fc0409-ad18-11e8-9b45-dd8cefbedb6d"'
 			}
 		},
 		target = new ve.init.mw.DesktopArticleTarget(),
@@ -100,7 +94,7 @@ QUnit.test( 'init', ( assert ) => {
 	target.on( 'surfaceReady', () => {
 		assert.strictEqual( target.getSurface().getModel().getDocument().getLang(), 'he', 'Page language is passed through from config' );
 		assert.strictEqual( target.getSurface().getModel().getDocument().getDir(), 'rtl', 'Page direction is passed through from config' );
-		target.activatingDeferred.then( () => {
+		target.activatingDeferred.then( async () => {
 			assert.equalDomElement(
 				target.actionsToolbar.tools.notices.noticeItems[ 0 ].$element[ 0 ],
 				$( '<div class="ve-ui-mwNoticesPopupTool-item"><b>HTML string notice</b> message</div>' )[ 0 ],
@@ -113,9 +107,45 @@ QUnit.test( 'init', ( assert ) => {
 				'Object notice message is passed through from API'
 			);
 			assert.strictEqual( target.actionsToolbar.tools.notices.noticeItems[ 1 ].type, 'object notice', 'Object notice type is passed through from API' );
-			target.destroy().then( () => {
-				done();
+
+			// Open the save dialog and examine it (this bypasses a bunch of stuff, and may fail in funny
+			// ways, but #showSaveDialog has many dependencies that I don't want to simulate here).
+			const dialogs = target.getSurface().getDialogs();
+			const instance = dialogs.openWindow( 'mwSave', target.getSaveDialogOpeningData() );
+			await instance.opened;
+			const dialog = dialogs.getCurrentWindow();
+			assert.equalDomElement(
+				dialog.$element.find( '#editpage-copywarn' )[ 0 ],
+				$( '<div id="editpage-copywarn">Blah blah</div>' )[ 0 ],
+				'Copyright warning message is passed through from API'
+			);
+			dialogs.closeWindow( 'mwSave' );
+			await instance.closed;
+
+			// Store doc state and examine it
+			target.storeDocState();
+			const storedData = JSON.parse( sessionStorage.getItem( 've-docstate' ) );
+			const ignoredKeys = {
+				// Not stored because it's always 'success'
+				result: true,
+				// Not stored because it's stored elsewhere
+				content: true,
+				// Not stored because if you're blocked, the editor opens in read-only mode (or doesn't open
+				// at all, on mobile), so we'll never have to restore from auto-save
+				blockinfo: true
+			};
+			Object.keys( response.visualeditor ).forEach( ( key ) => {
+				if ( !ignoredKeys[ key ] ) {
+					assert.deepEqual(
+						storedData.response[ key ],
+						response.visualeditor[ key ],
+						key + ' can be restored from auto-save data'
+					);
+				}
 			} );
+
+			await target.destroy();
+			done();
 		} );
 	} );
 	target.activate( dataPromise );

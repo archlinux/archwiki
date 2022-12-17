@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Anoopan",
-			"Praveenp"
+			"Praveenp",
+			"Akbarali"
 		]
 	},
 	"skinname-vector": "വെക്റ്റർ പഴമ (2010)",
@@ -30,7 +31,12 @@
 	"vector-view-view": "വായിക്കുക",
 	"vector-view-viewsource": "മൂലരൂപം കാണുക",
 	"vector-more-actions": "കൂടുതൽ",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> അടങ്ങിയ പേജുകൾക്കായി തിരയുക",
+	"vector-toc-heading": "ഉള്ളടക്കം",
 	"vector-anon-user-menu-pages-learn": "കൂടുതൽ അറിയുക",
 	"vector-main-menu-tooltip": "പ്രധാന മെനു",
+	"vector-toc-menu-tooltip": "ഉള്ളടക്കപ്പട്ടിക",
+	"vector-article-tools-nav-label": "ഉപകരണങ്ങൾ",
+	"vector-site-nav-label": "സൈറ്റ്",
 	"tooltip-vector-anon-user-menu-title": "കൂടുതൽ ഐച്ഛികങ്ങൾ"
 }

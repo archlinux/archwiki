@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Gastaz",
 			"Giromin Cangiaxo",
 			"N. Longo",
 			"S4b1nuz E.656"
 		]
 	},
-	"tooltip-pt-watchlist-2": "A lìsta de pàgine che ti t'æ sótta òservaçión",
 	"vector-skin-desc": "O fornìsce doî têmi Vector:\n* 2011 - Versción modèrna do MonoBook co-ina câa renovâ e di bèlli avantàggi inte l'adêuviabilitæ\n* 2022 - Versción svilupâ inte l'ànbito do progètto WMF [[mw:Desktop Improvements]]",
 	"prefs-vector-enable-vector-1-label": "Adêuvia Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "Inti ànni a vegnî ciàn cianìn agiorniêmo a skin do Vector. O Vector Legacy o te permetiâ d'amiâ a versción vêgia do Vector ascì (do dexénbre 2019). Pe savéine de ciù in scî agiornaménti, vànni a-a nòstra [[mw:Reading/Web/Desktop_Improvements|pàgina do progètto]].",
@@ -17,6 +17,8 @@
 	"vector-languages": "Léngoe",
 	"vector-language-button-aria-label": "Vànni a l'artìcolo inte 'n'âtra léngoa. Disponìbile in {{PLURAL:$1|$1 léngoa|$1 léngoe}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 léngoa|$1 léngoe}}",
+	"vector-no-language-button-label": "Azónzi léngoe",
+	"vector-no-language-button-aria-label": "St'artìcolo chi o l'exìste sôlo inte quésta léngoa. Azónzi l'artìcolo inte âtre léngoe",
 	"vector-language-redirect-to-top": "Inte 'sta Wikipedia chi, i ligàmmi a-e léngoe són mìssi in çìmma a-a pàgina, da-arénte a-o sò tìtolo. [[#p-lang-btn|Vànni in çìmma]].",
 	"vector-language-variant-switcher-label": "Càngia variànte da léngoa",
 	"vector-action-addsection": "Azónzi discusción",
@@ -35,14 +37,21 @@
 	"vector-jumptocontent": "Sâta a-o contegnûo",
 	"vector-more-actions": "Âtro",
 	"vector-search-loader": "Caregaménto di sugeriménti de çèrchia",
-	"vector-searchsuggest-containing": "Çèrca inte pàgine che contêgnan <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Çèrca inte pàgine che contêgnan <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduçión",
+	"vector-toc-heading": "Ìndice",
+	"vector-toc-toggle-position-sidebar": "méscia inta bâra laterâle",
+	"vector-toc-toggle-position-title": "ascóndi",
+	"vector-toc-beginning": "Prinçìpio",
+	"vector-toc-toggle-button-label": "Atîva a sotoseçión $1",
 	"vector-anon-user-menu-pages": "Pàgine pe-i contribotoî no conésci",
 	"vector-anon-user-menu-pages-learn": "Pe savéine de ciù",
 	"vector-anon-user-menu-pages-label": "Pe savéine de ciù in scê modìfiche",
-	"vector-personal-more-label": "Ligàmmi uténte",
 	"vector-main-menu-tooltip": "Menù prinçipâ",
-	"tooltip-vector-anon-user-menu-title": "Âtre scèlte",
-	"vector-menu-checkbox-expanded": "espànso",
-	"vector-menu-checkbox-collapsed": "conprèsso"
+	"vector-toc-menu-tooltip": "Tabélla di contegnûi",
+	"vector-toc-collapsible-button-label": "Altèrna a tabélla di contegnûi",
+	"vector-article-tools-nav-label": "Struménti",
+	"vector-site-nav-label": "Scîto",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Discusción]]",
+	"tooltip-vector-anon-user-menu-title": "Âtre scèlte"
 }

@@ -1,8 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nurlan"
+			"Nurlan",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
+	"abusefilter-log-search-submit": "Izlew",
+	"abusefilter-log-hide-show": "Kórsetiw",
+	"abusefilter-log-hide-hide": "Jasırıw",
 	"abusefilter-edit-tools": "Ásbaplar:"
 }

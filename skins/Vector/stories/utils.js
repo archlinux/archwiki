@@ -60,7 +60,7 @@ function helperMakeMenuData( name, htmlItems, additionalData = {} ) {
 
 	return Object.assign( {
 		id: `p-${name}`,
-		class: `mw-portlet mw-portlet-${name} vector-menu ${additionalClassString}`,
+		class: `mw-portlet mw-portlet-${name} ${additionalClassString}`,
 		label,
 		'html-user-language-attributes': htmlUserLanguageAttributes,
 		'html-items': htmlItems

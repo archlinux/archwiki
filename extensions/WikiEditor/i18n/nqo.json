@@ -77,6 +77,7 @@
 	"wikieditor-toolbar-tool-olist": "ߛߙߍߘߍ߫ ߝߙߍߕߍߦߊߣߍ߲",
 	"wikieditor-toolbar-tool-olist-example": "ߛߙߍߘߍ߫ ߝߙߍߕߍߦߊߣߍ߲ ߝߌ߬ߛߌ",
 	"wikieditor-toolbar-tool-nowiki": "ߥߞߌ ߖߙߎߡߎ߲ߦߊߟߌ߫ ߕߍ߫",
+	"wikieditor-toolbar-tool-nowiki-example": "ߞߟߏߜߍ߫ ߛߏ߯ߙߏߓߊߟߌ ߘߏ߫ ߟߊߘߏ߲߬ ߦߊ߲߬",
 	"wikieditor-toolbar-tool-redirect": "ߟߊ߬ߞߎ߲߰ߛߌ߲߬ߠߌ߲",
 	"wikieditor-toolbar-tool-redirect-example": "ߕߊ߯ߦߙߐ߫ ߞߐߜߍ ߕߐ߮",
 	"wikieditor-toolbar-tool-big": "ߞߎ߲߬ߓߊ߬ߓߊ",
@@ -118,5 +119,14 @@
 	"wikieditor-toolbar-section-characters": "ߞߟߏߘߋ߲߫ ߞߙߍߞߙߍߣߍ߲ ߠߎ߬",
 	"wikieditor-toolbar-section-help": "ߘߍ߬ߡߍ߲߬ߠߌ߲",
 	"tag-wikieditor-description": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߡߍ߲ ߠߎ߬ ߞߍߣߍ߲߫ ߦߋ߫ [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] ߟߊߓߊ߯ߙߊߟߌ ߘߐ߫ (߂߀߁߀ ߥߞߌߞߟߏߜߍ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߟߊ߲) ߠߊ߫",
-	"wikieditor-realtimepreview-preview": "ߢߍߦߋߟߌ"
+	"wikieditor-realtimepreview-preview": "ߢߍߦߋߟߌ",
+	"wikieditor-realtimepreview-error": "ߢߍߦߋߟߌ ߡߊ߫ ߟߊߢߎ߲߫",
+	"wikieditor-realtimepreview-reload": "ߊ߬ ߟߊߢߎ߲߫ ߞߎߘߊ߫ ߘߌ߫",
+	"wikieditor-realtimepreview-beta-label": "ߕߎ߬ߡߊ߬ ߘߌߡߊ߲ ߢߍߦߋߟߌ",
+	"wikieditor-realtimepreview-beta-desc": "ߊ߬ ߝߟߍ߫ ߓߊ߫ ߥߞߌߞߟߏߜߍ ߟߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߠߎ߬ ߞߎ߲߬ߓߐ߬ ߕߐ߫ ߦߋ߫ ߘߐ߬ߞߊ߬ߙߊ߲߬ߠߌ߲߬ߠߊ ߟߎ߬ ߢߊߞߘߐ߫ ߢߊ ߡߍ߲ ߡߊ߬ [[mw:Special:MyLanguage/Extension:WikiEditor|2010 editor]].",
+	"wikieditor-realtimepreview-reload-title": "ߕߎ߬ߡߊ߬ ߖߐ߲ߖߐ߲ ߢߍߦߋߟߌ ߦߌ߬ߘߊ߬ߥߟߊ ߟߊߦߟߍ߬",
+	"wikieditor-realtimepreview-manual": "ߊ߬ ߟߊߢߎ߲߫ ߓߟߏ ߟߊ߫ ߖߊ߰ߣߌ߲߫ ߞߵߌ ߟߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߢߍߛߐ߲ ߘߐߜߍ߫.",
+	"wikieditor-realtimepreview-onboarding-title": "ߕߎ߬ߡߊ߬ ߖߐ߲ߖߐ߲  ߢߍߦߋߟߌ",
+	"wikieditor-realtimepreview-onboarding-body": "ߊ߬ ߡߊߝߟߍ߫ ߡߎߣߎ߲߬ ߓߊ߫ ߞߵߊ߬ ߟߐ߲߫ ߌ ߟߊ߫ ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߞߍ߫ ߕߐ߫ ߦߋ߫ ߘߐ߬ߞߊ߬ߙߊ߲߬ߠߌ߲߬ߠߊ ߟߎ߬ ߢߊߞߘߐ߫ ߢߊ ߡߍ߲ ߡߊ߬߸ ߞߵߊ߬ߟߎ߫ ߢߍߛߐ߲ ߘߐߜߍ߫ ߕߎ߬ߡߊ߬ߣߍ߲߫ ߘߌߡߊ߲ ߠߊ߫.",
+	"wikieditor-realtimepreview-onboarding-button": "ߏ߰ߞߍ߫߸ ߒ ߓߘߴߊ߬ ߢߊߦߋ߫"
 }

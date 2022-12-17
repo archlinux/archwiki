@@ -15,16 +15,16 @@
 
 	QUnit.test( 'Constructor sense test', function ( assert ) {
 		var dialog = makeDialog();
-		assert.ok( dialog, 'Dialog is created successfully' );
+		assert.true( dialog instanceof mw.mmv.ui.OptionsDialog, 'Dialog is created successfully' );
 	} );
 
 	QUnit.test( 'Initialisation functions', function ( assert ) {
 		var dialog = makeDialog( true );
 
-		assert.ok( dialog.$disableDiv, 'Disable div is created.' );
-		assert.ok( dialog.$enableDiv, 'Enable div is created.' );
-		assert.ok( dialog.$disableConfirmation, 'Disable confirmation is created.' );
-		assert.ok( dialog.$enableConfirmation, 'Enable confirmation is created.' );
+		assert.strictEqual( dialog.$disableDiv.length, 1, 'Disable div is created.' );
+		assert.strictEqual( dialog.$enableDiv.length, 1, 'Enable div is created.' );
+		assert.strictEqual( dialog.$disableConfirmation.length, 1, 'Disable confirmation is created.' );
+		assert.strictEqual( dialog.$enableConfirmation.length, 1, 'Enable confirmation is created.' );
 	} );
 
 	QUnit.test( 'Disable', function ( assert ) {
@@ -55,7 +55,7 @@
 		assert.strictEqual( $icon.length, 1, 'Icon created successfully.' );
 		assert.strictEqual( $icon.html(), '&nbsp;', 'Icon has a blank space in it.' );
 
-		assert.ok( $text, 'Text div created successfully.' );
+		assert.strictEqual( $text.length, 1, 'Text div created successfully.' );
 		assert.strictEqual( $textHeader.length, 1, 'Text header created successfully.' );
 		assert.strictEqual( $textHeader.text(), '(multimediaviewer-options-text-header)', 'Text header has correct text (if this fails, it may be due to i18n differences)' );
 
@@ -111,7 +111,7 @@
 		assert.strictEqual( $icon.length, 1, 'Icon created successfully.' );
 		assert.strictEqual( $icon.html(), '&nbsp;', 'Icon has a blank space in it.' );
 
-		assert.ok( $text, 'Text div created successfully.' );
+		assert.strictEqual( $text.length, 1, 'Text div created successfully.' );
 		assert.strictEqual( $textHeader.length, 1, 'Text header created successfully.' );
 		assert.strictEqual( $textHeader.text(), '(multimediaviewer-enable-text-header)', 'Text header has correct text (if this fails, it may be due to i18n differences)' );
 

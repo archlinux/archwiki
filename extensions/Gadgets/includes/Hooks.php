@@ -23,38 +23,57 @@ namespace MediaWiki\Extension\Gadgets;
  * @file
  */
 
-use Action;
 use Content;
-use EditPage;
 use Exception;
 use HTMLForm;
 use IContextSource;
 use InvalidArgumentException;
-use LinkBatch;
+use ManualLogEntry;
 use MediaWiki\Extension\Gadgets\Content\GadgetDefinitionContent;
+use MediaWiki\Hook\BeforePageDisplayHook;
+use MediaWiki\Hook\DeleteUnknownPreferencesHook;
+use MediaWiki\Hook\EditFilterMergedContentHook;
+use MediaWiki\Hook\PreferencesGetLegendHook;
+use MediaWiki\Page\Hook\PageDeleteCompleteHook;
+use MediaWiki\Page\ProperPageIdentity;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
+use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Revision\Hook\ContentHandlerDefaultModelForHook;
+use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
+use MediaWiki\Storage\Hook\PageSaveCompleteHook;
+use MediaWiki\User\Hook\UserGetDefaultOptionsHook;
 use OOUI\HtmlSnippet;
 use OutputPage;
 use RequestContext;
-use ResourceLoader;
+use Skin;
 use SpecialPage;
 use Status;
 use Title;
+use TitleValue;
 use User;
-use WebRequest;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\WrappedString;
 use WikiPage;
 use Xml;
 
-class Hooks {
+class Hooks implements
+	PageDeleteCompleteHook,
+	PageSaveCompleteHook,
+	UserGetDefaultOptionsHook,
+	GetPreferencesHook,
+	PreferencesGetLegendHook,
+	ResourceLoaderRegisterModulesHook,
+	BeforePageDisplayHook,
+	EditFilterMergedContentHook,
+	ContentHandlerDefaultModelForHook,
+	WgQueryPagesHook,
+	DeleteUnknownPreferencesHook
+{
 	/**
-	 * PageSaveComplete hook handler
-	 *
-	 * Only run in versions of mediawiki begining 1.35; before 1.35, ::onPageContentSaveComplete
-	 * and ::onPageContentInsertComplete are used
-	 *
-	 * @note parameters include classes not available before 1.35, so for those typehints
-	 * are not used. The variable name reflects the class
+	 * Handle MediaWiki\Page\Hook\PageSaveCompleteHook
 	 *
 	 * @param WikiPage $wikiPage
 	 * @param mixed $userIdentity unused
@@ -63,21 +82,41 @@ class Hooks {
 	 * @param mixed $revisionRecord unused
 	 * @param mixed $editResult unused
 	 */
-	public static function onPageSaveComplete(
-		WikiPage $wikiPage,
+	public function onPageSaveComplete(
+		$wikiPage,
 		$userIdentity,
-		string $summary,
-		int $flags,
+		$summary,
+		$flags,
 		$revisionRecord,
 		$editResult
-	) {
+	): void {
 		$title = $wikiPage->getTitle();
 		$repo = GadgetRepo::singleton();
+		$repo->handlePageUpdate( $title );
+	}
 
-		if ( ( $flags & EDIT_NEW ) && $title->inNamespace( NS_GADGET_DEFINITION ) ) {
-			$repo->handlePageCreation( $title );
-		}
-
+	/**
+	 * Handle MediaWiki\Page\Hook\PageDeleteCompleteHook
+	 *
+	 * @param ProperPageIdentity $page
+	 * @param Authority $deleter
+	 * @param string $reason
+	 * @param int $pageID
+	 * @param RevisionRecord $deletedRev Last revision
+	 * @param ManualLogEntry $logEntry
+	 * @param int $archivedRevisionCount Number of revisions deleted
+	 */
+	public function onPageDeleteComplete(
+		ProperPageIdentity $page,
+		Authority $deleter,
+		string $reason,
+		int $pageID,
+		RevisionRecord $deletedRev,
+		ManualLogEntry $logEntry,
+		int $archivedRevisionCount
+	): void {
+		$title = TitleValue::newFromPage( $page );
+		$repo = GadgetRepo::singleton();
 		$repo->handlePageUpdate( $title );
 	}
 
@@ -85,7 +124,7 @@ class Hooks {
 	 * UserGetDefaultOptions hook handler
 	 * @param array &$defaultOptions Array of default preference keys and values
 	 */
-	public static function userGetDefaultOptions( array &$defaultOptions ) {
+	public function onUserGetDefaultOptions( &$defaultOptions ) {
 		$gadgets = GadgetRepo::singleton()->getStructuredList();
 		if ( !$gadgets ) {
 			return;
@@ -109,7 +148,7 @@ class Hooks {
 	 * @param User $user
 	 * @param array &$preferences Preference descriptions
 	 */
-	public static function getPreferences( User $user, array &$preferences ) {
+	public function onGetPreferences( $user, &$preferences ) {
 		$gadgets = GadgetRepo::singleton()->getStructuredList();
 		if ( !$gadgets ) {
 			return;
@@ -163,7 +202,7 @@ class Hooks {
 	 *   be overridden
 	 * @return bool|void True or no return value to continue or false to abort
 	 */
-	public static function onPreferencesGetLegend( $form, $key, &$legend ) {
+	public function onPreferencesGetLegend( $form, $key, &$legend ) {
 		if ( str_starts_with( $key, 'gadget-section-' ) ) {
 			$legend = new HtmlSnippet( $form->msg( $key )->parse() );
 		}
@@ -173,7 +212,7 @@ class Hooks {
 	 * ResourceLoaderRegisterModules hook handler.
 	 * @param ResourceLoader $resourceLoader
 	 */
-	public static function registerModules( ResourceLoader $resourceLoader ) {
+	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
 		$repo = GadgetRepo::singleton();
 		$ids = $repo->getGadgetIds();
 
@@ -188,23 +227,21 @@ class Hooks {
 	/**
 	 * BeforePageDisplay hook handler.
 	 * @param OutputPage $out
+	 * @param Skin $skin
 	 */
-	public static function beforePageDisplay( OutputPage $out ) {
+	public function onBeforePageDisplay( $out, $skin ): void {
 		$repo = GadgetRepo::singleton();
 		$ids = $repo->getGadgetIds();
 		if ( !$ids ) {
 			return;
 		}
 
-		$lb = new LinkBatch();
-		$lb->setCaller( __METHOD__ );
 		$enabledLegacyGadgets = [];
-		$req = $out->getRequest();
+		$conditions = new GadgetLoadConditions( $out );
 
 		/**
 		 * @var $gadget Gadget
 		 */
-		$user = $out->getUser();
 		foreach ( $ids as $id ) {
 			try {
 				$gadget = $repo->getGadget( $id );
@@ -212,7 +249,7 @@ class Hooks {
 				continue;
 			}
 
-			if ( self::shouldLoadGadget( $gadget, $id, $user, $req, $out ) ) {
+			if ( $conditions->check( $gadget ) ) {
 				if ( $gadget->hasModule() ) {
 					if ( $gadget->getType() === 'styles' ) {
 						$out->addModuleStyles( Gadget::getModuleName( $gadget->getName() ) );
@@ -248,7 +285,7 @@ class Hooks {
 
 		$strings = [];
 		foreach ( $enabledLegacyGadgets as $id ) {
-			$strings[] = self::makeLegacyWarning( $id );
+			$strings[] = $this->makeLegacyWarning( $id );
 		}
 		$out->addHTML( WrappedString::join( "\n", $strings ) );
 	}
@@ -257,7 +294,7 @@ class Hooks {
 	 * @param string $id
 	 * @return string|WrappedString HTML
 	 */
-	private static function makeLegacyWarning( $id ) {
+	private function makeLegacyWarning( $id ) {
 		$special = SpecialPage::getTitleFor( 'Gadgets' );
 
 		return ResourceLoader::makeInlineScript(
@@ -275,20 +312,23 @@ class Hooks {
 	 * @param Content $content
 	 * @param Status $status
 	 * @param string $summary
+	 * @param User $user
+	 * @param bool $minoredit
 	 * @throws Exception
 	 * @return bool
 	 */
-	public static function onEditFilterMergedContent( IContextSource $context,
+	public function onEditFilterMergedContent(
+		IContextSource $context,
 		Content $content,
 		Status $status,
-		$summary
+		$summary,
+		User $user,
+		$minoredit
 	) {
 		if ( $content instanceof GadgetDefinitionContent ) {
 			$validateStatus = $content->validate();
 			if ( !$validateStatus->isGood() ) {
 				$status->merge( $validateStatus );
-				// @todo Remove this line after this extension do not support mediawiki version 1.36 and before
-				$status->value = EditPage::AS_HOOK_ERROR_EXPECTED;
 				return false;
 			}
 		} else {
@@ -310,7 +350,7 @@ class Hooks {
 	 * @param string &$model
 	 * @return bool
 	 */
-	public static function onContentHandlerDefaultModelFor( Title $title, &$model ) {
+	public function onContentHandlerDefaultModelFor( $title, &$model ) {
 		if ( $title->inNamespace( NS_GADGET ) ) {
 			preg_match( '!\.(css|js|json)$!u', $title->getText(), $ext );
 			$ext = $ext[1] ?? '';
@@ -328,24 +368,6 @@ class Hooks {
 		}
 
 		return true;
-	}
-
-	/**
-	 * @param Gadget $gadget
-	 * @param string $id
-	 * @param User $user
-	 * @param WebRequest $req
-	 * @param OutputPage $out
-	 * @return bool Load gadget or not
-	 */
-	private static function shouldLoadGadget( $gadget, $id, $user, $req, $out ): bool {
-		$urlLoad = $req->getRawVal( 'withgadget' ) === $id && $gadget->supportsUrlLoad();
-
-		return ( $gadget->isEnabled( $user ) || $urlLoad )
-			&& $gadget->isAllowed( $user )
-			&& $gadget->isActionSupported( Action::getActionName( $out->getContext() ) )
-			&& $gadget->isSkinSupported( $out->getSkin() )
-			&& ( in_array( $out->getTarget() ?? 'desktop', $gadget->getTargets() ) );
 	}
 
 	/**
@@ -369,7 +391,7 @@ class Hooks {
 	 * Add the GadgetUsage special page to the list of QueryPages.
 	 * @param array &$queryPages
 	 */
-	public static function onwgQueryPages( array &$queryPages ) {
+	public function onWgQueryPages( &$queryPages ) {
 		$queryPages[] = [ 'SpecialGadgetUsage', 'GadgetUsage' ];
 	}
 
@@ -379,7 +401,7 @@ class Hooks {
 	 * @param string[] &$where Array of where clause conditions to add to.
 	 * @param IDatabase $db
 	 */
-	public static function onDeleteUnknownPreferences( array &$where, IDatabase $db ) {
+	public function onDeleteUnknownPreferences( &$where, $db ) {
 		$where[] = 'up_property NOT' . $db->buildLike( 'gadget-', $db->anyString() );
 	}
 }

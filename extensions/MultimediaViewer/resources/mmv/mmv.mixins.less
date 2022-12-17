@@ -1,5 +1,3 @@
-/* stylelint-disable function-parentheses-space-inside */
-
 .unselectable() {
 	-webkit-user-select: none;
 	-moz-user-select: -moz-none;
@@ -10,22 +8,21 @@
 // from https://stackoverflow.com/a/12178019/323407
 .fade-out-vertical( @backgroundColor: white ) {
 	@invisible: fadeout( @backgroundColor, 100% );
-	background-image: -webkit-linear-gradient( top, @invisible 0%, @backgroundColor 100% ); // Chrome10+,Safari5.1+
 	background-image: linear-gradient( to bottom, @invisible 0%, @backgroundColor 100% ); // W3C
 }
 
 .fade-out-horizontal( @backgroundColor: white ) {
 	@invisible: fadeout( @backgroundColor, 100% );
-	background-image: -webkit-linear-gradient( left, @invisible 0%, @backgroundColor 100% ); // Chrome10+,Safari5.1+
 	background-image: linear-gradient( to right, @invisible 0%, @backgroundColor 100% ); // W3C
 }
 
 .rotate( @degrees: 45deg ) {
-	-webkit-transform: rotate( @degrees );
 	transform: rotate( @degrees );
 }
 
 .grayscale() {
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	-webkit-filter: grayscale( 100% );
+	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	filter: grayscale( 100% );
 }

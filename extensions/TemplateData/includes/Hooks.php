@@ -20,7 +20,6 @@ use RequestContext;
 use ResourceLoader;
 use Status;
 use Title;
-use WikiPage;
 
 /**
  * Hooks for TemplateData extension
@@ -97,7 +96,7 @@ class Hooks {
 
 		// Revision hasn't been parsed yet, so parse to know if self::render got a
 		// valid tag (via inclusion and transclusion) and abort save if it didn't
-		$parserOutput = $renderedRevision->getRevisionParserOutput();
+		$parserOutput = $renderedRevision->getRevisionParserOutput( [ 'generate-html' => false ] );
 		$templateDataStatus = self::getStatusFromParserOutput( $parserOutput );
 		if ( $templateDataStatus instanceof Status && !$templateDataStatus->isOK() ) {
 			// Abort edit, show error message from TemplateDataBlob::getStatus
@@ -166,22 +165,10 @@ class Hooks {
 		global $wgTemplateDataUseGUI;
 		if ( $wgTemplateDataUseGUI ) {
 			if ( $output->getTitle()->inNamespace( NS_TEMPLATE ) ) {
+				$output->addModuleStyles( 'ext.templateDataGenerator.editTemplatePage.loading' );
+				$output->addHTML( '<div class="tdg-editscreen-placeholder"></div>' );
 				$output->addModules( 'ext.templateDataGenerator.editTemplatePage' );
 			}
-		}
-	}
-
-	/**
-	 * Include config when appropriate.
-	 *
-	 * @param array &$vars
-	 * @param OutputPage $output
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/MakeGlobalVariablesScript
-	 */
-	public static function onMakeGlobalVariablesScript( array &$vars, OutputPage $output ) {
-		if ( $output->getTitle()->inNamespace( NS_TEMPLATE ) ) {
-			$vars['wgTemplateDataSuggestedValuesEditor'] =
-				$output->getConfig()->get( 'TemplateDataSuggestedValuesEditor' );
 		}
 	}
 
@@ -257,6 +244,7 @@ class Hooks {
 		$tplData = [];
 
 		$pageProps = MediaWikiServices::getInstance()->getPageProps();
+		$wikiPageFactory = MediaWikiServices::getInstance()->getWikiPageFactory();
 
 		// This inefficient implementation is currently tuned for
 		// Parsoid's use case where it requests info for exactly one title.
@@ -270,7 +258,7 @@ class Hooks {
 			}
 
 			if ( $title->isRedirect() ) {
-				$title = ( new WikiPage( $title ) )->getRedirectTarget();
+				$title = $wikiPageFactory->newFromTitle( $title )->getRedirectTarget();
 				if ( !$title ) {
 					// Invalid redirecting title
 					$tplData[$tplTitle] = null;

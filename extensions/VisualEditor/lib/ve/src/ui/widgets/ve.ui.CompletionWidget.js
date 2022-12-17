@@ -31,10 +31,18 @@ ve.ui.CompletionWidget = function VeUiCompletionWidget( surface, config ) {
 	this.$tabIndexed = this.$element;
 
 	var $doc = surface.getView().getDocument().getDocumentNode().$element;
+	this.popup = new OO.ui.PopupWidget( {
+		anchor: false,
+		align: 'forwards',
+		hideWhenOutOfView: false,
+		autoFlip: false,
+		width: null,
+		$container: config.$popupContainer || this.surface.$element,
+		containerPadding: config.popupPadding
+	} );
 	this.menu = new OO.ui.MenuSelectWidget( {
 		widget: this,
-		$input: $doc,
-		width: 'auto'
+		$input: $doc
 	} );
 	// This may be better semantically as a MenuSectionOptionWidget,
 	// but that causes all subsequent options to be indented.
@@ -49,12 +57,12 @@ ve.ui.CompletionWidget = function VeUiCompletionWidget( surface, config ) {
 		toggle: 'onMenuToggle'
 	} );
 
-	this.menu.$element.append( this.header.$element );
+	this.popup.$body.append( this.menu.$element );
 
 	// Setup
 	this.$element.addClass( 've-ui-completionWidget' )
 		.append(
-			this.menu.$element
+			this.popup.$element
 		);
 };
 
@@ -77,7 +85,7 @@ ve.ui.CompletionWidget.prototype.setup = function ( action ) {
 
 ve.ui.CompletionWidget.prototype.teardown = function () {
 	this.tearingDown = true;
-	this.menu.toggle( false );
+	this.popup.toggle( false );
 	this.surfaceModel.disconnect( this );
 	this.action = undefined;
 	this.tearingDown = false;
@@ -105,10 +113,9 @@ ve.ui.CompletionWidget.prototype.update = function () {
 
 	this.updateMenu( input );
 	this.action.getSuggestions( input ).then( function ( suggestions ) {
-		this.menu.clearItems().addItems( suggestions.map( this.action.getMenuItemForSuggestion.bind( this.action ) ) );
-		if ( this.menu.getItems().length ) {
-			this.menu.highlightItem( this.menu.getItems()[ 0 ] );
-		}
+		this.menu.clearItems();
+		this.menu.addItems( suggestions.map( this.action.getMenuItemForSuggestion.bind( this.action ) ) );
+		this.menu.highlightItem( this.menu.findFirstSelectableItem() );
 		this.updateMenu( input, suggestions );
 	}.bind( this ) );
 };
@@ -118,18 +125,20 @@ ve.ui.CompletionWidget.prototype.updateMenu = function ( input, suggestions ) {
 	var label = this.action.getHeaderLabel( input, suggestions );
 	if ( label !== undefined ) {
 		this.header.setLabel( label );
-		this.header.toggle( label !== null );
 	}
-	// If there is a label or menu items, show the menu
-	if ( this.header.getLabel() !== null || this.menu.items.length ) {
-		// HACK: upstream won't show the menu unless there are items.
-		// Fix upstream by adding a 'forceShow' option to toggle.
-		var length = this.menu.items.length;
-		this.menu.items.length = Math.max( length, 1 );
-		this.menu.toggle( true );
-		this.menu.items.length = length;
+	if ( this.header.getLabel() !== null ) {
+		this.menu.addItems( [ this.header ], 0 );
 	} else {
-		this.menu.toggle( false );
+		this.menu.removeItems( [ this.header ] );
+	}
+	// If there is a header or menu items, show the menu
+	if ( this.menu.items.length ) {
+		this.menu.toggle( true );
+		this.popup.toggle( true );
+		// Menu may have changed size, so recalculate position
+		this.popup.updateDimensions();
+	} else {
+		this.popup.toggle( false );
 	}
 };
 

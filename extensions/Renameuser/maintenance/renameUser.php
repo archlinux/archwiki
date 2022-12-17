@@ -29,6 +29,8 @@ if ( $IP === false ) {
 }
 require_once "$IP/maintenance/Maintenance.php";
 
+use MediaWiki\Extension\Renameuser\RenameuserSQL;
+
 class RenameUser extends Maintenance {
 	public function __construct() {
 		parent::__construct();

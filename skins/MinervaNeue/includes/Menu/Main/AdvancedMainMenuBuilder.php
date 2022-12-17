@@ -21,7 +21,6 @@
 namespace MediaWiki\Minerva\Menu\Main;
 
 use FatalError;
-use Hooks;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Group;
 use MWException;
@@ -60,6 +59,13 @@ final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
 		$this->showMobileOptions = $showMobileOptions;
 		$this->showDonateLink = $showDonateLink;
 		$this->definitions = $definitions;
+	}
+
+	/**
+	 * @return Group
+	 */
+	public function getSettingsGroup(): Group {
+		return new Group( 'pt-preferences' );
 	}
 
 	/**
@@ -105,8 +111,6 @@ final class AdvancedMainMenuBuilder implements IMainMenuBuilder {
 		$this->definitions->insertSpecialPages( $group );
 		$this->definitions->insertCommunityPortal( $group );
 
-		// Allow other extensions to add or override tools
-		Hooks::run( 'MobileMenu', [ 'sitetools', &$group ], '1.38' );
 		return $group;
 	}
 }

@@ -150,19 +150,16 @@ class DegroupTest extends MediaWikiIntegrationTestCase {
 			} );
 		$degroup = new Degroup(
 			$params,
-			new VariableHolder(),
+			VariableHolder::newFromArray( [ 'user_groups' => $hadGroups ] ),
 			$userGroupManager,
 			$this->createMock( FilterUser::class ),
 			$this->getMsgLocalizer()
 		);
 
-		$info = [
-			'vars' => VariableHolder::newFromArray( [ 'user_groups' => $hadGroups ] )
-		];
 		$performer = $this->getTestUser()->getUser();
 		$this->assertSame(
 			$success,
-			$degroup->revert( $info, $performer, 'reason' )
+			$degroup->revert( $performer, 'reason' )
 		);
 	}
 

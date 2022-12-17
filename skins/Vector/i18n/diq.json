@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"1917 Ekim Devrimi",
+			"Amire80",
 			"Asmen",
 			"Calak",
 			"Dılmıc",
@@ -39,5 +40,5 @@
 	"vector-jumptocontent": "Ravêr zerreki",
 	"vector-more-actions": "Zêde",
 	"vector-search-loader": "Tewsiye cıgeyrayışi bar benê",
-	"vector-searchsuggest-containing": "Pelanê tede <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> esto, cı geyre"
+	"vector-searchsuggest-containing": "Pelanê tede <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> esto, cı geyre"
 }

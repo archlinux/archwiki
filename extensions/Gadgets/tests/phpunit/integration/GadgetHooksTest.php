@@ -15,13 +15,13 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 	protected $user;
 
 	public function setUp(): void {
-		global $wgGroupPermissions;
-
 		parent::setUp();
 
-		$wgGroupPermissions['unittesters'] = [
-			'test' => true,
-		];
+		$this->setGroupPermissions( [
+			'unittesters' => [
+				'test' => true,
+			],
+		] );
 		$this->user = $this->getTestUser( [ 'unittesters' ] )->getUser();
 	}
 
@@ -32,7 +32,7 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Extension\Gadgets\Gadget
-	 * @covers \MediaWiki\Extension\Gadgets\Hooks::getPreferences
+	 * @covers \MediaWiki\Extension\Gadgets\Hooks::onGetPreferences
 	 * @covers \MediaWiki\Extension\Gadgets\GadgetRepo
 	 * @covers \MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo
 	 */
@@ -52,8 +52,8 @@ class GadgetHooksTest extends MediaWikiIntegrationTestCase {
 * quux [rights=test] | quux.js' );
 		$this->assertGreaterThanOrEqual( 2, count( $gadgets ), "Gadget list parsed" );
 
-		$repo->definitionCache = $gadgets;
-		GadgetHooks::getPreferences( $this->user, $prefs );
+		$repo->definitions = $gadgets;
+		( new GadgetHooks() )->onGetPreferences( $this->user, $prefs );
 
 		$this->assertArrayHasKey( 'gadget-bar', $prefs );
 		$this->assertArrayNotHasKey( 'gadget-baz', $prefs,

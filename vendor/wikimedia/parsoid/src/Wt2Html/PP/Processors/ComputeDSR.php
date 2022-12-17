@@ -18,6 +18,7 @@ use Wikimedia\Parsoid\Utils\Utils;
 use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wikitext\Consts;
 use Wikimedia\Parsoid\Wt2Html\Frame;
+use Wikimedia\Parsoid\Wt2Html\TT\PreHandler;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 
 class ComputeDSR implements Wt2HtmlDOMProcessor {
@@ -127,10 +128,10 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 	 * Compute wikitext string length that contributes to this
 	 * list item's open tag. Closing tag width is always 0 for lists.
 	 *
-	 * @param Node $li
+	 * @param Element $li
 	 * @return int
 	 */
-	private function computeListEltWidth( Node $li ): int {
+	private function computeListEltWidth( Element $li ): int {
 		if ( !$li->previousSibling && $li->firstChild ) {
 			if ( DOMUtils::isList( $li->firstChild ) ) {
 				// Special case!!
@@ -143,9 +144,21 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 		// count nest listing depth and assign
 		// that to the opening tag width.
 		$depth = 0;
-		while ( DOMCompat::nodeName( $li ) === 'li' || DOMCompat::nodeName( $li ) === 'dd' ) {
-			$depth++;
-			$li = $li->parentNode->parentNode;
+
+		// This is the crux of the algorithm in DOMHandler::getListBullets()
+		while ( !DOMUtils::atTheTop( $li ) ) {
+			$dp = DOMDataUtils::getDataParsoid( $li );
+			if ( DOMUtils::isListOrListItem( $li ) ) {
+				if ( DOMUtils::isListItem( $li ) ) {
+					$depth++;
+				}
+			} elseif (
+				!WTUtils::isLiteralHTMLNode( $li ) ||
+				empty( $dp->autoInsertedStart ) || empty( $dp->autoInsertedEnd )
+			) {
+				break;
+			}
+			$li = $li->parentNode;
 		}
 
 		return $depth;
@@ -247,11 +260,9 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 				if ( $stWidth === null ) {
 					// we didn't have a tsr to tell us how wide this tag was.
 					if ( $nodeName === 'a' ) {
-						DOMUtils::assertElt( $node );
 						$wtTagWidth = $this->computeATagWidth( $node, $dp );
 						$stWidth = $wtTagWidth ? $wtTagWidth[0] : null;
 					} elseif ( $nodeName === 'li' || $nodeName === 'dd' ) {
-						DOMUtils::assertElt( $node );
 						$stWidth = $this->computeListEltWidth( $node );
 					} elseif ( $wtTagWidth ) {
 						$stWidth = $wtTagWidth[0];
@@ -353,7 +364,6 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 			// B and I tags where the fix is clear-cut and obvious.
 			$next = $child->nextSibling;
 			if ( $next instanceof Element ) {
-
 				$ndp = DOMDataUtils::getDataParsoid( $next );
 				if (
 					isset( $ndp->src ) &&
@@ -403,8 +413,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 
 			if ( $cType === XML_TEXT_NODE ) {
 				if ( $ce !== null ) {
-					// This code is replicated below. Keep both in sync.
-					$cs = $ce - strlen( $child->textContent ) - WTUtils::indentPreDSRCorrection( $child );
+					$cs = $ce - strlen( $child->textContent );
 				}
 			} elseif ( $cType === XML_COMMENT_NODE ) {
 				'@phan-var Comment $child'; // @var Comment $child
@@ -459,6 +468,9 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 							$cs = $tsr->start;
 							$ce = $tsr->end;
 						}
+					} elseif ( PreHandler::isIndentPreWS( $child ) ) {
+						// Adjust start DSR; see PreHandler::newIndentPreWS()
+						$cs = $ce - 1;
 					} elseif ( DOMUtils::matchTypeOf( $child, '#^mw:Placeholder(/\w*)?$#D' ) &&
 						$ce !== null && $dp->src
 					) {
@@ -622,8 +634,7 @@ class ComputeDSR implements Wt2HtmlDOMProcessor {
 					while ( $newCE !== null && $sibling && !WTUtils::isTplStartMarkerMeta( $sibling ) ) {
 						$nType = $sibling->nodeType;
 						if ( $nType === XML_TEXT_NODE ) {
-							$newCE = $newCE + strlen( $sibling->textContent ) +
-								WTUtils::indentPreDSRCorrection( $sibling );
+							$newCE += strlen( $sibling->textContent );
 						} elseif ( $nType === XML_COMMENT_NODE ) {
 							'@phan-var Comment $sibling'; // @var Comment $sibling
 							$newCE += WTUtils::decodedCommentLength( $sibling );

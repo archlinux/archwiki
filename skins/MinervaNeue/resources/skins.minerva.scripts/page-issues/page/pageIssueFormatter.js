@@ -42,10 +42,8 @@
 	function insertPageIssueNotice( labelText, section ) {
 		var $link = newPageIssueLink( labelText );
 		$link.attr( 'href', '#/issues/' + section );
-		// FIXME: #section_0 rule can be removed > 1 week after
-		// I2ffdedd64414ffb3c6e441391a75fd6e744847a4 is in production.
 		// eslint-disable-next-line no-jquery/no-global-selector
-		$link.insertAfter( $( 'h1#section_0, h1.mw-first-heading' ) );
+		$link.insertAfter( $( 'h1.mw-first-heading' ) );
 	}
 
 	module.exports = {

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Don Alessandro",
 			"TayfunEt."
 		]
@@ -19,5 +20,5 @@
 	"vector-view-view": "Oqu",
 	"vector-view-viewsource": "Menba kodunı köster",
 	"vector-more-actions": "Başqa areketler",
-	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> içeren saifelerni qıdır"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> içeren saifelerni qıdır"
 }

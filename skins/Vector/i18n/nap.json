@@ -4,7 +4,8 @@
 			"C.R.",
 			"Chelin",
 			"Ruthven",
-			"Sannita"
+			"Sannita",
+			"Finizio"
 		]
 	},
 	"vector-skin-desc": "Verziona muderna 'e MonoBook cu n'aspetto nuovo nuovo e tante migliuramente d'uso",
@@ -16,9 +17,10 @@
 	"vector-action-undelete": "Arrepiglia",
 	"vector-action-unprotect": "Càgna prutezzione",
 	"vector-view-create": "Crèa",
-	"vector-view-edit": "Cagna",
+	"vector-view-edit": "Càgna",
 	"vector-view-history": "Vide 'a cronologgia",
 	"vector-view-view": "Liegge",
 	"vector-view-viewsource": "Vire sorgente",
-	"vector-more-actions": "Cchiù"
+	"vector-more-actions": "'E 'cchiù",
+	"vector-searchsuggest-containing": "Truova 'e paggene ca teneno <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

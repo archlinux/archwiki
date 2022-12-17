@@ -22,5 +22,3 @@ interface RenameUserSQLHook {
 	public function onRenameUserSQL( RenameuserSQL $renameUserSql ): void;
 
 }
-
-class_alias( RenameUserSQLHook::class, 'RenameUserSQLHook' );

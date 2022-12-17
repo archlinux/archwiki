@@ -100,7 +100,7 @@ class WikiLinkHandler extends TokenHandler {
 
 		if ( ( ltrim( $info->href )[0] ?? '' ) === ':' ) {
 			$info->fromColonEscapedText = true;
-			// remove the colon escape
+			// Remove the colon escape
 			$info->href = substr( ltrim( $info->href ), 1 );
 		}
 		if ( ( $info->href[0] ?? '' ) === ':' ) {
@@ -162,6 +162,10 @@ class WikiLinkHandler extends TokenHandler {
 				) {
 					// An interwiki link.
 					$info->interwiki = $interwikiInfo;
+					// Remove the colon escape after an interwiki prefix
+					if ( ( ltrim( $info->href )[0] ?? '' ) === ':' ) {
+						$info->href = substr( ltrim( $info->href ), 1 );
+					}
 				} else {
 					// A language link.
 					$info->language = $interwikiInfo;
@@ -247,7 +251,17 @@ class WikiLinkHandler extends TokenHandler {
 	public static function bailTokens( TokenTransformManager $manager, Token $token ): array {
 		$frame = $manager->getFrame();
 		$tsr = $token->dataAttribs->tsr;
-		$src = substr( $tsr->substr( $frame->getSrcText() ), 1, -1 );
+		$frameSrc = $frame->getSrcText();
+		$linkSrc = $tsr->substr( $frameSrc );
+		$src = substr( $linkSrc, 1, -1 );
+		if ( $src === false ) {
+			$manager->getEnv()->log(
+				'error', 'Unable to determine link source.',
+				"frame: $frameSrc", 'tsr: ', $tsr,
+				"link: $linkSrc"
+			);
+			return [ $linkSrc ];  // Forget about trying to tokenize this
+		}
 		$startOffset = $tsr->start + 1;
 		$toks = PipeLineUtils::processContentInPipeline(
 			$manager->getEnv(), $frame, $src, [
@@ -365,7 +379,7 @@ class WikiLinkHandler extends TokenHandler {
 		if ( $target->language ) {
 			$ns = $this->env->getPageConfig()->getNs();
 			$noLanguageLinks = $this->env->getSiteConfig()->namespaceIsTalk( $ns ) ||
-				!$this->env->getSiteConfig()->interwikimagic();
+				!$this->env->getSiteConfig()->interwikiMagic();
 			if ( $noLanguageLinks ) {
 				$target->interwiki = $target->language;
 				return $this->renderInterwikiLink( $token, $target );
@@ -495,9 +509,7 @@ class WikiLinkHandler extends TokenHandler {
 					if (
 						$t instanceof TagTk &&
 						( $t->getName() === 'figure' || $t->getName() === 'span' ) &&
-						// Only testing for Image here since we haven't added
-						// media info yet
-						TokenUtils::matchTypeOf( $t, '#^mw:Image($|/)#D' ) !== null
+						TokenUtils::matchTypeOf( $t, '#^mw:File($|/)#D' ) !== null
 					) {
 						throw new InternalException( 'Media-in-link' );
 					}
@@ -554,9 +566,6 @@ class WikiLinkHandler extends TokenHandler {
 		} else {
 			$newTk->dataAttribs->stx = 'simple';
 			$morecontent = Utils::decodeURIComponent( $target->href );
-
-			// Strip leading colon
-			$morecontent = PHPUtils::stripPrefix( $morecontent, ':' );
 
 			// Try to match labeling in core
 			if ( $env->getSiteConfig()->namespaceHasSubpages( $env->getPageConfig()->getNs() ) ) {
@@ -772,31 +781,30 @@ class WikiLinkHandler extends TokenHandler {
 	 */
 	private static function getWrapperInfo( array $opts ) {
 		$format = self::getFormat( $opts );
-		$isInline = !( $format === 'thumbnail' || $format === 'framed' );
+		$isInline = !in_array( $format, [ 'thumbnail', 'manualthumb', 'framed' ], true );
 		$classes = [];
-		$halign = ( $opts['format']['v'] ?? '' ) === 'framed' ? 'right' : null;
 
-		if ( !isset( $opts['size']['src'] ) ) {
+		if (
+			!isset( $opts['size']['src'] ) &&
+			// Framed and manualthumb images aren't scaled
+			!in_array( $format, [ 'manualthumb', 'framed' ], true )
+		) {
 			$classes[] = 'mw-default-size';
 		}
 
-		// Border isn't applicable to 'thumbnail' or 'framed' formats
+		// Border isn't applicable to 'thumbnail', 'manualthumb', or 'framed' formats
 		// Using $isInline as a shorthand for that here (see above),
 		// but this isn't about being *inline* per se
 		if ( $isInline && isset( $opts['border'] ) ) {
 			$classes[] = 'mw-image-border';
 		}
 
-		if ( isset( $opts['halign'] ) ) {
-			$halign = $opts['halign']['v'];
-		}
-
-		$halignOpt = $opts['halign']['v'] ?? null;
+		$halign = $opts['halign']['v'] ?? null;
 		switch ( $halign ) {
 			case 'none':
 				// PHP parser wraps in <div class="floatnone">
 				$isInline = false;
-				if ( $halignOpt === 'none' ) {
+				if ( $halign === 'none' ) {
 					$classes[] = 'mw-halign-none';
 				}
 				break;
@@ -804,7 +812,7 @@ class WikiLinkHandler extends TokenHandler {
 			case 'center':
 				// PHP parser wraps in <div class="center"><div class="floatnone">
 				$isInline = false;
-				if ( $halignOpt === 'center' ) {
+				if ( $halign === 'center' ) {
 					$classes[] = 'mw-halign-center';
 				}
 				break;
@@ -812,7 +820,7 @@ class WikiLinkHandler extends TokenHandler {
 			case 'left':
 				// PHP parser wraps in <div class="floatleft">
 				$isInline = false;
-				if ( $halignOpt === 'left' ) {
+				if ( $halign === 'left' ) {
 					$classes[] = 'mw-halign-left';
 				}
 				break;
@@ -820,7 +828,7 @@ class WikiLinkHandler extends TokenHandler {
 			case 'right':
 				// PHP parser wraps in <div class="floatright">
 				$isInline = false;
-				if ( $halignOpt === 'right' ) {
+				if ( $halign === 'right' ) {
 					$classes[] = 'mw-halign-right';
 				}
 				break;
@@ -1097,9 +1105,8 @@ class WikiLinkHandler extends TokenHandler {
 	 */
 	private static function getFormat( array $opts ): ?string {
 		if ( $opts['manualthumb'] ) {
-			return 'thumbnail';
+			return 'manualthumb';
 		}
-
 		return $opts['format']['v'] ?? null;
 	}
 
@@ -1246,7 +1253,7 @@ class WikiLinkHandler extends TokenHandler {
 			// "Image with multiple captions" parserTest.
 			if ( !is_string( $oText ) || $optInfo === null ||
 				// Deprecated options
-				in_array( $optInfo['ck'], [ 'noicon', 'noplayer', 'disablecontrols' ], true )
+				in_array( $optInfo['ck'], [ 'disablecontrols' ], true )
 			) {
 				// No valid option found!?
 				// Record for RT-ing
@@ -1273,8 +1280,15 @@ class WikiLinkHandler extends TokenHandler {
 				continue;
 			}
 
-			if ( isset( $opts[$optInfo['ck']] ) ) {
-				// first option wins, the rest are 'bogus'
+			// First option wins, the rest are 'bogus'
+			// FIXME: For now, see T305628
+			if (
+				isset( $opts[$optInfo['ck']] ) ||
+				// All the formats are simple options with the key "format"
+				// except for "manualthumb", so check if the format has been set
+				( in_array( $optInfo['ck'], [ 'format', 'manualthumb' ], true ) &&
+					self::getFormat( $opts ) )
+			) {
 				$dataAttribs->optList[] = [
 					'ck' => 'bogus',
 					'ak' => $optInfo['ak']
@@ -1324,6 +1338,11 @@ class WikiLinkHandler extends TokenHandler {
 				// make use of it.  This param validation is from the SVG handler but
 				// seems generally applicable.
 				} elseif ( $optInfo['ck'] === 'lang' && !Language::isValidCode( $optInfo['v'] ) ) {
+					$opt['ck'] = 'bogus';
+				} elseif (
+					$optInfo['ck'] === 'upright' &&
+					( !is_numeric( $optInfo['v'] ) || $optInfo['v'] <= 0 )
+				) {
 					$opt['ck'] = 'bogus';
 				} else {
 					$opts[$optInfo['ck']] = [
@@ -1402,21 +1421,28 @@ class WikiLinkHandler extends TokenHandler {
 			);
 		}
 
+		$format = self::getFormat( $opts );
+
 		// Handle image default sizes and upright option after extracting all
 		// options
-		if ( !empty( $opts['format'] ) && $opts['format']['v'] === 'framed' ) {
-			// width and height is ignored for framed images
+		if ( $format === 'framed' || $format === 'manualthumb' ) {
+			// width and height is ignored for framed and manualthumb images
 			// https://phabricator.wikimedia.org/T64258
 			$opts['size']['v'] = [ 'width' => null, 'height' => null ];
-		} elseif ( $opts['format'] ) {
+			// Mark any definitions as bogus
+			foreach ( $dataAttribs->optList as &$value ) {
+				if ( $value['ck'] === 'width' ) {
+					$value['ck'] = 'bogus';
+				}
+			}
+		} elseif ( $format ) {
 			if ( !$opts['size']['v']['height'] && !$opts['size']['v']['width'] ) {
 				$defaultWidth = $env->getSiteConfig()->widthOption();
 				if ( isset( $opts['upright'] ) ) {
-					// FIXME: If non-numeric, should this option be treated as a caption?
-					if ( is_numeric( $opts['upright']['v'] ) && $opts['upright']['v'] > 0 ) {
-						$defaultWidth *= $opts['upright']['v'];
-					} else {
+					if ( $opts['upright']['v'] === 'upright' ) {  // Simple option
 						$defaultWidth *= 0.75;
+					} else {
+						$defaultWidth *= $opts['upright']['v'];
 					}
 					// round to nearest 10 pixels
 					$defaultWidth = 10 * round( $defaultWidth / 10 );
@@ -1425,12 +1451,11 @@ class WikiLinkHandler extends TokenHandler {
 			}
 		}
 
-		// FIXME: Default type, since we don't have the info.  That right?
-		$rdfaType = 'mw:Image';
+		$rdfaType = 'mw:File';
 
 		// If the format is something we *recognize*, add the subtype
-		$format = self::getFormat( $opts );
 		switch ( $format ) {
+			case 'manualthumb':  // FIXME(T305759): Does it deserve its own type?
 			case 'thumbnail':
 				$rdfaType .= '/Thumb';
 				break;
@@ -1527,10 +1552,9 @@ class WikiLinkHandler extends TokenHandler {
 						'sol' => true
 					]
 				);
+
 				// Use parsed DOM given in `captionDOM`
 				// FIXME: Does this belong in `dataMw.attribs`?
-				// Note that, in T297443, we're trying to lint this away,
-				// unless there's an explicit alt option on the media as well.
 				$dataMw->caption = ContentUtils::ppToXML(
 					$captionDOM, [ 'innerXML' => true ]
 				);

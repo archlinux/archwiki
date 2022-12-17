@@ -44,7 +44,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Ova stranica ne postoji na projektu {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Naslov koji ste naveli nije valjan",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Vanjska poveznica",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Provjera postoji li stranica...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Ova stranica nije stranica sa sadržajem, već popis tema sa sličnim nazivima",
 	"wikieditor-toolbar-tool-link-int-invalid": "Naslov koji ste naveli nije valjan.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL koji ste predali čini se namijenjen kao poveznica na drugu wiki stranicu.\nŽelite li napraviti unutrašnju poveznicu?",
@@ -202,5 +201,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Normalni tekst<br />:Uvučeni tekst <br />::Uvučeni tekst",
 	"wikieditor-toolbar-help-content-indent-result": "Normalni tekst<dl><dd>Uvučeni tekst<dl><dd>Uvučeni tekst</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Uređivanje načinjeno pomoću [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]]a (uređivač wikiteksta iz 2010.)",
-	"wikieditor-realtimepreview-preview": "Pretpregled"
+	"wikieditor-realtimepreview-preview": "Pretpregled",
+	"wikieditor-realtimepreview-error": "Pretpregled se ne učitava",
+	"wikieditor-realtimepreview-reload": "Ponovno učitaj",
+	"wikieditor-realtimepreview-beta-label": "Pretpregled u stvarnom vremenu",
+	"wikieditor-realtimepreview-beta-desc": "Pogledajte kako će se promjene wikiteksta prikazati čitateljima unutar [[mw:Special:MyLanguage/Extension:WikiEditor|uređivača iz 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Ponovno učitajte okno pretpregleda u stvarnom vremenu",
+	"wikieditor-realtimepreview-manual": "Ponovno učitajte sada kako biste ručno pregledali svoja uređivanja.",
+	"wikieditor-realtimepreview-onboarding-title": "Pretpregled u stvarnom vremenu",
+	"wikieditor-realtimepreview-onboarding-body": "Pogledajte kako će vaša uređivanja izgledati čitateljima pretpregledom u stvarnom vremenu.",
+	"wikieditor-realtimepreview-onboarding-button": "U redu, razumijem."
 }

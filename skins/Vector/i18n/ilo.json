@@ -20,5 +20,6 @@
 	"vector-view-viewsource": "Kitaen ti taudan",
 	"vector-jumptonavigation": "Darsen a mapan iti pagdaliasatan",
 	"vector-jumptosearch": "Darsen a mapan agbiruk",
-	"vector-more-actions": "Adu pay"
+	"vector-more-actions": "Adu pay",
+	"vector-searchsuggest-containing": "Agbiruk kadagiti panid nga nga aglaon iti <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

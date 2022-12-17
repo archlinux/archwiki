@@ -79,6 +79,7 @@
 	"oathauth-invalidrequest": "Ongeldige aanvraag",
 	"notification-body-oathauth-disable": "Als {{GENDER:$2|u}} dit niet gedaan heeft, kan {{GENDER:$2|uw account}} wellicht gehackt zijn.",
 	"oathauth-notifications-disable-help": "Hulp",
+	"oathauth-notifications-enabled-help": "Hulp",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Groep|Groepen}} uitschakelen:",
 	"oathauth-prefs-disabledgroups-help": "{{GENDER:$2|Uw lidmaatschap}} in {{PLURAL:$1|deze groep|deze groepen}} is uitgeschakeld totdat u [[Special:Manage Two-factor authentication|tweetrapsauthenticatie]] heeft ingeschakeld."
 }

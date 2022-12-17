@@ -25,7 +25,11 @@
 
 namespace Wikimedia;
 
+use DomainException;
+use Exception;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use UnexpectedValueException;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -57,7 +61,7 @@ class PhpSessionSerializer {
 	 * This may change the format even if the current format is also supported.
 	 *
 	 * @return string Format set
-	 * @throws \\DomainException
+	 * @throws DomainException
 	 */
 	public static function setSerializeHandler() {
 		$formats = [
@@ -90,7 +94,7 @@ class PhpSessionSerializer {
 			}
 		}
 
-		throw new \DomainException(
+		throw new DomainException(
 			'Failed to set serialize handler to a supported format.' .
 				' Supported formats are: ' . implode( ', ', $formats ) . '.'
 		);
@@ -100,12 +104,12 @@ class PhpSessionSerializer {
 	 * Encode a session array to a string, using the format in session.serialize_handler
 	 * @param array $data Session data
 	 * @return string|null Encoded string, or null on failure
-	 * @throws \\DomainException
+	 * @throws DomainException
 	 */
 	public static function encode( array $data ) {
 		$format = ini_get( 'session.serialize_handler' );
 		if ( !is_string( $format ) ) {
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Could not fetch the value of session.serialize_handler'
 			);
 		}
@@ -120,7 +124,7 @@ class PhpSessionSerializer {
 				return self::encodePhpSerialize( $data );
 
 			default:
-				throw new \DomainException( "Unsupported format \"$format\"" );
+				throw new DomainException( "Unsupported format \"$format\"" );
 		}
 	}
 
@@ -129,17 +133,17 @@ class PhpSessionSerializer {
 	 * @param string $data Session data. Use the same caution in passing
 	 *   user-controlled data here that you would to PHP's unserialize function.
 	 * @return array|null Data, or null on failure
-	 * @throws \\DomainException
-	 * @throws \\InvalidArgumentException
+	 * @throws DomainException
+	 * @throws InvalidArgumentException
 	 */
 	public static function decode( $data ) {
 		if ( !is_string( $data ) ) {
-			throw new \InvalidArgumentException( '$data must be a string' );
+			throw new InvalidArgumentException( '$data must be a string' );
 		}
 
 		$format = ini_get( 'session.serialize_handler' );
 		if ( !is_string( $format ) ) {
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Could not fetch the value of session.serialize_handler'
 			);
 		}
@@ -154,7 +158,7 @@ class PhpSessionSerializer {
 				return self::decodePhpSerialize( $data );
 
 			default:
-				throw new \DomainException( "Unsupported format \"$format\"" );
+				throw new DomainException( "Unsupported format \"$format\"" );
 		}
 	}
 
@@ -166,7 +170,7 @@ class PhpSessionSerializer {
 	private static function serializeValue( $value ) {
 		try {
 			return serialize( $value );
-		} catch ( \Exception $ex ) {
+		} catch ( Exception $ex ) {
 			self::$logger->error( 'Value serialization failed: ' . $ex->getMessage() );
 			return null;
 		}
@@ -179,7 +183,7 @@ class PhpSessionSerializer {
 	 */
 	private static function unserializeValue( &$string ) {
 		$error = null;
-		set_error_handler( function ( $errno, $errstr ) use ( &$error ) {
+		set_error_handler( static function ( $errno, $errstr ) use ( &$error ) {
 			$error = $errstr;
 			return true;
 		} );
@@ -213,6 +217,7 @@ class PhpSessionSerializer {
 	public static function encodePhp( array $data ) {
 		$ret = '';
 		foreach ( $data as $key => $value ) {
+			// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 			if ( strcmp( $key, intval( $key ) ) === 0 ) {
 				self::$logger->warning( "Ignoring unsupported integer key \"$key\"" );
 				continue;
@@ -236,11 +241,11 @@ class PhpSessionSerializer {
 	 * @param string $data Session data. Use the same caution in passing
 	 *   user-controlled data here that you would to PHP's unserialize function.
 	 * @return array|null Data, or null on failure
-	 * @throws \\InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public static function decodePhp( $data ) {
 		if ( !is_string( $data ) ) {
-			throw new \InvalidArgumentException( '$data must be a string' );
+			throw new InvalidArgumentException( '$data must be a string' );
 		}
 
 		$ret = [];
@@ -283,6 +288,7 @@ class PhpSessionSerializer {
 	public static function encodePhpBinary( array $data ) {
 		$ret = '';
 		foreach ( $data as $key => $value ) {
+			// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 			if ( strcmp( $key, intval( $key ) ) === 0 ) {
 				self::$logger->warning( "Ignoring unsupported integer key \"$key\"" );
 				continue;
@@ -307,11 +313,11 @@ class PhpSessionSerializer {
 	 * @param string $data Session data. Use the same caution in passing
 	 *   user-controlled data here that you would to PHP's unserialize function.
 	 * @return array|null Data, or null on failure
-	 * @throws \\InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public static function decodePhpBinary( $data ) {
 		if ( !is_string( $data ) ) {
-			throw new \InvalidArgumentException( '$data must be a string' );
+			throw new InvalidArgumentException( '$data must be a string' );
 		}
 
 		$ret = [];
@@ -353,7 +359,7 @@ class PhpSessionSerializer {
 	public static function encodePhpSerialize( array $data ) {
 		try {
 			return serialize( $data );
-		} catch ( \Exception $ex ) {
+		} catch ( Exception $ex ) {
 			self::$logger->error( 'PHP serialization failed: ' . $ex->getMessage() );
 			return null;
 		}
@@ -365,15 +371,15 @@ class PhpSessionSerializer {
 	 * @param string $data Session data. Use the same caution in passing
 	 *   user-controlled data here that you would to PHP's unserialize function.
 	 * @return array|null Data, or null on failure
-	 * @throws \\InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public static function decodePhpSerialize( $data ) {
 		if ( !is_string( $data ) ) {
-			throw new \InvalidArgumentException( '$data must be a string' );
+			throw new InvalidArgumentException( '$data must be a string' );
 		}
 
 		$error = null;
-		set_error_handler( function ( $errno, $errstr ) use ( &$error ) {
+		set_error_handler( static function ( $errno, $errstr ) use ( &$error ) {
 			$error = $errstr;
 			return true;
 		} );

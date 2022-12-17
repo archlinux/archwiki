@@ -7,7 +7,7 @@
 			"Upwinxp"
 		]
 	},
-	"multimediaviewer-desc": "Razširi sličice na večjo velikost v celozaslonskem prikazu",
+	"multimediaviewer-desc": "V celozaslonskem vmesniku razširi sličice na večjo velikost",
 	"multimediaviewer-optin-pref": "Vklopi <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Pregledovalnik datotek]</span>",
 	"multimediaviewer-file-page": "Pojdi na pripadajočo opisno stran datoteke",
 	"multimediaviewer-repository-local": "Več podrobnosti",
@@ -19,7 +19,7 @@
 	"multimediaviewer-multiple-authors-combine": "$1 in $2",
 	"multimediaviewer-metadata-error": "Podatkov o sliki ni bilo mogoče naložiti (napaka: $1)",
 	"multimediaviewer-thumbnail-error": "Datoteke žal ni mogoče prikazati",
-	"multimediaviewer-thumbnail-error-description": "Pojavila se je tehnična težava. Če vztraja, lahko $1. Napaka: $2.",
+	"multimediaviewer-thumbnail-error-description": "Prišlo je do tehnične težave. Če vztraja, lahko $1. Napaka: $2.",
 	"multimediaviewer-thumbnail-error-retry": "poskusi znova",
 	"multimediaviewer-thumbnail-error-report": "poročaj o težavi",
 	"multimediaviewer-license-cc-by-1.0": "CC BY 1.0",

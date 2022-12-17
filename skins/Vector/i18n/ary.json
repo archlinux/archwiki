@@ -2,13 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"Abdeaitali",
+			"Amire80",
 			"Enzoreg",
 			"Reda Benkhadra",
 			"SADI9I",
 			"SADIQUI",
-			"Zanatos"
+			"Zanatos",
+			"Ideophagous"
 		]
 	},
+	"vector-opt-out": "رجع ل الشكل لقديم",
 	"vector-language-button-label": "{{PLURAL:$1|$1 لوغة|$1 لوغات}}",
 	"vector-language-redirect-to-top": "ف هاد لويكيپيديا ليانات د لوغات كاينين ف لفوق د صفحة حدا لعنوان. [[#p-lang-btn|سير لفوق]].",
 	"vector-action-addsection": "زيد شي موضوع",
@@ -23,5 +26,5 @@
 	"vector-view-view": "قرا",
 	"vector-view-viewsource": "شوف لمصدر",
 	"vector-more-actions": "كتر",
-	"vector-searchsuggest-containing": "قلب علا صفاحي فيهم <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "قلب علا صفاحي فيهم <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

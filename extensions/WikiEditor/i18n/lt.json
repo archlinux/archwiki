@@ -46,7 +46,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Puslapis neegzistuoja",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Neleistinas pavadinimas",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Išorinė nuoroda",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Tikrinama, ar puslapis egzistuoja...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Paaiškinimo puslapis",
 	"wikieditor-toolbar-tool-link-int-invalid": "Jūsų nurodytas pavadinimas neleistinas.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Adresas, kurį nurodėte, tikriausiai yra nuoroda į kitą viki puslapį. Ar norite paversti nuorodą vidine?",

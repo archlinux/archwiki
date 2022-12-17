@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Babanwalia",
+			"Bgo eiu",
 			"BukhariSaeed",
 			"Sony dandiwal",
 			"Tow",
-			"ਪ੍ਰਚਾਰਕ",
-			"Bgo eiu"
+			"ਪ੍ਰਚਾਰਕ"
 		]
 	},
 	"mobile-frontend-editor-edit": "ਸੋਧੋ",
@@ -27,5 +27,6 @@
 	"mobile-frontend-placeholder": "{{SITENAME}} 'ਤੇ ਖੋਜੋ",
 	"mobile-frontend-random-button": "ਅਟਕਲ ਪੱਚੂ",
 	"mobile-frontend-user-page-contributions": "ਯੋਗਦਾਨ",
-	"mobile-frontend-user-page-talk": "ਗੱਲ-ਬਾਤ"
+	"mobile-frontend-user-page-talk": "ਗੱਲ-ਬਾਤ",
+	"skin-minerva-mobile-option-MinervaShowCategories": "ਸ਼੍ਰੇਣੀਆਂ"
 }

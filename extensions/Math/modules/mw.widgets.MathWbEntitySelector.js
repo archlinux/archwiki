@@ -18,8 +18,9 @@
 		config = config || {};
 		this.api = config.api;
 		if ( !this.api ) {
-			var repoConfig = mw.config.get( 'wbRepo' ), url = repoConfig.url + repoConfig.scriptPath + '/api.php';
-			this.api = new mw.ForeignApi( url );
+			this.api = new mw.ForeignApi(
+				mw.config.get( 'wgMathEntitySelectorUrl' ),
+				{ anonymous: true } );
 		}
 		OO.ui.TextInputWidget.call( this, config );
 		OO.ui.mixin.LookupElement.call( this, config );

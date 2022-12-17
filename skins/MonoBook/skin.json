@@ -47,9 +47,14 @@
 	"SkinLessImportPaths": {
 		"monobook": "resources/mediawiki.less"
 	},
+	"HookHandlers": {
+		"main": {
+			"class": "MonoBook\\Hooks"
+		}
+	},
 	"Hooks": {
-		"OutputPageBodyAttributes": "MonoBook\\Hooks::onOutputPageBodyAttributes",
-		"SkinTemplateNavigation::Universal": "MonoBook\\Hooks::onSkinTemplateNavigationUniversal"
+		"OutputPageBodyAttributes": "main",
+		"SkinTemplateNavigation::Universal": "main"
 	},
 	"MessagesDirs": {
 		"MonoBook": [

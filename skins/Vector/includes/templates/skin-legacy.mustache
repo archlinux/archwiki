@@ -52,18 +52,18 @@
 	<h2>{{msg-navigation-heading}}</h2>
 	<div id="mw-head">
 		{{#data-portlets}}
-		{{>legacy/UserLinks}}
+		{{>LegacyUserLinks}}
 		<div id="left-navigation">
-			{{#data-namespaces}}{{>Menu}}{{/data-namespaces}}
-			{{#data-variants}}{{>Menu}}{{/data-variants}}
+			{{#data-namespaces}}{{>LegacyMenu}}{{/data-namespaces}}
+			{{#data-variants}}{{>LegacyMenu}}{{/data-variants}}
 		</div>
 		<div id="right-navigation">
-			{{#data-views}}{{>Menu}}{{/data-views}}
-			{{#data-actions}}{{>Menu}}{{/data-actions}}
+			{{#data-views}}{{>LegacyMenu}}{{/data-views}}
+			{{#data-actions}}{{>LegacyMenu}}{{/data-actions}}
 			{{#data-search-box}}{{>SearchBox}}{{/data-search-box}}
 		</div>
 		{{/data-portlets}}
 	</div>
-	{{#data-portlets-sidebar}}{{>legacy/Sidebar}}{{/data-portlets-sidebar}}
+	{{#data-portlets-sidebar}}{{>LegacySidebar}}{{/data-portlets-sidebar}}
 </div>
 {{#data-footer}}{{>Footer}}{{/data-footer}}

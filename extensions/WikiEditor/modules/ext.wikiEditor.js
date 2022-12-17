@@ -48,24 +48,13 @@
 		};
 	}
 
-	function addABTestData( data, addToken ) {
+	function addABTestData( data ) {
 		// DiscussionTools New Topic A/B test for logged out users
 		if ( !mw.config.get( 'wgDiscussionToolsABTest' ) ) {
 			return;
 		}
-		if ( mw.user.isAnon() ) {
-			var tokenData = mw.storage.getObject( 'DTNewTopicABToken' );
-			if ( !tokenData ) {
-				return;
-			}
-			var anonid = parseInt( tokenData.token.slice( 0, 8 ), 16 );
-			data.bucket = anonid % 2 === 0 ? 'test' : 'control';
-			if ( addToken ) {
-				// eslint-disable-next-line camelcase
-				data.anonymous_user_token = tokenData.token;
-			}
-		} else if ( mw.user.options.get( 'discussiontools-abtest2' ) ) {
-			data.bucket = mw.user.options.get( 'discussiontools-abtest2' );
+		if ( mw.config.get( 'wgDiscussionToolsABTestBucket' ) ) {
+			data.bucket = mw.config.get( 'wgDiscussionToolsABTestBucket' );
 		}
 	}
 
@@ -104,7 +93,7 @@
 			data.user_class = 'IP';
 		}
 
-		addABTestData( data, true );
+		addABTestData( data );
 
 		// Schema's kind of a mess of special properties
 		if ( data.action === 'init' || data.action === 'abort' || data.action === 'saveFailure' ) {
@@ -254,6 +243,10 @@
 	} );
 
 	mw.addWikiEditor = function ( $textarea ) {
+		if ( $textarea.css( 'display' ) === 'none' ) {
+			return;
+		}
+
 		$textarea.wikiEditor(
 			'addModule', require( './jquery.wikiEditor.toolbar.config.js' )
 		);
@@ -265,4 +258,31 @@
 		$textarea.wikiEditor( 'addModule', dialogsConfig.getDefaultConfig() );
 
 	};
+
+	// Add logging for Realtime Preview.
+	mw.hook( 'ext.WikiEditor.realtimepreview.enable' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-on' );
+	} );
+	mw.hook( 'ext.WikiEditor.realtimepreview.inuse' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-inuse' );
+	} );
+	mw.hook( 'ext.WikiEditor.realtimepreview.disable' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-off' );
+	} );
+	mw.hook( 'ext.WikiEditor.realtimepreview.loaded' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-loaded' );
+	} );
+	mw.hook( 'ext.WikiEditor.realtimepreview.stop' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-error-stopped' );
+	} );
+	mw.hook( 'ext.WikiEditor.realtimepreview.reloadError' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-reload-error' );
+	} );
+	mw.hook( 'ext.WikiEditor.realtimepreview.reloadHover' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-reload-hover' );
+	} );
+	mw.hook( 'ext.WikiEditor.realtimepreview.reloadManual' ).add( function () {
+		logEditFeature( 'preview', 'preview-realtime-reload-manual' );
+	} );
+
 }() );

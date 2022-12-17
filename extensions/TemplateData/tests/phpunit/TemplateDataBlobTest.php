@@ -753,7 +753,7 @@ class TemplateDataBlobTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			$case['status'],
 			is_string( $case['status'] ) ? $this->getStatusText( $status ) : $status->isGood(),
-			'Status: ' . $case['msg']
+			$case['msg'] . ' (status "' . $this->getStatusText( $status ) . '")'
 		);
 
 		if ( !isset( $case['output'] ) ) {
@@ -1464,14 +1464,14 @@ HTML
 		<tr>
 			<th>foo</th>
 			<td class="mw-templatedata-doc-param-name"><code>foo</code></td>
-			<td class="mw-templatedata-doc-muted"><p>(templatedata-doc-param-desc-empty)</p><dl></dl></td>
+			<td><p class="mw-templatedata-doc-muted">(templatedata-doc-param-desc-empty)</p><dl></dl></td>
 			<td class="mw-templatedata-doc-param-type mw-templatedata-doc-muted">(templatedata-doc-param-type-unknown)</td>
 			<td class="mw-templatedata-doc-param-status-optional" data-sort-value="0">(templatedata-doc-param-status-optional)</td>
 		</tr>
 		<tr>
 			<th>bar</th>
 			<td class="mw-templatedata-doc-param-name"><code>bar</code></td>
-			<td class="mw-templatedata-doc-muted"><p>(templatedata-doc-param-desc-empty)</p><dl></dl></td>
+			<td><p class="mw-templatedata-doc-muted">(templatedata-doc-param-desc-empty)</p><dl></dl></td>
 			<td class="mw-templatedata-doc-param-type mw-templatedata-doc-muted">(templatedata-doc-param-type-unknown)</td>
 			<td class="mw-templatedata-doc-param-status-required" data-sort-value="2">(templatedata-doc-param-status-required)</td>
 		</tr>
@@ -1504,10 +1504,10 @@ HTML
 		<tr>
 			<th>Label</th>
 			<td class="mw-templatedata-doc-param-name"><code>suggestedParam</code>(word-separator)<code class="mw-templatedata-doc-param-alias">Alias1</code>(word-separator)<code class="mw-templatedata-doc-param-alias">Alias2</code></td>
-			<td class="">
+			<td>
 				<p>Param docs</p>
 				<dl>
-					<dt>(templatedata-doc-param-suggestedvalues)</dt><dd><code class="mw-templatedata-doc-param-alias">Suggested1</code>(word-separator)<code class="mw-templatedata-doc-param-alias">Suggested2</code></dd>
+					<dt>(templatedata-doc-param-suggestedvalues)</dt><dd><code>Suggested1</code>(word-separator)<code>Suggested2</code></dd>
 					<dt>(templatedata-doc-param-default)</dt><dd>Default docs</dd>
 					<dt>(templatedata-doc-param-example)</dt><dd>Example docs</dd>
 					<dt>(templatedata-doc-param-autovalue)</dt><dd><code>Auto value</code></dd>
@@ -1519,7 +1519,7 @@ HTML
 		<tr>
 			<th>deprecatedParam</th>
 			<td class="mw-templatedata-doc-param-name"><code>deprecatedParam</code></td>
-			<td class="mw-templatedata-doc-muted"><p>(templatedata-doc-param-desc-empty)</p><dl></dl></td>
+			<td><p class="mw-templatedata-doc-muted">(templatedata-doc-param-desc-empty)</p><dl></dl></td>
 			<td class="mw-templatedata-doc-param-type">(templatedata-doc-param-type-date)</td>
 			<td class="mw-templatedata-doc-param-status-deprecated" data-sort-value="-1">(templatedata-doc-param-status-deprecated)</td>
 		</tr>

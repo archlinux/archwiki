@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests\MediaWiki\Minerva;
+namespace MediaWiki\Minerva;
 
 use ContentHandler;
+use HashConfig;
 use MediaWiki\Content\IContentHandlerFactory;
-use MediaWiki\Minerva\LanguagesHelper;
 use MediaWiki\Minerva\Permissions\IMinervaPagePermissions;
 use MediaWiki\Minerva\Permissions\MinervaPagePermissions;
-use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Watchlist\WatchlistManager;
 use MediaWikiIntegrationTestCase;
@@ -54,7 +53,7 @@ class MinervaPagePermissionsTest extends MediaWikiIntegrationTestCase {
 
 		$context = new RequestContext();
 		$context->setTitle( $title );
-		$context->setConfig( new \HashConfig( [
+		$context->setConfig( new HashConfig( [
 			'MinervaAlwaysShowLanguageButton' => $alwaysShowLanguageButton
 		] ) );
 		$context->setUser( $user );

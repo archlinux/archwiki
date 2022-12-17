@@ -4,6 +4,7 @@
 @import '../minerva.less/minerva.variables.less';
 @import 'mediawiki.ui/variables.less';
 @import 'mediawiki.ui/mixins.buttons.less';
+@import 'mediawiki.mixins.less';
 
 .action-history {
 	#mw-content-text > form {
@@ -24,8 +25,7 @@
 	// The large "Compare selected revisions" button container
 	.mw-history-compareselectedversions {
 		background: @background-color-base;
-		position: sticky;
-		position: -webkit-sticky;
+		.position-sticky();
 		top: 0;
 		z-index: @z-indexAboveContent;
 
@@ -35,6 +35,7 @@
 			.mw-ui-button-colors-primary( @colorProgressive, @colorProgressiveHighlight, @colorProgressiveActive );
 			width: 100%;
 			max-width: 100%;
+			// stylelint-disable-next-line plugin/no-unsupported-browser-features
 			-webkit-appearance: unset;
 			font-weight: bold;
 			border-radius: @border-radius-base;
@@ -76,7 +77,7 @@
 
 		li {
 			.changeslist-row();
-			.box-sizing( border-box );
+			box-sizing: border-box;
 			position: relative;
 			min-height: inherit;
 			padding: 12px 0 10px 60px;

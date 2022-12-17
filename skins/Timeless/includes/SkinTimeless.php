@@ -19,7 +19,7 @@ class SkinTimeless extends SkinTemplate {
 		$out = $this->getOutput();
 
 		// Basic IE support without flexbox
-		$out->addStyle( $this->stylename . '/resources/IE9fixes.css', 'screen', 'IE' );
+		$out->addStyle( 'Timeless/resources/IE9fixes.css', 'screen', 'IE' );
 
 		parent::__construct( $options );
 	}

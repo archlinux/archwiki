@@ -3,7 +3,9 @@
 		"authors": [
 			"Anarhistička Maca",
 			"Armando-Martin",
+			"Danniel07",
 			"Dgstranz",
+			"DiegoAmbrocio",
 			"Fitoschido",
 			"Jelou",
 			"Macofe",
@@ -12,9 +14,7 @@
 			"Matiia",
 			"McDutchie",
 			"MuratTheTurkish",
-			"PoLuX124",
-			"Danniel07",
-			"DiegoAmbrocio"
+			"PoLuX124"
 		]
 	},
 	"oathauth-desc": "Proporciona compatibilidad con la autenticación mediante contraseñas en HMAC de un solo uso",
@@ -90,6 +90,9 @@
 	"oathauth-invalidrequest": "Solicitud no válida",
 	"notification-header-oathauth-disable": "Se ha desactivado la autenticación en dos pasos de {{GENDER:$2|tu}} cuenta.",
 	"oathauth-notifications-disable-help": "Ayuda",
+	"notification-header-oathauth-enabled": "La autenticación de dos pasos se ha activado en {{GENDER:$2|tu cuenta}}.",
+	"notification-body-oathauth-enabled": "Si {{GENDER:$2|tu}}no hiciste esto, {{GENDER:$2|tu cuenta}} puede haber estado comprometida.",
+	"oathauth-notifications-enabled-help": "Ayuda",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} tiene activada la autenticación en dos pasos.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} no tiene activada la autenticación en dos pasos.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desactivado|Grupos desactivados}}:",

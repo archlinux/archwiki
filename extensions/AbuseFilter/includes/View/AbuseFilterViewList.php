@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\AbuseFilter\View;
 use Html;
 use HTMLForm;
 use IContextSource;
+use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\CentralDBManager;
 use MediaWiki\Extension\AbuseFilter\FilterProfiler;
@@ -21,6 +22,9 @@ use Xml;
  */
 class AbuseFilterViewList extends AbuseFilterView {
 
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
 	/** @var FilterProfiler */
 	private $filterProfiler;
 
@@ -31,6 +35,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 	private $centralDBManager;
 
 	/**
+	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param FilterProfiler $filterProfiler
 	 * @param SpecsFormatter $specsFormatter
@@ -41,6 +46,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 	 * @param array $params
 	 */
 	public function __construct(
+		LinkBatchFactory $linkBatchFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		FilterProfiler $filterProfiler,
 		SpecsFormatter $specsFormatter,
@@ -51,6 +57,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 		array $params
 	) {
 		parent::__construct( $afPermManager, $context, $linkRenderer, $basePageName, $params );
+		$this->linkBatchFactory = $linkBatchFactory;
 		$this->filterProfiler = $filterProfiler;
 		$this->specsFormatter = $specsFormatter;
 		$this->specsFormatter->setMessageLocalizer( $context );
@@ -64,13 +71,13 @@ class AbuseFilterViewList extends AbuseFilterView {
 		$out = $this->getOutput();
 		$request = $this->getRequest();
 		$config = $this->getConfig();
-		$user = $this->getUser();
+		$performer = $this->getAuthority();
 
 		$out->addWikiMsg( 'abusefilter-intro' );
 		$this->showStatus();
 
 		// New filter button
-		if ( $this->afPermManager->canEdit( $user ) ) {
+		if ( $this->afPermManager->canEdit( $performer ) ) {
 			$out->enableOOUI();
 			$buttons = new OOUI\HorizontalLayout( [
 				'items' => [
@@ -108,7 +115,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 		}
 		$scope = $request->getVal( 'rulescope', $defaultscope );
 
-		$searchEnabled = $this->afPermManager->canViewPrivateFilters( $user ) && !(
+		$searchEnabled = $this->afPermManager->canViewPrivateFilters( $performer ) && !(
 			$config->get( 'AbuseFilterCentralDB' ) !== null &&
 			!$config->get( 'AbuseFilterIsCentral' ) &&
 			$scope === 'global' );
@@ -190,7 +197,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 	 * @param array $conds
 	 */
 	private function showList( array $optarray, array $conds = [ 'af_deleted' => 0 ] ) {
-		$user = $this->getUser();
+		$performer = $this->getAuthority();
 		$config = $this->getConfig();
 		$centralDB = $config->get( 'AbuseFilterCentralDB' );
 		$dbIsCentral = $config->get( 'AbuseFilterIsCentral' );
@@ -218,6 +225,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 			$pager = new AbuseFilterPager(
 				$this,
 				$this->linkRenderer,
+				$this->linkBatchFactory,
 				$this->afPermManager,
 				$this->specsFormatter,
 				$conds,
@@ -273,7 +281,7 @@ class AbuseFilterViewList extends AbuseFilterView {
 			'default' => $furtherOptions
 		];
 
-		if ( $this->afPermManager->canViewPrivateFilters( $user ) ) {
+		if ( $this->afPermManager->canViewPrivateFilters( $performer ) ) {
 			$globalEnabled = $centralDB !== null && !$dbIsCentral;
 			$formDescriptor['querypattern'] = [
 				'name' => 'querypattern',

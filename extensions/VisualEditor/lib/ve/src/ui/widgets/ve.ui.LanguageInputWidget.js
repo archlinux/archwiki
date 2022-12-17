@@ -34,7 +34,6 @@ ve.ui.LanguageInputWidget = function VeUiLanguageInputWidget( config ) {
 	this.dir = null;
 	this.setReadOnly( !!config.readOnly );
 
-	this.overlay = new ve.ui.Overlay( { classes: [ 've-ui-overlay-global' ] } );
 	this.dialogs = config.dialogManager || new ve.ui.WindowManager( { factory: ve.ui.windowFactory } );
 	this.availableLanguages = config.availableLanguages;
 
@@ -42,6 +41,7 @@ ve.ui.LanguageInputWidget = function VeUiLanguageInputWidget( config ) {
 		classes: [ 've-ui-languageInputWidget-findLanguageButton' ],
 		icon: 'ellipsis'
 	} );
+	this.findLanguageButton.$button.attr( 'aria-label', ve.msg( 'visualeditor-dialog-language-search-title' ) );
 	this.selectedLanguageLabel = new OO.ui.LabelWidget( {
 		classes: [ 've-ui-languageInputWidget-selectedLanguageLabel' ],
 		label: ve.msg( 'visualeditor-languageinspector-widget-changelang' )
@@ -49,6 +49,8 @@ ve.ui.LanguageInputWidget = function VeUiLanguageInputWidget( config ) {
 	this.languageCodeTextInput = new OO.ui.TextInputWidget( {
 		classes: [ 've-ui-languageInputWidget-languageCodeTextInput' ]
 	} );
+	this.languageCodeTextInput.$input.attr( 'aria-label', ve.msg( 'visualeditor-languageinspector-widget-label-langcode' ) );
+
 	this.directionSelect = new OO.ui.ButtonSelectWidget( {
 		classes: [ 've-ui-languageInputWidget-directionSelect' ]
 	} );
@@ -93,8 +95,7 @@ ve.ui.LanguageInputWidget = function VeUiLanguageInputWidget( config ) {
 		);
 	}
 	this.directionSelect.addItems( dirItems );
-	this.overlay.$element.append( this.dialogs.$element );
-	$( document.body ).append( this.overlay.$element );
+	$( document.body ).append( this.dialogs.$element );
 
 	this.$element
 		.addClass( 've-ui-languageInputWidget' )

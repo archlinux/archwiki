@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Func",
+			"GuoPC",
 			"Hzy980512",
 			"Liangent",
 			"Linforest",
@@ -22,11 +23,13 @@
 	"spam-blacklisted-email": "禁止的电子邮件地址",
 	"spam-blacklisted-email-text": "您的电子邮件地址目前已被禁止您给其他用户发送邮件。",
 	"spam-blacklisted-email-signup": "所给电邮地址已被禁止使用。",
-	"spam-invalid-lines": "下列垃圾链接黑名单存在{{PLURAL:$1|一行|多行}}无效的正则表示式，请在保存前修正：",
-	"spam-blacklist-desc": "基于正则表达式的反垃圾工具允许将页面URL及注册用电子邮件地址禁止",
-	"log-name-spamblacklist": "垃圾链接黑名单日志",
-	"log-description-spamblacklist": "这个列表跟踪垃圾链接黑名单的触发。",
-	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}}在$3上试图加入$4，触发了垃圾链接黑名单。",
-	"right-spamblacklistlog": "查看垃圾链接黑名单日志",
-	"action-spamblacklistlog": "查看垃圾链接黑名单日志"
+	"spam-invalid-lines": "下列垃圾链接阻止列表存在{{PLURAL:$1|一行|多行}}无效的正则{{PLURAL:$1|表达式}}，{{PLURAL:$1|需要}}在保存页面前修正：",
+	"spam-blacklist-desc": "基于正则表达式的反垃圾邮件工具允许将页面中的URL及注册用户的电子邮件地址列入阻止列表",
+	"log-name-spamblacklist": "垃圾链接阻止列表日志",
+	"log-description-spamblacklist": "这个列表跟踪垃圾链接阻止列表的触发。",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}}在$3上试图添加$4，触发了垃圾链接阻止列表。",
+	"right-spamblacklistlog": "查看垃圾链接阻止列表日志",
+	"action-spamblacklistlog": "查看垃圾链接阻止列表日志",
+	"right-sboverride": "绕过垃圾链接阻止列表",
+	"action-sboverride": "绕过垃圾链接阻止列表"
 }

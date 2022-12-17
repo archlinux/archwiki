@@ -40,7 +40,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Trang này chưa có ở {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Tựa đề bạn ghi không hợp lệ",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Liên kết ngoài",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kiểm tra trang đã tồn tại chưa…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Trang này không phải là trang có nội dung, mà là trang liệt kê các chủ đề có tên tương tự nhau",
 	"wikieditor-toolbar-tool-link-int-invalid": "Tên trang chỉ định không hợp lệ.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Hình như bạn đã chọn URL chỉ đến trang wiki khác. Bạn có muốn biến nó thành liên kết nội bộ không?",

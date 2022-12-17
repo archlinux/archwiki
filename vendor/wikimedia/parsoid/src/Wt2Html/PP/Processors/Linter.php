@@ -675,10 +675,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 	}
 
 	/**
-	 * Log issues with generated figures
-	 *
-	 *   1. captions on inline images without explicity alt options (T297443)
-	 *   2. bogus (=unrecognized) media options
+	 * Log bogus (=unrecognized) media options
 	 *
 	 * See - https://www.mediawiki.org/wiki/Help:Images#Syntax
 	 *
@@ -687,30 +684,9 @@ class Linter implements Wt2HtmlDOMProcessor {
 	 * @param DataParsoid $dp
 	 * @param ?stdClass $tplInfo
 	 */
-	private function logMediaIssues(
+	private function logBogusMediaOptions(
 		Env $env, Node $c, DataParsoid $dp, ?stdClass $tplInfo
 	): void {
-		if ( !( $c instanceof Element ) ) {
-			return;
-		}
-
-		// if ( WTUtils::isInlineMedia( $c ) ) {
-		// 	$dmw = DOMDataUtils::getDataMw( $c );
-		// 	$media = $c->firstChild->firstChild ?? null;
-		// 	if (
-		// 		isset( $dmw->caption ) &&
-		// 		$media instanceof Element &&
-		// 		DOMCompat::nodeName( $media ) === 'img' &&
-		// 		!$media->hasAttribute( 'alt' )
-		// 	) {
-		// 		$templateInfo = $this->findEnclosingTemplateName( $env, $tplInfo );
-		// 		$env->recordLint( 'inline-media-caption', [
-		// 			'dsr' => $this->findLintDSR( $templateInfo, $tplInfo, $dp->dsr ?? null ),
-		// 			'templateInfo' => $templateInfo
-		// 		] );
-		// 	}
-		// }
-
 		if ( WTUtils::isGeneratedFigure( $c ) && !empty( $dp->optList ) ) {
 			$items = [];
 			foreach ( $dp->optList as $item ) {
@@ -1186,28 +1162,19 @@ class Linter implements Wt2HtmlDOMProcessor {
 	private function logWikilinksInExtlinks(
 		Env $env, Element $c, DataParsoid $dp, ?stdClass $tplInfo
 	) {
-		if ( DOMCompat::nodeName( $c ) === 'a' && $c->getAttribute( 'rel' ) === 'mw:ExtLink' ) {
-			$lintError = false;
-			$element = $c->nextSibling;
-			while ( $element instanceof Element ) {
-				if (
-					DOMCompat::nodeName( $element ) === 'a' &&
-					( DOMDataUtils::getDataParsoid( $element )->misnested ?? false ) &&
-					(
-						$element->getAttribute( 'rel' ) === 'mw:WikiLink' ||
-						// Media structure gets blown apart when nested in an
-						// external link so testing by typeof is not very
-						// useful.  We'll just have to assume the img tag here
-						// came from media syntax.
-						( $element->firstChild instanceof Element &&
-							DOMCompat::nodeName( $element->firstChild ) === 'img' )
-					)
-				) {
-					$lintError = true;
-					break;
-				}
-				$element = $element->firstChild;
-			}
+		if ( DOMCompat::nodeName( $c ) === 'a' &&
+			DOMUtils::hasRel( $c, "mw:ExtLink" ) &&
+			// Images in extlinks will end up with broken up extlinks inside the
+			// <figure> DOM. Those have 'misnested' flag set on them. Ignore those.
+			empty( DOMDataUtils::getDataParsoid( $c )->misnested )
+		) {
+			$next = $c->nextSibling;
+			$lintError = $next instanceof Element &&
+				!empty( DOMDataUtils::getDataParsoid( $next )->misnested ) &&
+				// This check may not be necessary but ensures that we are
+				// really in a link-in-link misnested scenario.
+				DOMUtils::treeHasElement( $next, 'a', true );
+
 			// Media as opposed to most instances of img (barring the link= trick), don't result
 			// in misnesting according the html5 spec since we're actively suppressing links in
 			// their structure. However, since timed media is inherently clickable, being nested
@@ -1251,7 +1218,7 @@ class Linter implements Wt2HtmlDOMProcessor {
 		$this->logDeletableTables( $env, $node, $dp, $tplInfo ); // For T161341
 		$this->logBadPWrapping( $env, $node, $dp, $tplInfo ); // For T161306
 		$this->logObsoleteHTMLTags( $env, $node, $dp, $tplInfo );
-		$this->logMediaIssues( $env, $node, $dp, $tplInfo ); // For T297443
+		$this->logBogusMediaOptions( $env, $node, $dp, $tplInfo );
 		$this->logTidyWhitespaceBug( $env, $node, $dp, $tplInfo );
 		$this->logTidyDivSpanFlip( $env, $node, $dp, $tplInfo );
 

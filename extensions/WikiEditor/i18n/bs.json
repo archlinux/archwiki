@@ -43,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Stranica ne postoji",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Nevaljan naslov",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Vanjski link",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Provjeravam postojanje stranice...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Čvor",
 	"wikieditor-toolbar-tool-link-int-invalid": "Naslov koji ste unijeli je nevaljan.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Izgleda da je URL koji ste naveli prepoznat kao link na drugu wiki-stranicu.\nŽelite li napraviti unutrašnji link?",

@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Joetaras"
+			"Joetaras",
+			"McDutchie"
 		]
 	},
 	"syntaxhighlight-desc": "Dèje 'na sindasse evidenziate <code>&lt;syntaxhighlight&gt;</code> ausanne [http://pygments.org/ Pygments - l'Evidenziatore de sindasse de Python]",
 	"syntaxhighlight-error-category": "Pàggene cu le errore jndr'à l'evidenziazione d'a sindasse",
 	"syntaxhighlight-error-category-desc": "Ha assute 'n'errore duranne 'u tendative de evidenzià 'u codece 'ngluse jndr'à pàgene.",
-	"syntaxhighlight-enclose-category": "Pàgene ca ausane le attrebbute anclose deprecate",
+	"syntaxhighlight-enclose-category": "Pàgene ca ausane le attrebbute \"enclose\" deprecate",
 	"syntaxhighlight-enclose-category-desc": "L'evidenziazione d'a sindasse sus 'a pàgene ause 'na sindasse enclose deprecate.",
 	"syntaxhighlight-source-category": "Pàggene ca ausane tag source deprecate",
 	"syntaxhighlight-source-category-desc": "L'evidenziazione d'a sindasse sus 'a pàgene ause tag source deprecate.",

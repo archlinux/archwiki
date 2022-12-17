@@ -35,7 +35,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "اێ وەڵگە هەنی(هالی)وجود نِئرێ",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "عنوان نادرست",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "پیوند به بیرون",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "بررسی وجود داشتن صفحه...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "وەڵگەل دیاری کردن(ابهام زدایی)",
 	"wikieditor-toolbar-tool-link-int-invalid": "عنوان تعیین‌شده نامعتبر است.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "نشانی اینترنتی که وارد کردید به شکلی است که نمایانگر یک پیوند به صفحه‌ای داخل ویکی است. آیا می‌خواهید آن را به یک پیوند داخلی تبدیل کنید؟",

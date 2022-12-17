@@ -16,15 +16,19 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-class ResourceLoaderSyntaxHighlightVisualEditorModule extends ResourceLoaderFileModule {
+namespace MediaWiki\SyntaxHighlight;
+
+use MediaWiki\ResourceLoader as RL;
+
+class ResourceLoaderSyntaxHighlightVisualEditorModule extends RL\FileModule {
 
 	protected $targets = [ 'desktop', 'mobile' ];
 
 	/**
-	 * @param ResourceLoaderContext $context
+	 * @param RL\Context $context
 	 * @return string JavaScript code
 	 */
-	public function getScript( ResourceLoaderContext $context ) {
+	public function getScript( RL\Context $context ) {
 		$scripts = parent::getScript( $context );
 		return $scripts
 			. 've.dm.MWSyntaxHighlightNode.static.addPygmentsLanguages('

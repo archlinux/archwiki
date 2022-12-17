@@ -8,6 +8,9 @@ const configMock = {
 		if ( key === 'wgScriptPath' ) {
 			return '/w';
 		}
+		if ( key === 'wgScript' ) {
+			return '/w/index.php';
+		}
 		return null;
 	} ),
 	set: jest.fn()
@@ -36,20 +39,26 @@ describe( 'restApiSearchClient', () => {
 				{
 					id: 37298,
 					key: 'Media',
+					label: 'Media',
 					title: 'Media',
 					description: 'Wikimedia disambiguation page',
-					thumbnail: null
+					thumbnail: null,
+					url: '/w/index.php?title=Special%3ASearch&search=Media',
+					value: 37298
 				},
 				{
 					id: 323710,
 					key: 'MediaWiki',
+					label: 'MediaWiki',
 					title: 'MediaWiki',
 					description: 'wiki software',
 					thumbnail: {
 						width: 200,
 						height: 189,
 						url: thumbUrl
-					}
+					},
+					url: '/w/index.php?title=Special%3ASearch&search=MediaWiki',
+					value: 323710
 				}
 			]
 		};

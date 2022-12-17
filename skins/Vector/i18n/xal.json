@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Huuchin"
+			"Huuchin",
+			"Amire80"
 		]
 	},
 	"vector-action-addsection": "Төриг немх",
@@ -11,7 +12,7 @@
 	"vector-action-undelete": "Һарһх биш",
 	"vector-action-unprotect": "Харсх биш",
 	"vector-view-create": "Бүтәх",
-	"vector-view-edit": "Чиклх",
+	"vector-view-edit": "Ясх",
 	"vector-view-history": "Тууҗин хәләвр",
 	"vector-view-view": "Умшлһн",
 	"vector-view-viewsource": "Темдгллһнә хәләвр",

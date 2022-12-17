@@ -29,7 +29,7 @@ class GlobalAbuseFilterPager extends AbuseFilterPager {
 		CentralDBManager $centralDBManager,
 		array $conds
 	) {
-		parent::__construct( $page, $linkRenderer, $afPermManager, $specsFormatter, $conds, null, null );
+		parent::__construct( $page, $linkRenderer, null, $afPermManager, $specsFormatter, $conds, null, null );
 		$this->mDb = $centralDBManager->getConnection( DB_REPLICA );
 	}
 

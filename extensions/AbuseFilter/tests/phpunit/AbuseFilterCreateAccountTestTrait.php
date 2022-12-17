@@ -1,6 +1,8 @@
 <?php
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPreAuthenticationProvider;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\MediaWikiServices;
 
 /**
  * This trait can be used to create accounts in integration tests.
@@ -19,14 +21,19 @@ trait AbuseFilterCreateAccountTestTrait {
 		User $creator = null,
 		bool $autocreate = false
 	): StatusValue {
-		$user = User::newFromName( $accountName );
+		$user = MediaWikiServices::getInstance()->getUserFactory()->newFromName( $accountName );
 		// A creatable username must exist to be passed to $logEntry->setPerformer(),
 		// so create the account.
 		$user->addToDatabase();
 
 		$creator = $creator ?? $user;
 
-		$provider = new AbuseFilterPreAuthenticationProvider();
+		$provider = new AbuseFilterPreAuthenticationProvider(
+			AbuseFilterServices::getVariableGeneratorFactory(),
+			AbuseFilterServices::getFilterRunnerFactory(),
+			new NullStatsdDataFactory(),
+			MediaWikiServices::getInstance()->getUserFactory()
+		);
 		$status = $provider->testForAccountCreation( $user, $creator, [] );
 
 		// FIXME This is a bit hacky, but AuthManager doesn't expose any methods for logging
@@ -40,6 +47,7 @@ trait AbuseFilterCreateAccountTestTrait {
 		] );
 		$logid = $logEntry->insert();
 		$logEntry->publish( $logid );
+		$status->value = $logid;
 		return $status;
 	}
 }

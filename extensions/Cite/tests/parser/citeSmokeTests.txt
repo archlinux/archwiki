@@ -100,22 +100,6 @@ Smoke test for references that are reused *before* defined in <references>
 !! end
 
 !! test
-T240248: Erroring parser function shouldn't break references
-!! wikitext
-<ref>something</ref>
-{{#ifeq: {{#expr: string < 5 }} | 1 | true | false or error }}
-<references />
-!! html
-<p><sup id="cite_ref-1" class="reference"><a href="#cite_note-1">&#91;1&#93;</a></sup>
-false or error
-</p>
-<div class="mw-references-wrap"><ol class="references">
-<li id="cite_note-1"><span class="mw-cite-backlink"><a href="#cite_ref-1">↑</a></span> <span class="reference-text">something</span>
-</li>
-</ol></div>
-!! end
-
-!! test
 It should be impossible to roll back a follow="…", because it can't have a name
 !! wikitext
 <ref name="a" />

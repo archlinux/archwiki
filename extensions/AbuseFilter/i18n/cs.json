@@ -20,9 +20,9 @@
 			"Robins7",
 			"Tchoř",
 			"Teslaton",
+			"TheMatto58",
 			"Urbanecm",
-			"Vks",
-			"TheMatto58"
+			"Vks"
 		]
 	},
 	"abusefilter-desc": "Podrobuje editace automatickým heuristikám",
@@ -355,12 +355,14 @@
 	"abusefilter-edit-builder-funcs-rmwhitespace": "Odstranit bílé znaky (rmwhitespace)",
 	"abusefilter-edit-builder-funcs-rmspecials": "Odstranit speciální znaky (rmspecials)",
 	"abusefilter-edit-builder-funcs-ip_in_range": "Patří IP adresa do rozsahu? (ip_in_range)",
+	"abusefilter-edit-builder-funcs-ip_in_ranges": "Patří IP adresa do některého z rozsahů? (ip_in_ranges)",
 	"abusefilter-edit-builder-funcs-contains-any": "Hledat několik podřetězců v řetězci v režimu OR (contains_any)",
 	"abusefilter-edit-builder-funcs-contains-all": "Hledat v řetězci více podřetězců v režimu AND. (contains_all)",
 	"abusefilter-edit-builder-funcs-equals-to-any": "Zjistí, zde je daný argument rovný (===) libovolnému z následujících argumentů (equals_to_any)",
 	"abusefilter-edit-builder-funcs-substr": "Podřetězec (substr)",
 	"abusefilter-edit-builder-funcs-strpos": "Pozice podřetězce v řetězci (strpos)",
 	"abusefilter-edit-builder-funcs-str_replace": "Nahradit podřetězec jiným řetězcem (str_replace)",
+	"abusefilter-edit-builder-funcs-str_replace_regexp": "Najít a nahradit regulárním výrazem (str_replace_regexp)",
 	"abusefilter-edit-builder-funcs-rescape": "Oescapovat řetězec jako literál do regexu (rescape)",
 	"abusefilter-edit-builder-funcs-set_var": "Nastavit proměnnou (set_var)",
 	"abusefilter-edit-builder-funcs-sanitize": "Normalizovat HTML entity na znaky unicode (sanitize)",

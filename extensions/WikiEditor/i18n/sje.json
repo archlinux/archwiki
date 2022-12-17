@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Olve Utne",
 			"Yupik"
 		]
 	},
 	"wikieditor-toolbar-tool-file-example": "Åvvdåmärrka.jpg",
-	"wikieditor-toolbar-tool-table-example": "Åvvdåmärrka"
+	"wikieditor-toolbar-tool-table-example": "Åvvdåmärrka",
+	"wikieditor-realtimepreview-onboarding-button": "Buorre, mån skeniv."
 }

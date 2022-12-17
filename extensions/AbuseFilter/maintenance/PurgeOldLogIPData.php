@@ -39,7 +39,7 @@ class PurgeOldLogIPData extends Maintenance {
 				'abuse_filter_log',
 				'afl_id',
 				[
-					'afl_ip <> ""',
+					'afl_ip <> ' . $dbw->addQuotes( '' ),
 					"afl_timestamp < " . $dbw->addQuotes( $dbw->timestamp( $cutoffUnix ) )
 				],
 				__METHOD__,

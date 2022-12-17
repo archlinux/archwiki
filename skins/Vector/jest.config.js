@@ -3,6 +3,7 @@
 
 module.exports = {
 	moduleNameMapper: {
+		'^./templates/(.*).mustache': '<rootDir>/includes/templates/$1.mustache'
 	},
 
 	// Automatically clear mock calls and instances between every test
@@ -35,15 +36,6 @@ module.exports = {
 		}
 	},
 
-	// A set of global variables that need to be available in all test environments
-	globals: {
-		'vue-jest': {
-			babelConfig: false,
-			hideStyleWarn: true,
-			experimentalCSSCompile: true
-		}
-	},
-
 	// An array of file extensions your modules use
 	moduleFileExtensions: [
 		'js',
@@ -57,7 +49,10 @@ module.exports = {
 		'./jest.setup.js'
 	],
 
+	testEnvironment: 'jsdom',
+
 	transform: {
-		'.*\\.(vue)$': '<rootDir>/node_modules/vue-jest'
+		'^.+\\.mustache?$': 'mustache-jest',
+		'.*\\.(vue)$': '<rootDir>/node_modules/@vue/vue3-jest'
 	}
 };

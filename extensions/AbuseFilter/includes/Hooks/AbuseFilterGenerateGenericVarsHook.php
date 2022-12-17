@@ -16,7 +16,7 @@ interface AbuseFilterGenerateGenericVarsHook {
 	 *     this is the entry. Null if it's for the current action being filtered.
 	 * @return bool|void True or no return value to continue or false to abort
 	 */
-	  public function onAbuseFilter_generateGenericVars(
+	public function onAbuseFilter_generateGenericVars(
 		VariableHolder $vars,
 		?RecentChange $rc
 	);

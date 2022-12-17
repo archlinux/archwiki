@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Abijeet Patro",
+			"AnupamM",
 			"Smtchahal",
 			"Ziyaurr",
-			"AnupamM",
 			"Saurmandal"
 		]
 	},
@@ -58,6 +58,9 @@
 	"oath-log-header": "इन घटनाओं से सदस्यों के दो-कारक प्रमाणीकरण की स्थिति में बदलावों को ट्रैक किया जाता है।",
 	"logentry-oath-disable-other": "$1 ने $3 का दो-कारक प्रमाणीकरण {{GENDER:$2|अक्षम किया}}",
 	"logentry-oath-verify": "$1 ने {{GENDER:$2|जाँचा}} कि $3 ने दो-कारक प्रमाणीकरण सक्षम किया है या नहीं",
+	"log-action-filter-oath": "दो-कारक प्रमाणीकरण के कार्य का प्रकार:",
+	"log-action-filter-oath-verify": "जाँचा गया कि दो-कारक प्रमाणीकरण सक्षम है या नहीं",
+	"log-action-filter-oath-disable-other": "किसी दूसरे सदस्य के लिए दो-कारक प्रमाणीकरण सक्षम किया गया",
 	"oathauth-ui-no-module": "कोई सक्षम नहीं",
 	"oathauth-module-invalid": "सदस्य द्वारा पंजीकृत OATH मॉड्यूल अमान्य है।",
 	"oathauth-module-totp-label": "TOTP (एकल-उपयोग टोकन)",
@@ -69,5 +72,6 @@
 	"oathauth-disable-generic": "अक्षम करें",
 	"oathauth-disable-page-title": "$1 अक्षम करें",
 	"oathauth-enable-page-title": "$1 सक्षम करें",
-	"oathauth-notifications-disable-help": "सहायता"
+	"oathauth-notifications-disable-help": "सहायता",
+	"oathauth-notifications-enabled-help": "सहायता"
 }

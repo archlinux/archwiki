@@ -8,6 +8,10 @@
 	height: 100%;
 	// Center vertically.
 	align-items: center;
+	// Hamburger menu icon with padding (22px + 12px = 46px) + right margin (12px) + logo (222px @ 16) + space between
+	// logo and searchbox (28px) = 296px which equals the sum of widths of sidebar elements (i.e. TOC) when toggled.
+	// 226px @ 16 provides correct spacing between the right edge of logo container + left edge of searchbox input.
+	min-width: 13.875em; // 222px @ 16
 }
 
 .mw-logo-icon {
@@ -21,7 +25,7 @@
 	width: @size-mw-logo-icon;
 	height: @size-mw-logo-icon;
 
-	@media ( min-width: @width-breakpoint-tablet ) {
+	@media ( min-width: @min-width-tablet ) {
 		display: block;
 	}
 }
@@ -42,7 +46,7 @@
 		width: 100%;
 	}
 
-	@media ( min-width: @width-breakpoint-tablet ) {
+	@media ( min-width: @min-width-tablet ) {
 		max-width: none;
 
 		img {

@@ -10,13 +10,13 @@
 	"license-name": "GPL-2.0-or-later AND MIT",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.38.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"APIModules": {
-		"scribunto-console": "ApiScribuntoConsole"
+		"scribunto-console": "MediaWiki\\Extension\\Scribunto\\ApiScribuntoConsole"
 	},
 	"ContentHandlers": {
-		"Scribunto": "ScribuntoContentHandler"
+		"Scribunto": "MediaWiki\\Extension\\Scribunto\\ScribuntoContentHandler"
 	},
 	"TrackingCategories": [
 		"scribunto-common-error-category",
@@ -33,26 +33,13 @@
 		"ScribuntoNamespaces": "Scribunto.namespaces.php"
 	},
 	"AutoloadClasses": {
-		"ScribuntoEngineBase": "includes/common/ScribuntoEngineBase.php",
-		"ScribuntoModuleBase": "includes/common/ScribuntoModuleBase.php",
-		"ScribuntoHooks": "includes/common/Hooks.php",
-		"ScribuntoException": "includes/common/ScribuntoException.php",
-		"Scribunto": "includes/common/Scribunto.php",
-		"ApiScribuntoConsole": "includes/common/ApiScribuntoConsole.php",
-		"ScribuntoContentHandler": "includes/common/ScribuntoContentHandler.php",
-		"ScribuntoContent": "includes/common/ScribuntoContent.php",
 		"Scribunto_LuaError": "includes/engines/LuaCommon/LuaError.php",
 		"Scribunto_LuaInterpreterNotFoundError": "includes/engines/LuaCommon/LuaInterpreterNotFoundError.php",
 		"Scribunto_LuaInterpreterBadVersionError": "includes/engines/LuaCommon/LuaInterpreterBadVersionError.php",
-		"Scribunto_LuaSandboxInterpreter": "includes/engines/LuaSandbox/LuaSandboxInterpreter.php",
-		"Scribunto_LuaSandboxCallback": "includes/engines/LuaSandbox/LuaSandboxCallback.php",
 		"Scribunto_LuaStandaloneInterpreterFunction": "includes/engines/LuaStandalone/LuaStandaloneInterpreterFunction.php",
 		"Scribunto_LuaEngine": "includes/engines/LuaCommon/LuaEngine.php",
 		"Scribunto_LuaModule": "includes/engines/LuaCommon/LuaModule.php",
 		"Scribunto_LuaInterpreter": "includes/engines/LuaCommon/LuaInterpreter.php",
-		"Scribunto_LuaSandboxEngine": "includes/engines/LuaSandbox/LuaSandboxEngine.php",
-		"Scribunto_LuaStandaloneEngine": "includes/engines/LuaStandalone/LuaStandaloneEngine.php",
-		"Scribunto_LuaStandaloneInterpreter": "includes/engines/LuaStandalone/LuaStandaloneInterpreter.php",
 		"Scribunto_LuaLibraryBase": "includes/engines/LuaCommon/LibraryBase.php",
 		"Scribunto_LuaSiteLibrary": "includes/engines/LuaCommon/SiteLibrary.php",
 		"Scribunto_LuaUriLibrary": "includes/engines/LuaCommon/UriLibrary.php",
@@ -62,7 +49,12 @@
 		"Scribunto_LuaTitleLibrary": "includes/engines/LuaCommon/TitleLibrary.php",
 		"Scribunto_LuaTextLibrary": "includes/engines/LuaCommon/TextLibrary.php",
 		"Scribunto_LuaHtmlLibrary": "includes/engines/LuaCommon/HtmlLibrary.php",
-		"Scribunto_LuaHashLibrary": "includes/engines/LuaCommon/HashLibrary.php"
+		"Scribunto_LuaHashLibrary": "includes/engines/LuaCommon/HashLibrary.php",
+		"MediaWiki\\Extension\\Scribunto\\Engines\\LuaStandalone\\LuaStandaloneInterpreterFunction": "includes/engines/LuaStandalone/LuaStandaloneInterpreterFunction.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\Scribunto\\": "includes/",
+		"MediaWiki\\Extension\\Scribunto\\Engines\\": "includes/engines/"
 	},
 	"TestAutoloadClasses": {
 		"Scribunto_LuaCommonTestsFailLibrary": "tests/phpunit/engines/LuaCommon/LuaCommonTestsFailLibrary.php",
@@ -109,19 +101,19 @@
 		"remoteExtPath": "Scribunto/modules"
 	},
 	"Hooks": {
-		"SoftwareInfo": "ScribuntoHooks::getSoftwareInfo",
-		"ParserFirstCallInit": "ScribuntoHooks::setupParserHook",
-		"ParserLimitReportPrepare": "ScribuntoHooks::reportLimitData",
-		"ParserLimitReportFormat": "ScribuntoHooks::formatLimitData",
-		"ParserClearState": "ScribuntoHooks::clearState",
-		"ParserCloned": "ScribuntoHooks::parserCloned",
-		"CodeEditorGetPageLanguage": "ScribuntoHooks::getCodeLanguage",
-		"EditPage::showStandardInputs:options": "ScribuntoHooks::showStandardInputsOptions",
-		"EditPage::showReadOnlyForm:initial": "ScribuntoHooks::showReadOnlyFormInitial",
-		"EditPageBeforeEditButtons": "ScribuntoHooks::beforeEditButtons",
-		"EditFilterMergedContent": "ScribuntoHooks::validateScript",
-		"ArticleViewHeader": "ScribuntoHooks::showDocPageHeader",
-		"ContentHandlerDefaultModelFor": "ScribuntoHooks::contentHandlerDefaultModelFor"
+		"SoftwareInfo": "MediaWiki\\Extension\\Scribunto\\Hooks::getSoftwareInfo",
+		"ParserFirstCallInit": "MediaWiki\\Extension\\Scribunto\\Hooks::setupParserHook",
+		"ParserLimitReportPrepare": "MediaWiki\\Extension\\Scribunto\\Hooks::reportLimitData",
+		"ParserLimitReportFormat": "MediaWiki\\Extension\\Scribunto\\Hooks::formatLimitData",
+		"ParserClearState": "MediaWiki\\Extension\\Scribunto\\Hooks::clearState",
+		"ParserCloned": "MediaWiki\\Extension\\Scribunto\\Hooks::parserCloned",
+		"CodeEditorGetPageLanguage": "MediaWiki\\Extension\\Scribunto\\Hooks::getCodeLanguage",
+		"EditPage::showStandardInputs:options": "MediaWiki\\Extension\\Scribunto\\Hooks::showStandardInputsOptions",
+		"EditPage::showReadOnlyForm:initial": "MediaWiki\\Extension\\Scribunto\\Hooks::showReadOnlyFormInitial",
+		"EditPageBeforeEditButtons": "MediaWiki\\Extension\\Scribunto\\Hooks::beforeEditButtons",
+		"EditFilterMergedContent": "MediaWiki\\Extension\\Scribunto\\Hooks::validateScript",
+		"ArticleViewHeader": "MediaWiki\\Extension\\Scribunto\\Hooks::showDocPageHeader",
+		"ContentHandlerDefaultModelFor": "MediaWiki\\Extension\\Scribunto\\Hooks::contentHandlerDefaultModelFor"
 	},
 	"namespaces": [
 		{
@@ -137,7 +129,7 @@
 			"subpages": true
 		}
 	],
-	"callback": "ScribuntoHooks::onRegistration",
+	"callback": "MediaWiki\\Extension\\Scribunto\\Hooks::onRegistration",
 	"config": {
 		"ScribuntoDefaultEngine": {
 			"description": "The name of the default script engine",
@@ -154,7 +146,7 @@
 			],
 			"value": {
 				"luasandbox": {
-					"class": "Scribunto_LuaSandboxEngine",
+					"class": "MediaWiki\\Extension\\Scribunto\\Engines\\LuaSandbox\\LuaSandboxEngine",
 					"memoryLimit": 52428800,
 					"cpuLimit": 7,
 					"profilerPeriod": 0.02,
@@ -162,7 +154,7 @@
 					"maxLangCacheSize": 30
 				},
 				"luastandalone": {
-					"class": "Scribunto_LuaStandaloneEngine",
+					"class": "MediaWiki\\Extension\\Scribunto\\Engines\\LuaStandalone\\LuaStandaloneEngine",
 					"errorFile": null,
 					"luaPath": null,
 					"memoryLimit": 52428800,

@@ -36,7 +36,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Сторінка не екзістує",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Неприпустна назва",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Екстерный одказ",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Перевірка екзістенції сторінкы...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Вами задана назва є неприпустна.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL котре сьте задали вызерать як одказ на іншу сторінку той вікі. Хочете з нєй зробити інтерный одказ?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Інтерный одказ",

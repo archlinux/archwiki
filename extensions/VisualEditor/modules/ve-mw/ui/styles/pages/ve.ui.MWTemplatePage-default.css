@@ -5,15 +5,6 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-.ve-ui-mwTemplatePage-more {
-	display: none;
-	margin: 2.25em 0 0.5em 0;
-}
-
-.ve-ui-mwTemplatePage:last-child .ve-ui-mwTemplatePage-more {
-	display: block;
-}
-
 .ve-ui-mwTemplatePage-description {
 	color: #54595d;
 	overflow-wrap: break-word;

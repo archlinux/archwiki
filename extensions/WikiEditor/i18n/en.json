@@ -35,7 +35,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "This page does not exist on {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "The title you specified is invalid",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "External link",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Checking page existence...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "This page is not a content page, but a list of topics with similar names",
 	"wikieditor-toolbar-tool-link-int-invalid": "The title you specified is invalid.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "The URL you specified looks like it was intended as a link to another wiki page.\nDo you want to make it an internal link?",
@@ -198,5 +197,15 @@
 	"wikieditor-toolbar-help-content-indent-result": "Normal text<dl><dd>Indented text<dl><dd>Indented text</dd></dl></dd></dl>",
 	"tag-wikieditor": "-",
 	"tag-wikieditor-description": "Edit made using [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 wikitext editor)",
-	"wikieditor-realtimepreview-preview": "Preview"
+	"wikieditor-realtimepreview-preview": "Preview",
+	"wikieditor-realtimepreview-error": "Preview not loading",
+	"wikieditor-realtimepreview-reload": "Reload",
+	"wikieditor-realtimepreview-beta-label": "Realtime Preview",
+	"wikieditor-realtimepreview-beta-desc": "See how wikitext changes will appear to readers inside the [[mw:Special:MyLanguage/Extension:WikiEditor|2010 editor]].",
+	"wikieditor-realtimepreview-reload-title": "Reload the realtime preview pane",
+	"accesskey-wikieditor-realtimepreview": ")",
+	"wikieditor-realtimepreview-manual": "Please reload now to manually preview your edits.",
+	"wikieditor-realtimepreview-onboarding-title": "Realtime Preview",
+	"wikieditor-realtimepreview-onboarding-body": "See what your edits will look like to readers by previewing them in realtime.",
+	"wikieditor-realtimepreview-onboarding-button": "Okay, got it"
 }

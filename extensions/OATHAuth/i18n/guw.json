@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Atej2*",
 			"Gadarawamo"
 		]
 	},
-	"oathauth-notifications-disable-help": "Alọgọ́"
+	"oathauth-notifications-disable-help": "Alọgọ́",
+	"oathauth-notifications-enabled-help": "Alọgọ"
 }

@@ -39,6 +39,7 @@
 	"scribunto-lua-error-location": "Lua-feil $1: $2.",
 	"scribunto-lua-error": "Lua-feil: $2.",
 	"scribunto-lua-notarrayreturn": "Skriptfeil: Modulen returnerte en $2-verdi. Det forventes at den returnerer en eksporttabell.",
+	"scribunto-lua-warning": "Skriptadvarsel: $1",
 	"scribunto-luastandalone-proc-error": "Lua-feil: Kan ikke opprette prosess.",
 	"scribunto-luastandalone-proc-error-msg": "Lua-feil: Kan ikke opprette prosess: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua-feil: Kan ikke opprette prosess: proc_open er ikke tilgjengelig. Sjekk PHPs «disable_functions»-konfigurasjon.",

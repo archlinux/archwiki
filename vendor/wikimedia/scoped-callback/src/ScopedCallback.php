@@ -24,11 +24,14 @@
 
 namespace Wikimedia;
 
+use InvalidArgumentException;
+use UnexpectedValueException;
+
 /**
- * Class for asserting that a callback happens when a dummy object leaves scope
+ * Make a callback run when a dummy object leaves the scope.
  */
 class ScopedCallback {
-	/** @var callable */
+	/** @var callable|null */
 	protected $callback;
 	/** @var array */
 	protected $params;
@@ -36,11 +39,10 @@ class ScopedCallback {
 	/**
 	 * @param callable|null $callback
 	 * @param array $params Callback arguments (since 1.0.0, MediaWiki 1.25)
-	 * @throws \InvalidArgumentException
 	 */
 	public function __construct( $callback, array $params = [] ) {
 		if ( $callback !== null && !is_callable( $callback ) ) {
-			throw new \InvalidArgumentException( "Provided callback is not valid." );
+			throw new InvalidArgumentException( 'Provided callback is not valid.' );
 		}
 		$this->callback = $callback;
 		$this->params = $params;
@@ -74,14 +76,18 @@ class ScopedCallback {
 	 *
 	 * @since 3.0.0
 	 * @return ScopedCallback|null
+	 *
+	 * @codeCoverageIgnore CI is only run via CLI, so this will never be exercised.
+	 * Also no benefit testing a function just returns null.
 	 */
 	public static function newScopedIgnoreUserAbort() {
+		// ignore_user_abort previously caused an infinite loop on CLI
 		// https://bugs.php.net/bug.php?id=47540
 		if ( PHP_SAPI != 'cli' ) {
 			// avoid half-finished operations
 			$old = ignore_user_abort( true );
-			return new ScopedCallback( function () use ( $old ) {
-				ignore_user_abort( $old );
+			return new ScopedCallback( static function () use ( $old ) {
+				ignore_user_abort( (bool)$old );
 			} );
 		}
 
@@ -99,16 +105,18 @@ class ScopedCallback {
 
 	/**
 	 * Do not allow this class to be serialized
+	 * @return never
 	 */
 	function __sleep() {
-		throw new \UnexpectedValueException( __CLASS__ . ' cannot be serialized' );
+		throw new UnexpectedValueException( __CLASS__ . ' cannot be serialized' );
 	}
 
 	/**
 	 * Protect the caller against arbitrary code execution
+	 * @return never
 	 */
 	function __wakeup() {
 		$this->callback = null;
-		throw new \UnexpectedValueException( __CLASS__ . ' cannot be unserialized' );
+		throw new UnexpectedValueException( __CLASS__ . ' cannot be unserialized' );
 	}
 }

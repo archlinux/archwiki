@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Beginneruser",
 			"Ebraminio",
 			"Huji",
 			"Iriman",
@@ -10,8 +11,7 @@
 			"MohammadtheEditor",
 			"Reza1615",
 			"Wayiran",
-			"فلورانس",
-			"Beginneruser"
+			"فلورانس"
 		]
 	},
 	"fancycaptcha-desc": "تولید‌کنندۀ Fancy CAPTCHA برای تأیید ویرایش",

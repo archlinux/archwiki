@@ -20,13 +20,12 @@
 
 namespace MediaWiki\SyntaxHighlight;
 
-use ResourceLoaderContext;
-use ResourceLoaderFileModule;
+use MediaWiki\ResourceLoader as RL;
 
 /**
  * At runtime switch between bundled CSS or dynamically generated
  */
-class ResourceLoaderPygmentsModule extends ResourceLoaderFileModule {
+class ResourceLoaderPygmentsModule extends RL\FileModule {
 
 	/** @var bool */
 	private $useBundled;
@@ -55,7 +54,7 @@ class ResourceLoaderPygmentsModule extends ResourceLoaderFileModule {
 	}
 
 	/** @inheritDoc */
-	public function getStyles( ResourceLoaderContext $context ) {
+	public function getStyles( RL\Context $context ) {
 		$styles = parent::getStyles( $context );
 		if ( !$this->useBundled ) {
 			// Generated styles before our overrides
@@ -66,7 +65,7 @@ class ResourceLoaderPygmentsModule extends ResourceLoaderFileModule {
 	}
 
 	/** @inheritDoc */
-	public function getDefinitionSummary( ResourceLoaderContext $context ) {
+	public function getDefinitionSummary( RL\Context $context ) {
 		$summary = parent::getDefinitionSummary( $context );
 		if ( !$this->useBundled ) {
 			$summary[] = Pygmentize::getVersion();

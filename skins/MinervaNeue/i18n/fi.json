@@ -6,8 +6,10 @@
 			"Crt",
 			"Elseweyr",
 			"Jack Phoenix",
+			"Korjaus1",
 			"Kulmalukko",
 			"Linnea",
+			"MITO",
 			"Markus Mikkonen",
 			"McSalama",
 			"MrTapsa",
@@ -15,8 +17,7 @@
 			"Pyscowicz",
 			"Stryn",
 			"Syreeni",
-			"Valtlait",
-			"Korjaus1"
+			"Valtlait"
 		]
 	},
 	"minerva-last-modified-date": "Viimeksi muokattu $1 kello $2",
@@ -71,6 +72,7 @@
 	"minerva-page-actions-protect": "Suojaa",
 	"minerva-page-actions-unprotect": "Poista suojaus",
 	"minerva-page-actions-user-groups": "Käyttäjäryhmät",
+	"minerva-page-actions-block": "Estä käyttäjä",
 	"minerva-page-actions-logs": "Lokit",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}}-kohde",
 	"minerva-page-actions-language-switcher": "Kielet",

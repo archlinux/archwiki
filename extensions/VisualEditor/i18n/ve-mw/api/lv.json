@@ -8,7 +8,6 @@
 	"apierror-visualeditor-difffailed": "Diff neizdevās",
 	"apierror-visualeditor-docserver-http-error": "Kļūda, savienojoties ar Parsoid/RESTBase serveri: $1",
 	"apierror-visualeditor-docserver-http": "Kļūda, savienojoties ar Parsoid/RESTBase serveri (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "Dokumentu serverim nav norādīts VirtualRESTService; skatīt https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Kļūda, savienojoties ar Parsoid/RESTBase serveri (nav atbildes)",
 	"apierror-visualeditor-latestnotfound": "Nevarēja atrast jaunāko versiju pēc nosaukuma",
 	"apihelp-visualeditor-description": "Atgriež HTML5 kodu lapai no Parsoid servisa.",

@@ -6,7 +6,8 @@
  */
 
 /**
- * MediaWiki transclusion dialog template page.
+ * Template dialog content pane header for a template.  Includes informational
+ * messages about the template, such as a link to the page where it's defined.
  *
  * @class
  * @extends OO.ui.PageLayout
@@ -19,8 +20,7 @@
  * @cfg {boolean} [isReadOnly] Page is read-only
  */
 ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
-	var link = template.getTemplateDataQueryTitle(),
-		veConfig = mw.config.get( 'wgVisualEditorConfig' );
+	var link = template.getTemplateDataQueryTitle();
 
 	// Configuration initialization
 	config = ve.extendObject( {
@@ -55,19 +55,10 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 		messageStyle = 've-ui-mwTemplatePage-description-missing',
 		$addMessageHere = this.$description;
 	if ( this.spec.getDescription() ) {
-		key = !veConfig.transclusionDialogNewSidebar ?
-			'visualeditor-dialog-transclusion-more-template-description' :
-			'visualeditor-dialog-transclusion-see-template';
+		key = 'visualeditor-dialog-transclusion-see-template';
 		messageStyle = 've-ui-mwTemplatePage-description-extra';
 		$addMessageHere = $( '<span>' );
 		this.$description.append( $( '<hr>' ), $addMessageHere );
-	} else if ( !veConfig.transclusionDialogNewSidebar ) {
-		if ( knownAsMissing ) {
-			key = 'visualeditor-dialog-transclusion-absent-template';
-		} else if ( link ) {
-			key = 'visualeditor-dialog-transclusion-no-template-description';
-		}
-		// Note this leaves dynamic template names like {{ {{foo}} }} without a message.
 	} else if ( !link || knownAsMissing ) {
 		var title;
 		try {
@@ -84,8 +75,6 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 
 	if ( key ) {
 		// The following messages are used here:
-		// * visualeditor-dialog-transclusion-absent-template
-		// * visualeditor-dialog-transclusion-more-template-description
 		// * visualeditor-dialog-transclusion-no-template-description
 		// * visualeditor-dialog-transclusion-see-template
 		// * visualeditor-dialog-transclusion-template-title-modifier
@@ -106,15 +95,12 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	this.infoFieldset.$element
 		.append( this.$description );
 
-	if ( veConfig.transclusionDialogNewSidebar && !knownAsMissing ) {
+	if ( !knownAsMissing ) {
 		var noticeWidget;
 
-		if ( !this.template.getSpec().getDocumentedParameterOrder().length ) {
-			noticeWidget = new OO.ui.MessageWidget( {
-				label: mw.message( 'visualeditor-dialog-transclusion-no-parameters-description' ).parseDom(),
-				classes: [ 've-ui-mwTransclusionDialog-template-note' ]
-			} );
-		} else if ( !this.template.getSpec().isDocumented() ) {
+		if ( this.template.getSpec().getDocumentedParameterOrder().length &&
+			!this.template.getSpec().isDocumented()
+		) {
 			noticeWidget = new OO.ui.MessageWidget( {
 				label: mw.message( 'visualeditor-dialog-transclusion-no-template-data-description', link ).parseDom(),
 				classes: [ 've-ui-mwTransclusionDialog-template-note' ],
@@ -131,39 +117,6 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	this.$element
 		.addClass( 've-ui-mwTemplatePage' )
 		.append( this.infoFieldset.$element );
-
-	if ( !config.isReadOnly ) {
-		if ( !veConfig.transclusionDialogBackButton &&
-			!veConfig.transclusionDialogNewSidebar
-		) {
-			var removeButton = new OO.ui.ButtonWidget( {
-				framed: false,
-				icon: 'trash',
-				title: ve.msg( 'visualeditor-dialog-transclusion-remove-template' ),
-				flags: [ 'destructive' ],
-				classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
-			} )
-				.connect( this, { click: 'onRemoveButtonClick' } );
-			removeButton.$element.appendTo( this.$element );
-		}
-
-		if ( !veConfig.transclusionDialogNewSidebar ) {
-			// This button is only shown as a last resort when this …TemplatePage is neither followed by
-			// a …ParameterPage (i.e. the template doesn't have parameters) nor a
-			// …ParameterPlaceholderPage (i.e. the parameter search widget isn't shown). This state
-			// should be unreachable, but isn't. Hiding this is done via CSS.
-			var addButton = new OO.ui.ButtonWidget( {
-				framed: false,
-				icon: 'parameter',
-				label: ve.msg( 'visualeditor-dialog-transclusion-add-param' )
-			} )
-				.connect( this, { click: 'addPlaceholderParameter' } );
-			$( '<div>' )
-				.addClass( 've-ui-mwTemplatePage-more' )
-				.append( addButton.$element )
-				.appendTo( this.$element );
-		}
-	}
 };
 
 /* Inheritance */
@@ -171,24 +124,6 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 OO.inheritClass( ve.ui.MWTemplatePage, OO.ui.PageLayout );
 
 /* Methods */
-
-/**
- * @inheritdoc
- */
-ve.ui.MWTemplatePage.prototype.setupOutlineItem = function () {
-	this.outlineItem
-		.setIcon( 'puzzle' )
-		.setMovable( true )
-		.setRemovable( true )
-		.setLabel( this.spec.getLabel() );
-};
-
-/**
- * @private
- */
-ve.ui.MWTemplatePage.prototype.onRemoveButtonClick = function () {
-	this.template.remove();
-};
 
 ve.ui.MWTemplatePage.prototype.addPlaceholderParameter = function () {
 	this.template.addParameter( new ve.dm.MWParameterModel( this.template ) );

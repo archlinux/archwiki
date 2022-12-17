@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Html2Wt;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
@@ -198,8 +199,7 @@ class DOMDiff {
 			// Did not find a diff yet, so the trees must be equal.
 			return true;
 		}
-		PHPUtils::unreachable( 'we shouldn\'t get here' );
-		return false;
+		throw new UnreachableException( 'we shouldn\'t get here' );
 	}
 
 	/**
@@ -445,7 +445,7 @@ class DOMDiff {
 					);
 				}
 				$meta = DiffUtils::prependTypedMeta( $node, 'mw:DiffMarker/' . $mark );
-			} elseif ( array_search( $node->nodeType, $ignoreableNodeTypes, true ) === false ) {
+			} elseif ( !in_array( $node->nodeType, $ignoreableNodeTypes, true ) ) {
 				$this->env->log( 'error/domdiff', 'Unhandled node type', $node->nodeType, 'in markNode!' );
 			}
 		}

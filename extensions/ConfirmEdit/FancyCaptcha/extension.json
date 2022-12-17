@@ -51,7 +51,7 @@
 		"localBasePath": "resources",
 		"remoteExtPath": "ConfirmEdit/FancyCaptcha/resources"
 	},
-	"callback": "ConfirmEditHooks::onFancyCaptchaSetup",
+	"callback": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::onFancyCaptchaSetup",
 	"config": {
 		"CaptchaClass": {
 			"value": "FancyCaptcha"

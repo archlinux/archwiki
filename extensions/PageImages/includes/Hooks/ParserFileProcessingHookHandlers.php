@@ -7,6 +7,9 @@ use Exception;
 use File;
 use FormatMetadata;
 use Http;
+use MediaWiki\Hook\ParserAfterTidyHook;
+use MediaWiki\Hook\ParserModifyImageHTML;
+use MediaWiki\Hook\ParserTestGlobalsHook;
 use MediaWiki\MediaWikiServices;
 use PageImages\PageImageCandidate;
 use PageImages\PageImages;
@@ -32,7 +35,11 @@ use Title;
  * @author Max Semenik
  * @author Thiemo Kreuz
  */
-class ParserFileProcessingHookHandlers {
+class ParserFileProcessingHookHandlers implements
+	ParserAfterTidyHook,
+	ParserModifyImageHTML,
+	ParserTestGlobalsHook
+{
 	private const CANDIDATE_REGEX = '/<!--MW-PAGEIMAGES-CANDIDATE-([0-9]+)-->/';
 
 	/**
@@ -44,11 +51,11 @@ class ParserFileProcessingHookHandlers {
 	 * @param array $params
 	 * @param string &$html
 	 */
-	public static function onParserModifyImageHTML(
+	public function onParserModifyImageHTML(
 		Parser $parser,
 		File $file,
 		array $params,
-		&$html
+		string &$html
 	): void {
 		$handler = new self();
 		$handler->doParserModifyImageHTML( $parser, $file, $params, $html );
@@ -61,7 +68,7 @@ class ParserFileProcessingHookHandlers {
 	 * @param Parser $parser
 	 * @param string &$text
 	 */
-	public static function onParserAfterTidy( Parser $parser, &$text ) {
+	public function onParserAfterTidy( $parser, &$text ) {
 		$handler = new self();
 		$handler->doParserAfterTidy( $parser, $text );
 	}
@@ -69,7 +76,7 @@ class ParserFileProcessingHookHandlers {
 	/**
 	 * @param array &$globals
 	 */
-	public static function onParserTestGlobals( &$globals ) {
+	public function onParserTestGlobals( &$globals ) {
 		$globals += [
 			'wgPageImagesScores' => [
 				'width' => [

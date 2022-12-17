@@ -6,7 +6,11 @@
 			"Joseph"
 		]
 	},
+	"mobile-frontend-history": "Пу страницазының тӱзедіглерінің тархынын кӧрерге.",
 	"mobile-frontend-home-button": "Пас",
 	"mobile-frontend-language-article-heading": "Тіл",
-	"mobile-frontend-placeholder": "Тілирге {{SITENAME}}"
+	"mobile-frontend-main-menu-login": "Кірерге",
+	"mobile-frontend-main-menu-settings": "Настройкалар",
+	"mobile-frontend-placeholder": "Тілирге {{SITENAME}}",
+	"mobile-frontend-random-button": "Рандом"
 }

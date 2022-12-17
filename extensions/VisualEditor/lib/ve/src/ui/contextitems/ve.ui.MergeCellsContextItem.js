@@ -18,6 +18,14 @@ ve.ui.MergeCellsContextItem = function VeUiMergeCellsContextItem( context, model
 	// Parent constructor
 	ve.ui.MergeCellsContextItem.super.call( this, context, model, config );
 
+	if ( this.context.isMobile() ) {
+		// Use desktop-style label-only button, as otherwise the "edit" button
+		// gets collapsed to just the edit icon.
+		this.editButton
+			.setIcon( null )
+			.setInvisibleLabel( false );
+	}
+
 	// Initialization
 	this.$element.addClass( 've-ui-mergeCellsContextItem' );
 };
@@ -36,8 +44,6 @@ ve.ui.MergeCellsContextItem.static.label = OO.ui.deferMsg( 'visualeditor-table-m
 
 ve.ui.MergeCellsContextItem.static.commandName = 'mergeCells';
 
-ve.ui.MergeCellsContextItem.static.deletable = false;
-
 ve.ui.MergeCellsContextItem.static.embeddable = false;
 
 /* Methods */
@@ -53,6 +59,9 @@ ve.ui.MergeCellsContextItem.static.isCompatibleWith = function ( model ) {
  * @inheritdoc
  */
 ve.ui.MergeCellsContextItem.prototype.setup = function () {
+	// Parent method
+	ve.ui.MergeCellsContextItem.super.prototype.setup.apply( this, arguments );
+
 	// If not disabled, selection must be table and spanning multiple matrix cells
 	var selection = this.getFragment().getSurface().getSelection(),
 		documentModel = this.getFragment().getDocument(),

@@ -13,7 +13,8 @@
 			"Shinjiman",
 			"Simon Shek",
 			"Wehwei",
-			"Xiplus"
+			"Xiplus",
+			"Lakejason0"
 		]
 	},
 	"categorytree": "分類樹",
@@ -31,9 +32,9 @@
 	"categorytree-collapse": "摺疊",
 	"categorytree-expand": "展開",
 	"categorytree-member-counts": "包含 $1 個子分類、$2 個頁面和 $3 個檔案",
-	"categorytree-num-categories": "$1 分類",
-	"categorytree-num-pages": "$1 頁面",
-	"categorytree-num-files": "$1 檔案",
+	"categorytree-num-categories": "$1 個分類",
+	"categorytree-num-pages": "$1 個頁面",
+	"categorytree-num-files": "$1 個檔案",
 	"categorytree-num-empty": "空的",
 	"categorytree-load": "載入",
 	"categorytree-loading": "載入中…",

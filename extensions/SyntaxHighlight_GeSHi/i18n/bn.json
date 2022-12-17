@@ -6,14 +6,15 @@
 			"Sayma Jahan",
 			"Yahya",
 			"Zaheen",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"McDutchie"
 		]
 	},
 	"syntaxhighlight-desc": "[http://pygments.org/ Pygments - পাইথন সিনট্যাক্স হাইলাইটার] ব্যবহার করে <code>&lt;syntaxhighlight&gt;</code> সিনট্যাক্স আলোকপাতের ক্ষমতা দেয়",
 	"syntaxhighlight-error-category": "সিনট্যাক্স আলোকপাতকরণ ত্রুটিসহ পাতা",
 	"syntaxhighlight-error-category-desc": "অন্তর্ভুক্ত পাতায় কোড আলোকপাত করার চেষ্টা করার সময় একটি ত্রুটি হয়েছিল।",
-	"syntaxhighlight-enclose-category": "অপ্রচলিত এনক্লোজ অ্যাট্রিবিউট ব্যবহার করা পাতা",
-	"syntaxhighlight-enclose-category-desc": "অবচিত এনক্লোজ সিনট্যাক্স ব্যবহার করে এমন সিনট্যাক্স আলোকপাতকারী পাতা।",
+	"syntaxhighlight-enclose-category": "অপ্রচলিত enclose অ্যাট্রিবিউট ব্যবহার করা পাতা",
+	"syntaxhighlight-enclose-category-desc": "অবচিত enclose সিনট্যাক্স ব্যবহার করে এমন সিনট্যাক্স আলোকপাতকারী পাতা।",
 	"syntaxhighlight-source-category": "অপ্রচলিত উৎস ট্যাগ ব্যবহার করা পাতা",
 	"syntaxhighlight-source-category-desc": "অবচিত উৎস ট্যাগ ব্যবহার করে এমন পাতায় সিনট্যাক্স আলোকপাতকরণ।",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "কোড",

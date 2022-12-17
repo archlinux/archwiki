@@ -1,6 +1,11 @@
 <?php
 
-class Scribunto_LuaSandboxCallback {
+namespace MediaWiki\Extension\Scribunto\Engines\LuaSandbox;
+
+use LuaSandboxRuntimeError;
+use Scribunto_LuaError;
+
+class LuaSandboxCallback {
 
 	/**
 	 * @var callable

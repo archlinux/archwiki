@@ -6,7 +6,8 @@
 			"Kareyac",
 			"Pandukht",
 			"Xelgen",
-			"Սահակ"
+			"Սահակ",
+			"Սերգեյ Սաֆարյան"
 		]
 	},
 	"mobile-frontend-cookies-required": "Դիտման ռեժիմը փոխելու համար անհրաժեշտ է ակտիվացնել թխուկները (քուքիները)։ Խնդրում ենք միացնել դրանք։",
@@ -14,6 +15,7 @@
 	"minerva-download": "Ներբեռնել",
 	"mobile-frontend-home-button": "Տուն",
 	"mobile-frontend-language-article-heading": "Կարդալ այլ լեզվով",
+	"mobile-frontend-languages-not-available": "Այս էջն այլ լեզուներով մատչելի չէ։",
 	"mobile-frontend-main-menu-button-tooltip": "Բացել գլխավոր ցանկը",
 	"mobile-frontend-main-menu-contributions": "Ներդրում",
 	"mobile-frontend-main-menu-login": "Մուտք գործել",
@@ -28,6 +30,7 @@
 	"mobile-frontend-user-page-contributions": "Ներդրում",
 	"minerva-page-actions-overflow": "Ավելին",
 	"minerva-page-actions-delete": "Ջնջել",
+	"minerva-page-actions-language-switcher": "Լեզուներ",
 	"minerva-page-actions-history": "Պատմություն",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Կատեգորիաներ"
 }

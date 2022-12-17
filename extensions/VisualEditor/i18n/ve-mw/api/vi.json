@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Anh88",
-			"Minh Nguyen",
-			"Bluetpp"
+			"Bluetpp",
+			"Minh Nguyen"
 		]
 	},
 	"apihelp-visualeditor-description": "Trả về mã HTML5 cho một trang từ dịch vụ Parsoid.",

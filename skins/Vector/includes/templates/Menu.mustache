@@ -1,27 +1,47 @@
 {{!
 	See @typedef MenuDefinition
 }}
-{{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
-<nav id="{{id}}"{{#class}} class="{{.}}"{{/class}} aria-labelledby="{{id}}-label" role="navigation" {{{html-tooltip}}}
-	 {{{html-user-language-attributes}}}>
+
+<div id="{{id}}" class="vector-menu{{#class}} {{.}}{{/class}}" {{{html-tooltip}}} {{{html-user-language-attributes}}}>
+	{{!
+		Dropdown menus use the checkbox hack and require `input` and `label` elements.
+		`aria-label` is applied to the `input` which is semantically a button.
+		The `label` element is used as a visual button.
+	}}
 	{{#is-dropdown}}
 	<input type="checkbox"
 		id="{{id}}-checkbox"
 		role="button"
 		aria-haspopup="true"
 		data-event-name="ui.dropdown-{{id}}"
-		class="{{#checkbox-class}}{{.}} {{/checkbox-class}}vector-menu-checkbox" aria-labelledby="{{id}}-label" />
-	{{/is-dropdown}}
-	<label id="{{id}}-label" aria-label="{{aria-label}}"{{#heading-class}} class="{{.}}"{{/heading-class}}{{^is-legacy}} aria-hidden="true"{{/is-legacy}}>
+		class="vector-menu-checkbox{{#checkbox-class}} {{.}}{{/checkbox-class}}"
+		{{#aria-label}}aria-label="{{.}}"{{/aria-label}}
+		{{{html-vector-menu-checkbox-attributes}}}
+	/>
+	<label
+		id="{{id}}-label"
+		for="{{id}}-checkbox"
+		class="vector-menu-heading{{#heading-class}} {{.}}{{/heading-class}}"
+		{{{html-vector-menu-heading-attributes}}}
+	>
 		{{{html-vector-heading-icon}}}<span class="vector-menu-heading-label">{{label}}</span>
-		{{#is-dropdown}}
-			<span class="vector-menu-checkbox-expanded">{{msg-vector-menu-checkbox-expanded}}</span>
-			<span class="vector-menu-checkbox-collapsed">{{msg-vector-menu-checkbox-collapsed}}</span>
-		{{/is-dropdown}}
 	</label>
+	{{/is-dropdown}}
+	{{!
+		Portal menus also require a label
+	}}
+	{{#is-portal}}
+	<div
+		id="{{id}}-label"
+		class="vector-menu-heading{{#heading-class}} {{.}}{{/heading-class}}"
+		{{#aria-label}}aria-label="{{.}}"{{/aria-label}}
+	>
+		{{{html-vector-heading-icon}}}<span class="vector-menu-heading-label">{{label}}</span>
+	</div>
+	{{/is-portal}}
 	<div class="vector-menu-content">
 		{{{html-before-portal}}}
 		<ul class="vector-menu-content-list">{{{html-items}}}</ul>
 		{{{html-after-portal}}}
 	</div>
-</nav>
+</div>

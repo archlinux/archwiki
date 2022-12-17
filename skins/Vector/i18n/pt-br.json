@@ -4,6 +4,7 @@
 			"!Silent",
 			"Cainamarques",
 			"Diego Queiroz",
+			"Duke of Wikipädia",
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
@@ -13,9 +14,8 @@
 			"Jaideraf",
 			"Luan",
 			"Opraco",
-			555,
 			"YuriNikolai",
-			"Duke of Wikipädia"
+			555
 		]
 	},
 	"skinname-vector": "Vector",
@@ -47,13 +47,15 @@
 	"vector-jumptocontent": "Ir para o conteúdo",
 	"vector-more-actions": "Mais",
 	"vector-search-loader": "Carregando sugestões de pesquisa",
-	"vector-searchsuggest-containing": "Procurar pelas páginas contendo <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Procurar pelas páginas contendo <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
+	"vector-toc-heading": "Conteúdo",
+	"vector-toc-toggle-position-title": "Esconder",
+	"vector-toc-beginning": "Início",
 	"vector-anon-user-menu-pages": "Páginas para editores conectados",
 	"vector-anon-user-menu-pages-learn": "saiba mais",
 	"vector-anon-user-menu-pages-label": "Saiba mais sobre edição",
-	"vector-personal-more-label": "Links do usuário",
 	"vector-main-menu-tooltip": "Menu principal",
-	"tooltip-vector-anon-user-menu-title": "Mais opções",
-	"vector-menu-checkbox-expanded": "expandido"
+	"vector-article-tools-nav-label": "Ferramentas",
+	"tooltip-vector-anon-user-menu-title": "Mais opções"
 }

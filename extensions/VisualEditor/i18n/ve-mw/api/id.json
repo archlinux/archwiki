@@ -10,7 +10,6 @@
 	"apierror-visualeditor-difffailed": "Beda gagal",
 	"apierror-visualeditor-docserver-http-error": "Galat menghubungi peladen Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-http": "Galat menghubungi peladen Parsoid/RESTBase (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService untuk peladen dokumen tidak ditentukan; lihat https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Galat menghubungi peladen Parsoid/RESTBase (tak ada tanggapan)",
 	"apierror-visualeditor-latestnotfound": "Tidak dapat menemukan revisi terkini untuk judul tersebut",
 	"apihelp-visualeditor-description": "Mengembalikan HTML5 untuk halaman yang berasal dari layanan parsoid.",

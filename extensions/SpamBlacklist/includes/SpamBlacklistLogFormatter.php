@@ -1,5 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\SpamBlacklist;
+
+use LogFormatter;
+use Message;
+
 class SpamBlacklistLogFormatter extends LogFormatter {
 	/**
 	 * @return array

@@ -235,7 +235,7 @@ ve.ui.MWSettingsPage.prototype.checkValidRedirect = function () {
 			 * my idea is to in the parse method instead of a boolean return a string with an error message (not an error code since the error string can have parameters),
 			 * then in Title.newFromText instead of returning null, return the error string. Use that string there in setErrors.
 			 * Problem: some methods might depend on it returning null.
-			 * Solution: either make it a new metohd (Title.newFromTextThrow), or add a an optional parameter to return the error message.
+			 * Solution: either make it a new method (Title.newFromTextThrow), or add a an optional parameter to return the error message.
 			 */
 			this.redirectTargetField.setErrors( [ mw.msg( 'visualeditor-title-error' ) ] );
 			return false;

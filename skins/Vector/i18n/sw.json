@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Edwingudfriend",
+			"Hussein m mmbaga",
 			"Kipala",
 			"Lloffiwr",
 			"Muddyb",
 			"Muddyb Blast Producer",
-			"Yasen igra",
-			"Amire80",
-			"Hussein m mmbaga"
+			"Yasen igra"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 lugha}}",
@@ -24,5 +24,6 @@
 	"vector-view-view": "Soma",
 	"vector-view-viewsource": "Tazama msimbo",
 	"vector-jumptocontent": "Rukia yaliyomo",
-	"vector-more-actions": "Zaidi"
+	"vector-more-actions": "Zaidi",
+	"vector-searchsuggest-containing": "Tafuta kurasa zilizo na <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bluehill",
 			"IRTC1015",
 			"Klutzy",
 			"Kwj2772",
@@ -8,8 +9,7 @@
 			"Revi",
 			"ToePeu",
 			"Ykhwong",
-			"아라",
-			"Bluehill"
+			"아라"
 		]
 	},
 	"captcha-edit": "글을 편집하려면 아래의 문제를 해결한 다음 상자에 정답을 입력해 주세요 ([[Special:Captcha/help|자세한 정보]]):",

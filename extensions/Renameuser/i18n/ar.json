@@ -32,6 +32,7 @@
 	"renameuser-page-exists": "الصفحة $1 موجودة بالفعل ولا يمكن إنشاء أخرى مكانها أوتوماتيكيا.",
 	"renameuser-page-moved": "تم نقل الصفحة $1 إلى $2.",
 	"renameuser-page-unmoved": "لم يتمكن من نقل الصفحة $1 إلى $2.",
+	"renameuser-warning-currentblock": "هذا المستخدم [ $1 محظور حاليًا].",
 	"log-name-renameuser": "سجل إعادة تسمية المستخدمين",
 	"log-description-renameuser": "هذا سجل بالتغييرات في أسماء المستخدمين.",
 	"logentry-renameuser-renameuser": "{{GENDER:$2|غيّر|غيّرت}} $1 اسم $4 ({{PLURAL:$6|تعديل واحد|تعديلان|$6 تعديلات|$6 تعديلاً|$6 تعديل}}) إلى {{GENDER:$7|$5}}",

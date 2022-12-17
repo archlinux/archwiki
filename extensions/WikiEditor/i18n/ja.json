@@ -8,6 +8,7 @@
 			"Hosiryuhosi",
 			"Linuxmetel",
 			"Macofe",
+			"MathXplore",
 			"Ohgi",
 			"Omotecho",
 			"Otokoume",
@@ -18,11 +19,10 @@
 			"Sujiniku",
 			"Tmv",
 			"Whym",
+			"Yamagata Yusuke",
 			"おはぐろ蜻蛉",
 			"ひまり",
-			"青子守歌",
-			"MathXplore",
-			"Yamagata Yusuke"
+			"青子守歌"
 		]
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
@@ -56,7 +56,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "このページは {{SITENAME}} に存在しません",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "指定したページ名は無効です。",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "外部リンク",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "ページの存在を確認中...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "このページは内容のあるページではありませんが、似た名前の題目の一覧です。",
 	"wikieditor-toolbar-tool-link-int-invalid": "指定したページ名は無効です。",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "指定した URL は別のウィキページへのリンクのようです。\nこれを内部リンクにしますか?",
@@ -212,5 +211,10 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "通常の文章<br />:インデントされた文章<br />::インデントされた文章",
 	"wikieditor-toolbar-help-content-indent-result": "通常の文章<dl><dd>インデントされた文章<dl><dd>インデントされた文章</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010年版ウィキテキストエディター)を使用した編集",
-	"wikieditor-realtimepreview-preview": "プレビュー"
+	"wikieditor-realtimepreview-preview": "プレビュー",
+	"wikieditor-realtimepreview-reload": "再読み込み",
+	"wikieditor-realtimepreview-beta-label": "リアルタイムのプレビュー",
+	"wikieditor-realtimepreview-manual": "編集を手動でプレビューするには今リロードしてください。",
+	"wikieditor-realtimepreview-onboarding-title": "リアルタイムのプレビュー",
+	"wikieditor-realtimepreview-onboarding-button": "わかりました"
 }

@@ -69,8 +69,6 @@ OO.inheritClass( ve.dm.MWTemplateModel, ve.dm.MWTransclusionPartModel );
 /* Static Methods */
 
 /**
- * Create from data.
- *
  * Data is in the format provided by Parsoid.
  *
  * @param {ve.dm.MWTransclusionModel} transclusion Transclusion template is in
@@ -93,8 +91,6 @@ ve.dm.MWTemplateModel.newFromData = function ( transclusion, data ) {
 };
 
 /**
- * Create from name.
- *
  * Name is equivalent to what would be entered between double brackets, defaulting to the Template
  * namespace, using a leading colon to access other namespaces.
  *
@@ -213,19 +209,30 @@ ve.dm.MWTemplateModel.prototype.getOriginalParameterName = function ( name ) {
  * @return {string[]}
  */
 ve.dm.MWTemplateModel.prototype.getAllParametersOrdered = function () {
-	var spec = this.spec,
-		parameters = spec.getCanonicalParameterOrder();
+	var primaryName,
+		spec = this.spec,
+		usedAliases = {};
+
+	for ( var alias in this.params ) {
+		if ( spec.isParameterAlias( alias ) ) {
+			primaryName = spec.getPrimaryParameterName( alias );
+			if ( !usedAliases[ primaryName ] ) {
+				// Skip primary name when it's not used, otherwise move it to the front
+				usedAliases[ primaryName ] = primaryName in this.params ? [ primaryName ] : [];
+			}
+			// Append aliases in their original order (not documented order)
+			usedAliases[ primaryName ].push( alias );
+		}
+	}
+
+	var parameters = spec.getCanonicalParameterOrder();
 
 	// Restore aliases originally used in the wikitext. The spec doesn't know which alias was used.
-	for ( var name in this.params ) {
-		if ( spec.isParameterAlias( name ) ) {
-			parameters.splice(
-				// This can never fail because only documented parameters can have aliases
-				parameters.indexOf( spec.getPrimaryParameterName( name ) ),
-				1,
-				name
-			);
-		}
+	for ( primaryName in usedAliases ) {
+		var i = parameters.indexOf( primaryName );
+		// TODO: parameters.splice( i, 1, ...usedAliases[ primaryName ] ) when we can use ES6
+		parameters = parameters.slice( 0, i ).concat( usedAliases[ primaryName ],
+			parameters.slice( i + 1 ) );
 	}
 
 	// Restore the placeholder, if present. The spec doesn't keep track of placeholders.
@@ -257,25 +264,6 @@ ve.dm.MWTemplateModel.prototype.getOrderedParameterNames = function () {
 };
 
 /**
- * Get parameter from its ID.
- *
- * @private
- * @param {string} id Parameter ID
- * @return {ve.dm.MWParameterModel|null} Parameter with matching ID, null if no parameters match
- */
-ve.dm.MWTemplateModel.prototype.getParameterFromId = function ( id ) {
-	for ( var name in this.params ) {
-		if ( this.params[ name ].getId() === id ) {
-			return this.params[ name ];
-		}
-	}
-
-	return null;
-};
-
-/**
- * Add a parameter to template.
- *
  * @param {ve.dm.MWParameterModel} param Parameter to add
  * @fires add
  * @fires change
@@ -315,11 +303,10 @@ ve.dm.MWTemplateModel.prototype.removeParameter = function ( param ) {
 };
 
 /**
- * @inheritdoc
+ * Add all non-existing required and suggested parameters, if any.
  */
 ve.dm.MWTemplateModel.prototype.addPromptedParameters = function () {
-	var addedCount = 0,
-		params = this.params,
+	var params = this.params,
 		spec = this.spec,
 		names = spec.getKnownParameterNames();
 
@@ -337,11 +324,8 @@ ve.dm.MWTemplateModel.prototype.addPromptedParameters = function () {
 			)
 		) {
 			this.addParameter( new ve.dm.MWParameterModel( this, names[ i ] ) );
-			addedCount++;
 		}
 	}
-
-	return addedCount;
 };
 
 /**

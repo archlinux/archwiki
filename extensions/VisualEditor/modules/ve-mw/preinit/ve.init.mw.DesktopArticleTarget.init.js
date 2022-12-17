@@ -38,7 +38,11 @@
 		targetLoaded = false,
 		plugins = [],
 		welcomeDialogDisabled = false,
-		educationPopupsDisabled = false;
+		educationPopupsDisabled = false,
+		$targetContainer = $(
+			document.querySelector( '[data-mw-ve-target-container]' ) ||
+			document.getElementById( 'content' )
+		);
 
 	function showLoading( /* mode */ ) {
 		if ( isLoading ) {
@@ -82,7 +86,7 @@
 		var scrollTop = $( document.documentElement ).scrollTop();
 		var floating = scrollTop > contentTop;
 		if ( floating !== wasFloating ) {
-			var width = $( '#content' ).outerWidth();
+			var width = $targetContainer.outerWidth();
 			$toolbarPlaceholder.toggleClass( 've-init-mw-desktopArticleTarget-toolbarPlaceholder-floating', floating );
 			$toolbarPlaceholderBar.css( 'width', width );
 			wasFloating = floating;
@@ -100,13 +104,13 @@
 			$toolbarPlaceholder.append( $toolbarPlaceholderBar );
 		}
 		// Toggle -floating class before append (if required) to avoid content moving later
-		contentTop = $( '#content' ).offset().top;
+		contentTop = $targetContainer.offset().top;
 		wasFloating = null;
 		onWindowScroll();
 
 		var scrollTopBefore = $( document.documentElement ).scrollTop();
 
-		$( '#content' ).prepend( $toolbarPlaceholder );
+		$targetContainer.prepend( $toolbarPlaceholder );
 
 		// TODO: Would be better with ve.addPassiveEventListener
 		$( window ).on( 'scroll', onWindowScrollListener );
@@ -194,9 +198,10 @@
 	function abortLoading() {
 		$( 'html' ).removeClass( 've-activated' );
 		active = false;
+		updateTabs( false );
 		// Push read tab URL to history
 		if ( history.pushState && $( '#ca-view a' ).length ) {
-			history.pushState( { tag: 'visualeditor' }, document.title, new mw.Uri( $( '#ca-view a' ).attr( 'href' ) ) );
+			history.pushState( { tag: 'visualeditor' }, '', new mw.Uri( $( '#ca-view a' ).attr( 'href' ) ) );
 		}
 		clearLoading();
 	}
@@ -273,6 +278,7 @@
 					);
 					target.on( 'deactivate', function () {
 						active = false;
+						updateTabs( false );
 					} );
 					target.on( 'reactivate', function () {
 						try {
@@ -287,7 +293,7 @@
 							parseSection( uri.query.section )
 						);
 					} );
-					target.setContainer( $( '#content' ) );
+					target.setContainer( $targetContainer );
 					targetLoaded = true;
 					return target;
 				}, function ( e ) {
@@ -302,7 +308,15 @@
 		return targetPromise;
 	}
 
-	function trackActivateStart( initData ) {
+	function trackActivateStart( initData, link ) {
+		if ( link ) {
+			link = new mw.Uri( $( link ).closest( 'a' ).attr( 'href' ) );
+		} else {
+			link = uri;
+		}
+		if ( link && link.query.wvprov === 'sticky-header' ) {
+			initData.mechanism += '-sticky-header';
+		}
 		ve.track( 'trace.activate.enter', { mode: initData.mode } );
 		// ve.track normally tries to guess the current platform based on
 		// ve.init.target. We're in a pre-target-loaded state, so have it
@@ -323,7 +337,7 @@
 			// * vector-view-create
 			// * messages for other skins
 			if ( !mw.message( tabMsgKey ).exists() ) {
-				tabMsgKey = key;
+				tabMsgKey = 'skin-view-' + key;
 			}
 		}
 		return mw.msg( tabMsgKey );
@@ -384,6 +398,43 @@
 			} );
 		}
 		return $.Deferred().resolve().promise();
+	}
+
+	/**
+	 * Update state of editing tabs
+	 *
+	 * @param {boolean} editing Whether the editor is loaded
+	 * @param {string} [mode='visual'] Edit mode ('visual' or 'source')
+	 * @param {boolean} [isNewSection] Adding a new section
+	 */
+	function updateTabs( editing, mode, isNewSection ) {
+		var $tab;
+
+		if ( editing ) {
+			if ( isNewSection ) {
+				$tab = $( '#ca-addsection' );
+			} else if ( $( '#ca-ve-edit' ).length ) {
+				if ( !mode || mode === 'visual' ) {
+					$tab = $( '#ca-ve-edit' );
+				} else {
+					$tab = $( '#ca-edit' );
+				}
+			} else {
+				// Single edit tab
+				$tab = $( '#ca-edit' );
+			}
+		} else {
+			$tab = $( '#ca-view' );
+		}
+
+		// Deselect current mode (e.g. "view" or "history") in skins that have
+		// separate tab sections for content actions and namespaces, like Vector.
+		$( '#p-views' ).find( 'li.selected' ).removeClass( 'selected' );
+		// In skins like MonoBook that don't have the separate tab sections,
+		// deselect the known tabs for editing modes (when switching or exiting editor).
+		$( '#ca-edit, #ca-ve-edit, #ca-addsection' ).not( $tab ).removeClass( 'selected' );
+
+		$tab.addClass( 'selected' );
 	}
 
 	/**
@@ -460,6 +511,8 @@
 	 */
 	function activateTarget( mode, section, tPromise, modified ) {
 		var dataPromise;
+
+		updateTabs( true, mode, section === 'new' );
 
 		// Only call requestPageData early if the target object isn't there yet.
 		// If the target object is there, this is a second or subsequent load, and the
@@ -548,15 +601,19 @@
 				if ( tempWikitextEditor ) {
 					syncTempWikitextEditor();
 				}
-				var activatePromise = target.activate( dataPromise );
 
-				// toolbarSetupDeferred resolves slightly before activatePromise, use done
-				// to run in the same paint cycle as the VE toolbar being drawn
-				target.toolbarSetupDeferred.done( function () {
-					hideToolbarPlaceholder();
+				var deactivating = target.deactivatingDeferred || $.Deferred().resolve();
+				return deactivating.then( function () {
+					var activatePromise = target.activate( dataPromise );
+
+					// toolbarSetupDeferred resolves slightly before activatePromise, use done
+					// to run in the same paint cycle as the VE toolbar being drawn
+					target.toolbarSetupDeferred.done( function () {
+						hideToolbarPlaceholder();
+					} );
+
+					return activatePromise;
 				} );
-
-				return activatePromise;
 			} )
 			.then( function () {
 				if ( mode === 'visual' ) {
@@ -574,8 +631,8 @@
 			.always( clearLoading );
 	}
 
-	function activatePageTarget( mode, section, modified ) {
-		trackActivateStart( { type: 'page', mechanism: mw.config.get( 'wgArticleId' ) ? 'click' : 'new', mode: mode } );
+	function activatePageTarget( mode, section, modified, link ) {
+		trackActivateStart( { type: 'page', mechanism: mw.config.get( 'wgArticleId' ) ? 'click' : 'new', mode: mode }, link );
 
 		if ( !active ) {
 			if ( uri.query.action !== 'edit' && !( uri.query.veaction in veactionToMode ) ) {
@@ -583,9 +640,9 @@
 					// Replace the current state with one that is tagged as ours, to prevent the
 					// back button from breaking when used to exit VE. FIXME: there should be a better
 					// way to do this. See also similar code in the DesktopArticleTarget constructor.
-					history.replaceState( { tag: 'visualeditor' }, document.title, uri );
-					// Set veaction to edit
-					history.pushState( { tag: 'visualeditor' }, document.title, mode === 'source' ? veEditSourceUri : veEditUri );
+					history.replaceState( { tag: 'visualeditor' }, '', uri );
+					// Set action=edit or veaction=edit/editsource
+					history.pushState( { tag: 'visualeditor' }, '', mode === 'source' ? veEditSourceUri : veEditUri );
 				}
 
 				// Update mw.Uri instance
@@ -613,6 +670,13 @@
 		return editor;
 	}
 
+	/**
+	 * Get the preferred editor for this edit page
+	 *
+	 * For the preferred *available* editor, use getAvailableEditPageEditor.
+	 *
+	 * @return {string} 'visualeditor' or 'wikitext'
+	 */
 	function getEditPageEditor() {
 		// This logic matches VisualEditorHooks::getEditPageEditor
 		// !!+ casts '0' to false
@@ -637,6 +701,28 @@
 			case 'remember-last':
 			default:
 				return getLastEditor();
+		}
+	}
+
+	/**
+	 * Get the preferred editor which is also available on this edit page
+	 *
+	 * @return {string} 'visual' or 'source'
+	 */
+	function getAvailableEditPageEditor() {
+		switch ( getEditPageEditor() ) {
+			case 'visualeditor':
+				if ( init.isVisualAvailable ) {
+					return 'visual';
+				}
+				if ( init.isWikitextAvailable ) {
+					return 'source';
+				}
+				return null;
+
+			case 'wikitext':
+			default:
+				return init.isWikitextAvailable ? 'source' : null;
 		}
 	}
 
@@ -690,6 +776,11 @@
 	var isViewPage = mw.config.get( 'wgIsArticle' ) && !( 'diff' in uri.query );
 	var isEditPage = mw.config.get( 'wgAction' ) === 'edit' || mw.config.get( 'wgAction' ) === 'submit';
 	var pageCanLoadEditor = isViewPage || isEditPage;
+	var pageIsProbablyEditable = mw.config.get( 'wgIsProbablyEditable' ) ||
+		mw.config.get( 'wgRelevantPageIsProbablyEditable' );
+	if ( pageCanLoadEditor ) {
+		$targetContainer.addClass( 've-init-mw-desktopArticleTarget-targetContainer' );
+	}
 
 	// Cast "0" (T89513)
 	var enable = !!+mw.user.options.get( 'visualeditor-enable' );
@@ -698,11 +789,11 @@
 	tabPreference = mw.user.options.get( 'visualeditor-tabs' );
 
 	function isOnlyTabVE() {
-		return conf.singleEditTab && getEditPageEditor() === 'visualeditor';
+		return conf.singleEditTab && getAvailableEditPageEditor() === 'visual';
 	}
 
 	function isOnlyTabWikitext() {
-		return conf.singleEditTab && getEditPageEditor() === 'wikitext';
+		return conf.singleEditTab && getAvailableEditPageEditor() === 'source';
 	}
 
 	init = {
@@ -836,14 +927,14 @@
 
 				// Alter the edit tab (#ca-edit)
 				if ( $( '#ca-view-foreign' ).length ) {
-					if ( tabMessages[ action + 'localdescriptionsource' ] !== null ) {
+					if ( tabMessages[ action + 'localdescriptionsource' ] ) {
 						// The following messages can be used here:
 						// * editlocaldescriptionsource
 						// * createlocaldescriptionsource
 						$caEditLink.text( mw.msg( tabMessages[ action + 'localdescriptionsource' ] ) );
 					}
 				} else {
-					if ( tabMessages[ action + 'source' ] !== null ) {
+					if ( tabMessages[ action + 'source' ] ) {
 						// The following messages can be used here:
 						// * editsource
 						// * createsource
@@ -1082,12 +1173,12 @@
 				if ( section !== null ) {
 					this.onEditSectionLinkClick( mode, e, section );
 				} else {
-					init.activateVe( mode );
+					init.activateVe( mode, e.target );
 				}
 			}
 		},
 
-		activateVe: function ( mode ) {
+		activateVe: function ( mode, link ) {
 			var wikitext = $( '#wpTextbox1' ).textSelection( 'getContents' ),
 				sectionVal = $( 'input[name=wpSection]' ).val(),
 				section = sectionVal !== '' && sectionVal !== undefined ? sectionVal : null,
@@ -1131,7 +1222,7 @@
 				} );
 			} else {
 				releaseOldEditWarning();
-				activatePageTarget( mode, section, modified );
+				activatePageTarget( mode, section, modified, link );
 			}
 		},
 
@@ -1163,24 +1254,29 @@
 				return;
 			}
 
-			trackActivateStart( { type: 'section', mechanism: section === 'new' ? 'new' : 'click', mode: mode } );
+			trackActivateStart( { type: 'section', mechanism: section === 'new' ? 'new' : 'click', mode: mode }, e.target );
 
-			if ( history.pushState && !( linkUri.query.veaction in veactionToMode ) ) {
-				// Replace the current state with one that is tagged as ours, to prevent the
-				// back button from breaking when used to exit VE. FIXME: there should be a better
-				// way to do this. See also similar code in the DesktopArticleTarget constructor.
-				history.replaceState( { tag: 'visualeditor' }, document.title, linkUri );
-				// Change the state to the href of the section link that was clicked. This saves
-				// us from having to figure out the section number again.
-				history.pushState( { tag: 'visualeditor' }, document.title, this.href );
-			}
+			if ( !active ) {
+				if ( uri.query.action !== 'edit' && !( uri.query.veaction in veactionToMode ) ) {
+					if ( history.pushState ) {
+						// Replace the current state with one that is tagged as ours, to prevent the
+						// back button from breaking when used to exit VE. FIXME: there should be a better
+						// way to do this. See also similar code in the DesktopArticleTarget constructor.
+						history.replaceState( { tag: 'visualeditor' }, '', uri );
+						// Use linkUri
+						history.pushState( { tag: 'visualeditor' }, '', linkUri );
+					}
+				}
+				// Update mw.Uri instance
+				uri = linkUri;
 
-			// Use section from URL
-			if ( section === undefined ) {
-				section = parseSection( linkUri.query.section );
+				// Use section from URL
+				if ( section === undefined ) {
+					section = parseSection( linkUri.query.section );
+				}
+				var tPromise = getTarget( mode, section );
+				activateTarget( mode, section, tPromise, e.target );
 			}
-			var tPromise = getTarget( mode, section );
-			activateTarget( mode, section, tPromise );
 		},
 
 		/**
@@ -1352,6 +1448,8 @@
 	// FIXME: We should do this more elegantly
 	init.setEditorPreference = setEditorPreference;
 
+	init.updateTabs = updateTabs;
+
 	// Note: Though VisualEditor itself only needs this exposure for a very small reason
 	// (namely to access init.unsupportedList from the unit tests...) this has become one of the nicest
 	// ways to easily detect whether the VisualEditor initialisation code is present.
@@ -1378,6 +1476,12 @@
 		} );
 	}
 
+	/**
+	 * Get the edit mode for the given URI
+	 *
+	 * @param {mw.Uri} editUri Edit URI
+	 * @return {string} 'visual' or 'source'
+	 */
 	function getEditModeFromUri( editUri ) {
 		if ( mw.config.get( 'wgDiscussionToolsStartNewTopicTool' ) ) {
 			// Avoid conflicts with DiscussionTools
@@ -1398,19 +1502,7 @@
 			if ( !enabledForUser || $( '#ca-viewsource' ).length || mw.config.get( 'wgAction' ) === 'submit' ) {
 				return null;
 			}
-			switch ( getEditPageEditor() ) {
-				case 'visualeditor':
-					if ( init.isVisualAvailable ) {
-						return 'visual';
-					}
-					if ( init.isWikitextAvailable ) {
-						return 'source';
-					}
-					return null;
-
-				case 'wikitext':
-					return init.isWikitextAvailable ? 'source' : null;
-			}
+			return getAvailableEditPageEditor();
 		}
 		return null;
 	}
@@ -1420,7 +1512,7 @@
 			section = parseSection( uri.query.section );
 
 		var requiredSkinElements =
-			$( '#content' ).length &&
+			$targetContainer.length &&
 			$( '#mw-content-text' ).length &&
 			// A link to open the editor is technically not necessary if it's going to open itself
 			( isEditPage || $( '#ca-edit, #ca-viewsource' ).length );
@@ -1429,11 +1521,28 @@
 			initialWikitext = $( '#wpTextbox1' ).textSelection( 'getContents' );
 		}
 
-		if ( init.isAvailable && pageCanLoadEditor && !requiredSkinElements ) {
+		if ( ( init.isVisualAvailable || init.isWikitextAvailable ) &&
+			pageCanLoadEditor &&
+			pageIsProbablyEditable &&
+			!requiredSkinElements
+		) {
 			mw.log.warn(
 				'Your skin is incompatible with VisualEditor. ' +
 				'See https://www.mediawiki.org/wiki/Extension:VisualEditor/Skin_requirements for the requirements.'
 			);
+			// aid debugging for additional context.
+			var errorCode = [
+				init.isVisualAvailable,
+				init.isWikitextAvailable,
+				pageCanLoadEditor,
+				pageIsProbablyEditable,
+				requiredSkinElements
+			].map( function ( bool ) {
+				return Number( bool );
+			} ).join( '-' );
+			var err = new Error( 'Incompatible with VisualEditor: ' + errorCode );
+			err.name = 'VeIncompatibleSkinWarning';
+			mw.errorLogger.logError( err, 'error.visualeditor' );
 		} else if ( init.isAvailable ) {
 			var mode = getEditModeFromUri( uri );
 			if ( mode ) {
@@ -1549,11 +1658,8 @@
 			( init.isVisualAvailable || init.isWikitextAvailable || $( '#wpTextbox1' ).length ) &&
 			isEditPage &&
 			init.shouldShowWelcomeDialog() &&
-			(
-				// Not on protected pages
-				mw.config.get( 'wgIsProbablyEditable' ) ||
-				mw.config.get( 'wgRelevantPageIsProbablyEditable' )
-			)
+			// Not on protected pages
+			pageIsProbablyEditable
 		) {
 			mw.loader.using( 'ext.visualEditor.welcome' ).done( function () {
 				var windowManager, welcomeDialog;
@@ -1586,12 +1692,20 @@
 		}
 
 		if ( uri.query.venotify ) {
+			var notify = uri.query.venotify;
+
+			// wgPostEdit can be "saved", "created", "restored" or null for null edits.
+			// TODO: Also set wgPostEdit on non-redirecting edits (T240041)
+			mw.config.set( 'wgPostEdit', notify );
+
 			// Load postEdit code to execute the queued event below, which will handle it once it arrives
 			mw.loader.load( 'mediawiki.action.view.postEdit' );
 
-			var notify = uri.query.venotify;
+			var messageSuffix;
 			if ( notify === 'saved' ) {
-				notify = mw.config.get( 'wgEditSubmitButtonLabelPublish' ) ? 'published' : 'saved';
+				messageSuffix = mw.config.get( 'wgEditSubmitButtonLabelPublish' ) ? 'published' : 'saved';
+			} else {
+				messageSuffix = notify;
 			}
 			mw.hook( 'postEdit' ).fire( {
 				// The following messages can be used here:
@@ -1599,13 +1713,13 @@
 				// * postedit-confirmation-saved
 				// * postedit-confirmation-created
 				// * postedit-confirmation-restored
-				message: mw.msg( 'postedit-confirmation-' + notify, mw.user )
+				message: mw.msg( 'postedit-confirmation-' + messageSuffix, mw.user )
 			} );
 
 			delete uri.query.venotify;
 			// Get rid of the ?venotify= from the URL
 			if ( history.replaceState ) {
-				history.replaceState( null, document.title, uri );
+				history.replaceState( null, '', uri );
 			}
 		}
 	} );

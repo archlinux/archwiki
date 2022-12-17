@@ -213,7 +213,7 @@ module.exports = function () {
 			amcOutreach = mobile.amcOutreach,
 			amcCampaign = amcOutreach.loadCampaign(),
 			onDismiss = function () {
-				toast.showOnPageReload( mw.message( 'mobile-frontend-amc-outreach-dismissed-message' ).text() );
+				toast.showOnPageReload( mw.msg( 'mobile-frontend-amc-outreach-dismissed-message' ) );
 				window.location = self.href;
 			},
 			drawer = amcCampaign.showIfEligible( amcOutreach.ACTIONS.onHistoryLink, onDismiss, currentPage.title, 'action=history' );
@@ -414,15 +414,18 @@ module.exports = function () {
 		// If MobileFrontend installed we add a table of contents icon to the table of contents.
 		// This should probably be done in the parser.
 		// setup toc icons
-		new Icon( {
-			glyphPrefix: 'minerva',
-			name: 'listBullet'
-		} ).$el.prependTo( '.toctitle' );
-		new Icon( {
-			glyphPrefix: 'mf',
-			name: 'expand',
-			isSmall: true
-		} ).$el.appendTo( '.toctitle' );
+		mw.hook( 'wikipage.content' ).add( function ( $container ) {
+			var $toctitle = $container.find( '.toctitle' );
+			new Icon( {
+				glyphPrefix: 'minerva',
+				name: 'listBullet'
+			} ).$el.prependTo( $toctitle );
+			new Icon( {
+				glyphPrefix: 'mf',
+				name: 'expand',
+				isSmall: true
+			} ).$el.appendTo( $toctitle );
+		} );
 
 		// wire up talk icon if necessary
 		if ( permissions.talk ) {

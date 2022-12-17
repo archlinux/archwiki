@@ -5,7 +5,8 @@
 			"Kly",
 			"LNDDYL",
 			"Laundry Machine",
-			"Xiplus"
+			"Xiplus",
+			"Lakejason0"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "檢查防濫用過濾器是否符合變數集、編輯、或是所記錄的防濫用過濾器事件。\n\nvars、rcid 或 logid是必須填入的，然而只會使用其中一個。",
@@ -27,10 +28,10 @@
 	"apihelp-abusefilterevalexpression-param-prettyprint": "是否美化輸出結果",
 	"apihelp-abusefilterevalexpression-example-1": "評估一份簡易表達式",
 	"apihelp-abusefilterevalexpression-example-2": "評估一個簡易表達式、格式化結果",
-	"apihelp-abusefilterunblockautopromote-description": "從由防濫用過濾器結果所接收到的自動調整來解封使用者。",
+	"apihelp-abusefilterunblockautopromote-description": "解除因防濫用過濾器操作所給予使用者的自動授權剝奪。",
 	"apihelp-abusefilterunblockautopromote-summary": "從由防濫用過濾器結果所接收到的自動調整來解封使用者。",
 	"apihelp-abusefilterunblockautopromote-param-user": "您希望解封的使用者名稱。",
-	"apihelp-abusefilterunblockautopromote-example-1": "移除對 [[User:Example]] 的自動提升封鎖",
+	"apihelp-abusefilterunblockautopromote-example-1": "移除對 [[User:Example]] 的自動授權封鎖",
 	"apihelp-query+abusefilters-description": "顯示防濫用過濾器的詳細資料。",
 	"apihelp-query+abusefilters-summary": "顯示防濫用過濾器的詳細資料。",
 	"apihelp-query+abusefilters-param-startid": "起始列舉的篩選 ID。",

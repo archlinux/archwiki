@@ -5,6 +5,7 @@
  * used where further processing on the token stream is needed.
  */
 {
+	use Wikimedia\Assert\UnreachableException;
 	use Wikimedia\Parsoid\Config\Env;
 	use Wikimedia\Parsoid\Config\SiteConfig;
 	use Wikimedia\Parsoid\Core\DomSourceRange;
@@ -81,7 +82,7 @@
 	}
 
 	private function unreachable() {
-		throw new \Exception( "Grammar.pegphp: this should be unreachable" );
+		throw new UnreachableException( "Grammar.pegphp: this should be unreachable" );
 	}
 
 	// Some shorthands for legibility
@@ -157,23 +158,6 @@
 			|| isset( Consts::$HTML['OlderHTMLTags'][$lName] );
 	}
 
-	private function isAnnOrExtTag( string $name ): bool {
-		$tagName = mb_strtolower( $name );
-		$isInstalledExt = isset( $this->extTags[$tagName] );
-		$isIncludeTag = TokenizerUtils::isIncludeTag( $tagName );
-		$isAnnotationTag = $this->siteConfig->isAnnotationTag( $tagName );
-
-		if ( !$isAnnotationTag ) {
-			// avoid crashing on <tvar|name> even if we don't support that syntax explicitly
-			$pipepos = strpos( $tagName, '|' );
-			if ( $pipepos ) {
-				$strBeforePipe = substr( $tagName, 0, $pipepos );
-				$isAnnotationTag = $this->siteConfig->isAnnotationTag( $strBeforePipe );
-			}
-		}
-		return $isInstalledExt || $isIncludeTag || $isAnnotationTag;
-	}
-
 	private function maybeAnnotationOrExtensionTag( Token $t, ?bool $end, array $attribs, SourceRange $tsr ) {
 		$tagName = mb_strtolower( $t->getName() );
 
@@ -195,11 +179,11 @@
 			if ( count( $attribs ) > 0 ) {
 				$attrMap = [];
 				foreach ( $attribs as $attr ) {
-				    // If the key or the value is not a string, we replace it by the thing that generated it and
-				    // consider that wikitext as a raw string instead.
-				    $k = is_string( $attr->k ) ? $attr->k : $attr->ksrc;
-				    $v = is_string( $attr->v ) ? $attr->v : $attr->vsrc;
-				    $attrMap[$k] = $v;
+					// If the key or the value is not a string, we replace it by the thing that generated it and
+					// consider that wikitext as a raw string instead.
+					$k = is_string( $attr->k ) ? $attr->k : $attr->ksrc;
+					$v = is_string( $attr->v ) ? $attr->v : $attr->vsrc;
+					$attrMap[$k] = $v;
 				}
 				$datamw = [];
 				// Possible follow-up in T295168 for attribute sanitation
@@ -221,7 +205,7 @@
 		}
 
 		$isInstalledExt = isset( $this->extTags[$tagName] );
-		$isIncludeTag = TokenizerUtils::isIncludeTag( $tagName );
+		$isIncludeTag = WTUtils::isIncludeTag( $tagName );
 
 		// Extensions have higher precedence when they shadow html tags.
 		if ( !( $isInstalledExt || $isIncludeTag ) ) {
@@ -978,7 +962,7 @@ autourl =
 			$last = PHPUtils::lastItem( $url );
 			$trim = 0;
 			if ( is_string( $last ) ) {
-				$strip = TokenizerUtils::getAutoUrlTerminatingChars( $path );
+				$strip = TokenizerUtils::getAutoUrlTerminatingChars( in_array( '(', $path, true ) );
 				$trim = strspn( strrev( $last ), $strip );
 				$url[ count( $url ) - 1 ] = substr( $last, 0, strlen( $last ) - $trim );
 			}
@@ -1651,18 +1635,18 @@ tvar_old_syntax_closing_HACK =
 	}
 
 annotation_tag =
-    annToken:extension_annotation_tag
-    &{
-        return ( $annToken instanceof Token && $annToken->getName() !== 'extension' );
-    }
-    { return $annToken; }
+	annToken:extension_annotation_tag
+	&{
+		return ( $annToken instanceof Token && $annToken->getName() !== 'extension' );
+	}
+	{ return $annToken; }
 
 extension_annotation_tag =
 	!<annOrExtTag>
 	extToken:xmlish_tag
 	// Account for `maybeAnnotationOrExtensionTag` returning unmatched start / end tags
 	&{ return !$extToken || $extToken[0]->getName() === 'extension' ||
-	    ($extToken[0]->getName() === 'meta' && preg_match( WTUtils::ANNOTATION_META_TYPE_REGEXP, $extToken[0]->getAttribute( 'typeof' ) ) > 0); }
+		($extToken[0]->getName() === 'meta' && preg_match( WTUtils::ANNOTATION_META_TYPE_REGEXP, $extToken[0]->getAttribute( 'typeof' ) ) > 0); }
 	{ return !$extToken ? '' : $extToken[0]; }
 
 nowiki =
@@ -1709,7 +1693,7 @@ xmlish_tag_opened =
 	isBlock: <isBlock>
 	& {
 		if ( $annOrExtTag ) {
-			return $this->isAnnOrExtTag( $name );
+			return WTUtils::isAnnOrExtTag( $this->env, $name );
 		} else {
 			// Only enforce ascii alpha first char for non-extension tags.
 			// See tag_name above for the details.
@@ -2465,7 +2449,7 @@ include_limits =
 	& {
 		$il = $il[0];
 		$lname = mb_strtolower( $il->getName() );
-		if ( !TokenizerUtils::isIncludeTag( $lname ) ) { return false;  }
+		if ( !WTUtils::isIncludeTag( $lname ) ) { return false;  }
 		// Preserve SOL where necessary (for onlyinclude and noinclude)
 		// Note that this only works because we encounter <*include*> tags in
 		// the toplevel content and we rely on the php preprocessor to expand

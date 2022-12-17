@@ -168,7 +168,6 @@ class PdfHandler extends ImageHandler {
 			return new TransformParameterError( $params );
 		}
 
-		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 		$width = (int)$params['width'];
 		$height = (int)$params['height'];
 		$page = (int)$params['page'];
@@ -218,6 +217,8 @@ class PdfHandler extends ImageHandler {
 			"-dLastPage={$page}",
 			"-dSAFER",
 			"-r{$wgPdfHandlerDpi}",
+			// CropBox defines the region that the PDF viewer application is expected to display or print.
+			"-dUseCropBox",
 			"-dBATCH",
 			"-dNOPAUSE",
 			"-q",

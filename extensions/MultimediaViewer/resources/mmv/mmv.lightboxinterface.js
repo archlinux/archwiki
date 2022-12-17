@@ -251,8 +251,6 @@
 	 * Detaches the interface from the DOM.
 	 */
 	LIP.unattach = function () {
-		mw.mmv.actionLogger.log( 'close' );
-
 		// We trigger this event on the document because unattach() can run
 		// when the interface is unattached
 		// We're calling this before cleaning up (below) the DOM, as that
@@ -375,14 +373,10 @@
 		this.isFullscreen = e.fullscreen;
 
 		if ( this.isFullscreen ) {
-			mw.mmv.actionLogger.log( 'fullscreen' );
-
 			this.$fullscreenButton
 				.prop( 'title', mw.message( 'multimediaviewer-defullscreen-popup-text' ).text() )
 				.attr( 'alt', mw.message( 'multimediaviewer-defullscreen-popup-text' ).text() );
 		} else {
-			mw.mmv.actionLogger.log( 'defullscreen' );
-
 			this.$fullscreenButton
 				.prop( 'title', mw.message( 'multimediaviewer-fullscreen-popup-text' ).text() )
 				.attr( 'alt', mw.message( 'multimediaviewer-fullscreen-popup-text' ).text() );

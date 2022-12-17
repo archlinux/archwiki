@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Purodha",
-			"Amire80"
+			"Amire80",
+			"Purodha"
 		]
 	},
 	"wikieditor": "Fottjeschredde Beärbeide un Änndere för der WikkiTäx.",
@@ -35,7 +35,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Di Sigg jidd_et nit",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Dat es en onjöltijje Övverschreff för en Sigg",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ene Lengk noh ußerhallef vum Wiki",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Ben aam Prööfe, ov et di Sigg jitt{{int:ellipsis}}",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "„Wadd eß dat?“ Sigg",
 	"wikieditor-toolbar-tool-link-int-invalid": "De aanjejovve Övverschreff för en Sigg en onjöltesch.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Ding <i lang=\"en\">URL</i> schingk obb en Sigg em Wiki sellver ze jon. Wells De ene ääschte Lengk en et Wiki druß maache?",

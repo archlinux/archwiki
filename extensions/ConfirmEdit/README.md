@@ -65,7 +65,7 @@ $wgCaptchaWhitelistIP = false;
  * The captcha code should not use $wgCaptchaTriggers, but CaptchaTriggers()
  * which also takes into account per namespace triggering.
  */
-$wgCaptchaTriggers = array();
+$wgCaptchaTriggers = [];
 $wgCaptchaTriggers['edit']          = false; // Would check on every edit
 $wgCaptchaTriggers['create']        = false; // Check on page creation.
 $wgCaptchaTriggers['sendemail']     = false; // Special:Emailuser
@@ -81,7 +81,7 @@ $wgCaptchaTriggers['badlogin']      = true;  // Special:Userlogin after failure
  *
  * Shall not be used with 'createaccount' (it is not checked).
  */
-$wgCaptchaTriggersOnNamespace = array();
+$wgCaptchaTriggersOnNamespace = [];
 
 # Example:
 # $wgCaptchaTriggersOnNamespace[NS_TALK]['create'] = false; //Allow creation of talk pages without captchas.
@@ -150,5 +150,5 @@ $wgCaptchaWhitelist = false;
  *
  * @fixme Add a message for local admins to add items as well.
  */
-$wgCaptchaRegexes = array();
+$wgCaptchaRegexes = [];
 ```

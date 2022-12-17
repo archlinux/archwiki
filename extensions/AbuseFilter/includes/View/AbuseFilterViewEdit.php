@@ -108,7 +108,6 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 	 * Shows the page
 	 */
 	public function show() {
-		$user = $this->getUser();
 		$out = $this->getOutput();
 		$out->enableOOUI();
 		$request = $this->getRequest();
@@ -141,7 +140,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		// Add the default warning and disallow messages in a JS variable
 		$this->exposeMessages();
 
-		$canEdit = $this->afPermManager->canEdit( $user );
+		$canEdit = $this->afPermManager->canEdit( $this->getAuthority() );
 
 		if ( $filter === null && !$canEdit ) {
 			// Special case: Special:AbuseFilter/new is certainly not usable if the user cannot edit
@@ -1298,6 +1297,7 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 
 					$parameters[0] = $specMsg;
 				} elseif ( $action === 'block' ) {
+					// TODO: Should save a boolean
 					$parameters[0] = $request->getCheck( 'wpFilterBlockTalk' ) ?
 						'blocktalk' : 'noTalkBlockSet';
 					$parameters[1] = $request->getVal( 'wpBlockAnonDuration' );

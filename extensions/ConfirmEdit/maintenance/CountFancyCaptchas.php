@@ -28,6 +28,8 @@ if ( getenv( 'MW_INSTALL_PATH' ) ) {
 
 require_once "$IP/maintenance/Maintenance.php";
 
+use MediaWiki\Extension\ConfirmEdit\Hooks;
+
 /**
  * Maintenance script that counts the number of captchas remaining.
  *
@@ -41,7 +43,7 @@ class CountFancyCaptchas extends Maintenance {
 	}
 
 	public function execute() {
-		$instance = ConfirmEditHooks::getInstance();
+		$instance = Hooks::getInstance();
 		if ( !( $instance instanceof FancyCaptcha ) ) {
 			$this->fatalError( "\$wgCaptchaClass is not FancyCaptcha.\n", 1 );
 		}

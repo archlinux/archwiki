@@ -39,14 +39,7 @@ ve.ui.MWNumberedExternalLinkNodeContextItem.static.modelClasses = [ ve.dm.MWNumb
 
 ve.ui.MWNumberedExternalLinkNodeContextItem.static.clearable = false;
 
-ve.ui.MWNumberedExternalLinkNodeContextItem.static.deletable = true;
-
 /* Methods */
-
-ve.ui.MWNumberedExternalLinkNodeContextItem.prototype.isDeletable = function () {
-	// We don't care about whether the context wants to show delete buttons, so override the check.
-	return this.constructor.static.deletable && !this.isReadOnly();
-};
 
 /**
  * @inheritdoc

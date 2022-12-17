@@ -32,8 +32,10 @@
 	"vector-jumptosearch": "Idi na pretragu",
 	"vector-more-actions": "Više",
 	"vector-search-loader": "Učitavam prijedloge pretrage",
+	"vector-searchsuggest-containing": "Pretraži stranice koje sadrže <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-heading": "Sadržaj",
+	"vector-toc-beginning": "Početak",
 	"vector-anon-user-menu-pages-learn": "detaljnije",
-	"vector-personal-more-label": "Korisnički linkovi",
 	"vector-main-menu-tooltip": "Glavni meni",
 	"tooltip-vector-anon-user-menu-title": "Više opcija"
 }

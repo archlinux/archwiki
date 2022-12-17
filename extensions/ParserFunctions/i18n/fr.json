@@ -33,7 +33,7 @@
 	"pfunc_expr_division_by_zero": "Division par zéro.",
 	"pfunc_expr_invalid_argument": "Paramètre incorrect pour '''$1''' : < -1 ou > 1.",
 	"pfunc_expr_invalid_argument_ln": "Paramètre incorrect pour '''ln''' : ≤ 0.",
-	"pfunc_expr_unknown_error": "Erreur d’expression : erreur inconnue ($1).",
+	"pfunc_expr_unknown_error": "Erreur d’expression : erreur inconnue ($1).",
 	"pfunc_expr_not_a_number": "Dans $1 : le résultat n’est pas un nombre.",
 	"pfunc_string_too_long": "Erreur : la chaîne dépasse la limite maximale de $1 caractère{{PLURAL:$1||s}}."
 }

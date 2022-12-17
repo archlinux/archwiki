@@ -1,6 +1,6 @@
 ( function () {
 	QUnit.module( 'mmv.ui', QUnit.newMwEnvironment( {
-		setup: function () {
+		beforeEach: function () {
 			this.clock = this.sandbox.useFakeTimers();
 		}
 	} ) );
@@ -9,7 +9,7 @@
 		var element = new mw.mmv.ui.Element( $( '<div>' ) );
 
 		element.handleEvent( 'mmv-foo', function () {
-			assert.ok( true, 'Event is handled' );
+			assert.true( true, 'Event is handled' );
 		} );
 
 		$( document ).trigger( new $.Event( 'mmv-foo' ) );
@@ -23,7 +23,7 @@
 		var element = new mw.mmv.ui.Element( $( '<div>' ) ),
 			$testDiv = $( '<div>' ).attr( 'id', 'mmv-testdiv' ).text( '!!!' ).appendTo( '#qunit-fixture' );
 
-		assert.ok( $testDiv.is( ':visible' ), 'Test div is visible' );
+		assert.true( $testDiv.is( ':visible' ), 'Test div is visible' );
 
 		element.setInlineStyle( 'test', '#mmv-testdiv { display: none; }' );
 

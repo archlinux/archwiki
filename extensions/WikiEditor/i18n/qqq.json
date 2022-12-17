@@ -66,7 +66,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Text shown when the title the user entered does not exist",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Text shown when the title the user entered is invalid.\n{{Identical|Invalid title}}",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Text shown when the link target the user entered points to an external web site\n{{Identical|External link}}",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "alt text and title text for the image shown while the title the user entered is being checked for existence",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Text shown when the link target that the user entered points to a disambiguation page.\n\nRelated to this message: {{msg-mw|Disambiguator-notification-summary}}.\n\nThese messages should be phrased similarly.\n{{Identical|Disambiguation page}}",
 	"wikieditor-toolbar-tool-link-int-invalid": "This message appears when you try to create an internal link, but the page title in the link is invalid.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Used in the link dialog of the toolbar as hint when clicking the insert button",
@@ -229,5 +228,15 @@
 	"wikieditor-toolbar-help-content-indent-result": "{{RawHtml|phab=T294760}}\n\nHTML example used in the help section \"discussion\" of the toolbar",
 	"tag-wikieditor": "{{ignored}}Short description of the wikieditor tag.\n\nShown on lists of changes (history, recentchanges, etc.) for each edit made using WikiEditor.\n\nSee also:\n* {{msg-mw|Tag-wikieditor-description}}",
 	"tag-wikieditor-description": "Long description of the wikieditor tag ({{msg-mw|Tag-wikieditor}}).\n\nShown on [[Special:Tags]].\n\nSee also:\n* {{msg-mw|Tag-wikieditor}}",
-	"wikieditor-realtimepreview-preview": "Label for the toolbar button to enable/disable realtime preview."
+	"wikieditor-realtimepreview-preview": "Label for the toolbar button to enable/disable realtime preview.",
+	"wikieditor-realtimepreview-error": "Header text for realtime preview errors.",
+	"wikieditor-realtimepreview-reload": "Button text for the realtime preview 'reload' buttons (the hover button, the manual-reload button, and the button shown in error messages).",
+	"wikieditor-realtimepreview-beta-label": "Used in [[Special:Preferences]].\n\nUsed as label for checkbox to enable Realtime Preview as a Beta Feature.\n\nThe description for this checkbox is: {{msg-mw|wikieditor-realtimepreview-beta-desc}}.",
+	"wikieditor-realtimepreview-beta-desc": "Used in [[Special:Preferences]].\n\nUsed as description for the checkbox to enable Realtime Preview as a Beta Feature.\n\nThe label for this checkbox is {{msg-mw|wikieditor-realtimepreview-beta-label}}.",
+	"wikieditor-realtimepreview-reload-title": "Tooltip text for the manual reload button.",
+	"accesskey-wikieditor-realtimepreview": "{{doc-accesskey}}\nAccesskey for the manual reload button.",
+	"wikieditor-realtimepreview-manual": "Message displayed when realtime preview is in 'manual' mode.",
+	"wikieditor-realtimepreview-onboarding-title": "Title label shown in the Realtime Preview onboarding popup.",
+	"wikieditor-realtimepreview-onboarding-body": "Description of Realtime Preview shown in the onboarding popup.",
+	"wikieditor-realtimepreview-onboarding-button": "Dismissing button for the Realtime Preview onboarding popup."
 }

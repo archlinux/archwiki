@@ -29,8 +29,7 @@
 		"MultiContentSave": "MediaWiki\\Extension\\TemplateData\\Hooks::onMultiContentSave",
 		"ResourceLoaderRegisterModules": "MediaWiki\\Extension\\TemplateData\\Hooks::onResourceLoaderRegisterModules",
 		"EditPage::showEditForm:initial": "MediaWiki\\Extension\\TemplateData\\Hooks::onEditPage",
-		"ParserFetchTemplateData": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFetchTemplateData",
-		"MakeGlobalVariablesScript": "MediaWiki\\Extension\\TemplateData\\Hooks::onMakeGlobalVariablesScript"
+		"ParserFetchTemplateData": "MediaWiki\\Extension\\TemplateData\\Hooks::onParserFetchTemplateData"
 	},
 	"MessagesDirs": {
 		"TemplateData": [
@@ -42,7 +41,7 @@
 		"ext.templateData": {
 			"localBasePath": "modules/ext.templateData",
 			"remoteExtPath": "TemplateData/modules/ext.templateData",
-			"styles": "templateData.css"
+			"styles": "templateData.less"
 		},
 		"ext.templateDataGenerator.editPage": {
 			"localBasePath": "modules/ext.templateDataGenerator.editPage",
@@ -63,10 +62,15 @@
 				"oojs"
 			]
 		},
+		"ext.templateDataGenerator.editTemplatePage.loading": {
+			"localBasePath": "modules/ext.templateDataGenerator.editTemplatePage",
+			"remoteExtPath": "TemplateData/modules/ext.templateDataGenerator.editTemplatePage",
+			"styles": "templateDataGenerator.placeholder.less"
+		},
 		"ext.templateDataGenerator.editTemplatePage": {
 			"localBasePath": "modules/ext.templateDataGenerator.editTemplatePage",
 			"remoteExtPath": "TemplateData/modules/ext.templateDataGenerator.editTemplatePage",
-			"styles": "templateDataGenerator.ui.css",
+			"styles": "templateDataGenerator.ui.less",
 			"packageFiles": [
 				"init.js",
 				"widgets/AutosizeTextInputWidget.js",
@@ -232,11 +236,6 @@
 	"config": {
 		"TemplateDataUseGUI": {
 			"value": true
-		},
-		"TemplateDataSuggestedValuesEditor": {
-			"description": "Temporary feature flag to enable the \"suggested values\" UI",
-			"value": false,
-			"public": true
 		}
 	},
 	"manifest_version": 2

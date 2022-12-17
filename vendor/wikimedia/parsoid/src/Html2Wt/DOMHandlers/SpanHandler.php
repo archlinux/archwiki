@@ -58,7 +58,7 @@ class SpanHandler extends DOMHandler {
 					$state->serializeChildren( $node );
 				}
 			} elseif ( DOMUtils::hasTypeOf( $node, 'mw:DisplaySpace' ) ) {
-				// FIXME(T254501): Turn this into an `PHPUtils::unreachable()`
+				// FIXME(T254501): Throw an UnreachableException here instead
 				$state->emitChunk( ' ', $node );
 			} elseif ( DOMUtils::matchTypeOf( $node, '#^mw:Placeholder(/|$)#' ) ) {
 				if ( isset( $dp->src ) ) {
@@ -100,9 +100,11 @@ class SpanHandler extends DOMHandler {
 		return DOMUtils::matchTypeOf(
 			$node,
 			// FIXME(T254501): Remove mw:DisplaySpace
+			// TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content
+			// is no longer supported
 			'#^mw:('
 				. 'Nowiki|Entity|DisplaySpace|Placeholder(/\w+)?'
-				. '|(Image|Video|Audio)(/(Frameless|Frame|Thumb))?'
+				. '|(File|Image|Video|Audio)(/(Frameless|Frame|Thumb))?'
 				. ')$#'
 		);
 	}

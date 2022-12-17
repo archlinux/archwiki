@@ -24,14 +24,26 @@
 		"PageImages\\Tests\\": "tests/phpunit/"
 	},
 	"Hooks": {
-		"ApiOpenSearchSuggest": "PageImages\\PageImages::onApiOpenSearchSuggest",
-		"BeforePageDisplay": "PageImages\\PageImages::onBeforePageDisplay",
-		"InfoAction": "PageImages\\PageImages::onInfoAction",
-		"ParserAfterTidy": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserAfterTidy",
-		"ParserModifyImageHTML": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserModifyImageHTML",
-		"ParserTestGlobals": "PageImages\\Hooks\\ParserFileProcessingHookHandlers::onParserTestGlobals",
-		"SearchResultProvideThumbnail": "PageImages\\Hooks\\SearchResultProvideThumbnailHookHandler::onSearchResultProvideThumbnail",
+		"ApiOpenSearchSuggest": "main",
+		"BeforePageDisplay": "main",
+		"InfoAction": "main",
+		"ParserAfterTidy": "parser",
+		"ParserModifyImageHTML": "parser",
+		"ParserTestGlobals": "parser",
+		"SearchResultProvideThumbnail": "search",
 		"SpecialMobileEditWatchlist::images": "PageImages\\PageImages::onSpecialMobileEditWatchlistImages"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "PageImages\\PageImages"
+		},
+		"parser": {
+			"class": "PageImages\\Hooks\\ParserFileProcessingHookHandlers"
+		},
+		"search": {
+			"class": "PageImages\\Hooks\\SearchResultProvideThumbnailHookHandler",
+			"services": [ "PageProps", "RepoGroup" ]
+		}
 	},
 	"JobClasses": {
 		"InitImageDataJob": "PageImages\\Job\\InitImageDataJob"
@@ -73,6 +85,11 @@
 					"db": false
 				}
 			]
+		},
+		"PageImagesOpenGraph": {
+			"description": "Enable the OpenGraph meta tags",
+			"public": true,
+			"value": true
 		},
 		"PageImagesDenylistExpiry": {
 			"value": 900

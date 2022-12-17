@@ -128,5 +128,14 @@
 	"wikieditor-toolbar-section-characters": "Окремни знаки",
 	"wikieditor-toolbar-section-help": "Помоц",
 	"tag-wikieditor-description": "Ушорйованє зробене зоз хаснованьом [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (редактор викитексту 2010)",
-	"wikieditor-realtimepreview-preview": "Предходни прегляд"
+	"wikieditor-realtimepreview-preview": "Предходни прегляд",
+	"wikieditor-realtimepreview-error": "Предходни прегляд ше нє учитує",
+	"wikieditor-realtimepreview-reload": "Ознова учитай",
+	"wikieditor-realtimepreview-beta-label": "Предходни прегляд у реалним чаше",
+	"wikieditor-realtimepreview-beta-desc": "Опатьце як викитекстово пременки буду випатрац читачом у [[mw:Special:MyLanguage/Extension:WikiEditor|редактор 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Ознова учитай панел у реалним чаше",
+	"wikieditor-realtimepreview-manual": "Модлїм вас, учитайце ознова же бисце мануално видзели свойо ушорйованя",
+	"wikieditor-realtimepreview-onboarding-title": "Предходни прегляд у реалним чаше",
+	"wikieditor-realtimepreview-onboarding-body": "Опатьце як вашо ушорйованя буду випатрац читачом кед ше их прикаже у реалним чаше",
+	"wikieditor-realtimepreview-onboarding-button": "У порядку, я тото похопел"
 }

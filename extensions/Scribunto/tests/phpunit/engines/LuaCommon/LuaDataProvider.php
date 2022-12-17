@@ -32,22 +32,24 @@ class Scribunto_LuaDataProvider implements Iterator {
 		$this->exports = null;
 	}
 
-	public function rewind() {
+	public function rewind(): void {
 		$this->key = 1;
 	}
 
-	public function valid() {
+	public function valid(): bool {
 		return $this->key <= $this->exports['count'];
 	}
 
+	#[\ReturnTypeWillChange]
 	public function key() {
 		return $this->key;
 	}
 
-	public function next() {
+	public function next(): void {
 		$this->key++;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function current() {
 		return $this->engine->getInterpreter()->callFunction( $this->exports['provide'], $this->key );
 	}

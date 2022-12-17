@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences;
 
 use MediaWiki\Block\BlockUser;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Block;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Consequence;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\ConsequencesDisablerConsequence;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\HookAborterConsequence;
@@ -11,10 +12,10 @@ use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\GlobalNameUtils;
 use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Linker\LinkTarget;
+use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
 use Status;
-use Title;
-use User;
 
 class ConsequencesExecutor {
 	public const CONSTRUCTOR_OPTIONS = [
@@ -36,9 +37,9 @@ class ConsequencesExecutor {
 	private $logger;
 	/** @var ServiceOptions */
 	private $options;
-	/** @var User */
+	/** @var UserIdentity */
 	private $user;
-	/** @var Title */
+	/** @var LinkTarget */
 	private $title;
 	/** @var VariableHolder */
 	private $vars;
@@ -50,8 +51,8 @@ class ConsequencesExecutor {
 	 * @param FilterLookup $filterLookup
 	 * @param LoggerInterface $logger
 	 * @param ServiceOptions $options
-	 * @param User $user
-	 * @param Title $title
+	 * @param UserIdentity $user
+	 * @param LinkTarget $title
 	 * @param VariableHolder $vars
 	 */
 	public function __construct(
@@ -61,8 +62,8 @@ class ConsequencesExecutor {
 		FilterLookup $filterLookup,
 		LoggerInterface $logger,
 		ServiceOptions $options,
-		User $user,
-		Title $title,
+		UserIdentity $user,
+		LinkTarget $title,
 		VariableHolder $vars
 	) {
 		$this->consLookup = $consLookup;
@@ -87,9 +88,7 @@ class ConsequencesExecutor {
 	 *         the errors and warnings to be shown to the user to explain the actions.
 	 */
 	public function executeFilterActions( array $filters ): Status {
-		$actionsByFilter = $this->consLookup->getConsequencesForFilters( $filters );
-		$consequences = $this->replaceArraysWithConsequences( $actionsByFilter );
-		$actionsToTake = $this->getFilteredConsequences( $consequences );
+		$actionsToTake = $this->getActualConsequencesToExecute( $filters );
 		$actionsTaken = array_fill_keys( $filters, [] );
 
 		$messages = [];
@@ -110,104 +109,208 @@ class ConsequencesExecutor {
 	}
 
 	/**
-	 * Remove consequences that we already know won't be executed. This includes:
-	 * - Only keep the longest block from all filters
-	 * - For global filters, remove locally disabled actions
-	 * - For every filter, remove "disallow" if a blocking action will be executed
-	 * Then, convert the remaining ones to Consequence objects.
-	 *
-	 * @param array[] $actionsByFilter
+	 * @param string[] $filters
 	 * @return Consequence[][]
-	 * @internal Temporarily public
+	 * @internal
 	 */
-	public function replaceArraysWithConsequences( array $actionsByFilter ): array {
-		// Keep track of the longest block
-		$maxBlock = [ 'id' => null, 'expiry' => -1, 'blocktalk' => null ];
-		$dangerousActions = $this->consRegistry->getDangerousActionNames();
+	public function getActualConsequencesToExecute( array $filters ): array {
+		$rawConsParamsByFilter = $this->consLookup->getConsequencesForFilters( $filters );
+		$consParamsByFilter = $this->replaceLegacyParameters( $rawConsParamsByFilter );
+		$specializedConsParams = $this->specializeParameters( $consParamsByFilter );
+		$allowedConsParams = $this->removeForbiddenConsequences( $specializedConsParams );
 
-		foreach ( $actionsByFilter as $filter => &$actions ) {
-			$isGlobalFilter = GlobalNameUtils::splitGlobalName( $filter )[1];
+		$consequences = $this->replaceArraysWithConsequences( $allowedConsParams );
+		$actualConsequences = $this->applyConsequenceDisablers( $consequences );
+		$deduplicatedConsequences = $this->deduplicateConsequences( $actualConsequences );
+		return $this->removeRedundantConsequences( $deduplicatedConsequences );
+	}
 
-			if ( $isGlobalFilter ) {
-				$actions = array_diff_key(
-					$actions,
-					array_filter( $this->options->get( 'AbuseFilterLocallyDisabledGlobalActions' ) )
-				);
-			}
-
-			// Don't show the disallow message if a blocking action is executed
-			if ( array_intersect( array_keys( $actions ), $dangerousActions )
-				&& isset( $actions['disallow'] )
-			) {
-				unset( $actions['disallow'] );
-			}
-
+	/**
+	 * Update parameters for all consequences, making sure that they match the currently expected format
+	 * (e.g., 'block' didn't use to have expiries).
+	 *
+	 * @param array[] $consParams
+	 * @return array[]
+	 */
+	private function replaceLegacyParameters( array $consParams ): array {
+		$registeredBlockDuration = $this->options->get( 'AbuseFilterBlockDuration' );
+		$anonBlockDuration = $this->options->get( 'AbuseFilterAnonBlockDuration' ) ?? $registeredBlockDuration;
+		foreach ( $consParams as $filter => $actions ) {
 			foreach ( $actions as $name => $parameters ) {
-				switch ( $name ) {
-					case 'throttle':
-					case 'warn':
-					case 'disallow':
-					case 'rangeblock':
-					case 'degroup':
-					case 'blockautopromote':
-					case 'tag':
-						$actions[$name] = $this->actionsParamsToConsequence( $name, $parameters, $filter );
-						break;
-					case 'block':
-						// TODO Move to a dedicated method and/or create a generic interface
-						if ( count( $parameters ) === 3 ) {
-							// New type of filters with custom block
-							if ( $this->user->isAnon() ) {
-								$expiry = $parameters[1];
-							} else {
-								$expiry = $parameters[2];
-							}
-						} else {
-							// Old type with fixed expiry
-							$anonDuration = $this->options->get( 'AbuseFilterAnonBlockDuration' );
-							if ( $anonDuration !== null && $this->user->isAnon() ) {
-								// The user isn't logged in and the anon block duration
-								// doesn't default to $wgAbuseFilterBlockDuration.
-								$expiry = $anonDuration;
-							} else {
-								$expiry = $this->options->get( 'AbuseFilterBlockDuration' );
-							}
-						}
+				if ( $name === 'block' && count( $parameters ) !== 3 ) {
+					// Old type with fixed expiry
+					$blockTalk = in_array( 'blocktalk', $parameters, true );
 
-						$parsedExpiry = BlockUser::parseExpiryInput( $expiry );
-						if (
-							$maxBlock['expiry'] === -1 ||
-							$parsedExpiry > BlockUser::parseExpiryInput( $maxBlock['expiry'] )
-						) {
-							// Save the parameters to issue the block with
-							$maxBlock = [
-								'id' => $filter,
-								'expiry' => $expiry,
-								'blocktalk' => is_array( $parameters ) && in_array( 'blocktalk', $parameters )
-							];
-						}
-						// We'll re-add it later
-						unset( $actions['block'] );
-						break;
-					default:
-						$cons = $this->actionsParamsToConsequence( $name, $parameters, $filter );
-						if ( $cons !== null ) {
-							$actions[$name] = $cons;
-						} else {
-							unset( $actions[$name] );
-						}
+					$consParams[$filter][$name] = [
+						$blockTalk ? 'blocktalk' : 'noTalkBlockSet',
+						$anonBlockDuration,
+						$registeredBlockDuration
+					];
 				}
 			}
 		}
-		unset( $actions );
 
-		if ( $maxBlock['id'] !== null ) {
-			$id = $maxBlock['id'];
-			unset( $maxBlock['id'] );
-			$actionsByFilter[$id]['block'] = $this->actionsParamsToConsequence( 'block', $maxBlock, $id );
+		return $consParams;
+	}
+
+	/**
+	 * For every consequence, keep only the parameters that are relevant for this specific action being filtered.
+	 * For instance, choose between anon expiry and registered expiry for blocks.
+	 *
+	 * @param array[] $consParams
+	 * @return array[]
+	 */
+	private function specializeParameters( array $consParams ): array {
+		foreach ( $consParams as $filter => $actions ) {
+			foreach ( $actions as $name => $parameters ) {
+				if ( $name === 'block' ) {
+					$consParams[$filter][$name] = [
+						'expiry' => $this->user->isRegistered() ? $parameters[2] : $parameters[1],
+						'blocktalk' => $parameters[0] === 'blocktalk'
+					];
+				}
+			}
 		}
 
-		return $actionsByFilter;
+		return $consParams;
+	}
+
+	/**
+	 * Removes any consequence that cannot be executed. For instance, remove locally disabled
+	 * consequences for global filters.
+	 *
+	 * @param array[] $consParams
+	 * @return array[]
+	 */
+	private function removeForbiddenConsequences( array $consParams ): array {
+		$locallyDisabledActions = $this->options->get( 'AbuseFilterLocallyDisabledGlobalActions' );
+		foreach ( $consParams as $filter => $actions ) {
+			$isGlobalFilter = GlobalNameUtils::splitGlobalName( $filter )[1];
+			if ( $isGlobalFilter ) {
+				$consParams[$filter] = array_diff_key(
+					$actions,
+					array_filter( $locallyDisabledActions )
+				);
+			}
+		}
+
+		return $consParams;
+	}
+
+	/**
+	 * Converts all consequence specifiers to Consequence objects.
+	 *
+	 * @param array[] $actionsByFilter
+	 * @return Consequence[][]
+	 */
+	private function replaceArraysWithConsequences( array $actionsByFilter ): array {
+		$ret = [];
+		foreach ( $actionsByFilter as $filter => $actions ) {
+			$ret[$filter] = [];
+			foreach ( $actions as $name => $parameters ) {
+				$cons = $this->actionsParamsToConsequence( $name, $parameters, $filter );
+				if ( $cons !== null ) {
+					$ret[$filter][$name] = $cons;
+				}
+			}
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Pre-check any consequences-disabler consequence and remove any further actions prevented by them. Specifically:
+	 * - For every filter with "throttle" enabled, remove other actions if the throttle counter hasn't been reached
+	 * - For every filter with "warn" enabled, remove other actions if the warning hasn't been shown
+	 *
+	 * @param Consequence[][] $consequencesByFilter
+	 * @return Consequence[][]
+	 */
+	private function applyConsequenceDisablers( array $consequencesByFilter ): array {
+		foreach ( $consequencesByFilter as $filter => $actions ) {
+			/** @var ConsequencesDisablerConsequence[] $consequenceDisablers */
+			$consequenceDisablers = array_filter( $actions, static function ( $el ) {
+				return $el instanceof ConsequencesDisablerConsequence;
+			} );
+			'@phan-var ConsequencesDisablerConsequence[] $consequenceDisablers';
+			uasort(
+				$consequenceDisablers,
+				static function ( ConsequencesDisablerConsequence $x, ConsequencesDisablerConsequence $y ) {
+					return $x->getSort() - $y->getSort();
+				}
+			);
+			foreach ( $consequenceDisablers as $name => $consequence ) {
+				if ( $consequence->shouldDisableOtherConsequences() ) {
+					$consequencesByFilter[$filter] = [ $name => $consequence ];
+					continue 2;
+				}
+			}
+		}
+
+		return $consequencesByFilter;
+	}
+
+	/**
+	 * Removes duplicated consequences. For instance, this only keeps the longest of all blocks.
+	 *
+	 * @param Consequence[][] $consByFilter
+	 * @return Consequence[][]
+	 */
+	private function deduplicateConsequences( array $consByFilter ): array {
+		// Keep track of the longest block
+		$maxBlock = [ 'id' => null, 'expiry' => -1, 'cons' => null ];
+
+		foreach ( $consByFilter as $filter => $actions ) {
+			foreach ( $actions as $name => $cons ) {
+				if ( $name === 'block' ) {
+					/** @var Block $cons */
+					'@phan-var Block $cons';
+					$expiry = $cons->getExpiry();
+					$parsedExpiry = BlockUser::parseExpiryInput( $expiry );
+					if (
+						$maxBlock['expiry'] === -1 ||
+						$parsedExpiry > BlockUser::parseExpiryInput( $maxBlock['expiry'] )
+					) {
+						$maxBlock = [
+							'id' => $filter,
+							'expiry' => $expiry,
+							'cons' => $cons
+						];
+					}
+					// We'll re-add it later
+					unset( $consByFilter[$filter]['block'] );
+				}
+			}
+		}
+
+		if ( $maxBlock['id'] !== null ) {
+			$consByFilter[$maxBlock['id']]['block'] = $maxBlock['cons'];
+		}
+
+		return $consByFilter;
+	}
+
+	/**
+	 * Remove redundant consequences, e.g., remove "disallow" if a dangerous action will be executed
+	 * TODO: Is this wanted, especially now that we have custom disallow messages?
+	 *
+	 * @param Consequence[][] $consByFilter
+	 * @return Consequence[][]
+	 */
+	private function removeRedundantConsequences( array $consByFilter ): array {
+		$dangerousActions = $this->consRegistry->getDangerousActionNames();
+
+		foreach ( $consByFilter as $filter => $actions ) {
+			// Don't show the disallow message if a blocking action is executed
+			if (
+				isset( $actions['disallow'] ) &&
+				array_intersect( array_keys( $actions ), $dangerousActions )
+			) {
+				unset( $consByFilter[$filter]['disallow'] );
+			}
+		}
+
+		return $consByFilter;
 	}
 
 	/**
@@ -253,7 +356,11 @@ class ConsequencesExecutor {
 				$duration = $this->options->get( 'AbuseFilterBlockAutopromoteDuration' ) * 86400;
 				return $this->consFactory->newBlockAutopromote( $baseConsParams, $duration );
 			case 'block':
-				return $this->consFactory->newBlock( $baseConsParams, $rawParams['expiry'], $rawParams['blocktalk'] );
+				return $this->consFactory->newBlock(
+					$baseConsParams,
+					$rawParams['expiry'],
+					$rawParams['blocktalk']
+				);
 			case 'tag':
 				try {
 					// The variable is not lazy-loaded
@@ -271,40 +378,6 @@ class ConsequencesExecutor {
 					return null;
 				}
 		}
-	}
-
-	/**
-	 * Pre-check any "special" consequence and remove any further actions prevented by them. Specifically:
-	 * should be actually executed. Normalizations done here:
-	 * - For every filter with "throttle" enabled, remove other actions if the throttle counter hasn't been reached
-	 * - For every filter with "warn" enabled, remove other actions if the warning hasn't been shown
-	 *
-	 * @param Consequence[][] $actionsByFilter
-	 * @return Consequence[][]
-	 * @internal Temporary method
-	 */
-	public function getFilteredConsequences( array $actionsByFilter ): array {
-		foreach ( $actionsByFilter as $filter => $actions ) {
-			/** @var ConsequencesDisablerConsequence[] $consequenceDisablers */
-			$consequenceDisablers = array_filter( $actions, static function ( $el ) {
-				return $el instanceof ConsequencesDisablerConsequence;
-			} );
-			'@phan-var ConsequencesDisablerConsequence[] $consequenceDisablers';
-			uasort(
-				$consequenceDisablers,
-				static function ( ConsequencesDisablerConsequence $x, ConsequencesDisablerConsequence $y ) {
-					return $x->getSort() - $y->getSort();
-				}
-			);
-			foreach ( $consequenceDisablers as $name => $consequence ) {
-				if ( $consequence->shouldDisableOtherConsequences() ) {
-					$actionsByFilter[$filter] = [ $name => $consequence ];
-					continue 2;
-				}
-			}
-		}
-
-		return $actionsByFilter;
 	}
 
 	/**

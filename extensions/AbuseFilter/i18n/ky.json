@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Growingup"
+			"Growingup",
+			"Amire80"
 		]
 	},
 	"abusefilter-log-search-user": "Катышуучу:",
@@ -21,6 +22,7 @@
 	"abusefilter-tools-reautoconfirm-user": "Катышуучу:",
 	"abusefilter-edit-status-label": "Статистика:",
 	"abusefilter-edit-new": "Жаңы фильтр",
+	"abusefilter-edit-action-block": "Колдонуучунун жана/же IP дарегинден оңдоону бөгөттөө",
 	"abusefilter-edit-warn-actions": "Аракеттер:",
 	"abusefilter-edit-history": "Тарых:",
 	"abusefilter-edit-tools": "Аспаптар:",
@@ -32,6 +34,8 @@
 	"abusefilter-edit-builder-op-arithmetic-pow": "Даража (**)",
 	"abusefilter-edit-builder-op-bool-and": "ЖАНА (&)",
 	"abusefilter-edit-builder-op-bool-or": "ЖЕ (|)",
+	"abusefilter-edit-builder-group-funcs": "Функциялар",
+	"abusefilter-edit-builder-funcs-specialratio": "Атайын белгилер / total characters (specialratio)",
 	"abusefilter-edit-builder-group-vars": "Өзгөрмөлөр",
 	"abusefilter-edit-builder-vars-action": "Аракет",
 	"abusefilter-history-timestamp": "Убакыт",
@@ -43,9 +47,14 @@
 	"abusefilter-history-filterid": "Фильтр",
 	"abusefilter-history-select-user": "Катышуучу:",
 	"abusefilter-history-diff": "Өзгөртүүлөр",
+	"abusefilter-action-warn": "Эскертүү",
+	"abusefilter-action-block": "Бөгөттөө",
+	"abusefilter-action-degroup": "Топтордон жоюу",
 	"abusefilter-revert-filter": "Фильтр:",
 	"abusefilter-revert-reasonfield": "Себеп:",
 	"abusefilter-examine-submit": "Издөө",
+	"abusefilter-diff-title": "Версиялардын арасындагы айырмалар",
 	"abusefilter-diff-item": "Элемент",
+	"abusefilter-diff-info": "Негизги маалымат",
 	"abusefilter-group-default": "Жарыяланбасча"
 }

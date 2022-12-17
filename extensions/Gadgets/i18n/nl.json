@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Annabel",
+			"Bdijkstra",
 			"Edoderoo",
 			"Esketti",
 			"Krinkle",
@@ -12,8 +13,7 @@
 			"SPQRobin",
 			"Servien",
 			"Siebrand",
-			"Sjoerddebruin",
-			"Bdijkstra"
+			"Sjoerddebruin"
 		]
 	},
 	"gadgets-desc": "Laat gebruikers [[Special:Gadgets|CSS en JavaScripts]] activeren in hun [[Special:Preferences#mw-prefsection-gadgets|voorkeuren]]",

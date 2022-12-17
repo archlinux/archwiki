@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"AnakngAraw",
 			"GinawaSaHapon",
-			"Sky Harbor",
 			"Ianlopez1115",
-			"Amire80",
+			"Sky Harbor",
 			"Jojit fb"
 		]
 	},
@@ -17,6 +17,7 @@
 	"vector.js": "/* Ang lahat ng JavaScript dito ay ikakarga para sa mga tagagamit ng pabalat na Vector */",
 	"vector-languages": "Mga wika",
 	"vector-language-button-label": "{{PLURAL:$1|$1 wika|$1 (na) wika}}",
+	"vector-no-language-button-label": "Magdagdag ng wika",
 	"vector-action-addsection": "Magdagdag ng paksa",
 	"vector-action-delete": "Burahin",
 	"vector-action-move": "Ilipat",
@@ -29,5 +30,5 @@
 	"vector-view-view": "Basahin",
 	"vector-view-viewsource": "Tingnan ang pinagmulan",
 	"vector-more-actions": "Higit pa",
-	"vector-searchsuggest-containing": "Maghanap ng mga pahina na naglalaman ng <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Maghanap ng mga pahinang may <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

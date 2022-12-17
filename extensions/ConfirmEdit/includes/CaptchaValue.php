@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\ConfirmEdit;
+
 /**
  * Simple value object for storing a captcha question + answer.
  */

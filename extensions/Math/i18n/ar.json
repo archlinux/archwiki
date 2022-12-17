@@ -14,7 +14,8 @@
 			"Tala Ali",
 			"ديفيد",
 			"زكريا",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"FShbib"
 		]
 	},
 	"math-desc": "حوِّل الصيغ الرياضية بين وسمي <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -28,6 +29,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "افتراضي",
 	"math-visualeditor-mwlatexinspector-display-inline": "على نفس السطر",
 	"math-visualeditor-mwlatexinspector-id": "معرِّف الوصلة (اختياري)",
+	"math-visualeditor-mwlatexinspector-qid": "معرف قاعدة ويكي (مع بادئة Q)",
 	"math-visualeditor-mwmathdialog-title": "صيغة رياضية",
 	"math-visualeditor-symbol-group-chem-addition": "مركبات إضافة",
 	"math-visualeditor-symbol-group-chem-aggregation": "حالات التجميع",
@@ -92,7 +94,7 @@
 	"math_unknown_error": "خطأ غير معروف",
 	"math_unknown_function": "وظيفة غير معروفة «$1»",
 	"mw_math_latexml": "LaTeXML (تجريبي؛ يستخدم MathML)",
-	"mw_math_mathml": "اعرض بصيغة MathML إن أمكن (تجريبي)",
+	"mw_math_mathml": "SVG مع PNG احتياطي (يمكن تمكين MathML عبر المكوِّن الإضافي للمتصفح)",
 	"mw_math_png": "دائما اعرض على هيئة PNG",
 	"mw_math_source": "اعرض على هيئة LaTeX (للمتصفحات النصية)",
 	"prefs-math": "رياضيات",

@@ -142,7 +142,7 @@ class SearchResultProvideThumbnailHookHandlerTest extends MediaWikiIntegrationTe
 		$handler = new SearchResultProvideThumbnailHookHandler( $pageProps, $repoGroup );
 
 		$results = [ 1 => null, 2 => null, 3 => null, 4 => null ];
-		$handler->doSearchResultProvideThumbnail( $pageIdentities, $results );
+		$handler->onSearchResultProvideThumbnail( $pageIdentities, $results );
 
 		$this->assertNull( $results[ 2 ] );
 		$this->assertNull( $results[ 4 ] );

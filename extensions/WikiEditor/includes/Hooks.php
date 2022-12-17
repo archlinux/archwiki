@@ -18,6 +18,8 @@ use Html;
 use MediaWiki\Cache\CacheKeyHelper;
 use MediaWiki\ChangeTags\Hook\ChangeTagsListActiveHook;
 use MediaWiki\ChangeTags\Hook\ListDefinedTagsHook;
+use MediaWiki\Extension\BetaFeatures\BetaFeatures;
+use MediaWiki\Extension\DiscussionTools\Hooks as DiscussionToolsHooks;
 use MediaWiki\Extension\EventLogging\EventLogging;
 use MediaWiki\Hook\EditPage__attemptSave_afterHook;
 use MediaWiki\Hook\EditPage__attemptSaveHook;
@@ -27,6 +29,7 @@ use MediaWiki\Hook\EditPageGetPreviewContentHook;
 use MediaWiki\Hook\RecentChange_saveHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\ResourceLoader as RL;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserOptionsLookup;
 use MessageLocalizer;
@@ -34,7 +37,6 @@ use MWCryptRand;
 use OutputPage;
 use RecentChange;
 use RequestContext;
-use ResourceLoaderContext;
 use Status;
 use User;
 use WebRequest;
@@ -95,8 +97,12 @@ class Hooks implements
 		// Sample 6.25%
 		$samplingRate = $this->config->has( 'WMESchemaEditAttemptStepSamplingRate' ) ?
 			$this->config->get( 'WMESchemaEditAttemptStepSamplingRate' ) : 0.0625;
+
+		// (T314896) Convert whatever we've been given to a string of hex, as that's what EL needs
+		$hexValue = hash( 'md5', $sessionId, false );
+
 		$inSample = EventLogging::sessionInSample(
-			(int)( 1 / $samplingRate ), $sessionId
+			(int)( 1 / $samplingRate ), $hexValue
 		);
 		return $inSample;
 	}
@@ -145,8 +151,11 @@ class Hooks implements
 			'mw_version' => MW_VERSION,
 		] + $data;
 
-		if ( $this->userOptionsLookup->getOption( $user, 'discussiontools-abtest2' ) ) {
-			$data['bucket'] = $this->userOptionsLookup->getOption( $user, 'discussiontools-abtest2' );
+		$bucket = ExtensionRegistry::getInstance()->isLoaded( 'DiscussionTools' ) ?
+			// @phan-suppress-next-line PhanUndeclaredClassMethod
+			DiscussionToolsHooks\HookUtils::determineUserABTestBucket( $user ) : false;
+		if ( $bucket ) {
+			$data['bucket'] = $bucket;
 		}
 
 		if ( $user->isAnon() ) {
@@ -193,7 +202,9 @@ class Hooks implements
 			'user_editcount' => $editCount ?: 0,
 		];
 
-		$bucket = $this->userOptionsLookup->getOption( $user, 'discussiontools-abtest2' );
+		$bucket = ExtensionRegistry::getInstance()->isLoaded( 'DiscussionTools' ) ?
+			// @phan-suppress-next-line PhanUndeclaredClassMethod
+			DiscussionToolsHooks\HookUtils::determineUserABTestBucket( $user ) : false;
 		if ( $bucket ) {
 			$data['bucket'] = $bucket;
 		}
@@ -222,8 +233,14 @@ class Hooks implements
 		if ( $this->userOptionsLookup->getBoolOption( $user, 'usebetatoolbar' ) ) {
 			$outputPage->addModuleStyles( 'ext.wikiEditor.styles' );
 			$outputPage->addModules( 'ext.wikiEditor' );
-			// Optionally enable Realtime Preview.
-			if ( $this->config->get( 'WikiEditorRealtimePreview' ) ) {
+			// Optionally enable Realtime Preview, and behind a BetaFeature where applicable.
+			$betaFeaturesInstalled = ExtensionRegistry::getInstance()->isLoaded( 'BetaFeatures' );
+			$user = $article->getContext()->getUser();
+			$betaFeatureEnabled = $betaFeaturesInstalled &&
+				BetaFeatures::isFeatureEnabled( $user, 'wikieditor-realtime-preview' );
+			if ( $this->config->get( 'WikiEditorRealtimePreview' ) &&
+				( $betaFeatureEnabled || !$betaFeaturesInstalled )
+			) {
 				$outputPage->addModules( 'ext.wikiEditor.realtimepreview' );
 			}
 		}
@@ -258,6 +275,9 @@ class Hooks implements
 				} else {
 					$data['init_mechanism'] = 'url';
 				}
+			}
+			if ( $request->getRawVal( 'wvprov' ) === 'sticky-header' ) {
+				$data['init_mechanism'] .= '-sticky-header';
 			}
 
 			$this->doEventLogging( 'init', $article, $data );
@@ -345,30 +365,37 @@ class Hooks implements
 			'help-message' => 'wikieditor-toolbar-preference-help',
 			'section' => 'editing/editor',
 		];
-	}
-
-	/**
-	 * @param ResourceLoaderContext $context
-	 * @param Config $config
-	 * @return array
-	 */
-	public static function getModuleData( ResourceLoaderContext $context, Config $config ) {
-		return [
-			// expose magic words for use by the wikieditor toolbar
-			'magicWords' => self::getMagicWords(),
-			'signature' => self::getSignatureMessage( $context )
+		$defaultPreferences['wikieditor-realtimepreview'] = [
+			'type' => 'api',
 		];
 	}
 
 	/**
-	 * @param ResourceLoaderContext $context
+	 * @param RL\Context $context
 	 * @param Config $config
 	 * @return array
 	 */
-	public static function getModuleDataSummary( ResourceLoaderContext $context, Config $config ) {
+	public static function getModuleData( RL\Context $context, Config $config ) {
+		return [
+			// expose magic words for use by the wikieditor toolbar
+			'magicWords' => self::getMagicWords(),
+			'signature' => self::getSignatureMessage( $context ),
+			'realtimeDebounce' => $config->get( 'WikiEditorRealtimePreviewDebounce' ),
+			'realtimeDisableDuration' => $config->get( 'WikiEditorRealtimeDisableDuration' ),
+		];
+	}
+
+	/**
+	 * @param RL\Context $context
+	 * @param Config $config
+	 * @return array
+	 */
+	public static function getModuleDataSummary( RL\Context $context, Config $config ) {
 		return [
 			'magicWords' => self::getMagicWords(),
-			'signature' => self::getSignatureMessage( $context, true )
+			'signature' => self::getSignatureMessage( $context, true ),
+			'realtimeDebounce' => $config->get( 'WikiEditorRealtimePreviewDebounce' ),
+			'realtimeDisableDuration' => $config->get( 'WikiEditorRealtimeDisableDuration' ),
 		];
 	}
 
@@ -560,5 +587,31 @@ class Hooks implements
 			$recentChange->addTags( 'wikieditor' );
 		}
 		return true;
+	}
+
+	/**
+	 * @param User $user
+	 * @param array &$prefs
+	 * @return void
+	 */
+	public static function onGetBetaFeaturePreferences( $user, &$prefs ) {
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		if ( !$config->get( 'WikiEditorRealtimePreview' ) ) {
+			return;
+		}
+		$extensionAssetsPath = $config->get( 'ExtensionAssetsPath' );
+		$prefs['wikieditor-realtime-preview'] = [
+			'label-message' => 'wikieditor-realtimepreview-beta-label',
+			'desc-message' => 'wikieditor-realtimepreview-beta-desc',
+			'screenshot' => [
+				'ltr' => "$extensionAssetsPath/WikiEditor/modules/images/beta-feature-ltr.svg",
+				'rtl' => "$extensionAssetsPath/WikiEditor/modules/images/beta-feature-rtl.svg",
+			],
+			// @todo Update links once mw:Help:Extension:WikiEditor/Realtime_Preview is written.
+			'info-link' => 'https://meta.wikimedia.org/wiki/Special:MyLanguage/' .
+				'Community_Wishlist_Survey_2021/Real_Time_Preview_for_Wikitext',
+			'discussion-link' => 'https://meta.wikimedia.org/wiki/' .
+				'Talk:Community_Wishlist_Survey_2021/Real_Time_Preview_for_Wikitext',
+		];
 	}
 }

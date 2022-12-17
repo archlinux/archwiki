@@ -4,7 +4,7 @@
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var description = new mw.mmv.ui.Description( $( '#qunit-fixture' ) );
 
-		assert.ok( description, 'Image description UI element is created' );
+		assert.true( description instanceof mw.mmv.ui.Description, 'Image description UI element is created' );
 		assert.strictEqual( description.$imageDescDiv.length, 1, 'Image description div is created' );
 		assert.strictEqual( description.$imageDesc.length, 1, 'Image description element is created' );
 	} );

@@ -41,7 +41,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Faqja nuk ekziston",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titulli i pavlefshëm",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Lidhje të jashtme",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Duke kontrolluar ekzistencën e faqes...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Titulli i cili ju e keni specifikuar është i pavlefshëm.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-n që të specifikuar është menduar si një lidhje në faqe të tjera wiki. A doni ta bëni këtë një lidhje të brendshme?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Lidhje të brëndshme",

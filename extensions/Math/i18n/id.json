@@ -9,7 +9,8 @@
 			"Iwan Novirion",
 			"Rachmat.Wahidi",
 			"Rachmat04",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Veracious"
 		]
 	},
 	"math-desc": "Menghasilkan rumus matematika di antara tag <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -23,6 +24,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "Bawaan",
 	"math-visualeditor-mwlatexinspector-display-inline": "Sebaris",
 	"math-visualeditor-mwlatexinspector-id": "ID pranala (opsional)",
+	"math-visualeditor-mwlatexinspector-qid": "Penanda Wikibase (dengan awalan Q)",
 	"math-visualeditor-mwmathdialog-title": "Rumus matematika",
 	"math-visualeditor-symbol-group-chem-addition": "Senyawa adisi",
 	"math-visualeditor-symbol-group-chem-aggregation": "Wujud agregasi",

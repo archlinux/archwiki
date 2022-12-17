@@ -41,7 +41,7 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 			] ),
 		] );
 
-		$editor = $this->getTestSysop()->getUser();
+		$editor = self::getTestSysop()->getUser();
 
 		$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
 
@@ -80,7 +80,8 @@ class Scribunto_LuaTitleLibraryTest extends Scribunto_LuaEngineTestBase {
 				'areRestrictionsLoaded',
 				'areCascadeProtectionSourcesLoaded',
 				'getAllRestrictions',
-				'registerOldRestrictions' // just do nothing
+				// just do nothing
+				'registerOldRestrictions'
 			]
 		);
 

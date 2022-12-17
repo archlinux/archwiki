@@ -11,8 +11,7 @@
 	"apierror-visualeditor-badcachekey": "لا cached serialization تم العثور عليه مع هذا المفتاح",
 	"apierror-visualeditor-difffailed": "فشل الفرق",
 	"apierror-visualeditor-docserver-http-error": "خطأ في الاتصال بخادم Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-http": "خطأ في الاتصال بخادم Parsoid/RESTBase (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "لم يتم تعريف VirtualRESTService لملقم المستند، انظر https://www.mediawiki.org/wiki/Extension:VisualEditor",
+	"apierror-visualeditor-docserver-http": "خطأ في الاتصال بخادم Parsoid / RESTBase (HTTP $1 ): $2",
 	"apierror-visualeditor-docserver": "خطأ في الاتصال بخادم Parsoid/RESTBase (بدون استجابة)",
 	"apierror-visualeditor-latestnotfound": "لم يمكن العثور على أحدث نسخة للعنوان",
 	"apihelp-visualeditor-description": "يرجع HTML5 لصفحة من الخدمة بارسويد (Parsoid).",
@@ -39,6 +38,8 @@
 	"apihelp-visualeditoredit-param-cachekey": "استخدام نتيجة لتسلسل السابق لطلب مخبأ مع هذا المفتاح.\nيتجاوز $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "CAPTCHA ID (عندما تحفظ مع استجابة CAPTCHA).",
 	"apihelp-visualeditoredit-param-captchaword": "الإجابة على اختبار CAPTCHA (عندما الادخار مع استجابة CAPTCHA).",
+	"apihelp-visualeditoredit-param-plugins": "الإضافات المرتبطة بطلب API.",
+	"apihelp-visualeditoredit-param-data-{plugin}": "تم إرسال البيانات التعسفية بواسطة مكون إضافي مع طلب واجهة برمجة التطبيقات.",
 	"apihelp-visualeditoredit-param-etag": "ETag للإرسال.",
 	"apihelp-visualeditoredit-param-html": "HTML لإرسالها إلى Parsoid في مقابل نصوص WikiText.",
 	"apihelp-visualeditoredit-param-minor": "العلم لتغيير طفيف.",
@@ -50,6 +51,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "العنوان للقسم الجديد",
 	"apihelp-visualeditoredit-param-starttimestamp": "عندما تحفظ ، وتعيين هذا إلى الطابع الزمني عندما تم تحميل الصفحة. تستخدم لكشف تضاربات التحرير.",
 	"apihelp-visualeditoredit-param-summary": "ملخص التعديل.",
+	"apihelp-visualeditoredit-param-tags": "قم بتغيير العلامات لتطبيقها على التعديل.",
 	"apihelp-visualeditoredit-param-wikitext": "نص الويكي للعمل معه.",
 	"apihelp-visualeditoredit-summary": "حفظ صفحة HTML5 لميدياويكي (محولة إلى نص الويكي عبر خدمة Parsoid)."
 }

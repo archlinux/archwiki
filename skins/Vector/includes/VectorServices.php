@@ -1,10 +1,10 @@
 <?php
 
-namespace Vector;
+namespace MediaWiki\Skins\Vector;
 
 use MediaWiki\MediaWikiServices;
-use Vector\FeatureManagement\FeatureManager;
-use Vector\Services\LanguageService;
+use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
+use MediaWiki\Skins\Vector\Services\LanguageService;
 
 /**
  * A service locator for services specific to Vector.
@@ -18,7 +18,7 @@ final class VectorServices {
 	 * Gets the feature manager service.
 	 *
 	 * Per its definition in ServiceWiring.php, the feature manager service is bound to the global
-	 * request and user objects and to the _Vector.Config_ service.
+	 * request and user objects.
 	 *
 	 * @return FeatureManager
 	 */

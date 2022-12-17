@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"McDutchie"
 		]
 	},
@@ -31,14 +32,13 @@
 	"vector-jumptocontent": "Saltar al contento",
 	"vector-more-actions": "Plus",
 	"vector-search-loader": "Cargante suggestiones de recerca",
-	"vector-searchsuggest-containing": "Cercar paginas que contine <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Cercar paginas que contine <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
 	"vector-anon-user-menu-pages": "Paginas pro redactores sin session aperte",
 	"vector-anon-user-menu-pages-learn": "leger plus",
 	"vector-anon-user-menu-pages-label": "Leger plus sur le modification",
-	"vector-personal-more-label": "Ligamines de usator",
 	"vector-main-menu-tooltip": "Menu principal",
-	"tooltip-vector-anon-user-menu-title": "Plus optiones",
-	"vector-menu-checkbox-expanded": "displicate",
-	"vector-menu-checkbox-collapsed": "plicate"
+	"vector-article-tools-nav-label": "Instrumentos",
+	"vector-site-nav-label": "Sito",
+	"tooltip-vector-anon-user-menu-title": "Plus optiones"
 }

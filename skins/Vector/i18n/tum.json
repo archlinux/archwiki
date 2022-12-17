@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tumbuka Arch",
-			"Amire80"
+			"Amire80",
+			"Tumbuka Arch"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 chiyowoyelo|$1 viyowoyelo}}",
@@ -14,5 +14,5 @@
 	"vector-view-history": "Wona mayambilo",
 	"vector-view-view": "Ŵelenga",
 	"vector-more-actions": "Vinandi",
-	"vector-searchsuggest-containing": "Fufuza ma jani agho muli <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Fufuza ma jani agho muli <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

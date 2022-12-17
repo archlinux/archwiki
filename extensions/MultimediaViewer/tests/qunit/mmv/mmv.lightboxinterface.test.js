@@ -11,7 +11,7 @@
 	}
 
 	QUnit.module( 'mmv.lightboxInterface', QUnit.newMwEnvironment( {
-		setup: function () {
+		beforeEach: function () {
 			// animation would keep running, conflict with other tests
 			this.sandbox.stub( $.fn, 'animate' ).returnsThis();
 		}
@@ -43,7 +43,7 @@
 
 		// Check that the close button on the lightbox still follow the spec (being visible right away)
 		assert.strictEqual( $( '#qunit-fixture .mw-mmv-close' ).length, 1, 'There should be a close button' );
-		assert.ok( $( '#qunit-fixture .mw-mmv-close' ).is( ':visible' ), 'The close button should be visible' );
+		assert.true( $( '#qunit-fixture .mw-mmv-close' ).is( ':visible' ), 'The close button should be visible' );
 
 		// Unattach lightbox from document
 		lightbox.unattach();
@@ -172,7 +172,7 @@
 		assert.strictEqual( lightbox.panel.$imageMetadata.is( ':visible' ), true, 'Image metadata is visible' );
 
 		lightbox.buttons.fadeOut = function () {
-			assert.ok( true, 'Opening fullscreen triggers a fadeout' );
+			assert.true( true, 'Opening fullscreen triggers a fadeout' );
 		};
 
 		// Pretend that the mouse cursor is on top of the button
@@ -183,12 +183,12 @@
 		lightbox.buttons.$fullscreen.trigger( 'click' );
 
 		lightbox.buttons.fadeOut = function () {};
-		assert.ok( lightbox.isFullscreen, 'Lightbox knows that it\'s in fullscreen mode' );
+		assert.true( lightbox.isFullscreen, 'Lightbox knows that it\'s in fullscreen mode' );
 
 		oldRevealButtonsAndFadeIfNeeded = lightbox.buttons.revealAndFade;
 
 		lightbox.buttons.revealAndFade = function ( position ) {
-			assert.ok( true, 'Moving the cursor triggers a reveal + fade' );
+			assert.true( true, 'Moving the cursor triggers a reveal + fade' );
 
 			oldRevealButtonsAndFadeIfNeeded.call( this, position );
 		};
@@ -203,7 +203,7 @@
 		assert.strictEqual( panelBottom, $( window ).height(), 'Image metadata does not extend beyond the viewport' );
 
 		lightbox.buttons.revealAndFade = function ( position ) {
-			assert.ok( true, 'Closing fullscreen triggers a reveal + fade' );
+			assert.true( true, 'Closing fullscreen triggers a reveal + fade' );
 
 			oldRevealButtonsAndFadeIfNeeded.call( this, position );
 		};
@@ -213,7 +213,7 @@
 
 		panelBottom = $( '.mw-mmv-post-image' ).position().top + $( '.mw-mmv-post-image' ).height();
 
-		assert.ok( panelBottom > $( window ).height(), 'Image metadata extends beyond the viewport' );
+		assert.true( panelBottom > $( window ).height(), 'Image metadata extends beyond the viewport' );
 		assert.strictEqual( lightbox.isFullscreen, false, 'Lightbox knows that it\'s not in fullscreen mode' );
 
 		// Unattach lightbox from document
@@ -273,11 +273,11 @@
 
 		// Since we define both, the test works regardless of RTL settings
 		lightbox.on( 'next', function () {
-			assert.ok( true, 'Next image was open' );
+			assert.true( true, 'Next image was open' );
 		} );
 
 		lightbox.on( 'prev', function () {
-			assert.ok( true, 'Prev image was open' );
+			assert.true( true, 'Prev image was open' );
 		} );
 
 		// 37 is left arrow, 39 is right arrow
@@ -285,11 +285,11 @@
 		lightbox.keydown( $.Event( 'keydown', { which: 39 } ) );
 
 		lightbox.off( 'next' ).on( 'next', function () {
-			assert.ok( false, 'Next image should not have been open' );
+			assert.true( false, 'Next image should not have been open' );
 		} );
 
 		lightbox.off( 'prev' ).on( 'prev', function () {
-			assert.ok( false, 'Prev image should not have been open' );
+			assert.true( false, 'Prev image should not have been open' );
 		} );
 
 		lightbox.keydown( $.Event( 'keydown', { which: 37, altKey: true } ) );

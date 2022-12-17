@@ -8,7 +8,6 @@
 		]
 	},
 	"visualeditor": "Chanjyell welesek",
-	"visualeditor-aliencontextitem-title": "Elven",
 	"visualeditor-aliennode-tooltip": "Diharesow, ny yllir golegi an elven ma marnas y'n modh pennfenten rag lemmyn.",
 	"visualeditor-align-desc-center": "kres",
 	"visualeditor-align-desc-default": "defowt",
@@ -84,8 +83,6 @@
 	"visualeditor-indentationbutton-outdent-tooltip": "Iselhe",
 	"visualeditor-inspector-close-tooltip": "Degea",
 	"visualeditor-inspector-remove-tooltip": "Dilea",
-	"visualeditor-key-alt": "Alt",
-	"visualeditor-key-ctrl": "Ctrl",
 	"visualeditor-key-delete": "Dilea",
 	"visualeditor-key-down": "Yn-nans",
 	"visualeditor-key-enter": "Entra",

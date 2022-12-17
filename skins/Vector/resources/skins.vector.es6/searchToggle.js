@@ -18,12 +18,12 @@ function bindSearchBoxHandler( searchBox, header ) {
 	const clickHandler = ( ev ) => {
 		if (
 			ev.target instanceof HTMLElement &&
-			// Check if the click target was a suggestion link. WVUI clears the
+			// Check if the click target was a suggestion link. Codex clears the
 			// suggestion elements from the DOM when a suggestion is clicked so we
 			// can't test if the suggestion is a child of the searchBox.
 			//
 			// Note: The .closest API is feature detected in `initSearchToggle`.
-			!ev.target.closest( '.wvui-typeahead-suggestion' ) &&
+			!ev.target.closest( '.cdx-typeahead-search .cdx-menu-item__content' ) &&
 			!searchBox.contains( ev.target )
 		) {
 			header.classList.remove( SEARCH_VISIBLE_CLASS );

@@ -10,6 +10,7 @@ use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
 use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesFormatter;
 use Status;
+use Wikimedia\ParamValidator\ParamValidator;
 
 class EvalExpression extends ApiBase {
 
@@ -47,7 +48,7 @@ class EvalExpression extends ApiBase {
 	 */
 	public function execute() {
 		// "Anti-DoS"
-		if ( !$this->afPermManager->canUseTestTools( $this->getUser() ) ) {
+		if ( !$this->afPermManager->canUseTestTools( $this->getAuthority() ) ) {
 			$this->dieWithError( 'apierror-abusefilter-canteval', 'permissiondenied' );
 		}
 
@@ -80,7 +81,6 @@ class EvalExpression extends ApiBase {
 		// Generic vars are the only ones available
 		$generator = $this->afVariableGeneratorFactory->newGenerator();
 		$vars = $generator->addGenericVars()->getVariableHolder();
-		$vars->setVar( 'timestamp', wfTimestamp( TS_UNIX ) );
 		$ruleChecker->setVariables( $vars );
 
 		return Status::newGood( $ruleChecker->evaluateExpression( $expr ) );
@@ -93,10 +93,10 @@ class EvalExpression extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'expression' => [
-				ApiBase::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_REQUIRED => true,
 			],
 			'prettyprint' => [
-				ApiBase::PARAM_TYPE => 'boolean'
+				ParamValidator::PARAM_TYPE => 'boolean'
 			]
 		];
 	}

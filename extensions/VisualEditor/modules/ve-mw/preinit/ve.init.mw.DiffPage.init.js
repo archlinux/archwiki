@@ -92,7 +92,7 @@
 
 		if ( history.replaceState ) {
 			uri.query.diffmode = mode;
-			history.replaceState( history.state, document.title, uri );
+			history.replaceState( history.state, '', uri );
 		}
 
 	}

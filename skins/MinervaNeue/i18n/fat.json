@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Blanche Micah-Davis",
 			"Ebenoffen1",
-			"Leonard Nketsia",
-			"Blanche Micah-Davis"
+			"Leonard Nketsia"
 		]
 	},
 	"minerva-watchlist-cta": "Ma w'anyiwa nkɔ kratafa yi do na nsesa biara a ɔbɛbado.",
@@ -55,6 +55,7 @@
 	"minerva-page-actions-protect": "Bambɔ",
 	"minerva-page-actions-unprotect": "Dza bambɔ nnda do",
 	"minerva-page-actions-user-groups": "Dwumadzifo ekuwekuw",
+	"minerva-page-actions-block": "Siw dwumadzinyi kwan",
 	"minerva-page-actions-logs": "Nlɔɔgo",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}} adze",
 	"minerva-page-actions-language-switcher": "Kasahorow",

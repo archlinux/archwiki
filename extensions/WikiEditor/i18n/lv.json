@@ -36,11 +36,10 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Saites teksts:",
 	"wikieditor-toolbar-tool-link-insert": "Ievietot saiti",
 	"wikieditor-toolbar-tool-link-cancel": "Atcelt",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "Lapa eksistē",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Lapa nepastāv",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Šī lapa pastāv vietnē \"{{SITENAME}}\"",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Šī lapa nepastāv vietnē \"{{SITENAME}}\"",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Norādītais nosaukums nav derīgs",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ārējā saite",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Tiek pārbaudīts vai lapa eksistē...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Šī lapa nav satura lapa, bet tēmu ar līdzīgiem nosaukumiem uzskaitījums",
 	"wikieditor-toolbar-tool-link-int-invalid": "Norādītais nosaukums nav derīgs.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Norādītais URL izskatās pēc saites uz viki lapu. Vai vēlaties to pārveidot par iekšēju saiti?",
@@ -196,5 +195,12 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Teksts bez atkāpes<br />:Teksts ar atkāpi<br />::Teksts ar atkāpi",
 	"wikieditor-toolbar-help-content-indent-result": "Teksts bez atkāpes<dl><dd>Teksts ar atkāpi<dl><dd>Teksts ar atkāpi</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Labojums veikts, izmantojot [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010. gada vikiteksta redaktoru)",
-	"wikieditor-realtimepreview-preview": "Pirmskats"
+	"wikieditor-realtimepreview-preview": "Pirmskats",
+	"wikieditor-realtimepreview-error": "Pirmskats nelādējas",
+	"wikieditor-realtimepreview-reload": "Pārlādēt",
+	"wikieditor-realtimepreview-beta-label": "Reālā laika pirmskats",
+	"wikieditor-realtimepreview-reload-title": "Pārlādēt reālā laika priekšskatījuma paneli",
+	"wikieditor-realtimepreview-manual": "Lūdzu, pārlādē, lai manuāli priekšskatītu savus labojumus.",
+	"wikieditor-realtimepreview-onboarding-title": "Reālā laika pirmskats",
+	"wikieditor-realtimepreview-onboarding-button": "Labi, sapratu"
 }

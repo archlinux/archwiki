@@ -221,7 +221,7 @@
 						var replace = action.type === 'replace';
 						if ( 'regex' in action.options && 'regexReplace' in action.options ) {
 							var selection = context.$textarea.textSelection( 'getSelection' );
-							if ( selection !== '' && selection.match( action.options.regex ) ) {
+							if ( selection !== '' && action.options.regex.test( selection ) ) {
 								parts.peri = selection.replace( action.options.regex,
 									action.options.regexReplace );
 								parts.pre = parts.post = '';
@@ -249,10 +249,7 @@
 				var $group = $( '<div>' ).attr( { class: 'group group-' + id, rel: id } ),
 					label = $.wikiEditor.autoMsg( group, 'label' );
 				if ( label ) {
-					var $label = $( '<span>' )
-						.addClass( 'label' )
-						.text( label );
-					$group.append( $label );
+					$( '<span>' ).addClass( 'label' ).text( label ).appendTo( $group );
 				}
 				var empty = true;
 				if ( 'tools' in group ) {
@@ -297,9 +294,9 @@
 							} else if ( tool.type === 'toggle' ) {
 								oouiButton = new OO.ui.ToggleButtonWidget( config );
 							}
-							$button = oouiButton.$element;
-							$button.attr( 'rel', id );
-							$button.data( 'ooui', oouiButton );
+							$button = oouiButton.$element
+								.attr( 'rel', id )
+								.data( 'ooui', oouiButton );
 						} else {
 							$button = $( '<a>' )
 								.attr( {
@@ -430,16 +427,17 @@
 						return $select;
 					case 'element':
 						// A raw 'element' type can be {htmlString|Element|Text|Array|jQuery|OO.ui.HTMLSnippet|function}.
-						var $element = $( '<div>' )
-							.attr( { rel: id, class: 'tool tool-element' } );
+						var $element;
 						if ( tool.element instanceof OO.ui.HtmlSnippet ) {
-							$element.append( tool.element.toString() );
+							$element = tool.element.toString();
 						} else if ( typeof tool.element === 'function' ) {
-							$element.append( tool.element( context ) );
+							$element = tool.element( context );
 						} else {
-							$element.append( tool.element );
+							$element = tool.element;
 						}
-						return $element;
+						return $( '<div>' )
+							.attr( { rel: id, class: 'tool tool-element' } )
+							.append( $element );
 					default:
 						return null;
 				}
@@ -461,8 +459,9 @@
 					.on( 'click', function ( event ) {
 						$( this ).parent().parent().find( '.page' ).hide();
 						$( this ).parent().parent().find( '.page-' + $( this ).attr( 'rel' ) ).show().trigger( 'loadPage' );
-						$( this ).siblings().removeClass( 'current' );
-						$( this ).addClass( 'current' );
+						$( this )
+							.addClass( 'current' )
+							.siblings().removeClass( 'current' );
 						var section = $( this ).parent().parent().attr( 'rel' );
 						$.cookie(
 							'wikiEditor-' + $( this ).data( 'context' ).instance + '-booklet-' + section + '-page',
@@ -493,8 +492,7 @@
 				switch ( page.layout ) {
 					case 'table':
 						$page.addClass( 'page-table' );
-						var html =
-							'<table class="table-' + id + '">';
+						var html = '';
 						if ( 'headings' in page ) {
 							html += toolbarModule.fn.buildHeading( context, page.headings );
 						}
@@ -503,7 +501,7 @@
 								html += toolbarModule.fn.buildRow( context, page.rows[ i ] );
 							}
 						}
-						$page.html( html + '</table>' );
+						$page.html( '<table class="table-' + id + '">' + html + '</table>' );
 						break;
 					case 'characters':
 						$page.addClass( 'page-characters' );
@@ -549,21 +547,21 @@
 				}
 			},
 			buildHeading: function ( context, headings ) {
-				var html = '<tr>';
+				var html = '';
 				for ( var i = 0; i < headings.length; i++ ) {
 					html += '<th>' + $.wikiEditor.autoSafeMsg( headings[ i ], [ 'html', 'text' ] ) + '</th>';
 				}
-				return html + '</tr>';
+				return '<tr>' + html + '</tr>';
 			},
 			buildRow: function ( context, row ) {
-				var html = '<tr>';
+				var html = '';
 				for ( var cell in row ) {
 					// FIXME: This currently needs to use the "unsafe" .text() message because it embeds raw HTML
 					// in the messages (as used exclusively by the 'help' toolbar panel).
 					html += '<td class="cell cell-' + cell + '"><span>' +
 						$.wikiEditor.autoMsg( row[ cell ], [ 'html', 'text' ] ) + '</span></td>';
 				}
-				return html + '</tr>';
+				return '<tr>' + html + '</tr>';
 			},
 			buildCharacter: function ( character, actions ) {
 				if ( typeof character === 'string' ) {
@@ -593,23 +591,13 @@
 				}
 				if ( character && 'action' in character && 'label' in character ) {
 					actions[ character.label ] = character.action;
-					if ( character.titleMsg !== undefined || character.title !== undefined ) {
-						var title;
-						if ( character.titleMsg !== undefined ) {
-							// eslint-disable-next-line mediawiki/msg-doc
-							title = mw.msg( character.titleMsg );
-						} else {
-							title = character.title;
-						}
-
-						return mw.html.element(
-							'span',
-							{ rel: character.label, title: title },
-							character.label
-						);
-					} else {
-						return mw.html.element( 'span', { rel: character.label }, character.label );
-					}
+					// eslint-disable-next-line mediawiki/msg-doc
+					var title = character.titleMsg ? mw.msg( character.titleMsg ) : character.title;
+					return mw.html.element(
+						'span',
+						{ rel: character.label, title: title || false },
+						character.label
+					);
 				}
 				mw.log( 'A character for the toolbar was undefined. This is not supposed to happen. Double check the config.' );
 				// bug 31673; also an additional fix for bug 24208...
@@ -663,8 +651,9 @@
 								.removeClass( 'section-visible' )
 								.addClass( 'section-hidden' );
 
-							$( this ).attr( 'aria-expanded', 'false' );
-							$( this ).parent().parent().find( 'a' ).removeClass( 'current' );
+							$( this )
+								.attr( 'aria-expanded', 'false' )
+								.parent().parent().find( 'a' ).removeClass( 'current' );
 							if ( show ) {
 								$section
 									.removeClass( 'section-hidden' )
@@ -705,13 +694,9 @@
 
 				// Show or hide section
 				if ( id !== 'main' && id !== 'secondary' ) {
-					$section.attr( 'aria-expanded', show ? 'true' : 'false' );
-
-					if ( show ) {
-						$section.addClass( 'section-visible' );
-					} else {
-						$section.addClass( 'section-hidden' );
-					}
+					$section
+						.attr( 'aria-expanded', show.toString() )
+						.addClass( show ? 'section-visible' : 'section-hidden' );
 				}
 				return $section;
 			},
@@ -759,7 +744,7 @@
 								);
 							}
 						}
-						$section.append( $index ).append( $pages );
+						$section.append( $index, $pages );
 						toolbarModule.fn.updateBookletSelection( context, id, $pages, $index );
 						break;
 				}

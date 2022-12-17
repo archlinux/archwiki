@@ -43,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Orri hori ez da existitzen",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Balio gabeko izenburua",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Kanpo esteka",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Orriaren existentzia egiaztatzen...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Argipen orria",
 	"wikieditor-toolbar-tool-link-int-invalid": "Zehaztutako izenburua ez dago zuzen.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Adierazi duzun URLak beste wiki orri bateranzko esteka izateko asmoz eratua dirudi.\nBarne esteka bihurtu nahi duzu?",

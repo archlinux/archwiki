@@ -3,34 +3,51 @@
 namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterChangesList;
-use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewExamine;
+use MediaWiki\Linker\LinkRenderer;
 use RecentChange;
 use ReverseChronologicalPager;
 use stdClass;
 use Title;
+use Wikimedia\Rdbms\IDatabase;
 
 class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	/**
 	 * @var AbuseFilterChangesList Our changes list
 	 */
-	public $mChangesList;
+	private $changesList;
 	/**
-	 * @var AbuseFilterViewExamine The associated view
+	 * @var Title
 	 */
-	public $mPage;
+	private $title;
+	/**
+	 * @var array Query conditions
+	 */
+	private $conds;
 	/**
 	 * @var int Line number of the row, see RecentChange::$counter
 	 */
-	public $rcCounter;
+	private $rcCounter;
 
 	/**
-	 * @param AbuseFilterViewExamine $page
 	 * @param AbuseFilterChangesList $changesList
+	 * @param LinkRenderer $linkRenderer
+	 * @param IDatabase $dbr
+	 * @param Title $title
+	 * @param array $conds
 	 */
-	public function __construct( AbuseFilterViewExamine $page, AbuseFilterChangesList $changesList ) {
-		parent::__construct();
-		$this->mChangesList = $changesList;
-		$this->mPage = $page;
+	public function __construct(
+		AbuseFilterChangesList $changesList,
+		LinkRenderer $linkRenderer,
+		IDatabase $dbr,
+		Title $title,
+		array $conds
+	) {
+		// Set database before parent constructor to avoid setting it there with wfGetDB
+		$this->mDb = $dbr;
+		parent::__construct( $changesList, $linkRenderer );
+		$this->changesList = $changesList;
+		$this->title = $title;
+		$this->conds = $conds;
 		$this->rcCounter = 1;
 	}
 
@@ -38,30 +55,11 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	 * @return array
 	 */
 	public function getQueryInfo() {
-		$dbr = wfGetDB( DB_REPLICA );
-		$conds = [];
 		$rcQuery = RecentChange::getQueryInfo();
-
-		if ( (string)$this->mPage->mSearchUser !== '' ) {
-			$conds[$rcQuery['fields']['rc_user_text']] = $this->mPage->mSearchUser;
-		}
-
-		$startTS = strtotime( $this->mPage->mSearchPeriodStart );
-		if ( $startTS ) {
-			$conds[] = 'rc_timestamp>=' . $dbr->addQuotes( $dbr->timestamp( $startTS ) );
-		}
-		$endTS = strtotime( $this->mPage->mSearchPeriodEnd );
-		if ( $endTS ) {
-			$conds[] = 'rc_timestamp<=' . $dbr->addQuotes( $dbr->timestamp( $endTS ) );
-		}
-
-		$conds[] = $this->mPage->buildTestConditions( $dbr );
-		$conds = array_merge( $conds, $this->mPage->buildVisibilityConditions( $dbr, $this->getAuthority() ) );
-
 		$info = [
 			'tables' => $rcQuery['tables'],
 			'fields' => $rcQuery['fields'],
-			'conds' => $conds,
+			'conds' => $this->conds,
 			'join_conds' => $rcQuery['joins'],
 		];
 
@@ -75,7 +73,7 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	public function formatRow( $row ) {
 		$rc = RecentChange::newFromRow( $row );
 		$rc->counter = $this->rcCounter++;
-		return $this->mChangesList->recentChangesLine( $rc, false );
+		return $this->changesList->recentChangesLine( $rc, false );
 	}
 
 	/**
@@ -87,10 +85,11 @@ class AbuseFilterExaminePager extends ReverseChronologicalPager {
 	}
 
 	/**
+	 * @codeCoverageIgnore Merely declarative
 	 * @return Title
 	 */
 	public function getTitle() {
-		return $this->mPage->getTitle( 'examine' );
+		return $this->title;
 	}
 
 	/**

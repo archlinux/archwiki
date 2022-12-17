@@ -2,23 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Alireza Ivaz",
+			"Beginneruser",
 			"Darafsh",
 			"Ebraminio",
 			"Freshman404",
 			"Huji",
+			"Jeeputer",
 			"Ladsgroup",
+			"Matma Rex",
 			"Movyn",
 			"Reza1615",
 			"الناز",
-			"درفش کاویانی",
-			"Beginneruser",
-			"Jeeputer",
-			"Matma Rex"
+			"درفش کاویانی"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "کپچا برای آن کلید یافت نشد",
 	"apierror-visualeditor-difffailed": "تفاوت دارای خطا",
-	"apierror-visualeditor-docserver-unconfigured": "خدمات VirtualRESTService برای سرور مطالب تعریف نشده‌است. https://www.mediawiki.org/wiki/Extension:VisualEditor را مشاهده کنید.",
 	"apierror-visualeditor-docserver": "خطا در اتصال به سرور Parsoid/RESTBase (پاسخی دریافت نشد)",
 	"apierror-visualeditor-latestnotfound": "آخرین نسخه برای عنوان یافت نشد",
 	"apihelp-visualeditor-description": "HTML5 یک صفحه را از خدمت پارسوید برمی‌گرداند.",

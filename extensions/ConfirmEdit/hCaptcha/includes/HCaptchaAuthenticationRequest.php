@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Extension\ConfirmEdit\hCaptcha;
 
-use CaptchaAuthenticationRequest;
 use MediaWiki\Auth\AuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 
 class HCaptchaAuthenticationRequest extends CaptchaAuthenticationRequest {
 	public function __construct() {

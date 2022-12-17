@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Dj",
+			"Hanna Tardos",
 			"Hunyadym",
 			"Rodrigo",
 			"Tacsipacsi"
@@ -57,8 +58,10 @@
 	"minerva-page-actions-move": "Átnevezés",
 	"minerva-page-actions-delete": "Törlés",
 	"minerva-page-actions-protect": "Lapvédelem",
+	"minerva-page-actions-unblock": "Felhasználó blokkolásának feloldása",
 	"minerva-page-actions-unprotect": "Védelem feloldása",
 	"minerva-page-actions-user-groups": "Felhasználói csoportok",
+	"minerva-page-actions-block": "Felhasználó blokkolása",
 	"minerva-page-actions-logs": "Rendszernaplók",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}}-adatlap",
 	"minerva-page-actions-language-switcher": "Nyelvek",

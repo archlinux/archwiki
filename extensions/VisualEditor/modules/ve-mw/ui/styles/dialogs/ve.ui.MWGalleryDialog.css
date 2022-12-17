@@ -11,10 +11,7 @@
 	background-position: 50% 50%;
 	border: 1px solid #c8ccd1;
 	cursor: pointer;
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	background-size: contain;
-	-webkit-transition: border 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 ), box-shadow 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 );
-	-moz-transition: border 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 ), box-shadow 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 );
 	transition: border 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 ), box-shadow 200ms cubic-bezier( 0.39, 0.575, 0.565, 1 );
 	/* Override default padding of DraggableElement */
 	/* TODO: Remove once T168745 is resolved */
@@ -48,7 +45,6 @@
 	height: 200px;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	background-size: contain;
 }
 
@@ -58,7 +54,6 @@
 }
 
 .ve-ui-mwGalleryDialog-menuLayout-mobile > .oo-ui-menuLayout-menu {
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	height: calc( 102px + 2em );
 	border-bottom: 1px solid #c8ccd1;
 }
@@ -69,7 +64,6 @@
 }
 
 .ve-ui-mwGalleryDialog-menuLayout-mobile > .oo-ui-menuLayout-content {
-	/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 	top: calc( 102px + 2em );
 }
 

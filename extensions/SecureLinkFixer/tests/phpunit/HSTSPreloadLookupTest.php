@@ -52,6 +52,7 @@ class HSTSPreloadLookupTest extends MediaWikiIntegrationTestCase {
 			[ 'secure.insecure-example.org', true ],
 			[ 'insecure-example.org', false ],
 			[ 'not-preloaded.org', false ],
+			[ 'pathological.case.that.is.not.preloaded.org', false ],
 		];
 	}
 }

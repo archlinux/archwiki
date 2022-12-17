@@ -12,7 +12,6 @@
 	"apierror-visualeditor-difffailed": "Nepodařilo se zobrazit rozdíl",
 	"apierror-visualeditor-docserver-http-error": "Vyskytla se chyba při kontaktování Parsoid/RESTBase serveru: $1",
 	"apierror-visualeditor-docserver-http": "Vyskytla se chyba při kontaktování Parsoid/RESTBase serveru (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService pro server dokumentu není definováno; viz https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Vyskytla se chyba při kontaktování Parsoid/RESTBase serveru (bez odpovědi)",
 	"apierror-visualeditor-latestnotfound": "Nepodařilo se najít poslední revizi pro název",
 	"apihelp-visualeditor-description": "Vrací HTML5 pro stránku ze služby Parsoid.",

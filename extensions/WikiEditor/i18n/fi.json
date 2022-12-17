@@ -53,7 +53,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sivua ei ole olemassa",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Määrittämäsi otsikko ei kelpaa.",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ulkoinen linkki",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Tarkastetaan sivun olemassaolo…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Tämä ei ole sisältösivu, vaan se listaa aiheita, joilla on samanlaiset nimet",
 	"wikieditor-toolbar-tool-link-int-invalid": "Antamasi otsikko on virheellinen.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-osoite, jonka annoit näyttää siltä kuin se olisi linkki toiselle wikisivulle.\nHaluatko tehdä siitä sisäisen linkin?",

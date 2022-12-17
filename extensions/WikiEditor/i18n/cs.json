@@ -43,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Tato stránka na {{GRAMMAR:6sg|{{SITENAME}}}} neexistuje",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Vámi zadaný název je neplatný",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Externí odkaz",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Zjišťování existence stránky…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Tato stránka není článek s obsahem, ale seznam témat s podobným názvem",
 	"wikieditor-toolbar-tool-link-int-invalid": "Zadaný název je neplatný.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Uvedené URL vypadá jako odkaz na jinou stránku této wiki.\nChcete z něj tedy udělat vnitřní odkaz?",
@@ -198,5 +197,8 @@
 	"wikieditor-toolbar-help-content-indent-description": "Odsazení",
 	"wikieditor-toolbar-help-content-indent-syntax": "Základní text<br />:Odsazený text<br />::Odsazený text",
 	"wikieditor-toolbar-help-content-indent-result": "Základní text<dl><dd>Odsazený text<dl><dd>Odsazený text</dd></dl></dd></dl>",
-	"wikieditor-realtimepreview-preview": "Náhled"
+	"wikieditor-realtimepreview-preview": "Náhled",
+	"wikieditor-realtimepreview-error": "Náhled se nenačítá",
+	"wikieditor-realtimepreview-reload": "Obnovit",
+	"wikieditor-realtimepreview-beta-label": "Náhled v reálném čase"
 }

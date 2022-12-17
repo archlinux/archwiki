@@ -22,5 +22,3 @@ interface RenameUserCompleteHook {
 	public function onRenameUserComplete( int $uid, string $old, string $new ): void;
 
 }
-
-class_alias( RenameUserCompleteHook::class, 'RenameUserCompleteHook' );

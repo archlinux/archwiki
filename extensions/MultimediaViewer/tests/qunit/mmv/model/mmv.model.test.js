@@ -28,11 +28,9 @@
 		assert.strictEqual( thumbnail.width, width, 'Width is set correctly' );
 		assert.strictEqual( thumbnail.height, height, 'Height is set correctly' );
 
-		try {
+		assert.throws( function () {
 			thumbnail = new mw.mmv.model.Thumbnail( url, width );
-		} catch ( e ) {
-			assert.ok( e, 'Exception is thrown when parameters are missing' );
-		}
+		}, 'Exception is thrown when parameters are missing' );
 	} );
 
 	QUnit.test( 'ThumbnailWidth constructor sense check', function ( assert ) {
@@ -48,11 +46,9 @@
 		assert.strictEqual( thumbnailWidth.screen, screenWidth, 'Screen width is set correctly' );
 		assert.strictEqual( thumbnailWidth.real, realWidth, 'Real width is set correctly' );
 
-		try {
+		assert.throws( function () {
 			thumbnailWidth = new mw.mmv.model.ThumbnailWidth( cssWidth, screenWidth );
-		} catch ( e ) {
-			assert.ok( e, 'Exception is thrown when parameters are missing' );
-		}
+		}, 'Exception is thrown when parameters are missing' );
 	} );
 
 }() );

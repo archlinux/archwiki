@@ -127,8 +127,10 @@
 		/** @property {string} author The author of the image - unsafe HTML sometimes goes here */
 		this.author = author;
 
-		/** @property {number} authorCount The number of different authors of the image. This is guessed by the
-		 *   number of templates with author fields, so might be less than the number of actual authors. */
+		/**
+		 * @property {number} authorCount The number of different authors of the image. This is guessed by the
+		 *   number of templates with author fields, so might be less than the number of actual authors.
+		 */
 		this.authorCount = authorCount;
 
 		/** @property {mw.mmv.model.License} license The license under which the image is distributed */
@@ -187,7 +189,7 @@
 
 			// Anonymise the timestamp to avoid making the file identifiable
 			// We only need to know the day
-			anonymizedUploadDateTime = anonymizedUploadDateTime.substr( 0, anonymizedUploadDateTime.length - 6 ) + '000000';
+			anonymizedUploadDateTime = anonymizedUploadDateTime.slice( 0, anonymizedUploadDateTime.length - 6 ) + '000000';
 
 			name = this.parseExtmeta( extmeta.ObjectName, 'plaintext' );
 

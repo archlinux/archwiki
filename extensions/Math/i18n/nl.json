@@ -13,7 +13,8 @@
 			"Romaine",
 			"SPQRobin",
 			"Siebrand",
-			"Sjoerddebruin"
+			"Sjoerddebruin",
+			"Vistaus"
 		]
 	},
 	"math-desc": "Wiskundige formules tussen <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>-labels weergeven",
@@ -27,6 +28,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "Standaard",
 	"math-visualeditor-mwlatexinspector-display-inline": "In de regel",
 	"math-visualeditor-mwlatexinspector-id": "Koppelings-ID (optioneel)",
+	"math-visualeditor-mwlatexinspector-qid": "Wikibase-id (voorzien van Q-achtervoegsel)",
 	"math-visualeditor-mwmathdialog-title": "Wiskundige formule",
 	"math-visualeditor-symbol-group-chem-arrows": "Reactiepijlen",
 	"math-visualeditor-symbol-group-chem-equations": "Scheikundige vergelijking",
@@ -80,7 +82,7 @@
 	"math_unknown_error": "onbekende fout",
 	"math_unknown_function": "onbekende functie \"$1\"",
 	"mw_math_latexml": "LaTeXML (experimenteel; gebruikt MathML)",
-	"mw_math_mathml": "MathML met SVG- of PNG-terugval (aanbevolen voor moderne browsers en toegankelijkheidshulpmiddelen)",
+	"mw_math_mathml": "SVG met PNG-terugval (MathML kan worden gebruikt via een browserplugin)",
 	"mw_math_png": "PNG-afbeeldingen",
 	"mw_math_source": "LaTeX-bron (voor tekstbrowsers)",
 	"prefs-math": "Formules",

@@ -7,7 +7,14 @@
  * @file
  */
 
+namespace MediaWiki\Extension\TitleBlacklist;
+
 use MediaWiki\MediaWikiServices;
+use MWException;
+use ObjectCache;
+use TextContent;
+use Title;
+use User;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -28,7 +35,7 @@ class TitleBlacklist {
 	protected static $instance = null;
 
 	/** Blacklist format */
-	public const VERSION = 3;
+	public const VERSION = 4;
 
 	/**
 	 * Get an instance of this class
@@ -118,7 +125,8 @@ class TitleBlacklist {
 	 */
 	private static function getBlacklistText( $source ) {
 		if ( !is_array( $source ) || count( $source ) <= 0 ) {
-			return '';	// Return empty string in error case
+			// Return empty string in error case
+			return '';
 		}
 
 		if ( $source['type'] == 'message' ) {
@@ -362,3 +370,5 @@ class TitleBlacklist {
 			( $action == 'new-account' && $user->isAllowed( 'tboverride-account' ) );
 	}
 }
+
+class_alias( TitleBlacklist::class, 'TitleBlacklist' );

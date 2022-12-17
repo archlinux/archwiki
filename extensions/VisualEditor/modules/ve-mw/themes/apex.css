@@ -16,10 +16,6 @@
 	border-bottom-left-radius: 0.25em;
 }
 
-.ve-ui-mwTransclusionDialog-addParameterFieldset .ve-ui-mwParameterSearchWidget {
-	box-shadow: 0 0 0.5em rgba( 0, 0, 0, 0.2 );
-}
-
 /* Ace editor widget */
 
 /* stylelint-disable-next-line selector-class-pattern */

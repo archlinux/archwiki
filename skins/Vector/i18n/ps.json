@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmed-Najib-Biabani-Ibrahimkhel"
+			"Ahmed-Najib-Biabani-Ibrahimkhel",
+			"Amjad Khan"
 		]
 	},
 	"skinname-vector": "وېکټور",
@@ -18,5 +19,6 @@
 	"vector-view-history": "پېښليک کتل",
 	"vector-view-view": "لوستل",
 	"vector-view-viewsource": "سرچينه کتل",
-	"vector-more-actions": "نور"
+	"vector-more-actions": "نور",
+	"vector-toc-beginning": "پیل"
 }

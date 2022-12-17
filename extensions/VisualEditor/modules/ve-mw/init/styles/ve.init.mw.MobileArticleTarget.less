@@ -27,12 +27,10 @@
 		// Ensure whole page is focusable (T109508)
 		// Subtract toolbar height, margin-bottom and a little more
 		// to prevent scrolling.
-		/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 		min-height: ~'calc( 100vh - 5em )';
 
 		.ve-init-target-ios & {
 			// More spacing required on iOS to prevent scrolling.
-			/* stylelint-disable-next-line plugin/no-unsupported-browser-features */
 			min-height: ~'calc( 100vh - 10em )';
 		}
 
@@ -67,6 +65,11 @@
 	overflow: hidden;
 }
 
+.ve-init-mw-mobileArticleTarget-toolbar-popups {
+	// Avoid jittering while scrolling (T209192)
+	position: fixed;
+}
+
 @media screen and ( max-width: 767px ) {
 	.ve-init-mw-target-surface > .ve-ui-surface-placeholder > * {
 		/* Fix margin overlap */
@@ -96,11 +99,6 @@
 .ve-ui-debugBar-selectionLabel {
 	min-width: auto;
 	width: 100%;
-}
-
-/* Hide toolbar shortcuts, no use on mobile */
-.oo-ui-popupToolGroup-tools .oo-ui-tool-link .oo-ui-tool-accel {
-	display: none;
 }
 
 /* Restrict width of context to tablet width */

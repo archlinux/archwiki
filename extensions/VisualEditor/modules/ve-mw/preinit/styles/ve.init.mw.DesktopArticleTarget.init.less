@@ -49,10 +49,19 @@
 	}
 }
 
-/* While loading, everything except the placeholder toolbar */
-.ve-loading #content > :not( .ve-init-mw-desktopArticleTarget-toolbarPlaceholder ),
-/* Once activated, all uneditable content except catlinks */
-.ve-activated .ve-init-mw-desktopArticleTarget-uneditableContent {
+/*!
+ * Styles to make the original read view look disabled
+ * Don't "disable":
+ * - while loading: the placeholder toolbar
+ * - while loading: the target, as this momentarily appears at the end of the loading sequence
+ *   and contains the real toolbar
+ * Do "disable":
+ * - while loading: anything marked "original content" as on the second load this is where the read mode content will be
+ * - after activation: anything marked as "uneditable content"
+ */
+.ve-loading .ve-init-mw-desktopArticleTarget-targetContainer > :not( .ve-init-mw-desktopArticleTarget-toolbarPlaceholder ):not( .ve-init-mw-desktopArticleTarget ),
+.ve-loading .ve-init-mw-desktopArticleTarget-originalContent,
+.ve-activated:not( .ve-loading ) .ve-init-mw-desktopArticleTarget-uneditableContent {
 	pointer-events: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -62,7 +71,7 @@
 }
 
 .ve-activated {
-	#firstHeading {
+	.ve-init-mw-desktopArticleTarget-targetContainer #firstHeading {
 		/* Override the styles above to allow the heading to be selected, for copy-pasting */
 		-webkit-user-select: text;
 		-moz-user-select: text;
@@ -77,7 +86,7 @@
 		}
 	}
 
-	#catlinks {
+	.ve-init-mw-desktopArticleTarget-originalContent #catlinks {
 		cursor: pointer;
 
 		&:hover {
@@ -88,10 +97,6 @@
 		a {
 			opacity: 1;
 		}
-	}
-
-	#content {
-		position: relative;
 	}
 }
 /* stylelint-enable selector-max-id */

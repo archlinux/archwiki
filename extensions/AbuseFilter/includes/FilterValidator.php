@@ -7,10 +7,9 @@ use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagValidator;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
-use MediaWiki\User\UserIdentity;
+use MediaWiki\Permissions\Authority;
 use Message;
 use Status;
-use User;
 
 /**
  * This class validates filters, e.g. before saving.
@@ -60,10 +59,12 @@ class FilterValidator {
 	/**
 	 * @param AbstractFilter $newFilter
 	 * @param AbstractFilter $originalFilter
-	 * @param User $user
+	 * @param Authority $performer
 	 * @return Status
 	 */
-	public function checkAll( AbstractFilter $newFilter, AbstractFilter $originalFilter, User $user ): Status {
+	public function checkAll(
+		AbstractFilter $newFilter, AbstractFilter $originalFilter, Authority $performer
+	): Status {
 		// TODO We might consider not bailing at the first error, so we can show all errors at the first attempt
 
 		$syntaxStatus = $this->checkValidSyntax( $newFilter );
@@ -101,7 +102,7 @@ class FilterValidator {
 			}
 		}
 
-		$globalPermStatus = $this->checkGlobalFilterEditPermission( $user, $newFilter, $originalFilter );
+		$globalPermStatus = $this->checkGlobalFilterEditPermission( $performer, $newFilter, $originalFilter );
 		if ( !$globalPermStatus->isGood() ) {
 			return $globalPermStatus;
 		}
@@ -111,7 +112,7 @@ class FilterValidator {
 			return $globalFilterMsgStatus;
 		}
 
-		$restrictedActionsStatus = $this->checkRestrictedActions( $user, $newFilter, $originalFilter );
+		$restrictedActionsStatus = $this->checkRestrictedActions( $performer, $newFilter, $originalFilter );
 		if ( !$restrictedActionsStatus->isGood() ) {
 			return $restrictedActionsStatus;
 		}
@@ -285,19 +286,19 @@ class FilterValidator {
 	}
 
 	/**
-	 * @param User $user
+	 * @param Authority $performer
 	 * @param AbstractFilter $newFilter
 	 * @param AbstractFilter $originalFilter
 	 * @return Status
 	 */
 	public function checkGlobalFilterEditPermission(
-		User $user,
+		Authority $performer,
 		AbstractFilter $newFilter,
 		AbstractFilter $originalFilter
 	): Status {
 		if (
-			!$this->permManager->canEditFilter( $user, $newFilter ) ||
-			!$this->permManager->canEditFilter( $user, $originalFilter )
+			!$this->permManager->canEditFilter( $performer, $newFilter ) ||
+			!$this->permManager->canEditFilter( $performer, $originalFilter )
 		) {
 			return Status::newFatal( 'abusefilter-edit-notallowed-global' );
 		}
@@ -323,13 +324,13 @@ class FilterValidator {
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @param AbstractFilter $newFilter
 	 * @param AbstractFilter $originalFilter
 	 * @return Status
 	 */
 	public function checkRestrictedActions(
-		UserIdentity $user,
+		Authority $performer,
 		AbstractFilter $newFilter,
 		AbstractFilter $originalFilter
 	): Status {
@@ -337,7 +338,7 @@ class FilterValidator {
 		$allEnabledActions = $newFilter->getActions() + $originalFilter->getActions();
 		if (
 			array_intersect_key( array_fill_keys( $this->restrictedActions, true ), $allEnabledActions )
-			&& !$this->permManager->canEditFilterWithRestrictedActions( $user )
+			&& !$this->permManager->canEditFilterWithRestrictedActions( $performer )
 		) {
 			$ret->error( 'abusefilter-edit-restricted' );
 		}

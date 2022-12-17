@@ -7,6 +7,7 @@
 			"DCamer",
 			"David1010",
 			"Dim Grits",
+			"DonRumata",
 			"Eleferen",
 			"G0rn",
 			"Iluvatar",
@@ -18,14 +19,13 @@
 			"Mailman",
 			"Movses",
 			"Okras",
+			"Pacha Tchernof",
 			"Sealle",
 			"Smigles",
 			"Stjn",
 			"Temuri rajavi",
 			"Vlad5250",
 			"Александр Сигачёв",
-			"DonRumata",
-			"Pacha Tchernof",
 			"WindEwriX"
 		]
 	},
@@ -60,7 +60,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Эта страница не существует на {{GRAMMAR:prepositional|{{SITENAME}}}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Указанное вами название недействительно",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Внешняя ссылка",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Проверка существования страницы…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Эта страница не является содержательной страницей, а списком тем с похожими названиями",
 	"wikieditor-toolbar-tool-link-int-invalid": "Указанное название недопустимо.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Указанный вами URL похож на ссылку на другую вики-страницу. Возможно, вы хотите сделать данную ссылку внутренней?",
@@ -220,5 +219,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Обычный текст<br />:Текст с отступом<br />::Текст с отступом",
 	"wikieditor-toolbar-help-content-indent-result": "Обычный текст<dl><dd>Текст с отступом<dl><dd>Текст с отступом</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Правка сделана с помощью [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]]-а (редактора вики-разметки 2010)",
-	"wikieditor-realtimepreview-preview": "Предпросмотр"
+	"wikieditor-realtimepreview-preview": "Предпросмотр",
+	"wikieditor-realtimepreview-error": "Предпросмотр не загружается",
+	"wikieditor-realtimepreview-reload": "Перезагрузить",
+	"wikieditor-realtimepreview-beta-label": "Предпросмотр в реальном времени",
+	"wikieditor-realtimepreview-beta-desc": "Посмотрите, как изменения вики-разметки будут показываться читателям в [[mw:Special:MyLanguage/Extension:WikiEditor|редакторе 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Перезагрузить панель предварительного просмотра",
+	"wikieditor-realtimepreview-manual": "Пожалуйста, перезагрузите сейчас, чтобы вручную совершить предпросмотр ваших правок.",
+	"wikieditor-realtimepreview-onboarding-title": "Предпросмотр в реальном времени",
+	"wikieditor-realtimepreview-onboarding-body": "Проверьте, как читатели будут видеть ваши правки, просмотрев их в режиме реального времени.",
+	"wikieditor-realtimepreview-onboarding-button": "Окей, понятно"
 }

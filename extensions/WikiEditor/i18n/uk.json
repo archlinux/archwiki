@@ -3,6 +3,7 @@
 		"authors": [
 			"AS",
 			"Ahonc",
+			"Andriy.v",
 			"Andriykopanytsia",
 			"AtUkr",
 			"Base",
@@ -18,6 +19,7 @@
 			"Prima klasy4na",
 			"Vlad5250",
 			"Ата",
+			"Пан Хаунд",
 			"Тест"
 		]
 	},
@@ -52,7 +54,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Ця сторінка не існує на {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Вказаний вами заголовок недійсний",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Зовнішнє посилання",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Перевірка наявності сторінки...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Ця сторінка не є сторінкою вмісту, тут лише перераховано теми зі схожими назвами",
 	"wikieditor-toolbar-tool-link-int-invalid": "Зазначена назва неприпустима.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Зазначений вами URL виглядає як посилання на іншу вікі-сторінку. Ви хочете зробити його внутрішнім посиланням?",
@@ -212,5 +213,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Звичайний текст<br />:Текст з відступом<br />::Текст з відступом",
 	"wikieditor-toolbar-help-content-indent-result": "Звичайний текст<dl><dd>Текст з відступом<dl><dd>Текст з відступом</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Редагування зроблено використовуючи [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (редактор вікітексту 2010 року)",
-	"wikieditor-realtimepreview-preview": "Попередній перегляд"
+	"wikieditor-realtimepreview-preview": "Попередній перегляд",
+	"wikieditor-realtimepreview-error": "Попередній перегляд не завантажується",
+	"wikieditor-realtimepreview-reload": "Перезавантажити",
+	"wikieditor-realtimepreview-beta-label": "Перегляд у реальному часі",
+	"wikieditor-realtimepreview-beta-desc": "Подивіться як зміни у вікітексті будуть відображатися читачам у [[mw:Special:MyLanguage/Extension:WikiEditor|редакторі вікітексту 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Перезавантажте панель попереднього перегляду в реальному часі",
+	"wikieditor-realtimepreview-manual": "Будь ласка, перезавантажте зараз, щоб вручну переглянути свої зміни.",
+	"wikieditor-realtimepreview-onboarding-title": "Перегляд у реальному часі",
+	"wikieditor-realtimepreview-onboarding-body": "Подивіться, як ваші правки виглядатимуть читачам, переглянувши їх у реальному часі.",
+	"wikieditor-realtimepreview-onboarding-button": "Гаразд, зрозуміло"
 }

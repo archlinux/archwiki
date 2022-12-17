@@ -53,7 +53,7 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 
 		$updater->addExtensionTable(
 			'abuse_filter',
-			"$dir/$dbType/abusefilter.sql"
+			"$dir/$dbType/tables-generated.sql"
 		);
 
 		if ( $dbType === 'mysql' || $dbType === 'sqlite' ) {
@@ -127,6 +127,54 @@ class SchemaChangesHandler implements LoadExtensionSchemaUpdatesHook {
 			] );
 			$updater->addExtensionUpdate( [
 				'dropDefault', 'abuse_filter_log', 'afl_global'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter', 'abuse_filter_user', 'af_user'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter', 'abuse_filter_group_enabled_id', 'af_group_enabled'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_action', 'abuse_filter_action_consequence', 'afa_consequence'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_log', 'abuse_filter_log_filter_timestamp_full', 'afl_filter_timestamp_full'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_log', 'abuse_filter_log_user_timestamp', 'afl_user_timestamp'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_log', 'abuse_filter_log_timestamp', 'afl_timestamp'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_log', 'abuse_filter_log_page_timestamp', 'afl_page_timestamp'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_log', 'abuse_filter_log_ip_timestamp', 'afl_ip_timestamp'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_log', 'abuse_filter_log_rev_id', 'afl_rev_id'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_log', 'abuse_filter_log_wiki_timestamp', 'afl_wiki_timestamp'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_history', 'abuse_filter_history_filter', 'afh_filter'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_history', 'abuse_filter_history_user', 'afh_user'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_history', 'abuse_filter_history_user_text', 'afh_user_text'
+			] );
+			$updater->addExtensionUpdate( [
+				'renameIndex', 'abuse_filter_history', 'abuse_filter_history_timestamp', 'afh_timestamp'
+			] );
+			$updater->addExtensionUpdate( [
+				'changeNullableField', ' abuse_filter_history', 'afh_public_comments', 'NULL', true
+			] );
+			$updater->addExtensionUpdate( [
+				'changeNullableField', ' abuse_filter_history', 'afh_actions', 'NULL', true
 			] );
 		}
 

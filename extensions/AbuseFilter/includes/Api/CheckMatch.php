@@ -17,6 +17,7 @@ use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Revision\RevisionRecord;
 use RecentChange;
+use Wikimedia\ParamValidator\ParamValidator;
 
 class CheckMatch extends ApiBase {
 
@@ -59,12 +60,12 @@ class CheckMatch extends ApiBase {
 	 * @inheritDoc
 	 */
 	public function execute() {
-		$user = $this->getUser();
+		$performer = $this->getAuthority();
 		$params = $this->extractRequestParams();
 		$this->requireOnlyOneParameter( $params, 'vars', 'rcid', 'logid' );
 
 		// "Anti-DoS"
-		if ( !$this->afPermManager->canUseTestTools( $this->getUser() ) ) {
+		if ( !$this->afPermManager->canUseTestTools( $performer ) ) {
 			$this->dieWithError( 'apierror-abusefilter-canttest', 'permissiondenied' );
 		}
 
@@ -87,18 +88,18 @@ class CheckMatch extends ApiBase {
 					!LogEventsList::userCanBitfield(
 						$deletedValue,
 						LogPage::SUPPRESSED_ACTION | LogPage::SUPPRESSED_USER,
-						$user
+						$performer
 					)
 				) || (
 					$type !== RC_LOG &&
-					!RevisionRecord::userCanBitfield( $deletedValue, RevisionRecord::SUPPRESSED_ALL, $user )
+					!RevisionRecord::userCanBitfield( $deletedValue, RevisionRecord::SUPPRESSED_ALL, $performer )
 				)
 			) {
 				// T223654 - Same check as in AbuseFilterChangesList
 				$this->dieWithError( 'apierror-permissiondenied-generic', 'deletedrc' );
 			}
 
-			$varGenerator = $this->afVariableGeneratorFactory->newRCGenerator( $rc, $user );
+			$varGenerator = $this->afVariableGeneratorFactory->newRCGenerator( $rc, $this->getUser() );
 			$vars = $varGenerator->getVars();
 		} elseif ( $params['logid'] ) {
 			$row = $this->getDB()->selectRow(
@@ -112,7 +113,7 @@ class CheckMatch extends ApiBase {
 				$this->dieWithError( [ 'apierror-abusefilter-nosuchlogid', $params['logid'] ], 'nosuchlogid' );
 			}
 
-			$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $user, $this->afPermManager );
+			$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $performer, $this->afPermManager );
 			if ( $visibility !== SpecialAbuseLog::VISIBILITY_VISIBLE ) {
 				// T223654 - Same check as in SpecialAbuseLog. Both the visibility of the AbuseLog entry
 				// and the corresponding revision are checked.
@@ -151,14 +152,14 @@ class CheckMatch extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'filter' => [
-				ApiBase::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_REQUIRED => true,
 			],
 			'vars' => null,
 			'rcid' => [
-				ApiBase::PARAM_TYPE => 'integer'
+				ParamValidator::PARAM_TYPE => 'integer'
 			],
 			'logid' => [
-				ApiBase::PARAM_TYPE => 'integer'
+				ParamValidator::PARAM_TYPE => 'integer'
 			],
 		];
 	}

@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\AbuseFilter\VariableGenerator;
 use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\User\UserIdentity;
+use MWTimestamp;
 use RecentChange;
 use Title;
 use User;
@@ -50,6 +51,10 @@ class VariableGenerator {
 	 * @return $this For chaining
 	 */
 	public function addGenericVars( RecentChange $rc = null ): self {
+		$timestamp = $rc
+			? MWTimestamp::convert( TS_UNIX, $rc->getAttribute( 'rc_timestamp' ) )
+			: wfTimestamp( TS_UNIX );
+		$this->vars->setVar( 'timestamp', $timestamp );
 		// These are lazy-loaded just to reduce the amount of preset variables, but they
 		// shouldn't be expensive.
 		$this->vars->setLazyLoadVar( 'wiki_name', 'get-wiki-name', [] );
@@ -66,6 +71,7 @@ class VariableGenerator {
 	 * @return $this For chaining
 	 */
 	public function addUserVars( UserIdentity $userIdentity, RecentChange $rc = null ): self {
+		$asOf = $rc ? $rc->getAttribute( 'rc_timestamp' ) : wfTimestampNow();
 		$user = User::newFromIdentity( $userIdentity );
 
 		$this->vars->setLazyLoadVar(
@@ -85,7 +91,7 @@ class VariableGenerator {
 		$this->vars->setLazyLoadVar(
 			'user_age',
 			'user-age',
-			[ 'user' => $user, 'asof' => wfTimestampNow() ]
+			[ 'user' => $user, 'asof' => $asOf ]
 		);
 
 		$this->vars->setLazyLoadVar(
@@ -139,6 +145,9 @@ class VariableGenerator {
 			);
 		}
 
+		$asOf = $rc ? $rc->getAttribute( 'rc_timestamp' ) : wfTimestampNow();
+
+		// TODO: add 'asof' to this as well
 		$this->vars->setLazyLoadVar(
 			"{$prefix}_recent_contributors",
 			'load-recent-authors',
@@ -148,7 +157,7 @@ class VariableGenerator {
 		$this->vars->setLazyLoadVar(
 			"{$prefix}_age",
 			'page-age',
-			[ 'title' => $title, 'asof' => wfTimestampNow() ]
+			[ 'title' => $title, 'asof' => $asOf ]
 		);
 
 		$this->vars->setLazyLoadVar(
@@ -164,10 +173,10 @@ class VariableGenerator {
 
 	/**
 	 * @param WikiPage $page
-	 * @param User $user The current user
+	 * @param UserIdentity $userIdentity The current user
 	 * @return $this For chaining
 	 */
-	public function addEditVars( WikiPage $page, User $user ): self {
+	public function addEditVars( WikiPage $page, UserIdentity $userIdentity ): self {
 		$this->vars->setLazyLoadVar( 'edit_diff', 'diff',
 			[ 'oldtext-var' => 'old_wikitext', 'newtext-var' => 'new_wikitext' ] );
 		$this->vars->setLazyLoadVar( 'edit_diff_pst', 'diff',
@@ -197,26 +206,26 @@ class VariableGenerator {
 			[
 				'text-var' => 'new_wikitext',
 				'article' => $page,
-				'contextUser' => $user
+				'contextUserIdentity' => $userIdentity
 			] );
 		$this->vars->setLazyLoadVar( 'old_links', 'links-from-wikitext-or-database',
 			[
 				'article' => $page,
 				'text-var' => 'old_wikitext',
-				'contextUser' => $user
+				'contextUserIdentity' => $userIdentity
 			] );
 		$this->vars->setLazyLoadVar( 'new_pst', 'parse-wikitext',
 			[
 				'wikitext-var' => 'new_wikitext',
 				'article' => $page,
 				'pst' => true,
-				'contextUser' => $user
+				'contextUserIdentity' => $userIdentity
 			] );
 		$this->vars->setLazyLoadVar( 'new_html', 'parse-wikitext',
 			[
 				'wikitext-var' => 'new_wikitext',
 				'article' => $page,
-				'contextUser' => $user
+				'contextUserIdentity' => $userIdentity
 			] );
 
 		return $this;

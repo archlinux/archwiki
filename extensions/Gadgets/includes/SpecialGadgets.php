@@ -22,7 +22,7 @@ use Xml;
 
 class SpecialGadgets extends SpecialPage {
 	public function __construct() {
-		parent::__construct( 'Gadgets', '', true );
+		parent::__construct( 'Gadgets' );
 	}
 
 	/**
@@ -188,12 +188,12 @@ class SpecialGadgets extends SpecialPage {
 					if ( $needLineBreakAfter ) {
 						$output->addHTML( '<br />' );
 					}
-					$output->addHTML( Html::rawElement(
-						'span',
-						[ 'class' => 'mw-gadget-legacy errorbox' ],
-						$this->msg( 'gadgets-legacy' )->parse()
+					$output->addHTML( Html::errorBox(
+						$this->msg( 'gadgets-legacy' )->parse(),
+						'',
+						'mw-gadget-legacy'
 					) );
-					$needLineBreakAfter = true;
+					$needLineBreakAfter = false;
 				}
 
 				// Portion: Show required rights (optional)
@@ -306,7 +306,7 @@ class SpecialGadgets extends SpecialPage {
 
 		$htmlForm = HTMLForm::factory( 'ooui', [], $this->getContext() );
 		$htmlForm
-			->addHiddenField( 'title', SpecialPage::getTitleFor( 'Export' )->getPrefixedDBKey() )
+			->setTitle( SpecialPage::getTitleFor( 'Export' ) )
 			->addHiddenField( 'pages', $exportList )
 			->addHiddenField( 'wpDownload', '1' )
 			->addHiddenField( 'templates', '1' )

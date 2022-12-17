@@ -147,8 +147,6 @@
 	 * @fires mmv-permission-grow
 	 */
 	P.grow = function () {
-		mw.mmv.actionLogger.log( 'terms-open' );
-
 		// FIXME: Use CSS transition
 		// eslint-disable-next-line no-jquery/no-animate
 		this.$box.addClass( 'full-size' )

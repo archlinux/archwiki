@@ -365,8 +365,8 @@
 				ve.track( 'trace.restbaseLoad.enter', { mode: 'visual' } );
 
 				var headers = {
-					// Should be synchronised with ApiVisualEditor.php
-					Accept: 'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.0.0"',
+					// Should be synchronised with VisualEditorParsoidClient.php
+					Accept: 'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.4.0"',
 					'Accept-Language': mw.config.get( 'wgVisualEditor' ).pageLanguageCode,
 					'Api-User-Agent': 'VisualEditor-MediaWiki/' + mw.config.get( 'wgVersion' )
 				};
@@ -475,7 +475,7 @@
 				// We can detect that case by `content` being empty, and not retry.
 				if ( useRestbase && resp.visualeditor.content && (
 					!resp.visualeditor.etag ||
-					!resp.visualeditor.etag.match( etagRegexp )
+					!etagRegexp.test( resp.visualeditor.etag )
 				) ) {
 					// Direct request to RESTBase returned a mangled or missing etag.
 					// Retry via the MediaWiki API.

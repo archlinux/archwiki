@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lorenzoitza",
-			"26agcp"
+			"26agcp",
+			"Lorenzoitza"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|Junp'éel t'aan|$1 t'aano'ob}}",

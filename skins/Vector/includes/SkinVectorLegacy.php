@@ -1,6 +1,6 @@
 <?php
 
-namespace Vector;
+namespace MediaWiki\Skins\Vector;
 
 /**
  * @ingroup Skins
@@ -9,45 +9,18 @@ namespace Vector;
  */
 class SkinVectorLegacy extends SkinVector {
 	/**
+	 * Whether or not the legacy version of the skin is being used.
+	 *
+	 * @return bool
+	 */
+	protected function isLegacy(): bool {
+		return true;
+	}
+
+	/**
 	 * @inheritDoc
 	 */
-	public function __construct( $options = [] ) {
-		$options += [
-			'template' => self::getTemplateOption(),
-			'scripts' => self::getScriptsOption(),
-			'styles' => self::getStylesOption(),
-		];
-		parent::__construct( $options );
-	}
-
-	/**
-	 * Temporary static function while we deprecate SkinVector class.
-	 *
-	 * @return string
-	 */
-	public static function getTemplateOption() {
-		return 'skin-legacy';
-	}
-
-	/**
-	 * Temporary static function while we deprecate SkinVector class.
-	 *
-	 * @return array
-	 */
-	public static function getScriptsOption() {
-		return [
-			'skins.vector.legacy.js',
-		];
-	}
-
-	/**
-	 * Temporary static function while we deprecate SkinVector class.
-	 *
-	 * @return array
-	 */
-	public static function getStylesOption() {
-		return [
-			'skins.vector.styles.legacy',
-		];
+	protected function isLanguagesInContentAt( $location ) {
+		return false;
 	}
 }

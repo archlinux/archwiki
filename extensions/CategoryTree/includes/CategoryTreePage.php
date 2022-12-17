@@ -157,10 +157,11 @@ class CategoryTreePage extends SpecialPage {
 		];
 
 		HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() )
-			->addHiddenFields( [ 'title' => $this->getPageTitle()->getPrefixedDbKey() ] )
 			->setWrapperLegendMsg( 'categorytree-legend' )
 			->setSubmitTextMsg( 'categorytree-go' )
 			->setMethod( 'get' )
+			// Strip subpage
+			->setTitle( $this->getPageTitle() )
 			->prepareForm()
 			->displayForm( false );
 	}

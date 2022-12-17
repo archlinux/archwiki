@@ -6,7 +6,6 @@ namespace Wikimedia\Parsoid\Mocks;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Wikimedia\Parsoid\Config\SiteConfig;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
@@ -55,6 +54,9 @@ class MockSiteConfig extends SiteConfig {
 	/** @var string|null */
 	private $linkPrefixRegex = null;
 
+	/** @var string|bool */
+	private $externalLinkTarget;
+
 	/**
 	 * @param array $opts
 	 */
@@ -70,6 +72,7 @@ class MockSiteConfig extends SiteConfig {
 		$this->tidyWhitespaceBugMaxLength = $opts['tidyWhitespaceBugMaxLength'] ?? null;
 		$this->linkPrefixRegex = $opts['linkPrefixRegex'] ?? null;
 		$this->linkTrailRegex = $opts['linkTrailRegex'] ?? '/^([a-z]+)/sD'; // enwiki default
+		$this->externalLinkTarget = $opts['externallinktarget'] ?? false;
 
 		// Use Monolog's PHP console handler
 		$logger = new Logger( "Parsoid CLI" );
@@ -77,14 +80,6 @@ class MockSiteConfig extends SiteConfig {
 		$handler->setFormatter( new LineFormatter( '%message%' ) );
 		$logger->pushHandler( $handler );
 		$this->setLogger( $logger );
-	}
-
-	/**
-	 * Set the log channel, for debuggings
-	 * @param ?LoggerInterface $logger
-	 */
-	public function setLogger( ?LoggerInterface $logger ): void {
-		$this->logger = $logger;
 	}
 
 	public function tidyWhitespaceBugMaxLength(): int {
@@ -177,8 +172,7 @@ class MockSiteConfig extends SiteConfig {
 
 	/** @inheritDoc */
 	public function specialPageLocalName( string $alias ): ?string {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		throw new \BadMethodCallException( 'Not implemented' );
+		return null;
 	}
 
 	/**
@@ -303,10 +297,15 @@ class MockSiteConfig extends SiteConfig {
 	/** @inheritDoc */
 	protected function getMagicWords(): array {
 		return [
-			'toc'           => [ 0, '__TOC__' ],
-			'img_thumbnail' => [ 1, 'thumb' ],
-			'img_none'      => [ 1, 'none' ],
-			'notoc'         => [ 0, '__NOTOC__' ]
+			'toc'             => [ 0, '__TOC__' ],
+			'img_thumbnail'   => [ 1, 'thumb' ],
+			'img_framed'      => [ 1, 'frame', 'framed' ],
+			'img_frameless'   => [ 1, 'frameless' ],
+			'img_manualthumb' => [ 1, 'thumbnail=$1', 'thumb=$1' ],
+			'img_none'        => [ 1, 'none' ],
+			'notoc'           => [ 0, '__NOTOC__' ],
+			'timedmedia_loop' => [ 0, 'loop' ],
+			'timedmedia_muted' => [ 0, 'muted' ],
 		];
 	}
 
@@ -430,5 +429,19 @@ class MockSiteConfig extends SiteConfig {
 
 	public function scrubBidiChars(): bool {
 		return true;
+	}
+
+	/** @inheritDoc */
+	public function getNoFollowConfig(): array {
+		return [
+			'nofollow' => true,
+			'nsexceptions' => [ 1 ],
+			'domainexceptions' => [ 'www.example.com' ]
+		];
+	}
+
+	/** @inheritDoc */
+	public function getExternalLinkTarget() {
+		return $this->externalLinkTarget;
 	}
 }

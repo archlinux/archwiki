@@ -19,9 +19,9 @@ Adding or updating libraries
 ----------------------------
 
 0. Read the [documentation] on the process for adding new libraries.
-1. Ensure you're using the latest version of 2.3.x of composer via
-   `composer --version`. This keeps installed.json alpha-sorted, making patches
-   less likely to conflict, and diffs easier to read.
+1. Ensure you're using version 2.3.3 of composer via `composer --version`. Us
+   all using the same version means that diffs from the autoloader are minimal
+   and so easier to validate and simpler to manually rebase.
 2. Edit the composer.json file to add/update the libraries you want to change.
    It is recommended that you use `composer require <package> <version>
    --no-update` to do so as composer will then automatically sort the

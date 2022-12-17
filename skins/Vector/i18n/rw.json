@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Vogone",
-			"RebecaRwanda"
+			"RebecaRwanda",
+			"Vogone"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ururimi|$1 indimi}}",

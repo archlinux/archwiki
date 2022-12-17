@@ -24,6 +24,10 @@ runInfo() {
 }
 
 runToText() {
+	# CropBox defines the region that the PDF viewer application is expected to display or print.
+	# pdftotext's -cropbox was only introduced in poppler 21.03.0
+	# It also only works with -bbox so we cannot use it.
+	# Some text that is not visible in the PDF might thus be included in the output
 	"$PDFHANDLER_TOTEXT" \
 		file.pdf - > text
 	# Store exit code so we can use it later

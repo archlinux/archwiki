@@ -1,6 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
+			"Bdijkstra",
 			"Calak",
 			"Mainframe98",
 			"McDutchie",
@@ -13,7 +15,6 @@
 		]
 	},
 	"skinname-vector": "Vector, oude versie (2010)",
-	"tooltip-pt-watchlist-2": "Een lijst met pagina's die u monitort op wijzigingen",
 	"vector-skin-desc": "Bevat 2 Vector vormgevingen:\n* 2011 - De Moderne versie van MonoBook met een fris uiterlijk en veel verbeteringen op het gebied van gebruiksvriendelijkheid.\n* 2022 - De Vector versie als onderdeel van het WMF [[mw:Desktop Improvements]] project.",
 	"prefs-vector-enable-vector-1-label": "Gebruik de Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "De komende jaren zullen we de Vector-skin geleidelijk bijwerken. Met Legacy Vector kunt u de oude versie van Vector bekijken (vanaf december 2019). Ga voor meer informatie over de updates naar onze [[mw:Reading/Web/Desktop_Improvements|projectpagina]].",
@@ -25,6 +26,7 @@
 	"vector-languages": "Talen",
 	"vector-language-button-aria-label": "Ga naar een artikel in een andere taal. Beschikbaar in {{PLURAL:$1|$1 taal|$1 talen}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 taal|$1 talen}}",
+	"vector-no-language-button-label": "Talen toevoegen",
 	"vector-language-redirect-to-top": "Op deze {{SITENAME}} staan de taallinks bovenaan de pagina tegenover de titel van het artikel. [[#p-lang-btn|Naar boven]].",
 	"vector-language-variant-switcher-label": "Taalvariant wijzigen",
 	"vector-action-addsection": "Onderwerp toevoegen",
@@ -43,13 +45,16 @@
 	"vector-jumptocontent": "Naar inhoud springen",
 	"vector-more-actions": "Meer",
 	"vector-search-loader": "Zoeksuggesties worden geladen",
-	"vector-searchsuggest-containing": "Zoek naar pagina's die <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> bevatten",
+	"vector-searchsuggest-containing": "Zoek naar pagina's die <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> bevatten",
+	"vector-toc-heading": "Inhoud",
+	"vector-toc-toggle-position-title": "verbergen",
+	"vector-toc-beginning": "Top",
 	"vector-anon-user-menu-pages": "Pagina's voor uitgelogde redacteuren",
 	"vector-anon-user-menu-pages-learn": "meer lezen",
 	"vector-anon-user-menu-pages-label": "Meer leren over bewerken",
-	"vector-personal-more-label": "Gebruikerskoppelingen",
 	"vector-main-menu-tooltip": "Hoofdmenu",
-	"tooltip-vector-anon-user-menu-title": "Meer opties",
-	"vector-menu-checkbox-expanded": "uitgevouwen",
-	"vector-menu-checkbox-collapsed": "samenvouwen"
+	"vector-toc-menu-tooltip": "Inhoudsopgave",
+	"vector-article-tools-nav-label": "Hulpmiddelen",
+	"vector-site-nav-label": "Site",
+	"tooltip-vector-anon-user-menu-title": "Meer opties"
 }

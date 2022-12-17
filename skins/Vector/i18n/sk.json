@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Helix84",
 			"KuboF",
 			"Luky001",
@@ -8,7 +9,9 @@
 			"Robert Važan",
 			"Rudko",
 			"Sudo77(new)",
-			"Yardom78"
+			"Yardom78",
+			"Teslaton",
+			"Vegetator"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -20,6 +23,7 @@
 	"vector.css": "/* Tu umiestnené CSS bude ovplyvňovať používateľov štýlu Vector */",
 	"vector.js": "/* Tu sa nachádzajúci JavaScript sa načíta používateľom vzhľadu Vector */",
 	"vector-language-button-label": "{{PLURAL:$1|$1 jazyk|$1 jazyky|$1 jazykov}}",
+	"vector-language-redirect-to-top": "Tu na {{GRAMMAR:6sg|{{SITENAME}}}} sú jazykové odkazy vpravo hore vedľa názvu článku. [[#p-lang-btn|Ísť hore]].",
 	"vector-action-addsection": "Pridať tému",
 	"vector-action-delete": "Zmazať",
 	"vector-action-move": "Presunúť",
@@ -32,5 +36,7 @@
 	"vector-view-view": "Čítať",
 	"vector-view-viewsource": "Zobraziť kód",
 	"vector-more-actions": "Viac",
-	"vector-searchsuggest-containing": "Hľadať stránky obsahujúce <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Hľadať stránky obsahujúce <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-beginning": "Začiatok",
+	"vector-main-menu-tooltip": "Hlavné menu"
 }

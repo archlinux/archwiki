@@ -45,7 +45,7 @@
 		oldUnattach = ui.unattach;
 
 		ui.unattach = function () {
-			assert.ok( true, 'Lightbox was unattached' );
+			assert.true( true, 'Lightbox was unattached' );
 			oldUnattach.call( this );
 		};
 
@@ -64,7 +64,7 @@
 		assert.strictEqual( viewer.isOpen, false, 'Viewer is closed' );
 
 		ui.unattach = function () {
-			assert.ok( false, 'Lightbox was not unattached' );
+			assert.true( false, 'Lightbox was not unattached' );
 			oldUnattach.call( this );
 		};
 
@@ -514,7 +514,7 @@
 
 		function eventHandler( e ) {
 			if ( e.isDefaultPrevented() ) {
-				assert.ok( false, 'Event was incorrectly trapped: ' + e.which );
+				assert.true( false, 'Event was incorrectly trapped: ' + e.which );
 			}
 
 			e.preventDefault();
@@ -698,7 +698,7 @@
 		bootstrap.setupEventHandlers();
 		viewer.setMediaHash();
 
-		assert.ok( document.title.match( title.getNameText() ), 'File name is visible in title' );
+		assert.notStrictEqual( document.title.match( title.getNameText() ), null, 'File name is visible in title' );
 
 		viewer.close();
 		bootstrap.cleanupEventHandlers();

@@ -2,10 +2,15 @@
 
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\InputCheck\InputCheckFactory;
+use MediaWiki\Extension\Math\Math;
 use MediaWiki\Extension\Math\MathConfig;
+use MediaWiki\Extension\Math\MathFormatter;
+use MediaWiki\Extension\Math\MathWikibaseConnector;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use Wikibase\Client\WikibaseClient;
+use Wikibase\Lib\Formatters\SnakFormatter;
 
 return [
 	'Math.CheckerFactory' => static function ( MediaWikiServices $services ): InputCheckFactory {
@@ -21,7 +26,8 @@ return [
 	},
 	'Math.Config' => static function ( MediaWikiServices $services ): MathConfig {
 		return new MathConfig(
-			new ServiceOptions( MathConfig::CONSTRUCTOR_OPTIONS, $services->getMainConfig() )
+			new ServiceOptions( MathConfig::CONSTRUCTOR_OPTIONS, $services->getMainConfig() ),
+			ExtensionRegistry::getInstance()
 		);
 	},
 	'Math.RendererFactory' => static function ( MediaWikiServices $services ): RendererFactory {
@@ -30,9 +36,22 @@ return [
 				RendererFactory::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
 			),
-			$services->get( 'Math.Config' ),
+			Math::getMathConfig( $services ),
 			$services->getUserOptionsLookup(),
 			LoggerFactory::getInstance( 'Math' )
 		);
 	},
+	'Math.WikibaseConnector' => static function ( MediaWikiServices $services ): MathWikibaseConnector {
+		return new MathWikibaseConnector(
+			new ServiceOptions( MathWikibaseConnector::CONSTRUCTOR_OPTIONS, $services->getMainConfig() ),
+			WikibaseClient::getRepoLinker( $services ),
+			$services->getLanguageFactory(),
+			WikibaseClient::getEntityRevisionLookup( $services ),
+			WikibaseClient::getFallbackLabelDescriptionLookupFactory( $services ),
+			WikibaseClient::getSite( $services ),
+			WikibaseClient::getEntityIdParser( $services ),
+			new MathFormatter( SnakFormatter::FORMAT_HTML ),
+			LoggerFactory::getInstance( 'Math' )
+		);
+	}
 ];

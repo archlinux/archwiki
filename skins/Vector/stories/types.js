@@ -25,7 +25,7 @@
  * @property {ResourceLoaderSkinModuleLogos} data-logos as configured,
  *  the return value of ResourceLoaderSkinModule::getAvailableLogos.
  * @property {string} msg-sitetitle alternate text for wordmark
-	href the url to navigate to on click.
+ *  href the url to navigate to on click.
  * @property {string} msg-sitesubtitle alternate text for tagline.
  */
 
@@ -81,6 +81,6 @@
 
 /**
  * @typedef {Object} UserLinksDefinition
- * @property {MenuDefinition} data-user-more
+ * @property {MenuDefinition} data-user-menu-overflow
  * @property {MenuDefinition} data-user-menu
  */

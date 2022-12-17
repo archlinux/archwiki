@@ -192,6 +192,9 @@ class LinkHandlerUtils {
 			// Parsoid only emits and recognizes ExtLink, WikiLink, and PageProp rel values.
 			// Everything else defaults to ExtLink during serialization (unless it is
 			// serializable to a wikilink)
+			// We're keeping the preg_match here instead of going through DOMUtils::matchRel
+			// because we have \b guards to handle the multivalue, and we're keeping the matches,
+			// which matchRel doesn't do.
 			if ( preg_match( '/\b(mw:(WikiLink|ExtLink|MediaLink|PageProp)[^\s]*)\b/', $rel, $typeMatch ) ) {
 				$rtData->type = $typeMatch[1];
 				// Strip link subtype info
@@ -475,8 +478,8 @@ class LinkHandlerUtils {
 	 * @return bool
 	 */
 	private static function hasAutoUrlTerminatingChars( string $url ): bool {
-		$sep = TokenizerUtils::getAutoUrlTerminatingChars( str_split( $url ) );
-		return str_contains( $sep, mb_substr( $url, -1 ) );
+		$sep = TokenizerUtils::getAutoUrlTerminatingChars( strpos( $url, '(' ) !== false );
+		return str_contains( $sep, substr( $url, -1 ) );
 	}
 
 	/**
@@ -520,6 +523,12 @@ class LinkHandlerUtils {
 			$strippedTargetValue = rtrim(
 				preg_replace( '#^\s*(:|\./)#', '', $target['value'], 1 )
 			);
+
+			// Strip colon escape after prefix for interwikis
+			if ( !empty( $linkData->isInterwiki ) ) {
+				$strippedTargetValue = preg_replace( '#^(\w+:):#', '$1', $strippedTargetValue, 1 );
+			}
+
 			$decodedTarget = Utils::decodeWtEntities( $strippedTargetValue );
 			// Deal with the protocol-relative link scenario as well
 			$hrefHasProto = preg_match( '#^(\w+:)?//#', $linkData->href );
@@ -536,6 +545,7 @@ class LinkHandlerUtils {
 				// try wrapped in forward slashes in case they were stripped
 				( '/' . $contentString . '/' ) === $decodedTarget ||
 				// normalize as titles and compare
+				// FIXME: This will strip an interwiki prefix.  Is that right?
 				$env->normalizedTitleKey( $contentString, true )
 					=== preg_replace( self::$MW_TITLE_WHITESPACE_RE, '_', $decodedTarget ) ||
 				// Relative link
@@ -670,7 +680,7 @@ class LinkHandlerUtils {
 						$nextNode = $node->nextSibling;
 						if ( !(
 							$nextNode instanceof Element && DOMCompat::nodeName( $nextNode ) === 'link' &&
-							$nextNode->getAttribute( 'rel' ) === 'mw:PageProp/Category' &&
+							DOMUtils::hasRel( $nextNode, 'mw:PageProp/Category' ) &&
 							$nextNode->getAttribute( 'href' ) === $node->getAttribute( 'href' )
 						) ) {
 							$linkTarget = ':' . $linkTarget;
@@ -779,8 +789,8 @@ class LinkHandlerUtils {
 			// Buffer redirect text if it is not in start of file position
 			if ( !preg_match( self::$REDIRECT_TEST_RE, $state->out . $state->currLine->text ) ) {
 				$state->redirectText = $linkData->prefix . '[[' . $linkTarget . ']]';
-				$state->emitChunk( '', $node ); // Flush seperators for this node
-				// Flush seperators for this node
+				$state->emitChunk( '', $node ); // Flush separators for this node
+				// Flush separators for this node
 				return;
 			}
 
@@ -1028,7 +1038,7 @@ class LinkHandlerUtils {
 		$elt = $ms->mediaElt;
 		$captionElt = $ms->captionElt;
 
-		$format = WTSUtils::getMediaFormat( $outerElt );
+		$format = WTUtils::getMediaFormat( $outerElt );
 
 		// Try to identify the local title to use for this image.
 		$resource = $state->serializer->serializedImageAttrVal( $outerElt, $elt, 'resource' );
@@ -1088,47 +1098,6 @@ class LinkHandlerUtils {
 			}
 			return $null;
 		};
-
-		// Identify a page # to use.
-		$page = null;
-		$pageFromHref = preg_match(
-			'#[?]page=(\d+)$#D',
-			( $linkElt ? $linkElt->getAttribute( 'href' ) : null ) ?? '',
-			$matches ) ? $matches[1] : null;
-		$pageFromDataMw = WTSUtils::getAttrFromDataMw( $outerDMW, 'page', true );
-		if ( $pageFromDataMw !== null ) {
-			// FIXME: if $pageFromHref is null but $pageFromDataMw is
-			// set, then we go ahead and serialize the page parameter
-			// as unmodified.  This helps transition old RESTBase
-			// content where the ?page suffix on the URL was missing,
-			// but eventually $restBaseMigrationHack should be left
-			// false always. (T259931)
-			$restBaseMigrationHack =
-				( $pageFromHref === null && $pageFromDataMw[1]->txt );
-
-			if (
-				trim( $pageFromDataMw[1]->txt ) === $pageFromHref ||
-				$restBaseMigrationHack
-			) {
-				$page = $state->serializer->getAttributeValueAsShadowInfo( $outerElt, 'page' );
-				if ( !$page ) {
-					$page = [
-						'value' => $pageFromDataMw[1]->txt,
-						'modified' => false,
-						'fromsrc' => false,
-						'fromDataMW' => true,
-					];
-				}
-			}
-		}
-		if ( !$page && $pageFromHref !== null ) {
-			$page = [
-				'value' => $pageFromHref,
-				'modified' => true,
-				'fromsrc' => false,
-				'fromDataMW' => false,
-			];
-		}
 
 		// Try to identify the local title to use for the link.
 		$link = null;
@@ -1197,12 +1166,27 @@ class LinkHandlerUtils {
 			$caption = $state->serializeCaptionChildrenToString(
 				$captionElt, [ $state->serializer->wteHandlers, 'mediaOptionHandler' ]
 			);
+
+			// Alt stuff
+			if ( !WTUtils::hasVisibleCaption( $outerElt ) && $elt->hasAttribute( 'alt' ) ) {
+				$altOnElt = trim( $elt->getAttribute( 'alt' ) );
+				$altFromCaption = trim( WTUtils::textContentFromCaption( $captionElt ) );
+				// The first condition is to support an empty \alt=\ option
+				// when no caption is present
+				if ( $altOnElt && ( $altOnElt === $altFromCaption ) ) {
+					$elt->removeAttribute( 'alt' );
+				}
+			}
 		}
 
 		// Fetch the alt (if any)
 		$alt = $state->serializer->serializedImageAttrVal( $outerElt, $elt, 'alt' );
 		// Fetch the lang (if any)
 		$lang = $state->serializer->serializedImageAttrVal( $outerElt, $elt, 'lang' );
+		// Fetch the muted (if any)
+		$muted = $state->serializer->serializedImageAttrVal( $outerElt, $elt, 'muted' );
+		// Fetch the loop (if any)
+		$loop = $state->serializer->serializedImageAttrVal( $outerElt, $elt, 'loop' );
 
 		// Ok, start assembling options, beginning with link & alt & lang
 		// Other media don't have links in output.
@@ -1234,16 +1218,17 @@ class LinkHandlerUtils {
 		// and $value is the Parsoid "shadow info" for the attribute.
 		// $cond tells us whether we need to explicitly output this option;
 		// if it is false we are using an implicit default.
-		// `lang` and `alt` are fairly straightforward.  `link` and `page`
-		// are a little trickier, since we need to massage/fake the shadow
-		// info because they don't come *directly* from the attribute.
+		// `lang` and `alt` are fairly straightforward.  `link`
+		// is a little trickier, since we need to massage/fake the shadow
+		// info because it doesn't come *directly* from the attribute.
 		// link comes from the combination of a[href], img[src], and
-		// img[resource], etc; page comes from the query part of a[href] etc.
+		// img[resource], etc;
 		foreach ( [
-			[ 'name' => 'link', 'value' => $link, 'cond' => $linkCond ],
-			[ 'name' => 'alt', 'value' => $alt, 'cond' => $altCond ],
-			[ 'name' => 'page', 'value' => $page, 'cond' => isset( $page['value'] ) ],
-			[ 'name' => 'lang', 'value' => $lang, 'cond' => isset( $lang['value'] ) ]
+			[ 'name' => 'link', 'value' => $link, 'cond' => $linkCond, 'alias' => 'img_link' ],
+			[ 'name' => 'alt', 'value' => $alt, 'cond' => $altCond, 'alias' => 'img_alt' ],
+			[ 'name' => 'lang', 'value' => $lang, 'cond' => isset( $lang['value'] ), 'alias' => 'img_lang' ],
+			[ 'name' => 'muted', 'value' => $muted, 'cond' => isset( $muted['value'] ), 'alias' => 'timedmedia_muted' ],
+			[ 'name' => 'loop', 'value' => $loop, 'cond' => isset( $loop['value'] ), 'alias' => 'timedmedia_loop' ],
 		] as $o ) {
 			if ( !$o['cond'] ) {
 				continue;
@@ -1266,7 +1251,7 @@ class LinkHandlerUtils {
 				$nopts[] = [
 					'ck' => $o['name'],
 					'v' => $value,
-					'ak' => $mwAliases['img_' . $o['name']],
+					'ak' => $mwAliases[$o['alias']],
 				];
 			}
 		}
@@ -1339,7 +1324,8 @@ class LinkHandlerUtils {
 		// thumbnail implementation to the editor so we don't do that.)
 		$mwParams = [
 			[ 'prop' => 'thumb', 'ck' => 'manualthumb', 'alias' => 'img_manualthumb' ],
-			// mw:Video specific
+			[ 'prop' => 'page', 'ck' => 'page', 'alias' => 'img_page' ],
+			// Video specific
 			[ 'prop' => 'starttime', 'ck' => 'starttime', 'alias' => 'timedmedia_starttime' ],
 			[ 'prop' => 'endtime', 'ck' => 'endtime', 'alias' => 'timedmedia_endtime' ],
 			[ 'prop' => 'thumbtime', 'ck' => 'thumbtime', 'alias' => 'timedmedia_thumbtime' ]
@@ -1353,12 +1339,27 @@ class LinkHandlerUtils {
 			$mwParams[] = [ 'prop' => 'alt', 'ck' => 'alt', 'alias' => 'img_alt' ];
 		}
 
+		$hasManualthumb = false;
 		foreach ( $mwParams as $o ) {
 			$v = $outerDMW->{$o['prop']} ?? null;
 			if ( $v === null ) {
 				$a = WTSUtils::getAttrFromDataMw( $outerDMW, $o['ck'], true );
-				if ( $a !== null && !isset( $a[1]->html ) ) {
-					$v = $a[1]->txt;
+				if ( $a !== null ) {
+					if ( isset( $a[1]->html ) ) {
+						// FIXME: Apply this to more that just page?
+						if ( $o['prop'] === 'page' ) {
+							$page = $state->serializer->getAttributeValueAsShadowInfo( $outerElt, 'page' );
+							if ( isset( $page['value'] ) ) {
+								$nopts[] = [
+									'ck' => $o['prop'],
+									'ak' => [ $page['value'] ],
+								];
+								continue;
+							}
+						}
+					} else {
+						$v = $a[1]->txt;
+					}
 				}
 			}
 			if ( $v !== null ) {
@@ -1372,6 +1373,7 @@ class LinkHandlerUtils {
 				];
 				// Piggyback this here ...
 				if ( $o['prop'] === 'thumb' ) {
+					$hasManualthumb = true;
 					$format = '';
 				}
 			}
@@ -1435,11 +1437,14 @@ class LinkHandlerUtils {
 			// preserve upright option
 			$nopts[] = [
 				'ck' => $upright['ck'],
-				'ak' => [ $upright['ak'] ],
+				'ak' => [ $upright['ak'] ],  // FIXME: don't use ak here!
 			];
-		}// FIXME: don't use ak here!
+		}
 
-		if ( !( DOMCompat::getClassList( $outerElt )->contains( 'mw-default-size' ) ) ) {
+		if (
+			!DOMCompat::getClassList( $outerElt )->contains( 'mw-default-size' ) &&
+			$format !== 'Frame' && !$hasManualthumb
+		) {
 			$size = $getLastOpt( 'width' );
 			$sizeString = (string)( $size['ak'] ?? '' );
 			if ( $sizeString === '' && !empty( $ww['fromDataMW'] ) ) {
@@ -1449,10 +1454,10 @@ class LinkHandlerUtils {
 				// preserve original width/height string if not touched
 				$nopts[] = [
 					'ck' => 'width',
-					'v' => $sizeString, // original size string
-					'ak' => [ '$1' ]
+					'v' => $sizeString,  // original size string
+					'ak' => [ '$1' ],  // don't add px or the like
 				];
-			} else { // don't add px or the like
+			} else {
 				$bbox = null;
 				// Serialize to a square bounding box
 				if ( isset( $ww['value'] ) && preg_match( '/^\d+/', $ww['value'] ) ) {
@@ -1482,11 +1487,11 @@ class LinkHandlerUtils {
 						// box explicitly square (100x100px). The 'px' is
 						// added by the alias though, and can be localized.
 						'v' => $bbox . 'x' . $bbox,
-						'ak' => $mwAliases['img_width'],
+						'ak' => $mwAliases['img_width'],  // adds the 'px' suffix
 					];
 				}
 			}
-		}// adds the 'px' suffix
+		}
 
 		$opts = $outerDP->optList ?? []; // original wikitext options
 
@@ -1597,10 +1602,7 @@ class LinkHandlerUtils {
 		$wikitext .= ']]';
 
 		$state->emitChunk( new WikiLinkText(
-			$wikitext, $node, $state->getEnv()->getSiteConfig(),
-			// FIXME: Does this matter? Emit a constant for now, it'll all
-			// be same in the follow up patch to consolidate the types
-			'mw:Image'
+			$wikitext, $node, $state->getEnv()->getSiteConfig(), 'mw:File'
 		), $node );
 	}
 

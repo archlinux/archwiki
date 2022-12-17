@@ -1,6 +1,6 @@
 <?php
 
-namespace Vector\Services;
+namespace MediaWiki\Skins\Vector\Services;
 
 class LanguageService {
 	/**

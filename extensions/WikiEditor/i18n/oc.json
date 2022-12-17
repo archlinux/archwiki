@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La pagina existís pas",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Títol invalid",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ligam extèrne",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Verificacion de l'existéncia de la pagina...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Lo títol qu'avètz especificat es incorrècte.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "L'URL qu'avètz especificada sembla ligar cap a una autra pagina del wiki. Volètz utilizar un ligam intèrne a la plaça ?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Ligam intèrne",

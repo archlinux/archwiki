@@ -38,7 +38,7 @@
 	"gadgets-export": "Exportar",
 	"gadgets-export-title": "Exportação de ''gadgets''",
 	"gadgets-not-found": "O ''gadget'' \"$1\" não foi encontrado.",
-	"gadgets-export-text": "Para exportar o ''gadget'' $1, clique o botão \"{{int:gadgets-export-download}}\", grave o ficheiro transferido,\nvá à página Special:Import na wiki de destino e faça o upload do ficheiro. Depois adicione o seguinte à página MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nNa wiki de destino tem de ter as permissões necessárias (incluindo o privilégio de editar mensagens de sistema) e têm de ser permitidas importações por upload de ficheiros.",
+	"gadgets-export-text": "Para exportar o ''gadget'' $1, clique o botão \"{{int:gadgets-export-download}}\", grave o ficheiro transferido,\nvá à página Special:Import na wiki de destino e carregue o ficheiro. Depois adicione o seguinte à página MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nNa wiki de destino tem de ter as permissões necessárias (incluindo o privilégio de editar mensagens de sistema) e têm de ser permitidas importações por carregamento de ficheiros.",
 	"gadgets-export-download": "Download",
 	"gadgets-validate-notset": "A propriedade <code>$1</code> não está definida.",
 	"gadgets-validate-wrongtype": "A propriedade <code>$1</code> tem de ter o tipo <code>$2</code> em vez de <code>$3</code>.",

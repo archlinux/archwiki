@@ -46,7 +46,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "A lap nem létezik a(z) {{SITENAME}} wikin",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "A megadott cím érvénytelen",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Külső hivatkozás",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Ellenőrzöm, hogy létezik-e a lap…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Ez a lap nem tartalmi lap, hanem hasonló nevű témák listája",
 	"wikieditor-toolbar-tool-link-int-invalid": "A megadott cím érvénytelen",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Úgy tűnik, hogy a megadott URL másik wiki lapra mutató hivatkozás akart lenni.\nSzeretnéd belső hivatkozássá alakítani?",
@@ -202,5 +201,6 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Sima szöveg<br />:Behúzott szöveg<br />::Behúzott szöveg",
 	"wikieditor-toolbar-help-content-indent-result": "Sima szöveg<dl><dd>Behúzott szöveg<dl><dd>Behúzott szöveg</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "A [[mw:Extension:WikiEditor/hu|WikiEditorrel]] (2010-es wikiszöveg-szerkesztővel) készült szerkesztés",
-	"wikieditor-realtimepreview-preview": "Előnézet"
+	"wikieditor-realtimepreview-preview": "Előnézet",
+	"wikieditor-realtimepreview-reload": "Újratöltés"
 }

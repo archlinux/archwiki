@@ -25,9 +25,6 @@
 	border-bottom: 1px solid #ccc;
 	box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.1 );
 	background-color: #f8fbfd;
-	background-image: -webkit-gradient( linear, right top, right bottom, color-stop( 0, #fff ), color-stop( 100%, #f1f7fb ) );
-	background-image: -webkit-linear-gradient( top, #fff 0, #f1f7fb 100% );
-	background-image: -moz-linear-gradient( top, #fff 0, #f1f7fb 100% );
 	background-image: linear-gradient( to bottom, #fff 0, #f1f7fb 100% );
 }
 

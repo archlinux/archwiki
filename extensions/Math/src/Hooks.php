@@ -45,20 +45,15 @@ class Hooks {
 		foreach ( [ 'mathoid', 'mathlatexml' ] as $mode ) {
 			$updater->addExtensionTable(
 				$mode,
-				__DIR__ . "/../db/$mode.$type.sql"
+				__DIR__ . "/../sql/$type/$mode.sql"
 			);
 		}
 
 		if ( $type === 'mysql' ) {
-			$updater->modifyExtensionField(
-				'mathlatexml',
-				'math_mathml',
-				__DIR__ . '/../db/patches/mathlatexml.mathml-length-adjustment.mysql.sql'
-			);
 			$updater->addExtensionField(
 				'mathoid',
 				'math_png',
-				__DIR__ . '/../db/patches/mathoid.add_png.mysql.sql'
+				__DIR__ . '/../sql/' . $type . '/patch-mathoid.add_png.sql'
 			);
 		}
 	}

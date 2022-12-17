@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bluehill",
 			"Bluemersen",
 			"Hwangjy9",
 			"IRTC1015",
@@ -12,8 +13,7 @@
 			"Songhee",
 			"Ykhwong",
 			"렌즈",
-			"아라",
-			"Bluehill"
+			"아라"
 		]
 	},
 	"templatedata-desc": "(JSON을 사용하여) 틀 변수에 대한 데이터 저장소를 구현합니다",

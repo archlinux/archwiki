@@ -6,56 +6,55 @@ use Generator;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
-use MediaWiki\Permissions\PermissionManager;
-use MediaWiki\User\UserIdentity;
+use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use MediaWikiUnitTestCase;
-use User;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager
- * @covers ::__construct
  */
 class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
+	use MockAuthorityTrait;
 
-	private function getPermMan( array $rights = [] ): AbuseFilterPermissionManager {
-		$pm = $this->createMock( PermissionManager::class );
-		$pm->method( 'userHasRight' )->willReturnCallback( static function ( $u, $r ) use ( $rights ) {
-			return in_array( $r, $rights, true );
-		} );
-		$pm->method( 'userHasAnyRight' )->willReturnCallback( static function ( $u, ...$r ) use ( $rights ) {
-			return (bool)array_intersect( $r, $rights );
-		} );
-		return new AbuseFilterPermissionManager( $pm );
+	private function getPermMan(): AbuseFilterPermissionManager {
+		// No longer has any dependencies
+		return new AbuseFilterPermissionManager();
 	}
 
 	public function provideCanEdit(): Generator {
-		$blockedUser = $this->createMock( User::class );
 		$sitewideBlock = $this->createMock( DatabaseBlock::class );
 		$sitewideBlock->method( 'isSiteWide' )->willReturn( true );
-		$blockedUser->method( 'getBlock' )->willReturn( $sitewideBlock );
-		yield 'blocked sitewide' => [ $blockedUser, [], false ];
+		yield 'blocked sitewide' => [ $sitewideBlock, [], false ];
 
-		$partialBlockedUser = $this->createMock( User::class );
 		$partialBlock = $this->createMock( DatabaseBlock::class );
 		$partialBlock->method( 'isSiteWide' )->willReturn( false );
-		$partialBlockedUser->method( 'getBlock' )->willReturn( $partialBlock );
-		yield 'partially blocked' => [ $partialBlockedUser, [], false ];
+		yield 'partially blocked' => [ $partialBlock, [], false ];
 
-		$unblockedUser = $this->createMock( User::class );
-		yield 'unblocked, no right' => [ $unblockedUser, [], false ];
+		yield 'unblocked, no right' => [ null, [], false ];
 
-		yield 'success' => [ $unblockedUser, [ 'abusefilter-modify' ], true ];
+		yield 'success' => [ null, [ 'abusefilter-modify' ], true ];
 	}
 
 	/**
-	 * @param User $user
+	 * @param ?DatabaseBlock $block
 	 * @param array $rights
 	 * @param bool $expected
 	 * @covers ::canEdit
 	 * @dataProvider provideCanEdit
 	 */
-	public function testCanEdit( User $user, array $rights, bool $expected ) {
-		$this->assertSame( $expected, $this->getPermMan( $rights )->canEdit( $user ) );
+	public function testCanEdit( ?DatabaseBlock $block, array $rights, bool $expected ) {
+		if ( $block !== null ) {
+			$performer = $this->mockUserAuthorityWithBlock(
+				$this->mockRegisteredUltimateAuthority()->getUser(),
+				$block,
+				$rights
+			);
+		} else {
+			$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		}
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canEdit( $performer )
+		);
 	}
 
 	public function provideCanEditGlobal(): Generator {
@@ -68,8 +67,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideCanEditGlobal
 	 */
 	public function testCanEditGlobal( array $rights, bool $expected ) {
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $expected, $this->getPermMan( $rights )->canEditGlobal( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canEditGlobal( $performer )
+		);
 	}
 
 	public function provideCanEditFilter(): Generator {
@@ -97,14 +99,31 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @param AbstractFilter $filter
-	 * @param User $user
+	 * @param ?DatabaseBlock $block
 	 * @param array $rights
 	 * @param bool $expected
 	 * @covers ::canEditFilter
 	 * @dataProvider provideCanEditFilter
 	 */
-	public function testCanEditFilter( AbstractFilter $filter, User $user, array $rights, bool $expected ) {
-		$this->assertSame( $expected, $this->getPermMan( $rights )->canEditFilter( $user, $filter ) );
+	public function testCanEditFilter(
+		AbstractFilter $filter,
+		?DatabaseBlock $block,
+		array $rights,
+		bool $expected
+	) {
+		if ( $block !== null ) {
+			$performer = $this->mockUserAuthorityWithBlock(
+				$this->mockRegisteredUltimateAuthority()->getUser(),
+				$block,
+				$rights
+			);
+		} else {
+			$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		}
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canEditFilter( $performer, $filter )
+		);
 	}
 
 	public function provideCanViewPrivateFilters(): Generator {
@@ -119,8 +138,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideCanViewPrivateFilters
 	 */
 	public function testCanViewPrivateFilters( array $rights, bool $expected ) {
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $expected, $this->getPermMan( $rights )->canViewPrivateFilters( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canViewPrivateFilters( $performer )
+		);
 	}
 
 	public function provideCanViewPrivateFiltersLogs(): Generator {
@@ -137,8 +159,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideCanViewPrivateFiltersLogs
 	 */
 	public function testCanViewPrivateFiltersLogs( array $rights, bool $expected ) {
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $expected, $this->getPermMan( $rights )->canViewPrivateFiltersLogs( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canViewPrivateFiltersLogs( $performer )
+		);
 	}
 
 	public function provideCanSeeLogDetailsForFilter(): Generator {
@@ -160,8 +185,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 * @dataProvider provideCanSeeLogDetailsForFilter
 	 */
 	public function testCanSeeLogDetailsForFilter( bool $filterHidden, array $rights, bool $expected ) {
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $expected, $this->getPermMan( $rights )->canSeeLogDetailsForFilter( $user, $filterHidden ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$expected,
+			$this->getPermMan()->canSeeLogDetailsForFilter( $performer, $filterHidden )
+		);
 	}
 
 	public function provideSimpleCases(): array {
@@ -177,8 +205,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanEditFilterWithRestrictedActions( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-modify-restricted' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canEditFilterWithRestrictedActions( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canEditFilterWithRestrictedActions( $performer )
+		);
 	}
 
 	/**
@@ -187,8 +218,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanViewAbuseLog( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-log' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canViewAbuseLog( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canViewAbuseLog( $performer )
+		);
 	}
 
 	/**
@@ -197,8 +231,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanHideAbuseLog( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-hide-log' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canHideAbuseLog( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canHideAbuseLog( $performer )
+		);
 	}
 
 	/**
@@ -207,8 +244,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanRevertFilterActions( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-revert' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canRevertFilterActions( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canRevertFilterActions( $performer )
+		);
 	}
 
 	/**
@@ -217,8 +257,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanSeeLogDetails( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-log-detail' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canSeeLogDetails( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canSeeLogDetails( $performer )
+		);
 	}
 
 	/**
@@ -227,8 +270,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanSeePrivateDetails( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-privatedetails' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canSeePrivateDetails( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canSeePrivateDetails( $performer )
+		);
 	}
 
 	/**
@@ -237,8 +283,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanSeeHiddenLogEntries( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-hidden-log' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canSeeHiddenLogEntries( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canSeeHiddenLogEntries( $performer )
+		);
 	}
 
 	/**
@@ -247,8 +296,11 @@ class AbuseFilterPermissionManagerTest extends MediaWikiUnitTestCase {
 	 */
 	public function testCanUseTestTools( bool $allowed ) {
 		$rights = $allowed ? [ 'abusefilter-modify' ] : [];
-		$user = $this->createMock( UserIdentity::class );
-		$this->assertSame( $allowed, $this->getPermMan( $rights )->canUseTestTools( $user ) );
+		$performer = $this->mockRegisteredAuthorityWithPermissions( $rights );
+		$this->assertSame(
+			$allowed,
+			$this->getPermMan()->canUseTestTools( $performer )
+		);
 	}
 
 }

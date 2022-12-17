@@ -11,6 +11,8 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use TestLogger;
 use Title;
+use Wikimedia\WRStats\BagOStuffStatsStore;
+use Wikimedia\WRStats\WRStatsFactory;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\FilterProfiler
@@ -36,13 +38,12 @@ class FilterProfilerTest extends MediaWikiUnitTestCase {
 	private function getFilterProfiler( array $options = null, LoggerInterface $logger = null ): FilterProfiler {
 		if ( $options === null ) {
 			$options = [
-				'AbuseFilterProfileActionsCap' => 10000,
 				'AbuseFilterConditionLimit' => 1000,
 				'AbuseFilterSlowFilterRuntimeLimit' => 500,
 			];
 		}
 		return new FilterProfiler(
-			new HashBagOStuff(),
+			new WRStatsFactory( new BagOStuffStatsStore( new HashBagOStuff() ) ),
 			new ServiceOptions( FilterProfiler::CONSTRUCTOR_OPTIONS, $options ),
 			'wiki',
 			$this->createMock( IBufferingStatsdDataFactory::class ),
@@ -264,49 +265,6 @@ class FilterProfilerTest extends MediaWikiUnitTestCase {
 			],
 			$profiler->getGroupProfile( 'default' )
 		);
-	}
-
-	/**
-	 * @covers ::checkResetProfiling
-	 * @covers ::filterProfileGroupKey
-	 */
-	public function testCheckResetProfiling() {
-		$profiler = $this->getFilterProfiler( [
-			'AbuseFilterProfileActionsCap' => 1,
-			'AbuseFilterConditionLimit' => 1000,
-			'AbuseFilterSlowFilterRuntimeLimit' => 500,
-		] );
-
-		$profiler->recordPerFilterProfiling(
-			$this->createMock( Title::class ),
-			[
-				'1' => [
-					'time' => 12.5,
-					'conds' => 5,
-					'result' => false
-				],
-				'2' => [
-					'time' => 34.5,
-					'conds' => 3,
-					'result' => true
-				],
-				'3' => [
-					'time' => 34.5,
-					'conds' => 5,
-					'result' => true
-				],
-			]
-		);
-
-		$profiler->recordStats( 'default', 100, 256.5, true );
-		$profiler->recordStats( 'default', 200, 512.5, false );
-
-		$profiler->checkResetProfiling( 'default', [ '1', '2' ] );
-
-		$this->assertSame( self::NULL_GROUP_PROFILE, $profiler->getGroupProfile( 'default' ) );
-		$this->assertSame( self::NULL_FILTER_PROFILE, $profiler->getFilterProfile( 1 ) );
-		$this->assertSame( self::NULL_FILTER_PROFILE, $profiler->getFilterProfile( 2 ) );
-		$this->assertNotSame( self::NULL_FILTER_PROFILE, $profiler->getFilterProfile( 3 ) );
 	}
 
 }

@@ -77,16 +77,14 @@ function base_convert( $input, $sourceBase, $destBase, $pad = 1,
 	} elseif ( extension_loaded( 'bcmath' ) && ( $engine == 'auto' || $engine == 'bcmath' ) ) {
 		$decimal = '0';
 		foreach ( str_split( strtolower( $input ) ) as $char ) {
-			$decimal = bcmul( $decimal, $sourceBase );
+			$decimal = bcmul( $decimal, (string)$sourceBase );
 			$decimal = bcadd( $decimal, $baseChars[$char] );
 		}
 
-		// @codingStandardsIgnoreStart Generic.CodeAnalysis.ForLoopWithTestFunctionCall.NotAllowed
-		for ( $result = ''; bccomp( $decimal, 0 ); $decimal = bcdiv( $decimal, $destBase, 0 ) ) {
+		for ( $result = ''; bccomp( $decimal, '0' ); $decimal = bcdiv( $decimal, (string)$destBase, 0 ) ) {
 			// As of PHP 7.2, bcmod can return a floating point value if bcscale is nonzero
-			$result .= $baseChars[(int)bcmod( $decimal, $destBase )];
+			$result .= $baseChars[(int)bcmod( $decimal, (string)$destBase )];
 		}
-		// @codingStandardsIgnoreEnd
 
 		$result = strrev( $result );
 	} else {

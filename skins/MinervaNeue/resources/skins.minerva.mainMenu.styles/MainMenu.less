@@ -1,6 +1,5 @@
 // Component of ui.less
 @import '../../minerva.less/minerva.variables.less';
-@import '../../minerva.less/minerva.mixins.less';
 
 // stylelint-disable no-descending-specificity, selector-max-id
 
@@ -22,7 +21,7 @@
 	// Add vertical scrollbar as needed.
 	overflow-y: auto;
 	background-color: @primaryNavBackgroundColor;
-	.transform( translate( -100%, 0 ) );
+	transform: translate( -100%, 0 );
 
 	ul {
 		padding-bottom: 22px;
@@ -51,7 +50,7 @@
 #main-menu-input:checked ~ #mw-mf-page-left {
 	visibility: visible;
 	box-shadow: 1px 0 8px 0 @grayDrawerShadow;
-	.transform( translate( 0, 0 ) );
+	transform: translate( 0, 0 );
 }
 
 // Without the minerva-animations-ready class, the main menu can appear and
@@ -60,24 +59,18 @@
 // https://bugs.chromium.org/p/chromium/issues/detail?id=332189
 .minerva-animations-ready {
 	#mw-mf-page-left {
-		.transition(
-			// Animate menu visibility, opacity, and translation changes in and out. Visibility duration
-			// cannot be animated initially as it causes a flash on page load in Chromium due to
-			// https://bugs.chromium.org/p/chromium/issues/detail?id=332189.
-			opacity @transition-duration-medium @transition-timing-function-menu,
-			visibility @transition-duration-medium @transition-timing-function-menu,
-			transform @transition-duration-medium @transition-timing-function-menu; );
+		// Animate menu visibility, opacity, and translation changes in and out. Visibility duration
+		// cannot be animated initially as it causes a flash on page load in Chromium due to
+		// https://bugs.chromium.org/p/chromium/issues/detail?id=332189.
+		transition: opacity @transition-duration-medium @transition-timing-function-menu, visibility @transition-duration-medium @transition-timing-function-menu, transform @transition-duration-medium @transition-timing-function-menu;
 	}
 
 	.main-menu-mask {
-		.transition(
-			opacity @transition-duration-base @transition-timing-function-menu,
-			visibility 0ms linear @transition-duration-base;
-		);
+		transition: opacity @transition-duration-base @transition-timing-function-menu, visibility 0ms linear @transition-duration-base;
 	}
 
 	#main-menu-input:checked ~ .main-menu-mask {
-		.transition( opacity @transition-duration-base @transition-timing-function-menu;);
+		transition: opacity @transition-duration-base @transition-timing-function-menu;
 	}
 }
 

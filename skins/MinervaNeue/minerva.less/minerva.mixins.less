@@ -1,13 +1,11 @@
-@import 'mediawiki.mixins.less';
-@import 'mediawiki.mixins.animation.less';
 @import 'minerva.variables.less';
 
 .editor-textarea() {
-	// stylelint-disable-next-line no-descending-specificity
-	.box-sizing( border-box );
+	box-sizing: border-box;
 	width: 100%;
 	// Note if a textarea has a .mw-ui-input class, this may be overridden
 	padding: 10px @contentPadding 10px @contentPadding;
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	resize: none;
 }
 
@@ -61,7 +59,7 @@
 
 .changeslist-header() {
 	background-color: @colorGray14;
-	color: @colorGray7;
+	color: @colorGray5;
 	display: block;
 	width: 100%;
 	padding: 0.5em 16px 0.4em;

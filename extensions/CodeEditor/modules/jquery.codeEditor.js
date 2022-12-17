@@ -388,6 +388,17 @@
 					session.setUseSoftTabs( false );
 					session.setUseWrapMode( context.lineWrappingActive );
 
+					// Configure any workers
+					session.on( 'changeMode', function ( e, session2 ) {
+						// eslint-disable-next-line no-jquery/variable-pattern
+						var mode = session2.getMode().$id;
+						if ( mode === 'ace/mode/javascript' ) {
+							session2.$worker.send( 'setOptions', [ {
+								maxerr: 1000
+							} ] );
+						}
+					} );
+
 					mw.hook( 'codeEditor.configure' ).fire( session );
 
 					ace.config.loadModule( 'ace/ext/modelist', function ( modelist ) {

@@ -5,15 +5,14 @@
 			"Hindustanilanguage",
 			"Jayprakash12345",
 			"Niharika29",
-			"Sfic",
-			"Saurmandal"
+			"Saurmandal",
+			"Sfic"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "किसी कैश कुँजी के साथ क्रमबद्धता नहीं मिला",
 	"apierror-visualeditor-difffailed": "अंतर असफल रहा",
 	"apierror-visualeditor-docserver-http-error": "Parsoid/RESTBase सर्वर से संपर्क करते समय त्रुटि हुई: $1",
-	"apierror-visualeditor-docserver-http": "Parsoid/RESTBase सर्वर से संपर्क करते समय त्रुटि हुई (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "दस्तावेज़ सर्वर के लिए VirtualRESTService परिभाषित नहीं है; https://www.mediawiki.org/wiki/Extension:VisualEditor देखें",
+	"apierror-visualeditor-docserver-http": "Parsoid/RESTBase सर्वर से संपर्क करते समय त्रुटि हुई (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Parsoid/RESTBase सर्वर से संपर्क करते समय त्रुटि हुई (कोई जवाब नहीं मिला)",
 	"apierror-visualeditor-latestnotfound": "शीर्षक के लिए नवीनतम अवतरण नहीं खोजा जा सका",
 	"apihelp-visualeditor-description": "Parsoid सेवा से एक पृष्ठ के लिए HTML5 वापस करता है।",

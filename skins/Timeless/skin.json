@@ -8,7 +8,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.38"
+		"MediaWiki": ">= 1.39"
 	},
 	"ValidSkinNames": {
 		"timeless": {
@@ -17,6 +17,7 @@
 			"args": [
 				{
 					"name": "timeless",
+					"bodyOnly": true,
 					"template": "MediaWiki\\Skin\\Timeless\\TimelessTemplate",
 					"responsive": true,
 					"styles": [
@@ -58,7 +59,6 @@
 			"features": {
 				"normalize": false,
 				"logo": true,
-				"content-thumbnails": false,
 				"content-media": false,
 				"content-links": true,
 				"content-links-external": true,
@@ -66,7 +66,7 @@
 				"content-tables": false,
 				"interface": false,
 				"interface-category": false,
-				"interface-message-box": false,
+				"interface-message-box": true,
 				"elements": false,
 				"legacy": false,
 				"i18n-ordered-lists": true,
@@ -75,6 +75,9 @@
 				"toc": true
 			},
 			"styles": {
+				"resources/content.media-common.less": {
+					"media": "all"
+				},
 				"resources/libraries/normalise.css": {
 					"media": "screen"
 				},
@@ -82,6 +85,9 @@
 					"media": "screen"
 				},
 				"resources/forms.less": {
+					"media": "screen"
+				},
+				"resources/content.media-screen.less": {
 					"media": "screen"
 				},
 				"resources/screen-common.less": {
@@ -107,6 +113,9 @@
 					"media": "print"
 				},
 				"resources/print.css": {
+					"media": "print"
+				},
+				"resources/content.media-print.less": {
 					"media": "print"
 				}
 			},

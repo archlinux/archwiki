@@ -17,7 +17,14 @@
  * @cfg {string[]} [surfaceClasses] Surface classes to apply
  */
 ve.ui.MWTargetWidget = function VeUiMWTargetWidget( config ) {
-	this.surfaceClasses = config.surfaceClasses;
+	this.surfaceClasses = ve.copy( config.surfaceClasses ) || [];
+
+	// HACK: T287733
+	// This assumes the target widget is being shown outside of vector-body, otherwise this
+	// will apply the class a second time and cause problems.
+	if ( mw.config.get( 'skin' ) === 'vector' || mw.config.get( 'skin' ) === 'vector-2022' ) {
+		this.surfaceClasses.push( 'vector-body' );
+	}
 
 	// Parent constructor
 	ve.ui.MWTargetWidget.super.apply( this, arguments );

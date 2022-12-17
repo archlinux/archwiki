@@ -11,6 +11,7 @@ let /** @type {HTMLElement} */ fooSection,
 	/** @type {HTMLElement} */ quuxSection;
 const onHeadingClick = jest.fn();
 const onToggleClick = jest.fn();
+const onToggleCollapse = jest.fn();
 
 /**
  * @param {Object} templateProps
@@ -18,6 +19,9 @@ const onToggleClick = jest.fn();
  */
 function render( templateProps = {} ) {
 	const templateData = Object.assign( {
+		'is-vector-toc-beginning-enabled': true,
+		'msg-vector-toc-beginning': 'Beginning',
+		'msg-vector-toc-heading': 'Contents',
 		'vector-is-collapse-sections-enabled': false,
 		'array-sections': [ {
 			toclevel: 1,
@@ -34,6 +38,7 @@ function render( templateProps = {} ) {
 			anchor: 'bar',
 			'is-top-level-section': true,
 			'is-parent-section': true,
+			'vector-button-label': 'Toggle bar subsection',
 			'array-sections': [ {
 				toclevel: 2,
 				number: '2.1',
@@ -76,7 +81,8 @@ function mount( templateProps = {} ) {
 	const toc = initTableOfContents( {
 		container: /** @type {HTMLElement} */ ( document.getElementById( 'mw-panel-toc' ) ),
 		onHeadingClick,
-		onToggleClick
+		onToggleClick,
+		onToggleCollapse
 	} );
 
 	fooSection = /** @type {HTMLElement} */ ( document.getElementById( 'toc-foo' ) );
@@ -88,6 +94,32 @@ function mount( templateProps = {} ) {
 }
 
 describe( 'Table of contents', () => {
+	beforeEach( () => {
+		// @ts-ignore
+		global.window.matchMedia = jest.fn( () => ( {} ) );
+	} );
+
+	describe( 'renders', () => {
+		test( 'when `vector-is-collapse-sections-enabled` is false', () => {
+			const toc = mount();
+			expect( document.body.innerHTML ).toMatchSnapshot();
+			expect( barSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
+		} );
+		test( 'when `vector-is-collapse-sections-enabled` is true', () => {
+			const toc = mount( { 'vector-is-collapse-sections-enabled': true } );
+			expect( document.body.innerHTML ).toMatchSnapshot();
+			expect( barSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
+		} );
+		test( 'toggles for top level parent sections', () => {
+			const toc = mount();
+			expect( fooSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
+			expect( barSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 1 );
+			expect( bazSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
+			expect( quxSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
+			expect( quuxSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
+		} );
+	} );
+
 	describe( 'binds event listeners', () => {
 		test( 'for onHeadingClick', () => {
 			const toc = mount();
@@ -107,17 +139,8 @@ describe( 'Table of contents', () => {
 		} );
 	} );
 
-	test( 'renders toggles for top level parent sections', () => {
-		const toc = mount();
-		expect( fooSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
-		expect( barSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 1 );
-		expect( bazSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
-		expect( quxSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
-		expect( quuxSection.getElementsByClassName( toc.TOGGLE_CLASS ).length ).toEqual( 0 );
-	} );
-
-	describe( 'when changing sections', () => {
-		test( 'applies correct class', () => {
+	describe( 'applies correct classes', () => {
+		test( 'when changing active sections', () => {
 			const toc = mount( { 'vector-is-collapse-sections-enabled': true } );
 			toc.changeActiveSection( 'toc-foo' );
 			expect( fooSection.classList.contains( toc.ACTIVE_SECTION_CLASS ) ).toEqual( true );
@@ -147,72 +170,49 @@ describe( 'Table of contents', () => {
 			expect( quxSection.classList.contains( toc.ACTIVE_SECTION_CLASS ) ).toEqual( true );
 			expect( quuxSection.classList.contains( toc.ACTIVE_SECTION_CLASS ) ).toEqual( false );
 		} );
-	} );
 
-	describe( 'when `vector-is-collapse-sections-enabled` is false', () => {
-		test( 'renders', () => {
-			mount();
-			expect( document.body.innerHTML ).toMatchSnapshot();
-		} );
-
-		test( 'expands sections', () => {
+		test( 'when expanding sections', () => {
 			const toc = mount();
-			toc.expandSection( 'toc-foo' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
-			expect( barSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
-			expect( bazSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quuxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
-
 			toc.expandSection( 'toc-bar' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
 			expect( barSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
-			expect( bazSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quuxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
 		} );
 
-		test( 'toggles expanded sections', () => {
+		test( 'when toggling sections', () => {
 			const toc = mount();
-			toc.toggleExpandSection( 'toc-foo' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-
-			toc.toggleExpandSection( 'toc-foo' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
-		} );
-	} );
-
-	describe( 'when `vector-is-collapse-sections-enabled` is true', () => {
-		test( 'renders', () => {
-			mount( { 'vector-is-collapse-sections-enabled': true } );
-			expect( document.body.innerHTML ).toMatchSnapshot();
-		} );
-
-		test( 'expands sections', () => {
-			const toc = mount( { 'vector-is-collapse-sections-enabled': true } );
-			toc.expandSection( 'toc-foo' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
+			toc.toggleExpandSection( 'toc-bar' );
 			expect( barSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( bazSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quuxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
+			toc.toggleExpandSection( 'toc-bar' );
+			expect( barSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
+		} );
+	} );
+
+	describe( 'applies the correct aria attributes', () => {
+		test( 'when initialized', () => {
+			const spy = jest.spyOn( mw, 'hook' );
+			const toc = mount();
+			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${toc.TOGGLE_CLASS}` ) );
+
+			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'true' );
+			expect( spy ).toBeCalledWith( 'wikipage.tableOfContents' );
+		} );
+
+		test( 'when expanding sections', () => {
+			const toc = mount();
+			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${toc.TOGGLE_CLASS}` ) );
 
 			toc.expandSection( 'toc-bar' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
-			expect( barSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
-			expect( bazSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
-			expect( quuxSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
+			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'true' );
 		} );
 
-		test( 'toggles expanded sections', () => {
-			const toc = mount( { 'vector-is-collapse-sections-enabled': true } );
-			toc.toggleExpandSection( 'toc-foo' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( true );
+		test( 'when toggling sections', () => {
+			const toc = mount();
+			const toggleButton = /** @type {HTMLElement} */ ( barSection.querySelector( `.${toc.TOGGLE_CLASS}` ) );
 
-			toc.toggleExpandSection( 'toc-foo' );
-			expect( fooSection.classList.contains( toc.EXPANDED_SECTION_CLASS ) ).toEqual( false );
+			toc.toggleExpandSection( 'toc-bar' );
+			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'false' );
+
+			toc.toggleExpandSection( 'toc-bar' );
+			expect( toggleButton.getAttribute( 'aria-expanded' ) ).toEqual( 'true' );
 		} );
-
 	} );
 } );

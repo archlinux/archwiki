@@ -20,11 +20,13 @@
 	"spam-blacklisted-email": "已禁止的電子郵件地址",
 	"spam-blacklisted-email-text": "您的電子郵件地址目前已被禁止，以防止您傳送郵件給其他使用者。",
 	"spam-blacklisted-email-signup": "提供的電子郵件地址目前已被禁止，無法使用。",
-	"spam-invalid-lines": "下列垃圾連結黑名單中有{{PLURAL:$1|一行|多行}}使用了無效的正規表示法，須修正後才可儲存此頁面：",
-	"spam-blacklist-desc": "以正規表示法為基礎的防濫用工具，可禁止頁面中的URL以及已註冊使用者的電子郵件位址。",
-	"log-name-spamblacklist": "垃圾連結黑名單日誌",
-	"log-description-spamblacklist": "此頁記錄了觸發垃圾連結黑名單的事件。",
-	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} 於 $3 嘗試加入的 $4 符合垃圾連結黑名單中的項目。",
-	"right-spamblacklistlog": "檢視垃圾連結黑名單日誌",
-	"action-spamblacklistlog": "檢視垃圾連結黑名單日誌"
+	"spam-invalid-lines": "下列垃圾連結封鎖清單中有{{PLURAL:$1|一行|多行}}使用了無效的{{PLURAL:$1|正規表示法}}，{{PLURAL:$1|需要}}修正後才可儲存此頁面：",
+	"spam-blacklist-desc": "以正規表示法為基礎的防濫用工具，可封鎖列在頁面中的 URL 以及已註冊使用者的電子郵件位址。",
+	"log-name-spamblacklist": "垃圾連結封鎖清單日誌",
+	"log-description-spamblacklist": "此頁記錄了觸發垃圾連結封鎖清單的事件。",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} 於 $3 嘗試加入的 $4 符合垃圾連結封鎖清單中的項目。",
+	"right-spamblacklistlog": "檢視垃圾連結封鎖清單日誌",
+	"action-spamblacklistlog": "檢視垃圾連結封鎖清單日誌",
+	"right-sboverride": "繞過垃圾連結封鎖清單",
+	"action-sboverride": "繞過垃圾連結封鎖清單"
 }

@@ -6,7 +6,7 @@ use ApiTestCase;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Extension\AbuseFilter\BlockAutopromoteStore;
 use MediaWiki\MediaWikiServices;
-use User;
+use MediaWiki\User\UserIdentity;
 
 /**
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\Api\UnblockAutopromote
@@ -88,7 +88,7 @@ class UnblockAutopromoteTest extends ApiTestCase {
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->once() )
 			->method( 'unblockAutopromote' )
-			->with( $this->isInstanceOf( User::class ), $user, $this->anything() )
+			->with( $this->isInstanceOf( UserIdentity::class ), $user, $this->anything() )
 			->willReturn( false );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 
@@ -108,7 +108,7 @@ class UnblockAutopromoteTest extends ApiTestCase {
 		$store = $this->createMock( BlockAutopromoteStore::class );
 		$store->expects( $this->once() )
 			->method( 'unblockAutopromote' )
-			->with( $this->isInstanceOf( User::class ), $user, $this->anything() )
+			->with( $this->isInstanceOf( UserIdentity::class ), $user, $this->anything() )
 			->willReturn( true );
 		$this->setService( BlockAutopromoteStore::SERVICE_NAME, $store );
 

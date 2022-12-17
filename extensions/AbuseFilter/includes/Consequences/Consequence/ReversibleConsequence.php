@@ -10,12 +10,10 @@ use MediaWiki\User\UserIdentity;
 interface ReversibleConsequence {
 
 	/**
-	 * @param array $info
 	 * @param UserIdentity $performer
 	 * @param string $reason
 	 * @return bool Whether the revert was successful
-	 * @todo define or narrow $info
 	 */
-	public function revert( $info, UserIdentity $performer, string $reason ): bool;
+	public function revert( UserIdentity $performer, string $reason ): bool;
 
 }

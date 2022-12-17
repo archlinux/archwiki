@@ -43,20 +43,18 @@ ve.dm.MWInlineImageNode.static.preserveHtmlAttributes = function ( attribute ) {
 	return attributes.indexOf( attribute ) === -1;
 };
 
-// For a while, Parsoid switched to <figure-inline> for inline images, but
-// then decided to switch back to <span> in T266143.
-ve.dm.MWInlineImageNode.static.matchTagNames = [ 'span', 'figure-inline' ];
+ve.dm.MWInlineImageNode.static.matchTagNames = [ 'span' ];
 
 ve.dm.MWInlineImageNode.static.disallowedAnnotationTypes = [ 'link' ];
 
 ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter ) {
-	var container = domElements[ 0 ]; // <span> or <figure-inline>
+	var container = domElements[ 0 ]; // <span>
 	var imgWrapper = container.children[ 0 ]; // <a> or <span>
 	if ( !imgWrapper ) {
 		// Malformed figure, alienate (T267282)
 		return null;
 	}
-	var img = imgWrapper.children[ 0 ]; // <img>, <video> or <audio>
+	var img = imgWrapper.children[ 0 ]; // <img>, <video>, <audio>, or <span> if mw:Error
 	var typeofAttrs = ( container.getAttribute( 'typeof' ) || '' ).trim().split( /\s+/ );
 	var mwDataJSON = container.getAttribute( 'data-mw' );
 	var mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
@@ -85,9 +83,11 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 
 	var attributes = {
 		mediaClass: types.mediaClass,
+		mediaTag: img.nodeName.toLowerCase(),
 		type: types.frameType,
 		src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
 		href: href,
+		imageClassAttr: img.getAttribute( 'class' ),
 		imgWrapperClassAttr: imgWrapper.getAttribute( 'class' ),
 		resource: img.getAttribute( 'resource' ),
 		originalClasses: classes,
@@ -95,8 +95,7 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 		height: height !== null && height !== '' ? +height : null,
 		alt: img.getAttribute( 'alt' ),
 		mw: mwData,
-		isError: isError,
-		tagName: container.nodeName.toLowerCase()
+		isError: isError
 	};
 
 	// Extract individual classes
@@ -144,9 +143,8 @@ ve.dm.MWInlineImageNode.static.toDataElement = function ( domElements, converter
 
 ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, converter ) {
 	var attributes = dataElement.attributes,
-		mediaClass = attributes.mediaClass,
-		container = doc.createElement( attributes.tagName || 'span' ),
-		img = doc.createElement( attributes.isError ? 'span' : this.typesToTags[ mediaClass ] ),
+		container = doc.createElement( 'span' ),
+		img = doc.createElement( attributes.isError ? 'span' : attributes.mediaTag ),
 		classes = [],
 		originalClasses = attributes.originalClasses;
 
@@ -160,7 +158,7 @@ ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, conv
 		img.setAttribute( attributes.isError ? 'data-width' : 'height', height );
 	}
 
-	var srcAttr = this.typesToSrcAttrs[ mediaClass ];
+	var srcAttr = this.tagsToSrcAttrs[ img.nodeName.toLowerCase() ];
 	if ( srcAttr && !attributes.isError ) {
 		img.setAttribute( srcAttr, attributes.src );
 	}
@@ -171,7 +169,7 @@ ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, conv
 	}
 
 	// RDFa type
-	container.setAttribute( 'typeof', this.getRdfa( mediaClass, attributes.type, attributes.isError ) );
+	container.setAttribute( 'typeof', this.getRdfa( attributes.mediaClass, attributes.type, attributes.isError ) );
 	if ( !ve.isEmptyObject( attributes.mw ) ) {
 		container.setAttribute( 'data-mw', JSON.stringify( attributes.mw ) );
 	}
@@ -221,6 +219,11 @@ ve.dm.MWInlineImageNode.static.toDomElements = function ( dataElement, doc, conv
 		}
 		var filename = mw.libs.ve.normalizeParsoidResourceName( attributes.resource || '' );
 		img.appendChild( doc.createTextNode( filename ) );
+		// At the moment, preserving this is only relevant on mw:Error spans
+		if ( attributes.imageClassAttr ) {
+			// eslint-disable-next-line mediawiki/class-doc
+			img.className = attributes.imageClassAttr;
+		}
 	}
 
 	container.appendChild( firstChild );

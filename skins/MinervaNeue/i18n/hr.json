@@ -3,8 +3,8 @@
 		"authors": [
 			"Bugoslav",
 			"MaGa",
-			"SpeedyGonsales",
-			"Ponor"
+			"Ponor",
+			"SpeedyGonsales"
 		]
 	},
 	"minerva-last-modified-date": "Zadnji put uređivano $1, u $2.",
@@ -59,10 +59,12 @@
 	"minerva-page-actions-protect": "Zaštiti",
 	"minerva-page-actions-unprotect": "Ukloni zaštitu",
 	"minerva-page-actions-user-groups": "Suradničke skupine",
+	"minerva-page-actions-block": "Blokiraj suradnika",
 	"minerva-page-actions-logs": "Evidencije",
 	"minerva-page-actions-wikibase": "Stavka ({{WBREPONAME}})",
 	"minerva-page-actions-language-switcher": "Jezici",
 	"minerva-page-actions-history": "Povijest",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Rasprava]]",
 	"minerva-talk-explained": "Aktivne rasprave",
 	"minerva-talk-explained-empty": "Nema rasprava na ovoj stranici.",
 	"minerva-talk-full-page": "Čitati kao wikistranicu",

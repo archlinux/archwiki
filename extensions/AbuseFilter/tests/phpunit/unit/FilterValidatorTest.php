@@ -14,10 +14,10 @@ use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
 use MediaWiki\Extension\AbuseFilter\Parser\ParserStatus;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
+use MediaWiki\Permissions\Authority;
 use MediaWikiUnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Status;
-use User;
 
 /**
  * @group Test
@@ -208,7 +208,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		$permManager->method( 'canEditFilter' )->willReturnOnConsecutiveCalls( $canEditNew, $canEditOrig );
 		$validator = $this->getFilterValidator( $permManager );
 		$actual = $validator->checkGlobalFilterEditPermission(
-			$this->createMock( User::class ),
+			$this->createMock( Authority::class ),
 			$this->createMock( AbstractFilter::class ),
 			$this->createMock( AbstractFilter::class )
 		);
@@ -283,10 +283,10 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		?string $expected
 	) {
 		$validator = $this->getFilterValidator( $permManager, null, $restrictions );
-		$user = $this->createMock( User::class );
+		$performer = $this->createMock( Authority::class );
 		$this->assertStatusMessageParams(
 			$expected,
-			$validator->checkRestrictedActions( $user, $newFilter, $oldFilter )
+			$validator->checkRestrictedActions( $performer, $newFilter, $oldFilter )
 		);
 	}
 
@@ -382,7 +382,7 @@ class FilterValidatorTest extends MediaWikiUnitTestCase {
 		$validator = $this->getFilterValidator( $permissionManager, $ruleChecker, $restrictions );
 		$origFilter = $this->createMock( AbstractFilter::class );
 
-		$status = $validator->checkAll( $newFilter, $origFilter, $this->createMock( User::class ) );
+		$status = $validator->checkAll( $newFilter, $origFilter, $this->createMock( Authority::class ) );
 		$actualError = $status->isGood() ? null : $status->getErrors()[0]['message'];
 		$this->assertSame( $expected, $actualError );
 	}

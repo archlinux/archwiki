@@ -1,10 +1,7 @@
-( function () {
-	QUnit.module( 'mmv.lightboximage', QUnit.newMwEnvironment() );
+QUnit.module( 'mmv.lightboximage', QUnit.newMwEnvironment() );
 
-	QUnit.test( 'Sense test, object creation', function ( assert ) {
-		var lightboxImage = new mw.mmv.LightboxImage( 'foo.png' );
+QUnit.test( 'Sense test', function ( assert ) {
+	var lightboxImage = new mw.mmv.LightboxImage( 'foo.png' );
 
-		assert.ok( lightboxImage, 'Object created !' );
-	} );
-
-}() );
+	assert.true( lightboxImage instanceof mw.mmv.LightboxImage, 'Object created' );
+} );

@@ -240,7 +240,7 @@
 		}
 
 		this.addText( $div, msgs, true );
-		this.addInfoLink( $div, ( enabled ? 'enable' : 'disable' ) + '-about-link' );
+		this.addInfoLink( $div );
 		this.makeButtons( $div, smsg, enabled );
 
 		this[ propName ] = $div;
@@ -287,8 +287,6 @@
 				$buttons.prop( 'disabled', true );
 
 				dialog.config.setMediaViewerEnabledOnClick( enabled ).done( function () {
-					mw.mmv.actionLogger.log( 'opt' + ( enabled ? 'in' : 'out' ) + '-' + ( mw.user.isAnon() ? 'anon' : 'loggedin' ) );
-
 					if ( enabled ) {
 						dialog.showEnableConfirmation();
 					} else {
@@ -379,14 +377,12 @@
 	 * Adds the info link to the panel.
 	 *
 	 * @param {jQuery} $div The panel to which we're adding the link.
-	 * @param {string} eventName
 	 */
-	ODP.addInfoLink = function ( $div, eventName ) {
+	ODP.addInfoLink = function ( $div ) {
 		$( '<a>' )
 			.addClass( 'mw-mmv-project-info-link' )
 			.prop( 'href', mw.config.get( 'wgMultimediaViewer' ).helpLink )
 			.text( mw.message( 'multimediaviewer-options-learn-more' ) )
-			.on( 'click', function () { mw.mmv.actionLogger.log( eventName ); } )
 			.appendTo( $div.find( '.mw-mmv-options-text' ) );
 	};
 

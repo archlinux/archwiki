@@ -8,8 +8,9 @@
 			"Presidenvolksraad",
 			"Rachmat.Wahidi",
 			"Rachmat04",
+			"Veracious",
 			"WongKentir",
-			"Veracious"
+			"Rex"
 		]
 	},
 	"apihelp-main-param-action": "Tindakan manakah yang akan dilakukan.",
@@ -51,7 +52,7 @@
 	"apihelp-edit-param-title": "Judul halaman untuk dibuat. Tidak dapat digunakan bersama dengan <var>$1pageid</var>.",
 	"apihelp-edit-param-pageid": "ID halaman dari halaman yang akan disunting. Tidak dapat digunakan bersama dengan <var>$1title</var>.",
 	"apihelp-edit-param-section": "Nomor bagian. <kbd>0</kbd> untuk bagian atas, <kbd>baru</kbd> untuk bagian baru.",
-	"apihelp-edit-param-sectiontitle": "Judul untuk bagian baru.",
+	"apihelp-edit-param-sectiontitle": "Judul untuk bagian baru saat menggunakan <var>$1section=new</var>.",
 	"apihelp-edit-param-text": "Isi halaman.",
 	"apihelp-edit-param-summary": "Ringkasan suntingan. Juga tajuk bagian ketika $1section=new dan $1sectiontitle tidak diatur.",
 	"apihelp-edit-param-tags": "Ganti tag untuk menerapkan ke revisi.",
@@ -96,6 +97,7 @@
 	"apihelp-help-example-recursive": "Semua bantuan dalam satu halaman.",
 	"apihelp-help-example-help": "Bantuan untuk modul bantuan.",
 	"apihelp-import-param-xml": "Berkas XML yang diunggah.",
+	"apihelp-login-param-name": "Nama pengguna.",
 	"apihelp-login-param-password": "Kata sandi.",
 	"apihelp-login-param-domain": "Domain (opsional).",
 	"apihelp-login-param-token": "Token login diperoleh pada permintaan pertama.",

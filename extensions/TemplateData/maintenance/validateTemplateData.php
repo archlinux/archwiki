@@ -26,17 +26,18 @@ class ValidateTemplateData extends Maintenance {
 		$badRows = 0;
 		$this->output( "Pages with invalid Template Data:\n" );
 		do {
-			$res = $db->select(
-				[ 'page_props', 'page' ],
-				[ 'pp_page', 'pp_value', 'page_namespace', 'page_title' ],
-				[
+			$res = $db->newSelectQueryBuilder()
+				->from( 'page_props' )
+				->join( 'page', null, 'pp_page=page_id' )
+				->fields( [ 'pp_page', 'pp_value', 'page_namespace', 'page_title' ] )
+				->where( [
 					'pp_page > ' . $db->addQuotes( $lastId ),
 					'pp_propname' => 'templatedata'
-				],
-				__METHOD__,
-				[ 'LIMIT' => $this->getBatchSize(), 'ORDER BY' => 'pp_page' ],
-				[ 'page' => [ 'INNER JOIN', [ 'pp_page=page_id' ] ] ]
-			);
+				] )
+				->orderBy( 'pp_page' )
+				->limit( $this->getBatchSize() )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			$count = $res->numRows();
 

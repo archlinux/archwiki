@@ -92,6 +92,7 @@
 	"notification-body-oathauth-disable": "Se você não fez isso, sua conta pode ter sido comprometida.",
 	"notification-body-oathauth-disable-other": "Se você não solicitou isso, entre em contato com um administrador.",
 	"oathauth-notifications-disable-help": "Ajuda",
+	"oathauth-notifications-enabled-help": "Ajuda",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} possui autenticação de dois fatores ativada.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} não possui autenticação de dois fatores ativada.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Grupo desativado|Grupos desativados}}:"

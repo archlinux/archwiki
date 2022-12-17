@@ -1,16 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Matma Rex",
 			"Metalhead64",
-			"ToBeFree",
-			"Matma Rex"
+			"ToBeFree"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Keine gecachte Serialisierung mit diesem Schlüssel gefunden",
 	"apierror-visualeditor-difffailed": "Unterschied fehlgeschlagen",
 	"apierror-visualeditor-docserver-http-error": "Fehler bei der Kontaktaufnahme mit dem Parsoid-/RESTBase-Server: $1",
-	"apierror-visualeditor-docserver-http": "Fehler bei der Kontaktaufnahme mit dem Parsoid-/RESTBase-Server (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "Der VirtualRESTService für den Dokumentenserver ist nicht definiert; siehe https://www.mediawiki.org/wiki/Extension:VisualEditor",
+	"apierror-visualeditor-docserver-http": "Fehler bei der Kontaktaufnahme mit dem Parsoid-/RESTBase-Server (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Fehler beim Kontaktieren des Parsoid-/RESTBase-Servers (keine Antwort)",
 	"apierror-visualeditor-latestnotfound": "Die aktuellste Version für den Titel konnte nicht gefunden werden",
 	"apihelp-visualeditor-description": "Gibt HTML5 für eine Seite von dem Parsoid-Dienst zurück.",

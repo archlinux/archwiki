@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Ammartivari",
 			"Macofe",
-			"Mdupont",
-			"Amire80"
+			"Mdupont"
 		]
 	},
 	"wikieditor": "redaktimi i avancuar wikitext interface",
@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Faqja nuk ekziston",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titulli i pavlefshëm",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Lidhje e jashtme",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kontrollit të ekzistencës faqe ...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Titulli ju specifikuar është i pavlefshëm.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-in që të specifikuar duket si ajo ishte menduar si një lidhje në faqe të tjera wiki.\nA doni ta bërë atë një lidhje të brendshme?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Lidhje të Brendshme",

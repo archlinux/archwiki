@@ -4,5 +4,9 @@
 			"Eleassar"
 		]
 	},
-	"replacetext_continue": "Nadaljuj"
+	"replacetext-desc": "Zagotavlja [[Special:ReplaceText|posebno stran]], ki administratorjem omogoča globalno iskanje in zamenjavo nizov na vseh straneh vikija",
+	"replacetext_replace": "Zamenjaj",
+	"replacetext_continue": "Nadaljuj",
+	"right-replacetext": "Zamenjevanje nizov v vsem vikiju",
+	"action-replacetext": "zamenjevati nizov v vsem vikiju"
 }

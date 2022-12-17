@@ -1,13 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Anok kutai jang"
+			"Anok kutai jang",
+			"Amire80"
 		]
 	},
 	"tooltip-ca-ve-edit": "Kas bae kintal",
 	"visualeditor-ca-createlocaldescriptionsource": "Kas tamba deskripsi lokal",
 	"visualeditor-ca-createsource": "Biking sumber",
 	"visualeditor-ca-editsource": "Kas bae sumber data",
-	"visualeditor-ca-editsource-section": "Kas bae sumber",
+	"visualeditor-ca-editsource-section": "kas bae sumber",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

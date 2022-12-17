@@ -3,13 +3,13 @@
 		"authors": [
 			"Ahmad252",
 			"Alirezaaa",
+			"Beginneruser",
 			"FarsiNevis",
 			"Huji",
 			"Jeeputer",
 			"Ladsgroup",
 			"Reza1615",
-			"Sunfyre",
-			"Beginneruser"
+			"Sunfyre"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "بررسی کنید تا ببینید پالایهٔ ویرایش با مجموعه‌ای از متغیرها، یک ویرایش، یا یک رویداد سیاههٔ پالایهٔ ویرایش کاربر مطابق است یا خیر.\n\nمتغیر، شناسهٔ تغییرات اخیر یا شناسهٔ ورود مورد نیاز است، اما فقط یکی از این سه می‌تواند استفاده شود.",

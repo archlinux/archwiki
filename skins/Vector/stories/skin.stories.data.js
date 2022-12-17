@@ -1,10 +1,10 @@
 import { htmlUserLanguageAttributes } from './utils';
 import { placeholder } from './utils';
 
+import { articleToolbarTemplate, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY } from './ArticleToolbar.stories.data';
 import { userLinksTemplateLegacy } from './UserLinks.stories.data';
-import { menuTemplate } from './Menu.stories.data';
+import { menuTemplate, legacyMenuTemplate } from './Menu.stories.data';
 import { PERSONAL_MENU_TEMPLATE_DATA } from './UserLinks.stories.data';
-import { pageActionsData, namespaceTabsData } from './MenuTabs.stories.data';
 import { vectorMenuTemplate, moreData, variantsData } from './MenuDropdown.stories.data';
 import { searchBoxData, searchBoxTemplate, SEARCH_TEMPLATE_PARTIALS } from './SearchBox.stories.data';
 import { SIDEBAR_DATA, SIDEBAR_TEMPLATE_PARTIALS, OPT_OUT_DATA,
@@ -15,36 +15,30 @@ import { logoTemplate } from './Logo.stories.data';
 
 export const NAVIGATION_TEMPLATE_DATA = {
 	loggedInWithVariantsAndOptOut: Object.assign( {}, {
-		'data-portlets': {
+		'data-portlets': Object.assign( {}, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
 			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
-			'data-namespaces': namespaceTabsData,
-			'data-views': pageActionsData,
 			'data-variants': variantsData
-		},
+		} ),
 		'data-search-box': searchBoxData,
 		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
 		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
 	}, OPT_OUT_DATA ),
 	loggedOutWithVariants: {
-		'data-portlets': {
+		'data-portlets': Object.assign( {}, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
 			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedOut,
-			'data-namespaces': namespaceTabsData,
-			'data-views': pageActionsData,
 			'data-variants': variantsData
-		},
+		} ),
 		'data-search-box': searchBoxData,
 		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
 		'msg-navigation-heading': 'Navigation menu',
 		'html-logo-attributes': `class="mw-wiki-logo" href="/wiki/Main_Page" title="Visit the main page"`
 	},
 	loggedInWithMoreActions: {
-		'data-portlets': {
+		'data-portlets': Object.assign( {}, ARTICLE_TOOLBAR_TEMPLATE_DATA_LEGACY[ 'data-portlets' ], {
 			'data-personal': PERSONAL_MENU_TEMPLATE_DATA.loggedInWithEcho,
-			'data-namespaces': namespaceTabsData,
-			'data-views': pageActionsData,
 			'data-actions': moreData
-		},
+		} ),
 		'data-search-box': searchBoxData,
 		'data-portlets-sidebar': SIDEBAR_DATA.withPortals,
 		'msg-navigation-heading': 'Navigation menu',
@@ -54,12 +48,14 @@ export const NAVIGATION_TEMPLATE_DATA = {
 
 export const TEMPLATE_PARTIALS = Object.assign( {}, SIDEBAR_TEMPLATE_PARTIALS, {
 	Logo: logoTemplate,
+	ArticleToolbar: articleToolbarTemplate,
 	SearchBox: searchBoxTemplate,
-	'legacy/Sidebar': sidebarLegacyTemplate,
+	LegacySidebar: sidebarLegacyTemplate,
 	Sidebar: sidebarTemplate,
+	LegacyMenu: legacyMenuTemplate,
 	VectorMenu: vectorMenuTemplate,
 	Menu: menuTemplate,
-	'legacy/UserLinks': userLinksTemplateLegacy,
+	LegacyUserLinks: userLinksTemplateLegacy,
 	Footer: footerTemplate
 }, FOOTER_TEMPLATE_PARTIALS, SEARCH_TEMPLATE_PARTIALS );
 

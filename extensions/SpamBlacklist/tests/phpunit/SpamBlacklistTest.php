@@ -1,11 +1,13 @@
 <?php
 
+use MediaWiki\Extension\SpamBlacklist\BaseBlacklist;
+use MediaWiki\Extension\SpamBlacklist\SpamBlacklist;
 use MediaWiki\MediaWikiServices;
 
 /**
  * @group SpamBlacklist
  * @group Database
- * @covers SpamBlacklist
+ * @covers \MediaWiki\Extension\SpamBlacklist\SpamBlacklist
  */
 class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -142,7 +144,7 @@ class SpamBlacklistTest extends MediaWikiIntegrationTestCase {
 
 		// That only works if the spam blacklist is really reset
 		$instance = BaseBlacklist::getInstance( 'spam' );
-		$reflProp = new \ReflectionProperty( $instance, 'regexes' );
+		$reflProp = new ReflectionProperty( $instance, 'regexes' );
 		$reflProp->setAccessible( true );
 		$reflProp->setValue( $instance, false );
 	}

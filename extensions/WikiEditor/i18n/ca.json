@@ -50,7 +50,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La pàgina no existeix a {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "El títol que heu especificat no és vàlid",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Enllaç extern",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Comprovació de l'existència de la pàgina ...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Aquesta pàgina no és una pàgina de contingut, llista temes amb noms similars",
 	"wikieditor-toolbar-tool-link-int-invalid": "El títol que heu especificat no és vàlid.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "L'URL que heu especificat sembla que enllaça a una altra pàgina del wiki.\nVoleu convertir-lo en un enllaç intern?",

@@ -7,6 +7,7 @@
 			"Dnshitobu",
 			"Jahinfo",
 			"Masssly",
+			"Musahfm",
 			"Ruky Wunpini"
 		]
 	},
@@ -20,5 +21,6 @@
 	"vector-view-edit": "Mali niŋ",
 	"vector-view-history": "Lihimi tarihi",
 	"vector-view-view": "Karimma",
-	"vector-more-actions": "Lihimi n pahi"
+	"vector-more-actions": "Lihimi n pahi",
+	"vector-searchsuggest-containing": "Yuli bo yaɣi shɛŋa din mali <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

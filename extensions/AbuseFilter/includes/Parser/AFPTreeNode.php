@@ -135,7 +135,7 @@ class AFPTreeNode {
 			return '  ' . $line;
 		};
 
-		$lines = [ "{$this->type}" ];
+		$lines = [ $this->type ];
 		// @phan-suppress-next-line PhanTypeSuspiciousNonTraversableForeach children is array here
 		foreach ( $this->children as $subnode ) {
 			if ( $subnode instanceof AFPTreeNode ) {

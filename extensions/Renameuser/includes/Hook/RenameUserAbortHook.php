@@ -24,5 +24,3 @@ interface RenameUserAbortHook {
 	public function onRenameUserAbort( int $uid, string $old, string $new );
 
 }
-
-class_alias( RenameUserAbortHook::class, 'RenameUserAbortHook' );

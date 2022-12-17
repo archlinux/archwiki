@@ -1,9 +1,5 @@
-const Vue = require( 'vue' );
 const VueTestUtils = require( '@vue/test-utils' );
 const App = require( '../../resources/skins.vector.search/App.vue' );
-
-// @ts-ignore
-Vue.directive( 'i18n-html', () => {} );
 
 const defaultProps = {
 	id: 'searchform',
@@ -16,11 +12,18 @@ const defaultProps = {
 const mount = ( /** @type {Object} */ customProps ) => {
 	// @ts-ignore
 	return VueTestUtils.shallowMount( App, {
-		propsData: Object.assign( {}, defaultProps, customProps ),
-		mocks: {
-			$i18n: ( /** @type {string} */ str ) => ( {
-				text: () => str
-			} )
+		props: Object.assign( {}, defaultProps, customProps ),
+		global: {
+			mocks: {
+				$i18n: ( /** @type {string} */ str ) => ( {
+					text: () => str
+				} )
+			},
+			directives: {
+				'i18n-html': ( el, binding ) => {
+					el.innerHTML = `${binding.arg} (${binding.value})`;
+				}
+			}
 		}
 	} );
 };

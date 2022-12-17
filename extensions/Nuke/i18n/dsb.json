@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Matěj Suchánek",
-			"Michawiki"
+			"Michawiki",
+			"1233qwer1234qwer4"
 		]
 	},
 	"nuke": "Masowe lašowanje",
@@ -11,7 +12,7 @@
 	"nuke-nopages": "Žedne nowe boki wót [[Special:Contributions/$1|{{GENDER:$1|$1}}]] w aktualnych změnach.",
 	"nuke-list": "Slědujuce boki su se nowo napórali wót [[Special:Contributions/$1|{{GENDER:$1|$1}}]];\nzapódaj komentar a klikni na tłocašk, aby je lašował.",
 	"nuke-list-multiple": "Slědujuce boki su se rowno napórali;\nzapódaj komentar a klikni na tłocašk, aby je wulašował.",
-	"nuke-defaultreason": "Masowe lašowanje bokow, kótarež [[Special:Contributions/$1|{{GENDER:$1|$1}}]] jo pśidał.",
+	"nuke-defaultreason": "Masowe lašowanje bokow, kótarež [[Special:Contributions/$1|{{GENDER:$1|$1}}]] jo pśidał",
 	"nuke-multiplepeople": "Masowe wulašowanje njedawno pśidanych bokow",
 	"nuke-tools": "Toś ten rěd zmóžnja masowe lašowanja bokow, kótarež wěsty wužywaŕ abo IP jo rowno pśidał. Zapódaj wužywarske mě abo IP-adresu, aby dostał lisćinu bokow, kótarež maju se lašowaś abo wóstaj pólo prozne, aby wubrał wšych wužywarjow.",
 	"nuke-submit-user": "W pórěźe",

@@ -18,5 +18,6 @@
 	"vector-view-history": "Versionsgeschicht",
 	"vector-view-view": "Lese",
 	"vector-view-viewsource": "Quelltext oonzeiche",
-	"vector-more-actions": "Meh"
+	"vector-more-actions": "Meh",
+	"vector-searchsuggest-containing": "Suche noh Seite wo <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> enthelld."
 }

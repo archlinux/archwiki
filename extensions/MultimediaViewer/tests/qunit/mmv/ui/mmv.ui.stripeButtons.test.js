@@ -31,8 +31,8 @@
 		mw.user.isAnon = function () { return true; };
 		buttons = createStripeButtons();
 
-		assert.ok( buttons, 'UI element is created.' );
-		assert.ok( buttons.buttons.$descriptionPage, 'File page button created for anon.' );
+		assert.true( buttons instanceof mw.mmv.ui.StripeButtons, 'UI element is created.' );
+		assert.strictEqual( buttons.buttons.$descriptionPage.length, 1, 'File page button created for anon.' );
 
 		// now pretend we are logged in
 		mw.user.isAnon = function () { return false; };
@@ -51,7 +51,7 @@
 		buttons.set( fakeImageInfo, fakeRepoInfo );
 		buttons.empty();
 
-		assert.ok( true, 'No error on set()/empty().' );
+		assert.true( true, 'No error on set()/empty().' );
 	} );
 
 	QUnit.test( 'Description page button', function ( assert ) {

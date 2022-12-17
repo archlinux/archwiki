@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Wt2Html\TT;
 
 use Wikimedia\Assert\Assert;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Tokens\EndTagTk;
 use Wikimedia\Parsoid\Tokens\KV;
@@ -12,6 +13,8 @@ use Wikimedia\Parsoid\Tokens\SelfclosingTagTk;
 use Wikimedia\Parsoid\Tokens\SourceRange;
 use Wikimedia\Parsoid\Tokens\TagTk;
 use Wikimedia\Parsoid\Tokens\Token;
+use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Utils\PHPUtils;
 use Wikimedia\Parsoid\Utils\PipelineUtils;
 use Wikimedia\Parsoid\Utils\Title;
@@ -232,7 +235,7 @@ class TemplateHandler extends TokenHandler {
 					}
 
 				default:
-					PHPUtils::unreachable( 'Unexpected token type: ' . get_class( $ntt ) );
+					throw new UnreachableException( 'Unexpected token type: ' . get_class( $ntt ) );
 			}
 		}
 
@@ -275,20 +278,23 @@ class TemplateHandler extends TokenHandler {
 		$untrimmedPrefix = $pieces[0];
 		$prefix = trim( $pieces[0] );
 
+		// Parser function names usually (not always) start with a hash
+		$hasHash = substr( $target, 0, 1 ) === '#';
+		// String found after the colon will be the parser function arg
+		$haveColon = count( $pieces ) > 1;
+
 		// safesubst found in content should be treated as if no modifier were
 		// present. See https://en.wikipedia.org/wiki/Help:Substitution#The_safesubst:_modifier
-		if ( $this->isSafeSubst( $prefix ) ) {
+		if ( $haveColon && $this->isSafeSubst( $prefix ) ) {
 			$target = substr( $target, strlen( $untrimmedPrefix ) + 1 );
 			array_shift( $pieces );
 			$untrimmedPrefix = $pieces[0];
 			$prefix = trim( $pieces[0] );
+			$haveColon = count( $pieces ) > 1;
 		}
 
 		$env = $this->env;
 		$siteConfig = $env->getSiteConfig();
-
-		// String found after the colon will be the parser function arg
-		$haveColon = count( $pieces ) > 1;
 
 		// Additional tokens are only justifiable in parser functions scenario
 		if ( !$haveColon && $additionalToks ) {
@@ -324,7 +330,16 @@ class TemplateHandler extends TokenHandler {
 
 		// FIXME: Checks for msgnw, msg, raw are missing at this point
 
-		$canonicalFunctionName = $haveColon ? $siteConfig->getMagicWordForFunctionHook( $prefix ) : null;
+		$canonicalFunctionName = null;
+		if ( $haveColon ) {
+			$canonicalFunctionName = $siteConfig->getMagicWordForFunctionHook( $prefix );
+		}
+		if ( $canonicalFunctionName === null && $hasHash ) {
+			// If the target starts with a '#' it can't possibly be a template
+			// so this must be a "broken" parser function invocation
+			$canonicalFunctionName = substr( $prefix, 1 );
+			// @todo: Flag this as an author error somehow (T314524)
+		}
 		if ( $canonicalFunctionName !== null ) {
 			$state->parserFunctionName = $canonicalFunctionName;
 			return [
@@ -417,10 +432,13 @@ class TemplateHandler extends TokenHandler {
 	}
 
 	/**
+	 * By default, don't attempt to expand any templates in the wikitext that will be reprocessed.
+	 *
 	 * @param Token $token
+	 * @param bool $expandTemplates
 	 * @return TemplateExpansionResult
 	 */
-	private function convertToString( Token $token ): TemplateExpansionResult {
+	private function convertToString( Token $token, bool $expandTemplates = false ): TemplateExpansionResult {
 		$frame = $this->manager->getFrame();
 		$tsr = $token->dataAttribs->tsr;
 		$src = substr( $token->dataAttribs->src, 1, -1 );
@@ -431,8 +449,8 @@ class TemplateHandler extends TokenHandler {
 			$this->env, $frame, $src, [
 				'pipelineType' => 'text/x-mediawiki',
 				'pipelineOpts' => [
-					'expandTemplates' => $this->options['expandTemplates'],
 					'inTemplate' => $this->options['inTemplate'],
+					'expandTemplates' => $expandTemplates && $this->options['expandTemplates'],
 				],
 				'sol' => false,
 				'srcOffsets' => $srcOffsets,
@@ -492,6 +510,9 @@ class TemplateHandler extends TokenHandler {
 			// Parsoid core parser function versions have "token" versions
 			// which are incompatible with implementation in FunctionHookHandler
 			// and FunctionArgs. So, we continue down this hacky path for now.
+			if ( $target === '=' ) {
+				$target = 'equal';  // '=' is not a valid character in function names
+			}
 			$target = 'pf_' . $target;
 			// FIXME: Parsoid may not have implemented the parser function natively
 			// Emit an error message, but encapsulate it so it roundtrips back.
@@ -530,16 +551,25 @@ class TemplateHandler extends TokenHandler {
 		// load template w/ variant names (language variants)
 
 		// Fetch template source and expand it
-		$toks = $this->processTemplateSource(
-			$state->token,
-			[
-				'name' => $target,
-				'title' => $resolvedTgt['title'],
-				'attribs' => array_slice( $attribs, 1 ), // strip template target
-			],
-			$this->fetchTemplateAndTitle( $target, $attribs )
-		);
-		return new TemplateExpansionResult( $toks, true, $encap );
+		$src = $this->fetchTemplateAndTitle( $target, $attribs );
+		if ( $src !== null ) {
+			$toks = $this->processTemplateSource(
+				$state->token,
+				[
+					'name' => $target,
+					'title' => $resolvedTgt['title'],
+					'attribs' => array_slice( $attribs, 1 ), // strip template target
+				],
+				$src
+			);
+			return new TemplateExpansionResult( $toks, true, $encap );
+		} else {
+			// Convert to a wikilink (which will become a redlink after the redlinks pass).
+			$toks = [ new SelfclosingTagTk( 'wikilink' ) ];
+			$hrefSrc = $resolvedTgt['name'];
+			$toks[0]->attribs[] = new KV( 'href', $hrefSrc, null, null, $hrefSrc );
+			return new TemplateExpansionResult( $toks, false, $encap );
+		}
 	}
 
 	/**
@@ -551,19 +581,21 @@ class TemplateHandler extends TokenHandler {
 	 * @return array
 	 */
 	private function processTemplateSource( Token $token, array $tplArgs, string $src ): array {
-		if ( !$src ) {
-			return [];
-		}
-
 		$env = $this->env;
 		$frame = $this->manager->getFrame();
 		if ( $env->hasDumpFlag( 'tplsrc' ) ) {
-			$env->log( 'dump/tplsrc', str_repeat( '=', 80 ) );
-			$env->log( 'dump/tplsrc', 'TEMPLATE:', $tplArgs['name'], '; TRANSCLUSION:',
-				PHPUtils::jsonEncode( $token->dataAttribs->src ) );
-			$env->log( 'dump/tplsrc', str_repeat( '-', 80 ) );
-			$env->log( 'dump/tplsrc', $src );
-			$env->log( 'dump/tplsrc', str_repeat( '-', 80 ) );
+			$dump = str_repeat( '=', 28 ) . " template source " .
+				str_repeat( '=', 28 ) . "\n";
+			$dump .= 'TEMPLATE:' . $tplArgs['name'] . 'TRANSCLUSION:' .
+				PHPUtils::jsonEncode( $token->dataAttribs->src ) . "\n";
+			$dump .= str_repeat( '-', 80 ) . "\n";
+			$dump .= $src . "\n";
+			$dump .= str_repeat( '-', 80 ) . "\n";
+			$env->writeDump( $dump );
+		}
+
+		if ( $src === '' ) {
+			return [];
 		}
 
 		$env->log( 'debug', 'TemplateHandler.processTemplateSource',
@@ -601,6 +633,112 @@ class TemplateHandler extends TokenHandler {
 				'srcText' => $src,
 				'srcOffsets' => new SourceRange( 0, strlen( $src ) ),
 				'tplArgs' => $tplArgs,
+				// HEADS UP: You might be wondering why we are forcing "sol" => true without
+				// using information about whether the transclusion is used in a SOL context.
+				//
+				// Ex: "foo {{1x|*bar}}"  Here, "*bar" is not in SOL context relative to the
+				// top-level page and so, should it be actually be parsed as a list item?
+				//
+				// So, there is a use-case where one could argue that the sol value here
+				// should be conditioned on the page-level context where "{{1x|*bar}}" showed
+				// up. So, in this example "foo {{1x|*bar}}, sol would be false and in this
+				// example "foo\n{{1x|*bar}}", sol would be true. That is effectively how
+				// the legacy parser behaves. (Ignore T2529 for the moment.)
+				//
+				// But, Parsoid is a different beast. Since the Parsoid/JS days, templates
+				// have been processed asynchronously. So, {{1x|*bar}} would be expanded and
+				// tokenized before even its preceding context might have been processed.
+				// From the start, Parsoid has aimed to decouple the processing of fragment
+				// generators (be it templates, extensions, or something else) from the
+				// processing of the page they are embedded in. This has been the
+				// starting point of many a wikitext 2.0 proposal on mediawiki.org;
+				// see also [[mw:Parsing/Notes/Wikitext_2.0#Implications_of_this_model]].
+				//
+				// The main performance implication is that you can process a transclusion
+				// concurrently *and* cache the output of {{1x|*bar}} since its output is
+				// the same no matter where on the page it appears. Without this decoupled
+				// model, if you got "{{mystery-template-that-takes-30-secs}}{{1x|*bar}}"
+				// you have to wait 30 secs before you get to expand {{1x|*bar}}
+				// because you have to wait and see whether the mystery template will
+				// leave you in SOL state or non-SOL state.
+				//
+				// In a stroke of good luck, wikitext editors seem to have agreed
+				// that it is better for all templates to be expanded in a
+				// consistent SOL state and not be dependent on their context;
+				// turn now to phab task T2529 which (via a fragile hack) tried
+				// to ensure that every template which started with
+				// start-of-line-sensitive markup was evaluated in a
+				// start-of-line context (by hackily inserting a newline).  Not
+				// everyone was satisfied with this hack (see T14974), but it's
+				// been the way things work for over a decade now (as evidenced
+				// by T14974 never having been "fixed").
+				//
+				// So, while we've established we would prefer *not* to use page
+				// context to set the initial SOL value for tokenizing the
+				// template, what *should* the initial SOL value be?
+				//
+				// * Treat every transclusion as a fresh document starting in SOL
+				//   state, ie set "sol" => true always.  This is supported by
+				//   most current wiki use, and is the intent behind the original
+				//   T2529 hack (although that hack left a number of edge cases,
+				//   described below).
+				//
+				// * Use `"sol" => false` for templates -- this was the solution
+				//   rejected by the original T2529 as being contrary to editor
+				//   expectations.
+				//
+				// * In the future, one might allow the template itself to
+				//   specify that its initial SOL state should be, using a
+				//   mechanism similar to what might be necessary for typed
+				//   templates.  This could also address T14974.  This is not
+				//   excluded by Parsoid at this point; but it would probably be
+				//   signaled by a template "return type" which is *not* DOM
+				//   therefore the template wouldn't get parsed "as wikitext"
+				//   (ie, T14974 wants an "attribute-value" return type which is
+				//   a plain string, and some of the wikitext 2.0 proposals
+				//   anticipate a "attribute name/value" dictionary as a possible
+				//   return type).
+				//
+				// In support of using sol=>true as the default initial state,
+				// let's examine the sol-sensitive wikitext constructs, and
+				// implicitly the corner cases left open by the T2529 hack.  (For
+				// non-sol-sensitive constructs, the initial SOL state is
+				// irrelevant.)
+				//
+				//   - SOL-sensitive contructs include lists, headings, indent-pre,
+				//     and table syntax.
+				//   - Of these, only lists, headings, and table syntax are actually handled in
+				//     the PEG tokenizer and are impacted by SOL state.
+				//   - Indent-Pre has its own handler that operates in a full page token context
+				//     and isn't impacted.
+				//   - T2529 effectively means for *#:; (lists) and {| (table start), newlines
+				//     are added which means no matter what value we set here, they will get
+				//     processed in sol state.
+				//   - This leaves us with headings (=), table heading (!), table row (|), and
+				//     table close (|}) syntax that would be impacted by what we set here.
+				//   - Given that table row/heading/close templates are very very common on wikis
+				//     and used for constructing complex tables, sol => true will let us handle
+				//     those without hacks. We aren't fully off the hook there -- see the code
+				//     in TokenStreamPatcher, AttributeExpander, TableFixups that all exist to
+				//     to work around the fact that decoupled processing isn't the wikitext
+				//     default. But, without sol => true, we'll likely be in deeper trouble.
+				//   - But, this can cause some occasional bad parses where "=|!" aren't meant
+				//     to be processed as a sol-wikitext construct.
+				//   - Note also that the workaround for T14974 (ie, the T2529 hack applying
+				//     where sol=false is actually desired) has traditionally been to add an
+				//     initial <nowiki/> which ensures that the "T2529 characters" are not
+				//     initial.  There are a number of alternative mechanisms to accomplish
+				//     this (ie, HTML-encode the first character).
+				//
+				// To honor the spirit of T2529 it seems plausible to try to lint
+				// away the remaining corner cases where T2529 does *not* result
+				// in start-of-line state for template expansion, and to use the
+				// various workarounds for compatibility in the meantime.
+				//
+				// We should also pick *one* of the workarounds for T14974
+				// (probably `<nowiki/>` at the first position in the template),
+				// support that (until a better mechanism exists), and (if
+				// possible) lint away any others.
 				'sol' => true
 			]
 		);
@@ -680,9 +818,9 @@ class TemplateHandler extends TokenHandler {
 	 *
 	 * @param string $templateName
 	 * @param array $attribs
-	 * @return string
+	 * @return ?string
 	 */
-	private function fetchTemplateAndTitle( string $templateName, array $attribs ): string {
+	private function fetchTemplateAndTitle( string $templateName, array $attribs ): ?string {
 		$env = $this->env;
 		if ( isset( $env->pageCache[$templateName] ) ) {
 			return $env->pageCache[$templateName];
@@ -697,9 +835,8 @@ class TemplateHandler extends TokenHandler {
 		}
 
 		// FIXME:
-		// 1. This should probably be a redlink for a missing page.
-		// 2. Hard-coded 'main' role
-		return !$pageContent ? '' : $pageContent->getContent( 'main' );
+		// 1. Hard-coded 'main' role
+		return $pageContent ? $pageContent->getContent( 'main' ) : null;
 	}
 
 	/**
@@ -715,87 +852,6 @@ class TemplateHandler extends TokenHandler {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Extract tokens from the $targetToks token array that correspond to
-	 * parser function args.
-	 * FIXME: This method below can probably be dramatically simplified given that
-	 * this is now only processed for magic words.
-	 *
-	 * @param string $prefix
-	 * @param array $targetToks
-	 * @return array
-	 */
-	private function extractParserFunctionToks( string $prefix, array $targetToks ): array {
-		$pfArgToks = null;
-
-		// Because of the lenient stringifying earlier, we need to find the prefix.
-		// The strings we've seen so far are buffered in case they combine to our prefix.
-		// FIXME: We need to account for the call to $this->stripIncludeTokens
-		// and the safesubst replace.
-		$buf = '';
-		$index = -1;
-		$partialPrefix = false;
-		foreach ( $targetToks as $i => $t ) {
-			if ( !is_string( $t ) ) {
-				continue;
-			}
-
-			$buf .= $t;
-			$prefixPos = stripos( $buf, $prefix );
-			if ( $prefixPos !== false ) {
-				// Check if they combined
-				$offset = strlen( $buf ) - strlen( $t ) - $prefixPos;
-				if ( $offset > 0 ) {
-					$partialPrefix = substr( $prefix, $offset );
-				}
-				$index = $i;
-				break;
-			}
-		}
-
-		if ( $index > -1 ) {
-			// Strip parser-func / magic-word prefix
-			$firstTok = $targetToks[$index];
-			if ( $partialPrefix !== false ) {
-				// Remove the partial prefix if it case insensitively
-				// appears at the start of the token
-				if ( substr_compare( $firstTok, $partialPrefix,
-						0, strlen( $partialPrefix ), true ) === 0
-				) {
-					$firstTok = substr( $firstTok, strlen( $partialPrefix ) );
-				}
-			} else {
-				// Remove the first occurrence of the prefix from $firstTok,
-				// case insensitively
-				$prefixPos = stripos( $firstTok, $prefix );
-				if ( $prefixPos !== false ) {
-					$firstTok = substr( $firstTok, $prefixPos + strlen( $prefix ) );
-				}
-			}
-			$targetToks = array_slice( $targetToks, $index + 1 );
-
-			// Strip ":", again, after accounting for the lenient stringifying
-			while ( count( $targetToks ) > 0 &&
-				( !is_string( $firstTok ) || preg_match( '/^\s*$/D', $firstTok ) )
-			) {
-				$firstTok = $targetToks[0];
-				$targetToks = array_slice( $targetToks, 1 );
-			}
-			Assert::invariant( is_string( $firstTok ) && preg_match( '/^\s*:/', $firstTok ),
-				'Expecting : in parser function definiton'
-			);
-			$pfArgToks = array_merge( [ preg_replace( '/^\s*:/', '', $firstTok, 1 ) ], $targetToks );
-		}
-
-		if ( $pfArgToks === null ) {
-			// FIXME: Protect from crashers by using the full token -- this is
-			// still going to generate incorrect output, but it won't crash.
-			$pfArgToks = $targetToks;
-		}
-
-		return $pfArgToks;
 	}
 
 	/**
@@ -855,17 +911,6 @@ class TemplateHandler extends TokenHandler {
 		);
 
 		if ( isset( $tplToken->dataAttribs->tmp->templatedAttribs ) ) {
-			$pfArgToks = $this->extractParserFunctionToks(
-				$resolvedTgt['name'],
-				$resolvedTgt['targetToks']
-			);
-			// No shadowing if templated
-			//
-			// SSS FIXME: post-tpl-expansion, WS won't be trimmed. How do we handle this?
-			$metaToken->addAttribute( 'content', $pfArgToks, $resolvedTgt['srcOffsets']->expandTsrV() );
-			$metaToken->addAttribute( 'about', $env->newAboutId() );
-			$metaToken->addSpaceSeparatedAttribute( 'typeof', 'mw:ExpandedAttrs' );
-
 			// See [[mw:Specs/HTML#Generated_attributes_of_HTML_tags]]
 			//
 			// For every attribute that has a templated name and/or value,
@@ -890,15 +935,27 @@ class TemplateHandler extends TokenHandler {
 			// depending on which part is templated.
 			//
 			// FIXME: Is there a simpler / better repn. for templated attrs?
-			// FIXME: the content still contains the parser function prefix
-			//  (eg, the html is 'DISPLAYTITLE:Foo' even though the stripped
-			//   content attribute is 'Foo')
 			$ta = $tplToken->dataAttribs->tmp->templatedAttribs;
+			$html = $ta[0][0]['html'];
 			$ta[0] = [
-				[ 'txt' => 'content' ],         // Magic-word attribute name
-				[ 'html' => $ta[0][0]['html'] ] // HTML repn. of the attribute value
+				[ 'txt' => 'content' ],  // Magic-word attribute name
+				// FIXME: the content still contains the parser function prefix
+				//  (eg, the html is 'DISPLAYTITLE:Foo' even though the stripped
+				//   content attribute is 'Foo')
+				[ 'html' => $html ],     // HTML repn. of the attribute value
 			];
 			$metaToken->addAttribute( 'data-mw', PHPUtils::jsonEncode( [ 'attribs' => $ta ] ) );
+
+			// Use the textContent of the expanded attribute, similar to how
+			// Sanitizer::sanitizeTagAttr does it.  However, here we have the
+			// opportunity to strip the parser function prefix.
+			$dom = DOMUtils::parseHTML( $html );
+			$content = DOMCompat::getBody( $dom )->textContent;
+			$content = preg_replace( '#^\w+:#', '', $content, 1 );
+			$metaToken->addAttribute( 'content', $content, $resolvedTgt['srcOffsets']->expandTsrV() );
+
+			$metaToken->addAttribute( 'about', $env->newAboutId() );
+			$metaToken->addSpaceSeparatedAttribute( 'typeof', 'mw:ExpandedAttrs' );
 		} else {
 			// Leading/trailing WS should be stripped
 			//
@@ -975,7 +1032,7 @@ class TemplateHandler extends TokenHandler {
 		if ( $expandTemplates && $tgt === null ) {
 			// Target contains tags, convert template braces and pipes back into text
 			// Re-join attribute tokens with '=' and '|'
-			return $this->convertToString( $token );
+			return $this->convertToString( $token, true );
 		}
 
 		if ( isset( $tgt['magicWordType'] ) ) {
@@ -1000,7 +1057,7 @@ class TemplateHandler extends TokenHandler {
 			if ( $resolvedTgt === null ) {
 				// Target contains tags, convert template braces and pipes back into text
 				// Re-join attribute tokens with '=' and '|'
-				return $this->convertToString( $token );
+				return $this->convertToString( $token, true );
 			} else {
 				return $this->expandTemplateNatively( $state, $resolvedTgt, $newAttribs );
 			}

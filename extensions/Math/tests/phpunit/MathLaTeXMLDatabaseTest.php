@@ -82,6 +82,9 @@ class MathLaTeXMLDatabaseTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\Math\Hooks::onLoadExtensionSchemaUpdates
 	 */
 	public function testCreateTable() {
+		$this->markTestSkippedIfDbType( 'postgres' );
+		$this->markTestSkippedIfDbType( 'sqlite' );
+
 		$this->setMwGlobals( 'wgMathValidModes', [ MathConfig::MODE_LATEXML ] );
 		$this->db->dropTable( "mathlatexml", __METHOD__ );
 		$dbu = DatabaseUpdater::newForDB( $this->db );

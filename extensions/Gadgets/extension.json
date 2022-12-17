@@ -8,7 +8,7 @@
 	"descriptionmsg": "gadgets-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.37.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"type": "other",
 	"namespaces": [
@@ -16,6 +16,7 @@
 			"id": 2300,
 			"constant": "NS_GADGET",
 			"name": "Gadget",
+			"capitallinkoverride": false,
 			"protection": "gadgets-edit"
 		},
 		{
@@ -65,30 +66,30 @@
 	"RawHtmlMessages": [
 		"gadgets-definition"
 	],
-	"AutoloadClasses": {
-		"Gadget": "includes/Gadget.php",
-		"GadgetRepo": "includes/GadgetRepo.php",
-		"MediaWiki\\Extension\\Gadgets\\Gadget": "includes/Gadget.php",
-		"MediaWiki\\Extension\\Gadgets\\GadgetRepo": "includes/GadgetRepo.php"
-	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Gadgets\\": "includes/"
 	},
 	"TestAutoloadClasses": {
 		"GadgetTestUtils": "tests/phpunit/GadgetTestUtils.php"
 	},
+	"HookHandlers": {
+		"GadgetHooks": {
+			"class": "MediaWiki\\Extension\\Gadgets\\Hooks"
+		}
+	},
 	"Hooks": {
-		"PageSaveComplete": "MediaWiki\\Extension\\Gadgets\\Hooks::onPageSaveComplete",
-		"BeforePageDisplay": "MediaWiki\\Extension\\Gadgets\\Hooks::beforePageDisplay",
+		"PageDeleteComplete": "GadgetHooks",
+		"PageSaveComplete": "GadgetHooks",
+		"BeforePageDisplay": "GadgetHooks",
 		"CodeEditorGetPageLanguage": "MediaWiki\\Extension\\Gadgets\\Hooks::onCodeEditorGetPageLanguage",
-		"ContentHandlerDefaultModelFor": "MediaWiki\\Extension\\Gadgets\\Hooks::onContentHandlerDefaultModelFor",
-		"EditFilterMergedContent": "MediaWiki\\Extension\\Gadgets\\Hooks::onEditFilterMergedContent",
-		"UserGetDefaultOptions": "MediaWiki\\Extension\\Gadgets\\Hooks::userGetDefaultOptions",
-		"GetPreferences": "MediaWiki\\Extension\\Gadgets\\Hooks::getPreferences",
-		"PreferencesGetLegend": "MediaWiki\\Extension\\Gadgets\\Hooks::onPreferencesGetLegend",
-		"ResourceLoaderRegisterModules": "MediaWiki\\Extension\\Gadgets\\Hooks::registerModules",
-		"wgQueryPages": "MediaWiki\\Extension\\Gadgets\\Hooks::onwgQueryPages",
-		"DeleteUnknownPreferences": "MediaWiki\\Extension\\Gadgets\\Hooks::onDeleteUnknownPreferences"
+		"ContentHandlerDefaultModelFor": "GadgetHooks",
+		"EditFilterMergedContent": "GadgetHooks",
+		"UserGetDefaultOptions": "GadgetHooks",
+		"GetPreferences": "GadgetHooks",
+		"PreferencesGetLegend": "GadgetHooks",
+		"ResourceLoaderRegisterModules": "GadgetHooks",
+		"wgQueryPages": "GadgetHooks",
+		"DeleteUnknownPreferences": "GadgetHooks"
 	},
 	"config": {
 		"GadgetsRepoClass": {

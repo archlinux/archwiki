@@ -18,6 +18,7 @@ use MediaWiki\Extension\EventLogging\EventLogging;
 use MediaWiki\Extension\TemplateData\TemplateDataBlob;
 use MediaWiki\MediaWikiServices;
 use TextContent;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * @ingroup API
@@ -107,14 +108,16 @@ class ApiTemplateData extends ApiBase {
 
 		if ( $titles ) {
 			$db = $this->getDB();
-			$res = $db->select( 'page_props',
-				[ 'pp_page', 'pp_value' ], [
+			$res = $db->newSelectQueryBuilder()
+				->from( 'page_props' )
+				->fields( [ 'pp_page', 'pp_value' ] )
+				->where( [
 					'pp_page' => array_keys( $titles ),
 					'pp_propname' => 'templatedata'
-				],
-				__METHOD__,
-				[ 'ORDER BY' => 'pp_page' ]
-			);
+				] )
+				->orderBy( 'pp_page' )
+				->caller( __METHOD__ )
+				->fetchResultSet();
 
 			foreach ( $res as $row ) {
 				$rawData = $row->pp_value;
@@ -247,14 +250,14 @@ class ApiTemplateData extends ApiBase {
 	public function getAllowedParams( $flags = 0 ) {
 		$result = [
 			'includeMissingTitles' => [
-				ApiBase::PARAM_TYPE => 'boolean',
+				ParamValidator::PARAM_TYPE => 'boolean',
 			],
 			'doNotIgnoreMissingTitles' => [
-				ApiBase::PARAM_TYPE => 'boolean',
-				ApiBase::PARAM_DEPRECATED => true,
+				ParamValidator::PARAM_TYPE => 'boolean',
+				ParamValidator::PARAM_DEPRECATED => true,
 			],
 			'lang' => [
-				ApiBase::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_TYPE => 'string',
 			],
 		];
 		if ( $flags ) {

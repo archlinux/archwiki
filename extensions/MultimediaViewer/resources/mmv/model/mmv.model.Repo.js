@@ -15,8 +15,6 @@
  * along with MultimediaViewer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable no-use-before-define */
-
 ( function () {
 	/**
 	 * Represents information about a single image repository

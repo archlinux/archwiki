@@ -1,5 +1,4 @@
 @import '../../minerva.less/minerva.variables.less';
-@import '../../minerva.less/minerva.mixins.less';
 
 .notifications-overlay {
 	visibility: visible;
@@ -11,11 +10,11 @@
 	width: auto;
 	right: 0;
 	box-shadow: -5px 0 0 0 @grayDrawerShadow;
-	.transform( translate( 100%, 0 ) );
-	.transition( transform @transition-duration-medium @transition-timing-function-menu; );
+	transform: translate( 100%, 0 );
+	transition: transform @transition-duration-medium @transition-timing-function-menu;
 
 	&.visible {
-		.transform( translate( 0, 0 ) );
+		transform: translate( 0, 0 );
 	}
 }
 

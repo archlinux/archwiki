@@ -1,6 +1,6 @@
 var LinkTypeField = require( './LinkTypeField.js' );
 var TitleInputWidget = require( './TitleInputWidget.js' );
-var TitleOptionWidget = require( './TitleOptionWidget.js' );
+/* global InsertLinkTitleOptionWidget */
 
 /**
  * A FieldLayout containing a custom TitleInputwidget and message-display system.
@@ -49,7 +49,7 @@ TitleInputField.prototype.reset = function () {
  * Set the URL mode and disable automatic detection of external URLs.
  *
  * @public
- * @param {string} urlMode One of the `TitleInputField.urlModes.*` values.
+ * @param {string} urlMode One of the `LinkTypeField.static.LINK_MODE_*` values.
  */
 TitleInputField.prototype.setUrlMode = function ( urlMode ) {
 	this.urlMode = urlMode === LinkTypeField.static.LINK_MODE_EXTERNAL ?
@@ -90,8 +90,9 @@ TitleInputField.prototype.makeMessage = function ( kind, text ) {
 TitleInputField.prototype.setMessage = function ( icon, message, type ) {
 	this.setNotices( [ message ] );
 	// Note that setNotices() must be called before this.message is available.
-	this.message.setType( type || 'notice' );
-	this.message.setIcon( icon );
+	this.message
+		.setIcon( icon )
+		.setType( type );
 };
 
 /**
@@ -127,32 +128,27 @@ TitleInputField.prototype.validate = function ( value ) {
 };
 
 /**
- * @param {TitleOptionWidget} item
+ * @param {InsertLinkTitleOptionWidget} item
  */
 TitleInputField.prototype.onSelect = function ( item ) {
+	var icon, msg;
 	if ( this.urlMode === LinkTypeField.static.LINK_MODE_EXTERNAL ||
 		( !this.urlModeManual && this.urlMode === LinkTypeField.static.LINK_MODE_INTERNAL && item.isExternal() )
 	) {
-		this.setMessage(
-			'linkExternal',
-			mw.message( 'wikieditor-toolbar-tool-link-int-target-status-external' ).parse()
-		);
+		icon = 'linkExternal';
+		msg = 'wikieditor-toolbar-tool-link-int-target-status-external';
 	} else if ( item.isDisambiguation() ) {
-		this.setMessage(
-			'articleDisambiguation',
-			mw.message( 'wikieditor-toolbar-tool-link-int-target-status-disambig' ).parse()
-		);
+		icon = 'articleDisambiguation';
+		msg = 'wikieditor-toolbar-tool-link-int-target-status-disambig';
 	} else if ( !item.isMissing() && !item.isExternal() ) {
-		this.setMessage(
-			'article',
-			mw.message( 'wikieditor-toolbar-tool-link-int-target-status-exists' ).parse()
-		);
+		icon = 'article';
+		msg = 'wikieditor-toolbar-tool-link-int-target-status-exists';
 	} else {
-		this.setMessage(
-			'articleNotFound',
-			mw.message( 'wikieditor-toolbar-tool-link-int-target-status-notexists' ).parse()
-		);
+		icon = 'articleNotFound';
+		msg = 'wikieditor-toolbar-tool-link-int-target-status-notexists';
 	}
+	// eslint-disable-next-line mediawiki/msg-doc
+	this.setMessage( icon, mw.message( msg ).parse() );
 };
 
 module.exports = TitleInputField;

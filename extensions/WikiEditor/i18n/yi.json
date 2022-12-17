@@ -35,7 +35,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "בלאט עקזיסטירט נישט",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "אומגילטיקער טיטל",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "דרויסנדיקער לינק",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "קאָנטראָלירן צי בלאַט עקזיסטירט ...",
 	"wikieditor-toolbar-tool-link-int-invalid": "דעם טיטל איר האט ספעציפֿירט איז אומגילטיק.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "דעם URL איר האט ספעציפֿירט זעט אויס ווי א לינק צו אַן אַנדער וויקי בלאַט. צי ווילט איר מאַכן דאָס אַן אינערלעכן לינק?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "אינערלעכער לינק",

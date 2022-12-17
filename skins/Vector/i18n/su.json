@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Daud I.F. Argana",
 			"Kandar"
 		]
@@ -19,5 +20,5 @@
 	"vector-view-view": "Baca",
 	"vector-view-viewsource": "Témbongkeun sumber",
 	"vector-more-actions": "Lianna",
-	"vector-searchsuggest-containing": "Paluruh kaca-kaca anu ngandung <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Paluruh kaca-kaca anu ngandung <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

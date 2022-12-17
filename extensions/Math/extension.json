@@ -13,13 +13,14 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.36.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Math\\": "src/"
 	},
 	"TestAutoloadClasses": {
 		"DummyPropertyDataTypeLookup": "tests/phpunit/DummyPropertyDataTypeLookup.php",
+		"MediaWiki\\Extension\\Math\\Tests\\MathWikibaseConnectorTestFactory": "tests/phpunit/unit/MathWikibaseConnectorTestFactory.php",
 		"MediaWiki\\Extension\\Math\\Tests\\MathMockHttpTrait": "tests/phpunit/MathMockHttpTrait.php"
 	},
 	"DefaultUserOptions": {
@@ -42,6 +43,12 @@
 			"services": [
 				"Math.Config"
 			]
+		},
+		"ResourceLoaderConfigHandler": {
+			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\ResourceLoaderConfigHandler",
+			"services": [
+				"Math.Config"
+			]
 		}
 	},
 	"Hooks": {
@@ -54,7 +61,8 @@
 		"WikibaseClientDataTypes": "MediaWiki\\Extension\\Math\\WikibaseHook::onWikibaseClientDataTypes",
 		"WikibaseRepoDataTypes": "MediaWiki\\Extension\\Math\\WikibaseHook::onWikibaseRepoDataTypes",
 		"SpecialPage_initList": "MediaWiki\\Extension\\Math\\Hooks::onSpecialPageInitList",
-		"MaintenanceRefreshLinksInit": "MediaWiki\\Extension\\Math\\Hooks::onMaintenanceRefreshLinksInit"
+		"MaintenanceRefreshLinksInit": "MediaWiki\\Extension\\Math\\Hooks::onMaintenanceRefreshLinksInit",
+		"ResourceLoaderGetConfigVars": "ResourceLoaderConfigHandler"
 	},
 	"config": {
 		"MathDefaultLaTeXMLSetting": {
@@ -90,6 +98,10 @@
 		"MathEnableExperimentalInputFormats": {
 			"value": false
 		},
+		"MathEntitySelectorFallbackUrl": {
+			"description": "Fallback value for wbEntitySelector if wbRepo is not configured. See https://www.mediawiki.org/wiki/Manual:CORS for cross wiki communication.",
+			"value": "https://www.wikidata.org/w/api.php"
+		},
 		"MathLaTeXMLTimeout": {
 			"value": 240
 		},
@@ -101,6 +113,11 @@
 		},
 		"MathMathMLUrl": {
 			"value": "https://mathoid-beta.wmflabs.org"
+		},
+		"MathUseInternalRestbasePath": {
+			"description": "Whether to allow to use of internal RESTBase path instead of $wgMathFullRestbaseURL and $wgVisualEditorFullRestbaseURL. Set false if you want to use external RESTBase in any case.",
+			"value": true,
+			"public": true
 		},
 		"MathFullRestbaseURL": {
 			"value": "https://wikimedia.org/api/rest_"
@@ -126,13 +143,24 @@
 			"value": true
 		},
 		"MathWikibasePropertyIdHasPart": {
+			"description": "Original Wikidata property that described the elements of a mathematical formula with the data type item.",
 			"value": "P527"
 		},
+		"MathWikibasePropertyIdInDefiningFormula": {
+			"description": "New Wikidata property that describe the elements of a mathematical formula with the data type 'mathematical expression'. This potentially replaces 'has part' in the future.",
+			"value": "P7235"
+		},
 		"MathWikibasePropertyIdDefiningFormula": {
+			"description": "The property that describes the mathematical formula representing an item in Wikidata.",
 			"value": "P2534"
 		},
 		"MathWikibasePropertyIdQuantitySymbol": {
+			"description": "The Wikidata property that is used to present mathematical expressions in 'has part'. The data type is 'string'.",
 			"value": "P416"
+		},
+		"MathWikibasePropertyIdSymbolRepresents": {
+			"description": "The Wikidata property that is used to present mathematical expressions in 'in defining formula'. The data type is 'item'.",
+			"value": "P9758"
 		}
 	},
 	"attributes": {
@@ -200,7 +228,8 @@
 				"ve-math/ve.ui.MWMathInspector.js",
 				"ve-math/ve.ui.MWMathContextItem.js",
 				"ve-math/ve.ui.MWMathDialog.js",
-				"ve-math/ve.ui.MWMathDialogTool.js"
+				"ve-math/ve.ui.MWMathDialogTool.js",
+				"mw.widgets.MathWbEntitySelector.js"
 			],
 			"styles": [
 				"ve-math/ve.ui.MWLatexDialog.css",
@@ -224,6 +253,7 @@
 				"math-visualeditor-mwlatexinspector-display-default",
 				"math-visualeditor-mwlatexinspector-display-inline",
 				"math-visualeditor-mwlatexinspector-id",
+				"math-visualeditor-mwlatexinspector-qid",
 				"math-visualeditor-mwmathdialog-title",
 				"math-visualeditor-symbol-group-chem-addition",
 				"math-visualeditor-symbol-group-chem-aggregation",
@@ -321,6 +351,18 @@
 	],
 	"ServiceWiringFiles": [
 		"ServiceWiring.php"
+	],
+	"RestRoutes": [
+		{
+			"path": "/math/v0/popup/html/{qid}",
+			"method": "GET",
+			"class": "MediaWiki\\Extension\\Math\\Rest\\Popup",
+			"services": [
+				"Math.WikibaseConnector",
+				"LanguageFactory",
+				"TitleFactory"
+			]
+		}
 	],
 	"manifest_version": 2
 }

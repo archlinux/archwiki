@@ -9,6 +9,9 @@
  */
 
 use MediaWiki\Auth\AuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 
 class QuestyCaptcha extends SimpleCaptcha {
 	// used for questycaptcha-edit, questycaptcha-addurl, questycaptcha-badlogin,

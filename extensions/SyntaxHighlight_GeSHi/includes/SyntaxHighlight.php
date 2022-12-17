@@ -16,11 +16,29 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-use MediaWiki\MediaWikiServices;
-use MediaWiki\SyntaxHighlight\Pygmentize;
-use MediaWiki\SyntaxHighlight\PygmentsException;
+namespace MediaWiki\SyntaxHighlight;
 
-class SyntaxHighlight {
+use Content;
+use ExtensionRegistry;
+use FormatJson;
+use Html;
+use IContextSource;
+use MediaWiki\MediaWikiServices;
+use MWException;
+use Parser;
+use ParserOptions;
+use ParserOutput;
+use Sanitizer;
+use Status;
+use TextContent;
+use Title;
+use WANObjectCache;
+
+use Wikimedia\Parsoid\DOM\DocumentFragment;
+use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
+use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
+
+class SyntaxHighlight extends ExtensionTagHandler {
 
 	/** @var int The maximum number of lines that may be selected for highlighting. */
 	private const HIGHLIGHT_MAX_LINES = 1000;
@@ -84,14 +102,14 @@ class SyntaxHighlight {
 	 * @param Parser $parser
 	 */
 	public static function onParserFirstCallInit( Parser $parser ) {
-		$parser->setHook( 'source', [ 'SyntaxHighlight', 'parserHookSource' ] );
-		$parser->setHook( 'syntaxhighlight', [ 'SyntaxHighlight', 'parserHook' ] );
+		$parser->setHook( 'source', [ self::class, 'parserHookSource' ] );
+		$parser->setHook( 'syntaxhighlight', [ self::class, 'parserHook' ] );
 	}
 
 	/**
 	 * Parser hook for <source> to add deprecated tracking category
 	 *
-	 * @param string $text
+	 * @param ?string $text
 	 * @param array $args
 	 * @param Parser $parser
 	 * @return string
@@ -103,20 +121,24 @@ class SyntaxHighlight {
 	}
 
 	/**
-	 * Parser hook for both <source> and <syntaxhighlight> logic
+	 * @return array
+	 */
+	private static function getModuleStyles(): array {
+		return [ 'ext.pygments' ];
+	}
+
+	/**
 	 *
 	 * @param string $text
 	 * @param array $args
-	 * @param Parser $parser
-	 * @return string
+	 * @param ?Parser $parser
+	 * @return array
 	 * @throws MWException
 	 */
-	public static function parserHook( $text, $args, $parser ) {
-		// Replace strip markers (For e.g. {{#tag:syntaxhighlight|<nowiki>...}})
-		$out = $parser->getStripState()->unstripNoWiki( $text );
-
+	private static function processContent( string $text, array $args, ?Parser $parser = null ): array {
 		// Don't trim leading spaces away, just the linefeeds
-		$out = preg_replace( '/^\n+/', '', rtrim( $out ) );
+		$out = preg_replace( '/^\n+/', '', rtrim( $text ) );
+		$trackingCats = [];
 
 		// Convert deprecated attributes
 		if ( isset( $args['enclose'] ) ) {
@@ -124,23 +146,56 @@ class SyntaxHighlight {
 				$args['inline'] = true;
 			}
 			unset( $args['enclose'] );
-			$parser->addTrackingCategory( 'syntaxhighlight-enclose-category' );
+			$trackingCats[] = 'syntaxhighlight-enclose-category';
 		}
 
 		$lexer = $args['lang'] ?? '';
 
 		$result = self::highlight( $out, $lexer, $args, $parser );
 		if ( !$result->isGood() ) {
-			$parser->addTrackingCategory( 'syntaxhighlight-error-category' );
+			$trackingCats[] = 'syntaxhighlight-error-category';
 		}
-		$out = $result->getValue();
+
+		return [ 'html' => $result->getValue(), 'cats' => $trackingCats ];
+	}
+
+	/**
+	 * Parser hook for both <source> and <syntaxhighlight> logic
+	 *
+	 * @param ?string $text
+	 * @param array $args
+	 * @param Parser $parser
+	 * @return string
+	 * @throws MWException
+	 */
+	public static function parserHook( $text, $args, $parser ) {
+		// Replace strip markers (For e.g. {{#tag:syntaxhighlight|<nowiki>...}})
+		$out = $parser->getStripState()->unstripNoWiki( $text ?? '' );
+
+		$result = self::processContent( $out, $args, $parser );
+		foreach ( $result['cats'] as $cat ) {
+			$parser->addTrackingCategory( $cat );
+		}
 
 		// Register CSS
-		// TODO: Consider moving to a separate method so that public method
-		// highlight() can be used without needing to know the module name.
-		$parser->getOutput()->addModuleStyles( [ 'ext.pygments' ] );
+		$parser->getOutput()->addModuleStyles( self::getModuleStyles() );
 
-		return $out;
+		return $result['html'];
+	}
+
+	/** @inheritDoc */
+	public function sourceToDom(
+		ParsoidExtensionAPI $extApi, string $text, array $extArgs
+	): ?DocumentFragment {
+		$result = self::processContent( $text, $extApi->extArgsToArray( $extArgs ) );
+
+		// FIXME: There is no API method in Parsoid to add tracking categories
+		// So, $result['cats'] is being ignored
+
+		// Register CSS
+		$extApi->addModuleStyles( self::getModuleStyles() );
+
+		return $extApi->htmlToDom( $result['html'] );
 	}
 
 	/**
@@ -515,7 +570,7 @@ class SyntaxHighlight {
 		}
 		$out = $status->getValue();
 
-		$parserOutput->addModuleStyles( [ 'ext.pygments' ] );
+		$parserOutput->addModuleStyles( self::getModuleStyles() );
 		$parserOutput->addModules( [ 'ext.pygments.linenumbers' ] );
 		$parserOutput->setText( $out );
 
@@ -552,7 +607,7 @@ class SyntaxHighlight {
 			$out = '<pre' . $encodedAttrs . '>' . substr( $out, strlen( $m[0] ) );
 		}
 		$output = $context->getOutput();
-		$output->addModuleStyles( 'ext.pygments' );
+		$output->addModuleStyles( self::getModuleStyles() );
 		$output->addHTML( '<div dir="ltr">' . $out . '</div>' );
 
 		// Inform MediaWiki that we have parsed this page and it shouldn't mess with it.
@@ -573,3 +628,5 @@ class SyntaxHighlight {
 		}
 	}
 }
+
+class_alias( SyntaxHighlight::class, 'SyntaxHighlight' );

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Abbas dhothar",
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Bgo eiu"
 		]
 	},
 	"renameuser": "ورتن والے دا ہور ناں",
@@ -12,7 +13,7 @@
 	"renameuserold": "ہن والا ورتن والا ناں:",
 	"renameusernew": "نواں ورتن والا ناں:",
 	"renameuserreason": "ہور ناں رکھن دی وجہ:",
-	"renameusermove": "ورتن تے گل بات صفے نوں تے نال دے نکیاں صفیاں نوں نویں ناں ول لے چلو۔",
+	"renameusermove": "ورتن تے گل بات صفحے نوں تے نال دے نکیاں صفحیاں نوں نویں ناں ول لے چلو۔",
 	"renameusersuppress": "ایس نویں ناں نال ریڈائرکٹ ناں بناؤ۔",
 	"renameuserreserve": "پرانے ورتن والے ناں نوں اگے ورتے جان توں روکو",
 	"renameuserwarnings": "خبردار",

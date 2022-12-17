@@ -4,7 +4,8 @@
 			"C.R.",
 			"Candalua",
 			"Chelin",
-			"Ruthven"
+			"Ruthven",
+			"Finizio"
 		]
 	},
 	"wikieditor": "Nterfaccia avanzata 'e cagnamiento d' 'o wikitesto",
@@ -37,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "'A paggena nun esiste",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titolo invalido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Cullegamiente esterne",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Cuntrullanno l'esistenza d' 'a paggena...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Paggene 'e disambiguaziona",
 	"wikieditor-toolbar-tool-link-int-invalid": "'O titolo c'avite miso nun è bbuono.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "L'URL c'avite specificato pare ca fuje fatta pe' ne fà nu link a n'ata paggena wiki.\nVulite fà nu link interno?",
@@ -111,11 +111,11 @@
 	"wikieditor-toolbar-tool-table-zero": "Nun putite nzertà na tabbella cu zero righe o culonne.",
 	"wikieditor-toolbar-tool-replace": "Trova e sostituisce",
 	"wikieditor-toolbar-tool-replace-title": "Trova e sostituisce",
-	"wikieditor-toolbar-tool-replace-search": "Circa:",
+	"wikieditor-toolbar-tool-replace-search": "Ascia:",
 	"wikieditor-toolbar-tool-replace-replace": "Sostituisce cu:",
 	"wikieditor-toolbar-tool-replace-case": "Maiuscole/minuscole",
 	"wikieditor-toolbar-tool-replace-regex": "Tratta 'a stringa 'e ricerca comm'a n'espressione revolare",
-	"wikieditor-toolbar-tool-replace-button-findnext": "Cirche 'o prossemo",
+	"wikieditor-toolbar-tool-replace-button-findnext": "Ascia chillo aroppo",
 	"wikieditor-toolbar-tool-replace-button-replace": "Sostituisce",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Sostituisce tutte",
 	"wikieditor-toolbar-tool-replace-close": "Chiure",

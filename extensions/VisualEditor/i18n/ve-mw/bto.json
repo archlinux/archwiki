@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Filipinayzd"
+			"Filipinayzd",
+			"Amire80"
 		]
 	},
 	"tooltip-ca-ve-edit": "Balyowan ading pahina",
 	"visualeditor-ca-editsource": "Liwaton a pinaggalinan",
-	"visualeditor-ca-editsource-section": "Liwaton a pinagginalinan",
+	"visualeditor-ca-editsource-section": "liwaton a pinagginalinan",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

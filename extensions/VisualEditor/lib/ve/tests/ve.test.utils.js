@@ -53,41 +53,92 @@
 		return undefined;
 	};
 	DummyPlatform.prototype.setUserConfig = function () {};
-	DummyPlatform.prototype.createLocalStorage = DummyPlatform.prototype.createSessionStorage = function () {
-		var platform = this,
-			storage = {},
-			safeStore = {
-				get: function ( key ) {
-					if ( platform.storageDisabled ) {
-						return false;
-					}
-					return Object.prototype.hasOwnProperty.call( storage, key ) ?
-						storage[ key ] :
-						null;
-				},
-				set: function ( key, value ) {
-					if ( platform.storageDisabled || value === '__FAIL__' ) {
-						return false;
-					}
-					storage[ key ] = value.toString();
-					return true;
-				},
-				remove: function ( key ) {
-					if ( platform.storageDisabled ) {
-						return false;
-					}
-					delete storage[ key ];
-					return true;
-				},
-				getObject: function ( key ) {
-					return JSON.parse( safeStore.get( key ) );
-				},
-				setObject: function ( key, value ) {
-					safeStore.set( key, JSON.stringify( value ) );
-				}
-			};
+	DummyPlatform.prototype.createSafeStorage = function ( store ) {
+		var platform = this;
 
-		return new ve.init.ListStorage( safeStore );
+		var MockSafeStorage = function ( s ) {
+			this.store = s;
+		};
+		OO.initClass( MockSafeStorage );
+		MockSafeStorage.prototype.get = function ( key ) {
+			if ( platform.storageDisabled ) {
+				return false;
+			}
+			return this.store.getItem( key );
+		};
+		MockSafeStorage.prototype.set = function ( key, value ) {
+			if ( platform.storageDisabled || value === '__FAIL__' ) {
+				return false;
+			}
+			this.store.setItem( key, value );
+			return true;
+		};
+		MockSafeStorage.prototype.remove = function ( key ) {
+			if ( platform.storageDisabled ) {
+				return false;
+			}
+			this.store.removeItem( key );
+			return true;
+		};
+		MockSafeStorage.prototype.getObject = function ( key ) {
+			var json = this.get( key );
+
+			if ( json === false ) {
+				return false;
+			}
+
+			try {
+				return JSON.parse( json );
+			} catch ( e ) {}
+
+			return null;
+		};
+		MockSafeStorage.prototype.setObject = function ( key, value ) {
+			try {
+				var json = JSON.stringify( value );
+				return this.set( key, json );
+			} catch ( e ) {}
+			return false;
+		};
+
+		return new MockSafeStorage( store );
+	};
+	DummyPlatform.prototype.createLocalStorage = DummyPlatform.prototype.createSessionStorage = function ( store ) {
+		store = store || {};
+
+		var MockSystemStorage = function () {};
+		OO.initClass( MockSystemStorage );
+		MockSystemStorage.prototype.getItem = function ( key ) {
+			return Object.prototype.hasOwnProperty.call( store, key ) ?
+				store[ key ] :
+				null;
+		};
+		MockSystemStorage.prototype.setItem = function ( key, value ) {
+			store[ key ] = String( value );
+		};
+		MockSystemStorage.prototype.removeItem = function ( key ) {
+			delete store[ key ];
+		};
+		MockSystemStorage.prototype.clear = function () {
+			for ( var key in store ) {
+				delete store[ key ];
+			}
+		};
+		MockSystemStorage.prototype.key = function ( index ) {
+			var keys = Object.keys( store );
+			return index < keys.length ? keys[ index ] : null;
+		};
+		if ( !Object.prototype.hasOwnProperty.call( store, 'length' ) ) {
+			Object.defineProperty( store, 'length', {
+				get: function () {
+					return Object.keys( store ).length;
+				}
+			} );
+		}
+
+		var storage = this.createSafeStorage( new MockSystemStorage( store ) );
+
+		return ve.init.createListStorage( storage );
 	};
 
 	ve.test.utils.DummyPlatform = DummyPlatform;
@@ -356,14 +407,11 @@
 		var visualDiff = new ve.dm.VisualDiff( oldDoc, newDoc, caseItem.forceTimeout ? -1 : undefined );
 		var diffElement = new ve.ui.DiffElement( visualDiff );
 		assert.equalDomElement( diffElement.$document[ 0 ], $( '<div>' ).addClass( 've-ui-diffElement-document' ).html( caseItem.expected )[ 0 ], caseItem.msg );
-		assert.strictEqual( diffElement.$element.hasClass( 've-ui-diffElement-hasDescriptions' ), !!caseItem.expectedDescriptions, caseItem.msg + ': hasDescriptions' );
-		if ( caseItem.expectedDescriptions !== undefined ) {
-			assert.deepEqualWithDomElements(
-				diffElement.descriptions.items.map( function ( item ) { return item.$label.contents().toArray(); } ),
-				caseItem.expectedDescriptions.map( function ( expected ) { return $.parseHTML( expected ); } ),
-				caseItem.msg + ': sidebar'
-			);
-		}
+		assert.deepEqualWithDomElements(
+			diffElement.descriptions.items.map( function ( item ) { return item.$label.contents().toArray(); } ),
+			( caseItem.expectedDescriptions || [] ).map( function ( expected ) { return $.parseHTML( expected ); } ),
+			caseItem.msg + ': sidebar'
+		);
 		assert.strictEqual(
 			diffElement.$messages.children().length, caseItem.forceTimeout ? 1 : 0,
 			'Timeout message ' + ( caseItem.forceTimeout ? 'shown' : 'not shown' )
@@ -450,7 +498,7 @@
 				return null;
 			},
 			getImportRules: function () {
-				return ve.init.target.constructor.static.importRules;
+				return this.importRules;
 			},
 			getMode: function () {
 				return config.mode || 'visual';
@@ -479,7 +527,13 @@
 			execute: ve.ui.Surface.prototype.execute,
 			executeWithSource: ve.ui.Surface.prototype.executeWithSource,
 			createView: ve.ui.Surface.prototype.createView,
-			createModel: ve.ui.Surface.prototype.createModel
+			createModel: ve.ui.Surface.prototype.createModel,
+			context: {
+				// Used by ContentAction
+				isVisible: function () {
+					return false;
+				}
+			}
 		};
 		// Copied from ui.Surface constructor
 		mockSurface.commandRegistry = config.commandRegistry || ve.ui.commandRegistry;
@@ -489,6 +543,7 @@
 			config.includeCommands || mockSurface.commandRegistry.getNames(), config.excludeCommands || []
 		);
 		mockSurface.triggerListener = new ve.TriggerListener( mockSurface.commands, mockSurface.commandRegistry );
+		mockSurface.importRules = config.importRules || {};
 
 		model = docOrSurface instanceof ve.dm.Surface ? docOrSurface : mockSurface.createModel( docOrSurface );
 		view = mockSurface.createView( model );

@@ -14,8 +14,6 @@
 	"visualeditor-ca-createsource": "Чаяар",
 	"visualeditor-ca-editsource": "Вики-сөзүглелди эдер",
 	"visualeditor-ca-editsource-section": "вики-сөзүглелди эдер",
-	"visualeditor-ca-ve-edit": "Визуалдыг эдикчи",
-	"visualeditor-ca-ve-edit-section": "Визуалдыг эдикчи",
 	"visualeditor-categories-tool": "Аңгылалдар",
 	"visualeditor-desc": "MediaWiki-ге херек Визуалдыг эдикчи",
 	"visualeditor-descriptionpagelink": "Project:ВизуалдыгЭдикчи",
@@ -37,6 +35,5 @@
 	"visualeditor-mweditmodesource-warning-cancel": "Ойталал",
 	"visualeditor-mweditmodesource-warning-switch-discard": "Өскертилгелерни ойталаар",
 	"visualeditor-mwgallerydialog-title": "Галерея",
-	"visualeditor-savedialog-label-create": "Арын чаяар",
 	"visualeditor-savedialog-title-save": "Өскертилгеңер шыгжаар"
 }

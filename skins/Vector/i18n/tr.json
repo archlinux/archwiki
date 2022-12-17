@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Arystanbek",
 			"BaRaN6161 TURK",
+			"Betseg",
 			"Cobija",
 			"Emperyan",
 			"Hedda",
@@ -13,16 +15,13 @@
 			"SaldırganSincap",
 			"Sayginer",
 			"Stultiwikia",
-			"Vito Genovese",
-			"Betseg",
-			"Amire80",
-			"ToprakM"
+			"ToprakM",
+			"Vito Genovese"
 		]
 	},
 	"skinname-vector": "Eski Vektör (2010)",
 	"skinname-vector-2022": "Vector (2022)",
 	"vector-specialversion-name": "Vector",
-	"tooltip-pt-watchlist-2": "Değişiklikler için izlemeye aldığınız sayfaların listesi",
 	"vector-skin-desc": "2 Vector görünümleri sağlar:\n* 2011 - MonoBook'un yeni görünümü ve birçok kullanılabilirlik geliştirmesiyle Modern versiyonu.\n* 2022 - Vector, WMF [[mw:Desktop Improvements|mw:Masaüstü İyileştirmeleri]] projesinin bir parçası olarak oluşturuldu.",
 	"prefs-vector-enable-vector-1-label": "Eski Vektörü Kullan",
 	"prefs-vector-enable-vector-1-help": "Önümüzdeki birkaç yıl içinde Vektör görünümünü kademeli olarak güncelleyeceğiz. Eski Vektörün eski sürümünü görüntülemenize izin verir (Aralık 2019 itibariyle). Güncellemeler hakkında daha fazla bilgi için [[mw:Reading/Web/Desktop_Improvements|proje sayfamıza]] gidin.",
@@ -32,6 +31,8 @@
 	"vector-languages": "Diller",
 	"vector-language-button-aria-label": "Başka bir dildeki sayfaya gidin. {{PLURAL:$1|$1 dilde}} mevcut",
 	"vector-language-button-label": "$1 dil",
+	"vector-no-language-button-label": "Dil ekle",
+	"vector-no-language-button-aria-label": "Bu madde yalnızca bu dilde mevcuttur. Maddeyi diğer dillere ekleyin",
 	"vector-language-redirect-to-top": "Bu {{SITENAME}} sürümündeki dil bağlantıları sayfanın en yukarısında, madde başlığının sağ tarafında yer alıyor. [[#p-lang-btn|Yukarı gidin]].",
 	"vector-language-variant-switcher-label": "Dil varyantını değiştir",
 	"vector-action-addsection": "Konu ekle",
@@ -50,14 +51,18 @@
 	"vector-jumptocontent": "İçeriğe atla",
 	"vector-more-actions": "Daha fazla",
 	"vector-search-loader": "Arama önerileri yükleniyor",
-	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> içeren sayfaları ara",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> içeren sayfaları ara",
 	"vector-intro-page": "Help:Giriş",
+	"vector-toc-heading": "İçindekiler",
+	"vector-toc-toggle-position-sidebar": "kenar çubuğuna taşı",
+	"vector-toc-toggle-position-title": "gizle",
+	"vector-toc-beginning": "Başlangıç",
 	"vector-anon-user-menu-pages": "Çıkış yapmış editörler için sayfalar",
 	"vector-anon-user-menu-pages-learn": "daha fazla bilgi",
 	"vector-anon-user-menu-pages-label": "Düzenleme hakkında daha fazla bilgi edinin",
-	"vector-personal-more-label": "Kullanıcı bağlantıları",
 	"vector-main-menu-tooltip": "Ana menü",
-	"tooltip-vector-anon-user-menu-title": "Daha fazla seçenek",
-	"vector-menu-checkbox-expanded": "genişletilmiş",
-	"vector-menu-checkbox-collapsed": "daraltılmış"
+	"vector-toc-menu-tooltip": "İçindekiler",
+	"vector-article-tools-nav-label": "Araçlar",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Tartışma]]",
+	"tooltip-vector-anon-user-menu-title": "Daha fazla seçenek"
 }

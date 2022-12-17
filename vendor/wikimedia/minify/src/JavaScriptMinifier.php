@@ -111,7 +111,7 @@ class JavaScriptMinifier {
 	private const ACTION_PUSH = 202; // Push a state to the stack
 	private const ACTION_POP = 203; // Pop the state from the top of the stack, and go to that state
 
-	// Sanity limit to avoid excessive memory usage
+	// Limit to avoid excessive memory usage
 	private const STACK_LIMIT = 1000;
 
 	// Length of the longest token in $tokenTypes made of punctuation characters,
@@ -150,6 +150,7 @@ class JavaScriptMinifier {
 		')' => true,
 		'[' => true,
 		']' => true,
+		// Dots have a special case after $dotlessNum which require whitespace
 		'.' => true,
 		';' => true,
 		',' => true,
@@ -1247,6 +1248,52 @@ class JavaScriptMinifier {
 	 * @return string|bool Minified code or false on failure
 	 */
 	public static function minify( $s ) {
+		return self::minifyInternal( $s );
+	}
+
+	/**
+	 * Create a minifier state object without source map capabilities
+	 *
+	 * Example:
+	 *
+	 *   JavaScriptMinifier::createMinifier()
+	 *     ->addSourceFile( 'file.js', $source )
+	 *     ->getMinifiedOutput();
+	 *
+	 * @return JavaScriptMinifierState
+	 */
+	public static function createMinifier() {
+		return new JavaScriptMinifierState;
+	}
+
+	/**
+	 * Create a minifier state object with source map capabilities
+	 *
+	 * Example:
+	 *
+	 *   $mapper = JavaScriptMinifier::createSourceMapState()
+	 *     ->addSourceFile( 'file1.js', $source1 )
+	 *     ->addOutput( "\n\n" )
+	 *     ->addSourceFile( 'file2.js', $source2 );
+	 *   $out = $mapper->getMinifiedOutput();
+	 *   $map = $mapper->getSourceMap()
+	 *
+	 * @return JavaScriptMapperState
+	 */
+	public static function createSourceMapState() {
+		return new JavaScriptMapperState;
+	}
+
+	/**
+	 * Minify with optional source map.
+	 *
+	 * @internal
+	 *
+	 * @param string $s
+	 * @param MappingsGenerator|null $mapGenerator
+	 * @return bool|string
+	 */
+	public static function minifyInternal( $s, $mapGenerator = null ) {
 		self::ensureExpandedStates();
 
 		// Here's where the minifying takes place: Loop through the input, looking for tokens
@@ -1255,6 +1302,8 @@ class JavaScriptMinifier {
 		$pos = 0;
 		$length = strlen( $s );
 		$lineLength = 0;
+		$dotlessNum = false;
+		$lastDotlessNum = false;
 		$newlineFound = true;
 		$state = self::STATEMENT;
 		$stack = [];
@@ -1278,6 +1327,9 @@ class JavaScriptMinifier {
 				if ( !$newlineFound && strcspn( $s, "\r\n", $pos, $skip ) !== $skip ) {
 					$newlineFound = true;
 				}
+				if ( $mapGenerator ) {
+					$mapGenerator->consumeSource( $skip );
+				}
 				$pos += $skip;
 				continue;
 			}
@@ -1289,7 +1341,11 @@ class JavaScriptMinifier {
 				|| ( $ch === '<' && substr( $s, $pos, 4 ) === '<!--' )
 				|| ( $ch === '-' && $newlineFound && substr( $s, $pos, 3 ) === '-->' )
 			) {
-				$pos += strcspn( $s, "\r\n", $pos );
+				$skip = strcspn( $s, "\r\n", $pos );
+				if ( $mapGenerator ) {
+					$mapGenerator->consumeSource( $skip );
+				}
+				$pos += $skip;
 				continue;
 			}
 
@@ -1451,6 +1507,8 @@ class JavaScriptMinifier {
 						return self::parseError( $s, $end, 'The number has too many decimal points' );
 					}
 					$end += strspn( $s, '0123456789', $end + 1 ) + $decimal;
+				} else {
+					$dotlessNum = true;
 				}
 				$exponent = strspn( $s, 'eE', $end );
 				if ( $exponent ) {
@@ -1499,10 +1557,11 @@ class JavaScriptMinifier {
 				$type = $state < 0 ? self::TYPE_RETURN : self::TYPE_LITERAL;
 			}
 
+			$pad = '';
 			if ( $newlineFound && isset( self::$semicolon[$state][$type] ) ) {
 				// This token triggers the semicolon insertion mechanism of javascript. While we
 				// could add the ; token here ourselves, keeping the newline has a few advantages.
-				$out .= "\n";
+				$pad = "\n";
 				$state = $state < 0 ? -self::STATEMENT : self::STATEMENT;
 				$lineLength = 0;
 			} elseif ( $lineLength + $end - $pos > self::$maxLineLength &&
@@ -1514,23 +1573,39 @@ class JavaScriptMinifier {
 				// Only do this if it won't trigger semicolon insertion and if it won't
 				// put a postfix increment operator or an arrow on its own line,
 				// which is illegal in js.
-				$out .= "\n";
+				$pad = "\n";
 				$lineLength = 0;
 			// Check, whether we have to separate the token from the last one with whitespace
 			} elseif ( !isset( self::$opChars[$last] ) && !isset( self::$opChars[$ch] ) ) {
-				$out .= ' ';
+				$pad = ' ';
 				$lineLength++;
 			// Don't accidentally create ++, -- or // tokens
 			} elseif ( $last === $ch && ( $ch === '+' || $ch === '-' || $ch === '/' ) ) {
-				$out .= ' ';
+				$pad = ' ';
+				$lineLength++;
+			// Don't create invalid dot notation after number literal (T303827).
+			// Keep whitespace in "42. foo".
+			// But keep minifying "foo.bar", "42..foo", and "42.0.foo" per $opChars.
+			} elseif ( $lastDotlessNum && $type === self::TYPE_DOT ) {
+				$pad = ' ';
 				$lineLength++;
 			}
 
+			// self::debug( $topOfStack, $last, $lastType, $state, $ch, $token, $type, );
+
+			if ( $mapGenerator ) {
+				$mapGenerator->outputSpace( $pad );
+				$mapGenerator->outputToken( $token );
+				$mapGenerator->consumeSource( $end - $pos );
+			}
+			$out .= $pad;
 			$out .= $token;
 			$lineLength += $end - $pos; // += strlen( $token )
 			$last = $s[$end - 1];
 			$pos = $end;
 			$newlineFound = false;
+			$lastDotlessNum = $dotlessNum;
+			$dotlessNum = false;
 
 			// Now that we have output our token, transition into the new state.
 			$actions = $type === self::TYPE_SPECIAL ?
@@ -1561,5 +1636,48 @@ class JavaScriptMinifier {
 	public static function parseError( $fullJavascript, $position, $errorMsg ) {
 		// TODO: Handle the error: trigger_error, throw exception, return false...
 		return false;
+	}
+
+	/**
+	 * @param null|false|int $top
+	 * @param string $last
+	 * @param int $lastType
+	 * @param int $state
+	 * @param string $ch
+	 * @param string $token
+	 * @param int $type
+	 */
+	private static function debug(
+		$top, string $last, int $lastType,
+		int $state, string $ch, string $token, int $type
+	) {
+		static $first = true;
+		$self = new \ReflectionClass( self::class );
+		$constants = $self->getConstants();
+
+		foreach ( $self->getConstants() as $name => $value ) {
+			if ( $value === $top ) {
+				$top = $name;
+			}
+			if ( $value === $lastType ) {
+				$lastType = $name;
+			}
+			if ( $value === $state ) {
+				$state = $name;
+			}
+			if ( $value === $type ) {
+				$type = $name;
+			}
+		}
+
+		if ( $first ) {
+			print sprintf( "| %-29s | %-4s | %-29s | %-29s | %-2s | %-10s | %-29s\n",
+				'topOfStack', 'last', 'lastType', 'state', 'ch', 'token', 'type' );
+			print sprintf( "| %'-29s | %'-4s | %'-29s | %'-29s | %'-2s | %'-10s | %'-29s\n",
+				'', '', '', '', '', '', '' );
+			$first = false;
+		}
+		print sprintf( "| %-29s | %-4s | %-29s | %-29s | %-2s | %-10s | %-29s\n",
+			(string)$top, $last, $lastType, $state, $ch, $token, $type );
 	}
 }

@@ -11,9 +11,11 @@
  * Ian Baker <ian@wikimedia.org>
  */
 
+use MediaWiki\Extension\TitleBlacklist\TitleBlacklist;
+
 /**
  * @group medium
- * @covers ApiQueryTitleBlacklist
+ * @covers \MediaWiki\Extension\TitleBlacklist\Api\ApiQueryTitleBlacklist
  */
 class ApiQueryTitleBlacklistTest extends ApiTestCase {
 

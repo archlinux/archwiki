@@ -119,7 +119,7 @@ class SpecialMathStatus extends SpecialPage {
 		$renderer = new MathMathML( $inputSample, $attribs );
 		$this->assertEquals( 'pmml', $renderer->getInputType(), 'Checking if MathML input is supported' );
 		$this->assertTrue( $renderer->render(), 'Rendering Presentation MathML sample' );
-		$real = MathRenderer::renderMath( $inputSample, $attribs, MathConfig::MODE_MATHML );
+		$real = $renderer->getHtmlOutput();
 		$expected = 'hash=5628b8248b79267ecac656102334d5e3&amp;mode=mathml';
 		$this->assertContains( $expected, $real, 'Checking if the link to SVG image is correct' );
 	}
@@ -153,7 +153,8 @@ class SpecialMathStatus extends SpecialPage {
 		}
 		$tex .= $testMax;
 		$renderer = new MathLaTeXML( $tex, [ 'display' => 'linebreak' ] );
-		$this->assertTrue( $renderer->render( true ), "Rendering of linebreak test in LaTeXML mode" );
+		$renderer->setPurge();
+		$this->assertTrue( $renderer->render(), "Rendering of linebreak test in LaTeXML mode" );
 		$expected = 'mtr';
 		$real = preg_replace( "/\n\\s*/", '', $renderer->getHtmlOutput() );
 		$this->assertContains( $expected, $real, "Checking for linebreak" .

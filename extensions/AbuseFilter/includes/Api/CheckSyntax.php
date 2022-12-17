@@ -7,6 +7,7 @@ use ApiMain;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Parser\Exception\UserVisibleException;
 use MediaWiki\Extension\AbuseFilter\Parser\RuleCheckerFactory;
+use Wikimedia\ParamValidator\ParamValidator;
 
 class CheckSyntax extends ApiBase {
 
@@ -38,8 +39,8 @@ class CheckSyntax extends ApiBase {
 	 */
 	public function execute() {
 		// "Anti-DoS"
-		if ( !$this->afPermManager->canUseTestTools( $this->getUser() )
-			&& !$this->afPermManager->canEdit( $this->getUser() )
+		if ( !$this->afPermManager->canUseTestTools( $this->getAuthority() )
+			&& !$this->afPermManager->canEdit( $this->getAuthority() )
 		) {
 			$this->dieWithError( 'apierror-abusefilter-cantcheck', 'permissiondenied' );
 		}
@@ -84,7 +85,7 @@ class CheckSyntax extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'filter' => [
-				ApiBase::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_REQUIRED => true,
 			],
 		];
 	}

@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Bikarhêner",
-			"Ghybu"
+			"Ghybu",
+			"Balyozxane"
 		]
 	},
 	"timeless-sitetools": "Amûrên wîkiyê",
 	"timeless-pageactions": "Amûrên rûpelê",
 	"timeless-languages": "Ziman",
 	"timeless-view-history": "Dîrok",
-	"timeless-action-undelete": "Dîsa {{PLURAL:$1|guhertineke|$1 guhertinan}} çêke"
+	"timeless-action-undelete": "{{PLURAL:$1|guhartinê|$1 guhartinan}} dîsa çêke"
 }

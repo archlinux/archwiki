@@ -1,16 +1,13 @@
-/*!
- * @license The MIT License (MIT); see LICENSE.txt
- */
-
 /**
- * Container for template, as rendered in the template dialog sidebar.
+ * Container for a template as rendered in the template dialog sidebar.
+ * Contains search and visibility inputs, and a list of parameters when available.
  *
  * @class
  * @extends ve.ui.MWTransclusionOutlinePartWidget
  *
  * @constructor
  * @param {ve.dm.MWTemplateModel} template
- * @param {boolean} [replacesPlaceholder]
+ * @param {boolean} [replacesPlaceholder=false]
  * @property {ve.dm.MWTemplateModel} templateModel
  * @property {ve.ui.MWTransclusionOutlineParameterSelectWidget} parameterList
  */
@@ -26,15 +23,33 @@ ve.ui.MWTransclusionOutlineTemplateWidget = function VeUiMWTransclusionOutlineTe
 		ariaDescriptionSelectedSingle: ve.msg( 'visualeditor-dialog-transclusion-template-widget-aria-selected-single' )
 	} );
 
+	this.$element.addClass( 've-ui-mwTransclusionOutlineTemplateWidget' );
+
 	// Initialization
 	this.templateModel = template.connect( this, {
 		add: 'onParameterAddedToTemplateModel',
 		remove: 'onParameterRemovedFromTemplateModel'
 	} );
 
-	var initiallyHideUnused = !replacesPlaceholder && !this.transclusionModel.isSingleTemplate();
-	this.initializeParameterList( initiallyHideUnused );
-	this.toggleFilters( initiallyHideUnused );
+	var canFilter = this.shouldFiltersBeShown(),
+		initiallyHideUnused = canFilter && !replacesPlaceholder && !this.transclusionModel.isSingleTemplate();
+
+	var parameterNames = this.getRelevantTemplateParameters( initiallyHideUnused ? 'used' : 'all' );
+	if ( parameterNames.length ) {
+		this.initializeParameterList();
+		this.parameterList.addItems( parameterNames.map( this.createCheckbox.bind( this ) ) );
+	} else if ( !canFilter ) {
+		this.$noParametersNote = $( '<div>' )
+			.text( ve.msg( 'visualeditor-dialog-transclusion-no-template-parameters' ) )
+			.addClass( 've-ui-mwTransclusionOutlineTemplateWidget-no-template-parameters' );
+		this.$element.append( this.$noParametersNote );
+	}
+
+	this.toggleFilters();
+	if ( initiallyHideUnused ) {
+		// This is only to update the label of the "Hide unused" button
+		this.toggleUnusedWidget.toggleUnusedParameters( false );
+	}
 };
 
 /* Inheritance */
@@ -42,12 +57,6 @@ ve.ui.MWTransclusionOutlineTemplateWidget = function VeUiMWTransclusionOutlineTe
 OO.inheritClass( ve.ui.MWTransclusionOutlineTemplateWidget, ve.ui.MWTransclusionOutlinePartWidget );
 
 /* Events */
-
-/**
- * @event focusTemplateParameterById
- * @param {string} pageName Unique id of the {@see OO.ui.BookletLayout} page, e.g. something like
- *  "part_1" or "part_1/param1".
- */
 
 /**
  * Triggered when the user uses the search widget at the top to filter the list of parameters.
@@ -72,15 +81,9 @@ ve.ui.MWTransclusionOutlineTemplateWidget.static.searchableParameterCount = 4;
 
 /**
  * @private
- * @param {boolean} [initiallyHideUnused=false]
  */
-ve.ui.MWTransclusionOutlineTemplateWidget.prototype.initializeParameterList = function ( initiallyHideUnused ) {
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.initializeParameterList = function () {
 	if ( this.parameterList ) {
-		return;
-	}
-
-	var parameterNames = this.getRelevantTemplateParameters( initiallyHideUnused ? 'used' : 'all' );
-	if ( !parameterNames.length ) {
 		return;
 	}
 
@@ -89,12 +92,11 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.initializeParameterList = fu
 		.addClass( 've-ui-mwTransclusionOutline-ariaHidden' );
 
 	this.parameterList = new ve.ui.MWTransclusionOutlineParameterSelectWidget( {
-		items: parameterNames.map( this.createCheckbox.bind( this ) ),
 		ariaLabel: ve.msg( 'visualeditor-dialog-transclusion-param-selection-aria-label', this.templateModel.getSpec().getLabel() ),
 		$ariaDescribedBy: $parametersAriaDescription
 	} ).connect( this, {
 		choose: 'onTemplateParameterChoose',
-		templateParameterSelectionChanged: 'onTemplateParameterSelectionChanged',
+		templateParameterSpaceDown: 'onTemplateParameterSpaceDown',
 		change: 'onParameterWidgetListChanged'
 	} );
 
@@ -150,7 +152,7 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.getRelevantTemplateParameter
 		if ( template.getSpec().isParameterDeprecated( name ) && !template.hasParameter( name ) ) {
 			return false;
 		}
-		// Never create a checkbox for a ve.ui.MWParameterPlaceholderPage placeholder
+		// Never create a checkbox for a not yet named parameter placeholder
 		return !!name;
 	} );
 };
@@ -161,12 +163,15 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.getRelevantTemplateParameter
  * @return {OO.ui.OptionWidget}
  */
 ve.ui.MWTransclusionOutlineTemplateWidget.prototype.createCheckbox = function ( paramName ) {
-	var spec = this.templateModel.getSpec();
+	var spec = this.templateModel.getSpec(),
+		parameterModel = this.templateModel.getParameter( paramName );
+
 	return ve.ui.MWTransclusionOutlineParameterSelectWidget.static.createItem( {
 		required: spec.isParameterRequired( paramName ),
 		label: spec.getParameterLabel( paramName ),
 		data: paramName,
-		selected: this.templateModel.hasParameter( paramName )
+		selected: !!parameterModel,
+		hasValue: !!parameterModel && !!parameterModel.getValue()
 	} );
 };
 
@@ -190,11 +195,24 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.findCanonicalPosition = func
 };
 
 /**
- * @param {string} [paramName] Parameter name to highlight, e.g. "param1". Omit for no highlight.
+ * @param {string} [paramName] Parameter name to set, e.g. "param1". Omit to remove setting.
  */
-ve.ui.MWTransclusionOutlineTemplateWidget.prototype.highlightParameter = function ( paramName ) {
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.setParameter = function ( paramName ) {
 	if ( this.parameterList ) {
-		this.parameterList.highlightParameter( paramName );
+		this.parameterList.setActiveParameter( paramName );
+	}
+};
+
+/**
+ * @param {string} paramName
+ * @param {boolean} hasValue
+ */
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.toggleHasValue = function ( paramName, hasValue ) {
+	if ( this.parameterList ) {
+		var item = this.parameterList.findItemFromData( paramName );
+		if ( item ) {
+			item.toggleHasValue( hasValue );
+		}
 	}
 };
 
@@ -202,6 +220,7 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.highlightParameter = functio
  * @inheritDoc
  */
 ve.ui.MWTransclusionOutlineTemplateWidget.prototype.setSelected = function ( state ) {
+	// FIXME: This is a super-specific hack; should be replaced with a more generic solution
 	if ( !state && this.isSelected() && this.parameterList ) {
 		this.parameterList.highlightItem();
 	}
@@ -217,6 +236,11 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onParameterAddedToTemplateMo
 	// The placeholder (currently) doesn't get a corresponding item in the sidebar
 	if ( !paramName ) {
 		return;
+	}
+
+	if ( this.$noParametersNote ) {
+		this.$noParametersNote.remove();
+		delete this.$noParametersNote;
 	}
 
 	this.initializeParameterList();
@@ -259,15 +283,9 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onParameterRemovedFromTempla
  * @private
  * @param {OO.ui.OptionWidget} item
  * @param {boolean} selected
- * @fires focusTemplateParameterById
  */
 ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onTemplateParameterChoose = function ( item, selected ) {
-	this.onTemplateParameterSelectionChanged( item, selected );
-
-	var param = this.templateModel.getParameter( item.getData() );
-	if ( param && selected ) {
-		this.emit( 'focusTemplateParameterById', param.getId() );
-	}
+	this.toggleParameter( item, selected, false );
 };
 
 /**
@@ -275,7 +293,18 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onTemplateParameterChoose = 
  * @param {OO.ui.OptionWidget} item
  * @param {boolean} selected
  */
-ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onTemplateParameterSelectionChanged = function ( item, selected ) {
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onTemplateParameterSpaceDown = function ( item, selected ) {
+	this.toggleParameter( item, selected, true );
+};
+
+/**
+ * @private
+ * @param {OO.ui.OptionWidget} item
+ * @param {boolean} selected
+ * @param {boolean} soft If true, focus should stay in the sidebar.
+ * @fires transclusionOutlineItemSelected
+ */
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.toggleParameter = function ( item, selected, soft ) {
 	var paramName = item.getData(),
 		param = this.templateModel.getParameter( paramName );
 	if ( !selected ) {
@@ -286,6 +315,10 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onTemplateParameterSelection
 	}
 
 	this.updateUnusedParameterToggleState();
+
+	if ( param && selected ) {
+		this.emit( 'transclusionOutlineItemSelected', param.getId(), soft );
+	}
 };
 
 /**
@@ -307,20 +340,35 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onParameterWidgetListChanged
 
 /**
  * @private
- * @param {boolean} [initiallyHideUnused=false]
+ * @return {boolean}
  */
-ve.ui.MWTransclusionOutlineTemplateWidget.prototype.toggleFilters = function ( initiallyHideUnused ) {
-	var numParams = this.getRelevantTemplateParameters().length,
-		visible = numParams >= this.constructor.static.searchableParameterCount;
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.shouldFiltersBeShown = function () {
+	var min = this.constructor.static.searchableParameterCount,
+		existingParameterWidgets = this.parameterList && this.parameterList.getItemCount();
+	// Avoid expensive calls when there are already enough items in the parameter list
+	return existingParameterWidgets >= min || this.getRelevantTemplateParameters().length >= min;
+};
+
+/**
+ * @private
+ */
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.toggleFilters = function () {
+	var visible = this.shouldFiltersBeShown();
 	if ( this.searchWidget ) {
 		this.searchWidget.toggle( visible );
 		this.toggleUnusedWidget.toggle( visible );
 	} else if ( visible ) {
 		this.initializeFilters();
 		this.updateUnusedParameterToggleState();
-		if ( initiallyHideUnused ) {
-			this.toggleUnusedWidget.toggleUnusedParameters( false );
-		}
+	}
+
+	this.recalculateStickyHeaderHeight();
+};
+
+ve.ui.MWTransclusionOutlineTemplateWidget.prototype.recalculateStickyHeaderHeight = function () {
+	// A template with no used parameters might have a sticky header, but no paramater list yet
+	if ( this.$stickyHeader && this.parameterList ) {
+		this.parameterList.stickyHeaderHeight = Math.floor( this.$stickyHeader.outerHeight() );
 	}
 };
 
@@ -347,7 +395,7 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.initializeFilters = function
 		classes: [ 've-ui-mwTransclusionOutlineTemplateWidget-no-match' ]
 	} ).toggle( false );
 
-	var $stickyHeader = $( '<div>' )
+	this.$stickyHeader = $( '<div>' )
 		.addClass( 've-ui-mwTransclusionOutlineTemplateWidget-sticky' )
 		.append(
 			this.header.$element,
@@ -356,14 +404,13 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.initializeFilters = function
 		);
 
 	this.$element.prepend(
-		$stickyHeader,
+		this.$stickyHeader,
 		this.infoWidget.$element
 	);
 };
 
 /**
- * Narrows the list of checkboxes down to parameters that match the user's input. The search
- * algorithm is modelled after {@see ve.ui.MWParameterSearchWidget.buildIndex}. We search the
+ * Narrows the list of checkboxes down to parameters that match the user's input. We search the
  * parameter's primary name, aliases, label, and description. But not e.g. the example value.
  *
  * @private
@@ -405,35 +452,34 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.filterParameters = function 
 
 	this.toggleUnusedWidget.toggle( !query );
 	this.infoWidget.toggle( nothingFound );
+	this.parameterList.setTabIndex( nothingFound ? -1 : 0 );
+	// The "hide unused" button might be hidden now, which changes the height of the sticky header
+	this.recalculateStickyHeaderHeight();
 	this.emit( 'filterParametersById', visibility );
 };
 
 /**
  * @private
  * @param {boolean} visibility
- * @param {boolean} fromClick
+ * @param {boolean} [fromClick]
  */
 ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onToggleUnusedFields = function ( visibility, fromClick ) {
 	if ( visibility ) {
 		this.createAllParameterCheckboxes();
 	}
 
-	var firstSelected;
 	if ( this.parameterList ) {
 		this.parameterList.items.forEach( function ( item ) {
 			item.toggle( visibility || item.isSelected() );
-			if ( fromClick && !firstSelected && item.isSelected() ) {
-				firstSelected = item;
-			}
 		} );
 	}
 
 	if ( !visibility && fromClick ) {
-		// make sure the header is still visibly after collapsing
-		this.header.scrollElementIntoView();
-		if ( firstSelected ) {
-			// make sure parameters ( if any ) are still visible and scrolled underneath the sticky
-			firstSelected.scrollElementIntoView( { padding: { top: 110 } } );
-		}
+		var self = this;
+		this.header.scrollElementIntoView().then( function () {
+			if ( self.parameterList ) {
+				self.parameterList.ensureVisibilityOfFirstCheckedParameter();
+			}
+		} );
 	}
 };

@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Artsiom91",
-			"Chadyka",
-			"Amire80"
+			"Chadyka"
 		]
 	},
 	"syntaxhighlight-desc": "Дазваляе выкарыстоўваць тэг  <code>&lt;syntaxhighlight&gt;</code> для падсьветкі сынтаксісу з дапамогай [http://pygments.org/ Pygments]",

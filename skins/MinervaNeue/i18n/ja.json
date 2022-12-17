@@ -16,7 +16,8 @@
 			"Yusuke1109",
 			"そらたこ",
 			"神樂坂秀吉",
-			"組曲師"
+			"組曲師",
+			"Marine-Blue"
 		]
 	},
 	"minerva-last-modified-date": "最終更新: $1 $2",
@@ -69,12 +70,15 @@
 	"minerva-page-actions-move": "移動",
 	"minerva-page-actions-delete": "削除",
 	"minerva-page-actions-protect": "保護",
+	"minerva-page-actions-unblock": "利用者のブロックを解除します",
 	"minerva-page-actions-unprotect": "保護解除",
 	"minerva-page-actions-user-groups": "利用者グループ",
+	"minerva-page-actions-block": "利用者をブロック",
 	"minerva-page-actions-logs": "記録",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}}項目",
 	"minerva-page-actions-language-switcher": "言語",
 	"minerva-page-actions-history": "履歴",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|議論]]",
 	"minerva-talk-explained": "アクティブな議論",
 	"minerva-talk-explained-empty": "このページに議論はありません。",
 	"minerva-talk-full-page": "ウィキページとして閲覧",

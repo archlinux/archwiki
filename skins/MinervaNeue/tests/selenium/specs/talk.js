@@ -40,7 +40,7 @@ describe( 'Talk', () => {
 	} );
 
 	// @login
-	it( 'Talk on a page that doesn\'t exist (bug 64268)', () => {
+	it( 'Talk on a page that doesn\'t exist (T66268)', () => {
 		iAmLoggedIntoTheMobileWebsite();
 		iAmOnAPageThatDoesNotExist();
 		thereShouldBeATalkTab();

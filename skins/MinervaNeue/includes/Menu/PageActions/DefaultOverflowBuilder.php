@@ -20,7 +20,6 @@
 
 namespace MediaWiki\Minerva\Menu\PageActions;
 
-use Hooks;
 use MediaWiki\Minerva\Menu\Entries\IMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
@@ -81,7 +80,6 @@ class DefaultOverflowBuilder implements IOverflowBuilder {
 			$group->insertEntry( $menuEntry );
 		}
 
-		Hooks::run( 'MobileMenu', [ 'pageactions.overflow', &$group ], '1.38' );
 		return $group;
 	}
 

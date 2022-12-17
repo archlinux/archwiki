@@ -1,9 +1,8 @@
-var collapsibleTabs = require( '../skins.vector.legacy.js/collapsibleTabs.js' ),
-	vector = require( '../skins.vector.legacy.js/vector.js' ),
-	languageButton = require( './languageButton.js' ),
+var languageButton = require( './languageButton.js' ),
 	initSearchLoader = require( './searchLoader.js' ).initSearchLoader,
-	dropdownMenus = require( './dropdownMenus.js' ),
-	sidebar = require( './sidebar.js' );
+	dropdownMenus = require( './dropdownMenus.js' ).dropdownMenus,
+	sidebarPersistence = require( './sidebarPersistence.js' ),
+	checkbox = require( './checkbox.js' );
 
 /**
  * Wait for first paint before calling this function. That's its whole purpose.
@@ -20,13 +19,13 @@ var collapsibleTabs = require( '../skins.vector.legacy.js/collapsibleTabs.js' ),
  * ```less
  * .foo {
  *     color: #f00;
- *     .transform( translateX( -100% ) );
+ *     transform: translateX( -100% );
  * }
  *
  * // This transition will be disabled initially for JavaScript users. It will never be enabled for
- * // no-JS users.
+ * // non-JavaScript users.
  * .vector-animations-ready .foo {
- *     .transition( transform 100ms ease-out; );
+ *     transition: transform 100ms ease-out;
  * }
  * ```
  *
@@ -38,17 +37,43 @@ function enableCssAnimations( document ) {
 }
 
 /**
+ * In https://phabricator.wikimedia.org/T313409 #p-namespaces was renamed to #p-associatedPages
+ * This code maps items added by gadgets to the new menu.
+ * This code can be removed in MediaWiki 1.40.
+ */
+function addNamespacesGadgetSupport() {
+	// Set up hidden dummy portlet.
+	var dummyPortlet = document.createElement( 'div' );
+	dummyPortlet.setAttribute( 'id', 'p-namespaces' );
+	dummyPortlet.setAttribute( 'style', 'display: none;' );
+	dummyPortlet.appendChild( document.createElement( 'ul' ) );
+	document.body.appendChild( dummyPortlet );
+	mw.hook( 'util.addPortletLink' ).add( function ( /** @type {Element} */ node ) {
+		// If it was added to p-namespaces, show warning and move.
+		// eslint-disable-next-line no-jquery/no-global-selector
+		if ( $( '#p-namespaces' ).find( node ).length ) {
+			// eslint-disable-next-line no-jquery/no-global-selector
+			$( '#p-associated-pages ul' ).append( node );
+			// @ts-ignore
+			mw.log.warn( 'Please update call to mw.util.addPortletLink with ID p-namespaces. Use p-associatedPages instead.' );
+			// in case it was empty before:
+			mw.util.showPortlet( 'p-associated-pages' );
+		}
+	} );
+}
+
+/**
  * @param {Window} window
  * @return {void}
  */
 function main( window ) {
 	enableCssAnimations( window.document );
-	collapsibleTabs.init();
-	sidebar.init( window );
-	vector.init();
+	sidebarPersistence.init();
+	checkbox.init( window.document );
 	initSearchLoader( document );
 	languageButton();
 	dropdownMenus();
+	addNamespacesGadgetSupport();
 }
 
 /**

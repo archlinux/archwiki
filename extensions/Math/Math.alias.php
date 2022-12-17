@@ -31,6 +31,11 @@ $specialPageAliases['fa'] = [
 	'MathStatus' => [ 'وضعیت_ریاضی' ],
 ];
 
+/** Korean (한국어) */
+$specialPageAliases['ko'] = [
+	'MathStatus' => [ '수식상태' ],
+];
+
 /** Macedonian (македонски) */
 $specialPageAliases['mk'] = [
 	'MathStatus' => [ 'МатСтатус' ],

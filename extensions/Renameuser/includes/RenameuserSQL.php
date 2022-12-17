@@ -360,5 +360,3 @@ class RenameuserSQL {
 		);
 	}
 }
-
-class_alias( RenameuserSQL::class, 'RenameuserSQL' );

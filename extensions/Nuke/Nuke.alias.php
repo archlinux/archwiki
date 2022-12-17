@@ -33,7 +33,7 @@ $specialPageAliases['ba'] = [
 	'Nuke' => [ 'Nuke' ],
 ];
 
-/** Belarusian (Taraškievica orthography) (беларуская (тарашкевіца)‎) */
+/** Belarusian (Taraškievica orthography) (беларуская (тарашкевіца)) */
 $specialPageAliases['be-tarask'] = [
 	'Nuke' => [ 'Масавае_выдаленьне' ],
 ];
@@ -263,12 +263,12 @@ $specialPageAliases['sk'] = [
 	'Nuke' => [ 'Zničenie' ],
 ];
 
-/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+/** Serbian (Cyrillic script) (српски (ћирилица)) */
 $specialPageAliases['sr-ec'] = [
 	'Nuke' => [ 'МасовноБрисање', 'Масовно_брисање' ],
 ];
 
-/** Serbian (Latin script) (srpski (latinica)‎) */
+/** Serbian (Latin script) (srpski (latinica)) */
 $specialPageAliases['sr-el'] = [
 	'Nuke' => [ 'MasovnoBrisanje', 'Masovno_brisanje' ],
 ];
@@ -308,12 +308,12 @@ $specialPageAliases['zh'] = [
 	'Nuke' => [ '大量删除', '大量刪除' ],
 ];
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'Nuke' => [ '大量删除' ],
 ];
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）) */
 $specialPageAliases['zh-hant'] = [
 	'Nuke' => [ '大量刪除' ],
 ];

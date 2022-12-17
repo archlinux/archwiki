@@ -22,7 +22,7 @@
 		var $qf = $( '#qunit-fixture' ),
 			canvas = new mw.mmv.ui.Canvas( $qf, $qf, $qf );
 
-		assert.ok( canvas.$imageDiv, 'Image container is created.' );
+		assert.strictEqual( canvas.$imageDiv.length, 1, 'Image container is created.' );
 		assert.strictEqual( canvas.$imageWrapper, $qf, '$imageWrapper is set correctly.' );
 		assert.strictEqual( canvas.$mainWrapper, $qf, '$mainWrapper is set correctly.' );
 	} );
@@ -108,7 +108,7 @@
 		canvas.imageRawMetadata = imageRawMetadata;
 
 		canvas.set = function () {
-			assert.ok( false, 'Placeholder is not shown' );
+			assert.true( false, 'Placeholder is not shown' );
 		};
 
 		$image = $( '<img>' ).width( 10 ).height( 5 );
@@ -138,7 +138,7 @@
 		canvas.imageRawMetadata = imageRawMetadata;
 
 		canvas.set = function () {
-			assert.ok( true, 'Placeholder shown' );
+			assert.true( true, 'Placeholder shown' );
 		};
 
 		$image = $( '<img>' ).width( 200 ).height( 100 );
@@ -168,7 +168,7 @@
 		canvas.imageRawMetadata = imageRawMetadata;
 
 		canvas.set = function () {
-			assert.ok( true, 'Placeholder shown' );
+			assert.true( true, 'Placeholder shown' );
 		};
 
 		$image = $( '<img>' ).width( 100 ).height( 50 );
@@ -198,7 +198,7 @@
 		canvas.imageRawMetadata = imageRawMetadata;
 
 		canvas.set = function () {
-			assert.ok( true, 'Placeholder shown' );
+			assert.true( true, 'Placeholder shown' );
 		};
 
 		$image = $( '<img>' ).width( 100 ).height( 50 );
@@ -228,7 +228,7 @@
 		canvas.imageRawMetadata = imageRawMetadata;
 
 		canvas.set = function () {
-			assert.ok( false, 'Placeholder shown when it should not' );
+			assert.true( false, 'Placeholder shown when it should not' );
 		};
 
 		$image = $( '<img>' ).width( 10 ).height( 5 );
@@ -270,9 +270,9 @@
 
 		canvas.unblurWithAnimation();
 
-		assert.ok( !canvas.$image.css( '-webkit-filter' ) || !canvas.$image.css( '-webkit-filter' ).length,
+		assert.true( !canvas.$image.css( '-webkit-filter' ) || !canvas.$image.css( '-webkit-filter' ).length,
 			'Image has no -webkit-filter left' );
-		assert.ok( !canvas.$image.css( 'filter' ) || !canvas.$image.css( 'filter' ).length || canvas.$image.css( 'filter' ) === 'none',
+		assert.true( !canvas.$image.css( 'filter' ) || !canvas.$image.css( 'filter' ).length || canvas.$image.css( 'filter' ) === 'none',
 			'Image has no filter left' );
 		assert.strictEqual( parseInt( canvas.$image.css( 'opacity' ), 10 ), 1,
 			'Image is fully opaque' );

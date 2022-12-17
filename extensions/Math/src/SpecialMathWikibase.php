@@ -8,6 +8,7 @@ use Html;
 use InvalidArgumentException;
 use MediaWiki\Extension\Math\Widget\WikibaseEntitySelector;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 use Message;
 use OOUI\ButtonInputWidget;
 use OOUI\FormLayout;
@@ -55,9 +56,7 @@ class SpecialMathWikibase extends SpecialPage {
 		}
 
 		if ( !$this->wikibase ) {
-			$this->wikibase = new MathWikibaseConnector(
-				MathWikibaseConfig::getDefaultMathWikibaseConfig()
-			);
+			$this->wikibase = MediaWikiServices::getInstance()->get( 'Math.WikibaseConnector' );
 		}
 
 		$request = $this->getRequest();
@@ -82,7 +81,7 @@ class SpecialMathWikibase extends SpecialPage {
 			try {
 				$info = $this->wikibase->fetchWikibaseFromId( $requestId, $wgLanguageCode );
 				$this->logger->debug( "Successfully fetched information for qID: " . $requestId );
-				self::buildPageRepresentation( $info, $requestId, $output );
+				$this->buildPageRepresentation( $info, $requestId, $output );
 			} catch ( Exception $e ) {
 				$this->showError( $e );
 			}
@@ -160,7 +159,7 @@ class SpecialMathWikibase extends SpecialPage {
 	 * @param string $qid
 	 * @param OutputPage $output
 	 */
-	public static function buildPageRepresentation(
+	public function buildPageRepresentation(
 		MathWikibaseInfo $info,
 		$qid,
 		OutputPage $output
@@ -175,30 +174,31 @@ class SpecialMathWikibase extends SpecialPage {
 		}
 
 		// add formula information
-		$header = wfMessage( 'math-wikibase-formula-information' )->inContentLanguage()->plain();
+		$header = $this->msg( 'math-wikibase-formula-information' )->inContentLanguage()
+			->plain();
 		$output->addHTML( self::createHTMLHeader( $header ) );
 
-		if ( $info->getSymbol() ) {
+		if ( $info->getFormattedSymbol() ) {
 			$math = $info->getFormattedSymbol();
 			$formulaInfo = new Message( 'math-wikibase-formula-header-format' );
 			$formulaInfo->rawParams(
-				wfMessage( 'math-wikibase-formula' )->inContentLanguage(),
+				$this->msg( 'math-wikibase-formula' )->inContentLanguage(),
 				$math
 			);
 			$output->addHTML( Html::rawElement( "p", [], $formulaInfo->inContentLanguage()->parse() ) );
 		}
 
-		$labelName = wfMessage(
+		$labelName = $this->msg(
 			'math-wikibase-formula-header-format',
-			wfMessage( 'math-wikibase-formula-name' )->inContentLanguage(),
+			$this->msg( 'math-wikibase-formula-name' )->inContentLanguage(),
 			$info->getLabel()
 		)->inContentLanguage()->parse();
 		$output->addHTML( Html::rawElement( "p", [], $labelName ) );
 
 		if ( isset( $matches[2] ) ) {
-			$labelType = wfMessage(
+			$labelType = $this->msg(
 				'math-wikibase-formula-header-format',
-				wfMessage( 'math-wikibase-formula-type' )->inContentLanguage(),
+				$this->msg( 'math-wikibase-formula-type' )->inContentLanguage(),
 				$matches[1]
 			)->inContentLanguage()->parse();
 			$output->addHTML( Html::rawElement( "p", [], $labelType ) );
@@ -207,30 +207,30 @@ class SpecialMathWikibase extends SpecialPage {
 		} else {
 			$description = $info->getDescription();
 		}
-		$labelDesc = wfMessage(
+		$labelDesc = $this->msg(
 			'math-wikibase-formula-header-format',
-			wfMessage( 'math-wikibase-formula-description' )->inContentLanguage(),
+			$this->msg( 'math-wikibase-formula-description' )->inContentLanguage(),
 			$description
 		)->inContentLanguage()->parse();
 		$output->addHTML( Html::rawElement( "p", [], $labelDesc ) );
 
 		// add parts of formula
 		if ( $info->hasParts() ) {
-			$elementsHeader = wfMessage( 'math-wikibase-formula-elements-header' )
+			$elementsHeader = $this->msg( 'math-wikibase-formula-elements-header' )
 				->inContentLanguage()->plain();
 			$output->addHTML( self::createHTMLHeader( $elementsHeader ) );
 			$output->addHTML( $info->generateTableOfParts() );
 		}
 
 		// add link information
-		$wikibaseHeader = wfMessage(
+		$wikibaseHeader = $this->msg(
 			'math-wikibase-formula-link-header',
 			$info->getDescription()
 		)->inContentLanguage()->plain();
 
 		$output->addHTML( self::createHTMLHeader( $wikibaseHeader ) );
 
-		$url = MathWikibaseConnector::buildURL( $qid );
+		$url = $this->wikibase->buildURL( $qid );
 		$link = Html::linkButton( $url, [ "href" => $url ] );
 		$output->addHTML( Html::rawElement( "p", [], $link ) );
 	}
@@ -251,7 +251,7 @@ class SpecialMathWikibase extends SpecialPage {
 	 * Check whether Wikibase is available or not
 	 * @return bool
 	 */
-	public static function isWikibaseAvailable() {
+	public static function isWikibaseAvailable(): bool {
 		return ExtensionRegistry::getInstance()->isLoaded( 'WikibaseClient' );
 	}
 }

@@ -5,9 +5,9 @@ namespace MediaWiki\Extension\AbuseFilter\Consequences;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Linker\LinkTarget;
+use MediaWiki\User\UserIdentity;
 use Psr\Log\LoggerInterface;
-use Title;
-use User;
 
 class ConsequencesExecutorFactory {
 	public const SERVICE_NAME = 'AbuseFilterConsequencesExecutorFactory';
@@ -51,12 +51,12 @@ class ConsequencesExecutorFactory {
 	}
 
 	/**
-	 * @param User $user
-	 * @param Title $title
+	 * @param UserIdentity $user
+	 * @param LinkTarget $title
 	 * @param VariableHolder $vars
 	 * @return ConsequencesExecutor
 	 */
-	public function newExecutor( User $user, Title $title, VariableHolder $vars ): ConsequencesExecutor {
+	public function newExecutor( UserIdentity $user, LinkTarget $title, VariableHolder $vars ): ConsequencesExecutor {
 		return new ConsequencesExecutor(
 			$this->consLookup,
 			$this->consFactory,

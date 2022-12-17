@@ -1,6 +1,6 @@
 <?php
 /**
- * Helper functions for contacting Parsoid/RESTBase.
+ * Helper functions for contacting Parsoid/RESTBase from the action API.
  *
  * @file
  * @ingroup Extensions
@@ -8,22 +8,44 @@
  * @license MIT
  */
 
+namespace MediaWiki\Extension\VisualEditor;
+
+use Config;
+use Language;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use Message;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use StatusValue;
+use Title;
+use WebRequest;
 
 trait ApiParsoidTrait {
 
 	/**
-	 * @var VirtualRESTServiceClient
+	 * @var ParsoidHelper
 	 */
-	protected $serviceClient = null;
+	private $helper = null;
 
 	/**
 	 * @var LoggerInterface
 	 */
-	protected $logger = null;
+	private $logger = null;
+
+	/**
+	 * @return ParsoidHelper
+	 */
+	protected function getHelper(): ParsoidHelper {
+		if ( !$this->helper ) {
+			$this->helper = new ParsoidHelper(
+				$this->getConfig(),
+				$this->getLogger(),
+				$this->getRequest()->getHeader( 'Cookie' )
+			);
+		}
+		return $this->helper;
+	}
 
 	/**
 	 * @return LoggerInterface
@@ -37,133 +59,6 @@ trait ApiParsoidTrait {
 	 */
 	protected function setLogger( LoggerInterface $logger ) {
 		$this->logger = $logger;
-	}
-
-	/**
-	 * Creates the virtual REST service object to be used in VE's API calls. The
-	 * method determines whether to instantiate a ParsoidVirtualRESTService or a
-	 * RestbaseVirtualRESTService object based on configuration directives: if
-	 * $wgVirtualRestConfig['modules']['restbase'] is defined, RESTBase is chosen,
-	 * otherwise Parsoid is used (either by using the MW Core config, or the
-	 * VE-local one).
-	 *
-	 * @return VirtualRESTService the VirtualRESTService object to use
-	 */
-	protected function getVRSObject(): VirtualRESTService {
-		global $wgVisualEditorParsoidAutoConfig;
-		// the params array to create the service object with
-		$params = [];
-		// the VRS class to use, defaults to Parsoid
-		$class = ParsoidVirtualRESTService::class;
-		// The global virtual rest service config object, if any
-		$vrs = $this->getConfig()->get( 'VirtualRestConfig' );
-		if ( isset( $vrs['modules'] ) && isset( $vrs['modules']['restbase'] ) ) {
-			// if restbase is available, use it
-			$params = $vrs['modules']['restbase'];
-			// backward compatibility
-			$params['parsoidCompat'] = false;
-			$class = RestbaseVirtualRESTService::class;
-		} elseif ( isset( $vrs['modules'] ) && isset( $vrs['modules']['parsoid'] ) ) {
-			// there's a global parsoid config, use it next
-			$params = $vrs['modules']['parsoid'];
-			$params['restbaseCompat'] = true;
-		} elseif ( $wgVisualEditorParsoidAutoConfig ) {
-			$params = $vrs['modules']['parsoid'] ?? [];
-			$params['restbaseCompat'] = true;
-			// forward cookies on private wikis
-			$params['forwardCookies'] = !MediaWikiServices::getInstance()
-				->getPermissionManager()->isEveryoneAllowed( 'read' );
-		} else {
-			// No global modules defined, so no way to contact the document server.
-			$this->dieWithError( 'apierror-visualeditor-docserver-unconfigured', 'no_vrs' );
-		}
-		// merge the global and service-specific params
-		if ( isset( $vrs['global'] ) ) {
-			$params = array_merge( $vrs['global'], $params );
-		}
-		// set up cookie forwarding
-		if ( $params['forwardCookies'] ) {
-			$params['forwardCookies'] = $this->getRequest()->getHeader( 'Cookie' );
-		} else {
-			$params['forwardCookies'] = false;
-		}
-		// create the VRS object and return it
-		return new $class( $params );
-	}
-
-	/**
-	 * Creates the object which directs queries to the virtual REST service, depending on the path.
-	 *
-	 * @return VirtualRESTServiceClient
-	 */
-	protected function getVRSClient(): VirtualRESTServiceClient {
-		if ( !$this->serviceClient ) {
-			$this->serviceClient = new VirtualRESTServiceClient(
-				MediaWikiServices::getInstance()->getHttpRequestFactory()->createMultiClient() );
-			$this->serviceClient->mount( '/restbase/', $this->getVRSObject() );
-		}
-		return $this->serviceClient;
-	}
-
-	/**
-	 * Accessor function for all RESTbase requests
-	 *
-	 * @param Title $title The title of the page to use as the parsing context
-	 * @param string $method The HTTP method, either 'GET' or 'POST'
-	 * @param string $path The RESTbase api path
-	 * @param array $params Request parameters
-	 * @param array $reqheaders Request headers
-	 * @return array The RESTbase server's response, 'code', 'reason', 'headers' and 'body'
-	 */
-	protected function requestRestbase(
-		Title $title, string $method, string $path, array $params, array $reqheaders = []
-	): array {
-		// Should be synchronised with modules/ve-mw/init/ve.init.mw.ArticleTargetLoader.js
-		$reqheaders += [
-			'Accept' =>
-				'text/html; charset=utf-8; profile="https://www.mediawiki.org/wiki/Specs/HTML/2.0.0"',
-			'Accept-Language' => self::getPageLanguage( $title )->getCode(),
-			'User-Agent' => 'VisualEditor-MediaWiki/' . MW_VERSION,
-			'Api-User-Agent' => 'VisualEditor-MediaWiki/' . MW_VERSION,
-			'Promise-Non-Write-API-Action' => 'true',
-		];
-		$request = [
-			'method' => $method,
-			'url' => '/restbase/local/v1/' . $path,
-			( $method === 'GET' ? 'query' : 'body' ) => $params,
-			'headers' => $reqheaders,
-		];
-		$response = $this->getVRSClient()->run( $request );
-		if ( $response['code'] === 200 && $response['error'] === "" ) {
-			// If response was served directly from Varnish, use the response
-			// (RP) header to declare the cache hit and pass the data to the client.
-			$headers = $response['headers'];
-			if ( isset( $headers['x-cache'] ) && strpos( $headers['x-cache'], 'hit' ) !== false ) {
-				$this->getRequest()->response()->header( 'X-Cache: cached-response=true' );
-			}
-		} elseif ( $response['error'] !== '' ) {
-			$this->dieWithError(
-				[ 'apierror-visualeditor-docserver-http-error', wfEscapeWikiText( $response['error'] ) ],
-				'apierror-visualeditor-docserver-http-error'
-			);
-		} else {
-			// error null, code not 200
-			$this->getLogger()->warning(
-				__METHOD__ . ": Received HTTP {code} from RESTBase",
-				[
-					'code' => $response['code'],
-					'trace' => ( new Exception )->getTraceAsString(),
-					'response' => [ 'body' => $response['body'] ],
-					'requestPath' => $path,
-					'requestIfMatch' => $reqheaders['If-Match'] ?? '',
-				]
-			);
-			$this->dieWithError(
-				[ 'apierror-visualeditor-docserver-http', $response['code'] ],
-				'apierror-visualeditor-docserver-http'
-			);
-		}
-		return $response;
 	}
 
 	/**
@@ -207,6 +102,26 @@ trait ApiParsoidTrait {
 	}
 
 	/**
+	 * @param StatusValue $status
+	 */
+	private function forwardErrorsAndCacheHeaders( StatusValue $status ) {
+		if ( !$status->isOK() ) {
+			$this->dieStatus( $status );
+		}
+
+		$response = $status->getValue();
+		// Only set when using RESTBase
+		if ( isset( $response['code'] ) && $response['code'] === 200 ) {
+			// If response was served directly from Varnish, use the response
+			// (RP) header to declare the cache hit and pass the data to the client.
+			$headers = $response['headers'];
+			if ( isset( $headers['x-cache'] ) && strpos( $headers['x-cache'], 'hit' ) !== false ) {
+				$this->getRequest()->response()->header( 'X-Cache: cached-response=true' );
+			}
+		}
+	}
+
+	/**
 	 * Request page HTML from RESTBase
 	 *
 	 * @param RevisionRecord $revision Page revision
@@ -214,14 +129,13 @@ trait ApiParsoidTrait {
 	 */
 	protected function requestRestbasePageHtml( RevisionRecord $revision ): array {
 		$title = Title::newFromLinkTarget( $revision->getPageAsLinkTarget() );
-		return $this->requestRestbase(
-			$title,
-			'GET',
-			'page/html/' . urlencode( $title->getPrefixedDBkey() ) .
-				'/' . $revision->getId() .
-				'?redirect=false&stash=true',
-			[]
-		);
+		$lang = self::getPageLanguage( $title );
+
+		$status = $this->getHelper()->requestRestbasePageHtml( $revision, $lang );
+
+		$this->forwardErrorsAndCacheHeaders( $status );
+
+		return $status->getValue();
 	}
 
 	/**
@@ -236,33 +150,13 @@ trait ApiParsoidTrait {
 	protected function transformHTML(
 		Title $title, string $html, int $oldid = null, string $etag = null
 	): array {
-		$data = [ 'html' => $html, 'scrub_wikitext' => 1 ];
-		$path = 'transform/html/to/wikitext/' . urlencode( $title->getPrefixedDBkey() ) .
-			( $oldid === null ? '' : '/' . $oldid );
+		$lang = self::getPageLanguage( $title );
 
-		// Adapted from RESTBase mwUtil.parseETag()
-		// ETag is not expected when creating a new page (oldid=0)
-		if ( $oldid && !( preg_match( '/
-			^(?:W\\/)?"?
-			' . preg_quote( "$oldid", '/' ) . '
-			(?:\\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))
-			(?:\\/([^"]+))?
-			"?$
-		/x', $etag ) ) ) {
-			$this->getLogger()->info(
-				__METHOD__ . ": Received funny ETag from client: '{etag}'",
-				[
-					'etag' => $etag,
-					'oldid' => $oldid,
-					'requestPath' => $path,
-				]
-			);
-		}
-		return $this->requestRestbase(
-			$title,
-			'POST', $path, $data,
-			[ 'If-Match' => $etag ]
-		);
+		$status = $this->getHelper()->transformHTML( $title, $html, $oldid, $etag, $lang );
+
+		$this->forwardErrorsAndCacheHeaders( $status );
+
+		return $status->getValue();
 	}
 
 	/**
@@ -278,17 +172,13 @@ trait ApiParsoidTrait {
 	protected function transformWikitext(
 		Title $title, string $wikitext, bool $bodyOnly, int $oldid = null, bool $stash = false
 	): array {
-		return $this->requestRestbase(
-			$title,
-			'POST',
-			'transform/wikitext/to/html/' . urlencode( $title->getPrefixedDBkey() ) .
-				( $oldid === null ? '' : '/' . $oldid ),
-			[
-				'wikitext' => $wikitext,
-				'body_only' => $bodyOnly ? 1 : 0,
-				'stash' => $stash ? 1 : 0
-			]
-		);
+		$lang = self::getPageLanguage( $title );
+
+		$status = $this->getHelper()->transformWikitext( $title, $wikitext, $bodyOnly, $oldid, $stash, $lang );
+
+		$this->forwardErrorsAndCacheHeaders( $status );
+
+		return $status->getValue();
 	}
 
 	/**
@@ -317,6 +207,13 @@ trait ApiParsoidTrait {
 	 * @return never
 	 */
 	abstract public function dieWithError( $msg, $code = null, $data = null, $httpCode = null );
+
+	/**
+	 * @see ApiBase
+	 * @param StatusValue $status
+	 * @return never
+	 */
+	abstract public function dieStatus( StatusValue $status );
 
 	/**
 	 * @see ContextSource

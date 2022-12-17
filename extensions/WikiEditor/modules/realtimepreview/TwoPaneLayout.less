@@ -17,37 +17,15 @@
 		border: 1px solid @colorGray12;
 		border-width: 0 0 0 1px;
 		flex: 1 1 0;
-		overflow: auto;
-		padding: 0 6px;
-	}
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		// Should match ResizingDragBar.static.MIN_PANE_SIZE in ResizingBar.js
+		min-width: 248px;
 
-	@loadingbar-width: 20%;
-
-	// stylelint-disable-next-line selector-pseudo-element-colon-notation
-	.ext-WikiEditor-twopanes-pane2.ext-WikiEditor-twopanes-loading::before {
-		position: absolute;
-		top: 0;
-		z-index: 5;
-		display: block;
-		opacity: 1;
-		content: ' ';
-		background-color: @color-primary;
-		width: @loadingbar-width;
-		height: 4px;
-		// Hide the loading bar to start with; it'll be shown if the loading state persists for more than 1s.
-		visibility: hidden;
-		animation: loadingbar 1.5s 1s infinite linear alternate;
-	}
-
-	@keyframes loadingbar {
-		0% {
-			visibility: visible;
-			left: 0;
-		}
-
-		100% {
-			// stylelint-disable-next-line plugin/no-unsupported-browser-features
-			left: calc( 100% - @loadingbar-width );
+		.ext-WikiEditor-realtimepreview-preview {
+			overflow: auto;
+			height: 100%;
 		}
 	}
 }

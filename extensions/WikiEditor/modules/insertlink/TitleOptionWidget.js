@@ -17,7 +17,7 @@ function InsertLinkTitleOptionWidget( config ) {
 		config.data = config.url;
 		// Prepend http:// if there is no protocol (i.e. if it starts with "www.").
 		// @TODO This is repeated when the link is inserted (in jquery.wikiEditor.dialogs.config.js).
-		if ( !config.url.match( /^[a-z]+:\/\/./ ) ) {
+		if ( !/^[a-z]+:\/\/./.test( config.url ) ) {
 			config.url = 'http://' + config.url;
 		}
 		config.missing = false;

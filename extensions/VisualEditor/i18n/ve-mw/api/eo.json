@@ -3,15 +3,14 @@
 		"authors": [
 			"KuboF",
 			"Kvardek du",
+			"Matma Rex",
 			"Mirin",
 			"NMaia",
-			"Psychoslave",
-			"Matma Rex"
+			"Psychoslave"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Neniu seriigaĵo kun tiu ŝlosilo troviĝis en kaŝmemoro.",
 	"apierror-visualeditor-difffailed": "Diff malsukcesita",
-	"apierror-visualeditor-docserver-unconfigured": "La VirtualRESTService de la dokumento ne estas difinita; vidu la paĝon https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Eraro dum kontaktado de la servilo de Parsoid/RESTBase",
 	"apierror-visualeditor-latestnotfound": "Ne povis trovi plej lastan version de titolo",
 	"apihelp-visualeditor-description": "Liveras HTML5an kodon por paĝo el la servo de Parsoid.",

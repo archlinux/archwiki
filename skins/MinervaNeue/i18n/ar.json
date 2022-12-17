@@ -10,11 +10,12 @@
 			"Mido",
 			"OsamaK",
 			"Shbib Al-Subaie",
+			"أَحمد",
 			"ديفيد",
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"أَحمد"
+			"FShbib"
 		]
 	},
 	"minerva-last-modified-date": "آخر تعديل بتاريخ $1، في $2",
@@ -63,16 +64,20 @@
 	"minerva-page-actions-info": "معلومات الصفحة",
 	"minerva-page-actions-permalink": "وصلة دائمة",
 	"minerva-page-actions-backlinks": "ماذا يصل هنا",
+	"minerva-page-actions-change-block": "تغيير المنع",
 	"minerva-page-actions-cite": "استشهد بالصفحة",
 	"minerva-page-actions-move": "انقل",
 	"minerva-page-actions-delete": "احذف",
 	"minerva-page-actions-protect": "احمِ",
+	"minerva-page-actions-unblock": "رفع المنع عن المستخدم",
 	"minerva-page-actions-unprotect": "رفع الحماية",
 	"minerva-page-actions-user-groups": "مجموعات المستخدم",
+	"minerva-page-actions-block": "منع المستخدم",
 	"minerva-page-actions-logs": "سجلات",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}} عنصر",
 	"minerva-page-actions-language-switcher": "اللغات",
 	"minerva-page-actions-history": "التاريخ",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|مناقشة]]",
 	"minerva-talk-explained": "النقاشات النشطة",
 	"minerva-talk-explained-empty": "لا توجد مناقشات في هذه الصفحة.",
 	"minerva-talk-full-page": "اقرأ كصفحة ويكي",
@@ -85,5 +90,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "عرض تصنيفات الصفحات",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "تم تحسين معالجة مشاكل الصفحة",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "سيتم تضمين موضوعات الصفحة (قالب:صندوق رسالة مقالة) في المقالة.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "لسوء الحظ، تجميع النتائج حسب الصفحة غير متاح على الجوال، إذا كنت ترغب في استخدام ميزة المجموعة حسب الصفحة فتُرجَى زيارة موقع سطح المكتب."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "لسوء الحظ، تجميع النتائج حسب الصفحة غير متاح على الجوال، إذا كنت ترغب في استخدام ميزة المجموعة حسب الصفحة فتُرجَى زيارة موقع سطح المكتب.",
+	"minerva.css": "/ * سيتم تحميل جميع CSS هنا لمستخدمي MinervaNeue skin * /",
+	"minerva.js": "/ * سيتم تحميل جميع JavaScript هنا لمستخدمي MinervaNeue skin * /"
 }

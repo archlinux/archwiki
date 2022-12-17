@@ -39,7 +39,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "પાનું અસ્તિત્વ ધરાવતું નથી.",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "અમાન્ય મથાળું.",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "બાહ્ય કડી",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "અન્ય સ્થળે પાનાની મોજૂદગી ચકાસાઈ રહી છે",
 	"wikieditor-toolbar-tool-link-int-invalid": "આ શીર્ષક અમાન્ય છે.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "તમે જણાવેલ URL  પરથી લાગે છે કે તમે અન્ય વિકિ સાથે કડી જોડવા માંગો છો.\nશું તમે આંતરીક કડી બનાવવા માંગો છો?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "આંતરિક કડી",

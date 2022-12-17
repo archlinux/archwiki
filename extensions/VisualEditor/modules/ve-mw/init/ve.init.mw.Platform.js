@@ -15,7 +15,7 @@
  */
 ve.init.mw.Platform = function VeInitMwPlatform() {
 	// Parent constructor
-	ve.init.Platform.call( this );
+	ve.init.mw.Platform.super.call( this );
 
 	// Properties
 	this.externalLinkUrlProtocolsRegExp = new RegExp(

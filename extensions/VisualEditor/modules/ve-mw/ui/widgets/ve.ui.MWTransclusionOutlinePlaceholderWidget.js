@@ -1,4 +1,7 @@
 /**
+ * Sidebar item for a template which has yet to be added, its name is not yet
+ * given.
+ *
  * @class
  * @extends ve.ui.MWTransclusionOutlinePartWidget
  *
@@ -15,6 +18,8 @@ ve.ui.MWTransclusionOutlinePlaceholderWidget = function VeUiMWTransclusionOutlin
 		icon: 'puzzle',
 		label: label
 	} );
+
+	this.$element.addClass( 've-ui-mwTransclusionOutlinePlaceholderWidget' );
 };
 
 /* Inheritance */

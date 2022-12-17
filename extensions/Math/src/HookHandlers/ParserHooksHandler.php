@@ -157,12 +157,6 @@ class ParserHooksHandler implements
 		}
 		foreach ( $this->mathLazyRenderBatch as $key => [ $renderer, $renderParser ] ) {
 			$value = $this->mathPostTagHook( $renderer, $renderParser );
-			// Workaround for https://phabricator.wikimedia.org/T103269
-			$text = preg_replace(
-				'/(<mw:editsection[^>]*>.*?)' . preg_quote( $key ) . '(.*?)<\/mw:editsection>/',
-				'\1 $' . htmlspecialchars( $renderer->getTex() ) . '\2</mw:editsection>',
-				$text
-			);
 			$count = 0;
 			$text = str_replace( $key, $value, $text, $count );
 			if ( $count ) {

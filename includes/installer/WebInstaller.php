@@ -261,6 +261,7 @@ class WebInstaller extends Installer {
 
 		# Execute the page.
 		$this->currentPageName = $page->getName();
+		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable pageName is not null here
 		$this->startPageWrapper( $pageName );
 
 		if ( $page->isSlow() ) {
@@ -274,6 +275,7 @@ class WebInstaller extends Installer {
 		if ( $result == 'skip' ) {
 			# Page skipped without explicit submission.
 			# Skip it when we click "back" so that we don't just go forward again.
+			// @phan-suppress-next-line PhanTypeMismatchDimAssignment pageName is not null here
 			$this->skippedPages[$pageName] = true;
 			$result = 'continue';
 		} else {
@@ -1067,7 +1069,7 @@ class WebInstaller extends Installer {
 		foreach ( $varNames as $name ) {
 			$value = $this->request->getVal( $prefix . $name );
 			// T32524, do not trim passwords
-			if ( stripos( $name, 'password' ) === false ) {
+			if ( $value !== null && stripos( $name, 'password' ) === false ) {
 				$value = trim( $value );
 			}
 			$newValues[$name] = $value;

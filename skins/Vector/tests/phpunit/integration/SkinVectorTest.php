@@ -2,12 +2,13 @@
 namespace MediaWiki\Skins\Vector\Tests\Integration;
 
 use Exception;
-use HashConfig;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Skins\Vector\SkinVector22;
+use MediaWiki\Skins\Vector\SkinVectorLegacy;
 use MediaWikiIntegrationTestCase;
 use ReflectionMethod;
 use RequestContext;
 use Title;
-use Vector\SkinVector;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -15,16 +16,16 @@ use Wikimedia\TestingAccessWrapper;
  * @package MediaWiki\Skins\Vector\Tests\Unit
  * @group Vector
  * @group Skins
- *
- * @coversDefaultClass \Vector\SkinVector
  */
 class SkinVectorTest extends MediaWikiIntegrationTestCase {
 
 	/**
-	 * @return SkinVector
+	 * @return SkinVectorLegacy
 	 */
 	private function provideVectorTemplateObject() {
-		return new SkinVector( [ 'name' => 'vector' ] );
+		$skinFactory = MediaWikiServices::getInstance()->getSkinFactory();
+		$template = $skinFactory->makeSkin( 'vector' );
+		return $template;
 	}
 
 	/**
@@ -47,6 +48,10 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function provideGetTocData() {
+		$config = [
+			'VectorTableOfContentsBeginning' => true,
+			'VectorTableOfContentsCollapseAtCount' => 1
+		];
 		$tocData = [
 			'number-section-count' => 2,
 			'array-sections' => [
@@ -59,108 +64,144 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 					'fromtitle' => 'Test',
 					'byteoffset' => 231,
 					'anchor' => 'A',
+					'array-sections' =>	[],
+					'is-top-level-section' => true,
+					'is-parent-section' => false,
+				],
+				[
+					'toclevel' => 1,
+					'level' => '4',
+					'line' => 'B',
+					'number' => '2',
+					'index' => '2',
+					'fromtitle' => 'Test',
+					'byteoffset' => 245,
+					'anchor' => 'B',
+					'array-sections' =>	[],
+					'is-top-level-section' => true,
+					'is-parent-section' => false,
+				]
+			]
+		];
+		$nestedTocData = [
+			'number-section-count' => 2,
+			'array-sections' => [
+				[
+					'toclevel' => 1,
+					'level' => '2',
+					'line' => 'A',
+					'number' => '1',
+					'index' => '1',
+					'fromtitle' => 'Test',
+					'byteoffset' => 231,
+					'anchor' => 'A',
 					'array-sections' => [
-						[
-							'toclevel' => 2,
-							'level' => '4',
-							'line' => 'A1',
-							'number' => '1.1',
-							'index' => '2',
-							'fromtitle' => 'Test',
-							'byteoffset' => 245,
-							'anchor' => 'A1'
-						]
-					]
+						'toclevel' => 2,
+						'level' => '4',
+						'line' => 'A1',
+						'number' => '1.1',
+						'index' => '2',
+						'fromtitle' => 'Test',
+						'byteoffset' => 245,
+						'anchor' => 'A1',
+						'array-sections' => [],
+						'is-top-level-section' => false,
+						'is-parent-section' => false,
+					],
+					'is-top-level-section' => true,
+					'is-parent-section' => true,
 				],
 			]
 		];
 
+		$expectedConfigData = [
+			'is-vector-toc-beginning-enabled' => $config[ 'VectorTableOfContentsBeginning' ],
+			'vector-is-collapse-sections-enabled' =>
+				$tocData[ 'number-section-count' ] >= $config[ 'VectorTableOfContentsCollapseAtCount' ]
+		];
+		$expectedNestedTocData = array_merge( $nestedTocData, $expectedConfigData );
+
+		// qqx output
+		$buttonLabel = '(vector-toc-toggle-button-label: A)';
+		$expectedNestedTocData[ 'array-sections' ][ 0 ][ 'vector-button-label' ] = $buttonLabel;
+
 		return [
 			// When zero sections
 			[
-				// $tocData
 				[],
-				// wgVectorTableOfContentsCollapseAtCount
-				1,
-				// expected 'vector-is-collapse-sections-enabled' value
-				false
+				$config,
+				// TOC data is empty when given an empty array
+				[]
 			],
 			// When number of multiple sections is lower than configured value
 			[
-				// $tocData
 				$tocData,
-				// wgVectorTableOfContentsCollapseAtCount
-				3,
-				// expected 'vector-is-collapse-sections-enabled' value
-				false
+				array_merge( $config, [ 'VectorTableOfContentsCollapseAtCount' => 3 ] ),
+				// 'vector-is-collapse-sections-enabled' value is false
+				array_merge( $tocData, $expectedConfigData, [
+					'vector-is-collapse-sections-enabled' => false
+				] )
 			],
 			// When number of multiple sections is equal to the configured value
 			[
-				// $tocData
 				$tocData,
-				// wgVectorTableOfContentsCollapseAtCount
-				2,
-				// expected 'vector-is-collapse-sections-enabled' value
-				true
+				array_merge( $config, [ 'VectorTableOfContentsCollapseAtCount' => 2 ] ),
+				// 'vector-is-collapse-sections-enabled' value is true
+				array_merge( $tocData, $expectedConfigData )
 			],
 			// When number of multiple sections is higher than configured value
 			[
-				// $tocData
 				$tocData,
-				// wgVectorTableOfContentsCollapseAtCount
-				1,
-				// expected 'vector-is-collapse-sections-enabled' value
-				true
+				array_merge( $config, [ 'VectorTableOfContentsCollapseAtCount' => 1 ] ),
+				// 'vector-is-collapse-sections-enabled' value is true
+				array_merge( $tocData, $expectedConfigData )
+			],
+			// When "Beginning" TOC section is configured to be turned off
+			[
+				$tocData,
+				array_merge( $config, [ 'VectorTableOfContentsBeginning' => false ] ),
+				// 'is-vector-toc-beginning-enabled' value is false
+				array_merge( $tocData, $expectedConfigData, [
+					'is-vector-toc-beginning-enabled' => false
+				] )
+			],
+			// When TOC has sections with top level parent sections
+			[
+				$nestedTocData,
+				$config,
+				// 'vector-button-label' is provided for top level parent sections
+				$expectedNestedTocData
 			],
 		];
 	}
 
 	/**
-	 * @covers ::getTocData
+	 * @covers \MediaWiki\Skins\Vector\SkinVector22::getTocData
 	 * @dataProvider provideGetTOCData
 	 */
 	public function testGetTocData(
 		array $tocData,
-		int $configValue,
-		bool $expected
+		array $config,
+		array $expected
 	) {
-		$this->setMwGlobals( [
-			'wgVectorTableOfContentsCollapseAtCount' => $configValue
-		] );
+		$this->overrideConfigValues( $config );
+		$this->setUserLang( 'qqx' );
 
-		$skinVector = new SkinVector( [ 'name' => 'vector-2022' ] );
+		$skinVector = new SkinVector22( [ 'name' => 'vector-2022' ] );
 		$openSkinVector = TestingAccessWrapper::newFromObject( $skinVector );
 		$data = $openSkinVector->getTocData( $tocData );
-
-		if ( empty( $tocData ) ) {
-			$this->assertEquals( [], $data, 'toc data is empty when given an empty array' );
-			return;
-		}
-		$this->assertArrayHasKey( 'vector-is-collapse-sections-enabled', $data );
-		$this->assertEquals(
-			$expected,
-			$data['vector-is-collapse-sections-enabled'],
-			'vector-is-collapse-sections-enabled has correct value'
-		);
-		$this->assertArrayHasKey( 'array-sections', $data );
+		$this->assertEquals( $expected, $data );
 	}
 
 	/**
-	 * @covers ::getTemplateData
+	 * @covers \MediaWiki\Skins\Vector\SkinVector::getTemplateData
 	 */
 	public function testGetTemplateData() {
 		$title = Title::newFromText( 'SkinVector' );
-		$context = RequestContext::getMain();
-		$context->setTitle( $title );
+		$context = RequestContext::newExtraneousContext( $title );
 		$context->setLanguage( 'fr' );
 		$vectorTemplate = $this->provideVectorTemplateObject();
-		$this->setTemporaryHook( 'PersonalUrls', [
-			static function ( &$personal_urls, &$title, $skin ) {
-				$personal_urls = [
-					'pt-1' => [ 'text' => 'pt1' ],
-				];
-			}
-		] );
+		$vectorTemplate->setContext( $context );
 		$this->setTemporaryHook( 'SkinTemplateNavigation::Universal', [
 			static function ( &$skinTemplate, &$content_navigation ) {
 				$content_navigation['actions'] = [
@@ -179,6 +220,9 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 					]
 				];
 				$content_navigation['views'] = [];
+				$content_navigation['user-menu'] = [
+					'pt-1' => [ 'text' => 'pt1' ],
+				];
 			}
 		] );
 		$openVectorTemplate = TestingAccessWrapper::newFromObject( $vectorTemplate );
@@ -203,13 +247,14 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 			[
 				// Provided by core
 				'id' => 'p-views',
-				'class' => 'mw-portlet mw-portlet-views emptyPortlet vector-menu vector-menu-tabs',
+				'class' => 'mw-portlet mw-portlet-views emptyPortlet ' .
+					'vector-menu-tabs vector-menu-tabs-legacy',
 				'html-tooltip' => '',
 				'html-items' => '',
 				'html-after-portal' => '',
 				'html-before-portal' => '',
 				'label' => $context->msg( 'views' )->text(),
-				'heading-class' => 'vector-menu-heading',
+				'heading-class' => '',
 				'is-dropdown' => false,
 			],
 			$views
@@ -218,19 +263,19 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 		$variants = $props['data-variants'];
 		$actions = $props['data-actions'];
 		$this->assertSame(
-			'mw-portlet mw-portlet-namespaces vector-menu vector-menu-tabs',
+			'mw-portlet mw-portlet-namespaces vector-menu-tabs vector-menu-tabs-legacy',
 			$namespaces['class']
 		);
 		$this->assertSame(
-			'mw-portlet mw-portlet-variants vector-menu-dropdown-noicon vector-menu vector-menu-dropdown',
+			'mw-portlet mw-portlet-variants vector-menu-dropdown',
 			$variants['class']
 		);
 		$this->assertSame(
-			'mw-portlet mw-portlet-cactions vector-menu-dropdown-noicon vector-menu vector-menu-dropdown',
+			'mw-portlet mw-portlet-cactions vector-menu-dropdown',
 			$actions['class']
 		);
 		$this->assertSame(
-			'mw-portlet mw-portlet-personal vector-user-menu-legacy vector-menu',
+			'mw-portlet mw-portlet-personal vector-user-menu-legacy',
 			$props['data-personal']['class']
 		);
 	}
@@ -370,7 +415,7 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerLanguageAlertRequirements
-	 * @covers ::shouldLanguageAlertBeInSidebar
+	 * @covers \MediaWiki\Skins\Vector\SkinVector::shouldLanguageAlertBeInSidebar
 	 * @param array $requirements
 	 * @param Title $title
 	 * @param array $getLanguagesCached
@@ -387,14 +432,13 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 		bool $shouldHideLanguages,
 		bool $expected
 	) {
-		$config = new HashConfig( array_merge( $requirements, [
+		$this->overrideConfigValues( array_merge( $requirements, [
 			'DefaultSkin' => 'vector-2022',
 			'VectorDefaultSkinVersion' => '2',
 			'VectorSkinMigrationMode' => true,
 		] ) );
-		$this->installMockMwServices( $config );
 
-		$mockSkinVector = $this->getMockBuilder( SkinVector::class )
+		$mockSkinVector = $this->getMockBuilder( SkinVector22::class )
 			->disableOriginalConstructor()
 			->onlyMethods( [ 'getTitle', 'getLanguagesCached','isLanguagesInContentAt', 'shouldHideLanguages' ] )
 			->getMock();
@@ -408,15 +452,14 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 			->willReturn( $shouldHideLanguages );
 
 		$shouldLanguageAlertBeInSidebarMethod = new ReflectionMethod(
-			SkinVector::class,
+			SkinVector22::class,
 			'shouldLanguageAlertBeInSidebar'
 		);
 		$shouldLanguageAlertBeInSidebarMethod->setAccessible( true );
 
 		$this->assertSame(
-			$shouldLanguageAlertBeInSidebarMethod->invoke( $mockSkinVector ),
-			$expected
+			$expected,
+			$shouldLanguageAlertBeInSidebarMethod->invoke( $mockSkinVector )
 		);
 	}
-
 }

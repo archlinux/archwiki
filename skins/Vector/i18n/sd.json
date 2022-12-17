@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Aursani",
 			"Mehtab ahmed",
 			"Sindhu",
@@ -21,7 +22,8 @@
 	"vector-languages": "ٻوليون",
 	"vector-language-button-aria-label": "ڪنھن مضمون ڏانھن ڪنھن ٻي ٻوليءَ ۾ وڃو. {{PLURAL:$1|$1 ٻوليءَ|$1 ٻولين ۾}} موجود آھي",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ٻولي|$1 ٻوليون}}",
-	"vector-language-redirect-to-top": "ھن {{SITENAME}} تي ٻوليءَ جا ڳنڍڻا صفحي جي مٿان آھن، مضمون جي عنوان کان وٺي. [[#p-lang-btn|مٿي وڃو]].",
+	"vector-no-language-button-label": "ٻوليون شامل ڪريو",
+	"vector-language-redirect-to-top": "ھن {{SITENAME}} تي ٻوليءَ جا ڳنڍڻا صفحي جي مٿان آھن، مضمون جي عنوان کان اڳتي. [[#p-lang-btn|مٿي وڃو]].",
 	"vector-language-variant-switcher-label": "ٻوليءَ جو ويرينٽ بدلايو",
 	"vector-action-addsection": "موضوع شامل ڪريو",
 	"vector-action-delete": "ڊاھيو",
@@ -39,14 +41,14 @@
 	"vector-jumptocontent": "مواد ڏانھن ٽپ ڏيو",
 	"vector-more-actions": "وڌيڪ",
 	"vector-search-loader": "ڳولا صلاحون لاھيندي",
-	"vector-searchsuggest-containing": "اھي صفحا ڳوليو جن ۾ <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> آھي",
+	"vector-searchsuggest-containing": "اھي صفحا ڳوليو جن ۾ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> آھي",
 	"vector-intro-page": "Help:تعارف",
+	"vector-toc-heading": "فھرست",
+	"vector-toc-beginning": "شروعات",
+	"vector-toc-toggle-button-label": "سبسيڪشن $1 کي ٽوگل ڪريو",
 	"vector-anon-user-menu-pages": "ٻاھر نڪتل سنواريندڙن لاءِ صفحا",
 	"vector-anon-user-menu-pages-learn": "وڌيڪ ڄاڻيو",
 	"vector-anon-user-menu-pages-label": "سنوارڻ بابت وڌيڪ ڄاڻيو",
-	"vector-personal-more-label": "واپرائيندڙ جا ڳنڍڻا",
 	"vector-main-menu-tooltip": "مک مينيو",
-	"tooltip-vector-anon-user-menu-title": "وڌيڪ چارا",
-	"vector-menu-checkbox-expanded": "پکيڙيل",
-	"vector-menu-checkbox-collapsed": "ويڙهيل"
+	"tooltip-vector-anon-user-menu-title": "وڌيڪ چارا"
 }

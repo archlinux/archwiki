@@ -52,7 +52,7 @@ ve.dm.Model.static.matchTagNames = null;
  * For more information about element matching, see ve.dm.ModelRegistry.
  *
  * @static
- * @property {Array}
+ * @property {(string|RegExp)[]|null}
  * @inheritable
  */
 ve.dm.Model.static.matchRdfaTypes = null;
@@ -64,7 +64,7 @@ ve.dm.Model.static.matchRdfaTypes = null;
  * For more information about element matching, see ve.dm.ModelRegistry.
  *
  * @static
- * @property {Array}
+ * @property {(string|RegExp)[]|null}
  * @inheritable
  */
 ve.dm.Model.static.allowedRdfaTypes = [];
@@ -228,7 +228,7 @@ ve.dm.Model.static.getHashObject = function ( dataElement ) {
  * Array of RDFa types that this model should be a match candidate for.
  *
  * @static
- * @return {Array} Array of strings or regular expressions
+ * @return {(string|RegExp)[]|null} Array of strings or regular expressions
  */
 ve.dm.Model.static.getMatchRdfaTypes = function () {
 	return this.matchRdfaTypes;
@@ -238,7 +238,7 @@ ve.dm.Model.static.getMatchRdfaTypes = function () {
  * Extra RDFa types that the element is allowed to have.
  *
  * @static
- * @return {Array} Array of strings or regular expressions
+ * @return {(string|RegExp)[]|null} Array of strings or regular expressions
  */
 ve.dm.Model.static.getAllowedRdfaTypes = function () {
 	return this.allowedRdfaTypes;
@@ -273,9 +273,9 @@ ve.dm.Model.static.describeChanges = function ( attributeChanges ) {
 ve.dm.Model.static.describeChange = function ( key, change ) {
 	if ( ( typeof change.from === 'object' && change.from !== null ) || ( typeof change.to === 'object' && change.to !== null ) ) {
 		return ve.htmlMsg( 'visualeditor-changedesc-unknown', key );
-	} else if ( change.from === undefined ) {
+	} else if ( change.from === undefined || change.from === null ) {
 		return ve.htmlMsg( 'visualeditor-changedesc-set', key, this.wrapText( 'ins', change.to ) );
-	} else if ( change.to === undefined ) {
+	} else if ( change.to === undefined || change.to === null ) {
 		return ve.htmlMsg( 'visualeditor-changedesc-unset', key, this.wrapText( 'del', change.from ) );
 	} else if ( key === 'listItemDepth' ) {
 		// listItemDepth is a special key used on nodes which have isDiffedAsList set

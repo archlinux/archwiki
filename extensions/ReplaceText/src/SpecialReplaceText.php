@@ -790,7 +790,8 @@ class SpecialReplaceText extends SpecialPage {
 	function extractContext( $text, $target, $use_regex = false ) {
 		global $wgLang;
 
-		$cw = $this->getUser()->getOption( 'contextchars', 40 );
+		$cw = MediaWikiServices::getInstance()->getUserOptionsLookup()
+			->getOption( $this->getUser(), 'contextchars', 40 );
 
 		// Get all indexes
 		if ( $use_regex ) {

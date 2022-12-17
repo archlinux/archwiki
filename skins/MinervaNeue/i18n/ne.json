@@ -1,17 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bada Kaji",
 			"NehalDaveND",
 			"Nirajan pant",
 			"Parbat subedi",
 			"RajeshPandey",
 			"पर्वत सुबेदी",
+			"बडा काजी",
 			"बिप्लब आनन्द",
 			"राम प्रसाद जोशी",
 			"सरोज कुमार ढकाल",
 			"हिमाल सुबेदी",
-			"Bada Kaji",
-			"बडा काजी"
+			"CAPTAIN MEDUSA"
 		]
 	},
 	"minerva-last-modified-date": "अन्तिम सम्पादन $1, $2",
@@ -28,7 +29,7 @@
 	"mobile-frontend-main-menu-button-tooltip": "मुख्य सूची खोल्नुहोस्",
 	"mobile-frontend-main-menu-contributions": "योगदानहरू",
 	"mobile-frontend-main-menu-login": "प्रवेश गर्नुहोस्",
-	"mobile-frontend-main-menu-logout": "निर्गमन",
+	"mobile-frontend-main-menu-logout": "निर्गमन गर्नुहोस्",
 	"mobile-frontend-main-menu-nearby": "नजिकैको",
 	"mobile-frontend-main-menu-settings": "मेरो अभिरुचिहरू",
 	"mobile-frontend-main-menu-watchlist": "अवलोकनसूची",
@@ -54,6 +55,8 @@
 	"minerva-page-actions-backlinks": "यहाँ के जोडिन्छ",
 	"minerva-page-actions-cite": "लेख उद्दरण गर्नुहोस्",
 	"minerva-page-actions-move": "सार्नुहोस्",
+	"minerva-page-actions-delete": "मेट्ने",
+	"minerva-page-actions-protect": "सुरक्षित",
 	"minerva-page-actions-user-groups": "प्रयोगकर्ताको अधिकारहरू",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}} सामग्री",
 	"minerva-page-actions-language-switcher": "भाषाहरू",

@@ -23,7 +23,6 @@ const HISTORY_ICON = {
 const data = {
 	title: 'Audre Lorde',
 	heading: 'Introduction',
-	'is-visible': true,
 	'data-primary-action': {
 		id: 'p-lang-btn-sticky-header',
 		class: 'mw-interlanguage-selector',

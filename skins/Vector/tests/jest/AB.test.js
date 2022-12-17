@@ -1,74 +1,229 @@
-const mockConfig = require( './__mocks__/config.json' );
-const ABTestConfig = mockConfig.wgVectorWebABTestEnrollment;
-
-// Mock out virtual config.json file used in AB.js, before importing AB.js
-jest.mock( '../../resources/skins.vector.es6/config.json', () => {
-	return mockConfig;
-}, { virtual: true } );
 const AB = require( '../../resources/skins.vector.es6/AB.js' );
+const NAME_OF_EXPERIMENT = 'name-of-experiment';
+const TOKEN = 'token';
+const MW_EXPERIMENT_PARAM = {
+	name: NAME_OF_EXPERIMENT,
+	enabled: true,
+	buckets: {
+		unsampled: 0.5,
+		control: 0.25,
+		treatment: 0.25
+	}
+};
+
+// eslint-disable-next-line jsdoc/require-returns
+/**
+ * @param {Object} props
+ */
+function createInstance( props = {} ) {
+	const mergedProps = /** @type {AB.WebABTestProps} */ ( Object.assign( {
+		name: NAME_OF_EXPERIMENT,
+		buckets: {
+			unsampled: {
+				samplingRate: 0.5
+			},
+			control: {
+				samplingRate: 0.25
+			},
+			treatment: {
+				samplingRate: 0.25
+			}
+		},
+		token: TOKEN
+	}, props ) );
+
+	return AB( mergedProps );
+}
 
 describe( 'AB.js', () => {
-	const bucket = 'sampled';
-	const userId = '1';
+	const bucket = 'treatment';
 	const getBucketMock = jest.fn().mockReturnValue( bucket );
-	const toStringMock = jest.fn().mockReturnValue( userId );
 	mw.experiments.getBucket = getBucketMock;
-	// @ts-ignore
-	mw.user.getId = () => ( { toString: toStringMock } );
 
-	const expectedABTestGroupExperimentName = {
-		group: bucket,
-		experimentName: ABTestConfig.name
-	};
+	afterEach( () => {
+		document.body.removeAttribute( 'class' );
+	} );
 
-	describe( 'getBucketName', () => {
-		it( 'calls mw.experiments.getBucket with config data', () => {
-			expect( AB.test.getBucketName() ).toBe( bucket );
-			expect( getBucketMock ).toBeCalledWith( {
-				name: ABTestConfig.name,
-				enabled: ABTestConfig.enabled,
-				buckets: {
-					unsampled: ABTestConfig.buckets.unsampled.samplingRate,
-					control: ABTestConfig.buckets.control.samplingRate,
-					stickyHeaderDisabled: ABTestConfig.buckets.stickyHeaderDisabled.samplingRate,
-					stickyHeaderEnabled: ABTestConfig.buckets.stickyHeaderEnabled.samplingRate
-				}
-			}, userId );
-			expect( toStringMock ).toHaveBeenCalled();
+	describe( 'initialization when body tag does not contain bucket', () => {
+		let /** @type {jest.SpyInstance} */ hookMock;
+
+		beforeEach( () => {
+			hookMock = jest.spyOn( mw, 'hook' );
 		} );
-	} );
-	describe( 'getABTestGroupExperimentName', () => {
-		it( 'returns group and experiment name object', () => {
-			expect( AB.test.getABTestGroupExperimentName() )
-				.toEqual( expectedABTestGroupExperimentName );
-		} );
-	} );
-	describe( 'getEnabledExperiment', () => {
-		it( 'returns AB config data when enabled', () => {
-			expect( AB.getEnabledExperiment() ).toEqual(
-				Object.assign( {}, expectedABTestGroupExperimentName, ABTestConfig )
-			);
-		} );
-	} );
-	describe( 'initAB(', () => {
-		const hookMock = jest.fn().mockReturnValue( { fire: () => {} } );
-		const isAnonMock = jest.fn();
-		mw.user.isAnon = isAnonMock;
-		mw.hook = hookMock;
-		it( 'sends data to WikimediaEvents when the AB test is enabled ', () => {
-			isAnonMock.mockReturnValueOnce( false );
-			AB.initAB( 'sampled' );
+
+		it( 'sends data to WikimediaEvents when the bucket is part of sample (e.g. control)', () => {
+			getBucketMock.mockReturnValueOnce( 'control' );
+			createInstance();
 			expect( hookMock ).toHaveBeenCalled();
 		} );
-		it( 'doesnt send data to WikimediaEvents when the user is anon ', () => {
-			isAnonMock.mockReturnValueOnce( true );
-			AB.initAB( 'sampled' );
+		it( 'sends data to WikimediaEvents when the bucket is part of sample (e.g. treatment)', () => {
+			getBucketMock.mockReturnValueOnce( 'treatment' );
+			createInstance();
+			expect( hookMock ).toHaveBeenCalled();
+		} );
+		it( 'does not send data to WikimediaEvents when the bucket is unsampled ', () => {
+			getBucketMock.mockReturnValueOnce( 'unsampled' );
+			createInstance();
 			expect( hookMock ).not.toHaveBeenCalled();
 		} );
-		it( 'doesnt send data to WikimediaEvents when the bucket is unsampled ', () => {
-			isAnonMock.mockReturnValueOnce( false );
-			AB.initAB( 'unsampled' );
+	} );
+
+	describe( 'initialization when body tag contains bucket', () => {
+		let /** @type {jest.SpyInstance} */ hookMock;
+
+		beforeEach( () => {
+			hookMock = jest.spyOn( mw, 'hook' );
+		} );
+
+		it( 'sends data to WikimediaEvents when the bucket is part of sample (e.g. control)', () => {
+			document.body.classList.add( 'name-of-experiment-control' );
+			createInstance();
+			expect( hookMock ).toHaveBeenCalled();
+		} );
+		it( 'sends data to WikimediaEvents when the bucket is part of sample (e.g. treatment)', () => {
+			document.body.classList.add( 'name-of-experiment-treatment' );
+			createInstance();
+			expect( hookMock ).toHaveBeenCalled();
+		} );
+		it( 'does not send data to WikimediaEvents when the bucket is unsampled ', () => {
+			document.body.classList.add( 'name-of-experiment-unsampled' );
+			createInstance();
 			expect( hookMock ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'initialization when token is undefined', () => {
+		it( 'throws an error', () => {
+			expect( () => {
+				createInstance( { token: undefined } );
+			} ).toThrow( 'Tried to call `getBucket`' );
+		} );
+	} );
+
+	describe( 'getBucket when body tag does not contain AB class', () => {
+		it( 'calls mw.experiments.getBucket with config data', () => {
+			const experiment = createInstance();
+
+			expect( getBucketMock ).toBeCalledWith( MW_EXPERIMENT_PARAM, TOKEN );
+			expect( experiment.getBucket() ).toBe( bucket );
+		} );
+	} );
+
+	describe( 'getBucket when body tag contains AB class that is in the sample', () => {
+		it( 'returns the bucket on the body tag', () => {
+			document.body.classList.add( 'name-of-experiment-control' );
+			const experiment = createInstance();
+
+			expect( getBucketMock ).not.toHaveBeenCalled();
+			expect( experiment.getBucket() ).toBe( 'control' );
+		} );
+	} );
+
+	describe( 'getBucket when body tag contains AB class that is not in the sample', () => {
+		it( 'returns the bucket on the body tag', () => {
+			document.body.classList.add( 'name-of-experiment-unsampled' );
+			const experiment = createInstance();
+
+			expect( getBucketMock ).not.toHaveBeenCalled();
+			expect( experiment.getBucket() ).toBe( 'unsampled' );
+		} );
+	} );
+
+	describe( 'isInBucket', () => {
+		it( 'compares assigned bucket with passed in bucket', () => {
+			const experiment = createInstance();
+
+			expect( experiment.isInBucket( 'treatment' ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'isInTreatmentBucket when assigned to unsampled bucket (from server)', () => {
+		it( 'returns false', () => {
+			document.body.classList.add( 'name-of-experiment-unsampled' );
+			const experiment = createInstance();
+
+			expect( experiment.isInTreatmentBucket() ).toBe( false );
+		} );
+	} );
+
+	describe( 'isInTreatmentBucket when assigned to control bucket (from server)', () => {
+		it( 'returns false', () => {
+			document.body.classList.add( 'name-of-experiment-control' );
+			const experiment = createInstance();
+
+			expect( experiment.isInTreatmentBucket() ).toBe( false );
+		} );
+	} );
+
+	describe( 'isInTreatmentBucket when assigned to treatment bucket (from server)', () => {
+		it( 'returns true', () => {
+			document.body.classList.add( 'name-of-experiment-treatment' );
+			const experiment = createInstance();
+
+			expect( experiment.isInTreatmentBucket() ).toBe( true );
+		} );
+	} );
+
+	describe( 'isInTreatmentBucket when assigned to unsampled bucket (from client)', () => {
+		it( 'returns false', () => {
+			getBucketMock.mockReturnValueOnce( 'unsampled' );
+			const experiment = createInstance();
+
+			expect( experiment.isInTreatmentBucket() ).toBe( false );
+		} );
+	} );
+
+	describe( 'isInTreatmentBucket when assigned to control bucket (from client)', () => {
+		it( 'returns false', () => {
+			getBucketMock.mockReturnValueOnce( 'control' );
+			const experiment = createInstance();
+
+			expect( experiment.isInTreatmentBucket() ).toBe( false );
+		} );
+	} );
+
+	describe( 'isInTreatmentBucket when assigned to treatment bucket (from client)', () => {
+		it( 'returns true', () => {
+			getBucketMock.mockReturnValueOnce( 'treatment' );
+			const experiment = createInstance();
+
+			expect( experiment.isInTreatmentBucket() ).toBe( true );
+		} );
+	} );
+
+	describe( 'isInTreatmentBucket when assigned to treatment bucket (is case insensitive)', () => {
+		it( 'returns true', () => {
+			getBucketMock.mockReturnValueOnce( 'StickyHeaderVisibleTreatment' );
+			const experiment = createInstance();
+
+			expect( experiment.isInTreatmentBucket() ).toBe( true );
+		} );
+	} );
+
+	describe( 'isInSample when in unsampled bucket', () => {
+		it( 'returns false', () => {
+			document.body.classList.add( 'name-of-experiment-unsampled' );
+			const experiment = createInstance();
+
+			expect( experiment.isInSample() ).toBe( false );
+		} );
+	} );
+
+	describe( 'isInSample when in control bucket', () => {
+		it( 'returns true', () => {
+			document.body.classList.add( 'name-of-experiment-control' );
+			const experiment = createInstance();
+
+			expect( experiment.isInSample() ).toBe( true );
+		} );
+	} );
+
+	describe( 'isInSample when in treatment bucket', () => {
+		it( 'returns true', () => {
+			document.body.classList.add( 'name-of-experiment-treatment' );
+			const experiment = createInstance();
+
+			expect( experiment.isInSample() ).toBe( true );
 		} );
 	} );
 } );

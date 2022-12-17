@@ -5,6 +5,7 @@
 			"A2093064",
 			"Alexsh",
 			"Cwlin0416",
+			"DinoWP",
 			"Hello903hello",
 			"Kly",
 			"LNDDYL",
@@ -14,8 +15,7 @@
 			"Winston Sung",
 			"Xiplus",
 			"予弦",
-			"神樂坂秀吉",
-			"DinoWP"
+			"神樂坂秀吉"
 		]
 	},
 	"oathauth-desc": "提供基於 HMAC 的一次性密碼驗證支援",
@@ -70,6 +70,9 @@
 	"oath-log-header": "這些事件追蹤著使用者之雙重認證狀態的變更。",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|停用了}} $3 的雙因素驗證",
 	"logentry-oath-verify": "$1{{GENDER:$2|已檢查}}$3是否啟用雙重認證。",
+	"log-action-filter-oath": "雙重認證操作類型：",
+	"log-action-filter-oath-verify": "檢查是否啟用雙重認證",
+	"log-action-filter-oath-disable-other": "停用其他使用者的雙重認證",
 	"oathauth-ui-no-module": "全部停用",
 	"oathauth-module-invalid": "使用者已註冊的 OATHAuth 模阻無效。",
 	"oathauth-module-totp-label": "TOTP（一次性權杖）",
@@ -98,6 +101,9 @@
 	"notification-body-oathauth-disable": "如果{{GENDER:$2|您}}並沒有這樣做，{{GENDER:$2|您的帳號}}可能已被盜用。",
 	"notification-body-oathauth-disable-other": "如果{{GENDER:$2|您}}沒有請求這個，{{GENDER:$2|您}}應聯繫管理員。",
 	"oathauth-notifications-disable-help": "求助",
+	"notification-header-oathauth-enabled": "已在{{GENDER:$2|您的帳號}}上啟用雙重認證。",
+	"notification-body-oathauth-enabled": "如果{{GENDER:$2|您}}並沒有這樣做，{{GENDER:$2|您的帳號}}可能已被盜用。",
+	"oathauth-notifications-enabled-help": "說明",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}}有啟用雙重認證。",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}沒有啟用雙重認證。",
 	"oathauth-prefs-disabledgroups": "已停用{{PLURAL:$1|群組}}：",

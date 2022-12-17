@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La páxina nun esiste",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Títulu inválidu",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Enllaz esternu",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Comprobando la esistencia de la páxina...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Páxina de dixebra",
 	"wikieditor-toolbar-tool-link-int-invalid": "El títulu que conseñasti nun ye válidu.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "La URL que conseñasti paez que quería ser un enllaz a otra páxina de la wiki.\n¿Quies convertila nún enllaz internu?",

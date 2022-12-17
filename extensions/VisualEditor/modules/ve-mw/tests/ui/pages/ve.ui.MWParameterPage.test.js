@@ -1,10 +1,4 @@
-QUnit.module( 've.ui.MWParameterPage', ve.test.utils.newMwEnvironment( {
-	config: {
-		wgVisualEditorConfig: ve.extendObject( {}, mw.config.get( 'wgVisualEditorConfig' ), {
-			transclusionDialogSuggestedValues: true
-		} )
-	}
-} ) );
+QUnit.module( 've.ui.MWParameterPage', ve.test.utils.newMwEnvironment );
 
 [
 	[ undefined, '', ve.ui.MWLazyMultilineTextInputWidget ],

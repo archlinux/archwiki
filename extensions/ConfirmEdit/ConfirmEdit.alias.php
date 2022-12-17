@@ -93,12 +93,12 @@ $specialPageAliases['ml'] = [
 	'Captcha' => [ 'ക്യാപ്ച' ],
 ];
 
-/** Serbian (Cyrillic script) (српски (ћирилица)‎) */
+/** Serbian (Cyrillic script) (српски (ћирилица)) */
 $specialPageAliases['sr-ec'] = [
 	'Captcha' => [ 'ПотврдниКод', 'Потврдни_код' ],
 ];
 
-/** Serbian (Latin script) (srpski (latinica)‎) */
+/** Serbian (Latin script) (srpski (latinica)) */
 $specialPageAliases['sr-el'] = [
 	'Captcha' => [ 'PotvrdniKod', 'Potvrdni_kod' ],
 ];
@@ -118,12 +118,12 @@ $specialPageAliases['yue'] = [
 	'Captcha' => [ '驗證碼' ],
 ];
 
-/** Simplified Chinese (中文（简体）‎) */
+/** Simplified Chinese (中文（简体）) */
 $specialPageAliases['zh-hans'] = [
 	'Captcha' => [ '验证码' ],
 ];
 
-/** Traditional Chinese (中文（繁體）‎) */
+/** Traditional Chinese (中文（繁體）) */
 $specialPageAliases['zh-hant'] = [
 	'Captcha' => [ '驗證碼', '認證碼' ],
 ];

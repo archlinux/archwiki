@@ -6,11 +6,13 @@
 			"LexArt",
 			"Mikalai Udodau",
 			"Movses",
+			"No Sleep till Krupki",
 			"Vlad5250",
 			"ZlyiLev",
 			"Дзяніс Тутэйшы",
 			"Тест",
-			"No Sleep till Krupki"
+			"Plaga med",
+			"Maksim L."
 		]
 	},
 	"abusefilter-desc": "Прымяняе аўтаматычную эўрыстыку да правак.",
@@ -73,7 +75,7 @@
 	"abusefilter-log-detailedentry-local": "фільтр $1",
 	"abusefilter-log-detailslink": "падрабязнасці",
 	"abusefilter-log-diff": "розн.",
-	"abusefilter-log-hidelink": "настроіць бачнасць",
+	"abusefilter-log-hidelink": "рэгуляваць бачнасць",
 	"abusefilter-log-hide-entries": "Змяніць бачнасць выбраных запісаў",
 	"abusefilter-log-description-not-available": "недаступна",
 	"abusefilter-log-details-legend": "Падрабязнасці запісу журнала $1",
@@ -175,7 +177,7 @@
 	"abusefilter-throttle-ip": "IP-адрас",
 	"abusefilter-throttle-user": "рахунак удзельніка",
 	"abusefilter-throttle-range": "IP-дыяпазон",
-	"abusefilter-throttle-creationdate": "дата стварэння рахунка",
+	"abusefilter-throttle-creationdate": "дата стварэння ўліковага запісу",
 	"abusefilter-throttle-page": "старонка",
 	"abusefilter-throttle-none": "(няма)",
 	"abusefilter-throttle-details": "Дазволіць $1 {{PLURAL:$1|дзеянне|дзеянні|дзеянняў}} кожныя $2 {{PLURAL:$2|секунда|секунды|секундаў}}, абмяжоўваць групамі па: $3",

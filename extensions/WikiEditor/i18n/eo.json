@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Anakmalaysia",
 			"ArnoLagrange",
 			"KuboF",
@@ -12,8 +13,7 @@
 			"Nemo bis",
 			"Robin van der Vliet",
 			"Yekrats",
-			"Ziko",
-			"Amire80"
+			"Ziko"
 		]
 	},
 	"wikieditor": "Progresa redaktilo por vikiteksto",
@@ -47,7 +47,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Paĝo ne ekzistas",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Nepermesita titolo",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ligilo al ekstero",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kontrolante ekziston de paĝo...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Apartigilo",
 	"wikieditor-toolbar-tool-link-int-invalid": "La titolo kiun vi enmetis estas nepermesita.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "La retadreso (URL), kiun vi indikis, aspektas kvazaŭ ĝi estas ligilo al paĝo de alia vikio.\nĈu vi volas ŝanĝi ĝin al interna ligilo?",

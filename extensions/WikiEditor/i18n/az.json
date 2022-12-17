@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"AZISS",
+			"Amire80",
 			"Cekli829",
 			"Koc61",
 			"Macofe",
@@ -13,8 +14,7 @@
 			"Vago",
 			"Vugar 1981",
 			"Wertuose",
-			"Şeyx Şamil",
-			"Amire80"
+			"Şeyx Şamil"
 		]
 	},
 	"wikieditor-wikitext-tab": "Vikimətn",
@@ -159,5 +159,12 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>İstifadəçi adı</a> (<a href='#' title='$2:Username'>müzakirə</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Abzas",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal mətn<br />:Abzasla mətn<br />::Abzasla mətn",
-	"wikieditor-toolbar-help-content-indent-result": "Normal mətn<dl><dd>Abzasla mətn<dl><dd>Abzasla mətn</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normal mətn<dl><dd>Abzasla mətn<dl><dd>Abzasla mətn</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Sınaq göstərişi",
+	"wikieditor-realtimepreview-error": "Sınaq göstərişi yüklənmədi",
+	"wikieditor-realtimepreview-reload": "Yenidən yüklə",
+	"wikieditor-realtimepreview-beta-label": "Real vaxtda sınaq göstərişi",
+	"wikieditor-realtimepreview-beta-desc": "[[mw:Special:MyLanguage/Extension:WikiEditor|2010 vikimətn redaktoru]] daxilində redaktənizin real vaxtda necə göründüyünə baxın.",
+	"wikieditor-realtimepreview-reload-title": "Sınaq göstərişi panelini yenidən yüklə",
+	"wikieditor-realtimepreview-manual": "Lütfən, redaktələrinizi əl ilə nəzərdən keçirmək üçün indi yenidən yükləyin."
 }

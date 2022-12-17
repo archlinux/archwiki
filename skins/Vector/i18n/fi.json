@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"01miki10",
+			"Amire80",
 			"Crt",
 			"MITO",
 			"Majavah",
@@ -11,9 +12,8 @@
 			"Nike",
 			"Pxos",
 			"Pyscowicz",
-			"SuperPete",
 			"Rönttönen",
-			"Amire80"
+			"SuperPete"
 		]
 	},
 	"skinname-vector": "Vanha Vektori (2010)",
@@ -47,11 +47,12 @@
 	"vector-jumptocontent": "Siirry sisältöön",
 	"vector-more-actions": "Muut",
 	"vector-search-loader": "Ladataan hakuehdotuksia",
-	"vector-searchsuggest-containing": "Hae sivuja, jotka sisältävät <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Hae sivuja, jotka sisältävät <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-heading": "Sisällysluettelo",
+	"vector-toc-beginning": "Johdanto",
 	"vector-anon-user-menu-pages": "Sivut kirjautumattomille muokkaajille",
 	"vector-anon-user-menu-pages-learn": "lue lisää",
 	"vector-anon-user-menu-pages-label": "Lue lisää muokkaamisesta",
-	"vector-personal-more-label": "Käyttäjän linkit",
 	"vector-main-menu-tooltip": "Päävalikko",
 	"tooltip-vector-anon-user-menu-title": "Lisää valintoja"
 }

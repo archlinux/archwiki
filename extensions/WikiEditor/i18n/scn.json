@@ -39,7 +39,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sta pàggina nun esisti supra {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Tîtulu nun vàliddu",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Liami di fora",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Controllu di l'esistenza dâ pâggina n cursu",
 	"wikieditor-toolbar-tool-link-int-invalid": "Lu tìtulu ca spicificasti nun è vàliddu",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "La URL ca nnicasti pari nu liami versu n'àutra pàggina wiki.\nVuoi ca forra nu liami nternu ?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Liami nternu",

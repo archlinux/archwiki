@@ -178,7 +178,6 @@ class FilterRunner {
 		$this->vars = $generator->addGenericVars()->getVariableHolder();
 
 		$this->vars->forFilter = true;
-		$this->vars->setVar( 'timestamp', (int)wfTimestamp( TS_UNIX ) );
 		$this->ruleChecker = $this->ruleCheckerFactory->newRuleChecker( $this->vars );
 	}
 
@@ -382,17 +381,16 @@ class FilterRunner {
 	protected function profileExecution( RunnerData $data ) {
 		$allFilters = $data->getAllFilters();
 		$matchedFilters = $data->getMatchedFilters();
-		$this->filterProfiler->checkResetProfiling( $this->group, $allFilters );
 		$this->filterProfiler->recordRuntimeProfilingResult(
 			count( $allFilters ),
 			$data->getTotalConditions(),
-			$data->getTotalRunTime()
+			$data->getTotalRuntime()
 		);
 		$this->filterProfiler->recordPerFilterProfiling( $this->title, $data->getProfilingData() );
 		$this->filterProfiler->recordStats(
 			$this->group,
 			$data->getTotalConditions(),
-			$data->getTotalRunTime(),
+			$data->getTotalRuntime(),
 			(bool)$matchedFilters
 		);
 	}

@@ -12,7 +12,6 @@
 	"apierror-visualeditor-difffailed": "Ferq xırabo",
 	"apierror-visualeditor-docserver-http-error": "İrtıbatê Parsoidi de xeta biye/rovitoğê RESTBaseyi: $1",
 	"apierror-visualeditor-docserver-http": "İrtıbatê Parsoidi de xeta biye/rovitoğê RESTBaseyi (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "Seba VirtualRESTService ra dokumanê serveri nêşınasiyeno; https://www.mediawiki.org/wiki/Extension:VisualEditor ra bıvênê",
 	"apierror-visualeditor-docserver": "İrtıbatê Parsoidi de xeta biye/rovitoğê RESTBaseyi (cewab çıniyo)",
 	"apierror-visualeditor-latestnotfound": "Revizyonê sernameyo peyên nêvêniyo.",
 	"apihelp-visualeditor-description": "Perda Parsoid servis ra peyd şo pera HTML 5i.",

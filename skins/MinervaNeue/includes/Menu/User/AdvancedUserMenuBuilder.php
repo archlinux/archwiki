@@ -19,7 +19,6 @@
  */
 namespace MediaWiki\Minerva\Menu\User;
 
-use Hooks;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Entries\ProfileMenuEntry;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
@@ -104,7 +103,6 @@ final class AdvancedUserMenuBuilder implements IUserMenuBuilder {
 				$group->insertEntry( $entry );
 			}
 		}
-		Hooks::run( 'MobileMenu', [ 'user', &$group ], '1.38' );
 		return $group;
 	}
 }

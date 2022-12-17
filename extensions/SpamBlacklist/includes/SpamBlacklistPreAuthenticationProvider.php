@@ -1,6 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\SpamBlacklist;
+
 use MediaWiki\Auth\AbstractPreAuthenticationProvider;
+use StatusValue;
 
 class SpamBlacklistPreAuthenticationProvider extends AbstractPreAuthenticationProvider {
 	public function testForAccountCreation( $user, $creator, array $reqs ) {

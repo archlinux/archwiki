@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Beginneruser",
 			"Huji",
-			"Jeeputer",
-			"Beginneruser"
+			"Jeeputer"
 		]
 	},
 	"apihelp-query+oath-description": "بررسی می‌کند تا ببیند آیا تأیید اعتبار دومرحله‌ای (OATH) برای یک کاربر فعال شده‌است.",

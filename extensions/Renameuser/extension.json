@@ -67,19 +67,5 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Renameuser\\": "includes/"
 	},
-	"AutoloadClasses": {
-		"RenameUserAbortHook": "includes/Hook/RenameUserAbortHook.php",
-		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserAbortHook": "includes/Hook/RenameUserAbortHook.php",
-		"RenameUserPreRenameHook": "includes/Hook/RenameUserPreRenameHook.php",
-		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserPreRenameHook": "includes/Hook/RenameUserPreRenameHook.php",
-		"RenameUserCompleteHook": "includes/Hook/RenameUserCompleteHook.php",
-		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserCompleteHook": "includes/Hook/RenameUserCompleteHook.php",
-		"RenameuserSQL": "includes/RenameuserSQL.php",
-		"MediaWiki\\Extension\\Renameuser\\RenameuserSQL": "includes/RenameuserSQL.php",
-		"RenameUserSQLHook": "includes/Hook/RenameUserSQLHook.php",
-		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserSQLHook": "includes/Hook/RenameUserSQLHook.php",
-		"RenameUserWarningHook": "includes/Hook/RenameUserWarningHook.php",
-		"MediaWiki\\Extension\\Renameuser\\Hook\\RenameUserWarningHook": "includes/Hook/RenameUserWarningHook.php"
-	},
 	"manifest_version": 2
 }

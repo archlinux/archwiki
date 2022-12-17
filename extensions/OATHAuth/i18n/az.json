@@ -47,7 +47,7 @@
 	"action-oathauth-enable": "iki faktorlu autentifikasiyanı aktivləşdirmək",
 	"oathauth-auth-token-label": "Şifrə",
 	"oathauth-auth-token-help": "İki faktorlu autentifikasiyanın ikinci faktoru kimi istifadə olunan birdəfəlik parol.",
-	"oathauth-auth-ui": "Lütfən doğrulama cihazınızdan doğrulama kodunu daxil edin.",
+	"oathauth-auth-ui": "Lütfən, cihazınızdan təsdiqləmə kodunu daxil edin.",
 	"oathauth-throttled": "Çox saylı doğrulama cəhdi! Zəhmət olmasa $1 gözləyin.",
 	"oathauth-login-failed": "Doğrulama uğursuz oldu.",
 	"oathauth-describe-provider": "İki faktorlu autentifikasiya (OATH).",

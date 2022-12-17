@@ -1,9 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
-			"Debenben",
-			"Kghbln",
-			"Metalhead64"
+			"Kghbln"
 		]
 	},
 	"apihelp-spamblacklist-description": "Überprüft eine oder mehrere URLs gegen die Spam-Negativliste.",

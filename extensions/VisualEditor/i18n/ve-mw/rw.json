@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"RebecaRwanda",
 			"Amire80",
+			"RebecaRwanda",
 			"Rodrigue"
 		]
 	},
@@ -22,5 +22,6 @@
 	"visualeditor-autosave-not-recovered-text": "Impinduka zawe zitabitswe ntizashoboye kuboneka",
 	"visualeditor-ca-editsource": "Hindura inkomoko",
 	"visualeditor-ca-editsource-section": "hindura inkomoko",
-	"visualeditor-descriptionpagelink": "Project:VisualEditor"
+	"visualeditor-descriptionpagelink": "Project:VisualEditor",
+	"visualeditor-dialog-transclusion-filter-hide-unused": "Hisha ikitakireshejwe"
 }

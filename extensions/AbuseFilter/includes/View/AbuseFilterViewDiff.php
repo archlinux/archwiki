@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\View;
 
 use Diff;
 use DifferenceEngine;
+use Html;
 use IContextSource;
 use Linker;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
@@ -17,7 +18,6 @@ use MediaWiki\Extension\AbuseFilter\TableDiffFormatterFullContext;
 use MediaWiki\Linker\LinkRenderer;
 use OOUI;
 use TextContent;
-use Xml;
 
 class AbuseFilterViewDiff extends AbuseFilterView {
 	/**
@@ -150,7 +150,7 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 			return false;
 		}
 
-		if ( !$this->afPermManager->canViewPrivateFilters( $this->getUser() ) &&
+		if ( !$this->afPermManager->canViewPrivateFilters( $this->getAuthority() ) &&
 			( $this->oldVersion->isHidden() || $this->newVersion->isHidden() )
 		) {
 			$this->getOutput()->addWikiMsg( 'abusefilter-history-error-hidden' );
@@ -217,15 +217,30 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 	}
 
 	/**
-	 * @param string $timestamp
-	 * @param int $history_id
-	 * @return string
+	 * @param HistoryFilter $filterVersion
+	 * @return string raw html for the <th> element
 	 */
-	public function formatVersionLink( $timestamp, $history_id ) {
-		$text = $this->getLanguage()->userTimeAndDate( $timestamp, $this->getUser() );
+	private function getVersionHeading( HistoryFilter $filterVersion ) {
+		$text = $this->getLanguage()->userTimeAndDate(
+			$filterVersion->getTimestamp(),
+			$this->getUser()
+		);
+		$history_id = $filterVersion->getHistoryID();
 		$title = $this->getTitle( "history/$this->filter/item/$history_id" );
 
-		return $this->linkRenderer->makeLink( $title, $text );
+		$versionLink = $this->linkRenderer->makeLink( $title, $text );
+		$userLink = Linker::userLink(
+			$filterVersion->getUserID(),
+			$filterVersion->getUserName()
+		);
+		return Html::rawElement(
+			'th',
+			[],
+			$this->msg( 'abusefilter-diff-version' )
+				->rawParams( $versionLink, $userLink )
+				->params( $filterVersion->getUserName() )
+				->parse()
+		);
 	}
 
 	/**
@@ -236,27 +251,14 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 		$newVersion = $this->newVersion;
 
 		// headings
-		$oldLink = $this->formatVersionLink( $oldVersion->getTimestamp(), $oldVersion->getHistoryID() );
-		$newLink = $this->formatVersionLink( $newVersion->getTimestamp(), $newVersion->getHistoryID() );
-
-		$oldUserLink = Linker::userLink( $oldVersion->getUserID(), $oldVersion->getUserName() );
-		$newUserLink = Linker::userLink( $newVersion->getUserID(), $newVersion->getUserName() );
-
-		$headings = Xml::tags( 'th', null, $this->msg( 'abusefilter-diff-item' )->parse() );
-		$headings .= Xml::tags( 'th', null,
-			$this->msg( 'abusefilter-diff-version' )
-				->rawParams( $oldLink, $oldUserLink )
-				->params( $newVersion->getUserName() )
-				->parse()
+		$headings = Html::rawElement(
+			'th',
+			[],
+			$this->msg( 'abusefilter-diff-item' )->parse()
 		);
-		$headings .= Xml::tags( 'th', null,
-			$this->msg( 'abusefilter-diff-version' )
-				->rawParams( $newLink, $newUserLink )
-				->params( $newVersion->getUserName() )
-				->parse()
-		);
-
-		$headings = Xml::tags( 'tr', null, $headings );
+		$headings .= $this->getVersionHeading( $oldVersion );
+		$headings .= $this->getVersionHeading( $newVersion );
+		$headings = Html::rawElement( 'tr', [], $headings );
 
 		$body = '';
 		// Basic info
@@ -273,13 +275,11 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 		);
 
 		$info .= $this->getDiffRow( 'abusefilter-edit-notes', $oldVersion->getComments(), $newVersion->getComments() );
-
 		if ( $info !== '' ) {
 			$body .= $this->getHeaderRow( 'abusefilter-diff-info' ) . $info;
 		}
 
 		$pattern = $this->getDiffRow( 'abusefilter-edit-rules', $oldVersion->getRules(), $newVersion->getRules() );
-
 		if ( $pattern !== '' ) {
 			$body .= $this->getHeaderRow( 'abusefilter-diff-pattern' ) . $pattern;
 		}
@@ -289,17 +289,19 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 			$this->stringifyActions( $oldVersion->getActions() ) ?: [ '' ],
 			$this->stringifyActions( $newVersion->getActions() ) ?: [ '' ]
 		);
-
 		if ( $actions !== '' ) {
 			$body .= $this->getHeaderRow( 'abusefilter-edit-consequences' ) . $actions;
 		}
 
-		$html = "<table class='wikitable'>
-			<thead>$headings</thead>
-			<tbody>$body</tbody>
-		</table>";
+		$tableHead = Html::rawElement( 'thead', [], $headings );
+		$tableBody = Html::rawElement( 'tbody', [], $body );
+		$table = Html::rawElement(
+			'table',
+			[ 'class' => 'wikitable' ],
+			$tableHead . $tableBody
+		);
 
-		$html = Xml::tags( 'h2', null, $this->msg( 'abusefilter-diff-title' )->parse() ) . $html;
+		$html = Html::rawElement( 'h2', [], $this->msg( 'abusefilter-diff-title' )->parse() ) . $table;
 
 		return $html;
 	}
@@ -312,30 +314,34 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 		$lines = [];
 
 		ksort( $actions );
+		$language = $this->getLanguage();
 		foreach ( $actions as $action => $parameters ) {
-			$lines[] = $this->specsFormatter->formatAction( $action, $parameters, $this->getLanguage() );
+			$lines[] = $this->specsFormatter->formatAction( $action, $parameters, $language );
 		}
 
 		return $lines;
 	}
 
 	/**
-	 * @param string $msg
+	 * @param string $key
 	 * @return string
 	 */
-	public function getHeaderRow( $msg ) {
-		$html = $this->msg( $msg )->parse();
-		$html = Xml::tags( 'th', [ 'colspan' => 3 ], $html );
-		return Xml::tags( 'tr', [ 'class' => 'mw-abusefilter-diff-header' ], $html );
+	public function getHeaderRow( $key ) {
+		$msg = $this->msg( $key )->parse();
+		return Html::rawElement(
+			'tr',
+			[ 'class' => 'mw-abusefilter-diff-header' ],
+			Html::rawElement( 'th', [ 'colspan' => 3 ], $msg )
+		);
 	}
 
 	/**
-	 * @param string $msg
+	 * @param string $key
 	 * @param array|string $old
 	 * @param array|string $new
 	 * @return string
 	 */
-	public function getDiffRow( $msg, $old, $new ) {
+	public function getDiffRow( $key, $old, $new ) {
 		if ( !is_array( $old ) ) {
 			$old = explode( "\n", TextContent::normalizeLineEndings( $old ) );
 		}
@@ -355,9 +361,12 @@ class AbuseFilterViewDiff extends AbuseFilterView {
 		$formatter = new TableDiffFormatterFullContext();
 		$formattedDiff = $diffEngine->addHeader( $formatter->format( $diff ), '', '' );
 
-		return Xml::tags( 'tr', null,
-			Xml::tags( 'th', null, $this->msg( $msg )->parse() ) .
-			Xml::tags( 'td', [ 'colspan' => 2 ], $formattedDiff )
+		$heading = Html::rawElement( 'th', [], $this->msg( $key )->parse() );
+		$bodyCell = Html::rawElement( 'td', [ 'colspan' => 2 ], $formattedDiff );
+		return Html::rawElement(
+			'tr',
+			[],
+			$heading . $bodyCell
 		) . "\n";
 	}
 }

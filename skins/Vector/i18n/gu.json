@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Aritra",
 			"Ashok modhvadia",
 			"CptViraj",
@@ -31,5 +32,5 @@
 	"vector-jumptocontent": "લખાણ પર જાઓ",
 	"vector-more-actions": "વધુ",
 	"vector-search-loader": "શોધ સૂચનો લાવો",
-	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> ધરાવતા પાનાઓ શોધો"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ધરાવતા પાનાઓ શોધો"
 }

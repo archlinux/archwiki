@@ -50,7 +50,7 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 	 *
 	 * @return string[]
 	 */
-	public function getGadgetIds() {
+	public function getGadgetIds(): array {
 		$key = $this->getGadgetIdsKey();
 
 		$fname = __METHOD__;
@@ -61,12 +61,12 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 				$dbr = wfGetDB( DB_REPLICA );
 				$setOpts += Database::getCacheSetOptions( $dbr );
 
-				return $dbr->selectFieldValues(
-					'page',
-					'page_title',
-					[ 'page_namespace' => NS_GADGET_DEFINITION ],
-					$fname
-				);
+				return $dbr->newSelectQueryBuilder()
+					->select( 'page_title' )
+					->from( 'page' )
+					->where( [ 'page_namespace' => NS_GADGET_DEFINITION ] )
+					->caller( $fname )
+					->fetchFieldValues();
 			},
 			[
 				'checkKeys' => [ $key ],
@@ -79,25 +79,7 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 	/**
 	 * @inheritDoc
 	 */
-	public function handlePageUpdate( LinkTarget $target ) {
-		if ( $target->inNamespace( NS_GADGET_DEFINITION ) ) {
-			$this->purgeGadgetEntry( $target->getText() );
-		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function handlePageCreation( LinkTarget $target ) {
-		if ( $target->inNamespace( NS_GADGET_DEFINITION ) ) {
-			$this->purgeGadgetIdsList();
-		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function handlePageDeletion( LinkTarget $target ) {
+	public function handlePageUpdate( LinkTarget $target ): void {
 		if ( $target->inNamespace( NS_GADGET_DEFINITION ) ) {
 			$this->purgeGadgetIdsList();
 			$this->purgeGadgetEntry( $target->getText() );
@@ -107,7 +89,7 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 	/**
 	 * Purge the list of gadget ids when a page is deleted or if a new page is created
 	 */
-	public function purgeGadgetIdsList() {
+	public function purgeGadgetIdsList(): void {
 		$this->wanCache->touchCheckKey( $this->getGadgetIdsKey() );
 	}
 
@@ -123,7 +105,7 @@ class GadgetDefinitionNamespaceRepo extends GadgetRepo {
 	 * @throws InvalidArgumentException
 	 * @return Gadget
 	 */
-	public function getGadget( $id ) {
+	public function getGadget( string $id ): Gadget {
 		$key = $this->getGadgetCacheKey( $id );
 		$gadget = $this->wanCache->getWithSetCallback(
 			$key,

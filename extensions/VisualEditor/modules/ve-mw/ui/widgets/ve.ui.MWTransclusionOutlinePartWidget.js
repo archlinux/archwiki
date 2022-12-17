@@ -33,13 +33,11 @@ ve.ui.MWTransclusionOutlinePartWidget = function VeUiMWTransclusionOutlinePartWi
 	this.header = new ve.ui.MWTransclusionOutlineButtonWidget( config )
 		.connect( this, {
 			keyPressed: 'onHeaderKeyPressed',
-			click: 'onHeaderClick'
+			// The array syntax is a way to call `this.emit( 'transclusionOutlineItemSelected', … )`.
+			click: [ 'emit', 'transclusionOutlineItemSelected', part.getId() ]
 		} );
 
-	if ( config.ariaDescriptionUnselected &&
-		config.ariaDescriptionSelected &&
-		config.ariaDescriptionSelectedSingle
-	) {
+	if ( config.ariaDescriptionUnselected ) {
 		this.$ariaDescriptionUnselected = $( '<span>' )
 			.text( config.ariaDescriptionUnselected )
 			.addClass( 've-ui-mwTransclusionOutline-ariaHidden' );
@@ -52,12 +50,13 @@ ve.ui.MWTransclusionOutlinePartWidget = function VeUiMWTransclusionOutlinePartWi
 			.text( config.ariaDescriptionSelectedSingle )
 			.addClass( 've-ui-mwTransclusionOutline-ariaHidden' );
 
-		this.header.setAriaDescribedBy( this.$ariaDescriptionUnselected );
-		this.header.$element.prepend(
-			this.$ariaDescriptionUnselected,
-			this.$ariaDescriptionSelected,
-			this.$ariaDescriptionSelectedSingle
-		);
+		this.header
+			.setAriaDescribedBy( this.$ariaDescriptionUnselected )
+			.$element.prepend(
+				this.$ariaDescriptionUnselected,
+				this.$ariaDescriptionSelected,
+				this.$ariaDescriptionSelectedSingle
+			);
 	}
 
 	this.transclusionModel = this.part.getTransclusion().connect( this, {
@@ -82,11 +81,14 @@ OO.inheritClass( ve.ui.MWTransclusionOutlinePartWidget, OO.ui.Widget );
  */
 
 /**
- * "Hard" selection with enter or mouse click.
+ * Triggered when the user interacts with any sidebar element in a meaningful way, and that should
+ * be reflected in the content pane of the dialog. This includes e.g. selecting something that was
+ * already selected.
  *
- * @event transclusionPartSelected
+ * @event transclusionOutlineItemSelected
  * @param {string} pageName Unique id of the {@see OO.ui.BookletLayout} page, e.g. something like
  *  "part_1" or "part_1/param1".
+ * @param {boolean} [soft] If true, focus should stay in the sidebar. Defaults to false.
  */
 
 /* Methods */
@@ -100,14 +102,6 @@ ve.ui.MWTransclusionOutlinePartWidget.prototype.onHeaderKeyPressed = function ( 
 	if ( key === OO.ui.Keys.SPACE ) {
 		this.emit( 'transclusionPartSoftSelected', this.getData() );
 	}
-};
-
-/**
- * @protected
- * @fires transclusionPartSelected
- */
-ve.ui.MWTransclusionOutlinePartWidget.prototype.onHeaderClick = function () {
-	this.emit( 'transclusionPartSelected', this.getData() );
 };
 
 /**
@@ -125,10 +119,12 @@ ve.ui.MWTransclusionOutlinePartWidget.prototype.isSelected = function () {
  * @param {boolean} state
  */
 ve.ui.MWTransclusionOutlinePartWidget.prototype.setSelected = function ( state ) {
-	this.updateButtonAriaDescription( state );
-	this.header
-		.setSelected( state )
-		.setFlags( { progressive: state } );
+	if ( state !== this.isSelected() ) {
+		this.updateButtonAriaDescription( state );
+		this.header
+			.setSelected( state )
+			.setFlags( { progressive: state } );
+	}
 };
 
 /**
@@ -136,13 +132,6 @@ ve.ui.MWTransclusionOutlinePartWidget.prototype.setSelected = function ( state )
  * @param {boolean} state
  */
 ve.ui.MWTransclusionOutlinePartWidget.prototype.updateButtonAriaDescription = function ( state ) {
-	if ( !this.$ariaDescriptionUnselected ||
-		!this.$ariaDescriptionSelected ||
-		!this.$ariaDescriptionSelectedSingle
-	) {
-		return;
-	}
-
 	this.header.setAriaDescribedBy( !state ? this.$ariaDescriptionUnselected :
 		( this.transclusionModel.isSingleTemplate() ? this.$ariaDescriptionSelectedSingle : this.$ariaDescriptionSelected )
 	);

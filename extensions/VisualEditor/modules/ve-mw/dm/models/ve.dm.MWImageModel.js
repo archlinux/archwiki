@@ -46,6 +46,7 @@ ve.dm.MWImageModel = function VeDmMWImageModel( parentDoc, config ) {
 	this.imageSrc = '';
 	this.imageResourceName = '';
 	this.imageHref = '';
+	this.imageClassAttr = null;
 
 	// FIXME: This is blindly being preserved but may not apply if, say,
 	// a link is no longer pointing to a file description page.  When support
@@ -129,7 +130,8 @@ ve.dm.MWImageModel.static.createImageNode = function ( attributes, imageType ) {
 		.thumbLimits[ mw.user.options.get( 'thumbsize' ) ];
 
 	var attrs = ve.extendObject( {
-		mediaClass: 'Image',
+		mediaClass: 'File',
+		mediaTag: 'img',
 		type: 'thumb',
 		align: 'default',
 		width: defaultThumbSize,
@@ -184,6 +186,7 @@ ve.dm.MWImageModel.static.newFromImageAttributes = function ( attrs, parentDoc )
 	imgModel.setImageSource( attrs.src );
 	imgModel.setFilename( new mw.Title( mw.libs.ve.normalizeParsoidResourceName( attrs.resource ) ).getMainText() );
 	imgModel.setImageHref( attrs.href );
+	imgModel.setImageClassAttr( attrs.imageClassAttr );
 	imgModel.setImgWrapperClassAttr( attrs.imgWrapperClassAttr );
 
 	// Set bounding box
@@ -286,6 +289,12 @@ ve.dm.MWImageModel.prototype.changeImageSource = function ( attrs, APIinfo ) {
 		this.setImageHref( attrs.href );
 	}
 
+	// FIXME: Account for falsey but present values
+	if ( attrs.imageClassAttr ) {
+		this.setImageClassAttr( attrs.imageClassAttr );
+	}
+
+	// FIXME: Account for falsey but present values
 	if ( attrs.imgWrapperClassAttr ) {
 		this.setImgWrapperClassAttr( attrs.imgWrapperClassAttr );
 	}
@@ -554,7 +563,8 @@ ve.dm.MWImageModel.prototype.getUpdatedAttributes = function () {
 	}
 
 	var attrs = {
-		mediaClass: this.getMediaClass(),
+		mediaClass: 'File',
+		mediaTag: this.getMediaTag(),
 		type: this.getType(),
 		width: currentDimensions.width,
 		height: currentDimensions.height,
@@ -576,6 +586,7 @@ ve.dm.MWImageModel.prototype.getUpdatedAttributes = function () {
 
 	attrs.src = this.getImageSource();
 	attrs.href = this.getImageHref();
+	attrs.imageClassAttr = this.getImageClassAttr();
 	attrs.imgWrapperClassAttr = this.getImgWrapperClassAttr();
 	attrs.resource = this.getImageResourceName();
 
@@ -789,20 +800,20 @@ ve.dm.MWImageModel.prototype.getMediaType = function () {
 };
 
 /**
- * Get Parsoid media class: Image, Video or Audio
+ * Get media tag: img, video or audio
  *
- * @return {string} Media class
+ * @return {string} Tag name
  */
-ve.dm.MWImageModel.prototype.getMediaClass = function () {
+ve.dm.MWImageModel.prototype.getMediaTag = function () {
 	var mediaType = this.getMediaType();
 
 	if ( mediaType === 'VIDEO' ) {
-		return 'Video';
+		return 'video';
 	}
 	if ( mediaType === 'AUDIO' ) {
-		return 'Audio';
+		return 'audio';
 	}
-	return 'Image';
+	return 'img';
 };
 
 /**
@@ -1132,6 +1143,20 @@ ve.dm.MWImageModel.prototype.getImageResourceName = function () {
  */
 ve.dm.MWImageModel.prototype.getImageHref = function () {
 	return this.imageHref;
+};
+
+/**
+ * @param {string|null} classAttr
+ */
+ve.dm.MWImageModel.prototype.setImageClassAttr = function ( classAttr ) {
+	this.imageClassAttr = classAttr;
+};
+
+/**
+ * @return {string|null}
+ */
+ve.dm.MWImageModel.prototype.getImageClassAttr = function () {
+	return this.imageClassAttr;
 };
 
 /**

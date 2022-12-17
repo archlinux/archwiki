@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageReference;
@@ -35,23 +36,11 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		// service
 		$wikiPageFactory = $this->createMock( WikiPageFactory::class );
 		$wikiPageFactory->method( 'newFromTitle' )->willReturnCallback(
-			static function ( PageIdentity $pageIdentity ) {
-				// We can't use Title::castFromPageIdentity because that
-				// calls Title::resetArticleID which uses MediaWikiServices
-				// Thankfully, however, the only methods on the Title that are
-				// actually needed all work in unit tests
-				$title = Title::makeTitle(
-					$pageIdentity->getNamespace(),
-					$pageIdentity->getDBkey()
-				);
-				// WikiPage::construct calls Title::canExist which returns early
-				// if the id is already set, otherwise would break in unit tests
-				$title->mArticleID = $pageIdentity->getId();
-
-				// We can use an actual WikiPage, constructor works in unit tests
-				// now that the PageIdentity we give it is a real Title object,
-				// and ::getTitle works in unit tests too
-				return new WikiPage( $title );
+			function ( PageIdentity $pageIdentity ) {
+				$title = Title::castFromPageReference( $pageIdentity );
+				$wikiPage = $this->createMock( WikiPage::class );
+				$wikiPage->method( 'getTitle' )->willReturn( $title );
+				return $wikiPage;
 			}
 		);
 		return $wikiPageFactory;
@@ -59,8 +48,9 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 	private function getManager( array $params = [] ) {
 		$config = $params['config'] ?? [
-			'UseEnotif' => false,
-			'ShowUpdatedMarker' => false,
+			MainConfigNames::EnotifUserTalk => false,
+			MainConfigNames::EnotifWatchlist => false,
+			MainConfigNames::ShowUpdatedMarker => false,
 		];
 		$options = new ServiceOptions(
 			WatchlistManager::CONSTRUCTOR_OPTIONS,
@@ -160,7 +150,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 	public function testClearAllUserNotifications_configDisabled() {
 		// ********** Code path #3 **********
-		// Early return: config with `UseEnotif` and `ShowUpdatedMarker` both false
+		// Early return: config with `EnotifUserTalk`, `EnotifWatchlist` and `ShowUpdatedMarker` are false
 
 		$userIdentity = new UserIdentityValue( 100, 'User Name' );
 		list( $authority, $userFactory ) = $this->getAuthorityAndUserFactory(
@@ -191,8 +181,9 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		// Early return: user's id is falsey
 
 		$config = [
-			'UseEnotif' => true,
-			'ShowUpdatedMarker' => true
+			MainConfigNames::EnotifUserTalk => true,
+			MainConfigNames::EnotifWatchlist => true,
+			MainConfigNames::ShowUpdatedMarker => true
 		];
 
 		$userIdentity = new UserIdentityValue( 0, 'User Name' );
@@ -220,8 +211,9 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		// No early returns
 
 		$config = [
-			'UseEnotif' => true,
-			'ShowUpdatedMarker' => true
+			MainConfigNames::EnotifUserTalk => true,
+			MainConfigNames::EnotifWatchlist => true,
+			MainConfigNames::ShowUpdatedMarker => true
 		];
 
 		$userIdentity = new UserIdentityValue( 100, 'User Name' );
@@ -314,7 +306,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 	 */
 	public function testClearTitleUserNotifications_configDisabled( $testPageFactory ) {
 		// ********** Code path #3 **********
-		// Early return: config with `UseEnotif` and `ShowUpdatedMarker` both false
+		// Early return: config with `EnotifUserTalk` and `ShowUpdatedMarker` both false
 
 		$title = $testPageFactory( 100, NS_USER_TALK, 'PageTitleGoesHere' );
 
@@ -347,8 +339,9 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		$title = $testPageFactory( 100, NS_USER_TALK, 'PageTitleGoesHere' );
 
 		$config = [
-			'UseEnotif' => true,
-			'ShowUpdatedMarker' => true
+			MainConfigNames::EnotifUserTalk => true,
+			MainConfigNames::EnotifWatchlist => true,
+			MainConfigNames::ShowUpdatedMarker => true
 		];
 
 		$userIdentity = new UserIdentityValue( 0, 'User Name' );
@@ -381,8 +374,9 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		$title = $testPageFactory( 100, NS_USER_TALK, 'PageTitleGoesHere' );
 
 		$config = [
-			'UseEnotif' => true,
-			'ShowUpdatedMarker' => true
+			MainConfigNames::EnotifUserTalk => true,
+			MainConfigNames::EnotifWatchlist => true,
+			MainConfigNames::ShowUpdatedMarker => true
 		];
 
 		$userIdentity = new UserIdentityValue( 100, 'User Name' );
@@ -583,7 +577,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$status = $watchlistManager->setWatch( true, $authority, $title, '1 week' );
 
-		$this->assertTrue( $status->isGood() );
+		$this->assertStatusGood( $status );
 		$this->assertTrue( $watchlistManager->isWatchedIgnoringRights( $userIdentity, $title ) );
 	}
 
@@ -607,7 +601,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		$status = $watchlistManager->setWatch( true, $performer, $title );
 
 		// returns immediately with no error if not logged in
-		$this->assertTrue( $status->isGood() );
+		$this->assertStatusGood( $status );
 	}
 
 	/**
@@ -637,7 +631,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 		// Same expiry
 		$status = $watchlistManager->setWatch( true, $authority, $title, $expiry );
 
-		$this->assertTrue( $status->isGood() );
+		$this->assertStatusGood( $status );
 	}
 
 	/**
@@ -663,7 +657,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$status = $watchlistManager->setWatch( false, $authority, $title );
 
-		$this->assertTrue( $status->isGood() );
+		$this->assertStatusGood( $status );
 	}
 
 	/**
@@ -688,7 +682,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$status = $watchlistManager->setWatch( true, $authority, $title );
 
-		$this->assertTrue( $status->isGood() );
+		$this->assertStatusGood( $status );
 		$this->assertTrue( $watchlistManager->isWatchedIgnoringRights( $userIdentity, $title ) );
 	}
 
@@ -712,7 +706,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$status = $watchlistManager->setWatch( false, $authority, $title );
 
-		$this->assertTrue( $status->isGood() );
+		$this->assertStatusGood( $status );
 		$this->assertFalse( $watchlistManager->isWatchedIgnoringRights( $userIdentity, $title ) );
 	}
 
@@ -736,7 +730,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$actual = $watchlistManager->addWatchIgnoringRights( $userIdentity, $title );
 
-		$this->assertTrue( $actual->isGood() );
+		$this->assertStatusGood( $actual );
 		$this->assertTrue( $watchlistManager->isWatchedIgnoringRights( $userIdentity, $title ) );
 	}
 
@@ -760,7 +754,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$actual = $watchlistManager->addWatch( $authority, $title );
 
-		$this->assertTrue( $actual->isGood() );
+		$this->assertStatusGood( $actual );
 		$this->assertTrue( $watchlistManager->isWatchedIgnoringRights( $userIdentity, $title ) );
 	}
 
@@ -792,7 +786,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$status = $watchlistManager->removeWatch( $authority, $title );
 
-		$this->assertFalse( $status->isGood() );
+		$this->assertStatusNotGood( $status );
 		$errors = $status->getErrors();
 		$this->assertCount( 1, $errors );
 		$this->assertEquals( 'hookaborted', $errors[0]['message'] );
@@ -821,7 +815,7 @@ class WatchlistManagerUnitTest extends MediaWikiUnitTestCase {
 
 		$status = $watchlistManager->removeWatch( $authority, $title );
 
-		$this->assertTrue( $status->isGood() );
+		$this->assertStatusGood( $status );
 		$this->assertFalse( $watchlistManager->isWatchedIgnoringRights( $userIdentity, $title ) );
 	}
 }

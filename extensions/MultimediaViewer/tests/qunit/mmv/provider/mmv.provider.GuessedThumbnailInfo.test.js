@@ -20,7 +20,7 @@
 
 	QUnit.test( 'Constructor sense check', function ( assert ) {
 		var provider = new mw.mmv.provider.GuessedThumbnailInfo();
-		assert.ok( provider, 'Constructor call successful' );
+		assert.true( provider instanceof mw.mmv.provider.GuessedThumbnailInfo, 'Constructor call successful' );
 	} );
 
 	QUnit.test( 'get()', function ( assert ) {
@@ -36,18 +36,18 @@
 
 		provider.getUrl = function () { return resultUrl; };
 		result = provider.get( file, sampleUrl, width, originalWidth, originalHeight );
-		assert.ok( result.then, 'Result is a promise' );
+		assert.true( typeof result.then === 'function', 'Result is a promise' );
 		assert.strictEqual( result.state(), 'resolved', 'Result is resolved' );
 		result.then( function ( thumbnailInfo ) {
-			assert.ok( thumbnailInfo.width, 'Width is set' );
-			assert.ok( thumbnailInfo.height, 'Height is set' );
+			assert.true( typeof thumbnailInfo.width === 'number', 'Width is set' );
+			assert.true( typeof thumbnailInfo.height === 'number', 'Height is set' );
 			assert.strictEqual( thumbnailInfo.url, resultUrl, 'URL is set' );
 			done();
 		} );
 
 		provider.getUrl = function () { return undefined; };
 		result = provider.get( file, sampleUrl, width, originalWidth, originalHeight );
-		assert.ok( result.then, 'Result is a promise' );
+		assert.true( typeof result.then === 'function', 'Result is a promise' );
 		assert.strictEqual( result.state(), 'rejected', 'Result is rejected' );
 	} );
 

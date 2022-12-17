@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\ConfirmEdit;
+
 /**
  * A class with constants of the CAPTCHA triggers built-in in ConfirmEdit. Other extensions may
  * add more possible triggers, which are not included in this class.

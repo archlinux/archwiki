@@ -54,7 +54,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sidan finns inte på {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Den angivna titeln är ogiltig",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Extern länk",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kontrollerar om sidan existerar...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Detta är inte en innehållssida, utan en lista över ämnen med liknande namn",
 	"wikieditor-toolbar-tool-link-int-invalid": "Titeln du angav är ogiltig.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL:en du specificerade ser ut att vara avsed som en länk till en annan wikisida. Vill du göra den till en intern länk?",
@@ -211,5 +210,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal text<br />:indragen text<br />::indragen text",
 	"wikieditor-toolbar-help-content-indent-result": "Normal text<dl><dd>indragen text<dl><dd>indragen text</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Redigering gjord med [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 års wikitextredigerare)",
-	"wikieditor-realtimepreview-preview": "Förhandsgranska"
+	"wikieditor-realtimepreview-preview": "Förhandsgranska",
+	"wikieditor-realtimepreview-error": "Förhandsgranskning laddas inte",
+	"wikieditor-realtimepreview-reload": "Ladda om",
+	"wikieditor-realtimepreview-beta-label": "Förhandsvisning i realtid",
+	"wikieditor-realtimepreview-beta-desc": "Se hur wikitextändringar kommer visas för läsare i [[mw:Special:MyLanguage/Extension:WikiEditor|2010 års redigerare]].",
+	"wikieditor-realtimepreview-reload-title": "Ladda om panelen för realtidsförhandsgranskningar",
+	"wikieditor-realtimepreview-manual": "Ladda om nu för att manuellt förhandsgranska dina redigeringar.",
+	"wikieditor-realtimepreview-onboarding-title": "Förhandsvisning i realtid",
+	"wikieditor-realtimepreview-onboarding-body": "Se hur dina redigeringar ser ut för läsare genom att förhandsgranska dem i realtid.",
+	"wikieditor-realtimepreview-onboarding-button": "Okej, jag förstår"
 }

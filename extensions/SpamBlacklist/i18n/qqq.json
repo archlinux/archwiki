@@ -24,5 +24,7 @@
 	"log-description-spamblacklist": "Description of spam blacklist log",
 	"logentry-spamblacklist-hit": "Log entry that is created when a user adds a link that is forbidden by the spam blacklist.\n\n{{logentry}}\nAdditional parameters:\n* $4 - the URL the user tried to add",
 	"right-spamblacklistlog": "{{doc-right|spamblacklistlog}}",
-	"action-spamblacklistlog": "{{doc-action|spamblacklistlog}}"
+	"action-spamblacklistlog": "{{doc-action|spamblacklistlog}}",
+	"right-sboverride": "{{doc-right|sboverride}}",
+	"action-sboverride": "{{doc-action|sboverride}}"
 }

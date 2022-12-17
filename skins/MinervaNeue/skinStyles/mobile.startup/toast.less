@@ -49,15 +49,14 @@
 	/* we can't determine the actual size of the drawer in CSS, so this is
 	 * an estimate; it doesn't have to be exact because it's used only for
 	 * the sliding animation, not for hiding the drawer */
-	.transform( translate( 0, 100px ) );
+	transform: translate( 0, 100px );
 	bottom: 0;
 	opacity: 0;
-
-	.transition-transform( @transition-duration-medium, opacity @transition-duration-medium, visibility @transition-duration-medium; );
+	transition: transform @transition-duration-medium, opacity @transition-duration-medium, visibility @transition-duration-medium;
 
 	&.visible, &.mw-notification-visible {
 		visibility: visible;
 		opacity: 1;
-		.transform( translate( 0, 0 ) );
+		transform: translate( 0, 0 );
 	}
 }

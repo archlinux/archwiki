@@ -3,14 +3,14 @@
 		"authors": [
 			"Alirezaaa",
 			"Armin1392",
+			"Beginneruser",
 			"Darafsh",
 			"Ebraminio",
 			"Huji",
 			"Jeeputer",
 			"Ladsgroup",
 			"Reza1615",
-			"درفش کاویانی",
-			"Beginneruser"
+			"درفش کاویانی"
 		]
 	},
 	"oathauth-desc": "پشتیبانی از تأیید اعتبار با استفاده از رمزهای عبور یکبار مصرف HMAC را فراهم می‌کند",
@@ -88,6 +88,7 @@
 	"oathauth-switch-method-warning": "با تغییر به روش تأیید اعتبار دومرحله‌ای $2، روش کنونی ($1) غیرفعال خواهد شد و تمام داده‌های مرتبط با روش تأیید اعتبار کنونی حذف خواهد شد",
 	"oathauth-totp-disable-warning": "شما دیگر قادر به استفاده از دستگاه اصالت‌سنجی ثبت‌شده برای این حساب نخواهید بود و تمام توکن‌های یک‌بار مصرف مرتبط با این حساب نامعتبر محسوب خواهند شد.",
 	"oathauth-invalidrequest": "درخواست نامعتبر",
+	"oathauth-notifications-enabled-help": "راهنما",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} اصالت‌سنجی دومرحله‌ای را فعال کرده‌است.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} تأیید اعتبار دومرحله‌ای را فعال نکرده‌است."
 }

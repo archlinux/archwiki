@@ -1,4 +1,4 @@
-( function ( M, track, msg ) {
+( function ( M, track ) {
 	var MAX_PRINT_TIMEOUT = 3000,
 		printSetTimeoutReference = 0,
 		mobile = M.require( 'mobile.startup' ),
@@ -135,11 +135,11 @@
 			portletLink = mw.util.addPortletLink(
 				overflowList ? 'page-actions-overflow' : 'page-actions',
 				'#',
-				msg( 'minerva-download' ),
+				mw.msg( 'minerva-download' ),
 				// id
 				'minerva-download',
 				// tooltip
-				msg( 'minerva-download' ),
+				mw.msg( 'minerva-download' ),
 				// access key
 				'p',
 				overflowList ? null : document.getElementById( 'page-actions-watch' )
@@ -171,4 +171,4 @@
 	};
 
 // eslint-disable-next-line no-restricted-properties
-}( mw.mobileFrontend, mw.track, mw.msg ) );
+}( mw.mobileFrontend, mw.track ) );

@@ -85,6 +85,10 @@ class ReplaceAll extends Maintenance {
 			"If true, this option overrides the ns option.", false, false, 'a' );
 		$this->addOption( "ns", "Comma separated namespaces to search in " .
 			"(Main) .", false, true );
+		$this->addOption( 'category', "Search only pages within this category.",
+			false, true, 'c' );
+		$this->addOption( 'prefix', "Search only pages whose names start with this string.",
+			false, true, 'p' );
 		$this->addOption( "replacements", "File containing the list of " .
 			"replacements to be made.  Fields in the file are tab-separated. " .
 			"See --show-file-format for more information.", false, true, "f" );
@@ -255,11 +259,11 @@ EOF;
 	}
 
 	private function getCategory() {
-		return null;
+		return $this->getOption( 'category' );
 	}
 
 	private function getPrefix() {
-		return null;
+		return $this->getOption( 'prefix' );
 	}
 
 	private function useRegex() {

@@ -1,0 +1,37 @@
+@import 'mediawiki.ui/variables';
+
+.ext-WikiEditor-ManualWidget {
+	background-color: @colorGray14;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-color: @colorGray12;
+	border-width: 1px 0;
+	border-style: solid;
+	padding: 14px 24px;
+	position: relative;
+	color: inherit;
+
+	&:hover {
+		text-decoration: none;
+	}
+
+	.oo-ui-iconElement-icon {
+		position: relative;
+		margin-right: 1em;
+	}
+
+	.ext-WikiEditor-realtimepreview-manual-reload {
+		margin-left: auto;
+		font-weight: bolder;
+		color: @color-primary;
+	}
+
+	&.oo-ui-widget-disabled .ext-WikiEditor-realtimepreview-manual-reload {
+		color: @colorDisabledText;
+	}
+
+	&.oo-ui-widget-disabled:active {
+		color: inherit;
+	}
+}

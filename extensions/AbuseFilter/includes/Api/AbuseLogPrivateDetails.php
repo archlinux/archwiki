@@ -22,6 +22,7 @@ use ApiBase;
 use ApiMain;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * API module to allow accessing private details (the user's IP) from AbuseLog entries
@@ -118,11 +119,11 @@ class AbuseLogPrivateDetails extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'logid' => [
-				ApiBase::PARAM_TYPE => 'integer'
+				ParamValidator::PARAM_TYPE => 'integer'
 			],
 			'reason' => [
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => $this->getConfig()->get( 'AbuseFilterPrivateDetailsForceReason' ),
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_REQUIRED => $this->getConfig()->get( 'AbuseFilterPrivateDetailsForceReason' ),
 			]
 		];
 	}

@@ -36,7 +36,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Dës Säit gëtt et net op {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Den Titel den dir uginn hutt ass net valabel",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Externe Link",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Et gëtt nogekuckt ob et d'Säit gëtt...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Dës Säit ass keng Säit mat Inhalt, awer eng Lëscht mat  Theme mat änlechen Nimm",
 	"wikieditor-toolbar-tool-link-int-invalid": "Den Titel deen Dir uginn hutt ass net valabel.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Déi URL déi Dir uginn hutt gesäit aus wéi e Link op eng aner Wikisäit. Wëllt Dir doraus en interne Link maachen?",
@@ -186,5 +185,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Benotzernumm</a> (<a href='#' title='$2:Username'>Diskussioun</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Erasetzen",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normalen Text<br />\n:Erageréckelten Text<br />\n::Erageréckelten Text",
-	"wikieditor-toolbar-help-content-indent-result": "Normalen Text\n<dl>\n <dd>Erageréckelten Text\n  <dl>\n    <dd>Erageréckelten Text</dd>\n  </dl>\n </dd>\n</dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normalen Text\n<dl>\n <dd>Erageréckelten Text\n  <dl>\n    <dd>Erageréckelten Text</dd>\n  </dl>\n </dd>\n</dl>",
+	"wikieditor-realtimepreview-reload": "Nei lueden"
 }

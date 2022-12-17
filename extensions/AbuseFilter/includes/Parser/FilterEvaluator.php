@@ -52,6 +52,7 @@ class FilterEvaluator {
 		'rcount' => 'funcRCount',
 		'get_matches' => 'funcGetMatches',
 		'ip_in_range' => 'funcIPInRange',
+		'ip_in_ranges' => 'funcIPInRanges',
 		'contains_any' => 'funcContainsAny',
 		'contains_all' => 'funcContainsAll',
 		'equals_to_any' => 'funcEqualsToAny',
@@ -59,6 +60,7 @@ class FilterEvaluator {
 		'strlen' => 'funcLen',
 		'strpos' => 'funcStrPos',
 		'str_replace' => 'funcStrReplace',
+		'str_replace_regexp' => 'funcStrReplaceRegexp',
 		'rescape' => 'funcStrRegexEscape',
 		'set' => 'funcSetVar',
 		'set_var' => 'funcSetVar',
@@ -89,6 +91,7 @@ class FilterEvaluator {
 		'rcount' => [ 1, 2 ],
 		'get_matches' => [ 2, 2 ],
 		'ip_in_range' => [ 2, 2 ],
+		'ip_in_ranges' => [ 2, INF ],
 		'contains_any' => [ 2, INF ],
 		'contains_all' => [ 2, INF ],
 		'equals_to_any' => [ 2, INF ],
@@ -96,6 +99,7 @@ class FilterEvaluator {
 		'strlen' => [ 1, 1 ],
 		'strpos' => [ 2, 3 ],
 		'str_replace' => [ 3, 3 ],
+		'str_replace_regexp' => [ 3, 3 ],
 		'rescape' => [ 1, 1 ],
 		'set' => [ 2, 2 ],
 		'set_var' => [ 2, 2 ],
@@ -1013,6 +1017,33 @@ class FilterEvaluator {
 
 	/**
 	 * @param array $args
+	 * @param int $position
+	 * @return AFPData
+	 * @throws UserVisibleException
+	 */
+	protected function funcIPInRanges( $args, int $position ) {
+		$ip = array_shift( $args )->toString();
+
+		$strRanges = [];
+		foreach ( $args as $range ) {
+			$range = $range->toString();
+
+			if ( !IPUtils::isValidRange( $range ) && !IPUtils::isIPAddress( $range ) ) {
+				throw new UserVisibleException(
+					'invalidiprange',
+					$position,
+					[ $range ]
+				);
+			}
+
+			$strRanges[] = $range;
+		}
+
+		return new AFPData( AFPData::DBOOL, IPUtils::isInRanges( $ip, $strRanges ) );
+	}
+
+	/**
+	 * @param array $args
 	 * @return AFPData
 	 */
 	protected function funcCCNorm( $args ) {
@@ -1287,6 +1318,35 @@ class FilterEvaluator {
 		$replace = $args[2]->toString();
 
 		return new AFPData( AFPData::DSTRING, str_replace( $search, $replace, $subject ) );
+	}
+
+	/**
+	 * @param array $args
+	 * @param int $position
+	 * @return AFPData
+	 */
+	protected function funcStrReplaceRegexp( $args, int $position ) {
+		$subject = $args[0]->toString();
+		$search = $args[1]->toString();
+		$replace = $args[2]->toString();
+
+		$this->checkRegexMatchesEmpty( $args[1], $search, $position );
+		// phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+		$result = @preg_replace(
+			$this->mungeRegexp( $search ),
+			$replace,
+			$subject
+		);
+
+		if ( $result === null ) {
+			throw new UserVisibleException(
+				'regexfailure',
+				$position,
+				[ $search ]
+			);
+		}
+
+		return new AFPData( AFPData::DSTRING, $result );
 	}
 
 	/**

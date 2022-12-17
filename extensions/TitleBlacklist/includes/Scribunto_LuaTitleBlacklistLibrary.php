@@ -1,5 +1,9 @@
 <?php
 
+namespace MediaWiki\Extension\TitleBlacklist;
+
+use Scribunto_LuaLibraryBase;
+
 class Scribunto_LuaTitleBlacklistLibrary extends Scribunto_LuaLibraryBase {
 	public function register() {
 		$lib = [

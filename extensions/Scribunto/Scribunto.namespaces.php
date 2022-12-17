@@ -315,6 +315,11 @@ $namespaceNames['ku'] = [
 	829 => 'Gotûbêja_modulê',
 ];
 
+$namespaceNames['ky'] = [
+	828 => 'Модуль',
+	829 => 'Модулду_талкуулоо',
+];
+
 $namespaceNames['lb'] = [
 	828 => 'Modul',
 	829 => 'Modul_Diskussioun',
@@ -433,6 +438,11 @@ $namespaceNames['or'] = [
 $namespaceNames['pa'] = [
 	828 => 'ਮੌਡਿਊਲ',
 	829 => 'ਮੌਡਿਊਲ_ਗੱਲ-ਬਾਤ',
+];
+
+$namespaceNames['pcm'] = [
+	828 => 'Modul',
+	829 => 'Modul_tok_abaut_am',
 ];
 
 $namespaceNames['pl'] = [

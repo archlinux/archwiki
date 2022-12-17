@@ -144,6 +144,8 @@ class SyntaxChecker {
 				return $this->newNodeNamedBinop( $node, '**' );
 
 			case AFPTreeNode::UNARY:
+			case AFPTreeNode::INDEX_ASSIGNMENT:
+			case AFPTreeNode::ARRAY_APPEND:
 				return $this->newNodeMapExceptFirst( $node );
 
 			case AFPTreeNode::BOOL_INVERT:
@@ -178,7 +180,7 @@ class SyntaxChecker {
 					$node->children[2] = new AFPTreeNode(
 						AFPTreeNode::ATOM,
 						new AFPToken(
-							AFPTOKEN::TKEYWORD,
+							AFPToken::TKEYWORD,
 							"null",
 							$node->position
 						),
@@ -208,10 +210,6 @@ class SyntaxChecker {
 					$node->position
 				);
 
-			case AFPTreeNode::INDEX_ASSIGNMENT:
-			case AFPTreeNode::ARRAY_APPEND:
-				return $this->newNodeMapExceptFirst( $node );
-
 			default:
 				// @codeCoverageIgnoreStart
 				throw new InternalException( "Unknown node type passed: {$node->type}" );
@@ -235,7 +233,7 @@ class SyntaxChecker {
 		$trueNode = new AFPTreeNode(
 			AFPTreeNode::ATOM,
 			new AFPToken(
-				AFPTOKEN::TKEYWORD,
+				AFPToken::TKEYWORD,
 				"true",
 				$position
 			),
@@ -244,7 +242,7 @@ class SyntaxChecker {
 		$falseNode = new AFPTreeNode(
 			AFPTreeNode::ATOM,
 			new AFPToken(
-				AFPTOKEN::TKEYWORD,
+				AFPToken::TKEYWORD,
 				"false",
 				$position
 			),

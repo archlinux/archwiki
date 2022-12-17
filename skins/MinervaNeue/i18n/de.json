@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"ChrisiPK",
 			"Kghbln",
+			"Lucas Werkmeister",
 			"Metalhead64",
 			"Tobi 406",
 			"Umherirrender",
 			"WikiBayer",
-			"Wnme",
-			"Lucas Werkmeister",
-			"Brettchenweber"
+			"Wnme"
 		]
 	},
 	"minerva-last-modified-date": "Zuletzt bearbeitet am $1 um $2",
@@ -58,16 +58,20 @@
 	"minerva-page-actions-info": "Seiteninformationen",
 	"minerva-page-actions-permalink": "Permanentlink",
 	"minerva-page-actions-backlinks": "Links auf diese Seite",
+	"minerva-page-actions-change-block": "Sperre ändern",
 	"minerva-page-actions-cite": "Seite zitieren",
 	"minerva-page-actions-move": "Verschieben",
 	"minerva-page-actions-delete": "Löschen",
 	"minerva-page-actions-protect": "Schützen",
+	"minerva-page-actions-unblock": "Benutzer freigeben",
 	"minerva-page-actions-unprotect": "Schutz aufheben",
 	"minerva-page-actions-user-groups": "Benutzergruppen",
+	"minerva-page-actions-block": "Benutzer sperren",
 	"minerva-page-actions-logs": "Logbücher",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}}-Datenobjekt",
 	"minerva-page-actions-language-switcher": "Sprachen",
 	"minerva-page-actions-history": "Versionsgeschichte",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Diskussion]]",
 	"minerva-talk-explained": "Aktive Diskussionen",
 	"minerva-talk-explained-empty": "Es gibt keine Diskussionen auf dieser Seite.",
 	"minerva-talk-full-page": "Als Wikiseite lesen",

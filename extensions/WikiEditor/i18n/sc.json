@@ -33,7 +33,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sa pàgina no esistit",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Tìtulu non bàlidu",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ligòngiu a foras",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Cumproende s'esistèntzia de sa pàgina...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Su tìtulu ki as spetzificadu no est bàlidu.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Su URL chi as ispetzificadu paret èssere unu ligòngiu a un'àtera pàgina wiki.\nBoles a ddu mudare a ligòngiu internu?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Ligòngiu internu",

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bluehill",
 			"Bluemersen",
 			"Garam",
 			"Hwangjy9",
@@ -85,7 +86,7 @@
 	"math_unknown_error": "알 수 없는 오류",
 	"math_unknown_function": "알 수 없는 함수 \"$1\"",
 	"mw_math_latexml": "LaTeXML(시험용, MathML을 사용)",
-	"mw_math_mathml": "MathML을 사용하되 미지원 시 SVG나 PNG 사용 (최신 브라우저나 접근성 도구에 권장)",
+	"mw_math_mathml": "SVG를 사용하되 미지원 시 PNG 사용 (브라우저 플러그인을 통해 MathML 활성화 가능)",
 	"mw_math_png": "PNG 그림",
 	"mw_math_source": "LaTeX 소스(텍스트 브라우저용)",
 	"prefs-math": "수식",

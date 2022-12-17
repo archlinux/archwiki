@@ -42,24 +42,13 @@
 		);
 	}
 
-	function addABTestData( data, addToken ) {
+	function addABTestData( data ) {
 		// DiscussionTools New Topic A/B test for logged out users
 		if ( !mw.config.get( 'wgDiscussionToolsABTest' ) ) {
 			return;
 		}
-		if ( mw.user.isAnon() ) {
-			var tokenData = mw.storage.getObject( 'DTNewTopicABToken' );
-			if ( !tokenData ) {
-				return;
-			}
-			var anonid = parseInt( tokenData.token.slice( 0, 8 ), 16 );
-			data.bucket = anonid % 2 === 0 ? 'test' : 'control';
-			if ( addToken ) {
-				// eslint-disable-next-line camelcase
-				data.anonymous_user_token = tokenData.token;
-			}
-		} else if ( mw.user.options.get( 'discussiontools-abtest2' ) ) {
-			data.bucket = mw.user.options.get( 'discussiontools-abtest2' );
+		if ( mw.config.get( 'wgDiscussionToolsABTestBucket' ) ) {
+			data.bucket = mw.config.get( 'wgDiscussionToolsABTestBucket' );
 		}
 	}
 
@@ -104,6 +93,51 @@
 		return -1;
 	}
 
+	/**
+	 * Log the equivalent of an EditAttemptStep event via
+	 * [the Metrics Platform](https://wikitech.wikimedia.org/wiki/Metrics_Platform).
+	 *
+	 * See https://phabricator.wikimedia.org/T309013.
+	 *
+	 * @param {Object} data
+	 * @param {string} actionPrefix
+	 */
+	function logEditViaMetricsPlatform( data, actionPrefix ) {
+		var eventName = 'eas.ve.' + actionPrefix;
+
+		/* eslint-disable camelcase */
+		var customData = ve.extendObject(
+			{
+				editor_interface: 'visualeditor',
+				integration: ve.init && ve.init.target && ve.init.target.constructor.static.integrationType || 'page',
+				editing_session_id: editingSessionId
+			},
+			data
+		);
+
+		if ( !mw.config.get( 'wgRevisionId' ) ) {
+
+			// eslint-disable-next-line no-jquery/no-global-selector
+			customData.revision_id = +$( 'input[name=parentRevId]' ).val() || 0;
+		}
+
+		/* eslint-enable camelcase */
+
+		delete customData.action;
+
+		// Sampling rate (and therefore whether a stream should oversample) is captured in the
+		// stream config ($wgEventStreams).
+		delete customData.is_oversample;
+
+		// Platform can be derived from the agent_client_platform_family context attribute mixed in
+		// by the JavaScript Metrics Platform Client. The context attribute will be
+		// "desktop_browser" or "mobile_browser" depending on whether the MobileFrontend extension
+		// has signalled that it is enabled.
+		delete customData.platform;
+
+		mw.eventLog.dispatch( eventName, customData );
+	}
+
 	function mwEditHandler( topic, data, timeStamp ) {
 		var action = topic.split( '.' )[ 1 ],
 			actionPrefix = actionPrefixMap[ action ] || action,
@@ -116,10 +150,6 @@
 				ve.init.editingSessionId = editingSessionId;
 			}
 			firstInitDone = true;
-		}
-
-		if ( !inSample() && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) && !trackdebug ) {
-			return;
 		}
 
 		if (
@@ -161,6 +191,44 @@
 			}
 		}
 
+		// Schema's kind of a mess of special properties
+		if ( action === 'init' || action === 'abort' || action === 'saveFailure' ) {
+			data[ actionPrefix + '_type' ] = data.type;
+		}
+		if ( action === 'init' || action === 'abort' ) {
+			data[ actionPrefix + '_mechanism' ] = data.mechanism;
+		}
+		if ( action !== 'init' ) {
+			// Schema actually does have an init_timing field, but we don't want to
+			// store it because it's not meaningful.
+			duration = Math.round( computeDuration( action, data, timeStamp ) );
+			data[ actionPrefix + '_timing' ] = duration;
+		}
+		if ( action === 'saveFailure' ) {
+			data[ actionPrefix + '_message' ] = data.message;
+		}
+
+		// Remove renamed properties
+		delete data.type;
+		delete data.mechanism;
+		delete data.timing;
+		delete data.message;
+
+		if ( action === 'abort' ) {
+			timing = {};
+		} else {
+			timing[ action ] = timeStamp;
+		}
+		/* eslint-enable camelcase */
+
+		addABTestData( data );
+
+		logEditViaMetricsPlatform( data, actionPrefix );
+
+		if ( !inSample() && !mw.config.get( 'wgWMESchemaEditAttemptStepOversample' ) && !trackdebug ) {
+			return;
+		}
+
 		/* eslint-disable camelcase */
 		var event = ve.extendObject( {
 			version: 1,
@@ -184,38 +252,6 @@
 		if ( mw.user.isAnon() ) {
 			event.user_class = 'IP';
 		}
-
-		// Schema's kind of a mess of special properties
-		if ( action === 'init' || action === 'abort' || action === 'saveFailure' ) {
-			event[ actionPrefix + '_type' ] = event.type;
-		}
-		if ( action === 'init' || action === 'abort' ) {
-			event[ actionPrefix + '_mechanism' ] = event.mechanism;
-		}
-		if ( action !== 'init' ) {
-			// Schema actually does have an init_timing field, but we don't want to
-			// store it because it's not meaningful.
-			duration = Math.round( computeDuration( action, event, timeStamp ) );
-			event[ actionPrefix + '_timing' ] = duration;
-		}
-		if ( action === 'saveFailure' ) {
-			event[ actionPrefix + '_message' ] = event.message;
-		}
-
-		// Remove renamed properties
-		delete event.type;
-		delete event.mechanism;
-		delete event.timing;
-		delete event.message;
-
-		if ( action === 'abort' ) {
-			timing = {};
-		} else {
-			timing[ action ] = timeStamp;
-		}
-		/* eslint-enable camelcase */
-
-		addABTestData( event, true );
 
 		if ( trackdebug ) {
 			log( topic, duration + 'ms', event );

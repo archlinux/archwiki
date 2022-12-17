@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\TitleBlacklist;
+
 use MediaWiki\Auth\AuthenticationRequest;
 
 /**

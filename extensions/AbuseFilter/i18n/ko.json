@@ -3,6 +3,7 @@
 		"authors": [
 			"Albamhandae",
 			"Alex00728",
+			"Bluehill",
 			"Bluemersen",
 			"ChongDae",
 			"Delim",
@@ -32,8 +33,7 @@
 			"관인생략",
 			"렌즈",
 			"밝은소년",
-			"아라",
-			"Bluehill"
+			"아라"
 		]
 	},
 	"abusefilter-desc": "사용자 편집을 규칙에 따라 자동으로 검사합니다",
@@ -363,6 +363,7 @@
 	"abusefilter-edit-builder-funcs-rmwhitespace": "공백 제거 (rmwhitespace)",
 	"abusefilter-edit-builder-funcs-rmspecials": "특수 문자를 제거 (rmspecials)",
 	"abusefilter-edit-builder-funcs-ip_in_range": "IP가 대역 안에 있는지 여부 (ip_in_range)",
+	"abusefilter-edit-builder-funcs-ip_in_ranges": "IP기 대역에 포함되는지 여부 (ip_in_ranges)",
 	"abusefilter-edit-builder-funcs-contains-any": "문자열에서 여러 하위 문자열을 OR 방식으로 검색합니다. (contains_any)",
 	"abusefilter-edit-builder-funcs-contains-all": "문자열에서 여러 하위 문자열을 AND 방식으로 검색합니다. (contains_all)",
 	"abusefilter-edit-builder-funcs-equals-to-any": "주어진 문자열이 다음의 인수 중 어느 것과 동일(===)한지 확인합니다 (equals_to_any)",

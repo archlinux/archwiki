@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\VisualEditor\Tests;
 
+use MediaWiki\Extension\VisualEditor\SpecialCollabPad;
 use MediaWikiIntegrationTestCase;
-use SpecialCollabPad;
 use Title;
 
 /**
- * @covers \SpecialCollabPad
+ * @covers \MediaWiki\Extension\VisualEditor\SpecialCollabPad
  */
 class SpecialCollabPadTest extends MediaWikiIntegrationTestCase {
 

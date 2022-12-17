@@ -1,6 +1,17 @@
 @import 'mediawiki.skin.variables.less';
 @import 'mediawiki.ui/variables.less';
 
+//
+// == Media query breakpoints ==
+//
+@min-width-mobile: @width-breakpoint-mobile; // Above 320px
+@max-width-mobile: @width-breakpoint-tablet - 1px; // Below 719px
+@min-width-tablet: @width-breakpoint-tablet; // Above 720px
+@max-width-tablet: @width-breakpoint-desktop - 1px; // Below 999px
+@min-width-desktop: @width-breakpoint-desktop; // Above 1000px
+@max-width-desktop: @width-breakpoint-desktop-wide - 1px; // Below 1199px
+@min-width-desktop-wide: @width-breakpoint-desktop-wide; // Above 1200px
+
 // Sizing calculation primitives.
 @font-size-root: 100%;
 @font-size-browser: 16; // Assumed browser default of `16px`
@@ -52,6 +63,9 @@
 @size-sidebar-button: unit( 44 / @font-size-browser, em ); // Equals `2.75em`.
 
 @size-icon: unit( 20 / @font-size-browser, em );
+@size-indicator: unit( 12 / @font-size-browser, em );
+// Copied from mediawiki.ui.icons
+@icon-padding-md: unit( 12 / @font-size-browser, em );
 
 @background-position-nav-personal-icon: left unit( 4 / @font-size-browser / @font-size-nav-personal, em );
 @background-size-nav-personal-icon: unit( 14 / @font-size-browser / @font-size-nav-personal, em );
@@ -61,12 +75,17 @@
 // Due to darker background gradient, border needs to be darkened for aligned visual perception.
 @border-color-content--tabs-inactive: darken( @border-color-content, 10% );
 @border-color-portal-heading: #c8ccd1;
+@border-color-pagetitle: #eaecf0;
 // Use `rgba()` notation for better Safari support, see T254489.
 @border-color-portal-heading-transparent: rgba( red( @border-color-portal-heading ), green( @border-color-portal-heading ), blue( @border-color-portal-heading ), 0 );
 @border-start-blockquote: 4px @border-style-base #eaecf0;
-@padding-top-content: 1.25em;
+@padding-top-content: 0.5em;
 @padding-horizontal-content: 0.5em;
 @padding-blockquote: 8px 32px;
+@border-bottom-tabs: @border-width-base @border-style-base #eaecf0;
+
+@background-color-secondary--modern: #f8f9fa;
+@background-color-page-container: @background-color-base;
 
 // Navigation
 @background-color-secondary: #f6f6f6;
@@ -112,22 +131,32 @@
 // Menu button
 @margin-horizontal-sidebar-button-icon: unit( 12px / @font-size-browser, em ); // 0.75em @ 16
 
+// Main menu
+@selector-main-menu-open: ~'#mw-sidebar-checkbox:checked';
+@selector-main-menu-closed: ~'#mw-sidebar-checkbox:not( :checked )';
+
 // Sidebar
-@margin-toc-start-content: 16em;
-@space-end-sidebar: 2em;
-@width-sidebar: @margin-toc-start-content - @space-end-sidebar;
+@width-sidebar-px: 220px;
+@width-sidebar-px-wide: 244px;
+// T305069 Layout adjustments of sidebar elements:
+// Vertically align the left edge of sidebar elements with the visible edge of the sidebar toggle hamburger menu.
+@margin-start-sidebar-content: unit( 12px / @font-size-browser, em ); // 0.75em @ 16
+
+// TOC
+@sidebar-toc-selector: ~'.mw-table-of-contents-container .sidebar-toc';
 
 // Search
+@max-width-search: unit( 500px / @font-size-browser / @font-size-base, em ); // 35.71428571em @ 16 & 0.875em T270202
 @min-width-search-button: 28px;
 @width-search-button: unit( 28 / @font-size-browser / @font-size-search-input, em );
 @font-size-search-input: unit( 13 / @font-size-browser, em ); // Equals `0.8125em`.
-// Derived from @spacing-start-typeahead-search-figure + @spacing-end-typeahead-search-figure in WVUI
-// https://gerrit.wikimedia.org/g/wvui/+/refs/changes/93/650593/10/src/components/typeahead-search/TypeaheadSearch.vue#645
+// Derived from @size-typeahead-search-focus-addition in Codex
+// https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/tags/v0.1.0-alpha.8/packages/codex/src/components/typeahead-search/TypeaheadSearch.vue#703
 @size-search-expand: 24px;
 @margin-end-search: 12px;
 
-// language button
-@height-lang-button: unit( 32 / @font-size-browser, em );
+// Language button
+@height-button-lang: unit( 32 / @font-size-browser, em );
 
 // T296321 For sticky header, set an explicit height. This is needed for scroll padding
 // and for other sticky elements on the page. Setting the height in relative units enables
@@ -164,12 +193,16 @@
 // @z-index-ui-tooltip: 9999;
 
 // Transitions
-@transition-duration-base: 100ms;
 // Sticky header hide/show transition
 @transition-sticky-header: transform 250ms linear;
 
 //
 // Layout
 //
-@max-width-page-container: unit( 1650px / @font-size-browser, em ); // 103.125em @ 16
-@padding-horizontal-page-container: unit( 30px / @font-size-browser, em ); // 1.875em @ 16
+@max-width-page-container: unit( 1514px / @font-size-browser, em ); // 99.75em @ 16
+@max-width-content-container: unit( 960px / @font-size-browser, em ); // 60em @ 16
+@padding-horizontal-page-container: unit( 32px / @font-size-browser, em );
+@padding-horizontal-page-container-wide: unit( 40px / @font-size-browser, em );
+
+// Grid
+@grid-row-gap: 24px;

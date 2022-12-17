@@ -12,6 +12,7 @@ body {
 html {
 	font-size: @font-size-root;
 	// Support Safari: Prevent font scaling in landscape
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	-webkit-text-size-adjust: none;
 }
 
@@ -46,9 +47,9 @@ main {
 	display: none;
 }
 
-// Override rule in MobileFrontend to show copyright.
-// FIXME: This can be removed when I0bfc7f977cdaf5ce8873103346c64121d704b86c
-// is merged.
+// Override rule in MobileFrontend (
+// (ul.footer-info li in resources/mobile.init.styles.less)
+// to show copyright.
 // stylelint-disable-next-line selector-max-id
 #footer-info-copyright {
 	display: block;
@@ -96,6 +97,7 @@ main {
 	background-repeat: no-repeat;
 	background-size: @size-icon-search;
 	// Support Safari: Get rid of rounded corners.
+	// stylelint-disable-next-line plugin/no-unsupported-browser-features
 	-webkit-appearance: none;
 	width: 100%;
 	margin-top: 0;
@@ -106,7 +108,7 @@ main {
 	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.05 );
 	// Keyboard focus is taken care of below at `.search:focus`.
 	outline: 0;
-	.transition( border-color @transition-duration-medium, box-shadow @transition-duration-medium; );
+	transition: border-color @transition-duration-medium, box-shadow @transition-duration-medium;
 
 	// [T139928] Hide all pseudo-elements added to search inputs in WebKit.
 	&::-webkit-search-decoration,
@@ -147,30 +149,32 @@ main {
 		margin-bottom: @headingMargin;
 	}
 
-	// The following rules are duplicated in MobileFrontend
-	// but needed by Minerva desktop
 	.mw-parser-output {
-		> h1,
-		> h2,
-		> h3,
-		> h4,
-		> h5 {
-			// Safari needs this. @see T106347
-			display: table;
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			display: flex;
 
 			.mw-headline {
-				width: 100%;
+				flex-grow: 1;
+				flex-basis: 0;
+				margin-left: 0;
 			}
 
-			> span {
-				display: table-cell;
+			.mw-editsection {
+				align-self: center;
+				// Negative margins to prevent the edit icon from affecting the height of the heading
+				margin-top: -1em;
+				margin-bottom: -1em;
+
+				.mw-ui-icon-element {
+					height: 100%;
+				}
 			}
 		}
-	}
-
-	.mw-editsection > .mw-ui-icon-element {
-		margin-top: -0.75em;
-		margin-bottom: -0.75em;
 	}
 }
 

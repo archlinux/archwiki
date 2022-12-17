@@ -48,17 +48,37 @@ ve.dm.MWReferencesListNode.static.matchTagNames = null;
 
 ve.dm.MWReferencesListNode.static.matchRdfaTypes = [ 'mw:Extension/references', 'mw:Transclusion' ];
 
+// Allow TemplateStyles in the matching element
+ve.dm.MWReferencesListNode.static.allowedRdfaTypes = [ 'mw:Extension/templatestyles' ];
+
+// e.g. with a {{reflist}} with TemplateStyles
+ve.dm.MWReferencesListNode.static.enableAboutGrouping = true;
+
 // This node has the same specificity as ve.dm.MWTranslcusionNode and only matches
 // ahead of it because it is registered later (via a dependency in ResourceLoader)
 // TODO: Make this less fragile.
 ve.dm.MWReferencesListNode.static.matchFunction = function ( domElement ) {
+	function hasTypeof( el, type ) {
+		return ( el.getAttribute( 'typeof' ) || '' ).indexOf( type ) !== -1;
+	}
 	function isRefList( el ) {
-		return el && el.nodeType === Node.ELEMENT_NODE && ( el.getAttribute( 'typeof' ) || '' ).indexOf( 'mw:Extension/references' ) !== -1;
+		return el && el.nodeType === Node.ELEMENT_NODE && hasTypeof( el, 'mw:Extension/references' );
 	}
 	// If the template generated only a reference list, treat it as a ref list (T52769)
 	return isRefList( domElement ) ||
 		// A div-wrapped reference list
-		( domElement.children.length === 1 && isRefList( domElement.children[ 0 ] ) );
+		( domElement.children.length === 1 && isRefList( domElement.children[ 0 ] ) ) ||
+		// TemplateStyles, about-grouped to a div-wrapped reference list
+		(
+			hasTypeof( domElement, 'mw:Extension/templatestyles' ) &&
+			domElement.hasAttribute( 'about' ) &&
+			domElement.nextElementSibling &&
+			domElement.nextElementSibling.getAttribute( 'about' ) === domElement.getAttribute( 'about' ) &&
+			// A div-wrapped reference list
+			domElement.nextElementSibling.children.length === 1 && isRefList( domElement.nextElementSibling.children[ 0 ] )
+			// TODO: We should probably check there aren't subsequent elements. This and the above
+			// checks would be easier if the matchFunction was passed all the elements in the about group.
+		);
 };
 
 ve.dm.MWReferencesListNode.static.preserveHtmlAttributes = false;
@@ -71,7 +91,9 @@ ve.dm.MWReferencesListNode.static.toDataElement = function ( domElements, conver
 	if ( type.indexOf( 'mw:Extension/references' ) !== -1 ) {
 		refListNode = domElements[ 0 ];
 	} else {
-		refListNode = domElements[ 0 ].querySelectorAll( '[typeof*="mw:Extension/references"]' )[ 0 ];
+		refListNode = domElements[ 0 ].querySelector( '[typeof*="mw:Extension/references"]' ) ||
+			// In the TemplateStyles case, the ref list is in the second element
+			domElements[ 1 ].querySelector( '[typeof*="mw:Extension/references"]' );
 	}
 
 	var mwDataJSON = refListNode.getAttribute( 'data-mw' );

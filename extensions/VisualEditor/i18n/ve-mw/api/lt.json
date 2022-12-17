@@ -3,8 +3,8 @@
 		"authors": [
 			"Albertas",
 			"Eitvys200",
-			"Naktis",
-			"Matma Rex"
+			"Matma Rex",
+			"Naktis"
 		]
 	},
 	"apierror-visualeditor-docserver": "Klaida susisiekiant su Parsoid/RESTBase serveriu",

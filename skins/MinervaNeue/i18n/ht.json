@@ -3,7 +3,8 @@
 		"authors": [
 			"Amire80",
 			"Bfpage",
-			"Tisave"
+			"Tisave",
+			"Kitanago"
 		]
 	},
 	"minerva-last-modified-date": "Dènye modifikasyon : $1, $2",
@@ -14,7 +15,7 @@
 	"mobile-frontend-editor-redlink-create": "Kreye yon paj",
 	"mobile-frontend-editor-redlink-explain": "Paj sa a poko te kreye.",
 	"mobile-frontend-editor-redlink-leave": "Non, mèsi.",
-	"mobile-frontend-history": "Gade istwa modifikasyon paj sa a.",
+	"mobile-frontend-history": "Gade istorik modifikasyon paj sa a.",
 	"mobile-frontend-home-button": "Paj prensipal",
 	"mobile-frontend-language-article-heading": "Lang",
 	"mobile-frontend-languages-not-available": "Paj sa a pa disponib nan lòt lang.",
@@ -51,15 +52,19 @@
 	"minerva-page-actions-info": "Enfòmasyon sou paj la",
 	"minerva-page-actions-permalink": "Lyen pou tout tan",
 	"minerva-page-actions-backlinks": "Lyen yo pou paj sa a",
+	"minerva-page-actions-change-block": "Modifye blokaj la",
 	"minerva-page-actions-cite": "Site paj la",
 	"minerva-page-actions-delete": "Efase",
 	"minerva-page-actions-protect": "Pwoteje",
+	"minerva-page-actions-unblock": "Debloke itilizatè",
 	"minerva-page-actions-unprotect": "Depwoteje",
 	"minerva-page-actions-user-groups": "Gwoup itilizatè yo",
+	"minerva-page-actions-block": "Bloke itilizatè",
 	"minerva-page-actions-logs": "Jounal yo",
 	"minerva-page-actions-wikibase": "Eleman {{WBREPONAME}}",
 	"minerva-page-actions-language-switcher": "Lang yo",
 	"minerva-page-actions-history": "Istorik",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Diskisyon]]",
 	"minerva-talk-explained": "Diskisyon aktif yo",
 	"minerva-talk-explained-empty": "Pa gen diskisyon sou paj sa a.",
 	"minerva-talk-full-page": "Li kòm paj wiki",

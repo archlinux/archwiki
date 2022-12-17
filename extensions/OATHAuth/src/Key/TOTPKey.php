@@ -158,7 +158,7 @@ class TOTPKey implements IAuthKey {
 			$wgOATHAuthWindowRadius
 		);
 
-		// Remove any whitespace from the received token, which can be an intended group seperator
+		// Remove any whitespace from the received token, which can be an intended group separator
 		// or trimmeable whitespace
 		$token = preg_replace( '/\s+/', '', $token );
 

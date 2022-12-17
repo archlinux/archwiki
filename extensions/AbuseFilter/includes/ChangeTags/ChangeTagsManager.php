@@ -101,7 +101,7 @@ class ChangeTagsManager {
 		$tags = [];
 		foreach ( $res as $row ) {
 			$tags = array_merge(
-				$row->afa_parameters ? explode( "\n", $row->afa_parameters ) : [],
+				$row->afa_parameters !== '' ? explode( "\n", $row->afa_parameters ) : [],
 				$tags
 			);
 		}

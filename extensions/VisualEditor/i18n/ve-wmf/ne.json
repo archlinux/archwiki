@@ -3,7 +3,8 @@
 		"authors": [
 			"बिप्लब आनन्द",
 			"सरोज कुमार ढकाल",
-			"हिमाल सुबेदी"
+			"हिमाल सुबेदी",
+			"CAPTAIN MEDUSA"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|दृश्य सम्पादक]]",
@@ -24,5 +25,5 @@
 	"visualeditor-welcomedialog-content-thanks": "विश्वलाई अधिक पत्ता लगाउन मद्दत गर्नु भएकोमा धन्यवाद!",
 	"visualeditor-welcomedialog-switch": "स्राेत सम्पादकमा बदल्नुहाेस्",
 	"visualeditor-welcomedialog-switch-ve": "स्राेत सम्पादकमा बदल्नुहाेस्",
-	"visualeditor-welcomedialog-title": "मा {{GENDER:$1|स्वागत}} छ $2"
+	"visualeditor-welcomedialog-title": "$2मा {{GENDER:$1|स्वागत}} छ"
 }

@@ -2,15 +2,15 @@
 
 namespace PageImages\Hooks;
 
-use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Search\Entity\SearchResultThumbnail;
+use MediaWiki\Search\Hook\SearchResultProvideThumbnailHook;
 use PageImages\PageImages;
 use PageProps;
 use RepoGroup;
 use Title;
 
-class SearchResultProvideThumbnailHookHandler {
+class SearchResultProvideThumbnailHookHandler implements SearchResultProvideThumbnailHook {
 
 	public const THUMBNAIL_SIZE = 200;
 
@@ -113,32 +113,16 @@ class SearchResultProvideThumbnailHookHandler {
 	/**
 	 * @param array $pageIdentities array that contain $pageId => SearchResultPageIdentity.
 	 * @param array &$results Placeholder for result. $pageId => SearchResultThumbnail
+	 * @param int|null $size size of thumbnail height and width in points
 	 */
-	public function doSearchResultProvideThumbnail( array $pageIdentities, &$results ): void {
+	public function onSearchResultProvideThumbnail( array $pageIdentities, &$results, int $size = null ): void {
 		$pageIdTitles = array_map( static function ( PageIdentity $identity ) {
 			return Title::makeTitle( $identity->getNamespace(), $identity->getDBkey() );
 		}, $pageIdentities );
 
-		$data = $this->getThumbnails( $pageIdTitles, self::THUMBNAIL_SIZE );
+		$data = $this->getThumbnails( $pageIdTitles, $size ?? self::THUMBNAIL_SIZE );
 		foreach ( $data as $pageId => $thumbnail ) {
 			$results[ $pageId ] = $thumbnail;
 		}
-	}
-
-	public static function newFromGlobalState(): SearchResultProvideThumbnailHookHandler {
-		$services = MediaWikiServices::getInstance();
-		return new SearchResultProvideThumbnailHookHandler(
-			$services->getPageProps(),
-			$services->getRepoGroup()
-		);
-	}
-
-	/**
-	 * @param array[] $pageIdentities array that contain $pageId => PageIdentity.
-	 * @param array[] &$results Placeholder for result. $pageId => SearchResultThumbnail
-	 */
-	public static function onSearchResultProvideThumbnail( $pageIdentities, &$results ): void {
-		$handler = self::newFromGlobalState();
-		$handler->doSearchResultProvideThumbnail( $pageIdentities, $results );
 	}
 }

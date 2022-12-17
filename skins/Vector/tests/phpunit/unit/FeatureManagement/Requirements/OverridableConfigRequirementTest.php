@@ -18,19 +18,19 @@
  * @file
  */
 
-namespace Vector\FeatureManagement\Tests;
+namespace MediaWiki\Skins\Vector\Tests\Unit\FeatureManagement\Requirements;
 
 use CentralIdLookup;
 use HashConfig;
+use MediaWiki\Skins\Vector\Constants;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\OverridableConfigRequirement;
 use User;
-use Vector\Constants;
-use Vector\FeatureManagement\Requirements\OverridableConfigRequirement;
 use WebRequest;
 
 /**
  * @group Vector
  * @group FeatureManagement
- * @coversDefaultClass \Vector\FeatureManagement\Requirements\OverridableConfigRequirement
+ * @coversDefaultClass \MediaWiki\Skins\Vector\FeatureManagement\Requirements\OverridableConfigRequirement
  */
 class OverridableConfigRequirementTest extends \MediaWikiUnitTestCase {
 

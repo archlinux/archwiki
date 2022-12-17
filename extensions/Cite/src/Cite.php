@@ -260,7 +260,8 @@ class Cite {
 			// <ref> called in <references> has no content.
 			return StatusValue::newFatal(
 				'cite_error_empty_references_define',
-				Sanitizer::safeEncodeAttribute( $name )
+				Sanitizer::safeEncodeAttribute( $name ),
+				Sanitizer::safeEncodeAttribute( $group )
 			);
 		}
 
@@ -268,8 +269,11 @@ class Cite {
 		if ( !$this->isSectionPreview ) {
 			if ( !$this->referenceStack->hasGroup( $group ) ) {
 				// Called with group attribute not defined in text.
-				return StatusValue::newFatal( 'cite_error_references_missing_group',
-					Sanitizer::safeEncodeAttribute( $group ) );
+				return StatusValue::newFatal(
+					'cite_error_references_missing_group',
+					Sanitizer::safeEncodeAttribute( $group ),
+					Sanitizer::safeEncodeAttribute( $name )
+				);
 			}
 
 			$groupRefs = $this->referenceStack->getGroupRefs( $group );
@@ -299,7 +303,7 @@ class Cite {
 		// Tag every page where Book Referencing has been used, whether or not the ref tag is valid.
 		// This code and the page property will be removed once the feature is stable.  See T237531.
 		if ( array_key_exists( self::BOOK_REF_ATTRIBUTE, $argv ) ) {
-			$parser->getOutput()->setPageProperty( self::BOOK_REF_PROPERTY, true );
+			$parser->getOutput()->setPageProperty( self::BOOK_REF_PROPERTY, '' );
 		}
 
 		$status = $this->parseArguments(

@@ -59,6 +59,7 @@ ve.ui.MWLatexInspector.prototype.initialize = function () {
 	} );
 
 	this.idInput = new OO.ui.TextInputWidget();
+	this.qidInput = new mw.widgets.MathWbEntitySelector();
 
 	var inputField = new OO.ui.FieldLayout( this.input, {
 		align: 'top',
@@ -72,6 +73,10 @@ ve.ui.MWLatexInspector.prototype.initialize = function () {
 		align: 'top',
 		label: ve.msg( 'math-visualeditor-mwlatexinspector-id' )
 	} );
+	var qidField = new OO.ui.FieldLayout( this.qidInput, {
+		align: 'top',
+		label: ve.msg( 'math-visualeditor-mwlatexinspector-qid' )
+	} );
 
 	// Initialization
 	this.$content.addClass( 've-ui-mwLatexInspector-content' );
@@ -79,7 +84,8 @@ ve.ui.MWLatexInspector.prototype.initialize = function () {
 		inputField.$element,
 		this.generatedContentsError.$element,
 		displayField.$element,
-		idField.$element
+		idField.$element,
+		qidField.$element
 	);
 };
 
@@ -90,6 +96,21 @@ ve.ui.MWLatexInspector.prototype.getSetupProcess = function ( data ) {
 	return ve.ui.MWLatexInspector.super.prototype.getSetupProcess.call( this, data )
 		.next( function () {
 			var display = this.selectedNode.getAttribute( 'mw' ).attrs.display || 'default';
+			var attributes = this.selectedNode && this.selectedNode.getAttribute( 'mw' ).attrs,
+				id = attributes && attributes.id || '',
+				qid = attributes && attributes.qid || '',
+				isReadOnly = this.isReadOnly();
+
+			// Populate form
+			// TODO: This widget is not readable when disabled
+			this.idInput.setValue( id ).setReadOnly( isReadOnly );
+			this.qidInput.setValue( qid ).setReadOnly( isReadOnly );
+
+			// Add event handlers
+			this.input.on( 'change', this.onChangeHandler );
+			this.displaySelect.on( 'choose', this.onChangeHandler );
+			this.idInput.on( 'change', this.onChangeHandler );
+			this.qidInput.on( 'change', this.onChangeHandler );
 			this.displaySelect.selectItemByData( display );
 			this.displaySelect.on( 'choose', this.onChangeHandler );
 		}, this );
@@ -114,9 +135,11 @@ ve.ui.MWLatexInspector.prototype.updateMwData = function ( mwData ) {
 
 	var display = this.displaySelect.findSelectedItem().getData();
 	var id = this.idInput.getValue();
+	var qid = this.qidInput.getValue();
 
 	mwData.attrs.display = display !== 'default' ? display : undefined;
 	mwData.attrs.id = id || undefined;
+	mwData.attrs.qid = qid || undefined;
 };
 
 /**

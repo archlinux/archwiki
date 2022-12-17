@@ -35,14 +35,17 @@
 	/* stylelint-enable no-descending-specificity */
 }
 
+/* As in Vector, indenting of definition lists, and bolding of definition terms is generically useful */
 dl {
 	margin-left: 1em;
 
 	dt {
 		font-weight: bold;
 	}
+}
 
-	dd {
+.mw-parser-output {
+	dl dd {
 		display: block;
 		// Some dd's may contain images so these need to be scrollable
 		// Text will not become scrollable.

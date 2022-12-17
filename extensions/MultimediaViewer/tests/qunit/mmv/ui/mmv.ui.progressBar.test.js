@@ -20,7 +20,7 @@
 
 	QUnit.test( 'Constructor sense check', function ( assert ) {
 		var progressBar = new mw.mmv.ui.ProgressBar( $( '<div>' ) );
-		assert.ok( progressBar, 'ProgressBar created sccessfully' );
+		assert.true( progressBar instanceof mw.mmv.ui.ProgressBar, 'ProgressBar created sccessfully' );
 		assert.strictEqual( progressBar.$progress.hasClass( 'empty' ), true, 'ProgressBar starts empty' );
 	} );
 

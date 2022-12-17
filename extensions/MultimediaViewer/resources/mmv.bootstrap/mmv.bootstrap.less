@@ -11,20 +11,8 @@
 body.mw-mmv-lightbox-open {
 	overflow-y: auto;
 
-	/* stylelint-disable selector-max-id */
-	#mw-page-base,
-	#mw-head-base,
-	#mw-navigation,
-	#content,
-	#footer,
-	#globalWrapper { // monobook
-		/** Stop the article from scrolling in the background - skin-specific but works in any browser */
-		display: none;
-	}
-	/* stylelint-enable selector-max-id */
-
-	> * {
-		/** Stop the article from scrolling in the background - works with any skin but needs modern browser */
+	// Stop the article from scrolling in the background
+	> *:not( .mw-notification-area-overlay ) {
 		display: none;
 	}
 

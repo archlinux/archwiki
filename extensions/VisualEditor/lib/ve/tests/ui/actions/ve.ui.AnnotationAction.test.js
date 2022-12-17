@@ -99,6 +99,40 @@ QUnit.test( 'toggle', function ( assert ) {
 					data.splice( 12, 3, 'B', 'a', 'r' );
 				},
 				msg: 'toggle bold on comparable bold annotations spanning multiple table cells'
+			},
+			{
+				html: '<table><tr><td><b>A</b></td><td></td></tr></table>',
+				rangeOrSelection: {
+					type: 'table',
+					tableRange: new ve.Range( 0, 15 ),
+					fromCol: 0,
+					fromRow: 0,
+					toCol: 1,
+					toRow: 0
+				},
+				method: 'toggle',
+				args: [ 'textStyle/bold' ],
+				expectedData: function ( data ) {
+					data.splice( 5, 1, 'A' );
+				},
+				msg: 'toggle bold off when selection includes an content-less cell'
+			},
+			{
+				html: '<table><tr><td></td><td><b>A</b></td></tr></table>',
+				rangeOrSelection: {
+					type: 'table',
+					tableRange: new ve.Range( 0, 15 ),
+					fromCol: 0,
+					fromRow: 0,
+					toCol: 1,
+					toRow: 0
+				},
+				method: 'toggle',
+				args: [ 'textStyle/bold' ],
+				expectedData: function ( data ) {
+					data.splice( 9, 1, 'A' );
+				},
+				msg: 'toggle bold off when first cell is content-less cell'
 			}
 		];
 

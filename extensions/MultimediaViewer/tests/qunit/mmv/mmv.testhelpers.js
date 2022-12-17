@@ -126,15 +126,15 @@
 	 * @return {Function}
 	 */
 	MTH.asyncMethod = function ( object, method, assert ) {
+		var helpers = this;
 		return function () {
 			// apply arguments to original promise
-			var promise = object[ method ].apply( object, arguments ),
-				done;
+			var promise = object[ method ].apply( object, arguments );
 
-			this.asyncPromises.push( promise );
+			helpers.asyncPromises.push( promise );
 
 			if ( assert ) {
-				done = assert.async();
+				var done = assert.async();
 				// use setTimeout to ensure `done` is not the first callback handler
 				// to execute (possibly ending the test's wait right before
 				// the result of the promise is executed)
@@ -142,7 +142,7 @@
 			}
 
 			return promise;
-		}.bind( this );
+		};
 	};
 
 	/**

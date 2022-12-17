@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Nertiks",
 			"Nērtiks Jōrgesuns",
 			"Peteris",
-			"Tīgelika",
-			"Amire80"
+			"Tīgelika"
 		]
 	},
 	"vector-language-button-aria-label": "Jaīs en artīkelin pra kittan billin. Preiēiminan en {{PLURAL:$1|$1 bilāmans|$1 billai|$1 bilāmans}}",
@@ -22,5 +22,5 @@
 	"vector-view-view": "Skaitāis",
 	"vector-view-viewsource": "Wīdais appun",
 	"vector-more-actions": "Tūls",
-	"vector-searchsuggest-containing": "Laukīs pāusans turīnts <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Laukīs pāusans turīnts <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

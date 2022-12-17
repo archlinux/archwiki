@@ -6,7 +6,7 @@ class ViewListPage extends Page {
 	get title() { return $( '#firstHeading' ); }
 	get newFilterButton() { return $( '.oo-ui-buttonElement a' ); }
 
-	get filterSavedNotice() { return $( '.successbox' ); }
+	get filterSavedNotice() { return $( '.mw-message-box-success' ); }
 
 	get savedFilterID() {
 		const succesMsg = this.filterSavedNotice.getHTML(),

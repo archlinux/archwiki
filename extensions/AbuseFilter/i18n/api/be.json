@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"ZlyiLev",
-			"Chadyka"
+			"Chadyka",
+			"ZlyiLev"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-extended-description": "Зменныя vars, rcid і logid абавязковыя, аднак можа выкарыстоўвацца толькі адна з іх.",

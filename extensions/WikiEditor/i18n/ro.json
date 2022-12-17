@@ -44,7 +44,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Pagina nu există",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titlu incorect",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Legătură externă",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Verific existența paginii...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Pagină de dezambiguizare",
 	"wikieditor-toolbar-tool-link-int-invalid": "Titlul specificat nu este corect.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-ul specificat pare a fi o legătură către o altă pagină wiki. Doriți să o transformați într-o legătură internă?",
@@ -193,5 +192,7 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Nume de utilizator</a> (<a href='#' title='$2:Username'>discuție</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Indentare",
 	"wikieditor-toolbar-help-content-indent-syntax": "Text normal<br />:Text indentat<br />::Text indentat",
-	"wikieditor-toolbar-help-content-indent-result": "Text normal<dl><dd>Text indentat<dl><dd>Text indentat</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Text normal<dl><dd>Text indentat<dl><dd>Text indentat</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-beta-label": "Previzualizare în timp real",
+	"wikieditor-realtimepreview-beta-desc": "Vezi cum le vor apărea cititorilor schimbările asupra wikitextului înăuntrul [[mw:Special:MyLanguage/Extension:WikiEditor|editorului 2010]]."
 }
