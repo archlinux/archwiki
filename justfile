@@ -27,6 +27,7 @@ init: start
 		"ArchWiki" \
 		"admin"
 	echo -e "\$wgVectorResponsive = true;\n\$wgVectorDefaultSkinVersion = '2';\nwfLoadExtension( 'ArchLinux' );" >> LocalSettings.php
+	sed -E 's/^(\$wgDefaultSkin\s*=\s*).+/\1"vector-2022";/g' -i LocalSettings.php
 	echo -e "\$wgArchHome = 'https://www.archlinux.org/';" >> LocalSettings.php
 	echo -e "\$wgArchNavBar = ['Start' => '#', 'Wiki' => '/'];" >> LocalSettings.php
 	echo -e "\$wgArchNavBarSelectedDefault = 'Wiki';" >> LocalSettings.php
