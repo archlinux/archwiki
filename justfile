@@ -7,7 +7,7 @@ COMPOSE := 'docker-compose -f docker/app.yml -p archwiki'
 COMPOSE-RUN := COMPOSE + ' run --rm'
 PHP-DB-RUN := COMPOSE-RUN + ' app'
 PHP-RUN := COMPOSE-RUN + ' --no-deps app'
-MARIADB-RUN := COMPOSE-RUN + ' --no-deps mariadb'
+MARIADB-RUN := COMPOSE-RUN + ' -T --no-deps mariadb'
 
 default:
 	just --list
