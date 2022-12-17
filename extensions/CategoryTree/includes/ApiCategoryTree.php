@@ -10,6 +10,7 @@ use FormatJson;
 use MediaWiki\Languages\LanguageConverterFactory;
 use Title;
 use WANObjectCache;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * This program is free software; you can redistribute it and/or modify
@@ -149,11 +150,11 @@ class ApiCategoryTree extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'category' => [
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true,
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_REQUIRED => true,
 			],
 			'options' => [
-				ApiBase::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_TYPE => 'string',
 			],
 		];
 	}

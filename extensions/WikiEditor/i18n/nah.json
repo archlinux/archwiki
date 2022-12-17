@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Akapochtli",
+			"Languaeditor",
 			"Macofe",
 			"Ricardo gs",
 			"Taresi",
-			"Teòtlalili",
-			"Languaeditor"
+			"Teòtlalili"
 		]
 	},
 	"wikieditor": "Wel senka yankuik netzòwilìxtlâtli in tlenìk moyêyèktlàlia in wikitlâkuilòlmantli",
@@ -39,7 +39,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Ahmo oncah tlahcuilolamatl",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ahmo cualli tocaitl",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Panicatzohuiliztli",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Motztỉka intlà kox kä in tlaìxtlapalli",
 	"wikieditor-toolbar-tool-link-int-invalid": "Âmò kualli in tòkâtli tlèn òtimîkuilwili.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "In URL tlèn timonekiltia mîtòs kineki mochìwas ìtzòwilòka oksè wikitlaìxtlapalli.\n¿Timonekiltia mà mokuẻpa sè tlatlâtek tzòwìlli?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Tlahtectzohuiliztli",

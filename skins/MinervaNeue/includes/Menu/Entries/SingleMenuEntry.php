@@ -89,11 +89,14 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param string $url The URL entry points to
 	 * @param string $className Optional HTML classes
 	 * @param string|null $icon defaults to $name if not specified
+	 * @param bool $trackable Whether an entry will track clicks or not. Default is false.
 	 * @return static
 	 */
-	public static function create( $name, $text, $url, $className = '', $icon = null ) {
+	public static function create( $name, $text, $url, $className = '', $icon = null, $trackable = false ) {
 		$entry = new static( $name, $text, $url, $className );
-		$entry->trackClicks( $name );
+		if ( $trackable ) {
+			$entry->trackClicks( $name );
+		}
 		if ( $icon === null ) {
 			$icon = $name;
 		}
@@ -140,14 +143,19 @@ class SingleMenuEntry implements IMenuEntry {
 	 * @param string $iconPrefix either `wikimedia` or `minerva`
 	 * @return $this
 	 */
-	public function setIcon( $iconName, $iconType = 'before',
-		$additionalClassNames = '', $iconPrefix = 'minerva'
+	public function setIcon( $iconName,
+		$iconType = 'before',
+		$additionalClassNames = '',
+		$iconPrefix = 'minerva'
 	) {
 		if ( $iconType === 'before' ) {
 			$this->attributes['icon'] = $iconPrefix . '-' . $iconName;
 		} else {
 			$this->attributes['class'] .= ' ' . MinervaUI::iconClass(
-				$iconName, $iconType, $additionalClassNames, $iconPrefix
+				$iconName,
+				$iconType,
+				$additionalClassNames,
+				$iconPrefix
 			);
 		}
 		return $this;
@@ -179,5 +187,4 @@ class SingleMenuEntry implements IMenuEntry {
 	public function setJSOnly() {
 		$this->isJSOnly = true;
 	}
-
 }

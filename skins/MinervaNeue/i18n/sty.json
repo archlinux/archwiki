@@ -2,14 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Khanmarat",
-			"Sorbat"
+			"Sorbat",
+			"TayfunEt."
 		]
 	},
 	"mobile-frontend-editor-edit": "Төсәткәле",
 	"mobile-frontend-home-button": "Паш питкә",
-	"mobile-frontend-language-article-heading": "Пашҡа телтә уғығалы",
+	"mobile-frontend-language-article-heading": "Тел",
 	"mobile-frontend-main-menu-button-tooltip": "Төп менюны ацҡалы",
-	"mobile-frontend-main-menu-login": "Системаға танытылғалы",
+	"mobile-frontend-main-menu-login": "Кергәле",
 	"mobile-frontend-main-menu-nearby": "Йыуыҡта",
 	"mobile-frontend-main-menu-settings": "Ҡоролошлар",
 	"mobile-frontend-main-menu-watchlist": "Күргәсеү күцермәлек",

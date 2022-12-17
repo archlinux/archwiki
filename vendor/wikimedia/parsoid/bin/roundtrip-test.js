@@ -24,7 +24,7 @@ var Diff = require('../lib/utils/Diff.js').Diff;
 var JSUtils = require('../lib/utils/jsutils.js').JSUtils;
 var MockEnv = require('../tests/MockEnv.js').MockEnv;
 
-var defaultContentVersion = '2.4.0';
+var defaultContentVersion = '2.6.0';
 
 function displayDiff(type, count) {
 	var pad = (10 - type.length);  // Be positive!
@@ -212,7 +212,7 @@ var findMatchingNodes = function(node, range) {
 
 	// Cannot inspect image subtree at a finer grained level
 	var typeOf = node.getAttribute('typeof') || '';
-	if (/\bmw:Image(\/|\s|$)/.test(typeOf) && /^(FIGURE|SPAN)$/.test(node.nodeName)) {
+	if (/\bmw:File(\/|\s|$)/.test(typeOf) && /^(FIGURE|SPAN)$/.test(node.nodeName)) {
 		return [node];
 	}
 
@@ -289,6 +289,54 @@ var findMatchingNodes = function(node, range) {
 
 	return elts;
 };
+
+function stripTranscludedWhitespaceSpans(node) {
+	while (node) {
+		const sibling = node.nextSibling;
+		if (DOMUtils.isElt(node)) {
+			const about = node.getAttribute('about');
+			const nTypeOf = node.getAttribute('typeof') || '';
+
+			// remove whitespace spans that are first nodes of a transclusion,
+			// have whitespace content, and transfer attributes to their sibling.
+			if (node.nodeName === 'SPAN' &&
+				/^\s*$/.test(node.textContent) &&
+				/mw:Transclusion/.test(nTypeOf) &&
+				DOMUtils.isElt(sibling) &&
+				sibling.getAttribute('about') === about
+			) {
+				var sTypeOf = sibling.getAttribute('typeof') || '';
+				if (sTypeOf) {
+					sTypeOf = sTypeOf + ' ' + nTypeOf;
+				} else {
+					sTypeOf = nTypeOf;
+				}
+				sibling.setAttribute('typeof', sTypeOf);
+				sibling.setAttribute('data-mw', node.getAttribute('data-mw'));
+				sibling.setAttribute('data-parsoid', node.getAttribute('data-parsoid'));
+
+				const whitespace = node.ownerDocument.createTextNode(node.textContent);
+				node.parentNode.replaceChild(whitespace, node);
+
+				// Skip transclusion nodes
+				node = sibling;
+				while (node && DOMUtils.isElt(node) && node.getAttribute('about') === about) {
+					node = node.nextSibling;
+				}
+			} else if (/mw:Transclusion/.test(nTypeOf)) {
+				node = WTUtils.skipOverEncapsulatedContent(node);
+				// No skipping to nextSibling here!
+			} else if (node.firstChild) {
+				stripTranscludedWhitespaceSpans(node.firstChild);
+				node = sibling;
+			} else {
+				node = sibling;
+			}
+		} else {
+			node = sibling;
+		}
+	}
+}
 
 var getMatchingHTML = function(body, offsetRange, nlDiffs) {
 	// If the diff context straddles a template boundary (*) and if
@@ -393,17 +441,17 @@ function normalizeWikitext(wt, opts) {
 	return wt;
 }
 
-// Get diff substrings from offsets
+// Get diff slices from offsets
 var formatDiff = function(oldWt, newWt, offset, context) {
 	return [
 		'------',
-		oldWt.substring(offset[0].start - context, offset[0].start).blue +
-		oldWt.substring(offset[0].start, offset[0].end).green +
-		oldWt.substring(offset[0].end, offset[0].end + context).blue,
+		oldWt.slice(offset[0].start - context, offset[0].start).blue +
+		oldWt.slice(offset[0].start, offset[0].end).green +
+		oldWt.slice(offset[0].end, offset[0].end + context).blue,
 		'++++++',
-		newWt.substring(offset[1].start - context, offset[1].start).blue +
-		newWt.substring(offset[1].start, offset[1].end).red +
-		newWt.substring(offset[1].end, offset[1].end + context).blue,
+		newWt.slice(offset[1].start - context, offset[1].start).blue +
+		newWt.slice(offset[1].start, offset[1].end).red +
+		newWt.slice(offset[1].end, offset[1].end + context).blue,
 	].join('\n');
 };
 
@@ -437,6 +485,20 @@ function genSyntacticDiffs(data) {
 	return results;
 }
 
+function normalizeDocumentHTML(body) {
+	// Strip whitspace spans that are first elements of a transclusion
+	stripTranscludedWhitespaceSpans(body);
+
+	// Strip 'mw..' ids from the DOMs. This matters for 2 scenarios:
+	// * reduces noise in visual diffs
+	// * all other things being equal after normalization, we don't
+	//   assume DOMs are different simply because ids are different
+	stripElementIds(body);
+
+	// Strip section tags from the DOMs
+	ContentUtils.stripUnnecessaryWrappersAndFallbackIds(body);
+}
+
 var checkIfSignificant = function(offsets, data) {
 	var oldWt = data.oldWt;
 	var newWt = data.newWt;
@@ -456,16 +518,8 @@ var checkIfSignificant = function(offsets, data) {
 		mw: data.newMw && data.newMw.body,
 	});
 
-	// Strip 'mw..' ids from the DOMs. This matters for 2 scenarios:
-	// * reduces noise in visual diffs
-	// * all other things being equal after normalization, we don't
-	//   assume DOMs are different simply because ids are different
-	stripElementIds(oldBody.ownerDocument.body);
-	stripElementIds(newBody.ownerDocument.body);
-
-	// Strip section tags from the DOMs
-	ContentUtils.stripSectionTagsAndFallbackIds(oldBody.ownerDocument.body);
-	ContentUtils.stripSectionTagsAndFallbackIds(newBody.ownerDocument.body);
+	normalizeDocumentHTML(oldBody.ownerDocument.body);
+	normalizeDocumentHTML(newBody.ownerDocument.body);
 
 	var i, offset;
 	var results = [];
@@ -506,6 +560,11 @@ var checkIfSignificant = function(offsets, data) {
 		}
 	}
 
+	/*
+	console.log("---------OLD DOC HTML---------\n" + oldBody.ownerDocument.body.innerHTML);
+	console.log("---------NEW DOC HTML---------\n" + newBody.ownerDocument.body.innerHTML);
+	*/
+
 	// FIXME: In this code path below, the returned diffs might
 	// underreport syntactic diffs since these are based on
 	// diffs on normalized wikitext. Unclear how to tackle this.
@@ -525,8 +584,8 @@ var checkIfSignificant = function(offsets, data) {
 		thisResult.wtDiff = formatDiff(oldWt, newWt, offset, 0);
 
 		// Is this a newline separator diff?
-		var oldStr = oldWt.substring(offset[0].start, offset[0].end);
-		var newStr = newWt.substring(offset[1].start, offset[1].end);
+		var oldStr = oldWt.slice(offset[0].start, offset[0].end);
+		var newStr = newWt.slice(offset[1].start, offset[1].end);
 		var nlDiffs = /^\s*$/.test(oldStr) && /^\s*$/.test(newStr)
 			&& (/\n/.test(oldStr) || /\n/.test(newStr));
 
@@ -536,10 +595,9 @@ var checkIfSignificant = function(offsets, data) {
 		var diff = Diff.patchDiff(oldHTML, newHTML);
 		if (diff !== null) {
 			// Normalize wts to check if we really have a semantic diff
-			var wt1 = normalizeWikitext(oldWt.substring(offset[0].start, offset[0].end), { newlines: true, postDiff: true });
-			var wt2 = normalizeWikitext(newWt.substring(offset[1].start, offset[1].end), { newlines: true, postDiff: true });
+			var wt1 = normalizeWikitext(oldWt.slice(offset[0].start, offset[0].end), { newlines: true, postDiff: true });
+			var wt2 = normalizeWikitext(newWt.slice(offset[1].start, offset[1].end), { newlines: true, postDiff: true });
 			if (wt1 !== wt2) {
-
 				// Syntatic diff + provide context for semantic diffs
 				thisResult.type = 'fail';
 				thisResult.wtDiff = formatDiff(oldWt, newWt, offset, 25);
@@ -771,7 +829,6 @@ var runTests = Promise.async(function *(title, options, formatter) {
 				original: {
 					'data-parsoid': data.oldDp,
 					'data-mw': data.oldMw,
-					wikitext: { body: data.oldWt },
 				},
 			},
 		}, parsoidOptions);
@@ -823,11 +880,7 @@ var runTests = Promise.async(function *(title, options, formatter) {
 
 	if (options.readViewStripBenchmark && Math.random() < (options.readViewStripBenchmark.sampleRate || 0)) {
 		const rules = options.readViewStripBenchmark.rules;
-		const diffSizes = yield benchmarkReadView(domain, title, data.oldHTML.body, rules);
-		profile.readViewSizes = {
-			'original': diffSizes.originalSize,
-			'stripped': diffSizes.strippedSize,
-		};
+		profile.readViewSizes = yield benchmarkReadView(domain, title, data.oldHTML.body, rules);
 	}
 
 	var output = formatter(error, prefix, title, data.diffs, profile);

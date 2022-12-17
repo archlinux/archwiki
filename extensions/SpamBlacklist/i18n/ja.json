@@ -5,6 +5,7 @@
 			"Fryed-peach",
 			"JtFuruhata",
 			"Marine-Blue",
+			"MathXplore",
 			"Shirayuki",
 			"Tmv",
 			"Whym",
@@ -20,9 +21,11 @@
 	"spam-blacklisted-email-signup": "指定されたメールアドレスは現在使用を禁止されています。",
 	"spam-invalid-lines": "このスパムブラックリストには、無効な{{PLURAL:$1|正規表現}}を含む{{PLURAL:$1|行}}があります。保存する前に問題部分を修正してください:",
 	"spam-blacklist-desc": "ページ内の URL や登録利用者のメールアドレスを禁止できるようにする、正規表現に基づいたスパム対策ツール",
-	"log-name-spamblacklist": "スパムブラックリスト記録",
+	"log-name-spamblacklist": "スパムブロックリストのログ",
 	"log-description-spamblacklist": "これらのイベントはスパムブラックリストとの一致を追跡します。",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} が $3 に $4 を追加しようとした際にスパムブラックリストが発動しました。",
-	"right-spamblacklistlog": "スパムブラックリストを閲覧",
-	"action-spamblacklistlog": "スパムブラックリスト記録の閲覧"
+	"right-spamblacklistlog": "スパムブロックリスト記録を閲覧",
+	"action-spamblacklistlog": "スパムブロックリスト記録の閲覧",
+	"right-sboverride": "スパムブロックリストを回避",
+	"action-sboverride": "スパムブロックリストの回避"
 }

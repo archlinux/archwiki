@@ -7,7 +7,8 @@
 			"Horus",
 			"Octahedron80",
 			"Patsagorn Y.",
-			"Trisorn Triboon"
+			"Trisorn Triboon",
+			"Ekminarin"
 		]
 	},
 	"minerva-last-modified-date": "แก้ไขล่าสุดเมื่อ $1 เวลา $2",
@@ -18,7 +19,7 @@
 	"minerva-download": "ดาวน์โหลดเป็น PDF",
 	"mobile-frontend-editor-redlink-create": "สร้างหน้า",
 	"mobile-frontend-editor-redlink-explain": "หน้านี้ยังไม่ได้ถูกสร้างขึ้น",
-	"mobile-frontend-editor-redlink-leave": "ไม่ ขอบคุณ",
+	"mobile-frontend-editor-redlink-leave": "ไม่ขอบคุณ",
 	"mobile-frontend-history": "ดูประวัติการแก้ไขของหน้านี้",
 	"mobile-frontend-home-button": "หน้าหลัก",
 	"mobile-frontend-language-article-heading": "ภาษาอื่น",

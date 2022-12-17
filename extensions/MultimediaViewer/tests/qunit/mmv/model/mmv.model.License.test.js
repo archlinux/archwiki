@@ -27,24 +27,22 @@
 			url = 'http://creativecommons.org/licenses/by-sa/3.0/';
 
 		license = new mw.mmv.model.License( shortName );
-		assert.ok( license, 'License created successfully' );
+		assert.true( license instanceof mw.mmv.model.License, 'License created successfully' );
 		assert.strictEqual( license.shortName, shortName, 'License has correct short name' );
-		assert.notOk( license.internalName, 'License has no internal name' );
-		assert.notOk( license.longName, 'License has no long name' );
-		assert.notOk( license.deedUrl, 'License has no deed URL' );
+		assert.strictEqual( license.internalName, undefined, 'License has no internal name' );
+		assert.strictEqual( license.longName, undefined, 'License has no long name' );
+		assert.strictEqual( license.deedUrl, undefined, 'License has no deed URL' );
 
 		license = new mw.mmv.model.License( shortName, internalName, longName, url );
-		assert.ok( license, 'License created successfully' );
+		assert.true( license instanceof mw.mmv.model.License, 'License created successfully' );
 		assert.strictEqual( license.shortName, shortName, 'License has correct short name' );
 		assert.strictEqual( license.internalName, internalName, 'License has correct internal name' );
 		assert.strictEqual( license.longName, longName, 'License has correct long name' );
 		assert.strictEqual( license.deedUrl, url, 'License has correct deed URL' );
 
-		try {
+		assert.throws( function () {
 			license = new mw.mmv.model.License();
-		} catch ( e ) {
-			assert.ok( e, 'License cannot be created without a short name' );
-		}
+		}, 'License cannot be created without a short name' );
 	} );
 
 	QUnit.test( 'getShortName()', function ( assert ) {

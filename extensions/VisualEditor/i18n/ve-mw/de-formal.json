@@ -51,7 +51,6 @@
 	"visualeditor-savedialog-keyboard-shortcut-submit": "Sie können $1 drücken, um Ihre Bearbeitung zu speichern.",
 	"visualeditor-savedialog-label-review": "Überprüfen Sie Ihre Änderungen",
 	"visualeditor-savedialog-title-preview": "Eine Vorschau Ihrer Änderungen anzeigen",
-	"visualeditor-savedialog-warning-dirty": "Ihre Bearbeitung ist eventuell beschädigt. Bitte vor dem Speichern überprüfen.",
 	"visualeditor-toload": "Der Editor wird jetzt geladen. Wenn Sie diese Meldung nach einigen Sekunden noch sehen, [$1 laden Sie bitte die Seite] neu.",
 	"visualeditor-wikitext-warning": "Sie benutzen den visuellen Editor. [[{{MediaWiki:visualeditor-wikitext-warning-link}}|Wikitext]] funktioniert hier nicht. Um jederzeit ohne Verlust deiner Änderungen zur Quelltextbearbeitung zurückzukehren, klicken Sie auf den Wechseln-Button."
 }

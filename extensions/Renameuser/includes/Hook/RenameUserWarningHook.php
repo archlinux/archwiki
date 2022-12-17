@@ -24,5 +24,3 @@ interface RenameUserWarningHook {
 	public function onRenameUserWarning( string $oldUsername, string $newUsername, array &$warnings ): void;
 
 }
-
-class_alias( RenameUserWarningHook::class, 'RenameUserWarningHook' );

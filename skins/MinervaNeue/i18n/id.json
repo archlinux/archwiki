@@ -1,18 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
+			"ANukuma",
 			"Bennylin",
 			"Daud I.F. Argana",
 			"Farras",
+			"Gombang",
 			"Ilham151096",
 			"Iwan Novirion",
 			"Kenrick95",
 			"Naufal06",
 			"Rachmat04",
 			"Uchup19",
-			"William Surya Permana",
-			"ANukuma",
-			"Gombang"
+			"Veracious",
+			"William Surya Permana"
 		]
 	},
 	"minerva-last-modified-date": "Terakhir diubah pada $1, pukul $2",
@@ -61,12 +62,15 @@
 	"minerva-page-actions-info": "Informasi halaman",
 	"minerva-page-actions-permalink": "Pranala permanen",
 	"minerva-page-actions-backlinks": "Pranala balik",
+	"minerva-page-actions-change-block": "Ubah pemblokiran",
 	"minerva-page-actions-cite": "Kutip halaman ini",
 	"minerva-page-actions-move": "Pindahkan",
 	"minerva-page-actions-delete": "Hapus",
 	"minerva-page-actions-protect": "Lindungi",
+	"minerva-page-actions-unblock": "Buka blokir pengguna",
 	"minerva-page-actions-unprotect": "Batalkan perlindungan",
 	"minerva-page-actions-user-groups": "Kelompok pengguna",
+	"minerva-page-actions-block": "Blokir pengguna",
 	"minerva-page-actions-logs": "Log",
 	"minerva-page-actions-wikibase": "Butir di {{WBREPONAME}}",
 	"minerva-page-actions-language-switcher": "Bahasa",

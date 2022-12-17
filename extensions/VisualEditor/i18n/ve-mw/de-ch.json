@@ -8,8 +8,6 @@
 	"visualeditor-ca-editsource-section": "Quelltext bearbeiten",
 	"visualeditor-desc": "Stellt den WYSIWYG-Editor «VisualEditor» bereit",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-help": "Du kannst die Anzeige einer zusätzlichen Registerkarte neben der Registerkarte «$1» auf dieser Seite zum einfachen Hinzufügen eines neuen Abschnitts erzwingen oder die Anzeige unterdrücken.",
-	"visualeditor-dialog-transclusion-absent-template": "Die Vorlage «$1» ist noch nicht vorhanden.",
-	"visualeditor-dialog-transclusion-more-template-description": "Es könnten einige zusätzliche Informationen über die Vorlage «$1» auf [[{{ns:template}}:$1|ihrer Seite]] vorhanden sein.",
 	"visualeditor-recreate": "Die Seite wurde gelöscht, nachdem du zum Bearbeiten angefangen hast. Wähle «$1», um sie neu zu erstellen.",
 	"visualeditor-tooltip-non-breaking-space": "Nicht-umbrechender Leerschlag"
 }

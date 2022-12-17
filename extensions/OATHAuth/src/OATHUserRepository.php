@@ -26,9 +26,8 @@ use MediaWiki\MediaWikiServices;
 use MWException;
 use Psr\Log\LoggerInterface;
 use RequestContext;
-use stdClass;
 use User;
-use Wikimedia\Rdbms\DBConnRef;
+use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 class OATHUserRepository {
@@ -84,31 +83,19 @@ class OATHUserRepository {
 				->centralIdFromLocalUser( $user );
 			$res = $this->getDB( DB_REPLICA )->selectRow(
 				'oathauth_users',
-				'*',
+				[ 'module', 'data' ],
 				[ 'id' => $uid ],
 				__METHOD__
 			);
 			if ( $res ) {
-				$data = $res->data;
-				$moduleKey = $res->module;
-				if ( $this->isLegacy( $res ) ) {
-					$module = $this->auth->getModuleByKey( 'totp' );
-					$data = $this->checkAndResolveLegacy( $data, $res );
-				} else {
-					$module = $this->auth->getModuleByKey( $moduleKey );
-				}
+				$module = $this->auth->getModuleByKey( $res->module );
 				if ( $module === null ) {
-					// For sanity
 					throw new MWException( 'oathauth-module-invalid' );
 				}
 
 				$oathUser->setModule( $module );
 				$decodedData = FormatJson::decode( $res->data, true );
-				if ( !isset( $decodedData['keys'] ) && $module->getName() === 'totp' ) {
-					// Legacy single-key setup
-					$key = $module->newKey( $decodedData );
-					$oathUser->addKey( $key );
-				} elseif ( is_array( $decodedData['keys'] ) ) {
+				if ( is_array( $decodedData['keys'] ) ) {
 					foreach ( $decodedData['keys'] as $keyData ) {
 						$key = $module->newKey( $keyData );
 						$oathUser->addKey( $key );
@@ -165,6 +152,7 @@ class OATHUserRepository {
 				'clientip' => $clientInfo,
 				'oathtype' => $user->getModule()->getName(),
 			] );
+			Notifications\Manager::notifyEnabled( $user );
 		}
 	}
 
@@ -196,47 +184,11 @@ class OATHUserRepository {
 
 	/**
 	 * @param int $index DB_PRIMARY/DB_REPLICA
-	 * @return DBConnRef
+	 * @return IDatabase
 	 */
 	private function getDB( $index ) {
 		global $wgOATHAuthDatabase;
 
 		return $this->lb->getConnectionRef( $index, [], $wgOATHAuthDatabase );
-	}
-
-	/**
-	 * @param stdClass $row
-	 * @return bool
-	 */
-	private function isLegacy( $row ) {
-		if ( $row->module !== '' ) {
-			return false;
-		}
-		if ( property_exists( $row, 'secret' ) && $row->secret !== null ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if the DB data is in the new format,
-	 * if not converts old data to new
-	 *
-	 * @param string $data
-	 * @param stdClass $row
-	 * @return string
-	 */
-	private function checkAndResolveLegacy( $data, $row ) {
-		if ( $data ) {
-			// New data exists - no action required
-			return $data;
-		}
-		if ( property_exists( $row, 'secret' ) && property_exists( $row, 'scratch_tokens' ) ) {
-			return FormatJson::encode( [
-				'secret' => $row->secret,
-				'scratch_tokens' => $row->scratch_tokens
-			] );
-		}
-		return '';
 	}
 }

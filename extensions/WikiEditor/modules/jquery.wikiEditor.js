@@ -222,7 +222,7 @@
 		// where we left off
 		var context = $( this ).data( 'wikiEditor-context' );
 		// On first call, we need to set things up, but on all following calls we can skip right to the API handling
-		if ( !context || typeof context === 'undefined' ) {
+		if ( !context ) {
 
 			// Star filling the context with useful data - any jQuery selections, as usual should be named with a preceding $
 			context = {
@@ -315,13 +315,9 @@
 				 */
 				trigger: function ( name, event ) {
 					// Event is an optional argument, but from here on out, at least the type field should be dependable
-					if ( typeof event === 'undefined' ) {
-						event = { type: 'custom' };
-					}
+					event = event || { type: 'custom' };
 					// Ensure there's a place for extra information to live
-					if ( typeof event.data === 'undefined' ) {
-						event.data = {};
-					}
+					event.data = event.data || {};
 
 					// Allow filtering to occur
 					if ( name in context.evt ) {
@@ -329,7 +325,7 @@
 							return false;
 						}
 					}
-					var returnFromModules = null; // they return null by default
+					var returnFromModules = true;
 					// Pass the event around to all modules activated on this context
 
 					for ( var module in context.modules ) {
@@ -341,19 +337,11 @@
 							var ret = $.wikiEditor.modules[ module ].evt[ name ]( context, event );
 							if ( ret !== null ) {
 								// if 1 returns false, the end result is false
-								if ( returnFromModules === null ) {
-									returnFromModules = ret;
-								} else {
-									returnFromModules = returnFromModules && ret;
-								}
+								returnFromModules = returnFromModules && ret;
 							}
 						}
 					}
-					if ( returnFromModules !== null ) {
-						return returnFromModules;
-					} else {
-						return true;
-					}
+					return returnFromModules;
 				},
 
 				/**
@@ -484,13 +472,13 @@
 			context.$ui = context.$textarea.parent().parent().parent().parent().parent();
 			context.$wikitext = context.$textarea.parent().parent().parent().parent();
 			// Add in tab and button containers
-			context.$wikitext
-				.before(
-					$( '<div>' ).addClass( 'wikiEditor-ui-controls' )
-						.append( $( '<div>' ).addClass( 'wikiEditor-ui-tabs' ).hide() )
-						.append( $( '<div>' ).addClass( 'wikiEditor-ui-buttons' ) )
-				)
-				.before( $( '<div>' ).addClass( 'wikiEditor-ui-clear' ) );
+			context.$wikitext.before(
+				$( '<div>' ).addClass( 'wikiEditor-ui-controls' ).append(
+					$( '<div>' ).addClass( 'wikiEditor-ui-tabs' ).hide(),
+					$( '<div>' ).addClass( 'wikiEditor-ui-buttons' )
+				),
+				$( '<div>' ).addClass( 'wikiEditor-ui-clear' )
+			);
 			// Get references to some of the newly created containers
 			context.$controls = context.$ui.find( '.wikiEditor-ui-buttons' ).hide();
 			context.$buttons = context.$ui.find( '.wikiEditor-ui-buttons' );
@@ -498,8 +486,10 @@
 			// Clear all floating after the UI
 			context.$ui.after( $( '<div>' ).addClass( 'wikiEditor-ui-clear' ) );
 			// Attach a right container
-			context.$wikitext.append( $( '<div>' ).addClass( 'wikiEditor-ui-right' ) );
-			context.$wikitext.append( $( '<div>' ).addClass( 'wikiEditor-ui-clear' ) );
+			context.$wikitext.append(
+				$( '<div>' ).addClass( 'wikiEditor-ui-right' ),
+				$( '<div>' ).addClass( 'wikiEditor-ui-clear' )
+			);
 			// Attach a top container to the left pane
 			context.$wikitext.find( '.wikiEditor-ui-left' ).prepend( $( '<div>' ).addClass( 'wikiEditor-ui-top' ) );
 			// Setup the initial view
@@ -544,7 +534,7 @@
 			// Handle API calls
 			var callArg = args.shift();
 			if ( callArg in context.api ) {
-				context.api[ callArg ]( context, typeof args[ 0 ] === 'undefined' ? {} : args[ 0 ] );
+				context.api[ callArg ]( context, args[ 0 ] || {} );
 			}
 		}
 

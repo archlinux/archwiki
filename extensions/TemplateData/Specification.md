@@ -57,14 +57,14 @@ Requirements for non-Required ("optional") properties only apply if the property
 
 #### 3.1.2 `params`
 * Required
-* Value: `Object`
+* Value: `Object` containing `Param` objects, see 3.2
 
 Describes each of the template's parameters to a User.
 
 Authors MUST ensure that the `params` object maps parameter names to `Param` objects.
 
 #### 3.1.3 `paramOrder`
-* Value: `Array`
+* Value: `Array` of `string`
 
 The logical order of the parameters.
 
@@ -74,7 +74,7 @@ Consumers SHOULD display the parameters in this order.
 
 #### 3.1.4 `sets`
 * Required
-* Value: `Array`
+* Value: `Array` of `Set` objects, see 3.3
 
 List of groups of parameters that can be used together.
 
@@ -84,7 +84,7 @@ A Consumer MAY encourage users to interact with parameters in a `Set` together (
 
 #### 3.1.5 `maps`
 * Required
-* Value: `Object`
+* Value: `Object` containing `Map` objects, see 3.6
 
 An object describing which parameter(s) specific Consumers SHOULD use for some purpose.
 
@@ -97,7 +97,7 @@ Consumers that look for a `Map` SHOULD publicly document their identifier key.
 Authors MUST ensure that the `maps` object contains only `Map` objects. Authors MAY include a parameter in multiple `Map` objects. Authors are NOT REQUIRED to reference each parameter in at least one `Map` object.
 
 #### 3.1.6 `format`
-* Value: `null` or `FormatString` or `string` of either `'inline'` or `'block'`
+* Value: `null` or `FormatString` (see 3.7) or `string` of either `'inline'` or `'block'`
 * Default: `null`
 
 How the template's wikitext representation SHOULD be laid out. Authors MAY choose to use this parameter to express that a template will be better understood by other human readers of the wikitext representation if a template is in one form or the other.
@@ -163,7 +163,8 @@ Whether this parameter is discouraged from usage. Seting to `false` indicates th
 Authors are RECOMMENDED to, when marking a parameter as deprecated, provide a `string` of explanatory text describing why the parameter is deprecated (and what parameter or parameters the user should use instead). Alternatively, Authors MAY use the value `true` in absence of explanatory text.
 
 #### 3.2.6 `aliases`
-* Value: `Array`
+* Value: `Array` of `integer` or `string`
+* Default: `[]`
 
 An array of alternative names for the parameter.
 
@@ -172,7 +173,7 @@ Authors MUST NOT provide a `Param` object in `Root.params` for any alias. To des
 Consumers SHOULD display aliases where entered as secondary to the primary name.
 
 #### 3.2.7 `type`
-* Value: `Type`
+* Value: `Type`, see 3.4
 
 The kind of value the template expects to be associated with this parameter.
 
@@ -186,7 +187,7 @@ The key of another parameter from which this parameter will inherit properties. 
 Authors MUST ensure that the value matches the key of a `Param` object in `Root.params`.
 
 #### 3.2.9 `autovalue`
-* Value: `string`
+* Value: `null` or `string`
 
 A dynamically-generated default value in wikitext, such as today's date or the editing user's name; this will often involve wikitext substitution, such as `{{subst:CURRENTYEAR}}`.
 
@@ -200,7 +201,7 @@ The default value in wikitext (or description thereof) of a parameter as assumed
 Consumers SHOULD indicate this default value to the user when inserting or editing a template.
 
 #### 3.2.11 `suggestedvalues`
-* Value: `Array`
+* Value: `Array` of `string`
 * Default: `[]`
 
 A list of commonly used, suggested values.
@@ -227,13 +228,13 @@ Authors are RECOMMENDED to ensure these are unique and distinguishable from othe
 
 #### 3.3.2 params
 * Required
-* Value: `Array`
+* Value: `Array` of `string`
 
 A list of one or more `Root.params` keys.
 
 ### 3.4 Type
 * Value: `string`
-* Default: `"unknown"`
+* Default: `'unknown'`
 
 One of the following:
 

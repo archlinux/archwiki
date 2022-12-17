@@ -25,6 +25,7 @@ use MediaWiki\Extension\OATHAuth\IModule;
 use MediaWiki\Extension\OATHAuth\Module\TOTP;
 use MediaWiki\MediaWikiServices;
 use User;
+use Wikimedia\ParamValidator\ParamValidator;
 
 /**
  * Validate an OATH token.
@@ -106,14 +107,14 @@ class ApiOATHValidate extends ApiBase {
 	public function getAllowedParams() {
 		return [
 			'user' => [
-				ApiBase::PARAM_TYPE => 'user',
+				ParamValidator::PARAM_TYPE => 'user',
 			],
 			'totp' => [
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_DEPRECATED => true
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_DEPRECATED => true
 			],
 			'data' => [
-				ApiBase::PARAM_TYPE => 'string'
+				ParamValidator::PARAM_TYPE => 'string'
 			]
 		];
 	}

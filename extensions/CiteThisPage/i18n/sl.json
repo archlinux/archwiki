@@ -3,11 +3,12 @@
 		"authors": [
 			"Dbc334",
 			"Smihael",
-			"Yerpo"
+			"Yerpo",
+			"Eleassar"
 		]
 	},
 	"citethispage": "Navedi",
-	"citethispage-desc": "Doda posebno stran za [[Special:CiteThisPage|navedbo vira]] in povezavo v orodno vrstico",
+	"citethispage-desc": "V orodno vrstico doda [[Special:CiteThisPage|posebno stran]] in povezavo za navedbo vira",
 	"citethispage-link": "Navedba strani",
 	"tooltip-citethispage": "Informacije o tem, kako navajati to stran",
 	"citethispage-change-submit": "Navedi",

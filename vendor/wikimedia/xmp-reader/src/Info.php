@@ -27,9 +27,12 @@ namespace Wikimedia\XMPReader;
  * This class is just a container for a big array
  * used by Reader to determine which XMP items to
  * extract.
+ *
+ * @codeCoverageIgnore
  */
 class Info {
-	/** Get the items array
+	/**
+	 * Get the items array
 	 * @return array XMP item configuration array.
 	 */
 	public static function getItems() {
@@ -62,6 +65,7 @@ class Info {
 	 *     of a structure.
 	 *
 	 * Currently this just has a bunch of EXIF values as this class is only half-done.
+	 * @var array
 	 */
 	private static $items = [
 		'http://ns.adobe.com/exif/1.0/' => [
@@ -1222,11 +1226,6 @@ class Info {
 				'rangeHigh' => 180,
 			],
 			'InitialViewHeadingDegrees' => [
-				'map_group' => 'general',
-				'mode' => Reader::MODE_SIMPLE,
-				'validate' => 'validateInteger',
-			],
-			'InitialViewRollDegrees' => [
 				'map_group' => 'general',
 				'mode' => Reader::MODE_SIMPLE,
 				'validate' => 'validateInteger',

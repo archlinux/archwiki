@@ -1,13 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Hanberke",
-			"TayfunEt.",
-			"Amire80"
+			"TayfunEt."
 		]
 	},
 	"vector-languages": "Diller",
 	"vector-language-button-label": "{{PLURAL:$1|$1 Dil}}",
+	"vector-no-language-button-label": "Dil goşuň",
+	"vector-no-language-button-aria-label": "Bu makala diňe şu dilde bar. Makalany başga diller üçin goşuň",
 	"vector-action-addsection": "Mowzuk goş",
 	"vector-action-delete": "Öçür",
 	"vector-action-move": "Adyny üýtget",
@@ -20,5 +22,5 @@
 	"vector-view-view": "Oka",
 	"vector-view-viewsource": "Çeşmäni gör",
 	"vector-more-actions": "Has köp",
-	"vector-searchsuggest-containing": "Içindäki sahypalary gözläň <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Içindäki sahypalary gözläň <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

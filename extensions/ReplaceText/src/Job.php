@@ -112,7 +112,12 @@ class Job extends JobParent {
 
 			}
 		} else {
-			$wikiPage = new WikiPage( $this->title );
+			if ( method_exists( MediaWikiServices::class, 'getWikiPageFactory' ) ) {
+				// MW 1.36+
+				$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $this->title );
+			} else {
+				$wikiPage = new WikiPage( $this->title );
+			}
 			$latestRevision = $wikiPage->getRevisionRecord();
 
 			if ( $latestRevision === null ) {

@@ -3,12 +3,12 @@
 		"authors": [
 			"Alan ffm",
 			"Chrumps",
+			"Jdx",
 			"Openbk",
 			"Ostrzyciel",
 			"Rail",
 			"Railfail536",
-			"WTM",
-			"Jdx"
+			"WTM"
 		]
 	},
 	"oathauth-desc": "Dodaje wsparcie uwierzytelniania za pomocą haseł jednorazowych opartych o HMAC",
@@ -63,6 +63,9 @@
 	"oath-log-header": "Śledzenie zmian w statusach uwierzytelniania dwuskładnikowego użytkowników.",
 	"logentry-oath-disable-other": "$1 {{GENDER:$2|wyłączył|wyłączyła}} uwierzytelnianie dwuskładnikowe dla $3",
 	"logentry-oath-verify": "$1 {{GENDER:$2|sprawdził|sprawdziła}} czy $3 ma włączone uwierzytelnianie dwuskładnikowe",
+	"log-action-filter-oath": "Rodzaj operacji uwierzytelniania dwuskładnikowego:",
+	"log-action-filter-oath-verify": "Sprawdzanie, czy uwierzytelnianie dwuskładnikowe jest włączone",
+	"log-action-filter-oath-disable-other": "Wyłączanie uwierzytelniania dwuskładnikowego innego użytkownika",
 	"oathauth-ui-no-module": "Nie włączono",
 	"oathauth-module-invalid": "Zarejestrowany przez użytkownika moduł OATHAuth jest nieprawidłowy.",
 	"oathauth-module-totp-label": "TOTP (oparte na czasie hasło jednorazowe)",
@@ -91,6 +94,9 @@
 	"notification-body-oathauth-disable": "Jeśli to nie ty to {{GENDER:$2|zrobiłeś|zrobiłaś}}, twoje konto mogło zostać przejęte.",
 	"notification-body-oathauth-disable-other": "Jeśli nie {{GENDER:$2|wnioskowałeś|wnioskowałaś}} o to, {{GENDER:$2|powinieneś|powinnaś}} skontaktować się z administratorem.",
 	"oathauth-notifications-disable-help": "Pomoc",
+	"notification-header-oathauth-enabled": "Uwierzytelnianie dwuskładnikowe dla {{GENDER:$2|twojego konta}} zostało włączone.",
+	"notification-body-oathauth-enabled": "Jeśli to nie ty to {{GENDER:$2|zrobiłeś|zrobiłaś}}, twoje konto mogło zostać przejęte.",
+	"oathauth-notifications-enabled-help": "Pomoc",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} ma włączone uwierzytelnianie dwuskładnikowe.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} nie ma włączonego uwierzytelniania dwuskładnikowego.",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Zawieszona grupa|Zawieszone grupy}}:",

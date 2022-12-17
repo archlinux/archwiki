@@ -1,19 +1,30 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ukabia",
 			"Edith Nwobu",
-			"Izuchi Onyeike"
+			"Izuchi Onyeike",
+			"Ukabia",
+			"Amire80",
+			"Karen"
 		]
 	},
+	"wikieditor": "Ịhụ ndezi wikitext dị elu",
+	"wikieditor-toolbar": "Ogwe ngwaọrụ ndezi",
+	"wikieditor-toolbar-desc": "Dezie ogwe ngwaọrụ ibe site na iji ojiji emelitere",
+	"wikieditor-toolbar-preference-help": "A na-akpọ nke a '2010 wikitext editor' mgbe ụfọdụ",
 	"wikieditor-toolbar-tool-bold": "Shí íke",
 	"wikieditor-toolbar-tool-bold-example": "Mkpúrù èdè íke",
 	"wikieditor-toolbar-tool-italic": "Édémédé nsem",
 	"wikieditor-toolbar-tool-italic-example": "Mkpurụ okwu sélénsé",
 	"wikieditor-toolbar-tool-ilink": "Jikodo nke ímé",
 	"wikieditor-toolbar-tool-ilink-example": "Ishi edemede nke jikodo",
+	"wikieditor-toolbar-tool-xlink": "Njikọ mpụga (cheta http:// prefix)",
+	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com aha njikọ",
 	"wikieditor-toolbar-tool-link": "Òjikọ",
 	"wikieditor-toolbar-tool-link-title": "Tìnyé jikodo",
+	"wikieditor-toolbar-tool-link-int": "Gaa n'ibe wiki",
+	"wikieditor-toolbar-tool-link-int-target": "Ibe ebu n'uche ma ọ bụ URL:",
+	"wikieditor-toolbar-tool-link-int-target-tooltip": "Aha ibe ma ọ bụ URL",
 	"wikieditor-toolbar-tool-link-ext-target": "Jikodo URL:",
 	"wikieditor-toolbar-tool-link-ext-text": "Jikodo mkpúrù èdè:",
 	"wikieditor-toolbar-tool-link-cancel": "Hapụ̀",
@@ -46,7 +57,7 @@
 	"wikieditor-toolbar-help-page-heading": "Íshí édé",
 	"wikieditor-toolbar-help-page-list": "Ndetu",
 	"wikieditor-toolbar-help-page-file": "Àfabà",
-	"wikieditor-toolbar-help-page-discussion": "Nkpata okà",
+	"wikieditor-toolbar-help-page-discussion": "Ńkàtá",
 	"wikieditor-toolbar-help-content-italic-description": "Édémédé nsem",
 	"wikieditor-toolbar-help-content-bold-description": "Shí íke",
 	"wikieditor-toolbar-help-content-bold-syntax": "'''Édémédé shírí íké'''",

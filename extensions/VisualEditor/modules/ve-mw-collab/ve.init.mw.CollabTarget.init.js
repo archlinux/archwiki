@@ -27,7 +27,11 @@
 		} ),
 		importButton = OO.ui.infuse( $( '.ve-init-mw-collabTarget-importButton' ) ),
 		// Infuse the form last to avoid recursive infusion with no config
-		form = OO.ui.infuse( $( '.ve-init-mw-collabTarget-form' ) );
+		form = OO.ui.infuse( $( '.ve-init-mw-collabTarget-form' ) ),
+		$targetContainer = $(
+			document.querySelector( '[data-mw-ve-target-container]' ) ||
+			document.getElementById( 'content' )
+		);
 
 	if ( !VisualEditorSupportCheck() ) {
 		// VE not supported - say something?
@@ -67,7 +71,7 @@
 
 			$( 'body' ).addClass( 've-activated ve-active' );
 
-			$( '#content' ).prepend( target.$element );
+			$targetContainer.prepend( target.$element );
 
 			target.transformPage();
 			$( '#firstHeading' ).addClass( 've-init-mw-desktopArticleTarget-uneditableContent' );
@@ -207,7 +211,7 @@
 		var specialTitle = mw.Title.newFromText( 'Special:CollabPad' );
 
 		if ( pushState ) {
-			history.pushState( { tag: 'collabTarget' }, mw.msg( 'collabpad' ), specialTitle.getUrl() );
+			history.pushState( { tag: 'collabTarget' }, '', specialTitle.getUrl() );
 		}
 
 		if ( target ) {
@@ -234,10 +238,10 @@
 		var specialTitle = mw.Title.newFromText( 'Special:CollabPad/' + title.toString() );
 		if ( history.pushState ) {
 			// TODO: Handle popstate
-			history.pushState( { tag: 'collabTarget', title: title.toString() }, title.getMain(), specialTitle.getUrl() );
+			history.pushState( { tag: 'collabTarget', title: title.toString() }, '', specialTitle.getUrl() );
 			showPage( title, importTitle );
 		} else {
-			location.href = specialTitle.getUrl();
+			location.href = specialTitle.getUrl( { import: importTitle } );
 		}
 	}
 
@@ -308,7 +312,10 @@
 	onImportChange();
 
 	if ( pageTitle ) {
-		showPage( pageTitle );
+		var uri = new mw.Uri( location.href ),
+			importTitleText = uri.query.import,
+			importTitleParam = ( importTitleText ? mw.Title.newFromText( importTitleText ) : null );
+		showPage( pageTitle, importTitleParam );
 	} else {
 		showForm();
 	}
@@ -320,7 +327,7 @@
 
 	// Tag current state
 	if ( history.replaceState ) {
-		history.replaceState( { tag: 'collabTarget', title: pageName }, document.title, location.href );
+		history.replaceState( { tag: 'collabTarget', title: pageName }, '', location.href );
 	}
 	window.addEventListener( 'popstate', function ( e ) {
 		if ( e.state && e.state.tag === 'collabTarget' ) {

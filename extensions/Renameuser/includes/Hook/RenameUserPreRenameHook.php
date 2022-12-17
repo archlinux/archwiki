@@ -22,5 +22,3 @@ interface RenameUserPreRenameHook {
 	public function onRenameUserPreRename( int $uid, string $old, string $new ): void;
 
 }
-
-class_alias( RenameUserPreRenameHook::class, 'RenameUserPreRenameHook' );

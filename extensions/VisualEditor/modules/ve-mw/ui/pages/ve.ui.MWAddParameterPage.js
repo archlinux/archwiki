@@ -1,5 +1,5 @@
 /**
- * Placeholder page for a currently unnamed parameter. Represented as a unnamed
+ * Placeholder page for a currently unnamed parameter. Represented as an unnamed
  * {@see ve.dm.MWParameterModel} in the corresponding {@see ve.dm.MWTemplateModel}.
  *
  * @class
@@ -41,7 +41,7 @@ ve.ui.MWAddParameterPage = function VeUiMWAddParameterPage( parameter, name, con
 
 	// Initialization
 	this.$element
-		.addClass( 've-ui-mwParameterPlaceholderPage' )
+		.addClass( 've-ui-mwAddParameterPage' )
 		.append( this.addParameterFieldset.$element );
 };
 
@@ -71,7 +71,7 @@ ve.ui.MWAddParameterPage.prototype.initialize = function () {
 		} );
 	this.saveButton = new OO.ui.ButtonWidget( {
 		label: ve.msg( 'visualeditor-dialog-transclusion-add-param-save' ),
-		flags: [ 'primary', 'progressive' ],
+		flags: [ 'progressive' ],
 		disabled: true
 	} )
 		.connect( this, { click: 'onParameterNameSubmitted' } );
@@ -141,7 +141,7 @@ ve.ui.MWAddParameterPage.prototype.updateParameterNameValidation = function ( va
 
 /**
  * @private
- * @fires focusTemplateParameterById
+ * @fires templateParameterAdded
  */
 ve.ui.MWAddParameterPage.prototype.onParameterNameSubmitted = function () {
 	var name = this.paramInputField.getValue().trim();
@@ -157,7 +157,7 @@ ve.ui.MWAddParameterPage.prototype.onParameterNameSubmitted = function () {
 
 	var param = new ve.dm.MWParameterModel( this.template, name );
 	this.template.addParameter( param );
-	this.emit( 'focusTemplateParameterById', param.getId() );
+	this.emit( 'templateParameterAdded', param.getId() );
 
 	ve.track( 'activity.transclusion', {
 		action: 'add-unknown-parameter'
@@ -222,17 +222,4 @@ ve.ui.MWAddParameterPage.prototype.togglePlaceholder = function ( expand ) {
 		}
 		this.paramInputField.focus();
 	}
-};
-
-/**
- * @inheritDoc OO.ui.PageLayout
- */
-ve.ui.MWAddParameterPage.prototype.setupOutlineItem = function () {
-	this.outlineItem
-		// Basic properties to make the OO.ui.OutlineControlsWidget buttons behave sane
-		.setMovable( false )
-		.setRemovable( false )
-		.setLevel( 1 )
-		// This page should not be shown in the (BookletLayout-based) sidebar
-		.$element.empty().removeAttr( 'class' );
 };

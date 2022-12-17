@@ -86,10 +86,7 @@
 		this.$downloadButton = $( '<a>' )
 			.attr( 'target', '_blank' )
 			.attr( 'download', '' )
-			.addClass( 'mw-ui-button mw-ui-progressive mw-mmv-download-go-button' )
-			.on( 'click', function () {
-				mw.mmv.actionLogger.log( 'download' );
-			} );
+			.addClass( 'mw-ui-button mw-ui-progressive mw-mmv-download-go-button' );
 
 		this.$selectionArrow = $( '<span>' )
 			.addClass( 'mw-ui-button mw-ui-progressive mw-mmv-download-select-menu' )
@@ -121,10 +118,6 @@
 			'original'
 		);
 
-		this.downloadSizeMenu.getMenu().on( 'select', function ( item ) {
-			mw.mmv.actionLogger.log( 'download-select-menu-' + item.data.name );
-		} );
-
 		$container.append( this.downloadSizeMenu.$element );
 	};
 
@@ -138,10 +131,7 @@
 			.attr( 'target', '_blank' )
 			.addClass( 'mw-mmv-download-preview-link' )
 			.text( mw.message( 'multimediaviewer-download-preview-link-title' ).text() )
-			.appendTo( $container )
-			.on( 'click', function () {
-				mw.mmv.actionLogger.log( 'download-view-in-browser' );
-			} );
+			.appendTo( $container );
 	};
 
 	DP.createAttributionButton = function ( $container ) {

@@ -34,8 +34,6 @@ ve.ui.SumCellsContextItem.static.icon = 'mathematics';
 
 ve.ui.SumCellsContextItem.static.editable = false;
 
-ve.ui.SumCellsContextItem.static.deletable = false;
-
 ve.ui.SumCellsContextItem.static.embeddable = false;
 
 /* Methods */
@@ -51,6 +49,9 @@ ve.ui.SumCellsContextItem.static.isCompatibleWith = function ( model ) {
  * @inheritdoc
  */
 ve.ui.SumCellsContextItem.prototype.setup = function () {
+	// Parent method
+	ve.ui.SumCellsContextItem.super.prototype.setup.apply( this, arguments );
+
 	// If not disabled, selection must be table and spanning multiple matrix cells
 	var count = 0,
 		selection = this.getFragment().getSurface().getSelection(),

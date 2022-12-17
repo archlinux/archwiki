@@ -7,6 +7,9 @@ use ApiMain;
 use FauxRequest;
 use File;
 use IContextSource;
+use MediaWiki\Api\Hook\ApiOpenSearchSuggestHook;
+use MediaWiki\Hook\BeforePageDisplayHook;
+use MediaWiki\Hook\InfoActionHook;
 use MediaWiki\MediaWikiServices;
 use OutputPage;
 use Skin;
@@ -18,7 +21,11 @@ use Title;
  * @author Brad Jorsch
  * @author Thiemo Kreuz
  */
-class PageImages {
+class PageImages implements
+	ApiOpenSearchSuggestHook,
+	BeforePageDisplayHook,
+	InfoActionHook
+{
 	/**
 	 * @const value for free images
 	 */
@@ -127,7 +134,7 @@ class PageImages {
 	 * @param IContextSource $context Context, used to extract the title of the page
 	 * @param array[] &$pageInfo Auxillary information about the page.
 	 */
-	public static function onInfoAction( IContextSource $context, &$pageInfo ) {
+	public function onInfoAction( $context, &$pageInfo ) {
 		global $wgThumbLimits;
 
 		$imageFile = self::getPageImage( $context->getTitle() );
@@ -162,7 +169,7 @@ class PageImages {
 	 *
 	 * @param array[] &$results Array of results to add page images too
 	 */
-	public static function onApiOpenSearchSuggest( array &$results ) {
+	public function onApiOpenSearchSuggest( &$results ) {
 		global $wgPageImagesExpandOpenSearchXml;
 
 		if ( !$wgPageImagesExpandOpenSearchXml || !count( $results ) ) {
@@ -246,10 +253,13 @@ class PageImages {
 	}
 
 	/**
-	 * @param OutputPage &$out The page being output.
-	 * @param Skin &$skin Skin object used to generate the page. Ignored
+	 * @param OutputPage $out The page being output.
+	 * @param Skin $skin Skin object used to generate the page. Ignored
 	 */
-	public static function onBeforePageDisplay( OutputPage &$out, Skin &$skin ) {
+	public function onBeforePageDisplay( $out, $skin ): void {
+		if ( !$out->getConfig()->get( 'PageImagesOpenGraph' ) ) {
+			return;
+		}
 		$imageFile = self::getPageImage( $out->getContext()->getTitle() );
 		if ( !$imageFile ) {
 			$fallback = $out->getConfig()->get( 'PageImagesOpenGraphFallbackImage' );

@@ -86,7 +86,7 @@ class BlockAutopromoteTest extends MediaWikiUnitTestCase {
 			->with( $target, $performer, $this->anything() )
 			->willReturn( $success );
 		$blockAutopromote = new BlockAutopromote( $params, 0, $blockAutopromoteStore, $this->getMsgLocalizer() );
-		$this->assertSame( $success, $blockAutopromote->revert( [], $performer, 'reason' ) );
+		$this->assertSame( $success, $blockAutopromote->revert( $performer, 'reason' ) );
 	}
 
 	/**

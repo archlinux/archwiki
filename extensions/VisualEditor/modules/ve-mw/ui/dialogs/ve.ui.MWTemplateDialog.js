@@ -22,6 +22,8 @@
  * @constructor
  * @param {Object} [config] Configuration options
  * @property {ve.dm.MWTransclusionModel|null} transclusionModel
+ * @property {ve.ui.MWTransclusionOutlineWidget} sidebar
+ * @property {boolean} [canGoBack=false]
  */
 ve.ui.MWTemplateDialog = function VeUiMWTemplateDialog( config ) {
 	// Parent constructor
@@ -31,14 +33,11 @@ ve.ui.MWTemplateDialog = function VeUiMWTemplateDialog( config ) {
 	this.transclusionModel = null;
 	this.loaded = false;
 	this.altered = false;
+	this.canGoBack = false;
 	this.preventReselection = false;
-	this.expandedParamList = {};
-	this.useNewSidebar = mw.config.get( 'wgVisualEditorConfig' ).transclusionDialogNewSidebar;
 
-	this.confirmOverlay = new ve.ui.Overlay( { classes: [ 've-ui-overlay-global' ] } );
 	this.confirmDialogs = new ve.ui.WindowManager( { factory: ve.ui.windowFactory, isolate: true } );
-	this.confirmOverlay.$element.append( this.confirmDialogs.$element );
-	$( document.body ).append( this.confirmOverlay.$element );
+	$( document.body ).append( this.confirmDialogs.$element );
 };
 
 /* Inheritance */
@@ -50,16 +49,13 @@ OO.inheritClass( ve.ui.MWTemplateDialog, ve.ui.NodeDialog );
 ve.ui.MWTemplateDialog.static.modelClasses = [ ve.dm.MWTransclusionNode ];
 
 /**
- * Configuration for the {@see OO.ui.BookletLayout} used in this dialog.
+ * Configuration for the {@see ve.ui.MWTwoPaneTransclusionDialogLayout} used in this dialog.
  *
  * @static
  * @property {Object}
  * @inheritable
  */
-ve.ui.MWTemplateDialog.static.bookletLayoutConfig = {
-	continuous: true,
-	outlined: false
-};
+ve.ui.MWTemplateDialog.static.bookletLayoutConfig = {};
 
 /* Methods */
 
@@ -70,10 +66,11 @@ ve.ui.MWTemplateDialog.prototype.getReadyProcess = function ( data ) {
 	return ve.ui.MWTemplateDialog.super.prototype.getReadyProcess.call( this, data )
 		.next( function () {
 			if ( this.transclusionModel.isEmpty() ) {
-				this.bookletLayout.focus( 1 );
+				// Focus the template placeholder input field.
+				this.bookletLayout.focus();
 			}
 
-			this.bookletLayout.stackLayout.getItems().forEach( function ( page ) {
+			this.bookletLayout.getPagesOrdered().forEach( function ( page ) {
 				if ( page instanceof ve.ui.MWParameterPage ) {
 					page.updateSize();
 				}
@@ -101,34 +98,30 @@ ve.ui.MWTemplateDialog.prototype.touch = function () {
  * @param {ve.dm.MWTransclusionPartModel|null} added Added part
  */
 ve.ui.MWTemplateDialog.prototype.onReplacePart = function ( removed, added ) {
-	var reselect,
-		removePages = [];
+	var removePages = [];
 
 	if ( removed ) {
 		// Remove parameter pages of removed templates
-		var partPage = this.bookletLayout.getPage( removed.getId() );
 		if ( removed instanceof ve.dm.MWTemplateModel ) {
 			var params = removed.getParameters();
 			for ( var name in params ) {
-				removePages.push( this.bookletLayout.getPage( params[ name ].getId() ) );
-				delete this.expandedParamList[ params[ name ].getId() ];
+				removePages.push( params[ name ].getId() );
 			}
 			removed.disconnect( this );
 		}
-		if ( this.loaded && !this.preventReselection && partPage.isActive() ) {
-			var closestPage = this.bookletLayout.findClosestPage( partPage );
-			reselect = closestPage && closestPage.getName();
-		}
-		removePages.push( partPage );
+		removePages.push( removed.getId() );
 		this.bookletLayout.removePages( removePages );
 	}
 
 	if ( added ) {
 		var page = this.getPageFromPart( added );
 		if ( page ) {
+			var reselect;
+
 			this.bookletLayout.addPages( [ page ], this.transclusionModel.getIndex( added ) );
-			if ( reselect ) {
-				// Use added page instead of closest page
+			if ( removed ) {
+				// When we're replacing a part, it can only be a template placeholder
+				// becoming an actual template.  Focus this new template.
 				reselect = added.getId();
 			}
 
@@ -143,34 +136,21 @@ ve.ui.MWTemplateDialog.prototype.onReplacePart = function ( removed, added ) {
 				}
 				added.connect( this, { add: 'onAddParameter', remove: 'onRemoveParameter' } );
 
-				// Add required and suggested params to user created templates
-				var shouldAddPlaceholder = this.loaded && added.addPromptedParameters() === 0;
-
 				this.preventReselection = false;
 
-				if ( names.length ) {
-					// Focus the first element when parameters are present
-					// FIXME: This hasn't worked in a long time, nor is it a desirable behavior.
-					reselect = added.getParameter( names[ 0 ] ).getId();
-				} else if ( shouldAddPlaceholder && !this.useNewSidebar ) {
-					page.addPlaceholderParameter();
-				}
-
-				if ( this.useNewSidebar ) {
-					var documentedParameters = added.getSpec().getDocumentedParameterOrder(),
-						undocumentedParameters = added.getSpec().getUndocumentedParameterNames();
-
-					if ( !documentedParameters.length || undocumentedParameters.length ) {
-						page.addPlaceholderParameter();
+				if ( this.loaded ) {
+					if ( reselect ) {
+						this.bookletLayout.focusPart( reselect );
 					}
 				}
-			}
-		}
-	}
 
-	if ( this.loaded ) {
-		if ( reselect ) {
-			this.focusPart( reselect );
+				var documentedParameters = added.getSpec().getDocumentedParameterOrder(),
+					undocumentedParameters = added.getSpec().getUndocumentedParameterNames();
+
+				if ( !documentedParameters.length || undocumentedParameters.length ) {
+					page.addPlaceholderParameter();
+				}
+			}
 		}
 	}
 
@@ -178,17 +158,6 @@ ve.ui.MWTemplateDialog.prototype.onReplacePart = function ( removed, added ) {
 		this.touch();
 	}
 	this.updateTitle();
-};
-
-/**
- * Respond to showAll event in the placeholder page.
- * Cache this so we can make sure the parameter list is expanded
- * when we next load this same pageId placeholder.
- *
- * @param {string} pageId Page Id
- */
-ve.ui.MWTemplateDialog.prototype.onParameterPlaceholderShowAll = function ( pageId ) {
-	this.expandedParamList[ pageId ] = true;
 };
 
 /**
@@ -201,34 +170,23 @@ ve.ui.MWTemplateDialog.prototype.onAddParameter = function ( param ) {
 	var page;
 
 	if ( param.getName() ) {
-		page = new ve.ui.MWParameterPage( param, param.getId(), { $overlay: this.$overlay, readOnly: this.isReadOnly() } );
-	} else if ( this.useNewSidebar ) {
+		page = new ve.ui.MWParameterPage( param, {
+			$overlay: this.$overlay, readOnly: this.isReadOnly()
+		} )
+			.connect( this, {
+				hasValueChange: 'onHasValueChange'
+			} );
+	} else {
+		// Create parameter placeholder.
 		page = new ve.ui.MWAddParameterPage( param, param.getId(), {
 			$overlay: this.$overlay
 		} )
 			.connect( this, {
-				focusTemplateParameterById: 'focusPart'
-			} );
-	} else {
-		// This branch is triggered when we receive a synthetic placeholder event with name=''.
-		page = new ve.ui.MWParameterPlaceholderPage( param, param.getId(), {
-			$overlay: this.$overlay,
-			expandedParamList: !!this.expandedParamList[ param.getId() ]
-		} )
-			.connect( this, {
-				showAll: 'onParameterPlaceholderShowAll',
-				focusTemplateParameterById: 'focusPart'
+				templateParameterAdded: this.bookletLayout.focusPart.bind( this.bookletLayout )
 			} );
 	}
 	this.bookletLayout.addPages( [ page ], this.transclusionModel.getIndex( param ) );
 	if ( this.loaded ) {
-		// Unconditionally focus parameter placeholders. Named parameters must be focused manually.
-		if ( !this.preventReselection && !param.getName() ) {
-			this.focusPart( param.getId() );
-		} else if ( !this.loaded ) {
-			page.scrollElementIntoView();
-		}
-
 		this.touch();
 
 		if ( page instanceof ve.ui.MWParameterPage ) {
@@ -244,17 +202,7 @@ ve.ui.MWTemplateDialog.prototype.onAddParameter = function ( param ) {
  * @param {ve.dm.MWParameterModel} param Removed param
  */
 ve.ui.MWTemplateDialog.prototype.onRemoveParameter = function ( param ) {
-	var page = this.bookletLayout.getPage( param.getId() ),
-		reselect = this.bookletLayout.findClosestPage( page );
-
-	// Select the desired page first. Otherwise, if the page we are removing is selected,
-	// OOUI will try to select the first page after it is removed, and scroll to the top.
-	if ( this.loaded && !this.preventReselection && !this.pocSidebar ) {
-		this.focusPart( reselect.getName() );
-	}
-
-	this.bookletLayout.stackLayout.unsetCurrentItem();
-	this.bookletLayout.removePages( [ page ] );
+	this.bookletLayout.removePages( [ param.getId() ] );
 
 	this.touch();
 };
@@ -348,7 +296,9 @@ ve.ui.MWTemplateDialog.prototype.initialize = function () {
 	ve.ui.MWTemplateDialog.super.prototype.initialize.call( this );
 
 	// Properties
-	this.bookletLayout = new OO.ui.BookletLayout( this.constructor.static.bookletLayoutConfig );
+	this.bookletLayout = new ve.ui.MWTwoPaneTransclusionDialogLayout( this.constructor.static.bookletLayoutConfig );
+	// TODO: Remove once all references are gone.
+	this.sidebar = this.bookletLayout.sidebar;
 
 	// Initialization
 	this.$content.addClass( 've-ui-mwTemplateDialog' );
@@ -391,7 +341,7 @@ ve.ui.MWTemplateDialog.prototype.checkRequiredParameters = function () {
 				blankRequired.length
 			)
 		} ).closed.then( function ( data ) {
-			if ( data.action === 'ok' ) {
+			if ( data && data.action === 'ok' ) {
 				deferred.resolve();
 			} else {
 				deferred.reject();
@@ -442,8 +392,10 @@ ve.ui.MWTemplateDialog.prototype.getActionProcess = function ( action ) {
 				}
 				var parts = dialog.transclusionModel.getParts();
 				for ( var i = 0; i < parts.length; i++ ) {
-					if ( parts[ i ].getTitle ) {
-						templateEvent.template_names.push( parts[ i ].getTitle() );
+					// Only {@see ve.dm.MWTemplateModel} have a title
+					var title = parts[ i ].getTitle && parts[ i ].getTitle();
+					if ( title ) {
+						templateEvent.template_names.push( title );
 					}
 				}
 				mw.track( 'event.VisualEditorTemplateDialogUse', templateEvent );
@@ -483,25 +435,8 @@ ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
 
 			// Detach the form while building for performance
 			this.bookletLayout.$element.detach();
-			// HACK: Prevent any setPage() calls (from #onReplacePart) from focussing stuff, it messes
-			// with OOUI logic for marking fields as invalid (T199838). We set it back to true below.
-			this.bookletLayout.autoFocus = false;
 
-			if ( this.useNewSidebar && this.bookletLayout.isOutlined() ) {
-				// FIXME: This is created at the wrong time. That's why we run into the situation
-				//  where an old instance exists. Should be in initialize().
-				if ( !this.pocSidebar ) {
-					this.pocSidebar = new ve.ui.MWTransclusionOutlineWidget();
-					this.pocSidebar.connect( this, {
-						focusPageByName: 'focusPart',
-						filterPagesByName: 'onFilterPagesByName',
-						selectedTransclusionPartChanged: 'onSelectedTransclusionPartChanged'
-					} );
-				} else {
-					this.pocSidebar.clear();
-				}
-				this.transclusionModel.connect( this.pocSidebar, { replace: 'onReplacePart' } );
-			}
+			this.transclusionModel.connect( this.bookletLayout, { replace: 'onReplacePart' } );
 
 			// Initialization
 			if ( !this.selectedNode ) {
@@ -512,14 +447,15 @@ ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
 					var template = ve.dm.MWTemplateModel.newFromName(
 						this.transclusionModel, data.template
 					);
-					promise = this.transclusionModel.addPart( template ).then(
-						this.initializeNewTemplateParameters.bind( this )
-					);
+					promise = this.transclusionModel.addPart( template );
 				} else {
 					// Open the dialog to add a new template, always starting with a placeholder
-					promise = this.transclusionModel.addPart(
-						new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel )
-					);
+					var placeholderPage = new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel );
+					promise = this.transclusionModel.addPart( placeholderPage );
+					promise.then( function () {
+						dialog.bookletLayout.setPage( placeholderPage.getId() );
+					} );
+					this.canGoBack = true;
 				}
 			} else {
 				// Open the dialog to edit an existing template
@@ -553,47 +489,11 @@ ve.ui.MWTemplateDialog.prototype.getSetupProcess = function ( data ) {
 				// Add missing required and suggested parameters to each transclusion.
 				dialog.transclusionModel.addPromptedParameters();
 
-				dialog.loaded = true;
-				dialog.$element.addClass( 've-ui-mwTemplateDialog-ready' );
-
 				dialog.$body.append( dialog.bookletLayout.$element );
-				if ( dialog.pocSidebar ) {
-					// TODO: bookletLayout will be deprecated.
-					var $debugContainer = dialog.bookletLayout.outlinePanel.$element
-						.children( '.ve-ui-mwTemplateDialog-pocSidebar-debug-container' );
-					if ( !$debugContainer.length ) {
-						$debugContainer = $( '<div>' )
-							.addClass( 've-ui-mwTemplateDialog-pocSidebar-debug-container' )
-							.prependTo( dialog.bookletLayout.outlinePanel.$element );
-					}
-					$debugContainer.append(
-						dialog.pocSidebar.$element,
-						dialog.bookletLayout.outlineSelectWidget.$element
-					);
-					dialog.bookletLayout.outlineSelectWidget.toggle( false );
-
-					if ( !dialog.transclusionModel.isSingleTemplate() ) {
-						dialog.pocSidebar.hideAllUnusedParameters();
-					}
-				}
-
-				dialog.bookletLayout.autoFocus = true;
+				dialog.$element.addClass( 've-ui-mwTemplateDialog-ready' );
+				dialog.loaded = true;
 			} );
 		}, this );
-};
-
-/**
- * Initialize parameters for new template insertion
- *
- * @private
- */
-ve.ui.MWTemplateDialog.prototype.initializeNewTemplateParameters = function () {
-	var parts = this.transclusionModel.getParts();
-	for ( var i = 0; i < parts.length; i++ ) {
-		if ( parts[ i ] instanceof ve.dm.MWTemplateModel ) {
-			parts[ i ].addPromptedParameters();
-		}
-	}
 };
 
 /**
@@ -603,56 +503,11 @@ ve.ui.MWTemplateDialog.prototype.initializeTemplateParameters = function () {};
 
 /**
  * @private
- * @param {Object} visibility
- */
-ve.ui.MWTemplateDialog.prototype.onFilterPagesByName = function ( visibility ) {
-	for ( var pageName in visibility ) {
-		var page = this.bookletLayout.getPage( pageName );
-		if ( page ) {
-			page.toggle( visibility[ pageName ] );
-		}
-	}
-};
-
-/**
- * @private
- * @param {string} partId
- * @param {boolean} internal Used for internal calls to suppress events
- */
-ve.ui.MWTemplateDialog.prototype.onSelectedTransclusionPartChanged = function ( partId, internal ) {
-	var page = this.bookletLayout.getPage( partId );
-	if ( page && !internal ) {
-		page.scrollElementIntoView();
-	}
-
-	// FIXME: This hack re-implements what OO.ui.SelectWidget.selectItem would do, without firing
-	// the "select" event. This will stop working when we disconnect the old sidebar.
-	this.bookletLayout.getOutline().items.forEach( function ( item ) {
-		// This repeats what ve.ui.MWTransclusionOutlineWidget.setSelectionByPageName did, but for
-		// the old sidebar
-		item.setSelected( item.getData() === partId );
-	} );
-	this.bookletLayout.getOutlineControls().onOutlineChange();
-};
-
-/**
- * @private
  * @param {string} pageName
+ * @param {boolean} hasValue
  */
-ve.ui.MWTemplateDialog.prototype.focusPart = function ( pageName ) {
-	// The new sidebar does not focus template parameters, only top-level parts
-	if ( this.pocSidebar && pageName.indexOf( '/' ) === -1 ) {
-		// FIXME: This is currently needed because the event that adds a new part to the new sidebar
-		//  is executed later than this here.
-		setTimeout( this.pocSidebar.setSelectionByPageName.bind( this.pocSidebar, pageName ) );
-		this.bookletLayout.setPage( pageName );
-		// The .setPage() call above does not necessarily call .focus(). This forces it.
-		this.bookletLayout.focus();
-	} else if ( this.bookletLayout.isOutlined() ) {
-		this.bookletLayout.getOutline().selectItemByData( pageName );
-	} else {
-		this.bookletLayout.setPage( pageName );
-	}
+ve.ui.MWTemplateDialog.prototype.onHasValueChange = function ( pageName, hasValue ) {
+	this.sidebar.toggleHasValueByPageName( pageName, hasValue );
 };
 
 /**

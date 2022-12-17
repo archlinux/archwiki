@@ -4,6 +4,10 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Config;
 
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
@@ -147,6 +151,8 @@ abstract class SiteConfig {
 		}
 		$extId = $this->extModuleNextId++;
 		$this->extModules[$extId] = $module;
+		// remove cached extConfig to ensure this registration is picked up
+		$this->extConfig = null;
 		return $extId;
 	}
 
@@ -198,9 +204,43 @@ abstract class SiteConfig {
 	/** @var bool */
 	protected $linterEnabled = false;
 
-	/** var ?array */
+	/** @var ?array */
 	protected $extConfig = null;
 
+	/**
+	 * Tag handlers for some extensions currently explicit call unstripNowiki
+	 * first thing in their handlers. They do this to strip <nowiki>..</nowiki>
+	 * wrappers around args when encountered in the {{#tag:...}} parser function.
+	 * However, this strategy won't work for Parsoid which calls the preprocessor
+	 * to get expanded wikitext. In this mode, <nowiki> wrappers won't be stripped
+	 * and this leads to functional differences in parsing and output.
+	 *
+	 * See T203293 and T299103 for more details.
+	 *
+	 * To get around this, T299103 proposes that extensions that require this support
+	 * set a config flag in their Parsoid extension config. On the Parsoid end, we
+	 * then let the legacy parser know of these tags. When such extension tags are
+	 * encountered in the {{#tag:...}} parser function handler (see tagObj function
+	 * in CoreParserFunctions.php), that handler can than automatically strip these
+	 * nowiki wrappers on behalf of the extension.
+	 *
+	 * This serves two purposes. For one, it lets Parsoid support these extensions
+	 * in this nowiki use edge case. For another, extensions that register handlers
+	 * with Parsoid can get rid of explicit calls to unstripNowiki() in the
+	 * tag handlers for the legacy parser.
+	 *
+	 * This property maintains an array of tags that need this support.
+	 *
+	 * @var array an associative array of tag names
+	 */
+	private $t299103Tags = [];
+
+	/**
+	 * Base constructor.
+	 *
+	 * This constructor is public because it is used to create mock objects
+	 * in our test suite.
+	 */
 	public function __construct() {
 	}
 
@@ -218,6 +258,14 @@ abstract class SiteConfig {
 			$this->logger = new NullLogger;
 		}
 		return $this->logger;
+	}
+
+	/**
+	 * Set the log channel, for debugging
+	 * @param ?LoggerInterface $logger
+	 */
+	public function setLogger( ?LoggerInterface $logger ): void {
+		$this->logger = $logger;
 	}
 
 	/**
@@ -1346,6 +1394,14 @@ abstract class SiteConfig {
 	}
 
 	/**
+	 * @param string $lowerTagName
+	 * @return bool
+	 */
+	public function tagNeedsNowikiStrippedInTagPF( string $lowerTagName ): bool {
+		return isset( $this->t299103Tags[$lowerTagName] );
+	}
+
+	/**
 	 * Register a Parsoid-compatible extension
 	 * @param ExtensionModule $ext
 	 */
@@ -1365,6 +1421,12 @@ abstract class SiteConfig {
 			$lowerTagName = mb_strtolower( $tagConfig['name'] );
 			$this->extConfig['allTags'][$lowerTagName] = true;
 			$this->extConfig['parsoidExtTags'][$lowerTagName] = $tagConfig;
+			// Deal with b/c nowiki stripping support needed by some extensions.
+			// This register this tag with the legacy parser for
+			// implicit nowiki stripping in {{#tag:..}} args for this tag.
+			if ( isset( $tagConfig['options']['stripNowiki'] ) ) {
+				$this->t299103Tags[$lowerTagName] = true;
+			}
 		}
 
 		foreach ( $extConfig['annotations'] ?? [] as $aTag ) {
@@ -1535,4 +1597,37 @@ abstract class SiteConfig {
 		return $this->html2wtLimits;
 	}
 
+	/**
+	 * @param ?string $filePath File to log to (if null, logs to console)
+	 * @return Logger
+	 */
+	public static function createLogger( ?string $filePath = null ): Logger {
+		// Use Monolog's PHP console handler
+		$logger = new Logger( "Parsoid CLI" );
+		$format = '%message%';
+		if ( $filePath ) {
+			$handler = new StreamHandler( $filePath );
+			$format .= "\n";
+		} else {
+			$handler = new ErrorLogHandler();
+		}
+		// Don't suppress inline newlines
+		$handler->setFormatter( new LineFormatter( $format, null, true ) );
+		$logger->pushHandler( $handler );
+
+		if ( $filePath ) {
+			// Separator between logs since StreamHandler appends
+			$logger->log( Logger::INFO, "-------------- starting fresh log --------------" );
+		}
+
+		return $logger;
+	}
+
+	/**
+	 * @return array
+	 */
+	abstract public function getNoFollowConfig(): array;
+
+	/** @return string|false */
+	abstract public function getExternalLinkTarget();
 }

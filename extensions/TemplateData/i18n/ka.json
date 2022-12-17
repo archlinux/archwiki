@@ -89,7 +89,7 @@
 	"templatedata-modal-search-input-placeholder": "ძიება ენის სახელის ან კოდის მიხედვით",
 	"templatedata-modal-table-param-actions": "მოქმედებები",
 	"templatedata-modal-table-param-aliases": "ფსევდონიმები",
-	"templatedata-modal-table-param-autovalue": "საკუთარი მნიშვნელობა",
+	"templatedata-modal-table-param-autovalue": "ავტომატური მნიშვნელობა",
 	"templatedata-modal-table-param-default": "ნაგულისხმები მნიშვნელობა ($1)",
 	"templatedata-modal-table-param-deprecated": "მოძველებული",
 	"templatedata-modal-table-param-deprecatedValue": "ინფორმაცია მოძველების თაობაზე",

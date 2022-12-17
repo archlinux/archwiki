@@ -32,7 +32,7 @@ use SpecialPage;
 use Title;
 
 /**
- * Set of all know menu items for easier building
+ * Set of all known menu items for easier building
  */
 final class Definitions {
 
@@ -75,6 +75,24 @@ final class Definitions {
 	}
 
 	/**
+	 * Builds a meny entry.
+	 *
+	 * @param string $name
+	 * @param string $text Entry label
+	 * @param string $url The URL entry points to
+	 * @param string $className Optional HTML classes
+	 * @param string|null $icon defaults to $name if not specified
+	 * @param bool $trackable Whether an entry will track clicks or not. Default is false.
+	 * @throws MWException
+	 * @return SingleMenuEntry
+	 */
+	private function buildMenuEntry( $name, $text, $url, $className = '', $icon = null, $trackable = false ) {
+		$entry = SingleMenuEntry::create( $name, $text, $url, $className, $icon, $trackable );
+
+		return $entry;
+	}
+
+	/**
 	 * Creates a login or logout button with a profile button.
 	 *
 	 * @param Group $group
@@ -105,14 +123,17 @@ final class Definitions {
 	public function insertNearbyIfSupported( Group $group ) {
 		// Nearby link (if supported)
 		if ( $this->specialPageFactory->exists( 'Nearby' ) ) {
-			$group->insert( 'nearby', /* $isJSOnly = */ true )
-				->addComponent(
-					$this->context->msg( 'mobile-frontend-main-menu-nearby' )->text(),
-					SpecialPage::getTitleFor( 'Nearby' )->getLocalURL(),
-					'',
-					[ 'data-event-name' => 'menu.nearby' ],
-					'minerva-mapPin'
-				);
+			$entry = $this->buildMenuEntry(
+				'nearby',
+				$this->context->msg( 'mobile-frontend-main-menu-nearby' )->text(),
+				SpecialPage::getTitleFor( 'Nearby' )->getLocalURL(),
+				'',
+				'mapPin',
+				true
+			);
+			// Setting this feature for javascript only
+			$entry->setJSOnly();
+			$group->insertEntry( $entry );
 		}
 	}
 
@@ -138,16 +159,19 @@ final class Definitions {
 				!$betaEnabled
 			);
 
-		$item = SingleMenuEntry::create(
+		$entry = $this->buildMenuEntry(
 			'settings',
 			$this->context->msg( 'mobile-frontend-main-menu-settings' )->text(),
 			SpecialPage::getTitleFor( 'MobileOptions' )
-				->getLocalURL( [ 'returnto' => $returnToTitle ] )
+				->getLocalURL( [ 'returnto' => $returnToTitle ] ),
+			'',
+			null,
+			true
 		);
 		if ( $jsonly ) {
-			$item->setJSOnly();
+			$entry->setJSOnly();
 		}
-		$group->insertEntry( $item );
+		$group->insertEntry( $entry );
 	}
 
 	/**
@@ -156,12 +180,14 @@ final class Definitions {
 	 * @throws MWException
 	 */
 	public function insertPreferencesItem( Group $group ) {
-		$entry = SingleMenuEntry::create(
+		$entry = $this->buildMenuEntry(
 			'preferences',
 			$this->context->msg( 'preferences' )->text(),
-			SpecialPage::getTitleFor( 'Preferences' )->getLocalURL()
+			SpecialPage::getTitleFor( 'Preferences' )->getLocalURL(),
+			'',
+			'settings',
+			true
 		);
-		$entry->setIcon( 'settings' );
 		$group->insertEntry( $entry );
 	}
 
@@ -178,8 +204,8 @@ final class Definitions {
 		if ( !$title ) {
 			return;
 		}
-		$group->insert( 'about' )
-			->addComponent( $msg->text(), $title->getLocalURL() );
+		$entry = $this->buildMenuEntry( 'about', $msg->text(), $title->getLocalURL() );
+		$group->insertEntry( $entry );
 	}
 
 	/**
@@ -196,8 +222,8 @@ final class Definitions {
 		if ( !$title ) {
 			return;
 		}
-		$group->insert( 'disclaimers' )
-			->addComponent( $msg->text(), $title->getLocalURL() );
+		$entry = $this->buildMenuEntry( 'disclaimers', $msg->text(), $title->getLocalURL() );
+		$group->insertEntry( $entry );
 	}
 
 	/**
@@ -206,16 +232,15 @@ final class Definitions {
 	 * @throws MWException
 	 */
 	public function insertRecentChanges( Group $group ) {
-		$title = SpecialPage::getTitleFor( 'Recentchanges' );
-
-		$group->insert( 'recentchanges' )
-			->addComponent(
-				$this->context->msg( 'recentchanges' )->escaped(),
-				$title->getLocalURL(),
-				'',
-				[ 'data-event-name' => 'menu.recentchanges' ],
-				'minerva-recentChanges'
-			);
+		$entry = $this->buildMenuEntry(
+			'recentchanges',
+			$this->context->msg( 'recentchanges' )->escaped(),
+			SpecialPage::getTitleFor( 'Recentchanges' )->getLocalURL(),
+			'',
+			'recentChanges',
+			true
+		);
+		$group->insertEntry( $entry );
 	}
 
 	/**
@@ -224,13 +249,15 @@ final class Definitions {
 	 * @throws MWException
 	 */
 	public function insertSpecialPages( Group $group ) {
-		$group->insertEntry(
-			SingleMenuEntry::create(
-				'specialPages',
-				$this->context->msg( 'specialpages' )->text(),
-				SpecialPage::getTitleFor( 'Specialpages' )->getLocalURL()
-			)
+		$entry = $this->buildMenuEntry(
+			'specialPages',
+			$this->context->msg( 'specialpages' )->text(),
+			SpecialPage::getTitleFor( 'Specialpages' )->getLocalURL(),
+			'',
+			null,
+			true
 		);
+		$group->insertEntry( $entry );
 	}
 
 	/**
@@ -248,11 +275,15 @@ final class Definitions {
 		if ( !$title ) {
 			return;
 		}
-		$group->insertEntry( SingleMenuEntry::create(
+		$entry = $this->buildMenuEntry(
 			'speechBubbles',
 			$msg->text(),
-			$title->getLocalURL()
-		) );
+			$title->getLocalURL(),
+			'',
+			null,
+			true
+		);
+		$group->insertEntry( $entry );
 	}
 
 	/**
@@ -312,17 +343,14 @@ final class Definitions {
 			$urlMsg->text(),
 			[ 'utm_key' => 'minerva' ]
 		);
-
-		 $group->insert( 'donate' )->addComponent(
+		$entry = $this->buildMenuEntry(
+			'donate',
 			$labelMsg->text(),
 			$url,
 			'',
-			[
-				// for consistency with desktop
-				'id' => 'n-sitesupport',
-				'data-event-name' => 'menu.donate',
-			],
-			'minerva-heart'
+			'heart',
+			true
 		);
+		$group->insertEntry( $entry );
 	}
 }

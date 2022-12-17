@@ -1,9 +1,7 @@
 // A DropDownList is a ToggleList that extends downward.
 
-@import '../../../minerva.less/minerva.mixins.less';
-
 .toggle-list__list--drop-down {
-	.transform( translateY( -8px ) );
+	transform: translateY( -8px );
 
 	// When cursor is pointer and -webkit-tap-highlight-color is set, the color does not seem to
 	// transition. Clear it.
@@ -19,10 +17,10 @@
 		// Animate menu visibility, opacity, and translation changes in and out. Visibility duration
 		// cannot be animated initially as it causes a flash on page load in Chromium due to
 		// https://bugs.chromium.org/p/chromium/issues/detail?id=332189.
-		.transition( opacity @transition-duration-base ease-in-out, -webkit-tap-highlight-color 0s ease-in-out, transform @transition-duration-base ease-in-out, visibility @transition-duration-base ease-in-out; );
+		transition: opacity @transition-duration-base ease-in-out, -webkit-tap-highlight-color 0s ease-in-out, transform @transition-duration-base ease-in-out, visibility @transition-duration-base ease-in-out;
 	}
 }
 
 .toggle-list__checkbox:checked ~ .toggle-list__list--drop-down {
-	.transform( translateY( 0 ) );
+	transform: translateY( 0 );
 }

@@ -38,7 +38,7 @@ class MathMathML extends MathRenderer {
 	protected $host;
 
 	/** @var LoggerInterface */
-	private $logger;
+	protected $logger;
 
 	/** @var bool if false MathML output is not validated */
 	private $XMLValidation = true;
@@ -139,17 +139,9 @@ class MathMathML extends MathRenderer {
 		$this->allowedRootElements = $settings;
 	}
 
-	/**
-	 * @see MathRenderer::render()
-	 * @param bool $forceReRendering
-	 * @return bool
-	 */
-	public function render( $forceReRendering = false ) {
+	public function render() {
 		global $wgMathFullRestbaseURL;
 		try {
-			if ( $forceReRendering ) {
-				$this->setPurge( true );
-			}
 			if ( in_array( $this->inputType, $this->restbaseInputTypes ) &&
 				 in_array( $this->mode, $this->restbaseRenderingModes )
 			) {

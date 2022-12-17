@@ -6,7 +6,7 @@
  */
 
 /**
- * Creates an ve.ui.MWParameterCheckboxInputWidget object.
+ * Checkbox input for a parameter value which can only contain boolean values.
  *
  * @class
  * @extends OO.ui.CheckboxInputWidget

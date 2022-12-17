@@ -27,7 +27,7 @@
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var reuseDialog = makeReuseDialog( this.sandbox );
 
-		assert.ok( reuseDialog, 'Reuse UI element is created.' );
+		assert.true( reuseDialog instanceof mw.mmv.ui.reuse.Dialog, 'Reuse UI element is created.' );
 		assert.strictEqual( reuseDialog.$dialog.length, 1, 'Reuse dialog div created.' );
 	} );
 
@@ -35,20 +35,20 @@
 		var reuseDialog = makeReuseDialog( this.sandbox );
 
 		reuseDialog.openDialog = function () {
-			assert.ok( true, 'openDialog called.' );
+			assert.true( true, 'openDialog called.' );
 		};
 		reuseDialog.closeDialog = function () {
-			assert.ok( false, 'closeDialog should not have been called.' );
+			assert.true( false, 'closeDialog should not have been called.' );
 		};
 
 		// Dialog is closed by default, we should open it
 		reuseDialog.handleOpenCloseClick();
 
 		reuseDialog.openDialog = function () {
-			assert.ok( false, 'openDialog should not have been called.' );
+			assert.true( false, 'openDialog should not have been called.' );
 		};
 		reuseDialog.closeDialog = function () {
-			assert.ok( true, 'closeDialog called.' );
+			assert.true( true, 'closeDialog called.' );
 		};
 		reuseDialog.isOpen = true;
 
@@ -93,10 +93,10 @@
 		reuseDialog.initTabs();
 
 		reuseDialog.handleOpenCloseClick = function () {
-			assert.ok( false, 'handleOpenCloseClick should not have been called.' );
+			assert.true( false, 'handleOpenCloseClick should not have been called.' );
 		};
 		reuseDialog.handleTabSelection = function () {
-			assert.ok( false, 'handleTabSelection should not have been called.' );
+			assert.true( false, 'handleTabSelection should not have been called.' );
 		};
 
 		// Triggering action events before attaching should do nothing
@@ -104,10 +104,10 @@
 		reuseDialog.reuseTabs.emit( 'select' );
 
 		reuseDialog.handleOpenCloseClick = function () {
-			assert.ok( true, 'handleOpenCloseClick called.' );
+			assert.true( true, 'handleOpenCloseClick called.' );
 		};
 		reuseDialog.handleTabSelection = function () {
-			assert.ok( true, 'handleTabSelection called.' );
+			assert.true( true, 'handleTabSelection called.' );
 		};
 
 		reuseDialog.attach();
@@ -118,10 +118,10 @@
 
 		// Test the unattach part
 		reuseDialog.handleOpenCloseClick = function () {
-			assert.ok( false, 'handleOpenCloseClick should not have been called.' );
+			assert.true( false, 'handleOpenCloseClick should not have been called.' );
 		};
 		reuseDialog.handleTabSelection = function () {
-			assert.ok( false, 'handleTabSelection should not have been called.' );
+			assert.true( false, 'handleTabSelection should not have been called.' );
 		};
 
 		reuseDialog.unattach();
@@ -150,18 +150,18 @@
 
 		function assertDialogDoesNotCatchClicks() {
 			var event;
-			reuseDialog.closeDialog = function () { assert.ok( false, 'Dialog is not affected by click' ); };
+			reuseDialog.closeDialog = function () { assert.true( false, 'Dialog is not affected by click' ); };
 			event = clickOutsideDialog();
 			assert.strictEqual( event.isDefaultPrevented(), false, 'Dialog does not affect click' );
 			assert.strictEqual( event.isPropagationStopped(), false, 'Dialog does not affect click propagation' );
 		}
 		function assertDialogCatchesOutsideClicksOnly() {
 			var event;
-			reuseDialog.closeDialog = function () { assert.ok( false, 'Dialog is not affected by inside click' ); };
+			reuseDialog.closeDialog = function () { assert.true( false, 'Dialog is not affected by inside click' ); };
 			event = clickInsideDialog();
 			assert.strictEqual( event.isDefaultPrevented(), false, 'Dialog does not affect inside click' );
 			assert.strictEqual( event.isPropagationStopped(), false, 'Dialog does not affect inside click propagation' );
-			reuseDialog.closeDialog = function () { assert.ok( true, 'Dialog is closed by outside click' ); };
+			reuseDialog.closeDialog = function () { assert.true( true, 'Dialog is closed by outside click' ); };
 			event = clickOutsideDialog();
 			assert.strictEqual( event.isDefaultPrevented(), true, 'Dialog catches outside click' );
 			assert.strictEqual( event.isPropagationStopped(), true, 'Dialog stops outside click propagation' );
@@ -198,7 +198,7 @@
 		reuseDialog.set( image, embedFileInfo );
 		reuseDialog.empty();
 
-		assert.ok( true, 'Set/empty did not cause an error.' );
+		assert.true( true, 'Set/empty did not cause an error.' );
 	} );
 
 	QUnit.test( 'openDialog()/closeDialog():', function ( assert ) {

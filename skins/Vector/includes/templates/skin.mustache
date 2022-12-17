@@ -27,77 +27,52 @@
 	  true.
 	string msg-vector-action-toggle-sidebar The label used by the sidebar button.
 	string msg-vector-main-menu-tooltip The title attribute for the main menu icon.
-	string msg-vector-menu-checkbox-expanded Dropdown menu span content for expanded selection in checkbox hack.
-	string msg-vector-menu-checkbox-collapsed Dropdown menu span content for collapsed selection in checkbox hack.
 	object data-portlets-sidebar. See Sidebar.mustache for documentation.
 	object data-footer for footer template partial. see Footer.mustache for documentation.
 }}
 <div class="mw-page-container">
+	<span id="top-page"></span>
 	<a class="mw-jump-link" href="#content">{{msg-vector-jumptocontent}}</a>
-	<div class="mw-page-container-inner {{#data-toc}} vector-toc-visible{{/data-toc}}">
-
-<input
-	type="checkbox"
-	id="mw-sidebar-checkbox"
-	class="mw-checkbox-hack-checkbox"
-	{{#sidebar-visible}}checked{{/sidebar-visible}}>
-
-{{>Header}}
-
-<div class="mw-workspace-container">
-	{{>Navigation}}
-	<div class="mw-table-of-contents-container mw-sticky-header-element">
-		{{#data-toc}}{{>TableOfContents}}{{/data-toc}}
-	</div>
-	<div class="mw-content-container">
-{{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
-<main id="content" class="mw-body" role="main">
-	<a id="top"></a>
-	<div id="siteNotice">{{{html-site-notice}}}</div>
-
-	{{^is-language-in-content}}
-	{{>Indicators}}
-	{{{html-title-heading}}}
-	{{/is-language-in-content}}
-
-	{{#is-language-in-content}}
-	<header class="mw-body-header">
-		{{#is-language-in-content-top}}
-			{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
-		{{/is-language-in-content-top}}
-		{{{html-title-heading}}}
-		{{>Indicators}}
-		{{#is-article}}
-			<div id="siteSub" class="noprint">{{msg-tagline}}</div>
-		{{/is-article}}
-	</header>
-	{{/is-language-in-content}}
-
-	<div id="bodyContent" class="vector-body">
-		{{^is-language-in-content}}
-			{{#is-article}}<div id="siteSub" class="noprint">{{msg-tagline}}</div>{{/is-article}}
-		{{/is-language-in-content}}
-		<div id="contentSub"{{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
-		<div id="contentSub2">{{{html-undelete-link}}}</div>
-		{{{html-user-message}}}
-		{{{html-body-content}}}
-		{{{html-categories}}}
-	</div>
-
-	{{#is-language-in-content-bottom}}
-	{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
-	{{/is-language-in-content-bottom}}
-
-</main>
-{{{html-after-content}}}
-	</div> {{! END mw-content-container }}
-</div> {{! END mw-workspace-container }}
-
-<div class="mw-workspace-container mw-footer-container">
-	<div class="mw-content-container">
-		{{#data-footer}}{{>Footer}}{{/data-footer}}
-	</div>
-</div>
+	<div class="mw-page-container-inner">
+		<input
+			type="checkbox"
+			id="mw-sidebar-checkbox"
+			class="mw-checkbox-hack-checkbox"
+			{{#sidebar-visible}}checked{{/sidebar-visible}}>
+		{{>Header}}
+		<div class="vector-sidebar-container {{^data-toc}}vector-sidebar-container-no-toc{{/data-toc}}">
+			<div id="mw-navigation">
+				{{#data-portlets-sidebar}}{{>Sidebar}}{{/data-portlets-sidebar}}
+			</div>
+		</div>
+		<div class="vector-sitenotice-container">
+			<div id="siteNotice">{{{html-site-notice}}}</div>
+		</div>
+		<input type="checkbox" id="vector-toc-collapsed-checkbox" class="mw-checkbox-hack-checkbox">
+		{{>TableOfContentsContainer}}
+		<div class="mw-content-container">
+			{{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
+			<main id="content" class="mw-body" role="main">
+				<a id="top"></a>
+				{{>ContentHeader}}
+				{{>ArticleToolbar}}
+				<div id="bodyContent" class="vector-body" data-mw-ve-target-container>
+					{{>ContentSubheader}}
+					{{#html-subtitle}}<div id="contentSub"{{{html-user-language-attributes}}}>{{{.}}}</div>{{/html-subtitle}}
+					{{#html-undelete-link}}<div id="contentSub2">{{{.}}}</div>{{/html-undelete-link}}
+					{{{html-user-message}}}
+					{{{html-body-content}}}
+					{{{html-categories}}}
+				</div>
+				{{#is-language-in-content-bottom}}
+				{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
+				{{/is-language-in-content-bottom}}
+			</main>
+			{{{html-after-content}}}
+		</div>
+		<div class="mw-footer-container">
+			{{#data-footer}}{{>Footer}}{{/data-footer}}
+		</div>
 	</div> {{! END mw-page-container-inner }}
 </div> {{! END mw-page-container }}
 {{#data-vector-sticky-header}}{{>StickyHeader}}{{/data-vector-sticky-header}}

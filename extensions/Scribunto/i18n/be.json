@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Chadyka",
 			"Mechanizatar",
+			"No Sleep till Krupki",
 			"Wizardist",
 			"Чаховіч Уладзіслаў",
-			"No Sleep till Krupki",
-			"Chadyka"
+			"Maksim L."
 		]
 	},
 	"scribunto-desc": "Фрэймворк для выкарыстання скрыптавых моў на старонках MediaWiki",
@@ -28,7 +29,7 @@
 	"scribunto-common-error-category-desc": "Адбылася памылка пры апрацоўцы модуляў, уключаных у старонку.",
 	"scribunto-common-nosuchmodule": "Памылка скрыпта: модуль \"$2\" не існуе.",
 	"scribunto-common-nofunction": "Памылка скрыпта: Вы павінны пазначыць функцыю для выкліку.",
-	"scribunto-common-nosuchfunction": "Памылка скрыпта: функцыя \"$2\" не існуе.",
+	"scribunto-common-nosuchfunction": "Памылка скрыпта: функцыі \"$2\" няма.",
 	"scribunto-common-notafunction": "Памылка скрыпта: \"$2\" гэта не функцыя.",
 	"scribunto-common-timeout": "Час, адведзены пад выкананне скрыптаў, выйшаў.",
 	"scribunto-common-oom": "Перавышаная вобласць памяці, адведзенай пад выкананне скрыптаў.",

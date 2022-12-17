@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Amire80",
-			"Teitei Para",
 			"Laitei",
-			"Taytay"
+			"Taytay",
+			"Teitei Para"
 		]
 	},
 	"minerva-last-modified-date": "$1, $2 nota mopado pachiepa a châ",
@@ -53,16 +53,20 @@
 	"minerva-page-actions-info": "Hmia thâtih",
 	"minerva-page-actions-permalink": "Hmâpareipa link",
 	"minerva-page-actions-backlinks": "He lia he khâpa linkzy e",
+	"minerva-page-actions-change-block": "Khawkhâhpa pathlai",
 	"minerva-page-actions-cite": "Hmia atlychaka",
 	"minerva-page-actions-move": "Paly",
 	"minerva-page-actions-delete": "Parao",
 	"minerva-page-actions-protect": "Vaih",
+	"minerva-page-actions-unblock": "Hmâhtuhpa khawkhâh",
 	"minerva-page-actions-unprotect": "Vaih lei",
 	"minerva-page-actions-user-groups": "Hmâtuh pyzy",
+	"minerva-page-actions-block": "Hmâhtuhpa dâtai",
 	"minerva-page-actions-logs": "Logzy",
 	"minerva-page-actions-wikibase": "{{WBREPONAME}} hmodâh",
 	"minerva-page-actions-language-switcher": "Reihchâzy",
 	"minerva-page-actions-history": "History",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Biepachiana]]",
 	"minerva-talk-explained": "Thathyupa hmâhtuhpazy",
 	"minerva-talk-explained-empty": "He hmia lia biepachianazy y tlâ vei.",
 	"minerva-talk-full-page": "Wiki hmia lâta reih",

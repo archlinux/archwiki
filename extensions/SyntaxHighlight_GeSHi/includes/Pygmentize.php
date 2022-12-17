@@ -47,15 +47,11 @@ class Pygmentize {
 		global $wgPygmentizePath;
 
 		// If $wgPygmentizePath is unset, use the bundled copy.
-		if ( $wgPygmentizePath === false ) {
-			return __DIR__ . '/../pygments/pygmentize';
-		}
-
-		return $wgPygmentizePath;
+		return $wgPygmentizePath ?: __DIR__ . '/../pygments/pygmentize';
 	}
 
 	/**
-	 * Get the version of pygments
+	 * Get the version of pygments (cached)
 	 *
 	 * @return string
 	 */
@@ -69,29 +65,30 @@ class Pygmentize {
 			return $version;
 		}
 
-		$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
-		$version = $cache->getWithSetCallback(
-			$cache->makeGlobalKey( 'pygmentize-version' ),
-			$cache::TTL_HOUR,
-			function () {
-				$result = self::boxedCommand()
-					->params( self::getPath(), '-V' )
-					->includeStderr()
-					->execute();
-				self::recordShellout( 'version' );
+		// This is called a lot, during both page views, edits, and load.php startup request.
+		// It also gets called multiple times during the same request. As such, prefer
+		// low latency via php-apcu.
+		//
+		// This value also controls cache invalidation and propagation through embedding
+		// in other keys from this class, and thus has a low expiry. Avoid latency from
+		// frequent cache misses by by sharing the values with other servers via Memcached
+		// as well.
 
-				$output = $result->getStdout();
-				if ( $result->getExitCode() != 0 ||
-					!preg_match( '/^Pygments version (\S+),/', $output, $matches )
-				) {
-					throw new PygmentsException( $output );
-				}
-
-				return $matches[1];
+		$srvCache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
+		return $srvCache->getWithSetCallback(
+			$srvCache->makeGlobalKey( 'pygmentize-version' ),
+			// Spread between 55 min and 1 hour
+			mt_rand( 55 * $srvCache::TTL_MINUTE, 60 * $srvCache::TTL_MINUTE ),
+			static function () {
+				$wanCache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+				return $wanCache->getWithSetCallback(
+					$wanCache->makeGlobalKey( 'pygmentize-version' ),
+					// Must be under 55 min to avoid renewing stale data in upper layer
+					30 * $wanCache::TTL_MINUTE,
+					[ __CLASS__, 'fetchVersion' ]
+				);
 			}
 		);
-
-		return $version;
 	}
 
 	/**
@@ -104,6 +101,29 @@ class Pygmentize {
 	}
 
 	/**
+	 * Shell out to get installed pygments version
+	 *
+	 * @internal For use by WANObjectCache/BagOStuff only
+	 * @return string
+	 */
+	public static function fetchVersion(): string {
+		$result = self::boxedCommand()
+			->params( self::getPath(), '-V' )
+			->includeStderr()
+			->execute();
+		self::recordShellout( 'version' );
+
+		$output = $result->getStdout();
+		if ( $result->getExitCode() != 0 ||
+			!preg_match( '/^Pygments version (\S+),/', $output, $matches )
+		) {
+			throw new PygmentsException( $output );
+		}
+
+		return $matches[1];
+	}
+
+	/**
 	 * Get the pygments generated CSS (cached)
 	 *
 	 * Note: if using bundled, the CSS is already available
@@ -112,6 +132,10 @@ class Pygmentize {
 	 * @return string
 	 */
 	public static function getGeneratedCSS(): string {
+		// This is rarely called as the result gets HTTP-cached via long-expiry load.php.
+		// When it gets called once, after a deployment, during that brief spike of
+		// dedicated requests from each wiki. Leverage Memcached to share this.
+		// Its likely not needed again on the same server for a while after that.
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		return $cache->getWithSetCallback(
 			$cache->makeGlobalKey( 'pygmentize-css', self::getVersion() ),
@@ -151,10 +175,15 @@ class Pygmentize {
 			return require __DIR__ . '/../SyntaxHighlight.lexers.php';
 		}
 
+		// This is called during page views and edits, and may be called
+		// repeatedly. Trade low latency for higher shell rate by caching
+		// on each server separately. This is made up for with a high TTL,
+		// which is fine because we vary by version, thus ensuring quick
+		// propagation separate from the TTL.
 		$cache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 		return $cache->getWithSetCallback(
 			$cache->makeGlobalKey( 'pygmentize-lexers', self::getVersion() ),
-			$cache::TTL_DAY,
+			$cache::TTL_WEEK,
 			[ __CLASS__, 'fetchLexers' ]
 		);
 	}
@@ -233,11 +262,20 @@ class Pygmentize {
 	}
 
 	private static function boxedCommand(): BoxedCommand {
-		return MediaWikiServices::getInstance()->getShellCommandFactory()
+		$command = MediaWikiServices::getInstance()->getShellCommandFactory()
 			->createBoxed( 'syntaxhighlight' )
 			->disableNetwork()
 			->firejailDefaultSeccomp()
 			->routeName( 'syntaxhighlight-pygments' );
+
+		if ( wfIsWindows() ) {
+			// Python requires the SystemRoot environment variable to initialize (T300223)
+			$command->environment( [
+				'SystemRoot' => getenv( 'SystemRoot' ),
+			] );
+		}
+
+		return $command;
 	}
 
 	/**

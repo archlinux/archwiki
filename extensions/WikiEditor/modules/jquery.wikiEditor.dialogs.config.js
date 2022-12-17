@@ -189,7 +189,7 @@
 									} else {
 										target = target.trim();
 										// Prepend http:// if there is no protocol
-										if ( !target.match( /^[a-z]+:\/\/./ ) ) {
+										if ( !/^[a-z]+:\/\/./.test( target ) ) {
 											target = 'http://' + target;
 										}
 
@@ -199,7 +199,13 @@
 											var buttons = {};
 											buttons[ mw.msg( 'wikieditor-toolbar-tool-link-lookslikeinternal-int' ) ] =
 												function () {
-													insertLinkTitleInputField.getField().setValue( match[ 1 ] );
+													var titleValue = match[ 1 ];
+													try {
+														titleValue = decodeURI( titleValue );
+													} catch ( ex ) {
+														// Ignore invalid URLs; use plain titleValue instead.
+													}
+													insertLinkTitleInputField.getField().setValue( titleValue );
 													insertLinkTitleInputField.setUrlMode( LinkTypeField.static.LINK_MODE_INTERNAL );
 													$( this ).dialog( 'close' );
 													// Select the first match (i.e. the value set above) so that the
@@ -498,9 +504,6 @@
 								if ( !match ) {
 									return false;
 								}
-								var result = {};
-								result.pre = match[ 1 ];
-								result.post = match[ 3 ];
 								// Escape pipes inside links and templates,
 								// then split the parameters at the remaining pipes
 								var params = match[ 2 ].replace( /\[\[[^[\]]*\]\]|\{\{[^{}]\}\}/g, function ( link ) {
@@ -510,7 +513,11 @@
 								if ( !file || file.getNamespaceId() !== 6 ) {
 									return false;
 								}
-								result.fileName = file.getMainText();
+								var result = {
+									pre: match[ 1 ],
+									post: match[ 3 ],
+									fileName: file.getMainText()
+								};
 								for ( var i = 1; i < params.length; i++ ) {
 									var paramOrig = params[ i ];
 									var param = paramOrig.toLowerCase();
@@ -811,11 +818,7 @@
 							var match = false;
 							var offset, textRemainder;
 							if ( mode !== 'replaceAll' ) {
-								if ( mode === 'replace' ) {
-									offset = $( this ).data( 'matchIndex' );
-								} else {
-									offset = $( this ).data( 'offset' );
-								}
+								offset = $( this ).data( mode === 'replace' ? 'matchIndex' : 'offset' );
 								textRemainder = text.slice( offset );
 								match = textRemainder.match( regex );
 							}
@@ -865,28 +868,20 @@
 									offset = offset + match.index + actualReplacement.length;
 									textRemainder = text.slice( offset );
 									match = textRemainder.match( regex );
-
-									if ( match ) {
-										start = offset + match.index;
-										end = start + match[ 0 ].length;
-									} else {
+									if ( !match ) {
 										// If no new string was found, try searching from the beginning.
 										// TODO: Add a "Wrap around" option.
+										offset = 0;
 										textRemainder = text;
 										match = textRemainder.match( regex );
-										if ( match ) {
-											start = match.index;
-											end = start + match[ 0 ].length;
-										} else {
-											// Give up
-											start = 0;
-											end = 0;
-										}
 									}
-								} else {
-									start = offset + match.index;
-									end = start + match[ 0 ].length;
+									if ( !match ) {
+										// Give up
+										match = { index: 0, 0: { length: 0 } };
+									}
 								}
+								start = offset + match.index;
+								end = start + match[ 0 ].length;
 
 								$( this ).data( 'matchIndex', start );
 
@@ -922,8 +917,7 @@
 						},
 						open: function () {
 							var that = this;
-							$( this ).data( 'offset', 0 );
-							$( this ).data( 'matchIndex', 0 );
+							$( this ).data( { offset: 0, matchIndex: 0 } );
 
 							$( '#wikieditor-toolbar-replace-search' ).trigger( 'focus' );
 							$( '#wikieditor-toolbar-replace-nomatch, #wikieditor-toolbar-replace-success, #wikieditor-toolbar-replace-emptysearch, #wikieditor-toolbar-replace-invalidregex' ).hide();
@@ -945,10 +939,7 @@
 							}
 							var $dialog = $( this ).closest( '.ui-dialog' );
 							that = this;
-							var context = $( this ).data( 'context' );
-							var $textbox = context.$textarea;
-
-							$textbox
+							$( this ).data( 'context' ).$textarea
 								.on( 'keypress.srdialog', function ( e ) {
 									if ( e.which === 13 ) {
 										// Enter
@@ -961,9 +952,8 @@
 								} );
 						},
 						close: function () {
-							var context = $( this ).data( 'context' ),
-								$textbox = context.$textarea;
-							$textbox.off( 'keypress.srdialog' );
+							$( this ).data( 'context' ).$textarea
+								.off( 'keypress.srdialog' );
 							$( this ).closest( '.ui-dialog' ).data( 'dialogaction', false );
 						}
 					}

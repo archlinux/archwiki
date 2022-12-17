@@ -10,7 +10,7 @@ class AbuseFilterViewImport extends AbuseFilterView {
 	 */
 	public function show() {
 		$out = $this->getOutput();
-		if ( !$this->afPermManager->canEdit( $this->getUser() ) ) {
+		if ( !$this->afPermManager->canEdit( $this->getAuthority() ) ) {
 			$out->addWikiMsg( 'abusefilter-edit-notallowed' );
 			return;
 		}

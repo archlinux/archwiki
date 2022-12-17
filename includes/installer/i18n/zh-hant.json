@@ -3,6 +3,7 @@
 		"authors": [
 			"Anthony Fok",
 			"Cwlin0416",
+			"Diskdance",
 			"Hzy980512",
 			"Justincheng12345",
 			"Kly",
@@ -25,7 +26,8 @@
 			"Xiaomingyan",
 			"Xiplus",
 			"蘭斯特",
-			"아라"
+			"아라",
+			"Willy1018"
 		]
 	},
 	"config-desc": "MediaWiki 安裝程式",
@@ -234,7 +236,7 @@
 	"config-upload-deleted": "已刪除檔案的目錄：",
 	"config-upload-deleted-help": "請選擇用來存放已刪除檔案的目錄。\n理想情況下，此目錄不可被網頁直接存取。",
 	"config-personalization-settings": "個人化",
-	"config-logo-summary": "對於這些各個欄位，您需要上傳適當大小的圖片，並在下方方框輸入 URL。若您的標誌與 <code>$wgStylePath</code> 或是 <code>$wgScriptPath</code> 這些路徑相關，您可以拿來使用。您也可以對這些任一方框留空。\n\n您也能在支援的瀏覽器上，從您的檔案系統拖拉圖片檔案到輸入框或是預覽區域裡。",
+	"config-logo-summary": "對於這些各個欄位，您需要上傳適當大小的圖片，並在下方方框輸入 URL。若您的標誌與 <code>$wgStylePath</code> 或是 <code>$wgScriptPath</code> 這些路徑相關，您可以拿來使用。您也可以對這些任一方框留空。",
 	"config-logo-preview-main": "首頁",
 	"config-logo-icon": "標誌（圖示）",
 	"config-logo-icon-help": "您的標誌模樣應採用方形，一般會是超過 50 像素或是 SVG 格式。",
@@ -244,7 +246,7 @@
 	"config-logo-tagline-help": "您站台的標語。僅在您有定義上方字標時才使用。若未定義的話，通常會退回成文字。標語與字標的結合高度在一般規則是不超過 50 像素。",
 	"config-logo-sidebar": "側欄標誌（選擇性）：",
 	"config-logo-filedrop": "拖放圖片檔案至此",
-	"config-logo-sidebar-help": "某些 MediaWiki 外觀的側邊選單會包含高度為 160 像素的標誌。若未定義，會與上方所定義的圖標相同。您可能會想要一個結合字標與圖標的專用圖形。",
+	"config-logo-sidebar-help": "某些 MediaWiki 外觀的側欄選單會包含高度為 160 像素的標誌。若未定義，會與上方所定義的圖示相同。您可能會想要一個結合字標與圖示的專用圖形。",
 	"config-instantcommons": "開啟即時共享資源",
 	"config-instantcommons-help": "[https://www.mediawiki.org/wiki/Special:MyLanguage/InstantCommons 即時共享資源] 是允許 Wiki 使用來自 [https://commons.wikimedia.org/ Wikimedia Commons] 網站上的圖片、聲音以及其他媒體的一項功能。\n若要開啟此功能，您的 MediaWiki 必須能夠連線網際網路。\n更多有關此功能的訊息，包含如何存除了 Wikimedia Commons 之外其他網站的說明，請參考 \n[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgForeignFileRepos 操作手冊]。",
 	"config-cc-error": "查無該創作共用授權條款，\n請手動輸入您的授權條款名稱。",

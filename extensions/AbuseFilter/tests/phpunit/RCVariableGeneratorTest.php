@@ -3,6 +3,7 @@
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
+use MediaWiki\Revision\RevisionRecord;
 
 /**
  * @group Test
@@ -20,7 +21,6 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 	protected $tablesUsed = [
 		'page',
 		'text',
-		'page_restrictions',
 		'user',
 		'recentchanges',
 		'image',
@@ -31,7 +31,6 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 	 * @inheritDoc
 	 */
 	protected function tearDown(): void {
-		MWTimestamp::setFakeTime( false );
 		$this->clearUploads();
 		parent::tearDown();
 	}
@@ -48,7 +47,7 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 		$timestamp = '1514700000';
 		MWTimestamp::setFakeTime( $timestamp );
 		$user = $this->getMutableTestUser()->getUser();
-		$title = Title::newFromText( 'AbuseFilter testing page' );
+		$title = Title::makeTitle( NS_MAIN, 'AbuseFilter testing page' );
 		$services = $this->getServiceContainer();
 		$wikiPageFactory = $services->getWikiPageFactory();
 		$page = $type === 'create' ? $wikiPageFactory->newFromTitle( $title ) : $this->getExistingTestPage( $title );
@@ -61,14 +60,19 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 			'summary' => $summary,
 			'timestamp' => $timestamp
 		];
+		$rcConds = [];
 
 		switch ( $type ) {
 			case 'create':
 				$expectedValues['old_wikitext'] = '';
 			// Fallthrough
 			case 'edit':
-				$newText = 'Some new text for testing RC vars.';
-				$this->editPage( $title->getText(), $newText, $summary, $title->getNamespace(), $user );
+				$status = $this->editPage( $title, 'Some new text for testing RC vars.', $summary, NS_MAIN, $user );
+				$this->assertArrayHasKey( 'revision-record', $status->value, 'Edit successed' );
+				/** @var RevisionRecord $revRecord */
+				$revRecord = $status->value['revision-record'];
+				$rcConds['rc_this_oldid'] = $revRecord->getId();
+
 				$expectedValues += [
 					'page_id' => $page->getId(),
 					'page_namespace' => $title->getNamespace(),
@@ -77,25 +81,30 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 				];
 				break;
 			case 'move':
-				$newTitle = Title::newFromText( 'Another AbuseFilter testing page' );
+				$newTitle = Title::makeTitle( NS_MAIN, 'Another AbuseFilter testing page' );
 				$mpf = $services->getMovePageFactory();
 				$mp = $mpf->newMovePage( $title, $newTitle );
-				$mp->move( $user, $summary, false );
-				$newID = $wikiPageFactory->newFromTitle( $newTitle )->getId();
+				$status = $mp->move( $user, $summary, false );
+				$this->assertArrayHasKey( 'nullRevision', $status->value, 'Move successed' );
+				/** @var RevisionRecord $revRecord */
+				$revRecord = $status->value['nullRevision'];
+				$rcConds['rc_this_oldid'] = $revRecord->getId();
 
 				$expectedValues += [
 					'moved_from_id' => $page->getId(),
 					'moved_from_namespace' => $title->getNamespace(),
 					'moved_from_title' => $title->getText(),
 					'moved_from_prefixedtitle' => $title->getPrefixedText(),
-					'moved_to_id' => $newID,
+					'moved_to_id' => $revRecord->getPageId(),
 					'moved_to_namespace' => $newTitle->getNamespace(),
 					'moved_to_title' => $newTitle->getText(),
 					'moved_to_prefixedtitle' => $newTitle->getPrefixedText()
 				];
 				break;
 			case 'delete':
-				$page->doDeleteArticleReal( $summary, $user );
+				$status = $page->doDeleteArticleReal( $summary, $user );
+				$rcConds['rc_logid'] = $status->value;
+
 				$expectedValues += [
 					'page_id' => $page->getId(),
 					'page_namespace' => $title->getNamespace(),
@@ -105,7 +114,8 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 				break;
 			case 'newusers':
 				$accountName = 'AbuseFilter dummy user';
-				$this->createAccount( $accountName, $user, $action === 'autocreateaccount' );
+				$status = $this->createAccount( $accountName, $user, $action === 'autocreateaccount' );
+				$rcConds['rc_logid'] = $status->value;
 
 				$expectedValues = [
 					'action' => $action,
@@ -122,6 +132,8 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 				if ( !$status->isGood() ) {
 					throw new LogicException( "Cannot upload file:\n$status" );
 				}
+				$rcConds['rc_namespace'] = $destTitle->getNamespace();
+				$rcConds['rc_title'] = $destTitle->getDbKey();
 
 				// Since the SVG is randomly generated, we need to read some properties live
 				$file = $services->getRepoGroup()->getLocalRepo()->newFile( $destTitle );
@@ -143,24 +155,10 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 				throw new LogicException( "Type $type not recognized!" );
 		}
 
-		if ( $type === 'edit' ) {
-			$where = [ 'rc_source' => 'mw.edit' ];
-		} elseif ( $type === 'create' ) {
-			$where = [ 'rc_source' => 'mw.new' ];
-		} else {
-			$where = [ 'rc_log_type' => $type ];
-		}
-		$rcQuery = RecentChange::getQueryInfo();
-		$row = $this->db->selectRow(
-			$rcQuery['tables'],
-			$rcQuery['fields'],
-			$where,
-			__METHOD__,
-			[ 'ORDER BY rc_id DESC' ],
-			$rcQuery['joins']
-		);
+		DeferredUpdates::doUpdates();
+		$rc = RecentChange::newFromConds( $rcConds, __METHOD__, DB_PRIMARY );
+		$this->assertNotNull( $rc, 'RC item found' );
 
-		$rc = RecentChange::newFromRow( $row );
 		$varGenerator = AbuseFilterServices::getVariableGeneratorFactory()->newRCGenerator(
 			$rc,
 			$this->getTestSysop()->getUser()
@@ -198,4 +196,67 @@ class RCVariableGeneratorTest extends MediaWikiIntegrationTestCase {
 			'upload' => [ 'upload', 'upload' ],
 		];
 	}
+
+	/**
+	 * @covers ::addEditVars
+	 * @covers ::addEditVarsForRow
+	 * @covers ::addGenericVars
+	 * @covers \MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer
+	 */
+	public function testAddEditVarsForRow() {
+		$timestamp = 1514700000;
+		MWTimestamp::setFakeTime( $timestamp );
+
+		$title = Title::makeTitle( NS_MAIN, 'AbuseFilter testing page' );
+
+		$oldLink = "https://wikipedia.org";
+		$newLink = "https://en.wikipedia.org";
+		$oldText = "test $oldLink";
+		$newText = "new test $newLink";
+
+		$this->editPage( $title, $oldText, 'Creating the test page' );
+
+		$timestamp += 10;
+		MWTimestamp::setFakeTime( $timestamp );
+
+		$status = $this->editPage( $title, $newText, 'Editing the test page' );
+		$this->assertArrayHasKey( 'revision-record', $status->value, 'Edit successed' );
+		/** @var RevisionRecord $revRecord */
+		$revRecord = $status->value['revision-record'];
+
+		$rc = RecentChange::newFromConds(
+			[ 'rc_this_oldid' => $revRecord->getId() ],
+			__METHOD__,
+			DB_PRIMARY
+		);
+		$this->assertNotNull( $rc, 'RC item found' );
+
+		// one more tick to reliably test page_age
+		MWTimestamp::setFakeTime( $timestamp + 10 );
+
+		$generator = AbuseFilterServices::getVariableGeneratorFactory()->newRCGenerator(
+			$rc,
+			$this->getMutableTestUser()->getUser()
+		);
+		$varHolder = $generator->getVars();
+		$manager = AbuseFilterServices::getVariablesManager();
+
+		$expected = [
+			'page_age' => 10,
+			'old_wikitext' => $oldText,
+			'old_size' => strlen( $oldText ),
+			'old_links' => [ $oldLink ],
+			'new_wikitext' => $newText,
+			'new_size' => strlen( $newText ),
+			'all_links' => [ $newLink ],
+			'timestamp' => (string)$timestamp,
+		];
+		foreach ( $expected as $var => $value ) {
+			$this->assertSame(
+				$value,
+				$manager->getVar( $varHolder, $var )->toNative()
+			);
+		}
+	}
+
 }

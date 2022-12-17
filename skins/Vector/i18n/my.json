@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Dr Lotus Black",
 			"Lionslayer",
 			"Myanmars",
@@ -23,9 +24,8 @@
 	"vector-jumptonavigation": "အ​ညွှန်း​သို့ ခုန်ကူးရန်",
 	"vector-jumptosearch": "ရှာဖွေရန် ခုန်ကူးမည်",
 	"vector-more-actions": "ပို၍",
-	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> ပါဝင်သော စာမျက်နှာများ ရှာဖွေရန်",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ပါဝင်သော စာမျက်နှာများ ရှာဖွေရန်",
 	"vector-anon-user-menu-pages-label": "တည်းဖြတ်ခြင်းအကြောင်း ပိုမိုလေ့လာရန်",
-	"vector-personal-more-label": "အသုံးပြုသူ လင့်ခ်များ",
 	"vector-main-menu-tooltip": "ပင်မ မီနူး",
 	"tooltip-vector-anon-user-menu-title": "နောက်ထပ် ရွေးချယ်စရာများ"
 }

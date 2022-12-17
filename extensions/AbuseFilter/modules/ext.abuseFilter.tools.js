@@ -14,12 +14,12 @@
 	 * @this HTMLElement
 	 * @param {jQuery.Event} e The event fired when the function is called
 	 */
-	function doExprSubmit() {
-		var expr = $( '#wpFilterRules' ).val(),
-			api = new mw.Api();
+	function doExprSubmit( e ) {
+		var expr = $( '#wpFilterRules' ).val();
+
 		$( this ).injectSpinner( { id: 'abusefilter-expr', size: 'large' } );
 
-		api.post( {
+		new mw.Api().post( {
 			action: 'abusefilterevalexpression',
 			expression: expr,
 			prettyprint: 1
@@ -50,7 +50,7 @@
 					.removeClass( 'mw-abusefilter-tools-error' )
 					.show();
 			} );
-		return false;
+		e.preventDefault();
 	}
 
 	/**
@@ -106,8 +106,7 @@
 	 */
 	function doReautoSubmit() {
 		var nameField = OO.ui.infuse( $( '#reautoconfirm-user' ) ),
-			name = nameField.getValue(),
-			api;
+			name = nameField.getValue();
 
 		if ( name === '' ) {
 			return false;
@@ -115,8 +114,7 @@
 
 		$( this ).injectSpinner( { id: 'abusefilter-reautoconfirm', size: 'large' } );
 
-		api = new mw.Api();
-		api.post( {
+		new mw.Api().post( {
 			action: 'abusefilterunblockautopromote',
 			user: name,
 			token: mw.user.tokens.get( 'csrfToken' )
@@ -128,8 +126,6 @@
 
 	$( function initialize() {
 		$( '#mw-abusefilter-submitexpr' ).on( 'click', doExprSubmit );
-		if ( $( '#mw-abusefilter-reautoconfirmsubmit' ).length ) {
-			$( '#mw-abusefilter-reautoconfirmsubmit' ).on( 'click', doReautoSubmit );
-		}
+		$( '#mw-abusefilter-reautoconfirmsubmit' ).on( 'click', doReautoSubmit );
 	} );
 }() );

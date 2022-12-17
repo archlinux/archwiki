@@ -13,7 +13,6 @@
 		]
 	},
 	"visualeditor": "VisualEditor",
-	"visualeditor-aliencontextitem-title": "項目",
 	"visualeditor-aliennode-tooltip": "唔好意思，呢件嘢現時淨係可以喺源碼模式嗰度修改。",
 	"visualeditor-align-widget-center": "置中",
 	"visualeditor-align-widget-default": "預設",
@@ -93,8 +92,6 @@
 	"visualeditor-indentationbutton-outdent-tooltip": "褪出",
 	"visualeditor-inspector-close-tooltip": "閂",
 	"visualeditor-inspector-remove-tooltip": "拎走",
-	"visualeditor-key-alt": "Alt",
-	"visualeditor-key-ctrl": "Ctrl",
 	"visualeditor-key-delete": "刪除掣",
 	"visualeditor-key-space": "空格掣",
 	"visualeditor-language-search-input-placeholder": "用語言名或者代碼搵語言",

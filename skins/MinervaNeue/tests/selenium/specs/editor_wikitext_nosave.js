@@ -15,17 +15,19 @@ describe( 'Wikitext Editor', () => {
 	beforeEach( () => {
 		iAmLoggedIntoTheMobileWebsite();
 		iAmOnAPageThatDoesNotExist();
-		iClickTheEditButton();
-		iSeeTheWikitextEditorOverlay();
 	} );
 
 	// @smoke
 	it( 'Closing editor (overlay button)', () => {
+		iClickTheEditButton();
+		iSeeTheWikitextEditorOverlay();
 		iClickTheOverlayCloseButton();
 		iDoNotSeeAnOverlay();
 	} );
 
 	it( 'Closing editor (browser button)', () => {
+		iClickTheEditButton();
+		iSeeTheWikitextEditorOverlay();
 		iClickTheBrowserBackButton();
 		iDoNotSeeAnOverlay();
 	} );

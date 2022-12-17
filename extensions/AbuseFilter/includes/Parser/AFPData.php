@@ -337,7 +337,7 @@ class AFPData {
 		} elseif ( $op === '/' ) {
 			$data = $a / $b;
 		} elseif ( $op === '%' ) {
-			$data = $a % $b;
+			$data = (int)$a % (int)$b;
 		} else {
 			// Should never happen
 			// @codeCoverageIgnoreStart

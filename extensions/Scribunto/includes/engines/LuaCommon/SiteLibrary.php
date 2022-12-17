@@ -191,7 +191,7 @@ class Scribunto_LuaSiteLibrary extends Scribunto_LuaLibraryBase {
 				"bad argument #1 to 'interwikiMap' (unknown filter '$filter')"
 			);
 		}
-		$cacheKey = $filter === null ? 'null' : $filter;
+		$cacheKey = $filter ?? 'null';
 		if ( !isset( self::$interwikiMapCache[$cacheKey] ) ) {
 			// Not expensive because we can have a max of three cache misses in the
 			// entire page parse.

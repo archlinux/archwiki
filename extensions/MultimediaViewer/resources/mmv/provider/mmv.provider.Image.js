@@ -25,12 +25,6 @@
 	 * @param {string} imageQueryParameter When defined, is a query parameter to add to every image request
 	 */
 	function Image( imageQueryParameter ) {
-		/**
-		 * @property {mw.mmv.logging.PerformanceLogger}
-		 * @private
-		 */
-		this.performance = new mw.mmv.logging.PerformanceLogger();
-
 		this.imageQueryParameter = imageQueryParameter;
 
 		/**
@@ -43,21 +37,18 @@
 	}
 
 	/**
-	 * Loads an image and returns it. Includes performance metrics via mw.mmv.logging.PerformanceLogger.
-	 * When the browser supports it, the image is loaded as an AJAX request.
+	 * Loads an image and returns it. When the browser supports it, the image is loaded as an AJAX
+	 * request.
 	 *
 	 * @param {string} url
-	 * @param {jQuery.Deferred.<string>} extraStatsDeferred A promise which resolves to extra statistics.
 	 * @return {jQuery.Promise.<HTMLImageElement>} A promise which resolves to the image object.
 	 *  When loaded via AJAX, it has progress events, which return an array with the content loaded
 	 *  so far and with the progress as a floating-point number between 0 and 100.
 	 */
-	Image.prototype.get = function ( url, extraStatsDeferred ) {
+	Image.prototype.get = function ( url ) {
 		var provider = this,
 			cacheKey = url,
 			extraParam = {},
-			start,
-			rawGet,
 			uri;
 
 		if ( this.imageQueryParameter ) {
@@ -71,16 +62,7 @@
 		}
 
 		if ( !this.cache[ cacheKey ] ) {
-			if ( this.imagePreloadingSupported() ) {
-				rawGet = provider.rawGet.bind( provider, url, true );
-				this.cache[ cacheKey ] = this.performance.record( 'image', url, extraStatsDeferred ).then( rawGet, rawGet );
-			} else {
-				start = ( new Date() ).getTime();
-				this.cache[ cacheKey ] = this.rawGet( url );
-				this.cache[ cacheKey ].always( function () {
-					provider.performance.recordEntry( 'image', ( new Date() ).getTime() - start, url, undefined, extraStatsDeferred );
-				} );
-			}
+			this.cache[ cacheKey ] = this.rawGet( url, this.imagePreloadingSupported() );
 			this.cache[ cacheKey ].fail( function ( error ) {
 				mw.log( provider.constructor.name + ' provider failed to load: ', error );
 			} );

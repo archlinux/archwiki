@@ -1,7 +1,16 @@
 <?php
 
-use MediaWiki\CheckUser\Hooks;
+namespace MediaWiki\Extension\SpamBlacklist;
+
+use ExtensionRegistry;
+use LogPage;
+use ManualLogEntry;
+use MediaWiki\CheckUser\Hooks as CUHooks;
 use MediaWiki\MediaWikiServices;
+use ObjectCache;
+use RequestContext;
+use Title;
+use User;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\Database;
 
@@ -79,7 +88,8 @@ class SpamBlacklist extends BaseBlacklist {
 			}
 		} elseif ( $mode === 'stash' ) {
 			if ( $knownNonMatchAsOf && ( time() - $knownNonMatchAsOf ) < self::STASH_AGE_DYING ) {
-				return false; // OK; not about to expire soon
+				// OK; not about to expire soon
+				return false;
 			}
 		}
 
@@ -138,7 +148,7 @@ class SpamBlacklist extends BaseBlacklist {
 					$imploded = implode( ' ', $fullUrls[0] );
 					wfDebugLog( 'SpamBlacklistHit', "$ip caught submitting spam: $imploded\n" );
 					if ( !$preventLog && $title ) {
-						$this->logFilterHit( $user, $title, $imploded ); // Log it
+						$this->logFilterHit( $user, $title, $imploded );
 					}
 					if ( $retVal === false ) {
 						$retVal = [];
@@ -186,7 +196,8 @@ class SpamBlacklist extends BaseBlacklist {
 				return $dbr->selectFieldValues(
 					'externallinks',
 					'el_to',
-					[ 'el_from' => $title->getArticleID() ], // should be zero queries
+					// should be zero queries
+					[ 'el_from' => $title->getArticleID() ],
 					$fname
 				);
 			}
@@ -198,7 +209,8 @@ class SpamBlacklist extends BaseBlacklist {
 			$entries,
 			$title,
 			$user,
-			true /* no logging */,
+			// no logging
+			true,
 			'stash'
 		);
 	}
@@ -246,7 +258,7 @@ class SpamBlacklist extends BaseBlacklist {
 				// (which is the default)
 				if ( ExtensionRegistry::getInstance()->isLoaded( 'CheckUser' ) ) {
 					$rc = $logEntry->getRecentChange( $logid );
-					Hooks::updateCheckUserData( $rc );
+					CUHooks::updateCheckUserData( $rc );
 				}
 			} else {
 				// If the log is unrestricted, publish normally to RC,

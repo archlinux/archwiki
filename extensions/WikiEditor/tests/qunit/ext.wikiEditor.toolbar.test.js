@@ -1,14 +1,12 @@
-( function () {
-	QUnit.module( 'ext.wikiEditor.toolbar', QUnit.newMwEnvironment( {
-		setup: function () {
-			var $fixture = $( '#qunit-fixture' ),
-				$target = $( '<textarea>' ).attr( 'id', 'wpTextBox1' );
-			this.$target = $target;
-			$fixture.append( $target );
-			$target.wikiEditor( 'addModule', 'toolbar' );
-			this.$ui = $target.data( 'wikiEditor-context' ).$ui;
-		}
-	} ) );
+QUnit.module( 'ext.wikiEditor.toolbar', function ( hooks ) {
+	hooks.beforeEach( function () {
+		var $target = $( '<textarea>' )
+			.attr( 'id', 'wpTextBox1' )
+			.appendTo( '#qunit-fixture' );
+		this.$target = $target;
+		$target.wikiEditor( 'addModule', 'toolbar' );
+		this.$ui = $target.data( 'wikiEditor-context' ).$ui;
+	} );
 
 	QUnit.test( 'Toolbars', function ( assert ) {
 		// Add toolbar section
@@ -284,4 +282,4 @@
 		assert.strictEqual( this.$ui.find( '*[rel="info"].section' ).length, 0, 'After removing booklet section' );
 	} );
 
-}() );
+} );

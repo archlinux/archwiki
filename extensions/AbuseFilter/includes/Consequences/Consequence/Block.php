@@ -73,7 +73,7 @@ class Block extends BlockingConsequence implements ReversibleConsequence {
 	 * @inheritDoc
 	 * @todo This could use UnblockUser, but we need to check if the block was performed by the AF user
 	 */
-	public function revert( $info, UserIdentity $performer, string $reason ): bool {
+	public function revert( UserIdentity $performer, string $reason ): bool {
 		// TODO: Proper DI once T255433 is resolved
 		$block = ( $this->blockFactory )( $this->parameters->getUser()->getName() );
 		if ( !( $block && $block->getBy() === $this->filterUser->getUserIdentity()->getId() ) ) {
@@ -107,5 +107,13 @@ class Block extends BlockingConsequence implements ReversibleConsequence {
 			$filter->getName(),
 			GlobalNameUtils::buildGlobalName( $filter->getID(), $this->parameters->getIsGlobalFilter() )
 		];
+	}
+
+	/**
+	 * @return string
+	 * @internal
+	 */
+	public function getExpiry(): string {
+		return $this->expiry;
 	}
 }

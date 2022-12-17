@@ -8,8 +8,7 @@ var
 	CHECKBOX_HACK_TARGET_SELECTOR = '.vector-menu-content';
 
 /**
- * Add the ability for users to toggle dropdown menus using the enter key (as
- * well as space) using core's checkboxHack.
+ * Enhance dropdownMenu functionality and accessibility using core's checkboxHack.
  */
 function bind() {
 	// Search for all dropdown containers using the CHECKBOX_HACK_CONTAINER_SELECTOR.
@@ -30,16 +29,36 @@ function bind() {
 }
 
 /**
- * T295085: Close all dropdown menus when page is unloaded to prevent them from
- * being open when navigating back to a page.
+ * Create an icon element to be appended inside the anchor tag.
+ *
+ * @param {HTMLElement|null} menuElement
+ * @param {HTMLElement|null} parentElement
+ * @param {string|null} id
+ *
+ * @return {HTMLElement|undefined}
  */
-function bindCloseOnUnload() {
-	addEventListener( 'beforeunload', function () {
-		var checkboxes = document.querySelectorAll( CHECKBOX_HACK_CHECKBOX_SELECTOR + ':checked' );
-		Array.prototype.forEach.call( checkboxes, function ( checkbox ) {
-			/** @type {HTMLInputElement} */ ( checkbox ).checked = false;
-		} );
-	} );
+function createIconElement( menuElement, parentElement, id ) {
+	// Dropdowns which do not have the noicon class are icon capable.
+	var isIconCapable = menuElement &&
+		menuElement.classList.contains( 'vector-menu-dropdown' ) &&
+		!menuElement.classList.contains( 'vector-menu-dropdown-noicon' );
+
+	if ( !isIconCapable || !parentElement ) {
+		return;
+	}
+
+	var iconElement = document.createElement( 'span' );
+	iconElement.classList.add( 'mw-ui-icon' );
+
+	if ( id ) {
+		// The following class allows gadgets developers to style or hide an icon.
+		// * mw-ui-icon-vector-gadget-<id>
+		// The class is considered stable and should not be removed without
+		// a #user-notice.
+		iconElement.classList.add( 'mw-ui-icon-vector-gadget-' + id );
+	}
+
+	return iconElement;
 }
 
 /**
@@ -56,29 +75,29 @@ function addPortletLinkHandler( item, data ) {
 	var link = item.querySelector( 'a' );
 	var $menu = $( item ).parents( '.vector-menu' );
 	var menuElement = $menu.length && $menu.get( 0 ) || null;
-	// Dropdowns which have not got the noicon class are icon capable.
-	var isIconCapable = menuElement && menuElement.classList.contains(
-		'vector-menu-dropdown'
-	) && !menuElement.classList.contains(
-		'vector-menu-dropdown-noicon'
-	);
+	var iconElement = createIconElement( menuElement, link, data.id );
 
-	if ( isIconCapable && link ) {
-		// If class was previously added this will be a no-op so it is safe to call even
-		// if we've previously enhanced it.
-		link.classList.add(
-			'mw-ui-icon',
-			'mw-ui-icon-before'
-		);
-
-		if ( data.id ) {
-			// The following class allows gadgets developers to style or hide an icon.
-			// * mw-ui-icon-vector-gadget-<id>
-			// The class is considered stable and should not be removed without
-			// a #user-notice.
-			// eslint-disable-next-line mediawiki/class-doc
-			link.classList.add( 'mw-ui-icon-vector-gadget-' + data.id );
+	// The views menu has limited space so we need to decide whether there is space
+	// to accomodate the new item and if not to redirect to the more dropdown.
+	/* eslint-disable no-jquery/no-global-selector */
+	if ( $menu.prop( 'id' ) === 'p-views' ) {
+		// @ts-ignore if undefined as NaN will be ignored
+		var availableWidth = $( '.mw-article-toolbar-container' ).width() -
+			// @ts-ignore
+			$( '#p-namespaces' ).width() - $( '#p-variants' ).width() -
+			// @ts-ignore
+			$( '#p-views' ).width() - $( '#p-cactions' ).width();
+		var moreDropdown = document.querySelector( '#p-cactions ul' );
+		// If the screen width is less than 720px then the views menu is hidden
+		if ( moreDropdown && ( availableWidth < 0 || window.innerWidth < 720 ) ) {
+			moreDropdown.appendChild( item );
+			// reveal if hidden
+			mw.util.showPortlet( 'p-cactions' );
 		}
+	}
+
+	if ( link && iconElement ) {
+		link.prepend( iconElement );
 	}
 }
 
@@ -94,7 +113,7 @@ Array.prototype.forEach.call(
 
 mw.hook( 'util.addPortletLink' ).add( addPortletLinkHandler );
 
-module.exports = function dropdownMenus() {
-	bind();
-	bindCloseOnUnload();
+module.exports = {
+	dropdownMenus: function dropdownMenus() { bind(); },
+	addPortletLinkHandler: addPortletLinkHandler
 };

@@ -44,7 +44,7 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 	// TODO: Improve handling of missing files. See 'isError' in MWBlockImageNode#toDataElement
 	var li = domElements[ 0 ];
 	var img = li.querySelector( 'img,audio,video,span[resource]' );
-	var figureInline = img.parentNode.parentNode;
+	var container = img.parentNode.parentNode;
 
 	// Get caption (may be missing for mode="packed-hover" galleries)
 	var captionNode = li.querySelector( '.gallerytext' );
@@ -56,6 +56,12 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 			filename.remove();
 		}
 	}
+
+	// FIXME: This should match Parsoid's WTUtils::textContentFromCaption,
+	// which drops <ref>s
+	var altFromCaption = captionNode ? captionNode.textContent.trim() : '';
+	var altTextSame = img.hasAttribute( 'alt' ) && altFromCaption &&
+		( img.getAttribute( 'alt' ).trim() === altFromCaption );
 
 	var caption;
 	if ( captionNode ) {
@@ -69,16 +75,31 @@ ve.dm.MWGalleryImageNode.static.toDataElement = function ( domElements, converte
 		];
 	}
 
+	var typeofAttrs = container.getAttribute( 'typeof' ).trim().split( /\s+/ );
+	var errorIndex = typeofAttrs.indexOf( 'mw:Error' );
+	var isError = errorIndex !== -1;
+	var width = img.getAttribute( isError ? 'data-width' : 'width' );
+	var height = img.getAttribute( isError ? 'data-height' : 'height' );
+
+	if ( isError ) {
+		typeofAttrs.splice( errorIndex, 1 );
+	}
+
+	var types = ve.dm.MWImageNode.static.rdfaToTypes[ typeofAttrs[ 0 ] ];
+
 	var dataElement = {
 		type: this.name,
 		attributes: {
+			mediaClass: types.mediaClass,
+			mediaTag: img.nodeName.toLowerCase(),
 			resource: './' + mw.libs.ve.normalizeParsoidResourceName( img.getAttribute( 'resource' ) ),
 			altText: img.getAttribute( 'alt' ),
+			altTextSame: altTextSame,
 			// 'src' for images, 'poster' for video/audio
 			src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
-			height: img.getAttribute( 'height' ),
-			width: img.getAttribute( 'width' ),
-			tagName: figureInline.nodeName.toLowerCase()
+			width: width !== null && width !== '' ? +width : null,
+			height: height !== null && height !== '' ? +height : null,
+			isError: isError
 		}
 	};
 
@@ -91,49 +112,69 @@ ve.dm.MWGalleryImageNode.static.toDomElements = function ( data, doc ) {
 	// ImageNode:
 	//   <li> li (gallerybox)
 	//     <div> thumbDiv
-	//       <span> innerDiv
+	//       <span> container
 	//         <a> a
-	//           <img> img
+	//           <img> img (or span if error)
 	var model = data,
+		attributes = model.attributes,
 		li = doc.createElement( 'li' ),
 		thumbDiv = doc.createElement( 'div' ),
-		innerDiv = doc.createElement( model.attributes.tagName || 'span' ),
+		container = doc.createElement( 'span' ),
 		a = doc.createElement( 'a' ),
-		img = doc.createElement( 'img' ),
-		alt = model.attributes.altText;
+		img = doc.createElement( attributes.isError ? 'span' : ( attributes.mediaTag || 'img' ) ),
+		alt = attributes.altText;
+
+	// FIXME: attributes.mediaTag and attributes.mediaClass aren't set after edit
 
 	li.classList.add( 'gallerybox' );
 	thumbDiv.classList.add( 'thumb' );
-	innerDiv.setAttribute( 'typeof', 'mw:Image' );
+	container.setAttribute( 'typeof', ve.dm.MWImageNode.static.getRdfa(
+		( attributes.mediaClass || 'File' ), 'none', attributes.isError
+	) );
 
 	// TODO: Support editing the link
 	// FIXME: Dropping the href causes Parsoid to mark the node as wrapper modified,
 	// making the whole gallery subtree edited, preventing selser.  When fixing,
 	// preserving the imgWrapperClassAttr, as in the MW*ImageNodes, will also be
 	// necessary.
-	// a.setAttribute( 'href', model.attributes.src );
+	// a.setAttribute( 'href', attributes.src );
 
-	img.setAttribute( 'resource', model.attributes.resource );
-	img.setAttribute( 'src', model.attributes.src );
-	if ( alt ) {
+	img.setAttribute( 'resource', attributes.resource );
+	if ( attributes.isError ) {
+		img.classList.add( 'mw-broken-media' );
+		var filename = mw.libs.ve.normalizeParsoidResourceName( attributes.resource || '' );
+		img.appendChild( doc.createTextNode( filename ) );
+	} else {
+		var srcAttr = ve.dm.MWImageNode.static.tagsToSrcAttrs[ img.nodeName.toLowerCase() ];
+		img.setAttribute( srcAttr, attributes.src );
+	}
+	img.setAttribute( attributes.isError ? 'data-width' : 'width', attributes.width );
+	img.setAttribute( attributes.isError ? 'data-height' : 'height', attributes.height );
+
+	if ( typeof alt === 'string' && !attributes.altTextSame ) {
 		img.setAttribute( 'alt', alt );
 	}
 
 	a.appendChild( img );
-	innerDiv.appendChild( a );
-	thumbDiv.appendChild( innerDiv );
+	container.appendChild( a );
+	thumbDiv.appendChild( container );
 	li.appendChild( thumbDiv );
 
 	return [ li ];
 };
 
 ve.dm.MWGalleryImageNode.static.describeChange = function ( key ) {
-	// These attributes are computed
-	if ( key === 'src' || key === 'width' || key === 'height' ) {
-		return null;
+	if ( key === 'altText' ) {
+		// Parent method
+		return ve.dm.MWGalleryImageNode.super.static.describeChange.apply( this, arguments );
 	}
-	// Parent method
-	return ve.dm.MWGalleryImageNode.super.static.describeChange.apply( this, arguments );
+	// All other attributes are computed, or result in nodes being incomparable (`resource`)
+	return null;
+};
+
+ve.dm.MWGalleryImageNode.static.isDiffComparable = function ( element, other ) {
+	// Images with different src's shouldn't be diffed
+	return element.type === other.type && element.attributes.resource === other.attributes.resource;
 };
 
 /* Methods */

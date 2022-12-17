@@ -1,16 +1,15 @@
 <?php
 
-namespace Vector\ResourceLoader;
+namespace MediaWiki\Skins\Vector\ResourceLoader;
 
-use ResourceLoaderContext;
-use ResourceLoaderUserModule;
-use Vector\Constants;
+use MediaWiki\ResourceLoader as RL;
+use MediaWiki\Skins\Vector\Constants;
 
-class VectorResourceLoaderUserModule extends ResourceLoaderUserModule {
+class VectorResourceLoaderUserModule extends RL\UserModule {
 	/**
 	 * @inheritDoc
 	 */
-	protected function getPages( ResourceLoaderContext $context ) {
+	protected function getPages( RL\Context $context ) {
 		$skin = $context->getSkin();
 		$config = $this->getConfig();
 		$user = $context->getUserObj();

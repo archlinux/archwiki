@@ -2,12 +2,14 @@
 
 namespace MediaWiki\Extension\Math\Tests;
 
+use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\Extension\Math\MathRenderer;
 use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWikiIntegrationTestCase;
 use ParserOptions;
+use Psr\Log\NullLogger;
 
 /**
  * @group Database
@@ -16,40 +18,47 @@ use ParserOptions;
  */
 class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 
-	private function getDummyRenderer( $mode, $tex, $params ): MathRenderer {
-		return new class( $mode, $tex, $params ) extends MathRenderer {
-			public function __construct( $mode, $tex = '', $params = [] ) {
-				parent::__construct( $tex, $params );
-				$this->mode = $mode;
-			}
-
-			public function render( $forceReRendering = false ) {
-				return true;
-			}
-
-			public function checkTeX() {
-				return true;
-			}
-
-			public function getHtmlOutput() {
-				return "<render>$this->mode:$this->tex</render>";
-			}
-
-			protected function getMathTableName() {
-				return 'whatever';
-			}
-		};
-	}
-
 	private function setupDummyRendering() {
 		$this->setMwGlobals( 'wgMathValidModes', [ MathConfig::MODE_SOURCE, MathConfig::MODE_PNG ] );
 		$this->mergeMwGlobalArrayValue( 'wgDefaultUserOptions', [ 'math' => MathConfig::MODE_SOURCE ] );
-		$dummyRendererFactory = $this->createMock( RendererFactory::class );
-		$dummyRendererFactory->method( 'getRenderer' )
-			->willReturnCallback( function ( $tex, $params, $mode ) {
-				return $this->getDummyRenderer( $mode, $tex, $params );
-			} );
-		$this->setService( 'Math.RendererFactory', $dummyRendererFactory );
+		$this->setService( 'Math.RendererFactory', new class(
+			new ServiceOptions( RendererFactory::CONSTRUCTOR_OPTIONS, [
+				'MathoidCli' => false,
+				'MathEnableExperimentalInputFormats' => false,
+				'MathValidModes' => [ MathConfig::MODE_SOURCE, MathConfig::MODE_PNG ],
+			] ),
+			$this->getServiceContainer()->getUserOptionsLookup(),
+			new NullLogger()
+		) extends RendererFactory {
+			public function getRenderer(
+				string $tex,
+				array $params = [],
+				string $mode = MathConfig::MODE_PNG
+			): MathRenderer {
+				return new class( $mode, $tex, $params ) extends MathRenderer {
+					public function __construct( $mode, $tex = '', $params = [] ) {
+						parent::__construct( $tex, $params );
+						$this->mode = $mode;
+					}
+
+					public function render() {
+						return true;
+					}
+
+					public function checkTeX() {
+						return true;
+					}
+
+					public function getHtmlOutput() {
+						return "<render>$this->mode:$this->tex</render>";
+					}
+
+					protected function getMathTableName() {
+						return 'whatever';
+					}
+				};
+			}
+		} );
 	}
 
 	/**
@@ -77,14 +86,14 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 
 		// source was set as a default, so the rendering will be shared with
 		// canonical rendering produced by page edit
-		$parserOptions1 = ParserOptions::newFromAnon();
+		$parserOptions1 = ParserOptions::newCanonical( 'canonical' );
 		$parserOptions1->setOption( 'math', MathConfig::MODE_SOURCE );
 		$render = $parserOutputAccess->getCachedParserOutput( $page, $parserOptions1 );
 		$this->assertNotNull( $render );
 		$this->assertStringContainsString( "<render>source:TEST_FORMULA</render>", $render->getText() );
 
 		// Now render with 'png' and make sure we didn't get the cached output
-		$parserOptions2 = ParserOptions::newFromAnon();
+		$parserOptions2 = ParserOptions::newCanonical( 'canonical' );
 		$parserOptions2->setOption( 'math', MathConfig::MODE_PNG );
 		$this->assertNull( $parserOutputAccess->getCachedParserOutput( $page, $parserOptions2 ) );
 		$renderStatus = $parserOutputAccess->getParserOutput( $page, $parserOptions2 );
@@ -114,7 +123,7 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 	public function testMathInLink() {
 		$this->setupDummyRendering();
 		$po = ParserOptions::newFromAnon();
-		$po->setOption( 'math', 'png' );
+		$po->setOption( 'math', MathConfig::MODE_PNG );
 		$res = $this->getServiceContainer()
 			->getParser()
 			->parse(

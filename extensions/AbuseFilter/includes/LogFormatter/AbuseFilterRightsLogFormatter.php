@@ -25,7 +25,7 @@ class AbuseFilterRightsLogFormatter extends LogFormatter {
 	protected function extractParameters() {
 		$ret = [];
 		$ret[3] = $this->entry->getTarget()->getText();
-		if ( $this->entry->getSubType() === 'blockautopromote' ) {
+		if ( $this->entry->getSubtype() === 'blockautopromote' ) {
 			$parameters = $this->entry->getParameters();
 			$duration = $parameters['7::duration'];
 			$ret[4] = $this->context->getLanguage()->formatDuration( $duration );

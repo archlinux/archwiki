@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aram",
 			"Asoxor",
 			"Calak",
+			"Muhammed taha",
 			"Sarchia",
-			"ئارام بکر",
-			"Muhammed taha"
+			"ئارام بکر"
 		]
 	},
 	"skinname-vector": "ڤێکتۆر",
@@ -26,5 +27,6 @@
 	"vector-view-history": "مێژوو",
 	"vector-view-view": "خوێندنەوە",
 	"vector-view-viewsource": "سەرچاوەکەی ببینە",
-	"vector-more-actions": "زیاتر"
+	"vector-more-actions": "زیاتر",
+	"vector-searchsuggest-containing": "بەدوای ئەو پەڕانە بگەڕێ کە «<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>»یان تێدایە."
 }

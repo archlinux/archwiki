@@ -113,6 +113,7 @@ ve.ui.MWLatexDialog.prototype.initialize = function () {
 	} );
 
 	this.idInput = new OO.ui.TextInputWidget();
+	this.qidInput = new mw.widgets.MathWbEntitySelector();
 
 	var inputField = new OO.ui.FieldLayout( this.input, {
 		align: 'top',
@@ -125,6 +126,10 @@ ve.ui.MWLatexDialog.prototype.initialize = function () {
 	var idField = new OO.ui.FieldLayout( this.idInput, {
 		align: 'top',
 		label: ve.msg( 'math-visualeditor-mwlatexinspector-id' )
+	} );
+	var qidField = new OO.ui.FieldLayout( this.qidInput, {
+		align: 'top',
+		label: ve.msg( 'math-visualeditor-mwlatexinspector-qid' )
 	} );
 
 	var formulaPanel = new OO.ui.PanelLayout( {
@@ -175,7 +180,8 @@ ve.ui.MWLatexDialog.prototype.initialize = function () {
 		);
 		optionsTabPanel.$element.append(
 			displayField.$element,
-			idField.$element
+			idField.$element,
+			qidField.$element
 		);
 
 		dialog.$body
@@ -194,17 +200,20 @@ ve.ui.MWLatexDialog.prototype.getSetupProcess = function ( data ) {
 			var attributes = this.selectedNode && this.selectedNode.getAttribute( 'mw' ).attrs,
 				display = attributes && attributes.display || 'default',
 				id = attributes && attributes.id || '',
+				qid = attributes && attributes.qid || '',
 				isReadOnly = this.isReadOnly();
 
 			// Populate form
 			// TODO: This widget is not readable when disabled
 			this.displaySelect.selectItemByData( display ).setDisabled( isReadOnly );
 			this.idInput.setValue( id ).setReadOnly( isReadOnly );
+			this.qidInput.setValue( qid ).setReadOnly( isReadOnly );
 
 			// Add event handlers
 			this.input.on( 'change', this.onChangeHandler );
 			this.displaySelect.on( 'choose', this.onChangeHandler );
 			this.idInput.on( 'change', this.onChangeHandler );
+			this.qidInput.on( 'change', this.onChangeHandler );
 		}, this );
 };
 
@@ -233,6 +242,7 @@ ve.ui.MWLatexDialog.prototype.getTeardownProcess = function ( data ) {
 			this.input.off( 'change', this.onChangeHandler );
 			this.displaySelect.off( 'choose', this.onChangeHandler );
 			this.idInput.off( 'change', this.onChangeHandler );
+			this.qidInput.off( 'change', this.onChangeHandler );
 			this.getManager().disconnect( this );
 			this.indexLayout.setTabPanel( 'formula' );
 			this.indexLayout.resetScroll();
@@ -251,10 +261,12 @@ ve.ui.MWLatexDialog.prototype.updateMwData = function ( mwData ) {
 	// Get data from dialog
 	var display = this.displaySelect.findSelectedItem().getData();
 	var id = this.idInput.getValue();
+	var qid = this.qidInput.getValue();
 
 	// Update attributes
 	mwData.attrs.display = display !== 'default' ? display : undefined;
 	mwData.attrs.id = id || undefined;
+	mwData.attrs.qid = qid || undefined;
 };
 
 /**

@@ -1,5 +1,13 @@
 @import '../resources/common/variables.less';
 
+/** Mixin for collapsing the Echo new messages alert */
+.echo-alert-collapse() {
+	font-size: 12px;
+	position: absolute;
+	top: 100%;
+	right: 0;
+}
+
 .vector-user-links {
 	.vector-menu-content-list {
 		.mw-echo-alert {
@@ -15,13 +23,17 @@
 			}
 		}
 
-		@media ( max-width: @width-breakpoint-desktop-wide ) {
+		@media ( max-width: @min-width-desktop-wide ) {
 			.mw-echo-alert {
-				font-size: 12px;
-				position: absolute;
-				top: 100%;
-				right: 0;
+				.echo-alert-collapse();
 			}
 		}
+	}
+}
+
+// If the user link is wide, always collapse
+.vector-user-links-wide .vector-menu-content-list {
+	.mw-echo-alert {
+		.echo-alert-collapse();
 	}
 }

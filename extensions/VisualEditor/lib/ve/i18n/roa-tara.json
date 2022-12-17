@@ -5,7 +5,6 @@
 		]
 	},
 	"visualeditor": "VisualEditor",
-	"visualeditor-aliencontextitem-title": "Vôsce",
 	"visualeditor-aliennode-tooltip": "Ne despiace, stu elemende pò essere sulamende cangiate jndr'à 'u mode sorgende pe mò.",
 	"visualeditor-align-desc-center": "cendre",
 	"visualeditor-align-desc-default": "de base",
@@ -125,7 +124,6 @@
 	"visualeditor-indentationbutton-outdent-tooltip": "Diminuisce l'idendazione",
 	"visualeditor-inspector-close-tooltip": "Achiude",
 	"visualeditor-inspector-remove-tooltip": "Live",
-	"visualeditor-key-alt": "Alt",
 	"visualeditor-key-backspace": "Scangille",
 	"visualeditor-key-ctrl": "Control",
 	"visualeditor-key-delete": "Scangìlle",
@@ -136,7 +134,6 @@
 	"visualeditor-key-home": "Cáse",
 	"visualeditor-key-insert": "'Nzerisce",
 	"visualeditor-key-left": "Sinistre",
-	"visualeditor-key-meta": "Meta",
 	"visualeditor-key-page-down": "Pàgene de sotte",
 	"visualeditor-key-page-up": "Pàgene de sus",
 	"visualeditor-key-right": "Destre",

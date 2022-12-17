@@ -84,7 +84,7 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @inheritDoc
 	 */
-	public function setUp(): void {
+	protected function setUp(): void {
 		$this->getTagger()->clearBuffer();
 	}
 

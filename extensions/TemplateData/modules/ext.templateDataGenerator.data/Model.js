@@ -933,8 +933,9 @@ Model.prototype.getOriginalTemplateDataObject = function () {
  */
 Model.prototype.outputTemplateData = function () {
 	var allProps = this.constructor.static.getAllProperties( true ),
-		original = this.getOriginalTemplateDataObject() || { params: {} },
-		result = $.extend( true, {}, original ),
+		original = this.getOriginalTemplateDataObject() || {};
+	original.params = original.params || {};
+	var result = $.extend( true, {}, original ),
 		defaultLang = this.getDefaultLanguage();
 
 	var normalizedValue;

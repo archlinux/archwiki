@@ -3,7 +3,8 @@
 		"authors": [
 			"Beta16",
 			"C.R.",
-			"Ruthven"
+			"Ruthven",
+			"Finizio"
 		]
 	},
 	"minerva-last-modified-date": "Urtemo cagnamiento 'o $1, a 'e $2",
@@ -17,7 +18,7 @@
 	"mobile-frontend-editor-redlink-leave": "No, grazie.",
 	"mobile-frontend-history": "Vedite 'a storia 'e cagnamiente 'e sta paggena.",
 	"mobile-frontend-home-button": "Prencepale",
-	"mobile-frontend-language-article-heading": "Liegge int'a n'ata lengua",
+	"mobile-frontend-language-article-heading": "Lengua",
 	"mobile-frontend-languages-not-available": "Sta paggena nun è a disposizione dint'a ll'ati llengue.",
 	"mobile-frontend-main-menu-button-tooltip": "Arape 'o menu prencepale",
 	"mobile-frontend-main-menu-contributions": "Cuntribbute",
@@ -35,7 +36,7 @@
 	"mobile-frontend-notifications-filter": "Filtra",
 	"mobile-frontend-pageaction-edit-tooltip": "Cagna 'a sezione 'e cummencio 'e sta paggena",
 	"mobile-frontend-placeholder": "Ascia dint' 'a {{SITENAME}}",
-	"mobile-frontend-random-button": "A uocchio",
+	"mobile-frontend-random-button": "A caso",
 	"mobile-frontend-redirected-from": "Redirect 'a \"[[$1]]\"",
 	"mobile-frontend-talk-back-to-filepage": "Torna a 'o file \"$1\".",
 	"mobile-frontend-talk-back-to-page": "Torna â paggena \"$1\".",

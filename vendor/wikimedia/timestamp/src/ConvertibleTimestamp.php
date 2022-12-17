@@ -36,6 +36,7 @@ use Exception;
 class ConvertibleTimestamp {
 	/**
 	 * Standard gmdate() formats for the different timestamp types.
+	 * @var string[]
 	 */
 	private static $formats = [
 		TS_UNIX => 'U',
@@ -43,16 +44,20 @@ class ConvertibleTimestamp {
 		TS_DB => 'Y-m-d H:i:s',
 		TS_ISO_8601 => 'Y-m-d\TH:i:s\Z',
 		TS_ISO_8601_BASIC => 'Ymd\THis\Z',
-		TS_EXIF => 'Y:m:d H:i:s', // This shouldn't ever be used, but is included for completeness
+		// This shouldn't ever be used, but is included for completeness
+		TS_EXIF => 'Y:m:d H:i:s',
 		TS_RFC2822 => 'D, d M Y H:i:s',
-		TS_ORACLE => 'd-m-Y H:i:s.u', // Was 'd-M-y h.i.s A' . ' +00:00' before r51500
-		TS_POSTGRES => 'Y-m-d H:i:s+00', // Formerly 'Y-m-d H:i:s' . ' GMT'
+		// Was 'd-M-y h.i.s A' . ' +00:00' before r51500
+		TS_ORACLE => 'd-m-Y H:i:s.u',
+		// Formerly 'Y-m-d H:i:s' . ' GMT'
+		TS_POSTGRES => 'Y-m-d H:i:s+00',
 		TS_UNIX_MICRO => 'U.u',
 	];
 
 	/**
 	 * Regexes for setTimestamp(). Named capture groups correspond to format codes for
 	 * DateTime::createFromFormat(). Unnamed groups are ignored.
+	 * @var string[]
 	 */
 	private static $regexes = [
 		// 'TS_DB' => subset of TS_ISO_8601 (with no 'T')
@@ -136,13 +141,13 @@ class ConvertibleTimestamp {
 		}
 
 		if ( is_int( $fakeTime ) ) {
-			$fakeTime = function () use ( $fakeTime ) {
+			$fakeTime = static function () use ( $fakeTime ) {
 				return $fakeTime;
 			};
 		}
 
 		$old = static::$fakeTimeCallback;
-		static::$fakeTimeCallback = $fakeTime ? $fakeTime : null;
+		static::$fakeTimeCallback = $fakeTime ?: null;
 		return $old;
 	}
 
@@ -177,16 +182,28 @@ class ConvertibleTimestamp {
 	 */
 	public function setTimestamp( $ts = false ) {
 		$format = null;
+		$strtime = '';
 
 		// We want to catch 0, '', null... but not date strings starting with a letter.
 		if ( !$ts || $ts === "\0\0\0\0\0\0\0\0\0\0\0\0\0\0" ) {
-			$name = 'null';
 			$strtime = (string)self::time();
 			$format = 'U';
 		} else {
 			foreach ( self::$regexes as $name => $regex ) {
 				if ( !preg_match( $regex, $ts, $m ) ) {
 					continue;
+				}
+
+				// Apply RFC 2626 § 11.2 rules for fixing a 2-digit year.
+				// We apply by year as written, without regard for
+				// offset within the year or timezone of the input date.
+				if ( isset( $m['y'] ) ) {
+					$pivot = (int)gmdate( 'Y', static::time() ) + 50;
+					$m['Y'] = $pivot - ( $pivot % 100 ) + (int)$m['y'];
+					if ( $m['Y'] > $pivot ) {
+						$m['Y'] -= 100;
+					}
+					unset( $m['y'] );
 				}
 
 				// TS_POSTGRES's match for 'O' can begin with a space, which PHP doesn't accept
@@ -220,7 +237,7 @@ class ConvertibleTimestamp {
 					// "-1.2 seconds" like we want. So correct the values to match the componentwise
 					// interpretation.
 					$m['U']--;
-					$m['u'] = 1000000 - str_pad( $m['u'], 6, '0' );
+					$m['u'] = 1000000 - (int)str_pad( $m['u'], 6, '0' );
 				}
 
 				$filtered = [];
@@ -241,15 +258,7 @@ class ConvertibleTimestamp {
 		}
 
 		try {
-			if ( $format[0] === 'U' && $strtime[0] === '-' ) {
-				// Work around an HHVM bug, createFromFormat( 'U' ) doesn't work with
-				// negative timestamps.
-				list( $s, $us ) = $format === 'U u' ? explode( ' ', $strtime ) : [ $strtime, 0 ];
-				$final = DateTime::createFromFormat( '!U u', "0 $us" );
-				$final->sub( new DateInterval( 'PT' . abs( $s ) . 'S' ) );
-			} else {
-				$final = DateTime::createFromFormat( "!$format", $strtime, new DateTimeZone( 'UTC' ) );
-			}
+			$final = DateTime::createFromFormat( "!$format", $strtime, new DateTimeZone( 'UTC' ) );
 		} catch ( Exception $e ) {
 			throw new TimestampException( __METHOD__ . ': Invalid timestamp format.', $e->getCode(), $e );
 		}
@@ -309,8 +318,8 @@ class ConvertibleTimestamp {
 		$timestamp->setTimezone( new DateTimeZone( 'UTC' ) );
 
 		if ( $style === TS_UNIX_MICRO ) {
-			$seconds = $timestamp->format( 'U' );
-			$microseconds = $timestamp->format( 'u' );
+			$seconds = (int)$timestamp->format( 'U' );
+			$microseconds = (int)$timestamp->format( 'u' );
 			if ( $seconds < 0 && $microseconds > 0 ) {
 				// Adjust components to properly create a decimal number for TS_UNIX_MICRO and negative
 				// timestamps. See the comment in setTimestamp() for details.

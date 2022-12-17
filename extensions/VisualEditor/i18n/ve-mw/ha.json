@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Bashir Gwanki",
+			"Bello Na'im",
 			"DonCamillo",
 			"Em-em",
 			"Gwanki",
-			"Oby Ezeilo"
+			"Oby Ezeilo",
+			"Amire80"
 		]
 	},
 	"collabpad-doctitle": "Kollab Padi",
@@ -16,10 +18,7 @@
 	"visualeditor-ca-createlocaldescriptionsource": "Sa tushen bayani na harshen",
 	"visualeditor-ca-createsource": "Kirkira tsatso",
 	"visualeditor-ca-editsource": "Gyara masomi",
-	"visualeditor-ca-editsource-section": "Gyara masomin",
-	"visualeditor-ca-ve-create": "Gyaran Gani",
-	"visualeditor-ca-ve-edit": "Gyaran Gani",
-	"visualeditor-ca-ve-edit-section": "Gyaran Gani",
+	"visualeditor-ca-editsource-section": "gyara masomin",
 	"visualeditor-categories-tool": "Rukunoni",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor",
 	"visualeditor-dialog-media-change-image": "Canja Hoto",
@@ -27,15 +26,11 @@
 	"visualeditor-dialog-media-content-filename": "Sunan fayil",
 	"visualeditor-dialog-media-content-section": "Take",
 	"visualeditor-dialog-media-goback": "Baya",
-	"visualeditor-dialog-media-position-center": "Tsakkiya",
-	"visualeditor-dialog-media-position-left": "Hagu",
-	"visualeditor-dialog-media-position-none": "Babu",
-	"visualeditor-dialog-media-position-right": "Dama",
+	"visualeditor-dialog-media-info-meta-artist": "Mawallafi: $1",
 	"visualeditor-dialog-media-position-section": "Matsayi",
 	"visualeditor-dialog-media-save": "Ajiya",
 	"visualeditor-dialog-media-search-tab-search": "Bincike",
 	"visualeditor-dialog-media-search-tab-upload": "Ɗora",
-	"visualeditor-dialog-media-searchselect": "Zaɓi",
 	"visualeditor-dialog-media-size-section": "Girman hoton",
 	"visualeditor-dialog-media-type-section": "Irin hotan",
 	"visualeditor-dialog-meta-categories-category": "Rukuni",

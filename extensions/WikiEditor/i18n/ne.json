@@ -1,19 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bada Kaji",
 			"Bhawani Gautam",
 			"NehalDaveND",
 			"पर्वत सुबेदी",
+			"बडा काजी",
 			"राम प्रसाद जोशी",
-			"हिमाल सुबेदी",
-			"Bada Kaji",
-			"बडा काजी"
+			"हिमाल सुबेदी"
 		]
 	},
 	"wikieditor": "उन्नत विकिटेक्स्ट सम्पादन इन्टरफेस",
 	"wikieditor-wikitext-tab": "विकिपाठ",
 	"wikieditor-toolbar": "सम्पादन उपकरणपट्टी",
 	"wikieditor-toolbar-preference": "सम्पादन उपकरणपट्टी सक्षम गर्नुहोस्",
+	"wikieditor-toolbar-preference-help": "यसलाई कहिलेकाहीँ '२०१० विकिटेक्स्ट सम्पादक' भनिन्छ।",
 	"wikieditor-toolbar-tool-bold": "गाढा",
 	"wikieditor-toolbar-tool-bold-example": "गाढा अक्षर",
 	"wikieditor-toolbar-tool-italic": "छड्के",
@@ -153,5 +154,14 @@
 	"wikieditor-toolbar-help-content-showreferences-result": "<ol class='references'><li id='cite_note-test-0'><b><a title='' href='#'>^</a></b> <a rel='nofollow' title='http://www.example.org' class='external text' href='#'>Link text</a>, additional text.</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "समयछाप संग हस्ताक्षर",
 	"wikieditor-toolbar-help-content-signature-description": "हस्ताक्षर",
-	"wikieditor-realtimepreview-preview": "पूर्वावलोकन"
+	"wikieditor-realtimepreview-preview": "पूर्वावलोकन",
+	"wikieditor-realtimepreview-error": "पूर्वावलोकन लोड भइरहेको छैन",
+	"wikieditor-realtimepreview-reload": "पुन: लोड गर्नुहोस्",
+	"wikieditor-realtimepreview-beta-label": "वास्तविक समय पूर्वावलोकन",
+	"wikieditor-realtimepreview-beta-desc": "[[mw:Special:MyLanguage/Extension:WikiEditor|२०१० सम्पादक]] भित्र विकिटेक्स्ट परिवर्तनहरू पाठकहरूलाई कसरी देखा पर्नेछ हेर्नुहोस्।",
+	"wikieditor-realtimepreview-reload-title": "वास्तविक समय पूर्वावलोकन फलक पुन: लोड गर्नुहोस्",
+	"wikieditor-realtimepreview-manual": "तपाईंका सम्पादनहरू म्यानुअल रूपमा पूर्वावलोकन गर्न कृपया अहिले पुन: लोड गर्नुहोस्।",
+	"wikieditor-realtimepreview-onboarding-title": "वास्तविक समय पूर्वावलोकन",
+	"wikieditor-realtimepreview-onboarding-body": "तपाईंका सम्पादनहरू वास्तविक समयमा पूर्वावलोकन गरेर पाठकहरूलाई कस्तो देखिनेछन् हेर्नुहोस्।",
+	"wikieditor-realtimepreview-onboarding-button": "ठिक छ, मैले बुझेँ"
 }

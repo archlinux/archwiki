@@ -36,7 +36,7 @@ abstract class AbuseFilterSpecialPage extends SpecialPage {
 	 * @param string $pageType
 	 */
 	protected function addNavigationLinks( $pageType ) {
-		$user = $this->getUser();
+		$performer = $this->getAuthority();
 
 		$linkDefs = [
 			'home' => 'AbuseFilter',
@@ -44,13 +44,13 @@ abstract class AbuseFilterSpecialPage extends SpecialPage {
 			'examine' => 'AbuseFilter/examine',
 		];
 
-		if ( $this->afPermissionManager->canViewAbuseLog( $user ) ) {
+		if ( $this->afPermissionManager->canViewAbuseLog( $performer ) ) {
 			$linkDefs += [
 				'log' => 'AbuseLog'
 			];
 		}
 
-		if ( $this->afPermissionManager->canUseTestTools( $user ) ) {
+		if ( $this->afPermissionManager->canUseTestTools( $performer ) ) {
 			$linkDefs += [
 				'test' => 'AbuseFilter/test',
 				'tools' => 'AbuseFilter/tools'

@@ -33,9 +33,9 @@
 
 	QUnit.test( 'nextUniquePartId', function ( assert ) {
 		const transclusion = new ve.dm.MWTransclusionModel();
-		assert.strictEqual( transclusion.nextUniquePartId(), 0 );
-		assert.strictEqual( transclusion.nextUniquePartId(), 1 );
-		assert.strictEqual( transclusion.nextUniquePartId(), 2 );
+		assert.strictEqual( transclusion.nextUniquePartId(), 'part_0' );
+		assert.strictEqual( transclusion.nextUniquePartId(), 'part_1' );
+		assert.strictEqual( transclusion.nextUniquePartId(), 'part_2' );
 	} );
 
 	QUnit.test( 'fetch template part data', function ( assert ) {

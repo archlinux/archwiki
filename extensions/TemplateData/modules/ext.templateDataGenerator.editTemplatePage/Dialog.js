@@ -955,7 +955,6 @@ Dialog.prototype.toggleSuggestedValues = function ( type ) {
 	// Don't show the suggested values field when the feature flag is
 	// disabled, or for inapplicable types.
 	this.propFieldLayout.suggestedvalues.toggle(
-		mw.config.get( 'wgTemplateDataSuggestedValuesEditor' ) &&
 		suggestedValuesAllowedTypes.indexOf( type ) !== -1
 	);
 };

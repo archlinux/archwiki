@@ -27,7 +27,7 @@
 	"renameuser-page-unmoved": "The page $1 could not be moved to $2.",
 	"renameuser-warning-currentblock": "This user is [$1 currently blocked].",
 	"log-name-renameuser": "User rename log",
-	"log-description-renameuser": "This is a log of changes to user names.",
+	"log-description-renameuser": "This is a log of changes to usernames.",
 	"logentry-renameuser-renameuser": "$1 {{GENDER:$2|renamed}} user $4 ({{PLURAL:$6|$6 edit|$6 edits}}) to {{GENDER:$7|$5}}",
 	"logentry-renameuser-renameuser-legacier": "$1 renamed user $4 to {{GENDER:$7|$5}}",
 	"logentry-renameuser-renameuser-legaciest": "$1",

@@ -3,10 +3,13 @@
 		"authors": [
 			"Anakmalaysia",
 			"Bencmq",
+			"Diskdance",
 			"Fantasticfears",
 			"Gaoxuewei",
 			"GuoPC",
 			"Hydra",
+			"Lakejason0",
+			"Lantx",
 			"Liangent",
 			"Liuxinyu970226",
 			"Onecountry",
@@ -14,15 +17,14 @@
 			"Shirayuki",
 			"Shizhao",
 			"Simon Shek",
+			"Stang",
 			"Tranve",
 			"VulpesVulpes825",
+			"Winston Sung",
 			"Xiaomingyan",
 			"Zhang8569",
 			"列维劳德",
-			"铁桶",
-			"Lantx",
-			"Stang",
-			"Winston Sung"
+			"铁桶"
 		]
 	},
 	"wikieditor": "高级wikitext编辑界面",
@@ -56,7 +58,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "该页面在 {{SITENAME}} 上不存在",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "您指定的标题无效",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "外部链接",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "检查页面是否存在……",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "此页面不是一个内容页面，而是一个列出了具有相似名称主题的列表",
 	"wikieditor-toolbar-tool-link-int-invalid": "您指定的标题无效。",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "您输入的网址似乎指向另一个wiki页面。\n是否希望将其改为内部链接？",
@@ -214,5 +215,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "标准文本<br />:缩进文本<br />::缩进文本",
 	"wikieditor-toolbar-help-content-indent-result": "标准文本<dl><dd>缩进文本<dl><dd>缩进文本</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "通过[[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]]（2010年版wikitext编辑器）做出的编辑",
-	"wikieditor-realtimepreview-preview": "预览"
+	"wikieditor-realtimepreview-preview": "预览",
+	"wikieditor-realtimepreview-error": "未能加载预览",
+	"wikieditor-realtimepreview-reload": "重新加载",
+	"wikieditor-realtimepreview-beta-label": "实时预览",
+	"wikieditor-realtimepreview-beta-desc": "在[[mw:Special:MyLanguage/Extension:WikiEditor|2010年版编辑器]]中查看wikitext的更改是如何呈现给读者的。",
+	"wikieditor-realtimepreview-reload-title": "重新加载实时预览窗格",
+	"wikieditor-realtimepreview-manual": "请立即重新加载以手动预览你的编辑。",
+	"wikieditor-realtimepreview-onboarding-title": "实时预览",
+	"wikieditor-realtimepreview-onboarding-body": "通过实时预览来查看编辑内容呈现给读者时的样子。",
+	"wikieditor-realtimepreview-onboarding-button": "好的，明白了"
 }

@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"DCLXVI",
+			"Kareyac",
 			"Macofe",
 			"McDutchie",
 			"ShockD",
@@ -12,8 +13,7 @@
 			"Turin",
 			"V111P",
 			"Vodnokon4e",
-			"Wizardist",
-			"Kareyac"
+			"Wizardist"
 		]
 	},
 	"wikieditor": "Подобрен интерфейс за редактиране на уикитекст",
@@ -47,8 +47,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Страницата не съществува на {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Указаното заглавие е невалидно",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Външна препратка",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Проверка дали страницата съществува...",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Пояснителна страница",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Това не е страница със съдържание, а списък на теми с подобни имена",
 	"wikieditor-toolbar-tool-link-int-invalid": "Зададеното заглавие е невалидно.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-адресът, който сте задали, изглежда като връзка към друга уики-страница.\nИскате ли препратката да бъде вътрешна?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Вътрешна препратка",
@@ -202,5 +201,8 @@
 	"wikieditor-toolbar-help-content-indent-description": "Отстъп",
 	"wikieditor-toolbar-help-content-indent-syntax": "Текст без отстъп<br />:Текст с единичен отстъп<br />::Текст с двоен отстъп",
 	"wikieditor-toolbar-help-content-indent-result": "Текст без отстъп<dl><dd>Текст с единичен отстъп<dl><dd>Текст с двоен отстъп</dd></dl></dd></dl>",
-	"wikieditor-realtimepreview-preview": "Предварителен преглед"
+	"wikieditor-realtimepreview-preview": "Предварителен преглед",
+	"wikieditor-realtimepreview-beta-label": "Предварителен преглед в реално време",
+	"wikieditor-realtimepreview-beta-desc": "Вижте как промените на wikitext-а ще изглеждат за читателите в [[mw:Special:MyLanguage/Extension:WikiEditor|редактора от 2010 г.]].",
+	"wikieditor-realtimepreview-onboarding-title": "Предварителен преглед в реално време"
 }

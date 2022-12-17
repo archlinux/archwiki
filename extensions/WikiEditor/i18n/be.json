@@ -1,16 +1,16 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Artsiom91",
 			"Chadyka",
 			"Macofe",
 			"Maksim L.",
 			"Mikalai Udodau",
-			"Yury Tarasievich",
-			"ZlyiLev",
+			"No Sleep till Krupki",
 			"Tomato Cream",
-			"Amire80",
-			"No Sleep till Krupki"
+			"Yury Tarasievich",
+			"ZlyiLev"
 		]
 	},
 	"wikieditor": "Палепшаны інтэрфейс праўкі вікітэкста",
@@ -44,7 +44,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Старонка няма ў {{GRAMMAR:prepositional|{{SITENAME}}}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Назва, якую вы ўказалі, неслушная",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Спасылка ў Сеціва",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Праверка наяўнасці старонкі...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Гэта старонка не ўтрымлівае зместу, а толькі пералічвае спіс элементаў з аднолькавымі назвамі",
 	"wikieditor-toolbar-tool-link-int-invalid": "Упісаная няслушная назва.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Устаўлены URL, падобны да спасылкі на іншую вікі-старонку.\nЗрабіць спасылку ўнутранай?",
@@ -201,5 +200,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Просты тэкст<br />:Тэкст з водступам<br />::Тэкст з водступам",
 	"wikieditor-toolbar-help-content-indent-result": "Просты тэкст<dl><dd>Тэкст з водступам<dl><dd>Тэкст з водступам</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Праўка зроблена з дапамогай [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]]-а (рэдактара вікі-тэксту 2010)",
-	"wikieditor-realtimepreview-preview": "Перадпаказ"
+	"wikieditor-realtimepreview-preview": "Перадпаказ",
+	"wikieditor-realtimepreview-error": "Перадпаказ не загружаецца",
+	"wikieditor-realtimepreview-reload": "Перазагрузіць",
+	"wikieditor-realtimepreview-beta-label": "Перадпрагляд у рэжыме рэальнага часу",
+	"wikieditor-realtimepreview-beta-desc": "Паглядзіце, як змены вікі-тэксту будуць выглядаць для чытачоў у [[mw:Special:MyLanguage/Extension:WikiEditor|рэдактары 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Перазагрузіць панэль перадпрагляду ў рэжыме рэальнага часу",
+	"wikieditor-realtimepreview-manual": "Калі ласка, перазагрузіце зараз, каб уручную прагледзець свае змены.",
+	"wikieditor-realtimepreview-onboarding-title": "Перадпрагляд у рэжыме рэальнага часу",
+	"wikieditor-realtimepreview-onboarding-body": "Паглядзіце ў рэжыме рэальнага часу як вашы праўкі будуць выглядаць для чытачоў.",
+	"wikieditor-realtimepreview-onboarding-button": "Так, зразумела."
 }

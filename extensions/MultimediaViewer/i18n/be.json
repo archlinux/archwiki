@@ -3,7 +3,8 @@
 		"authors": [
 			"Artsiom91",
 			"Chadyka",
-			"No Sleep till Krupki"
+			"No Sleep till Krupki",
+			"Plaga med"
 		]
 	},
 	"multimediaviewer-desc": "Пашырае эскізы ў большы памер на ўвесь экран.",
@@ -26,7 +27,7 @@
 	"multimediaviewer-permission-title": "Звесткі аб дазволе",
 	"multimediaviewer-permission-link": "паказаць умовы",
 	"multimediaviewer-permission-link-hide": "схаваць умовы",
-	"multimediaviewer-permission-viewmore": "Паглядзець падрабязней",
+	"multimediaviewer-permission-viewmore": "Праглядзець больш",
 	"multimediaviewer-restriction-2257": "Гэта выява змяшчае адкравенны сексуальны змест, які можа рэгулявацца ў ЗША Актам па абароне дзяцей і барацьбы з непрыстойнасцю.",
 	"multimediaviewer-restriction-aus-reserve": "Гэта выява была зроблена ў запаведніку Аўстралійскай Садружнасці і не можа быць выкарыстана ў камерцыйных мэтах без дазволу.",
 	"multimediaviewer-restriction-communist": "Гэта выява змяшчае камуністычную сімволіку, якая можа быць забаронена ў некаторых краінах.",
@@ -87,7 +88,7 @@
 	"multimediaviewer-description-page-popup-text": "Падрабязней пра гэты файл на $1",
 	"multimediaviewer-commons-subtitle": "Сховішча свабодных медыяфайлаў",
 	"multimediaviewer-view-expanded": "Адкрыць у Праглядальніку медыяфайлаў",
-	"multimediaviewer-view-config": "Настройка",
+	"multimediaviewer-view-config": "Канфігурацыя",
 	"multimediaviewer-close-popup-text": "Закрыць гэты інструмент (Esc)",
 	"multimediaviewer-fullscreen-popup-text": "Паказаць на ўвесь экран",
 	"multimediaviewer-defullscreen-popup-text": "Выхад у поўнаэкраннага рэжыму",

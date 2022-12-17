@@ -24,8 +24,8 @@
 			apiProvider = new mw.mmv.provider.Api( api, options ),
 			ApiProviderWithNoOptions = new mw.mmv.provider.Api( api );
 
-		assert.ok( apiProvider );
-		assert.ok( ApiProviderWithNoOptions );
+		assert.true( apiProvider instanceof mw.mmv.provider.Api );
+		assert.true( ApiProviderWithNoOptions instanceof mw.mmv.provider.Api );
 	} );
 
 	QUnit.test( 'apiGetWithMaxAge()', function ( assert ) {
@@ -35,8 +35,8 @@
 
 		api.get = this.sandbox.stub();
 		apiProvider.apiGetWithMaxAge( {} );
-		assert.notOk( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage is not set by default' );
-		assert.notOk( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage is not set by default' );
+		assert.false( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage is not set by default' );
+		assert.false( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage is not set by default' );
 
 		options = { maxage: 123 };
 		apiProvider = new mw.mmv.provider.Api( api, options );
@@ -53,8 +53,8 @@
 
 		api.get = this.sandbox.stub();
 		apiProvider.apiGetWithMaxAge( {}, null, null );
-		assert.notOk( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage can be overridden to unset' );
-		assert.notOk( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage can be overridden to unset' );
+		assert.false( 'maxage' in api.get.getCall( 0 ).args[ 0 ], 'maxage can be overridden to unset' );
+		assert.false( 'smaxage' in api.get.getCall( 0 ).args[ 0 ], 'smaxage can be overridden to unset' );
 	} );
 
 	QUnit.test( 'getCachedPromise success', function ( assert ) {
@@ -65,7 +65,7 @@
 			promiseShouldBeCached = false;
 
 		mw.log = function () {
-			assert.ok( false, 'mw.log should not have been called' );
+			assert.true( false, 'mw.log should not have been called' );
 		};
 
 		promiseSource = function ( result ) {
@@ -99,7 +99,7 @@
 			promiseShouldBeCached = false;
 
 		mw.log = function () {
-			assert.ok( true, 'mw.log was called' );
+			assert.true( true, 'mw.log was called' );
 		};
 
 		promiseSource = function ( result ) {
@@ -201,12 +201,12 @@
 			done();
 		} );
 		apiProvider.getQueryField( 'imageusage', {} ).fail( function () {
-			assert.ok( true, 'promise rejected when data is missing' );
+			assert.true( true, 'promise rejected when data is missing' );
 			done();
 		} );
 
 		apiProvider.getQueryField( 'imageusage', { data: { query: {} } } ).fail( function () {
-			assert.ok( true, 'promise rejected when field is missing' );
+			assert.true( true, 'promise rejected when field is missing' );
 			done();
 		} );
 	} );
@@ -248,22 +248,22 @@
 		} );
 
 		apiProvider.getQueryPage( otherTitle, {} ).fail( function () {
-			assert.ok( true, 'promise rejected when page has different title' );
+			assert.true( true, 'promise rejected when page has different title' );
 			done();
 		} );
 
 		apiProvider.getQueryPage( title, {} ).fail( function () {
-			assert.ok( true, 'promise rejected when data is missing' );
+			assert.true( true, 'promise rejected when data is missing' );
 			done();
 		} );
 
 		apiProvider.getQueryPage( title, { data: { query: {} } } ).fail( function () {
-			assert.ok( true, 'promise rejected when pages are missing' );
+			assert.true( true, 'promise rejected when pages are missing' );
 			done();
 		} );
 
 		apiProvider.getQueryPage( title, { data: { query: { pages: {} } } } ).fail( function () {
-			assert.ok( true, 'promise rejected when pages are empty' );
+			assert.true( true, 'promise rejected when pages are empty' );
 			done();
 		} );
 	} );

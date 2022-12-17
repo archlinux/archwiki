@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Html2Wt;
 
 use stdClass;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Core\DomSourceRange;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
@@ -376,18 +377,6 @@ class WTSUtils {
 	}
 
 	/**
-	 * Extracts the media format from attribute string
-	 *
-	 * @param Element $node
-	 * @return string
-	 */
-	public static function getMediaFormat( Element $node ): string {
-		$mediaType = DOMUtils::matchTypeOf( $node, '#^mw:(Image|Video|Audio)(/|$)#' );
-		$parts = explode( '/', $mediaType ?? '' );
-		return $parts[1] ?? '';
-	}
-
-	/**
 	 * FIXME: This method should probably be moved to DOMDataUtils class since
 	 * it is used by both html2wt and wt2html code
 	 *
@@ -407,8 +396,7 @@ class WTSUtils {
 			} elseif ( is_object( $a[0] ) ) {
 				$txt = $a[0]->txt ?? null;
 			} else {
-				PHPUtils::unreachable( 'Control should never get here!' );
-				break;
+				throw new UnreachableException( 'Control should never get here!' );
 			}
 			if ( $txt === $key ) {
 				$i = $k;
@@ -426,4 +414,15 @@ class WTSUtils {
 		}
 		return $ret;
 	}
+
+	/**
+	 * Escape `<nowiki>` tags.
+	 *
+	 * @param string $text
+	 * @return string
+	 */
+	public static function escapeNowikiTags( string $text ): string {
+		return preg_replace( '#<(/?nowiki\s*/?\s*)>#i', '&lt;$1&gt;', $text );
+	}
+
 }

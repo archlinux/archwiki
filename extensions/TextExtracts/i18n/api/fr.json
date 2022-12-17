@@ -4,14 +4,16 @@
 			"Gomoko",
 			"Thibaut120094",
 			"Urhixidur",
-			"Wladek92"
+			"Wladek92",
+			"McDutchie",
+			"Verdy p"
 		]
 	},
-	"apihelp-query+extracts-description": "Renvoie du texte brut ou des extraits limités de HTML des pages fournies.",
-	"apihelp-query+extracts-summary": "Renvoie du texte brut ou des extraits limités de HTML des pages fournies.",
+	"apihelp-query+extracts-description": "Renvoie des extraits des pages fournies en texte brut ou en HTML limité.",
+	"apihelp-query+extracts-summary": "Renvoie des extraits en texte brut ou en HTML limité des pages données.",
 	"apihelp-query+extracts-param-chars": "Nombre de caractères à retourner. Le texte courant retourné peut être légèrement plus long.",
 	"apihelp-query+extracts-param-sentences": "Combien de phrases renvoyer.",
-	"apihelp-query+extracts-param-limit": "Combien d'extraits à retourner (les extraits multiples peuvent être retournés si exintro et mis à true).",
+	"apihelp-query+extracts-param-limit": "Combien d’extraits à retourner (des extraits multiples peuvent être retournés si « exintro » est mis à « true »).",
 	"apihelp-query+extracts-param-intro": "Retourner uniquement le contenu précédant la première section.",
 	"apihelp-query+extracts-param-plaintext": "Retourner les extraits au format texte brut au lieu de HTML limité.",
 	"apihelp-query+extracts-param-sectionformat": "Comment mettre en forme les sections en mode texte brut: ;plain:Pas de mise en forme.\n;wiki:mise en forme dans le style Wiki (== comme ceci ==).\n;raw:en format de représentation interne de ce module  (les titres de section préfixés avec &lt;ASCII 1&gt;&lt;ASCII 2&gt;&lt;section level&gt;&lt;ASCII 2&gt;&lt;ASCII 1&gt;).",

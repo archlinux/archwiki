@@ -1,124 +1,203 @@
+/** @module WebABTest */
+
+const EXCLUDED_BUCKET = 'unsampled';
+const TREATMENT_BUCKET_SUBSTRING = 'treatment';
+const WEB_AB_TEST_ENROLLMENT_HOOK = 'mediawiki.web_AB_test_enrollment';
 /**
- * Example A/B test configuration for sticky header:
- *
- * $wgVectorABTestEnrollment = [
- *     'name' => 'vector.sticky_header',
- *     'enabled' => true,
- *     'buckets' => [
- *         'unsampled' => [
- *             'samplingRate' => 0.1,
- *         ],
- *         'control' => [
- *             'samplingRate' => 0.3,
- *         ],
- *         'stickyHeaderDisabled' => [
- *             'samplingRate' => 0.3,
- *         ],
- *         'stickyHeaderEnabled' => [
- *             'samplingRate' => 0.3,
- *         ],
- *     ],
- * ];
+ * @typedef {Function} TreatmentBucketFunction
+ * @param {string} [a]
+ * @return {boolean}
  */
 
 /**
- * Functions and variables to implement A/B testing.
+ * @typedef {Object} WebABTest
+ * @property {string} name
+ * @property {function(): string} getBucket
+ * @property {function(string): boolean} isInBucket
+ * @property {function(): boolean} isInSample
+ * @property {TreatmentBucketFunction} isInTreatmentBucket
  */
-const ABTestConfig = require( /** @type {string} */ ( './config.json' ) ).wgVectorWebABTestEnrollment || {};
 
 /**
- * Get the name of the bucket the user is assigned to for A/B testing.
- *
- * @return {string} the name of the bucket the user is assigned.
+ * @typedef {Object} SamplingRate
+ * @property {number} samplingRate The desired sampling rate for the group in the range [0, 1].
  */
-function getBucketName() {
+
+/**
+ * @typedef {Object} WebABTestProps
+ * @property {string} name The name of the experiment.
+ * @property {Object} buckets Dict with bucket name as key and SamplingRate
+ * object as value. There must be an `unsampled` bucket that represents a
+ * population excluded from the experiment. Additionally, the treatment
+ * bucket(s) must include a case-insensitive `treatment` substring in their name
+ * (e.g. `treatment`, `stickyHeaderTreatment`, `sticky-header-treatment`).
+ * @property {string} [token] Token that uniquely identifies the subject for the
+ * duration of the experiment. If bucketing/server occurs on the server and the
+ * bucket is a class on the body tag, this can be ignored. Otherwise, it is
+ * required.
+ */
+
+/**
+ * Initializes an AB test experiment.
+ *
+ * Example props:
+ *
+ * webABTest({
+ *  name: 'nameOfExperiment',
+ *  buckets: {
+ *    unsampled: {
+ *      samplingRate: 0.25
+ *    },
+ *    control: {
+ *      samplingRate: 0.25
+ *    },
+ *    treatment1: {
+ *      samplingRate: 0.25
+ *    },
+ *    treatment2: {
+ *      samplingRate: 0.25
+ *    }
+ *  },
+ *  token: 'token'
+ * });
+ *
+ * @param {WebABTestProps} props
+ * @return {WebABTest}
+ */
+module.exports = function webABTest( props ) {
+	let /** @type {string} */ cachedBucket;
+
 	/**
-	 * Provided config should contain the keys:
-	 *  name: the name of the experiment prefixed with the skin name.
-	 *  enabled: must be true or all users are assigned to control.
-	 *  buckets: dict with bucket name as key and test config as value.
+	 * Get the names of all the buckets from props.buckets.
 	 *
-	 * Bucket test config can contain the keys:
-	 *  samplingRate: sampling rates will be summed up and each bucket will receive a proportion
-	 *   equal to its value.
+	 * @return {string[]}
 	 */
-	return mw.experiments.getBucket( {
-		name: ABTestConfig.name,
-		enabled: ABTestConfig.enabled,
-		buckets: {
+	function getBucketNames() {
+		return Object.keys( props.buckets );
+
+	}
+
+	/**
+	 * Get the name of the bucket from the class added to the body tag.
+	 *
+	 * @return {?string}
+	 */
+	function getBucketFromHTML() {
+		for ( const bucketName of getBucketNames() ) {
+			if ( document.body.classList.contains( `${props.name}-${bucketName}` ) ) {
+				return bucketName;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the name of the bucket the subject is assigned to for A/B testing.
+	 *
+	 * @throws {Error} Will throw an error if token is undefined and body tag has
+	 * not been assigned a bucket.
+	 * @return {string} the name of the bucket the subject is assigned.
+	 */
+	function getBucket() {
+		if ( cachedBucket ) {
+			// If we've already cached the bucket, return early.
+			return cachedBucket;
+		}
+
+		const bucketFromHTML = getBucketFromHTML();
+		// If bucketing/sampling already occurred on the server, return that bucket
+		// instead of trying to do it on the client.
+		if ( bucketFromHTML ) {
+			cachedBucket = bucketFromHTML;
+
+			return bucketFromHTML;
+		}
+
+		if ( props.token === undefined ) {
+			throw new Error( 'Tried to call `getBucket` with an undefined token' );
+		}
+
+		cachedBucket = mw.experiments.getBucket( {
+			name: props.name,
+			enabled: true,
 			// @ts-ignore
-			unsampled: ABTestConfig.buckets.unsampled.samplingRate,
-			control: ABTestConfig.buckets.control.samplingRate,
-			stickyHeaderDisabled: ABTestConfig.buckets.stickyHeaderDisabled.samplingRate,
-			stickyHeaderEnabled: ABTestConfig.buckets.stickyHeaderEnabled.samplingRate
-		}
-	}, mw.user.getId().toString() );
-}
+			buckets:
+			getBucketNames().reduce( ( buckets, key ) => {
+			// @ts-ignore
+				buckets[ key ] = props.buckets[ key ].samplingRate;
 
-/**
- * Get the group and experiment name for an A/B test.
- *
- * @return {Object} data to pass to event logging
- */
-function getABTestGroupExperimentName() {
+				return buckets;
+			}, {} )
+		}, props.token );
+
+		return cachedBucket;
+	}
+
+	/**
+	 * Whether or not the subject is included in the experiment.
+	 *
+	 * @return {boolean}
+	 */
+	function isInSample() {
+		return getBucket() !== EXCLUDED_BUCKET;
+	}
+
+	/**
+	 * Determine if subject is in a particular bucket.
+	 *
+	 * @param {string} targetBucket The target test bucket.
+	 * @return {boolean} Whether the subject is in the test bucket.
+	 */
+	function isInBucket( targetBucket ) {
+		return getBucket() === targetBucket;
+	}
+
+	/**
+	 * Whether or not the subject has been bucketed in a treatment bucket as
+	 * defined by the bucket name containing the case-insensitive 'treatment',
+	 * 'treatment1', or 'treatment2' substring (e.g. 'treatment', 'treatment1',
+	 * 'sticky-header-treatment1' and 'stickyHeaderTreatment2' are all assumed
+	 * to be treatment buckets).
+	 *
+	 * @param {string|null} [treatmentBucketName] lowercase name of bucket.
+	 * @return {boolean}
+	 */
+	function isInTreatmentBucket( treatmentBucketName = '' ) {
+		const bucket = getBucket();
+		// eslint-disable-next-line no-restricted-syntax
+		return bucket.toLowerCase().includes( `${TREATMENT_BUCKET_SUBSTRING}${treatmentBucketName}` );
+	}
+
+	/**
+	 * Initialize and fire hook to register A/B test enrollment if necessary.
+	 */
+	function init() {
+		// Send data to WikimediaEvents to log A/B test initialization if the subject
+		// has been sampled into the experiment.
+		if ( isInSample() ) {
+			mw.hook( WEB_AB_TEST_ENROLLMENT_HOOK ).fire( {
+				group: getBucket(),
+				experimentName: props.name
+			} );
+		}
+	}
+
+	init();
+
+	/**
+	 * @typedef {Object} WebABTest
+	 * @property {string} name
+	 * @property {getBucket} getBucket
+	 * @property {isInBucket} isInBucket
+	 * @property {isInSample} isInSample
+	 * @property {isInTreatmentBucket} isInTreatmentBucket
+	 */
 	return {
-		group: getBucketName(),
-		experimentName: ABTestConfig.name
+		name: props.name,
+		getBucket,
+		isInBucket,
+		isInSample,
+		isInTreatmentBucket
 	};
-}
-
-/**
- * Provides A/B test config for the current user.
- *
- * @return {Object} A/B test config data
- */
-function getEnabledExperiment() {
-	const mergedConfig = {};
-
-	if ( ABTestConfig.enabled ) {
-		// Merge all the A/B config to return.
-		Object.assign( mergedConfig, getABTestGroupExperimentName(), ABTestConfig );
-	}
-	return mergedConfig;
-}
-
-/**
- * Determine if user is in test group to experience feature.
- *
- * @param {string} bucket the bucket name the user is assigned
- * @param {string} targetGroup the target test group to experience feature
- * @return {boolean} true if the user should experience feature
- */
-function isInTestGroup( bucket, targetGroup ) {
-	return bucket === targetGroup;
-}
-
-/**
- * Fire hook to register A/B test enrollment.
- *
- * @param {string} bucket the bucket user is assigned to
- */
-function initAB( bucket ) {
-	// Send data to WikimediaEvents to log A/B test initialization if experiment is enabled
-	// and if the user is logged in.
-	if ( ABTestConfig.enabled && !mw.user.isAnon() && bucket !== 'unsampled' ) {
-		// @ts-ignore
-		mw.hook( 'mediawiki.web_AB_test_enrollment' ).fire( getABTestGroupExperimentName() );
-
-		// Remove class if present on the html element so that scroll padding isn't undesirably
-		// applied to users who don't experience the new treatment.
-		if ( bucket !== 'stickyHeaderEnabled' ) {
-			document.documentElement.classList.remove( 'vector-sticky-header-enabled' );
-		}
-	}
-}
-
-module.exports = {
-	isInTestGroup,
-	getEnabledExperiment,
-	initAB,
-	test: {
-		getBucketName,
-		getABTestGroupExperimentName
-	}
 };

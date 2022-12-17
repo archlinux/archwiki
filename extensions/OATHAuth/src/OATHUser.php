@@ -133,7 +133,7 @@ class OATHUser {
 	/**
 	 * Gets the module instance associated with this user
 	 *
-	 * @return IModule
+	 * @return IModule|null
 	 */
 	public function getModule() {
 		return $this->module;

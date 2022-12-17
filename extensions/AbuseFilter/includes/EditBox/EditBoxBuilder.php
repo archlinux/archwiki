@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\EditBox;
 
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
+use MediaWiki\Permissions\Authority;
 use MessageLocalizer;
 use OOUI\ButtonWidget;
 use OOUI\DropdownInputWidget;
@@ -11,7 +12,6 @@ use OOUI\FieldLayout;
 use OOUI\FieldsetLayout;
 use OOUI\Widget;
 use OutputPage;
-use User;
 use Xml;
 
 /**
@@ -27,8 +27,8 @@ abstract class EditBoxBuilder {
 	/** @var MessageLocalizer */
 	protected $localizer;
 
-	/** @var User */
-	protected $user;
+	/** @var Authority */
+	protected $authority;
 
 	/** @var OutputPage */
 	protected $output;
@@ -37,20 +37,20 @@ abstract class EditBoxBuilder {
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param KeywordsManager $keywordsManager
 	 * @param MessageLocalizer $messageLocalizer
-	 * @param User $user
+	 * @param Authority $authority
 	 * @param OutputPage $output
 	 */
 	public function __construct(
 		AbuseFilterPermissionManager $afPermManager,
 		KeywordsManager $keywordsManager,
 		MessageLocalizer $messageLocalizer,
-		User $user,
+		Authority $authority,
 		OutputPage $output
 	) {
 		$this->afPermManager = $afPermManager;
 		$this->keywordsManager = $keywordsManager;
 		$this->localizer = $messageLocalizer;
-		$this->user = $user;
+		$this->authority = $authority;
 		$this->output = $output;
 	}
 
@@ -72,8 +72,8 @@ abstract class EditBoxBuilder {
 		$this->output->enableOOUI();
 
 		$isUserAllowed = $needsModifyRights ?
-			$this->afPermManager->canEdit( $this->user ) :
-			$this->afPermManager->canUseTestTools( $this->user );
+			$this->afPermManager->canEdit( $this->authority ) :
+			$this->afPermManager->canUseTestTools( $this->authority );
 		if ( !$isUserAllowed ) {
 			$addResultDiv = false;
 		}

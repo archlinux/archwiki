@@ -6,6 +6,9 @@
  */
 
 /**
+ * Question-mark button which floats over content, currently used in the
+ * template dialog.  Clicking pops up a help screen.
+ *
  * @class
  * @extends OO.ui.Element
  *

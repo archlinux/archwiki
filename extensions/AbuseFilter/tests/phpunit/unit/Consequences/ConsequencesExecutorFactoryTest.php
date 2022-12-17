@@ -9,10 +9,10 @@ use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesLookup;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
+use MediaWiki\Linker\LinkTarget;
+use MediaWiki\User\UserIdentity;
 use MediaWikiUnitTestCase;
 use Psr\Log\NullLogger;
-use Title;
-use User;
 
 /**
  * @group Test
@@ -35,8 +35,8 @@ class ConsequencesExecutorFactoryTest extends MediaWikiUnitTestCase {
 			$this->createMock( ServiceOptions::class )
 		);
 		$factory->newExecutor(
-			$this->createMock( User::class ),
-			$this->createMock( Title::class ),
+			$this->createMock( UserIdentity::class ),
+			$this->createMock( LinkTarget::class ),
 			new VariableHolder()
 		);
 		$this->addToAssertionCount( 1 );

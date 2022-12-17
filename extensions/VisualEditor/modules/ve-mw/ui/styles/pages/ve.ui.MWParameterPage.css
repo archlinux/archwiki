@@ -5,17 +5,6 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
-.ve-ui-mwParameterPage .ve-ui-mwParameter-wikitextFallbackInput {
-	/* Support: Blink, Gecko, Webkit */
-	/* Specify a valid second value to fix size, see T176636 */
-	font-family: monospace, monospace;
-	background-color: #c8ccd1;
-}
-
-.ve-ui-mwParameterPage-info {
-	margin-bottom: 0.5em;
-}
-
 .ve-ui-mwParameterPage-label {
 	display: inline;
 	vertical-align: middle;
@@ -31,13 +20,6 @@
 
 .ve-ui-mwParameterPage-inlineDescription {
 	position: relative;
-	/* FIXME remove when sidebar feature flag is gone T303386 */
-	padding-left: 2.5em;
-}
-
-.ve-ui-mwTransclusionDialog-newSidebar .ve-ui-mwParameterPage-inlineDescription {
-	/* FIXME remove when sidebar feature flag is gone T303386 */
-	padding-left: 0;
 }
 
 .ve-ui-mwParameterPage-inlineDescription > .ve-ui-expandableContent-container {

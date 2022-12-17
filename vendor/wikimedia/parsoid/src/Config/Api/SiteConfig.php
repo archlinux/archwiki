@@ -5,10 +5,6 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Config\Api;
 
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\ErrorLogHandler;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Wikimedia\Parsoid\Config\SiteConfig as ISiteConfig;
 use Wikimedia\Parsoid\Config\StubMetadataCollector;
 use Wikimedia\Parsoid\Core\ContentMetadataCollector;
@@ -140,13 +136,7 @@ class SiteConfig extends ISiteConfig {
 		if ( isset( $opts['logger'] ) ) {
 			$this->setLogger( $opts['logger'] );
 		} else {
-			// Use Monolog's PHP console handler
-			$logger = new Logger( "Parsoid CLI" );
-			$handler = new ErrorLogHandler();
-			// Don't suppress inline newlines
-			$handler->setFormatter( new LineFormatter( '%message%', null, true ) );
-			$logger->pushHandler( $handler );
-			$this->setLogger( $logger );
+			$this->setLogger( self::createLogger() );
 		}
 
 		if ( isset( $opts['wt2htmlLimits'] ) ) {
@@ -217,7 +207,7 @@ class SiteConfig extends ISiteConfig {
 			$this->featureDetectionDone = true;
 			$data = $this->api->makeRequest( [ 'action' => 'paraminfo', 'modules' => 'query' ] );
 			$props = $data["paraminfo"]["modules"][0]["parameters"]["0"]["type"] ?? [];
-			$this->hasVideoInfo = array_search( 'videoinfo', $props, true ) !== false;
+			$this->hasVideoInfo = in_array( 'videoinfo', $props, true );
 		}
 	}
 
@@ -357,14 +347,6 @@ class SiteConfig extends ISiteConfig {
 		$this->savedCategoryRegexp = "@{$category}@";
 		$this->savedRedirectRegexp = "@{$redirect}@";
 		$this->savedBswRegexp = "@{$bswRegexp}@";
-	}
-
-	/**
-	 * Set the log channel, for debugging
-	 * @param ?LoggerInterface $logger
-	 */
-	public function setLogger( ?LoggerInterface $logger ): void {
-		$this->logger = $logger;
 	}
 
 	public function galleryOptions(): array {
@@ -789,4 +771,19 @@ class SiteConfig extends ISiteConfig {
 		return $metrics;
 	}
 
+	/** @inheritDoc */
+	public function getNoFollowConfig(): array {
+		$this->loadSiteData();
+		return [
+			'nofollow' => $this->siteData['nofollowlinks'] ?? true,
+			'nsexceptions' => $this->siteData['nofollownsexceptions'] ?? [],
+			'domainexceptions' => $this->siteData['nofollowdomainexceptions'] ?? [ 'mediawiki.org' ]
+		];
+	}
+
+	/** @inheritDoc */
+	public function getExternalLinkTarget() {
+		$this->loadSiteData();
+		return $this->siteData['externallinktarget'] ?? false;
+	}
 }

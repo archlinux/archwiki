@@ -71,7 +71,11 @@ class EditRevUpdaterTest extends MediaWikiUnitTestCase {
 		$title = Title::newFromLinkTarget( $target );
 		// Legacy code. Yay.
 		$title->mArticleID = 123456;
-		return [ new WikiPage( $title ), new MutableRevisionRecord( $title ) ];
+
+		$wikiPage = $this->createMock( WikiPage::class );
+		$wikiPage->method( 'getTitle' )->willReturn( $title );
+
+		return [ $wikiPage, new MutableRevisionRecord( $title ) ];
 	}
 
 	/**
@@ -92,10 +96,9 @@ class EditRevUpdaterTest extends MediaWikiUnitTestCase {
 	public function testUpdateRev_differentPages() {
 		$titleValue = new TitleValue( NS_PROJECT, 'EditRevUpdater' );
 		$updater = $this->getUpdater();
-		$title = Title::makeTitle( NS_HELP, 'Foobar' );
-		// Legacy code. Yay.
-		$title->mArticleID = 123456;
-		$updater->setLastEditPage( new WikiPage( $title ) );
+		$diffTitleValue = new TitleValue( NS_HELP, 'Foobar' );
+		[ $diffPage, ] = $this->getPageAndRev( $diffTitleValue );
+		$updater->setLastEditPage( $diffPage );
 		$updater->setLogIdsForTarget( $titleValue, [ 'local' => [ 1, 2 ], 'global' => [] ] );
 		$this->assertFalse( $updater->updateRev( ...$this->getPageAndRev( $titleValue ) ) );
 	}

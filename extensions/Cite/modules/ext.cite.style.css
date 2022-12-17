@@ -79,15 +79,15 @@ ol.mw-references > li {
 	counter-increment: mw-ref-linkback;
 }
 
-[ rel='mw:referencedBy' ] {
+[ rel~='mw:referencedBy' ] {
 	counter-reset: mw-ref-linkback -1;
 }
 
-[ rel='mw:referencedBy' ]:before {
+[ rel~='mw:referencedBy' ]:before {
 	content: '↑ ';
 }
 
-span[ rel='mw:referencedBy' ] a:before {
+span[ rel~='mw:referencedBy' ] a:before {
 	counter-increment: mw-ref-linkback;
 	content: counters( mw-ref-linkback, '.', decimal );
 	vertical-align: super;
@@ -95,7 +95,7 @@ span[ rel='mw:referencedBy' ] a:before {
 	font-size: smaller;
 }
 
-span[ rel='mw:referencedBy' ] a:after {
+span[ rel~='mw:referencedBy' ] a:after {
 	content: ' ';
 }
 

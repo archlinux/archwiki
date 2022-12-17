@@ -347,6 +347,7 @@
 	"abusefilter-edit-builder-funcs-substr": "Chuỗi con (substr)",
 	"abusefilter-edit-builder-funcs-strpos": "Vị trí của chuỗi con trong chuỗi (strpos)",
 	"abusefilter-edit-builder-funcs-str_replace": "Thay chuỗi con bằng chuỗi (str_replace)",
+	"abusefilter-edit-builder-funcs-str_replace_regexp": "Tìm và thay thế bằng biểu thức chính quy (str_replace_regexp)",
 	"abusefilter-edit-builder-funcs-rescape": "Đưa dấu thoát vào chuỗi trong biểu thức chính quy (rescape)",
 	"abusefilter-edit-builder-funcs-set_var": "Đặt biến (set_var)",
 	"abusefilter-edit-builder-funcs-sanitize": "Chuẩn hóa các thực thể HTML thành ký tự Unicode (sanitize)",

@@ -18,7 +18,7 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 				return err.code === 'abusefilter-warning';
 			} );
 			// Handle warnings/errors from Extension:AbuseFilter
-			target.showSaveError( target.extractErrorMessages( data ), isWarning, isWarning );
+			target.showSaveError( target.extractErrorMessages( data ), isWarning );
 			// Emit event for tracking. TODO: This is a bad design
 			target.emit( 'saveErrorAbuseFilter' );
 		};

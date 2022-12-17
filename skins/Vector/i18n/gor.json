@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Marwan Mohamad",
-			"Bennylin"
+			"Amire80",
+			"Bennylin",
+			"Marwan Mohamad"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|Bahasa $1}}",
@@ -14,5 +15,6 @@
 	"vector-view-edit": "Boli'o",
 	"vector-view-history": "Bilohi riwayati",
 	"vector-view-view": "Baca",
-	"vector-more-actions": "Uweewo"
+	"vector-more-actions": "Uweewo",
+	"vector-searchsuggest-containing": "Lolohe halaman otuwa <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

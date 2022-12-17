@@ -1,6 +1,6 @@
 @import '../../minerva.less/minerva.variables.less';
 @import '../../minerva.less/minerva.mixins.less';
-@import 'mediawiki.mixins.animation.less';
+@import 'mediawiki.mixins.less';
 
 @animationDuration: 0.3s;
 
@@ -15,7 +15,7 @@
 	z-index: @z-indexAboveContent;
 	// don't use display: none because it's not animatable
 	visibility: hidden;
-	.transition( opacity @transition-duration-base ease-in-out; );
+	transition: opacity @transition-duration-base ease-in-out;
 }
 
 .navigation-enabled {
@@ -28,7 +28,7 @@
 // Flip the arrow in table of contents when toggled
 .toctogglecheckbox:checked ~ .toctitle .mw-ui-icon:last-child {
 	&:before {
-		.transform( rotate( -180deg ) );
+		transform: rotate( -180deg );
 	}
 }
 
@@ -73,5 +73,5 @@
 // When the image has loaded transition background color and image opacity
 // for a fade-in effect
 img.image-lazy-loaded {
-	.animation( fadeInImage @animationDuration ease-in );
+	animation: fadeInImage @animationDuration ease-in;
 }

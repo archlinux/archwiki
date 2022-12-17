@@ -37,7 +37,7 @@ class SpecialAbuseLogTest extends MediaWikiIntegrationTestCase {
 		$user = $this->createMock( UserIdentity::class );
 		$authority = new SimpleAuthority( $user, $canSeeSuppressed ? [ 'viewsuppressed' ] : [] );
 		$afPermManager = $this->createMock( AbuseFilterPermissionManager::class );
-		$afPermManager->method( 'canSeeHiddenLogEntries' )->with( $user )->willReturn( $canSeeHidden );
+		$afPermManager->method( 'canSeeHiddenLogEntries' )->with( $authority )->willReturn( $canSeeHidden );
 		$revLookup = $this->createMock( RevisionLookup::class );
 		$revLookup->method( 'getRevisionById' )->willReturn( $revRec );
 		$this->setService( 'RevisionLookup', $revLookup );

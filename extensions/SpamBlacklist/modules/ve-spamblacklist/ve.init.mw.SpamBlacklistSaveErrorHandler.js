@@ -14,11 +14,8 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 		};
 
 		ve.init.mw.SpamBlacklistSaveErrorHandler.static.process = function ( data, target ) {
-			// Handle spam blacklist error from Extension:SpamBlacklist
-			target.showSaveError(
-				target.extractErrorMessages( data ),
-				false // prevents reapply
-			);
+			// Handle errors from Extension:SpamBlacklist
+			target.showSaveError( target.extractErrorMessages( data ) );
 			// Emit event for tracking. TODO: This is a bad design
 			target.emit( 'saveErrorSpamBlacklist' );
 		};

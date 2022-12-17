@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Vlad5250"
+		]
+	},
+	"apihelp-fancycaptchareload-description": "Daj novu FancyCaptcha.",
+	"apihelp-fancycaptchareload-summary": "Daj novu FancyCaptcha.",
+	"apihelp-fancycaptchareload-example-1": "Daj novu FancyCaptcha."
+}

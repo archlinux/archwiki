@@ -4,10 +4,15 @@
 		<div class="sidebar-toc-text">
 		<span class="sidebar-toc-numb">{{number}}</span>{{{line}}}</div>
 	</a>
+	{{#html-summary}}
+	{{{.}}}
+	{{/html-summary}}
 	{{#is-top-level-section}}{{#is-parent-section}}
-		<button class="mw-ui-icon mw-ui-icon-wikimedia-downTriangle mw-ui-icon-small sidebar-toc-toggle"></button>
+		<button aria-controls="toc-{{anchor}}-sublist" class="mw-ui-icon mw-ui-icon-wikimedia-expand mw-ui-icon-small sidebar-toc-toggle">
+			{{{vector-button-label}}}
+		</button>
 	{{/is-parent-section}}{{/is-top-level-section}}
-	<ul class="sidebar-toc-list">
+	<ul id="toc-{{anchor}}-sublist" class="sidebar-toc-list">
 		{{#array-sections}}
 		{{>TableOfContents__line}}
 		{{/array-sections}}

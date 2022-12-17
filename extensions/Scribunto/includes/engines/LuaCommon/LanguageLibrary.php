@@ -131,7 +131,7 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 	 * @internal
 	 * @param null|string $inLanguage
 	 * @param null|string $include
-	 * @return array[][]
+	 * @return string[][]
 	 */
 	public function fetchLanguageNames( $inLanguage, $include ) {
 		$this->checkTypeOptional( 'fetchLanguageNames', 1, $inLanguage, 'string', null );
@@ -408,7 +408,6 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 		$this->checkTypeOptional( 'formatDuration', 2, $args[1], 'table', [] );
 
 		list( $seconds, $chosenIntervals ) = $args;
-		$langcode = $lang->getCode();
 		$chosenIntervals = array_values( $chosenIntervals );
 
 		$ret = $lang->formatDuration( $seconds, $chosenIntervals );
@@ -427,7 +426,6 @@ class Scribunto_LuaLanguageLibrary extends Scribunto_LuaLibraryBase {
 		$this->checkTypeOptional( 'getDurationIntervals', 2, $args[1], 'table', [] );
 
 		list( $seconds, $chosenIntervals ) = $args;
-		$langcode = $lang->getCode();
 		$chosenIntervals = array_values( $chosenIntervals );
 
 		$ret = $lang->getDurationIntervals( $seconds, $chosenIntervals );

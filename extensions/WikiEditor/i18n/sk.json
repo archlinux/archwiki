@@ -42,7 +42,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Stránka neexistuje",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Neplatný názov",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Externý odkaz",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Kontroluje sa existencia stránky...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Rozlišovacia stránka",
 	"wikieditor-toolbar-tool-link-int-invalid": "Názov, ktorý ste zadali nie je platný.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL, ktorý ste zadali vyzerá ako odkaz na inú stránku wiki. Chcete z neho spraviť interný odkaz?",

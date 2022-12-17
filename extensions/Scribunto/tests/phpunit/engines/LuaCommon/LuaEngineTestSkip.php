@@ -2,9 +2,9 @@
 
 class Scribunto_LuaEngineTestSkip extends PHPUnit\Framework\TestCase {
 	/** @var string */
-	private $className = '';
+	private $className;
 	/** @var string */
-	private $message = '';
+	private $message;
 
 	/**
 	 * @param string $className Class being skipped

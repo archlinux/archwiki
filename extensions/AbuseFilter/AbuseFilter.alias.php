@@ -80,6 +80,12 @@ $specialPageAliases['bn'] = [
 	'AbuseFilter' => [ 'অপব্যবহার_ছাঁকনি' ],
 ];
 
+/** Breton (brezhoneg) */
+$specialPageAliases['br'] = [
+	'AbuseLog' => [ 'Marilh_ar_sil_a-enep_ar_gwallimplij' ],
+	'AbuseFilter' => [ 'Sil_a-enep_ar_gwallimplij' ],
+];
+
 /** Bosnian (bosanski) */
 $specialPageAliases['bs'] = [
 	'AbuseLog' => [ 'ZapisZloupotrebe' ],

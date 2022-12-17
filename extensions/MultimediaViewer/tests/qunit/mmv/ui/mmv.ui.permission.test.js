@@ -17,7 +17,7 @@
 
 ( function () {
 	QUnit.module( 'mw.mmv.ui.Permission', QUnit.newMwEnvironment( {
-		setup: function () {
+		beforeEach: function () {
 			// animation would keep running, conflict with other tests
 			this.sandbox.stub( $.fn, 'animate' ).returnsThis();
 		}
@@ -27,7 +27,7 @@
 		var $qf = $( '#qunit-fixture' ),
 			permission = new mw.mmv.ui.Permission( $qf );
 
-		assert.ok( permission, 'constructor does not throw error' );
+		assert.true( permission instanceof mw.mmv.ui.Permission, 'constructor does not throw error' );
 	} );
 
 	QUnit.test( 'set()', function ( assert ) {

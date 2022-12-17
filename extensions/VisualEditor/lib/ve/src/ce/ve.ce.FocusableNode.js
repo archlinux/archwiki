@@ -123,7 +123,6 @@ ve.ce.FocusableNode.static.deleteCommandName = null;
  * @return {Object} Object containing rects and boundingRect
  */
 ve.ce.FocusableNode.static.getRectsForElement = function ( $element, relativeRect ) {
-	var webkitColumns = 'webkitColumnCount' in document.createElement( 'div' ).style;
 	var $set;
 	var rects = [];
 
@@ -140,31 +139,6 @@ ve.ce.FocusableNode.static.getRectsForElement = function ( $element, relativeRec
 		}
 
 		var $el = $( el );
-
-		if ( webkitColumns ) {
-			var columnCount = $el.css( '-webkit-column-count' );
-			var columnWidth = $el.css( '-webkit-column-width' );
-			if ( ( columnCount && columnCount !== 'auto' ) || ( columnWidth && columnWidth !== 'auto' ) ) {
-				// Support: Chrome
-				// Chrome incorrectly measures children of nodes with columns [1], let's
-				// just ignore them rather than render a possibly bizarre highlight. They
-				// will usually not be positioned, because Chrome also doesn't position
-				// them correctly [2] and so people avoid doing it.
-				//
-				// Of course there are other ways to render a node outside the bounding
-				// box of its parent, like negative margin. We do not handle these cases,
-				// and the highlight may not correctly cover the entire node if that
-				// happens. This can't be worked around without implementing CSS
-				// layouting logic ourselves, which is not worth it.
-				//
-				// [1] https://code.google.com/p/chromium/issues/detail?id=391271
-				// [2] https://code.google.com/p/chromium/issues/detail?id=291616
-
-				// jQuery keeps nodes in its collections in document order, so the
-				// children have not been processed yet and can be safely removed.
-				$set = $set.not( $el.find( '*' ) );
-			}
-		}
 
 		// Don't descend if overflow is anything but visible as this prevents child
 		// elements appearing beyond the bounding box of the parent, *unless* display
@@ -368,12 +342,26 @@ ve.ce.FocusableNode.prototype.updateInvisibleIconSync = function ( showIcon ) {
 		return;
 	}
 	if ( showIcon ) {
+		// Don't try to append to void tags, or unrendered tags
+		var voidAndHiddenTypes = ve.elementTypes.void.concat( 'style', 'script' );
+		var $firstElement = this.$element.not( voidAndHiddenTypes.join( ',' ) ).first();
 		this.createInvisibleIcon();
-		this.$element.first()
+		if (
+			// Not needed if node is not attached (e.g. if used in the converter)
+			document.body.contains( $firstElement[ 0 ] ) &&
+			// eslint-disable-next-line no-jquery/no-sizzle
+			!$firstElement.is( ':visible' )
+		) {
+			// The first element to which we want to attach our icon is invisible.
+			// In this case make sure it *is* visible, so the button is visible,
+			// but remove the contents, so we don't start showing them (T305110).
+			$firstElement.empty().css( 'display', 'inline-block' );
+		}
+		$firstElement
 			.addClass( 've-ce-focusableNode-invisible' )
 			.prepend( this.icon.$element );
 	} else if ( this.icon ) {
-		this.$element.first().removeClass( 've-ce-focusableNode-invisible' );
+		this.$element.removeClass( 've-ce-focusableNode-invisible' );
 		this.icon.$element.detach();
 	}
 };
@@ -823,22 +811,24 @@ ve.ce.FocusableNode.prototype.getStartAndEndRects = function () {
 /**
  * Check if the rendering is visible
  *
- * "Visible", in this case, is defined as any of:
- * - contains any non-whitespace text
- * - is greater than 8px x 8px in dimensions
+ * "Visible", in this case, is defined as at least 10px × 4px
+ * or 4px × 10px in dimensions (T307527)
  *
  * @return {boolean} The node has a visible rendering
  */
 ve.ce.FocusableNode.prototype.hasRendering = function () {
-	if ( this.$element.text().trim() !== '' ) {
-		return true;
-	}
 	var visible = false;
+
+	function checkSize( width, height ) {
+		return ( width >= 10 && height >= 4 ) ||
+			( height >= 10 && width >= 4 );
+	}
+
 	this.$element.each( function () {
 		if (
-			( this.offsetWidth >= 8 && this.offsetHeight >= 8 ) ||
+			checkSize( this.offsetWidth, this.offsetHeight ) ||
 			// Check width/height attribute as well. (T125767)
-			( this.width >= 8 && this.height >= 8 )
+			checkSize( this.width, this.height )
 		) {
 			visible = true;
 			return false;

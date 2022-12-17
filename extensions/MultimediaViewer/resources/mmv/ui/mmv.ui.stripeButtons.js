@@ -75,9 +75,7 @@
 	SBP.initDescriptionPageButton = function () {
 		this.buttons.$descriptionPage = this.createButton(
 			'empty mw-mmv-description-page-button mw-ui-big mw-ui-button mw-ui-progressive'
-		).on( 'click', function () {
-			mw.mmv.actionLogger.log( 'file-description-page-abovefold' );
-		} );
+		);
 	};
 
 	/**

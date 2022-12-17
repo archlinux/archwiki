@@ -1,5 +1,6 @@
 @import '../../minerva.less/minerva.variables.less';
 @import '../../minerva.less/minerva.mixins.less';
+@import 'mediawiki.mixins.less';
 
 .last-modified-bar {
 	display: block;
@@ -9,7 +10,7 @@
 	padding-top: @icon-padding-md;
 	padding-bottom: @icon-padding-md;
 	font-size: @font-size-minerva-small;
-	.transition( background-color @transition-duration-medium, color @transition-duration-medium; );
+	transition: background-color @transition-duration-medium, color @transition-duration-medium;
 
 	a,
 	a:visited,

@@ -1,11 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Tumbuka Arch",
-			"Amire80"
+			"Amire80",
+			"Tumbuka Arch"
 		]
 	},
 	"fancycaptcha-captcha": "Chitetezo",
-	"fancycaptcha-imgcaptcha-ph": "Njizgani malemba agha ghali pa chithuzi",
-	"fancycaptcha-reload-text": "Refresh"
+	"fancycaptcha-imgcaptcha-ph": "Njizgani malemba agha ghali pa chithuzi"
 }

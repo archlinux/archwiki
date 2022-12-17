@@ -5,11 +5,12 @@
 			"Eleassar"
 		]
 	},
-	"questycaptcha-addurl": "Vaše urejanje vključuje nove zunanje povezave.\nZaradi zaščite wikija pred samodejnim smetjem vas prijazno naprošamo, da odgovorite na spodaj zastavljeno vprašanje ([[Special:Captcha/help|več informacij]]):",
-	"questycaptcha-badlogin": "Zaradi zaščite wikija pred samodejnim ugotavljanjem gesel vas prijazno naprošamo, da odgovorite na spodaj zastavljeno vprašanje ([[Special:Captcha/help|več informacij]]):",
-	"questycaptcha-createaccount": "Zaradi zaščite wikija pred samodejnim ustvarjanjem računov vas prijazno naprošamo, da odgovorite na spodaj zastavljeno vprašanje ([[Special:Captcha/help|več informacij]]):",
+	"questycaptcha-desc": "Domiseln generator CAPTCHA za potrditev urejanja",
+	"questycaptcha-addurl": "Vaše urejanje vključuje nove zunanje povezave.\nZa zaščito vikija pred samodejnim smetjem vas prijazno prosimo, da odgovorite na spodnje vprašanje ([[Special:Captcha/help|več o tem]]):",
+	"questycaptcha-badlogin": "Za zaščito vikija pred samodejnim ugotavljanjem gesel vas prijazno prosimo, da odgovorite na spodnje vprašanje ([[Special:Captcha/help|več o tem]]):",
+	"questycaptcha-createaccount": "Za zaščito vikija pred samodejnim ustvarjanjem računov vas prijazno prosimo, da odgovorite na spodnje vprašanje ([[Special:Captcha/help|več o tem]]):",
 	"questycaptcha-create": "Če želite ustvariti stran, prosimo odgovorite na spodaj zastavljeno vprašanje ([[Special:Captcha/help|več informacij]]):",
 	"questycaptcha-edit": "Če želite urediti stran, prosimo odgovorite na spodaj zastavljeno vprašanje ([[Special:Captcha/help|več informacij]]):",
-	"questycaptcha-sendemail": "Zaradi zaščite wikija pred samodejnim smetenjem vas prijazno naprošamo, da odgovorite na spodaj zastavljeno vprašanje ([[Special:Captcha/help|več informacij]]):",
-	"questycaptchahelp-text": "Spletne strani, ki omogočajo sodelovanje širše javnosti, kot na primer ta viki, pogosto zlorabljajo smetilci, ki za dodajanje svojih povezav na številne strani uporabljajo avtomatizirana orodja.\nČeprav je neželene povezave mogoče odstraniti, so precejšnja nadloga.\n\nVčasih, zlasti pri dodajanju novih spletnih povezav na stran, vam bo viki morda zastavil vprašanje.\nKer je to opravilo težko avtomatizirati, bo s tem večini ljudi prispevanje dovoljeno, smetilci in drugi robotski napadalci pa bodo ustavljeni.\n\nČe vam to nepričakovano preprečuje legitimno prispevanje, prosimo, da se obrnete na [[Special:ListAdmins|administratorje spletnega mesta]].\n\nZa vrnitev v urejevalnik v svojem brskalniku izberite gumb »nazaj«."
+	"questycaptcha-sendemail": "Za zaščito vikija pred samodejnim smetenjem vas prijazno prosimo, da odgovorite na spodnje vprašanje ([[Special:Captcha/help|več o tem]]):",
+	"questycaptchahelp-text": "Spletna mesta, ki omogočajo sodelovanje širše javnosti, kot na primer ta viki, pogosto zlorabljajo smetilci, ki za dodajanje svojih povezav na številne strani uporabljajo avtomatizirana orodja.\nČeprav je neželene povezave mogoče odstraniti, so precejšnja nadloga.\n\nVčasih, zlasti pri dodajanju novih spletnih povezav na stran, vam bo viki morda zastavil vprašanje.\nKer je to opravilo težko avtomatizirati, bo s tem večini ljudi prispevanje dovoljeno, smetilci in drugi robotski napadalci pa bodo ustavljeni.\n\nČe vam to nepričakovano preprečuje legitimno prispevanje, prosimo, da se obrnete na [[Special:ListAdmins|administratorje projekta]].\n\nZa vrnitev v urejevalnik v brskalniku izberite gumb »nazaj«."
 }

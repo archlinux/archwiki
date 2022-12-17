@@ -19,7 +19,7 @@ ve.ui.MWLiveExtensionInspector = function VeUiMWLiveExtensionInspector() {
 	// Parent constructor
 	ve.ui.MWLiveExtensionInspector.super.apply( this, arguments );
 
-	this.updatePreviewDebounced = ve.debounce( this.updatePreview.bind( this ), 250 );
+	this.updatePreviewDebounced = ve.debounce( this.updatePreview.bind( this ), 1000 );
 };
 
 /* Inheritance */

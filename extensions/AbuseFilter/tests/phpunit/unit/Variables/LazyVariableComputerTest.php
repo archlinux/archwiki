@@ -13,6 +13,7 @@ use MediaWiki\Extension\AbuseFilter\Variables\LazyLoadedVariable;
 use MediaWiki\Extension\AbuseFilter\Variables\LazyVariableComputer;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
@@ -21,7 +22,6 @@ use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiUnitTestCase;
 use MWException;
-use MWTimestamp;
 use Parser;
 use Psr\Log\NullLogger;
 use Title;
@@ -35,22 +35,10 @@ use Wikimedia\Rdbms\ILoadBalancer;
  */
 class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 
-	/**
-	 * @inheritDoc
-	 */
-	protected function tearDown(): void {
-		MWTimestamp::setFakeTime( false );
-		parent::tearDown();
-	}
-
 	private function getComputer(
-		Language $contentLanguage = null,
+		array $services = [],
 		array $hookHandlers = [],
-		RevisionLookup $revisionLookup = null,
-		string $wikiID = '',
-		UserEditTracker $userEditTracker = null,
-		UserGroupManager $userGroupManager = null,
-		PermissionManager $permissionManager = null
+		string $wikiID = ''
 	): LazyVariableComputer {
 		return new LazyVariableComputer(
 			$this->createMock( TextExtractor::class ),
@@ -58,13 +46,14 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			new NullLogger(),
 			$this->createMock( ILoadBalancer::class ),
 			$this->createMock( WANObjectCache::class ),
-			$revisionLookup ?? $this->createMock( RevisionLookup::class ),
+			$services['RevisionLookup'] ?? $this->createMock( RevisionLookup::class ),
 			$this->createMock( RevisionStore::class ),
-			$contentLanguage ?? $this->createMock( Language::class ),
+			$services['ContentLanguage'] ?? $this->createMock( Language::class ),
 			$this->createMock( Parser::class ),
-			$userEditTracker ?? $this->createMock( UserEditTracker::class ),
-			$userGroupManager ?? $this->createMock( UserGroupManager::class ),
-			$permissionManager ?? $this->createMock( PermissionManager::class ),
+			$services['UserEditTracker'] ?? $this->createMock( UserEditTracker::class ),
+			$services['UserGroupManager'] ?? $this->createMock( UserGroupManager::class ),
+			$services['PermissionManager'] ?? $this->createMock( PermissionManager::class ),
+			$services['RestrictionStore'] ?? $this->createMock( RestrictionStore::class ),
 			$wikiID
 		);
 	}
@@ -81,7 +70,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	public function testWikiNameVar() {
 		$fakeID = 'some-wiki-ID';
 		$var = new LazyLoadedVariable( 'get-wiki-name', [] );
-		$computer = $this->getComputer( null, [], null, $fakeID );
+		$computer = $this->getComputer( [], [], $fakeID );
 		$this->assertSame(
 			$fakeID,
 			$computer->compute( $var, new VariableHolder(), $this->getForbidComputeCB() )->toNative()
@@ -95,7 +84,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		$fakeCode = 'foobar';
 		$fakeLang = $this->createMock( Language::class );
 		$fakeLang->method( 'getCode' )->willReturn( $fakeCode );
-		$computer = $this->getComputer( $fakeLang );
+		$computer = $this->getComputer( [ 'ContentLanguage' => $fakeLang ] );
 		$var = new LazyLoadedVariable( 'get-wiki-language', [] );
 		$this->assertSame(
 			$fakeCode,
@@ -125,7 +114,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			$result = $expected;
 			return false;
 		};
-		$computer = $this->getComputer( null, [ 'AbuseFilter-interceptVariable' => $handler ] );
+		$computer = $this->getComputer( [], [ 'AbuseFilter-interceptVariable' => $handler ] );
 		$actual = $computer->compute(
 			new LazyLoadedVariable( 'get-wiki-name', [] ),
 			new VariableHolder(),
@@ -143,7 +132,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			$result = $expected;
 			return false;
 		};
-		$computer = $this->getComputer( null, [ 'AbuseFilter-computeVariable' => $handler ] );
+		$computer = $this->getComputer( [], [ 'AbuseFilter-computeVariable' => $handler ] );
 		$actual = $computer->compute(
 			new LazyLoadedVariable( 'method-does-not-exist', [] ),
 			new VariableHolder(),
@@ -162,9 +151,9 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	public function testUserRelatedVars(
 		LazyLoadedVariable $var,
 		$expected,
-		$services = [ null, null, null ]
- ) {
-		$computer = $this->getComputer( null, [], null, '', ...$services );
+		array $services = []
+	) {
+		$computer = $this->getComputer( $services );
 		$this->assertSame(
 			$expected,
 			$computer->compute( $var, new VariableHolder(), $this->getForbidComputeCB() )->toNative()
@@ -186,7 +175,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 
 		$userEditTracker->method( 'getUserEditCount' )->with( $user )->willReturn( $editCount );
 		$var = $getUserVar( $user, 'user-editcount' );
-		yield 'user_editcount' => [ $var, $editCount, [ $userEditTracker, null, null ] ];
+		yield 'user_editcount' => [ $var, $editCount, [ 'UserEditTracker' => $userEditTracker ] ];
 
 		$emailConfirm = '20000101000000';
 		$user->method( 'getEmailAuthenticationTimestamp' )->willReturn( $emailConfirm );
@@ -197,13 +186,13 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		$userGroupManager = $this->createMock( UserGroupManager::class );
 		$userGroupManager->method( 'getUserEffectiveGroups' )->with( $user )->willReturn( $groups );
 		$var = $getUserVar( $user, 'user-groups' );
-		yield 'user_groups' => [ $var, $groups, [ null, $userGroupManager, null ] ];
+		yield 'user_groups' => [ $var, $groups, [ 'UserGroupManager' => $userGroupManager ] ];
 
 		$rights = [ 'abusefilter-foo', 'abusefilter-bar' ];
 		$permissionManager = $this->createMock( PermissionManager::class );
 		$permissionManager->method( 'getUserPermissions' )->with( $user )->willReturn( $rights );
 		$var = $getUserVar( $user, 'user-rights' );
-		yield 'user_rights' => [ $var, $rights, [ null, null, $permissionManager ] ];
+		yield 'user_rights' => [ $var, $rights, [ 'PermissionManager' => $permissionManager ] ];
 
 		$block = new SystemBlock( [] );
 		$user->method( 'getBlock' )->willReturn( $block );
@@ -242,16 +231,16 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 	/**
 	 * @param LazyLoadedVariable $var
 	 * @param mixed $expected
-	 * @param RevisionLookup|null $revisionLookup
+	 * @param array $services
 	 * @covers ::compute
 	 * @dataProvider provideTitleRelatedVars
 	 */
 	public function testTitleRelatedVars(
 		LazyLoadedVariable $var,
 		$expected,
-		RevisionLookup $revisionLookup = null
+		array $services = []
 	) {
-		$computer = $this->getComputer( null, [], $revisionLookup );
+		$computer = $this->getComputer( $services );
 		$this->assertSame(
 			$expected,
 			$computer->compute( $var, new VariableHolder(), $this->getForbidComputeCB() )->toNative()
@@ -263,19 +252,32 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 		foreach ( $restrictions as $restriction ) {
 			$appliedRestrictions = [ 'sysop' ];
 			$restrictedTitle = $this->createMock( Title::class );
-			$restrictedTitle->method( 'getRestrictions' )->willReturn( $appliedRestrictions );
+			$restrictionStore = $this->createMock( RestrictionStore::class );
+			$restrictionStore->expects( $this->once() )
+				->method( 'getRestrictions' )
+				->with( $restrictedTitle, $restriction )
+				->willReturn( $appliedRestrictions );
 			$var = new LazyLoadedVariable(
 				'get-page-restrictions',
 				[ 'title' => $restrictedTitle, 'action' => $restriction ]
 			);
-			yield "*_restrictions_{$restriction}, restricted" => [ $var, $appliedRestrictions ];
+			yield "*_restrictions_{$restriction}, restricted" => [
+				$var, $appliedRestrictions, [ 'RestrictionStore' => $restrictionStore ]
+			];
+
 			$unrestrictedTitle = $this->createMock( Title::class );
-			$unrestrictedTitle->method( 'getRestrictions' )->willReturn( [] );
+			$restrictionStore = $this->createMock( RestrictionStore::class );
+			$restrictionStore->expects( $this->once() )
+				->method( 'getRestrictions' )
+				->with( $unrestrictedTitle, $restriction )
+				->willReturn( [] );
 			$var = new LazyLoadedVariable(
 				'get-page-restrictions',
 				[ 'title' => $unrestrictedTitle, 'action' => $restriction ]
 			);
-			yield "*_restrictions_{$restriction}, unrestricted" => [ $var, [] ];
+			yield "*_restrictions_{$restriction}, unrestricted" => [
+				$var, [], [ 'RestrictionStore' => $restrictionStore ]
+			];
 		}
 
 		$fakeTime = 1514700000;
@@ -290,7 +292,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			'page-age',
 			[ 'title' => $title, 'asof' => $fakeTime ]
 		);
-		yield "*_age" => [ $var, $age, $revLookup ];
+		yield "*_age" => [ $var, $age, [ 'RevisionLookup' => $revLookup ] ];
 
 		$title = $this->createMock( Title::class );
 		$firstRev = $this->createMock( RevisionRecord::class );
@@ -303,7 +305,9 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			'load-first-author',
 			[ 'title' => $title ]
 		);
-		yield '*_first_contributor, with rev' => [ $var, $firstUserName, $revLookup ];
+		yield '*_first_contributor, with rev' => [
+			$var, $firstUserName, [ 'RevisionLookup' => $revLookup ]
+		];
 
 		$title = $this->createMock( Title::class );
 		$revLookup = $this->createMock( RevisionLookup::class );
@@ -312,7 +316,7 @@ class LazyVariableComputerTest extends MediaWikiUnitTestCase {
 			'load-first-author',
 			[ 'title' => $title ]
 		);
-		yield '*_first_contributor, no rev' => [ $var, '', $revLookup ];
+		yield '*_first_contributor, no rev' => [ $var, '', [ 'RevisionLookup' => $revLookup ] ];
 
 		// TODO _recent_contributors is tested in LazyVariableComputerDBTest
 	}

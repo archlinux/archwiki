@@ -140,8 +140,9 @@ class Scribunto_LuaTextLibrary extends Scribunto_LuaLibraryBase {
 	 * @param array $arr
 	 * @param bool $isEncoding
 	 * @return array
+	 * @internal
 	 */
-	private static function reindexArrays( array $arr, $isEncoding ) {
+	public static function reindexArrays( array $arr, $isEncoding ) {
 		if ( $isEncoding ) {
 			ksort( $arr, SORT_NUMERIC );
 			$next = 1;

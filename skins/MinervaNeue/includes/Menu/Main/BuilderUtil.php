@@ -21,7 +21,6 @@
 namespace MediaWiki\Minerva\Menu\Main;
 
 use FatalError;
-use Hooks;
 use MediaWiki\Minerva\Menu\Definitions;
 use MediaWiki\Minerva\Menu\Entries\SingleMenuEntry;
 use MediaWiki\Minerva\Menu\Group;
@@ -115,9 +114,6 @@ final class BuilderUtil {
 			$group->insertEntry( $entry );
 		}
 		$definitions->insertNearbyIfSupported( $group );
-
-		// Allow other extensions to add or override tools
-		Hooks::run( 'MobileMenu', [ 'discovery', &$group ], '1.38' );
 		return $group;
 	}
 
@@ -153,8 +149,6 @@ final class BuilderUtil {
 
 		$definitions->insertAboutItem( $group );
 		$definitions->insertDisclaimersItem( $group );
-		// Allow other extensions to add or override tools
-		Hooks::run( 'MobileMenu', [ 'sitelinks', &$group ], '1.38' );
 		return $group;
 	}
 }

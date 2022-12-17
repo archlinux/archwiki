@@ -8,60 +8,22 @@
 @import '../../common/variables.less';
 @import 'mediawiki.mixins.less';
 
-// Sidebar
-@width-grid-column-one: 11em;
+@selector-sidebar-no-toc-sidebar-closed: ~'@{selector-main-menu-closed} ~ .vector-sidebar-container-no-toc';
 
-// Adjust the left position of the sidebar to align it with the sidebar menu button,
-// in the header, while ensuring the background gradient still extends to the edge of the screen.
-// note: the 1px comes from the transparent border of the sidebar button.
-@padding-left-sidebar:
-	@margin-horizontal-sidebar-button-icon +
-	unit( @border-width-base / @font-size-browser, em );
-
-// Layout containers
-
-// Page container
-
-@min-width-page-container--padded: @max-width-page-container + ( 2 * @padding-horizontal-page-container ); // 106.875em
-
-// Content containers
-
-@max-width-workspace-container: unit( 1440px / @font-size-browser, em ); // 90em @ 16
-@max-width-content-container: unit( 960px / @font-size-browser, em ); // 60em @ 16
+// Content container
 
 // Note this uses variables defined in mediawiki.skin.variables so that VisualEditor can read them
 // see T259331.
 @padding-content: @padding-top-content @padding-horizontal-content 1.5em;
-// We want ~60px of space between the end of the sidebar and the start of the
-// content container for aesthetic reasons. The sidebar is already displaced
-// -30px so we simply add 30px of space to the width of the sidebar.
-@margin-start-content: @width-grid-column-one + unit( 8px / @font-size-browser, em ); // 11.5em @ 16
-
-// Tabs
-
-@height-tabs: 2.5em; // Keep in sync with .vector-menu-tabs height.
 
 // Breakpoints
-
-// This determines the maximum width breakpoint at which
-// the content will have a fixed start margin applied to it when the sidebar
-// is open. The content can shift its position when the sidebar is open/closed
-// at or below this breakpoint and will maintain its position above this breakpoint.
-@max-width-margin-start-content:
-	(2 * @margin-start-content ) +
-	( 2 * @padding-horizontal-page-container ) +
-	@max-width-content-container;
-// 23em + 3.75em + 60em = 86.75em @ 16
 
 // Defines the minimum viewport width, at which point the layout will not get any
 // smaller and will start horizontal scrolling instead.
 @min-width-supported:
 	unit( 500px / @font-size-browser, em ) -
-	( 2 * @padding-horizontal-page-container );
+	( 2 * @padding-horizontal-page-container-wide );
 // 31.25em - 3.75em = 27.5em @ 16
-@border-color-sidebar: @background-color-secondary--modern;
-@background-color-secondary--modern: #f8f9fa;
-@background-color-page-container: @background-color-base;
 
 body {
 	background-color: @background-color-secondary--modern;
@@ -73,11 +35,10 @@ body {
 .mw-body,
 .parsoid-body {
 	direction: ltr;
-	padding: @padding-content;
 }
 
 .mw-body {
-	border-top: @border-width-base @border-style-base @border-color-content;
+	border-top: @border-width-base @border-style-base transparent;
 	/* Merge the border with tabs' one (in their background image) */
 	margin-top: -@border-width-base;
 	padding: @padding-content;
@@ -85,6 +46,7 @@ body {
 	.firstHeading {
 		/* Change the default from mediawiki.skinning CSS to let indicators float into heading area */
 		overflow: visible;
+		margin-bottom: 0;
 	}
 }
 
@@ -94,10 +56,13 @@ body {
 	z-index: @z-index-header;
 }
 
+.mw-body-content {
+	margin-top: 16px;
+}
+
 /* Main column */
 .mw-body,
 #mw-data-after-content,
-#left-navigation,
 .mw-footer {
 	margin-left: 0;
 }
@@ -107,40 +72,47 @@ body {
 	z-index: @z-index-indicators;
 }
 
-.mw-body-header {
+.mw-body-header,
+.mw-body-subheader {
 	.mixin-clearfix();
 }
 
-// TODO: Can be changed to `.mw-body .mw-portlet-lang` when language-in-header feature is default.
-.mw-body #p-lang-btn {
+.mw-body .mw-portlet-lang {
 	float: right;
+}
+
+#siteSub {
+	// By default its hidden as it was hidden in Vector legacy but site styles can reveal.
+	display: none;
 }
 
 .vector-body {
 	position: relative;
 	z-index: @z-index-base;
-}
 
-/* Navigation Containers */
-.mw-article-toolbar-container {
-	// Clear the floats on #left-navigation and #right-navigation.
-	.mixin-clearfix();
-	// We want to keep the max-width of the article-toolbar-container the
-	// same max-width as the article page's content container in order to
-	// prevent it from moving when going from an article page to a
-	// history/special page.
-	max-width: @max-width-content-container;
-	margin-left: auto;
-	margin-right: auto;
+	#siteSub {
+		margin-top: 8px; // T311564
+	}
+
+	#contentSub,
+	#contentSub2 {
+		font-size: 84%;
+		line-height: 1.2em;
+		// T311564
+		margin: 8px 0 0;
+		color: #54595d;
+		width: auto;
+	}
 }
 
 #left-navigation {
 	float: left;
+	margin-left: -@padding-horizontal-tabs;
 }
 
 #right-navigation {
 	float: right;
-
+	margin-right: -@padding-horizontal-tabs;
 	// Any dropdowns inside the right navigation in modern Vector (e.g. "more" menu).
 	// should be right-aligned to prevent horizontal scrolling.
 	.vector-menu-content {
@@ -149,38 +121,8 @@ body {
 	}
 }
 
-#mw-panel {
-	position: absolute;
-	top: 0;
-	// Sidebar is displaced from the workspace container so that the
-	// sidebar is flush with the edge of the screen at small widths.
-	left: -@padding-horizontal-page-container;
-	z-index: @z-index-sidebar;
-}
-
-// Update positioning when TOC is enabled
-.vector-toc-enabled #mw-panel {
-	position: static;
-	float: left;
-}
-
-.mw-table-of-contents-container {
-	position: sticky;
-	float: left;
-	clear: both;
-	// Defaults to the top of the viewport unless .mw-sticky-header-element
-	// overrides it.
-	top: 0;
-	padding-top: 1.5em;
-}
-
 .parsoid-body {
 	padding: @padding-content;
-}
-
-#p-namespaces {
-	background-image: none;
-	padding-left: 0;
 }
 
 .mw-footer {
@@ -190,6 +132,11 @@ body {
 
 // Container logic.
 .mw-page-container {
+	// Setting position and z-index is important as it allows overlays appended to the body tag
+	// to position themselves over the Vector interface. This forms another stacking context for
+	// elements placed inside this element
+	position: relative;
+	z-index: 0;
 	max-width: @max-width-page-container;
 	// Fill the viewport even if the content height is small. This also helps
 	// mitigate a long sidebar overflowing the page container (T257518).
@@ -204,152 +151,20 @@ body {
 	// For devices too small, they should be more useable with horizontal scrolling.
 	// e.g. Portrait on an iPad
 	min-width: @min-width-supported;
+
+	@media ( min-width: @min-width-desktop ) {
+		padding-left: @padding-horizontal-page-container;
+		padding-right: @padding-horizontal-page-container;
+	}
+
+	@media ( min-width: @min-width-desktop-wide ) {
+		padding-left: @padding-horizontal-page-container-wide;
+		padding-right: @padding-horizontal-page-container-wide;
+	}
 }
 
 .skin--responsive .mw-page-container {
 	min-width: auto;
 }
 
-// Used as a container for absolutely positioned elements.
-.mw-page-container-inner {
-	position: relative;
-}
-
-.mw-workspace-container {
-	max-width: @max-width-workspace-container;
-	margin-left: auto;
-	margin-right: auto;
-	// The sidebar is absolutely positioned relative to the
-	// mw-workspace-container.
-	position: relative;
-
-	&.mw-footer-container {
-		// T264679: There are elements (e.g. discussion tool popovers) in the main
-		// content container that we want to appear on top of the footer. We set the
-		// footer container to have static positioning instead of relative
-		// positioning (applied by .mw-workspace-container) to enable this.
-		position: static;
-	}
-}
-
-.mw-content-container {
-	display: flow-root;
-	max-width: @max-width-content-container;
-	margin-left: auto;
-	margin-right: auto;
-
-	// For container logic specific to special pages and history pages.
-	.skin-vector-disable-max-width & {
-		// Allow the max-width of content on history/special pages to be wider than
-		// the max-width of content on article pages.
-		// Note, we don't disable the max-width on .mw-article-toolbar-container intentionally
-		// to support easier navigation between tabs.
-		// See T293441 for further information on that.
-		max-width: none;
-	}
-}
-
-.mw-footer-container {
-	padding-top: 50px;
-	padding-bottom: 82px;
-}
-
-// We want it to appear like the sidebar is going into/coming out of
-// `.mw-page-container`, but we can't use `overflow: hidden` on
-// `.mw-page-container` because that will cut off the sidebar. Therefore, we
-// calculate the maximum distance from the start of `mw-page-container` to the
-// start of the sidebar.
-#mw-sidebar-checkbox:not( :checked ) ~ .mw-workspace-container .mw-sidebar {
-	.transform( translateX( -( @max-width-page-container - @max-width-workspace-container ) / 2 ) );
-}
-
-// Hide sidebar entirely when the checkbox is disabled and the TOC is enabled
-.vector-toc-enabled #mw-sidebar-checkbox:not( :checked ) ~ .mw-workspace-container .mw-sidebar {
-	display: none;
-}
-
-// Responsive overrides.
-@media ( min-width: @min-width-page-container--padded ) {
-	.mw-page-container {
-		border-left: 1px solid @border-color-sidebar;
-		border-right: 1px solid @border-color-sidebar;
-	}
-}
-
-// Adjusts the content when sidebar is open regardless of the viewport width.
-.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-content-container {
-	// For container logic specific to special pages and history pages.
-	.skin-vector-disable-max-width & {
-		margin-left: @margin-start-content;
-	}
-}
-
-// Increase margin when TOC is enabled
-.vector-toc-enabled .mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-content-container {
-	.skin-vector-disable-max-width & {
-		margin-left: @margin-toc-start-content;
-	}
-}
-
-@media ( max-width: @max-width-margin-start-content ) {
-	// Adjusts the content and mw-article-toolbar-container.
-	.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-content-container,
-	.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-article-toolbar-container {
-		margin-left: @margin-start-content;
-	}
-
-	// Increase margin when TOC is enabled
-	.vector-toc-enabled .mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-content-container,
-	.vector-toc-enabled .mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-article-toolbar-container {
-		margin-left: @margin-toc-start-content;
-	}
-
-	// Specificity needed to disable the default animations at lower resolutions.
-	.vector-animations-ready .mw-sidebar {
-		// Remove sidebar transition at smaller widths.
-		.transition( none );
-	}
-}
-
-// Update article page's content container when
-// TOC is visible and when TOC is enabled and the sidebar is open
-.vector-toc-visible .mw-workspace-container .mw-content-container,
-.vector-toc-visible .mw-workspace-container .mw-article-toolbar-container,
-.vector-toc-enabled .mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-content-container,
-.vector-toc-enabled .mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container .mw-article-toolbar-container {
-	margin-left: @margin-toc-start-content;
-}
-
-// Prevent center align when TOC is visible
-.vector-toc-visible .mw-workspace-container {
-	margin-left: initial;
-}
-
-@media ( min-width: @width-breakpoint-desktop ) {
-	.mw-page-container {
-		padding-left: @padding-horizontal-page-container;
-		padding-right: @padding-horizontal-page-container;
-	}
-}
-
-/**
- * Makes the sidebar full screen at lower resolutions.
- */
-@media ( max-width: @width-breakpoint-tablet ) {
-	.mw-checkbox-hack-checkbox:checked ~ .mw-workspace-container {
-		#mw-panel {
-			width: 100%;
-			position: relative;
-			left: 0;
-			float: none;
-		}
-
-		// !important as we always want to disable the margin-left on these elements
-		// Using !important is cleaner than having to rely on specificity involved :checked elements
-		.mw-content-container,
-		.mw-article-toolbar-container {
-			// stylelint-disable-next-line declaration-no-important
-			margin-left: 0 !important;
-		}
-	}
-}
+@import 'grid.less';

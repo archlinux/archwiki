@@ -1,4 +1,5 @@
 @import '../../minerva.less/minerva.variables.less';
+@import 'mediawiki.mixins.less';
 
 @border-color-divider: @colorGray14;
 
@@ -22,8 +23,7 @@
 
 .minerva-talk-full-page-button {
 	display: block;
-	position: sticky;
-	position: -webkit-sticky;
+	.position-sticky();
 	bottom: 0;
 	left: 0;
 	width: 100%;

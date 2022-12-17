@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hanberke"
+			"Hanberke",
+			"TayfunEt."
 		]
 	},
 	"captcha-edit": "Bu sahypany redaktirlemek üçin, aşakdaky meselni çözüň we jogaby gutynyň içine ýazyň ([[Special:Captcha/help|jikme-jik]]):",
@@ -16,5 +17,10 @@
 	"captcha-sendemail-fail": "Nädogry ýa-da kem tassyklama kody.",
 	"captcha-disabledinapi": "Bu iş captcha talap edýär, şonuň üçin hem ony API bilen berjaý edip bolmaýar.",
 	"captchahelp-title": "Captcha ýardamy",
-	"captchahelp-cookies-needed": "Munuň işlemegi üçin brauzeriňiziň kukileri kabul etmegi gerek."
+	"captchahelp-cookies-needed": "Munuň işlemegi üçin brauzeriňiziň kukileri kabul etmegi gerek.",
+	"confirmedit-preview-line": "Setir belgisi",
+	"confirmedit-preview-content": "Mazmuny",
+	"confirmedit-preview-validity": "Möhleti",
+	"confirmedit-preview-valid": "dogry",
+	"confirmedit-preview-invalid": "nädogry"
 }

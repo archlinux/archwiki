@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Nid yw'r dudalen ar gael",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Teitl annilys",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Cyswllt allanol",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Wrthi'n gwirio a yw'r dudalen ar gael...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Tudalen gwahaniaethu",
 	"wikieditor-toolbar-tool-link-int-invalid": "Ysgrifennwyd teitl annilys.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Mae'n ymddangos bod yr URL a osodwyd yn arwain at dudalen arall yn y wici.\nYdych chi am ei osod ar ffurf cyswllt mewnol?",

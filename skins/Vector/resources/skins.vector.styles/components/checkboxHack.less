@@ -18,9 +18,10 @@
 //             // of this can be replaced with `display: none` instead to avoid hidden rendering.
 //             visibility: hidden;
 //             opacity: 0;
-//             @timing: @transition-duration-base ease-in-out;
-//             .transition( transform @timing, opacity @timing, visibility @timing; );
-//             .transform( translateX( -100% ) );
+//             transition-property: transform, opacity, visibility;
+//             transition-duration: @transition-duration-base;
+//             transition-timing-function: ease-in-out;
+//             transform: translateX( -100% );
 //     }
 //
 // - Show / hide the target instantly without animation:

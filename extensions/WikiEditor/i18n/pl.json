@@ -51,7 +51,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Strona nie istnieje na {{GRAMMAR:MS.lp|{{SITENAME}}}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Podany tytuł jest nieprawidłowy",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Link zewnętrzny",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Sprawdzanie, czy strona istnieje…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Strona nie zawiera treści, a jedynie listę tematów o podobnych nazwach",
 	"wikieditor-toolbar-tool-link-int-invalid": "Wprowadzony tytuł jest nieprawidłowy.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Podany URL wygląda jak link do innej strony wiki. Czy chcesz, aby był to link wewnętrzny?",
@@ -208,5 +207,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Zwykły tekst<br />:Tekst wcięty<br />::Tekst wcięty",
 	"wikieditor-toolbar-help-content-indent-result": "Zwykły tekst<dl><dd>Tekst wcięty<dl><dd>Tekst wcięty</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Edycja wykonana przy użyciu [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditora]] (edytora wikitekstu 2010)",
-	"wikieditor-realtimepreview-preview": "Podgląd"
+	"wikieditor-realtimepreview-preview": "Podgląd",
+	"wikieditor-realtimepreview-error": "Podgląd nie został wczytany",
+	"wikieditor-realtimepreview-reload": "Odśwież",
+	"wikieditor-realtimepreview-beta-label": "Podgląd w czasie rzeczywistym",
+	"wikieditor-realtimepreview-beta-desc": "Obserwuj jak zmiany wikitekstu zostaną wyświetlone czytelnikom wewnątrz [[mw:Special:MyLanguage/Extension:WikiEditor|edytora 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Odśwież okno podglądu w czasie rzeczywistym",
+	"wikieditor-realtimepreview-manual": "Przeładuj, aby ręcznie podglądać zmiany w swoich edycjach.",
+	"wikieditor-realtimepreview-onboarding-title": "Podgląd w czasie rzeczywistym",
+	"wikieditor-realtimepreview-onboarding-body": "Obserwuj jak zmiany wikitekstu zostaną wyświetlone czytelnikom poprzez podgląd w czasie rzeczywistym.",
+	"wikieditor-realtimepreview-onboarding-button": "Ok, rozumiem"
 }

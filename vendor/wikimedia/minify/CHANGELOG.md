@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.3.0 (2022-04-19)
+
+Added:
+
+* JavaScriptMinifier: Add support for source maps. (Tim Starling) [T47514](https://phabricator.wikimedia.org/T47514)
+   Use via the `createMinifier()` and `createSourceMapState()` methods,
+   see `/tests/data/sourcemap/combine.php` for an example.
+* bin: Add `jsmap-web` and `jsmap-raw` commands. (Tim Starling)
+
+Fixed:
+
+* JavaScriptMinifier: Fix handling of property on dotless number literal. (Timo Tijhof) [T303827](https://phabricator.wikimedia.org/T303827)
+
 ## 2.2.6 (2021-11-18)
 
 Fixed:
@@ -22,7 +35,7 @@ Fixed:
 
 Fixed:
 
-*  JavaScriptMinifer: Fix handling of `.delete` as object property. (Roan Kattouw) [T283244](https://phabricator.wikimedia.org/T283244)
+* JavaScriptMinifer: Fix handling of `.delete` as object property. (Roan Kattouw) [T283244](https://phabricator.wikimedia.org/T283244)
 
 ## 2.2.2 (2021-05-07)
 

@@ -8,8 +8,8 @@
 			"Macofe",
 			"Octahedron80",
 			"Thas Tayapongsak",
-			"Woraponboonkerd",
-			"Trisorn Triboon"
+			"Trisorn Triboon",
+			"Woraponboonkerd"
 		]
 	},
 	"wikieditor": "อินเทอร์เฟซการแก้ไขข้อความวิกิขั้นสูง",
@@ -43,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "ไม่มีหน้านี้อยู่ที่ {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "ชื่อเรื่องที่คุณระบุไม่ถูกต้อง",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "ลิงก์ภายนอก",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "กำลังตรวจสอบการมีอยู่เดิมของหน้าดังกล่าว...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "หน้านี้ไม่ใช่หน้าเนื้อหา แต่เป็นหน้าแก้ความกำกวม",
 	"wikieditor-toolbar-tool-link-int-invalid": "ชื่อเรื่องที่คุณกำหนดไม่ถูกต้อง",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL ที่คุณระบุดูเหมือนว่ามีเจตนาเพื่อเป็นลิงก์ไปยังหน้าวิกิอื่น\nคุณต้องการทำให้เป็นลิงก์ภายในหรือไม่?",
@@ -190,5 +189,7 @@
 	"wikieditor-toolbar-help-content-indent-description": "ย่อหน้า",
 	"wikieditor-toolbar-help-content-indent-syntax": "บรรทัดปกติ<br />:บรรทัดย่อหน้า<br />::บรรทัดย่อหน้า",
 	"wikieditor-toolbar-help-content-indent-result": "บรรทัดปกติ<dl><dd>บรรทัดย่อหน้า<dl><dd>บรรทัดย่อหน้า</dd></dl></dd></dl>",
-	"wikieditor-realtimepreview-preview": "แสดงตัวอย่าง"
+	"wikieditor-realtimepreview-preview": "แสดงตัวอย่าง",
+	"wikieditor-realtimepreview-error": "แสดงตัวอย่างไม่โหลด",
+	"wikieditor-realtimepreview-reload": "โหลดใหม่"
 }

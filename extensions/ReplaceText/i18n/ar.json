@@ -43,6 +43,9 @@
 	"replacetext_announce": "الإعلان عن هذه التعديلات عبر $1 وقوائم المراقبة",
 	"replacetext_editsummary": "استبدال النص - '$1' ب'$2'",
 	"replacetext_reminder": "لتعديل الروابط إلى هذه الصفحة في صفحات أخرى; انتقل إلى $1.",
+	"replacetext_cfg_error": "خطأ في تكوين ReplaceText",
+	"replacetext_no_compress": "لن يعمل موقع wiki الخاص بك مع ReplaceText: لا يمكن تشغيل عمليات استبدال النص إذا تم تعيين $ wgCompressRevisions على \"true\".",
+	"replacetext_no_external_stores": "لن يعمل موقع wiki الخاص بك مع ReplaceText: لا يمكن تشغيل عمليات استبدال النص إذا كان $ wgExternalStores غير فارغ.",
 	"right-replacetext": "أجرِ استبدال النصّ في الويكي بأكملها",
 	"action-replacetext": "أجرِ استبدال النصّ في الويكي بأكملها"
 }

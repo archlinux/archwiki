@@ -112,14 +112,13 @@ class Degroup extends Consequence implements HookAborterConsequence, ReversibleC
 
 	/**
 	 * @inheritDoc
-	 * @phan-param array{vars:VariableHolder} $info
 	 */
-	public function revert( $info, UserIdentity $performer, string $reason ): bool {
+	public function revert( UserIdentity $performer, string $reason ): bool {
 		$user = $this->parameters->getUser();
 		$currentGroups = $this->userGroupManager->getUserGroups( $user );
 		// Pull the user's original groups from the vars. This is guaranteed to be set, because we
 		// enforce it when performing a degroup.
-		$removedGroups = $info['vars']->getComputedVariable( 'user_groups' )->toNative();
+		$removedGroups = $this->vars->getComputedVariable( 'user_groups' )->toNative();
 		$removedGroups = array_diff(
 			$removedGroups,
 			$this->userGroupManager->listAllImplicitGroups(),

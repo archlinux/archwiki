@@ -11,10 +11,6 @@
 	align-items: center;
 }
 
-.ve-ui-mobileContext .ve-ui-linearContextItem-head {
-	padding: 0.1em 0.5em;
-}
-
 .ve-ui-linearContextItem-title {
 	padding: 0 0.5em;
 	white-space: nowrap;
@@ -37,8 +33,7 @@
 	overflow: auto;
 }
 
-.ve-ui-linearContextItem + .ve-ui-linearContextItem .ve-ui-linearContextItem-close {
-	/* Only show a close button in the first context item */
+.ve-ui-linearContextItem-empty .ve-ui-linearContextItem-body {
 	display: none;
 }
 
@@ -59,6 +54,15 @@
 
 .ve-ui-mobileContext .ve-ui-linearContextItem-empty .ve-ui-linearContextItem-body-action-wrapper {
 	display: none;
+}
+
+.ve-ui-mobileContext-close + .ve-ui-linearContextItem-empty {
+	/* Make room for close button, if the first item is empty */
+	margin-right: 2.5em;
+}
+
+.ve-ui-mobileContext .ve-ui-linearContextItem-head {
+	padding: 0.25em 0.5em;
 }
 
 .ve-ui-mobileContext .ve-ui-linearContextItem-body {

@@ -23,11 +23,11 @@
 			buttons = new mw.mmv.ui.CanvasButtons( $qf, $( '<div>' ), $( '<div>' ) );
 
 		buttons.on( 'next', function () {
-			assert.ok( true, 'Switched to next image' );
+			assert.true( true, 'Switched to next image' );
 		} );
 
 		buttons.on( 'prev', function () {
-			assert.ok( true, 'Switched to prev image' );
+			assert.true( true, 'Switched to prev image' );
 		} );
 
 		buttons.$next.trigger( 'click' );

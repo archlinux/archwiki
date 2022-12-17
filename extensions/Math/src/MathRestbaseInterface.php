@@ -82,8 +82,7 @@ class MathRestbaseInterface {
 				try {
 					$mml = $rbi->evaluateContentResponse( 'mml', $results[$j], $requests[$j] );
 					$rbi->mml = $mml;
-				}
-				catch ( Exception $e ) {
+				} catch ( Exception $e ) {
 				}
 				$j++;
 			}
@@ -202,9 +201,9 @@ class MathRestbaseInterface {
 	}
 
 	/**
-	 * The URL is generated accoding to the following logic:
+	 * The URL is generated according to the following logic:
 	 *
-	 * Case A: <code>$internal = false</code>, which means one needs an URL that is accessible from
+	 * Case A: <code>$internal = false</code>, which means one needs a URL that is accessible from
 	 * outside:
 	 *
 	 * --> If <code>$wgMathFullRestbaseURL</code> is configured use it, otherwise fall back try to
@@ -214,8 +213,9 @@ class MathRestbaseInterface {
 	 * Case B: <code> $internal= true</code>, which means one needs to access content from Restbase
 	 * which does not need to be accessible from outside:
 	 *
-	 * --> Use the mount point whenever possible. If the mount point is not available, use
-	 * <code>$wgMathFullRestbaseURL</code> with fallback to <code>wgVisualEditorFullRestbaseURL</code>
+	 * --> Use the mount point when it is available and <code> $wgMathUseInternalRestbasePath=
+	 * true</code>. If not, use <code>$wgMathFullRestbaseURL</code> with fallback to
+	 * <code>wgVisualEditorFullRestbaseURL</code>
 	 *
 	 * @param string $path
 	 * @param bool|true $internal
@@ -223,8 +223,9 @@ class MathRestbaseInterface {
 	 * @throws MWException
 	 */
 	public function getUrl( $path, $internal = true ) {
-		global $wgVirtualRestConfig, $wgMathFullRestbaseURL, $wgVisualEditorFullRestbaseURL;
-		if ( $internal && isset( $wgVirtualRestConfig['modules']['restbase'] ) ) {
+		global $wgMathUseInternalRestbasePath, $wgVirtualRestConfig, $wgMathFullRestbaseURL,
+			$wgVisualEditorFullRestbaseURL;
+		if ( $internal && $wgMathUseInternalRestbasePath && isset( $wgVirtualRestConfig['modules']['restbase'] ) ) {
 			return "/mathoid/local/v1/$path";
 		}
 		if ( $wgMathFullRestbaseURL ) {

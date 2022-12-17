@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Juanpabl",
-			"Macofe",
-			"Amire80"
+			"Macofe"
 		]
 	},
 	"wikieditor": "Interficie abanzada d'edición de wikitexto",
@@ -36,7 +36,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "A pachina no existe",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Títol invalido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Vinclo externo",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Comprebando a existencia d'a pachina...",
 	"wikieditor-toolbar-tool-link-int-invalid": "O títol que ha especificato no ye valido.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "O URL que ha especificato pareix que enlazaba con un atra pachina d'o wiki. Quiere tornar-lo en un vinclo interno?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Vinclo interno",

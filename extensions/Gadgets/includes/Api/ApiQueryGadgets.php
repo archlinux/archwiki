@@ -207,20 +207,20 @@ class ApiQueryGadgets extends ApiQueryBase {
 		return [
 			'prop' => [
 				ParamValidator::PARAM_DEFAULT => 'id|metadata',
-				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => [
+				ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_TYPE => [
 					'id',
 					'metadata',
 					'desc',
 				],
 			],
 			'categories' => [
-				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_TYPE => 'string',
 			],
 			'ids' => [
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_ISMULTI => true,
 			],
 			'allowedonly' => false,
 			'enabledonly' => false,
@@ -233,7 +233,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 	 */
 	protected function getExamplesMessages() {
 		$params = $this->getAllowedParams();
-		$allProps = implode( '|', $params['prop'][ApiBase::PARAM_TYPE] );
+		$allProps = implode( '|', $params['prop'][ParamValidator::PARAM_TYPE] );
 		return [
 			'action=query&list=gadgets&gaprop=id|desc'
 				=> 'apihelp-query+gadgets-example-1',

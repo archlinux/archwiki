@@ -14,7 +14,7 @@
 }
 
 /* Linkbacks from <references> to <ref>s */
-span[ rel='mw:referencedBy' ] a:before {
+span[ rel~='mw:referencedBy' ] a:before {
 	content: counters( mw-ref-linkback, '٫', persian );
 }
 

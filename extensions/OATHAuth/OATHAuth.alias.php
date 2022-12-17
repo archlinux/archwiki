@@ -59,6 +59,15 @@ $specialPageAliases['gl'] = [
 	]
 ];
 
+/** Korean (한국어) */
+$specialPageAliases['ko'] = [
+	'OATHManage' => [
+		'2요소_인증_관리', '2요소인증관리', '2요소인증',
+		'2단계인증관리', '2단계인증',
+		'OATH_관리', 'OATH관리'
+	]
+];
+
 /** Northern Luri (لۊری شومالی) */
 $specialPageAliases['lrc'] = [
 	'OATHManage' => [ 'قأسأم' ],

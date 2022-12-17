@@ -1,14 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Bjankuloski06"
+			"Bjankuloski06",
+			"Vlad5250"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Не најдов меѓускладирана серијализација за тој клуч",
 	"apierror-visualeditor-difffailed": "Разликата не успеа",
 	"apierror-visualeditor-docserver-http-error": "Грешка при поврзувањето со опслужувачот Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-http": "Грешка при поврзувањето со опслужувачот Parsoid/RESTBase (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "Не е зададен VirtualRESTService за документен опслужувач; погл. https://www.mediawiki.org/wiki/Extension:VisualEditor",
+	"apierror-visualeditor-docserver-http": "Грешка при поврзувањето со опслужувачот Parsoid/RESTBase (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Грешка при поврзувањето со опслужувачот (не се одѕива)",
 	"apierror-visualeditor-latestnotfound": "Не можев да ја најдам последната преработка за насловот",
 	"apihelp-visualeditor-description": "Дава HTML5 за страница од службата Parsoid.",

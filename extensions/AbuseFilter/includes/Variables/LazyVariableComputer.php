@@ -9,6 +9,7 @@ use MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterHookRunner;
 use MediaWiki\Extension\AbuseFilter\Parser\AFPData;
 use MediaWiki\Extension\AbuseFilter\TextExtractor;
 use MediaWiki\Permissions\PermissionManager;
+use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\User\UserEditTracker;
@@ -78,6 +79,9 @@ class LazyVariableComputer {
 	/** @var PermissionManager */
 	private $permissionManager;
 
+	/** @var RestrictionStore */
+	private $restrictionStore;
+
 	/** @var string */
 	private $wikiID;
 
@@ -94,6 +98,7 @@ class LazyVariableComputer {
 	 * @param UserEditTracker $userEditTracker
 	 * @param UserGroupManager $userGroupManager
 	 * @param PermissionManager $permissionManager
+	 * @param RestrictionStore $restrictionStore
 	 * @param string $wikiID
 	 */
 	public function __construct(
@@ -109,6 +114,7 @@ class LazyVariableComputer {
 		UserEditTracker $userEditTracker,
 		UserGroupManager $userGroupManager,
 		PermissionManager $permissionManager,
+		RestrictionStore $restrictionStore,
 		string $wikiID
 	) {
 		$this->textExtractor = $textExtractor;
@@ -123,6 +129,7 @@ class LazyVariableComputer {
 		$this->userEditTracker = $userEditTracker;
 		$this->userGroupManager = $userGroupManager;
 		$this->permissionManager = $permissionManager;
+		$this->restrictionStore = $restrictionStore;
 		$this->wikiID = $wikiID;
 	}
 
@@ -172,8 +179,8 @@ class LazyVariableComputer {
 				$diff_lines = explode( "\n", $diff );
 				$result = [];
 				foreach ( $diff_lines as $line ) {
-					if ( substr( $line, 0, 1 ) === $line_prefix ) {
-						$result[] = substr( $line, strlen( $line_prefix ) );
+					if ( ( $line[0] ?? '' ) === $line_prefix ) {
+						$result[] = substr( $line, 1 );
 					}
 				}
 				break;
@@ -192,7 +199,7 @@ class LazyVariableComputer {
 					$editInfo = $article->prepareContentForEdit(
 						$content,
 						null,
-						$parameters['contextUser']
+						$parameters['contextUserIdentity']
 					);
 					$result = array_keys( $editInfo->output->getExternalLinks() );
 					self::$profilingExtraTime += ( microtime( true ) - $startTime );
@@ -218,7 +225,7 @@ class LazyVariableComputer {
 					$editInfo = $this->parseNonEditWikitext(
 						$wikitext,
 						$article,
-						$parameters['contextUser']
+						$parameters['contextUserIdentity']
 					);
 					$links = array_keys( $editInfo->output->getExternalLinks() );
 				} else {
@@ -260,7 +267,7 @@ class LazyVariableComputer {
 					$editInfo = $article->prepareContentForEdit(
 						$content,
 						null,
-						$parameters['contextUser']
+						$parameters['contextUserIdentity']
 					);
 					if ( isset( $parameters['pst'] ) && $parameters['pst'] ) {
 						$result = $editInfo->pstContent->serialize( $editInfo->format );
@@ -300,7 +307,7 @@ class LazyVariableComputer {
 				$action = $parameters['action'];
 				/** @var Title $title */
 				$title = $parameters['title'];
-				$result = $title->getRestrictions( $action );
+				$result = $this->restrictionStore->getRestrictions( $title, $action );
 				break;
 			case 'user-editcount':
 				/** @var UserIdentity $userIdentity */
@@ -408,7 +415,8 @@ class LazyVariableComputer {
 			'externallinks',
 			'el_to',
 			[ 'el_from' => $id ],
-			__METHOD__
+			__METHOD__,
+			[ 'DISTINCT' ]
 		);
 	}
 
@@ -429,10 +437,6 @@ class LazyVariableComputer {
 			WANObjectCache::TTL_MINUTE,
 			function ( $oldValue, &$ttl, array &$setOpts ) use ( $title, $fname ) {
 				$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
-				// T270033 Index renaming
-				$revIndex = $dbr->indexExists( 'revision', 'page_timestamp', $fname )
-					? 'page_timestamp'
-					: 'rev_page_timestamp';
 
 				$setOpts += Database::getCacheSetOptions( $dbr );
 				// Get the last 100 edit authors with a trivial query (avoid T116557)
@@ -451,7 +455,7 @@ class LazyVariableComputer {
 					[ 'ORDER BY' => 'rev_timestamp DESC, rev_id DESC',
 						'LIMIT' => 100,
 						// Force index per T116557
-						'USE INDEX' => [ 'revision' => $revIndex ],
+						'USE INDEX' => [ 'revision' => 'rev_page_timestamp' ],
 					],
 					$revQuery['joins']
 				);
@@ -474,24 +478,22 @@ class LazyVariableComputer {
 	 *
 	 * @param string $wikitext
 	 * @param WikiPage $article
-	 * @param User $user Context user
+	 * @param UserIdentity $userIdentity Context user
 	 *
 	 * @return stdClass
 	 */
-	private function parseNonEditWikitext( $wikitext, WikiPage $article, User $user ) {
+	private function parseNonEditWikitext( $wikitext, WikiPage $article, UserIdentity $userIdentity ) {
 		static $cache = [];
 
 		$cacheKey = md5( $wikitext ) . ':' . $article->getTitle()->getPrefixedText();
 
-		if ( isset( $cache[$cacheKey] ) ) {
-			return $cache[$cacheKey];
+		if ( !isset( $cache[$cacheKey] ) ) {
+			$options = ParserOptions::newFromUser( $userIdentity );
+			$cache[$cacheKey] = (object)[
+				'output' => $this->parser->parse( $wikitext, $article->getTitle(), $options )
+			];
 		}
 
-		$edit = (object)[];
-		$options = ParserOptions::newFromUser( $user );
-		$edit->output = $this->parser->parse( $wikitext, $article->getTitle(), $options );
-		$cache[$cacheKey] = $edit;
-
-		return $edit;
+		return $cache[$cacheKey];
 	}
 }

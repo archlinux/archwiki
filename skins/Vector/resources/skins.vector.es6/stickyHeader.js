@@ -2,18 +2,20 @@
  * Functions and variables to implement sticky header.
  */
 const
-	STICKY_HEADER_ID = 'vector-sticky-header',
-	header = document.getElementById( STICKY_HEADER_ID ),
 	initSearchToggle = require( './searchToggle.js' ),
+	STICKY_HEADER_ID = 'vector-sticky-header',
 	STICKY_HEADER_APPENDED_ID = '-sticky-header',
+	STICKY_HEADER_APPENDED_PARAM = [ 'wvprov', 'sticky-header' ],
 	STICKY_HEADER_VISIBLE_CLASS = 'vector-sticky-header-visible',
 	STICKY_HEADER_USER_MENU_CONTAINER_CLASS = 'vector-sticky-header-icon-end',
+	TOC_ID = 'mw-panel-toc',
 	FIRST_HEADING_ID = 'firstHeading',
 	USER_MENU_ID = 'p-personal',
 	ULS_STICKY_CLASS = 'uls-dialog-sticky',
 	ULS_HIDE_CLASS = 'uls-dialog-sticky-hide',
 	VECTOR_USER_LINKS_SELECTOR = '.vector-user-links',
 	SEARCH_TOGGLE_SELECTOR = '.vector-sticky-header-search-toggle',
+	STICKY_HEADER_EDIT_EXPERIMENT_NAME = 'vector.sticky_header_edit',
 	STICKY_HEADER_EXPERIMENT_NAME = 'vector.sticky_header';
 
 /**
@@ -34,9 +36,7 @@ function copyAttribute( from, to, attribute ) {
  * Show the sticky header.
  */
 function show() {
-	if ( header ) {
-		header.classList.add( STICKY_HEADER_VISIBLE_CLASS );
-	}
+	document.body.classList.add( STICKY_HEADER_VISIBLE_CLASS );
 	document.body.classList.remove( ULS_HIDE_CLASS );
 }
 
@@ -44,9 +44,37 @@ function show() {
  * Hide the sticky header.
  */
 function hide() {
-	if ( header ) {
-		header.classList.remove( STICKY_HEADER_VISIBLE_CLASS );
-		document.body.classList.add( ULS_HIDE_CLASS );
+	document.body.classList.remove( STICKY_HEADER_VISIBLE_CLASS );
+	document.body.classList.add( ULS_HIDE_CLASS );
+}
+
+/**
+ * Moves the TOC element to a new parent container.
+ *
+ * @param {string} position The position to move the TOC into: sidebar or stickyheader
+ */
+function moveToc( position ) {
+	const toc = document.getElementById( TOC_ID );
+	const currTocContainer = toc && toc.parentElement;
+	if ( !toc || !currTocContainer ) {
+		return;
+	}
+
+	// FIXME: Remove after Ia263c606dce5a6060b6b29fbaedc49cef3e17a5c has been in prod for 5 days
+	const isCachedHtml = document.querySelector( '.mw-table-of-contents-container.mw-sticky-header-element' );
+
+	let newTocContainer;
+	const sidebarTocContainerClass = isCachedHtml ? 'mw-table-of-contents-container' : 'vector-sticky-toc-container';
+	const stickyHeaderTocContainerClass = 'vector-menu-content';
+	// Avoid moving TOC if unnecessary
+	if ( !currTocContainer.classList.contains( sidebarTocContainerClass ) && position === 'sidebar' ) {
+		newTocContainer = document.querySelector( `.${sidebarTocContainerClass}` );
+	} else if ( !currTocContainer.classList.contains( stickyHeaderTocContainerClass ) && position === 'stickyheader' ) {
+		newTocContainer = document.querySelector( `.vector-sticky-header-toc .${stickyHeaderTocContainerClass}` );
+	}
+
+	if ( newTocContainer ) {
+		newTocContainer.insertAdjacentElement( 'beforeend', toc );
 	}
 }
 
@@ -73,6 +101,44 @@ function suffixStickyAttribute( node, attribute ) {
 	if ( value ) {
 		node.setAttribute( attribute, value + STICKY_HEADER_APPENDED_ID );
 	}
+}
+
+/**
+ * Suffixes the href attribute of a node with a value that indicates it
+ * relates to the sticky header to support tracking instrumentation.
+ *
+ * Distinct from suffixStickyAttribute as it's intended to support followed
+ * links recording their origin.
+ *
+ * @param {Element} node
+ */
+function suffixStickyHref( node ) {
+	/* eslint-disable compat/compat */
+	// @ts-ignore
+	const url = new URL( node.href );
+	if ( url && !url.searchParams.has( STICKY_HEADER_APPENDED_PARAM[ 0 ] ) ) {
+		url.searchParams.append(
+			STICKY_HEADER_APPENDED_PARAM[ 0 ], STICKY_HEADER_APPENDED_PARAM[ 1 ]
+		);
+		// @ts-ignore
+		node.href = url.toString();
+	}
+	/* eslint-enable compat/compat */
+}
+
+/**
+ * Undoes the effect of suffixStickyHref
+ *
+ * @param {Element} node
+ */
+function unsuffixStickyHref( node ) {
+	/* eslint-disable compat/compat */
+	// @ts-ignore
+	const url = new URL( node.href );
+	url.searchParams.delete( STICKY_HEADER_APPENDED_PARAM[ 0 ] );
+	// @ts-ignore
+	node.href = url.toString();
+	/* eslint-enable compat/compat */
 }
 
 /**
@@ -145,17 +211,19 @@ function watchstarCallback( $link, isWatched, expiry ) {
 /**
  * Makes sticky header icons functional for modern Vector.
  *
- * @param {Element} headerElement
+ * @param {Element} header
  * @param {Element|null} history
  * @param {Element|null} talk
+ * @param {Element|null} subject
  * @param {Element|null} watch
  */
-function prepareIcons( headerElement, history, talk, watch ) {
-	const historySticky = headerElement.querySelector( '#ca-history-sticky-header' ),
-		talkSticky = headerElement.querySelector( '#ca-talk-sticky-header' ),
-		watchSticky = headerElement.querySelector( '#ca-watchstar-sticky-header' );
+function prepareIcons( header, history, talk, subject, watch ) {
+	const historySticky = header.querySelector( '#ca-history-sticky-header' ),
+		talkSticky = header.querySelector( '#ca-talk-sticky-header' ),
+		subjectSticky = header.querySelector( '#ca-subject-sticky-header' ),
+		watchSticky = header.querySelector( '#ca-watchstar-sticky-header' );
 
-	if ( !historySticky || !talkSticky || !watchSticky ) {
+	if ( !historySticky || !talkSticky || !subjectSticky || !watchSticky ) {
 		throw new Error( 'Sticky header has unexpected HTML' );
 	}
 
@@ -164,11 +232,19 @@ function prepareIcons( headerElement, history, talk, watch ) {
 	} else {
 		removeNode( historySticky );
 	}
+
 	if ( talk ) {
 		copyButtonAttributes( talk, talkSticky );
 	} else {
 		removeNode( talkSticky );
 	}
+
+	if ( subject ) {
+		copyButtonAttributes( subject, subjectSticky );
+	} else {
+		removeNode( subjectSticky );
+	}
+
 	if ( watch && watch.parentNode instanceof Element ) {
 		const watchContainer = watch.parentNode;
 		copyButtonAttributes( watch, watchSticky );
@@ -188,35 +264,50 @@ function prepareIcons( headerElement, history, talk, watch ) {
 /**
  * Render sticky header edit or protected page icons for modern Vector.
  *
- * @param {Element} headerElement
+ * @param {Element} header
  * @param {Element|null} primaryEdit
  * @param {boolean} isProtected
  * @param {Element|null} secondaryEdit
+ * @param {Element|null} addSection
  * @param {Function} disableStickyHeader function to call to disable the sticky
  *  header.
  */
 function prepareEditIcons(
-	headerElement,
+	header,
 	primaryEdit,
 	isProtected,
 	secondaryEdit,
+	addSection,
 	disableStickyHeader
 ) {
 	const
-		primaryEditSticky = headerElement.querySelector(
+		primaryEditSticky = header.querySelector(
 			'#ca-ve-edit-sticky-header'
 		),
-		protectedSticky = headerElement.querySelector(
+		protectedSticky = header.querySelector(
 			'#ca-viewsource-sticky-header'
 		),
-		wikitextSticky = headerElement.querySelector(
+		wikitextSticky = header.querySelector(
 			'#ca-edit-sticky-header'
+		),
+		addSectionSticky = header.querySelector(
+			'#ca-addsection-sticky-header'
 		);
+
+	if ( addSectionSticky ) {
+		if ( addSection ) {
+			copyButtonAttributes( addSection, addSectionSticky );
+			suffixStickyHref( addSectionSticky );
+		} else {
+			removeNode( addSectionSticky );
+		}
+	}
 
 	// If no primary edit icon is present the feature is disabled.
 	if ( !primaryEditSticky || !wikitextSticky || !protectedSticky ) {
 		return;
 	}
+
 	if ( !primaryEdit ) {
 		removeNode( protectedSticky );
 		removeNode( wikitextSticky );
@@ -226,16 +317,20 @@ function prepareEditIcons(
 		removeNode( wikitextSticky );
 		removeNode( primaryEditSticky );
 		copyButtonAttributes( primaryEdit, protectedSticky );
+		suffixStickyHref( protectedSticky );
 	} else {
 		removeNode( protectedSticky );
 		copyButtonAttributes( primaryEdit, primaryEditSticky );
+		suffixStickyHref( primaryEditSticky );
 
 		primaryEditSticky.addEventListener( 'click', function ( ev ) {
 			const target = ev.target;
 			const $ve = $( primaryEdit );
 			if ( target && $ve.length ) {
 				const event = $.Event( 'click' );
+				suffixStickyHref( $ve[ 0 ] );
 				$ve.trigger( event );
+				unsuffixStickyHref( $ve[ 0 ] );
 				// The link has been progressively enhanced.
 				if ( event.isDefaultPrevented() ) {
 					disableStickyHeader();
@@ -245,13 +340,16 @@ function prepareEditIcons(
 		} );
 		if ( secondaryEdit ) {
 			copyButtonAttributes( secondaryEdit, wikitextSticky );
+			suffixStickyHref( wikitextSticky );
 			wikitextSticky.addEventListener( 'click', function ( ev ) {
 				const target = ev.target;
 				if ( target ) {
 					const $edit = $( secondaryEdit );
 					if ( $edit.length ) {
 						const event = $.Event( 'click' );
+						suffixStickyHref( $edit[ 0 ] );
 						$edit.trigger( event );
+						unsuffixStickyHref( $edit[ 0 ] );
 						// The link has been progressively enhanced.
 						if ( event.isDefaultPrevented() ) {
 							disableStickyHeader();
@@ -285,14 +383,14 @@ function isInViewport( element ) {
 /**
  * Add hooks for sticky header when Visual Editor is used.
  *
- * @param {Element} targetIntersection intersection element
+ * @param {Element} stickyIntersection intersection element
  * @param {IntersectionObserver} observer
  */
-function addVisualEditorHooks( targetIntersection, observer ) {
+function addVisualEditorHooks( stickyIntersection, observer ) {
 	// When Visual Editor is activated, hide the sticky header.
 	mw.hook( 've.activationStart' ).add( () => {
 		hide();
-		observer.unobserve( targetIntersection );
+		observer.unobserve( stickyIntersection );
 	} );
 
 	// When Visual Editor is deactivated (by clicking "Read" tab at top of page), show sticky header
@@ -301,15 +399,15 @@ function addVisualEditorHooks( targetIntersection, observer ) {
 		// Wait for the next repaint or we might calculate that
 		// sticky header should not be visible (T299114)
 		requestAnimationFrame( () => {
-			observer.observe( targetIntersection );
+			observer.observe( stickyIntersection );
 		} );
 	} );
 
 	// After saving edits, re-apply the sticky header if the target is not in the viewport.
 	mw.hook( 'postEdit.afterRemoval' ).add( () => {
-		if ( !isInViewport( targetIntersection ) ) {
+		if ( !isInViewport( stickyIntersection ) ) {
 			show();
-			observer.observe( targetIntersection );
+			observer.observe( stickyIntersection );
 		}
 	} );
 }
@@ -343,18 +441,20 @@ function prepareUserMenu( userMenu ) {
 /**
  * Makes sticky header functional for modern Vector.
  *
- * @param {Element} headerElement
+ * @param {Element} header
  * @param {Element} userMenu
  * @param {Element} userMenuStickyContainer
  * @param {IntersectionObserver} stickyObserver
  * @param {Element} stickyIntersection
+ * @param {boolean} disableEditIcons
  */
 function makeStickyHeaderFunctional(
-	headerElement,
+	header,
 	userMenu,
 	userMenuStickyContainer,
 	stickyObserver,
-	stickyIntersection
+	stickyIntersection,
+	disableEditIcons
 ) {
 	const
 		userMenuStickyContainerInner = userMenuStickyContainer
@@ -365,9 +465,23 @@ function makeStickyHeaderFunctional(
 		userMenuStickyContainerInner.appendChild( prepareUserMenu( userMenu ) );
 	}
 
-	prepareIcons( headerElement,
+	let namespaceName = mw.config.get( 'wgCanonicalNamespace' );
+	const namespaceNumber = mw.config.get( 'wgNamespaceNumber' );
+	if ( namespaceNumber >= 0 && namespaceNumber % 2 === 1 ) {
+		// Remove '_talk' to get subject namespace
+		namespaceName = namespaceName.slice( 0, -5 );
+	}
+	// Title::getNamespaceKey()
+	let namespaceKey = namespaceName.toLowerCase() || 'main';
+	if ( namespaceKey === 'file' ) {
+		namespaceKey = 'image';
+	}
+	const namespaceTabId = 'ca-nstab-' + namespaceKey;
+
+	prepareIcons( header,
 		document.querySelector( '#ca-history a' ),
-		document.querySelector( '#ca-talk a' ),
+		document.querySelector( '#ca-talk:not( .selected ) a' ),
+		document.querySelector( '#' + namespaceTabId + ':not( .selected ) a' ),
 		document.querySelector( '#ca-watch a, #ca-unwatch a' )
 	);
 
@@ -375,18 +489,22 @@ function makeStickyHeaderFunctional(
 	const ceEdit = document.querySelector( '#ca-edit a' );
 	const protectedEdit = document.querySelector( '#ca-viewsource a' );
 	const isProtected = !!protectedEdit;
-	const primaryEdit = protectedEdit || ( veEdit || ceEdit );
+	// For sticky header edit A/B test, conditionally remove the edit icon by setting null.
+	// Otherwise, use either protected, ve, or source edit (in that order).
+	const primaryEdit = disableEditIcons ? null : protectedEdit || veEdit || ceEdit;
 	const secondaryEdit = veEdit ? ceEdit : null;
 	const disableStickyHeader = () => {
-		headerElement.classList.remove( STICKY_HEADER_VISIBLE_CLASS );
+		document.body.classList.remove( STICKY_HEADER_VISIBLE_CLASS );
 		stickyObserver.unobserve( stickyIntersection );
 	};
+	const addSection = document.querySelector( '#ca-addsection a' );
 
 	prepareEditIcons(
-		headerElement,
+		header,
 		primaryEdit,
 		isProtected,
 		secondaryEdit,
+		addSection,
 		disableStickyHeader
 	);
 
@@ -394,11 +512,11 @@ function makeStickyHeaderFunctional(
 }
 
 /**
- * @param {Element} headerElement
+ * @param {Element} header
  */
-function setupSearchIfNeeded( headerElement ) {
+function setupSearchIfNeeded( header ) {
 	const
-		searchToggle = headerElement.querySelector( SEARCH_TOGGLE_SELECTOR );
+		searchToggle = header.querySelector( SEARCH_TOGGLE_SELECTOR );
 
 	if ( !document.body.classList.contains( 'skin-vector-search-vue' ) ) {
 		return;
@@ -416,8 +534,9 @@ function setupSearchIfNeeded( headerElement ) {
  * @return {boolean}
  */
 function isAllowedNamespace( namespaceNumber ) {
-	// Corresponds to Main, User, Wikipedia, Template, Help, Category, Portal, Module.
-	const allowedNamespaceNumbers = [ 0, 2, 4, 10, 12, 14, 100, 828 ];
+	// Corresponds to Main, Main talk, User, User talk, Wikipedia,
+	// Template, Help, Category, Portal, Module.
+	const allowedNamespaceNumbers = [ 0, 1, 2, 3, 4, 10, 12, 14, 100, 828 ];
 	return allowedNamespaceNumbers.indexOf( namespaceNumber ) > -1;
 }
 
@@ -433,49 +552,34 @@ function isAllowedAction( action ) {
 	return disallowedActions.indexOf( action ) < 0 && !hasDiffId;
 }
 
-const
-	stickyIntersection = document.getElementById(
-		FIRST_HEADING_ID
-	),
-	userMenu = document.getElementById( USER_MENU_ID ),
-	userMenuStickyContainer = document.getElementsByClassName(
+/**
+ * @typedef {Object} StickyHeaderProps
+ * @property {Element} header
+ * @property {Element} userMenu
+ * @property {IntersectionObserver} observer
+ * @property {Element} stickyIntersection
+ * @property {boolean} disableEditIcons
+ */
+
+/**
+ * @param {StickyHeaderProps} props
+ */
+function initStickyHeader( props ) {
+	const userMenuStickyContainer = document.getElementsByClassName(
 		STICKY_HEADER_USER_MENU_CONTAINER_CLASS
-	)[ 0 ],
-	allowedNamespace = isAllowedNamespace( mw.config.get( 'wgNamespaceNumber' ) ),
-	allowedAction = isAllowedAction( mw.config.get( 'wgAction' ) );
-
-/**
- * Check if all conditions are met to enable sticky header
- *
- * @return {boolean}
- */
-function isStickyHeaderAllowed() {
-	return !!header &&
-		!!stickyIntersection &&
-		!!userMenu &&
-		userMenuStickyContainer &&
-		allowedNamespace &&
-		allowedAction &&
-		'IntersectionObserver' in window;
-}
-
-/**
- * @param {IntersectionObserver} observer
- */
-function initStickyHeader( observer ) {
-	if ( !isStickyHeaderAllowed() || !header || !userMenu || !stickyIntersection ) {
-		return;
-	}
+	)[ 0 ];
 
 	makeStickyHeaderFunctional(
-		header,
-		userMenu,
+		props.header,
+		props.userMenu,
 		userMenuStickyContainer,
-		observer,
-		stickyIntersection
+		props.observer,
+		props.stickyIntersection,
+		props.disableEditIcons
 	);
-	setupSearchIfNeeded( header );
-	addVisualEditorHooks( stickyIntersection, observer );
+
+	setupSearchIfNeeded( props.header );
+	addVisualEditorHooks( props.stickyIntersection, props.observer );
 
 	// Make sure ULS outside sticky header disables the sticky header behaviour.
 	// @ts-ignore
@@ -488,7 +592,7 @@ function initStickyHeader( observer ) {
 	} );
 
 	// Make sure ULS dialog is sticky.
-	const langBtn = header.querySelector( '#p-lang-btn-sticky-header' );
+	const langBtn = props.header.querySelector( '#p-lang-btn-sticky-header' );
 	if ( langBtn ) {
 		langBtn.addEventListener( 'click', function () {
 			const bodyClassList = document.body.classList;
@@ -501,10 +605,14 @@ function initStickyHeader( observer ) {
 module.exports = {
 	show,
 	hide,
+	moveToc,
 	prepareUserMenu,
+	isAllowedNamespace,
+	isAllowedAction,
 	initStickyHeader,
-	isStickyHeaderAllowed,
-	header,
-	stickyIntersection,
+	STICKY_HEADER_ID,
+	FIRST_HEADING_ID,
+	USER_MENU_ID,
+	STICKY_HEADER_EDIT_EXPERIMENT_NAME,
 	STICKY_HEADER_EXPERIMENT_NAME
 };

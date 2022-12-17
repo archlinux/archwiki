@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Ezagren",
 			"J Subhi",
-			"Macofe",
-			"Amire80"
+			"Macofe"
 		]
 	},
 	"wikieditor-wikitext-tab": "NaskahWiki",
@@ -33,7 +33,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Tungkaran kadada",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Judul kada sah",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Tautan luar",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Tukui adakah tungkaran...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Judul nang Pian bari kada sah.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL nang Pian bariakan tampaknya marupakan tautan ka tungkaran wiki lain.\nApakah Pian handak maulahnya manjadi tautan internal?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Tautan dalam",

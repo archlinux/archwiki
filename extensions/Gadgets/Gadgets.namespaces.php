@@ -217,6 +217,13 @@ $namespaceNames['ko'] = [
 	NS_GADGET_DEFINITION_TALK => '소도구정의토론',
 ];
 
+$namespaceNames['ky'] = [
+	NS_GADGET => 'Гаджет',
+	NS_GADGET_TALK => 'Гаджетти_талкуулоо',
+	NS_GADGET_DEFINITION => 'Гаджеттин_түшүндүрмөсү',
+	NS_GADGET_DEFINITION_TALK => 'Гаджеттин_түшүндүрмөсүн_талкуулоо',
+];
+
 $namespaceNames['lfn'] = [
 	NS_GADGET => 'Macineta',
 	NS_GADGET_TALK => 'Macineta_Discute',
@@ -292,6 +299,13 @@ $namespaceNames['pa'] = [
 	NS_GADGET_TALK => 'ਗੈਜਟ_ਗੱਲ-ਬਾਤ',
 	NS_GADGET_DEFINITION => 'ਗੈਜਟ_ਪਰਿਭਾਸ਼ਾ',
 	NS_GADGET_DEFINITION_TALK => 'ਗੈਜਟ_ਪਰਿਭਾਸ਼ਾ_ਗੱਲ-ਬਾਤ',
+];
+
+$namespaceNames['pcm'] = [
+	NS_GADGET => 'Gajet',
+	NS_GADGET_TALK => 'Gajet_tok_abaut_am',
+	NS_GADGET_DEFINITION => 'Gajet_definishon',
+	NS_GADGET_DEFINITION_TALK => 'Gajet_definishon_tok_abaut_am',
 ];
 
 $namespaceNames['pl'] = [

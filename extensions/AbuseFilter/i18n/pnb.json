@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Abbas dhothar",
-			"BukhariSaeed"
+			"BukhariSaeed",
+			"Bgo eiu"
 		]
 	},
 	"right-abusefilter-log": "نوشتہ غلط کاری دا مشاہدہ",
@@ -66,7 +67,7 @@
 	"abusefilter-list-options-deleted-hide": "مٹائے فلٹر لُکاؤ",
 	"abusefilter-list-options-deleted-show": "مٹائے فلٹراں سمیت",
 	"abusefilter-list-options-scope": "فلٹر دکھاؤ:",
-	"abusefilter-list-options-further-options": "ہور آپشن:",
+	"abusefilter-list-options-further-options": "ہور چوݨاں:",
 	"abusefilter-list-options-hidedisabled": "ناکارہ فلٹر لُکاؤ",
 	"abusefilter-list-options-hideprivate": "پرائیویٹ فلٹر لُکاؤ",
 	"abusefilter-list-options-searchoptions": "کھوج موڈ:",
@@ -102,7 +103,7 @@
 	"abusefilter-edit-disallow-other": "ہور سنیہا",
 	"abusefilter-edit-disallow-actions": "عمل:",
 	"abusefilter-edit-history": "تریخ:",
-	"abusefilter-edit-tools": "سَند:",
+	"abusefilter-edit-tools": "سند:",
 	"abusefilter-edit-builder-vars-action": "عمل",
 	"abusefilter-edit-builder-vars-newsize": "نویں صفحے دا سائز",
 	"abusefilter-edit-builder-vars-oldsize": "پرانے صفحے دا سائز",
@@ -146,7 +147,7 @@
 	"abusefilter-topnav-home": "گھر",
 	"abusefilter-topnav-log": "نوشتہ غلط کاری",
 	"abusefilter-log-noresults": "کوئی نتارہ نئیں",
-	"abusefilter-diff-item": "آئٹم",
+	"abusefilter-diff-item": "مد",
 	"abusefilter-diff-prev": "پرانی تبدیلی",
 	"abusefilter-diff-next": "نویں تبدیلی",
 	"abusefilter-import-submit": "ڈیٹا منگواؤ",

@@ -55,7 +55,7 @@ OO.mixinClass( ve.dm.MWImageNode, ve.dm.ResizableNode );
 ve.dm.MWImageNode.static.rdfaToTypes = ( function () {
 	var rdfaToType = {};
 
-	[ 'Image', 'Video', 'Audio' ].forEach( function ( mediaClass ) {
+	[ 'File', 'Image', 'Video', 'Audio' ].forEach( function ( mediaClass ) {
 		rdfaToType[ 'mw:' + mediaClass ] = { mediaClass: mediaClass, frameType: 'none' };
 		rdfaToType[ 'mw:' + mediaClass + '/Frameless' ] = { mediaClass: mediaClass, frameType: 'frameless' };
 		// Block image only:
@@ -70,7 +70,7 @@ ve.dm.MWImageNode.static.rdfaToTypes = ( function () {
  * Get RDFa type
  *
  * @static
- * @param {string} mediaClass Media class, one of 'Image', 'Video' or 'Audio'
+ * @param {string} mediaClass Media class, one of 'File', 'Image', 'Video' or 'Audio'
  * @param {string} frameType Frame type, one of 'none', 'frameless', 'thumb' or 'frame'
  * @param {boolean} isError Whether the included media file is missing
  * @return {string} RDFa type
@@ -86,25 +86,15 @@ ve.dm.MWImageNode.static.getRdfa = function ( mediaClass, frameType, isError ) {
 };
 
 /**
- * Map media types to tag names
+ * Map media tags to source attributes
  *
  * @type {Object}
  */
-ve.dm.MWImageNode.static.typesToTags = {
-	Image: 'img',
-	Audio: 'audio',
-	Video: 'video'
-};
-
-/**
- * Map media types to source attributes
- *
- * @type {Object}
- */
-ve.dm.MWImageNode.static.typesToSrcAttrs = {
-	Image: 'src',
-	Audio: null,
-	Video: 'poster'
+ve.dm.MWImageNode.static.tagsToSrcAttrs = {
+	img: 'src',
+	audio: null,
+	video: 'poster',
+	span: null
 };
 
 /**
@@ -170,7 +160,9 @@ ve.dm.MWImageNode.static.describeChanges = function ( attributeChanges, attribut
 				continue;
 			}
 			var change = this.describeChange( key, attributeChanges[ key ] );
-			descriptions.push( change );
+			if ( change ) {
+				descriptions.push( change );
+			}
 		}
 	}
 	return descriptions;

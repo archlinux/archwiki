@@ -1,5 +1,7 @@
 <?php
 
+namespace MediaWiki\Extension\SpamBlacklist;
+
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -84,7 +86,9 @@ class SpamRegexBatch {
 		return array_filter(
 			array_map( 'trim',
 				preg_replace( '/#.*$/', '',
-					$lines ) ) );
+					$lines )
+			)
+		);
 	}
 
 	/**

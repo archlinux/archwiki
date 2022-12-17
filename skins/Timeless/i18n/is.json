@@ -16,10 +16,13 @@
 	"timeless-sitetools": "Wiki-verkfæri",
 	"timeless-pageactions": "Síðuverkfæri",
 	"timeless-userpagetools": "Verkfæri notandasíðu",
+	"timeless-action-addsection": "Nýtt umræðuefni",
+	"timeless-view-view": "Lesa",
 	"timeless-pagemisc": "Meira",
 	"timeless-namespaces": "Nafnrými",
 	"timeless-pagetools": "Aðgerðir síðu",
 	"timeless-languages": "Tungumál",
+	"timeless-projects": "Önnur verkefni",
 	"timeless-view-history": "Breytingaskrá",
-	"timeless-action-undelete": "Endurvekja {{PLURAL:$1|$1 breytingu|$1 breytingar}}"
+	"timeless-action-undelete": "Endurvekja {{PLURAL:$1|eina breytingu|$1 breytingar}}"
 }

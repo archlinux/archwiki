@@ -10,8 +10,7 @@
 			// Set config variable to activate new sidebar feature
 			// TODO: remove this when sidebar feature will be default
 			wgVisualEditorConfig: ve.extendObject( {}, mw.config.get( 'wgVisualEditorConfig' ), {
-				transclusionDialogNewSidebar: true,
-				transclusionDialogInlineDescriptions: true
+				transclusionDialogNewSidebar: true
 			} )
 		}
 	} ) );

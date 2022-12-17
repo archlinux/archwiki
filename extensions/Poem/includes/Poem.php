@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\Poem;
 
 use Html;
+use MediaWiki\Hook\ParserFirstCallInitHook;
 use Parser;
 use PPFrame;
 use Sanitizer;
@@ -14,13 +15,13 @@ use Sanitizer;
  * @license CC0-1.0
  * @author Nikola Smolenski <smolensk@eunet.yu>
  */
-class Poem {
+class Poem implements ParserFirstCallInitHook {
 	/**
 	 * Bind the renderPoem function to the <poem> tag
 	 * @param Parser $parser
 	 */
-	public static function init( Parser $parser ) {
-		$parser->setHook( 'poem', [ self::class, 'renderPoem' ] );
+	public function onParserFirstCallInit( $parser ) {
+		$parser->setHook( 'poem', [ $this, 'renderPoem' ] );
 	}
 
 	/**
@@ -31,7 +32,7 @@ class Poem {
 	 * @param PPFrame $frame
 	 * @return string
 	 */
-	public static function renderPoem( $in, array $param, Parser $parser, PPFrame $frame ) {
+	public function renderPoem( $in, array $param, Parser $parser, PPFrame $frame ) {
 		// using newlines in the text will cause the parser to add <p> tags,
 		// which may not be desired in some cases
 		$newline = isset( $param['compact'] ) ? '' : "\n";

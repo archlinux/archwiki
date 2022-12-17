@@ -6,10 +6,15 @@
 			"Yerpo"
 		]
 	},
-	"syntaxhighlight-desc": "Nudi označevanje skladnje <code>&lt;syntaxhighlight&gt;</code> z uporabo [http://pygments.org/ Pygments – označevalnika skladnje Python]",
+	"syntaxhighlight-desc": "Omogoča označevanje skladnje <code>&lt;syntaxhighlight&gt;</code> z uporabo [http://pygments.org/ Pygments – označevalnika skladnje Python]",
 	"syntaxhighlight-error-category": "Strani z napakami pri označevanju skladnje",
+	"syntaxhighlight-error-category-desc": "Pri poskusu označevanja kode na strani je prišlo do napake.",
+	"syntaxhighlight-enclose-category": "Strani z opuščenimi vključitvenimi atributi",
+	"syntaxhighlight-enclose-category-desc": "Označevanje skladnje na strani uporablja opuščeno vključitveno skladnjo.",
+	"syntaxhighlight-source-category-desc": "Označevanje skladnje na strani uporablja opuščene značke vira.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Koda",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jezik",
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Nič)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Prikaži številke vrstic",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Številka začetne vrstice",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kode"

@@ -20,9 +20,7 @@
 
 namespace MediaWiki\Minerva\Skins;
 
-use Action;
 use ExtensionRegistry;
-use Hooks as MWHooks;
 use Html;
 use Language;
 use MediaWiki\Linker\LinkTarget;
@@ -37,7 +35,6 @@ use MWException;
 use MWTimestamp;
 use ParserOptions;
 use ParserOutput;
-use RequestContext;
 use RuntimeException;
 use SkinMustache;
 use SkinTemplate;
@@ -51,6 +48,15 @@ use Title;
  * @ingroup Skins
  */
 class SkinMinerva extends SkinMustache {
+	private const NOTIFICATION_BUTTON_CLASSES = [
+		'user-button',
+		'mw-ui-button',
+		'mw-ui-quiet',
+		'mw-ui-icon',
+		'mw-ui-icon-element',
+		'mw-ui-icon-wikimedia-bellOutline-base20'
+	];
+
 	/** @const LEAD_SECTION_NUMBER integer which corresponds to the lead section
 	 * in editing mode
 	 */
@@ -93,7 +99,7 @@ class SkinMinerva extends SkinMustache {
 	private function hasPageActions() {
 		$title = $this->getTitle();
 		return !$title->isSpecialPage() && !$title->isMainPage() &&
-			Action::getActionName( $this->getContext() ) === 'view';
+			$this->getContext()->getActionName() === 'view';
 	}
 
 	/**
@@ -131,6 +137,75 @@ class SkinMinerva extends SkinMustache {
 	}
 
 	/**
+	 * A notification icon that links to Special:Mytalk when Echo is not installed.
+	 * Consider upstreaming this to core or removing at a future date.
+	 *
+	 * @return array
+	 */
+	private function getNotificationFallbackButton() {
+		return [
+			'link-class' => [
+				'mw-ui-icon',
+				'mw-ui-icon-element',
+				'mw-ui-icon-wikimedia-bellOutline-base20',
+				'mw-ui-button',
+				'mw-ui-quiet'
+			],
+			'href' => SpecialPage::getTitleFor( 'Mytalk' )->getLocalURL(
+				[ 'returnto' => $this->getTitle()->getPrefixedText() ]
+			),
+		];
+	}
+
+	/**
+	 * Minerva differs from other skins in that for users with unread notifications
+	 * instead of a bell with a small square indicating the number of notifications
+	 * it shows a red circle with a number inside. Ideally Vector and Minerva would
+	 * be treated the same but we'd need to talk to a designer about consolidating these
+	 * before making such a decision.
+	 *
+	 * @param array $alert
+	 * @return array
+	 */
+	private function getNotificationCircleButton( array $alert ) {
+		$alertCount = $alert['data']['counter-num'] ?? 0;
+		$alertText = $alert['data']['counter-text'] ?? $alertCount;
+		$alert['html'] =
+			Html::rawElement( 'div', [ 'class' => 'circle' ],
+				Html::element( 'span', [
+					'data-notification-count' => $alertCount,
+				], $alertText )
+			);
+		$alert['class'] = 'notification-count notification-unseen mw-echo-unseen-notifications';
+		$alert['link-class'] = array_merge(
+			$alert['link-class'],
+			self::NOTIFICATION_BUTTON_CLASSES
+		);
+		return $alert;
+	}
+
+	/**
+	 * Removes the OOUI icon class and adds Minerva notification classes.
+	 *
+	 * @param array $alert
+	 * @return array
+	 */
+	private function getNotificationButton( array $alert ) {
+		$linkClass = $alert['link-class'];
+		$linkClass = array_merge(
+			$linkClass,
+			self::NOTIFICATION_BUTTON_CLASSES
+		);
+		$alert['link-class'] = array_filter(
+			$linkClass,
+			static function ( $class ) {
+				return $class !== 'oo-ui-icon-bellOutline';
+			}
+		);
+		return $alert;
+	}
+
+	/**
 	 * Caches content navigation urls locally for use inside getTemplateData
 	 *
 	 * @inheritDoc
@@ -140,12 +215,34 @@ class SkinMinerva extends SkinMustache {
 		// There are some SkinTemplate modifications that occur after the execution of this hook
 		// to add rel attributes and ID attributes.
 		// The only one Minerva needs is this one so we manually add it.
+		$isSpecialPage = $skin->getTitle()->isSpecialPage();
 		foreach ( array_keys( $contentNavigationUrls['namespaces'] ) as $id ) {
 			if ( in_array( $id, [ 'user_talk', 'talk' ] ) ) {
 				$contentNavigationUrls['namespaces'][ $id ]['rel'] = 'discussion';
 			}
 		}
+		// Do not output the "Special page" tab.
+		if ( $isSpecialPage ) {
+			unset( $contentNavigationUrls['namespaces']['special'] );
+		}
 		$this->contentNavigationUrls = $contentNavigationUrls;
+		if ( $this->getUser()->isRegistered() ) {
+			// Unset notice icon. Minerva only shows one entry point to notifications.
+			// This can be reconsidered with a solution to https://phabricator.wikimedia.org/T142981
+			unset( $contentNavigationUrls['notifications']['notifications-notice'] );
+			// Shown to logged in users when Echo is not installed:
+			if ( count( $contentNavigationUrls['notifications'] ) === 0 ) {
+				$contentNavigationUrls['notifications']['mytalks'] = $this->getNotificationFallbackButton();
+			} else {
+				$alert = $contentNavigationUrls['notifications']['notifications-alert'] ?? null;
+				if ( $alert ) {
+					// @phan-suppress-next-line PhanTypeMismatchDimFetch False positive
+					$alertCount = $alert['data']['counter-num'] ?? 0;
+					$contentNavigationUrls['notifications']['notifications-alert'] = $alertCount > 0 ?
+						$this->getNotificationCircleButton( $alert ) : $this->getNotificationButton( $alert );
+				}
+			}
+		}
 	}
 
 	/**
@@ -180,7 +277,6 @@ class SkinMinerva extends SkinMustache {
 			}
 			return $data + [
 				'array-minerva-banners' => $this->prepareBanners( $data['html-site-notice'] ),
-				'html-minerva-user-notifications' => $this->prepareUserNotificationsButton( $this->getNewtalks() ),
 				'data-minerva-main-menu' => $this->getMainMenu()->getMenuData(
 					$nav,
 					$this->buildSidebar()
@@ -216,7 +312,8 @@ class SkinMinerva extends SkinMustache {
 			->getSubjectPage( $title );
 		$isMainPageTalk = Title::newFromLinkTarget( $subjectPage )->isMainPage();
 		return (
-				$this->hasPageActions() && !$isMainPageTalk
+				$this->hasPageActions() && !$isMainPageTalk &&
+				$skinOptions->get( SkinOptions::TALK_AT_TOP )
 			) || (
 				$isSpecialPage &&
 				$skinOptions->get( SkinOptions::TABS_ON_SPECIALS )
@@ -228,9 +325,8 @@ class SkinMinerva extends SkinMustache {
 	 * @return array
 	 */
 	private function getTabsData( array $contentNavigationUrls ) {
-		$skinOptions = $this->getSkinOptions();
-		$hasTalkTabs = $skinOptions->get( SkinOptions::TALK_AT_TOP ) && $this->hasPageTabs();
-		if ( !$hasTalkTabs ) {
+		$hasPageTabs = $this->hasPageTabs();
+		if ( !$hasPageTabs ) {
 			return [];
 		}
 		return $contentNavigationUrls ? [
@@ -408,31 +504,6 @@ class SkinMinerva extends SkinMustache {
 	}
 
 	/**
-	 * Prepares the user button.
-	 * @param string $newTalks New talk page messages for the current user
-	 * @return string
-	 */
-	protected function prepareUserNotificationsButton( $newTalks ) {
-		$user = $this->getUser();
-		if ( $user->isRegistered() ) {
-			$currentTitle = $this->getTitle();
-			$notificationsMsg = $this->msg( 'mobile-frontend-user-button-tooltip' )->text();
-			$notificationIconClass = MinervaUI::iconClass( 'bellOutline-base20',
-				'element', '', 'wikimedia' );
-			$badge = Html::element( 'a', [
-				'class' => $notificationIconClass,
-				'href' => SpecialPage::getTitleFor( 'Mytalk' )->getLocalURL(
-					[ 'returnto' => $currentTitle->getPrefixedText() ]
-				),
-			], $notificationsMsg );
-			MWHooks::run( 'SkinMinervaReplaceNotificationsBadge',
-				[ $user, $currentTitle, &$badge ] );
-			return $badge;
-		}
-		return '';
-	}
-
-	/**
 	 * Get a history link which describes author and relative time of last edit
 	 * @param Title $title The Title object of the page being viewed
 	 * @param string $timestamp
@@ -491,47 +562,43 @@ class SkinMinerva extends SkinMustache {
 	 * @return array|null
 	 */
 	protected function getHistoryLink( Title $title ) {
+		if ( !$title->exists() ||
+			$this->getContext()->getActionName() !== 'view'
+		) {
+			return null;
+		}
+
 		$out = $this->getOutput();
-		$isLatestRevision = $out->getRevisionId() === $title->getLatestRevID();
-		// Get rev_timestamp of current revision (preloaded by MediaWiki core)
-		$timestamp = $out->getRevisionTimestamp();
-		# No cached timestamp, load it from the database
-		if ( $timestamp === null ) {
-			$timestamp = MediaWikiServices::getInstance()
-				->getRevisionLookup()
-				->getTimestampFromId( $out->getRevisionId() );
+
+		if ( !$out->getRevisionId() || !$out->isRevisionCurrent() || $title->isMainPage() ) {
+			$historyLink = $this->getGenericHistoryLink( $title );
+		} else {
+			// Get rev_timestamp of current revision (preloaded by MediaWiki core)
+			$timestamp = $out->getRevisionTimestamp();
+			if ( !$timestamp ) {
+				# No cached timestamp, load it from the database
+				$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
+				$timestamp = $revisionLookup->getTimestampFromId( $out->getRevisionId() );
+			}
+			$historyLink = $this->getRelativeHistoryLink( $title, $timestamp );
 		}
 
-		// Create history link and corresponding icons.
-		$historyLinkAndIcons = [];
-		if ( Action::getActionName( RequestContext::getMain() ) === 'view' ) {
-			$historyIconClasses = [
-				'historyIconClass' => MinervaUI::iconClass(
-					'history-base20', 'mw-ui-icon-small', '', 'wikimedia'
-				),
-				'arrowIconClass' => MinervaUI::iconClass(
-					'expand-gray', 'small',
-					'mf-mw-ui-icon-rotate-anti-clockwise indicator',
-					// Uses icon in MobileFrontend so must be prefixed mf.
-					// Without MobileFrontend it will not render.
-					// Rather than maintain 2 versions (and variants) of the arrow icon which can conflict
-					// with each othe and bloat CSS, we'll
-					// use the MobileFrontend one. Long term when T177432 and T160690 are resolved
-					// we should be able to use one icon definition and break this dependency.
-					'mf'
-				),
-			];
-			$historyLink = !$isLatestRevision || $title->isMainPage() ?
-				$this->getGenericHistoryLink( $title ) :
-				$this->getRelativeHistoryLink( $title, $timestamp );
-
-			$historyLinkAndIcons = $historyLink + $historyIconClasses;
-		}
-
-		$title = $this->getTitle();
-		return $title->canExist() && $title->exists() && !empty( $historyLinkAndIcons )
-			? $historyLinkAndIcons
-			: null;
+		return $historyLink + [
+			'historyIconClass' => MinervaUI::iconClass(
+				'history-base20', 'mw-ui-icon-small', '', 'wikimedia'
+			),
+			'arrowIconClass' => MinervaUI::iconClass(
+				'expand-gray', 'small',
+				'mf-mw-ui-icon-rotate-anti-clockwise indicator',
+				// Uses icon in MobileFrontend so must be prefixed mf.
+				// Without MobileFrontend it will not render.
+				// Rather than maintain 2 versions (and variants) of the arrow icon which can conflict
+				// with each othe and bloat CSS, we'll
+				// use the MobileFrontend one. Long term when T177432 and T160690 are resolved
+				// we should be able to use one icon definition and break this dependency.
+				'mf'
+			),
+		];
 	}
 
 	/**
@@ -631,7 +698,7 @@ class SkinMinerva extends SkinMustache {
 			return false;
 		}
 
-		return $title->isTalkPage() && Action::getActionName( $this->getContext() ) === "view";
+		return $title->isTalkPage() && $this->getContext()->getActionName() === "view";
 	}
 
 	/**
@@ -851,7 +918,7 @@ class SkinMinerva extends SkinMustache {
 		// in order to enable toggling of the
 		// filters. Long term this won't be necessary when T111565 is resolved and a
 		// more general solution can be used.
-		if ( Action::getActionName( $this->getContext() ) !== 'history' ) {
+		if ( $this->getContext()->getActionName() !== 'history' ) {
 			// dequeue default content modules (toc, sortable, collapsible, etc.)
 			$modules['content'] = array_diff( $modules['content'], [
 				// T233340

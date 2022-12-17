@@ -3,16 +3,17 @@
 		"authors": [
 			"Abbas dhothar",
 			"BukhariSaeed",
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Bgo eiu"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویول ایڈیٹر]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویژوئل ایڈیٹر: چیک]]",
-	"tag-visualeditor-wikitext": "2017 سورس ایڈیٹ",
+	"tag-visualeditor-wikitext": "۲۰۱۷ء سروت توں سودھ",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|ویژوئل ایڈیٹر:چالو]]",
-	"visualeditor-help-label": "یوزر گائیڈ پڑھو",
-	"visualeditor-welcomedialog-action": "اڈیٹنگ شروع کرو",
-	"visualeditor-welcomedialog-switch": "سورس ایڈیٹر وچ جاؤ",
-	"visualeditor-welcomedialog-switch-ve": "ویژوئل ایڈیٹر وچ جاؤ",
-	"visualeditor-welcomedialog-title": "{{GENDER:$1|جی آیاں نوں}} نوں $2"
+	"visualeditor-help-label": "ورتوں دی گائیڈ پڑھیو",
+	"visualeditor-welcomedialog-action": "سودھاں شروع کرو",
+	"visualeditor-welcomedialog-switch": "سروت توں سودھو",
+	"visualeditor-welcomedialog-switch-ve": "گریفک توں سودھو",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|جی آیاں}} نوں $2"
 }

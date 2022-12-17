@@ -17,7 +17,6 @@
 		]
 	},
 	"visualeditor": "VisualEditor",
-	"visualeditor-aliencontextitem-title": "Item",
 	"visualeditor-aliennode-tooltip": "Sorry, this element can only be edited in source mode for now.",
 	"visualeditor-align-desc-center": "center",
 	"visualeditor-align-desc-default": "default",
@@ -107,8 +106,10 @@
 	"visualeditor-diff-moved-up": "Moved up",
 	"visualeditor-diff-no-changes": "No changes",
 	"visualeditor-diff-timed-out": "It took too long to compute your changes, so the description below may not be optimal.",
+	"visualeditor-dimensionswidget-height": "height",
 	"visualeditor-dimensionswidget-px": "px",
 	"visualeditor-dimensionswidget-times": "×",
+	"visualeditor-dimensionswidget-width": "width",
 	"visualeditor-find-and-replace-diacritic": "Diacritic insensitive",
 	"visualeditor-find-and-replace-diacritic-unavailable": "Diacritic insensitive search not available in this browser",
 	"visualeditor-find-and-replace-done": "Done",

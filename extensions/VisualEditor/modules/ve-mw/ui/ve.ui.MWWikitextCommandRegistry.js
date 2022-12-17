@@ -87,7 +87,7 @@ ve.ui.wikitextCommandRegistry.register(
 				/* unwrapOffsetsCallback */
 				function ( text ) {
 					/* Text is only italic if there are 2 or 5+ apostrophes */
-					var matches = text.match( /^(''([^'].*|.*[^'])''|'{5,}([^'].*|.*[^'])'{5,})$/ );
+					var matches = /^(''([^'].*|.*[^'])''|'{5,}([^'].*|.*[^'])'{5,})$/.test( text );
 
 					return matches ? [ 2, 2 ] : null;
 				}

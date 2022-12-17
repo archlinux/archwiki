@@ -9,11 +9,12 @@
 			"Metalhead64",
 			"Snatcher",
 			"Steinsplitter",
-			"WhatamIdoing"
+			"WhatamIdoing",
+			"Lucas Werkmeister"
 		]
 	},
 	"multimediaviewer-desc": "Ermöglicht die Darstellung von Vorschaubildern in einer Vollbildschnittstelle",
-	"multimediaviewer-optin-pref": "Den <span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Medienbetrachter]</span> nutzen",
+	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Medienbetrachter]</span> aktivieren",
 	"multimediaviewer-file-page": "Gehe zur zugehörigen Dateiseite",
 	"multimediaviewer-repository-local": "Weitere Einzelheiten",
 	"multimediaviewer-datetime-created": "Erstellt: $1",
@@ -26,7 +27,7 @@
 	"multimediaviewer-thumbnail-error-description": "Es scheint ein technisches Problem zu geben. Du kannst es $1, falls es weiterhin besteht. Fehler: $2",
 	"multimediaviewer-thumbnail-error-retry": "erneut versuchen",
 	"multimediaviewer-thumbnail-error-report": "das Problem melden",
-	"multimediaviewer-license-cc-by-4.0": "CC-BY 4.0",
+	"multimediaviewer-license-cc-by-4.0": "CC BY 4.0",
 	"multimediaviewer-license-cc-by-sa-4.0": "CC BY-SA 4.0",
 	"multimediaviewer-license-cc-pd": "Gemeinfrei",
 	"multimediaviewer-license-pd": "Gemeinfrei",

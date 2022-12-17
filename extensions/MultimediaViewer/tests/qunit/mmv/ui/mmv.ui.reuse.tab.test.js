@@ -27,7 +27,7 @@
 	QUnit.test( 'Object creation, UI construction and basic funtionality', function ( assert ) {
 		var reuseTab = makeReuseTab();
 
-		assert.ok( reuseTab, 'Reuse UI element is created.' );
+		assert.true( reuseTab instanceof mw.mmv.ui.reuse.Tab, 'Reuse UI element is created.' );
 		assert.strictEqual( reuseTab.$pane.length, 1, 'Pane created.' );
 
 		assert.strictEqual( reuseTab.$pane.hasClass( 'active' ), false, 'Tab is not active.' );

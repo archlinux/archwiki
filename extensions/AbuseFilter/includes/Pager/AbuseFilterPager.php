@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 
 use Linker;
 use LogicException;
+use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
 use MediaWiki\Extension\AbuseFilter\View\AbuseFilterViewList;
@@ -13,11 +14,28 @@ use SpecialPage;
 use stdClass;
 use TablePager;
 use Wikimedia\Rdbms\FakeResultWrapper;
+use Wikimedia\Rdbms\IResultWrapper;
 
 /**
  * Class to build paginated filter list
  */
 class AbuseFilterPager extends TablePager {
+
+	/**
+	 * The unique sort fields for the sort options for unique paginate
+	 */
+	private const INDEX_FIELDS = [
+		'af_id' => [ 'af_id' ],
+		'af_enabled' => [ 'af_enabled', 'af_deleted', 'af_id' ],
+		'af_timestamp' => [ 'af_timestamp', 'af_id' ],
+		'af_hidden' => [ 'af_hidden', 'af_id' ],
+		'af_group' => [ 'af_group', 'af_id' ],
+		'af_hit_count' => [ 'af_hit_count', 'af_id' ],
+		'af_public_comments' => [ 'af_public_comments', 'af_id' ],
+	];
+
+	/** @var ?LinkBatchFactory */
+	private $linkBatchFactory;
 
 	/** @var AbuseFilterPermissionManager */
 	protected $afPermManager;
@@ -45,6 +63,7 @@ class AbuseFilterPager extends TablePager {
 	/**
 	 * @param AbuseFilterViewList $page
 	 * @param LinkRenderer $linkRenderer
+	 * @param ?LinkBatchFactory $linkBatchFactory
 	 * @param AbuseFilterPermissionManager $afPermManager
 	 * @param SpecsFormatter $specsFormatter
 	 * @param array $conds
@@ -54,6 +73,7 @@ class AbuseFilterPager extends TablePager {
 	public function __construct(
 		AbuseFilterViewList $page,
 		LinkRenderer $linkRenderer,
+		?LinkBatchFactory $linkBatchFactory,
 		AbuseFilterPermissionManager $afPermManager,
 		SpecsFormatter $specsFormatter,
 		array $conds,
@@ -65,6 +85,7 @@ class AbuseFilterPager extends TablePager {
 		$this->specsFormatter = $specsFormatter;
 		parent::__construct( $page->getContext(), $linkRenderer );
 		$this->mPage = $page;
+		$this->linkBatchFactory = $linkBatchFactory;
 		$this->conds = $conds;
 		$this->searchPattern = $searchPattern;
 		$this->searchMode = $searchMode;
@@ -95,6 +116,25 @@ class AbuseFilterPager extends TablePager {
 			],
 			'conds' => $this->conds,
 		];
+	}
+
+	/**
+	 * @param IResultWrapper $result
+	 */
+	protected function preprocessResults( $result ) {
+		// LinkBatchFactory only provided and needed for local wiki results
+		if ( $this->linkBatchFactory === null || $this->getNumRows() === 0 ) {
+			return;
+		}
+
+		$lb = $this->linkBatchFactory->newLinkBatch();
+		$lb->setCaller( __METHOD__ );
+		foreach ( $result as $row ) {
+			$lb->add( NS_USER, $row->af_user_text );
+			$lb->add( NS_USER_TALK, $row->af_user_text );
+		}
+		$lb->execute();
+		$result->seek( 0 );
 	}
 
 	/**
@@ -167,12 +207,12 @@ class AbuseFilterPager extends TablePager {
 			'af_hidden' => 'abusefilter-list-visibility',
 		];
 
-		$user = $this->getUser();
-		if ( $this->afPermManager->canSeeLogDetails( $user ) ) {
+		$performer = $this->getAuthority();
+		if ( $this->afPermManager->canSeeLogDetails( $performer ) ) {
 			$headers['af_hit_count'] = 'abusefilter-list-hitcount';
 		}
 
-		if ( $this->afPermManager->canViewPrivateFilters( $user ) && $this->searchMode !== null ) {
+		if ( $this->afPermManager->canViewPrivateFilters( $performer ) && $this->searchMode !== null ) {
 			// This is also excluded in the default view
 			$headers['af_pattern'] = 'abusefilter-list-pattern';
 		}
@@ -383,29 +423,22 @@ class AbuseFilterPager extends TablePager {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getIndexField() {
+		return [ self::INDEX_FIELDS[$this->mSort] ];
+	}
+
+	/**
 	 * @param string $name
 	 * @return bool
 	 */
 	public function isFieldSortable( $name ) {
-		$sortable_fields = [
-			'af_id',
-			'af_enabled',
-			'af_timestamp',
-			'af_hidden',
-			'af_group',
-		];
-		if ( $this->afPermManager->canSeeLogDetails( $this->getUser() ) ) {
-			$sortable_fields[] = 'af_hit_count';
-			$sortable_fields[] = 'af_public_comments';
+		if ( ( $name === 'af_hit_count' || $name === 'af_public_comments' )
+			&& !$this->afPermManager->canSeeLogDetails( $this->getAuthority() )
+		) {
+			return false;
 		}
-		return in_array( $name, $sortable_fields );
-	}
-
-	/**
-	 * @codeCoverageIgnore Merely declarative
-	 * @inheritDoc
-	 */
-	public function getExtraSortFields() {
-		return [ 'af_enabled' => 'af_deleted' ];
+		return isset( self::INDEX_FIELDS[$name] );
 	}
 }

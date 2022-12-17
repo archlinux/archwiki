@@ -177,5 +177,14 @@
 	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Non itilizatè'>Non itilizatè</a> (<a href='#' title='$2:Non itilizatè'>diskisyon</a>) 15:54, 10 jen 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "Siyati",
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Non itilizatè'>Non itilizatè</a> (<a href='#' title='$2:Non itilizatè'>diskisyon</a>)",
-	"wikieditor-realtimepreview-preview": "Previzyalizasyon"
+	"wikieditor-realtimepreview-preview": "Previzyalizasyon",
+	"wikieditor-realtimepreview-error": "Preview p ap chaje",
+	"wikieditor-realtimepreview-reload": "Rechaje",
+	"wikieditor-realtimepreview-beta-label": "Previzyalizasyon an tan reyèl",
+	"wikieditor-realtimepreview-beta-desc": "Wè kijan chanjman yo nan wikitèks pral parèt devan lektè andedan [[mw:Special:MyLanguage/Extension:WikiEditor|editè 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Rechaje fenèt previzyalizasyon an tan reyèl la",
+	"wikieditor-realtimepreview-manual": "Tanpri rechaje kounye a pou wè yon previzyalizasyon manyèl modifikasyon ou yo.",
+	"wikieditor-realtimepreview-onboarding-title": "Previzyalizasyon an tan reyèl",
+	"wikieditor-realtimepreview-onboarding-body": "Wè kijan modifikasyon ou yo pral parèt pou lektè yo ak previzyalizasyon an tan reyèl.",
+	"wikieditor-realtimepreview-onboarding-button": "OK, mwen konprann li"
 }

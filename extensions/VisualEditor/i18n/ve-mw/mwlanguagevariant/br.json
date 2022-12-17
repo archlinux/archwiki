@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Adriendelucca",
+			"Y-M D"
+		]
+	},
+	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kod yezh",
+	"visualeditor-mwlanguagevariantcontextitem-rule-invalid-language-label": "<Direizh>",
+	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Yezh",
+	"visualeditor-mwlanguagevariantcontextitem-rule-text-from-label": "Mammenn",
+	"visualeditor-mwlanguagevariantcontextitem-rule-text-to-label": "Lec'h-kas :",
+	"visualeditor-mwlanguagevariantcontextitem-rule-text-twoway-label": "Testenn",
+	"visualeditor-mwlanguagevariantcontextitem-title-name": "Anv ar yezh",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Yezhoù",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "Kod yezh",
+	"visualeditor-mwlanguagevariantinspector-title-name": "Anv ar yezh"
+}

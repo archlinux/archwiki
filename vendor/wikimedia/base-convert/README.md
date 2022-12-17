@@ -18,8 +18,10 @@ Additional documentation about the library can be found on
 Usage
 -----
 
-    // Using padding, outputs 01010
-    \Wikimedia\base_convert('a', '36', '2', '5')
+```php
+// Using padding, outputs 01010
+\Wikimedia\base_convert( 'a', '36', '2', '5' )
+```
 
 
 Running tests

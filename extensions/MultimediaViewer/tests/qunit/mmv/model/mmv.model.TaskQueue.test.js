@@ -21,7 +21,7 @@
 	QUnit.test( 'TaskQueue constructor sense check', function ( assert ) {
 		var taskQueue = new mw.mmv.model.TaskQueue();
 
-		assert.ok( taskQueue, 'TaskQueue created successfully' );
+		assert.true( taskQueue instanceof mw.mmv.model.TaskQueue, 'TaskQueue created successfully' );
 	} );
 
 	QUnit.test( 'Queue length check', function ( assert ) {
@@ -73,7 +73,7 @@
 		var taskQueue = new mw.mmv.model.TaskQueue();
 
 		return taskQueue.execute().done( function () {
-			assert.ok( true, 'Queue promise resolved' );
+			assert.true( true, 'Queue promise resolved' );
 		} );
 	} );
 
@@ -155,11 +155,9 @@
 
 		taskQueue.execute();
 
-		try {
+		assert.throws( function () {
 			taskQueue.push( function () {} );
-		} catch ( e ) {
-			assert.ok( e, 'Exception thrown when trying to push to an already running queue' );
-		}
+		}, 'Exception thrown when trying to push to an already running queue' );
 	} );
 
 	QUnit.test( 'Test failed task', function ( assert ) {
@@ -170,7 +168,7 @@
 		} );
 
 		return taskQueue.execute().done( function () {
-			assert.ok( true, 'Queue promise resolved' );
+			assert.true( true, 'Queue promise resolved' );
 		} );
 	} );
 
@@ -195,7 +193,7 @@
 		} );
 
 		return taskQueue.execute().then( function () {
-			assert.ok( seenFinished, 'Task waits for previous task to finish' );
+			assert.true( seenFinished, 'Task waits for previous task to finish' );
 		} );
 	} );
 
@@ -212,10 +210,10 @@
 
 		taskQueue.execute()
 			.done( function () {
-				assert.ok( false, 'Queue promise rejected' );
+				assert.true( false, 'Queue promise rejected' );
 			} )
 			.fail( function () {
-				assert.ok( true, 'Queue promise rejected' );
+				assert.true( true, 'Queue promise rejected' );
 				assert.strictEqual( triggered, false, 'Task was not triggered' );
 			} )
 			.always( assert.async() );
@@ -235,10 +233,10 @@
 
 		taskQueue.execute()
 			.done( function () {
-				assert.ok( false, 'Queue promise rejected' );
+				assert.true( false, 'Queue promise rejected' );
 			} )
 			.fail( function () {
-				assert.ok( true, 'Queue promise rejected' );
+				assert.true( true, 'Queue promise rejected' );
 				assert.strictEqual( triggered, false, 'Task was not triggered' );
 			} )
 			.always( assert.async() );
@@ -264,10 +262,10 @@
 
 		taskQueue.execute()
 			.done( function () {
-				assert.ok( false, 'Queue promise rejected' );
+				assert.true( false, 'Queue promise rejected' );
 			} )
 			.fail( function () {
-				assert.ok( true, 'Queue promise rejected' );
+				assert.true( true, 'Queue promise rejected' );
 				assert.strictEqual( triggered, false, 'Task was not triggered' );
 			} )
 			.always( assert.async() );

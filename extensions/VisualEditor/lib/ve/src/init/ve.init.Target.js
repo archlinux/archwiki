@@ -162,6 +162,17 @@ ve.init.Target.static.toolbarGroups = [
 	{
 		name: 'specialCharacter',
 		include: [ 'specialCharacter' ]
+	},
+	{
+		name: 'pageMenu',
+		type: 'list',
+		align: 'after',
+		icon: 'menu',
+		indicator: null,
+		title: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
+		label: OO.ui.deferMsg( 'visualeditor-pagemenu-tooltip' ),
+		invisibleLabel: true,
+		include: [ 'findAndReplace', 'changeDirectionality', 'commandHelp' ]
 	}
 ];
 
@@ -172,14 +183,14 @@ ve.init.Target.static.actionGroups = [];
  *
  * @type {string[]} List of command names
  */
-ve.init.Target.static.documentCommands = [ 'commandHelp' ];
+ve.init.Target.static.documentCommands = [];
 
 /**
  * List of commands which can be triggered from within the target element
  *
  * @type {string[]} List of command names
  */
-ve.init.Target.static.targetCommands = [ 'findAndReplace', 'findNext', 'findPrevious' ];
+ve.init.Target.static.targetCommands = [ 'commandHelp', 'findAndReplace', 'findNext', 'findPrevious' ];
 
 /**
  * List of commands to include in the target
@@ -581,6 +592,18 @@ ve.init.Target.prototype.onSurfaceViewFocus = function ( surface ) {
  * @param {ve.ui.Surface} surface
  */
 ve.init.Target.prototype.setSurface = function ( surface ) {
+	if ( OO.ui.isMobile() ) {
+		// Allow popup tool groups's menus to display on top of the mobile context, which is attached
+		// to the global overlay (T307849)
+		this.toolbarConfig.$overlay = surface.getGlobalOverlay().$element;
+		// There is already a toolbar (e.g. when switching), swap out the overlay:
+		// TODO: Add a setOverlay method to Toolbar, or create a new toolbar
+		if ( this.toolbar ) {
+			this.toolbar.$overlay = this.toolbarConfig.$overlay;
+			this.toolbar.$overlay.append( this.toolbar.$popups );
+		}
+	}
+
 	if ( this.surfaces.indexOf( surface ) === -1 ) {
 		throw new Error( 'Active surface must have been added first' );
 	}
@@ -632,14 +655,18 @@ ve.init.Target.prototype.getActions = function () {
  * @param {ve.ui.Surface} surface
  */
 ve.init.Target.prototype.setupToolbar = function ( surface ) {
-	var toolbar = this.getToolbar(),
-		actions = this.getActions();
+	var toolbar = this.getToolbar();
 
 	toolbar.connect( this, {
 		resize: 'onToolbarResize',
 		active: 'onToolbarActive'
 	} );
-	actions.connect( this, { active: 'onToolbarActive' } );
+
+	var actions;
+	if ( this.actionGroups.length ) {
+		actions = this.getActions();
+		actions.connect( this, { active: 'onToolbarActive' } );
+	}
 
 	if ( surface.nullSelectionOnBlur ) {
 		toolbar.$element
@@ -671,8 +698,10 @@ ve.init.Target.prototype.setupToolbar = function ( surface ) {
 	}
 
 	toolbar.setup( this.toolbarGroups, surface );
-	actions.setup( this.actionGroups, surface );
-	toolbar.$actions.append( actions.$element );
+	if ( actions ) {
+		actions.setup( this.actionGroups, surface );
+		toolbar.$actions.append( actions.$element );
+	}
 	this.attachToolbar();
 	var rAF = window.requestAnimationFrame || setTimeout;
 	rAF( this.onContainerScrollHandler );
@@ -749,5 +778,7 @@ ve.init.Target.prototype.attachToolbar = function () {
 	var toolbar = this.getToolbar();
 	toolbar.$element.insertBefore( toolbar.getSurface().$element );
 	toolbar.initialize();
-	this.getActions().initialize();
+	if ( this.actionsToolbar ) {
+		this.actionsToolbar.initialize();
+	}
 };

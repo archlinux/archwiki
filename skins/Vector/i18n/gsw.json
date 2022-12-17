@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Als-Holder"
+			"Als-Holder",
+			"Amire80"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 Sproch|$1 Sproche}}",
@@ -17,5 +18,5 @@
 	"vector-view-view": "Läse",
 	"vector-view-viewsource": "Quälltext aaluege",
 	"vector-more-actions": "Meh",
-	"vector-searchsuggest-containing": "No Syte sueche, wu s <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> din het"
+	"vector-searchsuggest-containing": "No Syte sueche, wu s <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> din het"
 }

@@ -81,19 +81,14 @@
 			params = {
 				action: 'abusefiltercheckmatch',
 				filter: filter
-			},
-			api = new mw.Api();
+			};
 
 		$( this ).injectSpinner( { id: 'filter-check', size: 'large' } );
 
-		if ( examine.type === 'rc' ) {
-			params.rcid = examine.id;
-		} else {
-			params.logid = examine.id;
-		}
+		params[ examine.type === 'rc' ? 'rcid' : 'logid' ] = examine.id;
 
 		// Use post due to the rather large amount of data
-		api.post( params )
+		new mw.Api().post( params )
 			.done( examinerTestProcess )
 			.fail( examinerTestProcessFailure );
 	}

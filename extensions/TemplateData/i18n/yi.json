@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"פוילישער",
-			"Pacha Tchernof"
+			"Pacha Tchernof",
+			"פוילישער"
 		]
 	},
 	"templatedata-doc-desc-empty": "קיין באשרייבונג.",
@@ -32,7 +32,7 @@
 	"templatedata-doc-param-type-unknown": "אומבאַוואוסט",
 	"templatedata-doc-param-type-url": "URL",
 	"templatedata-doc-param-type-wiki-file-name": "טעקע",
-	"templatedata-doc-param-type-wiki-page-name": "בלאַט",
+	"templatedata-doc-param-type-wiki-page-name": "בלאַט־נאָמען",
 	"templatedata-doc-param-type-wiki-template-name": "מוסטער",
 	"templatedata-doc-param-type-wiki-user-name": "באַניצער",
 	"templatedata-doc-params": "מוסטער־פאראמעטערס",
@@ -49,6 +49,7 @@
 	"templatedata-invalid-value": "אומגילטיקער ווערט פֿאר אייגנשאפֿט \"$1\".",
 	"templatedata-modal-button-add-language": "צולייגן שפראך",
 	"templatedata-modal-button-addparam": "צולייגן פאראמעטער",
+	"templatedata-modal-button-addmap": "צולייגן נייע מאַפע",
 	"templatedata-modal-button-apply": "אָנװענדן",
 	"templatedata-modal-button-back": "צוריק",
 	"templatedata-modal-button-cancel": "אַנולירן",

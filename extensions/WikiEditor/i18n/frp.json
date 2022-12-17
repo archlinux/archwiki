@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"ChrisPtDe",
-			"Macofe",
-			"Amire80"
+			"Macofe"
 		]
 	},
 	"wikieditor": "Entèrface avanciê de changement de vouiquitèxto",
@@ -36,7 +36,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La pâge ègziste pas",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titro envalido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Lim de defôr",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Contrôlo de l’ègzistence de la pâge...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Lo titro que vos éd spècifiâ est envalido.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "L’URL que vos éd spècefiâ semble liyér vers una ôtra pâge du vouiqui.\nVoléd-vos utilisar un lim de dedens a la place ?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Lim de dedens",

@@ -140,7 +140,6 @@ class ContentModelHandler extends IContentModelHandler {
 	 */
 	private function preprocessDOM( Env $env, Document $doc ): void {
 		$siteConfig = $env->getSiteConfig();
-		$preprocTiming = Timing::start( $siteConfig->metrics() );
 
 		// Run any registered DOM preprocessors
 		foreach ( $siteConfig->getExtDOMProcessors() as $extName => $domProcs ) {
@@ -154,8 +153,6 @@ class ContentModelHandler extends IContentModelHandler {
 				);
 			}
 		}
-
-		$preprocTiming->end( 'html2wt.preprocess' );
 	}
 
 	/**
@@ -165,7 +162,6 @@ class ContentModelHandler extends IContentModelHandler {
 		ParsoidExtensionAPI $extApi, ?SelserData $selserData = null
 	): string {
 		$env = $this->env;
-
 		$metrics = $env->getSiteConfig()->metrics();
 		$setupTiming = Timing::start( $metrics );
 
@@ -175,16 +171,24 @@ class ContentModelHandler extends IContentModelHandler {
 		if ( $selserData && $selserData->oldText !== null ) {
 			$serializer = new SelectiveSerializer( $serializerOpts );
 			$this->setupSelser( $extApi, $selserData );
+			$wtsType = 'selser';
 		} else {
 			// Fallback
 			$serializer = new WikitextSerializer( $serializerOpts );
+			$wtsType = 'noselser';
 		}
 
 		$setupTiming->end( 'html2wt.setup' );
 
+		$preprocTiming = Timing::start( $metrics );
 		$this->preprocessDOM( $env, $env->topLevelDoc );
+		$preprocTiming->end( 'html2wt.preprocess' );
 
-		return $serializer->serializeDOM( $env->topLevelDoc );
+		$serializeTiming = Timing::start( $metrics );
+		$res = $serializer->serializeDOM( $env->topLevelDoc );
+		$serializeTiming->end( "html2wt.{$wtsType}.serialize" );
+
+		return $res;
 	}
 
 }

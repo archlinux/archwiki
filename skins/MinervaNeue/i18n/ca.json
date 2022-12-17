@@ -9,6 +9,7 @@
 			"Joan manel",
 			"Macofe",
 			"Mguix",
+			"Paucabot",
 			"QuimGil",
 			"Skurz0",
 			"Vriullop"
@@ -56,6 +57,7 @@
 	"minerva-page-actions-info": "Informació de la pàgina",
 	"minerva-page-actions-permalink": "Enllaç permanent",
 	"minerva-page-actions-backlinks": "Què hi enllaça",
+	"minerva-page-actions-change-block": "Modifica el blocatge",
 	"minerva-page-actions-cite": "Cita la pàgina",
 	"minerva-page-actions-move": "Mou",
 	"minerva-page-actions-user-groups": "Grups d’usuaris",

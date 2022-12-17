@@ -22,7 +22,7 @@
 		var api = { get: function () {} },
 			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
 
-		assert.ok( thumbnailInfoProvider );
+		assert.true( thumbnailInfoProvider instanceof mw.mmv.provider.ThumbnailInfo );
 	} );
 
 	QUnit.test( 'ThumbnailInfo get test', function ( assert ) {
@@ -86,7 +86,7 @@
 			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
-			assert.ok( true, 'promise rejected when no data is returned' );
+			assert.true( true, 'promise rejected when no data is returned' );
 			done();
 		} );
 	} );
@@ -108,7 +108,7 @@
 			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
-			assert.ok( true, 'promise rejected when imageinfo is missing' );
+			assert.true( true, 'promise rejected when imageinfo is missing' );
 			done();
 		} );
 	} );
@@ -158,7 +158,7 @@
 			thumbnailInfoProvider = new mw.mmv.provider.ThumbnailInfo( api );
 
 		thumbnailInfoProvider.get( file, 100 ).fail( function () {
-			assert.ok( true, 'promise rejected when thumbnail info is missing' );
+			assert.true( true, 'promise rejected when thumbnail info is missing' );
 			done();
 		} );
 	} );

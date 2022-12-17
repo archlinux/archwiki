@@ -66,6 +66,7 @@ ve.dm.Surface = function VeDmSurface( doc, attachedRoot, config ) {
 	this.autosaveFailed = false;
 	this.autosavePrefix = '';
 	this.synchronizer = null;
+	this.storing = false;
 	this.storage = ve.init.platform.sessionStorage;
 
 	// Let document know about the attachedRoot
@@ -796,6 +797,18 @@ ve.dm.Surface.prototype.setSelection = function ( selection ) {
 		this.selection = selection;
 	}
 
+	function intersectRanges( rangeA, rangeB ) {
+		var rangeStart = Math.max( rangeA.start, rangeB.start );
+		var rangeEnd = Math.min( rangeA.end, rangeB.end );
+
+		return new ve.Range(
+			rangeStart,
+			// If rangeStart > rangeEnd there is no overlap, just return
+			// a collapsed range at rangeStart (this shouldn't happen here)
+			Math.max( rangeStart, rangeEnd )
+		);
+	}
+
 	var range;
 	var selectedNode;
 	var branchNodes = {};
@@ -805,10 +818,13 @@ ve.dm.Surface.prototype.setSelection = function ( selection ) {
 
 		// Update branch nodes
 		branchNodes.start = this.getDocument().getBranchNodeFromOffset( range.start );
+		branchNodes.startRange = intersectRanges( branchNodes.start.getRange(), range );
 		if ( !range.isCollapsed() ) {
 			branchNodes.end = this.getDocument().getBranchNodeFromOffset( range.end );
+			branchNodes.endRange = intersectRanges( branchNodes.end.getRange(), range );
 		} else {
 			branchNodes.end = branchNodes.start;
+			branchNodes.endRange = branchNodes.startRange;
 		}
 		selectedNode = this.getSelectedNodeFromSelection( selection );
 
@@ -876,6 +892,16 @@ ve.dm.Surface.prototype.setSelection = function ( selection ) {
 	) {
 		this.branchNodes = branchNodes;
 		this.selectedNode = selectedNode;
+		contextChange = true;
+	} else if (
+		branchNodes.startRange && this.branchNodes.startRange && (
+			branchNodes.startRange.isCollapsed() !== this.branchNodes.startRange.isCollapsed() ||
+			branchNodes.endRange.isCollapsed() !== this.branchNodes.endRange.isCollapsed()
+		)
+	) {
+		// If the collapsed-ness of the selection within an edge node changes, the result of
+		// ve.dm.Surface#getSelectedLeafNodes could change, so emit a contextChange
+		this.branchNodes = branchNodes;
 		contextChange = true;
 	}
 
@@ -1066,7 +1092,6 @@ ve.dm.Surface.prototype.breakpoint = function () {
  * @fires undoStackChange
  */
 ve.dm.Surface.prototype.undo = function () {
-
 	if ( !this.canUndo() ) {
 		return;
 	}
@@ -1395,9 +1420,22 @@ ve.dm.Surface.prototype.setAutosaveDocId = function ( docId ) {
 };
 
 /**
+ * Set the storage interface for autosave
+ *
+ * @param {ve.init.SafeStorage} storage Storage interface
+ */
+ve.dm.Surface.prototype.setStorage = function ( storage ) {
+	if ( this.storing ) {
+		throw new Error( 'Can\'t change storage interface after auto-save has stared' );
+	}
+	this.storage = storage;
+};
+
+/**
  * Start storing changes after every undoStackChange
  */
 ve.dm.Surface.prototype.startStoringChanges = function () {
+	this.storing = true;
 	this.on( 'undoStackChange', this.storeChangesListener );
 	this.getDocument().on( 'storage', this.storeDocStorageListener );
 };
@@ -1406,6 +1444,7 @@ ve.dm.Surface.prototype.startStoringChanges = function () {
  * Stop storing changes
  */
 ve.dm.Surface.prototype.stopStoringChanges = function () {
+	this.storing = false;
 	this.off( 'undoStackChange', this.storeChangesListener );
 	this.getDocument().off( 'storage', this.storeDocStorageListener );
 };

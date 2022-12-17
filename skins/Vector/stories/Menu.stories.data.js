@@ -1,4 +1,5 @@
 import menuTemplate from '!!raw-loader!../includes/templates/Menu.mustache';
+import legacyMenuTemplate from '!!raw-loader!../includes/templates/LegacyMenu.mustache';
 import { helperMakeMenuData } from './utils';
 
 /**
@@ -11,4 +12,4 @@ const defaultMenu = helperMakeMenuData(
 <li><a href='#'>Item 3</a></li>`
 );
 
-export { menuTemplate, defaultMenu };
+export { menuTemplate, legacyMenuTemplate, defaultMenu };

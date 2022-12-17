@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "A páxina non existe",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Título non válido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ligazón externa",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Comprobando a existencia da páxina...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Páxina de homónimos",
 	"wikieditor-toolbar-tool-link-int-invalid": "O título que especificou non é válido.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "O enderezo URL que especificou semella ser unha ligazón cara a outra páxina do wiki.\nQuere converter ese enderezo nunha ligazón interna?",

@@ -18,5 +18,6 @@
 	"vector-view-history": "Pengepe tukulpan",
 	"vector-view-view": "Chillkatun",
 	"vector-view-viewsource": "Kimam chew küpan chi wirin",
-	"vector-more-actions": "Zoy"
+	"vector-more-actions": "Zoy",
+	"vector-searchsuggest-containing": "Kintun kom tapülh nielu <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

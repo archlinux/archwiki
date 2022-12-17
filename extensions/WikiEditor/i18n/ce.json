@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Иштта агӀо йац",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ца магайо цӀе",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Арахьара хьажорг",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "АгӀо йуьй хьажар…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Дуккха маьӀнаш долу агӀонаш",
 	"wikieditor-toolbar-tool-link-int-invalid": "Гойтуш йолу цӀе ца магайо.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Ахьа хоттийна URL кхечу вики-агӀонан хьажорагах тера йу. Лаьий хьуна и хьажорг чоьхьарчех йан?",
@@ -192,5 +191,8 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Декъашхочун цӀе</a> (<a href='#' title='$2:Username'>дийцаре</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Дlахило",
 	"wikieditor-toolbar-help-content-indent-syntax": "Гуттарлера йоза<br />:Дlахилийна йоза<br />::Дlахилийна йоза",
-	"wikieditor-toolbar-help-content-indent-result": "Гуттарлера йоза<dl><dd>Дlахилийна йоза<dl><dd>Дlахилийна йоза</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Гуттарлера йоза<dl><dd>Дlахилийна йоза<dl><dd>Дlахилийна йоза</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-beta-label": "ХӀинца йолу хенаца хьалхе хьажар",
+	"wikieditor-realtimepreview-beta-desc": "Хьажа, хийцам бина вики-йоза [[mw:Special:MyLanguage/Extension:WikiEditor|2010 редактор тӀехь]] болу йешархошна гура ду.",
+	"wikieditor-realtimepreview-onboarding-title": "ХӀинца йолу хенаца хьалхе хьажар"
 }

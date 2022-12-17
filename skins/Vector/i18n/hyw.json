@@ -4,9 +4,11 @@
 			"ArmenBakkalian",
 			"Azniv Stepanian",
 			"Rajemian",
-			"Դավիթ Սարոյան"
+			"Դավիթ Սարոյան",
+			"Սերգեյ Սաֆարյան"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 լեզու}}",
 	"vector-action-addsection": "Աւելցնել քննարկում",
 	"vector-action-delete": "Ջնջել",
 	"vector-action-move": "Տեղափոխել այս էջը",

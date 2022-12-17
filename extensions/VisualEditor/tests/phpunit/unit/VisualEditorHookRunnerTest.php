@@ -26,11 +26,12 @@ class VisualEditorHookRunnerTest extends MediaWikiUnitTestCase {
 		$runner = new VisualEditorHookRunner( $container );
 
 		$apiResponse = [];
+		$params = [];
 		$result = $runner->onVisualEditorApiVisualEditorEditPreSave(
 			PageIdentityValue::localIdentity( 0, 0, 'test' ),
 			UserIdentityValue::newAnonymous( '' ),
 			'',
-			[],
+			$params,
 			[],
 			$apiResponse
 		);

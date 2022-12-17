@@ -9,26 +9,12 @@
 
 	// Legacy specific components
 	@import './components/MenuDropdown.less';
+	@import './components/MenuTabs.less';
+	@import './components/MenuPortal.less';
 	@import './components/SearchBox.less';
 	@import './components/Sidebar.less';
+	@import './components/TabWatchstarLink.less';
 	@import './components/UserLinks.less';
-
-	// Overrides
-	// Since these override declarations in ResourceLoaderSkinModule they require
-	// the `skin-vector-legacy` class for greater specificity. See T288739.
-	// FIXME: This can be considered for removal in future or can be repurposed as a skin
-	// variable when modern and legacy Vector use different skin keys.
-	.skin-vector-legacy {
-		a.new {
-			color: #ba0000;
-		}
-
-		a.new:visited,
-		.vector-menu-tabs .new a,
-		.vector-menu-tabs .new a:visited {
-			color: #a55858;
-		}
-	}
 }
 
 @media print {

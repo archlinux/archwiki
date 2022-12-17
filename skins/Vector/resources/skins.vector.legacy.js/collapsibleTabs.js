@@ -38,9 +38,9 @@ function init() {
 		// if we haven't already bound our resize handler, bind it now
 		if ( !boundEvent ) {
 			boundEvent = true;
-			$( window ).on( 'resize', mw.util.debounce( 10, function () {
+			$( window ).on( 'resize', mw.util.debounce( function () {
 				rAF( $.collapsibleTabs.handleResize );
-			} ) );
+			}, 10 ) );
 		}
 
 		// call our resize handler to setup the page

@@ -3,6 +3,7 @@
 		"authors": [
 			"94rain",
 			"A Chinese Wikipedian",
+			"Diskdance",
 			"Gerongfenh",
 			"Hanyanbo98",
 			"Hudafu",
@@ -11,6 +12,7 @@
 			"Lakejason0",
 			"Liuxinyu970226",
 			"MuratTheTurkish",
+			"NACHOgao3",
 			"Stang",
 			"Tiger",
 			"Tranve",
@@ -22,8 +24,7 @@
 			"ZhuofanWu",
 			"佛壁灯",
 			"科劳",
-			"铁桶",
-			"NACHOgao3"
+			"铁桶"
 		]
 	},
 	"oathauth-desc": "提供“基于HMAC的一次性密码”的身份验证支持",
@@ -79,6 +80,9 @@
 	"oath-log-header": "这些事件记录了用户的双重身份验证状态变化。",
 	"logentry-oath-disable-other": "$1{{GENDER:$2|禁用了}}$3的双重身份验证",
 	"logentry-oath-verify": "$1{{GENDER:$2|检查了}}是否$3已启用双重身份验证",
+	"log-action-filter-oath": "双重身份验证操作类型：",
+	"log-action-filter-oath-verify": "检查是否启用双重验证",
+	"log-action-filter-oath-disable-other": "禁用另一名用户的双重身份验证",
 	"oathauth-ui-no-module": "没有启用",
 	"oathauth-module-invalid": "用户已注册的OATHAuth模块无效。",
 	"oathauth-module-totp-label": "TOTP（基于时间的一次性密码）",
@@ -103,10 +107,15 @@
 	"oathauth-switch-method-warning": "切换到$2双重身份验证方法后，目前的方法（$1）将被停用，且与当前身份验证方法关联的所有数据将被删除",
 	"oathauth-totp-disable-warning": "您将无法再次使用和此账号关联的设备进行认证。所有与该账号关联的临时密码均会失效。",
 	"oathauth-invalidrequest": "无效请求",
-	"notification-header-oathauth-disable": "{{GENDER:$2|您的帐户}}已禁用双因素验证。",
-	"notification-body-oathauth-disable": "如果{{GENDER:$2|您}}并未这么做，{{GENDER:$2|您的帐户}}可能已被入侵。",
+	"notification-header-oathauth-disable": "{{GENDER:$2|您的账户}}已禁用双重身份验证。",
+	"notification-body-oathauth-disable": "如果{{GENDER:$2|您}}并未这么做，{{GENDER:$2|您的账户}}可能已被盗用。",
 	"notification-body-oathauth-disable-other": "如果{{GENDER:$2|您}}并未提出此要求，{{GENDER:$2|您}}应当联系管理员。",
 	"oathauth-notifications-disable-help": "帮助",
+	"notification-header-oathauth-enabled": "{{GENDER:$2|您的账户}}已启用双重身份验证。",
+	"notification-body-oathauth-enabled": "如果{{GENDER:$2|您}}并未这么做，{{GENDER:$2|您的账户}}可能已被盗用。",
+	"oathauth-notifications-enabled-help": "帮助",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}}已启用双重身份验证。",
-	"oathauth-verify-disabled": "{{GENDER:$1|$1}}未启用双重身份验证。"
+	"oathauth-verify-disabled": "{{GENDER:$1|$1}}未启用双重身份验证。",
+	"oathauth-prefs-disabledgroups": "已禁用{{PLURAL:$1|用户组}}：",
+	"oathauth-prefs-disabledgroups-help": "在您启用[[Special:Manage Two-factor authentication|双重身份验证]]之前，{{GENDER:$2|您的会员资格}}在{{PLURAL:$1|此用户组|这些用户组}}会处于禁用状态。"
 }

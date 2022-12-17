@@ -17,6 +17,7 @@
 			"Nk88",
 			"Okras",
 			"Ole Yves",
+			"Pacha Tchernof",
 			"Putnik",
 			"Redredsonia",
 			"Serhio Magpie",
@@ -25,8 +26,7 @@
 			"Translatobecomer",
 			"Vlad5250",
 			"Wikisaurus",
-			"Ядерный Трамвай",
-			"Pacha Tchernof"
+			"Ядерный Трамвай"
 		]
 	},
 	"math-desc": "Отображает математические формулы в тегах <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -104,7 +104,7 @@
 	"math_unknown_error": "неизвестная ошибка",
 	"math_unknown_function": "неизвестная функция «$1»",
 	"mw_math_latexml": "LaTeXML (экспериментальный; использует MathML)",
-	"mw_math_mathml": "MathML с запасными SVG или PNG (рекомендуется для современных браузеров и инструментов повышения доступности)",
+	"mw_math_mathml": "SVG с запасным PNG (MathML можно включить с помощью плагина для браузера)",
 	"mw_math_png": "PNG-изображения",
 	"mw_math_source": "LaTeX-разметка (для текстовых браузеров)",
 	"prefs-math": "Отображение формул",

@@ -1,6 +1,6 @@
 ( function () {
 	QUnit.module( 'mmv.bootstrap', QUnit.newMwEnvironment( {
-		setup: function () {
+		beforeEach: function () {
 			mw.config.set( 'wgMediaViewer', true );
 			mw.config.set( 'wgMediaViewerOnClick', true );
 			this.sandbox.stub( mw.user, 'isAnon' ).returns( false );
@@ -133,7 +133,7 @@
 		event = new $.Event( 'click', { button: 0, which: 1 } );
 		returnValue = bootstrap.click( {}, event, mw.Title.newFromText( 'Foo' ) );
 		clock.tick( 10 );
-		assert.ok( event.isDefaultPrevented(), 'First click is caught' );
+		assert.true( event.isDefaultPrevented(), 'First click is caught' );
 		assert.strictEqual( returnValue, false, 'First click is caught' );
 
 		// wait until MMW is loaded (or failed to load, in this case) before we
@@ -313,7 +313,7 @@
 
 		$link.trigger( { type: 'click', which: 1 } );
 		clock.tick( 10 );
-		assert.ok( bootstrap.setupOverlay.called, 'Overlay was set up' );
+		assert.true( bootstrap.setupOverlay.called, 'Overlay was set up' );
 		assert.strictEqual( viewer.loadImageByTitle.firstCall.args[ 0 ].getPrefixedDb(), 'File:Foo.jpg', 'Titles are identical' );
 
 		clock.restore();
@@ -411,7 +411,7 @@
 
 		bootstrap.hash();
 
-		assert.ok( bootstrap.setupOverlay.called, 'Overlay is set up' );
+		assert.true( bootstrap.setupOverlay.called, 'Overlay is set up' );
 	} );
 
 	QUnit.test( 'Overlay is not set up on an irrelevant hash change', function ( assert ) {

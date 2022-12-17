@@ -96,7 +96,8 @@ class Warn extends Consequence implements HookAborterConsequence, ConsequencesDi
 			$this->parameters->getFilter()->getID(),
 			$this->parameters->getIsGlobalFilter()
 		);
-		$titleText = $this->parameters->getTarget()->getNamespace() . $this->parameters->getTarget()->getText();
+		$target = $this->parameters->getTarget();
+		$titleText = $target->getNamespace() . ':' . $target->getText();
 		return 'abusefilter-warned-' . md5( $titleText ) .
 			'-' . $globalFilterName . '-' . $this->parameters->getAction();
 	}

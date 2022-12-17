@@ -3,17 +3,17 @@
 namespace MediaWiki\Extension\ConfirmEdit\hCaptcha;
 
 use ApiBase;
-use CaptchaAuthenticationRequest;
-use ConfirmEditHooks;
 use ContentSecurityPolicy;
 use FormatJson;
 use Html;
 use MediaWiki\Auth\AuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\Hooks;
+use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\MediaWikiServices;
 use Message;
 use RawMessage;
 use RequestContext;
-use SimpleCaptcha;
 use Status;
 use WebRequest;
 
@@ -268,7 +268,7 @@ class HCaptcha extends SimpleCaptcha {
 		}
 
 		// ugly way to retrieve error information
-		$captcha = ConfirmEditHooks::getInstance();
+		$captcha = Hooks::getInstance();
 
 		$formDescriptor['captchaWord'] = [
 			'class' => HTMLHCaptchaField::class,

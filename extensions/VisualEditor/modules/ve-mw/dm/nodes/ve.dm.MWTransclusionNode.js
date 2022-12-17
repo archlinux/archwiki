@@ -212,14 +212,17 @@ ve.dm.MWTransclusionNode.static.toDomElements = function ( dataElement, doc, con
 		var modelNode = ve.dm.nodeFactory.createFromElement( dataElement );
 		modelNode.setDocument( converter.internalList.getDocument() );
 		var viewNode = ve.ce.nodeFactory.createFromModel( modelNode );
+		// HACK: Node must be attached to check for rendering
+		viewNode.$element.appendTo( 'body' );
 		if ( !viewNode.hasRendering() ) {
+			viewNode.$element.detach();
 			viewNode.onSetup();
 			// HACK: Force the icon to render immediately
 			viewNode.updateInvisibleIconSync( true );
 			els = viewNode.$element.toArray();
-			viewNode.destroy();
-			return els;
 		}
+		viewNode.destroy();
+		viewNode.$element.detach();
 	}
 	return els;
 };
@@ -325,34 +328,32 @@ ve.dm.MWTransclusionNode.static.escapeParameter = function ( param ) {
 		if ( inNowiki ) {
 			if ( match[ 0 ] === '</nowiki>' ) {
 				inNowiki = false;
-				output += match[ 0 ];
-			} else {
-				output += match[ 0 ];
 			}
+			output += match[ 0 ];
 		} else {
 			var needsNowiki = true;
 			if ( match[ 0 ] === '<nowiki>' ) {
 				inNowiki = true;
 				needsNowiki = false;
-			} else if ( match[ 0 ] === '</nowiki>' || match[ 0 ].match( /<nowiki\s*\/>/ ) ) {
+			} else if ( match[ 0 ] === '</nowiki>' || /<nowiki\s*\/>/.test( match[ 0 ] ) ) {
 				needsNowiki = false;
-			} else if ( match[ 0 ].match( /(?:\[\[)/ ) ) {
+			} else if ( /(?:\[\[)/.test( match[ 0 ] ) ) {
 				linkStack++;
 				needsNowiki = false;
-			} else if ( match[ 0 ].match( /(?:\]\])/ ) ) {
+			} else if ( /(?:\]\])/.test( match[ 0 ] ) ) {
 				if ( linkStack > 0 ) {
 					linkStack--;
 					needsNowiki = false;
 				}
-			} else if ( match[ 0 ].match( /(?:\{\{)/ ) ) {
+			} else if ( /(?:\{\{)/.test( match[ 0 ] ) ) {
 				bracketStack++;
 				needsNowiki = false;
-			} else if ( match[ 0 ].match( /(?:\}\})/ ) ) {
+			} else if ( /(?:\}\})/.test( match[ 0 ] ) ) {
 				if ( bracketStack > 0 ) {
 					bracketStack--;
 					needsNowiki = false;
 				}
-			} else if ( match[ 0 ].match( /\|+/ ) ) {
+			} else if ( /\|+/.test( match[ 0 ] ) ) {
 				if ( bracketStack > 0 || linkStack > 0 ) {
 					needsNowiki = false;
 				}

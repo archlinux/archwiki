@@ -4,9 +4,7 @@ namespace MediaWiki\Extension\Math;
 
 use Hooks;
 use MediaWiki\Logger\LoggerFactory;
-use Sanitizer;
 use StatusValue;
-use Xml;
 
 /**
  * Contains the driver function for the LaTeXML daemon
@@ -153,33 +151,6 @@ class MathLaTeXML extends MathMathML {
 	}
 
 	/**
-	 * Internal version of @link self::embedMathML
-	 * @return string html element with rendered math
-	 */
-	protected function getMathMLTag() {
-		return self::embedMathML( $this->getMathml(), urldecode( $this->getTex() ) );
-	}
-
-	/**
-	 * Embeds the MathML-XML element in a HTML span element with class tex
-	 * @param string $mml the MathML string
-	 * @param string $tagId optional tagID for references like (pagename#equation2)
-	 * @param array|false $attribs
-	 * @return string html element with rendered math
-	 */
-	public static function embedMathML( $mml, $tagId = '', $attribs = false ) {
-		$mml = str_replace( "\n", " ", $mml );
-		if ( !$attribs ) {
-			$attribs = [ 'class' => 'tex', 'dir' => 'ltr' ];
-			if ( $tagId ) {
-				$attribs['id'] = $tagId;
-			}
-			$attribs = Sanitizer::validateTagAttributes( $attribs, 'span' );
-		}
-		return Xml::tags( 'span', $attribs, $mml );
-	}
-
-	/**
 	 * Calculates the SVG image based on the MathML input
 	 * No cache is used.
 	 * @return bool
@@ -188,7 +159,8 @@ class MathLaTeXML extends MathMathML {
 		$renderer = new MathMathML( $this->getTex() );
 		$renderer->setMathml( $this->getMathml() );
 		$renderer->setMode( MathConfig::MODE_LATEXML );
-		$res = $renderer->render( true );
+		$renderer->setPurge();
+		$res = $renderer->render();
 		if ( $res == true ) {
 			$this->setSvg( $renderer->getSvg() );
 		} else {
@@ -223,3 +195,5 @@ class MathLaTeXML extends MathMathML {
 		return 'mathlatexml';
 	}
 }
+
+class_alias( MathLaTeXML::class, 'MathLaTeXML' );

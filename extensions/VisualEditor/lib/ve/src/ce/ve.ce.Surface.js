@@ -52,7 +52,12 @@ ve.ce.Surface = function VeCeSurface( model, ui, config ) {
 	this.clipboard = null;
 	this.clipboardId = Math.random().toString();
 	this.clipboardIndex = 0;
-	this.middleClickSelection = null;
+	// The last non-collapsed selection in this VE surface. This will be a NullSelection
+	// if there has never had a non-collapsed selection, or if the cursor is moved out of
+	// the surface and a selection is made elsewhere.
+	this.lastNonCollapsedDocumentSelection = new ve.dm.NullSelection();
+	this.middleClickPasting = false;
+	this.middleClickTargetOffset = false;
 	this.renderLocks = 0;
 	this.dragging = false;
 	this.relocatingSelection = null;
@@ -536,6 +541,7 @@ ve.ce.Surface.prototype.initialize = function () {
 			this.$document[ 0 ].execCommand( 'enableInlineTableEditing', false, false );
 		} catch ( e ) { /* Silently ignore */ }
 	}
+	this.emit( 'position' );
 };
 
 /**
@@ -709,12 +715,12 @@ ve.ce.Surface.prototype.isDeactivated = function () {
 };
 
 /**
- * Check if the surface is visible deactivated.
+ * Check if the surface is visibly deactivated.
  *
  * Only true if the surface was decativated by the user
  * in a way that is expected to change the rendering.
  *
- * @return {boolean} Surface is deactivated
+ * @return {boolean} Surface is visibly deactivated
  */
 ve.ce.Surface.prototype.isShownAsDeactivated = function () {
 	return this.deactivated && !this.showAsActivated;
@@ -749,7 +755,7 @@ ve.ce.Surface.prototype.deactivate = function ( showAsActivated, noSelectionChan
 			this.removeRangesAndBlur();
 			// iOS Safari will sometimes restore the selection immediately (T293661)
 			setTimeout( function () {
-				if ( surface.nativeSelection.rangeCount ) {
+				if ( OO.ui.contains( surface.$attachedRootNode[ 0 ], surface.nativeSelection.anchorNode, true ) ) {
 					surface.removeRangesAndBlur();
 				}
 			} );
@@ -936,11 +942,18 @@ ve.ce.Surface.prototype.onDocumentMouseDown = function ( e ) {
 
 	if ( e.which !== OO.ui.MouseButtons.LEFT ) {
 		if ( e.which === OO.ui.MouseButtons.MIDDLE ) {
-			this.middleClickSelection = this.getModel().getSelection();
+			// When middle click is also focusig the document, the selection may not end up
+			// where you clicked, so record the offset from the click coordinates. (T311733)
+			var targetOffset = -1;
+			if ( this.getModel().getSelection().isNull() ) {
+				targetOffset = this.getOffsetFromEventCoords( e );
+			}
+			this.middleClickTargetOffset = targetOffset !== -1 ? targetOffset : null;
+			this.middleClickPasting = true;
 			this.$document.one( 'mouseup', function () {
 				// Stay true until other events have run, e.g. paste
 				setTimeout( function () {
-					surface.middleClickSelection = null;
+					surface.middleClickPasting = false;
 				} );
 			} );
 		}
@@ -1113,6 +1126,17 @@ ve.ce.Surface.prototype.setDragging = function ( dragging ) {
  * @param {jQuery.Event} e Selection change event
  */
 ve.ce.Surface.prototype.onDocumentSelectionChange = function () {
+	var selection = this.getModel().getSelection();
+	if (
+		// There is a non-empty selection in the VE surface. Use this if middle-click-to-paste is triggered later.
+		!selection.isCollapsed() ||
+		// There is no surface selection, and a native selection has been made elsewhere.
+		// Null the lastNonCollapsedDocumentSelection so native middle-click-to-paste happens instead.
+		( selection.isNull() && this.nativeSelection.rangeCount && !this.nativeSelection.getRangeAt( 0 ).collapsed )
+	) {
+		this.lastNonCollapsedDocumentSelection = selection;
+	}
+
 	// selectionChange events are only emitted from window.document, so ignore
 	// any events which are fired when the document is blurred or deactivated.
 	if ( !this.focused || this.deactivated ) {
@@ -2107,6 +2131,13 @@ ve.ce.Surface.prototype.onPaste = function ( e ) {
 				surface.pasteSpecial = false;
 				surface.beforePasteData = null;
 
+				// Restore original clipboard metadata if requred (was overridden by middle-click
+				// paste logic in beforePaste)
+				if ( surface.originalClipboardMetdata ) {
+					surface.clipboardIndex = surface.originalClipboardMetdata.clipboardIndex;
+					surface.clipboard = surface.originalClipboardMetdata.clipboard;
+				}
+
 				ve.track( 'activity.clipboard', { action: 'paste' } );
 			} );
 		}
@@ -2136,25 +2167,24 @@ ve.ce.Surface.prototype.beforePaste = function ( e ) {
 	}
 
 	this.beforePasteData = {};
-	if ( this.middleClickSelection ) {
-		// Paste was triggered by middle click:
-		// * Simulate a fake copy if there was a document selection during the middle click
-		// * If not, re-use the contents of the last-copied item
-		//
-		// This simulates the behaviour of the copy phase of middle click paste, which doesn't
-		// fire an event, however it will not work for data that was loaded into the clipboard
-		// externally.
-
-		if ( !this.middleClickSelection.isCollapsed() ) {
-			this.clipboardIndex++;
-			this.clipboard = {
-				slice: this.model.documentModel.shallowCloneFromSelection( this.middleClickSelection ),
-				hash: null
-			};
-		}
-		if ( this.clipboard ) {
-			this.beforePasteData.custom = this.clipboardId + '-' + this.clipboardIndex;
-		}
+	this.originalClipboardMetdata = null;
+	if ( this.middleClickPasting && !this.lastNonCollapsedDocumentSelection.isNull() ) {
+		// Paste was triggered by middle click, and the last non-collapsed document selection was in
+		// this VE surface. Simulate a fake copy to load DM data into the clipboard. If we let the
+		// native middle-click paste happen, it would load CE data into the clipboard.
+		// Store original clipboard metadata so it can be restored after paste,
+		// and we can continue to use internal paste.
+		this.originalClipboardMetdata = {
+			clipboardIndex: this.clipboardIndex,
+			clipboard: this.clipboard
+		};
+		// Use a fake clipboard index for middle click, will be restored in afterPaste
+		this.clipboardIndex = -1;
+		this.clipboard = {
+			slice: this.model.documentModel.shallowCloneFromSelection( this.lastNonCollapsedDocumentSelection ),
+			hash: null
+		};
+		this.beforePasteData.custom = this.clipboardId + '-' + this.clipboardIndex;
 	} else if ( clipboardData ) {
 		if ( this.handleDataTransfer( clipboardData, true ) ) {
 			e.preventDefault();
@@ -2205,6 +2235,12 @@ ve.ce.Surface.prototype.beforePaste = function ( e ) {
 		if ( !leftText && !rightText ) {
 			context.push( '☁' );
 			textEnd = 1;
+			// If we are middle click pasting we can't change the native selection, so
+			// just make the text a placeholder to the left. (T311723)
+			if ( this.middleClickPasting ) {
+				leftText = '☁';
+				textStart = 1;
+			}
 		}
 		context.push( { type: '/' + context[ 0 ].type } );
 
@@ -2265,6 +2301,13 @@ ve.ce.Surface.prototype.afterPaste = function () {
 
 	if ( this.getModel().getFragment().isNull() ) {
 		return done;
+	}
+
+	if ( this.middleClickTargetOffset ) {
+		targetFragment = targetFragment.clone( new ve.dm.LinearSelection( new ve.Range( this.middleClickTargetOffset ) ) );
+	} else if ( this.middleClickPasting ) {
+		// Middle click pasting should always collapse the selection before pasting
+		targetFragment = targetFragment.collapseToEnd();
 	}
 
 	// Immedately remove any <style> tags from the pasteTarget that might
@@ -4439,16 +4482,23 @@ ve.ce.Surface.prototype.showModelSelection = function ( force ) {
 			// the actual model range. This is necessary because one model selection can
 			// correspond to many DOM selections, and we don't want to change a DOM
 			// selection that is already valid to an arbitrary different DOM selection.
-			var impliedModelRange = new ve.Range(
-				ve.ce.getOffset(
-					this.nativeSelection.anchorNode,
-					this.nativeSelection.anchorOffset
-				),
-				ve.ce.getOffset(
-					this.nativeSelection.focusNode,
-					this.nativeSelection.focusOffset
-				)
-			);
+			var impliedModelRange;
+			try {
+				impliedModelRange = new ve.Range(
+					ve.ce.getOffset(
+						this.nativeSelection.anchorNode,
+						this.nativeSelection.anchorOffset
+					),
+					ve.ce.getOffset(
+						this.nativeSelection.focusNode,
+						this.nativeSelection.focusOffset
+					)
+				);
+			} catch ( e ) {
+				// The nativeSelection appears to end up outside the documentNode
+				// sometimes, e.g. when deleting in Safari (T306218)
+				impliedModelRange = null;
+			}
 			if ( modelRange.equals( impliedModelRange ) ) {
 				// Current native selection fits model range; don't change
 				return false;

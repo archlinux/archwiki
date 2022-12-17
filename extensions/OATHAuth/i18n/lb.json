@@ -24,5 +24,6 @@
 	"notification-header-oathauth-disable": "Zwee-Facteur-Authentifikatioun gouf fir {{GENDER:$2|Äre Benotzerkont}} desaktivéiert.",
 	"notification-body-oathauth-disable-other": "Wann {{GENDER:$2|Dir}} dëst net gefrot hutt, da sollt {{GENDER:$2|Dir}} en Administrateur kontaktéieren.",
 	"oathauth-notifications-disable-help": "Hëllef",
+	"oathauth-notifications-enabled-help": "Hëllef",
 	"oathauth-prefs-disabledgroups": "{{PLURAL:$1|Desaktivéierte Grupp|Desaktivéiert Gruppen}}"
 }

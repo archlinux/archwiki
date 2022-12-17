@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Gildo Máquina",
 			"Jacinto Jeque",
-			"Amire80",
 			"Tomas Armando Moz"
 		]
 	},
@@ -17,5 +17,5 @@
 	"vector-view-history": "Moonelo wa ethale",
 	"vector-view-view": "Osoma",
 	"vector-more-actions": "Vanceene",
-	"vector-searchsuggest-containing": "Waavya makukhu arimomo <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Waavya makukhu arimomo <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

@@ -1,12 +1,19 @@
 <?php
 
 class TestFileEditor {
+	/** @var string[] */
 	private $lines;
+	/** @var int */
 	private $numLines;
+	/** @var array */
 	private $deletions;
+	/** @var array */
 	private $changes;
+	/** @var int */
 	private $pos = 0;
+	/** @var callable|false */
 	private $warningCallback;
+	/** @var string */
 	private $result = '';
 
 	public static function edit( $text, array $deletions, array $changes, $warningCallback = null ) {
@@ -166,7 +173,7 @@ class TestFileEditor {
 							$test[$i]['deleted'] = true;
 							break;
 						default:
-							throw new Exception( "Unknown op: ${change['op']}" );
+							throw new Exception( "Unknown op: {$change['op']}" );
 					}
 					// Acknowledge
 					// Note that we use the old section name for the rename op

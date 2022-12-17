@@ -17,6 +17,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "Predeterminita",
 	"math-visualeditor-mwlatexinspector-display-inline": "''Inline''",
 	"math-visualeditor-mwlatexinspector-id": "ID dil ligilo (fakultativo)",
+	"math-visualeditor-mwlatexinspector-qid": "ID di Wikibase (kun previxo Q)",
 	"math-visualeditor-mwmathdialog-title": "Matematikala formulo",
 	"math-visualeditor-symbol-group-chem-addition": "Adjuntar kompozuri",
 	"math-visualeditor-symbol-group-chem-aggregation": "Stando di ensemblado",

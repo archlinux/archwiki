@@ -1,5 +1,10 @@
 # Release History
 
+## v4.0.0
+* Remove HHVM support code from setTimestamp()
+* Drop PHP 7.0/7.1 and HHVM support
+* Handle 2-digit years per RFC 2626
+
 ## v3.0.0
 * BREAKING CHANGE: the library is now stricter about rejecting some invalid
   formats such as "Wed, 22 May 2019 12:00:00 +1 day" (which is a valid date

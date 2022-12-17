@@ -19,11 +19,19 @@
 
 /**
  * Block media items
- * (mostly derived from MediaWiki's content.parsoid.less)
+ * (mostly derived from MediaWiki's content.media-common.less)
  */
-figure[ typeof*='mw:Image' ],
-figure[ typeof*='mw:Video' ],
-figure[ typeof*='mw:Audio' ] {
+figure[ typeof~='mw:File/Thumb' ],
+figure[ typeof~='mw:File/Frame' ],
+/* TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content is no
+ * longer supported
+ */
+figure[ typeof~='mw:Image/Thumb' ],
+figure[ typeof~='mw:Video/Thumb' ],
+figure[ typeof~='mw:Audio/Thumb' ],
+figure[ typeof~='mw:Image/Frame' ],
+figure[ typeof~='mw:Video/Frame' ],
+figure[ typeof~='mw:Audio/Frame' ] {
 	max-width: 100%;
 	// Centered on non-tablet
 	margin: 0 auto;
@@ -35,9 +43,17 @@ figure[ typeof*='mw:Audio' ] {
 }
 
 @media screen and ( min-width: @width-breakpoint-tablet ) {
-	figure[ typeof*='mw:Image' ],
-	figure[ typeof*='mw:Video' ],
-	figure[ typeof*='mw:Audio' ] {
+	figure[ typeof~='mw:File/Thumb' ],
+	figure[ typeof~='mw:File/Frame' ],
+	/* TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content is no
+	 * longer supported
+	 */
+	figure[ typeof~='mw:Image/Thumb' ],
+	figure[ typeof~='mw:Video/Thumb' ],
+	figure[ typeof~='mw:Audio/Thumb' ],
+	figure[ typeof~='mw:Image/Frame' ],
+	figure[ typeof~='mw:Video/Frame' ],
+	figure[ typeof~='mw:Audio/Frame' ] {
 		// Defaults to right alignment when not explicitly set. Should be flippable.
 		margin: 0.6em 0 0.6em 1.4em;
 

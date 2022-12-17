@@ -15,5 +15,5 @@
 	"vector-view-history": "Raba uko vyagiye birakurikirana",
 	"vector-view-view": "Soma",
 	"vector-more-actions": "Ibindi",
-	"vector-searchsuggest-containing": "Rondera impapuro zirimwo <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Rondera impapuro zirimwo <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

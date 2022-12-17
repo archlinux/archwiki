@@ -1,8 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"AlefZet"
+			"AlefZet",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
-	"categorytree": "Kategoriyalar teregi"
+	"categorytree": "Kategoriyalar teregi",
+	"categorytree-portlet": "Kategoriyalar",
+	"categorytree-category": "Kategoriya:",
+	"categorytree-mode-all": "hámme betler",
+	"categorytree-collapse": "kishilestiriw",
+	"categorytree-expand": "úlkenlestiriw"
 }

@@ -1,6 +1,4 @@
 /* global FetchEndEvent, SuggestionClickEvent, SearchSubmitEvent */
-/** @module Instrumentation */
-
 /**
  * The value of the `inputLocation` property of any and all SearchSatisfaction events sent by the
  * corresponding instrumentation.
@@ -133,7 +131,7 @@ function getWprovFromResultIndex( index ) {
  */
 
 /**
- * Used by the `wvui-typeahead-search` component to generate URLs for the search results. Adds a
+ * Used by the Vue-enhanced search component to generate URLs for the search results. Adds a
  * `wprov` paramater to the URL to satisfy the SearchSatisfaction instrumentation.
  *
  * @see getWprovFromResultIndex
@@ -155,7 +153,16 @@ function generateUrl( suggestion, meta ) {
 
 	return result.toString();
 }
+/**
+ * @typedef {Object} Instrumentation
+ * @property {Object} listeners
+ * @property {Function} getWprovFromResultIndex
+ * @property {Function} generateUrl
+ */
 
+/**
+ * @type {Instrumentation}
+ */
 module.exports = {
 	listeners: {
 		onFetchStart,

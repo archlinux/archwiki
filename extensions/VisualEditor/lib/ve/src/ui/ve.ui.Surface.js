@@ -19,6 +19,7 @@
  * @cfg {jQuery} [$scrollContainer] The scroll container of the surface
  * @cfg {jQuery} [$scrollListener] The scroll listener of the surface
  * @cfg {jQuery} [$overlayContainer] Clipping container for local overlays, defaults to surface view
+ * @cfg {number} [overlayPadding] Padding beween local overlays and clipping container
  * @cfg {ve.ui.CommandRegistry} [commandRegistry] Command registry to use
  * @cfg {ve.ui.SequenceRegistry} [sequenceRegistry] Sequence registry to use
  * @cfg {ve.ui.DataTransferHandlerFactory} [dataTransferHandlerFactory] Data transfer handler factory to use
@@ -82,7 +83,10 @@ ve.ui.Surface = function VeUiSurface( dataOrDocOrSurface, config ) {
 	this.dialogs = this.createDialogWindowManager();
 	this.importRules = config.importRules || {};
 	this.multiline = config.multiline !== false;
-	this.context = this.createContext( { $popupContainer: config.$overlayContainer } );
+	this.context = this.createContext( {
+		$popupContainer: config.$overlayContainer,
+		popupPadding: config.overlayPadding
+	} );
 	this.progresses = [];
 	this.showProgressDebounced = ve.debounce( this.showProgress.bind( this ) );
 	this.scrollSelectionIntoViewDebounced = ve.debounce( this.scrollSelectionIntoView.bind( this ), 500 );
@@ -121,7 +125,13 @@ ve.ui.Surface = function VeUiSurface( dataOrDocOrSurface, config ) {
 	this.getContext().connect( this, { resize: 'onContextResize' } );
 
 	// Initialization
-	this.$menus.append( this.context.$element, this.completion.$element );
+	if ( OO.ui.isMobile() ) {
+		// Mobile context is almost fullscreen and must appear on top of other elements (T308716)
+		this.globalOverlay.$element.append( this.context.$element );
+	} else {
+		this.$menus.append( this.context.$element );
+	}
+	this.$menus.append( this.completion.$element );
 	this.$element
 		// The following classes are used here:
 		// * ve-ui-surface-visual
@@ -167,6 +177,12 @@ OO.inheritClass( ve.ui.Surface, OO.ui.Widget );
  * The surface has been submitted by user action, e.g. Ctrl+Enter
  *
  * @event submit
+ */
+
+/**
+ * The surface has been cancelled by user action, e.g. Escape
+ *
+ * @event cancel
  */
 
 /**
@@ -510,7 +526,8 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function () {
 	var animate = true,
 		view = this.getView(),
 		selection = view.getSelection(),
-		surface = this;
+		surface = this,
+		isNative = selection.isNativeCursor();
 
 	// We only care about the focus end of the selection, the anchor never
 	// moves and should be allowed off screen.
@@ -525,7 +542,7 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function () {
 
 	var padding = ve.copy( this.padding );
 
-	if ( selection.isNativeCursor() ) {
+	if ( isNative ) {
 		animate = false;
 		if (
 			OO.ui.isMobile() &&
@@ -552,6 +569,13 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function () {
 
 		clientRect.top -= 5;
 		clientRect.bottom += 5;
+	} else {
+		// Don't attempt to scroll non-native selections into view if they
+		// are taller than the viewport (T305862).
+		var viewportDimensions = this.getViewportDimensions();
+		if ( clientRect.height > viewportDimensions.height ) {
+			return;
+		}
 	}
 
 	ve.scrollIntoView( clientRect, {
@@ -559,7 +583,7 @@ ve.ui.Surface.prototype.scrollSelectionIntoView = function () {
 		scrollContainer: this.$scrollContainer[ 0 ],
 		padding: padding
 	} ).then( function () {
-		if ( selection.isNativeCursor() ) {
+		if ( isNative ) {
 			// TODO: This event has only even been emitted for native selection
 			// scroll changes. Perhaps rename it.
 			surface.emit( 'scroll' );
@@ -580,6 +604,11 @@ ve.ui.Surface.prototype.setPlaceholder = function ( placeholder ) {
 	if ( this.placeholder ) {
 		this.$placeholder.prependTo( this.$element );
 		this.updatePlaceholder();
+		var documentView = this.getView().getDocument();
+		this.$placeholder.prop( {
+			dir: documentView.getDir(),
+			lang: documentView.getLang()
+		} );
 	} else {
 		this.$placeholder.detach();
 		this.placeholderVisible = false;
@@ -770,7 +799,7 @@ ve.ui.Surface.prototype.adjustVisiblePadding = function () {
  * @param {jQuery.Promise} progressCompletePromise Promise which resolves when the progress action is complete
  * @param {jQuery|string|Function} label Progress bar label
  * @param {boolean} nonCancellable Progress item can't be cancelled
- * @return {jQuery.Promise} Promise which resolves with a progress bar widget and a promise which fails if cancelled
+ * @return {jQuery.Promise} Promise which resolves with a progress bar widget and fails if cancelled
  */
 ve.ui.Surface.prototype.createProgress = function ( progressCompletePromise, label, nonCancellable ) {
 	var progressBarDeferred = ve.createDeferred();

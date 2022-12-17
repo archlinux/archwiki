@@ -118,7 +118,59 @@ class ParsoidExtensionAPI {
 			$err['params'] = $params;
 		}
 		$this->errors[] = $err;
-		return WTUtils::createLocalizationFragment( $this->getTopLevelDoc(), $err );
+		return WTUtils::createInterfaceI18nFragment( $this->getTopLevelDoc(), $key, $params );
+	}
+
+	/**
+	 * Creates an internationalization (i18n) message that will be localized into the user
+	 * interface language. The returned DocumentFragment contains, as a single child, a span
+	 * element with the appropriate information for later localization.
+	 * @param string $key message key for the message to be localized
+	 * @param ?array $params parameters for localization
+	 * @return DocumentFragment
+	 */
+	public function createInterfaceI18nFragment( string $key, ?array $params ): DocumentFragment {
+		return WTUtils::createInterfaceI18nFragment( $this->getTopLevelDoc(), $key, $params );
+	}
+
+	/**
+	 * Creates an internationalization (i18n) message that will be localized into the page content
+	 * language. The returned DocumentFragment contains, as a single child, a span
+	 * element with the appropriate information for later localization.
+	 * @param string $key message key for the message to be localized
+	 * @param ?array $params parameters for localization
+	 * @return DocumentFragment
+	 */
+	public function createPageContentI18nFragment( string $key, ?array $params ): DocumentFragment {
+		return WTUtils::createPageContentI18nFragment( $this->getTopLevelDoc(), $key, $params );
+	}
+
+	/**
+	 * Adds to $element the internationalization information needed for the attribute $name to be
+	 * localized in a later pass into the user interface language.
+	 * @param Element $element element on which to add internationalization information
+	 * @param string $name name of the attribute whose value will be localized
+	 * @param string $key message key used for the attribute value localization
+	 * @param ?array $params parameters for localization
+	 */
+	public function addInterfaceI18nAttribute(
+		Element $element, string $name, string $key, ?array $params
+	) {
+		WTUtils::addInterfaceI18nAttribute( $element, $name, $key, $params );
+	}
+
+	/**
+	 * Adds to $element the internationalization information needed for the attribute $name to be
+	 * localized in a later pass into the page content language.
+	 * @param Element $element element on which to add internationalization information
+	 * @param string $name name of the attribute whose value will be localized
+	 * @param string $key message key used for the attribute value localization
+	 * @param array $params parameters for localization
+	 */
+	public function addPageContentI18nAttribute(
+		Element $element, string $name, string $key, array $params
+	) {
+		WTUtils::addPageContentI18nAttribute( $element, $name, $key, $params );
 	}
 
 	/**
@@ -367,6 +419,39 @@ class ParsoidExtensionAPI {
 		}
 
 		return $domFragment;
+	}
+
+	/**
+	 * Set temporary data into the DOM node that will be discarded
+	 * when DOM is serialized
+	 *
+	 * Use the tag name as the key for TempData management
+	 *
+	 * @param Element $node
+	 * @param mixed $data
+	 * @return void
+	 */
+	public function setTempNodeData( Element $node, $data ): void {
+		$dataParsoid = DOMDataUtils::getDataParsoid( $node );
+		$tmpData = $dataParsoid->getTemp();
+		$key = $this->extTag->getName();
+		$tmpData->setTagData( $key, $data );
+	}
+
+	/**
+	 * Get temporary data into the DOM node that will be discarded
+	 * when DOM is serialized.
+	 *
+	 * Use the tag name as the key for TempData management
+	 *
+	 * @param Element $node
+	 * @return mixed
+	 */
+	public function getTempNodeData( Element $node ) {
+		$dataParsoid = DOMDataUtils::getDataParsoid( $node );
+		$tmpData = $dataParsoid->getTemp();
+		$key = $this->extTag->getName();
+		return $tmpData->getTagData( $key );
 	}
 
 	/**
@@ -792,6 +877,7 @@ class ParsoidExtensionAPI {
 			// a caption.  And since it's first wins, it shouldn't interfere
 			// with another horizontal alignment defined in $imageOpts.
 			// We just have to remember to strip the class below.
+			// NOTE: This will have to be adjusted with T305628
 			$pieces[] = '|none';
 		}
 
@@ -854,7 +940,15 @@ class ParsoidExtensionAPI {
 		);
 
 		$thumb = $domFragment->firstChild;
-		if ( !in_array( DOMCompat::nodeName( $thumb ), [ 'figure', 'span' ], true ) ) {
+		$validWrappers = [ 'figure' ];
+		// Downstream code expects a figcaption if we're forcing a block so we
+		// validate that we did indeed parse a figure.  It might not have
+		// happened because $imageOpts has an unbalanced `]]` which closes
+		// the wikilink syntax before we get in our `|none`.
+		if ( !$forceBlock ) {
+			$validWrappers[] = 'span';
+		}
+		if ( !in_array( DOMCompat::nodeName( $thumb ), $validWrappers, true ) ) {
 			$error = "{$extTagName}_invalid_image";
 			return null;
 		}

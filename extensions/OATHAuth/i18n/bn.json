@@ -4,8 +4,8 @@
 			"Aftabuzzaman",
 			"Elias Ahmmad",
 			"MdsShakil",
-			"আফতাবুজ্জামান",
-			"Yahya"
+			"Yahya",
+			"আফতাবুজ্জামান"
 		]
 	},
 	"oathauth-desc": "HMAC ভিত্তিক এক-কালীন পাসওয়ার্ড ব্যবহার করে প্রমাণীকরণ প্রদান করে",
@@ -50,6 +50,7 @@
 	"oathauth-user-not-found": "এই নামে কোন ব্যবহারকারী অ্যাকাউন্ট পাওয়া যায় নি",
 	"oath-log-name": "দুই-ধাপের প্রমাণীকরণ লগ",
 	"logentry-oath-disable-other": "$1 $3-এর জন্য দুই-ধাপের প্রমাণীকরণ {{GENDER:$2|নিষ্ক্রিয় করেছেন}}",
+	"log-action-filter-oath-disable-other": "অন্য একজন ব্যবহারকারীর দুই-ধাপের প্রমাণীকরণ নিষ্ক্রিয় করা",
 	"oathauth-ui-no-module": "সক্রিয় করা নেই",
 	"oathauth-module-totp-label": "TOTP (এককালীন টোকেন)",
 	"oathauth-ui-manage": "পরিচালনা করুন",
@@ -64,6 +65,7 @@
 	"oathauth-disable-method-warning-button-label": "নিশ্চিত করছি ও অগ্রসর হোন",
 	"oathauth-invalidrequest": "অবৈধ অনুরোধ",
 	"oathauth-notifications-disable-help": "সাহায্য",
+	"oathauth-notifications-enabled-help": "সাহায্য",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} দুই-ধাপের প্রমাণীকরণ সক্রিয় করেছেন।",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}-এর দুই-ধাপের প্রমাণীকরণ সক্রিয় করা নেই।"
 }

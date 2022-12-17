@@ -70,7 +70,7 @@ class MathMathMLCli extends MathMathML {
 		// cli interface seems to be OK.
 		$this->processJsonResult( $response, 'file://' . $wgMathoidCli[0] );
 		$this->mathStyle = $response->mathoidStyle;
-		if ( array_key_exists( 'png', $response ) ) {
+		if ( property_exists( $response, 'png' ) ) {
 			$this->png = implode( array_map( "chr", $response->png->data ) );
 		} else {
 			LoggerFactory::getInstance( 'Math' )->error( 'Mathoid did not return a PNG image.' .
@@ -94,8 +94,7 @@ class MathMathMLCli extends MathMathML {
 				case '-':
 					// we do not know any cases that triggers this error
 			}
-		}
-		catch ( Exception $e ) {
+		} catch ( Exception $e ) {
 			// use default error message
 		}
 
@@ -121,7 +120,7 @@ class MathMathMLCli extends MathMathML {
 	 * @return mixed
 	 * @throws MWException
 	 */
-	public static function evaluateWithCli( $req, &$exitCode = null ) {
+	private static function evaluateWithCli( $req, &$exitCode = null ) {
 		global $wgMathoidCli;
 		$json_req = json_encode( $req );
 		$cmd = MediaWikiServices::getInstance()->getShellCommandFactory()->create();
@@ -146,7 +145,7 @@ class MathMathMLCli extends MathMathML {
 		return $res;
 	}
 
-	public function render( $forceReRendering = false ) {
+	public function render() {
 		if ( $this->getLastError() ) {
 			return false;
 		}

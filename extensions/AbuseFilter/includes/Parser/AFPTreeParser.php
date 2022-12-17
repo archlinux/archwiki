@@ -592,8 +592,8 @@ class AFPTreeParser {
 	protected function doLevelFunction() {
 		$next = $this->getNextToken();
 		if ( $this->mCur->type === AFPToken::TID &&
-			 $next->type === AFPToken::TBRACE &&
-			 $next->value === '('
+			$next->type === AFPToken::TBRACE &&
+			$next->value === '('
 		) {
 			$func = $this->mCur->value;
 			$position = $this->mPos;

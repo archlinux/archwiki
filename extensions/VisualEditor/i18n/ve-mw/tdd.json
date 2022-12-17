@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"咽頭べさ",
-			"Aey Tai Nuea"
+			"Aey Tai Nuea",
+			"咽頭べさ"
 		]
 	},
 	"tooltip-ca-ve-edit": "ᥛᥨᥢᥳᥛᥦᥰ ᥢᥣᥲᥘᥤᥐᥲᥢᥭᥳ",
@@ -17,9 +17,6 @@
 	"visualeditor-dialog-media-info-moreinfo": "ᥘᥩᥢᥳᥑᥣᥝᥱ ᥢᥛᥴᥘᥫᥴ",
 	"visualeditor-dialog-media-info-readmore": "ᥔᥪᥙᥱᥘᥧᥴ",
 	"visualeditor-dialog-media-page-advanced": "ᥓᥢᥳᥔᥧᥒᥴ",
-	"visualeditor-dialog-media-position-center": "ᥢᥬᥰᥐᥣᥒᥴ",
-	"visualeditor-dialog-media-position-left": "ᥔᥣᥭᥳ",
-	"visualeditor-dialog-media-position-right": "ᥑᥣᥴ",
 	"visualeditor-dialog-media-search-tab-search": "ᥑᥨᥢᥳᥞᥣᥴ",
 	"visualeditor-dialog-media-type-thumb": "ᥞᥣᥒᥲᥘᥥᥐᥳ",
 	"visualeditor-dialog-meta-categories-addcategory-label": "ᥗᥦᥛᥴᥙᥫᥒᥴᥗᥣᥢᥲ ᥔᥬᥱᥓᥧᥰ ᥢᥣᥲᥘᥤᥐᥲᥟᥢᥴᥢᥭᥳ",

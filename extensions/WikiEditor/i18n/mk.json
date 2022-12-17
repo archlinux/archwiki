@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Оваа страница не постои на {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Укажаниот наслов е неважечки",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Надворешна врска",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Проверувам дали постои страницата...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Оваа страница не е содржинска, туку список на теми со слични називи",
 	"wikieditor-toolbar-tool-link-int-invalid": "Наведениот наслов е неважечки.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL адресата која ја назначивте изгледа како врска до друга викистраница. Сакате ова да биде внатрешна врска?",
@@ -196,5 +195,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Нормален текст<br />:Вовлечен текст<br />::Вовлечен текст",
 	"wikieditor-toolbar-help-content-indent-result": "Нормален текст<dl><dd>Вовлечен текст<dl><dd>Вовлечен текст</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Уредувањето е направено користејќи [[mw:Special:MyLanguage/Extension:WikiEditor|Викиуредник]] (уредникот на вики текст од 2010 г.)",
-	"wikieditor-realtimepreview-preview": "Преглед"
+	"wikieditor-realtimepreview-preview": "Преглед",
+	"wikieditor-realtimepreview-error": "Прегледот не се вчитува",
+	"wikieditor-realtimepreview-reload": "Превчитај",
+	"wikieditor-realtimepreview-beta-label": "Преглед во живо",
+	"wikieditor-realtimepreview-beta-desc": "Погледајте како промените во викитекстот ќе им изгледаат на читателите во [[mw:Special:MyLanguage/Extension:WikiEditor|уредникот од 2010 г]].",
+	"wikieditor-realtimepreview-reload-title": "Превчитај го прегледникот во живо",
+	"wikieditor-realtimepreview-manual": "Превчитајте сега за да ги прегледате вашите уредувања рачно.",
+	"wikieditor-realtimepreview-onboarding-title": "Преглед во живо",
+	"wikieditor-realtimepreview-onboarding-body": "Погледајте како изгледаат вашите уредувања за читателите, прегледувајќи ги во живо.",
+	"wikieditor-realtimepreview-onboarding-button": "Јасно"
 }

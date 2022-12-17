@@ -271,23 +271,23 @@ QUnit.test( 'Diffing', function ( assert ) {
 					'<p data-diff-action="insert">boo</p>'
 			},
 			{
-				msg: 'Attributes added to ClassAttributeNodes',
-				oldDoc: '<figure><img src="http://example.org/foo.jpg" alt="foo"><figcaption>bar</figcaption></figure>',
+				msg: 'Alt text added to image',
+				oldDoc: '<figure><img src="http://example.org/foo.jpg"><figcaption>bar</figcaption></figure>',
 				newDoc: '<figure><img src="http://example.org/foo.jpg" alt="bar"><figcaption>bar</figcaption></figure>',
 				expected:
 					'<figure data-diff-action="structural-change" data-diff-id="0"><img src="http://example.org/foo.jpg" alt="bar"><figcaption>bar</figcaption></figure>',
 				expectedDescriptions: [
-					'<div>visualeditor-changedesc-changed,alt,<del>foo</del>,<ins>bar</ins></div>'
+					'<div>visualeditor-changedesc-set,alt,<ins>bar</ins></div>'
 				]
 			},
 			{
-				msg: 'Attributes added to ClassAttributeNodes with classes',
-				oldDoc: '<figure class="ve-align-right"><img src="http://example.org/foo.jpg" alt="foo"><figcaption>bar</figcaption></figure>',
-				newDoc: '<figure class="ve-align-right"><img src="http://example.org/foo.jpg" alt="bar"><figcaption>bar</figcaption></figure>',
+				msg: 'Attributes changed on ClassAttributeNode',
+				oldDoc: '<figure class="ve-align-right"><img src="http://example.org/foo.jpg"><figcaption>bar</figcaption></figure>',
+				newDoc: '<figure class="ve-align-left"><img src="http://example.org/foo.jpg"><figcaption>bar</figcaption></figure>',
 				expected:
-					'<figure class="ve-align-right" data-diff-action="structural-change" data-diff-id="0"><img src="http://example.org/foo.jpg" alt="bar"><figcaption>bar</figcaption></figure>',
+					'<figure class="ve-align-left" data-diff-action="structural-change" data-diff-id="0"><img src="http://example.org/foo.jpg"><figcaption>bar</figcaption></figure>',
 				expectedDescriptions: [
-					'<div>visualeditor-changedesc-changed,alt,<del>foo</del>,<ins>bar</ins></div>'
+					'<div>visualeditor-changedesc-align,<del>visualeditor-align-desc-right</del>,<ins>visualeditor-align-desc-left</ins></div>'
 				]
 			},
 			{
@@ -658,9 +658,12 @@ QUnit.test( 'Diffing', function ( assert ) {
 			},
 			{
 				msg: 'Table with no changes (colspan/rowspan set to 1) is not rendered',
-				oldDoc: '<table><tr><td>A</td></tr></table>',
-				newDoc: '<table><tr><td colspan="1" rowspan="1">A</td></tr></table>',
-				expected: noChanges
+				oldDoc: '<p>a</p><table><tr><td>A</td></tr></table><p>b</b>',
+				newDoc: '<p>a</p><table><tr><td colspan="1" rowspan="1">A</td></tr></table><p>b</b>',
+				expected:
+					'<p data-diff-action="none">a</p>' +
+					'<table><tbody><tr><td colspan="1" rowspan="1" data-diff-action="structural-change">A</td></tr></tbody></table>' +
+					'<p data-diff-action="none">b</p>'
 			},
 			{
 				msg: 'Sparse table insertion',
@@ -1305,7 +1308,7 @@ QUnit.test( 'Diffing', function ( assert ) {
 		};
 	};
 	InlineWidgetNode.static.isDiffComparable = function ( element, other ) {
-		return element.attributes.name === other.attributes.name;
+		return element.type === other.type && element.attributes.name === other.attributes.name;
 	};
 	ve.dm.modelRegistry.register( InlineWidgetNode );
 

@@ -147,7 +147,8 @@ ve.ui.MWReferenceSearchWidget.prototype.buildIndex = function () {
 			n++;
 			var refModel = ve.dm.MWReferenceModel.static.newFromReferenceNode( refNode );
 			var view = new ve.ui.MWPreviewElement(
-				this.internalList.getItemNode( refModel.getListIndex() )
+				this.internalList.getItemNode( refModel.getListIndex() ),
+				{ useView: true }
 			);
 
 			var refGroup = refModel.getGroup();

@@ -7,6 +7,7 @@
 @import '../minerva.less/minerva.variables.less';
 @import 'mediawiki.ui/mixins.buttons.less';
 @import 'mediawiki.ui/variables.less';
+@import 'mediawiki.mixins.less';
 
 // Decrease the font-size of the advanced filters module (see T229360).
 .mw-rcfilters-container,
@@ -187,4 +188,11 @@ ul.mw-contributions-list li .mw-rollback-link {
 		display: table;
 		width: 100%;
 	}
+}
+
+// `.content` must be specified to override padding of
+// `.content h2` rule provided by ResourceLoaderSkinModule.
+.content .mw-index-pager-list-header {
+	.changeslist-header();
+	box-sizing: border-box;
 }

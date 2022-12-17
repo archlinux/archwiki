@@ -16,6 +16,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
+namespace MediaWiki\SyntaxHighlight;
+
 /**
  * Class provides functionality to map Ace lexer definitions
  */

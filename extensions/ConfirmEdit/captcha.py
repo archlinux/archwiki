@@ -143,7 +143,7 @@ def gen_subdir(basedir, md5hash, levels):
 			os.mkdir(fulldir)
 	return subdir
 
-def try_pick_word(words, blacklist, verbose, nwords, min_length, max_length):
+def try_pick_word(words, badwordlist, verbose, nwords, min_length, max_length):
 	if words is not None:
 		word = words[random.randint(0,len(words)-1)]
 		while nwords > 1:
@@ -174,16 +174,16 @@ def try_pick_word(words, blacklist, verbose, nwords, min_length, max_length):
 			print("skipping word pair '%s' because it contains non-alphabetic characters" % word)
 		return None
 
-	for naughty in blacklist:
+	for naughty in badwordlist:
 		if naughty in word:
 			if verbose:
-				print("skipping word pair '%s' because it contains blacklisted word '%s'" % (word, naughty))
+				print("skipping word pair '%s' because it contains word '%s'" % (word, naughty))
 			return None
 	return word
 
-def pick_word(words, blacklist, verbose, nwords, min_length, max_length):
+def pick_word(words, badwordlist, verbose, nwords, min_length, max_length):
 	for x in range(1000): # If we can't find a valid combination in 1000 tries, just give up
-		word = try_pick_word(words, blacklist, verbose, nwords, min_length, max_length)
+		word = try_pick_word(words, badwordlist, verbose, nwords, min_length, max_length)
 		if word:
 			return word
 	sys.exit("Unable to find valid word combinations")
@@ -197,13 +197,13 @@ def read_wordlist(filename):
 def run_in_thread(object):
 	count = object[0];
 	words = object[1]
-	blacklist = object[2]
+	badwordlist = object[2]
 	opts = object[3]
 	font = object[4]
 	fontsize = object[5]
 
 	for i in range(count):
-		word = pick_word(words, blacklist, verbose, opts.number_words, opts.min_length, opts.max_length)
+		word = pick_word(words, badwordlist, verbose, opts.number_words, opts.min_length, opts.max_length)
 		salt = "%08x" % random.randrange(2**32)
 		# 64 bits of hash is plenty for this purpose
 		md5hash = hashlib.md5((key+salt+word+key+salt).encode('utf-8')).hexdigest()[:16]
@@ -232,7 +232,8 @@ if __name__ == '__main__':
 	parser.add_option("--font", help="The font to use (required)", metavar="FONT.ttf")
 	parser.add_option("--font-size", help="The font size (default 40)", metavar="N", type='int', default=40)
 	parser.add_option("--count", help="The maximum number of images to make (default 20)", metavar="N", type='int', default=20)
-	parser.add_option("--blacklist", help="A blacklist of words that should not be used", metavar="FILE", default=os.path.join(script_dir, "blacklist"))
+	parser.add_option("--badwordlist", help="A list of words that should not be used", metavar="FILE", default=os.path.join(script_dir, "badwordlist"))
+	parser.add_option("--blacklist", help="DEPRECATED: list of words that should not be used", metavar="FILE", default=os.path.join(script_dir, "blacklist"))
 	parser.add_option("--fill", help="Fill the output directory to contain N files, overrides count, cannot be used with --dirs", metavar="N", type='int')
 	parser.add_option("--dirs", help="Put the images into subdirectories N levels deep - $wgCaptchaDirectoryLevels", metavar="N", type='int')
 	parser.add_option("--verbose", "-v", help="Show debugging information", action='store_true')
@@ -262,7 +263,7 @@ if __name__ == '__main__':
 	else:
 		sys.exit("Need to specify the location of a font")
 
-	blacklist = read_wordlist(opts.blacklist)
+	badwordlist = read_wordlist(opts.blacklist) + read_wordlist(opts.badwordlist)
 	count = opts.count
 	fill = opts.fill
 	dirs = opts.dirs
@@ -293,6 +294,6 @@ if __name__ == '__main__':
 	data = []
 	print("Generating %s CAPTCHA images separated in %s image(s) per chunk run by %s threads..." % (count, chunks, threads))
 	for i in range(0, threads):
-		data.append([chunks, words, blacklist, opts, font, fontsize])
+		data.append([chunks, words, badwordlist, opts, font, fontsize])
 
 	p.map(run_in_thread, data)

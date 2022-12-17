@@ -15,6 +15,7 @@ ve.ui.sequenceRegistry.register(
 	new ve.ui.Sequence( 'wikitextHeading', 'heading2', [ { type: 'paragraph' }, '=', '=' ], 2 )
 );
 ( function () {
+	// As the user keeps pressing '=', reduce the heading level
 	for ( var level = 3; level <= 6; level++ ) {
 		ve.ui.sequenceRegistry.register(
 			new ve.ui.Sequence(

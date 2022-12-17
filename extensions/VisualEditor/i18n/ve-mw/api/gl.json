@@ -3,13 +3,12 @@
 		"authors": [
 			"Banjo",
 			"Elisardojm",
-			"Toliño",
-			"Matma Rex"
+			"Matma Rex",
+			"Toliño"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Non foi atopada ningunha serialización en caché con esa chave",
 	"apierror-visualeditor-difffailed": "Erro no dif",
-	"apierror-visualeditor-docserver-unconfigured": "Non se definiu o VirtualRESTService para o servidor de documentos; vexa https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Erro de acceso ó servidor Parsoid/RESTBase",
 	"apierror-visualeditor-latestnotfound": "Non se puido atopar a última revisión para ese título",
 	"apihelp-visualeditor-description": "Devolve o código HTML5 para unha páxina do servizo Parsoid.",

@@ -97,11 +97,13 @@ final class MainMenuDirector {
 				'sitelinks' => $this->builder->getSiteLinks()->getEntries()
 			]
 		];
+
 		$groups = [
 			// sidebar comes from MediaWiki:Sidebar so we can't assume it doesn't exist.
 			$builder->getDiscoveryGroup( $sidebar['navigation'] ?? [] ),
 			$builder->getInteractionToolsGroup(),
 			$builder->getPersonalToolsGroup( $contentNavUrls['user-menu'] ),
+			$builder->getSettingsGroup(),
 			$builder->getDonateGroup(),
 		];
 		foreach ( $groups as $group ) {

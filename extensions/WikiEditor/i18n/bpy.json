@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Macofe",
-			"Usingha",
-			"Amire80"
+			"Usingha"
 		]
 	},
 	"wikieditor": "উচ উইকিটেক্সট পাতানির ইন্টারফেসহান",
@@ -36,7 +36,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "পাতাহান নেই",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "চিঙনাঙে লালুইসে",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "বারেদের লগে মিলাপ",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "পাতাহান চারাঙ",
 	"wikieditor-toolbar-tool-link-int-invalid": "তর চিঙনাঙহান চুম নাইসে",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "যে ইউআরএলহান মাতানি অর অর আরাক উইকির পাতাহানরে বুঝার। ভিতরর মিরাপ সিলকরানি মনারাইথাঙ?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "ভিতরর মিলাপ",

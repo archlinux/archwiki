@@ -8,11 +8,29 @@
  * @license MIT
  */
 
-use MediaWiki\Extension\VisualEditor\VisualEditorHookRunner;
+namespace MediaWiki\Extension\VisualEditor;
+
+use ApiBase;
+use ApiMain;
+use BagOStuff;
+use ContentHandler;
+use Deflate;
+use DerivativeContext;
+use DerivativeRequest;
+use DifferenceEngine;
+use ExtensionRegistry;
+use FlaggablePageView;
+use IBufferingStatsdDataFactory;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Storage\PageEditStash;
 use MediaWiki\User\UserIdentity;
+use ObjectCache;
+use RequestContext;
+use Sanitizer;
+use SkinFactory;
+use Title;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiVisualEditorEdit extends ApiBase {
@@ -36,6 +54,9 @@ class ApiVisualEditorEdit extends ApiBase {
 	/** @var SkinFactory */
 	private $skinFactory;
 
+	/** @var WikiPageFactory */
+	private $wikiPageFactory;
+
 	/**
 	 * @param ApiMain $main
 	 * @param string $name Name of this module
@@ -44,6 +65,7 @@ class ApiVisualEditorEdit extends ApiBase {
 	 * @param IBufferingStatsdDataFactory $statsdDataFactory
 	 * @param PageEditStash $pageEditStash
 	 * @param SkinFactory $skinFactory
+	 * @param WikiPageFactory $wikiPageFactory
 	 */
 	public function __construct(
 		ApiMain $main,
@@ -52,7 +74,8 @@ class ApiVisualEditorEdit extends ApiBase {
 		RevisionLookup $revisionLookup,
 		IBufferingStatsdDataFactory $statsdDataFactory,
 		PageEditStash $pageEditStash,
-		SkinFactory $skinFactory
+		SkinFactory $skinFactory,
+		WikiPageFactory $wikiPageFactory
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
@@ -61,6 +84,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		$this->statsdDataFactory = $statsdDataFactory;
 		$this->pageEditStash = $pageEditStash;
 		$this->skinFactory = $skinFactory;
+		$this->wikiPageFactory = $wikiPageFactory;
 	}
 
 	/**
@@ -130,7 +154,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		$apiParams = [
 			'action' => 'parse',
 			'oldid' => $newRevId,
-			'prop' => 'text|revid|categorieshtml|displaytitle|subtitle|modules|jsconfigvars',
+			'prop' => 'text|revid|categorieshtml|sections|displaytitle|subtitle|modules|jsconfigvars',
 			'useskin' => $params['useskin'],
 		];
 		// Boolean parameters must be omitted completely to be treated as false.
@@ -160,6 +184,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		] );
 		$content = $result['parse']['text']['*'] ?? false;
 		$categorieshtml = $result['parse']['categorieshtml']['*'] ?? false;
+		$sections = isset( $result['parse']['showtoc'] ) ? $result['parse']['sections'] : [];
 		$displaytitle = $result['parse']['displaytitle'] ?? false;
 		$subtitle = $result['parse']['subtitle'] ?? false;
 		$modules = array_merge(
@@ -186,6 +211,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		return [
 			'content' => $content,
 			'categorieshtml' => $categorieshtml,
+			'sections' => $sections,
 			'displayTitleHtml' => $displaytitle,
 			'contentSub' => $subtitle,
 			'modules' => $modules,
@@ -265,7 +291,7 @@ class ApiVisualEditorEdit extends ApiBase {
 		$this->statsdDataFactory->increment( "editstash.ve_serialization_cache.set_" . $status );
 
 		// Also parse and prepare the edit in case it might be saved later
-		$pageUpdater = WikiPage::factory( $title )->newPageUpdater( $this->getUser() );
+		$pageUpdater = $this->wikiPageFactory->newFromTitle( $title )->newPageUpdater( $this->getUser() );
 		$content = ContentHandler::makeContent( $wikitext, $title, CONTENT_MODEL_WIKITEXT );
 
 		$status = $this->pageEditStash->parseAndCache( $pageUpdater, $content, $this->getUser(), '' );
@@ -458,12 +484,7 @@ class ApiVisualEditorEdit extends ApiBase {
 				$result['isRedirect'] = (string)$title->isRedirect();
 
 				if ( ExtensionRegistry::getInstance()->isLoaded( 'FlaggedRevs' ) ) {
-					$view = FlaggablePageView::singleton();
-
-					$originalContext = $view->getContext();
-					$originalTitle = RequestContext::getMain()->getTitle();
-
-					$newContext = new DerivativeContext( $originalContext );
+					$newContext = new DerivativeContext( RequestContext::getMain() );
 					// Defeat !$this->isPageView( $request ) || $request->getVal( 'oldid' ) check in setPageContent
 					$newRequest = new DerivativeRequest(
 						$this->getRequest(),
@@ -476,8 +497,13 @@ class ApiVisualEditorEdit extends ApiBase {
 					);
 					$newContext->setRequest( $newRequest );
 					$newContext->setTitle( $title );
+
+					// Must be after $globalContext->setTitle since FlaggedRevs constructor
+					// inspects global Title
+					$view = FlaggablePageView::newFromTitle( $title );
+					// Most likely identical to $globalState, but not our concern
+					$originalContext = $view->getContext();
 					$view->setContext( $newContext );
-					RequestContext::getMain()->setTitle( $title );
 
 					// The two parameters here are references but we don't care
 					// about what FlaggedRevs does with them.
@@ -487,7 +513,6 @@ class ApiVisualEditorEdit extends ApiBase {
 					$view->setPageContent( $outputDone, $useParserCache );
 					$view->displayTag();
 					$view->setContext( $originalContext );
-					RequestContext::getMain()->setTitle( $originalTitle );
 				}
 
 				$lang = $this->getLanguage();
@@ -574,7 +599,7 @@ class ApiVisualEditorEdit extends ApiBase {
 			'captchaword' => null,
 			'cachekey' => null,
 			'useskin' => [
-				ApiBase::PARAM_TYPE => array_keys( $this->skinFactory->getInstalledSkins() ),
+				ParamValidator::PARAM_TYPE => array_keys( $this->skinFactory->getInstalledSkins() ),
 				ApiBase::PARAM_HELP_MSG => 'apihelp-parse-param-useskin',
 			],
 			'tags' => [

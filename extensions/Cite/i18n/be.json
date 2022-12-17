@@ -3,8 +3,8 @@
 		"authors": [
 			"Artsiom91",
 			"Chadyka",
-			"Чаховіч Уладзіслаў",
-			"No Sleep till Krupki"
+			"No Sleep till Krupki",
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"cite-desc": "Дадае тэгі <code>&lt;ref&gt;</code> і <code>&lt;references/&gt;</code> для цытаванняў (зносак)",
@@ -24,10 +24,10 @@
 	"cite_error_included_references": "Няма завяршальнага тэга для <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Тэгі <code>&lt;ref&gt;</code> існуюць для групы «$1», але адпаведнага тэга <code>&lt;references group=\"$1\"/&gt;</code> не знойдзена",
 	"cite_error_references_group_mismatch": "Тэг <code>&lt;ref&gt;</code> у <code>&lt;references&gt;</code> мае канфліктуючы атрыбут групы (group) «$1».",
-	"cite_error_references_missing_group": "Тэг <code>&lt;ref&gt;</code> вызначаны ў <code>&lt;references&gt;</code> утрымлівае атрыбут групы (group) «$1», які раней не выкарыстоўваўся ў тэксце.",
+	"cite_error_references_missing_group": "Тэг <code>&lt;ref&gt;</code> з назвай $2, вызначаны ў <code>&lt;references&gt;</code> утрымлівае атрыбут групы (group) «$1», які раней не выкарыстоўваўся ў тэксце.",
 	"cite_error_references_missing_key": "тэг <code>&lt;ref&gt;</code> з імем \"$1\", вызначаны ў <code>&lt;references&gt;</code>, не згадваецца ў папярэднім тэксце.",
 	"cite_error_references_no_key": "Тэг <code>&lt;ref&gt;</code> вызначаны ў <code>&lt;references&gt;</code> не мае атрыбуту назвы (name).",
-	"cite_error_empty_references_define": "Тэг <code>&lt;ref&gt;</code> вызначаны ў <code>&lt;references&gt;</code> з назвай (name) «$1» не мае зместу.",
+	"cite_error_empty_references_define": "Тэг <code>&lt;ref&gt;</code> з назвай (name) «$1», вызначаны ў групе <code>&lt;references&gt;</code> «$2» не мае зместу.",
 	"cite-tracking-category-cite-error": "Старонкі з памылкамі ў зносках",
 	"cite-tracking-category-cite-error-desc": "Старонка мае памылкі ў выкарыстанні тэгаў зносак",
 	"cite_references_link_accessibility_label": "Назад",

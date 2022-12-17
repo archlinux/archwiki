@@ -7,6 +7,8 @@ use ApiQuery;
 use ApiQueryBase;
 use MediaWiki\MediaWikiServices;
 use Title;
+use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
 /**
  * Expose image information for a page via a new prop=pageimages API.
@@ -35,7 +37,7 @@ class ApiQueryPageImages extends ApiQueryBase {
 	 * (see {@see ApiPageSet::getGoodTitles}) union the set of "missing"
 	 * titles in the File namespace that might correspond to foreign files.
 	 * The latter are included because titles in the File namespace are
-	 * expected to be found with {@see wfFindFile}.
+	 * expected to be found with {@see \RepoGroup::findFile}.
 	 *
 	 * @return Title[] A map of page ID, which will be negative in the case
 	 *  of missing titles in the File namespace, to Title object
@@ -224,33 +226,33 @@ class ApiQueryPageImages extends ApiQueryBase {
 	public function getAllowedParams() {
 		return [
 			'prop' => [
-				ApiBase::PARAM_TYPE => [ 'thumbnail', 'name', 'original' ],
-				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_DFLT => 'thumbnail|name',
+				ParamValidator::PARAM_TYPE => [ 'thumbnail', 'name', 'original' ],
+				ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_DEFAULT => 'thumbnail|name',
 			],
 			'thumbsize' => [
-				ApiBase::PARAM_TYPE => 'integer',
-				ApiBase::PARAM_DFLT => 50,
+				ParamValidator::PARAM_TYPE => 'integer',
+				ParamValidator::PARAM_DEFAULT => 50,
 			],
 			'limit' => [
-				ApiBase::PARAM_DFLT => 50,
-				ApiBase::PARAM_TYPE => 'limit',
-				ApiBase::PARAM_MIN => 1,
-				ApiBase::PARAM_MAX => 50,
-				ApiBase::PARAM_MAX2 => 100,
+				ParamValidator::PARAM_DEFAULT => 50,
+				ParamValidator::PARAM_TYPE => 'limit',
+				IntegerDef::PARAM_MIN => 1,
+				IntegerDef::PARAM_MAX => 50,
+				IntegerDef::PARAM_MAX2 => 100,
 			],
 			'license' => [
-				ApiBase::PARAM_TYPE => [ PageImages::LICENSE_FREE, PageImages::LICENSE_ANY ],
-				ApiBase::PARAM_ISMULTI => false,
-				ApiBase::PARAM_DFLT => $this->getConfig()->get( 'PageImagesAPIDefaultLicense' ),
+				ParamValidator::PARAM_TYPE => [ PageImages::LICENSE_FREE, PageImages::LICENSE_ANY ],
+				ParamValidator::PARAM_ISMULTI => false,
+				ParamValidator::PARAM_DEFAULT => $this->getConfig()->get( 'PageImagesAPIDefaultLicense' ),
 			],
 			'continue' => [
-				ApiBase::PARAM_TYPE => 'integer',
+				ParamValidator::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
 			],
 			'langcode' => [
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_DFLT => null
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_DEFAULT => null
 			]
 		];
 	}

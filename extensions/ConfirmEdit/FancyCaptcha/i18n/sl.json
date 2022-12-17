@@ -1,16 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Dbc334"
+			"Dbc334",
+			"Eleassar"
 		]
 	},
-	"fancycaptcha-addurl": "Vaše urejanje vključuje nove zunanje povezave.\nZaradi zaščite wikija pred samodejnim smetjem vas prijazno naprošamo, da vnesete spodnje besede v polje ([[Special:Captcha/help|več informacij]]):",
-	"fancycaptcha-badlogin": "Zaradi zaščite wikija pred samodejnim ugotavljanjem gesel vas prijazno naprošamo, da vnesete spodnje besede v polje ([[Special:Captcha/help|več informacij]]):",
+	"fancycaptcha-desc": "Domiseln generator CAPTCHA za potrditev urejanja",
+	"fancycaptcha-addurl": "Vaše urejanje vključuje nove zunanje povezave.\nZa zaščito vikija pred samodejnim smetjem vas prijazno prosimo, da v polje vnesete spodnje besede ([[Special:Captcha/help|več o tem]]):",
+	"fancycaptcha-badlogin": "Za zaščito vikija pred samodejnim ugotavljanjem gesel vas prijazno naprošamo, da v polje vnesete spodnje besede ([[Special:Captcha/help|več o tem]]):",
 	"fancycaptcha-captcha": "Varnostno preverjanje",
-	"fancycaptcha-accountcreate": "Zaradi zaščite wikija pred samodejnim ustvarjanjem računov vas prijazno naprošamo, da vnesete spodnje besede v polje ([[Special:Captcha/help|več informacij]]):",
+	"fancycaptcha-accountcreate": "Zaradi zaščite vikija pred samodejnim ustvarjanjem računov vas prijazno prosimo, da v polje vnesete spodnje besede ([[Special:Captcha/help|več o tem]]):",
 	"fancycaptcha-create": "Če želite ustvariti stran, prosimo vnesite spodnje besede v polje ([[Special:Captcha/help|več informacij]]):",
 	"fancycaptcha-edit": "Če želite urediti stran, prosimo vnesite spodnje besede v polje ([[Special:Captcha/help|več informacij]]):",
 	"fancycaptcha-imgcaptcha-ph": "Vnesite besedilo, ki ga vidite na sliki",
-	"fancycaptcha-sendemail": "Zaradi zaščite wikija pred samodejnim smetenjem vas prijazno naprošamo, da vnesete spodnje besede v polje ([[Special:Captcha/help|več informacij]]):",
+	"fancycaptcha-sendemail": "Zaradi zaščite vikija pred samodejnim smetenjem vas prijazno prosimo, da v polje vnesete spodnje besede ([[Special:Captcha/help|več o tem]]):",
 	"fancycaptcha-reload-text": "Osveži"
 }

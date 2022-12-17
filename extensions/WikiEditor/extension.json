@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.38.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -29,7 +29,8 @@
 		"EditPageGetPreviewContent": "WikiEditorHooks",
 		"ListDefinedTags": "WikiEditorHooks",
 		"ChangeTagsListActive": "WikiEditorHooks",
-		"RecentChange_save": "WikiEditorHooks"
+		"RecentChange_save": "WikiEditorHooks",
+		"GetBetaFeaturePreferences": "MediaWiki\\Extension\\WikiEditor\\Hooks::onGetBetaFeaturePreferences"
 	},
 	"HookHandlers": {
 		"WikiEditorHooks": {
@@ -113,7 +114,6 @@
 				"wikieditor-toolbar-tool-link-int-target-status-notexists",
 				"wikieditor-toolbar-tool-link-int-target-status-invalid",
 				"wikieditor-toolbar-tool-link-int-target-status-external",
-				"wikieditor-toolbar-tool-link-int-target-status-loading",
 				"wikieditor-toolbar-tool-link-int-target-status-disambig",
 				"wikieditor-toolbar-tool-link-int-invalid",
 				"wikieditor-toolbar-tool-link-lookslikeinternal",
@@ -301,25 +301,63 @@
 			"group": "ext.wikiEditor",
 			"styles": "ext.wikiEditor.toolbar.styles.less"
 		},
+		"ext.wikiEditor.images": {
+			"class": "ResourceLoaderImageModule",
+			"selector": ".ext-WikiEditor-image-{name}",
+			"images": {
+				"realtimepreview-error": {
+					"file": "realtimepreview/error.svg"
+				},
+				"realtimepreview-onboarding": {
+					"file": {
+						"ltr": "realtimepreview/OnboardingPopup_ltr.svg",
+						"rtl": "realtimepreview/OnboardingPopup_rtl.svg"
+					}
+				}
+			}
+		},
 		"ext.wikiEditor.realtimepreview": {
 			"dependencies": [
 				"ext.wikiEditor",
-				"mediawiki.page.preview"
+				"mediawiki.page.preview",
+				"mediawiki.pulsatingdot",
+				"mediawiki.storage",
+				"ext.wikiEditor.images",
+				"oojs-ui.styles.icons-interactions"
 			],
 			"messages": [
-				"wikieditor-realtimepreview-preview"
+				"wikieditor-realtimepreview-preview",
+				"wikieditor-realtimepreview-error",
+				"wikieditor-realtimepreview-reload",
+				"wikieditor-realtimepreview-reload-title",
+				"accesskey-wikieditor-realtimepreview",
+				"wikieditor-realtimepreview-manual",
+				"wikieditor-realtimepreview-onboarding-title",
+				"wikieditor-realtimepreview-onboarding-body",
+				"wikieditor-realtimepreview-onboarding-button"
 			],
 			"packageFiles": [
 				"realtimepreview/init.js",
 				"realtimepreview/RealtimePreview.js",
 				"realtimepreview/ResizingDragBar.js",
-				"realtimepreview/TwoPaneLayout.js"
+				"realtimepreview/TwoPaneLayout.js",
+				"realtimepreview/ErrorLayout.js",
+				"realtimepreview/ManualWidget.js",
+				"realtimepreview/OnboardingPopup.js"
 			],
 			"styles": [
 				"realtimepreview/RealtimePreview.less",
 				"realtimepreview/ResizingDragBar.less",
-				"realtimepreview/TwoPaneLayout.less"
-			]
+				"realtimepreview/TwoPaneLayout.less",
+				"realtimepreview/ErrorLayout.less",
+				"realtimepreview/ManualWidget.less",
+				"realtimepreview/OnboardingPopup.less"
+			],
+			"skinStyles": {
+				"monobook": [
+					"realtimepreview/monobook.less"
+				]
+			}
 		}
 	},
 	"ResourceFileModulePaths": {
@@ -335,7 +373,8 @@
 		]
 	},
 	"DefaultUserOptions": {
-		"usebetatoolbar": true
+		"usebetatoolbar": true,
+		"wikieditor-realtimepreview": 0
 	},
 	"RawHtmlMessages": [
 		"wikieditor-toolbar-help-heading-description",
@@ -413,6 +452,14 @@
 		"WikiEditorRealtimePreview": {
 			"description": "Whether to enable the Realtime Preview feature.",
 			"value": false
+		},
+		"WikiEditorRealtimePreviewDebounce": {
+			"description": "Debounce time in milliseconds for the Realtime Preview feature.",
+			"value": 2500
+		},
+		"WikiEditorRealtimeDisableDuration": {
+			"description": "Average number of milliseconds after which to automatically disable Realtime Preview.",
+			"value": 6000
 		}
 	},
 	"manifest_version": 2

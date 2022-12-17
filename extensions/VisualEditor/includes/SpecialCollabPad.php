@@ -8,6 +8,20 @@
  * @license MIT
  */
 
+namespace MediaWiki\Extension\VisualEditor;
+
+use MediaWiki\Widget\TitleInputWidget;
+use OOUI\ActionFieldLayout;
+use OOUI\ButtonWidget;
+use OOUI\FieldsetLayout;
+use OOUI\FormLayout;
+use OOUI\ProgressBarWidget;
+use OOUI\TextInputWidget;
+use SkinTemplate;
+use SpecialPage;
+use Title;
+use User;
+
 class SpecialCollabPad extends SpecialPage {
 
 	public function __construct() {
@@ -54,18 +68,18 @@ class SpecialCollabPad extends SpecialPage {
 
 		$output->enableOOUI();
 
-		$documentNameFieldset = new OOUI\FieldsetLayout( [
+		$documentNameFieldset = new FieldsetLayout( [
 			'label' => $this->msg( 'visualeditor-rebase-client-document-create-edit' )->text(),
 			'icon' => 'edit',
 			'items' => [
-				new OOUI\ActionFieldLayout(
-					new OOUI\TextInputWidget( [
+				new ActionFieldLayout(
+					new TextInputWidget( [
 						'classes' => [ 've-init-mw-collabTarget-nameInput' ],
 						'placeholder' => $this->msg( 'visualeditor-rebase-client-document-name' )->text(),
 						'autofocus' => true,
 						'infusable' => true
 					] ),
-					new OOUI\ButtonWidget( [
+					new ButtonWidget( [
 						'classes' => [ 've-init-mw-collabTarget-nameButton' ],
 						'label' => $this->msg( 'visualeditor-rebase-client-document-create-edit' )->text(),
 						'flags' => [ 'primary', 'progressive' ],
@@ -81,17 +95,17 @@ class SpecialCollabPad extends SpecialPage {
 				)
 			]
 		] );
-		$importFieldset = new OOUI\FieldsetLayout( [
+		$importFieldset = new FieldsetLayout( [
 			'label' => $this->msg( 'visualeditor-rebase-client-import' )->text(),
 			'icon' => 'download',
 			'items' => [
-				new OOUI\ActionFieldLayout(
-					new MediaWiki\Widget\TitleInputWidget( [
+				new ActionFieldLayout(
+					new TitleInputWidget( [
 						'classes' => [ 've-init-mw-collabTarget-importInput' ],
 						'placeholder' => $this->msg( 'visualeditor-rebase-client-import-name' )->text(),
 						'infusable' => true,
 					] ),
-					new OOUI\ButtonWidget( [
+					new ButtonWidget( [
 						'classes' => [ 've-init-mw-collabTarget-importButton' ],
 						'label' => $this->msg( 'visualeditor-rebase-client-import' )->text(),
 						'flags' => [ 'progressive' ],
@@ -108,7 +122,7 @@ class SpecialCollabPad extends SpecialPage {
 			]
 		] );
 
-		$form = new OOUI\FormLayout( [
+		$form = new FormLayout( [
 			'classes' => [ 've-init-mw-collabTarget-form' ],
 			'items' => [
 				$documentNameFieldset,
@@ -117,7 +131,7 @@ class SpecialCollabPad extends SpecialPage {
 			'infusable' => true
 		] );
 
-		$progressBar = new OOUI\ProgressBarWidget( [
+		$progressBar = new ProgressBarWidget( [
 			'classes' => [ 've-init-mw-collabTarget-loading' ],
 			'infusable' => true
 		] );

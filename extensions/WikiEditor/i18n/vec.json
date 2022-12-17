@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La pàgina no la existe",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Tìtolo mia valido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Colegamento par fora",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "So' drio controlar se la pàgina la existe o no...",
 	"wikieditor-toolbar-tool-link-int-invalid": "El tìtolo che te ghè indicà no'l xe mia valido.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "L'URL che te ghè inserìo pararìa che el ponta verso de na pàgina wiki difarente. Vuto farlo deventar un colegamento interno?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Colegamento interno",

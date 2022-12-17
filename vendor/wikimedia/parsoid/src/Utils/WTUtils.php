@@ -3,6 +3,7 @@ declare( strict_types = 1 );
 
 namespace Wikimedia\Parsoid\Utils;
 
+use DOMException;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\DOM\Comment;
 use Wikimedia\Parsoid\DOM\Document;
@@ -12,6 +13,7 @@ use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\DOM\Text;
 use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\NodeData\DataParsoid;
+use Wikimedia\Parsoid\NodeData\I18nInfo;
 use Wikimedia\Parsoid\NodeData\TempData;
 use Wikimedia\Parsoid\Tokens\CommentTk;
 use Wikimedia\Parsoid\Wikitext\Consts;
@@ -100,7 +102,7 @@ class WTUtils {
 
 		// SSS FIXME: This requires to be made more robust
 		// for when dp->stx value is not present
-		return $node->getAttribute( "rel" ) === "mw:WikiLink" ||
+		return DOMUtils::hasRel( $node, 'mw:WikiLink' ) ||
 			( isset( $dp->stx ) && $dp->stx !== "url" && $dp->stx !== "magiclink" );
 	}
 
@@ -124,7 +126,7 @@ class WTUtils {
 
 		// SSS FIXME: This requires to be made more robust
 		// for when $dp->stx value is not present
-		return $node->getAttribute( "rel" ) === "mw:ExtLink" &&
+		return DOMUtils::hasRel( $node, 'mw:ExtLink' ) &&
 			( !isset( $dp->stx ) || ( $dp->stx !== "url" && $dp->stx !== "magiclink" ) );
 	}
 
@@ -148,7 +150,7 @@ class WTUtils {
 
 		// SSS FIXME: This requires to be made more robust
 		// for when $dp->stx value is not present
-		return $node->getAttribute( "rel" ) === "mw:ExtLink" &&
+		return DOMUtils::hasRel( $node, 'mw:ExtLink' ) &&
 			isset( $dp->stx ) && $dp->stx === "url";
 	}
 
@@ -170,8 +172,8 @@ class WTUtils {
 
 		// SSS FIXME: This requires to be made more robust
 		// for when $dp->stx value is not present
-		return $node->getAttribute( "rel" ) === "mw:ExtLink" &&
-			isset( $dp->stx ) && $dp->stx === "magiclink";
+		return DOMUtils::hasRel( $node, 'mw:ExtLink' ) &&
+			isset( $dp->stx ) && $dp->stx === 'magiclink';
 	}
 
 	/**
@@ -299,7 +301,9 @@ class WTUtils {
 	 * @return bool
 	 */
 	public static function isGeneratedFigure( Node $node ): bool {
-		return DOMUtils::matchTypeOf( $node, '#^mw:(Image|Video|Audio)($|/)#D' ) !== null;
+		// TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content
+		// is no longer supported
+		return DOMUtils::matchTypeOf( $node, '#^mw:(File|Image|Video|Audio)($|/)#D' ) !== null;
 	}
 
 	/**
@@ -363,7 +367,7 @@ class WTUtils {
 	public static function isRedirectLink( Node $node ): bool {
 		return $node instanceof Element &&
 			DOMCompat::nodeName( $node ) === 'link' &&
-			preg_match( '#\bmw:PageProp/redirect\b#', $node->getAttribute( 'rel' ) ?? '' );
+			DOMUtils::matchRel( $node, '#\bmw:PageProp/redirect\b#' ) !== null;
 	}
 
 	/**
@@ -375,7 +379,7 @@ class WTUtils {
 	public static function isCategoryLink( ?Node $node ): bool {
 		return $node instanceof Element &&
 			DOMCompat::nodeName( $node ) === 'link' &&
-			preg_match( '#\bmw:PageProp/Category\b#', $node->getAttribute( 'rel' ) ?? '' );
+			DOMUtils::matchRel( $node, '#\bmw:PageProp/Category\b#' ) !== null;
 	}
 
 	/**
@@ -387,7 +391,7 @@ class WTUtils {
 	public static function isSolTransparentLink( Node $node ): bool {
 		return $node instanceof Element &&
 			DOMCompat::nodeName( $node ) === 'link' &&
-			preg_match( TokenUtils::SOL_TRANSPARENT_LINK_REGEX, $node->getAttribute( 'rel' ) ?? '' );
+			DOMUtils::matchRel( $node, TokenUtils::SOL_TRANSPARENT_LINK_REGEX ) !== null;
 	}
 
 	/**
@@ -537,16 +541,6 @@ class WTUtils {
 		return $node instanceof Element &&
 			DOMCompat::nodeName( $node ) === 'section' &&
 			$node->hasAttribute( 'data-mw-section-id' );
-	}
-
-	/** Is $node a Parsoid-generated extended annotation wrapper
-	 * @param Node $node
-	 * @return bool
-	 */
-	public static function isExtendedAnnotationWrapperTag( Node $node ): bool {
-		return $node instanceof Element &&
-			$node->hasAttribute( 'typeof' ) &&
-			$node->getAttribute( 'typeof' ) === 'mw:ExtendedAnnRange';
 	}
 
 	/**
@@ -778,16 +772,6 @@ class WTUtils {
 	}
 
 	/**
-	 * Escape `<nowiki>` tags.
-	 *
-	 * @param string $text
-	 * @return string
-	 */
-	public static function escapeNowikiTags( string $text ): string {
-		return preg_replace( '#<(/?nowiki\s*/?\s*)>#i', '&lt;$1&gt;', $text );
-	}
-
-	/**
 	 * @param Env $env
 	 * @param Node $node
 	 * @return ?ExtensionTagHandler
@@ -800,20 +784,123 @@ class WTUtils {
 	}
 
 	/**
-	 * @param Document $doc
-	 * @param array $i18n With "key" and "params" for wfMessage
-	 * @return DocumentFragment
+	 * Is this an include directive?
+	 * @param string $name
+	 * @return bool
 	 */
-	public static function createLocalizationFragment(
-		Document $doc, array $i18n
-	): DocumentFragment {
+	public static function isIncludeTag( string $name ): bool {
+		return $name === 'includeonly' || $name === 'noinclude' || $name === 'onlyinclude';
+	}
+
+	/**
+	 * Check if tag is annotation or extension directive
+	 * Adapted from similar grammar function
+	 *
+	 * @param Env $env
+	 * @param string $name
+	 * @return bool
+	 */
+	public static function isAnnOrExtTag( Env $env, string $name ): bool {
+		$tagName = mb_strtolower( $name );
+		$siteConfig = $env->getSiteConfig();
+		$extTags = $siteConfig->getExtensionTagNameMap();
+		$isInstalledExt = isset( $extTags[$tagName] );
+		$isIncludeTag = self::isIncludeTag( $tagName );
+		$isAnnotationTag = $siteConfig->isAnnotationTag( $tagName );
+
+		if ( !$isAnnotationTag ) {
+			// avoid crashing on <tvar|name> even if we don't support that syntax explicitly
+			$pipepos = strpos( $tagName, '|' );
+			if ( $pipepos ) {
+				$strBeforePipe = substr( $tagName, 0, $pipepos );
+				$isAnnotationTag = $siteConfig->isAnnotationTag( $strBeforePipe );
+			}
+		}
+		return $isInstalledExt || $isIncludeTag || $isAnnotationTag;
+	}
+
+	/**
+	 * Creates a DocumentFragment containing a single span with type "mw:I18n". The created span
+	 * should be filled in with setDataNodeI18n to be valid.
+	 * @param Document $doc
+	 * @return DocumentFragment
+	 * @throws DOMException
+	 */
+	public static function createEmptyLocalizationFragment( Document $doc ): DocumentFragment {
 		$frag = $doc->createDocumentFragment();
 		$span = $doc->createElement( 'span' );
 		DOMUtils::addTypeOf( $span, 'mw:I18n' );
-		$dp = DOMDataUtils::getDataParsoid( $span );
-		$dp->getTemp()->i18n = $i18n;
 		$frag->appendChild( $span );
 		return $frag;
+	}
+
+	/**
+	 * Creates an internationalization (i18n) message that will be localized into the page content
+	 * language. The returned DocumentFragment contains, as a single child, a span
+	 * element with the appropriate information for later localization.
+	 * @param Document $doc
+	 * @param string $key message key for the message to be localized
+	 * @param ?array $params parameters for localization
+	 * @return DocumentFragment
+	 * @throws DOMException
+	 */
+	public static function createPageContentI18nFragment(
+		Document $doc, string $key, ?array $params = null
+	): DocumentFragment {
+		$frag = self::createEmptyLocalizationFragment( $doc );
+		$i18n = I18nInfo::createPageContentI18n( $key, $params );
+		DOMDataUtils::setDataNodeI18n( $frag->firstChild, $i18n );
+		return $frag;
+	}
+
+	/**
+	 * Creates an internationalization (i18n) message that will be localized into the user
+	 * interface language. The returned DocumentFragment contains, as a single child, a span
+	 * element with the appropriate information for later localization.
+	 * @param Document $doc
+	 * @param string $key message key for the message to be localized
+	 * @param ?array $params parameters for localization
+	 * @return DocumentFragment
+	 * @throws DOMException
+	 */
+	public static function createInterfaceI18nFragment(
+		Document $doc, string $key, ?array $params = null
+	): DocumentFragment {
+		$frag = self::createEmptyLocalizationFragment( $doc );
+		$i18n = I18nInfo::createInterfaceI18n( $key, $params );
+		DOMDataUtils::setDataNodeI18n( $frag->firstChild, $i18n );
+		return $frag;
+	}
+
+	/**
+	 * Adds to $element the internationalization information needed for the attribute $name to be
+	 * localized in a later pass into the page content language.
+	 * @param Element $element element on which to add internationalization information
+	 * @param string $name name of the attribute whose value will be localized
+	 * @param string $key message key used for the attribute value localization
+	 * @param ?array $params parameters for localization
+	 */
+	public static function addPageContentI18nAttribute(
+		Element $element, string $name, string $key, ?array $params = null
+	) {
+		$i18n = I18nInfo::createPageContentI18n( $key, $params );
+		DOMUtils::addTypeOf( $element, 'mw:LocalizedAttrs' );
+		DOMDataUtils::setDataAttrI18n( $element, $name, $i18n );
+	}
+
+	/** Adds to $element the internationalization information needed for the attribute $name to be
+	 * localized in a later pass into the user interface language.
+	 * @param Element $element element on which to add internationalization information
+	 * @param string $name name of the attribute whose value will be localized
+	 * @param string $key message key used for the attribute value localization
+	 * @param ?array $params parameters for localization
+	 */
+	public static function addInterfaceI18nAttribute(
+		Element $element, string $name, string $key, ?array $params = null
+	) {
+		$i18n = I18nInfo::createInterfaceI18n( $key, $params );
+		DOMUtils::addTypeOf( $element, 'mw:LocalizedAttrs' );
+		DOMDataUtils::setDataAttrI18n( $element, $name, $i18n );
 	}
 
 	/** Check whether a node is an annotation meta; if yes, returns its type
@@ -893,4 +980,56 @@ class WTUtils {
 	public static function isMarkerAnnotation( ?Node $n ): bool {
 		return $n !== null && self::matchAnnotationMeta( $n ) !== null;
 	}
+
+	/**
+	 * Extracts the media format from the attribute string
+	 *
+	 * @param Element $node
+	 * @return string
+	 */
+	public static function getMediaFormat( Element $node ): string {
+		// TODO: Remove "Image|Video|Audio" when version 2.4.0 of the content
+		// is no longer supported
+		$mediaType = DOMUtils::matchTypeOf( $node, '#^mw:(File|Image|Video|Audio)(/|$)#' );
+		$parts = explode( '/', $mediaType ?? '' );
+		return $parts[1] ?? '';
+	}
+
+	/**
+	 * @param Element $node
+	 * @return bool
+	 */
+	public static function hasVisibleCaption( Element $node ): bool {
+		$format = self::getMediaFormat( $node );
+		return in_array(
+			$format, [ 'Thumb', /* 'Manualthumb', FIXME(T305759) */ 'Frame' ], true
+		);
+	}
+
+	/**
+	 * Ref dom post-processing happens after adding media info, so the
+	 * linkbacks aren't available in the textContent added to the alt.
+	 * However, when serializing, they are in the caption elements.  So, this
+	 * special handler drops the linkbacks for the purpose of comparison.
+	 *
+	 * @param Node $node
+	 * @return string
+	 */
+	public static function textContentFromCaption( Node $node ): string {
+		$content = '';
+		$c = $node->firstChild;
+		while ( $c ) {
+			if ( $c instanceof Text ) {
+				$content .= $c->nodeValue;
+			} elseif (
+				$c instanceof Element &&
+				!DOMUtils::hasTypeOf( $c, "mw:Extension/ref" )
+			) {
+				$content .= self::textContentFromCaption( $c );
+			}
+			$c = $c->nextSibling;
+		}
+		return $content;
+	}
+
 }

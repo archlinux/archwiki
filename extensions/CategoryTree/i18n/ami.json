@@ -2,12 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Akamycoco",
-			"Vickylin77s"
+			"Vickylin77s",
+			"Amire80"
 		]
 	},
-	"categorytree-portlet": "　pisakilac",
+	"categorytree-portlet": "pisakilac",
 	"categorytree-mode-all": "O po:long no felih",
-	"categorytree-expand": " misatapang",
+	"categorytree-expand": "misatapang",
 	"categorytree-member-counts": "Maparo I laloma’ no {{PLURAL:$1|1 ko i kalaenoay a silsil}}, {{PLURAL:$2|ay ko felih ato}}, and {{PLURAL:$3|ko tang^an}}",
 	"categorytree-num-categories": "$1 kasakilac",
 	"categorytree-num-pages": "$1 o felih",

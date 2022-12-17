@@ -75,6 +75,7 @@ ve.dm.MWExternalLinkAnnotation.static.toDomElements = function ( dataElement, do
 		domElements[ 0 ].setAttribute( 'class', 'external' );
 	}
 
+	// we just created that link so the 'rel' attribute should be safe
 	domElements[ 0 ].setAttribute( 'rel', dataElement.attributes.rel || 'mw:ExtLink' );
 	return domElements;
 };

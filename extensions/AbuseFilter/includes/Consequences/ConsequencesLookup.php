@@ -120,7 +120,7 @@ class ConsequencesLookup {
 				continue;
 			} else {
 				$actionsByFilter[$prefix . $row->afa_filter][$row->afa_consequence] =
-					array_filter( explode( "\n", $row->afa_parameters ) );
+					$row->afa_parameters !== '' ? explode( "\n", $row->afa_parameters ) : [];
 			}
 		}
 

@@ -3,7 +3,7 @@
 	"namemsg": "skinname-minerva",
 	"descriptionmsg": "minerva-skin-desc",
 	"author": [
-		"[https://www.mediawiki.org/wiki/Reading/Web/Team Readers Web Team]",
+		"[https://www.mediawiki.org/wiki/Readers/Web/Team Readers Web Team]",
 		"Alex Hollender",
 		"Bahodir Mansurov",
 		"Florian Schmidt",
@@ -22,7 +22,7 @@
 	"url": "https://www.mediawiki.org/wiki/Skin:MinervaNeue",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.37.0"
+		"MediaWiki": ">= 1.38.0"
 	},
 	"config": {
 		"MinervaDonateLink": {
@@ -76,7 +76,8 @@
 			"value": {
 				"base": false,
 				"beta": false,
-				"amc": true
+				"amc": true,
+				"loggedin": true
 			}
 		},
 		"MinervaShowCategories": {
@@ -258,7 +259,7 @@
 	"ResourceModules": {
 		"skins.minerva.base.styles": {
 			"class": "MediaWiki\\Minerva\\ResourceLoaderSkinModule",
-			"features": [ "i18n-ordered-lists", "content-body", "content-links" ],
+			"features": [ "accessibility", "i18n-ordered-lists", "content-body", "content-links" ],
 			"targets": [
 				"mobile",
 				"desktop"
@@ -322,6 +323,7 @@
 			"defaultColor": "#54595d",
 			"class": "ResourceLoaderOOUIIconPackModule",
 			"icons": [
+				"block",
 				"ellipsis",
 				"articleRedirect",
 				"infoFilled",
@@ -332,6 +334,7 @@
 				"listBullet",
 				"logoWikidata",
 				"quotes",
+				"unBlock",
 				"unLock",
 				"userAvatarOutline",
 				"userTalk",
@@ -640,5 +643,12 @@
 	"ServiceWiringFiles": [
 		"includes/ServiceWiring.php"
 	],
+	"attributes": {
+		"MobileFrontend": {
+			"EditorAvailableSkins": [
+				"minerva"
+			]
+		}
+	},
 	"manifest_version": 2
 }

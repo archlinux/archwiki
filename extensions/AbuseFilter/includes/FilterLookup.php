@@ -249,8 +249,9 @@ class FilterLookup implements IDBAccessObject {
 
 		$actions = [];
 		foreach ( $res as $actionRow ) {
-			$actions[$actionRow->afa_consequence] =
-				array_filter( explode( "\n", $actionRow->afa_parameters ) );
+			$actions[$actionRow->afa_consequence] = $actionRow->afa_parameters !== ''
+				? explode( "\n", $actionRow->afa_parameters )
+				: [];
 		}
 		return $actions;
 	}

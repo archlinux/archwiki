@@ -3,6 +3,7 @@
 		"authors": [
 			"Agaafd",
 			"Ahmetlii",
+			"Amire80",
 			"BaRaN6161 TURK",
 			"Cobija",
 			"Emperyan",
@@ -20,8 +21,7 @@
 			"SaldırganSincap",
 			"Srhat",
 			"Sucsuzz",
-			"Vito Genovese",
-			"Amire80"
+			"Vito Genovese"
 		]
 	},
 	"wikieditor": "Gelişmiş vikimetin düzenleme arayüzü",
@@ -55,7 +55,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Bu sayfa {{SITENAME}} sitesinde mevcut değil",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Belirttiğiniz başlık geçersiz",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Dış bağlantı",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Sayfanın mevcudiyeti denetleniyor...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Bu sayfa bir içerik sayfası değil, benzer adlara sahip konuların bir listesidir",
 	"wikieditor-toolbar-tool-link-int-invalid": "Belirttiğiniz başlık geçersiz.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Belirttiğiniz URL, başka bir viki sayfasına bağlantı olarak tasarlanmış gibi görünüyor.\nDahili bir bağlantı yapmak ister misiniz?",
@@ -208,5 +207,12 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal metin<br />:Girintili metin<br />::Girintili metin",
 	"wikieditor-toolbar-help-content-indent-result": "Normal metin<dl><dd>Girintili metin<dl><dd>Girintili metin</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] kullanılarak yapılan düzenleme (2010 vikimetin düzenleyici)",
-	"wikieditor-realtimepreview-preview": "Önizleme"
+	"wikieditor-realtimepreview-preview": "Önizleme",
+	"wikieditor-realtimepreview-error": "Önizleme yüklenemiyor",
+	"wikieditor-realtimepreview-reload": "Yeniden yükle",
+	"wikieditor-realtimepreview-reload-title": "Gerçek zamanlı önizleme bölmesini yeniden yükleyin",
+	"wikieditor-realtimepreview-manual": "Düzenlemelerinizi elle önizlemek için lütfen şimdi yeniden yükleyin.",
+	"wikieditor-realtimepreview-onboarding-title": "Gerçek Zamanlı Önizleme",
+	"wikieditor-realtimepreview-onboarding-body": "Düzenlemelerinizi gerçek zamanlı olarak önizleyerek okuyuculara nasıl görüneceğini görün.",
+	"wikieditor-realtimepreview-onboarding-button": "Tamam, anladım"
 }

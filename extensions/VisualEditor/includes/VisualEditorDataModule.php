@@ -8,6 +8,12 @@
  * @license MIT
  */
 
+namespace MediaWiki\Extension\VisualEditor;
+
+use MediaWiki\ResourceLoader\Context as ResourceLoaderContext;
+use MediaWiki\ResourceLoader\Module as ResourceLoaderModule;
+use Title;
+
 class VisualEditorDataModule extends ResourceLoaderModule {
 
 	/** @inheritDoc */

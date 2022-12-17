@@ -1,9 +1,11 @@
 <?php
 
+use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
+use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use Wikimedia\ScopedCallback;
 
 /**
- * @covers SimpleCaptcha
+ * @covers \MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha
  */
 class CaptchaTest extends MediaWikiIntegrationTestCase {
 

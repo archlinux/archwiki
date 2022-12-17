@@ -4,8 +4,8 @@
 			"AdiJapan",
 			"KlaudiuMihaila",
 			"Minisarm",
-			"Stelistcristi",
-			"NGC 54"
+			"NGC 54",
+			"Stelistcristi"
 		]
 	},
 	"syntaxhighlight-desc": "Produce evidențierea sintaxei prin eticheta <code>&lt;syntaxhighlight&gt;</code> folosind [http://pygments.org/ Pygments - evidențiere Python de sintaxă]",

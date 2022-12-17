@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Ukurasa haupatikani",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Jina batili",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Kiungo cha nje",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Inahakikishwa kwamba ukurasa inapatikana...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Jina la ukurasa uliloliandika ni batili.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Inaonekana kwamba KISARA (URL) ulioingiza inaelekea ukurasa mwingine wa wiki hii. Je, unataka kutengeneza kiungo cha ndani?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Kiungo cha ndani",

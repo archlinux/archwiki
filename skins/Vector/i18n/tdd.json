@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"咽頭べさ",
-			"Aey Tai Nuea"
+			"Aey Tai Nuea",
+			"咽頭べさ"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 ᥚᥣᥱ ᥔᥣᥱ|$1 ᥚᥣᥱ ᥔᥣᥱ ᥑᥣᥛᥰ}}",
@@ -14,5 +14,6 @@
 	"vector-view-edit": "ᥛᥨᥢᥳ ᥛᥥᥰ",
 	"vector-view-history": "ᥖᥨᥭᥰ ᥙᥪᥢᥰ",
 	"vector-view-view": "ᥚᥖᥴ ᥖᥨᥭᥰ",
-	"vector-more-actions": "ᥘᥛᥴ ᥘᥫᥴ"
+	"vector-more-actions": "ᥘᥛᥴ ᥘᥫᥴ",
+	"vector-searchsuggest-containing": "ᥔᥩᥐ ᥞᥣᥴ ᥖᥩᥢᥲ ᥖᥣᥱ ᥘᥣᥲ ᥘᥤᥐ ᥓᥫᥰ ᥑᥝᥲ ᥙᥣᥰ ᥝᥭᥳ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

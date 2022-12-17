@@ -4,14 +4,13 @@
 			"Acamicamacaraca",
 			"BadDog",
 			"Kizule",
+			"Matma Rex",
 			"Milicevic01",
-			"Zoranzoki21",
-			"Matma Rex"
+			"Zoranzoki21"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Није пронађена кеширана серијализација са тим кључем",
 	"apierror-visualeditor-difffailed": "Приказ разлике није успео",
-	"apierror-visualeditor-docserver-unconfigured": "VirtualRESTService за сервер докумената није дефинисан; погледајте https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Грешка при контактирању сервера Parsoid/RESTBase (нема одговора)",
 	"apierror-visualeditor-latestnotfound": "Није могуће пронаћи најновију измену за наслов.",
 	"apihelp-visualeditor-description": "Враћа HTML5 за страницу коришћењем услуге Parsoid.",

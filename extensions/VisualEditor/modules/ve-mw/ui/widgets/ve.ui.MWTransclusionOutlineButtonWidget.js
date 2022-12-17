@@ -1,9 +1,13 @@
 /**
- * Generic button-like widget for items in the template dialog sidebar. See
- * {@see OO.ui.ButtonWidget} for inspiration.
+ * Generic button-like widget for top-level parts in the template dialog
+ * sidebar. See {@see OO.ui.ButtonWidget} for inspiration.
  *
  * @class
  * @extends OO.ui.OptionWidget
+ * @mixins OO.ui.mixin.ButtonElement
+ * @mixins OO.ui.mixin.IconElement
+ * @mixins OO.ui.mixin.TabIndexedElement
+ * @mixins ve.ui.MWAriaDescribe
  *
  * @constructor
  * @param {Object} config

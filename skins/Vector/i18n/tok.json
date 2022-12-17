@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"Robin van der Vliet",
 			"Gtbot2007",
 			"LesVisages",
+			"Robin van der Vliet",
 			"שוקו מוקה"
 		]
 	},
@@ -14,5 +14,6 @@
 	"vector-view-edit": "o ante",
 	"vector-view-history": "o lukin e tenpo pini",
 	"vector-view-view": "lukin",
-	"vector-more-actions": "mute"
+	"vector-more-actions": "mute",
+	"vector-toc-beginning": "open"
 }

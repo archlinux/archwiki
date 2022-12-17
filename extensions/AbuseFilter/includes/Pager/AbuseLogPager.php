@@ -12,6 +12,7 @@ use MediaWiki\Extension\AbuseFilter\CentralDBNotAvailableException;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseLog;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionManager;
 use ReverseChronologicalPager;
 use Sanitizer;
@@ -88,21 +89,19 @@ class AbuseLogPager extends ReverseChronologicalPager {
 	 * @return string
 	 */
 	public function doFormatRow( stdClass $row, bool $isListItem = true ): string {
-		$user = $this->getUser();
-		$lang = $this->getLanguage();
-
-		$title = Title::makeTitle( $row->afl_namespace, $row->afl_title );
-
-		$diffLink = false;
-		$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $user, $this->afPermissionManager );
+		$performer = $this->getAuthority();
+		$visibility = SpecialAbuseLog::getEntryVisibilityForUser( $row, $performer, $this->afPermissionManager );
 
 		if ( $visibility !== SpecialAbuseLog::VISIBILITY_VISIBLE ) {
 			return '';
 		}
 
 		$linkRenderer = $this->getLinkRenderer();
+		$diffLink = false;
 
 		if ( !$row->afl_wiki ) {
+			$title = Title::makeTitle( $row->afl_namespace, $row->afl_title );
+
 			$pageLink = $linkRenderer->makeLink(
 				$title,
 				null,
@@ -152,6 +151,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$this->msg( 'parentheses' )->params( WikiMap::getWikiName( $row->afl_wiki ) )->escaped();
 		}
 
+		$lang = $this->getLanguage();
 		$timestamp = htmlspecialchars( $lang->userTimeAndDate( $row->afl_timestamp, $this->getUser() ) );
 
 		$actions_takenRaw = $row->afl_actions;
@@ -192,7 +192,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 			$filter_hidden = $row->af_hidden;
 		}
 
-		if ( $this->afPermissionManager->canSeeLogDetailsForFilter( $user, $filter_hidden ) ) {
+		if ( $this->afPermissionManager->canSeeLogDetailsForFilter( $performer, $filter_hidden ) ) {
 			$actionLinks = [];
 
 			if ( $isListItem ) {
@@ -214,7 +214,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 				$actionLinks[] = $diffLink;
 			}
 
-			if ( !$isListItem && $this->afPermissionManager->canHideAbuseLog( $user ) ) {
+			if ( !$isListItem && $this->afPermissionManager->canHideAbuseLog( $performer ) ) {
 				// Link for hiding a single entry from the details view
 				$hideLink = $linkRenderer->makeKnownLink(
 					SpecialPage::getTitleFor( $this->basePageName, 'hide' ),
@@ -274,22 +274,21 @@ class AbuseLogPager extends ReverseChronologicalPager {
 		}
 
 		$attribs = null;
-		$isHidden = SpecialAbuseLog::isHidden( $row );
 		if (
 			$this->isHidingEntry( $row ) === true ||
 			// If isHidingEntry is false, we've just unhidden the row
-			( $this->isHidingEntry( $row ) === null && $isHidden === true )
+			( $this->isHidingEntry( $row ) === null && $row->afl_deleted )
 		) {
 			$attribs = [ 'class' => 'mw-abusefilter-log-hidden-entry' ];
 		}
-		if ( $isHidden === 'implicit' ) {
+		if ( self::entryHasAssociatedDeletedRev( $row ) ) {
 			$description .= ' ' .
 				$this->msg( 'abusefilter-log-hidden-implicit' )->parse();
 		}
 
-		if ( $isListItem && !$this->hideEntries && $this->afPermissionManager->canHideAbuseLog( $user ) ) {
+		if ( $isListItem && !$this->hideEntries && $this->afPermissionManager->canHideAbuseLog( $performer ) ) {
 			// Checkbox for hiding multiple entries, single entries are handled above
-			$description = Xml::check( 'hideids[' . $row->afl_id . ']' ) . $description;
+			$description = Xml::check( 'hideids[' . $row->afl_id . ']' ) . ' ' . $description;
 		}
 
 		if ( $isListItem ) {
@@ -379,7 +378,7 @@ class AbuseLogPager extends ReverseChronologicalPager {
 			];
 		}
 
-		if ( !$this->afPermissionManager->canSeeHiddenLogEntries( $this->getUser() ) ) {
+		if ( !$this->afPermissionManager->canSeeHiddenLogEntries( $this->getAuthority() ) ) {
 			$info['conds']['afl_deleted'] = 0;
 		}
 
@@ -400,12 +399,27 @@ class AbuseLogPager extends ReverseChronologicalPager {
 			// Only for local wiki results
 			if ( !$row->afl_wiki ) {
 				$lb->add( $row->afl_namespace, $row->afl_title );
-				$lb->add( NS_USER, $row->afl_user );
+				$lb->add( NS_USER, $row->afl_user_text );
 				$lb->add( NS_USER_TALK, $row->afl_user_text );
 			}
 		}
 		$lb->execute();
 		$result->seek( 0 );
+	}
+
+	/**
+	 * @param stdClass $row
+	 * @return bool
+	 * @todo This should be moved elsewhere
+	 */
+	private static function entryHasAssociatedDeletedRev( stdClass $row ): bool {
+		if ( !$row->afl_rev_id ) {
+			return false;
+		}
+		$revision = MediaWikiServices::getInstance()
+			->getRevisionLookup()
+			->getRevisionById( $row->afl_rev_id );
+		return $revision && $revision->getVisibility() !== 0;
 	}
 
 	/**

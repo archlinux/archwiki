@@ -84,6 +84,10 @@ module.exports = function ( amcOutreach, currentPage ) {
 			return;
 		}
 
+		// Dispatch desktop toggle event.
+		// https://phabricator.wikimedia.org/T310852
+		mw.eventLog.dispatch( 'mediawiki.desktop_link.click' );
+
 		return executeWrappedEvent();
 	}
 

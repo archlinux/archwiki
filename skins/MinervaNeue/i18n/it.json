@@ -9,7 +9,8 @@
 			"Sakretsu",
 			"Senpremì",
 			"The Polish",
-			"Ximo17"
+			"Ximo17",
+			"Pierpao"
 		]
 	},
 	"minerva-last-modified-date": "Ultima modifica il $1 alle $2",
@@ -65,11 +66,13 @@
 	"minerva-page-actions-wikibase": "Elemento {{WBREPONAME}}",
 	"minerva-page-actions-language-switcher": "Lingue",
 	"minerva-page-actions-history": "Cronologia",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Discussione]]",
 	"minerva-talk-explained": "Discussioni attive",
 	"minerva-talk-explained-empty": "Non ci sono discussioni su questa pagina.",
 	"minerva-talk-full-page": "Leggi come pagina wiki",
 	"minerva-talk-reply-success": "La tua risposta è stata salvata nella pagina di discussione.",
 	"skin-minerva-issue-learn-more": "Ulteriori informazioni",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorie",
-	"skin-minerva-mobile-option-MinervaShowCategories-description": "Visualizza le categorie delle pagine"
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "Visualizza le categorie delle pagine",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Sfortunatamente, il raggruppamento dei risultati per pagina non è disponibile sui dispositivi mobili. Se desideri utilizzare la funzione \"raggruppa per pagina\", utilizza il sito in versione desktop."
 }

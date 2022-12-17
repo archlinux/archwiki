@@ -1,8 +1,7 @@
 <?php
 
-namespace Tests\MediaWiki\Minerva;
+namespace MediaWiki\Minerva;
 
-use MediaWiki\Minerva\SkinOptions;
 use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWikiIntegrationTestCase;
 use OutputPage;

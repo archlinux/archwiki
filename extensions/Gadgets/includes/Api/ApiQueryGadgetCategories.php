@@ -93,16 +93,16 @@ class ApiQueryGadgetCategories extends ApiQueryBase {
 		return [
 			'prop' => [
 				ParamValidator::PARAM_DEFAULT => 'name',
-				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => [
+				ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_TYPE => [
 					'name',
 					'title',
 					'members',
 				],
 			],
 			'names' => [
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_TYPE => 'string',
+				ParamValidator::PARAM_ISMULTI => true,
 			],
 		];
 	}

@@ -1,6 +1,8 @@
 @import '../../common/variables.less';
 @import 'mediawiki.mixins.less';
 
+@font-size-sticky-header-links: unit( 14 / @font-size-browser, em ); // Equals `0.875em`.
+
 .vector-sticky-header {
 	width: 100%;
 	height: @height-sticky-header;
@@ -9,41 +11,45 @@
 	left: 0;
 	right: 0;
 	z-index: @z-index-header;
-	transform: translateY( -100% );
 	transition: @transition-sticky-header;
-	display: flex;
+	display: none;
 	align-items: center;
-	max-width: @max-width-page-container + @padding-horizontal-page-container + @padding-horizontal-page-container;
 	margin: 0 auto;
 	background: @background-color-base;
 	background-color: #fffffff7;
-	border-bottom: 1px solid @colorGray14;
+	border-bottom: @border-width-base @border-style-base @colorGray14;
 	// FIXME: Should this adapt to different thresholds? Ask Alex!
 	padding: 6px 8px 6px 10px;
 	justify-content: space-between;
 	box-sizing: border-box;
 
-	// If the user has expressed their preference for reduced motion, then disable animation for the sticky header.
-	@media ( prefers-reduced-motion: reduce ) {
-		transition: none;
-	}
-
-	@media ( min-width: @width-breakpoint-desktop ) {
+	@media ( min-width: @min-width-desktop ) {
 		padding: 6px 25px;
+		max-width: @max-width-page-container + ( @padding-horizontal-page-container * 2 );
 	}
 
-	// T298836 Hide the sticky header at lower resolutions.
-	@media ( max-width: @width-breakpoint-desktop ) {
+	@media ( min-width: @min-width-desktop-wide ) {
+		padding: 6px 25px;
+		max-width: @max-width-page-container + ( @padding-horizontal-page-container-wide * 2 );
+	}
+
+	// Hide sticky header and it's children until visible class is applied to the body
+	.client-js.vector-sticky-header-enabled :not( .vector-sticky-header-visible ) & {
+		transform: translateY( -100% );
+
+		> div {
+			display: none;
+		}
+	}
+
+	// Hide sticky header for no-js users
+	.client-nojs & {
 		display: none;
 	}
 
-	// Hide any open menus/search results unless sticky header is visible
-	&:not( .vector-sticky-header-visible ) > div {
-		display: none;
-	}
-
-	&-visible {
-		transform: translateY( 0% );
+	// T298836 Only show sticky header at higher resolutions.
+	@media ( min-width: @min-width-desktop ) {
+		display: flex;
 	}
 
 	//
@@ -66,11 +72,26 @@
 	// Components
 	//
 	&-context-bar {
-		border-left: 1px solid #c8c8c8;
+		border-left: @border-width-base @border-style-base #c8c8c8;
 		margin: 0 15px;
 		padding-left: 30px;
 		white-space: nowrap;
 		min-width: 0;
+	}
+
+	// Hide TOC in sticky header by default
+	&-toc-container {
+		display: none;
+	}
+
+	.vector-toc-collapsed &-toc-container {
+		display: block;
+		position: relative;
+		margin-left: -@icon-padding-md;
+
+		.sidebar-toc {
+			margin: 0;
+		}
 	}
 
 	&-context-bar-primary {
@@ -86,16 +107,24 @@
 		}
 	}
 
+	&-icons {
+		font-size: @font-size-sticky-header-links;
+	}
+
 	.vector-search-box {
 		// Hide the search box until the user toggles it.
 		display: none;
 	}
 
 	&.vector-header-search-toggled {
-		// .wvui-input__input left padding (36px) - the .wvui-icon svg width (20px)
-		// - the icon left padding (12px [1]) = 4px
-		// [1] see .wvui-typeahead-search--show-thumbnail .wvui-input__input:focus)
+		// .vector-sticky-header-search-toggle left border (1px) + left padding (12px)
+		// - .cdx-text-input__start-icon left offset (9px [1]) = 4px
+		// [1] see https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/tags/v0.1.0-alpha.8/packages/codex/src/components/text-input/TextInput.vue#257
 		@margin-start-search-box: 4px;
+		// .vector-sticky-header-search-toggle left border (1px) + left padding (12px)
+		// - .cdx-text-input__start-icon left offset (22px [2]) = -9px
+		// [2] see https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/tags/v0.1.0-alpha.8/packages/codex/src/components/typeahead-search/TypeaheadSearch.vue#708
+		@margin-start-search-box-with-thumbnail: -9px;
 
 		.vector-sticky-header-search-toggle,
 		.vector-sticky-header-context-bar {
@@ -104,27 +133,22 @@
 
 		.vector-search-box {
 			display: block;
-			flex-basis: unit( 500px / @font-size-browser / @font-size-base, em );
 			margin-left: @margin-start-search-box;
 		}
 
 		// T296318 Decrease the start margin of the search box to account for the
 		// icon's increased start position when the search component has thumbnails.
 		.vector-search-box-show-thumbnail {
-			margin-left: @margin-start-search-box - ( @size-search-expand / 2 );
+			margin-left: @margin-start-search-box-with-thumbnail;
 
-			.wvui-input__start-icon {
+			.cdx-text-input__start-icon {
 				color: @colorGray2;
 			}
 		}
 	}
 }
 
-.client-nojs .vector-sticky-header {
-	display: none;
-}
-
-@media ( min-width: @width-breakpoint-tablet ) {
+@media ( min-width: @min-width-tablet ) {
 	.client-js.vector-sticky-header-enabled {
 		// T290518: When the sticky header is enabled (feature flag is on, js is
 		// enabled, and viewport is at higher resolutions), add scroll padding to the
@@ -137,9 +161,17 @@
 		// sticky header isn't visible yet but we still need scroll padding applied
 		// (e.g. when the user navigates to a page with a hash fragment in the URI).
 		scroll-padding-top: @height-sticky-header;
+	}
+}
 
+// T298836 Sticky header is only shown at higher resolutions
+@media ( min-width: @min-width-desktop ) {
+	.client-js .vector-sticky-header-visible {
 		// T289817 Override other sticky element offsets to ensure that other
 		// sticky elements (i.e. table headers) appear below the sticky header.
+		//
+		// @stable See the Integration notes for developers section at
+		// https://www.mediawiki.org/wiki/Reading/Web/Desktop_Improvements/Features/Sticky_Header
 		.mw-sticky-header-element,
 		.charts-stickyhead th {
 			/* stylelint-disable-next-line declaration-no-important */

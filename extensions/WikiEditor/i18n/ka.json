@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"BRUTE",
 			"David1010",
 			"Dawid Deutschland",
@@ -8,7 +9,6 @@
 			"Macofe",
 			"Otogi",
 			"გიორგიმელა",
-			"Amire80",
 			"Გიო ოქრო"
 		]
 	},
@@ -43,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "გვერდი არ არსებობს",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "თქვენ მიერ მითითებული სათაური არასწორია",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "გარე ბმული",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "არსებული გვერდების შემოწმება...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "ეს გვერდი არ არის შინაარსის გვერდი, არამედ ერთმანეთის მსგავსი სათაურების მქონე თემების სია",
 	"wikieditor-toolbar-tool-link-int-invalid": "მითითებული დასახელება არ არსებობს",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "თქვენ მიერ მითითებული URL, როგორც ჩანს მითითებულია სხვა ვიკი-გვერდზე. გინდათ იყოს ის შიდა ბმული?",
@@ -196,5 +195,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "ჩვეულებრივი ტექსტი<br />:შეწეული ტექსტი<br />::შეწეული ტექსტი",
 	"wikieditor-toolbar-help-content-indent-result": "ჩვეულებრივი ტექსტი<dl><dd>შეწეული ტექსტი<dl><dd>შეწეული ტექსტი</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "რედაქტირება შესრულებულია [[mw:Special:MyLanguage/Extension:WikiEditor|ვიკირედაქტორის]] გამოყენებით (2010 წლის ვიკიტექსტის რედაქტორი)",
-	"wikieditor-realtimepreview-preview": "გადახედვა"
+	"wikieditor-realtimepreview-preview": "გადახედვა",
+	"wikieditor-realtimepreview-error": "გადახედვა არ იტვირთება",
+	"wikieditor-realtimepreview-reload": "ხელახლა ჩატვირთვა",
+	"wikieditor-realtimepreview-beta-label": "რეალურ დროში გადახედვა",
+	"wikieditor-realtimepreview-beta-desc": "[[mw:Special:MyLanguage/Extension:WikiEditor|2010 წლის ვიკირედაქტორშივე]] ნახეთ, როგორ გამოჩნდება ვიკიტექსტის ცვლილებები მკითხველებისათვის.",
+	"wikieditor-realtimepreview-reload-title": "რეალურ დროში გადახედვის პანელის გადატვირთვა",
+	"wikieditor-realtimepreview-manual": "გთხოვთ, გადატვირთოთ ახლა, რათა ხელით მოახდინოთ თქვენი რედაქტირებების გადახედვა.",
+	"wikieditor-realtimepreview-onboarding-title": "რეალურ დროში გადახედვა",
+	"wikieditor-realtimepreview-onboarding-body": "რეალურ დროში გადახედვის გზით იხილეთ როგორი იქნება თქვენი რედაქტირებები მკითხველის თვალით.",
+	"wikieditor-realtimepreview-onboarding-button": "კარგი, გასაგებია"
 }

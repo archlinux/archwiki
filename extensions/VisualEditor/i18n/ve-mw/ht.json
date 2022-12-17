@@ -1,18 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bfpage",
 			"Tisave",
-			"Amire80"
+			"Kitanago"
 		]
 	},
 	"tooltip-ca-createsource": "Kreye kòd sous paj sa a",
 	"tooltip-ca-ve-edit": "Edit paj sa a",
 	"visualeditor-ca-createlocaldescriptionsource": "Ajoute deskription lokal la nan kòd",
-	"visualeditor-ca-createsource": "Kreye nan kòd",
+	"visualeditor-ca-createsource": "Kreye ak wikikòd",
 	"visualeditor-ca-editsource": "Modifye kòd",
 	"visualeditor-ca-editsource-section": "modifye kòd",
 	"visualeditor-categories-tool": "Kategori yo",
+	"visualeditor-descriptionpagelink": "Pwojè:EditèVizyèl",
 	"visualeditor-dialog-media-change-image": "Chanje imaj",
 	"visualeditor-dialog-media-choose-image": "Sèvi imaj sa a",
 	"visualeditor-dialog-media-content-description-link": "(paj deskripsyon)",
@@ -46,7 +48,9 @@
 	"visualeditor-dialog-template-title": "Modèl",
 	"visualeditor-dialog-transclusion-action-save": "Anrejistre",
 	"visualeditor-dialog-transclusion-template-title-nonexistent": "Modèl sa a pa egziste.",
+	"visualeditor-dialog-transclusion-add-param-save": "Ajoute",
 	"visualeditor-dialog-transclusion-add-template": "Ajoute modèl la",
+	"visualeditor-dialog-transclusion-add-template-save": "Ajoute",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Ajoute paramèt san dokimantasyon",
 	"visualeditor-dialog-transclusion-collapse-options": "Kache opsyon yo",
 	"visualeditor-dialog-transclusion-confirmation-discard": "Jete modifikasyon yo",

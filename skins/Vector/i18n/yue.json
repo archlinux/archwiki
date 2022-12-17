@@ -7,7 +7,8 @@
 			"OmniBus",
 			"Roy17",
 			"Waihorace",
-			"Yueman"
+			"Yueman",
+			"Deryck Chan"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -20,7 +21,10 @@
 	"vector.js": "/* 響每一次個頁面載入時，用域達畫面嘅用戶都會載入呢度任何嘅JavaScript */",
 	"vector-action-toggle-sidebar": "邊欄開閂",
 	"vector-languages": "語言",
+	"vector-language-button-aria-label": "去睇另一種語文嘅文章。有$1種語言版本。",
 	"vector-language-button-label": "{{PLURAL:$1|$1種語言}}",
+	"vector-no-language-button-label": "加語言",
+	"vector-no-language-button-aria-label": "呢篇文淨係喺呢種語言先有。喺第種語言開呢篇文。",
 	"vector-language-redirect-to-top": "喺呢個{{SITENAME}}度，其他語言嘅連結喺頁頂文章標題側邊。[[#p-lang-btn|去頁頂]]。",
 	"vector-action-addsection": "加主題",
 	"vector-action-delete": "剷走",
@@ -37,5 +41,14 @@
 	"vector-jumptosearch": "跳去搵嘢",
 	"vector-jumptocontent": "跳去內容",
 	"vector-more-actions": "多啲",
-	"vector-search-loader": "載入緊搜索提議"
+	"vector-search-loader": "載入緊搜索提議",
+	"vector-searchsuggest-containing": "搵包含 <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> 嘅版",
+	"vector-toc-heading": "目錄",
+	"vector-toc-toggle-position-title": "收埋",
+	"vector-toc-beginning": "文頭",
+	"vector-anon-user-menu-pages-learn": "知多啲",
+	"vector-main-menu-tooltip": "主目錄",
+	"vector-toc-menu-tooltip": "內容一覽",
+	"vector-toc-collapsible-button-label": "開/收內容一覽",
+	"vector-site-nav-label": "站點"
 }

@@ -96,6 +96,12 @@ class FieldLayout extends Layout {
 		// Config initialization
 		$config = array_merge( [ 'align' => 'left', 'helpInline' => false ], $config );
 
+		if ( ( $config['help'] ?? '' ) !== '' && ( $config['label'] ?? '' ) === '' ) {
+			// Add an empty label. For some combinations of 'helpInline' and 'align'
+			// there would be no space in the interface to display the help text otherwise.
+			$config['label'] = ' ';
+		}
+
 		// Parent constructor
 		parent::__construct( $config );
 

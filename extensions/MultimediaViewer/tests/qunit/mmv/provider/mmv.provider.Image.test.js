@@ -21,7 +21,7 @@
 	QUnit.test( 'Image constructor sense check', function ( assert ) {
 		var imageProvider = new mw.mmv.provider.Image();
 
-		assert.ok( imageProvider );
+		assert.true( imageProvider instanceof mw.mmv.provider.Image );
 	} );
 
 	QUnit.test( 'Image load success', function ( assert ) {
@@ -31,10 +31,9 @@
 			imageProvider = new mw.mmv.provider.Image();
 
 		imageProvider.imagePreloadingSupported = function () { return false; };
-		imageProvider.performance.recordEntry = function () {};
 
 		return imageProvider.get( url ).then( function ( image ) {
-			assert.ok( image instanceof HTMLImageElement,
+			assert.true( image instanceof HTMLImageElement,
 				'success handler was called with the image element' );
 			assert.strictEqual( image.src, url, 'image src is correct' );
 		} );
@@ -49,12 +48,11 @@
 			imageProvider = new mw.mmv.provider.Image();
 
 		imageProvider.imagePreloadingSupported = function () { return false; };
-		imageProvider.performance.recordEntry = function () {};
 
 		return QUnit.whenPromisesComplete(
 			imageProvider.get( url ).then( function ( image ) {
 				result = image;
-				assert.ok( image instanceof HTMLImageElement,
+				assert.true( image instanceof HTMLImageElement,
 					'success handler was called with the image element' );
 				assert.strictEqual( image.src, url, 'image src is correct' );
 			} ),
@@ -71,70 +69,6 @@
 		);
 	} );
 
-	QUnit.test( 'Image load XHR progress funneling', function ( assert ) {
-		var i = 0,
-			imageProvider = new mw.mmv.provider.Image(),
-			oldPerformance = imageProvider.performance,
-			fakeURL = 'fakeURL',
-			response = 'response',
-			done1 = assert.async(),
-			done2 = assert.async();
-
-		imageProvider.performance.delay = 0;
-		imageProvider.imagePreloadingSupported = function () { return true; };
-		imageProvider.rawGet = function () { return $.Deferred().resolve(); };
-
-		imageProvider.performance.newXHR = function () {
-			return { readyState: 4,
-				response: response,
-				send: function () {
-					var self = this;
-
-					// The timeout is necessary because without it notify() happens before
-					// the imageProvider has time to chain its progress() to the returned deferred
-					setTimeout( function () {
-						self.onprogress( { lengthComputable: true, loaded: 10, total: 20 } );
-						self.onreadystatechange();
-					} );
-				},
-
-				open: function () {} };
-		};
-
-		imageProvider.performance.recordEntry = function ( type, total, url ) {
-			assert.strictEqual( type, 'image', 'Type matches' );
-			assert.strictEqual( url, fakeURL, 'URL matches' );
-			done1();
-
-			imageProvider.performance = oldPerformance;
-
-			return $.Deferred().resolve();
-		};
-
-		imageProvider.get( fakeURL )
-			.fail( function () {
-				assert.ok( false, 'Image failed to (pretend to) load' );
-				done2();
-			} )
-			.then( function () {
-				assert.ok( true, 'Image was pretend-loaded' );
-				done2();
-			} )
-			.progress( function ( response2, percent ) {
-				if ( i === 0 ) {
-					assert.strictEqual( percent, 50, 'Correctly propagated a 50% progress event' );
-					assert.strictEqual( response2, response2, 'Partial response propagated' );
-				} else if ( i === 1 ) {
-					assert.strictEqual( percent, 100, 'Correctly propagated a 100% progress event' );
-					assert.strictEqual( response2, response2, 'Partial response propagated' );
-				} else {
-					assert.ok( false, 'Only 2 progress events should propagate' );
-				}
-
-				i++;
-			} );
-	} );
-
 	QUnit.test( 'Image load fail', function ( assert ) {
 		var imageProvider = new mw.mmv.provider.Image(),
 			oldMwLog = mw.log,
@@ -142,12 +76,11 @@
 			mwLogCalled = false;
 
 		imageProvider.imagePreloadingSupported = function () { return false; };
-		imageProvider.performance.recordEntry = function () {};
 		mw.log = function () { mwLogCalled = true; };
 
 		imageProvider.get( 'doesntexist.png' ).fail( function () {
-			assert.ok( true, 'fail handler was called' );
-			assert.ok( mwLogCalled, 'mw.log was called' );
+			assert.true( true, 'fail handler was called' );
+			assert.true( mwLogCalled, 'mw.log was called' );
 			mw.log = oldMwLog;
 			done();
 		} );
@@ -165,7 +98,7 @@
 
 		return imageProvider.get( url ).then( function ( image ) {
 			// can't test equality as browsers transform this to a full URL
-			assert.ok( endsWith( image.src, url ), 'local image loaded with correct source' );
+			assert.true( endsWith( image.src, url ), 'local image loaded with correct source' );
 		} );
 	} );
 
@@ -180,21 +113,24 @@
 		};
 
 		imageProvider.get( url ).fail( function () {
-			assert.ok( true, 'Fail callback called for non-existing image' );
+			assert.true( true, 'Fail callback called for non-existing image' );
 			done();
 		} );
 	} );
 
 	QUnit.test( 'imageQueryParameter', function ( assert ) {
-		var imageProvider = new mw.mmv.provider.Image( 'foo' );
+		var imageProvider = new mw.mmv.provider.Image( 'foo' ),
+			done = assert.async();
 
 		imageProvider.imagePreloadingSupported = function () { return false; };
-		imageProvider.rawGet = function () { return $.Deferred().resolve(); };
-
-		imageProvider.performance.recordEntry = function ( type, total, url ) {
+		imageProvider.rawGet = function ( url ) {
 			assert.strictEqual( url, 'http://www.wikipedia.org/?foo', 'Extra parameter added' );
+
+			return $.Deferred().resolve();
 		};
 
-		imageProvider.get( 'http://www.wikipedia.org/' );
+		imageProvider.get( 'http://www.wikipedia.org/' ).then( function () {
+			done();
+		} );
 	} );
 }() );

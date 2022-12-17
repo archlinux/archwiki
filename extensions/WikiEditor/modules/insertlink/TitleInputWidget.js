@@ -133,11 +133,10 @@ TitleInputWidget.prototype.onLookupMenuChoose = function ( item ) {
  */
 TitleInputWidget.prototype.getOverlay = function () {
 	// Overlay z-index must be greater than the jQuery UI dialog's of 1002.
-	var $overlay = OO.ui.getDefaultOverlay()
+	return OO.ui.getDefaultOverlay()
 		.clone()
-		.css( 'z-index', '1010' );
-	$( document.body ).append( $overlay );
-	return $overlay;
+		.css( 'z-index', '1010' )
+		.appendTo( document.body );
 };
 
 /**
@@ -149,8 +148,7 @@ TitleInputWidget.prototype.getOverlay = function () {
  * @return {boolean}
  */
 TitleInputWidget.prototype.looksLikeExternalLink = function ( urlString ) {
-	var matches = urlString.match( this.constructor.static.urlRegex );
-	return matches !== null && matches.length > 0;
+	return this.constructor.static.urlRegex.test( urlString );
 };
 
 module.exports = TitleInputWidget;

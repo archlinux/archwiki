@@ -204,107 +204,39 @@ ve.ui.MWSaveDialog.prototype.setDiffAndReview = function ( wikitextDiffPromise, 
 /**
  * Set preview content and show preview panel.
  *
- * @param {HTMLDocument|jQuery} docOrMsg Document to preview, or error message
- * @param {HTMLDocument} [baseDoc] Base document against which to normalise links, if document provided
+ * @param {Object|jQuery} response action=parse API response, or error message
  */
-ve.ui.MWSaveDialog.prototype.showPreview = function ( docOrMsg, baseDoc ) {
-	var dialog = this;
-
-	if ( docOrMsg instanceof HTMLDocument ) {
-		var modules = [];
-		// Extract required modules for stylesheet tags (avoids re-loading styles)
-		Array.prototype.forEach.call( docOrMsg.head.querySelectorAll( 'link[rel~=stylesheet]' ), function ( link ) {
-			var uri = new mw.Uri( link.href );
-			if ( uri.query.modules ) {
-				modules = modules.concat( mw.libs.ve.expandModuleNames( uri.query.modules ) );
-			}
-		} );
-		// Remove skin-specific modules (T187075 / T185284)
-		modules = modules.filter( function ( module ) {
-			return ( module.match( /^(skins|mediawiki\.skinning)\./ ) === null );
-		} );
-		mw.loader.using( modules );
-		var body = docOrMsg.body;
-		var categories = [];
-		// Take a snapshot of all categories
-		Array.prototype.forEach.call( body.querySelectorAll( 'link[rel~="mw:PageProp/Category"]' ), function ( element ) {
-			categories.push( ve.dm.nodeFactory.createFromElement( ve.dm.MWCategoryMetaItem.static.toDataElement( [ element ] ) ) );
-		} );
-		// Import body to current document, then resolve attributes against original document (parseDocument called #fixBase)
-		document.adoptNode( body );
-
-		// TODO: This code is very similar to ve.ui.PreviewElement+ve.ui.MWPreviewElement
-		ve.resolveAttributes( body, docOrMsg, ve.dm.Converter.static.computedAttributes );
-
-		// Document title will only be set if wikitext contains {{DISPLAYTITLE}}
-		if ( docOrMsg.title ) {
-			// HACK: Parse title as it can contain basic wikitext (T122976)
-			ve.init.target.getContentApi().post( {
-				action: 'parse',
-				title: ve.init.target.getPageName(),
-				prop: 'displaytitle',
-				text: '{{DISPLAYTITLE:' + docOrMsg.title + '}}\n'
-			} ).then( function ( response ) {
-				if ( ve.getProp( response, 'parse', 'displaytitle' ) ) {
-					// eslint-disable-next-line no-jquery/no-html
-					dialog.$previewHeading.html( response.parse.displaytitle );
-				}
-			} );
-		}
-
-		// Redirect
-		var $redirect = $( [] );
-		var redirectMeta = body.querySelector( 'link[rel="mw:PageProp/redirect"]' );
-		if ( redirectMeta ) {
-			$redirect = ve.init.mw.ArticleTarget.static.buildRedirectMsg(
-				mw.libs.ve.getTargetDataFromHref(
-					redirectMeta.getAttribute( 'href' ),
-					document
-				).title
-			);
-		}
-
-		// TODO: This won't work with formatted titles (T122976)
-		this.$previewHeading.text( docOrMsg.title || mw.Title.newFromText( ve.init.target.getPageName() ).getPrefixedText() );
+ve.ui.MWSaveDialog.prototype.showPreview = function ( response ) {
+	if ( response instanceof $ ) {
 		this.$previewViewer.empty().append(
-			$redirect,
+			// eslint-disable-next-line no-jquery/no-append-html
+			$( '<em>' ).append( response )
+		);
+	} else {
+		var data = response.parse;
+
+		mw.config.set( data.jsconfigvars );
+		mw.loader.using( ( data.modules || [] ).concat( data.modulestyles || [] ) );
+
+		// eslint-disable-next-line no-jquery/no-html
+		this.$previewHeading.html( data.displaytitle );
+		// eslint-disable-next-line no-jquery/no-append-html
+		this.$previewViewer.empty().append(
 			// The following classes are used here:
 			// * mw-content-ltr
 			// * mw-content-rtl
-			// eslint-disable-next-line no-jquery/no-append-html
-			$( '<div>' ).addClass( 'mw-content-' + mw.config.get( 'wgVisualEditor' ).pageLanguageDir ).append(
-				body.childNodes
-			)
+			// eslint-disable-next-line no-jquery/no-html
+			$( '<div>' ).addClass( 'mw-content-' + mw.config.get( 'wgVisualEditor' ).pageLanguageDir ).html(
+				data.text
+			),
+			data.categorieshtml
 		);
 
 		ve.targetLinksToNewWindow( this.$previewViewer[ 0 ] );
-		// Add styles so links render with their appropriate classes
-		ve.init.platform.linkCache.styleParsoidElements( this.$previewViewer, baseDoc );
 		mw.libs.ve.fixFragmentLinks( this.$previewViewer[ 0 ], mw.Title.newFromText( ve.init.target.getPageName() ), 'mw-save-preview-' );
 
-		var deferred;
-		if ( categories.length ) {
-			// If there are categories, we need to render them. This involves
-			// a delay, since they might be hidden categories.
-			deferred = ve.init.target.renderCategories( categories ).done( function ( $categories ) {
-				dialog.$previewViewer.append( $categories );
-
-				ve.targetLinksToNewWindow( $categories[ 0 ] );
-				// Add styles so links render with their appropriate classes
-				ve.init.platform.linkCache.styleParsoidElements( $categories, baseDoc );
-			} );
-		} else {
-			deferred = ve.createDeferred().resolve();
-		}
-		deferred.done( function () {
-			// Run hooks so other things can alter the document
-			mw.hook( 'wikipage.content' ).fire( dialog.$previewViewer );
-		} );
-	} else if ( docOrMsg instanceof $ ) {
-		this.$previewViewer.empty().append(
-			// eslint-disable-next-line no-jquery/no-append-html
-			$( '<em>' ).append( docOrMsg )
-		);
+		// Run hooks so other things can alter the document
+		mw.hook( 'wikipage.content' ).fire( this.$previewViewer );
 	}
 
 	this.popPending();
@@ -457,12 +389,12 @@ ve.ui.MWSaveDialog.prototype.swapPanel = function ( panel, noFocus ) {
 
 	// Only show preview in source mode
 	this.actions.forEach( { actions: 'preview' }, function ( action ) {
-		action.toggle( dialog.canPreview );
+		action.toggle( dialog.canPreview && panel !== 'preview' );
 	} );
 
 	// Diff API doesn't support section=new
 	this.actions.forEach( { actions: 'review' }, function ( action ) {
-		action.toggle( dialog.canReview );
+		action.toggle( dialog.canReview && panel !== 'review' );
 	} );
 
 	// Support: iOS

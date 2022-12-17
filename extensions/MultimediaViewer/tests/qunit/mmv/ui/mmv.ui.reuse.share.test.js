@@ -25,10 +25,10 @@
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var share = makeShare();
 
-		assert.ok( share, 'Share UI element is created.' );
+		assert.true( share instanceof mw.mmv.ui.reuse.Share, 'Share UI element is created.' );
 		assert.strictEqual( share.$pane.length, 1, 'Pane div created.' );
-		assert.ok( share.pageInput, 'Text field created.' );
-		assert.ok( share.$pageLink, 'Link created.' );
+		assert.true( share.pageInput instanceof mw.widgets.CopyTextLayout, 'Text field created.' );
+		assert.strictEqual( share.$pageLink.length, 1, 'Link created.' );
 	} );
 
 	QUnit.test( 'set()/empty():', function ( assert ) {
@@ -42,7 +42,7 @@
 		assert.notStrictEqual( !share.pageInput.textInput.getValue(), '', 'pageInput is empty.' );
 
 		share.select = function () {
-			assert.ok( true, 'Text has been selected after data is set.' );
+			assert.true( true, 'Text has been selected after data is set.' );
 		};
 
 		share.set( image );

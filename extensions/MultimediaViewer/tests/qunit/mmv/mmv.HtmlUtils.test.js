@@ -31,11 +31,9 @@
 		assert.strictEqual( utils.wrapAndJquerify( el ).html(), '<span></span>', 'HTMLElement' );
 		assert.strictEqual( utils.wrapAndJquerify( html ).html(), '<span></span>', 'HTML string' );
 
-		try {
+		assert.throws( function () {
 			utils.wrapAndJquerify( invalid );
-		} catch ( e ) {
-			assert.ok( e, 'throws exception for invalid type' );
-		}
+		}, 'throws exception for invalid type' );
 	} );
 
 	QUnit.test( 'wrapAndJquerify() for multiple nodes', function ( assert ) {
@@ -83,17 +81,17 @@
 		utils.filterInvisible( $visibleChildInInvisibleChild );
 		utils.filterInvisible( $invisibleChildWithVisibleSiblings );
 
-		assert.ok( $visibleChild.has( 'span' ).length, 'visible child is not filtered' );
-		assert.notOk( $invisibleChild.has( 'span' ).length, 'invisible child is filtered' );
-		assert.notOk( $styleChild.has( 'style' ).length, '<style> child is filtered' );
-		assert.ok( $invisibleChildInVisibleChild.has( 'span' ).length, 'visible child is not filtered...' );
-		assert.notOk( $invisibleChildInVisibleChild.has( 'abbr' ).length, '... but its invisible child is' );
-		assert.notOk( $visibleChildInInvisibleChild.has( 'span' ).length, 'invisible child is filtered...' );
-		assert.notOk( $visibleChildInInvisibleChild.has( 'abbr' ).length, '...and its children too' );
-		assert.ok( $visibleChild.has( 'span' ).length, 'visible child is not filtered' );
-		assert.notOk( $invisibleChildWithVisibleSiblings.has( 'abbr' ).length, 'invisible sibling is filtered...' );
-		assert.ok( $invisibleChildWithVisibleSiblings.has( 'span' ).length, '...but its visible siblings are not' );
-		assert.ok( $invisibleChildWithVisibleSiblings.has( 'b' ).length, '...but its visible siblings are not' );
+		assert.strictEqual( $visibleChild.has( 'span' ).length, 1, 'visible child is not filtered' );
+		assert.strictEqual( $invisibleChild.has( 'span' ).length, 0, 'invisible child is filtered' );
+		assert.strictEqual( $styleChild.has( 'style' ).length, 0, '<style> child is filtered' );
+		assert.strictEqual( $invisibleChildInVisibleChild.has( 'span' ).length, 1, 'visible child is not filtered...' );
+		assert.strictEqual( $invisibleChildInVisibleChild.has( 'abbr' ).length, 0, '... but its invisible child is' );
+		assert.strictEqual( $visibleChildInInvisibleChild.has( 'span' ).length, 0, 'invisible child is filtered...' );
+		assert.strictEqual( $visibleChildInInvisibleChild.has( 'abbr' ).length, 0, '...and its children too' );
+		assert.strictEqual( $visibleChild.has( 'span' ).length, 1, 'visible child is not filtered' );
+		assert.strictEqual( $invisibleChildWithVisibleSiblings.has( 'abbr' ).length, 0, 'invisible sibling is filtered...' );
+		assert.strictEqual( $invisibleChildWithVisibleSiblings.has( 'span' ).length, 1, '...but its visible siblings are not' );
+		assert.strictEqual( $invisibleChildWithVisibleSiblings.has( 'b' ).length, 1, '...but its visible siblings are not' );
 	} );
 
 	QUnit.test( 'whitelistHtml()', function ( assert ) {
@@ -110,14 +108,14 @@
 		utils.whitelistHtml( $whitelistedInNonWhitelisted, 'a' );
 		utils.whitelistHtml( $siblings, 'a' );
 
-		assert.ok( $whitelisted.has( 'a' ).length, 'Whitelisted elements are kept.' );
-		assert.notOk( $nonWhitelisted.has( 'span' ).length, 'Non-whitelisted elements are removed.' );
-		assert.ok( $nonWhitelistedInWhitelisted.has( 'a' ).length, 'Whitelisted parents are kept.' );
-		assert.notOk( $nonWhitelistedInWhitelisted.has( 'span' ).length, 'Non-whitelisted children are removed.' );
-		assert.notOk( $whitelistedInNonWhitelisted.has( 'span' ).length, 'Non-whitelisted parents are removed.' );
-		assert.ok( $whitelistedInNonWhitelisted.has( 'a' ).length, 'Whitelisted children are kept.' );
-		assert.notOk( $siblings.has( 'span' ).length, 'Non-whitelisted siblings are removed.' );
-		assert.ok( $siblings.has( 'a' ).length, 'Whitelisted siblings are kept.' );
+		assert.strictEqual( $whitelisted.has( 'a' ).length, 1, 'Whitelisted elements are kept.' );
+		assert.strictEqual( $nonWhitelisted.has( 'span' ).length, 0, 'Non-whitelisted elements are removed.' );
+		assert.strictEqual( $nonWhitelistedInWhitelisted.has( 'a' ).length, 1, 'Whitelisted parents are kept.' );
+		assert.strictEqual( $nonWhitelistedInWhitelisted.has( 'span' ).length, 0, 'Non-whitelisted children are removed.' );
+		assert.strictEqual( $whitelistedInNonWhitelisted.has( 'span' ).length, 0, 'Non-whitelisted parents are removed.' );
+		assert.strictEqual( $whitelistedInNonWhitelisted.has( 'a' ).length, 1, 'Whitelisted children are kept.' );
+		assert.strictEqual( $siblings.has( 'span' ).length, 0, 'Non-whitelisted siblings are removed.' );
+		assert.strictEqual( $siblings.has( 'a' ).length, 1, 'Whitelisted siblings are kept.' );
 	} );
 
 	QUnit.test( 'appendWhitespaceToBlockElements()', function ( assert ) {
@@ -130,9 +128,9 @@
 		utils.appendWhitespaceToBlockElements( $blockElement );
 		utils.appendWhitespaceToBlockElements( $linebreak );
 
-		assert.ok( $noBlockElement.text().match( /abcdefghi/ ), 'Non-block elemens are not whitespaced.' );
-		assert.ok( $blockElement.text().match( /abc\s+def\s+ghi/ ), 'Block elemens are whitespaced.' );
-		assert.ok( $linebreak.text().match( /abc\s+def/ ), 'Linebreaks are whitespaced.' );
+		assert.true( /abcdefghi/.test( $noBlockElement.text() ), 'Non-block elemens are not whitespaced.' );
+		assert.true( /abc\s+def\s+ghi/.test( $blockElement.text() ), 'Block elemens are whitespaced.' );
+		assert.true( /abc\s+def/.test( $linebreak.text() ), 'Linebreaks are whitespaced.' );
 	} );
 
 	QUnit.test( 'jqueryToHtml()', function ( assert ) {

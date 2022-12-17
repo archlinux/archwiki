@@ -264,7 +264,8 @@ class MockDataAccess extends DataAccess {
 		'File:Thumb.png' => 'Thumb.png',
 		'File:LoremIpsum.djvu' => 'LoremIpsum.djvu',
 		'File:Video.ogv' => 'Video.ogv',
-		'File:Audio.oga' => 'Audio.oga'
+		'File:Audio.oga' => 'Audio.oga',
+		'File:Bad.jpg' => 'Bad.jpg',
 	];
 
 	private const PNAMES = [
@@ -299,6 +300,13 @@ class MockDataAccess extends DataAccess {
 			'height' => 180,
 			'bits' => 24,
 			'mime' => 'image/svg+xml'
+		],
+		'Bad.jpg' => [
+			'size' => 12345,
+			'width' => 320,
+			'height' => 240,
+			'bits' => 24,
+			'mime' => 'image/jpeg',
 		],
 		'LoremIpsum.djvu' => [
 			'size' => 3249,
@@ -406,7 +414,8 @@ class MockDataAccess extends DataAccess {
 				'url' => $baseurl,
 				'descriptionurl' => $durl,
 				'mediatype' => $mediatype,
-				'mime' => $props['mime']
+				'mime' => $props['mime'],
+				'badFile' => ( $normFileName === 'Bad.jpg' ),
 			];
 
 			if ( isset( $props['duration'] ) ) {
@@ -550,7 +559,7 @@ class MockDataAccess extends DataAccess {
 
 			case 'indicator':
 			case 'section':
-				$html = "\n";
+				$html = "";
 				break;
 
 			default:
@@ -569,10 +578,13 @@ class MockDataAccess extends DataAccess {
 		$revid = $pageConfig->getRevisionId();
 
 		$expanded = str_replace( '{{!}}', '|', $wikitext );
-		preg_match( '/{{1x\|(.*?)}}/s', $expanded, $match );
+		preg_match( '/{{1x\|(.*?)}}/s', $expanded, $match1 );
+		preg_match( '/{{#tag:ref\|(.*?)\|(.*?)}}/s', $expanded, $match2 );
 
-		if ( $match ) {
-			$ret = $match[1];
+		if ( $match1 ) {
+			$ret = $match1[1];
+		} elseif ( $match2 ) {
+			$ret = "<ref {$match2[2]}>{$match2[1]}</ref>";
 		} elseif ( $wikitext === '{{colours of the rainbow}}' ) {
 			$ret = 'purple';
 		} elseif ( $wikitext === '{{REVISIONID}}' ) {

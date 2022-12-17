@@ -7,6 +7,7 @@
 		]
 	},
 	"minerva-last-modified-date": "Апошняе рэдагаваньне ў $2 $1",
+	"minerva-watchlist-cta": "Сачыць за гэтай старонкай і ўсімі зьменамі на ёй.",
 	"minerva-talk-add-topic": "Дадаць тэму",
 	"mobile-frontend-cookies-required": "Файлы-кукі неабходныя для пераключэньня рэжымаў прагляду. Калі ласка, уключыце іх і паспрабуйце яшчэ раз.",
 	"mobile-frontend-editor-edit": "Рэдагаваць",
@@ -45,6 +46,7 @@
 	"mobile-frontend-user-page-contributions": "Унёсак",
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Далучыўся|Далучылася}} $1",
 	"mobile-frontend-user-page-talk": "Гутаркі",
+	"minerva-user-menu-button": "Карыстацкае мэню",
 	"minerva-page-actions-overflow": "Болей",
 	"minerva-page-actions-info": "Зьвесткі пра старонку",
 	"minerva-page-actions-permalink": "Сталая спасылка",

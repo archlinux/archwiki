@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Abbas dhothar",
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Bgo eiu"
 		]
 	},
 	"inputbox-desc": "ایچ ٹی ایم ایل پریڈیفائینڈ فورمز نوں رلان دی اجازت دیو۔",
@@ -11,5 +12,8 @@
 	"inputbox-tryexact": "ٹھیک جوڑ رلاؤ",
 	"inputbox-searchfulltext": "پوری لکھت لبھو",
 	"inputbox-createarticle": "صفحہ بناؤ",
+	"inputbox-movearticle": "صفحہ لے جاؤ",
+	"inputbox-postcomment": "نواں حصہ",
+	"inputbox-postcommenttitle": "نواں حصہ",
 	"inputbox-ns-main": "مین"
 }

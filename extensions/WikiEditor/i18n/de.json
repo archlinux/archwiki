@@ -47,7 +47,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Diese Seite ist in {{SITENAME}} nicht vorhanden",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Der angegebene Seitenname ist ungültig",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Externer Link",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Prüfe, ob Seite vorhanden ist …",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Diese Seite ist keine Inhaltsseite, sondern eine Liste von Themen mit ähnlichen Namen",
 	"wikieditor-toolbar-tool-link-int-invalid": "Der angegebene Seitenname ist ungültig.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Die von dir angegebene URL wirkt wie eine, die auf eine andere Wikiseite verlinken würde.\nMöchtest du daraus einen internen Link machen?",
@@ -204,5 +203,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Normaler Text<br />:Eingerückter Text<br />::Eingerückter Text",
 	"wikieditor-toolbar-help-content-indent-result": "Normaler Text<dl><dd>Eingerückter Text<dl><dd>Eingerückter Text</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Bearbeitungen mit dem [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 Wikitext-Editor)",
-	"wikieditor-realtimepreview-preview": "Vorschau"
+	"wikieditor-realtimepreview-preview": "Vorschau",
+	"wikieditor-realtimepreview-error": "Vorschau wird nicht geladen",
+	"wikieditor-realtimepreview-reload": "Neu laden",
+	"wikieditor-realtimepreview-beta-label": "Vorschau in Echtzeit",
+	"wikieditor-realtimepreview-beta-desc": "Siehe, wie Wikitext-Änderungen im [[mw:Special:MyLanguage/Extension:WikiEditor|2010er-Editor]] für die Leser erscheinen werden.",
+	"wikieditor-realtimepreview-reload-title": "Lade das Echtzeit-Vorschaufenster neu",
+	"wikieditor-realtimepreview-manual": "Bitte lade jetzt neu, um eine Vorschau deiner Bearbeitungen manuell zu erhalten.",
+	"wikieditor-realtimepreview-onboarding-title": "Vorschau in Echtzeit",
+	"wikieditor-realtimepreview-onboarding-body": "Sieh dir in der Echtzeit-Vorschau an, wie deine Bearbeitungen für die Leser aussehen werden.",
+	"wikieditor-realtimepreview-onboarding-button": "Okay, verstanden."
 }

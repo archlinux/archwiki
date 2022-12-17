@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"MacTire02",
 			"Macofe",
-			"Shimmin Beg",
-			"Amire80"
+			"Shimmin Beg"
 		]
 	},
 	"wikieditor-wikitext-tab": "Teks wiki",
@@ -35,7 +35,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Cha nel y duillag ayn",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ennym gyn vree",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Kiangley çheumooie",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Firrinaghey my ta'n duillag ayn...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Hug oo stiagh ennym gyn vree.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Rere y chiangley hug oo stiagh, t'eh jeeaghyn dy row eh foyd kiangley rish duillag wiki elley.\nBy vie lhiat jannoo kiangley çheusthie jeh?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Kiangley sthie",

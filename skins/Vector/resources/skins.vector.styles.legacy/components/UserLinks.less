@@ -4,10 +4,17 @@
 .vector-user-menu-legacy {
 	li {
 		font-size: @font-size-nav-personal;
+		float: left;
+		margin-left: 0.75em;
+		// `padding-top` instead of `margin-top` necessary for
+		// anonymous user icon position below
+		padding-top: 0.5em;
+		line-height: @line-height-nav-personal;
 	}
 
 	/* Icon for registered user names & anonymous message */
 	#pt-anonuserpage,
+	#pt-tmpuserpage,
 	#pt-userpage a {
 		background-position: @background-position-nav-personal-icon;
 		background-image: url( images/user-avatar.svg );
@@ -26,7 +33,8 @@
 	}
 
 	/* Show anonymous "Not logged in" text in gray */
-	#pt-anonuserpage {
+	#pt-anonuserpage,
+	#pt-tmpuserpage {
 		color: #54595d;
 	}
 

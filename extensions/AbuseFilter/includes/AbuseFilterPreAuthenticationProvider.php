@@ -2,21 +2,54 @@
 
 namespace MediaWiki\Extension\AbuseFilter;
 
+use IBufferingStatsdDataFactory;
 use MediaWiki\Auth\AbstractPreAuthenticationProvider;
 use MediaWiki\Auth\AuthenticationRequest;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Extension\AbuseFilter\VariableGenerator\VariableGeneratorFactory;
+use MediaWiki\User\UserFactory;
 use SpecialPage;
 use StatusValue;
 use User;
 
+/**
+ * AuthenticationProvider used to filter account creations. This runs after normal preauth providers
+ * to keep the log cleaner.
+ */
 class AbuseFilterPreAuthenticationProvider extends AbstractPreAuthenticationProvider {
+	/** @var VariableGeneratorFactory */
+	private $variableGeneratorFactory;
+	/** @var FilterRunnerFactory */
+	private $filterRunnerFactory;
+	/** @var IBufferingStatsdDataFactory */
+	private $statsd;
+	/** @var UserFactory */
+	private $userFactory;
+
+	/**
+	 * @param VariableGeneratorFactory $variableGeneratorFactory
+	 * @param FilterRunnerFactory $filterRunnerFactory
+	 * @param IBufferingStatsdDataFactory $statsd
+	 * @param UserFactory $userFactory
+	 */
+	public function __construct(
+		VariableGeneratorFactory $variableGeneratorFactory,
+		FilterRunnerFactory $filterRunnerFactory,
+		IBufferingStatsdDataFactory $statsd,
+		UserFactory $userFactory
+	) {
+		$this->variableGeneratorFactory = $variableGeneratorFactory;
+		$this->filterRunnerFactory = $filterRunnerFactory;
+		$this->statsd = $statsd;
+		$this->userFactory = $userFactory;
+	}
+
 	/**
 	 * @param User $user
 	 * @param User $creator
 	 * @param AuthenticationRequest[] $reqs
 	 * @return StatusValue
 	 */
-	public function testForAccountCreation( $user, $creator, array $reqs ) {
+	public function testForAccountCreation( $user, $creator, array $reqs ): StatusValue {
 		return $this->testUser( $user, $creator, false );
 	}
 
@@ -26,11 +59,11 @@ class AbuseFilterPreAuthenticationProvider extends AbstractPreAuthenticationProv
 	 * @param array $options
 	 * @return StatusValue
 	 */
-	public function testUserForCreation( $user, $autocreate, array $options = [] ) {
+	public function testUserForCreation( $user, $autocreate, array $options = [] ): StatusValue {
 		// if this is not an autocreation, testForAccountCreation already handled it
 		if ( $autocreate ) {
-			// FIXME Using the constructor directly here a bit hacky but needed for T272244
-			return $this->testUser( $user, new User, true );
+			// Make sure to use an anon as the creator, see T272244
+			return $this->testUser( $user, $this->userFactory->newAnonymous(), true );
 		}
 		return StatusValue::newGood();
 	}
@@ -41,23 +74,21 @@ class AbuseFilterPreAuthenticationProvider extends AbstractPreAuthenticationProv
 	 * @param bool $autocreate Is this an autocreation?
 	 * @return StatusValue
 	 */
-	protected function testUser( $user, $creator, $autocreate ) {
+	private function testUser( $user, $creator, $autocreate ): StatusValue {
 		$startTime = microtime( true );
 		if ( $user->getName() === wfMessage( 'abusefilter-blocker' )->inContentLanguage()->text() ) {
 			return StatusValue::newFatal( 'abusefilter-accountreserved' );
 		}
 
 		$title = SpecialPage::getTitleFor( 'Userlogin' );
-		$builder = AbuseFilterServices::getVariableGeneratorFactory()->newRunGenerator( $creator, $title );
+		$builder = $this->variableGeneratorFactory->newRunGenerator( $creator, $title );
 		$vars = $builder->getAccountCreationVars( $user, $autocreate );
 
-		$runnerFactory = AbuseFilterServices::getFilterRunnerFactory();
 		// pass creator in explicitly to prevent recording the current user on autocreation - T135360
-		$runner = $runnerFactory->newRunner( $creator, $title, $vars, 'default' );
+		$runner = $this->filterRunnerFactory->newRunner( $creator, $title, $vars, 'default' );
 		$status = $runner->run();
 
-		MediaWikiServices::getInstance()->getStatsdDataFactory()
-			->timing( 'timing.createaccountAbuseFilter', microtime( true ) - $startTime );
+		$this->statsd->timing( 'timing.createaccountAbuseFilter', microtime( true ) - $startTime );
 
 		return $status->getStatusValue();
 	}

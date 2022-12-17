@@ -612,6 +612,19 @@ ve.dm.Node.prototype.isSurfaceable = function () {
 };
 
 /**
+ * Find the first ancestor with matching type and attribute values.
+ *
+ * @param {string} type Node type to match
+ * @param {Object} [attributes] Node attributes to match
+ * @return {ve.dm.Node|null} Ancestor with matching type and attribute values
+ */
+ve.dm.Node.prototype.findMatchingAncestor = function ( type, attributes ) {
+	return this.traverseUpstream( function ( node ) {
+		return !node.matches( type, attributes );
+	} );
+};
+
+/**
  * Check if the node has an ancestor with matching type and attribute values.
  *
  * @param {string} type Node type to match
@@ -619,16 +632,7 @@ ve.dm.Node.prototype.isSurfaceable = function () {
  * @return {boolean} Node has an ancestor with matching type and attribute values
  */
 ve.dm.Node.prototype.hasMatchingAncestor = function ( type, attributes ) {
-	var node = this;
-	// Traverse up to matching node
-	while ( node && !node.matches( type, attributes ) ) {
-		node = node.getParent();
-		// Return false if we reach the root without finding anything
-		if ( node === null ) {
-			return false;
-		}
-	}
-	return true;
+	return !!this.findMatchingAncestor( type, attributes );
 };
 
 /**
@@ -643,12 +647,22 @@ ve.dm.Node.prototype.matches = function ( type, attributes ) {
 		return false;
 	}
 
-	// Check attributes
 	if ( attributes ) {
-		for ( var key in attributes ) {
-			if ( this.getAttribute( key ) !== attributes[ key ] ) {
-				return false;
-			}
+		return this.compareAttributes( attributes );
+	}
+	return true;
+};
+
+/**
+ * Check if specific attributes match those in the node
+ *
+ * @param {Object} attributes Node attributes to match
+ * @return {boolean} Attributes sepcified match those in the node
+ */
+ve.dm.Node.prototype.compareAttributes = function ( attributes ) {
+	for ( var key in attributes ) {
+		if ( this.getAttribute( key ) !== attributes[ key ] ) {
+			return false;
 		}
 	}
 	return true;

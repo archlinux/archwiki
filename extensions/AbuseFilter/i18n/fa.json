@@ -9,6 +9,7 @@
 			"Amir1arch",
 			"Arian Ar",
 			"Armin1392",
+			"Beginneruser",
 			"Calak",
 			"Dalba",
 			"Darafsh",
@@ -36,8 +37,7 @@
 			"Wayiran",
 			"ZxxZxxZ",
 			"جواد",
-			"درفش کاویانی",
-			"Beginneruser"
+			"درفش کاویانی"
 		]
 	},
 	"abusefilter-desc": "اکتشافات خودکاری را بر روی ویرایش‌های انجام می‌دهد.",
@@ -372,12 +372,14 @@
 	"abusefilter-edit-builder-funcs-rmwhitespace": "حذف نویسه‌های خالی (rmwhitespace)",
 	"abusefilter-edit-builder-funcs-rmspecials": "حذف نویسه‌های ویژه (rmspecials)",
 	"abusefilter-edit-builder-funcs-ip_in_range": "آیا آی‌پی در این محدوده است؟ (ip_in_range)",
+	"abusefilter-edit-builder-funcs-ip_in_ranges": "آیا آی‌پی در هریک از این بازه‌ها هست؟ (ip_in_ranges)",
 	"abusefilter-edit-builder-funcs-contains-any": "جستجوی رشته برای چند زیررشته با استفاده از شرط «یا» (contains_any)",
 	"abusefilter-edit-builder-funcs-contains-all": "جستجوی رشته برای چند زیررشته با استفاده از شرط «و» (contains_any)",
 	"abusefilter-edit-builder-funcs-equals-to-any": "بررسی این که مقدار یک پارامتر با دست کم یکی از پارامترهای بعدی برابر (===) است (equals_to_any)",
 	"abusefilter-edit-builder-funcs-substr": "زیررشته (substr)",
 	"abusefilter-edit-builder-funcs-strpos": "موقعیت زیررشته در رشته (strpos)",
 	"abusefilter-edit-builder-funcs-str_replace": "جایگزینی زیررشته با رشته (str_replace)",
+	"abusefilter-edit-builder-funcs-str_replace_regexp": "یافتن و جایگزینی با عبارت باقاعده (str_replace_regexp)",
 	"abusefilter-edit-builder-funcs-rescape": "گریز تحت‌الفظی متن به صورت یک عبارت باقاعده (rescape)",
 	"abusefilter-edit-builder-funcs-set_var": "نشاندن متغیر (set_var)",
 	"abusefilter-edit-builder-funcs-sanitize": "قاعده‌مندسازی موجودیت‌های اچ‌تی‌ام‌ال به نویسه‌های یونیکد (sanitize)",

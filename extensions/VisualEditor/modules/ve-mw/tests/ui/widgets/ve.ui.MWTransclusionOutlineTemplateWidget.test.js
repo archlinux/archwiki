@@ -4,9 +4,25 @@ QUnit.test( 'Constructor', ( assert ) => {
 	const transclusion = new ve.dm.MWTransclusionModel(),
 		template = ve.dm.MWTemplateModel.newFromData( transclusion, {
 			target: { wt: 'Example' },
-			params: { 1: {}, 2: {}, 3: {}, 4: {} }
-		} ),
-		widget = new ve.ui.MWTransclusionOutlineTemplateWidget( template );
+			params: {
+				1: {},
+				2: {},
+				3: {},
+				4: {},
+				// Representation of a parameter placeholder in the model, should be skipped
+				'': {}
+			}
+		} );
+	template.getSpec().setTemplateData( { params: {
+		// A deprecated parameter must be shown as long as it's used
+		4: { deprecated: true },
+		// An unused deprecated parameter should never be shown
+		5: { deprecated: true },
+		6: {}
+	} } );
+	const widget = new ve.ui.MWTransclusionOutlineTemplateWidget( template ),
+		// We need to skip .getItems() for this test because it makes a copy
+		parameters = widget.parameterList.items;
 
 	assert.strictEqual( widget.getData(), 'part_0' );
 	assert.strictEqual(
@@ -14,10 +30,23 @@ QUnit.test( 'Constructor', ( assert ) => {
 		'Example'
 	);
 	assert.true( widget.searchWidget.isVisible() );
+	assert.true( widget.toggleUnusedWidget.isVisible() );
 	assert.false( widget.infoWidget.isVisible() );
+	// Note that documented parameters go first
+	assert.deepEqual( parameters.map( ( item ) => item.data ), [ '4', '1', '2', '3' ] );
+
+	widget.toggleUnusedWidget.emit( 'click' );
+
+	assert.deepEqual( parameters.map( ( item ) => item.data ), [ '4', '6', '1', '2', '3' ] );
+
+	widget.searchWidget.setValue( 'can not find anything' );
+
+	assert.false( widget.toggleUnusedWidget.isVisible() );
+	assert.true( widget.infoWidget.isVisible() );
+	assert.strictEqual( parameters.filter( ( p ) => p.isVisible() ).length, 0 );
 } );
 
-QUnit.test( 'insertCheckboxAtCanonicalPosition()', ( assert ) => {
+QUnit.test( 'findCanonicalPosition()', ( assert ) => {
 	function assertOrder( w, expected ) {
 		assert.deepEqual( w.parameterList.items.map( ( item ) => item.data ), expected );
 	}

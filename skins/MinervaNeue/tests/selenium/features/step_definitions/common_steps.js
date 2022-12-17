@@ -9,6 +9,7 @@ const assert = require( 'assert' ),
 const waitForPropagation = ( timeMs ) => {
 	// wait 2 seconds so the change can propogate.
 	// Replace this with a more dynamic statement.
+	// eslint-disable-next-line wdio/no-pause
 	browser.pause( timeMs );
 };
 

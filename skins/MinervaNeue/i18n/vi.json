@@ -10,7 +10,8 @@
 			"Nguyên Lê",
 			"Thienhau2003",
 			"Trần Nguyễn Minh Huy",
-			"Vinhtantran"
+			"Vinhtantran",
+			"CactiStaccingCrane"
 		]
 	},
 	"minerva-last-modified-date": "Sửa đổi lần cuối lúc $2 vào $1",
@@ -41,7 +42,7 @@
 	"mobile-frontend-meta-data-issues-talk": "Giới thiệu về trang thảo luận này",
 	"mobile-frontend-notifications-filter": "Bộ lọc",
 	"mobile-frontend-pageaction-edit-tooltip": "Sửa phần mở đầu của trang này",
-	"mobile-frontend-placeholder": "Tìm kiếm {{SITENAME}}",
+	"mobile-frontend-placeholder": "Tìm kiếm trên {{SITENAME}}",
 	"mobile-frontend-random-button": "Ngẫu nhiên",
 	"mobile-frontend-redirected-from": "Đổi hướng từ “[[$1]]”",
 	"mobile-frontend-talk-back-to-filepage": "Quay lại tập tin “$1”.",

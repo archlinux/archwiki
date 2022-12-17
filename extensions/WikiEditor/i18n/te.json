@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "పేజీ ఉనికిలో లేదు",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "తప్పుడు శీర్షిక",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "బయటి లింకు",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "పేజీ ఉనికిని సరిచూస్తున్నాం...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "అయోమయ నివృత్తి పేజీ",
 	"wikieditor-toolbar-tool-link-int-invalid": "మీరు ఇచ్చిన శీర్షిక సరైనది కాదు.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "మీరు ఇచ్చిన చిరునామాని బట్టి మీరు మరో వికీ పేజీకి లంకె చేర్చాలని ఉద్దేశించినట్టుంది. దాన్ని అంతర్గత లంకెగా మార్చాలనుకుంటున్నారా?",
@@ -154,5 +153,9 @@
 	"wikieditor-toolbar-help-content-signaturetimestamp-result": "--<a href='#' title='$1:Username'>వాడుకరిపేరు</a> (<a href='#' title='$2:Username'>చర్చ</a>) 15:54, 10 జూన్ 2009 (UTC)",
 	"wikieditor-toolbar-help-content-signature-description": "సంతకం",
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>వాడుకరిపేరు</a> (<a href='#' title='$2:Username'>చర్చ</a>)",
-	"wikieditor-realtimepreview-preview": "మునుజూపు"
+	"wikieditor-realtimepreview-preview": "మునుజూపు",
+	"wikieditor-realtimepreview-error": "మునుజూపు లోడవడం లేదు",
+	"wikieditor-realtimepreview-reload": "తిరిగి లోడు చెయ్యి",
+	"wikieditor-realtimepreview-beta-label": "తక్షణ మునుజూపు",
+	"wikieditor-realtimepreview-beta-desc": "వికీటెక్స్టులో చేసిన మార్పులు పాఠకులకు ఎలా కనబడతాయో [[mw:Special:MyLanguage/Extension:WikiEditor|2010 ఎడిటరులో]] చూడండి."
 }

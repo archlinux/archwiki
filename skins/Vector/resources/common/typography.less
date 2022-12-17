@@ -19,7 +19,7 @@ body {
 ul {
 	// `list-style-image` sits on `ul` as it inherits and we don't need to worry about `ol`.
 	// No need for PNG fallback. Fallback is browser default (a smaller, also black, circle).
-	.list-style-image( 'images/bullet-icon.svg' );
+	list-style-image: url( images/bullet-icon.svg );
 }
 
 pre,
@@ -76,6 +76,10 @@ pre,
 	// `calc` enables to set correct calculation in place again. See T102364.
 	font-size: @font-size-base--trident-hack;
 	line-height: @line-height-base;
+
+	#siteSub {
+		font-size: 12.8px; // T311421
+	}
 
 	h1 {
 		margin-top: 1em;
@@ -136,10 +140,15 @@ pre,
 }
 
 // External links
-// Use of `a` element selector due to its widespread usage and for limiting generic class scope.
+// Use of `a` element selector for limiting generic class scope due to `.external` widespread usage.
 .mw-parser-output a.external {
-	background-image: url( images/external-link-ltr-icon.svg );
+	// Use copy of Codex/OOUI WikimediaUI theme's 'linkExternal' icon in progressive color.
+	// Note that CSSJanus is flipping the `ltr` in the URL to `rtl`.
+	// Therefore make sure that both icons are available and up-to-date.
+	background-image: url( images/link-external-small-ltr-progressive.svg );
 	background-position: center right;
 	background-repeat: no-repeat;
-	padding-right: 13px;
+	// Equivalent of `12px` at calculation base of `14px` is `0.857em`.
+	background-size: 0.857em;
+	padding-right: 1em;
 }

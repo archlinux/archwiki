@@ -41,11 +41,7 @@
 	"ResourceModules": {
 		"mmv": {
 			"scripts": [
-				"mmv/logging/mmv.logging.Api.js",
-				"mmv/logging/mmv.logging.AttributionLogger.js",
-				"mmv/logging/mmv.logging.DimensionLogger.js",
 				"mmv/logging/mmv.logging.ViewLogger.js",
-				"mmv/logging/mmv.logging.PerformanceLogger.js",
 				"mmv/model/mmv.model.js",
 				"mmv/model/mmv.model.IwTitle.js",
 				"mmv/model/mmv.model.License.js",
@@ -329,10 +325,7 @@
 			"scripts": [
 				"mmv.bootstrap/mmv.Config.js",
 				"mmv.bootstrap/mmv.HtmlUtils.js",
-				"mmv.bootstrap/mmv.bootstrap.js",
-				"mmv.bootstrap/mmv.logging.Logger.js",
-				"mmv.bootstrap/mmv.logging.ActionLogger.js",
-				"mmv.bootstrap/mmv.logging.DurationLogger.js"
+				"mmv.bootstrap/mmv.bootstrap.js"
 			],
 			"styles": [
 				"mmv.bootstrap/mmv.bootstrap.less"
@@ -391,11 +384,6 @@
 			"tests/qunit/mmv/mmv.EmbedFileFormatter.test.js",
 			"tests/qunit/mmv/mmv.Config.test.js",
 			"tests/qunit/mmv/mmv.HtmlUtils.test.js",
-			"tests/qunit/mmv/logging/mmv.logging.DurationLogger.test.js",
-			"tests/qunit/mmv/logging/mmv.logging.PerformanceLogger.test.js",
-			"tests/qunit/mmv/logging/mmv.logging.ActionLogger.test.js",
-			"tests/qunit/mmv/logging/mmv.logging.AttributionLogger.test.js",
-			"tests/qunit/mmv/logging/mmv.logging.DimensionLogger.test.js",
 			"tests/qunit/mmv/logging/mmv.logging.ViewLogger.test.js",
 			"tests/qunit/mmv/model/mmv.model.test.js",
 			"tests/qunit/mmv/model/mmv.model.IwTitle.test.js",
@@ -439,17 +427,6 @@
 			"mmv.ui.tipsyDialog"
 		]
 	},
-	"attributes": {
-		"EventLogging": {
-			"Schemas": {
-				"MediaViewer": 10867062,
-				"MultimediaViewerNetworkPerformance": 15573630,
-				"MultimediaViewerDuration": 10427980,
-				"MultimediaViewerAttribution": 9758179,
-				"MultimediaViewerDimensions": 10014238
-			}
-		}
-	},
 	"Hooks": {
 		"UserGetDefaultOptions": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onUserGetDefaultOptions",
 		"GetPreferences": "MediaWiki\\Extension\\MultimediaViewer\\Hooks::onGetPreferences",
@@ -478,30 +455,6 @@
 				"tiff": "default",
 				"tif": "default"
 			}
-		},
-		"MediaViewerNetworkPerformanceSamplingFactor": {
-			"description": "If set, records image load network performance via EventLogging once per this many requests. False if unset.",
-			"value": false
-		},
-		"MediaViewerDurationLoggingSamplingFactor": {
-			"description": "If set, records loading times via EventLogging. A value of 1000 means there will be an 1:1000 chance to log the duration event. False if unset.",
-			"value": false
-		},
-		"MediaViewerDurationLoggingLoggedinSamplingFactor": {
-			"description": "If set, records loading times via EventLogging with factor specific to loggedin users. A value of 1000 means there will be an 1:1000 chance to log the duration event. False if unset.",
-			"value": false
-		},
-		"MediaViewerAttributionLoggingSamplingFactor": {
-			"description": "If set, records whether image attribution data was available. A value of 1000 means there will be an 1:1000 chance to log the attribution event. False if unset.",
-			"value": false
-		},
-		"MediaViewerDimensionLoggingSamplingFactor": {
-			"description": "If set, records whether image dimension data was available. A value of 1000 means there will be an 1:1000 chance to log the dimension event. False if unset.",
-			"value": false
-		},
-		"MediaViewerActionLoggingSamplingFactorMap": {
-			"description": "If set, records user actions via EventLogging and applies a sampling factor according to the map. A \"default\" key in the map must be set. False if unset.",
-			"value": false
 		},
 		"MediaViewerUseThumbnailGuessing": {
 			"description": "When this is enabled, MediaViewer will try to guess image URLs instead of making an imageinfo API to get them from the server. This speeds up image loading, but will result in 404s when $wgGenerateThumbnailOnParse (so the thumbnails are only generated as a result of the API request). MediaViewer will catch such 404 errors and fall back to the API request, but depending on how the site is set up, the 404 might get cached, or redirected, causing the image load to fail. The safe way to use URL guessing is with a 404 handler: https://www.mediawiki.org/wiki/Manual:Thumb.php#404_Handler",

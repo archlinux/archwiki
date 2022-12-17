@@ -192,5 +192,11 @@
 	"LogRestrictions": {
 		"oath": "oathauth-view-log"
 	},
+	"ActionFilteredLogs": {
+		"oath": {
+			"verify": [ "verify" ],
+			"disable-other": [ "disable-other" ]
+		}
+	},
 	"manifest_version": 2
 }

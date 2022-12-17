@@ -60,7 +60,7 @@ ve.ui.MWMediaInfoFieldWidget = function VeUiMWMediaInfoFieldWidget( content, con
 					// For the cases where we get urls that are "local"
 					// without http(s) prefix, we will add that prefix
 					// ourselves
-					!config.href.match( /^(https?:)?\/\// ) ?
+					!/^(https?:)?\/\//.test( config.href ) ?
 						'//' + config.href :
 						config.href
 				)

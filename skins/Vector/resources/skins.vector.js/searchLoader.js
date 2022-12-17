@@ -153,7 +153,7 @@ function initSearchLoader( document ) {
 	/**
 	 * 1. If we are in a browser that doesn't support ES6 fall back to non-JS version.
 	 * 2. Disable on Wikidata per T281318 until the REST API is ready.
-	 **/
+	 */
 	if ( isWikidata || mw.loader.getState( 'skins.vector.search' ) === null ) {
 		document.body.classList.remove(
 			'skin-vector-search-vue'
@@ -179,7 +179,6 @@ function initSearchLoader( document ) {
 		}
 		// Remove tooltips while Vue search is still loading
 		searchInput.setAttribute( 'autocomplete', 'off' );
-		searchInput.removeAttribute( 'title' );
 		setLoadingIndicatorListeners( searchInner, true, renderSearchLoadingIndicator );
 		loadSearchModule(
 			searchInput,

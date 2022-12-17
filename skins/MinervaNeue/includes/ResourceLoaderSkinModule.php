@@ -20,15 +20,17 @@
 
 namespace MediaWiki\Minerva;
 
+use MediaWiki\ResourceLoader;
+
 /**
  * Subclass with extra LESS variables for Minerva configuration.
  */
-class ResourceLoaderSkinModule extends \ResourceLoaderSkinModule {
+class ResourceLoaderSkinModule extends ResourceLoader\SkinModule {
 	/**
 	 * @param \ResourceLoaderContext $context
 	 * @return array LESS variables
 	 */
-	protected function getLessVars( \ResourceLoaderContext $context ) {
+	protected function getLessVars( ResourceLoader\Context $context ) {
 		$lessVars = parent::getLessVars( $context );
 		$lessVars += [
 			'wgMinervaApplyKnownTemplateHacks' =>

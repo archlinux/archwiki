@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Aguve",
-			"Natsubee",
 			"Amuzujoe",
-			"Azorbli"
+			"Azorbli",
+			"Natsubee"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 gbe|$1 gbeawo}}",

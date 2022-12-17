@@ -141,6 +141,11 @@
 				contextItem.static.label = item.title;
 				contextItem.static.commandName = name;
 				contextItem.static.template = item.template;
+				// If the grand-parent class (ve.ui.MWReferenceContextItem) is extended and re-registered
+				// (e.g. by Citoid), then the inheritance chain is broken, and the generic 'reference'
+				// context item would show. Instead manually specify that that context should never show
+				// when a more specific context item is shown.
+				contextItem.static.suppresses = [ 'reference' ];
 				ve.ui.contextItemFactory.register( contextItem );
 			}
 		} );

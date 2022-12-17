@@ -3,161 +3,149 @@
 namespace MediaWiki\Extension\AbuseFilter;
 
 use MediaWiki\Extension\AbuseFilter\Filter\AbstractFilter;
-use MediaWiki\Permissions\PermissionManager;
-use MediaWiki\User\UserIdentity;
-use User;
+use MediaWiki\Permissions\Authority;
 
 /**
- * This class acts as a mediator between the AbuseFilter code and the PermissionManager, knowing
+ * This class simplifies the interactions between the AbuseFilter code and Authority, knowing
  * what rights are required to perform AF-related actions.
  */
 class AbuseFilterPermissionManager {
 	public const SERVICE_NAME = 'AbuseFilterPermissionManager';
 
-	/** @var PermissionManager */
-	private $permissionManager;
-
 	/**
-	 * @param PermissionManager $pm
-	 */
-	public function __construct( PermissionManager $pm ) {
-		$this->permissionManager = $pm;
-	}
-
-	/**
-	 * @param User $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canEdit( User $user ): bool {
-		$block = $user->getBlock();
+	public function canEdit( Authority $performer ): bool {
+		$block = $performer->getBlock();
 		return (
 			!( $block && $block->isSitewide() ) &&
-			$this->permissionManager->userHasRight( $user, 'abusefilter-modify' )
+			$performer->isAllowed( 'abusefilter-modify' )
 		);
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canEditGlobal( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-modify-global' );
+	public function canEditGlobal( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-modify-global' );
 	}
 
 	/**
 	 * Whether the user can edit the given filter.
 	 *
-	 * @param User $user
+	 * @param Authority $performer
 	 * @param AbstractFilter $filter
 	 * @return bool
 	 */
-	public function canEditFilter( User $user, AbstractFilter $filter ): bool {
+	public function canEditFilter( Authority $performer, AbstractFilter $filter ): bool {
 		return (
-			$this->canEdit( $user ) &&
-			!( $filter->isGlobal() && !$this->canEditGlobal( $user ) )
+			$this->canEdit( $performer ) &&
+			!( $filter->isGlobal() && !$this->canEditGlobal( $performer ) )
 		);
 	}
 
 	/**
 	 * Whether the user can edit a filter with restricted actions enabled.
 	 *
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canEditFilterWithRestrictedActions( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-modify-restricted' );
+	public function canEditFilterWithRestrictedActions( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-modify-restricted' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canViewPrivateFilters( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasAnyRight(
-			$user,
+	public function canViewPrivateFilters( Authority $performer ): bool {
+		return $performer->isAllowedAny(
 			'abusefilter-modify',
 			'abusefilter-view-private'
 		);
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canViewPrivateFiltersLogs( UserIdentity $user ): bool {
-		return $this->canViewPrivateFilters( $user ) ||
-			$this->permissionManager->userHasRight( $user, 'abusefilter-log-private' );
+	public function canViewPrivateFiltersLogs( Authority $performer ): bool {
+		return $this->canViewPrivateFilters( $performer ) ||
+			$performer->isAllowed( 'abusefilter-log-private' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canViewAbuseLog( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-log' );
+	public function canViewAbuseLog( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-log' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canHideAbuseLog( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-hide-log' );
+	public function canHideAbuseLog( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-hide-log' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canRevertFilterActions( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-revert' );
+	public function canRevertFilterActions( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-revert' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @param bool|int $filterHidden Whether the filter is hidden
 	 * @todo Take a Filter parameter
 	 * @return bool
 	 */
-	public function canSeeLogDetailsForFilter( UserIdentity $user, $filterHidden ): bool {
+	public function canSeeLogDetailsForFilter( Authority $performer, $filterHidden ): bool {
 		if ( $filterHidden ) {
-			return $this->canSeeLogDetails( $user ) && $this->canViewPrivateFiltersLogs( $user );
+			return $this->canSeeLogDetails( $performer )
+				&& $this->canViewPrivateFiltersLogs( $performer );
 		}
 
-		return $this->canSeeLogDetails( $user );
+		return $this->canSeeLogDetails( $performer );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canSeeLogDetails( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-log-detail' );
+	public function canSeeLogDetails( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-log-detail' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canSeePrivateDetails( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-privatedetails' );
+	public function canSeePrivateDetails( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-privatedetails' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canSeeHiddenLogEntries( UserIdentity $user ): bool {
-		return $this->permissionManager->userHasRight( $user, 'abusefilter-hidden-log' );
+	public function canSeeHiddenLogEntries( Authority $performer ): bool {
+		return $performer->isAllowed( 'abusefilter-hidden-log' );
 	}
 
 	/**
-	 * @param UserIdentity $user
+	 * @param Authority $performer
 	 * @return bool
 	 */
-	public function canUseTestTools( UserIdentity $user ): bool {
+	public function canUseTestTools( Authority $performer ): bool {
 		// TODO: make independent
-		return $this->canViewPrivateFilters( $user );
+		return $this->canViewPrivateFilters( $performer );
 	}
 
 }

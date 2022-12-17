@@ -2,11 +2,18 @@
 
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\UsernameAuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaPreAuthenticationProvider;
+use MediaWiki\Extension\ConfirmEdit\Hooks;
+use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
+use MediaWiki\Extension\ConfirmEdit\Store\CaptchaHashStore;
+use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Tests\Unit\Auth\AuthenticationProviderTestTrait;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @covers CaptchaPreAuthenticationProvider
+ * @covers \MediaWiki\Extension\ConfirmEdit\Auth\CaptchaPreAuthenticationProvider
  * @group Database
  */
 class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase {
@@ -23,7 +30,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		] );
 		CaptchaStore::unsetInstanceForTests();
 		CaptchaStore::get()->clearAll();
-		$services = \MediaWiki\MediaWikiServices::getInstance();
+		$services = MediaWikiServices::getInstance();
 		if ( method_exists( $services, 'getLocalClusterObjectCache' ) ) {
 			$this->setService( 'LocalClusterObjectCache', new HashBagOStuff() );
 		}
@@ -33,7 +40,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 	public function tearDown(): void {
 		parent::tearDown();
 		// make sure $wgCaptcha resets between tests
-		TestingAccessWrapper::newFromClass( ConfirmEditHooks::class )->instanceCreated = false;
+		TestingAccessWrapper::newFromClass( Hooks::class )->instanceCreated = false;
 	}
 
 	/**
@@ -117,7 +124,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 		$captcha->expects( $this->any() )->method( 'isBadLoginPerUserTriggered' )
 			->willReturn( $isBadLoginPerUserTriggered );
 		$this->setMwGlobals( 'wgCaptcha', $captcha );
-		TestingAccessWrapper::newFromClass( ConfirmEditHooks::class )->instanceCreated = true;
+		TestingAccessWrapper::newFromClass( Hooks::class )->instanceCreated = true;
 		$provider = new CaptchaPreAuthenticationProvider();
 		$this->initProvider( $provider, null, null, $this->getServiceContainer()->getAuthManager() );
 

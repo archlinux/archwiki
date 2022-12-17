@@ -49,9 +49,12 @@ class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 			->method( 'getMain' )
 			->willReturn( $main );
 
+		$langConv = $this->createMock( ILanguageConverter::class );
+		$langConv->method( 'getPreferredVariant' )
+			->willReturn( 'en' );
 		$langConvFactory = $this->createMock( LanguageConverterFactory::class );
 		$langConvFactory->method( 'getLanguageConverter' )
-			->willReturn( $this->createMock( ILanguageConverter::class ) );
+			->willReturn( $langConv );
 
 		return new ApiQueryExtracts(
 			$query,
@@ -71,6 +74,10 @@ class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 		$page = $this->createMock( \WikiPage::class );
 		$page->method( 'getTitle' )
 			->willReturn( $title );
+		$page->method( 'getId' )
+			->willReturn( 123 );
+		$page->method( 'getTouched' )
+			->willReturn( '20010101000000' );
 
 		$text = 'Text to cache';
 
@@ -234,7 +241,7 @@ class ApiQueryExtractsTest extends \MediaWikiIntegrationTestCase {
 			],
 
 			'Multiple matches' => [
-				"${marker}First\n${marker}Second",
+				"{$marker}First\n{$marker}Second",
 				'wiki',
 				"\n=== First ===\n\n=== Second ===",
 			],

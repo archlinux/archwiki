@@ -33,6 +33,7 @@ describe( 'Opening and closing the reference drawer', () => {
 	it( 'Opening a reference', () => {
 		iAmOnPage( 'Selenium References test page' );
 		iClickOnAReference();
+		iShouldSeeDrawerWithText( 'This is a note.' );
 		iClickOnTheMask();
 		iShouldSeeNotTheReferenceDrawer();
 	} );
@@ -40,6 +41,7 @@ describe( 'Opening and closing the reference drawer', () => {
 	it( 'Opening a nested reference', () => {
 		iAmOnPage( 'Selenium References test page' );
 		iClickOnAReference();
+		iShouldSeeDrawerWithText( 'This is a note.' );
 		iClickOnANestedReference();
 		iShouldSeeDrawerWithText( 'This is a nested ref.' );
 	} );

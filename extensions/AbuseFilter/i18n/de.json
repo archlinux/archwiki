@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Cedric31",
 			"ChrisiPK",
 			"Church of emacs",
@@ -32,9 +33,8 @@
 			"W (aka Wuzur)",
 			"WikiBayer",
 			"Wikifan",
-			"Xqt",
 			"Wnme",
-			"Brettchenweber"
+			"Xqt"
 		]
 	},
 	"abusefilter-desc": "Wendet Heuristiken automatisch auf Bearbeitungen an",
@@ -61,7 +61,7 @@
 	"right-abusefilter-modify-restricted": "Missbrauchsfilter mit privilegierten Aktionen bearbeiten",
 	"right-abusefilter-revert": "Alle Bearbeitungen durch einen bestimmten Missbrauchsfilter rückgängig machen",
 	"right-abusefilter-view-private": "Als privat markierten Missbrauchsfilter einsehen",
-	"right-abusefilter-log-private": "Als privat markierten Einträge im Missbrauchsfilter einsehen",
+	"right-abusefilter-log-private": "Als privat markierte Einträge im Missbrauchsfilter einsehen",
 	"right-abusefilter-hide-log": "Einträge aus dem Missbrauchsfilter-Logbuch ausblenden",
 	"right-abusefilter-hidden-log": "Versteckte Einträge im Missbrauchsfilter-Logbuch einsehen",
 	"right-abusefilter-modify-global": "Globale Missbrauchsfilter erstellen oder verändern",
@@ -259,8 +259,8 @@
 	"abusefilter-edit-throttle-groups": "Drosselung gruppieren nach:",
 	"abusefilter-edit-throttle-groups-help": "Siehe $1.",
 	"abusefilter-edit-throttle-groups-help-text": "die Dokumentation auf mediawiki.org",
-	"abusefilter-edit-throttle-hidden-placeholder": "Mit Kommata trennen, um mit AND zu verbinden und mit Zeilenumbrüchen, um mit OR zu verbinden.",
-	"abusefilter-edit-throttle-placeholder": "Mit Kommata trennen, um mit AND zu verbinden und füge nacheinander ein, um mit OR zu verbinden.",
+	"abusefilter-edit-throttle-hidden-placeholder": "Mit Kommata trennen, um mit AND zu verbinden, und mit Zeilenumbrüchen, um mit OR zu verbinden.",
+	"abusefilter-edit-throttle-placeholder": "Mit Kommata trennen, um mit AND zu verbinden, und nacheinander einfügen, um mit OR zu verbinden.",
 	"abusefilter-throttle-ip": "IP-Adresse",
 	"abusefilter-throttle-user": "Benutzerkonto",
 	"abusefilter-throttle-range": "IP-Adress-Bereich",
@@ -368,12 +368,14 @@
 	"abusefilter-edit-builder-funcs-rmwhitespace": "Leerzeichen entfernen (rmwhitespace)",
 	"abusefilter-edit-builder-funcs-rmspecials": "Sonderzeichen entfernen (rmspecials)",
 	"abusefilter-edit-builder-funcs-ip_in_range": "Befindet sich die IP-Adresse im angegebenen Adressbereich? (ip_in_range)",
+	"abusefilter-edit-builder-funcs-ip_in_ranges": "Befindet sich die IP-Adresse in einem der Bereiche? (ip_in_ranges)",
 	"abusefilter-edit-builder-funcs-contains-any": "Sucht in der Zeichenfolge nach mehreren Unterzeichenfolgen im OR-Modus (contains_any)",
 	"abusefilter-edit-builder-funcs-contains-all": "Sucht in der Zeichenfolge nach mehreren Unterzeichenfolgen im AND-Modus (contains_all)",
 	"abusefilter-edit-builder-funcs-equals-to-any": "Überprüfen, ob ein angegebenes Argument gleich (===) mit einem der folgenden Argumente ist (equals_to_any)",
 	"abusefilter-edit-builder-funcs-substr": "Teil-Zeichenkette (substr)",
 	"abusefilter-edit-builder-funcs-strpos": "Position der Teil-Zeichenkette in der Zeichenkette (strpos)",
-	"abusefilter-edit-builder-funcs-str_replace": "Ersetze Teil-Zeichenkette mit Zeichenkette (str_replace)",
+	"abusefilter-edit-builder-funcs-str_replace": "Ersetze Teil-Zeichenkette durch Zeichenkette (str_replace)",
+	"abusefilter-edit-builder-funcs-str_replace_regexp": "Suchen und Ersetzen durch reguläre Ausdrücke (str_replace_regexp)",
 	"abusefilter-edit-builder-funcs-rescape": "Escape-Zeichenfolge als Buchstabensymbol in einem regulären Ausdruck (rescape)",
 	"abusefilter-edit-builder-funcs-set_var": "Variable setzen (set_var)",
 	"abusefilter-edit-builder-funcs-sanitize": "HTML-Entitäten in Unicode-Zeichen normalisieren (sanitize)",

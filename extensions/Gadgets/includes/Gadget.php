@@ -417,5 +417,3 @@ class Gadget {
 		return 'general';
 	}
 }
-
-class_alias( Gadget::class, 'Gadget' );

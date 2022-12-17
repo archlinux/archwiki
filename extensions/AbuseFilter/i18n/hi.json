@@ -18,13 +18,13 @@
 			"Prong$31",
 			"Roovinn",
 			"Sachinkatiyar",
+			"Saurmandal",
 			"Sfic",
 			"Siddhartha Ghai",
 			"Smtchahal",
 			"Wikiuser13",
 			"गोपाल",
-			"संजीव कुमार",
-			"Saurmandal"
+			"संजीव कुमार"
 		]
 	},
 	"abusefilter-desc": "संपादनों पर स्वतः शोध प्रणाली का प्रयोग लागू करता है",
@@ -343,7 +343,7 @@
 	"abusefilter-action-tag": "टैग",
 	"abusefilter-action-throttle": "कार्यों की रेट सीमा पार होने पर कदम उठाएँ",
 	"abusefilter-action-warn": "चेतावनी",
-	"abusefilter-action-blockautopromote": "स्वतःप्रचार अवरोध",
+	"abusefilter-action-blockautopromote": "स्वतः प्रचार अवरोध",
 	"abusefilter-action-block": "अवरोध",
 	"abusefilter-action-degroup": " सदस्य समूह से निकालें",
 	"abusefilter-action-rangeblock": "रेंज-अवरोध",

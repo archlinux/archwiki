@@ -61,7 +61,7 @@ final class SkinOptions {
 		/** no extension requirements */
 		self::TOOLBAR_SUBMENU => true,
 		/** Whether to show tabs on special pages */
-		self::TABS_ON_SPECIALS => false,
+		self::TABS_ON_SPECIALS => true,
 		/** whether to show a personal menu */
 		self::PERSONAL_MENU => true,
 		/** whether to show a main menu with additional items */

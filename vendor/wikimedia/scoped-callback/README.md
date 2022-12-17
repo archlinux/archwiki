@@ -16,17 +16,19 @@ Additional documentation about the library can be found on
 Usage
 -----
 
-    use Wikimedia\ScopedCallback;
-    $sc = new ScopedCallback( [ $this, 'teardown' ] );
-    // Even if this throws an exception, the callback will run
-    // or it'll run at the end of the function
-    $this->fooBar();
-    // If you want to manually call the callback
-    ScopedCallback::consume( $sc );
-    // or
-    unset( $sc );
-    // If you want to prevent it from being called
-    ScopedCallback::cancel( $sc );
+```php
+use Wikimedia\ScopedCallback;
+$sc = new ScopedCallback( [ $this, 'teardown' ] );
+// Even if this throws an exception, the callback will run
+// or it'll run at the end of the function
+$this->fooBar();
+// If you want to manually call the callback
+ScopedCallback::consume( $sc );
+// or
+unset( $sc );
+// If you want to prevent it from being called
+ScopedCallback::cancel( $sc );
+```
 
 
 Running tests

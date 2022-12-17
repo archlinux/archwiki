@@ -3,11 +3,11 @@
 		"authors": [
 			"Chrumps",
 			"Halibutt",
+			"Msz2001",
 			"Rail",
 			"Railfail536",
 			"The Polish",
-			"Woytecr",
-			"Msz2001"
+			"Woytecr"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Sprawdź, by przekonać się, czy filtr nadużyć dopasowuje się do zestawu zmiennych, edycji lub zarejestrowanego zdarzenia filtra nadużyć.\n\nvars, rcid albo logid jest wymagane, ale tylko jedno może zostać użyte.",

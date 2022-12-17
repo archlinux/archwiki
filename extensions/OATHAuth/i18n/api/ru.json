@@ -7,8 +7,8 @@
 			"MirandaBlack",
 			"Mouse21",
 			"Movses",
-			"Vlad5250",
-			"Reedy"
+			"Reedy",
+			"Vlad5250"
 		]
 	},
 	"apihelp-query+oath-description": "Проверьте, включена ли двухфакторная аутентификация (OATH) для пользователя.",

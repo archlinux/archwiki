@@ -283,7 +283,7 @@ class Hooks {
 					true : $featureManager->isFeatureAvailableForCurrentUser(
 						self::FEATURE_OVERFLOW_PAGE_ACTIONS
 					),
-				SkinOptions::TABS_ON_SPECIALS => false,
+				SkinOptions::TABS_ON_SPECIALS => true,
 			] );
 			MWHooks::run( 'SkinMinervaOptionsInit', [ $skin, $skinOptions ] );
 		}
@@ -454,7 +454,7 @@ class Hooks {
 		if ( $context->getSkin() === 'minerva' ) {
 			$config['search'] = false;
 			$config['collapsible'] = false;
-			$config['sortable'] = false;
+			$config['sortable'] = true;
 			$config['selectorLogoutLink'] = 'a.menu__item--logout[data-mw="interface"]';
 		}
 	}

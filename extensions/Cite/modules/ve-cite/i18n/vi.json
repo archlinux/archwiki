@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Anh88",
+			"Bluetpp",
 			"Cheers!",
 			"Dinhxuanduyet",
 			"Jdforrester",
@@ -10,13 +11,13 @@
 			"Nguyên Lê",
 			"Quenhitran",
 			"Trần Nguyễn Minh Huy",
-			"Bluetpp"
+			"CactiStaccingCrane"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Sách",
 	"visualeditor-cite-tool-name-journal": "Tạp chí",
 	"visualeditor-cite-tool-name-news": "Tin tức",
-	"visualeditor-cite-tool-name-web": "Trang Web",
+	"visualeditor-cite-tool-name-web": "Trang web",
 	"cite-ve-changedesc-ref-group-both": "Nhóm chú thích đổi từ “$1” thành “$2”",
 	"cite-ve-changedesc-ref-group-from": "Nhóm chú thích đổi từ “$1” thành nhóm chung",
 	"cite-ve-changedesc-ref-group-to": "Nhóm chú thích đổi từ nhóm chung thành “$1”",

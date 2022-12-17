@@ -3,16 +3,17 @@
 		"authors": [
 			"Fitoschido",
 			"Gaddi00",
+			"LoveIceLang",
 			"Maxí",
 			"Snævar",
 			"Sveinn í Felli"
 		]
 	},
 	"minerva-last-modified-date": "Síðast breytt $1, kl. $2",
-	"minerva-talk-add-topic": "Bæta við umræðu",
+	"minerva-talk-add-topic": "Bæta við efni",
 	"mobile-frontend-cookies-required": "Krafist er notkunar á vefkökum til að skipta um sýnishami. Virkjaðu þær og reyndu aftur.",
 	"mobile-frontend-editor-edit": "Breyta",
-	"minerva-download": "Sækja",
+	"minerva-download": "Sækja sem PDF",
 	"mobile-frontend-editor-redlink-create": "Búa til síðu",
 	"mobile-frontend-editor-redlink-explain": "Þessi síða hefur ekki enn verið búin til.",
 	"mobile-frontend-editor-redlink-leave": "Nei, takk.",
@@ -45,5 +46,6 @@
 	"mobile-frontend-user-newmessages": "Þú átt ný skilaboð á spjallsíðunni þinni",
 	"mobile-frontend-user-page-contributions": "Framlög",
 	"mobile-frontend-user-page-talk": "Spjall",
+	"minerva-page-actions-block": "Banna notanda",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Flokkar"
 }

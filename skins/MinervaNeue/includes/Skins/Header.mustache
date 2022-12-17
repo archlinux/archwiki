@@ -22,8 +22,11 @@
 		{{/data-search-box}}
 		<nav class="minerva-user-navigation" aria-label="{{msg-minerva-user-navigation}}">
 			{{^is-anon}}
-					<div class="minerva-user-notifications" id="pt-notifications-alert">
-						{{{html-minerva-user-notifications}}}
+					<div class="minerva-user-notifications"
+						id="pt-notifications-alert">
+						{{#data-portlets.data-notifications}}
+						<ul>{{{html-items}}}</ul>
+						{{/data-portlets.data-notifications}}
 					</div>
 			{{/is-anon}}
 			{{#html-minerva-user-menu}}{{{html-minerva-user-menu}}}{{/html-minerva-user-menu}}

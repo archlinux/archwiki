@@ -2,7 +2,7 @@
 
 // The dimensions of the UI affordance (the little line in the draggable area).
 @affordance-width: 4px;
-@affordance-length: 110px;
+@affordance-length: 52px;
 
 .ext-WikiEditor-ResizingDragBar {
 	background-color: @colorGray14;
@@ -17,6 +17,7 @@
 
 .ext-WikiEditor-ResizingDragBar-ew {
 	cursor: ew-resize;
+	background-color: @colorGray15;
 }
 
 .ext-WikiEditor-ResizingDragBar span {
@@ -25,8 +26,7 @@
 	background-color: @colorGray12;
 	border-radius: 2px;
 	display: block;
-	// Don't change without also changing the calculated width of pane1 above.
-	margin: 1px;
+	margin: 2px;
 }
 
 .ext-WikiEditor-ResizingDragBar:hover span {

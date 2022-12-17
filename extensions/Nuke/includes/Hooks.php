@@ -23,7 +23,10 @@ class Hooks implements ContributionsToolLinksHook {
 			$tools['nuke'] = $specialPage->getLinkRenderer()->makeKnownLink(
 				SpecialPage::getTitleFor( 'Nuke' ),
 				$specialPage->msg( 'nuke-linkoncontribs' )->text(),
-				[ 'title' => $specialPage->msg( 'nuke-linkoncontribs-text', $username )->text() ],
+				[
+					'title' => $specialPage->msg( 'nuke-linkoncontribs-text', $username )->text(),
+					'class' => 'mw-contributions-link-nuke'
+				],
 				[ 'target' => $username ]
 			);
 		}

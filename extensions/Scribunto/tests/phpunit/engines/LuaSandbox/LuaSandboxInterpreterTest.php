@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxEngine;
+use MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter;
+
 if ( !wfIsCLI() ) {
 	exit;
 }
@@ -9,9 +12,9 @@ require_once __DIR__ . '/../LuaCommon/LuaInterpreterTest.php';
 /**
  * @group Lua
  * @group LuaSandbox
- * @covers Scribunto_LuaSandboxInterpreter
+ * @covers \MediaWiki\Extension\Scribunto\Engines\LuaSandbox\LuaSandboxInterpreter
  */
-class Scribunto_LuaSandboxInterpreterTest extends Scribunto_LuaInterpreterTest {
+class LuaSandboxInterpreterTest extends Scribunto_LuaInterpreterTest {
 	/** @var array */
 	public $stdOpts = [
 		'memoryLimit' => 50000000,
@@ -19,9 +22,9 @@ class Scribunto_LuaSandboxInterpreterTest extends Scribunto_LuaInterpreterTest {
 	];
 
 	protected function newInterpreter( $opts = [] ) {
-		$opts = $opts + $this->stdOpts;
-		$engine = new Scribunto_LuaSandboxEngine( $this->stdOpts );
-		return new Scribunto_LuaSandboxInterpreter( $engine, $opts );
+		$opts += $this->stdOpts;
+		$engine = new LuaSandboxEngine( $this->stdOpts );
+		return new LuaSandboxInterpreter( $engine, $opts );
 	}
 
 	public function testGetMemoryUsage() {

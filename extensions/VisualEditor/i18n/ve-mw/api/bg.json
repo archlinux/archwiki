@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"StanProg",
 			"Vodnokon4e",
-			"Лорд Бъмбъри",
-			"StanProg"
+			"Лорд Бъмбъри"
 		]
 	},
 	"apihelp-visualeditor-description": "Връща HTML5 за страница от услугата Parsoid.",

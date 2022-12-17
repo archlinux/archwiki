@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Ernác",
 			"Iltever",
 			"Macofe",
-			"Къарачайлы",
-			"Amire80"
+			"Къарачайлы"
 		]
 	},
 	"wikieditor": "Викитекст редакторлауну кенгертилген интерфейси",
@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Быллай бет джокъду",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Джараусуз ат",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Тыш джибериу",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Бетни бар болууу сыналады...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Кёбмагъанлы бет",
 	"wikieditor-toolbar-tool-link-int-invalid": "Белгиленнген ат джараусузду",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Кёргюзген URL, башха вики бетге джибериу этилирге изленнгеннге ушайды. Аннга къарамай ич джибериу этерге излеймисиз?",

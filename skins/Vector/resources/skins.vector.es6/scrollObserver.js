@@ -1,23 +1,63 @@
 const
-	SCROLL_HOOK = 'vector.page_title_scroll',
-	SCROLL_CONTEXT_ABOVE = 'scrolled-above-page-title',
-	SCROLL_CONTEXT_BELOW = 'scrolled-below-page-title',
-	SCROLL_ACTION = 'scroll-to-top';
+	SCROLL_TITLE_HOOK = 'vector.page_title_scroll',
+	SCROLL_TITLE_CONTEXT_ABOVE = 'scrolled-above-page-title',
+	SCROLL_TITLE_CONTEXT_BELOW = 'scrolled-below-page-title',
+	SCROLL_TITLE_ACTION = 'scroll-to-top',
+	SCROLL_TOC_HOOK = 'vector.table_of_contents_scroll',
+	SCROLL_TOC_CONTEXT_ABOVE = 'scrolled-above-table-of-contents',
+	SCROLL_TOC_CONTEXT_BELOW = 'scrolled-below-table-of-contents',
+	SCROLL_TOC_ACTION = 'scroll-to-toc',
+	SCROLL_TOC_PARAMETER = 'table_of_contents';
+
+/**
+ * @typedef {Object} scrollVariables
+ * @property {string} scrollHook
+ * @property {string} scrollContextBelow
+ * @property {string} scrollContextAbove
+ * @property {string} scrollAction
+ */
+
+/**
+ * Return the correct variables based on hook type.
+ *
+ * @param {string} hook the type of hook
+ * @return {scrollVariables}
+ */
+function getScrollVariables( hook ) {
+	const scrollVariables = {};
+	if ( hook === 'page_title' ) {
+		scrollVariables.scrollHook = SCROLL_TITLE_HOOK;
+		scrollVariables.scrollContextBelow = SCROLL_TITLE_CONTEXT_BELOW;
+		scrollVariables.scrollContextAbove = SCROLL_TITLE_CONTEXT_ABOVE;
+		scrollVariables.scrollAction = SCROLL_TITLE_ACTION;
+	} else if ( hook === SCROLL_TOC_PARAMETER ) {
+		scrollVariables.scrollHook = SCROLL_TOC_HOOK;
+		scrollVariables.scrollContextBelow = SCROLL_TOC_CONTEXT_BELOW;
+		scrollVariables.scrollContextAbove = SCROLL_TOC_CONTEXT_ABOVE;
+		scrollVariables.scrollAction = SCROLL_TOC_ACTION;
+	}
+	return scrollVariables;
+}
 
 /**
  * Fire a hook to be captured by WikimediaEvents for scroll event logging.
  *
  * @param {string} direction the scroll direction
+ * @param {string} hook the hook to fire
  */
-function fireScrollHook( direction ) {
+function fireScrollHook( direction, hook ) {
+	const scrollVariables = getScrollVariables( hook );
+	if ( Object.keys( scrollVariables ).length === 0 && scrollVariables.constructor === Object ) {
+		return;
+	}
 	if ( direction === 'down' ) {
-		// @ts-ignore
-		mw.hook( SCROLL_HOOK ).fire( { context: SCROLL_CONTEXT_BELOW } );
+		mw.hook( scrollVariables.scrollHook ).fire( {
+			context: scrollVariables.scrollContextBelow
+		} );
 	} else {
-		// @ts-ignore
-		mw.hook( SCROLL_HOOK ).fire( {
-			context: SCROLL_CONTEXT_ABOVE,
-			action: SCROLL_ACTION
+		mw.hook( scrollVariables.scrollHook ).fire( {
+			context: scrollVariables.scrollContextAbove,
+			action: scrollVariables.scrollAction
 		} );
 	}
 }

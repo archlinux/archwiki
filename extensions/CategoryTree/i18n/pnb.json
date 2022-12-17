@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Abbas dhothar",
-			"Khalid Mahmood"
+			"Khalid Mahmood",
+			"Bgo eiu"
 		]
 	},
 	"categorytree": "گٹھ لین",
@@ -14,7 +15,7 @@
 	"categorytree-go": "لین وکھاؤ",
 	"categorytree-parents": "وڈوڈیرے",
 	"categorytree-mode-categories": "صرف گٹھاں",
-	"categorytree-mode-pages": "فائلاں بنا صفے",
+	"categorytree-mode-pages": "فائلاں توں چٹ صفحے",
 	"categorytree-mode-all": "سارے صفحے",
 	"categorytree-collapse": "لُکاؤ",
 	"categorytree-expand": "ودھاؤ",

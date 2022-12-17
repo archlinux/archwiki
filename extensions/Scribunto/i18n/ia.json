@@ -36,6 +36,7 @@
 	"scribunto-lua-error-location": "Error de Lua $1: $2",
 	"scribunto-lua-error": "Error de Lua: $2",
 	"scribunto-lua-notarrayreturn": "Error de script: Le modulo retornava un valor $2, ma debeva retornar un tabella de exportation.",
+	"scribunto-lua-warning": "Aviso del script: $1",
 	"scribunto-luastandalone-proc-error": "Error de Lua: non pote crear processo",
 	"scribunto-luastandalone-proc-error-msg": "Error de Lua: non pote crear processo: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Error de Lua: Impossibile crear processo: proc_open non es disponibile. Verifica le directiva de configuration \"disable_functions\" de PHP.",
@@ -59,5 +60,5 @@
 	"scribunto-limitreport-profile-ms": "$1 ms",
 	"scribunto-limitreport-logs": "Registros Lua",
 	"nstab-module": "Modulo",
-	"tooltip-ca-nstab-module": "Vider le pagina del modulo"
+	"tooltip-ca-nstab-module": "Visitar le pagina del modulo"
 }

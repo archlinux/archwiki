@@ -71,15 +71,8 @@ ve.dm.MWInternalLinkAnnotation.static.toDataElement = function ( domElements, co
  * @return {Object} The element.
  */
 ve.dm.MWInternalLinkAnnotation.static.dataElementFromTitle = function ( title, rawTitle ) {
-	var target = title.toText(),
-		namespaceIds = mw.config.get( 'wgNamespaceIds' );
+	var target = title.toText();
 
-	if ( title.getNamespaceId() === namespaceIds.file || title.getNamespaceId() === namespaceIds.category ) {
-		// File: or Category: link
-		// We have to prepend a colon so this is interpreted as a link
-		// rather than an image inclusion or categorization
-		target = ':' + target;
-	}
 	if ( title.getFragment() ) {
 		target += '#' + title.getFragment();
 	}
@@ -115,6 +108,7 @@ ve.dm.MWInternalLinkAnnotation.static.newFromTitle = function ( title, rawTitle 
 
 ve.dm.MWInternalLinkAnnotation.static.toDomElements = function () {
 	var parentResult = ve.dm.LinkAnnotation.static.toDomElements.apply( this, arguments );
+	// we just created that link so the 'rel' attribute should be safe
 	parentResult[ 0 ].setAttribute( 'rel', 'mw:WikiLink' );
 	return parentResult;
 };

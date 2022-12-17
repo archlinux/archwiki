@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Seda lehekülge pole {{GRAMMAR:inessive|{{SITENAME}}}}.",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Määratud pealkiri on vigane.",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Välislink",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Lehekülje olemasolu kindlakstegemine...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "See ei ole sisulehekülg. See on loetelu sarnase pealkirjaga teemadest.",
 	"wikieditor-toolbar-tool-link-int-invalid": "Määratud pealkiri on vigane.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Paistab, et sisestatud internetiaadress viitab teisele vikileheküljele.\nKas soovid sellest siselingi teha?",
@@ -196,5 +195,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Harilik tekst<br />:Taandega tekst<br />::Taandega tekst",
 	"wikieditor-toolbar-help-content-indent-result": "Harilik tekst<dl><dd>Taandega tekst<dl><dd>Taandega tekst</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Muudatus tehtud [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditoriga]] (2010. aasta vikiteksti toimeti)",
-	"wikieditor-realtimepreview-preview": "Eelvaade"
+	"wikieditor-realtimepreview-preview": "Eelvaade",
+	"wikieditor-realtimepreview-error": "Eelvaadet ei laadita",
+	"wikieditor-realtimepreview-reload": "Laadi uuesti",
+	"wikieditor-realtimepreview-beta-label": "Eelvaade reaalajas",
+	"wikieditor-realtimepreview-beta-desc": "Vaata [[mw:Special:MyLanguage/Extension:WikiEditor|2010. aasta toimetis]], kuidas vikiteksti muudatused lugejate jaoks välja näevad.",
+	"wikieditor-realtimepreview-reload-title": "Laadi reaalaja eelvaate paan uuesti",
+	"wikieditor-realtimepreview-manual": "Palun laadi nüüd käsitsi uuesti, et näha muudatuste eelvaadet.",
+	"wikieditor-realtimepreview-onboarding-title": "Eelvaade reaalajas",
+	"wikieditor-realtimepreview-onboarding-body": "Vaata reaalajas, kuidas sinu muudatused lugejate jaoks välja näevad.",
+	"wikieditor-realtimepreview-onboarding-button": "Hästi, sain aru"
 }

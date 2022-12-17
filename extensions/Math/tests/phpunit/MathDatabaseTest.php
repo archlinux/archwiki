@@ -20,10 +20,7 @@ class MathDatabaseTest extends MediaWikiIntegrationTestCase {
 	 */
 	private $renderer;
 	private const SOME_TEX = "a+b";
-	private const SOME_HTML = "a<sub>b</sub> and so on";
 	private const SOME_MATHML = "iℏ∂_tΨ=H^Ψ<mrow><\ci>";
-	private const SOME_CONSERVATIVENESS = 2;
-	private const SOME_OUTPUTHASH = 'C65c884f742c8591808a121a828bc09f8<';
 
 	/**
 	 * creates a new database connection and a new math renderer
@@ -33,11 +30,14 @@ class MathDatabaseTest extends MediaWikiIntegrationTestCase {
 	 *    $this->tablesUsed[] = 'math';
 	 * }
 	 * was not sufficient.
+	 * @throws Exception
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 		// TODO: figure out why this is necessary
-		$this->db = wfGetDB( DB_PRIMARY );
+		$this->db = $this->getServiceContainer()
+			->getDBLoadBalancer()
+			->getConnection( DB_PRIMARY );
 		$this->renderer = new MathMathML( self::SOME_TEX );
 		$this->tablesUsed[] = 'mathoid';
 	}
@@ -87,6 +87,9 @@ class MathDatabaseTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\Math\Hooks::onLoadExtensionSchemaUpdates
 	 */
 	public function testCreateTable() {
+		$this->markTestSkippedIfDbType( 'postgres' );
+		$this->markTestSkippedIfDbType( 'sqlite' );
+
 		$this->setMwGlobals( 'wgMathValidModes', [ MathConfig::MODE_MATHML ] );
 		$this->db->dropTable( "mathoid", __METHOD__ );
 		$dbu = DatabaseUpdater::newForDB( $this->db );

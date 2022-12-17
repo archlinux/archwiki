@@ -18,17 +18,36 @@
 
 namespace MediaWiki\SecureLinkFixer;
 
-class Hooks {
+use MediaWiki\Hook\LinkerMakeExternalLinkHook;
+
+class Hooks implements LinkerMakeExternalLinkHook {
+
+	/** @var HSTSPreloadLookup */
+	private $lookup;
+
+	/**
+	 * @param HSTSPreloadLookup $lookup
+	 */
+	public function __construct( HSTSPreloadLookup $lookup ) {
+		$this->lookup = $lookup;
+	}
 
 	/**
 	 * Hook: LinkerMakeExternalLink
 	 *
 	 * Changes the scheme of the URL to HTTPS if necessary
 	 *
-	 * @param string &$url
+	 * @param string &$url Link URL
+	 * @param string &$text Link text
+	 * @param string &$link New link HTML (if returning false)
+	 * @param string[] &$attribs Attributes to be applied
+	 * @param string $linkType External link type
+	 * @return bool|void True or no return value to continue or false to abort
 	 */
-	public static function onLinkerMakeExternalLink( &$url ) {
-		if ( strpos( $url, 'https://' ) === 0 ) {
+	public function onLinkerMakeExternalLink(
+		&$url, &$text, &$link, &$attribs, $linkType
+	) {
+		if ( str_starts_with( $url, 'https://' ) ) {
 			// Already HTTPS
 			return;
 		}
@@ -43,7 +62,7 @@ class Hooks {
 			return;
 		}
 
-		if ( HSTSPreloadLookup::getInstance()->isPreloaded( $parsed['host'] ) ) {
+		if ( $this->lookup->isPreloaded( $parsed['host'] ) ) {
 			$parsed['scheme'] = 'https';
 			$parsed['delimiter'] = '://';
 			$url = wfAssembleUrl( $parsed );

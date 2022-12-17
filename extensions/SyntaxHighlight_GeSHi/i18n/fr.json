@@ -18,7 +18,7 @@
 	"syntaxhighlight-error-category": "Pages avec des erreurs de coloration syntaxique",
 	"syntaxhighlight-error-category-desc": "Il y a eu une erreur lors de la tentative de mise en valeur du code inclus sur la page.",
 	"syntaxhighlight-enclose-category": "Pages utilisant des attributs enclose obsolètes",
-	"syntaxhighlight-enclose-category-desc": "La coloration syntaxique sur la page utilise une syntaxe incluse obsolète.",
+	"syntaxhighlight-enclose-category-desc": "La coloration syntaxique sur la page utilise une syntaxe « enclose » obsolète.",
 	"syntaxhighlight-source-category": "Pages utilisant des balises source obsolètes",
 	"syntaxhighlight-source-category-desc": "La coloration syntaxique sur la page utilise des balises source obsolètes.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Code",

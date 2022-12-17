@@ -51,15 +51,27 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
+	public function testGivenDeactivedOpenGraphOnBeforePageDisplayDoesNotAddMeta() {
+		$outputPage = $this->mockOutputPage( [
+			'PageImagesOpenGraph' => false,
+		] );
+		$outputPage->expects( $this->never() )
+			->method( 'addMeta' );
+
+		$skinTemplate = new SkinTemplate();
+		( new PageImages() )->onBeforePageDisplay( $outputPage, $skinTemplate );
+	}
+
 	public function testGivenNonExistingPageOnBeforePageDisplayDoesNotAddMeta() {
 		$outputPage = $this->mockOutputPage( [
+			'PageImagesOpenGraph' => true,
 			'PageImagesOpenGraphFallbackImage' => false
 		] );
 		$outputPage->expects( $this->never() )
 			->method( 'addMeta' );
 
 		$skinTemplate = new SkinTemplate();
-		PageImages::onBeforePageDisplay( $outputPage, $skinTemplate );
+		( new PageImages() )->onBeforePageDisplay( $outputPage, $skinTemplate );
 	}
 
 	public static function provideFallbacks() {
@@ -76,6 +88,7 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 	public function testGivenFallbackImageOnBeforePageDisplayAddMeta( $expected, $fallback ) {
 		$this->setMwGlobals( [ 'wgCanonicalServer' => 'http://wiki.test' ] );
 		$outputPage = $this->mockOutputPage( [
+			'PageImagesOpenGraph' => true,
 			'PageImagesOpenGraphFallbackImage' => $fallback
 		] );
 		$outputPage->expects( $this->once() )
@@ -83,7 +96,7 @@ class PageImagesTest extends MediaWikiIntegrationTestCase {
 			->with( $this->equalTo( 'og:image' ), $this->equalTo( $expected ) );
 
 		$skinTemplate = new SkinTemplate();
-		PageImages::onBeforePageDisplay( $outputPage, $skinTemplate );
+		( new PageImages() )->onBeforePageDisplay( $outputPage, $skinTemplate );
 	}
 
 	/**

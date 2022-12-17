@@ -96,9 +96,11 @@ class ParserTest extends ParserTestCase {
 			[ '1 === 1', true ],
 			[ 'rescape( "abc* (def)" )', 'abc\* \(def\)' ],
 			[ 'str_replace( "foobarbaz", "bar", "-" )', 'foo-baz' ],
+			[ 'str_replace_regexp( "foo1bar1baz", "\d", "" )', 'foobarbaz' ],
+			[ 'str_replace_regexp( "foobarbaz", "(bar)", "$1baz" )', 'foobarbazbaz' ],
 			[ 'rmdoubles( "foobybboo" )', 'fobybo' ],
 			[ 'lcase("FÁmí")', 'fámí' ],
-			[ 'substr( "foobar", 0, 3 )', 'foo' ]
+			[ 'substr( "foobar", 0, 3 )', 'foo' ],
 		];
 	}
 
@@ -552,6 +554,7 @@ class ParserTest extends ParserTestCase {
 			[ "rcount('(','a')", 'funcRCount' ],
 			[ "get_matches('this (should fail', 'any haystack')", 'funcGetMatches' ],
 			[ "'a' rlike '('", 'keywordRegex' ],
+			[ "str_replace_regexp('any string', 'a bad (regex', 'any replacement')", 'funcStrReplaceRegexp' ],
 		];
 	}
 
@@ -575,6 +578,8 @@ class ParserTest extends ParserTestCase {
 	public function invalidIPRange() {
 		return [
 			[ "ip_in_range('0.0.0.0', 'lol')", 'funcIPInRange' ],
+			[ "ip_in_ranges('0.0.0.0', ':', '0.0.0.256')", 'funcIPInRanges' ],
+			[ "ip_in_ranges('1.1.1.1', '1.1.0.0/16', 'gibberish')", 'funcIPInRanges' ],
 		];
 	}
 
@@ -644,6 +649,7 @@ class ParserTest extends ParserTestCase {
 		return [
 			[ 'get_matches' ],
 			[ 'ip_in_range' ],
+			[ 'ip_in_ranges' ],
 			[ 'contains_any' ],
 			[ 'contains_all' ],
 			[ 'ccnorm_contains_any' ],
@@ -679,6 +685,7 @@ class ParserTest extends ParserTestCase {
 	public function threeParamsFuncs() {
 		return [
 			[ 'str_replace' ],
+			[ 'str_replace_regexp' ],
 		];
 	}
 
@@ -702,6 +709,7 @@ class ParserTest extends ParserTestCase {
 			[ "ip_in_range( 'a', 'b', 'c' )" ],
 			[ "substr( 'a', 'b', 'c', 'd' )" ],
 			[ "str_replace( 'a', 'b', 'c', 'd', 'e' )" ],
+			[ "str_replace_regexp( 'a', 'b', 'c', 'd', 'e' )" ],
 		];
 	}
 
@@ -761,7 +769,8 @@ class ParserTest extends ParserTestCase {
 			[ 'bool()', 'noparams' ],
 			[ 'ip_in_range(1)', 'notenoughargs' ],
 			[ 'set_var("x")', 'notenoughargs' ],
-			[ 'str_replace("x","y")', 'notenoughargs' ]
+			[ 'str_replace("x","y")', 'notenoughargs' ],
+			[ 'str_replace_regexp("x","y")', 'notenoughargs' ],
 		];
 	}
 
@@ -1099,6 +1108,7 @@ class ParserTest extends ParserTestCase {
 		return [
 			[ "norm(,,,)" ],
 			[ "str_replace(,'x','y')" ],
+			[ "str_replace_regexp(,'x','y')" ],
 			[ "contains_any(,)" ],
 			[ "contains_any(,,)" ],
 			[ "contains_any(1,2,,)" ],
@@ -1132,6 +1142,7 @@ class ParserTest extends ParserTestCase {
 			[ 'added_lines contains string(3/0)', 'dividebyzero' ],
 			[ 'norm(new_text) irlike ")"', 'regexfailure' ],
 			[ 'ip_in_range( user_name, "foobar" )', 'invalidiprange' ],
+			[ 'ip_in_ranges( user_name, "foo", "bar" )', 'invalidiprange' ],
 		];
 	}
 

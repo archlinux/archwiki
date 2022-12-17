@@ -39,6 +39,7 @@
 	"cite-ve-referenceslist-isempty": "Nema referenci u grupi \"$1\" na ovoj stranici koje bi mogle biti uključene u ovaj popis.",
 	"cite-ve-referenceslist-isempty-default": "Nema referenci na ovoj stranici koje bi mogle biti uključene u ovaj popis.",
 	"cite-ve-referenceslist-missingref": "Ova reference je definirana u predlošku ili drugom generiranom dijelu, i za sad može biti uređivana samo u prikazu za uređivanje izvornog koda.",
+	"cite-ve-referenceslist-missingref-in-list": "Ovaj je popis izvora generirao predložak ili drugi generirani blok i za sada ga je moguće vidjeti jedino u uređivaču kôda.",
 	"cite-ve-referenceslist-missingreflist": "Ovaj je popis izvora generirao predložak i za sada ga je moguće uređivati jedino uređivanjem kôda.",
 	"cite-ve-toolbar-group-label": "Citiraj",
 	"cite-ve-othergroup-item": "$1 referenca",

@@ -40,7 +40,7 @@ class VisualEditorHookRunner implements
 		ProperPageIdentity $page,
 		UserIdentity $user,
 		string $wikitext,
-		array $params,
+		array &$params,
 		array $pluginData,
 		array &$apiResponse
 	) {
@@ -48,7 +48,7 @@ class VisualEditorHookRunner implements
 			$page,
 			$user,
 			$wikitext,
-			$params,
+			&$params,
 			$pluginData,
 			&$apiResponse
 		], [ 'abortable' => true ] );

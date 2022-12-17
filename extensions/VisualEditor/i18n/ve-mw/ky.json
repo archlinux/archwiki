@@ -31,13 +31,10 @@
 	"visualeditor-dialog-meta-languages-code-label": "Тилдин коду",
 	"visualeditor-dialog-meta-languages-label": "Тилдер",
 	"visualeditor-dialog-meta-languages-section": "Тилдер",
-	"visualeditor-dialog-transclusion-options": "Ырастоолор",
 	"visualeditor-dialog-transclusion-placeholder": "Жаңы калып",
-	"visualeditor-dialog-transclusion-remove-content": "Мазмунун өчүрүү",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Артка кайтуу",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Баары бир улантуу",
 	"visualeditor-formatdropdown-format-mw-heading2": "Баш сөз",
-	"visualeditor-savedialog-label-create": "Барак түзүү",
 	"visualeditor-savedialog-title-review": "Өзгөртүүлөрдү карап чыгуу",
 	"visualeditor-savedialog-title-save": "Өзгөртүүлөрдү сактоо"
 }

@@ -66,7 +66,7 @@ ve.dm.MWBlockImageNode.static.classAttributes = {
 ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter ) {
 	var figure = domElements[ 0 ];
 	var imgWrapper = figure.children[ 0 ]; // <a> or <span>
-	var img = imgWrapper.children[ 0 ]; // <img>, <video> or <audio>
+	var img = imgWrapper.children[ 0 ]; // <img>, <video>, <audio>, or <span> if mw:Error
 	var captionNode = figure.children[ 1 ]; // <figcaption> or undefined
 	var classAttr = figure.getAttribute( 'class' );
 	var typeofAttrs = figure.getAttribute( 'typeof' ).trim().split( /\s+/ );
@@ -95,9 +95,11 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 
 	var attributes = {
 		mediaClass: types.mediaClass,
+		mediaTag: img.nodeName.toLowerCase(),
 		type: types.frameType,
 		src: img.getAttribute( 'src' ) || img.getAttribute( 'poster' ),
 		href: href,
+		imageClassAttr: img.getAttribute( 'class' ),
 		imgWrapperClassAttr: imgWrapper.getAttribute( 'class' ),
 		resource: img.getAttribute( 'resource' ),
 		width: width !== null && width !== '' ? +width : null,
@@ -161,16 +163,15 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) {
 	var dataElement = data[ 0 ],
 		attributes = dataElement.attributes,
-		mediaClass = attributes.mediaClass,
 		figure = doc.createElement( 'figure' ),
 		imgWrapper = doc.createElement( attributes.href ? 'a' : 'span' ),
-		img = doc.createElement( attributes.isError ? 'span' : this.typesToTags[ mediaClass ] ),
+		img = doc.createElement( attributes.isError ? 'span' : attributes.mediaTag ),
 		wrapper = doc.createElement( 'div' ),
 		classAttr = this.getClassAttrFromAttributes( attributes ),
 		captionData = data.slice( 1, -1 );
 
 	// RDFa type
-	figure.setAttribute( 'typeof', this.getRdfa( mediaClass, attributes.type, attributes.isError ) );
+	figure.setAttribute( 'typeof', this.getRdfa( attributes.mediaClass, attributes.type, attributes.isError ) );
 	if ( !ve.isEmptyObject( attributes.mw ) ) {
 		figure.setAttribute( 'data-mw', JSON.stringify( attributes.mw ) );
 	}
@@ -182,6 +183,12 @@ ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) 
 
 	if ( attributes.href ) {
 		imgWrapper.setAttribute( 'href', attributes.href );
+	}
+
+	// At the moment, preserving this is only relevant on mw:Error spans
+	if ( attributes.isError && attributes.imageClassAttr ) {
+		// eslint-disable-next-line mediawiki/class-doc
+		img.className = attributes.imageClassAttr;
 	}
 
 	if ( attributes.imgWrapperClassAttr ) {
@@ -202,7 +209,7 @@ ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) 
 		}
 	}
 
-	var srcAttr = this.typesToSrcAttrs[ mediaClass ];
+	var srcAttr = this.tagsToSrcAttrs[ img.nodeName.toLowerCase() ];
 	if ( srcAttr && !attributes.isError ) {
 		img.setAttribute( srcAttr, attributes.src );
 	}
@@ -218,7 +225,7 @@ ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) 
 		img.setAttribute( attributes.isError ? 'data-width' : 'width', width );
 	}
 	if ( height !== null ) {
-		img.setAttribute( attributes.isError ? 'data-width' : 'height', height );
+		img.setAttribute( attributes.isError ? 'data-height' : 'height', height );
 	}
 
 	img.setAttribute( 'resource', attributes.resource );

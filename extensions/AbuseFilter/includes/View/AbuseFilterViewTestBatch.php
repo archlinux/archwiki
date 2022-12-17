@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\AbuseFilter\View;
 
+use Html;
 use HTMLForm;
 use IContextSource;
 use LogEventsList;
@@ -100,7 +101,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 	public function show() {
 		$out = $this->getOutput();
 
-		if ( !$this->afPermManager->canUseTestTools( $this->getUser() ) ) {
+		if ( !$this->afPermManager->canUseTestTools( $this->getAuthority() ) ) {
 			// TODO: the message still refers to the old rights
 			$out->addWikiMsg( 'abusefilter-mustviewprivateoredit' );
 			return;
@@ -113,7 +114,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$out->addWikiMsg( 'abusefilter-test-intro', self::$mChangeLimit );
 		$out->enableOOUI();
 
-		$boxBuilder = $this->boxBuilderFactory->newEditBoxBuilder( $this, $this->getUser(), $out );
+		$boxBuilder = $this->boxBuilderFactory->newEditBoxBuilder( $this, $this->getAuthority(), $out );
 
 		$rulesFields = [
 			'rules' => [
@@ -217,7 +218,9 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$ruleChecker = $this->ruleCheckerFactory->newRuleChecker();
 
 		if ( !$ruleChecker->checkSyntax( $this->testPattern )->isValid() ) {
-			$out->addWikiMsg( 'abusefilter-test-syntaxerr' );
+			$out->addHTML(
+				Html::errorBox( $this->msg( 'abusefilter-test-syntaxerr' )->parse() )
+			);
 			return;
 		}
 
@@ -225,7 +228,7 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$rcQuery = RecentChange::getQueryInfo();
 		$conds = [];
 
-		if ( (string)$this->mTestUser !== '' ) {
+		if ( $this->mTestUser !== '' ) {
 			$conds[$rcQuery['fields']['rc_user_text']] = $this->mTestUser;
 		}
 
@@ -237,15 +240,14 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 			$conds[] = 'rc_timestamp <= ' .
 				$dbr->addQuotes( $dbr->timestamp( strtotime( $this->mTestPeriodEnd ) ) );
 		}
-		if ( $this->mTestPage ) {
+		if ( $this->mTestPage !== '' ) {
 			$title = Title::newFromText( $this->mTestPage );
-			if ( $title instanceof Title ) {
-				$conds['rc_namespace'] = $title->getNamespace();
-				$conds['rc_title'] = $title->getDBkey();
-			} else {
+			if ( !$title ) {
 				$out->addWikiMsg( 'abusefilter-test-badtitle' );
 				return;
 			}
+			$conds['rc_namespace'] = $title->getNamespace();
+			$conds['rc_title'] = $title->getDBkey();
 		}
 
 		if ( $this->mExcludeBots ) {
@@ -338,20 +340,23 @@ class AbuseFilterViewTestBatch extends AbuseFilterView {
 		$this->mExcludeBots = $request->getBool( 'wpExcludeBots' );
 		$this->mTestAction = $request->getText( 'wpTestAction' );
 
-		if ( !$this->testPattern
+		if ( $this->testPattern === ''
 			&& count( $this->mParams ) > 1
 			&& is_numeric( $this->mParams[1] )
 		) {
 			$dbr = wfGetDB( DB_REPLICA );
-			$this->testPattern = $dbr->selectField( 'abuse_filter',
+			$pattern = $dbr->selectField( 'abuse_filter',
 				'af_pattern',
-				[ 'af_id' => $this->mParams[1] ],
+				[ 'af_id' => intval( $this->mParams[1] ) ],
 				__METHOD__
 			);
+			if ( $pattern !== false ) {
+				$this->testPattern = $pattern;
+			}
 		}
 
 		// Normalise username
 		$userTitle = Title::newFromText( $testUsername, NS_USER );
-		$this->mTestUser = $userTitle ? $userTitle->getText() : null;
+		$this->mTestUser = $userTitle ? $userTitle->getText() : '';
 	}
 }

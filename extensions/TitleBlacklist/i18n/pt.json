@@ -1,12 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
-			"Cainamarques",
-			"Hamilton Abreu",
-			"Malafaya",
-			"Vitorvicentevalente",
-			"Waldir",
-			555
+			"Hamilton Abreu"
 		]
 	},
 	"action-tboverride": "contornar a lista de títulos e nomes de utilizador interditos",

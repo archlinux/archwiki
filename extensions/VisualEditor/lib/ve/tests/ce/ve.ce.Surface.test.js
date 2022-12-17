@@ -159,7 +159,6 @@ ve.test.utils.runSurfaceHandleSpecialKeyTest = function ( assert, caseItem ) {
 };
 
 ve.test.utils.runSurfacePasteTest = function ( assert, item ) {
-
 	var afterPastePromise = ve.createDeferred().resolve().promise(),
 		htmlOrView = item.documentHtml || '<p id="foo"></p><p>Foo</p><h2> Baz </h2><table><tbody><tr><td></td></tr></tbody></table><p><b>Quux</b></p>',
 		pasteData = {
@@ -168,7 +167,7 @@ ve.test.utils.runSurfacePasteTest = function ( assert, item ) {
 		},
 		clipboardData = new ve.test.utils.DataTransfer( ve.copy( pasteData ) ),
 		view = typeof htmlOrView === 'string' ?
-			ve.test.utils.createSurfaceViewFromHtml( htmlOrView ) :
+			ve.test.utils.createSurfaceViewFromHtml( htmlOrView, item.config ) :
 			htmlOrView,
 		model = view.getModel(),
 		doc = model.getDocument(),
@@ -200,7 +199,8 @@ ve.test.utils.runSurfacePasteTest = function ( assert, item ) {
 		testEvent = ve.test.utils.createTestEvent( { type: 'paste', clipboardData: clipboardData } );
 	}
 	if ( item.middleClickRangeOrSelection ) {
-		view.middleClickSelection = ve.test.utils.selectionFromRangeOrSelection( doc, item.middleClickRangeOrSelection );
+		view.lastNonCollapsedDocumentSelection = ve.test.utils.selectionFromRangeOrSelection( doc, item.middleClickRangeOrSelection );
+		view.onDocumentMouseDown( ve.test.utils.createTestEvent( 'mousedown', { which: OO.ui.MouseButtons.MIDDLE } ) );
 	}
 	model.setSelection( ve.test.utils.selectionFromRangeOrSelection( doc, item.rangeOrSelection ) );
 	view.pasteSpecial = item.pasteSpecial;
@@ -2178,6 +2178,32 @@ QUnit.test( 'beforePaste/afterPaste', function ( assert ) {
 				],
 				expectedDefaultPrevented: false,
 				msg: 'Middle click to paste'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '1<b>2</b>3',
+				expectedRangeOrSelection: new ve.Range( 4 ),
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [ '1', '2', '3' ],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				config: {
+					importRules: {
+						external: {
+							blacklist: {
+								'textStyle/bold': true
+							}
+						}
+					}
+				},
+				msg: 'Formatting removed by import rules'
 			}
 		];
 

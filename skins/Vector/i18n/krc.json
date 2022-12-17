@@ -19,5 +19,6 @@
 	"vector-view-history": "Тарихи",
 	"vector-view-view": "Окъу",
 	"vector-view-viewsource": "Кодха къара",
-	"vector-more-actions": "Энтда"
+	"vector-more-actions": "Энтда",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ичинде болгъан бетлени изле"
 }

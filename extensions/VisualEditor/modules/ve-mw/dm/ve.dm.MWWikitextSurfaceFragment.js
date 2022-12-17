@@ -36,7 +36,8 @@ ve.dm.MWWikitextSurfaceFragment.prototype.hasMatchingAncestor = function ( type,
 		// TODO: Use a registry to do this matching
 		switch ( type ) {
 			case 'paragraph':
-				all = !text.match( /^ |^=|^<blockquote>/ );
+				// Anything but what's matched below
+				all = !/^ |^=|^<blockquote>/.test( text );
 				break;
 			case 'mwPreformatted':
 				all = text.slice( 0, 1 ) === ' ';
@@ -45,8 +46,8 @@ ve.dm.MWWikitextSurfaceFragment.prototype.hasMatchingAncestor = function ( type,
 				all = text.slice( 0, 12 ) === '<blockquote>';
 				break;
 			case 'mwHeading':
-				all = text.match( new RegExp( '^={' + attributes.level + '}[^=]' ) ) &&
-					text.match( new RegExp( '[^=]={' + attributes.level + '}$' ) );
+				all = new RegExp( '^={' + attributes.level + '}[^=]' ).test( text ) &&
+					new RegExp( '[^=]={' + attributes.level + '}$' ).test( text );
 				break;
 			default:
 				all = false;

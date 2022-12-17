@@ -67,6 +67,7 @@
 	"minerva-page-actions-protect": "Proteger",
 	"minerva-page-actions-unprotect": "Desproteger",
 	"minerva-page-actions-user-groups": "Grupos de usuários",
+	"minerva-page-actions-block": "Bloquear usuário(a)",
 	"minerva-page-actions-logs": "Registros",
 	"minerva-page-actions-wikibase": "Item no {{WBREPONAME}}",
 	"minerva-page-actions-language-switcher": "Idiomas",

@@ -1,13 +1,46 @@
 <?php
 
+namespace MediaWiki\Extension\ConfirmEdit\SimpleCaptcha;
+
+use ApiBase;
+use ApiEditPage;
+use BagOStuff;
+use Config;
+use ConfigException;
+use Content;
+use ContentSecurityPolicy;
+use EditPage;
+use ExtensionRegistry;
+use HTMLForm;
+use IContextSource;
+use MailAddress;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
+use MediaWiki\Extension\ConfirmEdit\CaptchaTriggers;
+use MediaWiki\Extension\ConfirmEdit\Hooks\HookRunner;
+use MediaWiki\Extension\ConfirmEdit\Store\CaptchaStore;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionAccessException;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\User\UserNameUtils;
+use Message;
+use ObjectCache;
+use OOUI\FieldLayout;
+use OOUI\HiddenInputWidget;
+use OOUI\NumberInputWidget;
+use OutputPage;
+use ParserOptions;
+use RequestContext;
+use Status;
+use TextContent;
+use Title;
+use UnexpectedValueException;
+use User;
+use WebRequest;
 use Wikimedia\IPUtils;
+use WikiPage;
 
 /**
  * Demo CAPTCHA (not for production usage) and base class for real CAPTCHAs
@@ -141,8 +174,8 @@ class SimpleCaptcha {
 
 		return [
 			'html' =>
-				new OOUI\FieldLayout(
-					new OOUI\NumberInputWidget( [
+				new FieldLayout(
+					new NumberInputWidget( [
 						'name' => 'wpCaptchaWord',
 						'classes' => [ 'simplecaptcha-answer' ],
 						'id' => 'wpCaptchaWord',
@@ -156,7 +189,7 @@ class SimpleCaptcha {
 						'classes' => [ 'simplecaptcha-field' ],
 					]
 				) .
-				new OOUI\HiddenInputWidget( [
+				new HiddenInputWidget( [
 					'name' => 'wpCaptchaId',
 					'id' => 'wpCaptchaId',
 					'value' => $index
@@ -432,7 +465,7 @@ class SimpleCaptcha {
 			);
 			// And then store it in cache for one day. This cache is cleared on
 			// modifications to the whitelist page.
-			// @see ConfirmEditHooks::onPageSaveComplete()
+			// @see MediaWiki\Extension\ConfirmEdit\Hooks::onPageSaveComplete()
 			$cache->set( $cacheKey, $whitelist, 86400 );
 		} else {
 			// Whitelist from the cache
@@ -552,6 +585,11 @@ class SimpleCaptcha {
 		) {
 			$result = $wgCaptchaTriggersOnNamespace[$title->getNamespace()][$action];
 		}
+
+		$hookRunner = new HookRunner(
+			MediaWikiServices::getInstance()->getHookContainer()
+		);
+		$hookRunner->onConfirmEditTriggersCaptcha( $action, $title, $result );
 
 		return $result;
 	}

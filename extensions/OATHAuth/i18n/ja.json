@@ -70,6 +70,7 @@
 	"oathauth-totp-description": "TOTP (Time-based One-Time Password algorithm) は HOTP (HMAC-based One-time Password algorithm) を拡張したアルゴリズムで、現在の時刻からワンタイムパスワードを生成します。",
 	"oathauth-switch-method-warning": "認証方式を$2に切り替えると現在の認証方式（$1）は無効化されます。現在の認証方式に関連付けられているすべてのデータは削除されます。",
 	"oathauth-notifications-disable-help": "ヘルプ",
+	"oathauth-notifications-enabled-help": "ヘルプ",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}}は二要素認証を有効化しています。",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}は二要素認証を有効化していません。"
 }

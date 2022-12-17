@@ -1,19 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
+			"Edith Nwobu",
+			"Ifexin",
+			"Oby Ezeilo",
+			"Pasjoesscc",
+			"Timzy D'Great",
 			"Tochiprecious",
 			"Ukabia",
 			"Uzoma Ozurumba",
-			"Edith Nwobu",
-			"Pasjoesscc",
-			"Oby Ezeilo",
-			"Amire80",
-			"Ifexin",
-			"Timzy D'Great"
+			"Karen"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 asụsụ}}",
-	"vector-action-addsection": "Tinyé Okwu",
+	"vector-action-addsection": "Tinye isiokwu",
 	"vector-action-delete": "Kàcha",
 	"vector-action-move": "Papụ̀",
 	"vector-action-protect": "Cẹdolu",
@@ -25,5 +26,9 @@
 	"vector-view-view": "Gụ̀ọ",
 	"vector-view-viewsource": "Lee ebeosi",
 	"vector-more-actions": "Ọzọ",
-	"vector-searchsuggest-containing": "Chọọ peeji ndị gụnyere <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Chọọ peeji ndị gụnyere <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-heading": "Ndịna",
+	"vector-toc-toggle-position-sidebar": "Ga na nootu akụkụ",
+	"vector-toc-toggle-position-title": "zoo",
+	"vector-toc-toggle-button-label": "Chọba ndịnisiokwu $1"
 }

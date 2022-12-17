@@ -1,5 +1,6 @@
 /**
- * Button widget to toggle unused fields
+ * Button widget to toggle unused fields in the template dialog sidebar, appears
+ * at the top of any template with more than the threshold number of parameters.
  *
  * @class
  * @extends OO.ui.ButtonWidget
@@ -32,6 +33,8 @@ OO.inheritClass( ve.ui.MWTransclusionOutlineToggleUnusedWidget, OO.ui.ButtonWidg
 
 /**
  * @event toggleUnusedFields
+ * @param {boolean} visibility If unused fields should be shown or not.
+ * @param {boolean} [fromClick]
  * Emitted when the visibility for unused fields should be (re)applied.
  */
 

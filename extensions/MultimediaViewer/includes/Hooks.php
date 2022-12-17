@@ -169,13 +169,7 @@ class Hooks implements MakeGlobalVariablesScriptHook {
 	 * @param array &$vars
 	 */
 	public static function onResourceLoaderGetConfigVars( array &$vars ) {
-		global $wgMediaViewerActionLoggingSamplingFactorMap,
-			$wgMediaViewerNetworkPerformanceSamplingFactor,
-			$wgMediaViewerDurationLoggingSamplingFactor,
-			$wgMediaViewerDurationLoggingLoggedinSamplingFactor,
-			$wgMediaViewerAttributionLoggingSamplingFactor,
-			$wgMediaViewerDimensionLoggingSamplingFactor,
-			$wgMediaViewerUseThumbnailGuessing, $wgMediaViewerExtensions,
+		global $wgMediaViewerUseThumbnailGuessing, $wgMediaViewerExtensions,
 			$wgMediaViewerImageQueryParameter, $wgMediaViewerRecordVirtualViewBeaconURI;
 
 		$vars['wgMultimediaViewer'] = [
@@ -183,12 +177,6 @@ class Hooks implements MakeGlobalVariablesScriptHook {
 			'discussionLink' => self::$discussionLink,
 			'helpLink' => self::$helpLink,
 			'useThumbnailGuessing' => (bool)$wgMediaViewerUseThumbnailGuessing,
-			'durationSamplingFactor' => $wgMediaViewerDurationLoggingSamplingFactor,
-			'durationSamplingFactorLoggedin' => $wgMediaViewerDurationLoggingLoggedinSamplingFactor,
-			'networkPerformanceSamplingFactor' => $wgMediaViewerNetworkPerformanceSamplingFactor,
-			'actionLoggingSamplingFactorMap' => $wgMediaViewerActionLoggingSamplingFactorMap,
-			'attributionSamplingFactor' => $wgMediaViewerAttributionLoggingSamplingFactor,
-			'dimensionSamplingFactor' => $wgMediaViewerDimensionLoggingSamplingFactor,
 			'imageQueryParameter' => $wgMediaViewerImageQueryParameter,
 			'recordVirtualViewBeaconURI' => $wgMediaViewerRecordVirtualViewBeaconURI,
 			'tooltipDelay' => 1000,

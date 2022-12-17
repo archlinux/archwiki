@@ -26,11 +26,11 @@
 	QUnit.module( 'Minerva pageIssues' );
 
 	QUnit.test( 'insertBannersOrNotice() should add a "learn more" message', function ( assert ) {
-		assert.strictEqual( /⧼skin-minerva-issue-learn-more⧽/.test( processedAmbox.html() ), true );
+		assert.true( /⧼skin-minerva-issue-learn-more⧽/.test( processedAmbox.html() ) );
 	} );
 
 	QUnit.test( 'insertBannersOrNotice() should add an icon', function ( assert ) {
-		assert.strictEqual( /mw-ui-icon/.test( processedAmbox.html() ), true );
+		assert.true( /mw-ui-icon/.test( processedAmbox.html() ) );
 	} );
 	QUnit.test( 'clicking on the product of insertBannersOrNotice() should trigger a URL change', function ( assert ) {
 		processedAmbox.click();

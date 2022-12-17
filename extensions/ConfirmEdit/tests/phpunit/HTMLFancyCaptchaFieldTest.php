@@ -30,13 +30,14 @@ class HTMLFancyCaptchaFieldTest extends PHPUnit\Framework\TestCase {
 	}
 
 	protected function getForm( $params = [], WebRequest $request = null ) {
-		$params['class'] = HTMLFancyCaptchaField::class;
-		$form = new HTMLForm( [ 'captchaWord' => $params ] );
 		if ( $request ) {
 			$context = new DerivativeContext( RequestContext::getMain() );
 			$context->setRequest( $request );
-			$form->setContext( $context );
+		} else {
+			$context = RequestContext::getMain();
 		}
+		$params['class'] = HTMLFancyCaptchaField::class;
+		$form = new HTMLForm( [ 'captchaWord' => $params ], $context );
 		$form->setTitle( Title::newFromText( 'Foo' ) );
 		$form->prepareForm();
 		return $form;

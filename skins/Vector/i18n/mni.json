@@ -14,5 +14,6 @@
 	"vector-view-edit": "ꯁꯦꯝꯒꯠꯄꯥ",
 	"vector-view-history": "ꯄꯨꯋꯥꯔꯤ ꯎꯠꯂꯨ",
 	"vector-view-view": "ꯄꯥꯑꯣ",
-	"vector-more-actions": "ꯋꯥꯠꯂꯤ"
+	"vector-more-actions": "ꯋꯥꯠꯂꯤ",
+	"vector-searchsuggest-containing": "ꯂꯃꯥꯏꯁꯤꯡ ꯑꯁꯤ ꯌꯥꯎꯕ ꯊꯤꯕꯥ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

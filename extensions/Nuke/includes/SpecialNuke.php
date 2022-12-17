@@ -72,13 +72,12 @@ class SpecialNuke extends SpecialPage {
 		$reason = $this->getDeleteReason( $this->getRequest(), $target );
 
 		$limit = $req->getInt( 'limit', 500 );
-		$namespace = $req->getVal( 'namespace' );
-		$namespace = ctype_digit( $namespace ) ? (int)$namespace : null;
+		$namespace = $req->getIntOrNull( 'namespace' );
 
 		if ( $req->wasPosted()
 			&& $currentUser->matchEditToken( $req->getVal( 'wpEditToken' ) )
 		) {
-			if ( $req->getVal( 'action' ) === 'delete' ) {
+			if ( $req->getRawVal( 'action' ) === 'delete' ) {
 				$pages = $req->getArray( 'pages' );
 
 				if ( $pages ) {
@@ -86,7 +85,7 @@ class SpecialNuke extends SpecialPage {
 
 					return;
 				}
-			} elseif ( $req->getVal( 'action' ) === 'submit' ) {
+			} elseif ( $req->getRawVal( 'action' ) === 'submit' ) {
 				$this->listForm( $target, $reason, $limit, $namespace );
 			} else {
 				$this->promptForm();
@@ -148,7 +147,6 @@ class SpecialNuke extends SpecialPage {
 			->setSubmitTextMsg( 'nuke-submit-user' )
 			->setSubmitName( 'nuke-submit-user' )
 			->setAction( $this->getPageTitle()->getLocalURL( 'action=submit' ) )
-			->addHiddenField( 'wpEditToken', $this->getUser()->getEditToken() )
 			->prepareForm()
 			->displayForm( false );
 	}
@@ -273,7 +271,7 @@ class SpecialNuke extends SpecialPage {
 					'pages[]',
 					true,
 					[ 'value' => $title->getPrefixedDBkey() ]
-				) . '&#160;' .
+				) . "\u{00A0}" .
 				( $thumb ? $thumb->toHtml( [ 'desc-link' => true ] ) : '' ) .
 				$linkRenderer->makeKnownLink( $title ) . $wordSeparator .
 				$this->msg( 'parentheses' )->rawParams( $userNameText . $changesLink )->escaped() .
@@ -387,9 +385,13 @@ class SpecialNuke extends SpecialPage {
 			$deletionResult = false;
 			if ( !$this->hookRunner->onNukeDeletePage( $title, $reason, $deletionResult ) ) {
 				if ( $deletionResult ) {
-					$res[] = $this->msg( 'nuke-deleted', $title->getPrefixedText() )->parse();
+					$res[] = $this->msg( 'nuke-deleted' )
+						->plaintextParams( $title->getPrefixedText() )
+						->parse();
 				} else {
-					$res[] = $this->msg( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
+					$res[] = $this->msg( 'nuke-not-deleted' )
+						->plaintextParams( $title->getPrefixedText() )
+						->parse();
 				}
 				continue;
 			}
@@ -426,12 +428,18 @@ class SpecialNuke extends SpecialPage {
 				$status = 'job';
 			}
 
-			if ( $status == 'job' ) {
-				$res[] = $this->msg( 'nuke-deletion-queued', $title->getPrefixedText() )->parse();
+			if ( $status === 'job' ) {
+				$res[] = $this->msg( 'nuke-deletion-queued' )
+					->plaintextParams( $title->getPrefixedText() )
+					->parse();
 			} elseif ( $status->isOK() ) {
-				$res[] = $this->msg( 'nuke-deleted', $title->getPrefixedText() )->parse();
+				$res[] = $this->msg( 'nuke-deleted' )
+					->plaintextParams( $title->getPrefixedText() )
+					->parse();
 			} else {
-				$res[] = $this->msg( 'nuke-not-deleted', $title->getPrefixedText() )->parse();
+				$res[] = $this->msg( 'nuke-not-deleted' )
+					->plaintextParams( $title->getPrefixedText() )
+					->parse();
 			}
 		}
 

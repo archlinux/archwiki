@@ -18,6 +18,7 @@
 			"Siebrand",
 			"Sjoerddebruin",
 			"Tvdm",
+			"Vistaus",
 			"Wiki13"
 		]
 	},
@@ -52,7 +53,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Deze pagina bestaat niet op {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "De opgegeven titel is ongeldig",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Externe koppeling",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Bezig met controleren of de pagina al bestaat...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Deze pagina heeft geen inhoud, maar bevat een lijst met verwante thema's",
 	"wikieditor-toolbar-tool-link-int-invalid": "De opgegeven pagina is ongeldig.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "De URL die u hebt opgegeven lijkt bedoeld te zijn als koppeling naar een andere wikipagina.\nWilt u er een interne koppeling van maken?",
@@ -64,6 +64,7 @@
 	"wikieditor-toolbar-file-target": "Bestandsnaam:",
 	"wikieditor-toolbar-file-caption": "Bijschrift:",
 	"wikieditor-toolbar-file-alt": "Alternatieve tekst:",
+	"wikieditor-toolbar-file-alt-help": "U kunt dit veld eventueel gebruiken om een tekstbeschrijving op te geven voor mensen die het bestand niet kunnen zien.\nDe beschrijving moet goed genoeg zijn om het doel en de informatie van het media-item te begrijpen. Dit is van vitaal belang voor blinde en andere gebruikers van schermlezersoftware of tekstbrowsers.",
 	"wikieditor-toolbar-file-alt-help-label": "(Hulp weergeven)",
 	"wikieditor-toolbar-file-size": "Grootte:",
 	"wikieditor-toolbar-file-float": "Uitlijning:",
@@ -113,6 +114,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! kop 1\n! kop 2\n! kop 3\n|-\n| rij 1, cel 1\n| rij 1, cel 2\n| rij 1, cel 3\n|-\n| rij 2, cel 1\n| rij 2, cel 2\n| rij 2, cel 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Celtekst",
 	"wikieditor-toolbar-tool-table-example-header": "Koptekst",
+	"wikieditor-toolbar-tool-table-example-caption": "Bijschrift",
 	"wikieditor-toolbar-tool-table-title": "Tabel invoegen",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Rijen",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Kolommen",
@@ -123,6 +125,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Voorvertoning",
 	"wikieditor-toolbar-tool-table-insert": "Invoegen",
 	"wikieditor-toolbar-tool-table-cancel": "Annuleren",
+	"wikieditor-toolbar-tool-table-example-text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut nec purus diam. Sed aliquam imperdiet nunc quis lacinia. Donec rutrum consectetur placerat. Sed volutpat neque non purus faucibus id ultricies enim euismod.",
 	"wikieditor-toolbar-tool-table-toomany": "Het invoegen van een tabel met meer dan $1 {{PLURAL:$1|cel|cellen}} is niet mogelijk met dit dialoogvenster.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "U hebt een ongeldig aantal regels of kolommen opgegeven.",
 	"wikieditor-toolbar-tool-table-zero": "U kunt geen tabel invoegen zonder regels of kolommen.",
@@ -205,5 +208,16 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Gebruikersnaam</a> (<a href='#' title='$2:Username'>overleg</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Inspringen",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normale tekst<br />:Ingesprongen tekst<br />::Ingesprongen tekst",
-	"wikieditor-toolbar-help-content-indent-result": "Normale tekst<dl><dd>Ingesprongen tekst<dl><dd>Ingesprongen tekst</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normale tekst<dl><dd>Ingesprongen tekst<dl><dd>Ingesprongen tekst</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "Bewerking gemaakt met [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (wikitekstbewerker uit 2010)",
+	"wikieditor-realtimepreview-preview": "Voorvertoning",
+	"wikieditor-realtimepreview-error": "Voorvertoning wordt niet geladen",
+	"wikieditor-realtimepreview-reload": "Herladen",
+	"wikieditor-realtimepreview-beta-label": "Live-voorvertoning",
+	"wikieditor-realtimepreview-beta-desc": "Bekijk hoe wikitekstwijzigingen eruitzien voor lezers in de [[mw:Special:MyLanguage/Extension:WikiEditor|tekstverwerker van 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Het realtime voorvertoningspaneel opnieuw laden",
+	"wikieditor-realtimepreview-manual": "Herlaad nu voor een handmatige voorvertoning van uw bewerkingen.",
+	"wikieditor-realtimepreview-onboarding-title": "Live-voorvertoning",
+	"wikieditor-realtimepreview-onboarding-body": "Bekijk in een voortdurend bijgewerkte voorvertoning hoe uw bewerkingen er voor lezers uit zullen zien.",
+	"wikieditor-realtimepreview-onboarding-button": "Oké, ik begrijp het"
 }

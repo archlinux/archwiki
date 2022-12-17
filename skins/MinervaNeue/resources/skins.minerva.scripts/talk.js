@@ -74,7 +74,7 @@ module.exports = function ( mobile ) {
 			// contains underscores instead of spaces.
 			licenseMsg: skin.getLicenseMsg(),
 			onSaveComplete: function () {
-				toast.showOnPageReload( mw.message( 'minerva-talk-reply-success' ).text() );
+				toast.showOnPageReload( mw.msg( 'minerva-talk-reply-success' ) );
 				window.location.reload();
 			}
 		} );
@@ -139,7 +139,7 @@ module.exports = function ( mobile ) {
 
 				currentPageTitle: currentPage.title,
 				onSaveComplete: function () {
-					toast.showOnPageReload( mw.message( 'minerva-talk-topic-feedback' ).text() );
+					toast.showOnPageReload( mw.msg( 'minerva-talk-topic-feedback' ) );
 					window.location = currentPage.titleObj.getTalkPage().getUrl();
 				}
 			} );
@@ -156,7 +156,7 @@ module.exports = function ( mobile ) {
 		$( '<button>' )
 			.addClass( 'minerva-talk-full-page-button' )
 			.attr( 'data-event-name', 'talkpage.readAsWiki' )
-			.text( mw.message( 'minerva-talk-full-page' ).text() )
+			.text( mw.msg( 'minerva-talk-full-page' ) )
 			.on( 'click', function () {
 				restoreSectionHeadings();
 				$( document.body ).removeClass( 'skin-minerva--talk-simplified' );

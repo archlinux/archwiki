@@ -1,15 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bada Kaji",
 			"Ganesh Paudel",
 			"NehalDaveND",
 			"Nirjal stha",
 			"RajeshPandey",
+			"बडा काजी",
 			"बिप्लब आनन्द",
 			"राम प्रसाद जोशी",
-			"सरोज कुमार ढकाल",
-			"Bada Kaji",
-			"बडा काजी"
+			"सरोज कुमार ढकाल"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "पुस्तकहरू",
@@ -28,6 +28,7 @@
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "सामान्य सन्दर्भहरूको सूची",
 	"cite-ve-dialog-referenceslist-contextitem-description-named": "समूह \"$1\"को लागि सन्दर्भहरूको सूची",
 	"cite-ve-dialog-referenceslist-title": "सन्दर्भ सूची",
+	"cite-ve-dialogbutton-citation-educationpopup-text": "जानकारीको स्रोतहरू थपेर तपाईंको सामग्री सुधार गर्दछ। तपाईं पुस्तकहरू, पत्रपत्रिकाहरू र वेबसाइटहरूबाट उद्धृत गर्न सक्नुहुन्छ।",
 	"cite-ve-dialogbutton-citation-educationpopup-title": "सन्दर्भहरू",
 	"cite-ve-dialogbutton-reference-full-label": "सामान्य",
 	"cite-ve-dialogbutton-reference-title": "सन्दर्भ",

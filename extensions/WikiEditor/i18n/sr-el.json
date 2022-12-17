@@ -43,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Stranica ne postoji",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Nevažeći naslov",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Spoljašnja veza",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Provera postojanja stranice…",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Višeznačna stranica",
 	"wikieditor-toolbar-tool-link-int-invalid": "Naslov koji ste naveli nije važeći.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL adresa koju ste uneli izgleda kao veza prema drugoj viki stranici. \nŽelite li da je promenite u unutrašnju vezu?",

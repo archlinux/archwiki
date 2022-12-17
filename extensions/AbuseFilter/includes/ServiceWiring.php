@@ -57,7 +57,7 @@ return [
 	},
 	FilterProfiler::SERVICE_NAME => static function ( MediaWikiServices $services ): FilterProfiler {
 		return new FilterProfiler(
-			$services->getMainObjectStash(),
+			$services->getWRStatsFactory(),
 			new ServiceOptions(
 				FilterProfiler::CONSTRUCTOR_OPTIONS,
 				$services->getMainConfig()
@@ -68,7 +68,8 @@ return [
 		);
 	},
 	PermManager::SERVICE_NAME => static function ( MediaWikiServices $services ): PermManager {
-		return new PermManager( $services->getPermissionManager() );
+		// No longer has any dependencies
+		return new PermManager();
 	},
 	ChangeTagger::SERVICE_NAME => static function ( MediaWikiServices $services ): ChangeTagger {
 		return new ChangeTagger(
@@ -329,6 +330,7 @@ return [
 			$services->getUserEditTracker(),
 			$services->getUserGroupManager(),
 			$services->getPermissionManager(),
+			$services->getRestrictionStore(),
 			WikiMap::getCurrentWikiDbDomain()->getId()
 		);
 	},

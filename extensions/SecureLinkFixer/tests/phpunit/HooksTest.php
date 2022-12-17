@@ -30,7 +30,10 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideOnLinkerMakeExternalLink
 	 */
 	public function testOnLinkerMakeExternalLink( $input, $expected ) {
-		Hooks::onLinkerMakeExternalLink( $input );
+		$hooks = new Hooks( $this->getServiceContainer()->getService( 'HSTSPreloadLookup' ) );
+		$dummy = '';
+		$dummy2 = [];
+		$hooks->onLinkerMakeExternalLink( $input, $dummy, $dummy, $dummy2, $dummy );
 		$this->assertSame( $expected, $input );
 	}
 

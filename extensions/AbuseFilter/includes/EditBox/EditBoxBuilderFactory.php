@@ -5,9 +5,9 @@ namespace MediaWiki\Extension\AbuseFilter\EditBox;
 use BadMethodCallException;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
+use MediaWiki\Permissions\Authority;
 use MessageLocalizer;
 use OutputPage;
-use User;
 
 /**
  * Factory for EditBoxBuilder objects
@@ -43,49 +43,49 @@ class EditBoxBuilderFactory {
 	/**
 	 * Returns a builder, preferring the Ace version if available
 	 * @param MessageLocalizer $messageLocalizer
-	 * @param User $user
+	 * @param Authority $authority
 	 * @param OutputPage $output
 	 * @return EditBoxBuilder
 	 */
 	public function newEditBoxBuilder(
 		MessageLocalizer $messageLocalizer,
-		User $user,
+		Authority $authority,
 		OutputPage $output
 	): EditBoxBuilder {
 		return $this->isCodeEditorLoaded
-			? $this->newAceBoxBuilder( $messageLocalizer, $user, $output )
-			: $this->newPlainBoxBuilder( $messageLocalizer, $user, $output );
+			? $this->newAceBoxBuilder( $messageLocalizer, $authority, $output )
+			: $this->newPlainBoxBuilder( $messageLocalizer, $authority, $output );
 	}
 
 	/**
 	 * @param MessageLocalizer $messageLocalizer
-	 * @param User $user
+	 * @param Authority $authority
 	 * @param OutputPage $output
 	 * @return PlainEditBoxBuiler
 	 */
 	public function newPlainBoxBuilder(
 		MessageLocalizer $messageLocalizer,
-		User $user,
+		Authority $authority,
 		OutputPage $output
 	): PlainEditBoxBuiler {
 		return new PlainEditBoxBuiler(
 			$this->afPermManager,
 			$this->keywordsManager,
 			$messageLocalizer,
-			$user,
+			$authority,
 			$output
 		);
 	}
 
 	/**
 	 * @param MessageLocalizer $messageLocalizer
-	 * @param User $user
+	 * @param Authority $authority
 	 * @param OutputPage $output
 	 * @return AceEditBoxBuiler
 	 */
 	public function newAceBoxBuilder(
 		MessageLocalizer $messageLocalizer,
-		User $user,
+		Authority $authority,
 		OutputPage $output
 	): AceEditBoxBuiler {
 		if ( !$this->isCodeEditorLoaded ) {
@@ -95,11 +95,11 @@ class EditBoxBuilderFactory {
 			$this->afPermManager,
 			$this->keywordsManager,
 			$messageLocalizer,
-			$user,
+			$authority,
 			$output,
 			$this->newPlainBoxBuilder(
 				$messageLocalizer,
-				$user,
+				$authority,
 				$output
 			)
 		);

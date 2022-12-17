@@ -1,18 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Athena in Wonderland",
 			"Crazymadlover",
 			"Giro720",
+			"GoEThe",
 			"Hamilton Abreu",
 			"Luan",
 			"Malafaya",
 			"MokaAkashiyaPT",
 			"Vitorvicentevalente",
 			"Waldir",
-			"Waldyrious",
-			"Amire80",
-			"GoEThe"
+			"Waldyrious"
 		]
 	},
 	"skinname-vector": "Vector antigo (2010)",
@@ -27,6 +27,8 @@
 	"vector-languages": "Línguas",
 	"vector-language-button-aria-label": "Ir para um artigo noutra língua. Disponível em {{PLURAL:$1|$1 língua|$1 línguas}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 língua|$1 línguas}}",
+	"vector-no-language-button-label": "Adicionar línguas",
+	"vector-no-language-button-aria-label": "Este artigo só existe nesta língua. Adicione o artigo noutras línguas",
 	"vector-language-redirect-to-top": "Na wiki {{SITENAME}} as hiperligações interlínguas estão localizadas no topo da página do lado oposto ao título. [[#p-lang-btn|Ir para o topo]].",
 	"vector-language-variant-switcher-label": "Mudar a variante da língua",
 	"vector-action-addsection": "Adicionar tópico",
@@ -45,11 +47,21 @@
 	"vector-jumptocontent": "Saltar para o conteúdo",
 	"vector-more-actions": "Mais",
 	"vector-search-loader": "A carregar sugestões de pesquisa",
-	"vector-searchsuggest-containing": "Procurar páginas que contenham <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Procurar páginas que contenham <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
+	"vector-toc-heading": "Conteúdo",
+	"vector-toc-toggle-position-sidebar": "mover para a barra lateral",
+	"vector-toc-toggle-position-title": "ocultar",
+	"vector-toc-beginning": "Início",
+	"vector-toc-toggle-button-label": "Alternar a subsecção $1",
 	"vector-anon-user-menu-pages": "Páginas para editores sem sessão iniciada",
 	"vector-anon-user-menu-pages-learn": "saber mais",
 	"vector-anon-user-menu-pages-label": "Saiba mais sobre edição",
 	"vector-main-menu-tooltip": "Menu principal",
+	"vector-toc-menu-tooltip": "Índice",
+	"vector-toc-collapsible-button-label": "Alternar o índice",
+	"vector-article-tools-nav-label": "Ferramentas",
+	"vector-site-nav-label": "''Site''",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|discussão]]",
 	"tooltip-vector-anon-user-menu-title": "Mais opções"
 }

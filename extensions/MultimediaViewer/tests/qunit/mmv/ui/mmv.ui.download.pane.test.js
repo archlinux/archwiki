@@ -21,12 +21,13 @@
 	QUnit.test( 'Sense test, object creation and UI construction', function ( assert ) {
 		var download = new mw.mmv.ui.download.Pane( $( '#qunit-fixture' ) );
 
-		assert.ok( download, 'download UI element is created.' );
+		assert.true( download instanceof mw.mmv.ui.download.Pane, 'download UI element is created.' );
 		assert.strictEqual( download.$pane.length, 1, 'Pane div created.' );
-		assert.ok( download.$downloadButton && download.$selectionArrow, 'Download button created.' );
-		assert.ok( download.downloadSizeMenu, 'Image size pulldown menu created.' );
-		assert.ok( download.$previewLink, 'Preview link created.' );
-		assert.ok( download.defaultItem, 'Default item set.' );
+		assert.strictEqual( download.$downloadButton.length, 1, 'Download button created.' );
+		assert.strictEqual( download.$selectionArrow.length, 1, 'Download button created.' );
+		assert.true( download.downloadSizeMenu instanceof OO.ui.DropdownWidget, 'Image size pulldown menu created.' );
+		assert.strictEqual( download.$previewLink.length, 1, 'Preview link created.' );
+		assert.true( download.defaultItem instanceof OO.ui.MenuOptionWidget, 'Default item set.' );
 
 		assert.strictEqual( download.$downloadButton.html(), '', 'Button has empty content.' );
 		assert.strictEqual( download.$downloadButton.attr( 'href' ), undefined, 'Button href is empty.' );
@@ -44,10 +45,10 @@
 		assert.strictEqual( download.imageExtension, undefined, 'Image extension is not set.' );
 
 		download.utils.updateMenuOptions = function () {
-			assert.ok( true, 'Menu options updated.' );
+			assert.true( true, 'Menu options updated.' );
 		};
 		download.downloadSizeMenu.getMenu().selectItem = function () {
-			assert.ok( true, 'Default item selected to update the labels.' );
+			assert.true( true, 'Default item selected to update the labels.' );
 		};
 
 		download.set( image );
@@ -121,12 +122,12 @@
 
 		download.handleSizeSwitch( download.downloadSizeMenu.getMenu().findSelectedItem() );
 
-		assert.ok( download.$downloadButton.html().match( /original.*/ ), 'Button message updated.' );
+		assert.true( /original.*/.test( download.$downloadButton.html() ), 'Button message updated.' );
 
 		download.image = { url: newImageUrl };
 
 		download.utils.getThumbnailUrlPromise = function () {
-			assert.ok( false, 'Should not fetch the thumbnail if the image is original size.' );
+			assert.true( false, 'Should not fetch the thumbnail if the image is original size.' );
 		};
 
 		download.handleSizeSwitch( download.downloadSizeMenu.getMenu().findSelectedItem() );
@@ -137,7 +138,7 @@
 			message;
 
 		download.setButtonText( 'large', 'jpg', 100, 200 );
-		assert.ok( true, 'Setting the text did not cause any errors' );
+		assert.true( true, 'Setting the text did not cause any errors' );
 
 		message = download.$downloadButton.html();
 		download.setButtonText( 'small', 'png', 1000, 2000 );

@@ -2,8 +2,10 @@
 
 namespace MediaWiki\Extension\Math;
 
+use ExtensionRegistry;
 use MediaWiki\Config\ServiceOptions;
 use Message;
+use Wikibase\Client\WikibaseClient;
 
 class MathConfig {
 
@@ -11,6 +13,7 @@ class MathConfig {
 	public const CONSTRUCTOR_OPTIONS = [
 		'MathDisableTexFilter',
 		'MathValidModes',
+		'MathEntitySelectorFallbackUrl'
 	];
 
 	/** @var string */
@@ -54,15 +57,21 @@ class MathConfig {
 
 	/** @var ServiceOptions */
 	private $options;
+	/** @var ExtensionRegistry */
+	private $registry;
 
 	/**
 	 * @param ServiceOptions $options
+	 * @param ExtensionRegistry $registry
 	 */
 	public function __construct(
-		ServiceOptions $options
+		ServiceOptions $options,
+		ExtensionRegistry $registry
+
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
+		$this->registry = $registry;
 	}
 
 	/**
@@ -160,5 +169,22 @@ class MathConfig {
 			return $mode;
 		}
 		return $default;
+	}
+
+	/**
+	 * If the WikibaseClient is enabled the API url of that client is returned, otherwise the
+	 * fallback url is used.
+	 * @return string url of the Wikibase url
+	 */
+	public function getMathEntitySelectorUrl(): string {
+		// @see WikibaseSettings::isClientEnabled()
+		if ( $this->registry->isLoaded( 'WikibaseClient' ) ) {
+			$settings = WikibaseClient::getSettings();
+			return $settings->getSetting( 'repoUrl' ) .
+				$settings->getSetting( 'repoScriptPath' ) .
+				'/api.php';
+
+		}
+		return $this->options->get( 'MathEntitySelectorFallbackUrl' );
 	}
 }

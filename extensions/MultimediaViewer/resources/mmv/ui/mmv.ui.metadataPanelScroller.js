@@ -185,7 +185,6 @@
 		if ( scrollTopTarget === scrollTop ) {
 			return $.Deferred().resolve().promise();
 		} else {
-			mw.mmv.actionLogger.log( direction === 'up' ? 'metadata-open' : 'metadata-close' );
 			if ( direction === 'up' && !panelIsOpen ) {
 				// FIXME nasty. This is not really an event but a command sent to the metadata panel;
 				// child UI elements should not send commands to their parents. However, there is no way
@@ -239,13 +238,8 @@
 
 		if ( panelIsOpen && !this.panelWasOpen ) { // just opened
 			this.$container.trigger( 'mmv-metadata-open' );
-			// This will include keyboard- and mouseclick-initiated open events as well,
-			// since the panel is anomated, which counts as scrolling.
-			// Filtering these seems too much trouble to be worth it.
-			mw.mmv.actionLogger.log( 'metadata-scroll-open' );
 		} else if ( !panelIsOpen && this.panelWasOpen ) { // just closed
 			this.$container.trigger( 'mmv-metadata-close' );
-			mw.mmv.actionLogger.log( 'metadata-scroll-close' );
 		}
 		this.panelWasOpen = panelIsOpen;
 	};

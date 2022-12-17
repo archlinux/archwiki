@@ -8,7 +8,6 @@
 	"apierror-visualeditor-difffailed": "Fərq uğursuz oldu",
 	"apierror-visualeditor-docserver-http-error": "Parsoid/RESTBase serveri ilə əlaqə qurarkən xəta: $1",
 	"apierror-visualeditor-docserver-http": "Parsoid/RESTBase serveri ilə əlaqə qurarkən xəta (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "Sənəd serveri üçün VirtualRESTService təyin edilməyib; https://www.mediawiki.org/wiki/Extension:VisualEditor səhifəsini nəzərdən keçirin",
 	"apierror-visualeditor-docserver": "Parsoid/RESTBase serveri ilə əlaqə qurarkən xəta (cavab gəlmədi)",
 	"apierror-visualeditor-latestnotfound": "Bu başlıq üçün sonuncu versiya tapıla bilmədi",
 	"apihelp-visualeditor-description": "Parsoid xidmətindən səhifə üçün HTML5 göndərir",

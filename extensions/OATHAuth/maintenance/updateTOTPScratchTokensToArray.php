@@ -47,7 +47,7 @@ class UpdateTOTPScratchTokensToArray extends Maintenance {
 		$dbw = $lb->getConnectionRef( DB_PRIMARY, [], $wgOATHAuthDatabase );
 
 		if ( !UpdateTables::switchTOTPScratchTokensToArray( $dbw ) ) {
-			$this->error( "Failed to update TOTP Scratch Tokens.\n", 1 );
+			$this->fatalError( "Failed to update TOTP Scratch Tokens.\n" );
 		}
 		$this->output( "Done.\n" );
 	}

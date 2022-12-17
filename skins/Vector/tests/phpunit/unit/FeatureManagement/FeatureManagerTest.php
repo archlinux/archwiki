@@ -19,14 +19,14 @@
  * @since 1.35
  */
 
-namespace Vector\FeatureManagement\Tests;
+namespace MediaWiki\Skins\Vector\Tests\Unit\FeatureManagement;
 
-use Vector\FeatureManagement\FeatureManager;
+use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
 
 /**
  * @group Vector
  * @group FeatureManagement
- * @coversDefaultClass \Vector\FeatureManagement\FeatureManager
+ * @coversDefaultClass \MediaWiki\Skins\Vector\FeatureManagement\FeatureManager
  */
 class FeatureManagerTest extends \MediaWikiUnitTestCase {
 
@@ -59,6 +59,26 @@ class FeatureManagerTest extends \MediaWikiUnitTestCase {
 				],
 			],
 		];
+	}
+
+	/**
+	 * @covers ::getFeatureBodyClass
+	 */
+	public function testGetFeatureBodyClass() {
+		$featureManager = new FeatureManager();
+		$featureManager->registerSimpleRequirement( 'requirement', true );
+		$featureManager->registerSimpleRequirement( 'disabled', false );
+		$featureManager->registerFeature( 'sticky-header', [ 'requirement' ] );
+		$featureManager->registerFeature( 'TableOfContents', [ 'requirement' ] );
+		$featureManager->registerFeature( 'Test', [ 'disabled' ] );
+		$this->assertEquals(
+			[
+				'vector-feature-sticky-header-enabled',
+				'vector-feature-table-of-contents-enabled',
+				'vector-feature-test-disabled'
+			],
+			$featureManager->getFeatureBodyClass()
+		);
 	}
 
 	/**

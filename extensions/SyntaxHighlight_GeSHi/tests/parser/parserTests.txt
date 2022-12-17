@@ -1,4 +1,8 @@
-!! Version 2
+!! options
+parsoid-compatible
+version=2
+!! end
+
 # Force the test runner to ensure the extension is loaded
 !! hooks
 source
@@ -10,12 +14,16 @@ Non-existent language
 <source lang="doesnotexist">
 foobar
 </source>
-!! html
+!! html/php
 <div class="mw-highlight mw-content-ltr" dir="ltr"><pre>foobar</pre></div>
+!! html/parsoid
+<div class="mw-highlight mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/source" data-mw='{"name":"source","attrs":{"lang":"doesnotexist"},"body":{"extsrc":"\nfoobar\n"}}'><pre>foobar</pre></div>
 !! end
 
 !! test
 No language specified
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <source>
 foo
@@ -26,6 +34,8 @@ foo
 
 !! test
 No language specified (no wellformed xml)
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! config
 !! wikitext
 <source>
@@ -37,6 +47,8 @@ bar
 
 !! test
 XSS is escaped
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <source lang="doesnotexist">
 <script>alert("pwnd")</script>
@@ -61,8 +73,10 @@ SRC=&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105
 
 !! test
 XSS is escaped (inline)
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
-<source lang="doesnotexist" inline>
+<source lang="doesnotexist" inline="">
 <script>alert("pwnd")</script>
 <IMG SRC=`javascript:alert("RSnake says, 'XSS'")`>
 <IMG
@@ -79,6 +93,8 @@ SRC=&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#97;&#108;&#1
 
 !! test
 Default behaviour (inner is pre)
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <source lang="javascript">
 var a;
@@ -90,11 +106,13 @@ var a;
 
 !! test
 Multiline <source/> in lists
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
-* <source>a
+*<source>a
 b</source>
 
-* foo <source>a
+*foo <source>a
 b</source>
 !! html
 <ul><li><div class="mw-highlight mw-content-ltr" dir="ltr"><pre>a
@@ -105,6 +123,8 @@ b</pre></div></li></ul>
 
 !! test
 Custom attributes
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <source lang="javascript" id="foo" class="bar" dir="rtl" style="font-size: larger;">var a;</source>
 !! html
@@ -112,17 +132,25 @@ Custom attributes
 </pre></div>
 !! end
 
+# The html/parsoid section verifies that Parsoid can handle attributes
+# that are not in key=value XML-like syntax.
 !! test
 Inline attribute (inline code)
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 Text <source lang="javascript" inline>var a;</source>.
-!! html
+!! html/php
 <p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr"><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.
 </p>
+!! html/parsoid
+<p>Text <code class="mw-highlight mw-highlight-lang-javascript mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/source" data-mw='{"name":"source","attrs":{"lang":"javascript","inline":""},"body":{"extsrc":"var a;"}}'><span class="kd">var</span> <span class="nx">a</span><span class="p">;</span></code>.</p>
 !! end
 
 !! test
 Enclose none (inline code)
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 Text <source lang="javascript" enclose="none">var a;</source>.
 !! html
@@ -134,13 +162,27 @@ Text <source lang="javascript" enclose="none">var a;</source>.
 Enclose with nowiki
 !! wikitext
 {{#tag:syntaxhighlight|<nowiki>foo</nowiki>|lang="text"|inline=none}}
-!! html
+!! html/php
 <p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr">foo</code>
 </p>
+!! html/parsoid
+<p><code class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr" about="#mwt1" typeof="mw:Extension/syntaxhighlight mw:Transclusion" data-mw='{"parts":[{"template":{"target":{"wt":"#tag:syntaxhighlight","function":"tag"},"params":{"1":{"wt":"&lt;nowiki>foo&lt;/nowiki>"},"lang":{"wt":"\"text\""},"inline":{"wt":"none"}},"i":0}}]}'>foo</code></p>
+!! end
+
+!! test
+Self-closing tag
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
+!! wikitext
+<syntaxhighlight lang="CSharp" />
+!! html
+<div class="mw-highlight mw-highlight-lang-csharp mw-content-ltr" dir="ltr"></div>
 !! end
 
 !! test
 No code
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <source lang="CSharp"></source>
 !! html
@@ -149,6 +191,8 @@ No code
 
 !! test
 Just whitespace
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <source lang="CSharp"> </source>
 !! html
@@ -157,6 +201,8 @@ Just whitespace
 
 !! test
 tabs plus tidy (T32930, T59826)
+!! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! wikitext
 <syntaxhighlight lang="javascript" enclose="pre" highlight="2-3">
 function doSomething() {
@@ -175,19 +221,22 @@ function doSomething() {
 !! test
 deprecated source tag adds tracking category
 !! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
+!! options
 cat
 !! wikitext
 <source lang="python">print('Hi')</source>
-!! html
+!! html/php
 cat=Pages_using_deprecated_source_tags sort=
 !! end
 
 !! test
 deprecated enclose option adds tracking category
 !! options
+parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 cat
 !! wikitext
 <syntaxhighlight enclose="none" lang="python">print('Hi')</syntaxhighlight>
-!! html
+!! html/php
 cat=Pages_using_deprecated_enclose_attributes sort=
 !! end

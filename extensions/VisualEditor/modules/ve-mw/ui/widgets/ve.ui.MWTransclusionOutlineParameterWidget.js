@@ -1,9 +1,3 @@
-/*!
- * VisualEditor user interface MWTransclusionOutlineParameterWidget class.
- *
- * @license The MIT License (MIT); see LICENSE.txt
- */
-
 /**
  * A widget that represents a template parameter, with a checkbox to add/remove the parameter.
  * Modelled after {@see OO.ui.OutlineOptionWidget}. Also see {@see OO.ui.CheckboxMultioptionWidget}
@@ -18,6 +12,7 @@
  * @cfg {string} label
  * @cfg {boolean} [required=false] Required parameters can't be unchecked
  * @cfg {boolean} [selected=false] If the parameter is currently used (checked)
+ * @cfg {boolean} [hasValue=false] If the parameter has a value that's not empty
  */
 ve.ui.MWTransclusionOutlineParameterWidget = function VeUiMWTransclusionOutlineParameterWidget( config ) {
 	this.checkbox = new OO.ui.CheckboxInputWidget( {
@@ -42,6 +37,8 @@ ve.ui.MWTransclusionOutlineParameterWidget = function VeUiMWTransclusionOutlineP
 		classes: [ 've-ui-mwTransclusionOutlineParameterWidget' ],
 		$label: $( '<label>' )
 	} ) );
+
+	this.toggleHasValue( config.hasValue );
 
 	// Initialization
 	this.$element
@@ -71,7 +68,29 @@ ve.ui.MWTransclusionOutlineParameterWidget.prototype.setSelected = function ( st
 	state = state || this.checkbox.isDisabled();
 
 	this.checkbox.setSelected( state, true );
-	ve.ui.MWTransclusionOutlineParameterWidget.super.prototype.setSelected.call( this, state );
+	return ve.ui.MWTransclusionOutlineParameterWidget.super.prototype.setSelected.call( this, state );
+};
 
-	return this;
+/**
+ * @param {boolean} state
+ */
+ve.ui.MWTransclusionOutlineParameterWidget.prototype.toggleActivePageIndicator = function ( state ) {
+	this.$element.toggleClass( 've-ui-mwTransclusionOutlineParameterWidget-activePage', state );
+};
+
+/**
+ * @param {boolean} hasValue
+ */
+ve.ui.MWTransclusionOutlineParameterWidget.prototype.toggleHasValue = function ( hasValue ) {
+	this.$element.toggleClass( 've-ui-mwTransclusionOutlineParameterWidget-hasValue', hasValue );
+};
+
+/**
+ * Custom method to scroll parameter into view respecting the sticky part that sits above
+ *
+ * @param {number} paddingTop
+ */
+ve.ui.MWTransclusionOutlineParameterWidget.prototype.ensureVisibility = function ( paddingTop ) {
+	// make sure parameter is visible and scrolled underneath the sticky
+	this.scrollElementIntoView( { animate: false, padding: { top: paddingTop } } );
 };

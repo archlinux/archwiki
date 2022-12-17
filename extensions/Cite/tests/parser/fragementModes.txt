@@ -3,7 +3,7 @@
 !! test
 Legacy fragment encoding
 !! config
-wgFragmentMode=['legacy']
+wgFragmentMode=["legacy"]
 !! wikitext
 <ref name="nature%20phylo">A</ref>
 <ref name="Mininova%2E26%2E11%2E2009">B</ref>
@@ -39,7 +39,7 @@ wgFragmentMode=['legacy']
 !! test
 FIXME: HTML5 fragment encoding
 !! config
-wgFragmentMode=['html5']
+wgFragmentMode=["html5"]
 !! wikitext
 <ref name="nature%20phylo">A</ref>
 <ref name="Mininova%2E26%2E11%2E2009">B</ref>
@@ -75,7 +75,7 @@ wgFragmentMode=['html5']
 !! test
 Double URL encoding in legacy mode
 !! config
-wgFragmentMode=['legacy']
+wgFragmentMode=["legacy"]
 !! wikitext
 <ref name="n%25%32%30n" group="g%25%32%30g">A</ref>
 <references group="g%25%32%30g" />
@@ -91,7 +91,7 @@ wgFragmentMode=['legacy']
 !! test
 Double URL encoding in HTML5 mode
 !! config
-wgFragmentMode=['html5']
+wgFragmentMode=["html5"]
 !! wikitext
 <ref name="n%25%32%30n" group="g%25%32%30g">A</ref>
 <references group="g%25%32%30g" />
@@ -107,7 +107,7 @@ wgFragmentMode=['html5']
 !! test
 Multiple, partly encoded spaces in legacy mode
 !! config
-wgFragmentMode=['legacy']
+wgFragmentMode=["legacy"]
 !! wikitext
 <ref name="a_ %20a" group="b_ %20b">A</ref>
 <references group="b_ %20b" />
@@ -123,7 +123,7 @@ wgFragmentMode=['legacy']
 !! test
 Multiple, partly encoded spaces in HTML5 mode
 !! config
-wgFragmentMode=['html5']
+wgFragmentMode=["html5"]
 !! wikitext
 <ref name="a_ %20a" group="b_ %20b">A</ref>
 <references group="b_ %20b" />

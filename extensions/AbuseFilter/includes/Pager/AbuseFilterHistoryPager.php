@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\AbuseFilter\Pager;
 use HtmlArmor;
 use IContextSource;
 use Linker;
+use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Extension\AbuseFilter\AbuseFilter;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
@@ -13,9 +14,13 @@ use MediaWiki\Linker\LinkRenderer;
 use MWException;
 use TablePager;
 use Title;
+use Wikimedia\Rdbms\IResultWrapper;
 use Xml;
 
 class AbuseFilterHistoryPager extends TablePager {
+
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
 
 	/** @var FilterLookup */
 	private $filterLookup;
@@ -35,6 +40,7 @@ class AbuseFilterHistoryPager extends TablePager {
 	/**
 	 * @param IContextSource $context
 	 * @param LinkRenderer $linkRenderer
+	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param FilterLookup $filterLookup
 	 * @param SpecsFormatter $specsFormatter
 	 * @param ?int $filter
@@ -44,6 +50,7 @@ class AbuseFilterHistoryPager extends TablePager {
 	public function __construct(
 		IContextSource $context,
 		LinkRenderer $linkRenderer,
+		LinkBatchFactory $linkBatchFactory,
 		FilterLookup $filterLookup,
 		SpecsFormatter $specsFormatter,
 		?int $filter,
@@ -53,6 +60,7 @@ class AbuseFilterHistoryPager extends TablePager {
 		// needed by parent's constructor call
 		$this->filter = $filter;
 		parent::__construct( $context, $linkRenderer );
+		$this->linkBatchFactory = $linkBatchFactory;
 		$this->filterLookup = $filterLookup;
 		$this->specsFormatter = $specsFormatter;
 		$this->user = $user;
@@ -219,6 +227,24 @@ class AbuseFilterHistoryPager extends TablePager {
 		}
 
 		return $info;
+	}
+
+	/**
+	 * @param IResultWrapper $result
+	 */
+	protected function preprocessResults( $result ) {
+		if ( $this->getNumRows() === 0 ) {
+			return;
+		}
+
+		$lb = $this->linkBatchFactory->newLinkBatch();
+		$lb->setCaller( __METHOD__ );
+		foreach ( $result as $row ) {
+			$lb->add( NS_USER, $row->afh_user_text );
+			$lb->add( NS_USER_TALK, $row->afh_user_text );
+		}
+		$lb->execute();
+		$result->seek( 0 );
 	}
 
 	/**

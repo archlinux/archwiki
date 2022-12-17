@@ -1,5 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\SpamBlacklist;
+
+use LogicException;
+use Title;
+use User;
 use Wikimedia\AtEase\AtEase;
 
 /**

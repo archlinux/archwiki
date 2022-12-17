@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"F Samaritani",
 			"Jaime Sulas"
 		]
@@ -15,5 +16,6 @@
 	"vector-view-history": "Càstia sa stòria",
 	"vector-view-view": "Ligi",
 	"vector-more-actions": "Àteru",
-	"vector-searchsuggest-containing": "Circa is pàginas chi tenint <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Circa is pàginas chi tenint <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-menu-tooltip": "Ìndixi"
 }

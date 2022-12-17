@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sahypa ýok",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Görkezen adyňyz nädogry",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Daşarky çykgyt",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Sahypanyň barlygy barlanylýar...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Bu sahypa mazmun sahypasy däl, meňzeş atlary bolan mowzuklaryň sanawy",
 	"wikieditor-toolbar-tool-link-int-invalid": "Görkezen adyňyz nädogry.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Görkezen URL-ňiz başga bir wiki sahypasyna çykgyt hökmünde niýetlenilen ýaly-la. Ony içerki çykgyda öwüresiňiz gelýärmi?",
@@ -189,5 +188,12 @@
 	"wikieditor-toolbar-help-content-indent-description": "Boş ýer",
 	"wikieditor-toolbar-help-content-indent-syntax": "Adaty tekst<br />:Boş ýerli tekst<br />::Boş ýerli tekst",
 	"wikieditor-toolbar-help-content-indent-result": "Adaty tekst<dl><dd>Boş ýerli tekst<dl><dd>Boş ýerli tekst</dd></dl></dd></dl>",
-	"wikieditor-realtimepreview-preview": "Deslapky syn"
+	"wikieditor-realtimepreview-preview": "Deslapky syn",
+	"wikieditor-realtimepreview-reload": "Gaýtadan ýükläň",
+	"wikieditor-realtimepreview-beta-label": "Hakyky syn",
+	"wikieditor-realtimepreview-reload-title": "Hakyky deslapky syn panelini täzeden ýükläň",
+	"wikieditor-realtimepreview-manual": "Üýtgeşmeleriňizi el bilen görmek üçin indi täzeden ýükläň.",
+	"wikieditor-realtimepreview-onboarding-title": "Hakyky syn",
+	"wikieditor-realtimepreview-onboarding-body": "Redaktirlemeleriňizi okyjylara hakyky wagtda gözden geçirip nähili boljakdygyny görüň.",
+	"wikieditor-realtimepreview-onboarding-button": "Bolýar, düşündim"
 }

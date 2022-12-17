@@ -1,7 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Laitei",
+			"Taytay",
 			"Teitei Para"
 		]
 	},
@@ -15,5 +17,5 @@
 	"vector-view-history": "Chhichânazy palâ teih",
 	"vector-view-view": "Reih teih",
 	"vector-more-actions": "Ahluhviapa",
-	"vector-searchsuggest-containing": "<strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong> ahlaopa châhmiazy tlua teh"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ahlaopa hmiazy tlua teh"
 }

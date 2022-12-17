@@ -68,7 +68,7 @@ class ErrorReporter {
 		$language = $this->getInterfaceLanguageAndSplitCache( $parser );
 		$msg = $this->messageLocalizer->msg( $key, ...$params )->inLanguage( $language );
 
-		[ $type, ] = $this->parseTypeAndIdFromMessageKey( $msg->getKey() );
+		[ $type ] = $this->parseTypeAndIdFromMessageKey( $msg->getKey() );
 
 		if ( $type === 'error' ) {
 			// Take care; this is a sideeffect that might not belong to this class.
@@ -124,10 +124,10 @@ class ErrorReporter {
 	/**
 	 * @param string $messageKey Expected to be a message key like "cite_error_ref_too_many_keys"
 	 *
-	 * @return string[]
+	 * @return string[] Two elements, e.g. "error" and "ref_too_many_keys"
 	 */
 	private function parseTypeAndIdFromMessageKey( string $messageKey ): array {
-		return array_slice( explode( '_', $messageKey, 3 ), 1 );
+		return array_slice( explode( '_', str_replace( '-', '_', $messageKey ), 3 ), 1 );
 	}
 
 }

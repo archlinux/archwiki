@@ -161,14 +161,42 @@ ve.ui.commandRegistry.register(
 // The regexps don't have to be precise; we'll validate the magic
 // link in #autolinkMagicLink above.
 ve.ui.sequenceRegistry.register(
-	new ve.ui.Sequence( 'autolinkMagicLinkIsbn10', 'autolinkMagicLink', /\bISBN\s+(?!97[89])([0-9][ -]?){9}[0-9Xx]$/, 0, true, false, true )
+	new ve.ui.Sequence(
+		'autolinkMagicLinkIsbn10', 'autolinkMagicLink', /\bISBN\s+(?!97[89])([0-9][ -]?){9}[0-9Xx]$/, 0,
+		{
+			setSelection: true,
+			delayed: false,
+			checkOnPaste: true
+		}
+	)
 );
 ve.ui.sequenceRegistry.register(
-	new ve.ui.Sequence( 'autolinkMagicLinkIsbn13', 'autolinkMagicLink', /\bISBN\s+(97[89])[ -]?([0-9][ -]?){9}[0-9Xx]$/, 0, true, false, true )
+	new ve.ui.Sequence(
+		'autolinkMagicLinkIsbn13', 'autolinkMagicLink', /\bISBN\s+(97[89])[ -]?([0-9][ -]?){9}[0-9Xx]$/, 0,
+		{
+			setSelection: true,
+			delayed: false,
+			checkOnPaste: true
+		}
+	)
 );
 ve.ui.sequenceRegistry.register(
-	new ve.ui.Sequence( 'autolinkMagicLinkIsbn', 'autolinkMagicLink', /\bISBN\s+(97[89][ -]?)?([0-9][ -]?){9}[0-9Xx]$/, 0, true, true, true )
+	new ve.ui.Sequence(
+		'autolinkMagicLinkIsbn', 'autolinkMagicLink', /\bISBN\s+(97[89][ -]?)?([0-9][ -]?){9}[0-9Xx]$/, 0,
+		{
+			setSelection: true,
+			delayed: true,
+			checkOnPaste: true
+		}
+	)
 );
 ve.ui.sequenceRegistry.register(
-	new ve.ui.Sequence( 'autolinkMagicLinkRfcPmid', 'autolinkMagicLink', /\b(RFC|PMID)\s+[0-9]+$/, 0, true, true, true )
+	new ve.ui.Sequence(
+		'autolinkMagicLinkRfcPmid', 'autolinkMagicLink', /\b(RFC|PMID)\s+[0-9]+$/, 0,
+		{
+			setSelection: true,
+			delayed: true,
+			checkOnPaste: true
+		}
+	)
 );

@@ -17,10 +17,13 @@
 			"i18n"
 		]
 	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Extension\\Poem\\Poem"
+		}
+	},
 	"Hooks": {
-		"ParserFirstCallInit": [
-			"MediaWiki\\Extension\\Poem\\Poem::init"
-		]
+		"ParserFirstCallInit": "main"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Poem\\": "includes/"

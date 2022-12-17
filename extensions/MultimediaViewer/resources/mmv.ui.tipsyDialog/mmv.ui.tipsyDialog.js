@@ -46,8 +46,10 @@
 		/** @property {string|null} contentBody Contents of the dialog */
 		this.contentBody = null;
 
-		/** @property {Function} closeProxy Proxied close function to be used as an event handler, so it can be
-		 * identified for removal. */
+		/**
+		 * @property {Function} closeProxy Proxied close function to be used as an event handler, so it can be
+		 * identified for removal.
+		 */
 		this.closeProxy = this.maybeCloseOnClick.bind( this );
 	}
 

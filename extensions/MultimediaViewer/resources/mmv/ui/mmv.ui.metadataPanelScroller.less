@@ -1,17 +1,16 @@
 @import '../mmv.variables.less';
 @import '../mmv.mixins.less';
-@import 'mediawiki.mixins.animation.less';
 
 .mw-mmv-post-image {
-	.animation( mw-mmv-appear-animation 0.5s ease 0s 1 normal forwards );
+	animation: mw-mmv-appear-animation 0.5s ease 0s 1 normal forwards;
 	transition: box-shadow 0.25s;
 
 	&.invite {
-		.animation( mw-mmv-invite-animation 0.9s ease 0.2s 1 normal forwards );
+		animation: mw-mmv-invite-animation 0.9s ease 0.2s 1 normal forwards;
 	}
 
 	.jq-fullscreened & {
-		.animation( none );
+		animation: none;
 	}
 
 	&.mw-mmv-untruncated,
@@ -34,10 +33,6 @@
 	}
 }
 
-@-webkit-keyframes mw-mmv-appear-animation {
-	.mw-mmv-appear-animation;
-}
-
 @keyframes mw-mmv-appear-animation {
 	.mw-mmv-appear-animation;
 }
@@ -54,10 +49,6 @@
 	85% {
 		margin-top: 0;
 	}
-}
-
-@-webkit-keyframes mw-mmv-invite-animation {
-	.mw-mmv-invite-animation;
 }
 
 @keyframes mw-mmv-invite-animation {

@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"RFScott",
-			"Amire80"
+			"Amire80",
+			"RFScott"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 хэсэ}}",

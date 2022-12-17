@@ -38,7 +38,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sida finst ikkje",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Ugyldig tittel",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ekstern lenkje",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Ser etter om sida finst...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Fleirtydingsside",
 	"wikieditor-toolbar-tool-link-int-invalid": "Tittelen du oppgav er ikkje gyldig.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL-en du oppgav ser ut til å vera meint som ei lenkje til ei anna wikiside. Ynskjer du å gjera han til ei intern lenkje?",

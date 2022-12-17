@@ -47,16 +47,18 @@ For output, the following conversions are predefined:
 Usage
 -----
 
-    $ts = new ConvertibleTimestamp( '2012-07-31T19:01:08Z' );
-    $formatted = $ts->getTimestamp( TS_UNIX );
+```php
+$ts = new ConvertibleTimestamp( '2012-07-31T19:01:08Z' );
+$formatted = $ts->getTimestamp( TS_UNIX );
 
-    // Shorthand
-    $formatted = ConvertibleTimestamp::convert(
-        TS_UNIX, '2012-07-31T19:01:08Z'
-    );
+// Shorthand
+$formatted = ConvertibleTimestamp::convert(
+    TS_UNIX, '2012-07-31T19:01:08Z'
+);
 
-    // Format using PHP date formatting codes
-    $formatted = $ts->format( 'Y-m-d H:i:s O' );
+// Format using PHP date formatting codes
+$formatted = $ts->format( 'Y-m-d H:i:s O' );
+```
 
 
 Running tests

@@ -33,13 +33,13 @@
 		"installer-name": "Vector"
 	},
 	"require-dev": {
-		"mediawiki/mediawiki-codesniffer": "38.0.0",
-		"mediawiki/mediawiki-phan-config": "0.11.0",
+		"johnkary/phpunit-speedtrap": "^3.1",
+		"mediawiki/mediawiki-codesniffer": "39.0.0",
+		"mediawiki/mediawiki-phan-config": "0.11.1",
 		"mediawiki/minus-x": "1.1.1",
-		"php-parallel-lint/php-console-highlighter": "0.5.0",
-		"php-parallel-lint/php-parallel-lint": "1.3.1",
-		"phpunit/phpunit": "^8.5.0",
-		"johnkary/phpunit-speedtrap": "^3.1"
+		"php-parallel-lint/php-console-highlighter": "1.0.0",
+		"php-parallel-lint/php-parallel-lint": "1.3.2",
+		"phpunit/phpunit": "^8.5.0"
 	},
 	"scripts": {
 		"fix": [
@@ -54,5 +54,10 @@
 		"test:size": "phpunit -c ../../phpunit.xml.dist tests/phpunit/structure/BundleSizeTest.php --verbose",
 		"phan": "phan -d . --long-progress-bar",
 		"phpcs": "phpcs -sp --cache"
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true
+		}
 	}
 }

@@ -8,17 +8,17 @@ export default {
 
 export const logo = () => mustache.render(
 	logoTemplate,
-	LOGO_TEMPLATE_DATA.wordmarkTaglineIcon
+	LOGO_TEMPLATE_DATA.wordmarkTaglineIcon[ 'data-logos' ]
 );
 
 export const logoWordmarkIcon = () => mustache.render(
 	logoTemplate,
-	LOGO_TEMPLATE_DATA.wordmarkIcon
+	LOGO_TEMPLATE_DATA.wordmarkIcon[ 'data-logos' ]
 );
 
 export const logoWordmark = () => mustache.render(
 	logoTemplate,
-	LOGO_TEMPLATE_DATA.wordmarkOnly
+	LOGO_TEMPLATE_DATA.wordmarkOnly[ 'data-logos' ]
 );
 
 export const noLogo = () => mustache.render(

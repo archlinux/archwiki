@@ -1,6 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
+			"Bluehill",
+			"Ellif",
 			"IRTC1015",
 			"Jonghaya",
 			"MemphisA5",
@@ -9,9 +11,7 @@
 			"Ykhwong",
 			"렌즈",
 			"밝은소년",
-			"아라",
-			"Ellif",
-			"Bluehill"
+			"아라"
 		]
 	},
 	"oathauth-desc": "HMAC 기반 일회용 비밀번호를 이용한 인증 지원 제공",
@@ -87,6 +87,8 @@
 	"notification-header-oathauth-disable": "{{GENDER:$2|당신의 계정}}에서 2요소 인증이 비활성화 되었습니다.",
 	"notification-body-oathauth-disable": "만약 {{GENDER:$2|당신}}이 하지 않았다면, {{GENDER:$2|계정}}이 해킹당했을 수 있습니다.",
 	"oathauth-notifications-disable-help": "도움말",
+	"notification-body-oathauth-enabled": "만약 {{GENDER:$2|당신}}이 하지 않았다면, {{GENDER:$2|계정}}이 해킹당했을 수 있습니다.",
+	"oathauth-notifications-enabled-help": "도움말",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}}은(는) 2요소 인증이 활성화 되어있습니다.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}}은(는) 2요소 인증이 활성화 되어있지 않습니다."
 }

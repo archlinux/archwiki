@@ -4,11 +4,13 @@ RunningStat
 RunningStat computes the central tendency, shape, and extrema of a set of
 points online, in constant space. It uses a neat one-pass algorithm for
 calculating variance, described here:
-	<https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm>
+<https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm>
 
 This particular implementation adapts a sample C++ implementation by John D.
-Cook to PHP. See <http://www.johndcook.com/standard_deviation.html> and
-	<http://www.johndcook.com/skewness_kurtosis.html>.
+Cook to PHP. See also:
+
+* <http://www.johndcook.com/standard_deviation.html>
+* <http://www.johndcook.com/skewness_kurtosis.html>
 
 RunningStat instances can be combined. The resultant RunningStat has the same
 state it would have had if it had been used to accumulate each point. This
@@ -25,7 +27,7 @@ Usage
 -----
 Here is how you use it:
 
-<pre lang="php">
+```php
 use Wikimedia\RunningStat;
 
 $rstat = new RunningStat();
@@ -50,8 +52,8 @@ printf(
 );
 // Output:
 // n = 20; min = 7.01; max = 96.58; mean = 47.59; variance = 725.71; stddev = 26.94
-</pre>
+```
 
 License
 -------
-GPL-2.0+
+GPL-2.0-or-later

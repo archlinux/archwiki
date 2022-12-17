@@ -102,6 +102,10 @@ ve.dm.MWGalleryNode.static.describeChange = function ( key ) {
 
 /* Methods */
 
+ve.dm.MWGalleryNode.prototype.isDiffedAsDocument = function () {
+	return true;
+};
+
 /**
  * Get the gallery's caption node.
  *

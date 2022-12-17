@@ -16,11 +16,6 @@
 	border-bottom-left-radius: 2px;
 }
 
-.ve-ui-mwTransclusionDialog-addParameterFieldset .ve-ui-mwParameterSearchWidget {
-	border-radius: 2px;
-	border: 1px solid #a2a9b1;
-}
-
 /* Ace editor widget */
 
 /* stylelint-disable-next-line selector-class-pattern */

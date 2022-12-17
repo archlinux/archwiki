@@ -7,9 +7,9 @@ use MediaWiki\Extension\AbuseFilter\ChangeTags\ChangeTagsManager;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesRegistry;
 use MediaWiki\Extension\AbuseFilter\Filter\Filter;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
+use MediaWiki\Permissions\Authority;
+use MediaWiki\User\UserIdentity;
 use Status;
-use stdClass;
-use User;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -80,100 +80,99 @@ class FilterStore {
 	 *  - OK with errors if a validation error occurred
 	 *  - Fatal in case of a permission-related error
 	 *
-	 * @param User $user
-	 * @param int|null $filter
+	 * @param Authority $performer
+	 * @param int|null $filterId
 	 * @param Filter $newFilter
 	 * @param Filter $originalFilter
 	 * @return Status
 	 */
 	public function saveFilter(
-		User $user,
-		?int $filter,
+		Authority $performer,
+		?int $filterId,
 		Filter $newFilter,
 		Filter $originalFilter
 	): Status {
-		$validationStatus = $this->filterValidator->checkAll( $newFilter, $originalFilter, $user );
+		$validationStatus = $this->filterValidator->checkAll( $newFilter, $originalFilter, $performer );
 		if ( !$validationStatus->isGood() ) {
 			return $validationStatus;
 		}
 
 		// Check for non-changes
 		$differences = $this->filterCompare->compareVersions( $newFilter, $originalFilter );
-		if ( !count( $differences ) ) {
+		if ( !$differences ) {
 			return Status::newGood( false );
 		}
 
 		// Everything went fine, so let's save the filter
 		$wasGlobal = $originalFilter->isGlobal();
-		list( $newID, $historyID ) = $this->doSaveFilter( $user, $newFilter, $differences, $filter, $wasGlobal );
+		[ $newID, $historyID ] = $this->doSaveFilter(
+			$performer->getUser(), $newFilter, $differences, $filterId, $wasGlobal );
 		return Status::newGood( [ $newID, $historyID ] );
 	}
 
 	/**
 	 * Saves new filter's info to DB
 	 *
-	 * @param User $user
+	 * @param UserIdentity $userIdentity
 	 * @param Filter $newFilter
 	 * @param array $differences
-	 * @param int|null $filter
+	 * @param int|null $filterId
 	 * @param bool $wasGlobal
 	 * @return int[] first element is new ID, second is history ID
 	 */
 	private function doSaveFilter(
-		User $user,
+		UserIdentity $userIdentity,
 		Filter $newFilter,
 		array $differences,
-		?int $filter,
+		?int $filterId,
 		bool $wasGlobal
 	): array {
 		$dbw = $this->loadBalancer->getConnectionRef( DB_PRIMARY );
-		$newRow = get_object_vars( $this->filterToDatabaseRow( $newFilter ) );
+		$newRow = $this->filterToDatabaseRow( $newFilter );
 
 		// Set last modifier.
 		$newRow['af_timestamp'] = $dbw->timestamp();
-		$newRow['af_user'] = $user->getId();
-		$newRow['af_user_text'] = $user->getName();
+		$newRow['af_user'] = $userIdentity->getId();
+		$newRow['af_user_text'] = $userIdentity->getName();
 
-		$isNew = $filter === null;
-		$newID = $filter;
+		$isNew = $filterId === null;
 
 		// Preserve the old throttled status (if any) only if disabling the filter.
 		// TODO: It might make more sense to check what was actually changed
 		$newRow['af_throttled'] = ( $newRow['af_throttled'] ?? false ) && !$newRow['af_enabled'];
 		// This is null when creating a new filter, but the DB field is NOT NULL
 		$newRow['af_hit_count'] = $newRow['af_hit_count'] ?? 0;
-		$newRow['af_id'] = $newID;
+		$rowForInsert = array_diff_key( $newRow, [ 'af_id' => true ] );
 
 		$dbw->startAtomic( __METHOD__ );
-		$dbw->replace( 'abuse_filter', 'af_id', $newRow, __METHOD__ );
-
-		if ( $isNew ) {
-			$newID = $dbw->insertId();
+		if ( $filterId === null ) {
+			$dbw->insert( 'abuse_filter', $rowForInsert, __METHOD__ );
+			$filterId = $dbw->insertId();
+		} else {
+			$dbw->update( 'abuse_filter', $rowForInsert, [ 'af_id' => $filterId ], __METHOD__ );
 		}
-		'@phan-var int $newID';
+		$newRow['af_id'] = $filterId;
 
 		$actions = $newFilter->getActions();
 		$actionsRows = [];
 		foreach ( $this->consequencesRegistry->getAllEnabledActionNames() as $action ) {
-			// Check if it's set
-			$enabled = isset( $actions[$action] );
-
-			if ( $enabled ) {
-				$parameters = $actions[$action];
-				if ( $action === 'throttle' && $parameters[0] === null ) {
-					// FIXME: Do we really need to keep the filter ID inside throttle parameters?
-					// We'd save space, keep things simpler and avoid this hack. Note: if removing
-					// it, a maintenance script will be necessary to clean up the table.
-					$parameters[0] = $newID;
-				}
-
-				$thisRow = [
-					'afa_filter' => $newID,
-					'afa_consequence' => $action,
-					'afa_parameters' => implode( "\n", $parameters )
-				];
-				$actionsRows[] = $thisRow;
+			if ( !isset( $actions[$action] ) ) {
+				continue;
 			}
+
+			$parameters = $actions[$action];
+			if ( $action === 'throttle' && $parameters[0] === null ) {
+				// FIXME: Do we really need to keep the filter ID inside throttle parameters?
+				// We'd save space, keep things simpler and avoid this hack. Note: if removing
+				// it, a maintenance script will be necessary to clean up the table.
+				$parameters[0] = $filterId;
+			}
+
+			$actionsRows[] = [
+				'afa_filter' => $filterId,
+				'afa_consequence' => $action,
+				'afa_parameters' => implode( "\n", $parameters ),
+			];
 		}
 
 		// Create a history row
@@ -203,7 +202,7 @@ class FilterStore {
 
 		$afhRow['afh_flags'] = implode( ',', $flags );
 
-		$afhRow['afh_filter'] = $newID;
+		$afhRow['afh_filter'] = $filterId;
 
 		// Do the update
 		$dbw->insert( 'abuse_filter_history', $afhRow, __METHOD__ );
@@ -211,7 +210,7 @@ class FilterStore {
 		if ( !$isNew ) {
 			$dbw->delete(
 				'abuse_filter_action',
-				[ 'afa_filter' => $filter ],
+				[ 'afa_filter' => $filterId ],
 				__METHOD__
 			);
 		}
@@ -225,13 +224,12 @@ class FilterStore {
 		}
 
 		// Logging
-		$subtype = $isNew ? 'create' : 'modify';
-		$logEntry = new ManualLogEntry( 'abusefilter', $subtype );
-		$logEntry->setPerformer( $user );
-		$logEntry->setTarget( SpecialAbuseFilter::getTitleForSubpage( (string)$newID ) );
+		$logEntry = new ManualLogEntry( 'abusefilter', $isNew ? 'create' : 'modify' );
+		$logEntry->setPerformer( $userIdentity );
+		$logEntry->setTarget( SpecialAbuseFilter::getTitleForSubpage( (string)$filterId ) );
 		$logEntry->setParameters( [
 			'historyId' => $historyID,
-			'newId' => $newID
+			'newId' => $filterId
 		] );
 		$logid = $logEntry->insert( $dbw );
 		$logEntry->publish( $logid );
@@ -241,21 +239,21 @@ class FilterStore {
 			$this->tagsManager->purgeTagCache();
 		}
 
-		$this->filterProfiler->resetFilterProfile( $newID );
+		$this->filterProfiler->resetFilterProfile( $filterId );
 		if ( $newRow['af_enabled'] ) {
-			$this->emergencyCache->setNewForFilter( $newID, $newRow['af_group'] );
+			$this->emergencyCache->setNewForFilter( $filterId, $newRow['af_group'] );
 		}
-		return [ $newID, $historyID ];
+		return [ $filterId, $historyID ];
 	}
 
 	/**
 	 * @todo Perhaps add validation to ensure no null values remained.
 	 * @param Filter $filter
-	 * @return stdClass
+	 * @return array
 	 */
-	private function filterToDatabaseRow( Filter $filter ): stdClass {
+	private function filterToDatabaseRow( Filter $filter ): array {
 		// T67807: integer 1's & 0's might be better understood than booleans
-		return (object)[
+		return [
 			'af_id' => $filter->getID(),
 			'af_pattern' => $filter->getRules(),
 			'af_public_comments' => $filter->getName(),

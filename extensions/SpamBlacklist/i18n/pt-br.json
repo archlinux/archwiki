@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Cainamarques",
+			"Duke of Wikipädia",
 			"Eduardo Addad de Oliveira",
 			"Eduardo.mps",
 			"Eduardoaddad",
@@ -20,10 +21,10 @@
 	"spam-blacklisted-email-text": "No momento, seu endereço de e-mail está proibido de enviar e-mails para outros usuários.",
 	"spam-blacklisted-email-signup": "O endereço de e-mail fornecido está atualmente proibido de usar.",
 	"spam-invalid-lines": "{{PLURAL:$1|A linha|As linhas}} a seguir {{PLURAL:$1|é uma expressão regular|são expressões regulares}} (regex) {{PLURAL:$1|inválida e precisa|inválidas e precisam}} ser {{PLURAL:$1|corrigida|corrigidas}} antes de salvar a página:",
-	"spam-blacklist-desc": "Ferramenta anti-spam baseada em Regex, que permite proibir URLs em páginas e endereços de e-mail para usuários registrados",
-	"log-name-spamblacklist": "Registro da lista negra de spam",
-	"log-description-spamblacklist": "Esses eventos rastreiam hits na lista negra de spam.",
-	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} causou uma correspondência na lista negra de spam em $3, tentando adicionar $4.",
-	"right-spamblacklistlog": "Ver os registros da lista negra de spam",
-	"action-spamblacklistlog": "ver os registros da lista negra de spam"
+	"spam-blacklist-desc": "Ferramenta anti-spam baseada em Regex, que permite bloquear URLs em páginas e endereços de e-mail para usuários registrados",
+	"log-name-spamblacklist": "Registro da lista de bloqueio de spam",
+	"log-description-spamblacklist": "Esses eventos rastreiam hits na lista de bloqueio de spam.",
+	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} causou uma correspondência na lista de bloqueio de spam em $3, tentando adicionar $4.",
+	"right-spamblacklistlog": "Ver os registros da lista de bloqueio de spam",
+	"action-spamblacklistlog": "ver os registros da lista de bloqueio de spam"
 }

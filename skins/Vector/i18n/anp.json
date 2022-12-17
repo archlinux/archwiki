@@ -14,5 +14,6 @@
 	"vector-view-edit": "संपादन करौ",
 	"vector-view-history": "इतिहास देखौ",
 	"vector-view-view": "पढ़ौ",
-	"vector-more-actions": "आरू जादा"
+	"vector-more-actions": "आरू जादा",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> सँ जुड़लो पन्ना खोजौ"
 }

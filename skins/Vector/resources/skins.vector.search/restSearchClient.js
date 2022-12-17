@@ -1,6 +1,8 @@
+/* global RestResult, SearchResult */
 /** @module restSearchClient */
 
 const fetchJson = require( './fetch.js' );
+const urlGenerator = require( './urlGenerator.js' );
 
 /**
  * @typedef {Object} RestResponse
@@ -8,42 +10,9 @@ const fetchJson = require( './fetch.js' );
  */
 
 /**
- * @typedef {Object} RestResult
- * @property {number} id
- * @property {string} key
- * @property {string} title
- * @property {string} [description]
- * @property {RestThumbnail | null} [thumbnail]
- *
- */
-
-/**
- * @typedef {Object} RestThumbnail
- * @property {string} url
- * @property {number | null} [width]
- * @property {number | null} [height]
- */
-
-/**
  * @typedef {Object} SearchResponse
  * @property {string} query
  * @property {SearchResult[]} results
- */
-
-/**
- * @typedef {Object} SearchResult
- * @property {number} id
- * @property {string} key
- * @property {string} title
- * @property {string} [description]
- * @property {SearchResultThumbnail} [thumbnail]
- */
-
-/**
- * @typedef {Object} SearchResultThumbnail
- * @property {string} url
- * @property {number} [width]
- * @property {number} [height]
  */
 
 /**
@@ -58,20 +27,26 @@ function nullish( a, b ) {
 }
 
 /**
+ * @param {MwMap} config
  * @param {string} query
  * @param {RestResponse} restResponse
+ * @param {boolean} showDescription
  * @return {SearchResponse}
  */
-function adaptApiResponse( query, restResponse ) {
+function adaptApiResponse( config, query, restResponse, showDescription ) {
+	const urlGeneratorInstance = urlGenerator( config );
 	return {
 		query,
-		results: restResponse.pages.map( ( page ) => {
+		results: restResponse.pages.map( ( page, index ) => {
 			const thumbnail = page.thumbnail;
 			return {
 				id: page.id,
+				value: page.id || -( index + 1 ),
+				label: page.title,
 				key: page.key,
 				title: page.title,
-				description: page.description,
+				description: showDescription ? page.description : undefined,
+				url: urlGeneratorInstance.generateUrl( page ),
 				thumbnail: thumbnail ? {
 					url: thumbnail.url,
 					width: nullish( thumbnail.width, undefined ),
@@ -111,7 +86,7 @@ function restSearchClient( config ) {
 		/**
 		 * @type {fetchByTitle}
 		 */
-		fetchByTitle: ( q, domain, limit = 10 ) => {
+		fetchByTitle: ( q, domain, limit = 10, showDescription = true ) => {
 			const params = { q, limit };
 			const url = '//' + domain + config.get( 'wgScriptPath' ) + '/rest.php/v1/search/title?' + $.param( params );
 			const result = fetchJson( url, {
@@ -121,7 +96,7 @@ function restSearchClient( config ) {
 			} );
 			const searchResponsePromise = result.fetch
 				.then( ( /** @type {RestResponse} */ res ) => {
-					return adaptApiResponse( q, res );
+					return adaptApiResponse( config, q, res, showDescription );
 				} );
 			return {
 				abort: result.abort,

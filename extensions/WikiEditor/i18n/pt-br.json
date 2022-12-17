@@ -20,8 +20,8 @@
 			"MetalBrasil",
 			"Opraco",
 			"Rafael Vargas",
-			555,
-			"YuriNikolai"
+			"YuriNikolai",
+			555
 		]
 	},
 	"wikieditor": "Interface avançada de edição de wikitexto",
@@ -55,7 +55,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "A página não existe em {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "O título que você especificou é inválido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Link externo",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Verificando existência da página...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Esta página não é de conteúdo, mas sim uma lista de tópicos com nomes semelhantes",
 	"wikieditor-toolbar-tool-link-int-invalid": "O título que você especificou é inválido.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "A URL que você especificou parece ser um link para outra página da wiki. Você deseja usar como link interno?",
@@ -214,5 +213,9 @@
 	"wikieditor-toolbar-help-content-indent-description": "Indentação",
 	"wikieditor-toolbar-help-content-indent-syntax": "Texto normal<br />:Texto indentado<br />::Texto indentado",
 	"wikieditor-toolbar-help-content-indent-result": "Texto normal<dl><dd>Texto indentado<dl><dd>Texto indentado</dd></dl></dd></dl>",
-	"wikieditor-realtimepreview-preview": "Mostar previsão"
+	"wikieditor-realtimepreview-preview": "Mostar previsão",
+	"wikieditor-realtimepreview-reload": "Recarregar",
+	"wikieditor-realtimepreview-beta-label": "Pré-visualização em tempo real",
+	"wikieditor-realtimepreview-reload-title": "Recarregar o painel da pré-visualização em tempo real",
+	"wikieditor-realtimepreview-onboarding-title": "Pré-visualização em tempo real"
 }

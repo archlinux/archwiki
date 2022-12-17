@@ -34,22 +34,6 @@ QUnit.test( 'Input event handlers', ( assert ) => {
 	assert.strictEqual( page.paramInputField.getValue(), 'documented', 'bad input is not cleared' );
 } );
 
-QUnit.test( 'Outline item initialization', ( assert ) => {
-	const transclusion = new ve.dm.MWTransclusionModel(),
-		template = new ve.dm.MWTemplateModel( transclusion, {} ),
-		parameter = new ve.dm.MWParameterModel( template ),
-		page = new ve.ui.MWAddParameterPage( parameter );
-
-	page.setOutlineItem( new OO.ui.OutlineOptionWidget() );
-	const outlineItem = page.getOutlineItem();
-
-	assert.strictEqual( outlineItem.$element.children().length, 0,
-		'Outline item should be empty' );
-	// eslint-disable-next-line no-jquery/no-class-state
-	assert.false( outlineItem.$element.hasClass( 'oo-ui-outlineOptionWidget' ),
-		'Outline item should not be styled' );
-} );
-
 [
 	[ '', 0 ],
 	[ 'a', 0 ],

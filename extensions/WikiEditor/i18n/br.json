@@ -2,13 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Adriendelucca",
+			"Amire80",
 			"Fohanno",
 			"Fulup",
 			"Gwendal",
+			"Huñvreüs",
 			"Macofe",
-			"Y-M D",
-			"Amire80",
-			"Huñvreüs"
+			"Y-M D"
 		]
 	},
 	"wikieditor": "Etrefas kemmañ wikitestenn klokaet",
@@ -42,7 +42,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Ar bajenn-mañ n'eus ket anezhi e {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Direizh eo an titl ho peus merket",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Liamm diavaez",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "O wiriañ hag-eñ ez eus eus ar bajenn...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Ar bajenn-mañ n’eo ket ur bajenn endalc’h, met ur roll pennadoù gant anvioù tost an eil ouzh egile",
 	"wikieditor-toolbar-tool-link-int-invalid": "Kamm eo an titl hoc'h eus merket.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Seblantout kas ul liamm davet ur bajenn all eus ar wiki a ra an URL lakaet ganeoc'h.\nHag ul liamm diabarzh eo a fell deoc'h lakaat?",
@@ -199,5 +198,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Testenn normal<br />:Testenn endantet<br />::Testenn endantet",
 	"wikieditor-toolbar-help-content-indent-result": "Testenn normal<dl><dd>Testenn endantet<dl><dd>Testenn endantet</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Kemm graet gant [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (aozer wikitestenn 2010)",
-	"wikieditor-realtimepreview-preview": "Rakwelet"
+	"wikieditor-realtimepreview-preview": "Rakwelet",
+	"wikieditor-realtimepreview-error": "N’emañ ket ar rakwel o kargañ",
+	"wikieditor-realtimepreview-reload": "Adkargañ",
+	"wikieditor-realtimepreview-beta-label": "Rakwel war-eeun",
+	"wikieditor-realtimepreview-beta-desc": "Gwelet penaos e vo gwelet kemmoù wikitestenn gant al lennerien en [[mw:Special:MyLanguage/Extension:WikiEditor|aozer 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Adkargañ an takad rakwel war-eeun",
+	"wikieditor-realtimepreview-manual": "Adkargit bremañ mar plij evit rakwelet ho kemmoù dre zorn.",
+	"wikieditor-realtimepreview-onboarding-title": "Rakwel war-eeun",
+	"wikieditor-realtimepreview-onboarding-body": "Gwelet penaos e vo gwelet ho kemmoù gant al lennerien en ur rakwelet anezho war-eeun.",
+	"wikieditor-realtimepreview-onboarding-button": "OK, deomp dezhi"
 }

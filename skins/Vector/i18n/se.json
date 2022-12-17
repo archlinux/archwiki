@@ -18,5 +18,6 @@
 	"vector-view-history": "Geahča historjjá",
 	"vector-view-view": "Loga",
 	"vector-view-viewsource": "Geahča gáldokoda",
-	"vector-more-actions": "Eanet"
+	"vector-more-actions": "Eanet",
+	"vector-searchsuggest-containing": "Oza siidduid main lea <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

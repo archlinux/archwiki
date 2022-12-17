@@ -26,6 +26,7 @@ describe( 'Search', () => {
 		iSeeTheSearchOverlay();
 		iTypeIntoTheSearchBox( 'Selenium search tes' );
 		// This pause statement is a temporary bandaid until we figure a bettery dynamic sync
+		// eslint-disable-next-line wdio/no-pause
 		browser.pause( 1000 );
 		iClickASearchWatchstar();
 		iShouldSeeAToastNotification();

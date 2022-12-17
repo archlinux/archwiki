@@ -7,6 +7,7 @@
 			"Maksim L.",
 			"Mechanizatar",
 			"Mienski",
+			"No Sleep till Krupki",
 			"Vlad5250",
 			"Yury Tarasievich"
 		]
@@ -22,6 +23,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "Па змаўчанні",
 	"math-visualeditor-mwlatexinspector-display-inline": "Унутры радка",
 	"math-visualeditor-mwlatexinspector-id": "Ідэнтыфікатар спасылкі (неабавязковы)",
+	"math-visualeditor-mwlatexinspector-qid": "Ідэнтыфікатар Wikibase (з прэфіксам Q)",
 	"math-visualeditor-mwmathdialog-title": "Матэматычную формулу",
 	"math-visualeditor-symbol-group-chem-addition": "Аддукты",
 	"math-visualeditor-symbol-group-chem-aggregation": "Станы агрэгацыі",
@@ -86,7 +88,7 @@
 	"math_unknown_error": "невядомая памылка",
 	"math_unknown_function": "невядомая функцыя \"$1\"",
 	"mw_math_latexml": "LaTeXML (эксперыментальна; ужывае MathML)",
-	"mw_math_mathml": "MathML з вяртаннем да SVG ці PNG (рэкамендуецца для сучасных браўзераў і інструментаў падвышэння даступнасці)",
+	"mw_math_mathml": "SVG з вяртаннем да PNG (можна ўключыць з дапамогай дапаўнення браўзера)",
 	"mw_math_png": "PNG-выявы",
 	"mw_math_source": "Пакідаць у выглядзе LaTeX (для тэкставых браўзераў)",
 	"prefs-math": "Матэматыка",

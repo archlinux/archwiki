@@ -1,7 +1,7 @@
 /** @module search */
 
 const
-	Vue = require( 'vue' ).default || require( 'vue' ),
+	Vue = require( 'vue' ),
 	App = require( './App.vue' ),
 	config = require( './config.json' );
 

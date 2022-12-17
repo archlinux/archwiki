@@ -37,7 +37,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Chan eil an duilleag ann",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Tiotal mì-dhligheach",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ceangal dhan taobh a-muigh",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "A' toirt sùil ach a bheil an duilleag ann mu thràth...",
 	"wikieditor-toolbar-tool-link-int-invalid": "Tha an tiotal a shònraich thu mì-dhligheach.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Tha coltas aig an URL a shònraich thu gun robh dùil agad ceangal a dhèanamh ri duilleag wiki eile.\nA bheil thu airson ceangal am broinn na làraich a dhèanamh dheth?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Ceangal am broinn na làraich",

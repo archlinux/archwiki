@@ -37,7 +37,7 @@ class RecursiveServiceDependencyException extends RuntimeException
 	/**
 	 * @param string $serviceName
 	 */
-	public function __construct( $serviceName ) {
+	public function __construct( string $serviceName ) {
 		parent::__construct( "Recursive service instantiation: $serviceName" );
 	}
 

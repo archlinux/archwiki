@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"CoderSI",
 			"Macofe",
 			"Malikxan",
 			"Sociologist",
-			"Amire80"
+			"Zafar Shamsiddinov"
 		]
 	},
 	"wikieditor": "Vikimatnni tahrirlashning kengaytirilgan interfeysi",
@@ -14,6 +15,7 @@
 	"wikieditor-toolbar": "Tahrirlash darchasi",
 	"wikieditor-toolbar-desc": "Foydalanishga qulayroq boʻlgan tahrirlash darchasi",
 	"wikieditor-toolbar-preference": "Yaxshilangan tahrirlash darchasini yoqish",
+	"wikieditor-toolbar-preference-help": "Bu baʼzan „2010 vikimatn muharriri“ deb ataladi.",
 	"wikieditor-toolbar-tool-bold": "Qalin",
 	"wikieditor-toolbar-tool-bold-example": "Qalin matn",
 	"wikieditor-toolbar-tool-italic": "Yotiq",
@@ -36,9 +38,9 @@
 	"wikieditor-toolbar-tool-link-cancel": "Bekor qilish",
 	"wikieditor-toolbar-tool-link-int-target-status-exists": "Sahifa {{SITENAME}}da mavjud",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Sahifa {{SITENAME}}da mavjud emas",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Mumkin boʻlmagan nom",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Siz koʻrsatgan sarlavha notoʻgʻri",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Tashqi havola",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Sahifa mavjudligiga tekshirish",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Bu sahifa kontent sahifasi emas, balki oʻxshash nomli mavzular roʻyxatidir",
 	"wikieditor-toolbar-tool-link-int-invalid": "Koʻrsatilgan nom mumkin emas.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Siz tomondan koʻrsatilgan URL boshqa viki-sahifaga havolaga oʻxshash. Siz mazkur havolani ichki qilishni xohlaysizmi?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Ichki havola",
@@ -49,6 +51,7 @@
 	"wikieditor-toolbar-file-target": "Fayl nomi:",
 	"wikieditor-toolbar-file-caption": "Yozuv:",
 	"wikieditor-toolbar-file-alt": "Muqobil matn:",
+	"wikieditor-toolbar-file-alt-help": "Ushbu ixtiyoriy maydondan faylni koʻra olmaydigan odamlar uchun matn tavsifini yozish uchun foydalanishingiz mumkin.\nTavsif ular media elementi tomonidan berilgan maqsad va maʼlumotni tushunishlari uchun yetarli boʻlishi lozim. Bu koʻzi ojiz foydalanuvchilar va ekranni oʻqish dasturidan yoki faqat matnli brauzerlardan foydalanadigan boshqa odamlar uchun juda muhimdir.",
 	"wikieditor-toolbar-file-alt-help-label": "(Yordam)",
 	"wikieditor-toolbar-file-size": "Oʻlchami",
 	"wikieditor-toolbar-file-float": "Tekislash:",
@@ -98,6 +101,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! sarlavha 1\n! sarlavha 2\n! sarlavha 3\n|-\n| qator 1, katak 1\n| qator 1, katak 2\n| qator 1, katak 3\n|-\n| qator 2, katak 1\n| qator 2, katak 2\n| qator 2, katak 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Katak matni",
 	"wikieditor-toolbar-tool-table-example-header": "Sarlavha matni",
+	"wikieditor-toolbar-tool-table-example-caption": "Sarlavha matni",
 	"wikieditor-toolbar-tool-table-title": "Jadval qoʻyish",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Qatorlar",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Ustunlar",
@@ -125,6 +129,7 @@
 	"wikieditor-toolbar-tool-replace-success": "$1 ta {{PLURAL:$1|almashtirish}} amalga oshirildi.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Nimani qidirishni koʻrsatmadingiz.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Siz kiritgan muntazam ifodada xatolik: $1",
+	"wikieditor-toolbar-tool-replace-word": "Mos keluvchi butun soʻz",
 	"wikieditor-toolbar-section-characters": "Maxsus belgilar",
 	"wikieditor-toolbar-section-help": "Yordam",
 	"wikieditor-toolbar-help-heading-description": "Taʼrif",
@@ -186,5 +191,15 @@
 	"wikieditor-toolbar-help-content-indent-description": "Xat boshi",
 	"wikieditor-toolbar-help-content-indent-syntax": "Odatiy matn<br />:Matn xat boshi bilan<br />::Matn xat boshi bilan",
 	"wikieditor-toolbar-help-content-indent-result": "Odatiy matn<dl><dd>Matn xat boshi bilan<dl><dd>Matn xat boshi bilan</dd></dl></dd></dl>",
-	"wikieditor-realtimepreview-preview": "Oldindan koʻrish"
+	"tag-wikieditor-description": "Tahrirlash [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010 vikimatn muharriri) yordamida amalga oshirildi.",
+	"wikieditor-realtimepreview-preview": "Oldindan koʻrish",
+	"wikieditor-realtimepreview-error": "Oldindan koʻrish yuklanmayapti",
+	"wikieditor-realtimepreview-reload": "Qayta yuklash",
+	"wikieditor-realtimepreview-beta-label": "Haqiqiy vaqtda oldindan koʻrish",
+	"wikieditor-realtimepreview-beta-desc": "[[mw:Special:MyLanguage/Extension:WikiEditor|2010 muharriri]] ichidagi vikimatn oʻzgarishlari oʻquvchilarga qanday koʻrinishini koʻring.",
+	"wikieditor-realtimepreview-reload-title": "Haqiqiy vaqtda oldindan koʻrish panelini qayta yuklash",
+	"wikieditor-realtimepreview-manual": "Tahrirlaringizni oʻzingiz koʻrishingiz uchun hozir qayta yuklang.",
+	"wikieditor-realtimepreview-onboarding-title": "Haqiqiy vaqtda oldindan koʻrish",
+	"wikieditor-realtimepreview-onboarding-body": "Tahrirlaringizni real vaqtda oldindan koʻrish orqali oʻquvchilarga qanday koʻrinishini koʻring.",
+	"wikieditor-realtimepreview-onboarding-button": "Tushunarli"
 }

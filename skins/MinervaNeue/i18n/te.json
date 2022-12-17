@@ -8,6 +8,7 @@
 	},
 	"minerva-talk-add-topic": "అంశాన్ని చేర్చండి",
 	"mobile-frontend-editor-edit": "సవరించు",
+	"mobile-frontend-editor-redlink-explain": "ఈ పేజీని ఇంకా సృష్టించలేదు.",
 	"mobile-frontend-history": "ఈ పేజీ దిద్దుబాటు చరిత్రను చూడండి.",
 	"mobile-frontend-home-button": "ముంగిలి",
 	"mobile-frontend-language-article-heading": "భాష",
@@ -19,6 +20,7 @@
 	"mobile-frontend-main-menu-watchlist": "వీక్షణ జాబితా",
 	"mobile-frontend-meta-data-issues-categories": "ఈ వర్గం గురించి",
 	"mobile-frontend-meta-data-issues-header-talk": "ఈ పేజీ గురించి",
+	"mobile-frontend-meta-data-issues-talk": "ఈ చర్చ పేజీ గురించి",
 	"mobile-frontend-pageaction-edit-tooltip": "ఈ పేజీ శీర్ష భాగాన్ని సవరించండి",
 	"mobile-frontend-placeholder": "{{SITENAME}}‌లో వెతకండి",
 	"mobile-frontend-random-button": "యాదృచ్చికం"

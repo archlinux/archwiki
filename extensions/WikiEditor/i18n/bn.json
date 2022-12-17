@@ -9,8 +9,8 @@
 			"Macofe",
 			"Nasir8891",
 			"Wikitanvir",
-			"আফতাবুজ্জামান",
-			"Yahya"
+			"Yahya",
+			"আফতাবুজ্জামান"
 		]
 	},
 	"wikieditor": "উন্নত উইকিপাঠ্য সম্পাদনার ইন্টারফেস",
@@ -44,7 +44,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "{{SITENAME}}-এ এই পাতাটি বিদ্যমান নেই",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "আপনার প্রদেয় শিরোনামটি বৈধ নয়।",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "বহিঃসংযোগ",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "পাতার অস্তিত্ব পরীক্ষা করা হচ্ছে...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "এই পাতাটি বিষয়বস্তুভিত্তিক পাতা নয়, বরং একই ধরনের নামবিশিষ্ট পাতার তালিকা",
 	"wikieditor-toolbar-tool-link-int-invalid": "আপনার শিরোনামটি সঠিক নয়।",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "যে ইউআরএলটিকে আপনি নির্দেশ করেছেন, তা অন্য একটি উইকির পাতাকে নির্দেশ করছে। আপনি কী এটিকে একটি আন্তসংযোগে পরিবর্তিত করতে চান?",
@@ -202,5 +201,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "সাধারণ লেখ<br />:প্রান্তিককৃত লেখ<br />::প্রান্তিককৃত লেখ",
 	"wikieditor-toolbar-help-content-indent-result": "সাধারণ লেখ<dl><dd>প্রান্তিককৃত লেখ<dl><dd>প্রান্তিককৃত লেখ</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|উইকিসম্পাদক]] ব্যবহার করে সম্পাদনা করা হয়েছে (২০১০ উইকিপাঠ্য সম্পাদক)",
-	"wikieditor-realtimepreview-preview": "প্রাকদর্শন"
+	"wikieditor-realtimepreview-preview": "প্রাকদর্শন",
+	"wikieditor-realtimepreview-error": "প্রাকদর্শন লোড হচ্ছে না",
+	"wikieditor-realtimepreview-reload": "পুনঃলোড করুন",
+	"wikieditor-realtimepreview-beta-label": "তাৎক্ষণিক প্রাকদর্শন",
+	"wikieditor-realtimepreview-beta-desc": "[[mw:Special:MyLanguage/Extension:WikiEditor|২০১০ সম্পাদকের]] ভিতর উইকিপাঠ্যের পরিবর্তন পাঠকদের কাছে কীরূপে প্রদর্শিত হবে তা দেখুন।",
+	"wikieditor-realtimepreview-reload-title": "তাৎক্ষণিক প্রাকদর্শন ফলকটি পুনঃলোড করুন",
+	"wikieditor-realtimepreview-manual": "হাতে দিয়ে আপনার সম্পাদনার প্রাকদর্শন দেখতে দয়া করে এখনই পুনঃলোড করুন।",
+	"wikieditor-realtimepreview-onboarding-title": "তাৎক্ষণিক প্রাকদর্শন",
+	"wikieditor-realtimepreview-onboarding-body": "আপনার সম্পাদনা পাঠকদের কাছে কেমনভাবে প্রদর্শিত হবে তা তাৎক্ষণিকভাবে দেখুন।",
+	"wikieditor-realtimepreview-onboarding-button": "ঠিক আছে, বুঝেছি"
 }

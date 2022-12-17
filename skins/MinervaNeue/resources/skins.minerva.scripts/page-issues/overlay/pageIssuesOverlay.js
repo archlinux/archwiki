@@ -1,4 +1,4 @@
-( function ( M, mwMsg ) {
+( function ( M ) {
 	var
 		Overlay = M.require( 'mobile.startup' ).Overlay,
 		IssueList = require( './IssueList.js' ),
@@ -22,7 +22,7 @@
 			// namespace.
 			headingText = section === '0' || section === KEYWORD_ALL_SECTIONS ?
 				getNamespaceHeadingText( namespaceID ) :
-				mwMsg( 'minerva-meta-data-issues-section-header' );
+				mw.msg( 'minerva-meta-data-issues-section-header' );
 
 		overlay = new Overlay( {
 			className: 'overlay overlay-issues',
@@ -57,4 +57,4 @@
 	module.exports = pageIssuesOverlay;
 
 // eslint-disable-next-line no-restricted-properties
-}( mw.mobileFrontend, mw.msg ) );
+}( mw.mobileFrontend ) );

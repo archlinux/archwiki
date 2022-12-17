@@ -8,7 +8,6 @@
 	"apierror-visualeditor-difffailed": "Falló diff",
 	"apierror-visualeditor-docserver-http-error": "Error al comunicase col sirvidor Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-http": "Error al comunicase col sirvidor Parsoid/RESTBase (HTTP $1)",
-	"apierror-visualeditor-docserver-unconfigured": "El VirtualRESTService pal sirvidor de documentos nun ta definíu; visita https://www.mediawiki.org/wiki/Extension:VisualEditor",
 	"apierror-visualeditor-docserver": "Error al comunicase col sirvidor Parsoid/RESTBase (nun hai respuesta)",
 	"apierror-visualeditor-latestnotfound": "Nun s'alcontró la cabera revisión del títulu",
 	"apihelp-visualeditor-description": "Devuelve HTML5 pa una páxina dende'l serviciu Parsoid.",

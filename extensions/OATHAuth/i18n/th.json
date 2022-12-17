@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
-			"Patsagorn Y."
+			"Patsagorn Y.",
+			"Trisorn Triboon"
 		]
 	},
 	"oathauth-desc": "จัดหาการรองรับการยืนยันตัวตนโดยใช้รหัสผ่านแบบครั้งเดียวบนพื้นฐานของ HMAC",
@@ -22,5 +23,6 @@
 	"oathauth-prefs-label": "การยืนยันตัวตนสองขั้นตอน:",
 	"right-oathauth-enable": "เปิดใช้งานการยืนยันตัวตนสองขั้นตอน",
 	"action-oathauth-enable": "เปิดใช้งานการยืนยันตัวตนสองขั้นตอน",
-	"oathauth-auth-ui": "กรุณาป้อนรหัสยืนยันตัวตนจากอุปกรณ์ยืนยันตัวตนของคุณ"
+	"oathauth-auth-ui": "กรุณาป้อนรหัสยืนยันตัวตนจากอุปกรณ์ยืนยันตัวตนของคุณ",
+	"oathauth-notifications-enabled-help": "ช่วยเหลือ"
 }

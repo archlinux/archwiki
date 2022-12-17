@@ -8,17 +8,45 @@
  * @license MIT
  */
 
+namespace MediaWiki\Extension\VisualEditor;
+
+use ApiBase;
+use ApiBlockInfoTrait;
+use ApiMain;
+use ApiResult;
+use Article;
+use Config;
+use ContentHandler;
+use DerivativeContext;
+use DerivativeRequest;
+use EditPage;
+use ExtensionRegistry;
+use Html;
+use LogEventsList;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Content\Transform\ContentTransformer;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserNameUtils;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
+use Parser;
+use ParserOptions;
+use RawMessage;
+use ReadOnlyMode;
+use RequestContext;
+use Skin;
+use SpecialMyLanguage;
+use Title;
 use Wikimedia\ParamValidator\ParamValidator;
+use WikitextContent;
 
 class ApiVisualEditor extends ApiBase {
 	use ApiBlockInfoTrait;
@@ -48,6 +76,18 @@ class ApiVisualEditor extends ApiBase {
 	/** @var ReadOnlyMode */
 	private $readOnlyMode;
 
+	/** @var RestrictionStore */
+	private $restrictionStore;
+
+	/** @var WikiPageFactory */
+	private $wikiPageFactory;
+
+	/** @var HookContainer */
+	private $hookContainer;
+
+	/** @var UserFactory */
+	private $userFactory;
+
 	/**
 	 * @param ApiMain $main
 	 * @param string $name
@@ -59,6 +99,10 @@ class ApiVisualEditor extends ApiBase {
 	 * @param ContentTransformer $contentTransformer
 	 * @param SpecialPageFactory $specialPageFactory
 	 * @param ReadOnlyMode $readOnlyMode
+	 * @param RestrictionStore $restrictionStore
+	 * @param WikiPageFactory $wikiPageFactory
+	 * @param HookContainer $hookContainer
+	 * @param UserFactory $userFactory
 	 */
 	public function __construct(
 		ApiMain $main,
@@ -70,7 +114,11 @@ class ApiVisualEditor extends ApiBase {
 		WatchlistManager $watchlistManager,
 		ContentTransformer $contentTransformer,
 		SpecialPageFactory $specialPageFactory,
-		ReadOnlyMode $readOnlyMode
+		ReadOnlyMode $readOnlyMode,
+		RestrictionStore $restrictionStore,
+		WikiPageFactory $wikiPageFactory,
+		HookContainer $hookContainer,
+		UserFactory $userFactory
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
@@ -82,6 +130,10 @@ class ApiVisualEditor extends ApiBase {
 		$this->contentTransformer = $contentTransformer;
 		$this->specialPageFactory = $specialPageFactory;
 		$this->readOnlyMode = $readOnlyMode;
+		$this->restrictionStore = $restrictionStore;
+		$this->wikiPageFactory = $wikiPageFactory;
+		$this->hookContainer = $hookContainer;
+		$this->userFactory = $userFactory;
 	}
 
 	/**
@@ -97,7 +149,7 @@ class ApiVisualEditor extends ApiBase {
 			$content,
 			$title,
 			$this->getUser(),
-			WikiPage::factory( $title )->makeParserOptions( $this->getContext() )
+			$this->wikiPageFactory->newFromTitle( $title )->makeParserOptions( $this->getContext() )
 		)
 		->serialize( 'text/x-wiki' );
 	}
@@ -120,7 +172,7 @@ class ApiVisualEditor extends ApiBase {
 			if ( $spName ) {
 				$specialPage = $this->specialPageFactory->getPage( $spName );
 				if ( $specialPage instanceof SpecialMyLanguage ) {
-					$preloadTitle = $specialPage->getRedirect( $spParam );
+					$preloadTitle = $specialPage->findTitleForTransclusion( $spParam );
 				}
 			}
 		}
@@ -131,10 +183,13 @@ class ApiVisualEditor extends ApiBase {
 			$preloadTitle->exists() &&
 			$this->getPermissionManager()->userCan( 'read', $this->getUser(), $preloadTitle )
 		) {
-			$preloadPage = WikiPage::factory( $preloadTitle );
+			// If the preload title has no redirect, null will be
+			// returned which will break call to ->preloadTransform() below.
+			$preloadTitleFallback = $preloadTitle;
+			$preloadPage = $this->wikiPageFactory->newFromTitle( $preloadTitle );
 			if ( $preloadPage->isRedirect() ) {
 				$preloadTitle = $preloadPage->getRedirectTarget();
-				$preloadPage = WikiPage::factory( $preloadTitle );
+				$preloadPage = $this->wikiPageFactory->newFromTitle( $preloadTitle );
 			}
 
 			$content = $preloadPage->getContent( RevisionRecord::RAW );
@@ -142,7 +197,7 @@ class ApiVisualEditor extends ApiBase {
 
 			$content = $this->contentTransformer->preloadTransform(
 				$content,
-				$preloadTitle,
+				$preloadTitle ?? $preloadTitleFallback,
 				$parserOptions,
 				(array)$params
 			)->serialize();
@@ -181,6 +236,11 @@ class ApiVisualEditor extends ApiBase {
 			case 'parse':
 			case 'wikitext':
 			case 'metadata':
+				// Dirty hack to provide the correct context for FlaggedRevs when it generates edit notices
+				// and save dialog checkboxes. (T307852)
+				// FIXME Don't write to globals! Eww.
+				RequestContext::getMain()->setTitle( $title );
+
 				$preloaded = false;
 				$restbaseHeaders = null;
 
@@ -205,7 +265,7 @@ class ApiVisualEditor extends ApiBase {
 							}
 							if ( $section !== null ) {
 								$sectionContent = new WikitextContent( $wikitext );
-								$page = WikiPage::factory( $title );
+								$page = $this->wikiPageFactory->newFromTitle( $title );
 								$newSectionContent = $page->replaceSectionAtRev(
 									$section, $sectionContent, '', $oldid
 								);
@@ -281,7 +341,7 @@ class ApiVisualEditor extends ApiBase {
 
 						$contentBeforeHook = $content;
 						if ( $section !== 'new' ) {
-							Hooks::run( 'EditFormPreloadText', [ &$content, &$title ] );
+							$this->hookContainer->run( 'EditFormPreloadText', [ &$content, &$title ] );
 						}
 						// Make sure we don't mark default system message content as a preload
 						if ( $content !== '' && $contentBeforeHook !== $content ) {
@@ -360,7 +420,7 @@ class ApiVisualEditor extends ApiBase {
 					)->page( $title )->parseAsBlock();
 
 					// Page protected from creation
-					if ( $title->getRestrictions( 'create' ) ) {
+					if ( $this->restrictionStore->getRestrictions( $title, 'create' ) ) {
 						$protectionNotices['titleprotectedwarning'] =
 							$this->msg( 'titleprotectedwarning' )->page( $title )->parseAsBlock() .
 							$this->getLastLogEntry( $title, 'protect' );
@@ -388,9 +448,9 @@ class ApiVisualEditor extends ApiBase {
 					$permissionManager->getNamespaceRestrictionLevels( $title->getNamespace() ) !== [ '' ]
 				) {
 					// Page protected from editing
-					if ( $title->isProtected( 'edit' ) ) {
+					if ( $this->restrictionStore->isProtected( $title, 'edit' ) ) {
 						// Is the title semi-protected?
-						if ( $title->isSemiProtected() ) {
+						if ( $this->restrictionStore->isSemiProtected( $title ) ) {
 							$protectedClasses[] = 'mw-textarea-sprotected';
 
 							$noticeMsg = 'semiprotectedpagewarning';
@@ -405,7 +465,7 @@ class ApiVisualEditor extends ApiBase {
 					}
 
 					// Deal with cascading edit protection
-					list( $sources, $restrictions ) = $title->getCascadeProtectionSources();
+					list( $sources, $restrictions ) = $this->restrictionStore->getCascadeProtectionSources( $title );
 					if ( isset( $restrictions['edit'] ) ) {
 						$protectedClasses[] = ' mw-textarea-cprotected';
 
@@ -430,7 +490,7 @@ class ApiVisualEditor extends ApiBase {
 					// Show generic permission errors, including page protection, user blocks, etc.
 					$notice = $this->getOutput()->formatPermissionsErrorMessage( $permErrors, 'edit' );
 					// That method returns wikitext (eww), hack to get it parsed:
-					$notice = ( new RawMessage( '$1', [ $notice ] ) )->parseAsBlock();
+					$notice = ( new RawMessage( '$1', [ $notice ] ) )->page( $title )->parseAsBlock();
 					// Invent a message key 'permissions-error' to store in $notices
 					$notices['permissions-error'] = $notice;
 				} elseif ( $protectionNotices ) {
@@ -447,9 +507,9 @@ class ApiVisualEditor extends ApiBase {
 				if ( $title->getNamespace() == NS_USER || $title->getNamespace() == NS_USER_TALK ) {
 					$parts = explode( '/', $title->getText(), 2 );
 					$targetUsername = $parts[0];
-					$targetUser = User::newFromName(
+					$targetUser = $this->userFactory->newFromName(
 						$targetUsername,
-						/* allow IP users*/ false
+						/* allow IP users*/ UserFactory::RIGOR_NONE
 					);
 					$block = $targetUser ? $targetUser->getBlock() : null;
 
@@ -471,6 +531,7 @@ class ApiVisualEditor extends ApiBase {
 					} elseif (
 						$block !== null &&
 						$block->getType() != DatabaseBlock::TYPE_AUTO &&
+						$targetUser &&
 						( $block->isSitewide() || $permissionManager->isBlockedFrom( $targetUser, $title ) )
 					) {
 						// Show log extract if the user is sitewide blocked or is partially
@@ -722,7 +783,7 @@ class ApiVisualEditor extends ApiBase {
 				ParamValidator::PARAM_DEFAULT => null,
 			],
 			'section' => null,
-			'stash' => null,
+			'stash' => false,
 			'oldid' => null,
 			'editintro' => null,
 			'pst' => false,

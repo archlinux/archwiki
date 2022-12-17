@@ -234,6 +234,19 @@ ve.init.mw.Target.static.parseDocument = function ( documentString, mode, sectio
 		mw.libs.ve.reduplicateStyles( doc.body );
 		// Fix relative or missing base URL if needed
 		this.fixBase( doc );
+		// Test: Remove tags injected by plugins during parse (T298147)
+		Array.prototype.forEach.call( doc.querySelectorAll( 'script' ), function ( element ) {
+			function truncate( text, l ) {
+				return text.length > l ? text.slice( 0, l ) + '…' : text;
+			}
+			var errorMessage = 'DOM content matching deny list found during parse:\n' + truncate( element.outerHTML, 100 ) +
+				'\nContext:\n' + truncate( element.parentNode.outerHTML, 200 );
+			mw.log.error( errorMessage );
+			var err = new Error( errorMessage );
+			err.name = 'VeDomDenyListWarning';
+			mw.errorLogger.logError( err, 'error.visualeditor' );
+			element.parentNode.removeChild( element );
+		} );
 	}
 
 	return doc;
@@ -411,16 +424,37 @@ ve.init.mw.Target.prototype.setSurface = function ( surface ) {
 /**
  * Intialise autosave, recovering changes if applicable
  *
- * @param {boolean} [suppressNotification=false] Don't notify the user if changes are recovered
+ * @param {Object} [config] Configuration options
+ * @cfg {boolean} [suppressNotification=false] Don't notify the user if changes are recovered
+ * @cfg {string} [docId] Document ID for storage grouping
+ * @cfg {ve.init.SafeStorage} [storage] Storage interface
  */
-ve.init.mw.Target.prototype.initAutosave = function ( suppressNotification ) {
-	var target = this,
-		surfaceModel = this.getSurface().getModel();
+ve.init.mw.Target.prototype.initAutosave = function ( config ) {
+	var target = this;
+
+	// Old function signature
+	// TODO: Remove after fixed downstream
+	if ( typeof config === 'boolean' ) {
+		config = { suppressNotification: config };
+	} else {
+		config = config || {};
+	}
+
+	var surfaceModel = this.getSurface().getModel();
+
+	if ( config.docId ) {
+		surfaceModel.setAutosaveDocId( config.docId );
+	}
+
+	if ( config.storage ) {
+		surfaceModel.setStorage( config.storage );
+	}
+
 	if ( this.recovered ) {
 		// Restore auto-saved transactions if document state was recovered
 		try {
 			surfaceModel.restoreChanges();
-			if ( !suppressNotification ) {
+			if ( !config.suppressNotification ) {
 				ve.init.platform.notify(
 					ve.msg( 'visualeditor-autosave-recovered-text' ),
 					ve.msg( 'visualeditor-autosave-recovered-title' )
@@ -543,7 +577,9 @@ ve.init.mw.Target.prototype.getWikitextFragment = function ( doc, useRevision ) 
 	var params = {
 		action: 'visualeditoredit',
 		paction: 'serialize',
-		html: ve.dm.converter.getDomFromModel( doc ).body.innerHTML,
+		html: mw.libs.ve.targetSaver.getHtml(
+			ve.dm.converter.getDomFromModel( doc )
+		),
 		page: this.getPageName()
 	};
 

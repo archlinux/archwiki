@@ -7,6 +7,8 @@ use IBufferingStatsdDataFactory;
 use MediaWiki\Config\ServiceOptions;
 use Psr\Log\LoggerInterface;
 use Title;
+use Wikimedia\WRStats\LocalEntityKey;
+use Wikimedia\WRStats\WRStatsFactory;
 
 /**
  * This class is used to create, store, and retrieve profiling information for single filters and
@@ -17,42 +19,30 @@ class FilterProfiler {
 	public const SERVICE_NAME = 'AbuseFilterFilterProfiler';
 
 	public const CONSTRUCTOR_OPTIONS = [
-		'AbuseFilterProfileActionsCap',
 		'AbuseFilterConditionLimit',
 		'AbuseFilterSlowFilterRuntimeLimit',
 	];
 
-	private const NULL_FILTER_PROFILE = [
-		// Number of observed executions of this filter
-		'count' => 0,
-		// Number of observed matches of this filter
-		'matches' => 0,
-		// Total time spent on this filter from all observed executions (in milliseconds)
-		'total-time' => 0.0,
-		// Total number of conditions for this filter from all executions
-		'total-cond' => 0,
-	];
-
-	private const NULL_GROUP_PROFILE = [
-		// Total number of actions observed
-		'total' => 0,
-		// Number of actions ending by exceeding condition limit
-		'overflow' => 0,
-		// Total time of execution of all observed actions (in milliseconds)
-		'total-time' => 0.0,
-		// Total number of conditions from all observed actions
-		'total-cond' => 0,
-		// Total number of filters matched
-		'matches' => 0,
-	];
-
 	/**
-	 * @var int How long to keep profiling data in cache (in seconds)
+	 * How long to keep profiling data in cache (in seconds)
 	 */
 	private const STATS_STORAGE_PERIOD = BagOStuff::TTL_DAY;
 
-	/** @var BagOStuff */
-	private $objectStash;
+	/** The stats time bucket size */
+	private const STATS_TIME_STEP = self::STATS_STORAGE_PERIOD / 12;
+
+	/** The WRStats spec common to all metrics */
+	private const STATS_TEMPLATE = [
+		'sequences' => [ [
+			'timeStep' => self::STATS_TIME_STEP,
+			'expiry' => self::STATS_STORAGE_PERIOD,
+		] ],
+	];
+
+	private const KEY_PREFIX = 'abusefilter-profile';
+
+	/** @var WRStatsFactory */
+	private $statsFactory;
 
 	/** @var ServiceOptions */
 	private $options;
@@ -66,34 +56,48 @@ class FilterProfiler {
 	/** @var LoggerInterface */
 	private $logger;
 
+	/** @var array */
+	private $statsSpecs;
+
 	/**
-	 * @param BagOStuff $objectStash
+	 * @param WRStatsFactory $statsFactory
 	 * @param ServiceOptions $options
 	 * @param string $localWikiID
 	 * @param IBufferingStatsdDataFactory $statsd
 	 * @param LoggerInterface $logger
 	 */
 	public function __construct(
-		BagOStuff $objectStash,
+		WRStatsFactory $statsFactory,
 		ServiceOptions $options,
 		string $localWikiID,
 		IBufferingStatsdDataFactory $statsd,
 		LoggerInterface $logger
 	) {
-		$this->objectStash = $objectStash;
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+		$this->statsFactory = $statsFactory;
 		$this->options = $options;
 		$this->localWikiID = $localWikiID;
 		$this->statsd = $statsd;
 		$this->logger = $logger;
+		$this->statsSpecs = [
+			'count' => self::STATS_TEMPLATE,
+			'total' => self::STATS_TEMPLATE,
+			'overflow' => self::STATS_TEMPLATE,
+			'matches' => self::STATS_TEMPLATE,
+			'total-time' => [ 'resolution' => 1e-3 ] + self::STATS_TEMPLATE,
+			'total-cond' => self::STATS_TEMPLATE
+		];
 	}
 
 	/**
 	 * @param int $filter
 	 */
 	public function resetFilterProfile( int $filter ): void {
-		$profileKey = $this->filterProfileKey( $filter );
-		$this->objectStash->delete( $profileKey );
+		$writer = $this->statsFactory->createWriter(
+			$this->statsSpecs,
+			self::KEY_PREFIX
+		);
+		$writer->resetAll( [ $this->filterProfileKey( $filter ) ] );
 	}
 
 	/**
@@ -104,8 +108,15 @@ class FilterProfiler {
 	 * @phan-return array{count:int,matches:int,total-time:float,total-cond:int}
 	 */
 	public function getFilterProfile( int $filter ): array {
-		return $this->objectStash->get( $this->filterProfileKey( $filter ) )
-			?: self::NULL_FILTER_PROFILE;
+		$reader = $this->statsFactory->createReader(
+			$this->statsSpecs,
+			self::KEY_PREFIX
+		);
+		return $reader->total( $reader->getRates(
+			[ 'count', 'matches', 'total-time', 'total-cond' ],
+			$this->filterProfileKey( $filter ),
+			$reader->latest( self::STATS_STORAGE_PERIOD )
+		) );
 	}
 
 	/**
@@ -116,8 +127,15 @@ class FilterProfiler {
 	 * @phan-return array{total:int,overflow:int,total-time:float,total-cond:int,matches:int}
 	 */
 	public function getGroupProfile( string $group ): array {
-		return $this->objectStash->get( $this->filterProfileGroupKey( $group ) )
-			?: self::NULL_GROUP_PROFILE;
+		$reader = $this->statsFactory->createReader(
+			$this->statsSpecs,
+			self::KEY_PREFIX
+		);
+		return $reader->total( $reader->getRates(
+			[ 'total', 'overflow', 'total-time', 'total-cond', 'matches' ],
+			$this->filterProfileGroupKey( $group ),
+			$reader->latest( self::STATS_STORAGE_PERIOD )
+		) );
 	}
 
 	/**
@@ -129,52 +147,18 @@ class FilterProfiler {
 	 * @param bool $matched
 	 */
 	private function recordProfilingResult( int $filter, float $time, int $conds, bool $matched ): void {
-		// Note: It is important that all key information be stored together in a single
-		// memcache entry to avoid race conditions where competing Apache instances
-		// partially overwrite the stats.
-		$profileKey = $this->filterProfileKey( $filter );
-		$this->objectStash->merge(
-			$profileKey,
-			static function ( $cache, $key, $profile ) use ( $time, $conds, $matched ) {
-				if ( $profile === false ) {
-					$profile = self::NULL_FILTER_PROFILE;
-				}
-
-				$profile['count']++;
-				if ( $matched ) {
-					$profile['matches']++;
-				}
-				$profile['total-time'] += $time;
-				$profile['total-cond'] += $conds;
-
-				return $profile;
-			},
-			BagOStuff::TTL_HOUR
+		$key = $this->filterProfileKey( $filter );
+		$writer = $this->statsFactory->createWriter(
+			$this->statsSpecs,
+			self::KEY_PREFIX
 		);
-	}
-
-	/**
-	 * Check if profiling data for all filters is lesser than the limit. If not, delete it and
-	 * also delete per-filter profiling for all filters. Note that we don't need to reset it for
-	 * disabled filters too, as their profiling data will be reset upon re-enabling anyway.
-	 *
-	 * @param string $group
-	 * @param string[] $allFilters
-	 */
-	public function checkResetProfiling( string $group, array $allFilters ): void {
-		$profile = $this->getGroupProfile( $group );
-		$total = $profile['total'];
-
-		if ( $total > $this->options->get( 'AbuseFilterProfileActionsCap' ) ) {
-			$profileKey = $this->filterProfileGroupKey( $group );
-			$this->objectStash->delete( $profileKey );
-			foreach ( $allFilters as $filter ) {
-				list( $filterID, $global ) = GlobalNameUtils::splitGlobalName( $filter );
-				if ( $global === false ) {
-					$this->resetFilterProfile( $filterID );
-				}
-			}
+		$writer->incr( 'count', $key );
+		if ( $matched ) {
+			$writer->incr( 'matches', $key );
 		}
+		$writer->incr( 'total-time', $key, $time );
+		$writer->incr( 'total-cond', $key, $conds );
+		$writer->flush();
 	}
 
 	/**
@@ -186,35 +170,26 @@ class FilterProfiler {
 	 * @param bool $anyMatch Whether at least one filter matched the action
 	 */
 	public function recordStats( string $group, int $condsUsed, float $totalTime, bool $anyMatch ): void {
-		$profileKey = $this->filterProfileGroupKey( $group );
-
-		// Note: All related data is stored in a single memcache entry and updated via merge()
-		// to avoid race conditions where partial updates on competing instances corrupt the data.
-		$this->objectStash->merge(
-			$profileKey,
-			function ( $cache, $key, $profile ) use ( $condsUsed, $totalTime, $anyMatch ) {
-				if ( $profile === false ) {
-					$profile = self::NULL_GROUP_PROFILE;
-				}
-
-				$profile['total']++;
-				$profile['total-time'] += $totalTime;
-				$profile['total-cond'] += $condsUsed;
-
-				// Increment overflow counter, if our condition limit overflowed
-				if ( $condsUsed > $this->options->get( 'AbuseFilterConditionLimit' ) ) {
-					$profile['overflow']++;
-				}
-
-				// Increment counter by 1 if there was at least one match
-				if ( $anyMatch ) {
-					$profile['matches']++;
-				}
-
-				return $profile;
-			},
-			self::STATS_STORAGE_PERIOD
+		$writer = $this->statsFactory->createWriter(
+			$this->statsSpecs,
+			self::KEY_PREFIX
 		);
+		$key = $this->filterProfileGroupKey( $group );
+
+		$writer->incr( 'total', $key );
+		$writer->incr( 'total-time', $key, $totalTime );
+		$writer->incr( 'total-cond', $key, $condsUsed );
+
+		// Increment overflow counter, if our condition limit overflowed
+		if ( $condsUsed > $this->options->get( 'AbuseFilterConditionLimit' ) ) {
+			$writer->incr( 'overflow', $key );
+		}
+
+		// Increment counter by 1 if there was at least one match
+		if ( $anyMatch ) {
+			$writer->incr( 'matches', $key );
+		}
+		$writer->flush();
 	}
 
 	/**
@@ -302,22 +277,22 @@ class FilterProfiler {
 	}
 
 	/**
-	 * Get the memcache access key used to store per-filter profiling data.
+	 * Get the WRStats entity key used to store per-filter profiling data.
 	 *
 	 * @param int $filter
-	 * @return string
+	 * @return LocalEntityKey
 	 */
-	private function filterProfileKey( int $filter ): string {
-		return $this->objectStash->makeKey( 'abusefilter-profile', 'v3', $filter );
+	private function filterProfileKey( int $filter ): LocalEntityKey {
+		return new LocalEntityKey( [ 'filter', (string)$filter ] );
 	}
 
 	/**
-	 * Memcache access key used to store overall profiling data for rule groups
+	 * WRStats entity key used to store overall profiling data for rule groups
 	 *
 	 * @param string $group
-	 * @return string
+	 * @return LocalEntityKey
 	 */
-	private function filterProfileGroupKey( string $group ): string {
-		return $this->objectStash->makeKey( 'abusefilter-profile', 'group', $group );
+	private function filterProfileGroupKey( string $group ): LocalEntityKey {
+		return new LocalEntityKey( [ 'group', $group ] );
 	}
 }

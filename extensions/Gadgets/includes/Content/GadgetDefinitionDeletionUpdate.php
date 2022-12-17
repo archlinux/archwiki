@@ -42,6 +42,6 @@ class GadgetDefinitionDeletionUpdate extends DataUpdate {
 	}
 
 	public function doUpdate() {
-		GadgetRepo::singleton()->handlePageDeletion( $this->target );
+		GadgetRepo::singleton()->handlePageUpdate( $this->target );
 	}
 }

@@ -6,12 +6,12 @@ use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
 use MediaWiki\Extension\AbuseFilter\KeywordsManager;
 use MediaWiki\Extension\AbuseFilter\Parser\AbuseFilterTokenizer;
 use MediaWiki\Extension\AbuseFilter\Parser\FilterEvaluator;
+use MediaWiki\Permissions\Authority;
 use MessageLocalizer;
 use OOUI\ButtonWidget;
 use OOUI\HorizontalLayout;
 use OOUI\Widget;
 use OutputPage;
-use User;
 use Xml;
 
 /**
@@ -30,11 +30,11 @@ class AceEditBoxBuiler extends EditBoxBuilder {
 		AbuseFilterPermissionManager $afPermManager,
 		KeywordsManager $keywordsManager,
 		MessageLocalizer $messageLocalizer,
-		User $user,
+		Authority $authority,
 		OutputPage $output,
 		PlainEditBoxBuiler $plainBuilder
 	) {
-		parent::__construct( $afPermManager, $keywordsManager, $messageLocalizer, $user, $output );
+		parent::__construct( $afPermManager, $keywordsManager, $messageLocalizer, $authority, $output );
 		$this->plainBuilder = $plainBuilder;
 	}
 

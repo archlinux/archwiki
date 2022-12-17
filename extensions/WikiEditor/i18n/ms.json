@@ -43,7 +43,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Laman ini tidak wujud di {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Tajuk yang anda nyatakan tidak sah",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Pautan luar",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Memeriksa kewujudan laman...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Laman ini bukan laman kandungan namun senarai topik dengan nama yang serupa",
 	"wikieditor-toolbar-tool-link-int-invalid": "Tajuk yang anda nyatakan tidak sah.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL yang diselitkan merupakan halaman wiki? Adakah anda ingin menyelitkan pautan dalaman?",
@@ -197,5 +196,10 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Teks normal<br />:Teks terinden<br />::Teks terinden",
 	"wikieditor-toolbar-help-content-indent-result": "Teks normal<dl><dd>Teks terinden<dl><dd>Teks terinden</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Suntingan dibuat menggunakan [[mw:Special:MyLanguage/Extension:WikiEditor|WikiPenyunting]] (penyunting wikiteks 2010)",
-	"wikieditor-realtimepreview-preview": "Pralihat"
+	"wikieditor-realtimepreview-preview": "Pralihat",
+	"wikieditor-realtimepreview-error": "Pralihat tidak memuat",
+	"wikieditor-realtimepreview-reload": "Muat semula",
+	"wikieditor-realtimepreview-beta-label": "Pralihat Masa Nyata",
+	"wikieditor-realtimepreview-beta-desc": "Lihat cara perubahan wikiteks akan muncul kepada pembaca di dalam [[mw:Special:MyLanguage/Extension:WikiEditor|penyunting 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Muat semula anak tetingkap pralihat masa nyata"
 }

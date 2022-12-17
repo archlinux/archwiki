@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bennylin",
 			"Daud I.F. Argana",
 			"Farras",
@@ -10,9 +11,9 @@
 			"Iwan Novirion",
 			"Kenrick95",
 			"Macofe",
+			"Veracious",
 			"William Surya Permana",
-			"WongKentir",
-			"Amire80"
+			"WongKentir"
 		]
 	},
 	"wikieditor": "Antarmuka penyuntingan teks wiki canggih",
@@ -46,7 +47,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Halaman ini tidak ada di {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Judul yang Anda berikan tidak sah",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Pranala luar",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "Memeriksa keberadaan halaman...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Halaman ini bukanlah halaman konten, melainkan daftar topik dengan nama yang mirip",
 	"wikieditor-toolbar-tool-link-int-invalid": "Judul yang Anda berikan tidak sah.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL yang Anda berikan tampaknya merupakan pranala ke halaman wiki lain.\nApakah Anda ingin membuatnya menjadi pranala internal?",
@@ -203,5 +203,13 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Teks biasa<br />:Teks inden<br />::Teks inden",
 	"wikieditor-toolbar-help-content-indent-result": "Teks normal<dl><dd>Teks inden<dl><dd>Teks inden</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Suntingan dibuat menggunakan [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (editor teks wiki 2010)",
-	"wikieditor-realtimepreview-preview": "Pratayang"
+	"wikieditor-realtimepreview-preview": "Pratayang",
+	"wikieditor-realtimepreview-error": "Pratayang tidak termuat",
+	"wikieditor-realtimepreview-reload": "Muat ulang",
+	"wikieditor-realtimepreview-beta-label": "Pratayang Waktu Nyata",
+	"wikieditor-realtimepreview-beta-desc": "Lihat bagaimana perubahan teks wiki akan dilihat oleh pembaca di dalam [[mw:Special:MyLanguage/Extension:WikiEditor|editor tahun 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Muat ulang pratayang waktu nyata",
+	"wikieditor-realtimepreview-manual": "Tolong muat ulang sekarang untuk melihat pratayang suntingan Anda secara manual.",
+	"wikieditor-realtimepreview-onboarding-title": "Pratinjau Waktu Nyata",
+	"wikieditor-realtimepreview-onboarding-button": "Oke, saya paham"
 }

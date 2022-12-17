@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Ext\Gallery;
 
 use stdClass;
+use Wikimedia\Assert\UnreachableException;
 use Wikimedia\Parsoid\Core\MediaStructure;
 use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
@@ -15,6 +16,7 @@ use Wikimedia\Parsoid\Ext\ExtensionTagHandler;
 use Wikimedia\Parsoid\Ext\ParsoidExtensionAPI;
 use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\PHPUtils;
+use Wikimedia\Parsoid\Utils\WTUtils;
 
 /**
  * Implements the php parser's `renderImageGallery` natively.
@@ -98,13 +100,12 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 		$doc = $thumb->ownerDocument;
 		$rdfaType = $thumb->getAttribute( 'typeof' ) ?? '';
 
+		// T214601: Account for a format being set in $imageOptStr
+		$rdfaType = preg_replace( '#mw:File(/\w+)?\b#', 'mw:File', $rdfaType, 1 );
+
 		// Detach figcaption as well
 		$figcaption = DOMCompat::querySelector( $thumb, 'figcaption' );
-		if ( !$figcaption ) {
-			$figcaption = $doc->createElement( 'figcaption' );
-		} else {
-			DOMCompat::remove( $figcaption );
-		}
+		DOMCompat::remove( $figcaption );
 
 		if ( $opts->showfilename ) {
 			// No need for error checking on this call since it was already
@@ -200,6 +201,13 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 				if ( !$thumb ) {
 					break;
 				}
+				$gallerytext = DOMCompat::querySelector( $child, '.gallerytext' );
+				if ( $gallerytext ) {
+					$showfilename = DOMCompat::querySelector( $gallerytext, '.galleryfilename' );
+					if ( $showfilename ) {
+						DOMCompat::remove( $showfilename ); // Destructive to the DOM!
+					}
+				}
 				$ms = MediaStructure::parse( DOMUtils::firstNonSepChild( $thumb ) );
 				if ( $ms ) {
 					// FIXME: Dry all this out with T252246 / T262833
@@ -210,9 +218,15 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 						// match the link handler so that values stashed in
 						// data-mw aren't ignored.
 						if ( $ms->hasAlt() ) {
-							$alt = $ms->getAlt();
-							$content .= '|alt=' .
-								$extApi->escapeWikitext( $alt, $child, $extApi::IN_MEDIA );
+							$altOnElt = trim( $ms->getAlt() );
+							$altFromCaption = $gallerytext ?
+								trim( WTUtils::textContentFromCaption( $gallerytext ) ) : '';
+							// The first condition is to support an empty \alt=\ option
+							// when no caption is present
+							if ( !$altOnElt || ( $altOnElt !== $altFromCaption ) ) {
+								$content .= '|alt=' .
+									$extApi->escapeWikitext( $altOnElt, $child, $extApi::IN_MEDIA );
+							}
 						}
 						// FIXME: Handle missing media
 						if ( $ms->hasMediaUrl() && !$ms->isRedLink() ) {
@@ -231,12 +245,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 					// that version is no longer supported.
 					$content .= $thumb->textContent;
 				}
-				$gallerytext = DOMCompat::querySelector( $child, '.gallerytext' );
 				if ( $gallerytext ) {
-					$showfilename = DOMCompat::querySelector( $gallerytext, '.galleryfilename' );
-					if ( $showfilename ) {
-						DOMCompat::remove( $showfilename ); // Destructive to the DOM!
-					}
 					$caption = $extApi->domChildrenToWikitext(
 						$gallerytext, $extApi::IN_IMG_CAPTION
 					);
@@ -255,8 +264,7 @@ class Gallery extends ExtensionTagHandler implements ExtensionModule {
 				// Ignore it
 				break;
 			default:
-				PHPUtils::unreachable( 'should not be here!' );
-				break;
+				throw new UnreachableException( 'should not be here!' );
 			}
 		}
 		return $content;

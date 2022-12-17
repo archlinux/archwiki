@@ -15,5 +15,5 @@
 	"vector-view-history": "Nwuan nkhang",
 	"vector-view-view": "Fang",
 	"vector-more-actions": "Nkyang njhyang",
-	"vector-searchsuggest-containing": "Zop ngwat na̱ byia̱ <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Zop ngwat na̱ byia̱ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

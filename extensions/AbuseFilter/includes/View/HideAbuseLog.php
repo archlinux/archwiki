@@ -43,7 +43,7 @@ class HideAbuseLog extends AbuseFilterView {
 		$output = $this->getOutput();
 		$output->enableOOUI();
 
-		if ( !$this->afPermManager->canHideAbuseLog( $this->getUser() ) ) {
+		if ( !$this->afPermManager->canHideAbuseLog( $this->getAuthority() ) ) {
 			$output->addWikiMsg( 'abusefilter-log-hide-forbidden' );
 			return;
 		}
@@ -123,7 +123,7 @@ class HideAbuseLog extends AbuseFilterView {
 			$output->addHTML( "<h2>" . $suppressLogPage->getName()->escaped() . "</h2>\n" );
 			$searchTitles = [];
 			foreach ( $this->hideIDs as $id ) {
-				$searchTitles[] = $this->getTitle( (string)$id )->getDBKey();
+				$searchTitles[] = $this->getTitle( (string)$id )->getDBkey();
 			}
 			$conds = [ 'log_namespace' => NS_SPECIAL, 'log_title' => $searchTitles ];
 			LogEventsList::showLogExtract( $output, 'suppress', '', '', [ 'conds' => $conds ] );

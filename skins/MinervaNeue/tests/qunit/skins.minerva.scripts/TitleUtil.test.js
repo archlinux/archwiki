@@ -1,116 +1,171 @@
 ( function () {
 	var TitleUtil = require( '../../../resources/skins.minerva.scripts/TitleUtil.js' );
+	var mwUriOrg = mw.Uri;
 
 	QUnit.module( 'Minerva TitleUtil', QUnit.newMwEnvironment( {
-		setup: function () {
+		beforeEach: function () {
 			this.mwUriOrg = mw.Uri;
 			mw.Uri = mw.UriRelative( 'https://meta.wikimedia.org/w/index.php' );
+			mw.config.set( {
+				wgArticlePath: '/wiki/$1',
+				wgScriptPath: '/w'
+			} );
 		},
-		teardown: function () {
-			mw.Uri = this.mwUriOrg;
-			delete this.mwUriOrg;
+		afterEach: function () {
+			mw.Uri = mwUriOrg;
 		},
+		// mw.Title relies on these three config vars
+		// Restore them after each test run
 		config: {
-			wgArticlePath: '/wiki/$1',
-			wgScriptPath: '/w'
+			wgFormattedNamespaces: {
+				'-2': 'Media',
+				'-1': 'Special',
+				0: '',
+				1: 'Talk',
+				2: 'User',
+				3: 'User talk',
+				4: 'Wikipedia',
+				5: 'Wikipedia talk',
+				6: 'File',
+				7: 'File talk',
+				8: 'MediaWiki',
+				9: 'MediaWiki talk',
+				10: 'Template',
+				11: 'Template talk',
+				12: 'Help',
+				13: 'Help talk',
+				14: 'Category',
+				15: 'Category talk',
+				// testing custom / localized namespace
+				100: 'Penguins'
+			},
+			wgNamespaceIds: {
+				/* eslint-disable camelcase */
+				media: -2,
+				special: -1,
+				'': 0,
+				talk: 1,
+				user: 2,
+				user_talk: 3,
+				wikipedia: 4,
+				wikipedia_talk: 5,
+				file: 6,
+				file_talk: 7,
+				mediawiki: 8,
+				mediawiki_talk: 9,
+				template: 10,
+				template_talk: 11,
+				help: 12,
+				help_talk: 13,
+				category: 14,
+				category_talk: 15,
+				image: 6,
+				image_talk: 7,
+				project: 4,
+				project_talk: 5,
+				// Testing custom namespaces and aliases
+				penguins: 100,
+				antarctic_waterfowl: 100
+				/* eslint-enable camelcase */
+			},
+			wgCaseSensitiveNamespaces: []
 		}
 	} ) );
 
-	QUnit.test( '.newFromUri()', function ( assert ) {
-		[ '', 'https://meta.wikimedia.org' ].forEach( function ( authority, index ) {
-			var
-				indexMsg = 'case ' + index + ' ',
-				authorityMsg = ' authority="' + authority + '"',
-				validateReadOnlyLink = { validateReadOnlyLink: true };
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/w/index.php?title=Title' ).getPrefixedDb(),
-				'Title',
-				indexMsg + 'title is in query parameter' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/wiki/Title' ).getPrefixedDb(),
-				'Title',
-				indexMsg + 'title is in path' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/foo/bar/wiki/Title' ),
-				null,
-				indexMsg + 'title is not in nonmatching path' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/wiki/%E6%B8%AC%E8%A9%A6' ).getPrefixedDb(),
-				'測試',
-				indexMsg + 'title is decoded' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/wiki/Foo bar' ).getPrefixedDb(),
-				'Foo_bar',
-				indexMsg + 'title with space is decoded' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/wiki/Foo%20bar' ).getPrefixedDb(),
-				'Foo_bar',
-				indexMsg + 'title with encoded space is decoded' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/w/index.php?title=Title#fragment' ).getPrefixedDb(),
-				'Title',
-				indexMsg + 'fragment is omitted from query title' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/wiki/Title#fragment' ).getPrefixedDb(),
-				'Title',
-				indexMsg + 'fragment is omitted from path title' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/w/index.php?title=Title#fragment' ).getFragment(),
-				'fragment',
-				indexMsg + 'fragment is present after query parameter' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/wiki/Title#fragment' ).getFragment(),
-				'fragment',
-				indexMsg + 'fragment is present after path' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/w/index.php?title=Title#foo%20bar' ).getFragment(),
-				'foo bar',
-				indexMsg + 'fragment is decoded' + authorityMsg
-			);
+	QUnit.test.each( '.newFromUri() authority', {
+		empty: '',
+		metawiki: 'https://meta.wikimedia.org'
+	}, function ( assert, authority ) {
+		var validateReadOnlyLink = { validateReadOnlyLink: true };
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/w/index.php?title=Title' ).getPrefixedDb(),
+			'Title',
+			'title is in query parameter'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/wiki/Title' ).getPrefixedDb(),
+			'Title',
+			'title is in path'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/foo/bar/wiki/Title' ),
+			null,
+			'title is not in nonmatching path'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/wiki/%E6%B8%AC%E8%A9%A6' ).getPrefixedDb(),
+			'測試',
+			'title is decoded'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/wiki/Foo bar' ).getPrefixedDb(),
+			'Foo_bar',
+			'title with space is decoded'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/wiki/Foo%20bar' ).getPrefixedDb(),
+			'Foo_bar',
+			'title with encoded space is decoded'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/w/index.php?title=Title#fragment' ).getPrefixedDb(),
+			'Title',
+			'fragment is omitted from query title'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/wiki/Title#fragment' ).getPrefixedDb(),
+			'Title',
+			'fragment is omitted from path title'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/w/index.php?title=Title#fragment' ).getFragment(),
+			'fragment',
+			'fragment is present after query parameter'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/wiki/Title#fragment' ).getFragment(),
+			'fragment',
+			'fragment is present after path'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/w/index.php?title=Title#foo%20bar' ).getFragment(),
+			'foo bar',
+			'fragment is decoded'
+		);
 
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/w/index.php?title=Title', validateReadOnlyLink ).getPrefixedDb(),
-				'Title',
-				indexMsg + 'query title is read-only' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/wiki/Title', validateReadOnlyLink ).getPrefixedDb(),
-				'Title',
-				indexMsg + 'path title is read-only' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/w/index.php?title=Title&oldid=123', validateReadOnlyLink ).getPrefixedDb(),
-				'Title',
-				indexMsg + 'query title with revision is read-only' + authorityMsg
-			);
-			assert.strictEqual(
-				TitleUtil.newFromUri( authority + '/w/index.php?title=Title&param', validateReadOnlyLink ),
-				null,
-				indexMsg + 'query title with unknown parameter is not read-only' + authorityMsg
-			);
-		} );
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/w/index.php?title=Title', validateReadOnlyLink ).getPrefixedDb(),
+			'Title',
+			'query title is read-only'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/wiki/Title', validateReadOnlyLink ).getPrefixedDb(),
+			'Title',
+			'path title is read-only'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/w/index.php?title=Title&oldid=123', validateReadOnlyLink ).getPrefixedDb(),
+			'Title',
+			'query title with revision is read-only'
+		);
+		assert.strictEqual(
+			TitleUtil.newFromUri( authority + '/w/index.php?title=Title&param', validateReadOnlyLink ),
+			null,
+			'query title with unknown parameter is not read-only'
+		);
+	} );
 
-		// Bad or odd inputs.
-		[
-			'%', null, undefined, '', ' ', '/', {}, '\\', '/wiki/%', '/w/index.php?title=%'
-		].forEach( function ( input, index ) {
-			assert.strictEqual(
-				TitleUtil.newFromUri( input ),
-				null,
-				'Case ' + index + ' no Title in bad input input="' + input + '"'
-			);
-		} );
+	QUnit.test.each( '.newFromUri() bad input', [
+		'%', null, undefined, '', ' ', '/', {}, '\\', '/wiki/%', '/w/index.php?title=%'
+	], function ( assert, input ) {
+		assert.strictEqual(
+			TitleUtil.newFromUri( input ),
+			null,
+			'no Title in bad input input="' + input + '"'
+		);
+	} );
 
+	QUnit.test( '.newFromUri() misc', function ( assert ) {
 		// Parameters are passed to Uri's constructor.
 		assert.strictEqual(
 			TitleUtil.newFromUri( { protocol: 'https',

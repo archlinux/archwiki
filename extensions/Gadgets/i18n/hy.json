@@ -4,7 +4,8 @@
 			"Aram1985",
 			"Kareyac",
 			"Xelgen",
-			"Աշոտ1997"
+			"Աշոտ1997",
+			"Սերգեյ Սաֆարյան"
 		]
 	},
 	"gadgets-desc": "Թույլ է տալիս օգտագործողներին ընտրել հատուկ [[Special:Gadgets|ՍիԷսԷս և ՋավաՍկիրպտ (CSS and JavaScript) գադջեթներ]] իրանց [[Special:Preferences#mw-prefsection-gadgets|նախընտրությունների]] էջում։",
@@ -21,5 +22,5 @@
 	"gadgets-export": "Արտահանել",
 	"gadgets-export-title": "Գադջեթի արտահանում",
 	"gadgets-not-found": "$1 գադջեթը չի գտնվել",
-	"gadgets-export-download": "Բեռնել"
+	"gadgets-export-download": "Ներբեռնել"
 }

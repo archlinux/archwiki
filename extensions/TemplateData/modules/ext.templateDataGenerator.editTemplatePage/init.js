@@ -42,7 +42,7 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 	if ( $textbox.length ) {
 		// Prepare the editor
 		var wtTarget = new Target( $textbox, config );
-		$( '#mw-content-text' ).prepend( wtTarget.$element );
+		$( '.tdg-editscreen-placeholder' ).replaceWith( wtTarget.$element );
 	}
 	var veTarget;
 	// Visual editor source mode

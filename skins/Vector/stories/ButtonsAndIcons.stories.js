@@ -1,9 +1,9 @@
-import wvui from '@wikimedia/wvui';
-import Vue from 'vue';
+import { CdxIcon, CdxButton } from '@wikimedia/codex';
+import '../node_modules/@wikimedia/codex/dist/codex.style.css';
+import { h, createApp } from 'vue';
 import buttonTemplate from '!!raw-loader!../includes/templates/Button.mustache';
-import '@wikimedia/wvui/dist/wvui.css';
 import mustache from 'mustache';
-const wvuiIconAdd = 'M11 9V4H9v5H4v2h5v5h2v-5h5V9z';
+import { cdxIconAdd } from '@wikimedia/codex-icons';
 
 export default {
 	title: 'Icon and Buttons'
@@ -52,25 +52,20 @@ function makeButtonLegacy( props, label ) {
  */
 function makeButton( props, text, icon ) {
 	const el = document.createElement( 'div' );
-	const vm = new Vue( {
-		el,
-		render: function ( createElement ) {
-			return createElement( wvui.WvuiButton, {
-				props
-			}, [
-				createElement( wvui.WvuiIcon, {
-					props: {
-						icon
-					}
-				} ),
+	const vm = createApp( {
+		render: function () {
+			// @ts-ignore
+			return h( CdxButton, props, [
+				h( CdxIcon, { icon } ),
 				text
 			] );
 		}
 	} );
+	vm.mount( el );
 	return `
 	<tr>
 		<td>${makeButtonLegacy( props, text )}</td>
-		<td>${vm.$el.outerHTML}</td>
+		<td>${el.outerHTML}</td>
 	</tr>`;
 }
 
@@ -114,7 +109,7 @@ function makeButtons( btns ) {
 	<tbody>
 		<tr>
 			<th>Legacy</th>
-			<th>WVUI</th>
+			<th>Codex</th>
 		</tr>
 		${btns.join( '\n' )}
 	</tbody>
@@ -128,26 +123,26 @@ export const Button = () => makeButtons( [
 	makeButton( {
 		action: 'default',
 		type: 'quiet'
-	}, 'Quiet button', wvuiIconAdd ),
+	}, 'Quiet button', cdxIconAdd ),
 	makeButton( {
 		action: 'progressive',
 		type: 'quiet'
-	}, 'Quiet progressive', wvuiIconAdd ),
+	}, 'Quiet progressive', cdxIconAdd ),
 	makeButton( {
 		action: 'destructive',
 		type: 'quiet'
-	}, 'Quiet destructive', wvuiIconAdd ),
+	}, 'Quiet destructive', cdxIconAdd ),
 	makeButton( {
 		action: 'default',
 		type: 'normal'
-	}, 'Normal', wvuiIconAdd ),
+	}, 'Normal', cdxIconAdd ),
 	makeButton( {
 		type: 'primary',
 		action: 'progressive'
-	}, 'Progressive primary', wvuiIconAdd ),
+	}, 'Progressive primary', cdxIconAdd ),
 	makeButton( {
 		type: 'primary',
 		action: 'destructive'
-	}, 'Destructive primary', wvuiIconAdd ),
+	}, 'Destructive primary', cdxIconAdd ),
 	makeIcon()
 ] );

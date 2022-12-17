@@ -6,7 +6,9 @@
  */
 
 /**
- * MediaWiki transclusion dialog placeholder page.
+ * The placeholder is shown in the template dialog content pane, and allows the
+ * user to enter a template name.  Once a name is chosen, the placeholder is
+ * replaced with elements for the concrete template.
  *
  * @class
  * @extends OO.ui.PageLayout
@@ -18,8 +20,6 @@
  * @cfg {jQuery} [$overlay] Overlay to render dropdowns in
  */
 ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeholder, name, config ) {
-	var veConfig = mw.config.get( 'wgVisualEditorConfig' );
-
 	// Configuration initialization
 	config = ve.extendObject( {
 		scrollable: false
@@ -48,7 +48,7 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 	this.addTemplateInput.$input.attr( 'aria-label', ve.msg( 'visualeditor-dialog-transclusion-add-template' ) );
 
 	this.addTemplateButton = new OO.ui.ButtonWidget( {
-		label: ve.msg( 'visualeditor-dialog-transclusion-add-template' ),
+		label: ve.msg( 'visualeditor-dialog-transclusion-add-template-save' ),
 		flags: [ 'progressive' ],
 		classes: [ 've-ui-mwTransclusionDialog-addButton' ],
 		disabled: true
@@ -68,52 +68,27 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 		items: [ addTemplateActionFieldLayout ]
 	};
 
-	// Temporary switch for verbose template search.
-	if ( mw.config.get( 'wgVisualEditorConfig' ).templateSearchImprovements ) {
-		var dialogTitle = this.placeholder.getTransclusion().isSingleTemplate() ?
-			'visualeditor-dialog-transclusion-template-search' :
-			'visualeditor-dialog-transclusion-add-template';
+	var dialogTitle = this.placeholder.getTransclusion().isSingleTemplate() ?
+		'visualeditor-dialog-transclusion-template-search' :
+		'visualeditor-dialog-transclusion-add-template';
 
-		// Temporary feedback message when templateSearchImprovements is true T284560
-		// TODO: remove when templateSearchImprovements are out of beta
-		var feedbackMessage = new ve.ui.MWDismissibleMessageWidget( {
-			messageKey: 'visualeditor-dialog-transclusion-feedback-message'
-		} )
-			.connect( this, { close: 'focus' } );
+	// TODO: Remove `mw.storage.remove` after a few months, let's say December 2022.
+	mw.storage.remove( 'mwe-visualeditor-hide-visualeditor-dialog-transclusion-feedback-message' );
 
-		addTemplateFieldsetConfig = ve.extendObject( addTemplateFieldsetConfig, {
-			// The following messages are used here:
-			// * visualeditor-dialog-transclusion-template-search
-			// * visualeditor-dialog-transclusion-add-template
-			label: ve.msg( dialogTitle ),
-			help: ve.msg( 'visualeditor-dialog-transclusion-template-search-help' ),
-			helpInline: true,
-			// TODO: remove this line when templateSearchImprovements are out of beta
-			items: [].concat( [ feedbackMessage ], addTemplateFieldsetConfig.items )
-		} );
-	}
+	addTemplateFieldsetConfig = ve.extendObject( addTemplateFieldsetConfig, {
+		// The following messages are used here:
+		// * visualeditor-dialog-transclusion-template-search
+		// * visualeditor-dialog-transclusion-add-template
+		label: ve.msg( dialogTitle ),
+		help: ve.msg( 'visualeditor-dialog-transclusion-template-search-help' ),
+		helpInline: true
+	} );
 	this.addTemplateFieldset = new OO.ui.FieldsetLayout( addTemplateFieldsetConfig );
 
 	// Initialization
 	this.$element
 		.addClass( 've-ui-mwTemplatePlaceholderPage' )
 		.append( this.addTemplateFieldset.$element );
-
-	if ( !veConfig.transclusionDialogNewSidebar ) {
-		this.removeButton = new OO.ui.ButtonWidget( {
-			framed: false,
-			icon: 'trash',
-			title: ve.msg( 'visualeditor-dialog-transclusion-remove-template' ),
-			flags: [ 'destructive' ],
-			classes: [ 've-ui-mwTransclusionDialog-removeButton' ]
-		} )
-			.connect( this, { click: 'onRemoveButtonClick' } );
-
-		if ( this.placeholder.getTransclusion().isSingleTemplate() ) {
-			this.removeButton.toggle( false );
-		}
-		this.$element.append( this.removeButton.$element );
-	}
 };
 
 /* Inheritance */
@@ -121,26 +96,6 @@ ve.ui.MWTemplatePlaceholderPage = function VeUiMWTemplatePlaceholderPage( placeh
 OO.inheritClass( ve.ui.MWTemplatePlaceholderPage, OO.ui.PageLayout );
 
 /* Methods */
-
-/**
- * @inheritdoc
- */
-ve.ui.MWTemplatePlaceholderPage.prototype.setupOutlineItem = function () {
-	var dialogTitle = ( this.placeholder.getTransclusion().isSingleTemplate() &&
-		mw.config.get( 'wgVisualEditorConfig' ).templateSearchImprovements ) ?
-		'visualeditor-dialog-transclusion-template-search' :
-		'visualeditor-dialog-transclusion-add-template';
-
-	this.outlineItem
-		.setIcon( 'puzzle' )
-		.setMovable( true )
-		.setRemovable( true )
-		.setFlags( [ 'placeholder' ] )
-		// The following messages are used here:
-		// * visualeditor-dialog-transclusion-template-search
-		// * visualeditor-dialog-transclusion-add-template
-		.setLabel( ve.msg( dialogTitle ) );
-};
 
 /**
  * @inheritDoc OO.ui.PanelLayout
@@ -185,14 +140,13 @@ ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
 	mw.track( 'event.VisualEditorTemplateDialogUse', event );
 
 	var part = ve.dm.MWTemplateModel.newFromName( transclusion, name );
-	transclusion.replacePart( this.placeholder, part );
+	transclusion.replacePart( this.placeholder, part ).then(
+		transclusion.addPromptedParameters.bind( transclusion )
+	);
 	this.addTemplateInput.pushPending();
 	// abort pending lookups, also, so the menu can't appear after we've left the page
 	this.addTemplateInput.closeLookupMenu();
 	this.addTemplateButton.setDisabled( true );
-	if ( this.removeButton ) {
-		this.removeButton.setDisabled( true );
-	}
 };
 
 /**
@@ -200,11 +154,4 @@ ve.ui.MWTemplatePlaceholderPage.prototype.onAddTemplate = function () {
  */
 ve.ui.MWTemplatePlaceholderPage.prototype.onTemplateInputChange = function () {
 	this.addTemplateButton.setDisabled( this.addTemplateInput.getMWTitle() === null );
-};
-
-/**
- * @private
- */
-ve.ui.MWTemplatePlaceholderPage.prototype.onRemoveButtonClick = function () {
-	this.placeholder.remove();
 };

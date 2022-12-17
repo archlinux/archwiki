@@ -41,6 +41,7 @@
 	"abusefilter-edit-new": "Fîltreya nû",
 	"abusefilter-edit-save": "Fîltreyê qeyd bike",
 	"abusefilter-edit-id": "IDya Fîltreyê:",
+	"abusefilter-edit-switch-editor": "Edîtorê biguhêre",
 	"abusefilter-edit-description": "Daxuyanî:\n:''(ji aliye her kesî dikare were dîtin)''",
 	"abusefilter-edit-field-description": "danasîn",
 	"abusefilter-edit-group": "Komê parzûnê:",
@@ -81,7 +82,7 @@
 	"abusefilter-revert-reasonfield": "Sedem:",
 	"abusefilter-test-submit": "Test",
 	"abusefilter-test-load": "Bar bike",
-	"abusefilter-examine-legend": "Guhertinan bibijêre",
+	"abusefilter-examine-legend": "Guhartinan bibijêre",
 	"abusefilter-examine-submit": "Lêgerîn",
 	"abusefilter-topnav-home": "Mal",
 	"abusefilter-topnav-recentchanges": "Guhartinên parzûnan yên dawî"

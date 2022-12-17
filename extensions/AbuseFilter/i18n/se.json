@@ -3,10 +3,13 @@
 		"authors": [
 			"Jeblad",
 			"Linnea",
-			"Yupik"
+			"Yupik",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
 	"abuselog": "Boasttogeavahanfiltera logga",
+	"abusefilter-log-search-user": "Geavaheaddji:",
+	"abusefilter-log-search-wiki": "Wiki:",
 	"abusefilter-log-search-submit": "Oza",
 	"abusefilter-log-hide-show": "Čájet",
 	"abusefilter-log-hide-hide": "Čiega",

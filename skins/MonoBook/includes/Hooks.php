@@ -22,11 +22,19 @@
 
 namespace MonoBook;
 
+use MediaWiki\Hook\OutputPageBodyAttributesHook;
+use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use OutputPage;
 use Skin;
 use SkinTemplate;
 
-class Hooks {
+/**
+ * @phpcs:disable MediaWiki.NamingConventions.LowerCamelFunctionsName.FunctionName
+ */
+class Hooks implements
+	OutputPageBodyAttributesHook,
+	SkinTemplateNavigation__UniversalHook
+{
 	/**
 	 * Add the "monobook-capitalize-all-nouns" CSS class to the <body> element for German
 	 * (de) and various languages which have German set as a fallback language, such
@@ -38,7 +46,7 @@ class Hooks {
 	 * @param Skin $skin
 	 * @param array &$bodyAttrs Pre-existing attributes for the <body> element
 	 */
-	public static function onOutputPageBodyAttributes( OutputPage $out, Skin $skin, &$bodyAttrs ) {
+	public function onOutputPageBodyAttributes( $out, $skin, &$bodyAttrs ): void {
 		$lang = $skin->getLanguage();
 		if (
 			$skin->getSkinName() === 'monobook' && (
@@ -56,7 +64,7 @@ class Hooks {
 	 * @param SkinTemplate $skin
 	 * @param array &$content_navigation
 	 */
-	public static function onSkinTemplateNavigationUniversal( SkinTemplate $skin, array &$content_navigation ) {
+	public function onSkinTemplateNavigation__Universal( $skin, &$content_navigation ): void {
 		$title = $skin->getTitle();
 		if ( $skin->getSkinName() === 'monobook' ) {
 			$tabs = [];

@@ -123,8 +123,6 @@
 	 * Opens a dialog.
 	 */
 	DP.openDialog = function () {
-		mw.mmv.actionLogger.log( this.eventPrefix + '-open' );
-
 		this.startListeningToOutsideClick();
 		this.$dialog.show();
 		this.isOpen = true;
@@ -135,10 +133,6 @@
 	 * Closes a dialog.
 	 */
 	DP.closeDialog = function () {
-		if ( this.isOpen ) {
-			mw.mmv.actionLogger.log( this.eventPrefix + '-close' );
-		}
-
 		this.stopListeningToOutsideClick();
 		this.$dialog.hide();
 		this.isOpen = false;

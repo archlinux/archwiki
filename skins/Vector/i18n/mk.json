@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Bjankuloski06",
 			"Brest"
 		]
@@ -8,7 +9,6 @@
 	"skinname-vector": "Старо векторско (2010)",
 	"skinname-vector-2022": "Векторско (2022)",
 	"vector-specialversion-name": "Векторско",
-	"tooltip-pt-watchlist-2": "Список на страници кои сте избрале да ги набљудувате.",
 	"vector-skin-desc": "Дава две верзии на „Векторско“:\n\n* 2011 — Современа верзија на рувото „Монобук“ со свеж изглед и многу подобрувања на употребливоста.\n* 2022 — „Векторско“ изработено како дел од проектот  „[[mw:Desktop Improvements|Столни подобрувања]]“ на Фондацијата Викимедија.",
 	"prefs-vector-enable-vector-1-label": "Користи Векторско по старо",
 	"prefs-vector-enable-vector-1-help": "Во текот на следните неколку години постепено ќе го надградуваме рувото Векторско. Неговата употреба по старо ќе ви овозможува да ја гледате старата верзија (по податок од декември 2019 г.). За да дознаете повеќе за надградбите, појдете на нашата [[mw:Reading/Web/Desktop_Improvements|проектна страница]].",
@@ -20,6 +20,8 @@
 	"vector-languages": "Јазици",
 	"vector-language-button-aria-label": "Појдете на статија на друг јазик. Достапно на {{PLURAL:$1|$1 јазик|$1 јазици}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 јазик|$1 јазици}}",
+	"vector-no-language-button-label": "Додај јазици",
+	"vector-no-language-button-aria-label": "Оваа статија постои само на овој јазик. Додајте ја статијата за други јазици",
 	"vector-language-redirect-to-top": "Јазичните врски на проектот {{SITENAME}} се во горниот дел на страницата, спроти насловот на статијата. [[#p-lang-btn|Одете најгоре]].",
 	"vector-language-variant-switcher-label": "Менување на јазичната варијанта",
 	"vector-action-addsection": "Додај тема",
@@ -38,14 +40,21 @@
 	"vector-jumptocontent": "Прејди на содржината",
 	"vector-more-actions": "Повеќе",
 	"vector-search-loader": "Вчитувам предлози за пребарувањето",
-	"vector-searchsuggest-containing": "Пребарај страници кои го содржат <strong class=\"wvui-typeahead-search__suggestions__footer__text__query\">$1</strong>",
+	"vector-searchsuggest-containing": "Пребарај страници кои го содржат <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Вовед",
+	"vector-toc-heading": "Содржина",
+	"vector-toc-toggle-position-sidebar": "премести во страничникот",
+	"vector-toc-toggle-position-title": "скриј",
+	"vector-toc-beginning": "Почеток",
+	"vector-toc-toggle-button-label": "Префрли на поднасловот $1",
 	"vector-anon-user-menu-pages": "Страници за одјавени уредници",
 	"vector-anon-user-menu-pages-learn": "дознајте повеќе",
 	"vector-anon-user-menu-pages-label": "Дознајте повеќе за уредувањето",
-	"vector-personal-more-label": "Кориснички врски",
 	"vector-main-menu-tooltip": "Главно мени",
-	"tooltip-vector-anon-user-menu-title": "Повеќе можности",
-	"vector-menu-checkbox-expanded": "расклопено",
-	"vector-menu-checkbox-collapsed": "склопено"
+	"vector-toc-menu-tooltip": "Содржина",
+	"vector-toc-collapsible-button-label": "Прик./скр. содржина",
+	"vector-article-tools-nav-label": "Алатки",
+	"vector-site-nav-label": "Мрежно место",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Разговор]]",
+	"tooltip-vector-anon-user-menu-title": "Повеќе можности"
 }

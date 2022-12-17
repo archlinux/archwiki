@@ -50,19 +50,12 @@
 			}
 		} );
 
-		this.pageInput.on( 'copy', function () {
-			mw.mmv.actionLogger.log( 'share-link-copied' );
-		} );
-
 		this.$pageLink = $( '<a>' )
 			.addClass( 'mw-mmv-share-page-link' )
 			.prop( 'alt', mw.message( 'multimediaviewer-link-to-page' ).text() )
 			.prop( 'target', '_blank' )
 			.html( '&nbsp;' )
-			.appendTo( this.$pane )
-			.on( 'click', function () {
-				mw.mmv.actionLogger.log( 'share-page' );
-			} );
+			.appendTo( this.$pane );
 
 		this.pageInput.$element.appendTo( this.$pane );
 

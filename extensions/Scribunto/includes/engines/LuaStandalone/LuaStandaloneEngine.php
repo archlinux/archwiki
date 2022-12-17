@@ -1,16 +1,21 @@
 <?php
 
+namespace MediaWiki\Extension\Scribunto\Engines\LuaStandalone;
+
+use Exception;
 use MediaWiki\Logger\LoggerFactory;
+use ParserOutput;
+use Scribunto_LuaEngine;
 use Wikimedia\AtEase\AtEase;
 
-class Scribunto_LuaStandaloneEngine extends Scribunto_LuaEngine {
+class LuaStandaloneEngine extends Scribunto_LuaEngine {
 	/** @var int|null */
 	protected static $clockTick;
 	/** @var array|false */
 	public $initialStatus;
 
 	/**
-	 * @var Scribunto_LuaStandaloneInterpreter
+	 * @var LuaStandaloneInterpreter
 	 */
 	protected $interpreter;
 
@@ -65,8 +70,6 @@ class Scribunto_LuaStandaloneEngine extends Scribunto_LuaEngine {
 
 	/** @inheritDoc */
 	public function formatLimitData( $key, &$value, &$report, $isHTML, $localize ) {
-		global $wgLang;
-		$lang = $localize ? $wgLang : Language::factory( 'en' );
 		switch ( $key ) {
 			case 'scribunto-limitreport-logs':
 				if ( $isHTML ) {
@@ -93,17 +96,17 @@ class Scribunto_LuaStandaloneEngine extends Scribunto_LuaEngine {
 	}
 
 	/**
-	 * @return Scribunto_LuaStandaloneInterpreter
+	 * @return LuaStandaloneInterpreter
 	 */
 	protected function newInterpreter() {
-		return new Scribunto_LuaStandaloneInterpreter( $this, $this->options + [
+		return new LuaStandaloneInterpreter( $this, $this->options + [
 			'logger' => LoggerFactory::getInstance( 'Scribunto' )
 		] );
 	}
 
 	/** @inheritDoc */
 	public function getSoftwareInfo( array &$software ) {
-		$ver = Scribunto_LuaStandaloneInterpreter::getLuaVersion( $this->options );
+		$ver = LuaStandaloneInterpreter::getLuaVersion( $this->options );
 		if ( $ver !== null ) {
 			if ( substr( $ver, 0, 6 ) === 'LuaJIT' ) {
 				$software['[http://luajit.org/ LuaJIT]'] = str_replace( 'LuaJIT ', '', $ver );

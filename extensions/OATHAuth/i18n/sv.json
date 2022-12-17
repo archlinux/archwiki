@@ -4,6 +4,7 @@
 			"Felba",
 			"Lokal Profil",
 			"Mjälten",
+			"Sabelöga",
 			"Skalman",
 			"WikiPhoenix"
 		]
@@ -84,6 +85,7 @@
 	"oathauth-switch-method-warning": "Genom att byta till tvåfaktorsautentiseringsmetoden $2 kommer den nuvarande metoden ($1) inaktiveras och all data som associeras med den nuvarande autentiseringsmetoden kommer raderas",
 	"oathauth-totp-disable-warning": "Du kommer inte längre kunna använda autentiseringsenheten som är registrerat till detta konto. Alla engångsnycklar som associeras med detta kontot kommer inaktiveras.",
 	"oathauth-invalidrequest": "Ogiltig begäran",
+	"oathauth-notifications-enabled-help": "Hjälp",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} har aktiverat tvåfaktorsautentisering.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} har inte aktiverat tvåfaktorsautentisering."
 }

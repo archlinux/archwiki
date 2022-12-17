@@ -3,14 +3,15 @@
 namespace Cite\ResourceLoader;
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\ResourceLoader\FileModule;
 
 /**
- * ResourceLoaderFileModule for adding the content language Cite CSS
+ * ResourceLoader FileModule for adding the content language Cite CSS
  *
  * @copyright 2011-2018 VisualEditor Team's Cite sub-team and others; see AUTHORS.txt
  * @license MIT
  */
-class CiteCSSFileModule extends \ResourceLoaderFileModule {
+class CiteCSSFileModule extends FileModule {
 
 	/**
 	 * @inheritDoc

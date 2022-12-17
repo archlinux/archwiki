@@ -1,5 +1,5 @@
 import sidebarTemplate from '!!raw-loader!../includes/templates/Sidebar.mustache';
-import sidebarLegacyTemplate from '!!raw-loader!../includes/templates/legacy/Sidebar.mustache';
+import sidebarLegacyTemplate from '!!raw-loader!../includes/templates/LegacySidebar.mustache';
 import { vectorMenuTemplate } from './MenuDropdown.stories.data';
 import { PORTALS } from './MenuPortal.stories.data';
 

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aram",
 			"Arya sarhan",
 			"Asoxor",
 			"BMRG14",
@@ -12,8 +13,7 @@
 			"Muhammed taha",
 			"Sarchia",
 			"Épine",
-			"ئارام بکر",
-			"Aram"
+			"ئارام بکر"
 		]
 	},
 	"wikieditor": "ڕووکاری پێشکەوتووی دەستکاریکردنی ویکیدەق",
@@ -46,7 +46,6 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "ئەم پەڕە لە {{SITENAME}} نییە",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "ئەو ناونیشانەی دەستنیشانت کردووە نادروستە.",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "بەستەری دەرەکی",
-	"wikieditor-toolbar-tool-link-int-target-status-loading": "پشکنینی ھەبوونی پەڕە ...",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "ئەم پەڕە پەڕەیەکی ناوەڕۆک نییە، بەڵکوو پێڕستێکی ئەو بابەتانەیە کە ھەمان ناویان ھەیە.",
 	"wikieditor-toolbar-tool-link-int-invalid": "ئەو ناونیشانەی دەستنیشانت کردووە نادروستە.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "ئەو ناونیشانەی ڕەچاوت کردووە لەوەدەچێ بەستەرێک بێت بۆ پەڕەیەکی ویکی دیکە. ئایا دەتەوێ بیکەی بە بەستەرێکی ناوەکی؟",
@@ -198,5 +197,10 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "دەقی ئاسایی<br />:دەقی پێشچوو<br />::دەقی پێشچوو",
 	"wikieditor-toolbar-help-content-indent-result": "دەقی ئاسایی<dl><dd>دەقی پێشچوو<dl><dd>دەقی پێشچوو</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "دەستکاری بە بەکارھێنانی [[mw:Special:MyLanguage/Extension:WikiEditor|دەستکاریکەری ویکی]] (دەستکاریکەری ویکیدەقی ٢٠١٠) کراوە",
-	"wikieditor-realtimepreview-preview": "پێشبینین"
+	"wikieditor-realtimepreview-preview": "پێشبینین",
+	"wikieditor-realtimepreview-error": "پێشبینین بار ناکرێت",
+	"wikieditor-realtimepreview-reload": "بارکردنەوە",
+	"wikieditor-realtimepreview-beta-label": "پێشبینینی ڕاستەوخۆ",
+	"wikieditor-realtimepreview-onboarding-title": "پێشبینینی ڕاستەوخۆ",
+	"wikieditor-realtimepreview-onboarding-button": "باشە، تێگەیشتم"
 }

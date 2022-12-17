@@ -23,17 +23,13 @@
  */
 
 use MediaWiki\MediaWikiServices;
-use Vector\Constants;
-use Vector\FeatureManagement\FeatureManager;
-use Vector\FeatureManagement\Requirements\DynamicConfigRequirement;
-use Vector\FeatureManagement\Requirements\LatestSkinVersionRequirement;
-use Vector\FeatureManagement\Requirements\OverridableConfigRequirement;
-use Vector\SkinVersionLookup;
+use MediaWiki\Skins\Vector\Constants;
+use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\DynamicConfigRequirement;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\OverridableConfigRequirement;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\TableOfContentsTreatmentRequirement;
 
 return [
-	Constants::SERVICE_CONFIG => static function ( MediaWikiServices $services ) {
-		return $services->getService( 'ConfigFactory' )->makeConfig( Constants::SKIN_NAME_LEGACY );
-	},
 	Constants::SERVICE_FEATURE_MANAGER => static function ( MediaWikiServices $services ) {
 		$featureManager = new FeatureManager();
 
@@ -45,28 +41,7 @@ return [
 			)
 		);
 
-		// Feature: Latest skin
-		// ====================
 		$context = RequestContext::getMain();
-
-		$featureManager->registerRequirement(
-			new LatestSkinVersionRequirement(
-				new SkinVersionLookup(
-					$context->getRequest(),
-					$context->getUser(),
-					$services->getService( Constants::SERVICE_CONFIG ),
-					$services->getUserOptionsLookup()
-				)
-			)
-		);
-
-		$featureManager->registerFeature(
-			Constants::FEATURE_LATEST_SKIN,
-			[
-				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
-			]
-		);
 
 		// Feature: Languages in sidebar
 		// ================================
@@ -78,7 +53,7 @@ return [
 				$services->getCentralIdLookupFactory()->getNonLocalLookup(),
 				Constants::CONFIG_KEY_LANGUAGE_IN_HEADER,
 				Constants::REQUIREMENT_LANGUAGE_IN_HEADER,
-				Constants::QUERY_PARAM_LANGUAGE_IN_HEADER,
+				null,
 				Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST
 			)
 		);
@@ -117,7 +92,6 @@ return [
 			Constants::FEATURE_LANGUAGE_IN_HEADER,
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
 				Constants::REQUIREMENT_LANGUAGE_IN_HEADER,
 			]
 		);
@@ -131,9 +105,7 @@ return [
 				$context->getRequest(),
 				null,
 				Constants::CONFIG_LANGUAGE_IN_MAIN_PAGE_HEADER,
-				Constants::REQUIREMENT_LANGUAGE_IN_MAIN_PAGE_HEADER,
-				Constants::QUERY_PARAM_LANGUAGE_IN_MAIN_PAGE_HEADER,
-				null
+				Constants::REQUIREMENT_LANGUAGE_IN_MAIN_PAGE_HEADER
 			)
 		);
 
@@ -146,7 +118,6 @@ return [
 			Constants::FEATURE_LANGUAGE_IN_MAIN_PAGE_HEADER,
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
 				Constants::REQUIREMENT_IS_MAIN_PAGE,
 				Constants::REQUIREMENT_LANGUAGE_IN_HEADER,
 				Constants::REQUIREMENT_LANGUAGE_IN_MAIN_PAGE_HEADER
@@ -162,9 +133,7 @@ return [
 				$context->getRequest(),
 				null,
 				Constants::CONFIG_LANGUAGE_ALERT_IN_SIDEBAR,
-				Constants::REQUIREMENT_LANGUAGE_ALERT_IN_SIDEBAR,
-				Constants::QUERY_PARAM_LANGUAGE_ALERT_IN_SIDEBAR,
-				null
+				Constants::REQUIREMENT_LANGUAGE_ALERT_IN_SIDEBAR
 			)
 		);
 
@@ -172,32 +141,8 @@ return [
 			Constants::FEATURE_LANGUAGE_ALERT_IN_SIDEBAR,
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
 				Constants::REQUIREMENT_LANGUAGE_IN_HEADER,
 				Constants::REQUIREMENT_LANGUAGE_ALERT_IN_SIDEBAR
-			]
-		);
-
-		// Feature: T297610: Table of Contents
-		// ================================
-		$featureManager->registerRequirement(
-			new OverridableConfigRequirement(
-				$services->getMainConfig(),
-				$context->getUser(),
-				$context->getRequest(),
-				null,
-				Constants::CONFIG_TABLE_OF_CONTENTS,
-				Constants::REQUIREMENT_TABLE_OF_CONTENTS,
-				Constants::QUERY_PARAM_TABLE_OF_CONTENTS,
-				null
-			)
-		);
-
-		$featureManager->registerFeature(
-			Constants::FEATURE_TABLE_OF_CONTENTS,
-			[
-				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_TABLE_OF_CONTENTS
 			]
 		);
 
@@ -210,9 +155,7 @@ return [
 				$context->getRequest(),
 				null,
 				Constants::CONFIG_STICKY_HEADER,
-				Constants::REQUIREMENT_STICKY_HEADER,
-				Constants::QUERY_PARAM_STICKY_HEADER,
-				null
+				Constants::REQUIREMENT_STICKY_HEADER
 			)
 		);
 
@@ -223,9 +166,7 @@ return [
 				$context->getRequest(),
 				null,
 				Constants::CONFIG_STICKY_HEADER_EDIT,
-				Constants::REQUIREMENT_STICKY_HEADER_EDIT,
-				Constants::QUERY_PARAM_STICKY_HEADER_EDIT,
-				null
+				Constants::REQUIREMENT_STICKY_HEADER_EDIT
 			)
 		);
 
@@ -233,7 +174,6 @@ return [
 			Constants::FEATURE_STICKY_HEADER,
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
 				Constants::REQUIREMENT_STICKY_HEADER
 			]
 		);
@@ -242,9 +182,48 @@ return [
 			Constants::FEATURE_STICKY_HEADER_EDIT,
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_LATEST_SKIN_VERSION,
 				Constants::REQUIREMENT_STICKY_HEADER,
 				Constants::REQUIREMENT_STICKY_HEADER_EDIT,
+			]
+		);
+
+		// T313435 Feature: Table of Contents
+		// Temporary - remove after TOC A/B test is finished.
+		// ================================
+		$featureManager->registerRequirement(
+			new TableOfContentsTreatmentRequirement(
+				$services->getMainConfig(),
+				$context->getUser(),
+				$services->getCentralIdLookupFactory()->getNonLocalLookup()
+			)
+		);
+
+		$featureManager->registerFeature(
+			Constants::FEATURE_TABLE_OF_CONTENTS,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_TABLE_OF_CONTENTS,
+			]
+		);
+
+		// Temporary feature: Visual enhancements
+		// ================================
+		$featureManager->registerRequirement(
+			new OverridableConfigRequirement(
+				$services->getMainConfig(),
+				$context->getUser(),
+				$context->getRequest(),
+				$services->getCentralIdLookupFactory()->getNonLocalLookup(),
+				Constants::CONFIG_KEY_VISUAL_ENHANCEMENTS,
+				Constants::REQUIREMENT_VISUAL_ENHANCEMENTS
+			)
+		);
+
+		$featureManager->registerFeature(
+			Constants::FEATURE_VISUAL_ENHANCEMENTS,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_VISUAL_ENHANCEMENTS,
 			]
 		);
 

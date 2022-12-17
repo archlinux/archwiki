@@ -22,8 +22,10 @@
 	"spam-invalid-lines": "{{PLURAL:$1|Następująca linia jest niepoprawnym wyrażeniem regularnym i musi być poprawiona przed zapisaniem strony:|Następujące linie są niepoprawnymi wyrażeniami regularnymi i muszą być poprawione przed zapisaniem strony:}}",
 	"spam-blacklist-desc": "Narzędzie antyspamowe oparte o wyrażenia regularne pozwalające odrzucać adresy URL na stronach i adresy e-mail użytkowników",
 	"log-name-spamblacklist": "Rejestr filtru antyspamowego",
-	"log-description-spamblacklist": "Te zdarzenia służą do śledzenia trafień czarnej listy spamu.",
-	"logentry-spamblacklist-hit": "$1 {{GENDER:$2|uruchomił|uruchomiła}} filtr antyspamowy na stronie $3, próbując dodać $4.",
-	"right-spamblacklistlog": "Podgląd rejestru czarnej listy spamu",
-	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego"
+	"log-description-spamblacklist": "Te zdarzenia służą do śledzenia blokad filtru antyspamowego.",
+	"logentry-spamblacklist-hit": "$1 {{GENDER:$2|uruchomił|uruchomiła|uruchomił(a)}} filtr antyspamowy na stronie $3, próbując dodać $4.",
+	"right-spamblacklistlog": "Podgląd rejestru filtru antyspamowego",
+	"action-spamblacklistlog": "przeglądania rejestru filtru antyspamowego",
+	"right-sboverride": "Nie bycie dotkniętym przez filtr antyspamowy",
+	"action-sboverride": "omijania filtru antyspamowego"
 }

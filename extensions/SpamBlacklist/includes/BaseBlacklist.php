@@ -1,7 +1,14 @@
 <?php
 
+namespace MediaWiki\Extension\SpamBlacklist;
+
+use Exception;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
+use ObjectCache;
+use TextContent;
+use Title;
+use User;
 
 /**
  * Base class for different kinds of blacklists
@@ -44,8 +51,8 @@ abstract class BaseBlacklist {
 	 * @var array
 	 */
 	private static $blacklistTypes = [
-		'spam' => 'SpamBlacklist',
-		'email' => 'EmailBlacklist',
+		'spam' => SpamBlacklist::class,
+		'email' => EmailBlacklist::class,
 	];
 
 	/**
@@ -446,3 +453,5 @@ abstract class BaseBlacklist {
 		// subclass this
 	}
 }
+
+class_alias( BaseBlacklist::class, 'BaseBlacklist' );

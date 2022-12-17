@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Gomoko",
-			"Wladek92",
-			"Verdy p"
+			"Verdy p",
+			"Wladek92"
 		]
 	},
 	"apihelp-titleblacklist-description": "Valider un titre de page, un nom de fichier ou un nom d’utilisateur d’après la liste des titres interdits.",

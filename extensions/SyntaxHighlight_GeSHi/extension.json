@@ -29,9 +29,7 @@
 	},
 	"AutoloadClasses": {
 		"SyntaxHighlight": "includes/SyntaxHighlight.php",
-		"SyntaxHighlightAce": "includes/SyntaxHighlightAce.php",
-		"SyntaxHighlightGeSHiCompat": "includes/SyntaxHighlightGeSHiCompat.php",
-		"ResourceLoaderSyntaxHighlightVisualEditorModule": "includes/ResourceLoaderSyntaxHighlightVisualEditorModule.php"
+		"MediaWiki\\SyntaxHighlight\\SyntaxHighlight": "includes/SyntaxHighlight.php"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules",
@@ -55,10 +53,13 @@
 			],
 			"scripts": [
 				"pygments.linenumbers.js"
+			],
+			"dependencies": [
+				"mediawiki.util"
 			]
 		},
 		"ext.geshi.visualEditor": {
-			"class": "ResourceLoaderSyntaxHighlightVisualEditorModule",
+			"class": "MediaWiki\\SyntaxHighlight\\ResourceLoaderSyntaxHighlightVisualEditorModule",
 			"scripts": [
 				"ve-syntaxhighlight/ve.dm.MWSyntaxHighlightNode.js",
 				"ve-syntaxhighlight/ve.dm.MWBlockSyntaxHighlightNode.js",
@@ -104,6 +105,9 @@
 		],
 		"SoftwareInfo": "SyntaxHighlight::onSoftwareInfo"
 	},
+	"ParsoidModules": [
+		"MediaWiki\\SyntaxHighlight\\ParsoidExt"
+	],
 	"attributes": {
 		"SyntaxHighlight": {
 			"Models": {}
