@@ -16,13 +16,12 @@ services:
       - mariadb
 
   nginx:
-    image: nginx:stable-alpine
+    image: nginxinc/nginx-unprivileged:stable-alpine
     ports:
-      - "${PORT}:80"
+      - "${PORT}:8080"
     volumes:
       - ../:/app:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-    userns_mode: host
     tmpfs:
       - /tmp
     depends_on:
