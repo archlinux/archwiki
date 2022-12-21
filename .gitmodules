@@ -26,3 +26,7 @@
 	path = extensions/FlarumAuth
 	url = https://github.com/archlinux-de/mediawiki-extensions-FlarumAuth.git
 	branch = REL1_39
+[submodule "extensions/DarkMode"]
+	path = extensions/DarkMode
+	url = https://github.com/wikimedia/mediawiki-extensions-DarkMode.git
+	branch = REL1_39
