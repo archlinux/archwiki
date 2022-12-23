@@ -13,7 +13,8 @@
 			"Pxos",
 			"Pyscowicz",
 			"Rönttönen",
-			"SuperPete"
+			"SuperPete",
+			"Stryn"
 		]
 	},
 	"skinname-vector": "Vanha Vektori (2010)",
@@ -30,6 +31,8 @@
 	"vector-languages": "Kielet",
 	"vector-language-button-aria-label": "Mene artikkeliin toisella kielellä. Saatavilla {{PLURAL:$1|$1 kielellä}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 kieli|$1 kieltä}}",
+	"vector-no-language-button-label": "Lisää kieliä",
+	"vector-no-language-button-aria-label": "Tämä artikkeli on olemassa vain tällä kielellä. Lisää artikkeli muille kielille",
 	"vector-language-redirect-to-top": "Tällä sivustolla ({{SITENAME}}) kielilinkit ovat artikkelin yläosassa otsikon vieressä. [[#p-lang-btn|Sivun yläosaan]].",
 	"vector-action-addsection": "Lisää aihe",
 	"vector-action-delete": "Poista",
@@ -54,5 +57,8 @@
 	"vector-anon-user-menu-pages-learn": "lue lisää",
 	"vector-anon-user-menu-pages-label": "Lue lisää muokkaamisesta",
 	"vector-main-menu-tooltip": "Päävalikko",
+	"vector-toc-menu-tooltip": "Sisällysluettelot",
+	"vector-site-nav-label": "Sivusto",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Keskustelu]]",
 	"tooltip-vector-anon-user-menu-title": "Lisää valintoja"
 }

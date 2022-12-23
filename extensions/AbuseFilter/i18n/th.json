@@ -18,7 +18,8 @@
 			"Patsagorn Y.",
 			"Prame Tan",
 			"Trisorn Triboon",
-			"Woraponboonkerd"
+			"Woraponboonkerd",
+			"Ekminarin"
 		]
 	},
 	"abusefilter-desc": "วิเคราะห์พฤติกรรมการแก้ไขอัตโนมัติ",
@@ -251,7 +252,7 @@
 	"abusefilter-throttle-none": "(ไม่มี)",
 	"abusefilter-throttle-details": "อนุญาต $1 การกระทำทุก $2 วินาที โดยจัดกลุ่มการจำกัดผลลัพธ์ตาม: $3",
 	"abusefilter-edit-warn-message": "ข้อความระบบที่ใช้สำหรับเตือน:",
-	"abusefilter-edit-warn-other": "ข้อความอื่นๆ",
+	"abusefilter-edit-warn-other": "ข้อความอื่น ๆ",
 	"abusefilter-edit-warn-other-label": "ชื่อหน้าของข้อความอื่น:\n:''(โดยไม่มีคำขึ้นต้น \"MediaWiki:\")''",
 	"abusefilter-edit-warn-actions": "การกระทำ:",
 	"abusefilter-edit-warn-preview": "แสดง/ซ่อนตัวอย่างข้อความที่เลือก",

@@ -37,7 +37,7 @@
 	"oathauth-step4": "Schritt 4: Verifizierung",
 	"oathauth-entertoken": "Gib zur Verifizierung einen Code von deinem Authentifizierungsgerät ein:",
 	"oathauth-disable-for-user": "Zwei-Faktor-Authentifizierung für einen Benutzer deaktivieren",
-	"oathauth-verify-for-user": "Überprüfe, ob ein Benutzer die Zwei-Faktor-Authentifizierung aktiviert hat",
+	"oathauth-verify-for-user": "Überprüfen, ob ein Benutzer die Zwei-Faktor-Authentifizierung aktiviert hat",
 	"right-oathauth-disable-for-user": "Zwei-Faktor-Authentifizierung für einen Benutzer deaktivieren",
 	"action-oathauth-disable-for-user": "die Zwei-Faktor-Authentifizierung für einen Benutzer zu deaktivieren",
 	"right-oathauth-verify-user": "Überprüfen, ob ein Benutzer die Zwei-Faktor-Authentifizierung aktiviert hat",

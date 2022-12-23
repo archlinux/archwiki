@@ -89,5 +89,17 @@
 	"mathwikibase": "Matemaatilise valemi teave",
 	"datatypes-type-math": "Avaldis",
 	"wikibase-listdatatypes-math-head": "Avaldis",
-	"wikibase-listdatatypes-math-body": "Literaalandmete väli LaTeX-i variandis esitatud matemaatiliste avaldiste, valemite, võrrandite ja muu seesuguse jaoks."
+	"wikibase-listdatatypes-math-body": "Literaalandmete väli LaTeX-i variandis esitatud matemaatiliste avaldiste, valemite, võrrandite ja muu seesuguse jaoks.",
+	"math-wikibase-header": "Matemaatiliste üksuste teave",
+	"math-wikibase-formula": "Valem",
+	"math-wikibase-formula-name": "Nimetus",
+	"math-wikibase-formula-description": "Kirjeldus",
+	"math-wikibase-formula-information": "Matemaatilise valemi teave",
+	"math-wikibase-formula-link-header": "Andmeallikas",
+	"math-wikibase-formula-elements-header": "Valemi elemendid",
+	"math-wikibase-special-form-header": "Määra valemi nimetus:",
+	"math-wikibase-special-form-placeholder": "Valemi pealkiri",
+	"math-wikibase-special-form-button": "Päri teave",
+	"math-wikibase-special-error-header": "Tõrge",
+	"math-wikibase-special-error-invalid-argument": "Määrasid Vikibaasi identifikaatori, mida pole olemas."
 }

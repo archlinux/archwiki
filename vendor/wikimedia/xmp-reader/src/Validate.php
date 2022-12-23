@@ -223,7 +223,7 @@ class Validate implements LoggerAwareInterface {
 		) {
 			$this->logger->info(
 				__METHOD__
-				. " Expected value within range of ${info['rangeLow']}-${info['rangeHigh']}, but got $val"
+				. " Expected value within range of {$info['rangeLow']}-{$info['rangeHigh']}, but got $val"
 			);
 			$val = null;
 		}

@@ -11,7 +11,8 @@
 			"Yury Tarasievich",
 			"Дзяніс Тутэйшы",
 			"Хомелка",
-			"Maksim L."
+			"Maksim L.",
+			"Plaga med"
 		]
 	},
 	"vector-skin-desc": "Забяспечвае 2 вокладкі Вектар:\n* 2011 — Сучасная версія вокладкі Манабук, з абноўленым відам і шматлікімі зручнымі паляпшэннямі.\n* 2022 — Вектар, створаны ў рамках праекта WMF [[mw:Desktop Improvements]].",
@@ -22,7 +23,7 @@
 	"vector-action-toggle-sidebar": "Пераключыць бакавую панэль",
 	"vector-languages": "Мовы",
 	"vector-language-button-aria-label": "Перайсці да артыкула на іншай мове. Даступны на $1 {{PLURAL:$1|мове|мовах}}.",
-	"vector-language-button-label": "{{PLURAL:$1|$1 мова|$1 мовы|$1 моваў}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 мова|$1 мовы|$1 моў}}",
 	"vector-no-language-button-label": "Дадаць мовы",
 	"vector-no-language-button-aria-label": "Гэты артыкул ёсць толькі на гэтай мове. Дадайце артыкул для іншых моў",
 	"vector-language-redirect-to-top": "У гэтай пляцоўцы {{SITENAME}} моўныя спасылкі знаходзяцца ўверсе старонкі насупраць загалоўка артыкула. [[#p-lang-btn|Перайсці ўверх]].",

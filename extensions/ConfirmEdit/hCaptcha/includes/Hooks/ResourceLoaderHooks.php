@@ -5,25 +5,22 @@ declare( strict_types=1 );
 namespace MediaWiki\Extension\ConfirmEdit\hCaptcha\Hooks;
 
 use Config;
-use MediaWiki\MediaWikiServices;
-use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
+use MediaWiki\ResourceLoader as RL;
 
-class ResourceLoaderHooks implements ResourceLoaderGetConfigVarsHook {
+class ResourceLoaderHooks {
 	/**
-	 * Adds extra variables to the global config
-	 *
-	 * @param array &$vars Global variables object
-	 * @param string $skin
+	 * Passes config variables to ext.confirmEdit.hCaptcha.visualEditor ResourceLoader module.
+	 * @param RL\Context $context
 	 * @param Config $config
-	 * @return void
+	 * @return array
 	 */
-	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
-		$hCaptchaConfig = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'hcaptcha' );
-		if ( $hCaptchaConfig->get( 'CaptchaClass' ) === 'MediaWiki\\Extensions\\ConfirmEdit\\hCaptcha\\HCaptcha' ) {
-			$vars['wgConfirmEditConfig'] = [
-				'hCaptchaSiteKey' => $hCaptchaConfig->get( 'HCaptchaSiteKey' ),
-				'hCaptchaScriptURL' => 'https://hcaptcha.com/1/api.js',
-			];
-		}
+	public static function getHCaptchaResourceLoaderConfig(
+		RL\Context $context,
+		Config $config
+	) {
+		return [
+			'hCaptchaSiteKey' => $config->get( 'HCaptchaSiteKey' ),
+			'hCaptchaScriptURL' => 'https://js.hcaptcha.com/1/api.js',
+		];
 	}
 }

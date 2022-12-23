@@ -3,7 +3,8 @@
 		"authors": [
 			"Jon Harald Søby (WMNO)",
 			"Skuolfi",
-			"Yupik"
+			"Yupik",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
 	"math-visualeditor-mwchemdialog-title": "Kemihkalaš formel",
@@ -11,5 +12,5 @@
 	"math_unknown_error": "dovdameahttun feaila",
 	"math_unknown_function": "dovdameahttun funkšuvdna \"$1\"",
 	"mw_math_png": "Čájet álo PNG:n",
-	"prefs-math": "Matematihkká"
+	"prefs-math": "Matematihkka"
 }

@@ -370,6 +370,7 @@
 	"abusefilter-edit-builder-funcs-substr": "하위 문자열 (substr)",
 	"abusefilter-edit-builder-funcs-strpos": "문자열 내의 하위 문자열의 위치 (strpos)",
 	"abusefilter-edit-builder-funcs-str_replace": "문자열을 찾아 바꾸기 (str_replace)",
+	"abusefilter-edit-builder-funcs-str_replace_regexp": "정규 표현식 검색 및 치환 (str_replace_regexp)",
 	"abusefilter-edit-builder-funcs-rescape": "정규 표현식에서 문자열을 리터럴로 이스케이프 (rescape)",
 	"abusefilter-edit-builder-funcs-set_var": "변수 설정 (set_var)",
 	"abusefilter-edit-builder-funcs-sanitize": "HTML 엔티티를 유니코드 문자로 일반화합니다 (sanitize)",

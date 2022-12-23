@@ -43,5 +43,6 @@
 	"right-gadgets-edit": "рэдагаваньне JavaScript і CSS-старонак гаджэту",
 	"action-gadgets-edit": "рэдагаваць гэтую JavaScript ці CSS-старонку гаджэту",
 	"right-gadgets-definition-edit": "рэдагаваньне вызначэньняў гаджэтаў",
-	"action-gadgets-definition-edit": "рэдагаваць апісаньне гэтага гаджэту"
+	"action-gadgets-definition-edit": "рэдагаваць апісаньне гэтага гаджэту",
+	"gadgets-wrong-contentmodel": "Старонкі ў прасторы назваў {{ns:2302}} павінны мець мадэль зьместу GadgetDefinition."
 }

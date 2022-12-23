@@ -21,7 +21,8 @@
 			"Spring Roll Conan",
 			"Waihorace",
 			"Xiplus",
-			"아라"
+			"아라",
+			"捍粵者"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|視覺化編輯]]",
@@ -39,7 +40,7 @@
 	"visualeditor-help-title": "有關如何使用編輯器的使用者說明",
 	"visualeditor-welcomedialog-action": "開始編輯",
 	"visualeditor-welcomedialog-content": "任何人可編輯，每次改進都可以協助我們。",
-	"visualeditor-welcomedialog-content-thanks": "感謝您的協助讓人們發現世界！",
+	"visualeditor-welcomedialog-content-thanks": "感謝您的協助讓眾人發現世界！",
 	"visualeditor-welcomedialog-switch": "切換至原始碼編輯器",
 	"visualeditor-welcomedialog-switch-ve": "切換至視覺化編輯器",
 	"visualeditor-welcomedialog-title": "{{GENDER:$1|歡迎光臨}} $2"

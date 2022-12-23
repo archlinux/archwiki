@@ -6,6 +6,6 @@
 		]
 	},
 	"apihelp-spamblacklist-description": "Ovrednoti enega ali več URL-jev s seznamom blokiranja smetja.",
-	"apihelp-spamblacklist-example-1": "Preveri dva URL-ja s seznamom blokad",
-	"apihelp-spamblacklist-param-url": "URL-ji za primerjavo s seznamom blokad."
+	"apihelp-spamblacklist-example-1": "Preveri dva URL-ja na seznamu blokiranja",
+	"apihelp-spamblacklist-param-url": "URL-ji za preverjanje na seznamu blokiranja."
 }

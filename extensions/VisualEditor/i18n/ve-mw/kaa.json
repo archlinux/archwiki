@@ -48,6 +48,14 @@
 	"visualeditor-dialog-transclusion-add-template-save": "Qosıw",
 	"visualeditor-dialog-transclusion-contextitem-loading": "Júklenbekte…",
 	"visualeditor-dialog-transclusion-loading": "Júklenbekte…",
+	"visualeditor-formatdropdown-format-mw-heading1": "Bet ataması",
+	"visualeditor-formatdropdown-format-mw-heading2": "Bólim",
+	"visualeditor-formatdropdown-format-mw-heading3": "Bólim astı 1",
+	"visualeditor-formatdropdown-format-mw-heading4": "Bólim astı 2",
+	"visualeditor-formatdropdown-format-mw-heading5": "Bólim astı 3",
+	"visualeditor-formatdropdown-format-mw-heading6": "Bólim astı 4",
+	"visualeditor-linkinspector-illegal-title": "Nadurıs bet ataması",
+	"visualeditor-rebase-client-import-name": "Bet ataması",
 	"visualeditor-savedialog-label-save-short": "Saqlań",
 	"visualeditor-savedialog-label-save-short-start": "Saqlań..."
 }

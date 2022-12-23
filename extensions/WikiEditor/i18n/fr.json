@@ -214,7 +214,7 @@
 	"wikieditor-toolbar-help-content-indent-description": "Retrait",
 	"wikieditor-toolbar-help-content-indent-syntax": "Texte normal<br /> : Texte en retrait<br /> :: Texte en retrait",
 	"wikieditor-toolbar-help-content-indent-result": "Texte normal<dl><dd>Texte en retrait<dl><dd>Texte en retrait</dd></dl></dd></dl>",
-	"tag-wikieditor-description": "Modification effectuée en utilisant [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (éditeur de wikicode 2010)",
+	"tag-wikieditor-description": "Modifications effectuées en utilisant [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (éditeur de wikicode 2010)",
 	"wikieditor-realtimepreview-preview": "Aperçu",
 	"wikieditor-realtimepreview-error": "Aperçu non chargé",
 	"wikieditor-realtimepreview-reload": "Recharger",

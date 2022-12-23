@@ -9,7 +9,10 @@
 			"Penguinlay"
 		]
 	},
+	"vector-opt-out": "ပုံစံဟောင်းသို့ပြောင်းပါ",
+	"vector-languages": "ဘာသာစကားများ",
 	"vector-language-button-label": "{{PLURAL:$1|ဘာသာစကား $1 ခု|$1 ဘာသာစကားများ $1 ခု}}",
+	"vector-no-language-button-label": "ဘာသာစကားများ ထည့်သွင်းရန်",
 	"vector-action-addsection": "အကြောင်းအရာအသစ် ထပ်ထည့်ရန်",
 	"vector-action-delete": "ဖျက်​ပါ​",
 	"vector-action-move": "ရွှေ့ပါ",

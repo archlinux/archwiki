@@ -8,12 +8,13 @@
 			"Liuxinyu970226",
 			"Spring Roll Conan",
 			"Xiplus",
-			"Yfdyh000"
+			"Yfdyh000",
+			"捍粵者"
 		]
 	},
 	"scribunto-desc": "用來內嵌腳本語言到 MediaWiki 頁面的框架",
-	"scribunto-line": "在第 $1 行",
-	"scribunto-module-line": "於 $1 中的第 $2 行",
+	"scribunto-line": "在第$1行",
+	"scribunto-module-line": "於第$2行的$1中",
 	"scribunto-parser-dialog-title": "腳本錯誤",
 	"scribunto-error-short": "腳本錯誤：$1",
 	"scribunto-error-long": "腳本錯誤：\n\n$1",
@@ -36,7 +37,7 @@
 	"scribunto-common-timeout": "分配用來執行腳本的時間已到期。",
 	"scribunto-common-oom": "已超出執行腳本允許的記憶體用量。",
 	"scribunto-common-backtrace": "回溯：",
-	"scribunto-common-no-details": "沒有進一步可用詳情。",
+	"scribunto-common-no-details": "沒有其它可用詳情。",
 	"scribunto-lua-in-function": "於函數 \"$1\"",
 	"scribunto-lua-in-main": "於主要區塊",
 	"scribunto-lua-in-function-at": "於函數 $1:$2",

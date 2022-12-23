@@ -26,7 +26,8 @@
 			"Ywang",
 			"予弦",
 			"沈澄心",
-			"神樂坂秀吉"
+			"神樂坂秀吉",
+			"Lantianjialiang"
 		]
 	},
 	"minerva-last-modified-date": "最后编辑于$1 $2",
@@ -75,6 +76,7 @@
 	"minerva-page-actions-info": "页面信息",
 	"minerva-page-actions-permalink": "固定链接",
 	"minerva-page-actions-backlinks": "链入页面",
+	"minerva-page-actions-change-block": "更改块区域",
 	"minerva-page-actions-cite": "引用本页",
 	"minerva-page-actions-move": "移动",
 	"minerva-page-actions-delete": "删除",
@@ -87,6 +89,7 @@
 	"minerva-page-actions-wikibase": "{{WBREPONAME}}项目",
 	"minerva-page-actions-language-switcher": "语言",
 	"minerva-page-actions-history": "历史",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|讨论]]",
 	"minerva-talk-explained": "活跃的讨论",
 	"minerva-talk-explained-empty": "此页面上没有任何讨论。",
 	"minerva-talk-full-page": "作为wiki页面阅读",

@@ -47,7 +47,7 @@
 	"apihelp-visualeditoredit-param-sectiontitle": "Titulo pro nove section.",
 	"apihelp-visualeditoredit-param-starttimestamp": "Quando tu salveguarda, mitte isto al data e hora de cargamento del pagina. Isto es pro deteger conflictos de modification.",
 	"apihelp-visualeditoredit-param-summary": "Summario del modification.",
-	"apihelp-visualeditoredit-param-tags": "Modificar le etiquettas a applicar al modification.",
+	"apihelp-visualeditoredit-param-tags": "Etiquettas de modification a applicar al modification.",
 	"apihelp-visualeditoredit-param-wikitext": "Le wikitexto a tractar.",
 	"apihelp-visualeditoredit-summary": "Salveguardar un pagina HTML5 in MediaWiki (convertite in wikitexto per le servicio Parsoid)."
 }

@@ -223,7 +223,7 @@
 	"abusefilter-edit-builder-op-arithmetic-modulo": "Modulo (%)",
 	"abusefilter-edit-builder-op-arithmetic-pow": "Kuasa (**)",
 	"abusefilter-edit-builder-group-op-comparison": "Operator perbandingan",
-	"abusefilter-edit-builder-op-comparison-equal": "Sama dengan (==)",
+	"abusefilter-edit-builder-op-comparison-equal": "Nilai sama dengan (==)",
 	"abusefilter-edit-builder-op-comparison-equal-strict": "Nilai dan jenis sama dengan (===)",
 	"abusefilter-edit-builder-op-comparison-notequal": "Nilai tidak sama dengan (!=)",
 	"abusefilter-edit-builder-op-comparison-notequal-strict": "Nilai dan jenis tidak sama dengan (!==)",

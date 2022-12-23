@@ -3,13 +3,14 @@
 		"authors": [
 			"Anakmalaysia",
 			"Aviator",
-			"Kurniasan"
+			"Kurniasan",
+			"Tofeiku"
 		]
 	},
 	"imagemap_desc": "Membenarkan peta imej boleh klik menggunakan tag <code>&lt;imagemap&gt;</code>",
 	"imagemap_no_image": "Ralat: sila nyatakan imej dalam baris pertama",
 	"imagemap_invalid_image": "Imej: imej tidak sah atau tidak wujud",
-	"imagemap_bad_image": "Ralat: imej disenaraihitamkan di laman ini",
+	"imagemap_bad_image": "Ralat: Imej tidak dibenarkan di laman ini",
 	"imagemap_no_link": "Ralat: tiada pautan sah dijumpai pada akhir baris $1",
 	"imagemap_invalid_title": "Ralat: tajuk tidak sah dalam pautan pada baris $1",
 	"imagemap_missing_coord": "Ralat: koordinat bagi bentuk tidak cukup pada baris $1",

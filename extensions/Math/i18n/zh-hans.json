@@ -16,7 +16,8 @@
 			"乌拉跨氪",
 			"予弦",
 			"神樂坂秀吉",
-			"铁桶"
+			"铁桶",
+			"Lantianjialiang"
 		]
 	},
 	"math-desc": "在<code>&lt;math&gt;</code>…<code>&lt;/math&gt;</code>标签间生成数学公式",
@@ -30,6 +31,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "默认",
 	"math-visualeditor-mwlatexinspector-display-inline": "行内",
 	"math-visualeditor-mwlatexinspector-id": "链接ID（可选）",
+	"math-visualeditor-mwlatexinspector-qid": "Wikibase ID（带 Q 作为前缀）",
 	"math-visualeditor-mwmathdialog-title": "数学公式",
 	"math-visualeditor-symbol-group-chem-addition": "加合物",
 	"math-visualeditor-symbol-group-chem-aggregation": "聚合状态",

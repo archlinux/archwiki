@@ -5,6 +5,7 @@
 			"SADIQUI"
 		]
 	},
+	"scribunto-module-line": "ف $1 على السطر $2",
 	"scribunto-lua-error": "خطأ لوا: $2.",
 	"nstab-module": "مودول"
 }

@@ -67,7 +67,7 @@
 	"templatedata-invalid-duplicate-value": "La propriété « $1 » (« $3 ») est un doublon de « $2 ».",
 	"templatedata-invalid-empty-array": "La propriété « $1 » doit avoir au moins une valeur dans son tableau.",
 	"templatedata-invalid-format": "La propriété « $1 » doit être « inline », « block » ou une chaîne de format valide.",
-	"templatedata-invalid-length": "Données trop grosses pour être enregistrées ({{formatnum:$1}} octet{{PLURAL:$1||s}}, la limite est {{PLURAL:$2|}}{{formatnum:$2}})",
+	"templatedata-invalid-length": "Données trop grosses pour être enregistrées ({{formatnum:$1}} octet{{PLURAL:$1||s}}, la limite est {{PLURAL:$2|}}{{formatnum:$2}})",
 	"templatedata-invalid-missing": "Propriété « $1 » obligatoire non trouvée.",
 	"templatedata-invalid-param": "« $1 »  est un paramètre non valide pour la propriété « $2 ».",
 	"templatedata-invalid-parse": "Erreur de syntaxe dans JSON.",

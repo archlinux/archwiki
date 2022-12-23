@@ -7,7 +7,8 @@
 			"Sator",
 			"Subi",
 			"Unai Fdz. de Betoño",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Xabier Armendaritz"
 		]
 	},
 	"gadgets-desc": "Lankideek [[Special:Gadgets|CSS eta JavaScript gadgetak]] aukeratu ditzazkete beraien [[Special:Preferences#mw-prefsection-gadgets|hobespenetan]]",
@@ -26,7 +27,7 @@
 	"gadgets-export": "Esportatu",
 	"gadgets-export-title": "Gadgeten esportazioa",
 	"gadgets-not-found": "Ez da \"$1\" gadgeta aurkitu.",
-	"gadgets-export-download": "Jaitsi",
+	"gadgets-export-download": "Deskargatu",
 	"action-gadgets-edit": "gadget honen JavaScript edo CSS orria aldatu",
 	"right-gadgets-definition-edit": "Gadgetaren definizioak aldatu",
 	"action-gadgets-definition-edit": "Gadget honen definizioa aldatu"

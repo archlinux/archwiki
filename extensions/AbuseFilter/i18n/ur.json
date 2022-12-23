@@ -7,7 +7,8 @@
 			"Roovinn",
 			"Zainab Meher",
 			"عثمان خان شاہ",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"TheAafi"
 		]
 	},
 	"abusefilter-desc": "ترامیم پر مشینی قواعد نافذ کرتا ہے",
@@ -15,7 +16,7 @@
 	"abuselog": "نوشتہ مقطر غلط کاری",
 	"abusefilter-disallowed": "یہ عمل روک دیا گیا ہے کیونکہ خود کار طریقے سے نقصان دہ شناخت ہوا ہے۔\nاگر آپ کو یقین ہے کہ آپ کا عمل فائدہ مند تھا، تو براہ مہربانی آپ کسی منتظم کو مطلع کریں کہ آپ کیا کرنے کی کوشش کر رہے تھے۔\nآپ کے عمل کی رک جانے کی مختصر وجہ یہ ہے: $1",
 	"abusefilter-blocker": "مقطر غلط کاری",
-	"right-abusefilter-modify": "غلط کاری کے مقطروں میں ترمیم",
+	"right-abusefilter-modify": "غلط کاری کے مقطر بنائیں اور ان میں ترمیم کریں",
 	"right-abusefilter-view": "غلط کاری کے مقطروں کا مشاہدہ",
 	"right-abusefilter-log": "نوشتہ غلط کاری کا مشاہدہ",
 	"right-abusefilter-log-detail": "نوشتہ غلط کاری کے مفصل اندراجات کا مشاہدہ",
@@ -65,6 +66,7 @@
 	"abusefilter-log-detailslink": "تفصیلات",
 	"abusefilter-log-diff": "فرق",
 	"abusefilter-log-hidelink": "رویت میں تبدیلی کریں",
+	"abusefilter-log-description-not-available": "موجود نہیں",
 	"abusefilter-log-details-var": "متغیر",
 	"abusefilter-log-details-val": "قدر",
 	"abusefilter-log-details-vars": "کارروائی کے پیرامیٹر",

@@ -10,11 +10,14 @@
 			"Octahedron80",
 			"Patsagorn Y.",
 			"Trisorn Triboon",
-			"Woraponboonkerd"
+			"Woraponboonkerd",
+			"Ekminarin"
 		]
 	},
-	"skinname-vector": "เวกเตอร์",
-	"vector-skin-desc": "โมโนบุ๊กยุคใหม่กับมุมมองที่มีชีวิตชีวาและมีการปรับปรุงประสิทธิภาพการใช้งานจำนวนมาก",
+	"skinname-vector": "เวกเตอร์แบบเก่า (2553)",
+	"skinname-vector-2022": "เวกเตอร์ (2565)",
+	"vector-specialversion-name": "เวกเตอร์",
+	"vector-skin-desc": "Provides 2 Vector skins:\n* 2011 - The Modern version of MonoBook with fresh look and many usability improvements.\n* 2022 - The Vector built as part of the WMF [[mw:Desktop Improvements]] project.",
 	"prefs-vector-enable-vector-1-label": "ใช้สกินเวกเตอร์แบบเก่า",
 	"prefs-vector-enable-vector-1-help": "ในอีกไม่กี่ปีข้างหน้า เราจะปรับปรุงสกินเวกเตอร์ ส่วนมุมมองดั้งเดิมนั้นยังสามารถให้คุณใช้งานได้อยู่ (รุ่น ณ เดือนธันวาคม พ.ศ. 2562) เรียนรู้เพิ่มเติมเกี่ยวกับการปรับปรุงนี้ได้ที่[[mw:Reading/Web/Desktop_Improvements|หน้าโครงการ]]",
 	"vector-opt-out": "สลับกลับมุมมองดั้งเดิม",
@@ -25,7 +28,8 @@
 	"vector-languages": "ภาษา",
 	"vector-language-button-aria-label": "ไปที่บทความในภาษาอื่น ซึ่งมีใน {{PLURAL:$1|}}$1 ภาษา",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ภาษา}}",
-	"vector-language-redirect-to-top": "ลิงก์ข้ามไปยังรุ่นภาษาอื่นของบทความนี้ถูกย้ายไปด้านบนแล้วที่ทางขวาของชื่อหน้า [[#p-lang-btn|ไปด้านบน]]",
+	"vector-no-language-button-label": "เพิ่มภาษา",
+	"vector-language-redirect-to-top": "ใน {{SITENAME}} ลิงก์ข้ามไปยังรุ่นภาษาอื่นของบทความนี้ถูกย้ายไปด้านบนแล้วที่ทางขวาของชื่อหน้า [[#p-lang-btn|ไปด้านบน]]",
 	"vector-action-addsection": "เพิ่มหัวข้อ",
 	"vector-action-delete": "ลบ",
 	"vector-action-move": "เปลี่ยนชื่อ",
@@ -48,6 +52,7 @@
 	"vector-toc-beginning": "บทนำ",
 	"vector-anon-user-menu-pages": "หน้าสำหรับผู้แก้ไขที่ออกจากระบบ",
 	"vector-anon-user-menu-pages-learn": "เรียนรู้เพิ่มเติม",
+	"vector-anon-user-menu-pages-label": "เรียนรู้เพิ่มเกี่ยวกับการแก้ไข",
 	"vector-main-menu-tooltip": "เมนูหลัก",
 	"tooltip-vector-anon-user-menu-title": "ตัวเลือกเพิ่มเติม"
 }

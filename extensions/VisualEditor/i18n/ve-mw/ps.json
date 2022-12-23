@@ -5,7 +5,8 @@
 			"Amjad Khan",
 			"Baloch Khan",
 			"Irus",
-			"عثمان منصور انصاري"
+			"عثمان منصور انصاري",
+			"Af420"
 		]
 	},
 	"tooltip-ca-createsource": "د دې مخ د سرچينې کوډ جوړول",
@@ -172,6 +173,7 @@
 	"visualeditor-savedialog-label-review": "خپل بدلونونه بياکتل",
 	"visualeditor-savedialog-label-review-good": "د خوندي کولو چوکاټ ته ورگرځېدل",
 	"visualeditor-savedialog-label-save-short": "خوندي کول",
+	"visualeditor-savedialog-review-nosummary": "د سمون لنډیز نسته",
 	"visualeditor-savedialog-title-conflict": "کړکېچ",
 	"visualeditor-savedialog-title-review": "خپل بدلونونه بياکتل",
 	"visualeditor-savedialog-title-save": "بدلونونه مو خوندي کړئ",

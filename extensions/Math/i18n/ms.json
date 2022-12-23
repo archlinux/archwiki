@@ -6,15 +6,17 @@
 			"CoolCityCat",
 			"Jeluang Terluang",
 			"Kurniasan",
-			"Macofe"
+			"Macofe",
+			"Tofeiku"
 		]
 	},
 	"math-desc": "Mengolah rumus-rumus matematik antara teg-teg <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
 	"math-visualeditor-mwlatexinspector-display": "Paparan",
-	"math-visualeditor-mwlatexinspector-display-block": "Blok",
+	"math-visualeditor-mwlatexinspector-display-block": "Sekat",
 	"math-visualeditor-mwlatexinspector-display-default": "Asali",
 	"math-visualeditor-mwlatexinspector-display-inline": "Inline",
 	"math-visualeditor-mwlatexinspector-id": "ID pautan (pilihan)",
+	"math-visualeditor-mwlatexinspector-qid": "ID Wikibase (dengan awalan Q)",
 	"math_failure": "Gagal menghurai",
 	"math_invalidjson": "Respons pelayan $1 ialah JSON yang tidak sah.",
 	"math_invalidresponse": "$1: Respons tidak sah (\"$3\") dari pelayan \"$2\":",

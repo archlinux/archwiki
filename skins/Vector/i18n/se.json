@@ -3,10 +3,13 @@
 		"authors": [
 			"Gálaniitoluodda",
 			"Jeblad",
-			"Trondtr"
+			"Trondtr",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
+	"vector-languages": "Gielat",
 	"vector-language-button-label": "{{PLURAL:$1|$1 gillii|$1 gielaide}}",
+	"vector-no-language-button-label": "Lasit gielaid",
 	"vector-action-addsection": "Lasit fáttá",
 	"vector-action-delete": "Sihko",
 	"vector-action-move": "Sirdde",
@@ -18,6 +21,12 @@
 	"vector-view-history": "Geahča historjjá",
 	"vector-view-view": "Loga",
 	"vector-view-viewsource": "Geahča gáldokoda",
+	"vector-jumptonavigation": "Njuikes navigašuvdnii",
+	"vector-jumptosearch": "Njuikes ohcamii",
+	"vector-jumptocontent": "Njuikes sisdollui",
 	"vector-more-actions": "Eanet",
-	"vector-searchsuggest-containing": "Oza siidduid main lea <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Oza siidduid main lea <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-anon-user-menu-pages-learn": "lassedieđut",
+	"vector-anon-user-menu-pages-label": "Lassedieđut rievdadeami birra",
+	"vector-main-menu-tooltip": "Váldofállu"
 }

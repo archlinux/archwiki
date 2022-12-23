@@ -1023,17 +1023,17 @@
         },
         {
             "name": "pear/mail",
-            "version": "v1.4.1",
-            "version_normalized": "1.4.1.0",
+            "version": "v1.5.0",
+            "version_normalized": "1.5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pear/Mail.git",
-                "reference": "9609ed5e42ac5b221dfd9af85de005c59d418ee7"
+                "reference": "c31b7635899a630a8ce681e5ced18cededcc15f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pear/Mail/zipball/9609ed5e42ac5b221dfd9af85de005c59d418ee7",
-                "reference": "9609ed5e42ac5b221dfd9af85de005c59d418ee7",
+                "url": "https://api.github.com/repos/pear/Mail/zipball/c31b7635899a630a8ce681e5ced18cededcc15f3",
+                "reference": "c31b7635899a630a8ce681e5ced18cededcc15f3",
                 "shasum": ""
             },
             "require": {
@@ -1046,7 +1046,7 @@
             "suggest": {
                 "pear/net_smtp": "Install optionally via your project's composer.json"
             },
-            "time": "2017-04-11T17:27:29+00:00",
+            "time": "2022-11-29T22:04:18+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1059,12 +1059,17 @@
                 "./"
             ],
             "license": [
-                "BSD-2-Clause"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
                     "name": "Chuck Hagenbuch",
                     "email": "chuck@horde.org",
+                    "role": "Lead"
+                },
+                {
+                    "name": "Armin Graefe",
+                    "email": "schengawegga@gmail.com",
                     "role": "Lead"
                 },
                 {
@@ -2599,83 +2604,6 @@
             "install-path": "../wikimedia/composer-merge-plugin"
         },
         {
-            "name": "wikimedia/dodo",
-            "version": "v0.4.0",
-            "version_normalized": "0.4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/wikimedia/mediawiki-libs-Dodo.git",
-                "reference": "47e8176b8fd04ea00034d91b524f272e3745604a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/mediawiki-libs-Dodo/zipball/47e8176b8fd04ea00034d91b524f272e3745604a",
-                "reference": "47e8176b8fd04ea00034d91b524f272e3745604a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2.9|^8.0",
-                "wikimedia/idle-dom": "0.10.0",
-                "wikimedia/remex-html": "^2.3.2|^3.0.0",
-                "wikimedia/zest-css": "^2.0.1"
-            },
-            "require-dev": {
-                "consolidation/robo": "^3@alpha",
-                "fgnass/domino": "^2.1",
-                "mediawiki/mediawiki-codesniffer": "38.0.0",
-                "mediawiki/mediawiki-phan-config": "0.11.0",
-                "mediawiki/minus-x": "1.1.1",
-                "nikic/php-parser": "^4.10",
-                "ockcyp/covers-validator": "1.3.3",
-                "php-parallel-lint/php-console-highlighter": "^0.5",
-                "php-parallel-lint/php-parallel-lint": "1.3.1",
-                "phpunit/phpunit": "^8.5|^9.5",
-                "web-platform-tests/wpt": "^2.7",
-                "wikimedia/update-history": "1.0.1"
-            },
-            "time": "2021-10-25T15:40:15+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Wikimedia\\Dodo\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jason Linehan",
-                    "email": "jlinehan@wikimedia.org"
-                },
-                {
-                    "name": "C. Scott Ananian",
-                    "email": "cananian@wikimedia.org"
-                },
-                {
-                    "name": "Tim Abdullin",
-                    "email": "tim.abdullin@speedandfunction.com"
-                },
-                {
-                    "name": "Wikimedia Parsing Team and the broader MediaWiki community",
-                    "homepage": "https://www.mediawiki.org/wiki/Parsoid"
-                }
-            ],
-            "description": "DOm DOcument implementation",
-            "homepage": "https://www.mediawiki.org/wiki/Dodo",
-            "keywords": [
-                "dom",
-                "domino",
-                "webidl"
-            ],
-            "support": {
-                "source": "https://github.com/wikimedia/mediawiki-libs-Dodo/tree/v0.4.0"
-            },
-            "install-path": "../wikimedia/dodo"
-        },
-        {
             "name": "wikimedia/equivset",
             "version": "1.4.3",
             "version_normalized": "1.4.3.0",
@@ -3205,17 +3133,17 @@
         },
         {
             "name": "wikimedia/parsoid",
-            "version": "v0.16.0-a21",
-            "version_normalized": "0.16.0.0-alpha21",
+            "version": "v0.16.1",
+            "version_normalized": "0.16.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/parsoid.git",
-                "reference": "cadfa13c256d9d25e85b4fce238709e8f641a440"
+                "reference": "02ad1ede5131d7129f4798ff34c9836c94709743"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/parsoid/zipball/cadfa13c256d9d25e85b4fce238709e8f641a440",
-                "reference": "cadfa13c256d9d25e85b4fce238709e8f641a440",
+                "url": "https://api.github.com/repos/wikimedia/parsoid/zipball/02ad1ede5131d7129f4798ff34c9836c94709743",
+                "reference": "02ad1ede5131d7129f4798ff34c9836c94709743",
                 "shasum": ""
             },
             "require": {
@@ -3228,7 +3156,7 @@
                 "psr/log": "^1.1.4",
                 "symfony/polyfill-php80": "^1.23.1",
                 "wikimedia/assert": "^0.5.1",
-                "wikimedia/dodo": "0.4.0",
+                "wikimedia/idle-dom": "0.10.0",
                 "wikimedia/ip-utils": "^4.0.0",
                 "wikimedia/object-factory": "^4.0.0",
                 "wikimedia/remex-html": "^3.0.0",
@@ -3258,7 +3186,7 @@
             "suggest": {
                 "wikimedia/langconv": "Provides script conversion support"
             },
-            "time": "2022-09-01T13:59:26+00:00",
+            "time": "2022-12-19T21:08:34+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -3284,7 +3212,7 @@
             ],
             "support": {
                 "irc": "irc://irc.libera.chat/mediawiki-parsoid",
-                "source": "https://github.com/wikimedia/parsoid/tree/v0.16.0-a21",
+                "source": "https://github.com/wikimedia/parsoid/tree/v0.16.1",
                 "wiki": "https://www.mediawiki.org/wiki/Parsoid"
             },
             "install-path": "../wikimedia/parsoid"
@@ -4063,17 +3991,17 @@
         },
         {
             "name": "wikimedia/xmp-reader",
-            "version": "0.8.5",
-            "version_normalized": "0.8.5.0",
+            "version": "0.8.6",
+            "version_normalized": "0.8.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wikimedia/xmp-reader.git",
-                "reference": "99e6c9397d281f3c9842f3e72588fc04ef3e6fa4"
+                "reference": "f2bc581314de73858d33c80c705da9b5644a996a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wikimedia/xmp-reader/zipball/99e6c9397d281f3c9842f3e72588fc04ef3e6fa4",
-                "reference": "99e6c9397d281f3c9842f3e72588fc04ef3e6fa4",
+                "url": "https://api.github.com/repos/wikimedia/xmp-reader/zipball/f2bc581314de73858d33c80c705da9b5644a996a",
+                "reference": "f2bc581314de73858d33c80c705da9b5644a996a",
                 "shasum": ""
             },
             "require": {
@@ -4097,7 +4025,7 @@
                 "php-parallel-lint/php-parallel-lint": "1.3.2",
                 "phpunit/phpunit": "^8.5"
             },
-            "time": "2022-10-20T14:10:29+00:00",
+            "time": "2022-11-04T22:57:59+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -4125,7 +4053,7 @@
                 "xmp"
             ],
             "support": {
-                "source": "https://github.com/wikimedia/xmp-reader/tree/0.8.5"
+                "source": "https://github.com/wikimedia/xmp-reader/tree/0.8.6"
             },
             "install-path": "../wikimedia/xmp-reader"
         },

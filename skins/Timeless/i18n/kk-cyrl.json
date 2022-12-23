@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Arystanbek",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Batyrbek.kz"
 		]
 	},
 	"skinname-timeless": "Timeless",
@@ -20,7 +21,7 @@
 	"timeless-action-addsection": "Жаңа тақырып",
 	"timeless-view-view": "Оқу",
 	"timeless-pagemisc": "Тағы",
-	"timeless-namespaces": "Аттар кеңістіктері",
+	"timeless-namespaces": "Ат кеңістіктері",
 	"timeless-pagetools": "Бет әрекеттері",
 	"timeless-languages": "Тілдер",
 	"timeless-projects": "Басқа жобаларда",

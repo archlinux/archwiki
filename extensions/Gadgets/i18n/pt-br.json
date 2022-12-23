@@ -14,7 +14,8 @@
 			"Luan",
 			"Rafael Vargas",
 			"Teles",
-			555
+			555,
+			"Fúlvio"
 		]
 	},
 	"gadgets-desc": "Permite que os usuários selecionem [[Special:Gadgets|\"gadgets\" JavaScript e CSS]] personalizados nas suas [[Special:Preferences#mw-prefsection-gadgets|preferências]]",
@@ -31,11 +32,15 @@
 	"gadgetusage-default": "Padrão",
 	"gadgets-title": "Gadgets",
 	"gadgets-pagetext": "Segue-se uma lista de \"gadgets\" que podem ser ativados pelos usuários através de [[Special:Preferences#mw-prefsection-gadgets|suas páginas de preferências]], definidos em [[MediaWiki:Gadgets-definition|suas definições]].\nEsta lista possibilita um acesso fácil para as mensagens de sistema que definem as descrições e códigos de cada um dos gadgets.",
+	"gadgets-editdescription": "Editar descrição",
+	"gadgets-viewdescription": "Ver descrição",
 	"gadgets-uses": "Usos",
 	"gadgets-required-rights": "Requer {{PLURAL:$2|o seguinte privilégio|os seguintes privilégios}}:\n\n$1",
 	"gadgets-required-skins": "Disponível {{PLURAL:$2|no skin $1|nos seguintes skins: $1}}.",
+	"gadgets-required-actions": "Funciona {{PLURAL:$2|na ação de página \"$1\"|nas seguintes ações de página: $1}}",
 	"gadgets-default": "Ativado para todos por padrão.",
 	"gadgets-legacy": "O gadget não está carregado. Por favor, migre para ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Mais informacões])",
+	"gadgets-packaged": "Este gadget está [https://www.mediawiki.org/wiki/ResourceLoader/Package_files empacotado], com o ponto de entrada sendo $1",
 	"gadgets-export": "Exportar",
 	"gadgets-export-title": "Exportar gadgets",
 	"gadgets-not-found": "O gadget \"$1\" não encontrado.",
@@ -46,5 +51,7 @@
 	"right-gadgets-edit": "Editar as páginas de JavaScript e CSS dos gadgets",
 	"action-gadgets-edit": "editar a página de JavaScript ou CSS deste gadget",
 	"right-gadgets-definition-edit": "Editar as definições dos gadgets",
-	"action-gadgets-definition-edit": "editar a definição deste gadget"
+	"action-gadgets-definition-edit": "editar a definição deste gadget",
+	"gadgets-wrong-contentmodel": "As páginas no espaço nominal {{ns:2302}} devem ser do modelo de conteúdo GadgetDefinition.",
+	"gadgets-supports-urlload": "Este gadget oferece suporte ao carregamento via URL com o parâmetro de consulta <code>?withgadget</code>."
 }

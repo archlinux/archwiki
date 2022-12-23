@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Ernác",
-			"Iltever"
+			"Iltever",
+			"Къарачайлы"
 		]
 	},
 	"templatedata-desc": "Шаблон параметрле ючюн билгиле сакъланнган джерни реализациясы (JSON'ни болушлугъу бла)",
@@ -44,7 +45,7 @@
 	"templatedata-modal-button-add-language": "Тилни къошуу",
 	"templatedata-modal-button-addparam": "Параметрни къошуу",
 	"templatedata-modal-button-apply": "Хайырландыр",
-	"templatedata-modal-button-back": "Артха",
+	"templatedata-modal-button-back": "Кери",
 	"templatedata-modal-button-cancel": "Ызына алыу",
 	"templatedata-modal-button-changelang": "Тилни ауушдуруу",
 	"templatedata-modal-button-delparam": "Параметрни юсюнден информацияны кетер",

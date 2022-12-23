@@ -7,7 +7,8 @@
 			"MGChecker",
 			"Metalhead64",
 			"Schmackes",
-			"ToBeFree"
+			"ToBeFree",
+			"Brettchenweber"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Prüfen, ob ein Missbrauchsfilter mit einem Satz von Variablen, einer Bearbeitung oder einem protokollierten Missbrauchsfilter-Ereignis übereinstimmt.\n\nvars, rcid oder logid ist erforderlich, es darf jedoch nur eine davon verwendet werden.",
@@ -15,8 +16,8 @@
 	"apihelp-abusefiltercheckmatch-extended-description": "Es ist vars, rcid oder logid erforderlich, jedoch kann nur eines verwendet werden.",
 	"apihelp-abusefiltercheckmatch-param-filter": "Der vollständige Filtertext, der für einen Treffer überprüft werden soll.",
 	"apihelp-abusefiltercheckmatch-param-vars": "JSON-kodierte Anordnung von Variablen, die gegengetestet werden sollen.",
-	"apihelp-abusefiltercheckmatch-param-rcid": "Zu gegenprüfende Letzte-Änderungs-Kennung.",
-	"apihelp-abusefiltercheckmatch-param-logid": "Zu gegenprüfende Missbrauchsfilter-Logbuch-Kennung.",
+	"apihelp-abusefiltercheckmatch-param-rcid": "Gegenzuprüfende Letzte-Änderungs-Kennung.",
+	"apihelp-abusefiltercheckmatch-param-logid": "Gegenzuprüfende Missbrauchsfilter-Logbuch-Kennung.",
 	"apihelp-abusefiltercheckmatch-example-1": "Testet, ob die Letzte-Änderungen-Kennung 15 einem einfachen Filter entspricht.",
 	"apihelp-abusefilterchecksyntax-description": "Prüft die Syntax eines Missbrauchfilters.",
 	"apihelp-abusefilterchecksyntax-summary": "Überprüft die Syntax eines Missbrauchfilters.",
@@ -32,7 +33,7 @@
 	"apihelp-abusefilterunblockautopromote-description": "Verhindert, dass ein Benutzer aufgrund einer Missbrauchsfilter-Folge Autopromotions erhält.",
 	"apihelp-abusefilterunblockautopromote-summary": "Verhindert, dass ein Benutzer aufgrund einer Missbrauchsfilter-Folge Autopromotions erhält.",
 	"apihelp-abusefilterunblockautopromote-param-user": "Benutzername des Benutzers, den du entsperren möchtest.",
-	"apihelp-abusefilterunblockautopromote-example-1": "Entfernet die Sperre auf der Autopromotion von [[User:Example]]",
+	"apihelp-abusefilterunblockautopromote-example-1": "Entfernt die Sperre auf der Autopromotion von [[User:Example]]",
 	"apihelp-query+abusefilters-description": "Einzelheiten über die Missbrauchsfilter anzeigen.",
 	"apihelp-query+abusefilters-summary": "Zeigt Einzelheiten des Missbrauchfilters an.",
 	"apihelp-query+abusefilters-param-startid": "Die Filterkennung, bei der die Aufzählung beginnen soll.",

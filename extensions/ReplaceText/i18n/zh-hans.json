@@ -9,7 +9,8 @@
 			"PhiLiP",
 			"Xiplus",
 			"Xzonn",
-			"Yfdyh000"
+			"Yfdyh000",
+			"飞小RAN"
 		]
 	},
 	"replacetext": "替换文字",
@@ -22,8 +23,8 @@
 	"replacetext_optionalfilters": "可选过滤器：",
 	"replacetext_categorysearch": "仅替换该分类中的页面：",
 	"replacetext_prefixsearch": "仅替换带该前缀页面：",
-	"replacetext_editpages": "仅在页面内容中替换",
-	"replacetext_movepages": "可能的话，在页面名称中替换",
+	"replacetext_editpages": "在页面内容中替换",
+	"replacetext_movepages": "在可行的情况下，在页面名称中替换",
 	"replacetext_givetarget": "必须指定查找的字符串。",
 	"replacetext_nonamespace": "您必须选择至少一个命名空间。",
 	"replacetext_editormove": "必须选择至少一个替换选项。",

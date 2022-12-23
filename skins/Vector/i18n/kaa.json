@@ -2,10 +2,18 @@
 	"@metadata": {
 		"authors": [
 			"Atabek",
-			"Nurlan"
+			"Nurlan",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
+	"skinname-vector": "Vektor miyrası (2010)",
+	"skinname-vector-2022": "Vektor (2022)",
+	"vector-specialversion-name": "Vektor",
+	"prefs-vector-enable-vector-1-label": "Eski Vektordan paydalanıw",
+	"vector-opt-out": "Eski kóriniske almastırıw",
+	"vector-languages": "Tiller",
 	"vector-language-button-label": "{{PLURAL:$1|$1 til}}",
+	"vector-no-language-button-label": "Tillerdi qosıw",
 	"vector-action-addsection": "Tema qosıw",
 	"vector-action-delete": "Óshiriw",
 	"vector-action-move": "Kóshiriw",

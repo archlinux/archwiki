@@ -10,6 +10,6 @@
 	"pfunc_expr_unrecognised_word": "خطأ في التعبير: كلمة ما معروفاش \"$1\"",
 	"pfunc_expr_unexpected_operator": "غالاط ف التعبير: لعامل $1 ماشي متوقع",
 	"pfunc_expr_missing_operand": "غلط في التعبير: معامل مفقود للعامل $1",
-	"pfunc_expr_unrecognised_punctuation": "خطأ في التعبير: علامة ترقيم ما معروفاش \"$1\"",
+	"pfunc_expr_unrecognised_punctuation": "خطأ ف التعبير: علامة ترقيم ما معروفاش \"$1\"",
 	"pfunc_expr_division_by_zero": "القسمة على زيرو."
 }

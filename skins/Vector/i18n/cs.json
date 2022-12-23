@@ -9,7 +9,8 @@
 			"Matěj Suchánek",
 			"Mormegil",
 			"Patriccck",
-			"Patrik L."
+			"Patrik L.",
+			"Martin Urbanec (WMF)"
 		]
 	},
 	"skinname-vector": "Starý Vektor (2010)",
@@ -27,6 +28,7 @@
 	"vector-language-button-aria-label": "Přejděte k článku v jiném jazyce. Je dostupný v {{PLURAL:$1|$1 jazyce|$1 jazycích}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 jazyk|$1 jazyky|$1 jazyků}}",
 	"vector-no-language-button-label": "Přidat jazyky",
+	"vector-no-language-button-aria-label": "Tento článek existuje jenom v tomto jazyce. Přidejte jej i v ostatních jazycích",
 	"vector-language-redirect-to-top": "Tady na {{GRAMMAR:6sg|{{SITENAME}}}} jsou mezijazykové odkazy nahoře na stránce, napravo od názvu článku. [[#p-lang-btn|Jít nahoru]].",
 	"vector-language-variant-switcher-label": "Změnit variantu jazyka",
 	"vector-action-addsection": "Přidat téma",
@@ -46,7 +48,7 @@
 	"vector-more-actions": "Další",
 	"vector-search-loader": "Načítají se návrhy pro hledání",
 	"vector-searchsuggest-containing": "Vyhledat stránky obsahující „<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>“",
-	"vector-intro-page": "Nápověda:Úvod",
+	"vector-intro-page": "Help:Úvod",
 	"vector-toc-heading": "Obsah",
 	"vector-toc-toggle-position-sidebar": "přesunout do postranního panelu",
 	"vector-toc-toggle-position-title": "skrýt",
@@ -57,6 +59,7 @@
 	"vector-main-menu-tooltip": "Hlavní menu",
 	"vector-toc-menu-tooltip": "Obsah",
 	"vector-toc-collapsible-button-label": "Přepnout obsah",
+	"vector-site-nav-label": "Projekt",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskuse]]",
 	"tooltip-vector-anon-user-menu-title": "Další možnosti"
 }

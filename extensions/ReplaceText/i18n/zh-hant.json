@@ -9,11 +9,12 @@
 			"Mark85296341",
 			"Roc michael",
 			"Sheepy",
-			"Wrightbus"
+			"Wrightbus",
+			"捍粵者"
 		]
 	},
 	"replacetext": "取代文字",
-	"replacetext-desc": "提供管理員可以對全站頁面內容進行搜尋及取代的 [[Special:ReplaceText|特殊頁面]]。",
+	"replacetext-desc": "管理員可在[[Special:ReplaceText|特殊頁面]]搜尋及取代全站的內容頁面。",
 	"replacetext_docu": "要取代此 Wiki 內所有頁面的文字，請分別填入以下「原始文字」及「取代文字」兩個欄位，然後點選 \"{{int:replacetext_continue}}\"。\n接著會顯示所有包含搜尋文字的頁面，您可以選擇您要取代的頁面。\n您所做的任何變更會顯示在頁面的歷史記錄中以示負責。",
 	"replacetext_originaltext": "原始文字：",
 	"replacetext_replacementtext": "取代文字：",
@@ -49,6 +50,6 @@
 	"replacetext_cfg_error": "ReplaceText 設置錯誤",
 	"replacetext_no_compress": "您的 wiki 無法運作 ReplaceText：若 $wgCompressRevisions 設定成 true，無法執行文字替換。",
 	"replacetext_no_external_stores": "您的 wiki 無法運作 ReplaceText：若 $wgExternalStores 非空值，無法執行文字替換。",
-	"right-replacetext": "對整個 Wiki 進行字串取代。",
-	"action-replacetext": "對整個 Wiki 進行字串取代。"
+	"right-replacetext": "取代整個Wiki的字串",
+	"action-replacetext": "取代整個Wiki的字串。"
 }

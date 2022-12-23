@@ -8,12 +8,11 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 
 		ve.init.mw.HCaptchaSaveErrorHandler.static.getReadyPromise = function () {
 			var onLoadFn = 'onHcaptchaLoadCallback' + Date.now(),
-				deferred, config, scriptURL, params;
+				deferred, scriptURL, params;
 
 			if ( !this.readyPromise ) {
 				deferred = $.Deferred();
-				config = mw.config.get( 'wgConfirmEditConfig' );
-				scriptURL = new mw.Uri( config.hCaptchaScriptURL );
+				scriptURL = new mw.Uri( require( './config.json' ).hCaptchaScriptURL );
 				params = { onload: onLoadFn, render: 'explicit' };
 				scriptURL.query = $.extend( scriptURL.query, params );
 
@@ -33,8 +32,7 @@ mw.loader.using( 'ext.visualEditor.targetLoader' ).then( function () {
 
 		ve.init.mw.HCaptchaSaveErrorHandler.static.process = function ( data, target ) {
 			var self = this,
-				config = mw.config.get( 'wgConfirmEditConfig' ),
-				siteKey = config.hCaptchaSiteKey,
+				siteKey = require( './config.json' ).hCaptchaSiteKey,
 				$container = $( '<div>' );
 
 			// Register extra fields

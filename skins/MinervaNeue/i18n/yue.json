@@ -8,7 +8,8 @@
 			"Obonggi",
 			"Roy17",
 			"Sun8908",
-			"Yueman"
+			"Yueman",
+			"捍粵者"
 		]
 	},
 	"minerva-last-modified-date": "最近編輯時間係$1 $2",
@@ -53,7 +54,7 @@
 	"minerva-page-actions-wikibase": "{{WBREPONAME}}項目",
 	"minerva-page-actions-language-switcher": "話",
 	"minerva-page-actions-history": "史",
-	"minerva-talk-explained": "進行緊嘅討論",
+	"minerva-talk-explained": "熱鬧嘅討論",
 	"minerva-talk-reply-success": "你嘅回覆經已儲存咗去討論版。",
 	"skin-minerva-mobile-option-MinervaShowCategories": "分類"
 }

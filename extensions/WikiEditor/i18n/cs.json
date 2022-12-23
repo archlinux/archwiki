@@ -200,5 +200,6 @@
 	"wikieditor-realtimepreview-preview": "Náhled",
 	"wikieditor-realtimepreview-error": "Náhled se nenačítá",
 	"wikieditor-realtimepreview-reload": "Obnovit",
-	"wikieditor-realtimepreview-beta-label": "Náhled v reálném čase"
+	"wikieditor-realtimepreview-beta-label": "Náhled v reálném čase",
+	"wikieditor-realtimepreview-beta-desc": "V [[mw:Special:MyLanguage/Extension:WikiEditor|klasickém editoru]] uvidíte náhled, jak se změny wikitextu zobrazí čtenářům."
 }

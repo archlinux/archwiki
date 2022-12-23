@@ -29,5 +29,5 @@
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Bloc de code",
 	"syntaxhighlight-error-pygments-invocation-failure": "Impossible d'appeler Pygments",
 	"syntaxhighlight-error-unknown-language": "Langue inconnue \"$1\"",
-	"syntaxhighlight-error-exceeds-size-limit": "Code de taille $1 {{PLURAL:$1|octets}} qui dépasse le  maximum autorisé $2 {{PLURAL:$2|octets}}"
+	"syntaxhighlight-error-exceeds-size-limit": "La taille du code ($1 octet{{PLURAL:$1||s}}) dépasse le maximum autorisé ($2 octet{{PLURAL:$2||s}})"
 }

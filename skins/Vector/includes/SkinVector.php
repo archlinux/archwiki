@@ -245,9 +245,16 @@ abstract class SkinVector extends SkinMustache {
 	 * @param string[] $returnto array of query strings used to build the login link
 	 * @param bool $useCombinedLoginLink if a combined login/signup link will be used
 	 * @param bool $isTempUser
+	 * @param bool $includeLearnMoreLink Pass `true` to include the learn more
+	 * link in the menu for anon users. This param will be inert for temp users.
 	 * @return string
 	 */
-	private function getAnonMenuBeforePortletHTML( $returnto, $useCombinedLoginLink, $isTempUser ) {
+	private function getAnonMenuBeforePortletHTML(
+		$returnto,
+		$useCombinedLoginLink,
+		$isTempUser,
+		$includeLearnMoreLink
+	) {
 		$templateParser = $this->getTemplateParser();
 		$loginLinkData = array_merge( $this->buildLoginData( $returnto, $useCombinedLoginLink ), [
 			'class' => [ 'vector-menu-content-item', 'vector-menu-content-item-login' ],
@@ -256,19 +263,22 @@ abstract class SkinVector extends SkinMustache {
 		$templateData = [
 			'htmlCreateAccount' => $this->getCreateAccountHTML( $returnto, true ),
 			'htmlLogin' => $this->makeLink( 'login', $loginLinkData ),
+			'data-anon-editor' => []
 		];
 
-		if ( $isTempUser ) {
-			$templateName = 'UserLinks__templogin';
-		} else {
-			$templateName = 'UserLinks__login';
+		$templateName = $isTempUser ? 'UserLinks__templogin' : 'UserLinks__login';
+
+		if ( !$isTempUser && $includeLearnMoreLink ) {
 			$learnMoreLinkData = [
 				'text' => $this->msg( 'vector-anon-user-menu-pages-learn' )->text(),
 				'href' => Title::newFromText( $this->msg( 'vector-intro-page' )->text() )->getLocalURL(),
 				'aria-label' => $this->msg( 'vector-anon-user-menu-pages-label' )->text(),
 			];
-			$templateData['htmlLearnMoreLink'] = $this->makeLink( '', $learnMoreLinkData );
-			$templateData['msgLearnMore'] = $this->msg( 'vector-anon-user-menu-pages' );
+
+			$templateData['data-anon-editor'] = [
+				'htmlLearnMoreLink' => $this->makeLink( '', $learnMoreLinkData ),
+				'msgLearnMore' => $this->msg( 'vector-anon-user-menu-pages' )
+			];
 		}
 
 		return $templateParser->processTemplate( $templateName, $templateData );
@@ -308,7 +318,13 @@ abstract class SkinVector extends SkinMustache {
 			$userMenuData[ 'html-before-portal' ] .= $this->getAnonMenuBeforePortletHTML(
 				$returnto,
 				$useCombinedLoginLink,
-				$isTempUser
+				$isTempUser,
+				// T317789: The `anontalk` and `anoncontribs` links will not be added to
+				// the menu if `$wgGroupPermissions['*']['edit']` === false which can
+				// leave the menu empty due to our removal of other user menu items in
+				// `Hooks::updateUserLinksDropdownItems`. In this case, we do not want
+				// to render the anon "learn more" link.
+				!$userMenuData['is-empty']
 			);
 		} else {
 			// Appending as to not override data potentially set by the onSkinAfterPortlet hook.
@@ -737,8 +753,18 @@ abstract class SkinVector extends SkinMustache {
 	 * @return array
 	 */
 	private function getUserMenuPortletData( $portletData ) {
-		// Add target class to apply different icon to personal menu dropdown for logged in users.
-		$portletData['class'] .= ' vector-user-menu';
+		// T317789: Core can undesirably add an 'emptyPortlet' class that hides the
+		// user menu. This is a result of us manually removing items from the menu
+		// in Hooks::updateUserLinksDropdownItems which can make
+		// SkinTemplate::getPortletData apply the `emptyPortlet` class if there are
+		// no menu items. Since we subsequently add menu items in
+		// SkinVector::getUserLinksTemplateData, the `emptyPortlet` class is
+		// innaccurate. This is why we add the desired classes, `mw-portlet` and
+		// `mw-portlet-personal` here instead. This can potentially be removed upon
+		// completion of T319356.
+		//
+		// Also, add target class to apply different icon to personal menu dropdown for logged in users.
+		$portletData['class'] = 'mw-portlet mw-portlet-personal vector-user-menu';
 		$portletData['class'] .= $this->loggedin ?
 			' vector-user-menu-logged-in' :
 			' vector-user-menu-logged-out';

@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"JonesT143",
-			"Lloffiwr"
+			"Lloffiwr",
+			"Afalau"
 		]
 	},
-	"vector-language-button-label": "$1 iaith",
+	"vector-language-button-label": "{{PLURAL:$1|iaith}}",
 	"vector-action-addsection": "Ychwanegu adran",
 	"vector-action-delete": "Dileu",
 	"vector-action-move": "Symud",

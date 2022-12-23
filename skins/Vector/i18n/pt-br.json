@@ -15,7 +15,8 @@
 			"Luan",
 			"Opraco",
 			"YuriNikolai",
-			555
+			555,
+			"Fúlvio"
 		]
 	},
 	"skinname-vector": "Vector",
@@ -30,6 +31,9 @@
 	"vector-languages": "Idiomas",
 	"vector-language-button-aria-label": "Vá para um artigo em outro idioma. Disponível em {{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idiomas}}",
+	"vector-no-language-button-label": "Adicionar idiomas",
+	"vector-no-language-button-aria-label": "Este artigo existe somente neste idioma. Adicione o artigo em outros idiomas",
+	"vector-language-redirect-to-top": "Nesta {{SITENAME}}, os links dos idiomas estão no topo da página, em frente ao título do artigo. [[#p-lang-btn|Ir para o topo]].",
 	"vector-language-variant-switcher-label": "Alterar a variante de idioma",
 	"vector-action-addsection": "Adicionar tópico",
 	"vector-action-delete": "Excluir",
@@ -52,10 +56,15 @@
 	"vector-toc-heading": "Conteúdo",
 	"vector-toc-toggle-position-title": "Esconder",
 	"vector-toc-beginning": "Início",
+	"vector-toc-toggle-button-label": "Alternar subseção $1",
 	"vector-anon-user-menu-pages": "Páginas para editores conectados",
 	"vector-anon-user-menu-pages-learn": "saiba mais",
 	"vector-anon-user-menu-pages-label": "Saiba mais sobre edição",
 	"vector-main-menu-tooltip": "Menu principal",
+	"vector-toc-menu-tooltip": "Índice",
+	"vector-toc-collapsible-button-label": "Alternar o índice",
 	"vector-article-tools-nav-label": "Ferramentas",
+	"vector-site-nav-label": "Site",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Discussão]]",
 	"tooltip-vector-anon-user-menu-title": "Mais opções"
 }

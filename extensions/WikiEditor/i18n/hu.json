@@ -202,5 +202,9 @@
 	"wikieditor-toolbar-help-content-indent-result": "Sima szöveg<dl><dd>Behúzott szöveg<dl><dd>Behúzott szöveg</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "A [[mw:Extension:WikiEditor/hu|WikiEditorrel]] (2010-es wikiszöveg-szerkesztővel) készült szerkesztés",
 	"wikieditor-realtimepreview-preview": "Előnézet",
-	"wikieditor-realtimepreview-reload": "Újratöltés"
+	"wikieditor-realtimepreview-reload": "Újratöltés",
+	"wikieditor-realtimepreview-beta-label": "Valós idejű előnézet",
+	"wikieditor-realtimepreview-reload-title": "A valós idejű előnézet ablaktáblájának újratöltése",
+	"wikieditor-realtimepreview-onboarding-title": "Valós idejű előnézet",
+	"wikieditor-realtimepreview-onboarding-button": "Oké, értettem"
 }

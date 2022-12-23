@@ -8,6 +8,7 @@
 			"Guherto"
 		]
 	},
+	"abuselog": "Fîltreyên qeydên bedkariyê",
 	"abusefilter-log-search-user": "Bikarhêner:",
 	"abusefilter-log-search-title": "Sernav:",
 	"abusefilter-log-search-wiki": "Wîkî:",
@@ -16,6 +17,7 @@
 	"abusefilter-log-detailslink": "detayan",
 	"abusefilter-log-diff": "cudahî",
 	"abusefilter-log-noactions": "tine",
+	"abusefilter-log-linkonhistory": "qeydên bedkariyê bibîne",
 	"abusefilter-log-hide-reason": "Sedem:",
 	"log-action-filter-abusefilter": "Cureyê guhartina parzûnê:",
 	"abusefilter-list": "Hemû fîltreyan",
@@ -54,7 +56,7 @@
 	"abusefilter-edit-notes": "Not:",
 	"abusefilter-edit-warn-other": "Peyama din",
 	"abusefilter-edit-warn-actions": "Çalakî:",
-	"abusefilter-edit-warn-preview": "Pêşdîtina peyama bijartî nîşan bide/biveşêre",
+	"abusefilter-edit-warn-preview": "Pêşdîtina peyama bijartî nîşan bide/veşêre",
 	"abusefilter-edit-history": "Dîrok:",
 	"abusefilter-edit-tools": "Amûr:",
 	"abusefilter-edit-builder-op-bool-not": "Na (!)",

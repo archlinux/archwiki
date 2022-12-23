@@ -48,7 +48,7 @@
 	"mobile-frontend-user-button-tooltip": "Prikaži moja obvestila",
 	"mobile-frontend-user-newmessages": "Na vaši pogovorni strani imate nova sporočila",
 	"mobile-frontend-user-page-contributions": "Prispevki",
-	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Pridružen|Pridružena|Pridružen(-a)}} $1",
+	"mobile-frontend-user-page-member-since": "{{GENDER:$2|Pridružen|Pridružena|Pridružen_a}} $1",
 	"mobile-frontend-user-page-talk": "Pogovor",
 	"minerva-user-menu-button": "Uporabniški meni",
 	"minerva-user-navigation": "Navigacija uporabnika",

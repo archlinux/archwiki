@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nurlan"
+		]
+	},
+	"wikieditor-wikitext-tab": "Wikitekst",
+	"wikieditor-toolbar": "Redaktorlaw ásbapı",
+	"wikieditor-toolbar-desc": "Paydalanıwǵa qolaylı bolǵan redaktorlaw ásbapı",
+	"wikieditor-toolbar-preference": "Jaqsılanǵan redaktorlaw ásbapın qosıw",
+	"wikieditor-toolbar-preference-help": "Bul geyde '2010 wikitekst redaktori' dep ataladı.",
+	"wikieditor-toolbar-tool-bold": "Qalıń jazıw",
+	"wikieditor-toolbar-tool-bold-example": "Qalıń tekst",
+	"wikieditor-toolbar-tool-italic": "Qıya",
+	"wikieditor-toolbar-tool-italic-example": "Qıya tekst",
+	"wikieditor-toolbar-tool-ilink": "Ishki silteme",
+	"wikieditor-toolbar-tool-ilink-example": "Silteme bası",
+	"wikieditor-toolbar-tool-link": "Silteme",
+	"wikieditor-toolbar-tool-link-title": "Silteme qoyıw"
+}

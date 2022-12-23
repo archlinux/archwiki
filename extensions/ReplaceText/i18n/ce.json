@@ -8,7 +8,7 @@
 	"replacetext": "Хийца йоза",
 	"replacetext_originaltext": "ДӀадолалун йоза:",
 	"replacetext_optionalfilters": "Тlедожийна доцу литтарш:",
-	"replacetext_cannotmove": "{{PLURAL:$1|1=ТӀехьа йогӀу агӀонан цӀе хуьйцийла дац|ТӀехьа йогӀу агӀонийн цӀерш хуьйцийла дац}}:",
+	"replacetext_cannotmove": "{{PLURAL:$1|1=РогӀера агӀонан цӀе хуьйцийла дац|РогӀера агӀонийн цӀерш хуьйцийла дац}}:",
 	"replacetext_invertselections": "Харжаран инверт йе",
 	"replacetext_replace": "Хийца",
 	"replacetext_continue": "Кхин дӀа"

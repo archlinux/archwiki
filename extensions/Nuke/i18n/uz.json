@@ -1,10 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sociologist"
+			"Sociologist",
+			"Nataev",
+			"Malikxan"
 		]
 	},
 	"nuke": "Birdaniga oʻchirish",
+	"nuke-defaultreason": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] yaratgan sahifalar birdaniga oʻchirildi",
+	"nuke-submit-delete": "Tanlanganlarni oʻchirish",
+	"right-nuke": "Sahifalarni birdaniga oʻchirish",
 	"nuke-deleted": "'''$1''' sahifasi oʻchirildi.",
+	"nuke-deletion-queued": "'''„$1“''' sahifasi oʻchirilish uchun navbatga qoʻyildi.",
+	"nuke-viewchanges": "oʻzgarishlarni koʻrish",
 	"nuke-linkoncontribs": "birdaniga oʻchirish"
 }

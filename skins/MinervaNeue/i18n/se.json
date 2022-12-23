@@ -2,17 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Trondtr",
-			"Yupik"
+			"Yupik",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
 	"mobile-frontend-editor-redlink-leave": "Ii giitu.",
 	"mobile-frontend-history": "Čájet siiddu redigerenhistorjjá.",
 	"mobile-frontend-home-button": "Ruoktu",
 	"mobile-frontend-language-article-heading": "Giella",
-	"mobile-frontend-main-menu-login": "Logge sisa",
+	"mobile-frontend-main-menu-login": "Čálit sisa",
+	"mobile-frontend-main-menu-logout": "Čálit olggos",
 	"mobile-frontend-main-menu-settings": "Ásahusat",
 	"mobile-frontend-main-menu-watchlist": "Čuovvunlistu",
+	"mobile-frontend-notifications-filter": "Sille",
 	"mobile-frontend-placeholder": "Oza {{SITENAME}}:s",
 	"mobile-frontend-random-button": "Sahtedohko",
+	"minerva-page-actions-delete": "Sihko",
+	"skin-minerva-issue-learn-more": "Lassedieđut",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Kategoriijat"
 }

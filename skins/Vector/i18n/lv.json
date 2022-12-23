@@ -5,6 +5,7 @@
 			"Papuass"
 		]
 	},
+	"vector-skin-desc": "Nodrošina 2 Vector apdares:\n* 2011. gada — MonoBook modernā versija ar svaigu izskatu un daudziem lietojamības uzlabojumiem.\n* 2022. gada — Vector, kas pārveidots kā daļa no WMF [[mw:Desktop Improvements]] projekta.",
 	"prefs-vector-enable-vector-1-label": "Izmantot Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "Dažu nākamo gadu laikā mēs pakāpeniski atjaunināsim Vector apdari. Legacy Vector ļaus skatīt veco Vector versiju (kāda tā bija 2019. gada decembrī). Lai uzzinātu vairāk par jauninājumiem, dodies uz mūsu [[mw:Reading/Web/Desktop_Improvements|projekta lapu]].",
 	"vector-opt-out": "Pārslēgties uz veco izskatu",
@@ -39,6 +40,7 @@
 	"vector-toc-toggle-position-title": "paslēpt",
 	"vector-toc-beginning": "Sākums",
 	"vector-toc-toggle-button-label": "Pārslēgt $1 apakšsadaļu",
+	"vector-anon-user-menu-pages": "Lapas redaktoriem, kuri nav pieslēgušies",
 	"vector-anon-user-menu-pages-learn": "uzzināt vairāk",
 	"vector-anon-user-menu-pages-label": "Uzzini vairāk par rediģēšanu",
 	"vector-main-menu-tooltip": "Galvenā izvēlne",

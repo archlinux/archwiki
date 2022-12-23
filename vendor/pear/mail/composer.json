@@ -6,6 +6,11 @@
             "role": "Lead"
         },
         {
+            "email": "schengawegga@gmail.com",
+            "name": "Armin Graefe",
+            "role": "Lead"
+        },
+        {
             "email": "richard@phpguru.org",
             "name": "Richard Heyes",
             "role": "Developer"
@@ -26,7 +31,7 @@
     "include-path": [
         "./"
     ],
-    "license": "BSD-2-Clause",
+    "license": "BSD-3-Clause",
     "name": "pear/mail",
     "support": {
         "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=Mail",

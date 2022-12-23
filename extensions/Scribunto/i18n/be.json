@@ -52,7 +52,7 @@
 	"scribunto-luastandalone-signal": "Памылка Lua: Унутраная памылка: інтэрпрэтатар быў спынены з сігналам «$2».",
 	"scribunto-luastandalone-exited": "Памылка Lua: Унутраная памылка: інтэрпрэтатар завяршыў працу з станам $2.",
 	"scribunto-module-with-errors-category": "Модулі Scribunto з памылкамі",
-	"scribunto-module-with-errors-category-desc": "Модуль утрымлівае памылку.",
+	"scribunto-module-with-errors-category-desc": "У модулі ёсць памылка.",
 	"scribunto-limitreport-timeusage": "Выкарыстання часу Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 с",
 	"scribunto-limitreport-virtmemusage": "Віртуальны памер Lua",

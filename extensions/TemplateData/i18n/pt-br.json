@@ -13,7 +13,8 @@
 			"Luckas",
 			"Luk3",
 			"Opraco",
-			555
+			555,
+			"Fúlvio"
 		]
 	},
 	"templatedata-desc": "Implementa o armazenamento de dados para os parâmetros das predefinições (em JSON)",
@@ -57,7 +58,7 @@
 	"templatedata-invalid-duplicate-value": "A propriedade \"$1\" (\"$3\") é uma duplicata de \"$2\".",
 	"templatedata-invalid-empty-array": "Propriedade \"$1\" deve ter pelo menos um valor em sua matriz.",
 	"templatedata-invalid-format": "A propriedade \"$1\" deverá ser \"inline\", \"block\" ou uma string de formato válida.",
-	"templatedata-invalid-length": "Quantia de dados muito grande para ser salva ({{formatnum:$1}} {{PLURAL:$1|byte|bytes}}, {{PLURAL:$2|e o limite é}} {{formatnum:$2}})",
+	"templatedata-invalid-length": "Quantia de dados muito grande para ser salva ($1 {{PLURAL:$1|byte|bytes}}, {{PLURAL:$2|e o limite é}} $2)",
 	"templatedata-invalid-missing": "A propriedade \"$1\" é requerida mas não foi encontrada.",
 	"templatedata-invalid-param": "Parâmetro inválido \"$1\" para a propriedade \"$2\".",
 	"templatedata-invalid-parse": "Erro de sintaxe em JSON.",

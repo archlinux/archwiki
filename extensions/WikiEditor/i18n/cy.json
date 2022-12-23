@@ -4,7 +4,8 @@
 			"Lloffiwr",
 			"Macofe",
 			"Robin Owain",
-			"Xxglennxx"
+			"Xxglennxx",
+			"Afalau"
 		]
 	},
 	"wikieditor": "Rhyngwyneb golygu testun wici uwch",
@@ -33,8 +34,8 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Ysgrifen y cyswllt:",
 	"wikieditor-toolbar-tool-link-insert": "Mewnosod cyswllt",
 	"wikieditor-toolbar-tool-link-cancel": "Diddymu",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "Y dudalen ar gael",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Nid yw'r dudalen ar gael",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Mae'r dudalen hon ar gael ar {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Nid yw'r dudalen ar gael ar {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Teitl annilys",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Cyswllt allanol",
 	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Tudalen gwahaniaethu",

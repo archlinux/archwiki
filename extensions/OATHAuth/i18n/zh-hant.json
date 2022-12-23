@@ -15,7 +15,8 @@
 			"Winston Sung",
 			"Xiplus",
 			"予弦",
-			"神樂坂秀吉"
+			"神樂坂秀吉",
+			"捍粵者"
 		]
 	},
 	"oathauth-desc": "提供基於 HMAC 的一次性密碼驗證支援",
@@ -61,7 +62,7 @@
 	"oathauth-throttled": "驗證次數過多，請稍等 $1。",
 	"oathauth-login-failed": "驗證失敗",
 	"oathauth-describe-provider": "雙重認證（OATH）。",
-	"grant-group-authentication": "為自己及其他人進行身份認證動作",
+	"grant-group-authentication": "驗證自己及其他人身份",
 	"grant-oath": "為自己與他人存取雙重認證（OATH）資訊",
 	"right-oathauth-api-all": "查詢並驗證自己和他人的OATH資訊",
 	"action-oathauth-api-all": "檢查 OATH 狀態",

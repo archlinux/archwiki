@@ -21,7 +21,8 @@
 			"Opraco",
 			"Rafael Vargas",
 			"YuriNikolai",
-			555
+			555,
+			"Fúlvio"
 		]
 	},
 	"wikieditor": "Interface avançada de edição de wikitexto",
@@ -213,9 +214,15 @@
 	"wikieditor-toolbar-help-content-indent-description": "Indentação",
 	"wikieditor-toolbar-help-content-indent-syntax": "Texto normal<br />:Texto indentado<br />::Texto indentado",
 	"wikieditor-toolbar-help-content-indent-result": "Texto normal<dl><dd>Texto indentado<dl><dd>Texto indentado</dd></dl></dd></dl>",
+	"tag-wikieditor-description": "Edição feita usando o [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (editor de wikitexto de 2010)",
 	"wikieditor-realtimepreview-preview": "Mostar previsão",
+	"wikieditor-realtimepreview-error": "A visualização não está carregando",
 	"wikieditor-realtimepreview-reload": "Recarregar",
 	"wikieditor-realtimepreview-beta-label": "Pré-visualização em tempo real",
+	"wikieditor-realtimepreview-beta-desc": "Veja como as alterações do wikitexto aparecerão para os leitores dentro do [[mw:Special:MyLanguage/Extension:WikiEditor|editor de 2010]].",
 	"wikieditor-realtimepreview-reload-title": "Recarregar o painel da pré-visualização em tempo real",
-	"wikieditor-realtimepreview-onboarding-title": "Pré-visualização em tempo real"
+	"wikieditor-realtimepreview-manual": "Recarregue agora para visualizar manualmente suas edições.",
+	"wikieditor-realtimepreview-onboarding-title": "Pré-visualização em tempo real",
+	"wikieditor-realtimepreview-onboarding-body": "Veja como suas edições serão exibidas para os leitores visualizando-as em tempo real.",
+	"wikieditor-realtimepreview-onboarding-button": "Ok, entendi"
 }

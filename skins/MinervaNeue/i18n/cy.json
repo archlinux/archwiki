@@ -4,7 +4,8 @@
 			"Ham II",
 			"Lloffiwr",
 			"Robin Owain",
-			"Troswr"
+			"Troswr",
+			"Afalau"
 		]
 	},
 	"mobile-frontend-editor-edit": "Golygu",
@@ -18,8 +19,8 @@
 	"mobile-frontend-main-menu-settings": "Gosodiadau",
 	"mobile-frontend-main-menu-watchlist": "Rhestr wylio",
 	"mobile-frontend-meta-data-issues": "Mae 'na broblem efo'r dudalen hon",
-	"mobile-frontend-meta-data-issues-header": "Problemau",
-	"mobile-frontend-pageaction-edit-tooltip": "Golygu adran agoriadol y dudalen hon.",
+	"mobile-frontend-meta-data-issues-header": "Problemau'r dudalen",
+	"mobile-frontend-pageaction-edit-tooltip": "Golygu adran agoriadol y dudalen hon",
 	"mobile-frontend-placeholder": "Chwilio {{SITENAME}}",
 	"mobile-frontend-random-button": "Ar hap",
 	"mobile-frontend-talk-back-to-page": "Nôl i'r dudalen \"$1\".",

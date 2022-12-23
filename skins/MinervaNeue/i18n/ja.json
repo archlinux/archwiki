@@ -17,7 +17,8 @@
 			"そらたこ",
 			"神樂坂秀吉",
 			"組曲師",
-			"Marine-Blue"
+			"Marine-Blue",
+			"Funa-enpitu"
 		]
 	},
 	"minerva-last-modified-date": "最終更新: $1 $2",
@@ -90,5 +91,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "ページが属するカテゴリを表示",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "ページの問題処理の改良",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "ページの問題 (Template:ambox) は記事上でリンク表示します。",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "残念ながら、モバイルビューでは複数の変更をページごとにまとめて表示することはできません。ページごとにまとめて表示する機能を利用したい場合はデスクトップサイトにアクセスしてください。"
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "残念ながら、モバイルビューでは複数の変更をページごとにまとめて表示することはできません。ページごとにまとめて表示する機能を利用したい場合はデスクトップサイトにアクセスしてください。",
+	"minerva.css": "/* ここに記述したCSSは、全てのミネルバスキン利用者に読み込まれます　*/",
+	"minerva.js": "/* ここに記述したJavaScriptは、全てのミネルバスキン利用者に読み込まれます　*/"
 }

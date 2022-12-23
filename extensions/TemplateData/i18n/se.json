@@ -5,7 +5,10 @@
 		]
 	},
 	"templatedata-doc-param-type-unknown": "Dovdameahttun",
+	"templatedata-doc-param-type-wiki-page-name": "Siidonamma",
 	"templatedata-doc-param-type-wiki-template-name": "Málle",
+	"templatedata-modal-button-changelang": "Molsso giela",
+	"templatedata-modal-button-saveparam": "Vurke",
 	"templatedata-modal-table-param-example": "Ovdamearka ($1)",
 	"templatedata-modal-title-language": "Giella"
 }

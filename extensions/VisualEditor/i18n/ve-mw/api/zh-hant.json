@@ -6,7 +6,8 @@
 			"Kly",
 			"LNDDYL",
 			"Liuxinyu970226",
-			"Tranve"
+			"Tranve",
+			"捍粵者"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "使用該金鑰查無已快取的序列化內容",
@@ -17,7 +18,7 @@
 	"apierror-visualeditor-latestnotfound": "無法找到標題的最近修訂",
 	"apihelp-visualeditor-description": "從 Parsoid 服務回傳一個頁面的 HTML5。",
 	"apihelp-visualeditor-param-basetimestamp": "在儲存時，請將此設定爲該頁面編輯的時間戳記。 用於偵測編輯衝突。",
-	"apihelp-visualeditor-param-badetag": "若 RESTBase 查詢回傳一個看起來無效的 ETag，傳遞於此來進行記錄。",
+	"apihelp-visualeditor-param-badetag": "若RESTBase查詢傳回看起來無效的ETag，傳它過來記錄。",
 	"apihelp-visualeditor-param-cachekey": "要做序列化或版本比較，使用 serializeforcache 請求的結果以及此金鑰。覆蓋 $1html。",
 	"apihelp-visualeditor-param-editintro": "編輯介紹來加入通知。",
 	"apihelp-visualeditor-param-etag": "要傳送的 ETag。",

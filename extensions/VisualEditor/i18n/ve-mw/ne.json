@@ -152,6 +152,8 @@
 	"visualeditor-mweditmodeve-title": "दृश्य सम्पादनमा जानुहोस्",
 	"visualeditor-mweditmodeve-tool-current": "दृश्य सम्पादन",
 	"visualeditor-mweditmodeve-tool-unavailable": "दृश्य सम्पादन यहाँ उपलब्ध छैन",
+	"visualeditor-mweditmodewt-popup-body": "तपाईं यो आइकनमा क्लिक गरेर जुनसुकै बेला स्रोत सम्पादनमा फर्कन सक्नुहुन्छ।",
+	"visualeditor-mweditmodewt-popup-title": "तपाईंले दृश्य सम्पादनमा स्विच गर्नुभएको छ",
 	"visualeditor-mwgallerycontext-description": "$1 {{PLURAL:$1|तस्वीर|तस्वीरहरू}}",
 	"visualeditor-mwgallerydialog-card-images": "तस्वीरहरू",
 	"visualeditor-mwgallerydialog-card-options": "विकल्पहरू",

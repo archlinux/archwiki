@@ -8,7 +8,7 @@
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Guhartina dîtbarî]]",
-	"tag-visualeditor-description": "Bi bikaranîna [[{{MediaWiki:visualeditor-descriptionpagelink}}|visual editor]] hate guhartin",
+	"tag-visualeditor-description": "Bi bikaranîna [[{{MediaWiki:visualeditor-descriptionpagelink}}|guhartina dîtbarî]] hat guhartin",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Guhartina dîtbarî: Kontrol bike]]",
 	"tag-visualeditor-needcheck-description": "Guhartina ku bi [[{{MediaWiki:visualeditor-descriptionpagelink}}|edîtora dîtbarî]] hatiye çêkirin ku li wir sîstemê dît ku di wîkînivîsê de dibe ku guhartinên nexwestî hebin.",
 	"tag-visualeditor-wikitext": "2017 amûra guhartina çavkaniyê",
@@ -16,7 +16,7 @@
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Guhartina dîtbarî: Ji çavkaniyê hatiye guhartin]]",
 	"tag-visualeditor-switched-description": "Bikarhênerî bi edîtora dîtbarî dest bi guhartinê kir, dû re çûye ser edîtora wîkînivîsê.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Paşragihandin",
-	"visualeditor-feedback-tool": "Di derbarê vê nermalavê de fikrên xwe bibêjin",
+	"visualeditor-feedback-tool": "Di derbarê vê nermalavê de fikrên xwe bibêje",
 	"visualeditor-help-label": "Rêberê bikarhêneran bixwîne",
 	"visualeditor-help-title": "Rêberek ji bo hînbûna bikaranîna edîtorê",
 	"visualeditor-welcomedialog-action": "Dest bi guhartinê bike",

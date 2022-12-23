@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Bikarhêner"
+			"Bikarhêner",
+			"Balyozxane"
 		]
 	},
 	"inputbox-tryexact": "Lêhatinên herfiyen eynî biceribîne",
+	"inputbox-searchfulltext": "Nivîsa temamî lê bigere",
 	"inputbox-createarticle": "Gotarê biafirîne"
 }

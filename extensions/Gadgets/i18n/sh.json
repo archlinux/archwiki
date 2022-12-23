@@ -3,7 +3,8 @@
 		"authors": [
 			"Conquistador",
 			"Kolega2357",
-			"Vlad5250"
+			"Vlad5250",
+			"BadDog"
 		]
 	},
 	"gadgets-desc": "Omogućava korisnicima u svojim [[Special:Preferences#mw-prefsection-gadgets|podešavanjima]] da odaberu svoje prilagođene [[Special:Gadgets|CSS i JavaScript spravice]]",
@@ -21,7 +22,7 @@
 	"gadgets-uses": "Upotrebe / Употребе",
 	"gadgets-required-rights": "Zahtijeva {{PLURAL:$2|sljedeće pravo|sljedeća prava}}:\n\n$1",
 	"gadgets-required-skins": "Dostupno u {{PLURAL:$2|temi $1|sljedećim temama: $1}}.",
-	"gadgets-default": "Dostupno za svakog po postavkama",
+	"gadgets-default": "Podrazumijevano uključeno za svakoga.",
 	"gadgets-legacy": "Spravica nije učitana. Molimo vas prebacite na „Вчитувач на ресурси“ (ResourceLoader). ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Saznajte više])",
 	"gadgets-export": "Izvezi / Извези",
 	"gadgets-export-title": "Izvoz spravice",

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Kly",
-			"LNDDYL"
+			"LNDDYL",
+			"捍粵者"
 		]
 	},
 	"apihelp-query+oath-description": "檢查是否有替使用者啟用雙重認證（OATH）。",
@@ -18,5 +19,5 @@
 	"apihelp-oathvalidate-example-1": "驗證目前使用者的令牌",
 	"apihelp-oathvalidate-example-2": "驗證使用者 <kbd>Example</kbd> 的權杖",
 	"apihelp-oathvalidate-example-3": "為使用者 <kbd>Example</kbd> 驗證 JSON 資料",
-	"apihelp-oathvalidate-param-data": "用於進行驗證使用者的目前有效模組之預期 JSON 編碼資料"
+	"apihelp-oathvalidate-param-data": "用於驗證使用者的目前有效模組之預期JSON編碼資料"
 }
