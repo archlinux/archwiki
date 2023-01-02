@@ -30,3 +30,7 @@
 	path = extensions/DarkMode
 	url = https://github.com/wikimedia/mediawiki-extensions-DarkMode.git
 	branch = REL1_40
+[submodule "extensions/NativeSvgHandler"]
+	path = extensions/NativeSvgHandler
+	url = https://github.com/wikimedia/mediawiki-extensions-NativeSvgHandler.git
+	branch = REL1_40
