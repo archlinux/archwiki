@@ -112,7 +112,8 @@
 			"Wolf Lambert",
 			"Xxmarijnw",
 			"לערי ריינהארט",
-			"아라"
+			"아라",
+			"Daniuu"
 		]
 	},
 	"tog-underline": "Links onderstrepen:",
@@ -892,7 +893,7 @@
 	"converter-manual-rule-error": "Er is een fout gedetecteerd in een handmatig toegevoegde taalconversieregel.",
 	"undo-success": "Deze bewerking kan ongedaan gemaakt worden.\nHieronder staat de tekst waarin de wijziging ongedaan is gemaakt.\nControleer voor het publiceren of het resultaat gewenst is.",
 	"undo-failure": "De wijziging kan niet ongedaan gemaakt worden vanwege andere strijdige wijzigingen.",
-	"undo-main-slot-only": "De wijziging kan niet ongedaan gemaakt wordenomdat deze inhoud bevat die niet in het hoofdslot bevind.",
+	"undo-main-slot-only": "De wijziging kan niet ongedaan gemaakt worden omdat deze inhoud zich niet in het hoofdslot bevind.",
 	"undo-norev": "De bewerking kon niet ongedaan gemaakt worden, omdat die niet bestaat of is verwijderd.",
 	"undo-nochange": "De bewerking lijkt al ongedaan gemaakt te zijn.",
 	"undo-summary": "Versie $1 van [[Special:Contributions/$2|$2]] ([[User talk:$2|overleg]]) ongedaan gemaakt",
@@ -999,7 +1000,7 @@
 	"revdelete-edit-reasonlist": "Redenen voor verwijderen bewerken",
 	"revdelete-edit-reasonlist-suppress": "Zichtbaarheidsbeperkingsredenen bewerken",
 	"revdelete-offender": "Auteur van versie:",
-	"suppressionlog": "Verbergingslogboek",
+	"suppressionlog": "Logboek onderdrukte wijzigingen (Oversight)",
 	"suppressionlogtext": "De onderstaande lijst bevat de verwijderingen en blokkades die voor beheerders verborgen zijn.\nIn de [[Special:BlockList|blokkadelijst]] zijn de huidige blokkades te bekijken.",
 	"mergehistory": "Geschiedenis van pagina's samenvoegen",
 	"mergehistory-header": "Via deze pagina kunt u versies van de geschiedenis van een bronpagina naar een nieuwere pagina samenvoegen.\nZorg dat deze wijziging de geschiedenis van de pagina behoudt.",
@@ -2695,7 +2696,7 @@
 	"ipb-blockingself": "U staat op het punt uzelf te blokkeren. Weet u zeker dat u dat wilt doen?",
 	"ipb-confirmhideuser": "U staat op het punt een gebruiker te blokkeren met de optie \"gebruiker verbergen\". Hiermee wordt de gebruikersnaam in alle lijsten en logboekregels verborgen. Weet u het zeker?",
 	"ipb-confirmaction": "Weet u zeker dat u dit wilt doen? Selecteer dan het selectievakje \"{{int:ipb-confirm}}\" hieronder.",
-	"ipb-edit-dropdown": "Lijst van redenen bewerken",
+	"ipb-edit-dropdown": "Redenen voor blokkeren bewerken",
 	"ipb-unblock-addr": "$1 deblokkeren",
 	"ipb-unblock": "Een gebruiker of IP-adres deblokkeren",
 	"ipb-blocklist": "Bestaande blokkades bekijken",

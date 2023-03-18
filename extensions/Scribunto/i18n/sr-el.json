@@ -10,7 +10,7 @@
 	"scribunto-parser-dialog-title": "Greška u skripti",
 	"scribunto-error-short": "Greška u skripti: $1",
 	"scribunto-doc-page-name": "Module:$1/dok",
-	"scribunto-doc-page-does-not-exist": "''Dokumentacija za ovaj modul se može napraviti na [[$1]]''",
+	"scribunto-doc-page-does-not-exist": "''Dokumentaciju ovog modula možete da napravite na stranici [[$1]]''",
 	"scribunto-doc-page-header": "'''Ovo je dokumentaciona podstranica za [[$1]]'''",
 	"scribunto-console-clear": "Očisti",
 	"scribunto-common-error-category": "Stranice sa greškama u skripti",
@@ -22,5 +22,6 @@
 	"scribunto-limitreport-timeusage": "Vreme korišćenja Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 sekundi",
 	"scribunto-limitreport-memusage": "Memorija korišćenja Lua",
-	"nstab-module": "Modul"
+	"nstab-module": "Modul",
+	"tooltip-ca-nstab-module": "Pogledajte stranicu modula"
 }

@@ -12,7 +12,8 @@
 			"Rachmat04",
 			"Rex",
 			"Veracious",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Agam Riyandana"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -48,7 +49,7 @@
 	"vector-more-actions": "Lainnya",
 	"vector-search-loader": "Memuat saran pencarian",
 	"vector-searchsuggest-containing": "Cari halaman yang berisi <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-intro-page": "Bantuan:Pengantar",
+	"vector-intro-page": "Help:Pengantar",
 	"vector-toc-heading": "Daftar isi",
 	"vector-toc-toggle-position-title": "sembunyikan",
 	"vector-toc-beginning": "Awal",

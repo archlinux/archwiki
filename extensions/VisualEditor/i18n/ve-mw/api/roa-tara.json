@@ -8,7 +8,7 @@
 	"apierror-visualeditor-badcachekey": "Nisciuna serializzazzione cesciate ha state acchiate cu sta chiave",
 	"apierror-visualeditor-difffailed": "Diff fallite",
 	"apierror-visualeditor-docserver-http-error": "Errore condattanne 'u server Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-http": "Errore condattanne 'u server Parsoid/RESTBase (HTTP $1)",
+	"apierror-visualeditor-docserver-http": "Errore condattanne 'u server Parsoid/RESTBase (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Errore condattanne 'u server Parsoid/RESTBase (nisciuna resposte)",
 	"apierror-visualeditor-latestnotfound": "Non ge s epò acchià l'urtema revisione pu titole",
 	"apihelp-visualeditor-description": "Tuèrne HTML5 pe 'na pàgene da 'u servizie Parsoid.",

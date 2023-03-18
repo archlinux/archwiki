@@ -212,6 +212,10 @@
 	"tag-wikieditor-description": "Измене направљене [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]]-ом из 2010",
 	"wikieditor-realtimepreview-preview": "Преглед",
 	"wikieditor-realtimepreview-error": "Претпреглед се не учитава",
-	"wikieditor-realtimepreview-reload": "Поново учитај",
+	"wikieditor-realtimepreview-reload": "Освежи",
+	"wikieditor-realtimepreview-beta-label": "Уживо преглед",
+	"wikieditor-realtimepreview-reload-title": "Освежи преглед",
+	"wikieditor-realtimepreview-onboarding-title": "Уживо преглед",
+	"wikieditor-realtimepreview-onboarding-body": "Преглед измена у реалном времену.",
 	"wikieditor-realtimepreview-onboarding-button": "У реду, разумем"
 }

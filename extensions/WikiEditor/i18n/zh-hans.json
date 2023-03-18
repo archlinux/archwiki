@@ -219,9 +219,9 @@
 	"wikieditor-realtimepreview-error": "未能加载预览",
 	"wikieditor-realtimepreview-reload": "重新加载",
 	"wikieditor-realtimepreview-beta-label": "实时预览",
-	"wikieditor-realtimepreview-beta-desc": "在[[mw:Special:MyLanguage/Extension:WikiEditor|2010年版编辑器]]中查看wikitext的更改是如何呈现给读者的。",
+	"wikieditor-realtimepreview-beta-desc": "在[[mw:Special:MyLanguage/Extension:WikiEditor|2010年版编辑器]]中实时查看wikitext的更改将如何呈现给读者。",
 	"wikieditor-realtimepreview-reload-title": "重新加载实时预览窗格",
-	"wikieditor-realtimepreview-manual": "请立即重新加载以手动预览你的编辑。",
+	"wikieditor-realtimepreview-manual": "请立即重新加载以手动预览您的编辑。",
 	"wikieditor-realtimepreview-onboarding-title": "实时预览",
 	"wikieditor-realtimepreview-onboarding-body": "通过实时预览来查看编辑内容呈现给读者时的样子。",
 	"wikieditor-realtimepreview-onboarding-button": "好的，明白了"

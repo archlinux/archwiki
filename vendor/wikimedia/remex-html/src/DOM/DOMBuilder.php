@@ -231,6 +231,9 @@ class DOMBuilder implements TreeHandler {
 			if ( $attr->namespaceURI === null
 				&& strpos( $attr->localName, ':' ) !== false
 			) {
+				// Create a DOMText explicitly instead of setting $attrNode->value,
+				// to work around the DOMAttr entity expansion bug (T324408)
+				$textNode = new \DOMText( $attr->value );
 				try {
 					// FIXME: this apparently works to create a prefixed localName
 					// in the null namespace, but this is probably taking advantage
@@ -238,14 +241,14 @@ class DOMBuilder implements TreeHandler {
 					// interesting ways. For example, attributes created in this
 					// way can't be discovered via hasAttribute() or hasAttributeNS().
 					$attrNode = $this->doc->createAttribute( $attr->localName );
-					$attrNode->value = $attr->value;
+					$attrNode->appendChild( $textNode );
 					$node->setAttributeNodeNS( $attrNode );
 				} catch ( \Throwable $e ) {
 					$this->rethrowIfNotDomException( $e );
 					'@phan-var \DOMException $e'; /** @var \DOMException $e */
 					$attrNode = $this->doc->createAttribute(
 						$this->coerceName( $attr->localName ) );
-					$attrNode->value = $attr->value;
+					$attrNode->appendChild( $textNode );
 					$node->setAttributeNodeNS( $attrNode );
 				}
 			} else {

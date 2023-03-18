@@ -3,15 +3,21 @@
 		"authors": [
 			"Daud I.F. Argana",
 			"Hidayatsrf",
-			"Robfirstname"
+			"Robfirstname",
+			"Rachmat04"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Melihat apakah sebuah Filter Penyalahgunaan sesuai dengan seperangkat variabel, sebuah suntingan, atau sebuah kejadian yang dicatat Filter Penyalahgunaan.\n\nvars, rcid atau logid diwajibkan tetapi hanya satu yang bisa digunakan.",
 	"apihelp-abusefiltercheckmatch-summary": "Melihat apakah sebuah Filter Penyalahgunaan sesuai dengan seperangkat variabel, sebuah suntingan, atau sebuah kejadian yang dicatat Filter Penyalahgunaan.",
 	"apihelp-abusefiltercheckmatch-extended-description": "vars, rcid atau logid diwajibkan tetapi hanya satu yang bisa digunakan.",
 	"apihelp-abusefiltercheckmatch-param-filter": "Teks filter lengkap untuk mencari kecocokan.",
+	"apihelp-abusefiltercheckmatch-param-vars": "Larik variabel yang dikodekan dengan JSON untuk diuji.",
+	"apihelp-abusefiltercheckmatch-param-rcid": "ID perubahan terbaru yang akan diperiksa.",
 	"apihelp-abusefiltercheckmatch-param-logid": "ID log filter penyalahgunaan untuk diperiksa.",
+	"apihelp-abusefiltercheckmatch-example-1": "Uji apakah ID perubahan terbaru 15 cocok dengan penyaring sederhana",
 	"apihelp-abusefilterchecksyntax-description": "Periksa sintaks filter AbuseFilter.",
+	"apihelp-abusefilterchecksyntax-summary": "Periksa sintaksis dari penyaring AbuseFilter.",
+	"apihelp-abusefilterchecksyntax-param-filter": "Teks penyaring keseluruhan untuk memeriksa sintaksis.",
 	"apihelp-abusefilterunblockautopromote-param-user": "Nama pengguna dari pengguna yang ingin Anda buka pemblokirannya",
 	"apihelp-query+abusefilters-description": "Tampilkan detail filter penyalahgunaan.",
 	"apihelp-query+abusefilters-summary": "Tampilkan detail filter penyalahgunaan.",

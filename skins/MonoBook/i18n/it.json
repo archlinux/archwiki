@@ -8,7 +8,7 @@
 		]
 	},
 	"monobook-desc": "Il tema classico di MediaWiki dal 2004, prende il nome dall'immagine in bianco e nero del libro usata come sfondo della pagina",
-	"monobook.css": "/* Gli stili CSS inseriti qui si applicano agli utenti che usano il tema Monobook */",
+	"monobook.css": "/* Gli stili CSS inseriti qui vengono caricati dagli utenti che usano il tema Monobook */",
 	"monobook.js": "/* Il codice JavaScript inserito qui viene caricato dagli utenti che usano il tema MonoBook */",
 	"monobook-jumptotop": "torna all'inizio",
 	"monobook-jumptopersonal": "strumenti utente",

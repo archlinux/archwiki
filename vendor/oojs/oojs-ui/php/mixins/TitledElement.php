@@ -78,6 +78,7 @@ trait TitledElement {
 		if ( $title !== null ) {
 			// Only if this is an AccessKeyedElement
 			if ( method_exists( $this, 'formatTitleWithAccessKey' ) ) {
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				$title = $this->formatTitleWithAccessKey( $title );
 			}
 			$this->titled->setAttributes( [ 'title' => $title ] );
@@ -95,4 +96,9 @@ trait TitledElement {
 	public function getTitle() {
 		return $this->title;
 	}
+
+	/**
+	 * @param callable $func
+	 */
+	abstract public function registerConfigCallback( callable $func );
 }

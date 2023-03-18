@@ -186,5 +186,6 @@
 	"wikieditor-toolbar-help-content-indent-description": "Խորքից",
 	"wikieditor-toolbar-help-content-indent-syntax": "Սովորական տեքստ<br />:Խորքից գրված տեքստ<br />::Խորքից գրված տեքստ",
 	"wikieditor-toolbar-help-content-indent-result": "Սովորական տեքստ<dl><dd>Խորքից գրված տեքստ<dl><dd>Խորքից գրված տեքստ</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Նախադիտում",
 	"wikieditor-realtimepreview-reload": "Վերաբեռնել"
 }

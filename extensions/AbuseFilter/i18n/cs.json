@@ -22,7 +22,8 @@
 			"Teslaton",
 			"TheMatto58",
 			"Urbanecm",
-			"Vks"
+			"Vks",
+			"Jaroslav Cerny"
 		]
 	},
 	"abusefilter-desc": "Podrobuje editace automatickým heuristikám",
@@ -514,6 +515,7 @@
 	"abusefilter-revert-reasonfield": "Důvod:",
 	"abusefilter-test": "Test filtru na posledních změnách",
 	"abusefilter-test-intro": "Na této stránce můžete otestovat filtr, který zadáte do editačního pole níže, na {{PLURAL:$1|poslední změně|posledních $1 změnách}}.\nUž existující filtr můžete použít tím, že jeho ID napíšete do rámečku pod editačním polem a kliknete na tlačítko „{{int:abusefilter-test-load}}“.",
+	"abusefilter-test-rules-section": "Pravidla k testování",
 	"abusefilter-test-legend": "Test filtru",
 	"abusefilter-test-load-filter": "Načíst filtr s ID:",
 	"abusefilter-test-submit": "Otestovat",

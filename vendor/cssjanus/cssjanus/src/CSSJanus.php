@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP port of CSSJanus. https://github.com/cssjanus/php-cssjanus
+ * PHP port of CSSJanus. https://www.mediawiki.org/wiki/CSSJanus
  *
  * Copyright 2020 Timo Tijhof
  * Copyright 2014 Trevor Parscal
@@ -23,7 +23,7 @@
  */
 
 /**
- * CSSJanus is a a utility that converts CSS stylesheets
+ * CSSJanus is a utility that converts CSS stylesheets
  * from left-to-right (LTR) to right-to-left (RTL).
  */
 class CSSJanus {
@@ -95,7 +95,7 @@ class CSSJanus {
 		$patterns['possibly_negative_quantity'] = "((?:-?{$patterns['quantity']})|(?:inherit|auto))";
 		$patterns['color'] = "(#?{$patterns['nmchar']}+|(?:rgba?|hsla?)\([ \d.,%-]+\))";
 		// Use "*+" instead of "*?" to avoid reaching the backtracking limit.
-		// <https://github.com/cssjanus/php-cssjanus/issues/14>, <https://phabricator.wikimedia.org/T215746#4944830>.
+		// <https://phabricator.wikimedia.org/T326481>, <https://phabricator.wikimedia.org/T215746#4944830>.
 		$patterns['url_chars'] = "(?:{$patterns['url_special_chars']}|{$patterns['nonAscii']}|{$patterns['escape']})*+";
 		$patterns['lookahead_not_open_brace'] = "(?!({$patterns['nmchar']}|\\r?\\n|\s|#|\:|\.|\,|\+|>|~|\(|\)|\[|\]|=|\*=|~=|\^=|'[^']*'|\"[^\"]*\"|" . self::TOKEN_COMMENT . ")*+{)";
 		$patterns['lookahead_not_closing_paren'] = "(?!{$patterns['url_chars']}{$patterns['valid_after_uri_chars']}\))";
@@ -310,7 +310,7 @@ class CSSJanus {
 	private static function fixBorderRadius($css) {
 		return preg_replace_callback(
 			self::$patterns['border_radius'],
-			array('self', 'calculateBorderRadius'),
+			array(self::class, 'calculateBorderRadius'),
 			$css
 		);
 	}
@@ -434,7 +434,7 @@ class CSSJanus {
 	private static function fixBackgroundPosition($css) {
 		$replaced = preg_replace_callback(
 			self::$patterns['bg_horizontal_percentage'],
-			array('self', 'calculateNewBackgroundPosition'),
+			array(self::class, 'calculateNewBackgroundPosition'),
 			$css
 		);
 		if ($replaced !== null) {
@@ -443,7 +443,7 @@ class CSSJanus {
 		}
 		$replaced = preg_replace_callback(
 			self::$patterns['bg_horizontal_percentage_x'],
-			array('self', 'calculateNewBackgroundPosition'),
+			array(self::class, 'calculateNewBackgroundPosition'),
 			$css
 		);
 		if ($replaced !== null) {

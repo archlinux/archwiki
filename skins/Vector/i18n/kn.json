@@ -29,6 +29,8 @@
 	"vector-jumptosearch": "ಹುಡುಕಲು ಹೋಗು",
 	"vector-jumptocontent": "ವಿಷಯಕ್ಕೆ ಹೋಗು",
 	"vector-more-actions": "ಇನ್ನಷ್ಟು",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ಹೊಂದಿರುವ ಪುಟಗಳಿಗಾಗಿ ಹುಡುಕಿ",
 	"vector-toc-beginning": "ಮುನ್ನುಡಿ",
-	"vector-anon-user-menu-pages": "ಲಾಗ್ ಔಟ್ ಆದ ಸಂಪಾದಕರಿಗೆ ಪುಟಗಳು"
+	"vector-anon-user-menu-pages": "ಲಾಗ್ ಔಟ್ ಆದ ಸಂಪಾದಕರಿಗೆ ಪುಟಗಳು",
+	"vector-anon-user-menu-pages-learn": "ಹೆಚ್ಚಿನ ಮಾಹಿತಿ"
 }

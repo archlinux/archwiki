@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"StanProg"
+			"StanProg",
+			"Ted Masters"
 		]
 	},
 	"skinname-monobook": "Монобук",
-	"monobook-desc": "Класически облик на MediaWiki от 2004 година, кръстен на черно-бялата снимка използвана за фон на страницата",
+	"monobook-desc": "Класически облик на МедияУики от 2004 година, кръстен на черно-бялата снимка, използвана за фон на страницата",
 	"monobook.css": "/* Чрез редактиране на този файл можете да промените облика Монобук */",
 	"monobook.js": "/* Остаряла страница; използвайте [[MediaWiki:Common.js]] */",
 	"monobook-jumptotop": "върни се най-горе",
@@ -13,6 +14,7 @@
 	"monobook-jumptonavigation": "Направо към навигацията",
 	"monobook-jumptosearch": "Направо към търсенето",
 	"monobook-more-actions": "Още",
+	"cactions-mobile": "Действия на страницата",
 	"monobook-cactions-label": "Действия на страницата",
 	"monobook-notifications-link": "Известия ($1)",
 	"monobook-notifications-link-none": "Известия",

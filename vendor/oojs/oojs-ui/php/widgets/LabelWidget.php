@@ -10,6 +10,7 @@ class LabelWidget extends Widget {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'label';
 
 	/* Properties */
@@ -44,6 +45,7 @@ class LabelWidget extends Widget {
 		$this->addClasses( [ 'oo-ui-labelWidget' ] );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->input !== null ) {
 			$config['input'] = $this->input;

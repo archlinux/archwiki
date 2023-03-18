@@ -19,7 +19,7 @@ Adding or updating libraries
 ----------------------------
 
 0. Read the [documentation] on the process for adding new libraries.
-1. Ensure you're using version 2.3.3 of composer via `composer --version`. Us
+1. Ensure you're using version 2.5.1 of composer via `composer --version`. Us
    all using the same version means that diffs from the autoloader are minimal
    and so easier to validate and simpler to manually rebase.
 2. Edit the composer.json file to add/update the libraries you want to change.

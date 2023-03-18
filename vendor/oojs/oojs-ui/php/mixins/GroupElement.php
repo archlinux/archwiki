@@ -50,6 +50,10 @@ trait GroupElement {
 		return $this->items;
 	}
 
+	/**
+	 * @param mixed $data
+	 * @return Element|null
+	 */
 	public function findItemFromData( $data ) {
 		$items = $this->getItems();
 		// TODO: Support non-string $data using a hash (e.g. json_encode)
@@ -137,4 +141,9 @@ trait GroupElement {
 
 		return $this;
 	}
+
+	/**
+	 * @param callable $func
+	 */
+	abstract public function registerConfigCallback( callable $func );
 }

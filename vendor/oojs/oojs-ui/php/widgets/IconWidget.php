@@ -15,6 +15,7 @@ class IconWidget extends Widget {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'span';
 
 	/**

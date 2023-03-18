@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Zakaria Tunsung",
+			"Yirkang"
+		]
+	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 Kɔkɔre|$1 Kɔkɔɛ}}",
+	"vector-action-addsection": "Paahi yɛlzu kpoŋ",
+	"vector-action-delete": "Iri bare",
+	"vector-action-move": "Kyɛne/gaa",
+	"vector-view-create": "Maale",
+	"vector-view-edit": "Leɛre",
+	"vector-view-history": "kaa yɛlkori/yipɔge",
+	"vector-view-view": "Gane",
+	"vector-more-actions": "yaga",
+	"vector-searchsuggest-containing": "Bɔ leɛre ama naŋ taa <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+}

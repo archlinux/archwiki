@@ -82,6 +82,7 @@ class IndexLayout extends MenuLayout {
 			->appendContent( $this->tabSelectWidget );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$config = parent::getConfig( $config );
 		if ( !$this->autoFocus ) {
@@ -120,11 +121,17 @@ class IndexLayout extends MenuLayout {
 		return $this->tabPanels[$name];
 	}
 
+	/**
+	 * @return TabPanelLayout|null
+	 */
 	public function getCurrentTabPanel() {
 		$name = $this->getCurrentTabPanelName();
 		return $name ? $this->getTabPanel( $name ) : null;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getCurrentTabPanelName() {
 		return $this->currentTabPanelName;
 	}

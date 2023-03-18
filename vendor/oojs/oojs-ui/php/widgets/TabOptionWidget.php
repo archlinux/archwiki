@@ -4,6 +4,9 @@ namespace OOUI;
 
 class TabOptionWidget extends OptionWidget {
 
+	/** @var string|null */
+	protected $href;
+
 	/**
 	 * @param array $config Configuration options
 	 *      - string $config['href'] Hyperlink to add to TabOption. Mostly used in OOUI PHP.
@@ -28,6 +31,7 @@ class TabOptionWidget extends OptionWidget {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->href ) {
 			$config['href'] = $this->href;

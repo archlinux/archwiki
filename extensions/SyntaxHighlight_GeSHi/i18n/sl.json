@@ -3,7 +3,8 @@
 		"authors": [
 			"Dbc334",
 			"Eleassar",
-			"Yerpo"
+			"Yerpo",
+			"McDutchie"
 		]
 	},
 	"syntaxhighlight-desc": "Omogoča označevanje skladnje <code>&lt;syntaxhighlight&gt;</code> z uporabo [http://pygments.org/ Pygments – označevalnika skladnje Python]",
@@ -11,11 +12,15 @@
 	"syntaxhighlight-error-category-desc": "Pri poskusu označevanja kode na strani je prišlo do napake.",
 	"syntaxhighlight-enclose-category": "Strani z opuščenimi vključitvenimi atributi",
 	"syntaxhighlight-enclose-category-desc": "Označevanje skladnje na strani uporablja opuščeno vključitveno skladnjo.",
+	"syntaxhighlight-source-category": "Strani, ki uporabljajo opuščene izvorne značke",
 	"syntaxhighlight-source-category-desc": "Označevanje skladnje na strani uporablja opuščene značke vira.",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-code": "Koda",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-language": "Jezik",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-none": "(Nič)",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-showlines": "Prikaži številke vrstic",
 	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline": "Številka začetne vrstice",
-	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kode"
+	"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title": "Blok kode",
+	"syntaxhighlight-error-pygments-invocation-failure": "Pygments ni bilo mogoče priklicati",
+	"syntaxhighlight-error-unknown-language": "Neznani jezik »$1«",
+	"syntaxhighlight-error-exceeds-size-limit": "Velikost kode $1 {{PLURAL:$1|zlog|zloga|zloge|zlogov}} presega največjo dovoljeno velikost $2 {{PLURAL:$2|zlog|zloga|zloge|zlogov}}"
 }

@@ -104,5 +104,15 @@
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Mînak.png|$2|$3]]",
 	"wikieditor-toolbar-help-content-file-caption": "Nivîsa sernavê",
 	"wikieditor-toolbar-help-content-reference-description": "Çavkanî",
-	"wikieditor-toolbar-help-content-signature-description": "Îmze"
+	"wikieditor-toolbar-help-content-signature-description": "Îmze",
+	"wikieditor-realtimepreview-preview": "Pêşdîtin",
+	"wikieditor-realtimepreview-error": "Pêşdîtin nayê barkirin",
+	"wikieditor-realtimepreview-reload": "Ji nû ve bar bike",
+	"wikieditor-realtimepreview-beta-label": "Pêşdîtina zindî",
+	"wikieditor-realtimepreview-beta-desc": "Binêre ka guhartinên te dê di [[mw:Special:MyLanguage/Extension:WikiEditor|edîtora 2010an]] de ji xwendevanan re çawa xuya bike.",
+	"wikieditor-realtimepreview-reload-title": "Pencereya pêşdîtina zindî ji nû ve bar bike",
+	"wikieditor-realtimepreview-manual": "Ji kerema xwe re niha ji nû ve bar bike ji bo pêşdîtina manuel a guhartinan.",
+	"wikieditor-realtimepreview-onboarding-title": "Pêşdîtina zindî",
+	"wikieditor-realtimepreview-onboarding-body": "Bi riya pêşdîtina zindî, binêre ka guhartinên te dê ji xwendevanan re çawa xuya bike.",
+	"wikieditor-realtimepreview-onboarding-button": "Baş e, min fêhm kir"
 }

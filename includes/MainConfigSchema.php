@@ -2419,12 +2419,20 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * On pages containing images, tell the user agent to pre-connect to hosts from
-	 * $wgForeignFileRepos.  This speeds up rendering, but may create unwanted
-	 * traffic if there are many possible URLs from which images are served.
+	 * Add a preconnect link for browsers to a remote FileRepo host.
+	 *
+	 * This is an optional performance enhancement designed for wiki farm where
+	 * $wgForeignFileRepos or $wgLocalFileRepo is set to serve thumbnails from a
+	 * separate hostname (e.g. not local `/w/images`). The feature expects at most
+	 * a single remote hostname to be used.
+	 *
+	 * If multiple foreign repos are registered that serve images from different hostnames,
+	 * only the first will be preconnected.
+	 *
+	 * This may cause unneeded HTTP connections in browsers on wikis where a foreign repo is
+	 * enabled but where a local repo is more commonly used.
 	 *
 	 * @since 1.35
-	 * @warning EXPERIMENTAL!
 	 */
 	public const ImagePreconnect = [
 		'default' => false,
@@ -2957,18 +2965,9 @@ class MainConfigSchema {
 	 *
 	 * $wgSharedSchema is the table schema for the shared database. It defaults to
 	 * $wgDBmwschema.
-	 *
-	 * @deprecated since 1.21 In new code, use the $wiki parameter to LBFactory::getMainLB() to
-	 * access remote databases. Using LBFactory::getMainLB() allows the shared database to
-	 * reside on separate servers to the wiki's own database, with suitable
-	 * configuration of $wgLBFactoryConf.
 	 */
 	public const SharedDB = [
 		'default' => null,
-		'deprecated' => 'since 1.21 In new code, use the $wiki parameter to ' .
-			'LBFactory::getMainLB() to access remote databases. Using LBFactory::getMainLB() ' .
-			'allows the shared database to reside on separate servers to the wiki\'s own ' .
-			'database, with suitable configuration of $wgLBFactoryConf',
 	];
 
 	/**
@@ -6266,9 +6265,10 @@ class MainConfigSchema {
 	public const UrlProtocols = [
 		'default' => [
 			'bitcoin:', 'ftp://', 'ftps://', 'geo:', 'git://', 'gopher://', 'http://',
-			'https://', 'irc://', 'ircs://', 'magnet:', 'mailto:', 'mms://', 'news:',
-			'nntp://', 'redis://', 'sftp://', 'sip:', 'sips:', 'sms:', 'ssh://',
-			'svn://', 'tel:', 'telnet://', 'urn:', 'worldwind://', 'xmpp:', '//'
+			'https://', 'irc://', 'ircs://', 'magnet:', 'mailto:', 'matrix:', 'mms://',
+			'news:', 'nntp://', 'redis://', 'sftp://', 'sip:', 'sips:', 'sms:',
+			'ssh://', 'svn://', 'tel:', 'telnet://', 'urn:', 'worldwind://', 'xmpp:',
+			'//',
 		],
 		'type' => 'list',
 	];
@@ -7196,6 +7196,9 @@ class MainConfigSchema {
 			'Maintenance script', // Maintenance scripts which perform editing, image import script
 			'Template namespace initialisation script', // Used in 1.2->1.3 upgrade
 			'ScriptImporter', // Default user name used by maintenance/importSiteScripts.php
+			'Delete page script', // Default user name used by maintenance/deleteBatch.php
+			'Move page script', // Default user name used by maintenance/deleteBatch.php
+			'Command line script', // Default user name used by maintenance/undelete.php
 			'Unknown user', // Used in WikiImporter & RevisionStore for revisions with no author and in User for invalid user id
 			'msg:double-redirect-fixer', // Automatic double redirect fix
 			'msg:usermessage-editor', // Default user for leaving user messages

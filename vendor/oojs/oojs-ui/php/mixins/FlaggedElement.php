@@ -131,4 +131,9 @@ trait FlaggedElement {
 
 		return $this;
 	}
+
+	/**
+	 * @param callable $func
+	 */
+	abstract public function registerConfigCallback( callable $func );
 }

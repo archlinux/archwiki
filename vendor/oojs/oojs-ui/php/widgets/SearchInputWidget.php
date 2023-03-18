@@ -7,6 +7,9 @@ namespace OOUI;
  */
 class SearchInputWidget extends TextInputWidget {
 
+	/**
+	 * @param array $config
+	 */
 	public function __construct( array $config = [] ) {
 		// Config initialization
 		$config = array_merge( [
@@ -17,6 +20,7 @@ class SearchInputWidget extends TextInputWidget {
 		parent::__construct( $config );
 	}
 
+	/** @inheritDoc */
 	protected function getSaneType( $config ) {
 		return 'search';
 	}

@@ -9,7 +9,8 @@
 			"Schmackes",
 			"TMg",
 			"The Evil IP address",
-			"Umherirrender"
+			"Umherirrender",
+			"Brettchenweber"
 		]
 	},
 	"cite-desc": "Ermöglicht Referenzierungen mittels <code>&lt;ref&gt;</code> und <code>&lt;references&gt;</code>",
@@ -18,7 +19,7 @@
 	"cite_error_ref_numeric_key": "Ungültige Verwendung von <code>&lt;ref&gt;</code>: Der Parameter „name“ darf kein reiner Zahlenwert sein. Benutze einen beschreibenden Namen.",
 	"cite_error_ref_no_key": "Das öffnende <code>&lt;ref&gt;</code>-Tag ist beschädigt oder hat einen ungültigen Namen",
 	"cite_error_ref_too_many_keys": "Ungültige Verwendung von <code>&lt;ref&gt;</code>: Der Parameter „name“ ist ungültig oder zu lang.",
-	"cite_error_ref_nested_extends": "Die Erweiterung von <code>&lt;ref&gt;<code> Tags tiefer als eine Ebene ist nicht erlaubt",
+	"cite_error_ref_nested_extends": "Die Erweiterung von <code>&lt;ref&gt;<code>-Tags tiefer als eine Ebene ist nicht erlaubt",
 	"cite_error_ref_no_input": "Ungültige Verwendung von <code>&lt;ref&gt;</code>: Der Parameter „ref“ ohne Namen muss einen Inhalt haben.",
 	"cite_error_references_duplicate_key": "Ungültiges <code>&lt;ref&gt;</code>-Tag. Der Name „$1“ wurde mehrere Male mit einem unterschiedlichen Inhalt definiert.",
 	"cite_error_references_invalid_parameters": "Ungültiger Parameter im <code>&lt;references&gt;</code>-Tag",

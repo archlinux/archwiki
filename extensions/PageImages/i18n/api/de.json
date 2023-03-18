@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Hwboehm",
-			"Metalhead64"
+			"Metalhead64",
+			"Brettchenweber"
 		]
 	},
-	"apihelp-query+pageimages-description": "Liefert Informationen über Bilder auf der Seite, wie z.B. Miniaturansichten und das Vorhandensein von Fotos.",
-	"apihelp-query+pageimages-summary": "Liefert Informationen über Bilder auf der Seite, wie z.B. Miniaturansichten und das Vorhandensein von Fotos.",
+	"apihelp-query+pageimages-description": "Liefert Informationen über Bilder auf der Seite, wie z. B. Miniaturansichten und das Vorhandensein von Fotos.",
+	"apihelp-query+pageimages-summary": "Liefert Informationen über Bilder auf der Seite, wie z. B. Miniaturansichten und das Vorhandensein von Fotos.",
 	"apihelp-query+pageimages-example-1": "Gibt den Namen und ein <kbd>100</kbd>-Pixel-Vorschaubild einer Grafik von der Seite <kbd>Albert Einstein</kbd> zurück.",
 	"apihelp-query+pageimages-param-prop": "Welche Informationen zurückgegeben werden sollen:\n;thumbnail:Die URL und Abmessungen des Vorschaubildes, das mit der Seite verknüpft ist, falls vorhanden.\n;original:Die URL und Originalabmessungen des Bildes, das mit der Seite verknüpft ist, falls vorhanden.\n;name:Der Bildtitel.",
 	"apihelp-query+pageimages-param-thumbsize": "Maximale Breite der Vorschaubilder in Pixel.",

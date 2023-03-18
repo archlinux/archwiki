@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bugirbiig",
+			"Vsambian"
+		]
+	},
+	"minerva-watchlist-cta": "Kpansim lakir kaŋa nɛ tiakir kanɛ wʋsa bɛ di ni.",
+	"minerva-talk-add-topic": "Pɛ'ɛsim pian'azug",
+	"mobile-frontend-editor-edit": "Tiak",
+	"mobile-frontend-editor-redlink-create": "Maalim lakir",
+	"mobile-frontend-editor-redlink-explain": "Lakir kaŋa nam pʋ paam maalʋgɔ",
+	"mobile-frontend-editor-redlink-leave": "Ayei, m pʋ'ʋsya",
+	"mobile-frontend-history": "Gɔsim tia'as banɛ maal lakir kaŋa ni",
+	"mobile-frontend-home-button": "Yin/Lɛm yin",
+	"mobile-frontend-language-article-heading": "Buudi pian'uk",
+	"mobile-frontend-languages-not-available": "Lakir kaŋa Kai buud sieba ni.",
+	"mobile-frontend-main-menu-login": "Kpɛn'ɛm",
+	"mobile-frontend-main-menu-logout": "Yi",
+	"mobile-frontend-main-menu-nearby": "Yamma",
+	"mobile-frontend-main-menu-settings": "Asʋŋ maalʋg",
+	"mobile-frontend-meta-data-issues": "Lakir daaŋ",
+	"mobile-frontend-meta-data-issues-header": "Lakir daaŋ",
+	"minerva-meta-data-issues-section-header": "Babir daaŋ",
+	"mobile-frontend-placeholder": "Iem {{SITENAME}}",
+	"mobile-frontend-random-button": "Yɔɔyɔɔg"
+}

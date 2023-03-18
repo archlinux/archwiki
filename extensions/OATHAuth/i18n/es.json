@@ -19,6 +19,7 @@
 	},
 	"oathauth-desc": "Proporciona compatibilidad con la autenticación mediante contraseñas en HMAC de un solo uso",
 	"disableoathforuser": "Desactivar la autenticación en dos pasos de un usuario",
+	"verifyoathforuser": "Comprobar el estado de la autenticación en dos pasos",
 	"specialpages-group-oath": "Autenticación en dos pasos",
 	"oathauth-account": "Nombre de la cuenta:",
 	"oathauth-secret": "Clave secreta de autenticación en dos pasos:",

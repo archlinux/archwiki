@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ibrahim"
+			"Ibrahim",
+			"Vashgird"
 		]
 	},
 	"renameuser": "Тағйири номи корбарӣ",
@@ -10,7 +11,7 @@
 	"renameusernew": "Номи корбари ҷадид:",
 	"renameuserreason": "Сабаб:",
 	"renameusermove": "Саҳифаи корбарӣ ва саҳифаи баҳси корбар (ва зерсаҳифаҳои он)ро интиқол бидеҳ",
-	"renameuserreserve": "Бастани номи корбарии кӯҳна аз истифодаи оянда",
+	"renameuserreserve": "Бастани номи корбарии куҳна аз истифодаи оянда",
 	"renameuserwarnings": "Ҳушдорҳо:",
 	"renameuserconfirm": "Бале, номи корбариро тағйир бидеҳ",
 	"renameusersubmit": "Сабт",

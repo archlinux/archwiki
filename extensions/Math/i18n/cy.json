@@ -3,10 +3,24 @@
 		"authors": [
 			"Lloffiwr",
 			"Macofe",
-			"Robin Owain"
+			"Robin Owain",
+			"Afalau"
 		]
 	},
 	"math-desc": "Arddangos fformwla mathemategol rhwng y tagiau <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
+	"math-visualeditor-mwchemdialog-title": "Fformiwla gemegol",
+	"math-visualeditor-mwcheminspector-title": "Fformiwla gemegol",
+	"math-visualeditor-mwlatexcontextitem-quickedit": "Golygu’n gyflym",
+	"math-visualeditor-mwlatexdialog-card-formula": "Fformiwla",
+	"math-visualeditor-mwlatexdialog-card-options": "Opsiynau",
+	"math-visualeditor-mwlatexinspector-display": "Arddangos",
+	"math-visualeditor-mwlatexinspector-display-block": "Bloc",
+	"math-visualeditor-mwlatexinspector-display-default": "Rhagosodedig",
+	"math-visualeditor-mwlatexinspector-display-inline": "Mewn-lein",
+	"math-visualeditor-mwlatexinspector-id": "ID’r ddolen (dewisol)",
+	"math-visualeditor-mwmathdialog-title": "Fformiwla mathemategol",
+	"math-visualeditor-symbol-group-math-arrows": "Saethau",
+	"math-visualeditor-symbol-group-math-special": "Arbennig",
 	"math_failure": "Wedi methu dosrannu",
 	"math_syntax_error": "gwall cystrawen",
 	"math_unknown_error": "gwall anhysbys",
@@ -14,5 +28,11 @@
 	"mw_math_mathml": "MathML os yn bosib (arbrofol)",
 	"mw_math_png": "Delweddau PNG",
 	"mw_math_source": "Gadewch fel côd LaTeX (ar gyfer porwyr testun)",
-	"prefs-math": "Mathemateg"
+	"prefs-math": "Mathemateg",
+	"math-wikibase-formula": "Fformiwla",
+	"math-wikibase-formula-name": "Enw",
+	"math-wikibase-formula-type": "Math",
+	"math-wikibase-formula-description": "Disgrifiad",
+	"math-wikibase-formula-link-header": "Ffynhonnell Data",
+	"math-wikibase-special-error-header": "Gwall"
 }

@@ -16,7 +16,9 @@
 			"Sayginer",
 			"Stultiwikia",
 			"ToprakM",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Jelican9",
+			"Sadrettin"
 		]
 	},
 	"skinname-vector": "Eski Vektör (2010)",
@@ -42,7 +44,7 @@
 	"vector-action-undelete": "Geri al",
 	"vector-action-unprotect": "Korumayı değiştir",
 	"vector-view-create": "Oluştur",
-	"vector-view-edit": "Düzenle",
+	"vector-view-edit": "Değiştir",
 	"vector-view-history": "Geçmişi gör",
 	"vector-view-view": "Oku",
 	"vector-view-viewsource": "Kaynağı gör",
@@ -56,13 +58,15 @@
 	"vector-toc-heading": "İçindekiler",
 	"vector-toc-toggle-position-sidebar": "kenar çubuğuna taşı",
 	"vector-toc-toggle-position-title": "gizle",
-	"vector-toc-beginning": "Başlangıç",
+	"vector-toc-beginning": "Giriş",
 	"vector-anon-user-menu-pages": "Çıkış yapmış editörler için sayfalar",
 	"vector-anon-user-menu-pages-learn": "daha fazla bilgi",
-	"vector-anon-user-menu-pages-label": "Düzenleme hakkında daha fazla bilgi edinin",
+	"vector-anon-user-menu-pages-label": "Değişiklik yapma hakkında daha fazla bilgi edinin",
 	"vector-main-menu-tooltip": "Ana menü",
 	"vector-toc-menu-tooltip": "İçindekiler",
+	"vector-toc-collapsible-button-label": "İçindekiler tablosunu değiştir",
 	"vector-article-tools-nav-label": "Araçlar",
+	"vector-site-nav-label": "Site",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Tartışma]]",
 	"tooltip-vector-anon-user-menu-title": "Daha fazla seçenek"
 }

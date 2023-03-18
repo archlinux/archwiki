@@ -11,6 +11,7 @@ abstract class Theme {
 
 	/* Properties */
 
+	/** @var self|null */
 	private static $singleton;
 
 	/* Static Methods */
@@ -41,7 +42,7 @@ abstract class Theme {
 	 * otherwise state transitions will not work properly.
 	 *
 	 * @param Element $element Element for which to get classes
-	 * @return array Categorized class names with `on` and `off` lists
+	 * @return string[][] Categorized class names with `on` and `off` lists
 	 */
 	public function getElementClasses( Element $element ) {
 		return [ 'on' => [], 'off' => [] ];
@@ -58,11 +59,13 @@ abstract class Theme {
 		$classes = $this->getElementClasses( $element );
 
 		if ( method_exists( $element, 'getIconElement' ) ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$element->getIconElement()
 				->removeClasses( $classes['off'] )
 				->addClasses( $classes['on'] );
 		}
 		if ( method_exists( $element, 'getIndicatorElement' ) ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$element->getIndicatorElement()
 				->removeClasses( $classes['off'] )
 				->addClasses( $classes['on'] );

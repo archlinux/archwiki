@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Gorgich",
-			"TayfunEt."
+			"TayfunEt.",
+			"Abylaikhan 94"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 тил}}",
@@ -10,9 +11,9 @@
 	"vector-action-delete": "Йок ет",
 	"vector-action-move": "Тагы",
 	"vector-action-protect": "Корув",
-	"vector-view-create": "Джаратув",
+	"vector-view-create": "Яратув",
 	"vector-view-edit": "Туьрлентуьв",
-	"vector-view-history": "Тарихи",
+	"vector-view-history": "Тарихын карав",
 	"vector-view-view": "Окув",
 	"vector-more-actions": "Тагы",
 	"vector-searchsuggest-containing": "Бар бетлерди излев <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"

@@ -6,12 +6,19 @@
 			"Rinatus",
 			"Ерней",
 			"Ильнар",
-			"Рашат Якупов"
+			"Рашат Якупов",
+			"Ильгиз"
 		]
 	},
-	"skinname-vector": "Сызымлы",
+	"skinname-vector": "Сызымлы, иске (2010)",
+	"skinname-vector-2022": "Сызымлы (2022)",
+	"vector-specialversion-name": "Сызымлы",
 	"vector-skin-desc": "Хәзерге заманга туры килгән MonoBook күренеше, яңа бизәлеш һәм яңа мөмкинлекләр",
+	"vector-opt-out": "Иске дизайнга кайту",
+	"vector-languages": "Телләр",
 	"vector-language-button-label": "{{PLURAL:$1|$1 тел}}",
+	"vector-no-language-button-label": "Телләр өстәү",
+	"vector-language-variant-switcher-label": "Телне алмаштыру",
 	"vector-action-addsection": "Яңа тема өстәү",
 	"vector-action-delete": "Бетерү",
 	"vector-action-move": "Күчерү",
@@ -25,6 +32,12 @@
 	"vector-view-viewsource": "Чыганагын карау",
 	"vector-jumptonavigation": "Навигациягә күчү",
 	"vector-jumptosearch": "Эзләүгә күчү",
+	"vector-jumptocontent": "Эчтәлеккә күчү",
 	"vector-more-actions": "Тагын",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ны үз эченә алган битләрне эзләү"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ны үз эченә алган битләрне эзләү",
+	"vector-intro-page": "Help:Кереш",
+	"vector-toc-beginning": "Башы",
+	"vector-anon-user-menu-pages-learn": "күбрәк белү",
+	"vector-main-menu-tooltip": "Төп меню",
+	"vector-site-nav-label": "Сайт"
 }

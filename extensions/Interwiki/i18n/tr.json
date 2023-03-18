@@ -9,10 +9,11 @@
 			"SaldırganSincap",
 			"Suelnur",
 			"Violetanka",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Rapsar"
 		]
 	},
-	"interwiki": "Vikilerarası veriyi görüntüle ve düzenle",
+	"interwiki": "Vikilerarası veriyi görüntüle ve değiştir",
 	"interwiki-title-norights": "Vikilerarası veriyi görüntüle",
 	"interwiki-desc": "Vikilerarası tabloyu görüntülemek ve düzenlemek için [[Special:Interwiki|özel bir sayfa]] ekler",
 	"interwiki_intro": "Bu farklı vikilere ve diğer harici sitelere hızlı bir şekilde bağlanmak için kullanılan önek kısayollarını tanımlayan vikiarası tablosuna genel bir bakıştır. Tavsiye edilen kullanım için [https://www.mediawiki.org/wiki/Extension:Interwiki/tr MediaWiki.org'da kılavuzuna] bakın.",
@@ -33,7 +34,7 @@
 	"interwiki_0": "hayır",
 	"interwiki_error": "Hata: Vikiarası tablosu boş ya da başka bir şeyde sorun çıktı.",
 	"interwiki-cached": "Vikiarası verileri önbelleğe alınır. Önbelleği değiştirmek mümkün değildir.",
-	"interwiki_edit": "Düzenle",
+	"interwiki_edit": "Değiştir",
 	"interwiki_reasonfield": "Sebep:",
 	"interwiki_deleting": "\"$1\" önekini siliyorsunuz.",
 	"interwiki_deleted": "\"$1\" öneki vikiarası tablosundan kaldırıldı.",

@@ -35,7 +35,7 @@
 	"captcha-createaccount-fail": "CAPTCHA erroné ou manquant.",
 	"captcha-create": "Pour créer la page, veuillez résoudre la tâche ci-dessous et inscrire le résultat dans le champ ([[Special:Captcha/help|plus d’informations]]) :",
 	"captcha-sendemail": "Afin de nous aider à prévenir le pollupostage automatisé, veuillez résoudre la tâche et inscrire le résultat dans le champ ([[Special:Captcha/help|plus d’informations]]) :",
-	"captcha-sendemail-fail": "CAPTCHA incorrect ou absent.",
+	"captcha-sendemail-fail": "CAPTCHA incorrect ou manquant.",
 	"captcha-disabledinapi": "Cette action requiert un CAPTCHA, elle ne peut donc pas être effectuée via l’API.",
 	"captcha-error": "La vérification CAPTCHA a échoué avec l’erreur interne : $1",
 	"captchahelp-title": "Aide sur le CAPTCHA",

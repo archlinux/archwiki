@@ -6,6 +6,7 @@ class WikimediaUITheme extends Theme {
 
 	/* Methods */
 
+	/** @inheritDoc */
 	public function getElementClasses( Element $element ) {
 		$variants = [
 			'invert' => false,
@@ -26,7 +27,9 @@ class WikimediaUITheme extends Theme {
 			// Icon on CheckboxInputWidget
 			$variants['invert'] = true;
 		} elseif ( $element->supports( [ 'hasFlag' ] ) ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$isFramed = $element->supports( [ 'isFramed' ] ) && $element->isFramed();
+			// @phan-suppress-next-line PhanUndeclaredMethod
 			$isActive = $element->supports( [ 'isActive' ] ) && $element->isActive();
 			if ( $isFramed && ( $isActive || $element->isDisabled() || $element->hasFlag( 'primary' ) ) ) {
 				// Button with a dark background, use white icon

@@ -3,7 +3,8 @@
 		"authors": [
 			"Ganbarzada",
 			"Patriot Kur",
-			"Гусейн"
+			"Гусейн",
+			"Patriot Kor"
 		]
 	},
 	"minerva-last-modified-date": "Охонә кәрә че $1 сәрост кардә быә саат $2",
@@ -19,7 +20,7 @@
 	"mobile-frontend-home-button": "Əsos səhifə",
 	"mobile-frontend-language-article-heading": "Zıvon",
 	"mobile-frontend-languages-not-available": "Ым сәһифә дастрәсе ҹо зывононәдә.",
-	"mobile-frontend-main-menu-button-tooltip": "Әсос менју окә",
+	"mobile-frontend-main-menu-button-tooltip": "Əsosi menyu okə",
 	"mobile-frontend-main-menu-contributions": "Тоһфә",
 	"mobile-frontend-main-menu-login": "Dəşi",
 	"mobile-frontend-main-menu-logout": "Беше",
@@ -68,7 +69,7 @@
 	"minerva-talk-topic-feedback": "Нујә мывзу әловә кардә быә бә мызокирә сәһифә!",
 	"minerva-talk-reply-success": "Шымә ҹәвоб огәтә быә мызокирә сәһифәдә.",
 	"minerva-skin-desc": "Иминә адаптивә мобил мывзу рәвош.",
-	"skin-minerva-issue-learn-more": "Ве зынеј",
+	"skin-minerva-issue-learn-more": "Ve omute",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категоријон",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Категоријон сәһифә дијә карде",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Сәһифон проблемон пәјдо карде чок кардә быә",

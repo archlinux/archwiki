@@ -1,9 +1,19 @@
 {
 	"@metadata": {
 		"authors": [
-			"AgnesAbah"
+			"AgnesAbah",
+			"Amire80"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 íchi|$1 amí íchi}}",
+	"vector-action-addsection": "Dí óla manyu",
+	"vector-action-delete": "Dukwó",
+	"vector-action-move": "Tẹlo",
+	"vector-action-protect": "Dída",
+	"vector-view-create": "Nyí",
 	"vector-view-edit": "Nwọ́che",
-	"vector-view-view": "Gbá"
+	"vector-view-history": "Gọ ọ́là īgbálá",
+	"vector-view-view": "Gbá",
+	"vector-more-actions": "Mànyú",
+	"vector-searchsuggest-containing": "Téné amí ogbá kí gwonwú <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

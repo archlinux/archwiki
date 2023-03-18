@@ -8,7 +8,8 @@
 			"Eduardoaddad",
 			"Felipe L. Ewald",
 			"Giro720",
-			555
+			555,
+			"Fúlvio"
 		]
 	},
 	"cite-desc": "Adiciona elementos <code>&lt;ref&gt;</code> e <code>&lt;references&gt;</code> para uso em citações",
@@ -28,10 +29,10 @@
 	"cite_error_included_references": "Falta a etiqueta de fechamento para <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Existem marcas <code>&lt;ref&gt;</code> para um grupo chamado \"$1\", mas nenhuma marca <code>&lt;references group=\"$1\"/&gt;</code> correspondente foi encontrada",
 	"cite_error_references_group_mismatch": "marca <code>&lt;ref&gt;</code> em <code>&lt;references&gt;</code> está com o atributo de grupo \"$1\" conflitante.",
-	"cite_error_references_missing_group": "marca <code>&lt;ref&gt;</code> definida em <code>&lt;references&gt;</code> está com atributo de grupo \"$1\" que não aparece no texto anterior.",
+	"cite_error_references_missing_group": "marca <code>&lt;ref&gt;</code> com o nome \"$2\", definida em <code>&lt;references&gt;</code>, está com atributo de grupo \"$1\" que não aparece no texto anterior.",
 	"cite_error_references_missing_key": "marca <code>&lt;ref&gt;</code> com nome \"$1\", definida em <code>&lt;references&gt;</code>, não foi utilizada no texto anterior.",
 	"cite_error_references_no_key": "marca <code>&lt;ref&gt;</code>, definida em <code>&lt;references&gt;</code>, não tem atributo de nome.",
-	"cite_error_empty_references_define": "marca <code>&lt;ref&gt;</code>, definida em <code>&lt;references&gt;</code>, com nome \"$1\", não tem nenhum conteúdo.",
+	"cite_error_empty_references_define": "marca <code>&lt;ref&gt;</code> com o nome \"$1\", definida no grupo <code>&lt;references&gt;</code> \"$2\", não tem nenhum conteúdo.",
 	"cite-tracking-category-cite-error": "Páginas com erros de referência",
 	"cite-tracking-category-cite-error-desc": "As páginas nesta categoria têm erros no uso de tags de referência.",
 	"cite_references_link_accessibility_label": "Ir para cima",

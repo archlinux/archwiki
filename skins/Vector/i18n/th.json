@@ -27,8 +27,9 @@
 	"vector-action-toggle-sidebar": "เปิด/ปิดแถบข้าง",
 	"vector-languages": "ภาษา",
 	"vector-language-button-aria-label": "ไปที่บทความในภาษาอื่น ซึ่งมีใน {{PLURAL:$1|}}$1 ภาษา",
-	"vector-language-button-label": "{{PLURAL:$1|$1 ภาษา}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 language|$1 ภาษา}}",
 	"vector-no-language-button-label": "เพิ่มภาษา",
+	"vector-no-language-button-aria-label": "บทความนี้มีเฉพาะในภาษานี้ เพิ่มบทความสำหรับภาษาอื่น ๆ",
 	"vector-language-redirect-to-top": "ใน {{SITENAME}} ลิงก์ข้ามไปยังรุ่นภาษาอื่นของบทความนี้ถูกย้ายไปด้านบนแล้วที่ทางขวาของชื่อหน้า [[#p-lang-btn|ไปด้านบน]]",
 	"vector-action-addsection": "เพิ่มหัวข้อ",
 	"vector-action-delete": "ลบ",
@@ -54,5 +55,8 @@
 	"vector-anon-user-menu-pages-learn": "เรียนรู้เพิ่มเติม",
 	"vector-anon-user-menu-pages-label": "เรียนรู้เพิ่มเกี่ยวกับการแก้ไข",
 	"vector-main-menu-tooltip": "เมนูหลัก",
+	"vector-toc-menu-tooltip": "สารบัญ",
+	"vector-site-nav-label": "ไซต์",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|อภิปราย]]",
 	"tooltip-vector-anon-user-menu-title": "ตัวเลือกเพิ่มเติม"
 }

@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Chulsu463"
+			"Chulsu463",
+			"Amire80"
 		]
 	},
-	"tooltip-ca-ve-edit": "ere fiyelen isamjambi",
-	"visualeditor-backbutton-tooltip": "marimbi",
-	"visualeditor-ca-createlocaldescriptionsource": "ba i suhe gisurere sekiyen be nonggimbi",
-	"visualeditor-ca-createsource": "sekiyen arara",
-	"visualeditor-ca-editsource": "sekiyen isamjambi",
+	"tooltip-ca-ve-edit": "Ere fiyelen isamjambi",
+	"visualeditor-backbutton-tooltip": "Marimbi",
+	"visualeditor-ca-createlocaldescriptionsource": "Ba i suhe gisurere sekiyen be nonggimbi",
+	"visualeditor-ca-createsource": "Sekiyen arara",
+	"visualeditor-ca-editsource": "Sekiyen isamjambi",
 	"visualeditor-ca-editsource-section": "sekiyen isamjambi",
-	"visualeditor-descriptionpagelink": "Project:tuwara banjibusi"
+	"visualeditor-descriptionpagelink": "Project:Tuwara banjibusi"
 }

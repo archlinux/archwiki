@@ -299,7 +299,7 @@
 	"visualeditor-mweditmodeve-popup-body": "您可以随时通过点击该图标切换回可视化编辑。",
 	"visualeditor-mweditmodeve-popup-title": "您已切换至源代码编辑",
 	"visualeditor-mweditmodeve-progress": "正在切换为可视化编辑…",
-	"visualeditor-mweditmodeve-showagain": "不要再显示这条消息",
+	"visualeditor-mweditmodeve-showagain": "不再显示此消息",
 	"visualeditor-mweditmodeve-title": "切换为可视化编辑么？",
 	"visualeditor-mweditmodeve-tool-current": "可视化编辑",
 	"visualeditor-mweditmodeve-tool-unavailable": "可视化编辑无法在此使用",

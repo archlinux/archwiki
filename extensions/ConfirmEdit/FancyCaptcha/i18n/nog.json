@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"TayfunEt."
+			"TayfunEt.",
+			"Abylaikhan 94"
 		]
 	},
 	"fancycaptcha-captcha": "Сенме тести",
-	"fancycaptcha-imgcaptcha-ph": "Суретте коьрсетилген соьзди джазынъыз",
+	"fancycaptcha-imgcaptcha-ph": "Суьвретте коьрсетилген соьзди язынъыз",
 	"fancycaptcha-reload-text": "Джанъыла"
 }

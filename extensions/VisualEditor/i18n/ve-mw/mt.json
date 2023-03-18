@@ -3,7 +3,8 @@
 		"authors": [
 			"CharlieTheCabbie",
 			"Chrisportelli",
-			"Leli Forte"
+			"Leli Forte",
+			"ToniSant"
 		]
 	},
 	"tooltip-ca-ve-edit": "Immodifika din il-paġna",
@@ -32,7 +33,7 @@
 	"visualeditor-dialog-media-info-separator": ".",
 	"visualeditor-dialog-media-info-uploaded": "Tella': $1",
 	"visualeditor-dialog-media-page-advanced": "Konfigurazzjonijiet avvanzati",
-	"visualeditor-dialog-media-page-general": "Konfigurazzjonijiet ġenerali",
+	"visualeditor-dialog-media-page-general": "Ġenerali",
 	"visualeditor-dialog-media-position-checkbox": "Irranġa t-test madwar dan l-oġġett",
 	"visualeditor-dialog-media-position-section": "Pożizzjoni",
 	"visualeditor-dialog-media-size-section": "Daqs tal-istampa",

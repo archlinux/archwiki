@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Atabek",
-			"Jiemurat"
+			"Jiemurat",
+			"Nurlan"
 		]
 	},
 	"math_syntax_error": "sintaksikalıq qa'telik",
 	"math_unknown_error": "belgisiz qa'telik",
-	"math_unknown_function": "belgisiz funktsiya",
+	"math_unknown_function": "belgisiz funkciya \"$1\"",
 	"prefs-math": "Formulalar"
 }

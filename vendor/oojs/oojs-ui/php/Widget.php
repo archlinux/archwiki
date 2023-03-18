@@ -25,15 +25,12 @@ class Widget extends Element {
 	 *      - bool $config['disabled'] Disable (default: false)
 	 */
 	public function __construct( array $config = [] ) {
-		// Initialize config
-		$config = array_merge( [ 'disabled' => false ], $config );
-
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Initialization
 		$this->addClasses( [ 'oo-ui-widget' ] );
-		$this->setDisabled( $config['disabled'] );
+		$this->setDisabled( $config['disabled'] ?? false );
 	}
 
 	/**
@@ -89,6 +86,7 @@ class Widget extends Element {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->disabled ) {
 			$config['disabled'] = $this->disabled;

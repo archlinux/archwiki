@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Patriot Kur",
-			"QeneralĞasım"
+			"QeneralĞasım",
+			"Patriot Kor"
 		]
 	},
+	"templatedata-doc-param-type-number": "Aşmard",
 	"templatedata-doc-param-type-wiki-page-name": "Səhifə nom",
 	"templatedata-modal-button-cancel": "Ləğv karde"
 }

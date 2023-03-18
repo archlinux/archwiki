@@ -14,7 +14,7 @@
 	"timeless-notloggedin": "Niste prijavljeni",
 	"timeless-userpage": "Stranica {{GENDER:$1|korisnika|korisnice}}",
 	"timeless-talkpage": "Razgovor sa {{GENDER:$1|korisnikom|korisnicom}}",
-	"timeless-pagelog": "Evidencije stranice",
+	"timeless-pagelog": "Dnevnici stranice",
 	"timeless-more": "Više",
 	"timeless-sitetools": "Viki alatke",
 	"timeless-pageactions": "Alatke za stranicu",
@@ -26,7 +26,8 @@
 	"timeless-pagetools": "Radnje za stranicu",
 	"timeless-languages": "Jezici",
 	"timeless-projects": "Drugi projekti",
-	"timeless.js": "/* Javaskript postavljen ovde će se učitati za sve one koji koriste bezvremensku temu */",
+	"timeless.css": "/* CSS postavljen ovde učitaće se svim korisnicima bezvremenske teme */",
+	"timeless.js": "/* JavaScript postavljen ovde učitaće se svim korisnicima bezvremenske teme */",
 	"timeless-view-history": "Istorija",
 	"timeless-action-undelete": "Vrati {{PLURAL:$1|izbrisanu izmenu|$1 izbrisane izmene|$1 izbrisanih izmena}}"
 }

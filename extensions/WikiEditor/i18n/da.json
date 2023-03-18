@@ -49,7 +49,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Siden findes ikke på {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titlen, du angav, er ugyldig",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ekstern henvisning",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Denne side er ikke en indholdsside; den oplister emner med lignende navne",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Denne side er ikke en indholdsside, men en liste over emner med lignende navne",
 	"wikieditor-toolbar-tool-link-int-invalid": "Titlen du gav, er ugyldig.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "URL'en, du har angivet, ser ud til at være tiltænkt som en henvisning til en anden wikiside.\nØnsker du at gøre den til en intern henvisning.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Intern henvisning",
@@ -119,7 +119,7 @@
 	"wikieditor-toolbar-tool-table-preview": "Forhåndsvisning",
 	"wikieditor-toolbar-tool-table-insert": "Indsæt",
 	"wikieditor-toolbar-tool-table-cancel": "Annullér",
-	"wikieditor-toolbar-tool-table-toomany": "Det er ikke muligt at indsætte en tabel med mere end {{PLURAL:$1|en celle|$1 celler}} med denne dialogboks",
+	"wikieditor-toolbar-tool-table-toomany": "Det er ikke muligt at indsætte en tabel med mere end {{PLURAL:$1|en celle|$1 celler}} med denne dialogboks.",
 	"wikieditor-toolbar-tool-table-invalidnumber": "Du har ikke angivet et gyldigt antal rækker eller kolonner.",
 	"wikieditor-toolbar-tool-table-zero": "Du kan ikke indsætte en tabel med nul rækker eller kolonner",
 	"wikieditor-toolbar-tool-replace": "Søg og erstat",
@@ -201,5 +201,11 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Brugernavn</a> (<a href='#' title='$2:Username'>diskussion</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Indrykning",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal tekst<br />:Indrykket tekst<br />::Indrykket tekst",
-	"wikieditor-toolbar-help-content-indent-result": "Normal tekst<dl><dd>Indrykket tekst<dl><dd>Indrykket tekst</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normal tekst<dl><dd>Indrykket tekst<dl><dd>Indrykket tekst</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Forhåndsvisning",
+	"wikieditor-realtimepreview-reload": "Genindlæs",
+	"wikieditor-realtimepreview-beta-label": "Forhåndsvisning i realtid",
+	"wikieditor-realtimepreview-reload-title": "Genindlæs ruden med forhåndsvisning i realtid",
+	"wikieditor-realtimepreview-onboarding-body": "Se hvordan dine redigeringer vil se ud for læserne ved at bruge forhåndsvisning i realtid.",
+	"wikieditor-realtimepreview-onboarding-button": "OK, modtaget"
 }

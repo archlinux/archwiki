@@ -27,7 +27,7 @@
 	"categorytree-collapse": "teng ke",
 	"categorytree-expand": "hera kerê",
 	"categorytree-member-counts": "Tede {{PLURAL:$1|1 bınkategoriye|$1 bınkategoriy}}, {{PLURAL:$2|1 pele|$2 peli}} û {{PLURAL:$3|1 dosya|$3 dosyey}} estê",
-	"categorytree-num-categories": "$1 Kategoriy",
+	"categorytree-num-categories": "$1 Kategoriyi",
 	"categorytree-num-pages": "$1 Peli",
 	"categorytree-num-files": "$1 Dosya",
 	"categorytree-num-empty": "venga",

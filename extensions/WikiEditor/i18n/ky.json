@@ -4,7 +4,8 @@
 			"Amire80",
 			"Chorobek",
 			"Macofe",
-			"Викиней"
+			"Викиней",
+			"Bosogo"
 		]
 	},
 	"wikieditor-toolbar-tool-bold": "Калың",
@@ -66,7 +67,7 @@
 	"wikieditor-toolbar-tool-table-wikitable": "Чектери менен жасалга",
 	"wikieditor-toolbar-tool-table-sortable": "Жадыбал иреттелме болсун",
 	"wikieditor-toolbar-tool-table-example": "Мисал",
-	"wikieditor-toolbar-tool-table-preview": "Алдын ала көргөз",
+	"wikieditor-toolbar-tool-table-preview": "Алдын ала көрcөтүү",
 	"wikieditor-toolbar-tool-table-insert": "Киргиз",
 	"wikieditor-toolbar-tool-table-cancel": "Жокко чыгар",
 	"wikieditor-toolbar-tool-table-toomany": "Бул баарлашууда 1000ден ашык көзөнөгү бар жадыбал коюууга мүмкүн эмес.",
@@ -74,7 +75,7 @@
 	"wikieditor-toolbar-tool-table-zero": "Сиз бир дагы сабы же тилкеси жок жадыбал киргизе албайсыз",
 	"wikieditor-toolbar-tool-replace": "Таап алмаштыр",
 	"wikieditor-toolbar-tool-replace-title": "Таап алмаштыр",
-	"wikieditor-toolbar-tool-replace-search": "Изде:",
+	"wikieditor-toolbar-tool-replace-search": "Издөө:",
 	"wikieditor-toolbar-tool-replace-replace": "Менен алмаштыр:",
 	"wikieditor-toolbar-tool-replace-case": "Баш тамганы айырмала",
 	"wikieditor-toolbar-tool-replace-regex": "Издөө көзөнөгүн регулярдуу айтылыш  катары эсепте",

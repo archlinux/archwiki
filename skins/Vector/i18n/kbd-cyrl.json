@@ -2,18 +2,22 @@
 	"@metadata": {
 		"authors": [
 			"Bogups",
-			"Тамэ Балъкъэрхэ"
+			"Тамэ Балъкъэрхэ",
+			"Rhdtranslate"
 		]
 	},
-	"vector-action-addsection": "Теухугъуэ щӀэуэ щӀэдзэн",
-	"vector-action-delete": "Ихын",
-	"vector-action-move": "ЦӀэр хъуэжын",
+	"vector-language-button-label": "‎{{PLURAL:$1|$1 бзэр|$1 бзэхэр}}",
+	"vector-action-addsection": "Темэр хэлъхьэн",
+	"vector-action-delete": "ИгъэкӀын",
+	"vector-action-move": "‎ЦӀэр хъуэжын",
 	"vector-action-protect": "Хъумэн",
 	"vector-action-undelete": "ЗыфӀэгъэувэжын",
 	"vector-action-unprotect": "Хъумэныр техыжын",
 	"vector-view-create": "ЩӀын",
-	"vector-view-edit": "Гъэтэрэзын",
+	"vector-view-edit": "Зэгъэзэхуэжын",
 	"vector-view-history": "Тхыдэм еплъын",
 	"vector-view-view": "Еджэн",
-	"vector-view-viewsource": "КъызхэкӀам еплъын"
+	"vector-view-viewsource": "КъызхэкӀам еплъын",
+	"vector-more-actions": "Нэхъыбэу",
+	"vector-searchsuggest-containing": " <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> иту напэкӀуэцӀ лъыхъуэн"
 }

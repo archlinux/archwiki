@@ -291,7 +291,7 @@
 	"abusefilter-edit-action-disallow": "阻止用户进行可疑的操作",
 	"abusefilter-edit-action-blockautopromote": "撤销用户的自动确认状态",
 	"abusefilter-edit-action-degroup": "将用户从所有权限组中移除",
-	"abusefilter-edit-action-block": "封禁进行编辑的用户和／或IP地址",
+	"abusefilter-edit-action-block": "封禁进行编辑的用户和/或IP地址",
 	"abusefilter-edit-action-blocktalk": "封禁用户和/或IP地址编辑自己讨论页的权利",
 	"abusefilter-edit-action-throttle": "只当用户触犯频率上限后方触发操作",
 	"abusefilter-edit-action-rangeblock": "封禁用户来源的对应IP段",

@@ -4,6 +4,8 @@
 			"Yupik"
 		]
 	},
+	"visualeditor-mwlanguagevariantcontextitem-rule-code-label": "Kielâkoodi",
 	"visualeditor-mwlanguagevariantcontextitem-rule-name-label": "Kielâ",
-	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Kielah"
+	"visualeditor-mwlanguagevariantinspector-filter-langs-label": "Kielah",
+	"visualeditor-mwlanguagevariantinspector-filter-langs-placeholder": "Kielâkoodi"
 }

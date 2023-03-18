@@ -106,7 +106,7 @@ class InputWidget extends Widget {
 	/**
 	 * Set the value of the input.
 	 *
-	 * @param string $value New value
+	 * @param mixed $value New value should usually be a string
 	 * @return $this
 	 */
 	public function setValue( $value ) {
@@ -120,7 +120,7 @@ class InputWidget extends Widget {
 	 *
 	 * Ensures value is a string, and converts null to empty string.
 	 *
-	 * @param string $value Original value
+	 * @param mixed $value Original value
 	 * @return string Cleaned up value
 	 */
 	protected function cleanUpValue( $value ) {
@@ -131,6 +131,7 @@ class InputWidget extends Widget {
 		}
 	}
 
+	/** @inheritDoc */
 	public function setDisabled( $disabled ) {
 		parent::setDisabled( $disabled );
 		if ( isset( $this->input ) ) {
@@ -154,6 +155,7 @@ class InputWidget extends Widget {
 		return $this;
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$name = $this->input->getAttribute( 'name' );
 		if ( $name !== null ) {

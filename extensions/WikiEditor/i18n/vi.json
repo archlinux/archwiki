@@ -6,7 +6,8 @@
 			"Nguyên Lê",
 			"Thienhau2003",
 			"Vinhtantran",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"NguyenHung"
 		]
 	},
 	"wikieditor": "Giao diện sửa đổi mã wiki nâng cao",
@@ -197,5 +198,14 @@
 	"wikieditor-toolbar-help-content-indent-syntax": "Văn bản thường<br />:Văn bản được tăng lề<br />::Văn bản được tăng lề",
 	"wikieditor-toolbar-help-content-indent-result": "Văn bản thường<dl><dd>Văn bản được tăng lề<dl><dd>Văn bản được tăng lề</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "Sửa đổi thực hiện bằng [[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (trình soạn thảo mã wiki 2010)",
-	"wikieditor-realtimepreview-preview": "Xem trước"
+	"wikieditor-realtimepreview-preview": "Xem trước",
+	"wikieditor-realtimepreview-error": "Không tải bản xem trước",
+	"wikieditor-realtimepreview-reload": "Tải lại",
+	"wikieditor-realtimepreview-beta-label": "Xem trước thời gian thực",
+	"wikieditor-realtimepreview-beta-desc": "Xem các thay đổi mã wiki sẽ xuất hiện như thế nào đối với người đọc bên trong [[mw:Special:MyLanguage/Extension:WikiEditor|trình sửa đổi năm 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Tải lại khung xem trước thời gian thực",
+	"wikieditor-realtimepreview-manual": "Xin hãy tải lại ngay để xem trước các sửa đổi của bạn một cách thủ công.",
+	"wikieditor-realtimepreview-onboarding-title": "Xem trước thời gian thực",
+	"wikieditor-realtimepreview-onboarding-body": "Xem các sửa đổi của bạn sẽ trông như thế nào đối với người đọc bằng cách xem trước chúng trong thời gian thực.",
+	"wikieditor-realtimepreview-onboarding-button": "Hiểu rồi"
 }

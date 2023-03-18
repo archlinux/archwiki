@@ -6,7 +6,8 @@
 			"Mikalai Udodau",
 			"Тест",
 			"Чаховіч Уладзіслаў",
-			"Maksim L."
+			"Maksim L.",
+			"Plaga med"
 		]
 	},
 	"categorytree": "Дрэва катэгорый",
@@ -15,7 +16,7 @@
 	"categorytree-desc": "AJAX-кампанент для адлюстравання [[Special:CategoryTree|структуры катэгорый]] вікі",
 	"categorytree-header": "Увядзіце назву катэгорыі, каб пабачыць яе змесціва ў выглядзе дрэва (патрабуе JavaScript).",
 	"categorytree-category": "Катэгорыя:",
-	"categorytree-go": "Загрузіць",
+	"categorytree-go": "Паказаць дрэва",
 	"categorytree-parents": "Бацькоўскія катэгорыі",
 	"categorytree-mode-label": "Рэжым:",
 	"categorytree-mode-categories": "толькі катэгорыі",

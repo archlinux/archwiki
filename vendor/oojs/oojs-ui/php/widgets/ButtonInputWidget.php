@@ -16,6 +16,7 @@ class ButtonInputWidget extends InputWidget {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'span';
 
 	/* Properties */
@@ -66,6 +67,7 @@ class ButtonInputWidget extends InputWidget {
 		$this->addClasses( [ 'oo-ui-buttonInputWidget' ] );
 	}
 
+	/** @inheritDoc */
 	protected function getInputElement( $config ) {
 		$type = in_array( $config['type'], [ 'button', 'submit', 'reset' ] ) ?
 			$config['type'] :
@@ -100,7 +102,7 @@ class ButtonInputWidget extends InputWidget {
 	 *
 	 * Overridden to disable for `<input>` elements, which have value identical to the label.
 	 *
-	 * @param string $value New value
+	 * @param mixed $value New value should be a string
 	 * @return $this
 	 */
 	public function setValue( $value ) {
@@ -110,12 +112,16 @@ class ButtonInputWidget extends InputWidget {
 		return $this;
 	}
 
+	/**
+	 * @return null
+	 */
 	public function getInputId() {
 		// Disable generating `<label>` elements for buttons. One would very rarely need additional label
 		// for a button, and it's already a big clickable target, and it causes unexpected rendering.
 		return null;
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->useInputTag ) {
 			$config['useInputTag'] = true;

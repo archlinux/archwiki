@@ -4,7 +4,8 @@
 			"Amire80",
 			"Ganbarzada",
 			"Patriot Kur",
-			"Гусейн"
+			"Гусейн",
+			"Patriot Kor"
 		]
 	},
 	"vector-language-button-label": "{{PLURAL:$1|$1 zıvon|$1 zıvonon}}",
@@ -17,7 +18,7 @@
 	"vector-view-create": "Сохтеј",
 	"vector-view-edit": "Redaktə kardə",
 	"vector-view-history": "Tarixi diyəkə",
-	"vector-view-view": "Bahand",
+	"vector-view-view": "Bıhand",
 	"vector-view-viewsource": "Səvon diyə karde",
 	"vector-more-actions": "Ve"
 }

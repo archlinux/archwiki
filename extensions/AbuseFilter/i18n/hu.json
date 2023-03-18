@@ -15,13 +15,14 @@
 			"Samat",
 			"Tacsipacsi",
 			"Tgr",
-			"Wolf Rex"
+			"Wolf Rex",
+			"Eukarióta"
 		]
 	},
 	"abusefilter-desc": "Automatikus heurisztikát alkalmaz a szerkesztésekre.",
 	"abusefilter": "Vandálszűrő-kezelés",
 	"abuselog": "Vandálszűrő-napló",
-	"abusefilter-intro": "Üdvözölünk a Vandálszűrő kezelőfelületén.\nA Vandálszűrő egy automatizált szoftver, ami minden műveletnél automatikus heurisztikát alkalmaz.\nItt tekintheted át és módosíthatod a szűrőket.",
+	"abusefilter-intro": "Üdvözlünk a Vandálszűrő kezelőfelületén.\nA Vandálszűrő egy automatizált szoftver, ami minden műveletnél automatikus heurisztikát alkalmaz.\nItt tekintheted át és módosíthatod a szűrőket.",
 	"abusefilter-mustviewprivateoredit": "Biztonsági okokból csak azok a szerkesztők használhatják ezt a felületet, akik rendelkeznek a privát vandálszűrők megtekintéséhez és a szűrők szerkesztéséhez szükséges jogokkal.",
 	"abusefilter-warning": "'''Figyelmeztetés:''' ez a művelet károsnak lett minősítve.\nA nem építő jellegű műveletek gyorsan vissza lesznek vonva,\na többszöri ilyen jellegű szerkesztés a felhasználói fiók vagy az IP-cím blokkolását vonja maga után.\nHa biztos vagy benne, hogy a szerkesztésed építő jellegű, kattints az Elküld gombra a megerősítéshez.\nA visszaélési szabály rövid leírása, amelynek az általad végzett művelet megfelelt: $1",
 	"abusefilter-disallowed": "Ez a művelet automatikusan károsnak lett minősítve, így\nnem hajtható végre.\nHa úgy gondolod, hogy az általad végzett művelet építő jellegű, lépj kapcsolatba egy adminisztrátorral, és jelezd neki, hogy mit szerettél volna csinálni.\nA visszaélési szabály rövid leírása, amelynek az általad végzett művelet megfelelt: $1",

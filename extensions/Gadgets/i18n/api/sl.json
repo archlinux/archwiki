@@ -5,14 +5,22 @@
 			"Eleassar"
 		]
 	},
-	"apihelp-query+gadgetcategories-description": "Vrne seznam kategorij vtičnikov.",
-	"apihelp-query+gadgetcategories-summary": "Vrne seznam kategorij vtičnikov.",
-	"apihelp-query+gadgetcategories-example-1": "Prikaži seznam obstoječih kategorij vtičnikov",
-	"apihelp-query+gadgets-description": "Vrne seznam vtičnikov, ki se uporabljajo v tem vikiju.",
-	"apihelp-query+gadgets-summary": "Vrne seznam vtičnikov, ki se uporabljajo v tem vikiju.",
-	"apihelp-query+gadgets-param-allowedonly": "Izpiši samo vtičnike, ki so na voljo trenutnemu uporabniku.",
-	"apihelp-query+gadgets-param-enabledonly": "Izpiši samo vtičnike, ki jih ima trenutni uporabnik vključene.",
-	"apihelp-query+gadgets-example-1": "Prikaži seznam vtičnikov skupaj z njihovimi opisi",
-	"apihelp-query+gadgets-example-2": "Prikaži seznam vtičnikov z vsemi možnimi lastnostmi",
-	"apihelp-query+gadgets-example-5": "Prikaži seznam vtičnikov, ki jih ima trenutni uporabnik vključene."
+	"apihelp-query+gadgetcategories-description": "Vrne seznam kategorij pripomočkov.",
+	"apihelp-query+gadgetcategories-summary": "Vrne seznam kategorij pripomočkov.",
+	"apihelp-query+gadgetcategories-param-prop": "Kateri podatki o kategoriji pripomočkov naj se pridobijo:\n;name:Notranje ime kategorije.\n;title:Naslov kategorije.\n;members:Število pripomočkov v kategoriji.",
+	"apihelp-query+gadgetcategories-param-names": "Imena kategorij za pridobitev.",
+	"apihelp-query+gadgetcategories-example-1": "Pridobi seznam obstoječih kategorij pripomočkov",
+	"apihelp-query+gadgetcategories-example-2": "Pridobite vse informacije o kategorijah z imenom »foo« in »bar«",
+	"apihelp-query+gadgets-description": "Vrne seznam pripomočkov, ki se uporabljajo v tem vikiju.",
+	"apihelp-query+gadgets-summary": "Vrne seznam pripomočkov, ki se uporabljajo v tem vikiju.",
+	"apihelp-query+gadgets-param-prop": "Kateri podatkeli o pripomočku naj se pridobijo:\n;id:Notranji ID pripomočka.\n;metadata:Metapodatki pripomočka.\n;desc:Opis pripomočka, pretvorjen v HTML (lahko je počasno, uporabite le, če je res potrebno).",
+	"apihelp-query+gadgets-param-categories": "Iz katerih kategorij naj se pridobijo pripomočki.",
+	"apihelp-query+gadgets-param-ids": "ID-ji pripomočkov za pridobitev.",
+	"apihelp-query+gadgets-param-allowedonly": "Navedi samo pripomočke, ki so na voljo trenutnemu uporabniku.",
+	"apihelp-query+gadgets-param-enabledonly": "Navedi samo pripomočke, ki jih ima vključene trenutni uporabnik.",
+	"apihelp-query+gadgets-example-1": "Pridobi seznam pripomočkov skupaj z njihovimi opisi",
+	"apihelp-query+gadgets-example-2": "Pridobj seznam prioomočkov z vsemi možnimi lastnostmi",
+	"apihelp-query+gadgets-example-3": "Pridobi seznam pripomočkov, ki spadajo v kategorijo »foo«",
+	"apihelp-query+gadgets-example-4": "Pridobi informacije o pripomočkih »foo« in »bar«",
+	"apihelp-query+gadgets-example-5": "Pridobi seznam pripomočkov, ki jih ima vključene trenutni uporabnik."
 }

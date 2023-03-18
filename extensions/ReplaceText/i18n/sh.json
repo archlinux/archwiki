@@ -10,6 +10,7 @@
 	"replacetext_originaltext": "Prvobitni tekst:",
 	"replacetext_replacementtext": "Novi tekst:",
 	"replacetext_useregex": "Koristi regularne izraze",
+	"replacetext_regexdocu": "(Primjer: vrijednosti od \"a(.*)c\" za \"{{int:replacetext_originaltext}}\" i \"ac$1\" za \"{{int:replacetext_replacementtext}}\" će zamijeniti \"abc\" sa \"acb\".)",
 	"replacetext_optionalfilters": "Opcionalni filteri:",
 	"replacetext_categorysearch": "Zamijeni samo u kategoriji:",
 	"replacetext_prefixsearch": "Zamijeni samo u stranicama sa prefiksom:",

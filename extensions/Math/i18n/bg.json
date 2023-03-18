@@ -38,7 +38,9 @@
 	"mw_math_source": "Оставяне като LaTeX (за текстови браузъри)",
 	"prefs-math": "Математически формули",
 	"mathstatus": "Статус на математическите възможности",
+	"mathwikibase": "Информация за математическа формула",
 	"math-wikibase-header": "Информация за математически обекти",
 	"math-wikibase-formula-information": "Информация за математическа формула",
-	"math-wikibase-special-form-header": "Посочете името на формулата:"
+	"math-wikibase-special-form-header": "Посочете името на формулата:",
+	"math-wikibase-special-form-placeholder": "Наименование на формулата"
 }

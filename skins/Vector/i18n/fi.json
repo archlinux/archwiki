@@ -14,7 +14,8 @@
 			"Pyscowicz",
 			"Rönttönen",
 			"SuperPete",
-			"Stryn"
+			"Stryn",
+			"Yupik"
 		]
 	},
 	"skinname-vector": "Vanha Vektori (2010)",
@@ -57,7 +58,7 @@
 	"vector-anon-user-menu-pages-learn": "lue lisää",
 	"vector-anon-user-menu-pages-label": "Lue lisää muokkaamisesta",
 	"vector-main-menu-tooltip": "Päävalikko",
-	"vector-toc-menu-tooltip": "Sisällysluettelot",
+	"vector-toc-menu-tooltip": "Sisällysluettelo",
 	"vector-site-nav-label": "Sivusto",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Keskustelu]]",
 	"tooltip-vector-anon-user-menu-title": "Lisää valintoja"

@@ -12,5 +12,6 @@
 	"vector-view-edit": "Niuba",
 	"vector-view-history": "Ngenda' kisa dau-dau",
 	"vector-view-view": "Boso",
-	"vector-more-actions": "Iko"
+	"vector-more-actions": "Iko",
+	"vector-searchsuggest-containing": "Penemia laman yang bengen <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

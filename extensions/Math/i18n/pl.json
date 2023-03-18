@@ -27,6 +27,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "Domyślnie",
 	"math-visualeditor-mwlatexinspector-display-inline": "Równo z tekstem",
 	"math-visualeditor-mwlatexinspector-id": "Link ID (opcjonalnie)",
+	"math-visualeditor-mwlatexinspector-qid": "Identyfikator Wikibase (z prefiksem Q)",
 	"math-visualeditor-mwmathdialog-title": "Wzory matematyczne",
 	"math-visualeditor-symbol-group-chem-addition": "Dodatkowe związki",
 	"math-visualeditor-symbol-group-chem-aggregation": "Stany skupienia",

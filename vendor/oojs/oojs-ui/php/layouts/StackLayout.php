@@ -9,7 +9,9 @@ class StackLayout extends PanelLayout {
 
 	use GroupElement;
 
+	/** @var bool */
 	protected $continuous;
+	/** @var PanelLayout|null */
 	protected $currentItem;
 
 	/**
@@ -20,8 +22,6 @@ class StackLayout extends PanelLayout {
 	public function __construct( array $config = [] ) {
 		$config = array_merge( [
 			'preserveContent' => false,
-			'continuous' => false,
-			'items' => [],
 			'scrollable' => $config['continuous'] ?? false
 		], $config );
 
@@ -39,9 +39,12 @@ class StackLayout extends PanelLayout {
 		if ( $this->continuous ) {
 			$this->addClasses( [ 'oo-ui-stackLayout-continuous' ] );
 		}
-		$this->addItems( $config['items'] );
+		$this->addItems( $config['items'] ?? [] );
 	}
 
+	/**
+	 * @param PanelLayout $item
+	 */
 	public function setItem( $item ) {
 		if ( $item !== $this->currentItem ) {
 			$items = $this->getItems();
@@ -49,6 +52,10 @@ class StackLayout extends PanelLayout {
 		}
 	}
 
+	/**
+	 * @param Element[] $items
+	 * @param PanelLayout $selectedItem
+	 */
 	public function updateHiddenState( $items, $selectedItem ) {
 		if ( !$this->continuous ) {
 			$items = $this->getItems();
@@ -64,6 +71,7 @@ class StackLayout extends PanelLayout {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$config = parent::getConfig( $config );
 		if ( $this->continuous ) {

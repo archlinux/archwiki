@@ -7,7 +7,8 @@
 			"Goshaproject",
 			"Mikalai Udodau",
 			"Дзяніс Тутэйшы",
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"Plaga med"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Кніга",
@@ -28,7 +29,7 @@
 	"cite-ve-citationneeded-title": "Патрэбна крыніца",
 	"cite-ve-dialog-reference-editing-reused": "Гэтая зноска выкарыстоўваецца {{PLURAL:$1|$1 раз|$1 разы|$1 разоў|1=адзін раз|2=двойчы|3=тройчы}} на гэтай старонцы.",
 	"cite-ve-dialog-reference-editing-reused-long": "Гэтая зноска выкарыстоўваецца {{PLURAL:$1|$1 раз|$1 разы|$1 разоў|1=адзін раз|2=двойчы|3=тройчы}} на гэтай старонцы. Змены, зробленыя тут, будуць прыменены ва ўсіх месцах, дзе гэтая зноска выкарыстоўваецца паўторна.",
-	"cite-ve-dialog-reference-options-group-label": "Выкарыстоўваць гэтую групу",
+	"cite-ve-dialog-reference-options-group-label": "Выкарыстоўваць гэту групу",
 	"cite-ve-dialog-reference-options-group-placeholder": "Агульныя спасылкі",
 	"cite-ve-dialog-reference-options-name-label": "Паўторна выкарыстоўваць гэта імя",
 	"cite-ve-dialog-reference-options-responsive-label": "Выкарыстоўваць дызайн з рэспансіўнымі слупкамі",

@@ -12,7 +12,8 @@
 			"Macofe",
 			"MarcoAurelio",
 			"Rodney Araujo",
-			"Ryo567"
+			"Ryo567",
+			"Pierpao"
 		]
 	},
 	"minerva-last-modified-date": "Última edición el $1 a las $2",
@@ -61,10 +62,12 @@
 	"minerva-page-actions-info": "Información de la página",
 	"minerva-page-actions-permalink": "Enlace permanente",
 	"minerva-page-actions-backlinks": "Lo que enlaza aquí",
+	"minerva-page-actions-change-block": "Cambiar bloqueo",
 	"minerva-page-actions-cite": "Citar página",
 	"minerva-page-actions-move": "Trasladar",
 	"minerva-page-actions-delete": "Borrar",
 	"minerva-page-actions-protect": "Proteger",
+	"minerva-page-actions-unblock": "Desbloquear usuario",
 	"minerva-page-actions-unprotect": "Desproteger",
 	"minerva-page-actions-user-groups": "Grupos de usuarios",
 	"minerva-page-actions-block": "Bloquear usuario",
@@ -78,7 +81,7 @@
 	"minerva-talk-full-page": "Leer como página de wiki",
 	"minerva-talk-topic-feedback": "Se añadió un nuevo tema a la página de discusión.",
 	"minerva-talk-reply-success": "Se guardó tu respuesta en la página de discusión.",
-	"minerva-skin-desc": "La primera apariencia móvil responsiva",
+	"minerva-skin-desc": "Una apariencia mobile-first responsiva",
 	"skin-minerva-issue-learn-more": "Más información",
 	"skin-minerva-mobile-option-MinervaShowCategories": "Categorías",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Ver categorías de páginas",

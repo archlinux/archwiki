@@ -23,7 +23,7 @@
 	"prefs-vector-enable-vector-1-help": "Nei prossimi anni aggiorneremo gradualmente il tema Vector. Legacy Vector ti permetterà di visualizzare la vecchia versione di Vector (risalente al dicembre 2019). Per scoprirne di più sulle novità, visita la nostra [[mw:Reading/Web/Desktop_Improvements|pagina del progetto]].",
 	"vector-opt-out": "Torna al vecchio aspetto",
 	"vector-opt-out-tooltip": "Cambia le tue impostazioni per ritornare alla visualizzazione della skin precedente (legacy Vector)",
-	"vector.css": "/* Gli stili CSS inseriti qui si applicano agli utenti che usano il tema Vector */",
+	"vector.css": "/* Gli stili CSS inseriti qui vengono caricati dagli utenti che usano il tema Vector */",
 	"vector.js": "/* Il codice JavaScript inserito qui viene caricato dagli utenti che usano il tema Vector */",
 	"vector-languages": "Lingue",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingua|$1 lingue}}",

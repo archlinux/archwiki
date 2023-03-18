@@ -168,7 +168,11 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		return '';
 	}
 
-	public function formatDOMNode( \DOMNode $node ) {
+	/**
+	 * @param \DOMNode $node
+	 * @return string
+	 */
+	public function formatDOMNode( $node ) {
 		$contents = '';
 		if ( $node->firstChild ) {
 			foreach ( $node->childNodes as $child ) {
@@ -233,13 +237,18 @@ class HtmlFormatter implements Formatter, DOMFormatter {
 		}
 	}
 
-	public function formatDOMElement( \DOMElement $node, $contents ) {
+	/**
+	 * @param \DOMElement $node
+	 * @param string $contents
+	 * @return string
+	 */
+	public function formatDOMElement( $node, $contents ) {
 		$ns = $node->namespaceURI;
 		if ( $ns === null
 			|| isset( $this->unqualifiedNamespaces[$ns] )
-			|| $node->prefix === null
+			|| !( $node->prefix )
 		) {
-			$name = $node->localName;
+			$name = (string)$node->localName;
 		} else {
 			$name = $node->prefix . ':' . $node->localName;
 		}

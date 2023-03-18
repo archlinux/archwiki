@@ -8,7 +8,8 @@
 			"Kaztrans",
 			"U.ayaao.p",
 			"СеніңШешең",
-			"Darzz"
+			"Darzz",
+			"Nurlan"
 		]
 	},
 	"skinname-vector": "Ескі Vector (2010)",
@@ -46,7 +47,7 @@
 	"vector-more-actions": "Тағы",
 	"vector-search-loader": "Іздеу ұсыныстары жүктелуде",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">«$1»</strong> бар беттерді іздеу",
-	"vector-intro-page": "Уикипедия:Таныстыру",
+	"vector-intro-page": "Жәрдем:Таныстыру",
 	"vector-toc-heading": "Мазмұны",
 	"vector-toc-toggle-position-sidebar": "бүйірлік тақтаға жылжыту",
 	"vector-toc-toggle-position-title": "жасыру",

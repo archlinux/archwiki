@@ -24,6 +24,7 @@
 	"vector.js": "/* JavaScript постављен овде учитаће се свим корисницима векторске теме */",
 	"vector-action-toggle-sidebar": "Прикажи/сакриј бочну траку",
 	"vector-languages": "Језици",
+	"vector-language-button-aria-label": "Чланак на другим језицима. Доступан на: {{PLURAL:$1|$1}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 језик|$1 језика}}",
 	"vector-no-language-button-label": "Додај језике",
 	"vector-no-language-button-aria-label": "Овај чланак постоји само на овом језику. Додајте друге језике.",

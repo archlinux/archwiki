@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Inabat Allanova"
+			"Inabat Allanova",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
-	"cite_error": "Kóshirip alıw qátesi: $1"
+	"cite_error": "Derek kórsetiwdegi qátelik: $1",
+	"cite_error_ref_no_input": "Jaramsız <code>&lt;ref&gt;</code> tegi; atsız derek siltemesi qandayda bir maǵlıwmatqa iye bolıwı kerek"
 }

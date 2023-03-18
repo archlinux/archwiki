@@ -10,10 +10,20 @@
 			"NoiX180"
 		]
 	},
+	"skinname-vector": "Vector legacy (2010)",
+	"skinname-vector-2022": "Vector (2022)",
+	"vector-specialversion-name": "Véktor",
+	"vector-skin-desc": "Nyadiayang 2 kules Véktor:\n* 2011 - Vérsi Modérn saking MonoBook antuk cingakan seger tur akéh paningkatan kawigunaan.\n* 2022 - Véktor sané kawangun dados wagian saking proyék [[mw:Desktop Improvements]] WMF.",
+	"prefs-vector-enable-vector-1-label": "Anggén Vektor Tetamian",
 	"vector-opt-out": "Alih nuju cingakan sadurungné",
 	"vector-opt-out-tooltip": "Uahin setélan Ida antuk mawali nuju cingakan sadurungné saking kules puniki (Vektor warisan)",
 	"vector-action-toggle-sidebar": "Tugel wilah sisi",
+	"vector-languages": "Basa",
+	"vector-language-button-aria-label": "Nuju suratan ring basa liyanan. Wénten {{PLURAL:$1|$1 basa}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 basa}}",
+	"vector-no-language-button-label": "Weweh basa",
+	"vector-no-language-button-aria-label": "Suratan puniki wantah kasedia ring basa puniki. Alih basa sasuratan nyané nuju ring basa liyanan",
+	"vector-language-variant-switcher-label": "Gentos soroh basa",
 	"vector-action-addsection": "Weweh topik",
 	"vector-action-delete": "Usap",
 	"vector-action-move": "Gingsirang",
@@ -31,5 +41,11 @@
 	"vector-more-actions": "Lianan",
 	"vector-search-loader": "Ngamuat saran parerehan",
 	"vector-searchsuggest-containing": "Selehin kaca sané madaging <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-anon-user-menu-pages-learn": "pelajahin malih"
+	"vector-toc-beginning": "Pamahbah",
+	"vector-anon-user-menu-pages-learn": "pelajahin malih",
+	"vector-anon-user-menu-pages-label": "Pelajahin malih indik panguahan",
+	"vector-main-menu-tooltip": "Menu utama",
+	"vector-toc-menu-tooltip": "Daging cakepan",
+	"vector-site-nav-label": "Situs",
+	"tooltip-vector-anon-user-menu-title": "Opsi liyanan"
 }

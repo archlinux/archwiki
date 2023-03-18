@@ -13,6 +13,7 @@ class ButtonGroupWidget extends Widget {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'span';
 
 	/**

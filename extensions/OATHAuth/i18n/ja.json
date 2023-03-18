@@ -10,7 +10,8 @@
 			"Siglite3",
 			"Suyama",
 			"Yusuke1109",
-			"ネイ"
+			"ネイ",
+			"春春眠眠"
 		]
 	},
 	"oathauth-desc": "HMAC に基づいたワンタイムパスワードを使用する認証機能を提供する",
@@ -43,6 +44,7 @@
 	"action-oathauth-verify-user": "利用者が二段階認証を有効にしているかどうかの検証",
 	"right-oathauth-view-log": "二段階認証の変更記録を閲覧",
 	"action-oathauth-view-log": "二段階認証の変更記録の閲覧",
+	"oathauth-disable-intro": "大きな力には大きな責任が伴う",
 	"oathauth-enteruser": "利用者名:",
 	"oathauth-enterdisablereason": "無効にする理由:",
 	"oathauth-enterverifyreason": "確認する理由:",

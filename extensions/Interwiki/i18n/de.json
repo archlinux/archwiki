@@ -37,7 +37,7 @@
 	"interwiki-cached": "Die Interwikidaten wurden gecached. Die Daten im Cache zu ändern ist nicht möglich.",
 	"interwiki_edit": "Bearbeiten",
 	"interwiki_reasonfield": "Grund:",
-	"interwiki_deleting": "Du bist gerade dabei das Präfix „$1“ zu löschen.",
+	"interwiki_deleting": "Du bist gerade dabei, das Präfix „$1“ zu löschen.",
 	"interwiki_deleted": "Das Präfix „$1“ wurde aus der Interwikitabelle entfernt.",
 	"interwiki_delfailed": "Das „$1“ konnte nicht aus der Interwikitabelle gelöscht werden.",
 	"interwiki-logtext": "Logbuch ansehen",
@@ -50,7 +50,7 @@
 	"interwiki_added": "Das Präfix „$1“ wurde der Interwikitabelle hinzugefügt.",
 	"interwiki_addfailed": "Das Präfix „$1“ konnte nicht der Interwikitabelle hinzugefügt werden.\nMöglicherweise befindet es sich bereits in der Interwikitabelle.",
 	"interwiki_edittext": "Interwikipräfix bearbeiten",
-	"interwiki_editintro": "Du bist gerade dabei ein Präfix zu ändern.\nBeachte bitte, dass dies bereits vorhandene Links ungültig machen kann.",
+	"interwiki_editintro": "Du bist gerade dabei, ein Präfix zu ändern.\nBeachte bitte, dass dies bereits vorhandene Links ungültig machen kann.",
 	"interwiki_edited": "Das Präfix „$1“ wurde in der Interwikitabelle geändert.",
 	"interwiki_editerror": "Das Präfix „$1“ konnte nicht in der Interwikitabelle geändert werden.\nMöglicherweise ist es nicht vorhanden.",
 	"interwiki-badprefix": "Das festgelegte Interwikipräfix „$1“ beinhaltet ungültige Zeichen.",
@@ -71,6 +71,6 @@
 	"interwiki-links": "Interwiki-Präfixe",
 	"interwiki-language-links": "Interlanguage-Präfixe",
 	"interwiki-language-description": "Diese Präfixe stimmen mit definierten Sprachcodes überein und werden zur Erstellung der Liste „{{int:otherlanguages}}“ beim Hinzufügen zu einer Seite verwendet.",
-	"interwiki-global-language-links": "Globale Interlanguage Präfixes",
+	"interwiki-global-language-links": "Globale Interlanguage-Präfixe",
 	"interwiki-global-language-description": "Diese Präfixe stimmen mit definierten Sprachcodes überein und werden verwendet, um die Liste \"{{int: otherlanguages}}\" zu erstellen, wenn sie einer Seite hinzugefügt werden. Da sie von einer globalen Konfiguration geerbt werden, können sie nur im Quell-Wiki bearbeitet werden. Globale Sprachdefinitionen können nicht lokal überschrieben werden."
 }

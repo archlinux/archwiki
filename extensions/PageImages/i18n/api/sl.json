@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eleassar"
+		]
+	},
+	"apihelp-query+pageimages-description": "Vrne informacije o slikah na strani, kot so sličice in prisotnost fotografij.",
+	"apihelp-query+pageimages-summary": "Vrne informacije o slikah na strani, kot so sličice in prisotnost fotografij.",
+	"apihelp-query+pageimages-example-1": "Pridobi ime in sličico velikosti <kbd>100</kbd> slikovnih pik slike na strani <kbd>Albert Einstein</kbd>.",
+	"apihelp-query+pageimages-param-prop": "Kateri podatki naj se vrnejo:\n;sličica:URL in mere sličice, povezane s stranjo, če obstaja.\n;izvirnik:URL in izvirne mere slike, povezane s stranjo, če obstaja.\n;ime:naslov slike.",
+	"apihelp-query+pageimages-param-thumbsize": "Največja širina sličic v slikovnih pikah.",
+	"apihelp-query+pageimages-param-langcode": "Koda za jezik, v katerem bo slika upodobljena, če je podprtih več jezikov",
+	"apihelp-query+pageimages-param-limit": "Lastnosti, koliko strani naj se vrne.",
+	"apihelp-query+pageimages-param-license": "Omeji slike strani na določeno vrsto licence",
+	"apihelp-query+pageimages-paramvalue-license-free": "samo proste slike",
+	"apihelp-query+pageimages-paramvalue-license-any": "najboljša slika, ne glede na to, ali je prosta ali neprosta."
+}

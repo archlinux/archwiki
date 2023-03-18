@@ -20,21 +20,19 @@ class HiddenInputWidget extends Widget {
 	 *      - string $config['name'] The name of the hidden input. (default: '')
 	 */
 	public function __construct( array $config ) {
-		// Configuration initialization
-		$config = array_merge( [ 'value' => '', 'name' => '' ], $config );
-
 		// Parent constructor
 		parent::__construct( $config );
 
 		// Initialization
 		$this->setAttributes( [
 			'type' => 'hidden',
-			'value' => $config['value'],
-			'name' => $config['name'],
+			'value' => $config['value'] ?? '',
+			'name' => $config['name'] ?? '',
 		] );
 		$this->removeAttributes( [ 'aria-disabled' ] );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$config['value'] = $this->getAttribute( 'value' );
 		$config['name'] = $this->getAttribute( 'name' );

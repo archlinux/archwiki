@@ -192,5 +192,10 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Lankide izena</a> (<a href='#' title='$2:Username'>eztabaida</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Koska",
 	"wikieditor-toolbar-help-content-indent-syntax": "Testu normala<br />: Koskatutako testua<br />:: Koskatutako testua",
-	"wikieditor-toolbar-help-content-indent-result": "Testu arrunta<dl><dd>Koskatutako testua<dl><dd>Koskatutako testua</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Testu arrunta<dl><dd>Koskatutako testua<dl><dd>Koskatutako testua</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Aurrebista",
+	"wikieditor-realtimepreview-error": "Aurrebista ez da kargatzen",
+	"wikieditor-realtimepreview-reload": "Birkargatu",
+	"wikieditor-realtimepreview-beta-label": "Denbora errealeko aurrebista",
+	"wikieditor-realtimepreview-onboarding-title": "Denbora errealeko aurrebista"
 }

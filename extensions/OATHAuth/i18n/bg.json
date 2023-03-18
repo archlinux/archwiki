@@ -30,6 +30,7 @@
 	"oathauth-disable-for-user": "Деактивиране на двукомпонентно удостоверяване на потребител",
 	"right-oathauth-disable-for-user": "Деактивиране на двукомпонентно удостоверяване на потребител",
 	"action-oathauth-disable-for-user": "деактивиране на двукомпонентно удостоверяване на потребител",
+	"right-oathauth-verify-user": "Проверяване дали даден потребител има активирана двуфакторно удостоверяване",
 	"oathauth-disable-intro": "С голямата сила идва голяма отговорност",
 	"oathauth-enteruser": "Потребителско име:",
 	"oathauth-enterdisablereason": "Причина за изключване:",

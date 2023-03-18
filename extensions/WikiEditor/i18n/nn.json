@@ -184,5 +184,12 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Brukarnamn</a> (<a href='#' title='$2:Username'>diskusjon</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Innrykk",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normal tekst<br />:Tekst med innrykk<br />::Tekst med innrykk",
-	"wikieditor-toolbar-help-content-indent-result": "Normal tekst<dl><dd>Tekst med innrykk<dl><dd>Tekst med innrykk</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normal tekst<dl><dd>Tekst med innrykk<dl><dd>Tekst med innrykk</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Førehandsvising",
+	"wikieditor-realtimepreview-error": "Førehandsvisinga lastar ikkje",
+	"wikieditor-realtimepreview-beta-label": "Sanntidsførehandsvising",
+	"wikieditor-realtimepreview-reload-title": "Last panelet for sanntidsførehandsvising om att",
+	"wikieditor-realtimepreview-manual": "Last om att no for å førehandsvisa endringane dine manuelt.",
+	"wikieditor-realtimepreview-onboarding-body": "Sjå korleis endringane dine vil sjå ut for lesarar ved å førehandsvisa dei i sanntid.",
+	"wikieditor-realtimepreview-onboarding-button": "Greitt, skjøner"
 }

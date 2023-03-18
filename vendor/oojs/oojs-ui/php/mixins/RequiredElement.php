@@ -21,9 +21,14 @@ trait RequiredElement {
 	protected $requiredElement;
 
 	/**
-	 * @var IndicatorElement
+	 * @var IndicatorElement|null
 	 */
 	protected $indicatorElement;
+
+	/**
+	 * @var Element|null
+	 */
+	protected $input;
 
 	/**
 	 * @param array $config Configuration options
@@ -82,4 +87,9 @@ trait RequiredElement {
 		}
 		return $this;
 	}
+
+	/**
+	 * @param callable $func
+	 */
+	abstract public function registerConfigCallback( callable $func );
 }

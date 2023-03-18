@@ -12,6 +12,7 @@
 	"templatedata-doc-param-desc-empty": "nula deskripto",
 	"templatedata-doc-param-name": "Parametro",
 	"templatedata-doc-param-status": "Stando",
+	"templatedata-doc-param-type": "Tipo",
 	"templatedata-doc-param-type-boolean": "Hazardala",
 	"templatedata-doc-param-type-content": "Kontenajo",
 	"templatedata-doc-param-type-date": "Dato",
@@ -27,6 +28,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Uzero",
 	"templatedata-editbutton": "Administrar Shablono pri Dati",
 	"templatedata-helplink": "Informi pri ShablonoDatumi (TemplateData)",
+	"templatedata-modal-button-apply": "Aplikar",
 	"templatedata-modal-button-back": "Retroirar",
 	"templatedata-modal-button-cancel": "Anular",
 	"templatedata-modal-button-done": "Facita",
@@ -39,5 +41,6 @@
 	"templatedata-modal-table-param-example": "Exemplo ($1)",
 	"templatedata-modal-table-param-label": "Etiketo ($1)",
 	"templatedata-modal-table-param-name": "Nomo",
+	"templatedata-modal-table-param-type": "Tipo",
 	"templatedata-modal-title-language": "Linguo"
 }

@@ -3,7 +3,8 @@
 		"authors": [
 			"Kareyac",
 			"Vadgt",
-			"Xelgen"
+			"Xelgen",
+			"Սերգեյ Սաֆարյան"
 		]
 	},
 	"abusefilter-disallowed": "Այս գործողությունը կանխվեց ավտոմատ համակարգի կողմից, որպես վնասակար։\nԵթե կարծում եք, որ Ձեր կատարած գործողությունը կառուցողական է, խնդրում ենք  ադմինիստրատորներից մեկին տեղյակ պահել, թե ինչ էիք մտադիր անել։ \nԿանոնի հակիրճ նկարագրությունը հետևյալն է՝ $1",
@@ -31,6 +32,8 @@
 	"abusefilter-edit-notes": "Նշումներ՝",
 	"abusefilter-edit-throttle-groups-help": "Տես $1",
 	"abusefilter-throttle-page": "էջ",
+	"abusefilter-edit-warn-actions": "Գործողություններ՝",
+	"abusefilter-edit-disallow-actions": "Գործողություններ՝",
 	"abusefilter-edit-history": "Պատմություն.",
 	"abusefilter-edit-tools": "Գործիքներ.",
 	"abusefilter-edit-builder-op-bool-and": "և (&)",

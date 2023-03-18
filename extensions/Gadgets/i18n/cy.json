@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Lloffiwr",
-			"Robin Owain"
+			"Robin Owain",
+			"Afalau"
 		]
 	},
 	"gadgets-desc": "Yn galluogi defnyddwyr i ddewis [[Special:Gadgets|teclynnau CSS a JavaScript]] yn eu [[Special:Preferences#mw-prefsection-gadgets|dewisiadau]]",
@@ -13,8 +14,12 @@
 	"gadgetusage-gadget": "Teclynnau",
 	"gadgetusage-usercount": "Nifer y defnyddwyr",
 	"gadgetusage-noresults": "Ni chafwyd hyd i declynnau.",
+	"gadgetusage-activeusers": "Defnyddwyr gweithgar",
+	"gadgetusage-default": "Rhagosodedig",
 	"gadgets-title": "Teclynnau",
 	"gadgets-pagetext": "Isod mae rhestr o declynnau arbennig y gall defnyddwyr eu galluogi ar eu [[Special:Preferences#mw-prefsection-gadgets|tudalennau dewisiadau]], sef rhestr a bennir yn y dudalen [[MediaWiki:Gadgets-definition|diffiniadau]].\nMae'r trosolwg hwn yn cynnig mynediad rhwydd at y tudalennau negeseuon sustem sy'n diffinio disgrifiad a chod pob teclyn.",
+	"gadgets-editdescription": "Golygu disgrifiad",
+	"gadgets-viewdescription": "Gweld disgrifiad",
 	"gadgets-uses": "Yn defnyddio",
 	"gadgets-required-rights": "Mae gofyn cael y {{PLURAL:$2||gallu|galluoedd|galluoedd|galluoedd|galluoedd}}:\n\n$1",
 	"gadgets-required-skins": "Ar gael ar y {{PLURAL:$2|wedd $1|gweddau hyn: $1}}.",

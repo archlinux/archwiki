@@ -32,7 +32,7 @@
 	"categorytree-no-subcategories": "ni podkategorij",
 	"categorytree-no-parent-categories": "ni starševskih kategorij",
 	"categorytree-no-pages": "ni strani ali podkategorij",
-	"categorytree-not-found": "Kategorije <i>$1</i> ni moč najti",
+	"categorytree-not-found": "Kategorije <i>$1</i> ni mogoče najti",
 	"categorytree-error": "Težava pri nalaganju podatkov.",
 	"categorytree-retry": "Prosimo, počakajte trenutek in poskusite znova."
 }

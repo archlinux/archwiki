@@ -5,8 +5,12 @@
 			"Ajiniyaz Nurniyazov"
 		]
 	},
+	"abusefilter-blocker": "Nadurıs háreketlerdi filtrlew",
 	"abusefilter-log-search-submit": "Izlew",
+	"abusefilter-log-linkonundelete": "Ózimshillik penen paydalanıw jurnalın kóriw",
 	"abusefilter-log-hide-show": "Kórsetiw",
 	"abusefilter-log-hide-hide": "Jasırıw",
-	"abusefilter-edit-tools": "Ásbaplar:"
+	"abusefilter-list-options-submit": "Jańalaw",
+	"abusefilter-edit-tools": "Ásbaplar:",
+	"abusefilter-edit-builder-vars-page-id": "Bettiń ID nomeri"
 }

@@ -9,7 +9,7 @@
 	"interwiki-title-norights": "Податоци за меѓупроектни податоци",
 	"interwiki-desc": "Додава [[Special:Interwiki|службена страница]] за преглед и уредување на табелата со меѓупроектни врски",
 	"interwiki_intro": "Ова е преглед на табелата со јазични врски, која ги задава кратенките-претставки за брзо ставање врска до разни викија и други надворешни страници. Препорака за употребата ќе најдете во [https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Interwiki прирачникот на MediaWiki.org].",
-	"interwiki-legend-label": "Легенда",
+	"interwiki-legend-label": "Толкување",
 	"interwiki_prefix": "Претставка",
 	"interwiki-prefix-label": "Претставка:",
 	"interwiki_prefix_intro": "Меѓујазична претставка за користење во синтаксата на викитекстот <code>[<nowiki />[претставка:<em>име на страница</em>]]</code>.",

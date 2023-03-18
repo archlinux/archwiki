@@ -4,7 +4,8 @@
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
 			"NguyenHung",
-			"Vinhtantran"
+			"Vinhtantran",
+			"Tryvix1509"
 		]
 	},
 	"oathauth-desc": "Cho phép xác nhận dùng các mật khẩu một lần dựa trên mã xác thực thông điệp được băm (HMAC)",
@@ -47,7 +48,7 @@
 	"action-oathauth-enable": "xác thực dùng hai nhân tố",
 	"oathauth-auth-token-label": "Token",
 	"oathauth-auth-token-help": "Mật khẩu dùng một lần được sử dụng làm nhân tố thứ hai trong quá trình xác thực dùng hai nhân tố.",
-	"oathauth-auth-ui": "Xin hãy nhập một mã xác nhận từ máy xác thực của bạn.",
+	"oathauth-auth-ui": "Xin hãy nhập một mã xác nhận từ trình xác thực của bạn.",
 	"oathauth-throttled": "Đã cố xác nhận danh tính nhiều lần quá! Xin hãy chờ $1.",
 	"oathauth-login-failed": "Xác nhận thất bại.",
 	"oathauth-describe-provider": "Xác thực dùng hai nhân tố (OATH).",

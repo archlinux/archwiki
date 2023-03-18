@@ -35,10 +35,12 @@ class DropdownInputWidget extends InputWidget {
 		$this->input->addClasses( [ 'oo-ui-indicator-down' ] );
 	}
 
+	/** @inheritDoc */
 	protected function getInputElement( $config ) {
 		return new Tag( 'select' );
 	}
 
+	/** @inheritDoc */
 	public function setValue( $value ) {
 		$this->value = $this->cleanUpValue( $value );
 		foreach ( $this->options as $opt ) {
@@ -116,6 +118,7 @@ class DropdownInputWidget extends InputWidget {
 		return $this;
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$optionsConfig = [];
 		foreach ( $this->options as $option ) {

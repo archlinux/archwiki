@@ -453,7 +453,8 @@
 				"svg": "default",
 				"png": "default",
 				"tiff": "default",
-				"tif": "default"
+				"tif": "default",
+				"webp": "default"
 			}
 		},
 		"MediaViewerUseThumbnailGuessing": {

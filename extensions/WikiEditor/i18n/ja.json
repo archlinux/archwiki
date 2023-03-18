@@ -22,7 +22,8 @@
 			"Yamagata Yusuke",
 			"おはぐろ蜻蛉",
 			"ひまり",
-			"青子守歌"
+			"青子守歌",
+			"Kokage si"
 		]
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
@@ -216,5 +217,6 @@
 	"wikieditor-realtimepreview-beta-label": "リアルタイムのプレビュー",
 	"wikieditor-realtimepreview-manual": "編集を手動でプレビューするには今リロードしてください。",
 	"wikieditor-realtimepreview-onboarding-title": "リアルタイムのプレビュー",
+	"wikieditor-realtimepreview-onboarding-body": "編集をリアルタイムにプレビューして、読者にどのように表示されるかを確認します。",
 	"wikieditor-realtimepreview-onboarding-button": "わかりました"
 }

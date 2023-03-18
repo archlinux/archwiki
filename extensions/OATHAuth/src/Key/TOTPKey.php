@@ -21,6 +21,7 @@ namespace MediaWiki\Extension\OATHAuth\Key;
 
 use Base32\Base32;
 use DomainException;
+use EmptyBagOStuff;
 use Exception;
 use jakobo\HOTP\HOTP;
 use MediaWiki\Extension\OATHAuth\IAuthKey;
@@ -29,6 +30,7 @@ use MediaWiki\Extension\OATHAuth\OATHUserRepository;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MWException;
+use ObjectCache;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -143,10 +145,17 @@ class TOTPKey implements IAuthKey {
 
 		// Prevent replay attacks
 		$store = MediaWikiServices::getInstance()->getMainObjectStash();
+
+		if ( $store instanceof EmptyBagOStuff ) {
+			// Try and find some usable cache if the MainObjectStash isn't useful
+			$store = ObjectCache::getLocalServerInstance( CACHE_ANYTHING );
+		}
+
 		$uid = MediaWikiServices::getInstance()
 			->getCentralIdLookupFactory()
 			->getLookup()
 			->centralIdFromLocalUser( $user->getUser() );
+
 		$key = $store->makeKey( 'oathauth-totp', 'usedtokens', $uid );
 		$lastWindow = (int)$store->get( $key );
 

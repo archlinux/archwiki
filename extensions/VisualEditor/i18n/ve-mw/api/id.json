@@ -3,13 +3,14 @@
 		"authors": [
 			"Daud I.F. Argana",
 			"Gombang",
-			"William Surya Permana"
+			"William Surya Permana",
+			"Rachmat04"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Tidak ditemukan serialisasi tembolok dengan kunci tersebut",
 	"apierror-visualeditor-difffailed": "Beda gagal",
 	"apierror-visualeditor-docserver-http-error": "Galat menghubungi peladen Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-http": "Galat menghubungi peladen Parsoid/RESTBase (HTTP $1)",
+	"apierror-visualeditor-docserver-http": "Galat saat menghubungi peladen Parsoid/RESTBase (HTTP $1 ): $2",
 	"apierror-visualeditor-docserver": "Galat menghubungi peladen Parsoid/RESTBase (tak ada tanggapan)",
 	"apierror-visualeditor-latestnotfound": "Tidak dapat menemukan revisi terkini untuk judul tersebut",
 	"apihelp-visualeditor-description": "Mengembalikan HTML5 untuk halaman yang berasal dari layanan parsoid.",

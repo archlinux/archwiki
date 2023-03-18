@@ -17,6 +17,7 @@ class ButtonWidget extends Widget {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'span';
 
 	/* Properties */
@@ -251,6 +252,7 @@ class ButtonWidget extends Widget {
 		return $this->active;
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->active !== false ) {
 			$config['active'] = $this->active;

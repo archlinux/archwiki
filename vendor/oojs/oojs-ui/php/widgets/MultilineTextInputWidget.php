@@ -34,10 +34,12 @@ class MultilineTextInputWidget extends TextInputWidget {
 		}
 	}
 
+	/** @inheritDoc */
 	protected function getInputElement( $config ) {
 		return new Tag( 'textarea' );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$rows = $this->input->getAttribute( 'rows' );
 		if ( $rows !== null ) {

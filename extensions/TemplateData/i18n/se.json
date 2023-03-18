@@ -1,14 +1,20 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
+	"templatedata-doc-param-name": "Paramehter",
+	"templatedata-doc-param-status-optional": "eaktodáhtolaš",
 	"templatedata-doc-param-type-unknown": "Dovdameahttun",
 	"templatedata-doc-param-type-wiki-page-name": "Siidonamma",
 	"templatedata-doc-param-type-wiki-template-name": "Málle",
+	"templatedata-modal-button-addparam": "Lasit paramehtera",
 	"templatedata-modal-button-changelang": "Molsso giela",
 	"templatedata-modal-button-saveparam": "Vurke",
 	"templatedata-modal-table-param-example": "Ovdamearka ($1)",
+	"templatedata-modal-title-addparam": "Lasit ođđa paramehtera",
+	"templatedata-modal-title-choose-language": "Vállje giela",
 	"templatedata-modal-title-language": "Giella"
 }

@@ -84,5 +84,6 @@
 	"wikieditor-toolbar-help-content-xlink-description": "Extera ligilo",
 	"wikieditor-toolbar-help-content-xlink-syntax": "[http://www.example.org Etiketo dil ligilo]<br />[http://www.example.org]<br />http://www.example.org",
 	"wikieditor-toolbar-help-content-xlink-result": "<a href='#' class='external'>Etiketo dil ligilo</a><br /><a href='#' class='external autonumber'>[1]</a><br /><a href='#' class='external'>http://www.example.org</a>",
-	"wikieditor-toolbar-help-content-signature-description": "Signaturo"
+	"wikieditor-toolbar-help-content-signature-description": "Signaturo",
+	"wikieditor-realtimepreview-manual": "Kliktez nun, por previdar la rezulto di vua redakturi."
 }

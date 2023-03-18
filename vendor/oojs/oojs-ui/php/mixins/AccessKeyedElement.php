@@ -61,6 +61,7 @@ trait AccessKeyedElement {
 
 			// Only if this is a TitledElement
 			if ( method_exists( $this, 'updateTitle' ) ) {
+				// @phan-suppress-next-line PhanUndeclaredMethod
 				$this->updateTitle();
 			}
 		}
@@ -91,4 +92,9 @@ trait AccessKeyedElement {
 		}
 		return $title;
 	}
+
+	/**
+	 * @param callable $func
+	 */
+	abstract public function registerConfigCallback( callable $func );
 }

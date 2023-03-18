@@ -10,6 +10,7 @@ class CheckboxInputWidget extends InputWidget {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'span';
 
 	/* Properties */
@@ -20,6 +21,16 @@ class CheckboxInputWidget extends InputWidget {
 	 * @var bool
 	 */
 	protected $selected;
+
+	/**
+	 * @var bool
+	 */
+	protected $indeterminate;
+
+	/**
+	 * @var IconWidget
+	 */
+	protected $checkIcon;
 
 	/**
 	 * @param array $config Configuration options
@@ -51,6 +62,7 @@ class CheckboxInputWidget extends InputWidget {
 		$this->setIndeterminate( $config['indeterminate'] ?? false );
 	}
 
+	/** @inheritDoc */
 	protected function getInputElement( $config ) {
 		return ( new Tag( 'input' ) )->setAttributes( [ 'type' => 'checkbox' ] );
 	}
@@ -103,6 +115,7 @@ class CheckboxInputWidget extends InputWidget {
 		return $this->indeterminate;
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->selected ) {
 			$config['selected'] = $this->selected;

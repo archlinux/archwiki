@@ -14,7 +14,7 @@
 	"apierror-visualeditor-badcachekey": "Не знайдено кешованої серіалізованої інформації з таким ключем",
 	"apierror-visualeditor-difffailed": "Не вдалося отримати різницю версій",
 	"apierror-visualeditor-docserver-http-error": "Помилка підключення до серверу Parsoid/RESTBase: $1",
-	"apierror-visualeditor-docserver-http": "Помилка підключення до серверу Parsoid/RESTBase (HTTP $1)",
+	"apierror-visualeditor-docserver-http": "Помилка підключення до серверу Parsoid/RESTBase (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Не вдалося зв'язатися із сервером Parsoid/RESTBase (немає відповіді)",
 	"apierror-visualeditor-latestnotfound": "Не вдалося знайти останню версію для цієї назви",
 	"apihelp-visualeditor-description": "Повертає HTML5 для сторінки від сервісу Parsoid.",

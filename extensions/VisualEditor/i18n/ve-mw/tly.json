@@ -3,7 +3,8 @@
 		"authors": [
 			"Ganbarzada",
 			"Patriot Kur",
-			"Гусейн"
+			"Гусейн",
+			"Patriot Kor"
 		]
 	},
 	"tooltip-ca-ve-edit": "İm səhifə sərost kardey",
@@ -12,5 +13,8 @@
 	"visualeditor-ca-editsource": "Мәнбә сәрост карде",
 	"visualeditor-ca-editsource-section": "Мәтни овахте",
 	"visualeditor-descriptionpagelink": "Project:Виндә редактор",
+	"visualeditor-dialog-media-info-readmore": "Ve bıhand",
+	"visualeditor-dialog-meta-settings-index-disable": "Ne",
+	"visualeditor-dialog-meta-settings-newsectioneditlink-disable": "Ne",
 	"visualeditor-mweditmodesource-warning-cancel": "Ləğv karde"
 }

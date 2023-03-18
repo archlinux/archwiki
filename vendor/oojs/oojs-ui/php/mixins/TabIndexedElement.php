@@ -132,4 +132,14 @@ trait TabIndexedElement {
 		}
 		return false;
 	}
+
+	/**
+	 * @return bool
+	 */
+	abstract public function isDisabled();
+
+	/**
+	 * @param callable $func
+	 */
+	abstract public function registerConfigCallback( callable $func );
 }

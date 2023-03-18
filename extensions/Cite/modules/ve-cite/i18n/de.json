@@ -13,7 +13,8 @@
 			"Murma174",
 			"Se4598",
 			"Tomabrafix",
-			"Umherirrender"
+			"Umherirrender",
+			"Brettchenweber"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buch",
@@ -29,7 +30,7 @@
 	"cite-ve-changedesc-reflist-responsive-set": "Die Einzelnachweisliste wird jetzt in reagierenden Spalten angezeigt",
 	"cite-ve-changedesc-reflist-responsive-unset": "Die Einzelnachweisliste wird jetzt in nur einer Spalte angezeigt",
 	"cite-ve-citationneeded-button": "Einen Beleg hinzufügen",
-	"cite-ve-citationneeded-description": "Ein Autor hat darauf hingewiesen, dass für diese Behauptung ein Beleg auf eine zuverlässige Quelle erforderlich ist.",
+	"cite-ve-citationneeded-description": "Ein Autor hat darauf hingewiesen, dass für diese Behauptung eine zuverlässige Quelle als Beleg erforderlich ist.",
 	"cite-ve-citationneeded-reason": "Begründung:",
 	"cite-ve-citationneeded-title": "Beleg wird benötigt",
 	"cite-ve-dialog-reference-editing-reused": "Dieser Einzelnachweis wird auf dieser Seite {{PLURAL:$1|einmal|2=zwei Mal|$1 Mal}} verwendet.",

@@ -4,13 +4,15 @@
 			"DChan (WMF)",
 			"Lloffiwr",
 			"Robin Owain",
-			"ОйЛ"
+			"ОйЛ",
+			"Afalau"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Golygu gyda'r llygad]]",
 	"tag-visualeditor-description": "Golygwyd gyda'r  [[{{MediaWiki:visualeditor-descriptionpagelink}}|golygydd gweladwy]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visual edit: Check]]\n\n[[{{MediaWiki:visualeditor-descriptionpagelink}}|Golygwch:Angen gwirio]]",
 	"tag-visualeditor-needcheck-description": "Golygwyd gyda'r [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]] pan adnabu'r sustem y gallai'r gystrawen wici arwain at newidiadau anfwriadol.",
+	"tag-visualeditor-wikitext": "Golygiad ffynhonnell 2017",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Golygu gweledol: Newidiwyd]]",
 	"tag-visualeditor-switched-description": "Dechreuodd y defnyddiwr olygu yn y golygydd gweledol, yna newid i'r golygydd wicidestun.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Adborth",

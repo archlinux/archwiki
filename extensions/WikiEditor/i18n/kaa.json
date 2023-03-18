@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nurlan"
+			"Nurlan",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
 	"wikieditor-wikitext-tab": "Wikitekst",
@@ -10,11 +11,40 @@
 	"wikieditor-toolbar-preference": "Jaqsılanǵan redaktorlaw ásbapın qosıw",
 	"wikieditor-toolbar-preference-help": "Bul geyde '2010 wikitekst redaktori' dep ataladı.",
 	"wikieditor-toolbar-tool-bold": "Qalıń jazıw",
-	"wikieditor-toolbar-tool-bold-example": "Qalıń tekst",
-	"wikieditor-toolbar-tool-italic": "Qıya",
+	"wikieditor-toolbar-tool-bold-example": "Juwan tekst",
+	"wikieditor-toolbar-tool-italic": "Qıya jazıw",
 	"wikieditor-toolbar-tool-italic-example": "Qıya tekst",
 	"wikieditor-toolbar-tool-ilink": "Ishki silteme",
 	"wikieditor-toolbar-tool-ilink-example": "Silteme bası",
-	"wikieditor-toolbar-tool-link": "Silteme",
-	"wikieditor-toolbar-tool-link-title": "Silteme qoyıw"
+	"wikieditor-toolbar-tool-link": "Silteme qosıw",
+	"wikieditor-toolbar-tool-link-title": "Silteme qoyıw",
+	"wikieditor-toolbar-tool-link-int": "Wiki betine ótiw",
+	"wikieditor-toolbar-tool-link-int-target": "Nıshandaǵı bet yamasa URL:",
+	"wikieditor-toolbar-tool-link-int-target-tooltip": "Bettiń ataması yamasa URL",
+	"wikieditor-toolbar-tool-link-int-text": "Kórsetiliwi kerek tekst:",
+	"wikieditor-toolbar-tool-link-int-text-tooltip": "Kórsetiletuǵın tekst",
+	"wikieditor-toolbar-tool-link-ext": "Sırtqı web betine ótiw",
+	"wikieditor-toolbar-tool-link-ext-target": "URL siltemesi:",
+	"wikieditor-toolbar-tool-link-ext-text": "Silteme teksti:",
+	"wikieditor-toolbar-tool-link-insert": "Silteme kiritiw",
+	"wikieditor-toolbar-tool-link-cancel": "Biykarlaw",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "Bet {{SITENAME}}da bar",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Bet {{SITENAME}}da joq",
+	"wikieditor-toolbar-tool-file": "Fayl qosıw",
+	"wikieditor-toolbar-tool-file-title": "Fayl qosıw",
+	"wikieditor-toolbar-file-target": "Fayl atı:",
+	"wikieditor-toolbar-file-caption": "Ataması:",
+	"wikieditor-toolbar-file-size": "Ólshemi:",
+	"wikieditor-toolbar-file-float": "Tuwrılaw:",
+	"wikieditor-toolbar-file-default": "(standart)",
+	"wikieditor-toolbar-file-format": "Pishimi:",
+	"wikieditor-toolbar-file-format-none": "heshqanday",
+	"wikieditor-toolbar-tool-file-insert": "Qosıw",
+	"wikieditor-toolbar-tool-file-cancel": "Biykarlaw",
+	"wikieditor-toolbar-tool-file-upload": "Júklew",
+	"wikieditor-toolbar-tool-reference": "Derek qosıw",
+	"wikieditor-toolbar-section-advanced": "Keńeytilgen",
+	"wikieditor-toolbar-tool-olist": "Nomerlengen dizim",
+	"wikieditor-toolbar-section-characters": "Arnawlı tańbalar",
+	"wikieditor-toolbar-section-help": "Túsindirme"
 }

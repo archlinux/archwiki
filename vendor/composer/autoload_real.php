@@ -33,30 +33,23 @@ class ComposerAutoloaderInit_mediawiki_vendor
         set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
         require __DIR__ . '/autoload_static.php';
-        \Composer\Autoload\ComposerStaticInit_mediawiki_vendor::getInitializer($loader)();
+        call_user_func(\Composer\Autoload\ComposerStaticInit_mediawiki_vendor::getInitializer($loader));
 
         $loader->setClassMapAuthoritative(true);
         $loader->register(false);
 
-        $includeFiles = \Composer\Autoload\ComposerStaticInit_mediawiki_vendor::$files;
-        foreach ($includeFiles as $fileIdentifier => $file) {
-            composerRequire_mediawiki_vendor($fileIdentifier, $file);
+        $filesToLoad = \Composer\Autoload\ComposerStaticInit_mediawiki_vendor::$files;
+        $requireFile = static function ($fileIdentifier, $file) {
+            if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
+                $GLOBALS['__composer_autoload_files'][$fileIdentifier] = true;
+
+                require $file;
+            }
+        };
+        foreach ($filesToLoad as $fileIdentifier => $file) {
+            ($requireFile)($fileIdentifier, $file);
         }
 
         return $loader;
-    }
-}
-
-/**
- * @param string $fileIdentifier
- * @param string $file
- * @return void
- */
-function composerRequire_mediawiki_vendor($fileIdentifier, $file)
-{
-    if (empty($GLOBALS['__composer_autoload_files'][$fileIdentifier])) {
-        $GLOBALS['__composer_autoload_files'][$fileIdentifier] = true;
-
-        require $file;
     }
 }

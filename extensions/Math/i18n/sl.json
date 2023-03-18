@@ -104,7 +104,7 @@
 	"math-wikibase-special-form-placeholder": "Naslov formule",
 	"math-wikibase-special-form-button": "Pridobi podatke",
 	"math-wikibase-special-error-header": "Napaka",
-	"math-wikibase-special-error-invalid-argument": "ID predmeta v Wikibazi, ki ste ga navedli, ne obstaja.",
-	"math-wikibase-special-error-unknown": "Pri pridobivanju podatkov iz Wikibaze je prišlo do neznane napake.",
+	"math-wikibase-special-error-invalid-argument": "ID Wikibase predmete, ki ste ga navedli, ne obstaja.",
+	"math-wikibase-special-error-unknown": "Pri pridobivanju podatkov iz Wikibase je prišlo do neznane napake.",
 	"math-wikibase-special-error-no-wikibase": "Za uporabo te posebne strani je potrebna razširitev Wikibase."
 }

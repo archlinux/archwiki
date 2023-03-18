@@ -32,6 +32,7 @@
 	"abusefilter-log-linkoncontribs-text": "Registro pri misuzi da {{GENDER:$1|ica uzero}}",
 	"abusefilter-log-linkonhistory": "videz l'enrejistruri pri misuzo",
 	"abusefilter-log-hide-reason": "Motivo:",
+	"abusefilter-log-hide-reason-other": "Altra/suplementala motivo:",
 	"abusefilter-log-hide-show": "Montrez",
 	"abusefilter-log-hide-hide": "Celez",
 	"log-action-filter-abusefilter": "Tipo di modifiko en la filtrilo:",

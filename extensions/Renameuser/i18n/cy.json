@@ -1,12 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lloffiwr"
+			"Lloffiwr",
+			"Afalau"
 		]
 	},
 	"renameuser": "Ail-enwi defnyddiwr",
-	"renameuser-linkoncontribs": "ail-enwi'r defnyddiwr",
-	"renameuser-linkoncontribs-text": "Ail-enwi'r defnyddiwr hwn",
+	"renameuser-linkoncontribs": "ail-enwi {{GENDER:$1|defnyddiwr}}",
+	"renameuser-linkoncontribs-text": "Ail-enwi'r {{GENDER:$1|defnyddiwr}} hwn",
 	"renameuser-desc": "Yn ychwanegu [[Special:RenameUser|tudalen arbennig]] er mwyn gallu ail-enwi cyfrif defnyddiwr (sydd angen y gallu ''renameuser'')",
 	"renameuserold": "Enw presennol y defnyddiwr:",
 	"renameusernew": "Enw newydd i'r defnyddiwr:",

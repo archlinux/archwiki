@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"ToJack"
+			"ToJack",
+			"Vashgird"
 		]
 	},
 	"wikieditor-wikitext-tab": "Викиматн",
@@ -61,5 +62,5 @@
 	"wikieditor-toolbar-tool-table-cancel": "Пӯшидан",
 	"wikieditor-toolbar-tool-replace-search": "Ҷустуҷӯ барои:",
 	"wikieditor-toolbar-tool-replace-close": "Пӯшидан",
-	"wikieditor-toolbar-section-help": "Кӯмак"
+	"wikieditor-toolbar-section-help": "Кумак"
 }

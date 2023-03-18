@@ -3,7 +3,8 @@
 		"authors": [
 			"Minh Nguyen",
 			"Nguyên Lê",
-			"Vinhtantran"
+			"Vinhtantran",
+			"Ioe2015"
 		]
 	},
 	"captcha-edit": "Để sửa đổi trang này, xin hãy giải phép toán dưới đây và gõ câu trả lời vào ô ([[Special:Captcha/help|thông tin thêm]]):",
@@ -14,7 +15,7 @@
 	"captcha-id-help": "Giá trị này phải được gửi lại không thay đổi.",
 	"captcha-addurl": "Sửa đổi của bạn có chứa các liên kết ra bên ngoài. Để tránh spam tự động trong wiki, xin bạn vui lòng giải phép toán ở dưới và nhập kết quả vào ô để lưu giữ các sửa đổi của bạn ([[Special:Captcha/help|thông tin thêm]]):",
 	"captcha-badlogin": "Để tránh vụ tự động bẻ mật khẩu của người dùng wiki, xin bạn vui lòng giải phép toán ở dưới và nhập kết quả vào ô ([[Special:Captcha/help|thông tin thêm]]):",
-	"captcha-createaccount": "Để tránh vụ tự động mở tài khoản trong wiki, xin bạn vui lòng giải phép toán ở dưới và nhập kết quả vào ô ([[Special:Captcha/help|thông tin thêm]]):",
+	"captcha-createaccount": "Để tránh vụ tự động mở tài khoản trong wiki, xin bạn vui lòng hoàn thành tác vụ ở dưới và nhập kết quả vào ô ([[Special:Captcha/help|thông tin thêm]]):",
 	"captcha-createaccount-fail": "CAPTCHA bị thiếu hoặc không chính xác.",
 	"captcha-create": "Để tạo mới trang, xin hãy giải phép toán ở dưới và gõ\ncâu trả lời vào ô ([[Special:Captcha/help|thông tin thêm]]):",
 	"captcha-sendemail": "Để xác nhận rằng bạn không phải là tay spam, xin bạn vui lòng giải phép toán ở dưới và nhập kết quả vào ô ([[Special:Captcha/help|thông tin thêm]]):",

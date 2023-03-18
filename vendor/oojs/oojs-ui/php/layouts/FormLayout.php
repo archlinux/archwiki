@@ -10,6 +10,7 @@ class FormLayout extends Layout {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'form';
 
 	/**
@@ -36,6 +37,7 @@ class FormLayout extends Layout {
 		}
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		foreach ( [ 'method', 'action', 'enctype' ] as $attr ) {
 			$value = $this->getAttribute( $attr );

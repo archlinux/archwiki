@@ -2,9 +2,15 @@
 	"@metadata": {
 		"authors": [
 			"Ham II",
-			"Lloffiwr"
+			"Lloffiwr",
+			"Afalau"
 		]
 	},
+	"scribunto-console-clear": "Clirio",
 	"scribunto-lua-error": "Gwall Lua: $2.",
-	"scribunto-limitreport-timeusage-value": "$1/$2 eiliad"
+	"scribunto-limitreport-timeusage-value": "$1/$2 eiliad",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|beit}}",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|beit}}",
+	"nstab-module": "Modiwl",
+	"tooltip-ca-nstab-module": "Gweld tudalen y modiwl"
 }

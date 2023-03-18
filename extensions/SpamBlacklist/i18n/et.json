@@ -17,5 +17,7 @@
 	"log-description-spamblacklist": "Siin on loetletud rämpspostituse blokeerimisnimekirja tabamused.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} püüdis lisada leheküljele $3 rämpspostituse blokeerimisnimekirjas olevat linki $4.",
 	"right-spamblacklistlog": "Vaadata rämpsu blokeerimisnimekirja",
-	"action-spamblacklistlog": "vaadata rämpsu blokeerimisnimekirja"
+	"action-spamblacklistlog": "vaadata rämpsu blokeerimisnimekirja",
+	"right-sboverride": "Alistada rämpspostitamise blokeerimisloendi",
+	"action-sboverride": "alistada rämpspostitamise blokeerimisloendit"
 }

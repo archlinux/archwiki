@@ -911,9 +911,9 @@
 				pTabsId = isMinerva ? 'page-actions' :
 					$( '#p-views' ).length ? 'p-views' : 'p-cactions',
 				// Minerva puts the '#ca-...' ids on <a> nodes
-				$caSource = $( 'li#ca-viewsource' ),
-				$caEdit = $( 'li#ca-edit, li#page-actions-edit' ),
-				$caVeEdit = $( 'li#ca-ve-edit' ),
+				$caSource = $( '#ca-viewsource' ),
+				$caEdit = $( '#ca-edit, li#page-actions-edit' ),
+				$caVeEdit = $( '#ca-ve-edit' ),
 				$caEditLink = $caEdit.find( 'a' ),
 				$caVeEditLink = $caVeEdit.find( 'a' ),
 				caVeEditNextnode =

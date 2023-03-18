@@ -20,7 +20,7 @@
 	"apihelp-abusefilterevalexpression-description": "Evaluta un expression de filtro anti-abuso.",
 	"apihelp-abusefilterevalexpression-summary": "Evaluta un expression de filtro anti-abuso.",
 	"apihelp-abusefilterevalexpression-param-expression": "Le expression a evalutar.",
-	"apihelp-abusefilterevalexpression-param-prettyprint": "Si le resultato debe esser monstrate in forma imbellite.",
+	"apihelp-abusefilterevalexpression-param-prettyprint": "Si le resultato debe esser monstrate in forma elegante.",
 	"apihelp-abusefilterevalexpression-example-1": "Evalutar un expression simple",
 	"apihelp-abusefilterevalexpression-example-2": "Evalutar un expression simple, formatante le resultato",
 	"apihelp-abusefilterunblockautopromote-description": "Permitte que un usator recipe autopromotiones a causa de un consequentia de filtro anti-abuso.",

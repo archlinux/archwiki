@@ -7,7 +7,8 @@
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
 			"Trần Nguyễn Minh Huy",
-			"Vinhtantran"
+			"Vinhtantran",
+			"Nguyenphutrong2"
 		]
 	},
 	"math-desc": "Kết xuất các công thức nằm giữa thẻ <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
@@ -21,6 +22,7 @@
 	"math-visualeditor-mwlatexinspector-display-default": "Mặc định",
 	"math-visualeditor-mwlatexinspector-display-inline": "Nội tuyến",
 	"math-visualeditor-mwlatexinspector-id": "ID liên kết (tùy chọn)",
+	"math-visualeditor-mwlatexinspector-qid": "ID Wikibase (có tiền tố Q)",
 	"math-visualeditor-mwmathdialog-title": "Công thức toán",
 	"math-visualeditor-symbol-group-chem-addition": "Hợp chất cộng",
 	"math-visualeditor-symbol-group-chem-aggregation": "Trạng thái tập hợp",
@@ -107,7 +109,7 @@
 	"math-wikibase-special-form-placeholder": "Tựa đề của công thức",
 	"math-wikibase-special-form-button": "Yêu cầu thông tin",
 	"math-wikibase-special-error-header": "Lỗi",
-	"math-wikibase-special-error-invalid-argument": "Bạn đã ghi một mã mục Wikibase không tồn tại.",
+	"math-wikibase-special-error-invalid-argument": "Bạn đã ghi một mã khoản mục Wikibase không tồn tại.",
 	"math-wikibase-special-error-unknown": "Có lỗi không rõ xảy ra khi truy xuất dữ liệu từ Wikibase.",
 	"math-wikibase-special-error-no-wikibase": "Cần phải có bộ mở rộng Wikibase để sử dụng trang đặc biệt này."
 }

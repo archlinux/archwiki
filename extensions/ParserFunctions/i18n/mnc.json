@@ -3,13 +3,14 @@
 		"authors": [
 			"ChoiChong",
 			"Chulsu463",
-			"Foavi33"
+			"Foavi33",
+			"Amire80"
 		]
 	},
-	"pfunc_time_error": "ufaracun: erin",
-	"pfunc_expr_unrecognised_word": "tuyebure de ufaracun : sarkū gisun: \"$1\".",
-	"pfunc_expr_unexpected_operator": "tuyebure de ufaracun : boljohokū $1 jafara niyalma.",
-	"pfunc_expr_missing_operand": "tuyebure de ufaracun: bisirakū $1 i ton.",
-	"pfunc_expr_unrecognised_punctuation": "tuyebure de ufaracun : sarkū hergen: \"$1\".",
-	"pfunc_expr_division_by_zero": "untu i oho."
+	"pfunc_time_error": "Ufaracun: erin.",
+	"pfunc_expr_unrecognised_word": "Tuyebure de ufaracun: sarkū gisun: \"$1\".",
+	"pfunc_expr_unexpected_operator": "Tuyebure de ufaracun: boljohokū $1 jafara niyalma.",
+	"pfunc_expr_missing_operand": "Tuyebure de ufaracun: bisirakū $1 i ton.",
+	"pfunc_expr_unrecognised_punctuation": "Tuyebure de ufaracun: sarkū hergen: \"$1\".",
+	"pfunc_expr_division_by_zero": "Untu i oho."
 }

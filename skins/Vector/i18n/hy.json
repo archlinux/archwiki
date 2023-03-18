@@ -7,10 +7,12 @@
 			"Vadgt",
 			"Xelgen",
 			"Սերգեյ Սաֆարյան",
-			"Armenoid"
+			"Armenoid",
+			"Դավիթ Սարոյան"
 		]
 	},
 	"skinname-vector": "Սովորական",
+	"skinname-vector-2022": "Վեկտոր (2022)",
 	"vector-opt-out": "Անցնել հին տեսքին",
 	"vector-languages": "Լեզուներ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 լեզու}}",
@@ -28,10 +30,13 @@
 	"vector-view-view": "Կարդալ",
 	"vector-view-viewsource": "Դիտել ելատեքստը",
 	"vector-more-actions": "Ավելին",
+	"vector-intro-page": "Օգնություն:Գլխացանկ",
 	"vector-toc-heading": "Բովանդակություն",
 	"vector-toc-toggle-position-title": "թաքցնել",
 	"vector-toc-beginning": "Ներածություն",
+	"vector-anon-user-menu-pages": "Էջեր չգրանցված խմբագիրների համար",
 	"vector-anon-user-menu-pages-learn": "իմանալ ավելին",
+	"vector-main-menu-tooltip": "Հիմնական ընտրացանկ",
 	"vector-toc-menu-tooltip": "Բովանդակություն",
 	"tooltip-vector-anon-user-menu-title": "Այլ ընտրանքներ"
 }

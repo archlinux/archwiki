@@ -4,7 +4,8 @@
 			"Autokrator",
 			"Laurentianus",
 			"Lesgles",
-			"UV"
+			"UV",
+			"Adumbrativus"
 		]
 	},
 	"mobile-frontend-editor-edit": "Recensere",
@@ -23,5 +24,6 @@
 	"mobile-frontend-placeholder": "Quaerere apud {{grammar:accusative|{{SITENAME}}}}",
 	"mobile-frontend-random-button": "Pagina fortuita",
 	"mobile-frontend-talk-back-to-page": "Revertere ad \"$1\".",
-	"mobile-frontend-user-button-tooltip": "Nuntii mei ostendere"
+	"mobile-frontend-user-button-tooltip": "Nuntii mei ostendere",
+	"minerva-page-actions-history": "Historia"
 }

@@ -10,13 +10,14 @@
 			"Raimond Spekking",
 			"SVG",
 			"Sushi",
-			"Umherirrender"
+			"Umherirrender",
+			"Brettchenweber"
 		]
 	},
 	"categorytree": "Kategorienbaum",
 	"categorytree-portlet": "Kategorien",
 	"categorytree-legend": "Zeige Kategorienbaum",
-	"categorytree-desc": "Erweitert das Wiki um eine [[Special:CategoryTree|Spezialseite]] mit der man dynamisch durch die Kategorienstruktur navigieren kann",
+	"categorytree-desc": "Erweitert das Wiki um eine [[Special:CategoryTree|Spezialseite]], mit der man dynamisch durch die Kategorienstruktur navigieren kann",
 	"categorytree-header": "Gib den Namen einer Kategorie ein, um ihre Inhalte als Baumstruktur darzustellen. Erfordert JavaScript.",
 	"categorytree-category": "Kategorie:",
 	"categorytree-go": "Kategorienbaum anzeigen",

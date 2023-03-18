@@ -36,7 +36,7 @@
 	"visualeditor-backbutton-tooltip": "Вратите се",
 	"visualeditor-beta-warning": "Ако при уређивању наиђете на било какве техничке проблеме, пријавите их.",
 	"visualeditor-browserwarning": "Визуелни уређивач не подржава веб-прегледач који користите.",
-	"visualeditor-ca-createlocaldescriptionsource": "Додај извор локалног описа",
+	"visualeditor-ca-createlocaldescriptionsource": "Додај локални опис (изворно)",
 	"visualeditor-ca-createsource": "Направи извор",
 	"visualeditor-ca-editlocaldescriptionsource": "Уреди извор локалног описа",
 	"visualeditor-ca-editsource": "Уреди извор",
@@ -259,7 +259,7 @@
 	"visualeditor-mwpredialog-convert": "Стилизовање текста",
 	"visualeditor-mwpredialog-title": "Преформатиран обичан текст",
 	"visualeditor-mwsignature-tool": "Ваш потпис",
-	"visualeditor-preference-betatempdisable": "Привремено искључи визуелни уређивач док је у бета фази",
+	"visualeditor-preference-betatempdisable": "Привремено искључи Визуелни уређивач док је у бета фази",
 	"visualeditor-preference-core-description": "Омогућава визуелни уређивач. Неће бити доступан на страницама за разговор и неким другим именским просторима.",
 	"visualeditor-preference-core-label": "Визуелно уређивање",
 	"visualeditor-preference-enable": "Омогући Визуелни уређивач. Биће доступан у {{PLURAL:$2|следећем именском простору|следећим именским просторима}}: $1",
@@ -312,6 +312,6 @@
 	"visualeditor-wikitext-warning": "Користите визуелни уређивач — [[{{MediaWiki:visualeditor-wikitext-warning-link}}|викитекст]] овде не ради. У сваком тренутку можете да се пребаците на уређивање извора без губитка измена кликом на одговарајуће дугме.",
 	"visualeditor-wikitext-warning-title": "Откривено је означавање викитекста",
 	"visualeditor-wikitextconvert-title": "Претворити форматирање у викитекст?",
-	"visualeditor-wikitextconvert-message": "Ваш налепљен садржај садржи форматирање. Претворити у викитекст или налепити као обичан текст?",
+	"visualeditor-wikitextconvert-message": "Налепили сте садржај који садржи форматирање. Да ли желите да претворите ово форматирање у викитекст?",
 	"visualeditor-wikitextconvert-convert": "Претвори у викитекст"
 }

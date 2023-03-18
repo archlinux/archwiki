@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Yupik"
+			"Yupik",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
+	"multimediaviewer-share-tab": "Juoge",
 	"multimediaviewer-embed-wt": "Wikiteaksta",
 	"multimediaviewer-html-embed-credit-link-text": "Liŋka",
 	"multimediaviewer-original-embed-dimensions": "Álgovuolggalaš fiila $1",

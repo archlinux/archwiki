@@ -198,10 +198,12 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Nombre del parámetro",
 	"visualeditor-dialog-transclusion-add-param-save": "Añadir",
 	"visualeditor-dialog-transclusion-add-template": "Añadir plantilla",
+	"visualeditor-dialog-transclusion-add-template-save": "Añadir",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Añadir parámetro sin documentar",
 	"visualeditor-dialog-transclusion-collapse-options": "Ocultar opciones",
 	"visualeditor-dialog-transclusion-confirmation-reject": "Seguir editando",
 	"visualeditor-dialog-transclusion-contextitem-description": "Generados a partir de: $1",
+	"visualeditor-dialog-transclusion-contextitem-loading": "Cargando…",
 	"visualeditor-dialog-transclusion-expand-options": "Mostrar opciones",
 	"visualeditor-dialog-transclusion-filter-hide-unused": "Esconder lo no usado",
 	"visualeditor-dialog-transclusion-filter-no-match": "No se encontraron coincidencias",
@@ -373,6 +375,6 @@
 	"visualeditor-wikitext-warning": "Estás utilizando el editor visual, donde el [[{{MediaWiki:visualeditor-wikitext-warning-link}}|wikitexto]] no funciona. Para cambiar a la edición de fuente en cualquier momento sin perder tus cambios, haz clic en el botón de cambio.",
 	"visualeditor-wikitext-warning-title": "Se ha detectado wikitexto",
 	"visualeditor-wikitextconvert-title": "¿Quieres convertir el formato en wikitexto?",
-	"visualeditor-wikitextconvert-message": "El contenido pegado contiene formato. ¿Quieres convertirlo en wikitexto o insertarlo como texto sencillo?",
+	"visualeditor-wikitextconvert-message": "El contenido pegado contiene formato. ¿Quieres convertirlo en wikitexto?",
 	"visualeditor-wikitextconvert-convert": "Convertir en wikitexto"
 }

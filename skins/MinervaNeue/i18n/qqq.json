@@ -88,7 +88,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Description label for categories mobile web beta feature.",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Title for page issues feature flag displayed in Special:MobileOptions",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Description shown on Special:MobileOptions for page issues beta feature.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Warning message when informing about lack of '''group results by page''' feature availability on on mobile site. Message should recommend visiting desktop site to access grouping results by page.",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Warning message when informing about the lack of the '''group results by page''' feature availability on the mobile site. Message should recommend visiting desktop site to access grouping results by page.",
 	"minerva.css": "{{optional}}\nAll CSS here will be loaded for users of the MinervaNeue skin.",
 	"minerva.js": "{{optional}}\nAll JavaScript here will be loaded for users of the MinervaNeue skin."
 }

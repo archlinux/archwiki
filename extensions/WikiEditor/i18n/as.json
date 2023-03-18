@@ -38,11 +38,11 @@
 	"wikieditor-toolbar-tool-link-ext-text": "সংযোগী পাঠ্য:",
 	"wikieditor-toolbar-tool-link-insert": "লিংক যোগ কৰক",
 	"wikieditor-toolbar-tool-link-cancel": "বাতিল",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "পৃষ্ঠা আছে",
-	"wikieditor-toolbar-tool-link-int-target-status-notexists": "পৃষ্ঠা নাই",
-	"wikieditor-toolbar-tool-link-int-target-status-invalid": "অবৈধ শিৰোনাম",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "এই পৃষ্ঠাখন {{SITENAME}}ত আছে",
+	"wikieditor-toolbar-tool-link-int-target-status-notexists": "এই পৃষ্ঠাখন {{SITENAME}}ত নাই",
+	"wikieditor-toolbar-tool-link-int-target-status-invalid": "আপুনি দিয়া শিৰোনামটো অবৈধ",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "বাহ্যিক সংযোগ",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "দ্ব্যৰ্থতা দূৰীকৰণ পৃষ্ঠা",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "এই পৃষ্ঠাটো কোনো বিষয়বস্তুৰ পৃষ্ঠা নহয়, বৰঞ্চ একে নামৰ বিষয়ৰ এখন তালিকাহে",
 	"wikieditor-toolbar-tool-link-int-invalid": "আপুনি দিয়া শিৰোনামটো অবৈধ।",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "আপুনি নিৰ্দেশ কৰা ইউআৰএল টো আন এখন ৱিকি পৃষ্ঠালৈ লিংক যেন অনুমান হৈছে।\nআপুনি ইয়াক এটা আভ্যন্তৰীণ লিংক কৰিব খুজিছে নেকি?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "আভ্যন্তৰীণ সংযোগ",
@@ -191,5 +191,10 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>ব্যৱহাৰকাৰী</a> (<a href='#' title='$2:Username'>আলোচনা</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "ইণ্ডেণ্ট",
 	"wikieditor-toolbar-help-content-indent-syntax": "সাধাৰন আখৰ<br />:ইন্টেন্ডেণ্ট আখৰ<br />::ইন্টেন্ডেণ্ট আখৰ",
-	"wikieditor-toolbar-help-content-indent-result": "সাধাৰণ পাঠ্য<dl><dd>ইণ্ডেণ্ট কৰা পাঠ্য<dl><dd>ইণ্ডেণ্ট কৰা পাঠ্য</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "সাধাৰণ পাঠ্য<dl><dd>ইণ্ডেণ্ট কৰা পাঠ্য<dl><dd>ইণ্ডেণ্ট কৰা পাঠ্য</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "খচৰা",
+	"wikieditor-realtimepreview-reload": "পুনঃলোড কৰক",
+	"wikieditor-realtimepreview-beta-label": "তাৎক্ষণিক খচৰা",
+	"wikieditor-realtimepreview-onboarding-title": "তাৎক্ষণিক খচৰা চাওক",
+	"wikieditor-realtimepreview-onboarding-button": "বাৰু, বুজিলোঁ"
 }

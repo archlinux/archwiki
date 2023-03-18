@@ -3,7 +3,8 @@
 		"authors": [
 			"Aefgh39622",
 			"Patsagorn Y.",
-			"Trisorn Triboon"
+			"Trisorn Triboon",
+			"Ekminarin"
 		]
 	},
 	"oathauth-desc": "จัดหาการรองรับการยืนยันตัวตนโดยใช้รหัสผ่านแบบครั้งเดียวบนพื้นฐานของ HMAC",
@@ -21,8 +22,18 @@
 	"oathauth-failedtovalidateoath": "ไม่สามารถตรวจสอบข้อมูลประจำตัวแบบสองขั้นตอนได้",
 	"oathauth-disabledoath": "ปิดใช้งานการยืนยันตัวตนสองขั้นตอนแล้ว",
 	"oathauth-prefs-label": "การยืนยันตัวตนสองขั้นตอน:",
+	"oathauth-enteruser": "ชื่อผู้ใช้:",
 	"right-oathauth-enable": "เปิดใช้งานการยืนยันตัวตนสองขั้นตอน",
 	"action-oathauth-enable": "เปิดใช้งานการยืนยันตัวตนสองขั้นตอน",
+	"oathauth-auth-token-label": "โทเค็น",
 	"oathauth-auth-ui": "กรุณาป้อนรหัสยืนยันตัวตนจากอุปกรณ์ยืนยันตัวตนของคุณ",
+	"oathauth-ui-manage": "จัดการ",
+	"oathmanage": "จัดการการยืนยันตัวตนสองขั้นตอน",
+	"oathauth-enable-generic": "เปิดใช้งาน",
+	"oathauth-disable-generic": "ปิดใช้งาน",
+	"oathauth-disable-page-title": "ปิดใช้งาน $1",
+	"oathauth-enable-page-title": "เปิดใช้งาน $1",
+	"oathauth-disable-method-warning-button-label": "ยืนยันและดำเนินการต่อ",
+	"notification-header-oathauth-enabled": "การยืนยันตัวตนสองขั้นตอนเปิดใช้งานแล้วใน {{GENDER:$2|บัญชีของคุณ}}",
 	"oathauth-notifications-enabled-help": "ช่วยเหลือ"
 }

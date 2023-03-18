@@ -76,4 +76,18 @@ trait ButtonElement {
 	public function isFramed() {
 		return $this->framed;
 	}
+
+	/**
+	 * Toggle CSS classes.
+	 *
+	 * @param array $classes List of classes to add
+	 * @param bool|null $toggle Add classes
+	 * @return $this
+	 */
+	abstract public function toggleClasses( array $classes, $toggle = null );
+
+	/**
+	 * @param callable $func
+	 */
+	abstract public function registerConfigCallback( callable $func );
 }

@@ -5,7 +5,8 @@
 			"Kghbln",
 			"Metalhead64",
 			"PerfektesChaos",
-			"Umherirrender"
+			"Umherirrender",
+			"Justman10000"
 		]
 	},
 	"scribunto-desc": "Ermöglicht eine Umgebung zum Einbetten von Skriptsprachen in Wikiseiten",
@@ -40,6 +41,7 @@
 	"scribunto-lua-error-location": "Lua-Fehler $1: $2",
 	"scribunto-lua-error": "Lua-Fehler: $2",
 	"scribunto-lua-notarrayreturn": "Skriptfehler: Das Modul gab einen $2-Wert zurück. Es wird angenommen, dass eine Tabelle zum Export zurückgegeben wird.",
+	"scribunto-lua-warning": "Skript-Warnung: $1",
 	"scribunto-luastandalone-proc-error": "Lua-Fehler: Der Vorgang kann nicht erstellt werden.",
 	"scribunto-luastandalone-proc-error-msg": "Lua-Fehler: Der Prozess konnte nicht erstellt werden: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua-Fehler: Der Prozess konnte nicht erstellt werden: proc_open ist nicht verfügbar. „disable_functions“ der PHP-Konfigurationsanweisung überprüfen.",

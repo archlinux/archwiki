@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/cssjanus/php-cssjanus.svg?branch=main)](https://travis-ci.com/cssjanus/php-cssjanus) [![Packagist](https://img.shields.io/packagist/v/cssjanus/cssjanus.svg?style=flat)](https://packagist.org/packages/cssjanus/cssjanus) [![Coverage Status](https://coveralls.io/repos/github/cssjanus/php-cssjanus/badge.svg?branch=main)](https://coveralls.io/github/cssjanus/php-cssjanus?branch=main)
+[![Packagist](https://img.shields.io/packagist/v/cssjanus/cssjanus.svg?style=flat)](https://packagist.org/packages/cssjanus/cssjanus)
 
 # CSSJanus
 
@@ -38,16 +38,16 @@ If a rule is not meant to be flipped by CSSJanus, use a `/* @noflip */` comment 
 }
 ```
 
-## Who uses CSSJanus?
-
-* **[Wikimedia Foundation](https://www.wikimedia.org/)**, the non-profit behind Wikipedia and other free knowledge projects.<br/>Used in [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki), on [Wikipedia](https://ar.wikipedia.org/), and [other projects](https://doc.wikimedia.org/).
-
 ## Port
 
-This is a PHP port of the Node.js implementation of CSSJanus, and was originally
-based on a [Google project](http://code.google.com/p/cssjanus/).
+This is a PHP port of the Node.js implementation of CSSJanus. Feature requests and bugs related
+to the actual CSS transformation logic or test cases of it, should be submitted upstream
+at <https://github.com/cssjanus/cssjanus>.
 
-Feature requests and bugs related to the actual CSS transformation logic or test
-cases of it, should be submitted upstream at <https://github.com/cssjanus/cssjanus>.
+CSSJanus was originally a [Google project](http://code.google.com/p/cssjanus/).
 
-Upstream releases will be ported here.
+## Contribute
+
+* Issue tracker: <https://phabricator.wikimedia.org/tag/cssjanus/>
+* Source code: <https://gerrit.wikimedia.org/g/mediawiki/libs/php-cssjanus>
+* Submit patches via Gerrit: <https://www.mediawiki.org/wiki/Developer_account>

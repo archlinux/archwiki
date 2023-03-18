@@ -88,6 +88,7 @@ class MessageWidget extends Widget {
 		$this->appendContent( [ $this->icon, $this->label, $this->closeButton ] );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$config['type'] = $this->type;
 		$config['inline'] = $this->inline;

@@ -22,6 +22,7 @@
 	"visualeditor-categories-tool": "Категориялар",
 	"visualeditor-descriptionpagelink": "Project:Көрсөтмөлүү оңдоо",
 	"visualeditor-dialog-media-content-section": "Кол тамга",
+	"visualeditor-dialog-media-search-tab-search": "Издөө",
 	"visualeditor-dialog-meta-categories-category": "Категория",
 	"visualeditor-dialog-meta-categories-data-label": "Категориялар",
 	"visualeditor-dialog-meta-categories-input-newcategorylabel": "Жаңы категория",
@@ -30,11 +31,13 @@
 	"visualeditor-dialog-meta-categories-section": "Категориялар",
 	"visualeditor-dialog-meta-languages-code-label": "Тилдин коду",
 	"visualeditor-dialog-meta-languages-label": "Тилдер",
+	"visualeditor-dialog-meta-languages-name-label": "Тил",
 	"visualeditor-dialog-meta-languages-section": "Тилдер",
 	"visualeditor-dialog-transclusion-placeholder": "Жаңы калып",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Артка кайтуу",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Баары бир улантуу",
 	"visualeditor-formatdropdown-format-mw-heading2": "Баш сөз",
+	"visualeditor-languages-tool": "Тилдер",
 	"visualeditor-savedialog-title-review": "Өзгөртүүлөрдү карап чыгуу",
 	"visualeditor-savedialog-title-save": "Өзгөртүүлөрдү сактоо"
 }

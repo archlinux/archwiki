@@ -8,7 +8,7 @@
 		]
 	},
 	"replacetext": "Zamena teksta",
-	"replacetext_originaltext": "Izvorni tekst:",
+	"replacetext_originaltext": "Prvobitni tekst:",
 	"replacetext_replacementtext": "Novi tekst:",
 	"replacetext_optionalfilters": "Neobavezni filteri:",
 	"replacetext_categorysearch": "Zameni samo u kategoriji:",
@@ -29,6 +29,6 @@
 	"replacetext_nomove": "Nije nađena nijedna stranica čiji naslov sadrži „$1“.",
 	"replacetext_return": "Nazad na obrazac.",
 	"replacetext_continue": "Nastavi",
-	"replacetext_editsummary": "Zamena teksta - '$1' u '$2'",
+	"replacetext_editsummary": "Zamena teksta — „$1” u „$2”",
 	"right-replacetext": "zamenjivanje niski na celom vikiju"
 }

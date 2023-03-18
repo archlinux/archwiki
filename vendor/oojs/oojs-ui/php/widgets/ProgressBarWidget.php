@@ -60,6 +60,7 @@ class ProgressBarWidget extends Widget {
 		$this->toggleClasses( [ 'oo-ui-progressBarWidget-indeterminate' ], $progress === false );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->progress !== null ) {
 			$config['progress'] = $this->progress;

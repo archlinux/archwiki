@@ -25,7 +25,6 @@
 namespace MediaWiki\Extension\CategoryTree;
 
 use Article;
-use Category;
 use Config;
 use Html;
 use IContextSource;
@@ -35,6 +34,7 @@ use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\SkinBuildSidebarHook;
 use MediaWiki\Hook\SpecialTrackingCategories__generateCatLinkHook;
 use MediaWiki\Hook\SpecialTrackingCategories__preprocessHook;
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Page\Hook\ArticleFromTitleHook;
 use OutputPage;
 use Parser;
@@ -44,7 +44,6 @@ use Sanitizer;
 use Skin;
 use SpecialPage;
 use Title;
-use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * Hooks for the CategoryTree extension, an AJAX based gadget
@@ -64,8 +63,8 @@ class Hooks implements
 
 	private const EXTENSION_DATA_FLAG = 'CategoryTree';
 
-	/** @var ILoadBalancer */
-	private $loadBalancer;
+	/** @var CategoryCache */
+	private $categoryCache;
 
 	/**
 	 * @var Config
@@ -73,11 +72,11 @@ class Hooks implements
 	private $config;
 
 	/**
-	 * @param ILoadBalancer $loadBalancer
+	 * @param CategoryCache $categoryCache
 	 * @param Config $config
 	 */
-	public function __construct( ILoadBalancer $loadBalancer, Config $config ) {
-		$this->loadBalancer = $loadBalancer;
+	public function __construct( CategoryCache $categoryCache, Config $config ) {
+		$this->categoryCache = $categoryCache;
 		$this->config = $config;
 	}
 
@@ -283,52 +282,33 @@ class Hooks implements
 
 	/**
 	 * Hook handler for the SpecialTrackingCategories::preprocess hook
-	 * @suppress PhanUndeclaredProperty SpecialPage->categoryTreeCategories
 	 * @param SpecialPage $specialPage SpecialTrackingCategories object
-	 * @param array $trackingCategories [ 'msg' => Title, 'cats' => Title[] ]
-	 * @phan-param array<string,array{msg:Title,cats:Title[]}> $trackingCategories
+	 * @param array $trackingCategories [ 'msg' => LinkTarget, 'cats' => LinkTarget[] ]
+	 * @phan-param array<string,array{msg:LinkTarget,cats:LinkTarget[]}> $trackingCategories
 	 */
 	public function onSpecialTrackingCategories__preprocess(
 		$specialPage,
 		$trackingCategories
 	) {
-		$categoryDbKeys = [];
-		foreach ( $trackingCategories as $catMsg => $data ) {
+		$categoryTargets = [];
+		foreach ( $trackingCategories as $data ) {
 			foreach ( $data['cats'] as $catTitle ) {
-				$categoryDbKeys[] = $catTitle->getDbKey();
+				$categoryTargets[] = $catTitle;
 			}
 		}
-		$categories = [];
-		if ( $categoryDbKeys ) {
-			$dbr = $this->loadBalancer->getConnectionRef( DB_REPLICA );
-			$res = $dbr->select(
-				'category',
-				[ 'cat_id', 'cat_title', 'cat_pages', 'cat_subcats', 'cat_files' ],
-				[ 'cat_title' => array_unique( $categoryDbKeys ) ],
-				__METHOD__
-			);
-			foreach ( $res as $row ) {
-				$categories[$row->cat_title] = Category::newFromRow( $row );
-			}
-		}
-		$specialPage->categoryTreeCategories = $categories;
+		$this->categoryCache->doQuery( $categoryTargets );
 	}
 
 	/**
 	 * Hook handler for the SpecialTrackingCategories::generateCatLink hook
-	 * @suppress PhanUndeclaredProperty SpecialPage->categoryTreeCategories
 	 * @param SpecialPage $specialPage SpecialTrackingCategories object
-	 * @param Title $catTitle Title object of the linked category
+	 * @param LinkTarget $catTitle LinkTarget object of the linked category
 	 * @param string &$html Result html
 	 */
 	public function onSpecialTrackingCategories__generateCatLink( $specialPage,
 		$catTitle, &$html
 	) {
-		if ( !isset( $specialPage->categoryTreeCategories ) ) {
-			return;
-		}
-
-		$cat = $specialPage->categoryTreeCategories[$catTitle->getDBkey()] ?? null;
+		$cat = $this->categoryCache->getCategory( $catTitle );
 
 		$html .= CategoryTree::createCountString( $specialPage->getContext(), $cat, 0 );
 	}

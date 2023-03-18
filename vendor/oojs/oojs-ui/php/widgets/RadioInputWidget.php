@@ -10,6 +10,7 @@ class RadioInputWidget extends InputWidget {
 
 	/* Static Properties */
 
+	/** @var string */
 	public static $tagName = 'span';
 
 	/**
@@ -33,6 +34,7 @@ class RadioInputWidget extends InputWidget {
 		$this->setSelected( $config['selected'] ?? false );
 	}
 
+	/** @inheritDoc */
 	protected function getInputElement( $config ) {
 		return ( new Tag( 'input' ) )->setAttributes( [ 'type' => 'radio' ] );
 	}
@@ -62,6 +64,7 @@ class RadioInputWidget extends InputWidget {
 		return $this->input->getAttribute( 'checked' ) === 'checked';
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->isSelected() ) {
 			$config['selected'] = true;

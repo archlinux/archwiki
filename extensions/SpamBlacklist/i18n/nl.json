@@ -22,5 +22,7 @@
 	"log-description-spamblacklist": "Deze lijst bevat gebeurtenissen met betrekking tot de spamblokkeerlijst.",
 	"logentry-spamblacklist-hit": "{{GENDER:$2|$1}} veroorzaakte een treffer op de spamblokkeerlijst bij een poging $4 toe te voegen aan $3.",
 	"right-spamblacklistlog": "Logboek spamblokkeerlijst bekijken",
-	"action-spamblacklistlog": "het logboek van de spamblokkeerlijst te bekijken"
+	"action-spamblacklistlog": "het logboek van de spamblokkeerlijst te bekijken",
+	"right-sboverride": "De lijst met spamblokkeringen mogen omzeilen",
+	"action-sboverride": "de lijst met spamblokkeringen te omzeilen"
 }

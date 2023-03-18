@@ -16,6 +16,7 @@
 	"visualeditor-cite-tool-name-journal": "जर्नल",
 	"visualeditor-cite-tool-name-news": "समाचार",
 	"visualeditor-cite-tool-name-web": "वेबसाइट",
+	"cite-ve-changedesc-ref-group-both": "सन्दर्भ समूह \"$1\" बाट \"$2\"मा परिवर्तन भयो",
 	"cite-ve-citationneeded-button": "सन्दर्भ थप्नुहोस्",
 	"cite-ve-citationneeded-reason": "दिइएको कारण:",
 	"cite-ve-citationneeded-title": "सन्दर्भ आवश्यक छ",

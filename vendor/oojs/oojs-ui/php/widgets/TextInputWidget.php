@@ -46,11 +46,6 @@ class TextInputWidget extends InputWidget {
 	 */
 	public function __construct( array $config = [] ) {
 		// Config initialization
-		$config = array_merge( [
-			'type' => 'text',
-			'readOnly' => false,
-			'autofocus' => false,
-		], $config );
 		if ( is_bool( $config['autocomplete'] ?? null ) ) {
 			$config['autocomplete'] = $config['autocomplete'] ? 'on' : 'off';
 		}
@@ -77,14 +72,14 @@ class TextInputWidget extends InputWidget {
 				'oo-ui-textInputWidget-php',
 			] )
 			->appendContent( $this->icon, $this->indicator );
-		$this->setReadOnly( $config['readOnly'] );
+		$this->setReadOnly( $config['readOnly'] ?? false );
 		if ( isset( $config['placeholder'] ) ) {
 			$this->input->setAttributes( [ 'placeholder' => $config['placeholder'] ] );
 		}
 		if ( isset( $config['maxLength'] ) ) {
 			$this->input->setAttributes( [ 'maxlength' => $config['maxLength'] ] );
 		}
-		if ( $config['autofocus'] ) {
+		if ( $config['autofocus'] ?? false ) {
 			$this->input->setAttributes( [ 'autofocus' => 'autofocus' ] );
 		}
 		if ( isset( $config['autocomplete'] ) ) {
@@ -121,6 +116,7 @@ class TextInputWidget extends InputWidget {
 		return $this;
 	}
 
+	/** @inheritDoc */
 	protected function getInputElement( $config ) {
 		if ( $this->getSaneType( $config ) === 'number' ) {
 			return ( new Tag( 'input' ) )->setAttributes( [
@@ -132,17 +128,21 @@ class TextInputWidget extends InputWidget {
 		}
 	}
 
+	/**
+	 * @param array $config
+	 * @return string
+	 */
 	protected function getSaneType( $config ) {
 		$allowedTypes = [
-			'text',
 			'password',
 			'email',
 			'url',
 			'number'
 		];
-		return in_array( $config['type'], $allowedTypes ) ? $config['type'] : 'text';
+		return isset( $config['type'] ) && in_array( $config['type'], $allowedTypes ) ? $config['type'] : 'text';
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		if ( $this->type !== 'text' ) {
 			$config['type'] = $this->type;

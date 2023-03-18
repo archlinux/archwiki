@@ -42,6 +42,9 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\CategoryTree\\": "includes/"
 	},
+	"TestAutoloadNamespaces": {
+		"MediaWiki\\Extension\\CategoryTree\\Tests\\": "tests/phpunit/"
+	},
 	"ResourceModules": {
 		"ext.categoryTree": {
 			"localBasePath": "modules/ext.categoryTree",
@@ -89,7 +92,7 @@
 	"HookHandlers": {
 		"default": {
 			"class": "MediaWiki\\Extension\\CategoryTree\\Hooks",
-			"services": [ "DBLoadBalancer", "MainConfig" ]
+			"services": [ "CategoryTree.CategoryCache", "MainConfig" ]
 		},
 		"config": {
 			"class": "MediaWiki\\Extension\\CategoryTree\\ConfigHookHandler"
@@ -183,5 +186,8 @@
 			}
 		}
 	},
+	"ServiceWiringFiles": [
+		"includes/ServiceWiring.php"
+	],
 	"manifest_version": 2
 }

@@ -27,5 +27,6 @@
 	"right-skipcaptcha": "Выкананьне дзеяньняў без праверкі CAPTCHA, дзе яна патрабуецца",
 	"action-skipcaptcha": "выкананьне дзеяньняў без праверкі CAPTCHA, дзе яна патрабуецца",
 	"confirmedit-preview-line": "Нумар радка",
-	"confirmedit-preview-content": "Зьмест"
+	"confirmedit-preview-content": "Зьмест",
+	"confirmedit-preview-validity": "Сапраўднасьць"
 }

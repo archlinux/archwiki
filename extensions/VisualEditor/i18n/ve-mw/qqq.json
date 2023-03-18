@@ -192,7 +192,7 @@
 	"visualeditor-dialog-transclusion-add-param-help": "Help text for new undocumented parameter input field.\n\nParameters:\n* $1 - The title of the template.",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Placeholder in the input field that adds a new undocumented parameter to a transcluded template.",
 	"visualeditor-dialog-transclusion-add-param-save": "Short label for save button that adds a new undocumented parameter to a transcluded template.",
-	"visualeditor-dialog-transclusion-add-template": "Heading to add the specified template to the page.",
+	"visualeditor-dialog-transclusion-add-template": "Heading of the section which allows to add another template to the page.",
 	"visualeditor-dialog-transclusion-add-template-save": "Short label for button that adds the specified template to the page.",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Label for button that adds a new undocumented parameter to a transcluded template.",
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "Confirmation prompt for abandoning unsaved changes in an insert template dialog.",

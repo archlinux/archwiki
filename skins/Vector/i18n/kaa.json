@@ -14,6 +14,7 @@
 	"vector-languages": "Tiller",
 	"vector-language-button-label": "{{PLURAL:$1|$1 til}}",
 	"vector-no-language-button-label": "Tillerdi qosıw",
+	"vector-language-redirect-to-top": "Bul {{SITENAME}}da til siltemeleri bettiń eń joqarı bóleginde, maqala atınıń oń tárepine jaylasqan. [[#p-lang-btn|Joqarıǵa ótiw]].",
 	"vector-action-addsection": "Tema qosıw",
 	"vector-action-delete": "Óshiriw",
 	"vector-action-move": "Kóshiriw",
@@ -26,5 +27,9 @@
 	"vector-view-view": "Oqıw",
 	"vector-view-viewsource": "Kodın kóriw",
 	"vector-more-actions": "Jáne",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> nı óz ishine alǵan betler ushın izlew"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> nı óz ishine alǵan betler ushın izlew",
+	"vector-anon-user-menu-pages": "Shıǵıwdı ámelge asırǵan redaktorlawshılar ushın betler",
+	"vector-anon-user-menu-pages-learn": "tolıq maǵlıwmat",
+	"vector-toc-menu-tooltip": "Mazmunı",
+	"tooltip-vector-anon-user-menu-title": "Kóbirek opciyalar"
 }

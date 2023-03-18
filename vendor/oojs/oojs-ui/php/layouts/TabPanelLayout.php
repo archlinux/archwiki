@@ -17,7 +17,7 @@ class TabPanelLayout extends PanelLayout {
 	 */
 	protected $name;
 	/**
-	 * @var string
+	 * @var string|HtmlSnippet|null
 	 */
 	protected $label;
 	/**
@@ -58,6 +58,7 @@ class TabPanelLayout extends PanelLayout {
 		] );
 	}
 
+	/** @inheritDoc */
 	public function getConfig( &$config ) {
 		$config['name'] = $this->name;
 		$config['label'] = $this->label;
@@ -73,18 +74,30 @@ class TabPanelLayout extends PanelLayout {
 		return parent::getConfig( $config );
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getName() {
 		return $this->name;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getTabItemConfig() {
 		return $this->tabItemConfig;
 	}
 
+	/**
+	 * @return string|HtmlSnippet|null
+	 */
 	public function getLabel() {
 		return $this->label;
 	}
 
+	/**
+	 * @param bool $active
+	 */
 	public function setActive( $active ) {
 		$this->active = $active;
 		$this->removeClasses( [ 'oo-ui-tabPanelLayout-active' ] );

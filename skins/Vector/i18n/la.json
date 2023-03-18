@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Laurentianus",
-			"UV"
+			"UV",
+			"Adumbrativus"
 		]
 	},
 	"vector-action-addsection": "Partem novam addere",
@@ -16,5 +17,6 @@
 	"vector-view-history": "Historiam inspicere",
 	"vector-view-view": "Legere",
 	"vector-view-viewsource": "Fontem inspicere",
-	"vector-more-actions": "Plura"
+	"vector-more-actions": "Plura",
+	"vector-toc-beginning": "Initium"
 }
