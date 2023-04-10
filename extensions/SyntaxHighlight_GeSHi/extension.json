@@ -14,7 +14,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.36",
+		"MediaWiki": ">= 1.39.0",
 		"platform": {
 			"ability-shell": true
 		}
@@ -90,7 +90,10 @@
 				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-startingline",
 				"syntaxhighlight-visualeditor-mwsyntaxhighlightinspector-title"
 			],
-			"targets": [ "desktop", "mobile" ]
+			"targets": [
+				"desktop",
+				"mobile"
+			]
 		}
 	},
 	"Hooks": {

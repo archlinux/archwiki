@@ -17,6 +17,7 @@
 	"vector.js": "/*ഇവിടെ നൽകുന്ന ജാവാസ്ക്രിപ്റ്റ് വെക്റ്റർ ദൃശ്യരൂപം ഉപയോഗിക്കുന്ന ഉപയോക്താക്കൾക്ക് ബാധകമായിരിക്കും*/",
 	"vector-languages": "ഭാഷകൾ",
 	"vector-language-button-label": "{{PLURAL:$1|ഒരു ഭാഷ|$1 ഭാഷകൾ}}",
+	"vector-no-language-button-label": "ഭാഷകൾ ചേർക്കുക",
 	"vector-language-redirect-to-top": "ഈ {{SITENAME}} പദ്ധതിയിൽ ഭാഷാ കണ്ണികൾ, താളിനു മുകളിൽ ലേഖനത്തിന്റെ തലക്കെട്ടിന് എതിർ വശത്തായി ആണുള്ളത്. [[#p-lang-btn|മുകളിലേക്ക് പോവുക]].",
 	"vector-language-variant-switcher-label": "ഭാഷയുടെ ചരം മാറ്റുക",
 	"vector-action-addsection": "വിഷയം ചേർക്കുക",

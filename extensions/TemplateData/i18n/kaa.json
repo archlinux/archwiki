@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ajiniyaz Nurniyazov",
+			"Nurlan"
+		]
+	},
+	"templatedata-doc-desc-empty": "Sıpatlaması joq.",
+	"templatedata-doc-param-default": "Standart",
+	"templatedata-doc-param-example": "Mısalı",
+	"templatedata-doc-param-desc": "Sıpatlaması",
+	"templatedata-doc-param-desc-empty": "sıpatlaması joq",
+	"templatedata-doc-param-name": "Parametr",
+	"templatedata-doc-param-status": "Statusı",
+	"templatedata-doc-param-status-deprecated": "gónergen",
+	"templatedata-doc-param-status-optional": "(shárt emes)",
+	"templatedata-doc-param-status-required": "talap etiledi",
+	"templatedata-doc-param-status-suggested": "usınılǵan",
+	"templatedata-doc-param-suggestedvalues": "Usınılǵan mániler",
+	"templatedata-doc-param-type": "Tipi",
+	"templatedata-doc-param-type-date": "Sáne",
+	"templatedata-doc-param-type-line": "Sızıq",
+	"templatedata-doc-param-type-number": "San",
+	"templatedata-doc-param-type-url": "URL",
+	"templatedata-doc-param-type-wiki-file-name": "Fayl",
+	"templatedata-doc-param-type-wiki-page-name": "Bettiń atı",
+	"templatedata-doc-param-type-wiki-template-name": "Úlgi",
+	"templatedata-doc-param-type-wiki-user-name": "Paydalanıwshı",
+	"templatedata-doc-params": "Úlgi parametrleri",
+	"templatedata-modal-button-add-language": "Til qosıw",
+	"templatedata-modal-button-addparam": "Parametr qosıw",
+	"templatedata-modal-button-back": "Artqa",
+	"templatedata-modal-button-cancel": "Biykarlaw",
+	"templatedata-modal-button-changelang": "Tildi ózgertiw",
+	"templatedata-modal-button-done": "Orınlandı",
+	"templatedata-modal-button-saveparam": "Saqlaw",
+	"templatedata-modal-title-language": "Til",
+	"templatedata-modal-title-templateparams": "Úlgi parametrleri"
+}

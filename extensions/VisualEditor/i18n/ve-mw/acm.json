@@ -1,9 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmedadeljaff"
+			"Ahmedadeljaff",
+			"MRidhaAJ"
 		]
 	},
+	"visualeditor-ca-createlocaldescriptionsource": "حط مصدر وصف محلي",
+	"visualeditor-ca-createsource": "سوي المصدر",
 	"visualeditor-ca-editsource": "عدل كود",
 	"visualeditor-ca-editsource-section": "عدل كود",
 	"visualeditor-descriptionpagelink": "Project:محرر مرئي"

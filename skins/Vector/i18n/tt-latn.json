@@ -2,10 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Don Alessandro",
-			"Frhdkazan"
+			"Frhdkazan",
+			"TayfunEt."
 		]
 	},
 	"skinname-vector": "Sızımlı",
+	"vector-languages": "Tellär",
 	"vector-action-addsection": "Yaña tema östäw",
 	"vector-action-delete": "Beterü",
 	"vector-action-move": "Küçerü",

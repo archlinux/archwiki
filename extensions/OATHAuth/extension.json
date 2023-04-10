@@ -10,7 +10,7 @@
 	"descriptionmsg": "oathauth-desc",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.37.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"license-name": "GPL-2.0-or-later AND GPL-3.0-or-later",
 	"attributes": {
@@ -171,15 +171,23 @@
 	"RateLimits": {
 		"badoath": {
 			"&can-bypass": false,
-			"user": [ 10, 60 ],
-			"user-global": [ 10, 60 ]
+			"user": [
+				10,
+				60
+			],
+			"user-global": [
+				10,
+				60
+			]
 		}
 	},
 	"ReauthenticateTime": {
 		"oathauth-enable": 60
 	},
 	"load_composer_autoloader": true,
-	"LogTypes": [ "oath" ],
+	"LogTypes": [
+		"oath"
+	],
 	"LogNames": {
 		"oath": "oath-log-name"
 	},
@@ -194,8 +202,12 @@
 	},
 	"ActionFilteredLogs": {
 		"oath": {
-			"verify": [ "verify" ],
-			"disable-other": [ "disable-other" ]
+			"verify": [
+				"verify"
+			],
+			"disable-other": [
+				"disable-other"
+			]
 		}
 	},
 	"manifest_version": 2

@@ -5,7 +5,9 @@
 			"Amire80"
 		]
 	},
+	"vector-languages": "Amí ichí",
 	"vector-language-button-label": "{{PLURAL:$1|$1 íchi|$1 amí íchi}}",
+	"vector-no-language-button-label": "Dí amí ichí manwu",
 	"vector-action-addsection": "Dí óla manyu",
 	"vector-action-delete": "Dukwó",
 	"vector-action-move": "Tẹlo",

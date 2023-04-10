@@ -3,7 +3,8 @@
 		"authors": [
 			"Sasan700",
 			"Исмаил Садуев",
-			"Умар"
+			"Умар",
+			"Amire80"
 		]
 	},
 	"wikieditor": "Викийоза тадаран шоьйра интерфейс",
@@ -138,7 +139,7 @@
 	"wikieditor-toolbar-help-page-list": "Могlамаш",
 	"wikieditor-toolbar-help-page-file": "Файлаш",
 	"wikieditor-toolbar-help-page-reference": "Билгалдахарш",
-	"wikieditor-toolbar-help-page-discussion": "Дийцаре",
+	"wikieditor-toolbar-help-page-discussion": "Дийцар",
 	"wikieditor-toolbar-help-content-italic-description": "Курсив",
 	"wikieditor-toolbar-help-content-italic-syntax": "''Курсиваца къастор''",
 	"wikieditor-toolbar-help-content-italic-result": "<em>Курсиваца къастор</em>",

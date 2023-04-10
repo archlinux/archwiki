@@ -35,7 +35,7 @@
 	"visualeditor-cite-tool-name-journal": "Title of tool that inserts a citation for a journal\n{{Identical|Journal}}",
 	"visualeditor-cite-tool-name-news": "Title of tool that inserts a citation for a news.\n{{Identical|News}}",
 	"visualeditor-cite-tool-name-web": "Title of tool that inserts a citation for a website.\n{{Identical|Website}}",
-	"cite-tool-definition.json": "{{ignored}}\n\nJSON list of objects detailing each citation with name (key referring to a visualeditor-cite-tool-name-x message), icon ('ref-cite-book', 'ref-cite-journal', 'ref-cite-news', 'ref-cite-web'), and template name",
+	"cite-tool-definition.json": "{{ignored}}\n\nJSON list of objects detailing each citation with name (key referring to a visualeditor-cite-tool-name-x message), icon ('book', 'journal', 'newspaper', 'browser'), and template name",
 	"cite-ve-changedesc-ref-group-both": "Description of a reference changing group\n\nParameters:\n* $1 – the name of the group it was before\n* $2 – the name of the group it is now",
 	"cite-ve-changedesc-ref-group-from": "Description of a reference changing group to the general group\n\nParameters:\n* $1 – the name of the group it was before",
 	"cite-ve-changedesc-ref-group-to": "Description of a reference changing group from the general group\n\nParameters:\n* $1 – the name of the group it is now",

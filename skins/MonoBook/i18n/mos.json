@@ -1,9 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Amire80"
+			"Amire80",
+			"Abdul Fatawu 352"
 		]
 	},
 	"monobook-view-history": "Kibare",
-	"monobook-action-undelete": "Ka yēese {{PLURAL:$1|a ye toeeme|$1 toeeme}}"
+	"monobook-action-undelete": "Da yēese {{PLURAL:$1|tekre a ye|$1 tekre}}"
 }

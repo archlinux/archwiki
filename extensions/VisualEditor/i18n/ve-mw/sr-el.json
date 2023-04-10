@@ -31,7 +31,7 @@
 	"visualeditor-backbutton-tooltip": "Vratite se",
 	"visualeditor-beta-warning": "Ako pri uređivanju naiđete na bilo kakve tehničke probleme, prijavite ih.",
 	"visualeditor-browserwarning": "Vizuelni uređivač ne podržava veb-pregledač koji koristite.",
-	"visualeditor-ca-createlocaldescriptionsource": "Dodaj izvor lokalnog opisa",
+	"visualeditor-ca-createlocaldescriptionsource": "Dodaj lokalni opis (izvorno)",
 	"visualeditor-ca-createsource": "Napravi izvor",
 	"visualeditor-ca-editlocaldescriptionsource": "Uredi izvor lokalnog opisa",
 	"visualeditor-ca-editsource": "Uredi izvor",
@@ -254,7 +254,7 @@
 	"visualeditor-mwpredialog-convert": "Stilizovanje teksta",
 	"visualeditor-mwpredialog-title": "Preformatiran običan tekst",
 	"visualeditor-mwsignature-tool": "Vaš potpis",
-	"visualeditor-preference-betatempdisable": "Privremeno isključi vizuelni uređivač dok je u beta fazi",
+	"visualeditor-preference-betatempdisable": "Privremeno isključi Vizuelni uređivač dok je u beta fazi",
 	"visualeditor-preference-core-description": "Omogućava vizuelni uređivač. Neće biti dostupan na stranicama za razgovor i nekim drugim imenskim prostorima.",
 	"visualeditor-preference-core-label": "Vizuelno uređivanje",
 	"visualeditor-preference-enable": "Omogući Vizuelni uređivač. Biće dostupan u {{PLURAL:$2|sledećem imenskom prostoru|sledećim imenskim prostorima}}: $1",
@@ -307,6 +307,6 @@
 	"visualeditor-wikitext-warning": "Koristite vizuelni uređivač — [[{{MediaWiki:visualeditor-wikitext-warning-link}}|vikitekst]] ovde ne radi. U svakom trenutku možete da se prebacite na uređivanje izvora bez gubitka izmena klikom na odgovarajuće dugme.",
 	"visualeditor-wikitext-warning-title": "Otkriveno je označavanje vikiteksta",
 	"visualeditor-wikitextconvert-title": "Pretvoriti formatiranje u vikitekst?",
-	"visualeditor-wikitextconvert-message": "Vaš nalepljen sadržaj sadrži formatiranje. Pretvoriti u vikitekst ili nalepiti kao običan tekst?",
+	"visualeditor-wikitextconvert-message": "Nalepili ste sadržaj koji sadrži formatiranje. Da li želite da pretvorite ovo formatiranje u vikitekst?",
 	"visualeditor-wikitextconvert-convert": "Pretvori u vikitekst"
 }

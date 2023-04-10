@@ -101,5 +101,6 @@
 	"abusefilter-action-tag": "Teg",
 	"abusefilter-revert-reasonfield": "Sabab:",
 	"abusefilter-topnav-home": "Bosh sahifa",
-	"abusefilter-log-name": "Filtrlash qaydlari"
+	"abusefilter-log-name": "Filtrlash qaydlari",
+	"abusefilter-log-noresults": "Natijalar topilmadi"
 }

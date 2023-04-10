@@ -22,7 +22,7 @@
 	"vector-action-toggle-sidebar": "Ipakita/itago ang sidebar",
 	"vector-languages": "Mga wika",
 	"vector-language-button-aria-label": "Pumunta sa isang artikulo na nakasulat sa ibang wika. Mayroon ito sa $1 (na) wika",
-	"vector-language-button-label": "$1 (na) wika",
+	"vector-language-button-label": "{{PLURAL:$1|$1 wika|$1 (na) wika}}",
 	"vector-no-language-button-label": "Magdagdag ng wika",
 	"vector-no-language-button-aria-label": "Mayroon lamang ang artikulong ito sa wikang ito. Idagdag ang artikulo sa ibang mga wika",
 	"vector-language-redirect-to-top": "Sa {{SITENAME}} na ito, ang mga link ng wika ay nasa itaas ng pahina sa may bandang pamagat ng artikulo. [[#p-lang-btn|Pumunta sa itaas]].",

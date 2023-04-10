@@ -194,6 +194,7 @@
 	"abusefilter-examine": "ზოხოიან რედაქტირაფეფიშ ძირაფა",
 	"abusefilter-examine-submit": "გორუა",
 	"abusefilter-topnav-home": "დუდხასლაშა",
+	"abusefilter-logentry-create": "$1-ქ {{GENDER:$2|გაჭყჷ}} $4 ($5)",
 	"abusefilter-diff-item": "ელემენტი",
 	"abusefilter-diff-prev": "ჯვეში თირუა",
 	"abusefilter-diff-next": "ახალი თირუა"

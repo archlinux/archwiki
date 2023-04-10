@@ -9,7 +9,8 @@
 			"Macofe",
 			"Pizza1016",
 			"Tofeiku",
-			"Yosri"
+			"Yosri",
+			"Bebudak"
 		]
 	},
 	"wikieditor": "Wikiteks keutamaan halaman suntingan",
@@ -19,9 +20,9 @@
 	"wikieditor-toolbar-desc": "Bar alatan penyuntingan maju",
 	"wikieditor-toolbar-preference": "Bolehkan alatan penyuntingan",
 	"wikieditor-toolbar-preference-help": "Ini kadangkala dipanggil 'penyunting wikiteks 2010'.",
-	"wikieditor-toolbar-tool-bold": "Teks tebal",
+	"wikieditor-toolbar-tool-bold": "Tebal",
 	"wikieditor-toolbar-tool-bold-example": "Teks tebal",
-	"wikieditor-toolbar-tool-italic": "Teks condong",
+	"wikieditor-toolbar-tool-italic": "Condong",
 	"wikieditor-toolbar-tool-italic-example": "Teks condong",
 	"wikieditor-toolbar-tool-ilink": "Pautan dalaman",
 	"wikieditor-toolbar-tool-ilink-example": "Tajuk pautan",
@@ -201,5 +202,8 @@
 	"wikieditor-realtimepreview-reload": "Muat semula",
 	"wikieditor-realtimepreview-beta-label": "Pralihat Masa Nyata",
 	"wikieditor-realtimepreview-beta-desc": "Lihat cara perubahan wikiteks akan muncul kepada pembaca di dalam [[mw:Special:MyLanguage/Extension:WikiEditor|penyunting 2010]].",
-	"wikieditor-realtimepreview-reload-title": "Muat semula anak tetingkap pralihat masa nyata"
+	"wikieditor-realtimepreview-reload-title": "Muat semula anak tetingkap pralihat masa nyata",
+	"wikieditor-realtimepreview-manual": "Sila muat semula sekarang untuk pralihatkan secara manual suntingan anda.",
+	"wikieditor-realtimepreview-onboarding-title": "Pralihat Masa Nyata",
+	"wikieditor-realtimepreview-onboarding-button": "Baik, saya faham"
 }

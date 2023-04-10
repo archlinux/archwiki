@@ -4,5 +4,8 @@
 			"Han4299"
 		]
 	},
-	"mobile-frontend-language-article-heading": "Basa"
+	"mobile-frontend-home-button": "Paladang",
+	"mobile-frontend-language-article-heading": "Basa",
+	"mobile-frontend-placeholder": "Boya ri {{SITENAME}}",
+	"mobile-frontend-random-button": "Sambarang"
 }

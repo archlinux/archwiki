@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nurlan"
+			"Nurlan",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
-	"tag-visualeditor-wikitext": "Derekti redaktorlaw"
+	"tag-visualeditor-wikitext": "Derekti redaktorlaw",
+	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VizualRedaktor: Ózgerdi]]"
 }

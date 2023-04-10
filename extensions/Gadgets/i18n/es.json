@@ -47,5 +47,6 @@
 	"right-gadgets-edit": "Editar páginas de accesorios JavaScript y CSS",
 	"action-gadgets-edit": "editar esta página de accesorios JavaScript y CSS",
 	"right-gadgets-definition-edit": "Editar definiciones de accesorios",
-	"action-gadgets-definition-edit": "editar esta definición de accesorio"
+	"action-gadgets-definition-edit": "editar esta definición de accesorio",
+	"gadgets-wrong-contentmodel": "Las páginas del espacio de nombres {{ns:2302}} solo pueden tener el modelo de contenido «GadgetDefinition»."
 }

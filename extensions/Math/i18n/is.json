@@ -46,8 +46,7 @@
 	"math-test-success": "Próf ''$1'' <span style=\"color:green\">tókst</span>.",
 	"math_unknown_error": "óþekkt villa",
 	"math_unknown_function": "óþekkt aðgerð „$1”",
-	"mw_math_mathml": "MathML með SVG eða PNG til vara (mælt með fyrir nútíma vafra og hjálpartæki)",
-	"mw_math_png": "PNG myndir",
+	"mw_math_mathml": "SVG með PNG til vara (hægt er að virkja MathML með viðbót fyrir vafra)",
 	"mw_math_source": "LaTeX uppruni (fyrir textavafra)",
 	"prefs-math": "Stærðfræðiformúlur"
 }

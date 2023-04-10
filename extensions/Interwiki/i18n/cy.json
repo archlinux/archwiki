@@ -25,7 +25,7 @@
 	"interwiki_added": "Llwyddwyd i ychwanegu'r rhagddodiad \"$1\" at y tabl rhyngwici.",
 	"interwiki_addfailed": "Methwyd ychwanegu'r rhagddodiad \"$1\" at y tabl rhyngwici.\nEfallai ei fod eisoes yn y tabl rhyngwici.",
 	"log-name-interwiki": "Lòg y tabl rhyngwici",
-	"log-description-interwiki": "Dyma lòg y newidiadau i'r [[Special:Interwiki|tabl rhyngwici]].",
+	"log-description-interwiki": "Dyma log o newidiadau i'r [[Special:Interwiki|tabl rhyngwici]].",
 	"right-interwiki": "Golygu data rhyngwici",
 	"action-interwiki": "newid yr eitem rhyngwici hwn",
 	"interwiki-links": "Rhagddodiaid interwici"

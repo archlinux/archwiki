@@ -27,6 +27,8 @@
 	"math-visualeditor-symbol-group-math-greek": "ߜ߭ߙߍ߬ߞߌ߬ ߛߓߍߛߎ߲",
 	"math-visualeditor-symbol-group-math-hebrew": "ߋߓߙߋ߫ ߛߓߍߛߎ߲",
 	"math-visualeditor-symbol-group-math-special": "ߞߙߍߞߙߍߣߍ߲",
+	"math_syntax_error": "ߞߎߡߦߊߘߐ ߝߎ߬ߕߎ߲߬ߕߌ",
+	"math_timeout": "$1 ߕߎ߬ߡߊ ߓߘߊ߫ ߕߊ߬ߡߌ߲߬ ߞߊ߬ ߝߘߊ߫ \"$2\" ߟߊ߫.",
 	"math-test-fail": "ߞߟߏߘߋ߲ ''$1'' <span style=\"color:red\">ߓߘߊ߫ ߗߌߙߏ߲߫</span>",
 	"math-tracking-category-error": "ߘߡߊ߬ߟߐ߲ ߝߎ߬ߕߎ߲߬ߕߌ ߦߋ߫ ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߟߊ߫",
 	"math-tracking-category-error-desc": "ߞߐߜߍ ߡߍ߲ ߠߎ߬ ߦߋ߫ ߦߌߟߡߊ ߣߌ߲߬ ߘߐ߫߸ ߝߎ߬ߕߎ߲߬ߕߌ ߦߴߏ߬ ߟߎ߫ ߟߊ߫ ߞߊ߬ ߝߘߊ߫ ߘߡߊ߬ߟߐ߲ ߞߊ߲ߠߊߛߓߍ ߟߎ߬ ߟߊߓߊ߯ߙߊ ߡߊ߬.",

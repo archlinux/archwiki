@@ -15,7 +15,7 @@
 	"templatedata-doc-format-inline": "ეს თარგი პარამეტრების სტრიქონულ ფორმატირებას იყენებს.",
 	"templatedata-doc-no-params-set": "პარამეტრები არ არის მითითებული",
 	"templatedata-doc-param-autovalue": "ავტომატური მნიშვნელობა",
-	"templatedata-doc-param-default": "სტანდარტული",
+	"templatedata-doc-param-default": "ნაგულისხმევი",
 	"templatedata-doc-param-example": "მაგალითი",
 	"templatedata-doc-param-desc": "აღწერა",
 	"templatedata-doc-param-desc-empty": "არ არის აღწერა",

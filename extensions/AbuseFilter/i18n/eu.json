@@ -447,7 +447,7 @@
 	"abusefilter-action-rangeblock": "Barruti-blokea",
 	"abusefilter-action-disallow": "Debekatu",
 	"abusefilter-revert-title": "Desegin aldaketa guztiak $1 iragazkiarekin",
-	"abusefilter-revert-search-legend": "Desegingo diren abusu-iragazkietako ekintzak hautatu",
+	"abusefilter-revert-search-legend": "Hautatu lehengoratuko diren abusu-iragazkietako ekintzak",
 	"abusefilter-revert-periodstart": "Periodoaren hasiera:",
 	"abusefilter-revert-periodend": "Periodoaren amaiera:",
 	"abusefilter-revert-search": "Ekintzak hautatu",

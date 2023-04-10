@@ -25,7 +25,7 @@
 	"tag-visualeditor-description": "Edycja z wykorzystaniem [[{{MediaWiki:visualeditor-descriptionpagelink}}|edytora wizualnego]]",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor: do sprawdzenia]]",
 	"tag-visualeditor-needcheck-description": "Edycja wykonana z wykorzystaniem [[{{MediaWiki:visualeditor-descriptionpagelink}}|edytora wizualnego]], w której system wykrył prawdopodobnie niezamierzone uszkodzenie kodu źródłowego.",
-	"tag-visualeditor-wikitext": "edytor kodu źródłowego 2017",
+	"tag-visualeditor-wikitext": "Edytor kodu źródłowego 2017",
 	"tag-visualeditor-wikitext-description": "Edycja dokonana za pomocą edytora wikitekstu 2017",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor: przełączono]]",
 	"tag-visualeditor-switched-description": "Użytkownik rozpoczął edycję używając edytora wizualnego, a w jej trakcie przełączył się na edytor kodu źródłowego.",

@@ -31,7 +31,7 @@ class MathMathML extends MathRenderer {
 	/** @var string[] */
 	protected $restbaseInputTypes = [ 'tex', 'inline-tex', 'chem' ];
 	/** @var string[] */
-	protected $restbaseRenderingModes = [ MathConfig::MODE_MATHML, MathConfig::MODE_PNG ];
+	protected $restbaseRenderingModes = [ MathConfig::MODE_MATHML ];
 	/** @var string[] */
 	protected $allowedRootElements = [];
 	/** @var string */
@@ -354,9 +354,6 @@ class MathMathML extends MathRenderer {
 	 * @return Title|string
 	 */
 	private function getFallbackImageUrl( $noRender = false ) {
-		if ( $this->getMode() === MathConfig::MODE_PNG && $this->pngPath ) {
-			return $this->pngPath;
-		}
 		if ( $this->svgPath ) {
 			return $this->svgPath;
 		}

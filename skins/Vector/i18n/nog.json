@@ -6,7 +6,9 @@
 			"Abylaikhan 94"
 		]
 	},
+	"vector-languages": "Тиллер",
 	"vector-language-button-label": "{{PLURAL:$1|$1 тил}}",
+	"vector-no-language-button-label": "Тил косув",
 	"vector-action-addsection": "Мевзу косув",
 	"vector-action-delete": "Йок ет",
 	"vector-action-move": "Тагы",

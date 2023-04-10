@@ -11,7 +11,7 @@
 	"cite_error": "Gwall cyfeirio: $1",
 	"cite_error_ref_numeric_key": "Tag <code>&lt;ref&gt;</code> annilys; ni all enw fod yn rif. Defnyddiwch deitl disgrifiadol",
 	"cite_error_ref_no_key": "Mae'r <code>&lt;ref&gt;</code> tag yn annilys neu rhoddwyd iddo enw annilys",
-	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> annilys;\nenwau annilys; e.e. gormod ohonynt",
+	"cite_error_ref_too_many_keys": "Tag <code>&lt;ref&gt;</code> annilys; enwau annilys, ee. gormod ohonynt",
 	"cite_error_ref_no_input": "Tag <code>&lt;ref&gt;</code> annilys;\nrhaid i dagiau ref heb enw iddynt gynnwys rhywbeth",
 	"cite_error_references_duplicate_key": "Tag <code>&lt;ref&gt;</code> annilys; mae'r enw \"$1\" wedi'i ddiffinio droeon gyda chynnwys gwahanol",
 	"cite_error_references_invalid_parameters": "Tag <code>&lt;references&gt;</code> annilys;\nni chaniateir paramedrau.\nDefnyddiwch <code>&lt;references /&gt;</code>",

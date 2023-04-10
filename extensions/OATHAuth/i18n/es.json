@@ -90,6 +90,8 @@
 	"oathauth-switch-method-warning-header": "Confirmar el cambio a un método distinto de autenticación",
 	"oathauth-invalidrequest": "Solicitud no válida",
 	"notification-header-oathauth-disable": "Se ha desactivado la autenticación en dos pasos de {{GENDER:$2|tu}} cuenta.",
+	"notification-body-oathauth-disable": "Si {{GENDER:$2|tu}} no has hecho nada de esto, puede que {{GENDER:$2|tu cuenta}} esté comprometida.",
+	"notification-body-oathauth-disable-other": "Si {{GENDER:$2|tu}} no has solicitado esto, {{GENDER:$2|deberías}} ponerte en contacto con un administrador.",
 	"oathauth-notifications-disable-help": "Ayuda",
 	"notification-header-oathauth-enabled": "La autenticación de dos pasos se ha activado en {{GENDER:$2|tu cuenta}}.",
 	"notification-body-oathauth-enabled": "Si {{GENDER:$2|tu}}no hiciste esto, {{GENDER:$2|tu cuenta}} puede haber estado comprometida.",

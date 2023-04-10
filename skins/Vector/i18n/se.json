@@ -4,11 +4,12 @@
 			"Gálaniitoluodda",
 			"Jeblad",
 			"Trondtr",
-			"Kimberli Mäkäräinen (WMNO)"
+			"Kimberli Mäkäräinen (WMNO)",
+			"Tynnoel"
 		]
 	},
 	"vector-languages": "Gielat",
-	"vector-language-button-label": "{{PLURAL:$1|$1 gillii|$1 gielaide}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 gillii|$1 gillii}}",
 	"vector-no-language-button-label": "Lasit gielaid",
 	"vector-action-addsection": "Lasit fáttá",
 	"vector-action-delete": "Sihko",

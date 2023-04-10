@@ -572,7 +572,7 @@
 	"abusefilter-topnav-test": "Testowanie wsadowe",
 	"abusefilter-topnav-examine": "Skontroluj dawniejsze edycje",
 	"abusefilter-topnav-log": "Rejestr nadużyć",
-	"abusefilter-topnav-tools": "Narzędzia śledzenia",
+	"abusefilter-topnav-tools": "Narzędzia diagnostyczne",
 	"abusefilter-log-name": "Rejestr filtru nadużyć",
 	"abusefilter-log-header": "Rejestr zawiera zestawienie zmian wprowadzanych w filtrach.\nPełne informacje odnajdziesz w [[Special:AbuseFilter/history|rejestrze]] ostatnich zmian w filtrach.",
 	"abusefilter-logentry-create": "$1 {{GENDER:$2|utworzył|utworzyła}} $4 ($5)",

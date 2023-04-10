@@ -6,7 +6,9 @@
 			"Hasslaebetch"
 		]
 	},
-	"vector-language-button-label": "{{PLURAL:$1|$1 buudi-gomde|$1 buudi-goma}}",
+	"vector-languages": "Goama",
+	"vector-language-button-label": "{{PLURAL:$1|$1 buud-gomde|$1 buud-goama}}",
+	"vector-no-language-button-label": "Paas goama",
 	"vector-action-addsection": "Paase wɛɛbgẽ",
 	"vector-action-delete": "Yẽese",
 	"vector-action-move": "Kedme",

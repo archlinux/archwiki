@@ -4,8 +4,8 @@
 			"Servien"
 		]
 	},
-	"tooltip-ca-createsource": "Bronkode veur disse zied anmaken",
-	"tooltip-ca-editsource": "Bronkode van disse zied bewarken",
+	"tooltip-ca-createsource": "Bronkode vöär disse syde anmaken",
+	"tooltip-ca-editsource": "Bronkode van disse syde bewarken",
 	"tooltip-ca-ve-edit": "Disse syde bewarken",
 	"visualeditor-advancedsettings-tool": "Vorderde instellingen",
 	"visualeditor-autosave-modified-prompt-accept": "Bewarking voordsetten",
@@ -29,7 +29,7 @@
 	"visualeditor-dialog-media-info-readmore": "Meer lezen",
 	"visualeditor-dialog-media-info-uploaded": "Op-estuurd: $1",
 	"visualeditor-dialog-media-page-advanced": "Geavveseerde instellingen",
-	"visualeditor-dialog-media-page-general": "Algemene instellingen",
+	"visualeditor-dialog-media-page-general": "Algemeyn",
 	"visualeditor-dialog-media-position-section": "Posisie",
 	"visualeditor-dialog-media-save": "Opslaon",
 	"visualeditor-dialog-media-search-tab-search": "Zeuken",
@@ -123,6 +123,8 @@
 	"visualeditor-mweditmodeve-popup-title": "Jy bint oavergån up et bewarken van de brontekst",
 	"visualeditor-mweditmodeve-showagain": "Dit bericht neet meyr låten seen",
 	"visualeditor-mweditmodeve-tool-current": "Visueel bewarken",
+	"visualeditor-mweditmodewt-popup-body": "Jy künnet altyd weader oavergån up bronkode bewarken döär up dit piktogram te klikken.",
+	"visualeditor-mweditmodewt-popup-title": "Jy bint oavergån up visueel bewarken",
 	"visualeditor-mwgallerydialog-title": "Gallerye",
 	"visualeditor-mwsignature-tool": "Juw handteykening",
 	"visualeditor-preference-betatempdisable": "Schakel de visuele tekstverwarker tiejelik uut terwiel t in bèta is",

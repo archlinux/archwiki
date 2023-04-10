@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Ella Lachow"
+		]
+	},
+	"vector-languages": "Doonata",
+	"vector-language-button-label": "{{PLURAL:$1|$1 doonaa|$1 doonata}}",
+	"vector-no-language-button-label": "Doonata gujja",
+	"vector-action-addsection": "Huuphe yohuwaa gujja",
+	"vector-action-delete": "Xayssa",
+	"vector-action-move": "Yuushshanaassi",
+	"vector-action-protect": "Gorddanawu",
+	"vector-view-create": "Medha",
+	"vector-view-history": "Haydaa be'a",
+	"vector-more-actions": "Aaruwassi",
+	"vector-searchsuggest-containing": "Oyqqida sinttata koyya <strong class=\"cdx-typeahead-search_search-footer_query\">$1</strong>"
+}

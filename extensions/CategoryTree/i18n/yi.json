@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"פוילישער"
+			"פוילישער",
+			"Pacha Tchernof"
 		]
 	},
 	"categorytree": "קאַטעגאריע בוים",
@@ -9,7 +10,7 @@
 	"categorytree-legend": "ווײַזן קאַטעגאריע בוים",
 	"categorytree-desc": "נאוויגירן דינאמיש דעם [[Special:CategoryTree|קאטעגאריע סטרוקטור]]",
 	"categorytree-header": "לייגט אריין א קאטעגאריע נאמען צו זען איר אינהאלט אלס א בוים סטרוקטור.(פֿאדערט JavaScript.)",
-	"categorytree-category": "קאטעגאריע:",
+	"categorytree-category": "קאַטעגאָריע:",
 	"categorytree-go": "ווײַזן בוים",
 	"categorytree-parents": "העכערע קאַטעגאריעס",
 	"categorytree-mode-label": "מאדע:",

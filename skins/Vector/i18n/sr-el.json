@@ -23,6 +23,7 @@
 	"vector.js": "/* JavaScript postavljen ovde učitaće se svim korisnicima vektorske teme */",
 	"vector-action-toggle-sidebar": "Prikaži/sakrij bočnu traku",
 	"vector-languages": "Jezici",
+	"vector-language-button-aria-label": "Članak na drugim jezicima. Dostupan na: {{PLURAL:$1|$1}}",
 	"vector-language-button-label": "{{PLURAL:$1|$1 jezik|$1 jezika}}",
 	"vector-no-language-button-label": "Dodaj jezike",
 	"vector-no-language-button-aria-label": "Ovaj članak postoji samo na ovom jeziku. Dodajte druge jezike.",

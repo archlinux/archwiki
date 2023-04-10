@@ -4,6 +4,8 @@
 			"Katelem"
 		]
 	},
+	"vector-languages": "Ebi kè Usem",
+	"vector-no-language-button-label": "Tap usem sọkọ",
 	"vector-action-addsection": "Tap Ibot-ikọ gbaalek",
 	"vector-action-delete": "Chọk",
 	"vector-action-move": "Nwene erieen̄",
@@ -12,5 +14,6 @@
 	"vector-view-edit": "Nen̄e ge",
 	"vector-view-history": "Kpọ mfufuk",
 	"vector-view-view": "Fuk",
-	"vector-more-actions": "Ofifi si"
+	"vector-more-actions": "Ofifi si",
+	"vector-searchsuggest-containing": "Wèek ebi kè akpọk ìkakaan̄ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

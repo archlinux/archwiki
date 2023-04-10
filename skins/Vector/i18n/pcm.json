@@ -5,7 +5,9 @@
 			"Samatics"
 		]
 	},
+	"vector-languages": "Langwej-dem",
 	"vector-language-button-label": "{{PLURAL:$1|$1 langwej|$1 langwej-dem}}",
+	"vector-no-language-button-label": "Ad langwej-dem",
 	"vector-action-addsection": "Put anoda topik",
 	"vector-action-delete": "Komot-am",
 	"vector-action-move": "Muv-am",

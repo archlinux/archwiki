@@ -497,7 +497,7 @@
 	"abusefilter-exception-unclosedstring": "於第 $1 個字元處開始未結束字串。",
 	"abusefilter-exception-invalidoperator": "於第 $1 個字元處使用了無效的運算子 \"$2\"。",
 	"abusefilter-exception-unrecognisedtoken": "於第 $1 個字元處出現預期之外的符號 \"$2\"。",
-	"abusefilter-exception-noparams": "第$1字元處未傳入函式「$2」的參數，\n應有$3個參數。",
+	"abusefilter-exception-noparams": "第 $1 字元處未傳入函式「$2」的參數，\n應有 $3 個{{PLURAL:$3|參數}}。",
 	"abusefilter-exception-dividebyzero": "於第 $1 個字元處嘗試非法將 $2 除以 0。",
 	"abusefilter-exception-unrecognisedvar": "於第 $1 個字元處出現無法識別的變數 $2。",
 	"abusefilter-exception-notenoughargs": "於第 $1 個字元處呼叫的函式$2未傳入足夠的參數。預期應有 $3 個參數，僅使用了 $4 個",

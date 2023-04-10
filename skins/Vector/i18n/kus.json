@@ -5,7 +5,9 @@
 			"Amire80"
 		]
 	},
+	"vector-languages": "Buudi piana'ad",
 	"vector-language-button-label": "{{PLURAL:$1|$1 buudi pian'uk|$1 buudi pian'ad}}",
+	"vector-no-language-button-label": "Paasim Pian'ad",
 	"vector-action-addsection": "Pɛ'ɛsim pian'azug",
 	"vector-action-delete": "Yisim",
 	"vector-action-move": "Vuugim",

@@ -19,13 +19,13 @@ use Psr\Log\NullLogger;
 class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 
 	private function setupDummyRendering() {
-		$this->setMwGlobals( 'wgMathValidModes', [ MathConfig::MODE_SOURCE, MathConfig::MODE_PNG ] );
+		$this->setMwGlobals( 'wgMathValidModes', [ MathConfig::MODE_SOURCE, MathConfig::MODE_LATEXML ] );
 		$this->mergeMwGlobalArrayValue( 'wgDefaultUserOptions', [ 'math' => MathConfig::MODE_SOURCE ] );
 		$this->setService( 'Math.RendererFactory', new class(
 			new ServiceOptions( RendererFactory::CONSTRUCTOR_OPTIONS, [
 				'MathoidCli' => false,
 				'MathEnableExperimentalInputFormats' => false,
-				'MathValidModes' => [ MathConfig::MODE_SOURCE, MathConfig::MODE_PNG ],
+				'MathValidModes' => [ MathConfig::MODE_SOURCE ],
 			] ),
 			$this->getServiceContainer()->getUserOptionsLookup(),
 			new NullLogger()
@@ -33,7 +33,7 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 			public function getRenderer(
 				string $tex,
 				array $params = [],
-				string $mode = MathConfig::MODE_PNG
+				string $mode = MathConfig::MODE_MATHML
 			): MathRenderer {
 				return new class( $mode, $tex, $params ) extends MathRenderer {
 					public function __construct( $mode, $tex = '', $params = [] ) {
@@ -94,7 +94,7 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 
 		// Now render with 'png' and make sure we didn't get the cached output
 		$parserOptions2 = ParserOptions::newCanonical( 'canonical' );
-		$parserOptions2->setOption( 'math', MathConfig::MODE_PNG );
+		$parserOptions2->setOption( 'math', MathConfig::MODE_MATHML );
 		$this->assertNull( $parserOutputAccess->getCachedParserOutput( $page, $parserOptions2 ) );
 		$renderStatus = $parserOutputAccess->getParserOutput( $page, $parserOptions2 );
 		$this->assertTrue( $renderStatus->isGood() );
@@ -123,7 +123,7 @@ class ParserIntegrationTests extends MediaWikiIntegrationTestCase {
 	public function testMathInLink() {
 		$this->setupDummyRendering();
 		$po = ParserOptions::newFromAnon();
-		$po->setOption( 'math', MathConfig::MODE_PNG );
+		$po->setOption( 'math', MathConfig::MODE_SOURCE );
 		$res = $this->getServiceContainer()
 			->getParser()
 			->parse(

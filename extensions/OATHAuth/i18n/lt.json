@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Eitvys200"
+			"Eitvys200",
+			"Hugo.arg"
 		]
 	},
+	"specialpages-group-oath": "Dviejų veiksnių autentifikavimas",
 	"oathauth-account": "Paskyros vardas:",
 	"oathauth-auth-ui": "Prašome įvesti patvirtinimo kodą iš jūsų identifikacijos įrenginio.",
 	"action-oathauth-api-all": "patikrinti OATH būseną",

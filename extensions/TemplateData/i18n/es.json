@@ -16,7 +16,9 @@
 			"Ovruni",
 			"Rodney Araujo",
 			"Sethladan",
-			"Vfrico"
+			"Vfrico",
+			"La Mantis",
+			"MarcoAurelio"
 		]
 	},
 	"templatedata-desc": "Implementa almacenamiento de datos para parámetros de plantillas (mediante JSON).",
@@ -60,7 +62,7 @@
 	"templatedata-invalid-duplicate-value": "La propiedad «$1» («$3») es un duplicado de «$2».",
 	"templatedata-invalid-empty-array": "La propiedad \"$1\" debe tener al menos un valor en su arreglo.",
 	"templatedata-invalid-format": "La propiedad «$1» debería ser «inline», «block» o una cadena válida de formato.",
-	"templatedata-invalid-length": "Los datos son demasiado grandes para guardarlos ({{formatnum:$1}} {{PLURAL:$1|byte|bytes}}, {{PLURAL:$2|el límite es}} {{formatnum:$2}})",
+	"templatedata-invalid-length": "Los datos son demasiado grandes para guardarlos ($1 {{PLURAL:$1|byte|bytes}}, {{PLURAL:$2|el límite es}} $2)",
 	"templatedata-invalid-missing": "No se encontró la propiedad requerida «$1».",
 	"templatedata-invalid-param": "Parámetro no válido \"$1\" de la propiedad \"$2\".",
 	"templatedata-invalid-parse": "Error de sintaxis en el JSON.",
@@ -99,7 +101,7 @@
 	"templatedata-modal-placeholder-prompt-map-name": "Introducir nombre del mapa",
 	"templatedata-modal-search-input-placeholder": "Buscar por nombre o código del idioma",
 	"templatedata-modal-table-param-actions": "Acciones",
-	"templatedata-modal-table-param-aliases": "Alias (separados por comas)",
+	"templatedata-modal-table-param-aliases": "Alias",
 	"templatedata-modal-table-param-autovalue": "Valor automático",
 	"templatedata-modal-table-param-default": "Predeterminado ($1)",
 	"templatedata-modal-table-param-deprecated": "En desuso",

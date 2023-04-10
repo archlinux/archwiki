@@ -10,13 +10,15 @@
 			"Mormegil",
 			"Patriccck",
 			"Patrik L.",
-			"Martin Urbanec (WMF)"
+			"Martin Urbanec (WMF)",
+			"Blahma",
+			"Draceane"
 		]
 	},
 	"skinname-vector": "Starý Vektor (2010)",
 	"skinname-vector-2022": "Vektor (2022)",
 	"vector-specialversion-name": "Vektor",
-	"vector-skin-desc": "Poskytuje 2 vzhledy Vektor:\n* 2011 - Moderní verze vzhledu Kniha s novějším vzhledem a vylepšenou použitelností.\n* 2022 - Vektor vytvořený jako součást projektu WMF [[mw:Desktop Improvements]].",
+	"vector-skin-desc": "Poskytuje 2 vzhledy Vektor:\n* 2011 – Moderní verze vzhledu Kniha s novějším vzhledem a vylepšenou použitelností.\n* 2022 – Vektor vytvořený jako součást projektu WMF [[mw:Desktop Improvements]].",
 	"prefs-vector-enable-vector-1-label": "Použít starý Vektor",
 	"prefs-vector-enable-vector-1-help": "V následujících letech budeme postupně aktualizovat vzhled Vektor. Starý Vektor vám umožní používat starou verzi Vektoru z prosince 2019. Více o aktualizacích se dozvíte na naší [[mw:Reading/Web/Desktop_Improvements|projektové stránce]].",
 	"vector-opt-out": "Přepnout na starý vzhled",

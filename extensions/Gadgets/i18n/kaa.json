@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Nurlan"
+			"Nurlan",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
+	"prefs-gadgets": "Kerekli qurallar",
 	"gadgets": "Gadjetler",
 	"gadgets-title": "Gadjetler"
 }

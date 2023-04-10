@@ -3,9 +3,12 @@
 		"authors": [
 			"Better",
 			"Crucifunked",
-			"Julio Nepote"
+			"Julio Nepote",
+			"HackerPunki"
 		]
 	},
+	"vector-languages": "Luengas",
+	"vector-no-language-button-label": "Añidil luengas",
 	"vector-action-addsection": "Añidil tema",
 	"vector-action-delete": "Esborral",
 	"vector-action-move": "Mual",

@@ -4,13 +4,15 @@
 			"Ajdar",
 			"Derslek",
 			"Ерней",
-			"Ильнар"
+			"Ильнар",
+			"Ильгиз"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Китап",
 	"visualeditor-cite-tool-name-journal": "Мәкалә",
 	"visualeditor-cite-tool-name-news": "Яңалыклар",
 	"visualeditor-cite-tool-name-web": "Веб-сәхифә",
+	"cite-ve-changedesc-ref-group-both": "Референс төркем \"$1\"дән \"$2\"гә үзгәртелде",
 	"cite-ve-citationneeded-button": "Чыганакка сылтама өстәү",
 	"cite-ve-dialog-reference-editing-reused": "Әлеге сылтама бу биттә $1 {{PLURAL:$1|$1 тапкыр}} кулланыла.",
 	"cite-ve-dialog-reference-options-group-label": "Бу тупламны кулланырга",

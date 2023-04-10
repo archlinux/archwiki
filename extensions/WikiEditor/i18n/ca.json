@@ -46,7 +46,7 @@
 	"wikieditor-toolbar-tool-link-ext-text": "Text de l'enllaç:",
 	"wikieditor-toolbar-tool-link-insert": "Insereix un enllaç",
 	"wikieditor-toolbar-tool-link-cancel": "Cancel·la",
-	"wikieditor-toolbar-tool-link-int-target-status-exists": "La pàgina existeixa a {{SITENAME}}",
+	"wikieditor-toolbar-tool-link-int-target-status-exists": "La pàgina existeix a {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "La pàgina no existeix a {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "El títol que heu especificat no és vàlid",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Enllaç extern",

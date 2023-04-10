@@ -52,11 +52,9 @@ class MathConfigTest extends TestCase {
 
 	public function provideNormalizeRenderingMode() {
 		yield 'legacy user option' => [ 1, self::TEST_DEFAULT ];
-		yield 'png user option' => [ 0, MathConfig::MODE_PNG ];
 		yield 'source user option' => [ 3, MathConfig::MODE_SOURCE ];
 		yield 'mathml user option' => [ 5, MathConfig::MODE_MATHML ];
 		yield 'latexml user option' => [ 7, MathConfig::MODE_LATEXML ];
-		yield 'png string' => [ 'png', MathConfig::MODE_PNG ];
 		yield 'source string' => [ 'source', MathConfig::MODE_SOURCE ];
 		yield 'mathml string' => [ 'mathml', MathConfig::MODE_MATHML ];
 		yield 'latexml string' => [ 'latexml', MathConfig::MODE_LATEXML ];
@@ -73,12 +71,16 @@ class MathConfigTest extends TestCase {
 
 	public function testGetValidRenderingModes() {
 		$mathConfig = $this->newMathConfig( [
-			'MathValidModes' => [ MathConfig::MODE_MATHML, 5, MathConfig::MODE_PNG, 'this will be converted to png', ],
+			'MathValidModes' => [
+				MathConfig::MODE_MATHML,
+				5,
+				MathConfig::MODE_SOURCE,
+				'this will be converted to mathml' ],
 		] );
 		$actualModes = $mathConfig->getValidRenderingModes();
 		$this->assertCount( 2, $actualModes );
 		$this->assertContains( MathConfig::MODE_MATHML, $actualModes );
-		$this->assertContains( MathConfig::MODE_PNG, $actualModes );
+		$this->assertContains( MathConfig::MODE_SOURCE, $actualModes );
 	}
 
 	public function provideIsValidRenderingMode() {
@@ -92,17 +94,17 @@ class MathConfigTest extends TestCase {
 	 */
 	public function testIsValidRenderingMode( $mode, $expected ) {
 		$mathConfig = $this->newMathConfig( [
-			'MathValidModes' => [ MathConfig::MODE_PNG, MathConfig::MODE_MATHML ],
+			'MathValidModes' => [ MathConfig::MODE_MATHML ],
 		] );
 		$this->assertSame( $expected, $mathConfig->isValidRenderingMode( $mode ) );
 	}
 
 	public function testGetValidRenderingModeKeys() {
 		$mathConfig = $this->newMathConfig( [
-			'MathValidModes' => [ MathConfig::MODE_PNG ],
+			'MathValidModes' => [ MathConfig::MODE_MATHML ],
 		] );
 		$this->assertEquals(
-			[ 'png' => 'mw_math_png' ],
+			[ 'mathml' => 'mw_math_mathml' ],
 			$mathConfig->getValidRenderingModeKeys() );
 	}
 

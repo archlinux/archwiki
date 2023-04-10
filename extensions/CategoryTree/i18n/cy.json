@@ -1,14 +1,15 @@
 {
 	"@metadata": {
 		"authors": [
-			"Lloffiwr"
+			"Lloffiwr",
+			"Afalau"
 		]
 	},
 	"categorytree": "Coeden gategori",
 	"categorytree-portlet": "Categorïau",
 	"categorytree-legend": "Dangos y goeden gategori",
 	"categorytree-desc": "Teclyn AJAX yn arddangos [[Special:CategoryTree|adeiledd categorïau]]'r wici",
-	"categorytree-header": "Teipiwch enw categori yn y blwch er mwyn gweld ei gynnwys ar lun coeden.\nSylwer bod yn rhaid defnyddio offer uwch Sgript Java o'r enw AJAX er mwyn gwneud hyn.\nNi lwydda'r gofyniad os yw'ch porwr yn hen iawn neu os nad yw Sgript Java wedi ei alluogi.",
+	"categorytree-header": "Rhowch enw categori i weld ei gynnwys fel strwythur coeden. (JavaScript yn ofynnol.)",
 	"categorytree-category": "Categori:",
 	"categorytree-go": "Dangos y Goeden",
 	"categorytree-parents": "Rhieni",

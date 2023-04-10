@@ -12,7 +12,8 @@
 			"Stryn",
 			"Valtlait",
 			"Veikk0.ma",
-			"VezonThunder"
+			"VezonThunder",
+			"Valtlai"
 		]
 	},
 	"interwiki": "Wikienväliset linkit",
@@ -30,7 +31,7 @@
 	"interwiki_local_1_intro": "Ulkoiset HTTP-pyynnöt paikalliseen wikiin käyttäen tätä interwiki-etuliitettä ohjataan interwiki-kohteen osoitteeseen (eli kohdellaan kuin linkkejä paikallisiin sivuihin)",
 	"interwiki_trans": "Sisällytä",
 	"interwiki-trans-label": "Sisällytä",
-	"interwiki_trans_1_intro": "Jos wikitekstin syntaksia <code>{<nowiki />{etuliite:<em>sivun nimi</em>}}</code> käytetään, salli mallineiden/sivujen sisällytys ulkoisesta wikistä, jos interwiki-sisällytykset on sallittu yleisesti ([//www.mediawiki.org/wiki/Manual:$wgEnableScaryTranscluding ”scary transclusion”]).",
+	"interwiki_trans_1_intro": "Jos wikitekstin syntaksia <code>{<nowiki />{etuliite:<em>sivun nimi</em>}}</code> käytetään, salli mallineiden/sivujen sisällytys ulkoisesta wikistä, jos interwiki-sisällytykset on sallittu yleisesti ([https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgEnableScaryTranscluding ”scary transclusion”]).",
 	"interwiki_trans_0_intro": "Älä salli mallineiden/sivujen sisällyttämistä ulkoisesta wikistä <code>{<nowiki />{etuliite:<em>sivunnimi</em>}}</code>-syntaksilla; etsi sen sijaan paikallista sivua malline-nimiavaruudesta.",
 	"interwiki_1": "kyllä",
 	"interwiki_0": "ei",

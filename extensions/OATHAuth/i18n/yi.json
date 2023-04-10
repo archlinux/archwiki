@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"פוילישער"
+			"פוילישער",
+			"Pacha Tchernof"
 		]
 	},
 	"oathauth-account": "קאנטע נאמען:",
 	"oathauth-enable-generic": "אַקטיווירן",
-	"oathauth-disable-generic": "אָפאַקטיוויזירן"
+	"oathauth-disable-generic": "אָפאַקטיוויזירן",
+	"oathauth-notifications-disable-help": "הילף"
 }

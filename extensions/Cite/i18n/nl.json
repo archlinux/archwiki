@@ -19,6 +19,7 @@
 	"cite_error_ref_numeric_key": "Onjuist label <code>&lt;ref&gt;</code>; de naam mag niet slechts een geheel getal zijn. Gebruik een beschrijvende titel",
 	"cite_error_ref_no_key": "Het openingslabel <code>&lt;ref&gt;</code> is onjuist opgemaakt of heeft een verkeerde naam.",
 	"cite_error_ref_too_many_keys": "Onjuist label <code>&lt;ref&gt;</code>; onjuiste namen, bijvoorbeeld te veel",
+	"cite_error_ref_nested_extends": "Het uitbreiden van <code><ref></code>-tags tot meer dan één niveau diep is niet toegestaan",
 	"cite_error_ref_no_input": "Onjuist label <code>&lt;ref&gt;</code>; refs zonder naam moeten inhoud hebben",
 	"cite_error_references_duplicate_key": "Ongeldig label <code>&lt;ref&gt;</code>; de naam \"$1\" wordt meerdere keren met andere inhoud gedefinieerd.",
 	"cite_error_references_invalid_parameters": "Onjuiste parameter in <code>&lt;references&gt;</code>-tag",

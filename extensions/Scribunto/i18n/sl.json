@@ -3,7 +3,8 @@
 		"authors": [
 			"Dbc334",
 			"Eleassar",
-			"Janezdrilc"
+			"Janezdrilc",
+			"Uzume"
 		]
 	},
 	"scribunto-desc": "Ogrodje za vključevanje skriptnih jezikov v strani MediaWiki",
@@ -12,7 +13,7 @@
 	"scribunto-parser-dialog-title": "Napaka skripta",
 	"scribunto-error-short": "Napaka skripta: $1",
 	"scribunto-error-long": "Napake skripta:\n\n$1",
-	"scribunto-doc-page-name": "Modul:$1/dok",
+	"scribunto-doc-page-name": "Module:$1/dok",
 	"scribunto-doc-page-does-not-exist": "''Dokumentacijo za ta modul lahko ustvarite na strani [[$1]].''",
 	"scribunto-doc-page-header": "'''To je dokumentacijska stran za [[$1]]'''",
 	"scribunto-console-intro": "* Izvozi modula so na voljo kot spremenljivka »p«, vključno z neshranjenimi spremembami.\n* Vrstico začnite z <code>=</code>, da jo ocenite kot izraz, ali uporabite print(). Use mw.logObject() za tabele.\n* Uporabite mw.log() and mw.logObject() v kodi modula za pošiljanje sporočil na to konzolo.",

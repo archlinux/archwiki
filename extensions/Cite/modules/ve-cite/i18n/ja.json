@@ -20,7 +20,8 @@
 			"Takot",
 			"Vigorous action",
 			"Whym",
-			"おはぐろ蜻蛉"
+			"おはぐろ蜻蛉",
+			"Omotecho"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書籍",
@@ -37,6 +38,7 @@
 	"cite-ve-changedesc-reflist-responsive-unset": "脚注リストを1列のカラム表示に変更しました",
 	"cite-ve-citationneeded-button": "引用を追加",
 	"cite-ve-citationneeded-description": "エディターがこの主張には信頼できる出典による引用が必要であると示しています。",
+	"cite-ve-citationneeded-reason": "考えられる理由：",
 	"cite-ve-citationneeded-title": "要出典",
 	"cite-ve-dialog-reference-editing-reused": "この脚注はこのページ上で$1{{PLURAL:$1|回}}使用されています。",
 	"cite-ve-dialog-reference-editing-reused-long": "この脚注は、このページで$1回使われています。ここでの変更は、この脚注が使われているすべての場所に適用されます。",

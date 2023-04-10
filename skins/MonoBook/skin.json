@@ -11,7 +11,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "skin",
 	"requires": {
-		"MediaWiki": ">= 1.36.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"ValidSkinNames": {
 		"monobook": {
@@ -21,8 +21,12 @@
 					"name": "monobook",
 					"responsive": true,
 					"templateDirectory": "templates/",
-					"scripts": [ "skins.monobook.scripts" ],
-					"styles": [ "skins.monobook.styles" ],
+					"scripts": [
+						"skins.monobook.scripts"
+					],
+					"styles": [
+						"skins.monobook.styles"
+					],
 					"messages": [
 						"tagline",
 						"nstab-main",
@@ -84,7 +88,10 @@
 			]
 		},
 		"skins.monobook.scripts": {
-			"targets": [ "desktop", "mobile" ],
+			"targets": [
+				"desktop",
+				"mobile"
+			],
 			"packageFiles": [
 				"resources/skin.js",
 				"resources/mobile-uls.js",

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"פוילישער"
+			"פוילישער",
+			"Pacha Tchernof"
 		]
 	},
 	"citethispage": "ציטירן",
@@ -9,5 +10,5 @@
 	"citethispage-link": "ציטירן דעם דאזיגן בלאט",
 	"tooltip-citethispage": "אינפֿאָרמאַציע ווי אַזוי צו ציטירן דעם בלאַט",
 	"citethispage-change-submit": "ציטירן",
-	"citethispage-change-target": "בלאט:"
+	"citethispage-change-target": "בלאַט:"
 }

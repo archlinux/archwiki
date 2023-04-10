@@ -34,7 +34,8 @@
 			"WikiBayer",
 			"Wikifan",
 			"Wnme",
-			"Xqt"
+			"Xqt",
+			"*Surak*"
 		]
 	},
 	"abusefilter-desc": "Wendet Heuristiken automatisch auf Bearbeitungen an",
@@ -132,7 +133,7 @@
 	"abusefilter-log-cannot-see-details": "Du hast nicht die Berechtigung, Einzelheiten zur dieser Eingabe einzusehen.",
 	"abusefilter-log-cannot-see-privatedetails": "Du hast keine Berechtigung, um private Einzelheiten für diesen Eintrag einzusehen.",
 	"abusefilter-log-nonexistent": "Ein Eintrag mit der angegebenen Kennung ist nicht vorhanden.",
-	"abusefilter-log-details-hidden": "Du kannst die Details dieses Eintrags nicht einsehen, da sie vor der Öffentlichkeit verborgen sind.",
+	"abusefilter-log-details-hidden": "Du kannst die Details dieses Eintrags nicht einsehen, da sie nicht öffentlich sind.",
 	"abusefilter-log-details-hidden-implicit": "Du kannst die Einzelheiten für diesen Eintrag nicht einsehen, da die dazugehörige Version für die öffentliche Einsicht versteckt ist.",
 	"abusefilter-log-private-not-included": "Eine oder mehrere angegebene Filterkennungen sind privat. Da du nicht berechtigt bist, die Einzelheiten von privaten Filtern anzusehen, wurde nicht nach solchen Filtern gesucht.",
 	"abusefilter-log-hide-no-selected": "Keine Einträge ausgewählt",

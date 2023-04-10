@@ -7,7 +7,8 @@
 			"Kiranmayee",
 			"Praveen Illa",
 			"Ravichandra",
-			"Veeven"
+			"Veeven",
+			"V Bhavya"
 		]
 	},
 	"skinname-vector": "వెక్టర్",
@@ -15,7 +16,9 @@
 	"prefs-vector-enable-vector-1-help": "వచ్చే కొద్ది సంవత్సరాలలో, వెక్టర్ రూపం క్రమేపీ నవీకరించుతున్నాం. పాత వెక్టర్ (డిసెంబర్ 2019 ) నాటి వెక్టర్ రూపం వాడుటకు సహాయంగా వుంటుంది. తాజా సమాచారానికి [[mw:Reading/Web/Desktop_Improvements|ప్రాజెక్టు పేజీ]] చూడండి.",
 	"vector-opt-out": "పాత రూపానికి మార్చు",
 	"vector-opt-out-tooltip": "పాత వెక్టర్ రూపానికి వెళ్లడానికి  మీ అమరికలు మార్చు",
+	"vector-languages": "భాషలు",
 	"vector-language-button-label": "{{PLURAL:$1|$1 భాష|$1 భాషలు}}",
+	"vector-no-language-button-label": "భాషలను చేర్చు",
 	"vector-language-redirect-to-top": "ఈ {{SITENAME}} లో భాషా లింకులు పేజీకి పైన, వ్యాస శీర్షిక ఉండే వరుసలో కుడి చివర ఉంటాయి. [[#p-lang-btn|పైకి వెళ్ళు]].",
 	"vector-action-addsection": "అంశాన్ని చేర్చు",
 	"vector-action-delete": "తొలగించు",

@@ -76,5 +76,7 @@
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "Vider categorias de paginas",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "Tractamento meliorate de problemas de paginas",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "Problemas de paginas (Template:ambox) essera inserite in le articulo.",
-	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infortunatemente, le gruppamento de resultatos per pagina non es disponibile sur mobile. Si tu vole usar iste function, visita le sito pro scriptorio."
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "Infortunatemente, le gruppamento de resultatos per pagina non es disponibile sur mobile. Si tu vole usar iste function, visita le sito pro scriptorio.",
+	"minerva.css": "/* Le codice CSS placiate essera cargate pro le usatores del apparentia MinervaNeue */",
+	"minerva.js": "/* Le codice JavaScript placiate hic essera cargate pro le usatores del apparentia MinervaNeue */"
 }

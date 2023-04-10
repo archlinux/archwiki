@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Hanberke",
-			"TayfunEt."
+			"TayfunEt.",
+			"Uzume"
 		]
 	},
 	"scribunto-line": "$1 setirde",
@@ -10,7 +11,7 @@
 	"scribunto-parser-dialog-title": "Skript ýalňyşlygy",
 	"scribunto-error-short": "Skript ýalňyşlygy: $1",
 	"scribunto-error-long": "Skript ýalňyşlyklary: \n\n$1",
-	"scribunto-doc-page-name": "Modul:$1/doc",
+	"scribunto-doc-page-name": "Module:$1/doc",
 	"scribunto-doc-page-does-not-exist": "''Bu modul üçin resminamalar [[$1]] sahypasynda döredilip bilner''",
 	"scribunto-doc-page-header": "'''Bu [[$1]] üçin resminama sahypasy'''",
 	"scribunto-console-title": "Konsoly düzeltmek",

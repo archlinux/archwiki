@@ -480,7 +480,7 @@
 	"abusefilter-topnav-test": "Testiranje",
 	"abusefilter-topnav-examine": "Ispitajte prošla uređivanja",
 	"abusefilter-topnav-log": "Evidencija zlouporaba",
-	"abusefilter-topnav-tools": "Alati za ispravljanje pogrešaka (''debugging'')",
+	"abusefilter-topnav-tools": "Pomagala",
 	"abusefilter-log-name": "Evidencija filtra zloporaba",
 	"abusefilter-log-header": "Evidencija prikazuje sažetak promjena koje su napravljene filtrima.\nZa detaljnije informacije, vidi [[Special:AbuseFilter/history|popis]] nedavnih izmjena filtara.",
 	"abusefilter-logentry-create": "$1 {{GENDER:$2|stvara}} $4 ($5)",

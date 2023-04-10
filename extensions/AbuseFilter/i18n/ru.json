@@ -65,7 +65,8 @@
 			"Александр Сигачёв",
 			"ЛингвоЧел",
 			"Сrower",
-			"Туллук"
+			"Туллук",
+			"Colt browning"
 		]
 	},
 	"abusefilter-desc": "Позволяет применять автоматические эвристические фильтры к правкам",
@@ -282,7 +283,7 @@
 	"abusefilter-edit-action-degroup": "Исключить участника из всех привилегированных групп",
 	"abusefilter-edit-action-block": "Заблокировать участника или IP-адрес",
 	"abusefilter-edit-action-blocktalk": "Блокировать пользователя и/или IP-адрес от редактирования собственной страницы обсуждения",
-	"abusefilter-edit-action-throttle": "Применять меры только если участник превышает предел",
+	"abusefilter-edit-action-throttle": "Применять меры, только если участник превышает предел",
 	"abusefilter-edit-action-rangeblock": "Блокировать соответствующий диапазон, из которого работает участник.",
 	"abusefilter-edit-action-tag": "Отметить правку для дальнейшей проверки",
 	"abusefilter-edit-throttle-count": "Количество разрешённых действий:",

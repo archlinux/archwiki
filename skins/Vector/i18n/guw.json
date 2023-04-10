@@ -10,7 +10,9 @@
 			"Samatics"
 		]
 	},
+	"vector-languages": "Ogbè lẹ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ogbè|$1 ogbè lẹ}}",
+	"vector-no-language-button-label": "Yi ogbè lẹ dogọ",
 	"vector-action-addsection": "Yi hosọ dogọ",
 	"vector-action-delete": "Sunsunsẹ",
 	"vector-action-move": "Sẹtẹn",

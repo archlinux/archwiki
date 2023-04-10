@@ -164,6 +164,7 @@
 	"abusefilter-edit-done-subtitle": "ߛߍ߲ߛߍ߲ߟߊ߲߫ ߡߊߦߟߍ߬ߡߊ߲߬ߣߍ߲",
 	"abusefilter-edit-viewhistory": "ߛߍ߲ߛߍ߲ߟߊ߲ ߣߌ߲߬ ߘߐ߬ߝߐ ߘߐߜߍ߫",
 	"abusefilter-edit-history": "ߘߐ߬ߝߐ",
+	"abusefilter-edit-check": "ߞߎߡߦߊߘߐ ߝߛߍ߬ߝߛߍ߫",
 	"abusefilter-edit-badfilter": "ߌ ߣߊ߬ ߛߍ߲ߛߍ߲ߟߊ߲ ߡߍ߲ ߞߙߍߞߙߍ߫ ߟߊ߫ ߏ߬ ߕߴߦߋ߲߬.",
 	"abusefilter-edit-tools": "ߖߐ߯ߙߊ߲ ߠߎ߬:",
 	"abusefilter-edit-invalid-warn-message": "ߖߊ߬ߛߙߋ߬ߡߊ߬ߟߊ߫ ߗߋߛߓߍ ߘߐߞߏߟߏ߲ ߕߴߛߋ߫ ߓߌ߬ߟߊ߫ ߟߊ߫",
@@ -243,6 +244,7 @@
 	"abusefilter-edit-builder-vars-restrictions-move": "ߟߊߞߊ߲ߘߊߟߌ ߞߊߓߋ ߛߋ߲߬ߓߐ߫ ߞߐߜߍ ߟߊ߫",
 	"abusefilter-edit-builder-vars-restrictions-create": "ߞߐߜߍ ߣߌ߲߬ ߟߊߞߊ߲ߘߊߟߌ ߛߌ߲ߘߌ߫",
 	"abusefilter-edit-builder-vars-restrictions-upload": "ߞߐߕߐ߮ ߟߊߞߊ߲ߘߊߟߌ ߟߊߦߟߍ߬",
+	"abusefilter-edit-builder-vars-file-size": "ߞߐߕߐ߮ ߢߊ߲ߞߊ߲ ߝߌ߬ߘߊ߲ ߘߐ߫",
 	"abusefilter-edit-builder-vars-wiki-language": "ߞߊ߲ ߘߏߝߙߍߕߍ ߥߞߌ ߡߊ߬",
 	"abusefilter-filter-log": "ߛߍ߲ߛߍ߲ߟߊ߲ ߞߐ߯ߟߕߊ ߡߊߝߊ߬ߟߋ߲",
 	"abusefilter-history": "ߟߊߓߊ߯ߙߊ߫ ߢߊߖߎ߮ ߘߐ߬ߝߐ ߡߊߝߊ߬ߟߋ߲ #$1",
@@ -267,6 +269,7 @@
 	"abusefilter-revert-periodend": "ߥߎ߬ߛߎ ߟߊߓߊ߲:",
 	"abusefilter-revert-confirm-legend": "ߟߛߊ߬ߦߌ߬ߟߌ ߟߊߛߙߋߦߊ߫",
 	"abusefilter-revert-confirm": "ߊ߬ ߟߊߛߙߋߦߊ߫",
+	"abusefilter-revert-reasonfield": "ߊ߬ ߛߊߓߎ:",
 	"abusefilter-test-action": "ߞߍߟߌ ߛߎ߯ߦߊ:",
 	"abusefilter-test-search-type-all": "ߞߍߟߌ ߟߎ߬ ߓߍ߯",
 	"abusefilter-test-search-type-edit": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߠߎ߬",
@@ -288,5 +291,11 @@
 	"abusefilter-diff-invalid": "ߦߌߟߡߊ߫ ߡߊߢߌ߬ߣߌ߲߬ߞߊ߬ߣߍ߲ ߕߍ߫ ߛߐ߲߬ ߟߊߛߐ߬ߘߐ߲߫ ߠߊ߫",
 	"abusefilter-diff-backhistory": "ߌ ߞߐߛߊ߬ߦߌ߫ ߛߍ߲ߛߍ߲ߟߊ߲ ߘߐ߬ߝߐ ߡߊ߬",
 	"abusefilter-diff-prev": "ߡߊ߬ߦߟߍ߬ߡߊ߲߬ߠߌ߲ ߞߘߐ߬ߡߊ߲",
-	"abusefilter-diff-next": "ߡߊ߬ߟߦߍ߬ߡߊ߲߬ߠߌ߲߫ ߞߎߘߡߊ"
+	"abusefilter-diff-next": "ߡߊ߬ߟߦߍ߬ߡߊ߲߬ߠߌ߲߫ ߞߎߘߡߊ",
+	"abusefilter-import-submit": "ߓߟߏߡߟߊ ߟߊߛߣߍ߫",
+	"abusefilter-import-invalid-data": "ߌ ߦߋ߫ ߓߟߏߡߟߊ ߡߍ߲ ߟߊߛߣߍ߫ ߞߏ ߘߐ߫߸ ߏ߬ ߓߍ߲߬ߣߍ߲߫ ߕߍ߬",
+	"abusefilter-group-default": "ߓߐߛߎ߲",
+	"abusefilter-http-error": "http ߝߎ߬ߕߎ߲߬ߕߌ ߓߘߊ߫ ߟߊߞߏߟߐ߲߫: $1",
+	"abusefilter-view-privatedetails-submit": "ߜߎ߲߬ߘߎ߬ߘߐ߬ ߝߊߙߊ߲ߝߊ߯ߛߌ ߟߎ߬ ߦߋ߫",
+	"abusefilter-view-privatedetails-legend": "ߜߎ߲߬ߘߎ߬ߘߐ߬ ߝߊߙߊ߲ߝߊ߯ߛߌ ߟߎ߬ ߦߋ߫"
 }

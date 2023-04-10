@@ -6,10 +6,11 @@
 			"Otokoume",
 			"Shirayuki",
 			"Whym",
-			"Yusuke1109"
+			"Yusuke1109",
+			"Kiri"
 		]
 	},
-	"scribunto-desc": "MediaWiki ページにスクリプト言語を埋め込むフレームワーク",
+	"scribunto-desc": "スクリプト言語を MediaWiki ページに埋め込むためのフレームワーク",
 	"scribunto-line": "$1 行目",
 	"scribunto-module-line": "$1 内、$2 行目",
 	"scribunto-parser-dialog-title": "スクリプトエラー",
@@ -55,8 +56,11 @@
 	"scribunto-limitreport-timeusage": "Lua 実行時間",
 	"scribunto-limitreport-timeusage-value": "$1/$2 秒",
 	"scribunto-limitreport-virtmemusage": "Lua 仮想サイズ",
+	"scribunto-limitreport-virtmemusage-value": "$1/$2 {{PLURAL:$2|バイト}}",
 	"scribunto-limitreport-estmemusage": "Lua 推定メモリ使用量",
+	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|バイト}}",
 	"scribunto-limitreport-memusage": "Lua のメモリ使用量",
+	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|バイト}}",
 	"scribunto-limitreport-profile": "Lua プロファイル",
 	"scribunto-limitreport-profile-ms": "$1 ミリ秒",
 	"scribunto-limitreport-profile-percent": "$1%",

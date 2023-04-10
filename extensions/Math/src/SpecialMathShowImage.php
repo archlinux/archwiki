@@ -52,11 +52,7 @@ class SpecialMathShowImage extends SpecialPage {
 		$out->setArticleRelated( false );
 		$out->setRobotPolicy( "noindex,nofollow" );
 		$out->disable();
-		if ( $success && $this->mode == MathConfig::MODE_PNG ) {
-			$request->response()->header( "Content-type: image/png;" );
-		} else {
-			$request->response()->header( "Content-type: image/svg+xml; charset=utf-8" );
-		}
+		$request->response()->header( "Content-type: image/svg+xml; charset=utf-8" );
 		if ( $success && !( $this->noRender ) ) {
 			$request->response()->header(
 				'Cache-Control: public, s-maxage=604800, max-age=3600'
@@ -66,7 +62,7 @@ class SpecialMathShowImage extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgMathEnableExperimentalInputFormats, $wgMathoidCli;
+		global $wgMathEnableExperimentalInputFormats;
 		$request = $this->getRequest();
 		$hash = $request->getText( 'hash', '' );
 		$tex = $request->getText( 'tex', '' );
@@ -85,27 +81,13 @@ class SpecialMathShowImage extends SpecialPage {
 			echo $this->printSvgError( 'No Inputhash specified' );
 		} else {
 			if ( $tex === '' && $asciimath === '' ) {
-				if ( $wgMathoidCli && $this->mode === MathConfig::MODE_PNG ) {
-					$this->renderer = $this->rendererFactory->getRenderer( '', [], MathConfig::MODE_MATHML );
-				} else {
-					$this->renderer = $this->rendererFactory->getRenderer( '', [], $this->mode );
-				}
+				$this->renderer = $this->rendererFactory->getRenderer( '', [], $this->mode );
 				$this->renderer->setMd5( $hash );
 				$this->noRender = $request->getBool( 'noRender', false );
 				$isInDatabase = $this->renderer->readFromDatabase();
 				if ( $isInDatabase || $this->noRender ) {
 					$success = $isInDatabase;
 				} else {
-					if ( $this->mode == MathConfig::MODE_PNG && !$wgMathoidCli ) {
-						// get the texvc input from the mathoid database table
-						// and render the conventional way
-						$mmlRenderer = MathMathML::newFromMd5( $hash );
-						$mmlRenderer->readFromDatabase();
-						$this->renderer = $this->rendererFactory->getRenderer(
-							$mmlRenderer->getUserInputTex(), [], MathConfig::MODE_PNG
-						);
-						$this->renderer->setMathStyle( $mmlRenderer->getMathStyle() );
-					}
 					$success = $this->renderer->render();
 				}
 			} elseif ( $asciimath === '' ) {
@@ -118,13 +100,8 @@ class SpecialMathShowImage extends SpecialPage {
 				$success = $this->renderer->render();
 			}
 			if ( $success ) {
-				if ( $this->mode == MathConfig::MODE_PNG ) {
-					$output = $this->renderer->getPng();
-				} else {
-					$output = $this->renderer->getSvg();
-				}
+				$output = $this->renderer->getSvg();
 			} else {
-				// Error message in PNG not supported
 				$output = $this->printSvgError( $this->renderer->getLastError() );
 			}
 			if ( $output == "" ) {

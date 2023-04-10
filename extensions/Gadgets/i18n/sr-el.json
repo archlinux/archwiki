@@ -17,7 +17,7 @@
 	"gadgetusage-gadget": "Spravica",
 	"gadgetusage-usercount": "Broj korisnika",
 	"gadgetusage-noresults": "Nema pronađenih gadžeta.",
-	"gadgetusage-intro": "Tabela prikazuje broj korisnika koji su omogućili spravice na ovom vikiju. U aktivne korisnike se ubraja onaj koji je napravio izmenu u {{PLURAL:$1|poslednji dan|$1 poslednja dana|$1 poslednjih dana}}. Spisak ne uključuje statistike za spravice koje su svima podrazumevane i može uključivati spravice koje više nisu dostupne.",
+	"gadgetusage-intro": "Tabela prikazuje broj korisnika koji su omogućili spravice na ovom vikiju. U aktivne korisnike se ubrajaju oni koji su napravili izmene u {{PLURAL:$1|prethodnom danu|prethodnih $1 dana}}. Spisak ne uključuje statistike za spravice koje su svima podrazumevane i može uključivati spravice koje više nisu dostupne.",
 	"gadgetusage-intro-noactive": "Tabela prikazuje broj korisnika koji su omogućili spravice na ovom vikiju. Spisak ne uključuje statistike za spravice koje su svima podrazumevane i može uključivati spravice koje više nisu dostupne.",
 	"gadgetusage-activeusers": "Aktivni korisnici",
 	"gadgetusage-default": "Podrazumevano",

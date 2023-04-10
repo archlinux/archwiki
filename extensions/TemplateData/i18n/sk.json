@@ -10,7 +10,7 @@
 	},
 	"templatedata-desc": "Implementuje dátové úložisko pre parametre šablón (pomocou JSON)",
 	"templatedata-doc-desc-empty": "Bez popisu.",
-	"templatedata-doc-format-inline": "Táto šablóna upradnostňuje formátovanie parametrov na jednom riadku.",
+	"templatedata-doc-format-inline": "Táto šablóna uprednostňuje formátovanie parametrov na jednom riadku.",
 	"templatedata-doc-param-autovalue": "Automatická hodnota",
 	"templatedata-doc-param-default": "Predvolené",
 	"templatedata-doc-param-example": "Príklad",

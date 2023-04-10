@@ -8,6 +8,7 @@
 	},
 	"vector-languages": "Кӣл",
 	"vector-language-button-label": "{{PLURAL:$1|$1 кӣлл|$1 кӣл|$1 кӣллэ}}",
+	"vector-no-language-button-label": "Лажьхэ кӣлэтҍ",
 	"vector-action-addsection": "Лажьхэ тема",
 	"vector-action-delete": "Вэ̄цксэ",
 	"vector-action-move": "Вуайхэ нэ̄м",

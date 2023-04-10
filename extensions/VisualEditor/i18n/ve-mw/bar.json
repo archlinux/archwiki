@@ -4,12 +4,13 @@
 			"Alexx",
 			"Als-Holder",
 			"Joe Watzmo",
-			"Matthias Klostermayr"
+			"Matthias Klostermayr",
+			"Mucalexx"
 		]
 	},
-	"tooltip-ca-ve-edit": "De Seitn midm VisualEditor beorwaten",
-	"visualeditor-ca-createsource": "Artike olegn",
-	"visualeditor-ca-editsource": "Am Quelltext weakln",
-	"visualeditor-ca-editsource-section": "Am Quelltext weakln",
+	"tooltip-ca-ve-edit": "Dé Seiten mim VisualEditor beorwaten",
+	"visualeditor-ca-createsource": "Artiké áhléeng",
+	"visualeditor-ca-editsource": "Am Gwëntext werkeln",
+	"visualeditor-ca-editsource-section": "Am Gwëntext werkeln",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

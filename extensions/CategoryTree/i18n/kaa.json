@@ -11,5 +11,6 @@
 	"categorytree-mode-all": "hámme betler",
 	"categorytree-collapse": "kishilestiriw",
 	"categorytree-expand": "úlkenlestiriw",
-	"categorytree-member-counts": "Quramında {{PLURAL:$1|1 astkategoriya|$1 astkategoriya}}, {{PLURAL:$2|1 bet|$2 bet}}, hám {{PLURAL:$3|1 fayl|$3 fayl}}"
+	"categorytree-member-counts": "Quramında {{PLURAL:$1|1 astkategoriya|$1 astkategoriya}}, {{PLURAL:$2|1 bet|$2 bet}}, hám {{PLURAL:$3|1 fayl|$3 fayl}}",
+	"categorytree-not-found": "<i>$1</i> degen kategoriya tabılmadı"
 }

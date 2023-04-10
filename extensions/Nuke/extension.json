@@ -8,7 +8,7 @@
 	"descriptionmsg": "nuke-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.35.6"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {

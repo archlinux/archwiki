@@ -4,10 +4,13 @@
 			"Amire80",
 			"Gildo Máquina",
 			"Jacinto Jeque",
-			"Tomas Armando Moz"
+			"Tomas Armando Moz",
+			"Gito da Ana"
 		]
 	},
+	"vector-languages": "Mattaava",
 	"vector-language-button-label": "{{PLURAL:$1|$1 nttaava|$1 Mattaava}}",
+	"vector-no-language-button-label": "Yuncererya mattaava",
 	"vector-action-addsection": "Ophitaanya yoolempwa",
 	"vector-action-delete": "Ocipiha",
 	"vector-action-move": "Okumiha",

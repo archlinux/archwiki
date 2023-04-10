@@ -6,7 +6,8 @@
 			"Jeblad",
 			"Jon Harald Søby",
 			"Kingu",
-			"SuperPotato"
+			"SuperPotato",
+			"EdoAug"
 		]
 	},
 	"categorytree": "Kategoritre",
@@ -29,7 +30,7 @@
 	"categorytree-num-files": "$1 F",
 	"categorytree-num-empty": "tom",
 	"categorytree-load": "last",
-	"categorytree-loading": "laster...",
+	"categorytree-loading": "laster ...",
 	"categorytree-nothing-found": "ingenting funnet",
 	"categorytree-no-subcategories": "ingen underkategorier",
 	"categorytree-no-parent-categories": "ingen foreldrekategorier",

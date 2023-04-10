@@ -6,7 +6,8 @@
 			"Kiranpoojary",
 			"NamwikiTL",
 			"VASANTH S.N.",
-			"Vishwanatha Badikana"
+			"Vishwanatha Badikana",
+			"Mahaveer Indra"
 		]
 	},
 	"vector-action-addsection": "ವಿಸಯೊ ಸೇರಾಲೆ",
@@ -20,5 +21,6 @@
 	"vector-view-history": "ಇತಿಹಾಸೊನು ತೂಲೆ",
 	"vector-view-view": "ಓದ್‍ಲೆ",
 	"vector-view-viewsource": "ಮೂಲೊನು ತೂಲೆ",
-	"vector-more-actions": "ನನಾತ್"
+	"vector-more-actions": "ನನಾತ್",
+	"vector-searchsuggest-containing": "ಉಂದು<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ಇಪ್ಪುನ ಪುಟೊಕ್ಲೆನ್ ನಾಡ್‌ಲೆ"
 }

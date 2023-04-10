@@ -3,7 +3,8 @@
 		"authors": [
 			"Fwolff",
 			"Naudefj",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Rooiratel"
 		]
 	},
 	"abusefilter-desc": "Pas outomatiese heuristiek te wysigings",
@@ -32,6 +33,7 @@
 	"abusefilter-log-search-filter": "Filternommer:",
 	"abusefilter-log-search-title": "Titel:",
 	"abusefilter-log-search-wiki": "Wiki:",
+	"abusefilter-log-search-impact-all": "Alle aksies",
 	"abusefilter-log-search-submit": "Soek",
 	"abusefilter-log-detailedentry-global": "globale filter $1",
 	"abusefilter-log-detailedentry-local": "filter $1",
@@ -115,6 +117,7 @@
 	"abusefilter-edit-warn-actions": "Handelinge:",
 	"abusefilter-edit-warn-preview": "Voorskou gekose boodskap",
 	"abusefilter-edit-warn-edit": "Skep/wysig gekose boodskap",
+	"abusefilter-edit-disallow-actions": "Aksies:",
 	"abusefilter-edit-tag-tag": "Tags om aansoek te doen (een per lyn):",
 	"abusefilter-edit-denied": "Jy kan nie view details van hierdie filter nie, want dit is weggesteek uit die openbare oog.",
 	"abusefilter-edit-main": "Filter-parameters",
@@ -244,10 +247,13 @@
 	"abusefilter-test-submit": "Toets",
 	"abusefilter-test-load": "Laai",
 	"abusefilter-test-user": "Wysigings deur gebruiker:",
+	"abusefilter-test-nobots": "Versteek bot-wysigings",
 	"abusefilter-test-period-start": "Veranderinge gemaak na:",
 	"abusefilter-test-period-end": "Veranderinge gemaak nir:",
 	"abusefilter-test-page": "Wysigings aan bladsy:",
 	"abusefilter-test-shownegative": "Wys veranderinge wat nie aan die filter voldoen nie",
+	"abusefilter-test-search-type-all": "Alle aksies",
+	"abusefilter-test-search-type-edit": "Wysigings",
 	"abusefilter-changeslist-examine": "ondersoek",
 	"abusefilter-examine": "Ondersoek individuele veranderinge",
 	"abusefilter-examine-intro": "Hierdie bladsy laat jou toe om die veranderlikes wat gegenereer word deur die misbruik filter om 'n individuele verandering te ondersoek, en dit toets teen filters.",

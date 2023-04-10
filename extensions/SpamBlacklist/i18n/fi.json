@@ -27,5 +27,5 @@
 	"log-description-spamblacklist": "Nämä tapahtumat ovat osumia roskalinkkien torjuntalistalla.",
 	"logentry-spamblacklist-hit": "$1 sai aikaan osuman roskalinkkien torjuntalistalla kohteessa $3 yrittäessään lisätä $4",
 	"right-spamblacklistlog": "Tarkastella roskalinkkien torjuntalistan lokia",
-	"action-spamblacklistlog": "nähdä roskalinkkien torjuntalistan lokia"
+	"action-spamblacklistlog": "tarkastella roskalinkkien torjuntalistan lokia"
 }

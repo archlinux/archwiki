@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ajiniyaz Nurniyazov"
+		]
+	},
+	"scribunto-doc-page-does-not-exist": "''Bul moduldiń hújjetin [[$1]] betinde jarata alasız''",
+	"scribunto-doc-page-header": "'''Bul [[$1]] moduline arnalǵan hújjet beti'''"
+}

@@ -31,7 +31,8 @@
 			"Stryn",
 			"TMg",
 			"Valtlait",
-			"VezonThunder"
+			"VezonThunder",
+			"Valtlai"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -174,7 +175,7 @@
 	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "Tämä parametri on jo käytettävissä. Tarkista vaihtoehdot sivupalkista.",
 	"visualeditor-dialog-transclusion-add-param-error-forbidden-char": "$1 on kielletty merkki. Poista se lisätäksesi parametrin.",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Parametrin nimi",
-	"visualeditor-dialog-transclusion-add-param-save": "Lisää parametri",
+	"visualeditor-dialog-transclusion-add-param-save": "Lisää",
 	"visualeditor-dialog-transclusion-add-template": "Lisää malline",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Lisää dokumentoimaton parametri",
 	"visualeditor-dialog-transclusion-collapse-options": "Piilota valinnat",
@@ -183,10 +184,10 @@
 	"visualeditor-dialog-transclusion-contextitem-description": "Käytetty mallineita: $1",
 	"visualeditor-dialog-transclusion-contextitem-loading": "Ladataan...",
 	"visualeditor-dialog-transclusion-expand-options": "Näytä valinnat",
-	"visualeditor-dialog-transclusion-filter-hide-unused": "Piilota käyttämättömät kentät",
+	"visualeditor-dialog-transclusion-filter-hide-unused": "Piilota käyttämättömät",
 	"visualeditor-dialog-transclusion-filter-no-match": "Ei hakutuloksia",
 	"visualeditor-dialog-transclusion-filter-placeholder": "Haku",
-	"visualeditor-dialog-transclusion-filter-show-all": "Näytä kaikki kentät",
+	"visualeditor-dialog-transclusion-filter-show-all": "Näytä kaikki",
 	"visualeditor-dialog-transclusion-help-title": "Mukautettava malline",
 	"visualeditor-dialog-transclusion-help-message": "Mallineen sisältämää tietoa voi mukauttaa. Valittavissa olevat tietueet näytetään listana vasemmalla ja listasta valitut tietueet näytetään oikealla.",
 	"visualeditor-dialog-transclusion-help-page-help": "[//www.mediawiki.org/wiki/Special:MyLanguage/Help:VisualEditor/User_guide#Editing_templates Mukautettavien mallineiden ohje]",

@@ -182,6 +182,7 @@
 	"abusefilter-edit-status-label": "గణాంకాలు:",
 	"abusefilter-edit-status": "గత $1 {{PLURAL:$1|చర్యలో|చర్యలలో}}, ఈ వడపోత $2 సార్లు సరిపోలింది ($3%).\nసగటున, అది నడిచిన సమయం $4 ms. అది నిబంధనల పరిమితి లోని $5 {{PLURAL:$5|నిబంధనను|నిబంధనలను}} వాడుతుంది.",
 	"abusefilter-edit-throttled-warning": "'''హెచ్చరిక:''' ఈ వడపోత హానికరమైనదని ఆటోమాటిగ్గా గుర్తించబడింది. భద్రతా కారణాల రీత్యా, కింది చర్యలు అమలు కావు ($1). ఈ ఆంక్షను తీసివేసేందుకు, మీ షరతులను ఓసారి మళ్ళీ [[mw:Extension:AbuseFilter/Conditions|అనుకూలీకరించండి]] \n(ఆప్టిమైజు చెయ్యండి).",
+	"abusefilter-edit-throttled-warning-no-actions": "'''హెచ్చరిక:'''' ఈ వడపోతను హానికరమైనదని ఆటోమాటిగ్గా గుర్తించబడింది. చర్యలు వేటినీ ఆటోమాటిగ్గా నిలిపివేయలేదు గానీ, ఈ వడపోతకు చాలా పెద్ద సంఖ్యలో దిద్దుబాట్లు సరిపోలుతాయని అంచనా వేసారో లేదో తనిఖీ చేయండి. అది సరి అయితే, మీరు ఈ హెచ్చరికను విస్మరించవచ్చు.",
 	"abusefilter-edit-new": "కొత్త వడపోత",
 	"abusefilter-edit-save": "వడపోతను భద్రపరచు",
 	"abusefilter-edit-id": "వడపోత ID:",
@@ -504,5 +505,7 @@
 	"abusefilter-log-ip-not-available": "అందుబాటులో లేదు",
 	"abusefilter-tag-reserved": "<code>abusefilter-condition-limit</code> ట్యాగును దుశ్చర్యవడపోత అంతర్గత వినియోగం కోసం రిజర్వు చేసాం.",
 	"tag-abusefilter-condition-limit": "నిబంధనల పరిమితిని చేరింది",
-	"tag-abusefilter-condition-limit-description": "చేతనంగా ఉన్న [[Special:AbuseFilter|దుశ్చర్య వడపోతలన్నీ]] కూడా పరిశీలించలేని దిద్దుబాట్లు, ఇతర ఘటనలు ([[mw:Extension:AbuseFilter/Conditions|సహాయం]])."
+	"tag-abusefilter-condition-limit-description": "చేతనంగా ఉన్న [[Special:AbuseFilter|దుశ్చర్య వడపోతలన్నీ]] కూడా పరిశీలించలేని దిద్దుబాట్లు, ఇతర ఘటనలు ([[mw:Extension:AbuseFilter/Conditions|సహాయం]]).",
+	"notification-header-throttle-filter-actions": "{{GENDER:$1|మీరు}} ఇటీవల దిద్దుబాటు చేసిన వడపోత $2 కు పెద్ద మొత్తంలో దిద్దుబాట్లు సరిపోలుతున్నాయి. అంచేత, కింది {{PLURAL:$4|చర్య ఆటోమాటిగ్గా అచేతనం చేయబడింది|చర్యలు ఆటోమాటిగ్గా అచేతనం చేయబడ్డాయి}}: $3.",
+	"notification-header-throttle-filter-no-actions": "{{GENDER:$1|మీరు}} ఇటీవల దిద్దుబాటు చేసిన వడపోత $2 కు పెద్ద మొత్తంలో దిద్దుబాట్లు సరిపోలుతున్నాయి. కానీ, చర్యలు వేటినీ ఆటోమాటిగ్గా నిలిపివేయలేదు."
 }

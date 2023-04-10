@@ -8,11 +8,12 @@
 			"Octahedron80",
 			"Patsagorn Y.",
 			"Trisorn Triboon",
-			"Ekminarin"
+			"Ekminarin",
+			"Kaoavi"
 		]
 	},
 	"minerva-last-modified-date": "แก้ไขล่าสุดเมื่อ $1 เวลา $2",
-	"minerva-watchlist-cta": "ติดตามการเปลี่ยนแปลงที่จะเกิดขึ้นของหน้านีั",
+	"minerva-watchlist-cta": "ติดตามการเปลี่ยนแปลงทั้งหมดในหน้านี้",
 	"minerva-talk-add-topic": "เพิ่มหัวข้อ",
 	"mobile-frontend-cookies-required": "ต้องใช้คุกกี้ในการสลับโหมดมุมมอง โปรดเปิดใช้งานคุกกี้แล้วลองอีกครั้ง",
 	"mobile-frontend-editor-edit": "แก้ไข",

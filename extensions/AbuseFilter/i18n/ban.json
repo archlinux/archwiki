@@ -52,6 +52,7 @@
 	"abusefilter-log-linkonundelete": "cingak log panyalahwigunaan",
 	"abusefilter-log-hide-reason": "Hawanan:",
 	"abusefilter-log-hide-show": "Sinahang",
+	"abusefilter-log-hide-hide": "Engkebang",
 	"abusefilter-log-hide-done-show": "{{PLURAL:$1|ngenahang}}",
 	"abusefilter-log-entry-suppress": "$1 {{GENDER:$2|ngengkebang}} $3",
 	"log-action-filter-abusefilter": "Soroh gentosan saringan:",

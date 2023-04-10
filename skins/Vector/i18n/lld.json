@@ -6,7 +6,9 @@
 			"Starladin"
 		]
 	},
+	"vector-languages": "Rujenedes",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingaz|$1 lingac}}",
+	"vector-no-language-button-label": "Jonta rujenedes",
 	"vector-action-addsection": "Mët leprò n tema de descuscion",
 	"vector-action-delete": "Straihëia",
 	"vector-action-move": "Spostëia",

@@ -9,7 +9,9 @@
 			"Via maxima"
 		]
 	},
+	"vector-languages": "Limbas",
 	"vector-language-button-label": "{{PLURAL:$1|$1 limba|$1 limbas}}",
+	"vector-no-language-button-label": "Annanghe limbas",
 	"vector-action-addsection": "Agiunghe cuntierra",
 	"vector-action-delete": "Burra",
 	"vector-action-move": "Move",

@@ -5,7 +5,9 @@
 			"Tumbuka Arch"
 		]
 	},
+	"vector-languages": "Viyowoyelo",
 	"vector-language-button-label": "{{PLURAL:$1|$1 chiyowoyelo|$1 viyowoyelo}}",
+	"vector-no-language-button-label": "Sazgapo viyowoyelo",
 	"vector-action-addsection": "Sazgapo mutu",
 	"vector-action-delete": "Fufuta",
 	"vector-action-move": "Ithya",

@@ -124,7 +124,7 @@
 	"wikieditor-toolbar-tool-replace-button-replace": "Zamenjaj",
 	"wikieditor-toolbar-tool-replace-button-replaceall": "Zamenjaj vse",
 	"wikieditor-toolbar-tool-replace-close": "Zapri",
-	"wikieditor-toolbar-tool-replace-nomatch": "Vaše iskanje se ne ujema z ničemer.",
+	"wikieditor-toolbar-tool-replace-nomatch": "Vaše iskanje se ne ujema z ničimer.",
 	"wikieditor-toolbar-tool-replace-success": "{{PLURAL:$1|Opravljena $1 zamenjava|Opravljeni $1 zamenjavi|Opravljene $1 zamenjave|Opravljenih $1 zamenjav}}.",
 	"wikieditor-toolbar-tool-replace-emptysearch": "Za iskanje niste vnesli ničesar.",
 	"wikieditor-toolbar-tool-replace-invalidregex": "Običajni izraz, ki ste ga vnesli, je neveljaven: $1",

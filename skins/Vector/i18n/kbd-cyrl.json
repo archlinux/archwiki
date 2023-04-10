@@ -6,7 +6,9 @@
 			"Rhdtranslate"
 		]
 	},
+	"vector-languages": "Бзэхэр",
 	"vector-language-button-label": "‎{{PLURAL:$1|$1 бзэр|$1 бзэхэр}}",
+	"vector-no-language-button-label": "Бзэхэр щӀыгъун",
 	"vector-action-addsection": "Темэр хэлъхьэн",
 	"vector-action-delete": "ИгъэкӀын",
 	"vector-action-move": "‎ЦӀэр хъуэжын",

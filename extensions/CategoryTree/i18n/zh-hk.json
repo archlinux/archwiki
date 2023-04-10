@@ -1,8 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
-			"C933103"
+			"C933103",
+			"LuciferianThomas"
 		]
 	},
-	"categorytree-num-files": "$1檔案"
+	"categorytree-num-files": "$1 個檔案"
 }

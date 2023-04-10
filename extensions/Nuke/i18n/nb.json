@@ -24,6 +24,7 @@
 	"nuke-maxpages": "Maksimalt antall sider:",
 	"nuke-editby": "Opprettet av [[Special:Contributions/$1|{{GENDER:$1|$1}}]]",
 	"nuke-deleted": "Siden '''$1''' har blitt slettet.",
+	"nuke-deletion-queued": "Siden '''$1''' står i kø for å slettes.",
 	"nuke-not-deleted": "Siden [[:$1]] '''kunne ikke''' slettes.",
 	"nuke-delete-more": "[[Special:Nuke|Slett flere sider]]",
 	"nuke-pattern": "SQL-LIKE-mønster (f.eks. %) for sidenavnet:",

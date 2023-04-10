@@ -5,9 +5,10 @@
 			"Si Gam Acèh"
 		]
 	},
-	"vector-opt-out": "Gantoe u seuneudeuh awai",
+	"vector-opt-out": "Gantoe u rupa awai",
 	"vector-languages": "Bahsa",
 	"vector-language-button-label": "{{PLURAL:$1|$1 bahsa}}",
+	"vector-no-language-button-label": "Tamah bahsa",
 	"vector-action-addsection": "Tamah bhaih",
 	"vector-action-delete": "Sampôh",
 	"vector-action-move": "Pupinah",

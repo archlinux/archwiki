@@ -7,7 +7,9 @@
 		]
 	},
 	"minerva-last-modified-date": "ٲخری اؠڈِٹ $1 پؠٹھ، $2 بَجے",
+	"minerva-watchlist-cta": "یَتھ صَفَس تہٕ یَمچہِ تَبدیٖلیَن پؠٹھ تھٲوِو نَظَر.",
 	"minerva-talk-add-topic": " عُنٛوان لؠکھِو",
+	"mobile-frontend-cookies-required": "انداز نُمٲیِش تبدیٖل کَرنہٕ خٲطرٕ چھِ کُکیٖز ضۆروٗرَتھ. مہربٲنی کٔرِتھ ترٛٲوِو تِم یَلہٕ تہٕ پَتہٕ کٔرِو بیٛاکھ کوٗشِش.",
 	"mobile-frontend-editor-edit": "اؠڈِٹ",
 	"minerva-download": "ڈاوُنلوڈ پی‌ڈی‌ایف",
 	"mobile-frontend-editor-redlink-create": "صَفہٕ بَنٲوِو",
@@ -31,6 +33,7 @@
 	"mobile-frontend-meta-data-issues-header-talk": "یَتھ صَفَس مُتلِق",
 	"mobile-frontend-meta-data-issues-talk": "یَتھ کَتھ صَفَس مُتلِق",
 	"mobile-frontend-notifications-filter": "فِلٹَر",
+	"mobile-frontend-pageaction-edit-tooltip": "یَمہٕ صَفُک گۄڈٕنیُٛک حِصہٕ کٔرِو اؠڈِٹ",
 	"mobile-frontend-placeholder": "{{SITENAME}} مَنٛز کٔرِو تَلاش",
 	"mobile-frontend-random-button": "کانٛہہ تہِ",
 	"mobile-frontend-redirected-from": "\"[[$1]]\" پؠٹھٕ رجوٗع مُکرر",
@@ -62,6 +65,7 @@
 	"minerva-page-actions-wikibase": "{{WBREPONAME}} آئٹم",
 	"minerva-page-actions-language-switcher": "زَبانہٕ",
 	"minerva-page-actions-history": "توٲریٖخ",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|کَتھ باتھ]]",
 	"minerva-talk-explained": "جٲری کَتھ بات",
 	"minerva-talk-explained-empty": "یتھ صَفَس پؠٹھ چھُ نَہ کانٛہہ بَِحَژ.",
 	"minerva-talk-full-page": "وِکی صَفٕک پٲتھؠ پٔرِٛو",
@@ -71,5 +75,7 @@
 	"skin-minerva-issue-learn-more": "مٔزیٖد وُچھِو",
 	"skin-minerva-mobile-option-MinervaShowCategories": "زٲژ",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "صَفٕک زٲژِ وُچھِو",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "صَفہٕ مَسلہٕ (فرما:Ambox) آسَن مَضموٗن کین گۄڈنِچَن سٕطرَن مَنٛز."
+	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "صَفَس مَنٛز مَسلَن ہُنٛد بَہتَر سلوٗک",
+	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "صَفہٕ مَسلہٕ (فرما:Ambox) آسَن مَضموٗن کین گۄڈنِچَن سٕطرَن مَنٛز.",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "بدقسمتی سان چھُنہٕ صَفہٕ مُطٲبِق جَماتھ ہُنٛد نٔتیٖجہٕ  موبٲیِلس پؠٹھ دٔستیاب۔ اگر تم گروپس مطٲبق صفحہٕ خصوصیت استعمال کرنإ چُھ چاھندٕ، براہ کرم ڈیسک ٹاپ سائٹس پیٹھ زِ"
 }

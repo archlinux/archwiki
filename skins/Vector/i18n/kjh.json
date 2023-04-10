@@ -5,6 +5,9 @@
 			"AlexandrL714"
 		]
 	},
+	"vector-languages": "Тіллер",
+	"vector-language-button-label": "{{PLURAL:$1|$1 тіл}}",
+	"vector-no-language-button-label": "Тіллер хос саларға",
 	"vector-action-addsection": "Тема хозыбзарға",
 	"vector-action-delete": "Тастабызарға",
 	"vector-action-move": "Адын алыстырыбызарға",

@@ -16,5 +16,7 @@
 	"visualeditor-dialog-media-info-readmore": "Ve bıhand",
 	"visualeditor-dialog-meta-settings-index-disable": "Ne",
 	"visualeditor-dialog-meta-settings-newsectioneditlink-disable": "Ne",
-	"visualeditor-mweditmodesource-warning-cancel": "Ləğv karde"
+	"visualeditor-mweditmodesource-warning-cancel": "Ləğv karde",
+	"visualeditor-rebase-client-export": "İxroc",
+	"visualeditor-rebase-client-export-start": "İxroc"
 }

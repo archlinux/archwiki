@@ -1,11 +1,17 @@
 {
 	"@metadata": {
 		"authors": [
-			"Ahmedadeljaff"
+			"Ahmedadeljaff",
+			"MRidhaAJ"
 		]
 	},
+	"vector-languages": "لغات",
 	"vector-language-button-label": "{{PLURAL:$1|$1 لغـة|$1 لغـات}}",
+	"vector-no-language-button-label": "حط لغات",
 	"vector-action-addsection": "شارك مقالة",
+	"vector-action-delete": "حذف",
+	"vector-action-move": "حرك",
+	"vector-action-protect": "إحمي",
 	"vector-view-create": "سوي",
 	"vector-view-edit": "تعديل",
 	"vector-view-history": "شوف التاريخ",

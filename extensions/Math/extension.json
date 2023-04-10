@@ -131,7 +131,6 @@
 		"MathValidModes": {
 			"description": "To access this at run-time, use MathConfig::getValidRenderingModes(). Do not use the non-normalized configuration directly.",
 			"value": [
-				"png",
 				"source",
 				"mathml"
 			]

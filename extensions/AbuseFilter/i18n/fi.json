@@ -34,7 +34,8 @@
 			"Vililikku",
 			"Vlad5250",
 			"Zache",
-			"ZeiP"
+			"ZeiP",
+			"Valtlai"
 		]
 	},
 	"abusefilter-desc": "Mahdollistaa muokkauksien suodattamisen automaattisella heuristiikalla.",
@@ -564,5 +565,6 @@
 	"abusefilter-tag-reserved": "Tämä <code>abusefilter-condition-limit</code> merkintä on varattu Väärinkäyttösuodattimen sisäiseen käyttöön.",
 	"tag-abusefilter-condition-limit": "ehtojen raja-arvo on saavutettu",
 	"tag-abusefilter-condition-limit-description": "Muokkaukset tai muut tapahtumat, joita ei voitu käydä läpi kaikilla aktiivisilla [[Special:AbuseFilter|väärinkäyttösuodattimilla]] ([[mw:Extension:AbuseFilter/Conditions|ohje]]).",
+	"notification-subject-throttle-filter": "Muokkaamasi väärinkäyttösuodatin estettiin {{GRAMMAR:inessive|{{SITENAME}}}}",
 	"notification-link-text-show-filter": "Näytä suodatin"
 }

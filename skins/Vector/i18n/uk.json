@@ -14,7 +14,9 @@
 			"Piramidion",
 			"Prima klasy4na",
 			"Ата",
-			"Тест"
+			"Тест",
+			"VoidWanderer",
+			"Пан Хаунд"
 		]
 	},
 	"skinname-vector": "Старий вектор (2010)",
@@ -33,7 +35,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 мова|$1 мови|$1 мов}}",
 	"vector-no-language-button-label": "Додати мови",
 	"vector-no-language-button-aria-label": "Ця стаття існує лише цією мовою. Додайте статтю для інших мов",
-	"vector-language-redirect-to-top": "Цією мовою {{GRAMMAR:locative|{{SITENAME}}}} посилання на інші мовні версії розташовані угорі сторінки з іншого боку від її назви. [[#p-lang-btn|Перейти угору]].",
+	"vector-language-redirect-to-top": "Перемикач мовної версії розташований справа від назви статті. [[#p-lang-btn|Перейти]].",
 	"vector-language-variant-switcher-label": "Змінити варіант мови",
 	"vector-action-addsection": "Додати тему",
 	"vector-action-delete": "Вилучити",

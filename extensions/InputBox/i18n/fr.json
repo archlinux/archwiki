@@ -7,14 +7,15 @@
 			"Kghbln",
 			"Sherbrooke",
 			"Wyz",
-			"Zetud"
+			"Zetud",
+			"Verdy p"
 		]
 	},
 	"inputbox-desc": "Permet l’inclusion de formulaires HTML prédéfinis.",
-	"inputbox-error-no-type": "Vous n’avez pas précisé le type de la boîte d’entrée à créer.",
-	"inputbox-error-bad-type": "Type de boîte entrée « $1 » non reconnue.\nIndiquez une option parmi « create », « comment », « search », « searche2 » ou « fulltext ».",
+	"inputbox-error-no-type": "Vous n’avez pas précisé le type de champ de saisie à créer.",
+	"inputbox-error-bad-type": "Type de champ de saisie « $1 » non reconnu.\nVeuillez spécifier « create », « comment », « search », « search2 » ou « fulltext ».",
 	"inputbox-tryexact": "Essayez la correspondance exacte",
-	"inputbox-searchfulltext": "Recherche en texte intégral",
+	"inputbox-searchfulltext": "Rechercher en texte intégral",
 	"inputbox-createarticle": "Créer une page",
 	"inputbox-movearticle": "Renommer la page",
 	"inputbox-postcomment": "Nouvelle section",

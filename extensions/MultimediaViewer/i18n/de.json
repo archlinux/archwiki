@@ -10,7 +10,8 @@
 			"Snatcher",
 			"Steinsplitter",
 			"WhatamIdoing",
-			"Lucas Werkmeister"
+			"Lucas Werkmeister",
+			"Brettchenweber"
 		]
 	},
 	"multimediaviewer-desc": "Ermöglicht die Darstellung von Vorschaubildern in einer Vollbildschnittstelle",
@@ -47,7 +48,7 @@
 	"multimediaviewer-restriction-insignia": "Dieses Bild enthält offizielle Abzeichen, die Gegenstand rechtlicher Beschränkungen sein könnten.",
 	"multimediaviewer-restriction-ita-mibac": "Dieses Bild reproduziert ein Eigentum des italienischen Kulturerbes und ist durch italienisches Recht beschränkt.",
 	"multimediaviewer-restriction-nazi": "Dieses Bild enthält nationalsozialistische oder andere faschistische Abzeichen, die in einigen Staaten verboten sein könnten.",
-	"multimediaviewer-restriction-personality": "Die Persönlichkeitsrechte der abgebildeten Person(en) beschränken bestimmte Weiterverwendungen des Bildes ohne dessen/deren vorherige Zustimmung.",
+	"multimediaviewer-restriction-personality": "Die Persönlichkeitsrechte der abgebildeten Person(en) beschränken bestimmte Weiterverwendungen des Bildes ohne deren vorherige Zustimmung.",
 	"multimediaviewer-restriction-trademarked": "Dieses Bild enthält einen Inhalt, der Thema von Markenrechten sein könnte.",
 	"multimediaviewer-restriction-default": "Dieses Bild könnte durch rechtliche Bestimmungen außerhalb des Urheberrechts beschränkt sein. Siehe die Dateibeschreibungsseite für Einzelheiten.",
 	"multimediaviewer-restriction-default-and-others": "Dieses Bild könnte durch andere rechtliche Bestimmungen außerhalb des Urheberrechts beschränkt sein. Siehe die Dateibeschreibungsseite für Einzelheiten.",

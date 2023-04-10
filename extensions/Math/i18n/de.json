@@ -4,7 +4,8 @@
 			"Kghbln",
 			"Metalhead64",
 			"Revolus",
-			"Umherirrender"
+			"Umherirrender",
+			"Brettchenweber"
 		]
 	},
 	"math-desc": "Ergänzt das Tag <code>&lt;math&gt;</code> zum Darstellen mathematischer Formeln",
@@ -21,7 +22,7 @@
 	"math-visualeditor-mwlatexinspector-qid": "Wikibase-ID (mit Q-Präfix)",
 	"math-visualeditor-mwmathdialog-title": "Math-Formel",
 	"math-visualeditor-symbol-group-chem-addition": "Zusatzverbindungen",
-	"math-visualeditor-symbol-group-chem-aggregation": "Aggregatszustände",
+	"math-visualeditor-symbol-group-chem-aggregation": "Aggregatzustände",
 	"math-visualeditor-symbol-group-chem-arrows": "Reaktionspfeile",
 	"math-visualeditor-symbol-group-chem-brackets": "Runde Klammern, Klammern & geschweifte Klammern",
 	"math-visualeditor-symbol-group-chem-charges": "Aufladungen",
@@ -83,8 +84,7 @@
 	"math_unknown_error": "Unbekannter Fehler",
 	"math_unknown_function": "Unbekannte Funktion „$1“",
 	"mw_math_latexml": "LaTeXML (experimentell; verwendet MathML)",
-	"mw_math_mathml": "SVG mit PNG-Fallback (MathML kann über ein Browser-Plugin aktiviert werden)",
-	"mw_math_png": "PNG-Bilder",
+	"mw_math_mathml": "SVG (MathML kann über ein Browser-Plugin aktiviert werden)",
 	"mw_math_source": "LaTeX-Quelltext (für Textbrowser)",
 	"prefs-math": "Mathematische Formeln",
 	"mathstatus": "Math-Status",

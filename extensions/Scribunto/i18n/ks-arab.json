@@ -1,8 +1,18 @@
 {
 	"@metadata": {
 		"authors": [
-			"Iflaq"
+			"Iflaq",
+			"Uzume"
 		]
 	},
-	"scribunto-lua-error": "لُوا غَلطی: $2۔"
+	"scribunto-parser-dialog-title": "سِکرپٹ نُقُص",
+	"scribunto-error-short": "سِکرپٹ نُقُص: $1",
+	"scribunto-error-long": "سِکرپٹ نُقُص:\n\n$1",
+	"scribunto-doc-page-name": "Module:$1/دَستاویٖز",
+	"scribunto-doc-page-does-not-exist": "\"یَمہٕ ماڈیوٗلُک دَستاویٖز ییٚہِ [[$1]] جاے بَناونہٕ\"",
+	"scribunto-lua-error-location": "لُوا غَلطی $1: $2.",
+	"scribunto-lua-error": "لُوا غَلطی: $2۔",
+	"scribunto-lua-warning": "سِکرپٹ خَبردٲری: $1",
+	"nstab-module": "ماڈیوٗل",
+	"tooltip-ca-nstab-module": "ماڈیوٗل صَفہٕ وُچھِو"
 }

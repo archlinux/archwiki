@@ -8,6 +8,8 @@
 			"~aanzx"
 		]
 	},
+	"vector-skin-desc": "2 ವೆಕ್ಟರ್ ಚರ್ಮವನ್ನು ಒದಗಿಸುತ್ತದೆ:\n* 2011 - ತಾಜಾ ನೋಟ ಮತ್ತು ಅನೇಕ ಉಪಯುಕ್ತತೆ ಸುಧಾರಣೆಗಳೊಂದಿಗೆ ಮೊನೋಬುಕ್ ನ ಆಧುನಿಕ ಆವೃತ್ತಿ.\n* 2022 - ವೆಕ್ಟರ್ ಅನ್ನು WMF [[mw:Desktop Improvements]] ಯೋಜನೆಯ ಭಾಗವಾಗಿ ನಿರ್ಮಿಸಲಾಗಿದೆ.",
+	"prefs-vector-enable-vector-1-label": "ಲೆಗಸಿ ವೆಕ್ಟರ್ ಬಳಸಿ",
 	"vector-languages": "ಭಾಷೆಗಳು",
 	"vector-language-button-aria-label": "ಇನ್ನೊಂದು ಭಾಷೆಯ ಲೇಖನಕ್ಕೆ ಹೋಗಿ. {{PLURAL:$1| $1 ಭಾಷೆಯಲ್ಲಿ| $1 ಭಾಷೆಗಳಲ್ಲಿ}} ಲಭ್ಯವಿದೆ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ಭಾಷೆ|$1 ಭಾಷೆಗಳು}}",

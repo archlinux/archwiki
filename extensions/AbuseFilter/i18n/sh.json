@@ -111,7 +111,7 @@
 	"abusefilter-log-hide-legend": "Promijeni vidljivost",
 	"abusefilter-log-hide-set-visibility": "Dostupnost izabranih zapisa:",
 	"abusefilter-log-hide-reason": "Razlog:",
-	"abusefilter-log-hide-reason-other": "Ostali/dodatni razlog:",
+	"abusefilter-log-hide-reason-other": "Drugi/dodatni razlog:",
 	"abusefilter-log-hide-forbidden": "Nemate dozvolu da sakrivate unose u evidenciji filtera zloupotrebe.",
 	"abusefilter-log-hide-show": "Prikaži",
 	"abusefilter-log-hide-hide": "Sakrij",

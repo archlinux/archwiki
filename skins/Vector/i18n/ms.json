@@ -23,6 +23,7 @@
 	"vector-languages": "Bahasa",
 	"vector-language-button-aria-label": "Pergi ke rencana dalam bahasa lain. Tersedia dalam {{PLURAL:$1|$1 bahasa}}",
 	"vector-language-button-label": "{{PLURAL:$1|satu bahasa|$1 bahasa}}",
+	"vector-no-language-button-label": "Tambahkan bahasa",
 	"vector-language-redirect-to-top": "Di {{SITENAME}} ini, pautan bahasa di atas laman melintang daripada tajuk rencana. [[#p-lang-btn|Pergi ke atas]].",
 	"vector-language-variant-switcher-label": "Tukar kelainan bahasa",
 	"vector-action-addsection": "Tambah topik",

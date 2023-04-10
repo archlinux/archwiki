@@ -13,7 +13,7 @@
 	"apierror-visualeditor-badcachekey": "使用該金鑰查無已快取的序列化內容",
 	"apierror-visualeditor-difffailed": "比較差異失敗",
 	"apierror-visualeditor-docserver-http-error": "連線 Parsoid/RESTBase 伺服器錯誤：$1",
-	"apierror-visualeditor-docserver-http": "連線 Parsoid/RESTBase 伺服器錯誤（HTTP $1）",
+	"apierror-visualeditor-docserver-http": "連線 Parsoid/RESTBase 伺服器錯誤（HTTP $1）：$2",
 	"apierror-visualeditor-docserver": "連線 Parsoid/RESTBase 伺服器錯誤（無回應）",
 	"apierror-visualeditor-latestnotfound": "無法找到標題的最近修訂",
 	"apihelp-visualeditor-description": "從 Parsoid 服務回傳一個頁面的 HTML5。",

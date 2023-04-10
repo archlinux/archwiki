@@ -43,7 +43,7 @@
 	"interwiki_edittext": "Urejanje predpone interwiki",
 	"interwiki_editintro": "Urejate interviki predpono.\nNe pozabite, da lahko to prekine obstoječe povezave.",
 	"interwiki_edited": "Predpono »$1« smo v tabeli interwikijev spremenili.",
-	"interwiki_editerror": "Predpone »$1« ni mogoče spremeniti v tabeli interwiki.\nMorda ne obstaja.",
+	"interwiki_editerror": "Predpone »$1« ni bilo mogoče spremeniti v tabeli intervikijev.\nMogoče ne obstaja.",
 	"interwiki-badprefix": "Navedena predpona interwiki »$1« vsebuje neveljavne znake.",
 	"interwiki-cannotaddlocallanguage": "Predpona »$1« se ujema z znano oznako jezika. Dodajanje lokalnih medjezikovnih predpon je pri uporabi globalne medjezikovne podatkovne zbirke onemogočeno.",
 	"interwiki-submit-empty": "Predpona in URL ne smeta biti prazna.",

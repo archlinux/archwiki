@@ -9,12 +9,4 @@
 		return;
 	}
 
-	// We verify whether SVG as <img> is supported and otherwise use the
-	// PNG fallback. See https://github.com/Modernizr/Modernizr/blob/master/feature-detects/svg/asimg.js
-	if ( !document.implementation.hasFeature( 'http://www.w3.org/TR/SVG11/feature#Image', '1.1' ) ) {
-		$( '.mwe-math-fallback-image-inline, .mwe-math-fallback-image-display' ).each( function () {
-			this.src = this.src.replace( 'media/math/render/svg/', 'media/math/render/png/' );
-			this.src = this.src.replace( 'mode=mathml', 'mode=mathml-png' );
-		} );
-	}
 }() );

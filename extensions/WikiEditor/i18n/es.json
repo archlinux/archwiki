@@ -62,7 +62,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Esta página no existe en {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "El título especificado no es válido",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Enlace externo",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Página de desambiguación",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Esta no es una página de contenido, sino una lista de temas con nombres idénticos o similares",
 	"wikieditor-toolbar-tool-link-int-invalid": "El título que ha especificado no es válido.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "EL URL que has especificado parece que tenia como finalidad ser un vínculo para otra página wiki.\n¿Deseas hacerlo un vínculo interno?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Enlace interno",
@@ -221,5 +221,11 @@
 	"wikieditor-realtimepreview-preview": "Vista previa",
 	"wikieditor-realtimepreview-error": "No se carga la vista previa",
 	"wikieditor-realtimepreview-reload": "Recargar",
-	"wikieditor-realtimepreview-manual": "Vuelva a cargar ahora para obtener una vista previa manual de sus ediciones."
+	"wikieditor-realtimepreview-beta-label": "Vista previa en tiempo real",
+	"wikieditor-realtimepreview-beta-desc": "Ver como los cambios en el wikitexto aparecerán a los lectores a través del [[mw:Special:MyLanguage/Extension:WikiEditor|editor de código 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Recargar el panel de vista previa en tiempo real",
+	"wikieditor-realtimepreview-manual": "Vuelva a cargar ahora para obtener una vista previa manual de sus ediciones.",
+	"wikieditor-realtimepreview-onboarding-title": "Vista previa en tiempo real",
+	"wikieditor-realtimepreview-onboarding-body": "Mira como quedarán tus ediciones a través de la previsualización en tiempo real.",
+	"wikieditor-realtimepreview-onboarding-button": "Entendido"
 }

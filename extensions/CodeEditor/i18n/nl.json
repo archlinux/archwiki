@@ -21,5 +21,6 @@
 	"codeeditor-gotoline-prompt": "Voer een regelnummer in",
 	"codeeditor-indent": "Inspringen",
 	"codeeditor-outdent": "Uitspringen",
+	"codeeditor-error-title": "De afhankelijkheid is mislukt",
 	"codeeditor-error-message": "CodeEditor vereist dat WikiEditor beschikbaar is."
 }

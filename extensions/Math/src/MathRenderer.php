@@ -71,7 +71,7 @@ abstract class MathRenderer {
 	/** @var string binary packed inputhash */
 	protected $inputHash = '';
 	/** @var string rendering mode */
-	protected $mode = MathConfig::MODE_PNG;
+	protected $mode = MathConfig::MODE_MATHML;
 	/** @var string input type */
 	protected $inputType = 'tex';
 	/** @var MathRestbaseInterface used for checking */
@@ -143,7 +143,7 @@ abstract class MathRenderer {
 	 * @param string $mode indicating rendering mode
 	 * @return self appropriate renderer for mode
 	 */
-	public static function getRenderer( $tex, $params = [], $mode = MathConfig::MODE_PNG ) {
+	public static function getRenderer( $tex, $params = [], $mode = MathConfig::MODE_MATHML ) {
 		return MediaWikiServices::getInstance()
 			->get( 'Math.RendererFactory' )
 			->getRenderer( $tex, $params, $mode );

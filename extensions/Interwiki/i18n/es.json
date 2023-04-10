@@ -61,6 +61,7 @@
 	"interwiki_edited": "El prefijo «$1» se modificó en la tabla de interwikis.",
 	"interwiki_editerror": "El prefijo «$1» no puede ser modificado en la tabla de interwikis.\nPosiblemente no exista.",
 	"interwiki-badprefix": "El prefijo interwiki especificado «$1» contiene caracteres no válidos",
+	"interwiki-cannotaddlocallanguage": "El prefijo «$1» coincide con un código de idioma conocido. No se permite añadir enlaces interlingüísticos locales cuando el proyecto usa la base de datos global para aquellos.",
 	"interwiki-submit-empty": "El prefijo y la dirección URL no pueden estar vacías.",
 	"interwiki-submit-invalidurl": "El protocolo de la dirección URL no es válido.",
 	"log-name-interwiki": "Registro de la tabla interwiki",

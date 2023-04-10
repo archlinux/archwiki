@@ -6,7 +6,7 @@
 	"license-name": "WTFPL",
 	"type": "api",
 	"requires": {
-		"MediaWiki": ">= 1.37.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"APIPropModules": {
 		"pageimages": "PageImages\\ApiQueryPageImages"
@@ -42,7 +42,10 @@
 		},
 		"search": {
 			"class": "PageImages\\Hooks\\SearchResultProvideThumbnailHookHandler",
-			"services": [ "PageProps", "RepoGroup" ]
+			"services": [
+				"PageProps",
+				"RepoGroup"
+			]
 		}
 	},
 	"JobClasses": {

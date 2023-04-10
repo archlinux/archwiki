@@ -6,7 +6,8 @@
 			"Raj Singh",
 			"TariButtar",
 			"Tow",
-			"Bgo eiu"
+			"Bgo eiu",
+			"Jagseer S Sidhu"
 		]
 	},
 	"vector-skin-desc": "ਮੋਨੋਬੁੱਕ ਦੀ ਆਧੁਨਿਕ ਵਰਜਨ ਜਿਸ ਵਿਚ ਤਾਜ਼ਾ ਦਿੱਖ ਅਤੇ ਬਹੁਤ ਸਾਰੇ ਉਪਯੋਗਤਾ ਸੁਧਾਰ ਹਨ",
@@ -27,6 +28,7 @@
 	"vector-view-view": "ਪੜ੍ਹੋ",
 	"vector-view-viewsource": "ਸਰੋਤ ਵੇਖੋ",
 	"vector-more-actions": "ਹੋਰ",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ਵਾਲੇ ਪੰਨਿਆਂ ਦੀ ਖੋਜ ਕਰੋ",
 	"vector-anon-user-menu-pages-learn": "ਹੋਰ ਜਾਣੋ",
 	"vector-main-menu-tooltip": "ਮੁੱਖ ਮੇਨੂ",
 	"vector-toc-menu-tooltip": "ਸਮੱਗਰੀ ਸਾਰਨੀ",

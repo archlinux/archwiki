@@ -25,6 +25,7 @@
 	"cite-ve-citationneeded-reason": "આપેલ કારણ:",
 	"cite-ve-citationneeded-title": "સંદર્ભ જરુરી",
 	"cite-ve-dialog-reference-editing-reused": "આ સંદર્ભ આ પાના પર {{PLURAL:$1|એક|2=બે|$1}} વખત વપરાયો છે.",
+	"cite-ve-dialog-reference-editing-reused-long": "આ પાનાં પર આ સંદર્ભનો ઉપયોગ {{PLURAL:$1|એકવાર|2=બે વખત|$1 વખત}} થયો છે. અહીં કરેલા ફેરફારોને સંદર્ભનો ફરી ઉપયોગ થયેલા તમામ સ્થળોએ લાગુ કરવામાં આવશે.",
 	"cite-ve-dialog-reference-options-group-label": "આ સમૂહ વાપરો",
 	"cite-ve-dialog-reference-options-group-placeholder": "સામાન્ય સંદર્ભો",
 	"cite-ve-dialog-reference-options-name-label": "આ નામ વડે ફરી વાપરો",

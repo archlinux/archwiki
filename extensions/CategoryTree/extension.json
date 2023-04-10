@@ -6,7 +6,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.38.0"
+		"MediaWiki": ">= 1.39.0"
 	},
 	"ConfigRegistry": {
 		"categorytree": "GlobalVarConfig::newInstance"
@@ -92,7 +92,10 @@
 	"HookHandlers": {
 		"default": {
 			"class": "MediaWiki\\Extension\\CategoryTree\\Hooks",
-			"services": [ "CategoryTree.CategoryCache", "MainConfig" ]
+			"services": [
+				"CategoryTree.CategoryCache",
+				"MainConfig"
+			]
 		},
 		"config": {
 			"class": "MediaWiki\\Extension\\CategoryTree\\ConfigHookHandler"

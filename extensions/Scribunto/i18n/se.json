@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Jeblad"
+			"Jeblad",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
-	"scribunto-doc-page-name": "Module:$1/veahkki"
+	"scribunto-doc-page-name": "Module:$1/veahkki",
+	"scribunto-console-clear": "Gurre"
 }

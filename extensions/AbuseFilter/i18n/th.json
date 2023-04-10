@@ -70,6 +70,7 @@
 	"abusefilter-log-search-group-any": "ทั้งหมด",
 	"abusefilter-log-search-filter": "หมายเลขตัวกรอง:",
 	"abusefilter-log-search-filter-help": "คั่นด้วยไพป์ คำขึ้นต้น \"$1\" สำหรับตัวกรองทั่วโลก",
+	"abusefilter-log-search-filter-help-central": "คั่นด้วยไพป์",
 	"abusefilter-log-search-title": "ชื่อเรื่อง:",
 	"abusefilter-log-search-wiki": "วิกิ:",
 	"abusefilter-log-search-impact": "ผลกระทบ:",

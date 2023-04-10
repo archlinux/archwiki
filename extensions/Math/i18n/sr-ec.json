@@ -10,7 +10,8 @@
 			"Rancher",
 			"Srdjan m",
 			"Zoranzoki21",
-			"Милан Јелисавчић"
+			"Милан Јелисавчић",
+			"Zenfiric"
 		]
 	},
 	"math-desc": "Рендерује математичке формуле између ознака <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
@@ -72,8 +73,7 @@
 	"math_unknown_error": "непозната грешка",
 	"math_unknown_function": "непозната функција „$1“",
 	"mw_math_latexml": "LaTeXML (експриментално; користи MathML)",
-	"mw_math_mathml": "MathML са SVG или PNG резервом (препоручује се за савремене прегледаче и алатке за приступачност)",
-	"mw_math_png": "PNG слике",
+	"mw_math_mathml": "SVG (MathML се може укључити преко плугина за прегледач)",
 	"mw_math_source": "LaTeX извор (за текстуалне прегледаче)",
 	"prefs-math": "Приказ математичких формула",
 	"mathstatus": "Стање приказа математичких формула",

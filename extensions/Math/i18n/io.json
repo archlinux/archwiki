@@ -69,6 +69,7 @@
 	"math-test-start": "Duranta probi uzanta ''rendering mode $1''.",
 	"math-test-success": "Probo ''$1'' <span style=\"color:green\">sucesis</span>.",
 	"math-tracking-category-error": "Pagini kun erori pri matematiko",
+	"math-tracking-category-mhchem-deprecation-desc": "Pagini en ca kategorio uzas obsoleta formato dil etiketi ''chem''",
 	"math-tracking-category-render-error": "Pagini kun erori pri matematikala simboli",
 	"math_unknown_error": "nekonocata eroro",
 	"math_unknown_function": "funciono nekonocata \"$1\"",

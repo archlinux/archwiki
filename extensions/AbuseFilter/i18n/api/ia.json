@@ -8,7 +8,7 @@
 	"apihelp-abusefiltercheckmatch-summary": "Verificar si un filtro anti-abuso corresponde a un insimul de variabiles (un redactor registrava un evento AbuseFilter).",
 	"apihelp-abusefiltercheckmatch-extended-description": "vars, rcid o logid es requirite, ma solmente un de istes pote esser usate.",
 	"apihelp-abusefiltercheckmatch-param-filter": "Le texto complete del filtro pro verificar si un correspondentia existe.",
-	"apihelp-abusefiltercheckmatch-param-vars": "Array, codificate in JSON, de variabiles contra le quales testar.",
+	"apihelp-abusefiltercheckmatch-param-vars": "Matrice, codificate in JSON, de variabiles contra le quales testar.",
 	"apihelp-abusefiltercheckmatch-param-rcid": "ID de modification recente contra le qual verificar.",
 	"apihelp-abusefiltercheckmatch-param-logid": "ID de registro de filtro anti-abuso contra le qual verificar.",
 	"apihelp-abusefiltercheckmatch-example-1": "Testar si le ID de modification recente 15 corresponde a un filtro simple",

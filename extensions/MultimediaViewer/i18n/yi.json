@@ -2,11 +2,12 @@
 	"@metadata": {
 		"authors": [
 			"Har-wradim",
-			"פוילישער"
+			"פוילישער",
+			"Pacha Tchernof"
 		]
 	},
 	"multimediaviewer-repository-local": "מער פּרטים",
-	"multimediaviewer-datetime-created": "געשאפן: $1",
+	"multimediaviewer-datetime-created": "געשאַפֿן: $1",
 	"multimediaviewer-datetime-uploaded": "ארויפגעלאדן: $1",
 	"multimediaviewer-credit-fallback": "באקוקן שאפֿער אינפארמאציע",
 	"multimediaviewer-multiple-authors": "נאך {{PLURAL:$1|איין|$1}} שאפער",
