@@ -4,7 +4,8 @@
 			"Nayvik",
 			"VASANTH S.N.",
 			"Yogesh",
-			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ"
+			"ಮಲ್ನಾಡಾಚ್ ಕೊಂಕ್ಣೊ",
+			"~aanzx"
 		]
 	},
 	"wikieditor": "ಮುಂದುವರಿದ ವಿಕಿಪಠ್ಯ ಸಂಪಾದನೆಯ ಅಂತರ್‍ಸಂಪರ್ಕ",
@@ -41,8 +42,8 @@
 	"wikieditor-toolbar-tool-file-cancel": "ರದ್ದುಮಾಡಿ",
 	"wikieditor-toolbar-tool-reference": "ಉಲ್ಲೇಖಗಳು",
 	"wikieditor-toolbar-tool-reference-cancel": "ರದ್ದುಮಾಡಿ",
-	"wikieditor-toolbar-tool-reference-insert": "ಸೇರ್ಪಡಿಸು",
-	"wikieditor-toolbar-section-advanced": "ಮುಂದುವರೆದ",
+	"wikieditor-toolbar-tool-reference-insert": "ಸೇರಿಸು",
+	"wikieditor-toolbar-section-advanced": "ಸುಧಾರಿತ ಸಲಕರಣೆಗಳು",
 	"wikieditor-toolbar-tool-heading": "ತಲೆಬರಹ",
 	"wikieditor-toolbar-tool-heading-1": "ದರ್ಜೆ ೧",
 	"wikieditor-toolbar-tool-heading-2": "ದರ್ಜೆ ೨",
@@ -56,7 +57,7 @@
 	"wikieditor-toolbar-tool-big-example": "ದೊಡ್ಡ ಪಠ್ಯ",
 	"wikieditor-toolbar-tool-small": "ಸಣ್ಣದು",
 	"wikieditor-toolbar-tool-small-example": "ಸಣ್ಣ ಪಠ್ಯ",
-	"wikieditor-toolbar-group-insert": "ಸೇರ್ಪಡಿಸು",
+	"wikieditor-toolbar-group-insert": "ಸೇರಿಸು",
 	"wikieditor-toolbar-tool-gallery": "ಛಾಯಾಂಕಣ",
 	"wikieditor-toolbar-tool-newline": "ಹೊಸ ಸಾಲು",
 	"wikieditor-toolbar-tool-table": "ಪಟ್ಟಿ",
@@ -65,7 +66,7 @@
 	"wikieditor-toolbar-tool-table-dimensions-columns": "ಕಂಬಸಾಲುಗಳು",
 	"wikieditor-toolbar-tool-table-example": "ಉದಾಹರಣೆ",
 	"wikieditor-toolbar-tool-table-preview": "ಮುನ್ನೋಟ",
-	"wikieditor-toolbar-tool-table-insert": "ಸೇರ್ಪಡಿಸು",
+	"wikieditor-toolbar-tool-table-insert": "ಸೇರಿಸು",
 	"wikieditor-toolbar-tool-table-cancel": "ರದ್ದುಮಾಡಿ",
 	"wikieditor-toolbar-tool-replace-search": "ಇದನ್ನು ಹುಡುಕು",
 	"wikieditor-toolbar-tool-replace-close": "ಮುಚ್ಚಿ",

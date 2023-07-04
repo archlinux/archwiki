@@ -13,6 +13,7 @@
 	"math-visualeditor-mwlatexdialog-card-formula": "فارمولا",
 	"math-visualeditor-mwlatexdialog-card-options": "اختیارات",
 	"math-visualeditor-mwlatexinspector-display": "نمائش",
+	"math-visualeditor-mwlatexinspector-display-block": "پابندی لگائیں",
 	"math-visualeditor-mwlatexinspector-display-default": "طے شدہ",
 	"math-visualeditor-mwmathdialog-title": "ریاضی فارمولا",
 	"math-visualeditor-symbol-group-chem-brackets": "ہلالی علامتیں",
@@ -58,10 +59,13 @@
 	"math_unknown_function": "نامعلوم فعل \"$1\"",
 	"mw_math_latexml": "LaTeXML (تجرباتی؛ MathML زیر استعمال ہے)",
 	"mw_math_mathml": "PNG یا SVG کے ساتھ MathML (جدید براؤزر وغیرہ کے لیے اسے استعمال کرنے کی سفارش کی جاتی ہے)",
-	"mw_math_png": "PNG تصویریں",
 	"mw_math_source": "LaTeX شکل میں دکھائیں (متنی براؤزر کے لیے)",
 	"prefs-math": "ریاضی",
 	"mathstatus": "ریاضی کی صورت حال",
 	"datatypes-type-math": "علامت ریاضی",
-	"wikibase-listdatatypes-math-head": "علامت ریاضی"
+	"wikibase-listdatatypes-math-head": "علامت ریاضی",
+	"math-wikibase-header": "ریاضیاتی عناصر کی معلومات",
+	"math-wikibase-special-form-header": "فارمولے کا نام درج کریں:",
+	"math-wikibase-special-form-placeholder": "فارمولے کا نام",
+	"math-wikibase-special-form-button": "معلومات طلب کریں"
 }

@@ -27,6 +27,7 @@
 	"action-oathauth-enable": "เปิดใช้งานการยืนยันตัวตนสองขั้นตอน",
 	"oathauth-auth-token-label": "โทเค็น",
 	"oathauth-auth-ui": "กรุณาป้อนรหัสยืนยันตัวตนจากอุปกรณ์ยืนยันตัวตนของคุณ",
+	"oathauth-ui-no-module": "ไม่มีการเปิดใช้งาน",
 	"oathauth-ui-manage": "จัดการ",
 	"oathmanage": "จัดการการยืนยันตัวตนสองขั้นตอน",
 	"oathauth-enable-generic": "เปิดใช้งาน",

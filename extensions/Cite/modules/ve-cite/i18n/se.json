@@ -2,16 +2,30 @@
 	"@metadata": {
 		"authors": [
 			"Jon Harald Søby (WMNO)",
-			"Yupik"
+			"Yupik",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Girji",
+	"visualeditor-cite-tool-name-journal": "Áigečála",
 	"visualeditor-cite-tool-name-news": "Ođđasat",
 	"visualeditor-cite-tool-name-web": "Neahttasiidu",
+	"cite-ve-changedesc-ref-group-both": "Gáldojoavkku namma molsašuvai \"$1\" nammii \"$2\"",
+	"cite-ve-citationneeded-button": "Lasit gáldočujuhusa",
+	"cite-ve-dialog-reference-editing-reused": "Dát gáldu lea {{PLURAL:$1|1=oktii|2=guktii|3=golbmii|4=njelljii|5=vihttii|6=guhttii|7=čihččii|8=gákcii|9=okcii|$1 geardde}} dán siiddus.",
+	"cite-ve-dialog-reference-editing-reused-long": "Dát gáldu lea {{PLURAL:$1|1=oktii|2=guktii|3=golbmii|4=njelljii|5=vihttii|6=guhttii|7=čihččii|8=gákcii|9=okcii|$1 geardde}} dán siiddus. Go gáldu rievdaduvvo dás, de gáldu rievdaduvvo juohke sajis, mas dat lea anus.",
+	"cite-ve-dialog-reference-options-group-label": "Geavat dán joavkku",
+	"cite-ve-dialog-reference-title": "Gáldu",
 	"cite-ve-dialog-reference-useexisting-tool": "Geavat gáldu ođđasit",
-	"cite-ve-dialogbutton-reference-full-label": "Álkis hápmi",
+	"cite-ve-dialog-referenceslist-title": "Gáldolistu",
+	"cite-ve-dialogbutton-citation-educationpopup-title": "Gáldočujuhusat",
+	"cite-ve-dialogbutton-reference-full-label": "Eaŋkil",
+	"cite-ve-dialogbutton-reference-title": "Gáldu",
 	"cite-ve-dialogbutton-reference-tooltip": "Eaŋkil",
-	"cite-ve-dialogbutton-referenceslist-tooltip": "Gáldolisttu",
+	"cite-ve-dialogbutton-referenceslist-tooltip": "Gáldolistu",
+	"cite-ve-reference-input-placeholder": "Oza dálá gáldočujuhusain",
 	"cite-ve-toolbar-group-label": "Bájut",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Gáldut"
+	"cite-ve-othergroup-item": "$1 gáldu",
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Gáldut",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Gáldojoavkku namma: \"$1\""
 }

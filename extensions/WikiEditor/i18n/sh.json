@@ -4,9 +4,13 @@
 			"BadDog",
 			"Conquistador",
 			"Srdjan m",
-			"Srđan"
+			"Srđan",
+			"Vlad5250"
 		]
 	},
+	"wikieditor": "Napredni interfejs za uređivanje vikiteksta",
+	"wikieditor-desc": "Pruža napredni, proširivi interfejs za uređivanje vikiteksta",
+	"wikieditor-wikitext-tab": "Vikitekst",
 	"wikieditor-toolbar-tool-bold": "Podebljano",
 	"wikieditor-toolbar-tool-italic": "Ukošeno",
 	"wikieditor-toolbar-tool-link-cancel": "Otkaži",

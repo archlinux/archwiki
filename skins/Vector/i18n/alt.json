@@ -7,6 +7,9 @@
 			"Батыр Комдошев"
 		]
 	},
+	"vector-languages": "Тилдер",
+	"vector-language-button-label": "{{PLURAL:$1|$1 тил|$1 тилдер}}",
+	"vector-no-language-button-label": "Тилдер кожоры",
 	"vector-action-addsection": "Тема кожор",
 	"vector-action-delete": "Јоголтор",
 	"vector-action-move": "Адын солыыр",
@@ -18,5 +21,6 @@
 	"vector-view-history": "Тӱӱкини кӧргӱзер",
 	"vector-view-view": "Кычырар",
 	"vector-view-viewsource": "Темдектерин кӧрӧр",
-	"vector-more-actions": "Кӧптӧдӧ"
+	"vector-more-actions": "Кӧптӧдӧ",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> бар бӱктерди бедрери"
 }

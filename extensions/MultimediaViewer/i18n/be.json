@@ -4,7 +4,8 @@
 			"Artsiom91",
 			"Chadyka",
 			"No Sleep till Krupki",
-			"Plaga med"
+			"Plaga med",
+			"Maksim L."
 		]
 	},
 	"multimediaviewer-desc": "Пашырае эскізы ў большы памер на ўвесь экран.",
@@ -67,7 +68,7 @@
 	"multimediaviewer-link-to-page": "Спасылка на старонку апісання файла",
 	"multimediaviewer-link-to-file": "Спасылка на арыгінальны файл",
 	"multimediaviewer-share-explanation": "Скапіруйце і свабодна дзяліцеся спасылкай",
-	"multimediaviewer-embed-wt": "Вікі-тэкст",
+	"multimediaviewer-embed-wt": "Вікіразметка",
 	"multimediaviewer-embed-html": "HTML",
 	"multimediaviewer-embed-explanation": "Выкарыстоўвайце гэты код для ўстаўкі файла",
 	"multimediaviewer-text-embed-credit-text-bl": "Аўтар: $1, $2, $3",
@@ -78,7 +79,7 @@
 	"multimediaviewer-embed-byline": "Ад $1",
 	"multimediaviewer-embed-license": "Пад ліцэнзіяй $1.",
 	"multimediaviewer-embed-via": "З дапамогай $1.",
-	"multimediaviewer-default-embed-dimensions": "Памер эскізу па змоўчанні",
+	"multimediaviewer-default-embed-dimensions": "Прадвызначаны памер мініяцюры",
 	"multimediaviewer-original-embed-dimensions": "Арыгінальны файл $1",
 	"multimediaviewer-xl-embed-dimensions": "Вельмі вялікі $1",
 	"multimediaviewer-large-embed-dimensions": "Вялікі памер $1",
@@ -117,7 +118,7 @@
 	"multimediaviewer-disable-confirmation-header": "Вы адключылі Праглядальнік медыяфайлаў",
 	"multimediaviewer-disable-confirmation-text": "Наступны раз, калі Вы націсніце на эскіз на $1, то наўпрост пабачыце ўсе звесткі пра файл.",
 	"multimediaviewer-enable-dialog-header": "Уключыць Праглядальнік медыяфайлаў?",
-	"multimediaviewer-enable-text-header": "Уключыць гэту функцыю медыяпрагляду па змоўчанні для ўсіх файлаў.",
+	"multimediaviewer-enable-text-header": "Прадвызначана, уключыць гэту функцыю медыяпрагляду для ўсіх файлаў.",
 	"multimediaviewer-enable-submit-button": "Уключыць Праглядальнік медыяфайлаў",
 	"multimediaviewer-enable-confirmation-header": "Вы ўключылі Праглядальнік медыяфайлаў для ўсіх файлаў",
 	"multimediaviewer-enable-confirmation-text": "Наступны раз, калі Вы націсніце на эскіз на $1, будзе выкарыстаны Праглядальнік медыяфайлаў.",

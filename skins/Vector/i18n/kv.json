@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Comp1089",
-			"Enye Lav"
+			"Enye Lav",
+			"Merrahtar"
 		]
 	},
+	"vector-languages": "Кывъяс",
 	"vector-language-button-label": "{{PLURAL:$1|кыв}}",
 	"vector-action-move": "Ним вежны",
 	"vector-view-create": "Лӧсьӧдны",

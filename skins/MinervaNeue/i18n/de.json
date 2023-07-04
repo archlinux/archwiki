@@ -10,7 +10,8 @@
 			"Umherirrender",
 			"WikiBayer",
 			"Wnme",
-			"Justman10000"
+			"Justman10000",
+			"Count Count"
 		]
 	},
 	"minerva-last-modified-date": "Zuletzt bearbeitet am $1 um $2",
@@ -22,7 +23,7 @@
 	"mobile-frontend-editor-redlink-create": "Seite erstellen",
 	"mobile-frontend-editor-redlink-explain": "Diese Seite wurde noch nicht erstellt.",
 	"mobile-frontend-editor-redlink-leave": "Nein danke.",
-	"mobile-frontend-history": "Bearbeite den Verlauf dieser Seite.",
+	"mobile-frontend-history": "Versionsgeschichte dieser Seite anzeigen.",
 	"mobile-frontend-home-button": "Start",
 	"mobile-frontend-language-article-heading": "Sprache",
 	"mobile-frontend-languages-not-available": "Diese Seite ist nicht in anderen Sprachen verfügbar.",

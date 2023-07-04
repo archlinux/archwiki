@@ -9,7 +9,9 @@
 			"Wertuose"
 		]
 	},
+	"cite-desc": "Sitatlar üçün<code>&lt;ref&gt;</code> və <code>&lt;references&gt;</code> teqləri əlavə edir",
 	"cite_error": "Sitat səhvi: $1",
+	"cite_error_ref_invalid_dir": "Etibarsız <code>dir=\"$1\"</code>, <code>ltr</code> və ya <code>rtl</code> olmalıdır",
 	"cite_error_ref_numeric_key": "Xətalı <code>&lt;ref&gt;</code> etiketi; istinad adlandırması yalnız rəqəm ola bilməz. Daha yaxşı başlıqdan istifadə edin",
 	"cite_error_ref_too_many_keys": "Xətalı <code>&lt;ref&gt;</code> etiketi: adlandırma uyğunsuzdur",
 	"cite_error_references_duplicate_key": "Xətalı <code>&lt;ref&gt;</code> etiketi; \"$1\" adı bir neçə dəfə müxtəlif məzmunla verilib",

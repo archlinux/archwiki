@@ -14,7 +14,8 @@
 			"Srđan",
 			"Zoranzoki21",
 			"Милан Јелисавчић",
-			"Сербијана"
+			"Сербијана",
+			"Zenfiric"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -170,8 +171,8 @@
 	"visualeditor-dialog-transclusion-required-parameter-dialog-title": "{{PLURAL:$1|Обавезно поље недостаје|Обавезна поља недостају}}",
 	"visualeditor-dialog-transclusion-required-parameter-is-blank": "Желите ли заиста да наставите без {{PLURAL:$2|попуне|попуњавања}} поља $1?",
 	"visualeditor-dialog-transclusion-see-template": "Шаблони су кориснички генерисани и могу им недостајати целокупни описи појединих параметара. Додатне информације можда постоје на [[$2|страници шаблона]].",
-	"visualeditor-dialog-transclusion-title-insert-template": "Уметање шаблона",
-	"visualeditor-dialog-transclusion-title-insert-known-template": "Уметање: $1",
+	"visualeditor-dialog-transclusion-title-insert-template": "Уметни шаблон",
+	"visualeditor-dialog-transclusion-title-insert-known-template": "Уметни: $1",
 	"visualeditor-dialog-transclusion-title-edit-known-template": "Уређивање: $1",
 	"visualeditor-dialog-transclusion-title-edit-transclusion": "Садржина шаблона",
 	"visualeditor-dialog-transclusion-template-search": "Претрага шаблона",

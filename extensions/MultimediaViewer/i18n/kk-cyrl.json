@@ -3,11 +3,12 @@
 		"authors": [
 			"Arystanbek",
 			"Габдулгани НИШ ХБН",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
 	"multimediaviewer-desc": "Толық экранды интерфейсте шағын суреттерді өлшемін үлкенірек етіп кеңейту",
-	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Медиа қараушыны]</span> қосу",
+	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Media kóriwshi]</span>ni qosıw",
 	"multimediaviewer-file-page": "Тиісті файл бетіне өту",
 	"multimediaviewer-repository-local": "Көбірек егжей-тегжейі",
 	"multimediaviewer-datetime-created": "Құрылған кезі: $1",

@@ -6,7 +6,8 @@
 			"Liuxinyu970226",
 			"Pamputt",
 			"Robby",
-			"Umherirrender"
+			"Umherirrender",
+			"Shirayuki"
 		]
 	},
 	"skinname-timeless": "{{name}}",
@@ -29,8 +30,8 @@
 	"timeless-languages": "Label for the other languages dropdown\n{{Identical|Language}}",
 	"timeless-projects": "Label for the other projects dropdown",
 	"timeless-sitetitle": "{{ignore}}\nSite title for site banner",
-	"timeless.css": "{{optional}}\nCSS applied to users using Timeless skin.",
-	"timeless.js": "{{optional}}\nJS for users using Timeless skin.",
+	"timeless.css": "{{optional}}\nCSS applied to users using Timeless skin.\n{{related/css}}",
+	"timeless.js": "{{optional}}\nJS for users using Timeless skin.\n{{related/js}}",
 	"timeless-view-history": "Text used on the history tab.\n\n{{Identical|History}}",
 	"timeless-action-undelete": "It is tab label. It's really can be named ''nstab-undelete''. Parameters:\n* $1 - number of edits"
 }

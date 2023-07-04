@@ -98,6 +98,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! pennawd 1\n! pennawd 2\n! pennawd 3\n|-\n| rhes 1, cell 1\n| rhes 1, cell 2\n| rhes 1, cell 3\n|-\n| rhes 2, cell 1\n| rhes 2, cell 2\n| rhes 2, cell 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Testun y gell",
 	"wikieditor-toolbar-tool-table-example-header": "Testun y pennawd",
+	"wikieditor-toolbar-tool-table-example-caption": "Testun y pennawd",
 	"wikieditor-toolbar-tool-table-title": "Mewnosod tabl",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Rhesi",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Colofnau",

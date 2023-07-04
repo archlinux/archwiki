@@ -33,7 +33,7 @@
 	"replacetext_editormove": "Musisz wybrać co najmniej jedną opcję zastępowania.",
 	"replacetext_choosepagesforedit": "Wybierz {{PLURAL:$3|stronę|strony}}, na których chcesz „$1” zastąpić „$2”",
 	"replacetext_choosepagesformove": "Zastąp „$1” tekstem „$2” w {{PLURAL:$3|tytule strony|tytułach następujących stron:}}",
-	"replacetext_cannotmove": "{{PLURAL:$1|Poniższa strona nie może zostać przeniesiona|Poniższe strony nie mogą zostać przeniesione}}:",
+	"replacetext_cannotmove": "{{PLURAL:$1|Poniższej strony nie można przenieść|Poniższych $1 stron nie można przenosić}}:",
 	"replacetext_formovedpages": "Dla przeniesionych stron:",
 	"replacetext_savemovedpages": "Zapisz stare tytuły jako przekierowania do nowych",
 	"replacetext_watchmovedpages": "Obserwuj te strony",

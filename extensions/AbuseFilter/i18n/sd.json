@@ -30,6 +30,7 @@
 	"abusefilter-log-linkonhistory-text": "ھن صفحي لاءِ غلط-استعمال لاگ ڏسو",
 	"abusefilter-log-linkonundelete": "غلط-استعمال لاگ ڏسو",
 	"abusefilter-log-linkonundelete-text": "ھن صفحي لاءِ غلط-استعمال لاگ ڏسو",
+	"abusefilter-log-hide-reason-other": "ٻيا/واڌو ڪارڻ:",
 	"abusefilter-log-hide-forbidden": "توھان کي غلط-استعمال لاگ جي داخلائن کي لڪائڻ جي اجازت ناھي.",
 	"abusefilter-log-hide-show": "ڏيکاريو",
 	"abusefilter-log-hide-hide": "لڪايو",
@@ -59,10 +60,12 @@
 	"abusefilter-list-options-scope-local": "صرف مقامي اصول",
 	"abusefilter-edit-status-label": "انگ-اکر:",
 	"abusefilter-edit-field-description": "تشريح",
+	"abusefilter-throttle-editcount": "سنوارن جو ڳاڻيٽو",
 	"abusefilter-throttle-page": "صفحو",
 	"abusefilter-throttle-none": "(ڪوبہ نہ)",
 	"abusefilter-edit-warn-actions": "عملَ:",
 	"abusefilter-edit-disallow-actions": "عملَ:",
+	"abusefilter-block-user": "کاتيدار واپرائيندڙن تي بندش وجهو",
 	"abusefilter-edit-tools": "اوزار:",
 	"abusefilter-edit-builder-vars-removedlines": "سنوار ۾ ھٽايل سٽون",
 	"abusefilter-edit-builder-vars-summary": "تَتُ/سبب سنواريو",
@@ -77,5 +80,6 @@
 	"abusefilter-topnav-log": "غلط-استعمال لاگ",
 	"abusefilter-log-name": "غلط-استعمال ڇاڻي لاگ",
 	"abusefilter-log-noresults": "نتيجا ناھن",
+	"abusefilter-diff-title": "ورزنن وچ ۾ تفاوت",
 	"abusefilter-diff-item": "جزو"
 }

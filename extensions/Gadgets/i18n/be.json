@@ -5,7 +5,9 @@
 			"Chadyka",
 			"Mikalai Udodau",
 			"No Sleep till Krupki",
-			"ZlyiLev"
+			"ZlyiLev",
+			"Plaga med",
+			"Tomato Cream"
 		]
 	},
 	"gadgets-desc": "Дазваляе ўдзельнікам выбіраць [[Special:Gadgets|Гаджэты на мовах CSS і JavaScript]] у сваіх [[Special:Preferences#mw-prefsection-gadgets|наладах]]",
@@ -19,7 +21,7 @@
 	"gadgetusage-intro": "Гэтая табліца прадстаўляе колькасць удзельнікаў, якія ўключылі кожны гаджэт у гэтай вікі. Актыўным удзельнікам лічыцца той, хто зрабіў прынамсі адну праўку за {{PLURAL:$1|апошні дзень|апошнія $1 дні|апошнія $1 дзён}}. Статыстыка гаджэтаў, уключаных для ўсіх па змаўчанні, не ўлічаная ў гэтым спісе, але можа ўключаць гаджэты, якія больш недаступныя.",
 	"gadgetusage-intro-noactive": "Гэтая табліца прадстаўляе колькасць удзельнікаў, якія ўключылі кожны гаджэт у гэтай вікі. Статыстыка гаджэтаў, уключаных для ўсіх па змаўчанні, не ўлічаная ў гэтым спісе, але можа ўключаць гаджэты, якія больш недаступныя.",
 	"gadgetusage-activeusers": "Актыўныя ўдзельнікі",
-	"gadgetusage-default": "Па змаўчанні",
+	"gadgetusage-default": "Прадвызначана",
 	"gadgets-title": "Гаджэты",
 	"gadgets-pagetext": "Ніжэй знаходзіцца спіс гаджэтаў, якія ўдзельнікі могуць уключыць у [[Special:Preferences#mw-prefsection-gadgets|сваіх наладах]], у адпаведнасці са спісам на старонцы [[MediaWiki:Gadgets-definition|вызначэнняў]].\nГэты спіс дазваляе лёгка атрымаць доступ да старонак сістэмных паведамленняў, якія вызначаюць апісанні і крынічныя коды гаджэтаў.",
 	"gadgets-editdescription": "Правіць апісанне",
@@ -28,7 +30,7 @@
 	"gadgets-required-rights": "Патрабуе {{PLURAL:$2|1=права|наступныя правы}}:\n\n$1",
 	"gadgets-required-skins": "Даступны ў {{PLURAL:$2|1=вокладцы $1|наступных вокладках: $1}}.",
 	"gadgets-required-actions": "Працуе ў {{PLURAL:$2|дзеянні старонкі «$1»|наступных дзеяннях старонкі: $1}}.",
-	"gadgets-default": "Уключаны для ўсіх па змаўчанні.",
+	"gadgets-default": "Прадвызначана, уключаны для ўсіх.",
 	"gadgets-legacy": "Гаджэт не загружаны. Калі ласка, перанясіце яго на ResourceLoader ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Даведацца болей]).",
 	"gadgets-packaged": "Гэты гаджэт [https://www.mediawiki.org/wiki/ResourceLoader/Package_files запакаваны], кропка ўваходу — $1.",
 	"gadgets-export": "Экспартаваць",

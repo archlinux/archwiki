@@ -42,7 +42,9 @@
 	"replacetext_announce": "Kunngjør disse redigeringene via $1 og overvåkningslister",
 	"replacetext_editsummary": "Teksterstatting – «$1» til «$2»",
 	"replacetext_reminder": "For å også endre lenker til denne siden på andre sider, gå til $1.",
+	"replacetext_cfg_error": "Konfigurasjonsfeil i ReplaceText",
 	"replacetext_no_compress": "Wikien din vil ikke virke med ReplaceText: Teksterstatninger kan ikke kjøres hvis $wgCompressRevisions er satt til true.",
+	"replacetext_no_external_stores": "Wikien din vil ikke fungere med ReplaceText: Teksterstatninger kan ikke kjøres hvis ikke $wgExternalStores er tom.",
 	"right-replacetext": "Gjennomfør teksterstatninger på hele wikien",
 	"action-replacetext": "gjennomføre strengerstatninger på hele wikien"
 }

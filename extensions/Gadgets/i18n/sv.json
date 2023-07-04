@@ -28,9 +28,12 @@
 	"gadgetusage-default": "Standard",
 	"gadgets-title": "Finesser",
 	"gadgets-pagetext": "Härunder finns en lista över finesser som användare kan aktivera i sina [[Special:Preferences#mw-prefsection-gadgets|inställningar]], definierad av [[MediaWiki:Gadgets-definition|definitionerna]].\nDen här översikten ger enkel åtkomst till de systemmeddelanden som definierar beskrivningarna och koden för varje finess.",
+	"gadgets-editdescription": "Redigera beskrivning",
+	"gadgets-viewdescription": "Visa beskrivning",
 	"gadgets-uses": "Använder",
 	"gadgets-required-rights": "Kräver följande {{PLURAL:$2|rättighet|rättigheter}}:\n\n$1",
 	"gadgets-required-skins": "Tillgängligt i {{PLURAL:$2|$1-utseendet|följande utseenden: $1}}.",
+	"gadgets-required-actions": "Fungerar på {{PLURAL:$2|\"$1\" sidåtgärd|följande sidåtgärder: $1}}.",
 	"gadgets-default": "Som standard aktiverat för alla.",
 	"gadgets-legacy": "Finessen är inte inläst. Migrera till ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) Läs mer])",
 	"gadgets-export": "Exportera",
@@ -43,5 +46,7 @@
 	"right-gadgets-edit": "Redigera finessens JavaScript- och CSS-sidor",
 	"action-gadgets-edit": "redigera denna finess JavaScript eller CSS-sida",
 	"right-gadgets-definition-edit": "Redigera finessens definitioner",
-	"action-gadgets-definition-edit": "redigera denna finessdefinition"
+	"action-gadgets-definition-edit": "redigera denna finessdefinition",
+	"gadgets-wrong-contentmodel": "Sidor i namnrymden {{ns:2302}} måste vara av innehållsmodellen GadgetDefinition.",
+	"gadgets-supports-urlload": "Denna finess har stöd för att läsas in via webbadress med frågeparametern <code>?withgadget</code>."
 }

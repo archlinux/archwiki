@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kimberli Mäkäräinen (WMNO)"
+		]
+	},
+	"captcha-edit-fail": "CAPTCHA lea boastut dahje váilu.",
+	"captcha-label": "CAPTCHA",
+	"captcha-help": "CAPTCHA-čoavddus",
+	"captcha-info-help": "CAPTCHA govvádus",
+	"captcha-id-label": "CAPTCHA-gilkor",
+	"captcha-createaccount-fail": "CAPTCHA lea boastut dahje váilu.",
+	"captcha-sendemail-fail": "CAPTCHA lea boastut dahje váilu.",
+	"captchahelp-title": "CAPTCHA-rávvagat",
+	"confirmedit-preview-content": "Sisdoallu",
+	"confirmedit-preview-validity": "Dohkálašvuohta",
+	"confirmedit-preview-valid": "dohkálaš",
+	"confirmedit-preview-invalid": "boastu IP-čujuhus"
+}

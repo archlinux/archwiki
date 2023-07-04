@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Akpanufun",
+			"Anietie2",
+			"Uduakj",
+			"Okon Ibiono"
+		]
+	},
+	"vector-languages": "Ikọ",
+	"vector-no-language-button-label": "Dian usem",
+	"vector-action-addsection": "Dian iwod nwed",
+	"vector-action-delete": "Sịññe",
+	"vector-action-protect": "Beem",
+	"vector-view-history": "Se mkpo ini edem",
+	"vector-more-actions": "afen",
+	"vector-searchsuggest-containing": "Yem ikpa nwed anieghe <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+}

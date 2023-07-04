@@ -4,21 +4,25 @@
 			"Agilight",
 			"Riverman",
 			"Sborsody",
-			"Монгуш Салим"
+			"Монгуш Салим",
+			"Karak-Kyzyl"
 		]
 	},
 	"skinname-vector": "Вектор",
+	"vector-languages": "Дылдар",
 	"vector-language-button-label": "{{PLURAL:$1|$1 дыл}}",
+	"vector-no-language-button-label": "Дылдар немээр",
 	"vector-action-addsection": "Тема немээр",
 	"vector-action-delete": "Казыыр",
 	"vector-action-move": "Өскээр адаар",
 	"vector-action-protect": "Камгалаары",
 	"vector-action-undelete": "Эгидер",
 	"vector-action-unprotect": "Камгалалды өскертири",
-	"vector-view-create": "Тургузуп кылыр",
+	"vector-view-create": "Чаяар",
 	"vector-view-edit": "Эдер",
 	"vector-view-history": "Төөгүнү көөр",
 	"vector-view-view": "Номчуур",
 	"vector-view-viewsource": "Дөзү бижиин көөрү",
-	"vector-more-actions": "Оон ыңай"
+	"vector-more-actions": "Оон",
+	"vector-searchsuggest-containing": "Мындыг чүүлдерлиг арыннарны дилээри: <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
 }

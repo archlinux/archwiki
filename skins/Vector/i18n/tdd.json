@@ -5,7 +5,9 @@
 			"咽頭べさ"
 		]
 	},
+	"vector-languages": "ᥚᥣᥱ ᥔᥣᥱ ᥑᥣᥛᥰ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ᥚᥣᥱ ᥔᥣᥱ|$1 ᥚᥣᥱ ᥔᥣᥱ ᥑᥣᥛᥰ}}",
+	"vector-no-language-button-label": "ᥚᥣᥱ ᥔᥣᥱ ᥑᥣᥛᥰ ᥖᥒᥰ ᥔᥥᥒᥲ",
 	"vector-action-addsection": "ᥗᥦᥛᥴ ᥔᥬᥱ ᥞᥨᥝᥴ ᥑᥨᥝᥲ",
 	"vector-action-delete": "ᥛᥩᥖᥱ ᥙᥦᥖ",
 	"vector-action-move": "ᥑᥣᥭᥳ",

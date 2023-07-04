@@ -34,7 +34,7 @@
 	"replacetext_editormove": "Vous devez choisir au moins une option de remplacement.",
 	"replacetext_choosepagesforedit": "Remplacer « $1 » par « $2 » dans le texte {{PLURAL:$3|de la page suivante|des $3 pages suivantes}} :",
 	"replacetext_choosepagesformove": "Remplacer « $1 » par « $2 » dans {{PLURAL:$3|le nom de la page suivante|les noms des $3 pages suivantes}} :",
-	"replacetext_cannotmove": "{{PLURAL:$1|La page suivante n’a pas pu être renommée|Les pages suivantes n’ont pas pu être renommées}} :",
+	"replacetext_cannotmove": "L{{PLURAL:$1|a|es}} page{{PLURAL:$1||s}} suivante{{PLURAL:$1||s}} n’{{PLURAL:$1|a|ont}} pas pu être renommée{{PLURAL:$1||s}} :",
 	"replacetext_formovedpages": "Pour les pages renommées :",
 	"replacetext_savemovedpages": "Enregistrer les anciens titres comme redirections vers les nouveaux titres",
 	"replacetext_watchmovedpages": "Suivre ces pages",

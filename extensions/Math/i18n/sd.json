@@ -29,14 +29,20 @@
 	"math-visualeditor-symbol-group-math-logic": "منطق",
 	"math-visualeditor-symbol-group-math-sets": "سيٽَ",
 	"math-visualeditor-symbol-group-math-special": "خاص",
-	"mw_math_mathml": "ميٿ.ايم.ايل ايس.وي.جِي يا پي.اين.جِي فال بيڪ سان (جديد برائوزرس ۽ ايڪسيسبلٽي اوزارن لاءِ سفارش ڪيل)",
-	"mw_math_png": "پي.اين.جِي عڪسَ",
+	"math-status-introduction": "ھي صفحو فعال ڪيل رياضي رينڊرنگ بابت  {{PLURAL:$1|موڊ|موڊس}} ڄاڻ ڏيکاري ٿو.\n\nهيٺ ڏنل رينڊرنگ {{PLURAL:$1|موڊ فعال آھن|موڊس فعال آهن}}:",
+	"mw_math_mathml": "ايسويجِي (ميٿ.ايم.ايل برائوزر پلگ ذريعي فعال ڪري سگهجي ٿي)",
 	"mw_math_source": "لاٽيڪس ذريعو (متن وارن برائوزرس لاءِ)",
 	"prefs-math": "رياضي",
+	"mathstatus": "رياضي جي حالت",
 	"mathwikibase": "رياضي فارمولا جي معلومات",
+	"math-wikibase-header": "رياضياتي شين جي معلومات",
 	"math-wikibase-formula": "فارمولا",
 	"math-wikibase-formula-name": "نالو",
 	"math-wikibase-formula-type": "قِسم",
 	"math-wikibase-formula-description": "تشريح",
-	"math-wikibase-formula-link-header": "ڊيٽا ذريعو"
+	"math-wikibase-formula-link-header": "ڊيٽا ذريعو",
+	"math-wikibase-formula-elements-header": "فارمولا جا عنصر",
+	"math-wikibase-special-form-header": "فارمولا جو نالو ڄاڻايو:",
+	"math-wikibase-special-form-placeholder": "فارمولا جو عنوان",
+	"math-wikibase-special-form-button": "معلومات جي درخواست ڪريو"
 }

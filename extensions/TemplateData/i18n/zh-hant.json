@@ -64,7 +64,7 @@
 	"templatedata-invalid-type": "屬性 \"$1\" 預期的類型為 \"$2\"。",
 	"templatedata-invalid-unknown": "預期外的屬性 \"$1\"。",
 	"templatedata-invalid-value": "屬性 \"$1\" 的值無效。",
-	"templatedata-modal-button-add-language": "增加語言",
+	"templatedata-modal-button-add-language": "新增語言",
 	"templatedata-modal-button-addparam": "加入參數",
 	"templatedata-modal-button-addmap": "加入新映射",
 	"templatedata-modal-button-apply": "套用",

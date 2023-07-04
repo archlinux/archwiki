@@ -5,6 +5,7 @@
 			"Ajiniyaz Nurniyazov"
 		]
 	},
-	"cite_error": "Derek kórsetiwdegi qátelik: $1",
-	"cite_error_ref_no_input": "Jaramsız <code>&lt;ref&gt;</code> tegi; atsız derek siltemesi qandayda bir maǵlıwmatqa iye bolıwı kerek"
+	"cite_error": "Silteme kórsetiwdegi qátelik: $1",
+	"cite_error_ref_no_input": "Jaramsız <code>&lt;ref&gt;</code> tegi; atsız derek siltemesi qandayda bir maǵlıwmatqa iye bolıwı kerek",
+	"cite-tracking-category-cite-error": "Qáte siltemeleri bar betler"
 }

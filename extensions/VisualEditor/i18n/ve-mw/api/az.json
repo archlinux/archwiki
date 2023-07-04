@@ -7,7 +7,7 @@
 	"apierror-visualeditor-badcachekey": "Bu açarla heç bir keş yaddaşa alınmış serializasiya tapılmadı",
 	"apierror-visualeditor-difffailed": "Fərq uğursuz oldu",
 	"apierror-visualeditor-docserver-http-error": "Parsoid/RESTBase serveri ilə əlaqə qurarkən xəta: $1",
-	"apierror-visualeditor-docserver-http": "Parsoid/RESTBase serveri ilə əlaqə qurarkən xəta (HTTP $1)",
+	"apierror-visualeditor-docserver-http": "Parsoid/RESTBase serveri ilə əlaqə qurarkən xəta (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Parsoid/RESTBase serveri ilə əlaqə qurarkən xəta (cavab gəlmədi)",
 	"apierror-visualeditor-latestnotfound": "Bu başlıq üçün sonuncu versiya tapıla bilmədi",
 	"apihelp-visualeditor-description": "Parsoid xidmətindən səhifə üçün HTML5 göndərir",

@@ -211,7 +211,7 @@ class Pygmentize {
 		$lexers = [];
 		foreach ( explode( "\n", $output ) as $line ) {
 			if ( substr( $line, 0, 1 ) === '*' ) {
-				$newLexers = explode( ', ', trim( $line, "* :\n" ) );
+				$newLexers = explode( ', ', trim( $line, "* :\r\n" ) );
 
 				// Skip internal, unnamed lexers
 				if ( $newLexers[0] !== '' ) {

@@ -6,7 +6,9 @@
 			"Temuri rajavi"
 		]
 	},
+	"vector-languages": "Абызшәақәа",
 	"vector-language-button-label": "{{PLURAL:$1|$1 абызшәа|$1 абызшәақәа}}",
+	"vector-no-language-button-label": "Абызшәақәа рыцҵатәуп",
 	"vector-action-addsection": "Атема ацҵатәуп",
 	"vector-action-delete": "Ианыхтәуп",
 	"vector-action-move": "Ахьӡ аԥсахра",

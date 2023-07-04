@@ -298,6 +298,7 @@
 	"visualeditor-preference-core-label": "Vizualno uređivanje",
 	"visualeditor-preference-enable": "Omogući vizualni uređivač. Bit će dostupan u {{PLURAL:$2|imenskom prostoru|sljedećim imenskim prostorima}}: $1",
 	"visualeditor-preference-newwikitexteditor-description": "Omogućava uređivanje wikiteksta unutar vizualnog uređivača. Sadrži većinu alata iz vizualnog uređivača, rabi sličan izgled i omogućava bolje prebacivanje između ova dva načina uređivanja.",
+	"visualeditor-preference-newwikitexteditor-enable": "Unutar vizualnog uređivača rabi način wikiteksta umjesto drugog uređivača wikiteksta.",
 	"visualeditor-preference-newwikitexteditor-label": "Novi način uređivanja wikiteksta",
 	"visualeditor-preference-tabs": "Način uređivanja:",
 	"visualeditor-preference-tabs-multi-tab": "Prikaži kartice oba uređivača",

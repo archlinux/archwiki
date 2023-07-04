@@ -5,6 +5,9 @@
 			"محک"
 		]
 	},
+	"vector-languages": "زوون",
+	"vector-language-button-label": "{{PLURAL:$1|$1 زوون}}",
+	"vector-no-language-button-label": "زوون اضافه هکردن",
 	"vector-action-addsection": "ترنه گپ بزوئن",
 	"vector-action-delete": "پاک هاکردن",
 	"vector-action-move": "دکش هاکردن",
@@ -17,5 +20,6 @@
 	"vector-view-view": "بخوندستن",
 	"vector-view-viewsource": "ونه منبع ره هارشائن",
 	"vector-more-actions": "ویشته",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> دار صفحه‌ئون دله چرخه‌تو هکردن",
 	"vector-toc-beginning": "لید"
 }

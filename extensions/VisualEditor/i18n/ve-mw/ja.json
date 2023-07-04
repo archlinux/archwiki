@@ -400,6 +400,6 @@
 	"visualeditor-wikitext-warning": "ビジュアルエディターを使用中です。[[{{MediaWiki:visualeditor-wikitext-warning-link}}|ウィキテキスト]]はここでは使用できません。スイッチボタンをクリックすることで、編集内容を保持したままいつでもソース編集に切り替えられます。",
 	"visualeditor-wikitext-warning-title": "ウィキテキスト記法を検出しました",
 	"visualeditor-wikitextconvert-title": "書式をウィキテキストに変換しますか?",
-	"visualeditor-wikitextconvert-message": "あなたは豊富な書式が含まれている内容を貼り付けました。ウィキテキストに変換したいと思っていますか。",
+	"visualeditor-wikitextconvert-message": "あなたは書式付きの内容を貼り付けました。この書式をウィキテキストに変換しますか?",
 	"visualeditor-wikitextconvert-convert": "ウィキテキストに変換する"
 }

@@ -18,7 +18,8 @@
 			"神樂坂秀吉",
 			"組曲師",
 			"Marine-Blue",
-			"Funa-enpitu"
+			"Funa-enpitu",
+			"Ryoya3"
 		]
 	},
 	"minerva-last-modified-date": "最終更新: $1 $2",
@@ -48,7 +49,7 @@
 	"mobile-frontend-meta-data-issues-header-talk": "このページについて",
 	"mobile-frontend-meta-data-issues-talk": "このトークページについて",
 	"mobile-frontend-notifications-filter": "フィルター",
-	"mobile-frontend-pageaction-edit-tooltip": "このページの導入部を編集する。",
+	"mobile-frontend-pageaction-edit-tooltip": "このページの導入部を編集する",
 	"mobile-frontend-placeholder": "{{SITENAME}}内を検索",
 	"mobile-frontend-random-button": "おまかせ表示",
 	"mobile-frontend-redirected-from": "「[[$1]]」から転送されました",

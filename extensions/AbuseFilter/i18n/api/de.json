@@ -62,7 +62,7 @@
 	"apihelp-abuselogprivatedetails-param-logid": "Die Kennung des zu überprüfenden AbuseLog-Eintrags.",
 	"apihelp-abuselogprivatedetails-param-reason": "Ein gültiger Grund für das Ausführen der Überprüfung.",
 	"apihelp-abuselogprivatedetails-example-1": "Private Details für den AbuseLog-Eintrag mit der Kennung 1 erhalten mit der Begründung „Beispiel“.",
-	"apierror-abusefilter-canttest": "Du hast keine Berechtigung, Missbrauchsfilter zu testen.",
+	"apierror-abusefilter-canttest": "Du bist nicht berechtigt, Missbrauchsfilter zu testen.",
 	"apierror-abusefilter-cantcheck": "Du hast keine Berechtigung, die Syntax von Missbrauchsfiltern zu überprüfen.",
 	"apierror-abusefilter-canteval": "Du hast keine Berechtigung zum Auswerten von AbuseFilter-Ausdrücken.",
 	"apierror-abusefilter-nosuchlogid": "Es gibt keinen Missbrauchsfilter-Logbuch-Eintrag mit der Kennung $1.",

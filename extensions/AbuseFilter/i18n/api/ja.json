@@ -11,7 +11,8 @@
 			"Waki285",
 			"Yusuke1109",
 			"おはぐろ蜻蛉",
-			"そらたこ"
+			"そらたこ",
+			"春春眠眠"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "不正利用フィルターが変数のセット、編集、またはログに記録された不正利用フィルターイベントと一致するかどうかを確認します。\n\nvars、rcid、またはlogidが必要ですが、使用できるのは1つだけです。",
@@ -68,6 +69,6 @@
 	"apierror-abusefilter-canttest": "不正利用フィルターをテストする権限がありません。",
 	"apierror-abusefilter-cantcheck": "不正利用フィルターの構文を確認する権限がありません。",
 	"apierror-abusefilter-canteval": "不正利用フィルターの式を評価する権限がありません。",
-	"apierror-abusefilter-nosuchlogid": "ID$1にabuselog記録はありません。",
+	"apierror-abusefilter-nosuchlogid": "ID$1に不正利用記録はありません。",
 	"apierror-abusefilter-badsyntax": "フィルターの構文が無効です。"
 }

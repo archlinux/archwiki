@@ -23,6 +23,7 @@
 	"nuke-maxpages": "Səhifələrin maksimum sayı:",
 	"nuke-editby": "[[Special:Contributions/$1|{{GENDER:$1|$1}}]] tərəfindən yaradılıb",
 	"nuke-deleted": "\"$1\" səhifəsi silindi.",
+	"nuke-deletion-queued": "'''$1''' səhifəsi silinmək üçün növbəyə alınıb.",
 	"nuke-not-deleted": "[[:$1]] səhifəsini silmək '''mümkün olmadı.'''",
 	"nuke-delete-more": "[[Special:Nuke|Daha çox səhifə sil]]",
 	"nuke-pattern": "Səhifə adı üçün SQL LIKE kodu (məs: %)",

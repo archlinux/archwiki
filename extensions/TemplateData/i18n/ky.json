@@ -4,5 +4,11 @@
 			"Bosogo"
 		]
 	},
+	"templatedata-doc-param-status": "Макам",
+	"templatedata-doc-param-type-wiki-page-name": "Барак аталышы",
+	"templatedata-doc-param-type-wiki-template-name": "Калып",
+	"templatedata-doc-param-type-wiki-user-name": "Колдонуучу",
+	"templatedata-modal-button-add-language": "Тил кошуу",
+	"templatedata-modal-button-cancel": "Жокко чыгаруу",
 	"templatedata-modal-title-language": "Тил"
 }

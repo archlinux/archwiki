@@ -10,7 +10,9 @@
 			"Roy17",
 			"TMg",
 			"William915",
-			"Yueman"
+			"Yueman",
+			"Al12si",
+			"捍粵者"
 		]
 	},
 	"tooltip-ca-createsource": "整呢版嘅代碼出嚟",
@@ -69,7 +71,7 @@
 	"visualeditor-dialog-meta-categories-input-matchingcategorieslabel": "啱嘅類",
 	"visualeditor-dialog-meta-categories-input-movecategorylabel": "搬呢個類去呢度",
 	"visualeditor-dialog-meta-categories-input-newcategorylabel": "開新類",
-	"visualeditor-dialog-meta-categories-input-placeholder": "加個類",
+	"visualeditor-dialog-meta-categories-input-placeholder": "加類",
 	"visualeditor-dialog-meta-categories-missing": "呢個類缺少描述版",
 	"visualeditor-dialog-meta-categories-options": "選項",
 	"visualeditor-dialog-meta-categories-section": "類",
@@ -151,7 +153,7 @@
 	"visualeditor-linkinspector-educationpopup-text": "鏈重要嘅字眼去第啲wiki文章甚至係第啲網站，用來幫讀者更加了解上下文。",
 	"visualeditor-linkinspector-educationpopup-title": "拎",
 	"visualeditor-linkinspector-illegal-title": "頁名無效",
-	"visualeditor-linknodeinspector-add-label": "加璃寶",
+	"visualeditor-linknodeinspector-add-label": "加label",
 	"visualeditor-linknodeinspector-title": "短拎",
 	"visualeditor-magiclinknodeinspector-convert-link": "轉做簡單連結",
 	"visualeditor-magiclinknodeinspector-title-isbn": "ISBN 連結",
@@ -188,7 +190,7 @@
 	"visualeditor-mwgallerydialog-mode-dropdown-label-slideshow": "投影片",
 	"visualeditor-mwgallerydialog-mode-dropdown-label-traditional": "傳統",
 	"visualeditor-mwgallerydialog-mode-field-label": "顯示模式",
-	"visualeditor-mwgallerydialog-perrow-field-label": "每行幾多張圖",
+	"visualeditor-mwgallerydialog-perrow-field-label": "每行幾張圖？",
 	"visualeditor-mwgallerydialog-remove-button-label": "拎走張圖",
 	"visualeditor-mwgallerydialog-search-button-label": "加新圖",
 	"visualeditor-mwgallerydialog-show-filename-field-label": "顯示快勞名",

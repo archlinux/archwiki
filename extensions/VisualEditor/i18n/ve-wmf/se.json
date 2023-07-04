@@ -5,5 +5,15 @@
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuála rievdadus]]",
-	"visualeditor-help-label": "Loga rávagihppaga"
+	"tag-visualeditor-wikitext": "Wikiteaksta rievdaduvvon 2017-rievdadanprográmmain",
+	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuála rievdadus: molsojuvvon]]",
+	"tag-visualeditor-switched-description": "Geavaheaddji rievdadišgođii visuála rievdadanprográmmain, muhto das maŋŋá son molssui wikiteavstta rievdadanprográmmii.",
+	"visualeditor-feedback-link": "Project:Visuála rievdadanprográmma/Máhcahat",
+	"visualeditor-feedback-tool": "Atte máhcahaga dán prográmmadaga birra",
+	"visualeditor-help-label": "Loga rávagihppaga",
+	"visualeditor-help-title": "Rievdadanprográmma geavahanrávvagat",
+	"visualeditor-welcomedialog-action": "Rievdadišgoađe",
+	"visualeditor-welcomedialog-switch": "Molsso wikiteavstta rievdadanprográmmii",
+	"visualeditor-welcomedialog-switch-ve": "Molsso visuála rievdadanprográmmii",
+	"visualeditor-welcomedialog-title": "{{GENDER:$1|Bures boahtin}} siidui $2"
 }

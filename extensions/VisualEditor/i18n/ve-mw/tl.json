@@ -140,6 +140,8 @@
 	"visualeditor-savedialog-error-badtoken": "Hindi naming maiproseso ang pagbabago mo dahil nawalan na ng saysay ang sesyon.",
 	"visualeditor-savedialog-identify-anon": "Nais mo bang itala na lang ang pahinang ito bilang isang 'di-kilalang tagagamit?  Matatala ang iyong direksiyong IP sa kasaysayan ng pagbabago ng pahinang ito.",
 	"visualeditor-savedialog-identify-user": "Naka-login ka na bilang si [[User:$1|$1]]. Iuugnay ang pagbabagong ito sa account mo kapag itinala mo ang pagbabagong ito.",
+	"visualeditor-savedialog-label-publish-short": "Ilathala",
+	"visualeditor-savedialog-label-publish-short-start": "Ilathala…",
 	"visualeditor-savedialog-label-resolve-conflict": "Resolbahin ang alitan",
 	"visualeditor-savedialog-label-resume-editing": "Tumuloy sa pamamatnugot",
 	"visualeditor-savedialog-label-review": "Repasuhin ang iyong pagbabago",

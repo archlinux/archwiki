@@ -160,9 +160,11 @@
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>فھرست جو جزو</li><li>فھرست جو جزو</li></ol>",
 	"wikieditor-toolbar-help-content-signaturetimestamp-description": "وقت جي ٺپي سان صحيح",
 	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|وڪي.سنواريندڙ]] (2010 وڪيٽيڪسٽ سنواريندڙ) استعمال ڪندي ڪيل سنوار",
+	"wikieditor-realtimepreview-error": "پيشِ-نگاھ لوڊ نٿو ٿي",
 	"wikieditor-realtimepreview-reload": "ٻيھر لاھيو",
 	"wikieditor-realtimepreview-beta-label": "ساڳئي وقت ھلندڙ پيش-نگاھ",
 	"wikieditor-realtimepreview-reload-title": "ساڳئي وقت ھلندڙ پيش-نگاھ جو پين ٻيھر لاھيو",
+	"wikieditor-realtimepreview-manual": "ٻيھر لوڊ ڪندا تہ جيئن توھان جي سنوارن جي پيشِ-نگاھ ڪري سگهجي.",
 	"wikieditor-realtimepreview-onboarding-title": "ساڳئي وقت ھلندڙ پيش-نگاھ",
 	"wikieditor-realtimepreview-onboarding-body": "ڏسو تہ توهان جون سنوارون پڙهندڙن کي ڪيئن نظر اينديون انھن جي ساڳئي وقت ۾ پيش-نگاھ ڪندي.",
 	"wikieditor-realtimepreview-onboarding-button": "ٺيڪ، سمجهي ويس"

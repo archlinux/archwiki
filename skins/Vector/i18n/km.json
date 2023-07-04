@@ -7,6 +7,7 @@
 		]
 	},
 	"skinname-vector": "វ៉ិចទ័រ​​",
+	"vector-opt-out": "ប្តូរទៅរូបរាងចាស់",
 	"vector.css": "/* CSS បានដាក់ទីនេះនឹងមានអនុភាពលើអ្នកប្រើប្រាស់នៃសំបក Vector */",
 	"vector-languages": "ភាសា",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ភាសា}}",
@@ -24,5 +25,13 @@
 	"vector-view-viewsource": "មើល​កូដ",
 	"vector-more-actions": "ច្រើនទៀត",
 	"vector-searchsuggest-containing": "ស្វែងរកទំព័រដែលមានពាក្យ<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-heading": "មាតិកា"
+	"vector-toc-heading": "មាតិកា",
+	"vector-toc-beginning": "ក្បាលទំព័រ",
+	"vector-anon-user-menu-pages": "ទំព័រសម្រាប់អ្នកកែសម្រួលដែលបានកត់ឈ្មោះចេញ",
+	"vector-anon-user-menu-pages-learn": "ស្វែងយល់បន្ថែម",
+	"vector-anon-user-menu-pages-label": "ស្វែងយល់បន្ថែមអំពីការកែសម្រួល",
+	"vector-main-menu-tooltip": "បញ្ជីដើម",
+	"vector-toc-menu-tooltip": "​មាតិកា",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|ទំព័រពិភាក្សា]]",
+	"tooltip-vector-anon-user-menu-title": "ជម្រើសផ្សេងទៀត"
 }

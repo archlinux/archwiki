@@ -19,7 +19,7 @@
 		"cssjanus/cssjanus": "2.1.1",
 		"guzzlehttp/guzzle": "7.4.5",
 		"guzzlehttp/promises": "1.5.1",
-		"guzzlehttp/psr7": "2.4.0",
+		"guzzlehttp/psr7": "2.4.5",
 		"jakobo/hotp-php": "2.0.0",
 		"justinrainbow/json-schema": "5.2.11",
 		"liuggio/statsd-php-client": "1.0.18",

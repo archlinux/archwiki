@@ -14,7 +14,9 @@
 			"Tacsipacsi",
 			"Thibaut120094",
 			"Umherirrender",
-			"Verdy p"
+			"Verdy p",
+			"Mormegil",
+			"Robby"
 		]
 	},
 	"skinname-vector": "{{name}}",
@@ -25,8 +27,8 @@
 	"prefs-vector-enable-vector-1-help": "Detail explaining the operation of the prefs-vector-enable-vector-1-label checkbox.",
 	"vector-opt-out": "Text of link that takes the user to the Special:Preferences page so they can opt-out of the latest version of Vector and go back to legacy Vector.",
 	"vector-opt-out-tooltip": "Used as the tooltip for the Vector opt-out link",
-	"vector.css": "{{optional}}",
-	"vector.js": "{{optional}}",
+	"vector.css": "{{optional}}\n{{related/css}}",
+	"vector.js": "{{optional}}\n{{related/js}}",
 	"vector-action-toggle-sidebar": "Accessibility label for the button that toggles the sidebar's visibility, as well as audible presentation for screen readers.",
 	"vector-languages": "Label for language alert in sidebar when language switching is in header\n\n{{Identical|Language}}",
 	"vector-language-button-aria-label": "Accessibility label for language button dropdown menu in modern Vector.\n* $1 - the count of languages available, supports plural",
@@ -57,7 +59,7 @@
 	"vector-toc-toggle-position-sidebar": "Indicator for TOC to move position into sidebar",
 	"vector-toc-toggle-position-title": "Indicator for TOC to move to collapsed state next to title",
 	"vector-toc-beginning": "Shown in the table of contents: Text of link to the beginning of the article.",
-	"vector-toc-toggle-button-label": "Used to label TOC section toggle buttons for screen readers",
+	"vector-toc-toggle-button-label": "Used to label TOC section toggle buttons for screen readers\n\n* $1 – The name of the TOC section to show/hide",
 	"vector-anon-user-menu-pages": "Label describing the anon editor links in the anon user menu",
 	"vector-anon-user-menu-pages-learn": "Lowercase text of link that goes to Help:Introduction and helps the user learn more about editing",
 	"vector-anon-user-menu-pages-label": "Accessible version of 'vector-anon-user-menu-pages' link text, prompts user to learn more about editing",

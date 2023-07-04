@@ -9,6 +9,7 @@
 	"cite_error_ref_numeric_key": "Etiketo <code>&lt;ref&gt;</code> nevalida;\nla nomo ne povas simple ula cifro. Uzez deskriptiva titulo",
 	"cite_error_ref_no_key": "L'etiketo dil kodexo <code>&lt;ref&gt;</code> havas nevalida nomo o kreesis nekorekte",
 	"cite_error_ref_too_many_keys": "Nevalida etiketo <code>&lt;ref&gt;</code>;\nnevalida nomi (exemple: tre multa)",
+	"cite_error_ref_no_input": "Nevalida etiketo <code>&lt;ref&gt;</code>; referi sen nomi mustas havar kontenajo",
 	"cite_error_references_duplicate_key": "Nevalida refero <code>&lt;ref&gt;</code>; la nomo \"$1\" uzesis plu kam 1 foyo, kun diferanta kontenajo",
 	"cite_error_references_invalid_parameters": "Nevalida parametri en l'etiketo <code>&lt;references&gt;</code>",
 	"cite_error_references_no_text": "Nevalida etiketo <code>&lt;ref&gt;</code>;\nnula texto furniseis por la referi nomizita <code>$1</code>",

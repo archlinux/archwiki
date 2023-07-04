@@ -597,6 +597,6 @@
 	"notification-header-throttle-filter": "최근 {{GENDER:$1|편집하신}} $2 편집 필터의 속도가 제한되었습니다.",
 	"notification-header-throttle-filter-actions": "{{GENDER:$1|당신이}} 최근 편집한 편집 필터 $2는 높은 속도의 일치를 보였으며 다음의 {{PLURAL:$4|동작이}} 자동으로 비활성화되었습니다: $3.",
 	"notification-header-throttle-filter-no-actions": "{{GENDER:$1|당신이}} 최근 편집한 편집 필터 $2는 높은 속도의 일치를 보였으며 다음의 자동으로 비활성화된 동작은 없습니다.",
-	"notification-subject-throttle-filter": "{{GENDER:$1|당신이}} 편집한 편집 필터는 {{SITENATE}}에서 속도가 제한되었습니다",
+	"notification-subject-throttle-filter": "{{GENDER:$1|당신이}} 편집한 편집 필터는 {{SITENAME}}에서 속도가 제한되었습니다",
 	"notification-link-text-show-filter": "필터 표시"
 }

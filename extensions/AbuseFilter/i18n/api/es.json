@@ -10,7 +10,9 @@
 			"Macofe",
 			"MarcoAurelio",
 			"Ryo567",
-			"Whytheonlyone"
+			"Whytheonlyone",
+			"No se",
+			"The Pro Gamer"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Comprueba si el filtro antiabusos coincide con un conjunto de variables, una edición o un evento del registro del editor antiabusos.\n\nSe necesita \"vars\", \"rcid\" o \"logid\", pero solo se utiliza uno.",
@@ -29,7 +31,7 @@
 	"apihelp-abusefilterevalexpression-description": "Evalúa una expresión del filtro antiabusos.",
 	"apihelp-abusefilterevalexpression-summary": "Evalúa una expresión del filtro antiabusos.",
 	"apihelp-abusefilterevalexpression-param-expression": "La expresión que se evaluará.",
-	"apihelp-abusefilterevalexpression-param-prettyprint": "Si el resultado tendría que ser imprimió.",
+	"apihelp-abusefilterevalexpression-param-prettyprint": "Si el resultado debe ser bastante impreso.",
 	"apihelp-abusefilterevalexpression-example-1": "Evaluar una expresión simple",
 	"apihelp-abusefilterevalexpression-example-2": "Evaluar una expresión simple, formateando el resultado.",
 	"apihelp-abusefilterunblockautopromote-description": "Desbloquea un usuario de recibir autopromociones como consecuencia del filtro antiabusos.",

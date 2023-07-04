@@ -13,7 +13,8 @@
 			"Robotukas11",
 			"Shirayuki",
 			"Tomasdd",
-			"Zygimantus"
+			"Zygimantus",
+			"Nokeoo"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Knyga",
@@ -21,11 +22,16 @@
 	"visualeditor-cite-tool-name-news": "Naujienos",
 	"visualeditor-cite-tool-name-web": "Tinklapis",
 	"cite-ve-citationneeded-button": "Pridėti citatą",
+	"cite-ve-citationneeded-reason": "Pateikta priežastis:",
+	"cite-ve-citationneeded-title": "Reikalinga citata",
 	"cite-ve-dialog-reference-editing-reused": "Ši nuoroda naudojama {{PLURAL:$1|kartą|2=du kartus|$1 kartus}} šiame puslapyje.",
+	"cite-ve-dialog-reference-editing-reused-long": "Ši nuoroda naudojama {{PLURAL:$1|kartą|2=du kartus|$1 kartus}} šiame puslapyje. Čia atlikti pakeitimai bus taikomi visose vietose, kur ši nuoroda naudojama pakartotinai.",
 	"cite-ve-dialog-reference-options-group-label": "Naudoti šią grupę",
 	"cite-ve-dialog-reference-options-group-placeholder": "Bendrosios nuorodos",
 	"cite-ve-dialog-reference-options-name-label": "Pakartotinai naudoti pagal pavadinimą",
+	"cite-ve-dialog-reference-options-responsive-label": "Naudoti interaktyvų stulpelių išdėstymą",
 	"cite-ve-dialog-reference-options-section": "Parinktys",
+	"cite-ve-dialog-reference-placeholder": "Rašykite ar įklijuokite savo nuorodą čia arba įterpkite citatos šabloną.",
 	"cite-ve-dialog-reference-title": "Nuoroda",
 	"cite-ve-dialog-reference-useexisting-tool": "Naudoti pakartotinai",
 	"cite-ve-dialog-referenceslist-contextitem-description-general": "Bendrųjų nuorodų sąrašas",
@@ -41,7 +47,9 @@
 	"cite-ve-referenceslist-isempty": "Nėra nuorodų su grupe \"$1\" šiame puslapyje, kurias būtų galima pateikti šiame sąraše",
 	"cite-ve-referenceslist-isempty-default": "Šiame puslapyje nėra nuorodų, kurias būtų galima įtraukti į šį sąrašą.",
 	"cite-ve-referenceslist-missingref": "Ši nuoroda yra apibrėžta šablone arba kitame sugeneruotame bloke ir kol kas gali būti redaguojama tik išeities teksto režimu.",
+	"cite-ve-referenceslist-missingreflist": "Šis nuorodų sąrašas sukurtas pagal šabloną ir kol kas jį galima redaguoti tik šaltinio režimu.",
 	"cite-ve-toolbar-group-label": "Cituoti",
 	"cite-ve-othergroup-item": "$1 nuoroda",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Išnašos"
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Išnašos",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Nuorodų grupės pavadinimas: „$1“"
 }

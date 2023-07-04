@@ -5,7 +5,9 @@
 			"Kjeanclaude"
 		]
 	},
+	"vector-languages": "Aniein moun",
 	"vector-language-button-label": "{{PLURAL:$1|$1 aniein|$1 aniein moun}}",
+	"vector-no-language-button-label": "Fa aniein moun goua sou",
 	"vector-action-addsection": "Fa ndè ouflè goua sou",
 	"vector-action-delete": "Nounnoun",
 	"vector-action-move": "Katchi floua boué nga i douman",

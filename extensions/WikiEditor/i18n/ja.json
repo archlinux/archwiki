@@ -23,7 +23,8 @@
 			"おはぐろ蜻蛉",
 			"ひまり",
 			"青子守歌",
-			"Kokage si"
+			"Kokage si",
+			"Dragoniez"
 		]
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
@@ -44,10 +45,10 @@
 	"wikieditor-toolbar-tool-link": "リンク",
 	"wikieditor-toolbar-tool-link-title": "リンクの挿入",
 	"wikieditor-toolbar-tool-link-int": "ウィキページへ",
-	"wikieditor-toolbar-tool-link-int-target": "ページまたは URL:",
-	"wikieditor-toolbar-tool-link-int-target-tooltip": "ページ名または URL",
-	"wikieditor-toolbar-tool-link-int-text": "リンク文:",
-	"wikieditor-toolbar-tool-link-int-text-tooltip": "表示する文字列を入力してください",
+	"wikieditor-toolbar-tool-link-int-target": "対象ページまたはURL:",
+	"wikieditor-toolbar-tool-link-int-target-tooltip": "ページ名またはURL",
+	"wikieditor-toolbar-tool-link-int-text": "リンクのテキスト:",
+	"wikieditor-toolbar-tool-link-int-text-tooltip": "表示する文字列",
 	"wikieditor-toolbar-tool-link-ext": "外部のウェブページへ",
 	"wikieditor-toolbar-tool-link-ext-target": "リンクの URL:",
 	"wikieditor-toolbar-tool-link-ext-text": "リンク テキスト:",

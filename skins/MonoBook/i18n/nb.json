@@ -19,5 +19,5 @@
 	"monobook-notifications-link": "Varsler ($1)",
 	"monobook-notifications-link-none": "Varsler",
 	"monobook-view-history": "Historikk",
-	"monobook-action-undelete": "Gjenopprett {{PLURAL:$1|én revisjon|$1 revisjoner}}"
+	"monobook-action-undelete": "Gjenopprett {{PLURAL:$1|én versjon|$1 versjoner}}"
 }

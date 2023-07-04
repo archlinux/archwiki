@@ -22,7 +22,8 @@
 			"Remember the dot",
 			"Sanbec",
 			"Tiberius1701",
-			"Translationista"
+			"Translationista",
+			"MarcoAurelio"
 		]
 	},
 	"cite-desc": "Añade las etiquetas <code>&lt;ref&gt;</code> y <code>&lt;references&gt;</code> para citas.",
@@ -40,10 +41,10 @@
 	"cite_error_included_ref": "Etiqueta de apertura <code>&lt;ref&gt;</code> sin su correspondiente cierre <code>&lt;/ref&gt;</code>",
 	"cite_error_group_refs_without_references": "Existen etiquetas <code>&lt;ref&gt;</code> para un grupo llamado «$1», pero no se encontró la etiqueta <code>&lt;references group=\"$1\"/&gt;</code> correspondiente.",
 	"cite_error_references_group_mismatch": "La etiqueta <code>&lt;ref&gt;</code> en las <code>&lt;references&gt;</code> tiene un conflicto con el grupo «$1».",
-	"cite_error_references_missing_group": "La etiqueta <code>&lt;ref&gt;</code> definida en las <code>&lt;references&gt;</code> pertenece al grupo «$1» no declarado en el texto anterior.",
+	"cite_error_references_missing_group": "La etiqueta <code>&lt;ref&gt;</code> con el nombre «$2» definida en <code>&lt;references&gt;</code> pertenece al grupo «$1» no declarado en el texto anterior.",
 	"cite_error_references_missing_key": "La etiqueta <code>&lt;ref&gt;</code> definida en las <code>&lt;references&gt;</code> con nombre «$1» no se utiliza en el texto anterior.",
 	"cite_error_references_no_key": "La etiqueta <code>&lt;ref&gt;</code> definida en las <code>&lt;references&gt;</code> no tiene atributo de nombre.",
-	"cite_error_empty_references_define": "La etiqueta <code>&lt;ref&gt;</code> definida en las <code>&lt;references&gt;</code> con nombre «$1» no tiene contenido.",
+	"cite_error_empty_references_define": "La etiqueta <code>&lt;ref&gt;</code> con nombre «$1» definida en el grupo «$2» para <code>&lt;references&gt;</code> no tiene contenido.",
 	"cite-tracking-category-cite-error": "Páginas con errores en las referencias",
 	"cite-tracking-category-cite-error-desc": "Las páginas en esta categoría tienen errores en el uso de las etiquetas de referencias.",
 	"cite_references_link_accessibility_label": "Volver arriba",

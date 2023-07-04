@@ -558,8 +558,11 @@ class UpdateVarDumps extends LoggedUpdateMaintenance {
 			if ( $obj instanceof VariableHolder ) {
 				$varManager = AbuseFilterServices::getVariablesManager();
 				$varArray = $varManager->dumpAllVars( $obj, [ 'old_wikitext', 'new_wikitext' ] );
-			} else {
+			} elseif ( is_array( $obj ) ) {
 				$varArray = $obj;
+			} else {
+				$type = is_object( $obj ) ? get_class( $obj ) : gettype( $obj );
+				throw new UnexpectedValueException( "Unexpected type for stored blob: $type" );
 			}
 			$varArray = $this->updateVariables( $varArray );
 			// Recreating flags will also ensure that we don't add 'nativeDataArray'

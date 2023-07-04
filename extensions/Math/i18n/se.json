@@ -9,9 +9,9 @@
 	},
 	"math-visualeditor-mwchemdialog-title": "Kemihkalaš formel",
 	"math-visualeditor-mwmathdialog-title": "Matemahtihkka",
+	"math_syntax_error": "syntáksameattáhus",
 	"math_unknown_error": "dovdameahttun meattáhus",
 	"math_unknown_function": "dovdameahttun funkšuvdna \"$1\"",
-	"mw_math_png": "Čájet álo PNG:n",
 	"prefs-math": "Matematihkka",
 	"math-wikibase-special-error-header": "Meattáhus"
 }

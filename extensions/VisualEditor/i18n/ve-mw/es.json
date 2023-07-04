@@ -51,7 +51,8 @@
 			"Tiberius1701",
 			"Vikytinta",
 			"Wifidel",
-			"ZebaX2010"
+			"ZebaX2010",
+			"No se"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -337,6 +338,7 @@
 	"visualeditor-preference-core-label": "Edición visual",
 	"visualeditor-preference-enable": "Activar el editor visual. Estará disponible en {{PLURAL:$2|el siguiente espacio|los siguientes espacios}} de nombres: $1",
 	"visualeditor-preference-newwikitexteditor-description": "Activar el modo de código nuevo dentro del editor visual. Tiene muchas de sus herramientas, usa un diseño similar y permite una mejor alternancia entre los dos.",
+	"visualeditor-preference-newwikitexteditor-enable": "Utilizar el modo de wikitexto dentro del editor visual, en lugar de un editor de wikitexto diferente.",
 	"visualeditor-preference-newwikitexteditor-label": "Modo de código nuevo",
 	"visualeditor-preference-tabs": "Modo de edición:",
 	"visualeditor-preference-tabs-multi-tab": "Mostrarme ambas pestañas de edición",

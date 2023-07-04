@@ -9,7 +9,8 @@
 			"Rancher",
 			"Srdjan m",
 			"Srđan",
-			"Жељко Тодоровић"
+			"Жељко Тодоровић",
+			"Сербијана"
 		]
 	},
 	"wikieditor": "Napredni intefejs za uređivanje vikiteksta",
@@ -27,8 +28,8 @@
 	"wikieditor-toolbar-tool-ilink-example": "Naslov veze",
 	"wikieditor-toolbar-tool-xlink": "Spoljašnja veza (sa prefiksom http://)",
 	"wikieditor-toolbar-tool-xlink-example": "http://www.example.com naslov veze",
-	"wikieditor-toolbar-tool-link": "Link",
-	"wikieditor-toolbar-tool-link-title": "Umetanje linka",
+	"wikieditor-toolbar-tool-link": "Veza",
+	"wikieditor-toolbar-tool-link-title": "Umetni vezu",
 	"wikieditor-toolbar-tool-link-int": "Prema viki stranici",
 	"wikieditor-toolbar-tool-link-int-target": "Ciljana stranica ili URL adresa:",
 	"wikieditor-toolbar-tool-link-int-target-tooltip": "Naslov stranice ili URL adresa",
@@ -95,7 +96,7 @@
 	"wikieditor-toolbar-tool-superscript-example": "Tekst eksponenta",
 	"wikieditor-toolbar-tool-subscript": "Indeks",
 	"wikieditor-toolbar-tool-subscript-example": "Tekst indeksa",
-	"wikieditor-toolbar-group-insert": "Umetanje",
+	"wikieditor-toolbar-group-insert": "Umetni",
 	"wikieditor-toolbar-tool-gallery": "Galerija slika",
 	"wikieditor-toolbar-tool-gallery-example": "Primer.jpg|natpis1\nPrimer.jpg|natpis2",
 	"wikieditor-toolbar-tool-newline": "Novi red",
@@ -104,7 +105,7 @@
 	"wikieditor-toolbar-tool-table-example-cell-text": "Tekst ćelije",
 	"wikieditor-toolbar-tool-table-example-header": "Tekst naslova",
 	"wikieditor-toolbar-tool-table-example-caption": "Opisni tekst",
-	"wikieditor-toolbar-tool-table-title": "Umetanje tabele",
+	"wikieditor-toolbar-tool-table-title": "Umetni tabelu",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Redova",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Kolona",
 	"wikieditor-toolbar-tool-table-dimensions-header": "Red zaglavlja",

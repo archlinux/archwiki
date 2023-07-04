@@ -6,7 +6,9 @@
 			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
 		]
 	},
+	"vector-languages": "ꠜꠣꠡꠣꠁꠘ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 ꠝꠣꠔ|$1 ꠝꠣꠔꠣꠁꠘ}}",
+	"vector-no-language-button-label": "ꠢꠇ꠆ꠇꠟ ꠝꠣꠔꠣꠁꠘ ꠎꠥꠉ ꠈꠞꠂꠘ",
 	"vector-action-addsection": "ꠐꠙꠤꠇ ꠡꠥꠞꠥ ꠈꠞꠁꠘ",
 	"vector-action-delete": "ꠙꠣꠟꠣꠃꠇ꠆ꠇꠣ",
 	"vector-action-move": "ꠢꠞꠣꠅ",

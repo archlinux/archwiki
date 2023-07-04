@@ -5,7 +5,11 @@
 			"Батыр Комдошев"
 		]
 	},
+	"mobile-frontend-history": "Бу бӱктиҥ тӱзеткениниҥ тӱӱкизин кӧрӧри.",
+	"mobile-frontend-home-button": "Тӧс",
 	"mobile-frontend-language-article-heading": "Тил",
 	"mobile-frontend-main-menu-login": "Кирер",
-	"mobile-frontend-placeholder": "Бедреер {{SITENAME}}"
+	"mobile-frontend-main-menu-settings": "Эптештирӱ",
+	"mobile-frontend-placeholder": "Бедреер {{SITENAME}}",
+	"mobile-frontend-random-button": "Рандом"
 }

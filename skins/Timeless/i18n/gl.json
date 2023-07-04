@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Banjo",
-			"Elisardojm"
+			"Elisardojm",
+			"Toliño"
 		]
 	},
 	"timeless-desc": "Unha aparencia atemporal, deseñada por Brandon Harris en base ó prototipo Winter, e varios estilos da Fundación Wikimedia.",
@@ -16,10 +17,15 @@
 	"timeless-sitetools": "Ferramentas wiki",
 	"timeless-pageactions": "Ferramentas das páxinas",
 	"timeless-userpagetools": "Ferramentas de páxina de usuario",
+	"timeless-action-addsection": "Novo fío",
+	"timeless-view-view": "Ler",
 	"timeless-pagemisc": "Máis",
 	"timeless-namespaces": "Espazos de nomes",
 	"timeless-pagetools": "Accións de páxina",
 	"timeless-languages": "Linguas",
+	"timeless-projects": "Outros proxectos",
+	"timeless.css": "/* Todo o CSS que se coloque aquí afectará a quen use a aparencia Timeless */",
+	"timeless.js": "/* Todo o JavaScript que se coloque aquí afectará que usen a aparencia Timeless */",
 	"timeless-view-history": "Historial",
 	"timeless-action-undelete": "Restaurar {{PLURAL:$1|unha edición|$1 edicións}}"
 }

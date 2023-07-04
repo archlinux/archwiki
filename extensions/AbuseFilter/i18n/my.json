@@ -129,6 +129,7 @@
 	"abusefilter-edit-warn-actions": "ဆောင်ရွက်ချက်များ",
 	"abusefilter-edit-disallow-other": "အခြားမက်ဆေ့",
 	"abusefilter-edit-disallow-actions": "ဆောင်ရွက်ချက်များ",
+	"abusefilter-block-anon": "အမည်မသိ အသုံးပြုသူများကို ပိတ်ပင်တားဆီးရန်",
 	"abusefilter-edit-main": "စိစစ်မှုစနစ် ပါရာမီတာများ",
 	"abusefilter-edit-done-subtitle": "စိစစ်စနစ် ပြင်ဆင်ခဲ့သည်",
 	"abusefilter-edit-done": "[[Special:AbuseFilter/$1|စိစစ်မှုစနစ် $3]] သို့ [[Special:AbuseFilter/history/$1/diff/prev/$2|သင်၏ပြောင်းလဲချက်များကို]] သိမ်းဆည်းလိုက်ပါပြီ။",

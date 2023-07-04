@@ -7,6 +7,7 @@
 			"Vivaelcelta"
 		]
 	},
+	"skinname-vector": "Vector antigo (2010)",
 	"vector-skin-desc": "Proporciona 2 aparencias Vector:\n* 2011 - A versión Modern da aparencia MonoBook, cun aspecto actualizado e moitas melloras na usabilidade.\n* 2022 - A versión Vector creada como parte do proxecto de [[mw:Desktop Improvements|melloras do aspecto de escritorio]] da WMF.",
 	"prefs-vector-enable-vector-1-label": "Usar a versión antiga de Vector",
 	"prefs-vector-enable-vector-1-help": "Durante os próximos anos actualizaremos gradualmente o aspecto Vector. O aspecto Vector antigo permite ver a versión antiga (ata decembro de 2019). Para obter máis información sobre as actualizacións, visita a nosa [[mw:Reading/Web/Desktop_Improvements|páxina do proxecto]].",

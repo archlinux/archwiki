@@ -2,12 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Bosogo",
-			"Janatkg"
+			"Janatkg",
+			"Элдин беги"
 		]
 	},
 	"mobile-frontend-editor-edit": "Оңдоо",
 	"mobile-frontend-editor-redlink-create": "Барак түзүү",
-	"mobile-frontend-home-button": "Башкы",
+	"mobile-frontend-history": "Бул барактын түзөтүү тарыхын көрүү.",
+	"mobile-frontend-home-button": "Башкы барак",
 	"mobile-frontend-language-article-heading": "Башка тилинде окуу",
 	"mobile-frontend-main-menu-button-tooltip": "Башбаракты ачуу",
 	"mobile-frontend-main-menu-login": "Кирүү",

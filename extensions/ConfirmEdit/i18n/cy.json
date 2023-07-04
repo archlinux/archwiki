@@ -15,7 +15,7 @@
 	"captcha-createaccount-fail": "CAPTCHA ar goll neu'n anghywir.",
 	"captcha-create": "Er mwyn gallu creu'r dudalen, gwnewch y swm isod a gosodwch y canlyniad yn y blwch ([[Special:Captcha/help|rhagor o wybodaeth]]):",
 	"captcha-sendemail": "Er mwyn arbed y wici rhag sbamio awtomatig, byddwch gystal â gwneud y swm syml isod ac ysgrifennu'r ateb yn y blwch ([[Special:Captcha/help|rhagor o wybodaeth]]):",
-	"captcha-sendemail-fail": "CAPTCHA yn anghywir neu yn eisiau.",
+	"captcha-sendemail-fail": "CAPTCHA yn anghywir neu ar goll.",
 	"captcha-disabledinapi": "Mae angen \"captcha\" i gyflawni'r weithred hon, felly nid oes modd ei gyflawni trwy'r API.",
 	"captchahelp-title": "Cymorth \"captcha\"",
 	"captchahelp-cookies-needed": "Er mwyn i hyn weithio mae'n rhaid bod cookies wedi eu galluogi ar eich gwe-lywiwr.",

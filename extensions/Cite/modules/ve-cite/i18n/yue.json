@@ -6,14 +6,15 @@
 			"Hello903hello",
 			"Ktchankt",
 			"William915",
-			"Z423x5c6"
+			"Z423x5c6",
+			"捍粵者"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "書",
 	"visualeditor-cite-tool-name-journal": "期刊",
 	"visualeditor-cite-tool-name-news": "新聞",
 	"visualeditor-cite-tool-name-web": "網站",
-	"cite-ve-citationneeded-button": "加個引用",
+	"cite-ve-citationneeded-button": "加引用",
 	"cite-ve-citationneeded-description": "有編輯者指出呢個講法要引用可靠來源。",
 	"cite-ve-citationneeded-reason": "原因：",
 	"cite-ve-citationneeded-title": "要引用",

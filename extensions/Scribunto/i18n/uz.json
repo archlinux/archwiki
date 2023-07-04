@@ -22,6 +22,6 @@
 	"scribunto-limitreport-estmemusage-value": "$1 {{PLURAL:$1|bayt|bayt}}",
 	"scribunto-limitreport-memusage-value": "$1/$2 {{PLURAL:$2|bayt|bayt}}",
 	"scribunto-limitreport-logs": "Lua qaydlari",
-	"nstab-module": "Module",
+	"nstab-module": "Modul",
 	"tooltip-ca-nstab-module": "Modul sahifasini koʻrish"
 }
