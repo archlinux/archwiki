@@ -76,7 +76,10 @@
 			"逆襲的天邪鬼",
 			"铁桶",
 			"飞舞回堂前",
-			"NekoCharm"
+			"NekoCharm",
+			"ArsenalBastion4093",
+			")8",
+			"U.T."
 		]
 	},
 	"abusefilter-desc": "对编辑行为进行自动化条件判定",
@@ -92,7 +95,7 @@
 	"abusefilter-blocker": "滥用过滤器",
 	"abusefilter-blockreason": "被防滥用过滤器自动封禁。\n匹配的规则说明：$1",
 	"abusefilter-degroupreason": "权限被防滥用过滤器自动剥夺。\n规则说明：$1",
-	"abusefilter-blockautopromotereason": "防滥用过滤器已将用户获自动授权的时间推迟。\n规则描述：$1",
+	"abusefilter-blockautopromotereason": "滥用过滤器已将用户获自动授权的时间推迟。\n规则描述：$1",
 	"abusefilter-accountreserved": "此账户名称被保留给防滥用过滤器使用。",
 	"right-abusefilter-modify": "创建或修改防滥用过滤器",
 	"right-abusefilter-view": "查看防滥用过滤器",
@@ -253,7 +256,7 @@
 	"abusefilter-tools-reautoconfirm": "恢复自动确认状态",
 	"abusefilter-tools-reautoconfirm-user": "用户：",
 	"abusefilter-tools-reautoconfirm-submit": "重新自动确认",
-	"abusefilter-tools-restoreautopromote": "通过防滥用过滤器工具恢复自动授权。",
+	"abusefilter-tools-restoreautopromote": "通过滥用过滤器工具恢复自动授权。",
 	"abusefilter-reautoconfirm-none": "该用户的自动确认状态并没有被撤销过。",
 	"abusefilter-reautoconfirm-notallowed": "您不被允许恢复自动确认状态。",
 	"abusefilter-reautoconfirm-done": "该账号的自动确认状态已恢复",
@@ -282,7 +285,7 @@
 	"abusefilter-edit-global": "全域过滤器",
 	"abusefilter-edit-rules": "条件：",
 	"abusefilter-edit-field-conditions": "条件",
-	"abusefilter-edit-notes": "注释：",
+	"abusefilter-edit-notes": "备注：",
 	"abusefilter-edit-lastmod": "过滤器最后更改：",
 	"abusefilter-edit-lastmod-text": "$1，$2",
 	"abusefilter-edit-hitcount": "过滤器触发数：",

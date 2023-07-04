@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kimberli Mäkäräinen (WMNO)"
+		]
+	},
+	"fancycaptcha-create": "Jus háliidivččet ráhkadit dán siiddu, de čálit teakstagieddái dás vuolábealde sániid, mat oidnojit govas ([[Special:Captcha/help|lassedieđut]]):",
+	"fancycaptcha-edit": "Jus háliidivččet rievdadit dán siiddu, de čálit teakstagieddái dás vuolábealde sániid, mat oidnojit govas ([[Special:Captcha/help|lassedieđut]]):",
+	"fancycaptcha-imgcaptcha-ph": "Čális teavstta, maid oainnát govas",
+	"fancycaptcha-reload-text": "Molsso gova"
+}

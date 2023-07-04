@@ -20,7 +20,12 @@
 			"Miguel2706",
 			"Platonides",
 			"Rodney Araujo",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"-sasha-",
+			"Diegodlh",
+			"FlyingAce",
+			"Rodelar",
+			"Zapipedia (WMF)"
 		]
 	},
 	"skinname-vector": "Versión heredada de Vector (2010)",
@@ -39,7 +44,7 @@
 	"vector-language-button-label": "{{PLURAL:$1|$1 idioma|$1 idiomas}}",
 	"vector-no-language-button-label": "Añadir idiomas",
 	"vector-no-language-button-aria-label": "Este artículo existe sólo en este idioma. Añade el artículo para otros idiomas",
-	"vector-language-redirect-to-top": "En este {{SITENAME}}, los enlaces de idiomas se encuentran en la parte superior de la página, frente al título del artículo. [[#p-lang-btn|Ir arriba]].",
+	"vector-language-redirect-to-top": "En {{SITENAME}}, los enlaces de idiomas se encuentran en la parte superior de la página, frente al título del artículo. [[#p-lang-btn|Ir arriba]].",
 	"vector-language-variant-switcher-label": "Cambiar variante de idioma",
 	"vector-action-addsection": "Añadir tema",
 	"vector-action-delete": "Borrar",

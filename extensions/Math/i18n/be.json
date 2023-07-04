@@ -10,7 +10,8 @@
 			"No Sleep till Krupki",
 			"Vlad5250",
 			"Yury Tarasievich",
-			"Tomato Cream"
+			"Tomato Cream",
+			"Plaga med"
 		]
 	},
 	"math-desc": "Выводзіць матэматычныя формулы, запісаныя паміж тэгамі <code>&lt;math&gt;</code> і <code>&lt;/math&gt;</code>",
@@ -21,7 +22,7 @@
 	"math-visualeditor-mwlatexdialog-card-options": "Налады",
 	"math-visualeditor-mwlatexinspector-display": "Выгляд",
 	"math-visualeditor-mwlatexinspector-display-block": "Абзац",
-	"math-visualeditor-mwlatexinspector-display-default": "Па змаўчанні",
+	"math-visualeditor-mwlatexinspector-display-default": "Прадвызначана",
 	"math-visualeditor-mwlatexinspector-display-inline": "Унутры радка",
 	"math-visualeditor-mwlatexinspector-id": "Ідэнтыфікатар спасылкі (неабавязковы)",
 	"math-visualeditor-mwlatexinspector-qid": "Ідэнтыфікатар Wikibase (з прэфіксам Q)",

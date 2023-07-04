@@ -26,7 +26,8 @@
 			"Temuri rajavi",
 			"Vlad5250",
 			"Александр Сигачёв",
-			"WindEwriX"
+			"WindEwriX",
+			"Radmir Far"
 		]
 	},
 	"wikieditor": "Расширенный интерфейс редактирования вики-текста",
@@ -60,7 +61,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Эта страница не существует на {{GRAMMAR:prepositional|{{SITENAME}}}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Указанное вами название недействительно",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Внешняя ссылка",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Эта страница не является содержательной страницей, а списком тем с похожими названиями",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Эта страница является не статьёй, а списком тем с похожими названиями.",
 	"wikieditor-toolbar-tool-link-int-invalid": "Указанное название недопустимо.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Указанный вами URL похож на ссылку на другую вики-страницу. Возможно, вы хотите сделать данную ссылку внутренней?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Внутренняя ссылка",

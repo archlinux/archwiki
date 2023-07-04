@@ -338,7 +338,7 @@
 	"visualeditor-mwpredialog-title": "Title for the preformatted text dialog. It appears when clicking on a <nowiki><pre></nowiki> element.",
 	"visualeditor-mwsignature-tool": "Used as name of the tool for inserting signatures.",
 	"visualeditor-preference-betatempdisable": "Label for the temporary user preference to disable VisualEditor while it is in development, before it is available to all users without opt-out.",
-	"visualeditor-preference-core-description": "Used in [[Special:Preferences]].\n\nUsed as description for the checkbox to enable the visual editor.\n\nThe label for this checkbox is {{msg-mw|Visualeditor-preference-core-label}}.\n\nSee also:\n* {{msg-mw|Visualeditor-preference-enable}}",
+	"visualeditor-preference-core-description": "Used in [[Special:Preferences]].\n\nUsed as description for the checkbox to enable the visual editor.\n\nThe label for this checkbox is {{msg-mw|Visualeditor-preference-core-label}}.",
 	"visualeditor-preference-core-discussion-link": "{{optional|Used on [[Special:Preferences]] as a link to a page where users can discuss this Beta Feature. Defaults to a page on MediaWiki.org.}}",
 	"visualeditor-preference-core-info-link": "{{optional|Used on [[Special:Preferences]] as a link to a page where users can learn about this Beta Feature. Defaults to a page on MediaWiki.org.}}",
 	"visualeditor-preference-core-label": "Used in [[Special:Preferences]].\n\nUsed as label for checkbox to enable the visual editor.\n\nThe description for this checkbox is: {{msg-mw|Visualeditor-preference-core-description}}",

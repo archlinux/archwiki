@@ -6,15 +6,16 @@
 			"Ajiniyaz Nurniyazov"
 		]
 	},
-	"skinname-vector": "Vektor miyrası (2010)",
+	"skinname-vector": "Vektor, eski (2010)",
 	"skinname-vector-2022": "Vektor (2022)",
 	"vector-specialversion-name": "Vektor",
 	"prefs-vector-enable-vector-1-label": "Eski Vektordan paydalanıw",
 	"vector-opt-out": "Eski kóriniske almastırıw",
+	"vector-opt-out-tooltip": "Skinniń burınǵı kórinisine (eski Vectorǵa) qaytıw ushın sazlamalardı ózgertiw",
 	"vector-languages": "Tiller",
 	"vector-language-button-label": "{{PLURAL:$1|$1 til}}",
 	"vector-no-language-button-label": "Tillerdi qosıw",
-	"vector-language-redirect-to-top": "Bul {{SITENAME}}da til siltemeleri bettiń eń joqarı bóleginde, maqala atınıń oń tárepine jaylasqan. [[#p-lang-btn|Joqarıǵa ótiw]].",
+	"vector-language-redirect-to-top": "Bul {{SITENAME}}da til siltemeleri bettiń joqarǵı bóleginde, maqala atınıń oń tárepinde jaylasqan. [[#p-lang-btn|Joqarıǵa ótiw]].",
 	"vector-action-addsection": "Tema qosıw",
 	"vector-action-delete": "Óshiriw",
 	"vector-action-move": "Kóshiriw",
@@ -29,9 +30,13 @@
 	"vector-jumptonavigation": "Navigaciyaǵa ótiw",
 	"vector-jumptosearch": "Izlewge ótiw",
 	"vector-more-actions": "Jáne",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> nı óz ishine alǵan betler ushın izlew",
+	"vector-search-loader": "Izlew usınısları júklenbekte",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> tekstin óz ishine alǵan betlerdi izlew",
+	"vector-intro-page": "Járdem:Xosh keldińiz",
+	"vector-toc-beginning": "Kirisiw",
 	"vector-anon-user-menu-pages": "Shıǵıwdı ámelge asırǵan redaktorlawshılar ushın betler",
 	"vector-anon-user-menu-pages-learn": "tolıq maǵlıwmat",
 	"vector-toc-menu-tooltip": "Mazmunı",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Talqılaw]]",
 	"tooltip-vector-anon-user-menu-title": "Kóbirek opciyalar"
 }

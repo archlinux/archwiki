@@ -172,7 +172,7 @@
 	"visualeditor-dialog-transclusion-add-param-error-alias": "\"$1\" on jo lisätty parametrinä \"$2\". Tarkista vaihtoehdot sivupalkista. Tämä johtuu joko [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#aliases aliasten] tai [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#label labelien] käytöstä.",
 	"visualeditor-dialog-transclusion-add-param-error-deprecated": "Parametria \"$1\" ei voida lisätä, koska se on merkitty [//www.mediawiki.org/wiki/Special:MyLanguage/Help:TemplateData#deprecated käytöstä poistettavaksi].",
 	"visualeditor-dialog-transclusion-add-param-error-exists-selected": "Ei voi lisätä kahta parametria samalla nimellä.",
-	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "Tämä parametri on jo käytettävissä. Tarkista vaihtoehdot sivupalkista.",
+	"visualeditor-dialog-transclusion-add-param-error-exists-unselected": "Parametri \"$2\" on jo käytettävissä. Tarkista vaihtoehdot sivupalkista.",
 	"visualeditor-dialog-transclusion-add-param-error-forbidden-char": "$1 on kielletty merkki. Poista se lisätäksesi parametrin.",
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Parametrin nimi",
 	"visualeditor-dialog-transclusion-add-param-save": "Lisää",

@@ -19,7 +19,8 @@
 			"Stryn",
 			"Syreeni",
 			"VezonThunder",
-			"ZeiP"
+			"ZeiP",
+			"Kyykaarme"
 		]
 	},
 	"wikieditor": "Edistynyt wikitekstin muokkauskäyttöliittymä",
@@ -63,6 +64,9 @@
 	"wikieditor-toolbar-tool-file-title": "Lisää tiedosto",
 	"wikieditor-toolbar-file-target": "Tiedostonimi:",
 	"wikieditor-toolbar-file-caption": "Kuvaus:",
+	"wikieditor-toolbar-file-alt": "Vaihtoehtoinen teksti:",
+	"wikieditor-toolbar-file-alt-help": "Voit kirjoittaa tähän valinnaiseen kenttään sanallisen kuvailun henkilöille, jotka eivät näe tiedostoa. Kuvailun tulisi olla sellainen, että he ymmärtävät kyseisen mediatiedoston tarkoituksen ja informaation. Tämä on tärkeää sokeille käyttäjille ja muille käyttäjille, jotka käyttävät ruudunlukijaohjelmistoja tai tekstipohjaisia selaimia.",
+	"wikieditor-toolbar-file-alt-help-label": "(Näytä ohje)",
 	"wikieditor-toolbar-file-size": "Koko:",
 	"wikieditor-toolbar-file-float": "Tasaus:",
 	"wikieditor-toolbar-file-default": "(oletus)",
@@ -111,6 +115,7 @@
 	"wikieditor-toolbar-tool-table-example-old": "-\n! otsikko 1\n! otsikko 2\n! otsikko 3\n|-\n| rivi 1, solu 1\n| rivi 1, solu 2\n| rivi 1, solu 3\n|-\n| rivi 2, solu 1\n| rivi 2, solu 2\n| rivi 2, solu 3",
 	"wikieditor-toolbar-tool-table-example-cell-text": "Solun teksti",
 	"wikieditor-toolbar-tool-table-example-header": "Otsikkoteksti",
+	"wikieditor-toolbar-tool-table-example-caption": "Kuvateksti",
 	"wikieditor-toolbar-tool-table-title": "Lisää taulukko",
 	"wikieditor-toolbar-tool-table-dimensions-rows": "Rivit",
 	"wikieditor-toolbar-tool-table-dimensions-columns": "Sarakkeet",
@@ -203,5 +208,6 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Käyttäjätunnus</a> (<a href='#' title='$2:Username'>keskustelu</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Sisennys",
 	"wikieditor-toolbar-help-content-indent-syntax": "Normaali teksti<br />:Sisennetty teksti<br />::Sisennetty teksti",
-	"wikieditor-toolbar-help-content-indent-result": "Normaali teksti<dl><dd>Sisennetty teksti<dl><dd>Sisennetty teksti</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Normaali teksti<dl><dd>Sisennetty teksti<dl><dd>Sisennetty teksti</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Esikatselu"
 }

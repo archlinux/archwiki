@@ -15,7 +15,8 @@
 			"ديفيد",
 			"زكريا",
 			"محمد أحمد عبد الفتاح",
-			"FShbib"
+			"FShbib",
+			"Alshamiri1"
 		]
 	},
 	"math-desc": "حوِّل الصيغ الرياضية بين وسمي <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -94,8 +95,7 @@
 	"math_unknown_error": "خطأ غير معروف",
 	"math_unknown_function": "وظيفة غير معروفة «$1»",
 	"mw_math_latexml": "LaTeXML (تجريبي؛ يستخدم MathML)",
-	"mw_math_mathml": "SVG مع PNG احتياطي (يمكن تمكين MathML عبر المكوِّن الإضافي للمتصفح)",
-	"mw_math_png": "دائما اعرض على هيئة PNG",
+	"mw_math_mathml": "SVG (يمكن تمكين MathML عبر البرنامج المساعد للمتصفح)",
 	"mw_math_source": "اعرض على هيئة LaTeX (للمتصفحات النصية)",
 	"prefs-math": "رياضيات",
 	"mathstatus": "حالة الرياضيات",

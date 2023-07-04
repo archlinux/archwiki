@@ -111,7 +111,7 @@
 	"wikieditor-toolbar-tool-table-dimensions-header": "Uključi red zaglavlja",
 	"wikieditor-toolbar-tool-table-wikitable": "Stil sa okvirima",
 	"wikieditor-toolbar-tool-table-sortable": "Napravi sortirajuću tabelu",
-	"wikieditor-toolbar-tool-table-example": "Tekst ćelije",
+	"wikieditor-toolbar-tool-table-example": "Primjer",
 	"wikieditor-toolbar-tool-table-preview": "Pregled",
 	"wikieditor-toolbar-tool-table-insert": "Umetni",
 	"wikieditor-toolbar-tool-table-cancel": "Otkaži",
@@ -197,5 +197,7 @@
 	"wikieditor-toolbar-help-content-signature-result": "<a href='#' title='$1:Username'>Korisničko ime</a> (<a href='#' title='$2:Username'>razgovor</a>)",
 	"wikieditor-toolbar-help-content-indent-description": "Uvučeno",
 	"wikieditor-toolbar-help-content-indent-syntax": "Obični tekst<br />:Uvučeni tekst<br />::Uvučeni tekst",
-	"wikieditor-toolbar-help-content-indent-result": "Obični tekst<dl><dd>Uvučeni tekst<dl><dd>Uvučeni tekst</dd></dl></dd></dl>"
+	"wikieditor-toolbar-help-content-indent-result": "Obični tekst<dl><dd>Uvučeni tekst<dl><dd>Uvučeni tekst</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Pregled",
+	"wikieditor-realtimepreview-reload": "Osvježi"
 }

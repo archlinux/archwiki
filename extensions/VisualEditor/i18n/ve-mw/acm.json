@@ -5,6 +5,11 @@
 			"MRidhaAJ"
 		]
 	},
+	"collabpad-doctitle": "كولاب باد: $1",
+	"collabpad-import-subtitle": "مستورد من $1",
+	"collabpad": "كولاب باد",
+	"tooltip-ca-createsource": "سوي الكود المصدري لهاي الصفحة",
+	"tooltip-ca-edit": "عدل هاي الصفحه بكتابة الويكي",
 	"visualeditor-ca-createlocaldescriptionsource": "حط مصدر وصف محلي",
 	"visualeditor-ca-createsource": "سوي المصدر",
 	"visualeditor-ca-editsource": "عدل كود",

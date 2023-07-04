@@ -34,6 +34,8 @@ OO.mixinClass( ve.dm.MWTableNode, ve.dm.ClassAttributeNode );
 
 ve.dm.MWTableNode.static.name = 'mwTable';
 
+ve.dm.MWTableNode.static.allowedRdfaTypes = [ 'mw:ExpandedAttrs' ];
+
 ve.dm.MWTableNode.static.classAttributes = {
 	wikitable: { wikitable: true },
 	sortable: { sortable: true },
@@ -57,15 +59,18 @@ ve.dm.TableCaptionNode.static.parentNodeTypes.push( 'mwTable' );
 ve.dm.TableRowNode.static.childNodeTypes.push( 'mwTransclusionTableCell' );
 
 ve.dm.MWTableNode.static.toDataElement = function ( domElements ) {
-	var attributes = {},
-		dataElement = { type: this.name },
-		classAttr = domElements[ 0 ].getAttribute( 'class' );
+	var dataElement = { type: this.name },
+		domElement = domElements[ 0 ],
+		classAttr = domElement.getAttribute( 'class' );
+
+	var attributes = {
+		hasExpandedAttrs: ( domElement.getAttribute( 'typeof' ) || '' ).indexOf( 'mw:ExpandedAttrs' ) !== -1
+	};
 
 	this.setClassAttributes( attributes, classAttr );
 
-	if ( !ve.isEmptyObject( attributes ) ) {
-		dataElement.attributes = attributes;
-	}
+	dataElement.attributes = attributes;
+
 	return dataElement;
 };
 

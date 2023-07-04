@@ -6,7 +6,14 @@
 		]
 	},
 	"tooltip-ca-ve-edit": "Вуайхэ тэнн лыст",
-	"visualeditor-ca-createsource": "Лыһкэ виките̄кст",
+	"visualeditor-autosave-modified-prompt-accept": "Ю̄ттҍкэ вуайхэмуж",
+	"visualeditor-ca-createsource": "Лыһкэ викитекст",
 	"visualeditor-ca-editsource": "Вуайхэ ко̄д",
-	"visualeditor-ca-editsource-section": "вуайхэ код"
+	"visualeditor-ca-editsource-section": "вуайхэ ко̄д",
+	"visualeditor-dialog-meta-settings-hiddencat-label": "Пя̄ҋҋтма категорья",
+	"visualeditor-dialog-transclusion-confirmation-discard": "Вуэлльктэ вуайхэзэтҍ",
+	"visualeditor-dialog-transclusion-title-insert-known-template": "Лажьхэ: $1",
+	"visualeditor-mweditmodesource-tool-current": "Ко̄д вуайхэмушш",
+	"visualeditor-savedialog-review-nosummary": "Нимэ̄нн элля вуайхэзэ баяс кырьйха",
+	"visualeditor-savedialog-review-visual": "Визуальнэ"
 }

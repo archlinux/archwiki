@@ -6,7 +6,8 @@
 		]
 	},
 	"mobile-frontend-editor-edit": "Дуьзар хъувун",
-	"mobile-frontend-home-button": "КIвализ",
+	"mobile-frontend-history": "И чин авур масакӀавилерин тарихдиз.",
+	"mobile-frontend-home-button": "КӀвал",
 	"mobile-frontend-language-article-heading": "ЧӀал",
 	"mobile-frontend-main-menu-button-tooltip": "Кьилин меню ахъаюн",
 	"mobile-frontend-main-menu-login": "Гьахьун",
@@ -15,5 +16,5 @@
 	"mobile-frontend-main-menu-watchlist": "Вилив хуьнин сиягь",
 	"mobile-frontend-pageaction-edit-tooltip": "И чинин тухузвай пай дуьзар хъувун.",
 	"mobile-frontend-placeholder": "{{SITENAME}} жагъурун",
-	"mobile-frontend-random-button": "Дуьшуьшдин"
+	"mobile-frontend-random-button": "Дуьшуьшдай"
 }

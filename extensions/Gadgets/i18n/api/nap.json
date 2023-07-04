@@ -6,6 +6,7 @@
 		]
 	},
 	"apihelp-query+gadgetcategories-description": "Torna arreto n'elenco 'e categurìe 'e ppazzielle.",
+	"apihelp-query+gadgetcategories-summary": "Daje n'elenco 'e categurìe 'e ppazzielle.",
 	"apihelp-query+gadgetcategories-param-prop": "Qua' nfurmaziona 'e categurìa p' 'a pazziella piglià:\n;name:Nomme nterno 'e categurìa.\n;title:Titulo 'e categuria.\n;members:Quanta pazzielle int'a sta categurìa.",
 	"apihelp-query+gadgetcategories-param-names": "Nomme r' 'e categurìe a turnà.",
 	"apihelp-query+gadgetcategories-example-1": "Piglia n'elenco 'e categurìe p' 'e ppazzielle ca ce stanno",
@@ -18,7 +19,7 @@
 	"apihelp-query+gadgets-param-enabledonly": "Elenca surtanto 'e gadget appicciate 'a ll'utente 'e mo.",
 	"apihelp-query+gadgets-example-1": "Piglia n'elenco 'e ppazzielle appriesso ch' 'e chiàcchiere llòro",
 	"apihelp-query+gadgets-example-2": "Piglia n'elenco 'e ppazzielle cu tutt' 'e pproprietà pussibbele.",
-	"apihelp-query+gadgets-example-3": "Piglia n'elenco 'e gadged c'apparteneno alla categurìa \"foo\"",
+	"apihelp-query+gadgets-example-3": "Piglia n'elenco 'e pazzielle ca stanno int' 'a categurìa \"foo\"",
 	"apihelp-query+gadgets-example-4": "Piglia nfurmaziune ncopp' 'e ppazzielle \"foo\" e \"bar\"",
 	"apihelp-query+gadgets-example-5": "Piglia n'elenco 'e ppazzielle appicciate 'a ll'utente"
 }

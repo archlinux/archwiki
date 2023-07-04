@@ -406,7 +406,7 @@
 	"abusefilter-diff-backhistory": "Вярнуцца да гісторыі фільтру",
 	"abusefilter-diff-prev": "Старэйшая змена",
 	"abusefilter-diff-next": "Навейшая змена",
-	"abusefilter-group-default": "Па змоўчанні",
+	"abusefilter-group-default": "Прадвызначана",
 	"abusefilter-invalid-request": "Няправільны запыт! Вы павінны атрымаць доступ да асабістых даных журнала праз форму ў [[Special:AbuseLog/$1]] і пазначыць прычыну.",
 	"abusefilter-invalid-request-noid": "Няправільны запыт! Вы павінны атрымаць доступ да асабістых даных журнала праз форму на старонцы звестак пра журнал злоўжыванняў і пазначыць прычыну.",
 	"log-description-abusefilterprivatedetails": "Гэты журнал паказвае спіс выпадкаў, калі ўдзельнік звяртаўся да асабістых даных журнала злоўжыванняў.",

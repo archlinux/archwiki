@@ -11,13 +11,14 @@
 			"Metalhead64",
 			"Murma174",
 			"Se4598",
-			"Tomabrafix"
+			"Tomabrafix",
+			"Brettchenweber"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuelle Bearbeitung]]",
 	"tag-visualeditor-description": "Bearbeitungen, die mit dem [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuellen Editor]] ausgeführt wurden.",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuelle Bearbeitung: Überprüfung]]",
-	"tag-visualeditor-needcheck-description": "Bearbeitungen, die mit dem [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuellen Editor]] ausgeführt wurden und bei denen möglicherweise ungewollte Änderungen des Wikitexts vorgekommen sind.",
+	"tag-visualeditor-needcheck-description": "Bearbeitungen, die mit dem [[{{MediaWiki:visualeditor-descriptionpagelink}}|visuellen Editor]] ausgeführt wurden und bei denen es möglicherweise zu ungewollten Änderungen des Wikitexts gekommen ist.",
 	"tag-visualeditor-wikitext": "2017-Quelltext-Bearbeitung",
 	"tag-visualeditor-wikitext-description": "Bearbeitungen, die mit dem Wikitext-Editor 2017 ausgeführt wurden.",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuelle Bearbeitung: Gewechselt]]",

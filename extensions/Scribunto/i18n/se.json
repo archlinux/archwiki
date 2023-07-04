@@ -6,5 +6,6 @@
 		]
 	},
 	"scribunto-doc-page-name": "Module:$1/veahkki",
-	"scribunto-console-clear": "Gurre"
+	"scribunto-console-clear": "Gurre",
+	"scribunto-limitreport-timeusage": "Lua-áigegeavaheapmi"
 }

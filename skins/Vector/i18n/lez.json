@@ -7,6 +7,9 @@
 			"Soul Train"
 		]
 	},
+	"vector-languages": "ЧӀалар",
+	"vector-language-button-label": "{{PLURAL:$1|$1 чӀал|$1 чӀалар}}",
+	"vector-no-language-button-label": "ЧӀалар алава авун",
 	"vector-action-addsection": "Тема алава авун",
 	"vector-action-delete": "Алудун",
 	"vector-action-move": "ТӀвар эхцигун",

@@ -16,7 +16,9 @@
 			"Protnet",
 			"Stam.nikos",
 			"SucreRouge",
-			"Tifa93"
+			"Tifa93",
+			"DesVaMan",
+			"Dogogos123"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Βιβλίο",
@@ -25,6 +27,12 @@
 	"visualeditor-cite-tool-name-web": "Ιστότοπος",
 	"cite-ve-changedesc-ref-group-both": "Η ομάδα παραπομπής άλλαξε από \"$1\" σε \"$2\"",
 	"cite-ve-changedesc-ref-group-from": "Η ομάδα παραπομπής άλλαξε από \"$1\" στην γενική ομάδα",
+	"cite-ve-changedesc-ref-group-to": "Η ομάδα αναφοράς άλλαξε από τη γενική ομάδα σε \" $1 \"",
+	"cite-ve-changedesc-reflist-group-both": "Η ομάδα παραπομπής άλλαξε από \"$1\" σε \"$2\"",
+	"cite-ve-changedesc-reflist-group-from": "Η ομάδα παραπομπής άλλαξε από \"$1\" στην γενική ομάδα",
+	"cite-ve-changedesc-reflist-group-to": "Η ομάδα αναφοράς άλλαξε από τη γενική ομάδα σε \" $1 \"",
+	"cite-ve-changedesc-reflist-responsive-set": "Η λίστα αναφορών άλλαξε για να εμφανίζεται σε στήλες που αποκρίνονται",
+	"cite-ve-changedesc-reflist-responsive-unset": "Η λίστα αναφορών άλλαξε για να εμφανίζεται μόνο σε μία στήλη",
 	"cite-ve-citationneeded-button": "Προσθήκη παραπομπής",
 	"cite-ve-citationneeded-description": "Ένας συντάκτης επεσήμανε ότι αυτός ο ισχυρισμός απαιτεί μια παραπομπής προς αξιόπιστη πηγή.",
 	"cite-ve-citationneeded-reason": "Αιτία που δόθηκε:",
@@ -52,7 +60,10 @@
 	"cite-ve-referenceslist-isempty": "Δεν υπάρχουν παραπομπές με την ομάδα «$1» σε αυτήν τη σελίδα για να περιληφθούν σε αυτόν τον κατάλογο.",
 	"cite-ve-referenceslist-isempty-default": "Δεν υπάρχουν παραπομπές σε αυτήν τη σελίδα για να περιληφθούν σε αυτόν τον κατάλογο.",
 	"cite-ve-referenceslist-missingref": "Η παραπομπή αυτή έχει οριστεί μέσω προτύπου ή άλλου αυτόματα παραγόμενου μπλοκ και, προς το παρόν, δεν μπορείτε να την επεξεργαστείτε με τον VisualEditor. Χρησιμοποιήστε τον επεξεργαστή κώδικα.",
+	"cite-ve-referenceslist-missingref-in-list": "Αυτή η αναφορά ορίζεται σε ένα πρότυπο ή άλλο\nδημιουργημένο μπλοκ, και προς το παρόν μπορεί να γίνει προεπισκόπηση μόνο σε λειτουργία πηγής.",
+	"cite-ve-referenceslist-missingreflist": "Αυτή η λίστα αναφοράς δημιουργείται από ένα πρότυπο και προς το παρόν μπορεί να επεξεργαστεί μόνο σε λειτουργία πηγής.",
 	"cite-ve-toolbar-group-label": "Παραπομπή",
 	"cite-ve-othergroup-item": "$1 παραπομπή",
-	"visualeditor-internal-list-diff-default-group-name-mwreference": "Παραπομπές"
+	"visualeditor-internal-list-diff-default-group-name-mwreference": "Παραπομπές",
+	"visualeditor-internal-list-diff-group-name-mwreference": "Όνομα ομάδας αναφοράς: \" $1 \""
 }

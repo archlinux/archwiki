@@ -40,6 +40,7 @@
 	"scribunto-lua-error-location": "Lua xətası $1: $2.",
 	"scribunto-lua-error": "Lua xətası: $2.",
 	"scribunto-lua-notarrayreturn": "Skript xətası: Modul cədvəl yerinə $2 dəyəri göndərdi.",
+	"scribunto-lua-warning": "Skript xəbərdarlığı: $1",
 	"scribunto-luastandalone-proc-error": "Lua xətası: Proses yaradıla bilmədi.",
 	"scribunto-luastandalone-proc-error-msg": "Lua xətası: Proses yaradıla bilmədi: $2",
 	"scribunto-luastandalone-proc-error-proc-open": "Lua xətası: Proses yaradıla bilmədi. proc_open aktiv deyil. PHP-nin \"disable_functions\" konfiqurasiya direktivini yoxlayın.",

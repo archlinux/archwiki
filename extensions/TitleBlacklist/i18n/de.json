@@ -12,7 +12,8 @@
 			"Raimond Spekking",
 			"The Evil IP address",
 			"Umherirrender",
-			"Wnme"
+			"Wnme",
+			"Brettchenweber"
 		]
 	},
 	"action-tboverride": "die Negativliste unerwünschter Seiten- oder Benutzernamen außer Kraft zu setzen",
@@ -21,7 +22,7 @@
 	"log-name-titleblacklist": "Titel-Negativlisten-Logbuch",
 	"log-description-titleblacklist": "Dies ist ein Logbuch der Titel-Negativliste-Treffer.",
 	"logentry-titleblacklist-hit-username": "$1 {{GENDER:$2|verursachte}} einen Treffer in der Titel-Negativliste beim Versuch, das Benutzerkonto $3 mit dem übereinstimmenden Eintrag „$4“ zu erstellen.",
-	"titleblacklist-desc": "Ermöglicht es Administratoren die Erstellung unerwünschter Seiten- und Benutzernamen zu unterbinden: [[MediaWiki:Titleblacklist]] und [[MediaWiki:Titlewhitelist]]",
+	"titleblacklist-desc": "Ermöglicht es Administratoren, die Erstellung unerwünschter Seiten- und Benutzernamen zu unterbinden: [[MediaWiki:Titleblacklist]] und [[MediaWiki:Titlewhitelist]]",
 	"titleblacklist": "# Dies ist eine Negativliste für Seiten- und Benutzernamen. Sofern auf einen solchen Namen einer der folgenden regulären Ausdrücke zutrifft, kann er nicht erstellt werden.\n# Verwende „#“ für Kommentare.\n# Standardmäßig wird nicht zwischen Groß- und Kleinschreibung unterschieden.",
 	"titlewhitelist": "# Dies ist die Ausnahmeliste von der Schwarzen Liste unerwünschter Seiten- und Benutzernamen. Benutze „#“ für Kommentare.\n# Standardmäßig wird nicht zwischen Groß- und Kleinschreibung unterschieden.",
 	"titleblacklist-forbidden-edit": "'''Eine Seite mit dem Titel „$2“ kann nicht erstellt werden.'''<br />Der Titel kollidiert mit diesem Sperrbegriff: '''''$1'''''",

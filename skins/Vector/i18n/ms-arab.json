@@ -6,7 +6,9 @@
 	},
 	"skinname-vector-2022": "ۏيکتور (2022)",
 	"vector-specialversion-name": "ۏيکتور",
+	"vector-opt-out": "توکر کواجه لاما",
 	"vector-languages": "بهاس",
+	"vector-no-language-button-label": "تمبه بهاس",
 	"vector-action-addsection": "بوک توڤيک",
 	"vector-action-delete": "هاڤوس",
 	"vector-action-move": "ڤينده",
@@ -16,5 +18,7 @@
 	"vector-view-history": "ليهت سجاره",
 	"vector-view-view": "باچ",
 	"vector-more-actions": "لاݢي",
-	"vector-toc-heading": "کاندوڠن"
+	"vector-toc-heading": "کاندوڠن",
+	"vector-main-menu-tooltip": "مينو اوتام",
+	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|ڤربينچڠن]]"
 }

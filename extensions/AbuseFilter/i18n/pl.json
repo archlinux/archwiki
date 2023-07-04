@@ -604,7 +604,7 @@
 	"abusefilter-log-ip-not-available": "Niedostępne",
 	"abusefilter-tag-reserved": "Tag <code>abusefilter-condition-limit</code> jest zarezerwowany dla wewnętrznego użytku przez Filtr nadużyć.",
 	"tag-abusefilter-condition-limit": "osiągnięto limit warunku",
-	"tag-abusefilter-condition-limit-description": "Edycje lub inne operacje które nie mogły zostać sprzawdzone przez wszystkie aktywne [[Special:AbuseFilter|filtry nadużyć]] ([[mw:Extension:AbuseFilter/Conditions|pomoc]]).",
+	"tag-abusefilter-condition-limit-description": "Edycje lub inne operacje które nie mogły zostać sprawdzone przez wszystkie aktywne [[Special:AbuseFilter|filtry nadużyć]] ([[mw:Extension:AbuseFilter/Conditions|pomoc]]).",
 	"notification-header-throttle-filter": "Filtr nadużyć $2, który ostatnio {{GENDER:$1|edytowałeś|edytowałaś|edytowałeś(-aś)}} został ograniczony.",
 	"notification-header-throttle-filter-actions": "Filtr nadużyć $2, który ostatnio {{GENDER:$1|edytowałeś|edytowałaś|edytowałeś(-aś)}} był często aktywowany, dlatego {{PLURAL:$4|następująca akcja została wyłączona|następujące akcje zostały wyłączone}} automatycznie: $3.",
 	"notification-header-throttle-filter-no-actions": "Filtr nadużyć $2, który ostatnio {{GENDER:$1|edytowałeś|edytowałaś|edytowałeś(-aś)}} był często aktywowany, ale żadna akcja nie została automatycznie wyłączona.",

@@ -11,6 +11,7 @@
 	"vector-skin-desc": "Virsioni muderna di MonoBook cu n'aspettu novu e tanti migghiuramenti nta l'usabbilità",
 	"vector-languages": "Lingui",
 	"vector-language-button-label": "{{PLURAL:$1|$1 lingua|$1 lingui}}",
+	"vector-no-language-button-label": "Agghiunci lingui",
 	"vector-action-addsection": "Agghiunci n'argumentu",
 	"vector-action-delete": "Cancella",
 	"vector-action-move": "Sposta",
@@ -28,5 +29,6 @@
 	"vector-toc-heading": "Cuntinuti",
 	"vector-anon-user-menu-pages-learn": "àutri nfurmazzioni",
 	"vector-main-menu-tooltip": "Menu principali",
+	"vector-site-nav-label": "Situ",
 	"tooltip-vector-anon-user-menu-title": "Àutri opzioni"
 }

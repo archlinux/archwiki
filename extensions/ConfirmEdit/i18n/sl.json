@@ -15,7 +15,7 @@
 	"captcha-id-label": "ID uganke CAPTCHA",
 	"captcha-id-help": "To vrednost je treba poslati nazaj nespremenjeno.",
 	"captcha-addurl": "Vaše urejanje vključuje nove zunanje povezave.\nZa zaščito vikija pred samodejnim smetjem vas prijazno prosimo, da rešite spodnjo nalogo in odgovor vnesete v polje, če želite shraniti svoje urejanje ([[Special:Captcha/help|več o tem]]):",
-	"captcha-badlogin": "Da zaščitimo wiki pred samodejnim ugotavljanjem gesel, vas prijazno prosimo, da rešite spodnjo nalogo in odgovor vnesete v polje ([[Special:Captcha/help|več informacij]]):",
+	"captcha-badlogin": "Da zaščitimo viki pred samodejnim ugotavljanjem gesel, vas vljudno prosimo, da rešite spodnjo nalogo in odgovor vnesete v polje ([[Special:Captcha/help|več informacij]]):",
 	"captcha-createaccount": "Za zaščito vikija pred samodejnim ustvarjanjem računov vas prijazno prosimo, da rešite spodnjo nalogo in odgovor vnesete v polje ([[Special:Captcha/help|več o tem]]):",
 	"captcha-createaccount-fail": "Napačna ali manjkajoča CAPTCHA.",
 	"captcha-create": "Če želite ustvariti stran, prosimo rešite spodnjo nalogo in odgovor vpišite v polje ([[Special:Captcha/help|več informacij]]):",

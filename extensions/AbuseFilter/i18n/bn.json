@@ -16,7 +16,8 @@
 			"YahyA",
 			"Yahya",
 			"আজিজ",
-			"আফতাবুজ্জামান"
+			"আফতাবুজ্জামান",
+			"MdsShakil"
 		]
 	},
 	"abusefilter-desc": "সম্পাদনায় স্বয়ংক্রিয় অনুসন্ধানমূলক পদ্ধতি প্রযোজ্য।",
@@ -429,6 +430,8 @@
 	"abusefilter-log-details-id": "লগ আইডি",
 	"abusefilter-noreason": "সতর্কীকরণ: এই লগের ব্যক্তিগত বিবরণ দেখতে, আপনাকে অবশ্যই একটি কারণ প্রদান করতে হবে।",
 	"abusefilter-log-ip-not-available": "উপলব্ধ নয়",
+	"tag-abusefilter-condition-limit": "শর্তের সীমায় পৌঁছেছে",
+	"tag-abusefilter-condition-limit-description": "সম্পাদনা বা অন্যান্য ইভেন্ট যা সমস্ত সক্রিয় [[Special:AbuseFilter|অপব্যবহার ছাঁকনি]] দ্বারা পরীক্ষা করা যায়নি ([[mw:Extension:AbuseFilter/Conditions|সাহায্য]])।",
 	"notification-header-throttle-filter": "সম্প্রতি {{GENDER:$1|আপনার}} সম্পাদিত $2 নং অপব্যবহার ছাঁকনির কিছু কার্য নিষ্ক্রিয় করা হয়েছে।",
 	"notification-link-text-show-filter": "ছাঁকনি দেখান"
 }

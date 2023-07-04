@@ -635,8 +635,8 @@
 	"tag-abusefilter-condition-limit": "límite de condiciones superado",
 	"tag-abusefilter-condition-limit-description": "Ediciones u otros eventos que no pudieron ser verificados por todos los [[Special:AbuseFilter|filtros antiabusos]] ([[mw:Extension:AbuseFilter/Conditions|ayuda]]).",
 	"notification-header-throttle-filter": "El filtro antiabusos $2 que {{GENDER:$1|editastes}} recientemente ha sido limitado.",
-	"notification-header-throttle-filter-actions": "El filtro de abuso $2 {{GENDER:$1|you}} recientemente editado tenía un alto índice de coincidencias y las siguientes {{PLURAL:$4|action was|actions were}} automáticamente desactivadas: $3.",
-	"notification-header-throttle-filter-no-actions": "El filtro de abuso $2 {{GENDER:$1|you}} recientemente editado tenía un alto índice de coincidencias pero no se desactivó ninguna acción automáticamente.",
+	"notification-header-throttle-filter-actions": "El filtro antiabusos $2 {{GENDER:$1|que}} editaste recientemente tuvo una alta tasa de coincidencias y {{PLURAL:$4|la siguiente acción fue desactivada|las siguientes acciones fueron desactivadas}} automáticamente: $3.",
+	"notification-header-throttle-filter-no-actions": "El filtro antiabusos $2 {{GENDER:$1|que}} editaste recientemente tuvo una alta tasa de coincidencias pero no se desactivó ninguna acción automáticamente.",
 	"notification-subject-throttle-filter": "Un filtro antiabusos que {{GENDER:$1|editastes}} ha sido limitado en {{SITENAME}}",
 	"notification-link-text-show-filter": "Mostrar filtro"
 }

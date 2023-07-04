@@ -3,7 +3,9 @@
 		"authors": [
 			"Arystanbek",
 			"GaiJin",
-			"Kaztrans"
+			"Kaztrans",
+			"Ajiniyaz Nurniyazov",
+			"Batyrbek.kz"
 		]
 	},
 	"wikieditor": "Уикимәтінді өңдеудің кеңейтілген интерфейсі",
@@ -68,7 +70,7 @@
 	"wikieditor-toolbar-tool-heading-4": "4 деңгей",
 	"wikieditor-toolbar-tool-heading-5": "5 деңгей",
 	"wikieditor-toolbar-tool-heading-example": "Бөлім тақырыбы",
-	"wikieditor-toolbar-group-format": "Пішім",
+	"wikieditor-toolbar-group-format": "Формат",
 	"wikieditor-toolbar-tool-ulist": "Таңбаланған тізім",
 	"wikieditor-toolbar-tool-ulist-example": "Таңбаланған тізім элементі",
 	"wikieditor-toolbar-tool-olist": "Нөмірленген тізім",

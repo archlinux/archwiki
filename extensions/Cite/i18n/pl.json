@@ -10,7 +10,8 @@
 			"Rail",
 			"Railfail536",
 			"Sp5uhe",
-			"Woytecr"
+			"Woytecr",
+			"Msz2001"
 		]
 	},
 	"cite-desc": "Dodaje znaczniki <code>&lt;ref&gt;</code> oraz <code>&lt;references&gt;</code> ułatwiające podawanie źródeł cytatów",
@@ -30,10 +31,10 @@
 	"cite_error_included_references": "Brakujący tag zamykający dla <code>&lt;references&gt;</code>",
 	"cite_error_group_refs_without_references": "Istnieje znacznik <code>&lt;ref&gt;</code> dla grupy o nazwie „$1”, ale nie odnaleziono odpowiedniego znacznika <code>&lt;references group=\"$1\"/&gt;</code>",
 	"cite_error_references_group_mismatch": "Znacznik <code>&lt;ref&gt;</code> w <code>&lt;references&gt;</code> nie może mieć atrybutu grupy „$1”.",
-	"cite_error_references_missing_group": "Znacznik <code>&lt;ref&gt;</code> zdefiniowany w <code>&lt;references&gt;</code> ma atrybut grupowania „$1”, który nie występuje wcześniej w treści.",
+	"cite_error_references_missing_group": "Znacznik <code>&lt;ref&gt;</code> o nazwie „$2” zdefiniowany w <code>&lt;references&gt;</code> ma atrybut grupowania „$1”, który nie występuje wcześniej w treści.",
 	"cite_error_references_missing_key": "Znacznik <code>&lt;ref&gt;</code> o nazwie „$1”, zdefiniowany w <code>&lt;references&gt;</code>, nie był użyty wcześniej w treści.",
 	"cite_error_references_no_key": "Znacznik <code>&lt;ref&gt;</code> zdefiniowany w <code>&lt;references&gt;</code> nie ma atrybutu <code>name</code>.",
-	"cite_error_empty_references_define": "Znacznik <code>&lt;ref&gt;</code> zdefiniowany w <code>&lt;references&gt;</code> o nazwie „$1” nie ma treści.",
+	"cite_error_empty_references_define": "Znacznik <code>&lt;ref&gt;</code> o nazwie „$1”, zdefiniowany w <code>&lt;references&gt;</code> (grupa „$2”) nie ma treści.",
 	"cite-tracking-category-cite-error": "Strony z zepsutymi przypisami",
 	"cite-tracking-category-cite-error-desc": "Strony w tej kategorii zawierają błędy w użyciu znaczników przypisów.",
 	"cite_references_link_accessibility_label": "Skocz do góry",

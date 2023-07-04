@@ -8,7 +8,8 @@
 			"Pyscowicz",
 			"Silvonen",
 			"Stryn",
-			"Veikk0.ma"
+			"Veikk0.ma",
+			"Kyykaarme"
 		]
 	},
 	"disableoathforuser": "Poista käytöstä käyttäjän kaksivaiheinen tunnistautuminen",
@@ -40,8 +41,8 @@
 	"oathauth-enterdisablereason": "Käytöstä poistamisen syy:",
 	"oathauth-enterverifyreason": "Tarkastamisen syy:",
 	"oathauth-user-not-does-not-have-oath-enabled": "Käyttäjällä ei ole käytössä kaksivaiheista tunnistautumista, joten sitä ei voida poistaa käytöstä",
-	"right-oathauth-enable": "Ottaa käyttöön kahden tekijän avulla suoritettu (''two-factor'') tunnistautuminen",
-	"action-oathauth-enable": "ottaa käyttöön kahden tekijän avulla suoritettua (''two-factor'') tunnistautumista",
+	"right-oathauth-enable": "Ottaa käyttöön kaksivaiheinen tunnistautuminen",
+	"action-oathauth-enable": "ottaa käyttöön kaksivaiheista tunnistautumista",
 	"oathauth-auth-token-label": "Poletti",
 	"oathauth-auth-token-help": "Kertakäyttöinen salasana jota käytetään kaksivaiheisen tunnistautumisen toisena vaiheena.",
 	"oathauth-auth-ui": "Syötä vahvistuskoodi tunnistautumislaitteestasi.",

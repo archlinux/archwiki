@@ -50,7 +50,7 @@
 	"mobile-frontend-redirected-from": "重新導向自 \"[[$1]]\"",
 	"mobile-frontend-talk-back-to-filepage": "返回到檔案 \"$1\" 。",
 	"mobile-frontend-talk-back-to-page": "返回 \"$1\" 頁面。",
-	"mobile-frontend-talk-back-to-projectpage": "返回到計畫頁面 \"$1\"。",
+	"mobile-frontend-talk-back-to-projectpage": "返回專案頁面「$1」。",
 	"mobile-frontend-talk-back-to-userpage": "返回到 \"{{GENDER:$1|$1}}\" 的使用者頁面。",
 	"mobile-frontend-user-button-tooltip": "顯示我的通知",
 	"mobile-frontend-user-newmessages": "您的對話頁面有新訊息",

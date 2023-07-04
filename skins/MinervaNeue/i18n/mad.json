@@ -4,6 +4,11 @@
 			"Boesenbergia"
 		]
 	},
+	"mobile-frontend-history": "Tèngghu riwâyât beccè'anna kaca rèya.",
+	"mobile-frontend-home-button": "Tanèyan",
 	"mobile-frontend-language-article-heading": "Bhâsa",
-	"mobile-frontend-placeholder": "Sarè è {{SITENAME}}"
+	"mobile-frontend-main-menu-login": "Alebbhu",
+	"mobile-frontend-main-menu-settings": "Pangatoran",
+	"mobile-frontend-placeholder": "Sarè è {{SITENAME}}",
+	"mobile-frontend-random-button": "Sabhârâng"
 }

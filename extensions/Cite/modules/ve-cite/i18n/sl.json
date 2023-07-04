@@ -49,7 +49,7 @@
 	"cite-ve-referenceslist-missingref": "Ta sklic je opredeljen v predlogi ali drugem ustvarjenem bloku, zato ga lahko trenutno urejate samo v urejevalniku izvorne kode.",
 	"cite-ve-referenceslist-missingref-in-list": "Ta sklic je opredeljen v predlogi ali drugem ustvarjenem bloku, zato ga lahko trenutno pregledujete samo v urejevalniku izvorne kode.",
 	"cite-ve-referenceslist-missingreflist": "Ta seznam sklicev je ustvarila predloga, zato ga trenutno lahko urejate samo v urejevalniku izvorne kode.",
-	"cite-ve-toolbar-group-label": "Vstavi navedek",
+	"cite-ve-toolbar-group-label": "Vstavi citat",
 	"cite-ve-othergroup-item": "$1 sklic",
 	"visualeditor-internal-list-diff-default-group-name-mwreference": "Sklici",
 	"visualeditor-internal-list-diff-group-name-mwreference": "Ime skupine sklicev: »$1«"

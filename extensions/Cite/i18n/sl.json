@@ -6,7 +6,7 @@
 			"Yerpo"
 		]
 	},
-	"cite-desc": "Doda znački <code>&lt;ref&gt;</code> in <code>&lt;references/&gt;</code> za navedek",
+	"cite-desc": "Doda znački <code>&lt;ref&gt;</code> in <code>&lt;references/&gt;</code> za citat",
 	"cite_error": "Napaka pri navajanju: $1",
 	"cite_error_ref_invalid_dir": "Neveljavna značka <code>dir=\"$1\"</code>, biti mora <code>ltr</code> ali <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Neveljavna značka <code>&lt;ref&gt;</code>; ime ne more biti samo število. Uporabite opisni naslov.",

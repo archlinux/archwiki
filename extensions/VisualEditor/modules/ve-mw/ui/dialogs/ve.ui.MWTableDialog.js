@@ -90,12 +90,16 @@ ve.ui.MWTableDialog.prototype.getSetupProcess = function ( data ) {
 				sortable = !!tableNode.getAttribute( 'sortable' ),
 				collapsible = !!tableNode.getAttribute( 'collapsible' ),
 				collapsed = !!tableNode.getAttribute( 'collapsed' ),
+				hasExpandedAttrs = !!tableNode.getAttribute( 'hasExpandedAttrs' ),
 				isReadOnly = this.isReadOnly();
 
-			this.wikitableToggle.setValue( wikitable ).setDisabled( isReadOnly );
-			this.sortableToggle.setValue( sortable ).setDisabled( isReadOnly );
-			this.collapsibleToggle.setValue( collapsible ).setDisabled( isReadOnly );
-			this.collapsedToggle.setValue( collapsed ).setDisabled( isReadOnly );
+			// These toggles are disabled if hasExpandedAttrs, but the inherited "Caption"
+			// toggle will still work, as it isn't a real table node property.
+			// TODO: Show a message explaining why these toggles are disabled.
+			this.wikitableToggle.setValue( wikitable ).setDisabled( isReadOnly || hasExpandedAttrs );
+			this.sortableToggle.setValue( sortable ).setDisabled( isReadOnly || hasExpandedAttrs );
+			this.collapsibleToggle.setValue( collapsible ).setDisabled( isReadOnly || hasExpandedAttrs );
+			this.collapsedToggle.setValue( collapsed ).setDisabled( isReadOnly || hasExpandedAttrs );
 
 			ve.extendObject( this.initialValues, {
 				wikitable: wikitable,

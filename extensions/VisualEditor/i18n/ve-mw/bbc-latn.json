@@ -3,13 +3,14 @@
 		"authors": [
 			"Herryz",
 			"NoiX180",
-			"Salomo Christian Hutajulu"
+			"Salomo Christian Hutajulu",
+			"27christian11"
 		]
 	},
 	"tooltip-ca-ve-edit": "Padimpos alaman on",
 	"visualeditor-ca-createlocaldescriptionsource": "Tambahon asal ni deskripsi lokal",
 	"visualeditor-ca-createsource": "Bahen sumber",
-	"visualeditor-ca-editsource": "Patota asal",
-	"visualeditor-ca-editsource-section": "patota asal",
+	"visualeditor-ca-editsource": "Patota mualna",
+	"visualeditor-ca-editsource-section": "patota mualna",
 	"visualeditor-descriptionpagelink": "Project:VisualEditor"
 }

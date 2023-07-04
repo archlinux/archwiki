@@ -6,7 +6,9 @@
 			"Leonard Nketsia"
 		]
 	},
+	"vector-languages": "Kasahorow",
 	"vector-language-button-label": "{{PLURAL:$1|$1 kasa|$1 kasahorow}}",
+	"vector-no-language-button-label": "Fa kasa afofor ka ho",
 	"vector-action-addsection": "Fa tsirasɛm ka ho",
 	"vector-action-delete": "Pepa fi hɔ",
 	"vector-action-move": "Twe kɔ",

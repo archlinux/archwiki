@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Mybluberet",
-			"Owula kpakpo"
+			"Owula kpakpo",
+			"Amire80"
 		]
 	},
 	"mobile-frontend-language-article-heading": "Wiemɔ",
+	"mobile-frontend-main-menu-login": "Yaa mli",
 	"mobile-frontend-placeholder": "Taomɔ {{SITENAME}}"
 }

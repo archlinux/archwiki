@@ -26,5 +26,5 @@
 	"timeless-projects": "Andre prosjekter",
 	"timeless.js": "/* Javascript i denne fila vil gjelde for brukere av drakta Timeless */",
 	"timeless-view-history": "Historikk",
-	"timeless-action-undelete": "Gjenopprett {{PLURAL:$1|én revisjon|$1 revisjoner}}"
+	"timeless-action-undelete": "Gjenopprett {{PLURAL:$1|én versjon|$1 versjoner}}"
 }

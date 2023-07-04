@@ -2,9 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Jun Misugi",
-			"Paulu"
+			"Paulu",
+			"Jumpy01"
 		]
 	},
+	"vector-opt-out": "Vultà à l'aspettu di nanzu",
 	"vector-action-addsection": "Aghjunghje discussione",
 	"vector-action-delete": "Supprimà",
 	"vector-action-move": "Cullucà",

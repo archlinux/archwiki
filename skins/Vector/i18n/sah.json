@@ -1,10 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"HalanTul"
+			"HalanTul",
+			"MARKSDNW"
 		]
 	},
 	"vector-skin-desc": "Аныгы, саҥардыллыбыт, тупсарыллыбыт MonoBook",
+	"vector-languages": "Тыллар",
+	"vector-language-button-label": "{{PLURAL:$1|$1 тыл|$1 тыллар}}",
+	"vector-no-language-button-label": "Тылы эбии",
 	"vector-action-addsection": "Тиэмэ эбии",
 	"vector-action-delete": "Сот",
 	"vector-action-move": "Аатын уларыт",

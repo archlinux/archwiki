@@ -7,7 +7,8 @@
 			"Sujiniku",
 			"Whym",
 			"Yusuke1109",
-			"しぃ"
+			"しぃ",
+			"Shirayuki"
 		]
 	},
 	"skinname-timeless": "Timeless",
@@ -19,14 +20,14 @@
 	"timeless-talkpage": "{{GENDER:$1|利用者}}トーク",
 	"timeless-pagelog": "ページの記録",
 	"timeless-more": "その他",
-	"timeless-sitetools": "Wikiツール",
+	"timeless-sitetools": "ウィキツール",
 	"timeless-pageactions": "ページツール",
 	"timeless-userpagetools": "利用者ページツール",
 	"timeless-action-addsection": "新しい話題",
 	"timeless-view-view": "閲覧",
 	"timeless-pagemisc": "その他",
 	"timeless-namespaces": "名前空間",
-	"timeless-pagetools": "ページアクション",
+	"timeless-pagetools": "ページ操作",
 	"timeless-languages": "言語",
 	"timeless-projects": "他プロジェクト",
 	"timeless.css": "/* ここにあるすべてのCSSは、Timeless外装を使用している利用者に対して読み込まれます */",

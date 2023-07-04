@@ -21,15 +21,17 @@ namespace MediaWiki\SecureLinkFixer;
 class HSTSPreloadLookup {
 
 	/**
-	 * @var array
+	 * @var string
 	 */
-	private $domains;
+	private string $path;
+	/** @var array<string,int> */
+	private array $domains;
 
 	/**
-	 * @param array $domains
+	 * @param string $path
 	 */
-	public function __construct( array $domains ) {
-		$this->domains = $domains;
+	public function __construct( string $path ) {
+		$this->path = $path;
 	}
 
 	/**
@@ -37,7 +39,10 @@ class HSTSPreloadLookup {
 	 *
 	 * @return bool
 	 */
-	public function isPreloaded( $host ) {
+	public function isPreloaded( string $host ): bool {
+		// Lazy-load the domain mapping if it's not already set
+		$this->domains ??= require $this->path;
+
 		if ( isset( $this->domains[$host] ) ) {
 			// Host is directly in the preload list
 			return true;

@@ -361,7 +361,7 @@
 	"visualeditor-savedialog-title-save": "Lagre endringene dine",
 	"visualeditor-section-body-placeholder": "Nytt avsnitt",
 	"visualeditor-section-title-placeholder": "Emne",
-	"visualeditor-loaderror-revidconflict": "Revisjons-ID-er returnert av tjeneren matcher ikke (dokument: $1, metadata: $2).",
+	"visualeditor-loaderror-revidconflict": "Sideversjons-ID-er returnert av tjeneren matcher ikke (dokument: $1, metadata: $2).",
 	"visualeditor-loaderror-wrongmode": "Prøvde å laste redigering i gal modus (datatype: «$1», redigeringsmodus: «$2»).",
 	"visualeditor-settings-tool": "Sideinnstillinger",
 	"visualeditor-special-characters-group-other": "Ofte brukt",

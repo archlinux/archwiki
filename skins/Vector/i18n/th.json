@@ -33,7 +33,7 @@
 	"vector-language-redirect-to-top": "ใน {{SITENAME}} ลิงก์ข้ามไปยังรุ่นภาษาอื่นของบทความนี้ถูกย้ายไปด้านบนแล้วที่ทางขวาของชื่อหน้า [[#p-lang-btn|ไปด้านบน]]",
 	"vector-action-addsection": "เพิ่มหัวข้อ",
 	"vector-action-delete": "ลบ",
-	"vector-action-move": "เปลี่ยนชื่อ",
+	"vector-action-move": "ย้าย",
 	"vector-action-protect": "ป้องกัน",
 	"vector-action-undelete": "กู้คืน",
 	"vector-action-unprotect": "เปลี่ยนการป้องกัน",

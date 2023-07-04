@@ -3,7 +3,8 @@
 		"authors": [
 			"Servien",
 			"Slomox",
-			"Zylbath"
+			"Zylbath",
+			"Wikiundeplattsnacker"
 		]
 	},
 	"tooltip-ca-createsource": "Bornkood för düsse Siet opstellen",
@@ -11,6 +12,7 @@
 	"tooltip-ca-ve-edit": "Disse Siet ännern",
 	"visualeditor-beta-warning": "VisualEditor is een Beta-Verschoon. Dat mag Weekwoorfehlers geven un du warrst Delen vun de Sied nich ännern könen. Klick op \"{{int:visualeditor-ca-editsource}}\", üm in den Wikitextmodus to kamen. Daarbi gaht nich spiekerte Ännern verlustig.",
 	"visualeditor-browserwarning": "Du bruukst een Browser, de vun'n VisualEditor nich apentlich stütt warrt.",
+	"visualeditor-ca-createlocaldescriptionsource": "Föög een Beschrievung op Plattdüütsch för de Born to",
 	"visualeditor-ca-createsource": "Bornkood opstellen",
 	"visualeditor-ca-editsource": "Bornkood ännern",
 	"visualeditor-ca-editsource-section": "Bornkood ännern",

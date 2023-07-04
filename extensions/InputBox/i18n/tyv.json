@@ -3,10 +3,11 @@
 		"authors": [
 			"Agilight",
 			"Riverman",
-			"Sborsody"
+			"Sborsody",
+			"Karak-Kyzyl"
 		]
 	},
-	"inputbox-tryexact": "Ылаптыг дүгжүрүн шенээр",
+	"inputbox-tryexact": "Ылап дүгжүрүн шенээр",
 	"inputbox-createarticle": "Арын чаяар",
 	"inputbox-ns-main": "Кол"
 }

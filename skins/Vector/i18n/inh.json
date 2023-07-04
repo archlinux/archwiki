@@ -9,7 +9,9 @@
 		]
 	},
 	"skinname-vector": "Вéктора",
+	"vector-languages": "Метташ",
 	"vector-language-button-label": "{{PLURAL:$1|$1 мотт}}",
+	"vector-no-language-button-label": "Метташ тӀатоха",
 	"vector-action-addsection": "Тема тӀатоха",
 	"vector-action-delete": "ДӀаяккха",
 	"vector-action-move": "ЦӀи хувца",
@@ -22,6 +24,8 @@
 	"vector-view-view": "Де́ша",
 	"vector-view-viewsource": "Хьалххе бӀаргтохара разметкага хьажар",
 	"vector-more-actions": "Кхы а",
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> чулоацам бола оагӀонаш лахар",
 	"vector-anon-user-menu-pages": "Авторизаци яь йоацача доакъашхошта йола оагӀонаш",
-	"vector-anon-user-menu-pages-learn": "дукхагӀа хá"
+	"vector-anon-user-menu-pages-learn": "дукхагӀа хá",
+	"vector-main-menu-tooltip": "Керттера меню"
 }

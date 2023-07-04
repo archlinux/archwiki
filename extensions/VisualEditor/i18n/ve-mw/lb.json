@@ -10,7 +10,8 @@
 			"TMg",
 			"Tynchtyk Chorotegin",
 			"UV",
-			"Викиней"
+			"Викиней",
+			"Volvox"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -56,7 +57,7 @@
 	"visualeditor-dialog-media-info-audiofile": "Audiofichier",
 	"visualeditor-dialog-media-info-created": "Ugeluecht: $1",
 	"visualeditor-dialog-media-info-ellipsis": "…",
-	"visualeditor-dialog-media-info-meta-artist": "Auteu: $1",
+	"visualeditor-dialog-media-info-meta-artist": "Auteur: $1",
 	"visualeditor-dialog-media-info-moreinfo": "Méi Informatiounen",
 	"visualeditor-dialog-media-info-readmore": "Liest méi",
 	"visualeditor-dialog-media-info-separator": "·",

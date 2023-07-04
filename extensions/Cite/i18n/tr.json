@@ -30,7 +30,7 @@
 	"cite_error_included_references": "<code>&lt;references&gt;</code> için kapanış etiketi eksik",
 	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> \"$1\" adında grup ana etiketi bulunuyor, ancak <code>&lt;references group=\"$1\"/&gt;</code> etiketinin karşılığı bulunamadı",
 	"cite_error_references_group_mismatch": "<code>&lt;references&gt;</code> içinde <code>&lt;ref&gt;</code> etiketinin çelişen \"$1\" grup özniteliği var.",
-	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> üzerinde \"$2\" ismiyle tanımlanan <code>&lt;ref&gt;</code> etiketinin önceki metinde olmayan \"$1\" grup özniteliği var.",
+	"cite_error_references_missing_group": "<code>&lt;references&gt;</code> etiketinde \"$2\" ismiyle tanımlanan <code>&lt;ref&gt;</code> etiketinin önceki metinde olmayan \"$1\" group özniteliği var.",
 	"cite_error_references_missing_key": "<code>&lt;references&gt;</code> üzerinde tanımlanan \"$1\" adındaki <code>&lt;ref&gt;</code> etiketi önceki metinde kullanılmıyor.",
 	"cite_error_references_no_key": "<code>&lt;references&gt;</code> içinde tanımlanan <code>&lt;ref&gt;</code> etiketinin hiçbir ad özniteliği yok.",
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> grubunda \"$2\" içinde tanımlanan \"$1\" adlı <code>&lt;ref&gt;</code> etiketinin içeriği yok.",

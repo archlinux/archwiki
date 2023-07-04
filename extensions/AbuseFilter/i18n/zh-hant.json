@@ -525,7 +525,7 @@
 	"abusefilter-action-disallow": "禁止",
 	"abusefilter-revert-title": "還原所有由過濾器 $1 所做的變更",
 	"abusefilter-revert-intro": "此表單允許您還原所有由防濫用過濾器 $1 所做的變更。\n使用此工具時請小心謹慎。",
-	"abusefilter-revert-preview-item": "$1：$2 於 $4 上{{GENDER:$7|作出}}了 \"$3\"。\n要還原的動作：$5 ($6)",
+	"abusefilter-revert-preview-item": "$1：$2於$4{{GENDER:$7|製作了}}$3。\n要還原的動作：$5（$6）",
 	"abusefilter-revert-search-legend": "請選擇要還原的防濫用過濾器動作",
 	"abusefilter-revert-periodstart": "開始時間：",
 	"abusefilter-revert-periodend": "結束時間：",

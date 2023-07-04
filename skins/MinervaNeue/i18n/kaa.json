@@ -16,13 +16,13 @@
 	"mobile-frontend-language-article-heading": "Til",
 	"mobile-frontend-main-menu-login": "Kiriw",
 	"mobile-frontend-main-menu-logout": "Shıǵıw",
-	"mobile-frontend-main-menu-nearby": "Jaqın-átirapda",
-	"mobile-frontend-main-menu-settings": "Sazlamalar",
-	"mobile-frontend-main-menu-watchlist": "Meniń baqlaw dizimim",
+	"mobile-frontend-main-menu-nearby": "Jaqın átirapta",
+	"mobile-frontend-main-menu-settings": "Sazlawlar",
+	"mobile-frontend-main-menu-watchlist": "Baqlaw dizimim",
 	"mobile-frontend-meta-data-issues": "Bet máseleleri",
 	"mobile-frontend-placeholder": "{{SITENAME}}dan izlew",
 	"mobile-frontend-random-button": "Tosınnanlı maqala",
-	"mobile-frontend-user-page-contributions": "Meniń úlesim",
+	"mobile-frontend-user-page-contributions": "Úlesim",
 	"mobile-frontend-user-page-talk": "Talqılaw",
 	"minerva-page-actions-overflow": "Jáne",
 	"minerva-page-actions-info": "Bet haqqında maǵlıwmat",
@@ -38,5 +38,6 @@
 	"minerva-page-actions-block": "Paydalanıwshını bloklaw",
 	"minerva-page-actions-logs": "Jurnallar",
 	"minerva-page-actions-language-switcher": "Tiller",
-	"minerva-page-actions-history": "Tariyx"
+	"minerva-page-actions-history": "Tariyx",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|Talqılaw]]"
 }

@@ -8,7 +8,7 @@
 	},
 	"action-tboverride": "preglasitev seznama nadovoljenih naslovov ali uporabniških imen",
 	"action-tboverride-account": "preglasitev seznama nedovoljenih uporabniških imen",
-	"action-titleblacklistlog": "ogled dnevnika seznamov nedovoljenih naslovov",
+	"action-titleblacklistlog": "ogled dnevnika seznama nedovoljenih naslovov",
 	"log-name-titleblacklist": "Dnevnik seznama nedovoljenih naslovov",
 	"log-description-titleblacklist": "Ti dogodki sledijo pojave ujemanj z vnosi s seznama nedovoljenih naslovov.",
 	"logentry-titleblacklist-hit-username": "$1 je pri poskusu ustvaritve računa $3 {{GENDER:$2|povzročil|povzročila|povzročil_a}} ujemanje \nz vnosom $4 s seznama nedovoljenih naslovov.",

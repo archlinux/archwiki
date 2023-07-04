@@ -1,8 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Wertuose"
+			"Wertuose",
+			"NMW03"
 		]
 	},
+	"pageimages-desc": "Səhifədə istifadə olunan şəkillər haqqında məlumat toplayır",
 	"pageimages-info-label": "Səhifənin şəkli"
 }

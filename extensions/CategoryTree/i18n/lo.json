@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
-			"Passawuth"
+			"Passawuth",
+			"Lookruk"
 		]
 	},
 	"categorytree": "ໂຄງສ້າງໝວດ",
@@ -25,6 +26,6 @@
 	"categorytree-no-subcategories": "ບໍ່ມີໝວດຍ່ອຍ",
 	"categorytree-no-pages": "ບໍ່ມີໜ້າ ຫຼື ໝວດຍ່ອຍ",
 	"categorytree-not-found": "ບໍ່ເຫັນ",
-	"categorytree-error": "ການໂຫຼດຂໍ້ມູນມີປັນຫາ",
+	"categorytree-error": "ການໂຫຼດຂໍ້ມູນມີບັນຫາ",
 	"categorytree-retry": "ກະລຸນາຮອສັກຄູ່ ແລ້ວລອງໂຫຼດໃໝ່"
 }

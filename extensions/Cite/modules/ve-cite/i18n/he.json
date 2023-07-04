@@ -17,7 +17,8 @@
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"תומר ט"
+			"תומר ט",
+			"מקף"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "ספר",
@@ -34,7 +35,7 @@
 	"cite-ve-changedesc-reflist-responsive-unset": "רשימת הערות השוליים שונתה לתצוגה בעמודה אחת",
 	"cite-ve-citationneeded-button": "הוספת הערת שוליים",
 	"cite-ve-citationneeded-description": "עורך ציין שהטענה הזאת זקוקה להפניה למקור מהימן.",
-	"cite-ve-citationneeded-reason": "הסיבה שיתנה:",
+	"cite-ve-citationneeded-reason": "הסיבה שניתנה:",
 	"cite-ve-citationneeded-title": "דרוש מקור",
 	"cite-ve-dialog-reference-editing-reused": "הערת השוליים הזאת משמשת {{PLURAL:$1|פעם אחת|פעמיים|$1 פעמים}} בדף הזה.",
 	"cite-ve-dialog-reference-editing-reused-long": "הערת השוליים הזאת משמשת {{PLURAL:$1|פעם אחת|פעמיים|$1 פעמים}} בדף הזה. שינויים שנעשים פה יחולו בכל המקומות שבהם היא משמשת.",

@@ -3,11 +3,15 @@
 		"authors": [
 			"Atabek",
 			"Jiemurat",
-			"Nurlan"
+			"Nurlan",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
 	"math_syntax_error": "sintaksikalıq qa'telik",
 	"math_unknown_error": "belgisiz qa'telik",
 	"math_unknown_function": "belgisiz funkciya \"$1\"",
+	"mw_math_latexml": "LaTeXML (eksperimentallıq; MathML qollanıladı)",
+	"mw_math_mathml": "SVG (MathML brauzer ushın plagin járdeminde qosılıwı múmkin)",
+	"mw_math_source": "LaTeX belgi qaldırıw (tekstli brauzerler ushın)",
 	"prefs-math": "Formulalar"
 }

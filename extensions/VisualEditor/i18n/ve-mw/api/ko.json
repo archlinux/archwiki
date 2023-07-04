@@ -4,13 +4,14 @@
 			"Bluehill",
 			"MemphisA5",
 			"Ykhwong",
-			"아라"
+			"아라",
+			"렌즈"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "해당 키로써 캐시된 직렬화를 찾을 수 없습니다",
 	"apierror-visualeditor-difffailed": "차이 생성 실패",
 	"apierror-visualeditor-docserver-http-error": "Parsoid/RESTBase 서버와 통신하는 중 오류가 발생했습니다: $1",
-	"apierror-visualeditor-docserver-http": "Parsoid/RESTBase 서버와 통신하는 중 오류가 발생했습니다 (HTTP $1)",
+	"apierror-visualeditor-docserver-http": "Parsoid/RESTBase 서버와 통신하는 중 오류가 발생했습니다 (HTTP $1): $2",
 	"apierror-visualeditor-docserver": "Parsoid/RESTBase 서버와 통신하는 중 오류가 발생했습니다 (응답 없음)",
 	"apierror-visualeditor-latestnotfound": "제목에 대한 최신 판을 찾을 수 없습니다",
 	"apihelp-visualeditor-description": "Parsoid 서비스에서 문서를 위해 HTML5를 반환합니다.",

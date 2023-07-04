@@ -6,11 +6,11 @@
 			"Умар"
 		]
 	},
-	"multimediaviewer-optin-pref": "Хьалотае <span class=\"plainlinks\">«[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Медиафайлашка хьожарг]</span>»",
-	"multimediaviewer-optin-mmv": "Хьалотае «Медиафайлашка хьожарг»",
+	"multimediaviewer-optin-pref": "<span class=\"plainlinks\">«[https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:Media_Viewer/About Медиа-хьежарг]</span>» хьалсага",
+	"multimediaviewer-optin-mmv": "«Медиа-хьежарг» хьалсага",
 	"multimediaviewer-download-original-button-name": "Хьаараяккха юххьанцара йола файл",
 	"multimediaviewer-original-embed-dimensions": "Юххьанцара йола файл $1",
 	"multimediaviewer-options-learn-more": "ДукхагӀа хá",
-	"multimediaviewer-enable-dialog-header": "Хьалотае «Медиафайлашка хьожарг»?",
-	"multimediaviewer-enable-submit-button": "Хьалотае «Медиафайлашка хьожарг»"
+	"multimediaviewer-enable-dialog-header": "«Медиа-хьежарг» хьалсагеи?",
+	"multimediaviewer-enable-submit-button": "«Медиа-хьежарг» хьалсага"
 }

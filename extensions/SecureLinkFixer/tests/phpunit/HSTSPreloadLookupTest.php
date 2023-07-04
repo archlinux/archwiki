@@ -20,6 +20,7 @@ namespace MediaWiki\SecureLinkFixer\Test;
 
 use MediaWiki\SecureLinkFixer\HSTSPreloadLookup;
 use MediaWikiIntegrationTestCase;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @covers \MediaWiki\SecureLinkFixer\HSTSPreloadLookup
@@ -30,7 +31,8 @@ class HSTSPreloadLookupTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideIsPreloaded
 	 */
 	public function testIsPreloaded( $host, $expected ) {
-		$lookup = new HSTSPreloadLookup( [
+		$lookup = new HSTSPreloadLookup( 'dummy' );
+		TestingAccessWrapper::newFromObject( $lookup )->domains = [
 			// TLD
 			'foobar' => 1,
 			'secure-example.org' => 1,
@@ -38,7 +40,7 @@ class HSTSPreloadLookupTest extends MediaWikiIntegrationTestCase {
 			'insecure-subdomains-example.org' => 0,
 			// Subdomain is secure, root domain isn't
 			'secure.insecure-example.org' => 1,
-		] );
+		];
 		$this->assertSame( $expected, $lookup->isPreloaded( $host ) );
 	}
 

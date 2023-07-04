@@ -13,7 +13,8 @@
 			"TMg",
 			"Umherirrender",
 			"Ziko",
-			"✓"
+			"✓",
+			"Brettchenweber"
 		]
 	},
 	"wikieditor": "Fortgeschrittener Wikitext-Editor",
@@ -58,7 +59,7 @@
 	"wikieditor-toolbar-file-target": "Dateiname:",
 	"wikieditor-toolbar-file-caption": "Legende:",
 	"wikieditor-toolbar-file-alt": "Alternativtext:",
-	"wikieditor-toolbar-file-alt-help": "Du kannst dies verwenden, um eine Textbeschreibung für Menschen zu schreiben, die das Element nicht sehen können.\nDie Beschreibung sollte genug für sie zum Verstehen des Zwecks und der Information sein, die vom Medienelement gegeben wird. Dies ist wichtig für blinde Benutzer und andere Menschen, die Screenreader-Software oder Nur-Text-Browser verwenden.",
+	"wikieditor-toolbar-file-alt-help": "Du kannst dies verwenden, um eine Textbeschreibung für Menschen zu schreiben, die das Element nicht sehen können.\nDie Beschreibung sollte geeignet sein, um den Zweck und die Angaben des Medienelements verstehen zu können. Dies ist wichtig für blinde Benutzer und andere Menschen, die Screenreader-Software oder Nur-Text-Browser verwenden.",
 	"wikieditor-toolbar-file-alt-help-label": "(Hilfe anzeigen)",
 	"wikieditor-toolbar-file-size": "Größe:",
 	"wikieditor-toolbar-file-float": "Ausrichtung:",

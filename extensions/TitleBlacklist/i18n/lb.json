@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Robby",
-			"Soued031"
+			"Soued031",
+			"Les Meloures"
 		]
 	},
-	"titleblacklist-desc": "Erlaabt den Administrateuren et d'Uleeë vu Säiten a Benotzerkonte mat spezifeschen Titelen iwwer eng [[MediaWiki:Titleblacklist|schwaarz Lëscht]] an eng [[MediaWiki:Titlewhitelist|wäiss Lëscht]] ze verbidden",
+	"titleblacklist-desc": "Erlaabt den Administrateuren d'Uleeë vu Säiten a Benotzerkonte mat spezifeschen Titelen iwwer eng [[MediaWiki:Titleblacklist|schwaarz Lëscht]] an eng [[MediaWiki:Titlewhitelist|wäiss Lëscht]] ze verbidden",
 	"titleblacklist": "# Dëst ass een Titel deen op enger schwaarzer Lëscht steet. Titelen a Benotzernimm op déi dës Ausdréck passe kann net ugeluecht ginn\n# Benotzt \"#\" fir Bemierkungen\n# Et gëtt tëscht groussen a klenge Buchstawen ënnerscheet",
 	"titlewhitelist": "# Dëst ass d'''Whitelist'' vun den Titelen. Benotzt \"#\" fir Bemierkungen.\n# Et gëtt een Ënnerscheed tëscht groussen a klenge Buchstawe gemaach",
 	"titleblacklist-forbidden-edit": "Den Titel \"$2\" däerf net ugeluecht ginn.\nEn ass op der Lëscht vun den net erlaabten Titelen wéinst follgendem Begrëff:\n<code>$1</code>",

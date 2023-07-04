@@ -485,7 +485,7 @@
 	"abusefilter-examine-incompatible": "Тражену измену не подржава филтер злоупотреба",
 	"abusefilter-examine-noresults": "Нису нађени пезултати за параметре претраге које сте задали.",
 	"abusefilter-topnav": "'''Навигација'''",
-	"abusefilter-topnav-home": "почетна",
+	"abusefilter-topnav-home": "Почетна",
 	"abusefilter-topnav-recentchanges": "скорашње измене филтерâ",
 	"abusefilter-topnav-test": "групно испробавање",
 	"abusefilter-topnav-examine": "испитај прошле измене",

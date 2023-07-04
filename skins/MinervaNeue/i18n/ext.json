@@ -2,11 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"Crucifunked",
-			"Julio Nepote"
+			"Julio Nepote",
+			"HackerPunki"
 		]
 	},
 	"mobile-frontend-editor-edit": "Eital",
 	"mobile-frontend-home-button": "Encetu",
+	"mobile-frontend-language-article-heading": "Idioma",
 	"mobile-frontend-random-button": "Aleatóriu",
 	"minerva-page-actions-info": "Informacionis dela página"
 }

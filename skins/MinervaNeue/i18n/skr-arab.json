@@ -36,7 +36,13 @@
 	"mobile-frontend-user-page-contributions": "ونگاراں",
 	"mobile-frontend-user-page-member-since": "{{GENDER:$2|رکن ٻݨیا}} $1 کنوں",
 	"mobile-frontend-user-page-talk": "ڳالھ مہاڑ",
+	"minerva-user-menu-button": "ورتݨ آلے دا مینیو",
+	"minerva-user-navigation": "ورتݨ آلی نیویگیشݨ",
+	"minerva-page-actions-overflow": "ٻئے",
 	"minerva-page-actions-language-switcher": "زباناں",
+	"minerva-page-actions-history": "تاریخ",
+	"minerva-prefs-talkpage": "[[mw:Talk:Moderator Tools/Content moderation on mobile web|بحث]]",
 	"skin-minerva-issue-learn-more": "ٻیا سِکھو",
-	"skin-minerva-mobile-option-MinervaShowCategories": "ونکیاں"
+	"skin-minerva-mobile-option-MinervaShowCategories": "ونکیاں",
+	"skin-minerva-mobile-option-MinervaShowCategories-description": "ورقیاں دیاں ونکیاں ݙیکھو"
 }

@@ -41,7 +41,7 @@
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Éditeur visuel]]",
 	"tag-visualeditor-description": "Modification effectuée avec l'[[{{MediaWiki:visualeditor-descriptionpagelink}}|éditeur visuel]]",
-	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Éditeur visuel : à vérifier]]",
+	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Éditeur visuel : à vérifier]]",
 	"tag-visualeditor-needcheck-description": "Modification faite en utilisant l’[[{{MediaWiki:visualeditor-descriptionpagelink}}|éditeur visuel]], dans laquelle le système a détecté que le wikicode contient peut-être des modifications inattendues.",
 	"tag-visualeditor-wikitext": "Éditeur de wikicode 2017",
 	"tag-visualeditor-wikitext-description": "Modification effectuée en utilisant l’éditeur de wikicode 2017",
