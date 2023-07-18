@@ -173,7 +173,6 @@ class ApiQueryPageImages extends ApiQueryBase {
 				if ( isset( $prop['thumbnail'] ) ) {
 					$thumb = $file->transform( [
 						'width' => $size,
-						'height' => $size,
 						'lang' => $lang
 					] );
 					if ( $thumb && $thumb->getUrl() ) {

@@ -17,12 +17,30 @@ class Declh extends TexNode {
 		$this->arg = $arg;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getFname(): string {
+		return $this->fname;
+	}
+
+	/**
+	 * @return TexArray
+	 */
+	public function getArg(): TexArray {
+		return $this->arg;
+	}
+
 	public function inCurlies() {
 		return $this->render();
 	}
 
 	public function render() {
 		return '{' . $this->fname . ' ' . $this->arg->inCurlies() . '}';
+	}
+
+	public function renderMML( $arguments = [], $state = [] ) {
+		return $this->parseToMML( $this->fname, $arguments, null );
 	}
 
 	public function extractIdentifiers( $args = null ) {
@@ -64,7 +82,4 @@ class Declh extends TexNode {
 		return parent::extractSubscripts();
 	}
 
-	public function name() {
-		return 'DECLh';
-	}
 }

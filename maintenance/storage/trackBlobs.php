@@ -249,10 +249,6 @@ class TrackBlobs {
 				],
 				[ 'blob_tracking' => [ 'LEFT JOIN', 'bt_text_id=old_id' ] ]
 			);
-			$ids = [];
-			foreach ( $res as $row ) {
-				$ids[] = $row->old_id;
-			}
 
 			if ( !$res->numRows() ) {
 				break;
@@ -326,10 +322,7 @@ class TrackBlobs {
 				}
 				continue;
 			}
-			$table = $extDB->getLBInfo( 'blobs table' );
-			if ( $table === null ) {
-				$table = 'blobs';
-			}
+			$table = $extDB->getLBInfo( 'blobs table' ) ?? 'blobs';
 			if ( !$extDB->tableExists( $table, __METHOD__ ) ) {
 				echo "No blobs table on cluster $cluster\n";
 				continue;

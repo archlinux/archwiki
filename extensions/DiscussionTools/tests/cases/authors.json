@@ -1,0 +1,54 @@
+[
+	{
+		"thread": {
+			"type": "heading",
+			"id": "Heading1",
+			"replies": [
+				{
+					"type": "comment",
+					"id": "Eve1",
+					"author": "Eve",
+					"replies": [
+						{
+							"type": "comment",
+							"id": "Bob1",
+							"author": "Bob",
+							"replies": []
+						}
+					]
+				},
+				{
+					"type": "comment",
+					"author": "Bob",
+					"id": "Bob2",
+					"replies": [
+						{
+							"type": "comment",
+							"id": "Alice1",
+							"author": "Alice",
+							"replies": []
+						},
+						{
+							"type": "comment",
+							"id": "Eve2",
+							"author": "Eve",
+							"replies": []
+						}
+					]
+				}
+			]
+		},
+		"expectedAuthorsBelow": [
+			"Alice",
+			"Bob",
+			"Eve"
+		],
+		"expectedThreadItemIdsBelow": [
+			"Eve1",
+			"Bob1",
+			"Bob2",
+			"Alice1",
+			"Eve2"
+		]
+	}
+]

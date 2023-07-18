@@ -12,6 +12,7 @@
 			"Fabsouza1",
 			"Fasouzafreitas",
 			"Felipe L. Ewald",
+			"Fúlvio",
 			"Giro720",
 			"Gustavo",
 			"Gustavo.moraes",
@@ -20,6 +21,8 @@
 			"Luk3",
 			"Marcionunes",
 			"Marcos dias de oliveira",
+			"Re demz",
+			"Robertpontes",
 			"Rodrigo codignoli",
 			"TheEduGobi",
 			"Tks4Fish",
@@ -27,8 +30,7 @@
 			"Walesson",
 			"Warley Felipe C.",
 			"YuriNikolai",
-			555,
-			"Fúlvio"
+			555
 		]
 	},
 	"config-desc": "O instalador do MediaWiki",
@@ -75,8 +77,7 @@
 	"config-env-good": "O ambiente foi verificado.\nVocê pode instalar o MediaWiki.",
 	"config-env-bad": "O ambiente foi verificado.\nVocê não pode instalar o MediaWiki.",
 	"config-env-php": "O PHP $1 está instalado.",
-	"config-unicode-using-intl": "Usando a [https://www.php.net/manual/pt_BR/book.intl.php extensão intl PHP] para a normalização Unicode.",
-	"config-unicode-update-warning": "<strong>Aviso:</strong> A versão instalada do wrapper de normalização Unicode usa uma versão mais antiga da biblioteca do [http://www.site.icu-project.org/projeto ICU].\nVocê deve [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations atualizar] se você tem quaisquer preocupações com o uso do Unicode.",
+	"config-env-icu": "A biblioteca ICU $1 está instalada (suporta Unicode $2).",
 	"config-no-db": "Não foi possível encontrar um driver apropriado para a banco de dados! Você precisa instalar um driver de banco de dados para PHP. {{PLURAL:$2|É aceito o seguinte tipo|São aceitos os seguintes tipos}} de banco de dados: $1.\n\nSe você compilou o PHP, reconfigure-o com um cliente de banco de dados ativado, por exemplo, usando <code>./configure --with-mysqli</code>.\nSe instalou o PHP a partir de um pacote Debian ou Ubuntu, então também precisa instalar, por exemplo, o pacote <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Aviso:</strong> você tem o SQLite versão $2, que é menor do que a versão mínima necessária $1. O SQLite não estará disponível.",
 	"config-no-fts3": "<strong>Aviso</strong> O SQLite foi compilado sem o [//sqlite.org/fts3.html módulo FTS3], as funcionalidades de pesquisa não estarão disponíveis nesta instalação.",
@@ -102,7 +103,6 @@
 	"config-using-uri": "Usando URL do servidor \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "<strong>Aviso:</strong> O seu diretório atual de envios <code>$1</code> está vulnerável a execuções de script arbitrárias.\nEmbora o MediaWiki verifique todos os arquivos enviados por ameaças de segurança, é altamente recomendável [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security evitar essa vulnerabilidade de segurança] antes de permitir envios.",
 	"config-no-cli-uploads-check": "<strong>Atenção:</strong> O seu diretório padrão para envios (<code>$1</code>) não está marcado para vulnerabilidade\npara execução de script arbitrário durante a instalação do CLI.",
-	"config-suhosin-max-value-length": "O Suhosin está instalado e limita o parâmetro GET <code>length</code> a $1 bytes.\nO MediaWiki requer que <code>suhosin.get.max_value_length</code> seja pelo menos $2. Desative esta definição, ou aumente este valor para $3 no <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Aviso:</strong> o seu sistema parece estar sendo executado com inteiros de 32 bits. Isto [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit não é recomendado].",
 	"config-db-type": "Tipo do banco de dados:",
 	"config-db-host": "Servidor do banco de dados:",
@@ -329,6 +329,7 @@
 	"config-screenshot": "capturas de tela",
 	"config-extension-not-found": "Não foi possível encontrar o arquivo de registo da extensão \"$1\"",
 	"config-extension-dependency": "Foi encontrado um erro de dependências ao instalar a extensão \"$1\": $2",
+	"config-ext-skins-more-info": "mais informações",
 	"mainpagetext": "<strong>O MediaWiki foi instalado.</strong>",
 	"mainpagedocfooter": "Consulte o [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents Manual de Usuário] para informações de como usar o software wiki.\n\n== Começando ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Lista de opções de configuração]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ FAQ do MediaWiki]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Lista de discussão com avisos de novas versões do MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Traduza o MediaWiki para seu idioma]"
 }

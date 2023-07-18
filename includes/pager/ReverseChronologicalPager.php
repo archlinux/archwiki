@@ -16,13 +16,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Pager
  */
+
+use MediaWiki\Html\Html;
 use Wikimedia\Timestamp\TimestampException;
 
 /**
- * Efficient paging for SQL queries.
  * IndexPager with a formatted navigation bar.
+ *
  * @stable to extend
  * @ingroup Pager
  */
@@ -39,6 +40,8 @@ abstract class ReverseChronologicalPager extends IndexPager {
 	public $mDay;
 	/** @var string */
 	private $lastHeaderDate;
+	/** @var string */
+	protected $endOffset;
 
 	/**
 	 * @param string $date
@@ -88,6 +91,18 @@ abstract class ReverseChronologicalPager extends IndexPager {
 	}
 
 	/**
+	 * Returns the name of the timestamp field. Subclass can override this to provide the
+	 * timestamp field if they are using a aliased field for getIndexField()
+	 *
+	 * @since 1.40
+	 * @return string
+	 */
+	public function getTimestampField() {
+		// This is a chronological pager, so the first column should be some kind of timestamp
+		return is_array( $this->mIndexField ) ? $this->mIndexField[0] : $this->mIndexField;
+	}
+
+	/**
 	 * Get date from the timestamp
 	 *
 	 * @since 1.38
@@ -104,7 +119,7 @@ abstract class ReverseChronologicalPager extends IndexPager {
 	protected function getRow( $row ): string {
 		$s = '';
 
-		$timestampField = is_array( $this->mIndexField ) ? $this->mIndexField[0] : $this->mIndexField;
+		$timestampField = $this->getTimestampField();
 		$timestamp = $row->$timestampField ?? null;
 		$date = $timestamp ? $this->getDateFromTimestamp( $timestamp ) : null;
 		if ( $date && $this->isHeaderRowNeeded( $date ) ) {
@@ -170,7 +185,7 @@ abstract class ReverseChronologicalPager extends IndexPager {
 	}
 
 	/**
-	 * Set and return the mOffset timestamp such that we can get all revisions with
+	 * Set and return the offset timestamp such that we can get all revisions with
 	 * a timestamp up to the specified parameters.
 	 *
 	 * @stable to override
@@ -186,7 +201,7 @@ abstract class ReverseChronologicalPager extends IndexPager {
 		$day = (int)$day;
 
 		// Basic validity checks for year and month
-		// If year and month are invalid, don't update the mOffset
+		// If year and month are invalid, don't update the offset
 		if ( $year <= 0 && ( $month <= 0 || $month >= 13 ) ) {
 			return null;
 		}
@@ -201,17 +216,18 @@ abstract class ReverseChronologicalPager extends IndexPager {
 			$this->mYear = (int)$selectedDate->format( 'Y' );
 			$this->mMonth = (int)$selectedDate->format( 'm' );
 			$this->mDay = (int)$selectedDate->format( 'd' );
-			$this->mOffset = $this->mDb->timestamp( $timestamp->getTimestamp() );
+			// Don't mess with mOffset which IndexPager uses
+			$this->endOffset = $this->mDb->timestamp( $timestamp->getTimestamp() );
 		} catch ( TimestampException $e ) {
 			// Invalid user provided timestamp (T149257)
 			return null;
 		}
 
-		return $this->mOffset;
+		return $this->endOffset;
 	}
 
 	/**
-	 * Core logic of determining the mOffset timestamp such that we can get all items with
+	 * Core logic of determining the offset timestamp such that we can get all items with
 	 * a timestamp up to the specified parameters. Given parameters for a day up to which to get
 	 * items, this function finds the timestamp of the day just after the end of the range for use
 	 * in an database strict inequality filter.
@@ -286,5 +302,31 @@ abstract class ReverseChronologicalPager extends IndexPager {
 		}
 
 		return MWTimestamp::getInstance( "{$ymd}000000" );
+	}
+
+	/**
+	 * Return the end offset, extensions can use this if they are not in the context of subclass.
+	 *
+	 * @since 1.40
+	 * @return string
+	 */
+	public function getEndOffset() {
+		return $this->endOffset;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function buildQueryInfo( $offset, $limit, $order ) {
+		[ $tables, $fields, $conds, $fname, $options, $join_conds ] = parent::buildQueryInfo(
+			$offset,
+			$limit,
+			$order
+		);
+		if ( $this->endOffset ) {
+			$conds[] = $this->mDb->buildComparison( '<', [ $this->getTimestampField() => $this->endOffset ] );
+		}
+
+		return [ $tables, $fields, $conds, $fname, $options, $join_conds ];
 	}
 }

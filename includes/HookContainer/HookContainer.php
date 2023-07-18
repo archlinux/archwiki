@@ -367,7 +367,7 @@ class HookContainer implements SalvageableService {
 	 * Attach an event handler to a given hook.
 	 *
 	 * @param string $hook Name of hook
-	 * @param callable|string|array $callback handler object to attach
+	 * @param mixed $callback handler object to attach
 	 */
 	public function register( string $hook, $callback ) {
 		$deprecatedHooks = $this->registry->getDeprecatedHooks();
@@ -375,10 +375,11 @@ class HookContainer implements SalvageableService {
 		if ( $deprecated ) {
 			$info = $deprecatedHooks->getDeprecationInfo( $hook );
 			if ( empty( $info['silent'] ) ) {
-				$deprecatedVersion = $info['deprecatedVersion'] ?? false;
-				$component = $info['component'] ?? false;
+				$handler = $this->normalizeHandler( $callback, $hook );
 				wfDeprecated(
-					"$hook hook", $deprecatedVersion, $component
+					"$hook hook (used in " . $handler['functionName'] . ")",
+					$info['deprecatedVersion'] ?? false,
+					$info['component'] ?? false
 				);
 			}
 		}
@@ -425,6 +426,37 @@ class HookContainer implements SalvageableService {
 		}
 
 		return $handlers;
+	}
+
+	/**
+	 * Returns the names of all hooks that have at least one handler registered.
+	 * @return array
+	 */
+	public function getHookNames(): array {
+		$names = array_merge(
+			array_keys( $this->dynamicHandlers ),
+			array_keys( $this->registry->getGlobalHooks() ),
+			array_keys( $this->registry->getExtensionHooks() )
+		);
+
+		return array_unique( $names );
+	}
+
+	/**
+	 * Returns the names of all hooks that have handlers registered.
+	 * Note that this may include hook handlers that have been disabled using clear().
+	 *
+	 * @internal
+	 * @return string[]
+	 */
+	public function getRegisteredHooks(): array {
+		$names = array_merge(
+			array_keys( $this->dynamicHandlers ),
+			array_keys( $this->registry->getExtensionHooks() ),
+			array_keys( $this->registry->getGlobalHooks() ),
+		);
+
+		return array_unique( $names );
 	}
 
 	/**

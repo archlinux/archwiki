@@ -174,7 +174,6 @@ ve.ui.MWTransclusionDialog.prototype.onReplacePart = function ( removed, added )
 	if ( parts.length === 0 ) {
 		this.addPart( new ve.dm.MWTemplatePlaceholderModel( this.transclusionModel ) );
 	} else if ( parts.length > 1 ) {
-		this.bookletLayout.getOutlineControls().toggle( true );
 		this.$element.removeClass( 've-ui-mwTransclusionDialog-single-transclusion' );
 	}
 

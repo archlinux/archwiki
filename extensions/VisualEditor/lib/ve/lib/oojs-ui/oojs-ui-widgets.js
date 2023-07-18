@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.44.4
+ * OOUI v0.46.3
  * https://www.mediawiki.org/wiki/OOUI
  *
  * Copyright 2011–2023 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2023-01-04T17:25:02Z
+ * Date: 2023-02-07T00:43:59Z
  */
 ( function ( OO ) {
 
@@ -160,6 +160,17 @@ OO.ui.mixin.DraggableElement.prototype.onDragStart = function ( e ) {
 	} catch ( err ) {
 		// The above is only for Firefox. Move on if it fails.
 	}
+
+	// Support: Chrome on Android
+	if ( !dataTransfer.getData( 'text' ) ) {
+		try {
+			dataTransfer.setData( 'text', ' ' );
+		} catch ( err ) {
+			// This try catch exists only out of an abundance of caution,
+			// and Chesterton's fence with respect to the try-catch above.
+		}
+	}
+
 	// Briefly add a 'clone' class to style the browser's native drag image
 	this.$element.addClass( 'oo-ui-draggableElement-clone' );
 	// Add placeholder class after the browser has rendered the clone
@@ -1414,7 +1425,7 @@ OO.ui.StackLayout.prototype.unsetCurrentItem = function () {
  * @return {OO.ui.StackLayout} The layout, for chaining
  */
 OO.ui.StackLayout.prototype.addItems = function ( items, index ) {
-	if ( !items || !items.length ) {
+	if ( !items || items.length === 0 ) {
 		return this;
 	}
 
@@ -3497,6 +3508,7 @@ OO.ui.OutlineOptionWidget.prototype.setRemovable = function ( removable ) {
  * @return {OO.ui.Widget} The widget, for chaining
  */
 OO.ui.OutlineOptionWidget.prototype.setLevel = function ( level ) {
+	level = level || 0;
 	if ( this.level === level ) {
 		return this;
 	}
@@ -3877,6 +3889,8 @@ OO.ui.TabSelectWidget.prototype.toggleFramed = function ( framed ) {
  * @constructor
  * @param {Object} [config] Configuration options
  * @cfg {boolean} [clearOnSelect=true] Clear selection immediately after making it
+ * @cfg {Object} [menuClass=OO.ui.MenuSelectWidget] Class for the menu widget. This
+ *  must be a subclass of {@link OO.ui.MenuSelectWidget menu select widget}.
  * @cfg {Object} [menu] Configuration options to pass to
  *  {@link OO.ui.MenuSelectWidget menu select widget}.
  * @cfg {jQuery|boolean} [$overlay] Render the menu into a separate layer. This configuration is
@@ -3895,9 +3909,11 @@ OO.ui.ButtonMenuSelectWidget = function OoUiButtonMenuSelectWidget( config ) {
 	this.$overlay = ( config.$overlay === true ?
 		OO.ui.getDefaultOverlay() : config.$overlay ) || this.$element;
 
+	var MenuClass = config.menuClass || OO.ui.MenuSelectWidget;
+
 	// Properties
 	this.clearOnSelect = config.clearOnSelect !== false;
-	this.menu = new OO.ui.MenuSelectWidget( $.extend( {
+	this.menu = new MenuClass( $.extend( {
 		widget: this,
 		$floatableContainer: this.$element
 	}, config.menu ) );
@@ -4676,7 +4692,7 @@ OO.ui.TagMultiselectWidget.prototype.onTagFixed = function ( item ) {
 			break;
 		}
 	}
-	this.addItems( item, i );
+	this.addItems( [ item ], i );
 };
 /**
  * Respond to change event, where items were added, removed, or cleared.

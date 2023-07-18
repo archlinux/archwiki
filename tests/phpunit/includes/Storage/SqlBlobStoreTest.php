@@ -2,14 +2,15 @@
 
 namespace MediaWiki\Tests\Storage;
 
+use ConcatenatedGzipHistoryBlob;
 use ExternalStoreAccess;
 use ExternalStoreFactory;
 use HashBagOStuff;
 use InvalidArgumentException;
+use MediaWiki\Storage\BadBlobException;
 use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\SqlBlobStore;
 use MediaWikiIntegrationTestCase;
-use TitleValue;
 use WANObjectCache;
 use Wikimedia\Rdbms\LoadBalancer;
 
@@ -84,6 +85,12 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $store->getUseExternalStore() );
 	}
 
+	private function makeObjectBlob( $text ) {
+		$obj = new ConcatenatedGzipHistoryBlob();
+		$obj->setText( $text );
+		return serialize( $obj );
+	}
+
 	public function provideDecompress() {
 		yield '(no legacy encoding), empty in empty out' => [ false, '', [], '' ];
 		yield '(no legacy encoding), string in string out' => [ false, 'A', [], 'A' ];
@@ -96,17 +103,16 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 			// gzip string below generated with serialize( 'JOJO' )
 			false, "s:4:\"JOJO\";", [ 'object' ], false,
 		];
+
 		yield '(no legacy encoding), serialized object in with object flag returns string' => [
 			false,
-			// Using a TitleValue object as it has a getText method (which is needed)
-			serialize( new TitleValue( 0, 'HHJJDDFF' ) ),
+			$this->makeObjectBlob( 'HHJJDDFF' ),
 			[ 'object' ],
 			'HHJJDDFF',
 		];
 		yield '(no legacy encoding), serialized object in with object & gzip flag returns string' => [
 			false,
-			// Using a TitleValue object as it has a getText method (which is needed)
-			gzdeflate( serialize( new TitleValue( 0, '8219JJJ840' ) ) ),
+			gzdeflate( $this->makeObjectBlob( '8219JJJ840' ) ),
 			[ 'object', 'gzip' ],
 			'8219JJJ840',
 		];
@@ -124,13 +130,13 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 		];
 		yield '(ISO-8859-1 encoding), serialized object in with object flags returns string' => [
 			'ISO-8859-1',
-			serialize( new TitleValue( 0, iconv( 'utf-8', 'ISO-8859-1', "3®Àþ3" ) ) ),
+			$this->makeObjectBlob( iconv( 'utf-8', 'ISO-8859-1', "3®Àþ3" ) ),
 			[ 'object' ],
 			'3®Àþ3',
 		];
 		yield '(ISO-8859-1 encoding), serialized object in with object & gzip flags returns string' => [
 			'ISO-8859-1',
-			gzdeflate( serialize( new TitleValue( 0, iconv( 'utf-8', 'ISO-8859-1', "2®Àþ2" ) ) ) ),
+			gzdeflate( $this->makeObjectBlob( iconv( 'utf-8', 'ISO-8859-1', "2®Àþ2" ) ) ),
 			[ 'gzip', 'object' ],
 			'2®Àþ2',
 		];
@@ -187,11 +193,11 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Storage\SqlBlobStore::compressData
+	 * @requires extension zlib
 	 */
 	public function testCompressRevisionTextUtf8Gzip() {
 		$store = $this->getBlobStore();
 		$store->setCompressBlobs( true );
-		$this->checkPHPExtension( 'zlib' );
 
 		$row = (object)[ 'old_text' => "Wiki est l'\xc3\xa9cole superieur !" ];
 		$row->old_flags = $store->compressData( $row->old_text );
@@ -214,7 +220,8 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testSimpleStoreGetBlobKnownBad() {
 		$store = $this->getBlobStore();
-		$this->assertSame( '', $store->getBlob( 'bad:lost?bug=T12345' ) );
+		$this->expectException( BadBlobException::class );
+		$store->getBlob( 'bad:lost?bug=T12345' );
 	}
 
 	/**
@@ -507,9 +514,9 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers \MediaWiki\Storage\SqlBlobStore::expandBlob
 	 * @dataProvider provideExpandBlobWithZlibExtension
+	 * @requires extension zlib
 	 */
 	public function testGetRevisionWithZlibExtension( $expected, $flags, $raw ) {
-		$this->checkPHPExtension( 'zlib' );
 		$blobStore = $this->getBlobStore();
 		$this->assertEquals(
 			$expected,
@@ -527,9 +534,9 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers \MediaWiki\Storage\SqlBlobStore::expandBlob
 	 * @dataProvider provideExpandBlobWithZlibExtension_badData
+	 * @requires extension zlib
 	 */
 	public function testGetRevisionWithZlibExtension_badData( $flags, $raw ) {
-		$this->checkPHPExtension( 'zlib' );
 		$blobStore = $this->getBlobStore();
 
 		$this->assertFalse(
@@ -589,10 +596,9 @@ class SqlBlobStoreTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers \MediaWiki\Storage\SqlBlobStore::expandBlob
 	 * @dataProvider provideExpandBlobWithGzipAndLegacyEncoding
+	 * @requires extension zlib
 	 */
 	public function testGetRevisionWithGzipAndLegacyEncoding( $expected, $encoding, $flags, $raw ) {
-		$this->checkPHPExtension( 'zlib' );
-
 		$blobStore = $this->getBlobStore();
 		$blobStore->setLegacyEncoding( $encoding );
 

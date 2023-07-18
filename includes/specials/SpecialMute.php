@@ -124,9 +124,6 @@ class SpecialMute extends FormSpecialPage {
 			$hookData[$userOption]['after'] = (bool)$value;
 		}
 
-		// NOTE: this hook is temporary
-		$this->getHookRunner()->onSpecialMuteSubmit( $hookData );
-
 		return true;
 	}
 
@@ -188,7 +185,7 @@ class SpecialMute extends FormSpecialPage {
 		$target = $this->getTarget();
 		$form = parent::getForm();
 		$form->setId( 'mw-specialmute-form' );
-		$form->setHeaderText( $this->msg( 'specialmute-header', $target ? $target->getName() : '' )->parse() );
+		$form->setHeaderHtml( $this->msg( 'specialmute-header', $target ? $target->getName() : '' )->parse() );
 		$form->setSubmitTextMsg( 'specialmute-submit' );
 		$form->setSubmitID( 'save' );
 

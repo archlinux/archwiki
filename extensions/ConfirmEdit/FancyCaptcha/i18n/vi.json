@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"CactiStaccingCrane",
 			"Cheers!",
 			"Minh Nguyen",
+			"NguoiDungKhongDinhDanh",
 			"Nguyên Lê",
 			"Thienhau2003",
-			"Vinhtantran",
-			"CactiStaccingCrane",
-			"NguoiDungKhongDinhDanh"
+			"Vinhtantran"
 		]
 	},
 	"fancycaptcha-desc": "Trình sản xuất hình CAPTCHA đặc biệt cho ConfirmEdit",

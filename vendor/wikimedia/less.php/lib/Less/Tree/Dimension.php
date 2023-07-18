@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Dimension
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Dimension extends Less_Tree {
 
@@ -18,7 +14,7 @@ class Less_Tree_Dimension extends Less_Tree {
 		if ( $unit && ( $unit instanceof Less_Tree_Unit ) ) {
 			$this->unit = $unit;
 		} elseif ( $unit ) {
-			$this->unit = new Less_Tree_Unit( array( $unit ) );
+			$this->unit = new Less_Tree_Unit( [ $unit ] );
 		} else {
 			$this->unit = new Less_Tree_Unit();
 		}
@@ -28,12 +24,8 @@ class Less_Tree_Dimension extends Less_Tree {
 		$this->unit = $visitor->visitObj( $this->unit );
 	}
 
-	public function compile() {
-		return $this;
-	}
-
 	public function toColor() {
-		return new Less_Tree_Color( array( $this->value, $this->value, $this->value ) );
+		return new Less_Tree_Color( [ $this->value, $this->value, $this->value ] );
 	}
 
 	/**
@@ -41,7 +33,7 @@ class Less_Tree_Dimension extends Less_Tree {
 	 */
 	public function genCSS( $output ) {
 		if ( Less_Parser::$options['strictUnits'] && !$this->unit->isSingular() ) {
-			throw new Less_Exception_Compiler( "Multiple units in dimension. Correct the units or use the unit function. Bad unit: ".$this->unit->toString() );
+			throw new Less_Exception_Compiler( "Multiple units in dimension. Correct the units or use the unit function. Bad unit: " . $this->unit->toString() );
 		}
 
 		$value = Less_Functions::fround( $this->value );
@@ -49,7 +41,7 @@ class Less_Tree_Dimension extends Less_Tree {
 
 		if ( $value !== 0 && $value < 0.000001 && $value > -0.000001 ) {
 			// would be output 1e-6 etc.
-			$strValue = number_format( $strValue, 10 );
+			$strValue = number_format( (float)$strValue, 10 );
 			$strValue = preg_replace( '/\.?0+$/', '', $strValue );
 		}
 
@@ -57,7 +49,7 @@ class Less_Tree_Dimension extends Less_Tree {
 			// Zero values doesn't need a unit
 			if ( $value === 0 && $this->unit->isLength() ) {
 				$output->add( $strValue );
-				return $strValue;
+				return;
 			}
 
 			// Float values doesn't need a leading zero
@@ -80,6 +72,7 @@ class Less_Tree_Dimension extends Less_Tree {
 
 	/**
 	 * @param string $op
+	 * @param Less_Tree_Dimension $other
 	 */
 	public function operate( $op, $other ) {
 		$value = Less_Functions::operate( $op, $this->value, $other->value );
@@ -146,7 +139,7 @@ class Less_Tree_Dimension extends Less_Tree {
 	}
 
 	public function unify() {
-		return $this->convertTo( array( 'length' => 'px', 'duration' => 's', 'angle' => 'rad' ) );
+		return $this->convertTo( [ 'length' => 'px', 'duration' => 's', 'angle' => 'rad' ] );
 	}
 
 	public function convertTo( $conversions ) {
@@ -154,10 +147,10 @@ class Less_Tree_Dimension extends Less_Tree {
 		$unit = clone $this->unit;
 
 		if ( is_string( $conversions ) ) {
-			$derivedConversions = array();
+			$derivedConversions = [];
 			foreach ( Less_Tree_UnitConversions::$groups as $i ) {
 				if ( isset( Less_Tree_UnitConversions::${$i}[$conversions] ) ) {
-					$derivedConversions = array( $i => $conversions );
+					$derivedConversions = [ $i => $conversions ];
 				}
 			}
 			$conversions = $derivedConversions;

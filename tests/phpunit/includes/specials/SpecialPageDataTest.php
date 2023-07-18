@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\FauxResponse;
+
 /**
  * @covers SpecialPageData
  * @group Database
@@ -118,20 +121,20 @@ class SpecialPageDataTest extends SpecialPageTestBase {
 
 		try {
 			/** @var FauxResponse $response */
-			list( $output, $response ) = $this->executeSpecialPage( $subpage, $request );
+			[ $output, $response ] = $this->executeSpecialPage( $subpage, $request );
 
 			$this->assertEquals( $expCode, $response->getStatusCode(), "status code" );
-			$this->assertRegExp( $expRegExp, $output, "output" );
+			$this->assertMatchesRegularExpression( $expRegExp, $output, "output" );
 
 			foreach ( $expHeaders as $name => $exp ) {
 				$value = $response->getHeader( $name );
 				$this->assertNotNull( $value, "header: $name" );
 				$this->assertIsString( $value, "header: $name" );
-				$this->assertRegExp( $exp, $value, "header: $name" );
+				$this->assertMatchesRegularExpression( $exp, $value, "header: $name" );
 			}
 		} catch ( HttpError $e ) {
 			$this->assertEquals( $expCode, $e->getStatusCode(), "status code" );
-			$this->assertRegExp( $expRegExp, $e->getHTML(), "error output" );
+			$this->assertMatchesRegularExpression( $expRegExp, $e->getHTML(), "error output" );
 		}
 	}
 
@@ -139,7 +142,7 @@ class SpecialPageDataTest extends SpecialPageTestBase {
 		$request = new FauxRequest();
 		$request->response()->header( 'Status: 200 OK', true, 200 ); // init/reset
 
-		list( $output, ) = $this->executeSpecialPage( '', $request );
+		[ $output, ] = $this->executeSpecialPage( '', $request );
 
 		$this->assertStringContainsString( '(pagedata-text)', $output );
 	}

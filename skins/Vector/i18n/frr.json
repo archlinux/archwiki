@@ -23,9 +23,15 @@
 	"vector-view-viewsource": "Kweltekst uunluke",
 	"vector-more-actions": "Muar",
 	"vector-searchsuggest-containing": "Sjük sidjen, huar <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> banen as",
-	"vector-toc-heading": "Auersicht",
+	"vector-toc-label": "Auersicht",
 	"vector-toc-beginning": "Began",
 	"vector-main-menu-tooltip": "Hoodütjwool",
 	"vector-toc-menu-tooltip": "Auersicht",
+	"vector-main-menu-label": "Hoodütjwool",
+	"vector-page-tools-label": "Werktjüügen",
+	"vector-page-tools-general-label": "Algemian",
+	"vector-page-tools-actions-label": "Aksioonen",
+	"vector-pin-element-label": "Tu't sidjenliist fersküüw",
+	"vector-unpin-element-label": "Fersteeg",
 	"tooltip-vector-anon-user-menu-title": "Muar ütjwool"
 }

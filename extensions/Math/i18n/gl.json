@@ -85,7 +85,6 @@
 	"math_unknown_function": "descoñécese a función \"$1\"",
 	"mw_math_latexml": "LaTeXML (experimental; usa MathML)",
 	"mw_math_mathml": "MathML con respaldo en SVG ou PNG (recomendado para navegadores máis modernos e ferramentas de acesibilidade)",
-	"mw_math_png": "Imaxes PNG",
 	"mw_math_source": "Código LaTeX (para os navegadores de texto)",
 	"prefs-math": "Fórmulas matemáticas",
 	"mathstatus": "Estado de Math",

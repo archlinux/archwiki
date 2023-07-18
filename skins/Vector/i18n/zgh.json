@@ -21,5 +21,8 @@
 	"vector-view-view": "ⵖⵔ",
 	"vector-more-actions": "ⵓⴳⴳⴰⵔ",
 	"vector-search-loader": "ⴰⵣⴷⴰⵎ ⵏ ⵉⵙⵓⵎⴰⵔ ⵏ ⵓⵔⵣⵣⵓ",
-	"vector-searchsuggest-containing": "ⵔⵣⵓ ⵖⴼ ⵜⴰⵙⵏⵉⵡⵉⵏ ⵓⵎⴰⵏⵉⵏ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "ⵔⵣⵓ ⵖⴼ ⵜⴰⵙⵏⵉⵡⵉⵏ ⵓⵎⴰⵏⵉⵏ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "ⵉⵎⴰⵙⵙⵏ",
+	"vector-page-tools-general-label": "ⴰⵎⴰⵜⴰⵢ",
+	"vector-unpin-element-label": "ⵙⵙⵏⵜⵍ"
 }

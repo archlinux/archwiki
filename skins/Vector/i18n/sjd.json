@@ -18,5 +18,8 @@
 	"vector-view-history": "Исторья",
 	"vector-view-view": "Ло̄гкэ",
 	"vector-more-actions": "Вя̄л",
-	"vector-searchsuggest-containing": "О̄дзэ лыстэнҍ, мэ̄йн лӣ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "О̄дзэ лыстэнҍ, мэ̄йн лӣ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-main-menu-label": "Шурьмусс меню",
+	"vector-page-tools-label": "Тӯййшэмка̄вьн",
+	"vector-unpin-element-label": "пе̄ҋҋтэ"
 }

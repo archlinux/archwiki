@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Tofeiku"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Nampung",
+	"discussiontools-replylink": "nampung",
+	"discussiontools-replywidget-advanced": "Embunda",
+	"discussiontools-replywidget-cancel": "Kinsil",
+	"discussiontools-replywidget-mode-source": "Poon",
+	"discussiontools-replywidget-mode-visual": "Bijual",
+	"discussiontools-replywidget-placeholder-reply": "Nampung {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Petele’",
+	"discussiontools-replywidget-reply": "Nampung",
+	"discussiontools-replywidget-summary": "Repod",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|urang}} diam perundingan"
+}

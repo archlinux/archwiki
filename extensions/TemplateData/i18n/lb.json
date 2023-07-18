@@ -36,7 +36,7 @@
 	"templatedata-doc-param-type-wiki-template-name": "Schabloun",
 	"templatedata-doc-param-type-wiki-user-name": "Benotzer",
 	"templatedata-doc-params": "Parameter vun der Schabloun",
-	"templatedata-editbutton": "Donnéeë vun der Schabloun geréieren",
+	"templatedata-editbutton": "Donnéeë vun der Schabloun änneren",
 	"templatedata-errormsg-insertblank": "Sidd Dir sécher datt Dir Donnéeë vun der Schabloun ouni Informatioun drasetze wëllt?",
 	"templatedata-helplink": "Informatioun iwwer TemplateData",
 	"templatedata-invalid-duplicate-value": "Eegenschaft \"$1\" (\"$3\") ass en Doublon vu(n) \"$2\".",

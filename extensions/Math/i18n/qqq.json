@@ -94,6 +94,7 @@
 	"math_unknown_function": "Used as error message when texvc encounters an unknown function.\n\nPreceded by the message {{msg-mw|Math failure}}.\n\nParameters:\n* $1 - name of unknown function",
 	"mw_math_latexml": "Used as label for latexml radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}",
 	"mw_math_mathml": "Used as label for MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
+	"mw_math_native": "Used as label for native MathML radio button.\n\nSee also:\n* {{msg-mw|Mw math source}}\n* {{msg-mw|Mw math latexml}}",
 	"mw_math_source": "In user preferences (math). All mw_math_* messages MUST be different, things will break otherwise!\n\nUsed as label for source radio button.\n\nSee also:\n* {{msg-mw|Mw math latexml}}",
 	"prefs-math": "Used in user preferences as a section heading.\n{{Identical|Math}}",
 	"mathstatus": "Title of a special page that displays information about the enabled math rendering modes.",

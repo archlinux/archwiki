@@ -196,6 +196,16 @@ class SpecialGadgets extends SpecialPage {
 					$needLineBreakAfter = false;
 				}
 
+				if ( $gadget->requiresES6() ) {
+					if ( $needLineBreakAfter ) {
+						$output->addHTML( '<br />' );
+					}
+					$output->addHTML(
+						$this->msg( 'gadgets-requires-es6' )->parse()
+					);
+					$needLineBreakAfter = true;
+				}
+
 				// Portion: Show required rights (optional)
 				$rights = [];
 				foreach ( $gadget->getRequiredRights() as $right ) {

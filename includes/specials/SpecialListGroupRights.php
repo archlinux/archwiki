@@ -21,9 +21,11 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
 
 /**
@@ -123,6 +125,9 @@ class SpecialListGroupRights extends SpecialPage {
 				);
 			}
 
+			$groupWithParentheses = $this->msg( 'parentheses' )->rawParams( $group )->escaped();
+			$groupname = "<br /><code>$groupWithParentheses</code>";
+
 			if ( $group === 'user' ) {
 				// Link to Special:listusers for implicit group 'user'
 				$grouplink = '<br />' . $linkRenderer->makeKnownLink(
@@ -149,7 +154,7 @@ class SpecialListGroupRights extends SpecialPage {
 
 			$id = $group == '*' ? false : Sanitizer::escapeIdForAttribute( $group );
 			$out->addHTML( Html::rawElement( 'tr', [ 'id' => $id ], "
-				<td>$grouppage$grouplink</td>
+				<td>$grouppage$groupname$grouplink</td>
 					<td>" .
 					$this->formatPermissions( $permissions, $revoke, $addgroups, $removegroups,
 						$addgroupsSelf, $removegroupsSelf ) .
@@ -171,10 +176,9 @@ class SpecialListGroupRights extends SpecialPage {
 
 		$header = $this->msg( 'listgrouprights-namespaceprotection-header' )->text();
 		$out->addHTML(
-			Html::rawElement( 'h2', [], Html::element( 'span', [
-				'class' => 'mw-headline',
-				'id' => substr( Parser::guessSectionNameFromStrippedText( $header ), 1 )
-			], $header ) ) .
+			Html::element( 'h2', [
+				'id' => Sanitizer::escapeIdForAttribute( $header )
+			], $header ) .
 			Xml::openElement( 'table', [ 'class' => 'wikitable' ] ) .
 			Html::element(
 				'th',

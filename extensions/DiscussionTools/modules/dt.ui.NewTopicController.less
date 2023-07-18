@@ -1,0 +1,42 @@
+.ext-discussiontools-ui-newTopic {
+	clear: both;
+
+	&.oo-ui-panelLayout-padded.oo-ui-panelLayout-framed {
+		margin-top: 2em;
+	}
+
+	.ext-discussiontools-ui-newTopic-notices {
+		// Ensure that the form is visible below the notice in case of large notices and small screens
+		max-height: 75vh;
+		overflow: auto;
+	}
+
+	.ext-discussiontools-ui-newTopic-notices + .oo-ui-fieldLayout {
+		margin-top: 0;
+	}
+
+	h2&-sectionTitle {
+		max-width: none;
+		// This element is a <h2> - override unwanted heading styles
+		padding: 0;
+		border: 0;
+		margin-top: 4px;
+	}
+
+	.ext-discussiontools-ui-replyWidget {
+		margin-bottom: 0;
+	}
+
+	.oo-ui-fieldLayout-messages {
+		max-width: none;
+	}
+}
+
+.ext-discussiontools-ui-newTopic-hint.oo-ui-messageWidget-block {
+	clear: both;
+	margin-top: 2em;
+
+	& + .ext-discussiontools-ui-newTopic.oo-ui-panelLayout-padded.oo-ui-panelLayout-framed {
+		margin-top: 0.5em;
+	}
+}

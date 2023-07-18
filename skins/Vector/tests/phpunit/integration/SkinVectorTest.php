@@ -47,154 +47,8 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 		return in_array( $search, $values );
 	}
 
-	public function provideGetTocData() {
-		$config = [
-			'VectorTableOfContentsBeginning' => true,
-			'VectorTableOfContentsCollapseAtCount' => 1
-		];
-		$tocData = [
-			'number-section-count' => 2,
-			'array-sections' => [
-				[
-					'toclevel' => 1,
-					'level' => '2',
-					'line' => 'A',
-					'number' => '1',
-					'index' => '1',
-					'fromtitle' => 'Test',
-					'byteoffset' => 231,
-					'anchor' => 'A',
-					'array-sections' =>	[],
-					'is-top-level-section' => true,
-					'is-parent-section' => false,
-				],
-				[
-					'toclevel' => 1,
-					'level' => '4',
-					'line' => 'B',
-					'number' => '2',
-					'index' => '2',
-					'fromtitle' => 'Test',
-					'byteoffset' => 245,
-					'anchor' => 'B',
-					'array-sections' =>	[],
-					'is-top-level-section' => true,
-					'is-parent-section' => false,
-				]
-			]
-		];
-		$nestedTocData = [
-			'number-section-count' => 2,
-			'array-sections' => [
-				[
-					'toclevel' => 1,
-					'level' => '2',
-					'line' => 'A',
-					'number' => '1',
-					'index' => '1',
-					'fromtitle' => 'Test',
-					'byteoffset' => 231,
-					'anchor' => 'A',
-					'array-sections' => [
-						'toclevel' => 2,
-						'level' => '4',
-						'line' => 'A1',
-						'number' => '1.1',
-						'index' => '2',
-						'fromtitle' => 'Test',
-						'byteoffset' => 245,
-						'anchor' => 'A1',
-						'array-sections' => [],
-						'is-top-level-section' => false,
-						'is-parent-section' => false,
-					],
-					'is-top-level-section' => true,
-					'is-parent-section' => true,
-				],
-			]
-		];
-
-		$expectedConfigData = [
-			'is-vector-toc-beginning-enabled' => $config[ 'VectorTableOfContentsBeginning' ],
-			'vector-is-collapse-sections-enabled' =>
-				$tocData[ 'number-section-count' ] >= $config[ 'VectorTableOfContentsCollapseAtCount' ]
-		];
-		$expectedNestedTocData = array_merge( $nestedTocData, $expectedConfigData );
-
-		// qqx output
-		$buttonLabel = '(vector-toc-toggle-button-label: A)';
-		$expectedNestedTocData[ 'array-sections' ][ 0 ][ 'vector-button-label' ] = $buttonLabel;
-
-		return [
-			// When zero sections
-			[
-				[],
-				$config,
-				// TOC data is empty when given an empty array
-				[]
-			],
-			// When number of multiple sections is lower than configured value
-			[
-				$tocData,
-				array_merge( $config, [ 'VectorTableOfContentsCollapseAtCount' => 3 ] ),
-				// 'vector-is-collapse-sections-enabled' value is false
-				array_merge( $tocData, $expectedConfigData, [
-					'vector-is-collapse-sections-enabled' => false
-				] )
-			],
-			// When number of multiple sections is equal to the configured value
-			[
-				$tocData,
-				array_merge( $config, [ 'VectorTableOfContentsCollapseAtCount' => 2 ] ),
-				// 'vector-is-collapse-sections-enabled' value is true
-				array_merge( $tocData, $expectedConfigData )
-			],
-			// When number of multiple sections is higher than configured value
-			[
-				$tocData,
-				array_merge( $config, [ 'VectorTableOfContentsCollapseAtCount' => 1 ] ),
-				// 'vector-is-collapse-sections-enabled' value is true
-				array_merge( $tocData, $expectedConfigData )
-			],
-			// When "Beginning" TOC section is configured to be turned off
-			[
-				$tocData,
-				array_merge( $config, [ 'VectorTableOfContentsBeginning' => false ] ),
-				// 'is-vector-toc-beginning-enabled' value is false
-				array_merge( $tocData, $expectedConfigData, [
-					'is-vector-toc-beginning-enabled' => false
-				] )
-			],
-			// When TOC has sections with top level parent sections
-			[
-				$nestedTocData,
-				$config,
-				// 'vector-button-label' is provided for top level parent sections
-				$expectedNestedTocData
-			],
-		];
-	}
-
 	/**
-	 * @covers \MediaWiki\Skins\Vector\SkinVector22::getTocData
-	 * @dataProvider provideGetTOCData
-	 */
-	public function testGetTocData(
-		array $tocData,
-		array $config,
-		array $expected
-	) {
-		$this->overrideConfigValues( $config );
-		$this->setUserLang( 'qqx' );
-
-		$skinVector = new SkinVector22( [ 'name' => 'vector-2022' ] );
-		$openSkinVector = TestingAccessWrapper::newFromObject( $skinVector );
-		$data = $openSkinVector->getTocData( $tocData );
-		$this->assertEquals( $expected, $data );
-	}
-
-	/**
-	 * @covers \MediaWiki\Skins\Vector\SkinVector::getTemplateData
+	 * @covers \MediaWiki\Skins\Vector\SkinVectorLegacy::getTemplateData
 	 */
 	public function testGetTemplateData() {
 		$title = Title::newFromText( 'SkinVector' );
@@ -415,7 +269,7 @@ class SkinVectorTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerLanguageAlertRequirements
-	 * @covers \MediaWiki\Skins\Vector\SkinVector::shouldLanguageAlertBeInSidebar
+	 * @covers \MediaWiki\Skins\Vector\SkinVector22::shouldLanguageAlertBeInSidebar
 	 * @param array $requirements
 	 * @param Title $title
 	 * @param array $getLanguagesCached

@@ -1,5 +1,8 @@
 <?php
 
+namespace MediaWiki\Extension\ConfirmEdit\MathCaptcha;
+
+use Html;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
@@ -122,3 +125,5 @@ class MathCaptcha extends SimpleCaptcha {
 		$formDescriptor['captchaWord']['label-message'] = null;
 	}
 }
+
+class_alias( MathCaptcha::class, 'MathCaptcha' );

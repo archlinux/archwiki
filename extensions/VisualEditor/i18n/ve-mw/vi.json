@@ -190,7 +190,6 @@
 	"visualeditor-dialog-transclusion-param-default": "Mặc định: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "Ví dụ: $1",
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Nhấn Cách để thêm hoặc bỏ tham số. Nhấn Enter để thêm một tham số và ngay lập tức sửa đổi giá trị của nó. Khi một tham số đã được chọn, hãy nhấn Enter để sửa đổi giá trị.",
-	"visualeditor-dialog-transclusion-placeholder": "Thêm bản mẫu",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Thêm bản mẫu",
 	"visualeditor-dialog-transclusion-required-parameter": "Trường bắt buộc",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Trường bắt buộc.",

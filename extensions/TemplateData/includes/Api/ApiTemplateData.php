@@ -181,13 +181,15 @@ class ApiTemplateData extends ApiBase {
 		// template usage for the Technical Wishes topic area see T258917
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'EventLogging' ) ) {
 			foreach ( $resp as $pageInfo ) {
-				EventLogging::logEvent(
-					'TemplateDataApi',
-					-1,
+				EventLogging::submit(
+					'eventlogging_TemplateDataApi',
 					[
-						'template_name' => $wikiPageFactory->newFromTitle( $pageInfo['title'] )
-							->getTitle()->getDBkey(),
-						'has_template_data' => !isset( $pageInfo['notemplatedata'] ),
+						'$schema' => '/analytics/legacy/templatedataapi/1.0.0',
+						'event' => [
+							'template_name' => $wikiPageFactory->newFromTitle( $pageInfo['title'] )
+								->getTitle()->getDBkey(),
+							'has_template_data' => !isset( $pageInfo['notemplatedata'] ),
+						],
 					]
 				);
 			}
@@ -271,9 +273,9 @@ class ApiTemplateData extends ApiBase {
 	 */
 	protected function getExamplesMessages() {
 		return [
-			'action=templatedata&titles=Template:Stub|Template:Example&includeMissingTitles=1'
+			'action=templatedata&titles=Template:Foobar&includeMissingTitles=1'
 				=> 'apihelp-templatedata-example-1',
-			'action=templatedata&titles=Template:Stub|Template:Example'
+			'action=templatedata&titles=Template:Phabricator'
 				=> 'apihelp-templatedata-example-2',
 		];
 	}

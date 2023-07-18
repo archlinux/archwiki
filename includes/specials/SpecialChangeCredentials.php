@@ -4,8 +4,10 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Title\Title;
 
 /**
  * Special change to change credentials (such as the password).
@@ -178,7 +180,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 		$req = reset( $requests );
 		$info = $req->describeCredentials();
 
-		$form->addPreText(
+		$form->addPreHtml(
 			Html::openElement( 'dl' )
 			. Html::element( 'dt', [], $this->msg( 'credentialsform-provider' )->text() )
 			. Html::element( 'dd', [], $info['provider']->text() )
@@ -262,7 +264,7 @@ class SpecialChangeCredentials extends AuthManagerSpecialPage {
 			$out->redirect( $returnUrl );
 		} else {
 			// messages used: changecredentials-success removecredentials-success
-			$out->addHtml(
+			$out->addHTML(
 				Html::successBox(
 					$out->msg( static::$messagePrefix . '-success' )->parse()
 				)

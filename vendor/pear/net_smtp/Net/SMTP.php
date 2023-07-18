@@ -151,6 +151,18 @@ class Net_SMTP
     protected $esmtp = array();
 
     /**
+     * GSSAPI principal.
+     * @var string
+     */
+    protected $gssapi_principal = null;
+
+    /**
+     * GSSAPI principal.
+     * @var string
+     */
+    protected $gssapi_cname = null;
+
+    /**
      * Instantiates a new Net_SMTP object, overriding any defaults
      * with parameters that are passed in.
      *
@@ -174,7 +186,7 @@ class Net_SMTP
      */
     public function __construct($host = null, $port = null, $localhost = null,
         $pipelining = false, $timeout = 0, $socket_options = null,
-        $gssapi_principal=null, $gssapi_cname=null
+        $gssapi_principal = null, $gssapi_cname = null
     ) {
         if (isset($host)) {
             $this->host = $host;
@@ -485,22 +497,32 @@ class Net_SMTP
     /**
      * Attempt to disconnect from the SMTP server.
      *
+     * @param bool $force Forces a disconnection of the socket even if
+     *                    the QUIT command fails
+     *
      * @return mixed Returns a PEAR_Error with an error message on any
      *               kind of failure, or true on success.
      * @since 1.0
      */
-    public function disconnect()
+    public function disconnect($force = false)
     {
-        if (PEAR::isError($error = $this->put('QUIT'))) {
-            return $error;
+        /* parseResponse is only needed if put QUIT is successful */
+        if (!PEAR::isError($error = $this->put('QUIT'))) {
+            $error = $this->parseResponse(221);
         }
-        if (PEAR::isError($error = $this->parseResponse(221))) {
-            return $error;
+
+        /* disconnecting socket if there is no error on the QUIT
+         * command or force disconnecting is requested */
+        if (!PEAR::isError($error) || $force) {
+            if (PEAR::isError($error_socket = $this->socket->disconnect())) {
+                return PEAR::raiseError(
+                    'Failed to disconnect socket: ' . $error_socket->getMessage()
+                );
+            }
         }
-        if (PEAR::isError($error = $this->socket->disconnect())) {
-            return PEAR::raiseError(
-                'Failed to disconnect socket: ' . $error->getMessage()
-            );
+
+        if (PEAR::isError($error)) {
+            return $error;
         }
 
         return true;
@@ -1007,8 +1029,29 @@ class Net_SMTP
     public function authXOAuth2($uid, $token, $authz, $conn)
     {
         $auth = base64_encode("user=$uid\1auth=$token\1\1");
-        if (PEAR::isError($error = $this->put('AUTH', 'XOAUTH2 ' . $auth))) {
-            return $error;
+
+        // Maximum length of the base64-encoded token to be sent in the initial response is 497 bytes, according to
+        // RFC 4954 (https://datatracker.ietf.org/doc/html/rfc4954); for longer tokens an empty initial
+        // response MUST be sent and the token must be sent separately
+        // (497 bytes = 512 bytes /SMTP command length limit/ - 13 bytes /"AUTH XOAUTH2 "/ - 2 bytes /CRLF/)
+        if (strlen($auth) <= 497) {
+            if (PEAR::isError($error = $this->put('AUTH', 'XOAUTH2 ' . $auth))) {
+                return $error;
+            }
+        } else {
+            if (PEAR::isError($error = $this->put('AUTH', 'XOAUTH2'))) {
+                return $error;
+            }
+
+            // server is expected to respond with 334
+            if (PEAR::isError($error = $this->parseResponse(334))) {
+                return $error;
+            }
+
+            // then follows the token
+            if (PEAR::isError($error = $this->put($auth))) {
+                return $error;
+            }
         }
 
         /* 235: Authentication successful or 334: Continue authentication */

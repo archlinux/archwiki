@@ -1,8 +1,6 @@
 <?php
 /** Norwegian Bokmål (norsk bokmål)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -195,6 +193,7 @@ $specialPageAliases = [
 	'Recentchangeslinked'       => [ 'Relaterte_endringer' ],
 	'Redirect'                  => [ 'Omdirigering' ],
 	'RemoveCredentials'         => [ 'Fjern_akkreditiver' ],
+	'Renameuser'                => [ 'Gi_en_bruker_nytt_navn' ],
 	'Revisiondelete'            => [ 'Revisjonssletting' ],
 	'Search'                    => [ 'Søk' ],
 	'Shortpages'                => [ 'Korte_sider' ],

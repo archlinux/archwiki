@@ -240,10 +240,10 @@ class SpecialMathWikibase extends SpecialPage {
 	 * @return string Raw HTML
 	 */
 	private static function createHTMLHeader( string $header ): string {
-		return Html::rawElement(
+		return Html::element(
 			'h2',
 			[],
-			Html::element( 'span', [ 'class' => 'mw-headline' ], $header )
+			$header
 		);
 	}
 

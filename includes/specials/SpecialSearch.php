@@ -24,15 +24,19 @@
  */
 
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Html\Html;
 use MediaWiki\Interwiki\InterwikiLookup;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Search\SearchResultThumbnailProvider;
 use MediaWiki\Search\SearchWidgets\BasicSearchResultSetWidget;
 use MediaWiki\Search\SearchWidgets\FullSearchResultWidget;
 use MediaWiki\Search\SearchWidgets\InterwikiSearchResultSetWidget;
 use MediaWiki\Search\SearchWidgets\InterwikiSearchResultWidget;
 use MediaWiki\Search\SearchWidgets\SimpleSearchResultSetWidget;
 use MediaWiki\Search\SearchWidgets\SimpleSearchResultWidget;
+use MediaWiki\Search\TitleMatcher;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsManager;
 
 /**
@@ -117,6 +121,14 @@ class SpecialSearch extends SpecialPage {
 	/** @var LanguageConverterFactory */
 	private $languageConverterFactory;
 
+	/** @var RepoGroup */
+	private $repoGroup;
+
+	/** @var SearchResultThumbnailProvider */
+	private $thumbnailProvider;
+
+	private TitleMatcher $titleMatcher;
+
 	/**
 	 * @var Status Holds any parameter validation errors that should
 	 *  be displayed back to the user.
@@ -134,6 +146,9 @@ class SpecialSearch extends SpecialPage {
 	 * @param ReadOnlyMode $readOnlyMode
 	 * @param UserOptionsManager $userOptionsManager
 	 * @param LanguageConverterFactory $languageConverterFactory
+	 * @param RepoGroup $repoGroup
+	 * @param SearchResultThumbnailProvider $thumbnailProvider
+	 * @param TitleMatcher $titleMatcher
 	 */
 	public function __construct(
 		SearchEngineConfig $searchConfig,
@@ -143,7 +158,10 @@ class SpecialSearch extends SpecialPage {
 		InterwikiLookup $interwikiLookup,
 		ReadOnlyMode $readOnlyMode,
 		UserOptionsManager $userOptionsManager,
-		LanguageConverterFactory $languageConverterFactory
+		LanguageConverterFactory $languageConverterFactory,
+		RepoGroup $repoGroup,
+		SearchResultThumbnailProvider $thumbnailProvider,
+		TitleMatcher $titleMatcher
 	) {
 		parent::__construct( 'Search' );
 		$this->searchConfig = $searchConfig;
@@ -154,6 +172,9 @@ class SpecialSearch extends SpecialPage {
 		$this->readOnlyMode = $readOnlyMode;
 		$this->userOptionsManager = $userOptionsManager;
 		$this->languageConverterFactory = $languageConverterFactory;
+		$this->repoGroup = $repoGroup;
+		$this->thumbnailProvider = $thumbnailProvider;
+		$this->titleMatcher = $titleMatcher;
 	}
 
 	/**
@@ -265,7 +286,7 @@ class SpecialSearch extends SpecialPage {
 		$request = $this->getRequest();
 		$this->searchEngineType = $request->getVal( 'srbackend' );
 
-		list( $this->limit, $this->offset ) = $request->getLimitOffsetForUser(
+		[ $this->limit, $this->offset ] = $request->getLimitOffsetForUser(
 			$this->getUser(),
 			20,
 			'searchlimit'
@@ -338,8 +359,7 @@ class SpecialSearch extends SpecialPage {
 			return null;
 		}
 		# If there's an exact or very near match, jump right there.
-		$title = $this->getSearchEngine()
-			->getNearMatcher( $this->getConfig() )->getNearMatch( $term );
+		$title = $this->titleMatcher->getNearMatch( $term );
 		if ( $title === null ) {
 			return null;
 		}
@@ -482,14 +502,21 @@ class SpecialSearch extends SpecialPage {
 		}
 
 		$hasSearchErrors = $textStatus && $textStatus->getErrors() !== [];
-		$hasOtherResults = $textMatches &&
+		$hasInlineIwResults = $textMatches &&
 			$textMatches->hasInterwikiResults( ISearchResultSet::INLINE_RESULTS );
+		$hasSecondaryIwResults = $textMatches &&
+			$textMatches->hasInterwikiResults( ISearchResultSet::SECONDARY_RESULTS );
 
-		if ( $textMatches && $textMatches->hasInterwikiResults( ISearchResultSet::SECONDARY_RESULTS ) ) {
-			$out->addHTML( '<div class="searchresults mw-searchresults-has-iw">' );
-		} else {
-			$out->addHTML( '<div class="searchresults">' );
+		$classNames = [ 'searchresults' ];
+		if ( $hasSecondaryIwResults ) {
+			$classNames[] = 'mw-searchresults-has-iw';
 		}
+		if ( $this->offset > 0 ) {
+			$classNames[] = 'mw-searchresults-has-offset';
+		}
+		$out->addHTML( '<div class="' . implode( ' ', $classNames ) . '">' );
+
+		$out->addHTML( '<div class="mw-search-results-info">' );
 
 		if ( $hasSearchErrors || $this->loadStatus->getErrors() ) {
 			if ( $textStatus === null ) {
@@ -497,7 +524,7 @@ class SpecialSearch extends SpecialPage {
 			} else {
 				$textStatus->merge( $this->loadStatus );
 			}
-			list( $error, $warning ) = $textStatus->splitByErrorType();
+			[ $error, $warning ] = $textStatus->splitByErrorType();
 			if ( $error->getErrors() ) {
 				$out->addHTML( Html::errorBox(
 					$error->getHTML( 'search-error' )
@@ -513,9 +540,9 @@ class SpecialSearch extends SpecialPage {
 		// If we have no results and have not already displayed an error message
 		if ( $num === 0 && !$hasSearchErrors ) {
 			$out->wrapWikiMsg( "<p class=\"mw-search-nonefound\">\n$1</p>", [
-				$hasOtherResults ? 'search-nonefound-thiswiki' : 'search-nonefound',
+				$hasInlineIwResults ? 'search-nonefound-thiswiki' : 'search-nonefound',
 				wfEscapeWikiText( $term ),
-				$term,
+				$term
 			] );
 		}
 
@@ -524,11 +551,20 @@ class SpecialSearch extends SpecialPage {
 
 		$this->getHookRunner()->onSpecialSearchResults( $term, $titleMatches, $textMatches );
 
+		// Close <div class='mw-search-results-info'>
+		$out->addHTML( '</div>' );
+
 		// Although $num might be 0 there can still be secondary or inline
 		// results to display.
 		$linkRenderer = $this->getLinkRenderer();
 		$mainResultWidget = new FullSearchResultWidget(
-			$this, $linkRenderer, $this->getHookContainer() );
+			$this,
+			$linkRenderer,
+			$this->getHookContainer(),
+			$this->repoGroup,
+			$this->thumbnailProvider,
+			$this->userOptionsManager
+		);
 
 		// Default (null) on. Can be explicitly disabled.
 		if ( $engine->getFeatureData( 'enable-new-crossproject-page' ) !== false ) {

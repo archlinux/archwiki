@@ -20,12 +20,12 @@
 
 namespace MediaWiki\Page;
 
-use ActorMigration;
-use CommentStoreComment;
 use ManualLogEntry;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Message\Converter;
 use MediaWiki\Permissions\Authority;
@@ -34,11 +34,11 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\User\ActorMigration;
 use MediaWiki\User\ActorNormalization;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use Message;
-use RawMessage;
 use ReadOnlyMode;
 use RecentChange;
 use StatusValue;
@@ -449,13 +449,10 @@ class RollbackPage {
 			[ 'rc_id', 'rc_patrolled' ],
 			[
 				'rc_cur_id' => $current->getPageId(),
-				$dbw->makeList( [
-					'rc_timestamp > ' . $dbw->addQuotes( $timestamp ),
-					$dbw->makeList( [
-						'rc_timestamp' => $timestamp,
-						'rc_this_oldid > ' . $dbw->addQuotes( $target->getId() ),
-					], IDatabase::LIST_AND ),
-				], IDatabase::LIST_OR ),
+				$dbw->buildComparison( '>', [
+					'rc_timestamp' => $timestamp,
+					'rc_this_oldid' => $target->getId(),
+				] ),
 				'rc_actor' => $actorId,
 			],
 			__METHOD__

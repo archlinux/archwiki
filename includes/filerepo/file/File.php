@@ -12,6 +12,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -110,10 +111,10 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * The following member variables are not lazy-initialised
 	 */
 
-	/** @var FileRepo|LocalRepo|ForeignAPIRepo|bool */
+	/** @var FileRepo|LocalRepo|ForeignAPIRepo|false */
 	public $repo;
 
-	/** @var Title|string|bool */
+	/** @var Title|string|false */
 	protected $title;
 
 	/** @var string Text of last error */
@@ -125,7 +126,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	/** @var Title */
 	protected $redirectedTitle;
 
-	/** @var FSFile|bool False if undefined */
+	/** @var FSFile|false False if undefined */
 	protected $fsFile;
 
 	/** @var MediaHandler */
@@ -182,8 +183,8 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Most subclasses will want to call assertRepoDefined() here.
 	 *
 	 * @stable to call
-	 * @param Title|string|bool $title
-	 * @param FileRepo|bool $repo
+	 * @param Title|string|false $title
+	 * @param FileRepo|false $repo
 	 */
 	public function __construct( $title, $repo ) {
 		// Some subclasses do not use $title, but set name/title some other way
@@ -199,7 +200,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * valid Title object with namespace NS_FILE or null
 	 *
 	 * @param PageIdentity|LinkTarget|string $title
-	 * @param string|bool $exception Use 'exception' to throw an error on bad titles
+	 * @param string|false $exception Use 'exception' to throw an error on bad titles
 	 * @throws MWException
 	 * @return Title|null
 	 */
@@ -306,7 +307,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	public static function splitMime( ?string $mime ) {
 		if ( $mime === null ) {
 			return [ 'unknown', 'unknown' ];
-		} elseif ( strpos( $mime, '/' ) !== false ) {
+		} elseif ( str_contains( $mime, '/' ) ) {
 			return explode( '/', $mime, 2 );
 		} else {
 			return [ $mime, 'unknown' ];
@@ -413,7 +414,8 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * @return string
 	 */
 	public function getFullUrl() {
-		return wfExpandUrl( $this->getUrl(), PROTO_RELATIVE );
+		return (string)MediaWikiServices::getInstance()->getUrlUtils()
+			->expand( $this->getUrl(), PROTO_RELATIVE );
 	}
 
 	/**
@@ -421,7 +423,8 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * @return string
 	 */
 	public function getCanonicalUrl() {
-		return wfExpandUrl( $this->getUrl(), PROTO_CANONICAL );
+		return (string)MediaWikiServices::getInstance()->getUrlUtils()
+			->expand( $this->getUrl(), PROTO_CANONICAL );
 	}
 
 	/**
@@ -454,7 +457,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * returns false.
 	 *
 	 * @stable to override
-	 * @return string|bool ForeignAPIFile::getPath can return false
+	 * @return string|false ForeignAPIFile::getPath can return false
 	 */
 	public function getPath() {
 		if ( !isset( $this->path ) ) {
@@ -470,7 +473,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Returns false on failure. Callers must not alter the file.
 	 * Temporary files are cleared automatically.
 	 *
-	 * @return string|bool False on failure
+	 * @return string|false False on failure
 	 */
 	public function getLocalRefPath() {
 		$this->assertRepoDefined();
@@ -501,7 +504,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 *
 	 * @stable to override
 	 * @param int $page
-	 * @return int|bool
+	 * @return int|false
 	 */
 	public function getWidth( $page = 1 ) {
 		return false;
@@ -516,7 +519,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 *
 	 * @stable to override
 	 * @param int $page
-	 * @return bool|int False on failure
+	 * @return int|false False on failure
 	 */
 	public function getHeight( $page = 1 ) {
 		return false;
@@ -529,7 +532,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 *
 	 * @param int $desiredWidth
 	 * @param int $page
-	 * @return bool|int
+	 * @return int|false
 	 */
 	public function getThumbnailBucket( $desiredWidth, $page = 1 ) {
 		$thumbnailBuckets = MediaWikiServices::getInstance()
@@ -782,12 +785,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 */
 	public function getCommonMetaArray() {
 		$handler = $this->getHandler();
-
-		if ( !$handler ) {
-			return false;
-		}
-
-		return $handler->getCommonMetaArray( $this );
+		return $handler ? $handler->getCommonMetaArray( $this ) : false;
 	}
 
 	/**
@@ -1047,7 +1045,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 *
 	 * @param array $handlerParams
 	 *
-	 * @return ThumbnailImage|MediaTransformOutput|bool False on failure
+	 * @return ThumbnailImage|MediaTransformOutput|false False on failure
 	 */
 	public function getUnscaledThumb( $handlerParams = [] ) {
 		$hp =& $handlerParams;
@@ -1094,7 +1092,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 			return null;
 		}
 		$extension = $this->getExtension();
-		list( $thumbExt, ) = $this->getHandler()->getThumbType(
+		[ $thumbExt, ] = $this->getHandler()->getThumbType(
 			$extension, $this->getMimeType(), $params );
 		$thumbName = $this->getHandler()->makeParamString( $params );
 
@@ -1170,7 +1168,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * @param array $params An associative array of handler-specific parameters.
 	 *   Typical keys are width, height and page.
 	 * @param int $flags A bitfield, may contain self::RENDER_NOW to force rendering
-	 * @return ThumbnailImage|MediaTransformOutput|bool False on failure
+	 * @return ThumbnailImage|MediaTransformOutput|false False on failure
 	 */
 	public function transform( $params, $flags = 0 ) {
 		$thumbnailEpoch = MediaWikiServices::getInstance()->getMainConfig()
@@ -1185,7 +1183,8 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 			// Get the descriptionUrl to embed it as comment into the thumbnail. T21791.
 			$descriptionUrl = $this->getDescriptionUrl();
 			if ( $descriptionUrl ) {
-				$params['descriptionUrl'] = wfExpandUrl( $descriptionUrl, PROTO_CANONICAL );
+				$params['descriptionUrl'] = MediaWikiServices::getInstance()->getUrlUtils()
+					->expand( $descriptionUrl, PROTO_CANONICAL );
 			}
 
 			$handler = $this->getHandler();
@@ -1272,7 +1271,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * @param TempFSFile $tmpFile Temporary file where the rendered thumbnail will be saved
 	 * @param array $transformParams
 	 * @param int $flags
-	 * @return bool|MediaTransformOutput
+	 * @return MediaTransformOutput|false
 	 */
 	public function generateAndSaveThumb( $tmpFile, $transformParams, $flags ) {
 		$ignoreImageErrors = MediaWikiServices::getInstance()->getMainConfig()
@@ -1535,7 +1534,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	/**
 	 * Get a MediaHandler instance for this file
 	 *
-	 * @return MediaHandler|bool Registered MediaHandler for file's MIME type
+	 * @return MediaHandler|false Registered MediaHandler for file's MIME type
 	 *   or false if none found
 	 */
 	public function getHandler() {
@@ -1706,7 +1705,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the path of an archived file relative to the public zone root
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of an archived thumbnail file
+	 * @param string|false $suffix If not false, the name of an archived thumbnail file
 	 *
 	 * @return string
 	 */
@@ -1726,7 +1725,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * thumbnail directory or a particular file if $suffix is specified
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	public function getThumbRel( $suffix = false ) {
@@ -1754,7 +1753,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * or a specific thumb if the $suffix is given.
 	 *
 	 * @param string $archiveName The timestamped name of an archived image
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	private function getArchiveThumbRel( $archiveName, $suffix = false ) {
@@ -1769,7 +1768,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	/**
 	 * Get the path of the archived file.
 	 *
-	 * @param bool|string $suffix If not false, the name of an archived file.
+	 * @param string|false $suffix If not false, the name of an archived file.
 	 * @return string
 	 */
 	public function getArchivePath( $suffix = false ) {
@@ -1782,7 +1781,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the path of an archived file's thumbs, or a particular thumb if $suffix is specified
 	 *
 	 * @param string $archiveName The timestamped name of an archived image
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	public function getArchiveThumbPath( $archiveName, $suffix = false ) {
@@ -1796,7 +1795,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the path of the thumbnail directory, or a particular file if $suffix is specified
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	public function getThumbPath( $suffix = false ) {
@@ -1808,7 +1807,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	/**
 	 * Get the path of the transcoded directory, or a particular file if $suffix is specified
 	 *
-	 * @param bool|string $suffix If not false, the name of a media file
+	 * @param string|false $suffix If not false, the name of a media file
 	 * @return string
 	 */
 	public function getTranscodedPath( $suffix = false ) {
@@ -1821,7 +1820,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the URL of the archive directory, or a particular file if $suffix is specified
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of an archived file
+	 * @param string|false $suffix If not false, the name of an archived file
 	 * @return string
 	 */
 	public function getArchiveUrl( $suffix = false ) {
@@ -1842,7 +1841,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * @stable to override
 	 *
 	 * @param string $archiveName The timestamped name of an archived image
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	public function getArchiveThumbUrl( $archiveName, $suffix = false ) {
@@ -1861,7 +1860,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the URL of the zone directory, or a particular file if $suffix is specified
 	 *
 	 * @param string $zone Name of requested zone
-	 * @param bool|string $suffix If not false, the name of a file in zone
+	 * @param string|false $suffix If not false, the name of a file in zone
 	 * @return string Path
 	 */
 	private function getZoneUrl( $zone, $suffix = false ) {
@@ -1879,7 +1878,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the URL of the thumbnail directory, or a particular file if $suffix is specified
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string Path
 	 */
 	public function getThumbUrl( $suffix = false ) {
@@ -1905,7 +1904,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	/**
 	 * Get the URL of the transcoded directory, or a particular file if $suffix is specified
 	 *
-	 * @param bool|string $suffix If not false, the name of a media file
+	 * @param string|false $suffix If not false, the name of a media file
 	 * @return string Path
 	 */
 	public function getTranscodedUrl( $suffix = false ) {
@@ -1916,7 +1915,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the public zone virtual URL for a current version source file
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	public function getVirtualUrl( $suffix = false ) {
@@ -1933,7 +1932,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the public zone virtual URL for an archived version source file
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	public function getArchiveVirtualUrl( $suffix = false ) {
@@ -1952,7 +1951,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the virtual URL for a thumbnail file or directory
 	 * @stable to override
 	 *
-	 * @param bool|string $suffix If not false, the name of a thumbnail file
+	 * @param string|false $suffix If not false, the name of a thumbnail file
 	 * @return string
 	 */
 	public function getThumbVirtualUrl( $suffix = false ) {
@@ -2013,11 +2012,8 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * @return array[]|false
 	 */
 	public function formatMetadata( $context = false ) {
-		if ( !$this->getHandler() ) {
-			return false;
-		}
-
-		return $this->getHandler()->formatMetadata( $this, $context );
+		$handler = $this->getHandler();
+		return $handler ? $handler->formatMetadata( $this, $context ) : false;
 	}
 
 	/**
@@ -2042,7 +2038,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Returns the repository
 	 * @stable to override
 	 *
-	 * @return FileRepo|bool
+	 * @return FileRepo|false
 	 */
 	public function getRepo() {
 		return $this->repo;
@@ -2203,7 +2199,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * unknown or not applicable.
 	 *
 	 * @stable to override
-	 * @return string|bool
+	 * @return string|false
 	 */
 	public function getDescriptionUrl() {
 		if ( $this->repo ) {
@@ -2228,7 +2224,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 			return false;
 		}
 
-		$lang = $lang ?? $wgLang;
+		$lang ??= $wgLang;
 
 		$renderUrl = $this->repo->getDescriptionRenderUrl( $this->getName(), $lang->getCode() );
 		if ( $renderUrl ) {
@@ -2299,7 +2295,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * Get the 14-character timestamp of the file upload
 	 *
 	 * @stable to override
-	 * @return string|bool TS_MW timestamp or false on failure
+	 * @return string|false TS_MW timestamp or false on failure
 	 */
 	public function getTimestamp() {
 		$this->assertRepoDefined();
@@ -2313,7 +2309,7 @@ abstract class File implements IDBAccessObject, MediaHandlerState {
 	 * would be expensive.
 	 * @since 1.25
 	 * @stable to override
-	 * @return string|bool
+	 * @return string|false
 	 */
 	public function getDescriptionTouched() {
 		return false;

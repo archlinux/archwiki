@@ -5,8 +5,10 @@ namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Consequences\Consequence;
 use ConsequenceGetMessageTestTrait;
 use MediaWiki\Block\BlockUser;
 use MediaWiki\Block\BlockUserFactory;
+use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\RangeBlock;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
+use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
 use MediaWiki\Extension\AbuseFilter\FilterUser;
 use MediaWikiUnitTestCase;
 use MessageLocalizer;
@@ -87,7 +89,13 @@ class RangeBlockTest extends MediaWikiUnitTestCase {
 	public function testExecute(
 		string $requestIP, array $rangeBlockSize, string $target, bool $result
 	) {
-		$params = $this->provideGetMessageParameters()->current()[0];
+		$specifier = $this->createMock( ActionSpecifier::class );
+		$specifier->method( 'getIP' )->willReturn( $requestIP );
+		$params = new Parameters(
+			$this->createMock( ExistingFilter::class ),
+			false,
+			$specifier
+		);
 		$blockUser = $this->createMock( BlockUser::class );
 		$blockUser->expects( $this->once() )
 			->method( 'placeBlockUnsafe' )
@@ -112,8 +120,7 @@ class RangeBlockTest extends MediaWikiUnitTestCase {
 			$this->getMsgLocalizer(),
 			new NullLogger(),
 			$rangeBlockSize,
-			self::CIDR_LIMIT,
-			$requestIP
+			self::CIDR_LIMIT
 		);
 		$this->assertSame( $result, $rangeBlock->execute() );
 	}
@@ -131,8 +138,7 @@ class RangeBlockTest extends MediaWikiUnitTestCase {
 			$this->getMsgLocalizer(),
 			new NullLogger(),
 			[ 'IPv6' => 24, 'IPv4' => 24 ],
-			self::CIDR_LIMIT,
-			'1.1.1.1'
+			self::CIDR_LIMIT
 		);
 		$this->doTestGetMessage( $rangeBlock, $params, 'abusefilter-blocked-display' );
 	}

@@ -26,8 +26,15 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\FeatureManagement\FeatureManager;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirements\DynamicConfigRequirement;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\LoggedInRequirement;
 use MediaWiki\Skins\Vector\FeatureManagement\Requirements\OverridableConfigRequirement;
-use MediaWiki\Skins\Vector\FeatureManagement\Requirements\TableOfContentsTreatmentRequirement;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\UserPreferenceRequirement;
+
+// PHP unit does not understand code coverage for this file
+// as the @covers annotation cannot cover a specific file
+// This is partly tested in ServiceWiringTest.php
+// @codeCoverageIgnoreStart
 
 return [
 	Constants::SERVICE_FEATURE_MANAGER => static function ( MediaWikiServices $services ) {
@@ -53,8 +60,7 @@ return [
 				$services->getCentralIdLookupFactory()->getNonLocalLookup(),
 				Constants::CONFIG_KEY_LANGUAGE_IN_HEADER,
 				Constants::REQUIREMENT_LANGUAGE_IN_HEADER,
-				null,
-				Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST
+				null
 			)
 		);
 
@@ -63,13 +69,9 @@ return [
 		// Temporary T286932 - remove after languages A/B test is finished.
 		$requirementName = 'T286932';
 
-		// MultiConfig checks each config in turn, allowing us to override the main config for specific keys. In this
-		// case, override the "VectorLanguageInHeaderABTest" configuration value so that the following requirement
-		// always buckets the user as if the language treatment A/B test were running.
+		// MultiConfig checks each config in turn, allowing us to override the main config for specific keys.
 		$config = new MultiConfig( [
-			new HashConfig( [
-				Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST => true,
-			] ),
+			new HashConfig( [] ),
 			$services->getMainConfig(),
 		] );
 
@@ -81,8 +83,7 @@ return [
 				$services->getCentralIdLookupFactory()->getNonLocalLookup(),
 				Constants::CONFIG_KEY_LANGUAGE_IN_HEADER,
 				$requirementName,
-				/* $overrideName = */ '',
-				Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST
+				/* $overrideName = */ ''
 			)
 		);
 
@@ -159,17 +160,6 @@ return [
 			)
 		);
 
-		$featureManager->registerRequirement(
-			new OverridableConfigRequirement(
-				$services->getMainConfig(),
-				$context->getUser(),
-				$context->getRequest(),
-				null,
-				Constants::CONFIG_STICKY_HEADER_EDIT,
-				Constants::REQUIREMENT_STICKY_HEADER_EDIT
-			)
-		);
-
 		$featureManager->registerFeature(
 			Constants::FEATURE_STICKY_HEADER,
 			[
@@ -178,55 +168,135 @@ return [
 			]
 		);
 
-		$featureManager->registerFeature(
-			Constants::FEATURE_STICKY_HEADER_EDIT,
-			[
-				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_STICKY_HEADER,
-				Constants::REQUIREMENT_STICKY_HEADER_EDIT,
-			]
-		);
-
-		// T313435 Feature: Table of Contents
-		// Temporary - remove after TOC A/B test is finished.
-		// ================================
-		$featureManager->registerRequirement(
-			new TableOfContentsTreatmentRequirement(
-				$services->getMainConfig(),
-				$context->getUser(),
-				$services->getCentralIdLookupFactory()->getNonLocalLookup()
-			)
-		);
-
-		$featureManager->registerFeature(
-			Constants::FEATURE_TABLE_OF_CONTENTS,
-			[
-				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_TABLE_OF_CONTENTS,
-			]
-		);
-
-		// Temporary feature: Visual enhancements
+		// Feature: Page tools menu
 		// ================================
 		$featureManager->registerRequirement(
 			new OverridableConfigRequirement(
 				$services->getMainConfig(),
 				$context->getUser(),
 				$context->getRequest(),
-				$services->getCentralIdLookupFactory()->getNonLocalLookup(),
-				Constants::CONFIG_KEY_VISUAL_ENHANCEMENTS,
-				Constants::REQUIREMENT_VISUAL_ENHANCEMENTS
+				null,
+				Constants::CONFIG_PAGE_TOOLS,
+				Constants::REQUIREMENT_PAGE_TOOLS
+			)
+		);
+		$featureManager->registerFeature(
+			Constants::FEATURE_PAGE_TOOLS,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_PAGE_TOOLS,
+			]
+		);
+
+		// Feature: Page tools pinned
+		// ================================
+		$featureManager->registerRequirement(
+			new LoggedInRequirement(
+				$context->getUser(),
+				Constants::REQUIREMENT_LOGGED_IN
+			)
+		);
+
+		$featureManager->registerRequirement(
+			new UserPreferenceRequirement(
+				$context->getUser(),
+				$services->getUserOptionsLookup(),
+				Constants::PREF_KEY_PAGE_TOOLS_PINNED,
+				Constants::REQUIREMENT_PAGE_TOOLS_PINNED,
+				$context->getTitle()
 			)
 		);
 
 		$featureManager->registerFeature(
-			Constants::FEATURE_VISUAL_ENHANCEMENTS,
+			Constants::FEATURE_PAGE_TOOLS_PINNED,
 			[
 				Constants::REQUIREMENT_FULLY_INITIALISED,
-				Constants::REQUIREMENT_VISUAL_ENHANCEMENTS,
+				Constants::REQUIREMENT_LOGGED_IN,
+				Constants::REQUIREMENT_PAGE_TOOLS,
+				Constants::REQUIREMENT_PAGE_TOOLS_PINNED
+			]
+		);
+
+		// Feature: Table of Contents pinned
+		// ================================
+		$featureManager->registerRequirement(
+			new UserPreferenceRequirement(
+				$context->getUser(),
+				$services->getUserOptionsLookup(),
+				Constants::PREF_KEY_TOC_PINNED,
+				Constants::REQUIREMENT_TOC_PINNED,
+				$context->getTitle()
+			)
+		);
+
+		$featureManager->registerFeature(
+			Constants::FEATURE_TOC_PINNED,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_TOC_PINNED
+			]
+		);
+
+		// Feature: Main menu pinned
+		// ================================
+		$featureManager->registerRequirement(
+			new UserPreferenceRequirement(
+				$context->getUser(),
+				$services->getUserOptionsLookup(),
+				Constants::PREF_KEY_MAIN_MENU_PINNED,
+				Constants::REQUIREMENT_MAIN_MENU_PINNED,
+				$context->getTitle()
+			)
+		);
+
+		$featureManager->registerFeature(
+			Constants::FEATURE_MAIN_MENU_PINNED,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_LOGGED_IN,
+				Constants::REQUIREMENT_PAGE_TOOLS,
+				Constants::REQUIREMENT_MAIN_MENU_PINNED
+			]
+		);
+
+		// Feature: Max Width (skin)
+		// ================================
+		$featureManager->registerRequirement(
+			new UserPreferenceRequirement(
+				$context->getUser(),
+				$services->getUserOptionsLookup(),
+				Constants::PREF_KEY_LIMITED_WIDTH,
+				Constants::REQUIREMENT_LIMITED_WIDTH,
+				$context->getTitle()
+			)
+		);
+		$featureManager->registerFeature(
+			Constants::FEATURE_LIMITED_WIDTH,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_LIMITED_WIDTH
+			]
+		);
+
+		// Feature: Max Width (content)
+		// ================================
+		$featureManager->registerRequirement(
+			new LimitedWidthContentRequirement(
+				$services->getMainConfig(),
+				$context->getRequest(),
+				$context->getTitle()
+			)
+		);
+		$featureManager->registerFeature(
+			Constants::FEATURE_LIMITED_WIDTH_CONTENT,
+			[
+				Constants::REQUIREMENT_FULLY_INITIALISED,
+				Constants::REQUIREMENT_LIMITED_WIDTH_CONTENT,
 			]
 		);
 
 		return $featureManager;
 	}
 ];
+
+// @codeCoverageIgnoreEnd

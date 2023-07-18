@@ -6,7 +6,7 @@ use DataValues\StringValue;
 use InvalidArgumentException;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Languages\LanguageFactory;
-use MWException;
+use MediaWiki\Languages\LanguageNameUtils;
 use Psr\Log\LoggerInterface;
 use Site;
 use Wikibase\Client\RepoLinker;
@@ -51,6 +51,9 @@ class MathWikibaseConnector {
 	/** @var LanguageFactory */
 	private $languageFactory;
 
+	/** @var LanguageNameUtils */
+	private $languageNameUtils;
+
 	/** @var EntityRevisionLookup */
 	private $entityRevisionLookup;
 
@@ -85,6 +88,7 @@ class MathWikibaseConnector {
 	 * @param ServiceOptions $options
 	 * @param RepoLinker $repoLinker
 	 * @param LanguageFactory $languageFactory
+	 * @param LanguageNameUtils $languageNameUtils
 	 * @param EntityRevisionLookup $entityRevisionLookup
 	 * @param FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory
 	 * @param Site $site
@@ -96,6 +100,7 @@ class MathWikibaseConnector {
 		ServiceOptions $options,
 		RepoLinker $repoLinker,
 		LanguageFactory $languageFactory,
+		LanguageNameUtils $languageNameUtils,
 		EntityRevisionLookup $entityRevisionLookup,
 		FallbackLabelDescriptionLookupFactory $labelDescriptionLookupFactory,
 		Site $site,
@@ -106,6 +111,7 @@ class MathWikibaseConnector {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->repoLinker = $repoLinker;
 		$this->languageFactory = $languageFactory;
+		$this->languageNameUtils = $languageNameUtils;
 		$this->entityRevisionLookup = $entityRevisionLookup;
 		$this->labelDescriptionLookupFactory = $labelDescriptionLookupFactory;
 		$this->site = $site;
@@ -167,9 +173,9 @@ class MathWikibaseConnector {
 	 * id does not exist
 	 */
 	public function fetchWikibaseFromId( string $qid, string $langCode ): MathWikibaseInfo {
-		try {
+		if ( $this->languageNameUtils->isValidCode( $langCode ) ) {
 			$lang = $this->languageFactory->getLanguage( $langCode );
-		} catch ( MWException $e ) {
+		} else {
 			throw new InvalidArgumentException( "Invalid language code specified." );
 		}
 

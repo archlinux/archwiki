@@ -94,7 +94,7 @@
 	"templatedata-modal-table-param-required": "Obligāts",
 	"templatedata-modal-table-param-suggested": "Ieteicams",
 	"templatedata-modal-table-param-suggestedvalues": "Ieteiktās vērtības",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "Pievienot vērtību...",
+	"templatedata-modal-placeholder-multiselect": "Pievienot vērtību...",
 	"templatedata-modal-table-param-type": "Veids",
 	"templatedata-modal-table-param-uneditablefield": "Nav labojams",
 	"templatedata-modal-title": "Veidnes dokumentācijas redaktors",

@@ -17,5 +17,8 @@
 	"vector-view-history": "See wetin don hapun hie",
 	"vector-view-view": "Read-am",
 	"vector-more-actions": "Si oda tins:",
-	"vector-searchsuggest-containing": "Find pej-dem wey get <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Find pej-dem wey get <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Tins wey you go yuz wok",
+	"vector-page-tools-general-label": "General",
+	"vector-unpin-element-label": "hide-am"
 }

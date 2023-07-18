@@ -42,5 +42,8 @@
 	"vector-jumptocontent": "Ravêr zerreki",
 	"vector-more-actions": "Zêde",
 	"vector-search-loader": "Tewsiye cıgeyrayışi bar benê",
-	"vector-searchsuggest-containing": "Pelanê tede <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> esto, cı geyre"
+	"vector-searchsuggest-containing": "Pelanê tede <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> esto, cı geyre",
+	"vector-page-tools-label": "Haceti",
+	"vector-page-tools-general-label": "Umumi",
+	"vector-unpin-element-label": "bınımne"
 }

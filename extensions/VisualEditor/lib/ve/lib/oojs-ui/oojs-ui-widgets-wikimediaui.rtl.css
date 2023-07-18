@@ -1,12 +1,12 @@
 /*!
- * OOUI v0.44.4
+ * OOUI v0.46.3
  * https://www.mediawiki.org/wiki/OOUI
  *
  * Copyright 2011–2023 OOUI Team and other contributors.
  * Released under the MIT license
  * http://oojs.mit-license.org
  *
- * Date: 2023-01-04T17:25:12Z
+ * Date: 2023-02-07T00:44:09Z
  */
 .oo-ui-draggableElement-handle:not( .oo-ui-draggableElement-undraggable ),
 .oo-ui-draggableElement-handle:not( .oo-ui-draggableElement-undraggable ).oo-ui-widget {
@@ -255,7 +255,7 @@
   margin-left: 0;
 }
 .oo-ui-toggleButtonWidget.oo-ui-widget-enabled.oo-ui-buttonElement-frameless.oo-ui-toggleWidget-on .oo-ui-buttonElement-button {
-  background-color: rgba(0, 36, 73, 21/255);
+  background-color: rgba(0, 24, 73, 0.08235294);
   color: #000;
 }
 .oo-ui-toggleButtonWidget.oo-ui-widget-enabled.oo-ui-buttonElement-frameless.oo-ui-toggleWidget-on .oo-ui-buttonElement-button > .oo-ui-iconElement-icon:not( .oo-ui-image-invert ) {
@@ -687,11 +687,11 @@
   color: #36c;
   box-shadow: inset 0 -2px 0 0 #36c;
 }
-.oo-ui-tabSelectWidget-frameless .oo-ui-tabOptionWidget.oo-ui-widget-enabled:hover {
+.oo-ui-tabSelectWidget-frameless .oo-ui-tabOptionWidget.oo-ui-widget-enabled:not( .oo-ui-optionWidget-selected ):hover {
   color: #447ff5;
   box-shadow: inset 0 -2px 0 0 #447ff5;
 }
-.oo-ui-tabSelectWidget-frameless .oo-ui-tabOptionWidget.oo-ui-widget-enabled:active {
+.oo-ui-tabSelectWidget-frameless .oo-ui-tabOptionWidget.oo-ui-widget-enabled:not( .oo-ui-optionWidget-selected ):active {
   color: #2a4b8d;
   box-shadow: inset 0 -2px 0 0 #2a4b8d;
 }
@@ -941,7 +941,7 @@
   background-color: #fff;
 }
 .oo-ui-tagItemWidget.oo-ui-widget-enabled .oo-ui-buttonElement-button:active {
-  background-color: #c8ccd1;
+  background-color: #eaecf0;
 }
 .oo-ui-tagItemWidget.oo-ui-widget-enabled .oo-ui-buttonElement-button .oo-ui-icon-close {
   right: 3px;

@@ -19,6 +19,7 @@
  */
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -90,7 +91,7 @@ class FindOrphanedFiles extends Maintenance {
 				}
 
 				$oldNames[] = $name;
-				list( , $base ) = explode( '!', $name, 2 ); // <TS_MW>!<img_name>
+				[ , $base ] = explode( '!', $name, 2 ); // <TS_MW>!<img_name>
 				$oiWheres[] = $dbr->makeList(
 					[ 'oi_name' => $base, 'oi_archive_name' => $name ],
 					LIST_AND
@@ -147,7 +148,7 @@ class FindOrphanedFiles extends Maintenance {
 		}
 
 		foreach ( array_diff( $oldNames, $oldNamesFound ) as $name ) {
-			list( , $base ) = explode( '!', $name, 2 ); // <TS_MW>!<img_name>
+			[ , $base ] = explode( '!', $name, 2 ); // <TS_MW>!<img_name>
 			$file = $repo->newFromArchiveName( Title::makeTitle( NS_FILE, $base ), $name );
 			// Print name and public URL to ease recovery
 			$this->output( $name . "\n" . $file->getCanonicalUrl() . "\n\n" );

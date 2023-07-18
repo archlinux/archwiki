@@ -1,8 +1,6 @@
 <?php
 /** Hindi (हिन्दी)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -91,6 +89,7 @@ $specialPageAliases = [
 	'Prefixindex'               => [ 'उपसर्ग_अनुसार_पृष्ठ', 'उपसर्ग_खोज', 'उपसर्ग_सूचकांक' ],
 	'Protectedpages'            => [ 'सुरक्षित_पृष्ठ' ],
 	'Protectedtitles'           => [ 'सुरक्षित_शीर्षक' ],
+	'Renameuser'                => [ 'सदस्यनाम_बदलें', 'सदस्य_नाम_बदलें' ],
 	'Search'                    => [ 'खोज', 'खोजें' ],
 	'Shortpages'                => [ 'छोटे_पृष्ठ', 'छोटे_पन्ने' ],
 	'Specialpages'              => [ 'विशेष_पृष्ठ', 'विशेष_पन्ने' ],

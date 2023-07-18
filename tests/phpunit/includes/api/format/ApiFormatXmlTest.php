@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Title\Title;
+
 /**
  * @group API
  * @group Database
@@ -124,7 +126,7 @@ class ApiFormatXmlTest extends ApiFormatTestBase {
 				[ 'xslt' => 'MediaWiki:ApiFormatXmlTest' ] ],
 			[ [],
 				'<?xml version="1.0"?><?xml-stylesheet href="' .
-					htmlspecialchars( Title::newFromText( 'MediaWiki:ApiFormatXmlTest.xsl' )->getLocalURL( 'action=raw' ) ) .
+					htmlspecialchars( Title::makeTitle( NS_MEDIAWIKI, 'ApiFormatXmlTest.xsl' )->getLocalURL( 'action=raw' ) ) .
 					'" type="text/xsl" ?><api />',
 				[ 'xslt' => 'MediaWiki:ApiFormatXmlTest.xsl' ] ],
 		];

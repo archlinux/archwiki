@@ -1,8 +1,6 @@
 <?php
 /** Marathi (मराठी)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -137,6 +135,7 @@ $specialPageAliases = [
 	'Randomredirect'            => [ 'अविशिष्ट_पुर्ननिर्देशन' ],
 	'Recentchanges'             => [ 'अलीकडील_बदल' ],
 	'Recentchangeslinked'       => [ 'सांधलेलेअलिकडीलबदल' ],
+	'Renameuser'                => [ 'सदस्यपुर्नामितकरा' ],
 	'Revisiondelete'            => [ 'आवर्तनवगळा' ],
 	'Search'                    => [ 'शोधा' ],
 	'Shortpages'                => [ 'छोटी_पाने' ],

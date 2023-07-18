@@ -41,7 +41,7 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 	 * not yield more than a handful of languages before the time is exceeded
 	 * and continuation is applied, if one of the expensive props is requested.
 	 */
-	private const MAX_EXECUTE_SECONDS = 2;
+	private const MAX_EXECUTE_SECONDS = 3;
 
 	/** @var LanguageFactory */
 	private $languageFactory;
@@ -88,11 +88,12 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 		$includeDir = isset( $props['dir'] );
 		$includeAutonym = isset( $props['autonym'] );
 		$includeName = isset( $props['name'] );
+		$includeVariantnames = isset( $props['variantnames'] );
 		$includeFallbacks = isset( $props['fallbacks'] );
 		$includeVariants = isset( $props['variants'] );
 
 		$targetLanguageCode = $this->getLanguage()->getCode();
-		$include = 'all';
+		$include = LanguageNameUtils::ALL;
 
 		$availableLanguageCodes = array_keys( $this->languageNameUtils->getLanguageNames(
 			// MediaWiki and extensions may return different sets of language codes
@@ -126,10 +127,7 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 		// order of $languageCodes is guaranteed by LanguageNameUtils::getLanguageNames()
 		// and preserved by array_values() + array_intersect()
 
-		$continue = $this->getParameter( 'continue' );
-		if ( $continue === null ) {
-			$continue = reset( $languageCodes );
-		}
+		$continue = $this->getParameter( 'continue' ) ?? reset( $languageCodes );
 
 		$result = $this->getResult();
 		$rootPath = [
@@ -194,12 +192,21 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 				$info['fallbacks'] = $fallbacks;
 			}
 
-			if ( $includeVariants ) {
+			if ( $includeVariants || $includeVariantnames ) {
 				$language = $this->languageFactory->getLanguage( $languageCode );
 				$converter = $this->languageConverterFactory->getLanguageConverter( $language );
 				$variants = $converter->getVariants();
-				ApiResult::setIndexedTagName( $variants, 'var' );
-				$info['variants'] = $variants;
+
+				if ( $includeVariants ) {
+					$info['variants'] = $variants;
+					ApiResult::setIndexedTagName( $info['variants'], 'var' );
+				}
+				if ( $includeVariantnames ) {
+					$info['variantnames'] = [];
+					foreach ( $variants as $variantCode ) {
+						$info['variantnames'][$variantCode] = $language->getVariantname( $variantCode );
+					}
+				}
 			}
 
 			$fit = $result->addValue( $rootPath, $languageCode, $info );
@@ -225,6 +232,7 @@ class ApiQueryLanguageinfo extends ApiQueryBase {
 					'dir',
 					'autonym',
 					'name',
+					'variantnames',
 					'fallbacks',
 					'variants',
 				],

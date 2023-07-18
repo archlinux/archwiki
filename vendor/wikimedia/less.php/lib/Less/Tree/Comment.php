@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Comment
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Comment extends Less_Tree {
 
@@ -16,7 +12,7 @@ class Less_Tree_Comment extends Less_Tree {
 
 	public function __construct( $value, $silent, $index = null, $currentFileInfo = null ) {
 		$this->value = $value;
-		$this->silent = !!$silent;
+		$this->silent = (bool)$silent;
 		$this->currentFileInfo = $currentFileInfo;
 	}
 
@@ -38,10 +34,6 @@ class Less_Tree_Comment extends Less_Tree {
 		$isReference = ( $this->currentFileInfo && isset( $this->currentFileInfo['reference'] ) && ( !isset( $this->isReferenced ) || !$this->isReferenced ) );
 		$isCompressed = Less_Parser::$options['compress'] && !preg_match( '/^\/\*!/', $this->value );
 		return $this->silent || $isReference || $isCompressed;
-	}
-
-	public function compile() {
-		return $this;
 	}
 
 	public function markReferenced() {

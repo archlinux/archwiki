@@ -19,6 +19,7 @@
  * @ingroup Installer
  */
 
+use MediaWiki\Html\Html;
 use Wikimedia\IPUtils;
 
 class WebInstallerOptions extends WebInstallerPage {
@@ -207,7 +208,7 @@ class WebInstallerOptions extends WebInstallerPage {
 					'<div class="config-skins-item">' .
 					$this->parent->getCheckBox( [
 						'var' => "skin-$skin",
-						'rawtext' => $screenshotText,
+						'rawtext' => $screenshotText . $this->makeMoreInfoLink( $info ),
 						'value' => $this->getVar( "skin-$skin", true ), // all found skins enabled by default
 					] ) .
 					'<div class="config-skins-use-as-default">' . $radioButtons[strtolower( $skin )] . '</div>' .
@@ -257,16 +258,11 @@ class WebInstallerOptions extends WebInstallerPage {
 				}
 				$extHtml .= Html::element( 'h2', [], $message );
 				foreach ( $extByType[$type] as $ext => $info ) {
-					$urlText = '';
-					if ( isset( $info['url'] ) ) {
-						$urlText = ' ' . Html::element( 'a', [ 'href' => $info['url'] ], '(more information)' );
-					}
 					$attribs = [
 						'data-name' => $ext,
 						'class' => 'config-ext-input'
 					];
 					$labelAttribs = [];
-					$fullDepList = [];
 					if ( isset( $info['requires']['extensions'] ) ) {
 						$dependencyMap[$ext]['extensions'] = $info['requires']['extensions'];
 						$labelAttribs['class'] = 'mw-ext-with-dependencies';
@@ -307,7 +303,7 @@ class WebInstallerOptions extends WebInstallerPage {
 					}
 					$extHtml .= $this->parent->getCheckBox( [
 						'var' => "ext-$ext",
-						'rawtext' => $text,
+						'rawtext' => $text . $this->makeMoreInfoLink( $info ),
 						'attribs' => $attribs,
 						'labelAttribs' => $labelAttribs,
 					] );
@@ -448,6 +444,23 @@ class WebInstallerOptions extends WebInstallerPage {
 	}
 
 	/**
+	 * @param array $info
+	 * @return string HTML
+	 */
+	private function makeMoreInfoLink( $info ) {
+		if ( !isset( $info['url'] ) ) {
+			return '';
+		}
+		return ' ' . wfMessage( 'parentheses' )->rawParams(
+			Html::element(
+				'a',
+				[ 'href' => $info['url'] ],
+				wfMessage( 'config-ext-skins-more-info' )->text()
+			)
+		)->escaped();
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getCCPartnerUrl() {
@@ -571,8 +584,7 @@ class WebInstallerOptions extends WebInstallerPage {
 		$retVal = true;
 
 		if ( !array_key_exists( $this->getVar( '_RightsProfile' ), $this->parent->rightsProfiles ) ) {
-			reset( $this->parent->rightsProfiles );
-			$this->setVar( '_RightsProfile', key( $this->parent->rightsProfiles ) );
+			$this->setVar( '_RightsProfile', array_key_first( $this->parent->rightsProfiles ) );
 		}
 
 		$code = $this->getVar( '_LicenseCode' );

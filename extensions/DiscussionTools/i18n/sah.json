@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"HalanTul",
+			"MARKSDNW"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "хоруй",
+	"discussiontools-replywidget-advanced": "Дириҥник",
+	"discussiontools-replywidget-cancel": "Салҕаама",
+	"discussiontools-replywidget-mode-source": "Код",
+	"discussiontools-replywidget-mode-visual": "Көстүү",
+	"discussiontools-replywidget-preview": "Хайдах буолара",
+	"discussiontools-replywidget-summary": "Быһаарыы",
+	"discussiontools-replywidget-watchthis": "Бу сирэйи [[Special:Watchlist|watchlist]] эб",
+	"discussiontools-topicsubscription-button-subscribe": "сурутуу",
+	"discussiontools-topicsubscription-button-unsubscribe": "сурутууттан аккаастан"
+}

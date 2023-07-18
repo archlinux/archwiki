@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Javascript
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Javascript extends Less_Tree {
 
@@ -14,8 +10,8 @@ class Less_Tree_Javascript extends Less_Tree {
 	public $index;
 
 	/**
-	 * @param boolean $index
-	 * @param boolean $escaped
+	 * @param bool $index
+	 * @param bool $escaped
 	 */
 	public function __construct( $string, $index, $escaped ) {
 		$this->escaped = $escaped;
@@ -23,7 +19,7 @@ class Less_Tree_Javascript extends Less_Tree {
 		$this->index = $index;
 	}
 
-	public function compile() {
+	public function compile( $env ) {
 		return new Less_Tree_Anonymous( '/* Sorry, can not do JavaScript evaluation in PHP... :( */' );
 	}
 

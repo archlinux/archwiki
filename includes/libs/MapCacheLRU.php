@@ -33,7 +33,7 @@ use Wikimedia\LightweightObjectStore\ExpirationAwareness;
  * @ingroup Cache
  * @since 1.23
  */
-class MapCacheLRU implements ExpirationAwareness, Serializable {
+class MapCacheLRU implements ExpirationAwareness {
 	/** @var array Map of (key => value) */
 	private $cache = [];
 	/** @var array Map of (key => (UNIX timestamp, (field => UNIX timestamp))) */
@@ -110,8 +110,7 @@ class MapCacheLRU implements ExpirationAwareness, Serializable {
 		if ( $this->has( $key ) ) {
 			$this->ping( $key );
 		} elseif ( count( $this->cache ) >= $this->maxCacheKeys ) {
-			reset( $this->cache );
-			$evictKey = key( $this->cache );
+			$evictKey = array_key_first( $this->cache );
 			unset( $this->cache[$evictKey] );
 			unset( $this->timestamps[$evictKey] );
 		}
@@ -322,8 +321,7 @@ class MapCacheLRU implements ExpirationAwareness, Serializable {
 
 		$this->maxCacheKeys = $maxKeys;
 		while ( count( $this->cache ) > $this->maxCacheKeys ) {
-			reset( $this->cache );
-			$evictKey = key( $this->cache );
+			$evictKey = array_key_first( $this->cache );
 			unset( $this->cache[$evictKey] );
 			unset( $this->timestamps[$evictKey] );
 		}
@@ -369,20 +367,12 @@ class MapCacheLRU implements ExpirationAwareness, Serializable {
 		];
 	}
 
-	public function serialize(): string {
-		return serialize( $this->__serialize() );
-	}
-
 	public function __unserialize( $data ) {
 		$this->cache = $data['entries'] ?? [];
 		$this->timestamps = $data['timestamps'] ?? [];
 		// Fallback needed for serializations prior to T218511
 		$this->maxCacheKeys = $data['maxCacheKeys'] ?? ( count( $this->cache ) + 1 );
 		$this->epoch = $this->getCurrentTime();
-	}
-
-	public function unserialize( $serialized ): void {
-		$this->__unserialize( unserialize( $serialized ) );
 	}
 
 	/**

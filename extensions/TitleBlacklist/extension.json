@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"GroupPermissions": {
 		"sysop": {
@@ -51,12 +51,6 @@
 			"i18n",
 			"i18n/api"
 		]
-	},
-	"AutoloadClasses": {
-		"MediaWiki\\Extension\\TitleBlacklist\\TitleBlacklist": "includes/TitleBlacklist.php",
-		"TitleBlacklist": "includes/TitleBlacklist.php",
-		"MediaWiki\\Extension\\TitleBlacklist\\TitleBlacklistEntry": "includes/TitleBlacklistEntry.php",
-		"TitleBlacklistEntry": "includes/TitleBlacklistEntry.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\TitleBlacklist\\": "includes/"

@@ -1,4 +1,4 @@
-import sidebarTemplate from '!!raw-loader!../includes/templates/Sidebar.mustache';
+import sidebarTemplate from '!!raw-loader!../includes/templates/MainMenu.mustache';
 import sidebarLegacyTemplate from '!!raw-loader!../includes/templates/LegacySidebar.mustache';
 import { vectorMenuTemplate } from './MenuDropdown.stories.data';
 import { PORTALS } from './MenuPortal.stories.data';
@@ -13,7 +13,7 @@ export const SIDEBAR_TEMPLATE_PARTIALS = {
 };
 
 export const OPT_OUT_DATA = {
-	'data-emphasized-sidebar-action': {
+	'data-main-menu-action': {
 		href: '#',
 		'msg-vector-opt-out': 'Switch to old look',
 		'msg-vector-opt-out-tooltip': 'Change your settings to go back to the old look of the skin (legacy Vector)'

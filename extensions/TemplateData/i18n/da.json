@@ -4,8 +4,8 @@
 			"Jhertel",
 			"Jorn Ari",
 			"Saederup92",
-			"Weblars",
-			"Steenth"
+			"Steenth",
+			"Weblars"
 		]
 	},
 	"templatedata-desc": "Implementerer datalager for skabelonparametre (med JSON)",
@@ -42,7 +42,7 @@
 	"templatedata-doc-param-type-wiki-user-name": "Bruger",
 	"templatedata-doc-params": "Skabelonparametre",
 	"templatedata-editbutton": "Rediger TemplateData",
-	"templatedata-errormsg-jsonbadformat": "Ugyldigt JSON-format. Du kan avbryde denne operation for at korrigere det, slette de aktuelle <templatedata>-tags og prøve igen, eller fortsætte med at erstatte den nuværende TempateData med en ny.",
+	"templatedata-errormsg-jsonbadformat": "Ugyldig JSON-format. Du kan afbryde denne operation for at korrigere det, slette de aktuelle <templatedata>-tags og prøve igen, eller fortsætte med at erstatte den nuværende TempateData med en ny.",
 	"templatedata-errormsg-insertblank": "Er du sikker på at du vil indsætte TemplateData uden information?",
 	"templatedata-exists-on-related-page": "Bemærk: Der findes allerede en TemplateData-blok på den tilknyttede side \"[[$1]]\".",
 	"templatedata-helplink": "Information om TemplateData",
@@ -102,10 +102,10 @@
 	"templatedata-modal-table-param-required": "Påkrævet",
 	"templatedata-modal-table-param-suggested": "Foreslået",
 	"templatedata-modal-table-param-suggestedvalues": "Foreslået værdier",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "Tilføj værdi...",
+	"templatedata-modal-placeholder-multiselect": "Tilføj værdi...",
 	"templatedata-modal-table-param-type": "Type",
 	"templatedata-modal-table-param-uneditablefield": "Ikke-redigerbar",
-	"templatedata-modal-title": "Skabelondokumentationseditor",
+	"templatedata-modal-title": "Skabelon data editor",
 	"templatedata-modal-title-addparam": "Tilføj ny parameter",
 	"templatedata-modal-title-choose-language": "Vælg sprog",
 	"templatedata-modal-title-language": "Sprog",

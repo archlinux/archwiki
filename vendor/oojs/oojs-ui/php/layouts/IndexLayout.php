@@ -115,10 +115,10 @@ class IndexLayout extends MenuLayout {
 	 * Get a tab panel by its symbolic name.
 	 *
 	 * @param string $name Symbolic name of table panel
-	 * @return TabPanelLayout Tab panel, if found
+	 * @return TabPanelLayout|null Tab panel, if found
 	 */
-	public function getTabPanel( $name ) {
-		return $this->tabPanels[$name];
+	public function getTabPanel( $name ): ?TabPanelLayout {
+		return $this->tabPanels[$name] ?? null;
 	}
 
 	/**

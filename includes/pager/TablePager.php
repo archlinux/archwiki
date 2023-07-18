@@ -1,7 +1,5 @@
 <?php
 /**
- * Efficient paging for SQL queries.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,13 +16,14 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Pager
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 
 /**
  * Table-based display with a user-selectable sort order
+ *
  * @stable to extend
  * @ingroup Pager
  */
@@ -395,6 +394,7 @@ abstract class TablePager extends IndexPager {
 	 * Get \<input type="hidden"\> elements for use in a method="get" form.
 	 * Resubmits all defined elements of the query string, except for a
 	 * exclusion list, passed in the $noResubmit parameter.
+	 * Also array values are discarded for security reasons (per WebRequest::getVal)
 	 *
 	 * @param array $noResubmit Parameters from the request query which should not be resubmitted
 	 * @return string HTML fragment
@@ -407,6 +407,10 @@ abstract class TablePager extends IndexPager {
 		}
 		$s = '';
 		foreach ( $query as $name => $value ) {
+			if ( is_array( $value ) ) {
+				// Per WebRequest::getVal: Array values are discarded for security reasons.
+				continue;
+			}
 			$s .= Html::hidden( $name, $value ) . "\n";
 		}
 		return $s;

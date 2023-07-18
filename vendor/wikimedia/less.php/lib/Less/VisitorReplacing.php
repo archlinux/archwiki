@@ -1,15 +1,11 @@
 <?php
-
 /**
- * Replacing Visitor
- *
- * @package Less
- * @subpackage visitor
+ * @private
  */
 class Less_VisitorReplacing extends Less_Visitor {
 
 	public function visitObj( $node ) {
-		$funcName = 'visit'.$node->type;
+		$funcName = 'visit' . $node->type;
 		if ( isset( $this->_visitFnCache[$funcName] ) ) {
 
 			$visitDeeper = true;
@@ -20,7 +16,7 @@ class Less_VisitorReplacing extends Less_Visitor {
 					$node->accept( $this );
 				}
 
-				$funcName = $funcName . "Out";
+				$funcName .= "Out";
 				if ( isset( $this->_visitFnCache[$funcName] ) ) {
 					$this->$funcName( $node );
 				}
@@ -34,7 +30,7 @@ class Less_VisitorReplacing extends Less_Visitor {
 	}
 
 	public function visitArray( $nodes ) {
-		$newNodes = array();
+		$newNodes = [];
 		foreach ( $nodes as $node ) {
 			$evald = $this->visitObj( $node );
 			if ( $evald ) {

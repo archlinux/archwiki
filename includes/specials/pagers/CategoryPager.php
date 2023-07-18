@@ -20,7 +20,9 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**

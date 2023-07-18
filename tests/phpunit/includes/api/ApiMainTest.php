@@ -1,7 +1,11 @@
 <?php
 
+use MediaWiki\Language\RawMessage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Request\FauxResponse;
+use MediaWiki\StubObject\StubGlobalUser;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
 use Wikimedia\Rdbms\DBConnRef;
 use Wikimedia\Rdbms\DBQueryError;
@@ -35,7 +39,7 @@ class ApiMainTest extends ApiTestCase {
 	}
 
 	/**
-	 * Test that the API will accept a FauxRequest and execute.
+	 * Test that the API will accept a MediaWiki\Request\FauxRequest and execute.
 	 */
 	public function testApi() {
 		$fauxRequest = new FauxRequest( [ 'action' => 'query', 'meta' => 'siteinfo' ] );
@@ -57,7 +61,7 @@ class ApiMainTest extends ApiTestCase {
 	}
 
 	/**
-	 * ApiMain behaves differently if passed a FauxRequest (mInternalMode set
+	 * ApiMain behaves differently if passed a MediaWiki\Request\FauxRequest (mInternalMode set
 	 * to true) or a proper WebRequest (mInternalMode false).  For most tests
 	 * we can just set mInternalMode to false using TestingAccessWrapper, but
 	 * this doesn't work for the constructor.  This method returns an ApiMain
@@ -105,10 +109,10 @@ class ApiMainTest extends ApiTestCase {
 
 	public function testSuppressedLogin() {
 		// Testing some logic that changes the global $wgUser
-		// ApiMain will be setting it to a StubGlobalUser object, it should already
+		// ApiMain will be setting it to a MediaWiki\StubObject\StubGlobalUser object, it should already
 		// be one but in case its a full User object we will wrap the comparisons
-		// in StubGlobalUser::getRealUser() which will return the inner User object
-		// for a StubGlobalUser, or the actual User object if given a user.
+		// in MediaWiki\StubObject\StubGlobalUser::getRealUser() which will return the inner User object
+		// for a MediaWiki\StubObject\StubGlobalUser, or the actual User object if given a user.
 
 		// phpcs:ignore MediaWiki.Usage.DeprecatedGlobalVariables.Deprecated$wgUser
 		global $wgUser;

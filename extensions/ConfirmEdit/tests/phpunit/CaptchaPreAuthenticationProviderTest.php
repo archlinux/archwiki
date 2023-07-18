@@ -66,7 +66,7 @@ class CaptchaPreAuthenticationProviderTest extends MediaWikiIntegrationTestCase 
 			$this->assertCount( 1, $reqs );
 			$this->assertInstanceOf( CaptchaAuthenticationRequest::class, $reqs[0] );
 		} else {
-			$this->assertEmpty( $reqs );
+			$this->assertSame( [], $reqs );
 		}
 	}
 

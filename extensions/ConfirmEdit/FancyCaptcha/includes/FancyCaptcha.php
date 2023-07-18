@@ -1,10 +1,23 @@
 <?php
 
+namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
+
+use Exception;
+use FileBackend;
+use FSFileBackend;
+use Html;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Extension\ConfirmEdit\Auth\CaptchaAuthenticationRequest;
 use MediaWiki\Extension\ConfirmEdit\SimpleCaptcha\SimpleCaptcha;
 use MediaWiki\MediaWikiServices;
+use MWTimestamp;
+use NullLockManager;
+use ObjectCache;
+use SpecialPage;
+use StatusValue;
+use UnderflowException;
+use WikiMap;
 
 /**
  * FancyCaptcha for displaying captchas precomputed by captcha.py
@@ -498,3 +511,5 @@ class FancyCaptcha extends SimpleCaptcha {
 		] + $formDescriptor['captchaWord'];
 	}
 }
+
+class_alias( FancyCaptcha::class, 'FancyCaptcha' );

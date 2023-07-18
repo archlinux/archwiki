@@ -75,9 +75,6 @@ class ConsequencesFactory {
 	/** @var UserFactory */
 	private $userFactory;
 
-	/** @var string */
-	private $requestIP;
-
 	/**
 	 * @todo This might drag in unwanted dependencies. The alternative is to use ObjectFactory, but that's harder
 	 *   to understand for humans and static analysis tools, so do that only if the dependencies list starts growing.
@@ -94,7 +91,6 @@ class ConsequencesFactory {
 	 * @param MessageLocalizer $messageLocalizer
 	 * @param UserEditTracker $userEditTracker
 	 * @param UserFactory $userFactory
-	 * @param string $requestIP
 	 */
 	public function __construct(
 		ServiceOptions $options,
@@ -109,8 +105,7 @@ class ConsequencesFactory {
 		Session $session,
 		MessageLocalizer $messageLocalizer,
 		UserEditTracker $userEditTracker,
-		UserFactory $userFactory,
-		string $requestIP
+		UserFactory $userFactory
 	) {
 		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->options = $options;
@@ -126,7 +121,6 @@ class ConsequencesFactory {
 		$this->messageLocalizer = $messageLocalizer;
 		$this->userEditTracker = $userEditTracker;
 		$this->userFactory = $userFactory;
-		$this->requestIP = $requestIP;
 	}
 
 	// Each class has its factory method for better type inference and static analysis
@@ -166,8 +160,7 @@ class ConsequencesFactory {
 			$this->messageLocalizer,
 			$this->logger,
 			$this->options->get( 'AbuseFilterRangeBlockSize' ),
-			$this->options->get( 'BlockCIDRLimit' ),
-			$this->requestIP
+			$this->options->get( 'BlockCIDRLimit' )
 		);
 	}
 
@@ -203,7 +196,6 @@ class ConsequencesFactory {
 			$this->userEditTracker,
 			$this->userFactory,
 			$this->logger,
-			$this->requestIP,
 			$this->options->get( 'AbuseFilterIsCentral' ),
 			$this->options->get( 'AbuseFilterCentralDB' )
 		);
@@ -229,11 +221,10 @@ class ConsequencesFactory {
 
 	/**
 	 * @param Parameters $params
-	 * @param string|null $accountName
 	 * @param string[] $tags
 	 * @return Tag
 	 */
-	public function newTag( Parameters $params, ?string $accountName, array $tags ): Tag {
-		return new Tag( $params, $accountName, $tags, $this->changeTagger );
+	public function newTag( Parameters $params, array $tags ): Tag {
+		return new Tag( $params, $tags, $this->changeTagger );
 	}
 }

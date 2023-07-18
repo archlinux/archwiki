@@ -23,13 +23,13 @@ const HISTORY_ICON = {
 const data = {
 	title: 'Audre Lorde',
 	heading: 'Introduction',
-	'data-primary-action': {
+	'data-buttons': [ {
 		id: 'p-lang-btn-sticky-header',
 		class: 'mw-interlanguage-selector',
 		'is-quiet': true,
 		label: '196 languages',
 		'html-vector-button-icon': `<span class="mw-ui-icon mw-ui-icon-wikimedia-language"></span>`
-	},
+	} ],
 	'data-search': searchBoxData,
 	'data-button-start': {
 		icon: 'wikimedia-search',
@@ -38,7 +38,7 @@ const data = {
 		label: 'Search'
 	},
 	'data-button-end': NO_ICON,
-	'data-buttons': [
+	'data-icons': [
 		TALK_ICON, HISTORY_ICON, NO_ICON, NO_ICON
 	]
 };

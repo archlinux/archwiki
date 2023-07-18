@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Къарачайлы"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Джууабла",
+	"discussiontools-ledesection-button": "Бу бетни юсюнден кёбюрек бил",
+	"discussiontools-ledesection-title": "Бу сюзюу бетни юсюнден",
+	"discussiontools-replylink": "джууабла",
+	"discussiontools-replywidget-advanced": "Къошакъ",
+	"discussiontools-replywidget-cancel": "Ызына ал",
+	"discussiontools-replywidget-mode-source": "Къайнакъ",
+	"discussiontools-replywidget-mode-visual": "Кёрюмлю",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} атлы хайырланучугъа джууаб бер",
+	"discussiontools-replywidget-preview": "Ал къарау",
+	"discussiontools-replywidget-reply": "Джууабла",
+	"discussiontools-replywidget-summary": "Къысха ачыкълау",
+	"discussiontools-replywidget-watchthis": "Бу бетни [[Special:Watchlist|къарау тизгининге]] кош",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|адам}} сюзюуде",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|комментарий}}",
+	"discussiontools-topicheader-latestcomment": "Ахыр комментарий: $1",
+	"discussiontools-topicsubscription-button-subscribe": "абонент бол",
+	"discussiontools-topicsubscription-button-subscribe-label": "Абонент бол",
+	"discussiontools-topicsubscription-button-unsubscribe": "абонентликден чыкъ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Абонентликден чыкъ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Бу темада джангы комментарийлени билдириулерин аллыкъсыз.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Абонент болдугъуз!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Бу темада джангы комментарийлени билдириулерин энди аллыкъ тюлсюз.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Абонентликден чыкъдыгъыз."
+}

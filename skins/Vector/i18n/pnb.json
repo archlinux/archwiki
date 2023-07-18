@@ -3,8 +3,8 @@
 		"authors": [
 			"Abbas dhothar",
 			"Arslan",
-			"Khalid Mahmood",
-			"Bgo eiu"
+			"Bgo eiu",
+			"Khalid Mahmood"
 		]
 	},
 	"vector-opt-out": "پرانی وضع اُتے پرتو",
@@ -23,5 +23,8 @@
 	"vector-view-view": "پڑھو",
 	"vector-view-viewsource": "سورس ویکھو",
 	"vector-more-actions": "ہور",
-	"vector-searchsuggest-containing": "اس ٹرم نوں صفحےآں وچ کھوجو <strong class=\"cdx-$1typeahead-search__search-footer__query\"></strong>"
+	"vector-searchsuggest-containing": "اس ٹرم نوں صفحےآں وچ کھوجو <strong class=\"cdx-$1typeahead-search__search-footer__query\"></strong>",
+	"vector-page-tools-label": "سند",
+	"vector-page-tools-general-label": "عام",
+	"vector-unpin-element-label": "لُکاؤ"
 }

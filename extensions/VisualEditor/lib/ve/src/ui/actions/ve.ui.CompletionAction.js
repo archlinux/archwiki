@@ -75,8 +75,8 @@ ve.ui.CompletionAction.prototype.open = function () {
  *
  * @abstract
  * @param {string} input
- * @param {number} [limit=20] restrict number of results to this
- * @return {jQuery.Promise} promise that will return results
+ * @param {number} [limit=20] Maximum number of results
+ * @return {jQuery.Promise} Promise that resolves with list of suggestions
  */
 ve.ui.CompletionAction.prototype.getSuggestions = null;
 
@@ -94,6 +94,17 @@ ve.ui.CompletionAction.prototype.getSuggestions = null;
  */
 ve.ui.CompletionAction.prototype.getHeaderLabel = function () {
 	return null;
+};
+
+/**
+ * Choose a specific item
+ *
+ * @param {OO.ui.MenuOptionWidget} item Chosen item
+ * @param {ve.Range} range Current surface range
+ */
+ve.ui.CompletionAction.prototype.chooseItem = function ( item, range ) {
+	var fragment = this.insertCompletion( item.getData(), range );
+	fragment.collapseToEnd().select();
 };
 
 /**
@@ -116,9 +127,8 @@ ve.ui.CompletionAction.prototype.insertCompletion = function ( data, range ) {
  * @return {boolean} Whether to abandon
  */
 ve.ui.CompletionAction.prototype.shouldAbandon = function ( input, matches ) {
-	// abandon after adding whitespace if there are no active potential matches
-	return matches === ( this.constructor.static.alwaysIncludeInput ? 1 : 0 ) &&
-		!!( input && /\s$/.test( input ) );
+	// Abandon after adding whitespace if there are no active potential matches
+	return matches === 0 && !!( input && /\s$/.test( input ) );
 };
 
 // helpers
@@ -127,11 +137,22 @@ ve.ui.CompletionAction.prototype.shouldAbandon = function ( input, matches ) {
  * Make a menu item for a given suggestion
  *
  * @protected
- * @param  {string} suggestion
+ * @param  {Mixed} suggestion Suggestion data, string by default
  * @return {OO.ui.MenuOptionWidget}
  */
 ve.ui.CompletionAction.prototype.getMenuItemForSuggestion = function ( suggestion ) {
 	return new OO.ui.MenuOptionWidget( { data: suggestion, label: suggestion } );
+};
+
+/**
+ * Update the menu item list before adding, e.g. to add menu groups
+ *
+ * @protected
+ * @param  {OO.ui.MenuOptionWidget[]} menuItems
+ * @return {OO.ui.MenuOptionWidget[]}
+ */
+ve.ui.CompletionAction.prototype.updateMenuItems = function ( menuItems ) {
+	return menuItems;
 };
 
 /**
@@ -146,24 +167,53 @@ ve.ui.CompletionAction.prototype.getMenuItemForSuggestion = function ( suggestio
  * input to the list if alwaysIncludeInput and there wasn't an exact match.
  *
  * @protected
- * @param  {string[]} suggestions List of strings of valid completions
+ * @param  {Mixed[]} suggestions List of valid completions, strings by default
  * @param  {string} input Input to filter the suggestions to
  * @return {string[]}
  */
 ve.ui.CompletionAction.prototype.filterSuggestionsForInput = function ( suggestions, input ) {
-	var exact = false,
-		inputTrimmed = input.trim(),
-		inputTrimmedLower = inputTrimmed.toLowerCase().trim();
-	suggestions = suggestions.filter( function ( word ) {
-		var wordLower = word.toLowerCase();
-		exact = exact || wordLower === inputTrimmedLower;
-		return wordLower.slice( 0, inputTrimmedLower.length ) === inputTrimmedLower;
+	var action = this;
+	input = input.trim();
+
+	var normalizedInput = input.toLowerCase().trim();
+
+	var exact = false;
+	suggestions = suggestions.filter( function ( suggestion ) {
+		var result = action.compareSuggestionToInput( suggestion, normalizedInput );
+		exact = exact || result.isExact;
+		return result.isMatch;
 	} );
+
 	if ( this.constructor.static.defaultLimit < suggestions.length ) {
 		suggestions.length = this.constructor.static.defaultLimit;
 	}
-	if ( !exact && this.constructor.static.alwaysIncludeInput && inputTrimmed.length ) {
-		suggestions.push( inputTrimmed );
+	if ( !exact && this.constructor.static.alwaysIncludeInput && input.length ) {
+		suggestions.push( this.createSuggestion( input ) );
 	}
 	return suggestions;
+};
+
+/**
+ * Compare a suggestion to the normalized user input (lower case)
+ *
+ * @param {Mixed} suggestion Suggestion data, string by default
+ * @param {string} normalizedInput Noramlized user input
+ * @return {Object} Match object, containing two booleans, `isMatch` and `isExact`
+ */
+ve.ui.CompletionAction.prototype.compareSuggestionToInput = function ( suggestion, normalizedInput ) {
+	var normalizedSuggestion = suggestion.toLowerCase();
+	return {
+		isMatch: normalizedSuggestion.slice( 0, normalizedInput.length ) === normalizedInput,
+		isExact: normalizedSuggestion === normalizedInput
+	};
+};
+
+/**
+ * Create a suggestion from an input
+ *
+ * @param {string} input User input
+ * @return {Mixed} Suggestion data, string by default
+ */
+ve.ui.CompletionAction.prototype.createSuggestion = function ( input ) {
+	return input;
 };

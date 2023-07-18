@@ -10,9 +10,9 @@
 			"Macofe",
 			"MarcoAurelio",
 			"Ryo567",
+			"The Pro Gamer",
 			"Whytheonlyone",
-			"No se",
-			"The Pro Gamer"
+			"No se"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Comprueba si el filtro antiabusos coincide con un conjunto de variables, una edición o un evento del registro del editor antiabusos.\n\nSe necesita \"vars\", \"rcid\" o \"logid\", pero solo se utiliza uno.",

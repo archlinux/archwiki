@@ -37,7 +37,7 @@
 	"vector-search-loader": "Caregament di sugeriment de ricerca",
 	"vector-searchsuggest-containing": "Cerca i pagine che gh'hann dent <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
-	"vector-toc-heading": "Contegnud",
+	"vector-toc-label": "Contegnud",
 	"vector-toc-beginning": "Testada",
 	"vector-toc-toggle-button-label": "Pizza o smorza la sot-sezzion $1",
 	"vector-anon-user-menu-pages": "Pagine per i editor minga coness",

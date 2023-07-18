@@ -65,14 +65,14 @@ class MathMathMLTest extends MediaWikiIntegrationTestCase {
 		$renderer = new MathMathML();
 		$requestReturn = $renderer->makeRequest();
 		$this->assertFalse( $requestReturn->isGood(),
-			"requestReturn is false if HTTP::post returns false." );
+			"requestReturn is false if MediaWiki\\Http\\HttpRequestFactory::post returns false." );
 		$this->assertNull( $requestReturn->getValue(),
-			"result value is null if HTTP::post returns false." );
+			"result value is null if MediaWiki\\Http\\HttpRequestFactory::post returns false." );
 		$this->assertTrue(
 			$requestReturn->hasMessage(
 				wfMessage( 'math_invalidresponse', '', $url, 'Method Not Allowed' )
 			),
-			"return an error if HTTP::post returns false"
+			"return an error if MediaWiki\\Http\\HttpRequestFactory::post returns false"
 		);
 	}
 

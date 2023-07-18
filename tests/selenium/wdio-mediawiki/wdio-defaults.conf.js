@@ -26,13 +26,6 @@ if ( !process.env.MW_SERVER || !process.env.MW_SCRIPT_PATH ) {
  * - https://webdriver.io/docs/options/
  */
 exports.config = {
-	// ==================
-	// Automation Protocols
-	// ==================
-
-	// See https://webdriver.io/docs/automationProtocols/
-	automationProtocol: 'devtools',
-
 	// ======
 	// Custom conf keys for MediaWiki
 	//
@@ -67,9 +60,6 @@ exports.config = {
 			// If DISPLAY is set, assume developer asked non-headless or CI with Xvfb.
 			// Otherwise, use --headless.
 			args: [
-				// Default to reasonably common (https://gs.statcounter.com/screen-resolution-stats/desktop/worldwide)
-				// larger window size to avoid quirks with tests in smaller viewports.
-				'window-size=1920,1080',
 				// Dismissed Chrome's `Save password?` popup
 				'--enable-automation',
 				...( process.env.DISPLAY ? [] : [ '--headless' ] ),

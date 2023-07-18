@@ -22,9 +22,13 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Page\MergeHistoryFactory;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -82,23 +86,29 @@ class SpecialMergeHistory extends SpecialPage {
 	/** @var RevisionStore */
 	private $revisionStore;
 
+	/** @var CommentFormatter */
+	private $commentFormatter;
+
 	/**
 	 * @param MergeHistoryFactory $mergeHistoryFactory
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param ILoadBalancer $loadBalancer
 	 * @param RevisionStore $revisionStore
+	 * @param CommentFormatter $commentFormatter
 	 */
 	public function __construct(
 		MergeHistoryFactory $mergeHistoryFactory,
 		LinkBatchFactory $linkBatchFactory,
 		ILoadBalancer $loadBalancer,
-		RevisionStore $revisionStore
+		RevisionStore $revisionStore,
+		CommentFormatter $commentFormatter
 	) {
 		parent::__construct( 'MergeHistory', 'mergehistory' );
 		$this->mergeHistoryFactory = $mergeHistoryFactory;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->loadBalancer = $loadBalancer;
 		$this->revisionStore = $revisionStore;
+		$this->commentFormatter = $commentFormatter;
 	}
 
 	public function doesWrites() {
@@ -357,10 +367,10 @@ class SpecialMergeHistory extends SpecialPage {
 		if ( $size !== null ) {
 			$stxt = Linker::formatRevisionSize( $size );
 		}
-		$comment = Linker::revComment( $revRecord );
+		$comment = $this->commentFormatter->formatRevision( $revRecord, $user );
 
 		// Tags, if any.
-		list( $tagSummary, $classes ) = ChangeTags::formatSummaryRow(
+		[ $tagSummary, $classes ] = ChangeTags::formatSummaryRow(
 			$row->ts_tags,
 			'mergehistory',
 			$this->getContext()

@@ -4,6 +4,7 @@
 			"Antonla",
 			"Cgtdk",
 			"Christian List",
+			"Dipsacus fullonum",
 			"EileenSanda",
 			"Jhertel",
 			"Joedalton",
@@ -21,8 +22,7 @@
 			"Simeondahl",
 			"SimmeD",
 			"Tehnix",
-			"Weblars",
-			"Dipsacus fullonum"
+			"Weblars"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -135,7 +135,6 @@
 	"visualeditor-dialog-transclusion-loading": "Indlæser...",
 	"visualeditor-dialog-transclusion-param-default": "Standard: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "Eksempel: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Tilføj en skabelon",
 	"visualeditor-dialog-transclusion-required-parameter": "Påkrævet felt",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Gå tilbage",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Fortsæt alligevel",

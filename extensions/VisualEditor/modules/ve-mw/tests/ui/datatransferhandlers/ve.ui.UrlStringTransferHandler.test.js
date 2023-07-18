@@ -33,6 +33,6 @@ QUnit.test( 'paste', ( assert ) => {
 		];
 
 	for ( let i = 0; i < cases.length; i++ ) {
-		ve.test.utils.runUrlStringHandlerTest( assert, cases[ i ].pasteString, cases[ i ].pasteHtml, cases[ i ].pasteType, cases[ i ].expectedData, cases[ i ].msg );
+		ve.test.utils.runUrlStringHandlerTest( assert, cases[ i ].pasteString, cases[ i ].pasteHtml, cases[ i ].pasteType, cases[ i ].expectedData, location.origin, cases[ i ].msg );
 	}
 } );

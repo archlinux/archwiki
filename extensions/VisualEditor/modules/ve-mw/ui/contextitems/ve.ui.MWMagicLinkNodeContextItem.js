@@ -13,7 +13,7 @@
  * @constructor
  * @param {ve.ui.Context} context Context item is in
  * @param {ve.dm.MWMagicLinkNode} model Model item is related to
- * @param {Object} config Configuration options
+ * @param {Object} [config]
  */
 ve.ui.MWMagicLinkNodeContextItem = function VeUiMWMagicLinkNodeContextItem() {
 	// Parent constructor

@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Ерней",
+			"Ильгиз"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Җавап бирү",
+	"discussiontools-replylink": "җавап бирү",
+	"discussiontools-replywidget-advanced": "Киңәйтелгән",
+	"discussiontools-replywidget-cancel": "Кире алу",
+	"discussiontools-replywidget-mode-source": "Чыганак",
+	"discussiontools-replywidget-mode-visual": "Күрсәтмәле",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}} га җавап бирү",
+	"discussiontools-replywidget-preview": "Алдан карау",
+	"discussiontools-replywidget-reply": "Җавап бирү",
+	"discussiontools-replywidget-summary": "Тасвирлама",
+	"discussiontools-replywidget-watchthis": "Бу битне [[Special:Watchlist|күзәтү исемлегегезенә]] өстәргә",
+	"discussiontools-topicheader-authorcount": "$1 бәхәстә {{PLURAL:$1|кеше}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|хәбәр|хәбәрләр}}",
+	"discussiontools-topicheader-latestcomment": "Соңгы хәбәр: $1",
+	"discussiontools-topicsubscription-button-subscribe": "язылырга",
+	"discussiontools-topicsubscription-button-subscribe-label": "Язылырга",
+	"discussiontools-topicsubscription-button-unsubscribe": "язылуны туктатырга",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Язылуны туктатырга",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Сезгә бу темага яңа комментарийлар турында белдермәләр киләчәк.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Сез язылдыгыз!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Бу темада яңа комментарийлар турында белдермәләр сезгә бүтән килмәячәк.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Сез язылуыгызны туктаттыгыз."
+}

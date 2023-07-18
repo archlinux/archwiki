@@ -21,7 +21,11 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 class ProtectedPagesPager extends TablePager {

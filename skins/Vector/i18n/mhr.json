@@ -4,9 +4,12 @@
 			"Azim",
 			"Sergey Ivanov",
 			"Сай",
-			"Санюн Вадик"
+			"Санюн Вадик",
+			"Lifeway"
 		]
 	},
+	"vector-language-button-label": "{{PLURAL:$1|$1 йылме|$1 йылме}}",
+	"vector-no-language-button-label": "Йылме-влакым ешараш",
 	"vector-action-addsection": "У ӱжашым тӱҥалаш",
 	"vector-action-delete": "Шӧраш",
 	"vector-action-move": "Лӱмым вашталташ",
@@ -18,5 +21,7 @@
 	"vector-view-history": "Эртымгорным ончалаш",
 	"vector-view-view": "Лудаш",
 	"vector-view-viewsource": "Тӱҥалтыш текстым ончалаш",
-	"vector-more-actions": "Эше"
+	"vector-more-actions": "Эше",
+	"vector-page-tools-label": "Ӱзгар-влак",
+	"vector-unpin-element-label": "шылташ"
 }

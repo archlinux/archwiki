@@ -35,7 +35,7 @@ ve.ui.MWInternalLinkAnnotationWidget.static.getAnnotationFromText = function ( v
 	if ( !title ) {
 		return null;
 	}
-	return ve.dm.MWInternalLinkAnnotation.static.newFromTitle( title, trimmed );
+	return ve.dm.MWInternalLinkAnnotation.static.newFromTitle( title );
 };
 
 /**

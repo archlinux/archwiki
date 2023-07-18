@@ -280,7 +280,7 @@
 		api = new mw.Api();
 		setPending();
 
-		api.post( params )
+		api.postWithToken( 'csrf', params )
 			.done( function ( result ) {
 				if ( result.sessionIsNew === '' && !sentContent ) {
 					// Session was lost. Resend query, with content

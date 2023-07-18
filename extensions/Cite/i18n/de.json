@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Debenben",
 			"Kghbln",
 			"Metalhead64",
@@ -9,8 +10,7 @@
 			"Schmackes",
 			"TMg",
 			"The Evil IP address",
-			"Umherirrender",
-			"Brettchenweber"
+			"Umherirrender"
 		]
 	},
 	"cite-desc": "Ermöglicht Referenzierungen mittels <code>&lt;ref&gt;</code> und <code>&lt;references&gt;</code>",

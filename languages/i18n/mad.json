@@ -257,7 +257,7 @@
 	"anontalkpagetext": "----\n<em>Arèya kaca pakanḍhâ'ân kasorang pangangguy ta' anyama sè bellun anḍi' akun otabâ ta' ngangghuy rèya.</em>\nMèlana, kodhu ngangguy lamat IP ḍâlem ropa angka ma'lè èkataowè.\nLamat IP ènga' arèya kennèng èyangghuy abhâreng bi' pan-brâmpan pangangghuy sè bhidhâ.\nMon bâ'na kasorang pangangghuy ta' anyama bân arassa bâḍâ komèntar-komèntar ètojjhuwaghi ka bâ'na, nyara [[Special:CreateAccount|aghâbây akun]] otabâ [[Special:UserLogin|alebbhu]] ma'lè ta' ghâriḍu bi' pangangguy ta' anyama laènna è laèn bâkto.",
 	"noarticletext": "Bâjârina taḍâ' tèks è kaca rèya. Bâ'na ngennèng [[Special:Search/{{PAGENAME}}|nyarè bhul-ombhul kaca rèya]] è kaca sè laèn, <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} nyarè log akaè'], otabâ [{{fullurl:{{FULLPAGENAME}}|action=edit}} aghâbây kaca rèya]</span>.",
 	"noarticletext-nopermission": "Bâjarina  taḍâ' tèks è kaca rèya.\nBâ'na ngennèng [[Special:Search/{{PAGENAME}}|nyarè bul-ombul kaca rèya]] è kaca sè laèn, otabâ <span class=\"plainlinks\">[{{fullurl:{{Special:Log}}|page={{FULLPAGENAME}}}} nyarè log sè akaè']</span>, tapè bâ'na ta' aghaḍhu èdhi mon aghâbâyâ kaca rèya.",
-	"userpage-userdoesnotexist-view": "Akun pangangghuy \"$1\" ta' taḍaftar",
+	"userpage-userdoesnotexist-view": "Akun pangangghuy \"$1\" lagghi' ta' taḍaftar è wiki rèya.",
 	"clearyourcache": "<strong>Cathetthan:</strong> Samarèna èsèmpen, bâ'na parlo alèbâḍhi bhung-embhungan pajhâlâjhâ wèbbhâ bâ'na mon nèngghuwâ obâ'ânna.\n* <strong>Firefox/Safari:</strong> Pècè' <em>Shift</em> lajhu klik <em>Reload</em>, otabâ pècè' <em>Ctrl-F5</em> otabâ <em>Ctrl-R</em> (<em>⌘-R è Mac)\n* <strong>Google Chrome:</strong> Pècè' <em>Ctrl-Shift-R</em> (<em>⌘-Shift-R</em> è Mac)\n* <strong>Internet Explorer/Edge:</strong> Pècè' <em>Ctrl</em> lajhu klik <em>Refresh</em>, otabâ pècè' <em>Ctrl-F5</em>\n* <strong>Opera:</strong> Klik <em>Menu → Settings</em> (<em>Opera Preferences</em> è Mac) lajhu pèlè <em>Privacy & security → Clear browsing data → Cached images and files</em>.",
 	"usercssyoucanpreview": "<strong>Tip:</strong> Ghuna'aghi mennor \"{{int:showpreview}}\" ka'angghuy ngojhi CSS anyarra bâ'na sabelluna nerbi'aghi.",
 	"userjsyoucanpreview": "<strong>Tip:</strong> Ghuna'aghi mennor \"{{int:showpreview}}\" ghâbây ngojhi JavaScript anyarra bâ'na sabelluna nerbi'aghi.",
@@ -674,5 +674,8 @@
 	"skin-view-edit-local": "Beccè' ḍèskripsi lokal",
 	"skin-action-protect": "Lènḍhungè",
 	"skin-action-delete": "Kosot",
-	"skin-action-move": "Allè"
+	"skin-action-move": "Allè",
+	"blockedtext-made-by": "Panganḍhângan èkalako bi' $1.",
+	"blockedtext-reason-comment": "Alasân sè tasaḍiyâ iyâ arèya <em>$1</em>",
+	"blockedtext-start-time": "Momolan panganḍhângan: $1"
 }

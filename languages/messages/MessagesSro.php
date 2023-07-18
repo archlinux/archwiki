@@ -1,11 +1,8 @@
 <?php
 /** Campidanese Sardinian (sardu campidanesu)
  *
- * To improve a translation please visit https://translatewiki.net
- *
- * @ingroup Language
  * @file
- *
+ * @ingroup Languages
  * @author Jaime Sulas
  * @author Amir E. Aharoni
  */

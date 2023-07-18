@@ -151,7 +151,6 @@
 	"visualeditor-dialog-transclusion-loading": "Cargando...",
 	"visualeditor-dialog-transclusion-no-template-description": "La plantía «$1» inda nun tien una descripción, pero pudiera haber dalguna información na [[$2|páxina de la plantía]].",
 	"visualeditor-dialog-transclusion-param-default": "Predetermináu: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Amestar una plantía",
 	"visualeditor-dialog-transclusion-required-parameter": "Campu requeríu",
 	"visualeditor-dialog-transclusion-required-parameter-description": "El campu ye obligatoriu.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Volver",

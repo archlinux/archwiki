@@ -23,8 +23,7 @@ describe( 'Menus open correct page for anonymous users', () => {
 		iShouldSeeALinkToDisclaimer();
 		iShouldSeeAUserPageLinkInMenu();
 		iSeeALinkToAboutPage();
-		[ 'Home', 'Random', 'Settings', 'Contributions',
-			'Watchlist' ].forEach( ( label ) => {
+		[ 'Home', 'Random', 'Settings', 'Watchlist' ].forEach( ( label ) => {
 			iShouldSeeALinkInMenu( label );
 		} );
 		iShouldSeeLogoutLinkInMenu();

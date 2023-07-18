@@ -6,11 +6,15 @@ use BagOStuff;
 use Generator;
 use HashBagOStuff;
 use InvalidArgumentException;
+use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Throttle;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequenceNotPrecheckedException;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
+use MediaWiki\Extension\AbuseFilter\Filter\ExistingFilter;
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\User\UserEditTracker;
 use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserIdentity;
 use MediaWikiUnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\NullLogger;
@@ -33,14 +37,18 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 		UserEditTracker $editTracker = null,
 		string $ip = null
 	) {
-		$params = $this->createMock( Parameters::class );
-		$params->method( 'getIsGlobalFilter' )->willReturn( $globalFilter );
-		if ( $user ) {
-			$params->method( 'getUser' )->willReturn( $user );
-		}
-		if ( $title ) {
-			$params->method( 'getTarget' )->willReturn( $title );
-		}
+		$specifier = new ActionSpecifier(
+			'some-action',
+			$title ?? $this->createMock( LinkTarget::class ),
+			$user ?? $this->createMock( UserIdentity::class ),
+			$ip ?? '1.2.3.4',
+			null
+		);
+		$params = new Parameters(
+			$this->createMock( ExistingFilter::class ),
+			$globalFilter,
+			$specifier
+		);
 		return new Throttle(
 			$params,
 			$throttleParams + [ 'groups' => [ 'user' ], 'count' => 3, 'period' => 60, 'id' => 1 ],
@@ -48,7 +56,6 @@ class ThrottleTest extends MediaWikiUnitTestCase {
 			$editTracker ?? $this->createMock( UserEditTracker::class ),
 			$this->createMock( UserFactory::class ),
 			new NullLogger(),
-			$ip ?? '1.2.3.4',
 			false,
 			$globalFilter ? 'foo-db' : null
 		);

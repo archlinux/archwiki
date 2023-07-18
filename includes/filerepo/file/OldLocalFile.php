@@ -21,6 +21,7 @@
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 
 /**
@@ -90,9 +91,9 @@ class OldLocalFile extends LocalFile {
 	 *
 	 * @param string $sha1 Base-36 SHA-1
 	 * @param LocalRepo $repo
-	 * @param string|bool $timestamp MW_timestamp (optional)
+	 * @param string|false $timestamp MW_timestamp (optional)
 	 *
-	 * @return bool|OldLocalFile
+	 * @return static|false
 	 */
 	public static function newFromKey( $sha1, $repo, $timestamp = false ) {
 		$dbr = $repo->getReplicaDB();
@@ -354,7 +355,7 @@ class OldLocalFile extends LocalFile {
 		}
 
 		$dbw = $this->repo->getPrimaryDB();
-		list( $major, $minor ) = self::splitMime( $this->mime );
+		[ $major, $minor ] = self::splitMime( $this->mime );
 
 		wfDebug( __METHOD__ . ': upgrading ' . $this->archive_name . " to the current schema" );
 		$dbw->update( 'oldimage',

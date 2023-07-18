@@ -668,12 +668,11 @@ class Exif {
 		// using !== as $res could potentially be 0
 		if ( $res !== false ) {
 			$this->mFilteredExifData[$prop] = $res;
-			unset( $this->mFilteredExifData[$prop . 'Ref'] );
 		} else {
 			// if invalid
 			unset( $this->mFilteredExifData[$prop] );
-			unset( $this->mFilteredExifData[$prop . 'Ref'] );
 		}
+		unset( $this->mFilteredExifData[$prop . 'Ref'] );
 	}
 
 	/** #@- */
@@ -865,7 +864,7 @@ class Exif {
 	 * @param bool $recursive True if called recursively for array types.
 	 * @return bool
 	 */
-	private function validate( $section, $tag, $val, $recursive = false ) {
+	private function validate( $section, $tag, $val, $recursive = false ): bool {
 		$debug = "tag is '$tag'";
 		$etype = $this->mExifTags[$section][$tag];
 		$ecount = 1;
@@ -880,7 +879,7 @@ class Exif {
 		$count = 1;
 		if ( is_array( $val ) ) {
 			$count = count( $val );
-			if ( $ecount != $count ) {
+			if ( $ecount !== $count ) {
 				$this->debug( $val, __FUNCTION__, "Expected $ecount elements for $tag but got $count" );
 				return false;
 			}
@@ -895,6 +894,12 @@ class Exif {
 
 			return true;
 		}
+
+		// NULL values are considered valid. T315202.
+		if ( $val === null ) {
+			return true;
+		}
+
 		// Does not work if not typecast
 		switch ( (string)$etype ) {
 			case (string)self::BYTE:

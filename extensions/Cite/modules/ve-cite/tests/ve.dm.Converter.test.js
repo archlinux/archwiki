@@ -12,7 +12,11 @@ QUnit.test( 'getModelFromDom', function ( assert ) {
 
 	for ( var msg in cases ) {
 		var caseItem = ve.copy( cases[ msg ] );
-		// TODO: Cite tests contain unsecaped < in attrs, handle this upstream somehow
+		caseItem.base = ve.dm.citeExample.baseUri;
+		caseItem.mwConfig = {
+			wgArticlePath: '/wiki/$1'
+		};
+		// TODO: Cite tests contain unescaped < in attrs, handle this upstream somehow
 		caseItem.ignoreXmlWarnings = true;
 		if ( caseItem.mwConfig ) {
 			mw.config.set( caseItem.mwConfig );
@@ -27,7 +31,11 @@ QUnit.test( 'getDomFromModel', function ( assert ) {
 
 	for ( var msg in cases ) {
 		var caseItem = ve.copy( cases[ msg ] );
-		// TODO: Cite tests contain unsecaped < in attrs, handle this upstream somehow
+		caseItem.base = ve.dm.citeExample.baseUri;
+		caseItem.mwConfig = {
+			wgArticlePath: '/wiki/$1'
+		};
+		// TODO: Cite tests contain unescaped < in attrs, handle this upstream somehow
 		caseItem.ignoreXmlWarnings = true;
 		if ( caseItem.mwConfig ) {
 			mw.config.set( caseItem.mwConfig );

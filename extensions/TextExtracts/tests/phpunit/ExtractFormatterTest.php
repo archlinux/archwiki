@@ -19,7 +19,7 @@ class ExtractFormatterTest extends MediaWikiIntegrationTestCase {
 	public function testExtracts( $expected, $text, $plainText ) {
 		$fmt = new ExtractFormatter( $text, $plainText );
 		// .metadata class will be added via $wgExtractsRemoveClasses on WMF
-		$fmt->remove( [ 'div', '.metadata' ] );
+		$fmt->remove( [ 'div', 'figure', '.metadata' ] );
 		$text = $fmt->getText();
 		$this->assertSame( $expected, $text );
 	}
@@ -30,6 +30,8 @@ class ExtractFormatterTest extends MediaWikiIntegrationTestCase {
 		$tocText = 'Lead<div id="toc" class="toc">TOC goes here</div>
 <h1>Section</h1>
 <p>Section text</p>';
+		// phpcs:ignore Generic.Files.LineLength
+		$figureText = '<b>Test 123</b>beforetext<figure><span><img alt="About this sound" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Loudspeaker.svg/11px-Loudspeaker.svg.png" width="11" height="11" srcset="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Loudspeaker.svg/17px-Loudspeaker.svg.png 1.5x, https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Loudspeaker.svg/22px-Loudspeaker.svg.png 2x" /></span><figcaption>Very loud speaker</figcaption></figure>aftertext';
 
 		return [
 			[
@@ -77,6 +79,18 @@ class ExtractFormatterTest extends MediaWikiIntegrationTestCase {
 				$tocText,
 				true,
 			],
+			[
+				// Verify that text in figures is removed (plain)
+				'Test 123beforetextaftertext',
+				$figureText,
+				true,
+			],
+			[
+				// Verify that text in figures is removed (html)
+				'<b>Test 123</b>beforetextaftertext',
+				$figureText,
+				false,
+			]
 		];
 	}
 

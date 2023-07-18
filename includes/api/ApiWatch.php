@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\ExpiryDef;
@@ -161,9 +162,7 @@ class ApiWatch extends ApiBase {
 	 * @return ApiPageSet
 	 */
 	private function getPageSet() {
-		if ( $this->mPageSet === null ) {
-			$this->mPageSet = new ApiPageSet( $this );
-		}
+		$this->mPageSet ??= new ApiPageSet( $this );
 
 		return $this->mPageSet;
 	}

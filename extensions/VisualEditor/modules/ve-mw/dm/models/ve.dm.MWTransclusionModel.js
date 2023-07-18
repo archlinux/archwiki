@@ -5,6 +5,19 @@
  * @license The MIT License (MIT); see LICENSE.txt
  */
 
+/**
+ * Object literal
+ *
+ * @class ve.dm.MWTransclusionPartInstruction
+ * @private
+ */
+/**
+ * @property {ve.dm.MWTransclusionPartModel} [remove]
+ * @property {ve.dm.MWTransclusionPartModel} [add]
+ * @property {number} [index]
+ * @property {jQuery.Deferred} [deferred]
+ */
+
 ( function () {
 	var hasOwn = Object.hasOwnProperty,
 		specCache = {};
@@ -12,26 +25,26 @@
 	/**
 	 * Represents a MediaWiki transclusion, i.e. a sequence of one or more template invocations that
 	 * strictly belong to each other (e.g. because they are unbalanced), possibly mixed with raw
-	 * wikitext snippets. These individual "parts" are subclasses of
-	 * {@see ve.dm.MWTransclusionPartModel}.
+	 * wikitext snippets. These individual "parts" are subclasses of ve.dm.MWTransclusionPartModel.
 	 *
 	 * @class
 	 * @mixins OO.EventEmitter
 	 *
 	 * @constructor
 	 * @param {ve.dm.Document} doc Document to use associate with API requests
-	 * @property {ve.dm.MWTransclusionPartModel[]} parts
-	 * @property {number} uid
-	 * @property {jQuery.Promise[]} templateDataApiRequests Currently running API requests. The only
-	 *  reason to keep these around is to be able to abort them earlier when the template dialog
-	 *  closes or resets.
-	 * @property {Object[]} changeQueue
 	 */
 	ve.dm.MWTransclusionModel = function VeDmMWTransclusionModel( doc ) {
 		// Mixin constructors
 		OO.EventEmitter.call( this );
 
-		// Properties
+		/**
+		 * @property {ve.dm.MWTransclusionPartModel[]} parts
+		 * @property {number} uid
+		 * @property {jQuery.Promise[]} templateDataApiRequests Currently running API requests. The only
+		 *  reason to keep these around is to be able to abort them earlier when the template dialog
+		 *  closes or resets.
+		 * @property {Object[]} changeQueue
+		 */
 		this.doc = doc;
 		this.parts = [];
 		this.uid = 0;
@@ -197,8 +210,8 @@
 	 * Process one or more queue items.
 	 *
 	 * @private
-	 * @param {Object[]} queue List of objects containing parts to add and optionally indexes to add
-	 *  them at, if no index is given parts will be added at the end
+	 * @param {ve.dm.MWTransclusionPartInstruction[]} queue List of objects containing parts to add and optionally
+	 * indexes to add them at, if no index is given parts will be added at the end
 	 * @fires replace For each item added
 	 * @fires change
 	 */
@@ -311,7 +324,7 @@
 	/**
 	 * @private
 	 * @param {string[]} titles
-	 * @param {Object[]} queue
+	 * @param {ve.dm.MWTransclusionPartInstruction[]} queue
 	 * @return {jQuery.Promise}
 	 */
 	ve.dm.MWTransclusionModel.prototype.callTemplateDataApi = function ( titles, queue ) {
@@ -332,7 +345,7 @@
 	/**
 	 * @private
 	 * @param {Object} [data]
-	 * @param {Object.<number,Object>} [data.pages]
+	 * @param {Object.<number,ve.dm.MWTemplatePageMetadata>} [data.pages]
 	 */
 	ve.dm.MWTransclusionModel.prototype.cacheTemplateDataApiResponse = function ( data ) {
 		if ( !data || !data.pages ) {

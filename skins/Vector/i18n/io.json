@@ -35,13 +35,15 @@
 	"vector-jumptocontent": "Irez a kontenajo",
 	"vector-more-actions": "Pluse",
 	"vector-searchsuggest-containing": "Serchar pagini kontenanta <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
-	"vector-toc-heading": "Kontenaji",
-	"vector-toc-toggle-position-title": "celez",
+	"vector-toc-label": "Kontenaji",
 	"vector-toc-beginning": "Komenco dil artiklo",
 	"vector-anon-user-menu-pages": "Pagini por redakteri neenrejistrita",
 	"vector-anon-user-menu-pages-learn": "lernez pluse",
 	"vector-anon-user-menu-pages-label": "Savez pluse pri quale redaktar",
 	"vector-main-menu-tooltip": "Chef-menuo",
 	"vector-toc-menu-tooltip": "Kontenajo-tabelo",
+	"vector-page-tools-label": "Utensili",
+	"vector-page-tools-general-label": "Ordinara",
+	"vector-unpin-element-label": "celez",
 	"tooltip-vector-anon-user-menu-title": "Plusa selekti"
 }

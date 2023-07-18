@@ -228,6 +228,9 @@ class MediaWikiGadgetsDefinitionRepo extends GadgetRepo {
 				case 'ResourceLoader':
 					$info['resourceLoaded'] = true;
 					break;
+				case 'requiresES6':
+					$info['requiresES6'] = true;
+					break;
 				case 'dependencies':
 					$info['dependencies'] = $params;
 					break;

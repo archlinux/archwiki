@@ -7,11 +7,13 @@ use HTMLForm;
 use IContextSource;
 use Linker;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterPermissionManager;
+use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\ReversibleConsequence;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequencesFactory;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
 use MediaWiki\Extension\AbuseFilter\FilterLookup;
 use MediaWiki\Extension\AbuseFilter\SpecsFormatter;
+use MediaWiki\Extension\AbuseFilter\Variables\UnsetVariableException;
 use MediaWiki\Extension\AbuseFilter\Variables\VariablesBlobStore;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\User\UserFactory;
@@ -188,15 +190,17 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 				$displayActions[] = $this->specsFormatter->getActionDisplay( $action );
 			}
 
+			/** @var ActionSpecifier $spec */
+			$spec = $result['spec'];
 			$msg = $this->msg( 'abusefilter-revert-preview-item' )
 				->params(
 					$lang->userTimeAndDate( $result['timestamp'], $user )
 				)->rawParams(
-					Linker::userLink( $result['userid'], $result['user'] )
+					Linker::userLink( $spec->getUser()->getId(), $spec->getUser()->getName() )
 				)->params(
-					$result['action']
+					$spec->getAction()
 				)->rawParams(
-					$this->linkRenderer->makeLink( $result['title'] )
+					$this->linkRenderer->makeLink( $spec->getTitle() )
 				)->params(
 					$lang->commaList( $displayActions )
 				)->rawParams(
@@ -206,7 +210,9 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 						[],
 						[ 'details' => $result['id'] ]
 					)
-				)->params( $result['user'] )->parse();
+				)->params(
+					$spec->getUser()->getName()
+				)->parse();
 			$list[] = Xml::tags( 'li', null, $msg );
 		}
 
@@ -265,6 +271,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 			'afl_id',
 			'afl_user',
 			'afl_user_text',
+			'afl_ip',
 			'afl_action',
 			'afl_actions',
 			'afl_var_dump',
@@ -280,21 +287,32 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 			[ 'ORDER BY' => 'afl_timestamp DESC' ]
 		);
 
+		// TODO: get the following from ConsequencesRegistry or sth else
+		static $reversibleActions = [ 'block', 'blockautopromote', 'degroup' ];
+
 		$results = [];
 		foreach ( $res as $row ) {
 			$actions = explode( ',', $row->afl_actions );
-			// TODO: get the following from ConsequencesRegistry or sth else
-			$reversibleActions = [ 'block', 'blockautopromote', 'degroup' ];
 			$currentReversibleActions = array_intersect( $actions, $reversibleActions );
 			if ( count( $currentReversibleActions ) ) {
+				$vars = $this->varBlobStore->loadVarDump( $row->afl_var_dump );
+				try {
+					// The variable is not lazy-loaded
+					$accountName = $vars->getComputedVariable( 'accountname' )->toNative();
+				} catch ( UnsetVariableException $_ ) {
+					$accountName = null;
+				}
 				$results[] = [
 					'id' => $row->afl_id,
 					'actions' => $currentReversibleActions,
-					'user' => $row->afl_user_text,
-					'userid' => $row->afl_user,
-					'vars' => $this->varBlobStore->loadVarDump( $row->afl_var_dump ),
-					'title' => new TitleValue( (int)$row->afl_namespace, $row->afl_title ),
-					'action' => $row->afl_action,
+					'vars' => $vars,
+					'spec' => new ActionSpecifier(
+						$row->afl_action,
+						new TitleValue( (int)$row->afl_namespace, $row->afl_title ),
+						$this->userFactory->newFromAnyId( (int)$row->afl_user, $row->afl_user_text ),
+						$row->afl_ip,
+						$accountName
+					),
 					'timestamp' => $row->afl_timestamp
 				];
 			}
@@ -353,13 +371,7 @@ class AbuseFilterViewRevert extends AbuseFilterView {
 		$params = new Parameters(
 			$this->filterLookup->getFilter( $this->filter, false ),
 			false,
-			$this->userFactory->newFromAnyId(
-				$result['userid'],
-				$result['user'],
-				null
-			),
-			$result['title'],
-			$result['action']
+			$result['spec']
 		);
 
 		switch ( $action ) {

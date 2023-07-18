@@ -50,11 +50,6 @@ describe( 'main.js', () => {
 			name: STICKY_HEADER_EDIT_EXPERIMENT_NAME,
 			enabled: false
 		};
-		const TABLE_OF_CONTENTS_AB = {
-			name: 'skin-vector-toc-experiment',
-			enabled: true,
-			buckets: {}
-		};
 		[
 			{
 				abConfig: STICKY_HEADER_AB_EDIT,
@@ -120,15 +115,6 @@ describe( 'main.js', () => {
 				}
 			},
 			{
-				abConfig: TABLE_OF_CONTENTS_AB,
-				isEnabled: true,
-				isUserInTreatmentBucket: false,
-				expectedResult: {
-					showStickyHeader: true,
-					disableEditIcons: false
-				}
-			},
-			{
 				abConfig: DISABLED_STICKY_HEADER_AB_EDIT,
 				isEnabled: true,
 				isUserInTreatmentBucket: false,
@@ -165,5 +151,80 @@ describe( 'main.js', () => {
 					document.documentElement.classList.contains( 'vector-sticky-header-enabled' )
 				).toBe( true );
 			} );
+	} );
+} );
+
+const sectionObserverFn = () => ( {
+	pause: () => {},
+	resume: () => {},
+	mount: () => {},
+	unmount: () => {},
+	setElements: () => {},
+	calcIntersection: () => {}
+} );
+
+describe( 'Table of contents re-rendering', () => {
+	const mockMwHook = () => {
+		/** @type {Object.<string, Function>} */
+		let callback = {};
+		// @ts-ignore
+		jest.spyOn( mw, 'hook' ).mockImplementation( ( name ) => {
+
+			return {
+				add: function ( fn ) {
+					callback[ name ] = fn;
+
+					return this;
+				},
+				fire: ( data ) => {
+					if ( callback[ name ] ) {
+						callback[ name ]( data );
+					}
+				}
+			};
+		} );
+	};
+
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
+	it( 'listens to wikipage.tableOfContents hook when mounted', () => {
+		mockMwHook();
+		const spy = jest.spyOn( mw, 'hook' );
+		const tocElement = document.createElement( 'div' );
+		const bodyContent = document.createElement( 'article' );
+		const toc = test.setupTableOfContents( tocElement, bodyContent, sectionObserverFn );
+		expect( toc ).not.toBe( null );
+		expect( spy ).toHaveBeenCalledWith( 'wikipage.tableOfContents' );
+		expect( spy ).not.toHaveBeenCalledWith( 'wikipage.tableOfContents.vector' );
+	} );
+
+	it( 'Firing wikipage.tableOfContents triggers reloadTableOfContents', async () => {
+		mockMwHook();
+		const tocElement = document.createElement( 'div' );
+		const bodyContent = document.createElement( 'article' );
+		const toc = test.setupTableOfContents( tocElement, bodyContent, sectionObserverFn );
+		if ( !toc ) {
+			// something went wrong
+			expect( true ).toBe( false );
+			return;
+		}
+		const spy = jest.spyOn( toc, 'reloadTableOfContents' ).mockImplementation( () => Promise.resolve() );
+
+		mw.hook( 'wikipage.tableOfContents' ).fire( [
+			// Add new section to see how the re-render performs.
+			{
+				toclevel: 1,
+				number: '4',
+				line: 'bat',
+				anchor: 'bat',
+				'is-top-level-section': true,
+				'is-parent-section': false,
+				'array-sections': null
+			}
+		] );
+
+		expect( spy ).toHaveBeenCalled();
 	} );
 } );

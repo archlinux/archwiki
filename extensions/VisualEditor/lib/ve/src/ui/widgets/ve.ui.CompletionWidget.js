@@ -113,8 +113,14 @@ ve.ui.CompletionWidget.prototype.update = function () {
 
 	this.updateMenu( input );
 	this.action.getSuggestions( input ).then( function ( suggestions ) {
+		if ( !this.action ) {
+			// Check widget hasn't been torn down
+			return;
+		}
 		this.menu.clearItems();
-		this.menu.addItems( suggestions.map( this.action.getMenuItemForSuggestion.bind( this.action ) ) );
+		var menuItems = suggestions.map( this.action.getMenuItemForSuggestion.bind( this.action ) );
+		menuItems = this.action.updateMenuItems( menuItems );
+		this.menu.addItems( menuItems );
 		this.menu.highlightItem( this.menu.findFirstSelectableItem() );
 		this.updateMenu( input, suggestions );
 	}.bind( this ) );
@@ -143,9 +149,7 @@ ve.ui.CompletionWidget.prototype.updateMenu = function ( input, suggestions ) {
 };
 
 ve.ui.CompletionWidget.prototype.onMenuChoose = function ( item ) {
-	var fragment = this.action.insertCompletion( item.getData(), this.getCompletionRange( true ) );
-
-	fragment.collapseToEnd().select();
+	this.action.chooseItem( item, this.getCompletionRange( true ) );
 
 	this.teardown();
 };
@@ -159,7 +163,20 @@ ve.ui.CompletionWidget.prototype.onMenuToggle = function ( visible ) {
 
 ve.ui.CompletionWidget.prototype.onModelSelect = function () {
 	var range = this.getCompletionRange();
-	if ( !range || range.isBackwards() || this.action.shouldAbandon( this.surfaceModel.getDocument().data.getText( false, range ), this.menu.getItems().length ) ) {
+	var widget = this;
+
+	function countMatches() {
+		var matches = widget.menu.getItems().length;
+		if ( widget.header.getLabel() !== null ) {
+			matches--;
+		}
+		if ( widget.action.constructor.static.alwaysIncludeInput ) {
+			matches--;
+		}
+		return matches;
+	}
+
+	if ( !range || range.isBackwards() || this.action.shouldAbandon( this.surfaceModel.getDocument().data.getText( false, range ), countMatches() ) ) {
 		this.teardown();
 	} else {
 		this.update();

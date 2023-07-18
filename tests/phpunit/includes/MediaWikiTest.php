@@ -1,6 +1,9 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\WebResponse;
+use MediaWiki\Title\Title;
+use Wikimedia\TestingAccessWrapper;
 
 class MediaWikiTest extends MediaWikiIntegrationTestCase {
 	private $oldServer, $oldGet, $oldPost;
@@ -236,5 +239,28 @@ class MediaWikiTest extends MediaWikiIntegrationTestCase {
 			],
 			$logger->getBuffer()
 		);
+	}
+
+	/**
+	 * @covers MediaWiki::performRequest
+	 */
+	public function testInvalidRedirectingOnSpecialPageWithPersonallyIdentifiableTarget() {
+		$this->overrideConfigValue( MainConfigNames::HideIdentifiableRedirects, true );
+
+		$specialTitle = SpecialPage::getTitleFor( 'Mypage', 'in<valid' );
+		$req = new FauxRequest( [
+			'title' => $specialTitle->getPrefixedDbKey(),
+		] );
+		$req->setRequestURL( $specialTitle->getFullUrl() );
+
+		$context = RequestContext::getMain();
+		$context->setRequest( $req );
+		$context->setTitle( $specialTitle );
+
+		$mw = TestingAccessWrapper::newFromObject( new MediaWiki( $context ) );
+
+		$this->expectException( BadTitleError::class );
+		$this->expectExceptionMessage( 'The requested page title contains invalid characters: "<".' );
+		$mw->performRequest();
 	}
 }

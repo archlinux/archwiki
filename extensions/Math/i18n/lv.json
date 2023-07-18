@@ -44,7 +44,6 @@
 	"math_unknown_function": "nezināma funkcija '$1'",
 	"mw_math_latexml": "LaTeXML (eksperimentāls; izmanto MathML)",
 	"mw_math_mathml": "MathML ar SVG vai PNG alternatīvu (ieteicams moderniem pārlūkiem un pieejamības rīkiem)",
-	"mw_math_png": "PNG attēli",
 	"mw_math_source": "LaTeX kods (teksta pārlūkiem)",
 	"prefs-math": "Formulas",
 	"datatypes-type-math": "Matemātiska izteiksme",

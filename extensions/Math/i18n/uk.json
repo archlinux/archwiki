@@ -93,6 +93,7 @@
 	"math_unknown_function": "невідома функція '$1'",
 	"mw_math_latexml": "LaTeXML (експериментально; використовує MathML)",
 	"mw_math_mathml": "SVG (MathML можна ввімкнути через плагін браузера)",
+	"mw_math_native": "MathML (експериментально; без зображень)",
 	"mw_math_source": "LaTeX-розмітка (для текстових браузерів)",
 	"prefs-math": "Відображення формул",
 	"mathstatus": "Статус Math",

@@ -1,0 +1,424 @@
+# This file has tests to verify TOC section metadata output for wikitext snippets
+
+!! options
+version=2
+parsoid-compatible=wt2html
+!! end
+
+!! article
+Template:1x
+!! text
+{{{1}}}
+!! endarticle
+
+!! article
+Template:Test
+!! text
+==th2==
+===th2.1===
+!! endarticle
+
+!! test
+Basic test
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==h1==
+===h1.1===
+==h2==
+===h2.1===
+====h2.1.1====
+===h2.2===
+====h2.2.1====
+====h2.2.2====
+==h3==
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:h1 line:h1
+  h3 index:2 toclevel:2 number:1.1 title:Parser_test off:7 anchor/linkAnchor:h1.1 line:h1.1
+ h2 index:3 toclevel:1 number:2 title:Parser_test off:18 anchor/linkAnchor:h2 line:h2
+  h3 index:4 toclevel:2 number:2.1 title:Parser_test off:25 anchor/linkAnchor:h2.1 line:h2.1
+   h4 index:5 toclevel:3 number:2.1.1 title:Parser_test off:36 anchor/linkAnchor:h2.1.1 line:h2.1.1
+  h3 index:6 toclevel:2 number:2.2 title:Parser_test off:51 anchor/linkAnchor:h2.2 line:h2.2
+   h4 index:7 toclevel:3 number:2.2.1 title:Parser_test off:62 anchor/linkAnchor:h2.2.1 line:h2.2.1
+   h4 index:8 toclevel:3 number:2.2.2 title:Parser_test off:77 anchor/linkAnchor:h2.2.2 line:h2.2.2
+ h2 index:9 toclevel:1 number:3 title:Parser_test off:92 anchor/linkAnchor:h3 line:h3
+!! end
+
+!! test
+HTML headings should get TOC entries with some empty properties
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==a==
+<h2>b</h2>
+<h3>c</h3>
+===d===
+<h2>e</h2>
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:a line:a
+ h2 index: toclevel:1 number:2 title:NULL off:NULL anchor/linkAnchor:b line:b
+  h3 index: toclevel:2 number:2.1 title:NULL off:NULL anchor/linkAnchor:c line:c
+  h3 index:2 toclevel:2 number:2.2 title:Parser_test off:28 anchor/linkAnchor:d line:d
+ h2 index: toclevel:1 number:3 title:NULL off:NULL anchor/linkAnchor:e line:e
+!! end
+
+!! test
+Duplicate headings should get unique anchors
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==a==
+==a==
+==b==
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:a line:a
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:6 anchor/linkAnchor:a_2 line:a
+ h2 index:3 toclevel:1 number:3 title:Parser_test off:12 anchor/linkAnchor:b line:b
+!! end
+
+!! test
+Templated sections (heading from template content)
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==a==
+{{Test}}
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:a line:a
+ h2 index:T-1 toclevel:1 number:2 title:Template:Test off:NULL anchor/linkAnchor:th2 line:th2
+  h3 index:T-2 toclevel:2 number:2.1 title:Template:Test off:NULL anchor/linkAnchor:th2.1 line:th2.1
+!! end
+
+!! test
+Ensure headings with html tags get the right anchors
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==<span>x</span>==
+==<strike>y</strike>==
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:x line:<span>x</span>
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:19 anchor/linkAnchor:y line:<strike>y</strike>
+!! end
+
+!! test
+Ensure unallowed tag wrappers in headings get stripped
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==<div>b</div>==
+==<font>c</font>==
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:b line:b
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:17 anchor/linkAnchor:c line:c
+!! end
+
+!! test
+Ensure disallowed attributes are stripped, but dir attribute in a span is left behind
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==<span dir='ltr' title='x'>a</span>==
+==<span dir='rtl' title='x'>b</span>==
+==<i dir='rtl' title='ha'>c</i>==
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:a line:<span dir="ltr">a</span>
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:39 anchor/linkAnchor:b line:<span dir="rtl">b</span>
+ h2 index:3 toclevel:1 number:3 title:Parser_test off:78 anchor/linkAnchor:c line:<i>c</i>
+!! end
+
+# Legacy parser behavior is broken. Parsoid's output is correct.
+!! test
+Ensure empty tags are stripped
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==<span><div></div></span>x==
+==<span dir='ltr'><i dir='ltr'></i></span>y==
+!! metadata/php
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:x line:x
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:30 anchor/linkAnchor:y line:<span dir="ltr"><i></i></span>y
+!! metadata/parsoid
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:x line:x
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:30 anchor/linkAnchor:y line:y
+!! end
+
+!! test
+Handle links in heading content
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==[[Cat]]==
+==[[Dog]]s==
+==[[Cat|I love my ''cat'']]==
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:Cat line:Cat
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:12 anchor/linkAnchor:Dogs line:Dogs
+ h2 index:3 toclevel:1 number:3 title:Parser_test off:25 anchor/linkAnchor:I_love_my_cat line:I love my <i>cat</i>
+!! end
+
+# Parsoid uses HTML5 semantics for anchors as the default.
+# Legacy parser tests require wgFragmentMode=[ "html5" ] for the same
+# behavior, which isn't (yet) the default in ParserTestRunner
+!! test
+Ensure headings with special chars get the right anchors
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! config
+wgFragmentMode=[ "html5", "legacy" ]
+!! wikitext
+===a=
+=''x''=
+!! metadata
+Sections:
+ h1 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:==a line:==a
+ h1 index:2 toclevel:1 number:2 title:Parser_test off:6 anchor/linkAnchor:x line:<i>x</i>
+!! end
+
+# For heading that come from template args, core, Parsoid-standalone, and
+# Parsoid-integrate different in ther "index" output.
+#
+# - For templated sections, Parsoid and core differ in some of the metadata.
+#   Parsoid doesn't distinguish between sections that come from template args
+#   and from templated content - it treats them all as template-generated headings.
+#   But core does not consider headings from template-args as "inTemplate", but
+#   'fromtitle' is set to false even so.
+#
+# - Parsoid's behavior is more consistent wrt templates. But, this is potentially
+#   a breaking change for users of TOC data. The index for templated
+#   content is used to generate section edit links for content coming
+#   from a template, and in updating the appropriate article when that
+#   section is saved.  So this is potentially a breaking change when
+#   Parsoid starts to generate section edit links, and possible one
+#   which could cause db corruption.
+#
+# - Additionally, heading-index is reset in integrated mode because templates are
+#   processed by core preprocessor whereas in native preprocessing mode (used by
+#   parsertests), the heading index is not reset.
+# - See also T222419.
+!! test
+Templated sections (heading from template arg)
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==a==
+{{1x|1=
+==b==
+}}
+!! metadata/php
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:a line:a
+ h2 index: toclevel:1 number:2 title:NULL off:NULL anchor/linkAnchor:b line:b
+!! metadata/parsoid+integrated
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:a line:a
+ h2 index:T-1 toclevel:1 number:2 title:Template:1x off:NULL anchor/linkAnchor:b line:b
+!! metadata/parsoid+standalone
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:a line:a
+ h2 index:T-2 toclevel:1 number:2 title:Template:1x off:NULL anchor/linkAnchor:b line:b
+!! end
+
+# FIXME:
+# 1. This potentially exposes a subtle issue in the interaction between TOC, Cite, and
+#    localization. Parsoid doesn't localize numbers in Cite (at all!) since it relies on CSS.
+#    But, with the legacy parser, a wiki with localized numbers will have an anchor
+#    based off a localized number if a <ref> is used in a heading. Parsoid won't!.
+# 2. We probably should be a bit smarter about what to strip for tags when that output
+#    comes from extensions. Below, we have stripped all extension typeofs and info.
+#    But, depends on who uses this 'line' property and how.
+
+# FIXME: test disabled because CI doesn't have the Cite extension installed
+!! test
+Handle extension content in section headers properly
+!! config
+wgFragmentMode=[ "html5", "legacy" ]
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==c<ref>d</ref>==
+!! metadata/php+disabled
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c[1] line:c<sup>&#91;1&#93;</sup>
+!! metadata/parsoid
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c[1] line:c<sup><span>[1]</span></sup>
+!! end
+
+# FIXME: This test shows a similar difference between legacy and
+# Parsoid output, but it may be due to a subtle difference in the
+# whitespace emitted by the parser test runner's <tag> implementation
+!! test
+Handle extension content in section headers properly (non-Cite version)
+!! config
+wgFragmentMode=[ "html5", "legacy" ]
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+==c<tag>d</tag>==
+!! metadata/php
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c_'d'_array_(_) line:"c\n'd'\narray (\n)"
+!! metadata/parsoid
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:c'd'_array_(_) line:"c'd'\narray (\n)"
+!! end
+
+!! test
+Offsets in toc metadata should be unicode codepoints, not bytes or UCS-2
+!! config
+wgFragmentMode=[ "html5", "legacy" ]
+!! options
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+showtocdata
+nohtml
+!! wikitext
+==One 💩==
+==Two 💩==
+==Three 💩==
+!! metadata
+Sections:
+ h2 index:1 toclevel:1 number:1 title:Parser_test off:0 anchor/linkAnchor:One_💩 line:One 💩
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:10 anchor/linkAnchor:Two_💩 line:Two 💩
+ h2 index:3 toclevel:1 number:3 title:Parser_test off:20 anchor/linkAnchor:Three_💩 line:Three 💩
+!! end
+
+!! test
+Handle multi-part content transclusion blocks
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+<div>
+{{1x|1=
+==foo==
+</div>
+}}
+==bar==
+!! metadata
+Sections:
+ h2 index: toclevel:1 number:1 title:NULL off:NULL anchor/linkAnchor:foo line:foo
+ h2 index:2 toclevel:1 number:2 title:Parser_test off:32 anchor/linkAnchor:bar line:bar
+!! end
+
+# Parsoid's parser function implementation used for standalone testing
+# is incomplete and only used in parser tests.
+# So, use HTML h-tags instead of wikitext h-tags in the parser function
+# to let us run this test in both standalone and integrated modes.
+!! test
+Handle parser functions generating sections
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+{{#if:1|<h2>foo</h2>|unused}}
+==bar==
+!! metadata
+Sections:
+ h2 index: toclevel:1 number:1 title:NULL off:NULL anchor/linkAnchor:foo line:foo
+ h2 index:1 toclevel:1 number:2 title:Parser_test off:30 anchor/linkAnchor:bar line:bar
+!! end
+
+!! test
+Handle top-level template args generating sections
+!! options
+nohtml
+showtocdata
+parsoid={
+	"modes": [ "wt2html" ],
+	"wrapSections": true
+}
+!! wikitext
+{{{foo|
+==tplarg==
+|abcd}}}
+!! metadata
+Sections:
+ h2 index: toclevel:1 number:1 title:NULL off:NULL anchor/linkAnchor:tplarg line:tplarg
+!! end

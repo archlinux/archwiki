@@ -22,12 +22,8 @@ use MediaWiki\Hook\LinkerMakeExternalLinkHook;
 
 class Hooks implements LinkerMakeExternalLinkHook {
 
-	/** @var HSTSPreloadLookup */
-	private $lookup;
+	private HSTSPreloadLookup $lookup;
 
-	/**
-	 * @param HSTSPreloadLookup $lookup
-	 */
 	public function __construct( HSTSPreloadLookup $lookup ) {
 		$this->lookup = $lookup;
 	}

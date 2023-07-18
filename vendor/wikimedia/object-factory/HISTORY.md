@@ -1,5 +1,14 @@
 # Release History
 
+## v5.0.1
+* .gitattributes: Updates (Reedy)
+
+## v5.0.0
+* BREAKING CHANGE: drop PHP 7.2/7.3 support (Reedy)
+* BREAKING CHANGE: drop `specIsArg` option (DannyS712)
+* Updates now we can use PHP 7.4 (Reedy)
+* composer.json: Allow psr/container 2 (Reedy)
+
 ## v4.0.0
 * BREAKING CHANGE: Drop Wikimedia\ObjectFactory class alias (Reedy)
 

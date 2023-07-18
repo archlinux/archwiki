@@ -23,6 +23,8 @@
  * @file
  */
 
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -31,6 +33,7 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SuppressedDataException;
 use MediaWiki\Storage\SqlBlobStore;
+use MediaWiki\Title\Title;
 use Wikimedia\Assert\Assert;
 use Wikimedia\IPUtils;
 
@@ -82,15 +85,22 @@ class XmlDumpWriter {
 	/** @var HookRunner */
 	private $hookRunner;
 
+	/** @var CommentStore */
+	private $commentStore;
+
 	/**
 	 * @param int $contentMode WRITE_CONTENT or WRITE_STUB.
 	 * @param string $schemaVersion which schema version the generated XML should comply to.
 	 * One of the values from self::$supportedSchemas, using the XML_DUMP_SCHEMA_VERSION_XX
 	 * constants.
+	 * @param HookContainer|null $hookContainer
+	 * @param CommentStore|null $commentStore
 	 */
 	public function __construct(
 		$contentMode = self::WRITE_CONTENT,
-		$schemaVersion = XML_DUMP_SCHEMA_VERSION_11
+		$schemaVersion = XML_DUMP_SCHEMA_VERSION_11,
+		?HookContainer $hookContainer = null,
+		?CommentStore $commentStore = null
 	) {
 		Assert::parameter(
 			in_array( $contentMode, [ self::WRITE_CONTENT, self::WRITE_STUB ], true ),
@@ -107,7 +117,10 @@ class XmlDumpWriter {
 
 		$this->contentMode = $contentMode;
 		$this->schemaVersion = $schemaVersion;
-		$this->hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
+		$this->hookRunner = new HookRunner(
+			$hookContainer ?? MediaWikiServices::getInstance()->getHookContainer()
+		);
+		$this->commentStore = $commentStore ?? MediaWikiServices::getInstance()->getCommentStore();
 	}
 
 	/**
@@ -407,8 +420,6 @@ class XmlDumpWriter {
 			$out .= "      " . Xml::element( 'sha1', null, strval( $sha1 ) ) . "\n";
 		}
 
-		// Avoid PHP 7.1 warning from passing $this by reference
-		$writer = $this;
 		$text = '';
 		if ( $contentMode === self::WRITE_CONTENT ) {
 			/** @var Content $content */
@@ -421,7 +432,7 @@ class XmlDumpWriter {
 
 			$text = $content ? $content->serialize() : '';
 		}
-		$this->hookRunner->onXmlDumpWriterWriteRevision( $writer, $out, $row, $text, $rev );
+		$this->hookRunner->onXmlDumpWriterWriteRevision( $this, $out, $row, $text, $rev );
 
 		$out .= "    </revision>\n";
 
@@ -552,8 +563,6 @@ class XmlDumpWriter {
 	 * @return string
 	 */
 	private function writeText( Content $content, $textAttributes, $indent ) {
-		$out = '';
-
 		$contentHandler = $content->getContentHandler();
 		$contentFormat = $contentHandler->getDefaultFormat();
 
@@ -566,11 +575,10 @@ class XmlDumpWriter {
 		}
 
 		$data = $contentHandler->exportTransform( $data, $contentFormat );
-		$textAttributes['bytes'] = $size = strlen( $data ); // make sure to use the actual size
+		// make sure to use the actual size
+		$textAttributes['bytes'] = strlen( $data );
 		$textAttributes['xml:space'] = 'preserve';
-		$out .= $indent . Xml::elementClean( 'text', $textAttributes, strval( $data ) ) . "\n";
-
-		return $out;
+		return $indent . Xml::elementClean( 'text', $textAttributes, strval( $data ) ) . "\n";
 	}
 
 	/**
@@ -595,7 +603,7 @@ class XmlDumpWriter {
 		if ( $row->log_deleted & LogPage::DELETED_COMMENT ) {
 			$out .= "    " . Xml::element( 'comment', [ 'deleted' => 'deleted' ] ) . "\n";
 		} else {
-			$comment = CommentStore::getStore()->getComment( 'log_comment', $row )->text;
+			$comment = $this->commentStore->getComment( 'log_comment', $row )->text;
 			if ( $comment != '' ) {
 				$out .= "    " . Xml::elementClean( 'comment', null, strval( $comment ) ) . "\n";
 			}

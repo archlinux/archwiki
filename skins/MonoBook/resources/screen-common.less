@@ -103,6 +103,7 @@ pre,
 
 .mw-jump-link:not( :focus ) {
 	.mixin-screen-reader-text;
+	.user-select( none );
 }
 
 /*
@@ -248,12 +249,6 @@ li#pt-anonuserpage {
 	font-size: 85%;
 }
 
-#login-sectiontip {
-	font-size: 85%;
-	line-height: 1.2;
-	padding-top: 2em;
-}
-
 /**
  * This was originally added by Gabriel Wicke in r3681 (committed on 25 May 2004)
  * with the commit message "tweaks to page history".
@@ -267,10 +262,6 @@ li#pt-anonuserpage {
 
 div.patrollink {
 	clear: both;
-}
-
-.sharedUploadNotice {
-	font-style: italic;
 }
 
 .toggle {
@@ -298,27 +289,6 @@ div.noarticletext {
 
 #powersearch p {
 	margin-top: 0;
-}
-
-div.multipageimagenavbox {
-	border: solid 1px @content-border;
-	padding: 4px;
-	margin: 1em;
-	background: @background;
-
-	div.thumb {
-		border: 0;
-		margin-left: 2em;
-		margin-right: 2em;
-	}
-
-	hr {
-		margin: 6px;
-	}
-}
-
-table.multipageimage td {
-	text-align: center;
 }
 
 .templatesUsed {

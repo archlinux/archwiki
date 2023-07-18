@@ -9,7 +9,6 @@ use Wikimedia\Parsoid\Utils\DOMCompat;
 use Wikimedia\Parsoid\Utils\DOMCompat\TokenList;
 use Wikimedia\Parsoid\Utils\DOMUtils;
 use Wikimedia\Parsoid\Wt2Html\XMLSerializer;
-
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -652,7 +651,7 @@ HTML;
 		// Note we're testing the "fast path" native implementation here,
 		// not the workaround version in DOMCompat::getElementById()
 		$q = $doc->getElementById( 'this-is-an-id' );
-		$this->assertNotEquals( $q, null );
+		$this->assertNotEquals( null, $q );
 		$this->assertEquals( 'this-is-an-id', $q->getAttribute( 'id' ) );
 	}
 }

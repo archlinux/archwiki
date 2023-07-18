@@ -17,5 +17,8 @@
 	"vector-view-history": "Gọ ọ́là īgbálá",
 	"vector-view-view": "Gbá",
 	"vector-more-actions": "Mànyú",
-	"vector-searchsuggest-containing": "Téné amí ogbá kí gwonwú <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Téné amí ogbá kí gwonwú <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Amí ewñ ane",
+	"vector-page-tools-general-label": "Ochakadu",
+	"vector-unpin-element-label": "dúmája"
 }

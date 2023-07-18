@@ -322,7 +322,7 @@ class OverridableConfigRequirementTest extends \MediaWikiUnitTestCase {
 	) {
 		$config = new HashConfig( [
 			Constants::CONFIG_KEY_LANGUAGE_IN_HEADER => $configValue,
-			Constants::CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST => $abValue,
+			$testName => $abValue,
 		] );
 
 		$user = $this->createMock( User::class );

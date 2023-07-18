@@ -102,7 +102,6 @@ abstract class GadgetRepo {
 		if ( self::$instance === null ) {
 			// @todo use Config here
 			global $wgGadgetsRepoClass;
-			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 			self::$instance = new $wgGadgetsRepoClass();
 		}
 		return self::$instance;

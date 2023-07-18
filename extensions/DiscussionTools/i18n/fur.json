@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"Klenje"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Rispueste",
+	"discussiontools-replylink": "rispuint",
+	"discussiontools-replywidget-advanced": "Avanzadis",
+	"discussiontools-replywidget-cancel": "Scancele",
+	"discussiontools-replywidget-mode-source": "Sorzint",
+	"discussiontools-replywidget-mode-visual": "Visuâl",
+	"discussiontools-replywidget-placeholder-reply": "Rispuint a {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Anteprime",
+	"discussiontools-replywidget-reply": "Rispuint",
+	"discussiontools-replywidget-summary": "Somari",
+	"discussiontools-replywidget-watchthis": "Zonte cheste pagjine ae tô [[Special:Watchlist|liste des pagjinis tignudis di voli]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|partecipant|partecipants}} ae discussion",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|coment|coments}}",
+	"discussiontools-topicheader-latestcomment": "Ultin coment: $1",
+	"discussiontools-topicsubscription-button-subscribe": "notiti",
+	"discussiontools-topicsubscription-button-subscribe-label": "Notiti",
+	"discussiontools-topicsubscription-button-unsubscribe": "disnotiti",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Disnotiti",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Ti rivaran notifichis pai gnûfs coments in cheste discussion.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Tu ti sês notât!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "No ti rivaran plui notifichis pai gnûfs coments in cheste discussion.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Tu ti sês disnotât."
+}

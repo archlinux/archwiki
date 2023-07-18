@@ -7,10 +7,10 @@ use MediaWiki\DAO\WikiAwareEntity;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Title\Title;
 use NamespaceInfo;
 use ParserOutput;
 use PurgeJobUtils;
-use Title;
 
 /**
  * categorylinks
@@ -154,7 +154,7 @@ class CategoryLinksTable extends TitleLinksTable {
 	 * @return iterable<array>
 	 */
 	protected function getNewLinkIDs() {
-		foreach ( $this->newLinks as $name => [ $prefix, $sortKey ] ) {
+		foreach ( $this->newLinks as $name => [ $prefix, ] ) {
 			yield [ (string)$name, $prefix ];
 		}
 	}
@@ -316,15 +316,19 @@ class CategoryLinksTable extends TitleLinksTable {
 			$addedChunks = array_chunk( $insertedLinks, $size );
 			foreach ( $addedChunks as $chunk ) {
 				$wp->updateCategoryCounts( $chunk, [], $this->getSourcePageId() );
-				$lbf->commitAndWaitForReplication(
-					__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+				if ( count( $addedChunks ) > 1 ) {
+					$lbf->commitAndWaitForReplication(
+						__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+				}
 			}
 
 			$deletedChunks = array_chunk( $deletedLinks, $size );
 			foreach ( $deletedChunks as $chunk ) {
 				$wp->updateCategoryCounts( [], $chunk, $this->getSourcePageId() );
-				$lbf->commitAndWaitForReplication(
-					__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+				if ( count( $deletedChunks ) > 1 ) {
+					$lbf->commitAndWaitForReplication(
+						__METHOD__, $this->getTransactionTicket(), [ 'domain' => $domainId ] );
+				}
 			}
 
 		}

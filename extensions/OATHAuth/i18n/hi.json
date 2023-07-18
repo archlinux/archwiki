@@ -3,9 +3,9 @@
 		"authors": [
 			"Abijeet Patro",
 			"AnupamM",
+			"Saurmandal",
 			"Smtchahal",
-			"Ziyaurr",
-			"Saurmandal"
+			"Ziyaurr"
 		]
 	},
 	"oathauth-desc": "HMAC-आधारित एकल-उपयोग पासवर्ड्स के साथ प्रमाणीकरण सेवा प्रदान करता है",

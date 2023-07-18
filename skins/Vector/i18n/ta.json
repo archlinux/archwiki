@@ -27,5 +27,5 @@
 	"vector-view-viewsource": "மூலத்தைக் காட்டவும்",
 	"vector-more-actions": "மேலும்",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> உள்ளடக்கிய பக்கங்களை தேடு",
-	"vector-toc-toggle-position-title": "மறை"
+	"vector-unpin-element-label": "மறை"
 }

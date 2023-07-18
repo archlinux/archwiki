@@ -2,11 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Gomoko",
+			"McDutchie",
 			"Thibaut120094",
 			"Urhixidur",
-			"Wladek92",
-			"McDutchie",
-			"Verdy p"
+			"Verdy p",
+			"Wladek92"
 		]
 	},
 	"apihelp-query+extracts-description": "Renvoie des extraits des pages fournies en texte brut ou en HTML limité.",

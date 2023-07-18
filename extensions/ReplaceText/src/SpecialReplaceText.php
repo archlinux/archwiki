@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * https://www.gnu.org/copyleft/gpl.html
  *
  * @file
  */
@@ -21,14 +21,20 @@ namespace MediaWiki\Extension\ReplaceText;
 
 use ErrorPageError;
 use Html;
-use JobQueueGroup;
+use Language;
+use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\MovePageFactory;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Storage\NameTableStore;
+use MediaWiki\User\UserFactory;
+use MediaWiki\User\UserOptionsLookup;
+use NamespaceInfo;
 use OOUI;
 use PermissionsError;
+use SearchEngineConfig;
 use SpecialPage;
 use Title;
-use User;
 use Xml;
 
 class SpecialReplaceText extends SpecialPage {
@@ -43,8 +49,59 @@ class SpecialReplaceText extends SpecialPage {
 	private $selected_namespaces;
 	private $doAnnounce;
 
-	public function __construct() {
+	/** @var Language */
+	private $contentLanguage;
+
+	/** @var LinkRenderer */
+	private $linkRenderer;
+
+	/** @var MovePageFactory */
+	private $movePageFactory;
+
+	/** @var NamespaceInfo */
+	private $namespaceInfo;
+
+	/** @var SearchEngineConfig */
+	private $searchEngineConfig;
+
+	/** @var NameTableStore */
+	private $slotRoleStore;
+
+	/** @var UserFactory */
+	private $userFactory;
+
+	/** @var UserOptionsLookup */
+	private $userOptionsLookup;
+
+	/**
+	 * @param Language $contentLanguage
+	 * @param LinkRenderer $linkRenderer
+	 * @param MovePageFactory $movePageFactory
+	 * @param NamespaceInfo $namespaceInfo
+	 * @param SearchEngineConfig $searchEngineConfig
+	 * @param NameTableStore $slotRoleStore
+	 * @param UserFactory $userFactory
+	 * @param UserOptionsLookup $userOptionsLookup
+	 */
+	public function __construct(
+		Language $contentLanguage,
+		LinkRenderer $linkRenderer,
+		MovePageFactory $movePageFactory,
+		NamespaceInfo $namespaceInfo,
+		SearchEngineConfig $searchEngineConfig,
+		NameTableStore $slotRoleStore,
+		UserFactory $userFactory,
+		UserOptionsLookup $userOptionsLookup
+	) {
 		parent::__construct( 'ReplaceText', 'replacetext' );
+		$this->contentLanguage = $contentLanguage;
+		$this->linkRenderer = $linkRenderer;
+		$this->movePageFactory = $movePageFactory;
+		$this->namespaceInfo = $namespaceInfo;
+		$this->searchEngineConfig = $searchEngineConfig;
+		$this->slotRoleStore = $slotRoleStore;
+		$this->userFactory = $userFactory;
+		$this->userOptionsLookup = $userOptionsLookup;
 	}
 
 	/**
@@ -58,27 +115,22 @@ class SpecialReplaceText extends SpecialPage {
 	 * @param null|string $query
 	 */
 	function execute( $query ) {
-		global $wgCompressRevisions, $wgExternalStores;
-
 		if ( !$this->getUser()->isAllowed( 'replacetext' ) ) {
 			throw new PermissionsError( 'replacetext' );
 		}
 
 		// Replace Text can't be run with certain settings, due to the
 		// changes they make to the DB storage setup.
-		if ( $wgCompressRevisions ) {
-			throw new ErrorPageError( "replacetext_cfg_error", "replacetext_no_compress" );
+		if ( $this->getConfig()->get( 'CompressRevisions' ) ) {
+			throw new ErrorPageError( 'replacetext_cfg_error', 'replacetext_no_compress' );
 		}
-		if ( !empty( $wgExternalStores ) ) {
-			throw new ErrorPageError( "replacetext_cfg_error", "replacetext_no_external_stores" );
+		if ( !empty( $this->getConfig()->get( 'ExternalStores' ) ) ) {
+			throw new ErrorPageError( 'replacetext_cfg_error', 'replacetext_no_external_stores' );
 		}
 
 		$out = $this->getOutput();
 		$out->enableOOUI();
 		$this->setHeaders();
-		if ( $out->getResourceLoader()->getModule( 'mediawiki.special' ) !== null ) {
-			$out->addModuleStyles( 'mediawiki.special' );
-		}
 		$this->doSpecialReplaceText();
 	}
 
@@ -86,8 +138,7 @@ class SpecialReplaceText extends SpecialPage {
 	 * @return array namespaces selected for search
 	 */
 	function getSelectedNamespaces() {
-		$all_namespaces = MediaWikiServices::getInstance()->getSearchEngineConfig()
-			->searchableNamespaces();
+		$all_namespaces = $this->searchEngineConfig->searchableNamespaces();
 		$selected_namespaces = [];
 		foreach ( $all_namespaces as $ns => $name ) {
 			if ( $this->getRequest()->getCheck( 'ns' . $ns ) ) {
@@ -105,7 +156,7 @@ class SpecialReplaceText extends SpecialPage {
 		$request = $this->getRequest();
 
 		$this->target = $request->getText( 'target' );
-		$this->targetString = preg_replace( "/\\n/", "&#8629;", $this->target );
+		$this->targetString = str_replace( "\n", "\u{21B5}", $this->target );
 		$this->replacement = $request->getText( 'replacement' );
 		$this->use_regex = $request->getBool( 'use_regex' );
 		$this->category = $request->getText( 'category' );
@@ -114,9 +165,6 @@ class SpecialReplaceText extends SpecialPage {
 		$this->move_pages = $request->getBool( 'move_pages' );
 		$this->doAnnounce = $request->getBool( 'doAnnounce' );
 		$this->selected_namespaces = $this->getSelectedNamespaces();
-
-		$services = MediaWikiServices::getInstance();
-		$linkRenderer = $services->getLinkRenderer();
 
 		if ( $request->getCheck( 'continue' ) && $this->target === '' ) {
 			$this->showForm( 'replacetext_givetarget' );
@@ -133,12 +181,8 @@ class SpecialReplaceText extends SpecialPage {
 			}
 
 			$jobs = $this->createJobsForTextReplacements();
-			if ( method_exists( $services, 'getJobQueueGroup' ) ) {
-				// MW 1.37+
-				$services->getJobQueueGroup()->push( $jobs );
-			} else {
-				JobQueueGroup::singleton()->push( $jobs );
-			}
+			$services = MediaWikiServices::getInstance();
+			$services->getJobQueueGroup()->push( $jobs );
 
 			$count = $this->getLanguage()->formatNum( count( $jobs ) );
 			$out->addWikiMsg(
@@ -149,7 +193,7 @@ class SpecialReplaceText extends SpecialPage {
 			);
 			// Link back
 			$out->addHTML(
-				$linkRenderer->makeLink(
+				$this->linkRenderer->makeLink(
 					$this->getPageTitle(),
 					$this->msg( 'replacetext_return' )->text()
 				)
@@ -183,7 +227,7 @@ class SpecialReplaceText extends SpecialPage {
 				$titles_for_edit = $this->getTitlesForEditingWithContext();
 			}
 			if ( $this->move_pages ) {
-				list( $titles_for_move, $unmoveable_titles ) = $this->getTitlesForMoveAndUnmoveableTitles();
+				[ $titles_for_move, $unmoveable_titles ] = $this->getTitlesForMoveAndUnmoveableTitles();
 			}
 
 			// If no results were found, check to see if a bad
@@ -195,7 +239,7 @@ class SpecialReplaceText extends SpecialPage {
 					$category_title = Title::makeTitleSafe( NS_CATEGORY, $this->category );
 					if ( !$category_title->exists() ) {
 						$category_title_exists = false;
-						$link = $linkRenderer->makeLink(
+						$link = $this->linkRenderer->makeLink(
 							$category_title,
 							ucfirst( $this->category )
 						);
@@ -218,7 +262,7 @@ class SpecialReplaceText extends SpecialPage {
 				// link back to starting form
 				$out->addHTML(
 					'<p>' .
-					$linkRenderer->makeLink(
+					$this->linkRenderer->makeLink(
 						$this->getPageTitle(),
 						$this->msg( 'replacetext_return' )->text()
 					)
@@ -252,11 +296,11 @@ class SpecialReplaceText extends SpecialPage {
 	 * @return array jobs
 	 */
 	function createJobsForTextReplacements() {
-		global $wgReplaceTextUser;
+		$replaceTextUser = $this->getConfig()->get( 'ReplaceTextUser' );
 
 		$replacement_params = [];
-		if ( $wgReplaceTextUser != null ) {
-			$user = User::newFromName( $wgReplaceTextUser );
+		if ( $replaceTextUser !== null ) {
+			$user = $this->userFactory->newFromName( $replaceTextUser );
 		} else {
 			$user = $this->getUser();
 		}
@@ -300,7 +344,7 @@ class SpecialReplaceText extends SpecialPage {
 				unset( $replacement_params['move_page'] );
 			} elseif ( strpos( $key, '|' ) !== false ) {
 				// Bundle multiple edits to the same page for a different slot into one job
-				list( $page_id, $role ) = explode( '|', $key, 2 );
+				[ $page_id, $role ] = explode( '|', $key, 2 );
 				$pages_to_edit[$page_id][] = $role;
 			}
 		}
@@ -369,10 +413,9 @@ class SpecialReplaceText extends SpecialPage {
 			$this->use_regex
 		);
 
-		$movePageFactory = MediaWikiServices::getInstance()->getMovePageFactory();
 		foreach ( $res as $row ) {
 			$title = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
-			if ( $title == null ) {
+			if ( !$title ) {
 				continue;
 			}
 
@@ -382,8 +425,13 @@ class SpecialReplaceText extends SpecialPage {
 				$this->replacement,
 				$this->use_regex
 			);
+			if ( !$new_title ) {
+				// New title is not valid because it contains invalid characters.
+				$unmoveable_titles[] = $title;
+				continue;
+			}
 
-			$mvPage = $movePageFactory->newMovePage( $title, $new_title );
+			$mvPage = $this->movePageFactory->newMovePage( $title, $new_title );
 			$moveStatus = $mvPage->isValidMove();
 			$permissionStatus = $mvPage->checkPermissions( $this->getUser(), null );
 
@@ -509,8 +557,7 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		// The interface is heavily based on the one in Special:Search.
-		$namespaces = MediaWikiServices::getInstance()->getSearchEngineConfig()
-			->searchableNamespaces();
+		$namespaces = $this->searchEngineConfig->searchableNamespaces();
 		$tables = $this->namespaceTables( $namespaces );
 		$out->addHTML(
 			"<div class=\"mw-search-formheader\"></div>\n" .
@@ -619,9 +666,8 @@ class SpecialReplaceText extends SpecialPage {
 		// Try not to make too many assumptions about namespace numbering.
 		$rows = [];
 		$tables = "";
-		$namespaceInfo = MediaWikiServices::getInstance()->getNamespaceInfo();
 		foreach ( $namespaces as $ns => $name ) {
-			$subj = $namespaceInfo->getSubject( $ns );
+			$subj = $this->namespaceInfo->getSubject( $ns );
 			if ( !array_key_exists( $subj, $rows ) ) {
 				$rows[$subj] = "";
 			}
@@ -638,7 +684,7 @@ class SpecialReplaceText extends SpecialPage {
 		// Lay out namespaces in multiple floating two-column tables so they'll
 		// be arranged nicely while still accommodating different screen widths
 		// Float to the right on RTL wikis
-		$tableStyle = MediaWikiServices::getInstance()->getContentLanguage()->isRTL() ?
+		$tableStyle = $this->contentLanguage->isRTL() ?
 			'float: right; margin: 0 0 0em 1em' : 'float: left; margin: 0 1em 0em 0';
 		// Build the final HTML table...
 		for ( $i = 0; $i < $numRows; $i += $rowsPerTable ) {
@@ -657,8 +703,6 @@ class SpecialReplaceText extends SpecialPage {
 	 * @param array $unmoveable_titles
 	 */
 	function pageListForm( $titles_for_edit, $titles_for_move, $unmoveable_titles ) {
-		global $wgLang;
-
 		$out = $this->getOutput();
 
 		$formOpts = [
@@ -686,8 +730,6 @@ class SpecialReplaceText extends SpecialPage {
 		$out->addModules( "ext.ReplaceText" );
 		$out->addModuleStyles( "ext.ReplaceTextStyles" );
 
-		$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
-
 		// Only show "invert selections" link if there are more than
 		// five pages.
 		if ( count( $titles_for_edit ) + count( $titles_for_move ) > 5 ) {
@@ -703,22 +745,24 @@ class SpecialReplaceText extends SpecialPage {
 				'replacetext_choosepagesforedit',
 				"<code><nowiki>{$this->targetString}</nowiki></code>",
 				"<code><nowiki>{$this->replacement}</nowiki></code>",
-				$wgLang->formatNum( count( $titles_for_edit ) )
+				$this->getLanguage()->formatNum( count( $titles_for_edit ) )
 			);
 
 			foreach ( $titles_for_edit as $title_and_context ) {
 				/**
 				 * @var $title Title
 				 */
-				list( $title, $context, $role ) = $title_and_context;
+				[ $title, $context, $role ] = $title_and_context;
 				$checkbox = new OOUI\CheckboxInputWidget( [
 					'name' => $title->getArticleID() . "|" . $role,
 					'selected' => true
 				] );
 				if ( $role === SlotRecord::MAIN ) {
-					$labelText = $linkRenderer->makeLink( $title, null ) . "<br /><small>$context</small>";
+					$labelText = $this->linkRenderer->makeLink( $title ) .
+						"<br /><small>$context</small>";
 				} else {
-					$labelText = $linkRenderer->makeLink( $title, null ) . " ($role) <br /><small>$context</small>";
+					$labelText = $this->linkRenderer->makeLink( $title ) .
+						" ($role) <br /><small>$context</small>";
 				}
 				$checkboxLabel = new OOUI\LabelWidget( [
 					'label' => new OOUI\HtmlSnippet( $labelText )
@@ -735,12 +779,14 @@ class SpecialReplaceText extends SpecialPage {
 		if ( count( $titles_for_move ) > 0 ) {
 			$out->addWikiMsg(
 				'replacetext_choosepagesformove',
-				$this->targetString, $this->replacement, $wgLang->formatNum( count( $titles_for_move ) )
+				$this->targetString,
+				$this->replacement,
+				$this->getLanguage()->formatNum( count( $titles_for_move ) )
 			);
 			foreach ( $titles_for_move as $title ) {
 				$out->addHTML(
-					Xml::check( 'move-' . $title->getArticleID(), true ) .
-					$linkRenderer->makeLink( $title, null ) . "<br />\n"
+					Xml::check( 'move-' . $title->getArticleID(), true ) . "\u{00A0}" .
+					$this->linkRenderer->makeLink( $title ) . "<br />\n"
 				);
 			}
 			$out->addHTML( '<br />' );
@@ -768,10 +814,12 @@ class SpecialReplaceText extends SpecialPage {
 		$out->addHTML( '</form>' );
 
 		if ( count( $unmoveable_titles ) > 0 ) {
-			$out->addWikiMsg( 'replacetext_cannotmove', $wgLang->formatNum( count( $unmoveable_titles ) ) );
+			$out->addWikiMsg( 'replacetext_cannotmove',
+				$this->getLanguage()->formatNum( count( $unmoveable_titles ) )
+			);
 			$text = "<ul>\n";
 			foreach ( $unmoveable_titles as $title ) {
-				$text .= "<li>" . $linkRenderer->makeLink( $title, null ) . "<br />\n";
+				$text .= "<li>" . $this->linkRenderer->makeLink( $title ) . "</li>\n";
 			}
 			$text .= "</ul>\n";
 			$out->addHTML( $text );
@@ -788,10 +836,7 @@ class SpecialReplaceText extends SpecialPage {
 	 * @return string
 	 */
 	function extractContext( $text, $target, $use_regex = false ) {
-		global $wgLang;
-
-		$cw = MediaWikiServices::getInstance()->getUserOptionsLookup()
-			->getOption( $this->getUser(), 'contextchars', 40 );
+		$cw = $this->userOptionsLookup->getOption( $this->getUser(), 'contextchars', 40 );
 
 		// Get all indexes
 		if ( $use_regex ) {
@@ -827,12 +872,12 @@ class SpecialReplaceText extends SpecialPage {
 
 		$context = '';
 		foreach ( $cuts as $_ ) {
-			list( $index, $len, ) = $_;
+			[ $index, $len, ] = $_;
 			$contextBefore = substr( $text, 0, $index );
 			$contextAfter = substr( $text, $index + $len );
 
-			$contextBefore = $wgLang->truncateForDatabase( $contextBefore, -$cw, '...', false );
-			$contextAfter = $wgLang->truncateForDatabase( $contextAfter, $cw, '...', false );
+			$contextBefore = $this->getLanguage()->truncateForDatabase( $contextBefore, -$cw, '...', false );
+			$contextAfter = $this->getLanguage()->truncateForDatabase( $contextAfter, $cw, '...', false );
 
 			$context .= $this->convertWhiteSpaceToHTML( $contextBefore );
 			$snippet = $this->convertWhiteSpaceToHTML( substr( $text, $index, $len ) );
@@ -848,7 +893,7 @@ class SpecialReplaceText extends SpecialPage {
 		}
 
 		// Display newlines as "line break" characters.
-		$context = str_replace( "\n", '&#8629;', $context );
+		$context = str_replace( "\n", "\u{21B5}", $context );
 		return $context;
 	}
 
@@ -859,15 +904,14 @@ class SpecialReplaceText extends SpecialPage {
 	 * @return string
 	 */
 	private function extractRole( $role_id ) {
-		$roleStore = MediaWikiServices::getInstance()->getSlotRoleStore();
-		return $roleStore->getName( $role_id );
+		return $this->slotRoleStore->getName( $role_id );
 	}
 
 	private function convertWhiteSpaceToHTML( $message ) {
 		$msg = htmlspecialchars( $message );
-		$msg = preg_replace( '/^ /m', '&#160; ', $msg );
-		$msg = preg_replace( '/ $/m', ' &#160;', $msg );
-		$msg = preg_replace( '/  /', '&#160; ', $msg );
+		$msg = preg_replace( '/^ /m', "\u{00A0} ", $msg );
+		$msg = preg_replace( '/ $/m', " \u{00A0}", $msg );
+		$msg = str_replace( '  ', "\u{00A0} ", $msg );
 		# $msg = str_replace( "\n", '<br />', $msg );
 		return $msg;
 	}

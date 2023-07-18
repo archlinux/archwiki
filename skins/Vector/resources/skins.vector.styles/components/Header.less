@@ -1,4 +1,5 @@
 @import '../../common/variables.less';
+@import '../../common/mixins.less';
 @import 'mediawiki.mixins.less';
 
 // Header sizes defined in the description of T246170 and comment T246170#5957100
@@ -19,34 +20,26 @@
 	// https://caniuse.com/#search=align-items
 	align-items: center;
 
-	.vector-layout-legacy & {
-		margin: @margin-top-header 0 @margin-bottom-header 0;
-		padding: 0;
-	}
-
-	#mw-sidebar-button {
-		margin-right: @margin-horizontal-sidebar-button-icon; // Accidentally the same.
-	}
-
-	&-content,
-	&-aside {
+	.vector-header-start,
+	.vector-header-end {
 		display: flex;
 		align-items: center;
 	}
 
-	&-aside {
-		float: left;
-	}
-
-	&-content {
+	.vector-header-end {
 		flex-grow: 1;
 	}
 
 	@media ( min-width: @min-width-desktop-wide ) {
 		// Ensure search box is aligned with content when search thumbnails or JS is off
-		.vector-search-box:not( .vector-search-box-auto-expand-width ),
-		html:not( .client-js ) & .vector-search-box {
+		.vector-feature-page-tools-disabled & .vector-search-box:not( .vector-search-box-auto-expand-width ),
+		.vector-feature-page-tools-disabled:not( .client-js ) & .vector-search-box {
 			padding-left: @size-search-expand;
+		}
+
+		.client-js.vector-feature-page-tools-enabled & .vector-search-box.vector-search-box-auto-expand-width {
+			// Ensure search box is aligned with content when it autoexpands (i.e. search thumbnails)
+			margin-left: -@size-search-expand;
 		}
 	}
 
@@ -56,13 +49,12 @@
 		}
 	}
 
-	/**
-	 * Toggles the visibility of the search box at lower resolutions.
-	 */
 	@media ( max-width: @max-width-tablet ) {
+		/**
+	 	 * Toggles the visibility of the search box at lower resolutions.
+		 */
 		&.vector-header-search-toggled {
-			#mw-sidebar-button,
-			.mw-logo,
+			.vector-header-start,
 			.search-toggle {
 				display: none;
 			}
@@ -75,12 +67,15 @@
 				// T284242#7206507: Widen the suggestion results to the edge of the search
 				// button at small resolutions.
 				position: relative;
-				margin-left: @padding-horizontal-tabs;
 				margin-right: @margin-end-search;
 
 				// Override default max width at lower resolutions
 				> div {
 					max-width: none;
+				}
+
+				.vector-feature-page-tools-disabled & {
+					margin-left: @padding-horizontal-tabs;
 				}
 			}
 

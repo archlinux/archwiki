@@ -7,6 +7,7 @@ use HashConfig;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Tests\Unit\Auth\AuthenticationProviderTestTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use RequestContext;
 use User;
 use Wikimedia\TestingAccessWrapper;
 
@@ -75,17 +76,26 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	 */
 	private function getBlockedUser( array $blockOptions ): User {
 		$user = $this->getMutableTestUser()->getUser();
-		$wrappedUser = TestingAccessWrapper::newFromObject( $user );
+		$blockStore = $this->getServiceContainer()->getDatabaseBlockStore();
 		$block = new DatabaseBlock( $blockOptions + [
 			'address' => $user,
 			'by' => $this->getTestSysop()->getUser(),
 			'reason' => __METHOD__,
 			'expiry' => time() + 100500,
 		] );
-		$wrappedUser->mBlock = $block;
-		$wrappedUser->mBlockedby = $block->getByName();
-		$wrappedUser->mBlockreason = $block->getReason();
-		$wrappedUser->mHideName = false;
+		$blockStore->insertBlock( $block );
+		if ( $block->getType() === DatabaseBlock::TYPE_IP ) {
+			// When an ip is blocked, the provided user object needs to know the ip
+			// That allows BlockManager::getUserBlock to load the ip block for this user
+			$request = $this->getMockBuilder( FauxRequest::class )
+				->onlyMethods( [ 'getIP' ] )->getMock();
+			$request->method( 'getIP' )
+				->willReturn( $blockOptions['address'] );
+			// The global request is used by User::getRequest
+			RequestContext::getMain()->setRequest( $request );
+			// The ip from request is only used for the global user
+			RequestContext::getMain()->setUser( $user );
+		}
 
 		return $user;
 	}
@@ -151,7 +161,7 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 		$provider = new CheckBlocksSecondaryAuthenticationProvider(
 			[ 'blockDisablesLogin' => $blockDisablesLogin ]
 		);
-		$this->initProvider( $provider,  new HashConfig(), null, $authManager );
+		$this->initProvider( $provider, new HashConfig(), null, $authManager );
 
 		$user = $this->getAnyBlockedUser( $blockType, $blockOptions );
 
@@ -160,13 +170,15 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	}
 
 	public function provideBeginSecondaryAuthentication() {
-		// all blocks prevent login on $wgBlockDisablesLogin wikis; global blocks are not handled
+		// Only fail authentication when $wgBlockDisablesLogin is set, the block is not partial,
+		// and not an IP block. Global blocks could in theory go either way, but GlobalBlocking
+		// extension blocks are always IP blocks so we mock them as such.
 		return [
 			// block type (user/ip/global/none), block options, wgBlockDisablesLogin, expected response status
 			'block does not disable login' => [ 'user', [], false, AuthenticationResponse::ABSTAIN ],
 			'not blocked' => [ 'none', [], true, AuthenticationResponse::PASS ],
-			'partial block' => [ 'user', [ 'sitewide' => false ], true, AuthenticationResponse::FAIL ],
-			'ip block' => [ 'ip', [], true, AuthenticationResponse::FAIL ],
+			'partial block' => [ 'user', [ 'sitewide' => false ], true, AuthenticationResponse::PASS ],
+			'ip block' => [ 'ip', [], true, AuthenticationResponse::PASS ],
 			'block' => [ 'user', [], true, AuthenticationResponse::FAIL ],
 			'global block' => [ 'global-ip', [], true, AuthenticationResponse::PASS ],
 		];
@@ -189,7 +201,7 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 		$provider = new CheckBlocksSecondaryAuthenticationProvider(
 			[ 'blockDisablesLogin' => $blockDisablesLogin ]
 		);
-		$this->initProvider( $provider,  new HashConfig(), null, $authManager );
+		$this->initProvider( $provider, new HashConfig(), null, $authManager );
 
 		$user = $this->getAnyBlockedUser( $blockType, $blockOptions );
 
@@ -199,7 +211,8 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 	}
 
 	public function provideTestUserForCreation() {
-		// blocks with createAccount flag prevent account signup, other blocks are ignored
+		// Tests for normal signup: only prevent if the user is blocked, the block is specifically
+		// targeted to the username, not partial, and the block prevents account creation.
 		$signupTests = [
 			// block type (user/ip/global/none), block options, wgBlockDisablesLogin, expected status
 			'not blocked' => [ 'none', [], true, true ],
@@ -207,14 +220,20 @@ class CheckBlocksSecondaryAuthenticationProviderTest extends \MediaWikiIntegrati
 			'createaccount-blocked' => [ 'user', [ 'createAccount' => true ], false, false ],
 			'blocked with wgBlockDisablesLogin' => [ 'user', [], true, true ],
 			'ip-blocked' => [ 'ip', [], false, true ],
-			'createaccount-ip-blocked' => [ 'ip', [ 'createAccount' => true ], false, false ],
+			'createaccount-ip-blocked' => [ 'ip', [ 'createAccount' => true ], false, true ],
 			'ip-blocked with wgBlockDisablesLogin' => [ 'ip', [], true, true ],
-			'partially blocked' => [ 'user', [ 'createAccount' => true, 'sitewide' => false ], true, false ],
+			'partially blocked' => [ 'user', [ 'createAccount' => true, 'sitewide' => false ], true, true ],
 			'globally blocked' => [ 'global-ip', [], false, true ],
 			'globally blocked with wgBlockDisablesLogin' => [ 'global-ip', [], true, true ],
 		];
 
+		// Tests for autocreation: in addition, also prevent on blocks without the
+		// createaccount flag if $wgBlockDisablesLogin is set, and also prevent on IP blocks
+		// when either the createaccount flag or $wgBlockDisablesLogin is set.
 		$autocreateTests = $signupTests;
+		$autocreateTests['blocked with wgBlockDisablesLogin'][3] = false;
+		$autocreateTests['createaccount-ip-blocked'][3] = false;
+		$autocreateTests['ip-blocked with wgBlockDisablesLogin'][3] = false;
 
 		foreach ( $signupTests as $name => $test ) {
 			// add autocreate parameter

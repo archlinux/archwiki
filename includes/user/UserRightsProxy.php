@@ -23,8 +23,10 @@
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\IDatabase;
 
 /**
@@ -37,6 +39,8 @@ class UserRightsProxy implements UserIdentity {
 
 	/** @var IDatabase */
 	private $db;
+	/** @var IDatabase */
+	private $userdb;
 	/** @var string */
 	private $dbDomain;
 	/** @var string */
@@ -52,12 +56,14 @@ class UserRightsProxy implements UserIdentity {
 	 * @see newFromId()
 	 * @see newFromName()
 	 * @param IDatabase $db Db connection
+	 * @param IDatabase $userdb Db connection (user table)
 	 * @param string $dbDomain Database name
 	 * @param string $name User name
 	 * @param int $id User ID
 	 */
-	private function __construct( $db, $dbDomain, $name, $id ) {
+	private function __construct( $db, $userdb, $dbDomain, $name, $id ) {
 		$this->db = $db;
+		$this->userdb = $userdb;
 		$this->dbDomain = $dbDomain;
 		$this->name = $name;
 		$this->id = intval( $id );
@@ -151,7 +157,7 @@ class UserRightsProxy implements UserIdentity {
 
 			if ( $row !== false ) {
 				return new UserRightsProxy(
-					$db, $dbDomain, $row->user_name, intval( $row->user_id ) );
+					$db, $userdb, $dbDomain, $row->user_name, intval( $row->user_id ) );
 			}
 		}
 		return null;
@@ -288,16 +294,16 @@ class UserRightsProxy implements UserIdentity {
 	 * Replaces User::touchUser()
 	 */
 	public function invalidateCache() {
-		$this->db->update(
+		$this->userdb->update(
 			'user',
-			[ 'user_touched' => $this->db->timestamp() ],
+			[ 'user_touched' => $this->userdb->timestamp() ],
 			[ 'user_id' => $this->id ],
 			__METHOD__
 		);
 
-		$domainId = $this->db->getDomainID();
+		$domainId = $this->userdb->getDomainID();
 		$userId = $this->id;
-		$this->db->onTransactionPreCommitOrIdle(
+		$this->userdb->onTransactionPreCommitOrIdle(
 			static function () use ( $domainId, $userId ) {
 				User::purge( $domainId, $userId );
 			},

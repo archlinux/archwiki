@@ -16,15 +16,20 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Maintenance
  */
+
+use MediaWiki\ResourceLoader\ForeignResourceManager;
 
 require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Manage foreign resources registered with ResourceLoader.
  *
+ * This uses the MediaWiki\ResourceLoader\ForeignResourceManager class internally.
+ * See also ForeignResourceStructureTest, which runs the "verify" action in CI.
+ *
  * @ingroup Maintenance
+ * @ingroup ResourceLoader
  * @since 1.32
  */
 class ManageForeignResources extends Maintenance {

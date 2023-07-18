@@ -1,14 +1,10 @@
 <?php
-
 /**
- * Join Selector Visitor
- *
- * @package Less
- * @subpackage visitor
+ * @private
  */
 class Less_Visitor_joinSelector extends Less_Visitor {
 
-	public $contexts = array( array() );
+	public $contexts = [ [] ];
 
 	/**
 	 * @param Less_Tree_Ruleset $root
@@ -26,31 +22,34 @@ class Less_Visitor_joinSelector extends Less_Visitor {
 	}
 
 	public function visitRuleset( $rulesetNode ) {
-		$paths = array();
+		$context = end( $this->contexts );
+		$paths = [];
 
 		if ( !$rulesetNode->root ) {
-			$selectors = array();
-
-			if ( $rulesetNode->selectors && $rulesetNode->selectors ) {
-				foreach ( $rulesetNode->selectors as $selector ) {
+			$selectors = $rulesetNode->selectors;
+			if ( $selectors !== null ) {
+				$filtered = [];
+				foreach ( $selectors as $selector ) {
 					if ( $selector->getIsOutput() ) {
-						$selectors[] = $selector;
+						$filtered[] = $selector;
 					}
+				}
+				$selectors = $rulesetNode->selectors = $filtered ?: null;
+				if ( $selectors ) {
+					$paths = $rulesetNode->joinSelectors( $context, $selectors );
 				}
 			}
 
-			if ( !$selectors ) {
-				$rulesetNode->selectors = null;
+			if ( $selectors === null ) {
 				$rulesetNode->rules = null;
-			} else {
-				$context = end( $this->contexts ); // $context = $this->contexts[ count($this->contexts) - 1];
-				$paths = $rulesetNode->joinSelectors( $context, $selectors );
 			}
 
 			$rulesetNode->paths = $paths;
 		}
 
-		$this->contexts[] = $paths; // different from less.js. Placed after joinSelectors() so that $this->contexts will get correct $paths
+		// NOTE: Assigned here instead of at the start like less.js,
+		// because PHP arrays aren't by-ref
+		$this->contexts[] = $paths;
 	}
 
 	public function visitRulesetOut() {
@@ -58,9 +57,9 @@ class Less_Visitor_joinSelector extends Less_Visitor {
 	}
 
 	public function visitMedia( $mediaNode ) {
-		$context = end( $this->contexts ); // $context = $this->contexts[ count($this->contexts) - 1];
+		$context = end( $this->contexts );
 
-		if ( !count( $context ) || ( is_object( $context[0] ) && $context[0]->multiMedia ) ) {
+		if ( count( $context ) === 0 || ( is_object( $context[0] ) && $context[0]->multiMedia ) ) {
 			$mediaNode->rules[0]->root = true;
 		}
 	}

@@ -3,9 +3,8 @@
 namespace MediaWiki\Extension\AbuseFilter\Maintenance;
 
 // @codeCoverageIgnoreStart
-if ( getenv( 'MW_INSTALL_PATH' ) ) {
-	$IP = getenv( 'MW_INSTALL_PATH' );
-} else {
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
@@ -14,13 +13,11 @@ require_once "$IP/maintenance/Maintenance.php";
 use LoggedUpdateMaintenance;
 use ManualLogEntry;
 use MediaWiki\Extension\AbuseFilter\Special\SpecialAbuseFilter;
-use MediaWiki\MediaWikiServices;
 use User;
 
 /**
- * Adds rows missing per T54919
  * @codeCoverageIgnore
- * No need to cover: old, single-use script.
+ * No need to test old single-use script.
  */
 class AddMissingLoggingEntries extends LoggedUpdateMaintenance {
 	public function __construct() {
@@ -46,7 +43,7 @@ class AddMissingLoggingEntries extends LoggedUpdateMaintenance {
 		$dryRun = $this->hasOption( 'dry-run' );
 		$logParams = [];
 		$afhRows = [];
-		$db = wfGetDB( DB_REPLICA, 'vslow' );
+		$db = $this->getDB( DB_REPLICA, 'vslow' );
 
 		$logParamsConcat = $db->buildConcat( [ 'afh_id', $db->addQuotes( "\n" ) ] );
 		$legacyParamsLike = $db->buildLike( $logParamsConcat, $db->anyString() );
@@ -81,16 +78,16 @@ class AddMissingLoggingEntries extends LoggedUpdateMaintenance {
 			return !$dryRun;
 		}
 
-		$logResult = wfGetDB( DB_REPLICA )->select(
+		$logResult = $this->getDB( DB_REPLICA )->selectFieldValues(
 			'logging',
-			[ 'log_params' ],
+			'log_params',
 			[ 'log_type' => 'abusefilter', 'log_params' => $logParams ],
 			__METHOD__
 		);
 
-		foreach ( $logResult as $row ) {
+		foreach ( $logResult as $params ) {
 			// id . "\n" . filter
-			$afhId = explode( "\n", $row->log_params, 2 )[0];
+			$afhId = explode( "\n", $params, 2 )[0];
 			// Forget this row had any issues - it just has a different timestamp in the log
 			unset( $afhRows[$afhId] );
 		}
@@ -109,13 +106,12 @@ class AddMissingLoggingEntries extends LoggedUpdateMaintenance {
 			return false;
 		}
 
-		$dbw = wfGetDB( DB_PRIMARY );
-		$factory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
+		$dbw = $this->getDB( DB_PRIMARY );
 
 		$count = 0;
 		foreach ( $afhRows as $row ) {
 			if ( $count % 100 === 0 ) {
-				$factory->waitForReplication();
+				$this->waitForReplication();
 			}
 			$user = User::newFromAnyId( $row->afh_user, $row->afh_user_text, null );
 

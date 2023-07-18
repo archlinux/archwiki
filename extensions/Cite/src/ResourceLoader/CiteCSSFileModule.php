@@ -31,7 +31,7 @@ class CiteCSSFileModule extends FileModule {
 			$contLang->getFallbackLanguages()
 		);
 		foreach ( $langCodes as $lang ) {
-			$langStyleFile = 'ext.cite.style.' . $lang . '.css';
+			$langStyleFile = 'ext.cite.style.' . strtr( $lang, '-', '_' ) . '.css';
 			$localPath = $this->getLocalPath( $langStyleFile );
 			if ( file_exists( $localPath ) ) {
 				$this->styles[] = $langStyleFile;

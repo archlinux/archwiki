@@ -3,8 +3,11 @@
 namespace MediaWiki\Extension\TemplateData;
 
 use Html;
+use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 use MessageLocalizer;
 use stdClass;
+use Title;
 
 class TemplateDataHtmlFormatter {
 
@@ -25,10 +28,12 @@ class TemplateDataHtmlFormatter {
 
 	/**
 	 * @param TemplateDataBlob $templateData
+	 * @param Title $frameTitle
+	 * @param bool $showEditLink
 	 *
 	 * @return string HTML
 	 */
-	public function getHtml( TemplateDataBlob $templateData ): string {
+	public function getHtml( TemplateDataBlob $templateData, Title $frameTitle, bool $showEditLink = true ): string {
 		$data = $templateData->getDataInLanguage( $this->languageCode );
 
 		$icon = null;
@@ -67,7 +72,15 @@ class TemplateDataHtmlFormatter {
 			. '</header>'
 			. '<table class="wikitable mw-templatedata-doc-params' . $sorting . '">'
 			. Html::rawElement( 'caption', [],
-				Html::element( 'p', [],
+				// Edit interface is only loaded in the template namespace (see Hooks::onEditPage)
+				( $showEditLink && $frameTitle->inNamespace( NS_TEMPLATE ) ?
+					Html::element( 'mw:edittemplatedata', [
+						'page' => $frameTitle->getPrefixedText()
+					] ) :
+					''
+				) .
+				Html::element( 'p',
+					[ 'class' => 'mw-templatedata-caption' ],
 					$this->localizer->msg( 'templatedata-doc-params' )->text()
 				)
 				. ( $formatMsg ?
@@ -118,6 +131,54 @@ class TemplateDataHtmlFormatter {
 		$html .= '</tbody></table>';
 
 		return Html::rawElement( 'section', [ 'class' => 'mw-templatedata-doc-wrap' ], $html );
+	}
+
+	/**
+	 * Replace <mw:edittemplatedata> markers with links
+	 *
+	 * @param string &$text
+	 */
+	public function replaceEditLink( string &$text ) {
+		$localizer = $this->localizer;
+		$text = preg_replace_callback(
+			// Based on EDITSECTION_REGEX in ParserOutput
+			'#<mw:edittemplatedata page="(.*?)"></mw:edittemplatedata>#s',
+			static function ( $m ) use ( $localizer ) {
+				$editsectionPage = Title::newFromText( htmlspecialchars_decode( $m[1] ) );
+
+				if ( !is_object( $editsectionPage ) ) {
+					LoggerFactory::getInstance( 'Parser' )
+						->error(
+							'TemplateDataHtmlFormatter::replaceEditLink(): bad title in edittemplatedata placeholder',
+							[
+								'placeholder' => $m[0],
+								'editsectionPage' => $m[1],
+							]
+						);
+					return '';
+				}
+
+				$result = Html::openElement( 'span', [ 'class' => 'mw-editsection-like' ] );
+				$result .= Html::rawElement( 'span', [ 'class' => 'mw-editsection-bracket' ], '[' );
+
+				$linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
+				$result .= $linkRenderer->makeKnownLink(
+					$editsectionPage,
+					$localizer->msg( 'templatedata-editbutton' )->text(),
+					[],
+					[
+						'action' => 'edit',
+						'templatedata' => 'edit',
+					]
+				);
+
+				$result .= Html::rawElement( 'span', [ 'class' => 'mw-editsection-bracket' ], ']' );
+				$result .= Html::closeElement( 'span' );
+
+				return $result;
+			},
+			$text
+		);
 	}
 
 	/**

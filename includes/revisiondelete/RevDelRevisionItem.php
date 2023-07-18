@@ -19,6 +19,7 @@
  * @ingroup RevisionDelete
  */
 
+use MediaWiki\Linker\Linker;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 
@@ -197,7 +198,8 @@ class RevDelRevisionItem extends RevDelItem {
 			->rawParams( $this->getDiffLink() )->escaped();
 		$revlink = $this->getRevisionLink();
 		$userlink = Linker::revUserLink( $revRecord );
-		$comment = Linker::revComment( $revRecord );
+		$comment = MediaWikiServices::getInstance()->getCommentFormatter()
+			->formatRevision( $revRecord, $this->list->getAuthority() );
 		if ( $this->isDeleted() ) {
 			$class = Linker::getRevisionDeletedClass( $revRecord );
 			$revlink = "<span class=\"$class\">$revlink</span>";
@@ -206,7 +208,7 @@ class RevDelRevisionItem extends RevDelItem {
 		$attribs = [];
 		$tags = $this->getTags();
 		if ( $tags ) {
-			list( $tagSummary, $classes ) = ChangeTags::formatSummaryRow(
+			[ $tagSummary, $classes ] = ChangeTags::formatSummaryRow(
 				$tags,
 				'revisiondelete',
 				$this->list->getContext()

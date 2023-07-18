@@ -15,7 +15,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"MessagesDirs": {
 		"Cite": [
@@ -197,6 +197,10 @@
 				"cite_references_link_accessibility_label",
 				"cite_references_link_many_accessibility_label",
 				"cite_references_link_accessibility_back_label"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
 			]
 		}
 	},
@@ -223,7 +227,8 @@
 	"attributes": {
 		"CodeMirror": {
 			"TagModes": {
-				"ref": "text/mediawiki"
+				"ref": "text/mediawiki",
+				"references": "text/mediawiki"
 			}
 		},
 		"EventLogging": {

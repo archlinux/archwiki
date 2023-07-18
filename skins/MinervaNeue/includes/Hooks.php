@@ -20,20 +20,30 @@
 
 namespace MediaWiki\Minerva;
 
+use ChangesList;
+use ChangesListFilterGroup;
+use Config;
 use ExtensionRegistry;
 use Hooks as MWHooks;
 use Html;
+use MediaWiki\Hook\FetchChangesListHook;
+use MediaWiki\Hook\OutputPageBodyAttributesHook;
+use MediaWiki\Hook\UserLogoutCompleteHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Minerva\Skins\SkinMinerva;
 use MediaWiki\Minerva\Skins\SkinUserPageHelper;
+use MediaWiki\ResourceLoader\Context;
+use MediaWiki\ResourceLoader\Hook\ResourceLoaderGetConfigVarsHook;
+use MediaWiki\ResourceLoader\Hook\ResourceLoaderRegisterModulesHook;
+use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\Skins\Hook\SkinPageReadyConfigHook;
+use MediaWiki\SpecialPage\Hook\SpecialPageBeforeExecuteHook;
 use MobileContext;
 use MobileFormatter;
 use MobileFrontend\Features\Feature;
 use MobileFrontend\Features\FeaturesManager;
 use OldChangesList;
 use OutputPage;
-use ResourceLoader;
-use ResourceLoaderContext;
 use RuntimeException;
 use Skin;
 use SpecialPage;
@@ -46,7 +56,15 @@ use Wikimedia\Services\NoSuchServiceException;
  * Hook handler method names should be in the form of:
  *	on<HookName>()
  */
-class Hooks {
+class Hooks implements
+	FetchChangesListHook,
+	OutputPageBodyAttributesHook,
+	ResourceLoaderGetConfigVarsHook,
+	ResourceLoaderRegisterModulesHook,
+	SkinPageReadyConfigHook,
+	SpecialPageBeforeExecuteHook,
+	UserLogoutCompleteHook
+{
 	private const FEATURE_OVERFLOW_PAGE_ACTIONS = 'MinervaOverflowInPageActions';
 
 	/**
@@ -62,7 +80,7 @@ class Hooks {
 	 *
 	 * @param ResourceLoader $resourceLoader
 	 */
-	public static function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ) {
+	public function onResourceLoaderRegisterModules( ResourceLoader $resourceLoader ): void {
 		if ( !ExtensionRegistry::getInstance()->isLoaded( 'MobileFrontend' ) ) {
 			$resourceLoader->register( [
 				'mobile.startup' => [
@@ -70,9 +88,25 @@ class Hooks {
 					'localBasePath' => dirname( __DIR__ ),
 					'remoteExtPath' => 'Minerva',
 					'scripts' => 'resources/mobile.startup.stub.js',
-					'targets' => [ 'desktop', 'mobile' ],
 				]
 			] );
+		}
+	}
+
+	/**
+	 * PreferencesGetLayout hook handler.
+	 *
+	 * Use mobile layout in Special:Preferences
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PreferencesGetLayout
+	 *
+	 * @param bool &$useMobileLayout
+	 * @param Skin|string $skin
+	 */
+	public static function onPreferencesGetLayout( &$useMobileLayout, $skin ) {
+		if ( $skin instanceof Skin && $skin->getSkinName() === 'minerva' ) {
+			$useMobileLayout = true;
+		} elseif ( is_string( $skin ) && $skin === 'minerva' ) {
+			$useMobileLayout = true;
 		}
 	}
 
@@ -82,11 +116,11 @@ class Hooks {
 	 *
 	 * @param User $user
 	 * @param Skin $skin
-	 * @param array &$list
-	 * @param array $groups
+	 * @param ChangesList|null &$list
+	 * @param ChangesListFilterGroup[] $groups
 	 * @return bool|null
 	 */
-	public static function onFetchChangesList( User $user, Skin $skin, &$list, $groups = [] ) {
+	public function onFetchChangesList( $user, $skin, &$list, $groups ) {
 		if ( $skin->getSkinName() === 'minerva' ) {
 			// The new changes list (table-based) does not work with Minerva
 			$list = new OldChangesList( $skin->getContext(), $groups );
@@ -181,7 +215,7 @@ class Hooks {
 	 * @param SpecialPage $special
 	 * @param string $subpage
 	 */
-	public static function onSpecialPageBeforeExecute( SpecialPage $special, $subpage ) {
+	public function onSpecialPageBeforeExecute( $special, $subpage ) {
 		$name = $special->getName();
 		$out = $special->getOutput();
 		$skin = $out->getSkin();
@@ -247,6 +281,7 @@ class Hooks {
 				// SkinUserPageHelper is being instantiated instead.
 				$relevantUserPageHelper = new SkinUserPageHelper(
 					$services->getUserNameUtils(),
+					$services->getUserFactory(),
 					$title->inNamespace( NS_USER_TALK ) ? $title->getSubjectPage() : $title,
 					$mobileContext
 				);
@@ -277,6 +312,8 @@ class Hooks {
 				SkinOptions::MAIN_MENU_EXPANDED => $featureManager->isFeatureAvailableForCurrentUser(
 					'MinervaAdvancedMainMenu'
 				),
+				// In mobile, always resort to single icon.
+				SkinOptions::SINGLE_ECHO_BUTTON => true,
 				SkinOptions::HISTORY_IN_PAGE_ACTIONS => $isUserPageOrUserTalkPage ?
 					true : $featureManager->isFeatureAvailableForCurrentUser( 'MinervaHistoryInPageActions' ),
 				SkinOptions::TOOLBAR_SUBMENU => $isUserPageOrUserTalkPage ?
@@ -315,8 +352,10 @@ class Hooks {
 	 * RequestContextCreateSkinMobile hook runs before the UserLogout hook.
 	 *
 	 * @param User $user
+	 * @param string &$inject_html
+	 * @param string $oldName
 	 */
-	public static function onUserLogoutComplete( User $user ) {
+	public function onUserLogoutComplete( $user, &$inject_html, $oldName ) {
 		try {
 			$ctx = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
 			self::setMinervaSkinOptions( $ctx, $ctx->getSkin() );
@@ -345,11 +384,10 @@ class Hooks {
 	 *
 	 * @param array &$vars Array of variables to be added into the output of the RL startup module.
 	 * @param string $skin
+	 * @param Config $config
 	 */
-	public static function onResourceLoaderGetConfigVars( &$vars, $skin ) {
+	public function onResourceLoaderGetConfigVars( array &$vars, $skin, Config $config ): void {
 		if ( $skin === 'minerva' ) {
-			$config = MediaWikiServices::getInstance()->getConfigFactory()
-				->makeConfig( 'minerva' );
 			// This is to let the UI adjust itself to a wiki that is always read-only.
 			// Ignore temporary read-only on live wikis, requires heavy DB check (T233458).
 			$roConf = MediaWikiServices::getInstance()->getConfiguredReadOnlyMode();
@@ -357,53 +395,6 @@ class Hooks {
 				'wgMinervaABSamplingRate' => $config->get( 'MinervaABSamplingRate' ),
 				'wgMinervaReadOnly' => $roConf->isReadOnly(),
 			];
-		}
-	}
-
-	/**
-	 * The Minerva skin loads message box styles differently from core, to
-	 * reduce the amount of styles on the critical path.
-	 * This adds message box styles to pages that need it, to avoid loading them
-	 * on pages where they are not.
-	 *
-	 * @param OutputPage $out
-	 * @param Skin $skin
-	 */
-	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ) {
-		if ( $skin->getSkinName() === 'minerva' ) {
-			self::addMessageBoxStylesToPage( $out );
-		}
-	}
-
-	/**
-	 * The Minerva skin loads message box styles differently from core, to
-	 * reduce the amount of styles on the critical path.
-	 * This adds message box styles to pages that need it, to avoid loading them
-	 * on pages where they are not.
-	 * The pages where they are needed are:
-	 * - special pages
-	 * - edit workflow (action=edit and action=submit)
-	 * - when viewing old revisions
-	 * - non-main namespaces for anon talk page messages
-	 *
-	 * @param OutputPage $out
-	 */
-	private static function addMessageBoxStylesToPage( OutputPage $out ) {
-		$request = $out->getRequest();
-		$title = $out->getTitle();
-		// Warning box styles are needed when reviewing old revisions
-		// and inside the fallback editor styles to action=edit page.
-		$requestAction = $request->getVal( 'action' );
-		$viewAction = $requestAction === null || $requestAction === 'view';
-
-		if (
-			$title->getNamespace() !== NS_MAIN ||
-			$request->getText( 'oldid' ) ||
-			!$viewAction
-		) {
-			$out->addModuleStyles( [
-				'skins.minerva.messageBox.styles'
-			] );
 		}
 	}
 
@@ -417,7 +408,7 @@ class Hooks {
 	 * @param Skin $skin
 	 * @param string[] &$bodyAttrs
 	 */
-	public static function onOutputPageBodyAttributes( OutputPage $out, Skin $skin, &$bodyAttrs ) {
+	public function onOutputPageBodyAttributes( $out, $skin, &$bodyAttrs ): void {
 		$classes = $out->getProperty( 'bodyClassName' );
 		$skinOptions = MediaWikiServices::getInstance()->getService( 'Minerva.SkinOptions' );
 		$isMinerva = $skin instanceof SkinMinerva;
@@ -443,14 +434,13 @@ class Hooks {
 	 *
 	 * Disable collapsible and sortable on page load
 	 *
-	 * @param ResourceLoaderContext $context
+	 * @param Context $context
 	 * @param mixed[] &$config Associative array of configurable options
-	 * @return void This hook must not abort, it must return no value
 	 */
-	public static function onSkinPageReadyConfig(
-		ResourceLoaderContext $context,
+	public function onSkinPageReadyConfig(
+		Context $context,
 		array &$config
-	) {
+	): void {
 		if ( $context->getSkin() === 'minerva' ) {
 			$config['search'] = false;
 			$config['collapsible'] = false;

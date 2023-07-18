@@ -36,6 +36,12 @@ class="foo" | foobar
   baz 
 !! endarticle
 
+!! article
+No Merging Here
+!! text
+Dummy article to suppress redlinks in tests
+!! end
+
 !! test
 Unsupported scenario: Cell combining with captions
 !! options
@@ -138,6 +144,8 @@ Table cell attributes and content from multiple templates
 
 !! test
 Table cell attribute merging edge cases
+!! config
+wgParserEnableLegacyMediaDOM=false
 !! wikitext
 {|
 | {{td_attrs_and_content|1=<div>foo</div> class="foo"}} baz
@@ -152,18 +160,17 @@ Table cell attribute merging edge cases
 <td class="foo">foobar baz
 </td></tr>
 <tr>
-<td><a href="/index.php?title=No_Merging_Here&amp;action=edit&amp;redlink=1" class="new" title="No Merging Here (page does not exist)">No Merging Here</a> class="foo" | foobar baz
+<td><a href="/wiki/No_Merging_Here" title="No Merging Here">No Merging Here</a> class="foo" | foobar baz
 </td></tr>
 <tr>
-<td><a href="/index.php?title=Special:Upload&amp;wpDestFile=Foo.jpg" class="new" title="File:Foo.jpg">File:Foo.jpg</a> class="foo" | foobar baz
+<td><span class="mw-default-size" typeof="mw:Error mw:File"><a href="/index.php?title=Special:Upload&amp;wpDestFile=Foo.jpg" class="new" title="File:Foo.jpg"><span class="mw-broken-media">File:Foo.jpg</span></a></span> class="foo" | foobar baz
 </td></tr></tbody></table>
 !! html/parsoid
 <table>
-<tbody><tr>
-<td class="foo" typeof="mw:Transclusion" about="#mwt1" data-parsoid='{"pi":[[{"k":"1","named":true}]]}' data-mw='{"parts":["| ",{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"&lt;div>foo&lt;/div> class=\"foo\""}},"i":0}}," baz"]}'>foobar baz</td></tr>
-<tr>
-<td><a rel="mw:WikiLink" href="./No_Merging_Here" title="No Merging Here" about="#mwt2" typeof="mw:Transclusion" class="new" data-parsoid='{"stx":"simple","a":{"href":"./No_Merging_Here"},"sa":{"href":"No Merging Here"},"pi":[[{"k":"1","named":true}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"[[No Merging Here]] class=\"foo\""}},"i":0}}]}'>No Merging Here</a><span about="#mwt2"> class="foo" | foobar</span> baz</td></tr>
-<tr>
+<tbody><tr data-parsoid='{"autoInsertedStart":true}'><td class="foo" typeof="mw:Transclusion" about="#mwt1" data-parsoid='{"pi":[[{"k":"1","named":true}]]}' data-mw='{"parts":["| ",{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"&lt;div>foo&lt;/div> class=\"foo\""}},"i":0}}," baz"]}'>foobar baz</td></tr>
+<tr data-parsoid='{"startTagSrc":"|-"}'>
+<td><a rel="mw:WikiLink" href="./No_Merging_Here" title="No Merging Here" about="#mwt2" typeof="mw:Transclusion" data-parsoid='{"stx":"simple","a":{"href":"./No_Merging_Here"},"sa":{"href":"No Merging Here"},"pi":[[{"k":"1","named":true}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"[[No Merging Here]] class=\"foo\""}},"i":0}}]}'>No Merging Here</a><span about="#mwt2"> class="foo" | foobar</span> baz</td></tr>
+<tr data-parsoid='{"startTagSrc":"|-"}'>
 <td><span class="mw-default-size" typeof="mw:Transclusion mw:Error mw:File" about="#mwt3" data-parsoid='{"optList":[],"pi":[[{"k":"1","named":true}]]}' data-mw='{"parts":[{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"[[File:Foo.jpg]] class=\"foo\""}},"i":0}}]}'><a href="./Special:FilePath/Foo.jpg"><span class="mw-broken-media" resource="./File:Foo.jpg">File:Foo.jpg</span></a></span><span about="#mwt3"> class="foo" | foobar</span> baz</td></tr>
 </tbody></table>
 !! end
@@ -254,5 +261,23 @@ Table cell attributes and nested transclusions
 !! html/parsoid
 <table>
 <tbody><tr><td style="border:1px solid blue;" typeof="mw:Transclusion" about="#mwt1" data-mw='{"parts":["| &apos;&apos;&apos;",{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"style=&apos;border:1px solid blue;&apos;"}},"i":0}},"&apos;&apos;&apos;"]}'>foobar</td></tr>
+</tbody></table>
+!! end
+
+!! test
+T331486: Newline entities should be properly handled while fixing up table cells
+!! wikitext
+{|
+|{{td_attrs_and_content|1=title="a&#10;b" class="xyz"}}
+|}
+!! html/php
+<table>
+<tbody><tr>
+<td title="a&#10;b" class="xyz">foobar
+</td></tr></tbody></table>
+!! html/parsoid
+<table>
+<tbody><tr><td title="a
+b" class="xyz" typeof="mw:Transclusion" about="#mwt1" data-mw='{"parts":["|",{"template":{"target":{"wt":"td_attrs_and_content","href":"./Template:Td_attrs_and_content"},"params":{"1":{"wt":"title=\"a&amp;#10;b\" class=\"xyz\""}},"i":0}}]}'>foobar</td></tr>
 </tbody></table>
 !! end

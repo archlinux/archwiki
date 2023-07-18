@@ -23,6 +23,7 @@
 use MediaWiki\Block\BlockActionInfo;
 use MediaWiki\Block\BlockRestrictionStore;
 use MediaWiki\Block\Restriction\PageRestriction;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use Wikimedia\IPUtils;
@@ -120,16 +121,12 @@ class ApiQueryBlocks extends ApiQueryBase {
 		$this->addWhereRange( 'ipb_id', $params['dir'], null, null );
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 2 );
-			$op = ( $params['dir'] == 'newer' ? '>' : '<' );
-			$continueTimestamp = $db->addQuotes( $db->timestamp( $cont[0] ) );
-			$continueId = (int)$cont[1];
-			$this->dieContinueUsageIf( $continueId != $cont[1] );
-			$this->addWhere( "ipb_timestamp $op $continueTimestamp OR " .
-				"(ipb_timestamp = $continueTimestamp AND " .
-				"ipb_id $op= $continueId)"
-			);
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
+			$op = ( $params['dir'] == 'newer' ? '>=' : '<=' );
+			$this->addWhere( $db->buildComparison( $op, [
+				'ipb_timestamp' => $db->timestamp( $cont[0] ),
+				'ipb_id' => $cont[1],
+			] ) );
 		}
 
 		if ( $params['ids'] ) {
@@ -154,13 +151,13 @@ class ApiQueryBlocks extends ApiQueryBase {
 			}
 
 			# Check range validity, if it's a CIDR
-			list( $ip, $range ) = IPUtils::parseCIDR( $params['ip'] );
+			[ $ip, $range ] = IPUtils::parseCIDR( $params['ip'] );
 			if ( $ip !== false && $range !== false && $range < $cidrLimit ) {
 				$this->dieWithError( [ 'apierror-cidrtoobroad', $type, $cidrLimit ] );
 			}
 
 			# Let IPUtils::parseRange handle calculating $upper, instead of duplicating the logic here.
-			list( $lower, $upper ) = IPUtils::parseRange( $params['ip'] );
+			[ $lower, $upper ] = IPUtils::parseRange( $params['ip'] );
 
 			# Extract the common prefix to any rangeblock affecting this IP/CIDR
 			$prefix = substr( $lower, 0, $prefixLen + (int)floor( $cidrLimit / 4 ) );

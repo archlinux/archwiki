@@ -159,7 +159,7 @@ ve.ui.MWTocWidget.prototype.build = function () {
 		documentView = surfaceView.getDocument(),
 		lastLevel = 0,
 		stack = [],
-		uri = new mw.Uri();
+		url = new URL( location.href );
 
 	function getItemIndex( $el, n ) {
 		return $el.children( 'li' ).length + ( n === stack.length - 1 ? 1 : 0 );
@@ -194,12 +194,12 @@ ve.ui.MWTocWidget.prototype.build = function () {
 
 		var tocNumber = stack.map( getItemIndex ).join( '.' );
 		var viewNode = documentView.getBranchNodeFromOffset( modelNode.getRange().start );
-		uri.query.section = ( i + 1 ).toString();
+		url.searchParams.set( 'section', ( i + 1 ).toString() );
 		// The following classes are used here:
 		// * toclevel-1, toclevel-2, ...
 		// * tocsection-1, tocsection-2, ...
 		var $item = $( '<li>' ).addClass( 'toclevel-' + stack.length ).addClass( 'tocsection-' + ( i + 1 ) );
-		var $link = $( '<a>' ).attr( 'href', uri ).append(
+		var $link = $( '<a>' ).attr( 'href', url.toString() ).append(
 			$( '<span>' ).addClass( 'tocnumber' ).text( tocNumber )
 		);
 		var $text = $( '<span>' ).addClass( 'toctext' );

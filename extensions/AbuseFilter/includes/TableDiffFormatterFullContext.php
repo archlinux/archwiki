@@ -6,11 +6,11 @@ use Diff;
 use TableDiffFormatter;
 
 /**
- * Like TableDiffFormatter, but will always render the full context
- * (even for empty diffs).
+ * Like TableDiffFormatter, but will always render the full context (even for empty diffs).
+ *
  * @todo Consider moving to MW core (as a separate class, or as an option to TableDiffFormatter)
  *
- * @private
+ * @internal
  */
 class TableDiffFormatterFullContext extends TableDiffFormatter {
 	/**

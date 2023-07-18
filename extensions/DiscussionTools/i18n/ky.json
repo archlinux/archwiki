@@ -1,0 +1,19 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bosogo"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Жооп",
+	"discussiontools-replywidget-advanced": "Кеңейтүү",
+	"discussiontools-replywidget-cancel": "Жокко чыгаруу",
+	"discussiontools-replywidget-preview": "Алдын ала көрүү",
+	"discussiontools-replywidget-reply": "Жооп берүү",
+	"discussiontools-replywidget-summary": "Түшүндүрмө",
+	"discussiontools-replywidget-watchthis": "Бул баракты [[Special:Watchlist|көзөмөл тизмегиме]] кошуу",
+	"discussiontools-topicheader-authorcount": "Талкууга $1 {{PLURAL:$1|адам}} катышууда.",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|пикир}}",
+	"discussiontools-topicheader-latestcomment": "Соңку пикир: $1",
+	"discussiontools-topicsubscription-button-subscribe": "жазылуу",
+	"discussiontools-topicsubscription-button-subscribe-label": "Жазылуу"
+}

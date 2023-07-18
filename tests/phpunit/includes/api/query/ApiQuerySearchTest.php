@@ -1,6 +1,7 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 
 /**
  * @group medium
@@ -38,7 +39,7 @@ class ApiQuerySearchTest extends ApiTestCase {
 	 */
 	public function testSearchResults( $expect, $hits, array $params = [] ) {
 		MockSearchEngine::addMockResults( 'my query', $hits );
-		list( $response, $request ) = $this->doApiRequest( $params + [
+		[ $response, $request ] = $this->doApiRequest( $params + [
 			'action' => 'query',
 			'list' => 'search',
 			'srsearch' => 'my query',
@@ -71,7 +72,7 @@ class ApiQuerySearchTest extends ApiTestCase {
 	 */
 	public function testInterwikiResults( $expect, $hits, array $params = [] ) {
 		MockSearchEngine::setMockInterwikiResults( $hits );
-		list( $response, $request ) = $this->doApiRequest( $params + [
+		[ $response, $request ] = $this->doApiRequest( $params + [
 			'action' => 'query',
 			'list' => 'search',
 			'srsearch' => 'my query',

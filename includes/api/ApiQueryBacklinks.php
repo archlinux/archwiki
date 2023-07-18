@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\Linker\LinksMigration;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -102,7 +103,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		$this->hasNS = $moduleName !== 'imageusage';
 		$this->linksMigration = $linksMigration;
 		if ( isset( $this->linksMigration::$mapping[$this->bl_table] ) ) {
-			list( $this->bl_ns, $this->bl_title ) = $this->linksMigration->getTitleFields( $this->bl_table );
+			[ $this->bl_ns, $this->bl_title ] = $this->linksMigration->getTitleFields( $this->bl_table );
 		} else {
 			$this->bl_ns = $prefix . '_namespace';
 			if ( $this->hasNS ) {
@@ -156,15 +157,15 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		$this->addWhereFld( $this->bl_from_ns, $this->params['namespace'] );
 
 		if ( count( $this->cont ) >= 2 ) {
-			$op = $this->params['dir'] == 'descending' ? '<' : '>';
+			$db = $this->getDB();
+			$op = $this->params['dir'] == 'descending' ? '<=' : '>=';
 			if ( $this->params['namespace'] !== null && count( $this->params['namespace'] ) > 1 ) {
-				$this->addWhere(
-					"{$this->bl_from_ns} $op {$this->cont[0]} OR " .
-					"({$this->bl_from_ns} = {$this->cont[0]} AND " .
-					"{$this->bl_from} $op= {$this->cont[1]})"
-				);
+				$this->addWhere( $db->buildComparison( $op, [
+					$this->bl_from_ns => $this->cont[0],
+					$this->bl_from => $this->cont[1],
+				] ) );
 			} else {
-				$this->addWhere( "{$this->bl_from} $op= {$this->cont[1]}" );
+				$this->addWhere( $db->buildComparison( $op, [ $this->bl_from => $this->cont[1] ] ) );
 			}
 		}
 
@@ -267,26 +268,23 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		$this->addWhereFld( 'page_namespace', $this->params['namespace'] );
 
 		if ( count( $this->cont ) >= 6 ) {
-			$op = $this->params['dir'] == 'descending' ? '<' : '>';
+			$op = $this->params['dir'] == 'descending' ? '<=' : '>=';
 
-			$where = "{$this->bl_from} $op= {$this->cont[5]}";
+			$conds = [];
+			if ( $this->hasNS && count( $allRedirNs ) > 1 ) {
+				$conds[ $this->bl_ns ] = $this->cont[2];
+			}
+			if ( count( $allRedirDBkey ) > 1 ) {
+				$conds[ $this->bl_title ] = $this->cont[3];
+			}
 			// Don't bother with namespace, title, or from_namespace if it's
 			// otherwise constant in the where clause.
 			if ( $this->params['namespace'] !== null && count( $this->params['namespace'] ) > 1 ) {
-				$where = "{$this->bl_from_ns} $op {$this->cont[4]} OR " .
-					"({$this->bl_from_ns} = {$this->cont[4]} AND ($where))";
+				$conds[ $this->bl_from_ns ] = $this->cont[4];
 			}
-			if ( count( $allRedirDBkey ) > 1 ) {
-				$title = $db->addQuotes( $this->cont[3] );
-				$where = "{$this->bl_title} $op $title OR " .
-					"({$this->bl_title} = $title AND ($where))";
-			}
-			if ( $this->hasNS && count( $allRedirNs ) > 1 ) {
-				$where = "{$this->bl_ns} $op {$this->cont[2]} OR " .
-					"({$this->bl_ns} = {$this->cont[2]} AND ($where))";
-			}
+			$conds[ $this->bl_from ] = $this->cont[5];
 
-			$this->addWhere( $where );
+			$this->addWhere( $db->buildComparison( $op, $conds ) );
 		}
 		if ( $this->params['filterredir'] == 'redirects' ) {
 			$this->addWhereFld( 'page_is_redirect', 1 );
@@ -395,6 +393,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 		}
 
 		// Parse and validate continuation parameter
+		// (Can't use parseContinueParamOrDie(), because the length is variable)
 		$this->cont = [];
 		if ( $this->params['continue'] !== null ) {
 			$cont = explode( '|', $this->params['continue'] );
@@ -479,8 +478,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 				if ( count( $this->cont ) >= 7 ) {
 					$startAt = $this->cont[6];
 				} else {
-					reset( $this->resultArr );
-					$startAt = key( $this->resultArr );
+					$startAt = array_key_first( $this->resultArr );
 				}
 				$idx = 0;
 				foreach ( $this->resultArr as $pageID => $arr ) {
@@ -505,8 +503,7 @@ class ApiQueryBacklinks extends ApiQueryGeneratorBase {
 					if ( count( $this->cont ) >= 8 && $pageID == $startAt ) {
 						$redirStartAt = $this->cont[7];
 					} else {
-						reset( $redirLinks );
-						$redirStartAt = key( $redirLinks );
+						$redirStartAt = array_key_first( $redirLinks );
 					}
 					foreach ( $redirLinks as $key => $redir ) {
 						if ( $key < $redirStartAt ) {

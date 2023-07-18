@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Zolgoyo"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Cewap",
+	"discussiontools-replywidget-advanced": "Kelĭşmĭş",
+	"discussiontools-replywidget-cancel": "Wazkeş",
+	"discussiontools-replywidget-mode-source": "Menba",
+	"discussiontools-replywidget-mode-visual": "Körsel",
+	"discussiontools-replywidget-preview": "Körselden qara",
+	"discussiontools-replywidget-summary": "Qısqa tarif",
+	"discussiontools-replywidget-watchthis": "Bo saypanı [[Special:Watchlist|Közetüw cedwelĭne]] qoş",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|kĭşĭ}} muzakerede",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|yorum}}",
+	"discussiontools-topicheader-latestcomment": "Soñkĭ yorum: $1",
+	"discussiontools-topicsubscription-button-subscribe": "abone bol",
+	"discussiontools-topicsubscription-button-subscribe-label": "Abone bol",
+	"discussiontools-topicsubscription-button-unsubscribe": "abone bolma",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Abone bolma"
+}

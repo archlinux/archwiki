@@ -25,10 +25,13 @@ use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\PasswordAuthenticationRequest;
+use MediaWiki\Html\Html;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\Title\Title;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -295,7 +298,7 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 				// A wiki without HTTPS login support should set $wgServer to
 				// http://somehost, in which case the secure URL generated
 				// above won't actually start with https://
-				if ( substr( $url, 0, 8 ) === 'https://' ) {
+				if ( str_starts_with( $url, 'https://' ) ) {
 					$this->mSecureLoginUrl = $url;
 				}
 			}
@@ -602,12 +605,33 @@ abstract class LoginSignupSpecialPage extends AuthManagerSpecialPage {
 			);
 		}
 
+		$formBlock = Html::rawElement( 'div', [ 'id' => 'userloginForm' ], $formHtml );
+		$formAndBenefits = $formBlock;
+		if ( $this->isSignup() && $this->showExtraInformation() ) {
+			$benefitsContainerHtml = null;
+			$info = [
+				'context' => $this->getContext(),
+				'form' => $this->authForm,
+			];
+			$options = [
+				'beforeForm' => false,
+			];
+			$this->getHookRunner()->onSpecialCreateAccountBenefits(
+				$benefitsContainerHtml, $info, $options
+			);
+			if ( $benefitsContainerHtml === null ) {
+				$benefitsContainerHtml = $this->getBenefitsContainerHtml();
+			}
+			$formAndBenefits = $options['beforeForm']
+				? ( $benefitsContainerHtml . $formBlock )
+				: ( $formBlock . $benefitsContainerHtml );
+		}
+
 		return Html::rawElement( 'div', [ 'class' => 'mw-ui-container' ],
 			$loginPrompt
 			. $languageLinks
 			. $signupStart
-			. Html::rawElement( 'div', [ 'id' => 'userloginForm' ], $formHtml )
-			. $this->getBenefitsContainerHtml()
+			. $formAndBenefits
 		);
 	}
 

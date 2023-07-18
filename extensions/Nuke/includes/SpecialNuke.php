@@ -7,13 +7,15 @@ use DeletePageJob;
 use FileDeleteForm;
 use Html;
 use HTMLForm;
+use JobQueueGroup;
 use ListToggle;
 use MediaWiki\Extension\Nuke\Hooks\NukeHookRunner;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Permissions\PermissionManager;
 use OOUI\DropdownInputWidget;
 use OOUI\FieldLayout;
 use OOUI\TextInputWidget;
 use PermissionsError;
+use RepoGroup;
 use SpecialPage;
 use Title;
 use User;
@@ -27,9 +29,30 @@ class SpecialNuke extends SpecialPage {
 	/** @var NukeHookRunner */
 	private $hookRunner;
 
-	public function __construct() {
+	/** @var JobQueueGroup */
+	private $jobQueueGroup;
+
+	/** @var PermissionManager */
+	private $permissionManager;
+
+	/** @var RepoGroup */
+	private $repoGroup;
+
+	/**
+	 * @param JobQueueGroup $jobQueueGroup
+	 * @param PermissionManager $permissionManager
+	 * @param RepoGroup $repoGroup
+	 */
+	public function __construct(
+		JobQueueGroup $jobQueueGroup,
+		PermissionManager $permissionManager,
+		RepoGroup $repoGroup
+	) {
 		parent::__construct( 'Nuke', 'nuke' );
 		$this->hookRunner = new NukeHookRunner( $this->getHookContainer() );
+		$this->jobQueueGroup = $jobQueueGroup;
+		$this->permissionManager = $permissionManager;
+		$this->repoGroup = $repoGroup;
 	}
 
 	public function doesWrites() {
@@ -245,12 +268,12 @@ class SpecialNuke extends SpecialPage {
 		$commaSeparator = $this->msg( 'comma-separator' )->escaped();
 
 		$linkRenderer = $this->getLinkRenderer();
-		$localRepo = MediaWikiServices::getInstance()->getRepoGroup()->getLocalRepo();
+		$localRepo = $this->repoGroup->getLocalRepo();
 		foreach ( $pages as $info ) {
 			/**
 			 * @var $title Title
 			 */
-			list( $title, $userName ) = $info;
+			[ $title, $userName ] = $info;
 
 			$image = $title->inNamespace( NS_FILE ) ? $localRepo->newFile( $title ) : false;
 			$thumb = $image && $image->exists() ?
@@ -376,9 +399,7 @@ class SpecialNuke extends SpecialPage {
 		$jobs = [];
 		$user = $this->getUser();
 
-		$services = MediaWikiServices::getInstance();
-		$localRepo = $services->getRepoGroup()->getLocalRepo();
-		$permissionManager = $services->getPermissionManager();
+		$localRepo = $this->repoGroup->getLocalRepo();
 		foreach ( $pages as $page ) {
 			$title = Title::newFromText( $page );
 
@@ -396,7 +417,7 @@ class SpecialNuke extends SpecialPage {
 				continue;
 			}
 
-			$permission_errors = $permissionManager->getPermissionErrors( 'delete', $user, $title );
+			$permission_errors = $this->permissionManager->getPermissionErrors( 'delete', $user, $title );
 
 			if ( $permission_errors !== [] ) {
 				throw new PermissionsError( 'delete', $permission_errors );
@@ -404,7 +425,8 @@ class SpecialNuke extends SpecialPage {
 
 			$file = $title->getNamespace() === NS_FILE ? $localRepo->newFile( $title ) : false;
 			if ( $file ) {
-				$oldimage = null; // Must be passed by reference
+				// Must be passed by reference
+				$oldimage = null;
 				$status = FileDeleteForm::doDelete(
 					$title,
 					$file,
@@ -444,7 +466,7 @@ class SpecialNuke extends SpecialPage {
 		}
 
 		if ( $jobs ) {
-			MediaWikiServices::getInstance()->getJobQueueGroup()->push( $jobs );
+			$this->jobQueueGroup->push( $jobs );
 		}
 
 		$this->getOutput()->addHTML(

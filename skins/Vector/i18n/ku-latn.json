@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Balyozxane",
 			"Bikarhêner",
 			"Ferhengvan",
 			"George Animal",
-			"Gomada",
-			"Balyozxane"
+			"Gomada"
 		]
 	},
 	"skinname-vector": "Vector legacy (2010)",
@@ -44,6 +44,7 @@
 	"vector-search-loader": "Pêşniyazên lêgerînê tê barkirin",
 	"vector-searchsuggest-containing": "Li rûpelên ku <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> dihewînin bigere",
 	"vector-intro-page": "Help:Gavên pêşîn",
+	"vector-toc-label": "Naverok",
 	"vector-toc-beginning": "Destpêk",
 	"vector-toc-toggle-button-label": "Binêbeşa $1 bigire/veke",
 	"vector-anon-user-menu-pages": "Rûpelên ji bo edîtorên derketî",
@@ -53,6 +54,11 @@
 	"vector-toc-menu-tooltip": "Tabloya naverokê",
 	"vector-toc-collapsible-button-label": "Tabloya naverokê bigre/veke",
 	"vector-site-nav-label": "Malper",
+	"vector-page-tools-label": "Amûr",
+	"vector-pin-element-label": "Here menuya kêlekê",
+	"vector-unpin-element-label": "veşêre",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Gotûbêj]]",
-	"tooltip-vector-anon-user-menu-title": "Zêdetir opsiyon"
+	"tooltip-vector-anon-user-menu-title": "Zêdetir opsiyon",
+	"vector-prefs-limited-width": "Moda firehiya sînorkirî çalak bike",
+	"vector-prefs-limited-width-help": "Ji bo tecrûbeya xwendinê ya baştir moda firehiya sînorkirî çalak bike"
 }

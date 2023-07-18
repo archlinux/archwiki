@@ -7,12 +7,12 @@
 			"Eldarado",
 			"Erdemaslancan",
 			"Ganbarzada",
+			"Patriot Kor",
 			"Patriot Kur",
 			"QeneralĞasım",
 			"Tuzkozbir",
 			"Гусейн",
-			"아라",
-			"Patriot Kor"
+			"아라"
 		]
 	},
 	"tog-underline": "Linki jintono rijə bıkəş:",
@@ -167,6 +167,7 @@
 	"permalink": "Һежо мандә линк",
 	"print": "Çap",
 	"view": "Tamşo bıkə",
+	"viewcontribs": "Diyəkə bə tohfəon",
 	"skin-view-view": "Bıhand",
 	"skin-view-foreign": "Дијәкә сајтәдә $1",
 	"edit": "Sərosti bıkə",

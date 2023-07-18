@@ -3,10 +3,10 @@
 		"authors": [
 			"Cvanca",
 			"Dvorapa",
+			"Jaroslav Cerny",
 			"Matěj Suchánek",
 			"Mormegil",
-			"Slepi",
-			"Jaroslav Cerny"
+			"Slepi"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Zkontrolovat, zda filtr zneužití odpovídá sadě proměnných, editaci nebo změně zaznamenané ve filtru.\n\nJe vyžadována právě jedna z následujících možností: vars, rcid nebo logid.",

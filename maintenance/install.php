@@ -21,8 +21,7 @@
  * @ingroup Maintenance
  */
 
-// NO_AUTOLOAD -- file-scope define() used to modify behaviour
-
+use MediaWiki\Settings\SettingsBuilder;
 use Wikimedia\AtEase\AtEase;
 
 require_once __DIR__ . '/Maintenance.php';
@@ -47,9 +46,9 @@ class CommandLineInstaller extends Maintenance {
 		$this->addDescription( "CLI-based MediaWiki installation and configuration.\n" .
 			"Default options are indicated in parentheses." );
 
-		$this->addArg( 'name', 'The name of the wiki (MediaWiki)', false );
-
+		$this->addArg( 'name', 'The name of the wiki' );
 		$this->addArg( 'admin', 'The username of the wiki administrator.' );
+
 		$this->addOption( 'pass', 'The password for the wiki administrator.', false, true );
 		$this->addOption(
 			'passfile',
@@ -106,6 +105,19 @@ class CommandLineInstaller extends Maintenance {
 			false, true, false, true );
 	}
 
+	public function canExecuteWithoutLocalSettings(): bool {
+		return true;
+	}
+
+	public function finalSetup( SettingsBuilder $settingsBuilder = null ) {
+		if ( !$settingsBuilder ) {
+			$settingsBuilder = SettingsBuilder::getInstance();
+		}
+
+		parent::finalSetup( $settingsBuilder );
+		Installer::overrideConfig( $settingsBuilder );
+	}
+
 	public function getDbType() {
 		if ( $this->hasOption( 'env-checks' ) ) {
 			return Maintenance::DB_NONE;
@@ -126,9 +138,9 @@ class CommandLineInstaller extends Maintenance {
 		}
 
 		try {
-			$installer = InstallerOverrides::getCliInstaller( $siteName, $adminName, $this->mOptions );
+			$installer = InstallerOverrides::getCliInstaller( $siteName, $adminName, $this->parameters->getOptions() );
 		} catch ( \MediaWiki\Installer\InstallException $e ) {
-			$this->output( $e->getStatus()->getMessage( false, false, 'en' )->text() . "\n" );
+			$this->error( $e->getStatus()->getMessage( false, false, 'en' )->text() . "\n" );
 			return false;
 		}
 
@@ -136,15 +148,11 @@ class CommandLineInstaller extends Maintenance {
 		if ( $status->isGood() ) {
 			$installer->showMessage( 'config-env-good' );
 		} else {
-			$installer->showStatusMessage( $status );
-
 			return false;
 		}
 		if ( !$envChecksOnly ) {
 			$status = $installer->execute();
 			if ( !$status->isGood() ) {
-				$installer->showStatusMessage( $status );
-
 				return false;
 			}
 			$installer->writeConfigurationFile( $this->getOption( 'confpath', $IP ) );
@@ -170,7 +178,7 @@ class CommandLineInstaller extends Maintenance {
 			if ( $dbpass === false ) {
 				$this->fatalError( "Couldn't open $dbpassfile" );
 			}
-			$this->mOptions['dbpass'] = trim( $dbpass, "\r\n" );
+			$this->setOption( 'dbpass', trim( $dbpass, "\r\n" ) );
 		}
 	}
 
@@ -178,7 +186,7 @@ class CommandLineInstaller extends Maintenance {
 		$passfile = $this->getOption( 'passfile' );
 		if ( $passfile !== null ) {
 			if ( $this->getOption( 'pass' ) !== null ) {
-				$this->error( 'WARNING: You have provided the options "pass" and "passfile". '
+				$this->error( 'WARNING: You have provided the option --pass or --passfile. '
 					. 'The content of "passfile" overrides "pass".' );
 			}
 			AtEase::suppressWarnings();
@@ -187,7 +195,7 @@ class CommandLineInstaller extends Maintenance {
 			if ( $pass === false ) {
 				$this->fatalError( "Couldn't open $passfile" );
 			}
-			$this->mOptions['pass'] = trim( $pass, "\r\n" );
+			$this->setOption( 'pass', trim( $pass, "\r\n" ) );
 		} elseif ( $this->getOption( 'pass' ) === null ) {
 			$this->fatalError( 'You need to provide the option "pass" or "passfile"' );
 		}

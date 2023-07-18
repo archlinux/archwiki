@@ -186,11 +186,13 @@ ve.ce.MWReferencesListNode.prototype.update = function () {
 		this.$originalRefList = $( ve.copyDomElements( model.getStore().value(
 			model.getElement().originalDomElementsHash
 		), document ) );
-		if ( !nodes || !nodes.indexOrder.length ) {
+		// Check for references in the model. If none are found do a slower check
+		// to see if $originalRefList has any, as they could all be defined in templates.
+		if ( ( nodes && nodes.indexOrder.length ) || this.$originalRefList.find( 'li' ).length ) {
+			this.$element.append( this.$originalRefList );
+		} else {
 			this.$refmsg.text( emptyText );
 			this.$element.append( this.$refmsg );
-		} else {
-			this.$element.append( this.$originalRefList );
 		}
 		return;
 	}

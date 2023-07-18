@@ -4,11 +4,11 @@ version 2 or later. The text of this license is included below.
 Some included files and subdirectories are licensed with an MIT license, not
 with the GPL. These are:
 
-* engines/LuaCommon/lualib/package.lua (as described in that file)
-* engines/LuaCommon/lualib/strict.lua (as described in that file)
-* engines/LuaCommon/lualib/luabit/ (as described in readme.txt in that directory)
-* engines/LuaCommon/lualib/ustring/ (as described in README in that directory)
-* engines/LuaStandalone/binaries/ (as described in README in that directory)
+* includes/Engines/LuaCommon/lualib/package.lua (as described in that file)
+* includes/Engines/LuaCommon/lualib/strict.lua (as described in that file)
+* includes/Engines/LuaCommon/lualib/luabit/ (as described in readme.txt in that directory)
+* includes/Engines/LuaCommon/lualib/ustring/ (as described in README in that directory)
+* includes/Engines/LuaStandalone/binaries/ (as described in README in that directory)
 
 The text of this license is also included below.
 

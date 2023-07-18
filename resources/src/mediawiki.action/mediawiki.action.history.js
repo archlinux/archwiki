@@ -2,9 +2,9 @@
  * JavaScript for History action
  */
 $( function () {
-	var $historyCompareForm = $( '#mw-history-compare' ),
-		$historySubmitter,
-		$lis = $( '#pagehistory .mw-contributions-list > li' );
+	var
+		$pagehistory = $( '#pagehistory' ),
+		$lis = $pagehistory.find( '.mw-contributions-list > li' );
 
 	/**
 	 * @ignore
@@ -68,67 +68,8 @@ $( function () {
 		return true;
 	}
 
-	$lis.find( 'input[name="diff"], input[name="oldid"]' ).on( 'click', updateDiffRadios );
+	$pagehistory.on( 'change', 'input[name="diff"], input[name="oldid"]', updateDiffRadios );
 
 	// Set initial state
 	updateDiffRadios();
-
-	// Prettify url output for HistoryAction submissions,
-	// to cover up action=historysubmit construction.
-
-	// Ideally we'd use e.target instead of $historySubmitter, but e.target points
-	// to the form element for submit actions, so.
-	$historyCompareForm.find( '.historysubmit' ).on( 'click', function () {
-		$historySubmitter = $( this );
-	} );
-
-	// On submit we clone the form element, remove unneeded fields in the clone
-	// that pollute the query parameter with stuff from the other "use case",
-	// and then submit the clone.
-	// Without the cloning we'd be changing the real form, which is slower, could make
-	// the page look broken for a second in slow browsers and might show the form broken
-	// again when coming back from a "next" page.
-	$historyCompareForm.on( 'submit', function ( e ) {
-		var $copyForm, $copyRadios, $copyAction;
-
-		if ( $historySubmitter ) {
-			$copyForm = $historyCompareForm.clone();
-			$copyRadios = $copyForm.find( '#pagehistory .mw-contributions-list > li' ).find( 'input[name="diff"], input[name="oldid"]' );
-			$copyAction = $copyForm.find( '> [name="action"]' );
-
-			// Remove action=historysubmit and ids[..]=..
-			// eslint-disable-next-line no-jquery/no-class-state
-			if ( $historySubmitter.hasClass( 'mw-history-compareselectedversions-button' ) ) {
-				$copyAction.remove();
-				$copyForm.find( 'input[name^="ids["]:checked' ).prop( 'checked', false );
-
-			// Remove diff=&oldid=, change action=historysubmit to revisiondelete, remove revisiondelete
-			} else if (
-				// eslint-disable-next-line no-jquery/no-class-state
-				$historySubmitter.hasClass( 'mw-history-revisiondelete-button' ) ||
-				// eslint-disable-next-line no-jquery/no-class-state
-				$historySubmitter.hasClass( 'mw-history-editchangetags-button' )
-			) {
-				$copyRadios.remove();
-				$copyAction.val( $historySubmitter.attr( 'name' ) );
-				// eslint-disable-next-line no-jquery/no-sizzle
-				$copyForm.find( ':submit' ).remove();
-			}
-
-			// Firefox requires the form to be attached, so insert hidden into document first
-			// Also remove potentially conflicting id attributes that we don't need anyway
-			$copyForm
-				.css( 'display', 'none' )
-				.find( '[id]' ).removeAttr( 'id' )
-				.end()
-				.insertAfter( $historyCompareForm )
-				.trigger( 'submit' );
-
-			e.preventDefault();
-			return false; // Because the submit is special, return false as well.
-		}
-
-		// Continue natural browser handling other wise
-		return true;
-	} );
 } );

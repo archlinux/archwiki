@@ -44,9 +44,7 @@
 	"vector-search-loader": "Загрузка прапановаў пошуку",
 	"vector-searchsuggest-containing": "Пошук старонак, якія маюць <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Уводзіны",
-	"vector-toc-heading": "Зьмест",
-	"vector-toc-toggle-position-sidebar": "перанесьці ў бакавую панэль",
-	"vector-toc-toggle-position-title": "схаваць",
+	"vector-toc-label": "Зьмест",
 	"vector-toc-beginning": "Пачатак",
 	"vector-toc-toggle-button-label": "Пераключыць падразьдзел $1",
 	"vector-anon-user-menu-pages": "Старонкі для неаўтарызаваных рэдактараў",
@@ -56,6 +54,12 @@
 	"vector-toc-menu-tooltip": "Зьмест",
 	"vector-toc-collapsible-button-label": "Схаваць/паказаць зьмест",
 	"vector-site-nav-label": "Сайт",
+	"vector-page-tools-label": "Інструмэнты",
+	"vector-page-tools-general-label": "Агульныя",
+	"vector-pin-element-label": "перанесьці ў бакавую панэль",
+	"vector-unpin-element-label": "схаваць",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Абмеркаваньне]]",
-	"tooltip-vector-anon-user-menu-title": "Болей парамэтраў"
+	"tooltip-vector-anon-user-menu-title": "Болей парамэтраў",
+	"vector-prefs-limited-width": "Уключыць рэжым абмежаванай шырыні",
+	"vector-prefs-limited-width-help": "Уключыць рэжым абмежаванай шырыні дзеля лепшага чытаньня."
 }

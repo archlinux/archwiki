@@ -56,7 +56,7 @@ class BasicSearchResultSetWidget {
 			return '';
 		}
 
-		$out = '';
+		$out = '<div class="mw-search-results-container">';
 
 		if ( $hasTitle ) {
 			$out .= $this->header( $this->specialPage->msg( 'titlematches' ) )
@@ -84,9 +84,15 @@ class BasicSearchResultSetWidget {
 					"<h2 class='mw-search-interwiki-header mw-search-visualclear'>" .
 						$this->specialPage->msg( "search-interwiki-results-{$interwiki}" )->parse() .
 					"</h2>";
-				$out .= $this->renderResultSet( $results, $offset );
+				$out .=
+					"<div class='mw-search-interwiki-results'>" .
+						$this->renderResultSet( $results, $offset ) .
+					"</div>";
 			}
 		}
+
+		// Close <div class='mw-search-results-container'>
+		$out .= '</div>';
 
 		if ( $hasSecondary ) {
 			$out .= $this->sidebarWidget->render(
@@ -111,9 +117,7 @@ class BasicSearchResultSetWidget {
 	 * @return string HTML
 	 */
 	protected function header( Message $msg ) {
-		return "<h2>" .
-			"<span class='mw-headline'>" . $msg->escaped() . "</span>" .
-		"</h2>";
+		return "<h2>" . $msg->escaped() . "</h2>";
 	}
 
 	/**

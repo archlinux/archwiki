@@ -95,7 +95,6 @@
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Kenty on vahnennuh. $1",
 	"visualeditor-dialog-transclusion-loading": "Ladavuu...",
 	"visualeditor-dialog-transclusion-no-template-description": "\"$1\" šablonal ei ole vie kuvavustu, no midätah tieduo voibi olla [[$2|šablonan sivul]].",
-	"visualeditor-dialog-transclusion-placeholder": "Ližiä šablon",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Kenty vältämättäh pidäy.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Mene järilleh",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Jatka yksikai",

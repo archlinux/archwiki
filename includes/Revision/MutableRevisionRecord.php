@@ -22,9 +22,9 @@
 
 namespace MediaWiki\Revision;
 
-use CommentStoreComment;
 use Content;
 use InvalidArgumentException;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Storage\RevisionSlotsUpdate;
 use MediaWiki\User\UserIdentity;
@@ -88,11 +88,11 @@ class MutableRevisionRecord extends RevisionRecord {
 		$newRevisionRecord->setParentId( $revision->getParentId( $revision->getWikiId() ) );
 		$newRevisionRecord->setUser( $revision->getUser() );
 
-		foreach ( $revision->getSlots()->getSlots() as $role => $slot ) {
+		foreach ( $revision->getSlots()->getSlots() as $slot ) {
 			$newRevisionRecord->setSlot( $slot );
 		}
 
-		foreach ( $slots as $role => $slot ) {
+		foreach ( $slots as $slot ) {
 			$newRevisionRecord->setSlot( $slot );
 		}
 
@@ -351,9 +351,7 @@ class MutableRevisionRecord extends RevisionRecord {
 	 */
 	public function getSize() {
 		// If not known, re-calculate and remember. Will be reset when slots change.
-		if ( $this->mSize === null ) {
-			$this->mSize = $this->mSlots->computeSize();
-		}
+		$this->mSize ??= $this->mSlots->computeSize();
 
 		return $this->mSize;
 	}
@@ -367,9 +365,7 @@ class MutableRevisionRecord extends RevisionRecord {
 	 */
 	public function getSha1() {
 		// If not known, re-calculate and remember. Will be reset when slots change.
-		if ( $this->mSha1 === null ) {
-			$this->mSha1 = $this->mSlots->computeSha1();
-		}
+		$this->mSha1 ??= $this->mSlots->computeSha1();
 
 		return $this->mSha1;
 	}
@@ -380,9 +376,8 @@ class MutableRevisionRecord extends RevisionRecord {
 	 *
 	 * @return MutableRevisionSlots
 	 */
-	public function getSlots(): RevisionSlots {
-		// Overwritten just guarantee the more narrow return type.
-		// TODO Update return typehint once full return type covariance is allowed (PHP 7.4+, T278139)
+	public function getSlots(): MutableRevisionSlots {
+		// Overwritten just to guarantee the more narrow return type.
 		// @phan-suppress-next-line PhanTypeMismatchReturnSuperType
 		return parent::getSlots();
 	}

@@ -102,7 +102,7 @@
 	"templatedata-modal-table-param-required": "Абавязковы",
 	"templatedata-modal-table-param-suggested": "Прапанаваны",
 	"templatedata-modal-table-param-suggestedvalues": "Прапанаваныя значэнні",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "Дадаць значэнне...",
+	"templatedata-modal-placeholder-multiselect": "Дадаць значэнне...",
 	"templatedata-modal-table-param-type": "Тып",
 	"templatedata-modal-table-param-uneditablefield": "Недаступна для рэдагавання",
 	"templatedata-modal-title": "Рэдактар дакументацыі шаблона",

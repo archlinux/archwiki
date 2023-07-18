@@ -16,5 +16,8 @@
 	"vector-view-history": "ᨹᩬᩴ᩵ᨷᩅᩢᨲ᩠ᨲᩥ᩺",
 	"vector-view-view": "ᩋ᩵ᩣ᩠ᨶ",
 	"vector-more-actions": "ᨾᩦᨳᩯ᩠ᨾ",
-	"vector-searchsuggest-containing": "ᨪᩰᩬᩡᩉᩣᩉ᩠ᨶ᩶ᩣᨴᩦ᩵ᨾᩦ<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "ᨪᩰᩬᩡᩉᩣᩉ᩠ᨶ᩶ᩣᨴᩦ᩵ᨾᩦ<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "ᨣᩕᩮᩬᩥ᩵ᨦᨾᩨ",
+	"vector-page-tools-general-label": "ᨵ᩠ᩅᩫ᩵ᨻᩱ",
+	"vector-unpin-element-label": "ᨪ᩵ᩬᩁ"
 }

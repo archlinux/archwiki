@@ -10,7 +10,7 @@
 	"type": "antispam",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"GroupPermissions": {
 		"user": {
@@ -47,10 +47,6 @@
 			"i18n/api"
 		]
 	},
-	"AutoloadClasses": {
-		"BaseBlacklist": "includes/BaseBlacklist.php",
-		"MediaWiki\\Extension\\SpamBlacklist\\BaseBlacklist": "includes/BaseBlacklist.php"
-	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\SpamBlacklist\\": "includes/"
 	},
@@ -84,7 +80,13 @@
 	},
 	"HookHandlers": {
 		"SpamBlacklistHookHandler": {
-			"class": "MediaWiki\\Extension\\SpamBlacklist\\Hooks"
+			"class": "MediaWiki\\Extension\\SpamBlacklist\\Hooks",
+			"services": [
+				"PermissionManager",
+				"PageEditStash",
+				"ContentRenderer",
+				"ContentHandlerFactory"
+			]
 		}
 	},
 	"config": {

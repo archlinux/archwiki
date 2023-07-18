@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Samatics",
+			"Maryeren"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Ibọrọ",
+	"discussiontools-replywidget-advanced": "Ekaiso",
+	"discussiontools-replywidget-cancel": "Kpọn̄",
+	"discussiontools-replywidget-mode-source": "Ntọñọ",
+	"discussiontools-replywidget-mode-visual": "Ndise",
+	"discussiontools-replywidget-preview": "Se idikpepde",
+	"discussiontools-replywidget-summary": "Se mbụk emi abañade",
+	"discussiontools-replywidget-watchthis": "Dian enye emi ke Page fo\n[[Special:Watchlist|watchlist]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|owo|mme owo}} ke nneme",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ibọrọ|mme ibọrọ}}",
+	"discussiontools-topicheader-latestcomment": "Obufa ibọrọ: $1",
+	"discussiontools-topicsubscription-button-subscribe": "kot kpukpru ini",
+	"discussiontools-topicsubscription-button-subscribe-label": "Kot kpukpru ini",
+	"discussiontools-topicsubscription-button-unsubscribe": "tre ndikot",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Tre ndikot"
+}

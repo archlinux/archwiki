@@ -8,6 +8,7 @@
 			"Pyscowicz",
 			"Samoasambia",
 			"Stryn",
+			"Valtlai",
 			"Valtlait",
 			"VezonThunder",
 			"Wix"
@@ -57,7 +58,6 @@
 	"math_unknown_function": "tuntematon funktio ”$1”",
 	"mw_math_latexml": "LaTeXML (kokeellinen; käyttää MathML:ää)",
 	"mw_math_mathml": "MathML, sekä SVG tai PNG varalla (suositeltu nykyaikaisille selaimille ja helppokäyttötyökaluille)",
-	"mw_math_png": "PNG-kuvat",
 	"mw_math_source": "Näytä LaTeX-muodossa (tekstiselaimille)",
 	"prefs-math": "Matematiikka",
 	"mathstatus": "Math-tila"

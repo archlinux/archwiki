@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Jon Harald Søby (WMNO)",
+			"Kimberli Mäkäräinen (WMNO)",
 			"Trondtr",
-			"Yupik",
-			"Kimberli Mäkäräinen (WMNO)"
+			"Yupik"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -68,6 +68,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Paramehternamma",
 	"visualeditor-dialog-transclusion-add-param-save": "Lasit paramehtera",
 	"visualeditor-dialog-transclusion-add-template": "Lasit málle",
+	"visualeditor-dialog-transclusion-add-template-button": "Lasit málle",
 	"visualeditor-dialog-transclusion-add-template-save": "Lasit",
 	"visualeditor-dialog-transclusion-confirmation-discard": "Hilggo rievdadusaid",
 	"visualeditor-dialog-transclusion-confirmation-reject": "Joatkke rievdadeamis",

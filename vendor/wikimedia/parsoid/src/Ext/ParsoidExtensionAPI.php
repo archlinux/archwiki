@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 namespace Wikimedia\Parsoid\Ext;
 
 use Closure;
+use Wikimedia\Bcp47Code\Bcp47Code;
 use Wikimedia\Parsoid\Config\Env;
 use Wikimedia\Parsoid\Config\PageConfig;
 use Wikimedia\Parsoid\Config\SiteConfig;
@@ -146,6 +147,22 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
+	 * Creates an internationalization (i18n) message that will be localized into an arbitrary
+	 * language. The returned DocumentFragment contains, as a single child, a span
+	 * element with the appropriate information for later localization.
+	 * The use of this method is discouraged; use ::createPageContentI18nFragment(...) and
+	 * ::createInterfaceI18nFragment(...) where possible rather than, respectively,
+	 * ::createLangI18nFragment($wgContLang, ...) and ::createLangI18nFragment($wgLang, ...).
+	 * @param Bcp47Code $lang language in which the message will be localized
+	 * @param string $key message key for the message to be localized
+	 * @param ?array $params parameters for localization
+	 * @return DocumentFragment
+	 */
+	public function createLangI18nFragment( Bcp47Code $lang, string $key, ?array $params ): DocumentFragment {
+		return WTUtils::createLangI18nFragment( $this->getTopLevelDoc(), $lang, $key, $params );
+	}
+
+	/**
 	 * Adds to $element the internationalization information needed for the attribute $name to be
 	 * localized in a later pass into the user interface language.
 	 * @param Element $element element on which to add internationalization information
@@ -171,6 +188,24 @@ class ParsoidExtensionAPI {
 		Element $element, string $name, string $key, array $params
 	) {
 		WTUtils::addPageContentI18nAttribute( $element, $name, $key, $params );
+	}
+
+	/**
+	 * Adds to $element the internationalization information needed for the attribute $name to be
+	 * localized in a later pass into the provided language.
+	 * The use of this method is discouraged; use ::addPageContentI18nAttribute(...) and
+	 * ::addInterfaceI18nAttribute(...) where possible rather than, respectively,
+	 * ::addLangI18nAttribute(..., $wgContLang, ...) and ::addLangI18nAttribute(..., $wgLang, ...).
+	 * @param Element $element element on which to add internationalization information
+	 * @param Bcp47Code $lang language in which the  attribute will be localized
+	 * @param string $name name of the attribute whose value will be localized
+	 * @param string $key message key used for the attribute value localization
+	 * @param array $params parameters for localization
+	 */
+	public function addLangI18nAttribute(
+		Element $element, Bcp47Code $lang, string $name, string $key, array $params
+	) {
+		WTUtils::addLangI18nAttribute( $element, $lang, $name, $key, $params );
 	}
 
 	/**
@@ -551,10 +586,11 @@ class ParsoidExtensionAPI {
 
 	/**
 	 * Forwards the logging request to the underlying logger
+	 * @param string $prefix
 	 * @param mixed ...$args
 	 */
-	public function log( ...$args ): void {
-		$this->env->log( ...$args );
+	public function log( string $prefix, ...$args ): void {
+		$this->env->log( $prefix, ...$args );
 	}
 
 	/**
@@ -834,6 +870,9 @@ class ParsoidExtensionAPI {
 	}
 
 	/**
+	 * Produce the HTML rendering of a title string and media options as the
+	 * wikitext parser would for a wikilink in the file namespace
+	 *
 	 * @param string $titleStr Image title string
 	 * @param array $imageOpts Array of a mix of strings or arrays,
 	 *   the latter of which can signify that the value came from source.
@@ -849,26 +888,20 @@ class ParsoidExtensionAPI {
 		?bool $forceBlock = false
 	): ?Element {
 		$extTagName = $this->extTag->getName();
+		$fileNs = $this->getSiteConfig()->canonicalNamespaceId( 'file' );
 
-		$title = $this->makeTitle(
-			$titleStr,
-			$this->getSiteConfig()->canonicalNamespaceId( 'file' )
-		);
-
-		if ( $title === null || !$title->getNamespace()->isFile() ) {
+		$title = $this->makeTitle( $titleStr, 0 );
+		if ( $title === null || $title->getNamespaceId() !== $fileNs ) {
 			$error = "{$extTagName}_no_image";
 			return null;
 		}
 
-		// FIXME: Try to confirm `file` isn't going to break WikiLink syntax.
-		// See the check for 'figure' below.
-		$file = $title->getPrefixedDBKey();
-
 		$pieces = [ '[[' ];
 		// Since the above two chars aren't from source, the resulting figure
 		// won't have any dsr info, so we can omit an offset for the title as
-		// well
-		$pieces[] = $file;
+		// well.  In any case, $titleStr may not necessarily be from source,
+		// see the special case in the gallery extension.
+		$pieces[] = $titleStr;
 		$pieces = array_merge( $pieces, $imageOpts );
 
 		if ( $forceBlock ) {

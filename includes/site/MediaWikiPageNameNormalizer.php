@@ -1,15 +1,5 @@
 <?php
-
-namespace MediaWiki\Site;
-
-use FormatJson;
-use Http;
-use InvalidArgumentException;
-use UtfNormal\Validator;
-
 /**
- * Service for normalizing a page name using a MediaWiki api.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -25,9 +15,21 @@ use UtfNormal\Validator;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @since 1.27
+ * @file
+ */
+
+namespace MediaWiki\Site;
+
+use FormatJson;
+use InvalidArgumentException;
+use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\MediaWikiServices;
+use UtfNormal\Validator;
+
+/**
+ * Service for normalizing a page name via a MediaWiki action API.
  *
- * @license GPL-2.0-or-later
+ * @since 1.27
  * @author John Erling Blad < jeblad@gmail.com >
  * @author Daniel Kinzler
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
@@ -39,19 +41,18 @@ class MediaWikiPageNameNormalizer {
 	public const NOFOLLOW_REDIRECT = 2;
 
 	/**
-	 * @var Http
+	 * @var HttpRequestFactory
 	 */
-	private $http;
+	private $httpRequestFactory;
 
 	/**
-	 * @param Http|null $http
+	 * @param HttpRequestFactory|null $httpRequestFactory
 	 */
-	public function __construct( Http $http = null ) {
-		if ( !$http ) {
-			$http = new Http();
+	public function __construct( $httpRequestFactory = null ) {
+		if ( !$httpRequestFactory instanceof HttpRequestFactory ) {
+			$httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
 		}
-
-		$this->http = $http;
+		$this->httpRequestFactory = $httpRequestFactory;
 	}
 
 	/**
@@ -119,9 +120,9 @@ class MediaWikiPageNameNormalizer {
 
 		// Go on call the external site
 		// @todo we need a good way to specify a timeout here.
-		$ret = $this->http->get( $url, [], __METHOD__ );
+		$ret = $this->httpRequestFactory->get( $url, [], __METHOD__ );
 
-		if ( $ret === false ) {
+		if ( $ret === null ) {
 			wfDebugLog( "MediaWikiSite", "call to external site failed: $url" );
 			return false;
 		}

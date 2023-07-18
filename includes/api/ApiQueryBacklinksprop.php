@@ -25,6 +25,7 @@
 
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -131,7 +132,7 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$hasNS = !isset( $settings['to_namespace'] );
 		if ( $hasNS ) {
 			if ( isset( $this->linksMigration::$mapping[$settings['linktable']] ) ) {
-				list( $bl_namespace, $bl_title ) = $this->linksMigration->getTitleFields( $settings['linktable'] );
+				[ $bl_namespace, $bl_title ] = $this->linksMigration->getTitleFields( $settings['linktable'] );
 			} else {
 				$bl_namespace = "{$p}_namespace";
 				$bl_title = "{$p}_title";
@@ -160,17 +161,14 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		// when it's constant in WHERE, so we have to test that for each field.
 		$sortby = [];
 		if ( $hasNS && count( $map ) > 1 ) {
-			$sortby[$bl_namespace] = 'ns';
+			$sortby[$bl_namespace] = 'int';
 		}
 		$theTitle = null;
 		foreach ( $map as $nsTitles ) {
-			reset( $nsTitles );
-			$key = key( $nsTitles );
-			if ( $theTitle === null ) {
-				$theTitle = $key;
-			}
+			$key = array_key_first( $nsTitles );
+			$theTitle ??= $key;
 			if ( count( $nsTitles ) > 1 || $key !== $theTitle ) {
-				$sortby[$bl_title] = 'title';
+				$sortby[$bl_title] = 'string';
 				break;
 			}
 		}
@@ -194,37 +192,16 @@ class ApiQueryBacklinksprop extends ApiQueryGeneratorBase {
 		$sortby[$bl_from] = 'int';
 
 		// Now use the $sortby to figure out the continuation
+		$continueFields = array_keys( $sortby );
+		$continueTypes = array_values( $sortby );
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != count( $sortby ) );
-			$where = '';
-			$i = count( $sortby ) - 1;
-			foreach ( array_reverse( $sortby, true ) as $field => $type ) {
-				$v = $cont[$i];
-				switch ( $type ) {
-					case 'ns':
-					case 'int':
-						$v = (int)$v;
-						$this->dieContinueUsageIf( $v != $cont[$i] );
-						break;
-					default:
-						$v = $db->addQuotes( $v );
-						break;
-				}
-
-				if ( $where === '' ) {
-					$where = "$field >= $v";
-				} else {
-					$where = "$field > $v OR ($field = $v AND ($where))";
-				}
-
-				$i--;
-			}
-			$this->addWhere( $where );
+			$continueValues = $this->parseContinueParamOrDie( $params['continue'], $continueTypes );
+			$conds = array_combine( $continueFields, $continueValues );
+			$this->addWhere( $db->buildComparison( '>=', $conds ) );
 		}
 
 		// Populate the rest of the query
-		list( $idxNoFromNS, $idxWithFromNS ) = $settings['indexes'] ?? [ '', '' ];
+		[ $idxNoFromNS, $idxWithFromNS ] = $settings['indexes'] ?? [ '', '' ];
 		// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 		if ( isset( $this->linksMigration::$mapping[$settings['linktable']] ) ) {
 			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive

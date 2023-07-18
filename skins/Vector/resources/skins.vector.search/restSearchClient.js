@@ -66,14 +66,24 @@ function adaptApiResponse( config, query, restResponse, showDescription ) {
 /**
  * @callback fetchByTitle
  * @param {string} query The search term.
- * @param {string} domain The base URL for the wiki without protocol. Example: 'sr.wikipedia.org'.
  * @param {number} [limit] Maximum number of results.
+ * @param {boolean} [showDescription] Whether descriptions should be added to the results.
+ * @return {AbortableSearchFetch}
+ */
+
+/**
+ * @callback loadMore
+ * @param {string} query The search term.
+ * @param {number} offset The number of search results that were already loaded.
+ * @param {number} [limit] How many further search results to load (at most).
+ * @param {boolean} [showDescription] Whether descriptions should be added to the results.
  * @return {AbortableSearchFetch}
  */
 
 /**
  * @typedef {Object} SearchClient
  * @property {fetchByTitle} fetchByTitle
+ * @property {loadMore} [loadMore]
  */
 
 /**
@@ -81,14 +91,16 @@ function adaptApiResponse( config, query, restResponse, showDescription ) {
  * @return {SearchClient}
  */
 function restSearchClient( config ) {
-	const customClient = config.get( 'wgVectorSearchClient' );
-	return customClient || {
+	return config.get( 'wgVectorSearchClient', {
 		/**
 		 * @type {fetchByTitle}
 		 */
-		fetchByTitle: ( q, domain, limit = 10, showDescription = true ) => {
+		fetchByTitle: ( q, limit = 10, showDescription = true ) => {
+			const searchApiUrl = config.get( 'wgVectorSearchApiUrl',
+				config.get( 'wgScriptPath' ) + '/rest.php'
+			);
 			const params = { q, limit };
-			const url = '//' + domain + config.get( 'wgScriptPath' ) + '/rest.php/v1/search/title?' + $.param( params );
+			const url = searchApiUrl + '/v1/search/title?' + $.param( params );
 			const result = fetchJson( url, {
 				headers: {
 					accept: 'application/json'
@@ -103,7 +115,7 @@ function restSearchClient( config ) {
 				fetch: searchResponsePromise
 			};
 		}
-	};
+	} );
 }
 
 module.exports = restSearchClient;

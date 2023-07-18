@@ -170,6 +170,7 @@ ve.ui.MWExportTool.static.name = 'export';
 ve.ui.MWExportTool.static.displayBothIconAndLabel = !OO.ui.isMobile();
 ve.ui.MWExportTool.static.group = 'export';
 ve.ui.MWExportTool.static.autoAddToCatchall = false;
+// eslint-disable-next-line es-x/no-regexp-prototype-flags
 ve.ui.MWExportTool.static.flags = [ 'progressive', 'primary' ];
 ve.ui.MWExportTool.static.title =
 	OO.ui.deferMsg( 'visualeditor-rebase-client-export-start' );

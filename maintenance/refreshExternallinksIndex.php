@@ -21,9 +21,9 @@
  * @ingroup Maintenance
  */
 
-require_once __DIR__ . '/Maintenance.php';
+use MediaWiki\ExternalLinks\LinkFilter;
 
-use MediaWiki\MediaWikiServices;
+require_once __DIR__ . '/Maintenance.php';
 
 /**
  * Maintenance script that refreshes the externallinks table el_index and
@@ -41,9 +41,7 @@ class RefreshExternallinksIndex extends LoggedUpdateMaintenance {
 	}
 
 	protected function getUpdateKey() {
-		return static::class
-			. ' v' . LinkFilter::VERSION
-			. ( LinkFilter::supportsIDN() ? '+' : '-' ) . 'IDN';
+		return static::class . ' v' . LinkFilter::VERSION . '+IDN';
 	}
 
 	protected function updateSkippedMessage() {
@@ -69,7 +67,6 @@ class RefreshExternallinksIndex extends LoggedUpdateMaintenance {
 		$deleted = 0;
 		$start = $minmax->min - 1;
 		$last = (int)$minmax->max;
-		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 		while ( $start < $last ) {
 			$end = min( $start + $this->mBatchSize, $last );
 			$this->output( "el_id $start - $end of $last\n" );
@@ -88,17 +85,21 @@ class RefreshExternallinksIndex extends LoggedUpdateMaintenance {
 					$deleted++;
 					continue;
 				}
-				if ( in_array( $row->el_index, $newIndexes, true ) ) {
+				$newIndexes2 = [];
+				foreach ( $newIndexes as $newIndex ) {
+					$newIndexes2[] = implode( '', $newIndex );
+				}
+				if ( in_array( $row->el_index, $newIndexes2, true ) ) {
 					continue;
 				}
 
-				if ( count( $newIndexes ) === 1 ) {
-					$newIndex = $newIndexes[0];
+				if ( count( $newIndexes2 ) === 1 ) {
+					$newIndex = $newIndexes2[0];
 				} else {
 					// Assume the scheme is the only difference between the different $newIndexes.
 					// Keep this row's scheme, assuming there's another row with the other scheme.
 					$newIndex = substr( $row->el_index, 0, strpos( $row->el_index, ':' ) ) .
-						substr( $newIndexes[0], strpos( $newIndexes[0], ':' ) );
+						substr( $newIndexes2[0], strpos( $newIndexes2[0], ':' ) );
 				}
 				$dbw->update( 'externallinks',
 					[
@@ -110,7 +111,7 @@ class RefreshExternallinksIndex extends LoggedUpdateMaintenance {
 				);
 				$updated++;
 			}
-			$lbFactory->waitForReplication();
+			$this->waitForReplication();
 			$start = $end;
 		}
 		$this->output( "Done, $updated rows updated, $deleted deleted.\n" );

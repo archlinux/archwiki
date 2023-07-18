@@ -8,6 +8,7 @@
 			"Eduardo Addad de Oliveira",
 			"Eduardoaddad",
 			"Felipe L. Ewald",
+			"Fúlvio",
 			"Giro720",
 			"He7d3r",
 			"Helder.wiki",
@@ -15,8 +16,7 @@
 			"Luan",
 			"Opraco",
 			"YuriNikolai",
-			555,
-			"Fúlvio"
+			555
 		]
 	},
 	"skinname-vector": "Vector",
@@ -53,8 +53,7 @@
 	"vector-search-loader": "Carregando sugestões de pesquisa",
 	"vector-searchsuggest-containing": "Procurar pelas páginas contendo <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
-	"vector-toc-heading": "Conteúdo",
-	"vector-toc-toggle-position-title": "Esconder",
+	"vector-toc-label": "Conteúdo",
 	"vector-toc-beginning": "Início",
 	"vector-toc-toggle-button-label": "Alternar subseção $1",
 	"vector-anon-user-menu-pages": "Páginas para editores conectados",
@@ -63,8 +62,16 @@
 	"vector-main-menu-tooltip": "Menu principal",
 	"vector-toc-menu-tooltip": "Índice",
 	"vector-toc-collapsible-button-label": "Alternar o índice",
-	"vector-article-tools-nav-label": "Ferramentas",
 	"vector-site-nav-label": "Site",
+	"vector-main-menu-label": "Menu principal",
+	"vector-page-tools-label": "Ferramentas",
+	"vector-page-tools-general-label": "Geral",
+	"vector-page-tools-actions-label": "Ações",
+	"vector-pin-element-label": "mover para a barra lateral",
+	"vector-unpin-element-label": "Esconder",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Discussão]]",
-	"tooltip-vector-anon-user-menu-title": "Mais opções"
+	"tooltip-vector-anon-user-menu-title": "Mais opções",
+	"vector-prefs-limited-width": "Ativar modo de largura limitada",
+	"vector-prefs-limited-width-help": "Ative o modo de largura limitada para melhorar a experiência de leitura.",
+	"empty-language-selector-body": "O conteúdo da página não é suportado em outros idiomas."
 }

@@ -69,6 +69,7 @@ class ReferenceStack {
 	 * See description of function rollbackRef.
 	 *
 	 * @var (array|false)[]
+	 * @phan-var array<array{0:string,1:int,2:string,3:?string,4:?string,5:?string,6:array}|false>
 	 */
 	private $refCallStack = [];
 
@@ -239,12 +240,14 @@ class ReferenceStack {
 	 * @param int $count
 	 *
 	 * @return array[] Refs to restore under the correct context, as a list of [ $text, $argv ]
+	 * @phan-return array<array{0:?string,1:array}>
 	 */
 	public function rollbackRefs( int $count ): array {
 		$redoStack = [];
 		while ( $count-- && $this->refCallStack ) {
 			$call = array_pop( $this->refCallStack );
 			if ( $call ) {
+				// @phan-suppress-next-line PhanParamTooFewUnpack
 				$redoStack[] = $this->rollbackRef( ...$call );
 			}
 		}

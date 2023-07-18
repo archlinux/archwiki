@@ -21,7 +21,7 @@
 	MenuDefinition data-portlets.data-views
 	MenuDefinition data-portlets.data-actions
 	object data-search-box. See SearchBox.mustache for documentation.
-	object data-portlets-sidebar. See Sidebar.mustache for documentation.
+	object data-portlets-main-menu. See MainMenu.mustache for documentation.
 	object data-footer for footer template partial. see Footer.mustache for documentation.
 }}
 <div id="mw-page-base" class="noprint"></div>
@@ -64,6 +64,6 @@
 		</div>
 		{{/data-portlets}}
 	</div>
-	{{#data-portlets-sidebar}}{{>LegacySidebar}}{{/data-portlets-sidebar}}
+	{{#data-portlets-main-menu}}{{>LegacySidebar}}{{/data-portlets-main-menu}}
 </div>
 {{#data-footer}}{{>Footer}}{{/data-footer}}

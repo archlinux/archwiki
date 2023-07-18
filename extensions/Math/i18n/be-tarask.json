@@ -54,7 +54,6 @@
 	"math_unknown_function": "невядомая функцыя '$1'",
 	"mw_math_latexml": "LaTeXML (экспэрымэнтальна; ужывае MathML)",
 	"mw_math_mathml": "SVG з запасным PNG (MathML можна ўключыць з дапамогай плагіну для броўзэра)",
-	"mw_math_png": "PNG-выявы",
 	"mw_math_source": "LaTeX-разьметка (для тэкставых браўзэраў)",
 	"prefs-math": "Матэматычныя формулы",
 	"mathstatus": "Генэрацыя матэматычных формулаў",

@@ -13,10 +13,10 @@
 			"NickK",
 			"Piramidion",
 			"Prima klasy4na",
-			"Ата",
-			"Тест",
 			"VoidWanderer",
-			"Пан Хаунд"
+			"Ата",
+			"Пан Хаунд",
+			"Тест"
 		]
 	},
 	"skinname-vector": "Старий вектор (2010)",
@@ -55,9 +55,7 @@
 	"vector-search-loader": "Завантажуються підказки пошуку",
 	"vector-searchsuggest-containing": "Знайдіть сторінки, що містять <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Вступ",
-	"vector-toc-heading": "Зміст",
-	"vector-toc-toggle-position-sidebar": "перемістити на бічну панель",
-	"vector-toc-toggle-position-title": "сховати",
+	"vector-toc-label": "Зміст",
 	"vector-toc-beginning": "Вступ",
 	"vector-toc-toggle-button-label": "Перемкнути підрозділ $1",
 	"vector-anon-user-menu-pages": "Сторінки для редакторів, які не ввійшли в систему",
@@ -66,8 +64,17 @@
 	"vector-main-menu-tooltip": "Головне меню",
 	"vector-toc-menu-tooltip": "Зміст",
 	"vector-toc-collapsible-button-label": "Сховати/показати зміст",
-	"vector-article-tools-nav-label": "Інструменти",
 	"vector-site-nav-label": "Сайт",
+	"vector-main-menu-label": "Головне меню",
+	"vector-limited-width-toggle": "Перемкнути ширину вмісту",
+	"vector-page-tools-label": "Інструменти",
+	"vector-page-tools-general-label": "Загальний",
+	"vector-page-tools-actions-label": "Дії",
+	"vector-pin-element-label": "перемістити на бічну панель",
+	"vector-unpin-element-label": "сховати",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Обговорення]]",
-	"tooltip-vector-anon-user-menu-title": "Більше опцій"
+	"tooltip-vector-anon-user-menu-title": "Більше опцій",
+	"vector-prefs-limited-width": "Увімкнути режим обмеженої ширини",
+	"vector-prefs-limited-width-help": "Увімкнути режим обмеженої ширини для кращого читання.",
+	"empty-language-selector-body": "Вміст сторінки не підтримується іншими мовами."
 }

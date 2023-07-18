@@ -482,7 +482,7 @@
 	"newarticletext": "Молить налтке мельга сёрмадовксос, конась апак тее.\nУли мелеть теемс сёрмадовкс, сёрмадт валт ало паргос (вант [$1 help page] тесэ лездамо информация).\nЛисиндеряй тесэ ильведькс, лепштик браузерсэ '''back''' повнэнть.",
 	"noarticletext": "Неень шкасто те лопасонть сёрмадовкс арась. Мусак [[Special:Search/{{PAGENAME}}|вешнемс  файлань те конякс]] лия сёрмадовкстнэстэ\n<span class=\"plainlinks\">\n[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} вешнемс малавикс журналтнэстэ],\nэли [{{fullurl:\n{{FULLPAGENAME}}|action=edit}} шкамс те лопанть]</span>.",
 	"noarticletext-nopermission": "Те лопасонть сёрмадовкс арась.\nМусак [[Special:Search/{{PAGENAME}}|вешнемс  файлань те коняксонть]] лия сёрмадовкстнэстэ эли\n<span class=\"plainlinks\">\n[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} вешнемс малавикс журналтнэстэ]</span>. Ялатеке тонеть а мерить шкамс те лопанть.",
-	"userpage-userdoesnotexist-view": "Совамотарка  \"$1\" апак сёрмадсто.",
+	"userpage-userdoesnotexist-view": "\"$1\" совамо таркась апак сёрмадсто те сайтс.",
 	"updated": "(Одолгавтозь)",
 	"note": "'''Явт мель:'''",
 	"previewnote": "<strong>Кирдтяя мельсэ, те ансяк васнянь невтевкс.</strong>\nПолавтоматне зярс апак вансто!",
@@ -1052,6 +1052,7 @@
 	"filehist-dimensions": "Келеть-кувалмот",
 	"filehist-filesize": "Файланть покшолмазо",
 	"filehist-comment": "Мельполадкс",
+	"filehist-missing": "Файлась арась",
 	"imagelinks": "Ков файлась нолдави тевс",
 	"linkstoimage": "Те файланть марто сюлмавозь вана {{PLURAL:$1|истямо лопа|$1 истят лопат}}:",
 	"linkstoimage-more": "$1 лопадо ламо {{PLURAL:$1|нолдить}} те файланть тевс.\nСеде тов максозь лемрисьмесэнть {{PLURAL:$1|невтеви васенце лопась, конась нолды|невтевить васенце $1 лопатне, конатне нолдыть}} ансяк те лопанть тевс.\n[[Special:WhatLinksHere/$2|Покш лемрисьмеяк]] ули.",
@@ -1607,7 +1608,7 @@
 	"metadata-help": "Те файласонть поладкс информация, кона, паряк, саевсь цифровой камерастонть эли сулеймашинастонть (скенерстэнть), зядро файлась теезель цифровой лувс. Бути сон оригиналонть эйстэ лиякстомтозь, паряк аволь весе ёнкстнэ ванстовсть; фото-артовкстнэсэ редявить асатыкст.",
 	"metadata-expand": "Невтемс топавтозь даннойтнень",
 	"metadata-collapse": "Пекстынк келейкстазь детальтнень.",
-	"metadata-fields": "Те сёрминесэ максозь артовксметадатань уминетне совавтовить артовкслопань невтемапотмос, зярдо метадата таблицась кекшезь-вишкалгавтозь. \nЛиятне, апак кевкстне, кармить улеме кекшезь.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Те сёрминесэ максозь артовксметадатань уминетне совавтовить артовкслопань невтемапотмос, зярдо метадата таблицась кекшезь-вишкалгавтозь. \nЛиятне, апак кевкстне, кармить улеме кекшезь.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "весе",
 	"monthsall": "весе",
 	"confirmemail": "Кемекстамс е-почтань сёрмапаргот",
@@ -1744,5 +1745,10 @@
 	"skin-action-protect": "Аравтомс ванстомас",
 	"skin-action-undelete": "Вельмевтемс нардазенть",
 	"skin-action-delete": "Нардамс",
-	"skin-action-move": "Печтевтемс"
+	"skin-action-move": "Печтевтемс",
+	"renameusernew": "Од лемесь:",
+	"renameuserreserve": "Озавтомс ташто совицянь лементь саймес, тевс илязо нолдаво седе тов",
+	"renameuserconfirm": "Истя, макст совицянтень од лем",
+	"renameusersubmit": "Максомс",
+	"renameusererrordoesnotexist": "\"<nowiki>$1</nowiki>\" совицясь арась."
 }

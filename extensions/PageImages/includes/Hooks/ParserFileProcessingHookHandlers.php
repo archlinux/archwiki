@@ -6,17 +6,19 @@ use DerivativeContext;
 use Exception;
 use File;
 use FormatMetadata;
-use Http;
 use MediaWiki\Hook\ParserAfterTidyHook;
 use MediaWiki\Hook\ParserModifyImageHTML;
 use MediaWiki\Hook\ParserTestGlobalsHook;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Http\HttpRequestFactory;
+use MediaWiki\Page\PageReference;
 use PageImages\PageImageCandidate;
 use PageImages\PageImages;
 use Parser;
 use ParserOutput;
+use RepoGroup;
 use RuntimeException;
 use Title;
+use WANObjectCache;
 
 /**
  * Handlers for parser hooks.
@@ -42,35 +44,28 @@ class ParserFileProcessingHookHandlers implements
 {
 	private const CANDIDATE_REGEX = '/<!--MW-PAGEIMAGES-CANDIDATE-([0-9]+)-->/';
 
-	/**
-	 * ParserModifyImageHTML hook. Save candidate images, and mark them with a
-	 * comment so that we can later tell if they were in the lead section.
-	 *
-	 * @param Parser $parser
-	 * @param File $file
-	 * @param array $params
-	 * @param string &$html
-	 */
-	public function onParserModifyImageHTML(
-		Parser $parser,
-		File $file,
-		array $params,
-		string &$html
-	): void {
-		$handler = new self();
-		$handler->doParserModifyImageHTML( $parser, $file, $params, $html );
-	}
+	/** @var RepoGroup */
+	private $repoGroup;
+
+	/** @var WANObjectCache */
+	private $mainWANObjectCache;
+
+	/** @var HttpRequestFactory */
+	private $httpRequestFactory;
 
 	/**
-	 * ParserAfterTidy hook handler. Remove candidate images which were not in
-	 * the lead section.
-	 *
-	 * @param Parser $parser
-	 * @param string &$text
+	 * @param RepoGroup $repoGroup
+	 * @param WANObjectCache $mainWANObjectCache
+	 * @param HttpRequestFactory $httpRequestFactory
 	 */
-	public function onParserAfterTidy( $parser, &$text ) {
-		$handler = new self();
-		$handler->doParserAfterTidy( $parser, $text );
+	public function __construct(
+		RepoGroup $repoGroup,
+		WANObjectCache $mainWANObjectCache,
+		HttpRequestFactory $httpRequestFactory
+	) {
+		$this->repoGroup = $repoGroup;
+		$this->mainWANObjectCache = $mainWANObjectCache;
+		$this->httpRequestFactory = $httpRequestFactory;
 	}
 
 	/**
@@ -92,58 +87,42 @@ class ParserFileProcessingHookHandlers implements
 	}
 
 	/**
+	 * ParserModifyImageHTML hook. Save candidate images, and mark them with a
+	 * comment so that we can later tell if they were in the lead section.
+	 *
 	 * @param Parser $parser
 	 * @param File $file
 	 * @param array $params
 	 * @param string &$html
 	 */
-	public function doParserModifyImageHTML(
+	public function onParserModifyImageHTML(
 		Parser $parser,
 		File $file,
 		array $params,
-		&$html
-	) {
-		$this->processFile( $parser, $file, $params, $html );
-	}
-
-	/**
-	 * @param Parser $parser
-	 * @param File|Title|null $file
-	 * @param array[] $handlerParams
-	 * @param string &$html
-	 */
-	private function processFile( Parser $parser, $file, $handlerParams, &$html ) {
-		if ( !$file || !$this->processThisTitle( $parser->getTitle() ) ) {
+		string &$html
+	): void {
+		$page = $parser->getPage();
+		if ( !$page || !$this->processThisTitle( $page ) ) {
 			return;
 		}
 
-		if ( !( $file instanceof File ) ) {
-			$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $file );
-			// Non-image files (e.g. audio files) from a <gallery> can end here
-			if ( !$file || !$file->canRender() ) {
-				return;
-			}
-		}
-
-		if ( is_array( $handlerParams ) ) {
-			$myParams = $handlerParams;
-			$this->calcWidth( $myParams, $file );
-		} else {
-			$myParams = [];
-		}
+		$this->calcWidth( $params, $file );
 
 		$index = $this->addPageImageCandidateToParserOutput(
-			PageImageCandidate::newFromFileAndParams( $file, $myParams ),
+			PageImageCandidate::newFromFileAndParams( $file, $params ),
 			$parser->getOutput()
 		);
 		$html .= "<!--MW-PAGEIMAGES-CANDIDATE-$index-->";
 	}
 
 	/**
+	 * ParserAfterTidy hook handler. Remove candidate images which were not in
+	 * the lead section.
+	 *
 	 * @param Parser $parser
 	 * @param string &$text
 	 */
-	public function doParserAfterTidy( Parser $parser, &$text ) {
+	public function onParserAfterTidy( $parser, &$text ) {
 		global $wgPageImagesLeadSectionOnly;
 		$parserOutput = $parser->getOutput();
 		$allImages = $parserOutput->getExtensionData( 'pageImages' );
@@ -151,27 +130,26 @@ class ParserFileProcessingHookHandlers implements
 			return;
 		}
 
-		// Find our special comments
+		// Find and remove our special comments
 		$images = [];
 		if ( $wgPageImagesLeadSectionOnly ) {
-			$sectionText = strstr( $text, '<mw:editsection', true );
-			if ( $sectionText === false ) {
-				$sectionText = $text;
-			}
+			$leadEndPos = strpos( $text, '<mw:editsection' );
 		} else {
-			$sectionText = $text;
+			$leadEndPos = false;
 		}
-		$matches = [];
-		preg_match_all( self::CANDIDATE_REGEX, $sectionText, $matches );
-		foreach ( $matches[1] as $id ) {
-			$id = intval( $id );
-			if ( isset( $allImages[$id] ) ) {
-				$images[] = PageImageCandidate::newFromArray( $allImages[$id] );
-			}
-		}
-
-		// Remove the comments
-		$text = preg_replace( self::CANDIDATE_REGEX, '', $text );
+		$text = preg_replace_callback(
+			self::CANDIDATE_REGEX,
+			static function ( $m ) use ( $allImages, &$images, $leadEndPos ) {
+				$offset = $m[0][1];
+				$id = intval( $m[1][0] );
+				$inLead = $leadEndPos === false || $offset < $leadEndPos;
+				if ( $inLead && isset( $allImages[$id] ) ) {
+					$images[] = PageImageCandidate::newFromArray( $allImages[$id] );
+				}
+				return '';
+			},
+			$text, -1, $count, PREG_OFFSET_CAPTURE
+		);
 
 		list( $bestImageName, $freeImageName ) = $this->findBestImages( $images );
 
@@ -255,11 +233,11 @@ class ParserFileProcessingHookHandlers implements
 	/**
 	 * Returns true if data for this title should be saved
 	 *
-	 * @param Title $title
+	 * @param PageReference $pageReference
 	 *
 	 * @return bool
 	 */
-	private function processThisTitle( Title $title ) {
+	private function processThisTitle( PageReference $pageReference ) {
 		global $wgPageImagesNamespaces;
 		static $flipped = false;
 
@@ -267,7 +245,7 @@ class ParserFileProcessingHookHandlers implements
 			$flipped = array_flip( $wgPageImagesNamespaces );
 		}
 
-		return isset( $flipped[$title->getNamespace()] );
+		return isset( $flipped[$pageReference->getNamespace()] );
 	}
 
 	/**
@@ -377,7 +355,7 @@ class ParserFileProcessingHookHandlers implements
 	 * @return bool
 	 */
 	protected function isImageFree( $fileName ) {
-		$file = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $fileName );
+		$file = $this->repoGroup->findFile( $fileName );
 		if ( $file ) {
 			// Process copyright metadata from CommonsMetadata, if present.
 			// Image is considered free if the value is '0' or unset.
@@ -430,10 +408,8 @@ class ParserFileProcessingHookHandlers implements
 	protected function getDenylist() {
 		global $wgPageImagesDenylistExpiry;
 
-		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-
-		return $cache->getWithSetCallback(
-			$cache->makeKey( 'pageimages-denylist' ),
+		return $this->mainWANObjectCache->getWithSetCallback(
+			$this->mainWANObjectCache->makeKey( 'pageimages-denylist' ),
 			$wgPageImagesDenylistExpiry,
 			function () {
 				global $wgPageImagesDenylist;
@@ -512,7 +488,7 @@ class ParserFileProcessingHookHandlers implements
 		global $wgFileExtensions;
 
 		$list = [];
-		$text = Http::get( $url, [ 'timeout' => 3 ], __METHOD__ );
+		$text = $this->httpRequestFactory->get( $url, [ 'timeout' => 3 ], __METHOD__ );
 		$regex = '/\[\[:([^|\#]*?\.(?:' . implode( '|', $wgFileExtensions ) . '))/i';
 
 		if ( $text && preg_match_all( $regex, $text, $matches ) ) {

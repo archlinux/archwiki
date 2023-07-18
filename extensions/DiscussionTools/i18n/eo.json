@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Agloforto",
+			"Javiero",
+			"NMaia",
+			"Robin van der Vliet",
+			"Wierzbowski"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Respondo",
+	"discussiontools-emptystate-desc-self": "Homoj sur {{SITENAME}} povas uzi ĉi tiun [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|diskutpaĝon]] por publikigi mesaĝon por vi kaj vi estos sciigita kiam ili tion faras.",
+	"discussiontools-emptystate-title-self": "Bonvenon sur via diskutpaĝo",
+	"discussiontools-newtopic-placeholder-title": "Titolo",
+	"discussiontools-postedit-confirmation-published": "Via komento estis publikigita.",
+	"discussiontools-replylink": "respondi",
+	"discussiontools-replywidget-advanced": "Altnivela",
+	"discussiontools-replywidget-cancel": "Nuligi",
+	"discussiontools-replywidget-mention-tool-header": "Trovi uzanton: $1",
+	"discussiontools-replywidget-mention-tool-title": "Mencii uzanton",
+	"discussiontools-replywidget-mode-source": "Fonto",
+	"discussiontools-replywidget-mode-visual": "Vida",
+	"discussiontools-replywidget-placeholder-reply": "Respondo al {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Antaŭrigardi",
+	"discussiontools-replywidget-reply": "Respondi",
+	"discussiontools-replywidget-summary": "Resumo",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|komento|komentoj}}",
+	"discussiontools-topicheader-latestcomment": "Lasta komento: $1",
+	"discussiontools-topicsubscription-button-subscribe": "aboni",
+	"discussiontools-topicsubscription-button-subscribe-label": "Aboni",
+	"discussiontools-topicsubscription-button-unsubscribe": "malaboni",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Malaboni"
+}

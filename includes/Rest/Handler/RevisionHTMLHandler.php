@@ -2,19 +2,15 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use Config;
-use IBufferingStatsdDataFactory;
 use LogicException;
-use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Page\PageLookup;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Rest\Handler\Helper\HtmlOutputRendererHelper;
+use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
+use MediaWiki\Rest\Handler\Helper\RevisionContentHelper;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Rest\StringStream;
-use MediaWiki\Revision\RevisionLookup;
-use TitleFormatter;
 use Wikimedia\Assert\Assert;
 
 /**
@@ -27,32 +23,15 @@ use Wikimedia\Assert\Assert;
  */
 class RevisionHTMLHandler extends SimpleHandler {
 
-	/** @var ParsoidHTMLHelper */
+	/** @var HtmlOutputRendererHelper */
 	private $htmlHelper;
 
 	/** @var RevisionContentHelper */
 	private $contentHelper;
 
-	public function __construct(
-		Config $config,
-		RevisionLookup $revisionLookup,
-		TitleFormatter $titleFormatter,
-		PageLookup $pageLookup,
-		ParsoidOutputStash $parsoidOutputStash,
-		IBufferingStatsdDataFactory $statsDataFactory,
-		ParsoidOutputAccess $parsoidOutputAccess
-	) {
-		$this->contentHelper = new RevisionContentHelper(
-			$config,
-			$revisionLookup,
-			$titleFormatter,
-			$pageLookup
-		);
-		$this->htmlHelper = new ParsoidHTMLHelper(
-			$parsoidOutputStash,
-			$statsDataFactory,
-			$parsoidOutputAccess
-		);
+	public function __construct( PageRestHelperFactory $helperFactory ) {
+		$this->contentHelper = $helperFactory->newRevisionContentHelper();
+		$this->htmlHelper = $helperFactory->newHtmlOutputRendererHelper();
 	}
 
 	protected function postValidationSetup() {
@@ -67,6 +46,14 @@ class RevisionHTMLHandler extends SimpleHandler {
 
 		if ( $page && $revision ) {
 			$this->htmlHelper->init( $page, $this->getValidatedParams(), $user, $revision );
+
+			$request = $this->getRequest();
+			$acceptLanguage = $request->getHeaderLine( 'Accept-Language' ) ?: null;
+			if ( $acceptLanguage ) {
+				$this->htmlHelper->setVariantConversionLanguage(
+					$acceptLanguage
+				);
+			}
 		}
 	}
 
@@ -89,12 +76,14 @@ class RevisionHTMLHandler extends SimpleHandler {
 		Assert::invariant( $revisionRecord !== null, 'Revision should be known' );
 
 		$outputMode = $this->getOutputMode();
+		$setContentLanguageHeader = true;
 		switch ( $outputMode ) {
 			case 'html':
 				$parserOutput = $this->htmlHelper->getHtml();
 				$response = $this->getResponseFactory()->create();
 				// TODO: need to respect content-type returned by Parsoid.
 				$response->setHeader( 'Content-Type', 'text/html' );
+				$this->htmlHelper->putHeaders( $response, $setContentLanguageHeader );
 				$this->contentHelper->setCacheControl( $response, $parserOutput->getCacheExpiry() );
 				$response->setBody( new StringStream( $parserOutput->getText() ) );
 				break;
@@ -103,6 +92,8 @@ class RevisionHTMLHandler extends SimpleHandler {
 				$body = $this->contentHelper->constructMetadata();
 				$body['html'] = $parserOutput->getText();
 				$response = $this->getResponseFactory()->createJson( $body );
+				// For JSON content, it doesn't make sense to set content language header
+				$this->htmlHelper->putHeaders( $response, !$setContentLanguageHeader );
 				$this->contentHelper->setCacheControl( $response, $parserOutput->getCacheExpiry() );
 				break;
 			default:

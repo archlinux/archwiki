@@ -167,14 +167,15 @@ $wgAutoloadClasses += [
 	# tests/phpunit/includes/specials
 	'SpecialPageTestBase' => "$testDir/phpunit/includes/specials/SpecialPageTestBase.php",
 	'SpecialPageExecutor' => "$testDir/phpunit/includes/specials/SpecialPageExecutor.php",
+	'SpecialSearchTestMockResultSet' => "$testDir/phpunit/includes/specials/SpecialSearchTestMockResultSet.php",
 
 	# test/phpunit/includes/user
 	'UserOptionsLookupTest' => "$testDir/phpunit/includes/user/UserOptionsLookupTest.php",
 
-	# tests/phpunit/languages
+	# tests/phpunit/includes/language
 	'DummyConverter' => "$testDir/phpunit/mocks/languages/DummyConverter.php",
-	'LanguageClassesTestCase' => "$testDir/phpunit/languages/LanguageClassesTestCase.php",
-	'LanguageConverterTestTrait' => "$testDir/phpunit/languages/LanguageConverterTestTrait.php",
+	'LanguageClassesTestCase' => "$testDir/phpunit/includes/language/LanguageClassesTestCase.php",
+	'LanguageConverterTestTrait' => "$testDir/phpunit/includes/language/LanguageConverterTestTrait.php",
 
 	# tests/phpunit/includes/libs
 	'BagOStuffTestBase' => "$testDir/phpunit/includes/libs/objectcache/BagOStuffTestBase.php",
@@ -249,6 +250,7 @@ $wgAutoloadClasses += [
 	'MediaWiki\\Tests\\Json\\JsonUnserializableSubClass' => "$testDir/phpunit/mocks/json/JsonUnserializableSubClass.php",
 
 	# tests/phpunit/unit/includes/language
+	'LanguageCodeTest' => "$testDir/phpunit/unit/includes/language/LanguageCodeTest.php",
 	'LanguageFallbackTestTrait' => "$testDir/phpunit/unit/includes/language/LanguageFallbackTestTrait.php",
 	'LanguageNameUtilsTestTrait' => "$testDir/phpunit/unit/includes/language/LanguageNameUtilsTestTrait.php",
 
@@ -262,8 +264,9 @@ $wgAutoloadClasses += [
 	# tests/phpunit/unit/includes/utils
 	'UrlUtilsProviders' => "$testDir/phpunit/unit/includes/utils/UrlUtilsProviders.php",
 
-	# tests/phpunit/includes/unit/password
+	# tests/phpunit/unit/includes/password
 	'PasswordTestCase' => "$testDir/phpunit/unit/includes/password/PasswordTestCase.php",
+	'Pbkdf2PasswordTestCase' => "$testDir/phpunit/unit/includes/password/Pbkdf2PasswordTestCase.php",
 
 	# tests/phpunit/integration/includes/user
 	'MediaWiki\Tests\User\ActorStoreTestBase' => "$testDir/phpunit/integration/includes/user/ActorStoreTestBase.php",
@@ -280,6 +283,7 @@ $wgAutoloadClasses += [
 	'MediaWiki\Tests\Rest\Handler\ActionModuleBasedHandlerTestTrait' => "$testDir/phpunit/unit/includes/Rest/Handler/ActionModuleBasedHandlerTestTrait.php",
 	'MediaWiki\Tests\Rest\Handler\HTMLHandlerTestTrait' => "$testDir/phpunit/integration/includes/Rest/Handler/HTMLHandlerTestTrait.php",
 	'MediaWiki\Tests\Rest\Handler\HandlerTestTrait' => "$testDir/phpunit/unit/includes/Rest/Handler/HandlerTestTrait.php",
+	'MediaWiki\Tests\Rest\Handler\PageHandlerTestTrait' => "$testDir/phpunit/unit/includes/Rest/Handler/PageHandlerTestTrait.php",
 	'MediaWiki\Tests\Rest\Handler\HelloHandler' => "$testDir/phpunit/unit/includes/Rest/Handler/HelloHandler.php",
 	'MediaWiki\Tests\Rest\Handler\MediaTestTrait' => "$testDir/phpunit/unit/includes/Rest/Handler/MediaTestTrait.php",
 

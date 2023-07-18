@@ -61,7 +61,7 @@ class ArrayUtils {
 	 * an element and return the appropriate key
 	 *
 	 * @param array $weights
-	 * @return bool|int|string
+	 * @return int|string|false
 	 */
 	public static function pickRandom( $weights ) {
 		if ( !is_array( $weights ) || count( $weights ) == 0 ) {
@@ -227,7 +227,7 @@ class ArrayUtils {
 		while ( !$done ) {
 			// Construct the output array element
 			$element = [];
-			foreach ( $inputArrays as $paramIndex => $inputArray ) {
+			foreach ( $inputArrays as $inputArray ) {
 				$element[] = current( $inputArray );
 			}
 			$outputArrays[] = $element;

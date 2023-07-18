@@ -10,23 +10,20 @@
 
 namespace MediaWiki\Extension\VisualEditor;
 
-use Config;
 use Language;
+use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
 use Message;
+use NullStatsdDataFactory;
+use PrefixingStatsdDataFactoryProxy;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use StatusValue;
 use Title;
 use WebRequest;
+use WikiMap;
 
 trait ApiParsoidTrait {
-
-	/**
-	 * @var ParsoidHelper
-	 */
-	private $helper = null;
 
 	/**
 	 * @var LoggerInterface
@@ -34,18 +31,9 @@ trait ApiParsoidTrait {
 	private $logger = null;
 
 	/**
-	 * @return ParsoidHelper
+	 * @var StatsdDataFactoryInterface
 	 */
-	protected function getHelper(): ParsoidHelper {
-		if ( !$this->helper ) {
-			$this->helper = new ParsoidHelper(
-				$this->getConfig(),
-				$this->getLogger(),
-				$this->getRequest()->getHeader( 'Cookie' )
-			);
-		}
-		return $this->helper;
-	}
+	private $stats = null;
 
 	/**
 	 * @return LoggerInterface
@@ -62,62 +50,48 @@ trait ApiParsoidTrait {
 	}
 
 	/**
-	 * Get the latest revision of a title
-	 *
-	 * @param Title $title Page title
-	 * @return RevisionRecord A revision record
+	 * @return StatsdDataFactoryInterface
 	 */
-	protected function getLatestRevision( Title $title ): RevisionRecord {
-		$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
-		$latestRevision = $revisionLookup->getRevisionByTitle( $title );
-		if ( $latestRevision !== null ) {
-			return $latestRevision;
-		}
-		$this->dieWithError( 'apierror-visualeditor-latestnotfound', 'latestnotfound' );
+	protected function getStats(): StatsdDataFactoryInterface {
+		return $this->stats ?: new NullStatsdDataFactory();
 	}
 
 	/**
-	 * Get a specific revision of a title
-	 *
-	 * If the oldid is ommitted or is 0, the latest revision will be fetched.
-	 *
-	 * If the oldid is invalid, an API error will be reported.
-	 *
-	 * @param Title|null $title Page title, not required if $oldid is used
-	 * @param int|string|null $oldid Optional revision ID.
-	 *  Should be an integer but will validate and convert user input strings.
-	 * @return RevisionRecord A revision record
+	 * @param StatsdDataFactoryInterface $stats
 	 */
-	protected function getValidRevision( Title $title = null, $oldid = null ): RevisionRecord {
-		$revisionLookup = MediaWikiServices::getInstance()->getRevisionLookup();
-		if ( $oldid === null || $oldid === 0 ) {
-			return $this->getLatestRevision( $title );
-		} else {
-			$revisionRecord = $revisionLookup->getRevisionById( $oldid );
-			if ( $revisionRecord ) {
-				return $revisionRecord;
-			}
-		}
-		$this->dieWithError( [ 'apierror-nosuchrevid', $oldid ], 'oldidnotfound' );
+	protected function setStats( StatsdDataFactoryInterface $stats ) {
+		$this->stats = new PrefixingStatsdDataFactoryProxy( $stats, WikiMap::getCurrentWikiId() );
 	}
 
 	/**
-	 * @param StatusValue $status
+	 * @return float Return a start time for use with statsRecordTiming()
 	 */
-	private function forwardErrorsAndCacheHeaders( StatusValue $status ) {
-		if ( !$status->isOK() ) {
-			$this->dieStatus( $status );
+	private function statsGetStartTime(): float {
+		return microtime( true );
+	}
+
+	/**
+	 * @param string $key
+	 * @param float $startTime from statsGetStartTime()
+	 */
+	private function statsRecordTiming( string $key, float $startTime ) {
+		$duration = ( microtime( true ) - $startTime ) * 1000;
+		$this->getStats()->timing( $key, $duration );
+	}
+
+	/**
+	 * @param array $response
+	 */
+	private function forwardErrorsAndCacheHeaders( array $response ) {
+		if ( !empty( $response['error'] ) ) {
+			$this->dieWithError( $response['error'] );
 		}
 
-		$response = $status->getValue();
-		// Only set when using RESTBase
-		if ( isset( $response['code'] ) && $response['code'] === 200 ) {
-			// If response was served directly from Varnish, use the response
-			// (RP) header to declare the cache hit and pass the data to the client.
-			$headers = $response['headers'];
-			if ( isset( $headers['x-cache'] ) && strpos( $headers['x-cache'], 'hit' ) !== false ) {
-				$this->getRequest()->response()->header( 'X-Cache: cached-response=true' );
-			}
+		// If response was received directly from Varnish, use the response
+		// (RP) header to declare the cache hit and pass the data to the client.
+		$headers = $response['headers'] ?? [];
+		if ( isset( $headers['x-cache'] ) && strpos( $headers['x-cache'], 'hit' ) !== false ) {
+			$this->getRequest()->response()->header( 'X-Cache: cached-response=true' );
 		}
 	}
 
@@ -131,11 +105,13 @@ trait ApiParsoidTrait {
 		$title = Title::newFromLinkTarget( $revision->getPageAsLinkTarget() );
 		$lang = self::getPageLanguage( $title );
 
-		$status = $this->getHelper()->requestRestbasePageHtml( $revision, $lang );
+		$startTime = $this->statsGetStartTime();
+		$response = $this->getParsoidClient()->getPageHtml( $revision, $lang );
+		$this->statsRecordTiming( 'ApiVisualEditor.ParsoidClient.getPageHtml', $startTime );
 
-		$this->forwardErrorsAndCacheHeaders( $status );
+		$this->forwardErrorsAndCacheHeaders( $response );
 
-		return $status->getValue();
+		return $response;
 	}
 
 	/**
@@ -152,11 +128,13 @@ trait ApiParsoidTrait {
 	): array {
 		$lang = self::getPageLanguage( $title );
 
-		$status = $this->getHelper()->transformHTML( $title, $html, $oldid, $etag, $lang );
+		$startTime = $this->statsGetStartTime();
+		$response = $this->getParsoidClient()->transformHTML( $title, $lang, $html, $oldid, $etag );
+		$this->statsRecordTiming( 'ApiVisualEditor.ParsoidClient.transformHTML', $startTime );
 
-		$this->forwardErrorsAndCacheHeaders( $status );
+		$this->forwardErrorsAndCacheHeaders( $response );
 
-		return $status->getValue();
+		return $response;
 	}
 
 	/**
@@ -174,11 +152,20 @@ trait ApiParsoidTrait {
 	): array {
 		$lang = self::getPageLanguage( $title );
 
-		$status = $this->getHelper()->transformWikitext( $title, $wikitext, $bodyOnly, $oldid, $stash, $lang );
+		$startTime = $this->statsGetStartTime();
+		$response = $this->getParsoidClient()->transformWikitext(
+			$title,
+			$lang,
+			$wikitext,
+			$bodyOnly,
+			$oldid,
+			$stash
+		);
+		$this->statsRecordTiming( 'ApiVisualEditor.ParsoidClient.transformWikitext', $startTime );
 
-		$this->forwardErrorsAndCacheHeaders( $status );
+		$this->forwardErrorsAndCacheHeaders( $response );
 
-		return $status->getValue();
+		return $response;
 	}
 
 	/**
@@ -199,6 +186,12 @@ trait ApiParsoidTrait {
 	}
 
 	/**
+	 * @see VisualEditorParsoidClientFactory
+	 * @return ParsoidClient
+	 */
+	abstract protected function getParsoidClient(): ParsoidClient;
+
+	/**
 	 * @see ApiBase
 	 * @param string|array|Message $msg See ApiErrorFormatter::addError()
 	 * @param string|null $code See ApiErrorFormatter::addError()
@@ -207,19 +200,6 @@ trait ApiParsoidTrait {
 	 * @return never
 	 */
 	abstract public function dieWithError( $msg, $code = null, $data = null, $httpCode = null );
-
-	/**
-	 * @see ApiBase
-	 * @param StatusValue $status
-	 * @return never
-	 */
-	abstract public function dieStatus( StatusValue $status );
-
-	/**
-	 * @see ContextSource
-	 * @return Config
-	 */
-	abstract public function getConfig();
 
 	/**
 	 * @see ContextSource

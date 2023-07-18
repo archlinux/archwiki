@@ -78,7 +78,6 @@
 	"math_unknown_function": "ismeretlen „$1” függvény",
 	"mw_math_latexml": "LaTeXML (kísérleti; MathML-t használ)",
 	"mw_math_mathml": "MathML SVG vagy PNG tartalékkal (modern böngészők és kisegítő eszközök számára ajánlott)",
-	"mw_math_png": "PNG-képek",
 	"mw_math_source": "LaTeX-forrás (szöveges böngészőknek)",
 	"prefs-math": "Képletek",
 	"datatypes-type-math": "Matematikai kifejezés",

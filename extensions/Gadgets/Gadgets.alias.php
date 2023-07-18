@@ -244,6 +244,12 @@ $specialPageAliases['ml'] = [
 	'Gadgets' => [ 'കൂട' ],
 ];
 
+/** Mon (ဘာသာ မန်) */
+$specialPageAliases['mnw'] = [
+	'Gadgets' => [ 'ကိရိယာဂမၠိုင်' ],
+	'GadgetUsage' => [ 'ကိရိယာစရင်အင်' ],
+];
+
 /** Marathi (मराठी) */
 $specialPageAliases['mr'] = [
 	'Gadgets' => [ 'सुविधा' ],

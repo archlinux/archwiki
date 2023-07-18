@@ -3,13 +3,16 @@
 		"authors": [
 			"Claw eg",
 			"DannyS712",
+			"Dr-Taher",
 			"FiberAhmed",
 			"Hasley",
 			"Hhaboh162002",
 			"Kuwaity26",
 			"Maroen1990",
 			"Meno25",
+			"Michel Bakni",
 			"Mido",
+			"NEHAOUA",
 			"Omda4wady",
 			"OsamaK",
 			"SaldırganSincap",
@@ -18,9 +21,7 @@
 			"أَحمد",
 			"ديفيد",
 			"روخو",
-			"محمد أحمد عبد الفتاح",
-			"NEHAOUA",
-			"Michel Bakni"
+			"محمد أحمد عبد الفتاح"
 		]
 	},
 	"config-desc": "مثبت برمجيات ميدياويكي",
@@ -67,8 +68,7 @@
 	"config-env-good": "جرى التحقق من البيئة.\nيمكنك تنصيب ميدياويكي.",
 	"config-env-bad": "جرى التحقق من البيئة. لا يمكنك تنصيب ميدياويكي.",
 	"config-env-php": "بي إتش بي $1 مثبت.",
-	"config-unicode-using-intl": "باستخدام [https://php.net/manual/en/book.intl.php امتداد PHP intl] لتسوية يونيكود.",
-	"config-unicode-update-warning": "<strong>تحذير:</strong> يستخدم الإصدار المثبت من برنامج تطبيع نظام يونيكود إصدارًا قديما من مكتبة [http://site.icu-project.org/ مشروع ICU];\nتجب عليك [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations الترقية] إذا كنت مهتما باستخدام يونيكود.",
+	"config-env-icu": "جرى تثبيت ICU $1 (يدعم Unicode $2).",
 	"config-no-db": "لا يمكن العثور على مشغل قاعدة بيانات مناسب! تحتاج إلى تثبيت مشغل قاعدة بيانات PHP، \n{{PLURAL:$2|نوع قاعدة البيانات التالي مدعوم|أنواع قاعدة البيانات التالية مدعومة}} البيانات التالية مدعومة: $1.\n\nإذا قمت بتجميع PHP بنفسك، فقم بتكوينها مع تمكين عميل قاعدة البيانات، على سبيل المثال، باستخدام <code>./configure --with-mysqli</code>.\nإذا قمت بتثبيت PHP من حزمة Debian أو Ubuntu، فستحتاج أيضا إلى تثبيت، على سبيل المثال، حزمة <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>تحذير:</strong> لديك SQLite $2، وهو أقل من الحد الأدنى المطلوب للنسخة $1، SQLite سوف يكون غير متوفر.",
 	"config-no-fts3": "<strong>تحذير:</strong> يتم تجميع SQLite بدون [//sqlite.org/fts3.html FTS3 module]; ستكون ميزات البحث غير متوفرة في هذه الواجهة الخلفية.",
@@ -94,7 +94,6 @@
 	"config-using-uri": "باستخدام URL الخادم «<nowiki>$1$2</nowiki>».",
 	"config-uploads-not-safe": "<strong>تحذير:</strong>  الدليل الافتراضي للمرفوعات <code>$1</code> عرضة لتنفيذ سكريبتات عشوائية،\nعلى الرغم من أن ميدياويكي يتحقق من كل الملفات المرفوعة للتهديدات الأمنية، فمن المستحسن بشدة [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security إغلاق هذه الثغرة الأمنية] قبل تمكين المرفوعات.",
 	"config-no-cli-uploads-check": "<strong>تحذير:</strong> لم يتم تحديد الدليل الافتراضي للمرفوعات (<code>$1</code>) للقابلية للتأثر\nلتنفيذ برنامج تعسفي أثناء تثبيت CLI.",
-	"config-suhosin-max-value-length": "تم تثبيت Suhosin وتقييد وسيط GET <code>length</code> إلى $1 بايت،\nيتطلب ميدياويكي أن يكون <code>suhosin.get.max_value_length</code> $2 على الأقل، قم بتعطيل هذا الإعداد  أو بزيادة هذه القيمة إلى $3 في <code>php.ini</code>.",
 	"config-using-32bit": "<strong>تحذير:</strong> يبدو أن نظامك يعمل مع الأعداد الصحيحة 32 بت، هذا [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit لا يُنصَح به].",
 	"config-db-type": "نوع قاعدة البيانات:",
 	"config-db-host": "مضيف قاعدة البيانات:",
@@ -326,6 +325,7 @@
 	"config-screenshot": "لقطة شاشة",
 	"config-extension-not-found": "لم يمكن العثور على ملف التسجيل للامتداد «$1»",
 	"config-extension-dependency": "خطأ اعتماد حدث أثناء تنصيب الامتداد «$1»: $2",
+	"config-ext-skins-more-info": "مزيد من المعلومات",
 	"mainpagetext": "<strong>تم تثبيت ميدياويكي بنجاح.</strong>",
 	"mainpagedocfooter": "استشر [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents دليل المستخدم] لمعلومات حول استخدام برنامج الويكي.\n\n== البداية ==\n\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings قائمة إعدادات الضبط]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ أسئلة متكررة حول ميدياويكي]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ القائمة البريدية الخاصة بإصدار ميدياويكي]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam تعلم كيفية مكافحة السخام في الويكي الخاص بك]"
 }

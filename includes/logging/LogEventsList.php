@@ -24,6 +24,8 @@
  */
 
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -103,9 +105,12 @@ class LogEventsList extends ContextSource {
 	 * @param array|null $filter
 	 * @param string $tagFilter Tag to select by default
 	 * @param string|null $action
+	 * @param array $extras
+	 * @param bool $tagInvert whether tags are filtered for (false) or out (true)
 	 */
 	public function showOptions( $types = [], $user = '', $page = '', $pattern = false, $year = 0,
-		$month = 0, $day = 0, $filter = null, $tagFilter = '', $action = null
+		$month = 0, $day = 0, $filter = null, $tagFilter = '', $action = null, $extras = [],
+		$tagInvert = false
 	) {
 		// For B/C, we take strings, but make sure they are converted...
 		$types = ( $types === '' ) ? [] : (array)$types;
@@ -117,11 +122,16 @@ class LogEventsList extends ContextSource {
 		$formDescriptor['user'] = $this->getUserInputDesc( $user );
 		$formDescriptor['page'] = $this->getTitleInputDesc( $page );
 
+		// Title pattern, if allowed
+		if ( !$this->getConfig()->get( MainConfigNames::MiserMode ) ) {
+			$formDescriptor['pattern'] = $this->getTitlePatternDesc( $pattern );
+		}
+
 		// Add extra inputs if any
 		// This could either be a form descriptor array or a string with raw HTML.
 		// We need it to work in both cases and show a deprecation warning if it
 		// is a string. See T199495.
-		$extraInputsDescriptor = $this->getExtraInputsDesc( $types );
+		$extraInputsDescriptor = $this->getExtraInputsDesc( $types, $extras );
 		if (
 			is_array( $extraInputsDescriptor ) &&
 			!empty( $extraInputsDescriptor )
@@ -136,11 +146,6 @@ class LogEventsList extends ContextSource {
 			wfDeprecated( '$input in LogEventsListGetExtraInputs hook', '1.32' );
 		}
 
-		// Title pattern, if allowed
-		if ( !$this->getConfig()->get( MainConfigNames::MiserMode ) ) {
-			$formDescriptor['pattern'] = $this->getTitlePatternDesc( $pattern );
-		}
-
 		// Date menu
 		$formDescriptor['date'] = [
 			'type' => 'date',
@@ -153,6 +158,14 @@ class LogEventsList extends ContextSource {
 			'type' => 'tagfilter',
 			'name' => 'tagfilter',
 			'label-message' => 'tag-filter',
+			'default' => $tagFilter,
+		];
+		$formDescriptor['tagInvert'] = [
+			'type' => 'check',
+			'name' => 'tagInvert',
+			'label-message' => 'invert',
+			'hide-if' => [ '===', 'tagfilter', '' ],
+			'default' => $tagInvert,
 		];
 
 		// Filter links
@@ -174,7 +187,7 @@ class LogEventsList extends ContextSource {
 		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $context );
 		$htmlForm
 			->setSubmitTextMsg( 'logeventslist-submit' )
-			->setMethod( 'get' )
+			->setMethod( 'GET' )
 			->setWrapperLegendMsg( 'log' )
 			// T321154
 			->setFormIdentifier( 'logeventslist' );
@@ -265,11 +278,16 @@ class LogEventsList extends ContextSource {
 	 * @return array Form descriptor
 	 */
 	private function getTitleInputDesc( $page ) {
+		if ( $page instanceof PageReference ) {
+			$titleFormatter = MediaWikiServices::getInstance()->getTitleFormatter();
+			$page = $titleFormatter->getPrefixedText( $page );
+		}
 		return [
 			'class' => HTMLTitleTextField::class,
 			'label-message' => 'speciallogtitlelabel',
 			'name' => 'page',
-			'required' => false
+			'required' => false,
+			'default' => $page,
 		];
 	}
 
@@ -282,20 +300,23 @@ class LogEventsList extends ContextSource {
 			'type' => 'check',
 			'label-message' => 'log-title-wildcard',
 			'name' => 'pattern',
+			'default' => $pattern,
 		];
 	}
 
 	/**
 	 * @param array $types
+	 * @param array $extras
 	 * @return array|string Form descriptor or string with HTML
 	 */
-	private function getExtraInputsDesc( $types ) {
+	private function getExtraInputsDesc( $types, $extras ) {
 		if ( count( $types ) == 1 ) {
 			if ( $types[0] == 'suppress' ) {
 				return [
 					'type' => 'text',
 					'label-message' => 'revdelete-offender',
 					'name' => 'offender',
+					'default' => $extras['offender'] ?? '',
 				];
 			} else {
 				// Allow extensions to add their own extra inputs
@@ -399,7 +420,7 @@ class LogEventsList extends ContextSource {
 		$del = $this->getShowHideLinks( $row );
 
 		// Any tags...
-		list( $tagDisplay, $newClasses ) = ChangeTags::formatSummaryRow(
+		[ $tagDisplay, $newClasses ] = ChangeTags::formatSummaryRow(
 			$row->ts_tags,
 			'logevent',
 			$this->getContext()
@@ -657,6 +678,7 @@ class LogEventsList extends ContextSource {
 			$services->getDBLoadBalancer(),
 			$services->getActorNormalization()
 		);
+		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( !$useRequestParams ) {
 			# Reset vars that may have been taken from the request
 			$pager->mLimit = 50;
@@ -665,6 +687,7 @@ class LogEventsList extends ContextSource {
 			$pager->mIsBackwards = false;
 		}
 
+		// @phan-suppress-next-line PhanImpossibleCondition
 		if ( $param['useMaster'] ) {
 			$pager->mDb = wfGetDB( DB_PRIMARY );
 		}
@@ -697,6 +720,7 @@ class LogEventsList extends ContextSource {
 				$loglist->endLogEventsList();
 			// add styles for change tags
 			$context->getOutput()->addModuleStyles( 'mediawiki.interface.helpers.styles' );
+		// @phan-suppress-next-line PhanRedundantCondition
 		} elseif ( $showIfEmpty ) {
 			$s = Html::rawElement( 'div', [ 'class' => 'mw-warning-logempty' ],
 				$context->msg( 'logempty' )->parse() );
@@ -763,7 +787,7 @@ class LogEventsList extends ContextSource {
 			);
 		}
 
-		// @phan-suppress-next-line PhanSuspiciousValueComparison
+		// @phan-suppress-next-line PhanSuspiciousValueComparison, PhanRedundantCondition
 		if ( $wrap != '' ) { // Wrap message in html
 			$s = str_replace( '$1', $s, $wrap );
 		}
@@ -787,7 +811,7 @@ class LogEventsList extends ContextSource {
 	 * @param IDatabase $db
 	 * @param string $audience Public/user
 	 * @param Authority|null $performer User to check, required when audience isn't public
-	 * @return string|bool String on success, false on failure.
+	 * @return string|false String on success, false on failure.
 	 * @throws InvalidArgumentException
 	 */
 	public static function getExcludeClause( $db, $audience = 'public', Authority $performer = null ) {

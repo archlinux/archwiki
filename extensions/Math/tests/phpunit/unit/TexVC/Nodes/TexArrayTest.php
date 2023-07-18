@@ -13,7 +13,7 @@ use MediaWikiUnitTestCase;
 class TexArrayTest extends MediaWikiUnitTestCase {
 
 	public function testIsTexNode() {
-		$this->assertEquals( new TexArray() instanceof TexNode, true,
+		$this->assertTrue( new TexArray() instanceof TexNode,
 			'Should create an instance of TexNode' );
 	}
 
@@ -74,4 +74,9 @@ class TexArrayTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( [], $n->extractSubscripts(), 'Should extract subscripts' );
 	}
 
+	public function testUnshift() {
+		$n = new TexArray( new TexNode( '' ) );
+		$n->unshift( 'test1', 'test2' );
+		$this->assertEquals( 3, $n->getLength(), 'Should unshift elements' );
+	}
 }

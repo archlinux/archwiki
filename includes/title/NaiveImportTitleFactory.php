@@ -18,6 +18,9 @@
  * @file
  */
 
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+
 /**
  * A class to convert page titles on a foreign wiki (ForeignTitle objects) into
  * page titles on the local wiki (Title objects), using a default namespace

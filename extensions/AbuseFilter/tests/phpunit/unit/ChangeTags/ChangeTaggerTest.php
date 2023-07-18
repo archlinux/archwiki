@@ -46,17 +46,19 @@ class ChangeTaggerTest extends MediaWikiUnitTestCase {
 			'rc_namespace' => NS_MAIN,
 			'rc_title' => $titleText,
 			'rc_user' => 42,
-			'rc_user_text' => $userName
+			'rc_user_text' => $userName,
+			'rc_ip' => '127.0.0.1',
 		];
 		$specifierFromArray = static function ( array $specs ): ActionSpecifier {
 			return new ActionSpecifier(
 				$specs['action'],
 				$specs['target'],
 				new UserIdentityValue( 42, $specs['username'] ),
+				$specs['ip'],
 				$specs['accountname'] ?? null
 			);
 		};
-		$baseSpecs = [ 'username' => $userName, 'target' => $title ];
+		$baseSpecs = [ 'username' => $userName, 'target' => $title, 'ip' => '127.0.0.1' ];
 
 		$rcAttribs = [ 'rc_log_type' => null ] + $baseAttribs;
 		yield 'edit' => [

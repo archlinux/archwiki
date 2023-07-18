@@ -26,6 +26,7 @@
  * @author Daniel Kinzler
  */
 
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreloadTransformParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
@@ -39,6 +40,9 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRenderingProvider;
 use MediaWiki\Search\ParserOutputSearchDataExtractor;
+use MediaWiki\StubObject\StubObject;
+use MediaWiki\Title\Title;
+use Wikimedia\Assert\Assert;
 use Wikimedia\ScopedCallback;
 
 /**
@@ -718,19 +722,18 @@ abstract class ContentHandler {
 
 		if ( $title->inNamespace( NS_MEDIAWIKI ) ) {
 			// Parse mediawiki messages with correct target language
-			list( /* $unused */, $lang ) = $services->getMessageCache()->figureMessage( $title->getText() );
+			[ /* $unused */, $lang ] = $services->getMessageCache()->figureMessage( $title->getText() );
 			$pageLang = $services->getLanguageFactory()->getLanguage( $lang );
 		}
 
 		// Simplify hook handlers by only passing objects of one type, in case nothing
-		// else has unstubbed the StubUserLang object by now.
+		// else has unstubbed the MediaWiki\StubObject\StubUserLang object by now.
 		StubObject::unstub( $wgLang );
 
 		$this->getHookRunner()->onPageContentLanguage( $title, $pageLang, $wgLang );
 
 		if ( !$pageLang instanceof Language ) {
-			wfDeprecated( 'the hook PageContentLanguage with other types than a Language object in $pageLang', '1.33' );
-			$pageLang = wfGetLangObj( $pageLang );
+			throw new MWException( 'onPageContentLanguage() hook provided an invalid $pageLang object.' );
 		}
 
 		return $pageLang;
@@ -826,7 +829,7 @@ abstract class ContentHandler {
 	 * @param Content $myContent One of the page's conflicting contents.
 	 * @param Content $yourContent One of the page's conflicting contents.
 	 *
-	 * @return Content|bool Always false.
+	 * @return Content|false Always false.
 	 */
 	public function merge3( Content $oldContent, Content $myContent, Content $yourContent ) {
 		return false;
@@ -1044,7 +1047,7 @@ abstract class ContentHandler {
 	 * @param Title $title The page's title
 	 * @param bool &$hasHistory Whether the page has a history
 	 *
-	 * @return mixed String containing deletion reason or empty string, or
+	 * @return string|false String containing deletion reason or empty string, or
 	 *    boolean false if no revision occurred
 	 */
 	public function getAutoDeleteReason( Title $title, &$hasHistory = false ) {
@@ -1380,16 +1383,32 @@ abstract class ContentHandler {
 	 * @param WikiPage $page Page to index
 	 * @param ParserOutput $output
 	 * @param SearchEngine $engine Search engine for which we are indexing
-	 * @return array Map of name=>value for fields
+	 * @param RevisionRecord|null $revision Revision content to fetch if provided or use the latest revision
+	 *                                      from WikiPage::getRevisionRecord() if not
+	 * @return array Map of name=>value for fields, an empty array is returned if the latest
+	 *               revision cannot be retrieved.
 	 * @since 1.28
 	 */
 	public function getDataForSearchIndex(
 		WikiPage $page,
 		ParserOutput $output,
-		SearchEngine $engine
+		SearchEngine $engine,
+		RevisionRecord $revision = null
 	) {
+		$revision ??= $page->getRevisionRecord();
+		if ( $revision === null ) {
+			LoggerFactory::getInstance( 'search' )->warning(
+				"Called getDataForSearchIndex on the page {page_id} for which the " .
+				"latest revision cannot be loaded.",
+				[ "page_id" => $page->getId() ]
+			);
+			return [];
+		}
+		Assert::invariant( $revision->getPageId() === $page->getId(),
+			'$revision and $page must target the same page_id' );
+
 		$fieldData = [];
-		$content = $page->getContent();
+		$content = $revision->getContent( SlotRecord::MAIN );
 
 		if ( $content ) {
 			$searchDataExtractor = new ParserOutputSearchDataExtractor();
@@ -1408,6 +1427,8 @@ abstract class ContentHandler {
 		}
 
 		$this->getHookRunner()->onSearchDataForIndex( $fieldData, $this, $page, $output, $engine );
+		$this->getHookRunner()->onSearchDataForIndex2( $fieldData, $this, $page, $output, $engine, $revision );
+
 		return $fieldData;
 	}
 
@@ -1426,18 +1447,24 @@ abstract class ContentHandler {
 	 *
 	 * @param WikiPage $page
 	 * @param ParserCache|null $cache deprecated since 1.38 and won't have any effect
+	 * @param RevisionRecord|null $revision
 	 * @return ParserOutput|null null when the ParserOutput cannot be obtained
 	 * @see ParserOutputAccess::getParserOutput() for failure modes
 	 */
-	public function getParserOutputForIndexing( WikiPage $page, ParserCache $cache = null ) {
+	public function getParserOutputForIndexing(
+		WikiPage $page,
+		ParserCache $cache = null,
+		RevisionRecord $revision = null
+	) {
 		// TODO: MCR: ContentHandler should be called per slot, not for the whole page.
 		// See T190066.
 		$parserOptions = $page->makeParserOptions( 'canonical' );
+		$parserOptions->setRenderReason( 'ParserOutputForIndexing' );
 		$parserOutputAccess = MediaWikiServices::getInstance()->getParserOutputAccess();
 		return $parserOutputAccess->getParserOutput(
 			$page,
 			$parserOptions,
-			null,
+			$revision,
 			ParserOutputAccess::OPT_NO_UPDATE_CACHE
 		)->getValue();
 	}

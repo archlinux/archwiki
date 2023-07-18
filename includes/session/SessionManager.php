@@ -23,14 +23,15 @@
 
 namespace MediaWiki\Session;
 
+use BadMethodCallException;
 use BagOStuff;
 use CachedBagOStuff;
 use Config;
-use FauxRequest;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\User\UserNameUtils;
 use MWException;
 use Psr\Log\LoggerInterface;
@@ -221,7 +222,7 @@ class SessionManager implements SessionManagerInterface {
 
 		$this->logger->debug( 'SessionManager using store ' . get_class( $store ) );
 		$this->store = $store instanceof CachedBagOStuff ? $store : new CachedBagOStuff( $store );
-		$this->userNameUtils = MediawikiServices::getInstance()->getUserNameUtils();
+		$this->userNameUtils = MediaWikiServices::getInstance()->getUserNameUtils();
 
 		register_shutdown_function( [ $this, 'shutdown' ] );
 	}
@@ -276,7 +277,6 @@ class SessionManager implements SessionManagerInterface {
 		}
 
 		if ( $create && $session === null ) {
-			$ex = null;
 			try {
 				$session = $this->getEmptySessionInternal( $request, $id );
 			} catch ( \Exception $ex ) {
@@ -586,7 +586,7 @@ class SessionManager implements SessionManagerInterface {
 			);
 		}
 
-		return $retInfos ? $retInfos[0] : null;
+		return $retInfos[0] ?? null;
 	}
 
 	/**
@@ -1010,7 +1010,7 @@ class SessionManager implements SessionManagerInterface {
 	public static function resetCache() {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) && !defined( 'MW_PARSER_TEST' ) ) {
 			// @codeCoverageIgnoreStart
-			throw new MWException( __METHOD__ . ' may only be called from unit tests!' );
+			throw new BadMethodCallException( __METHOD__ . ' may only be called from unit tests!' );
 			// @codeCoverageIgnoreEnd
 		}
 
@@ -1060,7 +1060,7 @@ class SessionManager implements SessionManagerInterface {
 		}
 		try {
 			$ip = $session->getRequest()->getIP();
-		} catch ( \MWException $e ) {
+		} catch ( MWException $e ) {
 			return;
 		}
 		if ( $ip === '127.0.0.1' || $proxyLookup->isConfiguredProxy( $ip ) ) {

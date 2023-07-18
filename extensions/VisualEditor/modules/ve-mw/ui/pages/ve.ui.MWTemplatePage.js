@@ -41,8 +41,12 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	} );
 
 	// Initialization
-	this.$description
-		.text( this.spec.getDescription() );
+	var description = this.spec.getDescription();
+	if ( description ) {
+		this.$description.append(
+			$( '<p>' ).text( description )
+		);
+	}
 
 	// The transcluded page may be dynamically generated or unspecified in the DOM
 	// for other reasons (T68724). In that case we can't tell the user what the
@@ -52,13 +56,10 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 		knownAsMissing = link && linkData && linkData.missing;
 
 	var key,
-		messageStyle = 've-ui-mwTemplatePage-description-missing',
-		$addMessageHere = this.$description;
-	if ( this.spec.getDescription() ) {
+		messageStyle = 've-ui-mwTemplatePage-description-missing';
+	if ( description ) {
 		key = 'visualeditor-dialog-transclusion-see-template';
 		messageStyle = 've-ui-mwTemplatePage-description-extra';
-		$addMessageHere = $( '<span>' );
-		this.$description.append( $( '<hr>' ), $addMessageHere );
 	} else if ( !link || knownAsMissing ) {
 		var title;
 		try {
@@ -74,6 +75,7 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 	}
 
 	if ( key ) {
+		var $addMessageHere = $( '<p>' );
 		// The following messages are used here:
 		// * visualeditor-dialog-transclusion-no-template-description
 		// * visualeditor-dialog-transclusion-see-template
@@ -85,6 +87,7 @@ ve.ui.MWTemplatePage = function VeUiMWTemplatePage( template, name, config ) {
 		// * ve-ui-mwTemplatePage-description-missing
 		$addMessageHere.addClass( messageStyle ).append( $msg );
 		ve.targetLinksToNewWindow( $addMessageHere[ 0 ] );
+		this.$description.append( $addMessageHere );
 	}
 
 	this.$description.find( 'a[href]' )

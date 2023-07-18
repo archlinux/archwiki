@@ -3,14 +3,13 @@
 namespace MediaWiki\Edit;
 
 use BagOStuff;
-use FormatJson;
+use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Parser\Parsoid\PageBundleJsonTrait;
 use MediaWiki\Parser\Parsoid\ParsoidRenderID;
-use Wikimedia\Parsoid\Core\PageBundle;
 
 /**
+ * @internal
  * @since 1.39
- * @unstable since 1.39, should be stable before release.
  */
 class SimpleParsoidOutputStash implements ParsoidOutputStash {
 	use PageBundleJsonTrait;
@@ -21,28 +20,38 @@ class SimpleParsoidOutputStash implements ParsoidOutputStash {
 	/** @var int */
 	private $duration;
 
+	/** @var IContentHandlerFactory */
+	private $contentHandlerFactory;
+
 	/**
+	 * @param IContentHandlerFactory $contentHandlerFactory
 	 * @param BagOStuff $bagOfStuff storage backend
 	 * @param int $duration cache duration in seconds
 	 */
-	public function __construct( BagOStuff $bagOfStuff, int $duration ) {
+	public function __construct( IContentHandlerFactory $contentHandlerFactory, BagOStuff $bagOfStuff, int $duration ) {
 		$this->bagOfStuff = $bagOfStuff;
 		$this->duration = $duration;
+		$this->contentHandlerFactory = $contentHandlerFactory;
+	}
+
+	private function makeCacheKey( ParsoidRenderID $renderId ): string {
+		return $this->bagOfStuff->makeKey( 'ParsoidOutputStash', $renderId->getKey() );
 	}
 
 	/**
 	 * Before we stash, we serialize & encode into JSON the relevant
 	 * parts of the data we need to construct a page bundle in the future.
 	 *
-	 * @param ParsoidRenderId $renderId
-	 * @param PageBundle $bundle
+	 * @param ParsoidRenderID $renderId Combination of revision ID and revision's time ID
+	 * @param SelserContext $selserContext
 	 *
 	 * @return bool
 	 */
-	public function set( ParsoidRenderId $renderId, PageBundle $bundle ): bool {
-		$pageBundleJson = FormatJson::encode( $this->jsonSerializePageBundle( $bundle ) );
+	public function set( ParsoidRenderID $renderId, SelserContext $selserContext ): bool {
+		$jsonic = $this->selserContextToJsonArray( $selserContext );
 
-		return $this->bagOfStuff->set( $renderId->getKey(), $pageBundleJson, $this->duration );
+		$key = $this->makeCacheKey( $renderId );
+		return $this->bagOfStuff->set( $key, $jsonic, $this->duration );
 	}
 
 	/**
@@ -50,18 +59,63 @@ class SimpleParsoidOutputStash implements ParsoidOutputStash {
 	 * if we have something in the stash that matches a given rendering or
 	 * will just return an empty array if no entry in the stash.
 	 *
-	 * @param ParsoidRenderId $renderId
+	 * @param ParsoidRenderID $renderId
 	 *
-	 * @return PageBundle|null
+	 * @return SelserContext|null
 	 */
-	public function get( ParsoidRenderId $renderId ): ?PageBundle {
-		$pageBundleArray = FormatJson::decode(
-				$this->bagOfStuff->get( $renderId->getKey() ),
-				true
-			) ?? [];
-		$pageBundle = $this->newPageBundleFromJson( $pageBundleArray );
+	public function get( ParsoidRenderID $renderId ): ?SelserContext {
+		$key = $this->makeCacheKey( $renderId );
+		$jsonic = $this->bagOfStuff->get( $key ) ?? [];
 
-		return $pageBundle ?: null;
+		if ( !is_array( $jsonic ) ) {
+			// Defend against old stashed data.
+			// Only needed for a couple of days after this code has been deployed.
+			return null;
+		}
+
+		$selserContext = $this->newSelserContextFromJson( $jsonic );
+		return $selserContext ?: null;
+	}
+
+	private function newSelserContextFromJson( array $json ): ?SelserContext {
+		if ( !isset( $json['pb'] ) ) {
+			return null;
+		}
+
+		$pb = $this->newPageBundleFromJson( $json['pb'] );
+
+		if ( !$pb ) {
+			return null;
+		}
+
+		$revId = (int)$json['revId'];
+
+		if ( isset( $json['content'] ) ) {
+			$contentHandler = $this->contentHandlerFactory->getContentHandler( $json['content']['model'] );
+			$content = $contentHandler->unserializeContent( $json['content']['data'] );
+		} else {
+			$content = null;
+		}
+
+		return new SelserContext( $pb, $revId, $content );
+	}
+
+	private function selserContextToJsonArray( SelserContext $selserContext ): array {
+		$json = [
+			'revId' => $selserContext->getRevisionID(),
+		];
+
+		$json['pb'] = $this->jsonSerializePageBundle( $selserContext->getPageBundle() );
+
+		$content = $selserContext->getContent();
+		if ( $content ) {
+			$json['content'] = [
+				'model' => $content->getModel(),
+				'data' => $content->serialize()
+			];
+		}
+
+		return $json;
 	}
 
 }

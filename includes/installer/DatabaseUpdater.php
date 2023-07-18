@@ -433,6 +433,17 @@ abstract class DatabaseUpdater {
 	}
 
 	/**
+	 * @since 1.40
+	 *
+	 * @param string $tableName
+	 * @param string $fieldName
+	 * @return bool
+	 */
+	public function fieldExists( $tableName, $fieldName ) {
+		return ( $this->db->fieldExists( $tableName, $fieldName, __METHOD__ ) );
+	}
+
+	/**
 	 * Add a maintenance script to be run after the database updates are complete.
 	 *
 	 * Script should subclass LoggedUpdateMaintenance
@@ -467,9 +478,8 @@ abstract class DatabaseUpdater {
 	 * @since 1.21
 	 *
 	 * Writes the schema updates desired to a file for the DB Admin to run.
-	 * @param array $schemaUpdate
 	 */
-	private function writeSchemaUpdateFile( array $schemaUpdate = [] ) {
+	private function writeSchemaUpdateFile() {
 		$updates = $this->updatesSkipped;
 		$this->updatesSkipped = [];
 
@@ -698,9 +708,7 @@ abstract class DatabaseUpdater {
 	 * @return bool False if patch is skipped.
 	 */
 	protected function applyPatch( $path, $isFullPath = false, $msg = null ) {
-		if ( $msg === null ) {
-			$msg = "Applying $path patch";
-		}
+		$msg ??= "Applying $path patch";
 		if ( $this->skipSchema ) {
 			$this->output( "...skipping schema change ($msg).\n" );
 
@@ -943,7 +951,7 @@ abstract class DatabaseUpdater {
 	 * @note protected since 1.35
 	 *
 	 * @param string $table Table to drop.
-	 * @param string|bool $patch String of patch file that will drop the table. Default: false.
+	 * @param string|false $patch String of patch file that will drop the table. Default: false.
 	 * @param bool $fullpath Whether $patch is a full path. Default: false.
 	 * @return bool False if this was skipped because schema changes are skipped
 	 */
@@ -1112,12 +1120,9 @@ abstract class DatabaseUpdater {
 
 		// ResourceLoader: Message cache
 		$services = MediaWikiServices::getInstance();
-		$blobStore = new MessageBlobStore(
-			$services->getResourceLoader(),
-			null,
+		MessageBlobStore::clearGlobalCacheEntry(
 			$services->getMainWANObjectCache()
 		);
-		$blobStore->clear();
 
 		// ResourceLoader: File-dependency cache
 		$this->db->delete( 'module_deps', '*', __METHOD__ );
@@ -1224,136 +1229,6 @@ abstract class DatabaseUpdater {
 		$this->output( "Running migrateLinksTable.php on templatelinks...\n" );
 		$task->execute();
 		$this->output( "done.\n" );
-	}
-
-	/**
-	 * Migrate comments to the new 'comment' table
-	 * @since 1.30
-	 */
-	protected function migrateComments() {
-		if ( !$this->updateRowExists( 'MigrateComments' ) ) {
-			$this->output(
-				"Migrating comments to the 'comments' table, printing progress markers. For large\n" .
-				"databases, you may want to hit Ctrl-C and do this manually with\n" .
-				"maintenance/migrateComments.php.\n"
-			);
-			$task = $this->maintenance->runChild( MigrateComments::class, 'migrateComments.php' );
-			$ok = $task->execute();
-			$this->output( $ok ? "done.\n" : "errors were encountered.\n" );
-		}
-	}
-
-	/**
-	 * Merge `image_comment_temp` into the `image` table
-	 * @since 1.32
-	 */
-	protected function migrateImageCommentTemp() {
-		if ( $this->tableExists( 'image_comment_temp' ) ) {
-			$this->output( "Merging image_comment_temp into the image table\n" );
-			$task = $this->maintenance->runChild(
-				MigrateImageCommentTemp::class, 'migrateImageCommentTemp.php'
-			);
-			// @phan-suppress-next-line PhanUndeclaredMethod
-			$task->setForce();
-			$ok = $task->execute();
-			$this->output( $ok ? "done.\n" : "errors were encountered.\n" );
-			if ( $ok ) {
-				$this->dropTable( 'image_comment_temp' );
-			}
-		}
-	}
-
-	/**
-	 * Migrate actors to the new 'actor' table
-	 * @since 1.31
-	 */
-	protected function migrateActors() {
-		if ( !$this->updateRowExists( 'MigrateActors' ) ) {
-			$this->output(
-				"Migrating actors to the 'actor' table, printing progress markers. For large\n" .
-				"databases, you may want to hit Ctrl-C and do this manually with\n" .
-				"maintenance/migrateActors.php.\n"
-			);
-			$task = $this->maintenance->runChild( MigrateActors::class, 'migrateActors.php' );
-			$ok = $task->execute();
-			$this->output( $ok ? "done.\n" : "errors were encountered.\n" );
-		}
-	}
-
-	/**
-	 * Migrate ar_text to modern storage
-	 * @since 1.31
-	 */
-	protected function migrateArchiveText() {
-		if ( $this->db->fieldExists( 'archive', 'ar_text', __METHOD__ ) ) {
-			$this->output( "Migrating archive ar_text to modern storage.\n" );
-			$task = $this->maintenance->runChild( MigrateArchiveText::class, 'migrateArchiveText.php' );
-			// @phan-suppress-next-line PhanUndeclaredMethod
-			$task->setForce();
-			if ( $task->execute() ) {
-				$this->applyPatch( 'patch-drop-ar_text.sql', false,
-					'Dropping ar_text and ar_flags columns' );
-			}
-		}
-	}
-
-	/**
-	 * Populate ar_rev_id, then make it not nullable
-	 * @since 1.31
-	 */
-	protected function populateArchiveRevId() {
-		$info = $this->db->fieldInfo( 'archive', 'ar_rev_id' );
-		if ( !$info ) {
-			throw new MWException( 'Missing ar_rev_id field of archive table. Should not happen.' );
-		}
-		if ( $info->isNullable() ) {
-			$this->output( "Populating ar_rev_id.\n" );
-			$task = $this->maintenance->runChild( PopulateArchiveRevId::class, 'populateArchiveRevId.php' );
-			if ( $task->execute() ) {
-				$this->applyPatch( 'patch-ar_rev_id-not-null.sql', false,
-					'Making ar_rev_id not nullable' );
-			}
-		}
-	}
-
-	/**
-	 * Populates the externallinks.el_index_60 field
-	 * @since 1.32
-	 */
-	protected function populateExternallinksIndex60() {
-		if ( !$this->updateRowExists( 'populate externallinks.el_index_60' ) ) {
-			$this->output(
-				"Populating el_index_60 field, printing progress markers. For large\n" .
-				"databases, you may want to hit Ctrl-C and do this manually with\n" .
-				"maintenance/populateExternallinksIndex60.php.\n"
-			);
-			$task = $this->maintenance->runChild( PopulateExternallinksIndex60::class,
-				'populateExternallinksIndex60.php' );
-			$task->execute();
-			$this->output( "done.\n" );
-		}
-	}
-
-	/**
-	 * Populates the MCR content tables
-	 * @since 1.32
-	 */
-	protected function populateContentTables() {
-		if ( !$this->updateRowExists( 'PopulateContentTables' ) ) {
-			$this->output(
-				"Migrating revision data to the MCR 'slot' and 'content' tables, printing progress markers.\n" .
-				"For large databases, you may want to hit Ctrl-C and do this manually with\n" .
-				"maintenance/populateContentTables.php.\n"
-			);
-			$task = $this->maintenance->runChild(
-				PopulateContentTables::class, 'populateContentTables.php'
-			);
-			$ok = $task->execute();
-			$this->output( $ok ? "done.\n" : "errors were encountered.\n" );
-			if ( $ok ) {
-				$this->insertUpdateRow( 'PopulateContentTables' );
-			}
-		}
 	}
 
 	/**

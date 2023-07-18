@@ -4,8 +4,8 @@
 			"Castillerian",
 			"Har-wradim",
 			"Joystick",
-			"פוילישער",
-			"Pacha Tchernof"
+			"Pacha Tchernof",
+			"פוילישער"
 		]
 	},
 	"skinname-vector": "וועקטאר אלט (2010)",
@@ -28,8 +28,12 @@
 	"vector-view-view": "לייענען",
 	"vector-view-viewsource": "ווײַזן מקור",
 	"vector-more-actions": "נאָך",
-	"vector-toc-heading": "אינהאַלט",
+	"vector-toc-label": "אינהאַלט",
 	"vector-toc-beginning": "אָנפֿאַנג",
 	"vector-main-menu-tooltip": "הויפט־מעניו",
-	"vector-toc-menu-tooltip": "אינהאַלט טאַבעלע"
+	"vector-toc-menu-tooltip": "אינהאַלט טאַבעלע",
+	"vector-page-tools-label": "געצייג",
+	"vector-page-tools-general-label": "אַלגעמיין",
+	"vector-pin-element-label": "אַריבערפיֿרן צו זייט־פאַס",
+	"vector-unpin-element-label": "באַהאַלטן"
 }

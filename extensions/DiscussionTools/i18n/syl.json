@@ -1,0 +1,32 @@
+{
+	"@metadata": {
+		"authors": [
+			"এম আবু সাঈদ",
+			"ꠢꠣꠍꠘ ꠞꠣꠎꠣ"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "ꠎꠥꠀꠙ",
+	"discussiontools-findcomment-label-search": "ꠕꠥꠇꠣꠘꠤ",
+	"discussiontools-newtopic-placeholder-title": "ꠛꠤꠡꠄ",
+	"discussiontools-replylink": "ꠚꠤꠞꠔꠤ ꠎꠥꠀꠚ",
+	"discussiontools-replywidget-advanced": "ꠀꠉꠥꠀꠘ",
+	"discussiontools-replywidget-cancel": "ꠛꠣꠖ ꠖꠦꠁꠘ",
+	"discussiontools-replywidget-mode-source": "ꠎꠠ",
+	"discussiontools-replywidget-mode-visual": "ꠖꠦꠈꠣ",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI:$1}}-ꠞꠦ ꠚꠤꠞꠔꠤ ꠎꠥꠀꠚ",
+	"discussiontools-replywidget-preview": "ꠀꠉꠛꠣꠠꠤ ꠖꠦꠈꠣ",
+	"discussiontools-replywidget-reply": "ꠚꠤꠞꠔꠤ ꠎꠥꠀꠚ",
+	"discussiontools-replywidget-summary": "ꠡꠋꠇꠦꠙꠦ",
+	"discussiontools-replywidget-watchthis": "ꠅꠃ ꠙꠣꠔꠣ ꠀꠙꠘꠣꠞ [[Special:Watchlist|ꠈꠤꠀꠟꠅ]] ꠎꠥꠉ ꠖꠦꠁꠘ",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ꠛꠦꠇ꠆ꠔꠤ|ꠝꠣꠘꠥꠡꠣꠁꠘ}} ꠝꠣꠔꠞ ꠝꠣꠏꠦ",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ꠝꠔꠣꠝꠔ|ꠝꠔꠣꠝꠔꠣꠁꠘ}}",
+	"discussiontools-topicheader-latestcomment": "ꠢꠦꠡꠤꠝꠦꠡꠤ ꠝꠔꠣꠝꠔ $1",
+	"discussiontools-topicsubscription-button-subscribe": "ꠟꠉ ꠗꠞꠤ",
+	"discussiontools-topicsubscription-button-subscribe-label": "ꠟꠉ ꠗꠞꠤ",
+	"discussiontools-topicsubscription-button-unsubscribe": "ꠟꠉꠦ ꠍꠣꠞꠂꠘ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "ꠟꠉꠦ ꠍꠣꠞꠂꠘ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "ꠅꠃ ꠛꠤꠡꠄꠅꠞ ꠃꠙꠞꠦ ꠘꠄꠀ ꠇꠥꠘꠥ ꠝꠘ꠆ꠔꠛ꠆ꠛ ꠀꠁꠟꠦ ꠀꠙꠘꠣꠞꠦ ꠎꠣꠘꠣꠁꠟ ꠅꠁꠛ ⁕",
+	"discussiontools-topicsubscription-notify-subscribed-title": "ꠀꠙꠘꠦ ꠍꠣꠛꠍ꠆ꠇꠦꠞꠣꠁꠛ (ꠟꠉꠦ ꠕꠣꠇꠣ) ꠇꠞꠤꠟꠤꠍꠂꠘ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "ꠀꠙꠘꠣꠞꠦ ꠁ ꠛꠤꠡꠄ ꠄ ꠀꠞ ꠇꠥꠘꠥ ꠝꠘ꠆ꠔꠛ꠆ꠛ ꠎꠣꠘꠣꠁꠟ ꠅꠁꠔꠘꠣꠄ ⁕",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "ꠀꠙꠘꠦ ꠟꠉꠦ ꠍꠣꠞꠤꠖꠤꠍꠂꠘ ⁕"
+}

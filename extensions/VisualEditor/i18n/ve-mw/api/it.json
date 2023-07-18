@@ -27,7 +27,7 @@
 	"apihelp-visualeditoredit-param-html": "HTML da inviare al Parsoid per essere convertito in wikitesto.",
 	"apihelp-visualeditoredit-param-minor": "Identificazione come modifica minore.",
 	"apihelp-visualeditoredit-param-needcheck": "Quando salva, imposta questo parametro nel caso la revisione abbia problemi di invio. Questo risulterà nella revisione selezionata.",
-	"apihelp-visualeditoredit-param-oldid": "Il numero di revisione da utilizzare. Il valore di default corrisponde all'ultima versione. Utilizza 0 per una nuova pagina.",
+	"apihelp-visualeditoredit-param-oldid": "Il numero di versione da utilizzare. Il valore di default corrisponde all'ultima versione.",
 	"apihelp-visualeditoredit-param-paction": "Azione da eseguire.",
 	"apihelp-visualeditoredit-param-page": "La pagina su cui eseguire l'azione.",
 	"apihelp-visualeditoredit-param-section": "La sezione su cui agire.",

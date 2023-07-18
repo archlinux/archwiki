@@ -63,7 +63,6 @@
 	"math_unknown_function": "ฟังก์ชันที่ไม่ทราบ \"$1\"",
 	"mw_math_latexml": "LaTeXML (แบบทดลอง ใช้ MathML)",
 	"mw_math_mathml": "MathML โดยมี  SVG หรือ PNG เป็นรูปแบบสำรอง (แนะนำสำหรับเว็บเบราว์เซอร์และเครื่องมือสนับสนุนการเข้าถึงรุ่นใหม่ๆ)",
-	"mw_math_png": "เป็นรูปภาพแบบ PNG",
 	"mw_math_source": "รหัสต้นฉบับ LaTeX (สำหรับเว็บเบราว์เซอร์แบบข้อความ)",
 	"prefs-math": "คณิตศาสตร์",
 	"datatypes-type-math": "นิพจน์ทางคณิตศาสตร์",

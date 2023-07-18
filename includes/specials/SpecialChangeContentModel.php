@@ -1,12 +1,15 @@
 <?php
 
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\EditPage\SpamChecker;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Page\ContentModelChangeFactory;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 
 class SpecialChangeContentModel extends FormSpecialPage {
 

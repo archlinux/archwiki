@@ -38,7 +38,7 @@ use WebRequest;
  *     $user,
  *     $request,
  *     $centralIdLookup,
- *     'configName',
+ *     MainConfigNames::Sitename,
  *     'requirementName',
  *     'overrideName',
  *     'configTestName',
@@ -52,9 +52,9 @@ use WebRequest;
  * and config object for the current state and returns it. Contrast to:
  *
  * ```lang=php
- * $featureManager->registerRequirement(
- *   'Foo',
- *   $config->get( 'Sitename' )
+ * $featureManager->registerSimpleRequirement(
+ *   'requirementName',
+ *   (bool)$config->get( MainConfigNames::Sitename )
  * );
  * ```
  *

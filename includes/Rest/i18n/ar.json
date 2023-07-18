@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Meno25",
 			"SaldırganSincap",
-			"ديفيد",
-			"Meno25"
+			"ديفيد"
 		]
 	},
 	"rest-prefix-mismatch": "المسار المطلوب ($1) لم يكن داخل مسار جذر API REST ($2)",

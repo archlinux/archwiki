@@ -31,7 +31,7 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideIsAllowed
 	 */
 	public function testIsAllowed( $passwordResetRoutes, $enableEmail,
-		$allowsAuthenticationDataChange, $canEditPrivate, $block, $globalBlock, $isAllowed
+		$allowsAuthenticationDataChange, $canEditPrivate, $block, $isAllowed
 	) {
 		$config = $this->makeConfig( $enableEmail, $passwordResetRoutes, false );
 
@@ -42,7 +42,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 		$user = $this->createMock( User::class );
 		$user->method( 'getName' )->willReturn( 'Foo' );
 		$user->method( 'getBlock' )->willReturn( $block );
-		$user->method( 'getGlobalBlock' )->willReturn( $globalBlock );
 		$user->method( 'isAllowed' )->with( 'editmyprivateinfo' )->willReturn( $canEditPrivate );
 
 		$passwordReset = new PasswordReset(
@@ -67,7 +66,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => true,
 				'block' => null,
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'email disabled' => [
@@ -76,7 +74,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => true,
 				'block' => null,
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'auth data change disabled' => [
@@ -85,7 +82,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => false,
 				'canEditPrivate' => true,
 				'block' => null,
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'cannot edit private data' => [
@@ -94,7 +90,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => false,
 				'block' => null,
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'blocked with account creation disabled' => [
@@ -103,7 +98,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => true,
 				'block' => new DatabaseBlock( [ 'createAccount' => true ] ),
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'blocked w/o account creation disabled' => [
@@ -112,7 +106,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => true,
 				'block' => new DatabaseBlock( [] ),
-				'globalBlock' => null,
 				'isAllowed' => true,
 			],
 			'using blocked proxy' => [
@@ -123,7 +116,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'block' => new SystemBlock(
 					[ 'systemBlock' => 'proxy' ]
 				),
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'globally blocked with account creation not disabled' => [
@@ -132,9 +124,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => true,
 				'block' => null,
-				'globalBlock' => new SystemBlock(
-					[ 'systemBlock' => 'global-block' ]
-				),
 				'isAllowed' => true,
 			],
 			'blocked via wgSoftBlockRanges' => [
@@ -145,7 +134,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'block' => new SystemBlock(
 					[ 'systemBlock' => 'wgSoftBlockRanges', 'anonOnly' => true ]
 				),
-				'globalBlock' => null,
 				'isAllowed' => true,
 			],
 			'blocked with an unknown system block type' => [
@@ -154,7 +142,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => true,
 				'block' => new SystemBlock( [ 'systemBlock' => 'unknown' ] ),
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'blocked with multiple blocks, all allowing password reset' => [
@@ -168,7 +155,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 						new DatabaseBlock( [] ),
 					]
 				] ),
-				'globalBlock' => null,
 				'isAllowed' => true,
 			],
 			'blocked with multiple blocks, not all allowing password reset' => [
@@ -182,7 +168,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 						new SystemBlock( [ 'systemBlock' => 'proxy' ] ),
 					]
 				] ),
-				'globalBlock' => null,
 				'isAllowed' => false,
 			],
 			'all OK' => [
@@ -191,7 +176,6 @@ class PasswordResetTest extends MediaWikiIntegrationTestCase {
 				'allowsAuthenticationDataChange' => true,
 				'canEditPrivate' => true,
 				'block' => null,
-				'globalBlock' => null,
 				'isAllowed' => true,
 			],
 		];

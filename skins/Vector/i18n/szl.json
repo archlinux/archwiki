@@ -39,9 +39,7 @@
 	"vector-search-loader": "Ładowanie sugestyjōw",
 	"vector-searchsuggest-containing": "Szukej zajtōw ftore zawiyrajōm <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Půmoc",
-	"vector-toc-heading": "Wykŏz inhaltu",
-	"vector-toc-toggle-position-sidebar": "przeciep do bocznyj lajsty",
-	"vector-toc-toggle-position-title": "skryj",
+	"vector-toc-label": "Wykŏz inhaltu",
 	"vector-toc-beginning": "Przodek",
 	"vector-toc-toggle-button-label": "Przeszaltruj podsekcyjõ $1",
 	"vector-anon-user-menu-pages": "Zajty dlo niyzameldowanych używŏczōw",
@@ -51,6 +49,10 @@
 	"vector-toc-menu-tooltip": "Wykŏz inhaltu",
 	"vector-toc-collapsible-button-label": "Przeszaltruj sztand wykŏzu inhaltu",
 	"vector-site-nav-label": "Neczajta",
+	"vector-pin-element-label": "przeciep do bocznyj lajsty",
+	"vector-unpin-element-label": "skryj",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|dyskusyjŏ]]",
-	"tooltip-vector-anon-user-menu-title": "Wiyncyj ôpcyji"
+	"tooltip-vector-anon-user-menu-title": "Wiyncyj ôpcyji",
+	"vector-prefs-limited-width": "Aktywuj modus ôgraniczōnyj szyrzki",
+	"vector-prefs-limited-width-help": "Aktywuj modus ôgraniczōnyj szyrzki dlo grajfniyjszego widoku czytaniŏ"
 }

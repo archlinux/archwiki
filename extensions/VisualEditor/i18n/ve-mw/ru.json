@@ -10,6 +10,7 @@
 			"Eugrus",
 			"Evs",
 			"Facenapalm",
+			"Fenixs-ru",
 			"Grebenkov",
 			"Happy13241",
 			"Helpau",
@@ -55,7 +56,6 @@
 			"Туллук",
 			"Умар",
 			"Ядерный Трамвай",
-			"Fenixs-ru",
 			"Merrahtar"
 		]
 	},
@@ -212,6 +212,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Имя параметра",
 	"visualeditor-dialog-transclusion-add-param-save": "Добавить",
 	"visualeditor-dialog-transclusion-add-template": "Добавить шаблон",
+	"visualeditor-dialog-transclusion-add-template-button": "Добавить шаблон",
 	"visualeditor-dialog-transclusion-add-template-save": "Добавить",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Добавить недокументированный параметр",
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "Вернуться к поиску? Ваши изменения будут потеряны, и это нельзя будет отменить.",
@@ -243,7 +244,6 @@
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Нажмите пробел, чтобы добавить или удалить параметры. Нажмите Enter, чтобы добавить параметр и сразу отредактировать его значение. Когда параметр уже выбран, нажмите Enter, чтобы отредактировать значение.",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "Параметры в $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Недокументированный параметр)",
-	"visualeditor-dialog-transclusion-placeholder": "Добавить шаблон",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Найти шаблон",
 	"visualeditor-dialog-transclusion-required-parameter": "Обязательное поле",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Это обязательное поле.",

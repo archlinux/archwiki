@@ -341,7 +341,7 @@ class SimpleCaptcha {
 			$formMetainfo = $formInformation;
 			unset( $formMetainfo['html'] );
 			$this->addFormInformationToOutput( $out, $formMetainfo );
-			$form->addFooterText(
+			$form->addFooterHtml(
 				"<div class='captcha'>" .
 				$this->getMessage( 'sendemail' )->parseAsBlock() .
 				$formInformation['html'] .

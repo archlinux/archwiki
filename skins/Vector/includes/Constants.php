@@ -81,6 +81,11 @@ final class Constants {
 	/**
 	 * @var string
 	 */
+	public const REQUIREMENT_LOGGED_IN = 'LoggedIn';
+
+	/**
+	 * @var string
+	 */
 	public const FEATURE_LANGUAGE_IN_HEADER = 'LanguageInHeader';
 
 	/**
@@ -99,25 +104,9 @@ final class Constants {
 	public const REQUIREMENT_LANGUAGE_IN_HEADER = 'LanguageInHeader';
 
 	/**
-	 * Defines whether or not the Language in header A/B test is running. See
-	 * https://phabricator.wikimedia.org/T280825 for additional detail about the test.
-	 *
-	 * Note well that if the associated config value is falsy, then we fall back to choosing the
-	 * language treatment based on the `VectorLanguageInHeader` config variable.
-	 *
-	 * @var string
-	 */
-	public const CONFIG_LANGUAGE_IN_HEADER_TREATMENT_AB_TEST = 'VectorLanguageInHeaderTreatmentABTest';
-
-	/**
 	 * @var string
 	 */
 	public const CONFIG_STICKY_HEADER = 'VectorStickyHeader';
-
-	/**
-	 * @var string
-	 */
-	public const CONFIG_STICKY_HEADER_EDIT = 'VectorStickyHeaderEdit';
 
 	/**
 	 * @var string
@@ -127,17 +116,7 @@ final class Constants {
 	/**
 	 * @var string
 	 */
-	public const REQUIREMENT_STICKY_HEADER_EDIT = 'StickyHeaderEdit';
-
-	/**
-	 * @var string
-	 */
 	public const FEATURE_STICKY_HEADER = 'StickyHeader';
-
-	/**
-	 * @var string
-	 */
-	public const FEATURE_STICKY_HEADER_EDIT = 'StickyHeaderEdit';
 
 	/**
 	 * Defines whether an A/B test is running.
@@ -209,32 +188,97 @@ final class Constants {
 	/**
 	 * @var string
 	 */
-	public const FEATURE_TABLE_OF_CONTENTS = 'TableOfContents';
-
-	/**
-	 * @var string
-	 */
-	public const REQUIREMENT_TABLE_OF_CONTENTS = 'TableOfContents';
-
-	/**
-	 * @var string
-	 */
 	public const WEB_AB_TEST_ARTICLE_ID_FACTORY_SERVICE = 'WikimediaEvents.WebABTestArticleIdFactory';
 
 	/**
 	 * @var string
 	 */
-	public const FEATURE_VISUAL_ENHANCEMENTS = 'VisualEnhancementNext';
+	public const CONFIG_PAGE_TOOLS = 'VectorPageTools';
 
 	/**
 	 * @var string
 	 */
-	public const REQUIREMENT_VISUAL_ENHANCEMENTS = 'VisualEnhancementNext';
+	public const REQUIREMENT_PAGE_TOOLS = 'PageTools';
 
 	/**
 	 * @var string
 	 */
-	public const CONFIG_KEY_VISUAL_ENHANCEMENTS = 'VectorVisualEnhancementNext';
+	public const FEATURE_PAGE_TOOLS = 'PageTools';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_PAGE_TOOLS_PINNED = 'PageToolsPinned';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_PAGE_TOOLS_PINNED = 'PageToolsPinned';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_PAGE_TOOLS_PINNED = 'vector-page-tools-pinned';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_TOC_PINNED = 'TOCPinned';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_TOC_PINNED = 'vector-toc-pinned';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_TOC_PINNED = 'TOCPinned';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_MAIN_MENU_PINNED = 'MainMenuPinned';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_MAIN_MENU_PINNED = 'MainMenuPinned';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_MAIN_MENU_PINNED = 'vector-main-menu-pinned';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_LIMITED_WIDTH = 'LimitedWidth';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_LIMITED_WIDTH = 'LimitedWidth';
+
+	/**
+	 * @var string
+	 */
+	public const PREF_KEY_LIMITED_WIDTH = 'vector-limited-width';
+
+	/**
+	 * @var string
+	 */
+	public const FEATURE_LIMITED_WIDTH_CONTENT = 'LimitedWidthContent';
+
+	/**
+	 * @var string
+	 */
+	public const REQUIREMENT_LIMITED_WIDTH_CONTENT = 'LimitedWidthContent';
+
+	/**
+	 * @var bool
+	 */
+	public const CONFIG_DEFAULT_LIMITED_WIDTH = 1;
 
 	/**
 	 * This class is for namespacing constants only. Forbid construction.

@@ -46,6 +46,7 @@
 	"vector-search-loader": "Ngamuat saran parerehan",
 	"vector-searchsuggest-containing": "Selehin kaca sané madaging <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Pangater",
+	"vector-toc-label": "Daging",
 	"vector-toc-beginning": "Pamahbah",
 	"vector-toc-toggle-button-label": "Maalih subséksi $1",
 	"vector-anon-user-menu-pages": "Kaca panguahan sampun medal log",
@@ -55,6 +56,16 @@
 	"vector-toc-menu-tooltip": "Daging cakepan",
 	"vector-toc-collapsible-button-label": "Maalih ''daftar isi''",
 	"vector-site-nav-label": "Situs",
+	"vector-main-menu-label": "Menu utama",
+	"vector-limited-width-toggle": "Alihang linggah kontén kawates",
+	"vector-page-tools-label": "Piranti",
+	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Parilaksana",
+	"vector-pin-element-label": "gingsirang nuju sidebar",
+	"vector-unpin-element-label": "engkebang",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Pabligbagan]]",
-	"tooltip-vector-anon-user-menu-title": "Opsi liyanan"
+	"tooltip-vector-anon-user-menu-title": "Opsi liyanan",
+	"vector-prefs-limited-width": "Idupang mode linggah kawates",
+	"vector-prefs-limited-width-help": "Idupang mode linggah kawates antuk ngabecikang pengalaman ngawacén",
+	"empty-language-selector-body": "Kontén kaca nénten kadukung ring basa liyanan."
 }

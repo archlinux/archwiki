@@ -4,7 +4,6 @@
 
 require('../core-upgrade.js');
 require('colors');
-const { benchmarkReadView } = require('./benchmark.readViewStrip.js');
 
 var entities = require('entities');
 var fs = require('fs');
@@ -24,7 +23,9 @@ var Diff = require('../lib/utils/Diff.js').Diff;
 var JSUtils = require('../lib/utils/jsutils.js').JSUtils;
 var MockEnv = require('../tests/MockEnv.js').MockEnv;
 
-var defaultContentVersion = '2.6.0';
+var defaultContentVersion = '2.7.0';
+
+var MAX_RETRIES = 10;
 
 function displayDiff(type, count) {
 	var pad = (10 - type.length);  // Be positive!
@@ -649,7 +650,7 @@ var parsoidPost = Promise.async(function *(profile, options) {
 	httpOptions.uri = uri;
 	httpOptions.proxy = options.proxy;
 
-	var result = yield ScriptUtils.retryingHTTPRequest(10, httpOptions);
+	var result = yield issueRequest(httpOptions);
 	var body = result[1];
 
 	// FIXME: Parse time was removed from profiling when we stopped
@@ -660,6 +661,12 @@ var parsoidPost = Promise.async(function *(profile, options) {
 			pre += options.profilePrefix + ':';
 		}
 		var str;
+
+		// Detect standard error response
+		if ( typeof body === 'object' && body.httpCode >= 400 ) {
+			throw new Error('Received error: ' + body.reason);
+		}
+
 		if (options.html2wt) {
 			pre += 'wt:';
 			str = body;
@@ -667,6 +674,7 @@ var parsoidPost = Promise.async(function *(profile, options) {
 			pre += 'html:';
 			str = body.html.body;
 		}
+
 		profile.size[pre + 'raw'] = str.length;
 		// Compress to record the gzipped size
 		var gzippedbuf = yield zlib.gzip(str);
@@ -717,6 +725,17 @@ var roundTripDiff = Promise.async(function *(profile, parsoidOptions, data) {
 	return checkIfSignificant(offsets, data);
 });
 
+// Custom httpClient global variable that can be set by ci tests
+var httpClient;
+
+var issueRequest = function(httpOptions) {
+	if (httpClient) {
+		return httpClient.request(httpOptions);
+	} else {
+		return ScriptUtils.retryingHTTPRequest(MAX_RETRIES, httpOptions);
+	}
+};
+
 // Returns a Promise for a object containing a formatted string and an
 // exitCode.
 var runTests = Promise.async(function *(title, options, formatter) {
@@ -727,6 +746,10 @@ var runTests = Promise.async(function *(title, options, formatter) {
 
 	var domain = options.domain;
 	var prefix = options.prefix;
+
+	if (options.httpClient) {
+		httpClient = options.httpClient;
+	}
 
 	// Preserve the default, but only if neither was provided.
 	if (!prefix && !domain) { domain = 'en.wikipedia.org'; }
@@ -785,7 +808,7 @@ var runTests = Promise.async(function *(title, options, formatter) {
 	var exitCode;
 	try {
 		var opts;
-		var req = yield ScriptUtils.retryingHTTPRequest(10, {
+		var req = yield issueRequest({
 			method: 'GET',
 			uri: uri2,
 			proxy: proxy,
@@ -876,11 +899,6 @@ var runTests = Promise.async(function *(title, options, formatter) {
 	} catch (e) {
 		error = e;
 		exitCode = 1;
-	}
-
-	if (options.readViewStripBenchmark && Math.random() < (options.readViewStripBenchmark.sampleRate || 0)) {
-		const rules = options.readViewStripBenchmark.rules;
-		profile.readViewSizes = yield benchmarkReadView(domain, title, data.oldHTML.body, rules);
 	}
 
 	var output = formatter(error, prefix, title, data.diffs, profile);
@@ -978,7 +996,6 @@ if (require.main === module) {
 	})().done();
 } else if (typeof module === 'object') {
 	module.exports.runTests = runTests;
-
 	module.exports.jsonFormat = jsonFormat;
 	module.exports.plainFormat = plainFormat;
 	module.exports.xmlFormat = xmlFormat;

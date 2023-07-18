@@ -4,8 +4,11 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\TexVC\Nodes;
 
-class DQ extends TexNode {
+use MediaWiki\Extension\Math\TexVC\MMLmappings\BaseMethods;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmrow;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmsub;
 
+class DQ extends TexNode {
 	/** @var TexNode */
 	private $base;
 	/** @var TexNode */
@@ -17,8 +20,36 @@ class DQ extends TexNode {
 		$this->down = $down;
 	}
 
+	/**
+	 * @return TexNode
+	 */
+	public function getBase(): TexNode {
+		return $this->base;
+	}
+
+	/**
+	 * @return TexNode
+	 */
+	public function getDown(): TexNode {
+		return $this->down;
+	}
+
 	public function render() {
 		return $this->base->render() . '_' . $this->down->inCurlies();
+	}
+
+	public function renderMML( $arguments = [], $state = [] ) {
+		$res = BaseMethods::checkAndParse( $this->base->getArgs()[0], $arguments, null, $this );
+		if ( $res ) {
+			return $res;
+		} else {
+			// Otherwise use default fallback
+			$mmlMrow = new MMLmrow();
+			$msub = new MMLmsub();
+			return $msub->encapsulateRaw(
+				$this->base->renderMML( [], $state ) .
+				$mmlMrow->encapsulateRaw( $this->down->renderMML( [], $state ) ) );
+		}
 	}
 
 	public function extractIdentifiers( $args = null ) {
@@ -64,7 +95,4 @@ class DQ extends TexNode {
 		return parent::getModIdent();
 	}
 
-	public function name() {
-		return 'DQ';
-	}
 }

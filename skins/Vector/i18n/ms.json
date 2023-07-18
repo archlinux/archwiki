@@ -6,7 +6,9 @@
 			"Aurora",
 			"Izington",
 			"Pizza1016",
-			"Tofeiku"
+			"Tofeiku",
+			"Bebudak",
+			"Hakimi97"
 		]
 	},
 	"skinname-vector": "Legasi Vektor (2010)",
@@ -45,7 +47,7 @@
 	"vector-search-loader": "Memuat cadangan carian",
 	"vector-searchsuggest-containing": "Cari untuk laman yang mengandungi <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Pengenalan",
-	"vector-toc-heading": "Kandungan",
+	"vector-toc-label": "Kandungan",
 	"vector-toc-beginning": "Permulaan",
 	"vector-toc-toggle-button-label": "Togol subbahagian $1",
 	"vector-anon-user-menu-pages": "Laman untuk penyunting log keluar",
@@ -55,6 +57,16 @@
 	"vector-toc-menu-tooltip": "Isi Kandungan",
 	"vector-toc-collapsible-button-label": "Togol isi kandungan",
 	"vector-site-nav-label": "Tapak",
+	"vector-main-menu-label": "Menu utama",
+	"vector-limited-width-toggle": "Togol lebar kandungan terhad",
+	"vector-page-tools-label": "Peralatan",
+	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Tindakan",
+	"vector-pin-element-label": "alih ke bar sisi",
+	"vector-unpin-element-label": "sorokkan",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Perbincangan]]",
-	"tooltip-vector-anon-user-menu-title": "Lebih pilihan"
+	"tooltip-vector-anon-user-menu-title": "Lebih pilihan",
+	"vector-prefs-limited-width": "Bolehkan mod lebar terhad",
+	"vector-prefs-limited-width-help": "Bolehkan mod lebar terhad untuk pengalaman membaca yang lebih baik.",
+	"empty-language-selector-body": "Kandungan laman tidak disokong dalam bahasa lain."
 }

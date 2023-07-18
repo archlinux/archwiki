@@ -38,10 +38,13 @@ use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\MagicWord;
 use MediaWiki\User\UserIdentity;
+use MediaWiki\User\UserTimeCorrection;
 use Wikimedia\Assert\Assert;
 use Wikimedia\AtEase\AtEase;
-use Wikimedia\RequestTimeout\TimeoutException;
+use Wikimedia\Bcp47Code\Bcp47Code;
+use Wikimedia\DebugInfo\DebugInfoTrait;
 
 /**
  * Base class for language-specific code.
@@ -50,7 +53,9 @@ use Wikimedia\RequestTimeout\TimeoutException;
  *
  * @ingroup Language
  */
-class Language {
+class Language implements Bcp47Code {
+	use DebugInfoTrait;
+
 	/**
 	 * Return all known languages in fetchLanguageName(s).
 	 * @since 1.32
@@ -100,41 +105,68 @@ class Language {
 
 	/**
 	 * @var ReplacementArray[]
+	 * @noVarDump
 	 */
 	private $transformData = [];
 
-	/** @var NamespaceInfo */
+	/**
+	 * @var NamespaceInfo
+	 * @noVarDump
+	 */
 	private $namespaceInfo;
 
-	/** @var LocalisationCache */
+	/**
+	 * @var LocalisationCache
+	 * @noVarDump
+	 */
 	private $localisationCache;
 
-	/** @var LanguageNameUtils */
+	/**
+	 * @var LanguageNameUtils
+	 * @noVarDump
+	 */
 	private $langNameUtils;
 
-	/** @var LanguageFallback */
+	/**
+	 * @var LanguageFallback
+	 * @noVarDump
+	 */
 	private $langFallback;
 
-	/** @var array[]|null */
+	/**
+	 * @var array[]|null
+	 * @noVarDump
+	 */
 	private $grammarTransformCache;
 
 	/**
 	 * @var LanguageConverterFactory
+	 * @noVarDump
 	 */
 	private $converterFactory;
 
 	/**
 	 * @var HookContainer
+	 * @noVarDump
 	 */
 	private $hookContainer;
 
 	/**
 	 * @var HookRunner
+	 * @noVarDump
 	 */
 	private $hookRunner;
 
-	/** @var Config */
+	/**
+	 * @var Config
+	 * @noVarDump
+	 */
 	private $config;
+
+	/**
+	 * @var array|null
+	 */
+	private $overrideUcfirstCharacters;
 
 	/**
 	 * Return a fallback chain for messages in getFallbacksFor
@@ -290,12 +322,16 @@ class Language {
 
 	/**
 	 * Get a cached or new language object for a given language code
-	 * @deprecated since 1.35, use LanguageFactory
+	 *
+	 * If the language code comes from user input, check ::isValidCode()
+	 * before calling this method.
+	 *
+	 * @deprecated since 1.35, use LanguageFactory. Hard-deprecated since 1.40.
 	 * @param string $code
-	 * @throws MWException if the language code is invalid
 	 * @return Language
 	 */
 	public static function factory( $code ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return MediaWikiServices::getInstance()->getLanguageFactory()->getLanguage( $code );
 	}
 
@@ -303,12 +339,13 @@ class Language {
 	 * Checks whether any localisation is available for that language tag
 	 * in MediaWiki (MessagesXx.php exists).
 	 *
-	 * @deprecated since 1.34, use LanguageNameUtils
+	 * @deprecated since 1.34, use LanguageNameUtils. Hard-deprecated since 1.40.
 	 * @param string $code Language tag (in lower case)
 	 * @return bool Whether language is supported
 	 * @since 1.21
 	 */
 	public static function isSupportedLanguage( $code ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->isSupportedLanguage( $code );
 	}
@@ -330,6 +367,7 @@ class Language {
 	 * @deprecated since 1.39, use LanguageCode::isWellFormedLanguageTag
 	 */
 	public static function isWellFormedLanguageTag( $code, $lenient = false ) {
+		wfDeprecated( __METHOD__, '1.39' );
 		return LanguageCode::isWellFormedLanguageTag( $code, $lenient );
 	}
 
@@ -338,7 +376,7 @@ class Language {
 	 * not it exists. This includes codes which are used solely for
 	 * customisation via the MediaWiki namespace.
 	 *
-	 * @deprecated since 1.34, use LanguageNameUtils
+	 * @deprecated since 1.34, use LanguageNameUtils. Hard-deprecated since 1.40.
 	 *
 	 * @param string $code
 	 *
@@ -346,6 +384,7 @@ class Language {
 	 *  characters or characters illegal in MediaWiki titles.
 	 */
 	public static function isValidCode( $code ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()->isValidCode( $code );
 	}
 
@@ -353,7 +392,7 @@ class Language {
 	 * Returns true if a language code is of a valid form for the purposes of
 	 * internal customisation of MediaWiki, via Messages*.php or *.json.
 	 *
-	 * @deprecated since 1.34, use LanguageNameUtils
+	 * @deprecated since 1.34, use LanguageNameUtils. Hard-deprecated since 1.40.
 	 *
 	 * @param string $code
 	 *
@@ -361,6 +400,7 @@ class Language {
 	 * @return bool
 	 */
 	public static function isValidBuiltInCode( $code ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->isValidBuiltInCode( $code );
 	}
@@ -368,7 +408,7 @@ class Language {
 	/**
 	 * Returns true if a language code is an IETF tag known to MediaWiki.
 	 *
-	 * @deprecated since 1.34, use LanguageNameUtils
+	 * @deprecated since 1.34, use LanguageNameUtils. Hard-deprecated since 1.40.
 	 *
 	 * @param string $tag
 	 *
@@ -376,15 +416,17 @@ class Language {
 	 * @return bool
 	 */
 	public static function isKnownLanguageTag( $tag ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->isKnownLanguageTag( $tag );
 	}
 
 	/**
-	 * @deprecated since 1.34, use MediaWikiServices
+	 * @deprecated since 1.34, use MediaWikiServices. Hard-deprecated since 1.40.
 	 * @return LocalisationCache
 	 */
 	public static function getLocalisationCache() {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLocalisationCache();
 	}
 
@@ -670,14 +712,15 @@ class Language {
 				}
 			}
 
+			$langConverter = $this->getConverterInternal();
 			# Also add converted namespace names as aliases, to avoid confusion.
 			$convertedNames = [];
-			foreach ( $this->getConverter()->getVariants() as $variant ) {
+			foreach ( $langConverter->getVariants() as $variant ) {
 				if ( $variant === $this->mCode ) {
 					continue;
 				}
 				foreach ( $this->getNamespaces() as $ns => $_ ) {
-					$convertedNames[$this->getConverter()->convertNamespace( $ns, $variant )] = $ns;
+					$convertedNames[$langConverter->convertNamespace( $ns, $variant )] = $ns;
 				}
 			}
 
@@ -794,7 +837,7 @@ class Language {
 	/**
 	 * Get an array of language names, indexed by code.
 	 *
-	 * @deprecated since 1.34, use LanguageNameUtils::getLanguageNames
+	 * @deprecated since 1.34, use LanguageNameUtils::getLanguageNames. Hard-deprecated since 1.40.
 	 * @param null|string $inLanguage Code of language in which to return the names
 	 * 		Use LanguageNameUtils::AUTONYMS for autonyms (native names)
 	 * @param string $include One of:
@@ -810,12 +853,13 @@ class Language {
 		$inLanguage = LanguageNameUtils::AUTONYMS,
 		$include = LanguageNameUtils::DEFINED
 	) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->getLanguageNames( $inLanguage, $include );
 	}
 
 	/**
-	 * @deprecated since 1.34, use LanguageNameUtils::getLanguageName
+	 * @deprecated since 1.34, use LanguageNameUtils::getLanguageName. Hard-deprecated since 1.40.
 	 * @param string $code The code of the language for which to get the name
 	 * @param null|string $inLanguage Code of language in which to return the name
 	 *   (LanguageNameUtils::AUTONYMS for autonyms)
@@ -828,6 +872,7 @@ class Language {
 		$inLanguage = LanguageNameUtils::AUTONYMS,
 		$include = LanguageNameUtils::ALL
 	) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->getLanguageName( $code, $inLanguage, $include );
 	}
@@ -2060,63 +2105,24 @@ class Language {
 			);
 		}
 
-		$data = explode( '|', $tz, 3 );
+		$timeCorrection = new UserTimeCorrection( (string)$tz, null, $localTZoffset );
 
-		if ( $data[0] == 'ZoneInfo' ) {
-			try {
-				$userTZ = new DateTimeZone( $data[2] );
-				$date = new DateTime( $ts, new DateTimeZone( 'UTC' ) );
-				$date->setTimezone( $userTZ );
-				return $date->format( 'YmdHis' );
-			} catch ( TimeoutException $e ) {
-				throw $e;
-			} catch ( Exception $e ) {
-				// Unrecognized timezone, default to 'Offset' with the stored offset.
-				$data[0] = 'Offset';
-			}
+		$tzObj = $timeCorrection->getTimeZone();
+		if ( $tzObj ) {
+			$date = new DateTime( $ts, new DateTimeZone( 'UTC' ) );
+			$date->setTimezone( $tzObj );
+			return $date->format( 'YmdHis' );
 		}
-
-		if ( $data[0] == 'System' || $tz == '' ) {
-			# Global offset in minutes.
-			$minDiff = $localTZoffset;
-		} elseif ( $data[0] == 'Offset' ) {
-			$minDiff = intval( $data[1] );
-		} else {
-			$data = explode( ':', $tz );
-			if ( count( $data ) == 2 ) {
-				$data[0] = intval( $data[0] );
-				$data[1] = intval( $data[1] );
-				$minDiff = abs( $data[0] ) * 60 + $data[1];
-				if ( $data[0] < 0 ) {
-					$minDiff = -$minDiff;
-				}
-			} else {
-				$minDiff = intval( $data[0] ) * 60;
-			}
-		}
+		$minDiff = $timeCorrection->getTimeOffset();
 
 		# No difference ? Return time unchanged
-		if ( $minDiff == 0 ) {
+		if ( $minDiff === 0 ) {
 			return $ts;
 		}
 
-		// E_STRICT system time bitching
-		AtEase::suppressWarnings();
-		# Generate an adjusted date; take advantage of the fact that mktime
-		# will normalize out-of-range values so we don't have to split $minDiff
-		# into hours and minutes.
-		$t = mktime( (
-			(int)substr( $ts, 8, 2 ) ), # Hours
-			(int)substr( $ts, 10, 2 ) + $minDiff, # Minutes
-			(int)substr( $ts, 12, 2 ), # Seconds
-			(int)substr( $ts, 4, 2 ), # Month
-			(int)substr( $ts, 6, 2 ), # Day
-			(int)substr( $ts, 0, 4 ) ); # Year
-
-		$date = date( 'YmdHis', $t );
-		AtEase::restoreWarnings();
-
-		return $date;
+		$date = new DateTime( $ts );
+		$date->modify( "+{$minDiff} minutes" );
+		return $date->format( 'YmdHis' );
 	}
 
 	/**
@@ -2141,7 +2147,7 @@ class Language {
 					->getUser()
 					->getDatePreference();
 			} else {
-				$userOptionsLookup = MediawikiServices::getInstance()->getUserOptionsLookup();
+				$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
 				$datePreference = (string)$userOptionsLookup->getDefaultOption( 'date' );
 			}
 		} else {
@@ -2450,9 +2456,7 @@ class Language {
 	public function getHumanTimestamp(
 		MWTimestamp $time, MWTimestamp $relativeTo = null, UserIdentity $user = null
 	) {
-		if ( $relativeTo === null ) {
-			$relativeTo = new MWTimestamp();
-		}
+		$relativeTo ??= new MWTimestamp();
 		if ( $user === null ) {
 			$user = RequestContext::getMain()->getUser();
 		} else {
@@ -2563,6 +2567,7 @@ class Language {
 	 * Gets the localized friendly name for a group, if it exists. For example,
 	 * "Administrators" or "Bureaucrats"
 	 *
+	 * @since 1.38
 	 * @param string $group Internal group name
 	 * @return string Localized friendly group name
 	 */
@@ -2575,6 +2580,7 @@ class Language {
 	 * Gets the localized name for a member of a group, if it exists. For example,
 	 * "administrator" or "bureaucrat"
 	 *
+	 * @since 1.38
 	 * @param string $group Internal group name
 	 * @param string|UserIdentity $member
 	 * @return string Localized name for group member
@@ -2633,13 +2639,23 @@ class Language {
 			// Assume this is a lowercase/uncased ASCII character
 			return ucfirst( $str );
 		}
-
 		$first = mb_substr( $str, 0, 1 );
-		return ( strlen( $first ) !== 1 )
-			// Assume this is a multibyte character and mb_internal_encoding() is appropriate
-			? $this->mbUpperChar( $first ) . mb_substr( $str, 1 )
-			// Assume this is a non-multibyte character and LC_CASE is appropriate
-			: ucfirst( $str );
+		if ( strlen( $first ) === 1 ) {
+			// Broken UTF-8?
+			return ucfirst( $str );
+		}
+
+		// Memoize the config table
+		$overrides = $this->overrideUcfirstCharacters
+			??= $this->config->get( MainConfigNames::OverrideUcfirstCharacters );
+
+		// Use the config table and fall back to MB_CASE_TITLE
+		$ucFirst = $overrides[$first] ?? mb_convert_case( $first, MB_CASE_TITLE );
+		if ( $ucFirst !== $first ) {
+			return $ucFirst . mb_substr( $str, 1 );
+		} else {
+			return $str;
+		}
 	}
 
 	/**
@@ -2653,25 +2669,6 @@ class Language {
 		} else {
 			return $this->isMultibyte( $str ) ? mb_strtoupper( $str ) : strtoupper( $str );
 		}
-	}
-
-	/**
-	 * Convert character to uppercase, allowing overrides of the default mb_upper
-	 * behaviour, which is buggy in many ways. Having a conversion table can be
-	 * useful during transitions between PHP versions where unicode changes happen.
-	 * This can make some resources unreachable on-wiki, see discussion at T219279.
-	 * Providing such a conversion table can allow to manage the transition period.
-	 *
-	 * @since 1.34
-	 *
-	 * @param string $char
-	 *
-	 * @return string
-	 */
-	protected function mbUpperChar( $char ) {
-		$overrideUcfirstCharacters =
-			$this->config->get( MainConfigNames::OverrideUcfirstCharacters );
-		return $overrideUcfirstCharacters[$char] ?? mb_strtoupper( $char );
 	}
 
 	/**
@@ -3128,11 +3125,8 @@ class Language {
 	 */
 	public function getSpecialPageAliases() {
 		// Cache aliases because it may be slow to load them
-		if ( $this->mExtendedSpecialPageAliases === null ) {
-			// Initialise array
-			$this->mExtendedSpecialPageAliases =
-				$this->localisationCache->getItem( $this->mCode, 'specialPageAliases' );
-		}
+		$this->mExtendedSpecialPageAliases ??=
+			$this->localisationCache->getItem( $this->mCode, 'specialPageAliases' );
 
 		return $this->mExtendedSpecialPageAliases;
 	}
@@ -3377,27 +3371,6 @@ class Language {
 	}
 
 	/**
-	 * Adds commas to a given number.  NumberFormatting class is used
-	 * when available for correct implementation as per tr35
-	 * specification of unicode.
-	 *
-	 * @since 1.19
-	 * @deprecated in 1.36 use formatNum
-	 * @param string|null $number Expected to be a numeric string without (thousand) group
-	 *  separators. Decimal separator, if present, must be a dot. Any non-string will be cast to
-	 *  string.
-	 * @return string
-	 */
-	public function commafy( $number ) {
-		wfDeprecated( __METHOD__, '1.36' );
-		// Validate the input argument.
-		if ( $number === null || $number === '' ) {
-			return '';
-		}
-		return $this->formatNumInternal( $number, true, false );
-	}
-
-	/**
 	 * @return string
 	 */
 	public function digitGroupingPattern() {
@@ -3493,6 +3466,7 @@ class Language {
 	/**
 	 * Truncate a string to a specified length in bytes, appending an optional
 	 * string (e.g. for ellipsis)
+	 * When an ellipsis isn't needed, using mb_strcut() directly is recommended.
 	 *
 	 * If $length is negative, the string will be truncated from the beginning
 	 *
@@ -3507,7 +3481,7 @@ class Language {
 	 */
 	public function truncateForDatabase( $string, $length, $ellipsis = '...', $adjustLength = true ) {
 		return $this->truncateInternal(
-			$string, $length, $ellipsis, $adjustLength, 'strlen', 'substr'
+			$string, $length, $ellipsis, $adjustLength, 'strlen', 'mb_strcut'
 		);
 	}
 
@@ -3588,12 +3562,10 @@ class Language {
 			if ( $length > 0 ) {
 				$length -= $ellipsisLength;
 				$string = $getSubstring( $string, 0, $length ); // xyz...
-				$string = $this->removeBadCharLast( $string );
 				$string = rtrim( $string ) . $ellipsis;
 			} else {
 				$length += $ellipsisLength;
 				$string = $getSubstring( $string, $length ); // ...xyz
-				$string = $this->removeBadCharFirst( $string );
 				$string = $ellipsis . ltrim( $string );
 			}
 		}
@@ -3629,24 +3601,6 @@ class Language {
 			) {
 				# We chopped in the middle of a character; remove it
 				$string = $m[1];
-			}
-		}
-		return $string;
-	}
-
-	/**
-	 * Remove bytes that represent an incomplete Unicode character
-	 * at the start of string (e.g. bytes of the char are missing)
-	 *
-	 * @param string $string
-	 * @return string
-	 */
-	protected function removeBadCharFirst( $string ) {
-		if ( $string != '' ) {
-			$char = ord( $string[0] );
-			if ( $char >= 0x80 && $char < 0xc0 ) {
-				# We chopped in the middle of a character; remove the whole thing
-				$string = preg_replace( '/^[\x80-\xbf]+/', '', $string );
 			}
 		}
 		return $string;
@@ -3705,7 +3659,7 @@ class Language {
 				} elseif ( $dispLen > $length && $dispLen > strlen( $ellipsis ) ) {
 					# String in fact does need truncation, the truncation point was OK.
 					// @phan-suppress-next-line PhanTypeInvalidExpressionArrayDestructuring
-					list( $ret, $openTags ) = $maybeState; // reload state
+					[ $ret, $openTags ] = $maybeState; // reload state
 					$ret = $this->removeBadCharLast( $ret ); // multi-byte char fix
 					$ret .= $ellipsis; // add ellipsis
 					break;
@@ -4129,18 +4083,19 @@ class Language {
 	 *
 	 * @since 1.19
 	 * @deprecated since 1.35 Use MediaWikiServices::getInstance()->getLanguageConverterFactory()
-	 *     ->getLanguageConverter( $language ) instead
+	 *     ->getLanguageConverter( $language ) instead. Hard-deprecated since 1.40.
 	 *
 	 * @return ILanguageConverter
 	 */
 	public function getConverter(): ILanguageConverter {
-		return $this->converterFactory->getLanguageConverter( $this );
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal();
 	}
 
 	/**
 	 * convert text to a variant
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::autoConvert
+	 * @deprecated since 1.35 use LanguageConverter::autoConvert. Hard-deprecated since 1.40.
 	 *
 	 * @param string $text text to convert
 	 * @param string|false $variant variant to convert to, or false to use the user's preferred
@@ -4148,19 +4103,21 @@ class Language {
 	 * @return string the converted string
 	 */
 	public function autoConvert( $text, $variant = false ) {
-		return $this->getConverter()->autoConvert( $text, $variant );
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->autoConvert( $text, $variant );
 	}
 
 	/**
 	 * convert text to all supported variants
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::autoConvertToAllVariants
+	 * @deprecated since 1.35 use LanguageConverter::autoConvertToAllVariants. Hard-deprecated since 1.40.
 	 *
 	 * @param string $text
 	 * @return array
 	 */
 	public function autoConvertToAllVariants( $text ) {
-		return $this->getConverter()->autoConvertToAllVariants( $text );
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->autoConvertToAllVariants( $text );
 	}
 
 	/**
@@ -4172,19 +4129,20 @@ class Language {
 	 *  escaped the input. Never feed this method user controlled text that
 	 *  is not properly escaped!
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::convert
+	 * @deprecated since 1.35 use LanguageConverter::convert. Hard-deprecated since 1.40.
 	 *
 	 * @param string $text Content that has been already escaped for use in HTML
 	 * @return string HTML
 	 */
 	public function convert( $text ) {
-		return $this->getConverter()->convert( $text );
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->convert( $text );
 	}
 
 	/**
 	 * Convert a namespace index to a string in the preferred variant
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::convertNamespace instead
+	 * @deprecated since 1.35 use LanguageConverter::convertNamespace instead. Hard-deprecated since 1.40.
 	 *
 	 * @param int $ns namespace index (https://www.mediawiki.org/wiki/Manual:Namespace)
 	 * @param string|null $variant variant to convert to, or null to use the user's preferred
@@ -4192,17 +4150,19 @@ class Language {
 	 * @return string a string representation of the namespace
 	 */
 	public function convertNamespace( $ns, $variant = null ) {
-		return $this->getConverter()->convertNamespace( $ns, $variant );
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->convertNamespace( $ns, $variant );
 	}
 
 	/**
 	 * Check if this is a language with variants
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::hasVariants instead
+	 * @deprecated since 1.35 use LanguageConverter::hasVariants instead. Hard-deprecated since 1.40.
 	 *
 	 * @return bool
 	 */
 	public function hasVariants() {
+		wfDeprecated( __METHOD__, '1.35' );
 		return count( $this->getVariants() ) > 1;
 	}
 
@@ -4212,85 +4172,93 @@ class Language {
 	 * Compare to LanguageConverter::validateVariant() which does a more
 	 * lenient check and attempts to coerce the given code to a valid one.
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::hasVariant instead
+	 * @deprecated since 1.35 use LanguageConverter::hasVariant instead. Hard-deprecated since 1.40.
 	 *
 	 * @since 1.19
 	 * @param string $variant
 	 * @return bool
 	 */
 	public function hasVariant( $variant ) {
-		return $this->getConverter()->hasVariant( $variant );
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->hasVariant( $variant );
 	}
 
 	/**
 	 * Perform output conversion on a string, and encode for safe HTML output.
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::convertHtml instead
+	 * @deprecated since 1.35 use LanguageConverter::convertHtml instead. Hard-deprecated since 1.40.
 	 *
 	 * @param string $text Text to be converted
 	 * @return string
 	 * @todo this should get integrated somewhere sensible
 	 */
 	public function convertHtml( $text ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return htmlspecialchars( $this->convert( $text ) );
 	}
 
 	/**
-	 * @deprecated since 1.35 use LanguageConverter::convertCategoryKey instead
+	 * @deprecated since 1.35 use LanguageConverter::convertCategoryKey instead. Hard-deprecated since 1.40.
 	 *
 	 * @param string $key
 	 * @return string
 	 */
 	public function convertCategoryKey( $key ) {
-		return $this->getConverter()->convertCategoryKey( $key );
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->convertCategoryKey( $key );
 	}
 
 	/**
 	 * Get the list of variants supported by this language
 	 * see sample implementation in LanguageZh.php
 	 *
-	 * @deprecated since 1.35  use LanguageConverter::getVariants instead
+	 * @deprecated since 1.35  use LanguageConverter::getVariants instead. Hard-deprecated since 1.40.
 	 *
 	 * @return string[] An array of language codes
 	 */
 	public function getVariants() {
-		return $this->getConverter()->getVariants();
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->getVariants();
 	}
 
 	/**
-	 * @deprecated since 1.35 use LanguageConverter::getPreferredVariant instead
+	 * @deprecated since 1.35 use LanguageConverter::getPreferredVariant instead. Hard-deprecated since 1.40.
 	 * @return string
 	 */
 	public function getPreferredVariant() {
-		return $this->getConverter()->getPreferredVariant();
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->getPreferredVariant();
 	}
 
 	/**
-	 * @deprecated since 1.35 use LanguageConverter::getDefaultVariant instead
+	 * @deprecated since 1.35 use LanguageConverter::getDefaultVariant instead. Hard-deprecated since 1.40.
 	 * @return string
 	 */
 	public function getDefaultVariant() {
-		return $this->getConverter()->getDefaultVariant();
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->getDefaultVariant();
 	}
 
 	/**
-	 * @deprecated since 1.35 use LanguageConverter::getURLVariant instead
+	 * @deprecated since 1.35 use LanguageConverter::getURLVariant instead. Hard-deprecated since 1.40.
 	 * @return string
 	 */
 	public function getURLVariant() {
-		return $this->getConverter()->getURLVariant();
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->getURLVariant();
 	}
 
 	/**
 	 * returns language specific options used by User::getPageRenderHash()
 	 * for example, the preferred language variant
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::getExtraHashOptions instead
+	 * @deprecated since 1.35 use LanguageConverter::getExtraHashOptions instead. Hard-deprecated since 1.40.
 	 *
 	 * @return string
 	 */
 	public function getExtraHashOptions() {
-		return $this->getConverter()->getExtraHashOptions();
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->getExtraHashOptions();
 	}
 
 	/**
@@ -4317,13 +4285,14 @@ class Language {
 	 * Get the "parent" language which has a converter to convert a "compatible" language
 	 * (in another variant) to this language (eg. zh for zh-cn, but not en for en-gb).
 	 *
-	 * @deprecated since 1.35, use LanguageFactory::getParentLanguage
+	 * @deprecated since 1.35, use LanguageFactory::getParentLanguage. Hard-deprecated since 1.40.
 	 * @return Language|null
 	 * @since 1.22
 	 */
 	public function getParentLanguage() {
+		wfDeprecated( __METHOD__, '1.35' );
 		return MediaWikiServices::getInstance()->getLanguageFactory()
-			->getParentLanguage( $this->getCode() );
+			->getParentLanguage( $this );
 	}
 
 	/**
@@ -4360,10 +4329,18 @@ class Language {
 	 * @return string
 	 */
 	public function getHtmlCode() {
-		if ( $this->mHtmlCode === null ) {
-			$this->mHtmlCode = LanguageCode::bcp47( $this->getCode() );
-		}
+		$this->mHtmlCode ??= LanguageCode::bcp47( $this->getCode() );
 		return $this->mHtmlCode;
+	}
+
+	/**
+	 * Implement the Bcp47Code interface.  This is an alias for
+	 * ::getHtmlCode().
+	 * @since 1.40
+	 * @return string
+	 */
+	public function toBcp47Code(): string {
+		return $this->getHtmlCode();
 	}
 
 	/**
@@ -4386,7 +4363,7 @@ class Language {
 	/**
 	 * Get the name of a file for a certain language code
 	 *
-	 * @deprecated since 1.34, use LanguageNameUtils
+	 * @deprecated since 1.34, use LanguageNameUtils, hard-deprecated since 1.40
 	 * @param string $prefix Prepend this to the filename
 	 * @param string $code Language code
 	 * @param string $suffix Append this to the filename
@@ -4394,28 +4371,31 @@ class Language {
 	 * @return string $prefix . $mangledCode . $suffix
 	 */
 	public static function getFileName( $prefix, $code, $suffix = '.php' ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->getFileName( $prefix, $code, $suffix );
 	}
 
 	/**
-	 * @deprecated since 1.34, use LanguageNameUtils
+	 * @deprecated since 1.34, use LanguageNameUtils, hard-deprecated since 1.40
 	 * @param string $code
 	 * @return string
 	 */
 	public static function getMessagesFileName( $code ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->getMessagesFileName( $code );
 	}
 
 	/**
-	 * @deprecated since 1.34, use LanguageNameUtils
+	 * @deprecated since 1.34, use LanguageNameUtils, hard-deprecated since 1.40
 	 * @param string $code
 	 * @return string
 	 * @throws MWException
 	 * @since 1.23
 	 */
 	public static function getJsonMessagesFileName( $code ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getLanguageNameUtils()
 			->getJsonMessagesFileName( $code );
 	}
@@ -4423,12 +4403,13 @@ class Language {
 	/**
 	 * Get the first fallback for a given language.
 	 *
-	 * @deprecated since 1.35, use LanguageFallback::getFirst
+	 * @deprecated since 1.35, use LanguageFallback::getFirst. Hard-deprecated since 1.40.
 	 *
 	 * @param string $code
 	 * @return string|false False if no fallbacks
 	 */
 	public static function getFallbackFor( $code ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return MediaWikiServices::getInstance()->getLanguageFallback()->getFirst( $code )
 			?? false;
 	}
@@ -4436,7 +4417,7 @@ class Language {
 	/**
 	 * Get the ordered list of fallback languages.
 	 *
-	 * @deprecated since 1.35, use LanguageFallback::getAll
+	 * @deprecated since 1.35, use LanguageFallback::getAll. Hard-deprecated since 1.40.
 	 *
 	 * @since 1.19
 	 * @param string $code Language code
@@ -4446,6 +4427,7 @@ class Language {
 	 * @return string[] List of language codes
 	 */
 	public static function getFallbacksFor( $code, $mode = LanguageFallback::MESSAGES ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return MediaWikiServices::getInstance()->getLanguageFallback()->getAll( $code, $mode );
 	}
 
@@ -4453,13 +4435,14 @@ class Language {
 	 * Get the ordered list of fallback languages, ending with the fallback
 	 * language chain for the site language.
 	 *
-	 * @deprecated since 1.35, use LanguageFallback::getAllIncludingSiteLanguage
+	 * @deprecated since 1.35, use LanguageFallback::getAllIncludingSiteLanguage. Hard-deprecated since 1.40.
 	 *
 	 * @since 1.22
 	 * @param string $code Language code
 	 * @return string[][] [ fallbacks, site fallbacks ]
 	 */
 	public static function getFallbacksIncludingSiteLanguage( $code ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return MediaWikiServices::getInstance()->getLanguageFallback()
 			->getAllIncludingSiteLanguage( $code );
 	}
@@ -4469,20 +4452,21 @@ class Language {
 	 * WARNING: this may take a long time. If you just need all message *keys*
 	 * but need the *contents* of only a few messages, consider using getMessageKeysFor().
 	 *
-	 * @deprecated since 1.35, use LocalisationCache directly
+	 * @deprecated since 1.35, use LocalisationCache directly. Hard-deprecated since 1.40.
 	 *
 	 * @param string $code
 	 *
 	 * @return array
 	 */
 	public static function getMessagesFor( $code ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return self::getLocalisationCache()->getItem( $code, 'messages' );
 	}
 
 	/**
 	 * Get a message for a given language
 	 *
-	 * @deprecated since 1.35, use LocalisationCache directly
+	 * @deprecated since 1.35, use LocalisationCache directly. Hard-deprecated since 1.40.
 	 *
 	 * @param string $key
 	 * @param string $code
@@ -4490,6 +4474,7 @@ class Language {
 	 * @return string
 	 */
 	public static function getMessageFor( $key, $code ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return self::getLocalisationCache()->getSubitem( $code, 'messages', $key );
 	}
 
@@ -4497,13 +4482,14 @@ class Language {
 	 * Get all message keys for a given language. This is a faster alternative to
 	 * array_keys( Language::getMessagesFor( $code ) )
 	 *
-	 * @deprecated since 1.35, use LocalisationCache directly
+	 * @deprecated since 1.35, use LocalisationCache directly. Hard-deprecated since 1.40.
 	 *
 	 * @since 1.19
 	 * @param string $code Language code
 	 * @return string[] Array of message keys (strings)
 	 */
 	public static function getMessageKeysFor( $code ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		return self::getLocalisationCache()->getSubitemList( $code, 'messages' );
 	}
 
@@ -4546,9 +4532,7 @@ class Language {
 	 */
 	public function formatExpiry( $expiry, $format = true, $infinity = 'infinity', $user = null ) {
 		static $dbInfinity;
-		if ( $dbInfinity === null ) {
-			$dbInfinity = wfGetDB( DB_REPLICA )->getInfinity();
-		}
+		$dbInfinity ??= wfGetDB( DB_REPLICA )->getInfinity();
 
 		if ( $expiry == '' || $expiry === 'infinity' || $expiry == $dbInfinity ) {
 			return $format === true
@@ -4636,7 +4620,6 @@ class Language {
 			if ( $format['avoid'] === 'avoidhours' ) {
 				$hours = round( ( $seconds - $days * 86400 ) / 3600 );
 				if ( $hours == 24 ) {
-					$hours = 0;
 					$days++;
 				}
 				$s = $daysMsg->params( $this->formatNum( $days ) )->text();
@@ -4766,12 +4749,13 @@ class Language {
 	/**
 	 * Get the conversion rule title, if any.
 	 *
-	 * @deprecated since 1.35 use LanguageConverter::getConvRuleTitle instead
+	 * @deprecated since 1.35 use LanguageConverter::getConvRuleTitle instead. Hard-deprecated since 1.40.
 	 *
 	 * @return string|false
 	 */
 	public function getConvRuleTitle() {
-		return $this->getConverter()->getConvRuleTitle();
+		wfDeprecated( __METHOD__, '1.35' );
+		return $this->getConverterInternal()->getConvRuleTitle();
 	}
 
 	/**
@@ -4860,6 +4844,16 @@ class Language {
 		$index = $this->getPluralRuleIndexNumber( $number );
 		$pluralRuleTypes = $this->getPluralRuleTypes();
 		return $pluralRuleTypes[$index] ?? 'other';
+	}
+
+	/**
+	 * Return the LanguageConverter for this language,
+	 * convenience function for use in the language classes only
+	 *
+	 * @return ILanguageConverter
+	 */
+	protected function getConverterInternal() {
+		return $this->converterFactory->getLanguageConverter( $this );
 	}
 
 	/**

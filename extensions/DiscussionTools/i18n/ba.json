@@ -1,0 +1,23 @@
+{
+	"@metadata": {
+		"authors": [
+			"Roustammr",
+			"Sagan"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Яуап бирергә",
+	"discussiontools-replywidget-advanced": "Киңәйтелгән",
+	"discussiontools-replywidget-cancel": "Кәрәкмәй",
+	"discussiontools-replywidget-mode-source": "Сығанаҡ",
+	"discussiontools-replywidget-mode-visual": "Визуаль",
+	"discussiontools-replywidget-preview": "Ҡарап сығырға",
+	"discussiontools-replywidget-summary": "Һөҙөмтә",
+	"discussiontools-replywidget-watchthis": "Был битте [[Special:Watchlist|күҙәреү исемлеге]]нә өҫтәргә",
+	"discussiontools-topicheader-authorcount": "$1 фекер алышыуҙа {{PLURAL:$1|кеше}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|хәбәр|хәбәрҙәр}}",
+	"discussiontools-topicheader-latestcomment": "Һуңғы хәбәр: $1",
+	"discussiontools-topicsubscription-button-subscribe": "яҙылырға",
+	"discussiontools-topicsubscription-button-subscribe-label": "Яҙылырға",
+	"discussiontools-topicsubscription-button-unsubscribe": "яҙылыуҙан баш тартырға",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Яҙылыуҙан баш тартыу"
+}

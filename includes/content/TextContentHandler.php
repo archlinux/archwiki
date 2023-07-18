@@ -27,6 +27,7 @@ use MediaWiki\Content\Renderer\ContentParseParams;
 use MediaWiki\Content\Transform\PreSaveTransformParams;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionRecord;
 
 /**
  * Base content handler implementation for flat text contents.
@@ -67,7 +68,7 @@ class TextContentHandler extends ContentHandler {
 	 * @param Content $myContent One of the page's conflicting contents.
 	 * @param Content $yourContent One of the page's conflicting contents.
 	 *
-	 * @return Content|bool
+	 * @return Content|false
 	 */
 	public function merge3( Content $oldContent, Content $myContent, Content $yourContent ) {
 		$this->checkModelID( $oldContent->getModel() );
@@ -157,9 +158,10 @@ class TextContentHandler extends ContentHandler {
 	public function getDataForSearchIndex(
 		WikiPage $page,
 		ParserOutput $output,
-		SearchEngine $engine
+		SearchEngine $engine,
+		?RevisionRecord $revision = null
 	) {
-		$fields = parent::getDataForSearchIndex( $page, $output, $engine );
+		$fields = parent::getDataForSearchIndex( $page, $output, $engine, $revision );
 		$fields['language'] =
 			$this->getPageLanguage( $page->getTitle(), $page->getContent() )->getCode();
 		return $fields;

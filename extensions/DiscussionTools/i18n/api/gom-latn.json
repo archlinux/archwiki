@@ -1,0 +1,11 @@
+{
+	"@metadata": {
+		"authors": [
+			"The Discoverer"
+		]
+	},
+	"apierror-discussiontools-commentid-notfound": "Ank $1 aslolo xero mellunk na",
+	"apihelp-discussiontoolsedit-param-commentid": "Xereacho ank.",
+	"apihelp-discussiontoolsedit-param-wikitext": "Wikimozkur",
+	"apihelp-discussiontoolsedit-summary": "Bhasabhasachea panar novo sondex boroi."
+}

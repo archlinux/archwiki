@@ -21,8 +21,9 @@
  * @file
  */
 
+use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -60,7 +61,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		$db = $this->getDB();
 
 		$query = $params['query'];
-		$protocol = self::getProtocolPrefix( $params['protocol'] );
+		$protocol = LinkFilter::getProtocolPrefix( $params['protocol'] );
 
 		$this->addTables( [ 'externallinks', 'page' ] );
 		$this->addJoinConds( [ 'page' => [ 'JOIN', 'page_id=el_from' ] ] );
@@ -75,9 +76,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		$orderBy = [];
 
 		if ( $query !== null && $query !== '' ) {
-			if ( $protocol === null ) {
-				$protocol = 'http://';
-			}
+			$protocol ??= 'http://';
 
 			// Normalize query to match the normalization applied for the externallinks table
 			$query = Parser::normalizeLinkUrl( $protocol . $query );
@@ -109,6 +108,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		}
 
 		$orderBy[] = 'el_id';
+
 		$this->addOption( 'ORDER BY', $orderBy );
 		$this->addFields( $orderBy ); // Make sure
 
@@ -135,16 +135,10 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		$this->addOption( 'STRAIGHT_JOIN' );
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) !== count( $orderBy ) );
-			$i = count( $cont ) - 1;
-			$cond = $orderBy[$i] . ' >= ' . $db->addQuotes( rawurldecode( $cont[$i] ) );
-			while ( $i-- > 0 ) {
-				$field = $orderBy[$i];
-				$v = $db->addQuotes( rawurldecode( $cont[$i] ) );
-				$cond = "($field > $v OR ($field = $v AND $cond))";
-			}
-			$this->addWhere( $cond );
+			$cont = $this->parseContinueParamOrDie( $params['continue'],
+				array_fill( 0, count( $orderBy ), 'string' ) );
+			$conds = array_combine( $orderBy, array_map( 'rawurldecode', $cont ) );
+			$this->addWhere( $db->buildComparison( '>=', $conds ) );
 		}
 
 		$res = $this->select( __METHOD__ );
@@ -227,7 +221,7 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
 			],
 			'protocol' => [
-				ParamValidator::PARAM_TYPE => self::prepareProtocols(),
+				ParamValidator::PARAM_TYPE => LinkFilter::prepareProtocols(),
 				ParamValidator::PARAM_DEFAULT => '',
 			],
 			'query' => null,
@@ -252,37 +246,6 @@ class ApiQueryExtLinksUsage extends ApiQueryGeneratorBase {
 		}
 
 		return $ret;
-	}
-
-	public static function prepareProtocols() {
-		$urlProtocols = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::UrlProtocols );
-		$protocols = [ '' ];
-		foreach ( $urlProtocols as $p ) {
-			if ( $p !== '//' ) {
-				$protocols[] = substr( $p, 0, strpos( $p, ':' ) );
-			}
-		}
-
-		return $protocols;
-	}
-
-	public static function getProtocolPrefix( $protocol ) {
-		// Find the right prefix
-		$urlProtocols = MediaWikiServices::getInstance()->getMainConfig()
-			->get( MainConfigNames::UrlProtocols );
-		if ( $protocol && !in_array( $protocol, $urlProtocols ) ) {
-			foreach ( $urlProtocols as $p ) {
-				if ( str_starts_with( $p, $protocol ) ) {
-					$protocol = $p;
-					break;
-				}
-			}
-
-			return $protocol;
-		} else {
-			return null;
-		}
 	}
 
 	protected function getExamplesMessages() {

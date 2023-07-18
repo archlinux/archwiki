@@ -402,13 +402,13 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 		return $result;
 	}
 
-	protected function doAdd( $key, $value, $expiry = 0, $flags = 0 ) {
+	protected function doAdd( $key, $value, $exptime = 0, $flags = 0 ) {
 		$conn = $this->getConnection( $key );
 		if ( !$conn ) {
 			return false;
 		}
 
-		$ttl = $this->getExpirationAsTTL( $expiry );
+		$ttl = $this->getExpirationAsTTL( $exptime );
 		$serialized = $this->getSerialized( $value, $key );
 		$valueSize = strlen( $serialized );
 
@@ -426,54 +426,6 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 		$this->logRequest( 'add', $key, $conn->getServer(), $result );
 
 		$this->updateOpStats( self::METRIC_OP_ADD, [ $key => [ $valueSize, 0 ] ] );
-
-		return $result;
-	}
-
-	public function incr( $key, $value = 1, $flags = 0 ) {
-		$conn = $this->getConnection( $key );
-		if ( !$conn ) {
-			return false;
-		}
-
-		try {
-			if ( !$conn->exists( $key ) ) {
-				return false;
-			}
-			// @FIXME: on races, the key may have a 0 TTL
-			$result = $conn->incrBy( $key, $value );
-		} catch ( RedisException $e ) {
-			$result = false;
-			$this->handleException( $conn, $e );
-		}
-
-		$this->logRequest( 'incr', $key, $conn->getServer(), $result );
-
-		$this->updateOpStats( self::METRIC_OP_INCR, [ $key ] );
-
-		return $result;
-	}
-
-	public function decr( $key, $value = 1, $flags = 0 ) {
-		$conn = $this->getConnection( $key );
-		if ( !$conn ) {
-			return false;
-		}
-
-		try {
-			if ( !$conn->exists( $key ) ) {
-				return false;
-			}
-			// @FIXME: on races, the key may have a 0 TTL
-			$result = $conn->decrBy( $key, $value );
-		} catch ( RedisException $e ) {
-			$result = false;
-			$this->handleException( $conn, $e );
-		}
-
-		$this->logRequest( 'decr', $key, $conn->getServer(), $result );
-
-		$this->updateOpStats( self::METRIC_OP_DECR, [ $key ] );
 
 		return $result;
 	}
@@ -621,7 +573,7 @@ class RedisBagOStuff extends MediumSpecificBagOStuff {
 		$this->debug( "$op($keys) on $server: " . ( $e ? "failure" : "success" ) );
 	}
 
-	public function makeKeyInternal( $keyspace, $components ) {
+	protected function makeKeyInternal( $keyspace, $components ) {
 		return $this->genericKeyFromComponents( $keyspace, ...$components );
 	}
 

@@ -81,17 +81,11 @@ class Hooks implements MakeGlobalVariablesScriptHook {
 		global $wgMediaViewerEnableByDefaultForAnonymous,
 			$wgMediaViewerEnableByDefault;
 
-		if ( $wgMediaViewerEnableByDefaultForAnonymous === null ) {
-			$enableByDefaultForAnons = $wgMediaViewerEnableByDefault;
-		} else {
-			$enableByDefaultForAnons = $wgMediaViewerEnableByDefaultForAnonymous;
-		}
-
-		if ( !$performer->isRegistered() ) {
-			return (bool)$enableByDefaultForAnons;
-		} else {
+		if ( $performer->isRegistered() ) {
 			return (bool)$this->userOptionsLookup->getOption( $performer, 'multimediaviewer-enable' );
 		}
+
+		return (bool)( $wgMediaViewerEnableByDefaultForAnonymous ?? $wgMediaViewerEnableByDefault );
 	}
 
 	/**

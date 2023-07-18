@@ -152,7 +152,6 @@
 	"visualeditor-dialog-transclusion-no-template-description": "\"$1\" সাঁচৰ এতিয়া ইয়াৰ কোনো বিৱৰণ নাই, কিন্তু [[$2|সাঁচৰ পৃষ্ঠাত]] অলপ তথ্য থাকিব পাৰে।",
 	"visualeditor-dialog-transclusion-param-default": "পূৰ্ববনিৰ্ধাৰিত: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "উদাহৰণ: $1",
-	"visualeditor-dialog-transclusion-placeholder": "এটা সাঁচ যোগ কৰক",
 	"visualeditor-dialog-transclusion-required-parameter": "প্ৰয়োজনীয় ক্ষেত্ৰ",
 	"visualeditor-dialog-transclusion-required-parameter-description": "ক্ষেত্ৰ প্ৰয়োজনীয়।",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "পাছলৈ যাওক",

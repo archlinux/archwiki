@@ -39,7 +39,7 @@
 	"templatedata-doc-param-type-wiki-template-name": "Templat",
 	"templatedata-doc-param-type-wiki-user-name": "Pengguna",
 	"templatedata-doc-params": "Parameter templat",
-	"templatedata-editbutton": "Urus DataTemplat",
+	"templatedata-editbutton": "Sunting data templat",
 	"templatedata-errormsg-jsonbadformat": "Format JSON salah. Anda boleh membatalkan tindakan ini supaya anda dapat memperbaikinya, menghapuskan tag <templatedata> sekarang dan cuba lagi, atau teruskan dengan menukar DataTemplat sekarang dengan yang baru.",
 	"templatedata-errormsg-insertblank": "Adakah anda pasti mahu memasukkan DataTemplat tanpa maklumat?",
 	"templatedata-exists-on-related-page": "Perhatian: terdapat sudah blok DataTemplat pada halaman berkaitan\"[[$1]]\".",

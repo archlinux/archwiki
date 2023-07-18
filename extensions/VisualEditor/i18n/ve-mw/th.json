@@ -132,7 +132,6 @@
 	"visualeditor-dialog-transclusion-expand-options": "แสดงตัวเลือก",
 	"visualeditor-dialog-transclusion-loading": "กำลังโหลด...",
 	"visualeditor-dialog-transclusion-param-default": "ค่าเริ่มต้น: $1",
-	"visualeditor-dialog-transclusion-placeholder": "เพิ่มแม่แบบ",
 	"visualeditor-dialog-transclusion-required-parameter": "เขตข้อมูลที่ต้องกรอก",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "ย้อนกลับ",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "ดำเนินการต่อ",

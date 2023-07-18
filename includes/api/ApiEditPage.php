@@ -21,13 +21,16 @@
  */
 
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\EditPage\EditPage;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\RedirectLookup;
 use MediaWiki\Page\WikiPageFactory;
+use MediaWiki\Request\DerivativeRequest;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\ParamValidator\ParamValidator;
@@ -482,6 +485,7 @@ class ApiEditPage extends ApiBase {
 		$ep->setApiEditOverride( true );
 		$ep->setContextTitle( $titleObj );
 		$ep->importFormData( $req );
+		$ep->maybeActivateTempUserCreate( true );
 
 		// T255700: Ensure content models of the base content
 		// and fetched revision remain the same before attempting to save.
@@ -494,9 +498,7 @@ class ApiEditPage extends ApiBase {
 			$baseContentModel = $baseContent ? $baseContent->getModel() : null;
 		}
 
-		if ( $baseContentModel === null ) {
-			$baseContentModel = $pageObj->getContentModel();
-		}
+		$baseContentModel ??= $pageObj->getContentModel();
 
 		// However, allow the content models to possibly differ if we are intentionally
 		// changing them or we are doing an undo edit that is reverting content model change.

@@ -13,7 +13,7 @@
  * @constructor
  * @param {ve.ui.Context} context Context item is in
  * @param {ve.dm.Model} model Model item is related to
- * @param {Object} config Configuration options
+ * @param {Object} [config]
  */
 ve.ui.MWTransclusionContextItem = function VeUiMWTransclusionContextItem() {
 	// Parent constructor
@@ -74,6 +74,19 @@ ve.ui.MWTransclusionContextItem.prototype.getDescription = function () {
 		nodeClass.static.getDescription( this.model ),
 		this.model.getPartsList().length
 	);
+};
+
+/**
+ * @inheritdoc
+ */
+ve.ui.MWTransclusionContextItem.prototype.renderBody = function () {
+	var nodeClass = ve.ce.nodeFactory.lookup( this.model.constructor.static.name );
+	// eslint-disable-next-line no-jquery/no-append-html
+	this.$body.append( ve.htmlMsg(
+		'visualeditor-dialog-transclusion-contextitem-description',
+		nodeClass.static.getDescriptionDom( this.model ),
+		this.model.getPartsList().length
+	) );
 };
 
 /**

@@ -54,6 +54,7 @@
 	"config-env-good": "Aplinka buvo patikrinta.\nJūs galite įdiegti MediaWiki.",
 	"config-env-bad": "Aplinka buvo patikrinta.\nJūs negalite įdiegti MediaWiki.",
 	"config-env-php": "PHP $1 yra įdiegtas.",
+	"config-env-icu": "Įdiegtas ICU $1 (palaiko Unicode $2).",
 	"config-outdated-sqlite": "<strong>Įspėjimas:</strong> jūs turite SQLite $2, kuri yra žemesnė nei minimali reikalinga versija $1. SQLite nebus prieinama.",
 	"config-no-fts3": "<strong>Įspėjimas:</strong> SQLite sukompiliuota be [//sqlite.org/fts3.html FTS3 modulio], paieškos funkcijos šioje vidinėje sistemoje nebus pasiekiamos.",
 	"config-pcre-no-utf8": "<strong>Kritinė:</strong> atrodo, kad PHP PCRE modulis buvo sukompiliuotas be PCRE_UTF8 palaikymo.\nMediaWiki reikalingas UTF-8 palaikymas, kad tinkamai veiktų.",
@@ -254,6 +255,7 @@
 	"config-screenshot": "ekrano kopija",
 	"config-extension-not-found": "Nepavyko rasti plėtinio „$1“ registracijos failo",
 	"config-extension-dependency": "Diegiant plėtinį „$1“ įvyko priklausomybės klaida: $2",
+	"config-ext-skins-more-info": "daugiau informacijos",
 	"mainpagetext": "<strong>MediaWiki sėkmingai įdiegta.</strong>",
 	"mainpagedocfooter": "Informacijos apie viki programinės įrangos naudojimą, ieškokite [[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents Naudotojo gide].\n\n== Pradžia ==\n* [https\n://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Konfigūracijos nustatymų sąrašas]\n* [https\n://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ MedijaWiki DUK]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ MediaWiki pranešimai el. paštu apie naujas versijas]\n* [https\n://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Lokalizuokite MedijaWiki savo kalbai]\n* [https\n://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Sužinokite kaip kovoti su šlamštu savo viki]"
 }

@@ -29,6 +29,7 @@
 	"vector-jumptocontent": "Mazmuna geçiň",
 	"vector-more-actions": "Has köp",
 	"vector-searchsuggest-containing": "Içindäki sahypalary gözläň <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Mazmuny",
 	"vector-toc-beginning": "Başlangyç",
 	"vector-anon-user-menu-pages-learn": "köpräk oka",
 	"vector-anon-user-menu-pages-label": "Redaktirlemek barada has giňişleýin öwreniň",
@@ -36,5 +37,8 @@
 	"vector-toc-menu-tooltip": "Mazmuny",
 	"vector-toc-collapsible-button-label": "Mazmunyň tablisasyny üýtgediň",
 	"vector-site-nav-label": "Saýt",
+	"vector-main-menu-label": "Esasy menýu",
+	"vector-page-tools-label": "Gurallar",
+	"vector-unpin-element-label": "gizle",
 	"tooltip-vector-anon-user-menu-title": "Has köp wariant"
 }

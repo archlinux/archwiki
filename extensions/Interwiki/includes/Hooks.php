@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\Interwiki;
 
 use Hooks as MWHooks;
-use Language;
 use MediaWiki\MediaWikiServices;
 use WikiMap;
 
@@ -60,7 +59,7 @@ class Hooks {
 
 	public static function onInterwikiLoadPrefix( $prefix, &$iwData ) {
 		global $wgInterwikiCentralDB, $wgInterwikiCentralInterlanguageDB;
-		$isInterlanguageLink = Language::fetchLanguageName( $prefix );
+		$isInterlanguageLink = MediaWikiServices::getInstance()->getLanguageNameUtils()->getLanguageName( $prefix );
 		if ( !$isInterlanguageLink && !self::$shouldSkipIWCheck ) {
 			// Check if prefix exists locally and skip
 			$lookup = MediaWikiServices::getInstance()->getInterwikiLookup();

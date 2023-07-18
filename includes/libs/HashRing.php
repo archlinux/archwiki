@@ -41,7 +41,7 @@
  *
  * @since 1.22
  */
-class HashRing implements Serializable {
+class HashRing {
 	/** @var string Hashing algorithm for hash() */
 	protected $algo;
 	/** @var int[] Non-empty (location => integer weight) */
@@ -411,7 +411,7 @@ class HashRing implements Serializable {
 			if ( count( $this->ejectExpiryByLocation ) ) {
 				// Some locations are still ejected from the ring
 				$liveRing = [];
-				foreach ( $this->baseRing as $i => $nodeInfo ) {
+				foreach ( $this->baseRing as $nodeInfo ) {
 					$location = $nodeInfo[self::KEY_LOCATION];
 					if ( !isset( $this->ejectExpiryByLocation[$location] ) ) {
 						$liveRing[] = $nodeInfo;
@@ -438,10 +438,6 @@ class HashRing implements Serializable {
 		return time();
 	}
 
-	public function serialize(): string {
-		return serialize( $this->__serialize() );
-	}
-
 	public function __serialize() {
 		return [
 			'algorithm' => $this->algo,
@@ -450,13 +446,9 @@ class HashRing implements Serializable {
 		];
 	}
 
-	public function unserialize( $serialized ): void {
-		$this->__unserialize( unserialize( $serialized ) );
-	}
-
 	public function __unserialize( $data ) {
 		if ( is_array( $data ) ) {
-			$this->init( $data['locations'], $data['algorithm'], $data['ejections'] );
+			$this->init( $data['locations'] ?? [], $data['algorithm'] ?? 'sha1', $data['ejections'] ?? [] );
 		} else {
 			throw new UnexpectedValueException( __METHOD__ . ": unable to decode JSON." );
 		}

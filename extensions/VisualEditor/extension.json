@@ -24,7 +24,7 @@
 	"license-name": "MIT",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"callback": "MediaWiki\\Extension\\VisualEditor\\Hooks::onRegistration",
 	"ServiceWiringFiles": [
@@ -33,9 +33,6 @@
 	"config": {
 		"VisualEditorAllowExternalLinkPaste": {
 			"value": false
-		},
-		"VisualEditorAllowLossySwitching": {
-			"value": true
 		},
 		"VisualEditorAvailableContentModels": {
 			"value": {
@@ -81,7 +78,7 @@
 			"value": false
 		},
 		"VisualEditorEnableDiffPage": {
-			"value": false
+			"value": true
 		},
 		"VisualEditorEnableDiffPageBetaFeature": {
 			"value": false
@@ -108,18 +105,18 @@
 			"value": false
 		},
 		"VisualEditorParsoidAutoConfig": {
-			"value": true
+			"value": true,
+			"description": "Deprecated since MW 1.40. Unused."
+		},
+		"VisualEditorDefaultParsoidClient": {
+			"value": "direct",
+			"description": "Sets the mechanism used by the VE API to talk to Parsoid. Can be set to 'vrs' for backwards compatibility, to make VisualEditor use a REST interface to talk to Parsoid."
 		},
 		"VisualEditorParsoidSettings": {
 			"value": []
 		},
 		"VisualEditorPluginModules": {
 			"value": []
-		},
-		"VisualEditorPreferenceModules": {
-			"value": {
-				"visualeditor-enable-experimental": "ext.visualEditor.experimental"
-			}
 		},
 		"VisualEditorPreloadModules": {
 			"value": [
@@ -179,6 +176,7 @@
 		"visualeditor": {
 			"class": "MediaWiki\\Extension\\VisualEditor\\ApiVisualEditor",
 			"services": [
+				"RevisionLookup",
 				"UserNameUtils",
 				"Parser",
 				"LinkRenderer",
@@ -188,9 +186,11 @@
 				"SpecialPageFactory",
 				"ReadOnlyMode",
 				"RestrictionStore",
+				"StatsdDataFactory",
 				"WikiPageFactory",
 				"HookContainer",
-				"UserFactory"
+				"UserFactory",
+				"VisualEditor.ParsoidClientFactory"
 			]
 		},
 		"visualeditoredit": {
@@ -201,7 +201,8 @@
 				"StatsdDataFactory",
 				"PageEditStash",
 				"SkinFactory",
-				"WikiPageFactory"
+				"WikiPageFactory",
+				"VisualEditor.ParsoidClientFactory"
 			]
 		}
 	},
@@ -392,6 +393,7 @@
 				"mediawiki.page.ready",
 				"mediawiki.storage",
 				"mediawiki.Title",
+				"web2017-polyfills",
 				"mediawiki.Uri",
 				"mediawiki.user",
 				"mediawiki.util",
@@ -406,10 +408,6 @@
 				"accesskey-ca-editsource",
 				"accesskey-ca-ve-edit",
 				"pipe-separator",
-				"postedit-confirmation-created",
-				"postedit-confirmation-published",
-				"postedit-confirmation-restored",
-				"postedit-confirmation-saved",
 				"tooltip-ca-createsource",
 				"tooltip-ca-edit",
 				"tooltip-ca-editsource",
@@ -417,7 +415,10 @@
 			]
 		},
 		"ext.visualEditor.desktopArticleTarget.noscript": {
-			"styles": "modules/ve-mw/init/styles/ve.init.mw.DesktopArticleTarget.noscript.less"
+			"styles": "modules/ve-mw/init/styles/ve.init.mw.DesktopArticleTarget.noscript.less",
+			"targets": [
+				"desktop"
+			]
 		},
 		"ext.visualEditor.targetLoader": {
 			"group": "visualEditorA",
@@ -433,7 +434,7 @@
 				"mediawiki.String",
 				"jquery.textSelection",
 				"mediawiki.api",
-				"mediawiki.Uri",
+				"web2017-polyfills",
 				"mediawiki.user",
 				"mediawiki.storage"
 			],
@@ -460,7 +461,10 @@
 				"monobook": [
 					"modules/ve-mw/init/styles/ve.init.mw.DesktopTarget-monobook.less"
 				]
-			}
+			},
+			"targets": [
+				"desktop"
+			]
 		},
 		"ext.visualEditor.desktopArticleTarget": {
 			"group": "visualEditorA",
@@ -500,8 +504,13 @@
 				"lastmodifiedat",
 				"mw-widgets-abandonedit",
 				"pagetitle",
+				"postedit-confirmation-published",
+				"postedit-confirmation-saved",
 				"visualeditor-section-body-placeholder",
 				"visualeditor-section-title-placeholder"
+			],
+			"targets": [
+				"desktop"
 			]
 		},
 		"ext.visualEditor.mobileArticleTarget": {
@@ -700,7 +709,7 @@
 				"lib/ve/src/ve.utils.client.js",
 				"lib/ve/src/init/ve.init.js",
 				"lib/ve/src/init/ve.init.SafeStorage.js",
-				"lib/ve/src/init/ve.init.ListStorage.js",
+				"lib/ve/src/init/ve.init.ConflictableStorage.js",
 				"lib/ve/src/init/ve.init.Platform.js",
 				"lib/ve/src/init/ve.init.Target.js"
 			],
@@ -740,7 +749,7 @@
 				"mediawiki.language",
 				"mediawiki.storage",
 				"mediawiki.Title",
-				"mediawiki.Uri",
+				"web2017-polyfills",
 				"mediawiki.user",
 				"mediawiki.util",
 				"ext.visualEditor.base",
@@ -1303,7 +1312,6 @@
 				"visualeditor-command-dialog-cancel",
 				"visualeditor-command-dialog-confirm",
 				"visualeditor-command-dialog-focus-context",
-				"visualeditor-commentinspector-edit",
 				"visualeditor-commentinspector-title",
 				"visualeditor-commentinspector-tooltip",
 				"visualeditor-content-select-all",
@@ -1881,7 +1889,7 @@
 				"ext.visualEditor.mwimage.core",
 				"mediawiki.widgets.MediaSearch",
 				"oojs-ui.styles.icons-media",
-				"oojs-ui.styles.icons-wikimedia",
+				"ext.visualEditor.icons-licenses",
 				"moment"
 			],
 			"messages": [
@@ -2197,6 +2205,7 @@
 				"visualeditor-dialog-transclusion-add-param-placeholder",
 				"visualeditor-dialog-transclusion-add-param-save",
 				"visualeditor-dialog-transclusion-add-template",
+				"visualeditor-dialog-transclusion-add-template-button",
 				"visualeditor-dialog-transclusion-add-template-save",
 				"visualeditor-dialog-transclusion-add-undocumented-param",
 				"visualeditor-dialog-transclusion-add-wikitext",
@@ -2229,7 +2238,6 @@
 				"visualeditor-dialog-transclusion-param-selection-aria-description",
 				"visualeditor-dialog-transclusion-param-selection-aria-label",
 				"visualeditor-dialog-transclusion-param-undocumented",
-				"visualeditor-dialog-transclusion-placeholder",
 				"visualeditor-dialog-transclusion-placeholder-input-placeholder",
 				"visualeditor-dialog-transclusion-required-parameter",
 				"visualeditor-dialog-transclusion-required-parameter-description",
@@ -2382,7 +2390,7 @@
 				"oojs-ui",
 				"oojs-ui.styles.icons-accessibility",
 				"oojs-ui.styles.icons-editing-advanced",
-				"mediawiki.Uri"
+				"web2017-polyfills"
 			],
 			"messages": [
 				"visualeditor-savedialog-review-visual",
@@ -2641,13 +2649,6 @@
 				"mobile"
 			]
 		},
-		"ext.visualEditor.experimental": {
-			"group": "visualEditorA",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
-		},
 		"ext.visualEditor.icons": {
 			"group": "visualEditorA",
 			"dependencies": [
@@ -2665,6 +2666,17 @@
 				"oojs-ui.styles.indicators",
 				"ext.visualEditor.moduleIcons",
 				"ext.visualEditor.moduleIndicators"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.visualEditor.icons-licenses": {
+			"group": "visualEditorA",
+			"class": "MediaWiki\\ResourceLoader\\OOUIIconPackModule",
+			"icons": [
+				"logoCC"
 			],
 			"targets": [
 				"desktop",
@@ -2702,7 +2714,6 @@
 		"styles": "lib/ve/lib/jsdifflib/diffview.css",
 		"scripts": [
 			"lib/proposal-promise-finally/polyfill.js",
-			"modules/ve-mw/tests/mw-preload.js",
 			"lib/ve/lib/jsdifflib/diffview.js",
 			"lib/ve/lib/jsdifflib/difflib.js",
 			"lib/ve/tests/ve.qunit.js",
@@ -2718,6 +2729,7 @@
 			"lib/ve/tests/ve.Node.test.js",
 			"lib/ve/tests/ve.BranchNode.test.js",
 			"lib/ve/tests/ve.LeafNode.test.js",
+			"lib/ve/tests/ve.sanitize.test.js",
 			"lib/ve/tests/dm/ve.dm.example.js",
 			"lib/ve/tests/dm/ve.dm.example.StubReferenceNode.js",
 			"lib/ve/tests/dm/ve.dm.Annotation.test.js",
@@ -2879,7 +2891,6 @@
 			"ext.visualEditor.mwalienextension",
 			"ext.visualEditor.mwwikitext",
 			"ext.visualEditor.language",
-			"ext.visualEditor.experimental",
 			"ext.visualEditor.desktopArticleTarget.init",
 			"ext.visualEditor.desktopArticleTarget",
 			"ext.visualEditor.rebase"
@@ -2892,10 +2903,8 @@
 	"DefaultUserOptions": {
 		"visualeditor-autodisable": 0,
 		"visualeditor-betatempdisable": 0,
-		"visualeditor-editor": "wikitext",
+		"visualeditor-editor": "visualeditor",
 		"visualeditor-enable": 1,
-		"visualeditor-enable-experimental": 0,
-		"visualeditor-enable-language": 0,
 		"visualeditor-hidebetawelcome": 0,
 		"visualeditor-hidetabdialog": 0,
 		"visualeditor-newwikitext": 0,

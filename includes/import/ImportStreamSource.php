@@ -58,6 +58,21 @@ class ImportStreamSource implements ImportSource {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function isSeekable() {
+		return stream_get_meta_data( $this->mHandle )['seekable'] ?? false;
+	}
+
+	/**
+	 * @param int $offset
+	 * @return int
+	 */
+	public function seek( int $offset ) {
+		return fseek( $this->mHandle, $offset );
+	}
+
+	/**
 	 * @param string $filename
 	 * @return Status
 	 */

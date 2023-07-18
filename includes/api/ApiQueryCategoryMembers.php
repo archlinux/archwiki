@@ -22,6 +22,7 @@
 
 use MediaWiki\Collation\CollationFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -127,24 +128,19 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			$this->addWhereRange( 'cl_from', $dir, null, null );
 
 			if ( $params['continue'] !== null ) {
-				$cont = explode( '|', $params['continue'] );
-				$this->dieContinueUsageIf( count( $cont ) != 2 );
-				$op = ( $dir === 'newer' ? '>' : '<' );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
+				$op = ( $dir === 'newer' ? '>=' : '<=' );
 				$db = $this->getDB();
-				$continueTimestamp = $db->addQuotes( $db->timestamp( $cont[0] ) );
-				$continueFrom = (int)$cont[1];
-				$this->dieContinueUsageIf( $continueFrom != $cont[1] );
-				$this->addWhere( "cl_timestamp $op $continueTimestamp OR " .
-					"(cl_timestamp = $continueTimestamp AND " .
-					"cl_from $op= $continueFrom)"
-				);
+				$this->addWhere( $db->buildComparison( $op, [
+					'cl_timestamp' => $db->timestamp( $cont[0] ),
+					'cl_from' => $cont[1],
+				] ) );
 			}
 
 			$this->addOption( 'USE INDEX', [ 'categorylinks' => 'cl_timestamp' ] );
 		} else {
 			if ( $params['continue'] ) {
-				$cont = explode( '|', $params['continue'], 3 );
-				$this->dieContinueUsageIf( count( $cont ) != 3 );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'string', 'string', 'int' ] );
 
 				// Remove the types to skip from $queryTypes
 				$contTypeIndex = array_search( $cont[0], $queryTypes );
@@ -152,13 +148,12 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 				// Add a WHERE clause for sortkey and from
 				$this->dieContinueUsageIf( !$this->validateHexSortkey( $cont[1] ) );
-				$escSortkey = $this->getDB()->addQuotes( hex2bin( $cont[1] ) );
-				$from = (int)$cont[2];
-				$op = $dir == 'newer' ? '>' : '<';
+				$op = $dir == 'newer' ? '>=' : '<=';
 				// $contWhere is used further down
-				$contWhere = "cl_sortkey $op $escSortkey OR " .
-					"(cl_sortkey = $escSortkey AND " .
-					"cl_from $op= $from)";
+				$contWhere = $this->getDB()->buildComparison( $op, [
+					'cl_sortkey' => hex2bin( $cont[1] ),
+					'cl_from' => $cont[2],
+				] );
 				// The below produces ORDER BY cl_sortkey, cl_from, possibly with DESC added to each of them
 				$this->addWhereRange( 'cl_sortkey', $dir, null, null );
 				$this->addWhereRange( 'cl_from', $dir, null, null );
@@ -246,7 +241,10 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				// @todo Security issue - if the user has no right to view next
 				// title, it will still be shown
 				if ( $params['sort'] == 'timestamp' ) {
-					$this->setContinueEnumParameter( 'continue', "$row->cl_timestamp|$row->cl_from" );
+					$this->setContinueEnumParameter(
+						'continue',
+						$this->getDB()->timestamp( $row->cl_timestamp ) . "|$row->cl_from"
+					);
 				} else {
 					$sortkey = bin2hex( $row->cl_sortkey );
 					$this->setContinueEnumParameter( 'continue',
@@ -291,7 +289,10 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 					null, $vals );
 				if ( !$fit ) {
 					if ( $params['sort'] == 'timestamp' ) {
-						$this->setContinueEnumParameter( 'continue', "$row->cl_timestamp|$row->cl_from" );
+						$this->setContinueEnumParameter(
+							'continue',
+							$this->getDB()->timestamp( $row->cl_timestamp ) . "|$row->cl_from"
+						);
 					} else {
 						$sortkey = bin2hex( $row->cl_sortkey );
 						$this->setContinueEnumParameter( 'continue',

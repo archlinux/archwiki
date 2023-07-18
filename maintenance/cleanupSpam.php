@@ -21,10 +21,13 @@
  * @ingroup Maintenance
  */
 
+use MediaWiki\ExternalLinks\LinkFilter;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
 

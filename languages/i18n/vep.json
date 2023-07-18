@@ -1045,6 +1045,7 @@
 	"filehist-dimensions": "Objektan suruz",
 	"filehist-filesize": "Failan suruz",
 	"filehist-comment": "Homaičend",
+	"filehist-missing": "Ei ole failad",
 	"imagelinks": "Failan kävutamine",
 	"linkstoimage": "{{PLURAL:$1|Nece lehtpol' kosketab|$1 Nened lehtpoled kosketadas}} necidä failad:",
 	"nolinkstoimage": "Ei ole necidä failad kosketajid lehtpolid.",
@@ -1955,5 +1956,11 @@
 	"skin-action-protect": "Kaita",
 	"skin-action-undelete": "Pördutada",
 	"skin-action-delete": "Čuta poiš",
-	"skin-action-move": "Udesnimitada"
+	"skin-action-move": "Udesnimitada",
+	"renameuser": "Udesnimitada kävutajad",
+	"renameuserold": "Nügüdläine kävutajannimi:",
+	"renameusernew": "Uz' kävutajan nimi:",
+	"renameuserreason": "Udesnimitandan sü:",
+	"renameusersubmit": "Tehta",
+	"right-renameuser": "Udesnimitada kävutajid"
 }

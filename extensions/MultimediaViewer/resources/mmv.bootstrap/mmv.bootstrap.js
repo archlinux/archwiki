@@ -292,9 +292,6 @@
 	 * Processes a Parsoid thumb, making use of the specified structure,
 	 *   https://www.mediawiki.org/wiki/Specs/HTML#Media
 	 *
-	 * Active formatting elements are sometimes re-opened inside
-	 * the structure and accounted for using .closest()
-	 *
 	 * @param {Object} thumb
 	 */
 	MMVB.processParsoidThumb = function ( thumb ) {
@@ -309,7 +306,9 @@
 			),
 			link = $link.prop( 'href' ),
 			alt = $thumb.attr( 'alt' ),
-			title = mw.Title.newFromImg( $thumb );
+			title = mw.Title.newFromImg( $thumb ),
+			caption,
+			$thumbCaption;
 
 		if ( !bs.isValidExtension( title ) ) {
 			// Short-circuit event handler and interface setup, because
@@ -325,6 +324,13 @@
 			bs.preloadAssets( $thumbContainer );
 		}
 
+		if ( ( $thumbContainer.prop( 'tagName' ) || '' ).toLowerCase() === 'figure' ) {
+			$thumbCaption = $thumbContainer.find( 'figcaption' );
+			caption = this.htmlUtils.htmlToTextWithTags( $thumbCaption.html() || '' );
+		} else {
+			caption = $link.prop( 'title' ) || undefined;
+		}
+
 		// This is the data that will be passed onto the mmv
 		this.thumbs.push( {
 			thumb: thumb,
@@ -332,8 +338,7 @@
 			title: title,
 			link: link,
 			alt: alt,
-			// FIXME: findCaption can further make use of Parsoid's regularity
-			caption: this.findCaption( $thumbContainer, $link )
+			caption: caption
 		} );
 
 		$link.on( 'click', function ( e ) {
@@ -469,7 +474,7 @@
 			return $link.prop( 'title' ) || undefined;
 		}
 
-		$potentialCaptions = $thumbContainer.find( '.thumbcaption, figcaption' );
+		$potentialCaptions = $thumbContainer.find( '.thumbcaption' );
 		if ( $potentialCaptions.length < 2 ) {
 			$thumbCaption = $potentialCaptions.eq( 0 );
 		} else {

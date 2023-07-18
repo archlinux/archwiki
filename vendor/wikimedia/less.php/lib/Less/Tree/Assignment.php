@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Assignment
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Assignment extends Less_Tree {
 

@@ -1,7 +1,5 @@
 <?php
 /**
- * Efficient paging for SQL queries.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,20 +16,24 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup Pager
  */
 
-use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Navigation\PagerNavigationBuilder;
 use MediaWiki\Navigation\PrevNextNavigationRenderer;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
- * IndexPager is an efficient pager which uses a (roughly unique) index in the
- * data set to implement paging, rather than a "LIMIT offset,limit" clause.
+ * Efficient paging for SQL queries that use a (roughly unique) index.
+ *
+ * This is for paging through data sets stored in tables with a unique
+ * index, instead of a naive "LIMIT offset,limit" clause.
+ *
  * In MySQL, such a limit/offset clause requires counting through the
  * specified number of offset rows to find the desired data, which can be
  * expensive for large offsets.
@@ -63,17 +65,16 @@ use Wikimedia\Rdbms\IResultWrapper;
  *      from the query. This naturally produces either the first page or the
  *      last page depending on the dir parameter.
  *
- *  Subclassing the pager to implement concrete functionality should be fairly
- *  simple, please see the examples in HistoryAction.php and
- *  SpecialBlockList.php. You just need to override formatRow(),
- *  getQueryInfo() and getIndexField(). Don't forget to call the parent
- *  constructor if you override it.
+ * Subclassing the pager to implement concrete functionality should be fairly
+ * simple, please see the examples in HistoryAction.php and
+ * SpecialBlockList.php. You just need to override formatRow(),
+ * getQueryInfo() and getIndexField(). Don't forget to call the parent
+ * constructor if you override it.
  *
  * @stable to extend
  * @ingroup Pager
  */
 abstract class IndexPager extends ContextSource implements Pager {
-	use ProtectedHookAccessorTrait;
 
 	/** Backwards-compatible constant for $mDefaultDirection field (do not change) */
 	public const DIR_ASCENDING = false;
@@ -191,7 +192,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 			->getIntOption( $this->getUser(), 'rclimit' );
 		if ( !$this->mLimit ) {
 			// Don't override if a subclass calls $this->setLimit() in its constructor.
-			list( $this->mLimit, /* $offset */ ) = $this->mRequest
+			[ $this->mLimit, /* $offset */ ] = $this->mRequest
 				->getLimitOffsetForUser( $this->getUser() );
 		}
 
@@ -454,7 +455,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * @return IResultWrapper
 	 */
 	public function reallyDoQuery( $offset, $limit, $order ) {
-		list( $tables, $fields, $conds, $fname, $options, $join_conds ) =
+		[ $tables, $fields, $conds, $fname, $options, $join_conds ] =
 			$this->buildQueryInfo( $offset, $limit, $order );
 
 		return $this->mDb->select( $tables, $fields, $conds, $fname, $options, $join_conds );
@@ -512,29 +513,6 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * single column or multiple columns. Where we paginate on multiple columns,
 	 * the sort order is defined by the order of the columns in $mIndexField.
 	 *
-	 * Some examples, with up to three columns. Each condition consists of inner
-	 * conditions, at least one of which must be true (joined by OR):
-	 *
-	 * - column X, with offset value 'x':
-	 *     WHERE X>'x'
-	 *
-	 * - columns X and Y, with offsets 'x' and 'y':
-	 *     WHERE X>'x'
-	 *     OR ( X='x' AND Y>'y' )
-	 *
-	 * - columns X, Y and Z, with offsets 'x', 'y' and 'z':
-	 *     WHERE X>'x'
-	 *     OR ( X='x' AND Y>'y' )
-	 *     OR ( X='x' AND Y='y' AND Z>'z' )
-	 *
-	 * - and so on...
-	 *
-	 * (The examples assume we want the next page and do not want to include the
-	 * offset in the results; otherwise the operators will be slightly different,
-	 * as handled in buildQueryInfo.)
-	 *
-	 * Note that the above performs better than: WHERE (X,Y,Z)>('x','y','z').
-	 *
 	 * @param string[] $offsets The offset for each index field
 	 * @param string[] $columns The name of each index field
 	 * @param string $operator Operator for the final part of each inner
@@ -544,36 +522,11 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * @return string The conditions for getting results from the offset
 	 */
 	private function buildOffsetConds( $offsets, $columns, $operator ) {
-		$innerConds = [];
-		// $offsets and $columns are the same length
-		for ( $i = 1; $i <= count( $offsets ); $i++ ) {
-			$innerConds[] = $this->buildOffsetInnerConds(
-				array_slice( $offsets, 0, $i ),
-				array_slice( $columns, 0, $i ),
-				$operator
-			);
-		}
-		return $this->mDb->makeList( $innerConds, IDatabase::LIST_OR );
-	}
-
-	/**
-	 * Build an inner part of an offset condition, consisting of inequalities
-	 * joined by AND, as described in buildOffsetConds.
-	 *
-	 * @param string[] $offsets
-	 * @param string[] $columns
-	 * @param string $operator
-	 * @return string The inner condition; to be concatenated in buildOffsetConds
-	 */
-	private function buildOffsetInnerConds( $offsets, $columns, $operator ) {
-		$conds = [];
-		while ( count( $offsets ) > 1 ) {
-			$conds[] = $columns[0] . '=' . $this->mDb->addQuotes( $offsets[0] );
-			array_shift( $columns );
-			array_shift( $offsets );
-		}
-		$conds[] = $columns[0] . $operator . $this->mDb->addQuotes( $offsets[0] );
-		return $this->mDb->makeList( $conds, IDatabase::LIST_AND );
+		// $offsets may be shorter than $columns, in which case the remaining columns should be ignored
+		// (T318080)
+		$columns = array_slice( $columns, 0, count( $offsets ) );
+		$conds = array_combine( $columns, $offsets );
+		return $this->mDb->buildComparison( $operator, $conds );
 	}
 
 	/**
@@ -671,7 +624,6 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * (see getNavigationBuilder()) to make the links. This is deprecated and will be removed.
 	 * You should override getNavigationBuilder() instead to return a customized builder.
 	 *
-	 * @stable to override (deprecated since 1.39)
 	 * @stable to call (since 1.39)
 	 *
 	 * @param string $text Text displayed on the link
@@ -873,9 +825,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 
 		// Use overridden makeLink() for the navigation, if it was overridden. Otherwise use the
 		// builder's implementation.
-		$reflectionMethod = new ReflectionMethod( $this, 'makeLink' );
-		$declaringClass = $reflectionMethod->getDeclaringClass()->getName();
-		if ( $declaringClass !== __CLASS__ ) {
+		if ( MWDebug::detectDeprecatedOverride( $this, __CLASS__, 'makeLink', '1.39' ) ) {
 			// Overriding makeLink() is deprecated since 1.39
 			$navBuilder->setMakeLinkCallback( function ( ...$args ) {
 				// @phan-suppress-next-line PhanParamTooFewUnpack
@@ -912,6 +862,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * @return string[] HTML
 	 */
 	protected function getPagingLinks( $linkTexts, $disabledTexts = [] ) {
+		wfDeprecated( __METHOD__, '1.39' );
 		$queries = $this->getPagingQueries();
 		$links = [];
 
@@ -935,6 +886,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 	 * @return string[] HTML
 	 */
 	protected function getLimitLinks() {
+		wfDeprecated( __METHOD__, '1.39' );
 		$links = [];
 		$offset = $this->getOffsetQuery();
 		foreach ( $this->mLimitsShown as $limit ) {
@@ -1077,6 +1029,7 @@ abstract class IndexPager extends ContextSource implements Pager {
 		array $query = [],
 		$atend = false
 	) {
+		wfDeprecated( __METHOD__, '1.39' );
 		$prevNext = new PrevNextNavigationRenderer( $this );
 
 		return $prevNext->buildPrevNextNavigation( $title, $offset, $limit, $query, $atend );
@@ -1091,5 +1044,15 @@ abstract class IndexPager extends ContextSource implements Pager {
 			$this->linkRenderer = MediaWikiServices::getInstance()->getLinkRenderer();
 		}
 		return $this->linkRenderer;
+	}
+
+	/**
+	 * @since 1.35 (moved from trait to class in 1.40)
+	 * @deprecated and emits warnings since 1.40 Inject a HookContainer instead
+	 * @return HookContainer
+	 */
+	protected function getHookContainer() {
+		wfDeprecated( __METHOD__, '1.40' );
+		return MediaWikiServices::getInstance()->getHookContainer();
 	}
 }

@@ -419,8 +419,6 @@ config-schema:
             Enable deferred upload tasks that use the job queue.
             Only enable this if job runners are set up for both the
             'AssembleUploadChunks' and 'PublishStashedFile' job types.
-            @note If you use suhosin, this setting is incompatible with
-            suhosin.session.encrypt.
     UploadMaintenance:
         default: false
         description: 'To disable file delete/restore temporarily'
@@ -1292,14 +1290,6 @@ config-schema:
     VerifyMimeType:
         default: true
         description: 'Determines if the MIME type of uploaded files should be checked'
-    VerifyMimeTypeIE:
-        default: true
-        description: |-
-            Determines whether extra checks for IE type detection should be applied.
-            This is a conservative check for exactly what IE 6 or so checked for,
-            and shouldn't trigger on for instance JPEG files containing links in EXIF
-            metadata.
-            @since 1.34
     MimeTypeFile:
         default: internal
         description: |-
@@ -1375,6 +1365,16 @@ config-schema:
             Adjust thumbnails on image pages according to a user setting. In order to
             reduce disk usage, the values can only be selected from a list. This is the
             list of settings the user can choose from:
+    ThumbnailNamespaces:
+        default:
+            - 6
+        type: array
+        items:
+            type: integer
+        description: |-
+            Defines what namespaces thumbnails will be displayed for in Special:Search.
+            This is the list of namespaces for which thumbnails (or a placeholder in
+            the absence of a thumbnail) will be shown:
     ThumbnailBuckets:
         default: null
         type:
@@ -1880,13 +1880,12 @@ config-schema:
         type: object
         mergeStrategy: replace
         description: |-
-            Load balancer factory configuration
-            To set up a multi-primary wiki farm, set the class here to something that
-            can return a LoadBalancer with an appropriate primary on a call to getMainLB().
-            The class identified here is responsible for reading $wgDBservers,
-            $wgDBserver, etc., so overriding it may cause those globals to be ignored.
-            The LBFactoryMulti class is provided for this purpose, please see
-            includes/db/LBFactoryMulti.php for configuration information.
+            Configuration for the ILBFactory service
+            The "class" setting must point to a LBFactory subclass, which is also responsible
+            for reading $wgDBservers, $wgDBserver, etc.
+            To set up a wiki farm with multiple database clusters, set the "class" to
+            LBFactoryMulti. See {@link Wikimedia::Rdbms::LBFactoryMulti LBFactoryMulti} docs for
+            information on how to configure the rest of the $wgLBFactoryConf array.
     DataCenterUpdateStickTTL:
         default: 10
         description: |-
@@ -1965,9 +1964,27 @@ config-schema:
               - 1.38: Added
               - 1.39: Default has changed to SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
                 and support for SCHEMA_COMPAT_OLD is dropped.
+    ExternalLinksSchemaMigrationStage:
+        default: 3
+        type: integer
+        description: |-
+            Externallinks table schema migration stage.
+            Use the SCHEMA_COMPAT_XXX flags. Supported values:
+              - SCHEMA_COMPAT_OLD
+              - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+            History:
+              - 1.40: Added
+    CommentTempTableSchemaMigrationStage:
+        default: {  }
+        type: object
+        description: |-
+            Comment temp tables schema migration stage.
+            Use the SCHEMA_COMPAT_XXX flags.
+            History:
+             - 1.40: Added
     ContentHandlers:
         default:
-            wikitext: WikitextContentHandler
+            wikitext: { class: WikitextContentHandler, services: [TitleFactory, ParserFactory, GlobalIdGenerator, LanguageNameUtils, MagicWordFactory] }
             javascript: JavaScriptContentHandler
             json: JsonContentHandler
             css: CssContentHandler
@@ -1976,7 +1993,7 @@ config-schema:
         type: object
         description: |-
             Plugins for page content model handling.
-            Each entry in the array maps a model id to a class name or callback
+            Each entry in the array maps a model id to an ObjectFactory specification
             that creates an instance of the appropriate ContentHandler subclass.
             @since 1.21
     NamespaceContentModels:
@@ -2179,16 +2196,36 @@ config-schema:
               'redisConfig' => []
             ] ];
             ```
-            **Example using C daemon from https://www.mediawiki.org/wiki/Extension:PoolCounter:**
+            **Example using C daemon from <https://gerrit.wikimedia.org/g/mediawiki/services/poolcounter>**
             ```
+            $wgPoolCountClientConf = [
+              'servers' => [ '127.0.0.1' ],
+              'timeout' => 0.5,
+              'connect_timeout' => 0.01,
+            ];
             $wgPoolCounterConf = [ 'ArticleView' => [
-              'class' => MediaWiki\Extension\PoolCounter\Client::class,
+              'class' => 'PoolCounter_Client',
               'timeout' => 15, // wait timeout in seconds
               'workers' => 5, // maximum number of active threads in each pool
               'maxqueue' => 50, // maximum number of total threads in each pool
               ... any extension-specific options...
             ] ];
             ```
+            @since 1.16
+    PoolCountClientConf:
+        default:
+            servers: [127.0.0.1]
+            timeout: 0.1
+        type: object
+        description: |-
+            Configuration array for the PoolCounter client.
+            - servers: Array of hostnames, or hostname:port. The default port is 7531.
+            - timeout: Connection timeout.
+            - connect_timeout: [Since 1.28] Alternative connection timeout. If set, it is used
+              instead of `timeout` and will be retried once if a connection fails
+              to be established. Background: https://phabricator.wikimedia.org/T105378.
+            @see MediaWiki\PoolCounter\PoolCounterClient
+            @since 1.16
     MaxUserDBWriteDuration:
         default: false
         type:
@@ -2259,6 +2296,11 @@ config-schema:
             - CACHE_ACCEL:      APC, APCU or WinCache
             - (other):          A string may be used which identifies a cache
                                 configuration in $wgObjectCaches.
+            For a multi-datacenter setup, the underlying service should be configured
+            to broadcast operations by WANObjectCache using Mcrouter or Dynomite.
+            See @ref wanobjectcache-deployment "Deploying WANObjectCache".
+            To configure the `broadcastRoutingPrefix` WANObjectCache parameter,
+            use $wgWANObjectCache.
             @see $wgMessageCacheType, $wgParserCacheType
     MessageCacheType:
         default: -1
@@ -2269,8 +2311,24 @@ config-schema:
     ParserCacheType:
         default: -1
         description: |-
-            The cache type for storing article HTML. This is used to store data which
-            is expensive to regenerate, and benefits from having plenty of storage space.
+            The cache type for storing page content HTML (e.g. parsed from wikitext).
+            Parsing wikitext is considered an expensive operation. It is recommended
+            to give your parser cache plenty of storage space, such that long tail cache
+            hits are possible.
+            The default parser cache backend (when MainCacheType is left to CACHE_NONE)
+            is effectively CACHE_DB (SqlBagOStuff). If you set up a main cache type
+            such as memcached, it is recommended to set this explicitly to CACHE_DB.
+            Advice for large wiki farms:
+            - Consider allocating a dedicated database to ParserCache.
+              Register it in $wgObjectCaches and point $wgParserCacheType to it.
+            - Consider using MultiWriteBagOStuff to add a higher tier with Memcached
+              in front of the lower database tier.
+            - Consider setting `'purgePeriod' => 0` in the dedicated SqlBagOStuff
+              entry in $wgObjectCaches. This disables the automatic purging of
+              expired rows (which would normally happen in the background of
+              write requests). You can then schedule the purgeParserCache.php script
+              to e.g. once a day prune expired rows from the a dedicated maintenance
+              server.
             For available types see $wgMainCacheType.
     SessionCacheType:
         default: -1
@@ -2355,61 +2413,13 @@ config-schema:
             For MemcachedPhpBagOStuff parameters see {@link MemcachedPhpBagOStuff::__construct}
             For MemcachedPeclBagOStuff parameters see {@link MemcachedPeclBagOStuff::__construct}
             For RedisBagOStuff parameters see {@link RedisBagOStuff::__construct}
-    MainWANCache:
-        default: false
-        type:
-            - integer
-            - string
-            - boolean
-        description: |-
-            Main Wide-Area-Network cache type.
-            By default, this will wrap $wgMainCacheType (which is disabled, since the basic
-            stock default of CACHE_DB is not fast enough to make it worthwhile).
-            For single server or single datacenter setup, setting $wgMainCacheType
-            is enough.
-            For a multiple datacenter setup, WANObjectCache should be configured to
-            broadcast some if its operations using Mcrouter or Dynomite.
-            See @ref wanobjectcache-deployment "Deploying WANObjectCache".
-            The options are:
-              - false:            Configure the cache using $wgMainCacheType, without using
-                                  a relayer (only matters if there are multiple datacenters)
-              - CACHE_NONE:       Do not cache
-              - (other):          A string may be used which identifies a cache
-                                  configuration in $wgWANObjectCaches
-            @since 1.26
-    WANObjectCaches:
-        default:
-            - { class: WANObjectCache, cacheId: 0 }
+    WANObjectCache:
+        default: {  }
         type: object
         description: |-
-            Advanced WAN object cache configuration.
-            The format is an associative array where the key is an identifier
-            that may be referenced by $wgMainWANCache, and the value is an array of options:
-             - class:   (Required) The class to use (must be WANObjectCache or a subclass).
-             - cacheId: (Required) A cache identifier from $wgObjectCaches.
-             - secret:  (Optional) Stable secret for hashing long strings in key components.
-                        Default: $wgSecretKey.
-            Any other options are treated as constructor parameters to WANObjectCache,
-            except for 'cache', 'logger', 'stats' and 'asyncHandler' which are
-            unconditionally set by MediaWiki core's ServiceWiring.
-            **Example:**
-            ```
-            $wgWANObjectCaches['memcached-php'] => [
-              'class' => WANObjectCache::class,
-              'cacheId' => 'memcached-php',
-            ];
-            ```
-            @since 1.26
-    EnableWANCacheReaper:
-        default: false
-        type: boolean
-        description: |-
-            Verify and enforce WAN cache purges using reliable DB sources as streams.
-            These secondary cache purges are de-duplicated via simple cache mutexes.
-            This improves consistency when cache purges are lost, which becomes more likely
-            as more cache servers are added or if there are multiple datacenters. Only keys
-            related to important mutable content will be checked.
-            @since 1.29
+            Extra parameters to the WANObjectCache constructor.
+            See @ref wanobjectcache-deployment "Deploying WANObjectCache".
+            @since 1.40
     MainStash:
         default: db-replicated
         description: |-
@@ -2559,7 +2569,7 @@ config-schema:
         type: object
         description: |-
             Localisation cache configuration.
-            Used by Language::getLocalisationCache() to decide how to construct the
+            Used by service wiring to decide how to construct the
             LocalisationCache instance. Associative array with keys:
             class:       The class to use for constructing the LocalisationCache object.
                          This may be overridden by extensions to a subclass of LocalisationCache.
@@ -2861,8 +2871,8 @@ config-schema:
         default: false
         description: 'Hide interlanguage links from the sidebar'
     ExtraInterlanguageLinkPrefixes:
-        default: {  }
-        type: object
+        default: []
+        type: array
         description: |-
             List of additional interwiki prefixes that should be treated as
             interlanguage links (i.e. placed in the sidebar).
@@ -2875,6 +2885,12 @@ config-schema:
             - A friendly name for each site, used for tooltip text, may optionally be
               placed in the system message "interlanguage-link-sitename-xyz" where xyz is
               the prefix in this array.
+            - This should be a list of "interwiki prefixes" (ie, what appears in
+              wikitext), and you probably want to add an entry to
+              InterlanguageLinkCodeMap as well to specify which mediawiki internal
+              (or custom) language code this prefix corresponds to, and perhaps
+              then map that custom language code to a language name in
+              ExtraLanguageNames.
     InterlanguageLinkCodeMap:
         default: {  }
         type: object
@@ -2955,7 +2971,9 @@ config-schema:
         description: 'Whether to enable language variant conversion for links.'
     DefaultLanguageVariant:
         default: false
-        description: 'Default variant code, if false, the default will be the language code'
+        description: |-
+            Default variant code. If false, the default will be the static default
+            variant of the language.
     UsePigLatinVariant:
         default: false
         description: |-
@@ -3070,7 +3088,6 @@ config-schema:
             Language::ucfirst. The characters should be
             represented as char_to_convert => conversion_override. See T219279 for details
             on why this is useful during php version transitions.
-            @warning: EXPERIMENTAL!
             @since 1.34
     MimeType:
         default: text/html
@@ -3165,6 +3182,16 @@ config-schema:
             via the `useskin` query parameter. To uninstall a skin, remove its inclusion
             from LocalSettings.php.
             @see \SkinFactory::getAllowedSkins
+    ResourceLoaderClientPreferences:
+        default: false
+        description: |-
+            Enable client-side preferences for unregistered users.
+            This is only supported for unregistered users. For registered users, skins
+            and extensions must use user preferences (e.g. hidden or API-only options)
+            and swap class names server-side through the Skin interface.
+            @warning EXPERIMENTAL!
+            @since 1.40
+            @see \MediaWiki\ResourceLoader\ClientHtml
     DisableOutputCompression:
         default: false
         description: 'Disable output compression (enabled by default if zlib is available)'
@@ -3273,14 +3300,6 @@ config-schema:
             server which should be used, i.e. $wgServer or $wgCanonicalServer. Since
             detection of the current server is unreliable, the link is sent
             unconditionally.
-    MangleFlashPolicy:
-        default: true
-        deprecated: 'since 1.39; no longer has any effect'
-        description: |-
-            Formerly a workaround for a security vulnerability caused by installation
-            of Flash as a browser extension.
-            @since 1.25
-            @deprecated since 1.39
     ResourceModules:
         default: {  }
         type: object
@@ -3887,6 +3906,7 @@ config-schema:
             - Mypage
             - Mytalk
             - Redirect
+            - Mylog
         type: array
         description: |-
             Array of invalid page redirect targets.
@@ -3924,12 +3944,12 @@ config-schema:
         type:
             - boolean
             - object
-            - string
         mergeStrategy: replace
         description: |-
-            Interwiki cache, either as an associative array or a path to a constant
-            database (.cdb) file.
-            This data structure database is generated by the `dumpInterwiki` maintenance
+            Interwiki cache as an associative array.
+            When set, the InterwikiLookup service will not use the built-in `interwiki` database table,
+            but instead use this static array as its source.
+            This cache data structure can be generated by the `dumpInterwiki.php` maintenance
             script (which lives in the WikimediaMaintenance repository) and has key
             formats such as the following:
              - dbname:key - a simple key (e.g. enwiki:meta)
@@ -3938,6 +3958,7 @@ config-schema:
              - __sites:dbname - site mapping (e.g. __sites:enwiki)
             Sites mapping just specifies site name, other keys provide "local url"
             data layout.
+            @see \MediaWiki\Interwiki\ClassicInterwikiLookup
     InterwikiScopes:
         default: 3
         description: |-
@@ -4091,7 +4112,7 @@ config-schema:
             production.
             @since 1.39
     ParserEnableLegacyMediaDOM:
-        default: true
+        default: false
         description: |-
             Enable legacy media HTML structure in the output from the Parser.  The
             alternative modern HTML structure that replaces it is described at
@@ -4274,7 +4295,7 @@ config-schema:
         description: 'Central ID lookup provider to use by default'
     PasswordPolicy:
         default:
-            policies: { bureaucrat: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, sysop: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, interface-admin: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, bot: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, default: { MinimalPasswordLength: { value: 1, suggestChangeOnLogin: true }, PasswordCannotBeSubstringInUsername: { value: true, suggestChangeOnLogin: true }, PasswordCannotMatchDefaults: { value: true, suggestChangeOnLogin: true }, MaximalPasswordLength: { value: 4096, suggestChangeOnLogin: true }, PasswordNotInCommonList: { value: true, suggestChangeOnLogin: true } } }
+            policies: { bureaucrat: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, sysop: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, interface-admin: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, bot: { MinimalPasswordLength: 10, MinimumPasswordLengthToLogin: 1 }, default: { MinimalPasswordLength: { value: 8, suggestChangeOnLogin: true }, PasswordCannotBeSubstringInUsername: { value: true, suggestChangeOnLogin: true }, PasswordCannotMatchDefaults: { value: true, suggestChangeOnLogin: true }, MaximalPasswordLength: { value: 4096, suggestChangeOnLogin: true }, PasswordNotInCommonList: { value: true, suggestChangeOnLogin: true } } }
             checks: { MinimalPasswordLength: 'PasswordPolicyChecks::checkMinimalPasswordLength', MinimumPasswordLengthToLogin: 'PasswordPolicyChecks::checkMinimumPasswordLengthToLogin', PasswordCannotBeSubstringInUsername: 'PasswordPolicyChecks::checkPasswordCannotBeSubstringInUsername', PasswordCannotMatchDefaults: 'PasswordPolicyChecks::checkPasswordCannotMatchDefaults', MaximalPasswordLength: 'PasswordPolicyChecks::checkMaximalPasswordLength', PasswordNotInCommonList: 'PasswordPolicyChecks::checkPasswordNotInCommonList' }
         type: object
         mergeStrategy: array_replace_recursive
@@ -4492,13 +4513,17 @@ config-schema:
             pbkdf2-legacyA: { class: LayeredParameterizedPassword, types: [A, pbkdf2] }
             pbkdf2-legacyB: { class: LayeredParameterizedPassword, types: [B, pbkdf2] }
             bcrypt: { class: BcryptPassword, cost: 9 }
-            pbkdf2: { class: Pbkdf2Password, algo: sha512, cost: '30000', length: '64' }
+            pbkdf2: { factory: [AbstractPbkdf2Password, newInstance], algo: sha512, cost: '30000', length: '64' }
             argon2: { class: Argon2Password, algo: auto }
         type: object
         description: |-
-            Configuration for built-in password types. Maps the password type
-            to an array of options. The 'class' option is the Password class to
-            use. All other options are class-dependent.
+            Configuration for built-in password types.
+            Maps the password type to an array of options:
+            - class: The Password class to use.
+            - factory (since 1.40): A function that creates and returns a suitable Password object.
+              This option is intended only for internal use; the function signature is unstable and
+              subject to change in future versions.
+            All other options are class-dependent.
             An advanced example:
             ```
             $wgPasswordConfig['bcrypt-peppered'] = [
@@ -4606,6 +4631,7 @@ config-schema:
             search-match-redirect: true
             search-special-page: Search
             searchlimit: 20
+            search-thumbnail-extra-namespaces: true
             showhiddencats: 0
             shownumberswatching: 1
             showrollbackconfirmation: 0
@@ -4647,7 +4673,7 @@ config-schema:
         type: array
         description: 'An array of preferences to not show for the user'
     InvalidUsernameCharacters:
-        default: '@:>'
+        default: '@:>='
         description: |-
             Characters to prevent during new account creations.
             This is used in a regular expression character class during
@@ -4682,7 +4708,7 @@ config-schema:
     SessionProviders:
         type: object
         default:
-            MediaWiki\Session\CookieSessionProvider: { class: MediaWiki\Session\CookieSessionProvider, args: [{ priority: 30, callUserSetCookiesHook: true }] }
+            MediaWiki\Session\CookieSessionProvider: { class: MediaWiki\Session\CookieSessionProvider, args: [{ priority: 30 }] }
             MediaWiki\Session\BotPasswordSessionProvider: { class: MediaWiki\Session\BotPasswordSessionProvider, args: [{ priority: 75 }], services: [GrantsInfo] }
         description: |-
             MediaWiki\Session\SessionProvider configuration.
@@ -4778,11 +4804,9 @@ config-schema:
     BlockDisablesLogin:
         default: false
         description: |-
-            If true, blocked users will not be allowed to login. When using this with
-            a public wiki, the effect of logging out blocked users may actually be
-            avers: unless the user's address is also blocked (e.g. auto-block),
-            logging the user out will again allow reading and editing, just as for
-            anonymous visitors.
+            If true, sitewide blocked users will not be allowed to login. (Direct
+            blocks only; IP blocks are ignored.) This can be used to remove users'
+            read access on a private wiki.
     EnablePartialActionBlocks:
         default: false
         type: boolean
@@ -4850,7 +4874,7 @@ config-schema:
             bot: { bot: true, autoconfirmed: true, editsemiprotected: true, nominornewtalk: true, autopatrol: true, suppressredirect: true, apihighlimits: true, writeapi: true }
             sysop: { block: true, createaccount: true, delete: true, bigdelete: true, deletedhistory: true, deletedtext: true, undelete: true, editinterface: true, editsitejson: true, edituserjson: true, import: true, importupload: true, move: true, move-subpages: true, move-rootuserpages: true, move-categorypages: true, patrol: true, autopatrol: true, protect: true, editprotected: true, rollback: true, upload: true, reupload: true, reupload-shared: true, unwatchedpages: true, autoconfirmed: true, editsemiprotected: true, ipblock-exempt: true, blockemail: true, markbotedits: true, apihighlimits: true, browsearchive: true, noratelimit: true, movefile: true, unblockself: true, suppressredirect: true, mergehistory: true, managechangetags: true, deletechangetags: true }
             interface-admin: { editinterface: true, editsitecss: true, editsitejson: true, editsitejs: true, editusercss: true, edituserjson: true, edituserjs: true }
-            bureaucrat: { userrights: true, noratelimit: true }
+            bureaucrat: { userrights: true, noratelimit: true, renameuser: true }
             suppress: { hideuser: true, suppressrevision: true, viewsuppressed: true, suppressionlog: true, deleterevision: true, deletelogentry: true }
         description: |-
             Permission keys given to users in each group.
@@ -5259,7 +5283,7 @@ config-schema:
             upload: { ip: [8, 60], newbie: [8, 60] }
             rollback: { user: [10, 60], newbie: [5, 120] }
             mailpassword: { ip: [5, 3600] }
-            emailuser: { ip: [5, 86400], newbie: [5, 86400], user: [20, 86400] }
+            sendemail: { ip: [5, 86400], newbie: [5, 86400], user: [20, 86400] }
             changeemail: { ip-all: [10, 3600], user: [4, 86400] }
             confirmemail: { ip-all: [10, 3600], user: [4, 86400] }
             purge: { ip: [30, 60], user: [30, 60] }
@@ -5268,7 +5292,7 @@ config-schema:
             renderfile-nonstandard: { ip: [70, 30], user: [70, 30] }
             stashedit: { ip: [30, 60], newbie: [30, 60] }
             stashbasehtml: { ip: [5, 60], newbie: [5, 60] }
-            changetag: { ip: [8, 60], newbie: [8, 60] }
+            changetags: { ip: [8, 60], newbie: [8, 60] }
             editcontentmodel: { newbie: [2, 120], user: [8, 60] }
         type: object
         mergeStrategy: array_plus_2d
@@ -5852,7 +5876,7 @@ config-schema:
             Profiler `class`. Check individual Profiler subclasses for additional
             options that may be available.
             Profiler subclasses available in MediaWiki core:
-            - ProfilerXhprof: Based on XHProf or Tideways.
+            - ProfilerXhprof: Based on XHProf or Tideways-XHProf.
             - ProfilerExcimer: Based on Excimer.
             - ProfilerSectionOnly
             Profiler output classes available in MediaWiki:
@@ -5906,54 +5930,42 @@ config-schema:
             Patterns are Unix shell patterns (e.g. 'MediaWiki.api.*').
             Rates are sampling probabilities (e.g. 0.1 means 1 in 10 events are sampled).
             @since 1.28
-    MetricsTarget:
+    StatsTarget:
         default: null
         type:
             - string
             - 'null'
         description: |-
-            Metrics output target URI e.g. udp://127.0.0.1:8125
+            Stats output target URI e.g. udp://127.0.0.1:8125
             If null, metrics will not be sent.
-            Note: this only affects metrics instantiated by the MetricsFactory service
+            Note: this only affects metrics instantiated by the StatsFactory service
             @since 1.38
-    MetricsFormat:
+    StatsFormat:
         default: null
         type:
             - string
             - 'null'
         description: |-
-            Metrics output format
+            Stats output format
             If null, metrics will not be rendered nor sent.
-            Note: this only affects metrics instantiated by the MetricsFactory service
-            @see \Wikimedia\Metrics\MetricsFactory::SUPPORTED_OUTPUT_FORMATS
-            @since 1.38
-    MetricsPrefix:
+            Note: this only affects metrics instantiated by the StatsFactory service
+            @see \Wikimedia\Stats\OutputFormats::SUPPORTED_FORMATS
+            @since 1.41
+    StatsPrefix:
         default: mediawiki
         type: string
         description: |-
-            Metrics service name prefix
+            Stats service name prefix
             Required.  Must not be zero-length.
             Defaults to: 'mediawiki'
-            Note: this only affects metrics instantiated by the MetricsFactory service
-            @since 1.38
+            Note: this only affects metrics instantiated by the StatsFactory service
+            @since 1.41
     PageInfoTransclusionLimit:
         default: 50
         description: |-
             InfoAction retrieves a list of transclusion links (both to and from).
             This number puts a limit on that query in the case of highly transcluded
             templates.
-    ParserTestFiles:
-        default: {  }
-        type: object
-        deprecated: 'since 1.30'
-        description: |-
-            Parser test suite files to be run by parserTests.php when no specific
-            filename is passed to it.
-            Extensions using extension.json will have any *.txt file in a
-            tests/parser/ directory automatically run.
-            Core tests can be added to ParserTestRunner::$coreTestFiles.
-            Use full paths.
-            @deprecated since 1.30
     EnableJavaScriptTest:
         default: false
         description: 'Allow running of QUnit tests via [[Special:JavaScriptTest]].'
@@ -6003,13 +6015,6 @@ config-schema:
             Sites with heavy load would typically have these point to a custom
             PHP wrapper to avoid firing up mediawiki for every keystroke
             Placeholders: {searchTerms}
-    EnableOpenSearchSuggest:
-        default: true
-        deprecated: 'since 1.35 No longer used'
-        description: |-
-            This was previously a used to force empty responses from ApiOpenSearch
-            with the 'suggest' parameter set.
-            @deprecated since 1.35 No longer used
     OpenSearchDefaultLimit:
         default: 10
         description: |-
@@ -6388,8 +6393,8 @@ config-schema:
             ```
     FeedClasses:
         default:
-            rss: RSSFeed
-            atom: AtomFeed
+            rss: MediaWiki\Feed\RSSFeed
+            atom: MediaWiki\Feed\AtomFeed
         type: object
         description: |-
             Available feeds objects.
@@ -6511,7 +6516,7 @@ config-schema:
             and the purgeExpiredWatchlistItems.php maintenance script should be run periodically.
             @since 1.35
     WatchlistExpiryMaxDuration:
-        default: '6 months'
+        default: '1 year'
         type:
             - string
             - 'null'
@@ -6753,17 +6758,8 @@ config-schema:
         type: object
         description: |-
             Special page list. This is an associative array mapping the (canonical) names of
-            special pages to either a class name to be instantiated, or a callback to use for
-            creating the special page object. In both cases, the result must be an instance of
-            SpecialPage.
-    AutoloadAttemptLowercase:
-        default: false
-        deprecated: 'since 1.35'
-        description: |-
-            Switch controlling legacy case-insensitive classloading.
-            Do not disable if your wiki must support data created by PHP4, or by
-            MediaWiki 1.4 or earlier.
-            @deprecated since 1.35
+            special pages to either a class name or a ObjectFactory spec to be instantiated, or a callback to use for
+            creating the special page object. In all cases, the result must be an instance of SpecialPage.
     ExtensionCredits:
         default: {  }
         type: object
@@ -6873,16 +6869,26 @@ config-schema:
             clearWatchlistNotifications: ClearWatchlistNotificationsJob
             userOptionsUpdate: UserOptionsUpdateJob
             revertedTagUpdate: RevertedTagUpdateJob
-            enqueue: EnqueueJob
             'null': NullJob
             userEditCountInit: UserEditCountInitJob
+            parsoidCachePrewarm: { class: ParsoidCachePrewarmJob, services: [ParsoidOutputAccess, PageStore, RevisionLookup], needsPage: false }
+            renameUser: { class: RenameUserJob, services: [MainConfig, DBLoadBalancerFactory] }
         type: object
         description: |-
             Maps jobs to their handlers; extensions
             can add to this to provide custom jobs.
-            A job handler should either be a class name to be instantiated,
-            or (since 1.30) a callback to use for creating the job object.
-            The callback takes (Title, array map of parameters) as arguments.
+            Since 1.40, job handlers can be specified as object specs
+            for use with ObjectFactory, using an array, a plain class name,
+            or a callback.
+            @note The constructor signature of job classes has to follow one of two patterns:
+            Either it takes a parameter array as the first argument, followed by any services it
+            needs to have injected: ( array $params, ... ).
+            Or it takes a PageReference as the first parameter, followed by the parameter array,
+            followed by any services: ( PageReference $page, array $params, ... ).
+            In order to signal to the JobFactory that the $page parameter should be omitted from
+            the constructor arguments, the job class has to be a subclass of GenericParameterJob,
+            or the object specification for the job has to set the 'needsPage' key to false.
+            If a callback is used, its signature follows the same rules.
     JobTypesExcludedFromDefaultQueue:
         default:
             - AssembleUploadChunks
@@ -7033,6 +7039,7 @@ config-schema:
             - tag
             - managetags
             - contentmodel
+            - renameuser
         type: array
         description: |-
             The logging system has two levels: an event type, which describes the
@@ -7144,6 +7151,7 @@ config-schema:
             protect/move_prot: ProtectLogFormatter
             protect/protect: ProtectLogFormatter
             protect/unprotect: ProtectLogFormatter
+            renameuser/renameuser: RenameuserLogFormatter
             rights/autopromote: RightsLogFormatter
             rights/rights: RightsLogFormatter
             suppress/block: BlockLogFormatter
@@ -7197,7 +7205,7 @@ config-schema:
         description: |-
             Set this to an array of special page names to prevent
             maintenance/updateSpecialPages.php from updating those pages.
-            Mapping each special page name to an run mode like 'periodical' if a cronjob is set up.
+            Mapping each special page name to a run mode like 'periodical' if a cronjob is set up.
     CountCategorizedImagesAsUsed:
         default: false
         description: |-
@@ -7507,10 +7515,6 @@ config-schema:
             @note If using firejail with MediaWiki running in a home directory different
             from the webserver user, firejail 0.9.44+ is required.
             @since 1.31
-    ShellboxUrl:
-        default: null
-        deprecated: 'since 1.37; use $wgShellboxUrls instead'
-        description: '@deprecated since 1.37; use $wgShellboxUrls instead'
     ShellboxUrls:
         default:
             default: null
@@ -7609,10 +7613,19 @@ config-schema:
     JobRunRate:
         default: 1
         description: |-
-            Number of jobs to perform per request. May be less than one in which case
-            jobs are performed probabilistically. If this is zero, jobs will not be done
-            during ordinary apache requests. In this case, maintenance/runJobs.php should
-            be run periodically.
+            Number of jobs to perform per request. May be less than one in which case jobs are
+            performed probabalistically. If this is zero, jobs will not be done during ordinary
+            apache requests. In this case, maintenance/runJobs.php should be run in loop every
+            few seconds via a service or cron job. If using a cron job, be sure to handle the
+            case where the script is already running (e.g. via `/usr/bin/flock -n <lock_file>`).
+            If this is set to a non-zero number, then it is highly recommended that PHP run in
+            fastcgi mode (php_fpm). When using a standard Apache PHP handler (mod_php), it is
+            recommended that output_buffering and zlib.output_compression both be set to "Off",
+            allowing MediaWiki to install an unlimited size output buffer on the fly. Setting
+            output_buffering to an integer (e.g. 4096) or enabling zlib.output_compression can
+            cause user-visible slowness as background tasks execute during web requests.
+            Regardless of the web server engine in use, be sure to configure a sufficient number
+            processes/threads in order to avoid exhaustion (which will cause user-visible slowness).
     RunJobsAsync:
         default: false
         description: |-
@@ -7737,3 +7750,9 @@ config-schema:
         description: |-
             List of preferred skins to be listed higher in Special:Preferences
             @since 1.38
+    SpecialContributeSkinsEnabled:
+        default: []
+        type: array
+        description: |-
+            List of skins to not show the Special:Contribute page
+            @since 1.40

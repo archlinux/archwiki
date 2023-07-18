@@ -56,9 +56,9 @@ class SvgHandler extends ImageHandler {
 			wfDebug( "\$wgSVGConverter is invalid, disabling SVG rendering." );
 
 			return false;
-		} else {
-			return true;
 		}
+
+		return true;
 	}
 
 	public function mustRender( $file ) {
@@ -308,9 +308,9 @@ class SvgHandler extends ImageHandler {
 		$status = $this->rasterize( $lnPath, $dstPath, $physicalWidth, $physicalHeight, $lang );
 		if ( $status === true ) {
 			return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
-		} else {
-			return $status; // MediaTransformError
 		}
+
+		return $status; // MediaTransformError
 	}
 
 	/**
@@ -348,13 +348,17 @@ class SvgHandler extends ImageHandler {
 				$retval = (bool)$err;
 			} else {
 				// External command
-				$cmd = str_replace(
-					[ '$path/', '$width', '$height', '$input', '$output' ],
-					[ $svgConverterPath ? Shell::escape( "{$svgConverterPath}/" ) : "",
-						intval( $width ),
-						intval( $height ),
-						Shell::escape( $srcPath ),
-						Shell::escape( $dstPath ) ],
+				$path = $svgConverterPath ? Shell::escape( "{$svgConverterPath}/" ) : '';
+				$cmd = preg_replace_callback( '/\$(path\/|width|height|input|output)/',
+					static function ( $m ) use ( $path, $width, $height, $srcPath, $dstPath ) {
+						return [
+							'$path/' => $path,
+							'$width' => intval( $width ),
+							'$height' => intval( $height ),
+							'$input' => Shell::escape( $srcPath ),
+							'$output' => Shell::escape( $dstPath ),
+						][$m[0]];
+					},
 					$svgConverters[$svgConverter]
 				);
 
@@ -385,7 +389,7 @@ class SvgHandler extends ImageHandler {
 		$im->setImageFormat( 'png' );
 		$im->setImageDepth( 8 );
 
-		if ( !$im->thumbnailImage( intval( $width ), intval( $height ), /* fit */ false ) ) {
+		if ( !$im->thumbnailImage( (int)$width, (int)$height, /* fit */ false ) ) {
 			return 'Could not resize image';
 		}
 		if ( !$im->writeImage( $dstPath ) ) {
@@ -451,11 +455,11 @@ class SvgHandler extends ImageHandler {
 	}
 
 	protected function validateMetadata( $unser ) {
-		if ( isset( $unser['version'] ) && $unser['version'] == self::SVG_METADATA_VERSION ) {
+		if ( isset( $unser['version'] ) && $unser['version'] === self::SVG_METADATA_VERSION ) {
 			return $unser;
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 
 	public function getMetadataType( $image ) {
@@ -476,9 +480,7 @@ class SvgHandler extends ImageHandler {
 	}
 
 	protected function visibleMetadataFields() {
-		$fields = [ 'objectname', 'imagedescription' ];
-
-		return $fields;
+		return [ 'objectname', 'imagedescription' ];
 	}
 
 	/**
@@ -535,7 +537,7 @@ class SvgHandler extends ImageHandler {
 			// Reject negative heights, widths
 			return ( $value > 0 );
 		}
-		if ( $name == 'lang' ) {
+		if ( $name === 'lang' ) {
 			// Validate $code
 			if ( $value === ''
 				|| !LanguageCode::isWellFormedLanguageTag( $value )

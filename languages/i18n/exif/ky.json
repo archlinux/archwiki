@@ -3,8 +3,7 @@
 		"authors": [
 			"Chorobek",
 			"Growingup",
-			"Викиней",
-			"Bosogo"
+			"Викиней"
 		]
 	},
 	"exif-imagewidth": "Туурасы",
@@ -107,6 +106,5 @@
 	"exif-iimcategory-sci": "Илим жана техника",
 	"exif-iimcategory-soi": "Социалдык маселелер",
 	"exif-iimcategory-spo": "Спорт",
-	"exif-iimcategory-wea": "Аба-ырайы",
-	"exif-usepanoramaviewer-true": "Ооба"
+	"exif-iimcategory-wea": "Аба-ырайы"
 }

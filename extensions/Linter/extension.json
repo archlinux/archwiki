@@ -1,0 +1,211 @@
+{
+	"name": "Linter",
+	"license-name": "GPL-2.0-or-later",
+	"url": "https://www.mediawiki.org/wiki/Extension:Linter",
+	"author": [
+		"Kunal Mehta",
+		"Arlo Breault",
+		"Subramanya Sastry"
+	],
+	"descriptionmsg": "linter-desc",
+	"type": "specialpage",
+	"requires": {
+		"MediaWiki": ">= 1.40.0"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Linter\\": "includes/"
+	},
+	"MessagesDirs": {
+		"Linter": [
+			"i18n",
+			"i18n/api"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"LinterAlias": "Linter.alias.php"
+	},
+	"HookHandlers": {
+		"main": {
+			"class": "MediaWiki\\Linter\\Hooks",
+			"services": [
+				"LinkRenderer"
+			]
+		},
+		"schema": {
+			"class": "MediaWiki\\Linter\\SchemaHooks"
+		}
+	},
+	"Hooks": {
+		"LoadExtensionSchemaUpdates": "schema",
+		"BeforePageDisplay": "main",
+		"APIQuerySiteInfoGeneralInfo": "main",
+		"InfoAction": "main",
+		"WikiPageDeletionUpdates": "main",
+		"RevisionFromEditComplete": "main",
+		"ParserLogLinterData": "main"
+	},
+	"APIListModules": {
+		"linterrors": "MediaWiki\\Linter\\ApiQueryLintErrors"
+	},
+	"APIMetaModules": {
+		"linterstats": "MediaWiki\\Linter\\ApiQueryLinterStats"
+	},
+	"SpecialPages": {
+		"LintErrors": "MediaWiki\\Linter\\SpecialLintErrors"
+	},
+	"JobClasses": {
+		"RecordLintJob": "MediaWiki\\Linter\\RecordLintJob"
+	},
+	"ResourceModules": {
+		"ext.linter.edit": {
+			"scripts": "ext.linter.edit.js",
+			"dependencies": [
+				"jquery.textSelection"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules",
+		"remoteExtPath": "Linter/modules"
+	},
+	"config": {
+		"LinterCategories": {
+			"value": {
+				"fostered": {
+					"dbid": 1,
+					"enabled": true,
+					"priority": "medium",
+					"no-params": true
+				},
+				"obsolete-tag": {
+					"dbid": 2,
+					"enabled": true,
+					"priority": "low",
+					"has-name": true
+				},
+				"bogus-image-options": {
+					"dbid": 3,
+					"enabled": true,
+					"priority": "medium"
+				},
+				"missing-end-tag": {
+					"dbid": 4,
+					"enabled": true,
+					"priority": "low",
+					"has-name": true
+				},
+				"stripped-tag": {
+					"dbid": 5,
+					"enabled": true,
+					"priority": "low",
+					"has-name": true
+				},
+				"self-closed-tag": {
+					"dbid": 6,
+					"enabled": true,
+					"priority": "high",
+					"has-name": true,
+					"parser-migration": true
+				},
+				"deletable-table-tag": {
+					"dbid": 7,
+					"enabled": true,
+					"priority": "high",
+					"has-name": true,
+					"parser-migration": true
+				},
+				"misnested-tag": {
+					"dbid": 8,
+					"enabled": true,
+					"priority": "medium",
+					"has-name": true
+				},
+				"pwrap-bug-workaround": {
+					"dbid": 9,
+					"enabled": true,
+					"priority": "high",
+					"parser-migration": true
+				},
+				"tidy-whitespace-bug": {
+					"dbid": 10,
+					"enabled": true,
+					"priority": "high",
+					"parser-migration": true
+				},
+				"multi-colon-escape": {
+					"dbid": 11,
+					"enabled": true,
+					"priority": "medium"
+				},
+				"html5-misnesting": {
+					"dbid": 12,
+					"enabled": true,
+					"priority": "high",
+					"has-name": true,
+					"parser-migration": true
+				},
+				"tidy-font-bug": {
+					"dbid": 13,
+					"enabled": true,
+					"priority": "high",
+					"has-name": true,
+					"parser-migration": true
+				},
+				"multiple-unclosed-formatting-tags": {
+					"dbid": 14,
+					"enabled": true,
+					"priority": "high",
+					"has-name": true,
+					"parser-migration": true
+				},
+				"unclosed-quotes-in-heading": {
+					"dbid": 15,
+					"enabled": true,
+					"priority": "high",
+					"has-name": true,
+					"parser-migration": true
+				},
+				"multiline-html-table-in-list": {
+					"dbid": 16,
+					"enabled": true,
+					"priority": "high",
+					"parser-migration": true
+				},
+				"misc-tidy-replacement-issues": {
+					"dbid": 17,
+					"enabled": true,
+					"priority": "high",
+					"parser-migration": true
+				},
+				"wikilink-in-extlink": {
+					"dbid": 18,
+					"enabled": true,
+					"priority": "medium",
+					"no-params": true
+				},
+				"inline-media-caption": {
+					"dbid": 19,
+					"enabled": false,
+					"priority": "high",
+					"no-params": true
+				}
+			}
+		},
+		"LinterStatsdSampleFactor": {
+			"value": false
+		},
+		"LinterWriteNamespaceColumnStage": {
+			"value": false
+		},
+		"LinterUseNamespaceColumnStage": {
+			"value": false
+		},
+		"LinterWriteTagAndTemplateColumnsStage": {
+			"value": false
+		},
+		"LinterUserInterfaceTagAndTemplateStage": {
+			"value": false
+		}
+	},
+	"manifest_version": 2
+}

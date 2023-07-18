@@ -12,7 +12,6 @@
 	"apierror-visualeditor-badcachekey": "Neniu seriigaĵo kun tiu ŝlosilo troviĝis en kaŝmemoro.",
 	"apierror-visualeditor-difffailed": "Diff malsukcesita",
 	"apierror-visualeditor-docserver": "Eraro dum kontaktado de la servilo de Parsoid/RESTBase",
-	"apierror-visualeditor-latestnotfound": "Ne povis trovi plej lastan version de titolo",
 	"apihelp-visualeditor-description": "Liveras HTML5an kodon por paĝo el la servo de Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Kiam konservigu, asignu tempindikon de la redaktita revizio. Tio estas uzata por rekoni konflikoj pri redakto.",
 	"apihelp-visualeditor-param-cachekey": "Por vicigo aŭ diferencaĵo, uzu rezulton de antaŭa porkaŝmemorviciga peto (''serializeforcache request'') kun tiu vokilo. Transpasu $1html.",

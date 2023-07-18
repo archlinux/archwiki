@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80",
+			"Linus Konkor",
+			"Yirkang"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Leɛ sagbo",
+	"discussiontools-replylink": "Sagebu",
+	"discussiontools-replywidget-advanced": "Tɔnnooŋ",
+	"discussiontools-replywidget-cancel": "Iribarebo",
+	"discussiontools-replywidget-mode-source": "Yizie",
+	"discussiontools-replywidget-mode-visual": "Kaabo",
+	"discussiontools-replywidget-placeholder-reply": "Sage o {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Leɛkaabo",
+	"discussiontools-replywidget-reply": "Sagebo",
+	"discussiontools-replywidget-summary": "Leɛroo",
+	"discussiontools-replywidget-watchthis": "De a ganzu ŋa paali fo [[Special:Watchlist|watchlist]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|neɛ|noba}} aba yɛlɛ yelle yelbu",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|teɛroo|teɛɛroo}}",
+	"discussiontools-topicheader-latestcomment": "Yelle paaba : $1",
+	"discussiontools-topicsubscription-button-subscribe": "Sage la",
+	"discussiontools-topicsubscription-button-subscribe-label": "Sage la",
+	"discussiontools-topicsubscription-button-unsubscribe": "Ba sagebo",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Ba sagebo",
+	"discussiontools-topicsubscription-notify-subscribed-body": "Fo na woŋi la yelkaŋa kyaare ne a yelzu paalaa na.",
+	"discussiontools-topicsubscription-notify-subscribed-title": "Fo toɔ sagɛɛ la",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "Fo koŋ leɛ nyɛ yeli zaa kyaare ne a yelzu paala ŋa",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "Fo ba Leɛsɛgebo."
+}

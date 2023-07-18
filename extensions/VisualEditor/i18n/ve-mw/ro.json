@@ -175,7 +175,6 @@
 	"visualeditor-dialog-transclusion-no-template-parameters": "Acest format nu are niciun parametru documentat și se poate să fie făcut să funcționeze fără ele.",
 	"visualeditor-dialog-transclusion-param-default": "Valoare implicită: $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Parametru nedocumentat)",
-	"visualeditor-dialog-transclusion-placeholder": "Adăugare format",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Găsire format",
 	"visualeditor-dialog-transclusion-required-parameter": "Câmp necesar",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Câmpul este necesar.",

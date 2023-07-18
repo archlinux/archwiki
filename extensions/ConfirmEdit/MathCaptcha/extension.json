@@ -18,11 +18,15 @@
 		]
 	},
 	"AutoloadClasses": {
-		"MathCaptcha": "includes/MathCaptcha.php"
+		"MathCaptcha": "includes/MathCaptcha.php",
+		"MediaWiki\\Extension\\ConfirmEdit\\MathCaptcha\\MathCaptcha": "includes/MathCaptcha.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\ConfirmEdit\\MathCaptcha\\": "includes/"
 	},
 	"config": {
 		"CaptchaClass": {
-			"value": "MathCaptcha"
+			"value": "MediaWiki\\Extension\\ConfirmEdit\\MathCaptcha\\MathCaptcha"
 		}
 	},
 	"manifest_version": 2

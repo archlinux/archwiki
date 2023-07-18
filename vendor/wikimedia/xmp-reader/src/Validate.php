@@ -69,7 +69,7 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateBoolean( $info, &$val, $standalone ) {
+	public function validateBoolean( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -89,7 +89,7 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateRational( $info, &$val, $standalone ) {
+	public function validateRational( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -112,7 +112,7 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateRating( $info, &$val, $standalone ) {
+	public function validateRating( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -151,7 +151,7 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateInteger( $info, &$val, $standalone ) {
+	public function validateInteger( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -172,7 +172,7 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateClosed( $info, &$val, $standalone ) {
+	public function validateClosed( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -202,7 +202,7 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateReal( $info, &$val, $standalone ) {
+	public function validateReal( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -236,10 +236,12 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateFlash( $info, &$val, $standalone ) {
+	public function validateFlash( $info, &$val, $standalone ): void {
 		if ( $standalone ) {
 			// this only validates flash structs, not individual properties
+			// @codeCoverageIgnoreStart
 			return;
+			// @codeCoverageIgnoreEnd
 		}
 		if ( !isset( $val['Fired'] ) ||
 			!isset( $val['Function'] ) ||
@@ -274,7 +276,7 @@ class Validate implements LoggerAwareInterface {
 	 * @param mixed &$val Current value to validate
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateLangCode( $info, &$val, $standalone ) {
+	public function validateLangCode( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -305,7 +307,7 @@ class Validate implements LoggerAwareInterface {
 	 *    2011:04.
 	 * @param bool $standalone If this is a simple property or array
 	 */
-	public function validateDate( $info, &$val, $standalone ) {
+	public function validateDate( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart
@@ -410,7 +412,7 @@ class Validate implements LoggerAwareInterface {
 	 *   or DDD,MM.mmk form
 	 * @param bool $standalone If it's a simple prop (should always be true)
 	 */
-	public function validateGPS( $info, &$val, $standalone ) {
+	public function validateGPS( $info, &$val, $standalone ): void {
 		if ( !$standalone ) {
 			// this only validates standalone properties, not arrays, etc
 			// @codeCoverageIgnoreStart

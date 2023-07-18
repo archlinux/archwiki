@@ -102,9 +102,9 @@ trait ApiMessageTrait {
 			} elseif ( $key === 'apierror-missingparam' ) {
 				// @todo: Kill this case along with ApiBase::$messageMap
 				$this->apiCode = 'no' . $this->getParams()[0];
-			} elseif ( substr( $key, 0, 8 ) === 'apiwarn-' ) {
+			} elseif ( str_starts_with( $key, 'apiwarn-' ) ) {
 				$this->apiCode = substr( $key, 8 );
-			} elseif ( substr( $key, 0, 9 ) === 'apierror-' ) {
+			} elseif ( str_starts_with( $key, 'apierror-' ) ) {
 				$this->apiCode = substr( $key, 9 );
 			} else {
 				$this->apiCode = $key;
@@ -135,20 +135,12 @@ trait ApiMessageTrait {
 		$this->apiData = $data;
 	}
 
-	public function serialize(): string {
-		return serialize( $this->__serialize() );
-	}
-
 	public function __serialize() {
 		return [
 			'parent' => parent::__serialize(),
 			'apiCode' => $this->apiCode,
 			'apiData' => $this->apiData,
 		];
-	}
-
-	public function unserialize( $serialized ): void {
-		$this->__unserialize( unserialize( $serialized ) );
 	}
 
 	public function __unserialize( $data ) {

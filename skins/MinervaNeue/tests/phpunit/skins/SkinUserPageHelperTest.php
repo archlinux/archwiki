@@ -20,7 +20,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 	public function testTitleNotInUserNamespace() {
 		$title = Title::makeTitle( NS_MAIN, 'Test_Page' );
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $title );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$title
+		);
 		$this->assertFalse( $helper->isUserPage() );
 	}
 
@@ -32,7 +36,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 	public function testTitleIsNull() {
 		$title = null;
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $title );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$title
+		);
 		$this->assertNull( $helper->getPageUser() );
 		$this->assertFalse( $helper->isUserPage() );
 	}
@@ -44,7 +52,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 	public function testTitleisASubpage() {
 		$title = Title::makeTitle( NS_USER, 'TestUser/subpage' );
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $title );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$title
+		);
 		$this->assertFalse( $helper->isUserPage() );
 	}
 
@@ -56,7 +68,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 	public function testTitleisAnIP() {
 		$title = Title::makeTitle( NS_USER, '127.0.0.1' );
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $title );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$title
+		);
 		$this->assertTrue( $helper->isUserPage() );
 	}
 
@@ -68,7 +84,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 	public function testTitleIsIPRange() {
 		$title = Title::makeTitle( NS_USER, '127.0.0.1/24' );
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $title );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$title
+		);
 		$this->assertFalse( $helper->isUserPage() );
 	}
 
@@ -80,7 +100,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 	public function testTitleIsFakeUserPage() {
 		$title = Title::makeTitle( NS_USER, 'Fake_user' );
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $title );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$title
+		);
 		$this->assertFalse( $helper->isUserPage() );
 	}
 
@@ -104,7 +128,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 			->method( 'getText' )
 			->willReturn( 'Test' );
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $titleMock );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$titleMock
+		);
 		$helper->isUserPage();
 		$helper->isUserPage();
 		$helper->getPageUser();
@@ -120,7 +148,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 		$testUser = $this->getTestUser()->getUser();
 		$title = $testUser->getUserPage();
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $title );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$title
+		);
 		$this->assertTrue( $helper->isUserPage() );
 		$this->assertEquals( $testUser->getId(), $helper->getPageUser()->getId() );
 	}
@@ -137,7 +169,11 @@ class SkinUserPageHelperTest extends MediaWikiIntegrationTestCase {
 		$secondTestUser = $this->getTestSysop()->getUser();
 		$secondTestUserTitle = $secondTestUser->getUserPage();
 
-		$helper = new SkinUserPageHelper( $this->getServiceContainer()->getUserNameUtils(), $secondTestUserTitle );
+		$helper = new SkinUserPageHelper(
+			$this->getServiceContainer()->getUserNameUtils(),
+			$this->getServiceContainer()->getUserFactory(),
+			$secondTestUserTitle
+		);
 		$this->assertTrue( $helper->isUserPage() );
 		$this->assertNotEquals( $testUser->getId(), $helper->getPageUser()->getId() );
 		$this->assertNotEquals( $helper->getPageUser()->getUserPage(), $testUserTitle );

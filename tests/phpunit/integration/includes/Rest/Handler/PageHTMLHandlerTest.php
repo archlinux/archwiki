@@ -4,28 +4,23 @@ namespace MediaWiki\Tests\Rest\Handler;
 
 use DeferredUpdates;
 use Exception;
-use ExtensionRegistry;
 use HashBagOStuff;
-use HashConfig;
-use MediaWiki\Config\ServiceOptions;
-use MediaWiki\Json\JsonCodec;
+use MediaWiki\Hook\ParserLogLinterDataHook;
 use MediaWiki\MainConfigNames;
-use MediaWiki\MainConfigSchema;
-use MediaWiki\Parser\ParserCacheFactory;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
 use MediaWiki\Rest\Handler\PageHTMLHandler;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\RequestData;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use MWTimestamp;
-use NullStatsdDataFactory;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\NullLogger;
-use WANObjectCache;
+use Psr\Http\Message\StreamInterface;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\Parsoid\Core\ClientError;
 use Wikimedia\Parsoid\Core\ResourceLimitExceededException;
 use Wikimedia\Parsoid\Parsoid;
+use Wikimedia\Parsoid\Utils\ContentUtils;
+use Wikimedia\Parsoid\Utils\DOMUtils;
 use WikiPage;
 
 /**
@@ -34,6 +29,7 @@ use WikiPage;
  */
 class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	use HandlerTestTrait;
+	use PageHandlerTestTrait;
 	use HTMLHandlerTestTrait;
 
 	private const WIKITEXT = 'Hello \'\'\'World\'\'\'';
@@ -59,77 +55,16 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * Checks whether Parsoid extension is installed and skips the test if it's not.
-	 */
-	private function checkParsoidInstalled() {
-		if ( !ExtensionRegistry::getInstance()->isLoaded( 'Parsoid' ) ) {
-			$this->markTestSkipped( 'Skip test, since parsoid is not configured' );
-		}
-	}
-
-	/**
 	 * @param Parsoid|MockObject|null $parsoid
 	 *
 	 * @return PageHTMLHandler
 	 */
 	private function newHandler( ?Parsoid $parsoid = null ): PageHTMLHandler {
-		$parserCacheFactoryOptions = new ServiceOptions( ParserCacheFactory::CONSTRUCTOR_OPTIONS, [
-			'CacheEpoch' => '20200202112233',
-			'OldRevisionParserCacheExpireTime' => 60 * 60,
-		] );
-
-		$services = $this->getServiceContainer();
-		$parserCacheFactory = new ParserCacheFactory(
-			$this->parserCacheBagOStuff,
-			new WANObjectCache( [ 'cache' => $this->parserCacheBagOStuff, ] ),
-			$this->createHookContainer(),
-			new JsonCodec(),
-			new NullStatsdDataFactory(),
-			new NullLogger(),
-			$parserCacheFactoryOptions,
-			$services->getTitleFactory(),
-			$services->getWikiPageFactory()
-		);
-
-		$config = [
-			'RightsUrl' => 'https://example.com/rights',
-			'RightsText' => 'some rights',
-			'ParsoidCacheConfig' =>
-				MainConfigSchema::getDefaultValue( MainConfigNames::ParsoidCacheConfig )
-		];
-
-		$parsoidOutputAccess = new ParsoidOutputAccess(
-			new ServiceOptions(
-				ParsoidOutputAccess::CONSTRUCTOR_OPTIONS,
-				$services->getMainConfig()
-			),
-			$parserCacheFactory,
-			$services->getRevisionLookup(),
-			$services->getGlobalIdGenerator(),
-			$services->getStatsdDataFactory(),
-			$parsoid ?? new Parsoid(
-				$services->get( 'ParsoidSiteConfig' ),
-				$services->get( 'ParsoidDataAccess' )
-			),
-			$services->getParsoidSiteConfig(),
-			$services->getParsoidPageConfigFactory()
-		);
-
-		$handler = new PageHTMLHandler(
-			new HashConfig( $config ),
-			$services->getRevisionLookup(),
-			$services->getTitleFormatter(),
-			$services->getPageStore(),
-			$this->getParsoidOutputStash(),
-			$services->getStatsdDataFactory(),
-			$parsoidOutputAccess
-		);
-
-		return $handler;
+		return $this->newPageHtmlHandler( $parsoid );
 	}
 
 	public function testExecuteWithHtml() {
-		$this->checkParsoidInstalled();
+		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
 		$page = $this->getExistingTestPage( 'HtmlEndpointTestPage/with/slashes' );
 		$this->assertTrue(
 			$this->editPage( $page, self::WIKITEXT )->isGood(),
@@ -151,8 +86,65 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( self::HTML, $data['html'] );
 	}
 
+	public function testExecuteWillLint() {
+		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
+
+		$this->overrideConfigValue( MainConfigNames::ParsoidSettings, [
+			'linting' => true
+		] );
+
+		$mockHandler = $this->createMock( ParserLogLinterDataHook::class );
+		$mockHandler->expects( $this->once() ) // this is the critical assertion in this test case!
+		->method( 'onParserLogLinterData' );
+
+		$this->setTemporaryHook(
+			'ParserLogLinterData',
+			$mockHandler
+		);
+
+		$page = $this->getExistingTestPage( 'HtmlEndpointTestPage/with/slashes' );
+
+		$request = new RequestData(
+			[ 'pathParams' => [ 'title' => $page->getTitle()->getPrefixedText() ] ]
+		);
+
+		$handler = $this->newHandler();
+		$data = $this->executeHandlerAndGetBodyData( $handler, $request, [
+			'format' => 'with_html'
+		] );
+	}
+
+	public function testExecuteWithHtmlForSystemMessagePage() {
+		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
+		$title = Title::newFromText( 'MediaWiki:Logouttext' );
+		$page = $this->getNonexistingTestPage( $title );
+
+		$request = new RequestData(
+			[ 'pathParams' => [ 'title' => $page->getTitle()->getPrefixedText() ] ]
+		);
+
+		$handler = $this->newHandler();
+		$data = $this->executeHandlerAndGetBodyData( $handler, $request, [
+			'format' => 'with_html'
+		] );
+
+		// Let's create and test on a full HTML document since system message pages
+		// will not return a full HTML document by default.
+		$data['html'] = ContentUtils::toXML( DOMUtils::parseHTML( $data['html'] ) );
+
+		$this->assertSame( $title->getPrefixedDBkey(), $data['key'] );
+		$this->assertSame( $title->getPrefixedText(), $data['title'] );
+		$this->assertStringContainsString( '<!DOCTYPE html>', $data['html'] );
+		$this->assertStringContainsString( '<html', $data['html'] );
+		$this->assertStringContainsString( '<meta http-equiv', $data['html'] );
+		$this->assertStringContainsString( 'content="en"', $data['html'] );
+
+		$msg = wfMessage( 'logouttext' )->inLanguage( 'en' )->useDatabase( false );
+		$this->assertStringContainsString( $msg->parse(), $data['html'] );
+	}
+
 	public function testExecuteHtmlOnly() {
-		$this->checkParsoidInstalled();
+		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
 		$page = $this->getExistingTestPage( 'HtmlEndpointTestPage/with/slashes' );
 		$this->assertTrue(
 			$this->editPage( $page, self::WIKITEXT )->isGood(),
@@ -174,8 +166,96 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertStringContainsString( self::HTML, $htmlResponse );
 	}
 
+	public function testExecuteHtmlOnlyForSystemMessagePage() {
+		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
+		$title = Title::newFromText( 'MediaWiki:Logouttext/de' );
+		$page = $this->getNonexistingTestPage( $title );
+
+		$request = new RequestData(
+			[ 'pathParams' => [ 'title' => $page->getTitle()->getPrefixedText() ] ]
+		);
+
+		$handler = $this->newHandler();
+		$response = $this->executeHandler( $handler, $request, [
+			'format' => 'html'
+		] );
+
+		$htmlResponse = (string)$response->getBody();
+		// Let's create and test on a full HTML document since system message pages
+		// will not return a full HTML document by default.
+		$htmlResponse = ContentUtils::toXML( DOMUtils::parseHTML( $htmlResponse ) );
+
+		$this->assertStringContainsString( '<!DOCTYPE html>', $htmlResponse );
+		$this->assertStringContainsString( '<html', $htmlResponse );
+		$this->assertStringContainsString( '<meta http-equiv', $htmlResponse );
+		$this->assertStringContainsString( 'content="de"', $htmlResponse );
+
+		$msg = wfMessage( 'logouttext' )->inLanguage( 'de' )->useDatabase( false );
+		$this->assertStringContainsString( $msg->parse(), $htmlResponse );
+	}
+
+	/**
+	 * @dataProvider provideExecuteWithVariant
+	 */
+	public function testExecuteWithVariant(
+		string $format,
+		callable $bodyHtmlHandler,
+		string $expectedContentLanguage,
+		string $expectedVaryHeader
+	) {
+		$page = $this->getExistingTestPage( 'HtmlVariantConversion' );
+		$this->assertTrue(
+			$this->editPage( $page, '<p>test language conversion</p>' )->isGood(),
+			'Edited a page'
+		);
+
+		$acceptLanguage = 'en-x-piglatin';
+		$request = new RequestData(
+			[
+				'pathParams' => [ 'title' => $page->getTitle()->getPrefixedText() ],
+				'headers' => [
+					'Accept-Language' => $acceptLanguage
+				]
+			]
+		);
+
+		$handler = $this->newHandler();
+		$response = $this->executeHandler( $handler, $request, [
+			'format' => $format
+		] );
+
+		$htmlBody = $bodyHtmlHandler( $response->getBody() );
+		$contentLanguageHeader = $response->getHeaderLine( 'Content-Language' );
+		$varyHeader = $response->getHeaderLine( 'Vary' );
+
+		$this->assertStringContainsString( '>esttay anguagelay onversioncay<', $htmlBody );
+		$this->assertEquals( $expectedContentLanguage, $contentLanguageHeader );
+		$this->assertStringContainsStringIgnoringCase( $expectedVaryHeader, $varyHeader );
+		$this->assertStringContainsString( $acceptLanguage, $response->getHeaderLine( 'ETag' ) );
+	}
+
+	public function provideExecuteWithVariant() {
+		yield 'with_html request should contain accept language but not content language' => [
+			'with_html',
+			static function ( StreamInterface $response ) {
+				return json_decode( $response->getContents(), true )['html'];
+			},
+			'',
+			'accept-language'
+		];
+
+		yield 'html request should contain accept and content language' => [
+			'html',
+			static function ( StreamInterface $response ) {
+				return $response->getContents();
+			},
+			'en-x-piglatin',
+			'accept-language'
+		];
+	}
+
 	public function testEtagLastModified() {
-		$this->checkParsoidInstalled();
+		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
 
 		$time = time();
 		MWTimestamp::setFakeTime( $time );
@@ -265,7 +345,7 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		Exception $parsoidException,
 		Exception $expectedException
 	) {
-		$this->checkParsoidInstalled();
+		$this->markTestSkippedIfExtensionNotLoaded( 'Parsoid' );
 
 		$page = $this->getExistingTestPage( 'HtmlEndpointTestPage/with/slashes' );
 		$request = new RequestData(
@@ -309,7 +389,7 @@ class PageHTMLHandlerTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$handler = $this->newHandler();
-		$this->executeHandler( $handler, $request );
+		$this->executeHandler( $handler, $request, [ 'format' => 'html' ] );
 	}
 
 	/**

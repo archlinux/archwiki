@@ -1,4 +1,7 @@
 <?php
+
+use MediaWiki\Html\Html;
+
 /**
  * A basic extension that's used by the parser tests to test whether input and
  * arguments are passed to extensions properly.
@@ -43,6 +46,14 @@ class ParserTestParserHook {
 			"</pre>";
 	}
 
+	/**
+	 * @param string $in
+	 * @param array $argv
+	 * @param Parser $parser
+	 * @return string
+	 * @suppress PhanUndeclaredProperty static_tag_buf is deliberately dynamic
+	 * @suppress SecurityCheck-XSS
+	 */
 	public static function staticTagHook( $in, $argv, $parser ) {
 		if ( !count( $argv ) ) {
 			$parser->static_tag_buf = $in;
@@ -53,10 +64,8 @@ class ParserTestParserHook {
 			// Clear the buffer, we probably don't need to
 			$tmp = $parser->static_tag_buf ?? '';
 			$parser->static_tag_buf = null;
-			// @phan-suppress-next-line SecurityCheck-XSS
 			return $tmp;
 		} else { // wtf?
-			// @phan-suppress-next-line SecurityCheck-XSS
 			return "\nCall this extension as <statictag>string</statictag> or as" .
 				" <statictag action=flush/>, not in any other way.\n" .
 				"text: " . var_export( $in, true ) . "\n" .

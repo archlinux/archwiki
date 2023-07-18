@@ -19,9 +19,12 @@
  *
  * @file
  */
+
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 
 class RCCacheEntryFactory {
 
@@ -117,11 +120,8 @@ class RCCacheEntryFactory {
 	private function buildCLink( RCCacheEntry $cacheEntry ) {
 		$type = $cacheEntry->mAttribs['rc_type'];
 
-		// New unpatrolled pages
-		if ( $cacheEntry->unpatrolled && $type == RC_NEW ) {
-			$clink = $this->linkRenderer->makeKnownLink( $cacheEntry->getTitle() );
 		// Log entries
-		} elseif ( $type == RC_LOG ) {
+		if ( $type == RC_LOG ) {
 			$logType = $cacheEntry->mAttribs['rc_log_type'];
 
 			if ( $logType ) {
@@ -134,7 +134,7 @@ class RCCacheEntryFactory {
 		} elseif ( $cacheEntry->mAttribs['rc_namespace'] == NS_SPECIAL ) {
 			wfDebugLog( 'recentchanges', 'Unexpected special page in recentchanges' );
 			$clink = '';
-		// Edits
+		// Edits and everything else
 		} else {
 			$clink = $this->linkRenderer->makeKnownLink( $cacheEntry->getTitle() );
 		}
@@ -187,13 +187,16 @@ class RCCacheEntryFactory {
 	 * @return string
 	 */
 	private function buildCurLink( RecentChange $cacheEntry, $showDiffLinks ) {
-		$queryParams = $this->buildCurQueryParams( $cacheEntry );
 		$curMessage = $this->getMessage( 'cur' );
 		$logTypes = [ RC_LOG ];
+		if ( $cacheEntry->mAttribs['rc_this_oldid'] == $cacheEntry->getAttribute( 'page_latest' ) ) {
+			$showDiffLinks = false;
+		}
 
 		if ( !$showDiffLinks || in_array( $cacheEntry->mAttribs['rc_type'], $logTypes ) ) {
 			$curLink = $curMessage;
 		} else {
+			$queryParams = $this->buildCurQueryParams( $cacheEntry );
 			$curUrl = htmlspecialchars( $cacheEntry->getTitle()->getLinkURL( $queryParams ) );
 			$curLink = "<a class=\"mw-changeslist-diff-cur\" href=\"$curUrl\">$curMessage</a>";
 		}
@@ -292,7 +295,10 @@ class RCCacheEntryFactory {
 			$userLink = Linker::userLink(
 				$cacheEntry->mAttribs['rc_user'],
 				$cacheEntry->mAttribs['rc_user_text'],
-				ExternalUserNames::getLocal( $cacheEntry->mAttribs['rc_user_text'] )
+				ExternalUserNames::getLocal( $cacheEntry->mAttribs['rc_user_text'] ),
+				[
+					'data-mw-revid' => $cacheEntry->mAttribs['rc_this_oldid']
+				]
 			);
 		}
 

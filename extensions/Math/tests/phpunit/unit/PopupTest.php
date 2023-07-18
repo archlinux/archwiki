@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\Math\Tests;
 
 use MediaWiki\Extension\Math\Rest\Popup;
 use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\HttpException;
 use MediaWiki\Rest\RequestData;
@@ -45,13 +46,13 @@ class PopupTest extends MathWikibaseConnectorTestFactory {
 	}
 
 	public function testInvalidLanguage() {
-		$languageFactoryMock = $this->createMock( LanguageFactory::class );
-		$languageFactoryMock->expects( $this->once() )
-			->method( 'getLanguage' )
+		$languageNameUtilsMock = $this->createMock( LanguageNameUtils::class );
+		$languageNameUtilsMock->expects( $this->once() )
+			->method( 'isValidCode' )
 			->with( 'tmp' )
-			->willThrowException( new \MWException() );
+			->willReturn( false );
 
-		$popupHandler = $this->getPopup( $languageFactoryMock );
+		$popupHandler = $this->getPopup( null, $languageNameUtilsMock );
 		$response = $this->executeHandler( $popupHandler, $this->getRequest( '1', 'tmp' ) );
 		$this->assertEquals( 400, $response->getStatusCode() );
 		$data = json_decode( $response->getBody(), true );
@@ -62,7 +63,7 @@ class PopupTest extends MathWikibaseConnectorTestFactory {
 	 * @dataProvider provideItemSetups
 	 */
 	public function testExistingId( Item $item ) {
-		$popupHandler = $this->getPopup( null, $item );
+		$popupHandler = $this->getPopup( null, null, $item );
 
 		$request = $this->getRequest( '1', 'en' );
 		$data = $this->executeHandlerAndGetBodyData( $popupHandler, $request );
@@ -109,12 +110,17 @@ class PopupTest extends MathWikibaseConnectorTestFactory {
 
 	private function getPopup(
 		LanguageFactory $languageFactoryMock = null,
+		LanguageNameUtils $languageNameUtilsMock = null,
 		Item $item = null
 	): Popup {
 		$languageFactoryMock = $languageFactoryMock ?: $this->createMock( LanguageFactory::class );
+		if ( !$languageNameUtilsMock ) {
+			$languageNameUtilsMock = self::createMock( LanguageNameUtils::class );
+			$languageNameUtilsMock->method( 'isValidCode' )->willReturn( true );
+		}
 		$mathWikibaseConnectorMock = $item ?
 			$this->getWikibaseConnectorWithExistingItems( new EntityRevision( $item ) ) :
-			$this->getWikibaseConnector( $languageFactoryMock );
+			$this->getWikibaseConnector( $languageFactoryMock, $languageNameUtilsMock );
 
 		$titleMock = $this->createMock( Title::class );
 		$titleMock->method( 'getLocalURL' )->willReturn( 'special/Q1' );
@@ -124,7 +130,7 @@ class PopupTest extends MathWikibaseConnectorTestFactory {
 			->method( 'newFromText' )
 			->willReturn( $titleMock );
 
-		return new Popup( $mathWikibaseConnectorMock, $languageFactoryMock, $titleFactoryMock );
+		return new Popup( $mathWikibaseConnectorMock, $languageFactoryMock, $languageNameUtilsMock, $titleFactoryMock );
 	}
 
 	public function provideItemSetups(): array {

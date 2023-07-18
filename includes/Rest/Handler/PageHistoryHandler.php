@@ -27,6 +27,8 @@ use Wikimedia\Rdbms\IResultWrapper;
  * Handler class for Core REST API endpoints that perform operations on revisions
  */
 class PageHistoryHandler extends SimpleHandler {
+	use PageRedirectHandlerTrait;
+
 	private const REVISIONS_RETURN_LIMIT = 20;
 	private const ALLOWED_FILTER_TYPES = [ 'anonymous', 'bot', 'reverted', 'minor' ];
 
@@ -126,6 +128,7 @@ class PageHistoryHandler extends SimpleHandler {
 		}
 
 		$page = $this->getPage();
+
 		if ( !$page ) {
 			throw new LocalizedHttpException(
 				new MessageValue( 'rest-nonexistent-title',
@@ -140,6 +143,17 @@ class PageHistoryHandler extends SimpleHandler {
 					[ new ScalarParam( ParamType::PLAINTEXT, $title ) ] ),
 				403
 			);
+		}
+
+		'@phan-var \MediaWiki\Page\ExistingPageRecord $page';
+		$redirectResponse = $this->createNormalizationRedirectResponseIfNeeded(
+			$page,
+			$params['title'] ?? null,
+			$this->titleFormatter
+		);
+
+		if ( $redirectResponse !== null ) {
+			return $redirectResponse;
 		}
 
 		$relativeRevId = $params['older_than'] ?? $params['newer_than'] ?? 0;
@@ -191,13 +205,6 @@ class PageHistoryHandler extends SimpleHandler {
 		];
 
 		if ( $params['filter'] ) {
-			// This redundant join condition tells MySQL that rev_page and revactor_page are the
-			// same, so it can propagate the condition
-			if ( isset( $revQuery['tables']['temp_rev_user'] ) /* SCHEMA_COMPAT_READ_TEMP */ ) {
-				$revQuery['joins']['temp_rev_user'][1] =
-					"temp_rev_user.revactor_rev = rev_id AND revactor_page = rev_page";
-			}
-
 			// The validator ensures this value, if present, is one of the expected values
 			switch ( $params['filter'] ) {
 				case 'bot':
@@ -246,9 +253,10 @@ class PageHistoryHandler extends SimpleHandler {
 		if ( $relativeRevId ) {
 			$op = $params['older_than'] ? '<' : '>';
 			$sort = $params['older_than'] ? 'DESC' : 'ASC';
-			$ts = $dbr->addQuotes( $dbr->timestamp( $ts ) );
-			$cond[] = "rev_timestamp $op $ts OR " .
-				"(rev_timestamp = $ts AND rev_id $op $relativeRevId)";
+			$cond[] = $dbr->buildComparison( $op, [
+				'rev_timestamp' => $dbr->timestamp( $ts ),
+				'rev_id' => $relativeRevId,
+			] );
 			$orderBy = "rev_timestamp $sort, rev_id $sort";
 		} else {
 			$orderBy = "rev_timestamp DESC, rev_id DESC";
@@ -258,7 +266,6 @@ class PageHistoryHandler extends SimpleHandler {
 		$limit = self::REVISIONS_RETURN_LIMIT + 1;
 
 		$res = $dbr->select(
-			// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset False positive
 			$revQuery['tables'],
 			$revQuery['fields'],
 			$cond,

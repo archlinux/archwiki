@@ -56,8 +56,7 @@
 	"config-env-good": "Rematou a comprobación da contorna.\nPode instalar MediaWiki.",
 	"config-env-bad": "Rematou a comprobación da contorna.\nNon pode instalar MediaWiki.",
 	"config-env-php": "Está instalado o PHP $1.",
-	"config-unicode-using-intl": "Usando a [https://php.net/manual/en/book.intl.php extensión intl de PHP] para a normalización Unicode.",
-	"config-unicode-update-warning": "<strong>Atención:</strong> A versión instalada da envoltura de normalización Unicode emprega unha versión vella da biblioteca [http://site.icu-project.org/ do proxecto ICU].\nDebería [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations actualizar] se o uso de Unicode é importante para vostede.",
+	"config-env-icu": "Está instalado o ICU $1 (soporta Unicode $2).",
 	"config-no-db": "Non se puido atopar un controlador axeitado para a base de datos! Necesita instalar un controlador de base de datos para PHP.\n{{PLURAL:$2|Acéptase o seguinte tipo|Acéptanse os seguintes tipos}} de base de datos: $1.\n\nSe compilou o PHP vostede mesmo, reconfigúreo activando un cliente de base de datos, por exemplo, usando <code>./configure --with-mysqli</code>.\nSe instalou o PHP desde un paquete Debian ou Ubuntu, entón tamén necesita instalar, por exemplo, o módulo <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Atención:</strong> Ten o SQLite $2, que é inferior á versión mínima necesaria: $1. O SQLite non estará dispoñible.",
 	"config-no-fts3": "<strong>Atención:</strong> O SQLite está compilado sen o [//sqlite.org/fts3.html módulo FTS3]; as características de procura non estarán dispoñibles nesta instalación.",
@@ -83,7 +82,6 @@
 	"config-using-uri": "Usando o URL do servidor \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "<strong>Atención:</strong> O seu directorio por defecto para as subidas, <code>$1</code>, é vulnerable a execucións arbitrarias de secuencias de comandos.\nAínda que MediaWiki comproba todos os ficheiros cargados por se houbese ameazas de seguridade, recoméndase encarecidamente [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security cercar esta vulnerabilidade de seguridade] antes de activar as subidas.",
 	"config-no-cli-uploads-check": "<strong>Atención:</strong> Durante a instalación por CLI, o seu directorio por defecto para as subidas (<code>$1</code>) non se comproba fronte a posibles vulnerabilidades de execucións arbitrarias de secuencias de comandos.",
-	"config-suhosin-max-value-length": "Suhosin está instalado e limita o parámetro GET <code>length</code> a $1 bytes.\nMediaWiki precisa que <code>suhosin.get.max_value_length</code> sexa igual ou superior a $2. Desactive este axuste, o aumente este valor a $3 en <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Aviso:</strong> o teu sistema semella estar funcionando con números enteiros de 32 bits. Isto é algo [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit non recomendado].",
 	"config-db-type": "Tipo de base de datos:",
 	"config-db-host": "Servidor da base de datos:",
@@ -315,6 +313,7 @@
 	"config-screenshot": "captura de pantalla",
 	"config-extension-not-found": "Non se poido atopar o ficheiro de rexistro para a extensión \"$1\"",
 	"config-extension-dependency": "Un erro de dependencias ocorreu mentres se instalaba a extensión \"$1\": $2",
+	"config-ext-skins-more-info": "máis información",
 	"mainpagetext": "<strong>Instalouse MediaWiki.</strong>",
 	"mainpagedocfooter": "Consulte a [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents guía de usuario] para obter máis información sobre como usar o software wiki.\n\n== Primeiros pasos ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Lista das opcións de configuración]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Preguntas máis frecuentes sobre MediaWiki]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Lista de correo dos lanzamentos de MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Localice MediaWiki á súa lingua]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Aprenda como combater a spam no seu wiki]"
 }

@@ -1,9 +1,5 @@
 <?php
 /**
- * Helps EditPage build textboxes
- *
- * (C) Copyright 2017 Kunal Mehta <legoktm@debian.org>
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,14 +22,15 @@ namespace MediaWiki\EditPage;
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Sanitizer;
-use Title;
 
 /**
  * Helps EditPage build textboxes
  *
  * @since 1.31
+ * @author Kunal Mehta <legoktm@debian.org>
  */
 class TextboxBuilder {
 

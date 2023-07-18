@@ -3,7 +3,8 @@
 		"authors": [
 			"Amikeco",
 			"Bouron",
-			"Taamu"
+			"Taamu",
+			"Таймураз"
 		]
 	},
 	"vector-no-language-button-label": "Æвзæгтæ бафтау",
@@ -18,5 +19,6 @@
 	"vector-view-history": "Истори",
 	"vector-view-view": "Кæсын",
 	"vector-view-viewsource": "Код кæсын",
-	"vector-more-actions": "Фылдæр"
+	"vector-more-actions": "Фылдæр",
+	"vector-searchsuggest-containing": "Агур фæрстæ, кæцыты ис <strong class=\"cdx-typeahead-search__search-footer__query\"></strong>"
 }

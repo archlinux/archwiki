@@ -23,50 +23,61 @@
 	MenuDefinition data-portlets.data-views
 	MenuDefinition data-portlets.data-actions
 	object data-search-box. See SearchBox.mustache for documentation.
-	boolean sidebar-visible For users that want to see the sidebar on initial render, this should be
-	  true.
+	boolean is-main-menu-visible For users that want to see the sidebar on initial render, this should be
+		true.
 	string msg-vector-action-toggle-sidebar The label used by the sidebar button.
 	string msg-vector-main-menu-tooltip The title attribute for the main menu icon.
-	object data-portlets-sidebar. See Sidebar.mustache for documentation.
+	object data-main-menu. See MainMenu.mustache for documentation.
 	object data-footer for footer template partial. see Footer.mustache for documentation.
 }}
 <div class="mw-page-container">
-	<span id="top-page"></span>
-	<a class="mw-jump-link" href="#content">{{msg-vector-jumptocontent}}</a>
+	<a class="mw-jump-link" href="#bodyContent">{{msg-vector-jumptocontent}}</a>
 	<div class="mw-page-container-inner">
 		<input
 			type="checkbox"
 			id="mw-sidebar-checkbox"
 			class="mw-checkbox-hack-checkbox"
-			{{#sidebar-visible}}checked{{/sidebar-visible}}>
+			{{#is-main-menu-visible}}checked{{/is-main-menu-visible}}>
 		{{>Header}}
-		<div class="vector-sidebar-container {{^data-toc}}vector-sidebar-container-no-toc{{/data-toc}}">
-			<div id="mw-navigation">
-				{{#data-portlets-sidebar}}{{>Sidebar}}{{/data-portlets-sidebar}}
-			</div>
-		</div>
+		{{>MainMenuPinned}}
 		<div class="vector-sitenotice-container">
 			<div id="siteNotice">{{{html-site-notice}}}</div>
 		</div>
+		{{#data-toc}}
 		<input type="checkbox" id="vector-toc-collapsed-checkbox" class="mw-checkbox-hack-checkbox">
-		{{>TableOfContentsContainer}}
+		<nav id="mw-panel-toc" role="navigation" aria-label="{{ msg-vector-toc-label }}" data-event-name="ui.sidebar-toc" class="mw-table-of-contents-container vector-toc-landmark">
+			{{! T313060 Additional container div needed to prevent the sticky element from being siblings with the footer }}
+			{{#data-toc-pinnable-container}}
+			{{>PinnableContainer/Pinned/Open}}
+				{{#is-pinned}}
+					{{#data-toc}}{{>TableOfContents}}{{/data-toc}}
+				{{/is-pinned}}
+			{{>PinnableContainer/Close}}
+			{{/data-toc-pinnable-container}}
+		</nav>
+		{{/data-toc}}
 		<div class="mw-content-container">
 			{{! `role` is unnecessary but kept to support selectors in any gadgets or user styles. }}
 			<main id="content" class="mw-body" role="main">
-				<a id="top"></a>
-				{{>ContentHeader}}
-				{{>ArticleToolbar}}
-				<div id="bodyContent" class="vector-body" data-mw-ve-target-container>
-					{{>ContentSubheader}}
-					{{#html-subtitle}}<div id="contentSub"{{{html-user-language-attributes}}}>{{{.}}}</div>{{/html-subtitle}}
+				{{>PageTitlebar}}
+				{{>PageToolbar}}
+				{{#is-page-tools-enabled}}{{>ColumnEnd}}{{/is-page-tools-enabled}}
+				<div id="bodyContent" class="vector-body" aria-labelledby="firstHeading" data-mw-ve-target-container>
+					{{>BeforeContent}}
+					{{! the #contentSub element is currently used by editors, do not hide or remove it
+						until https://phabricator.wikimedia.org/T316830 has been addressed}}
+					<div id="contentSub"{{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
 					{{#html-undelete-link}}<div id="contentSub2">{{{.}}}</div>{{/html-undelete-link}}
 					{{{html-user-message}}}
 					{{{html-body-content}}}
 					{{{html-categories}}}
+					{{#is-page-tools-enabled}}{{#is-language-in-content-bottom}}
+						{{#data-lang-btn}}{{>LanguageDropdown}}{{/data-lang-btn}}
+					{{/is-language-in-content-bottom}}{{/is-page-tools-enabled}}
 				</div>
-				{{#is-language-in-content-bottom}}
-				{{#data-portlets.data-languages}}{{>Menu}}{{/data-portlets.data-languages}}
-				{{/is-language-in-content-bottom}}
+				{{^is-page-tools-enabled}}{{#is-language-in-content-bottom}}
+					{{#data-lang-btn}}{{>LanguageDropdown}}{{/data-lang-btn}}
+				{{/is-language-in-content-bottom}}{{/is-page-tools-enabled}}
 			</main>
 			{{{html-after-content}}}
 		</div>

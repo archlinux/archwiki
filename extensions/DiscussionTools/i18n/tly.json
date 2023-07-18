@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": [
+			"Patriot Kor",
+			"Patriot Kur",
+			"Гусейн"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Cəvob bıdə",
+	"discussiontools-replylink": "cəvob bıdə",
+	"discussiontools-replywidget-cancel": "Ləğv karde",
+	"discussiontools-replywidget-mode-visual": "Əyoni",
+	"discussiontools-replywidget-newtopic": "Mıvzo əlovə bıkə",
+	"discussiontools-replywidget-placeholder-reply": "Cəvob bıdə bə {{BIDI:$1}}",
+	"discussiontools-replywidget-reply": "Cəvob bıdə",
+	"discussiontools-replywidget-summary": "Xılosə:",
+	"discussiontools-topicsubscription-pager-topic": "Mıvzo"
+}

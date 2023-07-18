@@ -22,7 +22,7 @@
 
 namespace MediaWiki\Revision;
 
-use CommentStoreComment;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\User\UserIdentity;
@@ -101,7 +101,7 @@ class RevisionStoreCacheRecord extends RevisionStoreRecord {
 	 * @throws RevisionAccessException if the row could not be loaded
 	 */
 	private function loadFreshRow() {
-		list( $freshRevDeleted, $freshUser ) = call_user_func( $this->mCallback, $this->mId );
+		[ $freshRevDeleted, $freshUser ] = call_user_func( $this->mCallback, $this->mId );
 
 		// Set to null to ensure we do not make unnecessary queries for subsequent getter calls,
 		// and to allow the closure to be freed.

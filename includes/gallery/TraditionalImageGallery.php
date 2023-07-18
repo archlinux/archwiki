@@ -1,8 +1,11 @@
 <?php
 
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Wikimedia\Assert\Assert;
 
 /**
@@ -99,7 +102,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 						// @phan-suppress-next-line PhanTypeMismatchArgument Type mismatch on pass-by-ref args
 						$this->mParser, $nt, $options, $descQuery );
 					# Fetch and register the file (file title may be different via hooks)
-					list( $img, $nt ) = $this->mParser->fetchFileAndTitle( $nt, $options );
+					[ $img, $nt ] = $this->mParser->fetchFileAndTitle( $nt, $options );
 				} else {
 					$img = $repoGroup->findFile( $nt );
 				}
@@ -135,7 +138,7 @@ class TraditionalImageGallery extends ImageGalleryBase {
 						);
 						$label = $thumb->toText();
 					} else {
-						$label = '';
+						$label = $alt ?? '';
 					}
 					$thumbhtml = Linker::makeBrokenImageLinkObj(
 						$nt, $label, '', '', '', false, $transformOptions, $currentExists
@@ -159,14 +162,19 @@ class TraditionalImageGallery extends ImageGalleryBase {
 					$imageParameters = [
 						'desc-link' => true,
 						'desc-query' => $descQuery,
-						'alt' => $alt,
+						'alt' => $alt ?? '',
 						'custom-url-link' => $link
 					];
 				} else {
-					$params = [
-						'alt' => $alt,
-						'title' => $imageOptions['title'],
-					];
+					$params = [];
+					// An empty alt indicates an image is not a key part of the
+					// content and that non-visual browsers may omit it from
+					// rendering.  Only set the parameter if it's explicitly
+					// requested.
+					if ( $alt !== null ) {
+						$params['alt'] = $alt;
+					}
+					$params['title'] = $imageOptions['title'];
 					$imageParameters = Linker::getImageLinkMTOParams(
 						$imageOptions, $descQuery, $this->mParser
 					) + $params;

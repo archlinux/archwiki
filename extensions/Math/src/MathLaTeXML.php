@@ -55,11 +55,7 @@ class MathLaTeXML extends MathMathML {
 	 */
 	public function getLaTeXMLSettings() {
 		global $wgMathDefaultLaTeXMLSetting;
-		if ( $this->LaTeXMLSettings ) {
-			return $this->LaTeXMLSettings;
-		}
-
-		return $wgMathDefaultLaTeXMLSetting;
+		return $this->LaTeXMLSettings ?: $wgMathDefaultLaTeXMLSetting;
 	}
 
 	/**

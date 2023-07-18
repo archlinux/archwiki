@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"BrennodAloisi",
 			"Cedric31",
 			"Fitoschido",
 			"Guilhelma",
 			"Matma Rex",
 			"Matěj Suchánek",
-			"Unuaiga",
-			"BrennodAloisi"
+			"Unuaiga"
 		]
 	},
 	"abusefilter-desc": "Aplica d'euristicas automaticas a las modificacions",

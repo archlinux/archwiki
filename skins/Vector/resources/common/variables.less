@@ -64,8 +64,6 @@
 
 @size-icon: unit( 20 / @font-size-browser, em );
 @size-indicator: unit( 12 / @font-size-browser, em );
-// Copied from mediawiki.ui.icons
-@icon-padding-md: unit( 12 / @font-size-browser, em );
 
 @background-position-nav-personal-icon: left unit( 4 / @font-size-browser / @font-size-nav-personal, em );
 @background-size-nav-personal-icon: unit( 14 / @font-size-browser / @font-size-nav-personal, em );
@@ -80,9 +78,9 @@
 @border-color-portal-heading-transparent: rgba( red( @border-color-portal-heading ), green( @border-color-portal-heading ), blue( @border-color-portal-heading ), 0 );
 @border-start-blockquote: 4px @border-style-base #eaecf0;
 @padding-top-content: 0.5em;
-@padding-horizontal-content: 0.5em;
 @padding-blockquote: 8px 32px;
-@border-bottom-tabs: @border-width-base @border-style-base #eaecf0;
+// T311311 Match VE toolbar styles
+@border-bottom-tabs: @border-width-base @border-style-base @colorGray12;
 
 @background-color-secondary--modern: #f8f9fa;
 @background-color-page-container: @background-color-base;
@@ -127,23 +125,41 @@
 // Tabs
 @font-size-tabs: unit( 13 / @font-size-browser, em ); // Equals `0.8125em`.
 @padding-horizontal-tabs: 8px;
+@padding-top-tabs: 18px;
+@padding-vertical-tabs: @padding-top-tabs 0 7px 0;
 
-// Menu button
-@margin-horizontal-sidebar-button-icon: unit( 12px / @font-size-browser, em ); // 0.75em @ 16
+// Dropdowns
+@height-dropdown-menu-item: unit( 32 / @font-size-browser, rem );
+// Remove this variable after VectorPageTools is enabled everywhere
+@padding-dropdown-menu-item: 0 12px;
+@padding-vertical-dropdown-menu-item: 6px;
+@padding-horizontal-dropdown-menu-item: 14px;
+@font-size-dropdown: unit( @font-size-base, rem ); // Equals `0.875rem`.
 
 // Main menu
 @selector-main-menu-open: ~'#mw-sidebar-checkbox:checked';
 @selector-main-menu-closed: ~'#mw-sidebar-checkbox:not( :checked )';
 
-// Sidebar
-@width-sidebar-px: 220px;
-@width-sidebar-px-wide: 244px;
-// T305069 Layout adjustments of sidebar elements:
-// Vertically align the left edge of sidebar elements with the visible edge of the sidebar toggle hamburger menu.
-@margin-start-sidebar-content: unit( 12px / @font-size-browser, em ); // 0.75em @ 16
+// Scroll Indicator
+@height-scroll-indicator: 30px;
+// The amount of space that should be between the bottom of the viewport and the
+// bottom of the scroll indicator.
+@max-height-bottom-spacing-scroll-indicator: 16px;
+
+// TOC and Page tools Pinned elements
+@padding-top-pinned-element: unit( (30px - @padding-top-tabs) / @font-size-browser, em);
+
+// Page Tools
+// 2.34 (height of #firstHeading) - the padding on the pinned element to allow
+// for 30px of space between the top of the pinned element and the top of the viewport.
+@margin-top-pinned-page-tools: (@font-size-heading-1 * @line-height-heading) - @padding-top-pinned-element;
 
 // TOC
-@sidebar-toc-selector: ~'.mw-table-of-contents-container .sidebar-toc';
+@spacing-subsection-toggle: 22px; // @size-toc-subsection-toggle-icon @ 12
+@size-toc-subsection-toggle-icon: 1.834em;
+// Add the top padding of .mw-body element to @margin-top-pinned-page-tools
+// since it starts higher on the page.
+@margin-top-pinned-toc: @margin-top-pinned-page-tools + @padding-top-content;
 
 // Search
 @max-width-search: unit( 500px / @font-size-browser / @font-size-base, em ); // 35.71428571em @ 16 & 0.875em T270202
@@ -199,10 +215,19 @@
 //
 // Layout
 //
-@max-width-page-container: unit( 1514px / @font-size-browser, em ); // 99.75em @ 16
-@max-width-content-container: unit( 960px / @font-size-browser, em ); // 60em @ 16
-@padding-horizontal-page-container: unit( 32px / @font-size-browser, em );
-@padding-horizontal-page-container-wide: unit( 40px / @font-size-browser, em );
+@max-width-page-container: unit( 1596px / @font-size-browser, em ); // T305069 - 99.75em @ 16
+@max-width-content-container: unit( 960px / @font-size-browser, em ); // T305069 - 60em @ 16
+@padding-horizontal-page-container: unit( 24px / @font-size-browser, em );
+@padding-horizontal-page-container-desktop: unit( 44px / @font-size-browser, em );
+@padding-horizontal-page-container-desktop-wide: unit( 52px / @font-size-browser, em );
+// T314419 - Scroll padding is modified primarily to bring section headings into a position that is
+// easier to read, which is slightly lower than the very top of the page. The primary use-case is when
+// navigating sections via the table of contents. When changing this value, also change the value in
+// resources/skins.vector.es6/main.js
+@scroll-padding-top: 75px;
 
 // Grid
 @grid-row-gap: 24px;
+@grid-column-gap: 36px;
+@width-column-start-desktop: unit( 196px / @font-size-browser, em ); // Total width including gap is 232px
+@width-column-start-desktop-wide: unit( 248px / @font-size-browser, em ); // Total width including gap is 284px

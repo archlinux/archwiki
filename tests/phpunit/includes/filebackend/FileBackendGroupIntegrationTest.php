@@ -2,6 +2,7 @@
 
 use MediaWiki\FileBackend\LockManager\LockManagerGroupFactory;
 use MediaWiki\MainConfigNames;
+use MediaWiki\WikiMap\WikiMap;
 
 /**
  * @coversDefaultClass FileBackendGroup
@@ -44,7 +45,7 @@ class FileBackendGroupIntegrationTest extends MediaWikiIntegrationTestCase {
 			}
 		}
 
-		$this->assertEmpty(
+		$this->assertSame( [],
 			array_diff( array_keys( $options ), $globals, array_keys( $serviceMembers ) ) );
 
 		$services = $this->getServiceContainer();

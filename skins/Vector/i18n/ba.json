@@ -4,7 +4,8 @@
 			"Assele",
 			"Haqmar",
 			"Sagan",
-			"Рустам Нурыев"
+			"Рустам Нурыев",
+			"З. ӘЙЛЕ"
 		]
 	},
 	"skinname-vector": "Векторлы",
@@ -24,5 +25,10 @@
 	"vector-view-view": "Уҡыу",
 	"vector-view-viewsource": "Сығанаҡты ҡарарға",
 	"vector-more-actions": "Тағы",
-	"vector-searchsuggest-containing": "Эсәтегендә <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> булған биттәрҙе эҙләргә"
+	"vector-searchsuggest-containing": "Эсәтегендә <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> булған биттәрҙе эҙләргә",
+	"vector-toc-label": "Йөкмәткеһе",
+	"vector-toc-beginning": "Башы",
+	"vector-page-tools-label": "Ҡоралдар",
+	"vector-page-tools-general-label": "Ғәҙәти",
+	"vector-unpin-element-label": "йәшерергә"
 }

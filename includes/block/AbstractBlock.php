@@ -20,17 +20,17 @@
 
 namespace MediaWiki\Block;
 
-use CommentStoreComment;
 use DeprecationHelper;
 use IContextSource;
 use InvalidArgumentException;
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\DAO\WikiAwareEntityTrait;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Message;
 use RequestContext;
-use Title;
 use User;
 
 /**
@@ -134,8 +134,7 @@ abstract class AbstractBlock implements Block {
 	 * @inheritDoc
 	 */
 	public function getId( $wikiId = self::LOCAL ): ?int {
-		// TODO: Enable deprecation warnings once cross-wiki accesses have been removed, see T274817
-		// $this->deprecateInvalidCrossWiki( $wikiId, '1.38' );
+		$this->deprecateInvalidCrossWiki( $wikiId, '1.38' );
 		return null;
 	}
 
@@ -386,7 +385,7 @@ abstract class AbstractBlock implements Block {
 	 * @param string $timestamp
 	 */
 	public function setTimestamp( $timestamp ) {
-		// Force string so getExpiry() return typehint doesn't break things
+		// Force string so getTimestamp() return typehint doesn't break things
 		$this->mTimestamp = (string)$timestamp;
 	}
 
@@ -400,7 +399,7 @@ abstract class AbstractBlock implements Block {
 			$this->target = null;
 			$this->type = null;
 		} else {
-			list( $parsedTarget, $this->type ) = MediaWikiServices::getInstance()
+			[ $parsedTarget, $this->type ] = MediaWikiServices::getInstance()
 				->getBlockUtils()
 				->parseBlockTarget( $target );
 			if ( $parsedTarget !== null ) {
@@ -422,7 +421,7 @@ abstract class AbstractBlock implements Block {
 	 * Get the key and parameters for the corresponding error message.
 	 *
 	 * @deprecated since 1.35 Use BlockErrorFormatter::getMessage instead, and
-	 *  build the array using Message::getKey and Message::getParams.
+	 *  build the array using Message::getKey and Message::getParams.Hard deprecated since 1.40.
 	 * @since 1.22
 	 * @param IContextSource $context
 	 * @return array A message array: either a list of strings, the first of which
@@ -431,6 +430,7 @@ abstract class AbstractBlock implements Block {
 	 * @phan-return non-empty-array
 	 */
 	public function getPermissionsError( IContextSource $context ) {
+		wfDeprecated( __METHOD__, '1.35' );
 		$message = MediaWikiServices::getInstance()
 			->getBlockErrorFormatter()->getMessage(
 				$this,

@@ -41,6 +41,7 @@
 	"vector-search-loader": "Cargando as suxestións de busca",
 	"vector-searchsuggest-containing": "Procurar as páxinas que conteñan \"<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>\"",
 	"vector-intro-page": "Help:Introdución",
+	"vector-toc-label": "Contidos",
 	"vector-toc-beginning": "Inicio",
 	"vector-toc-toggle-button-label": "Mostrar ou agochar a subsección \"$1\"",
 	"vector-anon-user-menu-pages": "Páxinas para os editores sen a sesión iniciada",
@@ -50,6 +51,16 @@
 	"vector-toc-menu-tooltip": "Táboa de contidos",
 	"vector-toc-collapsible-button-label": "Mostrar ou agochar a táboa de contidos",
 	"vector-site-nav-label": "Sitio",
+	"vector-main-menu-label": "Menú principal",
+	"vector-limited-width-toggle": "Alterna o ancho de contido limitado",
+	"vector-page-tools-label": "Ferramentas",
+	"vector-page-tools-general-label": "Xeral",
+	"vector-page-tools-actions-label": "Accións",
+	"vector-pin-element-label": "mover á barra lateral",
+	"vector-unpin-element-label": "agochar",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Conversa]]",
-	"tooltip-vector-anon-user-menu-title": "Máis opcións"
+	"tooltip-vector-anon-user-menu-title": "Máis opcións",
+	"vector-prefs-limited-width": "Activar o modo de ancho limitado",
+	"vector-prefs-limited-width-help": "Activar o modo de ancho limitado para mellorar a experiencia de lectura.",
+	"empty-language-selector-body": "Os contidos da páxina non están dispoñibles noutras linguas."
 }

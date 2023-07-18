@@ -27,16 +27,15 @@ class LocationRange implements \JsonSerializable {
 		return "{$this->start}-{$this->end}";
 	}
 
-	/** Emit a JSON serialization similar to JS, for testing
+	/**
+	 * Emit a JSON serialization similar to JS, for testing
 	 * @return array
 	 */
-	public function jsonSerialize() {
+	#[\ReturnTypeWillChange]
+	public function jsonSerialize(): array {
 		return [
 			'start' => $this->start,
 			'end' => $this->end,
 		];
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( LocationRange::class, 'WikiPEG\LocationRange' );

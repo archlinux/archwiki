@@ -24,7 +24,8 @@ class SyntaxError extends \Exception implements \JsonSerializable {
 	 * JSON serialization similar to the JavaScript SyntaxError, for testing
 	 * @return array
 	 */
-	public function jsonSerialize() {
+	#[\ReturnTypeWillChange]
+	public function jsonSerialize(): array {
 		return [
 			'name' => 'SyntaxError',
 			'message' => $this->message,
@@ -34,6 +35,3 @@ class SyntaxError extends \Exception implements \JsonSerializable {
 		];
 	}
 }
-
-// Retain the old namespace for backwards compatibility.
-class_alias( SyntaxError::class, 'WikiPEG\SyntaxError' );

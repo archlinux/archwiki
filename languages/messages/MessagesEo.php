@@ -1,8 +1,6 @@
 <?php
 /** Esperanto (Esperanto)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -117,6 +115,7 @@ $specialPageAliases = [
 	'Randomredirect'            => [ 'Hazarda_alidirektilo', 'Hazarda_alidirekto' ],
 	'Recentchanges'             => [ 'Lastaj_ŝanĝoj' ],
 	'Recentchangeslinked'       => [ 'Rilataj_ŝanĝoj' ],
+	'Renameuser'                => [ 'Alinomigi_uzanton' ],
 	'Revisiondelete'            => [ 'Forigi_revizion' ],
 	'Search'                    => [ 'Serĉi' ],
 	'Shortpages'                => [ 'Mallongaj_paĝoj' ],

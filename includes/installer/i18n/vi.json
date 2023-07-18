@@ -7,6 +7,7 @@
 			"Minh Nguyen",
 			"Ngoxuannguyenchuong",
 			"NguoiDungKhongDinhDanh",
+			"Nguyenphutrong2",
 			"Nguyên Lê",
 			"Phjtieudoc",
 			"Tuanminh01",
@@ -59,8 +60,6 @@
 	"config-env-good": "Đã kiểm tra môi trường.\nBạn có thể cài đặt MediaWiki.",
 	"config-env-bad": "Đã kiểm tra môi trường.\nBạn không thể cài đặt MediaWiki.",
 	"config-env-php": "PHP $1 đã được cài đặt.",
-	"config-unicode-using-intl": "Sẽ sử dụng [https://php.net/manual/en/book.intl.php phần mở rộng intl PHP] để chuẩn hóa Unicode.",
-	"config-unicode-update-warning": "<strong>Cảnh báo:</strong> Phiên bản cài đặt của gói Unicode chuẩn hóa sử dụng một phiên bản cũ của thư viện [http://site.icu-project.org/ the ICU project].\nBạn phải [https://www.mediawiki.org/wiki/Special:MyLanguage/nâng cấp Unicode_normalization_considerations] nếu bạn quan tâm đến việc sử dụng Unicode.",
 	"config-no-db": "Không tìm thấy một trình điều khiển cơ sở dữ liệu phù hợp! Bạn cần phải cài một trình điều khiển cơ sở dữ liệu cho PHP.\n{{PLURAL:$2|Loại|Các loại}} cơ sở dữ liệu sau đây được hỗ trợ: $1.\n\nNếu bạn đã biên dịch PHP lấy, cấu hình lại nó mà kích hoạt một trình khách cơ sở dữ liệu, ví dụ bằng lệnh <code>./configure --with-mysqli</code>.\nNếu bạn đã cài PHP từ một gói Debian hoặc Ubuntu, thì bạn cũng cần phải cài ví dụ gói <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Chú ý:</strong> Bạn có SQLite $2, phiên bản này thấp hơn phiên bản yêu câu tối thiểu $1. SQLite sẽ không có tác dụng.",
 	"config-no-fts3": "<strong>Chú ý:</strong> SQLite được biên dịch mà không có [//sqlite.org/fts3.html mô đun FTS3], nên các chức năng tìm kiếm sẽ bị vô hiệu trên hệ thống phía sau này.",
@@ -85,7 +84,6 @@
 	"config-using-uri": "Sẽ sử dụng URL máy chủ “<nowiki>$1$2</nowiki>”.",
 	"config-uploads-not-safe": "<strong>Cảnh báo:</strong> Thư mục tải lên mặc định của bạn, <code>$1</code>, đang có lỗ hỏng bảo mật, dễ bị khai thác bởi các đoạn mã thực thi xấu.\nMặc dù MediaWiki kiểm tra tất cả các tập tin tải lên để tránh nguy cơ bảo mật, chúng tôi đặc biệt khuyến cáo [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security đóng lỗ hỏng bảo mật này lại] trước khi kích hoạt tính năng tải lên.",
 	"config-no-cli-uploads-check": "<strong>Cảnh báo:</strong> Thư mục tải lên mặc định của bạn (<code>$1</code>) không được kiểm tra lỗ hỏng bảo mật dễ bị khai thác bởi các đoạn mã thực thi xấu trong quá trình cài đặt giao diện dòng lệnh.",
-	"config-suhosin-max-value-length": "Suhosin được cài đặt và hạn chế tham số GET <code>length</code> (độ dài) không thể vượt quá $1 byte.\nMediaWiki cần <code>suhosin.get.max_value_length</code> có giá trị tối thiểu $2. Hãy tắt tùy chọn này hoặc tăng nó lên $3 trong <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Cảnh báo:</strong> Máy của bạn hình như sử dụng các số nguyên 32 bit. Chế độ này [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit không được khuyên khích].",
 	"config-db-type": "Kiểu cơ sở dữ liệu:",
 	"config-db-host": "Máy chủ của cơ sở dữ liệu:",
@@ -301,6 +299,7 @@
 	"config-screenshot": "ảnh chụp màn hình",
 	"config-extension-not-found": "Không tìm thấy tập tin đăng ký của bộ mở rộng “$1”",
 	"config-extension-dependency": "Lỗi thiếu phần phụ thuộc xảy ra khi đang cài đặt bộ mở rộng “$1”: $2",
+	"config-ext-skins-more-info": "thêm thông tin",
 	"mainpagetext": "'''MediaWiki đã được cài đặt.'''",
 	"mainpagedocfooter": "Xin đọc [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents Hướng dẫn sử dụng] để biết thêm thông tin về cách sử dụng phần mềm wiki.\n\n== Để bắt đầu ==\n\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Danh sách các thiết lập cấu hình]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Các câu hỏi thường gặp MediaWiki]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Danh sách gửi thư về việc phát hành MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Tìm hiểu cách chống spam tại wiki của bạn]"
 }

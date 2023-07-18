@@ -18,7 +18,4 @@ class Dollar extends TexNode {
 		return [];
 	}
 
-	public function name() {
-		return 'DOLLAR';
-	}
 }

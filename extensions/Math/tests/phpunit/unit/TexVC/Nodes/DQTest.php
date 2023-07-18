@@ -38,6 +38,12 @@ class DQTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( 'a_{b}', $dq->render(), 'Should create a basic dq' );
 	}
 
+	public function testGetters() {
+		$dq = new DQ( new Literal( 'a' ), new Literal( 'b' ) );
+		$this->assertNotEmpty( $dq->getBase() );
+		$this->assertNotEmpty( $dq->getDown() );
+	}
+
 	public function testEmptyBaseDQ() {
 		$dq = new DQ( new TexNode(), new Literal( 'b' ) );
 		$this->assertEquals( '_{b}', $dq->render(), 'Should create an empty base dq' );

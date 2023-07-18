@@ -20,6 +20,7 @@
  * @file
  */
 
+use MediaWiki\ExternalLinks\LinkFilter;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -44,7 +45,7 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		$db = $this->getDB();
 
 		$query = $params['query'];
-		$protocol = ApiQueryExtLinksUsage::getProtocolPrefix( $params['protocol'] );
+		$protocol = LinkFilter::getProtocolPrefix( $params['protocol'] );
 
 		$this->addFields( [
 			'el_from',
@@ -62,9 +63,7 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		}
 
 		if ( $query !== null && $query !== '' ) {
-			if ( $protocol === null ) {
-				$protocol = 'http://';
-			}
+			$protocol ??= 'http://';
 
 			// Normalize query to match the normalization applied for the externallinks table
 			$query = Parser::normalizeLinkUrl( $protocol . $query );
@@ -96,22 +95,17 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 		}
 
 		$orderBy[] = 'el_id';
+
 		$this->addOption( 'ORDER BY', $orderBy );
 		$this->addFields( $orderBy ); // Make sure
 
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) !== count( $orderBy ) );
-			$i = count( $cont ) - 1;
-			$cond = $orderBy[$i] . ' >= ' . $db->addQuotes( rawurldecode( $cont[$i] ) );
-			while ( $i-- > 0 ) {
-				$field = $orderBy[$i];
-				$v = $db->addQuotes( rawurldecode( $cont[$i] ) );
-				$cond = "($field > $v OR ($field = $v AND $cond))";
-			}
-			$this->addWhere( $cond );
+			$cont = $this->parseContinueParamOrDie( $params['continue'],
+				array_fill( 0, count( $orderBy ), 'string' ) );
+			$conds = array_combine( $orderBy, array_map( 'rawurldecode', $cont ) );
+			$this->addWhere( $db->buildComparison( '>=', $conds ) );
 		}
 
 		$res = $this->select( __METHOD__ );
@@ -164,7 +158,7 @@ class ApiQueryExternalLinks extends ApiQueryBase {
 				ApiBase::PARAM_HELP_MSG => 'api-help-param-continue',
 			],
 			'protocol' => [
-				ParamValidator::PARAM_TYPE => ApiQueryExtLinksUsage::prepareProtocols(),
+				ParamValidator::PARAM_TYPE => LinkFilter::prepareProtocols(),
 				ParamValidator::PARAM_DEFAULT => '',
 			],
 			'query' => null,

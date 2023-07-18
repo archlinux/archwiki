@@ -1,9 +1,9 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ajiniyaz Nurniyazov",
 			"Inabat Allanova",
-			"Nurlan",
-			"Ajiniyaz Nurniyazov"
+			"Nurlan"
 		]
 	},
 	"collabpad-doctitle": "Sheriklik paneli: $1",
@@ -103,6 +103,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Parametr atı",
 	"visualeditor-dialog-transclusion-add-param-save": "Qosıw",
 	"visualeditor-dialog-transclusion-add-template": "Úlgi qosıw",
+	"visualeditor-dialog-transclusion-add-template-button": "Úlgi qosıw",
 	"visualeditor-dialog-transclusion-add-template-save": "Qosıw",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Hújjetlestirilmegen parametr qosıw",
 	"visualeditor-dialog-transclusion-collapse-options": "Opciyalardı jasırıw",
@@ -120,6 +121,7 @@
 	"visualeditor-dialog-transclusion-param-default": "Ádettegi: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "Mısal: $1",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "$1 degi parametrler",
+	"visualeditor-dialog-transclusion-param-undocumented": "(hújjetlestirilmegen parametr)",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Úlgini tabıw",
 	"visualeditor-dialog-transclusion-required-parameter": "Shártli maydan",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Maydan toltırılıwı shárt",

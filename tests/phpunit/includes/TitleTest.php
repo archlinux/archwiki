@@ -1,12 +1,14 @@
 <?php
 
 use MediaWiki\Cache\CacheKeyHelper;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\Title;
 use Wikimedia\Assert\PreconditionException;
 use Wikimedia\TestingAccessWrapper;
 
@@ -757,7 +759,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 			'',
 			__METHOD__
 		);
-		$res = Title::newFromId( $maxPageId + 1 );
+		$res = Title::newFromID( $maxPageId + 1 );
 		$this->assertNull( $res, 'newFromID returns null for missing ids' );
 	}
 
@@ -1811,6 +1813,8 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @covers Title::loadRestrictions
 	 */
 	public function testLoadRestrictions() {
+		$this->hideDeprecated( Title::class . '::areRestrictionsLoaded' );
+		$this->hideDeprecated( Title::class . '::getRestrictionExpiry' );
 		$title = Title::newFromText( 'UTPage1' );
 		$title->loadRestrictions();
 		$this->assertTrue( $title->areRestrictionsLoaded() );
@@ -1871,6 +1875,9 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideRestrictionsRows
 	 */
 	public function testloadRestrictionsFromRows( $rows ) {
+		$this->hideDeprecated( Title::class . '::loadRestrictionsFromRows' );
+		$this->hideDeprecated( Title::class . '::getRestrictions' );
+		$this->hideDeprecated( Title::class . '::getRestrictionExpiry' );
 		$title = $this->getExistingTestPage( 'UTest1' )->getTitle();
 		$title->loadRestrictionsFromRows( $rows );
 		$this->assertSame(
@@ -1906,6 +1913,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	public function testRestrictionStoreForwarding(
 		string $method, array $params, $return, array $options = []
 	) {
+		$this->hideDeprecated( Title::class . '::' . $method );
 		$expectedParams = $options['expectedParams'] ?? $params;
 
 		if ( isset( $options['static'] ) ) {
@@ -1927,7 +1935,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 
 		$this->setService( 'RestrictionStore', $mockRestrictionStore );
 
-		$options['expectedReturn'] = $options['expectedReturn'] ?? $return;
+		$options['expectedReturn'] ??= $return;
 
 		$comparisonMethod = isset( $options['weakCompareReturn'] ) ? 'assertEquals' : 'assertSame';
 
@@ -1993,6 +2001,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @covers Title::getRestrictions
 	 */
 	public function testGetRestrictions() {
+		$this->hideDeprecated( Title::class . '::getRestrictions' );
 		$title = $this->getExistingTestPage( 'UTest1' )->getTitle();
 		$rs = $this->getServiceContainer()->getRestrictionStore();
 		$wrapper = TestingAccessWrapper::newFromObject( $rs );
@@ -2012,6 +2021,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @covers Title::getAllRestrictions
 	 */
 	public function testGetAllRestrictions() {
+		$this->hideDeprecated( Title::class . '::getAllRestrictions' );
 		$restrictions = [
 			'a' => [ 'sysop' ],
 			'b' => [ 'sysop' ],
@@ -2033,6 +2043,8 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @covers Title::getRestrictionExpiry
 	 */
 	public function testGetRestrictionExpiry() {
+		$this->hideDeprecated( Title::class . '::getRestrictionExpiry' );
+		$this->hideDeprecated( Title::class . '::getRestrictions' );
 		$title = $this->getExistingTestPage( 'UTest1' )->getTitle();
 		$rs = $this->getServiceContainer()->getRestrictionStore();
 		$wrapper = TestingAccessWrapper::newFromObject( $rs );
@@ -2059,6 +2071,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @covers Title::isSemiProtected
 	 */
 	public function testIsSemiProtected() {
+		$this->hideDeprecated( Title::class . '::isSemiProtected' );
 		$title = $this->getExistingTestPage( 'UTest1' )->getTitle();
 		$this->overrideConfigValues( [
 			MainConfigNames::SemiprotectedRestrictionLevels => [ 'autoconfirmed' ],
@@ -2088,6 +2101,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @covers Title::isProtected
 	 */
 	public function testIsProtected() {
+		$this->hideDeprecated( Title::class . '::isProtected' );
 		$title = $this->getExistingTestPage( 'UTest1' )->getTitle();
 		$this->overrideConfigValues( [
 			MainConfigNames::RestrictionLevels => [ '', 'autoconfirmed', 'sysop' ],
@@ -2109,6 +2123,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @covers Title::isCascadeProtected
 	 */
 	public function testIsCascadeProtected() {
+		$this->hideDeprecated( Title::class . '::isCascadeProtected' );
 		$page = $this->getExistingTestPage( 'UTest1' );
 		$title = $page->getTitle();
 		$rs = $this->getServiceContainer()->getRestrictionStore();
@@ -2142,6 +2157,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 	 * @group Broken
 	 */
 	public function testGetCascadeProtectionSources() {
+		$this->hideDeprecated( Title::class . '::getCascadeProtectionSources' );
 		$page = $this->getExistingTestPage( 'UTest1' );
 		$title = $page->getTitle();
 
@@ -2257,7 +2273,7 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 		$this->getExistingTestPage( $title->getSubpage( 'A' ) );
 		$this->getExistingTestPage( $title->getSubpage( 'B' ) );
 
-		$this->assertEmpty( $title->getSubpages() );
+		$this->assertSame( [], $title->getSubpages() );
 	}
 
 	public function provideNamespaces() {
@@ -2594,6 +2610,25 @@ class TitleTest extends MediaWikiIntegrationTestCase {
 		$this->assertFalse( $title->isRedirect() );
 		$this->assertFalse( $title->getTouched() );
 		$this->assertNotEmpty( $title->getContentModel() );
+	}
+
+	/**
+	 * @covers Title::getDefaultSystemMessage
+	 */
+	public function testGetDefaultSystemMessage() {
+		$title = Title::makeTitle( NS_MEDIAWIKI, 'Logouttext' );
+
+		$this->assertInstanceOf( Message::class, $title->getDefaultSystemMessage() );
+		$this->assertStringContainsString( 'You are now logged out', $title->getDefaultMessageText() );
+	}
+
+	/**
+	 * @covers Title::getDefaultSystemMessage
+	 */
+	public function testGetDefaultSystemMessageReturnsNull() {
+		$title = Title::makeTitle( NS_MAIN, 'Some title' );
+
+		$this->assertNull( $title->getDefaultSystemMessage() );
 	}
 
 }

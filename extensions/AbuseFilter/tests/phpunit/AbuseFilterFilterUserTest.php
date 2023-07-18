@@ -15,6 +15,7 @@ class AbuseFilterFilterUserTest extends MediaWikiIntegrationTestCase {
 	/**
 	 * @covers ::getUser
 	 * @covers ::getUserIdentity
+	 * @covers ::getAuthority
 	 */
 	public function testGetUser() {
 		$name = 'AbuseFilter blocker user';
@@ -26,6 +27,7 @@ class AbuseFilterFilterUserTest extends MediaWikiIntegrationTestCase {
 		$actual = $filterUser->getUserIdentity();
 		$this->assertSame( $name, $actual->getName(), 'name' );
 		$this->assertContains( 'sysop', $ugm->getUserGroups( $actual ), 'sysop' );
+		$this->assertTrue( $filterUser->getAuthority()->isAllowed( 'block' ) );
 	}
 
 	/**

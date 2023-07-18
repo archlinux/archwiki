@@ -17,14 +17,14 @@ abstract class BaseBlacklist {
 	/**
 	 * Array of blacklist sources
 	 *
-	 * @var array
+	 * @var string[]
 	 */
 	public $files = [];
 
 	/**
 	 * Array containing regexes to test against
 	 *
-	 * @var bool|array
+	 * @var string[]|false
 	 */
 	protected $regexes = false;
 
@@ -48,7 +48,7 @@ abstract class BaseBlacklist {
 	/**
 	 * Array containing blacklists that extend BaseBlacklist
 	 *
-	 * @var array
+	 * @var string[]
 	 */
 	private static $blacklistTypes = [
 		'spam' => SpamBlacklist::class,
@@ -58,13 +58,11 @@ abstract class BaseBlacklist {
 	/**
 	 * Array of blacklist instances
 	 *
-	 * @var array
+	 * @var self[]
 	 */
 	private static $instances = [];
 
 	/**
-	 * Constructor
-	 *
 	 * @param array $settings
 	 */
 	public function __construct( $settings = [] ) {
@@ -100,7 +98,7 @@ abstract class BaseBlacklist {
 	/**
 	 * Return the array of blacklist types currently defined
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public static function getBlacklistTypes() {
 		return self::$blacklistTypes;
@@ -238,7 +236,7 @@ abstract class BaseBlacklist {
 	/**
 	 * Fetch local and (possibly cached) remote blacklists.
 	 * Will be cached locally across multiple invocations.
-	 * @return array set of regular expressions, potentially empty.
+	 * @return string[] set of regular expressions, potentially empty.
 	 */
 	public function getBlacklists() {
 		if ( $this->regexes === false ) {
@@ -253,7 +251,7 @@ abstract class BaseBlacklist {
 	/**
 	 * Returns the local blacklist
 	 *
-	 * @return array Regular expressions
+	 * @return string[] Regular expressions
 	 */
 	public function getLocalBlacklists() {
 		$type = $this->getBlacklistType();
@@ -271,7 +269,7 @@ abstract class BaseBlacklist {
 	/**
 	 * Returns the (local) whitelist
 	 *
-	 * @return array Regular expressions
+	 * @return string[] Regular expressions
 	 */
 	public function getWhitelists() {
 		$type = $this->getBlacklistType();
@@ -453,5 +451,3 @@ abstract class BaseBlacklist {
 		// subclass this
 	}
 }
-
-class_alias( BaseBlacklist::class, 'BaseBlacklist' );

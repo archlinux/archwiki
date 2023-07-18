@@ -3,16 +3,16 @@
 namespace MediaWiki\Tests\Storage;
 
 use Article;
-use EditPage;
-use FauxRequest;
 use McrUndoAction;
+use MediaWiki\EditPage\EditPage;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Revision\RevisionStoreRecord;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Storage\EditResult;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
 use OutputPage;
 use RequestContext;
-use Title;
 use User;
 use WikiPage;
 use WikitextContent;
@@ -71,6 +71,7 @@ class UndoIntegrationTest extends MediaWikiIntegrationTestCase {
 		$revisionRenderer = $services->getRevisionRenderer();
 		$revisionLookup = $services->getRevisionLookup();
 		$readOnlyMode = $services->getReadOnlyMode();
+		$commentFormatter = $services->getCommentFormatter();
 		$config = $services->getMainConfig();
 		return new class(
 			$article,
@@ -78,6 +79,7 @@ class UndoIntegrationTest extends MediaWikiIntegrationTestCase {
 			$readOnlyMode,
 			$revisionLookup,
 			$revisionRenderer,
+			$commentFormatter,
 			$config
 		) extends McrUndoAction {
 			public function show() {

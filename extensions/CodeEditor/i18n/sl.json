@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"NegativeTwelveDollars",
-			"Eleassar"
+			"Eleassar",
+			"NegativeTwelveDollars"
 		]
 	},
 	"codeeditor-desc": "Urejanje strani JavaScript in CSS z [https://ace.c9.io/ urejevalnikom Ace]",

@@ -3,8 +3,8 @@
 		"authors": [
 			"AnakngAraw",
 			"GinawaSaHapon",
-			"Leeheonjin",
-			"Jojit fb"
+			"Jojit fb",
+			"Leeheonjin"
 		]
 	},
 	"math-desc": "I-render ang mga pormulang pangmatematika sa pagitan ng mga tag na <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",
@@ -83,7 +83,6 @@
 	"math_unknown_function": "di-matukoy na function na \"$1\"",
 	"mw_math_latexml": "LaTeXML (eksperimento; gumagamit ng MathML)",
 	"mw_math_mathml": "MathML na may SVG o PNG fallback (inirerekomenda para sa mga modernong browser at mga kagamitang pantulong)",
-	"mw_math_png": "Larawang PNG",
 	"mw_math_source": "Pinagmulan ng LaTeX (para sa mga text browser)",
 	"prefs-math": "Math",
 	"mathstatus": "Estado ng math",

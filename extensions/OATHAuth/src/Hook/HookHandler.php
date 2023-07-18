@@ -147,7 +147,6 @@ class HookHandler implements
 			}
 			$info = $context->getLanguage()->commaList( $list );
 			$disabledInfo = [ 'oathauth-disabledgroups' => [
-				// @phan-suppress-next-line SecurityCheck-XSS T183174
 				'type' => 'info',
 				'label-message' => [ 'oathauth-prefs-disabledgroups',
 					\Message::numParam( count( $disabledGroups ) ) ],

@@ -12,10 +12,10 @@
 			"Rancher",
 			"Srdjan m",
 			"Srđan",
+			"Zenfiric",
 			"Zoranzoki21",
 			"Милан Јелисавчић",
-			"Сербијана",
-			"Zenfiric"
+			"Сербијана"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -149,6 +149,7 @@
 	"visualeditor-dialog-table-wikitable": "Стилизована (викитабела)",
 	"visualeditor-dialog-template-title": "Шаблон",
 	"visualeditor-dialog-transclusion-add-template": "Додај шаблон",
+	"visualeditor-dialog-transclusion-add-template-button": "Додај шаблон",
 	"visualeditor-dialog-transclusion-collapse-options": "Сакриј опције",
 	"visualeditor-dialog-transclusion-contextitem-description": "Генерисано из: $1",
 	"visualeditor-dialog-transclusion-expand-options": "Прикажи опције",
@@ -162,7 +163,6 @@
 	"visualeditor-dialog-transclusion-loading": "Учитавање…",
 	"visualeditor-dialog-transclusion-no-template-description": "Шаблон „$1“ још увек нема опис, али је могуће да постоје неке информације на [[$2|страници шаблона]].",
 	"visualeditor-dialog-transclusion-param-default": "Подразумевано: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Додавање шаблона",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Претражите шаблоне",
 	"visualeditor-dialog-transclusion-required-parameter": "Обавезно поље",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Поље је обавезно.",

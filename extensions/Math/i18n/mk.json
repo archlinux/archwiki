@@ -82,6 +82,7 @@
 	"math_unknown_function": "непозната функција „$1“",
 	"mw_math_latexml": "LaTeXML (пробно; користи MathML)",
 	"mw_math_mathml": "SVG (MathML може да се овозможи преку приклучок на прелистувачот)",
+	"mw_math_native": "MathML (пробно; без слики)",
 	"mw_math_source": "LaTeX-извор (за текстуални прелистувачи)",
 	"prefs-math": "Математички формули",
 	"mathstatus": "Статус на математичкиот испис",

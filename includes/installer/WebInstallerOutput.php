@@ -21,7 +21,9 @@
  * @ingroup Installer
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\ResourceLoader;
 

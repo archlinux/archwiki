@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Parser\Parsoid;
 
+use InvalidArgumentException;
+
 /**
  * Represents the identity of a specific rendering of a specific revision
  * at some point in time.
@@ -39,8 +41,12 @@ class ParsoidRenderID {
 	 *
 	 */
 	public static function newFromKey( string $key ): self {
-		[ $revisionID, $uniqueID ] = explode( '/',
-			$key, 2 );
+		[ $revisionID, $uniqueID ] = explode( '/', $key, 2 );
+
+		if ( $revisionID === null || $uniqueID === null ) {
+			throw new InvalidArgumentException( 'Bad key: ' . $key );
+		}
+
 		return new self( (int)$revisionID, $uniqueID );
 	}
 
@@ -54,12 +60,18 @@ class ParsoidRenderID {
 	 * @param string $eTag ETag with double quotes,
 	 *   see https://www.rfc-editor.org/rfc/rfc7232#section-2.3
 	 *
-	 * @return self
+	 * @return ParsoidRenderID|null The render ID embedded in the ETag,
+	 *         or null if the ETag was malformed.
 	 * @see newFromKey() if ETag already has outside quotes trimmed
 	 *
 	 */
-	public static function newFromETag( string $eTag ): self {
-		[ $revisionID, $uniqueID ] = explode( '/', trim( $eTag, '"' ) );
+	public static function newFromETag( string $eTag ): ?self {
+		if ( !preg_match( '@^(?:W/)?"(\d+)/([^/]+)(:?/.*)?"$@', $eTag, $m ) ) {
+			return null;
+		}
+
+		[ , $revisionID, $uniqueID ] = $m;
+
 		return new self( (int)$revisionID, $uniqueID );
 	}
 

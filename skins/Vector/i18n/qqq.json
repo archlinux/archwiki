@@ -10,13 +10,13 @@
 			"Matma Rex",
 			"Metalhead64",
 			"Raymond",
+			"Robby",
 			"Shirayuki",
 			"Tacsipacsi",
 			"Thibaut120094",
 			"Umherirrender",
 			"Verdy p",
-			"Mormegil",
-			"Robby"
+			"Mormegil"
 		]
 	},
 	"skinname-vector": "{{name}}",
@@ -55,9 +55,7 @@
 	"vector-search-loader": "Text to display below search input while the search suggestion module is loading",
 	"vector-searchsuggest-containing": "Label used in the special item of the search suggestions list which gives the user an option to perform a full text search for the term. Used in the Codex typeahead search component.",
 	"vector-intro-page": "Introduction or tutorial page for the wiki. Typically either Project/Help:Introduction ([[d:Q3945]]) or Project/Help:Tutorial ([[d:Q915263]]).",
-	"vector-toc-heading": "Heading of table of contents\n\n{{Identical|Content}}",
-	"vector-toc-toggle-position-sidebar": "Indicator for TOC to move position into sidebar",
-	"vector-toc-toggle-position-title": "Indicator for TOC to move to collapsed state next to title",
+	"vector-toc-label": "Heading of table of contents\n\n{{Identical|Content}}",
 	"vector-toc-beginning": "Shown in the table of contents: Text of link to the beginning of the article.",
 	"vector-toc-toggle-button-label": "Used to label TOC section toggle buttons for screen readers\n\n* $1 – The name of the TOC section to show/hide",
 	"vector-anon-user-menu-pages": "Label describing the anon editor links in the anon user menu",
@@ -66,8 +64,17 @@
 	"vector-main-menu-tooltip": "Used as title attribute for main menu icon on hover.",
 	"vector-toc-menu-tooltip": "Used as title attribute for table of contents icon on hover.",
 	"vector-toc-collapsible-button-label": "Used as the label for the table of contents collapsible toggle button",
-	"vector-article-tools-nav-label": "Accessible label for the article tools nav landmark",
 	"vector-site-nav-label": "Accessible label for site (main menu) nav landmark",
+	"vector-main-menu-label": "Main menu label",
+	"vector-limited-width-toggle": "Toggle for control to limit content width.",
+	"vector-page-tools-label": "Label for the page tools pinnable dropdown\n{{identical|Tools}}",
+	"vector-page-tools-general-label": "Label for the page tools 'General' menu\n{{identical|General}}",
+	"vector-page-tools-actions-label": "Label for the page tools 'Actions' menu\n{{identical|Action}}",
+	"vector-pin-element-label": "Label for toggle button in PinnableHeader to pin an element",
+	"vector-unpin-element-label": "Label for toggle button in PinnableHeader to unpin an element",
 	"vector-2022-prefs-talkpage": "Link to the desktop improvements project talk page which is shown before the preview link in skin preferences. See T307113 for more information.",
-	"tooltip-vector-anon-user-menu-title": "Used as title attribute for user menu icon on hover for anonymous users."
+	"tooltip-vector-anon-user-menu-title": "Used as title attribute for user menu icon on hover for anonymous users.",
+	"vector-prefs-limited-width": "Used in [[Special:Preferences]]",
+	"vector-prefs-limited-width-help": "Help message used on [[Special:Preferences]].\n\nSee also:\n* {{msg-mw|Mypreferences}}",
+	"empty-language-selector-body": "Text of the body of the dropdown that explains to the user that the page is not supported in other languages. The dropdown opens when the less prominent language button is clicked, inside non-content pages"
 }

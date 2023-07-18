@@ -19,7 +19,8 @@
 			"Sunpriat",
 			"Tanzun",
 			"Thothsum",
-			"Александр Сигачёв"
+			"Александр Сигачёв",
+			"Adam-Yourist"
 		]
 	},
 	"skinname-vector": "Векторная, устаревшая (2010)",
@@ -58,9 +59,7 @@
 	"vector-search-loader": "Загружаются поисковые предложения",
 	"vector-searchsuggest-containing": "Поиск страниц, содержащих <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Введение",
-	"vector-toc-heading": "Содержание",
-	"vector-toc-toggle-position-sidebar": "переместить в боковую панель",
-	"vector-toc-toggle-position-title": "скрыть",
+	"vector-toc-label": "Содержание",
 	"vector-toc-beginning": "Начало",
 	"vector-toc-toggle-button-label": "Показать/Скрыть подраздел $1",
 	"vector-anon-user-menu-pages": "Страницы для неавторизованных редакторов",
@@ -69,8 +68,17 @@
 	"vector-main-menu-tooltip": "Главное меню",
 	"vector-toc-menu-tooltip": "Содержание",
 	"vector-toc-collapsible-button-label": "Скрыть/показать содержание",
-	"vector-article-tools-nav-label": "Инструменты",
 	"vector-site-nav-label": "Сайт",
+	"vector-main-menu-label": "Главное меню",
+	"vector-limited-width-toggle": "Переключить ограниченную ширину контента",
+	"vector-page-tools-label": "Инструменты",
+	"vector-page-tools-general-label": "Общие",
+	"vector-page-tools-actions-label": "Действия",
+	"vector-pin-element-label": "переместить в боковую панель",
+	"vector-unpin-element-label": "скрыть",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Обсуждение]]",
-	"tooltip-vector-anon-user-menu-title": "Больше возможностей"
+	"tooltip-vector-anon-user-menu-title": "Больше возможностей",
+	"vector-prefs-limited-width": "Включить режим ограниченной ширины",
+	"vector-prefs-limited-width-help": "Включите режим ограниченной ширины для улучшения читательского опыта.",
+	"empty-language-selector-body": "Содержимое страницы недоступно на других языках."
 }

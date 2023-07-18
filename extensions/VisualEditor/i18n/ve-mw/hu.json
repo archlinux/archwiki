@@ -173,7 +173,6 @@
 	"visualeditor-dialog-transclusion-param-default": "Alapértelmezett: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "Példa: $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Dokumentálatlan paraméter)",
-	"visualeditor-dialog-transclusion-placeholder": "Sablon hozzáadása",
 	"visualeditor-dialog-transclusion-required-parameter": "Kötelező mező",
 	"visualeditor-dialog-transclusion-required-parameter-description": "A mező kitöltése kötelező.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Vissza",

@@ -1,5 +1,6 @@
 <?php
 
+use MediaWiki\Language\RawMessage;
 use Wikimedia\Message\MessageValue;
 use Wikimedia\TestingAccessWrapper;
 
@@ -294,6 +295,24 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
+	 * @covers Status::hasMessagesExcept
+	 */
+	public function testHasMessagesExcept() {
+		$status = new Status();
+		$status->fatal( 'bad' );
+		$status->fatal( wfMessage( 'bad-msg' ) );
+		$status->fatal( new MessageValue( 'bad-msg-value' ) );
+		$this->assertTrue( $status->hasMessagesExcept( 'good' ) );
+		$this->assertTrue( $status->hasMessagesExcept( 'bad' ) );
+		$this->assertFalse( $status->hasMessagesExcept(
+			'bad', 'bad-msg', 'bad-msg-value' ) );
+		$this->assertFalse( $status->hasMessagesExcept(
+			'good', 'bad', 'bad-msg', 'bad-msg-value' ) );
+		$this->assertFalse( $status->hasMessagesExcept(
+			wfMessage( 'bad' ), new MessageValue( 'bad-msg' ), 'bad-msg-value' ) );
+	}
+
+	/**
 	 * @dataProvider provideCleanParams
 	 * @covers Status::cleanParams
 	 */
@@ -528,6 +547,71 @@ class StatusTest extends MediaWikiLangTestCase {
 	}
 
 	/**
+	 * @dataProvider provideGetPsr3MessageAndContext
+	 * @covers Status::getPsr3MessageAndContext
+	 */
+	public function testGetPsr3MessageAndContext(
+		array $errors,
+		string $expectedMessage,
+		array $expectedContext
+	) {
+		$status = new Status();
+		foreach ( $errors as $error ) {
+			$status->error( ...$error );
+		}
+		[ $actualMessage, $actualContext ] = $status->getPsr3MessageAndContext();
+		$this->assertSame( $expectedMessage, $actualMessage );
+		$this->assertSame( $expectedContext, $actualContext );
+	}
+
+	public function provideGetPsr3MessageAndContext() {
+		return [
+			// parameters to Status::error() calls as array of arrays; expected message; expected context
+			'no errors' => [
+				[],
+				"Internal error: Status::getWikiText called for a good result, this is incorrect\n",
+				[],
+			],
+			'two errors' => [
+				[ [ 'rawmessage', 'foo' ], [ 'rawmessage', 'bar' ] ],
+				"* foo\n* bar\n",
+				[],
+			],
+			'unknown subclass' => [
+				// phpcs:ignore Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore
+				[ [ new class( 'rawmessage', [ 'foo' ] ) extends Message {} ] ],
+				'foo',
+				[],
+			],
+			'non-scalar parameter' => [
+				[ [ new Message( 'rawmessage', [ new Message( 'rawmessage', [ 'foo' ] ) ] ) ] ],
+				'foo',
+				[],
+			],
+			'one parameter' => [
+				[ [ 'apiwarn-invalidtitle', 'foo' ] ],
+				'"{parameter1}" is not a valid title.',
+				[ 'parameter1' => 'foo' ],
+			],
+			'multiple parameters' => [
+				[ [ 'api-exception-trace', 'foo', 'bar', 'baz', 'boom' ] ],
+				"{parameter1} at {parameter2}({parameter3})\n{parameter4}",
+				[ 'parameter1' => 'foo', 'parameter2' => 'bar', 'parameter3' => 'baz', 'parameter4' => 'boom' ],
+			],
+			'formatted parameter' => [
+				[ [ 'apiwarn-invalidtitle', Message::numParam( 1000000 ) ] ],
+				'"{parameter1}" is not a valid title.',
+				[ 'parameter1' => 1000000 ],
+			],
+			'rawmessage' => [
+				[ [ new RawMessage( 'foo $1 baz', [ 'bar' ] ) ] ],
+				'foo {parameter1} baz',
+				[ 'parameter1' => 'bar' ],
+			],
+		];
+	}
+
+	/**
 	 * @covers Status::replaceMessage
 	 */
 	public function testReplaceMessage() {
@@ -736,7 +820,7 @@ class StatusTest extends MediaWikiLangTestCase {
 		$sv = StatusValue::newFatal( 'fatal' );
 		$sv->warning( 'warning' );
 		$s = Status::wrap( $sv );
-		list( $se, $sw ) = $s->splitByErrorType();
+		[ $se, $sw ] = $s->splitByErrorType();
 		$this->assertTrue( $s->hasMessage( 'fatal' ) );
 		$this->assertTrue( $s->hasMessage( 'warning' ) );
 		$this->assertFalse( $s->isOK() );

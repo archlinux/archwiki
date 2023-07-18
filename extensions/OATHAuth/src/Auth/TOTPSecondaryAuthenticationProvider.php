@@ -110,6 +110,14 @@ class TOTPSecondaryAuthenticationProvider extends AbstractSecondaryAuthenticatio
 		if ( $authUser->getModule()->verify( $authUser, [ 'token' => $token ] ) ) {
 			return AuthenticationResponse::newPass();
 		} else {
+			// Increase rate limit counter for failed request
+			$user->pingLimiter( 'badoath' );
+
+			$this->logger->info( 'OATHAuth user {user} failed OTP/scratch token from {clientip}', [
+				'user'     => $user,
+				'clientip' => $user->getRequest()->getIP(),
+			] );
+
 			return AuthenticationResponse::newUI( [ new TOTPAuthenticationRequest() ],
 				wfMessage( 'oathauth-login-failed' ), 'error' );
 		}

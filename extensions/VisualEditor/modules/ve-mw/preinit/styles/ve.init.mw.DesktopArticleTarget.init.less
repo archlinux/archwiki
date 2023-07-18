@@ -19,10 +19,9 @@
  * Deactivated          | ve-available
  */
 
-/* Only hide the #toc inside the original article, not generated ones in VE (T187636) */
 .ve-active {
-	.ve-init-mw-desktopArticleTarget-editableContent #toc,
-	#siteNotice,
+	// Hide banners only on skins where they would be shown in the editable area (T324055)
+	.ve-init-mw-desktopArticleTarget-targetContainer #siteNotice,
 	.mw-indicators,
 	#t-print,
 	#t-permalink,

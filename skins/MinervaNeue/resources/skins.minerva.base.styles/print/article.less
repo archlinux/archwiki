@@ -30,8 +30,7 @@
 	}
 }
 
-// Prefer class & direct child selector `.mw-body > .content` over `#bodyContent`.
-.mw-body > .content {
+.content {
 	padding-top: 55px;
 	position: relative;
 
@@ -60,9 +59,8 @@
 	}
 }
 
-// Prefer class & direct child selector `.mw-body > .content` over `#bodyContent`.
 .thumb:after,
-.mw-body > .content:before {
+.content:before {
 	position: absolute;
 	left: 0;
 	content: '';
@@ -79,9 +77,7 @@
 	font-size: 28px;
 }
 
-// `#mw-content-text` doesn't feature universal class selector.
-// `class|='mw-content'` catches `.mw-content`, but also `.mw-content-rtl`.
-[ class|='mw-content' ] {
+.mw-body-content {
 	font-size: 36px;
 
 	a {

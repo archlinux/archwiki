@@ -126,7 +126,6 @@
 	"visualeditor-dialog-transclusion-loading": "Agkarkarga...",
 	"visualeditor-dialog-transclusion-no-template-description": "Awan pay ti deskripsion ti plantilia ti \"$1\", ngem mabalin nga adda sangkabassit a pakaammo iti [[$2|panid ti plantilia]].",
 	"visualeditor-dialog-transclusion-param-default": "Kasisigud: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Agnayon iti plantilia",
 	"visualeditor-dialog-transclusion-required-parameter": "Nasken a pagikabilan",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Nasken ti pagikabilan.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Agsubli",

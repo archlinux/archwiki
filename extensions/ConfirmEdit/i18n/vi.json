@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"Ioe2015",
 			"Minh Nguyen",
 			"Nguyên Lê",
-			"Vinhtantran",
-			"Ioe2015"
+			"Vinhtantran"
 		]
 	},
 	"captcha-edit": "Để sửa đổi trang này, xin hãy giải phép toán dưới đây và gõ câu trả lời vào ô ([[Special:Captcha/help|thông tin thêm]]):",

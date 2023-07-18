@@ -31,6 +31,8 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MainConfigSchema;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Settings\SettingsBuilder;
+use MediaWiki\StubObject\StubGlobalUser;
+use MediaWiki\Title\Title;
 use Wikimedia\AtEase\AtEase;
 
 /**
@@ -137,6 +139,7 @@ abstract class Installer {
 	 * @var array
 	 */
 	protected $envChecks = [
+		'envCheckLibicu',
 		'envCheckDB',
 		'envCheckPCRE',
 		'envCheckMemory',
@@ -148,8 +151,6 @@ abstract class Installer {
 		'envCheckServer',
 		'envCheckPath',
 		'envCheckUploadsDirectory',
-		'envCheckLibicu',
-		'envCheckSuhosinMaxValueLength',
 		'envCheck64Bit',
 	];
 
@@ -413,10 +414,8 @@ abstract class Installer {
 		$defaultConfig = new GlobalVarConfig(); // all the defaults from config-schema.yaml.
 		$installerConfig = self::getInstallerConfig( $defaultConfig );
 
-		$this->resetMediaWikiServices( $installerConfig );
-
 		// Disable all storage services, since we don't have any configuration yet!
-		MediaWikiServices::disableStorageBackend();
+		$this->resetMediaWikiServices( $installerConfig, [], true );
 
 		$this->settings = $this->getDefaultSettings();
 
@@ -465,31 +464,47 @@ abstract class Installer {
 	 * @param array $serviceOverrides Service definition overrides. Values can be null to
 	 *        disable specific overrides that would be applied per default, namely
 	 *        'InterwikiLookup' and 'UserOptionsLookup'.
+	 * @param bool $disableStorage Whether MediaWikiServices::disableStorage() should be called.
 	 *
 	 * @return MediaWikiServices
-	 * @throws MWException
 	 */
-	public function resetMediaWikiServices( Config $installerConfig = null, $serviceOverrides = [] ) {
+	public function resetMediaWikiServices(
+		Config $installerConfig = null,
+		$serviceOverrides = [],
+		bool $disableStorage = false
+	) {
 		global $wgObjectCaches, $wgLang;
 
-		$serviceOverrides += [
-			// Disable interwiki lookup, to avoid database access during parses
-			'InterwikiLookup' => static function () {
-				return new NullInterwikiLookup();
-			},
-
-			// Disable user options database fetching, only rely on default options.
-			'UserOptionsLookup' => static function ( MediaWikiServices $services ) {
-				return $services->get( '_DefaultOptionsLookup' );
-			}
-		];
-
-		$lang = $this->getVar( '_UserLang', 'en' );
-
-		// Reset all services and inject config overrides
+		// Reset all services and inject config overrides.
+		// NOTE: This will reset existing instances, but not previous wiring overrides!
 		MediaWikiServices::resetGlobalInstance( $installerConfig );
 
 		$mwServices = MediaWikiServices::getInstance();
+
+		if ( $disableStorage ) {
+			$mwServices->disableStorage();
+		} else {
+			// Default to partially disabling services.
+
+			$serviceOverrides += [
+				// Disable interwiki lookup, to avoid database access during parses
+				'InterwikiLookup' => static function () {
+					return new NullInterwikiLookup();
+				},
+
+				// Disable user options database fetching, only rely on default options.
+				'UserOptionsLookup' => static function ( MediaWikiServices $services ) {
+					return $services->get( '_DefaultOptionsLookup' );
+				},
+
+				// Restore to default wiring, in case it was overwritten by disableStorage()
+				'DBLoadBalancer' => static function ( MediaWikiServices $services ) {
+					return $services->getDBLoadBalancerFactory()->getMainLB();
+				},
+			];
+		}
+
+		$lang = $this->getVar( '_UserLang', 'en' );
 
 		foreach ( $serviceOverrides as $name => $callback ) {
 			// Skip if the caller set $callback to null
@@ -680,7 +695,7 @@ abstract class Installer {
 		if ( !str_ends_with( $lsFile, '.php' ) ) {
 			throw new Exception(
 				'The installer cannot yet handle non-php settings files: ' . $lsFile . '. ' .
-				'Use maintenance/update.php to update an existing installation.'
+				'Use `php maintenance/run.php update` to update an existing installation.'
 			);
 		}
 		unset( $lsExists );
@@ -799,10 +814,14 @@ abstract class Installer {
 	}
 
 	public function disableLinkPopups() {
+		// T317647: This ParserOptions method is deprecated; we should be
+		// updating ExternalLinkTarget in the Configuration instead.
 		$this->parserOptions->setExternalLinkTarget( false );
 	}
 
 	public function restoreLinkPopups() {
+		// T317647: This ParserOptions method is deprecated; we should be
+		// updating ExternalLinkTarget in the Configuration instead.
 		global $wgExternalLinkTarget;
 		$this->parserOptions->setExternalLinkTarget( $wgExternalLinkTarget );
 	}
@@ -1088,23 +1107,6 @@ abstract class Installer {
 	}
 
 	/**
-	 * Checks if suhosin.get.max_value_length is set, and if so generate
-	 * a warning because it is incompatible with ResourceLoader.
-	 * @return bool
-	 */
-	protected function envCheckSuhosinMaxValueLength() {
-		$currentValue = ini_get( 'suhosin.get.max_value_length' );
-		$minRequired = 2000;
-		$recommended = 5000;
-		if ( $currentValue > 0 && $currentValue < $minRequired ) {
-			$this->showError( 'config-suhosin-max-value-length', $currentValue, $minRequired, $recommended );
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
 	 * Checks if we're running on 64 bit or not. 32 bit is becoming increasingly
 	 * hard to support, so let's at least warn people.
 	 *
@@ -1119,25 +1121,11 @@ abstract class Installer {
 	}
 
 	/**
-	 * Check the libicu version
+	 * Check and display the libicu and Unicode versions
 	 */
 	protected function envCheckLibicu() {
-		/**
-		 * This needs to be updated something that the latest libicu
-		 * will properly normalize.  This normalization was found at
-		 * https://www.unicode.org/versions/Unicode5.2.0/#Character_Additions
-		 * Note that we use the hex representation to create the code
-		 * points in order to avoid any Unicode-destroying during transit.
-		 */
-		$not_normal_c = "\u{FA6C}";
-		$normal_c = "\u{242EE}";
-
-		$intl = normalizer_normalize( $not_normal_c, Normalizer::FORM_C );
-
-		$this->showMessage( 'config-unicode-using-intl' );
-		if ( $intl !== $normal_c ) {
-			$this->showMessage( 'config-unicode-update-warning' );
-		}
+		$unicodeVersion = implode( '.', array_slice( IntlChar::getUnicodeVersion(), 0, 3 ) );
+		$this->showMessage( 'config-env-icu', INTL_ICU_VERSION, $unicodeVersion );
 	}
 
 	/**
@@ -1442,7 +1430,7 @@ abstract class Installer {
 		// so the first extension is the one we want to load,
 		// everything else is a dependency
 		$i = 0;
-		foreach ( $info['credits'] as $name => $credit ) {
+		foreach ( $info['credits'] as $credit ) {
 			$i++;
 			if ( $i == 1 ) {
 				// Extension we want to load

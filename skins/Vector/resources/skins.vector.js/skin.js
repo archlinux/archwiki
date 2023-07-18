@@ -1,7 +1,11 @@
 var languageButton = require( './languageButton.js' ),
+	echo = require( './echo.js' ),
 	initSearchLoader = require( './searchLoader.js' ).initSearchLoader,
 	dropdownMenus = require( './dropdownMenus.js' ).dropdownMenus,
 	sidebarPersistence = require( './sidebarPersistence.js' ),
+	watchstar = require( './watchstar.js' ),
+	// @ts-ignore
+	menuTabs = require( './menuTabs.js' ),
 	checkbox = require( './checkbox.js' );
 
 /**
@@ -72,8 +76,13 @@ function main( window ) {
 	checkbox.init( window.document );
 	initSearchLoader( document );
 	languageButton();
+	echo();
 	dropdownMenus();
+	// menuTabs should follow `dropdownMenus` as that can move menu items from a
+	// tab menu to a dropdown.
+	menuTabs();
 	addNamespacesGadgetSupport();
+	watchstar();
 }
 
 /**

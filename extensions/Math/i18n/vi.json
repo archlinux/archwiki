@@ -6,9 +6,9 @@
 			"Max20091",
 			"Minh Nguyen",
 			"NguoiDungKhongDinhDanh",
+			"Nguyenphutrong2",
 			"Trần Nguyễn Minh Huy",
-			"Vinhtantran",
-			"Nguyenphutrong2"
+			"Vinhtantran"
 		]
 	},
 	"math-desc": "Kết xuất các công thức nằm giữa thẻ <code>&lt;math&gt;</code> … <code>&lt;/math&gt;</code>",
@@ -88,7 +88,6 @@
 	"math_unknown_function": "hàm không rõ “$1”",
 	"mw_math_latexml": "LaTeXML (thử nghiệm; sử dụng MathML)",
 	"mw_math_mathml": "MathML hoặc SVG/PNG (khuyến khích các trình duyệt và công cụ trợ năng hiện đại)",
-	"mw_math_png": "Hình ảnh PNG",
 	"mw_math_source": "Mã nguồn LaTeX (dành cho trình duyệt văn bản)",
 	"prefs-math": "Toán học",
 	"mathstatus": "Trạng thái toán học",

@@ -1,78 +1,28 @@
 <?php
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 namespace MediaWiki\Extension\OATHAuth;
 
-use Config;
-use ExtensionRegistry;
-use Wikimedia\Rdbms\LBFactory;
-
 /**
- * This class serves as a utility class for this extension
- *
- * @package MediaWiki\Extension\OATHAuth
+ * Holds various OATHAuth constants.
  */
 class OATHAuth {
 	public const AUTHENTICATED_OVER_2FA = 'OATHAuthAuthenticatedOver2FA';
-
-	/**
-	 * @var Config
-	 */
-	protected $config;
-	/**
-	 * @var LBFactory
-	 */
-	protected $dbLBFactory;
-
-	/**
-	 * @var array
-	 */
-	protected $modules = [];
-
-	/**
-	 * @param Config $config
-	 * @param LBFactory $dbLBFactory
-	 */
-	public function __construct( $config, $dbLBFactory ) {
-		$this->config = $config;
-		$this->dbLBFactory = $dbLBFactory;
-	}
-
-	/**
-	 * @param string $key
-	 * @return IModule|null
-	 */
-	public function getModuleByKey( $key ) {
-		$this->collectModules();
-		if ( isset( $this->modules[$key] ) ) {
-			$module = call_user_func_array( $this->modules[$key], [] );
-			if ( !$module instanceof IModule ) {
-				return null;
-			}
-			return $module;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get all modules registered on the wiki
-	 *
-	 * @return array
-	 */
-	public function getAllModules() {
-		$this->collectModules();
-		$modules = [];
-		foreach ( $this->modules as $key => $callback ) {
-			$module = $this->getModuleByKey( $key );
-			if ( $module === null || !( $module instanceof IModule ) ) {
-				continue;
-			}
-			$modules[$key] = $module;
-		}
-		return $modules;
-	}
-
-	private function collectModules() {
-		$this->modules = ExtensionRegistry::getInstance()->getAttribute( 'OATHAuthModules' );
-	}
 }

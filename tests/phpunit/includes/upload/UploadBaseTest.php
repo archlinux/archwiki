@@ -134,7 +134,7 @@ class UploadBaseTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideCheckSvgScriptCallback
 	 */
 	public function testCheckSvgScriptCallback( $svg, $wellFormed, $filterMatch, $message ) {
-		list( $formed, $match ) = $this->upload->checkSvgString( $svg );
+		[ $formed, $match ] = $this->upload->checkSvgString( $svg );
 		$this->assertSame( $wellFormed, $formed, $message . " (well-formed)" );
 		$this->assertSame( $filterMatch, $match, $message . " (filter match)" );
 	}
@@ -159,6 +159,13 @@ class UploadBaseTest extends MediaWikiIntegrationTestCase {
 				true,
 				true,
 				'SVG with onload property (http://html5sec.org/#65)'
+			],
+			[
+				'<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   ><defs><inkscape:path-effect svg:onload="javascript:alert(1)" /></defs></svg>',
+				true,
+				true,
+				'SVG with svg:onload on a non-svg element (probably not a thing)'
 			],
 			[
 				'<svg xmlns="http://www.w3.org/2000/svg"> <a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="javascript:alert(1)"><rect width="1000" height="1000" fill="white"/></a> </svg>',
@@ -555,6 +562,11 @@ class UploadBaseTest extends MediaWikiIntegrationTestCase {
 				"$IP/tests/phpunit/data/upload/buggynamespace-okay2.svg",
 				false,
 				'SVG with a namespace definition created by Adobe Illustrator and mangled by Inkscape (twice)'
+			],
+			[
+				"$IP/tests/phpunit/data/upload/inkscape-only-selected.svg",
+				false,
+				'SVG with an inkscape only-selected attribute'
 			],
 			[
 				"$IP/tests/phpunit/data/upload/buggynamespace-bad.svg",

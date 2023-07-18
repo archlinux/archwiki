@@ -1,5 +1,10 @@
 <?php
 
+namespace MediaWiki\Extension\ConfirmEdit\ReCaptchaNoCaptcha;
+
+use Html;
+use HTMLFormField;
+
 /**
  * Creates a ReCaptcha v2 widget. Does not return any data; handling the data submitted by the
  * widget is callers' responsibility.

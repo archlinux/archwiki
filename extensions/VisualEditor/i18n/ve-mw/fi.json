@@ -30,9 +30,9 @@
 			"Skalman",
 			"Stryn",
 			"TMg",
+			"Valtlai",
 			"Valtlait",
-			"VezonThunder",
-			"Valtlai"
+			"VezonThunder"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -201,7 +201,6 @@
 	"visualeditor-dialog-transclusion-param-example-long": "Esimerkki: $1",
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Paina välilyöntiä lisätäksesi tai poistaaksesi parametrit. Paina Enteriä lisätäksesi parametrin ja muokataksesi sen arvoa heti. Kun parametri on jo valittu, paina Enteriä muokataksesi sen arvoa.",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Dokumentoimaton parametri)",
-	"visualeditor-dialog-transclusion-placeholder": "Lisää malline",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Lisää malline",
 	"visualeditor-dialog-transclusion-required-parameter": "Pakollinen kenttä",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Kenttä vaaditaan.",

@@ -49,7 +49,7 @@ abstract class AbstractContributionHandler extends Handler {
 	}
 
 	/**
-	 * Returns the user who's contributions we are requesting.
+	 * Returns the user whose contributions we are requesting.
 	 * Either me (requesting user) or another user.
 	 *
 	 * @return UserIdentity
@@ -69,7 +69,7 @@ abstract class AbstractContributionHandler extends Handler {
 		/** @var UserIdentity $user */
 		$user = $this->getValidatedParams()['user'];
 		$name = $user->getName();
-		if ( !$this->userNameUtils->isIp( $name ) && !$user->isRegistered() ) {
+		if ( !$this->userNameUtils->isIP( $name ) && !$user->isRegistered() ) {
 			throw new LocalizedHttpException(
 				new MessageValue( 'rest-nonexistent-user', [ $name ] ), 404
 			);

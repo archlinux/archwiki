@@ -1,8 +1,6 @@
 <?php
 /** Norwegian Nynorsk (norsk nynorsk)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -287,6 +285,7 @@ $specialPageAliases = [
 	'Recentchanges'             => [ 'Siste_endringar', 'Siste_endringane' ],
 	'Recentchangeslinked'       => [ 'Relaterte_endringar' ],
 	'Redirect'                  => [ 'Omdiriger' ],
+	'Renameuser'                => [ 'Døyp_om_brukar' ],
 	'Revisiondelete'            => [ 'Versjonssletting' ],
 	'Search'                    => [ 'Søk' ],
 	'Shortpages'                => [ 'Korte_sider', 'Stutte_sider' ],

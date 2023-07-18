@@ -20,7 +20,7 @@
 
 namespace MediaWiki\ResourceLoader;
 
-use Html;
+use MediaWiki\Html\Html;
 use Wikimedia\WrappedString;
 use Wikimedia\WrappedStringList;
 
@@ -61,6 +61,8 @@ class ClientHtml {
 	 *  - 'target': Parameter for modules=startup request, see StartUpModule.
 	 *  - 'safemode': Parameter for modules=startup request, see StartUpModule.
 	 *  - 'nonce': From OutputPage->getCSP->getNonce().
+	 *  - 'clientPrefEnabled': See $wgResourceLoaderClientPreferences.
+	 *  - 'clientPrefCookiePrefix': See $wgResourceLoaderClientPreferences.
 	 */
 	public function __construct( Context $context, array $options = [] ) {
 		$this->context = $context;
@@ -69,6 +71,8 @@ class ClientHtml {
 			'target' => null,
 			'safemode' => null,
 			'nonce' => null,
+			'clientPrefEnabled' => false,
+			'clientPrefCookiePrefix' => '',
 		];
 	}
 
@@ -235,6 +239,52 @@ class ClientHtml {
 	}
 
 	/**
+	 * Set relevant classes on document.documentElement
+	 *
+	 * @param string|null $nojsClass Class name that Skin will set on HTML document
+	 * @return string
+	 */
+	private function getDocumentClassNameScript( $nojsClass ) {
+		// Change "client-nojs" to "client-js".
+		// This enables server rendering of UI components, even for those that should be hidden
+		// in Grade C where JavaScript is unsupported, whilst avoiding a flash of wrong content.
+		//
+		// See also Skin:getHtmlElementAttributes() and startup/startup.js.
+		//
+		// Optimisation: Produce shorter and faster JS by only writing to DOM. Avoid reading
+		// HTMLElement.className and executing JS regexes by doing the string replace in PHP.
+		// This is possible because Skin informs RL about the final value of <html class>, and
+		// because RL already controls the first element in HTML <head> for performance reasons.
+		$nojsClass ??= $this->getDocumentAttributes()['class'];
+		$jsClass = preg_replace( '/(^|\s)client-nojs(\s|$)/', '$1client-js$2', $nojsClass );
+		$jsClassJson = $this->context->encodeJson( $jsClass );
+		$script = "
+document.documentElement.className = {$jsClassJson};
+";
+
+		if ( $this->options['clientPrefEnabled'] ) {
+			$cookiePrefix = $this->options['clientPrefCookiePrefix'];
+			$script .= <<<JS
+( function () {
+	var cookie = document.cookie.match( /(?:^|; ){$cookiePrefix}mwclientprefs=([^;]+)/ );
+	// For now, only support disabling a feature
+	// Only supports a single feature (modifying a single class) at this stage.
+	// In future this may be expanded to multiple once this has been proven as viable.
+	if ( cookie ) {
+		var featureName = cookie[1];
+		document.documentElement.className = document.documentElement.className.replace(
+			featureName + '-enabled',
+			featureName + '-disabled'
+		);
+	}
+} () );
+JS;
+		}
+
+		return $script;
+	}
+
+	/**
 	 * The order of elements in the head is as follows:
 	 * - Inline scripts.
 	 * - Stylesheets.
@@ -254,15 +304,7 @@ class ClientHtml {
 		$data = $this->getData();
 		$chunks = [];
 
-		// Change "client-nojs" class to client-js. This allows easy toggling of UI components.
-		// This must happen synchronously on every page view to avoid flashes of wrong content.
-		// See also startup/startup.js.
-		$nojsClass = $nojsClass ?? $this->getDocumentAttributes()['class'];
-		$jsClass = preg_replace( '/(^|\s)client-nojs(\s|$)/', '$1client-js$2', $nojsClass );
-		$jsClassJson = $this->context->encodeJson( $jsClass );
-		$script = "
-document.documentElement.className = {$jsClassJson};
-";
+		$script = $this->getDocumentClassNameScript( $nojsClass );
 
 		// Inline script: Declare mw.config variables for this page.
 		if ( $this->config ) {
@@ -438,7 +480,7 @@ RLPAGEMODULES = {$pageModulesJson};
 				}
 
 				// Link/embed each set
-				foreach ( $moduleSets as list( $embed, $moduleSet ) ) {
+				foreach ( $moduleSets as [ $embed, $moduleSet ] ) {
 					$moduleSetNames = array_keys( $moduleSet );
 					$context->setModules( $moduleSetNames );
 					if ( $embed ) {

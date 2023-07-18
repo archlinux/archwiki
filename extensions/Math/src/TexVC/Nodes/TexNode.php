@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace MediaWiki\Extension\Math\TexVC\Nodes;
 
 use InvalidArgumentException;
+use MediaWiki\Extension\Math\TexVC\MMLmappings\BaseMethods;
 
 class TexNode {
 
@@ -24,17 +25,41 @@ class TexNode {
 		$this->args = $args;
 	}
 
+	protected function parseToMML( $input, $passedArgs, $operatorContent ): string {
+		$parsed = BaseMethods::checkAndParse( $input, $passedArgs, $operatorContent, $this );
+		if ( $parsed ) {
+			return $parsed;
+		}
+		$name = strtoupper( get_class() );
+
+		return BaseMethods::generateMMLError( "Not implemented $name for $input" );
+	}
+
+	/**
+	 * @return TexNode[]|string[]
+	 */
+	public function getArgs(): array {
+		return $this->args;
+	}
+
 	public function render() {
-		return array_reduce( $this->args, function ( $out, $child ) {
-			return $out . $this->renderChild( $child );
+		$out = '';
+		foreach ( $this->args as $child ) {
+			$out .= $child instanceof self ? $child->render() : $child;
+		}
+		return $out;
+	}
+
+	public function renderMML( $arguments = [], $state = [] ) {
+		return array_reduce( $this->args, function ( $out, $child ) use ( $arguments, $state ) {
+			return $out . $this->renderChildMML( $child, $arguments, $state );
 		}, '' );
 	}
 
-	public function renderChild( $child ) {
+	public function renderChildMML( $child, $arguments, $state ) {
 		if ( $child instanceof TexNode ) {
-			return $child->render();
+			return $child->renderMML( $arguments, $state );
 		}
-
 		return $child;
 	}
 
@@ -55,40 +80,33 @@ class TexNode {
 	}
 
 	public function extractIdentifiers( $args = null ) {
-		if ( $args == null ) {
-			$args = $this->args;
-		}
 		$output = [];
 
-		array_walk( $args, static function ( $value, $key ) use ( &$output )  {
-			if ( is_string( $value ) ) {
-				array_push( $output, $value );
-			} else {
+		foreach ( $args ?? $this->args as $value ) {
+			if ( $value instanceof self ) {
 				$output = array_merge( $output, $value->extractIdentifiers() );
+			} else {
+				$output[] = $value;
 			}
-		} );
+		}
 
 		return $output;
 	}
 
-	public function containsFunc( $target ) {
-		$output = false;
-		array_walk( $this->args, static function ( $value, $key ) use ( &$target, &$output ) {
-			if ( $output ) {
-				// Do not check the other items, if some function has been found already.
-				return;
-			}
-			if ( $value instanceof TexNode ) {
+	public function containsFunc( $target, $args = null ) {
+		foreach ( $args ?? $this->args as $value ) {
+			if ( $value instanceof self ) {
 				$ret = $value->containsFunc( $target );
 			} else {
-				$ret = TexNode::texContainsFunc( $target, $value );
+				$ret = self::texContainsFunc( $target, $value );
 			}
 			if ( $ret ) {
-				$output = true;
+				// Do not check the other items, if some function has been found already.
+				return true;
 			}
-		} );
+		}
 
-		return $output;
+		return false;
 	}
 
 	public function extractSubscripts() {
@@ -108,6 +126,11 @@ class TexNode {
 	 * @return string|bool rendered LaTeX string or false if not found.
 	 */
 	public static function texContainsFunc( $target, string $t ) {
+		// protect against using random strings as keys in target
+		if ( !$t || $t[0] !== '\\' ) {
+			return false;
+		}
+
 		// may have trailing '(', '[', '\\{' or " "
 		$t = preg_replace( '/(\(|\[|\\\\{| )$/', '', $t );
 
@@ -121,37 +144,24 @@ class TexNode {
 		$matches = [];
 		$m = preg_match( '/^\\\\mbox\{(\\\\.*)}$/', $t, $matches );
 		if ( $m == 1 ) {
-			$match1 = self::match( $target, '\\mbox' );
-			if ( $match1 ) {
-				return $match1;
-			}
-			return self::match( $target, $matches[1] );
+			return self::match( $target, '\\mbox' ) ?: self::match( $target, $matches[1] );
 		}
 
 		// special case #3: \\color, \\pagecolor, \\definecolor
 		$matches = [];
-		$m = preg_match( '/^(\\\\(color|pagecolor|definecolor))/', $t, $matches );
+		$m = preg_match( '/^(\\\\(?:page|define)?color) /', $t, $matches );
 		if ( $m == 1 ) {
 			return self::match( $target, $matches[1] );
 		}
 
 		// special case #4: \\mathbb, \\mathrm
 		$matches = [];
-		$m = preg_match( '/^(\\\\math..) \{(\\.*)}$/', $t, $matches );
+		$m = preg_match( '/^(\\\\math..) \{(\\\\.*)}$/', $t, $matches );
 		if ( $m == 1 ) {
-			$match = self::match( $target, $matches[1] );
-			if ( $match ) {
-				return $match;
-			}
-			return self::match( $target, $matches[2] );
+			return self::match( $target, $matches[1] ) ?: self::match( $target, $matches[2] );
 		}
 
-		// protect against using random strings as keys in target
-		if ( substr( $t, 0, 1 ) === '\\' ) {
-			return self::match( $target, $t );
-		} else {
-			return false;
-		}
+		return self::match( $target, $t );
 	}
 
 	/**
@@ -161,20 +171,25 @@ class TexNode {
 	 * @return bool|string matching value or false
 	 */
 	public static function match( $target, string $str ) {
-		if ( is_array( $target ) ) {
-			$output = false;
-			array_walk( $target, static function ( $value, $key ) use ( &$output, &$str )  {
-				if ( $output ) {
-					return;
-				}
-				$output = TexNode::match( $value, $str );
-			} );
-			return $output;
-		}
 		if ( is_string( $target ) ) {
 			return $target === $str ? $str : false;
 		}
 
-		return $target[$str] ? $str : false;
+		foreach ( $target as $key => $value ) {
+			// In javascript both types are used to comparison in match functionality
+			if ( is_string( $key ) ) {
+				if ( $key === $str ) {
+					return $str;
+				}
+			} elseif ( is_array( $value ) ) {
+				if ( self::match( $value, $str ) !== false ) {
+					return $str;
+				}
+			} elseif ( $value === $str ) {
+				return $str;
+			}
+		}
+
+		return false;
 	}
 }

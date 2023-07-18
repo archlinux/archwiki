@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"GroupPermissions": {
 		"*": {
@@ -64,11 +64,6 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\ConfirmEdit\\": "includes/",
 		"MediaWiki\\Extension\\ConfirmEdit\\SimpleCaptcha\\": "SimpleCaptcha/"
-	},
-	"TestAutoloadClasses": {
-		"HTMLFancyCaptchaField": "FancyCaptcha/includes/HTMLFancyCaptchaField.php",
-		"HTMLReCaptchaNoCaptchaField": "ReCaptchaNoCaptcha/includes/HTMLReCaptchaNoCaptchaField.php",
-		"ReCaptchaNoCaptchaAuthenticationRequest": "ReCaptchaNoCaptcha/includes/ReCaptchaNoCaptchaAuthenticationRequest.php"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.editPreview.ipwhitelist.styles": {

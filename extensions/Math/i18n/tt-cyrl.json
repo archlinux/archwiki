@@ -17,7 +17,6 @@
 	"math_unknown_error": "беленмәгән хата",
 	"math_unknown_function": "билгесез функция «$1»",
 	"mw_math_mathml": "SVG яисә PNG форматларыннан күчү өчен MathML куллану (яңа төр браузерга тәкъдим ителә)",
-	"mw_math_png": "PNG рәсемнәр",
 	"mw_math_source": "LaTeX билгеләнеш (текстлы браузерлар өчен)",
 	"prefs-math": "Формулалар"
 }

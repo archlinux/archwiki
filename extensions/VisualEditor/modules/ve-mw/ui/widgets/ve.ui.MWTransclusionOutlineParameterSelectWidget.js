@@ -169,10 +169,25 @@ ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onCheckboxChange = fu
  * @inheritDoc OO.ui.SelectWidget
  */
 ve.ui.MWTransclusionOutlineParameterSelectWidget.prototype.onFocus = function ( event ) {
-	if ( event.target === this.$element[ 0 ] && !this.findHighlightedItem() ) {
-		// When tabbing into the selection list, highlight the first parameter.
-		this.highlightItem( this.items[ 0 ] );
+	if ( event.target !== this.$element[ 0 ] || this.findHighlightedItem() ) {
+		return;
 	}
+
+	var index = 0;
+	if ( event.relatedTarget ) {
+		var toolbarClass = 've-ui-mwTransclusionOutlineControlsWidget',
+			// The only elements below a parameter list can be another part or the toolbar
+			selector = '.ve-ui-mwTransclusionOutlinePartWidget, .' + toolbarClass,
+			$fromPart = $( event.relatedTarget ).closest( selector ),
+			$toPart = $( event.target ).closest( selector );
+		// When shift+tabbing into the list, highlight the last parameter
+		// eslint-disable-next-line no-jquery/no-class-state
+		if ( $fromPart.hasClass( toolbarClass ) || $fromPart.index() > $toPart.index() ) {
+			index = this.getItemCount() - 1;
+		}
+	}
+	this.highlightItem( this.items[ index ] );
+
 	// Don't call the parent. It makes assumptions what should be done here.
 };
 

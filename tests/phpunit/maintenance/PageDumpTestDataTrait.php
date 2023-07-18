@@ -5,12 +5,12 @@ namespace MediaWiki\Tests\Maintenance;
 use Exception;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MWException;
 use RequestContext;
 use RevisionDeleter;
-use Title;
 use Wikimedia\Rdbms\IDatabase;
-use WikiPage;
 use WikitextContent;
 
 /**
@@ -66,12 +66,13 @@ trait PageDumpTestDataTrait {
 					. " We can't currently deal with that." );
 			}
 
+			$wikiPageFactory = $this->getServiceContainer()->getWikiPageFactory();
 			$this->pageTitle1 = Title::newFromText( 'BackupDumperTestP1', $this->namespace );
-			$page = WikiPage::factory( $this->pageTitle1 );
+			$page = $wikiPageFactory->newFromTitle( $this->pageTitle1 );
 			$this->rev1_1 = $this->addMultiSlotRevision(
 				$page,
 				[
-					'main' => new WikitextContent( 'BackupDumperTestP1Text1' ),
+					SlotRecord::MAIN => new WikitextContent( 'BackupDumperTestP1Text1' ),
 					'aux' => new WikitextContent( 'BackupDumperTestP1Text1/aux' ),
 				],
 				"BackupDumperTestP1Summary1"
@@ -79,7 +80,7 @@ trait PageDumpTestDataTrait {
 			$this->pageId1 = $page->getId();
 
 			$this->pageTitle2 = Title::newFromText( 'BackupDumperTestP2', $this->namespace );
-			$page = WikiPage::factory( $this->pageTitle2 );
+			$page = $wikiPageFactory->newFromTitle( $this->pageTitle2 );
 			[ , , $this->rev2_1 ] = $this->addRevision( $page,
 				"BackupDumperTestP2Text1", "BackupDumperTestP2Summary1" );
 			[ , , $this->rev2_2 ] = $this->addRevision( $page,
@@ -109,7 +110,7 @@ trait PageDumpTestDataTrait {
 			);
 
 			$this->pageTitle3 = Title::newFromText( 'BackupDumperTestP3', $this->namespace );
-			$page = WikiPage::factory( $this->pageTitle3 );
+			$page = $wikiPageFactory->newFromTitle( $this->pageTitle3 );
 			[ , , $this->rev3_1 ] = $this->addRevision( $page,
 				"BackupDumperTestP3Text1", "BackupDumperTestP2Summary1" );
 			[ , , $this->rev3_2 ] = $this->addRevision( $page,
@@ -120,14 +121,14 @@ trait PageDumpTestDataTrait {
 				->deleteUnsafe( "Testing" );
 
 			$this->pageTitle4 = Title::newFromText( 'BackupDumperTestP1', $this->talk_namespace );
-			$page = WikiPage::factory( $this->pageTitle4 );
+			$page = $wikiPageFactory->newFromTitle( $this->pageTitle4 );
 			[ , , $this->rev4_1 ] = $this->addRevision( $page,
 				"Talk about BackupDumperTestP1 Text1",
 				"Talk BackupDumperTestP1 Summary1" );
 			$this->pageId4 = $page->getId();
 
 			$this->pageTitle5 = Title::newFromText( 'BackupDumperTestP5' );
-			$page = WikiPage::factory( $this->pageTitle5 );
+			$page = $wikiPageFactory->newFromTitle( $this->pageTitle5 );
 			[ , , $this->rev5_1 ] = $this->addRevision( $page,
 				"BackupDumperTestP5 Text1",
 				"BackupDumperTestP5 Summary1" );
@@ -252,9 +253,9 @@ trait PageDumpTestDataTrait {
 	}
 
 	private function setSiteVarMappings( DumpAsserter $asserter ) {
-		global $wgSitename, $wgDBname, $wgVersion, $wgCapitalLinks;
+		global $wgSitename, $wgDBname, $wgCapitalLinks;
 
-		$asserter->setVarMapping( 'mw_version', $wgVersion );
+		$asserter->setVarMapping( 'mw_version', MW_VERSION );
 		$asserter->setVarMapping( 'schema_version', $asserter->getSchemaVersion() );
 
 		$asserter->setVarMapping( 'site_name', $wgSitename );

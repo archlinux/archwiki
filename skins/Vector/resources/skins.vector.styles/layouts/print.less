@@ -2,16 +2,21 @@
 @import 'mediawiki.mixins.less';
 
 // Used to be under #mw-navigation, which is hidden in common/print.less
-.vector-article-toolbar,
+.vector-page-toolbar,
 // Hide main menu checkbox
 #mw-sidebar-checkbox,
 // Hide all header content except the logo
-.mw-header-aside > *:not( .mw-logo ),
-.mw-header-content,
+.vector-header-start > *:not( .mw-logo ),
+.vector-header-end,
 // T300178, T306719
 #mw-panel-toc,
 #vector-sticky-header,
 #p-lang-btn,
+.vector-menu-checkbox,
+// Hide all navigation
+nav,
+#vector-page-titlebar-toc,
 #footer {
-	display: none;
+	/* stylelint-disable-next-line declaration-no-important */
+	display: none !important;
 }

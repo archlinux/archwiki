@@ -70,6 +70,7 @@ class HideAbuseLog extends AbuseFilterView {
 			return;
 		}
 
+		$output->addModuleStyles( 'mediawiki.interface.helpers.styles' );
 		$output->wrapWikiMsg(
 			"<strong>$1</strong>",
 			[

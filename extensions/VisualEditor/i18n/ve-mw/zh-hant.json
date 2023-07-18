@@ -39,8 +39,8 @@
 			"Zhxy 519",
 			"列维劳德",
 			"和平奮鬥救地球",
-			"烈羽",
-			"捍粵者"
+			"捍粵者",
+			"烈羽"
 		]
 	},
 	"collabpad-doctitle": "CollabPad：$1",
@@ -183,6 +183,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "參數名稱",
 	"visualeditor-dialog-transclusion-add-param-save": "新增",
 	"visualeditor-dialog-transclusion-add-template": "新增模板",
+	"visualeditor-dialog-transclusion-add-template-button": "新增模板",
 	"visualeditor-dialog-transclusion-add-template-save": "新增",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "新增尚未記錄的參數",
 	"visualeditor-dialog-transclusion-close-confirmation-prompt": "關閉模板編輯器？這將捨棄您的變更，並且無法回復。",
@@ -208,7 +209,6 @@
 	"visualeditor-dialog-transclusion-param-example-long": "範例：$1",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "「$1」中的參數",
 	"visualeditor-dialog-transclusion-param-undocumented": "（未有記錄的參數）",
-	"visualeditor-dialog-transclusion-placeholder": "新增模板",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "尋找模板",
 	"visualeditor-dialog-transclusion-required-parameter": "必填參數",
 	"visualeditor-dialog-transclusion-required-parameter-description": "參數是必填的。",

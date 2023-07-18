@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Agam Riyandana",
 			"Amire80",
 			"Arifin.wijaya",
 			"Bennylin",
@@ -12,8 +13,7 @@
 			"Rachmat04",
 			"Rex",
 			"Veracious",
-			"William Surya Permana",
-			"Agam Riyandana"
+			"William Surya Permana"
 		]
 	},
 	"skinname-vector": "Vektor",
@@ -50,16 +50,22 @@
 	"vector-search-loader": "Memuat saran pencarian",
 	"vector-searchsuggest-containing": "Cari halaman yang berisi <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Pengantar",
-	"vector-toc-heading": "Daftar isi",
-	"vector-toc-toggle-position-title": "sembunyikan",
+	"vector-toc-label": "Daftar isi",
 	"vector-toc-beginning": "Awal",
 	"vector-anon-user-menu-pages": "Halaman penyunting yang telah keluar log",
 	"vector-anon-user-menu-pages-learn": "pelajari lebih lanjut",
 	"vector-anon-user-menu-pages-label": "Pelajari lebih lanjut tentang menyunting",
 	"vector-main-menu-tooltip": "Menu utama",
 	"vector-toc-menu-tooltip": "Daftar Isi",
-	"vector-article-tools-nav-label": "Perkakas",
 	"vector-site-nav-label": "Situs",
+	"vector-main-menu-label": "Menu utama",
+	"vector-page-tools-label": "Perkakas",
+	"vector-page-tools-general-label": "Umum",
+	"vector-page-tools-actions-label": "Tindakan",
+	"vector-pin-element-label": "pindah ke bilah sisi",
+	"vector-unpin-element-label": "sembunyikan",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskusi]]",
-	"tooltip-vector-anon-user-menu-title": "Opsi lainnya"
+	"tooltip-vector-anon-user-menu-title": "Opsi lainnya",
+	"vector-prefs-limited-width": "Aktifkan mode lebar terbatas",
+	"empty-language-selector-body": "Konten halaman tidak didukung dalam bahasa lain."
 }

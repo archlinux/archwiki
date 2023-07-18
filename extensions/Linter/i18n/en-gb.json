@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Amire80"
+		]
+	},
+	"linter-category-tidy-font-bug-desc": "Previously, these font tags were moved inside links to change link colour",
+	"linter-pager-tidy-font-bug-details": "Font tag tries to change link colour"
+}

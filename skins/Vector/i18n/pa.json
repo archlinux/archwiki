@@ -3,11 +3,11 @@
 		"authors": [
 			"Aalam",
 			"Babanwalia",
+			"Bgo eiu",
+			"Jagseer S Sidhu",
 			"Raj Singh",
 			"TariButtar",
-			"Tow",
-			"Bgo eiu",
-			"Jagseer S Sidhu"
+			"Tow"
 		]
 	},
 	"vector-skin-desc": "ਮੋਨੋਬੁੱਕ ਦੀ ਆਧੁਨਿਕ ਵਰਜਨ ਜਿਸ ਵਿਚ ਤਾਜ਼ਾ ਦਿੱਖ ਅਤੇ ਬਹੁਤ ਸਾਰੇ ਉਪਯੋਗਤਾ ਸੁਧਾਰ ਹਨ",
@@ -29,9 +29,14 @@
 	"vector-view-viewsource": "ਸਰੋਤ ਵੇਖੋ",
 	"vector-more-actions": "ਹੋਰ",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ਵਾਲੇ ਪੰਨਿਆਂ ਦੀ ਖੋਜ ਕਰੋ",
+	"vector-toc-label": "ਸਮੱਗਰੀ",
 	"vector-anon-user-menu-pages-learn": "ਹੋਰ ਜਾਣੋ",
 	"vector-main-menu-tooltip": "ਮੁੱਖ ਮੇਨੂ",
 	"vector-toc-menu-tooltip": "ਸਮੱਗਰੀ ਸਾਰਨੀ",
 	"vector-site-nav-label": "ਸਾਈਟ",
-	"tooltip-vector-anon-user-menu-title": "ਹੋਰ ਚੋਣਾਂ"
+	"vector-page-tools-label": "ਸੰਦ",
+	"vector-page-tools-general-label": "ਆਮ",
+	"vector-unpin-element-label": "ਲੁਕਾਓ",
+	"tooltip-vector-anon-user-menu-title": "ਹੋਰ ਚੋਣਾਂ",
+	"vector-prefs-limited-width": "ਛੋਟੀ ਚੌੜਾਈ ਚੋਣ ਨੂੰ ਚਾਲੂ ਕਰੋ"
 }

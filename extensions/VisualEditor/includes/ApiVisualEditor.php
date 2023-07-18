@@ -22,6 +22,7 @@ use DerivativeRequest;
 use EditPage;
 use ExtensionRegistry;
 use Html;
+use IBufferingStatsdDataFactory;
 use LogEventsList;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\Content\Transform\ContentTransformer;
@@ -31,6 +32,7 @@ use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\WikiPageFactory;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\SpecialPage\SpecialPageFactory;
 use MediaWiki\User\UserFactory;
@@ -52,6 +54,9 @@ class ApiVisualEditor extends ApiBase {
 	use ApiBlockInfoTrait;
 	use ApiParsoidTrait;
 
+	/** @var RevisionLookup */
+	private $revisionLookup;
+
 	/** @var UserNameUtils */
 	private $userNameUtils;
 
@@ -61,7 +66,7 @@ class ApiVisualEditor extends ApiBase {
 	/** @var LinkRenderer */
 	private $linkRenderer;
 
-	/** @var userOptionsLookup */
+	/** @var UserOptionsLookup */
 	private $userOptionsLookup;
 
 	/** @var WatchlistManager */
@@ -88,9 +93,13 @@ class ApiVisualEditor extends ApiBase {
 	/** @var UserFactory */
 	private $userFactory;
 
+	/** @var VisualEditorParsoidClientFactory */
+	private $parsoidClientFactory;
+
 	/**
 	 * @param ApiMain $main
 	 * @param string $name
+	 * @param RevisionLookup $revisionLookup
 	 * @param UserNameUtils $userNameUtils
 	 * @param Parser $parser
 	 * @param LinkRenderer $linkRenderer
@@ -100,13 +109,16 @@ class ApiVisualEditor extends ApiBase {
 	 * @param SpecialPageFactory $specialPageFactory
 	 * @param ReadOnlyMode $readOnlyMode
 	 * @param RestrictionStore $restrictionStore
+	 * @param IBufferingStatsdDataFactory $statsdDataFactory
 	 * @param WikiPageFactory $wikiPageFactory
 	 * @param HookContainer $hookContainer
 	 * @param UserFactory $userFactory
+	 * @param VisualEditorParsoidClientFactory $parsoidClientFactory
 	 */
 	public function __construct(
 		ApiMain $main,
 		$name,
+		RevisionLookup $revisionLookup,
 		UserNameUtils $userNameUtils,
 		Parser $parser,
 		LinkRenderer $linkRenderer,
@@ -116,12 +128,16 @@ class ApiVisualEditor extends ApiBase {
 		SpecialPageFactory $specialPageFactory,
 		ReadOnlyMode $readOnlyMode,
 		RestrictionStore $restrictionStore,
+		IBufferingStatsdDataFactory $statsdDataFactory,
 		WikiPageFactory $wikiPageFactory,
 		HookContainer $hookContainer,
-		UserFactory $userFactory
+		UserFactory $userFactory,
+		VisualEditorParsoidClientFactory $parsoidClientFactory
 	) {
 		parent::__construct( $main, $name );
 		$this->setLogger( LoggerFactory::getInstance( 'VisualEditor' ) );
+		$this->setStats( $statsdDataFactory );
+		$this->revisionLookup = $revisionLookup;
 		$this->userNameUtils = $userNameUtils;
 		$this->parser = $parser;
 		$this->linkRenderer = $linkRenderer;
@@ -134,6 +150,16 @@ class ApiVisualEditor extends ApiBase {
 		$this->wikiPageFactory = $wikiPageFactory;
 		$this->hookContainer = $hookContainer;
 		$this->userFactory = $userFactory;
+		$this->parsoidClientFactory = $parsoidClientFactory;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getParsoidClient(): ParsoidClient {
+		return $this->parsoidClientFactory->createParsoidClient(
+			$this->getRequest()->getHeader( 'Cookie' )
+		);
 	}
 
 	/**
@@ -226,11 +252,6 @@ class ApiVisualEditor extends ApiBase {
 			$this->dieWithError( 'apierror-pagecannotexist' );
 		}
 
-		$parserParams = [];
-		if ( isset( $params['oldid'] ) ) {
-			$parserParams['oldid'] = $params['oldid'];
-		}
-
 		wfDebugLog( 'visualeditor', "called on '$title' with paction: '{$params['paction']}'" );
 		switch ( $params['paction'] ) {
 			case 'parse':
@@ -248,8 +269,21 @@ class ApiVisualEditor extends ApiBase {
 
 				// Get information about current revision
 				if ( $title->exists() ) {
-					$revision = $this->getValidRevision( $title, $parserParams['oldid'] ?? null );
-					$latestRevision = $this->getLatestRevision( $title );
+					$latestRevision = $this->revisionLookup->getRevisionByTitle( $title );
+					if ( !$latestRevision ) {
+						$this->dieWithError(
+							[ 'apierror-missingrev-title', wfEscapeWikiText( $title->getPrefixedText() ) ],
+							'nosuchrevid'
+						);
+					}
+					if ( isset( $params['oldid'] ) ) {
+						$revision = $this->revisionLookup->getRevisionById( $params['oldid'] );
+						if ( !$revision ) {
+							$this->dieWithError( [ 'apierror-nosuchrevid', $params['oldid'] ] );
+						}
+					} else {
+						$revision = $latestRevision;
+					}
 
 					$restoring = !$revision->isCurrent();
 					$baseTimestamp = $latestRevision->getTimestamp();
@@ -465,7 +499,7 @@ class ApiVisualEditor extends ApiBase {
 					}
 
 					// Deal with cascading edit protection
-					list( $sources, $restrictions ) = $this->restrictionStore->getCascadeProtectionSources( $title );
+					[ $sources, $restrictions ] = $this->restrictionStore->getCascadeProtectionSources( $title );
 					if ( isset( $restrictions['edit'] ) ) {
 						$protectedClasses[] = ' mw-textarea-cprotected';
 
@@ -547,9 +581,7 @@ class ApiVisualEditor extends ApiBase {
 				$block = null;
 				$blockinfo = null;
 				// Blocked user notice
-				if ( $user->isBlockedGlobally() ) {
-					$block = $user->getGlobalBlock();
-				} elseif ( $permissionManager->isBlockedFrom( $user, $title, true ) ) {
+				if ( $permissionManager->isBlockedFrom( $user, $title, true ) ) {
 					$block = $user->getBlock();
 				}
 				if ( $block ) {
@@ -665,18 +697,16 @@ class ApiVisualEditor extends ApiBase {
 				$result = $editPage->makeTemplatesOnThisPageList( $editPage->getTemplates() );
 				break;
 
-			case 'parsedoc':
 			case 'parsefragment':
 				$wikitext = $params['wikitext'];
 				if ( $wikitext === null ) {
 					$this->dieWithError( [ 'apierror-missingparam', 'wikitext' ] );
 				}
-				$bodyOnly = ( $params['paction'] === 'parsefragment' );
 				if ( $params['pst'] ) {
 					$wikitext = $this->pstWikitext( $title, $wikitext );
 				}
 				$content = $this->transformWikitext(
-					$title, $wikitext, $bodyOnly
+					$title, $wikitext, true
 				)['body'];
 				if ( $content === false ) {
 					$this->dieWithError( 'apierror-visualeditor-docserver', 'docserver' );
@@ -775,7 +805,6 @@ class ApiVisualEditor extends ApiBase {
 					'templatesused',
 					'wikitext',
 					'parsefragment',
-					'parsedoc',
 				],
 			],
 			'wikitext' => [
@@ -784,7 +813,9 @@ class ApiVisualEditor extends ApiBase {
 			],
 			'section' => null,
 			'stash' => false,
-			'oldid' => null,
+			'oldid' => [
+				ParamValidator::PARAM_TYPE => 'integer',
+			],
 			'editintro' => null,
 			'pst' => false,
 			'preload' => null,

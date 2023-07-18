@@ -210,8 +210,7 @@ return [
 			// TODO: Use a proper MessageLocalizer once available (T247127)
 			RequestContext::getMain(),
 			$services->getUserEditTracker(),
-			$services->getUserFactory(),
-			RequestContext::getMain()->getRequest()->getIP()
+			$services->getUserFactory()
 		);
 	},
 	EditBoxBuilderFactory::SERVICE_NAME => static function ( MediaWikiServices $services ): EditBoxBuilderFactory {

@@ -1,0 +1,12 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie",
+			"Romaine"
+		]
+	},
+	"apihelp-discussiontoolsedit-param-wikitext": "De te plaatsen inhoud als wikitekst. Kan niet samen met <var>html</var> worden gebruikt.",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Voeg een nieuwe opmerking toe als antwoord op een bestaande opmerking.",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Voeg een nieuwe discussiesectie toe met de eerste opmerking daarin.",
+	"apihelp-discussiontoolsedit-summary": "Plaats een bericht op een discussiepagina."
+}

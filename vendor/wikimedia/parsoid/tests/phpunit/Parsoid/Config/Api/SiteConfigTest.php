@@ -185,6 +185,13 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		);
 	}
 
+	public function testLangBcp47() {
+		$this->assertEqualsIgnoringCase(
+			'en',
+			$this->getSiteConfig()->langBcp47()->toBcp47Code()
+		);
+	}
+
 	public function testMainpage() {
 		$this->assertSame(
 			'Main Page',
@@ -192,10 +199,18 @@ class SiteConfigTest extends \PHPUnit\Framework\TestCase {
 		);
 	}
 
-	public function testResponsiveReferences() {
+	public function testGetMWConfigValue() {
 		$this->assertSame(
-			[ 'enabled' => true, 'threshold' => 10 ],
-			$this->getSiteConfig()->responsiveReferences()
+			true,
+			$this->getSiteConfig()->getMWConfigValue( 'CiteResponsiveReferences' )
+		);
+		$this->assertSame(
+			10,
+			$this->getSiteConfig()->getMWConfigValue( 'CiteResponsiveReferencesThreshold' )
+		);
+		$this->assertSame(
+			null,
+			$this->getSiteConfig()->getMWConfigValue( 'CiteUnknownConfig' )
 		);
 	}
 

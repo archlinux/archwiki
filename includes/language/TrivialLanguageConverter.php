@@ -20,6 +20,7 @@
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
+use MediaWiki\StubObject\StubUserLang;
 
 /**
  * A trivial language converter.
@@ -75,7 +76,7 @@ class TrivialLanguageConverter implements ILanguageConverter {
 		return $t;
 	}
 
-	public function convertTo( $text, $variant ) {
+	public function convertTo( $text, $variant, bool $clearState = true ) {
 		return $text;
 	}
 

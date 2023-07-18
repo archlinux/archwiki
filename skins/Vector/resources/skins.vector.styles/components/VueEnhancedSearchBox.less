@@ -12,7 +12,7 @@
 @size-base: 32px;
 
 @min-size-search-button: 30px;
-@background-size-x-search-button: unit( 20px / @font-size-browser / @font-size-base, em );
+@background-size-x-search-button: 20px;
 
 // Search container
 // We have to put those styles outside `.skin-vector-search-vue`,
@@ -39,7 +39,12 @@
 }
 
 .vector-search-box-vue .vector-search-box-input {
-	height: @size-base;
+	height: auto;
+	// The following is copied directly from Codex.
+	min-height: @size-base;
+	line-height: 1.4285714;
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 
 .vector-search-box-vue .searchButton {
@@ -54,8 +59,12 @@
 	// Derived from text input start icon padding in Codex.
 	// https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/tags/v0.1.0-alpha.8/packages/codex/src/components/text-input/TextInput.vue#257
 	@padding-left-start-icon: 36px;
+	// Derived from the @size-icon-medium token in Codex. 14px is the base font size in Vector.
+	@size-icon-medium: unit( 20 / 14, em );
+	// Derived from icon positioning in Codex. This is essentially (@padding-left-start-icon - @size-icon-medium)/2
+	@position-left-icon: 8px;
 
-	.cdx-typeahead-search {
+	.vector-typeahead-search {
 		// Hide the button, only show it on hover or when the input or the button itself is focused
 		.cdx-search-input__end-button {
 			opacity: 0;
@@ -63,7 +72,7 @@
 			transition: opacity 250ms;
 
 			&:focus {
-				opacity: 1;
+				opacity: @opacity-base;
 			}
 		}
 
@@ -75,7 +84,7 @@
 		&--active,
 		&:hover {
 			.cdx-search-input__end-button {
-				opacity: 1;
+				opacity: @opacity-base;
 			}
 
 			// Make the text input's right border appear on top of the button's left border,
@@ -138,12 +147,18 @@
 		// Increase size to match Codex.
 		width: @padding-left-start-icon;
 		// Set opacity to match icon color from Codex (0.51 approximates #72777d)
-		opacity: 0.51;
+		opacity: @opacity-icon-base--disabled;
+		// Use relative sizing for the icon
+		background-size: @size-icon-medium auto;
+		// Make sure the icon is positioned consistently with Codex; if we don't do this, it'll
+		// be centered which will be different from Codex's positioning if the text size zoom
+		// is not 100%
+		background-position-x: @position-left-icon;
 	}
 
 	.vector-search-box-input:focus ~ .searchButton {
 		// When the input is focused, change icon color to match Codex (0.87 approximates #202122)
-		opacity: 0.87;
+		opacity: @opacity-icon-base;
 	}
 
 	&.vector-search-box-show-thumbnail {
@@ -162,27 +177,6 @@
 		&.vector-search-box-auto-expand-width .vector-search-box-input {
 			margin-left: @size-search-expand;
 			width: ~'calc( 100% - @{size-search-expand} )';
-		}
-
-		// Recreate Codex expanding input.
-		&:not( .vector-search-box-auto-expand-width ) .vector-search-box-input,
-		&.vector-search-box-auto-expand-width .vector-search-box-input:focus {
-			margin-left: 0;
-			// Use ~ and fixed values to disable the LESS transformation in ResourceLoader LESS implementation.
-			padding-left: ~'calc( @{padding-left-start-icon} + @{size-search-expand} )';
-			width: 100%;
-		}
-
-		// Reposition search icon for expanded input.
-		&:not( .vector-search-box-auto-expand-width ) .vector-search-box-input ~ .searchButton,
-		&.vector-search-box-auto-expand-width .vector-search-box-input:focus ~ .searchButton {
-			// Derived from @spacing-start-typeahead-icon in Codex
-			// https://gerrit.wikimedia.org/r/plugins/gitiles/design/codex/+/refs/tags/v0.1.0-alpha.8/packages/codex/src/components/typeahead-search/TypeaheadSearch.vue#708
-			@spacing-start-typeahead-icon: 22px;
-			// Codex uses left: @spacing-start-typeahead-icon, but we have to account for the fact
-			// that we made the search button wider and centered the icon in it
-			@size-icon-px: 20px;
-			left: @spacing-start-typeahead-icon - ( @padding-left-start-icon - @size-icon-px ) / 2;
 		}
 	}
 }

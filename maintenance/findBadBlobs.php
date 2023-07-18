@@ -261,12 +261,13 @@ class FindBadBlobs extends Maintenance {
 	private function loadRevisionsByTimestamp( int $afterId, string $fromTimestamp, $batchSize ) {
 		$db = $this->loadBalancer->getConnectionRef( DB_REPLICA );
 		$queryInfo = $this->revisionStore->getQueryInfo();
-		$quotedTimestamp = $db->addQuotes( $fromTimestamp );
 		$rows = $db->newSelectQueryBuilder()
 			->select( $queryInfo['fields'] )
 			->tables( $queryInfo['tables'] )
-			->where( "rev_timestamp > $quotedTimestamp OR "
-				. "(rev_timestamp = $quotedTimestamp AND rev_id > $afterId )" )
+			->where( $db->buildComparison( '>', [
+				'rev_timestamp' => $fromTimestamp,
+				'rev_id' => $afterId,
+			] ) )
 			->joinConds( $queryInfo['joins'] )
 			->useIndex( [ 'revision' => 'rev_timestamp' ] )
 			->orderBy( [ 'rev_timestamp', 'rev_id' ] )
@@ -441,8 +442,6 @@ class FindBadBlobs extends Maintenance {
 	 */
 	private function checkSlot( RevisionRecord $rev, SlotRecord $slot ) {
 		$address = $slot->getAddress();
-		$error = null;
-		$type = null;
 
 		try {
 			$this->blobStore->getBlob( $address );
@@ -461,7 +460,7 @@ class FindBadBlobs extends Maintenance {
 			. "error='$error', type='$type'. ID:\t{$rev->getId()}\n" );
 
 		if ( $this->hasOption( 'mark' ) ) {
-			$newAddress = $this->markBlob( $rev, $slot, $error );
+			$newAddress = $this->markBlob( $slot, $error );
 			$this->output( "\tChanged address to <$newAddress>\n" );
 		}
 
@@ -469,13 +468,12 @@ class FindBadBlobs extends Maintenance {
 	}
 
 	/**
-	 * @param RevisionRecord $rev
 	 * @param SlotRecord $slot
 	 * @param string|null $error
 	 *
 	 * @return false|string
 	 */
-	private function markBlob( RevisionRecord $rev, SlotRecord $slot, string $error = null ) {
+	private function markBlob( SlotRecord $slot, string $error = null ) {
 		$args = [];
 
 		if ( $this->hasOption( 'mark' ) ) {

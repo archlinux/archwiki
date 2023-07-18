@@ -1,8 +1,6 @@
 <?php
 /** Swahili (Kiswahili)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -96,6 +94,7 @@ $specialPageAliases = [
 	'Protectedtitles'           => [ 'JinaLililolindwa' ],
 	'Randompage'                => [ 'UkurasawaBahati' ],
 	'Recentchanges'             => [ 'MabadalikoyaKaribuni' ],
+	'Renameuser'                => [ 'BadilishajinalaMtumiaji' ],
 	'Search'                    => [ 'Tafuta' ],
 	'Shortpages'                => [ 'KurasaFupi' ],
 	'Specialpages'              => [ 'KurasaMaalum' ],

@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
-			"Zakaria Tunsung",
-			"Yirkang",
+			"Amire80",
 			"Linus Konkor",
-			"Amire80"
+			"Yirkang",
+			"Zakaria Tunsung"
 		]
 	},
 	"vector-languages": "Kɔkɔɛ",
@@ -19,5 +19,8 @@
 	"vector-view-history": "Kaa dabaŋkoroŋ",
 	"vector-view-view": "Gane",
 	"vector-more-actions": "Yaga",
-	"vector-searchsuggest-containing": "Bɔ leɛre ama naŋ taa <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Bɔ leɛre ama naŋ taa <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Tɔtɔbomma",
+	"vector-page-tools-general-label": "Te zaa",
+	"vector-unpin-element-label": "Sɔgele"
 }

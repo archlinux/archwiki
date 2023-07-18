@@ -129,7 +129,7 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 					'setTex'
 				] )->setConstructorArgs( [ self::TEXVCCHECK_INPUT ] )->getMock();
 		$renderer->expects( $this->once() )->method( 'readFromDatabase' )
-			->will( $this->returnValue( false ) );
+			->willReturn( false );
 		$renderer->expects( $this->once() )->method( 'setTex' )->with( self::TEXVCCHECK_OUTPUT );
 
 		/** @var MathRenderer $renderer */
@@ -150,8 +150,8 @@ class MathRendererTest extends MediaWikiIntegrationTestCase {
 					'readFromDatabase',
 					'setTex'
 				] )->setConstructorArgs( [ self::TEXVCCHECK_INPUT ] )->getMock();
-		$renderer->expects( $this->exactly( 1 ) )->method( 'readFromDatabase' )
-			->will( $this->returnValue( true ) );
+		$renderer->expects( $this->once() )->method( 'readFromDatabase' )
+			->willReturn( true );
 		$renderer->expects( $this->never() )->method( 'setTex' );
 
 		/** @var MathRenderer $renderer */

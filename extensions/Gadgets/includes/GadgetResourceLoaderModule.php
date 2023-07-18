@@ -78,6 +78,21 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 	}
 
 	/**
+	 * @param string $fileName
+	 * @param string $contents
+	 * @return string
+	 */
+	protected function validateScriptFile( $fileName, $contents ) {
+		// Temporary solution to support gadgets in ES6 by disabling validation
+		// for them and putting them in a separate resource group to avoid a syntax error in them
+		// from corrupting core/extension-loaded scripts or other non-ES6 gadgets.
+		if ( $this->requiresES6() ) {
+			return $contents;
+		}
+		return parent::validateScriptFile( $fileName, $contents );
+	}
+
+	/**
 	 * Overrides RL\WikiModule::isPackaged()
 	 * Returns whether this gadget is packaged.
 	 * @return bool
@@ -117,7 +132,11 @@ class GadgetResourceLoaderModule extends RL\WikiModule {
 		return $this->getGadget()->getRequiredSkins() ?: null;
 	}
 
+	public function requiresES6(): bool {
+		return $this->getGadget()->requiresES6();
+	}
+
 	public function getGroup() {
-		return 'site';
+		return $this->requiresES6() ? 'es6-gadget' : self::GROUP_SITE;
 	}
 }

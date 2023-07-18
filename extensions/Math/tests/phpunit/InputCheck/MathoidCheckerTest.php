@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\Math\InputCheck;
 
 use HashBagOStuff;
+use MediaWiki\Extension\Math\Math;
 use MediaWiki\Extension\Math\MathMathML;
 use MediaWiki\Http\HttpRequestFactory;
-use MediaWiki\MediaWikiServices;
 use MediaWikiIntegrationTestCase;
 use MockHttpTrait;
 use WANObjectCache;
@@ -130,8 +130,7 @@ class MathoidCheckerTest extends MediaWikiIntegrationTestCase {
 	 * @return MathoidChecker
 	 */
 	private function getMathoidChecker( $tex = '\sin x' ): MathoidChecker {
-		return MediaWikiServices::getInstance()
-			->getService( 'Math.CheckerFactory' )
+		return Math::getCheckerFactory()
 			->newMathoidChecker( $tex, 'tex' );
 	}
 

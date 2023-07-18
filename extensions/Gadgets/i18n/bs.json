@@ -9,6 +9,7 @@
 	},
 	"gadgets-desc": "Omogućava korisnicima da odaberu vlastite [[Special:Gadgets|CSS i JavaScript dodatke]] (gadgets) u svojim [[Special:Preferences#mw-prefsection-gadgets|postavkama]]",
 	"prefs-gadgets": "Dodaci",
+	"prefs-description-gadgets": "Uključite dodatne mogućnosti za svoj račun.",
 	"gadgets-prefstext": "Ovo je spisak posebnih dodataka koje možete uključiti za svoj korisnički račun.\nOvi dodaci se najčešće zasnivaju na JavaScriptu, tako da ga morate uključiti u svom pregledniku da bi mogli raditi.\nZapamtite da ovi dodaci nemaju utjecaj na ovu stranicu s postavkama.\n\nZapamtite da ovi posebni dodaci nisu dio MediaWiki softvera, te ih obično prave i razvijaju korisnici na lokalnim wikijima.\nAdministratori mogu mijenjati dostupne dodatke koristeći [[MediaWiki:Gadgets-definition|definicije]] i [[Special:Gadgets|opise]]. Broj korisnika koji koriste svaki dodatak na ovom wikiju naveden je se u [[Special:GadgetUsage|statistici korištenja dodataka]].",
 	"gadgets": "Dodaci (gadgets)",
 	"gadgetusage": "Statistika korištenja dodataka",

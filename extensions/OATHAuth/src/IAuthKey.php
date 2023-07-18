@@ -10,7 +10,7 @@ interface IAuthKey extends JsonSerializable {
 	/**
 	 * @param array|stdClass $data
 	 * @param OATHUser $user
-	 * @return mixed
+	 * @return bool
 	 */
 	public function verify( $data, OATHUser $user );
 

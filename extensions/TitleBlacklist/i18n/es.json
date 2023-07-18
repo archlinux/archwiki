@@ -11,7 +11,8 @@
 			"MarcoAurelio",
 			"Remember the dot",
 			"Sanbec",
-			"Tiberius1701"
+			"Tiberius1701",
+			"Ciencia Al Poder"
 		]
 	},
 	"action-tboverride": "ignorar la lista negra de títulos o de nombres de usuario",
@@ -26,7 +27,7 @@
 	"titleblacklist-forbidden-edit": "Se ha bloqueado la creación del título «$2».\nCoincide con la siguiente entrada de lista negra: <code>$1</code>",
 	"titleblacklist-forbidden-move": "«$2» no puede ser trasladado a «$3», porque se ha bloqueado la creación del título «$3».\nCoincide con la siguiente entrada de lista negra: <code>$1</code>",
 	"titleblacklist-forbidden-upload": "No se puede crear el archivo «$2».\nCoincide con la entrada de lista negra <code>$1</code>.",
-	"titleblacklist-forbidden-new-account": "Se prohibe crear el nombre de usuario «$2».\nCoincide con la siguiente entrada de la lista negra: <code>$1</code>",
+	"titleblacklist-forbidden-new-account": "Se prohíbe crear el nombre de usuario «$2».\nCoincide con la siguiente entrada de la lista negra: <code>$1</code>",
 	"titleblacklist-invalid": "{{PLURAL:$1|La siguiente línea|Las siguientes líneas}} de la lista negra no {{PLURAL:$1|es válida|son válidas}};\npor favor corríge{{PLURAL:$1|la|las}} antes de grabar:",
 	"titleblacklist-override": "Ignorar la lista negra si coincide",
 	"titleblacklist-override-help": "Los usuarios con suficientes privilegios pueden configurar esto para ignorar las comprobaciones de títulos en la lista negra.",

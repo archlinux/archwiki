@@ -122,6 +122,13 @@ class Hooks implements
 		if ( !$extensionRegistry->isLoaded( 'EventLogging' ) ) {
 			return false;
 		}
+		if ( $extensionRegistry->isLoaded( 'MobileFrontend' ) ) {
+			$mobFrontContext = MediaWikiServices::getInstance()->getService( 'MobileFrontend.Context' );
+			if ( $mobFrontContext->shouldDisplayMobileView() ) {
+				// on a MobileFrontend page the logging should be handled by it
+				return false;
+			}
+		}
 		$inSample = $this->inEventSample( $data['editing_session_id'] );
 		$shouldOversample = $extensionRegistry->isLoaded( 'WikimediaEvents' ) &&
 			WikimediaEventsHooks::shouldSchemaEditAttemptStepOversample( $article->getContext() );
@@ -162,7 +169,10 @@ class Hooks implements
 			$data['user_class'] = 'IP';
 		}
 
-		return EventLogging::logEvent( 'EditAttemptStep', 18530416, $data );
+		// NOTE: The 'EditAttemptStep' event was migrated to the Event Platform and is no longer
+		//  using the legacy EventLogging schema from metawiki. $revId is actually overriden by
+		//  the EventLoggingSchemas extension attribute in WikimediaEvents/extension.json.
+		return EventLogging::logEvent( 'EditAttemptStep', -1, $data );
 	}
 
 	/**
@@ -209,7 +219,11 @@ class Hooks implements
 			$data['bucket'] = $bucket;
 		}
 
-		return EventLogging::logEvent( 'VisualEditorFeatureUse', 21199762, $data );
+		// NOTE: The 'VisualEditorFeatureUse' event was migrated to the Event Platform and is no
+		//  longer using the legacy EventLogging schema from metawiki. $revId is actually
+		//  overridden by the EventLoggingSchemas extension attribute in
+		//  WikimediaEvents/extension.json.
+		return EventLogging::logEvent( 'VisualEditorFeatureUse', -1, $data );
 	}
 
 	/**
@@ -238,8 +252,9 @@ class Hooks implements
 			$user = $article->getContext()->getUser();
 			$betaFeatureEnabled = $betaFeaturesInstalled &&
 				BetaFeatures::isFeatureEnabled( $user, 'wikieditor-realtime-preview' );
+			$useBetaFeature = $this->config->get( 'WikiEditorRealtimePreviewBeta' );
 			if ( $this->config->get( 'WikiEditorRealtimePreview' ) &&
-				( $betaFeatureEnabled || !$betaFeaturesInstalled )
+				( $useBetaFeature && $betaFeatureEnabled || !$betaFeaturesInstalled || !$useBetaFeature )
 			) {
 				$outputPage->addModules( 'ext.wikiEditor.realtimepreview' );
 			}
@@ -596,7 +611,7 @@ class Hooks implements
 	 */
 	public static function onGetBetaFeaturePreferences( $user, &$prefs ) {
 		$config = MediaWikiServices::getInstance()->getMainConfig();
-		if ( !$config->get( 'WikiEditorRealtimePreview' ) ) {
+		if ( !$config->get( 'WikiEditorRealtimePreview' ) || !$config->get( 'WikiEditorRealtimePreviewBeta' ) ) {
 			return;
 		}
 		$extensionAssetsPath = $config->get( 'ExtensionAssetsPath' );

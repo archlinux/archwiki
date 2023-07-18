@@ -49,6 +49,7 @@ use WikiPage;
  * See also mediawiki.action.edit/stash.js.
  *
  * @since 1.34
+ * @ingroup Page
  */
 class PageEditStash {
 	/** @var BagOStuff */
@@ -366,10 +367,8 @@ class PageEditStash {
 			$start = microtime( true );
 			// We ignore user aborts and keep parsing. Block on any prior parsing
 			// so as to use its results and make use of the time spent parsing.
-			// Skip this logic if there no primary connection in case this method
-			// is called on an HTTP GET request for some reason.
-			$dbw = $this->lb->getAnyOpenConnection( $this->lb->getWriterIndex() );
-			if ( $dbw && $dbw->lock( $key, __METHOD__, 30 ) ) {
+			$dbw = $this->lb->getConnection( DB_PRIMARY );
+			if ( $dbw->lock( $key, __METHOD__, 30 ) ) {
 				$editInfo = $this->getStashValue( $key );
 				$dbw->unlock( $key, __METHOD__ );
 			}
@@ -453,7 +452,7 @@ class PageEditStash {
 	 */
 	private function getStashKey( PageIdentity $page, $contentHash, UserIdentity $user ) {
 		return $this->cache->makeKey(
-			'stashedit-info-v1',
+			'stashedit-info-v2',
 			md5( "{$page->getNamespace()}\n{$page->getDBkey()}" ),
 			// Account for the edit model/text
 			$contentHash,
@@ -467,12 +466,9 @@ class PageEditStash {
 	 * @return stdClass|bool Object map (pstContent,output,outputID,timestamp,edits) or false
 	 */
 	private function getStashValue( $key ) {
-		$stashInfo = $this->cache->get( $key );
-		if ( is_object( $stashInfo ) && $stashInfo->output instanceof ParserOutput ) {
-			return $stashInfo;
-		}
+		$serial = $this->cache->get( $key );
 
-		return false;
+		return $this->unserializeStashInfo( $serial );
 	}
 
 	/**
@@ -512,10 +508,16 @@ class PageEditStash {
 			'pstContent' => $pstContent,
 			'output'     => $parserOutput,
 			'timestamp'  => $timestamp,
-			'edits'      => $user->isRegistered() ? $this->userEditTracker->getUserEditCount( $user ) : null,
+			'edits'      => $user->isRegistered()
+				? $this->userEditTracker->getUserEditCount( $user )
+				: null,
 		];
+		$serial = $this->serializeStashInfo( $stashInfo );
+		if ( $serial === false ) {
+			return 'store_error';
+		}
 
-		$ok = $this->cache->set( $key, $stashInfo, $ttl, BagOStuff::WRITE_ALLOW_SEGMENTS );
+		$ok = $this->cache->set( $key, $serial, $ttl, BagOStuff::WRITE_ALLOW_SEGMENTS );
 		if ( $ok ) {
 			// These blobs can waste slots in low cardinality memcached slabs
 			$this->pruneExcessStashedEntries( $user, $key );
@@ -549,5 +551,22 @@ class PageEditStash {
 		$key = $this->cache->makeKey( 'stash-edit-recent', sha1( $user->getName() ) );
 
 		return count( $this->cache->get( $key ) ?: [] );
+	}
+
+	private function serializeStashInfo( stdClass $stashInfo ) {
+		// @todo: use JSON with ParserOutput and Content
+		return serialize( $stashInfo );
+	}
+
+	private function unserializeStashInfo( $serial ) {
+		if ( is_string( $serial ) ) {
+			// @todo: use JSON with ParserOutput and Content
+			$stashInfo = unserialize( $serial );
+			if ( is_object( $stashInfo ) && $stashInfo->output instanceof ParserOutput ) {
+				return $stashInfo;
+			}
+		}
+
+		return false;
 	}
 }

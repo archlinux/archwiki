@@ -2,6 +2,7 @@
 
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Storage\DerivedPageDataUpdater;
+use MediaWiki\Title\Title;
 use Psr\Log\NullLogger;
 use Wikimedia\ScopedCallback;
 
@@ -49,7 +50,7 @@ class RefreshSecondaryDataUpdateTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 0, $queue->getSize() );
 		$this->assertSame( 0, DeferredUpdates::pendingUpdatesCount() );
-		$wikiPage = WikiPage::factory( Title::makeTitle( NS_MAIN, 'TestPage' ) );
+		$wikiPage = $services->getWikiPageFactory()->newFromTitle( Title::makeTitle( NS_MAIN, 'TestPage' ) );
 		DeferredUpdates::addUpdate( new RefreshSecondaryDataUpdate(
 			$lbFactory,
 			$user,
@@ -127,7 +128,7 @@ class RefreshSecondaryDataUpdateTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 0, $queue->getSize() );
 		$this->assertSame( 0, DeferredUpdates::pendingUpdatesCount() );
-		$wikiPage = WikiPage::factory( Title::makeTitle( NS_MAIN, 'TestPage' ) );
+		$wikiPage = $services->getWikiPageFactory()->newFromTitle( Title::makeTitle( NS_MAIN, 'TestPage' ) );
 		DeferredUpdates::addUpdate( new RefreshSecondaryDataUpdate(
 			$lbFactory,
 			$user,
@@ -205,7 +206,7 @@ class RefreshSecondaryDataUpdateTest extends MediaWikiIntegrationTestCase {
 				return [ $goodUpdate ];
 			} );
 
-		$wikiPage = WikiPage::factory( Title::makeTitle( NS_MAIN, 'UTPage' ) );
+		$wikiPage = $services->getWikiPageFactory()->newFromTitle( Title::makeTitle( NS_MAIN, 'UTPage' ) );
 		$update = new RefreshSecondaryDataUpdate(
 			$lbFactory,
 			$user,

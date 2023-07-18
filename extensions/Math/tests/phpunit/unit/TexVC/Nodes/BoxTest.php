@@ -37,6 +37,12 @@ class BoxTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( '{\\hbox{a}}', $box->render(), 'Should create a basic function' );
 	}
 
+	public function testGetters() {
+		$box = new Box( '\\hbox', 'a' );
+		$this->assertNotEmpty( $box->getArg() );
+		$this->assertNotEmpty( $box->getFname() );
+	}
+
 	public function testExtractIdentifiersBox() {
 		$box = new Box( '\\hbox', 'a' );
 		$this->assertEquals( [], $box->extractIdentifiers(), 'Should extract identifiers' );
@@ -45,5 +51,10 @@ class BoxTest extends MediaWikiUnitTestCase {
 	public function testCurliesBox() {
 		$box = new Box( '\\hbox', 'a' );
 		$this->assertEquals( '{\\hbox{a}}', $box->inCurlies(), 'Should create exactly one set of curlies' );
+	}
+
+	public function testRenderMML() {
+		$box = new Box( '\\hbox', 'a' );
+		$this->assertStringContainsString( '</mtext>', $box->renderMML(), 'Render MathML as text.' );
 	}
 }

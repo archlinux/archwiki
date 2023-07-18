@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
@@ -28,6 +29,7 @@ use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -134,18 +136,13 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		$this->addTimestampWhereRange( 'rc_timestamp', $params['dir'], $params['start'], $params['end'] );
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 2 );
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
 			$db = $this->getDB();
-			$timestamp = $db->addQuotes( $db->timestamp( $cont[0] ) );
-			$id = (int)$cont[1];
-			$this->dieContinueUsageIf( $id != $cont[1] );
-			$op = $params['dir'] === 'older' ? '<' : '>';
-			$this->addWhere(
-				"rc_timestamp $op $timestamp OR " .
-				"(rc_timestamp = $timestamp AND " .
-				"rc_id $op= $id)"
-			);
+			$op = $params['dir'] === 'older' ? '<=' : '>=';
+			$this->addWhere( $db->buildComparison( $op, [
+				'rc_timestamp' => $db->timestamp( $cont[0] ),
+				'rc_id' => $cont[1],
+			] ) );
 		}
 
 		$order = $params['dir'] === 'older' ? 'DESC' : 'ASC';
@@ -153,8 +150,6 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			"rc_timestamp $order",
 			"rc_id $order",
 		] );
-
-		$this->addWhereFld( 'rc_namespace', $params['namespace'] );
 
 		if ( $params['type'] !== null ) {
 			try {
@@ -169,9 +164,13 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			$titleObj = Title::newFromText( $title );
 			if ( $titleObj === null || $titleObj->isExternal() ) {
 				$this->dieWithError( [ 'apierror-invalidtitle', wfEscapeWikiText( $title ) ] );
+			} elseif ( $params['namespace'] && !in_array( $titleObj->getNamespace(), $params['namespace'] ) ) {
+				$this->requireMaxOneParameter( $params, 'title', 'namespace' );
 			}
 			$this->addWhereFld( 'rc_namespace', $titleObj->getNamespace() );
 			$this->addWhereFld( 'rc_title', $titleObj->getDBkey() );
+		} else {
+			$this->addWhereFld( 'rc_namespace', $params['namespace'] );
 		}
 
 		if ( $params['show'] !== null ) {
@@ -674,7 +673,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			return 'private';
 		}
 		if ( $params['prop'] !== null && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMessage() among other things
+			// MediaWiki\CommentFormatter\CommentFormatter::formatItems() calls wfMessage() among other things
 			return 'anon-public-user-private';
 		}
 

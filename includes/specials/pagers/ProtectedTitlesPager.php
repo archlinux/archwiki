@@ -20,6 +20,7 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -128,6 +129,6 @@ class ProtectedTitlesPager extends AlphabeticPager {
 	}
 
 	public function getIndexField() {
-		return 'pt_timestamp';
+		return [ [ 'pt_timestamp', 'pt_namespace', 'pt_title' ] ];
 	}
 }

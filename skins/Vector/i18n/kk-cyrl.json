@@ -3,13 +3,13 @@
 		"authors": [
 			"Arystanbek",
 			"Daniyar",
+			"Darzz",
 			"GaiJin",
 			"Hedeyohu22",
 			"Kaztrans",
+			"Nurlan",
 			"U.ayaao.p",
-			"СеніңШешең",
-			"Darzz",
-			"Nurlan"
+			"СеніңШешең"
 		]
 	},
 	"skinname-vector": "Ескі Vector (2010)",
@@ -48,9 +48,7 @@
 	"vector-search-loader": "Іздеу ұсыныстары жүктелуде",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">«$1»</strong> бар беттерді іздеу",
 	"vector-intro-page": "Жәрдем:Таныстыру",
-	"vector-toc-heading": "Мазмұны",
-	"vector-toc-toggle-position-sidebar": "бүйірлік тақтаға жылжыту",
-	"vector-toc-toggle-position-title": "жасыру",
+	"vector-toc-label": "Мазмұны",
 	"vector-toc-beginning": "Кіріспе",
 	"vector-toc-toggle-button-label": "$1 суббөлімін көрсету/жасыру",
 	"vector-anon-user-menu-pages": "Шыққан өңдеушілерге арналған беттер",
@@ -59,8 +57,17 @@
 	"vector-main-menu-tooltip": "Басты мәзір",
 	"vector-toc-menu-tooltip": "Мазмұны",
 	"vector-toc-collapsible-button-label": "Мазмұнды көрсету/жасыру",
-	"vector-article-tools-nav-label": "Құралдар",
 	"vector-site-nav-label": "Сайт",
+	"vector-main-menu-label": "Басты мәзір",
+	"vector-limited-width-toggle": "Шектеулі мазмұн енін ауыстырып-қосу",
+	"vector-page-tools-label": "Құралдар",
+	"vector-page-tools-general-label": "Жалпы",
+	"vector-page-tools-actions-label": "Әрекеттер",
+	"vector-pin-element-label": "бүйірлік тақтаға жылжыту",
+	"vector-unpin-element-label": "жасыру",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Талқылау]]",
-	"tooltip-vector-anon-user-menu-title": "Басқа баптаулар"
+	"tooltip-vector-anon-user-menu-title": "Басқа баптаулар",
+	"vector-prefs-limited-width": "Шектеулі ен режимін қосу",
+	"vector-prefs-limited-width-help": "Оқу тәжірибесін жақсарту үшін шектеулі ен режимін қосу.",
+	"empty-language-selector-body": "Бет мазмұнына басқа тілдерде қолдау көрсетілмейді."
 }

@@ -6,8 +6,10 @@
 
 namespace MediaWiki\Skins\Vector\Tests\Integration;
 
+use FauxRequest;
 use HashConfig;
 use MediaWiki\Skins\Vector\Constants;
+use MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement;
 use MediaWiki\Skins\Vector\Hooks;
 use MediaWiki\Skins\Vector\SkinVector22;
 use MediaWiki\Skins\Vector\SkinVectorLegacy;
@@ -56,10 +58,10 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 			[
 				[
 					'VectorWebABTestEnrollment' => [],
-					'VectorSearchHost' => 'en.wikipedia.org'
+					'VectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php'
 				],
 				[
-					'wgVectorSearchHost' => 'en.wikipedia.org',
+					'wgVectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php',
 					'wgVectorWebABTestEnrollment' => [],
 				]
 			],
@@ -83,10 +85,10 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 								],
 						],
 					],
-					'VectorSearchHost' => 'en.wikipedia.org'
+					'VectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php'
 				],
 				[
-					'wgVectorSearchHost' => 'en.wikipedia.org',
+					'wgVectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php',
 					'wgVectorWebABTestEnrollment' => [
 						'name' => 'vector.sticky_header',
 						'enabled' => true,
@@ -115,7 +117,7 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 			# Bad experiment (no buckets)
 			[
 				[
-					'VectorSearchHost' => 'en.wikipedia.org',
+					'VectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php',
 					'VectorWebABTestEnrollment' => [
 						'name' => 'vector.sticky_header',
 						'enabled' => true,
@@ -125,7 +127,7 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 			# Bad experiment (no unsampled bucket)
 			[
 				[
-					'VectorSearchHost' => 'en.wikipedia.org',
+					'VectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php',
 					'VectorWebABTestEnrollment' => [
 						'name' => 'vector.sticky_header',
 						'enabled' => true,
@@ -140,7 +142,7 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 			# Bad experiment (wrong format)
 			[
 				[
-					'VectorSearchHost' => 'en.wikipedia.org',
+					'VectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php',
 					'VectorWebABTestEnrollment' => [
 						'name' => 'vector.sticky_header',
 						'enabled' => true,
@@ -153,7 +155,7 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 			# Bad experiment (samplingRate defined as string)
 			[
 				[
-					'VectorSearchHost' => 'en.wikipedia.org',
+					'VectorSearchApiUrl' => 'https://en.wikipedia.org/w/rest.php',
 					'VectorWebABTestEnrollment' => [
 						'name' => 'vector.sticky_header',
 						'enabled' => true,
@@ -248,6 +250,22 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 				true
 			],
 			[
+				'Can be disabled with a regex match, also for falsy 0.',
+				self::makeMaxWidthConfig(
+					false,
+					[
+						/* no namespaces excluded */
+					],
+					[
+						/* no includes */
+					],
+					[ 'foo' => '[0-9]+' ]
+				),
+				Title::makeTitle( NS_MAIN, 'Test' ),
+				[ 'foo' => '0' ],
+				true
+			],
+			[
 				'Can be disabled with a non-regex wildcard (for backwards compatibility).',
 				self::makeMaxWidthConfig(
 					false,
@@ -300,7 +318,9 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers ::shouldDisableMaxWidth
+	 * @todo move into MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement
+	 *  test in future.
+	 * @covers MediaWiki\Skins\Vector\FeatureManagement\Requirements\LimitedWidthContentRequirement::isMet
 	 * @dataProvider providerShouldDisableMaxWidth
 	 */
 	public function testShouldDisableMaxWidth(
@@ -310,9 +330,14 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		$requestValues,
 		$shouldDisableMaxWidth
 	) {
+		$requirement = new LimitedWidthContentRequirement(
+			new HashConfig( [ 'VectorMaxWidthOptions' => $options ] ),
+			new FauxRequest( $requestValues ),
+			$title
+		);
 		$this->assertSame(
-			$shouldDisableMaxWidth,
-			Hooks::shouldDisableMaxWidth( $options, $title, $requestValues ),
+			!$shouldDisableMaxWidth,
+			$requirement->isMet(),
 			$msg
 		);
 	}
@@ -394,19 +419,23 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testOnSkinTemplateNavigation() {
 		$this->setMwGlobals( [
-			'wgVectorUseIconWatch' => true
+			'wgVectorUseIconWatch' => true,
 		] );
 		$skin = new SkinVector22( [ 'name' => 'vector' ] );
 		$skin->getContext()->setTitle( Title::newFromText( 'Foo' ) );
 		$contentNavWatch = [
+			'associated-pages' => [],
+			'views' => [],
 			'actions' => [
-				'watch' => [ 'class' => [ 'watch' ] ],
+				'watch' => [ 'class' => [ 'watch' ], 'icon' => 'star' ],
 			]
 		];
 		$contentNavUnWatch = [
+			'associated-pages' => [],
+			'views' => [],
 			'actions' => [
 				'move' => [ 'class' => [ 'move' ] ],
-				'unwatch' => [],
+				'unwatch' => [ 'icon' => 'unStar' ],
 			],
 		];
 
@@ -433,6 +462,8 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 	public function testUpdateUserLinksItems() {
 		$vector2022Skin = new SkinVector22( [ 'name' => 'vector-2022' ] );
 		$contentNav = [
+			'associated-pages' => [],
+			'views' => [],
 			'user-page' => [
 				'userpage' => [ 'class' => [], 'icon' => 'userpage' ],
 			],
@@ -442,6 +473,8 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		];
 		$vectorLegacySkin = new SkinVectorLegacy( [ 'name' => 'vector' ] );
 		$contentNavLegacy = [
+			'associated-pages' => [],
+			'views' => [],
 			'user-page' => [
 				'userpage' => [ 'class' => [], 'icon' => 'userpage' ],
 			]
@@ -474,13 +507,23 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 				'anonuserpage' => [ 'class' => [], 'icon' => 'anonuserpage' ],
 				'createaccount' => [ 'class' => [], 'icon' => 'createaccount' ],
 				'login' => [ 'class' => [], 'icon' => 'login' ],
-				'login-private' => [ 'class' => [], 'icon' => 'login-private' ],
+				'anontalk' => [ 'class' => [], 'icon' => 'anontalk' ],
+				'anoncontribs' => [ 'class' => [], 'icon' => 'anoncontribs' ],
 			],
 		];
 		$updateUserLinksDropdownItems->invokeArgs( null, [ $skin, &$contentAnon ] );
 		$this->assertTrue(
-			count( $contentAnon['user-menu'] ) === 0,
-			'Anon user page, create account, login, and login private links are removed from anon user links dropdown'
+			count( $contentAnon['user-menu'] ) === 2 &&
+			isset( $contentAnon['user-menu']['createaccount'] ) &&
+			isset( $contentAnon['user-menu']['login'] ),
+			'Anon user page, anon talk, anon contribs links are removed from user-menu'
+		);
+
+		$this->assertTrue(
+			count( $contentAnon['user-menu'] ) === 2 &&
+			isset( $contentAnon['user-menu-anon-editor']['anontalk'] ) &&
+			isset( $contentAnon['user-menu-anon-editor']['anoncontribs'] ),
+			'Anon talk, anon contribs links are moved to user-menu-anon-editor'
 		);
 
 		// Registered user
@@ -514,6 +557,9 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 			'Watchlist link in user links dropdown has link-html'
 		);
 		$this->assertFalse( isset( $contentRegistered['user-menu']['logout'] ),
+			'Logout link in user links dropdown is not set'
+		);
+		$this->assertTrue( isset( $contentRegistered['user-menu-logout']['logout'] ),
 			'Logout link in user links dropdown is not set'
 		);
 	}
@@ -721,6 +767,6 @@ class VectorHooksTest extends MediaWikiIntegrationTestCase {
 		);
 		$updateItemData->setAccessible( true );
 		$data = $updateItemData->invokeArgs( null, [ $item, $buttonClassProp, $iconHtmlProp ] );
-		$this->assertEquals( $expected, $data );
+		$this->assertArraySubmapSame( $expected, $data );
 	}
 }

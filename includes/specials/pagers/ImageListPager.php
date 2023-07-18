@@ -19,8 +19,12 @@
  * @ingroup Pager
  */
 
+use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserNameUtils;
 use Wikimedia\Rdbms\FakeResultWrapper;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -60,6 +64,9 @@ class ImageListPager extends TablePager {
 	/** @var UserCache */
 	private $userCache;
 
+	/** @var CommentFormatter */
+	private $commentFormatter;
+
 	/**
 	 * The unique sort fields for the sort options for unique paginate
 	 */
@@ -77,6 +84,7 @@ class ImageListPager extends TablePager {
 	 * @param RepoGroup $repoGroup
 	 * @param UserCache $userCache
 	 * @param UserNameUtils $userNameUtils
+	 * @param CommentFormatter $commentFormatter
 	 * @param string $userName
 	 * @param string $search
 	 * @param bool $including
@@ -90,6 +98,7 @@ class ImageListPager extends TablePager {
 		RepoGroup $repoGroup,
 		UserCache $userCache,
 		UserNameUtils $userNameUtils,
+		CommentFormatter $commentFormatter,
 		$userName,
 		$search,
 		$including,
@@ -133,6 +142,7 @@ class ImageListPager extends TablePager {
 		$this->commentStore = $commentStore;
 		$this->localRepo = $repoGroup->getLocalRepo();
 		$this->userCache = $userCache;
+		$this->commentFormatter = $commentFormatter;
 	}
 
 	/**
@@ -150,7 +160,7 @@ class ImageListPager extends TablePager {
 	 * @param string $userName Unescaped user name
 	 */
 	protected function outputUserDoesNotExist( $userName ) {
-		$this->getOutput()->addHtml( Html::warningBox(
+		$this->getOutput()->addHTML( Html::warningBox(
 			$this->getOutput()->msg( 'listfiles-userdoesnotexist', wfEscapeWikiText( $userName ) )->parse(),
 			'mw-userpage-userdoesnotexist'
 		) );
@@ -212,7 +222,6 @@ class ImageListPager extends TablePager {
 		if ( $this->mIncluding ) {
 			return false;
 		}
-		$sortable = array_keys( self::INDEX_FIELDS );
 		/* For reference, the indices we can use for sorting are:
 		 * On the image table: img_actor_timestamp, img_size, img_timestamp
 		 * On oldimage: oi_actor_timestamp, oi_name_timestamp
@@ -230,7 +239,7 @@ class ImageListPager extends TablePager {
 			return $field === 'img_name';
 		}
 
-		return in_array( $field, $sortable );
+		return isset( self::INDEX_FIELDS[$field] );
 	}
 
 	public function getQueryInfo() {
@@ -323,7 +332,7 @@ class ImageListPager extends TablePager {
 		$dbr = $this->getDatabase();
 		$prevTableName = $this->mTableName;
 		$this->mTableName = 'image';
-		list( $tables, $fields, $conds, $fname, $options, $join_conds ) =
+		[ $tables, $fields, $conds, $fname, $options, $join_conds ] =
 			$this->buildQueryInfo( $offset, $limit, $order );
 		$imageRes = $dbr->select( $tables, $fields, $conds, $fname, $options, $join_conds );
 		$this->mTableName = $prevTableName;
@@ -337,13 +346,13 @@ class ImageListPager extends TablePager {
 		# Hacky...
 		$oldIndex = $this->mIndexField;
 		foreach ( $this->mIndexField as &$index ) {
-			if ( substr( $index, 0, 4 ) !== 'img_' ) {
+			if ( !str_starts_with( $index, 'img_' ) ) {
 				throw new MWException( "Expected to be sorting on an image table field" );
 			}
 			$index = 'oi_' . substr( $index, 4 );
 		}
 
-		list( $tables, $fields, $conds, $fname, $options, $join_conds ) =
+		[ $tables, $fields, $conds, $fname, $options, $join_conds ] =
 			$this->buildQueryInfo( $offset, $limit, $order );
 		$oldimageRes = $dbr->select( $tables, $fields, $conds, $fname, $options, $join_conds );
 
@@ -441,7 +450,7 @@ class ImageListPager extends TablePager {
 				$file = $this->localRepo->findFile( $this->getCurrentRow()->img_name, $opt );
 				// If statement for paranoia
 				if ( $file ) {
-					$thumb = $file->transform( [ 'width' => 180, 'height' => 360 ] );
+					$thumb = $file->transform( [ 'width' => 180, 'height' => 360, 'loading' => 'lazy' ] );
 					if ( $thumb ) {
 						return $thumb->toHtml( [ 'desc-link' => true ] );
 					} else {
@@ -507,7 +516,7 @@ class ImageListPager extends TablePager {
 			case 'img_description':
 				$field = $this->mCurrentRow->description_field;
 				$value = $this->commentStore->getComment( $field, $this->mCurrentRow )->text;
-				return Linker::formatComment( $value );
+				return $this->commentFormatter->format( $value );
 			case 'count':
 				return htmlspecialchars( $this->getLanguage()->formatNum( intval( $value ) + 1 ) );
 			case 'top':

@@ -36,17 +36,6 @@ const { defineSupportCode } = require( '@cucumber/cucumber' ),
 		iClickASearchWatchstar,
 		iSeeTheSearchOverlay
 	} = require( './search_steps' ),
-	{
-		iClickTheAddTalkButton,
-		iAddATopic,
-		iSeeTheTalkOverlay,
-		thereShouldBeASaveDiscussionButton,
-		noTopicIsPresent,
-		thereShouldBeAnAddDiscussionButton,
-		thereShouldBeATalkButton,
-		thereShouldBeNoTalkButton,
-		iShouldSeeTheTopicInTheListOfTopics
-	} = require( './talk_steps' ),
 	{ iSeeALinkToAboutPage, iShouldSeeAUserPageLinkInMenu,
 		iClickOnTheMainNavigationButton,
 		iShouldSeeALinkInMenu, iShouldSeeALinkToDisclaimer
@@ -115,18 +104,6 @@ defineSupportCode( function ( { Then, When, Given } ) {
 	When( /I click the notifications overlay close button/, iClickTheNotificationsOverlayCloseButton );
 	Then( /after 1 seconds I should not see the notifications overlay/, iShouldNotSeeTheNotificationsOverlay );
 	Then( /I should see the notifications overlay/, iShouldSeeTheNotificationsOverlay );
-
-	// talk
-	When( /^I click the add talk button$/, iClickTheAddTalkButton );
-	When( /^I add a topic called "(.+)"$/, iAddATopic );
-	Then( /^I see the talk overlay$/, iSeeTheTalkOverlay );
-	Then( /^I should see the talk overlay$/, iSeeTheTalkOverlay );
-	Then( /^there should be a save discussion button$/, thereShouldBeASaveDiscussionButton );
-	Then( /^no topic is present$/, noTopicIsPresent );
-	Then( /^there should be an add discussion button$/, thereShouldBeAnAddDiscussionButton );
-	Then( /^there should be a talk button/, thereShouldBeATalkButton );
-	Then( /^there should be no talk button$/, thereShouldBeNoTalkButton );
-	Then( /^I should see the topic called "(.+)" in the list of topics$/, iShouldSeeTheTopicInTheListOfTopics );
 
 	// user page
 	Given( /^I visit my user page$/, iVisitMyUserPage );

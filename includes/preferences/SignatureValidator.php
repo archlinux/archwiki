@@ -20,11 +20,12 @@
 
 namespace MediaWiki\Preferences;
 
-use Html;
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserIdentity;
 use MessageLocalizer;
 use MultiHttpClient;
@@ -32,7 +33,6 @@ use ParserFactory;
 use ParserOptions;
 use ParsoidVirtualRESTService;
 use SpecialPage;
-use TitleFactory;
 use VirtualRESTServiceClient;
 
 /**
@@ -204,7 +204,7 @@ class SignatureValidator {
 
 	/**
 	 * @param string $signature Signature before PST
-	 * @return string|bool Signature with PST applied, or false if applying PST yields wikitext that
+	 * @return string|false Signature with PST applied, or false if applying PST yields wikitext that
 	 *     would change if PST was applied again
 	 */
 	protected function applyPreSaveTransform( string $signature ) {
@@ -315,7 +315,7 @@ class SignatureValidator {
 		// the "subpage parameter" are not normalized for us.
 		$splinks = $pout->getLinksSpecial();
 		foreach ( $splinks as $dbkey => $unused ) {
-			list( $name, $subpage ) = $this->specialPageFactory->resolveAlias( $dbkey );
+			[ $name, $subpage ] = $this->specialPageFactory->resolveAlias( $dbkey );
 			if ( $name === 'Contributions' && $subpage ) {
 				$userTitle = $this->titleFactory->makeTitleSafe( NS_USER, $subpage );
 				if ( $userTitle && $userTitle->getText() === $username ) {

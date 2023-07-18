@@ -1,7 +1,9 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\Title;
 
 /**
  * @group API

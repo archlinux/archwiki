@@ -6,7 +6,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"ConfigRegistry": {
 		"categorytree": "GlobalVarConfig::newInstance"
@@ -103,14 +103,14 @@
 	},
 	"Hooks": {
 		"MediaWikiServices": "config",
-		"ArticleFromTitle": "default",
 		"SpecialTrackingCategories::preprocess": "default",
 		"SpecialTrackingCategories::generateCatLink": "default",
 		"SkinAfterPortlet": "default",
 		"SkinBuildSidebar": "default",
 		"ParserFirstCallInit": "default",
 		"OutputPageMakeCategoryLinks": "default",
-		"OutputPageParserOutput": "default"
+		"CategoryViewer::doCategoryQuery": "default",
+		"CategoryViewer::generateLink": "default"
 	},
 	"config": {
 		"CategoryTreeMaxChildren": {

@@ -58,8 +58,7 @@
 	"config-env-good": "Miljøet har blitt sjekket.\nDu kan installere MediaWiki.",
 	"config-env-bad": "Miljøet har blitt sjekket.\nDu kan ikke installere MediaWiki.",
 	"config-env-php": "PHP $1 er installert.",
-	"config-unicode-using-intl": "Bruker [https://php.net/manual/en/book.intl.php PHPs intl-utvidelse] for Unicode-normalisering.",
-	"config-unicode-update-warning": "<strong>Advarsel:</strong> Den installerte versjonen av Unicode-normalisereren bruker en eldre versjon av [http://site.icu-project.org/ ICU-prosjektets] bibliotek.\nDu bør [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations oppgradere] om du er bekymret for å bruke Unicode.",
+	"config-env-icu": "ICU $1 er installert (støtter Unicode $2).",
 	"config-no-db": "Fant ingen passende databasedriver! Du må installere en databasedriver for PHP.\nFølgende {{PLURAL:$2|databasetype|databasetyper}} støttes: $1\n\nOm du kompilerte PHP selv, rekonfigurer den med en aktivert databaseklient, for eksempel ved å bruke <code>./configure --with-mysqli</code>.\nOm du installerte PHP fra en Debian- eller Ubuntu-pakke, må du også installere for eksempel <code>php-mysql</code>-pakken.",
 	"config-outdated-sqlite": "<strong>Advarsel:</strong> Du har SQLite $2, som er en eldre versjon enn minimumskravet SQLite $1. SQLite vil ikke være tilgjengelig.",
 	"config-no-fts3": "'''Advarsel''': SQLite er kompilert uten [//sqlite.org/fts3.html FTS3-modulen], søkefunksjoner vil ikke være tilgjengelig på dette bakstykket.",
@@ -85,7 +84,6 @@
 	"config-using-uri": "Bruker server-URL \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "'''Advarsel:''' Din standardmappe for opplastinger <code>$1</code> er sårbar for kjøring av vilkårlige skript.\nSelv om MediaWiki sjekker alle opplastede filer for sikkerhetstrusler er det sterkt anbefalt å [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security lukke denne sikkerhetssårbarheten] før du aktiverer opplastinger.",
 	"config-no-cli-uploads-check": "'''Advarsel:''' Din standard-katalog for opplastinger (<code>$1</code>) er ikke kontrollert for sårbarhet overfor vilkårlig skript-kjøring under CLI-installasjonen.",
-	"config-suhosin-max-value-length": "Suhosin er installert og begrenser GET-parameterlengder til $1 bytes.\nMediaWiki krever at <code>suoshin.get.max_value_length</code> er minst $2. Slå av denne innstillingen eller øk verdien til $3 i <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Adversel:</strong> Systemet ditt ser ut til å være 32-bit-basert, mens dette er [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit not advised].",
 	"config-db-type": "Databasetype:",
 	"config-db-host": "Databasevert:",
@@ -317,6 +315,7 @@
 	"config-screenshot": "skjermbilde",
 	"config-extension-not-found": "Kunne ikke finne registreringsfil for utvidelsen «$1»",
 	"config-extension-dependency": "En avhengighetsfeil inntraff under installering av utvidelsen «$1»: $2",
+	"config-ext-skins-more-info": "mer informasjon",
 	"mainpagetext": "<strong>MediaWiki har blitt installert.</strong>",
 	"mainpagedocfooter": "Sjekk [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents brukerveiledningen] for å få informasjon om hvordan du bruker wiki-programvaren.\n\n==Komme i gang==\n*[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Innstillingsliste]\n*[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ Ofte stilte spørsmål om MediaWiki]\n*[https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ MediaWiki e-postliste]\n*[https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Tilpass MediaWiki for ditt språk]\n*[https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Lær deg å beskytte deg mot spam på wikien din]"
 }

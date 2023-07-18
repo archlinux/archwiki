@@ -4,14 +4,17 @@ const jestFetchMock = require( 'jest-fetch-mock' );
 
 const mockedRequests = !process.env.TEST_LIVE_REQUESTS;
 const configMock = {
-	get: jest.fn().mockImplementation( key => {
+	get: jest.fn().mockImplementation( ( key, fallback = null ) => {
 		if ( key === 'wgScriptPath' ) {
 			return '/w';
 		}
 		if ( key === 'wgScript' ) {
 			return '/w/index.php';
 		}
-		return null;
+		if ( key === 'wgVectorSearchApiUrl' ) {
+			return 'https://en.wikipedia.org/w/rest.php';
+		}
+		return fallback;
 	} ),
 	set: jest.fn()
 };
@@ -66,7 +69,6 @@ describe( 'restApiSearchClient', () => {
 
 		const searchResult = await restSearchClient( configMock ).fetchByTitle(
 			'media',
-			'en.wikipedia.org',
 			2
 		).fetch;
 
@@ -87,7 +89,7 @@ describe( 'restApiSearchClient', () => {
 		if ( mockedRequests ) {
 			expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 			expect( fetchMock ).toHaveBeenCalledWith(
-				'//en.wikipedia.org/w/rest.php/v1/search/title?q=media&limit=2',
+				'https://en.wikipedia.org/w/rest.php/v1/search/title?q=media&limit=2',
 				{ headers: { accept: 'application/json' }, signal: controller.signal }
 			);
 		}
@@ -98,8 +100,7 @@ describe( 'restApiSearchClient', () => {
 		fetchMock.mockOnce( JSON.stringify( restResponse ) );
 
 		const searchResult = await restSearchClient( configMock ).fetchByTitle(
-			'thereIsNothingLikeThis',
-			'en.wikipedia.org'
+			'thereIsNothingLikeThis'
 		).fetch;
 
 		/* eslint-disable-next-line compat/compat */
@@ -111,7 +112,7 @@ describe( 'restApiSearchClient', () => {
 		if ( mockedRequests ) {
 			expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 			expect( fetchMock ).toHaveBeenCalledWith(
-				'//en.wikipedia.org/w/rest.php/v1/search/title?q=thereIsNothingLikeThis&limit=10',
+				'https://en.wikipedia.org/w/rest.php/v1/search/title?q=thereIsNothingLikeThis&limit=10',
 				{ headers: { accept: 'application/json' }, signal: controller.signal }
 			);
 		}
@@ -122,8 +123,7 @@ describe( 'restApiSearchClient', () => {
 			fetchMock.mockRejectOnce( new Error( 'failed' ) );
 
 			await expect( restSearchClient( configMock ).fetchByTitle(
-				'anything',
-				'en.wikipedia.org'
+				'anything'
 			).fetch ).rejects.toThrow( 'failed' );
 		} );
 	}

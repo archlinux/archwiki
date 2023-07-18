@@ -29,9 +29,10 @@ use IuConverter;
 use KkConverter;
 use KuConverter;
 use Language;
+use MediaWiki\StubObject\StubUserLang;
+use ShConverter;
 use ShiConverter;
 use SrConverter;
-use StubUserLang;
 use TgConverter;
 use TlyConverter;
 use TrivialLanguageConverter;
@@ -72,6 +73,9 @@ class LanguageConverterFactory {
 		],
 		'shi' => [
 			'class' => ShiConverter::class,
+		],
+		'sh' => [
+			'class' => ShConverter::class,
 		],
 		'sr' => [
 			'class' => SrConverter::class,
@@ -146,7 +150,7 @@ class LanguageConverterFactory {
 	/**
 	 * Returns Converter instance for given language object
 	 *
-	 * @param Language|StubUserLang $lang
+	 * @param Language|\MediaWiki\StubObject\StubUserLang $lang
 	 * @return ILanguageConverter
 	 */
 	private function instantiateConverter( $lang ): ILanguageConverter {
@@ -197,6 +201,7 @@ class LanguageConverterFactory {
 	 * @deprecated since 1.36 Should use ::isLinkConversionDisabled() instead
 	 */
 	public function isTitleConversionDisabled() {
+		wfDeprecated( __METHOD__, '1.36' );
 		return $this->isTitleConversionDisabled;
 	}
 

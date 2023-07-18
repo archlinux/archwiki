@@ -21,6 +21,9 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Html\Html;
+use MediaWiki\Utils\UrlUtils;
+
 /**
  * Special page to redirect to API help pages, for situations where linking to
  * the api.php endpoint is not wanted.
@@ -28,8 +31,18 @@
  * @ingroup SpecialPage
  */
 class SpecialApiHelp extends UnlistedSpecialPage {
-	public function __construct() {
+
+	/** @var UrlUtils */
+	private $urlUtils;
+
+	/**
+	 * @param UrlUtils $urlUtils
+	 */
+	public function __construct(
+		UrlUtils $urlUtils
+	) {
 		parent::__construct( 'ApiHelp' );
+		$this->urlUtils = $urlUtils;
 	}
 
 	public function execute( $par ) {
@@ -50,13 +63,13 @@ class SpecialApiHelp extends UnlistedSpecialPage {
 		// These are for linking from wikitext, since url parameters are a pain
 		// to do.
 		while ( true ) {
-			if ( substr( $par, 0, 4 ) === 'sub/' ) {
+			if ( str_starts_with( $par, 'sub/' ) ) {
 				$par = substr( $par, 4 );
 				$options['submodules'] = 1;
 				continue;
 			}
 
-			if ( substr( $par, 0, 5 ) === 'rsub/' ) {
+			if ( str_starts_with( $par, 'rsub/' ) ) {
 				$par = substr( $par, 5 );
 				$options['recursivesubmodules'] = 1;
 				continue;
@@ -70,7 +83,7 @@ class SpecialApiHelp extends UnlistedSpecialPage {
 			unset( $options['nolead'], $options['title'] );
 			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable False positive
 			$options['modules'] = $moduleName;
-			$link = wfAppendQuery( wfExpandUrl( wfScript( 'api' ), PROTO_CURRENT ), $options );
+			$link = wfAppendQuery( (string)$this->urlUtils->expand( wfScript( 'api' ), PROTO_CURRENT ), $options );
 			$this->getOutput()->redirect( $link );
 			return;
 		}

@@ -1,16 +1,15 @@
 <?php
-
 /**
- * Value
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Value extends Less_Tree {
 
 	public $type = 'Value';
 	public $value;
 
+	/**
+	 * @param array<Less_Tree> $value
+	 */
 	public function __construct( $value ) {
 		$this->value = $value;
 	}
@@ -20,7 +19,7 @@ class Less_Tree_Value extends Less_Tree {
 	}
 
 	public function compile( $env ) {
-		$ret = array();
+		$ret = [];
 		$i = 0;
 		foreach ( $this->value as $i => $v ) {
 			$ret[] = $v->compile( $env );

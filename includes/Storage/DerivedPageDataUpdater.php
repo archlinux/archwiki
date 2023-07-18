@@ -1,7 +1,5 @@
 <?php
 /**
- * A handle for managing updates for derived page data on edit, import, purge, etc.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -52,6 +50,7 @@ use MediaWiki\Revision\RevisionSlots;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Title\Title;
 use MediaWiki\User\TalkPageNotificationManager;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserNameUtils;
@@ -61,6 +60,7 @@ use MWUnknownContentModelException;
 use ParserCache;
 use ParserOptions;
 use ParserOutput;
+use ParsoidCachePrewarmJob;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -68,7 +68,6 @@ use RefreshSecondaryDataUpdate;
 use RevertedTagUpdateJob;
 use SearchUpdate;
 use SiteStatsUpdate;
-use Title;
 use User;
 use WANObjectCache;
 use Wikimedia\Assert\Assert;
@@ -96,13 +95,12 @@ use WikiPage;
  * require prepareContent or prepareUpdate to have been called first, to initialize the
  * DerivedPageDataUpdater.
  *
- * @see docs/pageupdater.md for more information.
- *
  * MCR migration note: this replaces the relevant methods in WikiPage, and covers the use cases
  * of PreparedEdit.
  *
- * @internal
+ * @see docs/pageupdater.md for more information.
  *
+ * @internal
  * @since 1.32
  * @ingroup Page
  */
@@ -193,7 +191,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		'causeAction' => null,
 		'causeAgent' => null,
 		'editResult' => null,
-		'approved' => false,
+		'approved' => false
 	];
 
 	/**
@@ -396,6 +394,35 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 
 	public function setLogger( LoggerInterface $logger ) {
 		$this->logger = $logger;
+	}
+
+	/**
+	 * Set the cause action and cause agent, for logging and debugging.
+	 * If $causeAction or $causeAgent is null, any previously set value is preserved.
+	 *
+	 * @param ?string $causeAction
+	 * @param ?string $causeAgent
+	 *
+	 * @return void
+	 */
+	public function setCause( ?string $causeAction, ?string $causeAgent ) {
+		if ( $causeAction ) {
+			$this->options['causeAction'] = $causeAction;
+		}
+
+		if ( $causeAgent ) {
+			$this->options['causeAgent'] = $causeAgent;
+		}
+	}
+
+	/**
+	 * @return string[] [ $causeAction, $causeAgent ]
+	 */
+	private function getCause(): array {
+		return [
+			$this->options['causeAction'] ?? 'unknown',
+			$this->options['causeAgent'] ?? 'unknown',
+		];
 	}
 
 	/**
@@ -885,6 +912,8 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		}
 
 		$userPopts = ParserOptions::newFromUserAndLang( $user, $this->contLang );
+		$userPopts->setRenderReason( $this->options['causeAgent'] ?? 'unknown' );
+
 		$this->hookRunner->onArticlePrepareTextForEdit( $wikiPage, $userPopts );
 
 		$this->user = $user;
@@ -990,7 +1019,10 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 
 		$renderHints['generate-html'] = $this->shouldGenerateHTMLOnEdit();
 
-		// NOTE: we want a canonical rendering, so don't pass $this->user or ParserOptions
+		[ $causeAction, ] = $this->getCause();
+		$renderHints['causeAction'] = $causeAction;
+
+			// NOTE: we want a canonical rendering, so don't pass $this->user or ParserOptions
 		// NOTE: the revision is either new or current, so we can bypass audience checks.
 		$this->renderedRevision = $this->revisionRenderer->getRenderedRevision(
 			$this->revision,
@@ -1365,6 +1397,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		if ( $this->renderedRevision ) {
 			$this->renderedRevision->updateRevision( $revision );
 		} else {
+			[ $causeAction, ] = $this->getCause();
 			// NOTE: we want a canonical rendering, so don't pass $this->user or ParserOptions
 			// NOTE: the revision is either new or current, so we can bypass audience checks.
 			$this->renderedRevision = $this->revisionRenderer->getRenderedRevision(
@@ -1374,7 +1407,8 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 				[
 					'use-master' => $this->usePrimary(),
 					'audience' => RevisionRecord::RAW,
-					'known-revision-output' => $options['known-revision-output'] ?? null
+					'known-revision-output' => $options['known-revision-output'] ?? null,
+					'causeAction' => $causeAction
 				]
 			);
 
@@ -1705,6 +1739,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		$this->assertHasRevision( __METHOD__ );
 
 		$userParserOptions = ParserOptions::newFromUser( $this->user );
+
 		// Decide whether to save the final canonical parser output based on the fact that
 		// users are typically redirected to viewing pages right after they edit those pages.
 		// Due to vary-revision-id, getting/saving that output here might require a reparse.
@@ -1758,7 +1793,8 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 	/**
 	 * Do secondary data updates (e.g. updating link tables) or schedule them as deferred updates
 	 *
-	 * MCR note: this method is temporarily exposed via WikiPage::doSecondaryDataUpdates.
+	 * @note This does not update the parser cache. Use doParserCacheUpdate() for that.
+	 * @note Application logic should use Wikipage::doSecondaryDataUpdates instead.
 	 *
 	 * @param array $options
 	 *   - recursive: make the update recursive, i.e. also update pages which transclude the
@@ -1776,8 +1812,7 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		}
 
 		$triggeringUser = $this->options['triggeringUser'] ?? $this->user;
-		$causeAction = $this->options['causeAction'] ?? 'unknown';
-		$causeAgent = $this->options['causeAgent'] ?? 'unknown';
+		[ $causeAction, $causeAgent ] = $this->getCause();
 		if ( isset( $options['known-revision-output'] ) ) {
 			$this->getRenderedRevision()->setRevisionParserOutput( $options['known-revision-output'] );
 		}
@@ -1804,6 +1839,12 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 		}
 	}
 
+	/**
+	 * Causes parser cache entries to be updated.
+	 *
+	 * @note This does not update links tables. Use doSecondaryDataUpdates() for that.
+	 * @note Application logic should use Wikipage::updateParserCache instead.
+	 */
 	public function doParserCacheUpdate() {
 		$this->assertHasRevision( __METHOD__ );
 
@@ -1828,46 +1869,17 @@ class DerivedPageDataUpdater implements IDBAccessObject, LoggerAwareInterface, P
 
 		// If we enable cache warming with parsoid outputs, let's do it at the same
 		// time we're populating the parser cache with pre-generated HTML.
+		// Use OPT_FORCE_PARSE to avoid a useless cache lookup.
 		if ( $this->warmParsoidParserCache ) {
-			$this->doParsoidCacheUpdate();
-		}
-	}
-
-	public function doParsoidCacheUpdate() {
-		$this->assertHasRevision( __METHOD__ );
-
-		$wikiPage = $this->getWikiPage(); // TODO: ParserCache should accept a RevisionRecord instead
-		$rev = $this->getRevision();
-		$parserOpts = $this->getCanonicalParserOptions();
-
-		$mainSlot = $rev->getSlot( SlotRecord::MAIN );
-		if ( !$this->parsoidOutputAccess->supportsContentModel( $mainSlot->getModel() ) ) {
-			$this->logger->debug( __METHOD__ . ': Parsoid does not support content model ' . $mainSlot->getModel() );
-			return;
-		}
-
-		// Make sure that ParsoidOutputAccess recognizes the revision as the current one.
-		Assert::precondition(
-			$wikiPage->getLatest() === $rev->getId(),
-			'The ID of the new revision must match the page\'s current revision ID'
-		);
-
-		$this->logger->debug( __METHOD__ . ': generating Parsoid output' );
-
-		// getParserOutput() will write to ParserCache
-		$status = $this->parsoidOutputAccess->getParserOutput(
-			$wikiPage,
-			$parserOpts,
-			$rev,
-			ParsoidOutputAccess::OPT_FORCE_PARSE
-		);
-
-		if ( !$status->isOK() ) {
-			$this->logger->error( __METHOD__ . ': Parsoid error', [
-				'errors' => $status->getErrors(),
-				'page' => $wikiPage->getTitle()->getPrefixedText(),
-				'rev' => $rev->getId(),
-			] );
+			$cacheWarmingParams = $this->getCause();
+			$cacheWarmingParams['options'] = ParsoidOutputAccess::OPT_FORCE_PARSE;
+			$this->jobQueueGroup->lazyPush(
+				ParsoidCachePrewarmJob::newSpec(
+					$this->revision->getId(),
+					$wikiPage->getId(),
+					$cacheWarmingParams
+				)
+			);
 		}
 	}
 

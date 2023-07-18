@@ -164,6 +164,7 @@ class ApiQueryGadgets extends ApiQueryBase {
 				'shared' => false,
 				'category' => $g->getCategory(),
 				'legacyscripts' => (bool)$g->getLegacyScripts(),
+				'requiresES6' => $g->requiresES6(),
 				'supportsUrlLoad' => $g->supportsUrlLoad(),
 			],
 			'module' => [

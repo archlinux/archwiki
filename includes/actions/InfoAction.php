@@ -23,18 +23,23 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
-use MediaWiki\HookContainer\HookContainer;
-use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Category\Category;
+use MediaWiki\EditPage\TemplatesOnThisPageFormatter;
+use MediaWiki\Html\Html;
 use MediaWiki\Languages\LanguageNameUtils;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
+use MediaWiki\Page\PageProps;
 use MediaWiki\Page\RedirectLookup;
+use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\Permissions\RestrictionStore;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\ILoadBalancer;
 
@@ -48,9 +53,6 @@ class InfoAction extends FormlessAction {
 
 	/** @var Language */
 	private $contentLanguage;
-
-	/** @var HookRunner */
-	private $hookRunner;
 
 	/** @var LanguageNameUtils */
 	private $languageNameUtils;
@@ -95,10 +97,9 @@ class InfoAction extends FormlessAction {
 	private $linksMigration;
 
 	/**
-	 * @param Page $page
+	 * @param Article $article
 	 * @param IContextSource $context
 	 * @param Language $contentLanguage
-	 * @param HookContainer $hookContainer
 	 * @param LanguageNameUtils $languageNameUtils
 	 * @param LinkBatchFactory $linkBatchFactory
 	 * @param LinkRenderer $linkRenderer
@@ -115,10 +116,9 @@ class InfoAction extends FormlessAction {
 	 * @param LinksMigration $linksMigration
 	 */
 	public function __construct(
-		Page $page,
+		Article $article,
 		IContextSource $context,
 		Language $contentLanguage,
-		HookContainer $hookContainer,
 		LanguageNameUtils $languageNameUtils,
 		LinkBatchFactory $linkBatchFactory,
 		LinkRenderer $linkRenderer,
@@ -134,9 +134,8 @@ class InfoAction extends FormlessAction {
 		RestrictionStore $restrictionStore,
 		LinksMigration $linksMigration
 	) {
-		parent::__construct( $page, $context );
+		parent::__construct( $article, $context );
 		$this->contentLanguage = $contentLanguage;
-		$this->hookRunner = new HookRunner( $hookContainer );
 		$this->languageNameUtils = $languageNameUtils;
 		$this->linkBatchFactory = $linkBatchFactory;
 		$this->linkRenderer = $linkRenderer;
@@ -242,7 +241,7 @@ class InfoAction extends FormlessAction {
 		$pageInfo = $this->pageInfo();
 
 		// Allow extensions to add additional information
-		$this->hookRunner->onInfoAction( $this->getContext(), $pageInfo );
+		$this->getHookRunner()->onInfoAction( $this->getContext(), $pageInfo );
 
 		// Render page information
 		foreach ( $pageInfo as $header => $infoTable ) {
@@ -293,15 +292,13 @@ class InfoAction extends FormlessAction {
 	protected function makeHeader( $header, $canonicalId ) {
 		return Html::rawElement(
 			'h2',
-			[ 'id' => Sanitizer::escapeIdForAttribute( $canonicalId ) ],
+			[ 'id' => Sanitizer::escapeIdForAttribute( $header ) ],
 			Html::element(
 				'span',
-				[
-					'class' => 'mw-headline',
-					'id' => Sanitizer::escapeIdForAttribute( $header ),
-				],
-				$header
-			)
+				[ 'id' => Sanitizer::escapeIdForAttribute( $canonicalId ) ],
+				''
+			) .
+			htmlspecialchars( $header )
 		);
 	}
 
@@ -407,6 +404,7 @@ class InfoAction extends FormlessAction {
 		];
 
 		// Page namespace
+		$pageInfo['header-basic'][] = [ $this->msg( 'pageinfo-namespace-id' ), $title->getNamespace() ];
 		$pageNamespace = $title->getNsText();
 		if ( $pageNamespace ) {
 			$pageInfo['header-basic'][] = [ $this->msg( 'pageinfo-namespace' ), $pageNamespace ];
@@ -635,11 +633,9 @@ class InfoAction extends FormlessAction {
 
 			switch ( count( $protections ) ) {
 				case 0:
-					$message = $this->getNamespaceProtectionMessage( $title );
-					if ( $message === null ) {
-						// Allow all users
-						$message = $this->msg( 'protect-default' )->escaped();
-					}
+					$message = $this->getNamespaceProtectionMessage( $title ) ??
+						// Allow all users by default
+						$this->msg( 'protect-default' )->escaped();
 					break;
 
 				case 1:

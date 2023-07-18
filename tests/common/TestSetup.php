@@ -28,11 +28,11 @@ class TestSetup {
 	 * of a Maintenance subclass which then gets called via MW_SETUP_CALLBACK in Setup.php.
 	 */
 	public static function applyInitialConfig() {
-		global $wgMainCacheType, $wgMessageCacheType, $wgParserCacheType, $wgMainWANCache, $wgSessionCacheType;
+		global $wgMainCacheType, $wgMessageCacheType, $wgParserCacheType, $wgSessionCacheType;
 		global $wgMainStash, $wgChronologyProtectorStash;
 		global $wgObjectCaches;
 		global $wgLanguageConverterCacheType, $wgUseDatabaseMessages;
-		global $wgLocaltimezone, $wgLocalTZOffset, $wgLocalisationCacheConf;
+		global $wgLocaltimezone, $wgLocalTZoffset, $wgLocalisationCacheConf;
 		global $wgSearchType;
 		global $wgDevelopmentWarnings;
 		global $wgSessionProviders, $wgSessionPbkdf2Iterations;
@@ -53,7 +53,6 @@ class TestSetup {
 		// See also MediaWikiIntegrationTestCase::run() which mocks CACHE_DB and APC.
 
 		// Disabled per default in MainConfigSchema, override local settings
-		$wgMainWANCache =
 		$wgMainCacheType = CACHE_NONE;
 		// Uses CACHE_ANYTHING per default in MainConfigSchema, use hash instead of db
 		$wgMessageCacheType =
@@ -81,7 +80,7 @@ class TestSetup {
 
 		// Assume UTC for testing purposes
 		$wgLocaltimezone = 'UTC';
-		$wgLocalTZOffset = 0;
+		$wgLocalTZoffset = 0;
 
 		$wgLocalisationCacheConf['class'] = TestLocalisationCache::class;
 		$wgLocalisationCacheConf['storeClass'] = LCStoreNull::class;
@@ -91,13 +90,12 @@ class TestSetup {
 
 		// Generic MediaWiki\Session\SessionManager configuration for tests
 		// We use CookieSessionProvider because things might be expecting
-		// cookies to show up in a FauxRequest somewhere.
+		// cookies to show up in a MediaWiki\Request\FauxRequest somewhere.
 		$wgSessionProviders = [
 			[
 				'class' => MediaWiki\Session\CookieSessionProvider::class,
 				'args' => [ [
 					'priority' => 30,
-					'callUserSetCookiesHook' => true,
 				] ],
 			],
 		];
@@ -136,11 +134,11 @@ class TestSetup {
 		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
 		ini_set( 'xdebug.max_nesting_level', 1000 );
 
-		// Bug T116683 serialize_precision of 100
-		// may break testing against floating point values
-		// treated with PHP's serialize()
+		// Make sure that serialize_precision is set to its default value
+		// so floating-point numbers within serialized or JSON-encoded data
+		// will match the expected string representations (T116683).
 		// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
-		ini_set( 'serialize_precision', 17 );
+		ini_set( 'serialize_precision', -1 );
 	}
 
 	/**

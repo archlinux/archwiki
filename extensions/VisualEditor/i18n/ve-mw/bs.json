@@ -153,7 +153,7 @@
 	"visualeditor-dialog-transclusion-no-template-parameters": "Ovaj šablon nema dokumentiranih parametara i možda je predviđeno da se upotrebljava bez njih.",
 	"visualeditor-dialog-transclusion-param-default": "Predodređeno: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "Primjer: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Dodaj šablon",
+	"visualeditor-dialog-transclusion-param-undocumented": "(nedokumentirani parametar)",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Pronađi šablon",
 	"visualeditor-dialog-transclusion-required-parameter": "Obavezno polje",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Polje je obavezno.",

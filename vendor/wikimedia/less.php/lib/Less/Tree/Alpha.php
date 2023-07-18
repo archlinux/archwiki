@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Alpha
- *
- * @package Less
- * @subpackage tree
+ * @private
  */
 class Less_Tree_Alpha extends Less_Tree {
 	public $value;

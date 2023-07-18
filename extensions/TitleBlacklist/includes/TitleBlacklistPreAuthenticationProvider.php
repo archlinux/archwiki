@@ -10,6 +10,8 @@ use StatusValue;
 use User;
 
 class TitleBlacklistPreAuthenticationProvider extends AbstractPreAuthenticationProvider {
+
+	/** @var bool */
 	protected $blockAutoAccountCreation;
 
 	public function __construct( $params = [] ) {

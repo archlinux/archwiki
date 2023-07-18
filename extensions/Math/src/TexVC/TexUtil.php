@@ -7,6 +7,7 @@ namespace MediaWiki\Extension\Math\TexVC;
 use MWException;
 
 class TexUtil {
+	private static $instance = null;
 	private $allFunctions;
 	private $baseElements;
 
@@ -15,11 +16,13 @@ class TexUtil {
 	 * allFunctions holds the root-level function keys
 	 * other objects are second level elements and hold all functions which are assigned to this second level elements
 	 */
-	public function __construct() {
+	private function __construct() {
 		$jsonContent = $this->getJSON();
 		// dynamically create functions from the content
 		$this->allFunctions = [];
 		$this->baseElements = [];
+		$this->allFunctions["\\begin"] = true;
+		$this->allFunctions["\\end"] = true;
 
 		foreach ( $jsonContent as $key => $value ) {
 			// Adding all basic elements as functions
@@ -37,6 +40,18 @@ class TexUtil {
 			// Adding function to all functions
 			$this->allFunctions[$key] = true;
 		}
+	}
+
+	public static function removeInstance() {
+		self::$instance = null;
+	}
+
+	public static function getInstance() {
+		if ( self::$instance == null ) {
+			self::$instance = new TexUtil();
+		}
+
+		return self::$instance;
 	}
 
 	/**

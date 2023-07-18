@@ -1,7 +1,5 @@
 <?php
 /**
- * Updater for link tracking tables after a page edit.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,12 +17,14 @@
  *
  * @file
  */
+
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStoreRecord;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\LBFactory;
 
 /**
@@ -39,6 +39,7 @@ use Wikimedia\Rdbms\LBFactory;
  * Category changes will be mentioned for revisions at/after the timestamp for this page
  *
  * @since 1.27
+ * @ingroup JobQueue
  */
 class CategoryMembershipChangeJob extends Job {
 	/** @var int|null */
@@ -94,7 +95,7 @@ class CategoryMembershipChangeJob extends Job {
 		}
 
 		// Cut down on the time spent in waitForPrimaryPos() in the critical section
-		$dbr = $lb->getConnectionRef( DB_REPLICA, [ 'recentchanges' ] );
+		$dbr = $lb->getConnectionRef( DB_REPLICA );
 		if ( !$lb->waitForPrimaryPos( $dbr ) ) {
 			$this->setLastError( "Timed out while pre-waiting for replica DB to catch up" );
 			return false;
@@ -152,7 +153,6 @@ class CategoryMembershipChangeJob extends Job {
 
 		// Find revisions to this page made around and after this revision which lack category
 		// notifications in recent changes. This lets jobs pick up were the last one left off.
-		$encCutoff = $dbr->addQuotes( $dbr->timestamp( $cutoffUnix ) );
 		$revisionStore = $services->getRevisionStore();
 		$revQuery = $revisionStore->getQueryInfo();
 		$res = $dbr->select(
@@ -160,8 +160,10 @@ class CategoryMembershipChangeJob extends Job {
 			$revQuery['fields'],
 			[
 				'rev_page' => $page->getId(),
-				"rev_timestamp > $encCutoff" .
-					" OR (rev_timestamp = $encCutoff AND rev_id > $lastRevId)"
+				$dbr->buildComparison( '>', [
+					'rev_timestamp' => $dbr->timestamp( $cutoffUnix ),
+					'rev_id' => $lastRevId,
+				] )
 			],
 			__METHOD__,
 			[ 'ORDER BY' => [ 'rev_timestamp ASC', 'rev_id ASC' ] ],
@@ -206,7 +208,7 @@ class CategoryMembershipChangeJob extends Job {
 
 		// Parse the new revision and get the categories
 		$categoryChanges = $this->getExplicitCategoriesChanges( $page, $newRev, $oldRev );
-		list( $categoryInserts, $categoryDeletes ) = $categoryChanges;
+		[ $categoryInserts, $categoryDeletes ] = $categoryChanges;
 		if ( !$categoryInserts && !$categoryDeletes ) {
 			return; // nothing to do
 		}
@@ -268,6 +270,7 @@ class CategoryMembershipChangeJob extends Job {
 		$services = MediaWikiServices::getInstance();
 		$options = $page->makeParserOptions( 'canonical' );
 		$options->setTimestamp( $parseTimestamp );
+		$options->setRenderReason( 'CategoryMembershipChangeJob' );
 
 		$output = $rev instanceof RevisionStoreRecord && $rev->isCurrent()
 			? $services->getParserCache()->get( $page, $options )
@@ -278,9 +281,10 @@ class CategoryMembershipChangeJob extends Job {
 				->getRevisionParserOutput();
 		}
 
-		// array keys will cast numeric category names to ints
-		// so we need to cast them back to strings to avoid breaking things!
-		return array_map( 'strval', array_keys( $output->getCategories() ) );
+		// array keys will cast numeric category names to ints;
+		// ::getCategoryNames() is careful to cast them back to strings
+		// to avoid breaking things!
+		return $output->getCategoryNames();
 	}
 
 	public function getDeduplicationInfo() {

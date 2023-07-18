@@ -320,7 +320,7 @@
 	"anontalkpagetext": "----\n<em>On ma alaman mangkatai ni angka sipamangke anonim na ndang dope mambahen akun, manang na so mamangke akun.</em>\nAlani i, hami gabe tarpaksa mamangke alamat IP marnomor asa boi manandahonna.\nAlamat IP na songon on dipangke angka na asing. Molo hamu sipanghasea anonim jala manjalo pandapot na so suman dihilala hamu,  [[Special:CreateAccount|mambahen akun]] ma hamuna jala [[Special:UserLogin|masuk log]] asa ndang parroha tompu dohot sipanghasea anonim na asing tu joloan on.",
 	"noarticletext": "Ndang adong siguriton di alaman on saonari. Parhaseang ma [[Special:Search/{{PAGENAME}}|laho mandiori judul ni alaman on]] di alaman na asing, <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} diori log na marpardomuan], manang [{{fullurl:{{FULLPAGENAME}}|action=edit}} laho manompa alaman on]</span>.",
 	"noarticletext-nopermission": "Ndang adong siguriton di alaman on saonari. Parhaseang ma[[Special:Search/{{PAGENAME}}|mandiori goar ni alaman on]] di alaman na asing, manang <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} mangalului angka log na mardomu]</span>, alai ndang diloas hamu laho mambahen alaman on.",
-	"userpage-userdoesnotexist-view": "Na so tarsurat do panghasea \"$1\"",
+	"userpage-userdoesnotexist-view": "Sipanghasea \"$1\" on ndang tarsurat di wiki on.",
 	"clearyourcache": "<strong>Siingoton</strong> Nunga tarsimpan, atik pe porlu manalpuhon tembolok peramban asa boi diidahon parubaanna.\n*<strong>Firefox/Safari:</strong> Tahan <em>Shift</em> di tingki mangeklik</em> <em>Reload</em>, manang pinsit <em>Ctrl-F5</em> manang <em>Ctrl-R</em> (<em>⌘-R</em> di Mac)\n*<strong>Google Chrome:</strong> Pinsit <em>Ctrl-Shift-R</em> (<em>⌘-Shift-R</em> di Mac)\n*<strong>internet Explorer / Edge:</strong> Tahan <em>Ctrl</em> di tingki mangeklik <em>Refresh</em>, manang pinsit <em>Ctrl-F5</em>\n*<strong>Opera:</strong> Pinsit <em>Ctrl-F5</em>",
 	"previewnote": "<strong>Ingot ma holan sada andorang pataridahon do on.</strong>\nParubaan na binahenmu ndang disimpan dope!",
 	"continue-editing": "Laho tu inganan ni panotaan",
@@ -725,7 +725,7 @@
 	"bad_image_list": "Songon on ma rumangna:\n\nHolan daftar (baris na dimulai dohot tanda *) na masuk etongan. Pangait na parjolo di sada-sada baris ikkon do gabe pangait tu berkas na buruk. Pangait na manghihut di nasabaris i dietong do i pulik,ima alaman na patuduhon berkas i.",
 	"metadata": "Metadata",
 	"metadata-help": "Ugasan on marnampunahon angkup ni inpormasi, ra ditambai sian kamera digital manang sian ulaula na asing. Molo nunga dipauneune ugasan on, hatoranganna ra do ndang sintong songon inpormasi sian ugasan naung dipauneune on.",
-	"metadata-fields": "Angka bidang metadata gombar na dipajojor di bagasan tona on naeng dipamasuk di hataridaan ni alaman gombar tingki tabel metadata dipametmet. Data na asing gabe dibunihon songon naung ditontuhon.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Angka bidang metadata gombar na dipajojor di bagasan tona on naeng dipamasuk di hataridaan ni alaman gombar tingki tabel metadata dipametmet. Data na asing gabe dibunihon songon naung ditontuhon.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "sude",
 	"monthsall": "sudena",
 	"imgmultipageprev": "← alaman andorangsona",
@@ -775,5 +775,12 @@
 	"skin-action-protect": "Alaman na di jaga",
 	"skin-action-undelete": "unang sesa",
 	"skin-action-delete": "Bolonghon",
-	"skin-action-move": "Pahusor"
+	"skin-action-move": "Pahusor",
+	"blockedtext-made-by": "Hurungan dipasahat $1",
+	"blockedtext-reason-comment": "Dalian na dilehon ima <em>$1</em>",
+	"blockedtext-start-time": "Mula ni hurungan: $1",
+	"blockedtext-expiration-time": "Ujung ni hurungan: $1",
+	"blockedtext-intended-blockee": "Situjuon ni panghurungan: $1",
+	"blockedtext-contact-blocker-admin": "Boi di uhai hamu $1 manang [[{{MediaWiki:Grouppage-sysop}}|juara bagas]] na asing taringot tu hurungan i.",
+	"blockedtext-include-details-queries": "Padohot ma sude panorangion na di ginjang di sude sungkunsungkun sisungkunonmu."
 }

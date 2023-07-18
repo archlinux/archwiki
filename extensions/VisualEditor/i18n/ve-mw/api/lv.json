@@ -9,7 +9,6 @@
 	"apierror-visualeditor-docserver-http-error": "Kļūda, savienojoties ar Parsoid/RESTBase serveri: $1",
 	"apierror-visualeditor-docserver-http": "Kļūda, savienojoties ar Parsoid/RESTBase serveri (HTTP $1)",
 	"apierror-visualeditor-docserver": "Kļūda, savienojoties ar Parsoid/RESTBase serveri (nav atbildes)",
-	"apierror-visualeditor-latestnotfound": "Nevarēja atrast jaunāko versiju pēc nosaukuma",
 	"apihelp-visualeditor-description": "Atgriež HTML5 kodu lapai no Parsoid servisa.",
 	"apihelp-visualeditor-param-basetimestamp": "Saglabājot uzstādi šo uz labotās versijas laika zīmogu. Tiek izmantots, lai noteiktu labošanas konfliktus.",
 	"apihelp-visualeditor-param-etag": "Nosūtāmais ETag.",

@@ -18,15 +18,16 @@
 			"SRXcraft",
 			"Sherbrooke",
 			"Urhixidur",
+			"Verdy p",
 			"Windes",
 			"Wladek92",
 			"Zcqsc06",
-			"Zetud",
-			"Verdy p"
+			"Zetud"
 		]
 	},
 	"gadgets-desc": "Permet aux utilisateurs de choisir des [[Special:Gadgets|gadgets CSS et Javascripts]] personnalisés dans leurs [[Special:Preferences#mw-prefsection-gadgets|préférences]]",
 	"prefs-gadgets": "Gadgets",
+	"prefs-description-gadgets": "Activer des fonctionnalités supplémentaires pour votre compte.",
 	"gadgets-prefstext": "Ci-dessous apparaît une liste de gadgets que vous pouvez activer pour votre compte.\nIls font appel principalement à JavaScript qui doit donc être activé dans votre navigateur Web pour les faire fonctionner.\nNotez que ces gadgets n’auront aucun effet sur cette page de préférences.\n\nNotez également que ces gadgets spéciaux ne font pas partie du logiciel MediaWiki et qu’ils sont généralement développés et maintenus par les utilisateurs de votre wiki local.\nLes administrateurs d’interface locaux peuvent modifier les [[MediaWiki:Gadgets-definition|définitions]] des gadgets disponibles et les administrateurs locaux peuvent modifier leurs [[Special:Gadgets|descriptions]], où vous pouvez trouver le code source de chaque gadget. Le nombre d’utilisateurs pour chaque gadget sur ce wiki est listé dans les [[Special:GadgetUsage|statistiques d’utilisation des gadgets]].",
 	"gadgets": "Gadgets",
 	"gadgetusage": "Statistiques d’utilisation des gadgets",
@@ -53,6 +54,7 @@
 	"gadgets-not-found": "Gadget « $1 » non trouvé.",
 	"gadgets-export-text": "Pour exporter le gadget $1, cliquez sur le bouton « {{int:gadgets-export-download}} », enregistrez le fichier téléchargé puis allez sur la page « Special:Import » du wiki de destination et téléversez-le. Ajoutez ensuite le texte suivant dans la page « MediaWiki:Gadgets-definition » :\n<pre>$2</pre>\nIl est nécessaire de disposer des droits correspondants sur le wiki de destination (y compris celui de modifier les messages système) et le téléversement de fichiers doit y être activé.",
 	"gadgets-export-download": "Télécharger",
+	"gadgets-requires-es6": "Ce gadget n’est pris en charge que sur les navigateurs dont le moteur JavaScript est compatible avec la spécification ES6 (ECMAScript 6).",
 	"gadgets-validate-notset": "La propriété <code>$1</code> n’est pas définie.",
 	"gadgets-validate-wrongtype": "La propriété <code>$1</code> doit être de type <code>$2</code> plutôt que <code>$3</code>.",
 	"right-gadgets-edit": "Modifier les pages JavaScript et CSS de gadget",

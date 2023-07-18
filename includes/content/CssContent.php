@@ -25,6 +25,8 @@
  * @author Daniel Kinzler
  */
 
+use MediaWiki\Title\Title;
+
 /**
  * Content object for CSS pages.
  *
@@ -34,7 +36,7 @@
 class CssContent extends TextContent {
 
 	/**
-	 * @var bool|Title|null
+	 * @var Title|null|false
 	 */
 	private $redirectTarget = false;
 

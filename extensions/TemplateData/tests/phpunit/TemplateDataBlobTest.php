@@ -609,6 +609,10 @@ class TemplateDataBlobTest extends MediaWikiIntegrationTestCase {
 				'status' => '(templatedata-invalid-type: maps.application.things[0][0], string)'
 			],
 			[
+				'input' => '{ "params": {}, "format": "" }',
+				'status' => '(templatedata-invalid-format: format)'
+			],
+			[
 				'input' => '{
 					"params": {
 						"foo": {}
@@ -1441,7 +1445,10 @@ class TemplateDataBlobTest extends MediaWikiIntegrationTestCase {
 <section class="mw-templatedata-doc-wrap">
 <header><p class="mw-templatedata-doc-desc mw-templatedata-doc-muted">(templatedata-doc-desc-empty)</p></header>
 <table class="wikitable mw-templatedata-doc-params">
-	<caption><p>(templatedata-doc-params)</p></caption>
+	<caption>
+		<mw:edittemplatedata page="Template:Test/doc"></mw:edittemplatedata>
+		<p class="mw-templatedata-caption">(templatedata-doc-params)</p>
+	</caption>
 	<thead><tr><th colspan="2">(templatedata-doc-param-name)</th><th>(templatedata-doc-param-desc)</th><th>(templatedata-doc-param-type)</th><th>(templatedata-doc-param-status)</th></tr></thead>
 	<tbody>
 		<tr>
@@ -1458,7 +1465,10 @@ HTML
 <section class="mw-templatedata-doc-wrap">
 <header><p class="mw-templatedata-doc-desc mw-templatedata-doc-muted">(templatedata-doc-desc-empty)</p></header>
 <table class="wikitable mw-templatedata-doc-params sortable">
-	<caption><p>(templatedata-doc-params)</p></caption>
+	<caption>
+		<mw:edittemplatedata page="Template:Test/doc"></mw:edittemplatedata>
+		<p class="mw-templatedata-caption">(templatedata-doc-params)</p>
+	</caption>
 	<thead><tr><th colspan="2">(templatedata-doc-param-name)</th><th>(templatedata-doc-param-desc)</th><th>(templatedata-doc-param-type)</th><th>(templatedata-doc-param-status)</th></tr></thead>
 	<tbody>
 		<tr>
@@ -1498,7 +1508,10 @@ HTML
 <section class="mw-templatedata-doc-wrap">
 <header><p class="mw-templatedata-doc-desc">Template docs</p></header>
 <table class="wikitable mw-templatedata-doc-params sortable">
-	<caption><p>(templatedata-doc-params)</p></caption>
+	<caption>
+		<mw:edittemplatedata page="Template:Test/doc"></mw:edittemplatedata>
+		<p class="mw-templatedata-caption">(templatedata-doc-params)</p>
+	</caption>
 	<thead><tr><th colspan="2">(templatedata-doc-param-name)</th><th>(templatedata-doc-param-desc)</th><th>(templatedata-doc-param-type)</th><th>(templatedata-doc-param-status)</th></tr></thead>
 	<tbody>
 		<tr>
@@ -1541,8 +1554,9 @@ HTML
 				return new RawMessage( "($key)" );
 			}
 		};
+		$title = Title::newFromText( 'Template:Test/doc' );
 		$formatter = new TemplateDataHtmlFormatter( $localizer );
-		$actual = $formatter->getHtml( $t );
+		$actual = $formatter->getHtml( $t, $title );
 		$linedActual = preg_replace( '/>\s*</', ">\n<", $actual );
 
 		$linedExpected = preg_replace( '/>\s*</', ">\n<", trim( $expected ) );

@@ -434,7 +434,8 @@ ve.ui.MWGalleryDialog.prototype.getSetupProcess = function ( data ) {
 						width: image.getAttribute( 'width' ),
 						captionDocument: this.createCaptionDocument( imageCaptionNode ),
 						tagName: image.getAttribute( 'tagName' ),
-						isError: image.getAttribute( 'isError' )
+						isError: image.getAttribute( 'isError' ),
+						errorText: image.getAttribute( 'errorText' )
 					} );
 				}
 
@@ -679,7 +680,8 @@ ve.ui.MWGalleryDialog.prototype.onRequestImagesSuccess = function ( response ) {
 					width: thumbUrls[ title ].width,
 					thumbUrl: thumbUrls[ title ].thumbUrl,
 					captionDocument: this.createCaptionDocument( null ),
-					isError: false
+					isError: false,
+					errorText: null
 				}, config ) );
 				delete this.selectedFilenames[ title ];
 			}
@@ -792,15 +794,19 @@ ve.ui.MWGalleryDialog.prototype.onHighlightItem = function ( item ) {
 
 	// Populate edit panel
 	var title = mw.Title.newFromText( mw.libs.ve.normalizeParsoidResourceName( item.resource ) );
+	var $link = $( '<a>' )
+		.addClass( 've-ui-mwMediaDialog-description-link' )
+		.attr( 'target', '_blank' )
+		.attr( 'rel', 'noopener' )
+		.text( ve.msg( 'visualeditor-dialog-media-content-description-link' ) );
+
+	// T322704
+	ve.setAttributeSafe( $link[ 0 ], 'href', title.getUrl(), '#' );
+
 	this.filenameFieldset.setLabel(
 		$( '<span>' ).append(
 			$( document.createTextNode( title.getMainText() + ' ' ) ),
-			$( '<a>' )
-				.addClass( 've-ui-mwMediaDialog-description-link' )
-				.attr( 'href', title.getUrl() )
-				.attr( 'target', '_blank' )
-				.attr( 'rel', 'noopener' )
-				.text( ve.msg( 'visualeditor-dialog-media-content-description-link' ) )
+			$link
 		)
 	);
 	this.$highlightedImage
@@ -1025,7 +1031,8 @@ ve.ui.MWGalleryDialog.prototype.insertOrUpdateNode = function () {
 			height: size.height,
 			width: size.width,
 			tagName: galleryItem.tagName,
-			isError: galleryItem.isError
+			isError: galleryItem.isError,
+			errorText: galleryItem.errorText
 		};
 
 		return [

@@ -1,0 +1,25 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lea.fakauvea"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Tali",
+	"discussiontools-replylink": "tali",
+	"discussiontools-replywidget-advanced": "Fakatokatoka",
+	"discussiontools-replywidget-cancel": "Fakafisi",
+	"discussiontools-replywidget-mode-source": "Matapuna",
+	"discussiontools-replywidget-mode-visual": "Sio",
+	"discussiontools-replywidget-placeholder-reply": "Tali kia {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "Sio fakatomu'a",
+	"discussiontools-replywidget-reply": "Tali",
+	"discussiontools-replywidget-summary": "Fakanounou",
+	"discussiontools-replywidget-watchthis": "Tohi te pāsina aeni ki tau [[Special:Watchlist|lisi muli'i]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|tahi|haha'i}} e palalau",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|talamanatu |talamanatu}}",
+	"discussiontools-topicheader-latestcomment": "Talamanatu fakamuli:$1",
+	"discussiontools-topicsubscription-button-subscribe": "Tohi tau higoa",
+	"discussiontools-topicsubscription-button-subscribe-label": "Tohi tau higoa",
+	"discussiontools-topicsubscription-button-unsubscribe": "Molehi tau higoa",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Molehi tau higoa"
+}

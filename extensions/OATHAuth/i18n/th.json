@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Aefgh39622",
+			"Ekminarin",
 			"Patsagorn Y.",
-			"Trisorn Triboon",
-			"Ekminarin"
+			"Trisorn Triboon"
 		]
 	},
 	"oathauth-desc": "จัดหาการรองรับการยืนยันตัวตนโดยใช้รหัสผ่านแบบครั้งเดียวบนพื้นฐานของ HMAC",

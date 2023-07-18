@@ -3,10 +3,12 @@
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageIdentityValue;
+use MediaWiki\Page\PageProps;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentityValue;
 
 /**
@@ -304,7 +306,11 @@ class RecentChangeTest extends MediaWikiIntegrationTestCase {
 			$this->title,
 			$this->user_comment,
 			'a|b|c',
-			7
+			7,
+			'',
+			42,
+			false,
+			true
 		);
 
 		$expected = [
@@ -316,6 +322,9 @@ class RecentChangeTest extends MediaWikiIntegrationTestCase {
 			'rc_logid' => 7,
 			'rc_log_type' => 'test',
 			'rc_log_action' => 'testing',
+			'rc_this_oldid' => 42,
+			'rc_patrolled' => RecentChange::PRC_AUTOPATROLLED,
+			'rc_bot' => 1,
 		];
 
 		$actual = array_intersect_key( $rc->getAttributes(), $expected );
@@ -460,45 +469,27 @@ class RecentChangeTest extends MediaWikiIntegrationTestCase {
 		);
 	}
 
-	public function provideDoMarkPatrolledPermissions() {
-		yield 'auto, no autopatrol' => [
-			'lackingPermissions' => [ 'autopatrol' ],
-			'auto' => true,
-			'expectedError' => 'missing-autopatrol'
-		];
-		yield 'no patrol' => [
-			'lackingPermissions' => [ 'patrol' ],
-			'auto' => false,
-			'expectedError' => 'missing-patrol'
-		];
-	}
-
 	/**
-	 * @dataProvider provideDoMarkPatrolledPermissions
 	 * @covers RecentChange::doMarkPatrolled
 	 */
-	public function testDoMarkPatrolledPermissions(
-		array $lackingPermissions,
-		bool $auto,
-		string $expectError
-	) {
+	public function testDoMarkPatrolledPermissions() {
 		$rc = $this->getDummyEditRecentChange();
 		$performer = $this->mockRegisteredAuthority( static function (
 			string $permission,
 			PageIdentity $page,
 			PermissionStatus $status
-		) use ( $lackingPermissions ) {
-			if ( in_array( $permission, $lackingPermissions ) ) {
-				$status->fatal( "missing-$permission" );
+		) {
+			if ( $permission === 'patrol' ) {
+				$status->fatal( 'missing-patrol' );
 				return false;
 			}
 			return true;
 		} );
 		$errors = $rc->doMarkPatrolled(
 			$performer,
-			$auto
+			false
 		);
-		$this->assertContains( [ $expectError ], $errors );
+		$this->assertContains( [ 'missing-patrol' ], $errors );
 	}
 
 	/**
@@ -542,7 +533,7 @@ class RecentChangeTest extends MediaWikiIntegrationTestCase {
 		$errors = $rc->doMarkPatrolled(
 			$this->mockUserAuthorityWithPermissions( $this->user, [ 'patrol', 'autopatrol' ] )
 		);
-		$this->assertEmpty( $errors );
+		$this->assertSame( [], $errors );
 
 		$reloadedRC = RecentChange::newFromId( $rc->getAttribute( 'rc_id' ) );
 		$this->assertSame( '1', $reloadedRC->getAttribute( 'rc_patrolled' ) );

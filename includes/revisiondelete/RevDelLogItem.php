@@ -19,8 +19,9 @@
  * @ingroup RevisionDelete
  */
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 
 /**
  * Item class for a logging table row
@@ -129,19 +130,13 @@ class RevDelLogItem extends RevDelItem {
 		// User links and action text
 		$action = $formatter->getActionText();
 
-		$commentRaw = $this->commentStore->getComment( 'log_comment', $this->row )->text;
-		$commentFormatter = MediaWikiServices::getInstance()->getCommentFormatter();
-		$dirMark = $this->list->getLanguage()->getDirMark();
-		$comment = $dirMark . $commentFormatter->formatBlock( $commentRaw );
-
-		if ( LogEventsList::isDeleted( $this->row, LogPage::DELETED_COMMENT ) ) {
-			$comment = '<span class="history-deleted">' . $comment . '</span>';
-		}
+		$comment = $this->list->getLanguage()->getDirMark() .
+			$formatter->getComment();
 
 		$content = "$loglink $date $action $comment";
 		$attribs = [];
 		if ( $this->row->ts_tags ) {
-			list( $tagSummary, $classes ) = ChangeTags::formatSummaryRow(
+			[ $tagSummary, $classes ] = ChangeTags::formatSummaryRow(
 				$this->row->ts_tags,
 				'revisiondelete',
 				$this->list->getContext()

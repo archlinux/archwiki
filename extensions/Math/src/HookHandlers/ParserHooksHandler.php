@@ -76,6 +76,9 @@ class ParserHooksHandler implements
 		$renderer = $this->rendererFactory->getRenderer( $content ?? '', $attributes, $mode );
 
 		$parser->getOutput()->addModuleStyles( [ 'ext.math.styles' ] );
+		if ( array_key_exists( "qid", $attributes ) ) {
+			$parser->getOutput()->addModules( [ 'ext.math.popup' ] );
+		}
 		if ( $mode == MathConfig::MODE_MATHML ) {
 			$parser->getOutput()->addModules( [ 'ext.math.scripts' ] );
 			$marker = Parser::MARKER_PREFIX .
@@ -147,9 +150,7 @@ class ParserHooksHandler implements
 	 */
 	public function onParserAfterTidy( $parser, &$text ) {
 		global $wgMathoidCli;
-		$renderers = array_map( static function ( $tag ) {
-			return $tag[0];
-		}, $this->mathLazyRenderBatch );
+		$renderers = array_column( $this->mathLazyRenderBatch, 0 );
 		if ( $wgMathoidCli ) {
 			MathMathMLCli::batchEvaluate( $renderers );
 		} else {

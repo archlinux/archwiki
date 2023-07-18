@@ -67,7 +67,6 @@
 	"math_unknown_function": "funcție „$1” necunoscută",
 	"mw_math_latexml": "LaTeXML (experimental; folosește MathML)",
 	"mw_math_mathml": "MathML cu fallback pe SVG sau PNG (recomandat pentru browserele moderne și uneltele de accesibilitate)",
-	"mw_math_png": "Imagini PNG",
 	"mw_math_source": "Sursa LaTeX (pentru browserele în mod text)",
 	"prefs-math": "Aspect formule",
 	"datatypes-type-math": "Expresie matematică",

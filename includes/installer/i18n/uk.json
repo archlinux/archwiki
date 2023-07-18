@@ -19,9 +19,9 @@
 			"Renamerr",
 			"Vlad5250",
 			"Ата",
+			"Пан Хаунд",
 			"Тест",
-			"아라",
-			"Пан Хаунд"
+			"아라"
 		]
 	},
 	"config-desc": "Інсталятор MediaWiki",
@@ -68,8 +68,6 @@
 	"config-env-good": "Перевірку середовища успішно завершено.\nВи можете встановити MediaWiki.",
 	"config-env-bad": "Було проведено перевірку середовища. Ви не можете встановити MediaWiki.",
 	"config-env-php": "Встановлено версію PHP: $1.",
-	"config-unicode-using-intl": "За допомогою [https://php.net/manual/en/book.intl.php PHP-розширення intl] для нормалізації Юнікоду.",
-	"config-unicode-update-warning": "'''Увага''': Встановлена версія обгортки нормалізації Юнікоду використовує стару версію бібліотеки [http://site.icu-project.org/ проекту ICU].\nВи маєте [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations оновити версію], якщо плануєте повноцінно використовувати Юнікод.",
 	"config-no-db": "Не вдалося знайти потрібний драйвер бази даних! Вам необхідно встановити драйвер бази даних для PHP. Підтримуються {{PLURAL:$2|такий тип|такі типи}} баз даних: $1.\n\nЯкщо ви скомпілювали PHP самостійно, переналаштуйте його з увімкненим клієнтом бази даних, наприклад за допомогою <code>./configure --with-mysqli</code>.\n\nЯкщо установлено PHP з пакетів Debian або Ubuntu, тоді ви також повинні встановити, наприклад, пакунок <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Увага:</strong> у Вас встановлена версія SQLite $2, а це нижче, ніж мінімально необхідна версія $1. SQLite буде недоступним.",
 	"config-no-fts3": "'''Увага''': SQLite зібраний без [//sqlite.org/fts3.html модуля FTS3], функції пошуку не будуть працювати у цій системі.",
@@ -94,7 +92,6 @@
 	"config-using-uri": "Використовується URL сервера \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "'''Увага:''' Ваша типова папка для завантажень <code>$1</code> вразлива до виконання довільних скриптів.\nХоча MediaWiki перевіряє усі завантажені файли на наявність загроз, наполегливо рекомендується [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security закрити дану вразливість] перед тим, як дозволяти завантаження файлів.",
 	"config-no-cli-uploads-check": "'''Увага:''' Ваша типова папка для завантажень (<code>$1</code>) не перевірялась на вразливість до виконання довільних скриптів під час встановлення CLI.",
-	"config-suhosin-max-value-length": "Suhosin встановлено і він обмежує GET-параметр <code>length</code> до $1 {{PLURAL:$1|байт|байта|байт}}.   Для MediaWiki потрібно, щоб значення <code>suhosin.get.max_value_length</code> було хоча б $2. Вимкніть це налаштування, або збільшіть значення у <code>php.ini</code> до $3.",
 	"config-using-32bit": "<strong>Попередження:</strong> схоже, що Ваша система працює з 32-бітними цілими числами. Таке [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit не рекомендується].",
 	"config-db-type": "Тип бази даних:",
 	"config-db-host": "Хост бази даних:",

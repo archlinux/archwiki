@@ -52,9 +52,7 @@
 	"vector-search-loader": "بارگیری پیشنهادهای جستجو",
 	"vector-searchsuggest-containing": "جستجو برای صفحه‌های دارای <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:مقدمه",
-	"vector-toc-heading": "فهرست",
-	"vector-toc-toggle-position-sidebar": "انتقال به نوار کناری",
-	"vector-toc-toggle-position-title": "نهفتن",
+	"vector-toc-label": "فهرست",
 	"vector-toc-beginning": "بخش آغازین",
 	"vector-toc-toggle-button-label": "تغییر وضعیت زیربخش‌های $1",
 	"vector-anon-user-menu-pages": "صفحه‌هایی برای ویرایشگرانی که از سامانه خارج شدند",
@@ -63,8 +61,15 @@
 	"vector-main-menu-tooltip": "منوی اصلی",
 	"vector-toc-menu-tooltip": "فهرست محتوا",
 	"vector-toc-collapsible-button-label": "تغییر وضعیت فهرست محتویات",
-	"vector-article-tools-nav-label": "ابزارها",
 	"vector-site-nav-label": "وبگاه",
+	"vector-main-menu-label": "منوی اصلی",
+	"vector-page-tools-label": "ابزارها",
+	"vector-page-tools-general-label": "عمومی",
+	"vector-page-tools-actions-label": "عمل‌ها",
+	"vector-pin-element-label": "انتقال به نوار کناری",
+	"vector-unpin-element-label": "نهفتن",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|بحث]]",
-	"tooltip-vector-anon-user-menu-title": "گزینه‌های بیشتر"
+	"tooltip-vector-anon-user-menu-title": "گزینه‌های بیشتر",
+	"vector-prefs-limited-width": "فعال‌سازی حالت محدودیت عرض",
+	"vector-prefs-limited-width-help": "فعال‌سازی حالت محدودیت عرض برای بهبود تجربهٔ مطالعه."
 }

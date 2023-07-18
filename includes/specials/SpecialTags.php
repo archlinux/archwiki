@@ -21,6 +21,7 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\MainConfigNames;
 
 /**
@@ -105,7 +106,7 @@ class SpecialTags extends SpecialPage {
 			HTMLForm::factory( 'ooui', $fields, $this->getContext() )
 				->setAction( $this->getPageTitle( 'create' )->getLocalURL() )
 				->setWrapperLegendMsg( 'tags-create-heading' )
-				->setHeaderText( $this->msg( 'tags-create-explanation' )->parseAsBlock() )
+				->setHeaderHtml( $this->msg( 'tags-create-explanation' )->parseAsBlock() )
 				->setSubmitCallback( [ $this, 'processCreateTagForm' ] )
 				->setSubmitTextMsg( 'tags-create-submit' )
 				->show();
@@ -315,7 +316,7 @@ class SpecialTags extends SpecialPage {
 				$out->parseAsInterface( $status->getWikiText() ) .
 				$this->msg( 'tags-create-warnings-below' )->parseAsBlock();
 
-			$form->setHeaderText( $headerText )
+			$form->setHeaderHtml( $headerText )
 				->setSubmitTextMsg( 'htmlform-yes' );
 
 			$out->addBacklinkSubtitle( $this->getPageTitle() );
@@ -380,7 +381,7 @@ class SpecialTags extends SpecialPage {
 			} )
 			->setSubmitTextMsg( 'tags-delete-submit' )
 			->setSubmitDestructive()
-			->addPreText( $preText )
+			->addPreHtml( $preText )
 			->show();
 	}
 
@@ -434,7 +435,7 @@ class SpecialTags extends SpecialPage {
 			} )
 			// tags-activate-submit, tags-deactivate-submit
 			->setSubmitTextMsg( "tags-$actionStr-submit" )
-			->addPreText( $preText )
+			->addPreHtml( $preText )
 			->show();
 	}
 

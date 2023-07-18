@@ -30,6 +30,7 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\SlotRecord;
 use MediaWiki\Settings\SettingsBuilder;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -63,7 +64,7 @@ abstract class DumpIterator extends Maintenance {
 
 		if ( $this->hasOption( 'file' ) ) {
 			$file = $this->getOption( 'file' );
-			$revision = new WikiRevision( $this->getConfig() );
+			$revision = new WikiRevision();
 			$text = file_get_contents( $file );
 			$title = Title::newFromText( rawurldecode( basename( $file, '.txt' ) ) );
 			$revision->setTitle( $title );

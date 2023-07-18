@@ -1,5 +1,7 @@
 <?php
 
+use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Revision\RevisionStore;
@@ -11,9 +13,6 @@ use Wikimedia\Rdbms\ILoadBalancer;
 class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 	/** @var DeletedContribsPager */
 	private $pager;
-
-	/** @var CommentStore */
-	private $commentStore;
 
 	/** @var HookContainer */
 	private $hookContainer;
@@ -27,26 +26,34 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 	/** @var RevisionStore */
 	private $revisionStore;
 
+	/** @var CommentFormatter */
+	private $commentFormatter;
+
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
 	protected function setUp(): void {
 		parent::setUp();
 
 		$services = $this->getServiceContainer();
-		$this->commentStore = $services->getCommentStore();
 		$this->hookContainer = $services->getHookContainer();
 		$this->linkRenderer = $services->getLinkRenderer();
 		$this->loadBalancer = $services->getDBLoadBalancer();
 		$this->revisionStore = $services->getRevisionStore();
+		$this->commentFormatter = $services->getCommentFormatter();
+		$this->linkBatchFactory = $services->getLinkBatchFactory();
 		$this->pager = $this->getDeletedContribsPager();
 	}
 
 	private function getDeletedContribsPager( $target = 'UTSysop', $namespace = 0 ) {
 		return new DeletedContribsPager(
 			RequestContext::getMain(),
-			$this->commentStore,
 			$this->hookContainer,
 			$this->linkRenderer,
 			$this->loadBalancer,
 			$this->revisionStore,
+			$this->commentFormatter,
+			$this->linkBatchFactory,
 			$target,
 			$namespace
 		);
@@ -64,6 +71,9 @@ class DeletedContribsPagerTest extends MediaWikiIntegrationTestCase {
 			$data = [ [ new class() {
 				public $ar_timestamp = 12345;
 				public $testing = 'TESTING';
+				public $ar_namespace = NS_MAIN;
+				public $ar_title = 'Test';
+				public $ar_rev_id = null;
 			} ] ];
 		} );
 		$this->setTemporaryHook( 'DeletedContributionsLineEnding', function ( $pager, &$ret, $row ) {

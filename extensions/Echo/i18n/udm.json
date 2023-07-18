@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"AlnashPiyash2",
+			"Kaganer",
+			"Kotwys",
+			"Wadorgurt"
+		]
+	},
+	"echo-category-title-edit-user-talk": "Вераськон бамме {{PLURAL:$1|тупатэм|тупатэмъёс}}",
+	"tooltip-pt-notifications-alert": "{{GENDER:|Тӥляд}} ивортонъёсты",
+	"notification-inbox-filter-all": "Ваньзэ"
+}

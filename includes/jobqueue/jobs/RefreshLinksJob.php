@@ -1,7 +1,5 @@
 <?php
 /**
- * Job to update link tables for pages
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,8 +16,8 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup JobQueue
  */
+
 use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use MediaWiki\Deferred\LinksUpdate\LinksUpdate;
 use MediaWiki\Logger\LoggerFactory;
@@ -29,9 +27,10 @@ use MediaWiki\Page\PageAssertionException;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionRenderer;
+use MediaWiki\Title\Title;
 
 /**
- * Job to update link tables for pages
+ * Job to update link tables for rerendered wiki pages.
  *
  * This job comes in a few variants:
  *
@@ -78,7 +77,7 @@ class RefreshLinksJob extends Job {
 			// Multiple pages per job make matches unlikely
 			!( isset( $params['pages'] ) && count( $params['pages'] ) != 1 )
 		);
-		$this->params += [ 'causeAction' => 'unknown', 'causeAgent' => 'unknown' ];
+		$this->params += [ 'causeAction' => 'RefreshLinksJob', 'causeAgent' => 'unknown' ];
 		// Tell JobRunner to not automatically wrap run() in a transaction round.
 		// Each runForTitle() call will manage its own rounds in order to run DataUpdates
 		// and to avoid contention as well.
@@ -148,7 +147,7 @@ class RefreshLinksJob extends Job {
 
 		} elseif ( isset( $this->params['pages'] ) ) {
 			// Job to update link tables for a set of titles
-			foreach ( $this->params['pages'] as list( $ns, $dbKey ) ) {
+			foreach ( $this->params['pages'] as [ $ns, $dbKey ] ) {
 				$title = Title::makeTitleSafe( $ns, $dbKey );
 				if ( $title && $title->canExist() ) {
 					$ok = $this->runForTitle( $title ) && $ok;
@@ -185,7 +184,7 @@ class RefreshLinksJob extends Job {
 		if ( !$page->exists() ) {
 			// Probably due to concurrent deletion or renaming of the page
 			$logger = LoggerFactory::getInstance( 'RefreshLinksJob' );
-			$logger->notice(
+			$logger->warning(
 				'The page does not exist. Perhaps it was deleted?',
 				[
 					'page_title' => $this->title->getPrefixedDBkey(),
@@ -203,7 +202,7 @@ class RefreshLinksJob extends Job {
 		// The page ID and latest revision ID will be queried again after the lock
 		// is acquired to bail if they are changed from that of loadPageData() above.
 		// Serialize links updates by page ID so they see each others' changes
-		$dbw = $lbFactory->getMainLB()->getConnectionRef( DB_PRIMARY );
+		$dbw = $lbFactory->getPrimaryDatabase();
 		/** @noinspection PhpUnusedLocalVariableInspection */
 		$scopedLock = LinksUpdate::acquirePageLock( $dbw, $page->getId(), 'job' );
 		if ( $scopedLock === null ) {
@@ -244,6 +243,12 @@ class RefreshLinksJob extends Job {
 		// Execute corresponding DataUpdates immediately
 		$page->doSecondaryDataUpdates( $options );
 		InfoAction::invalidateCache( $page );
+
+		// NOTE: Since 2019 (f588586e) this no longer saves the new ParserOutput to the ParserCache!
+		//       This means the page will have to be rendered on-the-fly when it is next viewed.
+		//       This is to avoid spending limited ParserCache capacity on rarely visited pages.
+		// TODO: Save the ParserOutput to ParserCache by calling WikiPage::updateParserCache()
+		//       for pages that are likely to benefit (T327162).
 
 		// Commit any writes here in case this method is called in a loop.
 		// In that case, the scoped lock will fail to be acquired.
@@ -313,11 +318,12 @@ class RefreshLinksJob extends Job {
 			return $cachedOutput;
 		}
 
+		$causeAction = $this->params['causeAction'] ?? 'RefreshLinksJob';
 		$renderedRevision = $renderer->getRenderedRevision(
 			$revision,
 			$page->makeParserOptions( 'canonical' ),
 			null,
-			[ 'audience' => $revision::RAW ]
+			[ 'audience' => $revision::RAW, 'causeAction' => $causeAction ]
 		);
 
 		$parseTimestamp = wfTimestampNow(); // timestamp that parsing started

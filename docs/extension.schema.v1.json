@@ -791,7 +791,7 @@
 		},
 		"SpecialPages": {
 			"type": "object",
-			"description": "SpecialPages implemented in this extension (mapping of page name to class name or to ObjectFactory spec)"
+			"description": "SpecialPages implemented in this extension (mapping of page name to class name or to ObjectFactory spec, or factory callback)"
 		},
 		"AutoloadNamespaces": {
 			"type": "object",
@@ -1020,12 +1020,16 @@
 							"description": "Path to style files. '{module}' will be replaced with the module's name."
 						},
 						"images": {
-							"type": [ "string", "null" ],
-							"description": "Path to images (optional). '{module}' will be replaced with the module's name."
+							"type": "string",
+							"description": "Path to image definition files. '{module}' will be replaced with the module's name. If the files don't exist, default theme's images will be used instead."
 						}
 					}
 				}
 			}
+		},
+		"SkinCodexThemes": {
+			"type": "object",
+			"description": "Name of the Codex theme to use for each skin, keyed by skin name. Skins not specified here default to the wikimedia-ui theme."
 		},
 		"PasswordPolicy": {
 			"type": "object",
@@ -1041,6 +1045,13 @@
 		"RawHtmlMessages": {
 			"type": "array",
 			"description": "Messages which are rendered as raw HTML",
+			"items": {
+				"type": "string"
+			}
+		},
+		"LateJSConfigVarNames": {
+			"type": "array",
+			"description": "Names of JS config vars (as used in MakeGlobalVariablesScript hook or in ParserOutput::setJsConfigVar) that may be set from the end of the HTML body instead of the HTML head, to improve page load time. In JavaScript, these variables should be accessed via mw.hook('wikipage.content').",
 			"items": {
 				"type": "string"
 			}
@@ -1088,10 +1099,6 @@
 					}
 				}
 			}
-		},
-		"ParserTestFiles": {
-			"type": "array",
-			"description": "DEPRECATED: Parser test suite files to be run by parserTests.php when no specific filename is passed to it"
 		},
 		"SearchMappings": {
 			"type": "object",

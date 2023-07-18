@@ -5,24 +5,27 @@ namespace MediaWiki\Extension\AbuseFilter\Maintenance;
 use LoggedUpdateMaintenance;
 
 // @codeCoverageIgnoreStart
-if ( getenv( 'MW_INSTALL_PATH' ) ) {
-	$IP = getenv( 'MW_INSTALL_PATH' );
-} else {
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
 	$IP = __DIR__ . '/../../..';
 }
 require_once "$IP/maintenance/Maintenance.php";
 // @codeCoverageIgnoreEnd
 
 /**
- * Fix old log entries with log_type = 'abusefilter' where log_params are imploded with '\n'
+ * Fix old rows in logging which hold broken log_params
+ *
+ * Fixes entries with log_type = 'abusefilter' where log_params are imploded with '\n'
  * instead of "\n" (using single quotes), which causes a broken display.
- * This was caused by the addMissingLoggingEntries script creating broken entries, see T208931
- * and T228655.
- * It also fixes a problem which caused addMissingLoggingEntries to insert duplicate rows foreach
- * non-legacy entries
+ *
+ * This was caused by the addMissingLoggingEntries script creating broken entries,
+ * see T208931 and T228655.
+ *
+ * It also fixes a problem which caused addMissingLoggingEntries to insert duplicate rows
+ * foreach non-legacy entries
  *
  * @codeCoverageIgnore
- * No need to cover: old, single-use script.
+ * No need to test old single-use script.
  */
 class FixOldLogEntries extends LoggedUpdateMaintenance {
 	/** @var bool */
@@ -59,8 +62,8 @@ class FixOldLogEntries extends LoggedUpdateMaintenance {
 	 * @return int[] The IDs of the affected rows
 	 */
 	private function deleteDuplicatedRows() {
-		$dbr = wfGetDB( DB_REPLICA, 'vslow' );
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbr = $this->getDB( DB_REPLICA, 'vslow' );
+		$dbw = $this->getDB( DB_PRIMARY );
 		$newFormatLike = $dbr->buildLike( $dbr->anyString(), 'historyId', $dbr->anyString() );
 		$batchSize = $this->getBatchSize();
 		$prevID = 0;
@@ -133,8 +136,8 @@ class FixOldLogEntries extends LoggedUpdateMaintenance {
 	 * @return int[] Affected log_id's
 	 */
 	private function changeNewlineType( array $deleted ) {
-		$dbr = wfGetDB( DB_REPLICA, 'vslow' );
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbr = $this->getDB( DB_REPLICA, 'vslow' );
+		$dbw = $this->getDB( DB_PRIMARY );
 		$batchSize = $this->getBatchSize();
 		$prevID = 1;
 		$curID = $batchSize;
@@ -198,8 +201,8 @@ class FixOldLogEntries extends LoggedUpdateMaintenance {
 	 * @return int[]
 	 */
 	private function updateLoggingFields( array $deleted ) {
-		$dbr = wfGetDB( DB_REPLICA, 'vslow' );
-		$dbw = wfGetDB( DB_PRIMARY );
+		$dbr = $this->getDB( DB_REPLICA, 'vslow' );
+		$dbw = $this->getDB( DB_PRIMARY );
 		$batchSize = $this->getBatchSize();
 		$prevID = 1;
 		$curID = $batchSize;
@@ -249,7 +252,7 @@ class FixOldLogEntries extends LoggedUpdateMaintenance {
 	 */
 	public function doDBUpdates() {
 		$this->dryRun = $this->hasOption( 'dry-run' );
-		$this->loggingRowsCount = (int)wfGetDB( DB_REPLICA )->selectField(
+		$this->loggingRowsCount = (int)$this->getDB( DB_REPLICA )->selectField(
 			'logging',
 			'MAX(log_id)',
 			[],

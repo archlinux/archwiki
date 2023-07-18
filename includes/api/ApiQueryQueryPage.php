@@ -22,6 +22,7 @@
 
 use MediaWiki\MainConfigNames;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -91,7 +92,7 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 	}
 
 	/**
-	 * @param ApiPageSet|null $resultPageSet
+	 * @param ApiPageSet|null $resultPageSet Set when used as a generator, null otherwise
 	 */
 	public function run( $resultPageSet = null ) {
 		$params = $this->extractRequestParams();
@@ -102,20 +103,22 @@ class ApiQueryQueryPage extends ApiQueryGeneratorBase {
 			$this->dieWithError( 'apierror-specialpage-cantexecute' );
 		}
 
-		$r = [ 'name' => $params['page'] ];
-		if ( $qp->isCached() ) {
-			if ( !$qp->isCacheable() ) {
-				$r['disabled'] = true;
-			} else {
-				$r['cached'] = true;
-				$ts = $qp->getCachedTimestamp();
-				if ( $ts ) {
-					$r['cachedtimestamp'] = wfTimestamp( TS_ISO_8601, $ts );
+		if ( $resultPageSet === null ) {
+			$r = [ 'name' => $params['page'] ];
+			if ( $qp->isCached() ) {
+				if ( !$qp->isCacheable() ) {
+					$r['disabled'] = true;
+				} else {
+					$r['cached'] = true;
+					$ts = $qp->getCachedTimestamp();
+					if ( $ts ) {
+						$r['cachedtimestamp'] = wfTimestamp( TS_ISO_8601, $ts );
+					}
+					$r['maxresults'] = $this->getConfig()->get( MainConfigNames::QueryCacheLimit );
 				}
-				$r['maxresults'] = $this->getConfig()->get( MainConfigNames::QueryCacheLimit );
 			}
+			$result->addValue( [ 'query' ], $this->getModuleName(), $r );
 		}
-		$result->addValue( [ 'query' ], $this->getModuleName(), $r );
 
 		if ( $qp->isCached() && !$qp->isCacheable() ) {
 			// Disabled query page, don't run the query

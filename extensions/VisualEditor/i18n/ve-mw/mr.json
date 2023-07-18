@@ -137,7 +137,6 @@
 	"visualeditor-dialog-transclusion-loading": "भारण करीत आहे...",
 	"visualeditor-dialog-transclusion-no-template-description": "या \"$1\" साच्यास स्वतःचे असे वर्णन नाही, पण [[$2|साचा पानावर]] काही माहिती असू शकते.",
 	"visualeditor-dialog-transclusion-param-default": "अविचल: $1",
-	"visualeditor-dialog-transclusion-placeholder": "साचा जोडा",
 	"visualeditor-dialog-transclusion-required-parameter": "आवश्यक क्षेत्र",
 	"visualeditor-dialog-transclusion-required-parameter-description": "क्षेत्र आवश्यक आहे.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "परत जा",

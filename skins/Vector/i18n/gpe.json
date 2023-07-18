@@ -17,5 +17,9 @@
 	"vector-view-history": "View history",
 	"vector-view-view": "Read",
 	"vector-more-actions": "More",
-	"vector-searchsuggest-containing": "Search for pages wey dey contain <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Search for pages wey dey contain <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-beginning": "Dey begin",
+	"vector-page-tools-label": "Tools",
+	"vector-page-tools-general-label": "General",
+	"vector-unpin-element-label": "hide am"
 }

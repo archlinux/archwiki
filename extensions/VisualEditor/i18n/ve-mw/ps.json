@@ -1,12 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Af420",
 			"Ahmed-Najib-Biabani-Ibrahimkhel",
 			"Amjad Khan",
 			"Baloch Khan",
 			"Irus",
-			"عثمان منصور انصاري",
-			"Af420"
+			"عثمان منصور انصاري"
 		]
 	},
 	"tooltip-ca-createsource": "د دې مخ د سرچينې کوډ جوړول",
@@ -103,7 +103,6 @@
 	"visualeditor-dialog-transclusion-expand-options": "خوښنې ښکاره کول",
 	"visualeditor-dialog-transclusion-loading": "رابرسېرېږي...",
 	"visualeditor-dialog-transclusion-param-default": "تلواليز: $1",
-	"visualeditor-dialog-transclusion-placeholder": "يوه کينډۍ ورگډول",
 	"visualeditor-dialog-transclusion-required-parameter": "غوښتلی ډاگی",
 	"visualeditor-dialog-transclusion-required-parameter-description": "دې ډاگي ته اړتيا ده.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "پر شا تلل",

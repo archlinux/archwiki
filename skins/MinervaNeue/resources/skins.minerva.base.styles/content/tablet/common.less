@@ -24,12 +24,40 @@ A file for css that optimises the Minerva skin on larger devices.
 	}
 	// stylelint-enable selector-max-id
 
+	// Defaults for page content language
+	// These will be overriden below when explicit classes are set
+	figure[ typeof~='mw:File/Thumb' ],
+	figure[ typeof~='mw:File/Frame' ] {
+		.mw-content-ltr & {
+			/* @noflip */
+			float: right;
+			/* @noflip */
+			clear: right;
+			/* @noflip */
+			margin-left: 1.4em;
+			/* @noflip */
+			margin-right: 0;
+		}
+
+		.mw-content-rtl & {
+			/* @noflip */
+			float: left;
+			/* @noflip */
+			clear: left;
+			/* @noflip */
+			margin-left: 0;
+			/* @noflip */
+			margin-right: 1.4em;
+		}
+	}
+
 	.content {
 		// Classes added by thumbnails
 		// e.g. [[File:Scholars mate animation.gif|frame|left|"[[Scholar's mate]]"]]
 		// We use @noflip because we still want .tleft to be on the left and
 		// .tright to be on the right in RTL languages.
-		figure,
+		figure[ typeof~='mw:File/Thumb' ],
+		figure[ typeof~='mw:File/Frame' ],
 		.thumb {
 			max-width: @width-breakpoint-tablet - @contentMargin;
 
@@ -40,10 +68,11 @@ A file for css that optimises the Minerva skin on larger devices.
 				/* @noflip */
 				clear: left;
 				/* @noflip */
+				margin-left: 0;
+				/* @noflip */
 				margin-right: 1.4em;
 			}
 
-			&.mw-default-size,
 			&.mw-halign-right,
 			&.tright {
 				/* @noflip */
@@ -52,6 +81,22 @@ A file for css that optimises the Minerva skin on larger devices.
 				clear: right;
 				/* @noflip */
 				margin-left: 1.4em;
+				/* @noflip */
+				margin-right: 0;
+			}
+
+			&.mw-halign-none {
+				float: none;
+				clear: none;
+				margin-left: 0;
+				margin-right: 0;
+			}
+
+			&.mw-halign-center {
+				float: none;
+				clear: none;
+				margin-left: auto;
+				margin-right: auto;
 			}
 		}
 

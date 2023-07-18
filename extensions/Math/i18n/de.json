@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Kghbln",
 			"Metalhead64",
 			"Revolus",
 			"Umherirrender",
-			"Brettchenweber"
+			"Justman10000"
 		]
 	},
 	"math-desc": "Ergänzt das Tag <code>&lt;math&gt;</code> zum Darstellen mathematischer Formeln",
@@ -85,6 +86,7 @@
 	"math_unknown_function": "Unbekannte Funktion „$1“",
 	"mw_math_latexml": "LaTeXML (experimentell; verwendet MathML)",
 	"mw_math_mathml": "SVG (MathML kann über ein Browser-Plugin aktiviert werden)",
+	"mw_math_native": "MathML (experimentell; keine Bilder)",
 	"mw_math_source": "LaTeX-Quelltext (für Textbrowser)",
 	"prefs-math": "Mathematische Formeln",
 	"mathstatus": "Math-Status",

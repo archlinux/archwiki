@@ -5,14 +5,14 @@
 			"Artsiom91",
 			"Chadyka",
 			"Kareyac",
+			"Maksim L.",
 			"Mikalai Udodau",
 			"No Sleep till Krupki",
+			"Plaga med",
 			"Tomato Cream",
 			"Yury Tarasievich",
 			"Дзяніс Тутэйшы",
-			"Хомелка",
-			"Maksim L.",
-			"Plaga med"
+			"Хомелка"
 		]
 	},
 	"vector-skin-desc": "Забяспечвае 2 вокладкі Вектар:\n* 2011 — Сучасная версія вокладкі Манабук, з абноўленым відам і шматлікімі зручнымі паляпшэннямі.\n* 2022 — Вектар, створаны ў рамках праекта WMF [[mw:Desktop Improvements]].",
@@ -46,9 +46,7 @@
 	"vector-search-loader": "Загрузка прапаноў пошуку",
 	"vector-searchsuggest-containing": "Шукаць старонкі, якія змяшчаюць <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Даведка",
-	"vector-toc-heading": "Змест",
-	"vector-toc-toggle-position-sidebar": "перанесці да бакавой панэлі",
-	"vector-toc-toggle-position-title": "схаваць",
+	"vector-toc-label": "Змест",
 	"vector-toc-beginning": "Пачатак",
 	"vector-toc-toggle-button-label": "Змяніць стан падраздзелу $1",
 	"vector-anon-user-menu-pages": "Старонкі для ананімных рэдактараў",
@@ -57,8 +55,17 @@
 	"vector-main-menu-tooltip": "Галоўнае меню",
 	"vector-toc-menu-tooltip": "Змест",
 	"vector-toc-collapsible-button-label": "Пераключыць змест",
-	"vector-article-tools-nav-label": "Інструменты",
 	"vector-site-nav-label": "Праект",
+	"vector-main-menu-label": "Галоўнае меню",
+	"vector-limited-width-toggle": "Пераключыць абмежаваную шырыню зместу",
+	"vector-page-tools-label": "Інструменты",
+	"vector-page-tools-general-label": "Агульныя",
+	"vector-page-tools-actions-label": "Дзеянні",
+	"vector-pin-element-label": "перанесці да бакавой панэлі",
+	"vector-unpin-element-label": "схаваць",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Размова]]",
-	"tooltip-vector-anon-user-menu-title": "Больш магчымасцей"
+	"tooltip-vector-anon-user-menu-title": "Больш магчымасцей",
+	"vector-prefs-limited-width": "Уключыць рэжым абмежаванай шырыні",
+	"vector-prefs-limited-width-help": "Уключыце рэжым абмежаванай шырыні для лепшага чытання.",
+	"empty-language-selector-body": "Змест старонкі недаступны на іншых мовах."
 }

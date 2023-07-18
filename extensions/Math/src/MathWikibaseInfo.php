@@ -239,7 +239,7 @@ class MathWikibaseInfo {
 			$output .= Html::openElement( "tr" );
 			$output .= Html::rawElement(
 				"td",
-				[ "style" => "text-align:right;" ],
+				[ "style" => "text-align: center; padding-right: 5px;" ],
 				$part->getFormattedSymbol()
 			);
 			$output .= Html::element( "td", [ "style" => "text-align:left;" ], $part->getLabel() );

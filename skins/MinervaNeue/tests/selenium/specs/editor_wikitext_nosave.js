@@ -18,7 +18,8 @@ describe( 'Wikitext Editor', () => {
 	} );
 
 	// @smoke
-	it( 'Closing editor (overlay button)', () => {
+	// Skipped on 2022-12-07 because of T313775
+	it.skip( 'Closing editor (overlay button)', () => {
 		iClickTheEditButton();
 		iSeeTheWikitextEditorOverlay();
 		iClickTheOverlayCloseButton();

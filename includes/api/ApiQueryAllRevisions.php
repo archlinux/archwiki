@@ -20,6 +20,7 @@
  * @file
  */
 
+use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\Transform\ContentTransformer;
@@ -28,6 +29,8 @@ use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRoleRegistry;
+use MediaWiki\Title\Title;
+use MediaWiki\User\ActorMigration;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -58,6 +61,7 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param ContentRenderer $contentRenderer
 	 * @param ContentTransformer $contentTransformer
+	 * @param CommentFormatter $commentFormatter
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -69,7 +73,8 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 		ActorMigration $actorMigration,
 		NamespaceInfo $namespaceInfo,
 		ContentRenderer $contentRenderer,
-		ContentTransformer $contentTransformer
+		ContentTransformer $contentTransformer,
+		CommentFormatter $commentFormatter
 	) {
 		parent::__construct(
 			$query,
@@ -80,7 +85,8 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 			$parserFactory,
 			$slotRoleRegistry,
 			$contentRenderer,
-			$contentTransformer
+			$contentTransformer,
+			$commentFormatter
 		);
 		$this->revisionStore = $revisionStore;
 		$this->actorMigration = $actorMigration;
@@ -188,15 +194,12 @@ class ApiQueryAllRevisions extends ApiQueryRevisionsBase {
 		}
 
 		if ( $params['continue'] !== null ) {
-			$op = ( $dir == 'newer' ? '>' : '<' );
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 2 );
-			$ts = $db->addQuotes( $db->timestamp( $cont[0] ) );
-			$rev_id = (int)$cont[1];
-			$this->dieContinueUsageIf( strval( $rev_id ) !== $cont[1] );
-			$this->addWhere( "$tsField $op $ts OR " .
-				"($tsField = $ts AND " .
-				"$idField $op= $rev_id)" );
+			$op = ( $dir == 'newer' ? '>=' : '<=' );
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
+			$this->addWhere( $db->buildComparison( $op, [
+				$tsField => $db->timestamp( $cont[0] ),
+				$idField => $cont[1],
+			] ) );
 		}
 
 		$this->addOption( 'LIMIT', $this->limit + 1 );

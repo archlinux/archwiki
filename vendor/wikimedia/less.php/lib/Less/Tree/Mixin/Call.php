@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @private
+ */
 class Less_Tree_Mixin_Call extends Less_Tree {
 
 	public $selector;
@@ -28,16 +30,16 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 	//}
 
 	public function compile( $env ) {
-		$rules = array();
+		$rules = [];
 		$match = false;
 		$isOneFound = false;
-		$candidates = array();
+		$candidates = [];
 		$defaultUsed = false;
-		$conditionResult = array();
+		$conditionResult = [];
 
-		$args = array();
+		$args = [];
 		foreach ( $this->arguments as $a ) {
-			$args[] = array( 'name' => $a['name'], 'value' => $a['value']->compile( $env ) );
+			$args[] = [ 'name' => $a['name'], 'value' => $a['value']->compile( $env ) ];
 		}
 
 		foreach ( $env->frames as $frame ) {
@@ -68,14 +70,17 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 
 				if ( $mixin->matchArgs( $args, $env ) ) {
 
-					$candidate = array( 'mixin' => $mixin, 'group' => $defNone );
+					$candidate = [ 'mixin' => $mixin, 'group' => $defNone ];
 
 					if ( $mixin instanceof Less_Tree_Ruleset ) {
-
 						for ( $f = 0; $f < 2; $f++ ) {
 							Less_Tree_DefaultFunc::value( $f );
 							$conditionResult[$f] = $mixin->matchCondition( $args, $env );
 						}
+
+						// PhanTypeInvalidDimOffset -- False positive
+						'@phan-var array{0:bool,1:bool} $conditionResult';
+
 						if ( $conditionResult[0] || $conditionResult[1] ) {
 							if ( $conditionResult[0] != $conditionResult[1] ) {
 								$candidate['group'] = $conditionResult[1] ? $defTrue : $defFalse;
@@ -93,7 +98,7 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 
 			Less_Tree_DefaultFunc::reset();
 
-			$count = array( 0, 0, 0 );
+			$count = [ 0, 0, 0 ];
 			for ( $m = 0; $m < count( $candidates ); $m++ ) {
 				$count[ $candidates[$m]['group'] ]++;
 			}
@@ -116,7 +121,7 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 					try{
 						$mixin = $candidates[$m]['mixin'];
 						if ( !( $mixin instanceof Less_Tree_Mixin_Definition ) ) {
-							$mixin = new Less_Tree_Mixin_Definition( '', array(), $mixin->rules, null, false );
+							$mixin = new Less_Tree_Mixin_Definition( '', [], $mixin->rules, null, false );
 							$mixin->originalRuleset = $mixins[$m]->originalRuleset;
 						}
 						$rules = array_merge( $rules, $mixin->evalCall( $env, $args, $this->important )->rules );
@@ -137,12 +142,11 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 		}
 
 		if ( $isOneFound ) {
-			throw new Less_Exception_Compiler( 'No matching definition was found for `'.$this->Format( $args ).'`', null, $this->index, $this->currentFileInfo );
+			throw new Less_Exception_Compiler( 'No matching definition was found for `' . $this->Format( $args ) . '`', null, $this->index, $this->currentFileInfo );
 
 		} else {
-			throw new Less_Exception_Compiler( trim( $this->selector->toCSS() ) . " is undefined in ".$this->currentFileInfo['filename'], null, $this->index );
+			throw new Less_Exception_Compiler( trim( $this->selector->toCSS() ) . " is undefined in " . $this->currentFileInfo['filename'], null, $this->index );
 		}
-
 	}
 
 	/**
@@ -150,7 +154,7 @@ class Less_Tree_Mixin_Call extends Less_Tree {
 	 *
 	 */
 	private function Format( $args ) {
-		$message = array();
+		$message = [];
 		if ( $args ) {
 			foreach ( $args as $a ) {
 				$argValue = '';

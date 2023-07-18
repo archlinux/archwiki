@@ -1,9 +1,11 @@
 <?php
 
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 
 /**
  * @group Database
@@ -520,7 +522,7 @@ class LinkerTest extends MediaWikiLangTestCase {
 
 		$this->assertSame( 0, Title::newFromText( $title )->getArticleID() );
 		$pageData = $this->insertPage( $title );
-		$page = WikiPage::factory( $pageData['title'] );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $pageData['title'] );
 
 		$summary = CommentStoreComment::newUnsavedComment( 'Some comment!' );
 		$page->newPageUpdater( $user )
@@ -784,6 +786,72 @@ class LinkerTest extends MediaWikiLangTestCase {
 				true,
 				RevisionRecord::DELETED_COMMENT
 			],
+		];
+	}
+
+	/**
+	 * @covers Linker::specialLink
+	 * @dataProvider provideSpecialLink
+	 */
+	public function testSpecialLink( $expected, $target, $key = null ) {
+		$this->overrideConfigValues( [
+			MainConfigNames::Script => '/w/index.php',
+			MainConfigNames::ArticlePath => '/wiki/$1',
+		] );
+
+		$this->assertEquals( $expected, Linker::specialLink( $target, $key ) );
+	}
+
+	public static function provideSpecialLink() {
+		yield 'Recent Changes' => [
+			'<a href="/wiki/Special:RecentChanges" title="Special:RecentChanges">Recent changes</a>',
+			'Recentchanges'
+		];
+
+		yield 'Recent Changes, only for a given tag' => [
+			'<a href="/w/index.php?title=Special:RecentChanges&amp;tagfilter=blanking" title="Special:RecentChanges">Recent changes</a>',
+			'Recentchanges?tagfilter=blanking'
+		];
+
+		yield 'Contributions' => [
+			'<a href="/wiki/Special:Contributions" title="Special:Contributions">User contributions</a>',
+			'Contributions'
+		];
+
+		yield 'Contributions, custom key' => [
+			'<a href="/wiki/Special:Contributions" title="Special:Contributions">⧼made-up-display-key⧽</a>',
+			'Contributions',
+			'made-up-display-key'
+		];
+
+		yield 'Contributions, targetted' => [
+			'<a href="/wiki/Special:Contributions/JohnDoe" title="Special:Contributions/JohnDoe">User contributions</a>',
+			'Contributions/JohnDoe'
+		];
+
+		yield 'Contributions, targetted, topOnly' => [
+			'<a href="/w/index.php?title=Special:Contributions/JohnDoe&amp;topOnly=1" title="Special:Contributions/JohnDoe">User contributions</a>',
+			'Contributions/JohnDoe?topOnly=1'
+		];
+
+		yield 'Userlogin' => [
+			'<a href="/wiki/Special:UserLogin" title="Special:UserLogin">Log in</a>',
+			'Userlogin',
+			'login'
+		];
+
+		yield 'Userlogin, returnto' => [
+			'<a href="/w/index.php?title=Special:UserLogin&amp;returnto=Main+Page" title="Special:UserLogin">Log in</a>',
+			'Userlogin?returnto=Main+Page',
+			'login'
+		];
+
+		yield 'Userlogin, targetted' => [
+			// Note that this special page doesn't have any support for and doesn't do anything with
+			// the subtitle; this is here as demonstration that Linker doesn't care.
+			'<a href="/wiki/Special:UserLogin/JohnDoe" title="Special:UserLogin/JohnDoe">Log in</a>',
+			'Userlogin/JohnDoe',
+			'login'
 		];
 	}
 }

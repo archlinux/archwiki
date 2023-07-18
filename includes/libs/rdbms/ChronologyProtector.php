@@ -163,6 +163,26 @@ class ChronologyProtector implements LoggerAwareInterface {
 	/** @var float|null */
 	private $wallClockOverride;
 
+	/**
+	 * Whether we are assuming a semi-deterministic clientId.
+	 *
+	 * This is set to true on the majority of requests where a clientId wasn't set
+	 * in a cookie or query param, i.e. when there were no recent writes in this
+	 * browsing session. This is a temporary flag to determine whether and why
+	 * a client might receive a clientId but then not send it back to the server
+	 * on subsequent requests (i.e. due to cross-domain browser restrictions that
+	 * we may have not known about as part of Multi-DC prep in T91820, or due to
+	 * bot frameworks that may be ignoring cookies).
+	 *
+	 * We then use this flag to log a warning in lazyStartup() if there were in
+	 * fact stored positions found under the assumed clientId.
+	 *
+	 * See also: <https://phabricator.wikimedia.org/T314434>
+	 *
+	 * @var bool
+	 */
+	private $hasImplicitClientId = false;
+
 	/** Seconds to store position write index cookies (safely less than POSITION_STORE_TTL) */
 	public const POSITION_COOKIE_TTL = 10;
 	/** Seconds to store replication positions */
@@ -195,11 +215,12 @@ class ChronologyProtector implements LoggerAwareInterface {
 		if ( isset( $client['clientId'] ) ) {
 			$this->clientId = $client['clientId'];
 		} else {
+			$this->hasImplicitClientId = true;
 			$this->clientId = ( $secret != '' )
 				? hash_hmac( 'md5', $client['ip'] . "\n" . $client['agent'], $secret )
 				: md5( $client['ip'] . "\n" . $client['agent'] );
 		}
-		$this->key = $store->makeGlobalKey( __CLASS__, $this->clientId, 'v3' );
+		$this->key = $store->makeGlobalKey( __CLASS__, $this->clientId, 'v4' );
 		$this->waitForPosIndex = $clientPosIndex;
 
 		$this->clientLogInfo = [
@@ -240,7 +261,7 @@ class ChronologyProtector implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Apply client "session consistency" replication position to a new ILoadBalancer
+	 * Yield client "session consistency" replication position for a new ILoadBalancer
 	 *
 	 * If the stash has a previous primary position recorded, this will try to make
 	 * sure that the next query to a replica server of that primary will see changes up
@@ -250,11 +271,11 @@ class ChronologyProtector implements LoggerAwareInterface {
 	 * @internal This method should only be called from LBFactory.
 	 *
 	 * @param ILoadBalancer $lb
-	 * @return void
+	 * @return DBPrimaryPos|null
 	 */
-	public function applySessionReplicationPosition( ILoadBalancer $lb ) {
+	public function yieldSessionPrimaryPos( ILoadBalancer $lb ) {
 		if ( !$this->enabled || !$this->positionWaitsEnabled ) {
-			return;
+			return null;
 		}
 
 		$cluster = $lb->getClusterName();
@@ -263,10 +284,11 @@ class ChronologyProtector implements LoggerAwareInterface {
 		$pos = $this->getStartupSessionPositions()[$primaryName] ?? null;
 		if ( $pos instanceof DBPrimaryPos ) {
 			$this->logger->debug( __METHOD__ . ": $cluster ($primaryName) position is '$pos'" );
-			$lb->waitFor( $pos );
 		} else {
 			$this->logger->debug( __METHOD__ . ": $cluster ($primaryName) has no position" );
 		}
+
+		return $pos;
 	}
 
 	/**
@@ -280,7 +302,7 @@ class ChronologyProtector implements LoggerAwareInterface {
 	 * @param ILoadBalancer $lb
 	 * @return void
 	 */
-	public function stageSessionReplicationPosition( ILoadBalancer $lb ) {
+	public function stageSessionPrimaryPos( ILoadBalancer $lb ) {
 		if ( !$this->enabled || !$lb->hasOrMadeRecentPrimaryChanges( INF ) ) {
 			return;
 		}
@@ -461,6 +483,21 @@ class ChronologyProtector implements LoggerAwareInterface {
 					'indexReached' => $indexReached
 				] + $this->clientLogInfo );
 			}
+		}
+
+		if ( $indexReached && $this->hasImplicitClientId ) {
+				$isWithinPossibleCookieTTL = false;
+				foreach ( $this->startupTimestampsByCluster as $timestamp ) {
+					if ( ( $this->startupTimestamp - $timestamp ) < self::POSITION_COOKIE_TTL ) {
+						$isWithinPossibleCookieTTL = true;
+						break;
+					}
+				}
+				if ( $isWithinPossibleCookieTTL ) {
+					$this->logger->warning( 'found position data under a presumed clientId (T314434)', [
+						'indexReached' => $indexReached
+					] + $this->clientLogInfo );
+				}
 		}
 	}
 

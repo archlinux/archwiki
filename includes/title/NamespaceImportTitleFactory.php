@@ -18,6 +18,9 @@
  * @file
  */
 
+use MediaWiki\Title\Title;
+use MediaWiki\Title\TitleFactory;
+
 /**
  * A class to convert page titles on a foreign wiki (ForeignTitle objects) into
  * page titles on the local wiki (Title objects), placing all pages in a fixed
@@ -41,7 +44,7 @@ class NamespaceImportTitleFactory implements ImportTitleFactory {
 		int $ns
 	) {
 		if ( !$namespaceInfo->exists( $ns ) ) {
-			throw new MWException( "Namespace $ns doesn't exist on this wiki" );
+			throw new InvalidArgumentException( "Namespace $ns doesn't exist on this wiki" );
 		}
 		$this->titleFactory = $titleFactory;
 		$this->ns = $ns;

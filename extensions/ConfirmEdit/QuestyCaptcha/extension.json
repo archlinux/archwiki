@@ -13,11 +13,15 @@
 		]
 	},
 	"AutoloadClasses": {
-		"QuestyCaptcha": "includes/QuestyCaptcha.php"
+		"QuestyCaptcha": "includes/QuestyCaptcha.php",
+		"MediaWiki\\Extension\\ConfirmEdit\\QuestyCaptcha\\QuestyCaptcha": "includes/QuestyCaptcha.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\ConfirmEdit\\QuestyCaptcha\\": "includes/"
 	},
 	"config": {
 		"CaptchaClass": {
-			"value": "QuestyCaptcha"
+			"value": "MediaWiki\\Extension\\ConfirmEdit\\QuestyCaptcha\\QuestyCaptcha"
 		},
 		"CaptchaQuestions": {
 			"value": []

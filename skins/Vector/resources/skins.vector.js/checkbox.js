@@ -90,7 +90,7 @@ function bindToggleOnSpaceEnter( button ) {
 }
 
 /**
- * Improve the interactivity of the sidebar panel by binding checkbox hack enhancements.
+ * Improve the interactivity of the main menu by binding checkbox hack enhancements.
  *
  * @param {HTMLElement|null} checkbox
  * @param {HTMLElement|null} button
@@ -107,25 +107,6 @@ function initMainMenu( checkbox, button, target ) {
 }
 
 /**
- * Improve the interactivity of the collapsed TOC by binding checkbox hack enhancements.
- *
- * @param {HTMLElement|null} checkbox
- * @param {HTMLElement|null} button
- * @param {HTMLElement|null} target
- * @return {void}
- */
-function initCollapsedToc( checkbox, button, target ) {
-	if ( checkbox instanceof HTMLInputElement && button && target ) {
-		checkboxHack.bindToggleOnClick( checkbox, button );
-		checkboxHack.bindDismissOnClickOutside( window, checkbox, button, target );
-		checkboxHack.bindDismissOnClickLink( checkbox, target );
-		bindUpdateAriaExpandedOnInput( checkbox, button );
-		updateAriaExpanded( checkbox, button );
-		bindToggleOnSpaceEnter( button );
-	}
-}
-
-/**
  * Initialize main menu and collapsed TOC enhancements.
  *
  * @param {Document} document
@@ -135,12 +116,6 @@ function init( document ) {
 		document.getElementById( 'mw-sidebar-checkbox' ),
 		document.getElementById( 'mw-sidebar-button' ),
 		document.getElementById( 'mw-navigation' )
-	);
-
-	initCollapsedToc(
-		document.getElementById( 'vector-toc-collapsed-checkbox' ),
-		document.getElementById( 'vector-toc-collapsed-button' ),
-		document.getElementById( 'mw-panel-toc' )
 	);
 }
 

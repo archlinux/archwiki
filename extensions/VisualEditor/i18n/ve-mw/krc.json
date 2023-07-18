@@ -105,7 +105,6 @@
 	"visualeditor-dialog-transclusion-loading": "Джюклениу...",
 	"visualeditor-dialog-transclusion-no-template-description": "«$1» шаблонну сиз бу бетге саласыз. Аны алкъын айгъакълауу джокъду, алай а [[$2|шаблонну бети]]нде къаллай болса да иформация болургъа боллукъду.",
 	"visualeditor-dialog-transclusion-param-default": "Тынгылау бла магъанасы: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Шаблон къош",
 	"visualeditor-dialog-transclusion-required-parameter": "Ажымсыз керек къыр",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Къыр ажымсыз керекди.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Артха",

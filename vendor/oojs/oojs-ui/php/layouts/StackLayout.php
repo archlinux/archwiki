@@ -43,28 +43,29 @@ class StackLayout extends PanelLayout {
 	}
 
 	/**
-	 * @param PanelLayout $item
+	 * @param PanelLayout|null $item
 	 */
 	public function setItem( $item ) {
 		if ( $item !== $this->currentItem ) {
 			$items = $this->getItems();
 			$this->updateHiddenState( $items, $item );
+			$this->currentItem = $item;
 		}
 	}
 
 	/**
 	 * @param Element[] $items
-	 * @param PanelLayout $selectedItem
+	 * @param PanelLayout|null $selectedItem
 	 */
-	public function updateHiddenState( $items, $selectedItem ) {
+	private function updateHiddenState( $items, $selectedItem ) {
 		if ( !$this->continuous ) {
-			$items = $this->getItems();
 			foreach ( $items as $item ) {
 				if ( !$selectedItem || $selectedItem !== $item ) {
 					$item->toggle( false );
 					$item->setAttributes( [ 'aria-hidden' => 'true' ] );
 				}
-
+			}
+			if ( $selectedItem ) {
 				$selectedItem->toggle( true );
 				$selectedItem->removeAttributes( [ 'aria-hidden' ] );
 			}

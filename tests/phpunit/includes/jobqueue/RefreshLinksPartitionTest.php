@@ -16,22 +16,25 @@ class RefreshLinksPartitionTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider provider_backlinks
-	 * @covers BacklinkJobUtils::partitionBacklinkJob
+	 * @dataProvider provideBacklinks
+	 * @covers BacklinkJobUtils
 	 */
 	public function testRefreshLinks( $ns, $dbKey, $pages ) {
 		$title = Title::makeTitle( $ns, $dbKey );
 
-		$user = $this->getTestSysop()->getUser();
+		$user = $this->getTestSysop()->getAuthority();
 		foreach ( $pages as [ $bns, $bdbkey ] ) {
-			$bpage = WikiPage::factory( Title::makeTitle( $bns, $bdbkey ) );
-			$content = ContentHandler::makeContent( "[[{$title->getPrefixedText()}]]", $bpage->getTitle() );
-			$bpage->doUserEditContent( $content, $user, "test" );
+			$this->editPage(
+				Title::makeTitle( $bns, $bdbkey ),
+				"[[{$title->getPrefixedText()}]]",
+				'test',
+				NS_MAIN,
+				$user
+			);
 		}
 
 		$backlinkCache = $this->getServiceContainer()->getBacklinkCacheFactory()
 			->getBacklinkCache( $title );
-		$backlinkCache->clear();
 		$this->assertEquals(
 			20,
 			$backlinkCache->getNumLinks( 'pagelinks' ),
@@ -52,7 +55,7 @@ class RefreshLinksPartitionTest extends MediaWikiIntegrationTestCase {
 			'Last job is recursive sub-job' );
 		$this->assertTrue( $jobs[9]->params['recursive'],
 			'Last job is recursive sub-job' );
-		$this->assertTrue( is_array( $jobs[9]->params['range'] ),
+		$this->assertIsArray( $jobs[9]->params['range'],
 			'Last job is recursive sub-job' );
 		$this->assertEquals( $title->getPrefixedText(), $jobs[0]->getTitle()->getPrefixedText(),
 			'Base job title retainend in leaf job' );
@@ -79,7 +82,7 @@ class RefreshLinksPartitionTest extends MediaWikiIntegrationTestCase {
 			'Last job is recursive sub-job' );
 		$this->assertTrue( $jobs2[9]->params['recursive'],
 			'Last job is recursive sub-job' );
-		$this->assertTrue( is_array( $jobs2[9]->params['range'] ),
+		$this->assertIsArray( $jobs2[9]->params['range'],
 			'Last job is recursive sub-job' );
 		$this->assertEquals( $extraParams['rootJobSignature'], $jobs2[0]->params['rootJobSignature'],
 			'Leaf job has root params' );
@@ -104,7 +107,7 @@ class RefreshLinksPartitionTest extends MediaWikiIntegrationTestCase {
 			'Last leaf job has root params' );
 	}
 
-	public static function provider_backlinks() {
+	public static function provideBacklinks() {
 		$pages = [];
 		for ( $i = 0; $i < 20; ++$i ) {
 			$pages[] = [ 0, "Page-$i" ];

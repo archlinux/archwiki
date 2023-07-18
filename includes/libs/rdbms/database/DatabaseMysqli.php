@@ -38,6 +38,7 @@ use Wikimedia\IPUtils;
  */
 class DatabaseMysqli extends DatabaseMysqlBase {
 	protected function doSingleStatementQuery( string $sql ): QueryStatus {
+		// Hide packet warnings caused by things like dropped connections
 		AtEase::suppressWarnings();
 		$res = $this->getBindingHandle()->query( $sql );
 		AtEase::restoreWarnings();
@@ -61,7 +62,10 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		}
 
 		$combinedSql = implode( ";\n", $sqls );
+		// Hide packet warnings caused by things like dropped connections
+		AtEase::suppressWarnings();
 		$conn->multi_query( $combinedSql );
+		AtEase::restoreWarnings();
 
 		reset( $sqls );
 		$done = false;
@@ -137,7 +141,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		} elseif ( substr_count( $server, ':/' ) == 1 ) {
 			// If we have a colon slash instead of a colon and a port number
 			// after the ip or hostname, assume it's the Unix domain socket path
-			list( $realServer, $socket ) = explode( ':', $server, 2 );
+			[ $realServer, $socket ] = explode( ':', $server, 2 );
 		} else {
 			$realServer = $server;
 		}
@@ -171,7 +175,11 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 		} else {
 			$mysqli->options( MYSQLI_SET_CHARSET_NAME, 'binary' );
 		}
-		$mysqli->options( MYSQLI_OPT_CONNECT_TIMEOUT, 3 );
+
+		$mysqli->options( MYSQLI_OPT_CONNECT_TIMEOUT, $this->connectTimeout ?: 3 );
+		if ( $this->receiveTimeout ) {
+			$mysqli->options( MYSQLI_OPT_READ_TIMEOUT, $this->receiveTimeout );
+		}
 
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal socket seems set when used
 		$ok = $mysqli->real_connect( $realServer, $user, $password, $db, $port, $socket, $flags );
@@ -180,9 +188,7 @@ class DatabaseMysqli extends DatabaseMysqlBase {
 	}
 
 	protected function closeConnection() {
-		$conn = $this->getBindingHandle();
-
-		return $conn->close();
+		return ( $this->conn instanceof mysqli ) ? mysqli_close( $this->conn ) : true;
 	}
 
 	public function insertId() {

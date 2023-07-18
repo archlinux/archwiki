@@ -161,9 +161,8 @@ class FileBackendGroup {
 			}
 			$class = $config['class'];
 
-			$config['domainId'] =
-				$config['domainId'] ?? $config['wikiId'] ?? $this->options->get( 'fallbackWikiId' );
-			$config['readOnly'] = $config['readOnly'] ?? $readOnlyReason;
+			$config['domainId'] ??= $config['wikiId'] ?? $this->options->get( 'fallbackWikiId' );
+			$config['readOnly'] ??= $readOnlyReason;
 
 			unset( $config['class'] ); // backend won't need this
 			$this->backends[$name] = [
@@ -252,7 +251,7 @@ class FileBackendGroup {
 	 * @return FileBackend|null Backend or null on failure
 	 */
 	public function backendFromPath( $storagePath ) {
-		list( $backend, , ) = FileBackend::splitStoragePath( $storagePath );
+		[ $backend, , ] = FileBackend::splitStoragePath( $storagePath );
 		if ( $backend !== null && isset( $this->backends[$backend] ) ) {
 			return $this->get( $backend );
 		}

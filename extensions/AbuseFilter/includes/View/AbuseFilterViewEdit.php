@@ -902,14 +902,10 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 				} else {
 					if ( $set && count( $parameters ) === 1 ) {
 						// Only blocktalk available
-						// @phan-suppress-next-line PhanTypeArraySuspiciousNullable $parameters is array here
 						$blockTalk = $parameters[0];
 					}
-					if ( $config->get( 'AbuseFilterAnonBlockDuration' ) ) {
-						$defaultAnonDuration = $config->get( 'AbuseFilterAnonBlockDuration' );
-					} else {
-						$defaultAnonDuration = $config->get( 'AbuseFilterBlockDuration' );
-					}
+					$defaultAnonDuration = $config->get( 'AbuseFilterAnonBlockDuration' ) ??
+						$config->get( 'AbuseFilterBlockDuration' );
 					$defaultUserDuration = $config->get( 'AbuseFilterBlockDuration' );
 				}
 				$suggestedBlocks = SpecialBlock::getSuggestedDurations( null, false );
@@ -1114,7 +1110,8 @@ class AbuseFilterViewEdit extends AbuseFilterView {
 		// and one (or both) of the global variables use different wording
 		// for the same duration. In such case, when setting the default of
 		// the dropdowns it would fail.
-		$anonDuration = self::getAbsoluteBlockDuration( $wgAbuseFilterAnonBlockDuration );
+		$anonDuration = self::getAbsoluteBlockDuration( $wgAbuseFilterAnonBlockDuration ??
+			$wgAbuseFilterBlockDuration );
 		$userDuration = self::getAbsoluteBlockDuration( $wgAbuseFilterBlockDuration );
 		foreach ( $durations as &$duration ) {
 			$currentDuration = self::getAbsoluteBlockDuration( $duration );

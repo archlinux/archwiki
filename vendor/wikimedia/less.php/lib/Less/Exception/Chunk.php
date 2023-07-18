@@ -1,10 +1,6 @@
 <?php
-
 /**
- * Chunk Exception
- *
- * @package Less
- * @subpackage exception
+ * @private
  */
 class Less_Exception_Chunk extends Less_Exception_Parser {
 
@@ -15,13 +11,11 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 	protected $input_len;
 
 	/**
-	 * Constructor
-	 *
 	 * @param string $input
-	 * @param Exception $previous Previous exception
-	 * @param integer $index The current parser index
-	 * @param Less_FileInfo|string $currentFile The file
-	 * @param integer $code The exception code
+	 * @param Exception|null $previous Previous exception
+	 * @param int|null $index The current parser index
+	 * @param array|null $currentFile The file
+	 * @param int $code The exception code
 	 */
 	public function __construct( $input, Exception $previous = null, $index = null, $currentFile = null, $code = 0 ) {
 		$this->message = 'ParseError: Unexpected input'; // default message
@@ -40,7 +34,6 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 	/**
 	 * See less.js chunks()
 	 * We don't actually need the chunks
-	 *
 	 */
 	protected function Chunks() {
 		$level = 0;
@@ -95,7 +88,9 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 					break;
 				// \
 				case 92:
-					if ( $this->parserCurrentIndex < $this->input_len - 1 ) { $this->parserCurrentIndex++; break;
+					if ( $this->parserCurrentIndex < $this->input_len - 1 ) {
+						$this->parserCurrentIndex++;
+						break;
 					}
 					return $this->fail( "unescaped `\\`" );
 
@@ -105,11 +100,12 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 				case 96:
 					$matched = 0;
 					$currentChunkStartIndex = $this->parserCurrentIndex;
-					for ( $this->parserCurrentIndex = $this->parserCurrentIndex + 1; $this->parserCurrentIndex < $this->input_len; $this->parserCurrentIndex++ ) {
+					for ( $this->parserCurrentIndex += 1; $this->parserCurrentIndex < $this->input_len; $this->parserCurrentIndex++ ) {
 						$cc2 = $this->CharCode( $this->parserCurrentIndex );
 						if ( $cc2 > 96 ) { continue;
 						}
-						if ( $cc2 == $cc ) { $matched = 1; break;
+						if ( $cc2 == $cc ) { $matched = 1;
+break;
 						}
 						if ( $cc2 == 92 ) {        // \
 							if ( $this->parserCurrentIndex == $this->input_len - 1 ) {
@@ -129,15 +125,15 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 					$cc2 = $this->CharCode( $this->parserCurrentIndex + 1 );
 					if ( $cc2 == 47 ) {
 						// //, find lnfeed
-						for ( $this->parserCurrentIndex = $this->parserCurrentIndex + 2; $this->parserCurrentIndex < $this->input_len; $this->parserCurrentIndex++ ) {
+						for ( $this->parserCurrentIndex += 2; $this->parserCurrentIndex < $this->input_len; $this->parserCurrentIndex++ ) {
 							$cc2 = $this->CharCode( $this->parserCurrentIndex );
 							if ( ( $cc2 <= 13 ) && ( ( $cc2 == 10 ) || ( $cc2 == 13 ) ) ) { break;
 							}
 						}
-					} else if ( $cc2 == 42 ) {
+					} elseif ( $cc2 == 42 ) {
 						// /*, find */
 						$lastMultiComment = $currentChunkStartIndex = $this->parserCurrentIndex;
-						for ( $this->parserCurrentIndex = $this->parserCurrentIndex + 2; $this->parserCurrentIndex < $this->input_len - 1; $this->parserCurrentIndex++ ) {
+						for ( $this->parserCurrentIndex += 2; $this->parserCurrentIndex < $this->input_len - 1; $this->parserCurrentIndex++ ) {
 							$cc2 = $this->CharCode( $this->parserCurrentIndex );
 							if ( $cc2 == 125 ) { $lastMultiCommentEndBrace = $this->parserCurrentIndex;
 							}
@@ -167,7 +163,7 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 			} else {
 				return $this->fail( "missing closing `}`", $lastOpening );
 			}
-		} else if ( $parenLevel !== 0 ) {
+		} elseif ( $parenLevel !== 0 ) {
 			return $this->fail( "missing closing `)`", $lastParen );
 		}
 
@@ -186,7 +182,7 @@ class Less_Exception_Chunk extends Less_Exception_Parser {
 		} else {
 			$this->index = $index;
 		}
-		$this->message = 'ParseError: '.$msg;
+		$this->message = 'ParseError: ' . $msg;
 	}
 
 	/*

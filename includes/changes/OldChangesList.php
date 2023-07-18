@@ -20,6 +20,7 @@
  * @file
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 
@@ -95,7 +96,7 @@ class OldChangesList extends ChangesList {
 			}
 		// Log entries (old format) or log targets, and special pages
 		} elseif ( $rc->mAttribs['rc_namespace'] == NS_SPECIAL ) {
-			list( $name, $htmlubpage ) = MediaWikiServices::getInstance()->getSpecialPageFactory()->
+			[ $name, $htmlubpage ] = MediaWikiServices::getInstance()->getSpecialPageFactory()->
 				resolveAlias( $rc->mAttribs['rc_title'] );
 			if ( $name == 'Log' ) {
 				$this->insertLog( $html, $rc->getTitle(), $htmlubpage, false );

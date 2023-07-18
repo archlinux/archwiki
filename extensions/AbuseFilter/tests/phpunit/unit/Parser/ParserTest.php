@@ -148,7 +148,7 @@ class ParserTest extends ParserTestCase {
 			AbuseFilterTokenizer::OPERATORS
 		);
 		$operatorRe = '/(' . implode( '|', $quotedOps ) . ')/A';
-		$this->assertEquals( $operatorRe, AbuseFilterTokenizer::OPERATOR_RE );
+		$this->assertEquals( AbuseFilterTokenizer::OPERATOR_RE, $operatorRe );
 	}
 
 	/**

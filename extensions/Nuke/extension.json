@@ -8,7 +8,7 @@
 	"descriptionmsg": "nuke-desc",
 	"license-name": "GPL-2.0-or-later",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {
@@ -58,7 +58,14 @@
 		}
 	},
 	"SpecialPages": {
-		"Nuke": "MediaWiki\\Extension\\Nuke\\SpecialNuke"
+		"Nuke": {
+			"class": "MediaWiki\\Extension\\Nuke\\SpecialNuke",
+			"services": [
+				"JobQueueGroup",
+				"PermissionManager",
+				"RepoGroup"
+			]
+		}
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\Nuke\\": "includes/"

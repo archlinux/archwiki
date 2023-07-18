@@ -169,7 +169,7 @@ class UnboxedExecutor {
 	/**
 	 * Get the environment to be passed through to the subprocess. In CLI mode
 	 * this uses getenv() because that is backwards compatible and relatively
-	 * sane. In the other SAPIs, there's no way to get the real environment
+	 * sensible. In the other SAPIs, there's no way to get the real environment
 	 * short of shell_exec('env'), but it's usually near-empty anyway. We add
 	 * PATH for convenience.
 	 *

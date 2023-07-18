@@ -7,17 +7,19 @@ use HtmlArmor;
 use Language;
 use LinkBatch;
 use LinkCache;
-use Linker;
 use MalformedTitleException;
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Linker\Linker;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Linker\LinkTarget;
+use MediaWiki\Title\Title;
+use MediaWiki\WikiMap\WikiMap;
 use NamespaceInfo;
 use Parser;
 use RepoGroup;
-use Title;
+use StringUtils;
 use TitleParser;
 use TitleValue;
 
@@ -295,7 +297,7 @@ class CommentParser {
 	) {
 		if ( $wikiId !== null && $wikiId !== false && !$target->isExternal() ) {
 			return Linker::makeExternalLink(
-				\WikiMap::getForeignURL(
+				WikiMap::getForeignURL(
 					$wikiId,
 					$target->getNamespace() === 0
 						? $target->getDBkey()
@@ -396,7 +398,7 @@ class CommentParser {
 							$trail = "";
 						}
 						$linkRegexp = '/\[\[(.*?)\]\]' . preg_quote( $trail, '/' ) . '/';
-						list( $inside, $trail ) = Linker::splitTrail( $trail );
+						[ $inside, $trail ] = Linker::splitTrail( $trail );
 
 						$linkText = $text;
 						$linkTarget = Linker::normalizeSubpageLink( $selfLinkTarget, $match[1], $linkText );
@@ -423,7 +425,7 @@ class CommentParser {
 						// @phan-suppress-next-next-line PhanPossiblyUndeclaredVariable linkRegexp set when used
 						// @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal linkRegexp set when used
 						$linkRegexp,
-						$linkMarker,
+						StringUtils::escapeRegexReplacement( $linkMarker ),
 						$comment,
 						1
 					);
@@ -463,7 +465,7 @@ class CommentParser {
 		if ( $wikiId !== null && $wikiId !== false && !$target->isExternal() ) {
 			// Handle links from a foreign wiki ID
 			return Linker::makeExternalLink(
-				\WikiMap::getForeignURL(
+				WikiMap::getForeignURL(
 					$wikiId,
 					$target->getNamespace() === 0
 						? $target->getDBkey()

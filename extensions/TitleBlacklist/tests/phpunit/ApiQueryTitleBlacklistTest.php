@@ -19,7 +19,7 @@ use MediaWiki\Extension\TitleBlacklist\TitleBlacklist;
  */
 class ApiQueryTitleBlacklistTest extends ApiTestCase {
 
-	public function setUp(): void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		TitleBlacklist::destroySingleton();
@@ -31,7 +31,7 @@ class ApiQueryTitleBlacklistTest extends ApiTestCase {
 		] );
 	}
 
-	public function tearDown(): void {
+	protected function tearDown(): void {
 		TitleBlacklist::destroySingleton();
 		parent::tearDown();
 	}

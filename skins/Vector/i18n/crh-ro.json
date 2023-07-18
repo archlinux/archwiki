@@ -14,5 +14,8 @@
 	"vector-view-create": "Yarat",
 	"vector-view-history": "Keşmĭş",
 	"vector-more-actions": "Taa köp",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ĭşergen saypalardı qıdır"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ĭşergen saypalardı qıdır",
+	"vector-page-tools-label": "Aletler",
+	"vector-page-tools-general-label": "Genel",
+	"vector-unpin-element-label": "gĭzle"
 }

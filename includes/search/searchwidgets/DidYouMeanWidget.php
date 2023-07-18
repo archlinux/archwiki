@@ -2,8 +2,8 @@
 
 namespace MediaWiki\Search\SearchWidgets;
 
-use Html;
 use ISearchResultSet;
+use MediaWiki\Html\Html;
 use SpecialSearch;
 
 /**
@@ -75,17 +75,11 @@ class DidYouMeanWidget {
 			$stParams
 		);
 
-		$stParams['search'] = $term;
-		$stParams['runsuggestion'] = 0;
-		$original = $linkRenderer->makeKnownLink(
-			$this->specialSearch->getPageTitle(),
-			$term,
-			[ 'id' => 'mw-search-DYM-original' ],
-			$stParams
-		);
+		$original = $term;
 
 		return $this->specialSearch->msg( 'search-rewritten' )
-			->rawParams( $rewritten, $original )
+			->rawParams( $rewritten )
+			->params( $original )
 			->escaped();
 	}
 

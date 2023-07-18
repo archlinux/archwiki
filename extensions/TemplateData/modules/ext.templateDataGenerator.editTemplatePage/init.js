@@ -22,6 +22,7 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 
 	var pieces = pageName.split( '/' );
 	var isDocPage = pieces.length > 1 && pieces[ pieces.length - 1 ] === docSubpage;
+	var openTDG = new URL( location.href ).searchParams.get( 'templatedata' ) === 'edit';
 
 	config = {
 		pageName: pageName,
@@ -43,6 +44,9 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 		// Prepare the editor
 		var wtTarget = new Target( $textbox, config );
 		$( '.tdg-editscreen-placeholder' ).replaceWith( wtTarget.$element );
+		if ( openTDG ) {
+			wtTarget.onEditOpenDialogButton();
+		}
 	}
 	var veTarget;
 	// Visual editor source mode
@@ -55,6 +59,10 @@ new mw.Api().loadMessages( 'templatedata-doc-subpage', { amlang: mw.config.get( 
 			// Use the same font size as main content text
 			veTarget.$element.addClass( 'mw-body-content' );
 			$( '.ve-init-mw-desktopArticleTarget-originalContent' ).prepend( veTarget.$element );
+
+			if ( openTDG ) {
+				veTarget.onEditOpenDialogButton();
+			}
 		}
 	} );
 	mw.hook( 've.deactivationComplete' ).add( function () {

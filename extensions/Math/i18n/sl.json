@@ -83,6 +83,7 @@
 	"math_unknown_function": "neznana funkcija '$1'",
 	"mw_math_latexml": "LaTeXML (poskusno; uporablja MathML)",
 	"mw_math_mathml": "SVG (MathML lahko omogočite z vtičnikom brskalnika)",
+	"mw_math_native": "MathML (eksperimentalno; brez slik)",
 	"mw_math_source": "Vir LaTeX (za besedilne brskalnike)",
 	"prefs-math": "Prikaz matematičnega besedila",
 	"mathstatus": "Stanje izvedbe izpisa matematičnih formul",

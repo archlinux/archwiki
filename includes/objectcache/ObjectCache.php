@@ -24,6 +24,7 @@
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\WikiMap\WikiMap;
 
 /**
  * Functions to get cache objects
@@ -133,23 +134,21 @@ class ObjectCache {
 	 *  - class: BagOStuff subclass constructed with $params.
 	 *  - loggroup: Alias to set 'logger' key with LoggerFactory group.
 	 *  - .. Other parameters passed to factory or class.
-	 * @param Config|null $conf (Since 1.35)
+	 * @param MediaWikiServices|null $services [internal]
 	 * @return BagOStuff
-	 * @throws InvalidArgumentException
 	 */
-	public static function newFromParams( array $params, Config $conf = null ) {
-		$services = MediaWikiServices::getInstance();
+	public static function newFromParams( array $params, MediaWikiServices $services = null ) {
+		$services ??= MediaWikiServices::getInstance();
+		$conf = $services->getMainConfig();
+
 		// Apply default parameters and resolve the logger instance
 		$params += [
 			'logger' => LoggerFactory::getInstance( $params['loggroup'] ?? 'objectcache' ),
 			'keyspace' => self::getDefaultKeyspace(),
 			'asyncHandler' => [ DeferredUpdates::class, 'addCallableUpdate' ],
 			'reportDupes' => true,
+			'stats' => $services->getStatsdDataFactory(),
 		];
-
-		if ( !isset( $params['stats'] ) ) {
-			$params['stats'] = $services->getStatsdDataFactory();
-		}
 
 		if ( isset( $params['factory'] ) ) {
 			$args = $params['args'] ?? [ $params ];
@@ -164,9 +163,8 @@ class ObjectCache {
 		}
 
 		$class = $params['class'];
-		$conf = $conf ?? $services->getMainConfig();
 
-		// Do config normalization for SqlBagOStuff
+		// Normalization and DI for SqlBagOStuff
 		if ( is_a( $class, SqlBagOStuff::class, true ) ) {
 			if ( isset( $params['globalKeyLB'] ) ) {
 				throw new InvalidArgumentException(
@@ -198,13 +196,25 @@ class ObjectCache {
 			$params += [ 'writeBatchSize' => $conf->get( MainConfigNames::UpdateRowsPerQuery ) ];
 		}
 
-		// Do config normalization for MemcachedBagOStuff
+		// Normalization and DI for MemcachedBagOStuff
 		if ( is_subclass_of( $class, MemcachedBagOStuff::class ) ) {
 			$params += [
 				'servers' => $conf->get( MainConfigNames::MemCachedServers ),
 				'persistent' => $conf->get( MainConfigNames::MemCachedPersistent ),
 				'timeout' => $conf->get( MainConfigNames::MemCachedTimeout ),
 			];
+		}
+
+		// Normalization and DI for MultiWriteBagOStuff
+		if ( is_a( $class, MultiWriteBagOStuff::class, true ) ) {
+			// Phan warns about foreach with non-array because it
+			// thinks any key can be Closure|IBufferingStatsdDataFactory
+			'@phan-var array{caches:array[]} $params';
+			foreach ( $params['caches'] ?? [] as $i => $cacheInfo ) {
+				// Ensure logger, keyspace, asyncHandler, etc are injected just as if
+				// one of these was configured without MultiWriteBagOStuff.
+				$params['caches'][$i] = self::newFromParams( $cacheInfo, $services );
+			}
 		}
 
 		return new $class( $params );
@@ -237,9 +247,14 @@ class ObjectCache {
 			}
 		}
 
-		if ( MediaWikiServices::getInstance()->isServiceDisabled( 'DBLoadBalancer' ) ) {
-			// The LoadBalancer is disabled, probably because
-			// MediaWikiServices::disableStorageBackend was called.
+		$services = MediaWikiServices::getInstance();
+
+		if ( $services->isServiceDisabled( 'DBLoadBalancer' ) ) {
+			// The DBLoadBalancer service is disabled, so we can't use the database!
+			$candidate = CACHE_NONE;
+		} elseif ( $services->isStorageDisabled() ) {
+			// Storage services are disabled because MediaWikiServices::disableStorage()
+			// was called. This is typically the case during installation.
 			$candidate = CACHE_NONE;
 		} else {
 			$candidate = CACHE_DB;
@@ -284,9 +299,7 @@ class ObjectCache {
 	 * @return BagOStuff
 	 */
 	public static function getLocalClusterInstance() {
-		global $wgMainCacheType;
-
-		return self::getInstance( $wgMainCacheType );
+		return MediaWikiServices::getInstance()->get( '_LocalClusterCache' );
 	}
 
 	/**

@@ -13,6 +13,13 @@ class ChemFun2u extends TexNode {
 	/** @var TexNode */
 	private $right;
 
+	/**
+	 * @return string
+	 */
+	public function getFname(): string {
+		return $this->fname;
+	}
+
 	public function __construct( string $fname, TexNode $left, TexNode $right ) {
 		parent::__construct( $fname, $left, $right );
 		$this->fname = $fname;
@@ -20,8 +27,18 @@ class ChemFun2u extends TexNode {
 		$this->right = $right;
 	}
 
-	public function inCurlies() {
-		return $this->render();
+	/**
+	 * @return TexNode
+	 */
+	public function getLeft(): TexNode {
+		return $this->left;
+	}
+
+	/**
+	 * @return TexNode
+	 */
+	public function getRight(): TexNode {
+		return $this->right;
 	}
 
 	public function render() {
@@ -32,7 +49,4 @@ class ChemFun2u extends TexNode {
 		return [];
 	}
 
-	public function name() {
-		return 'CHEM_FUN2u';
-	}
 }

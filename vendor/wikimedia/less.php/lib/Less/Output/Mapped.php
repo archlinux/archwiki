@@ -1,10 +1,8 @@
 <?php
-
 /**
  * Parser output with source map
  *
- * @package Less
- * @subpackage Output
+ * @private
  */
 class Less_Output_Mapped extends Less_Output {
 
@@ -18,14 +16,14 @@ class Less_Output_Mapped extends Less_Output {
 	/**
 	 * Current line
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	protected $lineNumber = 0;
 
 	/**
 	 * Current column
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	protected $column = 0;
 
@@ -34,7 +32,7 @@ class Less_Output_Mapped extends Less_Output {
 	 *
 	 * @var array
 	 */
-	protected $contentsMap = array();
+	protected $contentsMap = [];
 
 	/**
 	 * Constructor
@@ -52,8 +50,8 @@ class Less_Output_Mapped extends Less_Output {
 	 * The $index for less.php may be different from less.js since less.php does not chunkify inputs
 	 *
 	 * @param string $chunk
-	 * @param string $fileInfo
-	 * @param integer $index
+	 * @param array|null $fileInfo
+	 * @param int $index
 	 * @param mixed $mapLines
 	 */
 	public function add( $chunk, $fileInfo = null, $index = 0, $mapLines = null ) {
@@ -62,7 +60,7 @@ class Less_Output_Mapped extends Less_Output {
 			return;
 		}
 
-		$sourceLines = array();
+		$sourceLines = [];
 		$sourceColumns = ' ';
 
 		if ( $fileInfo ) {
@@ -74,7 +72,7 @@ class Less_Output_Mapped extends Less_Output {
 				$sourceLines = explode( "\n", $inputSource );
 				$sourceColumns = end( $sourceLines );
 			} else {
-				throw new Exception( 'Filename '.$url.' not in contentsMap' );
+				throw new Exception( 'Filename ' . $url . ' not in contentsMap' );
 			}
 
 		}

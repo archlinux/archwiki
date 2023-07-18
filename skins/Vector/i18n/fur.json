@@ -20,5 +20,8 @@
 	"vector-view-view": "Lei",
 	"vector-view-viewsource": "Cjale risultive",
 	"vector-more-actions": "Di plui",
-	"vector-searchsuggest-containing": "Cîr pagjinis cun dentri <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Cîr pagjinis cun dentri <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Imprescj",
+	"vector-page-tools-general-label": "Gjenerâl",
+	"vector-unpin-element-label": "plate"
 }

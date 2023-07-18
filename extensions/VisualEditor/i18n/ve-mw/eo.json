@@ -156,7 +156,6 @@
 	"visualeditor-dialog-transclusion-loading": "Ŝarĝanta...",
 	"visualeditor-dialog-transclusion-no-template-description": "La ŝablono \"$1\" ne jam estas priskribita, sed eble estas iom da informo en la [[$2|paĝo de la ŝablono]].",
 	"visualeditor-dialog-transclusion-param-default": "Defaŭlto: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Aldoni ŝablonon",
 	"visualeditor-dialog-transclusion-required-parameter": "Deviga kampo",
 	"visualeditor-dialog-transclusion-required-parameter-description": "La kampo estas deviga.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Reveni",

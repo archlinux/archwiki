@@ -73,20 +73,65 @@ function makeButton( props, text, icon ) {
  * @return {string}
  */
 function makeIcon() {
+	const el = document.createElement( 'div' );
+	const vm = createApp( {
+		render: function () {
+			// @ts-ignore
+			return h( CdxButton, {
+				'aria-label': 'add'
+			}, [
+				h( CdxIcon, { icon: cdxIconAdd } )
+			] );
+		}
+	} );
+	vm.mount( el );
+	const elQuiet = document.createElement( 'div' );
+	const vmQuiet = createApp( {
+		render: function () {
+			// @ts-ignore
+			return h( CdxButton, {
+				type: 'quiet',
+				'aria-label': 'add'
+			}, [
+				h( CdxIcon, { icon: cdxIconAdd } )
+			] );
+		}
+	} );
+	vmQuiet.mount( elQuiet );
 	return `
 	<tr>
 		<td>
+			<h6>Regular icon</h6>
 		${
 	mustache.render( buttonTemplate, {
-		label: 'Normal Icon',
+		label: 'Normal Icon button',
 		icon: 'add'
 	} )
 }
 		</td>
-		<td>N/A</td>
+		<td>
+			<h6>Regular icon</h6>
+		${el.outerHTML}
+		</td>
 	</tr>
 	<tr>
 		<td>
+		<h6>Small icon button</h6>
+		${
+	mustache.render( buttonTemplate, {
+		label: 'Small icon button',
+		class: 'mw-ui-icon-small',
+		icon: 'add'
+	} )
+}
+		</td>
+		<td>
+			<h6>Small icon button</h6>
+			${el.outerHTML}</td>
+	</tr>
+	<tr>
+		<td>
+		<h6>Quiet icon button</h6>
 		${
 	mustache.render( buttonTemplate, {
 		label: 'Quiet Icon',
@@ -95,7 +140,9 @@ function makeIcon() {
 	} )
 }
 		</td>
-		<td>N/A</td>
+		<td>
+		<h6>Quiet icon button</h6>
+		${elQuiet.outerHTML}</td>
 	</tr>`;
 }
 
@@ -105,7 +152,7 @@ function makeIcon() {
  * @return {string}
  */
 function makeButtons( btns ) {
-	return `<table>
+	return `<table class="vector-storybook-example-table">
 	<tbody>
 		<tr>
 			<th>Legacy</th>

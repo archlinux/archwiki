@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Rut"
+		]
+	},
+	"vector-view-history": "Тарих",
+	"vector-more-actions": "Бала",
+	"vector-searchsuggest-containing": "Мид-кид джарбыр ахтармиш <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+}

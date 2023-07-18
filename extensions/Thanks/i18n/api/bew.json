@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bangrapip"
+		]
+	},
+	"apihelp-flowthank-description": "Kirim ma'lumat makasi umum bakal tanggepan Flow.",
+	"apihelp-flowthank-summary": "Kirim ma'lumat makasi umum bakal tanggepan Flow.",
+	"apihelp-flowthank-param-postid": "UUID deri publikasi nyang pèngèn dimakasiin.",
+	"apihelp-flowthank-example-1": "Kirim makasi bakal tanggepan dengen <kbd>UUID xyz789</kbd>",
+	"apihelp-thank-description": "Kirim ma'lumat makasi ke pemermak.",
+	"apihelp-thank-summary": "Kirim ma'lumat makasi ke pemermak.",
+	"apihelp-thank-param-rev": "ID répisi nyang pèngèn dimakasii. Ni atawa 'rekeman' kudu ada.",
+	"apihelp-thank-param-log": "ID rekeman nyang pèngèn dimakasiin. Ni atawa 'rev' kudu ada.",
+	"apihelp-thank-param-source": "Kèteng pèndek nyang ngejabarin sumber rekès, tulad <kbd>diff</kbd> atawa <kbd>history</kbd>.",
+	"apihelp-thank-example-1": "Kirim makasi bakal répisi <kbd>ID 456</kbd>, dengen sumber nyang jadi halaman perbèdaannya"
+}

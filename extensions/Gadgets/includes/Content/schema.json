@@ -53,6 +53,11 @@
 					"description": "Whether this gadget supports ?withgadget query parameter",
 					"type": "boolean",
 					"default": false
+				},
+				"requiresES6": {
+					"description": "Whether this gadget requires ES6",
+					"type": "boolean",
+					"default": false
 				}
 			}
 		},

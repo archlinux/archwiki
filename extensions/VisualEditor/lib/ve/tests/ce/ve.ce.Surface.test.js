@@ -1379,7 +1379,18 @@ QUnit.test( 'beforePaste/afterPaste', function ( assert ) {
 						{ type: 'retain', length: 1 },
 						{
 							type: 'replace',
-							insert: [ 'A', '2', '3', 'B', 'C', 'D', 'E', 'F', 'G', 'H' ],
+							insert: [
+								[ 'A', [ { type: 'textStyle/bold', attributes: { nodeName: 'b' } } ] ],
+								[ '2', [ { type: 'textStyle/bold', attributes: { nodeName: 'b' } } ] ],
+								[ '3', [ { type: 'textStyle/bold', attributes: { nodeName: 'b' } } ] ],
+								[ 'B', [ { type: 'textStyle/italic', attributes: { nodeName: 'i' } } ] ],
+								[ 'C', [ { type: 'textStyle/underline', attributes: { nodeName: 'u' } } ] ],
+								[ 'D', [ { type: 'textStyle/strikethrough', attributes: { nodeName: 's' } } ] ],
+								[ 'E', [ { type: 'textStyle/superscript', attributes: { nodeName: 'sup' } } ] ],
+								[ 'F', [ { type: 'textStyle/subscript', attributes: { nodeName: 'sub' } } ] ],
+								[ 'G', [ { type: 'textStyle/bold', attributes: { nodeName: 'b' } }, { type: 'textStyle/italic', attributes: { nodeName: 'i' } } ] ],
+								'H'
+							],
 							remove: []
 						},
 						{ type: 'retain', length: 29 }
@@ -1387,7 +1398,29 @@ QUnit.test( 'beforePaste/afterPaste', function ( assert ) {
 				],
 				expectedRangeOrSelection: new ve.Range( 11 ),
 				testOriginalDomElements: true,
-				msg: 'Span cleanups: style removed (not converted into markup)'
+				msg: 'Span cleanups: style converted into markup'
+			},
+			{
+				rangeOrSelection: new ve.Range( 1 ),
+				pasteHtml: '<a href="javascript:alert(\'unsafe\');">Foo</a><a href="#safe">Bar</a>',
+				expectedRangeOrSelection: new ve.Range( 7 ),
+				expectedOps: [
+					[
+						{ type: 'retain', length: 1 },
+						{
+							type: 'replace',
+							insert: [
+								'F', 'o', 'o',
+								[ 'B', [ { type: 'link', attributes: { href: '#safe' } } ] ],
+								[ 'a', [ { type: 'link', attributes: { href: '#safe' } } ] ],
+								[ 'r', [ { type: 'link', attributes: { href: '#safe' } } ] ]
+							],
+							remove: []
+						},
+						{ type: 'retain', length: docLen - 1 }
+					]
+				],
+				msg: 'Unsafe link removed by ve.sanitize'
 			},
 			{
 				rangeOrSelection: new ve.Range( 0 ),
@@ -2446,7 +2479,7 @@ QUnit.test( 'selectFirstSelectableContentOffset/selectLastSelectableContentOffse
 					{ type: 'internalList' },
 					{ type: '/internalList' }
 				]
-			) ),
+			), null, ve.dm.example.baseUri ),
 			firstRange: new ve.Range( 14 ),
 			lastRange: new ve.Range( 17 )
 		},
@@ -2460,7 +2493,7 @@ QUnit.test( 'selectFirstSelectableContentOffset/selectLastSelectableContentOffse
 					{ type: 'internalList' },
 					{ type: '/internalList' }
 				]
-			) ),
+			), null, ve.dm.example.baseUri ),
 			firstRange: new ve.Range( 52 ),
 			lastRange: new ve.Range( 55 )
 		},
@@ -2473,13 +2506,16 @@ QUnit.test( 'selectFirstSelectableContentOffset/selectLastSelectableContentOffse
 					{ type: 'internalList' },
 					{ type: '/internalList' }
 				]
-			) ),
+			), null, ve.dm.example.baseUri ),
 			firstRange: null,
 			lastRange: null
 		},
 		{
 			msg: 'Sections (ve.ce.ActiveNode) can take focus',
-			htmlOrDoc: ve.dm.example.createExampleDocumentFromData( ve.dm.example.domToDataCases[ 'article and sections' ].data ),
+			htmlOrDoc: ve.dm.example.createExampleDocumentFromData(
+				ve.dm.example.domToDataCases[ 'article and sections' ].data,
+				null, ve.dm.example.baseUri
+			),
 			firstRange: new ve.Range( 3 ),
 			lastRange: new ve.Range( 20 )
 		}

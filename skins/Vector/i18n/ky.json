@@ -46,6 +46,7 @@
 	"vector-search-loader": "Издөө сунуштары жүктөлүүдө",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> камтыган барактарды издөө",
 	"vector-intro-page": "Википедия:Киришүү",
+	"vector-toc-label": "Мазмуну",
 	"vector-toc-beginning": "Башына кайтуу",
 	"vector-toc-toggle-button-label": "$1 бөлүмчөсүн көрсөтүү/жашыруу",
 	"vector-anon-user-menu-pages": "Катталбаган түзөтүүчүлөр үчүн барактар",
@@ -55,6 +56,16 @@
 	"vector-toc-menu-tooltip": "Мазмун",
 	"vector-toc-collapsible-button-label": "Мазмунду жашыруу/көрсөтүү",
 	"vector-site-nav-label": "Сайт",
+	"vector-main-menu-label": "Иш тилкеси",
+	"vector-limited-width-toggle": "Мазмундун туурасын чектөө/чектебөө",
+	"vector-page-tools-label": "Куралдар",
+	"vector-page-tools-general-label": "Жалпы",
+	"vector-page-tools-actions-label": "Аракеттер",
+	"vector-pin-element-label": "каптал тилкесине жылдыруу",
+	"vector-unpin-element-label": "жашыруу",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Талкуу]]",
-	"tooltip-vector-anon-user-menu-title": "Кошумча мүмкүнчүлүктөр"
+	"tooltip-vector-anon-user-menu-title": "Кошумча мүмкүнчүлүктөр",
+	"vector-prefs-limited-width": "Чектелген туурасы режимин орнотуу",
+	"vector-prefs-limited-width-help": "Окуу ыңгайлуулугу үчүн чектелген туурасы режимин орнотуу",
+	"empty-language-selector-body": "Барактын мазмуну башка тилдерде жеткиликтүү эмес."
 }

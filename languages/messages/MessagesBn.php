@@ -1,8 +1,6 @@
 <?php
 /** Bengali (বাংলা)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -29,7 +27,7 @@ $namespaceNames = [
 $namespaceAliases = [
 	'$1_আলাপ' => NS_PROJECT_TALK,
 	'চিত্র_আলাপ' => NS_FILE_TALK,
-	'MediaWiki_আলাপ' => NS_FILE_TALK,
+	'MediaWiki_আলাপ' => NS_MEDIAWIKI_TALK,
 ];
 
 $datePreferences = false;
@@ -94,7 +92,7 @@ $specialPageAliases = [
 	'Listbots'                  => [ 'বটের_তালিকা' ],
 	'ListDuplicatedFiles'       => [ 'সদৃশ_ফাইলের_তালিকা', 'অনুরূপ_ফাইলের_তালিকা' ],
 	'Listfiles'                 => [ 'ফাইলের_তালিকা', 'চিত্রের_তালিকা', 'ছবির_তালিকা' ],
-	'Listgrants'                => [ 'অনুদানের_তালিকা', 'গ্র্যান্টের_তালিকা' ],
+	'Listgrants'                => [ 'অনুমোদনের_তালিকা', 'গ্র্যান্টের_তালিকা' ],
 	'Listgrouprights'           => [ 'দলগত_অধিকারের_তালিকা', 'ব্যবহারকারীর_দলগত_অধিকার' ],
 	'Listredirects'             => [ 'পুনর্নির্দেশের_তালিকা', 'পুনঃনির্দেশের_তালিকা' ],
 	'Listusers'                 => [ 'ব্যবহারকারীর_তালিকা', 'ব্যবহারকারী_তালিকা' ],
@@ -136,6 +134,7 @@ $specialPageAliases = [
 	'Recentchangeslinked'       => [ 'সংযুক্ত_সাম্প্রতিক_পরিবর্তন', 'সংযুক্ত_সাম্প্রতিক_পরিবর্তনসমূহ', 'সম্পর্কিত_পরিবর্তন' ],
 	'Redirect'                  => [ 'পুনর্নির্দেশ' ],
 	'RemoveCredentials'         => [ 'পরিচয়পত্র_অপসারণ' ],
+	'Renameuser'                => [ 'ব্যবহারকারী_নামান্তর', 'ব্যবহারকারী_পুনঃনামকরণ' ],
 	'ResetTokens'               => [ 'টোকেন_পরিবর্তন' ],
 	'Revisiondelete'            => [ 'অপসারিত_ইতিহাস' ],
 	'RunJobs'                   => [ 'রানজব' ],

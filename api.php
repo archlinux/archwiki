@@ -35,6 +35,7 @@
  */
 
 use MediaWiki\Logger\LegacyLogger;
+use MediaWiki\Title\Title;
 
 // So extensions (and other code) can check whether they're running in API mode
 define( 'MW_API', true );
@@ -77,7 +78,7 @@ function wfApiMain() {
 		// Last chance hook before executing the API
 		Hooks::runner()->onApiBeforeMain( $processor );
 		if ( !$processor instanceof ApiMain ) {
-			throw new MWException( 'ApiBeforeMain hook set $processor to a non-ApiMain class' );
+			throw new LogicException( 'ApiBeforeMain hook set $processor to a non-ApiMain class' );
 		}
 	} catch ( Throwable $e ) {
 		// Crap. Try to report the exception in API format to be friendly to clients.

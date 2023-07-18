@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"1233qwer1234qwer4",
 			"Ahloubadar",
 			"Amire80",
 			"DannyS712",
@@ -13,8 +14,7 @@
 			"SF-Language",
 			"Urhixidur",
 			"Vlad5250",
-			"아라",
-			"1233qwer1234qwer4"
+			"아라"
 		]
 	},
 	"tog-underline": "Rëddaatu lëkkalekaay yi :",
@@ -922,6 +922,7 @@
 	"filehist-dimensions": "Dayoo",
 	"filehist-filesize": "Dayoo ŋara wi",
 	"filehist-comment": "Saraa",
+	"filehist-missing": "Dencukaay bi fi nekkul",
 	"imagelinks": "Njëfandikug dencukaay bi",
 	"linkstoimage": "{{PLURAL:$1|Xët wii ci suuf ëmb na|$1 xët yii ci suuf ëmb nañu}} bii dencukaay:",
 	"linkstoimage-more": "Lu ëpp $1 {{PLURAL:$1|xët lëkkale nañu leen|xët lëkkale nañu leen}} ak bii dencukaay.\nLim bii di toftal moo lay won {{PLURAL:$1|xët wi ñu njëkk a|xët yi ñu njëkk a}} lëkkale ak wii.\nAb [[Special:WhatLinksHere/$2|lim bu mat]] jàppandi na.",

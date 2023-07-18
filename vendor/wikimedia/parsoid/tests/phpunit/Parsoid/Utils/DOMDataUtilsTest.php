@@ -25,8 +25,8 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		// Note that we use the 'native' getElementById, not
 		// DOMCompat::getElementById, in order to test T232390
 		$el = $doc->getElementById( 'mw-pagebundle' );
-		$this->assertNotEquals( $el, null );
-		$this->assertEquals( DOMCompat::nodeName( $el ), 'script' );
+		$this->assertNotEquals( null, $el );
+		$this->assertEquals( 'script', DOMCompat::nodeName( $el ) );
 	}
 
 	/**
@@ -47,5 +47,27 @@ class DOMDataUtilsTest extends \PHPUnit\Framework\TestCase {
 		// in order to test T232390.
 		$el = $doc->getElementById( $id );
 		$this->assertEquals( $p, $el );
+	}
+
+	/**
+	 * @return void
+	 * @throws \Wikimedia\Parsoid\Core\ClientError
+	 * @covers ::extractPageBundle
+	 */
+	public function testExtractPageBundle() {
+		$html = <<<'EOF'
+<html>
+  <head>
+    <script id="mw-pagebundle" type="application/x-mw-pagebundle">
+      {"parsoid":
+      {"counter":1,"ids":{"mwAA":{"dsr":[0,13,0,0]},
+      "mwAQ":{"dsr":[0,12,0,0]}},"offsetType":"byte"},"mw":{"ids":[]}}
+    </script>
+  </head>
+  <body><p id="mwAQ">Hello, world</p>
+EOF;
+		$doc = DOMUtils::parseHTML( $html );
+		$pb = DOMDataUtils::extractPageBundle( $doc );
+		self::assertIsArray( $pb->parsoid['ids'] );
 	}
 }

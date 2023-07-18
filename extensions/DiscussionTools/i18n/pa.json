@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bgo eiu",
+			"Jagseer S Sidhu"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "ਜੁਆਬ",
+	"discussiontools-replylink": "ਜੁਆਬ ਦਿਉ",
+	"discussiontools-replywidget-advanced": "ਉੱਨਤ",
+	"discussiontools-replywidget-cancel": "ਰੱਦ ਕਰੋ",
+	"discussiontools-replywidget-mode-source": "ਸਰੋਤ",
+	"discussiontools-replywidget-mode-visual": "ਵਿਜ਼ੂਅਲ",
+	"discussiontools-replywidget-placeholder-reply": "{{BIDI: $1 }} ਨੂੰ ਜਵਾਬ ਦਿਓ",
+	"discussiontools-replywidget-preview": "ਝਲਕ",
+	"discussiontools-replywidget-reply": "ਜੁਆਬ ਦਿਉ",
+	"discussiontools-replywidget-summary": "ਸਾਰ",
+	"discussiontools-replywidget-watchthis": "ਇਸ ਪੰਨੇ ਨੂੰ ਆਪਣੀ [[Special:Watchlist|ਨਿਗਰਾਨ ਸੂਚੀ]] ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ।",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1| ਵਿਅਕਤੀ|ਲੋਕ}} ਚਰਚਾ ਵਿੱਚ ਹਨ",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1| ਟਿੱਪਣੀ|ਟਿੱਪਣੀਆਂ}}",
+	"discussiontools-topicheader-latestcomment": "ਤਾਜ਼ਾ ਟਿੱਪਣੀ: $1",
+	"discussiontools-topicsubscription-button-subscribe": "ਗਾਹਕ ਕਰੋ",
+	"discussiontools-topicsubscription-button-subscribe-label": "ਗਾਹਕੀ ਕਰੋ",
+	"discussiontools-topicsubscription-button-unsubscribe": "ਗਾਹਕੀ ਰੱਦ ਕਰੋ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "ਗਾਹਕੀ ਰੱਦ ਕਰੋ",
+	"discussiontools-topicsubscription-notify-subscribed-body": "ਤੁਹਾਨੂੰ ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਨੋਟੀਫਿਕੇਸ਼ਨ ਪ੍ਰਾਪਤ ਹੋਣਗੇ।",
+	"discussiontools-topicsubscription-notify-subscribed-title": "ਤੁਸੀਂ ਸਬਸਕ੍ਰਾਈਬ ਕੀਤਾ ਹੈ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "ਤੁਹਾਨੂੰ ਹੁਣ ਇਸ ਵਿਸ਼ੇ ਵਿੱਚ ਨਵੀਆਂ ਟਿੱਪਣੀਆਂ ਬਾਰੇ ਨੋਟੀਫਿਕੇਸ਼ਨ ਨਹੀਂ ਪ੍ਰਾਪਤ ਹੋਣਗੇ।",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "ਤੁਸੀਂ ਗਾਹਕੀ ਰੱਦ ਕਰ ਦਿੱਤੀ ਹੈ।"
+}

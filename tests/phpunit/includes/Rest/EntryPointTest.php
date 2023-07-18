@@ -4,13 +4,13 @@ namespace MediaWiki\Tests\Rest;
 
 use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\Uri;
+use MediaWiki\Request\WebResponse;
 use MediaWiki\Rest\CorsUtils;
 use MediaWiki\Rest\EntryPoint;
 use MediaWiki\Rest\Handler;
 use MediaWiki\Rest\RequestData;
 use MediaWiki\Rest\RequestInterface;
 use RequestContext;
-use WebResponse;
 
 /**
  * @covers \MediaWiki\Rest\EntryPoint
@@ -34,7 +34,7 @@ class EntryPointTest extends \MediaWikiIntegrationTestCase {
 	private function createCorsUtils() {
 		$cors = $this->createMock( CorsUtils::class );
 		$cors->method( 'modifyResponse' )
-			->will( $this->returnArgument( 1 ) );
+			->willReturnArgument( 1 );
 
 		return $cors;
 	}

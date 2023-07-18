@@ -1,8 +1,6 @@
 <?php
 /** Thai (ไทย)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -119,6 +117,7 @@ $specialPageAliases = [
 	'Randomredirect'            => [ 'สุ่มหน้าเปลี่ยนทาง' ],
 	'Recentchanges'             => [ 'ปรับปรุงล่าสุด' ],
 	'Recentchangeslinked'       => [ 'การปรับปรุงที่โยงมา' ],
+	'Renameuser'                => [ 'เปลี่ยนชื่อผู้ใช้' ],
 	'Revisiondelete'            => [ 'ลบรุ่นการแก้ไข' ],
 	'Search'                    => [ 'ค้นหา' ],
 	'Shortpages'                => [ 'หน้าที่สั้นที่สุด' ],

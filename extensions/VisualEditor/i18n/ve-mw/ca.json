@@ -165,7 +165,6 @@
 	"visualeditor-dialog-transclusion-loading": "Carregant...",
 	"visualeditor-dialog-transclusion-no-template-description": "La plantilla «$1» encara no té descripció, però hi pot haver alguna informació a la [[$2|pàgina de la plantilla]].",
 	"visualeditor-dialog-transclusion-param-default": "Valor per defecte:$1",
-	"visualeditor-dialog-transclusion-placeholder": "Afegeix una plantilla",
 	"visualeditor-dialog-transclusion-required-parameter": "Camp obligatori",
 	"visualeditor-dialog-transclusion-required-parameter-description": "El camp es obligatori.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Torna",

@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"1233qwer1234qwer4",
 			"Asiri wiki",
 			"Budhajeewa",
 			"Calcey",
@@ -40,8 +41,7 @@
 			"සුරනිමල",
 			"හරිත",
 			"아라",
-			1100100,
-			"1233qwer1234qwer4"
+			1100100
 		]
 	},
 	"tog-underline": "සබැඳි යටීර කිරීම:",
@@ -1410,6 +1410,7 @@
 	"filehist-dimensions": "මාන",
 	"filehist-filesize": "ගොනුවේ විශාලත්වය",
 	"filehist-comment": "පරිකථනය",
+	"filehist-missing": "ගොනුව සොයාගත නොහැක",
 	"imagelinks": "ගොනු භාවිතය",
 	"linkstoimage": "පහත දැක්වෙන {{PLURAL:$1|පිටුව|පිටු $1 ක් }} විසින් මෙම ගොනුව භාවිතා කෙරෙයි:",
 	"linkstoimage-more": "මෙම ගොනුවට {{PLURAL:$1|පිටුවකට |පිටු  $1 කට}} වඩා වැඩි ගණනක් සබැ‍ඳේ.\nමෙම පිටුවට පමණක් අදාළ වන {{PLURAL:$1|පළමු පිටු සබැඳිය|පළමු පිටු සබැඳියන් $1 }} මෙහි පහත ලැයිස්තුවෙහි දැක්වේ.\n [[Special:WhatLinksHere/$2|සම්පූර්ණ ලැයිස්තුව]]ක්ද තිබේ.",
@@ -2387,7 +2388,7 @@
 	"metadata-help": "සමහරවිට ඩිජිටල් කැමරාවක් හෝ ස්කෑනරයක් හෝ භාවිතයෙන්, නිමැවා හෝ සංඛ්‍යාංකකරණය (ඩිජිටල්කරණය) කොට එක් කල , අමතර තොරතුරු මෙම ගොනුවේ අඩංගුය.\nගොනුව මුලින්ම පැවැති තත්ත්වයෙහි සිට විකරණය කොට තිබේ නම්, සමහරක් තොරතුරු විකරිත ගොනුව පූර්ණ වශයෙන් පිළිඹිමු නොකරනු ඇත.",
 	"metadata-expand": "විස්තීරණය කරන ලද විස්තර පෙන්වන්න",
 	"metadata-collapse": "විස්තීරණය කරන ලද විස්තර සඟවන්න",
-	"metadata-fields": "Image metadata fields listed in this message will be included on image page display when the metadata table is collapsed.\nOthers will be hidden by default.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Image metadata fields listed in this message will be included on image page display when the metadata table is collapsed.\nOthers will be hidden by default.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "සියල්ල",
 	"monthsall": "සියළු",
 	"confirmemail": "විද්‍යුත්-තැපැල් ලිපිනය තහවුරු කරන්න",
@@ -2692,9 +2693,6 @@
 	"logentry-newusers-autocreate": "$1 පරිශීලක ගිණුම ස්වංක්‍රීයව {{GENDER:$2|නිර්මිතය}}",
 	"logentry-upload-upload": "$1 විසින් $3 {{GENDER:$2|උඩුගත කරන ලදී}}",
 	"rightsnone": "(කිසිවක් නොමැත)",
-	"feedback-adding": "ප්‍රතිචාරය පිටුවට එක් කරමින් ...",
-	"feedback-bugcheck": "කදිමයි! දැන් එය දැනටමත් [$1 හඳුනාගත් දෝෂ]වල තිබේ දැයි පිරික්සන්න.",
-	"feedback-bugnew": "මම පරික්ෂා කළා. නව දෝෂය වාර්තා කරන්න",
 	"feedback-cancel": "අවලංගු කරන්න",
 	"feedback-close": "හරි",
 	"feedback-error1": "දෝෂය: API ගෙන් හදුනානොගත් ප්‍රතිපල",
@@ -2782,5 +2780,32 @@
 	"skin-action-protect": "ආරක්‍ෂණය",
 	"skin-action-undelete": "මකාදැමීම අවලංගු කරන්න",
 	"skin-action-delete": "මකන්න",
-	"skin-action-move": "ගෙනයන්න"
+	"skin-action-move": "ගෙනයන්න",
+	"renameuser": "පරිශීලකයා යළි-නම්කරන්න",
+	"renameuser-linkoncontribs": "පරිශීලකයා යළි-නම්කරන්න",
+	"renameuser-linkoncontribs-text": "මෙම පරිශීලකයා ප්‍රති-නම් කරන්න",
+	"renameuserold": "වත්මන් පරිශීලක නාමය:",
+	"renameusernew": "නව පරිශීලක නාමය:",
+	"renameuserreason": "හේතුව:",
+	"renameusermove": "පරිශීලක හා සාකච්ඡා පිටු   (හා  ඒවායේ උපපිටු) නව නම වෙතට ගෙන යන්න",
+	"renameusersuppress": "යළි යොමුවන් නම නාමයේ සැකසීමෙන් වළකින්න.",
+	"renameuserreserve": "පැරණි පරිශීලක නම අනාගත භාවිතයෙන් වාරණය කරන්න",
+	"renameuserwarnings": "අවවාදයන්:",
+	"renameuserconfirm": "ඔව්, පරිශීලකයා යළි-නම්කරන්න",
+	"renameusersubmit": "යොමන්න",
+	"renameusererrordoesnotexist": "\"<nowiki>$1</nowiki>\" පරිශීලකයා නොපවතී.",
+	"renameusererrorexists": "\"<nowiki>$1</nowiki>\" පරිශීලකයා දැනටමත් පවතියි.",
+	"renameusererrorinvalid": "\"<nowiki>$1</nowiki>\" පරිශීලක නාමය අනීතිකයි.",
+	"renameuser-error-request": "ඉල්ලීම ලැබීමේ දෝෂයක් හට ගැනිනි.\nකරුණාකර ආපසු ගොස් නැවත උත්සාහ කරන්න.",
+	"renameuser-error-same-user": "ඔබට පරිශීලකයෙක් පෙර තිබූ නමටම ප්‍රතිනම්කළ නොහැක.",
+	"renameusersuccess": "\"<nowiki>$1</nowiki>\" පරිශීලකයා \"<nowiki>$2</nowiki>\" වෙත ප්‍රතිනම් කෙරිනි.",
+	"renameuser-page-exists": "$1 පිටුව දැනටමත් පවතින අතර, එය ස්වයංක්‍රීයව අධිලිවීමකට භාජනය කල නොහැක.",
+	"renameuser-page-moved": " $1 පිටුව $2 වෙත ගෙනයන ලදි.",
+	"renameuser-page-unmoved": " $1 පිටුව  $2 වෙත ගෙනයා නොහැක.",
+	"log-name-renameuser": "පරිශීලක ප්‍රතිනම්කෙරුම් ලොගය",
+	"log-description-renameuser": "මෙය පරිශීලක නාම වෙනස්වීම් පිළිබඳ ලඝු-සටහනකි.",
+	"renameuser-move-log": "පරිශීලක \"[[User:$1|$1]]\", \"[[User:$2|$2]]\" වෙත ප්‍රතිනම්කරන අතරතුර පිටුව ස්‍වයංක්‍රීයව ගෙනයන ලදී",
+	"action-renameuser": "පරිශීලකයන් ප්‍රතිනම් කරන්න",
+	"right-renameuser": "පරිශීලකයන් ප්‍රතිනම් කරන්න",
+	"renameuser-renamed-notice": "මෙම පරිශීලකයා ප්‍රතිනම්කර ඇත.\nප්‍රතිනම්කෙරුම් ලඝු-සටහන පහත දක්වා ඇත."
 }

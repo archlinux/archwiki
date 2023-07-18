@@ -31,6 +31,8 @@ use MediaWiki\Settings\SettingsBuilder;
 use MediaWiki\Tests\AnsiTermColorer;
 use MediaWiki\Tests\DummyTermColorer;
 
+define( 'MW_AUTOLOAD_TEST_CLASSES', true );
+
 class ParserTestsMaintenance extends Maintenance {
 	/**
 	 * Copied over from the Parsoid repo: (tools/ScriptUtils.php)
@@ -68,6 +70,8 @@ class ParserTestsMaintenance extends Maintenance {
 			false, true );
 		$this->addOption( 'filter', 'Alias for --regex', false, true );
 		$this->addOption( 'file', 'Run test cases from a custom file instead of parserTests.txt',
+			false, true, false, true );
+		$this->addOption( 'dir', 'Run test cases for all *.txt files in a directory',
 			false, true, false, true );
 		$this->addOption( 'record', 'Record tests in database' );
 		$this->addOption( 'compare', 'Compare with recorded results, without updating the database.' );
@@ -120,8 +124,6 @@ class ParserTestsMaintenance extends Maintenance {
 		define( 'MW_PARSER_TEST', true );
 
 		parent::finalSetup( $settingsBuilder );
-		ExtensionRegistry::getInstance()->setLoadTestClassesAndNamespaces( true );
-		self::requireTestsAutoloader();
 		TestSetup::applyInitialConfig();
 	}
 
@@ -208,8 +210,8 @@ class ParserTestsMaintenance extends Maintenance {
 		}
 
 		// Default parser tests and any set from extensions or local config
-		$files = $this->getOption( 'file', ParserTestRunner::getParserTestFiles() );
-
+		$dirs = $this->getOption( 'dir', [] );
+		$files = $this->getOption( 'file', ParserTestRunner::getParserTestFiles( $dirs ) );
 		$norm = $this->hasOption( 'norm' ) ? explode( ',', $this->getOption( 'norm' ) ) : [];
 
 		$selserOpt = $this->getOption( 'selser', false ); /* can also be 'noauto' */
@@ -238,7 +240,7 @@ class ParserTestsMaintenance extends Maintenance {
 			'html2html' => $this->hasOption( 'html2html' ),
 			'numchanges' => $this->getOption( 'numchanges', 20 ),
 			'selser' => $selserOpt,
-			'changetree' => json_decode( $this->getOption( 'changetree', null ), true ),
+			'changetree' => json_decode( $this->getOption( 'changetree', '' ), true ),
 			'knownFailures' => $this->booleanOption( $this->getOption( 'knownFailures', true ) ),
 			'updateKnownFailures' => $this->hasOption( 'updateKnownFailures' )
 		] );

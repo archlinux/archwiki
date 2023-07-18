@@ -51,8 +51,7 @@
 	"config-env-good": "Omno verifikesis.\nVu povas intalar MediaWiki.",
 	"config-env-bad": "Omno verifikesis.\nVu NE POVAS intalar MediaWiki.",
 	"config-env-php": "PHP $1 instalesis.",
-	"config-unicode-using-intl": "Uzanta [https://php.net/manual/en/book.intl.php PHP intl extension] por normaligo Unicode.",
-	"config-unicode-update-warning": "<strong>Atencez:</strong> La versiono di ''Unicode normalization wrapper'' instalata en vua komputero uzas obsoleta versiono di la biblioteko del [http://site.icu-project.org/ projeto ICU].\nVu mustas instalar [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations la nova versiono] se vu deziras uzar Unicode.",
+	"config-env-icu": "ICU $1 instalesis (ol suportas Unicode $2).",
 	"config-no-db": "Ne povis trovar konvenanta ''driver'' por la datumaro! Vu mustas instalar ''driver'' por datumaro en PHP.\nLa sequanta {{PLURAL:$2|tipo|tipi}} di datumaro esas suportebla: $1.\n\nIf you compiled PHP yourself, reconfigure it with a database client enabled, for example, using <code>./configure --with-mysqli</code>.\nIf you installed PHP from a Debian or Ubuntu package, then you also need to install, for example, the <code>php-mysql</code> package.",
 	"config-outdated-sqlite": "<strong>Atencez:</strong> vu havas SQLite $2, quo esas inferiora a la minima versiono bezonata, $1. SQLite ne esos disponebla.",
 	"config-no-fts3": "<strong>Atencez:</strong> SQLite kompilesis sen la [//sqlite.org/fts3.html modulo FTS3], do l'utensili por serchado ne divenos disponebla hike.",
@@ -78,7 +77,6 @@
 	"config-using-uri": "Ret-adreso (URL) dil servero \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "<strong>Warning:</strong> Your default directory for uploads <code>$1</code> is vulnerable to arbitrary scripts execution.\nAlthough MediaWiki checks all uploaded files for security threats, it is highly recommended to [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security close this security vulnerability] before enabling uploads.",
 	"config-no-cli-uploads-check": "<strong>Warning:</strong> Your default directory for uploads (<code>$1</code>) is not checked for vulnerability\nto arbitrary script execution during the CLI install.",
-	"config-suhosin-max-value-length": "Suhosin is installed and limits the GET parameter <code>length</code> to $1 bytes.\nMediaWiki requires <code>suhosin.get.max_value_length</code> to be at least $2. Disable this setting, or increase this value to $3 in <code>php.ini</code>.",
 	"config-using-32bit": "<strong>Atencez:</strong> semblas ke vua sistemo uzas integra nombri 32-bit. [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit TO NE ESAS KONSILATA].",
 	"config-db-type": "Tipo di datumaro:",
 	"config-db-host": "Loko dil datumaro:",
@@ -308,6 +306,7 @@
 	"config-screenshot": "skreno-kopiuro",
 	"config-extension-not-found": "Ne povis trovar la registro-arkivo por \"$1\"",
 	"config-extension-dependency": "Eroro pri dependo trovesis dum l'instalo dil extenso \"$1\": $2",
+	"config-ext-skins-more-info": "plusa informo",
 	"mainpagetext": "<strong>MediaWiki instalesis sucese.</strong>",
 	"mainpagedocfooter": "Videz la [https://meta.wikimedia.org/wiki/Help:Contents Guidilo por Uzeri] por plusa informi pri quale uzar la wiki programo.\n\n== Komencar ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Listo pri ''Configuration setting'']\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ MediaWiki FAQ]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ E-postala-listo por recevar mesaji de MediaWiki]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Trovar MediaWiki en vua linguo]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Lernez quale kombatar ''spam'' en vua wiki]"
 }

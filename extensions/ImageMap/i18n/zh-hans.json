@@ -2,9 +2,9 @@
 	"@metadata": {
 		"authors": [
 			"Hmgrmb",
+			"Lakejason0",
 			"Shinjiman",
-			"Xiaomingyan",
-			"Lakejason0"
+			"Xiaomingyan"
 		]
 	},
 	"imagemap_desc": "允许使用<code>&lt;imagemap&gt;</code>标签制作客户端可点击的图像地图",

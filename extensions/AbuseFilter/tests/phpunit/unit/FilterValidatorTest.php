@@ -24,6 +24,7 @@ use Status;
  * @group AbuseFilter
  * @group AbuseFilterSave
  * @coversDefaultClass \MediaWiki\Extension\AbuseFilter\FilterValidator
+ * @covers ::__construct()
  */
 class FilterValidatorTest extends MediaWikiUnitTestCase {
 

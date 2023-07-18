@@ -26,6 +26,7 @@
 
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\RevisionLookup;
+use MediaWiki\Title\Title;
 
 require_once __DIR__ . '/Maintenance.php';
 
@@ -59,8 +60,7 @@ class AttachLatest extends Maintenance {
 			->fetchResultSet();
 
 		$services = MediaWikiServices::getInstance();
-		$lbFactory = $services->getDBLoadBalancerFactory();
-		$dbDomain = $lbFactory->getLocalDomainID();
+		$dbDomain = $services->getDBLoadBalancerFactory()->getLocalDomainID();
 		$wikiPageFactory = $services->getWikiPageFactory();
 		$revisionLookup = $services->getRevisionLookup();
 
@@ -93,7 +93,7 @@ class AttachLatest extends Maintenance {
 			if ( $this->hasOption( 'fix' ) ) {
 				$page = $wikiPageFactory->newFromTitle( $title );
 				$page->updateRevisionOn( $dbw, $revRecord );
-				$lbFactory->waitForReplication();
+				$this->waitForReplication();
 			}
 			$n++;
 		}

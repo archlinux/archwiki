@@ -16,7 +16,6 @@
 		ParamLabelWidget = require( './ParamLabelWidget.js' ),
 		BooleanToggleSwitchParamWidget = require( './BooleanToggleSwitchParamWidget.js' ),
 		DateTimeParamWidget = require( './DateTimeParamWidget.js' ),
-		IntegerParamWidget = require( './IntegerParamWidget.js' ),
 		LimitParamWidget = require( './LimitParamWidget.js' ),
 		PasswordParamWidget = require( './PasswordParamWidget.js' ),
 		UploadSelectFileParamWidget = require( './UploadSelectFileParamWidget.js' );
@@ -353,11 +352,14 @@
 					break;
 
 				case 'integer':
-					widget = new IntegerParamWidget( {
+					widget = new OO.ui.NumberInputWidget( {
+						step: 1,
+						min: pi.min || -Infinity,
+						max: pi.max || Infinity,
 						required: Util.apiBool( pi.required )
 					} );
 					widget.paramInfo = pi;
-					widget.setRange( pi.min || -Infinity, pi.max || Infinity );
+					$.extend( widget, WidgetMethods.textInputWidget );
 					multiModeAllowed = true;
 					multiModeInput = widget;
 					break;
@@ -964,6 +966,7 @@
 							// If only the tokens are invalid, offer to fix them
 							var tokenErrorCount = countValues( false, arguments );
 							if ( tokenErrorCount === errorCount ) {
+								// eslint-disable-next-line es-x/no-regexp-prototype-flags
 								delete actions[ 0 ].flags;
 								actions.push( {
 									action: 'fix',
@@ -1339,10 +1342,7 @@
 
 		if ( ppi.info && ppi.info.length ) {
 			for ( var i = 0; i < ppi.info.length; i++ ) {
-				helpLabel.$element.append( $( '<div>' )
-					.addClass( 'info' )
-					.append( Util.parseHTML( ppi.info[ i ] ) )
-				);
+				helpLabel.addInfo( Util.parseHTML( ppi.info[ i ].text ) );
 			}
 		}
 		var flag = true;
@@ -1355,14 +1355,14 @@
 				break;
 
 			case 'limit':
-				helpLabel.addInfo(
-					Util.parseMsg(
+				tmp = [
+					mw.message(
 						'paramvalidator-help-type-number-minmax', 1,
 						widget.paramInfo.min, widget.paramInfo.apiSandboxMax
-					),
-					' ',
-					Util.parseMsg( 'apisandbox-param-limit' )
-				);
+					).parse(),
+					mw.message( 'apisandbox-param-limit' ).parse()
+				];
+				helpLabel.addInfo( Util.parseHTML( tmp.join( mw.msg( 'word-separator' ) ) ) );
 				break;
 
 			case 'integer':
@@ -1407,7 +1407,7 @@
 				);
 			}
 			if ( tmp.length ) {
-				helpLabel.addInfo( Util.parseHTML( tmp.join( ' ' ) ) );
+				helpLabel.addInfo( Util.parseHTML( tmp.join( mw.msg( 'word-separator' ) ) ) );
 			}
 		}
 		if ( 'maxbytes' in ppi ) {
@@ -1722,9 +1722,20 @@
 				}
 
 				// Hide the 'wrappedhtml' parameter on format modules
+				// and make formatversion default to the latest version for humans
+				// (even though machines get a different default for b/c)
 				if ( pi.group === 'format' ) {
 					pi.parameters = pi.parameters.filter( function ( p ) {
 						return p.name !== 'wrappedhtml';
+					} ).map( function ( p ) {
+						if ( p.name === 'formatversion' ) {
+							// Use the highest numeric value
+							p.default = p.type.reduce( function ( prev, current ) {
+								return !isNaN( current ) ? Math.max( prev, current ) : prev;
+							} );
+							p.required = true;
+						}
+						return p;
 					} );
 				}
 

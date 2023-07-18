@@ -25,6 +25,8 @@
  * @author Daniel Kinzler
  */
 
+use MediaWiki\Title\Title;
+
 /**
  * Content for JavaScript pages.
  *
@@ -34,7 +36,7 @@
 class JavaScriptContent extends TextContent {
 
 	/**
-	 * @var bool|Title|null
+	 * @var Title|null|false
 	 */
 	private $redirectTarget = false;
 

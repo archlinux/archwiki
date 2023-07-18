@@ -3,12 +3,12 @@
 		"authors": [
 			"Bdijkstra",
 			"Mainframe98",
+			"McDutchie",
 			"PonkoSasuke",
 			"Romaine",
 			"SPQRobin",
 			"Siebrand",
-			"Tvdm",
-			"McDutchie"
+			"Tvdm"
 		]
 	},
 	"syntaxhighlight-desc": "Voorziet in het markeren van syntaxis voor <code>&lt;syntaxhighlight&gt;</code> met [http://pygments.org/ Pygments]",

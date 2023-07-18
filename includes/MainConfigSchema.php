@@ -11,6 +11,7 @@
 // phpcs:disable Generic.Files.LineLength.TooLong
 namespace MediaWiki;
 
+use AbstractPbkdf2Password;
 use ActivityUpdateJob;
 use APCUBagOStuff;
 use Argon2Password;
@@ -32,7 +33,6 @@ use DoubleRedirectJob;
 use EmaillingJob;
 use EmptyBagOStuff;
 use EnotifNotifyJob;
-use EnqueueJob;
 use EventRelayerNull;
 use FallbackContentHandler;
 use Generator;
@@ -58,14 +58,16 @@ use MWOldPassword;
 use MWSaltedPassword;
 use NamespaceInfo;
 use NullJob;
+use ParsoidCachePrewarmJob;
 use PatrolLogFormatter;
-use Pbkdf2Password;
 use ProtectLogFormatter;
 use PublishStashedFileJob;
 use RecentChangesUpdateJob;
 use RedisPubSubFeedEngine;
 use ReflectionClass;
 use RefreshLinksJob;
+use RenameUserJob;
+use RenameuserLogFormatter;
 use ReplicatedBagOStuff;
 use RevertedTagUpdateJob;
 use RightsLogFormatter;
@@ -79,7 +81,6 @@ use UploadLogFormatter;
 use UserEditCountInitJob;
 use UserGroupExpiryJob;
 use UserOptionsUpdateJob;
-use WANObjectCache;
 use WatchlistExpiryJob;
 use WebRequest;
 use WikitextContentHandler;
@@ -151,6 +152,10 @@ class MainConfigSchema {
 
 			if ( !is_array( $value ) ) {
 				// Just in case we end up having some other kind of constant on this class.
+				continue;
+			}
+
+			if ( isset( $value['obsolete'] ) ) {
 				continue;
 			}
 
@@ -878,9 +883,6 @@ class MainConfigSchema {
 	 *
 	 * Only enable this if job runners are set up for both the
 	 * 'AssembleUploadChunks' and 'PublishStashedFile' job types.
-	 *
-	 * @note If you use suhosin, this setting is incompatible with
-	 * suhosin.session.encrypt.
 	 */
 	public const EnableAsyncUploads = [
 		'default' => false,
@@ -2161,19 +2163,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Determines whether extra checks for IE type detection should be applied.
-	 *
-	 * This is a conservative check for exactly what IE 6 or so checked for,
-	 * and shouldn't trigger on for instance JPEG files containing links in EXIF
-	 * metadata.
-	 *
-	 * @since 1.34
-	 */
-	public const VerifyMimeTypeIE = [
-		'default' => true,
-	];
-
-	/**
 	 * Sets the MIME type definition file to use by includes/libs/mime/MimeAnalyzer.php.
 	 *
 	 * When this is set to the path of a mime.types file, MediaWiki will use this
@@ -2276,6 +2265,17 @@ class MainConfigSchema {
 			300
 		],
 		'type' => 'list',
+	];
+
+	/**
+	 * Defines what namespaces thumbnails will be displayed for in Special:Search.
+	 * This is the list of namespaces for which thumbnails (or a placeholder in
+	 * the absence of a thumbnail) will be shown:
+	 */
+	public const ThumbnailNamespaces = [
+		'default' => [ NS_FILE ],
+		'type' => 'list',
+		'items' => [ 'type' => 'integer', ],
 	];
 
 	/**
@@ -3076,15 +3076,14 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Load balancer factory configuration
-	 * To set up a multi-primary wiki farm, set the class here to something that
-	 * can return a LoadBalancer with an appropriate primary on a call to getMainLB().
+	 * Configuration for the ILBFactory service
 	 *
-	 * The class identified here is responsible for reading $wgDBservers,
-	 * $wgDBserver, etc., so overriding it may cause those globals to be ignored.
+	 * The "class" setting must point to a LBFactory subclass, which is also responsible
+	 * for reading $wgDBservers, $wgDBserver, etc.
 	 *
-	 * The LBFactoryMulti class is provided for this purpose, please see
-	 * includes/db/LBFactoryMulti.php for configuration information.
+	 * To set up a wiki farm with multiple database clusters, set the "class" to
+	 * LBFactoryMulti. See {@link Wikimedia::Rdbms::LBFactoryMulti LBFactoryMulti} docs for
+	 * information on how to configure the rest of the $wgLBFactoryConf array.
 	 */
 	public const LBFactoryConf = [
 		'default' => [
@@ -3215,6 +3214,35 @@ class MainConfigSchema {
 		'type' => 'integer',
 	];
 
+	/**
+	 * Externallinks table schema migration stage.
+	 *
+	 * Use the SCHEMA_COMPAT_XXX flags. Supported values:
+	 *
+	 *   - SCHEMA_COMPAT_OLD
+	 *   - SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_OLD
+	 *
+	 * History:
+	 *   - 1.40: Added
+	 */
+	public const ExternalLinksSchemaMigrationStage = [
+		'default' => SCHEMA_COMPAT_OLD,
+		'type' => 'integer',
+	];
+
+	/**
+	 * Comment temp tables schema migration stage.
+	 *
+	 * Use the SCHEMA_COMPAT_XXX flags.
+	 *
+	 * History:
+	 *  - 1.40: Added
+	 */
+	public const CommentTempTableSchemaMigrationStage = [
+		'default' => [],
+		'type' => 'map',
+	];
+
 	// endregion -- End of DB settings
 
 	/***************************************************************************/
@@ -3224,7 +3252,7 @@ class MainConfigSchema {
 	/**
 	 * Plugins for page content model handling.
 	 *
-	 * Each entry in the array maps a model id to a class name or callback
+	 * Each entry in the array maps a model id to an ObjectFactory specification
 	 * that creates an instance of the appropriate ContentHandler subclass.
 	 *
 	 * @since 1.21
@@ -3233,7 +3261,16 @@ class MainConfigSchema {
 		'default' =>
 			[
 				// the usual case
-				CONTENT_MODEL_WIKITEXT => WikitextContentHandler::class,
+				CONTENT_MODEL_WIKITEXT => [
+					'class' => WikitextContentHandler::class,
+					'services' => [
+						'TitleFactory',
+						'ParserFactory',
+						'GlobalIdGenerator',
+						'LanguageNameUtils',
+						'MagicWordFactory',
+					],
+				],
 				// dumb version, no syntax highlighting
 				CONTENT_MODEL_JAVASCRIPT => JavaScriptContentHandler::class,
 				// simple implementation, for use by extensions, etc.
@@ -3548,21 +3585,51 @@ class MainConfigSchema {
 	 * ] ];
 	 * ```
 	 *
-	 * **Example using C daemon from https://www.mediawiki.org/wiki/Extension:PoolCounter:**
+	 * **Example using C daemon from <https://gerrit.wikimedia.org/g/mediawiki/services/poolcounter>**
 	 *
 	 * ```
+	 * $wgPoolCountClientConf = [
+	 *   'servers' => [ '127.0.0.1' ],
+	 *   'timeout' => 0.5,
+	 *   'connect_timeout' => 0.01,
+	 * ];
+	 *
 	 * $wgPoolCounterConf = [ 'ArticleView' => [
-	 *   'class' => MediaWiki\Extension\PoolCounter\Client::class,
+	 *   'class' => 'PoolCounter_Client',
 	 *   'timeout' => 15, // wait timeout in seconds
 	 *   'workers' => 5, // maximum number of active threads in each pool
 	 *   'maxqueue' => 50, // maximum number of total threads in each pool
 	 *   ... any extension-specific options...
 	 * ] ];
 	 * ```
+	 *
+	 * @since 1.16
 	 */
 	public const PoolCounterConf = [
 		'default' => null,
 		'type' => '?map',
+	];
+
+	/**
+	 * Configuration array for the PoolCounter client.
+	 *
+	 * - servers: Array of hostnames, or hostname:port. The default port is 7531.
+	 * - timeout: Connection timeout.
+	 * - connect_timeout: [Since 1.28] Alternative connection timeout. If set, it is used
+	 *   instead of `timeout` and will be retried once if a connection fails
+	 *   to be established. Background: https://phabricator.wikimedia.org/T105378.
+	 *
+	 * @see MediaWiki\PoolCounter\PoolCounterClient
+	 * @since 1.16
+	 */
+	public const PoolCountClientConf = [
+		'default' => [
+			'servers' => [
+				'127.0.0.1'
+			],
+			'timeout' => 0.1,
+		],
+		'type' => 'map',
 	];
 
 	/**
@@ -3667,6 +3734,12 @@ class MainConfigSchema {
 	 * - (other):          A string may be used which identifies a cache
 	 *                     configuration in $wgObjectCaches.
 	 *
+	 * For a multi-datacenter setup, the underlying service should be configured
+	 * to broadcast operations by WANObjectCache using Mcrouter or Dynomite.
+	 * See @ref wanobjectcache-deployment "Deploying WANObjectCache".
+	 * To configure the `broadcastRoutingPrefix` WANObjectCache parameter,
+	 * use $wgWANObjectCache.
+	 *
 	 * @see $wgMessageCacheType, $wgParserCacheType
 	 */
 	public const MainCacheType = [
@@ -3684,8 +3757,27 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * The cache type for storing article HTML. This is used to store data which
-	 * is expensive to regenerate, and benefits from having plenty of storage space.
+	 * The cache type for storing page content HTML (e.g. parsed from wikitext).
+	 *
+	 * Parsing wikitext is considered an expensive operation. It is recommended
+	 * to give your parser cache plenty of storage space, such that long tail cache
+	 * hits are possible.
+	 *
+	 * The default parser cache backend (when MainCacheType is left to CACHE_NONE)
+	 * is effectively CACHE_DB (SqlBagOStuff). If you set up a main cache type
+	 * such as memcached, it is recommended to set this explicitly to CACHE_DB.
+	 *
+	 * Advice for large wiki farms:
+	 * - Consider allocating a dedicated database to ParserCache.
+	 *   Register it in $wgObjectCaches and point $wgParserCacheType to it.
+	 * - Consider using MultiWriteBagOStuff to add a higher tier with Memcached
+	 *   in front of the lower database tier.
+	 * - Consider setting `'purgePeriod' => 0` in the dedicated SqlBagOStuff
+	 *   entry in $wgObjectCaches. This disables the automatic purging of
+	 *   expired rows (which would normally happen in the background of
+	 *   write requests). You can then schedule the purgeParserCache.php script
+	 *   to e.g. once a day prune expired rows from the a dedicated maintenance
+	 *   server.
 	 *
 	 * For available types see $wgMainCacheType.
 	 */
@@ -3831,81 +3923,15 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Main Wide-Area-Network cache type.
+	 * Extra parameters to the WANObjectCache constructor.
 	 *
-	 * By default, this will wrap $wgMainCacheType (which is disabled, since the basic
-	 * stock default of CACHE_DB is not fast enough to make it worthwhile).
-	 *
-	 * For single server or single datacenter setup, setting $wgMainCacheType
-	 * is enough.
-	 *
-	 * For a multiple datacenter setup, WANObjectCache should be configured to
-	 * broadcast some if its operations using Mcrouter or Dynomite.
 	 * See @ref wanobjectcache-deployment "Deploying WANObjectCache".
 	 *
-	 * The options are:
-	 *   - false:            Configure the cache using $wgMainCacheType, without using
-	 *                       a relayer (only matters if there are multiple datacenters)
-	 *   - CACHE_NONE:       Do not cache
-	 *   - (other):          A string may be used which identifies a cache
-	 *                       configuration in $wgWANObjectCaches
-	 *
-	 * @since 1.26
+	 * @since 1.40
 	 */
-	public const MainWANCache = [
-		'default' => false,
-		'type' => 'integer|string|false',
-	];
-
-	/**
-	 * Advanced WAN object cache configuration.
-	 *
-	 * The format is an associative array where the key is an identifier
-	 * that may be referenced by $wgMainWANCache, and the value is an array of options:
-	 *
-	 *  - class:   (Required) The class to use (must be WANObjectCache or a subclass).
-	 *  - cacheId: (Required) A cache identifier from $wgObjectCaches.
-	 *  - secret:  (Optional) Stable secret for hashing long strings in key components.
-	 *             Default: $wgSecretKey.
-	 *
-	 * Any other options are treated as constructor parameters to WANObjectCache,
-	 * except for 'cache', 'logger', 'stats' and 'asyncHandler' which are
-	 * unconditionally set by MediaWiki core's ServiceWiring.
-	 *
-	 * **Example:**
-	 *
-	 * ```
-	 * $wgWANObjectCaches['memcached-php'] => [
-	 *   'class' => WANObjectCache::class,
-	 *   'cacheId' => 'memcached-php',
-	 * ];
-	 * ```
-	 *
-	 * @since 1.26
-	 */
-	public const WANObjectCaches = [
-		'default' => [
-			CACHE_NONE => [
-				'class' => WANObjectCache::class,
-				'cacheId' => CACHE_NONE,
-			]
-		],
+	public const WANObjectCache = [
+		'default' => [],
 		'type' => 'map',
-	];
-
-	/**
-	 * Verify and enforce WAN cache purges using reliable DB sources as streams.
-	 *
-	 * These secondary cache purges are de-duplicated via simple cache mutexes.
-	 * This improves consistency when cache purges are lost, which becomes more likely
-	 * as more cache servers are added or if there are multiple datacenters. Only keys
-	 * related to important mutable content will be checked.
-	 *
-	 * @since 1.29
-	 */
-	public const EnableWANCacheReaper = [
-		'default' => false,
-		'type' => 'boolean',
 	];
 
 	/**
@@ -4113,7 +4139,7 @@ class MainConfigSchema {
 	/**
 	 * Localisation cache configuration.
 	 *
-	 * Used by Language::getLocalisationCache() to decide how to construct the
+	 * Used by service wiring to decide how to construct the
 	 * LocalisationCache instance. Associative array with keys:
 	 *
 	 * class:       The class to use for constructing the LocalisationCache object.
@@ -4610,10 +4636,16 @@ class MainConfigSchema {
 	 * - A friendly name for each site, used for tooltip text, may optionally be
 	 *   placed in the system message "interlanguage-link-sitename-xyz" where xyz is
 	 *   the prefix in this array.
+	 * - This should be a list of "interwiki prefixes" (ie, what appears in
+	 *   wikitext), and you probably want to add an entry to
+	 *   InterlanguageLinkCodeMap as well to specify which mediawiki internal
+	 *   (or custom) language code this prefix corresponds to, and perhaps
+	 *   then map that custom language code to a language name in
+	 *   ExtraLanguageNames.
 	 */
 	public const ExtraInterlanguageLinkPrefixes = [
 		'default' => [],
-		'type' => 'map',
+		'type' => 'list',
 	];
 
 	/**
@@ -4744,7 +4776,8 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Default variant code, if false, the default will be the language code
+	 * Default variant code. If false, the default will be the static default
+	 * variant of the language.
 	 */
 	public const DefaultLanguageVariant = [
 		'default' => false,
@@ -4883,7 +4916,7 @@ class MainConfigSchema {
 
 	public static function getDefaultLocaltimezone(): string {
 		// This defaults to the `date.timezone` value of the PHP INI option. If this option is not set,
-		// it falls back to UTC. Prior to PHP 7.0, this fallback produced a warning.
+		// it falls back to UTC.
 		$localtimezone = date_default_timezone_get();
 		if ( !$localtimezone ) {
 			// Make doubly sure we have a valid time zone, even if date_default_timezone_get()
@@ -4923,7 +4956,6 @@ class MainConfigSchema {
 	 * represented as char_to_convert => conversion_override. See T219279 for details
 	 * on why this is useful during php version transitions.
 	 *
-	 * @warning: EXPERIMENTAL!
 	 * @since 1.34
 	 */
 	public const OverrideUcfirstCharacters = [
@@ -5085,6 +5117,21 @@ class MainConfigSchema {
 	public const SkipSkins = [
 		'default' => [],
 		'type' => 'map',
+	];
+
+	/**
+	 * Enable client-side preferences for unregistered users.
+	 *
+	 * This is only supported for unregistered users. For registered users, skins
+	 * and extensions must use user preferences (e.g. hidden or API-only options)
+	 * and swap class names server-side through the Skin interface.
+	 *
+	 * @warning EXPERIMENTAL!
+	 * @since 1.40
+	 * @see \MediaWiki\ResourceLoader\ClientHtml
+	 */
+	public const ResourceLoaderClientPreferences = [
+		'default' => false,
 	];
 
 	/**
@@ -5262,7 +5309,9 @@ class MainConfigSchema {
 	 */
 	public const MangleFlashPolicy = [
 		'default' => true,
-		'deprecated' => 'since 1.39; no longer has any effect',
+		'obsolete' => 'Since 1.39; no longer has any effect.',
+		'description' => 'Has been emitting warnings since 1.39 (LTS). ' .
+			'Can be removed completely in 1.44, assuming 1.43 is an LTS release.'
 	];
 
 	/**
@@ -6092,7 +6141,7 @@ class MainConfigSchema {
 	 * other namespaces cannot be invalidated by this variable.
 	 */
 	public const InvalidRedirectTargets = [
-		'default' => [ 'Filepath', 'Mypage', 'Mytalk', 'Redirect' ],
+		'default' => [ 'Filepath', 'Mypage', 'Mytalk', 'Redirect', 'Mylog' ],
 		'type' => 'list',
 	];
 
@@ -6142,10 +6191,12 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Interwiki cache, either as an associative array or a path to a constant
-	 * database (.cdb) file.
+	 * Interwiki cache as an associative array.
 	 *
-	 * This data structure database is generated by the `dumpInterwiki` maintenance
+	 * When set, the InterwikiLookup service will not use the built-in `interwiki` database table,
+	 * but instead use this static array as its source.
+	 *
+	 * This cache data structure can be generated by the `dumpInterwiki.php` maintenance
 	 * script (which lives in the WikimediaMaintenance repository) and has key
 	 * formats such as the following:
 	 *
@@ -6156,10 +6207,12 @@ class MainConfigSchema {
 	 *
 	 * Sites mapping just specifies site name, other keys provide "local url"
 	 * data layout.
+	 *
+	 * @see \MediaWiki\Interwiki\ClassicInterwikiLookup
 	 */
 	public const InterwikiCache = [
 		'default' => false,
-		'type' => 'false|map|string',
+		'type' => 'false|map',
 		'mergeStrategy' => 'replace',
 	];
 
@@ -6382,7 +6435,7 @@ class MainConfigSchema {
 	 * @since 1.36
 	 */
 	public const ParserEnableLegacyMediaDOM = [
-		'default' => true,
+		'default' => false,
 	];
 
 	/**
@@ -6768,7 +6821,7 @@ class MainConfigSchema {
 					'MinimumPasswordLengthToLogin' => 1,
 				],
 				'default' => [
-					'MinimalPasswordLength' => [ 'value' => 1, 'suggestChangeOnLogin' => true ],
+					'MinimalPasswordLength' => [ 'value' => 8, 'suggestChangeOnLogin' => true ],
 					'PasswordCannotBeSubstringInUsername' => [
 						'value' => true,
 						'suggestChangeOnLogin' => true
@@ -7054,9 +7107,16 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Configuration for built-in password types. Maps the password type
-	 * to an array of options. The 'class' option is the Password class to
-	 * use. All other options are class-dependent.
+	 * Configuration for built-in password types.
+	 *
+	 * Maps the password type to an array of options:
+	 *
+	 * - class: The Password class to use.
+	 * - factory (since 1.40): A function that creates and returns a suitable Password object.
+	 *   This option is intended only for internal use; the function signature is unstable and
+	 *   subject to change in future versions.
+	 *
+	 * All other options are class-dependent.
 	 *
 	 * An advanced example:
 	 *
@@ -7100,7 +7160,7 @@ class MainConfigSchema {
 				'cost' => 9,
 			],
 			'pbkdf2' => [
-				'class' => Pbkdf2Password::class,
+				'factory' => [ AbstractPbkdf2Password::class, 'newInstance' ],
 				'algo' => 'sha512',
 				'cost' => '30000',
 				'length' => '64',
@@ -7109,8 +7169,8 @@ class MainConfigSchema {
 				'class' => Argon2Password::class,
 
 				// Algorithm used:
-				// * 'argon2i' is optimized against side-channel attacks (PHP 7.2+)
-				// * 'argon2id' is optimized against both side-channel and GPU cracking (PHP 7.3+)
+				// * 'argon2i' is optimized against side-channel attacks
+				// * 'argon2id' is optimized against both side-channel and GPU cracking
 				// * 'auto' to use best available algorithm. If you're using more than one server, be
 				//   careful when you're mixing PHP versions because newer PHP might generate hashes that
 				//   older versions might would not understand.
@@ -7253,6 +7313,7 @@ class MainConfigSchema {
 				'search-match-redirect' => true,
 				'search-special-page' => 'Search',
 				'searchlimit' => 20,
+				'search-thumbnail-extra-namespaces' => true,
 				'showhiddencats' => 0,
 				'shownumberswatching' => 1,
 				'showrollbackconfirmation' => 0,
@@ -7302,7 +7363,7 @@ class MainConfigSchema {
 	 * registration (regex metacharacters like / are escaped).
 	 */
 	public const InvalidUsernameCharacters = [
-		'default' => '@:>',
+		'default' => '@:>=',
 	];
 
 	/**
@@ -7360,7 +7421,6 @@ class MainConfigSchema {
 				'class' => \MediaWiki\Session\CookieSessionProvider::class,
 				'args' => [ [
 					'priority' => 30,
-					'callUserSetCookiesHook' => true,
 				] ],
 			],
 			\MediaWiki\Session\BotPasswordSessionProvider::class => [
@@ -7492,11 +7552,9 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * If true, blocked users will not be allowed to login. When using this with
-	 * a public wiki, the effect of logging out blocked users may actually be
-	 * avers: unless the user's address is also blocked (e.g. auto-block),
-	 * logging the user out will again allow reading and editing, just as for
-	 * anonymous visitors.
+	 * If true, sitewide blocked users will not be allowed to login. (Direct
+	 * blocks only; IP blocks are ignored.) This can be used to remove users'
+	 * read access on a private wiki.
 	 */
 	public const BlockDisablesLogin = [
 		'default' => false,
@@ -7719,6 +7777,7 @@ class MainConfigSchema {
 			'bureaucrat' => [
 					'userrights' => true,
 					'noratelimit' => true,
+					'renameuser' => true,
 				],
 			'suppress' => [
 					'hideuser' => true,
@@ -8335,7 +8394,7 @@ class MainConfigSchema {
 				'ip' => [ 5, 3600 ],
 			],
 			// Emailing other users using MediaWiki
-			'emailuser' => [
+			'sendemail' => [
 				'ip' => [ 5, 86400 ],
 				'newbie' => [ 5, 86400 ],
 				'user' => [ 20, 86400 ],
@@ -8380,7 +8439,7 @@ class MainConfigSchema {
 				'newbie' => [ 5, 60 ],
 			],
 			// Adding or removing change tags
-			'changetag' => [
+			'changetags' => [
 				'ip' => [ 8, 60 ],
 				'newbie' => [ 8, 60 ],
 			],
@@ -9411,7 +9470,7 @@ class MainConfigSchema {
 	 *
 	 * Profiler subclasses available in MediaWiki core:
 	 *
-	 * - ProfilerXhprof: Based on XHProf or Tideways.
+	 * - ProfilerXhprof: Based on XHProf or Tideways-XHProf.
 	 * - ProfilerExcimer: Based on Excimer.
 	 * - ProfilerSectionOnly
 	 *
@@ -9497,42 +9556,42 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Metrics output target URI e.g. udp://127.0.0.1:8125
+	 * Stats output target URI e.g. udp://127.0.0.1:8125
 	 *
 	 * If null, metrics will not be sent.
-	 * Note: this only affects metrics instantiated by the MetricsFactory service
+	 * Note: this only affects metrics instantiated by the StatsFactory service
 	 *
 	 * @since 1.38
 	 */
-	public const MetricsTarget = [
+	public const StatsTarget = [
 		'default' => null,
 		'type' => '?string',
 	];
 
 	/**
-	 * Metrics output format
+	 * Stats output format
 	 *
 	 * If null, metrics will not be rendered nor sent.
-	 * Note: this only affects metrics instantiated by the MetricsFactory service
+	 * Note: this only affects metrics instantiated by the StatsFactory service
 	 *
-	 * @see \Wikimedia\Metrics\MetricsFactory::SUPPORTED_OUTPUT_FORMATS
-	 * @since 1.38
+	 * @see \Wikimedia\Stats\OutputFormats::SUPPORTED_FORMATS
+	 * @since 1.41
 	 */
-	public const MetricsFormat = [
+	public const StatsFormat = [
 		'default' => null,
 		'type' => '?string',
 	];
 
 	/**
-	 * Metrics service name prefix
+	 * Stats service name prefix
 	 *
 	 * Required.  Must not be zero-length.
 	 * Defaults to: 'mediawiki'
-	 * Note: this only affects metrics instantiated by the MetricsFactory service
+	 * Note: this only affects metrics instantiated by the StatsFactory service
 	 *
-	 * @since 1.38
+	 * @since 1.41
 	 */
-	public const MetricsPrefix = [
+	public const StatsPrefix = [
 		'default' => 'mediawiki',
 		'type' => 'string',
 	];
@@ -9545,25 +9604,6 @@ class MainConfigSchema {
 	 */
 	public const PageInfoTransclusionLimit = [
 		'default' => 50,
-	];
-
-	/**
-	 * Parser test suite files to be run by parserTests.php when no specific
-	 * filename is passed to it.
-	 *
-	 * Extensions using extension.json will have any *.txt file in a
-	 * tests/parser/ directory automatically run.
-	 *
-	 * Core tests can be added to ParserTestRunner::$coreTestFiles.
-	 *
-	 * Use full paths.
-	 *
-	 * @deprecated since 1.30
-	 */
-	public const ParserTestFiles = [
-		'default' => [],
-		'type' => 'map',
-		'deprecated' => 'since 1.30',
 	];
 
 	/**
@@ -9663,7 +9703,9 @@ class MainConfigSchema {
 	 */
 	public const EnableOpenSearchSuggest = [
 		'default' => true,
-		'deprecated' => 'since 1.35 No longer used',
+		'obsolete' => 'Since 1.35, no longer used',
+		'description' => 'Has been emitting warnings since 1.39 (LTS). ' .
+			'Can be removed completely in 1.44, assuming 1.43 is an LTS release.'
 	];
 
 	/**
@@ -10247,8 +10289,8 @@ class MainConfigSchema {
 	 */
 	public const FeedClasses = [
 		'default' => [
-			'rss' => 'RSSFeed',
-			'atom' => 'AtomFeed',
+			'rss' => \MediaWiki\Feed\RSSFeed::class,
+			'atom' => \MediaWiki\Feed\AtomFeed::class,
 		],
 		'type' => 'map',
 	];
@@ -10452,7 +10494,7 @@ class MainConfigSchema {
 	 * @since 1.35
 	 */
 	public const WatchlistExpiryMaxDuration = [
-		'default' => '6 months',
+		'default' => '1 year',
 		'type' => '?string',
 	];
 
@@ -10830,9 +10872,8 @@ class MainConfigSchema {
 
 	/**
 	 * Special page list. This is an associative array mapping the (canonical) names of
-	 * special pages to either a class name to be instantiated, or a callback to use for
-	 * creating the special page object. In both cases, the result must be an instance of
-	 * SpecialPage.
+	 * special pages to either a class name or a ObjectFactory spec to be instantiated, or a callback to use for
+	 * creating the special page object. In all cases, the result must be an instance of SpecialPage.
 	 */
 	public const SpecialPages = [
 		'default' => [],
@@ -10840,16 +10881,20 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * Switch controlling legacy case-insensitive classloading.
+	 * Obsolete switch that controlled legacy case-insensitive classloading.
 	 *
-	 * Do not disable if your wiki must support data created by PHP4, or by
-	 * MediaWiki 1.4 or earlier.
+	 * Case-insensitive classloading was needed for loading data that had
+	 * been serialized by PHP 4 with the class names converted to lowercase.
+	 * It is no longer necessary since 1.31; the lowercase forms in question
+	 * are now listed in autoload.php (T166759).
 	 *
 	 * @deprecated since 1.35
 	 */
 	public const AutoloadAttemptLowercase = [
 		'default' => false,
-		'deprecated' => 'since 1.35',
+		'obsolete' => 'Since 1.40; no longer has any effect.',
+		'description' => 'Has been emitting warnings since 1.39 (LTS). ' .
+			'Can be removed completely in 1.44, assuming 1.43 is an LTS release.'
 	];
 
 	/**
@@ -10971,9 +11016,19 @@ class MainConfigSchema {
 	 * Maps jobs to their handlers; extensions
 	 * can add to this to provide custom jobs.
 	 *
-	 * A job handler should either be a class name to be instantiated,
-	 * or (since 1.30) a callback to use for creating the job object.
-	 * The callback takes (Title, array map of parameters) as arguments.
+	 * Since 1.40, job handlers can be specified as object specs
+	 * for use with ObjectFactory, using an array, a plain class name,
+	 * or a callback.
+	 *
+	 * @note The constructor signature of job classes has to follow one of two patterns:
+	 * Either it takes a parameter array as the first argument, followed by any services it
+	 * needs to have injected: ( array $params, ... ).
+	 * Or it takes a PageReference as the first parameter, followed by the parameter array,
+	 * followed by any services: ( PageReference $page, array $params, ... ).
+	 * In order to signal to the JobFactory that the $page parameter should be omitted from
+	 * the constructor arguments, the job class has to be a subclass of GenericParameterJob,
+	 * or the object specification for the job has to set the 'needsPage' key to false.
+	 * If a callback is used, its signature follows the same rules.
 	 */
 	public const JobClasses = [
 		'default' => [
@@ -10999,9 +11054,25 @@ class MainConfigSchema {
 			'clearWatchlistNotifications' => ClearWatchlistNotificationsJob::class,
 			'userOptionsUpdate' => UserOptionsUpdateJob::class,
 			'revertedTagUpdate' => RevertedTagUpdateJob::class,
-			'enqueue' => EnqueueJob::class, // local queue for multi-DC setups
 			'null' => NullJob::class,
 			'userEditCountInit' => UserEditCountInitJob::class,
+			'parsoidCachePrewarm' => [
+				'class' => ParsoidCachePrewarmJob::class,
+				'services' => [
+					'ParsoidOutputAccess',
+					'PageStore',
+					'RevisionLookup'
+				],
+				// tell the JobFactory not to include the $page parameter in the constructor call
+				'needsPage' => false
+			],
+			'renameUser' => [
+				'class' => RenameUserJob::class,
+				'services' => [
+					'MainConfig',
+					'DBLoadBalancerFactory'
+				]
+			],
 		],
 		'type' => 'map',
 	];
@@ -11241,6 +11312,7 @@ class MainConfigSchema {
 			'tag',
 			'managetags',
 			'contentmodel',
+			'renameuser',
 		],
 		'type' => 'list',
 	];
@@ -11383,6 +11455,7 @@ class MainConfigSchema {
 			'protect/move_prot' => ProtectLogFormatter::class,
 			'protect/protect' => ProtectLogFormatter::class,
 			'protect/unprotect' => ProtectLogFormatter::class,
+			'renameuser/renameuser' => RenameuserLogFormatter::class,
 			'rights/autopromote' => RightsLogFormatter::class,
 			'rights/rights' => RightsLogFormatter::class,
 			'suppress/block' => BlockLogFormatter::class,
@@ -11504,7 +11577,7 @@ class MainConfigSchema {
 	 * Set this to an array of special page names to prevent
 	 * maintenance/updateSpecialPages.php from updating those pages.
 	 *
-	 * Mapping each special page name to an run mode like 'periodical' if a cronjob is set up.
+	 * Mapping each special page name to a run mode like 'periodical' if a cronjob is set up.
 	 */
 	public const DisableQueryPageUpdate = [
 		'default' => false,
@@ -11996,14 +12069,6 @@ class MainConfigSchema {
 	];
 
 	/**
-	 * @deprecated since 1.37; use $wgShellboxUrls instead
-	 */
-	public const ShellboxUrl = [
-		'default' => null,
-		'deprecated' => 'since 1.37; use $wgShellboxUrls instead',
-	];
-
-	/**
 	 * Shell commands can be run on a remote server using Shellbox. To use this
 	 * feature, set this to the URLs mapped by the service, and also configure $wgShellboxSecretKey.
 	 *
@@ -12162,10 +12227,21 @@ class MainConfigSchema {
 	/** @name   Job queue */
 
 	/**
-	 * Number of jobs to perform per request. May be less than one in which case
-	 * jobs are performed probabilistically. If this is zero, jobs will not be done
-	 * during ordinary apache requests. In this case, maintenance/runJobs.php should
-	 * be run periodically.
+	 * Number of jobs to perform per request. May be less than one in which case jobs are
+	 * performed probabalistically. If this is zero, jobs will not be done during ordinary
+	 * apache requests. In this case, maintenance/runJobs.php should be run in loop every
+	 * few seconds via a service or cron job. If using a cron job, be sure to handle the
+	 * case where the script is already running (e.g. via `/usr/bin/flock -n <lock_file>`).
+	 *
+	 * If this is set to a non-zero number, then it is highly recommended that PHP run in
+	 * fastcgi mode (php_fpm). When using a standard Apache PHP handler (mod_php), it is
+	 * recommended that output_buffering and zlib.output_compression both be set to "Off",
+	 * allowing MediaWiki to install an unlimited size output buffer on the fly. Setting
+	 * output_buffering to an integer (e.g. 4096) or enabling zlib.output_compression can
+	 * cause user-visible slowness as background tasks execute during web requests.
+	 *
+	 * Regardless of the web server engine in use, be sure to configure a sufficient number
+	 * processes/threads in order to avoid exhaustion (which will cause user-visible slowness).
 	 */
 	public const JobRunRate = [
 		'default' => 1,
@@ -12366,6 +12442,16 @@ class MainConfigSchema {
 	 */
 	public const SkinsPreferred = [
 		'default' => [ 'vector-2022', 'vector' ],
+		'type' => 'list',
+	];
+
+	/**
+	 * List of skins to not show the Special:Contribute page
+	 *
+	 * @since 1.40
+	 */
+	public const SpecialContributeSkinsEnabled = [
+		'default' => [],
 		'type' => 'list',
 	];
 

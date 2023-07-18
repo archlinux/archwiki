@@ -1,4 +1,9 @@
 <?php
+
+namespace MediaWiki\Extension\ConfirmEdit\FancyCaptcha;
+
+use ApiBase;
+
 /**
  * Api module to reload FancyCaptcha
  *

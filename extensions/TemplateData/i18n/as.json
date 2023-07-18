@@ -99,7 +99,7 @@
 	"templatedata-modal-table-param-required": "প্ৰয়োজনীয়",
 	"templatedata-modal-table-param-suggested": "প্ৰস্তাৱিত",
 	"templatedata-modal-table-param-suggestedvalues": "প্ৰস্তাৱিত মান",
-	"templatedata-modal-table-param-suggestedvalues-placeholder": "মান যোগ কৰক...",
+	"templatedata-modal-placeholder-multiselect": "মান যোগ কৰক...",
 	"templatedata-modal-table-param-type": "প্ৰকাৰ",
 	"templatedata-modal-table-param-uneditablefield": "অ-সম্পাদনযোগ্য",
 	"templatedata-modal-title": "সাঁচ নথি সম্পাদক",

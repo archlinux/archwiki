@@ -13,7 +13,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "editor",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"MessagesDirs": {
 		"WikiEditor": [
@@ -44,6 +44,10 @@
 	},
 	"ResourceModules": {
 		"ext.wikiEditor": {
+			"targets": [
+				"desktop",
+				"mobile"
+			],
 			"group": "ext.wikiEditor",
 			"packageFiles": [
 				"ext.wikiEditor.js",
@@ -298,6 +302,10 @@
 			]
 		},
 		"ext.wikiEditor.styles": {
+			"targets": [
+				"desktop",
+				"mobile"
+			],
 			"group": "ext.wikiEditor",
 			"styles": "ext.wikiEditor.toolbar.styles.less"
 		},
@@ -450,8 +458,12 @@
 	},
 	"config": {
 		"WikiEditorRealtimePreview": {
-			"description": "Whether to enable the Realtime Preview feature.",
+			"description": "Whether to enable the Realtime Preview feature. If true, the feature might still be limited to a beta feature depending on WikiEditorRealtimePreviewBeta and general beta feature availability. If false, the feature is not available in any form.",
 			"value": false
+		},
+		"WikiEditorRealtimePreviewBeta": {
+			"description": "Offer Realtime Preview as a Beta Feature (assuming the BetaFeatures extension is installed). If false, WikiEditorRealtimePreview directly controls whether the feature is enabled or not.",
+			"value": true
 		},
 		"WikiEditorRealtimePreviewDebounce": {
 			"description": "Debounce time in milliseconds for the Realtime Preview feature.",

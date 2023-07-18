@@ -3,9 +3,9 @@
 		"authors": [
 			"Dr Lotus Black",
 			"Ninjastrikers",
+			"Phosai",
 			"Sanlinnaing",
-			"Zawthet",
-			"Phosai"
+			"Zawthet"
 		]
 	},
 	"collabpad-import-subtitle": "$1 မှ တင်သွင်းခဲ့သည်",
@@ -100,6 +100,7 @@
 	"visualeditor-dialog-transclusion-action-save": "သိမ်းရန်",
 	"visualeditor-dialog-transclusion-add-param-save": "ပေါင်းထည့်ရန်",
 	"visualeditor-dialog-transclusion-add-template": "တမ်းပလိတ် ပေါင်းထည့်ရန်",
+	"visualeditor-dialog-transclusion-add-template-button": "တမ်းပလိတ် ပေါင်းထည့်ရန်",
 	"visualeditor-dialog-transclusion-add-template-save": "ပေါင်းထည့်ရန်",
 	"visualeditor-dialog-transclusion-confirmation-reject": "တည်းဖြတ်မှုကို ဆက်လုပ်ရန်",
 	"visualeditor-dialog-transclusion-contextitem-loading": "ဝန်ဆွဲတင်နေသည်...",

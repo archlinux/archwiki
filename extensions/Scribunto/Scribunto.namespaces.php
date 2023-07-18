@@ -40,6 +40,16 @@ $namespaceNames['ar'] = [
 	829 => 'نقاش_الوحدة',
 ];
 
+$namespaceNames['ary'] = [
+	828 => 'مودول',
+	829 => 'مداكرة_د_لمودول',
+];
+
+$namespaceAliases['ary'] = [
+	'وحدة' => 828,
+	'نقاش_الوحدة' => 829,
+];
+
 $namespaceNames['ast'] = [
 	828 => 'Módulu',
 	829 => 'Módulu_alderique',
@@ -117,7 +127,11 @@ $namespaceNames['ca'] = [
 
 $namespaceNames['ce'] = [
 	828 => 'Модуль',
-	829 => 'Модулин_дийцаре',
+	829 => 'Модуль_йийцар',
+];
+
+$namespaceAliases['ce'] = [
+	'Модулин_дийцаре' => 829,
 ];
 
 $namespaceNames['ckb'] = [

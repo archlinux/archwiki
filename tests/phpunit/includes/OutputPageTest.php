@@ -1,15 +1,20 @@
 <?php
 
+use MediaWiki\Html\Html;
 use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Page\PageReferenceValue;
 use MediaWiki\Page\PageStoreRecord;
+use MediaWiki\Parser\ParserOutputFlags;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Request\ContentSecurityPolicy;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\ResourceLoader as RL;
 use MediaWiki\ResourceLoader\ResourceLoader;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
 use PHPUnit\Framework\MockObject\MockObject;
 use Wikimedia\DependencyStore\KeyValueDependencyStore;
 use Wikimedia\Rdbms\FakeResultWrapper;
@@ -38,6 +43,14 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		ResourceLoader::clearCache();
+
+		$this->overrideConfigValues( [
+			MainConfigNames::ScriptPath => '/mw',
+			MainConfigNames::Script => '/mw/index.php',
+			MainConfigNames::ArticlePath => '/wikipage/$1',
+			MainConfigNames::Server => 'http://example.org',
+			MainConfigNames::CanonicalServer => 'https://www.example.org',
+		] );
 	}
 
 	protected function tearDown(): void {
@@ -128,6 +141,222 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				[], [ self::ATOM_RC_LINK, self::RSS_RC_LINK ]
 			],
 		];
+	}
+
+	/**
+	 * @covers OutputPage::setCanonicalUrl
+	 * @covers OutputPage::getCanonicalUrl
+	 * @covers OutputPage::getHeadLinksArray
+	 */
+	public function testSetCanonicalUrl() {
+		$op = $this->newInstance();
+		$op->setCanonicalUrl( 'http://example.comm' );
+		$op->setCanonicalUrl( 'http://example.com' );
+
+		$this->assertSame( 'http://example.com', $op->getCanonicalUrl() );
+
+		$headLinks = $op->getHeadLinksArray();
+
+		$this->assertContains( Html::element( 'link', [
+			'rel' => 'canonical', 'href' => 'http://example.com'
+		] ), $headLinks );
+
+		$this->assertNotContains( Html::element( 'link', [
+			'rel' => 'canonical', 'href' => 'http://example.comm'
+		] ), $headLinks );
+	}
+
+	public static function provideGetHeadLinksArray() {
+		return [
+			[
+				[
+					'EnableCanonicalServerLink' => true,
+				],
+				'https://www.example.org/xyzzy/Hello',
+				true,
+				'/xyzzy/Hello'
+			],
+			[
+				[
+					'EnableCanonicalServerLink' => true,
+				],
+				'https://www.example.org/wikipage/My_test_page',
+				true,
+				null
+			],
+			[
+				[
+					'EnableCanonicalServerLink' => true,
+				],
+				'https://www.mediawiki.org/wiki/Manual:FauxRequest.php',
+				false,
+				null
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideGetHeadLinksArray
+	 * @covers OutputPage::getHeadLinksArray
+	 */
+	public function testGetHeadLinksArray( $config, $canonicalUrl, $isArticleRelated, $canonicalUrlToSet = null ) {
+		$request = new FauxRequest();
+		$request->setRequestURL( 'https://www.mediawiki.org/wiki/Manual:FauxRequest.php' );
+		$op = $this->newInstance( $config, $request );
+		if ( $canonicalUrlToSet ) {
+			$op->setCanonicalUrl( $canonicalUrlToSet );
+		}
+		$op->setArticleRelated( $isArticleRelated );
+		$headLinks = $op->getHeadLinksArray();
+		$this->assertSame(
+			Html::element( 'link',
+				[ 'rel' => 'canonical', 'href' => $canonicalUrl ]
+			),
+			$headLinks['link-canonical']
+		);
+	}
+
+	/**
+	 * Test the generation of hreflang Tags when site language has variants
+	 *
+	 * @covers OutputPage::getHeadLinksArray
+	 */
+	public function testGetLanguageVariantUrl() {
+		$this->overrideConfigValue( 'LanguageCode', 'zh' );
+
+		$op = $this->newInstance();
+		$headLinks = $op->getHeadLinksArray();
+
+		# T123901, T305540, T108443: Don't use language variant link for mixed-variant variant
+		#  (the language code with converter / the main code)
+		$this->assertSame(
+			Html::element( 'link', [ 'rel' => 'alternate', 'hreflang' => 'zh',
+				'href' => 'http://example.org/wikipage/My_test_page' ] ),
+			$headLinks['link-alternate-language-zh']
+		);
+
+		# Make sure alternate URLs use BCP 47 codes in hreflang
+		$this->assertSame(
+			Html::element( 'link', [ 'rel' => 'alternate', 'hreflang' => 'zh-Hant-TW',
+				'href' => 'http://example.org/mw/index.php?title=My_test_page&variant=zh-tw' ] ),
+			$headLinks['link-alternate-language-zh-hant-tw']
+		);
+
+		# Make sure $wgVariantArticlePath work
+		# We currently use MediaWiki internal language code as the primary variant URL parameter
+		$this->overrideConfigValues( [
+			'LanguageCode' => 'zh',
+			'VariantArticlePath' => '/$2/$1',
+		] );
+
+		$op = $this->newInstance();
+		$headLinks = $op->getHeadLinksArray();
+
+		$this->assertSame(
+			Html::element( 'link', [ 'rel' => 'alternate', 'hreflang' => 'zh-Hant-TW',
+				'href' => 'http://example.org/zh-tw/My_test_page' ] ),
+			$headLinks['link-alternate-language-zh-hant-tw']
+		);
+	}
+
+	public static function provideCanonicalUrlAndAlternateUrlData() {
+		# $messsage, $action, $urlVariant, $canonicalUrl, $altUrlLangCode, $present, $nonpresent
+		return [
+			[
+				'Non-specified variant with view action - '
+					. 'We currently use MediaWiki internal codes as the primary URL parameter',
+				null,
+				null,
+				'https://www.example.org/wikipage/My_test_page',
+				'zh-tw',
+				'http://example.org/mw/index.php?title=My_test_page&variant=zh-tw',
+				'http://example.org/mw/index.php?title=My_test_page&variant=zh-hant-tw',
+			],
+			[
+				'Specified zh-tw variant with view action - '
+					. 'Canonical URL and alternate URL should be the same; '
+					. 'Alternate URL should be kept even when it is the current page view language',
+				null,
+				'zh-tw',
+				'https://www.example.org/mw/index.php?title=My_test_page&variant=zh-tw',
+				'zh-tw',
+				'http://example.org/mw/index.php?title=My_test_page&variant=zh-tw',
+				'http://example.org/mw/index.php?title=My_test_page&variant=zh-hant-tw',
+			],
+			[
+				'Non-specified variant with history action - '
+					. 'There should be no alternate URLs for language variants'
+					. 'There should be no alternate URLs for language variants',
+				'history',
+				null,
+				'https://www.example.org/mw/index.php?title=My_test_page&action=history',
+				'zh-tw',
+				null,
+				'https://www.example.org/mw/index.php?title=My_test_page&action=history&variant=zh-tw',
+			],
+			[
+				'Specified zh-tw variant with history action - '
+					. 'There should be no alternate URLs for language variants',
+				'history',
+				'zh-tw',
+				'https://www.example.org/mw/index.php?title=My_test_page&action=history',
+				'zh-tw',
+				null,
+				'https://www.example.org/mw/index.php?title=My_test_page&action=history&variant=zh-tw',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideCanonicalUrlAndAlternateUrlData
+	 * @covers OutputPage::getHeadLinksArray
+	 */
+	public function testCanonicalUrlAndAlternateUrls(
+		$messsage, $action, $urlVariant, $canonicalUrl, $altUrlLangCode, $present, $nonpresent
+	) {
+		$req = new FauxRequest( [
+			'title' => 'My_test_page',
+			'action' => $action,
+			'variant' => $urlVariant,
+		] );
+		$this->overrideConfigValues( [
+			'LanguageCode' => 'zh',
+			'Request' => $req, # LanguageConverter is using global state...
+		] );
+		$op = $this->newInstance( [ MainConfigNames::EnableCanonicalServerLink => true ], $req );
+		$bcp47 = LanguageCode::bcp47( $altUrlLangCode );
+		$bcp47Lowercase = strtolower( $bcp47 );
+		$headLinks = $op->getHeadLinksArray();
+
+		$this->assertSame(
+			Html::element( 'link', [ 'rel' => 'canonical', 'href' => $canonicalUrl ] ),
+			$headLinks['link-canonical'],
+			$messsage
+		);
+
+		if ( isset( $present ) ) {
+			$this->assertSame(
+				Html::element(
+					'link',
+					[
+						'rel' => 'alternate',
+						'hreflang' => $bcp47,
+						'href' => $present,
+					]
+				),
+				$headLinks['link-alternate-language-' . $bcp47Lowercase],
+				$messsage
+			);
+		}
+
+		$this->assertNotContains(
+			Html::element(
+				'link',
+				[ 'rel' => 'alternate', 'hreflang' => $bcp47, 'href' => $nonpresent, ]
+			),
+			$headLinks,
+			$messsage
+		);
 	}
 
 	/**
@@ -232,7 +461,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->assertContains( '<meta name="keywords" content="first"/>', $links );
 		$this->assertContains( '<meta name="keywords" content="second"/>', $links );
 		$this->assertContains( '<meta property="og:title" content="Ta-duh"/>', $links );
-		$this->assertArrayNotHasKey( 'meta-robots', $links );
+		$this->assertArrayHasKey( 'meta-robots', $links );
 	}
 
 	/**
@@ -259,29 +488,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		foreach ( $links as $link ) {
 			$this->assertContains( Html::element( 'link', $link ), $result );
 		}
-	}
-
-	/**
-	 * @covers OutputPage::setCanonicalUrl
-	 * @covers OutputPage::getCanonicalUrl
-	 * @covers OutputPage::getHeadLinksArray
-	 */
-	public function testSetCanonicalUrl() {
-		$op = $this->newInstance();
-		$op->setCanonicalUrl( 'http://example.comm' );
-		$op->setCanonicalUrl( 'http://example.com' );
-
-		$this->assertSame( 'http://example.com', $op->getCanonicalUrl() );
-
-		$headLinks = $op->getHeadLinksArray();
-
-		$this->assertContains( Html::element( 'link', [
-			'rel' => 'canonical', 'href' => 'http://example.com'
-		] ), $headLinks );
-
-		$this->assertNotContains( Html::element( 'link', [
-			'rel' => 'canonical', 'href' => 'http://example.comm'
-		] ), $headLinks );
 	}
 
 	/**
@@ -412,7 +618,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			$csp = TestingAccessWrapper::newFromObject( $op->getCSP() );
 			$actual = $csp->makeCSPDirectives( [ 'default-src' => [] ], false );
 			$regex = '/(^|;)\s*' . $ltype . '-src\s[^;]*' . $ltype . 'src\.com[\s;]/';
-			$this->assertRegExp( $regex, $actual, $type );
+			$this->assertMatchesRegularExpression( $regex, $actual, $type );
 		}
 	}
 
@@ -427,7 +633,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op->addBodyClasses( [ 'd', 'e' ] );
 		$op->addBodyClasses( 'a' );
 
-		$this->assertStringContainsString( '"a mediawiki b c d e ltr',
+		$this->assertStringContainsString( '<body class="a mediawiki b c d e ',
 			'' . $op->headElement( $op->getContext()->getSkin() ) );
 	}
 
@@ -605,7 +811,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op->setRobotPolicy( 'noindex, nofollow' );
 
 		$links = $op->getHeadLinksArray();
-		$this->assertContains( '<meta name="robots" content="noindex,nofollow"/>', $links );
+		$this->assertContains( '<meta name="robots" content="noindex,nofollow,max-image-preview:standard"/>', $links );
 	}
 
 	/**
@@ -621,12 +827,12 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op->setIndexPolicy( 'index' );
 
 		$links = $op->getHeadLinksArray();
-		$this->assertContains( '<meta name="robots" content="index,nofollow,max-snippet:500"/>', $links );
+		$this->assertContains( '<meta name="robots" content="index,nofollow,max-image-preview:standard,max-snippet:500"/>', $links );
 
 		$op->setFollowPolicy( 'follow' );
 		$links = $op->getHeadLinksArray();
 		$this->assertContains(
-			'<meta name="robots" content="max-snippet:500"/>',
+			'<meta name="robots" content="max-image-preview:standard,max-snippet:500"/>',
 			$links,
 			'When index,follow (browser default) omit'
 		);
@@ -655,7 +861,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op->setFollowPolicy( 'nofollow' );
 
 		$links = $op->getHeadLinksArray();
-		$this->assertContains( '<meta name="robots" content="noindex,nofollow"/>', $links );
+		$this->assertContains( '<meta name="robots" content="noindex,nofollow,max-image-preview:standard"/>', $links );
 	}
 
 	private function extractHTMLTitle( OutputPage $op ) {
@@ -791,7 +997,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame( 'My test page', $op->getTitle()->getPrefixedText() );
 
-		$op->setTitle( Title::newFromText( 'Another test page' ) );
+		$op->setTitle( Title::makeTitle( NS_MAIN, 'Another test page' ) );
 
 		$this->assertSame( 'Another test page', $op->getTitle()->getPrefixedText() );
 	}
@@ -1257,11 +1463,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, true );
 
 		if ( $variantLinkCallback ) {
-			$mockContLang = $this->createMock( Language::class );
-			$mockContLang
-				->method( 'convertHtml' )
-				->willReturnArgument( 0 );
-
 			$mockLanguageConverter = $this
 				->createMock( ILanguageConverter::class );
 			$mockLanguageConverter
@@ -1284,7 +1485,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			->onlyMethods( [ 'addCategoryLinksToLBAndGetResult', 'getTitle' ] )
 			->getMock();
 
-		$title = Title::newFromText( 'My test page' );
+		$title = Title::makeTitle( NS_MAIN, 'My test page' );
 		$op->method( 'getTitle' )
 			->willReturn( $title );
 
@@ -1573,6 +1774,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			'getHeadItems',
 			'getImages',
 			'getIndicators',
+			'getSections',
 			'getLanguageLinks',
 			'getOutputHooks',
 			'getTemplateIds',
@@ -1724,10 +1926,10 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 					[ '== Title ==' ],
 					"<h2><span class=\"mw-headline\" id=\"Title\">Title</span></h2>",
 				], 'With title at start' => [
-					[ '* {{PAGENAME}}', true, Title::newFromText( 'Talk:Some page' ) ],
+					[ '* {{PAGENAME}}', true, Title::makeTitle( NS_TALK, 'Some page' ) ],
 					"<ul><li>Some page</li></ul>\n",
 				], 'With title not at start' => [
-					[ '* {{PAGENAME}}', false, Title::newFromText( 'Talk:Some page' ) ],
+					[ '* {{PAGENAME}}', false, Title::makeTitle( NS_TALK, 'Some page' ) ],
 					"<p>* Some page</p>",
 				], 'Untidy input' => [
 					[ '<b>{{PAGENAME}}', true, $somePageRef ],
@@ -1745,10 +1947,10 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 					[ '* <b>Not a list', false ],
 					'<p>* <b>Not a list</b></p>',
 				], 'With title at start' => [
-					[ '* {{PAGENAME}}', true, Title::newFromText( 'Talk:Some page' ) ],
+					[ '* {{PAGENAME}}', true, Title::makeTitle( NS_TALK, 'Some page' ) ],
 					"<ul><li>Some page</li></ul>",
 				], 'With title not at start' => [
-					[ '* {{PAGENAME}}', false, Title::newFromText( 'Talk:Some page' ) ],
+					[ '* {{PAGENAME}}', false, Title::makeTitle( NS_TALK, 'Some page' ) ],
 					"<p>* Some page</p>",
 				], 'EditPage' => [
 					[ "<div class='mw-editintro'>{{PAGENAME}}", true, $somePageRef ],
@@ -2166,6 +2368,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers OutputPage::disableClientCache
+	 * @covers OutputPage::enableClientCache
 	 * @covers OutputPage::addParserOutputMetadata
 	 * @covers OutputPage::addParserOutput
 	 */
@@ -2179,6 +2382,13 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		// Test setting to false
 		$op->disableClientCache();
 		$this->assertSame( false, $op->couldBePublicCached() );
+
+		// Test setting to true
+		$op->enableClientCache();
+		$this->assertSame( true, $op->couldBePublicCached() );
+
+		// set back to false
+		$op->disableClientCache();
 
 		// Test that a cacheable ParserOutput doesn't set to true
 		$pOutCacheable = $this->createParserOutputStub( 'isCacheable', true );
@@ -2194,43 +2404,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$pOutUncacheable = $this->createParserOutputStub( 'isCacheable', false );
 		$op->addParserOutput( $pOutUncacheable );
 		$this->assertSame( false, $op->couldBePublicCached() );
-	}
-
-	/**
-	 * This test can be safely removed when the deprecated
-	 * OutputPage::enableClientCache() is removed.
-	 * @covers OutputPage::enableClientCache
-	 */
-	public function testEnableClientCache() {
-		// OutputPage::enableClientCache() is deprecated, so this test
-		// will emit warnings.
-		$this->hideDeprecated( 'OutputPage::enableClientCache' );
-
-		$op = $this->newInstance();
-
-		// Test initial value
-		$this->assertSame( true, $op->enableClientCache( null ) );
-		// Test that calling with null doesn't change the value
-		$this->assertSame( true, $op->enableClientCache( null ) );
-
-		// Test setting to false
-		$this->assertSame( true, $op->enableClientCache( false ) );
-		$this->assertSame( false, $op->enableClientCache( null ) );
-		// Test that calling with null doesn't change the value
-		$this->assertSame( false, $op->enableClientCache( null ) );
-		// Using ::disableClientCache() works, too
-		$op->disableClientCache();
-		$this->assertSame( false, $op->enableClientCache( null ) );
-
-		// Test setting back to true
-		$this->assertSame( false, $op->enableClientCache( true ) );
-		$this->assertSame( true, $op->enableClientCache( null ) );
-
-		// For completeness, test that ::disableClientCache() also sets it
-		// to false.
-		$this->assertSame( true, $op->enableClientCache( null ) );
-		$op->disableClientCache();
-		$this->assertSame( false, $op->enableClientCache( null ) );
 	}
 
 	/**
@@ -2810,7 +2983,6 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			$uploadDir = "$baseDir/images";
 			$uploadPath = "$basePath/images";
 		}
-		$this->setMwGlobals( 'IP', $baseDir );
 		$conf = new HashConfig( [
 			MainConfigNames::ResourceBasePath => $basePath,
 			MainConfigNames::UploadDirectory => $uploadDir,
@@ -2857,12 +3029,12 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				'baseDir' => $baseDir, 'basePath' => '/w',
-				'https://example.org/w/test.jpg'
+				'https://www.example.org/w/test.jpg'
 			],
 			// Unrelated path with domain component. Ignored.
 			[
 				'baseDir' => $baseDir, 'basePath' => '/w',
-				'https://example.org/files/test.jpg'
+				'https://www.example.org/files/test.jpg'
 			],
 			[
 				'baseDir' => $baseDir, 'basePath' => '/w',
@@ -2871,7 +3043,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 			// Unrelated path with domain, and empty base path (root mw install). Ignored.
 			[
 				'baseDir' => $baseDir, 'basePath' => '',
-				'https://example.org/files/test.jpg'
+				'https://www.example.org/files/test.jpg'
 			],
 			[
 				'baseDir' => $baseDir, 'basePath' => '',
@@ -2992,11 +3164,48 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		$op = $this->newInstance();
 		$this->assertFalse( $op->isTOCEnabled() );
 
-		$pOut1 = $this->createParserOutputStub( 'getTOCHTML', false );
+		$pOut1 = $this->createParserOutputStub();
+		$pOut1->method( 'getOutputFlag' )->willReturnMap( [
+			[ ParserOutputFlags::SHOW_TOC, false ],
+		] );
 		$op->addParserOutputMetadata( $pOut1 );
 		$this->assertFalse( $op->isTOCEnabled() );
 
-		$pOut2 = $this->createParserOutputStub( 'getTOCHTML', true );
+		$pOut2 = $this->createParserOutputStub();
+		$pOut2->method( 'getOutputFlag' )->willReturnMap( [
+			[ ParserOutputFlags::SHOW_TOC, true ],
+		] );
+		$op->addParserOutput( $pOut2 );
+		$this->assertTrue( $op->isTOCEnabled() );
+
+		// The parser output doesn't disable the TOC after it was enabled
+		$op->addParserOutputMetadata( $pOut1 );
+		$this->assertTrue( $op->isTOCEnabled() );
+	}
+
+	/**
+	 * @covers OutputPage::isTOCEnabled
+	 * @covers OutputPage::addParserOutputMetadata
+	 * @covers OutputPage::addParserOutput
+	 */
+	public function testIsTOCEnabledBackCompat() {
+		// This tests backward compatibility: OutputPage *used* to use
+		// ParserOutput::getTOCHTML() to determine whether the TOC should
+		// be enabled, before ParserOutputFlags::SHOW_TOC was added in 1.39.
+		$op = $this->newInstance();
+		$this->assertFalse( $op->isTOCEnabled() );
+
+		$pOut1 = $this->createParserOutputStub( [
+			'getTOCHTML' => '',
+			'hasTOCHTML' => false,
+		] );
+		$op->addParserOutputMetadata( $pOut1 );
+		$this->assertFalse( $op->isTOCEnabled() );
+
+		$pOut2 = $this->createParserOutputStub( [
+			'getTOCHTML' => 'stuff',
+			'hasTOCHTML' => true,
+		] );
 		$op->addParserOutput( $pOut2 );
 		$this->assertTrue( $op->isTOCEnabled() );
 
@@ -3007,7 +3216,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providePreloadLinkHeaders
-	 * @covers \MediaWiki\ResourceLoader\SkinModule::getPreloadLinks
+	 * @covers \MediaWiki\ResourceLoader\SkinModule
 	 */
 	public function testPreloadLinkHeaders( $config, $result ) {
 		$ctx = $this->createMock( RL\Context::class );
@@ -3113,6 +3322,8 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideSendCacheControl
 	 */
 	public function testSendCacheControl( array $options = [], array $expectations = [] ) {
+		$this->overrideConfigValue( MainConfigNames::UsePigLatinVariant, $options['variant'] ?? false );
+
 		$output = $this->newInstance( [
 			'UseCdn' => $options['useCdn'] ?? false,
 		] );
@@ -3148,31 +3359,46 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 		foreach ( $headers as $header => $default ) {
 			$value = $expectations[$header] ?? $default;
 			if ( $value === true ) {
-				$this->assertNotEmpty( $response->getHeader( $header ) );
+				$this->assertNotEmpty( $response->getHeader( $header ), "$header header" );
 			} elseif ( $value === false ) {
-				$this->assertNull( $response->getHeader( $header ) );
+				$this->assertNull( $response->getHeader( $header ), "$header header" );
 			} else {
-				$this->assertEquals( $value, $response->getHeader( $header ) );
+				$this->assertEquals( $value, $response->getHeader( $header ), "$header header" );
 			}
 		}
 	}
 
 	public function provideSendCacheControl() {
 		return [
-			'Default' => [],
-			'Logged out max-age' => [
+			'Vary on variant' => [
+				[
+					'variant' => true,
+				],
+				[
+					'Vary' => 'Accept-Encoding, Cookie, Accept-Language',
+				]
+			],
+			'Private per default' => [
+				[],
 				[
 					'Cache-Control' => 'private, must-revalidate, max-age=0',
 				],
 			],
-			'Cookies' => [
+			'Cookies force private' => [
 				[
 					'cookie' => true,
+					'useCdn' => true,
+					'cdnMaxAge' => 300,
 				],
+				[
+					'Cache-Control' => 'private, must-revalidate, max-age=0',
+				]
 			],
 			'Disable client cache' => [
 				[
 					'enableClientCache' => false,
+					'useCdn' => true,
+					'cdnMaxAge' => 300,
 				],
 				[
 					'Cache-Control' => 'no-cache, no-store, max-age=0, must-revalidate',
@@ -3242,7 +3468,7 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetJsVarsEditable( Authority $performer, array $expectedEditableConfig ) {
 		$op = $this->newInstance( [], null, null, $performer );
-		$op->getContext()->getSkin()->setRelevantTitle( Title::newFromText( 'RelevantTitle' ) );
+		$op->getContext()->getSkin()->setRelevantTitle( Title::makeTitle( NS_MAIN, 'RelevantTitle' ) );
 		$this->assertArraySubmapSame( $expectedEditableConfig, $op->getJSVars() );
 	}
 
@@ -3338,11 +3564,11 @@ class OutputPageTest extends MediaWikiIntegrationTestCase {
 				'RightsUrl' => false,
 				'UniversalEditButton' => false,
 			] ),
-			$context->getConfig()
+			$this->getServiceContainer()->getMainConfig(),
 		] ) );
 
 		if ( $option !== 'notitle' ) {
-			$context->setTitle( Title::newFromText( 'My test page' ) );
+			$context->setTitle( Title::makeTitle( NS_MAIN, 'My test page' ) );
 		}
 
 		if ( $request ) {

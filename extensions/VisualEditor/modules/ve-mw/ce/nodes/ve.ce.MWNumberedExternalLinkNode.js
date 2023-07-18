@@ -82,7 +82,8 @@ ve.ce.MWNumberedExternalLinkNode.static.getDescription = function ( model ) {
  * Handle model update events.
  */
 ve.ce.MWNumberedExternalLinkNode.prototype.onUpdate = function () {
-	this.$link.attr( 'href', this.model.getAttribute( 'href' ) );
+	// T322704
+	ve.setAttributeSafe( this.$link[ 0 ], 'href', this.model.getAttribute( 'href' ) || '', '#' );
 };
 
 /* Registration */

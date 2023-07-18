@@ -20,6 +20,7 @@
  */
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 
 /**
  * @covers SubpageImportTitleFactory
@@ -79,19 +80,8 @@ class SubpageImportTitleFactoryTest extends MediaWikiIntegrationTestCase {
 		$this->assertTrue( $testTitle->equals( $title ) );
 	}
 
-	public function failureProvider() {
-		return [
-			[
-				Title::newFromText( 'Graham' ),
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider failureProvider
-	 */
-	public function testFailures( Title $rootPage ) {
-		$this->expectException( MWException::class );
-		$this->newSubpageImportTitleFactory( $rootPage );
+	public function testInvalidNamespace() {
+		$this->expectException( InvalidArgumentException::class );
+		$this->newSubpageImportTitleFactory( Title::newFromText( 'Graham' ) );
 	}
 }

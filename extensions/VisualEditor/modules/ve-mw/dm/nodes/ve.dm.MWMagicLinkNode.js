@@ -39,6 +39,9 @@ ve.dm.MWMagicLinkNode.static.matchTagNames = [ 'a' ];
 
 ve.dm.MWMagicLinkNode.static.matchRdfaTypes = [ 'mw:WikiLink', 'mw:ExtLink' ];
 
+// Allow additional 'rel' values in Parsoid output (T321437)
+ve.dm.MWMagicLinkNode.static.allowedRdfaTypes = [ 'nofollow', 'noreferrer', 'noopener' ];
+
 ve.dm.MWMagicLinkNode.static.disallowedAnnotationTypes = [ 'link' ];
 
 /**
@@ -265,7 +268,7 @@ ve.dm.MWMagicLinkType.prototype.getCode = function () {
  * @return {boolean}
  */
 ve.dm.MWMagicLinkType.prototype.matchHref = function ( href ) {
-	return href.replace( /^https?:/i, '' ) === this.getHref();
+	return href.replace( /^https?:/i, '' ) === this.getHref().replace( /^https?:/i, '' );
 };
 
 /**

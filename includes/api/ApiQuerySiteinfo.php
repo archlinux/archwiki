@@ -26,10 +26,14 @@ use MediaWiki\Languages\LanguageConverterFactory;
 use MediaWiki\Languages\LanguageFactory;
 use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\MainConfigNames;
+use MediaWiki\MediaWikiServices;
+use MediaWiki\Parser\MagicWordFactory;
 use MediaWiki\ResourceLoader\SkinModule;
 use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserGroupManager;
 use MediaWiki\User\UserOptionsLookup;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\Rdbms\ILoadBalancer;
 
@@ -138,7 +142,6 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	public function execute() {
 		$params = $this->extractRequestParams();
 		$done = [];
-		$fit = false;
 		foreach ( $params['prop'] as $p ) {
 			switch ( $p ) {
 				case 'general':
@@ -513,6 +516,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 		$getPrefixes = $this->interwikiLookup->getAllPrefixes( $local );
 		$extraLangPrefixes = $this->getConfig()->get( MainConfigNames::ExtraInterlanguageLinkPrefixes );
+		$extraLangCodeMap = $this->getConfig()->get( MainConfigNames::InterlanguageLinkCodeMap );
 		$localInterwikis = $this->getConfig()->get( MainConfigNames::LocalInterwikis );
 		$data = [];
 
@@ -529,12 +533,21 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 
 			if ( $interwikiMagic && isset( $langNames[$prefix] ) ) {
 				$val['language'] = $langNames[$prefix];
+				$standard = LanguageCode::replaceDeprecatedCodes( $prefix );
+				if ( $standard !== $prefix ) {
+					# Note that even if this code is deprecated, it should
+					# only be remapped if extralanglink (set below) is false.
+					$val['deprecated'] = $standard;
+				}
+				$val['bcp47'] = LanguageCode::bcp47( $standard );
 			}
 			if ( in_array( $prefix, $localInterwikis ) ) {
 				$val['localinterwiki'] = true;
 			}
 			if ( $interwikiMagic && in_array( $prefix, $extraLangPrefixes ) ) {
 				$val['extralanglink'] = true;
+				$val['code'] = $extraLangCodeMap[$prefix] ?? $prefix;
+				$val['bcp47'] = LanguageCode::bcp47( $val['code'] );
 
 				$linktext = $this->msg( "interlanguage-link-$prefix" );
 				if ( !$linktext->isDisabled() ) {
@@ -548,7 +561,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 			}
 
 			$val['url'] = wfExpandUrl( $row['iw_url'], PROTO_CURRENT );
-			$val['protorel'] = substr( $row['iw_url'], 0, 2 ) == '//';
+			$val['protorel'] = str_starts_with( $row['iw_url'], '//' );
 			if ( isset( $row['iw_wikiid'] ) && $row['iw_wikiid'] !== '' ) {
 				$val['wikiid'] = $row['iw_wikiid'];
 			}
@@ -580,7 +593,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 				];
 			}
 		} else {
-			list( , $lag, $index ) = $this->loadBalancer->getMaxLag();
+			[ , $lag, $index ] = $this->loadBalancer->getMaxLag();
 			$data[] = [
 				'host' => $showHostnames
 						? $this->loadBalancer->getServerName( $index )
@@ -686,7 +699,7 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 		$data = [];
 		$installed = new ComposerInstalled( $path );
 		foreach ( $installed->getInstalledDependencies() as $name => $info ) {
-			if ( strpos( $info['type'], 'mediawiki-' ) === 0 ) {
+			if ( str_starts_with( $info['type'], 'mediawiki-' ) ) {
 				// Skip any extensions or skins since they'll be listed
 				// in their proper section
 				continue;
@@ -969,12 +982,14 @@ class ApiQuerySiteinfo extends ApiQueryBase {
 	}
 
 	public function appendSubscribedHooks( $property ) {
-		$hooks = $this->getConfig()->get( MainConfigNames::Hooks );
-		$myWgHooks = $hooks;
-		ksort( $myWgHooks );
+		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
+		$hookNames = $hookContainer->getHookNames();
+		sort( $hookNames );
 
 		$data = [];
-		foreach ( $myWgHooks as $name => $subscribers ) {
+		foreach ( $hookNames as $name ) {
+			$subscribers = $hookContainer->getLegacyHandlers( $name );
+
 			$arr = [
 				'name' => $name,
 				'subscribers' => array_map( [ SpecialVersion::class, 'arrayToString' ], $subscribers ),

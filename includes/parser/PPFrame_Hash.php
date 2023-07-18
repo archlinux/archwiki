@@ -19,6 +19,8 @@
  * @ingroup Parser
  */
 
+use MediaWiki\Title\Title;
+
 /**
  * An expansion frame, used as a context to expand the result of preprocessToObj()
  * @ingroup Parser
@@ -97,7 +99,7 @@ class PPFrame_Hash implements PPFrame {
 	 * Create a new child frame
 	 * $args is optionally a multi-root PPNode or array containing the template arguments
 	 *
-	 * @param array|false|PPNode_Hash_Array $args
+	 * @param PPNode[]|false|PPNode_Hash_Array $args
 	 * @param Title|false $title
 	 * @param int $indexOffset
 	 * @throws MWException
@@ -252,7 +254,7 @@ class PPFrame_Hash implements PPFrame {
 					throw new MWException( __METHOD__ .
 						': found an array where a node descriptor should be' );
 				}
-				list( $contextName, $contextChildren ) = $contextNode;
+				[ $contextName, $contextChildren ] = $contextNode;
 			} else {
 				throw new MWException( __METHOD__ . ': Invalid parameter type' );
 			}

@@ -3,8 +3,8 @@
 		"authors": [
 			"Akpanufun",
 			"Anietie2",
-			"Uduakj",
-			"Okon Ibiono"
+			"Okon Ibiono",
+			"Uduakj"
 		]
 	},
 	"vector-languages": "Ikọ",
@@ -14,5 +14,6 @@
 	"vector-action-protect": "Beem",
 	"vector-view-history": "Se mkpo ini edem",
 	"vector-more-actions": "afen",
-	"vector-searchsuggest-containing": "Yem ikpa nwed anieghe <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Yem ikpa nwed anieghe <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-unpin-element-label": "dịbe"
 }

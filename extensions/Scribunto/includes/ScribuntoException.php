@@ -31,11 +31,7 @@ class ScribuntoException extends MWException {
 	 * @param array $params
 	 */
 	public function __construct( $messageName, $params = [] ) {
-		if ( isset( $params['args'] ) ) {
-			$this->messageArgs = $params['args'];
-		} else {
-			$this->messageArgs = [];
-		}
+		$this->messageArgs = $params['args'] ?? [];
 		if ( isset( $params['module'] ) && isset( $params['line'] ) ) {
 			$codeLocation = false;
 			if ( isset( $params['title'] ) ) {

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * https://www.gnu.org/copyleft/gpl.html
  *
  * @file
  */
@@ -24,11 +24,35 @@ namespace MediaWiki\Extension\ReplaceText;
 use ALItem;
 use ALRow;
 use ALTree;
-use MediaWiki\MediaWikiServices;
+use Config;
+use MediaWiki\Hook\SpecialMovepageAfterMoveHook;
+use MediaWiki\SpecialPage\SpecialPageFactory;
+use MediaWiki\User\Hook\UserGetReservedNamesHook;
 use MovePageForm;
 use Title;
 
-class Hooks {
+class Hooks implements
+	SpecialMovepageAfterMoveHook,
+	UserGetReservedNamesHook
+{
+
+	/** @var Config */
+	private $config;
+
+	/** @var SpecialPageFactory */
+	private $specialPageFactory;
+
+	/**
+	 * @param Config $config
+	 * @param SpecialPageFactory $specialPageFactory
+	 */
+	public function __construct(
+		Config $config,
+		SpecialPageFactory $specialPageFactory
+	) {
+		$this->config = $config;
+		$this->specialPageFactory = $specialPageFactory;
+	}
 
 	/**
 	 * Implements AdminLinks hook from Extension:Admin_Links.
@@ -60,15 +84,17 @@ class Hooks {
 	 * Adds a link to the Special:ReplaceText page at the end of a successful
 	 * regular page move message.
 	 *
-	 * @param MovePageForm &$form
-	 * @param Title &$ot Title object of the old article (moved from)
-	 * @param Title &$nt Title object of the new article (moved to)
+	 * @param MovePageForm $form
+	 * @param Title $ot Title object of the old article (moved from)
+	 * @param Title $nt Title object of the new article (moved to)
 	 */
-	public static function replaceTextReminder( &$form, &$ot, &$nt ) {
+	public function onSpecialMovepageAfterMove( $form, $ot, $nt ) {
+		if ( !$form->getUser()->isAllowed( 'replacetext' ) ) {
+			return;
+		}
 		$out = $form->getOutput();
-		$services = MediaWikiServices::getInstance();
-		$page = $services->getSpecialPageFactory()->getPage( 'ReplaceText' );
-		$pageLink = $services->getLinkRenderer()->makeLink( $page->getPageTitle(), null );
+		$page = $this->specialPageFactory->getPage( 'ReplaceText' );
+		$pageLink = $form->getLinkRenderer()->makeLink( $page->getPageTitle() );
 		$out->addHTML( $form->msg( 'replacetext_reminder' )
 			->rawParams( $pageLink )->inContentLanguage()->parseAsBlock() );
 	}
@@ -77,10 +103,10 @@ class Hooks {
 	 * Implements UserGetReservedNames hook.
 	 * @param array &$names
 	 */
-	public static function getReservedNames( &$names ) {
-		global $wgReplaceTextUser;
-		if ( $wgReplaceTextUser !== null ) {
-			$names[] = $wgReplaceTextUser;
+	public function onUserGetReservedNames( &$names ) {
+		$replaceTextUser = $this->config->get( 'ReplaceTextUser' );
+		if ( $replaceTextUser !== null ) {
+			$names[] = $replaceTextUser;
 		}
 	}
 }

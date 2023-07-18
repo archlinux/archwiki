@@ -2,9 +2,11 @@
 	<cdx-typeahead-search
 		:id="id"
 		ref="searchForm"
+		class="vector-typeahead-search"
 		:class="rootClasses"
 		:search-results-label="$i18n( 'searchresults' ).text()"
 		:accesskey="searchAccessKey"
+		:autocapitalize="autocapitalizeValue"
 		:title="searchTitle"
 		:placeholder="searchPlaceholder"
 		:aria-label="searchPlaceholder"
@@ -16,9 +18,13 @@
 		:auto-expand-width="autoExpandWidth"
 		:search-results="suggestions"
 		:search-footer-url="searchFooterUrl"
+		:visible-item-limit="visibleItemLimit"
+		@load-more="onLoadMore"
 		@input="onInput"
 		@search-result-click="instrumentation.onSuggestionClick"
 		@submit="onSubmit"
+		@focus="onFocus"
+		@blur="onBlur"
 	>
 		<template #default>
 			<input
@@ -40,7 +46,7 @@
 </template>
 
 <script>
-/* global SearchSubmitEvent */
+/* global AbortableSearchFetch, SearchSubmitEvent */
 const { CdxTypeaheadSearch } = require( '@wikimedia/codex-search' ),
 	{ defineComponent, nextTick } = require( 'vue' ),
 	client = require( './restSearchClient.js' ),
@@ -62,6 +68,9 @@ module.exports = exports = defineComponent( {
 		id: {
 			type: String,
 			required: true
+		},
+		autocapitalizeValue: {
+			type: String
 		},
 		searchPageTitle: {
 			type: String,
@@ -129,17 +138,29 @@ module.exports = exports = defineComponent( {
 			// Link to the search page for the current search query.
 			searchFooterUrl: '',
 
+			// The current search query. Used to detect whether a fetch response is stale.
+			currentSearchQuery: '',
+
 			// Whether to apply a CSS class that disables the CSS transitions on the text input
 			disableTransitions: this.autofocusInput,
 
-			instrumentation: instrumentation.listeners
+			instrumentation: instrumentation.listeners,
+
+			isFocused: false
 		};
 	},
 	computed: {
 		rootClasses() {
 			return {
-				'vector-search-box-disable-transitions': this.disableTransitions
+				'vector-search-box-disable-transitions': this.disableTransitions,
+				'vector-typeahead-search--active': this.isFocused
 			};
+		},
+		visibleItemLimit() {
+			// if the search client supports loading more results,
+			// show 7 out of 10 results at first (arbitrary number),
+			// so that scroll events are fired and trigger onLoadMore()
+			return restClient.loadMore ? 7 : null;
 		}
 	},
 	methods: {
@@ -149,8 +170,9 @@ module.exports = exports = defineComponent( {
 		 * @param {string} value
 		 */
 		onInput: function ( value ) {
-			const domain = mw.config.get( 'wgVectorSearchHost', location.host ),
-				query = value.trim();
+			const query = value.trim();
+
+			this.currentSearchQuery = query;
 
 			if ( query === '' ) {
 				this.suggestions = [];
@@ -158,12 +180,57 @@ module.exports = exports = defineComponent( {
 				return;
 			}
 
+			this.updateUIWithSearchClientResult(
+				restClient.fetchByTitle( query, 10, this.showDescription ),
+				true
+			);
+		},
+
+		/**
+		 * Fetch additional suggestions.
+		 *
+		 * This should only be called if visibleItemLimit is non-null,
+		 * i.e. if the search client supports loading more results.
+		 */
+		onLoadMore() {
+			if ( !restClient.loadMore ) {
+				mw.log.warn( 'onLoadMore() should not have been called for this search client' );
+				return;
+			}
+
+			this.updateUIWithSearchClientResult(
+				restClient.loadMore(
+					this.currentSearchQuery,
+					this.suggestions.length,
+					10,
+					this.showDescription
+				),
+				false
+			);
+		},
+
+		/**
+		 * @param {AbortableSearchFetch} search
+		 * @param {boolean} replaceResults
+		 */
+		updateUIWithSearchClientResult( search, replaceResults ) {
+			const query = this.currentSearchQuery;
 			instrumentation.listeners.onFetchStart();
 
-			restClient.fetchByTitle( query, domain, 10, this.showDescription ).fetch
+			search.fetch
 				.then( ( data ) => {
-					this.suggestions = data.results;
-					this.searchFooterUrl = urlGenerator.generateUrl( query );
+					// Only use these results if they're still relevant
+					// If currentSearchQuery !== query, these results are for a previous search
+					// and we shouldn't show them.
+					if ( this.currentSearchQuery === query ) {
+						if ( replaceResults ) {
+							this.suggestions = [];
+						}
+						this.suggestions.push(
+							...instrumentation.addWprovToSearchResultUrls( data.results, this.suggestions.length )
+						);
+						this.searchFooterUrl = urlGenerator.generateUrl( query );
+					}
 
 					const event = {
 						numberOfResults: data.results.length,
@@ -183,6 +250,14 @@ module.exports = exports = defineComponent( {
 			this.wprov = instrumentation.getWprovFromResultIndex( event.index );
 
 			instrumentation.listeners.onSubmit( event );
+		},
+
+		onFocus() {
+			this.isFocused = true;
+		},
+
+		onBlur() {
+			this.isFocused = false;
 		}
 	},
 	mounted() {

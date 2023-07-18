@@ -4,7 +4,9 @@ use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Page\PageReference;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Unit\DummyServicesTrait;
+use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -39,7 +41,7 @@ class ApiPageSetTest extends ApiTestCase {
 	 * @dataProvider provideRedirectMergePolicy
 	 */
 	public function testRedirectMergePolicyWithArrayResult( $mergePolicy, $expect ) {
-		list( $target, $pageSet ) = $this->createPageSetWithRedirect();
+		[ $target, $pageSet ] = $this->createPageSetWithRedirect();
 		$pageSet->setRedirectMergePolicy( $mergePolicy );
 		$result = [
 			$target->getArticleID() => []
@@ -52,7 +54,7 @@ class ApiPageSetTest extends ApiTestCase {
 	 * @dataProvider provideRedirectMergePolicy
 	 */
 	public function testRedirectMergePolicyWithApiResult( $mergePolicy, $expect ) {
-		list( $target, $pageSet ) = $this->createPageSetWithRedirect();
+		[ $target, $pageSet ] = $this->createPageSetWithRedirect();
 		$pageSet->setRedirectMergePolicy( $mergePolicy );
 		$result = new ApiResult( false );
 		$result->addValue( null, 'pages', [
@@ -98,7 +100,7 @@ class ApiPageSetTest extends ApiTestCase {
 		$loopB = Title::makeTitle( NS_MAIN, 'UTPageRedirectTwo' );
 		$this->editPage( 'UTPageRedirectOne', '#REDIRECT [[UTPageRedirectTwo]]' );
 		$this->editPage( 'UTPageRedirectTwo', '#REDIRECT [[UTPageRedirectOne]]' );
-		list( $target, $pageSet ) = $this->createPageSetWithRedirect(
+		[ $target, $pageSet ] = $this->createPageSetWithRedirect(
 			'#REDIRECT [[UTPageRedirectOne]]'
 		);
 		$pageSet->setRedirectMergePolicy( static function ( $cur, $new ) {
@@ -141,9 +143,9 @@ class ApiPageSetTest extends ApiTestCase {
 
 	public function testSpecialRedirects() {
 		$id1 = $this->editPage( 'UTApiPageSet', 'UTApiPageSet in the default language' )
-			->value['revision-record']->getPageId();
+			->getNewRevision()->getPageId();
 		$id2 = $this->editPage( 'UTApiPageSet/de', 'UTApiPageSet in German' )
-			->value['revision-record']->getPageId();
+			->getNewRevision()->getPageId();
 
 		$user = $this->getTestUser()->getUser();
 		$userName = $user->getName();

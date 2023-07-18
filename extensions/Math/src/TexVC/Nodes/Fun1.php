@@ -4,6 +4,9 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\TexVC\Nodes;
 
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmo;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmover;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmrow;
 use MediaWiki\Extension\Math\TexVC\TexUtil;
 
 class Fun1 extends TexNode {
@@ -19,7 +22,21 @@ class Fun1 extends TexNode {
 		parent::__construct( $fname, $arg );
 		$this->fname = $fname;
 		$this->arg = $arg;
-		$this->tu = new TexUtil();
+		$this->tu = TexUtil::getInstance();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFname(): string {
+		return $this->fname;
+	}
+
+	/**
+	 * @return TexNode
+	 */
+	public function getArg(): TexNode {
+		return $this->arg;
 	}
 
 	public function inCurlies() {
@@ -28,6 +45,25 @@ class Fun1 extends TexNode {
 
 	public function render() {
 		return '{' . $this->fname . ' ' . $this->arg->inCurlies() . '}';
+	}
+
+	public function renderMML( $arguments = [], $state = [] ) {
+		return $this->parseToMML( $this->fname, $arguments, null );
+	}
+
+	public function createMover( $inner, $moArgs = [] ): string {
+		$mrow = new MMLmrow();
+		$mo = new MMLmo( "", $moArgs );
+		$mover = new MMLmover();
+		$ret = $mrow->encapsulateRaw(
+			$mrow->encapsulateRaw(
+				$mover->encapsulateRaw(
+					$this->args[1]->renderMML() .
+					$mo->encapsulateRaw( $inner )
+				)
+			)
+		);
+		return $ret;
 	}
 
 	public function extractIdentifiers( $args = null ) {
@@ -68,7 +104,4 @@ class Fun1 extends TexNode {
 		return [];
 	}
 
-	public function name() {
-		return 'FUN1';
-	}
 }

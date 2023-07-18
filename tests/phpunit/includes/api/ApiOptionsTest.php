@@ -1,7 +1,9 @@
 <?php
 
 use MediaWiki\Preferences\DefaultPreferencesFactory;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserOptionsManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -39,7 +41,7 @@ class ApiOptionsTest extends MediaWikiLangTestCase {
 
 		// Create a new context
 		$this->mContext = new DerivativeContext( new RequestContext() );
-		$this->mContext->getContext()->setTitle( Title::newFromText( 'Test' ) );
+		$this->mContext->getContext()->setTitle( Title::makeTitle( NS_MAIN, 'Test' ) );
 		$this->mContext->setAuthority(
 			$this->mockUserAuthorityWithPermissions( $this->mUserMock, [ 'editmyoptions' ] )
 		);
@@ -425,6 +427,19 @@ class ApiOptionsTest extends MediaWikiLangTestCase {
 				[ [ 'name', null ] ],
 				null,
 				'Resetting options via optionname without optionvalue',
+			],
+			[
+				[ 'optionname' => 'name', 'optionvalue' => str_repeat( '测试', 16383 ) ],
+				[],
+				[
+					'options' => 'success',
+					'warnings' => [
+						'options' => [
+							'warnings' => 'Validation error for "name": value too long (no more than 65,530 bytes allowed).'
+						],
+					],
+				],
+				'Options with too long value should be rejected',
 			],
 		];
 	}

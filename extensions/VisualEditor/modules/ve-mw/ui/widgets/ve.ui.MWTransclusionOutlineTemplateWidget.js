@@ -96,8 +96,7 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.initializeParameterList = fu
 		$ariaDescribedBy: $parametersAriaDescription
 	} ).connect( this, {
 		choose: 'onTemplateParameterChoose',
-		templateParameterSpaceDown: 'onTemplateParameterSpaceDown',
-		change: 'onParameterWidgetListChanged'
+		templateParameterSpaceDown: 'onTemplateParameterSpaceDown'
 	} );
 
 	this.$element.append(
@@ -328,14 +327,6 @@ ve.ui.MWTransclusionOutlineTemplateWidget.prototype.updateUnusedParameterToggleS
 	if ( this.toggleUnusedWidget ) {
 		this.toggleUnusedWidget.setDisabled( !this.getRelevantTemplateParameters( 'unused' ).length );
 	}
-};
-
-/**
- * @private
- * @param {OO.ui.Element[]} items
- */
-ve.ui.MWTransclusionOutlineTemplateWidget.prototype.onParameterWidgetListChanged = function () {
-	this.toggleFilters();
 };
 
 /**

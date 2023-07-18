@@ -27,6 +27,7 @@
 	"vector-search-loader": "Koshshaa zoreta ehiidi de'ees",
 	"vector-searchsuggest-containing": "Oyqqida sinttata koyya <strong class=\"cdx-typeahead-search_search-footer_query\">$1</strong>",
 	"vector-intro-page": "Help:Geluwaa",
+	"vector-toc-label": "Kesota",
 	"vector-toc-beginning": "Doomettaa",
 	"vector-toc-toggle-button-label": "$1 sima shaahuwaa laameretta",
 	"vector-anon-user-menu-pages": "Gelennan giigissiyaageetu sinttata",
@@ -36,6 +37,16 @@
 	"vector-toc-menu-tooltip": "Kesuwaa",
 	"vector-toc-collapsible-button-label": "Kesota laameretta",
 	"vector-site-nav-label": "Sohuwaa",
+	"vector-main-menu-label": "Huuphe kesuwaa",
+	"vector-limited-width-toggle": "Guutta kesuwaa zananaa laameretta",
+	"vector-page-tools-label": "Buqurata",
+	"vector-page-tools-general-label": "Xaaxi waaxin",
+	"vector-page-tools-actions-label": "Oosota",
+	"vector-pin-element-label": "Sayidibaariyakko yuuyya",
+	"vector-unpin-element-label": "gentta",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Tobbiyaa]]",
-	"tooltip-vector-anon-user-menu-title": "Aaho doorota"
+	"tooltip-vector-anon-user-menu-title": "Aaho doorota",
+	"vector-prefs-limited-width": "Guutta zanana hanotaa oosuwaan peeshsha",
+	"vector-prefs-limited-width-help": "Lo'ida nabbabuwaa meeziyaasi guutta zanana hanotaa oosuwaan peeshsha.",
+	"empty-language-selector-body": "Sinttaa kesoy hara doonatun kaafettibeenna."
 }

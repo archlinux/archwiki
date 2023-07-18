@@ -113,7 +113,7 @@ ve.ce.MWWikitextSurface.prototype.afterPasteInsertExternalData = function ( targ
 
 	// isPlainText is true but we still need sanitize (e.g. remove lists)
 	var promise = ve.ce.MWWikitextSurface.super.prototype.afterPasteInsertExternalData.call( this, targetFragment, plainPastedDocumentModel, plainContextRange );
-	if ( ve.init.target.constructor.static.convertToWikitextOnPaste && !wasPlain ) {
+	if ( this.getSurface().getTarget().constructor.static.convertToWikitextOnPaste && !wasPlain ) {
 		promise.then( function () {
 			// We need to wait for the selection change after paste as that triggers
 			// a contextChange event. Really we should wait for the afterPaste promise to resolve.
@@ -123,7 +123,7 @@ ve.ce.MWWikitextSurface.prototype.afterPasteInsertExternalData = function ( targ
 				// HACK: Directly set the 'relatedSources' result in the context to trick it
 				// into showing a context at the end of the paste. This context will disappear
 				// as soon as the selection change as a contextChange will fire.
-				// TODO: Come up witha method to store this context on the surface model then
+				// TODO: Come up with a method to store this context on the surface model then
 				// have the LinearContext read it from there.
 				context.relatedSources = [ {
 					embeddable: false,

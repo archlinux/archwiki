@@ -1,8 +1,6 @@
 <?php
 /** Serbian (Cyrillic script) (српски (ћирилица))
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  *
@@ -191,6 +189,7 @@ $specialPageAliases = [
 	'Recentchangeslinked'       => [ 'Повезане_измене', 'СроднеИзмене' ],
 	'Redirect'                  => [ 'Преусмерење' ],
 	'RemoveCredentials'         => [ 'Уклони_акредитиве', 'УклониАкредитиве' ],
+	'Renameuser'                => [ 'ПреименујКорисника', 'Преименуј_корисника' ],
 	'ResetTokens'               => [ 'Ресетуј_токене', 'РесетујЖетоне' ],
 	'Revisiondelete'            => [ 'Брисање_измене', 'БрисањеИзмене', 'УклањањеИзмене' ],
 	'RunJobs'                   => [ 'Изврши_послове', 'ИзвршиПослове' ],

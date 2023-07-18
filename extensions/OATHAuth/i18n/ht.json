@@ -1,8 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Schery19",
-			"Amire80"
+			"Amire80",
+			"Schery19"
 		]
 	},
 	"oathauth-module-totp-label": "TOTP (tikè pou sèvi yon sèl fwa)",

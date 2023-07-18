@@ -1,8 +1,6 @@
 <?php
 /** Zazaki (Zazaki)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -129,6 +127,7 @@ $specialPageAliases = [
 	'Recentchanges'             => [ 'VurnayışêPeyêni' ],
 	'Recentchangeslinked'       => [ 'GıreyêVurnayışêPeyênan' ],
 	'Redirect'                  => [ 'Serberdış' ],
+	'Renameuser'                => [ 'NamedayışéKarberi' ],
 	'ResetTokens'               => [ 'SimgeyanPeyserberze' ],
 	'Revisiondelete'            => [ 'ÇımraviyarnayışiBestere' ],
 	'RunJobs'                   => [ 'KariBıgurene' ],
@@ -211,7 +210,7 @@ $magicWords = [
 	'img_class'                 => [ '1', 'sınıf=$1', 'class=$1' ],
 	'img_framed'                => [ '1', 'çerçeweyın', 'çerçewekerden', 'çerçewe', 'frame', 'framed', 'enframed' ],
 	'img_frameless'             => [ '1', 'béçerçewe', 'frameless' ],
-	'img_lang'                  => [ '1', 'zuwan=1$', 'lang=$1' ],
+	'img_lang'                  => [ '1', 'zuwan=$1', 'lang=$1' ],
 	'img_left'                  => [ '1', 'çep', 'left' ],
 	'img_link'                  => [ '1', 'gre=$1', 'link=$1' ],
 	'img_manualthumb'           => [ '1', 'resmoqıckek=$1', 'qıckek=$1', 'thumbnail=$1', 'thumb=$1' ],

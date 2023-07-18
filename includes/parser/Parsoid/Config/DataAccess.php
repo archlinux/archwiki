@@ -21,20 +21,20 @@ namespace MediaWiki\Parser\Parsoid\Config;
 
 use ContentHandler;
 use File;
-use LinkBatch;
-use Linker;
 use MediaTransformError;
-use MediaWiki\BadFileLookup;
+use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Config\ServiceOptions;
 use MediaWiki\Content\Transform\ContentTransformer;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Page\File\BadFileLookup;
+use MediaWiki\Title\Title;
 use Parser;
 use ParserFactory;
 use ReadOnlyMode;
 use RepoGroup;
-use Title;
 use Wikimedia\Parsoid\Config\DataAccess as IDataAccess;
 use Wikimedia\Parsoid\Config\PageConfig as IPageConfig;
 use Wikimedia\Parsoid\Config\PageContent as IPageContent;
@@ -44,6 +44,7 @@ use Wikimedia\Parsoid\Core\ContentMetadataCollector;
  * Implement Parsoid's abstract class for data access.
  *
  * @since 1.39
+ * @internal
  */
 class DataAccess extends IDataAccess {
 
@@ -81,6 +82,9 @@ class DataAccess extends IDataAccess {
 	/** @var ReadOnlyMode */
 	private $readOnlyMode;
 
+	/** @var LinkBatchFactory */
+	private $linkBatchFactory;
+
 	/**
 	 * @param ServiceOptions $config MediaWiki main configuration object
 	 * @param RepoGroup $repoGroup
@@ -91,6 +95,7 @@ class DataAccess extends IDataAccess {
 	 *   database is read-only.
 	 * @param ParserFactory $parserFactory A legacy parser factory,
 	 *   for PST/preprocessing/extension handling
+	 * @param LinkBatchFactory $linkBatchFactory
 	 */
 	public function __construct(
 		ServiceOptions $config,
@@ -99,7 +104,8 @@ class DataAccess extends IDataAccess {
 		HookContainer $hookContainer,
 		ContentTransformer $contentTransformer,
 		ReadOnlyMode $readOnlyMode,
-		ParserFactory $parserFactory
+		ParserFactory $parserFactory,
+		LinkBatchFactory $linkBatchFactory
 	) {
 		$config->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
 		$this->config = $config;
@@ -108,6 +114,7 @@ class DataAccess extends IDataAccess {
 		$this->hookContainer = $hookContainer;
 		$this->contentTransformer = $contentTransformer;
 		$this->readOnlyMode = $readOnlyMode;
+		$this->linkBatchFactory = $linkBatchFactory;
 
 		$this->hookRunner = new HookRunner( $hookContainer );
 
@@ -184,7 +191,8 @@ class DataAccess extends IDataAccess {
 				$titleObjs[$name] = $t;
 			}
 		}
-		$linkBatch = new LinkBatch( $titleObjs );
+		$linkBatch = $this->linkBatchFactory->newLinkBatch( $titleObjs );
+		$linkBatch->setCaller( __METHOD__ );
 		$linkBatch->execute();
 
 		foreach ( $titleObjs as $obj ) {

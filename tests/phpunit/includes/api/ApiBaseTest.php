@@ -4,6 +4,8 @@ use MediaWiki\Api\Validator\SubmoduleDef;
 use MediaWiki\Block\DatabaseBlock;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
+use MediaWiki\Request\FauxRequest;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
@@ -337,7 +339,7 @@ class ApiBaseTest extends ApiTestCase {
 			) {
 				// Allow one second of fuzziness.  Make sure the formats are
 				// correct!
-				$this->assertRegExp( '/^\d{14}$/', $result );
+				$this->assertMatchesRegularExpression( '/^\d{14}$/', $result );
 				$this->assertLessThanOrEqual( 1,
 					abs( wfTimestamp( TS_UNIX, $result ) - time() ),
 					"Result $result differs from expected $expected by " .
@@ -1308,6 +1310,92 @@ class ApiBaseTest extends ApiTestCase {
 		}
 
 		return $returnArray;
+	}
+
+	/**
+	 * @dataProvider provideGetFinalParamDescription
+	 */
+	public function testGetFinalParamDescription( $paramSettings, $expectedMessages ) {
+		$mock = $this->getMockBuilder( MockApi::class )
+			->onlyMethods( [ 'getAllowedParams', 'getModulePath' ] )
+			->getMock();
+		$mock->method( 'getAllowedParams' )->willReturn( [
+			'param' => $paramSettings,
+		] );
+		$mock->method( 'getModulePath' )->willReturn( 'test' );
+		if ( $expectedMessages instanceof Exception ) {
+			$this->expectExceptionObject( $expectedMessages );
+		}
+		$paramDescription = $mock->getFinalParamDescription();
+		$this->assertArrayHasKey( 'param', $paramDescription );
+		$messages = $paramDescription['param'];
+		$messageKeys = array_map( fn( MessageSpecifier $m ) => $m->getKey(), $messages );
+		$this->assertSame( $expectedMessages, $messageKeys );
+	}
+
+	public function provideGetFinalParamDescription() {
+		return [
+			'default message' => [
+				'settings' => [],
+				'messages' => [ 'apihelp-test-param-param' ],
+			],
+			'custom message' => [
+				'settings' => [ ApiBase::PARAM_HELP_MSG => 'foo' ],
+				'messages' => [ 'foo' ],
+			],
+			'default per-value message' => [
+				'settings' => [
+					ParamValidator::PARAM_TYPE => [ 'a', 'b' ],
+					ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+				],
+				'messages' => [
+					'apihelp-test-param-param',
+					'apihelp-test-paramvalue-param-a',
+					'apihelp-test-paramvalue-param-b',
+				],
+			],
+			'custom per-value message' => [
+				'settings' => [
+					ParamValidator::PARAM_TYPE => [ 'a', 'b' ],
+					ApiBase::PARAM_HELP_MSG_PER_VALUE => [
+						'a' => 'foo',
+						'b' => 'bar',
+					],
+				],
+				'messages' => [
+					'apihelp-test-param-param',
+					'foo',
+					'bar',
+				],
+			],
+			'custom per-value message for strings' => [
+				'settings' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					ParamValidator::PARAM_ISMULTI => true,
+					ApiBase::PARAM_HELP_MSG_PER_VALUE => [
+						'a' => 'foo',
+						'b' => 'bar',
+					],
+				],
+				'messages' => [
+					'apihelp-test-param-param',
+					'foo',
+					'bar',
+				],
+			],
+			'must be multi-valued for per-value message' => [
+				'settings' => [
+					ParamValidator::PARAM_TYPE => 'string',
+					ApiBase::PARAM_HELP_MSG_PER_VALUE => [],
+				],
+				'messages' => new MWException(
+					'Internal error in ApiBase::getFinalParamDescription: '
+					. 'ApiBase::PARAM_HELP_MSG_PER_VALUE may only be used when '
+					. "ParamValidator::PARAM_TYPE is an array or it is 'string' "
+					. 'and ParamValidator::PARAM_ISMULTI is true'
+				),
+			],
+		];
 	}
 
 	public function testErrorArrayToStatus() {

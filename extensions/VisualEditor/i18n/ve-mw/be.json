@@ -10,12 +10,12 @@
 			"Mechanizatar",
 			"Mikalai Udodau",
 			"No Sleep till Krupki",
+			"Plaga med",
 			"Tomato Cream",
 			"Tīgelika",
 			"ZlyiLev",
 			"Дзяніс Тутэйшы",
-			"Чаховіч Уладзіслаў",
-			"Plaga med"
+			"Чаховіч Уладзіслаў"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -169,6 +169,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Назва параметра",
 	"visualeditor-dialog-transclusion-add-param-save": "Дадаць",
 	"visualeditor-dialog-transclusion-add-template": "Дадаць шаблон",
+	"visualeditor-dialog-transclusion-add-template-button": "Дадаць шаблон",
 	"visualeditor-dialog-transclusion-add-template-save": "Дадаць",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Дадаць недакументаваны параметр",
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "Вярнуцца да пошуку? Вашы змяненні будуць страчаны і гэта нельга будзе адмяніць.",
@@ -200,7 +201,6 @@
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Націсніце Прабел, каб дадаць ці выдаліць параметры. Націсніце Enter, каб дадаць параметр і адразу змяніць яго значэнне. Калі параметр ужо выбраны, націсніце Enter, каб змяніць значэнне.",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "Параметры ў $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Недакументаваны параметр)",
-	"visualeditor-dialog-transclusion-placeholder": "Дадаць шаблон",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Знайсці шаблон",
 	"visualeditor-dialog-transclusion-required-parameter": "Абавязковае поле",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Поле абавязковае.",

@@ -5,6 +5,11 @@
  * @ingroup Actions
  */
 
+use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\CommentStore\CommentStoreComment;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Revision\MutableRevisionRecord;
@@ -45,29 +50,35 @@ class McrUndoAction extends FormAction {
 	/** @var RevisionRenderer */
 	private $revisionRenderer;
 
+	/** @var CommentFormatter */
+	private $commentFormatter;
+
 	/** @var bool */
 	private $useRCPatrol;
 
 	/**
-	 * @param Page $page
+	 * @param Article $article
 	 * @param IContextSource $context
 	 * @param ReadOnlyMode $readOnlyMode
 	 * @param RevisionLookup $revisionLookup
 	 * @param RevisionRenderer $revisionRenderer
+	 * @param CommentFormatter $commentFormatter
 	 * @param Config $config
 	 */
 	public function __construct(
-		Page $page,
+		Article $article,
 		IContextSource $context,
 		ReadOnlyMode $readOnlyMode,
 		RevisionLookup $revisionLookup,
 		RevisionRenderer $revisionRenderer,
+		CommentFormatter $commentFormatter,
 		Config $config
 	) {
-		parent::__construct( $page, $context );
+		parent::__construct( $article, $context );
 		$this->readOnlyMode = $readOnlyMode;
 		$this->revisionLookup = $revisionLookup;
 		$this->revisionRenderer = $revisionRenderer;
+		$this->commentFormatter = $commentFormatter;
 		$this->useRCPatrol = $config->get( MainConfigNames::UseRCPatrol );
 	}
 
@@ -299,8 +310,6 @@ class McrUndoAction extends FormAction {
 		$out = $this->getOutput();
 
 		try {
-			$previewHTML = '';
-
 			# provide a anchor link to the form
 			$continueEditing = '<span class="mw-continue-editing">' .
 				'[[#mw-mcrundo-form|' .
@@ -310,6 +319,7 @@ class McrUndoAction extends FormAction {
 			$note = $this->context->msg( 'previewnote' )->plain() . ' ' . $continueEditing;
 
 			$parserOptions = $this->getWikiPage()->makeParserOptions( $this->context );
+			$parserOptions->setRenderReason( 'page-preview' );
 			$parserOptions->setIsPreview( true );
 			$parserOptions->setIsSectionPreview( false );
 
@@ -377,7 +387,7 @@ class McrUndoAction extends FormAction {
 
 		$newRev = $this->getNewRevision();
 		if ( !$newRev->hasSameContent( $curRev ) ) {
-			$hookRunner = Hooks::runner();
+			$hookRunner = $this->getHookRunner();
 			foreach ( $newRev->getSlotRoles() as $slotRole ) {
 				$slot = $newRev->getSlot( $slotRole, RevisionRecord::RAW );
 
@@ -470,8 +480,14 @@ class McrUndoAction extends FormAction {
 		];
 
 		if ( $request->getCheck( 'wpSummary' ) ) {
-			$ret['summarypreview']['default'] = Xml::tags( 'div', [ 'class' => 'mw-summary-preview' ],
-				Linker::commentBlock( trim( $request->getVal( 'wpSummary' ) ), $this->getTitle(), false )
+			$ret['summarypreview']['default'] = Xml::tags(
+				'div',
+				[ 'class' => 'mw-summary-preview' ],
+				$this->commentFormatter->formatBlock(
+					trim( $request->getVal( 'wpSummary' ) ),
+					$this->getTitle(),
+					false
+				)
 			);
 		} else {
 			unset( $ret['summarypreview'] );

@@ -7,6 +7,7 @@
 			"Dhallin",
 			"Haxpett",
 			"Jenniesarina",
+			"JohanahoJ",
 			"Jopparn",
 			"Josefine Hellroth Larsson (WMSE)",
 			"Josve05a",
@@ -26,8 +27,7 @@
 			"Tobulos1",
 			"Umeaboy",
 			"Warrakkk",
-			"WikiPhoenix",
-			"JohanahoJ"
+			"WikiPhoenix"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -181,6 +181,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Parameternamn",
 	"visualeditor-dialog-transclusion-add-param-save": "Lägg till",
 	"visualeditor-dialog-transclusion-add-template": "Lägg till mall",
+	"visualeditor-dialog-transclusion-add-template-button": "Lägg till mall",
 	"visualeditor-dialog-transclusion-add-template-save": "Lägg till",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "Lägg till odokumenterad parameter",
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "Gå tillbaka till sök? Dina ändringar kommer gå förlorade och detta kan inte återställas.",
@@ -212,7 +213,6 @@
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "Tryck på mellanslag för att lägga till eller ta bort parametrar. Tryck på Enter för att lägga till en parameter och omedelbart redigera dess värde. När en parameter är redan markerad trycker du på Enter för att redigera värdet.",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "Parametrar i $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(Odokumenterad parameter)",
-	"visualeditor-dialog-transclusion-placeholder": "Lägga till en mall",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Hitta mall",
 	"visualeditor-dialog-transclusion-required-parameter": "Obligatorisk fält",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Fältet är obligatoriskt.",

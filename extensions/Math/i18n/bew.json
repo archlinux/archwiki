@@ -81,6 +81,7 @@
 	"math_unknown_function": "pungsi kaga' ditauin \"$1\"",
 	"mw_math_latexml": "LaTeXML (coba-cobaan; maké MathML)",
 	"mw_math_mathml": "SVG (MathML bisa dinyalain liwat cecolokan-masup pengorag)",
+	"mw_math_native": "MathML (coba-cobaan; kaga' ada gambar)",
 	"mw_math_source": "Sumber LaTeX (bakal pengorag tèks)",
 	"prefs-math": "Matimatika",
 	"mathstatus": "Status matimatika",

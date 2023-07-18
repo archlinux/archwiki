@@ -23,7 +23,7 @@ ve.ui.MWTransclusionOutlineControlsWidget = function OoUiOutlineControlsWidget()
 	this.addTemplateButton = new OO.ui.ButtonWidget( {
 		framed: false,
 		icon: 'puzzle',
-		title: ve.msg( 'visualeditor-dialog-transclusion-add-template' )
+		title: ve.msg( 'visualeditor-dialog-transclusion-add-template-button' )
 	} );
 	this.addWikitextButton = new OO.ui.ButtonWidget( {
 		framed: false,

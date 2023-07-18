@@ -25,6 +25,8 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Revision\MutableRevisionRecord;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\StubObject\StubObject;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use Wikimedia\ScopedCallback;
 
@@ -136,6 +138,12 @@ class ParserOptions {
 	 * Appended to the options hash
 	 */
 	private $mExtraKey = '';
+
+	/**
+	 * The reason for rendering the content.
+	 * @var string
+	 */
+	private $renderReason = 'unknown';
 
 	/**
 	 * Fetch an option and track that is was accessed
@@ -424,6 +432,7 @@ class ParserOptions {
 	/**
 	 * Maximum recursion depth for templates within templates
 	 * @return int
+	 * @internal Only used by Parser (T318826)
 	 */
 	public function getMaxTemplateDepth() {
 		return $this->getOption( 'maxTemplateDepth' );
@@ -433,6 +442,7 @@ class ParserOptions {
 	 * Maximum recursion depth for templates within templates
 	 * @param int|null $x New value (null is no change)
 	 * @return int Old value
+	 * @internal Only used by ParserTestRunner (T318826)
 	 */
 	public function setMaxTemplateDepth( $x ) {
 		return $this->setOptionLegacy( 'maxTemplateDepth', $x );
@@ -521,6 +531,7 @@ class ParserOptions {
 	/**
 	 * Target attribute for external links
 	 * @return string|false
+	 * @internal Only set by installer (T317647)
 	 */
 	public function getExternalLinkTarget() {
 		return $this->getOption( 'externalLinkTarget' );
@@ -530,6 +541,7 @@ class ParserOptions {
 	 * Target attribute for external links
 	 * @param string|false|null $x New value (null is no change)
 	 * @return string Old value
+	 * @internal Only used by installer (T317647)
 	 */
 	public function setExternalLinkTarget( $x ) {
 		return $this->setOptionLegacy( 'externalLinkTarget', $x );
@@ -686,7 +698,7 @@ class ParserOptions {
 	 *
 	 * @warning Calling this causes the parser cache to be fragmented by user language!
 	 * To avoid cache fragmentation, output should not depend on the user language.
-	 * Use Parser::getFunctionLang() or Parser::getTargetLanguage() instead!
+	 * Use Parser::getTargetLanguage() instead!
 	 *
 	 * @note This function will trigger a cache fragmentation by recording the
 	 * 'userlang' option, see optionUsed(). This is done to avoid cache pollution
@@ -707,7 +719,7 @@ class ParserOptions {
 	 *
 	 * @warning Calling this causes the parser cache to be fragmented by user language!
 	 * To avoid cache fragmentation, output should not depend on the user language.
-	 * Use Parser::getFunctionLang() or Parser::getTargetLanguage() instead!
+	 * Use Parser::getTargetLanguage() instead!
 	 *
 	 * @see getUserLangObj()
 	 *
@@ -816,7 +828,7 @@ class ParserOptions {
 	/**
 	 * Class to use to wrap output from Parser::parse()
 	 * @since 1.30
-	 * @return string|bool
+	 * @return string|false
 	 */
 	public function getWrapOutputClass() {
 		return $this->getOption( 'wrapclass' );
@@ -827,7 +839,7 @@ class ParserOptions {
 	 * @since 1.30
 	 * @param string $className Class name to use for wrapping.
 	 *   Passing false to indicate "no wrapping" was deprecated in MediaWiki 1.31.
-	 * @return string|bool Current value
+	 * @return string|false Current value
 	 */
 	public function setWrapOutputClass( $className ) {
 		if ( $className === true ) { // DWIM, they probably want the default class name
@@ -1437,7 +1449,7 @@ class ParserOptions {
 	public function isSafeToCache( array $usedOptions = null ) {
 		$defaults = self::getDefaults();
 		$inCacheKey = self::getCacheVaryingOptionsHash();
-		$usedOptions = $usedOptions ?? array_keys( $this->options );
+		$usedOptions ??= array_keys( $this->options );
 		foreach ( $usedOptions as $option ) {
 			if ( empty( $inCacheKey[$option] ) && empty( self::$callbacks[$option] ) ) {
 				$v = $this->optionToString( $this->options[$option] ?? null );
@@ -1497,6 +1509,24 @@ class ParserOptions {
 			$linkCache->clearLink( $title );
 			$this->setCurrentRevisionRecordCallback( $oldCallback );
 		} );
+	}
+
+	/**
+	 * Returns reason for rendering the content. This human-readable, intended for logging and debugging only.
+	 * Expected values include "edit", "view", "purge", "LinksUpdate", etc.
+	 * @return string
+	 */
+	public function getRenderReason(): string {
+		return $this->renderReason;
+	}
+
+	/**
+	 * Sets reason for rendering the content. This human-readable, intended for logging and debugging only.
+	 * Expected values include "edit", "view", "purge", "LinksUpdate", etc.
+	 * @param string $renderReason
+	 */
+	public function setRenderReason( string $renderReason ): void {
+		$this->renderReason = $renderReason;
 	}
 }
 

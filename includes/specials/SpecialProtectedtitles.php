@@ -22,7 +22,10 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Html\Html;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -77,7 +80,7 @@ class SpecialProtectedtitles extends SpecialPage {
 			$size
 		);
 
-		$this->getOutput()->addHTML( $this->showOptions( $NS, $type, $level ) );
+		$this->getOutput()->addHTML( $this->showOptions() );
 
 		if ( $pager->getNumRows() ) {
 			$this->getOutput()->addHTML(
@@ -136,13 +139,9 @@ class SpecialProtectedtitles extends SpecialPage {
 	}
 
 	/**
-	 * @param int $namespace
-	 * @param string $type
-	 * @param string $level
 	 * @return string
-	 * @internal
 	 */
-	private function showOptions( $namespace, $type, $level ) {
+	private function showOptions() {
 		$formDescriptor = [
 			'namespace' => [
 				'class' => HTMLSelectNamespace::class,
@@ -152,7 +151,7 @@ class SpecialProtectedtitles extends SpecialPage {
 				'all' => '',
 				'label' => $this->msg( 'namespace' )->text()
 			],
-			'levelmenu' => $this->getLevelMenu( $level )
+			'levelmenu' => $this->getLevelMenu()
 		];
 
 		$htmlForm = HTMLForm::factory( 'ooui', $formDescriptor, $this->getContext() )
@@ -164,11 +163,9 @@ class SpecialProtectedtitles extends SpecialPage {
 	}
 
 	/**
-	 * @param string $pr_level Determines which option is selected as default
 	 * @return string|array
-	 * @internal
 	 */
-	private function getLevelMenu( $pr_level ) {
+	private function getLevelMenu() {
 		// Temporary array
 		$m = [ $this->msg( 'restriction-level-all' )->text() => 0 ];
 		$options = [];

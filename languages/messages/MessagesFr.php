@@ -1,8 +1,6 @@
 <?php
 /** French (français)
  *
- * To improve a translation please visit https://translatewiki.net
- *
  * @file
  * @ingroup Languages
  */
@@ -110,6 +108,7 @@ $specialPageAliases = [
 	'Recentchanges'             => [ 'Modifications_récentes', 'Modifications_recentes', 'ModificationsRécentes', 'ModificationsRecentes' ],
 	'Recentchangeslinked'       => [ 'Suivi_des_liens', 'SuiviDesLiens' ],
 	'Redirect'                  => [ 'Redirection' ],
+	'Renameuser'                => [ 'Renommer_utilisateur', 'RenommerUtilisateur' ],
 	'Revisiondelete'            => [ 'Versions_supprimées', 'Versions_supprimees', 'Versionsupprimées', 'Versionsupprimees' ],
 	'Search'                    => [ 'Recherche', 'Rechercher', 'Chercher' ],
 	'Shortpages'                => [ 'Pages_courtes', 'PagesCourtes' ],

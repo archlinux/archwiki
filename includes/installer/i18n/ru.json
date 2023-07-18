@@ -18,6 +18,7 @@
 			"Lockal",
 			"Macofe",
 			"Mailman",
+			"Max34",
 			"MaxSem",
 			"Meshkov.a",
 			"Movses",
@@ -32,8 +33,7 @@
 			"Александр Сигачёв",
 			"Ильнар",
 			"Сrower",
-			"아라",
-			"Max34"
+			"아라"
 		]
 	},
 	"config-desc": "Установщик MediaWiki",
@@ -80,8 +80,7 @@
 	"config-env-good": "Проверка внешней среды была успешно проведена.\nВы можете установить MediaWiki.",
 	"config-env-bad": "Была проведена проверка внешней среды.\nВы не можете установить MediaWiki.",
 	"config-env-php": "Установленная версия PHP: $1.",
-	"config-unicode-using-intl": "Будет использовано [https://php.net/manual/en/book.intl.php PHP intl расширение] для нормализации Юникода.",
-	"config-unicode-update-warning": "'''Предупреждение''': установленная версия обёртки нормализации Юникода использует старую версию библиотеки [http://site.icu-project.org/ проекта ICU].\nВы должны [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations обновить версию], если хотите полноценно использовать Юникод.",
+	"config-env-icu": "ICU $1 установлен (поддерживает Unicode $2).",
 	"config-no-db": "Не удалось найти подходящие драйвера баз данных! Вам необходимо установить драйвера базы данных для PHP.\n{{PLURAL:$2|Поддерживается следующий тип|Поддерживаются следующие типы}} баз данных: $1.\n\nЕсли вы скомпилировали PHP сами, перенастройте его с включением клиента баз данных, например, с помощью <code>./configure --with-mysqli</code>.\nЕсли вы установили PHP из пакетов Debian или Ubuntu, то вам также необходимо установить, например, пакет <code>php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>Внимание</strong>: у Вас установлен SQLite $2, версия которого ниже требуемой $1. SQLite будет недоступен.",
 	"config-no-fts3": "<strong>Внимание</strong>: SQLite собран без модуля [//sqlite.org/fts3.html FTS3] — поиск не будет работать для этой базы данных.",
@@ -107,7 +106,6 @@
 	"config-using-uri": "Используется URL сервера \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "<strong>Внимание</strong>: путь для загрузок, используемый по умолчанию (<code>$1</code>) уязвим к выполнению произвольных скриптов.\nНесмотря на то, что MediaWiki проверяет все загружаемые файлы на наличие угроз, настоятельно рекомендуется [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security закрыть данную уязвимость] перед включением загрузки файлов.",
 	"config-no-cli-uploads-check": "'''Предупреждение:''' каталог для загрузки по умолчанию ( <code>$1</code> ) не проверялся на уязвимости\n на выполнение произвольного сценария во время установки CLI.",
-	"config-suhosin-max-value-length": "Suhosin установлен и ограничивает параметр GET <code>length</code> до $1 {{PLURAL:$1|байт|байта|байт}}. Для MediaWiki требуется, чтоб значение <code>suhosin.get.max_value_length</code> было хотя бы $2. Отключите эту настройку или увеличьте значение в <code>php.ini</code> до $3.",
 	"config-using-32bit": "<strong>Внимание:</strong> похоже, ваша система работает с 32-битными целыми числами. Это [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit не рекомендуется].",
 	"config-db-type": "Тип базы данных:",
 	"config-db-host": "Хост базы данных:",
@@ -339,6 +337,7 @@
 	"config-screenshot": "скриншот",
 	"config-extension-not-found": "Не удалось найти файл регистрации для расширения «$1»",
 	"config-extension-dependency": "При установке расширения «$1» возникла ошибка зависимости: $2",
+	"config-ext-skins-more-info": "подробнее",
 	"mainpagetext": "<strong>MediaWiki успешно установлена.</strong>",
 	"mainpagedocfooter": "Информацию по работе с этой вики можно найти в [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents справочном руководстве].\n\n== Начало работы ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings Список возможных настроек];\n* [https://www.mediawiki.org/wiki/Manual:FAQ/ru Часто задаваемые вопросы и ответы по MediaWiki];\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ Рассылка уведомлений о выходе новых версий MediaWiki].\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources Перевод MediaWiki на свой язык]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam Узнайте, как бороться со спамом в вашей вики]"
 }

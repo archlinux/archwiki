@@ -38,6 +38,7 @@ use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Permissions\RateLimitSubject;
 use MediaWiki\Permissions\UserAuthority;
 use MediaWiki\Session\SessionManager;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserFactory;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
@@ -216,13 +217,13 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	/** @var bool */
 	private $mHideName;
 
-	/** @var WebRequest */
+	/** @var WebRequest|null */
 	private $mRequest;
 
 	/** @var AbstractBlock|null */
 	private $mBlock;
 
-	/** @var AbstractBlock|bool */
+	/** @var AbstractBlock|false */
 	private $mBlockedFromCreateAccount = false;
 
 	/** @var int User::READ_* constant bitfield used to load data */
@@ -273,6 +274,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	public function &__get( $name ) {
 		// A shortcut for $mRights deprecation phase
 		if ( $name === 'mRights' ) {
+			// hard deprecated since 1.40
+			wfDeprecated( 'User::$mRights', '1.34' );
 			$copy = MediaWikiServices::getInstance()
 				->getPermissionManager()
 				->getUserPermissions( $this );
@@ -302,6 +305,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		// A shortcut for $mRights deprecation phase, only known legitimate use was for
 		// testing purposes, other uses seem bad in principle
 		if ( $name === 'mRights' ) {
+			// hard deprecated since 1.40
+			wfDeprecated( 'User::$mRights', '1.34' );
 			MediaWikiServices::getInstance()->getPermissionManager()->overrideUserRightsForTesting(
 				$this,
 				$value ?? []
@@ -500,17 +505,6 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	}
 
 	/**
-	 * @param WANObjectCache $cache
-	 * @return string[]
-	 * @since 1.28
-	 */
-	public function getMutableCacheKeys( WANObjectCache $cache ) {
-		$id = $this->getId();
-
-		return $id ? [ $this->getCacheKey( $cache ) ] : [];
-	}
-
-	/**
 	 * Load user data from shared cache, given mId has already been set.
 	 *
 	 * @return bool True
@@ -590,7 +584,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 *   - 'creatable'  Valid for batch processes, login and account creation,
 	 *  except that true is accepted as an alias for 'valid', for BC.
 	 *
-	 * @return User|bool User object, or false if the username is invalid
+	 * @return User|false User object, or false if the username is invalid
 	 *  (e.g. if it contains illegal characters or is an IP address). If the
 	 *  username is not present in the database, the result will be a user object
 	 *  with a name, zero user ID and default settings.
@@ -615,15 +609,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 			$validation = $validate;
 		}
 
-		$user = MediaWikiServices::getInstance()
-			->getUserFactory()
-			->newFromName( (string)$name, $validation );
-
-		// UserFactory returns null instead of false
-		if ( $user === null ) {
-			$user = false;
-		}
-		return $user;
+		return MediaWikiServices::getInstance()->getUserFactory()
+			->newFromName( (string)$name, $validation ) ?? false;
 	}
 
 	/**
@@ -698,7 +685,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @param int|null $userId User ID, if known
 	 * @param string|null $userName User name, if known
 	 * @param int|null $actorId Actor ID, if known
-	 * @param bool|string $dbDomain remote wiki to which the User/Actor ID applies, or false if none
+	 * @param string|false $dbDomain remote wiki to which the User/Actor ID applies, or false if none
 	 * @return User
 	 */
 	public static function newFromAnyId( $userId, $userName, $actorId, $dbDomain = false ) {
@@ -928,12 +915,13 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 	/**
 	 * Get database id given a user name
-	 * @deprecated since 1.37. Use UserIdentityLookup::getUserIdentityByName instead.
+	 * @deprecated since 1.37. Use UserIdentityLookup::getUserIdentityByName instead. Hard-deprecated since 1.40.
 	 * @param string $name Username
 	 * @param int $flags User::READ_* constant bitfield
 	 * @return int|null The corresponding user's ID, or null if user is nonexistent
 	 */
 	public static function idFromName( $name, $flags = self::READ_NORMAL ) {
+		wfDeprecated( __METHOD__, '1.37' );
 		$actor = MediaWikiServices::getInstance()
 			->getUserIdentityLookup()
 			->getUserIdentityByName( (string)$name, $flags );
@@ -1049,7 +1037,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @note This no longer clears uncached lazy-initialised properties;
 	 *       the constructor does that instead.
 	 *
-	 * @param string|bool $name
+	 * @param string|false $name
 	 * @param int|null $actorId
 	 */
 	public function loadDefaults( $name = false, $actorId = null ) {
@@ -1161,9 +1149,6 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		);
 
 		$this->queryFlagsUsed = $flags;
-
-		// hook is hard deprecated since 1.37
-		$this->getHookRunner()->onUserLoadFromDatabase( $this, $s );
 
 		if ( $s !== false ) {
 			// Initialise user table data
@@ -1379,11 +1364,25 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 		if ( $wgFullyInitialised && $this->mFrom ) {
 			$services = MediaWikiServices::getInstance();
-			$services->getPermissionManager()->invalidateUsersRightsCache( $this );
-			$services->getUserOptionsManager()->clearUserOptionsCache( $this );
-			$services->getTalkPageNotificationManager()->clearInstanceCache( $this );
-			$services->getUserGroupManager()->clearCache( $this );
-			$services->getUserEditTracker()->clearUserEditCache( $this );
+			if ( $services->peekService( 'PermissionManager' ) ) {
+				$services->getPermissionManager()->invalidateUsersRightsCache( $this );
+			}
+
+			if ( $services->peekService( 'UserOptionsManager' ) ) {
+				$services->getUserOptionsManager()->clearUserOptionsCache( $this );
+			}
+
+			if ( $services->peekService( 'TalkPageNotificationManager' ) ) {
+				$services->getTalkPageNotificationManager()->clearInstanceCache( $this );
+			}
+
+			if ( $services->peekService( 'UserGroupManager' ) ) {
+				$services->getUserGroupManager()->clearCache( $this );
+			}
+
+			if ( $services->peekService( 'UserEditTracker' ) ) {
+				$services->getUserEditTracker()->clearUserEditCache( $this );
+			}
 		}
 
 		if ( $reloadFrom ) {
@@ -1569,6 +1568,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 *
 	 * @param string $ip IP address, uses current client if none given
 	 * @return bool True if blocked, false otherwise
+	 * @deprecated since 1.40. Use getBlock instead.
 	 */
 	public function isBlockedGlobally( $ip = '' ) {
 		return $this->getGlobalBlock( $ip ) instanceof AbstractBlock;
@@ -1583,6 +1583,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return AbstractBlock|null Block object if blocked, null otherwise
 	 * @throws FatalError
 	 * @throws MWException
+	 * @deprecated since 1.40. Use getBlock instead
 	 */
 	public function getGlobalBlock( $ip = '' ) {
 		if ( $this->mGlobalBlock !== null ) {
@@ -1976,7 +1977,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * Set the random token (used for persistent authentication)
 	 * Called from loadDefaults() among other places.
 	 *
-	 * @param string|bool $token If specified, set the token to this value
+	 * @param string|false $token If specified, set the token to this value
 	 */
 	public function setToken( $token = false ) {
 		$this->load();
@@ -2134,7 +2135,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * resetting it if it's empty (and saving changes).
 	 *
 	 * @param string $oname The option name to retrieve the token from
-	 * @return string|bool User's current value for the option, or false if this option is disabled.
+	 * @return string|false User's current value for the option, or false if this option is disabled.
 	 * @see resetTokenFromOption()
 	 * @see getOption()
 	 * @deprecated since 1.26 Applications should use the OAuth extension
@@ -2166,7 +2167,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * *Does not* save user's preferences (similarly to UserOptionsManager::setOption()).
 	 *
 	 * @param string $oname The option name to reset the token in
-	 * @return string|bool New token value, or false if this option is disabled.
+	 * @return string|false New token value, or false if this option is disabled.
 	 * @see getTokenFromOption()
 	 * @see UserOptionsManager::setOption
 	 */
@@ -2413,10 +2414,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return WebRequest
 	 */
 	public function getRequest() {
-		if ( $this->mRequest ) {
-			return $this->mRequest;
-		}
-		return RequestContext::getMain()->getRequest();
+		return $this->mRequest ?? RequestContext::getMain()->getRequest();
 	}
 
 	/**
@@ -2505,9 +2503,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * Log this user out.
 	 */
 	public function logout() {
-		// Avoid PHP 7.1 warning of passing $this by reference
-		$user = $this;
-		if ( $this->getHookRunner()->onUserLogout( $user ) ) {
+		if ( $this->getHookRunner()->onUserLogout( $this ) ) {
 			$this->doLogout();
 		}
 	}
@@ -2855,7 +2851,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Get whether the user is explicitly blocked from account creation.
 	 * @deprecated since 1.37. Instead use Authority::authorize* for createaccount permission.
-	 * @return bool|AbstractBlock
+	 * @return AbstractBlock|false
 	 */
 	public function isBlockedFromCreateAccount() {
 		$this->getBlockedStatus();
@@ -3047,7 +3043,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * confirmed status or validity.
 	 *
 	 * @param string $subject Message subject
-	 * @param string $body Message body
+	 * @param string|string[] $body Message body or array containing keys text and html
 	 * @param User|null $from Optional sending user; if unspecified, default
 	 *   $wgPasswordSender will be used.
 	 * @param MailAddress|null $replyto Reply-To address
@@ -3220,10 +3216,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		$emailAuthentication = MediaWikiServices::getInstance()->getMainConfig()
 			->get( MainConfigNames::EmailAuthentication );
 		$this->load();
-		// Avoid PHP 7.1 warning of passing $this by reference
-		$user = $this;
 		$confirmed = true;
-		if ( $this->getHookRunner()->onEmailConfirmed( $user, $confirmed ) ) {
+		if ( $this->getHookRunner()->onEmailConfirmed( $this, $confirmed ) ) {
 			if ( $this->isAnon() ) {
 				return false;
 			}
@@ -3255,7 +3249,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Get the timestamp of account creation.
 	 *
-	 * @return string|bool|null Timestamp of account creation, false for
+	 * @return string|false|null Timestamp of account creation, false for
 	 *  non-existent/anonymous user accounts, or null if existing account
 	 *  but information is not in database.
 	 */
@@ -3270,26 +3264,28 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	/**
 	 * Get the permissions associated with a given list of groups
 	 *
-	 * @deprecated since 1.34, use GroupPermissionsLookup::getGroupPermissions() instead in 1.36+,
-	 *    or PermissionManager::getGroupPermissions() in 1.34 and 1.35
+	 * @deprecated since 1.34, hard-deprecated since 1.40, use GroupPermissionsLookup::getGroupPermissions() instead
+	 *    in 1.36+, or PermissionManager::getGroupPermissions() in 1.34 and 1.35
 	 *
 	 * @param string[] $groups internal group names
 	 * @return string[] permission key names for given groups combined
 	 */
 	public static function getGroupPermissions( $groups ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getGroupPermissionsLookup()->getGroupPermissions( $groups );
 	}
 
 	/**
 	 * Get all the groups who have a given permission
 	 *
-	 * @deprecated since 1.34, use GroupPermissionsLookup::getGroupsWithPermission() instead in 1.36+,
-	 *    or PermissionManager::getGroupsWithPermission() in 1.34 and 1.35
+	 * @deprecated since 1.34, hard-deprecated since 1.40, use GroupPermissionsLookup::getGroupsWithPermission() instead
+	 *    in 1.36+, or PermissionManager::getGroupsWithPermission() in 1.34 and 1.35
 	 *
 	 * @param string $role Role to check
 	 * @return string[] internal group names with the given permission
 	 */
 	public static function getGroupsWithPermission( $role ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getGroupPermissionsLookup()->getGroupsWithPermission( $role );
 	}
 
@@ -3300,8 +3296,8 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * PermissionManager::isEveryoneAllowed() instead. That properly checks if it's revoked
 	 * from anyone.
 	 *
-	 * @deprecated since 1.34, use GroupPermissionsLookup::groupHasPermission() instead in 1.36+,
-	 *    or PermissionManager::groupHasPermission() in 1.34 and 1.35
+	 * @deprecated since 1.34, hard-deprecated since 1.40, use GroupPermissionsLookup::groupHasPermission() instead
+	 *    in 1.36+, or PermissionManager::groupHasPermission() in 1.34 and 1.35
 	 *
 	 * @since 1.21
 	 * @param string $group Group to check
@@ -3309,6 +3305,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return bool
 	 */
 	public static function groupHasPermission( $group, $role ) {
+		wfDeprecated( __METHOD__, '1.34' );
 		return MediaWikiServices::getInstance()->getGroupPermissionsLookup()
 			->groupHasPermission( $group, $role );
 	}
@@ -3338,9 +3335,10 @@ class User implements Authority, UserIdentity, UserEmailContact {
 
 	/**
 	 * Schedule a deferred update to update the user's edit count
-	 * @deprecated since 1.37
+	 * @deprecated since 1.37, hard deprecated 1.40. Use UserEditTracker::incrementUserEditCount
 	 */
 	public function incEditCount() {
+		wfDeprecated( __METHOD__, '1.37' );
 		MediaWikiServices::getInstance()->getUserEditTracker()->incrementUserEditCount( $this );
 	}
 
@@ -3400,8 +3398,6 @@ class User implements Authority, UserIdentity, UserEmailContact {
 	 * @return Status
 	 */
 	public static function newFatalPermissionDeniedStatus( $permission ) {
-		global $wgLang;
-
 		$groups = [];
 		foreach ( MediaWikiServices::getInstance()
 				->getGroupPermissionsLookup()
@@ -3410,7 +3406,7 @@ class User implements Authority, UserIdentity, UserEmailContact {
 		}
 
 		if ( $groups ) {
-			return Status::newFatal( 'badaccess-groups', $wgLang->commaList( $groups ), count( $groups ) );
+			return Status::newFatal( 'badaccess-groups', Message::listParam( $groups, 'comma' ), count( $groups ) );
 		}
 
 		return Status::newFatal( 'badaccess-group0' );

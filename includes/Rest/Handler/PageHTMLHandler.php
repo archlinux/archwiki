@@ -2,18 +2,16 @@
 
 namespace MediaWiki\Rest\Handler;
 
-use Config;
-use IBufferingStatsdDataFactory;
 use LogicException;
-use MediaWiki\Edit\ParsoidOutputStash;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Page\PageLookup;
-use MediaWiki\Parser\Parsoid\ParsoidOutputAccess;
+use MediaWiki\Page\RedirectStore;
+use MediaWiki\Rest\Handler\Helper\HtmlOutputHelper;
+use MediaWiki\Rest\Handler\Helper\PageContentHelper;
+use MediaWiki\Rest\Handler\Helper\PageRestHelperFactory;
 use MediaWiki\Rest\LocalizedHttpException;
 use MediaWiki\Rest\Response;
 use MediaWiki\Rest\SimpleHandler;
 use MediaWiki\Rest\StringStream;
-use MediaWiki\Revision\RevisionLookup;
 use TitleFormatter;
 use Wikimedia\Assert\Assert;
 
@@ -25,33 +23,32 @@ use Wikimedia\Assert\Assert;
  * @package MediaWiki\Rest\Handler
  */
 class PageHTMLHandler extends SimpleHandler {
+	use PageRedirectHandlerTrait;
 
-	/** @var ParsoidHTMLHelper */
+	/** @var HtmlOutputHelper */
 	private $htmlHelper;
 
 	/** @var PageContentHelper */
 	private $contentHelper;
 
+	/** @var TitleFormatter */
+	private $titleFormatter;
+
+	/** @var RedirectStore */
+	private $redirectStore;
+
+	private PageRestHelperFactory $helperFactory;
+
 	public function __construct(
-		Config $config,
-		RevisionLookup $revisionLookup,
 		TitleFormatter $titleFormatter,
-		PageLookup $pageLookup,
-		ParsoidOutputStash $parsoidOutputStash,
-		IBufferingStatsdDataFactory $statsDataFactory,
-		ParsoidOutputAccess $parsoidOutputAccess
+		RedirectStore $redirectStore,
+		PageRestHelperFactory $helperFactory
 	) {
-		$this->contentHelper = new PageContentHelper(
-			$config,
-			$revisionLookup,
-			$titleFormatter,
-			$pageLookup
-		);
-		$this->htmlHelper = new ParsoidHTMLHelper(
-			$parsoidOutputStash,
-			$statsDataFactory,
-			$parsoidOutputAccess
-		);
+		$this->titleFormatter = $titleFormatter;
+		$this->redirectStore = $redirectStore;
+		$this->contentHelper = $helperFactory->newPageContentHelper();
+		$this->helperFactory = $helperFactory;
+		$this->htmlHelper = $helperFactory->newHtmlOutputRendererHelper();
 	}
 
 	protected function postValidationSetup() {
@@ -61,9 +58,27 @@ class PageHTMLHandler extends SimpleHandler {
 
 		$this->contentHelper->init( $user, $this->getValidatedParams() );
 
-		$page = $this->contentHelper->getPage();
+		$page = $this->contentHelper->getPageIdentity();
+		$isSystemMessage = $this->contentHelper->useDefaultSystemMessage();
+
 		if ( $page ) {
-			$this->htmlHelper->init( $page, $this->getValidatedParams(), $user );
+			if ( $isSystemMessage ) {
+				$this->htmlHelper = $this->helperFactory->newHtmlMessageOutputHelper();
+				$this->htmlHelper->init( $page );
+			} else {
+				$revision = $this->contentHelper->getTargetRevision();
+				// NOTE: We know that $this->htmlHelper is an instance of HtmlOutputRendererHelper
+				//       because we set it in the constructor.
+				$this->htmlHelper->init( $page, $this->getValidatedParams(), $user, $revision );
+
+				$request = $this->getRequest();
+				$acceptLanguage = $request->getHeaderLine( 'Accept-Language' ) ?: null;
+				if ( $acceptLanguage ) {
+					$this->htmlHelper->setVariantConversionLanguage(
+						$acceptLanguage
+					);
+				}
+			}
 		}
 	}
 
@@ -73,14 +88,33 @@ class PageHTMLHandler extends SimpleHandler {
 	 */
 	public function run(): Response {
 		$this->contentHelper->checkAccess();
+		$page = $this->contentHelper->getPageIdentity();
+		$params = $this->getRequest()->getQueryParams();
 
-		$page = $this->contentHelper->getPage();
+		if ( array_key_exists( 'redirect', $params ) ) {
+			$followWikiRedirects = $params['redirect'] !== 'no';
+		} else {
+			$followWikiRedirects = true;
+		}
 
 		// The call to $this->contentHelper->getPage() should not return null if
 		// $this->contentHelper->checkAccess() did not throw.
 		Assert::invariant( $page !== null, 'Page should be known' );
 
+		$redirectResponse = $this->createRedirectResponseIfNeeded(
+			$page,
+			$followWikiRedirects,
+			$this->contentHelper->getTitleText(),
+			$this->titleFormatter,
+			$this->redirectStore
+		);
+
+		if ( $redirectResponse !== null ) {
+			return $redirectResponse;
+		}
+
 		$parserOutput = $this->htmlHelper->getHtml();
+
 		// Do not de-duplicate styles, Parsoid already does it in a slightly different way (T300325)
 		$parserOutputHtml = $parserOutput->getText( [ 'deduplicateStyles' => false ] );
 
@@ -88,20 +122,30 @@ class PageHTMLHandler extends SimpleHandler {
 		switch ( $outputMode ) {
 			case 'html':
 				$response = $this->getResponseFactory()->create();
-				// TODO: need to respect content-type returned by Parsoid.
-				$response->setHeader( 'Content-Type', 'text/html' );
 				$this->contentHelper->setCacheControl( $response, $parserOutput->getCacheExpiry() );
 				$response->setBody( new StringStream( $parserOutputHtml ) );
 				break;
 			case 'with_html':
 				$body = $this->contentHelper->constructMetadata();
 				$body['html'] = $parserOutputHtml;
+
+				$redirectTargetUrl = $this->getWikiRedirectTargetUrl(
+					$page, $this->redirectStore, $this->titleFormatter
+				);
+
+				if ( $redirectTargetUrl ) {
+					$body['redirect_target'] = $redirectTargetUrl;
+				}
+
 				$response = $this->getResponseFactory()->createJson( $body );
 				$this->contentHelper->setCacheControl( $response, $parserOutput->getCacheExpiry() );
 				break;
 			default:
 				throw new LogicException( "Unknown HTML type $outputMode" );
 		}
+
+		$setContentLanguageHeader = ( $outputMode === 'html' );
+		$this->htmlHelper->putHeaders( $response, $setContentLanguageHeader );
 
 		return $response;
 	}
@@ -113,7 +157,7 @@ class PageHTMLHandler extends SimpleHandler {
 	 * @return string|null
 	 */
 	protected function getETag(): ?string {
-		if ( !$this->contentHelper->isAccessible() ) {
+		if ( !$this->contentHelper->isAccessible() || !$this->contentHelper->hasContent() ) {
 			return null;
 		}
 
@@ -125,9 +169,10 @@ class PageHTMLHandler extends SimpleHandler {
 	 * @return string|null
 	 */
 	protected function getLastModified(): ?string {
-		if ( !$this->contentHelper->isAccessible() ) {
+		if ( !$this->contentHelper->isAccessible() || !$this->contentHelper->hasContent() ) {
 			return null;
 		}
+
 		return $this->htmlHelper->getLastModified();
 	}
 

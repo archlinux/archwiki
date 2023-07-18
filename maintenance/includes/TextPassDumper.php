@@ -35,6 +35,7 @@ use MediaWiki\Shell\Shell;
 use MediaWiki\Storage\BlobAccessException;
 use MediaWiki\Storage\BlobStore;
 use MediaWiki\Storage\SqlBlobStore;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\AtEase\AtEase;
 use Wikimedia\Rdbms\IMaintainableDatabase;
 
@@ -582,7 +583,7 @@ TEXT
 	 * is thrown.
 	 *
 	 * @param int|string $id Content address, or text row ID.
-	 * @param string|bool|null $model The content model used to determine
+	 * @param string|false|null $model The content model used to determine
 	 *  applicable export transformations. If $model is null, no transformation is applied.
 	 * @param string|null $format The content format used when applying export transformations.
 	 * @param int|null $expSize Expected length of the text, for checks

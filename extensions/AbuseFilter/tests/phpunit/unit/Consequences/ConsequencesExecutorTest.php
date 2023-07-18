@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Consequences;
 
 use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Block;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Throttle;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Warn;
@@ -50,7 +51,7 @@ class ConsequencesExecutorTest extends MediaWikiUnitTestCase {
 		return $consFactory;
 	}
 
-	private function getConsExecutor( array $consequences, LinkTarget $title ): ConsequencesExecutor {
+	private function getConsExecutor( array $consequences ): ConsequencesExecutor {
 		$locallyDisabledActions = [
 			'flag' => false,
 			'throttle' => false,
@@ -87,9 +88,14 @@ class ConsequencesExecutorTest extends MediaWikiUnitTestCase {
 			$this->createMock( FilterLookup::class ),
 			new NullLogger,
 			$options,
-			$this->createMock( UserIdentity::class ),
-			$title,
-			VariableHolder::newFromArray( [ 'action' => 'edit' ] )
+			new ActionSpecifier(
+				'edit',
+				$this->createMock( LinkTarget::class ),
+				$this->createMock( UserIdentity::class ),
+				'1.2.3.4',
+				null
+			),
+			new VariableHolder
 		);
 	}
 
@@ -111,7 +117,7 @@ class ConsequencesExecutorTest extends MediaWikiUnitTestCase {
 		array $rawConsequences,
 		array $expectedKeys
 	): void {
-		$executor = $this->getConsExecutor( $rawConsequences, $this->createMock( LinkTarget::class ) );
+		$executor = $this->getConsExecutor( $rawConsequences );
 		$actual = $executor->getActualConsequencesToExecute( array_keys( $rawConsequences ) );
 
 		$actualKeys = [];

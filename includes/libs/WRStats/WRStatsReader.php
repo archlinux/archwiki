@@ -79,7 +79,7 @@ class WRStatsReader {
 		if ( $metricSpec === null ) {
 			throw new WRStatsError( __METHOD__ . ": Unrecognised metric \"$metricName\"" );
 		}
-		$entity = $entity ?? new LocalEntityKey;
+		$entity ??= new LocalEntityKey;
 		$now = $this->now();
 		$seqSpec = null;
 		foreach ( $metricSpec->sequences as $seqSpec ) {
@@ -153,9 +153,7 @@ class WRStatsReader {
 	 * @return float|int
 	 */
 	private function now() {
-		if ( $this->now === null ) {
-			$this->now = microtime( true );
-		}
+		$this->now ??= microtime( true );
 		return $this->now;
 	}
 

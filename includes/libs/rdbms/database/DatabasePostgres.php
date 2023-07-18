@@ -21,6 +21,7 @@ namespace Wikimedia\Rdbms;
 
 use RuntimeException;
 use Wikimedia\Rdbms\Platform\PostgresPlatform;
+use Wikimedia\Rdbms\Replication\ReplicationReporter;
 use Wikimedia\WaitConditionLoop;
 
 /**
@@ -63,11 +64,17 @@ class DatabasePostgres extends Database {
 		}
 
 		parent::__construct( $params );
+
 		$this->platform = new PostgresPlatform(
 			$this,
-			$params['queryLogger'],
+			$this->logger,
 			$this->currentDomain,
 			$this->errorLogger
+		);
+		$this->replicationReporter = new ReplicationReporter(
+			$params['topologyRole'],
+			$this->logger,
+			$params['srvCache']
 		);
 	}
 
@@ -149,14 +156,23 @@ class DatabasePostgres extends Database {
 	}
 
 	public function doSelectDomain( DatabaseDomain $domain ) {
-		if ( $this->getDBname() !== $domain->getDatabase() ) {
+		$database = $domain->getDatabase();
+		if ( $database === null ) {
+			// A null database means "don't care" so leave it as is and update the table prefix
+			$this->currentDomain = new DatabaseDomain(
+				$this->currentDomain->getDatabase(),
+				$domain->getSchema() ?? $this->currentDomain->getSchema(),
+				$domain->getTablePrefix()
+			);
+			$this->platform->setCurrentDomain( $this->currentDomain );
+		} elseif ( $this->getDBname() !== $database ) {
 			// Postgres doesn't support selectDB in the same way MySQL does.
 			// So if the DB name doesn't match the open connection, open a new one
 			$this->open(
 				$this->connectionParams[self::CONN_HOST],
 				$this->connectionParams[self::CONN_USER],
 				$this->connectionParams[self::CONN_PASSWORD],
-				$domain->getDatabase(),
+				$database,
 				$domain->getSchema(),
 				$domain->getTablePrefix()
 			);
@@ -269,7 +285,7 @@ class DatabasePostgres extends Database {
 			PGSQL_DIAG_SOURCE_FUNCTION
 		];
 		foreach ( $diags as $d ) {
-			$this->queryLogger->debug( sprintf( "PgSQL ERROR(%d): %s",
+			$this->logger->debug( sprintf( "PgSQL ERROR(%d): %s",
 				$d, pg_result_error_field( $this->lastResultHandle, $d ) ) );
 		}
 	}
@@ -291,7 +307,7 @@ class DatabasePostgres extends Database {
 			if ( $this->lastResultHandle ) {
 				return pg_result_error( $this->lastResultHandle );
 			} else {
-				return pg_last_error();
+				return pg_last_error() ?: $this->lastConnectError;
 			}
 		}
 
@@ -444,11 +460,7 @@ __INDEXATTR__;
 			$this->strencode( $this->indexName( $index ) ) .
 			")'";
 		$res = $this->query( $sql, $fname, $flags );
-		if ( !$res ) {
-			return false;
-		}
-
-		return $res->numRows() > 0;
+		return $res && $res->numRows() > 0;
 	}
 
 	/**
@@ -504,17 +516,6 @@ __INDEXATTR__;
 
 	/**
 	 * @param string $name
-	 * @return string Value of $name or remapped name if $name is a reserved keyword
-	 * @deprecated since 1.37. Reserved identifiers should be quoted where necessary
-	 */
-	public function remappedTableName( $name ) {
-		wfDeprecated( __METHOD__, '1.37' );
-
-		return $this->keywordTableMap[$name] ?? $name;
-	}
-
-	/**
-	 * @param string $name
 	 * @param string $format
 	 * @return string Qualified and encoded (if requested) table name
 	 */
@@ -542,6 +543,32 @@ __INDEXATTR__;
 		$currval = $row[0];
 
 		return $currval;
+	}
+
+	/**
+	 * @param string $table
+	 * @return array<string,string>
+	 */
+	public function getValueTypesForWithClause( $table ) {
+		$typesByColumn = [];
+
+		$flags = self::QUERY_IGNORE_DBO_TRX | self::QUERY_CHANGE_NONE;
+		$encTable = $this->addQuotes( $table );
+		foreach ( $this->getCoreSchemas() as $schema ) {
+			$encSchema = $this->addQuotes( $schema );
+			$sql = "SELECT column_name,udt_name " .
+				"FROM information_schema.columns " .
+				"WHERE table_name = $encTable AND table_schema = $encSchema";
+			$res = $this->query( $sql, __METHOD__, $flags );
+			if ( $res->numRows() ) {
+				foreach ( $res as $row ) {
+					$typesByColumn[$row->column_name] = $row->udt_name;
+				}
+				break;
+			}
+		}
+
+		return $typesByColumn;
 	}
 
 	public function textFieldSize( $table, $field ) {
@@ -827,7 +854,7 @@ __INDEXATTR__;
 		if ( $this->schemaExists( $desiredSchema ) ) {
 			if ( in_array( $desiredSchema, $this->getSchemas() ) ) {
 				$this->platform->setCoreSchema( $desiredSchema );
-				$this->queryLogger->debug(
+				$this->logger->debug(
 					"Schema \"" . $desiredSchema . "\" already in the search path\n" );
 			} else {
 				// Prepend the desired schema to the search path (T17816)
@@ -835,12 +862,12 @@ __INDEXATTR__;
 				array_unshift( $search_path, $this->platform->addIdentifierQuotes( $desiredSchema ) );
 				$this->setSearchPath( $search_path );
 				$this->platform->setCoreSchema( $desiredSchema );
-				$this->queryLogger->debug(
+				$this->logger->debug(
 					"Schema \"" . $desiredSchema . "\" added to the search path\n" );
 			}
 		} else {
 			$this->platform->setCoreSchema( $this->getCurrentSchema() );
-			$this->queryLogger->debug(
+			$this->logger->debug(
 				"Schema \"" . $desiredSchema . "\" not found, using current \"" .
 				$this->getCoreSchema() . "\"\n" );
 		}
@@ -1129,7 +1156,7 @@ SQL;
 
 		$acquired = null;
 		$loop = new WaitConditionLoop(
-			function () use ( $lockName, $sql, $timeout, $method, &$acquired ) {
+			function () use ( $sql, $method, &$acquired ) {
 				$res = $this->query(
 					$sql,
 					$method,

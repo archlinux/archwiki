@@ -13,6 +13,7 @@ use Wikimedia\WRStats\WRStatsFactory;
 /**
  * This class is used to create, store, and retrieve profiling information for single filters and
  * groups of filters.
+ *
  * @internal
  */
 class FilterProfiler {

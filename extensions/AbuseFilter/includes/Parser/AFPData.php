@@ -39,12 +39,12 @@ class AFPData {
 
 	/**
 	 * @var string One of the D* const from this class
-	 * @private Use $this->getType()
+	 * @internal Use $this->getType() instead
 	 */
 	public $type;
 	/**
 	 * @var mixed|null|AFPData[] The actual data contained in this object
-	 * @private Use $this->getData()
+	 * @internal Use $this->getData() instead
 	 */
 	public $data;
 

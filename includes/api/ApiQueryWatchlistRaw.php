@@ -21,6 +21,7 @@
  */
 
 use MediaWiki\ParamValidator\TypeDef\UserDef;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -104,12 +105,8 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 		}
 
 		if ( isset( $params['continue'] ) ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 2 );
-			$ns = (int)$cont[0];
-			$this->dieContinueUsageIf( strval( $ns ) !== $cont[0] );
-			$title = $cont[1];
-			$options['startFrom'] = TitleValue::tryNew( $ns, $title );
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'string' ] );
+			$options['startFrom'] = TitleValue::tryNew( $cont[0], $cont[1] );
 			$this->dieContinueUsageIf( !$options['startFrom'] );
 		}
 

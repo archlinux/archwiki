@@ -1,5 +1,11 @@
 # Release History
 
+## v4.1.0
+* Add add(), sub() methods for date interval arithmetic
+* setFakeTime: add $step parameter
+* Add microtime() function
+* Fix documentation for ConvertibleTimestamp.php
+
 ## v4.0.0
 * Remove HHVM support code from setTimestamp()
 * Drop PHP 7.0/7.1 and HHVM support

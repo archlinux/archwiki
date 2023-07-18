@@ -160,7 +160,6 @@
 	"visualeditor-dialog-transclusion-loading": "Բեռնում…",
 	"visualeditor-dialog-transclusion-no-template-description": "Դու ավելացնում ես «$1» կաղապարը: Այն դեռևս նկարագրություն չունի, բայց հնարավոր է որոշակի տեղեկատվության առկայություն [[$2|կաղապարի էջում]]:",
 	"visualeditor-dialog-transclusion-param-default": "Լռելյայն` $1",
-	"visualeditor-dialog-transclusion-placeholder": "Ավելացնել կաղապար",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Գտնել կաղապար",
 	"visualeditor-dialog-transclusion-required-parameter": "Պարտադիր դաշտ",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Դաշտը պարտադիր է:",

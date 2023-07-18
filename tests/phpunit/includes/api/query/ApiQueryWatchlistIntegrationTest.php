@@ -3,6 +3,7 @@
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 
 /**
  * @group medium
@@ -42,7 +43,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 
 	private function doMinorPageEdit( User $user, LinkTarget $target, $content, $summary ) {
 		$title = Title::newFromLinkTarget( $target );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$page->doUserEditContent(
 			ContentHandler::makeContent( $content, $title ),
 			$user,
@@ -53,7 +54,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 
 	private function doBotPageEdit( User $user, LinkTarget $target, $content, $summary ) {
 		$title = Title::newFromLinkTarget( $target );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 		$page->doUserEditContent(
 			ContentHandler::makeContent( $content, $title ),
 			$user,
@@ -81,7 +82,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 	) {
 		$title = Title::newFromLinkTarget( $target );
 		$summary = CommentStoreComment::newUnsavedComment( trim( $summary ) );
-		$page = WikiPage::factory( $title );
+		$page = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		$updater = $page->newPageUpdater( $user );
 		$updater->setContent( SlotRecord::MAIN, ContentHandler::makeContent( $content, $title ) );
@@ -1409,7 +1410,7 @@ class ApiQueryWatchlistIntegrationTest extends ApiTestCase {
 				],
 			]
 		);
-		$this->watchPages( $user, [ $target1, $target2,	$target3 ] );
+		$this->watchPages( $user, [ $target1, $target2, $target3 ] );
 
 		$firstResult = $this->doListWatchlistRequest( [ 'wllimit' => 2, 'wlprop' => 'title' ] );
 		$this->assertArrayHasKey( 'continue', $firstResult[0] );

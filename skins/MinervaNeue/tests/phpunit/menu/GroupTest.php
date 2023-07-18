@@ -36,7 +36,7 @@ class GroupTest extends MediaWikiIntegrationTestCase {
 	public function testItShouldntHaveEntriesByDefault() {
 		$menu = new Group( 'p-test' );
 
-		$this->assertEmpty( $menu->getEntries() );
+		$this->assertSame( [], $menu->getEntries() );
 		$this->assertFalse( $menu->hasEntries() );
 	}
 

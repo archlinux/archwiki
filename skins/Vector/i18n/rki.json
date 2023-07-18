@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"Aggasena",
 			"Cakkaparla",
 			"ReyLon Mrat",
 			"Tejoebāsa",
-			"YaThaWinTha",
-			"Aggasena"
+			"YaThaWinTha"
 		]
 	},
 	"vector-languages": "ဘာသာစကားတိ",
@@ -20,5 +20,8 @@
 	"vector-view-history": "သမိုင်းတိကိုကြည့်ပါ",
 	"vector-view-view": "ဖတ်ကြေ့ပါ",
 	"vector-more-actions": "ထပ်လို့",
-	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>ပါဝင်ရေ စာမျက်နှာတိ ယှာဖွီရန်"
+	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>ပါဝင်ရေ စာမျက်နှာတိ ယှာဖွီရန်",
+	"vector-page-tools-label": "ကိရိယာတိ",
+	"vector-page-tools-general-label": "အထွီအထွီ",
+	"vector-unpin-element-label": "ဝှက်တေ"
 }

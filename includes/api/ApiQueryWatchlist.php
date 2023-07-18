@@ -20,9 +20,12 @@
  * @file
  */
 
+use MediaWiki\CommentFormatter\CommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -49,6 +52,9 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 	/** @var GenderCache */
 	private $genderCache;
 
+	/** @var CommentFormatter */
+	private $commentFormatter;
+
 	/**
 	 * @param ApiQuery $query
 	 * @param string $moduleName
@@ -57,6 +63,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 	 * @param Language $contentLanguage
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param GenderCache $genderCache
+	 * @param CommentFormatter $commentFormatter
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -65,7 +72,8 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		WatchedItemQueryService $watchedItemQueryService,
 		Language $contentLanguage,
 		NamespaceInfo $namespaceInfo,
-		GenderCache $genderCache
+		GenderCache $genderCache,
+		CommentFormatter $commentFormatter
 	) {
 		parent::__construct( $query, $moduleName, 'wl' );
 		$this->commentStore = $commentStore;
@@ -73,6 +81,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 		$this->contentLanguage = $contentLanguage;
 		$this->namespaceInfo = $namespaceInfo;
 		$this->genderCache = $genderCache;
+		$this->commentFormatter = $commentFormatter;
 	}
 
 	public function execute() {
@@ -146,12 +155,8 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 
 		$startFrom = null;
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 2 );
-			$continueTimestamp = $cont[0];
-			$continueId = (int)$cont[1];
-			$this->dieContinueUsageIf( $continueId != $cont[1] );
-			$startFrom = [ $continueTimestamp, $continueId ];
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'string', 'int' ] );
+			$startFrom = $cont;
 		}
 
 		if ( $wlowner !== $user ) {
@@ -219,7 +224,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			$this->contentLanguage->needsGenderDistinction()
 		) {
 			$usernames = [];
-			foreach ( $items as list( $watchedItem, $recentChangeInfo ) ) {
+			foreach ( $items as [ $watchedItem, ] ) {
 				/** @var WatchedItem $watchedItem */
 				$linkTarget = $watchedItem->getTarget();
 				if ( $this->namespaceInfo->hasGenderDistinction( $linkTarget->getNamespace() ) ) {
@@ -231,7 +236,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 			}
 		}
 
-		foreach ( $items as list( $watchedItem, $recentChangeInfo ) ) {
+		foreach ( $items as [ $watchedItem, $recentChangeInfo ] ) {
 			/** @var WatchedItem $watchedItem */
 			if ( $resultPageSet === null ) {
 				$vals = $this->extractOutputData( $watchedItem, $recentChangeInfo );
@@ -418,7 +423,7 @@ class ApiQueryWatchlist extends ApiQueryGeneratorBase {
 				}
 
 				if ( $this->fld_parsedcomment ) {
-					$vals['parsedcomment'] = Linker::formatComment( $comment, $title );
+					$vals['parsedcomment'] = $this->commentFormatter->format( $comment, $title );
 				}
 			}
 		}

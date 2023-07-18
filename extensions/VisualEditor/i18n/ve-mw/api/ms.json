@@ -5,7 +5,6 @@
 			"Karmadunya9-"
 		]
 	},
-	"apierror-visualeditor-latestnotfound": "Tidak dapat dicari semakan terkini bagi tajuk",
 	"apihelp-visualeditor-description": "Kembali ke HTML5 untuk halaman dari servis Parsoid",
 	"apihelp-visualeditor-param-basetimestamp": "Apabila menyimpan, tetapkan cop waktu bila halaman thelah dijana. Ini bagi mengelakkan konflik suntingan.",
 	"apihelp-visualeditor-param-cachekey": "Untuk serialize atau diff, gunakan hasil permintaan serializeforcache yang terdahulu dengan kunci ini. Mengatasi $1html.",

@@ -176,7 +176,7 @@ trait LanguageNameUtilsTestTrait {
 			'Simple code in a different language (doesn\'t work without hook)' =>
 				[ 'Deutsch', 'de', 'fr' ],
 			'Invalid code' => [ '', '&' ],
-			'Pig Latin not enabled' => [ '', 'en-x-piglatin', AUTONYMS, ALL ],
+			'Pig Latin' => [ 'Igpay Atinlay', 'en-x-piglatin', AUTONYMS, ALL ],
 			'qqq doesn\'t have a name' => [ '', 'qqq', AUTONYMS, ALL ],
 			'An MW legacy tag is recognized' => [ 'žemaitėška', 'bat-smg' ],
 			// @todo Is the next test's result desired?
@@ -386,9 +386,11 @@ trait LanguageNameUtilsTestTrait {
 	}
 
 	public function provideGetLanguageNames_pigLatin() {
+		# Pig Latin is supported only if UsePigLatinVariant is true
+		# (which it is, for these tests)
 		return [
 			'Simple test' => [ 'Igpay Atinlay' ],
-			'Not supported' => [ '', AUTONYMS, SUPPORTED ],
+			'Supported' => [ 'Igpay Atinlay', AUTONYMS, SUPPORTED ],
 			'Foreign language' => [ 'latin de cochons', 'fr' ],
 			'Hook doesn\'t override explicit autonym' =>
 				[ 'Igpay Atinlay', 'en-x-piglatin', 'en-x-piglatin' ],
@@ -396,9 +398,25 @@ trait LanguageNameUtilsTestTrait {
 	}
 
 	/**
-	 * Just for the sake of completeness, test that ExtraLanguageNames will not override the name
-	 * for pig Latin. Nobody actually cares about this and if anything current behavior is probably
-	 * wrong, but once we're testing the whole file we may as well be comprehensive.
+	 * @covers MediaWiki\Languages\LanguageNameUtils::getLanguageNames
+	 * @covers MediaWiki\Languages\LanguageNameUtils::getLanguageNamesUncached
+	 * @covers MediaWiki\Languages\LanguageNameUtils::getLanguageName
+	 * @covers Language::fetchLanguageNames
+	 * @covers Language::fetchLanguageName
+	 */
+	public function testGetLanguageNames_pigLatinNotSupported() {
+		// Pig Latin is "not supported" when UsePigLatinVariant is false
+		$this->assertGetLanguageNames(
+			[ MainConfigNames::UsePigLatinVariant => false ],
+			'', 'en-x-piglatin', AUTONYMS, SUPPORTED
+		);
+	}
+
+	/**
+	 * Just for the sake of completeness, test that ExtraLanguageNames
+	 * can override the name for Pig Latin. Nobody actually cares
+	 * about this, but once we're testing the whole file we may as
+	 * well be comprehensive.
 	 *
 	 * @covers MediaWiki\Languages\LanguageNameUtils::getLanguageNames
 	 * @covers MediaWiki\Languages\LanguageNameUtils::getLanguageNamesUncached
@@ -412,7 +430,7 @@ trait LanguageNameUtilsTestTrait {
 				MainConfigNames::UsePigLatinVariant => true,
 				MainConfigNames::ExtraLanguageNames => [ 'en-x-piglatin' => 'igpay atinlay' ]
 			],
-			'Igpay Atinlay',
+			'igpay atinlay',
 			'en-x-piglatin'
 		);
 	}
@@ -522,7 +540,7 @@ trait LanguageNameUtilsTestTrait {
 
 	public function provideExceptionFromInvalidCode() {
 		$ret = [];
-		foreach ( static::provideIsValidBuiltInCode() as $desc => list( $code, $valid ) ) {
+		foreach ( static::provideIsValidBuiltInCode() as $desc => [ $code, $valid ] ) {
 			if ( $valid ) {
 				// Won't get an exception from this one
 				continue;

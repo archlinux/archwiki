@@ -176,8 +176,6 @@ class FilterRunner {
 		);
 		$generator = $this->varGeneratorFactory->newGenerator( $this->vars );
 		$this->vars = $generator->addGenericVars()->getVariableHolder();
-
-		$this->vars->forFilter = true;
 		$this->ruleChecker = $this->ruleCheckerFactory->newRuleChecker( $this->vars );
 	}
 
@@ -225,20 +223,30 @@ class FilterRunner {
 			$this->profileExecution( $runnerData );
 			$this->updateEmergencyCache( $runnerData->getMatchesMap() );
 		} else {
+			// @codeCoverageIgnoreStart
 			DeferredUpdates::addCallableUpdate( function () use ( $runnerData ) {
 				$this->profileExecution( $runnerData );
 				$this->updateEmergencyCache( $runnerData->getMatchesMap() );
 			} );
+			// @codeCoverageIgnoreEnd
 		}
+
+		// TODO: inject the action specifier to avoid this
+		$accountname = $this->varManager->getVar(
+			$this->vars,
+			'accountname',
+			VariablesManager::GET_BC
+		)->toNative();
+		$spec = new ActionSpecifier(
+			$this->action,
+			$this->title,
+			$this->user,
+			$this->user->getRequest()->getIP(),
+			$accountname
+		);
 
 		// Tag the action if the condition limit was hit
 		if ( $runnerData->getTotalConditions() > $this->options->get( 'AbuseFilterConditionLimit' ) ) {
-			$accountname = $this->varManager->getVar(
-				$this->vars,
-				'accountname',
-				VariablesManager::GET_BC
-			)->toNative();
-			$spec = new ActionSpecifier( $this->action, $this->title, $this->user, $accountname );
 			$this->changeTagger->addConditionsLimitTag( $spec );
 		}
 
@@ -248,11 +256,7 @@ class FilterRunner {
 			return Status::newGood();
 		}
 
-		$executor = $this->consExecutorFactory->newExecutor(
-			$this->user,
-			$this->title,
-			$this->vars
-		);
+		$executor = $this->consExecutorFactory->newExecutor( $spec, $this->vars );
 		$status = $executor->executeFilterActions( $matchedFilters );
 		$actionsTaken = $status->getValue();
 

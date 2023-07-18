@@ -1,7 +1,5 @@
 <?php
 /**
- * Job to fix double redirects after moving a page.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +16,6 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
- * @ingroup JobQueue
  */
 
 use MediaWiki\Cache\CacheKeyHelper;
@@ -27,9 +24,10 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageReference;
 use MediaWiki\Revision\RevisionLookup;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 
 /**
- * Job to fix double redirects after moving a page
+ * Fix any double redirects after moving a page.
  *
  * @ingroup JobQueue
  */
@@ -87,8 +85,8 @@ class DoubleRedirectJob extends Job {
 		$jobs = [];
 		$jobQueueGroup = MediaWikiServices::getInstance()->getJobQueueGroup();
 		foreach ( $res as $row ) {
-			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
-			if ( !$title ) {
+			$title = Title::makeTitleSafe( $row->page_namespace, $row->page_title );
+			if ( !$title || !$title->canExist() ) {
 				continue;
 			}
 
@@ -113,6 +111,13 @@ class DoubleRedirectJob extends Job {
 	public function run() {
 		if ( !$this->redirTitle ) {
 			$this->setLastError( 'Invalid title' );
+
+			return false;
+		}
+
+		if ( !$this->title->canExist() ) {
+			// Needs a proper title for WikiPageFactory::newFromTitle and RevisionStore::getRevisionByTitle
+			$this->setLastError( 'Cannot edit title' );
 
 			return false;
 		}
@@ -199,7 +204,7 @@ class DoubleRedirectJob extends Job {
 	 *
 	 * @param LinkTarget $title
 	 *
-	 * @return Title|bool The final Title after following all redirects, or false if
+	 * @return Title|false The final Title after following all redirects, or false if
 	 *  the page is not a redirect or the redirect loops.
 	 */
 	public static function getFinalDestination( $title ) {
@@ -255,7 +260,7 @@ class DoubleRedirectJob extends Job {
 	 * False will be returned if the user name specified in the
 	 * 'double-redirect-fixer' message is invalid.
 	 *
-	 * @return User|bool
+	 * @return User|false
 	 */
 	private function getUser() {
 		if ( !self::$user ) {

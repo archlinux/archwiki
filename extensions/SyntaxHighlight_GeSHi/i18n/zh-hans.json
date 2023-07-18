@@ -1,11 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
+			"GuoPC",
 			"Liuxinyu970226",
 			"Shinjiman",
 			"Xiplus",
-			"佛壁灯",
-			"GuoPC"
+			"佛壁灯"
 		]
 	},
 	"syntaxhighlight-desc": "使用[http://pygments.org/ Pygments - Python 语法高亮]以提供语法高亮<code>&lt;syntaxhighlight&gt;</code>",

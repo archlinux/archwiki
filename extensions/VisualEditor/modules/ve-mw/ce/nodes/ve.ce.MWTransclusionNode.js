@@ -69,6 +69,44 @@ ve.ce.MWTransclusionNode.static.getDescription = function ( model ) {
 };
 
 /**
+ * Get a formatted description of the template parts in a transclusion node, excluding raw wikitext
+ * snippets.
+ *
+ * Like #getDescription, but parts generated from templates are linked to
+ * those templates
+ *
+ * @static
+ * @param {ve.dm.MWTransclusionNode} model
+ * @return {HTMLElement} DOM node with comma-separated list of template names
+ */
+ve.ce.MWTransclusionNode.static.getDescriptionDom = function ( model ) {
+	var nodes = model.getPartsList()
+		.map( function ( part ) {
+			if ( part.templatePage ) {
+				var title = mw.Title.newFromText( part.templatePage );
+				var link = document.createElement( 'a' );
+				link.textContent = title.getRelativeText( mw.config.get( 'wgNamespaceIds' ).template );
+				link.setAttribute( 'href', title.getUrl() );
+				return link;
+			}
+			// Not actually a template, but e.g. a parser function
+			return part.template ? document.createTextNode( part.template ) : null;
+		} )
+		.filter( function ( desc ) {
+			return desc;
+		} );
+	var span = document.createElement( 'span' );
+	nodes.forEach( function ( node, i ) {
+		if ( i ) {
+			span.appendChild( document.createTextNode( ve.msg( 'comma-separator' ) ) );
+		}
+		span.appendChild( node );
+	} );
+	ve.targetLinksToNewWindow( span );
+	return span;
+};
+
+/**
  * Filter rendering to remove auto-generated content and wrappers
  *
  * @static

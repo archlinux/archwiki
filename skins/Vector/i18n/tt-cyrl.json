@@ -5,9 +5,9 @@
 			"Don Alessandro",
 			"Rinatus",
 			"Ерней",
+			"Ильгиз",
 			"Ильнар",
-			"Рашат Якупов",
-			"Ильгиз"
+			"Рашат Якупов"
 		]
 	},
 	"skinname-vector": "Сызымлы, иске (2010)",
@@ -37,8 +37,15 @@
 	"vector-more-actions": "Тагын",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> ны үз эченә алган битләрне эзләү",
 	"vector-intro-page": "Help:Кереш",
+	"vector-toc-label": "Эчтәлек",
 	"vector-toc-beginning": "Башы",
 	"vector-anon-user-menu-pages-learn": "күбрәк белү",
 	"vector-main-menu-tooltip": "Төп меню",
-	"vector-site-nav-label": "Сайт"
+	"vector-site-nav-label": "Сайт",
+	"vector-main-menu-label": "Төп меню",
+	"vector-page-tools-label": "Кораллар",
+	"vector-page-tools-general-label": "Гомуми",
+	"vector-page-tools-actions-label": "Гамәлләр",
+	"vector-unpin-element-label": "яшерү",
+	"empty-language-selector-body": "Битнең эчтәлекләре башка телләрдә бирелми."
 }

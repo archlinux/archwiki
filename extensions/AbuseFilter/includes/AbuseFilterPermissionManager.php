@@ -61,9 +61,13 @@ class AbuseFilterPermissionManager {
 	 * @return bool
 	 */
 	public function canViewPrivateFilters( Authority $performer ): bool {
-		return $performer->isAllowedAny(
-			'abusefilter-modify',
-			'abusefilter-view-private'
+		$block = $performer->getBlock();
+		return (
+			!( $block && $block->isSitewide() ) &&
+			$performer->isAllowedAny(
+				'abusefilter-modify',
+				'abusefilter-view-private'
+			)
 		);
 	}
 

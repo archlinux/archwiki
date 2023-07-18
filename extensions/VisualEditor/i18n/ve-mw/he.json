@@ -16,11 +16,11 @@
 			"דגש חזק",
 			"דולב",
 			"חיים",
+			"מיכי י-ם",
 			"ערן",
 			"פוילישער",
 			"קיפודנחש",
-			"תומר ט",
-			"מיכי י-ם"
+			"תומר ט"
 		]
 	},
 	"collabpad-doctitle": "פנקס שיתופי: $1",
@@ -174,6 +174,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "שם הפרמטר",
 	"visualeditor-dialog-transclusion-add-param-save": "הוספה",
 	"visualeditor-dialog-transclusion-add-template": "הוספת תבנית",
+	"visualeditor-dialog-transclusion-add-template-button": "הוספת תבנית",
 	"visualeditor-dialog-transclusion-add-template-save": "הוספה",
 	"visualeditor-dialog-transclusion-add-undocumented-param": "הוספת פרמטר לא מתועד",
 	"visualeditor-dialog-transclusion-back-confirmation-prompt": "לחזור לחיפוש? העריכות תלכנה לאיבוד ולא יהיה אפשר לשחזר אותן.",
@@ -205,7 +206,6 @@
 	"visualeditor-dialog-transclusion-param-selection-aria-description": "יש ללחוץ על רווח כדי להוסיף או להסיר פרמטרים. יש ללחוץ על אנטר כדי להוסיף פרמטר ומייד לערוך את הערך שלו. כשהפרמטר כבר נבחר, יש ללחוץ על אנטר כדי לערוך את הערך.",
 	"visualeditor-dialog-transclusion-param-selection-aria-label": "פרמטרים של $1",
 	"visualeditor-dialog-transclusion-param-undocumented": "(פרמטר לא מתועד)",
-	"visualeditor-dialog-transclusion-placeholder": "הוספת תבנית",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "מציאת תבנית",
 	"visualeditor-dialog-transclusion-required-parameter": "שדה נדרש",
 	"visualeditor-dialog-transclusion-required-parameter-description": "השדה נדרש.",

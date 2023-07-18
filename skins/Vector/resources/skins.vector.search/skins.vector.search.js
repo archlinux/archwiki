@@ -14,7 +14,7 @@ function initApp( searchBox ) {
 		titleInput = /** @type {HTMLInputElement|null} */ (
 			searchBox.querySelector( 'input[name=title]' )
 		),
-		search = /** @type {HTMLInputElement|null} */ ( searchBox.querySelector( 'input[name="search"]' ) ),
+		search = /** @type {HTMLInputElement|null} */ ( searchBox.querySelector( 'input[name=search]' ) ),
 		searchPageTitle = titleInput && titleInput.value;
 
 	if ( !searchForm || !search || !titleInput ) {
@@ -25,6 +25,7 @@ function initApp( searchBox ) {
 	Vue.createMwApp(
 		App, $.extend( {
 			id: searchForm.id,
+			autocapitalizeValue: search.getAttribute( 'autocapitalize' ),
 			autofocusInput: search === document.activeElement,
 			action: searchForm.getAttribute( 'action' ),
 			searchAccessKey: search.getAttribute( 'accessKey' ),
@@ -43,10 +44,7 @@ function initApp( searchBox ) {
  * @return {void}
  */
 function main( document ) {
-	const searchBoxes = document.querySelectorAll( '.vector-search-box' );
-
-	searchBoxes.forEach( ( searchBox ) => {
-		initApp( searchBox );
-	} );
+	document.querySelectorAll( '.vector-search-box' )
+		.forEach( initApp );
 }
 main( document );

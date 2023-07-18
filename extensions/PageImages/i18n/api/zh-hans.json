@@ -2,8 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Liuxinyu970226",
-			"Yfdyh000",
-			"Xzonn"
+			"Xzonn",
+			"Yfdyh000"
 		]
 	},
 	"apihelp-query+pageimages-description": "返回页面上的图像的相关信息，例如缩略图和照片呈现信息。",

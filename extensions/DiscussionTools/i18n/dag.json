@@ -1,0 +1,27 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alhassan Mohammed Awal",
+			"Alhassan Peter",
+			"Amire80",
+			"Chirifo",
+			"Hasslaebetch",
+			"Jahinfo",
+			"Karimbaasani",
+			"Naporo",
+			"Ruky Wunpini"
+		]
+	},
+	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|labisibu}} in \"<strong>$4</strong>\".",
+	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Labisiri palli yini|$1 new replies|100=99+ labisiri pala}} din be \"<strong>$3</strong>\".",
+	"discussiontools-notification-subscribed-new-comment-view": "Lihimi tɔɣino",
+	"discussiontools-preference-topicsubscription": "Yɛltɔɣa zuɣu piibu",
+	"discussiontools-preference-topicsubscription-help": "Dimbɔŋɔ nyɛla din yɛn ti a soli ka a tooi deeri satara zaŋ chaŋ niriba ni yɛri shɛli zaŋ chaŋ yɛlikpana kam polo.",
+	"discussiontools-replywidget-preferences": "Suhuyurilim",
+	"discussiontools-topicsubscription-notify-subscribed-body": "A ni nya lahibali zanchaŋ taha shɛɣa yɛltɔɣa zuɣu ŋɔ ni",
+	"discussiontools-topicsubscription-notify-subscribed-title": "A zaŋ a maŋa m-pahi",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "A ku lahi nya tibili zaŋ chaŋ tɔɣino pala yaha zaŋ kpa bɔhim yaɣili ŋɔ.",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "A yihi a maŋa",
+	"echo-category-title-dt-subscription": "Yɛltɔɣa yaɣili {{PLURAL:$1|zaŋ maŋa pahi|subscriptions}}",
+	"echo-pref-tooltip-dt-subscription": "Ti ma tibili zaŋ chaŋ din chana n piibu polo ni"
+}

@@ -3,9 +3,8 @@
 namespace MediaWiki\Extension\Math\Tests;
 
 use DataValues\StringValue;
-use MediaWiki\Languages\LanguageFactory;
+use MediaWiki\Languages\LanguageNameUtils;
 use MediaWiki\Logger\LoggerFactory;
-use MWException;
 use Wikibase\DataModel\Entity\BasicEntityIdParser;
 use Wikibase\DataModel\Entity\EntityIdParsingException;
 use Wikibase\DataModel\Entity\Item;
@@ -30,10 +29,10 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 	}
 
 	public function testFetchInvalidLanguage() {
-		$languageFactory = $this->createMock( LanguageFactory::class );
-		$languageFactory->method( 'getLanguage' )
-			->willThrowException( new MWException( 'Invalid code' ) );
-		$mathWikibase = $this->getWikibaseConnector( $languageFactory );
+		$languageNameUtils = $this->createMock( LanguageNameUtils::class );
+		$languageNameUtils->method( 'isValidCode' )
+			->willReturn( false );
+		$mathWikibase = $this->getWikibaseConnector( null, $languageNameUtils );
 
 		$this->expectException( 'InvalidArgumentException' );
 		$this->expectErrorMessage( 'Invalid language code specified.' );
@@ -44,7 +43,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 		$entityRevisionLookup = $this->createMock( EntityRevisionLookup::class );
 		$entityRevisionLookup->method( 'getEntityRevision' )
 			->willThrowException( new StorageException( 'Invalid code' ) );
-		$mathWikibase = $this->getWikibaseConnector( null, null, $entityRevisionLookup );
+		$mathWikibase = $this->getWikibaseConnector( null, null, null, $entityRevisionLookup );
 
 		$this->expectException( 'InvalidArgumentException' );
 		$this->expectErrorMessage( 'Non-existing Wikibase ID.' );
@@ -81,6 +80,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 		$mathWikibase = $this->getWikibaseConnector(
 			null,
 			null,
+			null,
 			$revisionLookupMock,
 			null,
 			$parserMock
@@ -104,7 +104,7 @@ class MathWikibaseConnectorTest extends MathWikibaseConnectorTestFactory {
 					}
 				} );
 
-		$mathWikibase = $this->getWikibaseConnector( null, null, null, null, $parserMock );
+		$mathWikibase = $this->getWikibaseConnector( null, null, null, null, null, $parserMock );
 		$this->expectException( 'InvalidArgumentException' );
 		$this->expectErrorMessage( 'Invalid Wikibase ID.' );
 		$mathWikibase->fetchWikibaseFromId( '1', 'en' );

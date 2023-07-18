@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"BadDog",
 			"Kolega2357",
 			"OC Ripper",
-			"Vlad5250",
-			"BadDog"
+			"Vlad5250"
 		]
 	},
 	"cite-desc": "Dodaje oznake <code>&lt;ref&gt;</code> i <code>&lt;references/&gt;</code> za citiranja",

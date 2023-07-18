@@ -22,7 +22,9 @@
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
+use MediaWiki\Html\FormOptions;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -194,7 +196,7 @@ class NewPagesPager extends ReverseChronologicalPager {
 	}
 
 	public function getIndexField() {
-		return 'rc_timestamp';
+		return [ [ 'rc_timestamp', 'rc_id' ] ];
 	}
 
 	public function formatRow( $row ) {

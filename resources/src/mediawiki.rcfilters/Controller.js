@@ -54,8 +54,8 @@ OO.initClass( Controller );
  * Initialize the filter and parameter states
  *
  * @param {Array} filterStructure Filter definition and structure for the model
- * @param {Object} [namespaceStructure] Namespace definition
- * @param {Object} [tagList] Tag definition
+ * @param {Object} namespaceStructure Namespace definition
+ * @param {Object} tagList Tag definition
  * @param {Object} [conditionalViews] Conditional view definition
  */
 Controller.prototype.initialize = function ( filterStructure, namespaceStructure, tagList, conditionalViews ) {
@@ -69,84 +69,103 @@ Controller.prototype.initialize = function ( filterStructure, namespaceStructure
 		uri = new mw.Uri();
 
 	// Prepare views
-	if ( namespaceStructure ) {
-		nsAllContents = {
-			name: 'all-contents',
-			label: mw.msg( 'rcfilters-allcontents-label' ),
-			description: '',
-			identifiers: [ 'subject' ],
-			cssClass: 'mw-changeslist-ns-subject',
-			subset: []
-		};
-		nsAllDiscussions = {
-			name: 'all-discussions',
-			label: mw.msg( 'rcfilters-alldiscussions-label' ),
-			description: '',
-			identifiers: [ 'talk' ],
-			cssClass: 'mw-changeslist-ns-talk',
-			subset: []
-		};
-		items = [ nsAllContents, nsAllDiscussions ];
-		// eslint-disable-next-line no-jquery/no-each-util
-		$.each( namespaceStructure, function ( namespaceID, label ) {
-			// Build and clean up the individual namespace items definition
-			var isTalk = mw.Title.isTalkNamespace( namespaceID ),
-				nsFilter = {
-					name: namespaceID,
-					label: label || mw.msg( 'blanknamespace' ),
-					description: '',
-					identifiers: [
-						isTalk ? 'talk' : 'subject'
-					],
-					cssClass: 'mw-changeslist-ns-' + namespaceID
-				};
-			items.push( nsFilter );
-			( isTalk ? nsAllDiscussions : nsAllContents ).subset.push( { filter: namespaceID } );
-		} );
+	nsAllContents = {
+		name: 'all-contents',
+		label: mw.msg( 'rcfilters-allcontents-label' ),
+		description: '',
+		identifiers: [ 'subject' ],
+		cssClass: 'mw-changeslist-ns-subject',
+		subset: []
+	};
+	nsAllDiscussions = {
+		name: 'all-discussions',
+		label: mw.msg( 'rcfilters-alldiscussions-label' ),
+		description: '',
+		identifiers: [ 'talk' ],
+		cssClass: 'mw-changeslist-ns-talk',
+		subset: []
+	};
+	items = [ nsAllContents, nsAllDiscussions ];
+	// eslint-disable-next-line no-jquery/no-each-util
+	$.each( namespaceStructure, function ( namespaceID, label ) {
+		// Build and clean up the individual namespace items definition
+		var isTalk = mw.Title.isTalkNamespace( namespaceID ),
+			nsFilter = {
+				name: namespaceID,
+				label: label || mw.msg( 'blanknamespace' ),
+				description: '',
+				identifiers: [
+					isTalk ? 'talk' : 'subject'
+				],
+				cssClass: 'mw-changeslist-ns-' + namespaceID
+			};
+		items.push( nsFilter );
+		( isTalk ? nsAllDiscussions : nsAllContents ).subset.push( { filter: namespaceID } );
+	} );
 
-		views.namespaces = {
+	views.namespaces = {
+		title: mw.msg( 'namespaces' ),
+		trigger: ':',
+		groups: [ {
+			// Group definition (single group)
+			name: 'namespace', // parameter name is singular
+			type: 'string_options',
 			title: mw.msg( 'namespaces' ),
-			trigger: ':',
-			groups: [ {
-				// Group definition (single group)
-				name: 'namespace', // parameter name is singular
-				type: 'string_options',
-				title: mw.msg( 'namespaces' ),
-				labelPrefixKey: { default: 'rcfilters-tag-prefix-namespace', inverted: 'rcfilters-tag-prefix-namespace-inverted' },
-				separator: ';',
-				fullCoverage: true,
-				filters: items
-			} ]
-		};
-		views.invert = {
-			groups: [
-				{
-					name: 'invertGroup',
-					type: 'boolean',
-					hidden: true,
-					filters: [ {
-						name: 'invert',
-						default: '0'
-					} ]
+			labelPrefixKey: {
+				default: 'rcfilters-tag-prefix-namespace',
+				inverted: 'rcfilters-tag-prefix-namespace-inverted'
+			},
+			separator: ';',
+			supportsAll: false,
+			fullCoverage: true,
+			filters: items
+		} ]
+	};
+	views.invertNamespaces = {
+		groups: [
+			{
+				// Should really be called invertNamespacesGroup; legacy name is used so that
+				// saved queries don't break
+				name: 'invertGroup',
+				type: 'boolean',
+				hidden: true,
+				filters: [ {
+					name: 'invert',
+					default: '0'
 				} ]
-		};
-	}
-	if ( tagList ) {
-		views.tags = {
-			title: mw.msg( 'rcfilters-view-tags' ),
-			trigger: '#',
-			groups: [ {
-				// Group definition (single group)
-				name: 'tagfilter', // Parameter name
-				type: 'string_options',
-				title: 'rcfilters-view-tags', // Message key
-				labelPrefixKey: 'rcfilters-tag-prefix-tags',
-				separator: '|',
-				fullCoverage: false,
-				filters: tagList
 			} ]
-		};
-	}
+	};
+
+	views.tags = {
+		title: mw.msg( 'rcfilters-view-tags' ),
+		trigger: '#',
+		groups: [ {
+			// Group definition (single group)
+			name: 'tagfilter', // Parameter name
+			type: 'string_options',
+			title: 'rcfilters-view-tags', // Message key
+			labelPrefixKey: {
+				default: 'rcfilters-tag-prefix-tags',
+				inverted: 'rcfilters-tag-prefix-tags-inverted'
+			},
+			separator: '|',
+			supportsAll: false,
+			fullCoverage: false,
+			filters: tagList
+		} ]
+	};
+	views.invertTags = {
+		groups: [
+			{
+				name: 'invertTagsGroup',
+				type: 'boolean',
+				hidden: true,
+				filters: [ {
+					name: 'inverttags',
+					default: '0'
+				} ]
+			} ]
+	};
 
 	// Add parameter range operations
 	views.range = {
@@ -524,9 +543,6 @@ Controller.prototype.clearFilter = function ( filterName ) {
 		}
 
 		this.filtersModel.reassessFilterInteractions( filterItem );
-
-		// Log filter grouping
-		this.trackFilterGroupings( 'removefilter' );
 	}
 };
 
@@ -543,10 +559,29 @@ Controller.prototype.toggleHighlight = function () {
 };
 
 /**
- * Toggle the namespaces inverted feature on and off
+ * Toggle the inverted tags feature on and off
+ */
+Controller.prototype.toggleInvertedTags = function () {
+	this.filtersModel.toggleInvertedTags();
+
+	if (
+		this.filtersModel.getFiltersByView( 'tags' ).filter(
+			function ( filterItem ) { return filterItem.isSelected(); }
+		).length
+	) {
+		// Only re-fetch results if there are tags items that are actually selected
+		this.updateChangesList();
+	} else {
+		this.uriProcessor.updateURL();
+	}
+};
+
+/**
+ * Toggle the inverted namespaces feature on and off
  */
 Controller.prototype.toggleInvertedNamespaces = function () {
 	this.filtersModel.toggleInvertedNamespaces();
+
 	if (
 		this.filtersModel.getFiltersByView( 'namespaces' ).filter(
 			function ( filterItem ) { return filterItem.isSelected(); }
@@ -799,9 +834,6 @@ Controller.prototype.applySavedQuery = function ( queryID ) {
 	} else {
 		this.uriProcessor.updateURL( params );
 	}
-
-	// Log filter grouping
-	this.trackFilterGroupings( 'savedfilters' );
 };
 
 /**
@@ -1098,54 +1130,6 @@ Controller.prototype._fetchChangesList = function () {
 				return this._extractChangesListInfo( $parsed, data.status );
 			}.bind( this )
 		);
-};
-
-/**
- * Track filter grouping usage
- *
- * @param {string} action Action taken
- */
-Controller.prototype.trackFilterGroupings = function ( action ) {
-	var controller = this,
-		rightNow = Date.now(),
-		randomIdentifier = String( mw.user.sessionId() ) + String( rightNow ) + String( Math.random() ),
-		// Get all current filters
-		filters = this.filtersModel.findSelectedItems().map( function ( item ) {
-			return item.getName();
-		} );
-
-	action = action || 'filtermenu';
-
-	// Check if these filters were the ones we just logged previously
-	// (Don't log the same grouping twice, in case the user opens/closes)
-	// the menu without action, or with the same result
-	if (
-		// Only log if the two arrays are different in size
-		filters.length !== this.prevLoggedItems.length ||
-		// Or if any filters are not the same as the cached filters
-		filters.some( function ( filterName ) {
-			return controller.prevLoggedItems.indexOf( filterName ) === -1;
-		} ) ||
-		// Or if any cached filters are not the same as given filters
-		this.prevLoggedItems.some( function ( filterName ) {
-			return filters.indexOf( filterName ) === -1;
-		} )
-	) {
-		filters.forEach( function ( filterName ) {
-			mw.track(
-				'event.ChangesListFilterGrouping',
-				{
-					action: action,
-					groupIdentifier: randomIdentifier,
-					filter: filterName,
-					userId: mw.user.getId()
-				}
-			);
-		} );
-
-		// Cache the filter names
-		this.prevLoggedItems = filters;
-	}
 };
 
 /**

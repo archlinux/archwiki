@@ -20,8 +20,10 @@
  */
 
 use MediaWiki\Cache\LinkBatchFactory;
+use MediaWiki\Html\FormOptions;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\Permissions\GroupPermissionsLookup;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -154,7 +156,7 @@ class NewFilesPager extends RangeChronologicalPager {
 	}
 
 	public function getIndexField() {
-		return 'img_timestamp';
+		return [ [ 'img_timestamp', 'img_name' ] ];
 	}
 
 	protected function getStartBody() {

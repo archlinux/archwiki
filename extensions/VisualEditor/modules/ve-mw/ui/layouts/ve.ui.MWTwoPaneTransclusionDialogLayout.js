@@ -84,10 +84,17 @@ ve.ui.MWTwoPaneTransclusionDialogLayout.prototype.onReplacePart = function ( rem
 	this.sidebar.onReplacePart( removed, added, newPosition );
 
 	var keys = Object.keys( this.pages ),
+		isMultiPart = keys.length > 1,
 		isLastPlaceholder = keys.length === 1 &&
 			this.pages[ keys[ 0 ] ] instanceof ve.ui.MWTemplatePlaceholderPage;
+
 	// TODO: In other cases this is disabled rather than hidden. See T311303
 	this.outlineControlsWidget.removeButton.toggle( !isLastPlaceholder );
+
+	if ( isMultiPart ) {
+		// Warning, this is intentionally never turned off again
+		this.outlineControlsWidget.toggle( true );
+	}
 };
 
 /**

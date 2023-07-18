@@ -142,7 +142,6 @@
 	"visualeditor-dialog-transclusion-loading": "ശേഖരിക്കുന്നു...",
 	"visualeditor-dialog-transclusion-no-template-description": "\"$1\" ഫലകത്തിന് വിവരണമൊന്നുമില്ല, എങ്കിലും [[$2|ഫലകത്തിന്റെ താളിൽ]] വിവരമെന്തെങ്കിലും ഉണ്ടാകാതിരിക്കില്ല.",
 	"visualeditor-dialog-transclusion-param-default": "സ്വതേ: $1",
-	"visualeditor-dialog-transclusion-placeholder": "ഫലകം ചേർക്കുക",
 	"visualeditor-dialog-transclusion-required-parameter": "ആവശ്യമായ മണ്ഡലം",
 	"visualeditor-dialog-transclusion-required-parameter-description": "മണ്ഡലം ആവശ്യമാണ്.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "പിന്നിലേയ്ക്ക് മടങ്ങുക",

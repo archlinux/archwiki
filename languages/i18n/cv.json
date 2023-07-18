@@ -1024,7 +1024,6 @@
 	"logentry-newusers-newusers": "Хутшăнакан $1 аккаунтне {{GENDER:$2|турĕ}}",
 	"logentry-newusers-create": "Хутшăнакан $1 аккаунтне {{GENDER:$2|турĕ}}",
 	"rightsnone": "(çук)",
-	"feedback-back": "Каялла",
 	"searchsuggest-search": "{{SITENAME}} сайтӗнче шыра",
 	"pagelang-select-lang": "Чĕлхе суйлăр",
 	"mediastatistics-header-audio": "Аудио",
@@ -1034,5 +1033,8 @@
 	"nstab-mainpage": "Тӗпел",
 	"skin-action-protect": "хӳтĕле",
 	"skin-action-delete": "Кăларса пăрах",
-	"skin-action-move": "Ятне улăштар"
+	"skin-action-move": "Ятне улăштар",
+	"renameuserconfirm": "Çапла, хутшăнакан ятне улăштармалла",
+	"renameuser-page-moved": "$1 страницăн ятне $2 çине улăштарнă.",
+	"log-name-renameuser": "Хутшăнакансен ятне улăштарнин логĕ"
 }

@@ -21,5 +21,8 @@
 	"vector-view-history": "Тарихдиз килигун",
 	"vector-view-view": "КӀелун",
 	"vector-view-viewsource": "Чешме къалурун",
-	"vector-more-actions": "Мадни"
+	"vector-more-actions": "Мадни",
+	"vector-page-tools-label": "Алатар",
+	"vector-page-tools-general-label": "ЧӀехидин",
+	"vector-unpin-element-label": "чуьнуьхун"
 }

@@ -53,7 +53,6 @@
 	"math_unknown_function": "ukendt funktion '$1'",
 	"mw_math_latexml": "LaTeXML (eksperimentel; anvender MathML)",
 	"mw_math_mathml": "MathML med SVG- eller PNG-fallback (anbefalet til moderne browsere og værktøjer)",
-	"mw_math_png": "PNG-billeder",
 	"mw_math_source": "LaTeX-source (for tekstbrowsere)",
 	"prefs-math": "Matematiske formler",
 	"datatypes-type-math": "Matematisk udtryk",

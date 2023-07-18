@@ -2,7 +2,10 @@
 
 namespace MediaWiki\Deferred\LinksUpdate;
 
-use LinkFilter;
+use Config;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\ExternalLinks\LinkFilter;
+use MediaWiki\MainConfigNames;
 use ParserOutput;
 
 /**
@@ -13,8 +16,21 @@ use ParserOutput;
  * @since 1.38
  */
 class ExternalLinksTable extends LinksTable {
+	private const CONSTRUCTOR_OPTIONS = [
+		MainConfigNames::ExternalLinksSchemaMigrationStage,
+	];
+
 	private $newLinks = [];
 	private $existingLinks;
+	/** @var int */
+	private $migrationStage;
+
+	public function __construct( Config $config ) {
+		$options = new ServiceOptions( self::CONSTRUCTOR_OPTIONS, $config );
+		$options->assertRequiredOptions( self::CONSTRUCTOR_OPTIONS );
+
+		$this->migrationStage = $options->get( MainConfigNames::ExternalLinksSchemaMigrationStage );
+	}
 
 	public function setParserOutput( ParserOutput $parserOutput ) {
 		$this->newLinks = $parserOutput->getExternalLinks();
@@ -70,11 +86,16 @@ class ExternalLinksTable extends LinksTable {
 
 	protected function insertLink( $linkId ) {
 		foreach ( LinkFilter::makeIndexes( $linkId ) as $index ) {
-			$this->insertRow( [
-				'el_to' => $linkId,
-				'el_index' => $index,
-				'el_index_60' => substr( $index, 0, 60 ),
-			] );
+			$params = [ 'el_to' => $linkId ];
+			if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_OLD ) {
+				$params['el_index'] = implode( '', $index );
+				$params['el_index_60'] = substr( implode( '', $index ), 0, 60 );
+			}
+			if ( $this->migrationStage & SCHEMA_COMPAT_WRITE_NEW ) {
+				$params['el_to_domain_index'] = substr( $index[0], 0, 255 );
+				$params['el_to_path'] = $index[1];
+			}
+			$this->insertRow( $params );
 		}
 	}
 

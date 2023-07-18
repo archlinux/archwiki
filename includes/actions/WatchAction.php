@@ -46,18 +46,18 @@ class WatchAction extends FormAction {
 	/**
 	 * Only public since 1.21
 	 *
-	 * @param Page $page
+	 * @param Article $article
 	 * @param IContextSource $context
 	 * @param WatchlistManager $watchlistManager
 	 * @param WatchedItemStore $watchedItemStore
 	 */
 	public function __construct(
-		Page $page,
+		Article $article,
 		IContextSource $context,
 		WatchlistManager $watchlistManager,
 		WatchedItemStore $watchedItemStore
 	) {
-		parent::__construct( $page, $context );
+		parent::__construct( $article, $context );
 		$this->watchlistExpiry = $this->getContext()->getConfig()->get( MainConfigNames::WatchlistExpiry );
 		if ( $this->watchlistExpiry ) {
 			// The watchedItem is only used in this action's form if $wgWatchlistExpiry is enabled.
@@ -138,7 +138,7 @@ class WatchAction extends FormAction {
 	 * @todo Move this somewhere better when it's being used in more than just this action.
 	 *
 	 * @param MessageLocalizer $msgLocalizer
-	 * @param WatchedItem|bool $watchedItem
+	 * @param WatchedItem|false $watchedItem
 	 *
 	 * @return mixed[] With keys `options` (string[]) and `default` (string).
 	 */

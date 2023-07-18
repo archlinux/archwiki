@@ -26,8 +26,6 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 	private $userFactory;
 	/** @var LoggerInterface */
 	private $logger;
-	/** @var string */
-	private $requestIP;
 	/** @var $bool */
 	private $filterIsCentral;
 	/** @var string|null */
@@ -47,7 +45,6 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 	 * @param UserEditTracker $userEditTracker
 	 * @param UserFactory $userFactory
 	 * @param LoggerInterface $logger
-	 * @param string $requestIP
 	 * @param bool $filterIsCentral
 	 * @param string|null $centralDB
 	 */
@@ -58,7 +55,6 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 		UserEditTracker $userEditTracker,
 		UserFactory $userFactory,
 		LoggerInterface $logger,
-		string $requestIP,
 		bool $filterIsCentral,
 		?string $centralDB
 	) {
@@ -68,7 +64,6 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 		$this->userEditTracker = $userEditTracker;
 		$this->userFactory = $userFactory;
 		$this->logger = $logger;
-		$this->requestIP = $requestIP;
 		$this->filterIsCentral = $filterIsCentral;
 		$this->centralDB = $centralDB;
 	}
@@ -173,18 +168,18 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 	 */
 	private function throttleIdentifier( string $type ): string {
 		$user = $this->parameters->getUser();
-		$title = Title::castFromLinkTarget( $this->parameters->getTarget() );
 		switch ( $type ) {
 			case 'ip':
-				$identifier = $this->requestIP;
+				$identifier = $this->parameters->getActionSpecifier()->getIP();
 				break;
 			case 'user':
 				// NOTE: This is always 0 for anons. Is this good/wanted?
 				$identifier = $user->getId();
 				break;
 			case 'range':
-				$range = IPUtils::isIPv6( $this->requestIP ) ? self::IPV6_RANGE : self::IPV4_RANGE;
-				$identifier = IPUtils::sanitizeRange( "{$this->requestIP}/$range" );
+				$requestIP = $this->parameters->getActionSpecifier()->getIP();
+				$range = IPUtils::isIPv6( $requestIP ) ? self::IPV6_RANGE : self::IPV4_RANGE;
+				$identifier = IPUtils::sanitizeRange( "{$requestIP}/$range" );
 				break;
 			case 'creationdate':
 				// TODO Inject a proper service, not UserFactory, once getRegistration is moved away from User
@@ -199,6 +194,7 @@ class Throttle extends Consequence implements ConsequencesDisablerConsequence {
 				$identifier = 1;
 				break;
 			case 'page':
+				$title = Title::castFromLinkTarget( $this->parameters->getTarget() );
 				// TODO Replace with something from LinkTarget, e.g. namespace + text
 				$identifier = $title->getPrefixedText();
 				break;

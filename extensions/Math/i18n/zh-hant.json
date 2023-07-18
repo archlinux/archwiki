@@ -94,6 +94,7 @@
 	"math_unknown_function": "不明函數 \"$1\"",
 	"mw_math_latexml": "LaTeXML (實驗性；使用 MathML)",
 	"mw_math_mathml": "SVG（MathML 可以透過瀏覽器套件來啟用）",
+	"mw_math_native": "MathML（實驗性、無圖像）",
 	"mw_math_source": "LaTeX 來源（供文字瀏覽器使用）",
 	"prefs-math": "數學公式",
 	"mathstatus": "數學狀態",

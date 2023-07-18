@@ -7,6 +7,7 @@
 			"AttemptToCallNil",
 			"DDPAT",
 			"DannyS712",
+			"Deltaspace",
 			"Diralik",
 			"DmitTrix",
 			"Eakarpov",
@@ -53,8 +54,7 @@
 			"Дмитрий",
 			"Краснорядцева Елена",
 			"Лилиә",
-			"Марио",
-			"Deltaspace"
+			"Марио"
 		]
 	},
 	"apihelp-main-extended-description": "<div class=\"hlist plainlinks api-main-links\">\n* [[mw:Special:MyLanguage/API:Main_page|Документация]]\n* [[mw:Special:MyLanguage/API:Etiquette|Этикет и руководство по использованию]]\n* [[mw:Special:MyLanguage/API:FAQ|ЧЗВ]]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api.lists.wikimedia.org/ Почтовая рассылка]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-api-announce.lists.wikimedia.org/ Новости API]\n* [https://phabricator.wikimedia.org/maniphest/query/GebfyV4uCaLd/#R Ошибки и запросы]\n</div>\n<strong>Статус:</strong> MediaWiki API — зрелый и стабильный интерфейс, активно поддерживаемый и улучшаемый. Мы стараемся избегать ломающих изменений, однако изредка они могут быть необходимы. Подпишитесь на [https://lists.wikimedia.org/hyperkitty/list/mediawiki-api-announce@lists.wikimedia.org/ почтовую рассылку mediawiki-api-announce], чтобы быть в курсе обновлений.\n\n<strong>Ошибочные запросы:</strong> Если API получает запрос с ошибкой, вернётся заголовок HTTP с ключом «MediaWiki-API-Error», после чего значение заголовка и код ошибки будут отправлены обратно и установлены в то же значение. Более подробную информацию см. [[mw:Special:MyLanguage/API:Errors_and_warnings|API: Ошибки и предупреждения]].\n\n<p class=\"mw-apisandbox-link\"><strong>Тестирование:</strong> для удобства тестирования API-запросов, см. [[Special:ApiSandbox]].</p>",
@@ -1250,6 +1250,7 @@
 	"apihelp-query+userinfo-paramvalue-prop-registrationdate": "Добавляет дату регистрации участника.",
 	"apihelp-query+userinfo-paramvalue-prop-unreadcount": "Добавляет число непрочитанных страниц в странице наблюдения участника (максимум $1; возвращает <samp>$2</samp>, если их больше).",
 	"apihelp-query+userinfo-paramvalue-prop-centralids": "Добавляет центральный идентификатор и статус прикрепления участника.",
+	"apihelp-query+userinfo-paramvalue-prop-cancreateaccount": "Указывает, разрешено ли пользователю создавать учетные записи. Чтобы проверить, можно ли создать определенную учетную запись, используйте [[Special:ApiHelp/query+users| <kbd>action=query&list=users&usprop=cancreate</kbd>]].",
 	"apihelp-query+userinfo-param-attachedwiki": "Вместе с <kbd>$1prop=centralids</kbd> отображает, прикреплён ли к вики участник с этим идентификатором.",
 	"apihelp-query+userinfo-example-simple": "Получение информации о текущем участнике.",
 	"apihelp-query+userinfo-example-data": "Получение дополнительной информации о текущем участнике.",
@@ -1265,7 +1266,7 @@
 	"apihelp-query+users-paramvalue-prop-emailable": "Отмечает, может ли и хочет ли участник получать электронную почту посредством [[Special:Emailuser]].",
 	"apihelp-query+users-paramvalue-prop-gender": "Отмечает пол текущего участника. Возвращает «male», «female» или «unknown».",
 	"apihelp-query+users-paramvalue-prop-centralids": "Добавляет центральный идентификатор и статус прикрепления участника.",
-	"apihelp-query+users-paramvalue-prop-cancreate": "Определяет, могут ли быть созданы аккаунты с корректными, но незарегистрированными именами.",
+	"apihelp-query+users-paramvalue-prop-cancreate": "Определяет, могут ли быть созданы аккаунты с допустимыми, но незарегистрированными именами. Чтобы проверить, может ли текущий пользователь выполнить создание учетной записи, используйте [[Special:ApiHelp/query+userinfo|<kbd>action=query&meta=userinfo&uiprop=cancreateaccount</kbd>]].",
 	"apihelp-query+users-param-attachedwiki": "Вместе с <kbd>$1prop=centralids</kbd> отображает, прикреплён ли к вики участник с этим идентификатором.",
 	"apihelp-query+users-param-users": "Список участников, для которых получить информацию.",
 	"apihelp-query+users-param-userids": "Список идентификаторов участников, для которых получить информацию.",

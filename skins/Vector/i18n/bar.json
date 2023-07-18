@@ -22,5 +22,8 @@
 	"vector-view-view": "Leesen",
 	"vector-view-viewsource": "Quejtext ozoagn",
 	"vector-more-actions": "Meara",
-	"vector-searchsuggest-containing": "Suach nooch Seiten, dé <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> énthoiden"
+	"vector-searchsuggest-containing": "Suach nooch Seiten, dé <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> énthoiden",
+	"vector-page-tools-label": "Werkzeig",
+	"vector-page-tools-general-label": "Oigmoah",
+	"vector-unpin-element-label": "vastegga"
 }

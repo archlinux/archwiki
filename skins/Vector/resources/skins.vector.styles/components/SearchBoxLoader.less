@@ -35,10 +35,10 @@
 	position: absolute;
 	top: 100%;
 	width: 100%;
-	// Compute the height of a Codex menu item: the height of the thumbnail + the thumbnail's border
+	// Compute the height of a Codex menu item: the height of the thumbnail
 	// + the padding around the thumbnail. Then also add our own border-bottom-width, because we're
 	// using box-sizing: border-box;
-	height: ~'calc( @{size-search-figure} + 2*@{padding-vertical-menu-item} + 3*@{border-width-base} )';
+	height: ~'calc( @{size-search-figure} + 2*@{padding-vertical-menu-item} + @{border-width-base} )';
 	//
 	// Ensure the 100% width doesn't extend beyond the input.
 	box-sizing: border-box;
@@ -71,6 +71,11 @@
 		/* delay */ 500ms
 		/* iteration count */ infinite
 		/* fill direction */ alternate;
+
+	.vector-search-box-show-thumbnail.vector-search-box-auto-expand-width & {
+		margin-left: @size-search-expand;
+		width: ~'calc( 100% - @{size-search-expand} )';
+	}
 }
 
 @keyframes search-loader-progress-bar {

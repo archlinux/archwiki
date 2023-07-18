@@ -53,7 +53,7 @@ class Node {
 			} elseif ( is_array( $node ) ) {
 				$inner .= self::dumpArray( $node );
 			} else {
-				$inner .= htmlspecialchars( $node );
+				$inner .= htmlspecialchars( $node, ENT_COMPAT );
 			}
 		}
 		return $inner;

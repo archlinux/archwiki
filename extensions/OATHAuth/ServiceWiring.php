@@ -1,25 +1,38 @@
 <?php
 
-use MediaWiki\Extension\OATHAuth\OATHAuth;
+use MediaWiki\Config\ServiceOptions;
+use MediaWiki\Extension\OATHAuth\OATHAuthDatabase;
+use MediaWiki\Extension\OATHAuth\OATHAuthModuleRegistry;
 use MediaWiki\Extension\OATHAuth\OATHUserRepository;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 
 return [
-	'OATHAuth' => static function ( MediaWikiServices $services ) {
-		return new OATHAuth(
-			$services->getMainConfig(),
-			$services->getDBLoadBalancerFactory()
+	'OATHAuthDatabase' => static function ( MediaWikiServices $services ) {
+		return new OATHAuthDatabase(
+			new ServiceOptions(
+				OATHAuthDatabase::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig(),
+			),
+			$services->getDBLoadBalancerFactory(),
 		);
 	},
+	'OATHAuthModuleRegistry' => static function ( MediaWikiServices $services ) {
+		return new OATHAuthModuleRegistry();
+	},
 	'OATHUserRepository' => static function ( MediaWikiServices $services ) {
-		global $wgOATHAuthDatabase;
-		$auth = $services->getService( 'OATHAuth' );
 		return new OATHUserRepository(
-			$services->getDBLoadBalancerFactory()->getMainLB( $wgOATHAuthDatabase ),
-			new \HashBagOStuff( [
+			new ServiceOptions(
+				OATHUserRepository::CONSTRUCTOR_OPTIONS,
+				$services->getMainConfig(),
+			),
+			$services->getService( 'OATHAuthDatabase' ),
+			new HashBagOStuff( [
 				'maxKey' => 5
 			] ),
-			$auth
+			$services->getService( 'OATHAuthModuleRegistry' ),
+			$services->getCentralIdLookupFactory(),
+			LoggerFactory::getInstance( 'authentication' )
 		);
 	}
 ];

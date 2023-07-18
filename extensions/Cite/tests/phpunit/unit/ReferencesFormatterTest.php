@@ -212,6 +212,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 				return implode( '+', $args );
 			}
 		);
+		$anchorFormatter->method( 'getReferencesKey' )->willReturnArgument( 0 );
 
 		$mockMessageLocalizer = $this->createMock( ReferenceMessageLocalizer::class );
 		$mockMessageLocalizer->method( 'localizeSeparators' )->willReturnArgument( 0 );
@@ -246,7 +247,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 				[
 					'text' => 't',
 				],
-				'(cite_references_link_many|||<span class="reference-text">t</span>' . "\n|)"
+				'(cite_references_link_many|1-||<span class="reference-text">t</span>' . "\n|)"
 			],
 			'With dir' => [
 				1,
@@ -254,7 +255,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 					'dir' => 'rtl',
 					'text' => 't',
 				],
-				'(cite_references_link_many|||<span class="reference-text">t</span>' .
+				'(cite_references_link_many|1-||<span class="reference-text">t</span>' .
 					"\n" . '| class="mw-cite-dir-rtl")'
 			],
 			'Incomplete follow' => [
@@ -263,7 +264,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 					'follow' => 'f',
 					'text' => 't',
 				],
-				'(cite_references_no_link||<span class="reference-text">t</span>' . "\n)"
+				'(cite_references_no_link|f|<span class="reference-text">t</span>' . "\n)"
 			],
 			'Count zero' => [
 				1,
@@ -272,7 +273,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 					'key' => 5,
 					'text' => 't',
 				],
-				'(cite_references_link_one||1+5-0|<span class="reference-text">t</span>' . "\n|)"
+				'(cite_references_link_one|1-5|1+5-0|<span class="reference-text">t</span>' . "\n|)"
 			],
 			'Count negative' => [
 				1,
@@ -282,7 +283,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 					'number' => 3,
 					'text' => 't',
 				],
-				'(cite_references_link_one||5+|<span class="reference-text">t</span>' . "\n|)"
+				'(cite_references_link_one|5|5+|<span class="reference-text">t</span>' . "\n|)"
 			],
 			'Count positive' => [
 				1,
@@ -292,7 +293,7 @@ class ReferencesFormatterTest extends \MediaWikiUnitTestCase {
 					'number' => 3,
 					'text' => 't',
 				],
-				'(cite_references_link_many||(cite_references_link_many_format|1+5-0|3.0|' .
+				'(cite_references_link_many|1-5|(cite_references_link_many_format|1+5-0|3.0|' .
 				'(cite_references_link_many_format_backlink_labels))' .
 				'(cite_references_link_many_sep)(cite_references_link_many_format|1+5-1|3.1|' .
 				'(cite_error_references_no_backlink_label))(cite_references_link_many_and)' .

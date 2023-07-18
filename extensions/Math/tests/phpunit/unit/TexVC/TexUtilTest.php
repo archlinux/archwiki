@@ -11,10 +11,11 @@ use MediaWikiUnitTestCase;
 class TexUtilTest extends MediaWikiUnitTestCase {
 
 	/**
-	 * Basic test for tex util.
+	 * Basic test for TexUtil
 	 */
 	public function testTexUtil() {
-		$tu = new TexUtil();
+		TexUtil::removeInstance();
+		$tu = TexUtil::getInstance();
 		// Testing all functions
 		$this->assertTrue( $tu->getAllFunctionsAt( "\\AA" ) );
 		$this->assertFalse( $tu->getAllFunctionsAt( "\\notlisted" ) );
@@ -28,9 +29,9 @@ class TexUtilTest extends MediaWikiUnitTestCase {
 	 * @return void
 	 */
 	public function testChecksum() {
-		$tu = new TexUtil();
+		$tu = TexUtil::getInstance();
 
-		$out = []; // { }
+		$out = [];
 		$sets = [
 			'ams_required',
 			'big_literals',

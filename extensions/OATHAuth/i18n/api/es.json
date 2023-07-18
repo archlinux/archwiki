@@ -3,7 +3,8 @@
 		"authors": [
 			"Anarhistička Maca",
 			"Dgstranz",
-			"Jelou"
+			"Jelou",
+			"La Mantis"
 		]
 	},
 	"apihelp-query+oath-description": "Comprobar si la autenticación en dos pasos (OATH) de un usuario está habilitada.",
@@ -14,7 +15,5 @@
 	"apihelp-oathvalidate-description": "Validar una clave de autenticación en dos pasos (OATH).",
 	"apihelp-oathvalidate-summary": "Validar una clave de autenticación en dos pasos (OATH).",
 	"apihelp-oathvalidate-param-user": "Usuario al que validar la clave. Por defecto al usuario actual.",
-	"apihelp-oathvalidate-param-totp": "Clave de autenticación en dos pasos (OATH). Legacy, usa \"data\" parámetro en lugar de eso",
-	"apihelp-oathvalidate-example-1": "Validar una clave de autenticación del usuario actual",
-	"apihelp-oathvalidate-example-2": "Validar una clave de autenticación del usuario <kbd>Ejemplo</kbd>."
+	"apihelp-oathvalidate-example-1": "Validar los datos JSON para el usuario actual"
 }

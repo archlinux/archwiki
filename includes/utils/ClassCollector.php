@@ -75,7 +75,7 @@ class ClassCollector {
 		if ( isset( $matches[0][0] ) ) {
 			foreach ( $matches[0] as $match ) {
 				$match = trim( $match );
-				if ( substr( $match, -1 ) === '{' ) {
+				if ( str_ends_with( $match, '{' ) ) {
 					// Keep it balanced
 					$match .= '}';
 				}
@@ -138,7 +138,7 @@ class ClassCollector {
 				$this->startToken = null;
 				break;
 			case T_NEW:
-				// Skip over T_CLASS after T_NEW because this is a PHP 7 anonymous class.
+				// Skip over T_CLASS after T_NEW because this is an anonymous class.
 				if ( !is_array( $token ) || $token[0] !== T_WHITESPACE ) {
 					$this->startToken = null;
 				}

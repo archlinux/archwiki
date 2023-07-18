@@ -5,8 +5,8 @@
 			"Khanmarat",
 			"Sorbat",
 			"Stephanecbisson",
-			"Рустам Нурыев",
 			"TayfunEt.",
+			"Рустам Нурыев",
 			"Zolgoyo"
 		]
 	},
@@ -216,7 +216,7 @@
 	"anontalkpagetext": "----\n<em>Пы уйлап ҡарау пит исәп йасыуны ҡылтырмаған йә аны ошланмайтығын аноним ҡатнашыуцыныңҡы пите.</em> Ошланыуцыны таныу өцөн аныңҡы IP-адресы ошланылаты.\nӘгәр сес аноним ошланыуцы пулсағыс, сескә йебәрелмәгән ҡатлар алтым тисәгес (пер IP-адрес кән ошланыуцыларта пулғалы мөмкин), пашҡа мынтайын аңнашылмауцылыҡлар килеп цыҡмасын өцөн, [[Special:UserLogin|системаға керең]] йә [[Special:CreateAccount|теркәлең]].",
 	"noarticletext": "Ҡәсерге уаҡытта пы питтә текст йуҡ. Сес [[Special:Search/{{PAGENAME}}|пы исем кергән пашҡа мәҡәләләрне]], <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} туры килгән йасмаларны] таба йә '''[{{fullurl:{{FULLPAGENAME}}|action=edit}} шантайын уҡ исемле йаңа питне ҡыла]'''</span> аласыс.",
 	"noarticletext-nopermission": "Ҡәсерге уаҡытта пы питтә текст йуҡ. Сес пашҡа питләртә [[Special:Search/{{PAGENAME}}|пы исемне]] йә <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} журналтағы йасмаларны] эстәй аласыс. Сескә пит йасағалы рөҡсәт пирелмәгән.</span>",
-	"userpage-userdoesnotexist-view": "«$1» исемле исәп йасма йуҡ.",
+	"userpage-userdoesnotexist-view": "\"$1\" исәп йасма пы үикита тергәләнмәгән.",
 	"clearyourcache": "<strong>Искәрмә:</strong> Питне саҡлағаннан суң пашҡартыуларығыс күренер өцөн, браузерығысныңҡы кэшын тасартҡалы кәрәк пулыр.\n* <strong>Firefox / Safari:</strong> <em>Shift</em> төймәгә пасып, йебәрмәйен, <em>Йаңартҡалы</em> төймәгә пасың, йә <em>Ctrl-F5</em> йә <em>Ctrl-R</em> (Mac-та <em>⌘-R</em>) төймәләргә пасың\n* <strong>Google Chrome:</strong> <em>Ctrl-Shift-R </em>төймәгә пасың (Mac-та <em>⌘-Shift-R</em>)\n* <strong>Internet Explorer:</strong> <em>Ctrl </em>төймәгә пасып, йебәрмәйен, <em>Йаңартҡалы</em>төймәгә пасың, йә <em>Ctrl-F5 </em>төймәгә пасың\n* <strong>Opera:</strong> <em>Ҡораллар → Ҡоролошлар</em> (Mac-та <em>Opera → Ҡоролошлар</em>) пүлеккә күцең, суңынан <em>Ҡауапсыслыҡ → Кереүләр тариҡны тасартыу → Рәсемнәр кэшлау</em> менюта кэш тасартыуны сайлаң",
 	"previewnote": "<strong>Онотмаң, пы алттан ҡарап цығыу ғына.</strong>\nПашҡартыуларығыс әле саҡланмаған!",
 	"continue-editing": "Төсәтеүне ҡушлағалы",
@@ -625,5 +625,12 @@
 	"skin-view-create-local": "Локаль сүрәтләмәне өстәгәле",
 	"nstab-mainpage": "Паш пит",
 	"skin-action-delete": "Йуҡ иткәле",
-	"skin-action-move": "Исемне алмаштырғалы"
+	"skin-action-move": "Исемне алмаштырғалы",
+	"blockedtext-made-by": "Администратор $1 тыйған.",
+	"blockedtext-reason-comment": "Тыйыуның сәбәбе: <em>$1</em>",
+	"blockedtext-start-time": "Тыйыуның пашланыуы: $1",
+	"blockedtext-expiration-time": "Тыйыуның пөтөүө: $1",
+	"blockedtext-intended-blockee": "Ней өцөн тыйғалы: $1",
+	"blockedtext-contact-blocker-admin": "Тыйыуны киңәшләшеү өцөн $1ға йасып пағың йә пашҡа [[{{MediaWiki:Grouppage-sysop}}|администраторға]].",
+	"blockedtext-include-details-queries": "Әрни, ней үс энтәшеүләрегестә пы пөтөн ҡәбәр-пелемнәрне күргәсең."
 }

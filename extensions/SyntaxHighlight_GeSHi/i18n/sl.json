@@ -3,8 +3,8 @@
 		"authors": [
 			"Dbc334",
 			"Eleassar",
-			"Yerpo",
-			"McDutchie"
+			"McDutchie",
+			"Yerpo"
 		]
 	},
 	"syntaxhighlight-desc": "Omogoča označevanje skladnje <code>&lt;syntaxhighlight&gt;</code> z uporabo [http://pygments.org/ Pygments – označevalnika skladnje Python]",

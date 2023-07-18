@@ -60,8 +60,7 @@
 	"config-env-good": "הסביבה שלכם נבדקה.\nאפשר להתקין מדיה־ויקי.",
 	"config-env-bad": "הסביבה שלכם נבדקה.\nאי־אפשר להתקין מדיה־ויקי.",
 	"config-env-php": "מותקנת <span dir=\"ltr\">PHP $1</span>.",
-	"config-unicode-using-intl": "משתמש ב[https://php.net/manual/en/book.intl.php הרחבת PHP intl] לנרמול יוניקוד.",
-	"config-unicode-update-warning": "'''אזהרה''': הגרסה המותקנת של מעטפת נרמול יוניקוד משתמשת בגרסה ישנה של הספרייה של [http://site.icu-project.org/ פרויקט ICU].\nכדאי [https://www.mediawiki.org/wiki/Special:MyLanguage/Unicode_normalization_considerations לעדכן] אם הטיפול ביוניקוד חשוב לך.",
+	"config-env-icu": "ICU $1 מותקן (תומך ב־Unicode $2).",
 	"config-no-db": "לא נמצא דרייבר מסד נתונים מתאים. יש להתקין דרייבר מסד נתונים ל־PHP.\n{{PLURAL:$2|נתמך הסוג הבא של מסד נתונים|נתמכים הסוגים הבאים של מסדי נתונים}}: $1.\n\nאם קִמפלת את PHP בעצמך, יש להגדיר אותו מחדש ולהפעיל את לקוח מסד נתונים, למשל באמצעות <code dir=\"ltr\">./configure --with-mysqli</code>.\nאם התקנת את PHP מחבילה של דביאן או של אובונטו, יש להתקין, למשל, גם את המודול <code dir=\"ltr\">php-mysql</code>.",
 	"config-outdated-sqlite": "<strong>אזהרה</strong>: במערכת מתוקן SQLite $2. גרסה זו לא נתמכת ולשימוש ב־SQLite נדרשת גרסה $1 לפחות. SQLlite לא יהיה זמין.",
 	"config-no-fts3": "'''אזהרה''': SQLite מהודר ללא [//sqlite.org/fts3.html מודול FTS]. יכולות חיפוש לא יהיו זמינות בהתקנה הזאת.",
@@ -87,7 +86,6 @@
 	"config-using-uri": "נעשה שימוש בכתובת השרת \"<nowiki>$1$2</nowiki>\".",
 	"config-uploads-not-safe": "'''אזהרה:''' תיקיית ההעלאות ההתחלתית <code>$1</code> חשופה להרצת סקריפטים שרירותיים.\nאף שמדיה־ויקי בודקת את כל הקבצים המוּעלים לאיומי אבטחה, מומלץ מאוד למנוע את [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Security#Upload_security פרצת האבטחה] הזאת לפני הפעלת ההעלאות.",
 	"config-no-cli-uploads-check": "'''אזהרה:''' תיקיית ברירת המחדל להעלאות (<code>$1</code>) לא נבדקת לפגיעוּת\nלהרצת תסריטים אקראיים בזמן התקנה דרך CLI.",
-	"config-suhosin-max-value-length": "מותקן פה Suhosin והוא מגביל את אורך פרמטר GET ל־$1 בתים.\nמדיה־ויקי דורשת ש־ <code>suhosin.get.max_value_length</code> יהיה לפחות $2. כבו את האפשרות הזאת, או הַגדילו אותה לערך של $3 בקובץ <code>php.ini</code>.",
 	"config-using-32bit": "<strong>אזהרה:</strong> נראה שהמערכת שלך רצה עם מספרים שלמים של 32 סיביות. זה [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:32-bit לא מומלץ].",
 	"config-db-type": "סוג מסד הנתונים:",
 	"config-db-host": "שרת מסד הנתונים:",
@@ -317,6 +315,7 @@
 	"config-screenshot": "צילום מסך",
 	"config-extension-not-found": "לא היה אפשר למצוא את קובץ הרישום של ההרחבה \"$1\"",
 	"config-extension-dependency": "שגיאת תלות נמצאה בזמן התקנת ההרחבה \"$1\"‏: $2",
+	"config-ext-skins-more-info": "מידע נוסף",
 	"mainpagetext": "<strong>תוכנת מדיה־ויקי הותקנה בהצלחה.</strong>",
 	"mainpagedocfooter": "היעזרו ב[https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents מדריך למשתמש] למידע על שימוש בתוכנת הוויקי.\n\n== קישורים שימושיים ==\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Configuration_settings רשימת ההגדרות]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:FAQ שאלות ותשובות על מדיה־ויקי]\n* [https://lists.wikimedia.org/postorius/lists/mediawiki-announce.lists.wikimedia.org/ רשימת התפוצה על השקת גרסאות]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Localisation#Translation_resources תרגום מדיה־ויקי לשפה שלך]\n* [https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:Combating_spam איך להיאבק נגד ספאם באתר הוויקי שלך]"
 }

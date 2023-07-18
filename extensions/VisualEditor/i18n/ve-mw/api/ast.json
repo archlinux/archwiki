@@ -9,7 +9,6 @@
 	"apierror-visualeditor-docserver-http-error": "Error al comunicase col sirvidor Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-http": "Error al comunicase col sirvidor Parsoid/RESTBase (HTTP $1)",
 	"apierror-visualeditor-docserver": "Error al comunicase col sirvidor Parsoid/RESTBase (nun hai respuesta)",
-	"apierror-visualeditor-latestnotfound": "Nun s'alcontró la cabera revisión del títulu",
 	"apihelp-visualeditor-description": "Devuelve HTML5 pa una páxina dende'l serviciu Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Al guardar,establez esto como la marca horaria de la revisión que s'editó. Utilizao pa detectar conflictos d'edición.",
 	"apihelp-visualeditor-param-badetag": "Si la consulta RESTBase devolvió una ETag que paez inválida, pásala equí cola fin de rexistrala.",

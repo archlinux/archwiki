@@ -7,6 +7,7 @@
 			"DannyS712",
 			"Internoob",
 			"Jvm",
+			"Kitanago",
 			"LeGuyanaisPure",
 			"Lucas",
 			"Macofe",
@@ -14,8 +15,7 @@
 			"Schery19",
 			"Tisave",
 			"Urhixidur",
-			"아라",
-			"Kitanago"
+			"아라"
 		]
 	},
 	"tog-underline": "Souliyen lyen yo :",
@@ -481,8 +481,8 @@
 	"anontalkpagetext": "----\n<em>Ou nan paj diskisyon yon itilizatè anonim, ki poko kreye yon kont oubyen ki pa itilize pyès kont nan sistèm sa.</em>\nPou rezon sa, nou dwe itilize adrès IP l pou idantifye l.\nYon adrès IP kapab pataje ant plizyè itilizatè.\nSi w se yon itilizatè anonim e si ou wè ke ou resevwa komantè ki pa t pou ou, ou mèt [[Special:CreateAccount|kreye yon kont]] oubyen [[Special:UserLogin|konekte ou]] pou ou kapab anpeche konfizyon ak kontribitè anonim yo.",
 	"noarticletext": "Poko gen okenn tèks nan paj sa a pou kounye a.\nOu mèt fè yon [[Special:Search/{{PAGENAME}}|rechèch sou tit sa a]] nan lòt paj yo, <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} chèche nan operasyon ki gen rapò ak paj sa],\noubyen [{{fullurl:{{FULLPAGENAME}}|action=edit}} kreye paj sa a].",
 	"noarticletext-nopermission": "Poko gen okenn tèks nan paj sa a pou kounye a.\nOu mèt fè yon [[Special:Search/{{PAGENAME}}|echèch sou tit sa a]] nan lòt paj yo, oubyen <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} chèche nan operasyon ki gen rapò ak paj sa], men ou pa gen pèmisyon pou kreye paj sa a.",
-	"userpage-userdoesnotexist": "Kont itilizatè « <nowiki>$1</nowiki> » sa pa anrejistre. Verifye toutbon ke ou vle kreye paj sa.",
-	"userpage-userdoesnotexist-view": "Itilizatè \"$1\" pa ekziste.",
+	"userpage-userdoesnotexist": "Kont itilizatè \" $1 \" pa anrejistre sou wiki sa a.\nTanpri tcheke si w vle kreye/modifye paj sa a.",
+	"userpage-userdoesnotexist-view": "Kont itilizatè \"$1\" pa enskri sou wiki sa a.",
 	"blocked-notice-logextract": "{{GENDER:$1|Itilizatè}} sa a bloke kounye a.\nDènye jounal pou blokaj yo parèt anba kòm referans :",
 	"clearyourcache": "<strong>Note bagay sa :</strong> aprè ou fin pibliye modifikasyon yo, sa ka rive ou oblije fòse chajman total kach navigatè entènèt ou an pou ou kapab wè chanjman yo.\n* <strong>Firefox / Safari :</strong> kenbe touch <em>Maj</em> pandan w ap klike sou bouton <em>Rafrechi/Aktyalize</em> oswa ou peze <em>Ctrl-F5</em> oubyen <em>Ctrl-R</em> (<em>⌘-R</em> sou sistèm Apple Mac)\n* <strong>Google Chrome :</strong> peze <em>Ctrl-Shift-R</em> (<em>⌘-Maj-R</em> sou sistèm Apple Mac)\n* <strong>Internet Explorer / Edge :</strong> kenbe touch <em>Ctrl</em> pandan w ap klike sou bouton <em>Rafrechi/Aktyalize</em>, oubyen peze <em>Ctrl-F5</em>.\n* <strong>Opera:</strong> peze <em>Ctrl-F5</em>.",
 	"usercssyoucanpreview": "<strong>Bagay ki ap sèvi w :</strong> Itilize bouton « {{int:showpreview}} » pou teste nouvo fèy CSS anvan ou pibliye l.",
@@ -1140,7 +1140,7 @@
 	"metadata-help": "Fichye sa genyen enfòmasyon adisyonèl, petèt ki soti nan yon kamera dijital oubyen yon nimerizè itilize pou kreye oubyen dijitalize li.  Si fichye sa te modifye depi kreyasyon li, kèk detay ka pa menm avèk original la.",
 	"metadata-expand": "Montre detay konplè yo",
 	"metadata-collapse": "Kache enfòmasyon ak tout detay yo",
-	"metadata-fields": "Ou ka wè imaj sa a nan paj ki dekri imaj la. Gen kèk enfòmasyon ki pa toujou vizib.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Ou ka wè imaj sa a nan paj ki dekri imaj la. Gen kèk enfòmasyon ki pa toujou vizib.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "tout",
 	"monthsall": "tout",
 	"confirm_purge_button": "OK",
@@ -1218,5 +1218,12 @@
 	"skin-action-protect": "Pwoteje",
 	"skin-action-undelete": "Retabli",
 	"skin-action-delete": "Efase",
-	"skin-action-move": "Chanje non"
+	"skin-action-move": "Chanje non",
+	"blockedtext-made-by": "Blòk la fèt pa $1.",
+	"blockedtext-reason-comment": "Rezon yo bay la se <em>$1</em>",
+	"blockedtext-start-time": "Kòmansman blòk : $1",
+	"blockedtext-expiration-time": "Ekspirasyon blòk : $1",
+	"blockedtext-intended-blockee": "Kont la ki te sipoze bloke : $1",
+	"blockedtext-contact-blocker-admin": "Ou mèt kontakte $1 oubyen yon lòt [[{{MediaWiki:Grouppage-sysop}}|administratè]] pou diskite blokaj la.",
+	"blockedtext-include-details-queries": "Tanpri mete tout detay ki anwo yo nan nenpòt demand ou fè."
 }

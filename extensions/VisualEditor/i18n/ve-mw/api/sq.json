@@ -13,7 +13,6 @@
 	"apierror-visualeditor-docserver-http-error": "Gabim në lidhjen me shërbyesin Parsoid/RESTBase: $1",
 	"apierror-visualeditor-docserver-http": "Gabim në lidhjen me shërbyesin Parsoid/RESTBase (HTTP $1)",
 	"apierror-visualeditor-docserver": "Gabim në lidhjen me shërbyesin Parsoid/RESTBase (s’ka përgjigje)",
-	"apierror-visualeditor-latestnotfound": "S’u gjet dot rishikimi më i ri për titullin",
 	"apihelp-visualeditor-description": "Jep kod HTML5 për një faqe prej shërbimit Parsoid.",
 	"apihelp-visualeditor-param-basetimestamp": "Kur bëni ruajtje, vendoseni këtë sa vula kohore e rishikimit që po përpunohej. Përdoret për të pikasur përplasje përpunimesh.",
 	"apihelp-visualeditor-param-badetag": "Nëse kërkesa ndaj RESTBase u përgjigj me një Etag në dukje të pavlefshëm, jepeni këtu për qëllime regjistrimi.",

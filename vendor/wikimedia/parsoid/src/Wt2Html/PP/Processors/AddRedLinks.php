@@ -8,6 +8,8 @@ use Wikimedia\Parsoid\DOM\DocumentFragment;
 use Wikimedia\Parsoid\DOM\Element;
 use Wikimedia\Parsoid\DOM\Node;
 use Wikimedia\Parsoid\Utils\DOMCompat;
+use Wikimedia\Parsoid\Utils\UrlUtils;
+use Wikimedia\Parsoid\Utils\WTUtils;
 use Wikimedia\Parsoid\Wt2Html\Wt2HtmlDOMProcessor;
 
 class AddRedLinks implements Wt2HtmlDOMProcessor {
@@ -66,10 +68,46 @@ class AddRedLinks implements Wt2HtmlDOMProcessor {
 					continue;
 				}
 				$data = $titleMap[$k];
-				$a->removeAttribute( 'class' ); // Clear all
-				if ( !empty( $data['missing'] ) && empty( $data['known'] ) ) {
-					DOMCompat::getClassList( $a )->add( 'new' );
+				$a->removeAttribute( 'class' ); // Clear all, if we're doing a pb2pb refresh
+
+				$href = $a->getAttribute( 'href' );
+				$parsedURL = UrlUtils::parseUrl( $href );
+
+				$queryElts = [];
+				if ( isset( $parsedURL['query'] ) ) {
+					parse_str( $parsedURL['query'], $queryElts );
 				}
+
+				if (
+					!empty( $data['missing'] ) && empty( $data['known'] ) &&
+					$k !== $env->getPageConfig()->getTitle()
+				) {
+					DOMCompat::getClassList( $a )->add( 'new' );
+					WTUtils::addPageContentI18nAttribute( $a, 'title', 'red-link-title', [ $k ] );
+					$queryElts['action'] = 'edit';
+					$queryElts['redlink'] = '1';
+				} else {
+					// Clear a potential redlink, if we're doing a pb2pb refresh
+					// This is similar to what's happening in Html2Wt/RemoveRedLinks
+					// and maybe that pass should just run before this one.
+					if ( isset( $queryElts['action'] ) && $queryElts['action'] === 'edit' ) {
+						unset( $queryElts['action'] );
+					}
+					if ( isset( $queryElts['redlink'] ) && $queryElts['redlink'] === '1' ) {
+						unset( $queryElts['redlink'] );
+					}
+				}
+
+				if ( count( $queryElts ) === 0 ) {
+					// avoids the insertion of ? on empty query string
+					$parsedURL['query'] = null;
+				} else {
+					$parsedURL['query'] = http_build_query( $queryElts );
+				}
+				$newHref = UrlUtils::assembleUrl( $parsedURL );
+
+				$a->setAttribute( 'href', $newHref );
+
 				if ( !empty( $data['redirect'] ) ) {
 					DOMCompat::getClassList( $a )->add( 'mw-redirect' );
 				}

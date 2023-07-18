@@ -5,8 +5,6 @@
  * Remove this file if that ever gets fixed?
  */
 
-/* stylelint-disable selector-class-pattern */
-
 /* GENERAL CLASSES FOR DIRECTIONALITY SUPPORT */
 
 /**
@@ -208,7 +206,7 @@ td.mw-submit {
 	display: inline;
 	margin: 0;
 	padding: 0;
-	list-style: none none;
+	list-style: none;
 }
 
 .catlinks li {

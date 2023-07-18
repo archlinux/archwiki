@@ -22,11 +22,13 @@
 
 use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\MainConfigNames;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\ParamValidator\TypeDef\UserDef;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -128,7 +130,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			[ 'log_namespace', 'log_title' ],
 			$this->fld_title || $this->fld_parsedcomment
 		);
-		$this->addFieldsIf( 'log_params', $this->fld_details );
+		$this->addFieldsIf( 'log_params', $this->fld_details || $this->fld_ids );
 
 		if ( $this->fld_comment || $this->fld_parsedcomment ) {
 			$commentQuery = $this->commentStore->getJoin( 'log_comment' );
@@ -157,12 +159,12 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			// Do validation of action param, list of allowed actions can contains wildcards
 			// Allow the param, when the actions is in the list or a wildcard version is listed.
 			$logAction = $params['action'];
-			if ( strpos( $logAction, '/' ) === false ) {
+			if ( !str_contains( $logAction, '/' ) ) {
 				// all items in the list have a slash
 				$valid = false;
 			} else {
 				$logActions = array_fill_keys( $this->getAllowedLogActions(), true );
-				list( $type, $action ) = explode( '/', $logAction, 2 );
+				[ $type, $action ] = explode( '/', $logAction, 2 );
 				$valid = isset( $logActions[$logAction] ) || isset( $logActions[$type . '/*'] );
 			}
 
@@ -192,16 +194,12 @@ class ApiQueryLogEvents extends ApiQueryBase {
 		$this->addWhereRange( 'log_id', $params['dir'], null, null );
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 2 );
-			$op = ( $params['dir'] === 'newer' ? '>' : '<' );
-			$continueTimestamp = $db->addQuotes( $db->timestamp( $cont[0] ) );
-			$continueId = (int)$cont[1];
-			$this->dieContinueUsageIf( $continueId != $cont[1] );
-			$this->addWhere( "log_timestamp $op $continueTimestamp OR " .
-				"(log_timestamp = $continueTimestamp AND " .
-				"log_id $op= $continueId)"
-			);
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
+			$op = ( $params['dir'] === 'newer' ? '>=' : '<=' );
+			$this->addWhere( $db->buildComparison( $op, [
+				'log_timestamp' => $db->timestamp( $cont[0] ),
+				'log_id' => $cont[1],
+			] ) );
 		}
 
 		$limit = $params['limit'];
@@ -340,6 +338,10 @@ class ApiQueryLogEvents extends ApiQueryBase {
 				if ( $this->fld_ids ) {
 					$vals['pageid'] = (int)$row->page_id;
 					$vals['logpage'] = (int)$row->log_page;
+					$revId = $logEntry->getAssociatedRevId();
+					if ( $revId ) {
+						$vals['revid'] = (int)$revId;
+					}
 				}
 				if ( $this->fld_details ) {
 					$vals['params'] = LogFormatter::newFromEntry( $logEntry )->formatParametersForApi();
@@ -424,7 +426,7 @@ class ApiQueryLogEvents extends ApiQueryBase {
 			return 'private';
 		}
 		if ( $params['prop'] !== null && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMessage() among other things
+			// MediaWiki\CommentFormatter\CommentFormatter::formatItems() calls wfMessage() among other things
 			return 'anon-public-user-private';
 		} elseif ( LogEventsList::getExcludeClause( $this->getDB(), 'user', $this->getAuthority() )
 			=== LogEventsList::getExcludeClause( $this->getDB(), 'public' )

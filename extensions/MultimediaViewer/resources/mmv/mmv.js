@@ -16,8 +16,9 @@
  */
 
 ( function () {
-	var MMVP,
-		comingFromHashChange = false;
+	var router = require( 'mediawiki.router' );
+	var comingFromHashChange = false;
+	var MMVP;
 
 	/**
 	 * Analyses the page, looks for image content and sets up the hooks
@@ -83,7 +84,7 @@
 		/**
 		 * @property {OO.Router} router
 		 */
-		this.router = new OO.Router();
+		this.router = router;
 		this.setupRouter();
 		comingFromHashChange = false;
 

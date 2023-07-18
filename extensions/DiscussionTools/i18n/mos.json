@@ -1,0 +1,28 @@
+{
+	"@metadata": {
+		"authors": [
+			"Abdul Fatawu 352",
+			"Amire80",
+			"Azoure latif 2",
+			"Hasslaebetch"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Leoke",
+	"discussiontools-replylink": "loke",
+	"discussiontools-replywidget-advanced": "Taoore",
+	"discussiontools-replywidget-cancel": "Base",
+	"discussiontools-replywidget-mode-source": "Suurs",
+	"discussiontools-replywidget-mode-visual": "Yãabo",
+	"discussiontools-replywidget-placeholder-reply": "Leoke {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "N gese",
+	"discussiontools-replywidget-reply": "Leoke",
+	"discussiontools-replywidget-summary": "Kʋmbgo",
+	"discussiontools-replywidget-watchthis": "Paas ni neng kada f [[Special:Watchlist|gese-sõdgre]] pʋga",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|neda|neba}} sõasg pʋga",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|f tagsgo|tagse}}",
+	"discussiontools-topicheader-latestcomment": "Yaoolem tagsgo: $1",
+	"discussiontools-topicsubscription-button-subscribe": "n naag f menga",
+	"discussiontools-topicsubscription-button-subscribe-label": "N naag f menga",
+	"discussiontools-topicsubscription-button-unsubscribe": "n yeese f menga",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "N yeese f menga"
+}

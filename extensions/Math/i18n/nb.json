@@ -88,6 +88,7 @@
 	"math_unknown_function": "ukjent funksjon «$1»",
 	"mw_math_latexml": "LaTeXML (på forsøksstadiet; bruker MathML)",
 	"mw_math_mathml": "SVG (MathML kan aktiveres via nettlesertillegg)",
+	"mw_math_native": "MathML (eksperimentelt; ingen bilder)",
 	"mw_math_source": "LaTeX-kilde (for tekstbaserte nettlesere)",
 	"prefs-math": "Matematiske formler",
 	"mathstatus": "Mattestatus",

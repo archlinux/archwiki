@@ -17,3 +17,7 @@
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 }
+
+.ve-ui-mwReferenceContextItem .ve-ui-previewElement + .ve-ui-mwReferenceContextItem-muted {
+	margin-top: 0.5em;
+}

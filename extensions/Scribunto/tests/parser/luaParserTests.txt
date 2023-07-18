@@ -589,11 +589,9 @@ end
 return p
 !! end
 
-# Temporarily disable this test to break a circular dependency between core & Scribunto
 !! test
 Scribunto: Test unstripNowiki behavior
 !! options
-disabled
 parsoid={ "modes": ["wt2html","wt2wt"] }
 !! wikitext
 {{#invoke:EchoTest|echo|<nowiki>foo</nowiki>}}

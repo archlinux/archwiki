@@ -5,7 +5,9 @@
 			"Amire80",
 			"Foomin10",
 			"Fryed-peach",
+			"Jaw Salvager",
 			"Kkairri",
+			"Kokage si",
 			"LNDDYL",
 			"Marine-Blue",
 			"MathXplore",
@@ -23,8 +25,7 @@
 			"しぃ",
 			"ひまり",
 			"春春眠眠",
-			"青子守歌",
-			"Jaw Salvager"
+			"青子守歌"
 		]
 	},
 	"skinname-vector": "レガシー ベクター (2010年版)",
@@ -62,9 +63,7 @@
 	"vector-search-loader": "検索候補を読み込んでいます",
 	"vector-searchsuggest-containing": "<strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>を含むページを検索する",
 	"vector-intro-page": "Help:はじめに",
-	"vector-toc-heading": "目次",
-	"vector-toc-toggle-position-sidebar": "サイドバーに移動",
-	"vector-toc-toggle-position-title": "非表示",
+	"vector-toc-label": "目次",
 	"vector-toc-beginning": "ページ先頭",
 	"vector-toc-toggle-button-label": "$1サブセクションを切り替えます",
 	"vector-anon-user-menu-pages": "ログアウトした編集者のページ",
@@ -73,8 +72,17 @@
 	"vector-main-menu-tooltip": "メインメニュー",
 	"vector-toc-menu-tooltip": "目次",
 	"vector-toc-collapsible-button-label": "目次の表示・非表示を切り替え",
-	"vector-article-tools-nav-label": "ツール",
 	"vector-site-nav-label": "サイト",
+	"vector-main-menu-label": "メインメニュー",
+	"vector-limited-width-toggle": "本文の横幅制限を有効化／無効化",
+	"vector-page-tools-label": "ツール",
+	"vector-page-tools-general-label": "全般",
+	"vector-page-tools-actions-label": "操作",
+	"vector-pin-element-label": "サイドバーに移動",
+	"vector-unpin-element-label": "非表示",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|議論]]",
-	"tooltip-vector-anon-user-menu-title": "その他の操作"
+	"tooltip-vector-anon-user-menu-title": "その他の操作",
+	"vector-prefs-limited-width": "横幅制限モードを有効にする",
+	"vector-prefs-limited-width-help": "横幅制限モードを有効にすることで文章の可読性が向上します。",
+	"empty-language-selector-body": "ページのコンテンツが他言語でサポートされていません。"
 }

@@ -393,7 +393,7 @@
 						// eslint-disable-next-line no-jquery/variable-pattern
 						var mode = session2.getMode().$id;
 						if ( mode === 'ace/mode/javascript' ) {
-							session2.$worker.send( 'setOptions', [ {
+							session2.$worker.send( 'changeOptions', [ {
 								maxerr: 1000
 							} ] );
 						}

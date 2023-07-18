@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"ChrisPtDe"
+		]
+	},
+	"discussiontools-replylink": "rèpondre",
+	"discussiontools-replywidget-cancel": "Anular",
+	"discussiontools-replywidget-mode-source": "Sôrsa",
+	"discussiontools-replywidget-mode-visual": "Visuâl",
+	"discussiontools-replywidget-placeholder-reply": "Rèpondre a {{BIDI:$1}}",
+	"discussiontools-replywidget-reply": "Rèpondre"
+}

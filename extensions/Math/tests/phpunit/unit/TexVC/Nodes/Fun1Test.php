@@ -56,6 +56,12 @@ class Fun1Test extends MediaWikiUnitTestCase {
 			'Should not extract extended literals as identifiers.' );
 	}
 
+	public function testGetters() {
+		$f = new Fun1( '\\mathbf', new Literal( '\\infty' ) );
+		$this->assertNotEmpty( $f->getFname() );
+		$this->assertNotEmpty( $f->getArg() );
+	}
+
 	public function testExtractPhantomIdentifiers() {
 		$f = new Fun1( '\\hphantom', new Literal( 'A' ) );
 		$this->assertEquals( [], $f->extractIdentifiers(),

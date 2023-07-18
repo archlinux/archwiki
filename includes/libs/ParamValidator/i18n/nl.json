@@ -1,10 +1,10 @@
 {
 	"@metadata": {
 		"authors": [
+			"McDutchie",
 			"PonkoSasuke",
 			"Robin van der Vliet",
-			"Romaine",
-			"McDutchie"
+			"Romaine"
 		]
 	},
 	"paramvalidator-badexpiry": "Ongeldige waarde \"$2\" voor vervaldatumparameter \"$1\".",

@@ -160,6 +160,20 @@ ve.dm.Transaction.static.compareElementsForTranslate = function ( a, b ) {
 	return true;
 };
 
+/**
+ * Check if an operation only changes annotations
+ *
+ * @param {Object} op Operation object
+ * @return {boolean} Operation is annotation-only
+ */
+ve.dm.Transaction.static.isAnnotationOnlyOperation = function ( op ) {
+	return op.type === 'replace' &&
+		op.insert.length === op.remove.length &&
+		op.insert.every( function ( insert, j ) {
+			return ve.dm.Transaction.static.compareElementsForTranslate( insert, op.remove[ j ] );
+		} );
+};
+
 /* Methods */
 
 /**
@@ -398,17 +412,9 @@ ve.dm.Transaction.prototype.translateOffset = function ( offset, excludeInsertio
 
 	for ( var i = 0; i < this.operations.length; i++ ) {
 		var op = this.operations[ i ];
-		if ( op.type === 'retain' || (
-			// If a 'replace' only changes annotations, treat it like a 'retain'
-			// This imitates the behaviour of the old 'annotate' operation type.
-			op.type === 'replace' &&
-			op.insert.length === op.remove.length &&
-			// eslint-disable-next-line no-loop-func
-			op.insert.every( function ( insert, j ) {
-				return ve.dm.Transaction.static.compareElementsForTranslate( insert, op.remove[ j ] );
-			} )
-
-		) ) {
+		// If a 'replace' only changes annotations, treat it like a 'retain'
+		// This imitates the behaviour of the old 'annotate' operation type.
+		if ( op.type === 'retain' || ve.dm.Transaction.static.isAnnotationOnlyOperation( op ) ) {
 			var retainLength = op.type === 'retain' ? op.length : op.remove.length;
 			if ( offset >= cursor && offset < cursor + retainLength ) {
 				return offset + adjustment;
@@ -497,15 +503,25 @@ ve.dm.Transaction.prototype.translateRangeWithAuthor = function ( range, authorI
  * removal transaction it will be a zero-length range.
  *
  * @param {ve.dm.Document} doc The document in the state to which the transaction applies
- * @param {boolean} includeInternalList Include changes within the internal list
+ * @param {Object} [options] Options
+ * @param {boolean} [options.includeInternalList] Include changes within the internal list
+ * @param {boolean} [options.excludeAnnotations] Exclude annotation-only changes
+ * @param {boolean} [options.excludeAttributes] Exclude attribute changes
  * @return {ve.Range|null} Range covering modifications, or null for a no-op transaction
  */
-ve.dm.Transaction.prototype.getModifiedRange = function ( doc, includeInternalList ) {
+ve.dm.Transaction.prototype.getModifiedRange = function ( doc, options ) {
 	var docEndOffset = doc.data.getLength(),
 		oldOffset = 0,
 		offset = 0;
 
-	if ( !includeInternalList ) {
+	if ( typeof options === 'boolean' ) {
+		// Backwards compatibility
+		options = { includeInternalList: options };
+	} else {
+		options = options || {};
+	}
+
+	if ( !options.includeInternalList ) {
 		var internalListNode = doc.getInternalList().getListNode();
 		if ( internalListNode ) {
 			docEndOffset = internalListNode.getOuterRange().start;
@@ -526,6 +542,9 @@ ve.dm.Transaction.prototype.getModifiedRange = function ( doc, includeInternalLi
 				break;
 
 			case 'attribute':
+				if ( options.excludeAttributes ) {
+					break;
+				}
 				if ( start === undefined ) {
 					start = offset;
 				}
@@ -534,6 +553,15 @@ ve.dm.Transaction.prototype.getModifiedRange = function ( doc, includeInternalLi
 				break;
 
 			default:
+				if ( options.excludeAnnotations && this.constructor.static.isAnnotationOnlyOperation( op ) ) {
+					// Treat as 'retain'
+					if ( oldOffset + op.length > docEndOffset ) {
+						break opLoop;
+					}
+					offset += op.length;
+					oldOffset += op.length;
+					break;
+				}
 				if ( start === undefined ) {
 					// This is the first non-retain operation, set start to right before it
 					start = offset + ( op.insertedDataOffset || 0 );

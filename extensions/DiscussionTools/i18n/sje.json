@@ -1,0 +1,20 @@
+{
+	"@metadata": {
+		"authors": [
+			"Olve Utne"
+		]
+	},
+	"discussiontools-autotopicsubpopup-dismiss": "Buorre, mån skeniv.",
+	"discussiontools-emptystate-button": "Tjállegåde ságastallamav",
+	"discussiontools-emptystate-title": "Álge ságastallamav {{SUBJECTPAGENAME}} birra",
+	"discussiontools-emptystate-title-self": "Burist båhtem duv ságastallambielláj",
+	"discussiontools-replylink": "svärru",
+	"discussiontools-replywidget-cancel": "Buŧŧki",
+	"discussiontools-replywidget-mode-source": "Gálldo",
+	"discussiontools-replywidget-mode-visual": "Visuálalatj",
+	"discussiontools-replywidget-newtopic": "Lasedä ábdnasav",
+	"discussiontools-replywidget-placeholder-newtopic": "Gåvådibme",
+	"discussiontools-replywidget-placeholder-reply": "Svärru {{BIDI:$1}} lusa.",
+	"discussiontools-replywidget-reply": "Svärru",
+	"tag-discussiontools-edit": "Rävvdadam målgedibme"
+}

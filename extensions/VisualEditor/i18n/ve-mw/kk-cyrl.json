@@ -2,10 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Arystanbek",
+			"Darzz",
 			"TMg",
 			"Нұрлан Рахымжанов",
-			"СеніңШешең",
-			"Darzz"
+			"СеніңШешең"
 		]
 	},
 	"tooltip-ca-createsource": "Бұл беттің қайнар мәтінін бастау",
@@ -113,7 +113,6 @@
 	"visualeditor-dialog-transclusion-loading": "Жүктеуде…",
 	"visualeditor-dialog-transclusion-no-template-description": "Бұл бетке \"$1\" үлгісін {{GENDER:$2|қоспақшысыз}}. Онда сипаттамасы жоқ, бірақ [[$2|үлгі бетінде]] кейбір ақпараттар бар болу мүмкін.",
 	"visualeditor-dialog-transclusion-param-default": "Әдепкі: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Үлгі қосу",
 	"visualeditor-dialog-transclusion-required-parameter": "Жолақты қажет етеді",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Жолақты қажет етеді",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Артқа қайту",

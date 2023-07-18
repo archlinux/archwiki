@@ -165,11 +165,9 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expect, $_SESSION );
 
 		// Make sure session_reset() works too.
-		if ( function_exists( 'session_reset' ) ) {
-			$_SESSION['AuthenticationSessionTest'] = 'bogus';
-			session_reset();
-			$this->assertSame( $expect, $_SESSION );
-		}
+		$_SESSION['AuthenticationSessionTest'] = 'bogus';
+		session_reset();
+		$this->assertSame( $expect, $_SESSION );
 
 		// Re-fill the session, then test that session_destroy() works.
 		$_SESSION['AuthenticationSessionTest'] = $rand;
@@ -286,18 +284,17 @@ class PHPSessionHandlerTest extends MediaWikiIntegrationTestCase {
 		unset( $session );
 		session_id( $id );
 		session_start();
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [
-			'SessionCheckInfo' => [ static function ( &$reason ) {
+		$this->setTemporaryHook(
+			'SessionCheckInfo',
+			static function ( &$reason ) {
 				$reason = 'Testing';
 				return false;
-			} ],
-		] );
+			}
+		);
 		$this->assertNull( $manager->getSessionById( $id, true ) );
 		session_write_close();
 
-		$this->mergeMwGlobalArrayValue( 'wgHooks', [
-			'SessionCheckInfo' => [],
-		] );
+		$this->clearHook( 'SessionCheckInfo' );
 		$this->assertNotNull( $manager->getSessionById( $id, true ) );
 	}
 

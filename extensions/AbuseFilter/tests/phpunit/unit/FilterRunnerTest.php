@@ -21,6 +21,7 @@ use MediaWikiUnitTestCase;
 use Psr\Log\NullLogger;
 use Title;
 use User;
+use WebRequest;
 
 /**
  * @group Test
@@ -57,6 +58,10 @@ class FilterRunnerTest extends MediaWikiUnitTestCase {
 			$cache = $this->createMock( EditStashCache::class );
 			$cache->method( 'seek' )->willReturn( false );
 		}
+		$request = $this->createMock( WebRequest::class );
+		$request->method( 'getIP' )->willReturn( '127.0.0.1' );
+		$user = $this->createMock( User::class );
+		$user->method( 'getRequest' )->willReturn( $request );
 		return new FilterRunner(
 			new AbuseFilterHookRunner( $this->createHookContainer() ),
 			$this->createMock( FilterProfiler::class ),
@@ -72,7 +77,7 @@ class FilterRunnerTest extends MediaWikiUnitTestCase {
 			$cache,
 			new NullLogger(),
 			$opts,
-			$this->createMock( User::class ),
+			$user,
 			$this->createMock( Title::class ),
 			$vars ?? VariableHolder::newFromArray( [ 'action' => 'edit' ] ),
 			$group

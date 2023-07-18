@@ -70,7 +70,6 @@
 	"math_unknown_function": "អនុគមន៍​មិន​ស្គាល់ \"$1\"",
 	"mw_math_latexml": "LaTeXML (ស្ថិតក្រោមការពិសោធន៍នៅឡើយ។ ប្រើ MathML)",
 	"mw_math_mathml": "MathML ដែលមាន  SVG ឬ PNG សម្រាប់ជំនួស (ល្អសម្រាប់ឧបករណ៍រាយរកទំនើបនិង)",
-	"mw_math_png": "រូបភាពPNG",
 	"mw_math_source": "កូដ LaTeX (ចំពោះឧបករណ៍រាវរកអត្ថបទ)",
 	"prefs-math": "គណិត",
 	"mathstatus": "ស្ថានភាពគណិត",

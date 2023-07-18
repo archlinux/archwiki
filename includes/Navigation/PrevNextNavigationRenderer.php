@@ -20,8 +20,8 @@
 
 namespace MediaWiki\Navigation;
 
+use MediaWiki\Title\Title;
 use MessageLocalizer;
-use Title;
 
 /**
  * Helper class for generating prev/next links for paging.
@@ -40,6 +40,7 @@ class PrevNextNavigationRenderer {
 	 * @param MessageLocalizer $messageLocalizer
 	 */
 	public function __construct( MessageLocalizer $messageLocalizer ) {
+		wfDeprecated( __CLASS__, '1.39' );
 		$this->messageLocalizer = $messageLocalizer;
 	}
 

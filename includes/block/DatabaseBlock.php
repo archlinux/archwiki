@@ -22,22 +22,20 @@
 
 namespace MediaWiki\Block;
 
-use CommentStore;
 use Hooks;
-use Html;
 use InvalidArgumentException;
 use MediaWiki\Block\Restriction\ActionRestriction;
 use MediaWiki\Block\Restriction\NamespaceRestriction;
 use MediaWiki\Block\Restriction\PageRestriction;
 use MediaWiki\Block\Restriction\Restriction;
-use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\Html\Html;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MWException;
 use stdClass;
-use Title;
 use Wikimedia\IPUtils;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
@@ -54,8 +52,8 @@ class DatabaseBlock extends AbstractBlock {
 	/** @var bool */
 	private $mAuto;
 
-	/** @var int */
-	private $mParentBlockId;
+	/** @var int|null */
+	private $mParentBlockId = null;
 
 	/** @var int */
 	private $mId;
@@ -164,7 +162,8 @@ class DatabaseBlock extends AbstractBlock {
 	 * @phan-return array{tables:string[],fields:string[],joins:array}
 	 */
 	public static function getQueryInfo() {
-		$commentQuery = CommentStore::getStore()->getJoin( 'ipb_reason' );
+		$commentStore = MediaWikiServices::getInstance()->getCommentStore();
+		$commentQuery = $commentStore->getJoin( 'ipb_reason' );
 		return [
 			'tables' => [
 				'ipblocks',
@@ -252,7 +251,7 @@ class DatabaseBlock extends AbstractBlock {
 		# Be aware that the != '' check is explicit, since empty values will be
 		# passed by some callers (T31116)
 		if ( $vagueTarget != '' ) {
-			list( $target, $type ) = MediaWikiServices::getInstance()
+			[ $target, $type ] = MediaWikiServices::getInstance()
 				->getBlockUtils()
 				->parseBlockTarget( $vagueTarget );
 			switch ( $type ) {
@@ -270,7 +269,7 @@ class DatabaseBlock extends AbstractBlock {
 					break;
 
 				case self::TYPE_RANGE:
-					list( $start, $end ) = IPUtils::parseRange( $target );
+					[ $start, $end ] = IPUtils::parseRange( $target );
 					$conds['ipb_address'][] = (string)$target;
 					$conds[] = self::getRangeCond( $start, $end );
 					$conds = $db->makeList( $conds, LIST_OR );
@@ -353,7 +352,7 @@ class DatabaseBlock extends AbstractBlock {
 				# or take some floating point errors
 				$target = $block->getTargetName();
 				$max = IPUtils::isIPv6( $target ) ? 128 : 32;
-				list( $network, $bits ) = IPUtils::parseCIDR( $target );
+				[ , $bits ] = IPUtils::parseCIDR( $target );
 				$size = $max - $bits;
 
 				# Rank a range block covering a single IP equally with a single-IP block
@@ -379,9 +378,6 @@ class DatabaseBlock extends AbstractBlock {
 	 * @return string
 	 */
 	public static function getRangeCond( $start, $end = null ) {
-		if ( $end === null ) {
-			$end = $start;
-		}
 		# Per T16634, we want to include relevant active rangeblocks; for
 		# rangeblocks, we want to include larger ranges which enclose the given
 		# range. We know that all blocks must be smaller than $wgBlockCIDRLimit,
@@ -393,7 +389,7 @@ class DatabaseBlock extends AbstractBlock {
 		# Fairly hard to make a malicious SQL statement out of hex characters,
 		# but stranger things have happened...
 		$safeStart = $dbr->addQuotes( $start );
-		$safeEnd = $dbr->addQuotes( $end );
+		$safeEnd = $dbr->addQuotes( $end ?? $start );
 
 		return $dbr->makeList(
 			[
@@ -413,7 +409,7 @@ class DatabaseBlock extends AbstractBlock {
 	 */
 	protected static function getIpFragment( $hex ) {
 		$blockCIDRLimit = MediaWikiServices::getInstance()->getMainConfig()->get( MainConfigNames::BlockCIDRLimit );
-		if ( substr( $hex, 0, 3 ) == 'v6-' ) {
+		if ( str_starts_with( $hex, 'v6-' ) ) {
 			return 'v6-' . substr( substr( $hex, 3 ), 0, (int)floor( $blockCIDRLimit['IPv6'] / 4 ) );
 		} else {
 			return substr( $hex, 0, (int)floor( $blockCIDRLimit['IPv4'] / 4 ) );
@@ -432,17 +428,19 @@ class DatabaseBlock extends AbstractBlock {
 		$this->mAuto = (bool)$row->ipb_auto;
 		$this->setHideName( (bool)$row->ipb_deleted );
 		$this->mId = (int)$row->ipb_id;
-		$this->mParentBlockId = (int)$row->ipb_parent_block_id;
+		// Blocks with no parent id should have ipb_parent_block_id as null,
+		// don't save that as 0 though, see T282890
+		$this->mParentBlockId = $row->ipb_parent_block_id ? (int)$row->ipb_parent_block_id : null;
 
-		$this->setBlocker( MediaWikiServices::getInstance()
-			->getActorNormalization()
+		$services = MediaWikiServices::getInstance();
+		$this->setBlocker( $services->getActorNormalization()
 			->newActorFromRowFields( $row->ipb_by, $row->ipb_by_text, $row->ipb_by_actor ) );
 
 		// I wish I didn't have to do this
 		$db = $this->getDBConnection( DB_REPLICA );
 		$this->setExpiry( $db->decodeExpiry( $row->ipb_expiry ) );
 		$this->setReason(
-			CommentStore::getStore()
+			$services->getCommentStore()
 			// Legacy because $row may have come from self::selectFields()
 			->getCommentLegacy( $db, 'ipb_reason', $row )
 		);
@@ -476,7 +474,8 @@ class DatabaseBlock extends AbstractBlock {
 	 */
 	public function delete() {
 		return MediaWikiServices::getInstance()
-			->getDatabaseBlockStore()
+			->getDatabaseBlockStoreFactory()
+			->getDatabaseBlockStore( $this->getWikiId() )
 			->deleteBlock( $this );
 	}
 
@@ -491,7 +490,8 @@ class DatabaseBlock extends AbstractBlock {
 	 */
 	public function insert( IDatabase $dbw = null ) {
 		return MediaWikiServices::getInstance()
-			->getDatabaseBlockStore()
+			->getDatabaseBlockStoreFactory()
+			->getDatabaseBlockStore( $this->getWikiId() )
 			->insertBlock( $this, $dbw );
 	}
 
@@ -505,7 +505,8 @@ class DatabaseBlock extends AbstractBlock {
 	 */
 	public function update() {
 		return MediaWikiServices::getInstance()
-			->getDatabaseBlockStore()
+			->getDatabaseBlockStoreFactory()
+			->getDatabaseBlockStore( $this->getWikiId() )
 			->updateBlock( $this );
 	}
 
@@ -538,7 +539,7 @@ class DatabaseBlock extends AbstractBlock {
 
 		foreach ( $lines as $line ) {
 			# List items only
-			if ( substr( $line, 0, 1 ) !== '*' ) {
+			if ( !str_starts_with( $line, '*' ) ) {
 				continue;
 			}
 
@@ -636,10 +637,10 @@ class DatabaseBlock extends AbstractBlock {
 		}
 
 		# Insert the block...
-		$status = MediaWikiServices::getInstance()->getDatabaseBlockStore()->insertBlock(
-			$autoblock,
-			$this->getDBConnection( DB_PRIMARY )
-		);
+		$status = MediaWikiServices::getInstance()
+			->getDatabaseBlockStoreFactory()
+			->getDatabaseBlockStore( $this->getWikiId() )
+			->insertBlock( $autoblock );
 		return $status
 			? $status['id']
 			: false;
@@ -690,7 +691,7 @@ class DatabaseBlock extends AbstractBlock {
 			case self::TYPE_IP:
 				return IPUtils::toHex( $this->target );
 			case self::TYPE_RANGE:
-				list( $start, /*...*/ ) = IPUtils::parseRange( $this->target );
+				[ $start, /*...*/ ] = IPUtils::parseRange( $this->target );
 				return $start;
 			default:
 				throw new MWException( "Block with invalid type" );
@@ -709,7 +710,7 @@ class DatabaseBlock extends AbstractBlock {
 			case self::TYPE_IP:
 				return IPUtils::toHex( $this->target );
 			case self::TYPE_RANGE:
-				list( /*...*/, $end ) = IPUtils::parseRange( $this->target );
+				[ /*...*/, $end ] = IPUtils::parseRange( $this->target );
 				return $end;
 			default:
 				throw new MWException( "Block with invalid type" );
@@ -731,8 +732,7 @@ class DatabaseBlock extends AbstractBlock {
 	 * @inheritDoc
 	 */
 	public function getId( $wikiId = self::LOCAL ): ?int {
-		// TODO: Enable deprecation warnings once cross-wiki accesses have been removed, see T274817
-		// $this->deprecateInvalidCrossWiki( $wikiId, '1.38' );
+		$this->deprecateInvalidCrossWiki( $wikiId, '1.38' );
 		return $this->mId;
 	}
 
@@ -760,7 +760,10 @@ class DatabaseBlock extends AbstractBlock {
 	 * @return int|null If this is an autoblock, ID of the parent block; otherwise null
 	 */
 	public function getParentBlockId() {
-		return $this->mParentBlockId;
+		// Sanity: this shouldn't have been 0, because when it was set in
+		// initFromRow() we converted 0 to null, in case the object was serialized
+		// and then unserialized, force 0 back to null, see T282890
+		return $this->mParentBlockId ?: null;
 	}
 
 	/**
@@ -869,7 +872,7 @@ class DatabaseBlock extends AbstractBlock {
 		$vagueTarget = null,
 		$fromPrimary = false
 	) {
-		list( $target, $type ) = MediaWikiServices::getInstance()
+		[ $target, $type ] = MediaWikiServices::getInstance()
 			->getBlockUtils()
 			->parseBlockTarget( $specificTarget );
 		if ( $type == self::TYPE_ID || $type == self::TYPE_AUTO ) {
@@ -1171,15 +1174,6 @@ class DatabaseBlock extends AbstractBlock {
 		if ( !$user->isRegistered() &&
 			MediaWikiServices::getInstance()->getUserNameUtils()->isUsable( $user->getName() )
 		) {
-			// Temporarily log some block details to debug T192964
-			$logger = LoggerFactory::getInstance( 'BlockManager' );
-			$logger->warning(
-				'Blocker is neither a local user nor an invalid username',
-				[
-					'blocker' => (string)$user,
-					'blockId' => $this->getId( $this->getWikiId() ),
-				]
-			);
 			throw new InvalidArgumentException(
 				'Blocker must be a local user or a name that cannot be a local user'
 			);

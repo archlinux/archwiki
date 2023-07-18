@@ -60,6 +60,10 @@ class TOTPDisableForm extends OATHAuthOOUIHTMLForm implements IManageForm {
 						'clientip' => $this->getRequest()->getIP(),
 					]
 				);
+
+				// Increase rate limit counter for failed request
+				$this->getUser()->pingLimiter( 'badoath' );
+
 				return [ 'oathauth-failedtovalidateoath' ];
 			}
 		}

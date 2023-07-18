@@ -4,12 +4,15 @@ declare( strict_types = 1 );
 
 namespace MediaWiki\Extension\Math\TexVC\Nodes;
 
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmrow;
+use MediaWiki\Extension\Math\TexVC\MMLnodes\MMLmtext;
+
 class ChemWord extends TexNode {
 
 	/** @var TexNode */
-	private $left;
+	public $left;
 	/** @var TexNode */
-	private $right;
+	public $right;
 
 	public function __construct( TexNode $left, TexNode $right ) {
 		parent::__construct( $left, $right );
@@ -17,19 +20,38 @@ class ChemWord extends TexNode {
 		$this->right = $right;
 	}
 
-	public function inCurlies() {
-		return $this->render();
+	/**
+	 * @return TexNode
+	 */
+	public function getLeft(): TexNode {
+		return $this->left;
+	}
+
+	/**
+	 * @return TexNode
+	 */
+	public function getRight(): TexNode {
+		return $this->right;
 	}
 
 	public function render() {
 		return $this->left->render() . $this->right->render();
 	}
 
+	public function renderMML( $arguments = [], $state = [] ) {
+		$mmlMrow = new MMLmrow();
+		$mtextLeft = new MMLmtext( "", [ "mathcolor" => "red" ] );
+		$mtextRight = new MMLmtext();
+		// If right has empty literal content is resolved as dash
+		$right = $this->getRight()->getArgs()[0] == "" ? "-" : $this->getRight()->renderMML( [],
+			$state );
+		return $mmlMrow->encapsulateRaw( $mmlMrow->encapsulateRaw(
+			$mtextLeft->encapsulateRaw( $this->getLeft()->renderMML( [], $state ) )
+			. $mtextRight->encapsulateRaw( $right ) ) );
+	}
+
 	public function extractIdentifiers( $args = null ) {
 		return [];
 	}
 
-	public function name() {
-		return 'CHEM_WORD';
-	}
 }

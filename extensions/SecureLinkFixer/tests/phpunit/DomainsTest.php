@@ -43,7 +43,7 @@ class DomainsTest extends MediaWikiIntegrationTestCase {
 		// Some arbitrary number as a sanity check
 		$this->assertGreaterThan( 50000, count( $domains ) );
 		foreach ( $domains as $domain => $subdomain ) {
-			$this->assertRegExp( '/^[A-z0-9\-\.]*$/', $domain );
+			$this->assertMatchesRegularExpression( '/^[A-z0-9\-\.]*$/', $domain );
 			$this->assertTrue( $subdomain === 0 || $subdomain === 1 );
 		}
 	}

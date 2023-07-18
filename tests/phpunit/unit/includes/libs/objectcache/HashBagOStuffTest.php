@@ -1,16 +1,17 @@
 <?php
 
+use Liuggio\StatsdClient\Factory\StatsdDataFactoryInterface;
 use Wikimedia\TestingAccessWrapper;
 
 /**
+ * @covers HashBagOStuff
+ * @covers MediumSpecificBagOStuff
+ * @covers BagOStuff
  * @group BagOStuff
  */
 class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 	use MediaWikiCoversValidator;
 
-	/**
-	 * @covers HashBagOStuff::__construct
-	 */
 	public function testConstruct() {
 		$this->assertInstanceOf(
 			HashBagOStuff::class,
@@ -18,9 +19,6 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 		);
 	}
 
-	/**
-	 * @covers HashBagOStuff::__construct
-	 */
 	public function testQoS() {
 		$bag = new HashBagOStuff();
 
@@ -30,33 +28,21 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 		);
 	}
 
-	/**
-	 * @covers HashBagOStuff::__construct
-	 */
 	public function testConstructBadZero() {
 		$this->expectException( InvalidArgumentException::class );
 		$cache = new HashBagOStuff( [ 'maxKeys' => 0 ] );
 	}
 
-	/**
-	 * @covers HashBagOStuff::__construct
-	 */
 	public function testConstructBadNeg() {
 		$this->expectException( InvalidArgumentException::class );
 		$cache = new HashBagOStuff( [ 'maxKeys' => -1 ] );
 	}
 
-	/**
-	 * @covers HashBagOStuff::__construct
-	 */
 	public function testConstructBadType() {
 		$this->expectException( InvalidArgumentException::class );
 		$cache = new HashBagOStuff( [ 'maxKeys' => 'x' ] );
 	}
 
-	/**
-	 * @covers HashBagOStuff::delete
-	 */
 	public function testDelete() {
 		$cache = new HashBagOStuff();
 		for ( $i = 0; $i < 10; $i++ ) {
@@ -67,9 +53,6 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 		}
 	}
 
-	/**
-	 * @covers HashBagOStuff::clear
-	 */
 	public function testClear() {
 		$cache = new HashBagOStuff();
 		for ( $i = 0; $i < 10; $i++ ) {
@@ -82,10 +65,6 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 		}
 	}
 
-	/**
-	 * @covers HashBagOStuff::doGet
-	 * @covers HashBagOStuff::expire
-	 */
 	public function testExpire() {
 		$cache = new HashBagOStuff();
 		$cacheInternal = TestingAccessWrapper::newFromObject( $cache );
@@ -114,8 +93,6 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Ensure maxKeys eviction prefers keeping new keys.
-	 *
-	 * @covers HashBagOStuff::set
 	 */
 	public function testEvictionAdd() {
 		$cache = new HashBagOStuff( [ 'maxKeys' => 10 ] );
@@ -133,8 +110,6 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 	/**
 	 * Ensure maxKeys eviction prefers recently set keys
 	 * even if the keys pre-exist.
-	 *
-	 * @covers HashBagOStuff::set
 	 */
 	public function testEvictionSet() {
 		$cache = new HashBagOStuff( [ 'maxKeys' => 3 ] );
@@ -158,9 +133,6 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 
 	/**
 	 * Ensure maxKeys eviction prefers recently retrieved keys (LRU).
-	 *
-	 * @covers HashBagOStuff::doGet
-	 * @covers HashBagOStuff::hasKey
 	 */
 	public function testEvictionGet() {
 		$cache = new HashBagOStuff( [ 'maxKeys' => 3 ] );
@@ -180,5 +152,47 @@ class HashBagOStuffTest extends PHPUnit\Framework\TestCase {
 			$this->assertSame( 1, $cache->get( $key ), "Kept $key" );
 		}
 		$this->assertFalse( $cache->get( 'bar' ), 'Evicted bar' );
+	}
+
+	/**
+	 * Ensure updateOpStats doesn't get confused.
+	 */
+	public function testUpdateOpStats() {
+		$counts = [];
+
+		$stats = $this->createMock( StatsdDataFactoryInterface::class );
+		$stats->method( 'updateCount' )->willReturnCallback(
+			static function ( $name, $delta ) use ( &$counts ) {
+				$counts[$name] = ( $counts[$name] ?? 0 ) + $delta;
+			}
+		);
+
+		$cache = new HashBagOStuff( [
+			'stats' => $stats
+		] );
+		$cache = TestingAccessWrapper::newFromObject( $cache );
+
+		$cache->updateOpStats(
+			'frob',
+			[
+				// The value is the key
+				$cache->makeKey( 'Foo', '123456' ),
+
+				// The value is a tuble of ( bytes sent, bytes received )
+				$cache->makeGlobalKey( 'Bar', '123456' ) => [ 5, 3 ],
+
+				// The key is not a proper key
+				'1337BABE-123456' => [ 5, 3 ],
+			]
+		);
+
+		$this->assertSame( 1, $counts['objectcache.Foo.frob_call_rate'] );
+		$this->assertSame( 1, $counts['objectcache.Bar.frob_call_rate'] );
+		$this->assertSame( 1, $counts['objectcache.UNKNOWN.frob_call_rate'] );
+
+		$this->assertSame( 3, $counts['objectcache.Bar.frob_bytes_read'] );
+		$this->assertSame( 5, $counts['objectcache.Bar.frob_bytes_sent'] );
+		$this->assertSame( 3, $counts['objectcache.UNKNOWN.frob_bytes_read'] );
+		$this->assertSame( 5, $counts['objectcache.UNKNOWN.frob_bytes_sent'] );
 	}
 }

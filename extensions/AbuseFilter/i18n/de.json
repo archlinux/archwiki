@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"*Surak*",
 			"Brettchenweber",
 			"Cedric31",
 			"ChrisiPK",
@@ -34,8 +35,7 @@
 			"WikiBayer",
 			"Wikifan",
 			"Wnme",
-			"Xqt",
-			"*Surak*"
+			"Xqt"
 		]
 	},
 	"abusefilter-desc": "Wendet Heuristiken automatisch auf Bearbeitungen an",

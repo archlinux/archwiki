@@ -1,0 +1,31 @@
+{
+	"@metadata": {
+		"authors": [
+			"Saimawnkham"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "တွပ်ႇၶိုၼ်း",
+	"discussiontools-preference-topicsubscription-help": "ဢၼ်ၼႆႉ မၼ်းတေႁဵတ်းႁႂ်ႈ ၸဝ်ႈၵဝ်ႇ တိတ်းတၢမ်း တႃႇႁပ်ႉလႆႈ ၵၢၼ်ၸႅင်ႈတိုၼ်ႇ ၵဵဝ်ႇၵပ်း ၵႂၢမ်းႁၼ်ထိုင် တီႈ ႁူဝ်ၶေႃႈ ဢၼ်လႂ်ဢၼ်ၼၼ်ႉ။",
+	"discussiontools-replylink": "တွပ်ႇၶိုၼ်း",
+	"discussiontools-replywidget-advanced": "ၸၼ်ႉသုင်",
+	"discussiontools-replywidget-cancel": "ဢမ်ႇႁဵတ်း",
+	"discussiontools-replywidget-mode-source": "ငိူၼ်ႈငဝ်ႈတိုၼ်း",
+	"discussiontools-replywidget-mode-visual": "တႃႁၼ်",
+	"discussiontools-replywidget-placeholder-reply": "တွပ်ႇၶိုၼ်း ၸူး {{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "တူၺ်းတူဝ်ယၢင်ႇ",
+	"discussiontools-replywidget-reply": "တွပ်ႇၶိုၼ်း",
+	"discussiontools-replywidget-summary": "ႁူဝ်ႁုပ်ႈ",
+	"discussiontools-replywidget-watchthis": "ဢဝ်ၼႃႈလိၵ်ႈဢၼ်ၼႆႉ သႂ်ႇၸူႈ [[ၶိုၵ်ႉတွၼ်း:သဵၼ်ႈမၢႆပႂ်ႉတူၺ်း|သဵၼ်ႈမၢႆပႂ်ႉတူၺ်း]] ၸဝ်ႈၵဝ်ႇ",
+	"discussiontools-topicheader-authorcount": "တီႈ လွင်ႈဢုပ်ႇဢူဝ်း မီး ၵူၼ်း $1 {{PLURAL:$1|ၵေႃႉ}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|ၶွမ်းမႅၼ်ႉ}}",
+	"discussiontools-topicheader-latestcomment": "ၶွမ်းမႅၼ်ႉ လႃႈသုတ်း: $1",
+	"discussiontools-topicsubscription-button-subscribe": "တိတ်းတၢမ်း",
+	"discussiontools-topicsubscription-button-subscribe-label": "တိတ်းတၢမ်း",
+	"discussiontools-topicsubscription-button-subscribe-tooltip": "တိတ်းတၢမ်း တွၼ်ႈတႃႇ ႁပ်ႉလႆႈ ၵၢၼ်ၸႅင်ႈတိုၼ်ႇ ၵဵဝ်ႇၵပ်း ၵႂၢမ်းႁၼ်ထိုင် ဢၼ်မႂ်ႇ။",
+	"discussiontools-topicsubscription-button-unsubscribe": "ဢမ်ႇတိတ်းတၢမ်း",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "ဢမ်ႇတိတ်းတၢမ်း",
+	"discussiontools-topicsubscription-notify-subscribed-body": "ၸဝ်ႈၵဝ်ႇ တေႁပ်ႉႁၼ်လႆႈ ၶေႃႈပၼ်ၽၢင်ႉ ဢၼ်ၵဵဝ်ႇၵပ်း ၶွမ်းမႅၼ်ႉမႂ်ႇ တီႈၼႂ်း ႁူဝ်ၶေႃႈ ဢၼ်ၼႆႉ။",
+	"discussiontools-topicsubscription-notify-subscribed-title": "ၸဝ်ႈၵဝ်ႇ တိတ်းတၢမ်းဝႆႉယဝ်ႉ!",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "ၸဝ်ႈၵဝ်ႇ တေဢမ်ႇသိုပ်ႇႁပ်ႉႁၼ်လႆႈ ၶေႃႈပၼ်ၽၢင်ႉ ဢၼ်ၵဵဝ်ႇၵပ်း ၶွမ်းမႅၼ်ႉမႂ်ႇ တီႈၼႂ်း ႁူဝ်ၶေႃႈ ဢၼ်ၼႆႉ။",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "ၸဝ်ႈၵဝ်ႇ ဢမ်ႇလႆႈ တိတ်းတၢမ်းဝႆႉယဝ်ႉ။"
+}

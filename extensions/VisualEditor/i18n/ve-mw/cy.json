@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Afalau",
 			"Cymrodor",
 			"DChan (WMF)",
 			"Diafol",
@@ -9,8 +10,7 @@
 			"Lloffiwr",
 			"Robin Owain",
 			"TMg",
-			"ОйЛ",
-			"Afalau"
+			"ОйЛ"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -114,6 +114,7 @@
 	"visualeditor-dialog-transclusion-add-param-placeholder": "Enw'r paramedr",
 	"visualeditor-dialog-transclusion-add-param-save": "Ychwanegu",
 	"visualeditor-dialog-transclusion-add-template": "Ychwanegu nodyn",
+	"visualeditor-dialog-transclusion-add-template-button": "Ychwanegu nodyn",
 	"visualeditor-dialog-transclusion-add-template-save": "Ychwanegu",
 	"visualeditor-dialog-transclusion-collapse-options": "Cuddio'r dewisiadau",
 	"visualeditor-dialog-transclusion-confirmation-reject": "Parhau i olygu",
@@ -124,7 +125,6 @@
 	"visualeditor-dialog-transclusion-no-template-description": "Nid oes gan y \"$1\" templed disgrifiad, ond gallai fod rhywfaint o wybodaeth a roddir ar y [[$2|dudalen y templed]].",
 	"visualeditor-dialog-transclusion-param-default": "Rhagosodedig: $1",
 	"visualeditor-dialog-transclusion-param-example-long": "Enghraifft: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Ychwanegu templed",
 	"visualeditor-dialog-transclusion-required-parameter": "Maes gofynnol",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Nôl",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-ok": "Parhau sut bynnag",

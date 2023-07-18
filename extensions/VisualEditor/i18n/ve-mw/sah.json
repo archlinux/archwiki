@@ -138,7 +138,6 @@
 	"visualeditor-dialog-transclusion-loading": "Хачайдана турар...",
 	"visualeditor-dialog-transclusion-no-template-description": "«$1» сирэй ойуулааһына суох эбит, ол эрээри, баҕар, сибидиэнньэ [[$2|халыып бэйэтин сирэйигэр]] баара буолуо.",
 	"visualeditor-dialog-transclusion-param-default": "Анаан туруоруллубатах буоллаҕына: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Халыыбын эп",
 	"visualeditor-dialog-transclusion-required-parameter": "Толоруллуохтаах хонуу",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Хонууну толорор булгуччулаах.",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Төнүн",

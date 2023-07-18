@@ -130,7 +130,6 @@
 	"visualeditor-dialog-transclusion-loading": "Memuatkan...",
 	"visualeditor-dialog-transclusion-no-template-description": "Templat \"$1\" belum ada keterangan, tetapi mungkin ada maklumat di [[$2|halaman templat]] berkenaan.",
 	"visualeditor-dialog-transclusion-param-default": "Asali: $1",
-	"visualeditor-dialog-transclusion-placeholder": "Templat baru",
 	"visualeditor-dialog-transclusion-placeholder-input-placeholder": "Cari templat",
 	"visualeditor-dialog-transclusion-required-parameter": "Parameter diperlukan",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Parameter diperlukan.",

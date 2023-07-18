@@ -19,6 +19,8 @@
  */
 
 use MediaWiki\Cache\BacklinkCacheFactory;
+use MediaWiki\CommentStore\CommentStore;
+use MediaWiki\Html\Html;
 use MediaWiki\Linker\LinkRenderer;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -26,6 +28,7 @@ use MediaWiki\Page\DeletePage;
 use MediaWiki\Page\DeletePageFactory;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Revision\RevisionRecord;
+use MediaWiki\Title\TitleFactory;
 use MediaWiki\User\UserOptionsLookup;
 use MediaWiki\Watchlist\WatchlistManager;
 use Wikimedia\RequestTimeout\TimeoutException;
@@ -83,8 +86,8 @@ class DeleteAction extends FormlessAction {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct( Page $page, IContextSource $context = null ) {
-		parent::__construct( $page, $context );
+	public function __construct( Article $article, IContextSource $context ) {
+		parent::__construct( $article, $context );
 		$services = MediaWikiServices::getInstance();
 		$this->watchlistManager = $services->getWatchlistManager();
 		$this->linkRenderer = $services->getLinkRenderer();
@@ -292,7 +295,7 @@ class DeleteAction extends FormlessAction {
 	private function showBacklinksWarning(): void {
 		$backlinkCache = $this->backlinkCacheFactory->getBacklinkCache( $this->getTitle() );
 		if ( $backlinkCache->hasLinks( 'pagelinks' ) || $backlinkCache->hasLinks( 'templatelinks' ) ) {
-			$this->getOutput()->addHtml(
+			$this->getOutput()->addHTML(
 				Html::warningBox(
 					$this->msg( 'deleting-backlinks-warning' )->parse(),
 					'plainlinks'
@@ -305,7 +308,7 @@ class DeleteAction extends FormlessAction {
 		$title = $this->getTitle();
 		$subpageCount = count( $title->getSubpages( 51 ) );
 		if ( $subpageCount ) {
-			$this->getOutput()->addHtml(
+			$this->getOutput()->addHTML(
 				Html::warningBox(
 					$this->msg( 'deleting-subpages-warning' )->numParams( $subpageCount )->parse(),
 					'plainlinks'
@@ -317,7 +320,7 @@ class DeleteAction extends FormlessAction {
 			$talkPageTitle = $this->titleFactory->newFromLinkTarget( $this->namespaceInfo->getTalkPage( $title ) );
 			$subpageCount = count( $talkPageTitle->getSubpages( 51 ) );
 			if ( $subpageCount ) {
-				$this->getOutput()->addHtml(
+				$this->getOutput()->addHTML(
 					Html::warningBox(
 						$this->msg( 'deleting-talkpage-subpages-warning' )->numParams( $subpageCount )->parse(),
 						'plainlinks'
@@ -401,7 +404,7 @@ class DeleteAction extends FormlessAction {
 
 		$options = Xml::listDropDownOptions(
 			$dropDownReason,
-			[ 'other' => $this->getFormMsg( self::MSG_REASON_DROPDOWN_OTHER )->inContentLanguage()->text() ]
+			[ 'other' => $this->getFormMsg( self::MSG_REASON_DROPDOWN_OTHER )->text() ]
 		);
 		$options = Xml::listDropDownOptionsOoui( $options );
 
@@ -585,7 +588,7 @@ class DeleteAction extends FormlessAction {
 
 	protected function prepareOutputForForm(): void {
 		$outputPage = $this->getOutput();
-		$outputPage->addModules( 'mediawiki.action.delete' );
+		$outputPage->addModules( 'mediawiki.misc-authed-ooui' );
 		$outputPage->addModuleStyles( 'mediawiki.action.styles' );
 		$outputPage->enableOOUI();
 	}

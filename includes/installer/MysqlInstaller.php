@@ -21,8 +21,10 @@
  * @ingroup Installer
  */
 
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\Rdbms\Database;
+use Wikimedia\Rdbms\DatabaseFactory;
 use Wikimedia\Rdbms\DBConnectionError;
 use Wikimedia\Rdbms\DBQueryError;
 
@@ -145,7 +147,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		$status = Status::newGood();
 		try {
 			/** @var DatabaseMysqlBase $db */
-			$db = Database::factory( 'mysql', [
+			$db = ( new DatabaseFactory() )->create( 'mysql', [
 				'host' => $this->getVar( 'wgDBserver' ),
 				'user' => $this->getVar( '_InstallUser' ),
 				'password' => $this->getVar( '_InstallPassword' ),
@@ -173,8 +175,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		 * @var Database $conn
 		 */
 		$conn = $status->value;
-		$conn->selectDB( $this->getVar( 'wgDBname' ) );
-
+		$this->selectDatabase( $conn, $this->getVar( 'wgDBname' ) );
 		# Determine existing default character set
 		if ( $conn->tableExists( "revision", __METHOD__ ) ) {
 			$revision = $this->escapeLikeInternal( $this->getVar( 'wgDBprefix' ) . 'revision', '\\' );
@@ -451,7 +452,7 @@ class MysqlInstaller extends DatabaseInstaller {
 				__METHOD__
 			);
 		}
-		$conn->selectDB( $dbName );
+		$this->selectDatabase( $conn, $dbName );
 		$this->setupSchemaVars();
 
 		return $status;
@@ -486,7 +487,7 @@ class MysqlInstaller extends DatabaseInstaller {
 
 		$this->setupSchemaVars();
 		$dbName = $this->getVar( 'wgDBname' );
-		$this->db->selectDB( $dbName );
+		$this->selectDatabase( $this->db, $dbName );
 		$server = $this->getVar( 'wgDBserver' );
 		$password = $this->getVar( 'wgDBpassword' );
 		$grantableNames = [];
@@ -494,7 +495,7 @@ class MysqlInstaller extends DatabaseInstaller {
 		if ( $this->getVar( '_CreateDBAccount' ) ) {
 			// Before we blindly try to create a user that already has access,
 			try { // first attempt to connect to the database
-				Database::factory( 'mysql', [
+				( new DatabaseFactory() )->create( 'mysql', [
 					'host' => $server,
 					'user' => $dbUser,
 					'password' => $password,

@@ -21,6 +21,8 @@
  * @ingroup SpecialPage
  */
 
+use MediaWiki\Title\Title;
+
 /**
  * Landing page for non-local interwiki links.
  *
@@ -50,7 +52,7 @@ class SpecialGoToInterwiki extends UnlistedSpecialPage {
 	}
 
 	public function execute( $par ) {
-		$par = $par ?? '';
+		$par ??= '';
 
 		// Allow forcing an interstitial for local interwikis. This is used
 		// when a redirect page is reached via a special page which resolves
@@ -58,7 +60,7 @@ class SpecialGoToInterwiki extends UnlistedSpecialPage {
 		// RedirectSpecialPage::personallyIdentifiableTarget). See the hack
 		// for avoiding T109724 in MediaWiki::performRequest (which also
 		// explains why we can't use a query parameter instead).
-		$force = ( strpos( $par, 'force/' ) === 0 );
+		$force = str_starts_with( $par, 'force/' );
 		if ( $force ) {
 			$par = substr( $par, 6 );
 		}

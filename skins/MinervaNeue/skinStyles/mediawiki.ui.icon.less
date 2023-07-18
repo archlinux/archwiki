@@ -1,0 +1,37 @@
+@import '../minerva.less/minerva.variables.less';
+
+// Temporarily revert back from 44x44 (0.6875em) to 46x46 (0.75em)
+.mw-ui-icon-element.mw-ui-button {
+	padding: 0.75em; // 46x46
+}
+
+// Disable desktop touch area special handling.
+@media ( min-width: @width-breakpoint-desktop ) {
+	.mw-ui-icon-element.mw-ui-button {
+		padding: 0.75em;
+	}
+}
+
+// Revert back to old spacing between text and icon.
+.mw-ui-icon + span:not( :empty ) {
+	margin-left: 8px;
+}
+
+.mw-ui-icon-with-label-desktop:before {
+	margin-right: 8px;
+}
+
+// Revert back to old flush left rule.
+.mw-ui-icon-small.mw-ui-icon-flush-left {
+	margin-left: -0.5625em;
+}
+
+@media all and ( min-width: @width-breakpoint-desktop ) {
+	.mw-ui-icon-flush-left {
+		margin-left: -0.75em;
+	}
+
+	.mw-ui-icon-flush-right {
+		margin-right: -0.75em;
+	}
+}

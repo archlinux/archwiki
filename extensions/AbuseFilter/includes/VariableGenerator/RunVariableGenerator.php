@@ -284,7 +284,7 @@ class RunVariableGenerator extends VariableGenerator {
 
 		// We only have the upload comment and page text when using the UploadVerifyUpload hook
 		if ( $summary !== null && $text !== null ) {
-			// This block is adapted from self::getTextForFiltering()
+			// This block is adapted from self::getEditTextForFiltering()
 			$page = $this->wikiPageFactory->newFromTitle( $this->title );
 			if ( $this->title->exists() ) {
 				$revRec = $page->getRevisionRecord();

@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"apihelp-templatedata-example-1": "TemplateData teruggeven voor [[Template:Foobar]], met resultaten als het sjabloon of niet bestaat, of wel wel bestaat maar geen TemplateData heeft",
+	"apihelp-templatedata-example-2": "TemplateData teruggeven [[Template:Phabricator]], zonder resultaat als het slabloon of niet bestaat, of wel bestaat maar geen TemplateData heeft"
+}

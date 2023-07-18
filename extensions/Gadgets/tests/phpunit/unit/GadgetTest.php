@@ -158,6 +158,17 @@ class GadgetTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( [ 'jquery.ui' ], $g->getDependencies() );
 	}
 
+	/**
+	 * @covers \MediaWiki\Extension\Gadgets\MediaWikiGadgetsDefinitionRepo::newFromDefinition
+	 * @covers \MediaWiki\Extension\Gadgets\Gadget::requiresES6
+	 */
+	public function testES6() {
+		$es6gadget = GadgetTestUtils::makeGadget( '* foo[ResourceLoader|requiresES6]|bar.js' );
+		$es5gadget = GadgetTestUtils::makeGadget( '* foo[ResourceLoader]|bar.js' );
+		$this->assertTrue( $es6gadget->requiresES6() );
+		$this->assertFalse( $es5gadget->requiresES6() );
+	}
+
 	public static function provideGetType() {
 		return [
 			[

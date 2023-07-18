@@ -74,6 +74,7 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 	var mwData = mwDataJSON ? JSON.parse( mwDataJSON ) : {};
 	var errorIndex = typeofAttrs.indexOf( 'mw:Error' );
 	var isError = errorIndex !== -1;
+	var errorText = isError ? img.textContent : null;
 	var width = img.getAttribute( isError ? 'data-width' : 'width' );
 	var height = img.getAttribute( isError ? 'data-height' : 'height' );
 
@@ -83,7 +84,7 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 		// Otherwise Parsoid generates |link= options for copy-pasted images (T193253).
 		var targetData = mw.libs.ve.getTargetDataFromHref( href, converter.getTargetHtmlDocument() );
 		if ( targetData.isInternal ) {
-			href = './' + targetData.rawTitle;
+			href = mw.libs.ve.encodeParsoidResourceName( targetData.title );
 		}
 	}
 
@@ -106,7 +107,8 @@ ve.dm.MWBlockImageNode.static.toDataElement = function ( domElements, converter 
 		height: height !== null && height !== '' ? +height : null,
 		alt: img.getAttribute( 'alt' ),
 		mw: mwData,
-		isError: isError
+		isError: isError,
+		errorText: errorText
 	};
 
 	this.setClassAttributes( attributes, classAttr );
@@ -218,7 +220,7 @@ ve.dm.MWBlockImageNode.static.toDomElements = function ( data, doc, converter ) 
 			imgWrapper.classList.add( 'new' );
 		}
 		var filename = mw.libs.ve.normalizeParsoidResourceName( attributes.resource || '' );
-		img.appendChild( doc.createTextNode( filename ) );
+		img.appendChild( doc.createTextNode( attributes.errorText ? attributes.errorText : filename ) );
 	}
 
 	if ( width !== null ) {

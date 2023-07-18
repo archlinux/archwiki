@@ -23,6 +23,7 @@
 
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\CommentFormatter\RowCommentFormatter;
+use MediaWiki\CommentStore\CommentStore;
 use MediaWiki\MainConfigNames;
 use MediaWiki\Permissions\RestrictionStore;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -126,6 +127,7 @@ class SpecialProtectedpages extends SpecialPage {
 		) );
 
 		if ( $pager->getNumRows() ) {
+			$this->getOutput()->addModuleStyles( 'mediawiki.interface.helpers.styles' );
 			$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
 		} else {
 			$this->getOutput()->addWikiMsg( 'protectedpagesempty' );

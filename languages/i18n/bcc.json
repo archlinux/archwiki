@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"1233qwer1234qwer4",
 			"Amire80",
 			"Baloch Afghanistan",
 			"Ebraminio",
@@ -17,8 +18,7 @@
 			"RigiMahnoor",
 			"Sultanselim baloch",
 			"ZxxZxxZ",
-			"아라",
-			"1233qwer1234qwer4"
+			"아라"
 		]
 	},
 	"tog-underline": ":لینکاں کِشک کن",
@@ -1339,6 +1339,7 @@
 	"filehist-dimensions": "جنبه یان",
 	"filehist-filesize": "اندازه فایل",
 	"filehist-comment": "نظر",
+	"filehist-missing": "گارین فایل",
 	"imagelinks": "پایلی په کار کیپتین",
 	"linkstoimage": "جهلیگین {{PLURAL:$1|صفحه |$1 صفحات لینک}} پی ای فایل",
 	"linkstoimage-more": "گیشتر چه  $1 {{PLURAL:$1|صفحه لینکان|صفحات لینک}} پی ای فایل.\nجهلگین لیست {{PLURAL:$1|اولین لینک صفحه|اولین $1 لینکان صفحه ی}} پی ای فایل فقط پیش داریت.\nیک [[Special:WhatLinksHere/$2|لیست کامل]] موجودنت.",
@@ -2111,7 +2112,7 @@
 	"metadata-help": "ای فایل شامل مزیدین اطلاعاتنیت، شاید چه یک دوربین یا اسکنر په شرکتن و دیجیتالی کتن هور بیتت.\nاگه فایل چه اولیگین حالتی تغییر داته بوته شاید لهتی کل جزییات شر پیش مداریت.",
 	"metadata-expand": "پیش دار گیشترین جزییات",
 	"metadata-collapse": "پناه کن مزیدین جزییاتا",
-	"metadata-fields": "EXIF متادیتا فیلدان لسیت بوتگن ته ای کوله شامل بینت تع  اکس  صفحه پیش داریت وهخهدی کهجدول متادیتا is هراب بیت.\nدگران پناه بنت په طور پیش فرض.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "EXIF متادیتا فیلدان لسیت بوتگن ته ای کوله شامل بینت تع  اکس  صفحه پیش داریت وهخهدی کهجدول متادیتا is هراب بیت.\nدگران پناه بنت په طور پیش فرض.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "کل",
 	"monthsall": "کل",
 	"confirmemail": "آدرس ایمیل تایید کن",
@@ -2326,5 +2327,25 @@
 	"skin-action-protect": "ساٹتگݔن",
 	"skin-action-undelete": "ترینگ",
 	"skin-action-delete": "زورگ",
-	"skin-action-move": "جاه په جاه"
+	"skin-action-move": "جاه په جاه",
+	"renameuser": "کاربر نامی بدل کن",
+	"renameuserold": "هنیگݔں کارزورۏکی نام:",
+	"renameusernew": "نۏکݔں کارزورۏکی نام:",
+	"renameuserreason": "دلیل په نام بدل کتن:",
+	"renameusermove": "صفحات گپ و کاربر (و آیانی زیر صفحات) په نوکین نام جاه په جاه کن",
+	"renameuserwarnings": "هوژاریان:",
+	"renameuserconfirm": "بله، کاربر نامی عوض کن",
+	"renameusersubmit": "سپت کن",
+	"renameusererrordoesnotexist": "کاربر \"<nowiki>$1</nowiki>\" موجود نهنت.",
+	"renameusererrorexists": "کاربر \"<nowiki>$1</nowiki>\" هنو هستن.",
+	"renameusererrorinvalid": "\"<nowiki>$1</nowiki>\"ء کارزورۏکی نام‌ئا اݔتبار نے",
+	"renameuser-error-request": "مشکلی گون دریافت درخواست هستت.\nلطفا برگردیت و دگه تلاش کنیت.",
+	"renameuser-error-same-user": "شما نه تونیت یک کاربر په هما پیشگین چیزی نامی بدل کنیت",
+	"renameusersuccess": "کاربر \"<nowiki>$1</nowiki>\" نامی بدل بوتت په \"<nowiki>$2</nowiki>\".",
+	"renameuser-page-exists": "صفحه $1 الان هست و اتوماتیکی اور آی نوسیگ نه بیت.",
+	"renameuser-page-moved": "صفحه $1 جاه په جاه بیت په $2.",
+	"renameuser-page-unmoved": "صفحه $1 نه تونیت په $2 جاه په جاه بیت.",
+	"log-name-renameuser": "آمار نام بدل کتن کاربر",
+	"renameuser-move-log": "اتوماتیکی صفحه جاه په جاه بیت وهدی که کاربر نام بدل بی \"[[User:$1|$1]]\" به \"[[User:$2|$2]]\"",
+	"right-renameuser": "عوض کتن نام کابران"
 }

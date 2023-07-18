@@ -16,7 +16,7 @@ use InvalidArgumentException;
  * @par Example:
  * @code
  *     function getRowData() {
- *         $conn = $this->lb->getConnectedRef( DB_REPLICA );
+ *         $conn = $this->lb->getConnectionRef( DB_REPLICA );
  *         $row = $conn->select( ... );
  *         return $row ? (array)$row : false;
  *         // $conn falls out of scope and $this->lb->reuseConnection() gets called
@@ -31,7 +31,10 @@ class DBConnRef implements IMaintainableDatabase {
 	private $lb;
 	/** @var Database|null Live connection handle */
 	private $conn;
-	/** @var array N-tuple of (server index, group, DatabaseDomain|string) */
+	/**
+	 * @var array Map of (DBConnRef::FLD_* constant => connection parameter)
+	 * @phan-var array{0:int,1:array|string|false,2:DatabaseDomain,3:int}
+	 */
 	private $params;
 	/** @var int One of DB_PRIMARY/DB_REPLICA */
 	private $role;
@@ -49,7 +52,7 @@ class DBConnRef implements IMaintainableDatabase {
 	private $modCountFix;
 
 	private const FLD_INDEX = 0;
-	private const FLD_GROUP = 1;
+	private const FLD_GROUPS = 1;
 	private const FLD_DOMAIN = 2;
 	private const FLD_FLAGS = 3;
 
@@ -65,6 +68,8 @@ class DBConnRef implements IMaintainableDatabase {
 		if ( !is_array( $params ) || count( $params ) < 4 || $params[self::FLD_DOMAIN] === false ) {
 			throw new InvalidArgumentException( "Missing lazy connection arguments." );
 		}
+
+		$params[self::FLD_DOMAIN] = DatabaseDomain::newFromId( $params[self::FLD_DOMAIN] );
 
 		$this->lb = $lb;
 		$this->params = $params;
@@ -85,15 +90,26 @@ class DBConnRef implements IMaintainableDatabase {
 			// to take effect. The primary use case are replica servers being taken out of
 			// rotation, or the primary database changing.
 			if ( !$this->conn->trxLevel() ) {
-				$this->lb->closeConnection( $this->conn );
+				$this->conn->close();
 				$this->conn = null;
 			}
 		}
 
 		if ( $this->conn === null ) {
-			[ $index, $groups, $wiki, $flags ] = $this->params;
-			$this->conn = $this->lb->getConnectionInternal( $index, $groups, $wiki, $flags );
+			$this->conn = $this->lb->getConnectionInternal(
+				$this->params[self::FLD_INDEX],
+				$this->params[self::FLD_GROUPS],
+				$this->params[self::FLD_DOMAIN]->getId(),
+				$this->params[self::FLD_FLAGS]
+			);
 			$this->modCountFix = $this->modCountRef;
+		}
+
+		if ( !$this->params[self::FLD_DOMAIN]->equals( $this->conn->getDomainID() ) ) {
+			// The underlying connection handle is likely being shared by other DBConnRef
+			// instances in a load balancer. Make sure that each one routes queries by their
+			// owner function to the domain that the owner expects.
+			$this->conn->selectDomain( $this->params[self::FLD_DOMAIN] );
 		}
 	}
 
@@ -143,8 +159,7 @@ class DBConnRef implements IMaintainableDatabase {
 
 		if ( $this->conn === null ) {
 			// Avoid triggering a database connection
-			$domain = DatabaseDomain::newFromId( $this->params[self::FLD_DOMAIN] );
-			$prefix = $domain->getTablePrefix();
+			$prefix = $this->params[self::FLD_DOMAIN]->getTablePrefix();
 		} else {
 			// This will just return the prefix
 			$prefix = $this->__call( __FUNCTION__, func_get_args() );
@@ -161,8 +176,7 @@ class DBConnRef implements IMaintainableDatabase {
 
 		if ( $this->conn === null ) {
 			// Avoid triggering a database connection
-			$domain = DatabaseDomain::newFromId( $this->params[self::FLD_DOMAIN] );
-			$schema = (string)$domain->getSchema();
+			$schema = (string)( $this->params[self::FLD_DOMAIN]->getSchema() );
 		} else {
 			// This will just return the schema
 			$schema = $this->__call( __FUNCTION__, func_get_args() );
@@ -235,9 +249,8 @@ class DBConnRef implements IMaintainableDatabase {
 
 	public function getDomainID() {
 		if ( $this->conn === null ) {
-			$domain = $this->params[self::FLD_DOMAIN];
 			// Avoid triggering a database connection
-			return $domain instanceof DatabaseDomain ? $domain->getId() : $domain;
+			return $this->params[self::FLD_DOMAIN]->getId();
 		}
 
 		return $this->__call( __FUNCTION__, func_get_args() );
@@ -305,6 +318,11 @@ class DBConnRef implements IMaintainableDatabase {
 	public function newSelectQueryBuilder(): SelectQueryBuilder {
 		// Use $this not $this->conn so that the domain is preserved (T326377)
 		return new SelectQueryBuilder( $this );
+	}
+
+	public function newUpdateQueryBuilder(): UpdateQueryBuilder {
+		// Use $this not $this->conn so that the domain is preserved (T326377)
+		return new UpdateQueryBuilder( $this );
 	}
 
 	public function selectField(
@@ -388,6 +406,10 @@ class DBConnRef implements IMaintainableDatabase {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
+	public function buildComparison( string $op, array $conds ): string {
+		return $this->__call( __FUNCTION__, func_get_args() );
+	}
+
 	public function makeList( array $a, $mode = self::LIST_COMMA ) {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
@@ -457,12 +479,6 @@ class DBConnRef implements IMaintainableDatabase {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
-	public function selectDB( $db ) {
-		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
-		// Disallow things that might confuse the LoadBalancer tracking
-		throw $this->getDomainChangeException();
-	}
-
 	public function selectDomain( $domain ) {
 		// @phan-suppress-previous-line PhanPluginNeverReturnMethod
 		// Disallow things that might confuse the LoadBalancer tracking
@@ -471,9 +487,8 @@ class DBConnRef implements IMaintainableDatabase {
 
 	public function getDBname() {
 		if ( $this->conn === null ) {
-			$domain = DatabaseDomain::newFromId( $this->params[self::FLD_DOMAIN] );
 			// Avoid triggering a database connection
-			return $domain->getDatabase();
+			return $this->params[self::FLD_DOMAIN]->getDatabase();
 		}
 
 		return $this->__call( __FUNCTION__, func_get_args() );
@@ -763,10 +778,6 @@ class DBConnRef implements IMaintainableDatabase {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
 
-	public function setBigSelects( $value = true ) {
-		return $this->__call( __FUNCTION__, func_get_args() );
-	}
-
 	public function isReadOnly() {
 		return $this->__call( __FUNCTION__, func_get_args() );
 	}
@@ -826,12 +837,6 @@ class DBConnRef implements IMaintainableDatabase {
 	}
 
 	public function truncate( $tables, $fname = __METHOD__ ) {
-		$this->assertRoleAllowsWrites();
-
-		return $this->__call( __FUNCTION__, func_get_args() );
-	}
-
-	public function deadlockLoop( ...$args ) {
 		$this->assertRoleAllowsWrites();
 
 		return $this->__call( __FUNCTION__, func_get_args() );
@@ -915,15 +920,6 @@ class DBConnRef implements IMaintainableDatabase {
 	 */
 	protected function normalizeServerIndex( $i ) {
 		return ( $i === ILoadBalancer::DB_PRIMARY ) ? $this->lb->getWriterIndex() : $i;
-	}
-
-	/**
-	 * Clean up the connection when out of scope
-	 */
-	public function __destruct() {
-		if ( $this->conn ) {
-			$this->lb->reuseConnectionInternal( $this->conn );
-		}
 	}
 }
 

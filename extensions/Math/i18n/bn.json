@@ -76,7 +76,6 @@
 	"math_unknown_function": "'$1' অজানা ফাংশন",
 	"mw_math_latexml": "LaTeXML (পরীক্ষামূলক; MathML ব্যবহার করে)",
 	"mw_math_mathml": "SVG বা PNG পশ্চাদপসরণসহ MathML (আধুনিক ব্রাউজার এবং প্রবেশযোগ্যতা সরঞ্জামের জন্য সুপারিশ করা)",
-	"mw_math_png": "PNG চিত্রসমূহ",
 	"mw_math_source": "LaTeX উৎস (পাঠ্য ব্রাউজারগুলোর জন্য)",
 	"prefs-math": "গণিত",
 	"mathstatus": "গণিতের অবস্থা",

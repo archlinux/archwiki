@@ -196,7 +196,7 @@ class SpecialCiteThisPage extends FormSpecialPage {
 	 * @return ParserOptions
 	 */
 	private function getParserOptions() {
-		$parserOptions = ParserOptions::newFromUser( $this->getUser() );
+		$parserOptions = ParserOptions::newFromContext( $this->getContext() );
 		$parserOptions->setDateFormat( 'default' );
 		$parserOptions->setInterfaceMessage( true );
 		return $parserOptions;

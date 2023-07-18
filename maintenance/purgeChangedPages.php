@@ -24,6 +24,7 @@
 require_once __DIR__ . '/Maintenance.php';
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IResultWrapper;
 
 /**
@@ -110,7 +111,7 @@ class PurgeChangedPages extends Maintenance {
 			}
 
 			// Kludge to not get stuck in loops for batches with the same timestamp
-			list( $rows, $lastTime ) = $this->pageableSortedRows( $res, 'rev_timestamp', $bSize );
+			[ $rows, $lastTime ] = $this->pageableSortedRows( $res, 'rev_timestamp', $bSize );
 			if ( !count( $rows ) ) {
 				++$stuckCount;
 				continue;

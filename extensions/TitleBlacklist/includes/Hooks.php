@@ -59,39 +59,41 @@ class Hooks implements
 		if ( $action === 'createpage' || $action === 'createtalk' ) {
 			$action = 'create';
 		}
-		if ( $action == 'create' || $action == 'edit' || $action == 'upload' ) {
-			$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $user, $action );
-			if ( $blacklisted instanceof TitleBlacklistEntry ) {
-				$errmsg = $blacklisted->getErrorMessage( 'edit' );
-				$params = [
-					$blacklisted->getRaw(),
-					$title->getFullText()
-				];
-				ApiResult::setIndexedTagName( $params, 'param' );
-				$result = ApiMessage::create(
-					wfMessage(
-						$errmsg,
-						htmlspecialchars( $blacklisted->getRaw() ),
-						$title->getFullText()
-					),
-					'titleblacklist-forbidden',
-					[
-						'message' => [
-							'key' => $errmsg,
-							'params' => $params,
-						],
-						'line' => $blacklisted->getRaw(),
-						// As $errmsg usually represents a non-default message here, and ApiBase
-						// uses ->inLanguage( 'en' )->useDatabase( false ) for all messages, it will
-						// never result in useful 'info' text in the API. Try this, extra data seems
-						// to override the default.
-						'info' => 'TitleBlacklist prevents this title from being created',
-					]
-				);
-				return false;
-			}
+		if ( $action !== 'create' && $action !== 'edit' && $action !== 'upload' ) {
+			return true;
 		}
-		return true;
+		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $user, $action );
+		if ( !$blacklisted ) {
+			return true;
+		}
+
+		$errmsg = $blacklisted->getErrorMessage( 'edit' );
+		$params = [
+			$blacklisted->getRaw(),
+			$title->getFullText()
+		];
+		ApiResult::setIndexedTagName( $params, 'param' );
+		$result = ApiMessage::create(
+			wfMessage(
+				$errmsg,
+				htmlspecialchars( $blacklisted->getRaw() ),
+				$title->getFullText()
+			),
+			'titleblacklist-forbidden',
+			[
+				'message' => [
+					'key' => $errmsg,
+					'params' => $params,
+				],
+				'line' => $blacklisted->getRaw(),
+				// As $errmsg usually represents a non-default message here, and ApiBase
+				// uses ->inLanguage( 'en' )->useDatabase( false ) for all messages, it will
+				// never result in useful 'info' text in the API. Try this, extra data seems
+				// to override the default.
+				'info' => 'TitleBlacklist prevents this title from being created',
+			]
+		);
+		return false;
 	}
 
 	/**
@@ -174,31 +176,32 @@ class Hooks implements
 		$title = Title::makeTitleSafe( NS_USER, $userName );
 		$blacklisted = TitleBlacklist::singleton()->userCannot( $title, $creatingUser,
 			'new-account', $override );
-		if ( $blacklisted instanceof TitleBlacklistEntry ) {
-			if ( $log ) {
-				self::logFilterHitUsername( $creatingUser, $title, $blacklisted->getRaw() );
-			}
-			$message = $blacklisted->getErrorMessage( 'new-account' );
-			$params = [
-				$blacklisted->getRaw(),
-				$userName,
-			];
-			ApiResult::setIndexedTagName( $params, 'param' );
-			return StatusValue::newFatal( ApiMessage::create(
-				[ $message, $blacklisted->getRaw(), $userName ],
-				'titleblacklist-forbidden',
-				[
-					'message' => [
-						'key' => $message,
-						'params' => $params,
-					],
-					'line' => $blacklisted->getRaw(),
-					// The text of the message probably isn't useful API info, so do this instead
-					'info' => 'TitleBlacklist prevents this username from being created',
-				]
-			) );
+		if ( !$blacklisted ) {
+			return StatusValue::newGood();
 		}
-		return StatusValue::newGood();
+
+		if ( $log ) {
+			self::logFilterHitUsername( $creatingUser, $title, $blacklisted->getRaw() );
+		}
+		$message = $blacklisted->getErrorMessage( 'new-account' );
+		$params = [
+			$blacklisted->getRaw(),
+			$userName,
+		];
+		ApiResult::setIndexedTagName( $params, 'param' );
+		return StatusValue::newFatal( ApiMessage::create(
+			[ $message, $blacklisted->getRaw(), $userName ],
+			'titleblacklist-forbidden',
+			[
+				'message' => [
+					'key' => $message,
+					'params' => $params,
+				],
+				'line' => $blacklisted->getRaw(),
+				// The text of the message probably isn't useful API info, so do this instead
+				'info' => 'TitleBlacklist prevents this username from being created',
+			]
+		) );
 	}
 
 	/**

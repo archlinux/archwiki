@@ -12,8 +12,9 @@ use MediaWiki\Linker\LinksMigration;
 use MediaWiki\Page\PageIdentityValue;
 use MediaWiki\Page\PageStore;
 use MediaWiki\Permissions\RestrictionStore;
+use MediaWiki\Title\Title;
 use MediaWikiIntegrationTestCase;
-use Title;
+use SpecialPage;
 use WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 use Wikimedia\TestingAccessWrapper;
@@ -122,6 +123,17 @@ class RestrictionStoreTest extends MediaWikiIntegrationTestCase {
 
 		[ $sources, $restrictions ] = $this->newRestrictionStore()
 			->getCascadeProtectionSources( $pageSource );
+		$this->assertCount( 0, $sources );
+		$this->assertCount( 0, $restrictions );
+	}
+
+	/**
+	 * @covers ::getCascadeProtectionSources
+	 * @covers ::getCascadeProtectionSourcesInternal
+	 */
+	public function testGetCascadeProtectionSourcesSpecialPage() {
+		[ $sources, $restrictions ] = $this->newRestrictionStore()
+			->getCascadeProtectionSources( SpecialPage::getTitleFor( 'Whatlinkshere' ) );
 		$this->assertCount( 0, $sources );
 		$this->assertCount( 0, $restrictions );
 	}

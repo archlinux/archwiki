@@ -38,6 +38,13 @@ class Fun2Test extends MediaWikiUnitTestCase {
 			'Should create a basic function' );
 	}
 
+	public function testGetters() {
+		$f = new Fun2( '\\f', new Literal( 'a' ), new Literal( 'b' ) );
+		$this->assertNotEmpty( $f->getFname() );
+		$this->assertNotEmpty( $f->getArg1() );
+		$this->assertNotEmpty( $f->getArg2() );
+	}
+
 	public function testCurliesFun2() {
 		$f = new Fun2( '\\f', new Literal( 'a' ), new Literal( 'b' ) );
 		$this->assertEquals( '{\\f {a}{b}}', $f->inCurlies(),

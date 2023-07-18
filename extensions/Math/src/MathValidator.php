@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\Math;
 
 use DataValues\StringValue;
 use InvalidArgumentException;
-use MediaWiki\MediaWikiServices;
 use ValueValidators\Error;
 use ValueValidators\Result;
 use ValueValidators\ValueValidator;
@@ -31,9 +30,8 @@ class MathValidator implements ValueValidator {
 
 		// get input String from value
 		$tex = $value->getValue();
-		$checker = MediaWikiServices::getInstance()
-			->getService( 'Math.CheckerFactory' )
-			->newMathoidChecker( $tex, 'tex' );
+		$checker = Math::getCheckerFactory()
+			->newLocalChecker( $tex, 'tex' );
 
 		if ( $checker->isValid() ) {
 			return Result::newSuccess();

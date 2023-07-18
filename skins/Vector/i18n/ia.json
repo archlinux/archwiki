@@ -38,6 +38,7 @@
 	"vector-search-loader": "Cargante suggestiones de recerca",
 	"vector-searchsuggest-containing": "Cercar paginas que contine <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
 	"vector-intro-page": "Help:Introduction",
+	"vector-toc-label": "Contento",
 	"vector-toc-beginning": "Initio",
 	"vector-toc-toggle-button-label": "Alternar subsection $1",
 	"vector-anon-user-menu-pages": "Paginas pro redactores sin session aperte",
@@ -46,8 +47,17 @@
 	"vector-main-menu-tooltip": "Menu principal",
 	"vector-toc-menu-tooltip": "Tabula de contento",
 	"vector-toc-collapsible-button-label": "Alternar le tabula de contento",
-	"vector-article-tools-nav-label": "Instrumentos",
 	"vector-site-nav-label": "Sito",
+	"vector-main-menu-label": "Menu principal",
+	"vector-limited-width-toggle": "Alternar limitation de latitude de contento",
+	"vector-page-tools-label": "Instrumentos",
+	"vector-page-tools-general-label": "General",
+	"vector-page-tools-actions-label": "Actiones",
+	"vector-pin-element-label": "displaciar verso le barra lateral`",
+	"vector-unpin-element-label": "celar",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Discussion]]",
-	"tooltip-vector-anon-user-menu-title": "Plus optiones"
+	"tooltip-vector-anon-user-menu-title": "Plus optiones",
+	"vector-prefs-limited-width": "Activar le limitation de latitude",
+	"vector-prefs-limited-width-help": "Activar le limitation de latitude pro un experientia de lectura meliorate.",
+	"empty-language-selector-body": "Le contento del pagina non es supportate in altere linguas."
 }

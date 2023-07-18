@@ -18,7 +18,9 @@
  * @file
  */
 
+use MediaWiki\CommentStore\CommentStoreComment;
 use MediaWiki\HookContainer\ProtectedHookAccessorTrait;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 
@@ -107,10 +109,10 @@ class ImportReporter extends ContextSource {
 			// in RTL wikis in case the page title is LTR
 			$this->getOutput()->addHTML(
 				"<li>" . $linkRenderer->makeLink( $pageIdentity ) . " " .
-					"<bdi>" .
-					$this->msg( 'import-revision-count' )->numParams( $successCount )->escaped() .
-					"</bdi>" .
-					"</li>\n"
+				"<bdi>" .
+				$this->msg( 'import-revision-count' )->numParams( $successCount )->escaped() .
+				"</bdi>" .
+				"</li>\n"
 			);
 
 			$logParams = [ '4:number:count' => $successCount ];

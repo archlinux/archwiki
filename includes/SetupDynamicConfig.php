@@ -14,15 +14,6 @@ if ( $wgLogos !== false && isset( $wgLogos['1x'] ) ) {
 	$wgLogo = $wgLogos['1x'];
 }
 
-if ( $wgMainWANCache === false ) {
-	// Create a WAN cache from $wgMainCacheType
-	$wgMainWANCache = 'mediawiki-main-default';
-	$wgWANObjectCaches[$wgMainWANCache] = [
-		'class'    => WANObjectCache::class,
-		'cacheId'  => $wgMainCacheType,
-	];
-}
-
 // Back-compat
 if ( isset( $wgFileBlacklist ) ) {
 	$wgProhibitedFileExtensions = array_merge( $wgProhibitedFileExtensions, $wgFileBlacklist );
@@ -43,6 +34,26 @@ if ( isset( $wgShortPagesNamespaceBlacklist ) ) {
 	$wgShortPagesNamespaceExclusions = $wgShortPagesNamespaceBlacklist;
 } else {
 	$wgShortPagesNamespaceBlacklist = $wgShortPagesNamespaceExclusions;
+}
+
+// Rate limits should have the same name as the corresponding permission
+if ( isset( $wgRateLimits['emailuser'] ) ) {
+	// If the deprecated field is set, use it.
+	// Note that we can't know whether the new field has been set explicitly, since it has a default value.
+	$wgSettings->warning(
+		'RateLimit: The "emailuser" limit is deprecated, use "sendemail" instead.'
+	);
+	$wgRateLimits['sendemail'] = $wgRateLimits['emailuser'];
+}
+
+// Rate limits should have the same name as the corresponding permission
+if ( isset( $wgRateLimits['changetag'] ) ) {
+	// If the deprecated field is set, use it.
+	// Note that we can't know whether the new field has been set explicitly, since it has a default value.
+	$wgSettings->warning(
+		'RateLimit: The "changetag" limit is deprecated, use "changetags" instead.'
+	);
+	$wgRateLimits['changetags'] = $wgRateLimits['changetag'];
 }
 
 // Prohibited file extensions shouldn't appear on the "allowed" list
@@ -81,18 +92,14 @@ if ( isset( $wgFooterIcons['poweredby'] )
 		"$wgResourceBasePath/resources/assets/poweredby_mediawiki_176x62.png 2x";
 }
 
-/**
- * Unconditional protection for NS_MEDIAWIKI since otherwise it's too easy for a
- * sysadmin to set $wgNamespaceProtection incorrectly and leave the wiki insecure.
- *
- * Note that this is the definition of editinterface and it can be granted to
- * all users if desired.
- */
+// Unconditional protection for NS_MEDIAWIKI since otherwise it's too easy for a
+// sysadmin to set $wgNamespaceProtection incorrectly and leave the wiki insecure.
+//
+// Note that this is the definition of editinterface and it can be granted to
+// all users if desired.
 $wgNamespaceProtection[NS_MEDIAWIKI] = 'editinterface';
 
-/**
- * Initialise $wgLockManagers to include basic FS version
- */
+// Initialise $wgLockManagers to include basic FS version
 $wgLockManagers[] = [
 	'name' => 'fsLockManager',
 	'class' => FSLockManager::class,
@@ -103,10 +110,8 @@ $wgLockManagers[] = [
 	'class' => NullLockManager::class,
 ];
 
-/**
- * Default parameters for the "<gallery>" tag.
- * @see docs/Configuration.md for description of the fields.
- */
+// Default parameters for the "<gallery>" tag.
+// See \MediaWiki\MainConfigSchema::GalleryOptions
 $wgGalleryOptions += [
 	'imagesPerRow' => 0,
 	'imageWidth' => 120,

@@ -24,6 +24,7 @@ use MediaWiki\Api\ApiHookRunner;
 use MediaWiki\Api\Validator\SubmoduleDef;
 use MediaWiki\Block\Block;
 use MediaWiki\HookContainer\HookContainer;
+use MediaWiki\Language\RawMessage;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
@@ -32,12 +33,14 @@ use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\Permissions\PermissionStatus;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserRigorOptions;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\EnumDef;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 use Wikimedia\ParamValidator\TypeDef\StringDef;
 use Wikimedia\Rdbms\IDatabase;
+use Wikimedia\Timestamp\TimestampException;
 
 /**
  * This abstract class implements many basic API functions, and is the base of
@@ -187,11 +190,16 @@ abstract class ApiBase extends ContextSource {
 	public const PARAM_VALUE_LINKS = 'api-param-value-links';
 
 	/**
-	 * ((string|array|Message)[]) When PARAM_TYPE is an array, this is an array
-	 * mapping those values to $msg for ApiBase::makeMessage(). Any value not
-	 * having a mapping will use apihelp-{$path}-paramvalue-{$param}-{$value}.
-	 * Specify an empty array to use the default message key for all values.
+	 * ((string|array|Message)[]) When PARAM_TYPE is an array, or 'string'
+	 * with PARAM_ISMULTI, this is an array mapping parameter values to help
+	 * message specifiers (to be passed to ApiBase::makeMessage()) about
+	 * those values.
+	 * When PARAM_TYPE is an array, any value not having a mapping will use
+	 * the apihelp-{$path}-paramvalue-{$param}-{$value} message. (This means
+	 * you can use an empty array to use the default message key for all
+	 * values.)
 	 * @since 1.25
+	 * @note Use with PARAM_TYPE = 'string' is allowed since 1.40.
 	 */
 	public const PARAM_HELP_MSG_PER_VALUE = 'api-param-help-msg-per-value';
 
@@ -804,7 +812,7 @@ abstract class ApiBase extends ContextSource {
 			// ApiSandbox.PageLayout.prototype.updateTemplatedParams().
 			// If you update this, see if that needs updating too.
 			while ( $toProcess ) {
-				list( $name, $targets, $settings ) = array_shift( $toProcess );
+				[ $name, $targets, $settings ] = array_shift( $toProcess );
 
 				foreach ( $targets as $placeholder => $target ) {
 					if ( !array_key_exists( $target, $results ) ) {
@@ -1244,9 +1252,7 @@ abstract class ApiBase extends ContextSource {
 	 * @return Status
 	 */
 	public function errorArrayToStatus( array $errors, User $user = null ) {
-		if ( $user === null ) {
-			$user = $this->getUser();
-		}
+		$user ??= $this->getUser();
 
 		$status = Status::newGood();
 		foreach ( $errors as $error ) {
@@ -1254,7 +1260,7 @@ abstract class ApiBase extends ContextSource {
 				$error = [ $error ];
 			}
 			if ( is_string( $error[0] ) && isset( self::$blockMsgMap[$error[0]] ) && $user->getBlock() ) {
-				list( $msg, $code ) = self::$blockMsgMap[$error[0]];
+				[ $msg, $code ] = self::$blockMsgMap[$error[0]];
 				$status->fatal( ApiMessage::create( $msg, $code,
 					// @phan-suppress-next-line PhanTypeMismatchArgumentNullable Block is checked and not null
 					[ 'blockinfo' => $this->getBlockDetails( $user->getBlock() ) ]
@@ -1282,7 +1288,7 @@ abstract class ApiBase extends ContextSource {
 		}
 
 		if ( $block ) {
-			foreach ( self::$blockMsgMap as $msg => list( $apiMsg, $code ) ) {
+			foreach ( self::$blockMsgMap as $msg => [ $apiMsg, $code ] ) {
 				if ( $status->hasMessage( $msg ) ) {
 					$status->replaceMessage( $msg, ApiMessage::create( $apiMsg, $code,
 						[ 'blockinfo' => $this->getBlockDetails( $block ) ]
@@ -1325,7 +1331,7 @@ abstract class ApiBase extends ContextSource {
 	protected function filterIDs( $fields, array $ids ) {
 		$min = INF;
 		$max = 0;
-		foreach ( $fields as list( $table, $field ) ) {
+		foreach ( $fields as [ $table, $field ] ) {
 			if ( isset( self::$filterIDsCache[$table][$field] ) ) {
 				$row = self::$filterIDsCache[$table][$field];
 			} else {
@@ -1631,6 +1637,45 @@ abstract class ApiBase extends ContextSource {
 	}
 
 	/**
+	 * Parse the 'continue' parameter in the usual format and validate the types of each part,
+	 * or die with the 'badcontinue' error if the format, types, or number of parts is wrong.
+	 *
+	 * @param string $continue Value of 'continue' parameter obtained from extractRequestParams()
+	 * @param string[] $types Types of the expected parts in order, 'string', 'int' or 'timestamp'
+	 * @return mixed[] Array containing strings, integers or timestamps
+	 * @throws ApiUsageException
+	 * @since 1.40
+	 */
+	protected function parseContinueParamOrDie( string $continue, array $types ): array {
+		$cont = explode( '|', $continue );
+		$this->dieContinueUsageIf( count( $cont ) != count( $types ) );
+
+		foreach ( $cont as $i => &$value ) {
+			switch ( $types[$i] ) {
+				case 'string':
+					// Do nothing
+					break;
+				case 'int':
+					$this->dieContinueUsageIf( $value !== (string)(int)$value );
+					$value = (int)$value;
+					break;
+				case 'timestamp':
+					try {
+						$dbTs = $this->getDB()->timestamp( $value );
+					} catch ( TimestampException $ex ) {
+						$dbTs = false;
+					}
+					$this->dieContinueUsageIf( $value !== $dbTs );
+					break;
+				default:
+					throw new InvalidArgumentException( "Unknown type '{$types[$i]}'" );
+			}
+		}
+
+		return $cont;
+	}
+
+	/**
 	 * Die with the 'badcontinue' error.
 	 *
 	 * This call is common enough to make it into the base method.
@@ -1889,16 +1934,23 @@ abstract class ApiBase extends ContextSource {
 					self::dieDebug( __METHOD__,
 						'ApiBase::PARAM_HELP_MSG_PER_VALUE is not valid' );
 				}
-				if ( !is_array( $settings[ParamValidator::PARAM_TYPE] ) ) {
+				$isArrayOfStrings = is_array( $settings[ParamValidator::PARAM_TYPE] )
+					|| $settings[ParamValidator::PARAM_TYPE] === 'string'
+						&& ( $settings[ParamValidator::PARAM_ISMULTI] ?? false );
+				if ( !$isArrayOfStrings ) {
 					self::dieDebug( __METHOD__,
 						'ApiBase::PARAM_HELP_MSG_PER_VALUE may only be used when ' .
-						'ParamValidator::PARAM_TYPE is an array' );
+						'ParamValidator::PARAM_TYPE is an array or it is \'string\' and ' .
+						'ParamValidator::PARAM_ISMULTI is true' );
 				}
 
+				$values = is_array( $settings[ParamValidator::PARAM_TYPE] ) ?
+					$settings[ParamValidator::PARAM_TYPE] :
+					array_keys( $settings[self::PARAM_HELP_MSG_PER_VALUE] );
 				$valueMsgs = $settings[self::PARAM_HELP_MSG_PER_VALUE];
 				$deprecatedValues = $settings[EnumDef::PARAM_DEPRECATED_VALUES] ?? [];
 
-				foreach ( $settings[ParamValidator::PARAM_TYPE] as $value ) {
+				foreach ( $values as $value ) {
 					$msg = $valueMsgs[$value] ?? "apihelp-$path-paramvalue-$param-$value";
 					$m = self::makeMessage( $msg, $this->getContext(),
 						[ $prefix, $param, $name, $path, $value ] );

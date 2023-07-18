@@ -35,8 +35,9 @@ use Wikimedia\Assert\Assert;
  *
  * @package MediaWiki\Skins\Vector\FeatureManagement
  * @internal
+ * @final
  */
-final class FeatureManager {
+class FeatureManager {
 
 	/**
 	 * A map of feature name to the array of requirements (referenced by name). A feature is only
@@ -166,15 +167,13 @@ final class FeatureManager {
 	}
 
 	/**
-	 * Register a complex requirement.
+	 * Register a complex {@see Requirement}.
 	 *
 	 * A complex requirement is one that depends on object that may or may not be fully loaded
 	 * while the application is booting, e.g. see `User::isSafeToLoad`.
 	 *
 	 * Such requirements are expected to be registered during a hook that is run early on in the
 	 * application lifecycle, e.g. the `BeforePerformAction` and `APIBeforeMain` hooks.
-	 *
-	 * @see FeatureManager::registerRequirement
 	 *
 	 * @param Requirement $requirement
 	 *
@@ -191,12 +190,10 @@ final class FeatureManager {
 	}
 
 	/**
-	 * Register a requirement.
+	 * Register a {@see SimpleRequirement}.
 	 *
 	 * A requirement is some condition of the application state that a feature requires to be true
 	 * or false.
-	 *
-	 * @see FeatureManager::registerComplexRequirement
 	 *
 	 * @param string $name The name of the requirement
 	 * @param bool $isMet Whether the requirement is met

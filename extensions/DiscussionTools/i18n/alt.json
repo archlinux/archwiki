@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Батыр Комдошев"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Куруузы",
+	"discussiontools-replywidget-advanced": "Элбедилген",
+	"discussiontools-replywidget-cancel": "Токтодыш",
+	"discussiontools-replywidget-mode-source": "Алынган јери",
+	"discussiontools-replywidget-mode-visual": "Визуально",
+	"discussiontools-replywidget-preview": "Озолодо кӧрӧри",
+	"discussiontools-replywidget-summary": "Кыска јартамалы",
+	"discussiontools-replywidget-watchthis": "Бу бӱкти слердиҥ [[Special:Watchlist|ширтеениҥ тизимине]] кожуп салар",
+	"discussiontools-topicheader-authorcount": "Шӱӱжӱде $1 {{PLURAL:$1|кижи}}",
+	"discussiontools-topicheader-commentcount": "$1{{PLURAL:$1|самара|самаралар}}",
+	"discussiontools-topicheader-latestcomment": "Калганчы самара: $1",
+	"discussiontools-topicsubscription-button-subscribe": "бичидер",
+	"discussiontools-topicsubscription-button-subscribe-label": "Бичидер",
+	"discussiontools-topicsubscription-button-unsubscribe": "бичидишти токтодор",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Бичидишти токтодор"
+}

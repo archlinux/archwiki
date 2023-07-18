@@ -5,10 +5,10 @@
 			"Fringio",
 			"Horcrux92",
 			"Macofe",
+			"Pierpao",
 			"Ricordisamoa",
 			"Statix64",
-			"Valepert",
-			"Pierpao"
+			"Valepert"
 		]
 	},
 	"math-desc": "Esegue il rendering di formule matematiche tra i tag <code>&lt;math&gt;</code> ... <code>&lt;/math&gt;</code>",

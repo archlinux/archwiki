@@ -24,6 +24,7 @@ module.exports = function () {
 		references = require( './references.js' ),
 		TitleUtil = require( './TitleUtil.js' ),
 		issues = require( './page-issues/index.js' ),
+		talk = require( './talk.js' ),
 		Toolbar = require( './Toolbar.js' ),
 		ToggleList = require( '../../includes/Skins/ToggleList/ToggleList.js' ),
 		TabScroll = require( './TabScroll.js' ),
@@ -404,7 +405,10 @@ module.exports = function () {
 		TabScroll.initTabsScrollPosition();
 		// Setup the issues banner on the page
 		// Pages which dont exist (id 0) cannot have issues
-		if ( !currentPage.isMissing ) {
+		if (
+			!currentPage.isMissing &&
+			( !currentPage.titleObj.isTalkPage() || talk.isSimplifiedViewEnabled() )
+		) {
 			issues.init( overlayManager, currentPageHTMLParser );
 		}
 
@@ -429,7 +433,7 @@ module.exports = function () {
 
 		// wire up talk icon if necessary
 		if ( permissions.talk ) {
-			require( './talk.js' )( mobile );
+			talk.init( mobile );
 		}
 
 		// wire up watch icon if necessary

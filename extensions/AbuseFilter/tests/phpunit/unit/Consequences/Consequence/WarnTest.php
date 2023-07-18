@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AbuseFilter\Tests\Unit\Consequences\Consequence;
 
 use ConsequenceGetMessageTestTrait;
+use MediaWiki\Extension\AbuseFilter\ActionSpecifier;
 use MediaWiki\Extension\AbuseFilter\Consequences\Consequence\Warn;
 use MediaWiki\Extension\AbuseFilter\Consequences\ConsequenceNotPrecheckedException;
 use MediaWiki\Extension\AbuseFilter\Consequences\Parameters;
@@ -35,9 +36,13 @@ class WarnTest extends MediaWikiUnitTestCase {
 		$params = new Parameters(
 			$filter,
 			false,
-			new UserIdentityValue( 1, 'Warned user' ),
-			new TitleValue( NS_HELP, 'Some title' ),
-			'edit'
+			new ActionSpecifier(
+				'edit',
+				new TitleValue( NS_HELP, 'Some title' ),
+				new UserIdentityValue( 1, 'Warned user' ),
+				'1.2.3.4',
+				null
+			)
 		);
 		$warnWrap = TestingAccessWrapper::newFromObject( $this->getWarn( $params ) );
 		return [ $params, $warnWrap->getWarnKey() ];

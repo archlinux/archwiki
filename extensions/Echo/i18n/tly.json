@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Patriot Kor",
+			"Patriot Kur",
+			"Гусейн"
+		]
+	},
+	"echo-pref-email": "Enomə",
+	"tooltip-pt-notifications-alert": "{{GENDER:|Şımə}} xəbədon",
+	"notification-timestamp-today": "Imruj",
+	"notification-inbox-filter-read": "Bıhand",
+	"notification-inbox-filter-all": "Həmə",
+	"echo-date-today": "Imruj"
+}

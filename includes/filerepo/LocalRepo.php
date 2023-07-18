@@ -23,6 +23,8 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Page\PageIdentity;
 use MediaWiki\Permissions\Authority;
 use MediaWiki\Storage\BlobStore;
+use MediaWiki\Title\Title;
+use MediaWiki\WikiMap\WikiMap;
 use Wikimedia\Rdbms\Database;
 use Wikimedia\Rdbms\IDatabase;
 use Wikimedia\Rdbms\IResultWrapper;
@@ -232,7 +234,7 @@ class LocalRepo extends FileRepo {
 	 * Checks if there is a redirect named as $title
 	 *
 	 * @param PageIdentity|LinkTarget $title Title of file
-	 * @return bool|Title
+	 * @return Title|false
 	 */
 	public function checkRedirect( $title ) {
 		$title = File::normalizeTitle( $title, 'exception' );
@@ -522,16 +524,6 @@ class LocalRepo extends FileRepo {
 	 */
 	public function getPrimaryDB() {
 		return wfGetDB( DB_PRIMARY );
-	}
-
-	/**
-	 * Get a connection to the primary DB
-	 * @deprecated since 1.37
-	 * @return IDatabase
-	 */
-	public function getMasterDB() {
-		wfDeprecated( __METHOD__, '1.37' );
-		return $this->getPrimaryDB();
 	}
 
 	/**

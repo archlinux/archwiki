@@ -11,3 +11,19 @@
 .ve-init-mw-desktopArticleTarget-toolbar.ve-ui-toolbar > .oo-ui-toolbar-bar {
 	box-shadow: 0 2px 1px -1px rgba( 0, 0, 0, 0.1 );
 }
+
+// Account for the use of CSS Grid in Vector 2022
+// for the 2017 Wikitext editor preview.
+// The grid is defined with named grid areas on .mw-body.
+/* stylelint-disable-next-line selector-class-pattern */
+.ve-ui-mwSaveDialog-preview .mw-body .firstHeading {
+	grid-area: titlebar;
+}
+
+.ve-ui-mwSaveDialog-preview .mw-body .mw-body-content {
+	grid-area: content;
+}
+
+.ve-init-mw-desktopArticleTarget .ve-init-mw-target-surface > .ve-ce-surface .ve-ce-attachedRootNode {
+	min-height: 15em;
+}

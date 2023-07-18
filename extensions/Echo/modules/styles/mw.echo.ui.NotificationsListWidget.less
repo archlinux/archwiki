@@ -1,0 +1,16 @@
+@import '../echo.variables.less';
+
+.mw-echo-ui-notificationsListWidget {
+	.mw-echo-ui-notificationsListWidget-bundle & {
+		padding: 0;
+	}
+
+	> .mw-echo-ui-notificationItemWidget:first-child {
+		border-top: 0;
+	}
+
+	&:not( :hover ) a,
+	#p-personal &:not( :hover ) a.new { /* stylelint-disable-line selector-class-pattern */
+		color: @grey-medium;
+	}
+}

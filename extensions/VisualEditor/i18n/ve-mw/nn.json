@@ -97,7 +97,6 @@
 	"visualeditor-dialog-transclusion-deprecated-parameter-description": "Felter er utdatert. $1",
 	"visualeditor-dialog-transclusion-loading": "Lastar …",
 	"visualeditor-dialog-transclusion-no-template-description": "{{GENDER:$2|Du legg til}} malen «$1» på sida. Han har ikkje noka skildring enno, men det kan vera informasjon om han på [[$2|malsida]].",
-	"visualeditor-dialog-transclusion-placeholder": "Legg til ein mal",
 	"visualeditor-dialog-transclusion-required-parameter": "Påkravd felt",
 	"visualeditor-dialog-transclusion-required-parameter-description": "Dette feltet må fyllast ut",
 	"visualeditor-dialog-transclusion-required-parameter-dialog-cancel": "Gå attende",

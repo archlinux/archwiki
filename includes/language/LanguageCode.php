@@ -18,6 +18,9 @@
  * @file
  */
 
+use Wikimedia\Bcp47Code\Bcp47Code;
+use Wikimedia\Bcp47Code\Bcp47CodeValue;
+
 /**
  * Methods for dealing with language codes.
  *
@@ -98,9 +101,15 @@ class LanguageCode {
 
 		// Although these next codes aren't *wrong* per se, including
 		// both the script and the country code helps compatibility with
-		// other BCP 47 users. Note that MW also uses `zh-Hans`/`zh-Hant`,
+		// other BCP 47 users. Note that MW also uses
+		// `kk-Arab`/`kk-Cyrl`/`kk-Latn`, `zh-Hans`/`zh-Hant`,
 		// without a country code, and those should be left alone.
-		// (See $variantfallbacks in LanguageZh.php for Hans/Hant id.)
+		// `kk` has the Suppress-Script: Cyrl field, so `kk-KZ` won't be mapped
+		// to `kk-Cyrl-KZ`.
+		// (See getVariantsFallbacks() in KkConverter.php for Arab/Cyrl/Latn id.)
+		// (See getVariantsFallbacks() in ZhConverter.php for Hans/Hant id.)
+		'kk-cn' => 'kk-Arab-CN',
+		'kk-tr' => 'kk-Latn-TR',
 		'zh-cn' => 'zh-Hans-CN',
 		'zh-sg' => 'zh-Hans-SG',
 		'zh-my' => 'zh-Hans-MY',
@@ -138,7 +147,10 @@ class LanguageCode {
 	 * @since 1.32
 	 */
 	public static function getNonstandardLanguageCodeMapping() {
-		$result = [];
+		static $result = [];
+		if ( $result ) {
+			return $result;
+		}
 		foreach ( self::DEPRECATED_LANGUAGE_CODE_MAPPING as $code => $ignore ) {
 			$result[$code] = self::bcp47( $code );
 		}
@@ -163,7 +175,7 @@ class LanguageCode {
 	}
 
 	/**
-	 * Get the normalised IETF language tag
+	 * Get the normalised IANA language tag
 	 * See unit test for examples.
 	 * See mediawiki.language.bcp47 for the JavaScript implementation.
 	 *
@@ -196,6 +208,81 @@ class LanguageCode {
 		}
 		$langCode = implode( '-', $codeBCP );
 		return $langCode;
+	}
+
+	/**
+	 * Convert standardized BCP 47 codes to the internal names used
+	 * by MediaWiki and returned by Language::getCode().  This function
+	 * should be the inverse of LanguageCode::bcp47().  Note that BCP 47
+	 * explicitly states that language codes are case insensitive.
+	 *
+	 * Since LanguageFactory::getLanguage() is pretty generous about
+	 * accepting aliases (as long as they are lowercased), this function
+	 * should be equivalent to:
+	 *   LanguageFactory::getLanguage(strtolower($code))->getCode()
+	 * but (a) better describes the caller's intention, and (b) should
+	 * be much more efficient in practice.
+	 *
+	 * @param string $code The standard BCP-47 language code
+	 * @return string A MediaWiki-internal code, as returned for example by
+	 *    Language::getCode()
+	 * @since 1.40
+	 */
+	public static function bcp47ToInternal( string $code ): string {
+		static $invertedLookup = [];
+		if ( !$invertedLookup ) {
+			// There should never be two different entries in
+			// NON_STANDARD_LANGUAGE_CODE_MAPPING which map *different*
+			// internal codes to the same external BCP-47 code.  That is,
+			// BCP-47 should preserve all the information from the internal
+			// code (discussed further above)[*].  But note the converse isn't
+			// true: multiple BCP-47 codes can alias to the same internal code:
+			//     BCP-47      internal
+			//   zh-Hans-CN => zh-cn    (in NON_STANDARD_LANGUAGE_CODE_MAPPING)
+			//   zh-Hans    => zh-hans  (not in " )
+			//   zh-CN      => zh-cn    (not in " )
+			//
+			// [*] eml/egl are the "exception that proves the rule": `egl` *is*
+			// (prematurely?) defined as an internal code, but only
+			// eml.wikipedia.org exists, and it defines its language as `eml`;
+			// for internal purposes `egl` should map back into `eml` until
+			// `eml` is deprecated (aka an `eml => egl` entry is added to
+			// DEPRECATED_LANGUAGE_CODE_MAPPING): T36217.
+			foreach ( self::NON_STANDARD_LANGUAGE_CODE_MAPPING as $internal => $bcp47 ) {
+				$invertedLookup[strtolower( $bcp47 )] = $internal;
+			}
+			// We deliberately do *not* use DEPRECATED_LANGUAGE_CODE_MAPPING
+			// here: deprecated codes are no longer valid mediawiki internal
+			// codes and we should never return them.
+		}
+		// Internal codes are all lowercase.  This also achieves
+		// case-insensitivity in the lookup.
+		$code = strtolower( $code );
+		return $invertedLookup[$code] ?? $code;
+	}
+
+	/**
+	 * We want to eventually require valid BCP-47 codes on HTTP and HTML
+	 * APIs (where the standards require it).  This will "prefer" to
+	 * interpret the given $code as BCP-47, but if a mediawiki internal
+	 * code is provided, it will map it to the proper BCP-47 code.  We
+	 * don't emit a logged warning on this path yet, but we intend to
+	 * in the future.
+	 * @param string $code A "language code" provided from an HTTP or HTML
+	 *   API, presumed to be BCP-47
+	 * @return Bcp47Code An "actual" BCP-47 code
+	 * @internal
+	 */
+	public static function normalizeNonstandardCodeAndWarn( string $code ): Bcp47Code {
+		$compatMap = self::getNonstandardLanguageCodeMapping();
+		if ( isset( $compatMap[strtolower( $code )] ) ) {
+			// Backward compatibility, since clients may have been
+			// sending us non-standards-compliant
+			// "mediawiki internal language codes"; eventually we'll
+			// emit a logged warning here.
+			$code = $compatMap[strtolower( $code )];
+		}
+		return new Bcp47CodeValue( $code );
 	}
 
 	/**

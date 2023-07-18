@@ -1,13 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
+			"Brettchenweber",
 			"Hoo",
+			"Justman10000",
 			"Kghbln",
 			"Metalhead64",
 			"PerfektesChaos",
-			"Umherirrender",
-			"Justman10000",
-			"Brettchenweber"
+			"Umherirrender"
 		]
 	},
 	"scribunto-desc": "Ermöglicht eine Umgebung zum Einbetten von Skriptsprachen in Wikiseiten",

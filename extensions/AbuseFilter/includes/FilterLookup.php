@@ -19,6 +19,7 @@ use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
  * This class provides read access to the filters stored in the database.
+ *
  * @todo Cache exceptions
  */
 class FilterLookup implements IDBAccessObject {

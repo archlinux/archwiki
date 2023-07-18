@@ -32,7 +32,7 @@ class Ref extends ExtensionTagHandler {
 		// function.  However, we're overly permissive here since we can't
 		// distinguish when that's nested in another template.
 		// The php preprocessor did our expansion.
-		$allowNestedRef = !empty( $extApi->inTemplate() ) && $parentExtTag !== 'ref';
+		$allowNestedRef = !empty( $extApi->inTemplate() );
 
 		return $extApi->extTagToDOM(
 			$extArgs,
@@ -155,7 +155,7 @@ class Ref extends ExtensionTagHandler {
 				if ( $hasRefName ) {
 					// Follow content may have been added as spans, so drop it
 					if ( DOMCompat::querySelector( $bodyElt, "span[typeof~='mw:Cite/Follow']" ) ) {
-						$bodyElt = $bodyElt->cloneNode( true );
+						$bodyElt = DOMDataUtils::cloneNode( $bodyElt, true );
 						foreach ( $bodyElt->childNodes as $child ) {
 							if ( DOMUtils::hasTypeOf( $child, 'mw:Cite/Follow' ) ) {
 								// @phan-suppress-next-line PhanTypeMismatchArgumentSuperType

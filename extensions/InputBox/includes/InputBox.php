@@ -24,32 +24,59 @@ class InputBox {
 
 	/** @var Parser */
 	private $mParser;
+	/** @var string */
 	private $mType = '';
+	/** @var int */
 	private $mWidth = 50;
+	/** @var ?string */
 	private $mPreload = null;
+	/** @var ?array */
 	private $mPreloadparams = null;
+	/** @var ?string */
 	private $mEditIntro = null;
+	/** @var ?string */
 	private $mUseVE = null;
+	/** @var ?string */
 	private $mSummary = null;
+	/** @var ?string */
 	private $mNosummary = null;
+	/** @var ?string */
 	private $mMinor = null;
+	/** @var string */
 	private $mPage = '';
+	/** @var string */
 	private $mBR = 'yes';
+	/** @var string */
 	private $mDefaultText = '';
+	/** @var string */
 	private $mPlaceholderText = '';
+	/** @var string */
 	private $mBGColor = 'transparent';
+	/** @var string */
 	private $mButtonLabel = '';
+	/** @var string */
 	private $mSearchButtonLabel = '';
+	/** @var string */
 	private $mFullTextButton = '';
+	/** @var string */
 	private $mLabelText = '';
+	/** @var ?string */
 	private $mHidden = '';
+	/** @var string */
 	private $mNamespaces = '';
+	/** @var string */
 	private $mID = '';
-	private $mInline = false;
+	/** @var ?string */
+	private $mInline = null;
+	/** @var string */
 	private $mPrefix = '';
+	/** @var string */
 	private $mDir = '';
+	/** @var string */
 	private $mSearchFilter = '';
+	/** @var string */
 	private $mTour = '';
+	/** @var string */
 	private $mTextBoxAriaLabel = '';
 
 	/* Functions */
@@ -205,7 +232,8 @@ class InputBox {
 			$checkedNS = [];
 			// Check for valid namespaces
 			foreach ( $namespacesArray as $userNS ) {
-				$userNS = trim( $userNS ); // no whitespace
+				// no whitespace
+				$userNS = trim( $userNS );
 
 				// Namespace needs to be checked if flagged with "**"
 				if ( strpos( $userNS, '**' ) ) {
@@ -221,7 +249,8 @@ class InputBox {
 				} elseif ( isset( $nsAliases[$userNS] ) ) {
 					$i = $nsAliases[$userNS];
 				} else {
-					continue; // Namespace not recognized, skip
+					// Namespace not recognized, skip
+					continue;
 				}
 				$showNamespaces[$i] = $userNS;
 				if ( isset( $checkedNS[$userNS] ) && $checkedNS[$userNS] ) {
@@ -439,6 +468,7 @@ class InputBox {
 		if ( $this->mMinor !== null ) {
 			$htmlOut .= Html::hidden( 'minor', $this->mMinor );
 		}
+		// @phan-suppress-next-line PhanSuspiciousValueComparison False positive
 		if ( $this->mType === 'comment' ) {
 			$htmlOut .= Html::hidden( 'section', 'new' );
 		}
@@ -687,7 +717,7 @@ class InputBox {
 		// T297725: De-obfuscate attempts to trick people into making edits to .js pages
 		$target = $this->mType === 'commenttitle' ? $this->mPage : $this->mDefaultText;
 		if ( $this->mHidden && $this->mPreload && substr( $target, -3 ) === '.js' ) {
-			$this->mHidden = false;
+			$this->mHidden = null;
 		}
 	}
 

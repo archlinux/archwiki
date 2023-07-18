@@ -1,5 +1,12 @@
 # Release History
 
+## 3.0.0 (2022-11-10)
+* Drop class aliases for old \WikiPEG namespace.
+* Bump minimum required PHP version to 7.4.3.
+* Dependency updates (ansi-regex, eslint, minimatch; mediawiki-codesniffer,
+  mediawiki-phan-config, covers-validator, php-parallel-lint).
+* This release should also be compatible with PHP 8.1.
+
 ## 2.0.6 (2021-08-07)
 * Changed package namespace from WikiPEG to Wikimedia\WikiPEG to match
   composer package name. PHP's `class_alias` has been used so that existing

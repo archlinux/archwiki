@@ -9,7 +9,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"APIModules": {
-		"fancycaptchareload": "ApiFancyCaptchaReload"
+		"fancycaptchareload": "MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\ApiFancyCaptchaReload"
 	},
 	"MessagesDirs": {
 		"FancyCaptcha": [
@@ -19,8 +19,10 @@
 	},
 	"AutoloadClasses": {
 		"FancyCaptcha": "includes/FancyCaptcha.php",
-		"HTMLFancyCaptchaField": "includes/HTMLFancyCaptchaField.php",
-		"ApiFancyCaptchaReload": "includes/ApiFancyCaptchaReload.php"
+		"MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\FancyCaptcha": "includes/FancyCaptcha.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha\\": "includes/"
 	},
 	"ResourceModules": {
 		"ext.confirmEdit.fancyCaptcha.styles": {
@@ -54,7 +56,7 @@
 	"callback": "MediaWiki\\Extension\\ConfirmEdit\\Hooks::onFancyCaptchaSetup",
 	"config": {
 		"CaptchaClass": {
-			"value": "FancyCaptcha"
+			"value": "MediaWiki\\Extension\\ConfirmEdit\\FancyCaptcha"
 		},
 		"CaptchaFileBackend": {
 			"value": ""

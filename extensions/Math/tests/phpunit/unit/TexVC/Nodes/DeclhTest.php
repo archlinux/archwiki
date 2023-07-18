@@ -6,7 +6,6 @@ use ArgumentCountError;
 use MediaWiki\Extension\Math\TexVC\Nodes\Declh;
 use MediaWiki\Extension\Math\TexVC\Nodes\Literal;
 use MediaWiki\Extension\Math\TexVC\Nodes\TexArray;
-
 use MediaWikiUnitTestCase;
 use RuntimeException;
 use TypeError;
@@ -39,6 +38,12 @@ class DeclhTest extends MediaWikiUnitTestCase {
 		$this->assertEquals( '{\\rm {a}}', $f->render(), 'Should create a basic function' );
 	}
 
+	public function testGetters() {
+		$f = new Declh( '\\rm', new TexArray( new Literal( 'a' ) ) );
+		$this->assertNotEmpty( $f->getFname() );
+		$this->assertNotEmpty( $f->getArg() );
+	}
+
 	public function testTwoArgsFunctionDeclh() {
 		$f = new Declh( '\\rm',
 			new TexArray( new Literal( 'a' ), new Literal( 'b' ) ) );
@@ -54,6 +59,11 @@ class DeclhTest extends MediaWikiUnitTestCase {
 	public function testExtractIdentifiersDeclh() {
 		$f = new Declh( '\\rm', new TexArray( new Literal( 'a' ) ) );
 		$this->assertEquals( [ 'a' ], $f->extractIdentifiers(), 'Should extract identifiers' );
+	}
+
+	public function testExtractNoIdentifiersDeclh() {
+		$f = new Declh( '\\rm', new TexArray() );
+		$this->assertEquals( [], $f->extractIdentifiers(), 'Should extract identifiers' );
 	}
 
 	public function testExtractIdentifiersMultiDeclh() {
@@ -74,5 +84,10 @@ class DeclhTest extends MediaWikiUnitTestCase {
 			$this->assertEquals( [ "\\math{$mod}{a}" ], $f->extractSubscripts(),
 				"Should extract subscripts for {$mod} font modification" );
 		}
+	}
+
+	public function testRenderMML() {
+		$f = new Declh( '\\bf', new TexArray( new Literal( 'a' ) ) );
+		$this->assertStringContainsString( 'mathvariant="bold"', $f->renderMML(), 'MathML should render bold' );
 	}
 }

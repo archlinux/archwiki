@@ -1,7 +1,9 @@
 <?php
 
 use MediaWiki\MainConfigNames;
+use MediaWiki\Request\FauxRequest;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**

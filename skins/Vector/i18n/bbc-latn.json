@@ -26,5 +26,10 @@
 	"vector-view-view": "Jaha",
 	"vector-view-viewsource": "Ida haroanna",
 	"vector-more-actions": "Asingna muse",
-	"vector-searchsuggest-containing": "Diori alaman na marisi <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Diori alaman na marisi <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Impola",
+	"vector-toc-beginning": "Pamungka",
+	"vector-page-tools-label": "Parhohas",
+	"vector-page-tools-general-label": "Hatopan",
+	"vector-unpin-element-label": "bunihon"
 }

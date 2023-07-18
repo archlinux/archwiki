@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Toghrul Rahimli",
+			"Wertuose",
+			"Zpizza",
+			"NMW03"
+		]
+	},
+	"linterrors": "Lint xətaları",
+	"linter-category-bogus-image-options": "Saxta fayl seçimləri",
+	"linter-category-bogus-image-options-desc": "Bu səhifələrdə saxta seçimləri olan fayllar var.",
+	"linter-category-deletable-table-tag": "Silinməli olan cədvəl teqi",
+	"linter-category-deletable-table-tag-desc": "Bu səhifələrdə silinməli olan cədvəl teqləri var.",
+	"linter-category-fostered": "Təşviq edilmiş məzmun",
+	"linter-category-fostered-desc": "Bu səhifələrin məzmunu təşviq edilib.",
+	"linter-category-html5-misnesting": "HTML5 və HTML4-də fərqli renderlənməyə sahib yanlış iç-içə daxil edilmiş teq",
+	"linter-category-html5-misnesting-desc": "Bu səhv daxil edilmiş teqlər HTML4 ilə müqayisədə HTML5-də fərqli davranacaq.",
+	"linter-category-misc-tidy-replacement-issues": "Müxtəlif problemlər",
+	"linter-category-misc-tidy-replacement-issues-desc": "Bu səhifələrin əvvəllər göründüyündən fərqli şəkildə görünməsinə səbəb olan başqa problemləri var",
+	"linter-category-misnested-tag": "İç-içə keçirilmiş teqlər",
+	"linter-category-misnested-tag-desc": "Bu səhifələrdə düzəldilə bilən yanlış daxil edilmiş teqlər var.",
+	"linter-category-missing-end-tag": "Çatışmayan son teqi",
+	"linter-category-missing-end-tag-desc": "Bu səhifələrin sonlandırıcı teqləri yoxdur.",
+	"linter-category-self-closed-tag": "Self-qapalı tags",
+	"linter-category-self-closed-tag-desc": "Bu pages özünü qapalı tags var.",
+	"linter-page-edit": "redaktə",
+	"linter-page-viewsource": "mənbəyə bax",
+	"linter-pager-self-closed-tag-details": "Self-qapalı tag"
+}

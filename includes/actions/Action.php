@@ -23,6 +23,7 @@ use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Title\Title;
 
 /**
  * @defgroup Actions Actions
@@ -44,16 +45,6 @@ use MediaWiki\Permissions\Authority;
 abstract class Action implements MessageLocalizer {
 
 	/**
-	 * Page on which we're performing the action
-	 * @since 1.17
-	 * @deprecated since 1.35, use {@link getArticle()} ?? {@link getWikiPage()}. Must be removed.
-	 * @internal
-	 *
-	 * @var WikiPage|Article|ImagePage|CategoryPage|Page
-	 */
-	protected $page;
-
-	/**
 	 * @var Article
 	 * @since 1.35
 	 */
@@ -73,6 +64,11 @@ abstract class Action implements MessageLocalizer {
 	 */
 	protected $fields;
 
+	/** @var HookContainer|null */
+	private $hookContainer;
+	/** @var HookRunner|null */
+	private $hookRunner;
+
 	/**
 	 * Get an appropriate Action subclass for the given action
 	 * @since 1.17
@@ -80,7 +76,7 @@ abstract class Action implements MessageLocalizer {
 	 * @param string $action
 	 * @param Article $article
 	 * @param IContextSource|null $context Falls back to article's context
-	 * @return Action|bool|null False if the action is disabled, null
+	 * @return Action|false|null False if the action is disabled, null
 	 *     if it is not recognised
 	 */
 	final public static function factory(
@@ -88,13 +84,9 @@ abstract class Action implements MessageLocalizer {
 		Article $article,
 		IContextSource $context = null
 	) {
-		if ( $context === null ) {
-			$context = $article->getContext();
-		}
-
 		return MediaWikiServices::getInstance()
 			->getActionFactory()
-			->getAction( $action, $article, $context );
+			->getAction( $action, $article, $context ?? $article->getContext() );
 	}
 
 	/**
@@ -107,9 +99,8 @@ abstract class Action implements MessageLocalizer {
 	 * @return string Action name
 	 */
 	final public static function getActionName( IContextSource $context ) {
-		return MediaWikiServices::getInstance()
-			->getActionFactory()
-			->getActionName( $context );
+		// Optimisation: Reuse/prime the cached value of RequestContext
+		return $context->getActionName();
 	}
 
 	/**
@@ -244,12 +235,25 @@ abstract class Action implements MessageLocalizer {
 	}
 
 	/**
+	 * @since 1.40
+	 * @internal For use by ActionFactory
+	 * @param HookContainer $hookContainer
+	 */
+	public function setHookContainer( HookContainer $hookContainer ) {
+		$this->hookContainer = $hookContainer;
+		$this->hookRunner = new HookRunner( $hookContainer );
+	}
+
+	/**
 	 * @since 1.35
 	 * @internal since 1.37
 	 * @return HookContainer
 	 */
 	protected function getHookContainer() {
-		return MediaWikiServices::getInstance()->getHookContainer();
+		if ( !$this->hookContainer ) {
+			$this->hookContainer = MediaWikiServices::getInstance()->getHookContainer();
+		}
+		return $this->hookContainer;
 	}
 
 	/**
@@ -259,7 +263,10 @@ abstract class Action implements MessageLocalizer {
 	 * @return HookRunner
 	 */
 	protected function getHookRunner() {
-		return new HookRunner( $this->getHookContainer() );
+		if ( !$this->hookRunner ) {
+			$this->hookRunner = new HookRunner( $this->getHookContainer() );
+		}
+		return $this->hookRunner;
 	}
 
 	/**
@@ -267,47 +274,12 @@ abstract class Action implements MessageLocalizer {
 	 *
 	 * @stable to call
 	 *
-	 * @param Article|WikiPage|Page $page
-	 * 	Calling with anything other then Article is deprecated since 1.35
-	 * @param IContextSource|null $context
+	 * @param Article $article
+	 * @param IContextSource $context
 	 */
-	public function __construct(
-		Page $page,
-		IContextSource $context = null
-	) {
-		if ( $context === null ) {
-			wfWarn( __METHOD__ . ' called without providing a Context object.' );
-		}
-
-		$this->page = $page;// @todo remove b/c
-		$this->article = self::convertPageToArticle( $page, $context, __METHOD__ );
+	public function __construct( Article $article, IContextSource $context ) {
+		$this->article = $article;
 		$this->context = $context;
-	}
-
-	private static function convertPageToArticle(
-		Page $page,
-		?IContextSource $context,
-		string $method
-	): Article {
-		if ( $page instanceof Article ) {
-			return $page;
-		}
-
-		if ( !$page instanceof WikiPage ) {
-			throw new LogicException(
-				$method . ' called with unknown Page: ' . get_class( $page )
-			);
-		}
-
-		wfDeprecated(
-			$method . ' with: ' . get_class( $page ),
-			'1.35'
-		);
-
-		return Article::newFromWikiPage(
-			$page,
-			$context ?? RequestContext::getMain()
-		);
 	}
 
 	/**

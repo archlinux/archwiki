@@ -1,9 +1,5 @@
 <?php
 /**
- * Helper for displaying edit conflicts to users
- *
- * Copyright (C) 2017 Kunal Mehta <legoktm@debian.org>
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,20 +22,20 @@ namespace MediaWiki\EditPage;
 
 use Content;
 use ContentHandler;
-use Html;
 use IBufferingStatsdDataFactory;
 use MediaWiki\Content\IContentHandlerFactory;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use MWUnknownContentModelException;
 use OutputPage;
-use Title;
 use User;
 
 /**
- * Helper for displaying edit conflicts in text content
- * models to users
+ * Helper for displaying edit conflicts in text content models to users
  *
  * @since 1.31
+ * @author Kunal Mehta <legoktm@debian.org>
  */
 class TextConflictHelper {
 

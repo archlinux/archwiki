@@ -22,20 +22,16 @@ describe( 'Page', function () {
 		await browser.deleteAllCookies();
 		content = Util.getTestString( 'beforeEach-content-' );
 		name = Util.getTestString( 'BeforeEach-name-' );
-
-		// Don't try to run wikitext-specific tests if the test namespace isn't wikitext by default.
-		if ( await Util.isTargetNotWikitext( name ) ) {
-			this.skip();
-		}
 	} );
 
-	it( 'should be previewable', async function () {
+	it( 'should be previewable @daily', async function () {
+		await UserLoginPage.loginAdmin();
 		await EditPage.preview( name, content );
 
 		assert.strictEqual( await EditPage.heading.getText(), 'Creating ' + name );
 		assert.strictEqual( await EditPage.displayedContent.getText(), content );
 		assert( await EditPage.content.isDisplayed(), 'editor is still present' );
-		assert( await !EditPage.conflictingContent.isDisplayed(), 'no edit conflict happened' );
+		assert( !( await EditPage.conflictingContent.isDisplayed() ), 'no edit conflict happened' );
 
 		// T269566: Popup with text
 		// 'Leave site? Changes that you made may not be saved. Cancel/Leave'
@@ -45,6 +41,7 @@ describe( 'Page', function () {
 
 	it( 'should be creatable', async function () {
 		// create
+		await UserLoginPage.loginAdmin();
 		await EditPage.edit( name, content );
 
 		// check
@@ -60,6 +57,7 @@ describe( 'Page', function () {
 		await bot.delete( name, 'delete prior to recreate' );
 
 		// re-create
+		await UserLoginPage.loginAdmin();
 		await EditPage.edit( name, content );
 
 		// check
@@ -77,7 +75,7 @@ describe( 'Page', function () {
 
 		// check
 		assert.strictEqual( await EditPage.heading.getText(), name );
-		assert( await EditPage.displayedContent.getText().includes( editContent ) );
+		assert.match( await EditPage.displayedContent.getText(), new RegExp( editContent ) );
 	} );
 
 	it( 'should have history @daily', async function () {
@@ -99,10 +97,7 @@ describe( 'Page', function () {
 		await DeletePage.delete( name, 'delete reason' );
 
 		// check
-		assert.strictEqual(
-			await DeletePage.displayedContent.getText(),
-			'"' + name + '" has been deleted. See deletion log for a record of recent deletions.\n\nReturn to Main Page.'
-		);
+		assert.match( await DeletePage.displayedContent.getText(), new RegExp( `"${name}" has been deleted.` ) );
 	} );
 
 	it( 'should be restorable', async function () {
@@ -117,7 +112,7 @@ describe( 'Page', function () {
 		await RestorePage.restore( name, 'restore reason' );
 
 		// check
-		assert.strictEqual( await RestorePage.displayedContent.getText(), name + ' has been restored\n\nConsult the deletion log for a record of recent deletions and restorations.' );
+		assert.strictEqual( await RestorePage.displayedContent.getText(), name + ' has been undeleted\n\nConsult the deletion log for a record of recent deletions and restorations.' );
 	} );
 
 	it( 'should be protectable', async function () {
@@ -142,7 +137,7 @@ describe( 'Page', function () {
 		assert.strictEqual( await EditPage.heading.getText(), 'View source for ' + name );
 	} );
 
-	it.skip( 'should be undoable', async function () {
+	it( 'should be undoable @daily', async function () {
 
 		// create
 		await bot.edit( name, content, 'create to edit and undo' );

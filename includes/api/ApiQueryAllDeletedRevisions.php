@@ -23,6 +23,7 @@
  * @file
  */
 
+use MediaWiki\CommentFormatter\CommentFormatter;
 use MediaWiki\Content\IContentHandlerFactory;
 use MediaWiki\Content\Renderer\ContentRenderer;
 use MediaWiki\Content\Transform\ContentTransformer;
@@ -33,6 +34,7 @@ use MediaWiki\Revision\RevisionStore;
 use MediaWiki\Revision\SlotRoleRegistry;
 use MediaWiki\Storage\NameTableAccessException;
 use MediaWiki\Storage\NameTableStore;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 
 /**
@@ -62,6 +64,7 @@ class ApiQueryAllDeletedRevisions extends ApiQueryRevisionsBase {
 	 * @param NamespaceInfo $namespaceInfo
 	 * @param ContentRenderer $contentRenderer
 	 * @param ContentTransformer $contentTransformer
+	 * @param CommentFormatter $commentFormatter
 	 */
 	public function __construct(
 		ApiQuery $query,
@@ -73,7 +76,8 @@ class ApiQueryAllDeletedRevisions extends ApiQueryRevisionsBase {
 		NameTableStore $changeTagDefStore,
 		NamespaceInfo $namespaceInfo,
 		ContentRenderer $contentRenderer,
-		ContentTransformer $contentTransformer
+		ContentTransformer $contentTransformer,
+		CommentFormatter $commentFormatter
 	) {
 		parent::__construct(
 			$query,
@@ -84,7 +88,8 @@ class ApiQueryAllDeletedRevisions extends ApiQueryRevisionsBase {
 			$parserFactory,
 			$slotRoleRegistry,
 			$contentRenderer,
-			$contentTransformer
+			$contentTransformer,
+			$commentFormatter
 		);
 		$this->revisionStore = $revisionStore;
 		$this->changeTagDefStore = $changeTagDefStore;
@@ -278,7 +283,7 @@ class ApiQueryAllDeletedRevisions extends ApiQueryRevisionsBase {
 			// uncached at this point, and the non-generator case needs an actor
 			// join anyway so adding this join here is normally free. This should
 			// use the ar_actor_timestamp index.
-			$this->addWhereFld( 'actor_name',  $params['user'] );
+			$this->addWhereFld( 'actor_name', $params['user'] );
 		} elseif ( $params['excludeuser'] !== null ) {
 			$this->addWhere( 'actor_name<>' . $db->addQuotes( $params['excludeuser'] ) );
 		}
@@ -298,38 +303,27 @@ class ApiQueryAllDeletedRevisions extends ApiQueryRevisionsBase {
 		}
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$op = ( $dir == 'newer' ? '>' : '<' );
+			$op = ( $dir == 'newer' ? '>=' : '<=' );
 			if ( $optimizeGenerateTitles ) {
-				$this->dieContinueUsageIf( count( $cont ) != 2 );
-				$ns = (int)$cont[0];
-				$this->dieContinueUsageIf( strval( $ns ) !== $cont[0] );
-				$title = $db->addQuotes( $cont[1] );
-				$this->addWhere( "ar_namespace $op $ns OR " .
-					"(ar_namespace = $ns AND ar_title $op= $title)" );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'string' ] );
+				$this->addWhere( $db->buildComparison( $op, [
+					'ar_namespace' => $cont[0],
+					'ar_title' => $cont[1],
+				] ) );
 			} elseif ( $mode == 'all' ) {
-				$this->dieContinueUsageIf( count( $cont ) != 4 );
-				$ns = (int)$cont[0];
-				$this->dieContinueUsageIf( strval( $ns ) !== $cont[0] );
-				$title = $db->addQuotes( $cont[1] );
-				$ts = $db->addQuotes( $db->timestamp( $cont[2] ) );
-				$ar_id = (int)$cont[3];
-				$this->dieContinueUsageIf( strval( $ar_id ) !== $cont[3] );
-				$this->addWhere( "ar_namespace $op $ns OR " .
-					"(ar_namespace = $ns AND " .
-					"(ar_title $op $title OR " .
-					"(ar_title = $title AND " .
-					"(ar_timestamp $op $ts OR " .
-					"(ar_timestamp = $ts AND " .
-					"ar_id $op= $ar_id)))))" );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'string', 'timestamp', 'int' ] );
+				$this->addWhere( $db->buildComparison( $op, [
+					'ar_namespace' => $cont[0],
+					'ar_title' => $cont[1],
+					'ar_timestamp' => $db->timestamp( $cont[2] ),
+					'ar_id' => $cont[3],
+				] ) );
 			} else {
-				$this->dieContinueUsageIf( count( $cont ) != 2 );
-				$ts = $db->addQuotes( $db->timestamp( $cont[0] ) );
-				$ar_id = (int)$cont[1];
-				$this->dieContinueUsageIf( strval( $ar_id ) !== $cont[1] );
-				$this->addWhere( "ar_timestamp $op $ts OR " .
-					"(ar_timestamp = $ts AND " .
-					"ar_id $op= $ar_id)" );
+				$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'timestamp', 'int' ] );
+				$this->addWhere( $db->buildComparison( $op, [
+					'ar_timestamp' => $db->timestamp( $cont[0] ),
+					'ar_id' => $cont[1],
+				] ) );
 			}
 		}
 

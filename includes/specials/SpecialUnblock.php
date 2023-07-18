@@ -82,7 +82,7 @@ class SpecialUnblock extends SpecialPage {
 		$this->checkPermissions();
 		$this->checkReadOnly();
 
-		list( $this->target, $this->type ) = $this->getTargetAndType( $par, $this->getRequest() );
+		[ $this->target, $this->type ] = $this->getTargetAndType( $par, $this->getRequest() );
 		$this->block = DatabaseBlock::newFromTarget( $this->target );
 		if ( $this->target instanceof UserIdentity ) {
 			# Set the 'relevant user' in the skin, so it displays links like Contributions,
@@ -109,7 +109,7 @@ class SpecialUnblock extends SpecialPage {
 				)->unblock();
 			} )
 			->setSubmitTextMsg( 'ipusubmit' )
-			->addPreText( $this->msg( 'unblockiptext' )->parseAsBlock() );
+			->addPreHtml( $this->msg( 'unblockiptext' )->parseAsBlock() );
 
 		if ( $form->show() ) {
 			switch ( $this->type ) {

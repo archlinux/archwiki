@@ -16,5 +16,10 @@
 	"vector-view-edit": "لکھو",
 	"vector-view-history": "تاریخچہ",
 	"vector-view-view": "پڑھو",
-	"vector-more-actions": "ٻئے"
+	"vector-more-actions": "ٻئے",
+	"vector-main-menu-label": "اصل مینیو",
+	"vector-page-tools-label": "اوزار",
+	"vector-page-tools-general-label": "عمومی",
+	"vector-page-tools-actions-label": "عمل",
+	"vector-unpin-element-label": "لُکاؤ"
 }

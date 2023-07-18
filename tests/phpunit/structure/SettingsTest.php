@@ -69,8 +69,7 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 	 * Check that currently loaded settings validate against the schema.
 	 */
 	public function testCurrentSettingsValidate() {
-		global $wgSettings;
-		$validationResult = $wgSettings->validate();
+		$validationResult = SettingsBuilder::getInstance()->validate();
 		$this->assertStatusOK( $validationResult );
 	}
 
@@ -78,17 +77,23 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 	 * Check that currently loaded config does not use deprecated settings.
 	 */
 	public function testCurrentSettingsNotDeprecated() {
-		global $wgSettings;
-		$deprecations = $wgSettings->detectDeprecatedConfig();
+		$deprecations = SettingsBuilder::getInstance()->detectDeprecatedConfig();
 		$this->assertEquals( [], $deprecations );
+	}
+
+	/**
+	 * Check that currently loaded config does not use obsolete settings.
+	 */
+	public function testCurrentSettingsNotObsolete() {
+		$obsolete = SettingsBuilder::getInstance()->detectObsoleteConfig();
+		$this->assertEquals( [], $obsolete );
 	}
 
 	/**
 	 * Check that currently loaded config does not have warnings.
 	 */
 	public function testCurrentSettingsHaveNoWarnings() {
-		global $wgSettings;
-		$deprecations = $wgSettings->getWarnings();
+		$deprecations = SettingsBuilder::getInstance()->getWarnings();
 		$this->assertEquals( [], $deprecations );
 	}
 
@@ -99,7 +104,7 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 		];
 		yield 'includes/config-vars.php' => [
 			'option' => '--vars',
-			'expectedFile' => MW_INSTALL_PATH . '/includes/config-vars.php',
+			'expectedFile' => MW_INSTALL_PATH . '/docs/config-vars.php',
 		];
 		yield 'docs/config-schema.yaml' => [
 			'option' => '--yaml',
@@ -115,10 +120,14 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider provideConfigGeneration
 	 */
 	public function testConfigGeneration( string $option, string $expectedFile ) {
-		$script = MW_INSTALL_PATH . '/maintenance/generateConfigSchema.php';
-		$schemaGenerator = Shell::makeScriptCommand( $script, [ $option, 'php://stdout' ] );
+		$script = MW_INSTALL_PATH . '/maintenance/run.php';
+		$schemaGenerator = Shell::makeScriptCommand( $script, [ 'GenerateConfigSchema', $option, 'php://stdout' ] );
 		$result = $schemaGenerator->execute();
-		$this->assertSame( 0, $result->getExitCode(), 'Config generation must finish successfully' );
+		$this->assertSame(
+			0,
+			$result->getExitCode(),
+			'Config generation must finish successfully.' . "\n" . $result->getStderr()
+		);
 
 		$errors = $result->getStderr();
 		$errors = preg_replace( '/^Xdebug:.*\n/m', '', $errors );
@@ -198,6 +207,8 @@ class SettingsTest extends MediaWikiIntegrationTestCase {
 	public function testSchemaCompleteness( $schema ) {
 		$type = $schema['type'] ?? null;
 		$type = (array)$type;
+
+		$this->assertArrayNotHasKey( 'obsolete', $schema, 'Obsolete schemas should have been filtered out' );
 
 		if ( isset( $schema['properties'] ) ) {
 			$this->assertContains(

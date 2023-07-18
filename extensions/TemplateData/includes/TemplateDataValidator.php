@@ -92,16 +92,15 @@ class TemplateDataValidator {
 		}
 
 		// Root.format
-		if ( isset( $data->format ) ) {
-			// @phan-suppress-next-line PhanTypeMismatchDimFetchNullable
-			$f = self::PREDEFINED_FORMATS[$data->format] ?? $data->format;
-			if ( !is_string( $f ) ||
-				!preg_match( '/^\n?\{\{ *_+\n? *\|\n? *_+ *= *_+\n? *\}\}\n?$/', $f )
-			) {
-				return Status::newFatal( 'templatedata-invalid-format', 'format' );
-			}
-		} else {
+		if ( !isset( $data->format ) ) {
 			$data->format = null;
+		} elseif ( !is_string( $data->format ) ||
+			// @phan-suppress-next-line PhanImpossibleCondition
+			!( isset( self::PREDEFINED_FORMATS[$data->format] ) ||
+				$this->isValidCustomFormatString( $data->format )
+			)
+		) {
+			return Status::newFatal( 'templatedata-invalid-format', 'format' );
 		}
 
 		// Root.params
@@ -118,167 +117,13 @@ class TemplateDataValidator {
 		// to decide whether 'inherits' will add it or not.
 		$unnormalizedParams = unserialize( serialize( $data->params ) );
 
-		foreach ( $data->params as $paramName => $param ) {
-			if ( !( $param instanceof stdClass ) ) {
-				return Status::newFatal( 'templatedata-invalid-type', "params.{$paramName}",
-					'object' );
-			}
-
-			foreach ( $param as $key => $value ) {
-				if ( !in_array( $key, self::VALID_PARAM_KEYS ) ) {
-					return Status::newFatal( 'templatedata-invalid-unknown',
-						"params.{$paramName}.{$key}" );
-				}
-			}
-
-			// Param.label
-			if ( isset( $param->label ) ) {
-				if ( !$this->isValidInterfaceText( $param->label ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.label", 'string|object' );
-				}
-				$param->label = $this->normaliseInterfaceText( $param->label );
-			} else {
-				$param->label = null;
-			}
-
-			// Param.required
-			if ( isset( $param->required ) ) {
-				if ( !is_bool( $param->required ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.required", 'boolean' );
-				}
-			} else {
-				$param->required = false;
-			}
-
-			// Param.suggested
-			if ( isset( $param->suggested ) ) {
-				if ( !is_bool( $param->suggested ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.suggested", 'boolean' );
-				}
-			} else {
-				$param->suggested = false;
-			}
-
-			// Param.description
-			if ( isset( $param->description ) ) {
-				if ( !$this->isValidInterfaceText( $param->description ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.description", 'string|object' );
-				}
-				$param->description = $this->normaliseInterfaceText( $param->description );
-			} else {
-				$param->description = null;
-			}
-
-			// Param.example
-			if ( isset( $param->example ) ) {
-				if ( !$this->isValidInterfaceText( $param->example ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.example", 'string|object' );
-				}
-				$param->example = $this->normaliseInterfaceText( $param->example );
-			} else {
-				$param->example = null;
-			}
-
-			// Param.deprecated
-			if ( isset( $param->deprecated ) ) {
-				if ( !is_bool( $param->deprecated ) && !is_string( $param->deprecated ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.deprecated", 'boolean|string' );
-				}
-			} else {
-				$param->deprecated = false;
-			}
-
-			// Param.aliases
-			if ( isset( $param->aliases ) ) {
-				if ( !is_array( $param->aliases ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.aliases", 'array' );
-				}
-				foreach ( $param->aliases as $i => &$alias ) {
-					if ( is_int( $alias ) ) {
-						$alias = (string)$alias;
-					} elseif ( !is_string( $alias ) ) {
-						return Status::newFatal( 'templatedata-invalid-type',
-							"params.{$paramName}.aliases[$i]", 'int|string' );
-					}
-				}
-			} else {
-				$param->aliases = [];
-			}
-
-			// Param.autovalue
-			if ( isset( $param->autovalue ) ) {
-				if ( !is_string( $param->autovalue ) ) {
-					// TODO: Validate the autovalue values.
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.autovalue", 'string' );
-				}
-			} else {
-				$param->autovalue = null;
-			}
-
-			// Param.default
-			if ( isset( $param->default ) ) {
-				if ( !$this->isValidInterfaceText( $param->default ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.default", 'string|object' );
-				}
-				$param->default = $this->normaliseInterfaceText( $param->default );
-			} else {
-				$param->default = null;
-			}
-
-			// Param.type
-			if ( isset( $param->type ) ) {
-				if ( !is_string( $param->type ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.type", 'string' );
-				}
-
-				// Map deprecated types to newer versions
-				if ( isset( self::DEPRECATED_TYPES_MAP[ $param->type ] ) ) {
-					$param->type = self::DEPRECATED_TYPES_MAP[ $param->type ];
-				}
-
-				if ( !in_array( $param->type, self::VALID_TYPES ) ) {
-					return Status::newFatal( 'templatedata-invalid-value',
-						'params.' . $paramName . '.type' );
-				}
-			} else {
-				$param->type = 'unknown';
-			}
-
-			// Param.suggestedvalues
-			if ( isset( $param->suggestedvalues ) ) {
-				if ( !is_array( $param->suggestedvalues ) ) {
-					return Status::newFatal( 'templatedata-invalid-type',
-						"params.{$paramName}.suggestedvalues", 'array' );
-				}
-				foreach ( $param->suggestedvalues as $i => $value ) {
-					if ( !is_string( $value ) ) {
-						return Status::newFatal( 'templatedata-invalid-type',
-							"params.{$paramName}.suggestedvalues[$i]", 'string' );
-					}
-				}
-			} else {
-				$param->suggestedvalues = [];
-			}
+		$status = $this->validateParameters( $data->params );
+		if ( $status ) {
+			return $status;
 		}
 
-		// Param.inherits
-		// Done afterwards to avoid code duplication
 		foreach ( $data->params as $paramName => $param ) {
 			if ( isset( $param->inherits ) ) {
-				if ( !isset( $data->params->{ $param->inherits } ) ) {
-						return Status::newFatal( 'templatedata-invalid-missing',
-							"params.{$param->inherits}" );
-				}
 				$parentParam = $data->params->{ $param->inherits };
 				foreach ( $parentParam as $key => $value ) {
 					if ( !isset( $unnormalizedParams->$paramName->$key ) ) {
@@ -293,6 +138,186 @@ class TemplateDataValidator {
 			$this->validateSets( $data->sets, $data->params ) ??
 			$this->validateMaps( $data->maps, $data->params ) ??
 			Status::newGood();
+	}
+
+	/**
+	 * @param stdClass $params
+	 * @return Status|null Null on success, otherwise a Status object with the error message
+	 */
+	private function validateParameters( stdClass $params ): ?Status {
+		foreach ( $params as $paramName => $param ) {
+			if ( !( $param instanceof stdClass ) ) {
+				return Status::newFatal( 'templatedata-invalid-type', "params.{$paramName}",
+					'object' );
+			}
+
+			$status = $this->validateParameter( $paramName, $param );
+			if ( $status ) {
+				return $status;
+			}
+
+			if ( isset( $param->inherits ) && !isset( $params->{ $param->inherits } ) ) {
+				return Status::newFatal( 'templatedata-invalid-missing',
+					"params.{$param->inherits}" );
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param string $paramName
+	 * @param stdClass $param
+	 * @return Status|null Null on success, otherwise a Status object with the error message
+	 */
+	private function validateParameter( string $paramName, stdClass $param ): ?Status {
+		foreach ( $param as $key => $value ) {
+			if ( !in_array( $key, self::VALID_PARAM_KEYS ) ) {
+				return Status::newFatal( 'templatedata-invalid-unknown',
+					"params.{$paramName}.{$key}" );
+			}
+		}
+
+		// Param.label
+		if ( isset( $param->label ) ) {
+			if ( !$this->isValidInterfaceText( $param->label ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.label", 'string|object' );
+			}
+			$param->label = $this->normaliseInterfaceText( $param->label );
+		} else {
+			$param->label = null;
+		}
+
+		// Param.required
+		if ( isset( $param->required ) ) {
+			if ( !is_bool( $param->required ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.required", 'boolean' );
+			}
+		} else {
+			$param->required = false;
+		}
+
+		// Param.suggested
+		if ( isset( $param->suggested ) ) {
+			if ( !is_bool( $param->suggested ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.suggested", 'boolean' );
+			}
+		} else {
+			$param->suggested = false;
+		}
+
+		// Param.description
+		if ( isset( $param->description ) ) {
+			if ( !$this->isValidInterfaceText( $param->description ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.description", 'string|object' );
+			}
+			$param->description = $this->normaliseInterfaceText( $param->description );
+		} else {
+			$param->description = null;
+		}
+
+		// Param.example
+		if ( isset( $param->example ) ) {
+			if ( !$this->isValidInterfaceText( $param->example ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.example", 'string|object' );
+			}
+			$param->example = $this->normaliseInterfaceText( $param->example );
+		} else {
+			$param->example = null;
+		}
+
+		// Param.deprecated
+		if ( isset( $param->deprecated ) ) {
+			if ( !is_bool( $param->deprecated ) && !is_string( $param->deprecated ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.deprecated", 'boolean|string' );
+			}
+		} else {
+			$param->deprecated = false;
+		}
+
+		// Param.aliases
+		if ( isset( $param->aliases ) ) {
+			if ( !is_array( $param->aliases ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.aliases", 'array' );
+			}
+			foreach ( $param->aliases as $i => &$alias ) {
+				if ( is_int( $alias ) ) {
+					$alias = (string)$alias;
+				} elseif ( !is_string( $alias ) ) {
+					return Status::newFatal( 'templatedata-invalid-type',
+						"params.{$paramName}.aliases[$i]", 'int|string' );
+				}
+			}
+		} else {
+			$param->aliases = [];
+		}
+
+		// Param.autovalue
+		if ( isset( $param->autovalue ) ) {
+			if ( !is_string( $param->autovalue ) ) {
+				// TODO: Validate the autovalue values.
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.autovalue", 'string' );
+			}
+		} else {
+			$param->autovalue = null;
+		}
+
+		// Param.default
+		if ( isset( $param->default ) ) {
+			if ( !$this->isValidInterfaceText( $param->default ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.default", 'string|object' );
+			}
+			$param->default = $this->normaliseInterfaceText( $param->default );
+		} else {
+			$param->default = null;
+		}
+
+		// Param.type
+		if ( isset( $param->type ) ) {
+			if ( !is_string( $param->type ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.type", 'string' );
+			}
+
+			// Map deprecated types to newer versions
+			if ( isset( self::DEPRECATED_TYPES_MAP[ $param->type ] ) ) {
+				$param->type = self::DEPRECATED_TYPES_MAP[ $param->type ];
+			}
+
+			if ( !in_array( $param->type, self::VALID_TYPES ) ) {
+				return Status::newFatal( 'templatedata-invalid-value',
+					'params.' . $paramName . '.type' );
+			}
+		} else {
+			$param->type = 'unknown';
+		}
+
+		// Param.suggestedvalues
+		if ( isset( $param->suggestedvalues ) ) {
+			if ( !is_array( $param->suggestedvalues ) ) {
+				return Status::newFatal( 'templatedata-invalid-type',
+					"params.{$paramName}.suggestedvalues", 'array' );
+			}
+			foreach ( $param->suggestedvalues as $i => $value ) {
+				if ( !is_string( $value ) ) {
+					return Status::newFatal( 'templatedata-invalid-type',
+						"params.{$paramName}.suggestedvalues[$i]", 'string' );
+				}
+			}
+		} else {
+			$param->suggestedvalues = [];
+		}
+
+		return null;
 	}
 
 	/**
@@ -445,6 +470,14 @@ class TemplateDataValidator {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param string|null $format
+	 * @return bool
+	 */
+	private function isValidCustomFormatString( ?string $format ): bool {
+		return $format && preg_match( '/^\n?{{ *_+\n? *\|\n? *_+ *= *_+\n? *}}\n?$/', $format );
 	}
 
 	/**

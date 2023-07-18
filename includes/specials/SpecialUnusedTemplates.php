@@ -25,6 +25,7 @@
  */
 
 use MediaWiki\Linker\LinksMigration;
+use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 /**
@@ -72,7 +73,7 @@ class SpecialUnusedTemplates extends QueryPage {
 			'templatelinks',
 			'LEFT JOIN'
 		);
-		list( $ns, $title ) = $this->linksMigration->getTitleFields( 'templatelinks' );
+		[ $ns, $title ] = $this->linksMigration->getTitleFields( 'templatelinks' );
 		$joinConds = [];
 		$templatelinksJoin = [
 			'LEFT JOIN', [ "$title = page_title",

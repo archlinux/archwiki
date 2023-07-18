@@ -7,8 +7,8 @@
 			"Kiranmayee",
 			"Praveen Illa",
 			"Ravichandra",
-			"Veeven",
-			"V Bhavya"
+			"V Bhavya",
+			"Veeven"
 		]
 	},
 	"skinname-vector": "వెక్టర్",
@@ -32,8 +32,16 @@
 	"vector-view-view": "చదువు",
 	"vector-view-viewsource": "మూలాన్ని చూపించు",
 	"vector-more-actions": "మరిన్ని",
-	"vector-toc-heading": "విషయ సూచిక",
+	"vector-toc-label": "విషయ సూచిక",
 	"vector-toc-beginning": "ప్రవేశిక",
 	"vector-toc-toggle-button-label": "$1 ఉపవర్గాన్ని టాగుల్ చెయ్యి",
-	"vector-main-menu-tooltip": "ప్రధాన మెనూ"
+	"vector-main-menu-tooltip": "ప్రధాన మెనూ",
+	"vector-main-menu-label": "ప్రధాన మెనూ",
+	"vector-page-tools-label": "పరికరాలు",
+	"vector-page-tools-general-label": "సాధారణం",
+	"vector-pin-element-label": "సైడ్‌బార్‌ లోకి తరలించు",
+	"vector-unpin-element-label": "దాచు",
+	"vector-prefs-limited-width": "లిమిటెడ్ విడ్త్ మోడ్‌ను చేతనం చెయ్యి",
+	"vector-prefs-limited-width-help": "చదవడంలో మెరుగైన అనుభూతి కోసం లిమిటెడ్ విడ్త్ మోడ్‌ను చేతనం చేసుకోండి",
+	"empty-language-selector-body": "ఈ పేజీ లోని కంటెంటులకు ఇతర భాషలలో మద్దతు లేదు."
 }

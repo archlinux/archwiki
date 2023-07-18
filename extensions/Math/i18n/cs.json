@@ -85,7 +85,6 @@
 	"math_unknown_function": "neznámá funkce „$1“",
 	"mw_math_latexml": "LaTeXML (experimentální; používá MathML)",
 	"mw_math_mathml": "SVG, alternativně PNG (MathML lze povolit skrze prohlížečový plugin)",
-	"mw_math_png": "PNG obrázky",
 	"mw_math_source": "Zdrojový kód LaTeX (pro textové prohlížeče)",
 	"prefs-math": "Matematika",
 	"mathstatus": "Stav matematiky",

@@ -5,9 +5,9 @@
 			"CennoxX",
 			"Kghbln",
 			"Metalhead64",
+			"Schniggendiller",
 			"The Evil IP address",
-			"Umherirrender",
-			"Schniggendiller"
+			"Umherirrender"
 		]
 	},
 	"skinname-vector": "Vector alt (2010)",
@@ -45,9 +45,7 @@
 	"vector-search-loader": "Laden von Suchvorschlägen",
 	"vector-searchsuggest-containing": "Suche nach Seiten, die <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong> enthalten",
 	"vector-intro-page": "Help:Einführung",
-	"vector-toc-heading": "Inhaltsverzeichnis",
-	"vector-toc-toggle-position-sidebar": "In die Seitenleiste verschieben",
-	"vector-toc-toggle-position-title": "Verbergen",
+	"vector-toc-label": "Inhaltsverzeichnis",
 	"vector-toc-beginning": "Anfang",
 	"vector-toc-toggle-button-label": "Unterabschnitt $1 umschalten",
 	"vector-anon-user-menu-pages": "Seiten für abgemeldete Benutzer",
@@ -56,8 +54,17 @@
 	"vector-main-menu-tooltip": "Hauptmenü",
 	"vector-toc-menu-tooltip": "Inhaltsverzeichnis",
 	"vector-toc-collapsible-button-label": "Inhaltsverzeichnis umschalten",
-	"vector-article-tools-nav-label": "Werkzeuge",
 	"vector-site-nav-label": "Website",
+	"vector-main-menu-label": "Hauptmenü",
+	"vector-limited-width-toggle": "Umschalten der eingeschränkten Breite des Inhalts",
+	"vector-page-tools-label": "Werkzeuge",
+	"vector-page-tools-general-label": "Allgemein",
+	"vector-page-tools-actions-label": "Aktionen",
+	"vector-pin-element-label": "In die Seitenleiste verschieben",
+	"vector-unpin-element-label": "Verbergen",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|Diskussion]]",
-	"tooltip-vector-anon-user-menu-title": "Weitere Optionen"
+	"tooltip-vector-anon-user-menu-title": "Weitere Optionen",
+	"vector-prefs-limited-width": "Modus für begrenzte Breite aktivieren",
+	"vector-prefs-limited-width-help": "Aktiviere den Modus mit begrenzter Breite für eine verbesserte Leseansicht",
+	"empty-language-selector-body": "Seiteninhalte werden in anderen Sprachen nicht unterstützt."
 }

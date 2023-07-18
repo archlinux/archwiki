@@ -10,12 +10,12 @@ use MediaWiki\Revision\RevisionArchiveRecord;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWiki\Revision\RevisionSlots;
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Title\Title;
 use MediaWiki\User\UserIdentity;
 use MediaWiki\User\UserIdentityValue;
 use MediaWikiIntegrationTestCase;
 use stdClass;
 use TextContent;
-use Title;
 use TitleValue;
 use Wikimedia\Assert\PreconditionException;
 
@@ -128,7 +128,7 @@ class RevisionArchiveRecordTest extends MediaWikiIntegrationTestCase {
 	 * @param CommentStoreComment $comment
 	 * @param stdClass $row
 	 * @param RevisionSlots $slots
-	 * @param bool $wikiId
+	 * @param string|false $wikiId
 	 * @param string|null $expectedException
 	 */
 	public function testConstructorAndGetters(
@@ -259,7 +259,7 @@ class RevisionArchiveRecordTest extends MediaWikiIntegrationTestCase {
 	 * @param CommentStoreComment $comment
 	 * @param stdClass $row
 	 * @param RevisionSlots $slots
-	 * @param bool $wikiId
+	 * @param string|false $wikiId
 	 * @param string|null $expectedException
 	 */
 	public function testConstructorFailure(

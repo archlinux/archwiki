@@ -303,6 +303,7 @@ class Element extends Tag {
 		];
 		$attributeToConfig = [
 			'maxlength' => 'maxLength',
+			'minlength' => 'minLength',
 			'readonly' => 'readOnly',
 			'tabindex' => 'tabIndex',
 			'accesskey' => 'accessKey',

@@ -12,7 +12,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "antispam",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"AvailableRights": [
 		"abusefilter-modify",
@@ -292,10 +292,7 @@
 		},
 		"ext.abuseFilter.visualEditor": {
 			"scripts": "ve-abusefilter/ve.init.mw.AbuseFilterSaveErrorHandler.js",
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+			"targets": [ "desktop", "mobile" ]
 		}
 	},
 	"attributes": {
@@ -313,23 +310,16 @@
 	"HookHandlers": {
 		"ToolLinks": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\ToolLinksHandler",
-			"services": [
-				"AbuseFilterPermissionManager"
-			]
+			"services": [ "AbuseFilterPermissionManager" ]
 		},
 		"AutoPromoteGroups": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\AutoPromoteGroupsHandler",
 			"factory": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\AutoPromoteGroupsHandler::factory",
-			"services": [
-				"AbuseFilterConsequencesRegistry",
-				"AbuseFilterBlockAutopromoteStore"
-			]
+			"services": [ "AbuseFilterConsequencesRegistry", "AbuseFilterBlockAutopromoteStore" ]
 		},
 		"ChangeTags": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\ChangeTagsHandler",
-			"services": [
-				"AbuseFilterChangeTagsManager"
-			]
+			"services": [ "AbuseFilterChangeTagsManager" ]
 		},
 		"Tests": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\TestsHandler"
@@ -343,24 +333,19 @@
 		},
 		"PageSave": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\PageSaveHandler",
-			"services": [
-				"AbuseFilterEditRevUpdater"
-			]
+			"services": [ "AbuseFilterEditRevUpdater" ]
 		},
 		"RecentChangeSave": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\RecentChangeSaveHandler",
-			"services": [
-				"AbuseFilterChangeTagger"
-			]
+			"services": [ "AbuseFilterChangeTagger" ]
 		},
 		"FilteredActions": {
 			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\FilteredActionsHandler",
-			"services": [
-				"StatsdDataFactory",
-				"AbuseFilterRunnerFactory",
-				"AbuseFilterVariableGeneratorFactory",
-				"AbuseFilterEditRevUpdater"
-			]
+			"services": [ "StatsdDataFactory", "AbuseFilterRunnerFactory", "AbuseFilterVariableGeneratorFactory", "AbuseFilterEditRevUpdater" ]
+		},
+		"CheckUser": {
+			"class": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\CheckUserHandler",
+			"services": [ "AbuseFilterFilterUser" ]
 		}
 	},
 	"Hooks": {
@@ -379,6 +364,7 @@
 		"UploadStashFile": "FilteredActions",
 		"PageSaveComplete": "PageSave",
 		"RenameUserSQL": "UserRename",
+		"CheckUserInsertChangesRow": "CheckUser",
 		"UserMergeAccountFields": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\UserMergeHandler::onUserMergeAccountFields",
 		"BeforeCreateEchoEvent": "MediaWiki\\Extension\\AbuseFilter\\Hooks\\Handlers\\EchoHandler::onBeforeCreateEchoEvent",
 		"ParserOutputStashForEdit": "FilteredActions",
@@ -479,10 +465,8 @@
 			"description": "Duration, in days, for which users' autopromotion is blocked by filters."
 		},
 		"AbuseFilterValidGroups": {
-			"value": [
-				"default"
-			],
-			"description": "The list of 'groups' filters can be divided into \u2013\u00a0used for applying edit filters to certain types of actions. By default there is only one group."
+			"value": [ "default" ],
+			"description": "The list of 'groups' filters can be divided into – used for applying edit filters to certain types of actions. By default there is only one group."
 		},
 		"AbuseFilterDefaultWarningMessage": {
 			"value": {

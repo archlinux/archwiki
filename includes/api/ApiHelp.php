@@ -20,11 +20,16 @@
  * @file
  */
 
-use HtmlFormatter\HtmlFormatter;
 use MediaWiki\ExtensionInfo;
+use MediaWiki\Html\Html;
+use MediaWiki\Html\HtmlHelper;
+use MediaWiki\Linker\Linker;
 use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
+use Wikimedia\Parsoid\Core\TOCData;
+use Wikimedia\RemexHtml\Serializer\SerializerNode;
 
 /**
  * Class to output help for an API module
@@ -181,8 +186,7 @@ class ApiHelp extends ApiBase {
 		$haveModules = [];
 		$html = self::getHelpInternal( $context, $modules, $options, $haveModules );
 		if ( !empty( $options['toc'] ) && $haveModules ) {
-			// @phan-suppress-next-line SecurityCheck-DoubleEscaped Triggered by Linker?
-			$out->addHTML( Linker::generateTOC( $haveModules, $context->getLanguage() ) );
+			$out->addHTML( Linker::generateTOC( TOCData::fromLegacy( $haveModules ), $context->getLanguage() ) );
 		}
 		$out->addHTML( $html );
 
@@ -206,35 +210,39 @@ class ApiHelp extends ApiBase {
 	 * @return string
 	 */
 	public static function fixHelpLinks( $html, $helptitle = null, $localModules = [] ) {
-		$formatter = new HtmlFormatter( $html );
-		$doc = $formatter->getDoc();
-		$xpath = new DOMXPath( $doc );
-		$nodes = $xpath->query( '//a[@href][not(contains(@class,\'apihelp-linktrail\'))]' );
-		/** @var DOMElement $node */
-		foreach ( $nodes as $node ) {
-			$href = $node->getAttribute( 'href' );
-			do {
-				$old = $href;
-				$href = rawurldecode( $href );
-			} while ( $old !== $href );
-			if ( preg_match( '!Special:ApiHelp/([^&/|#]+)((?:#.*)?)!', $href, $m ) ) {
-				if ( isset( $localModules[$m[1]] ) ) {
-					$href = $m[2] === '' ? '#' . $m[1] : $m[2];
-				} elseif ( $helptitle !== null ) {
-					$href = Title::newFromText( str_replace( '$1', $m[1], $helptitle ) . $m[2] )
-						->getFullURL();
-				} else {
-					$href = wfAppendQuery( wfScript( 'api' ), [
-						'action' => 'help',
-						'modules' => $m[1],
-					] ) . $m[2];
+		return HtmlHelper::modifyElements(
+			$html,
+			static function ( SerializerNode $node ): bool {
+				return $node->name === 'a'
+					&& isset( $node->attrs['href'] )
+					&& !str_contains( $node->attrs['class'] ?? '', 'apihelp-linktrail' );
+			},
+			static function ( SerializerNode $node ) use ( $helptitle, $localModules ): SerializerNode {
+				$href = $node->attrs['href'];
+				// FIXME This can't be right to do this in a loop
+				do {
+					$old = $href;
+					$href = rawurldecode( $href );
+				} while ( $old !== $href );
+				if ( preg_match( '!Special:ApiHelp/([^&/|#]+)((?:#.*)?)!', $href, $m ) ) {
+					if ( isset( $localModules[$m[1]] ) ) {
+						$href = $m[2] === '' ? '#' . $m[1] : $m[2];
+					} elseif ( $helptitle !== null ) {
+						$href = Title::newFromText( str_replace( '$1', $m[1], $helptitle ) . $m[2] )
+							->getFullURL();
+					} else {
+						$href = wfAppendQuery( wfScript( 'api' ), [
+							'action' => 'help',
+							'modules' => $m[1],
+						] ) . $m[2];
+					}
+					$node->attrs['href'] = $href;
+					unset( $node->attrs['title'] );
 				}
-				$node->setAttribute( 'href', $href );
-				$node->removeAttribute( 'title' );
-			}
-		}
 
-		return $formatter->getText();
+				return $node;
+			}
+		);
 	}
 
 	/**
@@ -320,6 +328,7 @@ class ApiHelp extends ApiBase {
 
 				$headerAttr['id'] = $anchor;
 
+				// T326687: Maybe transition to using a SectionMetadata object?
 				$haveModules[$anchor] = [
 					'toclevel' => count( $tocnumber ),
 					'level' => $level,

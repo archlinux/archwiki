@@ -1409,7 +1409,7 @@
 	"metadata-help": "Esti archivu contieni enhormación aicional (metadatus), probabrienti añiia pola cámara dehital, el escánel u el pograma gastau pa crialu u dehitaliçalu. Si s'án hechu chambus nel archivu, es posibri que s'aigan perdiu detallis.",
 	"metadata-expand": "Muestral detallis",
 	"metadata-collapse": "Açonchal detallis",
-	"metadata-fields": "Los datus de metadatus EXIF que se listan nesti mensahi se muestrarán ena páhina e descrición la imahin aún cuandu la tabra e metadatus esté açonchá. Desistin algotrus campus que se mantendrán açonchaus pol defetu.\n* make\n* model\n* datetimeoriginal\n* exposuretime\n* fnumber\n* isospeedratings\n* focallength\n* artist\n* copyright\n* imagedescription\n* gpslatitude\n* gpslongitude\n* gpsaltitude",
+	"metadata-fields": "Los datus de metadatus EXIF que se listan nesti mensahi se muestrarán ena páhina e descrición la imahin aún cuandu la tabra e metadatus esté açonchá. Desistin algotrus campus que se mantendrán açonchaus pol defetu.\n* make \n* model \n* datetimeoriginal \n* exposuretime \n* fnumber \n* isospeedratings \n* focallength \n* artist \n* copyright \n* imagedescription \n* gpslatitude \n* gpslongitude \n* gpsaltitude \n* dc-rights \n* copyrightowner \n* usageterms \n* webstatement \n* licenseurl \n* attributionurl \n* preferredattributionname \n* credit \n* jpegfilecomment \n* pngfilecomment \n* giffilecomment \n* usercomment \n* citydest \n* citycreated \n* headline \n* source \n* locationdest \n* dc-contributor \n* dc-coverage \n* dc-publisher \n* dc-relation \n* label \n* nickname \n* personinimage \n* disclaimer \n* event \n* objectname",
 	"namespacesall": "tó",
 	"monthsall": "tó",
 	"confirmemail": "Confirmal email",
@@ -1526,5 +1526,6 @@
 	"skin-action-protect": "Protegel",
 	"skin-action-undelete": "Esborral",
 	"skin-action-delete": "Esborral",
-	"skin-action-move": "Mual"
+	"skin-action-move": "Mual",
+	"renameuser-page-moved": "S'á movíu la página $1 a $2."
 }

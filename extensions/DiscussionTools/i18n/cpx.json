@@ -1,0 +1,30 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kahin He",
+			"Amire80"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "回复",
+	"discussiontools-replylink": "回复",
+	"discussiontools-replywidget-advanced": "高级",
+	"discussiontools-replywidget-cancel": "取消",
+	"discussiontools-replywidget-mode-source": "代码",
+	"discussiontools-replywidget-mode-visual": "可视化",
+	"discussiontools-replywidget-placeholder-reply": "回复{{BIDI:$1}}",
+	"discussiontools-replywidget-preview": "預覽",
+	"discussiontools-replywidget-reply": "回复",
+	"discussiontools-replywidget-summary": "总结",
+	"discussiontools-replywidget-watchthis": "添加者蜀个页面遘汝兮[[Special:Watchlist|监视列表]]",
+	"discussiontools-topicheader-authorcount": "$1{{PLURAL:$1|個儂}}參與討論",
+	"discussiontools-topicheader-commentcount": "$1{{PLURAL:$1|條留言}}",
+	"discussiontools-topicheader-latestcomment": "最新兮留言：$1",
+	"discussiontools-topicsubscription-button-subscribe": "訂閱",
+	"discussiontools-topicsubscription-button-subscribe-label": "訂閱",
+	"discussiontools-topicsubscription-button-unsubscribe": "取消訂閱",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "取消訂閱",
+	"discussiontools-topicsubscription-notify-subscribed-body": "汝會收着者個話題中央新留言兮通知。",
+	"discussiontools-topicsubscription-notify-subscribed-title": "汝訂閱咯！",
+	"discussiontools-topicsubscription-notify-unsubscribed-body": "汝袂再收着者个话题中央新留言兮通知。",
+	"discussiontools-topicsubscription-notify-unsubscribed-title": "汝取消订阅咯。"
+}

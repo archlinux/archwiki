@@ -224,6 +224,7 @@ deprecated source tag adds tracking category
 parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 !! options
 cat
+nohtml
 !! wikitext
 <source lang="python">print('Hi')</source>
 !! html/php
@@ -235,6 +236,7 @@ deprecated enclose option adds tracking category
 !! options
 parsoid={ "modes": ["wt2html","wt2wt"], "normalizePhp": true }
 cat
+nohtml
 !! wikitext
 <syntaxhighlight enclose="none" lang="python">print('Hi')</syntaxhighlight>
 !! html/php

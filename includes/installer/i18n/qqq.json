@@ -71,8 +71,7 @@
 	"config-env-good": "See also:\n* {{msg-mw|Config-env-bad}}",
 	"config-env-bad": "See also:\n* {{msg-mw|Config-env-good}}",
 	"config-env-php": "Parameters:\n* $1 - the version of PHP that has been installed\nSee also:\n* {{msg-mw|config-env-php-toolow}}",
-	"config-unicode-using-intl": "Status message in the MediaWiki installer environment checks.",
-	"config-unicode-update-warning": "ICU is a body producing standard software tools for support of Unicode and other internationalization aspects. This message warns the system administrator installing MediaWiki that the server's software is not up-to-date and MediaWiki will have problems handling some characters.",
+	"config-env-icu": "ICU refers to [[:wikipedia:International Components for Unicode|International Components for Unicode]], a set of libraries for support of Unicode and other internationalization aspects. Parameters:\n* $1 - the version of ICU that has been installed\n* $2 - the version of Unicode supported by the installed ICU version",
 	"config-no-db": "{{doc-important|Do not translate \"<code>./configure --with-mysqli</code>\" and \"<code>php-mysql</code>\".}}\nParameters:\n* $1 is comma separated list of database types supported by MediaWiki.\n* $2 is the count of items in $1 - for use in plural.",
 	"config-outdated-sqlite": "Used as warning. Parameters:\n* $2 - the version of SQLite that has been installed\n* $1 - minimum version",
 	"config-no-fts3": "A \"[[:wikipedia:Front and back ends|backend]]\" is a system or component that ordinary users don't interact with directly and don't need to know about, and that is responsible for a distinct task or service - for example, a storage back-end is a generic system for storing data which other applications can use. Possible alternatives for back-end are \"system\" or \"service\", or (depending on context and language) even leave it untranslated.",
@@ -98,7 +97,6 @@
 	"config-using-uri": "Used as a part of environment check result. Parameters:\n* $1 - server name\n* $2 - script path",
 	"config-uploads-not-safe": "Used as a part of environment check result. Parameters:\n* $1 - name of directory for images: <code>$IP/images/</code>",
 	"config-no-cli-uploads-check": "CLI = [[w:Command-line interface|command-line interface]] (i.e. the installer runs as a command-line script, not using HTML interface via an internet browser)",
-	"config-suhosin-max-value-length": "{{doc-important|Do not translate \"length\", \"suhosin.get.max_value_length\", and \"php.ini\".}}\nThis error message is shown when PHP configuration <code>suhosin.get.max_value_length</code> is not high enough.\n\n* $1 - The current value\n* $2 - The minimum required value\n* $3 - The recommended value",
 	"config-using-32bit": "Warning message shown when installing on a 32-bit system.",
 	"config-db-type": "Field label in the MediaWiki installer followed by possible database types.",
 	"config-db-host": "Used as label.\n\nAlso used in {{msg-mw|Config-missing-db-host}}.",
@@ -331,6 +329,7 @@
 	"config-screenshot": "Link text for the link in {{msg-mw|config-skins-screenshot}}\n{{Identical|Screenshot}}",
 	"config-extension-not-found": "An error shown when an extension or skin named by the user could not be found.\n* $1 is the extension name",
 	"config-extension-dependency": "Used as error message shown if an extension could not be loaded due to it depending on the wrong version of MediaWiki or an uninstallable extension.\n\nParameters:\n* $1 — extension name\n* $2 — more detailed explanation, in English",
+	"config-ext-skins-more-info": "Link to mediawiki.org page of extensions/skins for more information",
 	"mainpagetext": "Along with {{msg-mw|mainpagedocfooter}}, the text you will see on the Main Page when your wiki is installed.",
 	"mainpagedocfooter": "Along with {{msg-mw|mainpagetext}}, the text you will see on the Main Page when your wiki is installed.\nThis might be a good place to put information about <nowiki>{{GRAMMAR:}}</nowiki>. See [[{{NAMESPACE}}:{{BASEPAGENAME}}/fi]] for an example. For languages having grammatical distinctions and not having an appropriate <nowiki>{{GRAMMAR:}}</nowiki> software available, a suggestion to check and possibly amend the messages having <nowiki>{{SITENAME}}</nowiki> may be valuable. See [[{{NAMESPACE}}:{{BASEPAGENAME}}/ksh]] for an example."
 }

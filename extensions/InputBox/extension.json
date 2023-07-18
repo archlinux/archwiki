@@ -11,7 +11,7 @@
 	"url": "https://www.mediawiki.org/wiki/Extension:InputBox",
 	"descriptionmsg": "inputbox-desc",
 	"requires": {
-		"MediaWiki": ">= 1.39.0"
+		"MediaWiki": ">= 1.40.0"
 	},
 	"license-name": "MIT",
 	"type": "parserhook",
@@ -50,10 +50,7 @@
 	},
 	"HookHandlers": {
 		"main": {
-			"class": "MediaWiki\\Extension\\InputBox\\InputBoxHooks",
-			"services": [
-				"MainConfig"
-			]
+			"class": "MediaWiki\\Extension\\InputBox\\InputBoxHooks"
 		}
 	},
 	"manifest_version": 2

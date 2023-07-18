@@ -23,6 +23,7 @@
 use MediaWiki\Cache\LinkBatchFactory;
 use MediaWiki\Linker\LinksMigration;
 use MediaWiki\ParamValidator\TypeDef\NamespaceDef;
+use MediaWiki\Title\Title;
 use Wikimedia\ParamValidator\ParamValidator;
 use Wikimedia\ParamValidator\TypeDef\IntegerDef;
 
@@ -102,7 +103,7 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		$params = $this->extractRequestParams();
 
 		if ( isset( $this->linksMigration::$mapping[$this->table] ) ) {
-			list( $nsField, $titleField ) = $this->linksMigration->getTitleFields( $this->table );
+			[ $nsField, $titleField ] = $this->linksMigration->getTitleFields( $this->table );
 			$queryInfo = $this->linksMigration->getQueryInfo( $this->table );
 			$this->addTables( $queryInfo['tables'] );
 			$this->addJoinConds( $queryInfo['joins'] );
@@ -150,19 +151,14 @@ class ApiQueryLinks extends ApiQueryGeneratorBase {
 		}
 
 		if ( $params['continue'] !== null ) {
-			$cont = explode( '|', $params['continue'] );
-			$this->dieContinueUsageIf( count( $cont ) != 3 );
-			$op = $params['dir'] == 'descending' ? '<' : '>';
-			$plfrom = (int)$cont[0];
-			$plns = (int)$cont[1];
-			$pltitle = $this->getDB()->addQuotes( $cont[2] );
-			$this->addWhere(
-				"{$this->prefix}_from $op $plfrom OR " .
-				"({$this->prefix}_from = $plfrom AND " .
-				"($nsField $op $plns OR " .
-				"($nsField = $plns AND " .
-				"$titleField $op= $pltitle)))"
-			);
+			$db = $this->getDB();
+			$cont = $this->parseContinueParamOrDie( $params['continue'], [ 'int', 'int', 'string' ] );
+			$op = $params['dir'] == 'descending' ? '<=' : '>=';
+			$this->addWhere( $db->buildComparison( $op, [
+				"{$this->prefix}_from" => $cont[0],
+				$nsField => $cont[1],
+				$titleField => $cont[2],
+			] ) );
 		}
 
 		$sort = ( $params['dir'] == 'descending' ? ' DESC' : '' );

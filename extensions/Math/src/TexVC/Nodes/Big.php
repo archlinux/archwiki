@@ -17,6 +17,20 @@ class Big extends TexNode {
 		$this->arg = $arg;
 	}
 
+	/**
+	 * @return string
+	 */
+	public function getFname(): string {
+		return $this->fname;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getArg(): string {
+		return $this->arg;
+	}
+
 	public function inCurlies() {
 		return $this->render();
 	}
@@ -25,11 +39,12 @@ class Big extends TexNode {
 		return '{' . $this->fname . ' ' . $this->arg . '}';
 	}
 
+	public function renderMML( $arguments = [], $state = [] ): string {
+		return $this->parseToMML( $this->fname, $arguments, null );
+	}
+
 	public function extractIdentifiers( $args = null ) {
 		return [];
 	}
 
-	public function name() {
-		return 'BIG';
-	}
 }

@@ -11,12 +11,14 @@
 			"MattiaMen",
 			"Melos",
 			"Nemo bis",
+			"Pierpao",
 			"Ricordisamoa",
 			"Statix64"
 		]
 	},
 	"gadgets-desc": "Consente agli utenti di selezionare [[Special:Gadgets|accessori CSS e JavaScript]] nelle proprie [[Special:Preferences#mw-prefsection-gadgets|preferenze]]",
 	"prefs-gadgets": "Accessori",
+	"prefs-description-gadgets": "Attiva funzionalità aggiuntive sul tuo account.",
 	"gadgets-prefstext": "Di seguito è presente una lista di accessori speciali (''gadget'') che è possibile abilitare per la propria utenza.\nQuesti accessori sono in maggioranza basati su JavaScript, è quindi necessario abilitare JavaScript nel proprio browser affinché funzionino correttamente. Si noti che gli accessori non hanno alcun effetto in questa pagina di preferenze.\n\nInoltre, si noti che questi accessori speciali non sono compresi nel software MediaWiki e sono di solito realizzati e gestiti dagli utenti di ciascun sito wiki. Gli amministratori dell'interfaccia del sito possono modificare la lista degli accessori disponibili tramite le pagine delle [[MediaWiki:Gadgets-definition|definizioni]], mentre gli amministratori del sito possono modificare le loro [[Special:Gadgets|descrizioni]], dove puoi vedere il codice sorgente di ogni accessorio. Il numero di utenti per ogni accessorio su questo wiki è elencato nelle [[Special:GadgetUsage|statistiche di uso degli accessori]].",
 	"gadgets": "Accessori",
 	"gadgetusage": "Statistiche sull'uso degli accessori",
@@ -40,6 +42,7 @@
 	"gadgets-not-found": "Accessorio \"$1\" non trovato.",
 	"gadgets-export-text": "Per esportare l'accessorio $1, fai clic sul pulsante \"{{int:gadgets-export-download}}\", salva il file scaricato,\nvai alla pagina Special:Import nella wiki di destinazione e carica il file. Poi aggiungi quanto segue alla pagina MediaWiki:Gadgets-definition:\n<pre>$2</pre>\nDevi disporre dei permessi appropriati nella wiki di destinazione (incluso il diritto di modificare i messaggi di sistema) e l'importazione da file deve essere abilitata.",
 	"gadgets-export-download": "Scarica",
+	"gadgets-requires-es6": "Questo accessorio è supportato solo su browser compatibili con ES6",
 	"gadgets-validate-notset": "La proprietà <code>$1</code> non è impostata.",
 	"gadgets-validate-wrongtype": "La proprietà <code>$1</code> deve essere di tipo <code>$2</code> anziché <code>$3</code>.",
 	"right-gadgets-edit": "Modifica i gadget JavaScript e le pagine CSS",

@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kimberli Mäkäräinen (WMNO)",
+			"Yupik"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|giitte}}}}",
+	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Giitte}}}}",
+	"thanks-button-action-cancel": "Šluhtte",
+	"thanks-button-action-completed": "Don {{GENDER:$1|{{GENDER:$2|giitet}}}} geavaheaddji $1",
+	"thanks-error-notloggedin": "Namahis geavaheaddjit eai sáhte giitit",
+	"thanks-confirmation2": "Háliidivččetgo don {{GENDER:$1|giitit}} almmolaččat?",
+	"thanks-thanked-notice": "{{GENDER:$3|Don}} giitet geavaheaddji {{GENDER:$2|$1}}.",
+	"thanks": "Giitte",
+	"thanks-submit": "Giitte",
+	"echo-category-title-edit-thank": "Giitu",
+	"notification-compact-header-edit-thank": "Geavaheaddji $1 {{GENDER:$2|giittii}} {{GENDER:$3|du}}.",
+	"logentry-thanks-thank": "Geavaheaddji $1 {{GENDER:$2|giittii}} geavaheaddji {{GENDER:$4|$3}}",
+	"notification-link-text-view-post": "Čájet kommeantta",
+	"notification-compact-header-flow-thank": "Geavaheaddji $1 {{GENDER:$2|giittii}} {{GENDER:$3|du}}."
+}

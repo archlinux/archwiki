@@ -39,7 +39,6 @@
 	"math_unknown_error": "Onbekannte Feeler",
 	"math_unknown_function": "Onbekannte Funktioun '$1'",
 	"mw_math_mathml": "MathML mat SVG oder PNG wann et net geet (recommandéiert fir modern Browser an Toole fir en Accès ouni Barrière)",
-	"mw_math_png": "PNG-Biller",
 	"mw_math_source": "LaTeX-Quell (fir Textbrowser)",
 	"prefs-math": "Math/TeX",
 	"datatypes-type-math": "Mathemateschen Ausdrock",

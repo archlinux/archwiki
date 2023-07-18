@@ -5,6 +5,7 @@ use MediaWiki\Permissions\Authority;
 use MediaWiki\Permissions\PermissionStatus;
 use MediaWiki\Tests\Unit\MockServiceDependenciesTrait;
 use MediaWiki\Tests\Unit\Permissions\MockAuthorityTrait;
+use MediaWiki\Title\Title;
 
 /**
  * TODO convert to a pure unit test
@@ -206,7 +207,7 @@ class ContentModelChangeTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testNoDirectEditing() {
 		$title = Title::newFromText( 'Dummy:NoDirectEditing' );
-		$wikipage = WikiPage::factory( $title );
+		$wikipage = $this->getServiceContainer()->getWikiPageFactory()->newFromTitle( $title );
 
 		$dummyContent = ContentHandler::getForModelID( 'testing' )->makeEmptyContent();
 		$wikipage->doUserEditContent(

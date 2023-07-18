@@ -20,5 +20,8 @@
 	"vector-view-view": "Ловномс",
 	"vector-view-viewsource": "Ваномс косто саезь",
 	"vector-more-actions": "Седе ламо",
-	"vector-searchsuggest-containing": "Вешнемс лопат, конатнесэ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Вешнемс лопат, конатнесэ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Кедьёнкст",
+	"vector-page-tools-general-label": "Овсекс",
+	"vector-unpin-element-label": "кекшемс"
 }
