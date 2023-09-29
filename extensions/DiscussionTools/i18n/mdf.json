@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Валгриш"
+		]
+	},
+	"discussiontools-defaultsummary-reply": "Пандома вал кизефксть коряс",
+	"discussiontools-replywidget-advanced": "Полаткс максфти",
+	"discussiontools-replywidget-cancel": "Сявомс меки",
+	"discussiontools-replywidget-mode-source": "Кодсь",
+	"discussiontools-replywidget-mode-visual": "Ланга ванозь",
+	"discussiontools-replywidget-preview": "Инголькиге ваномась",
+	"discussiontools-replywidget-summary": "Сембе ширде нюрьхкяняста азондома",
+	"discussiontools-replywidget-watchthis": "Сувафтомс тя лопать тонь [[Special:Watchlist|ваномань лувксозт]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|ломань|ломанть}} арьсезь корхнемста",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|мяль-арьсема|мяльхть-арьсемат}}",
+	"discussiontools-topicheader-latestcomment": "Мекольце нюрьхкяня мяльсь-азондомась:$1",
+	"discussiontools-topicsubscription-button-subscribe": "Сёрматфтомс пря",
+	"discussiontools-topicsubscription-button-subscribe-label": "Сёрматфтомс пря",
+	"discussiontools-topicsubscription-button-unsubscribe": "Лоткафтомс прянь сёрматфтомать",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Лоткафтомс прянь сёрматфтомать"
+}

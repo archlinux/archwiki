@@ -288,7 +288,7 @@
 	"abusefilter-edit-empty-throttlegroups": "Al minus un gruppo de limitation debe esser seligite.",
 	"abusefilter-edit-duplicated-throttlegroups": "Le gruppos de limitation non pote haber duplicatos.",
 	"abusefilter-edit-invalid-throttlegroups": "Le gruppos de limitation specificate non es valide.",
-	"abusefilter-edit-invalid-group": "Le gruppo de filtros specificate ('$1') non es valide.",
+	"abusefilter-edit-invalid-group": "Le gruppo de filtros specificate (‘$1’) non es valide.",
 	"abusefilter-edit-builder-select": "Selige un option pro inserer lo al puncto del cursor",
 	"abusefilter-edit-builder-group-op-arithmetic": "Operatores arithmetic",
 	"abusefilter-edit-builder-op-arithmetic-addition": "Addition (+)",

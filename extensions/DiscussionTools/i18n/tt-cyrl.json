@@ -2,7 +2,10 @@
 	"@metadata": {
 		"authors": [
 			"Ерней",
-			"Ильгиз"
+			"Ильгиз",
+			"Mansur",
+			"Run Li",
+			"З. ӘЙЛЕ"
 		]
 	},
 	"discussiontools-defaultsummary-reply": "Җавап бирү",
@@ -15,9 +18,9 @@
 	"discussiontools-replywidget-preview": "Алдан карау",
 	"discussiontools-replywidget-reply": "Җавап бирү",
 	"discussiontools-replywidget-summary": "Тасвирлама",
-	"discussiontools-replywidget-watchthis": "Бу битне [[Special:Watchlist|күзәтү исемлегегезенә]] өстәргә",
+	"discussiontools-replywidget-watchthis": "Бу битне [[Special:Watchlist|күзәтү исемлегегезгә]] өстәргә",
 	"discussiontools-topicheader-authorcount": "$1 бәхәстә {{PLURAL:$1|кеше}}",
-	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|хәбәр|хәбәрләр}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|хәбәр}}",
 	"discussiontools-topicheader-latestcomment": "Соңгы хәбәр: $1",
 	"discussiontools-topicsubscription-button-subscribe": "язылырга",
 	"discussiontools-topicsubscription-button-subscribe-label": "Язылырга",

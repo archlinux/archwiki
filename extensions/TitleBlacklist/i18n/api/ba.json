@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Янмурза Баки"
+			"Янмурза Баки",
+			"З. ӘЙЛЕ"
 		]
 	},
-	"apihelp-titleblacklist-param-action": "Тикшерерлергә тейеш эшмәкәрлек.",
-	"apihelp-titleblacklist-example-1": "Мәҡәлә [[Foo]] ҡара исемлекә индерелгәненлеген тикшерергә.",
-	"apihelp-titleblacklist-example-2": "Мәҡәлә[[Bar]] мөхәррирләү өсөн ҡара исемлеккә ингәнлеген тикшерергә."
+	"apihelp-titleblacklist-param-action": "Тикшерерлергә тейешле ғәмәл.",
+	"apihelp-titleblacklist-example-1": "[[Foo]] мәҡәләһенең ҡара исемлеккә индерелмәгәнме икәнлеген тикшерергә.",
+	"apihelp-titleblacklist-example-2": "[[Bar]] мәҡәләһенең мөхәррирләү өсөн ҡара исемлеккә индерелмәгәнме икәнлеген тикшерергә."
 }

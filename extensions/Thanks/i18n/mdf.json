@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Валгриш"
+		]
+	},
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|аст сюкпря}}}}"
+}

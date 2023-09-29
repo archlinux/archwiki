@@ -65,7 +65,7 @@
 	"templatedata-modal-format-inline": "Inline",
 	"templatedata-modal-format-null": "Net uginn",
 	"templatedata-modal-json-error-replace": "Ersetzen",
-	"templatedata-modal-notice-import-numparams": "{{PLURAL:$1|Een neie Parameter gouf|$1 nei Parametere goufen}} importéiert: $2",
+	"templatedata-modal-notice-import-numparams": "{{PLURAL:$1|En neie Parameter gouf|$1 nei Parametere goufen}} importéiert: $2",
 	"templatedata-modal-placeholder-add-new-map-input": "Eng nei Kaart derbäisetzen...",
 	"templatedata-modal-placeholder-paramkey": "Numm vum Parameter",
 	"templatedata-modal-placeholder-prompt-map-name": "Numm vun der Kaart aginn",

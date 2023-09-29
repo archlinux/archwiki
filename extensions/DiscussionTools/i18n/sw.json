@@ -20,7 +20,7 @@
 	"discussiontools-replywidget-summary": "Muhtasari",
 	"discussiontools-replywidget-watchthis": "Ongeza ukurasa huu kwenye [[Special:Watchlist|orodha ya maangalizi]]",
 	"discussiontools-topicheader-authorcount": "{{PLURAL:$1|Mtu $1 anajadili|Watu $1 wanajadili}}",
-	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1| maoni|maoni}}",
+	"discussiontools-topicheader-commentcount": "{{PLURAL:$1|maoni}} $1",
 	"discussiontools-topicheader-latestcomment": "Maoni ya hivi punde: $1",
 	"discussiontools-topicsubscription-button-subscribe": "jisajili",
 	"discussiontools-topicsubscription-button-subscribe-label": "Jisajili",

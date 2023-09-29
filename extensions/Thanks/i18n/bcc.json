@@ -1,10 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Baloch Afghanistan"
+			"Baloch Afghanistan",
+			"Moshtank"
 		]
 	},
-	"thanks-thank": "تشکر/سپاسیبا",
+	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|مننتوار}}}}",
 	"echo-category-title-edit-thank": "تشکرهان",
 	"notification-thanks-diff-link": "شمی ایڈ\tیٹ",
 	"log-name-thanks": "سیاه چالی تشکر",

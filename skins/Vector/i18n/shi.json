@@ -4,11 +4,13 @@
 			"Amara-Amaziɣ",
 			"Ayour2002",
 			"Dalinanir",
-			"Lhoussine AIT TAYFST"
+			"Lhoussine AIT TAYFST",
+			"AguzulH"
 		]
 	},
 	"vector-languages": "Tutlayin",
 	"vector-language-button-label": "{{PLURAL:$1|$1 tutlayt|$1 tutlayin}}",
+	"vector-no-language-button-label": "Rnu tutlayin",
 	"vector-action-addsection": "Rnu asntl",
 	"vector-action-delete": "Kks",
 	"vector-action-move": "Smatti",

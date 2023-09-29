@@ -5,12 +5,13 @@
 			"Alhassan Peter",
 			"Hasslaebetch",
 			"Jahinfo",
-			"Ruky Wunpini"
+			"Ruky Wunpini",
+			"Amire80"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Ŋun su $1 tɔɣino kani.",
 	"apierror-discussiontools-commentname-ambiguous": "Lahabaya balibu din mali yuli ŋɔ '$1' nyɛla di ni bon nyɛ shɛli, <var>commentid</var> nyɛla din niŋ talahi.",
-	"apierror-discussiontools-commentname-notfound": "Yuli din nyɛ  $1 tɔɣino kani.",
+	"apierror-discussiontools-commentname-notfound": "Yuli din nyɛ $1 tɔɣino kani.",
 	"apihelp-discussiontoolsedit-param-commentid": "ŋmahan gbaŋ din nyɛn n deei labsigu ŋɔ.zaŋ n tum tuma di<var>paction</var>nyɛla<var>addcomment</var>yaɣabu<var>commentname</var>.",
 	"apihelp-discussiontoolsedit-param-commentname": "Yɛltɔɣili yuli shɛli a ni yan labisi. Only used when <var>paction</var> is <var>addcomment</var>.",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Yaɣa din yɛn vihi",

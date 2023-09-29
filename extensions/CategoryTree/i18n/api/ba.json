@@ -2,10 +2,11 @@
 	"@metadata": {
 		"authors": [
 			"Ләйсән",
-			"Янмурза Баки"
+			"Янмурза Баки",
+			"З. ӘЙЛЕ"
 		]
 	},
 	"apihelp-categorytree-description": "CategoryTree ҡушымтаһы өсөн эске модуль.",
-	"apihelp-categorytree-param-category": "Исемдәр категориялары аралығындағы атама, ҡулланылған осраҡта префикс күрһәтелмәй.",
-	"apihelp-categorytree-param-options": "JSON объектары кеүек CategoryTree төҙөүсе төрҙәре. Тәрәнлек параметры <kbd>1</kbd> итеп куйылған."
+	"apihelp-categorytree-param-category": "Исемдәр арауығындағы категориялар атамаһы, префикс, әгәр бирелгән булһа, күрһәтелмәй.",
+	"apihelp-categorytree-param-options": "JSON-объектары булараҡ CategoryTree конструкторы төрҙәре. <var>depth</var> тәрәнлек параметры, программа көйләүе буйынса, <kbd>1</kbd> итеп ҡуйылған."
 }

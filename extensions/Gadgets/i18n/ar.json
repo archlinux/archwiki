@@ -10,7 +10,8 @@
 			"OsamaK",
 			"SaldırganSincap",
 			"ديفيد",
-			"روخو"
+			"روخو",
+			"Hubaishan"
 		]
 	},
 	"gadgets-desc": "يسمح للمستخدمين باختيار [[Special:Gadgets|إضافات سي إس إس وجافاسكريبت]] معدلة في [[Special:Preferences#mw-prefsection-gadgets|تفضيلاتهم]]",
@@ -32,7 +33,7 @@
 	"gadgets-viewdescription": "عرض الوصف",
 	"gadgets-uses": "تستخدم",
 	"gadgets-required-rights": "يتطلب {{PLURAL:$2|الحق|الحقوق}} التالية:\n\n$1",
-	"gadgets-required-skins": "متاحة على {{PLURAL:$2|$1 skin|following skins: $1}}.",
+	"gadgets-required-skins": "متاحة على {{PLURAL:$2| واجهة واحدة|الواجهات $1 التالية}}.",
 	"gadgets-required-actions": "يعمل على {{PLURAL:$2|إجراء صفحة «$1»|إجراءات الصفحة التالية: $1}}.",
 	"gadgets-default": "تمكين الجميع بشكل افتراضي.",
 	"gadgets-legacy": "الإضافة لم يتم تحميلها. من فضلك تحول إلى ResourceLoader. ([https://www.mediawiki.org/wiki/Special:MyLanguage/ResourceLoader/Migration_guide_(users) اعرف المزيد])",

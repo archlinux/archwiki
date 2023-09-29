@@ -76,7 +76,9 @@ class VectorComponentTableOfContents implements VectorComponent {
 		foreach ( $sections as &$section ) {
 			if ( $section['is-top-level-section'] && $section['is-parent-section'] ) {
 				$section['vector-button-label'] =
-					$this->localizer->msg( 'vector-toc-toggle-button-label', $section['line'] )->text();
+					$this->localizer->msg( 'vector-toc-toggle-button-label' )
+						->rawParams( $section['line'] )
+						->escaped();
 			}
 		}
 		$this->tocData[ 'array-sections' ] = $sections;

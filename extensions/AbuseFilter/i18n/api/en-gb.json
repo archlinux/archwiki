@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piano1forte2"
+		]
+	},
+	"apihelp-query+abuselog-param-filter": "Show only entries that were caught by the given filter IDs. Separate with pipes, prefix with '$1' for global filters.",
+	"apihelp-abuselogprivatedetails-example-1": "Get private details for the AbuseLog entry with ID 1, using the reason 'example'."
+}

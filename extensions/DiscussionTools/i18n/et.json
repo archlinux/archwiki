@@ -43,6 +43,8 @@
 	"discussiontools-findcomment-results-notcurrent": "(pole praeguses redaktsioonis)",
 	"discussiontools-findcomment-results-transcluded": "(teiselt leheküljelt mallikasutusena)",
 	"discussiontools-findcomment-title": "Kommentaari leidmine",
+	"discussiontools-ledesection-button": "Lisateave selle lehekülje kohta",
+	"discussiontools-ledesection-title": "Selle lehekülje kohta",
 	"discussiontools-limitreport-timeusage": "DiscussionToolsi ajakasutus",
 	"discussiontools-limitreport-timeusage-value": "$1 {{PLURAL:$1|sekund|sekundit}}",
 	"discussiontools-newtopic-legacy-hint": "<strong>See siin on uus vahend teema lisamiseks.</strong> Selle uuendusega saad lisada teema reasisese vormi kaudu ning saad teisi mainida uue otsetee abil. Samuti saad [$1 lülituda tagasi vanale vahendile].",

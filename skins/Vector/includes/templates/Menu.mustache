@@ -5,8 +5,13 @@
 <div id="{{id}}" class="vector-menu{{#class}} {{.}}{{/class}}" {{{html-tooltip}}} {{{html-user-language-attributes}}}>
 	{{#label}}
 	<div class="vector-menu-heading{{#label-class}} {{.}}{{/label-class}}">
-		{{{.}}}
+		{{.}}
 	</div>
 	{{/label}}
+	{{#html-label}}
+	<div class="vector-menu-heading{{#label-class}} {{.}}{{/label-class}}">
+		{{{.}}}
+	</div>
+	{{/html-label}}
 	{{>MenuContents}}
 </div>

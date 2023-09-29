@@ -44,5 +44,6 @@
 	"discussiontools-topicsubscription-button-unsubscribe-label": "Čåuddõõđ tiʹllʼjõõzz",
 	"discussiontools-topicsubscription-pager-notified-never": "ij ni kuäʹss",
 	"discussiontools-topicsubscription-pager-page": "Seidd",
+	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Ođđ teeʹmm]",
 	"tag-discussiontools-reply": "[{{int:discussiontools-replywidget-reply-link}} Vasttõs]"
 }

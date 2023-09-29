@@ -11,7 +11,8 @@
 			"Njardarlogar",
 			"Tarjeimo",
 			"Telaneo",
-			"아라"
+			"아라",
+			"Kimberli Mäkäräinen (WMNO)"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell redigering]]",
@@ -19,7 +20,7 @@
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell redigering: Sjekk]]",
 	"tag-visualeditor-needcheck-description": "Redigering gjort med [[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]] hvor systemet har detektert at utilsiktede endringer i wikiteksten kan ha inntruffet.",
 	"tag-visualeditor-wikitext": "2017-kilderedigering",
-	"tag-visualeditor-wikitext-description": "Redireging gjort med 2017-editoren",
+	"tag-visualeditor-wikitext-description": "Redigering gjort med 2017-editoren",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Visuell redigering: Byttet]]",
 	"tag-visualeditor-switched-description": "Brukeren begynte redigeringen med VisualEditor og byttet deretter til wikitekst-redigering.",
 	"visualeditor-feedback-link": "Project:VisualEditor/Feedback",

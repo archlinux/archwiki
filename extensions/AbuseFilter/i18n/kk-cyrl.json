@@ -6,7 +6,8 @@
 			"GaiJin",
 			"Hedeyohu22",
 			"Нұрлан Рахымжанов",
-			"СеніңШешең"
+			"СеніңШешең",
+			"Amire80"
 		]
 	},
 	"abusefilter": "Қиянаттауды сүзгілеу сүзгіш басқармасы",
@@ -62,7 +63,7 @@
 	"abusefilter-log-linkoncontribs-text": "Бұл қатысушының қиянат жасау журналы",
 	"abusefilter-log-hidden-implicit": "(жасырылған себебі нұсқасы жойылған)",
 	"abusefilter-log-cannot-see-details": "Бұл жазбаның егжей-тегжейін көруге рұқсатыңыз жоқ.",
-	"abusefilter-log-details-hidden": "Бұл жазба барлық қатысушыларға көрінуі жасырылғандықтан  егжей-тегжейін көре алмайсыз.",
+	"abusefilter-log-details-hidden": "Бұл жазба барлық қатысушыларға көрінуі жасырылғандықтан егжей-тегжейін көре алмайсыз.",
 	"abusefilter-log-hide-legend": "Журнал жазбасын жасыру",
 	"abusefilter-log-hide-reason": "Себебі:",
 	"abusefilter-log-hide-forbidden": "Қиянаттау журнал енгізілімдерін жасыруға рұқсатыңыз жоқ.",
@@ -143,7 +144,7 @@
 	"abusefilter-edit-disallow-other-label": "Басқа хабар бетінің атауы:\n:''(«MediaWiki» префиксінсіз)''",
 	"abusefilter-edit-disallow-preview": "Таңдалған хабарламаны алдын ала қарауды көрсету/жасыру",
 	"abusefilter-edit-tag-tag": "Белгіні қолдану (бір жол сайын)",
-	"abusefilter-edit-denied": "Бұл сүзгіш барлық қатысушыларға көрінуі жасырылғандықтан  егжей-тегжейін көре алмайсыз.",
+	"abusefilter-edit-denied": "Бұл сүзгіш барлық қатысушыларға көрінуі жасырылғандықтан егжей-тегжейін көре алмайсыз.",
 	"abusefilter-edit-main": "Сүзгіш параметрлері",
 	"abusefilter-edit-done-subtitle": "Сүзгіш өңделді",
 	"abusefilter-edit-done": "[[Special:AbuseFilter/$1|$3 сүзгішіндегі]] [[Special:AbuseFilter/history/$1/diff/prev/$2|өзгертулеріңіз]] сақталды.",

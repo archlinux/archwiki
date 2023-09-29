@@ -11,7 +11,8 @@
 			"Tranve",
 			"Winston Sung",
 			"Xiplus",
-			"捍粵者"
+			"捍粵者",
+			"沈澄心"
 		]
 	},
 	"discussiontools": "討論工具（Discussion tools）",
@@ -74,11 +75,11 @@
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "「<strong>$3</strong>」有{{PLURAL:$1|一則新回覆|$1則新回覆|100=99+則新回覆}}。",
 	"discussiontools-notification-subscribed-new-comment-header-compact": "$1：<em>$3</em>。",
 	"discussiontools-notification-subscribed-new-comment-view": "查看留言",
-	"discussiontools-pageframe-latestcomment": "由$2在話題$3上做出的最新留言：$1",
+	"discussiontools-pageframe-latestcomment": "由$2在話題$3上作出的最新留言：$1",
 	"discussiontools-pageframe-latestcomment-notopic": "$2的最新留言：$1",
 	"discussiontools-pagetitle-newtopic": "在$1發起新話題",
 	"discussiontools-pagetitle-reply": "回覆$1",
-	"discussiontools-postedit-confirmation-published": "已發布您的留言。",
+	"discussiontools-postedit-confirmation-published": "您的留言已發布。",
 	"discussiontools-postedit-confirmation-topicadded": "已新增您的話題。",
 	"discussiontools-preference-autotopicsub": "自動訂閱話題",
 	"discussiontools-preference-autotopicsub-help": "當您開始新討論或在現有討論中留言時，如果其他人發表新留言，您將自動收到通知。",

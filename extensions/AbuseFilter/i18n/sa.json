@@ -4,7 +4,8 @@
 			"Ansumang",
 			"Hemant wikikosh1",
 			"NehalDaveND",
-			"Shubha"
+			"Shubha",
+			"Amire80"
 		]
 	},
 	"abusefilter": "दुरुपयुक्तशोधकस्य प्रबन्धनम्",
@@ -99,7 +100,7 @@
 	"abusefilter-edit-builder-op-arithmetic-subtraction": "व्यवकलनम् (-)",
 	"abusefilter-edit-builder-op-arithmetic-multiplication": "गुणनम् (*)",
 	"abusefilter-edit-builder-op-arithmetic-divide": "भाजनम् (/)",
-	"abusefilter-edit-builder-op-arithmetic-modulo": "भागस्य शेषः  (%)",
+	"abusefilter-edit-builder-op-arithmetic-modulo": "भागस्य शेषः (%)",
 	"abusefilter-edit-builder-group-op-comparison": "तोलनकारकम्",
 	"abusefilter-edit-builder-group-op-bool": "बूलियन्कारकम्",
 	"abusefilter-edit-builder-op-bool-not": "नहि (!)",

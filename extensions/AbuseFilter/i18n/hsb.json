@@ -3,7 +3,8 @@
 		"authors": [
 			"J budissin",
 			"Matma Rex",
-			"Michawiki"
+			"Michawiki",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Nałožuje awtomatisku heuristiku na změny.",
@@ -11,7 +12,7 @@
 	"abuselog": "Protokol znjewužiwanskich filtrow",
 	"abusefilter-intro": "Witaj do powjercha zrjadowanja znjewužiwanskich filtrow.\nZnjewužiwanski filter je awtomatizowany softwarowy mechanizm za nałoženje awtomatiskeje heuristiki na wšě akcije.\nPowjerch pokazuje lisćinu definowanych filtrow a dowola je změnić.",
 	"abusefilter-warning": "'''Warnowanje''': Tuta akcija bu awtomatisce jako škódna identifikowana.\nNjekonstruktiwne změny budu so spěšnje cofnyć, a njesłyšane abo wospjetowane wobdźěłowanje budźe k tomu wjesć, zo twoje konto abo twoja IP-adresa so blokuje.\nJeli maš tutu akciju za konstruktiwnu, móžeš znowa skkadować, zo by ju wobkrućił. \nKrótke wopisanje znjewužiwanskeho prawidła, kotremuž twoja akcija wotpowěduje, je: $1",
-	"abusefilter-disallowed": "Tuta akcija bu awtomatisce jako škódna identifikowana a tohodla znjemóžnjena.\nJeli wěriš, zo twoja akcija je konstruktiwna była, informuj prošu  administratora, štož sy spytał činić.\nKrótke wopisanje znjewužiwanskeho prawidła, kotremuž twoja akcija wotpowěduje, je: $1",
+	"abusefilter-disallowed": "Tuta akcija bu awtomatisce jako škódna identifikowana a tohodla znjemóžnjena.\nJeli wěriš, zo twoja akcija je konstruktiwna była, informuj prošu administratora, štož sy spytał činić.\nKrótke wopisanje znjewužiwanskeho prawidła, kotremuž twoja akcija wotpowěduje, je: $1",
 	"abusefilter-blocked-display": "Tuta akcija bu awtomatisce jako škódna identifikowana, a je so ći zadźěwało, ju wuwjesć.\nPřidatnje su so twoje wužiwarske konto a wšě zwjazane IP-addresy přećiwo wobdźěłanju zawrjene, zo by so {{SITENAME}} škitał.\nJeli je so to zmylnje stało, staj so prošu z administratorom do zwiska.\nKrótke wopisanje znjewužiwanskeho prawidła, kotremuž twoja akcija wotpowěduje, je: $1",
 	"abusefilter-degrouped": "Tuta akcija bu awtomatisce jako škódna identifikowana.\nPotajkim je so znjemóžniła a, dokelž ma so twoje konto za wohrožene, su so wšě prawa cofnyli.\nJeli wěriš, zo to je so zmylnje stało, staj so z běrokratom do zwiska, přidaj rozjasnjenje tuteje akcije a twoje prawa bychu so wobnowili.\nKrótke wopisanje znjewužiwanskeho, kotremuž twoja akcija wotpowěduje, je: $1",
 	"abusefilter-autopromote-blocked": "Tuta akcija bu awtomatisce jako škódna identifikowana a je so znjemóžniła. Přidatnje, jako wěstotna naprawa, su so někotre priwilegije, kotrež so powšitkownje wutworjenym kontam dawaja, nachwilu twojemu konće zebrali.\nKrótke wopisanje znjewužiwanskeho prawidła, kotremuž twoja akcija wotpowěduje, je: $1",
@@ -111,7 +112,7 @@
 	"abusefilter-reautoconfirm-none": "{{GENDER:$1|Tutón wužiwar|Tomu wužiwarjej|Tej wužiwarce}} njebu {{GENDER:$1|jeho|jeje}} awtomatisce wobkrućeny status zebrany.",
 	"abusefilter-reautoconfirm-notallowed": "Njesměš awtomatisce wobkrućeny status wobnowić.",
 	"abusefilter-reautoconfirm-done": "Status awtomatiskeho wobkrućenja konta bu wobnowjeny",
-	"abusefilter-status": "Z {{PLURAL:$1|poslednjej akcije|poslednjeju $1 akciji|poslednich $1 akcijow|podslednich $1 akcijow}} {{PLURAL:$2|je $2 ($3 %) docpěła|stej $2 ($3 %) docpěłoj|su $2 ($3 %) docpěli|je $2 ($3 %) docpěło}} limit wuměnjenja $4, a $5 ($6 %)  {{PLURAL:$5| je wotpowědował|stej wotpowědowałoj|su wotpowědowali|je wotpowědowało}} jednomu z filtrow, kotrež su tuchwilu zmóžnjene.",
+	"abusefilter-status": "Z {{PLURAL:$1|poslednjej akcije|poslednjeju $1 akciji|poslednich $1 akcijow|podslednich $1 akcijow}} {{PLURAL:$2|je $2 ($3 %) docpěła|stej $2 ($3 %) docpěłoj|su $2 ($3 %) docpěli|je $2 ($3 %) docpěło}} limit wuměnjenja $4, a $5 ($6 %) {{PLURAL:$5| je wotpowědował|stej wotpowědowałoj|su wotpowědowali|je wotpowědowało}} jednomu z filtrow, kotrež su tuchwilu zmóžnjene.",
 	"abusefilter-edit": "Znjewužiwanski filter wobdźěłać",
 	"abusefilter-edit-subtitle": "Filter $1 so wobdźěłuje",
 	"abusefilter-edit-subtitle-new": "Filter so wutworja",
@@ -137,7 +138,7 @@
 	"abusefilter-edit-action-warn": "Tute akcije po warnowanje wužiwarjej zahibać",
 	"abusefilter-edit-action-disallow": "Wuwjedźenju tuteje akcije přez wužiwarja zadźěwać",
 	"abusefilter-edit-action-blockautopromote": "Wužiwarjej awtomatisce wobkrućeny status zebrać",
-	"abusefilter-edit-action-degroup": "Wužiwarja ze wšěch  priwilegowanych skupinow wotstronić",
+	"abusefilter-edit-action-degroup": "Wužiwarja ze wšěch priwilegowanych skupinow wotstronić",
 	"abusefilter-edit-action-block": "Wužiwarja a/abo IP-adresu přećiwo změnjenju blokować",
 	"abusefilter-edit-action-throttle": "Akcije jenož zahibać, jeli wužiwar prohowu hódnotu překročuje",
 	"abusefilter-edit-action-rangeblock": "Wobłuk /16 blokować, z kotrehož wužiwar pochadźa.",
@@ -155,7 +156,7 @@
 	"abusefilter-edit-denied": "Njemóžeš sej podrobnosće tutoho filtra wobhladać, dokelž je před zjawnym wobhladanjom schowany.",
 	"abusefilter-edit-main": "Filtrowe parametry",
 	"abusefilter-edit-done-subtitle": "Fitler wobdźěłany",
-	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Twoje změny]] na [[Special:AbuseFilter/$1|filtrje $3]]  su so składowali.",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Twoje změny]] na [[Special:AbuseFilter/$1|filtrje $3]] su so składowali.",
 	"abusefilter-edit-badsyntax": "Filter, kotryž sy podał, wobsahuje syntaktiski zmylk. Wudaće parsera bě: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Njemóžeš tutón filter wobdźěłać, dokelž wobsahuje jednu wobmjezowanu akciju abo wjacore wobmjezowane akcije. Prošu proš wužiwarja z prawom wobmjezowane akcije přidać, zo by změnu za tebje činił.",
 	"abusefilter-edit-viewhistory": "Stawizny tutoho filtra zwobraznić",

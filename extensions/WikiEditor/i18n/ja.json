@@ -24,7 +24,9 @@
 			"おはぐろ蜻蛉",
 			"ひまり",
 			"青子守歌",
-			"Dragoniez"
+			"Dragoniez",
+			"Likibp",
+			"MagicAho"
 		]
 	},
 	"wikieditor": "高度なウィキテキスト編集インターフェイス",
@@ -69,6 +71,7 @@
 	"wikieditor-toolbar-file-target": "ファイル名:",
 	"wikieditor-toolbar-file-caption": "キャプション:",
 	"wikieditor-toolbar-file-alt": "代替テキスト:",
+	"wikieditor-toolbar-file-alt-help": "この省略可能な入力欄を使用し、ファイルが見えない人のためにテキストによる説明を記述することができます。説明文はこのメディアアイテムによって与えられる目的と情報を理解するために十分なものでなければいけません。視覚に障害がある利用者や、スクリーンリーダー・ソフトウェア、テキストブラウザなどを利用する人たちにとって、必要不可欠なものです。",
 	"wikieditor-toolbar-file-alt-help-label": "(ヘルプを表示)",
 	"wikieditor-toolbar-file-size": "サイズ:",
 	"wikieditor-toolbar-file-float": "配置:",
@@ -214,8 +217,11 @@
 	"wikieditor-toolbar-help-content-indent-result": "通常の文章<dl><dd>インデントされた文章<dl><dd>インデントされた文章</dd></dl></dd></dl>",
 	"tag-wikieditor-description": "[[mw:Special:MyLanguage/Extension:WikiEditor|WikiEditor]] (2010年版ウィキテキストエディター)を使用した編集",
 	"wikieditor-realtimepreview-preview": "プレビュー",
+	"wikieditor-realtimepreview-error": "プレビューが読み込まれません",
 	"wikieditor-realtimepreview-reload": "再読み込み",
 	"wikieditor-realtimepreview-beta-label": "リアルタイムのプレビュー",
+	"wikieditor-realtimepreview-beta-desc": "ウィキテキストの変更が [[mw:Special:MyLanguage/Extension:WikiEditor|2010 editor]] 内の読者にどのように表示されるかを確認してください。",
+	"wikieditor-realtimepreview-reload-title": "リアルタイム プレビュー ペインをリロードする",
 	"wikieditor-realtimepreview-manual": "編集を手動でプレビューするには今リロードしてください。",
 	"wikieditor-realtimepreview-onboarding-title": "リアルタイムのプレビュー",
 	"wikieditor-realtimepreview-onboarding-body": "編集をリアルタイムにプレビューして、読者にどのように表示されるかを確認します。",

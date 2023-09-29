@@ -67,7 +67,7 @@
 	"discussiontools-notification-subscribed-new-comment-header": "$1 {{GENDER:$2|ha risposto}} in \"<strong>$4</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-header-bundled": "{{PLURAL:$1|Una nuova risposta|$1 nuove risposte|100=Più di 99 nuove risposte}} in \"<strong>$3</strong>\".",
 	"discussiontools-notification-subscribed-new-comment-view": "Vedi commento",
-	"discussiontools-pageframe-latestcomment": "Ultimo commento: $1, lasciato da $2 sull'argomento $3",
+	"discussiontools-pageframe-latestcomment": "Ultimo commento: $1, lasciato da $2 in merito all'argomento $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Ultimo commento: $1 di $2",
 	"discussiontools-pagetitle-newtopic": "Inizia nuovo argomento su $1",
 	"discussiontools-pagetitle-reply": "Risposta su $1",

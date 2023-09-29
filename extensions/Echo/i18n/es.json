@@ -38,7 +38,9 @@
 			"The Anonymouse",
 			"TheBITLINK",
 			"Themasterriot",
-			"Vivaelcelta"
+			"Vivaelcelta",
+			"DarkGames26",
+			"-sasha-"
 		]
 	},
 	"echo-desc": "Sistema para notificar a los usuarios sobre eventos y mensajes",
@@ -46,7 +48,7 @@
 	"prefs-description-echo": "Selecciona las notificaciones que deseas recibir y el modo en el que deseas recibirlas.",
 	"prefs-emailsettings": "Opciones de correo electrónico",
 	"prefs-echosubscriptions": "Notificarme sobre estos eventos",
-	"prefs-echocrosswiki": "Notificaciones de varios wikis",
+	"prefs-echocrosswiki": "Notificaciones de otros wikis",
 	"prefs-blocknotificationslist": "Usuarios silenciados",
 	"prefs-mutedpageslist": "Páginas silenciadas para notificaciones de enlaces de página",
 	"prefs-echopollupdates": "Notificaciones en vivo",
@@ -71,7 +73,7 @@
 	"echo-pref-dont-email-read-notifications": "No incluyas notificaciones leídas en los correos electrónicos de resumen",
 	"echo-learn-more": "Más información",
 	"echo-log": "Registro público",
-	"echo-new-messages": "Tienes un nuevo mensaje de discusión",
+	"echo-new-messages": "Tienes mensajes nuevos",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Edición|Ediciones}} en mi página de discusión",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Enlace|Enlaces}} de página",
 	"echo-category-title-reverted": "{{PLURAL:$1|Reversión|Reversiones}} de edición",

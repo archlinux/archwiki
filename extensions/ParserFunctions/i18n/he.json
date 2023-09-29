@@ -24,5 +24,5 @@
 	"pfunc_expr_invalid_argument_ln": "ארגומנט בלתי־תקין לפונקציה ln: קטן מ־0 או שווה ל־0.",
 	"pfunc_expr_unknown_error": "שגיאה בביטוי: שגיאה בלתי־ידועה ($1)",
 	"pfunc_expr_not_a_number": "התוצאה של $1 אינה מספר",
-	"pfunc_string_too_long": "שגיאה: המחרוזת עוברת את גבול התווים המותר, $1"
+	"pfunc_string_too_long": "שגיאה: המחרוזת עוברת את מגבלת מספר ההתווים המותר, $1"
 }

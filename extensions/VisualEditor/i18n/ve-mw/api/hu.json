@@ -33,7 +33,7 @@
 	"apihelp-visualeditoredit-param-html": "A Parsoidnak küldendő HTML, amiből wikiszöveg készül.",
 	"apihelp-visualeditoredit-param-minor": "Apró szerkesztés jelzése.",
 	"apihelp-visualeditoredit-param-needcheck": "Mentés közben állítsd be ezt a paramétert, ha a revízió roundtrip problémákkal küzdhet. Ennek eredményeként a szerkesztés fel lesz címkézve.",
-	"apihelp-visualeditoredit-param-oldid": "Használandó lapváltozat-azonosító. Alapértelmezetten az utolsó változat. Új oldalhoz használj 0-t.",
+	"apihelp-visualeditoredit-param-oldid": "Használandó lapváltozat-azonosító. Alapértelmezetten az utolsó változat.",
 	"apihelp-visualeditoredit-param-paction": "A végrehajtandó művelet.",
 	"apihelp-visualeditoredit-param-page": "Az oldal, amin a műveletet el kell végezni.",
 	"apihelp-visualeditoredit-param-section": "Szakasz a művelethez.",

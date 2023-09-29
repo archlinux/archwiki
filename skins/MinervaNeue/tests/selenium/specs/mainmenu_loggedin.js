@@ -13,22 +13,22 @@ const {
 // @chrome @en.m.wikipedia.beta.wmflabs.org @firefox @test2.m.wikipedia.org @vagrant @login
 describe( 'Menus open correct page for anonymous users', () => {
 
-	beforeEach( () => {
-		iAmLoggedIntoTheMobileWebsite();
-		iAmOnPage( 'Main Page' );
+	beforeEach( async () => {
+		await iAmLoggedIntoTheMobileWebsite();
+		await iAmOnPage( 'Main Page' );
 	} );
 
-	it( 'Check links in menu', () => {
-		iClickOnTheMainNavigationButton();
-		iShouldSeeALinkToDisclaimer();
-		iShouldSeeAUserPageLinkInMenu();
-		iSeeALinkToAboutPage();
-		[ 'Home', 'Random', 'Settings', 'Watchlist' ].forEach( ( label ) => {
-			iShouldSeeALinkInMenu( label );
+	it( 'Check links in menu', async () => {
+		await iClickOnTheMainNavigationButton();
+		await iShouldSeeALinkToDisclaimer();
+		await iShouldSeeAUserPageLinkInMenu();
+		await iSeeALinkToAboutPage();
+		[ 'Home', 'Random', 'Settings', 'Watchlist' ].forEach( async ( label ) => {
+			await iShouldSeeALinkInMenu( label );
 		} );
-		iShouldSeeLogoutLinkInMenu();
+		await iShouldSeeLogoutLinkInMenu();
 		try {
-			iShouldSeeALinkInMenu( 'Nearby' );
+			await iShouldSeeALinkInMenu( 'Nearby' );
 		} catch ( e ) {
 			console.warn( 'Nearby item will only appear in main menu if $wgMFNearby is configured' );
 		}

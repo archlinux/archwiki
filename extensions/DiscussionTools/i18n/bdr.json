@@ -14,5 +14,12 @@
 	"discussiontools-replywidget-preview": "Petele’",
 	"discussiontools-replywidget-reply": "Nampung",
 	"discussiontools-replywidget-summary": "Repod",
-	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|urang}} diam perundingan"
+	"discussiontools-replywidget-watchthis": "Namba laman tu ta'[[Special:Watchlist|senarai nijegoon]]",
+	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|urang}} diam perundingan",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kumin|kumin}}",
+	"discussiontools-topicheader-latestcomment": "Kumin betiru: $1",
+	"discussiontools-topicsubscription-button-subscribe": "ngendo'",
+	"discussiontools-topicsubscription-button-subscribe-label": "Ngendo'",
+	"discussiontools-topicsubscription-button-unsubscribe": "beranti ngendo'",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Beranti ngendo'"
 }

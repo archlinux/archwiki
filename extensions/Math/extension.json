@@ -39,7 +39,8 @@
 			"class": "MediaWiki\\Extension\\Math\\HookHandlers\\ParserHooksHandler",
 			"services": [
 				"Math.RendererFactory",
-				"UserOptionsLookup"
+				"UserOptionsLookup",
+				"HookContainer"
 			]
 		},
 		"PreferencesHooksHandler": {

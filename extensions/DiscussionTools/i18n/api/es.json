@@ -7,7 +7,10 @@
 			"MarcoAurelio",
 			"Rodney Araujo",
 			"Suecarmol",
-			"ZebaX2010"
+			"ZebaX2010",
+			"DarkGames26",
+			"Fitoschido",
+			"No se"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "No se encontró el comentario con ID '$1'.",
@@ -18,9 +21,13 @@
 	"apierror-discussiontools-subscription-failed-remove": "No se puede desuscribir de este tema.",
 	"apihelp-discussiontoolscompare-summary": "Obtenga información sobre los cambios en los comentarios entre dos revisiones de la página.",
 	"apihelp-discussiontoolsedit-param-commentid": "ID del comentario a responder. Es usado solamente cuando <var>paction</var> es <var>addcomment</var>. Sobrescribe <var>commentname</var> .",
+	"apihelp-discussiontoolsedit-param-commentname": "Nombre del comentario al que responder. Solo se utiliza cuando <var>paction</var> es <var>addcomment</var>.",
 	"apihelp-discussiontoolsedit-param-formtoken": "Una identificación única opcional generada en el cliente para evitar la doble publicación.",
 	"apihelp-discussiontoolsedit-param-html": "Contenido a publicar, como HTML. No puede ser usado junto a <var>wikitext</var>.",
+	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} Solo se utiliza cuando <var>paction</var> es <var>addtopic</var>.",
 	"apihelp-discussiontoolsedit-param-wikitext": "Contenido a publicar, como wikitexto. No puede ser usado junto a <var>html</var>.",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "Añadir un nuevo comentario como respuesta a un comentario existente.",
+	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "Añadir una nueva sección de discusión y el primer comentario en ella.",
 	"apihelp-discussiontoolsedit-summary": "Publicar un mensaje en una página de discusión.",
 	"apihelp-discussiontoolsgetsubscriptions-param-commentname": "Nombres de los temas a revisar",
 	"apihelp-discussiontoolsgetsubscriptions-summary": "Obtiene los estados de suscripción de los temas dados.",

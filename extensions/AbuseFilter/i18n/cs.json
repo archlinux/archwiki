@@ -23,7 +23,8 @@
 			"Teslaton",
 			"TheMatto58",
 			"Urbanecm",
-			"Vks"
+			"Vks",
+			"Draceane"
 		]
 	},
 	"abusefilter-desc": "Podrobuje editace automatickým heuristikám",
@@ -214,6 +215,7 @@
 	"abusefilter-edit-status-label": "Statistika:",
 	"abusefilter-edit-status": "Z {{PLURAL:$1|1 poslední operace|posledních $1 operací}} tomuto filtru {{PLURAL:$2|odpovídala|odpovídaly|odpovídalo}} $2 ($3 %).\nPrůměrná doba běhu filtru je $4 ms, filtr potřebuje $5 z dovoleného počtu podmínek.",
 	"abusefilter-edit-throttled-warning": "'''Varování:''' Tento filtr byl automaticky označen jako škodlivý. Z bezpečnostních důvodů {{PLURAL:$2|nebude vykonávána následující akce|nebudou vykonávány následující akce}}: $1. Zkontrolujte prosím, zda je vysoká míra zásahů očekávána. Pokud ano, můžete pro odstranění tohoto omezení tento filtr znovu uložit.",
+	"abusefilter-edit-throttled-warning-no-actions": "'''Varování:''' Tento filtr byl automaticky označen jako škodlivý. Žádné akce nebyly automaticky zakázány, ale zkontrolujte, zda je vysoká míra shod očekávaná. Pokud ano, můžete toto varování ignorovat.",
 	"abusefilter-edit-new": "Nový filtr",
 	"abusefilter-edit-save": "Uložit filtr",
 	"abusefilter-edit-id": "ID filtru:",
@@ -490,6 +492,7 @@
 	"abusefilter-exception-variablevariable": "set a set_var očekávají, že první argument bude řetězcový literál, nalezeno na pozici $1.",
 	"abusefilter-exception-unknownfunction": "$2 není platná funkce na pozici $1.",
 	"abusefilter-exception-unusedvars": "Následující proměnné nejsou použité: $2.",
+	"abusefilter-parser-warning-match-empty-regex": "Tento regulární výraz vyhovuje prázdnému řetězci (znak č. $1).",
 	"abusefilter-action-tag": "Značka",
 	"abusefilter-action-throttle": "Omezení",
 	"abusefilter-action-warn": "Varování",
@@ -516,6 +519,7 @@
 	"abusefilter-test": "Test filtru na posledních změnách",
 	"abusefilter-test-intro": "Na této stránce můžete otestovat filtr, který zadáte do editačního pole níže, na {{PLURAL:$1|poslední změně|posledních $1 změnách}}.\nUž existující filtr můžete použít tím, že jeho ID napíšete do rámečku pod editačním polem a kliknete na tlačítko „{{int:abusefilter-test-load}}“.",
 	"abusefilter-test-rules-section": "Pravidla k testování",
+	"abusefilter-test-options-section": "Možnosti hledání",
 	"abusefilter-test-legend": "Test filtru",
 	"abusefilter-test-load-filter": "Načíst filtr s ID:",
 	"abusefilter-test-submit": "Otestovat",

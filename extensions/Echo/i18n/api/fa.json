@@ -9,7 +9,8 @@
 			"Mjbmr",
 			"Mohammad ebz",
 			"Reza1615",
-			"فلورانس"
+			"فلورانس",
+			"Amire80"
 		]
 	},
 	"apihelp-echomarkread-description": "آگاه‌سازی‌‌ها برای کاربر کنونی به عنوان خوانده‌شده نشانه‌گذاری شوند.",
@@ -26,7 +27,7 @@
 	"apihelp-echomarkseen-summary": "علامت گذاری آگاه‌سازی‌ها به عنوان دیده شده برای کاربر کنونی.",
 	"apihelp-echomarkseen-example-1": "علامت‌گذاری آگاه‌سازی‌‌ها از همۀ نوع‌ها به عنوان دیده‌شده",
 	"apihelp-echomarkseen-param-type": "انواع آگاه‌سازی‌‌هایی که به‌عنوان خوانده‌شده علامت زده شدند: 'هشدار'، 'پیام'، یا 'همه'.",
-	"apihelp-echomarkseen-param-timestampFormat": "ساختار تاریخ استفاده شده برای خروجی  'ISO_8601' یا 'MW' است. 'MW' در اینجا دیگر مورد استفاده نیست در نتیجه همهٔ کاربران باید از 'ISO_8601' استفاده کنند. این متغیر حذف خواهد شد و 'ISO_8601' به عنوان تنها ساختار خروجی انتخاب خواهد شد.",
+	"apihelp-echomarkseen-param-timestampFormat": "ساختار تاریخ استفاده شده برای خروجی 'ISO_8601' یا 'MW' است. 'MW' در اینجا دیگر مورد استفاده نیست در نتیجه همهٔ کاربران باید از 'ISO_8601' استفاده کنند. این متغیر حذف خواهد شد و 'ISO_8601' به عنوان تنها ساختار خروجی انتخاب خواهد شد.",
 	"apihelp-echomute-description": "بی‌صدا یا باصدا کردن اعلان‌ها از کاربران یا صفحه‌های خاص.",
 	"apihelp-echomute-summary": "بی‌صدا یا باصدا کردن اعلان‌ها از کاربران یا صفحه‌های خاص.",
 	"apihelp-query+notifications-description": "دریافت آگاه‌سازی‌‌های منتظر کاربر کنونی.",
@@ -67,6 +68,6 @@
 	"apihelp-echoarticlereminder-example-2": "ساخت آگاه‌سازی یادآور برای فردا همراه بدون توضیح",
 	"apiwarn-echo-deprecation-timestampformat": "قالب خروجی مدیاویکی در اینجا منسوخ شده‌است. در آینده، ایزو ۸۶۰۱ همواره برای قالب خروجی برچسب زمان استفاده خواهد شد. برنامهٔ خود را تنظیم کنید و <var>timestampFormat</var> را برابر <kbd>ISO_8601</kbd> قرار دهید.",
 	"apiwarn-echo-deprecation-flyout": "<kbd>notformat=flyout</kbd> منسوخ شده و به زودی حذف خواهد شد. از <kbd>notformat=model</kbd> برای گرفتن داده‌های خام و از <kbd>notformat=special</kbd> برای گرفتن اچ‌تی‌ام‌ال استفاده کنید.",
-	"apiwarn-echo-deprecation-html": "<kbd>notformat=html</kbd> منسوخ شده و به زودی حذف خواهد شد. به جای آن از  <kbd>notformat=special</kbd> استفاده کنید.",
+	"apiwarn-echo-deprecation-html": "<kbd>notformat=html</kbd> منسوخ شده و به زودی حذف خواهد شد. به جای آن از <kbd>notformat=special</kbd> استفاده کنید.",
 	"apierror-echo-event-creation-failed": "امکان ایجاد رویداد سامانه آگاه‌سازی وجود ندارد"
 }

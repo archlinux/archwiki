@@ -17,7 +17,8 @@
 			"زكريا",
 			"علاء",
 			"محمد أحمد عبد الفتاح",
-			"مشعل الحربي"
+			"مشعل الحربي",
+			"Karim185.3"
 		]
 	},
 	"thanks-desc": "تضيف وصلات لشكر المستخدمين على التعديلات والتعليقات، إلخ.",
@@ -60,7 +61,7 @@
 	"notification-bundle-header-log-thank": "{{PLURAL:$1|شخص واحد|$1 شخص|100=99+ شخص}} {{GENDER:$3|شكرك|شكرتك}} لفعلك المرتبط ب<strong>$2</strong>.",
 	"log-name-thanks": "سجل الشكر",
 	"log-description-thanks": "بالأسفل قائمة مستخدمين تلقوا شكرًا من مستخدمين آخرين.",
-	"logentry-thanks-thank": "$1 {{GENDER:$2|شكر|شكرت}} {{GENDER:$4|$3}}",
+	"logentry-thanks-thank": "{{GENDER:$2|شكر|شكرت}} $1 {{GENDER:$4|$3}}",
 	"logeventslist-thanks-log": "سجل الشكر",
 	"thanks-error-no-id-specified": "يجب عليك تحديد معرِّف مراجعة أو سجل لإرسال الشكر.",
 	"thanks-confirmation-special-log": "هل تريد أن ترسل علانية شكرا على فعل السجل هذا؟",

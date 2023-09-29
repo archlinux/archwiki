@@ -4,7 +4,8 @@
 			"Haribanshi",
 			"Tulsi Bhagat",
 			"Vinitutpal",
-			"बिप्लब आनन्द"
+			"बिप्लब आनन्द",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "संपादनके लेल स्वत: हेरिस्टिक लागू होईत् अछि",
@@ -153,8 +154,8 @@
 	"abusefilter-edit-builder-op-comparison-notequal": "बराबर नैं अछि (!=)",
 	"abusefilter-edit-builder-op-comparison-lt": "(<) से कम",
 	"abusefilter-edit-builder-op-comparison-gt": "ई सs बेसी (>)",
-	"abusefilter-edit-builder-op-comparison-lte": "ई सs कम या बराबर  (<=)",
-	"abusefilter-edit-builder-op-comparison-gte": "ई से बेसी या बराबर  (>=)",
+	"abusefilter-edit-builder-op-comparison-lte": "ई सs कम या बराबर (<=)",
+	"abusefilter-edit-builder-op-comparison-gte": "ई से बेसी या बराबर (>=)",
 	"abusefilter-edit-builder-group-op-bool": "बूलिअन ऑपरेटर सभ",
 	"abusefilter-edit-builder-op-bool-not": "नैं (!)",
 	"abusefilter-edit-builder-op-bool-and": "आर (&)",

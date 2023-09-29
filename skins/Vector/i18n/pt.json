@@ -19,7 +19,7 @@
 	"vector-skin-desc": "Fornece 2 temas Vector:\n* 2011 - Versão moderna do MonoBook com um aspeto fresco e várias melhorias de usabilidade.\n* 2022 - O Vector criado como parte do projeto [[mw:Desktop Improvements|Melhoramentos do ambiente de trabalho]] da WMF.",
 	"prefs-vector-enable-vector-1-label": "Usar o Vector antigo",
 	"prefs-vector-enable-vector-1-help": "Durante os próximos anos iremos atualizar gradualmente o tema Vector. O Vetor antigo permitirá ver a versão antiga do tema Vector (a partir de dezembro de 2019). Para saber mais sobre as atualizações, consulte a  [[mw:Reading/Web/Desktop_Improvements|página do projeto]].",
-	"vector-opt-out": "Mudar para aparência antiga",
+	"vector-opt-out": "Mudar para aspeto antigo",
 	"vector-opt-out-tooltip": "Alterar as suas configurações para voltar ao aspeto anterior do tema (Vector anterior)",
 	"vector.css": "/* Todo o código CSS colocado aqui será carregado para os utilizadores do tema Vector */",
 	"vector.js": "/* Todo o código Javascript colocado aqui será carregado para os utilizadores do tema Vector */",

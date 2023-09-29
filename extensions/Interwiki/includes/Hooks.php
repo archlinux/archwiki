@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\Interwiki;
 
-use Hooks as MWHooks;
 use MediaWiki\MediaWikiServices;
 use WikiMap;
 
@@ -41,7 +40,7 @@ class Hooks {
 			return;
 		}
 		// This will trigger a deprecation warning in MW 1.36+
-		MWHooks::register(
+		MediaWikiServices::getInstance()->getHookContainer()->register(
 			'InterwikiLoadPrefix', 'MediaWiki\Extension\Interwiki\Hooks::onInterwikiLoadPrefix'
 		);
 	}

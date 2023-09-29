@@ -28,6 +28,7 @@
 	"discussiontools-replywidget-reply": "Balas",
 	"discussiontools-replywidget-summary": "Ringkasan",
 	"discussiontools-replywidget-watchthis": "Tambahakan laman ngini ka [[Special:Watchlist|daptar itihan]] Pian",
+	"discussiontools-target-comment-missing": "Kumintar ngini kada kawa didapati. Pinanya sudah dihapus atawa dipindahakan.",
 	"discussiontools-topicheader-authorcount": "$1 {{PLURAL:$1|urang}} dalam pamandiran",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|kumintar}}",
 	"discussiontools-topicheader-latestcomment": "Kumintar pahanyarnya: $1",

@@ -26,7 +26,8 @@
 			"WhatamIdoing",
 			"WindEwriX",
 			"Умар",
-			"OlegVeliky"
+			"OlegVeliky",
+			"Smigles"
 		]
 	},
 	"discussiontools": "Инструменты для обсуждений",
@@ -123,7 +124,7 @@
 	"discussiontools-replywidget-abandontopic-discard": "Отменить тему",
 	"discussiontools-replywidget-abandontopic-keep": "Продолжить писать",
 	"discussiontools-replywidget-advanced": "Дополнительно",
-	"discussiontools-replywidget-anon-warning": "<strong>Вы не вошли в систему.</strong> Чтобы вы могли уведомления при ответах вам и сообщение было под вашим именем, а не IP-адресом, вы можете [$1 войти] или [$2 создать учётную запись].",
+	"discussiontools-replywidget-anon-warning": "<strong>Вы не вошли в систему.</strong> Чтобы вы могли получать уведомления при ответах вам и сообщение было под вашим именем, а не IP-адресом, вы можете [$1 войти] или [$2 создать учётную запись].",
 	"discussiontools-replywidget-cancel": "Отмена",
 	"discussiontools-replywidget-feedback": "Отправить отзыв об этой функции",
 	"discussiontools-replywidget-loading": "Загрузка…",

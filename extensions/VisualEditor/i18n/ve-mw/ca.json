@@ -141,7 +141,7 @@
 	"visualeditor-dialog-meta-settings-notitleconvert-help": "Podeu evitar que el títol de la pàgina es converteixi automàticament en altres scripts.",
 	"visualeditor-dialog-meta-settings-notitleconvert-label": "No converteixis el títol entre variants lingüístiques",
 	"visualeditor-dialog-meta-settings-redirect-help": "Podeu convertir aquesta pàgina en una redirecció, una pàgina que enviarà els lectors automàticament a una altra pàgina d'aquest wiki. Això és útil per a faltes d'ortografia habituals i per noms o conceptes alternatius. Si ho feu, els lectors no veuran el contingut d'aquesta pàgina.",
-	"visualeditor-dialog-meta-settings-redirect-label": "Redirigeix aquesta pàgina",
+	"visualeditor-dialog-meta-settings-redirect-label": "Redirigeix aquesta pàgina a",
 	"visualeditor-dialog-meta-settings-redirect-placeholder": "Pàgina destinació de la redirecció",
 	"visualeditor-dialog-meta-settings-redirect-statichelp": "Podeu evitar que aquesta redirecció s'actualitzi automàticament quan la pàgina a la qual redirigeix es traslladi, en el cas molt inusual en què això sigui necessari.",
 	"visualeditor-dialog-meta-settings-redirect-staticlabel": "Evita que aquesta redirecció s'actualitzi quan es reanomeni la pàgina destinació",

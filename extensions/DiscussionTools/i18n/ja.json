@@ -25,7 +25,8 @@
 			"カッパ鳥",
 			"ネイ",
 			"春春眠眠",
-			"青子守歌"
+			"青子守歌",
+			"ひまり"
 		]
 	},
 	"discussiontools": "議論ツール",
@@ -106,7 +107,7 @@
 	"discussiontools-preference-sourcemodetoolbar-help": "この機能でツールバーを追加するとすばやく返信したり話題を追加したりするソース編集モードに切り替わり、pingの送信やリンク追加などのショートカットが使えます。",
 	"discussiontools-preference-summary": "この機能に関する情報は[https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary 機能の概要]のページをご覧ください。",
 	"discussiontools-preference-topicsubscription": "トピックの更新通知機能を有効にする",
-	"discussiontools-preference-topicsubscription-help": "この機能を使うと個別のトピックに関する更新の通知を受け取ることができます。（訳注＝詳細な解説は[https://www.mediawiki.org/wiki/Special:MyLanguage/Talk_pages_project/Feature_summary 機能の概要]をご覧ください。）",
+	"discussiontools-preference-topicsubscription-help": "この機能を使うと個別のトピックに関する更新の通知を受け取ることができます。",
 	"discussiontools-preference-visualenhancements": "議論のアクティビティを表示する",
 	"discussiontools-preference-visualenhancements-help": "この機能を有効にするとトークページの外観が変更され、各議論のアクティビティに関する情報が表示されるようになります。",
 	"discussiontools-replybutton": "返信",

@@ -11,7 +11,8 @@
 			"Rapsar",
 			"SaldırganSincap",
 			"Sezgin İbiş",
-			"Vito Genovese"
+			"Vito Genovese",
+			"Joseph"
 		]
 	},
 	"linterrors": "Lint hataları",
@@ -58,6 +59,12 @@
 	"linter-form-prefix-match": "Başlık önekiyle eşleşen tüm sayfaları ara",
 	"linter-form-exact-or-prefix": "Belirli bir sayfa başlığını veya genel bir başlık önekine sahip tüm sayfaları ara",
 	"linter-form-namespace": "Ad alanı:",
+	"linter-form-tag": "Etiket adına göre filtrele",
+	"linter-form-tag-option-all": "Filtre yok",
+	"linter-form-template": "Şablon durumuna göre filtrele",
+	"linter-form-template-option-all": "Filtre yok",
+	"linter-form-template-option-with": "Şablonlarla",
+	"linter-form-template-option-without": "Şablonlar olmadan",
 	"linter-form-title-prefix": "Lütfen bir başlık öneki veya tam bir başlık girin:",
 	"linter-heading-high-priority": "Yüksek öncelik",
 	"linter-heading-low-priority": "Düşük öncelik",

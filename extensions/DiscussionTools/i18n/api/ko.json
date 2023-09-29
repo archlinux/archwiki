@@ -23,6 +23,7 @@
 	"apihelp-discussiontoolspreview-param-type": "미리 볼 메시지의 유형",
 	"apihelp-discussiontoolspreview-param-wikitext": "위키텍스트 형식의 미리 볼 내용입니다.",
 	"apihelp-discussiontoolspreview-summary": "토론 문서의 메시지를 미리 봅니다.",
+	"apihelp-discussiontoolssubscribe-param-commentname": "구독(또는 구독 해지)할 주제의 이름",
 	"apihelp-discussiontoolssubscribe-param-page": "주제가 표시되는 페이지",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "true는 구독이며, false는 구독 해지임",
 	"apihelp-discussiontoolssubscribe-summary": "주제에 관한 알림을 수신하기 위해 구독(또는 구독 해지)을 합니다."

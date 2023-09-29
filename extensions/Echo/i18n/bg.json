@@ -45,7 +45,7 @@
 	"echo-pref-dont-email-read-notifications": "Изключване на известията за отбелязвания като прочетено, в имейлите с резюме",
 	"echo-learn-more": "Повече подробности",
 	"echo-log": "Публичен дневник",
-	"echo-new-messages": "Имате нови съобщение на беседата си.",
+	"echo-new-messages": "Имате ново съобщение на беседата си",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Редакция|Редакции}} на беседата ми",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Препратка|Препратки}} към страници",
 	"echo-category-title-reverted": "{{PLURAL:$1|Връщане|Връщания}} на редакция",

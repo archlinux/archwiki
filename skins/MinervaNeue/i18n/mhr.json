@@ -6,15 +6,17 @@
 			"Санюн Вадик"
 		]
 	},
-	"mobile-frontend-editor-edit": "Тӧрлаташ",
+	"mobile-frontend-editor-edit": "Тӧрлаш",
+	"mobile-frontend-history": "Тиде велыжын вашталтымаш историйжым ончалаш.",
 	"mobile-frontend-home-button": "Тӱҥ",
 	"mobile-frontend-language-article-heading": "Йылме",
 	"mobile-frontend-main-menu-button-tooltip": "Тӱҥ менюм почаш",
 	"mobile-frontend-main-menu-login": "Пураш",
-	"mobile-frontend-main-menu-nearby": "Воктене",
+	"mobile-frontend-main-menu-nearby": "Лишне",
 	"mobile-frontend-main-menu-settings": "Келыштарымаш",
-	"mobile-frontend-main-menu-watchlist": "Эскерымаш лаштык",
-	"mobile-frontend-pageaction-edit-tooltip": "Лаштыкын тӱҥ ужашыжым тӧрлаташ.",
-	"mobile-frontend-placeholder": "кычалаш",
-	"mobile-frontend-random-button": "Чокым"
+	"mobile-frontend-main-menu-watchlist": "Эскерыме списке",
+	"mobile-frontend-pageaction-edit-tooltip": "Велыжын тӱҥ ужашыжым тӧрлаташ.",
+	"mobile-frontend-placeholder": "{{SITENAME}} сайтыште кычалаш",
+	"mobile-frontend-random-button": "Чокым",
+	"mobile-frontend-user-newmessages": "Тыйын каҥашымаш велыжыштет у серыш уло"
 }

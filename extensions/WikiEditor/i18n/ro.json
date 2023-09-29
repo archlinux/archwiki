@@ -10,7 +10,8 @@
 			"NGC 54",
 			"Stelistcristi",
 			"Strainu",
-			"Wintereu"
+			"Wintereu",
+			"Alesaru"
 		]
 	},
 	"wikieditor": "Interfață de modificare wikitext avansată",
@@ -193,6 +194,9 @@
 	"wikieditor-toolbar-help-content-indent-description": "Indentare",
 	"wikieditor-toolbar-help-content-indent-syntax": "Text normal<br />:Text indentat<br />::Text indentat",
 	"wikieditor-toolbar-help-content-indent-result": "Text normal<dl><dd>Text indentat<dl><dd>Text indentat</dd></dl></dd></dl>",
+	"wikieditor-realtimepreview-preview": "Previzualizare",
+	"wikieditor-realtimepreview-reload": "Reîncărcare",
 	"wikieditor-realtimepreview-beta-label": "Previzualizare în timp real",
-	"wikieditor-realtimepreview-beta-desc": "Vezi cum le vor apărea cititorilor schimbările asupra wikitextului înăuntrul [[mw:Special:MyLanguage/Extension:WikiEditor|editorului 2010]]."
+	"wikieditor-realtimepreview-beta-desc": "Vezi cum le vor apărea cititorilor schimbările asupra wikitextului înăuntrul [[mw:Special:MyLanguage/Extension:WikiEditor|editorului 2010]].",
+	"wikieditor-realtimepreview-reload-title": "Reîncarcă panoul previzualizării în timp real"
 }

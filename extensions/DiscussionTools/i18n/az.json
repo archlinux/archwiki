@@ -97,7 +97,7 @@
 	"discussiontools-replywidget-abandontopic-discard": "Mövzunu ləğv et",
 	"discussiontools-replywidget-abandontopic-keep": "Yazmağa davam et",
 	"discussiontools-replywidget-advanced": "Daha çox",
-	"discussiontools-replywidget-anon-warning": "<strong>Siz daxil olmamısınız.</strong> Kimsə cavab verdikdə və IP ünvanınız əvəzinə adınızla cavab aldıqda xəbərdar olmaq üçün [$1 daxil ola] və ya [ $2 hesab yarada] bilərsiniz.",
+	"discussiontools-replywidget-anon-warning": "<strong>Siz daxil olmamısınız.</strong> Kimsə cavab verdikdə və IP-ünvanınız əvəzinə istifadəçi adınızla cavab aldıqda bundan xəbərdar olmaq üçün [$1 daxil ola] və ya [$2 hesab yarada] bilərsiniz.",
 	"discussiontools-replywidget-cancel": "İmtina",
 	"discussiontools-replywidget-feedback": "Bu funksiya haqqında rəyinizi bildirin",
 	"discussiontools-replywidget-feedback-link": "https://www.mediawiki.org/wiki/Talk:Talk_pages_project/Replying",

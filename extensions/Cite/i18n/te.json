@@ -30,6 +30,7 @@
 	"cite_error_empty_references_define": "<code>&lt;references&gt;</code> లో \"$1\" పేరుతో నిర్వచించిన <code>&lt;ref&gt;</code> ట్యాగులో పాఠ్యమేమీ లేదు.",
 	"cite-tracking-category-cite-error": "మూలాల లోపాలున్న పేజీలు",
 	"cite-tracking-category-cite-error-desc": "ఈ వర్గం లోని పేజీల్లో మూలాల ట్యాగుల వాడకంలో లోపాలున్నాయి.",
+	"cite_references_link_many_and": "&#32;",
 	"cite_references_link_accessibility_label": "పైకి దూకు",
 	"cite_references_link_many_accessibility_label": "ఇక్కడికి దుముకు:",
 	"cite_references_link_accessibility_back_label": "వెనక్కి గెంతు",

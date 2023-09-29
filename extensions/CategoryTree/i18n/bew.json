@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"Bangrapip"
+		]
+	},
+	"categorytree": "Puun katègori",
+	"categorytree-portlet": "Katègori",
+	"categorytree-legend": "Kasi unjuk puun katègori",
+	"categorytree-desc": "Arahin bèbas [[Special:CategoryTree|struktur katègori]]",
+	"categorytree-header": "Masupin nama katègori bakal ngiat dia punya isi dalem bentuk struktur puun. (Butuh JavaScript.)",
+	"categorytree-category": "Katègori:",
+	"categorytree-go": "Kasi unjuk puun",
+	"categorytree-parents": "Induk",
+	"categorytree-mode-label": "Mode:",
+	"categorytree-mode-categories": "cuman katègori",
+	"categorytree-mode-pages": "halaman kecuali berekas",
+	"categorytree-mode-all": "semua halaman",
+	"categorytree-collapse": "gulung",
+	"categorytree-expand": "tèmprakin",
+	"categorytree-member-counts": "Ada {{PLURAL:$1|1 anakkatègori|$1 anakkatègori}}, {{PLURAL:$2|1 halaman|$2 halaman}}, èn {{PLURAL:$3|1 berekas|$3 berekas}}",
+	"categorytree-num-categories": "$1 K",
+	"categorytree-num-pages": "$1 H",
+	"categorytree-num-files": "$1 B",
+	"categorytree-num-empty": "kosong",
+	"categorytree-load": "muatin",
+	"categorytree-loading": "muat...",
+	"categorytree-nothing-found": "kaga' ketemu",
+	"categorytree-no-subcategories": "kaga' ada anakkatègori",
+	"categorytree-no-parent-categories": "kaga' ada katègori induk",
+	"categorytree-no-pages": "kaga' ada halaman atawa anakkatègori",
+	"categorytree-not-found": "Katègori <i>$1</i> kaga' ketemu",
+	"categorytree-error": "Masalah pas muat data.",
+	"categorytree-retry": "Tunggu bentaran dah, terus jal lagi."
+}

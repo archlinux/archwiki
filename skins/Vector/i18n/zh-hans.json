@@ -33,7 +33,8 @@
 			"落花有意12138",
 			50829,
 			"Kishinsagi",
-			"魔琴"
+			"魔琴",
+			"LittlePaw365"
 		]
 	},
 	"skinname-vector": "旧版Vector（2010）",
@@ -82,7 +83,7 @@
 	"vector-toc-collapsible-button-label": "切换目录",
 	"vector-site-nav-label": "站点",
 	"vector-main-menu-label": "主菜单",
-	"vector-limited-width-toggle": "切换有限宽度模式",
+	"vector-limited-width-toggle": "开关有限宽度模式",
 	"vector-page-tools-label": "工具",
 	"vector-page-tools-general-label": "常规",
 	"vector-page-tools-actions-label": "操作",

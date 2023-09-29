@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"BaRaN6161 TURK",
-			"MuratTheTurkish"
+			"MuratTheTurkish",
+			"Amire80"
 		]
 	},
 	"apihelp-abusefiltercheckmatch-description": "Bir AbuseFilter'ın bir değişkenler kümesiyle mi, bir düzenleme ile mi yoksa günlüğe kaydedilen bir AbuseFilter olayıyla eşleştiğini kontrol edin.\n\nvars, rcid veya logid gereklidir, ancak yalnızca biri kullanılabilir.",
@@ -32,7 +33,7 @@
 	"apihelp-query+abusefilters-summary": "Kötüye kullanım filtrelerinin ayrıntılarını gösterin.",
 	"apihelp-query+abusefilters-param-startid": "Numaralandırmaya başlamak için filtre kimliği.",
 	"apihelp-query+abusefilters-param-endid": "Numaralandırmayı durdurmak için filtre kimliği.",
-	"apihelp-query+abusefilters-param-show": "Yalnızca  bu kriterlere uyan filtreleri göster.",
+	"apihelp-query+abusefilters-param-show": "Yalnızca bu kriterlere uyan filtreleri göster.",
 	"apihelp-query+abusefilters-param-limit": "Listelenecek maksimum filtre sayısı.",
 	"apihelp-query+abusefilters-param-prop": "Hangi özellikleri elde etmek.",
 	"apihelp-query+abusefilters-example-1": "Etkin olan genel filtreleri listele",

@@ -44,7 +44,7 @@ class ExtractFormatter extends HtmlFormatter {
 	 * Ignored
 	 * @return string Processed HTML
 	 */
-	public function getText( $element = null ) {
+	public function getText( $element = null ): string {
 		$this->filterContent();
 		$text = parent::getText();
 		if ( $this->plainText ) {
@@ -63,7 +63,7 @@ class ExtractFormatter extends HtmlFormatter {
 	 * @param string $html HTML string to process
 	 * @return string Processed HTML
 	 */
-	public function onHtmlReady( $html ) {
+	public function onHtmlReady( string $html ): string {
 		if ( $this->plainText ) {
 			$html = preg_replace( '/\s*(<h([1-6])\b)/i',
 				"\n\n" . self::SECTION_MARKER_START . '$2' . self::SECTION_MARKER_END . '$1',
@@ -79,7 +79,7 @@ class ExtractFormatter extends HtmlFormatter {
 	 *
 	 * @return array Array of removed DOMElements
 	 */
-	public function filterContent() {
+	public function filterContent(): array {
 		$removed = parent::filterContent();
 
 		$doc = $this->getDoc();

@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Mbrt",
-			"StefanusRA"
+			"StefanusRA",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Terapna pamriksan heuristik otomatis nang suntingan",
@@ -169,7 +170,7 @@
 	"abusefilter-log-noresults": "Ora aba asuke",
 	"abusefilter-diff-title": "Prabedhan antar versi",
 	"abusefilter-diff-item": "Barang",
-	"abusefilter-diff-version": "Versi sekang  $1 {{GENDER:$3|nang}} $2",
+	"abusefilter-diff-version": "Versi sekang $1 {{GENDER:$3|nang}} $2",
 	"abusefilter-diff-info": "Informasi dhasar",
 	"abusefilter-diff-pattern": "Kahanan saringan",
 	"abusefilter-diff-invalid": "Ora teyeng njikot versi sing dejaluk",

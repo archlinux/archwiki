@@ -2,19 +2,26 @@
 	"@metadata": {
 		"authors": [
 			"Anakmalaysia",
-			"Tofeiku"
+			"Tofeiku",
+			"Hakimi97"
 		]
 	},
 	"discussiontools-autotopicsubpopup-body": "Anda akan menerima pemberitahuan apabila seseorang menghantar ulasan baru di perbincangan ini. Anda boleh menyesuaikan tetapan pemberitahuan anda di keutamaan.",
-	"discussiontools-autotopicsubpopup-dismiss": "Baik, saya faham",
+	"discussiontools-autotopicsubpopup-dismiss": "Baiklah, saya faham",
 	"discussiontools-autotopicsubpopup-preferences": "Sunting keutamaan",
 	"discussiontools-autotopicsubpopup-title": "Anda telah melanggan",
 	"discussiontools-defaultsummary-reply": "Balas",
 	"discussiontools-emptystate-button": "Mulakan perbincangan",
+	"discussiontools-emptystate-title": "Mulakan perbincangan berkaitan {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-self": "Selamat datang ke laman perbincangan anda",
 	"discussiontools-emptystate-title-self-anon": "Selamat datang ke laman perbincangan ini",
+	"discussiontools-emptystate-title-user": "Mulakan perbincangan {{GENDER:{{PAGENAME}}|dengan}} {{PAGENAME}}",
 	"discussiontools-emptystate-title-user-anon": "Selamat datang ke laman perbincangan ini",
 	"discussiontools-error-comment-disappeared-reload": "Sila muat semula laman dan cuba lagi.",
+	"discussiontools-error-noswitchtove-extension": "sambungan atau sintaks rujukan",
+	"discussiontools-error-noswitchtove-table": "sintaks jadual",
+	"discussiontools-error-noswitchtove-template": "sintaks templat",
+	"discussiontools-error-noswitchtove-title": "Mod visual dilumpuhkan",
 	"discussiontools-findcomment-label-search": "Cari",
 	"discussiontools-findcomment-noresults": "Tiada hasil.",
 	"discussiontools-findcomment-title": "Cari ulasan",

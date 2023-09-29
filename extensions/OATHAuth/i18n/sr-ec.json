@@ -74,5 +74,6 @@
 	"oathauth-disable-method-warning-button-label": "Прихвати и настави",
 	"oathauth-switch-method-warning-header": "Потврда пребацивања на други метод потврде идентитета",
 	"oathauth-totp-disable-warning": "Више нећете моћи да користите уређај за потврду идентитета регистрован овим налогом. Сви причувни токени повезани са њим биће проглашени неважећим.",
-	"oathauth-invalidrequest": "Неважећи захтев"
+	"oathauth-invalidrequest": "Неважећи захтев",
+	"oathauth-notifications-disable-help": "Помоћ"
 }

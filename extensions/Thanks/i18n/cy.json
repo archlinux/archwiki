@@ -38,7 +38,7 @@
 	"thanks-submit": "Dweud diolch",
 	"echo-pref-subscription-edit-thank": "Diolchiadau am fy golygiadau",
 	"echo-pref-tooltip-edit-thank": "Hysbyser fi pan fo rhywun yn fy niolch am un o'm golygiadau.",
-	"echo-category-title-edit-thank": "Diolch",
+	"echo-category-title-edit-thank": "Diolchiadau",
 	"notification-thanks-diff-link": "eich golygiad",
 	"notification-header-rev-thank": "$1 Rhododd {{GENDER:$2|air o ddiolch}} i {{GENDER:$4|chi}} am eich golygiad ar '''$3'''.",
 	"notification-header-creation-thank": "Mae $1 {{GENDER:$2|wedi dweud diolch}} i {{GENDER:$4|chi}} am greu <strong>$3</strong>.",

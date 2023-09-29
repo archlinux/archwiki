@@ -17,8 +17,8 @@
 	"mobile-frontend-history": "ХӀокху агӀонан истори хьажар.",
 	"mobile-frontend-home-button": "Коьрта",
 	"mobile-frontend-language-article-heading": "Йеша кхечу маттахь",
-	"mobile-frontend-languages-not-available": "ХӀара агӀо кхечу меттанашна тӀекхочуш йац.",
-	"mobile-frontend-main-menu-button-tooltip": "Коьрта меню схьаелла",
+	"mobile-frontend-languages-not-available": "ХӀара агӀо кхечу меттанашкахь тӀекхочуш йац.",
+	"mobile-frontend-main-menu-button-tooltip": "Коьрта меню схьайелла",
 	"mobile-frontend-main-menu-contributions": "Къинхьегам",
 	"mobile-frontend-main-menu-login": "Довзийтар",
 	"mobile-frontend-main-menu-logout": "Болх дӀаберзор",
@@ -72,5 +72,6 @@
 	"skin-minerva-mobile-option-MinervaShowCategories": "Категореш",
 	"skin-minerva-mobile-option-MinervaShowCategories-description": "АгӀонийн категореш хьажа",
 	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment": "АгӀонан проблемаш карор аттадар",
-	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "(Кеп:ambox) агӀонан проблемаш йаззаман чу йаздира йу."
+	"skin-minerva-mobile-option-MinervaPageIssuesNewTreatment-description": "(Кеп:ambox) агӀонан проблемаш йаззаман чу йаздира йу.",
+	"skin-minerva-recentchanges-warning-enhanced-not-supported": "АгӀонгахь карийнарш тобанашка йекъар телефонаш тӀехь тӀекхочуш йац. Хьайна и функци лело лаахь, дехар ду шуьйрачу версин тӀе гӀо."
 }

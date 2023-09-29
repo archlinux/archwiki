@@ -9,6 +9,7 @@
 			"Uostofchuodnego"
 		]
 	},
+	"vector-skin-desc": "Przidŏwŏ dwie skōrki Wektor:\n* 2011 – Ôdświyżōnŏ wersyjŏ ôd skōrki MonoBook, z nowym wyglōndym i poprŏwkami.\n* 2022 – Skōrka Wektor zbudowanŏ kej tajla projektu [[mw:Desktop Improvements]] ôd Fundacyje Wikimedia.",
 	"prefs-vector-enable-vector-1-label": "Użyj Legacy Vector",
 	"prefs-vector-enable-vector-1-help": "Over the next few years, we will be gradually updating the Vector skin. Legacy Vector will allow you to view the old version of Vector (as of December 2019). To learn more about the updates, go to our [[mw:Reading/Web/Desktop_Improvements|project page]].",
 	"vector-opt-out": "Przeszaltruj na stary widok",
@@ -49,6 +50,8 @@
 	"vector-toc-menu-tooltip": "Wykŏz inhaltu",
 	"vector-toc-collapsible-button-label": "Przeszaltruj sztand wykŏzu inhaltu",
 	"vector-site-nav-label": "Neczajta",
+	"vector-page-tools-label": "Werkcojgi",
+	"vector-page-tools-general-label": "Ôgōlne",
 	"vector-pin-element-label": "przeciep do bocznyj lajsty",
 	"vector-unpin-element-label": "skryj",
 	"vector-2022-prefs-talkpage": "[[mw:Talk:Reading/Web/Desktop_Improvements|dyskusyjŏ]]",

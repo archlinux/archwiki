@@ -53,6 +53,7 @@
 	"discussiontools-pageframe-latestcomment": "Seneste indlæg: $1 af $2 i emnet $3",
 	"discussiontools-pageframe-latestcomment-notopic": "Seneste indlæg: $1 af $2",
 	"discussiontools-pagetitle-newtopic": "Starter nyt emne på $1",
+	"discussiontools-pagetitle-reply": "Svarer på $1",
 	"discussiontools-postedit-confirmation-published": "Dit indlæg er offentliggjort.",
 	"discussiontools-postedit-confirmation-topicadded": "Dit emne blev tilføjet.",
 	"discussiontools-preference-autotopicsub": "Abonner automatisk på emner",

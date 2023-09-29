@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"TheAafi"
+			"TheAafi",
+			"Amire80"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "آئی ڈی '$1' کے ساتھ تبصرہ نہیں ملا۔",
@@ -15,7 +16,7 @@
 	"apihelp-discussiontoolsedit-param-commentname": "جواب دیے جانے والے تبصرے کا نام۔ یہ صرف اس صورت استعمال ہوتا ہے جب <var>paction</var> <var>addcomment</var> ہو۔",
 	"apihelp-discussiontoolsedit-param-formtoken": "دوہری پوسٹنگ کو روکنے کے لیے کلائنٹ میں ایک آپشنل منفرد آئی ڈی تیار کی جاتی ہے۔",
 	"apihelp-discussiontoolsedit-param-html": "بطور ایچ۔ٹی۔ایم۔ال، ہوسٹ کرنے کے لیے مواد <var>ikitext\n</var> کے ساتھ ساتھ استعمال نہیں کیا جاسکتا۔",
-	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}}  صرف اسی صورت استعمال ہوتا ہے جب <var>paction</var> <var>addtopic</var> ہو۔",
+	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} صرف اسی صورت استعمال ہوتا ہے جب <var>paction</var> <var>addtopic</var> ہو۔",
 	"apihelp-discussiontoolsedit-param-wikitext": "بطور ویکی ٹیکسٹ، ہوسٹ کرنے کے لیے مواد <var>html</var> کے ساتھ ساتھ استعمال نہیں کیا جاسکتا۔",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "موجود تبصرے کے جواب میں ایک نیا تبصرہ شامل کریں۔",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "ایک نئی بحث کا خانہ اور اس میں پہلا تبصرہ شامل کریں۔",

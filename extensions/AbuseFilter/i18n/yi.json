@@ -7,7 +7,8 @@
 			"Matma Rex",
 			"Pacha Tchernof",
 			"פוילישער",
-			"පසිඳු කාවින්ද"
+			"පසිඳු කාවින්ද",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "ווענדט אויטאמאטישע הייריסטיק צו רעדאקטירונגען",
@@ -15,7 +16,7 @@
 	"abuselog": "פֿילטער לאגבוך",
 	"abusefilter-warning": "'''ווארענונג''': די פעולה איז געווארן אויטאמאַטיש אידענטיציפירט אלס שעדלעך.\nאומקאנסטרוקטיווע אַקציעס וועלן גיך ווערן צוריקגעשטעלט,\nאון גראבע אדער איבערגעחזרטע אומקאנסטרוקטיווע רעדאַקטירונג וועלן ברענגען צו בלאקירן אײַער קאנטע אדער IP אדרעס.\nווען איר האַלט אַז די רעדאַקטירונג איז יא קאנסטרוקטיוו, מעגט איר קליקן \"אויפהיטן\" נאכאַמאָל צו באַשטעטיגן זי.\nא קורצע באַשרייבונג פונעם כלל וואס איז געבראכן: $1",
 	"abusefilter-disallowed": "די אקציע האט מען אידענטיפֿיצירט אויטאמאטיש ווי שעדלעך, און דעריבער גע'אַסרט.\nווען איר האַלט אַז די רעדאַקטירונג איז יא קאנסטרוקטיוו, מעגט איר קליקן \"אויפהיטן\" נאכאַמאָל צו באַשטעטיגן זי.\nא קורצע באַשרייבונג פונעם כלל וואס איז געבראכן: $1",
-	"abusefilter-blocked-display": "די פעולה ווערט גערעכנט שעדלעך,\nאון מען האט אײַך פארמײַדט פון אויספירן זי.\nדערצו, כדי שיצן {{SITENAME}}, אײַער באניצער קאנטע און אלע אסאציאירטע  IP אדרעסן זענען געווארן בלאקירט פון רעדאקטירן.\nIf this has occurred in error, please contact an administrator.\nA brief description of the abuse rule which your action matched is: $1",
+	"abusefilter-blocked-display": "די פעולה ווערט גערעכנט שעדלעך,\nאון מען האט אײַך פארמײַדט פון אויספירן זי.\nדערצו, כדי שיצן {{SITENAME}}, אײַער באניצער קאנטע און אלע אסאציאירטע IP אדרעסן זענען געווארן בלאקירט פון רעדאקטירן.\nIf this has occurred in error, please contact an administrator.\nA brief description of the abuse rule which your action matched is: $1",
 	"abusefilter-blocker": "פֿילטער",
 	"abusefilter-accountreserved": "דער באניצער נאמען איז רעזערווירט פארן קרומבאניץ־פילטער.",
 	"right-abusefilter-modify": "ענדערן שעדיקן פֿילטערס",
@@ -132,7 +133,7 @@
 	"abusefilter-throttle-page": "בלאַט",
 	"abusefilter-edit-warn-message": "סיסטעם־מעלדונג פאר ווארענונג:",
 	"abusefilter-edit-warn-other": "אנדער מעלדונג",
-	"abusefilter-edit-warn-other-label": "בלאטנאמען  פון אנדער מעלדונג:\n:''(אן \"מעדיעוויקי:\" פרעפיקס)''",
+	"abusefilter-edit-warn-other-label": "בלאטנאמען פון אנדער מעלדונג:\n:''(אן \"מעדיעוויקי:\" פרעפיקס)''",
 	"abusefilter-edit-warn-actions": "אַקציעס:",
 	"abusefilter-edit-warn-preview": "ווייזן/באהאלטן פאראויסקוק פון געקליבענער מעלדונג",
 	"abusefilter-edit-warn-edit": "שאפן/רעדאקטירן געקליבענע מעלדונג",

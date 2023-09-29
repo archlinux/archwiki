@@ -2,13 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"Botuzhaleny-sodamo",
-			"Rueter"
+			"Rueter",
+			"Сантяй"
 		]
 	},
 	"tooltip-ca-ve-edit": "Витнемс-петнемс те лопанть",
-	"visualeditor-ca-createlocaldescriptionsource": "Поладомс тескень ёвтнеманть лисьмапрянзо",
-	"visualeditor-ca-createsource": "Шкамс викитекст",
-	"visualeditor-ca-editsource": "Витнемс-петнемс лисьмапрянзо",
-	"visualeditor-ca-editsource-section": "витнемс-петнемс лисьмапрянзо",
-	"visualeditor-descriptionpagelink": "Project:Витнемка-петнемка"
+	"visualeditor-ca-createlocaldescriptionsource": "Теемс юткова кода салава тешкс",
+	"visualeditor-ca-createsource": "Теемс салава тешкс",
+	"visualeditor-ca-editsource": "Витнемс салава тешксэнть",
+	"visualeditor-ca-editsource-section": "витнемс лисьмапрянть",
+	"visualeditor-descriptionpagelink": "Project:Сельмесэ неезь витема"
 }

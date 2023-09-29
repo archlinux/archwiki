@@ -13,7 +13,8 @@
 			"Macofe",
 			"Veracious",
 			"William Surya Permana",
-			"WongKentir"
+			"WongKentir",
+			"Rtnf"
 		]
 	},
 	"wikieditor": "Antarmuka penyuntingan teks wiki canggih",
@@ -211,5 +212,6 @@
 	"wikieditor-realtimepreview-reload-title": "Muat ulang pratayang waktu nyata",
 	"wikieditor-realtimepreview-manual": "Tolong muat ulang sekarang untuk melihat pratayang suntingan Anda secara manual.",
 	"wikieditor-realtimepreview-onboarding-title": "Pratinjau Waktu Nyata",
+	"wikieditor-realtimepreview-onboarding-body": "Lihat pratayang suntingan Anda secara langsung.",
 	"wikieditor-realtimepreview-onboarding-button": "Oke, saya paham"
 }

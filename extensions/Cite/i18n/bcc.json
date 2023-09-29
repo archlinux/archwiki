@@ -1,11 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Mostafadaneshvar"
+			"Mostafadaneshvar",
+			"Moshtank"
 		]
 	},
 	"cite-desc": "اضفافه کنت<code>&lt;ref[ name=id]&gt;</code> و <code>&lt;references/&gt;</code> تگ, په ارجاع دهگ",
-	"cite_error": "حطا ارجاع: $1",
+	"cite_error": "یادکِردءِ مِشتِک: $1",
 	"cite_error_ref_numeric_key": "نامعتبر <code>&lt;ref&gt;</code>تگ;\nنام یک سادگین هوری نه نه بیت. یک توضیحی عنوانی استفاده کنیت",
 	"cite_error_ref_no_key": "نامعتبر<code>&lt;ref&gt;</code>تگ;\nمراجع بی محتوا بایدن نامی داشته بنت",
 	"cite_error_ref_too_many_keys": "نامعتبر<code>&lt;ref&gt;</code>تگ;\nنامعتبر نامان, په داب بازین",

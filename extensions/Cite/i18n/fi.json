@@ -13,12 +13,13 @@
 			"Syreeni",
 			"Tarmo",
 			"Valtlai",
-			"Valtlait"
+			"Valtlait",
+			"Yupik"
 		]
 	},
 	"cite-desc": "Tarjoaa <code>&lt;ref&gt;</code>- ja <code>&lt;references&gt;</code>-elementit viittauksien tekemiseen.",
 	"cite_error": "Viittausvirhe: $1",
-	"cite_error_ref_invalid_dir": "Kelpaamatin <code>dir=\"$1\"</code>, tulee olla <code>ltr</code> tai <code>rtl</code>",
+	"cite_error_ref_invalid_dir": "Kelpaamaton <code>dir=\"$1\"</code>, tulee olla <code>ltr</code> tai <code>rtl</code>",
 	"cite_error_ref_numeric_key": "Kelpaamaton <code>&lt;ref&gt;</code>-elementti: nimi ei voi olla numero – käytä kuvaavampaa nimeä.",
 	"cite_error_ref_no_key": "Kelpaamaton <code>&lt;ref&gt;</code>-elementti: sisällöttömille refeille pitää määrittää nimi.",
 	"cite_error_ref_too_many_keys": "Kelpaamaton <code>&lt;ref&gt;</code>-elementti: virheelliset nimet, esim. liian monta",

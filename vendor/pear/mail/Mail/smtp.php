@@ -112,12 +112,12 @@ class Mail_smtp extends Mail {
      *
      * If the value is set to true, the Net_SMTP package will attempt to use
      * a STARTTLS encrypted connection.
-     * 
+     *
      * If the value is set to false, the Net_SMTP package will avoid
      * a STARTTLS encrypted connection.
-     * 
+     *
      * NULL indicates only STARTTLS if $auth is set.
-     * 
+     *
      * PEAR/Net_SMTP >= 1.10.0 required.
      *
      * @var boolean
@@ -174,6 +174,15 @@ class Mail_smtp extends Mail {
     var $debug = false;
 
     /**
+     * we need the greeting; from it we can extract the authorative name of the mail
+     * server we've really connected to. ideal if we're connecting to a round-robin
+     * of relay servers and need to track which exact one took the email
+     *
+     * @var string
+     */
+    var $greeting = null;
+
+    /**
      * Indicates whether or not the SMTP connection should persist over
      * multiple calls to the send() method.
      *
@@ -196,6 +205,19 @@ class Mail_smtp extends Mail {
      * @var array
      */
     var $socket_options = array();
+
+    /**
+     * If the message ends up in the queue, on the recipient server,
+     * the response will be saved here.
+     * Some successfully delivered emails will include a “queued”
+     * notation in the SMTP response, such as "250 OK; queued as 12345".
+     * This indicates that the email was delivered to the recipient
+     * as expected, but may require additional processing before it
+     * lands in the recipient’s inbox.
+     *
+     * @var string
+     */
+    var $queued_as = null;
 
     /**
      * Constructor.
@@ -413,7 +435,7 @@ class Mail_smtp extends Mail {
         /* Attempt to authenticate if authentication has been enabled. */
         if ($this->auth) {
             $method = is_string($this->auth) ? $this->auth : '';
-            
+
             $tls = $this->starttls === false ? false : true;
 
             if (PEAR::isError($res = $this->_smtp->auth($this->username,
@@ -426,7 +448,7 @@ class Mail_smtp extends Mail {
                 return PEAR::raiseError($error, PEAR_MAIL_SMTP_ERROR_AUTH);
             }
         }
-        
+
         /* Attempt to establish a TLS encrypted connection. PEAR/Net_SMTP >= 1.10.0 required. */
         if ($this->starttls && !$this->auth) {
             $starttls = $this->_smtp->starttls();

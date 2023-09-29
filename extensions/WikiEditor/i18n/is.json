@@ -37,7 +37,7 @@
 	"wikieditor-toolbar-tool-link-int-target-status-notexists": "Þessi síða er ekki til á {{SITENAME}}",
 	"wikieditor-toolbar-tool-link-int-target-status-invalid": "Titilinn sem þú gafst upp er ógildur",
 	"wikieditor-toolbar-tool-link-int-target-status-external": "Ytri tengill",
-	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Aðgreiningarsíða",
+	"wikieditor-toolbar-tool-link-int-target-status-disambig": "Þessi síða er ekki efnissíða, heldur listi efna með svipuðum nöfnum",
 	"wikieditor-toolbar-tool-link-int-invalid": "Titillinn sem þú gafst upp er ógildur.",
 	"wikieditor-toolbar-tool-link-lookslikeinternal": "Slóðin sem þú gafst upp lítur út eins og hún hafi verið ætluð til að tengja í aðra wiki-síðu.\nViltu gera hana að innri tengli?",
 	"wikieditor-toolbar-tool-link-lookslikeinternal-int": "Innri tengill",

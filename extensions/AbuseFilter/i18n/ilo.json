@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"Lam-ang",
-			"Matma Rex"
+			"Matma Rex",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Agipakat kadagiti automatiko a panagsolbar iti parikut kadagiti panagurnos",
@@ -302,7 +303,7 @@
 	"abusefilter-edit-builder-vars-file-height": "Katayag ti papeles kadagiti piksel",
 	"abusefilter-edit-builder-vars-file-bits-per-channel": "Dagiti bit tunggal kanal ti maris iti papeles",
 	"abusefilter-filter-log": "Kinaudi a panagsuksukat kadagiti sagat",
-	"abusefilter-history": "Sukatan ti pakasaritaan para iti  Sagat ti Panagabuso #$1",
+	"abusefilter-history": "Sukatan ti pakasaritaan para iti Sagat ti Panagabuso #$1",
 	"abusefilter-history-foruser": "Dagiti sinukatan babaen ti $1",
 	"abusefilter-history-hidden": "Nailemmeng",
 	"abusefilter-history-enabled": "Napakabaelan",
@@ -328,7 +329,7 @@
 	"abusefilter-exception-unexpectedtoken": "Saan a nanamnama a tandaan \"$3\" (iti kita $2) iti karakter $1.",
 	"abusefilter-exception-unclosedstring": "Saan a narikpan a kuerdas a nangrugi iti karakter $1.",
 	"abusefilter-exception-invalidoperator": "Imbalido nga agipatpataray \"$2\" iti karakter $1.",
-	"abusefilter-exception-unrecognisedtoken": "Saan a mabigbigan  a tandaan $2 iti karakter $1.",
+	"abusefilter-exception-unrecognisedtoken": "Saan a mabigbigan a tandaan $2 iti karakter $1.",
 	"abusefilter-exception-noparams": "Awan ti parametro a naited iti annong ti \"$2: iti karakter $1.",
 	"abusefilter-exception-dividebyzero": "Kalilis a gayagayen ti mangbingay ti $2 babaen ti sero iti karakter $1.",
 	"abusefilter-exception-unrecognisedvar": "Saan a malaslasin a sabsabali ti $2 iti karakter $1.",

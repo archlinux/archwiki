@@ -17,6 +17,7 @@
 		]
 	},
 	"wikieditor": "ڕووکاری پێشکەوتووی دەستکاریکردنی ویکیدەق",
+	"wikieditor-desc": "ڕووکارێکی دەستکاریکردنی پێشکەوتوو و فراوانی ویکیدەق دابین دەکات",
 	"wikieditor-wikitext-tab": "ویکیدەق",
 	"wikieditor-toolbar": "شریتامرازی دەستکاریکردن",
 	"wikieditor-toolbar-desc": "شریتامرازی پەڕەی دەستکاریکردن بە کارەمەیی پەرەپێدراو",
@@ -57,6 +58,7 @@
 	"wikieditor-toolbar-file-target": "ناوی پەرگە:",
 	"wikieditor-toolbar-file-caption": "ڕاڤە:",
 	"wikieditor-toolbar-file-alt": "دەقی جێگرەوە:",
+	"wikieditor-toolbar-file-alt-help": "دەتوانیت ئەم خانە ئارەزوومەندانە بەکاربێنی تا وەسفێک بۆ ئەو کەسانە بنووسیت کە ناتوانن پەڕگەکە ببینن.\nوەسفەکە دەبێ ئەوەندە بێ تا لە مەبەست و زانیاریی بابەتە میدیایییەکە تێبگەن. ئەمە بۆ بەکارھێنەرە کوێرەکان و ئەوانەی کە نەرمامێری خوێنەری شاشە بەکاردێنن یان ئەو وێبگەڕانەی کە تەنیا دەق پیشان دەدەن زۆر گرنگە.",
 	"wikieditor-toolbar-file-alt-help-label": "(یارمەتی پیشاندە)",
 	"wikieditor-toolbar-file-size": "قەبارە:",
 	"wikieditor-toolbar-file-float": "لاگرتن:",
@@ -182,6 +184,7 @@
 	"wikieditor-toolbar-help-content-olist-result": "<ol><li>ئەندامی لیست</li><li>ئەندامی لیست</li></ol>",
 	"wikieditor-toolbar-help-content-file-description": "پەڕگەی نێودەق",
 	"wikieditor-toolbar-help-content-file-syntax": "[[$1:Example.png|$2|$3]]",
+	"wikieditor-toolbar-help-content-file-caption": "دەقی شرۆڤەی وێنە",
 	"wikieditor-toolbar-help-content-reference-description": "سەرچاوە",
 	"wikieditor-toolbar-help-content-reference-syntax": "دەقی پەڕە.&lt;ref&gt;[http://www.example.org دەقی بەستەر], دەقی زیادی.&lt;/ref&gt;",
 	"wikieditor-toolbar-help-content-reference-result": "دەقی پەڕە.<sup><a href='#'>[1]</a></sup>",
@@ -201,6 +204,10 @@
 	"wikieditor-realtimepreview-error": "پێشبینین بار ناکرێت",
 	"wikieditor-realtimepreview-reload": "بارکردنەوە",
 	"wikieditor-realtimepreview-beta-label": "پێشبینینی ڕاستەوخۆ",
+	"wikieditor-realtimepreview-beta-desc": "بزانە گۆڕانکارییەکانی ویکیدەق لەنێو [[mw:Special:MyLanguage/Extension:WikiEditor|دەستکاریکەرەکەی ٢٠١٠]] چۆن بۆ خوێنەران دەردەکەون.",
+	"wikieditor-realtimepreview-reload-title": "پەنجەرەی پێشبینینی ڕاستەوخۆ باربکەرەوە",
+	"wikieditor-realtimepreview-manual": "تکایە ئێستا باری بکەرەوە تا بە شێوەی دەستی پێشبینینی دەستکارییەکانت بکەیت.",
 	"wikieditor-realtimepreview-onboarding-title": "پێشبینینی ڕاستەوخۆ",
+	"wikieditor-realtimepreview-onboarding-body": "بزانە دەستکارییەکانت بۆ خوێنەران چۆن دەبن لەڕێی پێشبینیکردنیان لە پێشبینینی ڕاستەوخۆدا.",
 	"wikieditor-realtimepreview-onboarding-button": "باشە، تێگەیشتم"
 }

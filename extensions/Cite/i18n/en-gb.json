@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piano1forte2"
+		]
+	},
+	"cite_error_ref_invalid_dir": "Invalid <code>dir='$1'</code>, must be <code>ltr</code> or <code>rtl</code>",
+	"cite_error_references_duplicate_key": "Invalid <code>&lt;ref&gt;</code> tag; name '$1' defined multiple times with different content",
+	"cite_error_no_link_label_group": "Ran out of custom link labels for group '$1'. Define more in the [[MediaWiki:$2]] message.",
+	"cite_error_group_refs_without_references": "<code>&lt;ref&gt;</code> tags exist for a group named '$1', but no corresponding <code>&lt;references group='$1'/&gt;</code> tag was found",
+	"cite_error_references_group_mismatch": "<code>&lt;ref&gt;</code> tag in <code>&lt;references&gt;</code> has conflicting group attribute '$1'.",
+	"cite_error_references_missing_group": "<code>&lt;ref&gt;</code> tag with name '$2' defined in <code>&lt;references&gt;</code> has group attribute '$1' which does not appear in prior text.",
+	"cite_error_empty_references_define": "<code>&lt;ref&gt;</code> tag with name '$1' defined in <code>&lt;references&gt;</code> group '$2' has no content."
+}

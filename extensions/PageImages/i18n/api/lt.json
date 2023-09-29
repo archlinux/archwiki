@@ -1,9 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Eitvys200"
+			"Eitvys200",
+			"Nokeoo"
 		]
 	},
+	"apihelp-query+pageimages-summary": "Pateikia informaciją apie puslapyje esančius vaizdus, pvz., miniatiūrą ir nuotraukų buvimo faktą.",
+	"apihelp-query+pageimages-param-thumbsize": "Didžiausias miniatiūrų plotis pikseliais.",
+	"apihelp-query+pageimages-param-langcode": "Kalbos, kuria paveikslėlis bus atvaizduotas, kodas, jei palaikomos kelios kalbos",
+	"apihelp-query+pageimages-param-limit": "Savybės, kiek puslapių grąžinti.",
 	"apihelp-query+pageimages-param-license": "Apriboti puslapio paveikslėlius tam tikru licencijos tipu",
 	"apihelp-query+pageimages-paramvalue-license-free": "tik nemokami paveikslėliai"
 }

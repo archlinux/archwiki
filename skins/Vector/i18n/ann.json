@@ -1,10 +1,12 @@
 {
 	"@metadata": {
 		"authors": [
-			"Katelem"
+			"Katelem",
+			"Amire80"
 		]
 	},
 	"vector-languages": "Ebi kè Usem",
+	"vector-language-button-label": "{{PLURAL:$1|$1 usem}}",
 	"vector-no-language-button-label": "Tap usem sọkọ",
 	"vector-action-addsection": "Tap Ibot-ikọ gbaalek",
 	"vector-action-delete": "Chọk",
@@ -16,6 +18,8 @@
 	"vector-view-view": "Fuk",
 	"vector-more-actions": "Ofifi si",
 	"vector-searchsuggest-containing": "Wèek ebi kè akpọk ìkakaan̄ <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Òkup me emen",
+	"vector-toc-beginning": "Ibebene",
 	"vector-page-tools-label": "Nroon̄",
 	"vector-page-tools-general-label": "Eyi otutuuk",
 	"vector-unpin-element-label": "let"

@@ -25,7 +25,8 @@
 			"ToBeFree",
 			"Tomabrafix",
 			"Umherirrender",
-			"Wnme"
+			"Wnme",
+			"XanonymusX"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -374,7 +375,7 @@
 	"visualeditor-templatesused-tool": "Verwendete Vorlagen",
 	"visualeditor-title-error": "Ungültiger Titel.",
 	"visualeditor-toload": "Der Editor wird jetzt geladen. Wenn du diese Meldung nach einigen Sekunden noch siehst, [$1 lade bitte die Seite] neu.",
-	"visualeditor-tooltip-non-breaking-space": "Nicht-umbrechendes Leerzeichen",
+	"visualeditor-tooltip-non-breaking-space": "Nicht umbrechendes Leerzeichen",
 	"visualeditor-version-label": "Version",
 	"visualeditor-wikitext-progress": "Konvertiere Wikitext",
 	"visualeditor-wikitext-warning": "Du benutzt den visuellen Editor. [[{{MediaWiki:visualeditor-wikitext-warning-link}}|Wikitext]] funktioniert hier nicht. Um jederzeit ohne Verlust deiner Änderungen zur Quelltextbearbeitung zurückzukehren, klicke auf den Wechseln-Button.",

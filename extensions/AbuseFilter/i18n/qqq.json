@@ -315,7 +315,7 @@
 	"abusefilter-edit-revert": "Link text for reverting to an older version of a filter.",
 	"abusefilter-edit-tools": "Field label for a list of tool links.\n\nUsed in:\n* {{msg-mw|Abusefilter-import-intro}}\n{{Identical|Tool}}",
 	"abusefilter-edit-test-link": "Link text for link to a form to test a filter. Accompanying label is {{msg-mw|abusefilter-edit-tools}}.",
-	"abusefilter-edit-export": "Link text for link to create  filter. Accompanying label is {{msg-mw|abusefilter-edit-tools}}.\n\nUsed in:\n* {{msg-mw|Abusefilter-import-intro}}",
+	"abusefilter-edit-export": "Link text for link to create filter. Accompanying label is {{msg-mw|abusefilter-edit-tools}}.\n\nUsed in:\n* {{msg-mw|Abusefilter-import-intro}}",
 	"abusefilter-edit-syntaxok": "Status message for filter test.",
 	"abusefilter-edit-syntaxerr": "Status message for filter test. Parameters:\n* $1 is the reported error.",
 	"abusefilter-edit-warn-leave": "Warning message shown when the user tries to leave the page with unsaved changes to a filter.",

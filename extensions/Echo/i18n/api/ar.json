@@ -9,7 +9,8 @@
 			"بدارين",
 			"ديفيد",
 			"محمد أحمد عبد الفتاح",
-			"Alshamiri1"
+			"Alshamiri1",
+			"Amire80"
 		]
 	},
 	"apihelp-echomarkread-description": "علم الإخطارات للقراءة للمستخدم الحالي.",
@@ -25,8 +26,8 @@
 	"apihelp-echomarkseen-description": "التعليم على الإخطارات كمنظورة للمستخدم الحالي.",
 	"apihelp-echomarkseen-summary": "التعليم على الإخطارات كمنظورة للمستخدم الحالي.",
 	"apihelp-echomarkseen-example-1": "التعليم على الإخطارات من كل الأنواع كمنظورة",
-	"apihelp-echomarkseen-param-type": "نوع الإشعارت  لتحديد كما تبدو على أنها: 'تنبيه' 'رسالة'  أو 'كل'.",
-	"apihelp-echomarkseen-param-timestampFormat": "صيغة الطابع الزمني للاستخدام للناتج 'ISO_8601' أو 'MW'.  'MW' مستغنى عنه هنا، لذا فكل العملاء ينبغي أن يتحولوا إلى 'ISO_8601'.  هذا المعامل ستتم إزالته، و 'ISO_8601' سيصبح صيغة الناتج الوحيدة.",
+	"apihelp-echomarkseen-param-type": "نوع الإشعارت لتحديد كما تبدو على أنها: 'تنبيه' 'رسالة' أو 'كل'.",
+	"apihelp-echomarkseen-param-timestampFormat": "صيغة الطابع الزمني للاستخدام للناتج 'ISO_8601' أو 'MW'‏. 'MW' مستغنى عنه هنا، لذا فكل العملاء ينبغي أن يتحولوا إلى 'ISO_8601'. هذا المعامل ستتم إزالته، و 'ISO_8601' سيصبح صيغة الناتج الوحيدة.",
 	"apihelp-echomute-description": "كتم أو إلغاء كتم الإشعارات من مستخدمين أو صفحات معينة.",
 	"apihelp-echomute-summary": "كتم أو إلغاء كتم الإشعارات من مستخدمين أو صفحات معينة.",
 	"apihelp-echomute-param-type": "قائمة كتم الصوت للإضافة إليها أو الإزالة منها",
@@ -81,7 +82,7 @@
 	"apihelp-echoarticlereminder-param-comment": "تعليق مستخدم اختياري لتضمينه في التذكير",
 	"apihelp-echoarticlereminder-example-1": "إنشاء إشعار تذكير مقالة للغد مع تعليق",
 	"apihelp-echoarticlereminder-example-2": "إنشاء إشعار تذكير مقالة للغد دون تعليق",
-	"apiwarn-echo-deprecation-timestampformat": "صيغة خرج MW timestamp مستغنى عنها هنا. في المستقبل، ISO 8601 سيتم استخدامها دائما لصيغة خرج الطابع الزمني. عدل عميلك واضبط  <var>timestampFormat</var> إلى <kbd>ISO_8601</kbd>.",
+	"apiwarn-echo-deprecation-timestampformat": "صيغة خرج MW timestamp مستغنى عنها هنا. في المستقبل، ISO 8601 سيتم استخدامها دائما لصيغة خرج الطابع الزمني. عدل عميلك واضبط <var>timestampFormat</var> إلى <kbd>ISO_8601</kbd>.",
 	"apiwarn-echo-deprecation-flyout": "<kbd>notformat=flyout</kbd> تم الاستغناء عنها وستتم إزالتها قريبا. استخدم <kbd>notformat=model</kbd> للحصول على البيانات الخام أو <kbd>notformat=special</kbd> لHTML المهيأ مسبقا.",
 	"apiwarn-echo-deprecation-html": "<kbd>notformat=html</kbd> تم الاستغناء عنها وستتم إزالتها قريبا. استخدم <kbd>notformat=special</kbd> بدلا منها.",
 	"apierror-echo-event-creation-failed": "لا يمكن إنشاء حدث إشعارات",

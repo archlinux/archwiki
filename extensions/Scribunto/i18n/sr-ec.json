@@ -20,6 +20,7 @@
 	"scribunto-common-no-details": "Није доступно више информација.",
 	"scribunto-lua-error-location": "Lua грешка $1: $2.",
 	"scribunto-lua-error": "Lua грешка: $2.",
+	"scribunto-module-with-errors-category-desc": "Модули са грешком.",
 	"scribunto-limitreport-timeusage": "Време коришћења Lua",
 	"scribunto-limitreport-timeusage-value": "$1/$2 секунди",
 	"scribunto-limitreport-memusage": "Меморија коришћења Lua",

@@ -5,7 +5,9 @@
 		]
 	},
 	"thanks-thank": "{{GENDER:$1|{{GENDER:$2|späʹssbõõžž}}}}",
+	"thanks-thanked": "{{GENDER:$1|{{GENDER:$2|Späʹssbõʹššiǩ}}}} õõʹnni.",
 	"thanks-button-thank": "{{GENDER:$1|{{GENDER:$2|Späʹssbõõžž}}}}",
+	"thanks-button-thanked": "{{GENDER:$1|{{GENDER:$2|Späʹssbõʹššiǩ}}}} õõʹnni.",
 	"thanks-button-action-cancel": "Jõõsk",
 	"thanks-button-action-completed": "{{GENDER:$1|{{GENDER:$2|Späʹssbõʹššiǩ}}}} õõʹnni $1",
 	"thanks-thank-tooltip": "{{GENDER:$1|Späʹssbõõžž}} tän {{GENDER:$2|õõʹnni}}",

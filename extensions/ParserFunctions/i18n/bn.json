@@ -26,5 +26,6 @@
 	"pfunc_expr_invalid_argument": "$1 এর জন্য ভুল শর্ত: < -1 অথবা > 1",
 	"pfunc_expr_invalid_argument_ln": "ln এর জন্য অসিদ্ধ শর্ত: <= 0",
 	"pfunc_expr_unknown_error": "এক্সপ্রেশন ত্রুটি: অজানা ত্রুটি ($1)।",
-	"pfunc_expr_not_a_number": "$1 এ: ফলাফল কোন সংখ্যা নয়।"
+	"pfunc_expr_not_a_number": "$1 এ: ফলাফল কোন সংখ্যা নয়।",
+	"pfunc_string_too_long": "ত্রুটি: স্ট্রিং অক্ষরের সীমা $1 অতিক্রম করেছে।"
 }

@@ -11,7 +11,9 @@
 			"Shbib Al-Subaie",
 			"Tala Ali",
 			"ديفيد",
-			"محمد أحمد عبد الفتاح"
+			"محمد أحمد عبد الفتاح",
+			"أيوب",
+			"علاء"
 		]
 	},
 	"discussiontools": "أدوات النقاش",
@@ -115,7 +117,7 @@
 	"discussiontools-replywidget-feedback": "{{GENDER:|شارك|شاركي}} برأيك حول هذه المِيزة",
 	"discussiontools-replywidget-feedback-link": "https://ar.wikipedia.org/wiki/%D9%86%D9%82%D8%A7%D8%B4_%D9%88%D9%8A%D9%83%D9%8A%D8%A8%D9%8A%D8%AF%D9%8A%D8%A7:%D9%85%D8%B4%D8%B1%D9%88%D8%B9_%D8%A3%D8%AF%D9%88%D8%A7%D8%AA_%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%AF%D8%AB%D8%A7%D8%AA_(%D8%A7%D9%84%D8%AA%D9%86%D8%B3%D9%8A%D9%82)",
 	"discussiontools-replywidget-loading": "جارٍ التحميل…",
-	"discussiontools-replywidget-mention-prefix": "◀&nbsp;",
+	"discussiontools-replywidget-mention-prefix": "@",
 	"discussiontools-replywidget-mention-tool-header": "بحث عن مستخدم: $1",
 	"discussiontools-replywidget-mention-tool-title": "إشارة إلى مستخدم",
 	"discussiontools-replywidget-mode-source": "مصدري",

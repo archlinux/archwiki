@@ -1,0 +1,33 @@
+{
+	"@metadata": {
+		"authors": [
+			"Lifeway",
+			"Венина Наталья Константиновна"
+		]
+	},
+	"discussiontools-autotopicsubpopup-dismiss": "Йӧра, мый умылышым",
+	"discussiontools-autotopicsubpopup-preferences": "Келыштарымашым вашталташ",
+	"discussiontools-defaultsummary-reply": "Вашмут",
+	"discussiontools-emptystate-button": "Каҥашымашым тӱҥалаш",
+	"discussiontools-findcomment-label-search": "Кычалаш",
+	"discussiontools-findcomment-noresults": "Лектыш уке.",
+	"discussiontools-findcomment-results-notcurrent": "(кызытсе версийыште огыл)",
+	"discussiontools-findcomment-results-transcluded": "(вес велыж гыч кусарыме)",
+	"discussiontools-newtopic-placeholder-title": "Теме",
+	"discussiontools-notification-removed-topic-view": "Велыжым ончымаш",
+	"discussiontools-preference-label": "Каҥашымаш ӱзгар",
+	"discussiontools-replywidget-advanced": "Кумдаҥдыме",
+	"discussiontools-replywidget-cancel": "Чараш",
+	"discussiontools-replywidget-mode-source": "Важ",
+	"discussiontools-replywidget-mode-visual": "Кузе коеш",
+	"discussiontools-replywidget-preview": "Ончылгоч ончымаш",
+	"discussiontools-replywidget-summary": "Возен ончыктымаш",
+	"discussiontools-replywidget-watchthis": "Тиде велыжым тыйын [[Special:Watchlist|эскерыме спискышкет]] ешараш",
+	"discussiontools-topicheader-authorcount": "$1 каҥашымаште {{PLURAL:$1|еҥ}}",
+	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|рашемдымаш}}",
+	"discussiontools-topicheader-latestcomment": "Пытартыш рашемдымаш: $1",
+	"discussiontools-topicsubscription-button-subscribe": "возалташ",
+	"discussiontools-topicsubscription-button-subscribe-label": "Возалташ",
+	"discussiontools-topicsubscription-button-unsubscribe": "ӧрдыжтаралташ",
+	"discussiontools-topicsubscription-button-unsubscribe-label": "Ӧрдыжтаралташ"
+}

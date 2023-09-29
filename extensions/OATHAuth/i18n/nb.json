@@ -92,8 +92,11 @@
 	"notification-body-oathauth-disable": "Hvis {{GENDER:$2|du}} ikke gjorde dette, kan {{GENDER:$2|kontoen tin}} ha blitt kompromittert.",
 	"notification-body-oathauth-disable-other": "Hvis {{GENDER:$2|du}} ikke ba om dette, burde {{GENDER:$2|du}} ta kontakt med en administrator.",
 	"oathauth-notifications-disable-help": "Hjelp",
+	"notification-header-oathauth-enabled": "Tofaktorautentisering har blitt aktivert på kontoen {{GENDER:$2|din}}",
+	"notification-body-oathauth-enabled": "Hvis {{GENDER:$2|du}} ikke gjorde dette kan kontoen din ha blitt kompromittert.",
 	"oathauth-notifications-enabled-help": "Hjelp",
 	"oathauth-verify-enabled": "{{GENDER:$1|$1}} har slått på tofaktorautentisering.",
 	"oathauth-verify-disabled": "{{GENDER:$1|$1}} har ikke slått på tofaktorautentisering.",
-	"oathauth-prefs-disabledgroups": "Skrudd av for {{PLURAL:$1|gruppen|gruppene}}:"
+	"oathauth-prefs-disabledgroups": "Skrudd av for {{PLURAL:$1|gruppen|gruppene}}:",
+	"oathauth-prefs-disabledgroups-help": "Medlemskapet {{GENDER:$2|ditt}} i {{PLURAL:$1|denne gruppa|disse gruppene}} er deaktivert fram til du aktiverer [[Special:Manage Two-factor authentication|tofaktorautentisering]]."
 }

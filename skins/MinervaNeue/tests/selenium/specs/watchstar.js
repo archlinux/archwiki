@@ -12,14 +12,14 @@ const { iAmViewingAnUnwatchedPage } = require( '../features/step_definitions/cre
 // @chrome @smoke @test2.m.wikipedia.org @login @vagrant
 describe( 'Manage Watchlist', () => {
 
-	beforeEach( () => {
-		iAmLoggedIntoTheMobileWebsite();
+	beforeEach( async () => {
+		await iAmLoggedIntoTheMobileWebsite();
 	} );
 
-	it( 'Add an article to the watchlist', () => {
-		iAmViewingAnUnwatchedPage();
-		iClickTheWatchstar();
-		iShouldSeeAToastNotificationWithMessage( 'added' );
-		theWatchstarShouldBeSelected();
+	it( 'Add an article to the watchlist', async () => {
+		await iAmViewingAnUnwatchedPage();
+		await iClickTheWatchstar();
+		await iShouldSeeAToastNotificationWithMessage( 'added' );
+		await theWatchstarShouldBeSelected();
 	} );
 } );

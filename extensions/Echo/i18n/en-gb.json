@@ -1,0 +1,22 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piano1forte2"
+		]
+	},
+	"echo-pref-notifications-page-linked-title-muted-list": "Do not display 'Page link' notifications for these pages. ([[mw:Special:MyLanguage/Help:Notifications#mute|learn more]])",
+	"notification-dynamic-actions-mute-page-linked": "{{GENDER:$2|Mute}} link notifications on '$1'",
+	"notification-dynamic-actions-mute-page-linked-confirmation": "'Page link' notifications are now disabled for the page '$1'",
+	"notification-dynamic-actions-unmute-page-linked": "{{GENDER:$2|Unmute}} link notifications on '$1'",
+	"notification-dynamic-actions-unmute-page-linked-confirmation": "'Page link' notifications are now enabled for the page '$1'",
+	"notification-dynamic-actions-unwatch": "{{GENDER:$3|Stop}} watching new activity on '$1'",
+	"notification-dynamic-actions-unwatch-confirmation": "{{GENDER:$3|You}} are no longer watching the page '$1'",
+	"notification-dynamic-actions-watch": "{{GENDER:$3|Follow}} new activity on '$1'",
+	"notification-dynamic-actions-watch-confirmation": "{{GENDER:$3|You}} are now watching the page '$1'",
+	"notification-header-edit-user-talk-with-section": "$1 {{GENDER:$2|left}} a message on <strong>{{GENDER:$3|your}} talk page</strong> in '<strong>$4</strong>'.",
+	"notification-compact-header-edit-user-talk-with-section": "$1 {{GENDER:$2|left}} {{GENDER:$3|you}} a message in '<strong>$4</strong>'.",
+	"notification-header-mention-other": "$1 {{GENDER:$2|mentioned}} {{GENDER:$3|you}} on <strong>$4</strong> in '<strong>$5</strong>'.",
+	"notification-header-mention-user-talkpage-v2": "$1 {{GENDER:$2|mentioned}} {{GENDER:$3|you}} on the <strong>user talk page {{GENDER:$5|of}} $4</strong> in '<strong>$6</strong>'.",
+	"notification-header-mention-agent-talkpage": "$1 {{GENDER:$2|mentioned}} {{GENDER:$3|you}} on <strong>{{GENDER:$2|his|her|their}} talk page</strong> in '<strong>$4</strong>'.",
+	"notification-header-mention-article-talkpage": "$1 {{GENDER:$2|mentioned}} {{GENDER:$3|you}} on the <strong>$4</strong> talk page in '<strong>$5</strong>'."
+}

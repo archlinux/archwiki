@@ -6,7 +6,8 @@
 			"Matma Rex",
 			"Matěj Suchánek",
 			"Nghtwlkr",
-			"Njardarlogar"
+			"Njardarlogar",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Legg automatisk til heuristikk til endringar.",
@@ -60,7 +61,7 @@
 	"abusefilter-log-search-action-taken-label": "Handling utført:",
 	"abusefilter-log-search-action-taken-any": "Kva som helst",
 	"abusefilter-log-search-submit": "Søk",
-	"abusefilter-log-entry": "$1: $2 utløyste eit endringsfilter ved å gjera  handlinga «$3» på $4. Reaksjon: $5; Filterskildring: $6",
+	"abusefilter-log-entry": "$1: $2 utløyste eit endringsfilter ved å gjera handlinga «$3» på $4. Reaksjon: $5; Filterskildring: $6",
 	"abusefilter-log-detailedentry-meta": "$1: $2 utløyste $3 ved å utføra handlinga «$4» på $5. Reaksjon: $6; Filterskildring: $7 ($8)",
 	"abusefilter-log-detailedentry-global": "globalt filter $1",
 	"abusefilter-log-detailedentry-local": "filter $1",
@@ -331,7 +332,7 @@
 	"abusefilter-exception-unexpectedatend": "Uventa «$2» ved teikn nummer $1.",
 	"abusefilter-exception-expectednotfound": "Venta ein $2 ved teikn nummer $1, men fann han ikkje (fann $3 $4 i staden).",
 	"abusefilter-exception-unrecognisedkeyword": "Nøkkelordet $2 ved teikn nummer $1 er ukjent.",
-	"abusefilter-exception-unexpectedtoken": "Uventa token «$3»  (av type $2) ved teikn nummer $1.",
+	"abusefilter-exception-unexpectedtoken": "Uventa token «$3» (av type $2) ved teikn nummer $1.",
 	"abusefilter-exception-unclosedstring": "Open streng som startar ved teikn nummer $1.",
 	"abusefilter-exception-invalidoperator": "Ugyldig operatør «$2» ved teikn nummer $1.",
 	"abusefilter-exception-unrecognisedtoken": "Ukjend token «$2» ved teikn nummer $1.",
@@ -353,7 +354,7 @@
 	"abusefilter-action-disallow": "Nekt",
 	"abusefilter-revert-title": "Gjer om alle endringane til filteret $1",
 	"abusefilter-revert-intro": "Dette skjemaet lèt deg attenderulla alle endringane gjorde av endringsfilteret gjennom filter $1. Ver varsam når du nyttar dette verktøyet.",
-	"abusefilter-revert-preview-item": "$1: $2 gjorde ei $3 på $4.\nHandlingar som  skal verta gjorde om: $5 ($6)",
+	"abusefilter-revert-preview-item": "$1: $2 gjorde ei $3 på $4.\nHandlingar som skal verta gjorde om: $5 ($6)",
 	"abusefilter-revert-search-legend": "Vel misbruksfilterhandlingar som skal gjerast om",
 	"abusefilter-revert-periodstart": "Periodestart:",
 	"abusefilter-revert-periodend": "Periodeslutt:",

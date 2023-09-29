@@ -23,7 +23,8 @@
 			"Timpul",
 			"Uostofchuodnego",
 			"Vlad5250",
-			"아라"
+			"아라",
+			"Amire80"
 		]
 	},
 	"tog-underline": "Podkreślynie linkōw:",
@@ -511,7 +512,7 @@
 	"noarticletext": "Niy ma terŏz żŏdnego tekstu.\nMogesz [[Special:Search/{{PAGENAME}}|szukać tego tytułu na inkszych zajtach]],\n<span class=\"plainlinks\">[{{fullurl:{{#special:Log}}|page={{urlencode:{{FULLPAGENAMEE}}}}}} przeszukać regest] \nabo [{{fullurl:{{FULLPAGENAME}}|action=edit}} stworzić tã zajtã]</span>.",
 	"noarticletext-nopermission": "Ta zajtaa je terŏz prōznŏ.\nMożesz [[Special:Search/{{PAGENAME}}|szukać tego tytułu]] we treściach inkszych zajt abo <span class=\"plainlinks\">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} przeszukać powiōnzane regesty]</span>, ale niy mŏsz praw do stworzyniŏ tyj zajty.",
 	"userpage-userdoesnotexist": "Użytkowńik \"<nowiki>$1</nowiki>\" ńy je zarejesztrowany. Sprowdź eli na pewno chćołżeś stworzyć/pomjynić gynał ta zajta.",
-	"userpage-userdoesnotexist-view": "Kōnto używŏcza''$1'' niy je zaregistrowane.",
+	"userpage-userdoesnotexist-view": "Kōnto używŏcza''$1'' niy je zaregistrowane na tyj wiki.",
 	"blocked-notice-logextract": "{{GENDER:$1|Tyn sprowjorz|Ta sprowjorka}} mo zawrzite sprowjyńa.",
 	"clearyourcache": "<strong>Pozōr:</strong> żeby ôbejzdrzeć zmiany po spamiyntaniu, może być potrzebne wysnŏżynie pamiyńci podryncznyj przeglōndarki.\n* <strong>Firefox / Safari:</strong> Przitrzim <em>Shift</em> przi klikaniu <em>Ôdświyż terŏźnõ strōnã</em>, abo naciś knefle <em>Ctrl+F5</em> abo <em>Ctrl+R</em> (<em>⌘-R</em> na kōmputrze Mac)\n* <strong>Google Chrome:</strong> Naciś <em>Ctrl-Shift-R</em> (<em>⌘-Shift-R</em> na kōmputrze Mac)\n* <strong>Internet Explorer:</strong> Przitrzim <em>Ctrl</em> przi klikaniu <em>Ôdświyż</em>, abo naciś knefle <em>Ctrl+F5</em>\n* <strong>Opera:</strong> Przejdź do <em>Myni → Sztelōnki</em> (<em>Opera → Preferyncyje</em> w Mac), a potym <em>Prywatność i bezpieczyństwo → Wysnŏż dane przeglōndaniŏ → Ôprōznij pamiyńć podryncznõ</em>.",
 	"usercssyoucanpreview": "!'''Podpowjydź:''' Użyj knefla \"Podglůnd\", coby przetestować Twůj nowy arkusz stylůw CSS abo kod JavaScript przed jego zaszrajbowańym.",
@@ -1323,7 +1324,7 @@
 	"enotif_lastvisited": "Uobejřij na zajće $1 wšyjstke půmjyńańo uod Twojej uostatńij wizyty.",
 	"enotif_lastdiff": "Uobejřij na zajće $1 te pomjyńeńe.",
 	"enotif_anon_editor": "užytkowńik anůnimowy $1",
-	"enotif_body": "Drogi/o $WATCHINGUSERNAME,\n\nzajta $PAGETITLE we {{GRAMMAR:MS.lp|{{SITENAME}}}} zostoua $CHANGEDORCREATED $PAGEEDITDATE bez užytkowńika $PAGEEDITOR. Uobejřij na zajće $PAGETITLE_URL aktualno wersja.\n\n$NEWPAGE\n\nOpis pomjyńeńa: $PAGESUMMARY $PAGEMINOREDIT\n\nSkůntaktuj śe s autorym:\ne-brif: $PAGEEDITOR_EMAIL\nwiki: $PAGEEDITOR_WIKI\n\nW připadku kolejnych půmjyńań nowe powjadůmjyńo ńy bydům wysuane, dopůki ńy uodwjydziš tyi zajty.\nMožeš tyž zresetować wšyjstke flagi powjadůmjyń na swojej liśće zajtůw, na kere dowoš pozůr.\n\n\tWjadůmość systymu powjadůmjyń {{GRAMMAR:D.lp|{{SITENAME}}}}\n\n--\nKejbyś chćou půmjyńić štalowańo swojej listy zajtůw, na kere dowoš pozůr, uodwjydź\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nPomoc:\n$HELPPAGE",
+	"enotif_body": "Drogi/o $WATCHINGUSERNAME,\n\n$PAGEINTRO $NEWPAGE\n\nOpis pomjyńeńa: $PAGESUMMARY $PAGEMINOREDIT\n\nSkůntaktuj śe s autorym:\ne-brif: $PAGEEDITOR_EMAIL\nwiki: $PAGEEDITOR_WIKI\n\nW připadku kolejnych půmjyńań nowe powjadůmjyńo ńy bydům wysuane, dopůki ńy uodwjydziš tyi zajty.\nMožeš tyž zresetować wšyjstke flagi powjadůmjyń na swojej liśće zajtůw, na kere dowoš pozůr.\n\nWjadůmość systymu powjadůmjyń {{GRAMMAR:D.lp|{{SITENAME}}}}\n\n--\nKejbyś chćou půmjyńić štalowańo swojej listy zajtůw, na kere dowoš pozůr, uodwjydź\n{{canonicalurl:{{#special:EditWatchlist}}}}\n\nPomoc:\n$HELPPAGE",
 	"created": "utwořono",
 	"changed": "pomjyńono",
 	"deletepage-submit": "Skasuj artykuł",
@@ -1960,5 +1961,12 @@
 	"skin-action-protect": "Zawrzij",
 	"skin-action-undelete": "Wćep",
 	"skin-action-delete": "Skasuj",
-	"skin-action-move": "Przeniyś"
+	"skin-action-move": "Przeniyś",
+	"blockedtext-made-by": "Szpera ôstała nałożōnŏ bez $1.",
+	"blockedtext-reason-comment": "Podano prziczina je <em>$1</em>.",
+	"blockedtext-start-time": "Zaczōntek szpery: $1",
+	"blockedtext-expiration-time": "Przedŏwniynie szpery: $1",
+	"blockedtext-intended-blockee": "Zaszperowany ôstoł: $1",
+	"blockedtext-contact-blocker-admin": "Mogesz skōntaktować sie ze $1 abo inkszym [[{{MediaWiki:Grouppage-sysop}}|adminisztratorym]], coby ôbgŏdać szperã.",
+	"blockedtext-include-details-queries": "Proszã ô wkludzyniy wszyjskich powyższych informacyji we wszelich spytaniach."
 }

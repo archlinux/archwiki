@@ -48,5 +48,6 @@
 	"discussiontools-topicsubscription-notify-unsubscribed-title": "Lah kiäsám tiilám maassâd.",
 	"discussiontools-topicsubscription-pager-actions": "Tooimah",
 	"discussiontools-topicsubscription-pager-notified-never": "ij kuássin",
-	"discussiontools-topicsubscription-pager-page": "Sijđo"
+	"discussiontools-topicsubscription-pager-page": "Sijđo",
+	"tag-discussiontools-newtopic": "[{{int:discussiontools-replywidget-newtopic-link}} Uđđâ fáddá]"
 }

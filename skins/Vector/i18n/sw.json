@@ -13,7 +13,7 @@
 		]
 	},
 	"vector-languages": "Lugha",
-	"vector-language-button-label": "{{PLURAL:$1|$1 lugha}}",
+	"vector-language-button-label": "{{PLURAL:$1|Lugha $1}}",
 	"vector-no-language-button-label": "Ongeza lugha",
 	"vector-action-addsection": "Weka mada",
 	"vector-action-delete": "Futa",

@@ -6,10 +6,10 @@ class ViewImportPage extends Page {
 	get importData() { return $( 'textarea[name="wpImportText"]' ); }
 	get submit() { return $( 'button[type="submit"]' ); }
 
-	importText( text ) {
-		this.open();
-		this.importData.setValue( text );
-		this.submit.click();
+	async importText( text ) {
+		await this.open();
+		await this.importData.setValue( text );
+		await this.submit.click();
 	}
 
 	open() {

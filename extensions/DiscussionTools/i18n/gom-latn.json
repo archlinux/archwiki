@@ -37,6 +37,7 @@
 	"discussiontools-replywidget-summary": "Sar",
 	"discussiontools-replywidget-terms-click": "\"$1\" -cher klik kelea vorvim, tu hea wikiche upeogacheo otti manun ghetai.",
 	"discussiontools-replywidget-transcluded": "Tuzo xero [[$1]] -acher zoddtolo.",
+	"discussiontools-replywidget-watchthis": "Hem pan tujea [[Special:Watchlist|sadurvollerint]] zodd",
 	"discussiontools-topicheader-authorcount": "Bhasabhasin $1 {{PLURAL:$1|zonn|zanna}}",
 	"discussiontools-topicheader-commentcount": "$1 {{PLURAL:$1|xero|xere}}",
 	"discussiontools-topicheader-latestcomment": "Akhercho xero: $1",

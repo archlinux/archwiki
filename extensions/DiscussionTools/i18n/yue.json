@@ -19,7 +19,7 @@
 	"discussiontools-emptystate-desc-self": "{{SITENAME}}上嘅人可以用呢個[[{{MediaWiki:discussiontools-emptystate-link-userpage}}|傾偈版]]向你發佈公開嘅訊息，而你會收到通知。",
 	"discussiontools-emptystate-title": "開個同{{SUBJECTPAGENAME}}有關嘅新討論",
 	"discussiontools-emptystate-title-self": "歡迎嚟到你嘅傾偈版",
-	"discussiontools-emptystate-title-user": "同{{PAGENAME}}開個新討論",
+	"discussiontools-emptystate-title-user": "{{GENDER:{{PAGENAME}}|同}}{{PAGENAME}}開個新討論",
 	"discussiontools-error-comment-conflict": "你嘅留言記唔低，因為有第個人同你同時留言。麻煩再試過，或者重新載入呢版嚟睇下新留言。",
 	"discussiontools-error-comment-disappeared": "搵唔返你覆緊嗰條留言，可能鏟咗或者搬咗去第版喇。麻煩重新載入呢版然後再試過。",
 	"discussiontools-error-noswitchtove": "對唔住，轉唔到去即見編輯模式，因為你寫嘅留言度偵測到有<b>$1</b>。 [https://www.mediawiki.org/wiki/Special:MyLanguage/Help:DiscussionTools/Reply_tool_visual_mode_limitations 知多啲]。",

@@ -13,7 +13,8 @@
 			"VulpesVulpes825",
 			"WhitePhosphorus",
 			"Xiplus",
-			"铁桶"
+			"铁桶",
+			"NekoCharm"
 		]
 	},
 	"linterrors": "Lint错误",
@@ -87,6 +88,6 @@
 	"linter-pager-unclosed-quotes-in-heading-details": "超出表格内容的未闭合引用",
 	"linterrors-subpage": "Lint错误：$1",
 	"linterrors-summary": "<strong>注意：</strong>分类计数并不精确，而是基于估计。",
-	"multi-part-template-block": "输出并非来自单一个模板",
+	"multi-part-template-block": "输出并非来自单个模板",
 	"pageinfo-linter": "Lint错误"
 }

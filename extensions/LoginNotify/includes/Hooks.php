@@ -41,7 +41,7 @@ class Hooks {
 
 		$loginBase = [
 			EchoAttributeManager::ATTR_LOCATORS => [
-				[ [ EchoUserLocator::class, 'locateArticleCreator' ] ],
+				[ [ EchoUserLocator::class, 'locateEventAgent' ] ],
 			],
 			'canNotifyAgent' => true,
 			'category' => 'login-fail',

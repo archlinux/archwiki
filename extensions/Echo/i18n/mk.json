@@ -107,7 +107,7 @@
 	"notification-dynamic-actions-unmute-page-linked": "{{GENDER:$2|Однеми}} известувања за врски на „$1“",
 	"notification-dynamic-actions-unmute-page-linked-confirmation": "Известувањата за „Врска до страница“ сега се овозможени за страницата „$1“",
 	"notification-dynamic-actions-unmute-page-linked-confirmation-description": "{{GENDER:$2|Можете}} да раководите со вашите занемени страници во [$1 нагодувањата] во секое време.",
-	"notification-dynamic-actions-unwatch": "{{GENDER:$3|Престани}} со набљудување на новите активности на „$1“",
+	"notification-dynamic-actions-unwatch": "{{GENDER:$3|Прекини}} набљудување на новите активности на „$1“",
 	"notification-dynamic-actions-unwatch-confirmation": "Повеќе не {{GENDER:$3|ја набљудувате}} страницата „$1“",
 	"notification-dynamic-actions-unwatch-confirmation-description": "Можете да {{GENDER:$3|ја набљудувате}} [$2 страницава] во секое време.",
 	"notification-dynamic-actions-watch": "{{GENDER:$3|Следи}} ги новите активности на „$1“",

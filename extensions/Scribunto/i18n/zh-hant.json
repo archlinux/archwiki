@@ -10,7 +10,8 @@
 			"Xiplus",
 			"Yfdyh000",
 			"捍粵者",
-			"Winston Sung"
+			"Winston Sung",
+			"Dream Star.cn"
 		]
 	},
 	"scribunto-desc": "用來內嵌腳本語言到 MediaWiki 頁面的框架",
@@ -56,7 +57,7 @@
 	"scribunto-luastandalone-signal": "Lua 錯誤：內部錯誤：直譯器因收到信號 \"$2\" 已中止。",
 	"scribunto-luastandalone-exited": "Lua 錯誤：內部錯誤：直譯器已結束，狀態碼為 $2。",
 	"scribunto-module-with-errors-category": "Scribunto 模組有錯誤",
-	"scribunto-module-with-errors-category-desc": "該模組中有一個錯誤。",
+	"scribunto-module-with-errors-category-desc": "該模組中有錯誤。",
 	"scribunto-limitreport-timeusage": "Lua 使用時間",
 	"scribunto-limitreport-timeusage-value": "$1/$2 秒",
 	"scribunto-limitreport-virtmemusage": "Lua 虛擬大小",

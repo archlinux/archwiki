@@ -9,7 +9,7 @@
 		]
 	},
 	"vector-languages": "Mattaava",
-	"vector-language-button-label": "{{PLURAL:$1|$1 nttaava|$1 Mattaava}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 nttaava|$1 mattaava}}",
 	"vector-no-language-button-label": "Yuncererya mattaava",
 	"vector-action-addsection": "Ophitaanya yoolempwa",
 	"vector-action-delete": "Ocipiha",

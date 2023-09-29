@@ -1,9 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Санюн Вадик"
+			"Санюн Вадик",
+			"Lifeway"
 		]
 	},
 	"tooltip-pt-notifications-alert": "Шижтарымаш-влак тыланда",
-	"tooltip-pt-notifications-notice": "Серыш-влак тыланда"
+	"tooltip-pt-notifications-notice": "Серыш-влак тыланда",
+	"notification-link-text-view-message": "Серышым ончымаш"
 }

@@ -80,6 +80,7 @@
 	"discussiontools-topicsubscription-pager-topic": "Pwnc",
 	"discussiontools-topicsubscription-pager-unsubscribe-button": "Dad-danysgrifio",
 	"discussiontools-topicsubscription-preferences-editsubscriptions": "Golygu tanysgrifiadau",
+	"echo-category-title-dt-subscription-archiving": "{{PLURAL:$1|Archifo}} tudalennau sgwrs",
 	"tag-discussiontools-description": "Golygiad wedi'i wneud yn DiscussionTools",
 	"tag-discussiontools-edit": "Wedi golygu sylw",
 	"tag-discussiontools-edit-description": "Cafodd sylw a oedd yn bodoli eisoes ei olygu yn DiscussionTools",

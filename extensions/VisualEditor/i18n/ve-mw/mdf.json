@@ -1,9 +1,13 @@
 {
 	"@metadata": {
 		"authors": [
-			"Numulunj pilgae"
+			"Numulunj pilgae",
+			"Валгриш"
 		]
 	},
-	"visualeditor-ca-editsource": "Петнемс лисьмапрянц",
-	"visualeditor-ca-editsource-section": "Петнемс лисьмапрянц"
+	"visualeditor-ca-createlocaldescriptionsource": "Тиемс вастова кода код",
+	"visualeditor-ca-createsource": "Арьсемс эрь кодама тяштькс. кона ащи кодамовок цифраста и букваста.",
+	"visualeditor-ca-editsource": "Петнемс салава валть",
+	"visualeditor-ca-editsource-section": "Петнемс кяшф валть",
+	"visualeditor-descriptionpagelink": "Project: Сельмоса няйф петема"
 }

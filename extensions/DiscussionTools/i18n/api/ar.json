@@ -6,7 +6,10 @@
 			"Matma Rex",
 			"Michel Bakni",
 			"NEHAOUA",
-			"Shbib Al-Subaie"
+			"Shbib Al-Subaie",
+			"Alshamiri1",
+			"Amire80",
+			"أيوب"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "لم يُعثَر على التعليق ذي المُعرِّف '$1'.",
@@ -16,12 +19,12 @@
 	"apierror-discussiontools-subscription-failed-add": "تعذَّر الاشتراك في هذا الموضوع.",
 	"apierror-discussiontools-subscription-failed-remove": "لا يمكن إلغاء الاشتراك في هذا الموضوع.",
 	"apihelp-discussiontoolscompare-summary": "الحصول على معلومات حول تغييرات التعليق بين مراجعتين للصفحة.",
-	"apihelp-discussiontoolsedit-param-commentid": "معرّف التعليق المراد الردّ عليه. يُستعمل فقط حين يكون  <var>paction</var> هو <var>addcomment</var>. يعيد كتابة المُتغيِّر <var>commentname</var>.",
+	"apihelp-discussiontoolsedit-param-commentid": "معرّف التعليق المراد الردّ عليه. يُستعمل فقط حين يكون <var>paction</var> هو <var>addcomment</var>. يعيد كتابة المُتغيِّر <var>commentname</var>.",
 	"apihelp-discussiontoolsedit-param-commentname": "اسم التعليق المُراد الردّ عليه. يستعمل فقط حين يكون <var>paction</var> هو <var>addcomment</var>.",
 	"apihelp-discussiontoolsedit-param-formtoken": "An optional unique ID generated in the client to prevent double-posting.",
 	"apihelp-discussiontoolsedit-param-html": "محتوى للنشر بصيغة HTML. لا يُمكِن استخدامه مع <var>wikitext</var>.",
 	"apihelp-discussiontoolsedit-param-sectiontitle": "{{int:apihelp-edit-param-sectiontitle}} تستخدم فقط حين يكون <var>paction</var> هو <var>addtopic</var>.",
-	"apihelp-discussiontoolsedit-param-wikitext": "محتوى للنشر بصيغة نص ويكي. لا يمكن استخدامه مع  <var>html</var>.",
+	"apihelp-discussiontoolsedit-param-wikitext": "محتوى للنشر بصيغة نص ويكي. لا يمكن استخدامه مع <var>html</var>.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addcomment": "أضف تعليقاً جديداً للردِّ على تعليقٍ سابقٍ.",
 	"apihelp-discussiontoolsedit-paramvalue-paction-addtopic": "تضيف قسما لنقاش جديد والتعليق الأوّل فيه.",
 	"apihelp-discussiontoolsedit-summary": "نشر رسالة على صفحة نقاش.",

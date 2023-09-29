@@ -6,14 +6,15 @@
 			"Als-Holder",
 			"J. 'mach' wust",
 			"Matma Rex",
-			"Melancholie"
+			"Melancholie",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Wändet automatischi Heurischtike uf Änderigen aa.",
 	"abusefilter": "Missbruuchsfilter-Verwaltig",
 	"abuselog": "Missbruuchsfilter-Logbuech",
 	"abusefilter-intro": "Willchu uf dr Hauptsyte vu dr Missbruuchsfilter-Verwaltig.\nDr Missbruuchsfilter isch e automatische Software-Mechanismus, wu automatische Heurischtike an allene Aktion durfiert.\nDie Syte zeigt e Lischte vu definierte Filter. D Filter chenne uf däre Syte au gänderert wäre.",
-	"abusefilter-warning": "'''Obacht''': Die Aktion isch automatisch as schädlig erkannt wore.\nUnkonschtruktivi Byyträg wäre zmeischt zimli schnäll usegnuh. In widerholte un bsundersch schlimme Fäll wird Dyy Benutzerkonto bzw. Dyyni IP-Adräss gsperrt.\nWänn Du dänksch, ass Dyyni Änderig konschtruktiv gsi isch, chasch si aber bstätige, indäm Du nomol uf  „{{int:savearticle}}“ drucksch.\n\nChurzbschryybig vu dr verletzte Regle: '''$1'''",
+	"abusefilter-warning": "'''Obacht''': Die Aktion isch automatisch as schädlig erkannt wore.\nUnkonschtruktivi Byyträg wäre zmeischt zimli schnäll usegnuh. In widerholte un bsundersch schlimme Fäll wird Dyy Benutzerkonto bzw. Dyyni IP-Adräss gsperrt.\nWänn Du dänksch, ass Dyyni Änderig konschtruktiv gsi isch, chasch si aber bstätige, indäm Du nomol uf „{{int:savearticle}}“ drucksch.\n\nChurzbschryybig vu dr verletzte Regle: '''$1'''",
 	"abusefilter-disallowed": "Die Aktion isch automatisch as schädlig erkannt wore un isch wäge däm nit durgfiert wore.\nWänn Du dänksch, ass Dyyni Änderig konschtruktiv gsi isch, wänd Di bitte an e Ammann un schryyb em, was Du mit Dyynere Änderig hesch welle.\n\nChurzbschryybig vu dr verletzte Regle: $1",
 	"abusefilter-blocked-display": "Die Aktion isch automatisch as schädli erkannt wore un isch nit uusgfiert wore.\nDezue isch au no Dyy Benutzerkonto un alli IP-Adrässe wu derzue ghere gsperrt wore.\nWänn Du dänksch, ass des e Fähler isch, no wänd Di bitte an e Ammann.\n\nChurzbschryybig vu dr verletzte Regle: $1",
 	"abusefilter-degrouped": "Die Aktion isch automatisch as schädli erkannt wore un isch nit uusgfiert wore.\nWel s megli isch, ass Dyy Benutzerkonto kompromittiert woren isch, sin Dir alli gwährte Rächt gnuh wore.\nWänn Du dänksch, ass des e Fähler isch, no wänd Di bitte an e Bürokrat un schryyb em, was Du grad gmacht hesch, ass Dyyni Rächt widerhärgstellt chenne wäre.\n\nChurzbschryybig vu dr verletzte Regle: $1",
@@ -313,7 +314,7 @@
 	"abusefilter-revert-filter": "Filter:",
 	"abusefilter-revert-preview-intro": "Do unte sin d Aktion vum Missbruuchfilter, wu dur die Aktion zrugggsetzt wäre.\nBitte prief si sorgfältig un druck \"Bstätige\" go Dyyni Uuswahl bstätige.",
 	"abusefilter-revert-confirm": "Bstätige",
-	"abusefilter-revert-success": "Du hesch alli  Aktionen zrugggsetzt, wu vum Missbruuchsfilter mgacht wore sin wäg em [[Special:AbuseFilter/$1|Filter $2]].",
+	"abusefilter-revert-success": "Du hesch alli Aktionen zrugggsetzt, wu vum Missbruuchsfilter mgacht wore sin wäg em [[Special:AbuseFilter/$1|Filter $2]].",
 	"abusefilter-revert-reason": "Alli Aktione vum Missbruuchsfilter automatisch zrugggsetzt wäg em Filter $1.\nGrund: $2",
 	"abusefilter-revert-reasonfield": "Grund:",
 	"abusefilter-test": "E Filter gege friejeri Bearbeitige teschte",

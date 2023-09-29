@@ -6,7 +6,8 @@
 			"Shirayuki",
 			"TAKAHASHI Shuuji",
 			"しぃ",
-			"ネイ"
+			"ネイ",
+			"Kokage si"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "ID「$1」のコメントが見つかりませんでした。",
@@ -33,5 +34,5 @@
 	"apihelp-discussiontoolssubscribe-param-commentname": "購読する（または購読を解除する）トピックの名前",
 	"apihelp-discussiontoolssubscribe-param-page": "トピックが表示されるページ",
 	"apihelp-discussiontoolssubscribe-param-subscribe": "購読する場合はtrue、購読を取り消す場合はfalse",
-	"apihelp-discussiontoolssubscribe-summary": "トピックに関する通知を受け取るには、購読（または購読解除）してください。"
+	"apihelp-discussiontoolssubscribe-summary": "トピックに関する通知を受け取るために、購読（または購読解除）します。"
 }

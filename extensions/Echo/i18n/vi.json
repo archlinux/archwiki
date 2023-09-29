@@ -9,7 +9,8 @@
 			"Thienhau2003",
 			"Trần Nguyễn Minh Huy",
 			"Vinhtantran",
-			"Flyplanevn27"
+			"Flyplanevn27",
+			"Phjtieudoc"
 		]
 	},
 	"echo-desc": "Hệ thống thông báo cho người dùng về các sự kiện và thay đổi quan trọng",
@@ -44,7 +45,7 @@
 	"echo-new-messages": "Bạn có tin nhắn mới",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1}}Tin nhắn thảo luận",
 	"echo-category-title-article-linked": "{{PLURAL:$1}}Liên kết đến trang",
-	"echo-category-title-reverted": "{{PLURAL:$1}}Bị lùi sửa",
+	"echo-category-title-reverted": "Sửa đổi {{PLURAL:$1|lùi sửa}}",
 	"echo-category-title-mention": "{{PLURAL:$1}}Được nhắc đến",
 	"echo-category-title-mention-failure": "{{PLURAL:$1}}Lời nhắc đến thất bại",
 	"echo-category-title-mention-success": "{{PLURAL:$1}}Lời nhắc đến thành công",

@@ -39,6 +39,7 @@
 	"log-description-thanks": "Under er ei liste over brukarar som har vorte takka av andre brukarar.",
 	"logentry-thanks-thank": "$1 {{GENDER:$2|takka}} {{GENDER:$4|$3}}",
 	"logeventslist-thanks-log": "Takkelogg",
+	"thanks-error-no-id-specified": "Du lyt oppgje ein sideversjons-ID eller logg-ID for å senda ein takk.",
 	"thanks-confirmation-special-log": "Ynskjer du å offentleg senda ein takk for denne logghandlinga?",
 	"thanks-confirmation-special-rev": "Ynskjer du å offentleg senda ein takk for denne endringa?",
 	"flow-thanks-confirmation-special": "Ynskjer du å offentleg senda ein takk for denne kommentaren?",

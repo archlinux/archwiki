@@ -2,9 +2,13 @@
 	"@metadata": {
 		"authors": [
 			"FRANCIS5091",
-			"FRANELYA"
+			"FRANELYA",
+			"Meqqal"
 		]
 	},
+	"vector-languages": "Boros",
+	"vector-language-button-label": "{{PLURAL:$1|$1 Boros|$1 boros}}",
+	"vector-no-language-button-label": "Ruhangai boros",
 	"vector-action-addsection": "Ruhangai piboboroson",
 	"vector-action-delete": "Pugaso",
 	"vector-action-move": "Poundoliho",
@@ -15,5 +19,12 @@
 	"vector-view-edit": "Idito",
 	"vector-view-history": "Intaai susuyan",
 	"vector-view-view": "Basao",
-	"vector-view-viewsource": "Intaai wowonod"
+	"vector-view-viewsource": "Intaai wowonod",
+	"vector-more-actions": "Suai",
+	"vector-searchsuggest-containing": "Ihumo bolikan di haro <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-toc-label": "Tonsi",
+	"vector-toc-beginning": "Kotimpuunan",
+	"vector-page-tools-label": "Tangakakamot",
+	"vector-page-tools-general-label": "Gumuan",
+	"vector-unpin-element-label": "polisoko'"
 }

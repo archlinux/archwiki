@@ -7,7 +7,8 @@
 			"Guilhelma",
 			"Matma Rex",
 			"Matěj Suchánek",
-			"Unuaiga"
+			"Unuaiga",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Aplica d'euristicas automaticas a las modificacions",
@@ -122,7 +123,7 @@
 	"abusefilter-edit": "Modificar lo filtre d'abusses",
 	"abusefilter-edit-subtitle": "Modificacion del filtre $1",
 	"abusefilter-edit-subtitle-new": "Crear un filtre",
-	"abusefilter-edit-oldwarning": "<strong>Sètz a modificar una version anciana del filtre. Las estatisticas afichadas son per la version correnta d'aqueste. Se  salvatz vòstras modificacions, van suprimir las modificacions efectuadas ulteriorament.</strong> &bull; [[Special:AbuseFilter/history/$2|Tornar a l'istoric d'aqueste filtre]]",
+	"abusefilter-edit-oldwarning": "<strong>Sètz a modificar una version anciana del filtre. Las estatisticas afichadas son per la version correnta d'aqueste. Se salvatz vòstras modificacions, van suprimir las modificacions efectuadas ulteriorament.</strong> &bull; [[Special:AbuseFilter/history/$2|Tornar a l'istoric d'aqueste filtre]]",
 	"abusefilter-edit-status-label": "Estatisticas :",
 	"abusefilter-edit-status": "{{PLURAL:$1|Dins la darrièra accion|Demest las $1 darrièras accions}}, aqueste filtre a atench $2 ($3 %).",
 	"abusefilter-edit-new": "Filtre novèl",

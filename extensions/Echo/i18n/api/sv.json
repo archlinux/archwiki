@@ -4,7 +4,8 @@
 			"Ainali",
 			"Lokal Profil",
 			"Sabelöga",
-			"WikiPhoenix"
+			"WikiPhoenix",
+			"Amire80"
 		]
 	},
 	"apihelp-echomarkread-description": "Markera aviseringar som lästa för den aktuella användaren.",
@@ -76,7 +77,7 @@
 	"apihelp-echoarticlereminder-param-comment": "Valfri användarkommentar att inkludera i påminnelsen",
 	"apihelp-echoarticlereminder-example-1": "Skapa en artikelpåminnelse via en avisering för imorgon med en kommentar",
 	"apihelp-echoarticlereminder-example-2": "Skapa en artikelpåminnelse via en avisering för imorgon utan en kommentar",
-	"apiwarn-echo-deprecation-timestampformat": "MW-tidsstämpelns utmatningsformat är föråldrat här. I framtiden kommer ISO 8601 alltid att användas för utmatningens tidstämpelsformat.  Justera din klient och ändra <var>timestampFormat</var> till <kbd>ISO_8601</kbd>.",
+	"apiwarn-echo-deprecation-timestampformat": "MW-tidsstämpelns utmatningsformat är föråldrat här. I framtiden kommer ISO 8601 alltid att användas för utmatningens tidstämpelsformat. Justera din klient och ändra <var>timestampFormat</var> till <kbd>ISO_8601</kbd>.",
 	"apiwarn-echo-deprecation-flyout": "<kbd>notformat=flyout</kbd> har blivit föråldrat och kommer att tas bort snart. Använd <kbd>notformat=model</kbd> för att få rå data eller <kbd>notformat=special</kbd> för förrenderad HTML.",
 	"apiwarn-echo-deprecation-html": "<kbd>notformat=html</kbd> har blivit föråldrat och kommer snart att tas bort. Använd <kbd>notformat=special</kbd> istället.",
 	"apierror-echo-event-creation-failed": "Kunde inte skapa Echo-händelse",

@@ -2,8 +2,14 @@
 	"@metadata": {
 		"authors": [
 			"MinecraftAustralia",
-			"Piwaiwaka"
+			"Piwaiwaka",
+			"Ultron90"
 		]
 	},
-	"vector-view-view": "Tirohia"
+	"vector-languages": "Reo",
+	"vector-no-language-button-label": "Tāpiri reo",
+	"vector-action-delete": "Muku",
+	"vector-action-move": "Nuku",
+	"vector-view-view": "Tirohia",
+	"vector-unpin-element-label": "huna"
 }

@@ -205,7 +205,7 @@
 	"notification-header-mention-failure-bundle": "{{GENDER:$2|您}}在<strong>$4</strong>讨论页做出的{{PLURAL:$3|$3次提及}}不能被发送。",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>用户名不存在：</strong>$1",
 	"notification-compact-header-mention-failure-user-anonymous": "<strong>不能提及IP：</strong>$1",
-	"notification-header-mention-success": "{{GENDER:$2|您}}对<strong>$3</strong>的提及被发送。",
+	"notification-header-mention-success": "{{GENDER:$2|您}}对<strong>$3</strong>的提及已发送。",
 	"notification-header-mention-success-bundle": "{{GENDER:$2|您}}在<strong>$4</strong>讨论页做出的{{PLURAL:$3|$3次提及}}已发送。",
 	"notification-compact-header-mention-success": "<strong>{{GENDER:$2|您提及了}}：</strong>$3",
 	"notification-header-mention-status-bundle": "{{PLURAL:$3|$3条}}有关{{GENDER:$2|您}}在<strong>$4</strong>讨论页做出提及的通知：{{PLURAL:$5|$5条未发送}}，{{PLURAL:$6|$6条已发送}}。",

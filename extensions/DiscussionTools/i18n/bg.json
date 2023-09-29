@@ -13,6 +13,7 @@
 	"discussiontools-autotopicsubpopup-title": "Абонирането е успешно",
 	"discussiontools-defaultsummary-reply": "Отговор",
 	"discussiontools-emptystate-button": "Започване на дискусия",
+	"discussiontools-emptystate-title": "Започнете дискусия за {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-user": "Започване на дискусия {{GENDER:{{PAGENAME}}|с}} {{PAGENAME}}",
 	"discussiontools-emptystate-title-user-anon": "Добре дошли на тази беседа",
 	"discussiontools-error-noswitchtove-title": "Визуалният режим е деактивиран",

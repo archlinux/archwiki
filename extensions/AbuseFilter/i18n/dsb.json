@@ -4,7 +4,8 @@
 			"Derbeth",
 			"Matma Rex",
 			"Matěj Suchánek",
-			"Michawiki"
+			"Michawiki",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Nałožujo awtomatisku heuristiku na změny.",
@@ -156,7 +157,7 @@
 	"abusefilter-edit-denied": "Njamóžoš se drobnostki toś togo filtra woglědaś, dokulaž jo pśed zjawnym woglědanim schowany.",
 	"abusefilter-edit-main": "Filtrowe parametry",
 	"abusefilter-edit-done-subtitle": "Filter wobźěłany",
-	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Twóje změny]] na [[Special:AbuseFilter/$1|filtrje $3]]  su se składowali.",
+	"abusefilter-edit-done": "[[Special:AbuseFilter/history/$1/diff/prev/$2|Twóje změny]] na [[Special:AbuseFilter/$1|filtrje $3]] su se składowali.",
 	"abusefilter-edit-badsyntax": "W filtrje, kótaryž sy pódał, wopśimujo zmólku.\nWudaśe parsera jo było: <pre>$1</pre>",
 	"abusefilter-edit-restricted": "Njamóžoš toś ten filter wobźěłaś, dokulaž wopśimujo jadnu wobgranicowanu akciju abo někotare wobgranicowane akcije.\nPšosym pšos wužywarja z pšawom wobgranicowane akcije pśidaś, aby cynił změnu za tebje.",
 	"abusefilter-edit-viewhistory": "Stawizny toś togo filtra se woglědaś",
@@ -314,7 +315,7 @@
 	"abusefilter-action-rangeblock": "Blokěrowanje wobcerka",
 	"abusefilter-action-disallow": "Zakazaś",
 	"abusefilter-revert-title": "Wše změny wót filtra $1 anulěrowaś",
-	"abusefilter-revert-intro": "Toś ten formular śi zmóžnja wše změny anulěrowaś, kótarež su se pśewjadli wot znjewužywański filter na zakłaźe filtra $1. Pšosym wužywaj toś ten rěd  wobglědniwje.",
+	"abusefilter-revert-intro": "Toś ten formular śi zmóžnja wše změny anulěrowaś, kótarež su se pśewjadli wot znjewužywański filter na zakłaźe filtra $1. Pšosym wužywaj toś ten rěd wobglědniwje.",
 	"abusefilter-revert-preview-item": "$1: $2 jo cynił $3 na $4.\nAkcije, kótarež maju se anulěrowaś: $5 ($6)",
 	"abusefilter-revert-search-legend": "Wubjeŕ akcije znjewužywańskego filtra, kótarež maju se anulěrowaś",
 	"abusefilter-revert-periodstart": "Zachopjeńk periody:",

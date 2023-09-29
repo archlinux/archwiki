@@ -23,32 +23,36 @@ class ViewEditPage extends Page {
 	get error() { return $( '.mw-message-box-error' ); }
 	get warning() { return $( '.mw-message-box-warning' ); }
 
-	submit() {
-		this.submitButton.waitForClickable();
-		this.submitButton.click();
+	async submit() {
+		await this.submitButton.waitForClickable();
+		await this.submitButton.click();
 	}
 
 	/**
 	 * Conveniency: the ace editor is hard to manipulate, and working with
 	 * the hidden textarea isn't great (sendKeys is not processed)
 	 */
-	switchEditor() {
-		const button = $( '#mw-abusefilter-switcheditor' );
-		button.waitForClickable();
-		button.click();
+	async switchEditor() {
+		const button = await $( '#mw-abusefilter-switcheditor' );
+		if ( !await button.isExisting() ) {
+			// CodeEditor not installed, nothing to do here.
+			return;
+		}
+		await button.waitForClickable();
+		await button.click();
 	}
 
-	setWarningMessage( msg ) {
-		$( 'select[name="wpFilterWarnMessage"]' ).selectByAttribute( 'value', 'other' );
-		this.warnOtherMessage.setValue( msg );
+	async setWarningMessage( msg ) {
+		await $( 'select[name="wpFilterWarnMessage"]' ).selectByAttribute( 'value', 'other' );
+		await this.warnOtherMessage.setValue( msg );
 	}
 
-	invalidateToken() {
-		$( '#mw-abusefilter-editing-form input[name="wpEditToken"]' ).setValue( '' );
+	async invalidateToken() {
+		await $( '#mw-abusefilter-editing-form input[name="wpEditToken"]' ).setValue( '' );
 	}
 
-	open( subpage ) {
-		super.openTitle( 'Special:AbuseFilter/' + subpage );
+	async open( subpage ) {
+		await super.openTitle( 'Special:AbuseFilter/' + subpage );
 	}
 }
 module.exports = new ViewEditPage();

@@ -151,7 +151,7 @@
 	"notification-header-mention-article-talkpage-nosection": "$1 {{GENDER:$3|sizi}} <strong>$4</strong> müzakirə səhifəsində {{GENDER:$2|qeyd etdi}}.",
 	"notification-header-mention-failure-user-unknown": "<strong>$3</strong> adlı istifadəçi mövcud olmadığından istifadəçini {{GENDER:$2|teqləmə}} mümkün olmadı.",
 	"notification-header-mention-failure-user-anonymous": "<strong>$3</strong> adlı istifadəçi anonim olduğundan istifadəçini {{GENDER:$2|teqləmə}} mümkün olmadı.",
-	"notification-header-mention-failure-too-many": "{{GENDER:$2|Siz}} $3 {{PLURAL:$3|istifadəçini}} teqləməyə çalışdınız. Limiti keçən teqlər göndərilmədi.",
+	"notification-header-mention-failure-too-many": "{{GENDER:$2|Siz}} $3 və ya daha artıq {{PLURAL:$3|istifadəçini}} qeyd etməyə çalışdınız. Həmin limiti keçən qeydlər göndərilmədi.",
 	"notification-header-mention-failure-bundle": "<strong>$4</strong> müzakirə səhifəsində əlavə etdiyiniz {{PLURAL:$3|teq|$3 teq}} {{GENDER:$2|göndərilə bilmədi}}.",
 	"notification-compact-header-mention-failure-user-unknown": "<strong>İstifadəçi adı mövcud deyil:</strong> $1",
 	"notification-compact-header-mention-failure-user-anonymous": "<strong>IP-lər teqlənə bilməz:</strong> $1",

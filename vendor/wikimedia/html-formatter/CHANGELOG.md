@@ -1,8 +1,37 @@
 # Changelog
 
+## 4.0.3
+
+Fixed:
+* Fixed a regression in HtmlFormatter::getText() when passed an element
+
+## 4.0.2
+
+Fixed:
+* ReturnTypeWillChange attribute added to more overridden functions to ease migration.
+
+## 4.0.1
+
+Fixed:
+* ReturnTypeWillChange attribute added to overridden functions to ease migration.
+
+## 4.0.0
+
+The library now requires PHP 7.4 or later.
+
+Fixed:
+* HTML is parsed as whole document to avoid encoding issues.
+
+Changed:
+* Return values added to functions.
+* Types added to function parameters.
+
+Removed:
+* PHP 7.2 and 7.3 are no longer supported.
+
 ## 3.0.1
 
-Fixed
+Fixed:
 * Made comment stripping independent of tag flattening.
 
 ## 3.0.0

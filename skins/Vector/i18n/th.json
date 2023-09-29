@@ -11,7 +11,8 @@
 			"Octahedron80",
 			"Patsagorn Y.",
 			"Trisorn Triboon",
-			"Woraponboonkerd"
+			"Woraponboonkerd",
+			"Kaoavi"
 		]
 	},
 	"skinname-vector": "เวกเตอร์แบบเก่า (2553)",
@@ -27,7 +28,7 @@
 	"vector-action-toggle-sidebar": "เปิด/ปิดแถบข้าง",
 	"vector-languages": "ภาษา",
 	"vector-language-button-aria-label": "ไปที่บทความในภาษาอื่น ซึ่งมีใน {{PLURAL:$1|}}$1 ภาษา",
-	"vector-language-button-label": "{{PLURAL:$1|$1 language|$1 ภาษา}}",
+	"vector-language-button-label": "{{PLURAL:$1|$1 ภาษา}}",
 	"vector-no-language-button-label": "เพิ่มภาษา",
 	"vector-no-language-button-aria-label": "บทความนี้มีเฉพาะในภาษานี้ เพิ่มบทความสำหรับภาษาอื่น ๆ",
 	"vector-language-redirect-to-top": "ใน {{SITENAME}} ลิงก์ข้ามไปยังรุ่นภาษาอื่นของบทความนี้ถูกย้ายไปด้านบนแล้วที่ทางขวาของชื่อหน้า [[#p-lang-btn|ไปด้านบน]]",

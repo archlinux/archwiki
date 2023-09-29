@@ -1,8 +1,11 @@
 {
 	"@metadata": {
 		"authors": [
-			"Keresturec"
+			"Keresturec",
+			"Vlad5250"
 		]
 	},
-	"inputbox-tryexact": "Пробуй найсц точни резултат преглєдованя"
+	"inputbox-tryexact": "Пробуй найсц точни резултат преглєдованя",
+	"inputbox-postcomment": "Нови оддзельок",
+	"inputbox-postcommenttitle": "Нови оддзельок"
 }

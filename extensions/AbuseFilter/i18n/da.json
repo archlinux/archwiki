@@ -22,7 +22,8 @@
 			"Sarrus",
 			"Steenth",
 			"Tjernobyl",
-			"Weblars"
+			"Weblars",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Anvender automatiske heuristikker på redigeringer",
@@ -78,7 +79,7 @@
 	"abusefilter-log-search-action-taken-label": "Handling udført:",
 	"abusefilter-log-search-action-taken-any": "Enhver",
 	"abusefilter-log-search-submit": "Søg",
-	"abusefilter-log-entry": "$1: $2  udløste et misbrugsfilter med handlingen \"$3\" på $4.\nForanstaltninger: $5.\nFilterbeskrivelse: $6",
+	"abusefilter-log-entry": "$1: $2 udløste et misbrugsfilter med handlingen \"$3\" på $4.\nForanstaltninger: $5.\nFilterbeskrivelse: $6",
 	"abusefilter-log-entry-withdiff": "$1: $2 udløste et misbrugsfilter med handlingen \"$3\" på $4.\nForanstaltninger: $5;\nFilterbeskrivelse: $6 ($7)",
 	"abusefilter-log-detailedentry-meta": "$1: $2 udløste $3 med handlingen \"$4\" på $5.\nForanstaltninger: $6.\nFilterbeskrivelse: $7 ($8)",
 	"abusefilter-log-detailedentry-global": "globalt filter $1",

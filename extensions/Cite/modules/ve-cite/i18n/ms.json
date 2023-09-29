@@ -6,7 +6,8 @@
 			"Karmadunya9-",
 			"Macofe",
 			"Pizza1016",
-			"Tofeiku"
+			"Tofeiku",
+			"Hakimi97"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "Buku",
@@ -19,9 +20,14 @@
 	"cite-ve-changedesc-reflist-group-both": "Kumpulan senarai rujukan ditukar dari \"$1\" ke \"$2\"",
 	"cite-ve-changedesc-reflist-group-from": "Kumpulan senarai rujukan ditukar dari \"$1\" ke kumpulan am",
 	"cite-ve-changedesc-reflist-group-to": "Kumpulan senarai rujukan ditukar dari kumpulan am ke \"$1\"",
+	"cite-ve-changedesc-reflist-responsive-set": "Senarai rujukan ditukar untuk paparan pada lajur responsif",
+	"cite-ve-changedesc-reflist-responsive-unset": "Senarai rujukan ditukar untuk paparan pada satu lajur sahaja",
+	"cite-ve-citationneeded-button": "Tambah petikan",
+	"cite-ve-citationneeded-description": "Seorang editor telah menyatakan bahawa tuntutan ini memerlukan petikan kepada sumber yang boleh dipercayai.",
 	"cite-ve-citationneeded-reason": "Sebab diberi:",
 	"cite-ve-citationneeded-title": "Petikan diperlukan",
 	"cite-ve-dialog-reference-editing-reused": "Rujukan ini digunakan {{PLURAL:$1|sekali|2=dua kali|$1 kali}} di laman ini.",
+	"cite-ve-dialog-reference-editing-reused-long": "Rujukan ini digunakan {{PLURAL:$1|sekali|2=dua kali|$1 kali}} pada halaman ini. Perubahan yang dibuat di sini akan digunakan di semua tempat yang menggunakan semula rujukan ini.",
 	"cite-ve-dialog-reference-options-group-label": "Gunakan kumpulan ini",
 	"cite-ve-dialog-reference-options-group-placeholder": "Rujukan umum",
 	"cite-ve-dialog-reference-options-name-label": "Gunakan semula dengan nama ini",
@@ -43,6 +49,7 @@
 	"cite-ve-referenceslist-isempty": "Tidak terdapat rujukan dengan kumpulan \"$1\" pada halaman ini untuk disertakan dalam senarai ini.",
 	"cite-ve-referenceslist-isempty-default": "Tidak terdapat rujukan pada halaman ini untuk disertakan dalam senarai ini.",
 	"cite-ve-referenceslist-missingref": "Rujukan ini ditakrifkan dalam templat atau seumpamanya, maka buat masa sekarang, ia boleh disunting dalam mod sumber sahaja.",
+	"cite-ve-referenceslist-missingref-in-list": "Rujukan ini ditakrifkan pada templat atau sekatan lain yang dijana, maka buat masa sekarang, ia boleh dilihat pada dalam mod sumber sahaja.",
 	"cite-ve-referenceslist-missingreflist": "Senarai rujukan ini dihasilkan oleh templat, oleh itu kini hanya boleh disunting dalam mod sumber.",
 	"cite-ve-toolbar-group-label": "Petik",
 	"cite-ve-othergroup-item": "Rujukan $1",

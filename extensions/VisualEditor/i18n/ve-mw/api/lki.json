@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Hosseinblue"
+			"Hosseinblue",
+			"Amire80"
 		]
 	},
 	"apihelp-visualeditor-description": "HTML5 یک صفحه را از خدمت پارسوید برمی‌گرداند.",
@@ -23,7 +24,7 @@
 	"apihelp-visualeditoredit-param-etag": "ای‌تگ برای ارسال.",
 	"apihelp-visualeditoredit-param-html": "HTML برای ارسال به پارسوید برای تبدیل به متن ویکی.",
 	"apihelp-visualeditoredit-param-minor": "علامت به‌عنوان ویرایش جزئی.",
-	"apihelp-visualeditoredit-param-needcheck": "در زمان ذخيره كردن اگر نسخه مشكلات رفت و برگشت داشت،  پاراسويد را تنظيم كن. اين عمل در برچسب ويرايش داشتن تاثير دارد.",
+	"apihelp-visualeditoredit-param-needcheck": "در زمان ذخيره كردن اگر نسخه مشكلات رفت و برگشت داشت، پاراسويد را تنظيم كن. اين عمل در برچسب ويرايش داشتن تاثير دارد.",
 	"apihelp-visualeditoredit-param-oldid": "شماره نسخه استفاده شود. پيش فرض بر آخرين نسخه است. صفحات تازه ٠ است",
 	"apihelp-visualeditoredit-param-page": "وةڵگة برای انجام‌دادن عمل‌ها بر روی آن.",
 	"apihelp-visualeditoredit-param-starttimestamp": "در زمان ذخیره‌کردن، این را برای زمان بارگیری نسخه تنظیم کنید. برای تشخیص تعارض ویرایش کاربرد دارد.",

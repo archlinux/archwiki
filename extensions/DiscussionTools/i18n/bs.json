@@ -12,6 +12,7 @@
 	"discussiontools-defaultsummary-reply": "odgovor",
 	"discussiontools-emptystate-button": "Započni raspravu",
 	"discussiontools-emptystate-title": "Započni raspravu o stranici {{SUBJECTPAGENAME}}",
+	"discussiontools-emptystate-title-user": "Započni razgovor s {{GENDER:{{PAGENAME}}|korisnikom|korisnicom|osobom}} {{PAGENAME}}",
 	"discussiontools-findcomment-label-idorname": "ID komentara ili ime",
 	"discussiontools-findcomment-label-search": "Traži",
 	"discussiontools-findcomment-noresults": "Nema rezultata.",

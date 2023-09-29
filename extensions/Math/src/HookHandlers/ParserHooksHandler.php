@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\Math\HookHandlers;
 
 use FatalError;
-use Hooks as MWHooks;
 use MediaWiki\Extension\Math\MathConfig;
 use MediaWiki\Extension\Math\MathMathML;
 use MediaWiki\Extension\Math\MathMathMLCli;
@@ -12,6 +11,7 @@ use MediaWiki\Extension\Math\Render\RendererFactory;
 use MediaWiki\Hook\ParserAfterTidyHook;
 use MediaWiki\Hook\ParserFirstCallInitHook;
 use MediaWiki\Hook\ParserOptionsRegisterHook;
+use MediaWiki\HookContainer\HookContainer;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\User\UserOptionsLookup;
 use MWException;
@@ -39,16 +39,22 @@ class ParserHooksHandler implements
 	/** @var UserOptionsLookup */
 	private $userOptionsLookup;
 
+	/** @var HookContainer */
+	private $hookContainer;
+
 	/**
 	 * @param RendererFactory $rendererFactory
 	 * @param UserOptionsLookup $userOptionsLookup
+	 * @param HookContainer $hookContainer
 	 */
 	public function __construct(
 		RendererFactory $rendererFactory,
-		UserOptionsLookup $userOptionsLookup
+		UserOptionsLookup $userOptionsLookup,
+		HookContainer $hookContainer
 	) {
 		$this->rendererFactory = $rendererFactory;
 		$this->userOptionsLookup = $userOptionsLookup;
+		$this->hookContainer = $hookContainer;
 	}
 
 	/**
@@ -133,8 +139,8 @@ class ParserHooksHandler implements
 			$renderer->addTrackingCategories( $parser );
 			return $renderer->getLastError();
 		}
-		// TODO: Convert to a new style hook system and inject HookContainer
-		MWHooks::run( 'MathFormulaPostRender',
+		// TODO: Convert to a new style hook system
+		$this->hookContainer->run( 'MathFormulaPostRender',
 			[ $parser, $renderer, &$renderedMath ]
 		); // Enables indexing of math formula
 

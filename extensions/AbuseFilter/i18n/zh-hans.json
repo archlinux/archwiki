@@ -78,7 +78,11 @@
 			"铁桶",
 			"飞舞回堂前",
 			"ArsenalBastion4093",
-			")8"
+			")8",
+			"U.T.",
+			"CrownedWharf566",
+			"LittlePaw365",
+			"Vikarna"
 		]
 	},
 	"abusefilter-desc": "对编辑行为进行自动化条件判定",
@@ -86,9 +90,9 @@
 	"abuselog": "防滥用过滤器日志",
 	"abusefilter-intro": "欢迎访问防滥用过滤器管理界面。\n防滥用过滤器是一个可以针对所有最近编辑动作进行自动化判断的软件系统。\n此界面显示已定义过滤器的列表，并允许对其进行修改。",
 	"abusefilter-mustviewprivateoredit": "出于安全考虑，只有拥有查看私有防滥用过滤器或修改过滤器权限的用户方可使用本界面。",
-	"abusefilter-warning": "'''警告：'''此操作已被自动识别为有害。\n无意义的操作会被迅速地回退，\n而过分或重复的无意义编辑会导致您的帐户或IP地址遭到封禁。\n如果您确信本次操作是有意义的，您可以再次点击提交以确认它。\n与您此次行为所匹配的过滤规则概述如下：$1",
+	"abusefilter-warning": "'''警告：'''此操作已被自动识别为有害操作。\n无意义的操作将会被迅速回退，而低质量或重复的无意义编辑会导致您的账号或IP地址遭到封禁。\n如果您确信您的操作有建设性，您可以再次点击提交以确认。\n与您此次行为所匹配的过滤规则概述如下：$1",
 	"abusefilter-disallowed": "此操作已被自动识别为有害，并因此不被允许。\n如果您认为您的这次编辑是有意义的，请联系管理员，并告诉他们您想要做什么。\n与您此次行为所匹配的过滤规则概述如下：$1",
-	"abusefilter-blocked-display": "系统已自动将您的操作识别为有害动作，故已阻止该操作。\n除此之外，为了保护{{SITENAME}}，您的用户帐户以及所有相关联的IP地址都被禁止进行编辑。\n如果您认为这是系统误判，请联系管理员。\n与您此次行为所匹配的过滤规则概述如下：$1",
+	"abusefilter-blocked-display": "系统已自动将您的操作识别为有害动作，故已阻止该操作。\n除此之外，为了保护{{SITENAME}}，您的用户账号以及所有相关联的IP地址都被禁止进行编辑。\n如果您认为这是系统误判，请联系管理员。\n与您此次行为所匹配的过滤规则概述如下：$1",
 	"abusefilter-degrouped": "系统已自动将您的操作识别为有害动作，故已阻止该操作。\n另外，由于您的账户疑似遭到盗用，系统已剥夺您的账户的所有权限。\n如果您认为这是系统误判，请联系行政员解释此操作，这样或许能取回权限。\n与您此次行为所匹配的过滤规则概述如下：$1",
 	"abusefilter-autopromote-blocked": "系统已自动将您的操作识别为有害动作，故已阻止该操作。\n此外，为安全起见，您的账户被暂时剥夺了部分例行授予已创建账户的权限。\n与您此次行为所匹配的过滤规则概述如下：$1",
 	"abusefilter-blocker": "滥用过滤器",
@@ -410,7 +414,7 @@
 	"abusefilter-edit-builder-funcs-count": "字符串 X 在字符串 Y 中出现的次数（count）",
 	"abusefilter-edit-builder-funcs-rcount": "正则表达式 X 在字符串 Y 中匹配的次数（rcount）",
 	"abusefilter-edit-builder-funcs-get_matches": "匹配文本中每个捕捉组的正则表达式数组（get_matches）",
-	"abusefilter-edit-builder-funcs-rmwhitespace": "移除空白字符（rmwhitespace）",
+	"abusefilter-edit-builder-funcs-rmwhitespace": "删除空格字符（rmwhitespace）",
 	"abusefilter-edit-builder-funcs-rmspecials": "移除特殊字符（rmspecials）",
 	"abusefilter-edit-builder-funcs-ip_in_range": "IP地址是否在范围内？（ip_in_range）",
 	"abusefilter-edit-builder-funcs-ip_in_ranges": "IP地址是否在任一范围内？（ip_in_ranges）",

@@ -7,22 +7,23 @@
 			"Haqmar",
 			"Sagan",
 			"Рустам Нурыев",
-			"Янмурза Баки"
+			"Янмурза Баки",
+			"З. ӘЙЛЕ"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир]]",
 	"tag-visualeditor-description": "Төҙәтеү [[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир]] ҡулланып башҡарылған",
 	"tag-visualeditor-needcheck": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир: Тикшереү]]",
-	"tag-visualeditor-needcheck-description": "Система асыҡлауынса[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир]]был һылтанма ҡулланып төҙәтеү эшләгәндә викитекста осраҡлы үҙгәртеүҙәр булыуын асыҡланы.",
+	"tag-visualeditor-needcheck-description": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир]] аша эшләнгән төҙәтеүҙә система аңламаҫтан үҙгәртелгән вики-текст булыу ихтималлығын асыҡланы.",
 	"tag-visualeditor-switched": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|Күҙләгес мөхәррир: Тикшереү]]",
-	"tag-visualeditor-switched-description": "Ҡатнашыусы күҙләткес мөхәррир ярҙамында мөхәррирләй башланы, ә викитест мөхәрриргә күсте",
-	"visualeditor-feedback-link": "Project:VisualEditor/Баһалау",
-	"visualeditor-feedback-tool": "Программа үтәлешенә баһа биреп ҡалдырырға",
-	"visualeditor-help-label": "Күрһәтмәләрҙе уҡығыҙ",
-	"visualeditor-help-title": "Күҙләгес мөхәррирҙе файҙаланыу ҡулланмаһы",
-	"visualeditor-welcomedialog-action": "Үҙгәртеүҙе башлау",
-	"visualeditor-welcomedialog-content": "Һәр кем мөхәррирләй ала һәм бөтә үҙгәртеүҙәр файҙалы",
-	"visualeditor-welcomedialog-content-thanks": "Рәхмәт, һеҙҙең ярҙам донъя менән күберәк таныштыра",
-	"visualeditor-welcomedialog-switch": "Баштағы кодтың мөхәррирләүенә күсергә",
-	"visualeditor-welcomedialog-title": "$2-се биткә {{GENDER:$1|рәхим итегеҙ}}"
+	"tag-visualeditor-switched-description": "Ҡатнашыусы күҙләгес мөхәррир (үҙгәртергә) ярҙамында мөхәррирләй башланы, һуңынан вики-тексты үҙгәртергә режимы аша мөхәррирләүгә күсте",
+	"visualeditor-feedback-link": "Project:VisualEditor/Фекер алышыу",
+	"visualeditor-feedback-tool": "Программа тәьминәте тураһында фекер ҡалдырығыҙ",
+	"visualeditor-help-label": "Ҡатнашыусы ҡулланмаларын уҡығыҙ",
+	"visualeditor-help-title": "Күҙләгес мөхәррирҙе файҙаланыу буйынса ҡулланма",
+	"visualeditor-welcomedialog-action": "Мөхәррирләүҙе башларға",
+	"visualeditor-welcomedialog-content": "Һәр кем мөхәррирләй ала һәм бөтә үҙгәртеүҙәр ҙә файҙалы",
+	"visualeditor-welcomedialog-content-thanks": "Донъяға күберәк белергә ярҙам иткәнегеҙ өсөн рәхмәт!",
+	"visualeditor-welcomedialog-switch": "Сығанаҡ кодты мөхәррирләүгә күсергә",
+	"visualeditor-welcomedialog-title": "$2 {{GENDER:$1|рәхим итегеҙ}}"
 }

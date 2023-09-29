@@ -5,7 +5,8 @@
 			"Banjo",
 			"Elisardojm",
 			"MarcoAurelio",
-			"Maria zaos"
+			"Maria zaos",
+			"Toliño"
 		]
 	},
 	"linterrors": "Erros de lint",
@@ -26,7 +27,7 @@
 	"linter-category-multi-colon-escape": "Escape de dous puntos múltiple",
 	"linter-category-multi-colon-escape-desc": "Estas páxinas teñen ligazóns iniciadas por varios caracteres de dous puntos.",
 	"linter-category-multiline-html-table-in-list": "Táboa de múltiples liñas nunha lista",
-	"linter-category-multiline-html-table-in-list-desc": "Tidy despraza a táboa dentro ou fora da lista, mentres que HTML5 extende a lista ó resto da páxina.",
+	"linter-category-multiline-html-table-in-list-desc": "Anteriormente, as táboas movíanse dentro ou fóra da lista, pero agora isto estende a lista ó resto da páxina.",
 	"linter-category-multiple-unclosed-formatting-tags": "Múltiples etiquetas de formato sen peche",
 	"linter-category-multiple-unclosed-formatting-tags-desc": "Estas páxinas teñen múltiples etiquetas de formato sen peche",
 	"linter-category-obsolete-tag": "Etiquetas HTML desbotadas",

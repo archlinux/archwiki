@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"V.narsikar"
+			"V.narsikar",
+			"Amire80"
 		]
 	},
 	"apihelp-echomarkread-description": "सध्याच्या सदस्यासाठी अधिसूचनांवर वाचले अशी खूण करा.",
@@ -20,7 +21,7 @@
 	"apihelp-query+notifications-description": "सध्याच्या सदस्यासाठी ताटकळत असलेल्या अधिसूचना प्राप्त करा.",
 	"apihelp-query+notifications-summary": "सध्याच्या सदस्यासाठी ताटकळत असलेल्या अधिसूचना प्राप्त करा.",
 	"apihelp-query+notifications-param-prop": "विनंती करावयाचा तपशिल.",
-	"apihelp-query+notifications-param-sections": "पृच्छा करावयासाठीचे विभाग  (म्हणजे - 'सजगता' व 'संदेश' यांची सरमिसळ).",
+	"apihelp-query+notifications-param-sections": "पृच्छा करावयासाठीचे विभाग (म्हणजे - 'सजगता' व 'संदेश' यांची सरमिसळ).",
 	"apihelp-query+notifications-param-groupbysection": "निकालाचे विभागानुसार गट करावयाचे काय. जर स्थापिल्या गेले तर,प्रत्येक विभागास वेगळ्या रितीने पुरवठा होतो.",
 	"apihelp-query+notifications-param-filter": "परतविलेल्या अधिसूचना गाळा.",
 	"apihelp-query+notifications-param-format": "जर नमूद केले तर, अधिसूचना या प्रकारे प्रारुपण करुन पाठविल्या जातील.",

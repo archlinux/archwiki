@@ -3,10 +3,12 @@
 		"authors": [
 			"Artsiom91",
 			"Тест",
-			"Чаховіч Уладзіслаў"
+			"Чаховіч Уладзіслаў",
+			"ZlyiLev"
 		]
 	},
 	"interwiki-title-norights": "Прагляд звестак пра інтэрвікі",
 	"interwiki_reasonfield": "Прычына:",
-	"interwiki_addbutton": "Дадаць"
+	"interwiki_addbutton": "Дадаць",
+	"interwiki-badprefix": "Пазначаны прэфікс інтэрвікі «$1» змяшчае няслушныя сімвалы"
 }

@@ -15,7 +15,7 @@
 	"scribunto-error-long": "Xırabiya scripti:\n$1",
 	"scribunto-doc-page-name": "Module:$1/dok",
 	"scribunto-doc-page-does-not-exist": "Seba na module şıma şenê yû pela dokumani vırazê [[$1]]",
-	"scribunto-doc-page-header": "[[$1]] seba pela dokumani ya na",
+	"scribunto-doc-page-header": "'''Na pela dokumantasyonê [[$1]]a'''",
 	"scribunto-console-title": "Konsolê xırabin weçinayış",
 	"scribunto-console-current-src": "Konsolê cıkewtışi",
 	"scribunto-console-clear": "Pak ke",

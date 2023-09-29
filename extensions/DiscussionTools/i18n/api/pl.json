@@ -4,11 +4,12 @@
 			"Matma Rex",
 			"Rail",
 			"Woytecr",
-			"Nux"
+			"Nux",
+			"Amire80"
 		]
 	},
 	"apierror-discussiontools-commentid-notfound": "Nie odnaleziono komentarza z ID „$1”.",
-	"apierror-discussiontools-commentname-ambiguous": "Odnaleziono więcej niż jeden komentarz z nazwą „$1”, wymagany jest parametr  <var>commentid</var>.",
+	"apierror-discussiontools-commentname-ambiguous": "Odnaleziono więcej niż jeden komentarz z nazwą „$1”, wymagany jest parametr <var>commentid</var>.",
 	"apierror-discussiontools-commentname-notfound": "Nie odnaleziono komentarza z nazwą „$1”.",
 	"apierror-discussiontools-formtoken-used": "Komentarz został już umieszczony. Przeładuj stronę aby go zobaczyć.",
 	"apierror-discussiontools-subscription-failed-add": "Nie udało się zasubskrybować tego tematu.",

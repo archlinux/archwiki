@@ -6,7 +6,8 @@
 			"Matma Rex",
 			"Mirin",
 			"NMaia",
-			"Psychoslave"
+			"Psychoslave",
+			"Amire80"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "Neniu seriigaĵo kun tiu ŝlosilo troviĝis en kaŝmemoro.",
@@ -32,7 +33,7 @@
 	"apihelp-visualeditor-summary": "Liveri HTML5-kodon por paĝo per la servo Parsoid.",
 	"apihelp-visualeditoredit-description": "Konservi HTML5an pâgon al MediaWiki (tradukita al vikiteksto per servico de Parsoid).",
 	"apihelp-visualeditoredit-param-basetimestamp": "Kiam konservigu, asignu tempindikon de la redaktita revizio. Tio estas uzata por rekoni konflikoj pri redakto.",
-	"apihelp-visualeditoredit-param-cachekey": "Uzi la rezulton de  antaŭa porkaŝmemorovicigo (''serializeforcache'') peto kun ĉi tiu vokanto. Ĝi transpasas $1html.",
+	"apihelp-visualeditoredit-param-cachekey": "Uzi la rezulton de antaŭa porkaŝmemorovicigo (''serializeforcache'') peto kun ĉi tiu vokanto. Ĝi transpasas $1html.",
 	"apihelp-visualeditoredit-param-captchaid": "Identigilo de homultesto Captcha (por konservi kun homultest-respondo).",
 	"apihelp-visualeditoredit-param-captchaword": "Respondo al homultesto Captcha (por konservi kun homultesto-respondo).",
 	"apihelp-visualeditoredit-param-etag": "[https://eo.wikipedia.org/wiki/HTTP_ETag ETag] Sendenda",

@@ -13,7 +13,8 @@
 			"Movyn",
 			"Reza1615",
 			"الناز",
-			"درفش کاویانی"
+			"درفش کاویانی",
+			"Amire80"
 		]
 	},
 	"apierror-visualeditor-badcachekey": "کپچا برای آن کلید یافت نشد",
@@ -34,7 +35,7 @@
 	"apihelp-visualeditor-param-pst": "پیش-ذخیره متن ویکی تبدیل شده پیش از ارسال آن به پارسوید (paction=parsefragment).",
 	"apihelp-visualeditor-param-section": "بخشی که برای انجم‌دادن است.",
 	"apihelp-visualeditor-param-starttimestamp": "در زمان ذخیره کردن، این را برای زمان بارگیری نسخه تنظیم کنید. برای تشخیص تعارض ویرایش کاربرد دارد.",
-	"apihelp-visualeditor-param-stash": "در زمان ذخیره، اگر قصد استفاده از  API پنهان را دارید این را true تنظیم کنید.",
+	"apihelp-visualeditor-param-stash": "در زمان ذخیره، اگر قصد استفاده از API پنهان را دارید این را true تنظیم کنید.",
 	"apihelp-visualeditor-param-wikitext": "متن ویکی برای ارسال به پارسوید برای تبدیل به اچ‌تی‌ام‌ال (paction=parsefragment).",
 	"apihelp-visualeditor-summary": "HTML5 یک صفحه را از خدمت پارسوید برمی‌گرداند.",
 	"apihelp-visualeditoredit-description": "ذخیره صفحه HTML5 به مدیاویکی (تبدیل به متن ویکی با سرویس پارسوید)",
@@ -45,7 +46,7 @@
 	"apihelp-visualeditoredit-param-etag": "ای‌تگ برای ارسال.",
 	"apihelp-visualeditoredit-param-html": "HTML برای ارسال به پارسوید برای تبدیل به متن ویکی.",
 	"apihelp-visualeditoredit-param-minor": "علامت به‌عنوان ویرایش جزئی.",
-	"apihelp-visualeditoredit-param-needcheck": "در زمان ذخيره كردن اگر نسخه مشكلات رفت و برگشت داشت،  پاراسويد را تنظيم كن. اين عمل در برچسب ويرايش داشتن تاثير دارد.",
+	"apihelp-visualeditoredit-param-needcheck": "در زمان ذخيره كردن اگر نسخه مشكلات رفت و برگشت داشت، پاراسويد را تنظيم كن. اين عمل در برچسب ويرايش داشتن تاثير دارد.",
 	"apihelp-visualeditoredit-param-oldid": "شماره نسخه استفاده شود. پيش فرض بر آخرين نسخه است. صفحات تازه ٠ است",
 	"apihelp-visualeditoredit-param-paction": "عمل برای انجام‌دادن.",
 	"apihelp-visualeditoredit-param-page": "صفحه برای انجام‌دادن عمل‌ها بر روی آن.",

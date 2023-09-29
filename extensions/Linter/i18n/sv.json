@@ -17,7 +17,7 @@
 	"linter-category-deletable-table-tag": "Tabelltagg som bör raderas",
 	"linter-category-deletable-table-tag-desc": "Dessa sidor har tabelltaggar som bör raderas.",
 	"linter-category-fostered": "Fostrat innehåll",
-	"linter-category-fostered-desc": "Dessa sidor har ett främjat innehåll.",
+	"linter-category-fostered-desc": "Dessa sidor har fostrat innehåll.",
 	"linter-category-html5-misnesting": "Felnästlade taggar som visas annorlunda i HTML5 jämfört med HTML4",
 	"linter-category-html5-misnesting-desc": "Följande felnästlade taggar uppför sig annorlunda i HTML5 jämfört med HTML4.",
 	"linter-category-misc-tidy-replacement-issues": "Diverse problem",

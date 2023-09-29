@@ -12,9 +12,9 @@ const {
 // @chrome @en.m.wikipedia.beta.wmflabs.org @firefox @test2.m.wikipedia.org @vagrant @login
 describe( 'Wikitext Editor', () => {
 
-	beforeEach( () => {
-		iAmLoggedIntoTheMobileWebsite();
-		iAmOnAPageThatDoesNotExist();
+	beforeEach( async () => {
+		await iAmLoggedIntoTheMobileWebsite();
+		await iAmOnAPageThatDoesNotExist();
 	} );
 
 	// @smoke
@@ -26,11 +26,11 @@ describe( 'Wikitext Editor', () => {
 		iDoNotSeeAnOverlay();
 	} );
 
-	it( 'Closing editor (browser button)', () => {
-		iClickTheEditButton();
-		iSeeTheWikitextEditorOverlay();
-		iClickTheBrowserBackButton();
-		iDoNotSeeAnOverlay();
+	it( 'Closing editor (browser button)', async () => {
+		await iClickTheEditButton();
+		await iSeeTheWikitextEditorOverlay();
+		await iClickTheBrowserBackButton();
+		await iDoNotSeeAnOverlay();
 	} );
 
 } );

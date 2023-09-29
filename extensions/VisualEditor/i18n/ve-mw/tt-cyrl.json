@@ -4,7 +4,8 @@
 			"Ajdar",
 			"Derslek",
 			"Ерней",
-			"Ильнар"
+			"Ильнар",
+			"З. ӘЙЛЕ"
 		]
 	},
 	"collabpad-doctitle": "CollabPad: $1",
@@ -21,12 +22,12 @@
 	"visualeditor-beta-warning": "Мөхәррирләү барышында техник кыенсызлыклар килеп чыкса, зинһар өчен безгә хәбәр итегез.",
 	"visualeditor-browserwarning": "Сез кергән браузер, әлеге мөхәррирдә рәсми кулланмый.",
 	"visualeditor-ca-createlocaldescriptionsource": "Локаль тасвирлама өстәргә",
-	"visualeditor-ca-createsource": "Чыгыш кодын төзү",
+	"visualeditor-ca-createsource": "Чыганак коды булдыру",
 	"visualeditor-ca-editsource": "Вики-текстны үзгәртү",
 	"visualeditor-ca-editsource-section": "вики-текстны үзгәртү",
 	"visualeditor-categories-tool": "Төркемнәр",
 	"visualeditor-desc": "MediaWiki өчен күрсәтмәле төзәткеч",
-	"visualeditor-descriptionpagelink": "Project:Күрсәтмәле төзәткеч",
+	"visualeditor-descriptionpagelink": "Project:Күрсәтмәле төзәтмә",
 	"visualeditor-dialog-media-alttext-section": "Альтернатив текст",
 	"visualeditor-dialog-media-change-image": "Сурәтне алмаштыру",
 	"visualeditor-dialog-media-choose-image": "Бу сурәтне куллану",

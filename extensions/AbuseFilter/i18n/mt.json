@@ -7,7 +7,8 @@
 			"Leli Forte",
 			"Matma Rex",
 			"Roderick Mallia",
-			"ToniSant"
+			"ToniSant",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Tapplika ewristika awtomatika lill-modifiki",
@@ -15,7 +16,7 @@
 	"abuselog": "Reġistru tal-filtru tal-abbuż",
 	"abusefilter-intro": "Merħba fl-interfaċċa tal-filtru tal-abbuż.\nIl-filtru tal-abbuż huwa mekkaniżmu ta' softwer awtomatiku li japplika ewristiċi awtomatiċi lil kull azzjoni.\nDin l-interfaċċa turi lista ta' filtri partikolari, u tħalli li jiġu modifikati.",
 	"abusefilter-warning": "'''Attenzjoni''': Din l-azzjoni ġiet awtomatikament identifikata bħala ta' ħsara.\nIl-modifiki mhux kostruttivi jiġu mħassra mill-ewwel, u l-kontribuzzjonijiet ħżiena jew mhux kostruttivi ripetuti jwasslu biex il-kont jew l-indirizz IP tiegħek jiġi imblukkat.\nJekk temmen li l-modifika tiegħek hija kostruttiva, tista' terġa' tissottomettiha sabiex tikkonfermaha.\nDin deskrizzjoni qasira tar-regola tal-abbuż li tapplika fil-każ tal-azzjoni tiegħek: $1",
-	"abusefilter-disallowed": "Din l-azzjoni ġiet awtomatikament identifikata bħala ta' ħsara, u għalhekk ma tħallietx tiġi esegwita.\nJekk temmen li l-modifika tiegħek hija kostruttiva, informa wieħed  mill- amministraturi dwar xi ppruvajt tagħmel.\nDin deskrizzjoni qasira tar-regola tal-abbuż li tapplika fil-każ tal-azzjoni tiegħek: $1",
+	"abusefilter-disallowed": "Din l-azzjoni ġiet awtomatikament identifikata bħala ta' ħsara, u għalhekk ma tħallietx tiġi esegwita.\nJekk temmen li l-modifika tiegħek hija kostruttiva, informa wieħed mill- amministraturi dwar xi ppruvajt tagħmel.\nDin deskrizzjoni qasira tar-regola tal-abbuż li tapplika fil-każ tal-azzjoni tiegħek: $1",
 	"abusefilter-blocked-display": "Din l-azzjoni ġiet awtomatikament identifikata bħala ta' ħsara, u għalhekk ma tħallietx tiġi esegwita.\nBarra minn hekk, sabiex tiġi protetta {{SITENAME}}, il-kont tiegħek u l-indirizzi IP kollha assoċjati ġew imblukkati milli jagħmlu modifiki.\nJekk dan ġara bi żball, ikkuntatja minnufih lil amministratur.\nDeskrizzjoni qasira tar-regola tal-abbuż li ġiet vjolata hi: $1",
 	"abusefilter-degrouped": "Din l-azzjoni ġiet awtomatikament identifikata bħala ta' ħsara.\nL-azzjoni għalhekk ma tħallietx tiġi esegwita u minħabba li hemm suspett li l-kont tiegħek huwa kompromess, id-drittijiet tiegħek ġew revokati.\nJekk dan ġara bi żball, ikkuntatja lil burokrata bi spjegazzjoni tal-azzjonijiet tiegħek, u d-drittijiet tiegħek jistgħu jiġu mogħtija lura.\nDeskrizzjoni qasira tar-regola tal-abbuż li ġiet vjolata hi: $1",
 	"abusefilter-autopromote-blocked": "Din l-azzjoni ġiet awtomatikament identifikata bħala ta' ħsara, u għalhekk ma tħallietx tiġi esegwita.\nBarra minnhekk, bħala miżura ta' sigurtà ġew imneħħija mill-kont tiegħek, b'mod temporanju, xi privileġġi li normalment jingħataw lil kontijiet stabbiliti.\nDeskrizzjoni qasira tar-regola tal-abbuż li ġiet vjolata hi: $1",

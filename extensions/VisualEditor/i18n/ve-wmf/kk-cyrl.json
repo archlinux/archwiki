@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Arystanbek"
+			"Arystanbek",
+			"Ajiniyaz Nurniyazov"
 		]
 	},
 	"tag-visualeditor": "[[{{MediaWiki:visualeditor-descriptionpagelink}}|VisualEditor]]",
@@ -18,7 +19,7 @@
 	"visualeditor-help-title": "Өңдеушіні қалай қолдану туралы нұсқаулық",
 	"visualeditor-welcomedialog-action": "Өңдеуді бастау",
 	"visualeditor-welcomedialog-content": "Әркім өңдей алатын және әрбір жетілдіруге көмектесе алады.",
-	"visualeditor-welcomedialog-content-thanks": "Әлемге көп білуге көмектескеніңіз үшін рахмет!",
+	"visualeditor-welcomedialog-content-thanks": "Dúnyadaǵı adamlardıń kóbirek biliwine kómekleskenińiz ushın raxmet!",
 	"visualeditor-welcomedialog-switch": "Қайнарын өңдегішке ауысу",
 	"visualeditor-welcomedialog-switch-ve": "VisualEditor-ға ауысу",
 	"visualeditor-welcomedialog-title": "$2 жобасына {{GENDER:$1|қош келдіңіз}}"

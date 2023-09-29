@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Wawiel"
+			"Wawiel",
+			"Rooiratel"
 		]
 	},
 	"templatedata-desc": "Implementeer die stoor van data vir sjabloonparameters (met JSON)",
@@ -35,7 +36,7 @@
 	"templatedata-doc-param-type-wiki-template-name": "Sjabloon",
 	"templatedata-doc-param-type-wiki-user-name": "Gebruiker",
 	"templatedata-doc-params": "Sjabloonparameters",
-	"templatedata-editbutton": "Bestuur Sjabloondata",
+	"templatedata-editbutton": "Wysig Sjabloondata",
 	"templatedata-errormsg-jsonbadformat": "Ongewenste JSON-formaat. Jy kan die proses stop om dit reg te maak, verwyder die huidige <templatedata>-merkers en probeer weer, of gaan voort om die huidige TemplateData met 'n nuwe een te vervang.",
 	"templatedata-exists-on-related-page": "Neem kennis: daar bestaan reeds 'n TemplateData-blok in die bestaande bladsy \"[[$1]]\".",
 	"templatedata-helplink": "Inligting oor Sjabloondata",

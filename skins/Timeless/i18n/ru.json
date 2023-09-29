@@ -6,13 +6,14 @@
 			"Kareyac",
 			"Movses",
 			"Okras",
-			"Redredsonia"
+			"Redredsonia",
+			"BerryAVGN"
 		]
 	},
 	"timeless-desc": "Тема оформления Timeless создана на основе прототипа Winter, созданного Брэндоном Харрисом, и различных стилей Фонда Викимедиа.",
 	"timeless-anonymous": "Аноним",
-	"timeless-loggedinas": "Вошёл как '''$1'''",
-	"timeless-notloggedin": "Вы не представились системе",
+	"timeless-loggedinas": "Вошли как '''$1'''",
+	"timeless-notloggedin": "Вы не вошли",
 	"timeless-userpage": "Страница {{GENDER:$1|участника|участницы}}",
 	"timeless-talkpage": "Обсуждение {{GENDER:$1|участника|участницы}}",
 	"timeless-pagelog": "Журналы страницы",

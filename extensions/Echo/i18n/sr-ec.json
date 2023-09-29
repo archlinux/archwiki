@@ -46,7 +46,7 @@
 	"echo-pref-notifications-page-linked-title-muted-list": "Не приказуј обавештења о повезивању следећих страница. ([[mw:Special:MyLanguage/Help:Notifications#mute|детаљније]])",
 	"echo-pref-dont-email-read-notifications": "Не укључуј прочитана обавештења у е-порукама са резимеом",
 	"echo-learn-more": "Сазнајте више",
-	"echo-log": "Јавани дневник",
+	"echo-log": "Јавни дневник",
 	"echo-new-messages": "Имате нове поруке",
 	"echo-category-title-edit-user-talk": "{{PLURAL:$1|Измена|Измене}} на мојој страници за разговор",
 	"echo-category-title-article-linked": "{{PLURAL:$1|Веза|Везе}} ка страници",
@@ -95,6 +95,7 @@
 	"echo-specialpage-section-markread": "Означи групу прочитаном",
 	"echo-specialpage-markasread": "Обавештење: Означавање прочитаним",
 	"echo-specialpage-markasread-invalid-id": "Неважећи ID догађаја",
+	"echo-specialpage-pagefilterwidget-aria-label": "Филтрирај по викију и наслову странице",
 	"echo-specialpage-special-help-menu-widget-aria-label": "Додатне опције и подешавања за обавештења.",
 	"echo-specialpage-pagination-numnotifications": "$1 {{PLURAL:$1|обавeштење|обавештења}}",
 	"echo-specialpage-pagination-range": "$1—$2.",
@@ -113,8 +114,11 @@
 	"echo-notification-markasread-tooltip": "Означите као прочитано",
 	"echo-notification-more-options-tooltip": "Још опција",
 	"notification-dynamic-actions-mute-page-linked": "{{GENDER:$2|Пригуши}} обавештења о повезивању „$1”",
+	"notification-dynamic-actions-mute-page-linked-confirmation": "Обавештења о „повезивању” су онемогућена за страницу „$1”",
 	"notification-dynamic-actions-mute-page-linked-confirmation-description": "{{GENDER:$2|У}} сваком тренутку можете променити пригушене странице у [$1 подешавањима].",
 	"notification-dynamic-actions-unmute-page-linked": "{{GENDER:$2|Обавештавај}} ме о повезивању „$1”",
+	"notification-dynamic-actions-unmute-page-linked-confirmation": "Обавештења о „повезивању” су омогућена за страницу „$1”",
+	"notification-dynamic-actions-unmute-page-linked-confirmation-description": "{{GENDER:$2|У}} сваком тренутку можете променити пригушене странице у [$1 подешавањима].",
 	"notification-dynamic-actions-unwatch": "{{GENDER:$3|Престани}} да надгледаш нову активност на страници „$1”",
 	"notification-dynamic-actions-unwatch-confirmation": "Више {{GENDER:$3|не надгледате}} страницу „$1”",
 	"notification-dynamic-actions-unwatch-confirmation-description": "У било ком тренутку {{GENDER:$3|можете}} да надгледате [$2 ову страницу].",
@@ -229,5 +233,6 @@
 	"echo-email-batch-link-text-view-all-notifications": "Прикажи сва обавештења",
 	"notification-header-foreign-alert": "Обавештења са {{PLURAL:$5|другог викија|$5 друга викија|$5 других викија}}",
 	"notification-header-foreign-notice": "Обавештења са {{PLURAL:$5|другог викија|$5 друга викија|$5 других викија}}",
-	"notification-header-foreign-all": "Обавештења са {{PLURAL:$5|другог викија|$5 друга викија|$5 других викија}}"
+	"notification-header-foreign-all": "Обавештења са {{PLURAL:$5|другог викија|$5 друга викија|$5 других викија}}",
+	"echo-foreign-wiki-lang": "$1 — $2"
 }

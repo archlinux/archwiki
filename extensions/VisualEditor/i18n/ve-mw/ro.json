@@ -274,7 +274,7 @@
 	"visualeditor-preference-core-label": "Editare vizuală",
 	"visualeditor-preference-enable": "Activează editorul vizual. Va fi disponibil în {{PLURAL:$2|următorul spațiu de nume|următoarele spații de nume}}: $1",
 	"visualeditor-preference-newwikitexteditor-description": "Activează noul mod de wikitext înăuntrul editorului vizual. Are multe dintre uneltele prezente în editorul vizual, utilizează un design similar și permite trecerea mai bună între cele două.",
-	"visualeditor-preference-newwikitexteditor-enable": "Utilizați modul wikitext înăuntrul editorului vizual, în schimbul unui editor wikitext diferit.",
+	"visualeditor-preference-newwikitexteditor-enable": "Utilizați modul wikitext înăuntrul editorului vizual, în locul unui editor wikitext diferit.",
 	"visualeditor-preference-newwikitexteditor-label": "Modul wikitext nou",
 	"visualeditor-preference-tabs": "Mod de editare:",
 	"visualeditor-preference-tabs-multi-tab": "Arată-mi ambele file de modificare",

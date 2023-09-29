@@ -5,13 +5,14 @@
 			"Joetaras",
 			"Matma Rex",
 			"McDutchie",
-			"Reder"
+			"Reder",
+			"Amire80"
 		]
 	},
 	"abusefilter-desc": "Applichesce le euristeche automateche pe le cangiaminde",
 	"abusefilter": "Gestione d'u filtre de le abbuse",
 	"abuselog": "Archivije de le filtre de le abbuse",
-	"abusefilter-intro": "Bovègne jndr'â gestione filtre abbuse de le 'nderfazze.\n'U filtre abbuse jè 'nu meccanisme software  pè applechesce l'euristeche automateche a totte le aziune.\nQuèste 'nderfazze fàce vedè 'nu elenghe de filtre definite, e conzente a lòre de essere cangiate.",
+	"abusefilter-intro": "Bovègne jndr'â gestione filtre abbuse de le 'nderfazze.\n'U filtre abbuse jè 'nu meccanisme software pè applechesce l'euristeche automateche a totte le aziune.\nQuèste 'nderfazze fàce vedè 'nu elenghe de filtre definite, e conzente a lòre de essere cangiate.",
 	"abusefilter-mustviewprivateoredit": "Pè mutive de sicurezze, sule le utinde cu 'u diritte de 'ndrucà le filtre abbuse private ponne ausà sta 'nderfacce.",
 	"abusefilter-warning": "'''Attenzione''': St'azione ha state automaticamende idendificate cumme pericolose.\nLe cangiaminde non costruttive onne state annullate veloce veloce, e le cangiaminde egregge o repetitive onna resultà sus a 'u cunde tune o l'indirizze IP ca adda avenè bloccate.\nCe tu cride ca st'azione éte costruttive, tu puè confermarle arrete.\n'Na descriziona veloce d'a regole de l'abbuse ca soddisfe l'aziona toje éte: $1",
 	"abusefilter-disallowed": "St'azione ha state automaticamende idendificate cumme pericolose e, allore non g'avène conzendite.\nCe tu cride ca l'aziona toje ere costruttive, pe piacere 'mborme 'n'amministratore de quidde ca tu ste pruvave a fà.\n'Na descrizione veloce d'a regole de l'abbuse sus 'a quale l'aziona toje s'ha scundrate: $1",

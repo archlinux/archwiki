@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": [
 			"C.R.",
-			"Ruthven"
+			"Ruthven",
+			"Amire80"
 		]
 	},
 	"apihelp-echomarkread-description": "Nzegna tutt' 'e mmasciate comm'a leggiute pe ll'utente.",
@@ -40,6 +41,6 @@
 	"apihelp-query+unreadnotificationpages-description": "Piglià paggene p' 'e quale ce stanno notifiche ca nun fossero ancora ligiute 'a ll'utente 'e mò.",
 	"apihelp-query+unreadnotificationpages-param-grouppages": "Paggene 'e chiacchiera 'e gruppo nziem'a ll'argomento suo, e notifiche 'e gruppo nun suòcie a na paggena nziem'a na paggena utente.",
 	"apihelp-query+unreadnotificationpages-param-limit": "'O nummero massimo 'e paggene ca s'avess'a turnà.",
-	"apihelp-query+unreadnotificationpages-param-wikis": "Elenco 'e wiki addò se ponno piglià paggene ch' 'e mmasciate nun liggiute (predefinite p'  'o wiki 'e mo sulamente).",
+	"apihelp-query+unreadnotificationpages-param-wikis": "Elenco 'e wiki addò se ponno piglià paggene ch' 'e mmasciate nun liggiute (predefinite p' 'o wiki 'e mo sulamente).",
 	"apihelp-query+unreadnotificationpages-example-1": "Elenco 'e paggene cu ('o cunto 'e) notifche senza lieggere"
 }

@@ -1,7 +1,8 @@
 {
 	"@metadata": {
 		"authors": [
-			"Vishwanatha Badikana"
+			"Vishwanatha Badikana",
+			"ChiK"
 		]
 	},
 	"templatedata-doc-param-default": "ಮೂಲೊಸ್ಥಿತಿ",
@@ -13,7 +14,7 @@
 	"templatedata-doc-param-status-required": "ಬೋಡಾಯಿನ",
 	"templatedata-doc-param-status-suggested": "ತೋಜ್ಪಾಯಿನ",
 	"templatedata-doc-param-type": "ಇದೊ",
-	"templatedata-doc-param-type-content": "ಪರಿವಿಡಿ",
+	"templatedata-doc-param-type-content": "ವಿಸಯೊಲು",
 	"templatedata-doc-param-type-date": "ತಾರೀಕ್",
 	"templatedata-doc-param-type-line": "ಸಾಲ್",
 	"templatedata-doc-param-type-number": "ಸಂಕ್ಯೆ",

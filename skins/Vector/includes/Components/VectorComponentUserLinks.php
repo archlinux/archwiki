@@ -2,6 +2,7 @@
 namespace MediaWiki\Skins\Vector\Components;
 
 use Linker;
+use MalformedTitleException;
 use MediaWiki\Skin\SkinComponentLink;
 use MediaWiki\Skins\Vector\Constants;
 use MediaWiki\Skins\Vector\VectorServices;
@@ -123,18 +124,24 @@ class VectorComponentUserLinks implements VectorComponent {
 			// `Hooks::updateUserLinksDropdownItems`. In this case, we do not want
 			// to render the anon "learn more" link.
 			if ( $isAnonEditorLinksEnabled ) {
-				$anonEditorLabelLinkData = [
-					'text' => $this->msg( 'vector-anon-user-menu-pages-learn' )->text(),
-					'href' => Title::newFromText( $this->msg( 'vector-intro-page' )->text() )->getLocalURL(),
-					'aria-label' => $this->msg( 'vector-anon-user-menu-pages-label' )->text(),
-				];
-				$anonEditorLabelLink = new SkinComponentLink(
-					'', $anonEditorLabelLinkData, $this->localizer, $this->linkOptions
-				);
-				$anonEditorLabelLinkHtml = $anonEditorLabelLink->getTemplateData()[ 'html' ];
-				$dropdownMenus[] = new VectorComponentMenu( [
-					'label' => $this->msg( 'vector-anon-user-menu-pages' )->text() . " " . $anonEditorLabelLinkHtml,
-				] + $portletData[ 'data-user-menu-anon-editor' ] );
+				$anonUserMenuData = $portletData[ 'data-user-menu-anon-editor' ];
+				try {
+					$anonEditorLabelLinkData = [
+						'text' => $this->msg( 'vector-anon-user-menu-pages-learn' )->text(),
+						'href' => Title::newFromTextThrow( $this->msg( 'vector-intro-page' )->text() )->getLocalURL(),
+						'aria-label' => $this->msg( 'vector-anon-user-menu-pages-label' )->text(),
+					];
+					$anonEditorLabelLink = new SkinComponentLink(
+						'', $anonEditorLabelLinkData, $this->localizer, $this->linkOptions
+					);
+					$anonEditorLabelLinkHtml = $anonEditorLabelLink->getTemplateData()[ 'html' ];
+					$anonUserMenuData['html-label'] = $this->msg( 'vector-anon-user-menu-pages' )->escaped() .
+						" " . $anonEditorLabelLinkHtml;
+					$anonUserMenuData['label'] = null;
+				} catch ( MalformedTitleException $e ) {
+					// ignore (T340220)
+				}
+				$dropdownMenus[] = new VectorComponentMenu( $anonUserMenuData );
 			}
 		} else {
 			// Logout isnt enabled for temp users, who are considered still considered registeredt

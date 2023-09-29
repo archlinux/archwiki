@@ -10,6 +10,7 @@
 	"discussiontools-emptystate-desc-user-anon": "لخدايميا يقدّو يصاوبو محتوى ف {{SITENAME}} ب [[{{MediaWiki:discussiontools-emptystate-link-userpage}}|صفحات النقاش]] على أحسن وجه. بداو مداكرة جديدة على مناقشة تّعديلات لي تدارو من هاد لأيپي. داكشي لي كيتّكتب هنا غادي يكون موتاح علنياً ل أي واحد. بزاف د لأيپيات كيتبدلو بشكل دوري، ؤ يقدرو يكونو مخدّمين من طاراف شحال من واحد.",
 	"discussiontools-emptystate-title": "بدا لمداكرة على {{SUBJECTPAGENAME}}",
 	"discussiontools-emptystate-title-user": "بدا لمداكرة {{GENDER:{{PAGENAME}}|معا}} {{PAGENAME}}",
+	"discussiontools-pageframe-latestcomment": "التعليق اللخراني: $1 ديال $2 ف لموضوع $3",
 	"discussiontools-pagetitle-newtopic": "بدو د موضوع جديد على $1",
 	"discussiontools-replylink": "{{GENDER:|ردّ|ردّي}}",
 	"discussiontools-replywidget-cancel": "لغي",

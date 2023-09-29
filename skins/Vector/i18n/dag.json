@@ -11,7 +11,9 @@
 			"Ruky Wunpini"
 		]
 	},
+	"vector-languages": "Bala",
 	"vector-language-button-aria-label": "Kpemi lahabali bali sheli ni. Din be {{PLURAL:$1|$1 Balli |$1 Bala}}",
+	"vector-no-language-button-label": "Pahimi bala",
 	"vector-language-variant-switcher-label": "Taɣimi balli woliginsima",
 	"vector-action-addsection": "Pahimi yaɣili",
 	"vector-action-delete": "Nyahima",
@@ -22,5 +24,8 @@
 	"vector-view-history": "Lihimi tarihi",
 	"vector-view-view": "Karimma",
 	"vector-more-actions": "Lihimi n pahi",
-	"vector-searchsuggest-containing": "Yuli bo yaɣi shɛŋa din mali <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>"
+	"vector-searchsuggest-containing": "Yuli bo yaɣi shɛŋa din mali <strong class=\"cdx-typeahead-search__search-footer__query\">$1</strong>",
+	"vector-page-tools-label": "Tuma nɛma",
+	"vector-page-tools-general-label": "Di bɔbigbaai",
+	"vector-unpin-element-label": "Sɔɣima"
 }

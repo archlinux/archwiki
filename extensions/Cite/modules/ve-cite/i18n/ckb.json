@@ -7,13 +7,14 @@
 			"Pirehelokan",
 			"Sarchia",
 			"Serwan",
-			"ئارام بکر"
+			"ئارام بکر",
+			"TerranBoy"
 		]
 	},
 	"visualeditor-cite-tool-name-book": "کتێب",
 	"visualeditor-cite-tool-name-journal": "بڵاوکراوە",
 	"visualeditor-cite-tool-name-news": "هەواڵ",
-	"visualeditor-cite-tool-name-web": "ماڵپەڕ",
+	"visualeditor-cite-tool-name-web": "وێبگە",
 	"cite-ve-changedesc-ref-group-both": "گرووپی سەرچاوە لە «$1» بۆ «$2» گۆڕا",
 	"cite-ve-changedesc-ref-group-from": "گرووپی سەرچاوە لە «$1» بۆ گرووپە گشتییەکە گۆڕا",
 	"cite-ve-changedesc-ref-group-to": "گرووپی سەرچاوە لە گرووپە گشتییەکەوە بۆ «$1» گۆڕا",
