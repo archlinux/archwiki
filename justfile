@@ -15,7 +15,7 @@ default:
 # Installs MediaWiki and creates LocalSettings.php
 init: start
 	rm -f LocalSettings.php
-	{{PHP-DB-RUN}} php maintenance/install.php \
+	{{PHP-DB-RUN}} php maintenance/run.php install \
 		--dbserver "mariadb" \
 		--dbuser "root" \
 		--dbpass "" \
@@ -37,7 +37,7 @@ import-db-dump file name='archwiki': start
 	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb drop -f {{name}} || true
 	{{MARIADB-RUN}} mariadb-admin -uroot -hmariadb create {{name}}
 	zcat {{file}} | {{MARIADB-RUN}} mariadb -uroot -hmariadb {{name}}
-	{{PHP-RUN}} php maintenance/update.php --quick
+	{{PHP-RUN}} php maintenance/run.php update --quick
 
 start:
 	{{COMPOSE}} up -d
